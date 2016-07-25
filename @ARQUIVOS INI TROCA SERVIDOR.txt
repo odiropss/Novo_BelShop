@@ -1,0 +1,12 @@
+
+- Servidor_Adm.ini
+- PCTConect_IB_Loja.ini
+- PCTConect_IB.ini
+- PCTConect_BKP.ini
+- ExecutarRedeLocal.Ini 
+	- Atenção:
+		- A Pasta de Origem Deve Ser Trestada, pois, não deve conter a indicação DRIVE <E: ou C: ...) 
+		- PastaOrigem=\\192.168.0.252\Projetos\BelShop
+- Executar.ini
+	- Atenção:
+		- A Pasta Deve Ser Trestada se deve, ou náo, conter a indicação DRIVE <E: ou C: ...) 
