@@ -77,6 +77,7 @@ type
     OdirPanApres: TPanel;
     Lab_Lojas: TLabel;
     Lab_Titulo: TLabel;
+    Button1: TButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);

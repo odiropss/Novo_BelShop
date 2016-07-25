@@ -207,6 +207,14 @@ object FrmControleEstoques: TFrmControleEstoques
       ParentFont = False
       OnClick = Bt_ContEstClipboardClick
     end
+    object Button1: TButton
+      Left = 528
+      Top = 8
+      Width = 75
+      Height = 25
+      Caption = 'Button1'
+      TabOrder = 4
+    end
   end
   object PC_ContEstPrincipal: TPageControl
     Left = 0
