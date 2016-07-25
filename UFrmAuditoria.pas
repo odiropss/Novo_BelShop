@@ -33,7 +33,9 @@ implementation
 
 procedure TFrmAuditoria.Bt_AuditoriaFechaClick(Sender: TObject);
 begin
+
   Close;
+  
 end;
 
 procedure TFrmAuditoria.FormKeyUp(Sender: TObject; var Key: Word;

@@ -213,7 +213,7 @@ object FrmControleEstoques: TFrmControleEstoques
     Top = 0
     Width = 977
     Height = 539
-    ActivePage = Ts_ContEstSimulador
+    ActivePage = Ts_ContEstSolic
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
