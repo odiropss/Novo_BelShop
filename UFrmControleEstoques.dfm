@@ -34,14 +34,14 @@ object FrmControleEstoques: TFrmControleEstoques
     Ctl3D = False
     ParentCtl3D = False
     TabOrder = 0
-    object Bt_ContEstFechaVolttar: TJvXPButton
+    object Bt_ContEstFechaVoltar: TJvXPButton
       Tag = 99
       Left = 873
       Top = 2
       Width = 100
       Height = 33
       Caption = 'Fechar'
-      TabOrder = 0
+      TabOrder = 5
       TabStop = False
       ShowFocusRect = True
       Spacing = 10
@@ -52,37 +52,27 @@ object FrmControleEstoques: TFrmControleEstoques
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
       ParentFont = False
-      OnClick = Bt_ContEstFechaVolttarClick
+      OnClick = Bt_ContEstFechaVoltarClick
     end
     object Bt_ContEstSimulador: TJvXPButton
       Left = 2
       Top = 2
-      Width = 135
+      Width = 120
       Height = 33
       Caption = 'Simular Estoques'
-      TabOrder = 1
+      TabOrder = 0
       Glyph.Data = {
-        07544269746D617076020000424D760200000000000076000000280000002000
-        0000200000000100040000000000000200000000000000000000100000000000
-        000000000000000080000080000000808000800000008000800080800000C0C0
+        07544269746D617042010000424D420100000000000076000000280000001100
+        0000110000000100040000000000CC0000000000000000000000100000001000
+        0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
         C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-        FF00777777777777777777777777777777777777777777777777777777777777
-        7777777777777777777700077777770007777777777777777770888077777088
-        8077777777777777770887880777088778077777777777777008777807700887
-        7807777777777777000877780700087788077700000777700000878000000087
-        8007770FFF007770800000000080000000777008888077708000000000800000
-        007770FFFFF007708000000000800000007770F8888800770888000777088800
-        077770FFFFFFF0077000000087700000777770F888888F0777700FFF00877777
-        777770FFFFFFFFF0000FFFFFFF087777777770F888888888888888888F087777
-        777770FFFFFFFFFFFFFFFFFFFF087777777770F888888888888888888F087777
-        777770FFFFFFFFFFFFFFFFFFFF087777777770F888888888888888888F087777
-        777770FFFFFFFFFFFFFFFFFFFF087777777770F888888888888888888F087777
-        777770FFFFFFFFFFFFFFFFFFFF087777777770F888888888888888888F087777
-        777770FFFFFFFFFFFFFFFFFFFF087777777770F888888888888888888F087777
-        777770FFFFFFFFFFFFFFFFFFFF087777777770F888888888888888888F077777
-        777770FFFFFFFFFFFFFFFFFFFF07777777777000000000000000000000077777
-        7777777777777777777777777777777777777777777777777777777777777777
-        7777}
+        FF00777777777777777770000000777007777087878700000000777777777077
+        7777000000007770077770000000000000007770077770FFFFFF000000007770
+        007770FFFFFF000000007777700770FFFFFF0000000070077007700000000000
+        00007000000770FFFFFF000000007700007770FFFFFF000000007777777770FF
+        FFFF000000007777747770000000000000007777744770FFFFFF000000007744
+        444470FFFFFF000000007777744770FFFFFF0000000077777477700000000000
+        0000777777777777777770000000}
       ShowFocusRect = True
       Spacing = 12
       Align = alLeft
@@ -96,12 +86,12 @@ object FrmControleEstoques: TFrmControleEstoques
     end
     object Bt_ContEstSalvaExcel: TJvXPButton
       Tag = 4
-      Left = 137
+      Left = 721
       Top = 2
       Width = 152
       Height = 33
       Caption = 'Salvar em Excel'
-      TabOrder = 2
+      TabOrder = 1
       TabStop = False
       Glyph.Data = {
         0A544A504547496D616765B0040000FFD8FFE000104A46494600010101006000
@@ -143,7 +133,7 @@ object FrmControleEstoques: TFrmControleEstoques
         7FC223F10356F891A2F85BC27E1BD1EF353BF8AF6169B55171ACCB77379777FB
         C5322CB6E782C02AC6818F97C14515D54E9A841423B23A231514A2BA1FFFD9}
       ShowFocusRect = True
-      Align = alLeft
+      Align = alRight
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -154,12 +144,12 @@ object FrmControleEstoques: TFrmControleEstoques
     end
     object Bt_ContEstClipboard: TJvXPButton
       Tag = 4
-      Left = 289
+      Left = 559
       Top = 2
       Width = 162
       Height = 33
       Caption = 'Salvar em Mem'#243'ria'
-      TabOrder = 3
+      TabOrder = 2
       Glyph.Data = {
         0A544A504547496D6167655B040000FFD8FFE000104A46494600010101006000
         600000FFDB004300020101020101020202020202020203050303030303060404
@@ -198,7 +188,7 @@ object FrmControleEstoques: TFrmControleEstoques
         E32ACA780F68E3197EEDB4A2A5CB7B5B9B96FB37F7B3F4B96E55867E7E7D508F
         E9451457EB87ED87FFD9}
       ShowFocusRect = True
-      Align = alLeft
+      Align = alRight
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -207,13 +197,76 @@ object FrmControleEstoques: TFrmControleEstoques
       ParentFont = False
       OnClick = Bt_ContEstClipboardClick
     end
+    object Bt_ContEstProdutos: TJvXPButton
+      Tag = 4
+      Left = 122
+      Top = 2
+      Width = 120
+      Height = 33
+      Caption = 'Simular Produtos'
+      TabOrder = 3
+      TabStop = False
+      Glyph.Data = {
+        07544269746D617042010000424D420100000000000076000000280000001100
+        0000110000000100040000000000CC0000000000000000000000100000001000
+        0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+        C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+        FF00777777777777777770000000777007777087878700000000777777777077
+        7777000000007770077770000000000000007770077770FFFFFF000000007770
+        007770FFFFFF000000007777700770FFFFFF0000000070077007700000000000
+        00007000000770FFFFFF000000007700007770FFFFFF000000007777777770FF
+        FFFF000000007777747770000000000000007777744770FFFFFF000000007744
+        444470FFFFFF000000007777744770FFFFFF0000000077777477700000000000
+        0000777777777777777770000000}
+      ShowFocusRect = True
+      Spacing = 12
+      Align = alLeft
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      OnClick = Bt_ContEstProdutosClick
+    end
+    object Bt_ContEstFornecedores: TJvXPButton
+      Tag = 4
+      Left = 242
+      Top = 2
+      Width = 120
+      Height = 33
+      Caption = 'Simular Fornecedores'
+      TabOrder = 4
+      Glyph.Data = {
+        07544269746D617042010000424D420100000000000076000000280000001100
+        0000110000000100040000000000CC0000000000000000000000100000001000
+        0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+        C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+        FF00777777777777777770000000777007777087878700000000777777777077
+        7777000000007770077770000000000000007770077770FFFFFF000000007770
+        007770FFFFFF000000007777700770FFFFFF0000000070077007700000000000
+        00007000000770FFFFFF000000007700007770FFFFFF000000007777777770FF
+        FFFF000000007777747770000000000000007777744770FFFFFF000000007744
+        444470FFFFFF000000007777744770FFFFFF0000000077777477700000000000
+        0000777777777777777770000000}
+      ShowFocusRect = True
+      Spacing = 12
+      Align = alLeft
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      OnClick = Bt_ContEstProdutosClick
+    end
   end
   object PC_ContEstPrincipal: TPageControl
     Left = 0
     Top = 0
     Width = 977
     Height = 539
-    ActivePage = Ts_ContEstSolic
+    ActivePage = Ts_ContEstProdutos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -224,6 +277,7 @@ object FrmControleEstoques: TFrmControleEstoques
     TabOrder = 1
     OnChange = PC_ContEstPrincipalChange
     object Ts_ContEstSolic: TTabSheet
+      Tag = 9999
       Caption = ' Filtros  '
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -990,7 +1044,7 @@ object FrmControleEstoques: TFrmControleEstoques
           end
           object Gb_ContEstTipoEstoques: TGroupBox
             Left = 796
-            Top = 7
+            Top = 31
             Width = 161
             Height = 57
             Caption = ' Tipo de Estoque '
@@ -1017,40 +1071,12 @@ object FrmControleEstoques: TFrmControleEstoques
                 'Somento SEM Estoque')
             end
           end
-          object GroupBox1: TGroupBox
-            Left = 796
-            Top = 63
-            Width = 161
-            Height = 57
-            Caption = ' Tipo de Apresenta'#231#227'o '
-            TabOrder = 22
-            Visible = False
-            object Cbx_ContEstTipoApres: TComboBox
-              Left = 14
-              Top = 22
-              Width = 139
-              Height = 22
-              Style = csOwnerDrawFixed
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = []
-              ItemHeight = 16
-              ItemIndex = 0
-              ParentFont = False
-              TabOrder = 0
-              Text = 'Anal'#237'tica'
-              Items.Strings = (
-                'Anal'#237'tica'
-                'Sint'#233'tica')
-            end
-          end
         end
       end
     end
     object Ts_ContEstSimulador: TTabSheet
-      Caption = ' Simulador de Estoques '
+      Tag = 9999
+      Caption = 'Simulador de Estoques'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -1260,6 +1286,418 @@ object FrmControleEstoques: TFrmControleEstoques
           Font.Style = [fsBold]
           ParentFont = False
         end
+      end
+    end
+    object Ts_ContEstProdutos: TTabSheet
+      Caption = 'Simulador Produtos'
+      ImageIndex = 2
+      object Panel1: TPanel
+        Left = 0
+        Top = 0
+        Width = 969
+        Height = 55
+        Align = alTop
+        BevelInner = bvRaised
+        BevelOuter = bvLowered
+        TabOrder = 0
+        object Label9: TLabel
+          Left = 12
+          Top = 30
+          Width = 26
+          Height = 13
+          Caption = 'OBS'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label10: TLabel
+          Left = 12
+          Top = 8
+          Width = 26
+          Height = 13
+          Caption = 'OBS'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+      end
+      object Dbg_ContEstProdutos: TDBGridJul
+        Left = 0
+        Top = 55
+        Width = 969
+        Height = 456
+        Align = alClient
+        Color = 15004403
+        DataSource = DMVirtual.DS_V_EstoqueLojas
+        FixedColor = clSilver
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
+        ParentFont = False
+        ParentShowHint = False
+        ReadOnly = True
+        ShowHint = False
+        TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clBlack
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = [fsBold]
+        CorComFoco = 15004403
+        SairComEnter = False
+        EditDataSetCheck = False
+        ValorCampoCheck = 'SIM'
+        ValorCampoUnCheck = 'NAO'
+        ImageChecked.Data = {
+          3E020000424D3E0200000000000036000000280000000D0000000D0000000100
+          180000000000080200000000000000000000000000000000000080511C80511C
+          80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
+          1C0080511CF1F3F3F3F5F5F6F7F7F8F9F9F9FAFAFBFCFCFDFDFDFEFEFEFFFFFF
+          FFFFFFFFFFFF80511C0080511CEFF1F1F1F3F3F3F5F5F6F7F7F8F9F9F9FAFAFB
+          FCFCFDFDFDFEFEFEFFFFFFFFFFFF80511C0080511CECEFEFEFF1F1F1F3F3F3F5
+          F521A121F8F9F9F9FAFAFBFCFCFDFDFDFEFEFEFFFFFF80511C0080511CE9ECEC
+          ECEFEFEFF1F121A12121A12121A121F8F9F9F9FAFAFBFCFCFDFDFDFEFEFE8051
+          1C0080511CE6EAEAE9ECEC21A12121A12121A12121A12121A121F8F9F9F9FAFA
+          FBFCFCFDFDFD80511C0080511CE3E7E7E6EAEA21A12121A121EFF1F121A12121
+          A12121A121F8F9F9F9FAFAFBFCFC80511C0080511CE1E5E5E3E7E721A121E9EC
+          ECECEFEFEFF1F121A12121A12121A121F8F9F9F9FAFA80511C0080511CDFE3E3
+          E1E5E5E3E7E7E6EAEAE9ECECECEFEFEFF1F121A12121A121F6F7F7F8F9F98051
+          1C0080511CDDE2E2DFE3E3E1E5E5E3E7E7E6EAEAE9ECECECEFEFEFF1F121A121
+          F3F5F5F6F7F780511C0080511CDDE2E2DDE2E2DFE3E3E1E5E5E3E7E7E6EAEAE9
+          ECECECEFEFEFF1F1F1F3F3F3F5F580511C0080511CDDE2E2DDE2E2DDE2E2DFE3
+          E3E1E5E5E3E7E7E6EAEAE9ECECECEFEFEFF1F1F1F3F380511C0080511C80511C
+          80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
+          1C00}
+        ImageUnChecked.Data = {
+          3E020000424D3E0200000000000036000000280000000D0000000D0000000100
+          180000000000080200000000000000000000000000000000000080511C80511C
+          80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
+          1C0080511CEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9FAFBFBFCFDFDFEFEFEFFFFFF
+          FFFFFFFFFFFF80511C0080511CECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9FA
+          FBFBFCFDFDFEFEFEFFFFFFFFFFFF80511C0080511CE9ECECECEFEFEFF1F1F1F3
+          F3F4F5F5F6F7F7F8F9F9FAFBFBFCFDFDFEFEFEFFFFFF80511C0080511CE5E8E8
+          E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9FAFBFBFCFDFDFEFEFE8051
+          1C0080511CE2E5E5E5E8E8E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9
+          FAFBFBFCFDFD80511C0080511CDEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F1F1
+          F3F3F4F5F5F6F7F7F8F9F9FAFBFB80511C0080511CDBE0E0DEE2E2E2E5E5E5E8
+          E8E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F980511C0080511CD9DEDE
+          DBE0E0DEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F78051
+          1C0080511CD7DCDCD9DEDEDBE0E0DEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F1
+          F1F3F3F4F5F580511C0080511CD7DCDCD7DCDCD9DEDEDBE0E0DEE2E2E2E5E5E5
+          E8E8E9ECECECEFEFEFF1F1F1F3F380511C0080511CD7DCDCD7DCDCD7DCDCD9DE
+          DEDBE0E0DEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F180511C0080511C80511C
+          80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
+          1C00}
+        Columns = <
+          item
+            Color = clYellow
+            Expanded = False
+            FieldName = 'COD_LOJA'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taCenter
+            Width = 50
+            Visible = True
+          end
+          item
+            Color = clSilver
+            Expanded = False
+            FieldName = 'QTD_ESTOQUE'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 100
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_ESTOQUE'
+            Title.Alignment = taRightJustify
+            Width = 120
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_VENDAS'
+            Title.Alignment = taRightJustify
+            Width = 100
+            Visible = True
+          end
+          item
+            Color = clSilver
+            Expanded = False
+            FieldName = 'EST_SIMULADO'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 100
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_SIMULADO'
+            Title.Alignment = taRightJustify
+            Width = 120
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'PER_SIMULADOR'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DIA_UTEIS'
+            Title.Alignment = taRightJustify
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DTA_INICIO'
+            Title.Alignment = taCenter
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DTA_FIM'
+            Title.Alignment = taCenter
+            Width = 70
+            Visible = True
+          end>
+      end
+    end
+    object Ts_ContEstFornecedores: TTabSheet
+      Caption = 'Simulador Fornecedores'
+      ImageIndex = 3
+      object Panel2: TPanel
+        Left = 0
+        Top = 0
+        Width = 969
+        Height = 55
+        Align = alTop
+        BevelInner = bvRaised
+        BevelOuter = bvLowered
+        TabOrder = 0
+        object Label11: TLabel
+          Left = 12
+          Top = 30
+          Width = 26
+          Height = 13
+          Caption = 'OBS'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label12: TLabel
+          Left = 12
+          Top = 8
+          Width = 26
+          Height = 13
+          Caption = 'OBS'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+      end
+      object Dbg_ContEstFornecedores: TDBGridJul
+        Left = 0
+        Top = 55
+        Width = 969
+        Height = 456
+        Align = alClient
+        Color = 15004403
+        DataSource = DMVirtual.DS_V_EstoqueLojas
+        FixedColor = clSilver
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
+        ParentFont = False
+        ParentShowHint = False
+        ReadOnly = True
+        ShowHint = False
+        TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clBlack
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = [fsBold]
+        OnDrawColumnCell = Dbg_ContEstSimuladorDrawColumnCell
+        OnTitleClick = Dbg_ContEstSimuladorTitleClick
+        CorComFoco = 15004403
+        SairComEnter = False
+        EditDataSetCheck = False
+        ValorCampoCheck = 'SIM'
+        ValorCampoUnCheck = 'NAO'
+        ImageChecked.Data = {
+          3E020000424D3E0200000000000036000000280000000D0000000D0000000100
+          180000000000080200000000000000000000000000000000000080511C80511C
+          80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
+          1C0080511CF1F3F3F3F5F5F6F7F7F8F9F9F9FAFAFBFCFCFDFDFDFEFEFEFFFFFF
+          FFFFFFFFFFFF80511C0080511CEFF1F1F1F3F3F3F5F5F6F7F7F8F9F9F9FAFAFB
+          FCFCFDFDFDFEFEFEFFFFFFFFFFFF80511C0080511CECEFEFEFF1F1F1F3F3F3F5
+          F521A121F8F9F9F9FAFAFBFCFCFDFDFDFEFEFEFFFFFF80511C0080511CE9ECEC
+          ECEFEFEFF1F121A12121A12121A121F8F9F9F9FAFAFBFCFCFDFDFDFEFEFE8051
+          1C0080511CE6EAEAE9ECEC21A12121A12121A12121A12121A121F8F9F9F9FAFA
+          FBFCFCFDFDFD80511C0080511CE3E7E7E6EAEA21A12121A121EFF1F121A12121
+          A12121A121F8F9F9F9FAFAFBFCFC80511C0080511CE1E5E5E3E7E721A121E9EC
+          ECECEFEFEFF1F121A12121A12121A121F8F9F9F9FAFA80511C0080511CDFE3E3
+          E1E5E5E3E7E7E6EAEAE9ECECECEFEFEFF1F121A12121A121F6F7F7F8F9F98051
+          1C0080511CDDE2E2DFE3E3E1E5E5E3E7E7E6EAEAE9ECECECEFEFEFF1F121A121
+          F3F5F5F6F7F780511C0080511CDDE2E2DDE2E2DFE3E3E1E5E5E3E7E7E6EAEAE9
+          ECECECEFEFEFF1F1F1F3F3F3F5F580511C0080511CDDE2E2DDE2E2DDE2E2DFE3
+          E3E1E5E5E3E7E7E6EAEAE9ECECECEFEFEFF1F1F1F3F380511C0080511C80511C
+          80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
+          1C00}
+        ImageUnChecked.Data = {
+          3E020000424D3E0200000000000036000000280000000D0000000D0000000100
+          180000000000080200000000000000000000000000000000000080511C80511C
+          80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
+          1C0080511CEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9FAFBFBFCFDFDFEFEFEFFFFFF
+          FFFFFFFFFFFF80511C0080511CECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9FA
+          FBFBFCFDFDFEFEFEFFFFFFFFFFFF80511C0080511CE9ECECECEFEFEFF1F1F1F3
+          F3F4F5F5F6F7F7F8F9F9FAFBFBFCFDFDFEFEFEFFFFFF80511C0080511CE5E8E8
+          E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9FAFBFBFCFDFDFEFEFE8051
+          1C0080511CE2E5E5E5E8E8E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9
+          FAFBFBFCFDFD80511C0080511CDEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F1F1
+          F3F3F4F5F5F6F7F7F8F9F9FAFBFB80511C0080511CDBE0E0DEE2E2E2E5E5E5E8
+          E8E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F980511C0080511CD9DEDE
+          DBE0E0DEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F78051
+          1C0080511CD7DCDCD9DEDEDBE0E0DEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F1
+          F1F3F3F4F5F580511C0080511CD7DCDCD7DCDCD9DEDEDBE0E0DEE2E2E2E5E5E5
+          E8E8E9ECECECEFEFEFF1F1F1F3F380511C0080511CD7DCDCD7DCDCD7DCDCD9DE
+          DEDBE0E0DEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F180511C0080511C80511C
+          80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
+          1C00}
+        Columns = <
+          item
+            Color = clYellow
+            Expanded = False
+            FieldName = 'COD_LOJA'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taCenter
+            Width = 50
+            Visible = True
+          end
+          item
+            Color = clSilver
+            Expanded = False
+            FieldName = 'QTD_ESTOQUE'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 100
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_ESTOQUE'
+            Title.Alignment = taRightJustify
+            Width = 120
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_VENDAS'
+            Title.Alignment = taRightJustify
+            Width = 100
+            Visible = True
+          end
+          item
+            Color = clSilver
+            Expanded = False
+            FieldName = 'EST_SIMULADO'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 100
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_SIMULADO'
+            Title.Alignment = taRightJustify
+            Width = 120
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'PER_SIMULADOR'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DIA_UTEIS'
+            Title.Alignment = taRightJustify
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DTA_INICIO'
+            Title.Alignment = taCenter
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DTA_FIM'
+            Title.Alignment = taCenter
+            Width = 70
+            Visible = True
+          end>
       end
     end
   end

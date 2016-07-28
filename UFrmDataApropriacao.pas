@@ -103,38 +103,8 @@ uses UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop, DK_Procs1, UPesquisaIB,
 Procedure TFrmDataApropriacao.NegociacoesCredDeb(Tipo: String);
 Var
   MySql: String;
-  bInsert, bUpdate: Boolean;
   sNumSeq: String;
 Begin
-
-  // Busca Fornecedores com Creditos para Busca de Déditos =====================
-  If sgFornecedores='' Then
-  Begin
-    MySql:=' Select distinct ff.cod_fornecedor'+
-           ' From FL_CAIXA_FORNECEDORES ff'+
-           ' Where ff.cod_historico=900'+
-           ' And ff.dta_caixa >='+QuotedStr(f_Troca('/','.',Dte_AproprDtaApropriacao.Text))+
-           ' Order by ff.cod_fornecedor';
-   DMBelShop.CDS_Busca.Close;
-   DMBelShop.SDS_Busca.CommandText:=MySql;
-   DMBelShop.CDS_Busca.Open;
-
-   While Not DMBelShop.CDS_Busca.Eof do
-   Begin
-     Refresh;
-
-      If sgFornecedores='' Then
-       sgFornecedores:=QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Fornecedor').AsString)
-      Else
-       sgFornecedores:=
-        sgFornecedores+', '+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Fornecedor').AsString);
-
-     DMBelShop.CDS_Busca.Next;
-   End; // While Not DMBelShop.CDS_Busca.Eof do
-
-   DMBelShop.CDS_Busca.Close;
-  End; // If sgFornecedores='' Then
-
   // Busca Creditos/Débitos ====================================================
   MySql:=' SELECT'+
          ' mf.codfornecedor, f.nomefornecedor,'+
@@ -181,76 +151,41 @@ Begin
   Begin
     Application.ProcessMessages;
 
-    // Verifica se Documento já existe ------------------------------
-    bInsert:=False;
-    bUpdate:=False;
-
-    MySql:=' Select NUM_CHAVENF, VLR_CAIXA'+
-           ' From FL_CAIXA_FORNECEDORES'+
-           ' Where NUM_CHAVENF='+
-           QuotedStr(IBQ_ConsultaCreDeb.FieldByName('CHAVENF').AsString)+
-           ' And COD_FORNECEDOR='+
-           QuotedStr(IBQ_ConsultaCreDeb.FieldByName('CODFORNECEDOR').AsString);
+    // Busca Num_seq do Dia do Fornecedor -------------------------
+    MySql:=' select coalesce(max(cf.num_seq)+1 ,1) Num_Seq'+
+           ' from FL_CAIXA_FORNECEDORES cf'+
+           ' where cf.dta_caixa='+QuotedStr(IBQ_ConsultaCreDeb.FieldByName('DATAENTRADA').AsString)+
+           ' and cf.cod_fornecedor='+QuotedStr(IBQ_ConsultaCreDeb.FieldByName('CODFORNECEDOR').AsString)+
+           ' and cf.num_seq>0'+
+           ' and cf.num_seq<999999';
     DMBelShop.CDS_Busca.Close;
     DMBelShop.SDS_Busca.CommandText:=MySql;
     DMBelShop.CDS_Busca.Open;
 
-    If Trim(DMBelShop.CDS_Busca.FieldByName('NUM_CHAVENF').AsString)='' Then
-     bInsert:=True
-    Else If DMBelShop.CDS_Busca.FieldByName('VLR_CAIXA').AsCurrency<>
-            IBQ_ConsultaCreDeb.FieldByName('VLR_TOTAL').AsCurrency Then
-     bUpdate:=True;
-
-    If bInsert Then
-    Begin
-      // Busca Num_seq do Dia do Fornecedor -------------------------
-      MySql:=' select coalesce(max(cf.num_seq)+1 ,1) Num_Seq'+
-             ' from FL_CAIXA_FORNECEDORES cf'+
-             ' where cf.dta_caixa='+QuotedStr(IBQ_ConsultaCreDeb.FieldByName('DATAENTRADA').AsString)+
-             ' and cf.cod_fornecedor='+QuotedStr(IBQ_ConsultaCreDeb.FieldByName('CODFORNECEDOR').AsString)+
-             ' and cf.num_seq>0'+
-             ' and cf.num_seq<999999';
-      DMBelShop.CDS_Busca.Close;
-      DMBelShop.SDS_Busca.CommandText:=MySql;
-      DMBelShop.CDS_Busca.Open;
-
-      sNumSeq:=Trim(DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString);
-      DMBelShop.CDS_Busca.Close;
-
-      // Insere Caixa -----------------------------------------------
-      MySql:='Insert Into FL_CAIXA_fORNECEDORES ('+
-             ' COD_FORNECEDOR, DES_FORNECEDOR, DTA_CAIXA, NUM_SEQ,'+
-             ' NUM_CHAVENF, COD_EMPRESA, COD_HISTORICO, TXT_OBS,'+
-             ' NUM_DOCUMENTO, NUM_SERIE, TIP_DEBCRE, VLR_CAIXA, VLR_SALDO)'+
-
-             ' Values ('+
-             QuotedStr(IBQ_ConsultaCreDeb.FieldByName('CODFORNECEDOR').AsString)+', '+
-             QuotedStr(IBQ_ConsultaCreDeb.FieldByName('NOMEFORNECEDOR').AsString)+', '+
-             QuotedStr(IBQ_ConsultaCreDeb.FieldByName('DATAENTRADA').AsString)+', '+
-             sNumSeq+', '+
-             QuotedStr(IBQ_ConsultaCreDeb.FieldByName('CHAVENF').AsString)+', '+
-             QuotedStr(IBQ_ConsultaCreDeb.FieldByName('CODFILIAL').AsString)+', '+
-             QuotedStr(IBQ_ConsultaCreDeb.FieldByName('CODCOMPROVANTE').AsString)+', '+
-             QuotedStr(AnsiUpperCase(IBQ_ConsultaCreDeb.FieldByName('OBSERVACAO').AsString))+', '+
-             QuotedStr(IBQ_ConsultaCreDeb.FieldByName('NUMERO').AsString)+', '+
-             QuotedStr(IBQ_ConsultaCreDeb.FieldByName('SERIE').AsString)+', '+
-             QuotedStr(IBQ_ConsultaCreDeb.FieldByName('TP_DEBCRE').AsString)+', '+
-             QuotedStr(IBQ_ConsultaCreDeb.FieldByName('VLR_TOTAL').AsString)+', '+
-             ' 0)';
-      DMBelShop.SQLC.Execute(MySql, nil, nil);
-      bgProcessar:=True;
-    End; // If bInsert Then
-
-    If bUpdate Then
-    Begin
-      MySql:='Update FL_CAIXA_FORNECEDORES'+
-             ' Set Vlr_Caixa='+QuotedStr(IBQ_ConsultaCreDeb.FieldByName('VLR_TOTAL').AsString)+
-             ' Where NUM_CHAVENF='+QuotedStr(IBQ_ConsultaCreDeb.FieldByName('CHAVENF').AsString)+
-             ' And COD_FORNECEDOR='+QuotedStr(IBQ_ConsultaCreDeb.FieldByName('CODFORNECEDOR').AsString);
-      DMBelShop.SQLC.Execute(MySql, nil, nil);
-      bgProcessar:=True;
-    End;
+    sNumSeq:=Trim(DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString);
     DMBelShop.CDS_Busca.Close;
+
+    // Insere Caixa -----------------------------------------------
+    MySql:='Insert Into FL_CAIXA_fORNECEDORES ('+
+           ' COD_FORNECEDOR, DES_FORNECEDOR, DTA_CAIXA, NUM_SEQ,'+
+           ' NUM_CHAVENF, COD_EMPRESA, COD_HISTORICO, TXT_OBS,'+
+           ' NUM_DOCUMENTO, NUM_SERIE, TIP_DEBCRE, VLR_CAIXA, VLR_SALDO)'+
+           ' Values ('+
+           QuotedStr(IBQ_ConsultaCreDeb.FieldByName('CODFORNECEDOR').AsString)+', '+
+           QuotedStr(IBQ_ConsultaCreDeb.FieldByName('NOMEFORNECEDOR').AsString)+', '+
+           QuotedStr(IBQ_ConsultaCreDeb.FieldByName('DATAENTRADA').AsString)+', '+
+           sNumSeq+', '+
+           QuotedStr(IBQ_ConsultaCreDeb.FieldByName('CHAVENF').AsString)+', '+
+           QuotedStr(IBQ_ConsultaCreDeb.FieldByName('CODFILIAL').AsString)+', '+
+           QuotedStr(IBQ_ConsultaCreDeb.FieldByName('CODCOMPROVANTE').AsString)+', '+
+           QuotedStr(AnsiUpperCase(IBQ_ConsultaCreDeb.FieldByName('OBSERVACAO').AsString))+', '+
+           QuotedStr(IBQ_ConsultaCreDeb.FieldByName('NUMERO').AsString)+', '+
+           QuotedStr(IBQ_ConsultaCreDeb.FieldByName('SERIE').AsString)+', '+
+           QuotedStr(IBQ_ConsultaCreDeb.FieldByName('TP_DEBCRE').AsString)+', '+
+           QuotedStr(IBQ_ConsultaCreDeb.FieldByName('VLR_TOTAL').AsString)+', '+
+           ' 0)';
+    DMBelShop.SQLC.Execute(MySql, nil, nil);
+    bgProcessar:=True;
 
     pgProgBar.Position:=IBQ_ConsultaCreDeb.RecNo;
 
@@ -298,65 +233,6 @@ Begin
 
   End; // If Not DMVirtual.CDS_V_Fornecedores.IsEmpty Then
 
-  // ===========================================================================
-  // Busca Débitos/Créditos BelShop_CD.FDB =====================================
-  // ===========================================================================
-
-  Lb_Apres.Caption:=Lb_Apres.Caption+cr+cr+'Loja: Bel_99';
-  Lb_Partes.Caption:='Parte 1/2';
-
-  // Conecta IBDB_MPMS ----------------------------------------------
-  If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then
-   MySql:=' Select (''\\''||';
-
-  If (Trim(sgTpConexao)='TCP/IP') Then
-   MySql:=' Select (';
-
-  // Se Conexão Externa =================================================
-  If (Not bgConexaoLocal) Then
-  Begin
-    MySql:=MySql+' Case '+
-                 '    When Trim(emp.Endereco_IP_Externo)<>'''' Then'+
-                 '       emp.ENDERECO_IP_EXTERNO'+
-                 '    Else'+
-                 '       emp.ENDERECO_IP'+
-                 ' End';
-  End;
-
-  // Se Conexão Local ===================================================
-  If (bgConexaoLocal) Then
-  Begin
-    MySql:=MySql+'emp.ENDERECO_IP'
-  End;
-
-  If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then
-   MySql:=MySql+'||''\''||emp.pasta_base_dados||''\''||emp.des_base_dados) Banco';
-
-  If (Trim(sgTpConexao)='TCP/IP') Then
-   MySql:=MySql+'||'':''||emp.pasta_base_dados||''\''||emp.des_base_dados) Banco';
-
-  MySql:=MySql+' from EMP_CONEXOES emp'+
-               ' WHERE emp.tip_emp=''M''';
-//odirapagar - 06/04/2016
-//               ' where emp.des_base_dados=''MPMS.FDB''';
-  DMBelShop.CDS_Busca.Close;
-  DMBelShop.SDS_Busca.CommandText:=MySql;
-  DMBelShop.CDS_Busca.Open;
-
-  DMConexoes.IBDB_MPMS.Connected:=False;;
-  DMConexoes.IBT_MPMS.Active:=False;;
-  DMConexoes.IBDB_MPMS.DatabaseName:=DMBelShop.CDS_Busca.FieldByName('Banco').AsString;
-  DMBelShop.CDS_Busca.Close;
-
-  b:=True;
-  While b do
-  Begin
-    Try
-      DMConexoes.IBDB_MPMS.Connected:=True;
-      Break;
-    Except
-    End;
-  End; // While b do
 
   // Monta Transacao ===========================================================
   TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
@@ -368,13 +244,189 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
-    // Monta Query de Consulta ----------------------------------------
+    // Busca Fornecedores com Creditos para Busca de Déditos ===================
+    If sgFornecedores='' Then
+    Begin
+      MySql:=' Select distinct ff.cod_fornecedor'+
+             ' From FL_CAIXA_FORNECEDORES ff'+
+             ' Where ff.cod_historico=900'+
+             ' And ff.dta_caixa >='+QuotedStr(f_Troca('/','.',Dte_AproprDtaApropriacao.Text))+
+             ' Order by ff.cod_fornecedor';
+     DMBelShop.CDS_Busca.Close;
+     DMBelShop.SDS_Busca.CommandText:=MySql;
+     DMBelShop.CDS_Busca.Open;
+
+     While Not DMBelShop.CDS_Busca.Eof do
+     Begin
+       Refresh;
+
+        If sgFornecedores='' Then
+         sgFornecedores:=QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Fornecedor').AsString)
+        Else
+         sgFornecedores:=
+          sgFornecedores+', '+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Fornecedor').AsString);
+
+       DMBelShop.CDS_Busca.Next;
+     End; // While Not DMBelShop.CDS_Busca.Eof do
+
+     DMBelShop.CDS_Busca.Close;
+    End; // If sgFornecedores='' Then
+
+    // Exclui Movtos do Caixa a Serem Atualizados -------------------
+    MySql:=' Delete from FL_CAIXA_FORNECEDORES ff'+
+           ' Where ff.COD_FORNECEDOR in ('+sgFornecedores+')'+
+           ' And ff.dta_caixa >='+QuotedStr(f_Troca('/','.',F_Troca('-','.',Dte_AproprDtaApropriacao.Text)));
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+
+    // =========================================================================
+    // Busca Débitos/Créditos BelShop_CD.FDB ===================================
+    // =========================================================================
+
+    Lb_Apres.Caption:=Lb_Apres.Caption+cr+cr+'Loja: Bel_99';
+    Lb_Partes.Caption:='Parte 1/2';
+
+    // Conecta IBDB_MPMS --------------------------------------------
+    If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then
+     MySql:=' Select (''\\''||';
+
+    If (Trim(sgTpConexao)='TCP/IP') Then
+     MySql:=' Select (';
+
+    // Se Conexão Externa -------------------------------------------
+    If (Not bgConexaoLocal) Then
+    Begin
+      MySql:=MySql+' Case '+
+                   '    When Trim(emp.Endereco_IP_Externo)<>'''' Then'+
+                   '       emp.ENDERECO_IP_EXTERNO'+
+                   '    Else'+
+                   '       emp.ENDERECO_IP'+
+                   ' End';
+    End;
+
+    // Se Conexão Local ---------------------------------------------
+    If (bgConexaoLocal) Then
+    Begin
+      MySql:=MySql+'emp.ENDERECO_IP'
+    End;
+
+    If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then
+     MySql:=MySql+'||''\''||emp.pasta_base_dados||''\''||emp.des_base_dados) Banco';
+
+    If (Trim(sgTpConexao)='TCP/IP') Then
+     MySql:=MySql+'||'':''||emp.pasta_base_dados||''\''||emp.des_base_dados) Banco';
+
+    MySql:=MySql+' from EMP_CONEXOES emp'+
+                 ' WHERE emp.tip_emp=''M''';
+    DMBelShop.CDS_Busca.Close;
+    DMBelShop.SDS_Busca.CommandText:=MySql;
+    DMBelShop.CDS_Busca.Open;
+
+    DMConexoes.IBDB_MPMS.Connected:=False;;
+    DMConexoes.IBT_MPMS.Active:=False;;
+    DMConexoes.IBDB_MPMS.DatabaseName:=DMBelShop.CDS_Busca.FieldByName('Banco').AsString;
+    DMBelShop.CDS_Busca.Close;
+
+    b:=True;
+    While b do
+    Begin
+      Try
+        DMConexoes.IBDB_MPMS.Connected:=True;
+        Break;
+      Except
+      End;
+    End; // While b do
+
+    // Monta Query de Consulta --------------------------------------
     FrmBelShop.CriaQueryIB('IBDB_MPMS','IBT_MPMS',IBQ_ConsultaCreDeb, True, True);
 
-    // Processa Creditos ----------------------------------------------
+    // Processa Creditos --------------------------------------------
     NegociacoesCredDeb('C');
 
-    // Fecha Transacao ------------------------------------------------
+    // ===========================================================================
+    // Busca Débitos/Créditos Outras Lojas =======================================
+    // ===========================================================================
+    Lb_Partes.Caption:='Parte 2/2';
+
+    // Busca Conexão das Empresas -----------------------------------
+    If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then
+     MySql:=' Select EMP.Cod_Filial, emp.Razao_Social, (''\\''||';
+
+    If (Trim(sgTpConexao)='TCP/IP') Then
+     MySql:=' Select EMP.Cod_Filial, emp.Razao_Social, (';
+
+    // Se Conexão Externa -------------------------------------------
+    If (Not bgConexaoLocal) Then
+    Begin
+      MySql:=MySql+' Case '+
+                   '    When Trim(emp.Endereco_IP_Externo)<>'''' Then'+
+                   '       emp.ENDERECO_IP_EXTERNO'+
+                   '    Else'+
+                   '       emp.ENDERECO_IP'+
+                   ' End';
+    End;
+
+    // Se Conexão Local ---------------------------------------------
+    If (bgConexaoLocal) Then
+    Begin
+      MySql:=MySql+'emp.ENDERECO_IP'
+    End;
+
+    If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then
+     MySql:=MySql+'||''\''||emp.pasta_base_dados||''\''||emp.des_base_dados) Banco';
+
+    If (Trim(sgTpConexao)='TCP/IP') Then
+     MySql:=MySql+'||'':''||emp.pasta_base_dados||''\''||emp.des_base_dados) Banco';
+
+    MySql:=MySql+' From EMP_CONEXOES emp'+
+                 ' Where emp.Ind_Ativo=''SIM'''+
+                 ' Order by emp.Cod_Emp';
+    DMBelShop.CDS_While.Close;
+    DMBelShop.SDS_While.CommandText:=MySql;
+    DMBelShop.CDS_While.Open;
+
+    Lb_Apres.Visible:=True;
+
+    While Not DMBelShop.CDS_While.Eof do
+    Begin
+      Screen.Cursor:=crSQLWait;
+
+      Lb_Apres.Caption:='Aguarde !!'+cr+cr+'Atualizando Comprovantes'+cr+cr+'900, 913, 916, 955'+cr+cr+
+                        'Loja: Bel_'+DMBelShop.CDS_While.FieldByName('Cod_Filial').AsString;
+      Refresh;
+
+      sDataBase:='IBDB_'+DMBelShop.CDS_While.FieldByName('Cod_Filial').AsString;
+      sTransaction:='IBT_'+DMBelShop.CDS_While.FieldByName('Cod_Filial').AsString;
+
+      // Abre Conexão da Empresa ------------------------------------
+      bSiga:=True;
+      If Not ConexaoEmpIndividual(sDataBase, sTransaction,'A') Then
+      Begin
+        if Trim(sMensagem)='' Then
+         sMensagem:='Lojas não Conectadas:';
+
+        sMensagem:=sMensagem+' Bel_'+DMBelShop.CDS_While.FieldByName('Cod_Filial').AsString;
+        bSiga:=False;
+      End; // If Not ConexaoEmpIndividual(sDataBase, sTransaction,'A') Then
+
+      If bSiga Then
+      Begin
+        // Monta Query de Consulta ----------------------------------
+        FrmBelShop.CriaQueryIB(sDataBase,sTransaction,IBQ_ConsultaCreDeb, True, True);
+
+        // Processa Creditos ----------------------------------------
+        NegociacoesCredDeb('D');
+
+        // Fecha Conexão da Empresa ---------------------------------
+        ConexaoEmpIndividual(sDataBase, sTransaction,'F');
+
+        Screen.Cursor:=crDefault;
+      End; // If bSiga Then
+
+      DMBelShop.CDS_While.Next;
+    End; // While Not DMBelShop.CDS_While.Eof do
+
+    // Fecha Transacao ----------------------------------------------
     DMBelShop.SQLC.Commit(TD);
 
     DateSeparator:='/';
@@ -400,136 +452,6 @@ Begin
       Exit;
     End;
   End;
-
-  // ===========================================================================
-  // Busca Débitos/Créditos Outras Lojas =======================================
-  // ===========================================================================
-
-  Lb_Partes.Caption:='Parte 2/2';
-
-  // Busca Conexão das Empresas -------------------------------------
-  If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then
-   MySql:=' Select EMP.Cod_Filial, emp.Razao_Social, (''\\''||';
-
-  If (Trim(sgTpConexao)='TCP/IP') Then
-   MySql:=' Select EMP.Cod_Filial, emp.Razao_Social, (';
-
-  // Se Conexão Externa =================================================
-  If (Not bgConexaoLocal) Then
-  Begin
-    MySql:=MySql+' Case '+
-                 '    When Trim(emp.Endereco_IP_Externo)<>'''' Then'+
-                 '       emp.ENDERECO_IP_EXTERNO'+
-                 '    Else'+
-                 '       emp.ENDERECO_IP'+
-                 ' End';
-  End;
-
-   // Se Conexão Local ===================================================
-   If (bgConexaoLocal) Then
-   Begin
-     MySql:=MySql+'emp.ENDERECO_IP'
-   End;
-
-  If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then
-   MySql:=MySql+'||''\''||emp.pasta_base_dados||''\''||emp.des_base_dados) Banco';
-
-  If (Trim(sgTpConexao)='TCP/IP') Then
-   MySql:=MySql+'||'':''||emp.pasta_base_dados||''\''||emp.des_base_dados) Banco';
-
-  MySql:=MySql+' From EMP_CONEXOES emp'+
-               ' Where emp.Ind_Ativo=''SIM'''+
-               ' Order by emp.Cod_Emp';
-  DMBelShop.CDS_While.Close;
-  DMBelShop.SDS_While.CommandText:=MySql;
-  DMBelShop.CDS_While.Open;
-
-  Lb_Apres.Visible:=True;
-
-  While Not DMBelShop.CDS_While.Eof do
-  Begin
-    Screen.Cursor:=crSQLWait;
-
-    Lb_Apres.Caption:='Aguarde !!'+cr+cr+'Atualizando Comprovantes'+cr+cr+'900, 913, 916, 955'+cr+cr+
-                      'Loja: Bel_'+DMBelShop.CDS_While.FieldByName('Cod_Filial').AsString;
-    Refresh;
-
-    sDataBase:='IBDB_'+DMBelShop.CDS_While.FieldByName('Cod_Filial').AsString;
-    sTransaction:='IBT_'+DMBelShop.CDS_While.FieldByName('Cod_Filial').AsString;
-
-    // Abre Conexão da Empresa ======================================
-    bSiga:=True;
-    If Not ConexaoEmpIndividual(sDataBase, sTransaction,'A') Then
-    Begin
-      if Trim(sMensagem)='' Then
-       sMensagem:='Lojas não Conectadas:';
-
-      sMensagem:=sMensagem+' Bel_'+DMBelShop.CDS_While.FieldByName('Cod_Filial').AsString;
-      bSiga:=False;
-    End; // If Not ConexaoEmpIndividual(sDataBase, sTransaction,'A') Then
-
-    If bSiga Then
-    Begin
-
-      // Monta Transacao ===========================================================
-      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-      TD.IsolationLevel:=xilREADCOMMITTED;
-      DMBelShop.SQLC.StartTransaction(TD);
-      Try
-        Screen.Cursor:=crSQLWait;
-
-        DateSeparator:='.';
-        DecimalSeparator:='.';
-
-        // Monta Query de Consulta ----------------------------------------
-        FrmBelShop.CriaQueryIB(sDataBase,sTransaction,IBQ_ConsultaCreDeb, True, True);
-
-        // Processa Creditos ----------------------------------------------
-        NegociacoesCredDeb('D');
-
-        // Fecha Transacao ===========================================================
-        DMBelShop.SQLC.Commit(TD);
-
-        DateSeparator:='/';
-        DecimalSeparator:=',';
-        Screen.Cursor:=crDefault;
-
-        // Fecha Conexão da Empresa ---------------------------------
-        ConexaoEmpIndividual(sDataBase, sTransaction,'F');
-
-        DateSeparator:='/';
-        DecimalSeparator:=',';
-
-        Screen.Cursor:=crDefault;
-
-      Except
-        on e : Exception do
-        Begin
-          FrmBelShop.MontaProgressBar(False, FrmDataApropriacao);
-
-          // RollBack -------------------------------------------------
-          DMBelShop.SQLC.Rollback(TD);
-
-          // Fecha Conexão da Empresa ---------------------------------
-          ConexaoEmpIndividual(sDataBase, sTransaction,'F');
-
-          bgProcessar:=False;
-          Lb_Apres.Visible:=False;
-
-          DateSeparator:='/';
-          DecimalSeparator:=',';
-
-          Screen.Cursor:=crDefault;
-
-          MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-          Exit;
-        End; // on e : Exception do
-      End; // Try
-
-    End; // If bSiga Then
-
-    DMBelShop.CDS_While.Next;
-  End; // While Not DMBelShop.CDS_While.Eof do
 
   // FIM =======================================================================
   msg('Atualização Efetuada com Sucesso !!','A');

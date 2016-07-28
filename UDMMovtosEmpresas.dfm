@@ -46,6 +46,7 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
   end
   object DSP_Busca: TDataSetProvider
     DataSet = SDS_Busca
+    Options = [poRetainServerOrder]
     Left = 148
     Top = 230
   end

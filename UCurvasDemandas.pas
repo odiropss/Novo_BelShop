@@ -419,7 +419,7 @@ Begin
     Else // Curva "B" ---------------------------------------------
     If (cPerAcum<=cgPerCurvaB) Or (Not bCurvaB) Then
     Begin
-      bCurvaB:=False;
+      bCurvaB:=True;
       sCurva:='B';
       sDiasEstocagen:=IntToStr(igDiasEstocagemB);
     End
@@ -600,7 +600,7 @@ begin
          ' FROM tab_auxiliar t'+
          ' WHERE t.tip_aux=2'+
          ' ORDER BY 1';
-    DMMovtosEmpresas.CDS_BuscaRapida.Close;
+  DMMovtosEmpresas.CDS_BuscaRapida.Close;
   DMMovtosEmpresas.SDS_BuscaRapida.CommandText:=MySql;
   DMMovtosEmpresas.CDS_BuscaRapida.Open;
 
@@ -705,8 +705,6 @@ begin
       DecimalSeparator:='.';
 
       sgCodLoja:=DMMovtosEmpresas.CDS_EmpProcessaCOD_FILIAL.AsString;
-//      If sgCodLoja='02' Then
-//       sgCodLoja:='99';//DMMovtosEmpresas.CDS_EmpProcessaCOD_FILIAL.AsString;
 
       // Busca Valor e Quantidade Total de Demandas ============================
       If sgCodLoja<>'99' Then

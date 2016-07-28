@@ -1,0 +1,13 @@
+NOME;Silvio Bastos Markus;
+CPF;01060287072;
+CRC;76404;
+CNPJ;09278570000112;
+CEP;90038900;
+END;Praça Osvaldo Cruz;
+NUM;15;
+COMPL;cj 1503;
+BAIRRO;CENTRO;
+FONE;51-3013.3900;
+FAX;;
+EMAIL;rosangela@contabilplus.com.br;
+COD_MUN;4314902;

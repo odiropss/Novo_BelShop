@@ -25989,7 +25989,7 @@ begin
     DecimalSeparator:='.';
 
     // Exclui Movto do Caixa ----------------------------------------
-    MySql:='Delete from FL_CAIXA_FORNECEDORES ff'+
+    MySql:=' Delete from FL_CAIXA_FORNECEDORES ff'+
            ' Where ff.COD_FORNECEDOR='+QuotedStr(
            FormatFloat('000000',EdtFluFornCodFornecedor.Value))+
            ' And ff.dta_caixa between '+
@@ -25998,7 +25998,7 @@ begin
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
     // Acerta Saldo Incial deo Movto de Caixa -----------------------
-    MySql:='Select min(ff.dta_caixa) Dta_Inicio'+
+    MySql:=' Select min(ff.dta_caixa) Dta_Inicio'+
            ' From FL_CAIXA_FORNECEDORES ff'+
            ' Where ff.COD_FORNECEDOR='+QuotedStr(
            FormatFloat('000000',EdtFluFornCodFornecedor.Value));
@@ -26011,7 +26011,7 @@ begin
 
     If Trim(sDt)<>'' Then
     Begin
-      MySql:='Update FL_CAIXA_FORNECEDORES ff'+
+      MySql:=' Update FL_CAIXA_FORNECEDORES ff'+
              ' Set Vlr_Saldo=0'+
              ' Where Num_Seq=0'+
              ' And ff.COD_FORNECEDOR='+QuotedStr(
@@ -45629,13 +45629,16 @@ begin
   FrmControleEstoques:=TFrmControleEstoques.Create(Self);
 
 //  TabSheetInvisivel(FrmControleEstoques);
-//  FrmControleEstoques.Ts_Profissionais.TabVisible:=True;
+//  FrmControleEstoques.Ts_ContEstSolic.TabVisible:=True;
 
   igTagPermissao:=(Sender as TMenuItem).Tag;
   BloqueioBotoes(FrmControleEstoques, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Permissões de Visualização ================================================
 //  PermissaoVisual(FrmcSalao.Ts_Profissionais);
+
+  FrmControleEstoques.Ts_ContEstFornecedores.TabVisible:=False;
+  FrmControleEstoques.Ts_ContEstProdutos.TabVisible:=False;
 
   FrmControleEstoques.PC_ContEstPrincipal.TabIndex:=0;
   FrmControleEstoques.ShowModal;

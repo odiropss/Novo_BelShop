@@ -6686,7 +6686,7 @@ Begin
     Begin
       i:=0;
       If ((Trim(DMSalao.CDS_ProfissionaisNUM_BANCO.AsString)<>'') Or (DMSalao.CDS_ProfissionaisNUM_BANCO.AsInteger<>0)) Then Inc(i);
-      If Trim(DMSalao.CDS_ProfissionaisDES_BAIRRO.AsString) <>''   Then Inc(i);
+      If Trim(DMSalao.CDS_ProfissionaisDES_BANCO.AsString) <>''   Then Inc(i);
       If Trim(DMSalao.CDS_ProfissionaisNUM_AGENCIA.AsString)<>''  Then Inc(i);
       If Trim(DMSalao.CDS_ProfissionaisDES_AGENCIA.AsString)<>''  Then Inc(i);
       If Trim(DMSalao.CDS_ProfissionaisNUM_CONTA.AsString)  <>''    Then Inc(i);

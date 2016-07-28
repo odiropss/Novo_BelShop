@@ -425,6 +425,8 @@ Procedure TFrmTransferencias.MontaCurvas(sCodLoja: String);
 Var
   MySql: String;
 Begin
+  sgCurvas:='';
+
   MySql:=' SELECT'+
          ' SUBSTRING(t.des_aux FROM 1  FOR 3) Ind_Curva_A,'+
          ' SUBSTRING(t.des_aux FROM 5  FOR 3) Ind_Curva_B,'+
@@ -671,27 +673,6 @@ Begin
                DMTransferencias.CDS_EstoqueLoja.ApplyUpdates(0);
              End; // If bRepoe Then
              DMTransferencias.CDS_ProdutoDemanda.Close;
-
-// Odirapagar - 30/06/2016
-//             // Inclui o Produto da Loja ----------------------------
-//             DMTransferencias.CDS_ProdutoDemanda.First;
-//             While not DMTransferencias.CDS_ProdutoDemanda.Eof do
-//             Begin
-//               DMTransferencias.CDS_EstoqueLoja.Insert;
-//               For ii:=0 to DMTransferencias.CDS_ProdutoDemanda.FieldCount-1 do
-//               Begin
-//                 If AnsiUpperCase(DMTransferencias.CDS_ProdutoDemanda.Fields[ii].DisplayLabel)<>'CODGRUPOSUB' Then
-//                  DMTransferencias.CDS_EstoqueLoja.Fields[ii].Assign(DMTransferencias.CDS_ProdutoDemanda.Fields[ii]);
-//               End; // For ii:=0 to DMTransferencias.CDS_ProdutoDemanda.FieldCount-1 do
-//               DMTransferencias.CDS_EstoqueLoja.Post;
-//
-//               DMTransferencias.CDS_ProdutoDemanda.Next;
-//             End; // While not DMTransferencias.CDS_ProdutoDemanda.Eof do
-//
-//             // Atualiza Apply --------------------------------------
-//             DMTransferencias.CDS_EstoqueLoja.ApplyUpdates(0);
-//
-//             DMTransferencias.CDS_ProdutoDemanda.Close;
            End
           Else // If (DMTransferencias.CDS_EstoqueCD.Locate('COD_PRODUTO',sCodProduto,[]))Then
            Begin

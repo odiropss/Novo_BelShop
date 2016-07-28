@@ -267,7 +267,6 @@ procedure TFrmPesquisaIB.FormKeyUp(Sender: TObject; var Key: Word;
 begin
   if Key=44   Then
    Clipboard.AsText:='';
-
 end;
 
 procedure TFrmPesquisaIB.DBGrid1CellClick(Column: TColumn);

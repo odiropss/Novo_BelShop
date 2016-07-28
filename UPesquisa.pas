@@ -271,6 +271,7 @@ end;
 
 procedure TFrmPesquisa.Bt_PesquisaOKClick(Sender: TObject);
 begin
+
   EdtCodigo.Text:=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Codigo).AsString;
   EdtDescricao.Text:=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Descricao).AsString;
 

@@ -182,7 +182,7 @@ Begin
       Inc(ii);
     End; // Try
 
-    If (ii=0) or (ii>2) Then
+    If (ii=0) or (ii>1) Then
      Break;
   End; // While Not b do
 

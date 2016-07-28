@@ -1,6 +1,6 @@
 object FrmFaltasCDLojas: TFrmFaltasCDLojas
-  Left = 244
-  Top = 129
+  Left = 247
+  Top = 117
   Width = 1063
   Height = 602
   BorderIcons = []
@@ -398,8 +398,8 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
   TextHeight = 13
   object Pan_Opcoes: TPanel
     Left = 0
-    Top = 637
-    Width = 1030
+    Top = 525
+    Width = 1047
     Height = 39
     Align = alBottom
     BevelInner = bvLowered
@@ -415,7 +415,7 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
       Caption = 'Observa'#231#245'es...'
     end
     object Bt_Sair: TJvXPButton
-      Left = 927
+      Left = 944
       Top = 2
       Width = 99
       Height = 33
@@ -492,10 +492,11 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
     end
   end
   object Dbg_FaltasCDLojas: TDBGrid
-    Left = -8
-    Top = 112
-    Width = 1005
-    Height = 525
+    Left = 0
+    Top = 47
+    Width = 1047
+    Height = 478
+    Align = alClient
     Color = 15004403
     Ctl3D = False
     FixedColor = clSilver
@@ -629,7 +630,7 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
   object Pan_FaltasCDLojas: TPanel
     Left = 0
     Top = 0
-    Width = 1030
+    Width = 1047
     Height = 47
     Align = alTop
     BevelInner = bvLowered
@@ -649,7 +650,7 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
       Caption = 'Per'#237'odo de '
     end
     object Pan_FaltasCDLojas1: TPanel
-      Left = 272
+      Left = 289
       Top = 2
       Width = 756
       Height = 43
@@ -660,7 +661,7 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
         Left = 15
         Top = 17
         Width = 20
-        Height = 12
+        Height = 13
         Caption = 'Loja'
       end
       object EdtFaltasCDLojasCodLoja: TCurrencyEdit
@@ -751,7 +752,7 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
         Left = 102
         Top = 14
         Width = 533
-        Height = 20
+        Height = 21
         TabStop = False
         Color = 12171775
         ReadOnly = True

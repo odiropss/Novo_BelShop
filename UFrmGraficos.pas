@@ -78,6 +78,7 @@ type
 var
   FrmGrafico: TFrmGrafico;
 
+  dDtaHoje: TDate;
   bgConexaoLocal: Boolean; // Se Conexão com o Servidor da Matriz é Local - Verifica a Existencia do Arquivo "ConexaoExterna.ini"
 
   sgParametro, // Guarda Paramentro de Entrada no Sistema. "Comercial" = Apresenta Faturamento do Dia Anterior
@@ -441,13 +442,7 @@ Begin
               // Atualiza Valor Total de Venda =================================
               If DMGraficos.CDS_Busca.FieldByName('Cod_Objetivo').AsInteger=7 Then
               Begin
-
-                If sgParametro='' Then
-                 DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsFloat:=DMGraficos.CDS_Busca.FieldByName('Objetivo_Hoje').AsFloat;
-
-                If sgParametro='Comercial' Then
-                 DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsFloat:=DMGraficos.CDS_Busca.FieldByName('Objetivo_Dia').AsFloat;
-
+                DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsFloat:=DMGraficos.CDS_Busca.FieldByName('Objetivo_Hoje').AsFloat;
                 DMGraficos.CDS_V_GraficoPER_ALCANCADO.AsFloat:=0;
                 If (DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsFloat<>0) and (DMGraficos.CDS_V_GraficoVLR_TOTAL.AsFloat<>0) Then
                 Begin
@@ -459,13 +454,7 @@ Begin
               // Atualiza Valor Total de Venda Salao ===========================
               If DMGraficos.CDS_Busca.FieldByName('Cod_Objetivo').AsInteger=5 Then
               Begin
-
-                If sgParametro='' Then
-                 DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat:=DMGraficos.CDS_Busca.FieldByName('Objetivo_Hoje').AsFloat;
-
-                If sgParametro='Comercial' Then
-                 DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat:=DMGraficos.CDS_Busca.FieldByName('Objetivo_Dia').AsFloat;
-
+                DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat:=DMGraficos.CDS_Busca.FieldByName('Objetivo_Hoje').AsFloat;
                 DMGraficos.CDS_V_GraficoPER_SALAO.AsFloat:=0;
                 If (DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat<>0) and (DMGraficos.CDS_V_GraficoVLR_SALAO.AsFloat<>0) Then
                 Begin
@@ -565,7 +554,12 @@ Begin
   Caption:='Demonstrativo Grafico';
 
   // Atualiza Último Processamento =============================================
-  s:=sgTitulo+' (Último Processamento em '+DateTimeToStr(DataHoraServidorFI(DMGraficos.SDS_DtaHoraServidor))+')';
+  s:=sgTitulo;
+
+  If sgParametro='Comercial' Then
+   s:=s+' (Processamento Até o Dia '+sgDtaFim+')'
+  Else
+   s:=s+' (Último Processamento em '+DateTimeToStr(DataHoraServidorFI(DMGraficos.SDS_DtaHoraServidor))+')';
   DbGrafico.Title.Text.Clear;
   DbGrafico.Title.Text.Add(s);
 
@@ -803,11 +797,7 @@ Begin
   // Apresenta o Grafico ----------------------------------------
   If sgTitulo='' Then
   Begin
-    If sgParametro='' Then
-     sgTitulo:='(%) Metas Vendas Mês de '+sgNomeMes+' de '+VarToStr(wgAnoH);
-
-    If sgParametro='Comercial' Then
-     sgTitulo:='(%) Metas Vendas Dia '+sgDtaInicio;
+    sgTitulo:='(%) Metas Vendas Mês de '+sgNomeMes+' de '+VarToStr(wgAnoH);
   End;
 
   Grafico(DMGraficos.CDS_V_Grafico, sTipoGrafico, sgTitulo);
@@ -930,11 +920,7 @@ Begin
     // Atualiza Valor Total de Venda ===========================================
     If DMGraficos.CDS_Busca.FieldByName('Cod_Objetivo').AsInteger=7 Then
     Begin
-      If sgParametro='' Then
-       DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsFloat:=DMGraficos.CDS_Busca.FieldByName('Objetivo_Hoje').AsFloat;
-
-      If sgParametro='Comercial' Then
-       DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsFloat:=DMGraficos.CDS_Busca.FieldByName('Objetivo_Dia').AsFloat;
+      DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsFloat:=DMGraficos.CDS_Busca.FieldByName('Objetivo_Hoje').AsFloat;
 
       If (DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsFloat<>0) and (DMGraficos.CDS_V_GraficoVLR_TOTAL.AsFloat<>0) Then
       Begin
@@ -946,11 +932,7 @@ Begin
     // Atualiza Valor Total de Venda Salao =====================================
     If DMGraficos.CDS_Busca.FieldByName('Cod_Objetivo').AsInteger=5 Then
     Begin
-      If sgParametro='' Then
-       DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat:=DMGraficos.CDS_Busca.FieldByName('Objetivo_Hoje').AsFloat;
-
-      If sgParametro='Comercial' Then
-       DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat:=DMGraficos.CDS_Busca.FieldByName('Objetivo_Dia').AsFloat;
+      DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat:=DMGraficos.CDS_Busca.FieldByName('Objetivo_Hoje').AsFloat;
 
       If (DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat<>0) and (DMGraficos.CDS_V_GraficoVLR_SALAO.AsFloat<>0) Then
       Begin
@@ -997,7 +979,7 @@ End; // Fecha Series de Graficos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmGrafico.ProcessaVendasLojas;
 Var
   MySql: String;
-  sPrimDiaMes, sUltDiaMes : String;
+  sDta, sPrimDiaMes, sUltDiaMes : String;
   i: Integer;
 begin
   While bgSiga do
@@ -1026,24 +1008,19 @@ begin
       Break;
     End;
 
-    // Atualiza Periodo (Dia Anterior para Comercial) ==========================
+    // Atualiza Periodo (MES Corrente) =========================================
+    sgDtaFim:=DateToStr(DataHoraServidorFI(DMGraficos.SDS_DtaHoraServidor));
+    sgDtaInicio:=DateToStr(PrimUltDia(StrToDate(sgDtaFim),'P'));
+
+    // Acerta Ultimo dia Calculo Comercial =====================================
     If sgParametro='Comercial' Then
     Begin
-      sgDtaInicio:=DateToStr(DataHoraServidorFI(DMGraficos.SDS_DtaHoraServidor)-1);
+      sDta:=DateToStr(DataHoraServidorFI(DMGraficos.SDS_DtaHoraServidor)-1);
 
-      While DiaSemanaAbrev(StrToDateTime(sgDtaInicio))='Dom' do
-        sgDtaInicio:=DateToStr(StrToDate(sgDtaInicio)-1);
+      While DiaSemanaAbrev(StrToDateTime(sDta))='Dom' do
+        sDta:=DateToStr(StrToDate(sDta)-1);
 
-      sgDtaFim:=sgDtaInicio;
-    End;
-
-    sgPeriodo:='PERÍODO DE '+sgDtaInicio+' A '+sgDtaFim;
-
-    // Atualiza Periodo (MES Corrente) =========================================
-    If sgParametro='' Then
-    Begin
-      sgDtaFim:=DateToStr(DataHoraServidorFI(DMGraficos.SDS_DtaHoraServidor));
-      sgDtaInicio:=DateToStr(PrimUltDia(StrToDate(sgDtaFim),'P'));
+      sgDtaFim:=sDta;
     End;
 
     DecodeDate(StrToDate(sgDtaFim), wgAnoH, wgMesH, wgDiaH);
@@ -1051,6 +1028,7 @@ begin
     sgNomeMes:=LongMonthNames[i];
 
     // Verifica Dias Uteis =====================================================
+    sgPeriodo:='PERÍODO DE '+sgDtaInicio+' A '+sgDtaFim;
     igNumDiasUteis:=0;
     igNumDiasUteisHoje:=0;
 
@@ -1111,7 +1089,7 @@ begin
 
     If (sgParametro='Comercial') Then
     Begin
-      If (mgLojas.Lines.Count<1) And (bgParaMemo) Then
+      If mgLojas.Lines.Count<1 Then
       Begin
         Timer1.Enabled:=True;
         Break;
@@ -1125,6 +1103,8 @@ procedure TFrmGrafico.FormCreate(Sender: TObject);
 begin
   sgParametro:=Trim(ParamStr(1));
 
+  sgParametro:='Comercial';
+
   // Não Permite Movimentar o Formulário =======================================
   DeleteMenu(GetSystemMenu(Handle, False), SC_MOVE, MF_BYCOMMAND);
 end;
@@ -1135,6 +1115,7 @@ Begin
   FrmGrafico.Align:=alClient;
 
   bgSair:=False;
+  dDtaHoje:=StrToDate(DateToStr(DataHoraServidorFI(DMGraficos.SDS_DtaHoraServidor)));
 
   If sgParametro='Comercial' Then
   Begin
@@ -1142,7 +1123,7 @@ Begin
 
     Bt_Iniciar.Visible:=False;
     Bt_Para.Visible:=False;
-    Bt_Configuracoes.Caption:='ReCalcular';
+    Bt_Configuracoes.Caption:='Sair';
     PanGrafico.Enabled:=True;
   End;
 
@@ -1280,7 +1261,7 @@ begin
 
   If sgParametro='Comercial' Then
   Begin
-    FormShow(Self);
+    Application.Terminate;
     exit;
   End;
 
@@ -1410,7 +1391,7 @@ procedure TFrmGrafico.Timer1Timer(Sender: TObject);
 begin
   If sgParametro='Comercial' Then
   Begin
-    If StrToDate(sgDtaInicio)<StrToDate(DateToStr(DataHoraServidorFI(DMGraficos.SDS_DtaHoraServidor))) Then
+    If dDtaHoje<StrToDate(DateToStr(DataHoraServidorFI(DMGraficos.SDS_DtaHoraServidor))) Then
      FormShow(Self);
   End;
 end;

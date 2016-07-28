@@ -12,7 +12,7 @@ type
   TFrmControleEstoques = class(TForm)
     CorCaptionForm: TJvGradientCaption;
     Panel10: TPanel;
-    Bt_ContEstFechaVolttar: TJvXPButton;
+    Bt_ContEstFechaVoltar: TJvXPButton;
     PC_ContEstPrincipal: TPageControl;
     Ts_ContEstSolic: TTabSheet;
     Ts_ContEstSimulador: TTabSheet;
@@ -63,8 +63,6 @@ type
     Bt_ContEstParametrosSalvar: TJvXPButton;
     Gb_ContEstTipoEstoques: TGroupBox;
     Cbx_ContEstEstTipo: TComboBox;
-    GroupBox1: TGroupBox;
-    Cbx_ContEstTipoApres: TComboBox;
     Dbg_ContEstSimulador: TDBGridJul;
     Bt_ContEstSalvaExcel: TJvXPButton;
     Bt_ContEstClipboard: TJvXPButton;
@@ -77,11 +75,23 @@ type
     OdirPanApres: TPanel;
     Lab_Lojas: TLabel;
     Lab_Titulo: TLabel;
+    Bt_ContEstProdutos: TJvXPButton;
+    Bt_ContEstFornecedores: TJvXPButton;
+    Ts_ContEstProdutos: TTabSheet;
+    Ts_ContEstFornecedores: TTabSheet;
+    Panel1: TPanel;
+    Label9: TLabel;
+    Label10: TLabel;
+    Dbg_ContEstProdutos: TDBGridJul;
+    Panel2: TPanel;
+    Label11: TLabel;
+    Label12: TLabel;
+    Dbg_ContEstFornecedores: TDBGridJul;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
-    procedure Bt_ContEstFechaVolttarClick(Sender: TObject);
+    procedure Bt_ContEstFechaVoltarClick(Sender: TObject);
     procedure PC_ContEstPrincipalChange(Sender: TObject);
 
     // Odir ====================================================================
@@ -99,6 +109,7 @@ type
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
     procedure Dbg_ContEstSimuladorTitleClick(Column: TColumn);
+    procedure Bt_ContEstProdutosClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -353,7 +364,6 @@ begin
   if bgSairEst Then
    Begin
      Action := caFree;
-
      //--FechaTudoModelo;
    End
   Else
@@ -395,11 +405,14 @@ begin
   PC_ContEstPrincipalChange(Self);
 end;
 
-procedure TFrmControleEstoques.Bt_ContEstFechaVolttarClick(Sender: TObject);
+procedure TFrmControleEstoques.Bt_ContEstFechaVoltarClick(Sender: TObject);
 begin
-  If Bt_ContEstFechaVolttar.Caption='Voltar' Then
+  If Bt_ContEstFechaVoltar.Caption='Voltar' Then
   Begin
-    PC_ContEstPrincipal.ActivePage:=Ts_ContEstSolic;
+    If PC_ContEstPrincipal.ActivePage=Ts_ContEstSimulador    Then PC_ContEstPrincipal.ActivePage:=Ts_ContEstSolic;
+    If PC_ContEstPrincipal.ActivePage=Ts_ContEstProdutos     Then PC_ContEstPrincipal.ActivePage:=Ts_ContEstSimulador;
+    If PC_ContEstPrincipal.ActivePage=Ts_ContEstFornecedores Then PC_ContEstPrincipal.ActivePage:=Ts_ContEstSimulador;
+    
     PC_ContEstPrincipalChange(Self);
     Exit;
   End;
@@ -427,14 +440,19 @@ procedure TFrmControleEstoques.PC_ContEstPrincipalChange(Sender: TObject);
 begin
   CorSelecaoTabSheet(PC_ContEstPrincipal);
 
-  Bt_ContEstFechaVolttar.Caption:='Fechar';
+  Bt_ContEstFechaVoltar.Caption:='Fechar';
   Bt_ContEstSimulador.Visible:=False;
-  Bt_ContEstSalvaExcel.Visible:=True;
+  Bt_ContEstFornecedores.Visible:=True;
+  Bt_ContEstProdutos.Visible:=True;
   Bt_ContEstClipboard.Visible:=True;
+  Bt_ContEstSalvaExcel.Visible:=True;
+
   If (PC_ContEstPrincipal.ActivePage=Ts_ContEstSolic) And (Ts_ContEstSolic.CanFocus) Then
   Begin
     Bt_ContEstClipboard.Visible:=False;
     Bt_ContEstSalvaExcel.Visible:=False;
+    Bt_ContEstProdutos.Visible:=False;
+    Bt_ContEstFornecedores.Visible:=False;
     Bt_ContEstSimulador.Visible:=True;
 
     Cbx_ContEstEstTipo.SetFocus;
@@ -442,8 +460,34 @@ begin
 
   If (PC_ContEstPrincipal.ActivePage=Ts_ContEstSimulador) And (Ts_ContEstSimulador.CanFocus) Then
   Begin
-    Bt_ContEstFechaVolttar.Caption:='Voltar';
+    Bt_ContEstFechaVoltar.Caption:='Voltar';
     Dbg_ContEstSimulador.SetFocus;
+  End;
+
+  If (PC_ContEstPrincipal.ActivePage=Ts_ContEstProdutos) And (Ts_ContEstProdutos.CanFocus) Then
+  Begin
+    Bt_ContEstFechaVoltar.Caption:='Voltar';
+
+    Bt_ContEstSimulador.Visible:=False;
+    Bt_ContEstFornecedores.Visible:=True;
+    Bt_ContEstProdutos.Visible:=False;
+    Bt_ContEstClipboard.Visible:=True;
+    Bt_ContEstSalvaExcel.Visible:=True;
+
+    Dbg_ContEstProdutos.SetFocus;
+  End;
+
+  If (PC_ContEstPrincipal.ActivePage=Ts_ContEstFornecedores) And (Ts_ContEstFornecedores.CanFocus) Then
+  Begin
+    Bt_ContEstFechaVoltar.Caption:='Voltar';
+
+    Bt_ContEstSimulador.Visible:=False;
+    Bt_ContEstFornecedores.Visible:=False;
+    Bt_ContEstProdutos.Visible:=True;
+    Bt_ContEstClipboard.Visible:=True;
+    Bt_ContEstSalvaExcel.Visible:=True;
+
+    Dbg_ContEstFornecedores.SetFocus;
   End;
 
 end;
@@ -684,18 +728,9 @@ begin
 
 
   // Monta SQL de Busca Estoques ===============================================
-  MySql:=' SELECT';
-
-  // Analitico ou Sintetico
-  If Cbx_ContEstTipoApres.ItemIndex=0 Then
-   MySql:=
-    MySql+' ''Bel_''||e.codfilial loja,'  // Analitico
-  Else
-   MySql:=
-    MySql+' ''BelShop'' Loja,'; // Sintetico
-
-  MySql:=
-   MySql+' CAST(SUM(COALESCE(e.saldoatual,0)) AS INTEGER) Qtd_Estoque,'+
+  MySql:=' SELECT'+
+         ' ''Bel_''||e.codfilial loja,'+
+         ' CAST(SUM(COALESCE(e.saldoatual,0)) AS INTEGER) Qtd_Estoque,'+
          ' CAST(SUM(COALESCE(e.saldoatual,0) * COALESCE(p.precovenda,0.00)) AS NUMERIC(12,2)) Vlr_Estoque,'+
          ' CAST(SUM(COALESCE(dm.qtd_venda,0)) AS INTEGER) Qtd_Vendas,'+
          // ' CAST(SUM(COALESCE(dm.qtd_venda_dia,0)) AS INTEGER) qtd_dia,'+
@@ -786,23 +821,16 @@ begin
          '               END'+
          '          END)'+
          ' AS NUMERIC(12,2)) vlr_Previsto';
-
    MySqlClausula1:=
          ' FROM ESTOQUE e'+
          '    LEFT JOIN PRODUTO p              ON p.codproduto=e.codproduto'+
-         '    LEFT JOIN ES_DEMANDAS_4MESES dm  ON dm.codfilial=:CodLoja'+
+         '                                    AND p.principalfor=e.principalfor'+
+         '    LEFT JOIN ES_DEMANDAS_4MESES dm  ON dm.codfilial=e.codfilial'+
          '                                    AND dm.codproduto=e.codproduto'+
-         '    LEFT JOIN ES_FINAN_CURVA_ABC ef  ON ef.cod_loja=:CodLoja'+
+         '    LEFT JOIN ES_FINAN_CURVA_ABC ef  ON ef.cod_loja=e.codfilial'+
          '                                    AND ef.cod_produto=e.codproduto'+
-         ' WHERE e.codfilial=:CodLoja';
-
-         // Situacao do Produto -------------------------------------
-         If Not FrmBelShop.Ckb_FiltroProdNaoCompra.Checked Then
-          MySqlClausula1:=
-           MySqlClausula1+' AND Coalesce(p.situacaopro,0)=0'
-         Else
-          MySqlClausula1:=
-           MySqlClausula1+' AND Coalesce(p.situacaopro,0) in (0,3)';
+         ' WHERE p.apresentacao is not null'+
+         ' AND   e.codfilial=:CodLoja';
 
          // Fornecedores --------------------------------------------
          If Trim(sgFornecedores)<>'' Then
@@ -823,6 +851,14 @@ begin
          Else If Trim(sgLikeProdutos)<>'' Then
           MySqlClausula1:=
            MySqlClausula1+' AND '+sgLikeProdutos;
+
+         // Situacao do Produto -------------------------------------
+         If Not FrmBelShop.Ckb_FiltroProdNaoCompra.Checked Then
+          MySqlClausula1:=
+           MySqlClausula1+' AND Coalesce(p.situacaopro,0)=0'
+         Else
+          MySqlClausula1:=
+           MySqlClausula1+' AND Coalesce(p.situacaopro,0) in (0,3)';
 
          // Grupos / SubGrupos --------------------------------------
          If sgGrupos<>'' Then
@@ -859,10 +895,8 @@ begin
           MySqlClausula1:=
            MySqlClausula1+' AND e.saldoatual<=0';
 
-         // Analitico: Tem Group By ---------------------------------
-         If Cbx_ContEstTipoApres.ItemIndex=0 Then
-          MySqlClausula1:=
-           MySqlClausula1+' GROUP BY 1';
+         MySqlClausula1:=
+          MySqlClausula1+' GROUP BY 1';
   DMBelShop.SQLQuery1.Close;
   DMBelShop.SQLQuery1.SQL.Clear;
   DMBelShop.SQLQuery1.SQL.Add(MySql+MySqlSelect+MySqlClausula1);
@@ -875,15 +909,16 @@ begin
   OdirPanApres.Visible:=True;
   Refresh;
 
-  try
-    DMVirtual.CDS_V_EstoqueLojas.Close;
+  DMVirtual.CDS_V_EstoqueLojas.Close;
+  DMVirtual.CDS_V_EstoqueLojas.IndexFieldNames:='';
+  DMVirtual.CDS_V_EstoqueLojas.IndexName:='';
+  Try
     DMVirtual.CDS_V_EstoqueLojas.CreateDataSet;
     DMVirtual.CDS_V_EstoqueLojas.Open;
   Except
     DMVirtual.CDS_V_EstoqueLojas.Open;
     DMVirtual.CDS_V_EstoqueLojas.EmptyDataSet;
   End;
-  DMVirtual.CDS_V_EstoqueLojas.Open;
 
   iQtdEstoque :=0;
   iQtdVendas  :=0;
@@ -1053,6 +1088,30 @@ begin
      OrderGrid:='Crescente';
    End;
 
+end;
+
+procedure TFrmControleEstoques.Bt_ContEstProdutosClick(Sender: TObject);
+begin
+
+  msg('Opção em Desenvolvimento !!','A');
+  Exit;
+
+  If DMVirtual.CDS_V_EstoqueLojas.IsEmpty Then
+   Exit;
+
+  If Trim((Sender as TJvXPButton).Name)='Bt_ContEstProdutos' Then
+  Begin
+    PC_ContEstPrincipal.ActivePage:=Ts_ContEstProdutos;
+    PC_ContEstPrincipalChange(Self);
+    Exit;
+  End;
+
+  If Trim((Sender as TJvXPButton).Name)='Bt_ContEstFornecedores' Then
+  Begin
+    PC_ContEstPrincipal.ActivePage:=Ts_ContEstFornecedores;
+    PC_ContEstPrincipalChange(Self);
+    Exit;
+  End;
 end;
 
 end.

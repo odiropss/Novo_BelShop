@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 562
-    ActivePage = Ts_MovtoComprovForn
+    ActivePage = Ts_FluFornecedor
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -14047,7 +14047,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 573
+              Left = 567
               Top = 12
               Width = 31
               Height = 13
@@ -14103,7 +14103,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 607
+              Left = 601
               Top = 9
               Width = 51
               Height = 18
@@ -14116,7 +14116,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 662
+              Left = 656
               Top = 9
               Width = 50
               Height = 18
@@ -18818,7 +18818,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 534
-        ActivePage = Ts_FinanObjetivosManut
+        ActivePage = Ts_FinanObjetivosResultadosDias
         Align = alClient
         TabOrder = 0
         OnChange = PC_FinanObjetivosChange
