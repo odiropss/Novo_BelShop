@@ -86,12 +86,12 @@ object FrmControleEstoques: TFrmControleEstoques
     end
     object Bt_ContEstSalvaExcel: TJvXPButton
       Tag = 4
-      Left = 721
+      Left = 559
       Top = 2
       Width = 152
       Height = 33
       Caption = 'Salvar em Excel'
-      TabOrder = 1
+      TabOrder = 3
       TabStop = False
       Glyph.Data = {
         0A544A504547496D616765B0040000FFD8FFE000104A46494600010101006000
@@ -144,12 +144,12 @@ object FrmControleEstoques: TFrmControleEstoques
     end
     object Bt_ContEstClipboard: TJvXPButton
       Tag = 4
-      Left = 559
+      Left = 711
       Top = 2
       Width = 162
       Height = 33
       Caption = 'Salvar em Mem'#243'ria'
-      TabOrder = 2
+      TabOrder = 4
       Glyph.Data = {
         0A544A504547496D6167655B040000FFD8FFE000104A46494600010101006000
         600000FFDB004300020101020101020202020202020203050303030303060404
@@ -204,7 +204,7 @@ object FrmControleEstoques: TFrmControleEstoques
       Width = 120
       Height = 33
       Caption = 'Simular Produtos'
-      TabOrder = 3
+      TabOrder = 1
       TabStop = False
       Glyph.Data = {
         07544269746D617042010000424D420100000000000076000000280000001100
@@ -236,7 +236,7 @@ object FrmControleEstoques: TFrmControleEstoques
       Width = 120
       Height = 33
       Caption = 'Simular Fornecedores'
-      TabOrder = 4
+      TabOrder = 2
       Glyph.Data = {
         07544269746D617042010000424D420100000000000076000000280000001100
         0000110000000100040000000000CC0000000000000000000000100000001000

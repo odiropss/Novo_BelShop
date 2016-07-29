@@ -3,6 +3,7 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
   Top = 117
   Width = 1063
   Height = 602
+  AutoSize = True
   BorderIcons = []
   Caption = ' Faltas de Reposi'#231#245'es CD => Lojas'
   Color = clBtnFace
@@ -394,9 +395,10 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object Pan_Opcoes: TPanel
+  object Pan_FaltasCDLojasOpcoes: TPanel
     Left = 0
     Top = 525
     Width = 1047
@@ -406,79 +408,16 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
     BorderStyle = bsSingle
     Ctl3D = False
     ParentCtl3D = False
-    TabOrder = 0
-    object Lb_Obs: TLabel
-      Left = 8
-      Top = 11
-      Width = 72
-      Height = 13
-      Caption = 'Observa'#231#245'es...'
-    end
-    object Bt_Sair: TJvXPButton
-      Left = 944
+    TabOrder = 2
+    object Bt_FaltasCDLojasFechar: TJvXPButton
+      Tag = 99
+      Left = 938
       Top = 2
-      Width = 99
+      Width = 105
       Height = 33
-      Caption = 'Sair'
-      TabOrder = 0
+      Caption = 'Fechar'
+      TabOrder = 2
       TabStop = False
-      Glyph.Data = {
-        07544269746D6170D6060000424DD60600000000000036040000280000001900
-        0000180000000100080000000000A0020000C30E0000C30E0000000100000000
-        0000000000007B000000FF000000007B00007B7B000000FF0000FFFF0000007B
-        7B007B7B7B00BDBDBD0000FFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-        FF00090909090909090909090909090909080909090909090909090000000909
-        0909090909090909090909090808080909090909090909000000090909090909
-        0909090909090909080404080909090909090900000009090909090909090909
-        0909090908060604080909090909090000000909090909090909090909090909
-        0806060404080909090909000000090909090909090909090909090908060604
-        0404080909090900000000000000000000000000090909090806060404040000
-        0000080000000909090909090909090008080808000606040404000809090900
-        0000090909090909090808000A0A0A0A07060604040400080909090000000909
-        09090909080004000A0A0A0A0706060404040008090909000000090909090909
-        080004000A0A0A0A070606040404000809090900000009090908080808040404
-        070A0A0A07060404000400080909090000000909080808080804060404070A0A
-        0706040800040008090909000000090400000000000406060404070A07060604
-        0404000809090900000008040606060606060606060404070706060404040008
-        0909090000000804060B0B0B0B0B0B0B06060407070606040404000809090900
-        0000090404040404040406060604070A07060604040400080909090000000909
-        080808080804060604070A0A0706060404040008090909000000090909090909
-        08040604070A0A0A070606040404000809090900000009090909090908040400
-        0A0A0A0A0704060404040008090909000000090909090909080000000A0A0A0A
-        0A070406040400080909090000000909090909090909080A0A0A0A0A0A0A0A04
-        0604000809090900000009090909090909090807070707070707070004040008
-        0909090000000909090909090909090808080808080808080808080909090900
-        0000}
       ShowFocusRect = True
       Spacing = 10
       Align = alRight
@@ -488,14 +427,77 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
       ParentFont = False
-      OnClick = Bt_SairClick
+      OnClick = Bt_FaltasCDLojasFecharClick
+    end
+    object Bt_FaltasCDLojasBuscaMovtos: TJvXPButton
+      Tag = 91
+      Left = 2
+      Top = 2
+      Width = 130
+      Height = 33
+      Caption = 'Busca Movtos'
+      TabOrder = 0
+      TabStop = False
+      ShowFocusRect = True
+      Align = alLeft
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      OnClick = Bt_FaltasCDLojasBuscaMovtosClick
+    end
+    object Pan_FaltasCDLojasSalvar: TPanel
+      Left = 568
+      Top = 2
+      Width = 370
+      Height = 33
+      Align = alRight
+      BevelOuter = bvNone
+      TabOrder = 1
+      object Bt_FaltasCDLojasSalvaExcel: TJvXPButton
+        Tag = 9
+        Left = 0
+        Top = 0
+        Width = 152
+        Height = 33
+        Caption = 'Salvar em Excel'
+        TabOrder = 0
+        TabStop = False
+        ShowFocusRect = True
+        Align = alLeft
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Bt_FaltasCDLojasClipboard: TJvXPButton
+        Tag = 8
+        Left = 152
+        Top = 0
+        Width = 162
+        Height = 33
+        Caption = 'Salvar em Mem'#243'ria'
+        TabOrder = 1
+        ShowFocusRect = True
+        Align = alLeft
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
     end
   end
   object Dbg_FaltasCDLojas: TDBGrid
     Left = 0
-    Top = 47
+    Top = 115
     Width = 1047
-    Height = 478
+    Height = 410
     Align = alClient
     Color = 15004403
     Ctl3D = False
@@ -515,255 +517,114 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
     TitleFont.Height = -11
     TitleFont.Name = 'MS Sans Serif'
     TitleFont.Style = [fsBold]
-    Columns = <
-      item
-        Expanded = False
-        FieldName = 'COD_LOJA'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'CH_DIVERGENCIA'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'COD_DIVERGENCIA'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'NFE_NUMERO'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'NFE_SERIE'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'NFE_COD_COMPROVANTE'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'NFE_COD_FORNECEDOR'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'NFE_FORNECEDOR'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'NFE_COD_SITUACAO'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'NFE_DES_SITUACAO'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'NFE_NUMERO_OC'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'NFE_DTA_EMISSAO'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'NFE_DTA_ENTRADA'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'NFE_NUM_ITENS'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'NFE_SEQ_ITEM'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'IND_LIBERADO'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'OBS_TEXTO'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'USU_INCLUI'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'DTA_INCLUI'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'USU_ALTERA'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'DTA_ALTERA'
-        Visible = True
-      end
-      item
-        Expanded = False
-        FieldName = 'DTA_ATUALIZACAO'
-        Visible = True
-      end>
   end
   object Pan_FaltasCDLojas: TPanel
     Left = 0
     Top = 0
     Width = 1047
-    Height = 47
+    Height = 115
     Align = alTop
     BevelInner = bvLowered
-    TabOrder = 2
-    object Label2: TLabel
-      Left = 164
-      Top = 19
-      Width = 6
-      Height = 13
-      Caption = 'a'
-    end
+    TabOrder = 0
     object Label3: TLabel
       Left = 9
-      Top = 19
+      Top = 9
       Width = 56
       Height = 13
       Caption = 'Per'#237'odo de '
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label2: TLabel
+      Left = 107
+      Top = 30
+      Width = 6
+      Height = 13
+      Caption = 'a'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label4: TLabel
+      Left = 9
+      Top = 64
+      Width = 95
+      Height = 13
+      Caption = 'Selecionar Produtos'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
     end
     object Pan_FaltasCDLojas1: TPanel
-      Left = 289
+      Left = 219
       Top = 2
-      Width = 756
-      Height = 43
+      Width = 826
+      Height = 111
       Align = alRight
       BevelInner = bvLowered
-      TabOrder = 0
-      object Label136: TLabel
-        Left = 15
-        Top = 17
-        Width = 20
-        Height = 13
-        Caption = 'Loja'
-      end
-      object EdtFaltasCDLojasCodLoja: TCurrencyEdit
-        Left = 39
-        Top = 13
-        Width = 31
-        Height = 21
-        AutoSize = False
-        DecimalPlaces = 0
-        DisplayFormat = '0'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
+      TabOrder = 3
+      object Clbx_FaltasCDLojasLojas: TRxCheckListBox
+        Left = 2
+        Top = 2
+        Width = 340
+        Height = 107
+        CheckKind = ckCheckMarks
+        Align = alLeft
+        AutoScroll = False
+        Columns = 2
+        ItemHeight = 16
+        Style = lbOwnerDrawFixed
         TabOrder = 0
+        OnClick = Clbx_FaltasCDLojasLojasClick
+        InternalVersion = 202
       end
-      object Bt_FaltasCDLojasBuscaLoja: TJvXPButton
-        Left = 72
-        Top = 11
-        Width = 26
-        Height = 24
+      object Clbx_FaltasCDLojasForn: TRxCheckListBox
+        Left = 342
+        Top = 2
+        Width = 482
+        Height = 107
+        CheckKind = ckCheckMarks
+        Align = alClient
+        AutoScroll = False
+        Columns = 2
+        ItemHeight = 16
+        Style = lbOwnerDrawFixed
         TabOrder = 1
-        TabStop = False
-        Glyph.Data = {
-          07544269746D61705E060000424D5E0600000000000036040000280000001600
-          000017000000010008000000000028020000C30E0000C30E0000000100000000
-          000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
-          FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
-          FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000010101010101010101010101010101010101010101010000010101010101
-          0101010101010101010101040404030100000101010101010101010101010101
-          0101040701070401000001010101010101010101010101010104070101070401
-          0000010101010101010101010101010104070101070704010000010101010101
-          0101010101010104070101070704010100000101010101010101010101010407
-          0101070704010101000001010101010101010101010407010107070401010101
-          0000010101010101010101010407010107070401010101010000010101010101
-          0101010404040307070401010101010100000101010101010404040404040407
-          0401010101010101000001010101040406010601010404040101010101010101
-          0000010101040106010601010101040101010101010101010000010101040601
-          0601060106010401010101010101010100000101040601060101010601060104
-          0101010101010101000001010401060106010601060101040101010101010101
-          0000010104060106010601060106010401010101010101010000010104010601
-          0601060106010104010101010101010100000101010401060101010601060401
-          0101010101010101000001010104060106010601060104010101010101010101
-          0000010101010404010101060404010101010101010101010000010101010101
-          0404040401010101010101010101010100000101010101010101010101010101
-          01010101010101010000}
-        ShowFocusRect = True
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object EdtFaltasCDLojasDesLoja: TEdit
-        Left = 102
-        Top = 14
-        Width = 533
-        Height = 21
-        TabStop = False
-        Color = 12171775
-        ReadOnly = True
-        TabOrder = 2
+        InternalVersion = 202
       end
     end
     object DtEdt_FaltasCDLojasDtaInicio: TcxDateEdit
-      Left = 66
-      Top = 13
+      Left = 9
+      Top = 25
       EditValue = 42705d
       ParentFont = False
+      Properties.OnChange = DtEdt_FaltasCDLojasDtaInicioPropertiesChange
+      Style.Font.Charset = DEFAULT_CHARSET
+      Style.Font.Color = clWindowText
+      Style.Font.Height = -13
+      Style.Font.Name = 'MS Sans Serif'
+      Style.Font.Style = [fsBold]
+      Style.IsFontAssigned = True
+      StyleFocused.BorderStyle = ebsOffice11
+      TabOrder = 0
+      Width = 94
+    end
+    object DtEdt_FaltasCDLojasDtaFim: TcxDateEdit
+      Left = 120
+      Top = 25
+      EditValue = 42705d
+      ParentFont = False
+      Properties.OnChange = DtEdt_FaltasCDLojasDtaInicioPropertiesChange
       Style.Font.Charset = DEFAULT_CHARSET
       Style.Font.Color = clWindowText
       Style.Font.Height = -13
@@ -774,20 +635,26 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
       TabOrder = 1
       Width = 94
     end
-    object DtEdt_FaltasCDLojasDtaFim: TcxDateEdit
-      Left = 176
-      Top = 13
-      EditValue = 42705d
+    object Cbx_ConsultaNfeSituacaoProd: TComboBox
+      Left = 9
+      Top = 80
+      Width = 138
+      Height = 22
+      Style = csOwnerDrawFixed
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ItemHeight = 16
+      ItemIndex = 0
       ParentFont = False
-      Style.Font.Charset = DEFAULT_CHARSET
-      Style.Font.Color = clWindowText
-      Style.Font.Height = -13
-      Style.Font.Name = 'MS Sans Serif'
-      Style.Font.Style = [fsBold]
-      Style.IsFontAssigned = True
-      StyleFocused.BorderStyle = ebsOffice11
       TabOrder = 2
-      Width = 94
+      Text = 'Ativo'
+      Items.Strings = (
+        'Ativo'
+        'N'#227'o Compra'
+        'Ativo/N'#227'o Compra')
     end
   end
 end

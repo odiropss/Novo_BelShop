@@ -42387,6 +42387,13 @@ begin
   End;
 
   FrmFaltasCDLojas:=TFrmFaltasCDLojas.Create(Self);
+
+  // Coloca Data de Hoje =======================================================
+  FrmFaltasCDLojas.DtEdt_FaltasCDLojasDtaInicio.Text:=
+                   DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+  FrmFaltasCDLojas.DtEdt_FaltasCDLojasDtaFim.Text   :=
+                   DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+
   FrmFaltasCDLojas.ShowModal;
 
   FreeAndNil(FrmFaltasCDLojas);

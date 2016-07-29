@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 562
-    ActivePage = Ts_FluFornecedor
+    ActivePage = Ts_ConsultaOC
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -14047,7 +14047,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 567
+              Left = 565
               Top = 12
               Width = 31
               Height = 13
@@ -14103,7 +14103,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 601
+              Left = 599
               Top = 9
               Width = 51
               Height = 18
@@ -14116,7 +14116,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 656
+              Left = 654
               Top = 9
               Width = 50
               Height = 18
@@ -16805,7 +16805,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 41
             Width = 963
-            Height = 443
+            Height = 441
             Align = alClient
             Color = 15004403
             DataSource = DMVirtual.DS_V_PlanFinanceira
@@ -16832,7 +16832,7 @@ object FrmBelShop: TFrmBelShop
           end
           object dxStatusBar2: TdxStatusBar
             Left = 0
-            Top = 484
+            Top = 482
             Width = 963
             Height = 24
             Panels = <
@@ -17119,7 +17119,7 @@ object FrmBelShop: TFrmBelShop
               object Label77: TLabel
                 Left = 2
                 Top = 2
-                Width = 232
+                Width = 412
                 Height = 13
                 Align = alTop
                 Alignment = taCenter
@@ -17304,7 +17304,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 2
                 Top = 58
                 Width = 412
-                Height = 220
+                Height = 218
                 Align = alClient
                 Color = 15004403
                 Ctl3D = False

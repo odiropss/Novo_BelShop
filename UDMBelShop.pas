@@ -1111,6 +1111,10 @@ type
     CDS_Busca: TClientDataSet;
     DSP_SQLQ_Busca: TDataSetProvider;
     CDS_SQLQ_Busca: TClientDataSet;
+    SDS_FaltasCDLojas: TSQLDataSet;
+    CDS_FaltasCDLojas: TClientDataSet;
+    DSP_FaltasCDLojas: TDataSetProvider;
+    DS_FaltasCDLojas: TDataSource;
 
     //==========================================================================
     // Odir ====================================================================
