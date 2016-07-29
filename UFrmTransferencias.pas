@@ -7,6 +7,7 @@ uses
   Dialogs, DBXpress, IBQuery, Grids, DBGrids, StdCtrls, ExtCtrls;
 
 type
+
   TFrmTransferencias = class(TForm)
     procedure FormCreate(Sender: TObject);
 
@@ -225,7 +226,7 @@ Begin
                     QuotedStr(DMTransferencias.CDS_EstoqueLojaDTA_MOVTO.AsString)+', '+
                     QuotedStr(DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString)+', '+
                     QuotedStr(IntToStr(iQtdReposicao-DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger))+', '+
-                    QuotedStr(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)+')'+
+                    QuotedStr(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)+')';
              DMTransferencias.SQLC.Execute(MySql,nil,nil);
 
              DateSeparator:='/';
