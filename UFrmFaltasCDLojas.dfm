@@ -1,7 +1,7 @@
 object FrmFaltasCDLojas: TFrmFaltasCDLojas
   Left = 247
   Top = 117
-  Width = 1063
+  Width = 1066
   Height = 602
   AutoSize = True
   BorderIcons = []
@@ -401,22 +401,22 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
   object Pan_FaltasCDLojasOpcoes: TPanel
     Left = 0
     Top = 525
-    Width = 1047
+    Width = 1050
     Height = 39
     Align = alBottom
     BevelInner = bvLowered
     BorderStyle = bsSingle
     Ctl3D = False
     ParentCtl3D = False
-    TabOrder = 2
+    TabOrder = 1
     object Bt_FaltasCDLojasFechar: TJvXPButton
       Tag = 99
-      Left = 938
+      Left = 941
       Top = 2
       Width = 105
       Height = 33
       Caption = 'Fechar'
-      TabOrder = 2
+      TabOrder = 1
       TabStop = False
       ShowFocusRect = True
       Spacing = 10
@@ -429,13 +429,13 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
       ParentFont = False
       OnClick = Bt_FaltasCDLojasFecharClick
     end
-    object Bt_FaltasCDLojasBuscaMovtos: TJvXPButton
+    object Bt_FaltasCDLojasBuscaProdutos: TJvXPButton
       Tag = 91
       Left = 2
       Top = 2
-      Width = 130
+      Width = 143
       Height = 33
-      Caption = 'Busca Movtos'
+      Caption = 'Busca Produtos'
       TabOrder = 0
       TabStop = False
       ShowFocusRect = True
@@ -446,82 +446,48 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
       ParentFont = False
-      OnClick = Bt_FaltasCDLojasBuscaMovtosClick
+      OnClick = Bt_FaltasCDLojasBuscaProdutosClick
     end
-    object Pan_FaltasCDLojasSalvar: TPanel
-      Left = 568
+    object Bt_FaltasCDLojasSalvaExcel: TJvXPButton
+      Tag = 9
+      Left = 145
       Top = 2
-      Width = 370
+      Width = 152
       Height = 33
-      Align = alRight
-      BevelOuter = bvNone
-      TabOrder = 1
-      object Bt_FaltasCDLojasSalvaExcel: TJvXPButton
-        Tag = 9
-        Left = 0
-        Top = 0
-        Width = 152
-        Height = 33
-        Caption = 'Salvar em Excel'
-        TabOrder = 0
-        TabStop = False
-        ShowFocusRect = True
-        Align = alLeft
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object Bt_FaltasCDLojasClipboard: TJvXPButton
-        Tag = 8
-        Left = 152
-        Top = 0
-        Width = 162
-        Height = 33
-        Caption = 'Salvar em Mem'#243'ria'
-        TabOrder = 1
-        ShowFocusRect = True
-        Align = alLeft
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
+      Caption = 'Salvar em Excel'
+      TabOrder = 2
+      TabStop = False
+      ShowFocusRect = True
+      Align = alLeft
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
     end
-  end
-  object Dbg_FaltasCDLojas: TDBGrid
-    Left = 0
-    Top = 115
-    Width = 1047
-    Height = 410
-    Align = alClient
-    Color = 15004403
-    Ctl3D = False
-    FixedColor = clSilver
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
-    Font.Style = []
-    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-    ParentCtl3D = False
-    ParentFont = False
-    ReadOnly = True
-    TabOrder = 1
-    TitleFont.Charset = DEFAULT_CHARSET
-    TitleFont.Color = clBlack
-    TitleFont.Height = -11
-    TitleFont.Name = 'MS Sans Serif'
-    TitleFont.Style = [fsBold]
+    object Bt_FaltasCDLojasClipboard: TJvXPButton
+      Tag = 8
+      Left = 297
+      Top = 2
+      Width = 162
+      Height = 33
+      Caption = 'Salvar em Mem'#243'ria'
+      TabOrder = 3
+      ShowFocusRect = True
+      Align = alLeft
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
   end
   object Pan_FaltasCDLojas: TPanel
     Left = 0
     Top = 0
-    Width = 1047
+    Width = 1050
     Height = 115
     Align = alTop
     BevelInner = bvLowered
@@ -565,8 +531,8 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
       Font.Style = []
       ParentFont = False
     end
-    object Pan_FaltasCDLojas1: TPanel
-      Left = 219
+    object Pan_FaltasCDLojasLojas: TPanel
+      Left = 222
       Top = 2
       Width = 826
       Height = 111
@@ -576,30 +542,16 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
       object Clbx_FaltasCDLojasLojas: TRxCheckListBox
         Left = 2
         Top = 2
-        Width = 340
-        Height = 107
-        CheckKind = ckCheckMarks
-        Align = alLeft
-        AutoScroll = False
-        Columns = 2
-        ItemHeight = 16
-        Style = lbOwnerDrawFixed
-        TabOrder = 0
-        OnClick = Clbx_FaltasCDLojasLojasClick
-        InternalVersion = 202
-      end
-      object Clbx_FaltasCDLojasForn: TRxCheckListBox
-        Left = 342
-        Top = 2
-        Width = 482
+        Width = 822
         Height = 107
         CheckKind = ckCheckMarks
         Align = alClient
         AutoScroll = False
-        Columns = 2
+        Columns = 3
         ItemHeight = 16
         Style = lbOwnerDrawFixed
-        TabOrder = 1
+        TabOrder = 0
+        OnClick = Clbx_FaltasCDLojasLojasClick
         InternalVersion = 202
       end
     end
@@ -608,7 +560,6 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
       Top = 25
       EditValue = 42705d
       ParentFont = False
-      Properties.OnChange = DtEdt_FaltasCDLojasDtaInicioPropertiesChange
       Style.Font.Charset = DEFAULT_CHARSET
       Style.Font.Color = clWindowText
       Style.Font.Height = -13
@@ -617,6 +568,7 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
       Style.IsFontAssigned = True
       StyleFocused.BorderStyle = ebsOffice11
       TabOrder = 0
+      OnEditing = DtEdt_FaltasCDLojasDtaInicioEditing
       Width = 94
     end
     object DtEdt_FaltasCDLojasDtaFim: TcxDateEdit
@@ -624,7 +576,6 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
       Top = 25
       EditValue = 42705d
       ParentFont = False
-      Properties.OnChange = DtEdt_FaltasCDLojasDtaInicioPropertiesChange
       Style.Font.Charset = DEFAULT_CHARSET
       Style.Font.Color = clWindowText
       Style.Font.Height = -13
@@ -633,9 +584,10 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
       Style.IsFontAssigned = True
       StyleFocused.BorderStyle = ebsOffice11
       TabOrder = 1
+      OnEditing = DtEdt_FaltasCDLojasDtaInicioEditing
       Width = 94
     end
-    object Cbx_ConsultaNfeSituacaoProd: TComboBox
+    object Cbx_FaltasCDLojasSitProd: TComboBox
       Left = 9
       Top = 80
       Width = 138
@@ -656,5 +608,295 @@ object FrmFaltasCDLojas: TFrmFaltasCDLojas
         'N'#227'o Compra'
         'Ativo/N'#227'o Compra')
     end
+  end
+  object PC_FaltasCDLojas: TPageControl
+    Left = 0
+    Top = 115
+    Width = 1050
+    Height = 410
+    ActivePage = Ts_FaltasCDLojasForn
+    Align = alClient
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    MultiLine = True
+    ParentFont = False
+    TabOrder = 2
+    OnChange = PC_FaltasCDLojasChange
+    object Ts_FaltasCDLojasForn: TTabSheet
+      Caption = 'Fornecedores'
+      Highlighted = True
+      object Gb_FiltroFornecedor: TGroupBox
+        Left = 0
+        Top = 0
+        Width = 316
+        Height = 382
+        Align = alLeft
+        Caption = '  Fornecedores  '
+        Color = 13092807
+        Ctl3D = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentCtl3D = False
+        ParentFont = False
+        TabOrder = 0
+        DesignSize = (
+          316
+          382)
+        object Label188: TLabel
+          Left = 282
+          Top = 29
+          Width = 29
+          Height = 13
+          Caption = '==>>'
+        end
+        object EdtFiltroCodForn: TCurrencyEdit
+          Left = 182
+          Top = 27
+          Width = 66
+          Height = 21
+          AutoSize = False
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          TabOrder = 0
+          OnExit = EdtFiltroCodFornExit
+        end
+        object Bt_FiltroBuscaForn: TJvXPButton
+          Tag = 92
+          Left = 253
+          Top = 24
+          Width = 24
+          Height = 26
+          TabOrder = 1
+          TabStop = False
+          ShowFocusRect = True
+          Anchors = [akTop, akRight]
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_FiltroBuscaFornClick
+        end
+        object Gb_CalculoCurvaABC: TGroupBox
+          Left = 4
+          Top = 68
+          Width = 308
+          Height = 46
+          Caption = ' Curva ABC '
+          Color = 13816530
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+          TabOrder = 2
+          object Ckb_CalculoCurvaTodas: TJvXPCheckbox
+            Left = 11
+            Top = 20
+            Width = 60
+            Height = 17
+            Caption = 'Todas'
+            TabOrder = 0
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Ckb_CalculoCurvaTodasClick
+            OnKeyUp = Ckb_CalculoCurvaTodasKeyUp
+          end
+          object Ckb_CalculoCurvaA: TJvXPCheckbox
+            Left = 75
+            Top = 20
+            Width = 62
+            Height = 17
+            Caption = 'A'
+            TabOrder = 1
+            ParentColor = False
+            Color = 15461355
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Castellar'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Ckb_CalculoCurvaAClick
+            OnKeyUp = Ckb_CalculoCurvaAKeyUp
+          end
+          object Ckb_CalculoCurvaB: TJvXPCheckbox
+            Left = 118
+            Top = 20
+            Width = 62
+            Height = 17
+            Caption = 'B'
+            TabOrder = 2
+            ParentColor = False
+            Color = 15461355
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Castellar'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Ckb_CalculoCurvaAClick
+            OnKeyUp = Ckb_CalculoCurvaAKeyUp
+          end
+          object Ckb_CalculoCurvaC: TJvXPCheckbox
+            Left = 162
+            Top = 20
+            Width = 64
+            Height = 17
+            Caption = 'C'
+            TabOrder = 3
+            ParentColor = False
+            Color = 15461355
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Castellar'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Ckb_CalculoCurvaAClick
+            OnKeyUp = Ckb_CalculoCurvaAKeyUp
+          end
+          object Ckb_CalculoCurvaD: TJvXPCheckbox
+            Left = 208
+            Top = 20
+            Width = 60
+            Height = 17
+            Caption = 'D'
+            TabOrder = 4
+            ParentColor = False
+            Color = 15461355
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Castellar'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Ckb_CalculoCurvaAClick
+            OnKeyUp = Ckb_CalculoCurvaAKeyUp
+          end
+          object Ckb_CalculoCurvaE: TJvXPCheckbox
+            Left = 251
+            Top = 20
+            Width = 43
+            Height = 17
+            Caption = 'E'
+            TabOrder = 5
+            ParentColor = False
+            Color = 15461355
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -16
+            Font.Name = 'Castellar'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Ckb_CalculoCurvaAClick
+            OnKeyUp = Ckb_CalculoCurvaAKeyUp
+          end
+        end
+      end
+      object Dbg_FiltroFornecedores: TDBGridJul
+        Left = 316
+        Top = 0
+        Width = 726
+        Height = 382
+        Hint = '<Delete> Exclui Fornecedor da Lista'
+        Align = alClient
+        DataSource = DMVirtual.DS_V_Fornecedores
+        FixedColor = clTeal
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWhite
+        TitleFont.Height = -11
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Style = [fsBold]
+        SairComEnter = False
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'Des_Fornecedor'
+            Title.Caption = 'Descri'#231#227'o do Fornecedor'
+            Width = 350
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'Cod_Fornecedor'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'C'#243'digo'
+            Width = 100
+            Visible = True
+          end>
+      end
+    end
+    object Ts_FaltasCDLojasMovtos: TTabSheet
+      Caption = 'Produtos'
+      ImageIndex = 1
+      object Dbg_FaltasCDLojas: TDBGrid
+        Left = 0
+        Top = 0
+        Width = 1042
+        Height = 382
+        Align = alClient
+        Color = 15004403
+        Ctl3D = False
+        FixedColor = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+        ParentCtl3D = False
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 0
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clBlack
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = [fsBold]
+      end
+    end
+  end
+  object OdirPanApres: TPanel
+    Left = 937
+    Top = 30
+    Width = 89
+    Height = 33
+    BevelInner = bvLowered
+    BevelWidth = 2
+    Caption = 'OdirPanApres'
+    Color = clSilver
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 3
+    Visible = False
   end
 end
