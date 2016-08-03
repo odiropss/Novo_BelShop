@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 562
-    ActivePage = TS_Filtros
+    ActivePage = Ts_ConsultaOC
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -14047,7 +14047,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 563
+              Left = 565
               Top = 12
               Width = 31
               Height = 13
@@ -14103,7 +14103,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 597
+              Left = 599
               Top = 9
               Width = 51
               Height = 18
@@ -14116,7 +14116,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 652
+              Left = 654
               Top = 9
               Width = 50
               Height = 18
@@ -17119,7 +17119,7 @@ object FrmBelShop: TFrmBelShop
               object Label77: TLabel
                 Left = 2
                 Top = 2
-                Width = 232
+                Width = 412
                 Height = 13
                 Align = alTop
                 Alignment = taCenter
@@ -18818,7 +18818,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 534
-        ActivePage = Ts_FinanObjetivosManut
+        ActivePage = Ts_FinanObjetivosResultadosDias
         Align = alClient
         TabOrder = 0
         OnChange = PC_FinanObjetivosChange
@@ -29504,7 +29504,7 @@ object FrmBelShop: TFrmBelShop
                   Width = 64
                   Height = 17
                   Caption = 'C'
-                  TabOrder = 3
+                  TabOrder = 4
                   ParentColor = False
                   Color = 15461355
                   Font.Charset = DEFAULT_CHARSET
@@ -29522,7 +29522,7 @@ object FrmBelShop: TFrmBelShop
                   Width = 60
                   Height = 17
                   Caption = 'D'
-                  TabOrder = 4
+                  TabOrder = 3
                   ParentColor = False
                   Color = 15461355
                   Font.Charset = DEFAULT_CHARSET
@@ -29810,7 +29810,7 @@ object FrmBelShop: TFrmBelShop
               Caption = '==>>'
             end
             object EdtFiltroCodProduto: TCurrencyEdit
-              Left = 158
+              Left = 182
               Top = 27
               Width = 66
               Height = 21

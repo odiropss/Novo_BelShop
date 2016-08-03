@@ -8819,7 +8819,7 @@ Begin
                 MySql:=MySql+' Where Coalesce(p.situacaopro,0)=0';
 
                If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then
-                MySql:=MySql+' Where Coalesce(p.situacaopro,0)=3';
+                MySql:=MySql+' Where Coalesce(p.situacaopro,3)=3';
 
                If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then
                 MySql:=MySql+' Where Coalesce(p.situacaopro,0) in (0,3)';
@@ -9657,7 +9657,7 @@ Begin
              MySqlEnt:=MySqlEnt+' AND COALESCE(pe.situacaopro,0)=0';
 
             If Cbx_ConsultaNfeSituacaoProd.ItemIndex=1 Then
-             MySqlEnt:=MySqlEnt+' AND COALESCE(pe.situacaopro,0)=3';
+             MySqlEnt:=MySqlEnt+' AND COALESCE(pe.situacaopro,3)=3';
 
             If Cbx_ConsultaNfeSituacaoProd.ItemIndex=2 Then
              MySqlEnt:=MySqlEnt+' AND COALESCE(pe.situacaopro,0) in (0,3)';
@@ -9733,7 +9733,7 @@ Begin
              MySqlSai:=MySqlSai+' AND COALESCE(ps.situacaopro,0)=0';
 
             If Cbx_ConsultaNfeSituacaoProd.ItemIndex=1 Then
-             MySqlSai:=MySqlSai+' AND COALESCE(ps.situacaopro,0)=3';
+             MySqlSai:=MySqlSai+' AND COALESCE(ps.situacaopro,3)=3';
 
             If Cbx_ConsultaNfeSituacaoProd.ItemIndex=2 Then
              MySqlSai:=MySqlSai+' AND COALESCE(ps.situacaopro,0) in (0,3)';
@@ -14417,7 +14417,7 @@ Begin
 
          If Cbx_CurvaABCEndSituacaoProd.ItemIndex=1 Then
           MySql:=
-           MySql+' AND   Coalesce(pt.situacaopro,0)=3';
+           MySql+' AND   Coalesce(pt.situacaopro,3)=3';
 
          If Cbx_CurvaABCEndSituacaoProd.ItemIndex=2 Then
           MySql:=
@@ -14541,7 +14541,7 @@ Begin
 
          If Cbx_CurvaABCEndSituacaoProd.ItemIndex=1 Then
           MySql:=
-           MySql+' AND   Coalesce(pr.situacaopro,0)=3';
+           MySql+' AND   Coalesce(pr.situacaopro,3)=3';
 
          If Cbx_CurvaABCEndSituacaoProd.ItemIndex=2 Then
           MySql:=
@@ -14757,7 +14757,7 @@ Begin
 
                If Cbx_CurvaABCEndSituacaoProd.ItemIndex=1 Then
                 MySqlClausula1:=
-                 MySqlClausula1+' AND Coalesce(pr.situacaopro,0)=3';
+                 MySqlClausula1+' AND Coalesce(pr.situacaopro,3)=3';
 
                If Cbx_CurvaABCEndSituacaoProd.ItemIndex=2 Then
                 MySqlClausula1:=
@@ -23461,7 +23461,7 @@ begin
              Try
                Cbx_EstFisFinanSituacaoProd.SetFocus;
                If Cbx_EstFisFinanSituacaoProd.ItemIndex=0      Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=0'
-               Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=3'
+               Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,3)=3'
                Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then MySql:=MySql+' And Coalesce(p.situacaopro,0) in (0,3)';
              Except
              End;
@@ -23469,7 +23469,7 @@ begin
              Try
                Cbx_ConsultaNfeSituacaoProd.SetFocus;
                If Cbx_ConsultaNfeSituacaoProd.ItemIndex=0      Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=0'
-               Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=3'
+               Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,3)=3'
                Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then MySql:=MySql+' And Coalesce(p.situacaopro,0) in (0,3)';
              Except
              End;
@@ -24176,7 +24176,7 @@ begin
            Try
              Cbx_EstFisFinanSituacaoProd.SetFocus;
              If Cbx_EstFisFinanSituacaoProd.ItemIndex=0      Then MySql:=MySql+' AND Coalesce(p.situacaopro,0)=0'
-             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' AND Coalesce(p.situacaopro,0)=3'
+             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' AND Coalesce(p.situacaopro,3)=3'
              Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then MySql:=MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
            Except
            End; // Try
@@ -24184,7 +24184,7 @@ begin
            Try
              Cbx_ConsultaNfeSituacaoProd.SetFocus;
              If Cbx_ConsultaNfeSituacaoProd.ItemIndex=0      Then MySql:=MySql+' AND Coalesce(p.situacaopro,0)=0'
-             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' AND Coalesce(p.situacaopro,0)=3'
+             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' AND Coalesce(p.situacaopro,3)=3'
              Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then MySql:=MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
            Except
            End;
@@ -26300,7 +26300,7 @@ begin
            Try
              Cbx_EstFisFinanSituacaoProd.SetFocus;
              If Cbx_EstFisFinanSituacaoProd.ItemIndex=0      Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=0'
-             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=3'
+             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,3)=3'
              Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then MySql:=MySql+' And Coalesce(p.situacaopro,0) in (0,3)';
            Except
            End;
@@ -26308,7 +26308,7 @@ begin
            Try
              Cbx_ConsultaNfeSituacaoProd.SetFocus;
              If Cbx_ConsultaNfeSituacaoProd.ItemIndex=0      Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=0'
-             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=3'
+             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,3)=3'
              Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then MySql:=MySql+' And Coalesce(p.situacaopro,0) in (0,3)';
            Except
            End;
@@ -26399,7 +26399,7 @@ begin
            Try
              Cbx_EstFisFinanSituacaoProd.SetFocus;
              If Cbx_EstFisFinanSituacaoProd.ItemIndex=0      Then MySqlClausula1:=' Where Coalesce(p.situacaopro,0)=0'
-             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySqlClausula1:=' Where Coalesce(p.situacaopro,0)=3'
+             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySqlClausula1:=' Where Coalesce(p.situacaopro,3)=3'
              Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then MySqlClausula1:=' Where Coalesce(p.situacaopro,0) in (0,3)';
            Except
            End; // Try
@@ -26407,7 +26407,7 @@ begin
            Try
              Cbx_ConsultaNfeSituacaoProd.SetFocus;
              If Cbx_ConsultaNfeSituacaoProd.ItemIndex=0      Then MySqlClausula1:=' Where Coalesce(p.situacaopro,0)=0'
-             Else If Cbx_ConsultaNfeSituacaoProd.ItemIndex=1 Then MySqlClausula1:=' Where Coalesce(p.situacaopro,0)=3'
+             Else If Cbx_ConsultaNfeSituacaoProd.ItemIndex=1 Then MySqlClausula1:=' Where Coalesce(p.situacaopro,3)=3'
              Else If Cbx_ConsultaNfeSituacaoProd.ItemIndex=2 Then MySqlClausula1:=' Where Coalesce(p.situacaopro,0) in (0,3)';
            Except
            End;
@@ -33750,7 +33750,7 @@ begin
                 MySql:=MySql+' Where Coalesce(p.situacaopro,0)=0';
 
                If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then
-                MySql:=MySql+' Where Coalesce(p.situacaopro,0)=3';
+                MySql:=MySql+' Where Coalesce(p.situacaopro,3)=3';
 
                If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then
                 MySql:=MySql+' Where Coalesce(p.situacaopro,0) in (0,3)';
@@ -37404,7 +37404,7 @@ begin
                 MySqlSelect:=MySqlSelect+' Where Coalesce(p.situacaopro,0)=0';
 
                If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then
-                MySqlSelect:=MySqlSelect+' Where Coalesce(p.situacaopro,0)=3';
+                MySqlSelect:=MySqlSelect+' Where Coalesce(p.situacaopro,3)=3';
 
                If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then
                 MySqlSelect:=MySqlSelect+' Where Coalesce(p.situacaopro,0) in (0,3)';
@@ -42386,15 +42386,6 @@ begin
     Exit;
   End;
 
-  try
-    DMVirtual.CDS_V_Fornecedores.CreateDataSet;
-    DMVirtual.CDS_V_Fornecedores.Open;
-  Except
-    DMVirtual.CDS_V_Fornecedores.EmptyDataSet;
-    DMVirtual.CDS_V_Fornecedores.Open;
-  End;
-  MontaSelectFornecedores;
-
   FrmFaltasCDLojas:=TFrmFaltasCDLojas.Create(Self);
 
   // Coloca Data de Hoje =======================================================
@@ -42402,10 +42393,6 @@ begin
                    DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
   FrmFaltasCDLojas.DtEdt_FaltasCDLojasDtaFim.Text   :=
                    DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
-
-  FrmFaltasCDLojas.PC_FaltasCDLojas.TabIndex:=0;
-  FrmFaltasCDLojas.Bt_FaltasCDLojasSalvaExcel.Visible:=False;
-  FrmFaltasCDLojas.Bt_FaltasCDLojasClipboard.Visible:=False;
 
   FrmFaltasCDLojas.ShowModal;
 
