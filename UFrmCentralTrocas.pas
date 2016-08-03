@@ -718,7 +718,7 @@ Var
 
   cldescontaicmspro_sn,
   prUnidadeEstoque, prCodIpiVenda, prIss, prCodPisCofins_Venda, prCodAgrupaCarga, // Dados Produto
-  lpPrecoVenda, // Dados Lista de Preços
+  lpPrecoCompra, // Dados Lista de Preços
 
   ipAliquota, ipIpiPercOuValor, ipOperacaoCreDeb, ipSomaFreteBaseIpi,
   ipSomaDespesaBaseIpi, ipSitTrib_Ipi_Saida,   // Dados IPI
@@ -954,7 +954,7 @@ Begin
     sCodLoja:=DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString;
 
     sCodComprv:='020';
-    If Pos(sCodLoja, '01')<>0 Then
+    If Pos(sCodLoja, '08')<>0 Then
      sCodComprv:='009';
 
     // Monta Sqls para Insert Pedido ===========================================
@@ -1210,7 +1210,7 @@ Begin
         IBQ_MPMS.SQL.Add(MySql);
         IBQ_MPMS.Open;
 
-        lpPrecoVenda:=IBQ_MPMS.FieldByName('PrecoCompra').AsString;
+        lpPrecoCompra:=IBQ_MPMS.FieldByName('PrecoCompra').AsString;
 
         IBQ_MPMS.Close;
 
@@ -1340,7 +1340,7 @@ Begin
                    QuotedStr(DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsString)+', '+ // QUANTPEDIDA
                    QuotedStr(DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsString)+', '+ // QUANTATENDIDA
                    QuotedStr('0')+', '+ // QUANTPENDENTE
-                   QuotedStr(lpPrecoVenda)+', '+ // PRECO
+                   QuotedStr(lpPrecoCompra)+', '+ // PRECO
                    QuotedStr('0006')+', '+ // CODLISTA
                    QuotedStr('0')+', '+ // DESCONTO1
                    QuotedStr('0')+', '+ // DESCONTO2
@@ -1349,7 +1349,7 @@ Begin
                    QuotedStr('0')+', '+ // DESCONTOCALC
                    QuotedStr('0')+', '; // VALDESCITEM
 
-        cVlrBruto:=DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsCurrency*StrToCurr(lpPrecoVenda);
+        cVlrBruto:=DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsCurrency*StrToCurr(lpPrecoCompra);
         cTotBruto:=cTotBruto+cVlrBruto;
 
         MySqlIteV:=
@@ -1633,12 +1633,12 @@ Begin
                    QuotedStr('0')+', '+ // COMISSAO3PERC
                    QuotedStr(sgDtaI)+', '+ // DATAENTREGA
                    QuotedStr('')+', '+ // ORDEMCOMPRA
-                   QuotedStr(lpPrecoVenda)+', '+ // PRECOORIGEM
+                   QuotedStr(lpPrecoCompra)+', '+ // PRECOORIGEM
                    QuotedStr(sCodFiscal)+', '+ // CODFISCALPRO
                    QuotedStr(IntToStr(iSeqItem))+', '+ // SEQUENCIADOPRODUTO;
                    QuotedStr(esCustoMedio)+', '+ // MOMENTOCUSTOMEDIO
-                   QuotedStr(lpPrecoVenda)+', '+ // MOMENTOPRECOBRUTO
-                   QuotedStr(lpPrecoVenda)+', '+ // MOMENTOPRECOLIQUIDO
+                   QuotedStr(lpPrecoCompra)+', '+ // MOMENTOPRECOBRUTO
+                   QuotedStr(lpPrecoCompra)+', '+ // MOMENTOPRECOLIQUIDO
                    QuotedStr('N')+', '+ // FOIPESADOSN
                    QuotedStr('0')+', '+ // VALPECAS
                    QuotedStr('0')+', '+ // PRECOMAXCONSUMIDOR

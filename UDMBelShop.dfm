@@ -2740,27 +2740,14 @@ object DMBelShop: TDMBelShop
       'A_FORNECEDORES ff'#13#10'      left join fl_caixa_historicos fc on ff.' +
       'cod_historico=fc.cod_historico'#13#10'      left join  emp_conexoes em' +
       'p on ff.cod_empresa=emp.cod_filial'#13#10#13#10'Where ff.cod_fornecedor= :' +
-      'CodForn'#13#10'and ff.DTA_CAIXA >= :DtaInicio '#13#10'and ff.DTA_CAIXA <= :D' +
-      'taFim'#13#10#13#10'order by ff.DTA_CAIXA, ff.NUM_SEQ'#13#10
+      'CodForn'#13#10#13#10'order by ff.DTA_CAIXA, ff.NUM_SEQ'#13#10
     MaxBlobSize = -1
     Params = <
       item
         DataType = ftString
         Name = 'CodForn'
         ParamType = ptInput
-        Value = '001112'
-      end
-      item
-        DataType = ftString
-        Name = 'DtaInicio'
-        ParamType = ptInput
-        Value = '01.10.2011'
-      end
-      item
-        DataType = ftString
-        Name = 'DtaFim'
-        ParamType = ptInput
-        Value = '30.10.2011'
+        Value = '0'
       end>
     SQLConnection = SQLC
     Left = 912
@@ -2770,8 +2757,6 @@ object DMBelShop: TDMBelShop
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FluxoFornecedor'
-    AfterOpen = CDS_FluxoFornecedorAfterOpen
-    AfterClose = CDS_FluxoFornecedorAfterClose
     Left = 991
     Top = 87
     object CDS_FluxoFornecedorDATA: TDateField

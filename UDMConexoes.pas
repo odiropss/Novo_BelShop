@@ -4,14 +4,6 @@ interface
 
 uses
   SysUtils, Classes, IBDatabase, DB, IBCustomDataSet, IBQuery;
-//  Último: DB;
-{
-  Sim:
-  // IBDatabase, DB,
-
-  Não:
-  IBCustomDataSet, IBQuery;
-}
 
 type
   TDMConexoes = class(TDataModule)
