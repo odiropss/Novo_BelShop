@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 562
-    ActivePage = Ts_MovtoComprovForn
+    ActivePage = Ts_FluFornecedor
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -14064,7 +14064,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 561
+              Left = 559
               Top = 12
               Width = 31
               Height = 13
@@ -14120,7 +14120,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 595
+              Left = 593
               Top = 9
               Width = 51
               Height = 18
@@ -14133,7 +14133,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 650
+              Left = 648
               Top = 9
               Width = 50
               Height = 18
@@ -31565,7 +31565,7 @@ object FrmBelShop: TFrmBelShop
           08080808000000000000000000000000000000080F080008BF00080808080808
           080808080800080F080F080F080F080F080F080F08000808BF00080808080808
           080808080808000000000000000000000000000000080808BF00}
-        Caption = 'Movtos de Comprovantes'
+        Caption = 'Movtos de Comprovantes Fornecedores'
         HelpContext = 1
         OnClick = SubMenuComprasMovtoComprovFornecedorClick
       end
