@@ -422,23 +422,11 @@ type
     Bt_CurvaABCEndFechar: TJvXPButton;
     Bt_CurvaABCEndCalculoCurvaABC: TJvXPButton;
     Ts_CurvaABCMixProd: TTabSheet;
-    Pan_FluForn: TPanel;
-    Gb_FluFornPeriodo: TGroupBox;
-    Label1: TLabel;
-    Label2: TLabel;
-    DtEdt_FluFornDtaInicio: TcxDateEdit;
-    DtEdt_FluFornDtaFim: TcxDateEdit;
-    Gb_FluFornFornecedor: TGroupBox;
-    Bt_FluFornBuscaFornecdor: TJvXPButton;
-    EdtFluFornFornecedor: TEdit;
-    EdtFluFornCodFornecedor: TCurrencyEdit;
-    Bt_FluFornBuscaCaixa: TJvXPButton;
     Gb_FluFornCaixa: TGroupBox;
     Dbg_FluFornCaixa: TDBGrid;
     Panel38: TPanel;
     Bt_FluFornFechar: TJvXPButton;
     Bt_FluFornAtualizar: TJvXPButton;
-    Bt_FluFornExcluir: TJvXPButton;
     N13: TMenuItem;
     PC_FinanMargemLucro: TPageControl;
     Ts_FinanMLFiltros: TTabSheet;
@@ -1372,6 +1360,11 @@ type
     MenuEstoques: TMenuItem;
     MenuEstoquesSimuladorEstoques: TMenuItem;
     SubMenuCentroDistAnaliseReposicoes: TMenuItem;
+    Gb_FluFornFornecedor: TGroupBox;
+    Bt_FluFornBuscaFornecdor: TJvXPButton;
+    EdtFluFornFornecedor: TEdit;
+    EdtFluFornCodFornecedor: TCurrencyEdit;
+    Ckbx_ConsultaNFeApresParcela: TCheckBox;
 
     // Odir ====================================================================
 
@@ -1704,8 +1697,6 @@ type
     procedure SubMenuComprasContaCorreteFornClick(Sender: TObject);
     procedure Bt_FluFornAtualizarClick(Sender: TObject);
     procedure Bt_FluFornBuscaFornecdorClick(Sender: TObject);
-    procedure Bt_FluFornBuscaCaixaClick(Sender: TObject);
-    procedure Bt_FluFornExcluirClick(Sender: TObject);
     procedure Bt_GeraOCBuscaDoctoClick(Sender: TObject);
     procedure Bt_OCBuscaListaPrecoClick(Sender: TObject);
     procedure Bt_FiltroBuscaGrupoSTClick(Sender: TObject);
@@ -1718,7 +1709,6 @@ type
     procedure Dbg_FluFornCaixaDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure EdtFluFornCodFornecedorExit(Sender: TObject);
-    procedure DtEdt_FluFornDtaInicioEditing(Sender: TObject; var CanEdit: Boolean);
     procedure EdtFluFornCodFornecedorChange(Sender: TObject);
     procedure Dbg_GeraOCEditaGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure PC_GeraOCEditaApresentacaoChange(Sender: TObject);
@@ -2314,6 +2304,12 @@ type
       var Key: Word; Shift: TShiftState);
     procedure MenuEstoquesSimuladorEstoquesClick(Sender: TObject);
     procedure SubMenuCentroDistAnaliseReposicoesClick(Sender: TObject);
+    procedure Dbg_FluFornCaixaKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_FluFornCaixaEnter(Sender: TObject);
+    procedure Ckbx_ConsultaNFeApresParcelaClick(Sender: TObject);
+    procedure Ckbx_ConsultaNFeApresParcelaKeyUp(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -9551,70 +9547,23 @@ Begin
   CDS_.CreateDataSet;
 
 //OdirApagar - 22/07/2016
-//  // Monta Sql de Movimentos de Entradas =======================================
-//  MySqlEnt:=' Select moe.codcomprovante, moe.numero, moe.serie,'+
-//            ' moe.datacomprovante datadocumento,'+
-//            ' moe.dataentrada,'+
-//            ' sum(mpe.quant) totqtd,'+
-//            ' count(mpe.codproduto) totitens,'+
-//            ' CASE'+
-//            '   WHEN SUM(COALESCE(mpe.valtotal,0))<>0 THEN'+
-//            '     SUM(COALESCE(mpe.valtotal,0))'+
-//            '   ELSE'+
-//            '     SUM(COALESCE(moe.totnota,0))'+
-//            ' END totnota,'+
-//
-//            ' cpe.nomecomprovante,'+
-//            ' moe.codfornecedor, foe.nomefornecedor'+
-//
-//            '  From MFOR moe'+
-//            '      LEFT JOIN COMPRV   cpe ON cpe.codcomprovante=moe.codcomprovante'+
-//            '      LEFT JOIN FORNECED foe ON foe.codfornecedor=moe.codfornecedor'+
-//            '      LEFT JOIN MFORPRO  mpe ON mpe.CHAVENF=moe.CHAVENF'+
-//            '      LEFT JOIN PRODUTO  pe  ON pe.codproduto=mpe.CodProduto'+
-//            '      LEFT JOIN gruposub gse ON gse.codgruposub=pe.codgruposub'+
-//            '      LEFT JOIN grupo    gre ON gre.codgrupo=gse.codgrupo'+
-//
-//            ' Where moe.dataentrada Between '+QuotedStr(sDti)+' And '+QuotedStr(sDtf)+
-//            ' And   moe.codfilial = :CodLoja';
-
-//..................................  // Monta Sql de Movimentos de Entradas =======================================
-  MySqlEnt:=' SELECT moe.codcomprovante, moe.numero, moe.serie,'+
+  // Monta Sql de Movimentos de Entradas =======================================
+  MySqlEnt:=' Select moe.codcomprovante, moe.numero, moe.serie,'+
             ' moe.datacomprovante datadocumento,'+
-
+            ' moe.dataentrada,'+
+            ' sum(mpe.quant) totqtd,'+
+            ' count(mpe.codproduto) totitens,'+
             ' CASE'+
-            '    WHEN COALESCE(parc.datavencimento,cast(''01.01.1800'' as Date))<>cast(''01.01.1800'' as Date) THEN'+
-            '      parc.datavencimento'+
-            '    ELSE'+
-            '     moe.dataentrada'+
-            '  END dataentrada,'+
-
-            ' SUM(mpe.quant) totqtd,'+
-            ' COUNT(mpe.codproduto) totitens,'+
-
-            ' CASE'+
-            '    WHEN SUM(COALESCE(parc.totnota,0))<>0 THEN'+
-            '      SUM(COALESCE(parc.totnota,0))'+
-            '    ELSE'+
-            '      CASE'+
-            '        WHEN SUM(COALESCE(mpe.valtotal,0))<>0 THEN'+
-            '          SUM(COALESCE(mpe.valtotal,0))'+
-            '        ELSE'+
-            '         SUM(COALESCE(moe.totnota,0))'+
-            '      END'+
-            '  END totnota,'+
-
-//            ' CASE'+
-//            '   WHEN SUM(COALESCE(mpe.valtotal,0))<>0 THEN'+
-//            '     SUM(COALESCE(mpe.valtotal,0))'+
-//            '   ELSE'+
-//            '     SUM(COALESCE(moe.totnota,0))'+
-//            ' END totnota,'+
+            '   WHEN SUM(COALESCE(mpe.valtotal,0))<>0 THEN'+
+            '     SUM(COALESCE(mpe.valtotal,0))'+
+            '   ELSE'+
+            '     SUM(COALESCE(moe.totnota,0))'+
+            ' END totnota,'+
 
             ' cpe.nomecomprovante,'+
             ' moe.codfornecedor, foe.nomefornecedor'+
 
-            '  FROM MFOR moe'+
+            '  From MFOR moe'+
             '      LEFT JOIN COMPRV   cpe ON cpe.codcomprovante=moe.codcomprovante'+
             '      LEFT JOIN FORNECED foe ON foe.codfornecedor=moe.codfornecedor'+
             '      LEFT JOIN MFORPRO  mpe ON mpe.CHAVENF=moe.CHAVENF'+
@@ -9622,28 +9571,9 @@ Begin
             '      LEFT JOIN gruposub gse ON gse.codgruposub=pe.codgruposub'+
             '      LEFT JOIN grupo    gre ON gre.codgrupo=gse.codgrupo'+
 
-            '      LEFT JOIN (SELECT m.codfilial, m.codcomprovante, m.codfornecedor,'+
-            '                        m.numero, m.datavencimento, m.totnota'+
-            '                 FROM MFORPAGA m'+
-            '                 WHERE m.datavencimento BETWEEN '+QuotedStr(sDti)+' AND '+QuotedStr(sDtf)+
-//            '                 WHERE m.codfilial=:CodLoja'+
-//            '                 AND   m.datavencimento BETWEEN '+QuotedStr(sDti)+' AND '+QuotedStr(sDtf)+
-            '                 UNION'+
-            '                 SELECT m.codfilial, m.codcomprovante, m.codfornecedor,'+
-            '                        m.numero, m.datavencimento, m.totnota'+
-            '                 FROM MFORPAGO m'+
-            '                 WHERE  m.datavencimento BETWEEN '+QuotedStr(sDti)+' AND '+QuotedStr(sDtf)+
-//            '                 WHERE m.codfilial=:CodLoja'+
-//            '                 AND   m.datavencimento BETWEEN '+QuotedStr(sDti)+' AND '+QuotedStr(sDtf)+
-//            '                 ORDER BY 1) Parc  ON Parc.codcomprovante=moe.codcomprovante'+
-            '                 ORDER BY 1) Parc  ON Parc.codfilial=moe.codfilial'+
-            '                                  AND Parc.codcomprovante=moe.codcomprovante'+
-            '                                  AND Parc.codfornecedor=moe.codfornecedor'+
-            '                                  AND Parc.numero=moe.numero'+
+            ' Where moe.dataentrada Between '+QuotedStr(sDti)+' And '+QuotedStr(sDtf)+
+            ' And   moe.codfilial = :CodLoja';
 
-            ' WHERE moe.dataentrada BETWEEN '+QuotedStr(sDti)+' AND '+QuotedStr(sDtf)+
-            ' AND   moe.codfilial = :CodLoja';
-//..................................
             // Numero do Docto
             If EdtConsultaNFeDocto.Value<>0 Then
              MySqlEnt:=MySqlEnt+' AND moe.numero='+QuotedStr(VarToStr(EdtConsultaNFeDocto.Value));
@@ -9824,8 +9754,11 @@ Begin
       // Inicia Processamento ==================================================
       If bSiga Then // Empresa Conectada
       Begin
-        // Cria Query da Empresa ------------------------------------
+        // Cria Query Busca Movimentos ------------------------------
         CriaQueryIB('IBDB_'+sgCodEmp,'IBT_'+sgCodEmp,IBQ_ConsultaFilial, True, True);
+
+        // Cria Query Busca Parcelas --------------------------------
+        CriaQueryIB('IBDB_'+sgCodEmp,'IBT_'+sgCodEmp,IBQ_ConsultaLoja, True, True);
 
         // Abre Query -----------------------------------------------
         i:=0;
@@ -9833,10 +9766,46 @@ Begin
         While Not bSiga do
         Begin
           Try
+            // Busca Movimentos --------------------------------------
+            IBQ_ConsultaFilial.Close;
             IBQ_ConsultaFilial.SQL.Clear;
             IBQ_ConsultaFilial.SQL.Add(MySql);
             IBQ_ConsultaFilial.Params.ParamByName('CodLoja').AsString:=sgCodEmp;
             IBQ_ConsultaFilial.Open;
+
+            // Busca Parcelas ----------------------------------------
+            If Ckbx_ConsultaNFeApresParcela.Checked Then
+            Begin
+              MySqlSelect:=' SELECT m.codfornecedor, m.codcomprovante, m.numero,'+
+                           '        m.numprestacao, m.datavencimento, m.totnota'+
+                           ' FROM MFORPAGA m'+
+                           ' WHERE m.datavencimento BETWEEN '+QuotedStr(sDti)+' And '+QuotedStr(sDtf)+
+                           ' AND   m.codfilial='+QuotedStr(sgCodEmp);
+
+                           If Trim(sComprov)<>'' Then
+                            MySqlSelect:=
+                             MySqlSelect+' AND m.codcomprovante in ('+sComprov+')';
+
+              MySqlSelect:=
+               MySqlSelect+' UNION'+
+
+                           ' SELECT m.codfornecedor, m.codcomprovante, m.numero,'+
+                           '        m.numprestacao, m.datavencimento, m.totnota'+
+                           ' FROM MFORPAGO m'+
+                           ' WHERE m.datavencimento BETWEEN '+QuotedStr(sDti)+' And '+QuotedStr(sDtf)+
+                           ' AND   m.codfilial='+QuotedStr(sgCodEmp);
+
+                           If Trim(sComprov)<>'' Then
+                            MySqlSelect:=
+                             MySqlSelect+' AND m.codcomprovante in ('+sComprov+')';
+
+              MySqlSelect:=
+               MySqlSelect+' ORDER BY 1,2,3,4';
+              IBQ_ConsultaLoja.SQL.Clear;
+              IBQ_ConsultaLoja.SQL.Add(MySqlSelect);
+              IBQ_ConsultaLoja.Open;
+            End; // If Ckbx_ConsultaNFeApresParcela.Checked Then
+
             bSiga:=True;
           Except
             Inc(i);
@@ -9903,26 +9872,60 @@ Begin
             iItensLoja:=iItensLoja+IBQ_ConsultaFilial.FieldByName('totitens').AsInteger;
             cQtdsLoja:=cQtdsLoja+IBQ_ConsultaFilial.FieldByName('totqtd').AsCurrency;
 
-            // Grava Notas de Entrada ------------------------------------------
+            // Grava Documentos -------------------------------------
             DMVirtual.CDS_V_NFe.Insert;
             DMVirtual.CDS_V_NFeCOD_LOJA.AsString:=sgCodEmp;
 
             If iCodForn<>IBQ_ConsultaFilial.FieldByName('codfornecedor').AsInteger Then
-              DMVirtual.CDS_V_NFeDES_FORNECEDOR.AsString:=IBQ_ConsultaFilial.FieldByName('NomeFornecedor').AsString;
+              DMVirtual.CDS_V_NFeDES_FORNECEDOR.AsString:=Trim(IBQ_ConsultaFilial.FieldByName('NomeFornecedor').AsString);
 
             DMVirtual.CDS_V_NFeCOD_FORNECEDOR.AsString:=FormatFloat('000000',IBQ_ConsultaFilial.FieldByName('codfornecedor').AsInteger);
-            DMVirtual.CDS_V_NFeCOD_COMPROV.AsString:=IBQ_ConsultaFilial.FieldByName('codcomprovante').AsString;
-            DMVirtual.CDS_V_NFeNUM_NOTA.AsString:=IBQ_ConsultaFilial.FieldByName('numero').AsString;
-            DMVirtual.CDS_V_NFeDES_SERIE.AsString:=IBQ_ConsultaFilial.FieldByName('serie').AsString;
-            DMVirtual.CDS_V_NFeDTA_NOTA.AsString:=IBQ_ConsultaFilial.FieldByName('datadocumento').AsString;
-            DMVirtual.CDS_V_NFeDTA_ENTRADA.AsString:=IBQ_ConsultaFilial.FieldByName('dataentrada').AsString;
-            DMVirtual.CDS_V_NFeTOT_QTDS.AsString:=IBQ_ConsultaFilial.FieldByName('totqtd').AsString;
-            DMVirtual.CDS_V_NFeTOT_ITENS.AsString:=IBQ_ConsultaFilial.FieldByName('totitens').AsString;
-            DMVirtual.CDS_V_NFeVLR_NOTA.AsString:=IBQ_ConsultaFilial.FieldByName('totnota').AsString;
-            DMVirtual.CDS_V_NFeDES_COMPROV.AsString:=IBQ_ConsultaFilial.FieldByName('nomecomprovante').AsString;
+            DMVirtual.CDS_V_NFeCOD_COMPROV.AsString:=Trim(IBQ_ConsultaFilial.FieldByName('codcomprovante').AsString);
+            DMVirtual.CDS_V_NFeNUM_NOTA.AsString:=Trim(IBQ_ConsultaFilial.FieldByName('numero').AsString);
+            DMVirtual.CDS_V_NFeDES_SERIE.AsString:=Trim(IBQ_ConsultaFilial.FieldByName('serie').AsString);
+            DMVirtual.CDS_V_NFeDTA_NOTA.AsString:=Trim(IBQ_ConsultaFilial.FieldByName('datadocumento').AsString);
+            DMVirtual.CDS_V_NFeDTA_ENTRADA.AsString:=Trim(IBQ_ConsultaFilial.FieldByName('dataentrada').AsString);
+            DMVirtual.CDS_V_NFeTOT_QTDS.AsString:=Trim(IBQ_ConsultaFilial.FieldByName('totqtd').AsString);
+            DMVirtual.CDS_V_NFeTOT_ITENS.AsString:=Trim(IBQ_ConsultaFilial.FieldByName('totitens').AsString);
+            DMVirtual.CDS_V_NFeVLR_NOTA.AsString:=Trim(IBQ_ConsultaFilial.FieldByName('totnota').AsString);
+            DMVirtual.CDS_V_NFeDES_COMPROV.AsString:=Trim(IBQ_ConsultaFilial.FieldByName('nomecomprovante').AsString);
             Inc(iOrdem);
             DMVirtual.CDS_V_NFeORDEM.AsInteger:=iOrdem;
             DMVirtual.CDS_V_NFe.Post;
+
+            // Grava Parcelas - INICIO =========================================
+            If Ckbx_ConsultaNFeApresParcela.Checked Then
+            Begin
+              If IBQ_ConsultaLoja.Locate('CODFORNECEDOR; CODCOMPROVANTE; NUMERO',VarArrayOf(
+                                         [FormatFloat('000000',IBQ_ConsultaFilial.FieldByName('codfornecedor').AsInteger),
+                                          Trim(IBQ_ConsultaFilial.FieldByName('codcomprovante').AsString),
+                                          Trim(IBQ_ConsultaFilial.FieldByName('numero').AsString)]),[]) Then
+              Begin
+                If IBQ_ConsultaLoja.FieldByName('totnota').AsCurrency<>IBQ_ConsultaFilial.FieldByName('totnota').AsCurrency Then
+                Begin
+                  While Not IBQ_ConsultaLoja.Eof do
+                  Begin
+                    DMVirtual.CDS_V_NFe.Insert;
+                    DMVirtual.CDS_V_NFeCOD_LOJA.AsString:=sgCodEmp;
+
+                    DMVirtual.CDS_V_NFeCOD_FORNECEDOR.AsString:=FormatFloat('000000',IBQ_ConsultaFilial.FieldByName('codfornecedor').AsInteger);
+                    DMVirtual.CDS_V_NFeNUM_NOTA.AsString:=IBQ_ConsultaFilial.FieldByName('numero').AsString;
+                    DMVirtual.CDS_V_NFeDTA_ENTRADA.AsString:=Trim(IBQ_ConsultaLoja.FieldByName('datavencimento').AsString);
+                    DMVirtual.CDS_V_NFeVLR_NOTA.AsString:=Trim(IBQ_ConsultaLoja.FieldByName('totnota').AsString);
+                    DMVirtual.CDS_V_NFeDES_COMPROV.AsString:='Prestação:'+Trim(IBQ_ConsultaLoja.FieldByName('numprestacao').AsString);
+                    Inc(iOrdem);
+                    DMVirtual.CDS_V_NFeORDEM.AsInteger:=iOrdem;
+                    DMVirtual.CDS_V_NFe.Post;
+
+                    IBQ_ConsultaLoja.Next;
+
+                    If Trim(IBQ_ConsultaFilial.FieldByName('numero').AsString)<>Trim(IBQ_ConsultaLoja.FieldByName('numero').AsString) Then
+                     Break;
+                  End; // While Not IBQ_ConsultaLoja.Eof do
+                End; // If IBQ_ConsultaLoja.FieldByName('totnota').AsCurrency<>IBQ_ConsultaFilial.FieldByName('totnota').AsCurrency Then
+              End; // If IBQ_ConsultaLoja.Locate('CODFORNECEDOR; CODCOMPROVANTE; NUMERO; NUMPRESTACAO',VarArrayOf(
+            End; // If Ckbx_ConsultaNFeApresParcela.Checked Then
+            // Grava Parcelas - FIM ============================================
 
             // Guarda Total do Comprovante =====================================
             If Ckb_ConsultaNFeParticipacao.Checked Then
@@ -9989,6 +9992,7 @@ Begin
             IBQ_ConsultaFilial.Next;
           End; // While Not IBQ_ConsultaFilial.Eof do
           IBQ_ConsultaFilial.Close;
+          IBQ_ConsultaLoja.Close;
 
           // Grava Totais por Comprovantes Por Loja ----------------------------
           If Ckb_ConsultaNFeParticipacao.Checked Then
@@ -17947,7 +17951,23 @@ Begin
       msg('Atualização de Saldos Efetuada'+cr+'com SUCESSO !!','A');
 
       If EdtFluFornCodFornecedor.Value<>0 Then
-       Bt_FluFornBuscaCaixaClick(Self);
+      Begin
+        DMBelShop.CDS_FluxoFornecedor.Close;
+        DMBelShop.SDS_FluxoFornecedor.Params.ParamByName('CodForn').Value:=
+                              FormatFloat('000000',EdtFluFornCodFornecedor.AsInteger);
+        DMBelShop.CDS_FluxoFornecedor.Open;
+
+        If Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='' Then
+        Begin
+          Screen.Cursor:=crDefault;
+          EdtFluFornFornecedor.Clear;
+          EdtFluFornCodFornecedor.Clear;
+
+          DMBelShop.CDS_FluxoFornecedor.Close;
+          msg('Sem Movimento de Caixa a Listar','A');
+          Exit;
+        End;
+      End; // If EdtFluFornCodFornecedor.Value<>0 Then
     End;
   Except
     on e : Exception do
@@ -25790,7 +25810,6 @@ begin
   igTagPermissao:=(Sender as TMenuItem).Tag;
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
-  Bt_FluFornExcluir.Enabled:=False;
   Bt_OdirRecSaldos.Visible:=False;
 
   if AnsiUpperCase(Des_Usuario)='ODIR' Then
@@ -25798,7 +25817,7 @@ begin
 
   SelecionaTabSheet(Ts_FluFornecedor);
 
-  DtEdt_FluFornDtaInicio.SetFocus;
+  EdtFluFornCodFornecedor.SetFocus;
 
 end;
 
@@ -25910,142 +25929,10 @@ begin
   If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0')Then
   Begin
     EdtFluFornCodFornecedor.Text:=FrmPesquisaIB.EdtCodigo.Text;
-    EdtFluFornFornecedor.Text:=FrmPesquisaIB.EdtDescricao.Text;
-    Bt_FluFornBuscaCaixa.SetFocus;
+    EdtFluFornCodFornecedorExit(Self);
   End; // If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0')Then
 
   FreeAndNil(FrmPesquisaIB);
-end;
-
-procedure TFrmBelShop.Bt_FluFornBuscaCaixaClick(Sender: TObject);
-begin
-  Dbg_FluFornCaixa.SetFocus;
-
-  Try
-    StrToDate(DtEdt_FluFornDtaInicio.Text);
-  Except
-    msg('Data Inicial do Período Inválida !!','A');
-    DtEdt_FluFornDtaInicio.SetFocus;
-    Exit;
-  End;
-
-  Try
-    StrToDate(DtEdt_FluFornDtaFim.Text);
-  Except
-    msg('Data Final do Período Inválida !!','A');
-    DtEdt_FluFornDtaFim.SetFocus;
-    Exit;
-  End;
-
-  If DtEdt_FluFornDtaFim.Date<DtEdt_FluFornDtaInicio.Date Then
-  Begin
-    msg('Período Inválido !!','A');
-    DtEdt_FluFornDtaInicio.SetFocus;
-    Exit;
-  End;
-
-  If EdtFluFornCodFornecedor.Value=0 Then
-  Begin
-    msg('Favor Informar o Fornecedore !!','A');
-    EdtFluFornCodFornecedor.SetFocus;
-    Exit;
-  End;
-
-  DMBelShop.CDS_FluxoFornecedor.Close;
-  DMBelShop.SDS_FluxoFornecedor.Params.ParamByName('CodForn').Value:=
-                        FormatFloat('000000',EdtFluFornCodFornecedor.AsInteger);
-  DMBelShop.SDS_FluxoFornecedor.Params.ParamByName('DtaInicio').Value:=
-                                   f_Troca('/','.',DtEdt_FluFornDtaInicio.Text);
-  DMBelShop.SDS_FluxoFornecedor.Params.ParamByName('DtaFim').Value:=
-                                       f_Troca('/','.',DtEdt_FluFornDtaFim.Text);
-  DMBelShop.CDS_FluxoFornecedor.Open;
-
-  If Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='' Then
-  Begin
-    msg('Sem Movimento de Caixa a Listar','A');
-    Exit;
-  End;
-
-end;
-
-procedure TFrmBelShop.Bt_FluFornExcluirClick(Sender: TObject);
-Var
-  MySql: String;
-  sDt: String;
-begin
-  Dbg_FluFornCaixa.SetFocus;
-
-  If msg('Deseja Realmente Excluir'+cr+'o Período Selecionado ?','C')=2 Then
-   Exit;
-
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMBelShop.SQLC.StartTransaction(TD);
-
-  Try
-    Screen.Cursor:=crAppStart;
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    // Exclui Movto do Caixa ----------------------------------------
-    MySql:=' Delete from FL_CAIXA_FORNECEDORES ff'+
-           ' Where ff.COD_FORNECEDOR='+QuotedStr(
-           FormatFloat('000000',EdtFluFornCodFornecedor.Value))+
-           ' And ff.dta_caixa between '+
-           QuotedStr(f_Troca('/','.',DtEdt_FluFornDtaInicio.Text))+
-           ' and '+QuotedStr(f_Troca('/','.',DtEdt_FluFornDtaFim.Text));
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-    // Acerta Saldo Incial deo Movto de Caixa -----------------------
-    MySql:=' Select min(ff.dta_caixa) Dta_Inicio'+
-           ' From FL_CAIXA_FORNECEDORES ff'+
-           ' Where ff.COD_FORNECEDOR='+QuotedStr(
-           FormatFloat('000000',EdtFluFornCodFornecedor.Value));
-    DMBelShop.CDS_Busca.Close;
-    DMBelShop.SDS_Busca.CommandText:=MySql;
-    DMBelShop.CDS_Busca.Open;
-
-    sDt:=DMBelShop.CDS_Busca.FieldByName('Dta_Inicio').AsString;
-    DMBelShop.CDS_Busca.Close;
-
-    If Trim(sDt)<>'' Then
-    Begin
-      MySql:=' Update FL_CAIXA_FORNECEDORES ff'+
-             ' Set Vlr_Saldo=0'+
-             ' Where Num_Seq=0'+
-             ' And ff.COD_FORNECEDOR='+QuotedStr(
-             FormatFloat('000000', EdtFluFornCodFornecedor.Value))+
-             ' And ff.dta_caixa='+QuotedStr(f_Troca('/','.', sDt));
-      DMBelShop.SQLC.Execute(MySql,nil,nil);
-    End; // If Trim()<>sDt Then
-
-    // Fecha Transacao =========================================================
-    DMBelShop.SQLC.Commit(TD);
-
-    // Calcula Fluxo ------------------------------------------------
-    DMBelShop.CDS_FluxoFornecedor.Close;
-    If Trim(sDt)<>'' Then
-     CalculaFluxoFornecedores(sDt, FormatFloat('000000', EdtFluFornCodFornecedor.Value));
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-    Screen.Cursor:=crDefault;
-
-  Except
-    on e : Exception do
-    Begin
-      DMBelShop.SQLC.Rollback(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-      Screen.Cursor:=crDefault;
-
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-      exit;
-    End;
-  End;
-
 end;
 
 procedure TFrmBelShop.Bt_GeraOCBuscaDoctoClick(Sender: TObject);
@@ -26808,16 +26695,27 @@ begin
 
     IBQ_Matriz.Close;
 
-    Bt_FluFornBuscaCaixa.SetFocus;
+    // Busca Conta Corrente ====================================================
+    Dbg_FluFornCaixa.SetFocus;
 
-   Screen.Cursor:=crDefault;
+    DMBelShop.CDS_FluxoFornecedor.Close;
+    DMBelShop.SDS_FluxoFornecedor.Params.ParamByName('CodForn').Value:=
+                          FormatFloat('000000',EdtFluFornCodFornecedor.AsInteger);
+    DMBelShop.CDS_FluxoFornecedor.Open;
+
+    If Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='' Then
+    Begin
+      Screen.Cursor:=crDefault;
+      EdtFluFornFornecedor.Clear;
+      EdtFluFornCodFornecedor.Clear;
+
+      DMBelShop.CDS_FluxoFornecedor.Close;
+      msg('Sem Movimento de Caixa a Listar','A');
+      Exit;
+    End;
+
+    Screen.Cursor:=crDefault;
   End;
-end;
-
-procedure TFrmBelShop.DtEdt_FluFornDtaInicioEditing(Sender: TObject; var CanEdit: Boolean);
-begin
-  DMBelShop.CDS_FluxoFornecedor.Close;
-
 end;
 
 procedure TFrmBelShop.EdtFluFornCodFornecedorChange(Sender: TObject);
@@ -36528,6 +36426,12 @@ begin
     Dbg_ConsultaNFeNotasLojas.Canvas.FillRect(Rect);
     Dbg_ConsultaNFeNotasLojas.DefaultDrawDataCell(Rect,Column.Field,state);
 
+    DMVirtual.CDS_V_NFeCOD_LOJA.Alignment:=taCenter;
+    DMVirtual.CDS_V_NFeCOD_COMPROV.Alignment:=taRightJustify;
+    DMVirtual.CDS_V_NFeDES_SERIE.Alignment:=taRightJustify;
+    DMVirtual.CDS_V_NFeDTA_NOTA.Alignment:=taCenter;
+    DMVirtual.CDS_V_NFeDTA_ENTRADA.Alignment:=taCenter;
+
   End; // if not (gdSelected in State) Then
 
 end;
@@ -45673,6 +45577,33 @@ begin
 
   FreeAndNil(FrmCentralTrocas);
 
+end;
+
+procedure TFrmBelShop.Dbg_FluFornCaixaKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if ((Shift = [ssCtrl]) and (key = vk_delete)) THEN
+   Abort;
+
+end;
+
+procedure TFrmBelShop.Dbg_FluFornCaixaEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_FluFornCaixaEnter; // Nome do DBGRID
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmBelShop.Ckbx_ConsultaNFeApresParcelaClick(Sender: TObject);
+begin
+  AcertaCkb_Style(Ckbx_ConsultaNFeApresParcela);
+
+end;
+
+procedure TFrmBelShop.Ckbx_ConsultaNFeApresParcelaKeyUp(Sender: TObject;var Key: Word; Shift: TShiftState);
+begin
+   Ckbx_ConsultaNFeApresParcelaClick(Self);
 end;
 
 End.

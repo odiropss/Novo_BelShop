@@ -884,6 +884,7 @@ Var
 begin
   // Fechar Programa do Agendamento Anterior ===================================
 //  ApagaUltProcesso('PCurvasDemandas.exe');
+//odir teste de fonte
   //============================================================================
 
   // Windows: Nome do Usuario e do Computador =================================

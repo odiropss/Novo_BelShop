@@ -696,6 +696,7 @@ Var
   MySql: String;
   b: Boolean;
 
+  MySqlEst, // Insert Estoque no CD
   MySqlPedI, MySqlIteI, // Inserts Pedido e Itens
   MySqlPedV, MySqlIteV // Values Pedido e Itens
   : String;
@@ -718,7 +719,7 @@ Var
 
   cldescontaicmspro_sn,
   prUnidadeEstoque, prCodIpiVenda, prIss, prCodPisCofins_Venda, prCodAgrupaCarga, // Dados Produto
-  lpPrecoVenda, // Dados Lista de Preços
+  lpPrecoCompra, // Dados Lista de Preços
 
   ipAliquota, ipIpiPercOuValor, ipOperacaoCreDeb, ipSomaFreteBaseIpi,
   ipSomaDespesaBaseIpi, ipSitTrib_Ipi_Saida,   // Dados IPI
@@ -752,6 +753,66 @@ Var
   cTotICMS_Bruto, // Igual a TOTICM
   cTotICM // Soma dos Valores de ICM
   :Currency;
+
+  //============================================================================
+  // Gera Controle de Estoque no CD ============================================
+  //============================================================================
+  Procedure GeraEstoqueCD;
+  Begin
+    MySqlEst:=' INSERT INTO ESTOQUE (CODFILIAL, CODPRODUTO, CORREDOR, PRATELEIRA,'+
+              ' GAVETA, SALDOATUAL, PEDIDOPENDENTE, COMPRAPENDENTE, DATACOMPRA,'+
+              ' DATAVENDA, CUSMEDVALOR, CUSMEDITENS, CUSTOMEDIO, LASTPRECOCOMPRA,'+
+              ' ESTOQUEIDEAL, ROTACAO, ROTACAOCONTA, ROTACAOATUAL, ROTACAO1, ROTACAO2,'+
+              ' ROTACAO3, ROTACAO4, ROTACAO5, ROTACAO6, DM_DEMANDAREAL, DM_DEMANDA,'+
+              ' DM_FALTA, DM_DIASDEESTOQUE, LASTCUSTOMEDIO, ZONAENDERECO, PECASSALDOATUAL,'+
+              ' PECASPEDIDOPENDENTE, PECASCOMPRAPENDENTE, LASTPRECOCOMPRA_SEMIMP,'+
+              ' DATAALTERACADASTRO, DATAALTERAESTOQUE, DATAALTERAESTOQUE_PED, ESTOQUEMAXIMO)'+
+
+              ' VALUES('+
+              QuotedStr(sCodLoja)+', '+ // CODFILIAL
+              QuotedStr(DMCentralTrocas.CDS_ReposicaoTransfCOD_PRODUTO.AsString)+', '+ // CODPRODUTO
+              QuotedStr('000')+', '+ // CORREDOR
+              QuotedStr('000')+', '+ // PRATELEIRA
+              QuotedStr('0000')+', '+ // GAVETA
+              '0.0000, '+ // SALDOATUAL
+              '0.0000, '+ // PEDIDOPENDENTE
+              '0.0000, '+ // COMPRAPENDENTE
+              'current_date, '+ // DATACOMPRA
+              'current_date, '+ // DATAVENDA
+              '0.00, '+ // CUSMEDVALOR
+              '0.00, '+ // CUSMEDITENS
+              '0.0000, '+ // CUSTOMEDIO
+              'null, '+ // LASTPRECOCOMPRA
+              '3.0000, '+ // ESTOQUEIDEAL
+              '30, '+ // ROTACAO
+              '1, '+ // ROTACAOCONTA
+              '0.0000, '+ // ROTACAOATUAL
+              '0.0000, '+ // ROTACAO1
+              '0.0000, '+ // ROTACAO2
+              '0.0000, '+ // ROTACAO3
+              '0.0000, '+ // ROTACAO4
+              '0.0000, '+ // ROTACAO5
+              '0.0000, '+ // ROTACAO6
+              '0.0000, '+ // DM_DEMANDAREAL
+              '1.0000, '+ // DM_DEMANDA
+              '1.0000, '+ // DM_FALTA
+              '0, '+ // DM_DIASDEESTOQUE
+              '0.0000, '+ // LASTCUSTOMEDIO
+              '0, '+ // ZONAENDERECO
+              '0, '+ // PECASSALDOATUAL
+              '0, '+ // PECASPEDIDOPENDENTE
+              '0, '+ // PECASCOMPRAPENDENTE
+              'null, '+ // LASTPRECOCOMPRA_SEMIMP
+              'current_timestamp, '+ // DATAALTERACADASTRO
+              'null, '+ // DATAALTERAESTOQUE
+              'null, '+ // DATAALTERAESTOQUE_PED
+              '999999.0000 '+ // ESTOQUEMAXIMO
+              ')';
+    IBQ_MPMS.Close;
+    IBQ_MPMS.SQL.Clear;
+    IBQ_MPMS.SQL.Add(MySqlEst);
+    IBQ_MPMS.ExecSQL;
+  End;
 
   //============================================================================
   // Gera Pedido - INICIO ======================================================
@@ -880,13 +941,6 @@ Var
     // Guarda Numero do Pedido =================================================
     If iSeqItem=EdtReposLojasQtdItensPed.AsInteger Then
     Begin
-//      // Numero do Próximo Pedido ==============================================
-//      If Not BuscaNumeradoLoja('01', 'S', '99', sNumPedidoSid) Then
-//      Begin
-//        msg(sgMensagem,'A');
-//        Exit;
-//      End;
-
       // Inicializa Variaveis para o Próximo Pedido ============================
       cTotBruto:=0; //	Total das Quantidade Atendidas * Preco
       cTotIPI:=0; //	Soma dos Valores de IPI
@@ -954,7 +1008,7 @@ Begin
     sCodLoja:=DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString;
 
     sCodComprv:='020';
-    If Pos(sCodLoja, '01')<>0 Then
+    If Pos(sCodLoja, '08')<>0 Then
      sCodComprv:='009';
 
     // Monta Sqls para Insert Pedido ===========================================
@@ -1154,6 +1208,23 @@ Begin
       If (DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsInteger>0) and
          (DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsString='000000') Then
       Begin
+        // Verifica se Existe Controle de Estoque no CD =============
+        MySql:=' SELECT e.codproduto'+
+               ' FROM ESTOQUE e'+
+               ' WHERE e.codproduto='+QuotedStr(DMCentralTrocas.CDS_ReposicaoTransfCOD_PRODUTO.AsString)+
+               ' AND e.codfilial='+QuotedStr(sCodLoja);
+        IBQ_MPMS.Close;
+        IBQ_MPMS.SQL.Clear;
+        IBQ_MPMS.SQL.Add(MySql);
+        IBQ_MPMS.Open;
+
+        If Trim(IBQ_MPMS.FieldByName('CodProduto').AsString)='' Then
+        Begin
+          // Gera Controle de Estoque no CD -------------------------
+          GeraEstoqueCD;
+        End;
+        IBQ_MPMS.Close;
+
         // Gera Pedido SIDICOM ======================================
         If iSeqItem=EdtReposLojasQtdItensPed.AsInteger Then
         Begin
@@ -1210,7 +1281,7 @@ Begin
         IBQ_MPMS.SQL.Add(MySql);
         IBQ_MPMS.Open;
 
-        lpPrecoVenda:=IBQ_MPMS.FieldByName('PrecoCompra').AsString;
+        lpPrecoCompra:=IBQ_MPMS.FieldByName('PrecoCompra').AsString;
 
         IBQ_MPMS.Close;
 
@@ -1340,7 +1411,7 @@ Begin
                    QuotedStr(DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsString)+', '+ // QUANTPEDIDA
                    QuotedStr(DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsString)+', '+ // QUANTATENDIDA
                    QuotedStr('0')+', '+ // QUANTPENDENTE
-                   QuotedStr(lpPrecoVenda)+', '+ // PRECO
+                   QuotedStr(lpPrecoCompra)+', '+ // PRECO
                    QuotedStr('0006')+', '+ // CODLISTA
                    QuotedStr('0')+', '+ // DESCONTO1
                    QuotedStr('0')+', '+ // DESCONTO2
@@ -1349,7 +1420,7 @@ Begin
                    QuotedStr('0')+', '+ // DESCONTOCALC
                    QuotedStr('0')+', '; // VALDESCITEM
 
-        cVlrBruto:=DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsCurrency*StrToCurr(lpPrecoVenda);
+        cVlrBruto:=DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsCurrency*StrToCurr(lpPrecoCompra);
         cTotBruto:=cTotBruto+cVlrBruto;
 
         MySqlIteV:=
@@ -1633,12 +1704,12 @@ Begin
                    QuotedStr('0')+', '+ // COMISSAO3PERC
                    QuotedStr(sgDtaI)+', '+ // DATAENTREGA
                    QuotedStr('')+', '+ // ORDEMCOMPRA
-                   QuotedStr(lpPrecoVenda)+', '+ // PRECOORIGEM
+                   QuotedStr(lpPrecoCompra)+', '+ // PRECOORIGEM
                    QuotedStr(sCodFiscal)+', '+ // CODFISCALPRO
                    QuotedStr(IntToStr(iSeqItem))+', '+ // SEQUENCIADOPRODUTO;
                    QuotedStr(esCustoMedio)+', '+ // MOMENTOCUSTOMEDIO
-                   QuotedStr(lpPrecoVenda)+', '+ // MOMENTOPRECOBRUTO
-                   QuotedStr(lpPrecoVenda)+', '+ // MOMENTOPRECOLIQUIDO
+                   QuotedStr(lpPrecoCompra)+', '+ // MOMENTOPRECOBRUTO
+                   QuotedStr(lpPrecoCompra)+', '+ // MOMENTOPRECOLIQUIDO
                    QuotedStr('N')+', '+ // FOIPESADOSN
                    QuotedStr('0')+', '+ // VALPECAS
                    QuotedStr('0')+', '+ // PRECOMAXCONSUMIDOR

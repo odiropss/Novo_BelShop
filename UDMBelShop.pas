@@ -1167,8 +1167,6 @@ type
     procedure IBQ_AComprarBeforePost(DataSet: TDataSet);
     procedure CDS_AComprarItensBeforeScroll(DataSet: TDataSet);
     procedure CDS_AComprarItensAfterScroll(DataSet: TDataSet);
-    procedure CDS_FluxoFornecedorAfterOpen(DataSet: TDataSet);
-    procedure CDS_FluxoFornecedorAfterClose(DataSet: TDataSet);
     procedure IBQ_AComprarEditaAfterPost(DataSet: TDataSet);
     procedure IBQ_AComprarEditaBeforePost(DataSet: TDataSet);
     procedure IBQ_AComprarEditaAfterScroll(DataSet: TDataSet);
@@ -3926,26 +3924,12 @@ begin
 
 end;
 
-procedure TDMBelShop.CDS_FluxoFornecedorAfterOpen(DataSet: TDataSet);
-begin
-  FrmBelShop.Bt_FluFornExcluir.Enabled:=False;
-  If Not CDS_FluxoFornecedor.IsEmpty Then
-   FrmBelShop.Bt_FluFornExcluir.Enabled:=True;
-end;
-
-procedure TDMBelShop.CDS_FluxoFornecedorAfterClose(DataSet: TDataSet);
-begin
-  FrmBelShop.Bt_FluFornExcluir.Enabled:=False;
-
-end;
-
 procedure TDMBelShop.IBQ_AComprarEditaAfterPost(DataSet: TDataSet);
 Var
   sTotal_Valor, sTotal_Itens, sTotal_Qtd: String;
   s, sCodForn, sCodItem, sCodLoja, sDoc: String;
   iSeq: Integer;
 begin
-//  iSeq:=IBQ_AComprarEditaNUM_SEQ.AsInteger;
   iSeq:=IBQ_AComprarEdita.RecNo;
 
   sDoc:=IBQ_AComprarEditaNUM_DOCUMENTO.AsString;
