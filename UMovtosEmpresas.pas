@@ -3847,51 +3847,16 @@ begin
                  ' Cast(Coalesce(sum(Coalesce(e.saldoatual*preco.precocompra,0)),0) as Numeric(12,2)) Est_Finan_Compra,'+
                  ' Cast(Coalesce(sum(Coalesce(e.saldoatual*preco.Margem,0)),0) as Numeric(12,2)) Est_Finan_Margem'+
 
-// OdirApagar - 15/06/2016
-//                 ' Cast(coalesce(sum((CASE'+
-//                 '                      WHEN COALESCE(e.pedidopendente,0)<0 THEN'+
-//                 '                        COALESCE(e.saldoatual,0)'+
-//                 '                      WHEN COALESCE(e.pedidopendente,0)>COALESCE(e.saldoatual,0) THEN'+
-//                 '                        0'+
-//                 '                      ELSE'+
-//                 '                        COALESCE(e.saldoatual,0)-COALESCE(e.pedidopendente,0)'+
-//                 '                    END)),0) as numeric(12,2)) Est_Final,'+
-//
-//                 ' Cast(Coalesce(sum(Coalesce((CASE'+
-//                 '                                WHEN COALESCE(e.pedidopendente,0)<0 THEN'+
-//                 '                                  COALESCE(e.saldoatual,0)'+
-//                 '                                WHEN COALESCE(e.pedidopendente,0)>COALESCE(e.saldoatual,0) THEN'+
-//                 '                                  0'+
-//                 '                                ELSE'+
-//                 '                                  COALESCE(e.saldoatual,0)-COALESCE(e.pedidopendente,0)'+
-//                 '                             END)*preco.precovenda,0)),0) as Numeric(12,2)) Est_Finan_Venda,'+
-//
-//                 ' Cast(Coalesce(sum(Coalesce((CASE'+
-//                 '                                WHEN COALESCE(e.pedidopendente,0)<0 THEN'+
-//                 '                                  COALESCE(e.saldoatual,0)'+
-//                 '                                WHEN COALESCE(e.pedidopendente,0)>COALESCE(e.saldoatual,0) THEN'+
-//                 '                                  0'+
-//                 '                                ELSE'+
-//                 '                                  COALESCE(e.saldoatual,0)-COALESCE(e.pedidopendente,0)'+
-//                 '                             END)*preco.precocompra,0)),0) as Numeric(12,2)) Est_Finan_Compra,'+
-//
-//                 ' Cast(Coalesce(sum(Coalesce((CASE'+
-//                 '                                WHEN COALESCE(e.pedidopendente,0)<0 THEN'+
-//                 '                                  COALESCE(e.saldoatual,0)'+
-//                 '                                WHEN COALESCE(e.pedidopendente,0)>COALESCE(e.saldoatual,0) THEN'+
-//                 '                                  0'+
-//                 '                                ELSE'+
-//                 '                                  COALESCE(e.saldoatual,0)-COALESCE(e.pedidopendente,0)'+
-//                 '                             END)*preco.Margem,0)),0) as Numeric(12,2)) Est_Finan_Margem'+
-
-                 ' From estoqmes e,'+
+                 ' From estoqmes e, produto p,'+
                  ' (Select lpi.codproduto, lpi.precocompra, lpi.precovenda, lpi.margem'+
                  '  From listapre lpi'+
                  '  Where lpi.codlista='+QuotedStr(sCodListaPreco)+
                  ' ) Preco'+
-                 ' where e.codfilial='+QuotedStr(sCodEmpresa)+
+                 ' where e.codproduto=preco.codproduto'+
+                 ' and e.codproduto=e.codproduto'+
+                 ' and p.principalfor Not In (''000300'', ''000500'', ''000883'', ''010000'', ''001072'')'+
+                 ' and e.codfilial='+QuotedStr(sCodEmpresa)+
                  ' and e.codanomes='+QuotedStr(sAno+sMes)+
-                 ' and e.codproduto=preco.codproduto'+
                  ' Group by 1,2'+
                  ' Order by 1';
           IBQ_Consulta.Close;

@@ -9407,7 +9407,7 @@ Begin
   sgLojasNConectadas:='';
 
   // Seleciona Empresa =========================================================
-  sgOutrasEmpresa:='(99)';
+  sgOutrasEmpresa:='(50,99)';
   FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
   FrmSelectEmpProcessamento.bUsarMatriz:=False;
   FrmSelectEmpProcessamento.iNrEmpProc:=0;
@@ -9552,7 +9552,17 @@ Begin
             ' moe.datacomprovante datadocumento,'+
             ' moe.dataentrada,'+
             ' sum(mpe.quant) totqtd,'+
-            ' count(mpe.codproduto) totitens,'+
+
+            ' sum(CASE'+
+            '       WHEN mpe.quant<1 THEN'+
+            '         -1'+
+            '       ELSE'+
+            '         1'+
+            '     END'+
+            ' ) totitens,'+
+//OODIRAPAGAR - 04/08/2016
+//            ' count(mpe.codproduto) totitens,'+
+
             ' CASE'+
             '   WHEN SUM(COALESCE(mpe.valtotal,0))<>0 THEN'+
             '     SUM(COALESCE(mpe.valtotal,0))'+
@@ -9623,7 +9633,17 @@ Begin
   MySqlSai:=' SELECT mos.codcomprovante, mos.numero, mos.serie,'+
             ' mos.datacomprovante datadocumento, mos.datadocumento dataentrada,'+
             ' SUM(mps.quantatendida) totqtd,'+
-            ' COUNT(mps.codproduto) totitens,'+
+
+            ' sum(CASE'+
+            '       WHEN mps.quantatendida<1 THEN'+
+            '         -1'+
+            '       ELSE'+
+            '         1'+
+            '     END'+
+            ' ) totitens,'+
+//OODIRAPAGAR - 04/08/2016
+//          ' COUNT(mps.codproduto) totitens,'+
+
             ' SUM(mps.valtotal) totnota,'+
             ' cps.nomecomprovante,'+
             ' CASE'+
