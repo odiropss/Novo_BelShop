@@ -1103,8 +1103,6 @@ procedure TFrmGrafico.FormCreate(Sender: TObject);
 begin
   sgParametro:=Trim(ParamStr(1));
 
-  sgParametro:='Comercial';
-
   // Não Permite Movimentar o Formulário =======================================
   DeleteMenu(GetSystemMenu(Handle, False), SC_MOVE, MF_BYCOMMAND);
 end;

@@ -40,9 +40,6 @@ var
   // Cria Ponteiro de transacão
   TD: TTransactionDesc;
 
-
-  bgExclidoMPMS: Boolean;
-
   IBQ_TR_Filial,
   IBQ_MPMS: TIBQuery;
 

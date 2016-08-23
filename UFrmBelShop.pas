@@ -74,7 +74,6 @@ type
     Ts_UsuarioManut: TTabSheet;
     Ts_OrdemCompra: TTabSheet;
     PopM_Auditoria: TPopupMenu;
-    Ts_FluFornecedor: TTabSheet;
     N4: TMenuItem;
     SubMenuComprasContaCorreteForn: TMenuItem;
     SubMenuComprasGeraOrdemdeCompra: TMenuItem;
@@ -210,7 +209,7 @@ type
     Bt_FiltroBuscaComprov: TJvXPButton;
     Dbg_FiltroComprov: TDBGridJul;
     Panel81: TPanel;
-    Bt_EstFisFInanFechar: TJvXPButton;
+    Bt_EstFisFinanFechar: TJvXPButton;
     Pan_EstFisFinanGiroTransf: TPanel;
     Label87: TLabel;
     Ckb_EstFisFinanGiroTransf: TJvXPCheckbox;
@@ -422,11 +421,6 @@ type
     Bt_CurvaABCEndFechar: TJvXPButton;
     Bt_CurvaABCEndCalculoCurvaABC: TJvXPButton;
     Ts_CurvaABCMixProd: TTabSheet;
-    Gb_FluFornCaixa: TGroupBox;
-    Dbg_FluFornCaixa: TDBGrid;
-    Panel38: TPanel;
-    Bt_FluFornFechar: TJvXPButton;
-    Bt_FluFornAtualizar: TJvXPButton;
     N13: TMenuItem;
     PC_FinanMargemLucro: TPageControl;
     Ts_FinanMLFiltros: TTabSheet;
@@ -1204,7 +1198,6 @@ type
     Bt_AudCompVendSalvaClipboard: TJvXPButton;
     Bt_AudCompVendSalvaCSV: TJvXPButton;
     SubMenuFinanVerificaExtratos: TMenuItem;
-    Bt_OdirRecSaldos: TButton;
     SubMenuFinanExportImportArquivos: TMenuItem;
     SubMenuFinanExpImpArquivosProSoft1: TMenuItem;
     N22: TMenuItem;
@@ -1311,7 +1304,6 @@ type
     PopM_GeraOCVerTransito: TMenuItem;
     PopM_GeraOCOCsOrigem: TMenuItem;
     Pan_GeraOCLojaUnica: TPanel;
-    Bt_FluFornSalvaExcel: TJvXPButton;
     PopM_GeraOCNecessidadedeCompra: TMenuItem;
     PopM_GeraOCVoltar2: TMenuItem;
     N35: TMenuItem;
@@ -1360,10 +1352,6 @@ type
     MenuEstoques: TMenuItem;
     MenuEstoquesSimuladorEstoques: TMenuItem;
     SubMenuCentroDistAnaliseReposicoes: TMenuItem;
-    Gb_FluFornFornecedor: TGroupBox;
-    Bt_FluFornBuscaFornecdor: TJvXPButton;
-    EdtFluFornFornecedor: TEdit;
-    EdtFluFornCodFornecedor: TCurrencyEdit;
     Ckbx_ConsultaNFeApresParcela: TCheckBox;
 
     // Odir ====================================================================
@@ -1499,10 +1487,6 @@ type
 
     // NOTAS FISCAIS DE ENTRADA ////////////////////////////////////////////////
     Function  ApresentaNFe: Boolean;
-    ////////////////////////////////////////////////////////////////////////////
-
-    // FLUXO DE CAIXA DE FORNECEDORES //////////////////////////////////////////
-    Procedure CalculaFluxoFornecedores(sDt: String; sCodForn: String =''; bEncerramento: Boolean =True);
     ////////////////////////////////////////////////////////////////////////////
 
     // PLANILHA FINANCEIRA /////////////////////////////////////////////////////
@@ -1695,8 +1679,6 @@ type
     procedure Ts_OCBuscaProdutosEnter(Sender: TObject);
     procedure Ts_OCGeraOrdemCompraExit(Sender: TObject);
     procedure SubMenuComprasContaCorreteFornClick(Sender: TObject);
-    procedure Bt_FluFornAtualizarClick(Sender: TObject);
-    procedure Bt_FluFornBuscaFornecdorClick(Sender: TObject);
     procedure Bt_GeraOCBuscaDoctoClick(Sender: TObject);
     procedure Bt_OCBuscaListaPrecoClick(Sender: TObject);
     procedure Bt_FiltroBuscaGrupoSTClick(Sender: TObject);
@@ -1706,10 +1688,6 @@ type
     procedure Bt_FiltroBuscaSubGrupoClick(Sender: TObject);
     procedure Bt_OCBuscaAplicacaoClick(Sender: TObject);
     procedure Bt_OCBuscaFamiliaPrecosClick(Sender: TObject);
-    procedure Dbg_FluFornCaixaDrawColumnCell(Sender: TObject;
-      const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
-    procedure EdtFluFornCodFornecedorExit(Sender: TObject);
-    procedure EdtFluFornCodFornecedorChange(Sender: TObject);
     procedure Dbg_GeraOCEditaGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure PC_GeraOCEditaApresentacaoChange(Sender: TObject);
     procedure Bt_GeraOCEditaVoltarClick(Sender: TObject);
@@ -2250,7 +2228,6 @@ type
     procedure PC_ConsultaMovtoComprChange(Sender: TObject);
     procedure PC_AudCompVendChange(Sender: TObject);
     procedure SubMenuFinanVerificaExtratosClick(Sender: TObject);
-    procedure Bt_OdirRecSaldosClick(Sender: TObject);
     procedure SubMenuFinanExpImpArquivosProSoft1Click(Sender: TObject);
     procedure PopM_PlanFinanceiraEXCELClick(Sender: TObject);
     procedure SubMenuProtUsuariosPermAcessoSIDICOMClick(Sender: TObject);
@@ -2282,7 +2259,6 @@ type
     procedure PopM_GeraOCPercelDescMIXClick(Sender: TObject);
     procedure PopM_GeraOCVerTransitoClick(Sender: TObject);
     procedure PopM_GeraOCOCsOrigemClick(Sender: TObject);
-    procedure Bt_FluFornSalvaExcelClick(Sender: TObject);
     procedure Bt_ConEmpresasUsuWindowsClick(Sender: TObject);
     procedure SubMenuMenuGerenciaContasPagarClick(Sender: TObject);
     procedure SubMenuMenuGerenciaContasReceberClick(Sender: TObject);
@@ -2304,9 +2280,6 @@ type
       var Key: Word; Shift: TShiftState);
     procedure MenuEstoquesSimuladorEstoquesClick(Sender: TObject);
     procedure SubMenuCentroDistAnaliseReposicoesClick(Sender: TObject);
-    procedure Dbg_FluFornCaixaKeyUp(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure Dbg_FluFornCaixaEnter(Sender: TObject);
     procedure Ckbx_ConsultaNFeApresParcelaClick(Sender: TObject);
     procedure Ckbx_ConsultaNFeApresParcelaKeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
@@ -2371,7 +2344,8 @@ var
   sgOutrasEmpresa,       // Usar (...) - Incluir Outras Empresas Separadas por <,> - '(99, 50)'
   sgEmpresaNao: String;  // Usar (...) - Não Apresenta Empresas Separadas por <,>  - '(02, 09)'
 
-  bgConexaoLocal: Boolean; // Se Conexão com o Servidor do Banco MPMS é Local - Verifica a Existencia do Arquivo "ConexaoExterna.ini"
+  bgOnActivate, // Se Ja Executou o Evento do Form OnActivate  
+  bgConexaoLocal, // Se Conexão com o Servidor do Banco MPMS é Local - Verifica a Existencia do Arquivo "ConexaoExterna.ini"
   bgAuditoria, bgCor, bgSiga,
   bgProcessar: Boolean;
 
@@ -2507,7 +2481,8 @@ uses DK_Procs1, UPermissao, UDMBelShop,
      UDMLojaUnica, UFrmConciliacaoCaixa,
      UDMCentralTrocas, UFrmCentralTrocas,
      UFrmEstoques, UEntrada, UDMSidicom,
-     UFrmFaltasCDLojas, UFrmControleKits, UFrmControleEstoques;
+     UFrmFaltasCDLojas, UFrmControleKits, UFrmControleEstoques,
+     UFrmFluxFornecedor;
 
 {$R *.dfm}
 {$R C:\Projetos\BelShop\Botoes\Botoes.res }
@@ -6815,7 +6790,7 @@ begin
 
         sgDesListaPreco:='';
 
-        // Busca Lista de Precos =====================================================
+        // Busca Lista de Precos ===============================================
         MySql:=' Select lp.nomelista'+
                ' from lista lp'+
                ' where lp.codlista='+QuotedStr(sgCodListaPreco);
@@ -8815,7 +8790,7 @@ Begin
                 MySql:=MySql+' Where Coalesce(p.situacaopro,0)=0';
 
                If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then
-                MySql:=MySql+' Where Coalesce(p.situacaopro,0)=3';
+                MySql:=MySql+' Where Coalesce(p.situacaopro,3)=3';
 
                If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then
                 MySql:=MySql+' Where Coalesce(p.situacaopro,0) in (0,3)';
@@ -9597,7 +9572,7 @@ Begin
              MySqlEnt:=MySqlEnt+' AND COALESCE(pe.situacaopro,0)=0';
 
             If Cbx_ConsultaNfeSituacaoProd.ItemIndex=1 Then
-             MySqlEnt:=MySqlEnt+' AND COALESCE(pe.situacaopro,0)=3';
+             MySqlEnt:=MySqlEnt+' AND COALESCE(pe.situacaopro,3)=3';
 
             If Cbx_ConsultaNfeSituacaoProd.ItemIndex=2 Then
              MySqlEnt:=MySqlEnt+' AND COALESCE(pe.situacaopro,0) in (0,3)';
@@ -9683,7 +9658,7 @@ Begin
              MySqlSai:=MySqlSai+' AND COALESCE(ps.situacaopro,0)=0';
 
             If Cbx_ConsultaNfeSituacaoProd.ItemIndex=1 Then
-             MySqlSai:=MySqlSai+' AND COALESCE(ps.situacaopro,0)=3';
+             MySqlSai:=MySqlSai+' AND COALESCE(ps.situacaopro,3)=3';
 
             If Cbx_ConsultaNfeSituacaoProd.ItemIndex=2 Then
              MySqlSai:=MySqlSai+' AND COALESCE(ps.situacaopro,0) in (0,3)';
@@ -14441,7 +14416,7 @@ Begin
 
          If Cbx_CurvaABCEndSituacaoProd.ItemIndex=1 Then
           MySql:=
-           MySql+' AND   Coalesce(pt.situacaopro,0)=3';
+           MySql+' AND   Coalesce(pt.situacaopro,3)=3';
 
          If Cbx_CurvaABCEndSituacaoProd.ItemIndex=2 Then
           MySql:=
@@ -14565,7 +14540,7 @@ Begin
 
          If Cbx_CurvaABCEndSituacaoProd.ItemIndex=1 Then
           MySql:=
-           MySql+' AND   Coalesce(pr.situacaopro,0)=3';
+           MySql+' AND   Coalesce(pr.situacaopro,3)=3';
 
          If Cbx_CurvaABCEndSituacaoProd.ItemIndex=2 Then
           MySql:=
@@ -14781,7 +14756,7 @@ Begin
 
                If Cbx_CurvaABCEndSituacaoProd.ItemIndex=1 Then
                 MySqlClausula1:=
-                 MySqlClausula1+' AND Coalesce(pr.situacaopro,0)=3';
+                 MySqlClausula1+' AND Coalesce(pr.situacaopro,3)=3';
 
                If Cbx_CurvaABCEndSituacaoProd.ItemIndex=2 Then
                 MySqlClausula1:=
@@ -17740,274 +17715,6 @@ Begin
   End;
 
 End; // Conecta a Empresa Matriz >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-// Calcula Fluxo de Caixa de Fornecedores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmBelShop.CalculaFluxoFornecedores(sDt: String; sCodForn: String =''; bEncerramento: Boolean =True);
-Var
-  MySql:String;
-  cVlrSaldo: Currency;
-  iUltmio: Integer;
-  sCodigo: String;
-Begin
-  DMBelShop.CDS_FluxoFornecedor.Close;
-
-  OdirPanApres.Caption:='AGUARDE !! Atualizando Saldos Fluxo de Caixa de Fornecedores...';
-  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
-  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
-  OdirPanApres.Visible:=True;
-  Refresh;
-
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMBelShop.SQLC.StartTransaction(TD);
-  Try
-    Screen.Cursor:=crAppStart;
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    // Busca Fornecedores ========================================================
-    MySql:='select distinct COD_FORNECEDOR, DTA_CAIXA'+
-           ' from FL_CAIXA_FORNECEDORES'+
-           ' Where DTA_CAIXA>='+QuotedStr(f_Troca('/','.',sDt));
-
-           If sCodForn<>'' Then
-            MySql:=MySql+' And COD_FORNECEDOR='+QuotedStr(sCodForn);
-
-           MySql:=MySql+' Order by COD_FORNECEDOR';
-    DMBelShop.CDS_While.Close;
-    DMBelShop.SDS_While.CommandText:=MySql;
-    DMBelShop.CDS_While.Open;
-
-    MontaProgressBar(True, FrmBelShop);
-    pgProgBar.Properties.Max:=DMBelShop.CDS_While.RecordCount;
-    sCodigo:='0';
-
-    While Not DMBelShop.CDS_While.Eof do
-    Begin
-      Application.ProcessMessages;
-
-      pgProgBar.Position:=DMBelShop.CDS_While.RecNo;
-      Refresh;
-
-      If sCodigo<>DMBelShop.CDS_While.FieldByName('Cod_Fornecedor').AsString Then
-       cVlrSaldo:=0;
-
-      // Busca Fluxo de Caixa Fornecedores =========================================
-      MySql:='Select COD_FORNECEDOR, DES_FORNECEDOR, DTA_CAIXA, NUM_SEQ,'+
-             ' TIP_DEBCRE, VLR_CAIXA, VLR_SALDO'+
-             ' From FL_CAIXA_FORNECEDORES'+
-             ' Where DTA_CAIXA='+
-             QuotedStr(DMBelShop.CDS_While.FieldByName('Dta_Caixa').AsString)+
-             ' And COD_FORNECEDOR='+
-             QuotedStr(DMBelShop.CDS_While.FieldByName('Cod_Fornecedor').AsString)+
-             ' Order By DTA_CAIXA, NUM_SEQ';
-      DMBelShop.CDS_Pesquisa.Close;
-      DMBelShop.SDS_Pesquisa.CommandText:=MySql;
-      DMBelShop.CDS_Pesquisa.Open;
-
-      DMBelShop.CDS_Pesquisa.Last;
-      iUltmio:=DMBelShop.CDS_Pesquisa.RecNo;
-      DMBelShop.CDS_Pesquisa.First;
-
-      While Not DMBelShop.CDS_Pesquisa.Eof do
-      Begin
-        Refresh;
-
-        // Verifica Registro de Saldo Inicial ==================================
-        If DMBelShop.CDS_Pesquisa.RecNo=1 Then
-        Begin
-          If DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger<>0 Then
-           Begin
-             // Busca Saldo Final do Dia Anterior ---------------------
-             MySql:='select Max(DTA_CAIXA) DtAnterior, vlr_saldo'+
-
-                    ' from FL_CAIXA_FORNECEDORES'+
-
-                    ' Where num_seq=999999'+
-                    ' And DTA_CAIXA<'+QuotedStr(
-                     DMBelShop.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
-                    ' And COD_FORNECEDOR='+QuotedStr(
-                    DMBelShop.CDS_While.FieldByName('COD_FORNECEDOR').AsString)+
-
-                    ' group by vlr_saldo'+
-                    ' order by DtAnterior desc';
-             DMBelShop.CDS_Busca.Close;
-             DMBelShop.SDS_Busca.CommandText:=MySql;
-             DMBelShop.CDS_Busca.Open;
-
-             MySql:='Insert Into FL_CAIXA_FORNECEDORES ('+
-                    ' COD_FORNECEDOR, DES_FORNECEDOR, DTA_CAIXA, NUM_SEQ,'+
-                    ' COD_HISTORICO, VLR_SALDO)'+
-                    ' Values ('+
-                    QuotedStr(
-                    DMBelShop.CDS_Pesquisa.FieldByName('Cod_Fornecedor').AsString)+', '+
-                    QuotedStr(
-                    DMBelShop.CDS_Pesquisa.FieldByName('Des_Fornecedor').AsString)+', '+
-                    QuotedStr(
-                    DMBelShop.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+', '+
-                    QuotedStr('0')+', '+
-                    QuotedStr('0')+', ';
-
-                   If Trim(DMBelShop.CDS_Busca.FieldByName('DtAnterior').AsString)='' Then
-                    Begin
-                      MySql:=MySql+QuotedStr('0')+')';
-                      cVlrSaldo:=0;
-                    End
-                   Else // If Trim(DMBelShop.CDS_Busca.FieldByName('DtAnterior').AsString)='' Then
-                    Begin
-                      MySql:=MySql+QuotedStr(
-                      DMBelShop.CDS_Busca.FieldByName('Vlr_Saldo').AsString)+')';
-                      cVlrSaldo:=DMBelShop.CDS_Busca.FieldByName('Vlr_Saldo').AsCurrency;
-                    End;
-             DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-             DMBelShop.CDS_Busca.Close;
-           End
-          Else // If DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger<>0 Then
-           Begin
-             If DMBelShop.CDS_While.RecNo=1 Then
-              Begin
-                cVlrSaldo:=DMBelShop.CDS_Pesquisa.FieldByName('Vlr_Saldo').AsCurrency;
-              End
-             Else // If DMBelShop.CDS_While.RecNo=1 Then
-              Begin
-                // Atualiza Saldo Incial --------------------------------
-                 MySql:='Update FL_CAIXA_FORNECEDORES'+
-                        ' Set Vlr_Saldo='+QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)))+
-                        ' Where DTA_CAIXA='+QuotedStr(
-                        DMBelShop.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
-                        ' And Num_Seq='+QuotedStr(
-                        DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsString)+
-                        ' And COD_FORNECEDOR='+QuotedStr(
-                        DMBelShop.CDS_Pesquisa.FieldByName('COD_FORNECEDOR').AsString);
-                 DMBelShop.SQLC.Execute(MySql,nil,nil);
-              End; // If DMBelShop.CDS_While.RecNo=1 Then
-           End; // If DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger<>0 Then
-        End; // If DMBelShop.CDS_Pesquisa.RecNo=1 Then
-
-        // Atualiza Movtos =====================================================
-        If (DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger<>0) and
-           (DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger<>999999) Then
-        Begin
-          // Atualiza Movto --------------------------------------
-          MySql:='Update FL_CAIXA_FORNECEDORES';
-
-          If DMBelShop.CDS_Pesquisa.FieldByName('TIP_DEBCRE').AsString='C' Then
-           cVlrSaldo:=cVlrSaldo+DMBelShop.CDS_Pesquisa.FieldByName('Vlr_Caixa').AsCurrency
-          Else
-           cVlrSaldo:=cVlrSaldo-DMBelShop.CDS_Pesquisa.FieldByName('Vlr_Caixa').AsCurrency;
-
-          MySql:=MySql+' Set Vlr_Saldo='+QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)))+
-                       ' Where DTA_CAIXA='+QuotedStr(
-                       DMBelShop.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
-                       ' And Num_Seq='+QuotedStr(
-                       DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsString)+
-                       ' And COD_FORNECEDOR='+QuotedStr(
-                       DMBelShop.CDS_Pesquisa.FieldByName('COD_FORNECEDOR').AsString);
-          DMBelShop.SQLC.Execute(MySql,nil,nil);
-        End; // If (DMBelShop.CDS_Pesquisa.RecNo<>iUltmio) and (DMBelShop.CDS_Pesquisa.RecNo<>1)Then
-
-        // Verifica Registro de Saldo Final ====================================
-        If DMBelShop.CDS_Pesquisa.RecNo=iUltmio Then
-        Begin
-          If DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger<>999999 Then
-           Begin
-             // Insere Saldo Final ----------------------------------
-             MySql:='Insert Into FL_CAIXA_FORNECEDORES ('+
-                    ' COD_FORNECEDOR, DES_FORNECEDOR, DTA_CAIXA, NUM_SEQ,'+
-                    ' COD_HISTORICO, VLR_SALDO)'+
-                    ' Values ('+
-                    QuotedStr(
-                    DMBelShop.CDS_Pesquisa.FieldByName('Cod_Fornecedor').AsString)+', '+
-                    QuotedStr(
-                    DMBelShop.CDS_Pesquisa.FieldByName('Des_Fornecedor').AsString)+', '+
-                    QuotedStr(
-                    DMBelShop.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+', '+
-                    QuotedStr('999999')+', '+
-                    QuotedStr('999999')+', '+
-                    QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)))+')';
-             DMBelShop.SQLC.Execute(MySql,nil,nil);
-           End
-          Else // If DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger<>999999 Then
-           Begin
-             // Atualiza Movto --------------------------------------
-             MySql:='Update FL_CAIXA_FORNECEDORES'+
-                    ' Set Vlr_Saldo='+QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)))+
-                    ' Where DTA_CAIXA='+QuotedStr(
-                    DMBelShop.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
-                    ' And Num_Seq='+QuotedStr(
-                    DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsString)+
-                    ' And COD_FORNECEDOR='+QuotedStr(
-                    DMBelShop.CDS_Pesquisa.FieldByName('COD_FORNECEDOR').AsString);
-             DMBelShop.SQLC.Execute(MySql,nil,nil);
-           End; // If DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger<>999999 Then
-        End; // If DMBelShop.CDS_Pesquisa.RecNo=iUltmio Then
-
-        DMBelShop.CDS_Pesquisa.Next;
-      End; // While Not DMBelShop.CDS_Pesquisa.Eof do
-
-      sCodigo:=DMBelShop.CDS_While.FieldByName('Cod_Fornecedor').AsString;
-
-      DMBelShop.CDS_While.Next;
-    End; // While Not DMBelShop.CDS_While.Eof do
-    MontaProgressBar(False, FrmBelShop);
-
-    OdirPanApres.Visible:=False;
-    Refresh;
-
-    DMBelShop.CDS_Pesquisa.Close;
-
-    // Fecha Transacao =========================================================
-    DMBelShop.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-    Screen.Cursor:=crDefault;
-
-    If bEncerramento Then
-    Begin
-      msg('Atualização de Saldos Efetuada'+cr+'com SUCESSO !!','A');
-
-      If EdtFluFornCodFornecedor.Value<>0 Then
-      Begin
-        DMBelShop.CDS_FluxoFornecedor.Close;
-        DMBelShop.SDS_FluxoFornecedor.Params.ParamByName('CodForn').Value:=
-                              FormatFloat('000000',EdtFluFornCodFornecedor.AsInteger);
-        DMBelShop.CDS_FluxoFornecedor.Open;
-
-        If Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='' Then
-        Begin
-          Screen.Cursor:=crDefault;
-          EdtFluFornFornecedor.Clear;
-          EdtFluFornCodFornecedor.Clear;
-
-          DMBelShop.CDS_FluxoFornecedor.Close;
-          msg('Sem Movimento de Caixa a Listar','A');
-          Exit;
-        End;
-      End; // If EdtFluFornCodFornecedor.Value<>0 Then
-    End;
-  Except
-    on e : Exception do
-    Begin
-      MontaProgressBar(False, FrmBelShop);
-
-      DMBelShop.SQLC.Rollback(TD);
-
-      OdirPanApres.Visible:=False;
-      FechaTudo;
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-      Screen.Cursor:=crDefault;
-
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-    End;
-  End;
-
-End; // Calcula Fluxo de Caixa de Fornecedores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Monta sFornecedores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBelShop.MontaSelectFornecedores;
@@ -22140,11 +21847,12 @@ begin
 
      // Desconecta Bancos e Encerra Programa ===================================
      DMBelShop.Desconecta;
-     Action := caFree;
 
      OdirPanApres.Visible:=False;
 
      Screen.Cursor:=crDefault;
+
+     Action := caFree;
    End
   Else
    Begin
@@ -22175,9 +21883,10 @@ end;
 
 procedure TFrmBelShop.FormCreate(Sender: TObject);
 Var
-  B: TNavigateBtn;
+  b: TNavigateBtn;
   i: Integer;
 Begin
+  bgOnActivate:=False;
 
   // Coloca BitMaps em Componentes =============================================
   BitMaps(FrmBelShop);
@@ -22207,11 +21916,11 @@ Begin
   Application.OnIdle := AntiCopia;
 
   // Caption do DBNavegator ====================================================
-  For B := Low(TNavigateBtn) to High(TNavigateBtn) do
+  For b := Low(TNavigateBtn) to High(TNavigateBtn) do
   Begin
-    With TDBNewNavigator(DBNav_FInainAuditoriaManut).Buttons[B] do
+    With TDBNewNavigator(DBNav_FInainAuditoriaManut).Buttons[b] do
     Begin
-      Case Index of 
+      Case Index of
         nbFirst   : Caption := 'Primeiro';
         nbPrior   : Caption := 'Anterior';
         nbNext    : Caption := 'Próximo';
@@ -22222,19 +21931,19 @@ Begin
         nbPost    : Caption := 'Salvar';
         nbCancel  : Caption := 'Cancelar';
         nbRefresh : Caption := 'Atualizar';
-      End; // Case Index of 
+      End; // With TDBNewNavigator(DBNav_FInainAuditoriaManut).Buttons[b] do
 
       Layout := blGlyphTop;
-      Hint := Caption; 
+      Hint := Caption;
       ShowHint := True;
-    End; // With TDBNewNavigator(DBNavigator1).Buttons[B] do
-  End; // for B := Low(TNavigateBtn) to High(TNavigateBtn) do 
+    End; // With TDBNewNavigator(DBNavigator1).Buttons[b] do
+  End; // for b := Low(TNavigateBtn) to High(TNavigateBtn) do
 
   // Inicializa Variaveis ======================================================
   InicializaFormatos;
 
   bEnterTab:= True;
- 
+
   // Posiciona PageControls ====================================================
   PC_Principal.TabIndex:=0;
   PC_PrincipalChange(Self);
@@ -22299,25 +22008,17 @@ begin
   // Usado em:
   //==================================
   // Bt_ConEmpresasFecharClick
-  // Bt_KitFecharClick
   // Bt_OCFecharClick
   // Bt_ConsultaOCFecharClick
   // Bt_ConsultaNFeFecharClick
   // Bt_CurvaABCEndFecharClick
-  // Bt_EstFisFInanFecharClick
-  // Bt_FluFornFecharClick
+  // Bt_EstFisFinanFecharClick
   // Bt_FinanComprovantesFecharClick
   //==================================
 
   If (Sender as TJvXPButton).Name='Bt_FinanComprovantesFechar' Then
   Begin
     EdtFinanComprovantesLocalizar.Clear;
-  End;
-
-  If (Sender as TJvXPButton).Name='Bt_FluFornFechar' Then
-  Begin
-    EdtFluFornCodFornecedor.Clear;
-    EdtFluFornFornecedor.Clear;
   End;
 
   If (Sender as TJvXPButton).Name='Bt_OCFechar' Then
@@ -23501,7 +23202,7 @@ begin
              Try
                Cbx_EstFisFinanSituacaoProd.SetFocus;
                If Cbx_EstFisFinanSituacaoProd.ItemIndex=0      Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=0'
-               Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=3'
+               Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,3)=3'
                Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then MySql:=MySql+' And Coalesce(p.situacaopro,0) in (0,3)';
              Except
              End;
@@ -23509,7 +23210,7 @@ begin
              Try
                Cbx_ConsultaNfeSituacaoProd.SetFocus;
                If Cbx_ConsultaNfeSituacaoProd.ItemIndex=0      Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=0'
-               Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=3'
+               Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,3)=3'
                Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then MySql:=MySql+' And Coalesce(p.situacaopro,0) in (0,3)';
              Except
              End;
@@ -24216,7 +23917,7 @@ begin
            Try
              Cbx_EstFisFinanSituacaoProd.SetFocus;
              If Cbx_EstFisFinanSituacaoProd.ItemIndex=0      Then MySql:=MySql+' AND Coalesce(p.situacaopro,0)=0'
-             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' AND Coalesce(p.situacaopro,0)=3'
+             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' AND Coalesce(p.situacaopro,3)=3'
              Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then MySql:=MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
            Except
            End; // Try
@@ -24224,7 +23925,7 @@ begin
            Try
              Cbx_ConsultaNfeSituacaoProd.SetFocus;
              If Cbx_ConsultaNfeSituacaoProd.ItemIndex=0      Then MySql:=MySql+' AND Coalesce(p.situacaopro,0)=0'
-             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' AND Coalesce(p.situacaopro,0)=3'
+             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' AND Coalesce(p.situacaopro,3)=3'
              Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then MySql:=MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
            Except
            End;
@@ -25826,133 +25527,19 @@ end;
 
 procedure TFrmBelShop.SubMenuComprasContaCorreteFornClick(Sender: TObject);
 begin
-  // Executa Permissões de Botões ==============================================
+
   igTagPermissao:=(Sender as TMenuItem).Tag;
-  BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
-  Bt_OdirRecSaldos.Visible:=False;
+  BloqueioBotoes(FrmFluxoFornecedor, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
-  if AnsiUpperCase(Des_Usuario)='ODIR' Then
-   Bt_OdirRecSaldos.Visible:=True;
+  // Permissões de Visualização ================================================
+//  PermissaoVisual(FrmFluxoFornecedor.Ts_????);
 
-  SelecionaTabSheet(Ts_FluFornecedor);
+  FrmFluxoFornecedor.EdtFluFornCodFornecedor.Clear;
+  FrmFluxoFornecedor.EdtFluFornFornecedor.Clear;
+  FrmFluxoFornecedor.EdtFluFornComprovante.Clear;
 
-  EdtFluFornCodFornecedor.SetFocus;
-
-end;
-
-procedure TFrmBelShop.Bt_FluFornAtualizarClick(Sender: TObject);
-Var
-  sData: String;
-  i: Integer;
-begin
-
-  Dbg_FluFornCaixa.SetFocus;
-
-  // Solicita Data de Abertura =================================================
-  bgProcessar:=False;
-  FrmDataApropriacao.Lb_Partes.Caption:='Parte 0/2';
-  FrmDataApropriacao.Lb_Apres.Caption:='Aguarde !!'+cr+cr+'Atualizando Códigos 900';
-  FrmDataApropriacao.ShowModal;
-
-  // Fecha
-  sData:=FrmDataApropriacao.Dte_AproprDtaApropriacao.Text;
-
-  if bgProcessar Then
-  Begin
-    DMBelShop.CDS_FluxoFornecedor.Close;
-    
-    If Not DMVirtual.CDS_V_Fornecedores.IsEmpty Then
-     Begin
-       DMVirtual.CDS_V_Fornecedores.Last;
-       i:=DMVirtual.CDS_V_Fornecedores.RecNo;
-       DMVirtual.CDS_V_Fornecedores.First;
-       While Not DMVirtual.CDS_V_Fornecedores.Eof do
-       Begin
-         Refresh;
-
-         If i=DMVirtual.CDS_V_Fornecedores.RecNo Then
-          CalculaFluxoFornecedores(sData, FormatFloat('000000',DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsInteger))
-         Else
-          CalculaFluxoFornecedores(sData, FormatFloat('000000',DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsInteger), False);
-
-         DMVirtual.CDS_V_Fornecedores.Next;
-       End; // While Not DMVirtual.CDS_V_Fornecedores.Eof do
-       DMVirtual.CDS_V_Fornecedores.First;
-     End
-    Else // If Not DMVirtual.CDS_V_Fornecedores.IsEmpty Then
-     Begin
-       CalculaFluxoFornecedores(sData);
-     End; // If Not DMVirtual.CDS_V_Fornecedores.IsEmpty Then
-
-    // Fecha Seleção de Fornecedor =============================================
-    Try
-      DMVirtual.CDS_V_Fornecedores.EmptyDataSet;
-      DMVirtual.CDS_V_Fornecedores.Close;
-    Except
-    End;
-  End; // if bgProcessar Then
-
-  bgProcessar:=False;
-
-end;
-
-procedure TFrmBelShop.Bt_FluFornBuscaFornecdorClick(Sender: TObject);
-Var
-  MySql: String;
-begin
-
-  EdtFluFornCodFornecedor.Clear;
-  EdtFluFornFornecedor.Clear;
-  DMBelShop.CDS_FluxoFornecedor.Close;
-
-  // ========== EFETUA A CONEXÃO ===============================================
-  FrmPesquisaIB:=TFrmPesquisaIB.Create(Self);
-
-  FrmPesquisaIB.IBCDS_Pesquisa.DBConnection:=IBQ_Matriz.Database;
-  FrmPesquisaIB.IBCDS_Pesquisa.DBTransaction:=IBQ_Matriz.Transaction;
-
-  // ========== EXECUTA QUERY PARA PESQUISA ====================================
-  Screen.Cursor:=crAppStart;
-
-  MySql:=' select distinct f.nomefornecedor, f.codfornecedor'+
-         ' from produto p, forneced f'+
-         ' where p.principalfor=f.codfornecedor'+
-         ' and Coalesce(p.situacaopro,0) in (0,3)'+
-         ' order by f.nomefornecedor';
-  FrmPesquisaIB.IBCDS_Pesquisa.Close;
-  FrmPesquisaIB.IBCDS_Pesquisa.CommandText:=MySql;
-  FrmPesquisaIB.IBCDS_Pesquisa.Open;
-
-  Screen.Cursor:=crDefault;
-
-  // ============== Verifica Existencia de Dados ===============================
-  If Trim(FrmPesquisaIB.IBCDS_Pesquisa.FieldByName('codfornecedor').AsString)='' Then
-  Begin
-    msg('Sem Registro a Listar !!','A');
-    EdtFluFornCodFornecedor.Clear;
-    FreeAndNil(FrmPesquisaIB);
-    EdtFluFornCodFornecedor.SetFocus;
-    Exit;
-  End;
-
-  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
-  FrmPesquisaIB.Campo_pesquisa:='NomeFornecedor';
-  FrmPesquisaIB.Campo_Codigo:='CodFornecedor';
-  FrmPesquisaIB.Campo_Descricao:='NomeFornecedor';
-  FrmPesquisaIB.EdtDescricao.Clear;
-
-  // ============= ABRE FORM DE PESQUISA =======================================
-  FrmPesquisaIB.ShowModal;
-
-  // ============= RETORNO =====================================================
-  If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0')Then
-  Begin
-    EdtFluFornCodFornecedor.Text:=FrmPesquisaIB.EdtCodigo.Text;
-    EdtFluFornCodFornecedorExit(Self);
-  End; // If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0')Then
-
-  FreeAndNil(FrmPesquisaIB);
+  FrmFluxoFornecedor.ShowModal;
 end;
 
 procedure TFrmBelShop.Bt_GeraOCBuscaDoctoClick(Sender: TObject);
@@ -26207,7 +25794,7 @@ begin
            Try
              Cbx_EstFisFinanSituacaoProd.SetFocus;
              If Cbx_EstFisFinanSituacaoProd.ItemIndex=0      Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=0'
-             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=3'
+             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,3)=3'
              Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then MySql:=MySql+' And Coalesce(p.situacaopro,0) in (0,3)';
            Except
            End;
@@ -26215,7 +25802,7 @@ begin
            Try
              Cbx_ConsultaNfeSituacaoProd.SetFocus;
              If Cbx_ConsultaNfeSituacaoProd.ItemIndex=0      Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=0'
-             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,0)=3'
+             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySql:=MySql+' And Coalesce(p.situacaopro,3)=3'
              Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then MySql:=MySql+' And Coalesce(p.situacaopro,0) in (0,3)';
            Except
            End;
@@ -26306,7 +25893,7 @@ begin
            Try
              Cbx_EstFisFinanSituacaoProd.SetFocus;
              If Cbx_EstFisFinanSituacaoProd.ItemIndex=0      Then MySqlClausula1:=' Where Coalesce(p.situacaopro,0)=0'
-             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySqlClausula1:=' Where Coalesce(p.situacaopro,0)=3'
+             Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then MySqlClausula1:=' Where Coalesce(p.situacaopro,3)=3'
              Else If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then MySqlClausula1:=' Where Coalesce(p.situacaopro,0) in (0,3)';
            Except
            End; // Try
@@ -26314,7 +25901,7 @@ begin
            Try
              Cbx_ConsultaNfeSituacaoProd.SetFocus;
              If Cbx_ConsultaNfeSituacaoProd.ItemIndex=0      Then MySqlClausula1:=' Where Coalesce(p.situacaopro,0)=0'
-             Else If Cbx_ConsultaNfeSituacaoProd.ItemIndex=1 Then MySqlClausula1:=' Where Coalesce(p.situacaopro,0)=3'
+             Else If Cbx_ConsultaNfeSituacaoProd.ItemIndex=1 Then MySqlClausula1:=' Where Coalesce(p.situacaopro,3)=3'
              Else If Cbx_ConsultaNfeSituacaoProd.ItemIndex=2 Then MySqlClausula1:=' Where Coalesce(p.situacaopro,0) in (0,3)';
            Except
            End;
@@ -26661,87 +26248,6 @@ begin
   End; // If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0')Then
 
   FreeAndNil(FrmPesquisaIB);
-end;
-
-procedure TFrmBelShop.Dbg_FluFornCaixaDrawColumnCell(Sender: TObject; const Rect: TRect;
-          DataCol: Integer; Column: TColumn; State: TGridDrawState);
-begin
-  if not (gdSelected in State) Then
-  Begin
-    if DMBelShop.CDS_FluxoFornecedorNUM_SEQ.AsInteger=0 then
-     Dbg_FluFornCaixa.Canvas.Brush.Color:=clSkyBlue;
-
-    Dbg_FluFornCaixa.Canvas.FillRect(Rect);
-    Dbg_FluFornCaixa.DefaultDrawDataCell(Rect,Column.Field,state);
-  End;
-
-end;
-
-procedure TFrmBelShop.EdtFluFornCodFornecedorExit(Sender: TObject);
-Var
-  MySql: String;
-begin
-
-  EdtFluFornFornecedor.Clear;
-  DMBelShop.CDS_FluxoFornecedor.Close;
-
-  If EdtFluFornCodFornecedor.Value<>0 Then
-  Begin
-    Screen.Cursor:=crAppStart;
-
-    // Busca Fornecedores ======================================================
-    MySql:=' select First 1 f.nomefornecedor, f.codfornecedor'+
-           ' from produto p, forneced f'+
-           ' where p.principalfor=f.codfornecedor'+
-           ' and Coalesce(p.situacaopro,0) in (0,3)'+
-           ' and f.codfornecedor='+QuotedStr(
-           FormatFloat('000000',EdtFluFornCodFornecedor.AsInteger));
-    IBQ_Matriz.Close;
-    IBQ_Matriz.SQL.Clear;
-    IBQ_Matriz.SQL.Add(MySql);
-    IBQ_Matriz.Open;
-
-    If Trim(IBQ_Matriz.FieldByName('codfornecedor').AsString)='' Then
-    Begin
-      msg('Fornecedor NÃO Encontrado !!!', 'A');
-      Screen.Cursor:=crDefault;
-      EdtFluFornCodFornecedor.Clear;
-      EdtFluFornCodFornecedor.SetFocus;
-      IBQ_Matriz.Close;
-      Exit;
-    End;
-
-    EdtFluFornFornecedor.Text:=IBQ_Matriz.FieldByName('NomeFornecedor').AsString;
-
-    IBQ_Matriz.Close;
-
-    // Busca Conta Corrente ====================================================
-    Dbg_FluFornCaixa.SetFocus;
-
-    DMBelShop.CDS_FluxoFornecedor.Close;
-    DMBelShop.SDS_FluxoFornecedor.Params.ParamByName('CodForn').Value:=
-                          FormatFloat('000000',EdtFluFornCodFornecedor.AsInteger);
-    DMBelShop.CDS_FluxoFornecedor.Open;
-
-    If Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='' Then
-    Begin
-      Screen.Cursor:=crDefault;
-      EdtFluFornFornecedor.Clear;
-      EdtFluFornCodFornecedor.Clear;
-
-      DMBelShop.CDS_FluxoFornecedor.Close;
-      msg('Sem Movimento de Caixa a Listar','A');
-      Exit;
-    End;
-
-    Screen.Cursor:=crDefault;
-  End;
-end;
-
-procedure TFrmBelShop.EdtFluFornCodFornecedorChange(Sender: TObject);
-begin
-  DMBelShop.CDS_FluxoFornecedor.Close;
-  EdtFluFornFornecedor.Clear;
 end;
 
 procedure TFrmBelShop.Dbg_GeraOCEditaGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -33668,7 +33174,7 @@ begin
                 MySql:=MySql+' Where Coalesce(p.situacaopro,0)=0';
 
                If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then
-                MySql:=MySql+' Where Coalesce(p.situacaopro,0)=3';
+                MySql:=MySql+' Where Coalesce(p.situacaopro,3)=3';
 
                If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then
                 MySql:=MySql+' Where Coalesce(p.situacaopro,0) in (0,3)';
@@ -37328,7 +36834,7 @@ begin
                 MySqlSelect:=MySqlSelect+' Where Coalesce(p.situacaopro,0)=0';
 
                If Cbx_EstFisFinanSituacaoProd.ItemIndex=1 Then
-                MySqlSelect:=MySqlSelect+' Where Coalesce(p.situacaopro,0)=3';
+                MySqlSelect:=MySqlSelect+' Where Coalesce(p.situacaopro,3)=3';
 
                If Cbx_EstFisFinanSituacaoProd.ItemIndex=2 Then
                 MySqlSelect:=MySqlSelect+' Where Coalesce(p.situacaopro,0) in (0,3)';
@@ -39513,7 +39019,7 @@ begin
 //  sgOutrasEmpresa:='(50,99)'; ou '(50)';
   sgOutrasEmpresa:='';
   FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
-  FrmSelectEmpProcessamento.bUsarMatriz:=False; // Empresa 06 Checada
+  FrmSelectEmpProcessamento.bUsarMatriz:=False;
   FrmSelectEmpProcessamento.ShowModal;
 
   // Verifica se Existe Empresa a Processar ====================================
@@ -39809,7 +39315,7 @@ begin
   // sgOutrasEmpresa:='(99)';
   sgOutrasEmpresa:='';
   FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
-  FrmSelectEmpProcessamento.bUsarMatriz:=False; // Empresa 06 Checada
+  FrmSelectEmpProcessamento.bUsarMatriz:=False;
 
   FrmSelectEmpProcessamento.ShowModal;
 
@@ -41749,7 +41255,7 @@ begin
   // Seleciona Lojas ===========================================================
   sgOutrasEmpresa:='(99)';
   FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
-  FrmSelectEmpProcessamento.bUsarMatriz:=False; // Empresa 06 Checada
+  FrmSelectEmpProcessamento.bUsarMatriz:=False;
   FrmSelectEmpProcessamento.ShowModal;
 
   // Verifica se Existe Empresa a Processar ====================================
@@ -42310,15 +41816,6 @@ begin
     Exit;
   End;
 
-  try
-    DMVirtual.CDS_V_Fornecedores.CreateDataSet;
-    DMVirtual.CDS_V_Fornecedores.Open;
-  Except
-    DMVirtual.CDS_V_Fornecedores.EmptyDataSet;
-    DMVirtual.CDS_V_Fornecedores.Open;
-  End;
-  MontaSelectFornecedores;
-
   FrmFaltasCDLojas:=TFrmFaltasCDLojas.Create(Self);
 
   // Coloca Data de Hoje =======================================================
@@ -42326,10 +41823,6 @@ begin
                    DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
   FrmFaltasCDLojas.DtEdt_FaltasCDLojasDtaFim.Text   :=
                    DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
-
-  FrmFaltasCDLojas.PC_FaltasCDLojas.TabIndex:=0;
-  FrmFaltasCDLojas.Bt_FaltasCDLojasSalvaExcel.Visible:=False;
-  FrmFaltasCDLojas.Bt_FaltasCDLojasClipboard.Visible:=False;
 
   FrmFaltasCDLojas.ShowModal;
 
@@ -43333,29 +42826,40 @@ end;
 
 procedure TFrmBelShop.FormActivate(Sender: TObject);
 begin
-  Refresh;
-
-  If Application.Terminated Then
+  If Not bgOnActivate Then
   Begin
-    Exit;
-  End;
+    If Application.Terminated Then
+    Begin
+      Exit;
+    End;
 
-  If sgCodLojaUnica<>'' Then
-  Begin
-    LiberaMenu(False);
-    OdirPanApres.Caption:='AGUARDE !! Atualizando Parâmetros Enviados Pela MATRIZ ...';
-    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
-    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
-    OdirPanApres.Visible:=True;
-    Refresh;
+    If sgCodLojaUnica<>'' Then
+    Begin
+      LiberaMenu(False);
+      OdirPanApres.Caption:='AGUARDE !! Atualizando Parâmetros Enviados Pela MATRIZ ...';
+      OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+      OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
+      OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
+      OdirPanApres.Visible:=True;
+      Refresh;
 
-    CorCaptionForm.FormCaption:=CorCaptionForm.FormCaption+' - Bel_'+sgCodLojaUnica;
+      CorCaptionForm.FormCaption:=CorCaptionForm.FormCaption+' - Bel_'+sgCodLojaUnica;
 
-    // Busca Parametros de Lojas =================================================
-    If Des_Usuario='ODIR' Then
-     Begin
-       If msg('Busca Parametros ??','C')=1 Then
+      // Busca Parametros de Lojas =================================================
+      If Des_Usuario='ODIR' Then
+       Begin
+         If msg('Busca Parametros ??','C')=1 Then
+         Begin
+           If Not FrmGeraPedidosComprasLojas.LojaBuscaParametros Then
+           Begin
+             OdirPanApres.Visible:=False;
+             msg(sgMensagem,'A');
+             Application.Terminate;
+             Exit;
+           End;
+         End; // If msg('Busca Parametros ??','C')=1 Then
+       End
+      Else // If Des_Usuario='ODIR' Then
        Begin
          If Not FrmGeraPedidosComprasLojas.LojaBuscaParametros Then
          Begin
@@ -43364,23 +42868,14 @@ begin
            Application.Terminate;
            Exit;
          End;
-       End; // If msg('Busca Parametros ??','C')=1 Then
-     End
-    Else // If Des_Usuario='ODIR' Then
-     Begin
-       If Not FrmGeraPedidosComprasLojas.LojaBuscaParametros Then
-       Begin
-         OdirPanApres.Visible:=False;
-         msg(sgMensagem,'A');
-         Application.Terminate;
-         Exit;
-       End;
-     End; // If Des_Usuario='ODIR' Then
+       End; // If Des_Usuario='ODIR' Then
 
-    OdirPanApres.Visible:=False;
-    LiberaMenu(True);
-  End; // If sgCodLojaUnica<>'' Then
+      OdirPanApres.Visible:=False;
+      LiberaMenu(True);
+    End; // If sgCodLojaUnica<>'' Then
 
+    bgOnActivate:=True;
+  End; // If Not bgOnActivate Then
 end;
 
 procedure TFrmBelShop.Panel5DblClick(Sender: TObject);
@@ -44019,11 +43514,6 @@ begin
 
 end;
 
-procedure TFrmBelShop.Bt_OdirRecSaldosClick(Sender: TObject);
-begin
-  CalculaFluxoFornecedores('01.01.2005','', False);
-end;
-
 procedure TFrmBelShop.SubMenuFinanExpImpArquivosProSoft1Click(Sender: TObject);
 begin
   // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
@@ -44156,7 +43646,10 @@ begin
 //  PermissaoVisual(FrmSalao.Ts_Profissionais);
 
   sgFiltros:='';
-  
+
+  If AnsiUpperCase(Des_Login)='ODIR' Then
+   FrmEstoques.Bt_Odir.Visible:=True;
+
   FrmEstoques.ShowModal;
 
   FreeAndNil(FrmEstoques);
@@ -44858,16 +44351,6 @@ begin
   OCOrigemImportadas;
 end;
 
-procedure TFrmBelShop.Bt_FluFornSalvaExcelClick(Sender: TObject);
-begin
-  If Not DMBelShop.CDS_FluxoFornecedor.IsEmpty Then
-  Begin
-    ExportDBGridExcel(True, Dbg_FluFornCaixa, FrmBelShop);
-    Dbg_FluFornCaixa.SetFocus;
-  End;
-
-end;
-
 procedure TFrmBelShop.Bt_ConEmpresasUsuWindowsClick(Sender: TObject);
 var
  sUsu, sComp: String;
@@ -45021,7 +44504,7 @@ begin
   // Conecta MPMS ==============================================================
   If Not ConectaMPMS Then
   Begin
-    msg('Impossível Continuar...'+cr+'Banco de Dados MPMS (Administração)'+cr+cr+'Não CONECTADO !!','A');
+    msg('Impossível Continuar...'+cr+'Banco de Dados BelShop_CD (Administração)'+cr+cr+'Não CONECTADO !!','A');
     Screen.Cursor:=crDefault;
     ControleMenu(True);
     Exit;
@@ -45086,7 +44569,7 @@ begin
 
     End; // if DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
 
-    FrmBelShop.OdirPanApres.Visible:=False;
+    OdirPanApres.Visible:=False;
 
     DMBelShop.CDS_EmpProcessa.Next;
   End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
@@ -45141,7 +44624,6 @@ begin
 
   If msg('VERIFIQUE se Alguém já esta'+cr+'Efetuando Atualização !!'+cr+cr+'Deseja Continuar ??','C')=2 Then
    Exit;
-
 
   OdirPanApres.Caption:='AGUARDE !! Localizando Últimas Atualizações de Estoques...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
@@ -45612,22 +45094,6 @@ begin
 
 end;
 
-procedure TFrmBelShop.Dbg_FluFornCaixaKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  if ((Shift = [ssCtrl]) and (key = vk_delete)) THEN
-   Abort;
-
-end;
-
-procedure TFrmBelShop.Dbg_FluFornCaixaEnter(Sender: TObject);
-begin
-  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
-  ApplicationEvents1.OnActivate:=Dbg_FluFornCaixaEnter; // Nome do DBGRID
-  Application.OnMessage := ApplicationEvents1Message;
-  ApplicationEvents1.Activate;
-
-end;
-
 procedure TFrmBelShop.Ckbx_ConsultaNFeApresParcelaClick(Sender: TObject);
 begin
   AcertaCkb_Style(Ckbx_ConsultaNFeApresParcela);
@@ -45647,6 +45113,7 @@ End.
 // 44994 - 12/09/2015 +
 // 44943 - 23/09/2015 -
 // 45483 - 23/05/2016
+// 45100 = 11/08/2016
 // unit cxSchedulerCustomControls;
 
 

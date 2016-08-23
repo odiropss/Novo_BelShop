@@ -722,6 +722,26 @@ object FrmEstoques: TFrmEstoques
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 1
+        object Bt_Odir: TJvTransparentButton
+          Left = 416
+          Top = 9
+          Width = 109
+          Height = 21
+          Caption = 'ODIR - Duplos'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          HotTrackFont.Charset = DEFAULT_CHARSET
+          HotTrackFont.Color = clWindowText
+          HotTrackFont.Height = -11
+          HotTrackFont.Name = 'MS Sans Serif'
+          HotTrackFont.Style = []
+          ParentFont = False
+          Visible = False
+          OnClick = Bt_OdirClick
+        end
         object Bt_EstoquesFechar: TJvXPButton
           Left = 878
           Top = 2

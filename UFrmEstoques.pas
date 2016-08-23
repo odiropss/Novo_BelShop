@@ -22,7 +22,7 @@ uses
   CurrEdit, ComCtrls, MMSystem, StrUtils, DB,
   IBQuery, JvCheckBox, FMTBcd, Provider, DBClient, SqlExpr, Math,
   DBXpress, Commctrl, dxSkinsdxStatusBarPainter, dxStatusBar, Menus,
-  JvExComCtrls, JvAnimate;
+  JvExComCtrls, JvAnimate, JvButton, JvTransparentButton;
 
 type
   TFrmEstoques = class(TForm)
@@ -75,6 +75,7 @@ type
     PopM_EstoquesAlterarTodosEstMnimos: TMenuItem;
     N1: TMenuItem;
     PopM_EstoquesReplicarEstMinLojas: TMenuItem;
+    Bt_Odir: TJvTransparentButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -122,6 +123,7 @@ type
     procedure PopM_EstoquesParametrosClick(Sender: TObject);
     procedure PopM_EstoquesAlterarTodosEstMnimosClick(Sender: TObject);
     procedure PopM_EstoquesReplicarEstMinLojasClick(Sender: TObject);
+    procedure Bt_OdirClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -379,7 +381,7 @@ procedure TFrmEstoques.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   if bgSairEstoques Then
    Begin
-     Action := caFree;
+     Action := caHide; // caFree;
 
      FrmBelShop.FechaTudo;
 
@@ -1023,20 +1025,6 @@ end;
 procedure TFrmEstoques.Dbg_EstoquesDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
-//   // Este comando altera cor da Celula ========================================
-//  If (Column.FieldName='IND_CURVA') Then
-//  Begin
-//    If DMVirtual.CDS_V_EstoquesDTA_INCLUSAO.AsDateTime>DtEdt_EstoquesFim.Date-30 Then
-//    Begin
-//      Dbg_Estoques.Canvas.Font.Style:=[fsBold];
-//      Dbg_Estoques.Canvas.Brush.Color:=clLime; //-->> Cor da Celula
-//
-//      Dbg_Estoques.Canvas.FillRect(Rect);
-//      Dbg_Estoques.DefaultDrawDataCell(Rect,Column.Field,state);
-//    End;
-//  End; // If (Column.FieldName='IND_CURVA') Then
-
-
   If Dbg_Estoques.DataSource.DataSet.State in [dsEdit, dsInsert, dsBrowse] Then
   Begin
     //Cor da linha selecionada
@@ -2280,6 +2268,55 @@ begin
   DMVirtual.CDS_V_Estoques.First;
   THackDBGrid(Dbg_Estoques).FixedCols:=4;
   Dbg_Estoques.SetFocus;
+
+end;
+
+procedure TFrmEstoques.Bt_OdirClick(Sender: TObject);
+Var
+  mMemo: TMemo;
+begin
+  If AnsiUpperCase(Des_Login)<>'ODIR' Then
+   EXIT;
+
+  // Cria Componente Memo ======================================================
+  mMemo:=TMemo.Create(Self);
+  mMemo.Visible:=True;
+  mMemo.Parent:=FrmEstoques;
+  mMemo.Height:=410;
+  mMemo.Left:=32;
+  mMemo.Width:=920;
+  mMemo.Top:=96;
+  mMemo.Anchors:=[akLeft,akTop,akRight,akBottom];
+  mMemo.Lines.Clear;
+
+  ShowMessage('0');
+
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:='SELECT * FROM ES_FINAN_CURVA_ABC e ORDER BY e.cod_loja, e.cod_produto';
+  DMBelShop.CDS_Busca.Open;
+
+  Bt_Odir.Caption:=IntToStr(DMBelShop.CDS_Busca.RecordCount);
+
+  sgCodigo:='';
+  sgDescricao:='';
+  While Not DMBelShop.CDS_Busca.Eof do
+  Begin
+    Application.ProcessMessages;
+    
+    sgDescricao:=DMBelShop.CDS_Busca.FieldByName('cod_loja').AsString+' - '+
+                 DMBelShop.CDS_Busca.FieldByName('cod_produto').AsString;
+
+    If sgCodigo=sgDescricao Then
+     mMemo.Lines.Add(sgCodigo);
+
+    sgCodigo:=DMBelShop.CDS_Busca.FieldByName('cod_loja').AsString+' - '+
+              DMBelShop.CDS_Busca.FieldByName('cod_produto').AsString;
+
+    Bt_Odir.Caption:=IntToStr(DMBelShop.CDS_Busca.RecordCount)+' - '+IntToStr(DMBelShop.CDS_Busca.RecNo);
+    DMBelShop.CDS_Busca.Next;
+  end;
+  DMBelShop.CDS_Busca.Close;
+  FreeAndNil(mMemo);
 
 end;
 

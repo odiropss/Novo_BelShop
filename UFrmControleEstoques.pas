@@ -363,7 +363,7 @@ procedure TFrmControleEstoques.FormClose(Sender: TObject; var Action: TCloseActi
 begin
   if bgSairEst Then
    Begin
-     Action := caFree;
+     Action := caHide; // caFree;
      //--FechaTudoModelo;
    End
   Else

@@ -17,7 +17,7 @@ var
 
 begin
   // Não Permite Rodar Duas Vezes
-  CreateMutex(nil, false, 'PFrmTransferencias');
+  CreateMutex(nil, false, 'PTransferencias');
   If GetLastError()=ERROR_ALREADY_EXISTS Then
    Begin
      ShowWindow(Aplicativo, SW_RESTORE);

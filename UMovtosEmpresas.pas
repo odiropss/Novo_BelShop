@@ -93,7 +93,7 @@ uses
 
 type
   TFrmMovtosEmpresas = class(TForm)
-    DBGrid1: TDBGrid;
+    Dbg_Empresas: TDBGrid;
     Panel1: TPanel;
     Bt_Atualizar: TJvXPButton;
     EdtParamStr: TEdit;
@@ -1908,7 +1908,8 @@ begin
   // odiraqui1: Original: Nao Comentar 1 ///////////////////////
   If Trim(EdtParamStr.Text)='' Then
    EdtParamStr.Text:='ODIR'; // Agora é Direto por Agendamento
-//   EdtParamStr.Text:='OPSS'; // Não Libera Direto
+//  EdtParamStr.Text:='OPSS';   // Não Libera Direto
+//  EdtParamStr.Text:='OPSS_N'; // Não Libera Direto
   // odiraqui2: Original: Nao Comentar 1 ///////////////////////
 
   If EdtParamStr.Text='' Then
@@ -1960,16 +1961,16 @@ begin
 //==============================================================================
 // Se Parametro = OPSS
 //==========================
-  // Não Atualiza ESTOQUES (AtualizaTabelaEstoque(Cod_Empresa))
-  // Não Processa "UMA VEZ" bgJaProcessouUmaVez=True (Fica Como Já Processado)
-  // Processa: VERIFICA SE PROCESSA <IND_TIPO> DA EMPRESA
+  // NÃO ATUALIZA ESTOQUES (AtualizaTabelaEstoque(Cod_Empresa))
+  // NÃO PROCESSA "UMA VEZ" bgJaProcessouUmaVez=True (Fica Como Já Processado)
+  // PROCESSA: VERIFICA SE PROCESSA <IND_TIPO> DA EMPRESA (Se Já Processada)
 
 //==========================
 // Se Parametro = OPSS_N
 //==========================
-  // Não Atualiza Estoques (AtualizaTabelaEstoque(Cod_Empresa))
-  // Não Processa "UMA VEZ" bgJaProcessouUmaVez=True (Fica Como Já Processado)
-  // NÃO Processa: VERIFICA SE PROCESSA <IND_TIPO> DA EMPRESA
+  // NÃO ATUALIZA ESTOQUES (AtualizaTabelaEstoque(Cod_Empresa))
+  // NÃO PROCESSA "UMA VEZ" bgJaProcessouUmaVez=True (Fica Como Já Processado)
+  // NÃO PROCESSA: VERIFICA SE PROCESSA <IND_TIPO> DA EMPRESA (Se Já Processada)
                   // Sempre Processa Lojas Selecionadas.
 //==============================================================================
 //                         PROCESSAMENTO MANUAL
@@ -2082,17 +2083,6 @@ begin
              QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
-      // Atualiza Produtos (MPMS)
-      // odirapagar - 30/05/2016
-      // sDtaUltAtualizacao:=DateToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor)-30);
-
-// odirapagar - 28/06/2016
-//      sDtaUltAtualizacao:=DateToStr(IncMonth(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor),-1));
-//
-//      sDtaUltAtualizacao:=f_Troca('/','.',sDtaUltAtualizacao);
-//      sDtaUltAtualizacao:=f_Troca('-','.',sDtaUltAtualizacao);
-//
-//      AtualizaProdutos(sDtaUltAtualizacao);
       AtualizaProdutos;
     End;
     // =========================================================================
@@ -2547,7 +2537,6 @@ begin
       // VERIFICA SE CONTINUA O PROCESSAMENTO - INICIO =========================
       // =======================================================================
       // =======================================================================
-//Odirapagar      bSiga:=True;
       If bSiga Then // Conexão OK
       Begin
         // Grava Inicio do Processamento da Loja ===============================
@@ -3848,15 +3837,15 @@ begin
                  ' Cast(Coalesce(sum(Coalesce(e.saldoatual*preco.Margem,0)),0) as Numeric(12,2)) Est_Finan_Margem'+
 
                  ' From estoqmes e, produto p,'+
-                 ' (Select lpi.codproduto, lpi.precocompra, lpi.precovenda, lpi.margem'+
-                 '  From listapre lpi'+
-                 '  Where lpi.codlista='+QuotedStr(sCodListaPreco)+
-                 ' ) Preco'+
-                 ' where e.codproduto=preco.codproduto'+
-                 ' and e.codproduto=e.codproduto'+
-                 ' and p.principalfor Not In (''000300'', ''000500'', ''000883'', ''010000'', ''001072'')'+
-                 ' and e.codfilial='+QuotedStr(sCodEmpresa)+
-                 ' and e.codanomes='+QuotedStr(sAno+sMes)+
+                 '      (Select lpi.codproduto, lpi.precocompra, lpi.precovenda, lpi.margem'+
+                 '       From listapre lpi'+
+                 '       Where lpi.codlista='+QuotedStr(sCodListaPreco)+') Preco'+
+
+                 ' where e.codproduto=p.codproduto'+
+                 ' and   e.codproduto=preco.codproduto'+
+                 ' and   p.principalfor Not In (''000300'', ''000500'', ''000883'', ''010000'', ''001072'')'+
+                 ' and   e.codfilial='+QuotedStr(sCodEmpresa)+
+                 ' and   e.codanomes='+QuotedStr(sAno+sMes)+
                  ' Group by 1,2'+
                  ' Order by 1';
           IBQ_Consulta.Close;
@@ -4940,16 +4929,6 @@ begin
 
           MySql:=' SELECT ''01.''||SUBSTRING(es.codanomes FROM 5 FOR 2)||''.''||SUBSTRING(es.codanomes FROM 1 FOR 4) Dta_Mes,'+
                  ' es.codfilial, es.codproduto,'+
-// OdirApagar - 15/06/2016
-//                 ' (CASE'+
-//                 '     WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//                 '       COALESCE(es.saldoatual,0)'+
-//                 '     WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//                 '       0'+
-//                 '     ELSE'+
-//                 '       COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//                 '  END) saldoatual,'+
-
                  ' COALESCE(es.saldoatual,0) saldoatual,'+
                  ' CURRENT_TIMESTAMP Dta_Atualizacao'+
 

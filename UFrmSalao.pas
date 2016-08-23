@@ -8678,7 +8678,7 @@ procedure TFrmSalao.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   if bgSairSalao Then
    Begin
-     Action := caFree;
+     Action := caHide; // caFree;
 
      If DMBelShop.SQLC.InTransaction Then
       DMBelShop.SQLC.Rollback(TD);

@@ -393,7 +393,6 @@ object FrmCentralTrocas: TFrmCentralTrocas
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
-  OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
@@ -1425,11 +1424,11 @@ object FrmCentralTrocas: TFrmCentralTrocas
         TabOrder = 0
         OnClick = PanReposLojasClick
         object Label7: TLabel
-          Left = 129
+          Left = 126
           Top = 14
-          Width = 113
+          Width = 60
           Height = 13
-          Caption = 'Selecionar Quantidades'
+          Caption = 'Quantidades'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -1438,7 +1437,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           ParentFont = False
         end
         object Lab_ReposLojasCons: TLabel
-          Left = 379
+          Left = 322
           Top = 14
           Width = 8
           Height = 13
@@ -1446,11 +1445,11 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Visible = False
         end
         object Label15: TLabel
-          Left = 439
+          Left = 381
           Top = 14
-          Width = 93
+          Width = 57
           Height = 13
-          Caption = 'Selecionar Corredor'
+          Caption = 'Corredor(es)'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -1459,7 +1458,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           ParentFont = False
         end
         object Cbx_ReposLojasCons: TComboBox
-          Left = 246
+          Left = 189
           Top = 11
           Width = 84
           Height = 22
@@ -1483,7 +1482,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             'TODAS')
         end
         object EdtReposLojasQtdInicio: TJvValidateEdit
-          Left = 333
+          Left = 276
           Top = 12
           Width = 41
           Height = 19
@@ -1494,7 +1493,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           OnChange = EdtReposLojasQtdInicioChange
         end
         object EdtReposLojasQtdFim: TJvValidateEdit
-          Left = 391
+          Left = 334
           Top = 12
           Width = 41
           Height = 19
@@ -1545,25 +1544,6 @@ object FrmCentralTrocas: TFrmCentralTrocas
             OnExit = EdtReposLojasQtdItensPedExit
           end
         end
-        object Cbx_ReposLojasCorredor: TComboBox
-          Left = 536
-          Top = 10
-          Width = 174
-          Height = 22
-          Style = csOwnerDrawFixed
-          Color = 15395562
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ItemHeight = 16
-          ParentFont = False
-          TabOrder = 5
-          OnChange = Cbx_ReposLojasCorredorChange
-          Items.Strings = (
-            '')
-        end
         object Gb_ReposLojasOBS: TGroupBox
           Left = 735
           Top = 2
@@ -1571,7 +1551,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Height = 39
           Align = alRight
           Caption = ' Observa'#231#245'es '
-          TabOrder = 6
+          TabOrder = 5
           object CkB_ReposLojasOBS: TCheckBox
             Left = 24
             Top = 16
@@ -1583,6 +1563,26 @@ object FrmCentralTrocas: TFrmCentralTrocas
             TabOrder = 0
             OnClick = CkB_ReposLojasOBSClick
           end
+        end
+        object CkCbx_ReposLojasCorredor: TJvCheckedComboBox
+          Left = 441
+          Top = 12
+          Width = 288
+          Height = 19
+          Items.Strings = (
+            '1.111'
+            '2.222'
+            '3.333'
+            '4.444'
+            '5.555'
+            '6.666')
+          CapSelectAll = '&Marca Todos'
+          CapDeSelectAll = '&Desmarca Todos'
+          NoFocusColor = clWindow
+          DropDownLines = 10
+          Delimiter = '-'
+          TabOrder = 6
+          OnChange = CkCbx_ReposLojasCorredorChange
         end
       end
       object Dbg_ReposLojasItens: TDBGridJul

@@ -391,7 +391,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     00000000000000000000FFFF0000}
   KeyPreview = True
   OldCreateOrder = False
-  Position = poScreenCenter
+  Position = poOwnerFormCenter
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 432
-    ActivePage = Ts_ApresentaGrid
+    ActivePage = Ts_ParametrosGerenciador
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -3127,6 +3127,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
               ItemHeight = 16
               TabOrder = 0
               OnChange = Cbx_ParamLojaNecesChange
+              OnClick = Cbx_ParamLojaNecesClick
+              OnKeyUp = Cbx_ParamLojaNecesKeyUp
               OnSelect = Cbx_ParamLojaNecesChange
               Items.Strings = (
                 'Domingo'

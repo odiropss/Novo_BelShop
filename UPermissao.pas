@@ -121,6 +121,8 @@ type
 var
   FrmLogin: TFrmLogin;
 
+  bgOnActivate: Boolean; // Se Ja Executou o Evento do Form OnActivate
+
   Num_Vezes: Integer;
 
   // Cria Ponteiro de transacão ================================================
@@ -193,6 +195,7 @@ end;
 
 procedure TFrmLogin.FormCreate(Sender: TObject);
 begin
+  bgOnActivate:=False;
 
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
@@ -966,7 +969,11 @@ end;
 procedure TFrmLogin.FormActivate(Sender: TObject);
 begin
   // Coloca BitMaps em Componentes =============================================
-  BitMaps(FrmLogin);
+  If Not bgOnActivate Then
+  Begin
+    BitMaps(FrmLogin);
+    bgOnActivate:=True;
+  End;
 
 end;
 

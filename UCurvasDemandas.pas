@@ -462,7 +462,7 @@ Begin
   End; // While Not DMMovtosEmpresas.CDS_Busca.Eof do
   DMMovtosEmpresas.CDS_Busca.Close;
 
-  // Acerta Toda a Curva E =====================================================
+  // Acerta Num_Dias_Estocagem da Curva E ======================================
   MySql:=' UPDATE ES_FINAN_CURVA_ABC f'+
          ' SET f.Num_Dias_Estocagem='+QuotedStr(sDiasEstocagen)+
          ' WHERE f.Cod_Loja='+QuotedStr(sgCodLoja)+
@@ -531,6 +531,23 @@ Begin
     DMMovtosEmpresas.CDS_Busca.Next;
   End; // While Not DMMovtosEmpresas.CDS_Busca.Eof do
   DMMovtosEmpresas.CDS_Busca.Close;
+
+  //============================================================================
+  // Altera Curva Conforme Solicitado peloa ANNA - 17/08/2016 ==================
+  //============================================================================
+  // 000356	- DELLY DISTR DE  SERV (ALTA MODA)
+  //        -  Todos os Prodtos que Conter no Nome "YELLOW"
+  //            - Passar da Curva "E' para Curva "C"
+  // 001188	- NG DE FRANCE
+  //        -  Todos os Prodtos que Iniciarem o Nome com "NG "
+  //            - Passar da Curva "E' para Curva "C"
+       MySql:=' UPDATE ES_FINAN_CURVA_ABC f'+
+              ' SET f.Ind_Curva_Qtd='+QuotedStr(sCurva)+
+              ' WHERE f.Cod_Loja='+QuotedStr(sgCodLoja)+
+              ' AND   f.Cod_Produto='+QuotedStr(DMMovtosEmpresas.CDS_Busca.FieldByName('Cod_Produto').AsString);
+       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+  //============================================================================
+
 
 End; // Calcula Curva ABC de Valores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

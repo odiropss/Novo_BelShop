@@ -545,19 +545,21 @@ object FrmDataApropriacao: TFrmDataApropriacao
       257)
     object Lb_Partes: TLabel
       Left = 57
-      Top = 88
+      Top = 72
       Width = 55
       Height = 13
       Caption = 'Parte 0/2'
     end
     object Lb_Apres: TLabel
       Left = 2
-      Top = 118
+      Top = 94
       Width = 172
-      Height = 106
+      Height = 127
       Alignment = taCenter
       AutoSize = False
-      Caption = 'Aguarde !!'#13#10'Atualizando C'#243'digos 900'
+      Caption = 
+        'Aguarde !!'#13#10#13#10'Atualizando Comprovantes'#13#10'900'#13#10'913'#13#10'916'#13#10'955'#13#10'957'#13 +
+        #10'011'
       Visible = False
     end
     object EdtAproprCodFornecedor: TCurrencyEdit

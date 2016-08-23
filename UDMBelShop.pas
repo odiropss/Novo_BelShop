@@ -333,7 +333,6 @@ type
     SDS_While: TSQLDataSet;
     CDS_While: TClientDataSet;
     DSP_While: TDataSetProvider;
-    CDS_FluxoFornecedorDTA_CAIXA: TDateField;
     CDS_FluxoFornecedorCOD_EMPRESA: TStringField;
     CDS_FluxoFornecedorRAZAO_SOCIAL: TStringField;
     CDS_FluxoFornecedorCOD_HISTORICO: TIntegerField;
@@ -342,7 +341,6 @@ type
     CDS_FluxoFornecedorNUM_SERIE: TStringField;
     CDS_FluxoFornecedorVLR_CREDITO: TFMTBCDField;
     CDS_FluxoFornecedorVLR_DEBITO: TFMTBCDField;
-    CDS_FluxoFornecedorVLR_SALDO: TFMTBCDField;
     CDS_FluxoFornecedorTXT_OBS: TStringField;
     CDS_FluxoFornecedorCOD_FORNECEDOR: TStringField;
     CDS_FluxoFornecedorDES_FORNECEDOR: TStringField;
@@ -1115,6 +1113,28 @@ type
     CDS_FaltasCDLojas: TClientDataSet;
     DSP_FaltasCDLojas: TDataSetProvider;
     DS_FaltasCDLojas: TDataSource;
+    SDS_FluxoFornecedores: TSQLDataSet;
+    CDS_FluxoFornecedores: TClientDataSet;
+    DSP_FluxoFornecedores: TDataSetProvider;
+    DS_FluxoFornecedores: TDataSource;
+    CDS_FluxoFornecedoresCOD_FORNECEDOR: TStringField;
+    CDS_FluxoFornecedoresNOMEFORNECEDOR: TStringField;
+    CDS_FluxoFornecedoresDTA_INICIAL: TDateField;
+    CDS_FluxoFornecedoresDTA_FINAL: TDateField;
+    SDS_FluxoFornHistorico: TSQLDataSet;
+    CDS_FluxoFornHistorico: TClientDataSet;
+    DSP_FluxoFornHistorico: TDataSetProvider;
+    DS_FluxoFornHistorico: TDataSource;
+    CDS_FluxoFornecedorLOJA: TStringField;
+    CDS_FluxoFornecedoresVLR_SALDO: TFMTBCDField;
+    CDS_FluxoFornecedoresDTA_CC: TDateField;
+    CDS_FluxoFornecedoresORDEM: TIntegerField;
+    CDS_FluxoFornecedoresDES_AUX: TStringField;
+    CDS_FluxoFornHistoricoDES_HISTORICO: TStringField;
+    CDS_FluxoFornHistoricoDEB_CRE: TStringField;
+    CDS_FluxoFornecedoresLIMITE: TStringField;
+    CDS_FluxoFornecedorVLR_SALDO: TFloatField;
+    CDS_FluxoFornHistoricoCOD_HISTORICO: TIntegerField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -1155,7 +1175,6 @@ type
                           // Montado com Alias < pr. >
                           //      USAR: MySql:=MySql+f_Troca('pr.','p.',**);
                           // ** = sgGrupos
-
     //==========================================================================
     // Odir ====================================================================
     //==========================================================================
@@ -1176,6 +1195,7 @@ type
     procedure CDS_ObjetivosEmpresasAfterScroll(DataSet: TDataSet);
     procedure Timer1Timer(Sender: TObject);
     procedure IBQ_AComprarAfterOpen(DataSet: TDataSet);
+    procedure CDS_FluxoFornecedoresAfterScroll(DataSet: TDataSet);
 
   private
     { Private declarations }
@@ -4224,6 +4244,15 @@ begin
   sgIndOCGerada:='';
   sgTipo :='';
   igQtd_Tipo:=0;
+
+end;
+
+procedure TDMBelShop.CDS_FluxoFornecedoresAfterScroll(DataSet: TDataSet);
+begin
+  If (DMBelShop.CDS_FluxoFornecedores.RecNo<4) and (DMBelShop.CDS_FluxoFornecedores.RecNo>1) Then
+  Begin
+    DMBelShop.CDS_FluxoFornecedores.RecNo:=4;
+  End;
 
 end;
 

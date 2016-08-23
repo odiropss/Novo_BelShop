@@ -405,7 +405,7 @@ object FrmSalao: TFrmSalao
     Top = 0
     Width = 977
     Height = 580
-    ActivePage = Ts_CadProfissional
+    ActivePage = Ts_Profissionais
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -815,7 +815,7 @@ object FrmSalao: TFrmSalao
         Width = 969
         Height = 415
         Align = alClient
-        Caption = ' Profisionais '
+        Caption = ' Profissionais '
         Color = 14342874
         Ctl3D = False
         Font.Charset = DEFAULT_CHARSET

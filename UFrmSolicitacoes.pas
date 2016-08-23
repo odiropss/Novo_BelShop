@@ -869,6 +869,9 @@ type
     procedure ApplicationEvents1Message(var Msg: tagMSG;
       var Handled: Boolean);
     procedure Dbg_ApresGridEnter(Sender: TObject);
+    procedure Cbx_ParamLojaNecesKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Cbx_ParamLojaNecesClick(Sender: TObject);
   private
     { Private declarations }
 
@@ -1135,49 +1138,49 @@ begin
   mCodUsuarios:=TMemo.Create(Self);
   mCodUsuarios.Visible:=False;
   mCodUsuarios.Parent:=FrmSolicitacoes;
-  mCodUsuarios.Width:=1000;
+  mCodUsuarios.Width:=5000;
   mCodUsuarios.Lines.Clear;
 
   mUsuario:=TMemo.Create(Self);
   mUsuario.Visible:=False;
   mUsuario.Parent:=FrmSolicitacoes;
-  mUsuario.Width:=1000;
+  mUsuario.Width:=5000;
   mUsuario.Lines.Clear;
 
   mUsuarioComprv:=TMemo.Create(Self);
   mUsuarioComprv.Visible:=False;
   mUsuarioComprv.Parent:=FrmSolicitacoes;
-  mUsuarioComprv.Width:=1000;
+  mUsuarioComprv.Width:=5000;
   mUsuarioComprv.Lines.Clear;
 
   mUsuarioFilial:=TMemo.Create(Self);
   mUsuarioFilial.Visible:=False;
   mUsuarioFilial.Parent:=FrmSolicitacoes;
-  mUsuarioFilial.Width:=1000;
+  mUsuarioFilial.Width:=5000;
   mUsuarioFilial.Lines.Clear;
 
   mUsuarioP:=TMemo.Create(Self);
   mUsuarioP.Visible:=False;
   mUsuarioP.Parent:=FrmSolicitacoes;
-  mUsuarioP.Width:=1000;
+  mUsuarioP.Width:=5000;
   mUsuarioP.Lines.Clear;
 
   mUsuarioLista:=TMemo.Create(Self);
   mUsuarioLista.Visible:=False;
   mUsuarioLista.Parent:=FrmSolicitacoes;
-  mUsuarioLista.Width:=1000;
+  mUsuarioLista.Width:=5000;
   mUsuarioLista.Lines.Clear;
 
   mUsuario_Monitor:=TMemo.Create(Self);
   mUsuario_Monitor.Visible:=False;
   mUsuario_Monitor.Parent:=FrmSolicitacoes;
-  mUsuario_Monitor.Width:=1000;
+  mUsuario_Monitor.Width:=5000;
   mUsuario_Monitor.Lines.Clear;
 
   memDML:=TMemo.Create(Self);
   memDML.Visible:=False;
   memDML.Parent:=FrmSolicitacoes;
-  memDML.Width:=1000;
+  memDML.Width:=5000;
   memDML.Lines.Clear;
 
   sgMensagemERRO:=''; // Erro ao Consultar Usuario
@@ -1186,6 +1189,8 @@ begin
 
   // Conecta Empresa =======================================================
   sgCodEmp:=FormatFloat('00',StrToInt(EdtLojaModelo.Text));
+
+  bSiga:=False;
   Try
     If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
      Begin
@@ -1195,6 +1200,12 @@ begin
     msg('Loja Modelo Sem Conexão !!'+cr+cr+'Tente Mais Tarde !!','A');
     Exit;
   End; // Try
+
+  If Not bSiga Then
+  Begin
+    msg('Loja Modelo Sem Conexão !!'+cr+cr+'Tente Mais Tarde !!','A');
+    Exit;
+  End;
 
   // Cria Query da Empresa ------------------------------------
   FrmBelShop.CriaQueryIB('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, IBQ_ConsultaFilial, True, True);
@@ -7788,7 +7799,7 @@ begin
   If Application.MessageBox('Deseja Realmente Atualizar Usuário Conforme Modelo ??', 'ATENÇÃO !!', 292) = idNo Then
    Exit;
 
-  sgOutrasEmpresa:='(96,97,98,99)'; //ou '('99', '50')';
+  sgOutrasEmpresa:='(50,96,97,98,99)'; //ou '('99', '50')';
 //  sgEmpresaNao   :='('+EdtLojaModelo.Text+')'; //ou '('50')';
   FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
   FrmSelectEmpProcessamento.bUsarMatriz:=False;
@@ -8249,6 +8260,16 @@ begin
   Application.OnMessage := ApplicationEvents1Message;
   ApplicationEvents1.Activate;
 
+end;
+
+procedure TFrmSolicitacoes.Cbx_ParamLojaNecesKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  Cbx_ParamLojaNecesChange(Self);
+end;
+
+procedure TFrmSolicitacoes.Cbx_ParamLojaNecesClick(Sender: TObject);
+begin
+  Cbx_ParamLojaNecesChange(Self);
 end;
 
 end.

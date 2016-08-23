@@ -1,6 +1,6 @@
 object FrmBelShop: TFrmBelShop
-  Left = 246
-  Top = 89
+  Left = 237
+  Top = 110
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 562
-    ActivePage = Ts_MovtoComprovForn
+    ActivePage = TS_Filtros
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -7012,7 +7012,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 534
-        ActivePage = Ts_OCBuscaProdutos
+        ActivePage = Ts_OCGeraOrdemCompra
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -8639,7 +8639,7 @@ object FrmBelShop: TFrmBelShop
             Top = 53
             Width = 793
             Height = 433
-            ActivePage = Ts_GeraOCOrdensCompra
+            ActivePage = Ts_GeraOCGrid
             Align = alClient
             MultiLine = True
             TabOrder = 3
@@ -14064,7 +14064,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 555
+              Left = 541
               Top = 12
               Width = 31
               Height = 13
@@ -14120,7 +14120,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 589
+              Left = 575
               Top = 9
               Width = 51
               Height = 18
@@ -14133,7 +14133,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 644
+              Left = 630
               Top = 9
               Width = 50
               Height = 18
@@ -14722,7 +14722,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 534
-        ActivePage = Ts_EstFisFinaResutadoGiroEstoque
+        ActivePage = Ts_EstFisFinaFiltros
         Align = alClient
         TabOrder = 0
         OnChange = PC_EstoqueFisicoFinanChange
@@ -14738,7 +14738,7 @@ object FrmBelShop: TFrmBelShop
             BevelInner = bvLowered
             BorderStyle = bsSingle
             TabOrder = 0
-            object Bt_EstFisFInanFechar: TJvXPButton
+            object Bt_EstFisFinanFechar: TJvXPButton
               Tag = 99
               Left = 859
               Top = 2
@@ -15148,7 +15148,7 @@ object FrmBelShop: TFrmBelShop
           ImageIndex = 1
           object Splitter2: TSplitter
             Left = 0
-            Top = 320
+            Top = 318
             Width = 963
             Height = 4
             Cursor = crVSplit
@@ -15160,7 +15160,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 320
+            Height = 318
             Align = alClient
             Color = 15004403
             DataSource = DMVirtual.DS_V_EstFisFinanEmp
@@ -15256,7 +15256,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Dbg_EstFisFinanLojas: TDBGrid
             Left = 0
-            Top = 324
+            Top = 322
             Width = 963
             Height = 149
             Align = alBottom
@@ -15347,7 +15347,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Pan_EstFisFinaResutadoGiroFisicoFinan: TPanel
             Left = 0
-            Top = 473
+            Top = 471
             Width = 963
             Height = 35
             Align = alBottom
@@ -15669,298 +15669,6 @@ object FrmBelShop: TFrmBelShop
               LeftText = True
             end
           end
-        end
-      end
-    end
-    object Ts_FluFornecedor: TTabSheet
-      Tag = 108
-      Caption = 'Conta Corrente de Fornecedores'
-      ImageIndex = 7
-      object Gb_FluFornCaixa: TGroupBox
-        Left = 0
-        Top = 56
-        Width = 971
-        Height = 443
-        Align = alClient
-        Caption = ' Fluxo de Caixa '
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlue
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        TabOrder = 0
-        DesignSize = (
-          971
-          443)
-        object Dbg_FluFornCaixa: TDBGrid
-          Left = 5
-          Top = 17
-          Width = 957
-          Height = 423
-          Anchors = [akLeft, akTop, akRight, akBottom]
-          Color = 15004403
-          Ctl3D = False
-          DataSource = DMBelShop.DS_FluxoFornecedor
-          FixedColor = clSilver
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-          ParentCtl3D = False
-          ParentFont = False
-          ReadOnly = True
-          TabOrder = 0
-          TitleFont.Charset = DEFAULT_CHARSET
-          TitleFont.Color = clBlack
-          TitleFont.Height = -11
-          TitleFont.Name = 'MS Sans Serif'
-          TitleFont.Style = [fsBold]
-          OnDrawColumnCell = Dbg_FluFornCaixaDrawColumnCell
-          OnEnter = Dbg_FluFornCaixaEnter
-          OnKeyUp = Dbg_FluFornCaixaKeyUp
-          Columns = <
-            item
-              Alignment = taCenter
-              Expanded = False
-              FieldName = 'DATA'
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              Title.Alignment = taCenter
-              Width = 75
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'COD_HISTORICO'
-              Width = 55
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'DES_HISTORICO'
-              Width = 150
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'NUM_DOCUMENTO'
-              Title.Alignment = taRightJustify
-              Width = 60
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'NUM_SERIE'
-              Width = 60
-              Visible = True
-            end
-            item
-              Color = 14024661
-              Expanded = False
-              FieldName = 'VLR_CREDITO'
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              Title.Alignment = taRightJustify
-              Width = 80
-              Visible = True
-            end
-            item
-              Color = 14671871
-              Expanded = False
-              FieldName = 'VLR_DEBITO'
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              Title.Alignment = taRightJustify
-              Width = 80
-              Visible = True
-            end
-            item
-              Color = 16769734
-              Expanded = False
-              FieldName = 'VLR_SALDO'
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              Title.Alignment = taRightJustify
-              Width = 100
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'TXT_OBS'
-              Visible = True
-            end
-            item
-              Color = 14286847
-              Expanded = False
-              FieldName = 'COD_EMPRESA'
-              Title.Alignment = taRightJustify
-              Width = 60
-              Visible = True
-            end
-            item
-              Color = 14286847
-              Expanded = False
-              FieldName = 'RAZAO_SOCIAL'
-              Width = 300
-              Visible = True
-            end>
-        end
-      end
-      object Panel38: TPanel
-        Left = 0
-        Top = 499
-        Width = 971
-        Height = 35
-        Align = alBottom
-        BevelInner = bvLowered
-        BorderStyle = bsSingle
-        Ctl3D = False
-        ParentCtl3D = False
-        TabOrder = 1
-        object Bt_FluFornFechar: TJvXPButton
-          Tag = 99
-          Left = 867
-          Top = 2
-          Width = 100
-          Height = 29
-          Caption = 'Fechar'
-          TabOrder = 0
-          TabStop = False
-          ShowFocusRect = True
-          Align = alRight
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          OnClick = Bt_UsuFechaClick
-        end
-        object Bt_FluFornAtualizar: TJvXPButton
-          Tag = 11
-          Left = 2
-          Top = 2
-          Width = 110
-          Height = 29
-          Caption = 'Atualizar'
-          TabOrder = 1
-          ShowFocusRect = True
-          Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          OnClick = Bt_FluFornAtualizarClick
-        end
-        object Bt_OdirRecSaldos: TButton
-          Left = 712
-          Top = 5
-          Width = 130
-          Height = 25
-          Caption = 'Bt_OdirRecSaldos'
-          TabOrder = 2
-          Visible = False
-          OnClick = Bt_OdirRecSaldosClick
-        end
-        object Bt_FluFornSalvaExcel: TJvXPButton
-          Tag = 9
-          Left = 112
-          Top = 2
-          Width = 152
-          Height = 29
-          Caption = 'Salvar em Excel'
-          TabOrder = 3
-          TabStop = False
-          ShowFocusRect = True
-          Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          OnClick = Bt_FluFornSalvaExcelClick
-        end
-      end
-      object Gb_FluFornFornecedor: TGroupBox
-        Left = 0
-        Top = 0
-        Width = 971
-        Height = 56
-        Align = alTop
-        Caption = ' Fornecedor '
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlue
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        TabOrder = 2
-        DesignSize = (
-          971
-          56)
-        object Bt_FluFornBuscaFornecdor: TJvXPButton
-          Tag = 92
-          Left = 89
-          Top = 20
-          Width = 23
-          Height = 25
-          TabOrder = 1
-          TabStop = False
-          ShowFocusRect = True
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          OnClick = Bt_FluFornBuscaFornecdorClick
-        end
-        object EdtFluFornFornecedor: TEdit
-          Left = 121
-          Top = 23
-          Width = 838
-          Height = 19
-          TabStop = False
-          Anchors = [akLeft, akTop, akRight]
-          Color = 12171775
-          ReadOnly = True
-          TabOrder = 2
-        end
-        object EdtFluFornCodFornecedor: TCurrencyEdit
-          Left = 13
-          Top = 23
-          Width = 68
-          Height = 21
-          AutoSize = False
-          DecimalPlaces = 0
-          DisplayFormat = '0'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          TabOrder = 0
-          OnChange = EdtFluFornCodFornecedorChange
-          OnExit = EdtFluFornCodFornecedorExit
         end
       end
     end
@@ -24461,7 +24169,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 473
+            Height = 471
             Align = alClient
             Color = 15004403
             Ctl3D = False
@@ -25076,7 +24784,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel18: TPanel
             Left = 0
-            Top = 473
+            Top = 471
             Width = 963
             Height = 35
             Align = alBottom
@@ -27139,7 +26847,7 @@ object FrmBelShop: TFrmBelShop
         Top = 43
         Width = 971
         Height = 491
-        ActivePage = Ts_FinanMLFat
+        ActivePage = Ts_FinanMLFiltros
         Align = alClient
         TabOrder = 1
         OnChange = PC_FinanMargemLucroChange
@@ -29435,7 +29143,7 @@ object FrmBelShop: TFrmBelShop
                   Width = 64
                   Height = 17
                   Caption = 'C'
-                  TabOrder = 3
+                  TabOrder = 4
                   ParentColor = False
                   Color = 15461355
                   Font.Charset = DEFAULT_CHARSET
@@ -29453,7 +29161,7 @@ object FrmBelShop: TFrmBelShop
                   Width = 60
                   Height = 17
                   Caption = 'D'
-                  TabOrder = 4
+                  TabOrder = 3
                   ParentColor = False
                   Color = 15461355
                   Font.Charset = DEFAULT_CHARSET
@@ -29741,7 +29449,7 @@ object FrmBelShop: TFrmBelShop
               Caption = '==>>'
             end
             object EdtFiltroCodProduto: TCurrencyEdit
-              Left = 158
+              Left = 182
               Top = 27
               Width = 66
               Height = 21

@@ -658,7 +658,7 @@ procedure TFrmControleKits.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   if bgSairKits Then
    Begin
-     Action := caFree;
+     Action := caHide; // caFree;
 
      FrmBelShop.FechaTudo;
    End

@@ -21,25 +21,6 @@ uses
   Clipbrd; // PrintScreen
 //  Último: Clipbrd
 
-{
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, cxGraphics, cxControls, cxLookAndFeels, cxLookAndFeelPainters,
-  cxContainer, cxEdit, dxSkinsCore, dxSkinsDefaultPainters, JvExControls,
-  JvXPCore, JvXPButtons, ExtCtrls, cxTextEdit, cxMaskEdit, cxDropDownEdit,
-  cxCalendar, cxGroupBox, StdCtrls, Grids, DBGrids, DBGridJul, Mask,
-  ToolEdit, CurrEdit, Buttons, cxTrackBar, IBQuery, IBDatabase,
-  Clipbrd, // PrintScreen
-  IBCustomDataSet, DBXpress, DB, SqlExpr, dxSkinBlack, dxSkinBlue,
-  dxSkinCaramel, dxSkinCoffee, dxSkinDarkRoom, dxSkinDarkSide, dxSkinFoggy,
-  dxSkinGlassOceans, dxSkiniMaginary, dxSkinLilian, dxSkinLiquidSky,
-  dxSkinLondonLiquidSky, dxSkinMcSkin, dxSkinMoneyTwins,
-  dxSkinOffice2007Black, dxSkinOffice2007Blue, dxSkinOffice2007Green,
-  dxSkinOffice2007Pink, dxSkinOffice2007Silver, dxSkinOffice2010Black,
-  dxSkinOffice2010Blue, dxSkinOffice2010Silver, dxSkinPumpkin, dxSkinSeven,
-  dxSkinSharp, dxSkinSilver, dxSkinSpringTime, dxSkinStardust,
-  dxSkinSummer2008, dxSkinValentine, dxSkinXmas2008Blue;
-}
-
 type
   TFrmDataApropriacao = class(TForm)
     Gb_AproprDtaApropriacao: TcxGroupBox;
@@ -573,7 +554,7 @@ begin
 
   // Processa Atualização ======================================================
   Lb_Apres.Visible:=True;
-  Lb_Apres.Caption:='Atualizando Comprovantes '+cr+cr+'900, 913, 916, 955';
+  Lb_Apres.Caption:='Atualizando Comprovantes '+cr+cr+'900, 913, 916, 955, 957, 011';
 
   AtualizaFluxoCaixa;
 

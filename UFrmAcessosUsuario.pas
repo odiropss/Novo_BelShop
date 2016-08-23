@@ -642,7 +642,7 @@ begin
 
   if bgSairCaixa Then
    Begin
-     Action := caFree;
+     Action := caHide;// caFree;
 
      DMSidicom.FechaTudoSidicom;
    End

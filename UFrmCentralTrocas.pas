@@ -23,7 +23,7 @@ uses
   Dialogs, IBQuery, Classes, DBXpress, printers, Math, Commctrl, ToolEdit,
   CurrEdit, DateUtils, FR_Class, frexpimg, FR_DSet, FR_DBSet,
   frOLEExl, frRtfExp, FR_E_HTML2, FR_E_HTM, FR_E_CSV, FR_E_RTF, FR_E_TXT,
-  RelVisual, jpeg, cxSpinEdit, DB;
+  RelVisual, jpeg, cxSpinEdit, DB, JvCombobox;
 
 type
   TFrmCentralTrocas = class(TForm)
@@ -123,7 +123,6 @@ type
     Dbe_AjustesCodComprov: TDBEdit;
     Dbe_AjustesDesComprov: TDBEdit;
     Label15: TLabel;
-    Cbx_ReposLojasCorredor: TComboBox;
     Gb_ReposLojasOBS: TGroupBox;
     CkB_ReposLojasOBS: TCheckBox;
     Bt_ReposLojasFonts: TJvXPButton;
@@ -139,6 +138,7 @@ type
     Label107: TLabel;
     EdtAnaliseReposAno: TcxSpinEdit;
     Dbg_AnaliseReposCorredores: TDBGrid;
+    CkCbx_ReposLojasCorredor: TJvCheckedComboBox;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -209,7 +209,6 @@ type
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
     procedure Dbg_ReposLojasDocsEnter(Sender: TObject);
-    procedure FormActivate(Sender: TObject);
     procedure Bt_ReposLojasEmissaoDocClick(Sender: TObject);
     procedure Bt_ReposLojasAlterarQtdClick(Sender: TObject);
     procedure Bt_ReposLojasGeraPedidoSIDICOMClick(Sender: TObject);
@@ -233,7 +232,6 @@ type
     procedure Bt_AjustesGeraPedidoSIDICOMClick(Sender: TObject);
     procedure Bt_AjustesPedidosGeradosClick(Sender: TObject);
     procedure PC_PrincipalChange(Sender: TObject);
-    procedure Cbx_ReposLojasCorredorChange(Sender: TObject);
     procedure CkB_ReposLojasOBSClick(Sender: TObject);
     procedure Bt_ReposLojasFontsClick(Sender: TObject);
     procedure PanReposLojasClick(Sender: TObject);
@@ -249,6 +247,7 @@ type
       Sender: TObject);
     procedure Dbg_AnaliseReposCorredoresDrawDataCell(Sender: TObject;
       const Rect: TRect; Field: TField; State: TGridDrawState);
+    procedure CkCbx_ReposLojasCorredorChange(Sender: TObject);
 
   private
     { Private declarations }
@@ -271,11 +270,15 @@ var
   buffer : array[0..255] of char;
   ///////////////////////////////
 
+  bgTodosCorredores,
   bgEnterTab: Boolean;
   bgSair: Boolean;
   bgChange: Boolean;
 
+  sgCorredores,
   sgCodProduto, sgCodBarras: String;
+
+  igCorredores: Integer;
 
   // Cria Ponteiro de transacão ================================================
   TD: TTransactionDesc;
@@ -1218,9 +1221,9 @@ Begin
         IBQ_MPMS.SQL.Add(MySql);
         IBQ_MPMS.Open;
 
+        // Gera Controle de Estoque no CD ===========================
         If Trim(IBQ_MPMS.FieldByName('CodProduto').AsString)='' Then
         Begin
-          // Gera Controle de Estoque no CD -------------------------
           GeraEstoqueCD;
         End;
         IBQ_MPMS.Close;
@@ -1232,7 +1235,7 @@ Begin
           Break;
         End;
 
-        // Sequencia do Item ----------------------------------------
+        // Sequencia do Item ========================================
         Inc(iSeqItem);
 
         // Total de Itens -------------------------------------------
@@ -2510,7 +2513,7 @@ begin
       If IBQ_Filial<>nil Then
        FreeAndNil(IBQ_Filial);
 
-     Action := caFree;
+     Action := caHide; // caFree;
    End
   Else
    Begin
@@ -2528,6 +2531,10 @@ begin
 
   bgSair:=False;
   bgEnterTab:=True;
+
+  bgTodosCorredores:=True;
+  sgCorredores:='';
+  igCorredores:=0;
 
   // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
   Application.OnMessage := ApplicationEvents1Message;
@@ -2584,6 +2591,9 @@ end;
 
 procedure TFrmCentralTrocas.FormShow(Sender: TObject);
 begin
+  // Coloca BitMaps em Componentes =============================================
+  BitMaps(FrmCentralTrocas);
+
   // Cor Form
   CorCaptionForm.Active:=False;
   CorCaptionForm.Active:=True;
@@ -4344,13 +4354,6 @@ begin
 
 end;
 
-procedure TFrmCentralTrocas.FormActivate(Sender: TObject);
-begin
-  // Coloca BitMaps em Componentes =============================================
-  BitMaps(FrmCentralTrocas);
-
-end;
-
 procedure TFrmCentralTrocas.Bt_ReposLojasEmissaoDocClick(Sender: TObject);
 Var
   s, MySql: String;
@@ -4359,6 +4362,12 @@ Var
   dir_padrao, dir_relat: String;
 begin
   Dbg_ReposLojasDocs.SetFocus;
+
+  If (igCorredores<>CkCbx_ReposLojasCorredor.Items.Count) and (igCorredores>1) Then
+  Begin
+    msg(' Relatório deve Conter: '+cr+'TODOS os Corredores ou Somente UM !!','A');
+    Exit;
+  End; // If Not bgTodosCorredores Then
 
   If DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty Then
    Exit;
@@ -4437,9 +4446,13 @@ begin
          ' AND   lo.qtd_a_transf<'+IntToStr(iQtdF)+
          ' AND   CAST(TRIM(COALESCE(lo.num_pedido,''0'')) AS INTEGER)=0';
 
-         If Cbx_ReposLojasCorredor.ItemIndex<>0 Then
+// Odirapagar - 08/08/2016
+//         If Cbx_ReposLojasCorredor.ItemIndex<>0 Then
+//          MySql:=
+//           MySql+' AND cd.end_zona||''.''||cd.end_corredor='+QuotedStr(Cbx_ReposLojasCorredor.Text);
+         If (sgCorredores<>'') and (Not bgTodosCorredores) Then
           MySql:=
-           MySql+' AND cd.end_zona||''.''||cd.end_corredor='+QuotedStr(Cbx_ReposLojasCorredor.Text);
+           MySql+' AND cd.end_zona||''.''||cd.end_corredor in ('+sgCorredores+')';
 
   MySql:=
    MySql+' ORDER BY 6, 11';
@@ -4480,9 +4493,13 @@ begin
            ' AND   l.qtd_a_transf<'+IntToStr(iQtdF)+
            ' AND   CAST(TRIM(COALESCE(l.num_pedido,''0'')) AS INTEGER)=0';
 
-           If Cbx_ReposLojasCorredor.ItemIndex<>0 Then
+//odirapagar - 08/08/2016
+//           If Cbx_ReposLojasCorredor.ItemIndex<>0 Then
+//            MySql:=
+//             MySql+' AND c.end_zona||''.''||c.end_corredor='+QuotedStr(Cbx_ReposLojasCorredor.Text);
+            If (sgCorredores<>'') and (Not bgTodosCorredores) Then
             MySql:=
-             MySql+' AND c.end_zona||''.''||c.end_corredor='+QuotedStr(Cbx_ReposLojasCorredor.Text);
+             MySql+' AND c.end_zona||''.''||c.end_corredor in ('+sgCorredores+')';
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
@@ -4538,10 +4555,16 @@ begin
    s:=s+' '+EdtReposLojasQtdInicio.Text+' a '+EdtReposLojasQtdFim.Text;
 
   DMRelatorio.frReport1.Dictionary.Variables.Variable['Qtd']:=#39+s+#39;
-  DMRelatorio.frReport1.Dictionary.Variables.Variable['Corredor']:=#39+Cbx_ReposLojasCorredor.Text+#39;
 
-    If FrmBelShop.Mem_Odir.Lines.Count>0 Then
-     DMRelatorio.frReport1.Dictionary.Variables.Variable['Obs']:=#39+FrmBelShop.Mem_Odir.Text+#39;
+//odirapagar - 08/08/2016
+//  DMRelatorio.frReport1.Dictionary.Variables.Variable['Corredor']:=#39+Cbx_ReposLojasCorredor.Text+#39;
+  If (bgTodosCorredores) or (igCorredores=0) Then
+   DMRelatorio.frReport1.Dictionary.Variables.Variable['Corredor']:=#39+'TODOS'+#39
+  Else
+   DMRelatorio.frReport1.Dictionary.Variables.Variable['Corredor']:=#39+Trim(f_troca('''','',sgCorredores))+#39;
+
+  If FrmBelShop.Mem_Odir.Lines.Count>0 Then
+   DMRelatorio.frReport1.Dictionary.Variables.Variable['Obs']:=#39+FrmBelShop.Mem_Odir.Text+#39;
 
   DMRelatorio.frReport1.PrepareReport;
   DMRelatorio.frReport1.ShowReport;
@@ -6100,27 +6123,6 @@ begin
   End;
 end;
 
-procedure TFrmCentralTrocas.Cbx_ReposLojasCorredorChange(Sender: TObject);
-Var
-  sCorredor: String;
-begin
-  sCorredor:='';
-  DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=False;
-  DMCentralTrocas.CDS_ReposicaoTransf.Filter:='';
-
-  If Cbx_ReposLojasCorredor.ItemIndex>0 Then
-   sCorredor:=Cbx_ReposLojasCorredor.Text;
-
-  If (Not DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty) and (sCorredor<>'') Then
-  Begin
-//    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='SUBSTRING(ENDERECO FROM 1 FOR 5)='+QuotedStr(sCorredor);
-    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='ENDERECO LIKE '+QuotedStr(sCorredor+'%');
-    DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
-  End;
-
-  DMCentralTrocas.CDS_ReposicaoDocsAfterScroll(DMCentralTrocas.CDS_ReposicaoDocs);
-end;
-
 procedure TFrmCentralTrocas.CkB_ReposLojasOBSClick(Sender: TObject);
 begin
   AcertaCkb_SN(CkB_ReposLojasOBS);
@@ -6232,17 +6234,13 @@ begin
   DMBelShop.SDS_BuscaRapida.CommandText:=MySq;
   DMBelShop.CDS_BuscaRapida.Open;
 
-  Cbx_ReposLojasCorredor.Items.Clear;
-  Cbx_ReposLojasCorredor.Items.Add('TODOS');
-
+  CkCbx_ReposLojasCorredor.Items.Clear;
   While Not DMBelShop.CDS_BuscaRapida.Eof do
   Begin
-    Cbx_ReposLojasCorredor.Items.Add(DMBelShop.CDS_BuscaRapida.FieldByName('Corredor').AsString);
+    CkCbx_ReposLojasCorredor.Items.Add(DMBelShop.CDS_BuscaRapida.FieldByName('Corredor').AsString);
 
     DMBelShop.CDS_BuscaRapida.Next;
   End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
-  Cbx_ReposLojasCorredor.ItemIndex:=0;
-
   DMBelShop.CDS_BuscaRapida.Close;
   Screen.Cursor:=crDefault;
 end;
@@ -6571,6 +6569,9 @@ end;
 
 procedure TFrmCentralTrocas.Dbg_AnaliseReposicoesTitleClick(Column: TColumn);
 begin
+  If DMCentralTrocas.CDS_V_AnaliseReposicao.IsEmpty Then
+   Exit;
+
   With DMCentralTrocas.CDS_V_AnaliseReposicao do
   Begin
     If IndexDefs.Count>0 Then
@@ -6603,6 +6604,56 @@ procedure TFrmCentralTrocas.Dbg_AnaliseReposCorredoresDrawDataCell(
   Sender: TObject; const Rect: TRect; Field: TField; State: TGridDrawState);
 begin
   ShowScrollBar(Dbg_AnaliseReposCorredores.Handle, SB_VERT, False);
+end;
+
+procedure TFrmCentralTrocas.CkCbx_ReposLojasCorredorChange(Sender: TObject);
+Var
+  i: Integer;
+  s: String;
+begin
+  If DMCentralTrocas.CDS_ReposicaoDocs.IsEmpty Then
+  Begin
+    CkCbx_ReposLojasCorredor.Items.Clear;
+    Exit;
+  End; // If DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty Then
+
+  igCorredores:=0;
+  sgCorredores:='';
+  s:='';
+  bgTodosCorredores:=True;
+  for i:=0 to CkCbx_ReposLojasCorredor.Items.Count-1 do
+  Begin
+    If CkCbx_ReposLojasCorredor.Checked[i] Then
+     Begin
+       If s='' Then
+        s:='ENDERECO LIKE '+QuotedStr(CkCbx_ReposLojasCorredor.Items[i]+'%')
+       Else
+        s:=s+' OR ENDERECO LIKE '+QuotedStr(CkCbx_ReposLojasCorredor.Items[i]+'%');
+
+       If sgCorredores='' Then
+        sgCorredores:=QuotedStr(CkCbx_ReposLojasCorredor.Items[i])
+       Else
+        sgCorredores:=sgCorredores+', '+QuotedStr(CkCbx_ReposLojasCorredor.Items[i]);
+
+       Inc(igCorredores);
+     End
+    Else
+     Begin
+       bgTodosCorredores:=False;
+     End;
+  End; // for i:=0 to CkCbx_ReposLojasCorredor.Items.Count-1 do
+
+  // Busca Movtos ==============================================================
+  DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=False;
+  DMCentralTrocas.CDS_ReposicaoTransf.Filter:='';
+
+  If (Not DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty) and (s<>'') and (Not bgTodosCorredores) Then
+  Begin
+    DMCentralTrocas.CDS_ReposicaoTransf.Filter:=s;
+    DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
+  End;
+
+  DMCentralTrocas.CDS_ReposicaoDocsAfterScroll(DMCentralTrocas.CDS_ReposicaoDocs);
 end;
 
 end.

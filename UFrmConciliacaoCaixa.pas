@@ -1382,7 +1382,7 @@ procedure TFrmConciliacaoCaixa.FormClose(Sender: TObject;
 begin
   if bgSairCaixa Then
    Begin
-     Action := caFree;
+     Action := caHide; // caFree;
 
      If DMBelShop.SQLC.InTransaction Then
       DMBelShop.SQLC.Rollback(TD);

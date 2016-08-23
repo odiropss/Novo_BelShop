@@ -8159,8 +8159,7 @@ begin
 
 end;
 
-procedure TFrmBancoExtratos.FormCloseQuery(Sender: TObject;
-  var CanClose: Boolean);
+procedure TFrmBancoExtratos.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   DMConciliacao.FechaTudoConciliacao;
 end;

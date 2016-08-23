@@ -1,8 +1,8 @@
 object DMBelShop: TDMBelShop
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 47
-  Height = 726
+  Left = 194
+  Height = 723
   Width = 1305
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
@@ -26,6 +26,7 @@ object DMBelShop: TDMBelShop
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
+    Connected = True
     Left = 32
     Top = 16
   end
@@ -2728,50 +2729,65 @@ object DMBelShop: TDMBelShop
   end
   object SDS_FluxoFornecedor: TSQLDataSet
     CommandText = 
-      'select '#13#10#13#10'Case ff.NUM_SEQ'#13#10'   When 0 Then   ff.DTA_CAIXA'#13#10'End D' +
-      'ATA,'#13#10#13#10'ff.COD_HISTORICO, fc.des_historico,'#13#10'ff.NUM_DOCUMENTO, f' +
-      'f.NUM_SERIE, '#13#10#13#10'Case ff.TIP_DEBCRE'#13#10'    When '#39'C'#39' Then   ff.VLR_' +
-      'CAIXA'#13#10'   Else 0'#13#10'End Vlr_Credito,'#13#10#13#10'Case ff.TIP_DEBCRE'#13#10'    Wh' +
-      'en '#39'D'#39' Then   ff.VLR_CAIXA'#13#10'   Else 0'#13#10'End Vlr_Debito,'#13#10#13#10'Case f' +
-      'f.NUM_SEQ'#13#10'   When 0 Then ff.VLR_SALDO'#13#10'   When 999999 Then ff.V' +
-      'LR_SALDO'#13#10'End vlr_Saldo,'#13#10#13#10'ff.TXT_OBS,'#13#10#13#10'ff.COD_EMPRESA, emp.r' +
-      'azao_social,'#13#10#13#10'ff.COD_FORNECEDOR, ff.DES_FORNECEDOR, ff.DTA_CAI' +
-      'XA,'#13#10'ff.NUM_SEQ, ff.NUM_CHAVENF,'#13#10'ff.TIP_DEBCRE'#13#10#13#10'from  FL_CAIX' +
-      'A_FORNECEDORES ff'#13#10'      left join fl_caixa_historicos fc on ff.' +
-      'cod_historico=fc.cod_historico'#13#10'      left join  emp_conexoes em' +
-      'p on ff.cod_empresa=emp.cod_filial'#13#10#13#10'Where ff.cod_fornecedor= :' +
-      'CodForn'#13#10#13#10'order by ff.DTA_CAIXA, ff.NUM_SEQ'#13#10
+      'SELECT'#13#10'/*'#13#10'CASE FF.NUM_SEQ'#13#10'   WHEN 0 THEN   FF.DTA_CAIXA'#13#10'END ' +
+      'DATA,'#13#10'*/'#13#10'FF.DTA_CAIXA DATA,'#13#10#13#10#39'Bel_'#39'||FF.COD_EMPRESA LOJA,'#13#10#13 +
+      #10'CASE'#13#10'  WHEN (FF.COD_HISTORICO=0) OR (FF.COD_HISTORICO=999999) ' +
+      'THEN'#13#10'   NULL'#13#10'  ELSE'#13#10'    FF.COD_HISTORICO'#13#10'END COD_HISTORICO,'#13 +
+      #10#13#10'FC.DES_HISTORICO,'#13#10'FF.NUM_DOCUMENTO, FF.NUM_SERIE, '#13#10#13#10'CASE'#13#10 +
+      '   WHEN FF.TIP_DEBCRE='#39'C'#39' THEN'#13#10'     FF.VLR_CAIXA'#13#10'   WHEN (FF.N' +
+      'UM_SEQ=0) or (FF.NUM_SEQ=999999) Then'#13#10'     null'#13#10'   ELSE'#13#10'     ' +
+      '0.00'#13#10'END VLR_CREDITO,'#13#10#13#10'CASE'#13#10'   WHEN FF.TIP_DEBCRE='#39'D'#39' THEN'#13#10 +
+      '      FF.VLR_CAIXA'#13#10'    WHEN (FF.NUM_SEQ=0) or (FF.NUM_SEQ=99999' +
+      '9) Then'#13#10'      null'#13#10'   ELSE'#13#10'      0.00'#13#10'END VLR_DEBITO,'#13#10'/*'#13#10'C' +
+      'ASE FF.NUM_SEQ'#13#10'   WHEN 0 THEN'#13#10'      FF.VLR_SALDO'#13#10'   WHEN 9999' +
+      '99 THEN'#13#10'     FF.VLR_SALDO'#13#10'END VLR_SALDO,'#13#10'*/'#13#10'CASE FF.NUM_SEQ'#13 +
+      #10'   WHEN 0 THEN'#13#10'      FF.VLR_SALDO- :Valor1'#13#10'   WHEN 999999 THE' +
+      'N'#13#10'     FF.VLR_SALDO- :Valor2'#13#10'END VLR_SALDO,'#13#10#13#10'FF.TXT_OBS,'#13#10#13#10 +
+      'FF.COD_EMPRESA, EMP.RAZAO_SOCIAL,'#13#10#13#10'FF.COD_FORNECEDOR, FF.DES_F' +
+      'ORNECEDOR,'#13#10'FF.NUM_SEQ, FF.NUM_CHAVENF,'#13#10'FF.TIP_DEBCRE'#13#10#13#10'FROM  ' +
+      'FL_CAIXA_FORNECEDORES FF'#13#10'      LEFT JOIN FL_CAIXA_HISTORICOS FC' +
+      ' ON FC.COD_HISTORICO=FF.COD_HISTORICO'#13#10'      LEFT JOIN EMP_CONEX' +
+      'OES EMP ON EMP.COD_FILIAL=FF.COD_EMPRESA'#13#10#13#10'WHERE FF.COD_FORNECE' +
+      'DOR= :CodForn'#13#10'AND   ff.dta_caixa>= :Data'#13#10#13#10'ORDER BY FF.DTA_CAI' +
+      'XA, FF.NUM_SEQ'#13#10
     MaxBlobSize = -1
     Params = <
       item
         DataType = ftString
+        Name = 'Valor1'
+        ParamType = ptInput
+        Value = '1'
+      end
+      item
+        DataType = ftString
+        Name = 'Valor2'
+        ParamType = ptInput
+        Value = '2'
+      end
+      item
+        DataType = ftString
         Name = 'CodForn'
         ParamType = ptInput
-        Value = '0'
+        Value = '3'
+      end
+      item
+        DataType = ftString
+        Name = 'Data'
+        ParamType = ptInput
+        Value = '01.01.2000'
       end>
     SQLConnection = SQLC
-    Left = 912
-    Top = 88
+    Left = 920
+    Top = 549
   end
   object CDS_FluxoFornecedor: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FluxoFornecedor'
-    Left = 991
-    Top = 87
+    Left = 999
+    Top = 548
     object CDS_FluxoFornecedorDATA: TDateField
       FieldName = 'DATA'
-    end
-    object CDS_FluxoFornecedorCOD_EMPRESA: TStringField
-      Alignment = taRightJustify
-      DisplayLabel = 'Cod Emp'
-      FieldName = 'COD_EMPRESA'
-      Size = 2
-    end
-    object CDS_FluxoFornecedorRAZAO_SOCIAL: TStringField
-      DisplayLabel = 'Empresa'
-      FieldName = 'RAZAO_SOCIAL'
-      Size = 60
     end
     object CDS_FluxoFornecedorCOD_HISTORICO: TIntegerField
       DisplayLabel = 'Cod Hist'
@@ -2807,17 +2823,26 @@ object DMBelShop: TDMBelShop
       Precision = 15
       Size = 2
     end
-    object CDS_FluxoFornecedorVLR_SALDO: TFMTBCDField
+    object CDS_FluxoFornecedorVLR_SALDO: TFloatField
       DisplayLabel = 'Valor Saldo'
       FieldName = 'VLR_SALDO'
-      DisplayFormat = '0.,00'
-      Precision = 15
-      Size = 2
+      DisplayFormat = '0,.00'
     end
     object CDS_FluxoFornecedorTXT_OBS: TStringField
       DisplayLabel = 'Observa'#231#227'o'
       FieldName = 'TXT_OBS'
       Size = 200
+    end
+    object CDS_FluxoFornecedorCOD_EMPRESA: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Cod Emp'
+      FieldName = 'COD_EMPRESA'
+      Size = 2
+    end
+    object CDS_FluxoFornecedorRAZAO_SOCIAL: TStringField
+      DisplayLabel = 'Empresa'
+      FieldName = 'RAZAO_SOCIAL'
+      Size = 60
     end
     object CDS_FluxoFornecedorCOD_FORNECEDOR: TStringField
       FieldName = 'COD_FORNECEDOR'
@@ -2827,11 +2852,6 @@ object DMBelShop: TDMBelShop
     object CDS_FluxoFornecedorDES_FORNECEDOR: TStringField
       FieldName = 'DES_FORNECEDOR'
       Size = 40
-    end
-    object CDS_FluxoFornecedorDTA_CAIXA: TDateField
-      Alignment = taCenter
-      DisplayLabel = 'Data'
-      FieldName = 'DTA_CAIXA'
     end
     object CDS_FluxoFornecedorNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
@@ -2845,16 +2865,22 @@ object DMBelShop: TDMBelShop
       FieldName = 'TIP_DEBCRE'
       Size = 1
     end
+    object CDS_FluxoFornecedorLOJA: TStringField
+      DisplayLabel = 'Loja'
+      FieldName = 'LOJA'
+      Size = 6
+    end
   end
   object DSP_FluxoFornecedor: TDataSetProvider
     DataSet = SDS_FluxoFornecedor
-    Left = 954
-    Top = 104
+    Options = [poRetainServerOrder]
+    Left = 962
+    Top = 565
   end
   object DS_FluxoFornecedor: TDataSource
     DataSet = CDS_FluxoFornecedor
-    Left = 1029
-    Top = 104
+    Left = 1037
+    Top = 565
   end
   object SDS_While: TSQLDataSet
     MaxBlobSize = -1
@@ -5132,8 +5158,8 @@ object DMBelShop: TDMBelShop
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FeriadosAno'
-    Left = 774
-    Top = 16
+    Left = 606
+    Top = 96
     object CDS_FeriadosAnoDTA_FERIADO: TDateField
       Alignment = taCenter
       DisplayLabel = 'Dia'
@@ -5156,21 +5182,21 @@ object DMBelShop: TDMBelShop
   end
   object DSP_FeriadosAno: TDataSetProvider
     DataSet = SDS_FeriadosAno
-    Left = 741
-    Top = 32
+    Left = 573
+    Top = 112
   end
   object DS_FeriadosAno: TDataSource
     DataSet = CDS_FeriadosAno
-    Left = 811
-    Top = 32
+    Left = 643
+    Top = 112
   end
   object SDS_FeriadosAno: TSQLDataSet
     CommandText = 'Select *'#13#10'From FIN_FERIADOS_ANO'#13#10'Order by DTA_FERIADO'
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 704
-    Top = 16
+    Left = 536
+    Top = 96
   end
   object SDS_Enderecamento: TSQLDataSet
     CommandText = 
@@ -5762,24 +5788,24 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 912
-    Top = 204
+    Top = 68
   end
   object DS_FechaCaixa: TDataSource
     DataSet = CDS_FechaCaixa
     Left = 1039
-    Top = 220
+    Top = 84
   end
   object DSP_FechaCaixa: TDataSetProvider
     DataSet = SDS_FechaCaixa
     Left = 953
-    Top = 220
+    Top = 84
   end
   object CDS_FechaCaixa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FechaCaixa'
     Left = 993
-    Top = 208
+    Top = 72
     object CDS_FechaCaixaCOD_CREDITO: TIntegerField
       DisplayLabel = 'Cod'
       FieldName = 'COD_CREDITO'
@@ -5835,24 +5861,24 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 912
-    Top = 268
+    Top = 132
   end
   object DS_FechaCaixaTotais: TDataSource
     DataSet = CDS_FechaCaixaTotais
     Left = 1039
-    Top = 284
+    Top = 148
   end
   object DSP_FechaCaixaTotais: TDataSetProvider
     DataSet = SDS_FechaCaixaTotais
     Left = 953
-    Top = 284
+    Top = 148
   end
   object CDS_FechaCaixaTotais: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FechaCaixaTotais'
     Left = 993
-    Top = 272
+    Top = 136
     object CDS_FechaCaixaTotaisCOD_CREDITO: TIntegerField
       DisplayLabel = 'Cod'
       FieldName = 'COD_CREDITO'
@@ -5930,19 +5956,19 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 896
-    Top = 412
+    Top = 268
   end
   object DSP_FechaDiarioMov: TDataSetProvider
     DataSet = SDS_FechaDiarioMov
     Left = 937
-    Top = 428
+    Top = 284
   end
   object CDS_FechaDiarioMov: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FechaDiarioMov'
     Left = 977
-    Top = 416
+    Top = 272
     object CDS_FechaDiarioMovNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Required = True
@@ -6007,7 +6033,7 @@ object DMBelShop: TDMBelShop
   object DS_FechaDiarioMov: TDataSource
     DataSet = CDS_FechaDiarioMov
     Left = 1023
-    Top = 428
+    Top = 284
   end
   object SDS_FechaDiarioTot: TSQLDataSet
     CommandText = 
@@ -6031,19 +6057,19 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 896
-    Top = 476
+    Top = 332
   end
   object DSP_FechaDiarioTot: TDataSetProvider
     DataSet = SDS_FechaDiarioTot
     Left = 937
-    Top = 492
+    Top = 348
   end
   object CDS_FechaDiarioTot: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FechaDiarioTot'
     Left = 977
-    Top = 480
+    Top = 336
     object CDS_FechaDiarioTotNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Required = True
@@ -6073,7 +6099,7 @@ object DMBelShop: TDMBelShop
   object DS_FechaDiarioTot: TDataSource
     DataSet = CDS_FechaDiarioTot
     Left = 1023
-    Top = 492
+    Top = 348
   end
   object DS_Geral: TDataSource
     Left = 136
@@ -6092,12 +6118,12 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 912
-    Top = 144
+    Top = 8
   end
   object DSP_Seguranca: TDataSetProvider
     DataSet = SDS_Seguranca
     Left = 952
-    Top = 160
+    Top = 24
   end
   object CDS_Seguranca: TClientDataSet
     Aggregates = <>
@@ -6109,7 +6135,7 @@ object DMBelShop: TDMBelShop
       end>
     ProviderName = 'DSP_Seguranca'
     Left = 992
-    Top = 152
+    Top = 16
     object CDS_SegurancaUSUARIO: TStringField
       FieldName = 'USUARIO'
       Required = True
@@ -6138,7 +6164,7 @@ object DMBelShop: TDMBelShop
   object DS_Seguranca: TDataSource
     DataSet = CDS_Seguranca
     Left = 1040
-    Top = 160
+    Top = 24
   end
   object SQLSP: TSQLStoredProc
     MaxBlobSize = -1
@@ -6164,14 +6190,14 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 909
+    Left = 685
     Top = 21
   end
   object CDS_ParametrosSis: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ParametrosSIS'
-    Left = 998
+    Left = 774
     Top = 26
     object CDS_ParametrosSisNUM_DIAS_CONCILIA: TIntegerField
       FieldName = 'NUM_DIAS_CONCILIA'
@@ -6237,12 +6263,12 @@ object DMBelShop: TDMBelShop
   end
   object DSP_ParametrosSis: TDataSetProvider
     DataSet = SDS_ParametrosSis
-    Left = 950
+    Left = 726
     Top = 38
   end
   object DS_ParametrosSis: TDataSource
     DataSet = CDS_ParametrosSis
-    Left = 1048
+    Left = 824
     Top = 38
   end
   object SDS_Consistencias: TSQLDataSet
@@ -6422,7 +6448,7 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_AuditoriaAnalise'
     StoreDefs = True
     Left = 990
-    Top = 547
+    Top = 403
     object StringField1: TStringField
       Alignment = taCenter
       DisplayLabel = 'C'#243'd Loja'
@@ -6494,12 +6520,12 @@ object DMBelShop: TDMBelShop
   object DataSetProvider1: TDataSetProvider
     DataSet = SDS_SidicomPermissoes
     Left = 955
-    Top = 563
+    Top = 419
   end
   object DataSource2: TDataSource
     DataSet = ClientDataSet1
     Left = 1030
-    Top = 563
+    Top = 419
   end
   object SDS_SidicomPermissoes: TSQLDataSet
     CommandText = 
@@ -6514,7 +6540,7 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 920
-    Top = 547
+    Top = 403
   end
   object SDS_CurvaFinanceira: TSQLDataSet
     CommandText = 'SELECT *'#13#10'FROM es_finan_curva_abc c'#13#10'WHERE c.cod_loja=999'
@@ -6522,24 +6548,24 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 904
-    Top = 340
+    Top = 196
   end
   object DS_CurvaFinanceira: TDataSource
     DataSet = CDS_CurvaFinanceira
     Left = 1031
-    Top = 356
+    Top = 212
   end
   object DSP_CurvaFinanceira: TDataSetProvider
     DataSet = SDS_CurvaFinanceira
     Left = 945
-    Top = 356
+    Top = 212
   end
   object CDS_CurvaFinanceira: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CurvaFinanceira'
     Left = 985
-    Top = 344
+    Top = 200
     object CDS_CurvaFinanceiraCOD_LOJA: TStringField
       FieldName = 'COD_LOJA'
       Required = True
@@ -8470,5 +8496,164 @@ object DMBelShop: TDMBelShop
     DataSet = CDS_FaltasCDLojas
     Left = 616
     Top = 637
+  end
+  object SDS_FluxoFornecedores: TSQLDataSet
+    CommandText = 
+      '-- Todos os Fornecedores'#13#10'SELECT'#13#10'3 Ordem,'#13#10't.des_aux,'#13#10'c.cod_fo' +
+      'rnecedor,'#13#10'TRIM(CASE'#13#10'      WHEN COALESCE(f.nomefornecedor, '#39'0'#39')' +
+      ' = '#39'0'#39' THEN '#13#10'          c.des_fornecedor'#13#10'      ELSE '#13#10'         ' +
+      '  f.nomefornecedor'#13#10'END) nomefornecedor,'#13#10#13#10'CAST(MIN(c.dta_caixa' +
+      ') AS DATE) dta_inicial, CAST(MAX(c.dta_caixa) AS DATE) dta_final' +
+      ','#13#10#13#10'SUM(DECODE(c.tip_debcre, '#39'D'#39', -c.vlr_caixa, c.vlr_caixa)) v' +
+      'lr_saldo,'#13#10#13#10'CAST(CASE'#13#10'       WHEN COALESCE(t.des_aux, '#39'0'#39') = '#39 +
+      '0'#39' THEN'#13#10'         NULL--MIN(c.dta_caixa)'#13#10'       ELSE'#13#10'         ' +
+      't.des_aux'#13#10'     END'#13#10'AS DATE) dta_cc,'#13#10#13#10'CASE'#13#10'  WHEN COALESCE(t' +
+      '.des_aux, '#39'0'#39') = '#39'0'#39' THEN'#13#10'    '#39'NAO'#39#13#10'  ELSE'#13#10'    '#39'SIM'#39#13#10'END LIM' +
+      'ITE'#13#10#13#10'FROM FL_CAIXA_FORNECEDORES c'#13#10'LEFT JOIN FORNECEDOR f ON f' +
+      '.codfornecedor = c.cod_fornecedor'#13#10'LEFT JOIN TAB_AUXILIAR t ON t' +
+      '.tip_aux = 14 AND'#13#10'      t.cod_aux = c.cod_fornecedor'#13#10#13#10'WHERE c' +
+      '.cod_historico <> 0 AND'#13#10'      c.cod_historico <> 999999'#13#10'GROUP ' +
+      'BY 2, 3, 4'#13#10#13#10'UNION'#13#10#13#10'-- Total Cr'#233'ditos dos Fornecedores'#13#10'SELEC' +
+      'T'#13#10'0 Ordem,'#13#10'null des_aux,'#13#10'null cod_fornecedor,'#13#10#39' TOTAL CR'#201'DIT' +
+      'OS DOS FORNECEDORES'#39' nomefornecedor,'#13#10#13#10'CAST(MIN(tc.dta_caixa) A' +
+      'S DATE) dta_inicial,'#13#10'CAST(MAX(tc.dta_caixa) AS DATE) dta_final,' +
+      #13#10#13#10'SUM(tc.vlr_caixa) vlr_saldo,'#13#10#13#10'NULL dta_cc,'#13#10'NULL LIMITE'#13#10#13 +
+      #10'FROM FL_CAIXA_FORNECEDORES tc'#13#10'WHERE tc.cod_historico <> 0 AND'#13 +
+      #10'      tc.cod_historico <> 999999'#13#10'AND   tc.tip_debcre='#39'C'#39#13#10#13#10'UN' +
+      'ION'#13#10#13#10'-- Total D'#233'bitos dos Fornecedores'#13#10'SELECT'#13#10'1 Ordem,'#13#10'null' +
+      ' des_aux,'#13#10'null cod_fornecedor,'#13#10#39' TOTAL D'#201'BITOS DOS FORNECEDORE' +
+      'S'#39' nomefornecedor,'#13#10#13#10'CAST(MIN(tc.dta_caixa) AS DATE) dta_inicia' +
+      'l,'#13#10'CAST(MAX(tc.dta_caixa) AS DATE) dta_final,'#13#10#13#10'SUM(tc.vlr_cai' +
+      'xa) vlr_saldo,'#13#10#13#10'NULL dta_cc,'#13#10'NULL LIMITE'#13#10#13#10'FROM FL_CAIXA_FOR' +
+      'NECEDORES tc'#13#10'WHERE tc.cod_historico <> 0 AND'#13#10'      tc.cod_hist' +
+      'orico <> 999999'#13#10'AND   tc.tip_debcre='#39'D'#39#13#10#13#10'UNION'#13#10#13#10'-- Total Ge' +
+      'ral dos Fornecedores'#13#10'SELECT'#13#10'2 Ordem,'#13#10'null des_aux,'#13#10'null cod_' +
+      'fornecedor,'#13#10#39' TOTAL GERAL: FORNECEDORES'#39' nomefornecedor,'#13#10#13#10'CAS' +
+      'T(MIN(ct.dta_caixa) AS DATE) dta_inicial, CAST(MAX(ct.dta_caixa)' +
+      ' AS DATE) dta_final,'#13#10#13#10'SUM(DECODE(ct.tip_debcre, '#39'D'#39', -ct.vlr_c' +
+      'aixa, ct.vlr_caixa)) vlr_saldo,'#13#10#13#10'NULL dta_cc,'#13#10'NULL LIMITE'#13#10#13#10 +
+      'FROM FL_CAIXA_FORNECEDORES cT'#13#10'WHERE ct.cod_historico <> 0 AND'#13#10 +
+      '      ct.cod_historico <> 999999'#13#10#13#10'ORDER BY 4'#13#10
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 920
+    Top = 485
+  end
+  object CDS_FluxoFornecedores: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_FluxoFornecedores'
+    AfterScroll = CDS_FluxoFornecedoresAfterScroll
+    Left = 999
+    Top = 484
+    object CDS_FluxoFornecedoresORDEM: TIntegerField
+      FieldName = 'ORDEM'
+      Required = True
+    end
+    object CDS_FluxoFornecedoresDES_AUX: TStringField
+      FieldName = 'DES_AUX'
+      Size = 50
+    end
+    object CDS_FluxoFornecedoresCOD_FORNECEDOR: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'COD_FORNECEDOR'
+      Required = True
+      Size = 6
+    end
+    object CDS_FluxoFornecedoresNOMEFORNECEDOR: TStringField
+      DisplayLabel = 'Fornecedor'
+      FieldName = 'NOMEFORNECEDOR'
+      Size = 40
+    end
+    object CDS_FluxoFornecedoresDTA_INICIAL: TDateField
+      Alignment = taCenter
+      DisplayLabel = 'Data Inicial'
+      FieldName = 'DTA_INICIAL'
+    end
+    object CDS_FluxoFornecedoresDTA_FINAL: TDateField
+      Alignment = taCenter
+      DisplayLabel = 'Data Final'
+      FieldName = 'DTA_FINAL'
+    end
+    object CDS_FluxoFornecedoresVLR_SALDO: TFMTBCDField
+      DisplayLabel = 'Saldo Final'
+      FieldName = 'VLR_SALDO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_FluxoFornecedoresDTA_CC: TDateField
+      Alignment = taCenter
+      DisplayLabel = 'Data CC'
+      FieldName = 'DTA_CC'
+    end
+    object CDS_FluxoFornecedoresLIMITE: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'Dt CC'
+      FieldName = 'LIMITE'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
+  end
+  object DSP_FluxoFornecedores: TDataSetProvider
+    DataSet = SDS_FluxoFornecedores
+    Left = 962
+    Top = 501
+  end
+  object DS_FluxoFornecedores: TDataSource
+    DataSet = CDS_FluxoFornecedores
+    Left = 1037
+    Top = 501
+  end
+  object SDS_FluxoFornHistorico: TSQLDataSet
+    CommandText = 
+      'select'#13#10'h.cod_historico,'#13#10'h.cod_historico||'#39' - '#39'||h.des_historic' +
+      'o Des_Historico,'#13#10'Case'#13#10'  when h.ind_debcre='#39'D'#39' Then'#13#10'    '#39'D'#233'bit' +
+      'o'#39#13#10'  Else'#13#10'    '#39'Cr'#233'dito'#39#13#10'End Deb_Cre'#13#10'from fl_caixa_historicos' +
+      ' h'#13#10'where h.cod_historico<>0'#13#10'and   h.cod_historico<>999999'#13#10'ord' +
+      'er by 2'
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 920
+    Top = 613
+  end
+  object CDS_FluxoFornHistorico: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_FluxoFornHistorico'
+    Left = 999
+    Top = 612
+    object CDS_FluxoFornHistoricoDES_HISTORICO: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      FieldName = 'DES_HISTORICO'
+      Size = 56
+    end
+    object CDS_FluxoFornHistoricoDEB_CRE: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'Deb/Cre'
+      FieldName = 'DEB_CRE'
+      Required = True
+      FixedChar = True
+      Size = 7
+    end
+    object CDS_FluxoFornHistoricoCOD_HISTORICO: TIntegerField
+      FieldName = 'COD_HISTORICO'
+      Required = True
+      Visible = False
+    end
+  end
+  object DSP_FluxoFornHistorico: TDataSetProvider
+    DataSet = SDS_FluxoFornHistorico
+    Left = 962
+    Top = 629
+  end
+  object DS_FluxoFornHistorico: TDataSource
+    DataSet = CDS_FluxoFornHistorico
+    Left = 1037
+    Top = 629
   end
 end

@@ -1,6 +1,6 @@
 object FrmControleEstoques: TFrmControleEstoques
-  Left = 234
-  Top = 109
+  Left = 253
+  Top = 116
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -266,7 +266,7 @@ object FrmControleEstoques: TFrmControleEstoques
     Top = 0
     Width = 977
     Height = 539
-    ActivePage = Ts_ContEstProdutos
+    ActivePage = Ts_ContEstSolic
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
