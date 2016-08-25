@@ -33,7 +33,8 @@ var
   bgConexaoLocal: Boolean; // Se Conexão com o Servidor da Matriz é Local - Verifica a Existencia do Arquivo "ConexaoExterna.ini"
 
   // Cria Ponteiro de transacão
-  TD: TTransactionDesc;
+  TD:  TTransactionDesc;
+  TD1: TTransactionDesc;
 
   IBQ_ConsultaFilial: TIBQuery;
 
@@ -176,7 +177,7 @@ Begin
 
     // Processamento ===========================================================
     If bSiga Then // Query Executada
-    Begin          
+    Begin
       // Monta Transacao =======================================================
       TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
       TD.IsolationLevel:=xilREADCOMMITTED;
@@ -186,23 +187,20 @@ Begin
         DecimalSeparator:='.';
 
         // Exclui Lançamentos para Substituição e Inclução de todos ============
-        If Not IBQ_ConsultaFilial.IsEmpty Then
-        Begin
-          MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES f'+
-                 ' WHERE f.cod_empresa='+QuotedStr(sgCodEmp)+
-                 ' AND f.dta_caixa>='+QuotedStr(sgDtaInicio);
-          DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
-        End; // If Not IBQ_ConsultaFilial.IsEmpty Then
+        MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES f'+
+               ' WHERE  (f.cod_empresa='+QuotedStr(sgCodEmp)+' or (f.cod_historico=0 or f.cod_historico=999999))'+
+               ' AND    f.dta_caixa>='+QuotedStr(sgDtaInicio);
+        DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
 
         While Not IBQ_ConsultaFilial.Eof do
         Begin
-          sCodForn   :=IBQ_ConsultaFilial.FieldByName('codfornecedor').AsString;
-          sgDtaInicio:=IBQ_ConsultaFilial.FieldByName('dataentrada').AsString;
+          sCodForn:=IBQ_ConsultaFilial.FieldByName('codfornecedor').AsString;
+          sgDtaFim:=IBQ_ConsultaFilial.FieldByName('dataentrada').AsString;
 
           // Busca Num_seq do Dia do Fornecedor ---------------------
           MySql:=' SELECT coalesce(max(cf.num_seq)+1 ,1) Num_Seq'+
                  ' FROM FL_CAIXA_FORNECEDORES cf'+
-                 ' WHERE cf.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaInicio)))+
+                 ' WHERE cf.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFim)))+
                  ' AND   cf.cod_fornecedor='+QuotedStr(sCodForn)+
                  ' AND   cf.num_seq>0'+
                  ' AND   cf.num_seq<999999';

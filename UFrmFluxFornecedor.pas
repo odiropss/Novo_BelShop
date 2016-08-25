@@ -46,8 +46,8 @@ type
     ApplicationEvents1: TApplicationEvents;
     MaskEdit1: TMaskEdit;
     PopM_Forn: TPopupMenu;
-    SIM: TMenuItem;
-    NAO: TMenuItem;
+    PopM_FluFornSIM: TMenuItem;
+    PopM_FluFornNAO: TMenuItem;
     Stb_FluForn: TdxStatusBar;
     Bt_FluFornComprovante: TJvXPButton;
     EdtFluFornComprovante: TEdit;
@@ -102,7 +102,7 @@ type
     procedure Dbg_FluFornComprovDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
-    procedure SIMClick(Sender: TObject);
+    procedure PopM_FluFornSIMClick(Sender: TObject);
     procedure Bt_FluFornComprovanteClick(Sender: TObject);
     procedure Rb_FluFornDebitoClick(Sender: TObject);
     procedure Rb_FluFornDebitoKeyUp(Sender: TObject; var Key: Word;
@@ -116,14 +116,15 @@ type
 
 const 
   // Show Hint em Forma de Balão
-  TTS_BALLOON = $40; 
-  TTM_SETTITLE = (WM_USER + 32); 
+  TTS_BALLOON = $40;
+  TTM_SETTITLE = (WM_USER + 32);
   //////////////////////////////
 
 var
   FrmFluxoFornecedor: TFrmFluxoFornecedor;
 
-  bgSairFF: Boolean;
+  bgSairFF, bgExcluiFF: Boolean;
+
   OrderGrid: String;    // Ordenar Grid
 
   IBQ_ConsultaFilial: TIBQuery;
@@ -171,7 +172,7 @@ Begin
 
     If Trim(MySql)<>'' Then
     Begin
-      sgMensagemERRO:='Impossivel Excluir !!'+cr+'Comprovante '+MySql+cr+'Contém Movimento(s) !!';
+      sgMensagemERRO:='Impossivel Excluir o Comprovante '+MySql+cr+cr+'Contém Movimento(s) !!'+cr+cr+'ENTRAR EM CONTATO COM O ODIR !!';
       Exit;
     End; // If Trim(MySql)<>'' Then
   End; // If sTipo='E' Then
@@ -215,13 +216,21 @@ Begin
     // Exclui Comprovante -------------------------------------------
     If sTipo='E' Then
     Begin
-      MySql:=' DELETE FL_CAIXA_HISTORICOS h'+
+      MySql:=' DELETE FROM FL_CAIXA_HISTORICOS h'+
              ' WHERE h.cod_historico='+sCodHist;
       DMBelShop.SQLC.Execute(MySql,nil,nil);
     End; // If sTipo='E' Then
 
     // Atualiza Transacao ======================================================
     DMBelShop.SQLC.Commit(TD);
+
+    If DMBelShop.CDS_FluxoFornHistorico.Active Then
+     DMBelShop.CDS_FluxoFornHistorico.Close;
+    DMBelShop.CDS_FluxoFornHistorico.Open;
+
+    If sTipo='I' Then
+     DMBelShop.CDS_FluxoFornHistorico.Locate('COD_HISTORICO',sCodHist,[]);
+
     Result:=True;
   Except
     on e : Exception do
@@ -233,6 +242,7 @@ Begin
     End; // on e : Exception do
   End; // Try
 
+  OdirPanApres.Visible:=False;
   DateSeparator:='/';
   DecimalSeparator:=',';
 End; // Manutenção DML de Historicos de Fornecedores >>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -686,24 +696,47 @@ Begin
         DateSeparator:='.';
         DecimalSeparator:='.';
 
+//        // Exclui Lançamentos para Substituição e Inclução de todos ============
+//        If bgExcluiFF Then
+//        Begin
+//          sCodForn:='';
+//          If (Trim(EdtFluFornCodFornAcertar.Text)<>'Cód a Acertar') and (Trim(EdtFluFornCodFornAcertar.Text)<>'') Then
+//           sCodForn:=FormatFloat('000000',StrToInt(EdtFluFornCodFornAcertar.text));
+//
+//          MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES f'+
+//                 ' WHERE f.cod_empresa='+QuotedStr(sgCodEmp);
+//
+//          If MaskEdit1.Text<>'  .  .20  ' Then
+//           MySql:=
+//            MySql+' AND f.dta_caixa>='+QuotedStr(MaskEdit1.Text);
+//
+//          If (Trim(sCodForn)<>'') Then
+//           MySql:=
+//            MySql+' AND f.cod_fornecedor='+QuotedStr(sCodForn);
+//           DMBelShop.SQLC.Execute(MySql,nil,nil);
+//        End;
         // Exclui Lançamentos para Substituição e Inclução de todos ============
-        If pgProgBar.Properties.Max>0 Then
-        Begin
-          MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES f'+
-                 ' WHERE f.cod_empresa='+QuotedStr(sgCodEmp);
+        sCodForn:='';
+        If (Trim(EdtFluFornCodFornAcertar.Text)<>'Cód a Acertar') and (Trim(EdtFluFornCodFornAcertar.Text)<>'') Then
+         sCodForn:=FormatFloat('000000',StrToInt(EdtFluFornCodFornAcertar.text));
 
-          If MaskEdit1.Text<>'  .  .20  ' Then
-           MySql:=
-            MySql+' AND f.dta_caixa>='+QuotedStr(MaskEdit1.Text);
+        MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES f'+
+               ' WHERE f.cod_empresa='+QuotedStr(sgCodEmp);
 
-          DMBelShop.SQLC.Execute(MySql,nil,nil);
-        End;
+        If MaskEdit1.Text<>'  .  .20  ' Then
+         MySql:=
+          MySql+' AND f.dta_caixa>='+QuotedStr(MaskEdit1.Text);
+
+        If (Trim(sCodForn)<>'') Then
+         MySql:=
+          MySql+' AND f.cod_fornecedor='+QuotedStr(sCodForn);
+         DMBelShop.SQLC.Execute(MySql,nil,nil);
 
         While Not IBQ_ConsultaFilial.Eof do
         Begin
           Application.ProcessMessages;
 
-          sCodForn   :=IBQ_ConsultaFilial.FieldByName('codfornecedor').AsString;
+          sCodForn:=IBQ_ConsultaFilial.FieldByName('codfornecedor').AsString;
           sgDtaInicio:=IBQ_ConsultaFilial.FieldByName('dataentrada').AsString;
 
           // Busca Num_seq do Dia do Fornecedor ---------------------
@@ -788,6 +821,9 @@ Begin
     End; // If bSiga Then
   End; // If bSiga Then
   sgDtaInicio:='';
+
+  // Fecha Conexão =========================================================
+  ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'F');
 
 end; // Busca Movtos de Debito/Credito de Fornecedores >>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -916,8 +952,9 @@ procedure TFrmFluxoFornecedor.Bt_FluFornAtualizarClick(Sender: TObject);
 Var
   MySql: String;
   i: Integer;
-  sCompDeb, sCompCre: String;
+  sCompDeb, sCompCre, sCodForn: String;
 begin
+  PC_Principal.TabIndex:=0;
   Dbg_FluFornFornec.SetFocus;
 
   If msg('ATENÇÃO !!'+cr+cr+'Deseja Realmente Atualizar  ??','C')=2 Then
@@ -925,6 +962,10 @@ begin
     MaskEdit1.SetFocus;
     Exit;
   End;
+
+  sCodForn:='';
+  If (Trim(EdtFluFornCodFornAcertar.Text)<>'Cód a Acertar') and (Trim(EdtFluFornCodFornAcertar.Text)<>'') Then
+   sCodForn:=FormatFloat('000000',StrToInt(EdtFluFornCodFornAcertar.text));
 
   // Busca Comprovantes ========================================================
   MySql:=' SELECT LPAD(h.cod_historico, 3, ''0'') cod_comprv, h.ind_debcre'+
@@ -1000,13 +1041,15 @@ begin
                 MySqlSelect:=
                  MySqlSelect+' AND mf.dataentrada>='+QuotedStr(MaskEdit1.Text);
 
-               If (Trim(EdtFluFornCodFornAcertar.Text)<>'Cód a Acertar') and (Trim(EdtFluFornCodFornAcertar.Text)<>'') Then
+               If (Trim(sCodForn)<>'') Then
                 MySqlSelect:=
-                 MySqlSelect+' AND mf.codfornecedor='+QuotedStr(Trim(EdtFluFornCodFornAcertar.Text));
+                 MySqlSelect+' AND mf.codfornecedor='+QuotedStr(sCodForn);
 
                MySqlSelect:=
                 MySqlSelect+' ORDER BY mf.codfornecedor, mf.dataentrada';
   FrmBelShop.Mem_Odir.Lines.Clear;
+
+  bgExcluiFF:=True;
   DMBelShop.CDS_EmpProcessa.First;
   While Not DMBelShop.CDS_EmpProcessa.Eof do
   Begin
@@ -1048,6 +1091,9 @@ begin
 
   msg('Processamento Efetuado com SUCESSO !!','A');
 
+  DMBelShop.CDS_FluxoFornecedores.Open;
+  EdtFluFornCodFornecedorExit(Self);
+
 end;
 
 procedure TFrmFluxoFornecedor.Dbg_FluFornFornecKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -1062,7 +1108,7 @@ begin
   // Exclui Comprovante ========================================================
   if (Key=VK_Delete) Then
   Begin
-    If Not DML_Historicos('E',DMBelShop.CDS_FluxoFornHistoricoCOD_HISTORICO.AsString);
+    If Not DML_Historicos('E',DMBelShop.CDS_FluxoFornHistoricoCOD_HISTORICO.AsString) Then
      MessageBox(Handle, pChar(sgMensagemERRO), 'Erro', MB_ICONERROR);
   End; // if (Key=VK_Delete) Then
 
@@ -1680,7 +1726,7 @@ begin
 
 end;
 
-procedure TFrmFluxoFornecedor.SIMClick(Sender: TObject);
+procedure TFrmFluxoFornecedor.PopM_FluFornSIMClick(Sender: TObject);
 begin
   If (DMBelShop.CDS_FluxoFornecedores.IsEmpty) Or (DMBelShop.CDS_FluxoFornecedoresORDEM.AsInteger<3) Then
    Exit;
@@ -1703,11 +1749,6 @@ Var
   s, sDesHist: String;
 begin
   EdtFluFornComprovante.Clear;
-
-  Rb_FluFornCredito.Checked:=False;
-  Rb_FluFornDebito.Checked:=False;
-  Rb_FluFornDebitoClick(Self);
-
   Dbg_FluFornComprov.SetFocus;
 
   // ========== EFETUA A CONEXÃO ===============================================
@@ -1732,11 +1773,6 @@ begin
   Begin
     msg('Sem Registro a Listar !!','A');
     EdtFluFornComprovante.Clear;
-
-    Rb_FluFornCredito.Checked:=False;
-    Rb_FluFornDebito.Checked:=False;
-    Rb_FluFornDebitoClick(Self);
-
     FreeAndNil(FrmPesquisa);
     Bt_FluFornComprovante.SetFocus;
     Exit;
@@ -1765,11 +1801,6 @@ begin
       Begin
         msg('Comprovante Já Informado !!','A');
         EdtFluFornComprovante.Clear;
-
-        Rb_FluFornCredito.Checked:=False;
-        Rb_FluFornDebito.Checked:=False;
-        Rb_FluFornDebitoClick(Self);
-
         FreeAndNil(FrmPesquisa);
         Bt_FluFornComprovante.SetFocus;
         Exit;
@@ -1781,7 +1812,10 @@ begin
      s:='Crédito';
 
     If msg('O Comprovante Selecionado'+cr+' Como '+s+cr+cr+'Esta Correto ?','C')=2 Then
-     Exit;
+    Begin
+      EdtFluFornComprovante.Clear;
+      Exit;
+    End;
 
     If Not DML_Historicos('I',FrmPesquisa.EdtCodigo.Text, Copy(s,1,1), Trim(FrmPesquisa.EdtDescricao.Text)) Then
      MessageBox(Handle, pChar(sgMensagemERRO), 'Erro', MB_ICONERROR);
@@ -1789,11 +1823,6 @@ begin
 
   OdirPanApres.Visible:=False;
   EdtFluFornComprovante.Clear;
-
-  Rb_FluFornCredito.Checked:=False;
-  Rb_FluFornDebito.Checked:=False;
-  Rb_FluFornDebitoClick(Self);
-
   Screen.Cursor:=crDefault;
   FreeAndNil(FrmPesquisa);
 end;

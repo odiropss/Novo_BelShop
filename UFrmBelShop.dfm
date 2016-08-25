@@ -14064,7 +14064,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 541
+              Left = 535
               Top = 12
               Width = 31
               Height = 13
@@ -14120,7 +14120,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 575
+              Left = 569
               Top = 9
               Width = 51
               Height = 18
@@ -14133,7 +14133,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 630
+              Left = 624
               Top = 9
               Width = 50
               Height = 18
@@ -36077,7 +36077,7 @@ object FrmBelShop: TFrmBelShop
   object PopM_OCRomaneio: TPopupMenu
     Left = 752
     Top = 296
-    object PopM_OCRomaneioVoltar1: TMenuItem
+    object PopM_OCRomaneioVoltar: TMenuItem
       Bitmap.Data = {
         F6000000424DF600000000000000760000002800000010000000100000000100
         0400000000008000000000000000000000001000000010000000000000000000
@@ -36201,7 +36201,7 @@ object FrmBelShop: TFrmBelShop
     object N35: TMenuItem
       Caption = '-'
     end
-    object PopM_OCRomaneioVoltar2: TMenuItem
+    object PopM_OCRomaneioVoltar1: TMenuItem
       Bitmap.Data = {
         F6000000424DF600000000000000760000002800000010000000100000000100
         0400000000008000000000000000000000001000000010000000000000000000

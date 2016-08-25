@@ -1135,6 +1135,7 @@ type
     CDS_FluxoFornecedoresLIMITE: TStringField;
     CDS_FluxoFornecedorVLR_SALDO: TFloatField;
     CDS_FluxoFornHistoricoCOD_HISTORICO: TIntegerField;
+    CDS_FluxoFornecedoresCOMPRADOR: TStringField;
 
     //==========================================================================
     // Odir ====================================================================

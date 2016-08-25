@@ -209,17 +209,17 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             TabOrder = 1
           end
           object Rb_FluFornDebito: TJvRadioButton
-            Left = 40
+            Left = 120
             Top = 43
-            Width = 62
+            Width = 52
             Height = 17
             Alignment = taLeftJustify
-            Caption = 'Cr'#233'dito'
+            Caption = 'D'#233'bito'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clBlack
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
+            Font.Style = []
             ParentFont = False
             TabOrder = 2
             OnClick = Rb_FluFornDebitoClick
@@ -232,19 +232,21 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             LinkedControls = <>
           end
           object Rb_FluFornCredito: TJvRadioButton
-            Left = 112
+            Left = 40
             Top = 43
-            Width = 52
+            Width = 62
             Height = 17
             Alignment = taLeftJustify
-            Caption = 'D'#233'bito'
+            Caption = 'Cr'#233'dito'
+            Checked = True
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clBlack
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
-            Font.Style = []
+            Font.Style = [fsBold]
             ParentFont = False
             TabOrder = 3
+            TabStop = True
             OnClick = Rb_FluFornDebitoClick
             OnKeyUp = Rb_FluFornDebitoKeyUp
             HotTrackFont.Charset = DEFAULT_CHARSET
@@ -382,6 +384,13 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
               FieldName = 'LIMITE'
               Title.Alignment = taCenter
               Width = 50
+              Visible = True
+            end
+            item
+              Color = 15724527
+              Expanded = False
+              FieldName = 'COMPRADOR'
+              Width = 150
               Visible = True
             end>
         end
@@ -640,7 +649,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       OnClick = Bt_FluFornAcertaSaldosClick
     end
     object EdtFluFornCodFornAcertar: TEdit
-      Left = 392
+      Left = 528
       Top = 8
       Width = 76
       Height = 19
@@ -667,7 +676,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       OnClick = Bt_FluFornFecharClick
     end
     object MaskEdit1: TMaskEdit
-      Left = 472
+      Left = 608
       Top = 8
       Width = 71
       Height = 19
@@ -727,7 +736,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
   object PopM_Forn: TPopupMenu
     Left = 903
     Top = 448
-    object SIM: TMenuItem
+    object PopM_FluFornSIM: TMenuItem
       Bitmap.Data = {
         B6030000424DB603000000000000360000002800000012000000100000000100
         1800000000008003000000000000000000000000000000000000C0C0C0000000
@@ -760,9 +769,9 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         0000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
         C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000}
       Caption = ' SIM  - Usar Data CC'
-      OnClick = SIMClick
+      OnClick = PopM_FluFornSIMClick
     end
-    object NAO: TMenuItem
+    object PopM_FluFornNAO: TMenuItem
       Bitmap.Data = {
         42010000424D4201000000000000760000002800000011000000110000000100
         040000000000CC00000000000000000000001000000010000000000000000000
@@ -776,7 +785,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         0000774744744744747770000000774444444444447770000000777777777777
         777770000000}
       Caption = 'NAO - Usar Data CC'
-      OnClick = SIMClick
+      OnClick = PopM_FluFornSIMClick
     end
   end
 end

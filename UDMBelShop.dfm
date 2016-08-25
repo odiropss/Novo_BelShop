@@ -26,7 +26,6 @@ object DMBelShop: TDMBelShop
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
-    Connected = True
     Left = 32
     Top = 16
   end
@@ -8503,37 +8502,40 @@ object DMBelShop: TDMBelShop
       'rnecedor,'#13#10'TRIM(CASE'#13#10'      WHEN COALESCE(f.nomefornecedor, '#39'0'#39')' +
       ' = '#39'0'#39' THEN '#13#10'          c.des_fornecedor'#13#10'      ELSE '#13#10'         ' +
       '  f.nomefornecedor'#13#10'END) nomefornecedor,'#13#10#13#10'CAST(MIN(c.dta_caixa' +
-      ') AS DATE) dta_inicial, CAST(MAX(c.dta_caixa) AS DATE) dta_final' +
-      ','#13#10#13#10'SUM(DECODE(c.tip_debcre, '#39'D'#39', -c.vlr_caixa, c.vlr_caixa)) v' +
-      'lr_saldo,'#13#10#13#10'CAST(CASE'#13#10'       WHEN COALESCE(t.des_aux, '#39'0'#39') = '#39 +
-      '0'#39' THEN'#13#10'         NULL--MIN(c.dta_caixa)'#13#10'       ELSE'#13#10'         ' +
-      't.des_aux'#13#10'     END'#13#10'AS DATE) dta_cc,'#13#10#13#10'CASE'#13#10'  WHEN COALESCE(t' +
-      '.des_aux, '#39'0'#39') = '#39'0'#39' THEN'#13#10'    '#39'NAO'#39#13#10'  ELSE'#13#10'    '#39'SIM'#39#13#10'END LIM' +
-      'ITE'#13#10#13#10'FROM FL_CAIXA_FORNECEDORES c'#13#10'LEFT JOIN FORNECEDOR f ON f' +
-      '.codfornecedor = c.cod_fornecedor'#13#10'LEFT JOIN TAB_AUXILIAR t ON t' +
-      '.tip_aux = 14 AND'#13#10'      t.cod_aux = c.cod_fornecedor'#13#10#13#10'WHERE c' +
-      '.cod_historico <> 0 AND'#13#10'      c.cod_historico <> 999999'#13#10'GROUP ' +
-      'BY 2, 3, 4'#13#10#13#10'UNION'#13#10#13#10'-- Total Cr'#233'ditos dos Fornecedores'#13#10'SELEC' +
-      'T'#13#10'0 Ordem,'#13#10'null des_aux,'#13#10'null cod_fornecedor,'#13#10#39' TOTAL CR'#201'DIT' +
-      'OS DOS FORNECEDORES'#39' nomefornecedor,'#13#10#13#10'CAST(MIN(tc.dta_caixa) A' +
-      'S DATE) dta_inicial,'#13#10'CAST(MAX(tc.dta_caixa) AS DATE) dta_final,' +
-      #13#10#13#10'SUM(tc.vlr_caixa) vlr_saldo,'#13#10#13#10'NULL dta_cc,'#13#10'NULL LIMITE'#13#10#13 +
-      #10'FROM FL_CAIXA_FORNECEDORES tc'#13#10'WHERE tc.cod_historico <> 0 AND'#13 +
-      #10'      tc.cod_historico <> 999999'#13#10'AND   tc.tip_debcre='#39'C'#39#13#10#13#10'UN' +
-      'ION'#13#10#13#10'-- Total D'#233'bitos dos Fornecedores'#13#10'SELECT'#13#10'1 Ordem,'#13#10'null' +
-      ' des_aux,'#13#10'null cod_fornecedor,'#13#10#39' TOTAL D'#201'BITOS DOS FORNECEDORE' +
-      'S'#39' nomefornecedor,'#13#10#13#10'CAST(MIN(tc.dta_caixa) AS DATE) dta_inicia' +
-      'l,'#13#10'CAST(MAX(tc.dta_caixa) AS DATE) dta_final,'#13#10#13#10'SUM(tc.vlr_cai' +
-      'xa) vlr_saldo,'#13#10#13#10'NULL dta_cc,'#13#10'NULL LIMITE'#13#10#13#10'FROM FL_CAIXA_FOR' +
-      'NECEDORES tc'#13#10'WHERE tc.cod_historico <> 0 AND'#13#10'      tc.cod_hist' +
-      'orico <> 999999'#13#10'AND   tc.tip_debcre='#39'D'#39#13#10#13#10'UNION'#13#10#13#10'-- Total Ge' +
-      'ral dos Fornecedores'#13#10'SELECT'#13#10'2 Ordem,'#13#10'null des_aux,'#13#10'null cod_' +
-      'fornecedor,'#13#10#39' TOTAL GERAL: FORNECEDORES'#39' nomefornecedor,'#13#10#13#10'CAS' +
-      'T(MIN(ct.dta_caixa) AS DATE) dta_inicial, CAST(MAX(ct.dta_caixa)' +
-      ' AS DATE) dta_final,'#13#10#13#10'SUM(DECODE(ct.tip_debcre, '#39'D'#39', -ct.vlr_c' +
-      'aixa, ct.vlr_caixa)) vlr_saldo,'#13#10#13#10'NULL dta_cc,'#13#10'NULL LIMITE'#13#10#13#10 +
-      'FROM FL_CAIXA_FORNECEDORES cT'#13#10'WHERE ct.cod_historico <> 0 AND'#13#10 +
-      '      ct.cod_historico <> 999999'#13#10#13#10'ORDER BY 4'#13#10
+      ') AS DATE) dta_inicial,'#13#10'CAST(MAX(c.dta_caixa) AS DATE) dta_fina' +
+      'l,'#13#10#13#10'SUM(DECODE(c.tip_debcre, '#39'D'#39', -c.vlr_caixa, c.vlr_caixa)) ' +
+      'vlr_saldo,'#13#10#13#10'CAST(CASE'#13#10'       WHEN COALESCE(t.des_aux, '#39'0'#39') = ' +
+      #39'0'#39' THEN'#13#10'         NULL--MIN(c.dta_caixa)'#13#10'       ELSE'#13#10'        ' +
+      ' t.des_aux'#13#10'     END'#13#10'AS DATE) dta_cc,'#13#10#13#10'CASE'#13#10'  WHEN COALESCE(' +
+      't.des_aux, '#39'0'#39') = '#39'0'#39' THEN'#13#10'    '#39'NAO'#39#13#10'  ELSE'#13#10'    '#39'SIM'#39#13#10'END LI' +
+      'MITE,'#13#10'cc.nomesubcusto Comprador'#13#10#13#10'FROM FL_CAIXA_FORNECEDORES  ' +
+      'c'#13#10'     LEFT JOIN FORNECEDOR   f    ON f.codfornecedor = c.cod_f' +
+      'ornecedor'#13#10'     LEFT JOIN TAB_AUXILIAR t  ON t.tip_aux = 14'#13#10'   ' +
+      '                           AND t.cod_aux = c.cod_fornecedor'#13#10'   ' +
+      ' LEFT JOIN CENTROCUSTO  cc  ON cc.codcentrocusto=f.codcentrocust' +
+      'o'#13#10#13#10'WHERE c.cod_historico <> 0 AND'#13#10'      c.cod_historico <> 99' +
+      '9999'#13#10'GROUP BY 2, 3, 4, 10'#13#10#13#10#13#10'UNION'#13#10#13#10'-- Total Cr'#233'ditos dos F' +
+      'ornecedores'#13#10'SELECT'#13#10'0 Ordem,'#13#10'null des_aux,'#13#10'null cod_fornecedo' +
+      'r,'#13#10#39' TOTAL CR'#201'DITOS DOS FORNECEDORES'#39' nomefornecedor,'#13#10#13#10'CAST(M' +
+      'IN(tc.dta_caixa) AS DATE) dta_inicial,'#13#10'CAST(MAX(tc.dta_caixa) A' +
+      'S DATE) dta_final,'#13#10#13#10'SUM(tc.vlr_caixa) vlr_saldo,'#13#10#13#10'NULL dta_c' +
+      'c,'#13#10'NULL LIMITE,'#13#10'NULL Comprador'#13#10#13#10'FROM FL_CAIXA_FORNECEDORES t' +
+      'c'#13#10'WHERE tc.cod_historico <> 0 AND'#13#10'      tc.cod_historico <> 99' +
+      '9999'#13#10'AND   tc.tip_debcre='#39'C'#39#13#10#13#10'UNION'#13#10#13#10'-- Total D'#233'bitos dos F' +
+      'ornecedores'#13#10'SELECT'#13#10'1 Ordem,'#13#10'null des_aux,'#13#10'null cod_fornecedo' +
+      'r,'#13#10#39' TOTAL D'#201'BITOS DOS FORNECEDORES'#39' nomefornecedor,'#13#10#13#10'CAST(MI' +
+      'N(tc.dta_caixa) AS DATE) dta_inicial,'#13#10'CAST(MAX(tc.dta_caixa) AS' +
+      ' DATE) dta_final,'#13#10#13#10'SUM(tc.vlr_caixa) vlr_saldo,'#13#10#13#10'NULL dta_cc' +
+      ','#13#10'NULL LIMITE,'#13#10'NULL Comprador'#13#10#13#10'FROM FL_CAIXA_FORNECEDORES tc' +
+      #13#10'WHERE tc.cod_historico <> 0 AND'#13#10'      tc.cod_historico <> 999' +
+      '999'#13#10'AND   tc.tip_debcre='#39'D'#39#13#10#13#10'UNION'#13#10#13#10'-- Total Geral dos Forn' +
+      'ecedores'#13#10'SELECT'#13#10'2 Ordem,'#13#10'null des_aux,'#13#10'null cod_fornecedor,'#13 +
+      #10#39' TOTAL GERAL: FORNECEDORES'#39' nomefornecedor,'#13#10#13#10'CAST(MIN(ct.dta' +
+      '_caixa) AS DATE) dta_inicial, CAST(MAX(ct.dta_caixa) AS DATE) dt' +
+      'a_final,'#13#10#13#10'SUM(DECODE(ct.tip_debcre, '#39'D'#39', -ct.vlr_caixa, ct.vlr' +
+      '_caixa)) vlr_saldo,'#13#10#13#10'NULL dta_cc,'#13#10'NULL LIMITE,'#13#10'NULL Comprado' +
+      'r'#13#10#13#10'FROM FL_CAIXA_FORNECEDORES ct'#13#10'WHERE ct.cod_historico <> 0 ' +
+      'AND'#13#10'      ct.cod_historico <> 999999'#13#10#13#10'ORDER BY 4'#13#10#13#10#13#10#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -8596,6 +8598,12 @@ object DMBelShop: TDMBelShop
       Required = True
       FixedChar = True
       Size = 3
+    end
+    object CDS_FluxoFornecedoresCOMPRADOR: TStringField
+      DisplayLabel = 'Comprador'
+      FieldName = 'COMPRADOR'
+      FixedChar = True
+      Size = 30
     end
   end
   object DSP_FluxoFornecedores: TDataSetProvider

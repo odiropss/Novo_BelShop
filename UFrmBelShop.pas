@@ -1296,7 +1296,7 @@ type
     PopM_GeraOCPercDesconto: TMenuItem;
     PopM_GeraOCPercelDescMIX: TMenuItem;
     N31: TMenuItem;
-    PopM_OCRomaneioVoltar1: TMenuItem;
+    PopM_OCRomaneioVoltar: TMenuItem;
     N32: TMenuItem;
     N33: TMenuItem;
     N34: TMenuItem;
@@ -1307,7 +1307,7 @@ type
     PopM_GeraOCNecessidadedeCompra: TMenuItem;
     PopM_GeraOCVoltar2: TMenuItem;
     N35: TMenuItem;
-    PopM_OCRomaneioVoltar2: TMenuItem;
+    PopM_OCRomaneioVoltar1: TMenuItem;
     N36: TMenuItem;
     N37: TMenuItem;
     N38: TMenuItem;
