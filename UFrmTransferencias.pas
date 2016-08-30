@@ -368,24 +368,42 @@ end; // Busca Produto e Demanda >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmTransferencias.BuscaProdutosCurvas(sCodLoja: String);
 Var
   MySql, sDta: String;
+  bCurvaC:Boolean;
 Begin
+  // Verifica se tem Curva C ===================================================
+  bCurvaC:=False;
+  If Pos('C', sgCurvas)<>0 Then
+   bCurvaC:=True;
+
   sDta:=f_Troca('/','.',f_Troca('-','.',DateToStr(dgDtaInicio)));
 
+  // Monta Select ==============================================================
   MySql:=' SELECT p.codproduto cod_produto,'+
 
-         ' CASE'+
-         '    WHEN (p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva=''E'') THEN'+
-         '     ''C'''+
+         ' CASE';
+
+         If bCurvaC Then
+          MySql:=
+           MySql+'    WHEN ((p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva=''E'')) OR'+
+                 '         ((p.principalfor='+QuotedStr('000356')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''%YELLOW%'')) OR'+
+                 '         ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')) THEN'
+         Else
+          MySql:=
+           MySql+'    WHEN (p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva=''E'') THEN';
+
+  MySql:=
+   MySql+'     ''C'''+
          '    ELSE'+
          '     c.ind_curva'+
          ' END ind_curva,'+
 
          ' CASE'+
-         '   WHEN (p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva=''E'') AND (t.vlr_aux1>c.est_minimo) THEN'+
+         '   WHEN ((p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva=''E'') AND (t.vlr_aux1>c.est_minimo)) THEN'+
          '    CAST(t.vlr_aux1 AS INTEGER)'+
          '   ELSE'+
          '    CAST(c.est_minimo AS INTEGER)'+
          ' END est_minimo,'+
+
          ' CAST(COALESCE(t.vlr_aux,0) AS INTEGER) Dias_Estocagem,'+
          ' CAST(COALESCE(e.saldoatual,0) AS INTEGER) saldoatual,'+
          ' p.datainclusao, p.dataalteracao'+
@@ -394,9 +412,18 @@ Begin
          '        LEFT JOIN ES_FINAN_CURVA_ABC c  ON c.cod_produto=p.codproduto'+
          '        LEFT JOIN ESTOQUE      e  ON e.codfilial=c.cod_loja'+
          '                                 AND e.codproduto=p.codproduto'+
-         '        LEFT JOIN TAB_AUXILIAR t  ON CASE'+
-         '                                       WHEN (p.datainclusao>'+QuotedStr(sDta)+') AND (c.ind_curva=''E'') THEN 3'+
-         '                                       WHEN c.ind_curva=''A'' THEN 1'+
+         '        LEFT JOIN TAB_AUXILIAR t  ON CASE';
+
+         If bCurvaC Then
+          MySql:=
+           MySql+'                               WHEN ((p.datainclusao>'+QuotedStr(sDta)+') AND (c.ind_curva=''E'')) OR'+
+                 '                                    ((p.principalfor='+QuotedStr('000356')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''%YELLOW%'')) OR'+
+                 '                                    ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')) THEN 3'
+         Else
+          MySql:=
+           MySql+'                               WHEN (p.datainclusao>'+QuotedStr(sDta)+') AND (c.ind_curva=''E'') THEN 3';
+  MySql:=
+   MySql+'                                       WHEN c.ind_curva=''A'' THEN 1'+
          '                                       WHEN c.ind_curva=''B'' THEN 2'+
          '                                       WHEN c.ind_curva=''C'' THEN 3'+
          '                                       WHEN c.ind_curva=''D'' THEN 4'+
@@ -405,15 +432,41 @@ Begin
          '                                 AND t.tip_aux=2'+
 
          ' WHERE p.situacaopro in (0,3)'+
-         ' AND   c.est_minimo>0'+
+         //odirapagar - 26/08/2016
+         // ' AND   c.est_minimo>0'+
+         ' AND CASE'+
+         '      WHEN ((p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva=''E'') AND (t.vlr_aux1>c.est_minimo)) THEN'+
+         '        CAST(t.vlr_aux1 AS INTEGER)'+
+         '      ELSE'+
+         '        CAST(c.est_minimo AS INTEGER)'+
+         '     END>0'+
 
          ' AND   p.codaplicacao<>''0015'''+ // Não Processa: 0015=E-Commerce
          ' AND   p.codaplicacao<>''0016'''+ // Não Processa: 0016=Brindes
 
          ' AND   c.cod_loja='+QuotedStr(sCodLoja)+
-         ' AND   p.principalfor Not in ('+sgFornNAO+')'+
-         ' AND   ((c.ind_curva in ('+sgCurvas+')) OR (p.datainclusao>='+QuotedStr(sDta)+' AND c.ind_curva=''E''))'+
-         ' ORDER BY p.codproduto';
+         ' AND   p.principalfor Not in ('+sgFornNAO+')';
+
+         If bCurvaC Then
+          MySql:=
+           MySql+' AND   ((c.ind_curva in ('+sgCurvas+'))'+
+                 '         OR'+
+                 '        (p.datainclusao>='+QuotedStr(sDta)+' AND c.ind_curva=''E'')'+
+                 '         OR'+
+                 '        ((p.principalfor='+QuotedStr('000356')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''%YELLOW%''))'+
+                 '         OR'+
+                 '        ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')))'
+         Else
+          MySql:=
+           MySql+' AND    ((c.ind_curva in ('+sgCurvas+'))'+
+                 '          OR'+
+                 '         (p.datainclusao>='+QuotedStr(sDta)+' AND c.ind_curva=''E''))'+
+                 ' AND NOT (((p.principalfor='+QuotedStr('000356')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''%YELLOW%''))'+
+                 '          OR'+
+                 '          ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')))';
+
+  MySql:=
+   MySql+' ORDER BY p.codproduto';
   DMTransferencias.CDS_CurvasLoja.Close;
   DMTransferencias.SDS_CurvasLoja.CommandText:=MySql;
   DMTransferencias.CDS_CurvasLoja.Open;
@@ -881,7 +934,6 @@ Var
 begin
   // Fechar Programa do Agendamento Anterior ===================================
 //  ApagaUltProcesso('PCurvasDemandas.exe');
-//odir teste de fonte
   //============================================================================
 
   // Windows: Nome do Usuario e do Computador =================================
