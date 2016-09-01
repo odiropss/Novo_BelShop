@@ -662,7 +662,6 @@ type
     CDS_V_CurvaABCEnderecoQTD_DEMANDA: TCurrencyField;
     CDS_V_Estoques: TClientDataSet;
     DS_V_Estoques: TDataSource;
-    CDS_V_EstoquesSEQ: TIntegerField;
     CDS_V_EstoquesCOD_PRODUTO: TStringField;
     CDS_V_EstoquesDES_PRODUTO: TStringField;
     CDS_V_EstoquesIND_CURVA: TStringField;
@@ -670,7 +669,6 @@ type
     CDS_V_EstoquesIND_SITUACAO: TStringField;
     CDS_V_EstoquesCOD_FORNECEDOR: TStringField;
     CDS_V_EstoquesDES_FORNECEDOR: TStringField;
-    CDS_V_EstoquesORDENAR: TIntegerField;
     CDS_V_EstoquesCODGRUPO: TStringField;
     CDS_V_EstoquesNOMEGRUPO: TStringField;
     CDS_V_EstoquesCODSUBGRUPO: TStringField;
@@ -745,6 +743,8 @@ type
     IBQ_EstoqueLojaCORREDOR: TIBStringField;
     IBQ_EstoqueLojaPRATELEIRA: TIBStringField;
     IBQ_EstoqueLojaGAVETA: TIBStringField;
+    CDS_V_EstoquesSEQ: TFMTBCDField;
+    CDS_V_EstoquesORDENAR: TFMTBCDField;
     procedure CDS_V_GruposProdutosAfterScroll(DataSet: TDataSet);
     procedure CDS_V_EstFisFinanEmpAfterScroll(DataSet: TDataSet);
     procedure CDS_V_MargemLucroFornAfterScroll(DataSet: TDataSet);
@@ -761,7 +761,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    bSeProcessa1, // Se Libera FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly:=True
+    bSeProcessa1, // Se Libera FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly:=True
     bSeProcessa2, // Se Atualiza Valores de Estoques
     bSeCalcCurva  // Se Esta Calculando Curva ABC
     : Boolean;
@@ -863,10 +863,16 @@ begin
 
     If bSeProcessa1 Then
     Begin
+//odirapagar
+//      If Trim(CDS_V_EstoquesCOD_PRODUTO.AsString)='' Then
+//       FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly:=True
+//      Else
+//       FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly:=False;
       If Trim(CDS_V_EstoquesCOD_PRODUTO.AsString)='' Then
-       FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly:=True
+       FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly:=True
       Else
-       FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly:=False;
+       FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly:=False;
+
     End; // If bSeProcessa1 Then
   End; // If Not DMVirtual.CDS_V_Estoques.IsEmpty Then
 end;
@@ -878,7 +884,9 @@ var
 begin
   bAtualizar:=False;
 
-  If Not FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly Then
+//odirapagar
+//  If Not FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly Then
+  If Not FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly Then
   Begin
     If igNrEmpProc=1 Then bAtualizar:=True;
 
@@ -925,7 +933,9 @@ procedure TDMVirtual.CDS_V_EstoquesAfterEdit(DataSet: TDataSet);
 var
  MySql, s: string;
 begin
-  If Not FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly Then
+//odirapagar
+//  If Not FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly Then
+  If Not FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly Then
   Begin
     iQtdEstMinOld :=CDS_V_EstoquesEST_IDEAL.AsInteger;
     iQtdDemandaOld:=CDS_V_EstoquesQTD_DEMANDA.AsInteger;

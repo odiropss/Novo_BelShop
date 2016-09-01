@@ -1738,8 +1738,10 @@ begin
   End;
 
   DMBelShop.CDS_FluxoFornecedores.Edit;
-  If Trim((Sender as TMenuItem).Name)='SIM' Then DMBelShop.CDS_FluxoFornecedoresLIMITE.AsString:='SIM';
-  If Trim((Sender as TMenuItem).Name)='NAO' Then DMBelShop.CDS_FluxoFornecedoresLIMITE.AsString:='NAO';
+  If Trim((Sender as TMenuItem).Name)='PopM_FluFornSIM' Then
+   DMBelShop.CDS_FluxoFornecedoresLIMITE.AsString:='SIM';
+  If Trim((Sender as TMenuItem).Name)='PopM_FluFornNAO' Then
+   DMBelShop.CDS_FluxoFornecedoresLIMITE.AsString:='NAO';
   DMBelShop.CDS_FluxoFornecedores.Post;
 end;
 

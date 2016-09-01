@@ -1,11 +1,11 @@
 object FrmBelShop: TFrmBelShop
-  Left = 237
-  Top = 110
+  Left = 240
+  Top = 111
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Gerenciador BelShop'
-  ClientHeight = 562
+  ClientHeight = 564
   ClientWidth = 979
   Color = clSilver
   Ctl3D = False
@@ -404,14 +404,14 @@ object FrmBelShop: TFrmBelShop
   OnShow = FormShow
   DesignSize = (
     979
-    562)
+    564)
   PixelsPerInch = 96
   TextHeight = 13
   object CorTelaForm: TJvGradient
     Left = 0
     Top = 0
     Width = 979
-    Height = 562
+    Height = 564
     Visible = False
     StartColor = clWhite
     EndColor = clWhite
@@ -428,7 +428,7 @@ object FrmBelShop: TFrmBelShop
     Left = 0
     Top = 0
     Width = 979
-    Height = 562
+    Height = 564
     Align = alClient
     Picture.Data = {
       0B546478504E47496D61676589504E470D0A1A0A0000000D49484452000013A1
@@ -4986,7 +4986,7 @@ object FrmBelShop: TFrmBelShop
   end
   object SBt_Sair: TSpeedButton
     Left = 832
-    Top = 517
+    Top = 519
     Width = 144
     Height = 41
     Anchors = [akRight, akBottom]
@@ -5075,7 +5075,7 @@ object FrmBelShop: TFrmBelShop
   end
   object Mem_Salvar: TMemo
     Left = 875
-    Top = 518
+    Top = 520
     Width = 49
     Height = 20
     Anchors = [akBottom]
@@ -5088,7 +5088,7 @@ object FrmBelShop: TFrmBelShop
   end
   object Memo3: TMemo
     Left = 851
-    Top = 510
+    Top = 512
     Width = 41
     Height = 20
     Anchors = [akBottom]
@@ -5101,7 +5101,7 @@ object FrmBelShop: TFrmBelShop
   end
   object Memo2: TMemo
     Left = 827
-    Top = 510
+    Top = 512
     Width = 48
     Height = 20
     Anchors = [akBottom]
@@ -5126,8 +5126,8 @@ object FrmBelShop: TFrmBelShop
     Left = 0
     Top = 0
     Width = 979
-    Height = 562
-    ActivePage = TS_Filtros
+    Height = 564
+    ActivePage = Ts_FinanFechaCaixa
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -5147,14 +5147,14 @@ object FrmBelShop: TFrmBelShop
         Left = 320
         Top = 0
         Width = 651
-        Height = 499
+        Height = 501
         Align = alClient
         BevelInner = bvLowered
         Enabled = False
         TabOrder = 0
         DesignSize = (
           651
-          499)
+          501)
         object Label15: TLabel
           Left = 46
           Top = 24
@@ -5435,7 +5435,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Panel21: TPanel
           Left = 2
-          Top = 462
+          Top = 464
           Width = 647
           Height = 35
           Align = alBottom
@@ -5770,7 +5770,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Panel9: TPanel
           Left = 2
-          Top = 412
+          Top = 414
           Width = 647
           Height = 50
           Align = alBottom
@@ -5863,7 +5863,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Gb_ConEmpresasConexao: TGroupBox
           Left = 2
-          Top = 293
+          Top = 295
           Width = 647
           Height = 119
           Align = alBottom
@@ -6050,7 +6050,7 @@ object FrmBelShop: TFrmBelShop
       end
       object Panel16: TPanel
         Left = 0
-        Top = 499
+        Top = 501
         Width = 971
         Height = 35
         Align = alBottom
@@ -6135,7 +6135,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 320
-        Height = 499
+        Height = 501
         Align = alLeft
         DataSource = DMBelShop.DS_Empresa
         FixedColor = clTeal
@@ -6426,7 +6426,7 @@ object FrmBelShop: TFrmBelShop
       end
       object Panel5: TPanel
         Left = 0
-        Top = 499
+        Top = 501
         Width = 971
         Height = 35
         Align = alBottom
@@ -6522,7 +6522,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 92
         Width = 971
-        Height = 407
+        Height = 409
         Align = alClient
         Color = 15004403
         Ctl3D = False
@@ -6593,10 +6593,10 @@ object FrmBelShop: TFrmBelShop
       ImageIndex = 4
       DesignSize = (
         971
-        534)
+        536)
       object Panel7: TPanel
         Left = 0
-        Top = 499
+        Top = 501
         Width = 971
         Height = 35
         Align = alBottom
@@ -6646,7 +6646,7 @@ object FrmBelShop: TFrmBelShop
         Left = 12
         Top = 53
         Width = 947
-        Height = 377
+        Height = 379
         Anchors = [akLeft, akTop, akRight, akBottom]
         Caption = '  Usu'#225'rio  '
         Color = 14342874
@@ -6662,10 +6662,10 @@ object FrmBelShop: TFrmBelShop
         TabOrder = 1
         DesignSize = (
           947
-          377)
+          379)
         object Label37: TLabel
           Left = 8
-          Top = 80
+          Top = 81
           Width = 131
           Height = 52
           Anchors = [akLeft]
@@ -6841,7 +6841,7 @@ object FrmBelShop: TFrmBelShop
         object Bt_UsuManutSenha: TJvXPButton
           Tag = 7
           Left = 426
-          Top = 82
+          Top = 83
           Width = 100
           Height = 31
           Caption = 'Senha'
@@ -6858,7 +6858,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Gb_UsuManutSenha: TGroupBox
           Left = 202
-          Top = 117
+          Top = 118
           Width = 545
           Height = 159
           Anchors = [akLeft, akRight]
@@ -7011,7 +7011,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 534
+        Height = 536
         ActivePage = Ts_OCGeraOrdemCompra
         Align = alClient
         TabOrder = 0
@@ -7024,14 +7024,14 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 506
+            Height = 508
             Align = alClient
             BevelInner = bvLowered
             Color = 14342874
             TabOrder = 0
             object Panel22: TPanel
               Left = 2
-              Top = 462
+              Top = 464
               Width = 959
               Height = 42
               Align = alBottom
@@ -8499,7 +8499,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 53
             Width = 102
-            Height = 433
+            Height = 435
             ActivePage = Ts_GeraOCProdutos
             Align = alLeft
             TabOrder = 1
@@ -8567,7 +8567,7 @@ object FrmBelShop: TFrmBelShop
             Left = 102
             Top = 53
             Width = 68
-            Height = 433
+            Height = 435
             ActivePage = Ts_GeraOCFiliais
             Align = alLeft
             TabOrder = 2
@@ -8638,7 +8638,7 @@ object FrmBelShop: TFrmBelShop
             Left = 170
             Top = 53
             Width = 793
-            Height = 433
+            Height = 435
             ActivePage = Ts_GeraOCGrid
             Align = alClient
             MultiLine = True
@@ -10150,7 +10150,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Sb_GeraOC: TdxStatusBar
             Left = 0
-            Top = 486
+            Top = 488
             Width = 963
             Height = 20
             Panels = <
@@ -10421,7 +10421,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 61
             Width = 963
-            Height = 445
+            Height = 447
             ActivePage = Ts_GeraOCEditaGrid
             Align = alClient
             MultiLine = True
@@ -10435,7 +10435,7 @@ object FrmBelShop: TFrmBelShop
               object Splitter1: TSplitter
                 Left = 320
                 Top = 0
-                Height = 354
+                Height = 356
                 Color = clRed
                 ParentColor = False
               end
@@ -10443,7 +10443,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 323
                 Top = 0
                 Width = 632
-                Height = 354
+                Height = 356
                 Align = alClient
                 DataSource = DMBelShop.DS_AComprarEdita
                 Font.Charset = DEFAULT_CHARSET
@@ -11179,7 +11179,7 @@ object FrmBelShop: TFrmBelShop
               end
               object dxStatusBar1: TdxStatusBar
                 Left = 0
-                Top = 354
+                Top = 356
                 Width = 955
                 Height = 20
                 Panels = <
@@ -11236,7 +11236,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 0
                 Top = 0
                 Width = 320
-                Height = 354
+                Height = 356
                 Align = alLeft
                 DataSource = DMBelShop.DS_AComprarEdita
                 FixedColor = clTeal
@@ -11282,7 +11282,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Panel43: TPanel
                 Left = 0
-                Top = 374
+                Top = 376
                 Width = 955
                 Height = 40
                 Align = alBottom
@@ -11497,7 +11497,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 194
         Width = 971
-        Height = 305
+        Height = 307
         Align = alClient
         Caption = ' Ordens de Compra  '
         Font.Charset = DEFAULT_CHARSET
@@ -11583,7 +11583,7 @@ object FrmBelShop: TFrmBelShop
           Left = 1
           Top = 58
           Width = 969
-          Height = 246
+          Height = 248
           Hint = '<Duplo Click> Alterar Gerar'
           Align = alClient
           Color = 15004403
@@ -12038,7 +12038,7 @@ object FrmBelShop: TFrmBelShop
       end
       object Panel44: TPanel
         Left = 0
-        Top = 499
+        Top = 501
         Width = 971
         Height = 35
         Align = alBottom
@@ -12092,7 +12092,7 @@ object FrmBelShop: TFrmBelShop
       ImageIndex = 16
       object Panel104: TPanel
         Left = 0
-        Top = 490
+        Top = 492
         Width = 971
         Height = 44
         Align = alBottom
@@ -12549,7 +12549,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 61
         Width = 971
-        Height = 429
+        Height = 431
         ActivePage = TS_ConsultaNFeFiltros
         Align = alClient
         TabOrder = 1
@@ -13012,7 +13012,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 534
+        Height = 536
         ActivePage = Ts_CurvaABCEndMantencao
         Align = alClient
         TabOrder = 0
@@ -13024,7 +13024,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 55
             Width = 963
-            Height = 451
+            Height = 453
             ActivePage = Ts_CurvaABCFiltros
             Align = alClient
             Font.Charset = DEFAULT_CHARSET
@@ -13665,7 +13665,7 @@ object FrmBelShop: TFrmBelShop
           ImageIndex = 1
           object Splitter3: TSplitter
             Left = 0
-            Top = 369
+            Top = 371
             Width = 963
             Height = 4
             Cursor = crVSplit
@@ -13677,7 +13677,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 369
+            Height = 371
             Align = alClient
             Color = 15004403
             Ctl3D = False
@@ -13900,7 +13900,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Dbg_CurvaABCEndCurvaABCForn: TDBGrid
             Left = 0
-            Top = 373
+            Top = 375
             Width = 963
             Height = 93
             Align = alBottom
@@ -14051,7 +14051,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Pan_CurvaABCEndABC: TPanel
             Left = 0
-            Top = 466
+            Top = 468
             Width = 963
             Height = 40
             Align = alBottom
@@ -14064,7 +14064,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 535
+              Left = 531
               Top = 12
               Width = 31
               Height = 13
@@ -14120,7 +14120,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 569
+              Left = 565
               Top = 9
               Width = 51
               Height = 18
@@ -14133,7 +14133,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 624
+              Left = 620
               Top = 9
               Width = 50
               Height = 18
@@ -14583,7 +14583,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 107
             Width = 963
-            Height = 359
+            Height = 361
             Align = alClient
             Color = 15004403
             DataSource = DMBelShop.DS_Enderecamento
@@ -14700,7 +14700,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Pan_CurvaABCEndEndereca: TPanel
             Left = 0
-            Top = 466
+            Top = 468
             Width = 963
             Height = 40
             Align = alBottom
@@ -14721,7 +14721,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 534
+        Height = 536
         ActivePage = Ts_EstFisFinaFiltros
         Align = alClient
         TabOrder = 0
@@ -14731,7 +14731,7 @@ object FrmBelShop: TFrmBelShop
           Highlighted = True
           object Panel81: TPanel
             Left = 0
-            Top = 463
+            Top = 465
             Width = 963
             Height = 43
             Align = alBottom
@@ -15454,7 +15454,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 471
+            Height = 473
             Align = alClient
             Color = 15004403
             DataSource = DMVirtual.DS_V_GiroEstoque
@@ -15625,7 +15625,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Pan_EstFisFinaResutadoGiroEstoque: TPanel
             Left = 0
-            Top = 471
+            Top = 473
             Width = 963
             Height = 35
             Align = alBottom
@@ -15680,7 +15680,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 534
+        Height = 536
         ActivePage = Ts_FinanComprPlanFinanRelacao
         Align = alClient
         TabOrder = 0
@@ -15690,7 +15690,7 @@ object FrmBelShop: TFrmBelShop
           Highlighted = True
           object Panel48: TPanel
             Left = 0
-            Top = 471
+            Top = 473
             Width = 963
             Height = 35
             Align = alBottom
@@ -15806,7 +15806,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 471
+            Height = 473
             Align = alClient
             Color = 15004403
             Ctl3D = False
@@ -15916,7 +15916,7 @@ object FrmBelShop: TFrmBelShop
           ImageIndex = 1
           DesignSize = (
             963
-            506)
+            508)
           object Gb_FinanManutComprovComprovante: TGroupBox
             Left = 256
             Top = 8
@@ -16154,7 +16154,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel50: TPanel
             Left = 0
-            Top = 471
+            Top = 473
             Width = 963
             Height = 35
             Align = alBottom
@@ -16513,7 +16513,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 543
-            Height = 471
+            Height = 473
             Align = alLeft
             Color = 15004403
             Ctl3D = False
@@ -16587,17 +16587,17 @@ object FrmBelShop: TFrmBelShop
             Left = 543
             Top = 0
             Width = 420
-            Height = 471
+            Height = 473
             Align = alClient
             BevelInner = bvLowered
             Enabled = False
             TabOrder = 1
             DesignSize = (
               420
-              471)
+              473)
             object Panel54: TPanel
               Left = 2
-              Top = 434
+              Top = 436
               Width = 416
               Height = 35
               Align = alBottom
@@ -16749,7 +16749,7 @@ object FrmBelShop: TFrmBelShop
               Left = 2
               Top = 156
               Width = 416
-              Height = 278
+              Height = 280
               Align = alBottom
               Anchors = [akLeft, akTop, akRight, akBottom]
               BevelInner = bvLowered
@@ -16982,7 +16982,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel53: TPanel
             Left = 0
-            Top = 471
+            Top = 473
             Width = 963
             Height = 35
             Align = alBottom
@@ -17189,7 +17189,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 506
+            Height = 508
             ActivePage = Ts_FinanComprPlanFinanManutDemonsResultados
             Align = alClient
             TabOrder = 0
@@ -17465,17 +17465,17 @@ object FrmBelShop: TFrmBelShop
                 Left = 379
                 Top = 55
                 Width = 576
-                Height = 388
+                Height = 390
                 Align = alClient
                 BevelInner = bvLowered
                 Enabled = False
                 TabOrder = 1
                 DesignSize = (
                   576
-                  388)
+                  390)
                 object Panel63: TPanel
                   Left = 2
-                  Top = 351
+                  Top = 353
                   Width = 572
                   Height = 35
                   Align = alBottom
@@ -17710,7 +17710,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 0
                 Top = 55
                 Width = 379
-                Height = 388
+                Height = 390
                 Align = alLeft
                 Color = 15004403
                 Ctl3D = False
@@ -17759,7 +17759,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Panel58: TPanel
                 Left = 0
-                Top = 443
+                Top = 445
                 Width = 955
                 Height = 35
                 Align = alBottom
@@ -18456,7 +18456,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 534
+        Height = 536
         ActivePage = Ts_FinanObjetivosManut
         Align = alClient
         TabOrder = 0
@@ -18468,7 +18468,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 379
-            Height = 471
+            Height = 473
             Align = alLeft
             BevelInner = bvLowered
             TabOrder = 0
@@ -18735,16 +18735,16 @@ object FrmBelShop: TFrmBelShop
             Left = 379
             Top = 0
             Width = 584
-            Height = 471
+            Height = 473
             Align = alClient
             BevelInner = bvLowered
             TabOrder = 1
             DesignSize = (
               584
-              471)
+              473)
             object Panel80: TPanel
               Left = 2
-              Top = 434
+              Top = 436
               Width = 580
               Height = 35
               Align = alBottom
@@ -18815,17 +18815,17 @@ object FrmBelShop: TFrmBelShop
               Left = 266
               Top = 194
               Width = 316
-              Height = 240
+              Height = 242
               Align = alRight
               Caption = ' Objetivos '
               Enabled = False
               TabOrder = 3
               DesignSize = (
                 316
-                240)
+                242)
               object Label91: TLabel
                 Left = 12
-                Top = 59
+                Top = 60
                 Width = 21
                 Height = 13
                 Anchors = []
@@ -18833,7 +18833,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label95: TLabel
                 Left = 11
-                Top = 89
+                Top = 90
                 Width = 22
                 Height = 13
                 Anchors = []
@@ -18841,7 +18841,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label96: TLabel
                 Left = 11
-                Top = 118
+                Top = 119
                 Width = 22
                 Height = 13
                 Anchors = []
@@ -18849,7 +18849,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label97: TLabel
                 Left = 13
-                Top = 147
+                Top = 148
                 Width = 20
                 Height = 13
                 Anchors = []
@@ -18857,7 +18857,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label98: TLabel
                 Left = 159
-                Top = 89
+                Top = 90
                 Width = 23
                 Height = 13
                 Anchors = []
@@ -18865,7 +18865,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label99: TLabel
                 Left = 165
-                Top = 59
+                Top = 60
                 Width = 17
                 Height = 13
                 Anchors = []
@@ -18873,7 +18873,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label100: TLabel
                 Left = 12
-                Top = 203
+                Top = 205
                 Width = 21
                 Height = 13
                 Anchors = []
@@ -18881,7 +18881,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label101: TLabel
                 Left = 12
-                Top = 174
+                Top = 176
                 Width = 21
                 Height = 13
                 Anchors = []
@@ -18889,7 +18889,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label102: TLabel
                 Left = 159
-                Top = 203
+                Top = 205
                 Width = 23
                 Height = 13
                 Anchors = []
@@ -18897,7 +18897,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label103: TLabel
                 Left = 158
-                Top = 174
+                Top = 176
                 Width = 24
                 Height = 13
                 Anchors = []
@@ -18905,7 +18905,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label104: TLabel
                 Left = 161
-                Top = 147
+                Top = 148
                 Width = 21
                 Height = 13
                 Anchors = []
@@ -18913,7 +18913,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label105: TLabel
                 Left = 162
-                Top = 118
+                Top = 119
                 Width = 20
                 Height = 13
                 Anchors = []
@@ -18921,7 +18921,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutJan: TDBEdit
                 Left = 37
-                Top = 56
+                Top = 57
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -18933,7 +18933,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutFev: TDBEdit
                 Left = 37
-                Top = 86
+                Top = 87
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -18945,7 +18945,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutMar: TDBEdit
                 Left = 37
-                Top = 115
+                Top = 116
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -18957,7 +18957,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutAbr: TDBEdit
                 Left = 37
-                Top = 144
+                Top = 145
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -18969,7 +18969,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutMai: TDBEdit
                 Left = 37
-                Top = 171
+                Top = 173
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -18981,7 +18981,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutJun: TDBEdit
                 Left = 37
-                Top = 200
+                Top = 202
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -18993,7 +18993,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutJul: TDBEdit
                 Left = 186
-                Top = 56
+                Top = 57
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19005,7 +19005,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutAgo: TDBEdit
                 Left = 186
-                Top = 86
+                Top = 87
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19017,7 +19017,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutSet: TDBEdit
                 Left = 186
-                Top = 115
+                Top = 116
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19029,7 +19029,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutOut: TDBEdit
                 Left = 186
-                Top = 144
+                Top = 145
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19041,7 +19041,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutNov: TDBEdit
                 Left = 186
-                Top = 171
+                Top = 173
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19053,7 +19053,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutDez: TDBEdit
                 Left = 186
-                Top = 200
+                Top = 202
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19159,7 +19159,7 @@ object FrmBelShop: TFrmBelShop
               Left = 2
               Top = 194
               Width = 264
-              Height = 240
+              Height = 242
               Align = alClient
               Caption = ' Empresas '
               TabOrder = 2
@@ -19851,7 +19851,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel73: TPanel
             Left = 0
-            Top = 471
+            Top = 473
             Width = 963
             Height = 35
             Align = alBottom
@@ -21088,7 +21088,7 @@ object FrmBelShop: TFrmBelShop
           ImageIndex = 2
           object Panel93: TPanel
             Left = 0
-            Top = 471
+            Top = 473
             Width = 963
             Height = 35
             Align = alBottom
@@ -21527,7 +21527,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 68
             Width = 963
-            Height = 384
+            Height = 386
             BackImageMode = pbmCenter
             BackWall.Brush.Color = clWhite
             BackWall.Color = 16777088
@@ -21605,7 +21605,7 @@ object FrmBelShop: TFrmBelShop
           end
           object ScrollBar2: TScrollBar
             Left = 0
-            Top = 452
+            Top = 454
             Width = 963
             Height = 19
             Align = alBottom
@@ -21621,7 +21621,7 @@ object FrmBelShop: TFrmBelShop
       ImageIndex = 13
       DesignSize = (
         971
-        534)
+        536)
       object Pan_FinanFeriadosAnoInformacoes: TPanel
         Left = 37
         Top = 11
@@ -21809,7 +21809,7 @@ object FrmBelShop: TFrmBelShop
         Left = 250
         Top = 81
         Width = 473
-        Height = 410
+        Height = 412
         Anchors = [akTop, akBottom]
         Caption = ' Datas Feriado '
         TabOrder = 1
@@ -21882,7 +21882,7 @@ object FrmBelShop: TFrmBelShop
       end
       object Panel75: TPanel
         Left = 0
-        Top = 499
+        Top = 501
         Width = 971
         Height = 35
         Align = alBottom
@@ -21969,7 +21969,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 534
+        Height = 536
         ActivePage = Ts_FinanAuditoriaManut
         Align = alClient
         TabOrder = 0
@@ -22204,14 +22204,14 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 42
             Width = 963
-            Height = 387
+            Height = 389
             Align = alClient
             Caption = ' Auditoria '
             Enabled = False
             TabOrder = 1
             DesignSize = (
               963
-              387)
+              389)
             object Gb_FinanAuditoriaManutEstoques: TGroupBox
               Left = 1
               Top = 16
@@ -23310,7 +23310,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel99: TPanel
             Left = 0
-            Top = 429
+            Top = 431
             Width = 963
             Height = 42
             Align = alBottom
@@ -23467,7 +23467,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel98: TPanel
             Left = 0
-            Top = 471
+            Top = 473
             Width = 963
             Height = 35
             Align = alBottom
@@ -23749,18 +23749,18 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 45
             Width = 963
-            Height = 426
+            Height = 428
             Align = alClient
             Caption = ' Auditorias '
             TabOrder = 1
             DesignSize = (
               963
-              426)
+              428)
             object Dbg_FinanAuditoriaAnalise: TDBGrid
               Left = 2
               Top = 16
               Width = 961
-              Height = 410
+              Height = 412
               Anchors = [akLeft, akTop, akRight, akBottom]
               Color = 15004403
               Ctl3D = False
@@ -23850,7 +23850,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel107: TPanel
             Left = 0
-            Top = 471
+            Top = 473
             Width = 963
             Height = 35
             Align = alBottom
@@ -24021,7 +24021,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 534
+        Height = 536
         ActivePage = Ts_AudCompVendFiltros
         Align = alClient
         TabOrder = 0
@@ -25062,7 +25062,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 76
         Width = 971
-        Height = 423
+        Height = 425
         Align = alClient
         BevelInner = bvLowered
         BevelWidth = 2
@@ -25070,12 +25070,12 @@ object FrmBelShop: TFrmBelShop
         TabOrder = 1
         DesignSize = (
           971
-          423)
+          425)
         object Gb_FinanFechaCaixaLancamentos: TGroupBox
           Left = 24
           Top = 63
           Width = 920
-          Height = 350
+          Height = 352
           Anchors = [akTop, akBottom]
           Caption = ' Lan'#231'amentos de Cr'#233'ditos '
           TabOrder = 1
@@ -25083,7 +25083,7 @@ object FrmBelShop: TFrmBelShop
             Left = 1
             Top = 14
             Width = 918
-            Height = 267
+            Height = 269
             Align = alClient
             Color = 15004403
             Ctl3D = False
@@ -25184,7 +25184,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Dbg_FinanFechaCaixaTotal: TDBGrid
             Left = 1
-            Top = 300
+            Top = 302
             Width = 918
             Height = 49
             Align = alBottom
@@ -25287,7 +25287,7 @@ object FrmBelShop: TFrmBelShop
           end
           object StatusBar5: TStatusBar
             Left = 1
-            Top = 281
+            Top = 283
             Width = 918
             Height = 19
             Panels = <
@@ -25458,7 +25458,7 @@ object FrmBelShop: TFrmBelShop
       end
       object Panel121: TPanel
         Left = 0
-        Top = 499
+        Top = 501
         Width = 971
         Height = 35
         Align = alBottom
@@ -25889,7 +25889,7 @@ object FrmBelShop: TFrmBelShop
       end
       object Panel124: TPanel
         Left = 0
-        Top = 499
+        Top = 501
         Width = 971
         Height = 35
         Align = alBottom
@@ -25971,13 +25971,13 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 43
         Width = 971
-        Height = 456
+        Height = 458
         ActivePage = Ts_FinanFechaDiarioLancto
         Align = alClient
         LookAndFeel.SkinName = 'UserSkin'
         TabOrder = 2
         OnChange = PC_FinanFechaDiarioChange
-        ClientRectBottom = 452
+        ClientRectBottom = 454
         ClientRectLeft = 4
         ClientRectRight = 967
         ClientRectTop = 24
@@ -25986,7 +25986,7 @@ object FrmBelShop: TFrmBelShop
           ImageIndex = 0
           DesignSize = (
             963
-            428)
+            430)
           object Gb_FinanFechaDiarioMovtos: TcxGroupBox
             Left = 11
             Top = 130
@@ -26846,7 +26846,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 43
         Width = 971
-        Height = 491
+        Height = 493
         ActivePage = Ts_FinanMLFiltros
         Align = alClient
         TabOrder = 1
@@ -27756,7 +27756,7 @@ object FrmBelShop: TFrmBelShop
           ImageIndex = 2
           DesignSize = (
             963
-            463)
+            465)
           object Sbt_FinanMLResFinal: TSpeedButton
             Left = 4
             Top = 247
@@ -27801,7 +27801,7 @@ object FrmBelShop: TFrmBelShop
             Left = 2
             Top = 0
             Width = 959
-            Height = 244
+            Height = 246
             TabStop = False
             Anchors = [akTop, akBottom]
             Color = 15004403
@@ -27928,7 +27928,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Dbg_FinanMLResFinal: TDBGrid
             Left = 165
-            Top = 253
+            Top = 255
             Width = 634
             Height = 167
             TabStop = False
@@ -28003,7 +28003,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel130: TPanel
             Left = 0
-            Top = 428
+            Top = 430
             Width = 963
             Height = 35
             Align = alBottom
@@ -28972,7 +28972,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 534
+        Height = 536
         ActivePage = TS_FiltroFornecedor
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
@@ -28991,7 +28991,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 316
-            Height = 506
+            Height = 508
             Align = alLeft
             Caption = '  Fornecedores  '
             Color = 13092807
@@ -29007,7 +29007,7 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 0
             DesignSize = (
               316
-              506)
+              508)
             object Label188: TLabel
               Left = 282
               Top = 29
@@ -29377,7 +29377,7 @@ object FrmBelShop: TFrmBelShop
             Left = 316
             Top = 0
             Width = 647
-            Height = 506
+            Height = 508
             Hint = '<Delete> Exclui Fornecedor da Lista'
             Align = alClient
             DataSource = DMVirtual.DS_V_Fornecedores
@@ -29424,7 +29424,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 316
-            Height = 506
+            Height = 508
             Align = alLeft
             Caption = '  Produtos  '
             Color = 13092807
@@ -29440,7 +29440,7 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 0
             DesignSize = (
               316
-              506)
+              508)
             object Label3: TLabel
               Left = 282
               Top = 29
@@ -29595,7 +29595,7 @@ object FrmBelShop: TFrmBelShop
             Left = 316
             Top = 0
             Width = 647
-            Height = 506
+            Height = 508
             Hint = '<Delete> Exclui Item da Lista'
             Align = alClient
             DataSource = DMVirtual.DS_V_Produtos
@@ -29651,7 +29651,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 409
-            Height = 506
+            Height = 508
             Align = alLeft
             Anchors = [akLeft, akTop, akRight, akBottom]
             Caption = '  Grupo de Produtos  '
@@ -29754,7 +29754,7 @@ object FrmBelShop: TFrmBelShop
             Left = 409
             Top = 0
             Width = 554
-            Height = 506
+            Height = 508
             Align = alClient
             Caption = '  Sub-Grupo de Produtos  '
             Color = 13092807
@@ -29770,12 +29770,12 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 1
             DesignSize = (
               554
-              506)
+              508)
             object Panel32: TPanel
               Left = 1
               Top = 60
               Width = 552
-              Height = 445
+              Height = 447
               Align = alBottom
               Anchors = [akLeft, akTop, akRight, akBottom]
               BevelInner = bvLowered
@@ -29870,7 +29870,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 177
-            Height = 506
+            Height = 508
             Align = alLeft
             Caption = '  Aplica'#231#245'es  '
             Color = 13092807
@@ -29886,7 +29886,7 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 0
             DesignSize = (
               177
-              506)
+              508)
             object Label4: TLabel
               Left = 143
               Top = 29
@@ -29928,7 +29928,7 @@ object FrmBelShop: TFrmBelShop
             Left = 177
             Top = 0
             Width = 786
-            Height = 506
+            Height = 508
             Hint = '<Delete> Exclui Item da Lista'
             Align = alClient
             DataSource = DMVirtual.DS_V_Aplicacao
@@ -29975,7 +29975,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 177
-            Height = 506
+            Height = 508
             Align = alLeft
             Caption = '  Familias Pre'#231'os  '
             Color = 13092807
@@ -29991,7 +29991,7 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 0
             DesignSize = (
               177
-              506)
+              508)
             object Label5: TLabel
               Left = 143
               Top = 29
@@ -30033,7 +30033,7 @@ object FrmBelShop: TFrmBelShop
             Left = 177
             Top = 0
             Width = 786
-            Height = 506
+            Height = 508
             Hint = '<Delete> Exclui Item da Lista'
             Align = alClient
             DataSource = DMVirtual.DS_V_FamiliaPrecos
@@ -30080,7 +30080,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 177
-            Height = 506
+            Height = 508
             Align = alLeft
             Caption = '  Grupos ST  '
             Color = 13092807
@@ -30096,7 +30096,7 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 0
             DesignSize = (
               177
-              506)
+              508)
             object Label6: TLabel
               Left = 143
               Top = 29
@@ -30138,7 +30138,7 @@ object FrmBelShop: TFrmBelShop
             Left = 177
             Top = 0
             Width = 786
-            Height = 506
+            Height = 508
             Hint = '<Delete> Exclui Item da Lista'
             Align = alClient
             DataSource = DMVirtual.DS_V_GrupoST
@@ -30183,7 +30183,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 177
-            Height = 506
+            Height = 508
             Align = alLeft
             Caption = '  Comprovantes  '
             Color = 13092807
@@ -30199,7 +30199,7 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 0
             DesignSize = (
               177
-              506)
+              508)
             object Label14: TLabel
               Left = 143
               Top = 29
@@ -30241,7 +30241,7 @@ object FrmBelShop: TFrmBelShop
             Left = 177
             Top = 0
             Width = 786
-            Height = 506
+            Height = 508
             Hint = '<Delete> Exclui Item da Lista'
             Align = alClient
             Color = 15004403

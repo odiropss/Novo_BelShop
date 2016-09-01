@@ -1,7 +1,7 @@
 object DMVirtual: TDMVirtual
   OldCreateOrder = False
-  Left = 222
-  Top = 59
+  Left = 223
+  Top = 87
   Height = 646
   Width = 1134
   object CDS_V_EmpConexoes: TClientDataSet
@@ -3544,10 +3544,12 @@ object DMVirtual: TDMVirtual
     AfterScroll = CDS_V_EstoquesAfterScroll
     OnCalcFields = CDS_V_EstoquesCalcFields
     Left = 413
-    Top = 152
-    object CDS_V_EstoquesSEQ: TIntegerField
-      DisplayLabel = 'Seq'
+    Top = 96
+    object CDS_V_EstoquesSEQ: TFMTBCDField
       FieldName = 'SEQ'
+      Required = True
+      Precision = 15
+      Size = 0
     end
     object CDS_V_EstoquesCOD_PRODUTO: TStringField
       DisplayLabel = 'C'#243'digo'
@@ -3675,16 +3677,18 @@ object DMVirtual: TDMVirtual
       DisplayFormat = '0.,00'
       Size = 2
     end
-    object CDS_V_EstoquesORDENAR: TIntegerField
+    object CDS_V_EstoquesORDENAR: TFMTBCDField
       FieldName = 'ORDENAR'
-      Visible = False
+      Required = True
+      Precision = 15
+      Size = 0
     end
     object CDS_V_EstoquesALTERACAO: TStringField
       FieldName = 'ALTERACAO'
       Size = 3
     end
     object CDS_V_EstoquesVLR_VENDAS_ACUM_OK: TFMTBCDField
-      DisplayLabel = 'Vendas Acumuladas'
+      DisplayLabel = 'Vendas Acumuladas OK'
       FieldName = 'VLR_VENDAS_ACUM_OK'
       DisplayFormat = '0.,00'
       Size = 2
@@ -3705,14 +3709,14 @@ object DMVirtual: TDMVirtual
   object DS_V_Estoques: TDataSource
     DataSet = CDS_V_Estoques
     Left = 464
-    Top = 176
+    Top = 120
   end
   object CDS_V_EstoquesFinan: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'IND_CURVA'
     Params = <>
     Left = 413
-    Top = 208
+    Top = 152
     object CDS_V_EstoquesFinanIND_CURVA: TStringField
       DisplayLabel = 'Curvas'
       FieldName = 'IND_CURVA'
@@ -3742,7 +3746,7 @@ object DMVirtual: TDMVirtual
   object DS_V_EstoquesFinan: TDataSource
     DataSet = CDS_V_EstoquesFinan
     Left = 464
-    Top = 224
+    Top = 168
   end
   object CDS_V_ParamLojaNeces: TClientDataSet
     Aggregates = <>

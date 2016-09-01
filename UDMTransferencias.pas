@@ -91,6 +91,14 @@ type
     CDS_ProdutoDemandaQTD_TRANSF_OC: TFMTBCDField;
     CDS_ProdutoDemandaOBS_DOCTO: TStringField;
     CDS_ProdutoDemandaCODGRUPOSUB: TStringField;
+    SQLQuery1: TSQLQuery;
+    SQLQuery1COD_PRODUTO: TStringField;
+    SQLQuery1IND_CURVA: TStringField;
+    SQLQuery1EST_MINIMO: TIntegerField;
+    SQLQuery1DIAS_ESTOCAGEM: TIntegerField;
+    SQLQuery1SALDOATUAL: TIntegerField;
+    SQLQuery1DATAINCLUSAO: TDateField;
+    SQLQuery1DATAALTERACAO: TDateField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir ====================================================================

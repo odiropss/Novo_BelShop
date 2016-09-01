@@ -189,7 +189,6 @@ type
     CDS_ConcCaixaTotaisVLR_DIFERENCA: TFMTBCDField;
     CDS_ConcCaixaTotaisIND_INFORMADO: TStringField;
     CDS_ConcCaixaTotaisUSU_INCLUI: TIntegerField;
-    CDS_ConcCaixaTotaisOBS: TStringField;
     CDS_ConcCaixa: TClientDataSet;
     CDS_ConcCaixaNUM_SEQREG: TIntegerField;
     CDS_ConcCaixaNUM_SEQ: TIntegerField;
@@ -228,6 +227,7 @@ type
     CDS_CMApresExtratosTIP_CONCILIACAO: TStringField;
     CDS_CMApresPagtosVLR_TOTAL: TAggregateField;
     CDS_CMApresExtratosVLR_TOTAL: TAggregateField;
+    CDS_ConcCaixaTotaisOBS: TStringField;
     procedure CDS_LojasBancoAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresExtratosAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresPagtosAfterScroll(DataSet: TDataSet);

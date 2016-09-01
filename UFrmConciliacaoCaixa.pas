@@ -2649,6 +2649,8 @@ Var
   bGravar: Boolean;
 begin
 
+  Dbg_ConcFechaCaixaTotal.SetFocus;
+  
   If DMConciliacao.CDS_ConcCaixaTotais.IsEmpty Then
    Exit;
 
@@ -2658,73 +2660,67 @@ begin
     Exit;
   End;
 
-  // Verifica se Transação esta Ativa
-  If DMBelShop.SQLC.InTransaction Then
-   DMBelShop.SQLC.Rollback(TD);
+  // Apresenta Observação ======================================================
+  s:=DMConciliacao.CDS_ConcCaixaTotaisOBS.AsString;
+  bGravar:=False;
+  If InputQueryOdir('CONCILIAÇÃO DE CAIXA', 'Informe a Observação do Caixa',s, 500) Then
+   bGravar:=True;
 
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMBelShop.SQLC.StartTransaction(TD);
-  Try
-    Screen.Cursor:=crAppStart;
-    DateSeparator:='.';
-    DecimalSeparator:='.';
+  If bGravar Then
+  Begin
+    // Verifica se Transação esta Ativa
+    If DMBelShop.SQLC.InTransaction Then
+     DMBelShop.SQLC.Rollback(TD);
 
-    s:=DMConciliacao.CDS_ConcCaixaTotaisOBS.AsString;
-    InputQuery('Observação do Caixa','',s);
+    // Monta Transacao ===========================================================
+    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMBelShop.SQLC.StartTransaction(TD);
+    Try
+      Screen.Cursor:=crAppStart;
+      DateSeparator:='.';
+      DecimalSeparator:='.';
 
+      If Trim(s)='' Then
+      Begin
+        If DMConciliacao.CDS_ConcCaixaTotaisVLR_DIFERENCA.AsCurrency>0 Then
+         s:='Vlr Débito MENOR que Vlr Crédito'
+        Else If DMConciliacao.CDS_ConcCaixaTotaisVLR_DIFERENCA.AsCurrency<0 Then
+         s:='Vlr Débito MAIOR que Vlr Crédito'
+        ELSE
+         s:='Vlr Débitos e Créditos FECHADOS';
+      End; // If Trim(s)='' Then
 
-    bGravar:=True;
-    If Trim(s)='' Then
-    Begin
-      bGravar:=False;
-      If DMConciliacao.CDS_ConcCaixaTotaisVLR_DIFERENCA.AsCurrency>0 Then
-       s:='Vlr Débito MENOR que Vlr Crédito'
-      Else If DMConciliacao.CDS_ConcCaixaTotaisVLR_DIFERENCA.AsCurrency<0 Then
-       s:='Vlr Débito MAIOR que Vlr Crédito'
-      ELSE
-       s:='Vlr Débitos e Créditos FECHADOS';
-    End; // If Trim(s)='' Then
+      MySql:=' UPDATE FIN_CONCILIACAO_CAIXA cx'+
+             ' SET cx.OBS_TEXTO='+QuotedStr(s)+
+             ' WHERE cx.cod_credito=9999'+
+             ' AND   cx.Cod_Loja ='+QuotedStr(FormatFloat('00',EdtConcFechaCaixaCodLoja.AsInteger))+
+             ' AND   cx.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdtConcFechaCaixaData.Date))));
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
 
-    DMConciliacao.CDS_ConcCaixaTotais.Edit;
-    DMConciliacao.CDS_ConcCaixaTotaisOBS.AsString:=s;
-    DMConciliacao.CDS_ConcCaixaTotais.Post;
+      // Atualiza Transacao ======================================================
+      DMBelShop.SQLC.Commit(TD);
 
-    MySql:=' UPDATE FIN_CONCILIACAO_CAIXA cx';
-
-           if bGravar Then
-            MySql:=MySql+' SET cx.OBS_TEXTO='+QuotedStr(s)
-           Else
-            MySql:=MySql+' SET cx.OBS_TEXTO=null';
-
-    MySql:=
-     MySql+' WHERE cx.cod_credito=9999'+
-           ' AND   cx.Cod_Loja ='+QuotedStr(FormatFloat('00',EdtConcFechaCaixaCodLoja.AsInteger))+
-           ' AND   cx.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdtConcFechaCaixaData.Date))));
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-    // Atualiza Transacao ======================================================
-    DMBelShop.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-    Screen.Cursor:=crDefault;
-  Except
-    on e : Exception do
-    Begin
-      // Abandona Transacao ====================================================
-      DMBelShop.SQLC.Rollback(TD);
-
+      DMConciliacao.CDS_ConcCaixaTotais.Close;
+      DMConciliacao.CDS_ConcCaixaTotais.Open;
       DateSeparator:='/';
       DecimalSeparator:=',';
       Screen.Cursor:=crDefault;
+    Except
+      on e : Exception do
+      Begin
+        // Abandona Transacao ====================================================
+        DMBelShop.SQLC.Rollback(TD);
 
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-      Exit;
-    End; // on e : Exception do
-  End; // Try
+        DateSeparator:='/';
+        DecimalSeparator:=',';
+        Screen.Cursor:=crDefault;
 
+        MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+        Exit;
+      End; // on e : Exception do
+    End; // Try
+  End; // If bGravar Then
 end;
 
 procedure TFrmConciliacaoCaixa.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);

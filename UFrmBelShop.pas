@@ -21766,6 +21766,15 @@ Var
   MySql: String;
 begin
 
+  //============================================================================
+  // TbaSheet's Não Usados =====================================================
+  //============================================================================
+  SubMenuFinanFechamentoDiarioLojas.Visible:=False;
+  SubMenuFinanFechamentoDiarioLojas.Enabled:=False;
+  SubMenuFinanFechamentoCaixa.Visible:=False;
+  SubMenuFinanFechamentoCaixa.Enabled:=False;
+  //============================================================================
+
   // Cor Form
   CorCaptionForm.Active:=False;
   CorTelaForm.Visible:=False;

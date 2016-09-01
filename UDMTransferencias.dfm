@@ -27,6 +27,7 @@ object DMTransferencias: TDMTransferencias
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'gds32.dll'
+    Connected = True
     Left = 48
     Top = 16
   end
@@ -492,5 +493,114 @@ object DMTransferencias: TDMTransferencias
     DataSet = SDS_EstoqueLoja
     Left = 432
     Top = 152
+  end
+  object SQLQuery1: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQL.Strings = (
+      'SELECT'
+      'c.cod_produto,'
+      'CASE'
+      
+        '    WHEN (p.datainclusao>='#39'18.01.2016'#39') AND (c.ind_curva='#39'E'#39') TH' +
+        'EN'
+      '      '#39'C'#39
+      '    ELSE'
+      '      c.ind_curva'
+      'END ind_curva,'
+      'CASE'
+      
+        '   WHEN (p.datainclusao>='#39'18.01.2016'#39') AND (c.ind_curva='#39'E'#39') AND' +
+        ' (t.vlr_aux1>c.est_minimo) THEN'
+      '     CAST(t.vlr_aux1 AS INTEGER)'
+      '   ELSE'
+      '     CAST(c.est_minimo AS INTEGER)'
+      'END est_minimo,'
+      ''
+      'CAST(COALESCE(t.vlr_aux,0) AS INTEGER) Dias_Estocagem,'
+      ''
+      'CAST((CASE'
+      '        WHEN COALESCE(e.pedidopendente,0)<0 THEN'
+      '          COALESCE(e.saldoatual,0)'
+      
+        '        WHEN COALESCE(e.pedidopendente,0)>COALESCE(e.saldoatual,' +
+        '0) THEN'
+      '          0'
+      '        ELSE'
+      '          COALESCE(e.saldoatual,0)-COALESCE(e.pedidopendente,0)'
+      '      END)'
+      'AS INTEGER) saldoatual,'
+      'p.datainclusao,'
+      'p.dataalteracao'
+      ''
+      'FROM ES_FINAN_CURVA_ABC c'
+      '        LEFT JOIN PRODUTO      p  ON p.codproduto=c.cod_produto'
+      '        LEFT JOIN ESTOQUE      e  ON e.codfilial=c.cod_loja'
+      '                                 AND e.codproduto=c.cod_produto'
+      '        LEFT JOIN TAB_AUXILIAR t  ON CASE'
+      
+        '                                       WHEN (p.datainclusao>'#39'18.' +
+        '01.2016'#39') AND (c.ind_curva='#39'E'#39') THEN 3'
+      
+        '                                       WHEN c.ind_curva='#39'A'#39' THEN' +
+        ' 1'
+      
+        '                                       WHEN c.ind_curva='#39'B'#39' THEN' +
+        ' 2'
+      
+        '                                       WHEN c.ind_curva='#39'C'#39' THEN' +
+        ' 3'
+      
+        '                                       WHEN c.ind_curva='#39'D'#39' THEN' +
+        ' 4'
+      
+        '                                       WHEN c.ind_curva='#39'E'#39' THEN' +
+        ' 5'
+      '                                       END=t.cod_aux'
+      '                                  AND t.tip_aux=2'
+      ''
+      'WHERE c.est_minimo>0'
+      'AND   p.situacaopro in (0,3)'
+      
+        'AND   p.principalfor Not in ('#39'000050'#39', '#39'000453'#39', '#39'000504'#39', '#39'0007' +
+        '97'#39', '#39'000048'#39', '#39'000251'#39', '#39'000338'#39','
+      
+        '                             '#39'000300'#39', '#39'000500'#39', '#39'000883'#39', '#39'0100' +
+        '00'#39', '#39'001072'#39')'
+      ''
+      
+        'AND   ((c.ind_curva in ('#39'A'#39', '#39'B'#39', '#39'C'#39', '#39'D'#39')) OR (p.datainclusao>' +
+        '='#39'18.01.2016'#39' AND c.ind_curva='#39'E'#39'))'
+      'AND   c.cod_loja='#39'06'#39
+      ''
+      '')
+    SQLConnection = SQLC
+    Left = 48
+    Top = 240
+    object SQLQuery1COD_PRODUTO: TStringField
+      FieldName = 'COD_PRODUTO'
+      Required = True
+      FixedChar = True
+      Size = 6
+    end
+    object SQLQuery1IND_CURVA: TStringField
+      FieldName = 'IND_CURVA'
+      Size = 1
+    end
+    object SQLQuery1EST_MINIMO: TIntegerField
+      FieldName = 'EST_MINIMO'
+    end
+    object SQLQuery1DIAS_ESTOCAGEM: TIntegerField
+      FieldName = 'DIAS_ESTOCAGEM'
+    end
+    object SQLQuery1SALDOATUAL: TIntegerField
+      FieldName = 'SALDOATUAL'
+    end
+    object SQLQuery1DATAINCLUSAO: TDateField
+      FieldName = 'DATAINCLUSAO'
+    end
+    object SQLQuery1DATAALTERACAO: TDateField
+      FieldName = 'DATAALTERACAO'
+    end
   end
 end

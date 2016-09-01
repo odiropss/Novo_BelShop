@@ -1,11 +1,11 @@
 object FrmEstoques: TFrmEstoques
-  Left = 238
-  Top = 104
+  Left = 242
+  Top = 105
   Align = alClient
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Controle de Estoques'
-  ClientHeight = 577
+  ClientHeight = 569
   ClientWidth = 977
   Color = clWindow
   Ctl3D = False
@@ -27,8 +27,8 @@ object FrmEstoques: TFrmEstoques
     Left = 0
     Top = 0
     Width = 977
-    Height = 577
-    ActivePage = Ts_Estoques
+    Height = 569
+    ActivePage = Ts_EstoquesFiltros
     Align = alClient
     TabOrder = 0
     OnChange = PC_EstoquesPrincipalChange
@@ -39,7 +39,7 @@ object FrmEstoques: TFrmEstoques
         Left = 0
         Top = 55
         Width = 969
-        Height = 439
+        Height = 431
         Align = alClient
         Color = 15004403
         Ctl3D = False
@@ -121,6 +121,15 @@ object FrmEstoques: TFrmEstoques
             Visible = True
           end
           item
+            Color = clWhite
+            Expanded = False
+            FieldName = 'EST_IDEAL'
+            ReadOnly = True
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
             Expanded = False
             FieldName = 'VLR_DEMANDAS'
             ReadOnly = True
@@ -178,15 +187,6 @@ object FrmEstoques: TFrmEstoques
             Color = 15400917
             Expanded = False
             FieldName = 'QTD_DISPONIVEL'
-            ReadOnly = True
-            Title.Alignment = taRightJustify
-            Width = 80
-            Visible = True
-          end
-          item
-            Color = 15269887
-            Expanded = False
-            FieldName = 'EST_IDEAL'
             ReadOnly = True
             Title.Alignment = taRightJustify
             Width = 80
@@ -713,7 +713,7 @@ object FrmEstoques: TFrmEstoques
       end
       object Panel66: TPanel
         Left = 0
-        Top = 514
+        Top = 506
         Width = 969
         Height = 35
         Align = alBottom
@@ -1027,7 +1027,7 @@ object FrmEstoques: TFrmEstoques
       end
       object Stb_Estoques: TdxStatusBar
         Left = 0
-        Top = 494
+        Top = 486
         Width = 969
         Height = 20
         Panels = <
@@ -1082,7 +1082,7 @@ object FrmEstoques: TFrmEstoques
       ImageIndex = 1
       object Bt_Filtros: TPanel
         Left = 0
-        Top = 514
+        Top = 506
         Width = 969
         Height = 35
         Align = alBottom

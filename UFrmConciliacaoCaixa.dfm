@@ -1821,9 +1821,9 @@ object FrmConciliacaoCaixa: TFrmConciliacaoCaixa
     end
   end
   object OdirPanApres: TPanel
-    Left = 880
-    Top = -4
-    Width = 89
+    Left = 882
+    Top = 0
+    Width = 96
     Height = 33
     BevelInner = bvLowered
     BevelWidth = 2

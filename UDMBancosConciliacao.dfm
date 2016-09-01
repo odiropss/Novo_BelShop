@@ -1213,6 +1213,8 @@ object DMConciliacao: TDMConciliacao
     object CDS_ConcCaixaTotaisOBS: TStringField
       DisplayLabel = 'Observa'#231#245'es'
       FieldName = 'OBS'
+      Required = True
+      FixedChar = True
       Size = 32
     end
   end
