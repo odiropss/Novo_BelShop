@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_FinanFechaCaixa
+    ActivePage = Ts_EstoqueFisicoFinan
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -7012,7 +7012,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_OCGeraOrdemCompra
+        ActivePage = Ts_OCBuscaProdutos
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -8512,7 +8512,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 0
                 Top = 0
                 Width = 94
-                Height = 390
+                Height = 392
                 Align = alClient
                 DataSource = DMBelShop.DS_AComprarItens
                 Font.Charset = DEFAULT_CHARSET
@@ -8555,7 +8555,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Panel4: TPanel
                 Left = 0
-                Top = 390
+                Top = 392
                 Width = 94
                 Height = 15
                 Align = alBottom
@@ -8580,7 +8580,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 0
                 Top = 0
                 Width = 60
-                Height = 390
+                Height = 392
                 Align = alClient
                 Ctl3D = False
                 DataSource = DMBelShop.DS_AComprar
@@ -8626,7 +8626,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Panel3: TPanel
                 Left = 0
-                Top = 390
+                Top = 392
                 Width = 60
                 Height = 15
                 Align = alBottom
@@ -8652,7 +8652,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 0
                 Top = 0
                 Width = 785
-                Height = 405
+                Height = 407
                 Align = alClient
                 DataSource = DMBelShop.DS_AComprar
                 Font.Charset = DEFAULT_CHARSET
@@ -14064,7 +14064,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 531
+              Left = 527
               Top = 12
               Width = 31
               Height = 13
@@ -14120,7 +14120,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 565
+              Left = 561
               Top = 9
               Width = 51
               Height = 18
@@ -14133,7 +14133,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 620
+              Left = 616
               Top = 9
               Width = 50
               Height = 18
@@ -28973,7 +28973,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = TS_FiltroFornecedor
+        ActivePage = TS_FiltroProdutos
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText

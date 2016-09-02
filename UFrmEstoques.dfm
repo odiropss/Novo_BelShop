@@ -28,7 +28,7 @@ object FrmEstoques: TFrmEstoques
     Top = 0
     Width = 977
     Height = 569
-    ActivePage = Ts_EstoquesFiltros
+    ActivePage = Ts_Estoques
     Align = alClient
     TabOrder = 0
     OnChange = PC_EstoquesPrincipalChange
@@ -320,6 +320,30 @@ object FrmEstoques: TFrmEstoques
         Align = alTop
         BevelInner = bvLowered
         TabOrder = 0
+        DesignSize = (
+          969
+          55)
+        object Bt_Odir: TJvTransparentButton
+          Left = 712
+          Top = 17
+          Width = 109
+          Height = 21
+          Anchors = [akTop, akRight]
+          Caption = 'ODIR - Duplos'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          HotTrackFont.Charset = DEFAULT_CHARSET
+          HotTrackFont.Color = clWindowText
+          HotTrackFont.Height = -11
+          HotTrackFont.Name = 'MS Sans Serif'
+          HotTrackFont.Style = []
+          ParentFont = False
+          Visible = False
+          OnClick = Bt_OdirClick
+        end
         object Gb_EstoquesLimiteCurvaA: TGroupBox
           Left = 5
           Top = 4
@@ -464,116 +488,6 @@ object FrmEstoques: TFrmEstoques
             TabOrder = 0
           end
         end
-        object Gb_EstoquesTransito: TGroupBox
-          Left = 555
-          Top = 4
-          Width = 168
-          Height = 48
-          Caption = ' Transito - Data Limite '
-          Color = 14342874
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentColor = False
-          ParentFont = False
-          TabOrder = 6
-          Visible = False
-          object DtEdt_EstoquesTransito: TcxDateEdit
-            Left = 57
-            Top = 16
-            ParentFont = False
-            Style.Font.Charset = DEFAULT_CHARSET
-            Style.Font.Color = clWindowText
-            Style.Font.Height = -13
-            Style.Font.Name = 'MS Sans Serif'
-            Style.Font.Style = [fsBold]
-            Style.IsFontAssigned = True
-            StyleFocused.BorderStyle = ebsOffice11
-            StyleFocused.TextStyle = [fsBold]
-            StyleHot.BorderStyle = ebsUltraFlat
-            TabOrder = 0
-            Width = 100
-          end
-          object CkB_EstoquesTransito: TJvCheckBox
-            Left = 8
-            Top = 21
-            Width = 44
-            Height = 17
-            Caption = 'SIM'
-            Checked = True
-            State = cbChecked
-            TabOrder = 1
-            OnClick = CkB_EstoquesTransitoClick
-            OnMouseUp = CkB_EstoquesTransitoMouseUp
-            LinkedControls = <>
-            HotTrackFont.Charset = DEFAULT_CHARSET
-            HotTrackFont.Color = clWindowText
-            HotTrackFont.Height = -11
-            HotTrackFont.Name = 'MS Sans Serif'
-            HotTrackFont.Style = []
-          end
-        end
-        object Gb_EstoquesPeriodo: TGroupBox
-          Left = 724
-          Top = 4
-          Width = 241
-          Height = 48
-          Caption = ' Per'#237'odo de Analise '
-          Color = 14342874
-          Enabled = False
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentColor = False
-          ParentFont = False
-          TabOrder = 7
-          Visible = False
-          object Label85: TLabel
-            Left = 114
-            Top = 23
-            Width = 8
-            Height = 13
-            Caption = 'a'
-          end
-          object DtEdt_EstoquesInicio: TcxDateEdit
-            Left = 9
-            Top = 17
-            ParentFont = False
-            Style.Color = 14737632
-            Style.Font.Charset = DEFAULT_CHARSET
-            Style.Font.Color = clBlue
-            Style.Font.Height = -13
-            Style.Font.Name = 'MS Sans Serif'
-            Style.Font.Style = [fsBold]
-            Style.IsFontAssigned = True
-            StyleFocused.BorderStyle = ebsOffice11
-            StyleFocused.TextStyle = [fsBold]
-            StyleHot.BorderStyle = ebsUltraFlat
-            TabOrder = 0
-            Width = 100
-          end
-          object DtEdt_EstoquesFim: TcxDateEdit
-            Left = 130
-            Top = 17
-            ParentFont = False
-            Style.Color = 14737632
-            Style.Font.Charset = DEFAULT_CHARSET
-            Style.Font.Color = clBlue
-            Style.Font.Height = -13
-            Style.Font.Name = 'MS Sans Serif'
-            Style.Font.Style = [fsBold]
-            Style.IsFontAssigned = True
-            StyleFocused.BorderStyle = ebsOffice11
-            StyleFocused.TextStyle = [fsBold]
-            StyleHot.BorderStyle = ebsUltraFlat
-            TabOrder = 1
-            Width = 100
-          end
-        end
         object Gb_EstoquesLimiteCurvaD: TGroupBox
           Left = 242
           Top = 4
@@ -685,7 +599,6 @@ object FrmEstoques: TFrmEstoques
           ParentColor = False
           ParentFont = False
           TabOrder = 5
-          Visible = False
           object Cbx_EstoquesSituacaoProd: TComboBox
             Left = 9
             Top = 18
@@ -693,7 +606,6 @@ object FrmEstoques: TFrmEstoques
             Height = 22
             Style = csOwnerDrawFixed
             Color = 14737632
-            Enabled = False
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clBlue
             Font.Height = -11
@@ -710,6 +622,28 @@ object FrmEstoques: TFrmEstoques
               'Ativo/N'#227'o Compra')
           end
         end
+        object DBE_EstoquesTOT1: TDBEdit
+          Left = 840
+          Top = 8
+          Width = 121
+          Height = 19
+          Anchors = [akTop, akRight]
+          DataField = 'VLR_TOT_VENDAS_ANO'
+          DataSource = DMVirtual.DS_V_Estoques
+          TabOrder = 6
+          OnChange = DBE_EstoquesTOT1Change
+        end
+        object DBE_EstoquesTOT2: TDBEdit
+          Left = 840
+          Top = 28
+          Width = 121
+          Height = 19
+          Anchors = [akTop, akRight]
+          DataField = 'VLR_TOT_VENDAS_ANO'
+          DataSource = DMVirtual.DS_V_Estoques
+          TabOrder = 7
+          OnChange = DBE_EstoquesTOT1Change
+        end
       end
       object Panel66: TPanel
         Left = 0
@@ -722,25 +656,57 @@ object FrmEstoques: TFrmEstoques
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 1
-        object Bt_Odir: TJvTransparentButton
-          Left = 416
-          Top = 9
-          Width = 109
-          Height = 21
-          Caption = 'ODIR - Duplos'
+        object Label2: TLabel
+          Left = 279
+          Top = 10
+          Width = 100
+          Height = 13
+          Caption = 'Venda Total Ano:'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          HotTrackFont.Charset = DEFAULT_CHARSET
-          HotTrackFont.Color = clWindowText
-          HotTrackFont.Height = -11
-          HotTrackFont.Name = 'MS Sans Serif'
-          HotTrackFont.Style = []
           ParentFont = False
-          Visible = False
-          OnClick = Bt_OdirClick
+        end
+        object Lab_EstoquesVlrTotAno: TLabel
+          Left = 384
+          Top = 10
+          Width = 26
+          Height = 13
+          Caption = '0,00'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlue
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label3: TLabel
+          Left = 511
+          Top = 10
+          Width = 92
+          Height = 13
+          Caption = 'Venda 4 Meses:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Lab_EstoquesVlrTot4Meses: TLabel
+          Left = 612
+          Top = 10
+          Width = 26
+          Height = 13
+          Caption = '0,00'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlue
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
         end
         object Bt_EstoquesFechar: TJvXPButton
           Left = 878
@@ -866,13 +832,14 @@ object FrmEstoques: TFrmEstoques
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
+          Visible = False
           OnClick = Bt_EstoquesDemonstrativoClick
         end
         object Bt_EstoquesFiltros: TJvXPButton
           Tag = 92
           Left = 166
           Top = 2
-          Width = 82
+          Width = 99
           Height = 29
           Caption = 'Filtros'
           TabOrder = 2
@@ -931,6 +898,7 @@ object FrmEstoques: TFrmEstoques
             0404040401010101010101010101010100000101010101010101010101010101
             01010101010101010000}
           ShowFocusRect = True
+          Spacing = 10
           Align = alLeft
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -961,8 +929,8 @@ object FrmEstoques: TFrmEstoques
         end
       end
       object Dbg_EstoquesDemFinan: TDBGrid
-        Left = 221
-        Top = 175
+        Left = 101
+        Top = 343
         Width = 500
         Height = 137
         DataSource = DMVirtual.DS_V_EstoquesFinan
@@ -1091,6 +1059,23 @@ object FrmEstoques: TFrmEstoques
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 0
+        DesignSize = (
+          967
+          33)
+        object Label1: TLabel
+          Left = 295
+          Top = 11
+          Width = 353
+          Height = 13
+          Anchors = [akTop]
+          Caption = 'OBS: Quando Houver Produto N'#227'o Busca Pelos Fornecedores'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
         object Bt_FiltrosVoltar: TJvXPButton
           Left = 865
           Top = 2

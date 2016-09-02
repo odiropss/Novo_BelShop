@@ -3538,6 +3538,7 @@ object DMVirtual: TDMVirtual
   end
   object CDS_V_Estoques: TClientDataSet
     Aggregates = <>
+    AggregatesActive = True
     Params = <>
     AfterEdit = CDS_V_EstoquesAfterEdit
     AfterPost = CDS_V_EstoquesAfterPost
@@ -3704,6 +3705,20 @@ object DMVirtual: TDMVirtual
       FieldName = 'NUM_LINHA'
       DisplayFormat = '0,'
       Calculated = True
+    end
+    object CDS_V_EstoquesVLR_TOT_VENDAS_ANO: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'VLR_TOT_VENDAS_ANO'
+      Active = True
+      DisplayFormat = '0,.00'
+      Expression = 'SUM(VLR_DEMANDAS)'
+    end
+    object CDS_V_EstoquesVLR_TOT_VENDAS_4M: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'VLR_TOT_VENDAS_4M'
+      Active = True
+      DisplayFormat = '0,.00'
+      Expression = 'SUM(QTD_DEMANDA)'
     end
   end
   object DS_V_Estoques: TDataSource

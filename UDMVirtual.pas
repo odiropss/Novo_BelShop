@@ -745,6 +745,8 @@ type
     IBQ_EstoqueLojaGAVETA: TIBStringField;
     CDS_V_EstoquesSEQ: TFMTBCDField;
     CDS_V_EstoquesORDENAR: TFMTBCDField;
+    CDS_V_EstoquesVLR_TOT_VENDAS_ANO: TAggregateField;
+    CDS_V_EstoquesVLR_TOT_VENDAS_4M: TAggregateField;
     procedure CDS_V_GruposProdutosAfterScroll(DataSet: TDataSet);
     procedure CDS_V_EstFisFinanEmpAfterScroll(DataSet: TDataSet);
     procedure CDS_V_MargemLucroFornAfterScroll(DataSet: TDataSet);
@@ -857,10 +859,6 @@ procedure TDMVirtual.CDS_V_EstoquesAfterScroll(DataSet: TDataSet);
 begin
   If Not DMVirtual.CDS_V_Estoques.IsEmpty Then
   Begin
-    FrmEstoques.Pan_EstoquesProdNovo.Visible:=False;
-    If DMVirtual.CDS_V_EstoquesDTA_INCLUSAO.AsDateTime>FrmEstoques.DtEdt_EstoquesFim.Date-30 Then
-     FrmEstoques.Pan_EstoquesProdNovo.Visible:=True;
-
     If bSeProcessa1 Then
     Begin
 //odirapagar

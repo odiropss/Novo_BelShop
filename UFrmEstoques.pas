@@ -22,7 +22,7 @@ uses
   CurrEdit, ComCtrls, MMSystem, StrUtils, DB,
   IBQuery, JvCheckBox, FMTBcd, Provider, DBClient, SqlExpr, Math,
   DBXpress, Commctrl, dxSkinsdxStatusBarPainter, dxStatusBar, Menus,
-  JvExComCtrls, JvAnimate, JvButton, JvTransparentButton;
+  JvExComCtrls, JvAnimate, JvButton, JvTransparentButton, DBCtrls, cxDBEdit;
 
 type
   TFrmEstoques = class(TForm)
@@ -39,12 +39,6 @@ type
     Gb_EstoquesLimiteCurvaC: TGroupBox;
     Label83: TLabel;
     EdtEstoquesLimiteCurvaC: TCurrencyEdit;
-    Gb_EstoquesTransito: TGroupBox;
-    DtEdt_EstoquesTransito: TcxDateEdit;
-    Gb_EstoquesPeriodo: TGroupBox;
-    Label85: TLabel;
-    DtEdt_EstoquesInicio: TcxDateEdit;
-    DtEdt_EstoquesFim: TcxDateEdit;
     Gb_EstoquesLimiteCurvaD: TGroupBox;
     Label187: TLabel;
     EdtEstoquesLimiteCurvaD: TCurrencyEdit;
@@ -55,7 +49,6 @@ type
     Cbx_EstoquesSituacaoProd: TComboBox;
     Panel66: TPanel;
     Bt_EstoquesFechar: TJvXPButton;
-    CkB_EstoquesTransito: TJvCheckBox;
     Bt_EstoquesDemonstrativo: TJvXPButton;
     Dbg_Estoques: TDBGrid;
     Dbg_EstoquesDemFinan: TDBGrid;
@@ -75,7 +68,14 @@ type
     PopM_EstoquesAlterarTodosEstMnimos: TMenuItem;
     N1: TMenuItem;
     PopM_EstoquesReplicarEstMinLojas: TMenuItem;
+    Label1: TLabel;
     Bt_Odir: TJvTransparentButton;
+    DBE_EstoquesTOT1: TDBEdit;
+    DBE_EstoquesTOT2: TDBEdit;
+    Label2: TLabel;
+    Lab_EstoquesVlrTotAno: TLabel;
+    Label3: TLabel;
+    Lab_EstoquesVlrTot4Meses: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -95,7 +95,6 @@ type
 
     procedure Dbg_EstoquesEnter(Sender: TObject);
     procedure Dbg_EstoquesExit(Sender: TObject);
-    procedure CkB_EstoquesTransitoClick(Sender: TObject);
     procedure Bt_EstoquesDemonstrativoClick(Sender: TObject);
     procedure Dbg_EstoquesKeyPress(Sender: TObject; var Key: Char);
     procedure Dbg_EstoquesDemFinanDrawColumnCell(Sender: TObject;
@@ -117,13 +116,12 @@ type
     procedure Dbg_EstoquesDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
-    procedure CkB_EstoquesTransitoMouseUp(Sender: TObject;
-      Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure PopM_InformarLojaTrabalharClick(Sender: TObject);
     procedure PopM_EstoquesParametrosClick(Sender: TObject);
     procedure PopM_EstoquesAlterarTodosEstMnimosClick(Sender: TObject);
     procedure PopM_EstoquesReplicarEstMinLojasClick(Sender: TObject);
     procedure Bt_OdirClick(Sender: TObject);
+    procedure DBE_EstoquesTOT1Change(Sender: TObject);
 
   private
     { Private declarations }
@@ -232,6 +230,10 @@ End; // Show Hint em Forma de Balão - Posiciona do Componente >>>>>>>>>>>>>>>>>>
 
 // Monta Filtros >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmEstoques.MontaFiltros(sTipo: String);
+Var
+  i, iReg: Integer;
+  sCod: String;
+  bUsou: Boolean; // Se Uso o filtro
 Begin
   // sTipo=EST - Controle de Estoques
 
@@ -240,26 +242,84 @@ Begin
     sgFiltros:='';
   End;
 
+  // Produtos ==================================================================
+  sgProdutos:='';
+  If Not DMVirtual.CDS_V_Produtos.IsEmpty Then
+  Begin
+    bUsou:=False;
+
+    FrmBelShop.SelecionaProdutos(True, False);
+    iReg:=DMVirtual.CDS_V_Produtos.RecordCount;
+
+    For i:=1 to iReg do
+    Begin
+      sCod:=Separa_String(sgProdutos+',',i,',');
+      If sTipo='EST' Then
+      Begin
+        If sgFiltros='' Then
+        Begin
+          sgFiltros:='ORDENAR<13 OR (COD_PRODUTO='+sCod;
+          bUsou:=True;
+        End
+        Else If Not bUsou Then
+        Begin
+          sgFiltros:=sgFiltros+' OR (COD_PRODUTO='+sCod;
+          bUsou:=True;
+        End
+        Else
+        Begin
+          sgFiltros:=sgFiltros+' OR COD_PRODUTO='+sCod;
+        End
+      End;
+    End; // For i:=1 to iReg do
+
+    If (sTipo='EST') And (sgFiltros<>'') Then
+     sgFiltros:=sgFiltros+')';
+
+    // Se Tem Produto Não Busca Pelo Fornecedor
+    If DMVirtual.CDS_V_Fornecedores.Active Then
+     DMVirtual.CDS_V_Fornecedores.Close;
+
+    DMVirtual.CDS_V_Fornecedores.CreateDataSet;
+    DMVirtual.CDS_V_Fornecedores.IndexFieldNames:='';
+    DMVirtual.CDS_V_Fornecedores.Filtered:=False;
+    DMVirtual.CDS_V_Fornecedores.Filter:='';
+    DMVirtual.CDS_V_Fornecedores.Open;
+  End; // If Not DMVirtual.CDS_V_Produtos.IsEmpty Then
+
+  // Fornecedores ==============================================================
   If Not DMVirtual.CDS_V_Fornecedores.IsEmpty Then
   Begin
+    bUsou:=False;
+
     DMVirtual.CDS_V_Fornecedores.First;
     While Not DMVirtual.CDS_V_Fornecedores.Eof do
     Begin
       If sTipo='EST' Then
       Begin
         If sgFiltros='' Then
-         sgFiltros:='ORDENAR<13 OR (COD_FORNECEDOR='+QuotedStr(DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsString)
+        Begin
+          sgFiltros:='ORDENAR<13 OR (COD_FORNECEDOR='+QuotedStr(DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsString);
+          bUsou:=True;
+        End
+        Else If Not bUsou Then
+        Begin
+          sgFiltros:=sgFiltros+' OR (COD_FORNECEDOR='+QuotedStr(DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsString);
+          bUsou:=True;
+        End
         Else
-         sgFiltros:=sgFiltros+' OR COD_FORNECEDOR='+QuotedStr(DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsString);
+        Begin
+          sgFiltros:=sgFiltros+' OR COD_FORNECEDOR='+QuotedStr(DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsString);
+        End;
       End;
 
       DMVirtual.CDS_V_Fornecedores.Next;
     End; // While Not DMVirtual.CDS_V_Fornecedores.Eof do
     DMVirtual.CDS_V_Fornecedores.First;
-  End; // If Not DMVirtual.CDS_V_Fornecedores.IsEmpty Then
 
-  If (sTipo='EST') And (sgFiltros<>'') Then
-   sgFiltros:=sgFiltros+')';
+    If (sTipo='EST') And (sgFiltros<>'') Then
+     sgFiltros:=sgFiltros+')';
+  End; // If Not DMVirtual.CDS_V_Fornecedores.IsEmpty Then
 
   If Not DMVirtual.CDS_V_GruposProdutos.IsEmpty Then
   Begin
@@ -268,7 +328,6 @@ Begin
     Begin
       If Not DMVirtual.CDS_V_SubGruposProdutos.IsEmpty Then
        Begin
-
          DMVirtual.CDS_V_SubGruposProdutos.First;
          While Not DMVirtual.CDS_V_SubGruposProdutos.Eof do
          Begin
@@ -277,6 +336,7 @@ Begin
              If sgFiltros='' Then
               Begin
                 sgFiltros:='ORDENAR<13 OR (CODGRUPOSUB='+QuotedStr(DMVirtual.CDS_V_SubGruposProdutosCod_GrupoSub.AsString);
+                bUsou:=True;
               End
              Else
               Begin
@@ -371,6 +431,7 @@ Begin
      sgGrupos:=sgGrupos+')';
 
   End; // If Not DMVirtual.CDS_V_GruposProdutos.IsEmpty Then
+
 End; // Monta Filtros >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 //==============================================================================
@@ -477,11 +538,6 @@ end;
 procedure TFrmEstoques.Dbg_EstoquesExit(Sender: TObject);
 begin
   bEnterTab:=True;
-end;
-
-procedure TFrmEstoques.CkB_EstoquesTransitoClick(Sender: TObject);
-begin
-  AcertaCkb_SN(CkB_EstoquesTransito);
 end;
 
 procedure TFrmEstoques.Bt_EstoquesDemonstrativoClick(Sender: TObject);
@@ -659,16 +715,7 @@ begin
 
   Ts_EstoquesFiltros.SetFocus;
 
-  If DMVirtual.CDS_V_Fornecedores.IsEmpty Then
-  Begin
-    If msg('Filtro SEM Fornecedor Selecionado !!'+cr+cr+'Esta CORRETO ??','C')=2 Then
-    Begin
-      FrmBelShop.PC_Filtros.TabIndex:=0;
-      FrmBelShop.PC_FiltrosChange(Self);
-      Exit;
-    End;
-  End; // If DMVirtual.CDS_V_Fornecedores.IsEmpty Then
-
+  // Monta Filtro ==============================================================
   OdirPanApres.Caption:='AGUARDE !! Montando Filtros...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmEstoques.Width-OdirPanApres.Width)/2));
@@ -785,6 +832,12 @@ begin
     DMVirtual.CDS_V_Estoques.IndexName:='NovaORDEM';
   End; // If Not bOriginal Then
 
+  // Recalcula Campos Aggregates ===============================================
+  DMVirtual.CDS_V_Estoques.Close;
+  DMVirtual.CDS_V_EstoquesVLR_TOT_VENDAS_ANO.Active:=False;
+  DMVirtual.CDS_V_EstoquesVLR_TOT_VENDAS_ANO.Active:=True;
+  DMVirtual.CDS_V_Estoques.Open;
+
   Ts_EstoquesFiltros.TabVisible:=False;
   Ts_Estoques.TabVisible:=True;
 
@@ -828,6 +881,15 @@ begin
   DMVirtual.CDS_V_Fornecedores.Filter:='';
   DMVirtual.CDS_V_Fornecedores.Open;
 
+  If DMVirtual.CDS_V_Produtos.Active Then
+   DMVirtual.CDS_V_Produtos.Close;
+
+  DMVirtual.CDS_V_Produtos.CreateDataSet;
+  DMVirtual.CDS_V_Produtos.IndexFieldNames:='';
+  DMVirtual.CDS_V_Produtos.Filtered:=False;
+  DMVirtual.CDS_V_Produtos.Filter:='';
+  DMVirtual.CDS_V_Produtos.Open;
+
   If DMVirtual.CDS_V_GruposProdutos.Active Then
    DMVirtual.CDS_V_GruposProdutos.Close;
 
@@ -859,7 +921,7 @@ begin
   //-----------------------------------------------------------------
   // Filtro de Produtos ---------------------------------------------
   //-----------------------------------------------------------------
-  FrmBelShop.TS_FiltroProdutos.TabVisible:=False;
+  FrmBelShop.TS_FiltroProdutos.TabVisible:=True;
   // Filtor nao Produtos de Não Compra
   FrmBelShop.Painel_FiltroNaoCompra.Visible:=False;
   // Filtro para Busca Pelo Nome
@@ -1064,12 +1126,6 @@ begin
 
 end;
 
-procedure TFrmEstoques.CkB_EstoquesTransitoMouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  CkB_EstoquesTransitoClick(Self);
-end;
-
 procedure TFrmEstoques.PopM_InformarLojaTrabalharClick(Sender: TObject);
 Var
   MySql: String;
@@ -1079,6 +1135,8 @@ Var
 
   hHrInicio, hHrFim: String;
 Begin
+  Lab_EstoquesVlrTotAno.Caption:='0,00';
+  Lab_EstoquesVlrTot4Meses.Caption:='0,00';
 
   // Fecha Demonstrativo =======================================================
   If Bt_EstoquesDemonstrativo.Caption='Fechar Demonstrativo' Then
@@ -1182,73 +1240,14 @@ Begin
   DMBelShop.SQLQ_Busca.Close;
 
   // Busca Movtos ==============================================================
-//  MySql:=' SELECT'+
-//         ' 0 SEQ,'+
-//         ' pr.codproduto COD_PRODUTO,'+
-//         ' pr.apresentacao DES_PRODUTO,'+
-//         ' fc.ind_curva,'+
-//         ' CAST(fc.vlr_demandas AS NUMERIC(12,2)) VLR_DEMANDAS,'+
-//
-//         ' CAST(CASE'+
-//         '       WHEN ((COALESCE(fc.qtd_demandas,0)=0) OR (COALESCE(fc.num_dias_uteis,0)=0)) THEN'+
-//         '         0'+
-//         '       ELSE'+
-//         '        (fc.qtd_demandas/fc.num_dias_uteis)*fc.num_dias_estocagem'+
-//         ' END AS INTEGER)  QTD_DEMANDA,'+ // Estocagem
-//
-//         ' fc.per_participacao,'+
-//         ' CAST(COALESCE(es.saldoatual,0) as INTEGER) QTD_ESTOQUE,'+
-//         ' fc.qtd_transito,'+
-//         ' CAST(COALESCE(es.saldoatual,0)+fc.qtd_transito AS INTEGER) QTD_DISPONIVEL,'+
-//         ' fc.est_minimo EST_IDEAL,'+
-//         ' es.estoquemaximo EST_MAXIMO,'+
-//         ' COALESCE(pr.precovenda,0) VLR_PC_VENDA,'+
-//
-//         ' CAST((COALESCE(es.saldoatual,0)+COALESCE(fc.qtd_transito,0)) *'+
-//         '       COALESCE(pr.precovenda,0) AS NUMERIC(12,2)) VLR_TOTAL_VENDA,'+
-//
-//         ' pr.datainclusao DTA_INCLUSAO,'+
-//         ' pr.codgrupo,'+
-//         ' pr.nomegrupo,'+
-//         ' pr.codsubgrupo,'+
-//         ' pr.nomesubgrupo,'+
-//         ' pr.codgruposub,'+
-//
-//         ' CAST(LPAD('+
-//         '   CASE'+
-//         '      WHEN pr.situacaopro=0 THEN ''Ativo'''+
-//         '      WHEN pr.situacaopro=1 THEN ''Bloqueado'''+
-//         '      WHEN pr.situacaopro=2 THEN ''Excluido'''+
-//         '      WHEN pr.situacaopro=3 THEN ''Não Compra'''+
-//         '      WHEN pr.situacaopro=4 THEN ''Não Venda'''+
-//         '      ELSE ''Sem Informação'''+
-//         '   END'+
-//         ',20, '' '') AS VARCHAR(20)) IND_SITUACAO,'+
-//
-//         ' pr.principalfor COD_FORNECEDOR,'+
-//         ' pr.nomefornecedor DES_FORNECEDOR,'+
-//         ' fc.qtd_demandas,'+
-//         ' 0.00 VLR_VENDAS_ACUM,'+
-//         ' 0 ORDENAR,'+
-//         ' ''NAO'' ALTERACAO,'+
-//         ' 0.00 VLR_VENDAS_ACUM_OK,'+
-//         ' fc.num_dias_uteis NUM_DIASUTEIS,'+
-//         ' 0 NUM_LINHA'+
-//
-//         ' FROM ES_FINAN_CURVA_ABC fc'+
-//         '     LEFT JOIN PRODUTO pr             ON pr.codproduto=fc.cod_produto'+
-//         '     LEFT JOIN ESTOQUE es             ON es.codfilial=fc.cod_loja'+  // QuotedStr(sgCodEmp)+
-//         '                                     AND es.codproduto=fc.cod_produto'+
-//         ' WHERE fc.cod_loja='+QuotedStr(sgCodEmp)+
-//         ' ORDER BY fc.ind_curva, fc.per_participacao desc, fc.vlr_demandas desc';
-
   MySql:=' SELECT'+
          ' GEN_ID(GEN_ODIR,1) SEQ,'+
          ' pr.codproduto COD_PRODUTO,'+
          ' pr.apresentacao DES_PRODUTO,'+
          ' fc.ind_curva,'+
-         ' CAST(fc.vlr_demandas AS NUMERIC(12,2)) VLR_DEMANDAS,'+ //* Ano */
-         ' CAST(COALESCE(e4.vlr_venda,0) AS NUMERIC(12,2)) VLR_VENDA4,'+ //* 4 Meses */
+//OdirApagar - 01/09/2016
+         ' CAST(COALESCE(fc.vlr_demandas,0.00) AS NUMERIC(12,2)) VLR_DEMANDAS,'+ //* Ano */
+         ' CAST(COALESCE(e4.vlr_venda,0.00) AS NUMERIC(12,2)) VLR_VENDA4,'+ //* 4 Meses */
 //         ' COALESCE(fc.qtd_demandas,0) qtd_vendas_ano,'+
 //         ' COALESCE(e4.qtd_venda,0) qtd_vendas_4m,'+
 
@@ -1257,7 +1256,7 @@ Begin
          '         0'+
          '       ELSE'+
          '        (fc.qtd_demandas/fc.num_dias_uteis)*fc.num_dias_estocagem'+
-         ' END AS INTEGER)  QTD_DEMANDA,'+ // Estocagem
+         ' END AS INTEGER) QTD_DEMANDA,'+ // Estocagem
 
 //         ' CAST(CASE'+
 //         '       WHEN ((COALESCE(e4.qtd_venda,0)<=0) OR (COALESCE(e4.qtd_venda_dia,0)<=0)) THEN'+
@@ -1272,10 +1271,10 @@ Begin
          ' CAST(COALESCE(es.saldoatual,0)+fc.qtd_transito AS INTEGER) QTD_DISPONIVEL,'+
          ' fc.est_minimo EST_IDEAL,'+
          ' es.estoquemaximo EST_MAXIMO,'+
-         ' COALESCE(pr.precovenda,0) VLR_PC_VENDA,'+
+         ' COALESCE(pr.precovenda,0.00) VLR_PC_VENDA,'+
 
          ' CAST((COALESCE(es.saldoatual,0)+COALESCE(fc.qtd_transito,0)) *'+
-         '       COALESCE(pr.precovenda,0) AS NUMERIC(12,2)) VLR_TOTAL_VENDA,'+
+         '       COALESCE(pr.precovenda,0.00) AS NUMERIC(12,2)) VLR_TOTAL_VENDA,'+
 
          ' pr.datainclusao DTA_INCLUSAO,'+
          ' pr.codgrupo,'+
@@ -1313,14 +1312,31 @@ Begin
          '     LEFT JOIN es_demandas_4meses e4  ON e4.codfilial=fc.cod_loja'+
          '                                     AND e4.codproduto=fc.cod_produto'+
 
-         ' WHERE fc.cod_loja='+QuotedStr(sgCodEmp)+
+         ' WHERE fc.cod_loja='+QuotedStr(sgCodEmp);
+
+         // Situacao dos Produtos -----------------------------
+         If Cbx_EstoquesSituacaoProd.ItemIndex=0 Then
+          MySql:=
+           MySql+' AND Coalesce(pr.situacaopro,0)=0';
+
+         If Cbx_EstoquesSituacaoProd.ItemIndex=1 Then
+          MySql:=
+           MySql+' AND Coalesce(pr.situacaopro,3)=3';
+
+         If Cbx_EstoquesSituacaoProd.ItemIndex=2 Then
+          MySql:=
+           MySql+' AND Coalesce(pr.situacaopro,0) in (0,3)';
+
+  MySql:=
+   MySql+' AND   NOT ((pr.principalfor IN (''010000'', ''000300'', ''000500'', ''001072'', ''000883''))'+
+         '            OR'+
+         '            (pr.codaplicacao =''0016''))'+ // Brindes
+
          ' ORDER BY fc.ind_curva, fc.per_participacao desc, fc.vlr_demandas desc';
-
-
-//  DMBelShop.CDS_SQLQ_Busca.DisableControls;
-//  DMBelShop.SQLQ_Busca.DisableControls;
-//  DMVirtual.CDS_V_Estoques.DisableControls;
-
+  DMBelShop.CDS_SQLQ_Busca.DisableControls;
+  DMBelShop.SQLQ_Busca.DisableControls;
+  DMVirtual.CDS_V_Estoques.DisableControls;
+                
   DMBelShop.CDS_SQLQ_Busca.close;
   DMBelShop.SQLQ_Busca.SQL.Clear;
   DMBelShop.SQLQ_Busca.SQL.Add(MySql);
@@ -1328,9 +1344,9 @@ Begin
 
   DMVirtual.CDS_V_Estoques.Data:=DMBelShop.CDS_SQLQ_Busca.Data;
 
-//  DMBelShop.SQLQ_Busca.EnableControls;
-//  DMBelShop.CDS_SQLQ_Busca.EnableControls;
-//  DMVirtual.CDS_V_Estoques.EnableControls;
+  DMBelShop.SQLQ_Busca.EnableControls;
+  DMBelShop.CDS_SQLQ_Busca.EnableControls;
+  DMVirtual.CDS_V_Estoques.EnableControls;
 
   DMBelShop.CDS_SQLQ_Busca.close;
 {
@@ -1446,16 +1462,6 @@ begin
    Bt_EstoquesDemonstrativoClick(Self);
 
   FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
-
-//  // Verifica se Apresentra Valores Originais do Parametro da Curva ABC ========
-//  bOriginal:=True;
-//  If (igDiasEstA<>0) OR (igDiasEstB<>0) OR (igDiasEstC<>0) OR (igDiasEstD<>0) OR (igDiasEstE<>0) Then
-//  Begin
-//    If msg('Deseja os Valores ORIGINAIS do'+cr+cr+'Parametro da Curva ABC ??','C')=2 Then
-//    Begin
-//      bOriginal:=False;
-//    End;
-//  End;
 
   // Busca Valores da Curva ABC ================================================
   MySql:=' SELECT t.cod_aux Cod_Curva,'+
@@ -2356,7 +2362,7 @@ begin
   While Not DMBelShop.CDS_Busca.Eof do
   Begin
     Application.ProcessMessages;
-    
+
     sgDescricao:=DMBelShop.CDS_Busca.FieldByName('cod_loja').AsString+' - '+
                  DMBelShop.CDS_Busca.FieldByName('cod_produto').AsString;
 
@@ -2371,6 +2377,18 @@ begin
   end;
   DMBelShop.CDS_Busca.Close;
   FreeAndNil(mMemo);
+
+end;
+
+procedure TFrmEstoques.DBE_EstoquesTOT1Change(Sender: TObject);
+begin
+  Lab_EstoquesVlrTotAno.Caption:='0,00';
+  Lab_EstoquesVlrTot4Meses.Caption:='0,00';
+  If trim(DBE_EstoquesTOT1.Text)<>'' Then
+   Lab_EstoquesVlrTotAno.Caption:=Formatfloat('R$ #,##0.00',StrToFloat(DBE_EstoquesTOT1.Text));
+
+  If trim(DBE_EstoquesTOT2.Text)<>'' Then
+   Lab_EstoquesVlrTot4Meses.Caption:=Formatfloat('R$ #,##0.00',StrToFloat(DBE_EstoquesTOT2.Text));
 
 end;
 

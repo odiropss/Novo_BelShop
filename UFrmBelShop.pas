@@ -43645,12 +43645,6 @@ begin
   // Inicializa Datas ==========================================================
   DecodeDate(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor), wgAnoH, wgMesH, wgDiaH);
 
-  FrmEstoques.DtEdt_EstoquesTransito.Date:=EncodeDate(wgAnoH, wgMesH, wgDiaH);
-  FrmEstoques.DtEdt_EstoquesTransito.Date:=FrmEstoques.DtEdt_EstoquesTransito.Date-30;
-
-  FrmEstoques.DtEdt_EstoquesInicio.Date:=EncodeDate(wgAnoH-1, wgMesH, 1);
-  FrmEstoques.DtEdt_EstoquesFim.Date:=EncodeDate(wgAnoH, wgMesH, wgDiaH);
-
 //  // Permissões de Visualização ================================================
 //  PermissaoVisual(FrmSalao.Ts_Profissionais);
 

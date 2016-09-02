@@ -1,8 +1,8 @@
 object DMBelShop: TDMBelShop
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 280
-  Top = 165
+  Left = 155
+  Top = 36
   Height = 724
   Width = 1305
   object SQLC: TSQLConnection
@@ -27,7 +27,6 @@ object DMBelShop: TDMBelShop
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
-    Connected = True
     Left = 32
     Top = 16
   end
@@ -8412,100 +8411,6 @@ object DMBelShop: TDMBelShop
   object SQLQ_Busca: TSQLQuery
     MaxBlobSize = -1
     Params = <>
-    SQL.Strings = (
-      'SELECT'
-      'GEN_ID(GEN_ODIR,1) SEQ,'
-      'fc.cod_loja,'
-      'pr.codproduto COD_PRODUTO,'
-      'pr.apresentacao DES_PRODUTO,'
-      'fc.ind_curva,'
-      'CAST(fc.vlr_demandas AS NUMERIC(12,2)) VLR_DEMANDAS, /* Ano */'
-      
-        'CAST(COALESCE(e4.vlr_venda,0) AS NUMERIC(12,2)) VLR_VENDA4, /* 4' +
-        ' Meses */'
-      ''
-      'COALESCE(fc.qtd_demandas,0) qtd_vendas_ano,'
-      'COALESCE(e4.qtd_venda,0) qtd_vendas_4m,'
-      ''
-      'CAST(CASE'
-      
-        '      WHEN ((COALESCE(fc.qtd_demandas,0)<=0) OR (COALESCE(fc.num' +
-        '_dias_uteis,0)=0)) THEN'
-      '        0'
-      '      ELSE'
-      '       (fc.qtd_demandas/fc.num_dias_uteis)*fc.num_dias_estocagem'
-      'END AS INTEGER)  QTD_DEMANDA, --// Estocagem Ano'
-      ''
-      'CAST(CASE'
-      
-        '      WHEN ((COALESCE(e4.qtd_venda,0)<=0) OR (COALESCE(e4.qtd_ve' +
-        'nda_dia,0)<=0)) THEN'
-      '        0'
-      '      ELSE'
-      '       (e4.qtd_venda_dia)*fc.num_dias_estocagem'
-      'END AS INTEGER)  QTD_DEMANDA_4m, --// Estocagem 4 meses'
-      ''
-      'fc.per_participacao,'
-      'CAST(COALESCE(es.saldoatual,0) as INTEGER) QTD_ESTOQUE,'
-      'fc.qtd_transito,'
-      
-        'CAST(COALESCE(es.saldoatual,0)+fc.qtd_transito AS INTEGER) QTD_D' +
-        'ISPONIVEL,'
-      'fc.est_minimo EST_IDEAL,'
-      'es.estoquemaximo EST_MAXIMO,'
-      'COALESCE(pr.precovenda,0) VLR_PC_VENDA,'
-      ''
-      'CAST((COALESCE(es.saldoatual,0)+COALESCE(fc.qtd_transito,0)) *'
-      
-        '      COALESCE(pr.precovenda,0) AS NUMERIC(12,2)) VLR_TOTAL_VEND' +
-        'A,'
-      ''
-      'pr.datainclusao DTA_INCLUSAO,'
-      'pr.codgrupo,'
-      'pr.nomegrupo,'
-      'pr.codsubgrupo,'
-      'pr.nomesubgrupo,'
-      'pr.codgruposub,'
-      ''
-      'CAST(LPAD('
-      '  CASE'
-      '     WHEN pr.situacaopro=0 THEN '#39'Ativo'#39
-      '     WHEN pr.situacaopro=1 THEN '#39'Bloqueado'#39
-      '     WHEN pr.situacaopro=2 THEN '#39'Excluido'#39
-      '     WHEN pr.situacaopro=3 THEN '#39'N'#227'o Compra'#39
-      '     WHEN pr.situacaopro=4 THEN '#39'N'#227'o Venda'#39
-      '     ELSE '#39'Sem Informa'#231#227'o'#39
-      '  END'
-      ',20, '#39' '#39') AS VARCHAR(20)) IND_SITUACAO,'
-      ''
-      'pr.principalfor COD_FORNECEDOR,'
-      'pr.nomefornecedor DES_FORNECEDOR,'
-      'fc.qtd_demandas,'
-      '0.00 VLR_VENDAS_ACUM,'
-      'GEN_ID(gen_odir1,1)+12 ORDENAR,'
-      #39'NAO'#39' ALTERACAO,'
-      '0.00 VLR_VENDAS_ACUM_OK,'
-      'fc.num_dias_uteis NUM_DIASUTEIS,'
-      'e4.dias_uteis dias_uteis_4m,'
-      '0 NUM_LINHA'
-      ''
-      'FROM ES_FINAN_CURVA_ABC fc'
-      
-        '    LEFT JOIN PRODUTO pr             ON pr.codproduto=fc.cod_pro' +
-        'duto'
-      '    LEFT JOIN ESTOQUE es             ON es.codfilial=fc.cod_loja'
-      
-        '                                    AND es.codproduto=fc.cod_pro' +
-        'duto'
-      '    LEFT JOIN es_demandas_4meses e4  ON e4.codfilial=fc.cod_loja'
-      
-        '                                    AND e4.codproduto=fc.cod_pro' +
-        'duto'
-      ''
-      'WHERE fc.cod_loja=99999'
-      
-        'ORDER BY fc.ind_curva, fc.per_participacao desc, fc.vlr_demandas' +
-        ' desc')
     SQLConnection = SQLC
     Left = 244
     Top = 80

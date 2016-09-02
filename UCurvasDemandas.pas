@@ -721,7 +721,10 @@ begin
                 ' AND    mt.ind_tipo=''DM'''+
                 ' AND    mt.dta_ref BETWEEN '+QuotedStr(sDtaDemI)+' and '+QuotedStr(sDtaDemF)+
                 ' AND    COALESCE(pt.situacaopro,0) in (0,3)'+ // Somente Ativo e Não Compra
-                ' AND    pt.principalfor NOT IN (''010000'', ''000300'', ''000500'', ''001072'')'+
+                ' AND    ((pt.principalfor NOT IN (''010000'', ''000300'', ''000500'', ''001072'', ''000883''))'+
+                '          OR'+
+                '         (pt.codaplicacao <>''0016''))'+
+
                 ' AND    mt.codfilial='+QuotedStr(sgCodLoja);
        End
       Else // If sgCodLoja<>'99' Then
@@ -733,7 +736,14 @@ begin
                 ' WHERE EXISTS (SELECT 1'+
                 '               FROM EMP_Conexoes c'+
                 '               WHERE c.Ind_Ativo=''SIM'''+
-                '               AND c.cod_filial=f.cod_loja)';
+                '               AND c.cod_filial=f.cod_loja)'+
+                ' AND NOT EXISTS (SELECT 1'+
+                '                 FROM PRODUTO p'+
+                '                 WHERE p.codproduto=f.cod_produto'+
+                '                 AND    ((p.principalfor IN (''010000'', ''000300'', ''000500'', ''001072'', ''000883''))'+
+                '                          OR'+
+                '                         (p.codaplicacao =''0016'')))'; // Brindes
+
        End; // If sgCodLoja<>'99' Then
       DMMovtosEmpresas.SDS.Close;
       DMMovtosEmpresas.SDS.CommandText:=MySql;
@@ -771,12 +781,14 @@ begin
                 QuotedStr(sgCodLoja)+' COD_LOJA,'+
                 ' pr.codproduto,'+
 
-                ' CASE'+
-                '   WHEN (pr.datainclusao>=current_date-30) Then'+
-                '     COALESCE(fc.est_minimo,3)'+
-                '   ELSE'+
-                '     COALESCE(fc.est_minimo,0)'+
-                ' END EST_MINIMO,'+
+// OdirApagar - 01/09/2016 - Estoque Minimo=0 para Produtos Novos
+//                ' CASE'+
+//                '   WHEN (pr.datainclusao>=current_date-30) Then'+
+//                '     COALESCE(fc.est_minimo,3)'+
+//                '   ELSE'+
+//                '     COALESCE(fc.est_minimo,0)'+
+//                ' END EST_MINIMO,'+
+                ' COALESCE(fc.est_minimo,0) EST_MINIMO,'+
 
                 ' ABS(CAST(CASE'+
                 '            WHEN pr.datainclusao<CAST('+QuotedStr(sDtaDemI)+' as Date) THEN'+
@@ -825,7 +837,9 @@ begin
                 '        LEFT JOIN ESTOQUE es  ON es.codproduto=pr.codproduto'+
                 '                             AND es.codfilial='+QuotedStr(sgCodLoja)+
                 ' WHERE COALESCE(pr.situacaopro,0) in (0,3)'+ // Somente Ativo e Não Compra
-                ' AND   pr.principalfor NOT IN (''010000'', ''000300'', ''000500'', ''001072'')';
+                ' AND   Not ((pr.principalfor IN (''000300'', ''000500'', ''001072'', ''000883'', ''010000''))'+
+                '            or'+
+                '            (pr.codaplicacao =''0016''))'; // Brindes
        End
       Else // If sgCodLoja<>'99' Then
        Begin
@@ -840,12 +854,14 @@ begin
                 QuotedStr(sgCodLoja)+' COD_LOJA,'+
                 ' pr.codproduto COD_PRODUTO,'+
 
-                ' CASE'+
-                '   WHEN (pr.datainclusao>=current_date-30) Then'+
-                '     COALESCE(fc.est_minimo,3)'+
-                '   ELSE'+
-                '     COALESCE(fc.est_minimo,0)'+
-                ' END EST_MINIMO,'+
+// OdirApagar - 01/09/2016 - Estoque Minimo=0 para Produtos Novos
+//                ' CASE'+
+//                '   WHEN (pr.datainclusao>=current_date-30) Then'+
+//                '     COALESCE(fc.est_minimo,3)'+
+//                '   ELSE'+
+//                '     COALESCE(fc.est_minimo,0)'+
+//                ' END EST_MINIMO,'+
+                ' COALESCE(fc.est_minimo,0) EST_MINIMO,'+
 
                 ' ABS(CAST(CASE'+
                 '            WHEN pr.datainclusao<CAST('+QuotedStr(sDtaDemI)+' as Date) THEN'+
@@ -908,7 +924,9 @@ begin
 //odirapagar
 //                ' WHERE ((COALESCE(pr.situacaopro,0)=0) OR (COALESCE(pr.situacaopro,0)=3 AND COALESCE(es.saldoatual,0)>0))'+
                 ' WHERE COALESCE(pr.situacaopro,0) in (0,3)'+ // Somente Ativo e Não Compra
-                ' AND   pr.principalfor NOT IN (''010000'', ''000300'', ''000500'', ''001072'')';
+                ' AND   Not ((pr.principalfor IN (''000300'', ''000500'', ''001072'', ''000883'', ''010000''))'+
+                '            or'+
+                '            (pr.codaplicacao =''0016''))'; // Brindes
        End; // If sgCodLoja<>'99' Then
       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 

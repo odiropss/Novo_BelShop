@@ -27,7 +27,6 @@ object DMTransferencias: TDMTransferencias
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'gds32.dll'
-    Connected = True
     Left = 48
     Top = 16
   end

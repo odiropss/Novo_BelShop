@@ -128,6 +128,7 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
   end
   object DSP_EmpProcessa: TDataSetProvider
     DataSet = SDS_EmpProcessa
+    Options = [poRetainServerOrder]
     Left = 144
     Top = 164
   end
@@ -890,6 +891,7 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
   end
   object DSP_BuscaRapida: TDataSetProvider
     DataSet = SDS_BuscaRapida
+    Options = [poRetainServerOrder]
     Left = 148
     Top = 302
   end
@@ -914,6 +916,7 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
   end
   object DSP_Pesquisa: TDataSetProvider
     DataSet = SDS_Pesquisa
+    Options = [poRetainServerOrder]
     Left = 148
     Top = 382
   end
