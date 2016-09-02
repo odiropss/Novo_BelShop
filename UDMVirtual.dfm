@@ -3549,12 +3549,14 @@ object DMVirtual: TDMVirtual
     object CDS_V_EstoquesSEQ: TFMTBCDField
       FieldName = 'SEQ'
       Required = True
+      DisplayFormat = '0,'
       Precision = 15
       Size = 0
     end
     object CDS_V_EstoquesCOD_PRODUTO: TStringField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_PRODUTO'
+      FixedChar = True
       Size = 6
     end
     object CDS_V_EstoquesDES_PRODUTO: TStringField
@@ -3568,21 +3570,45 @@ object DMVirtual: TDMVirtual
       FieldName = 'IND_CURVA'
       Size = 1
     end
-    object CDS_V_EstoquesVLR_DEMANDAS: TFMTBCDField
-      DisplayLabel = 'Vlr Demandas'
-      FieldName = 'VLR_DEMANDAS'
+    object CDS_V_EstoquesVLR_VENDAS_ANO: TFMTBCDField
+      DisplayLabel = 'Vlr Vendas Ano'
+      FieldName = 'VLR_VENDAS_ANO'
       DisplayFormat = '0.,00'
+      Precision = 15
       Size = 2
     end
-    object CDS_V_EstoquesQTD_DEMANDA: TIntegerField
-      DisplayLabel = 'Qtd Demanda'
-      FieldName = 'QTD_DEMANDA'
+    object CDS_V_EstoquesVLR_VENDAS_4M: TFMTBCDField
+      DisplayLabel = 'Vlr Vendas 4Meses'
+      FieldName = 'VLR_VENDAS_4M'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_EstoquesQTD_VENDAS_ANO: TIntegerField
+      DisplayLabel = 'Qtd Vendas Ano'
+      FieldName = 'QTD_VENDAS_ANO'
+      DisplayFormat = '0,'
+    end
+    object CDS_V_EstoquesQTD_VENDAS_4M: TIntegerField
+      DisplayLabel = 'Qtd Vendas 4Meses'
+      FieldName = 'QTD_VENDAS_4M'
+      DisplayFormat = '0,'
+    end
+    object CDS_V_EstoquesQTD_ESTOCAGEM_ANO: TIntegerField
+      DisplayLabel = 'Qtd Estocagem Ano'
+      FieldName = 'QTD_ESTOCAGEM_ANO'
+      DisplayFormat = '0,'
+    end
+    object CDS_V_EstoquesQTD_ESTCAGEM_4M: TIntegerField
+      DisplayLabel = 'Qtd Estocagem 4Meses'
+      FieldName = 'QTD_ESTCAGEM_4M'
       DisplayFormat = '0,'
     end
     object CDS_V_EstoquesPER_PARTICIPACAO: TFMTBCDField
       DisplayLabel = '% Participa'#231#227'o'
       FieldName = 'PER_PARTICIPACAO'
       DisplayFormat = '0.,0000'
+      Precision = 15
       Size = 4
     end
     object CDS_V_EstoquesQTD_ESTOQUE: TIntegerField
@@ -3609,18 +3635,21 @@ object DMVirtual: TDMVirtual
       DisplayLabel = 'Est. M'#225'ximo'
       FieldName = 'EST_MAXIMO'
       DisplayFormat = '0,'
-      Size = 0
+      Precision = 15
+      Size = 4
     end
     object CDS_V_EstoquesVLR_PC_VENDA: TFMTBCDField
       DisplayLabel = 'P'#231' Venda'
       FieldName = 'VLR_PC_VENDA'
       DisplayFormat = '0.,00'
-      Size = 2
+      Precision = 15
+      Size = 4
     end
     object CDS_V_EstoquesVLR_TOTAL_VENDA: TFMTBCDField
       DisplayLabel = 'Dispon'#237'vel P'#231' Venda'
       FieldName = 'VLR_TOTAL_VENDA'
       DisplayFormat = '0.,00'
+      Precision = 15
       Size = 2
     end
     object CDS_V_EstoquesDTA_INCLUSAO: TDateField
@@ -3630,36 +3659,42 @@ object DMVirtual: TDMVirtual
     object CDS_V_EstoquesCODGRUPO: TStringField
       DisplayLabel = 'C'#243'd Grupo'
       FieldName = 'CODGRUPO'
+      FixedChar = True
       Size = 3
     end
     object CDS_V_EstoquesNOMEGRUPO: TStringField
       DisplayLabel = 'Nome Grupo'
       FieldName = 'NOMEGRUPO'
+      FixedChar = True
       Size = 30
     end
     object CDS_V_EstoquesCODSUBGRUPO: TStringField
       DisplayLabel = 'C'#243'd Sub-Grupo'
       FieldName = 'CODSUBGRUPO'
+      FixedChar = True
       Size = 4
     end
     object CDS_V_EstoquesNOMESUBGRUPO: TStringField
       DisplayLabel = 'Nome Sub-Grupo'
       FieldName = 'NOMESUBGRUPO'
+      FixedChar = True
       Size = 30
     end
     object CDS_V_EstoquesCODGRUPOSUB: TStringField
       FieldName = 'CODGRUPOSUB'
-      Visible = False
+      FixedChar = True
       Size = 7
     end
     object CDS_V_EstoquesIND_SITUACAO: TStringField
       DisplayLabel = 'Situa'#231#227'o'
       FieldName = 'IND_SITUACAO'
+      Required = True
     end
     object CDS_V_EstoquesCOD_FORNECEDOR: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'Cod Forn'
       FieldName = 'COD_FORNECEDOR'
+      FixedChar = True
       Size = 6
     end
     object CDS_V_EstoquesDES_FORNECEDOR: TStringField
@@ -3667,15 +3702,12 @@ object DMVirtual: TDMVirtual
       FieldName = 'DES_FORNECEDOR'
       Size = 40
     end
-    object CDS_V_EstoquesQTD_DEMANDAS: TIntegerField
-      DisplayLabel = 'Qtd Demandas'
-      FieldName = 'QTD_DEMANDAS'
-      DisplayFormat = '0,'
-    end
     object CDS_V_EstoquesVLR_VENDAS_ACUM: TFMTBCDField
       DisplayLabel = 'Vendas Acumuladas'
       FieldName = 'VLR_VENDAS_ACUM'
+      Required = True
       DisplayFormat = '0.,00'
+      Precision = 15
       Size = 2
     end
     object CDS_V_EstoquesORDENAR: TFMTBCDField
@@ -3686,39 +3718,46 @@ object DMVirtual: TDMVirtual
     end
     object CDS_V_EstoquesALTERACAO: TStringField
       FieldName = 'ALTERACAO'
+      Required = True
+      FixedChar = True
       Size = 3
     end
     object CDS_V_EstoquesVLR_VENDAS_ACUM_OK: TFMTBCDField
       DisplayLabel = 'Vendas Acumuladas OK'
       FieldName = 'VLR_VENDAS_ACUM_OK'
+      Required = True
       DisplayFormat = '0.,00'
+      Precision = 15
       Size = 2
     end
     object CDS_V_EstoquesNUM_DIASUTEIS: TIntegerField
-      DisplayLabel = 'N'#186' Dias Uteis'
+      DisplayLabel = 'N'#186' Dias Uteis Ano'
       FieldName = 'NUM_DIASUTEIS'
       DisplayFormat = '0,'
     end
-    object CDS_V_EstoquesNUM_LINHA: TIntegerField
-      DisplayLabel = 'Seq'
-      FieldKind = fkCalculated
-      FieldName = 'NUM_LINHA'
+    object CDS_V_EstoquesDIAS_UTEIS_4M: TIntegerField
+      DisplayLabel = 'N'#186' Dias Uteis 4Meses'
+      FieldName = 'DIAS_UTEIS_4M'
       DisplayFormat = '0,'
-      Calculated = True
+    end
+    object CDS_V_EstoquesNUM_LINHA: TIntegerField
+      DisplayLabel = 'Seq Linha'
+      FieldName = 'NUM_LINHA'
+      Required = True
     end
     object CDS_V_EstoquesVLR_TOT_VENDAS_ANO: TAggregateField
       Alignment = taRightJustify
       FieldName = 'VLR_TOT_VENDAS_ANO'
       Active = True
       DisplayFormat = '0,.00'
-      Expression = 'SUM(VLR_DEMANDAS)'
+      Expression = 'SUM(VLR_VENDAS_ANO)'
     end
     object CDS_V_EstoquesVLR_TOT_VENDAS_4M: TAggregateField
       Alignment = taRightJustify
       FieldName = 'VLR_TOT_VENDAS_4M'
       Active = True
       DisplayFormat = '0,.00'
-      Expression = 'SUM(QTD_DEMANDA)'
+      Expression = 'SUM(VLR_VENDAS_4M)'
     end
   end
   object DS_V_Estoques: TDataSource

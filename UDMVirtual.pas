@@ -662,27 +662,13 @@ type
     CDS_V_CurvaABCEnderecoQTD_DEMANDA: TCurrencyField;
     CDS_V_Estoques: TClientDataSet;
     DS_V_Estoques: TDataSource;
-    CDS_V_EstoquesCOD_PRODUTO: TStringField;
-    CDS_V_EstoquesDES_PRODUTO: TStringField;
-    CDS_V_EstoquesIND_CURVA: TStringField;
-    CDS_V_EstoquesDTA_INCLUSAO: TDateField;
-    CDS_V_EstoquesIND_SITUACAO: TStringField;
-    CDS_V_EstoquesCOD_FORNECEDOR: TStringField;
-    CDS_V_EstoquesDES_FORNECEDOR: TStringField;
-    CDS_V_EstoquesCODGRUPO: TStringField;
-    CDS_V_EstoquesNOMEGRUPO: TStringField;
-    CDS_V_EstoquesCODSUBGRUPO: TStringField;
-    CDS_V_EstoquesNOMESUBGRUPO: TStringField;
-    CDS_V_EstoquesCODGRUPOSUB: TStringField;
     CDS_V_EstoquesFinan: TClientDataSet;
     DS_V_EstoquesFinan: TDataSource;
     CDS_V_EstoquesFinanIND_CURVA: TStringField;
     CDS_V_EstoquesFinanVLR_DEMANDA_PV: TCurrencyField;
     CDS_V_EstoquesFinanPER_NIVELSERVICO: TCurrencyField;
     CDS_V_EstoquesFinanVLR_ESTOQUE_PV: TCurrencyField;
-    CDS_V_EstoquesEST_IDEAL: TIntegerField;
     CDS_V_EstoquesFinanQTD_ITENS: TIntegerField;
-    CDS_V_EstoquesNUM_DIASUTEIS: TIntegerField;
     CDS_V_ParamLojaNeces: TClientDataSet;
     DS_V_ParamLojaNeces: TDataSource;
     CDS_V_ParamLojaNecesDES_LOJA: TStringField;
@@ -692,8 +678,6 @@ type
     CDS_V_ParamLojaNecesIND_CURVA_D: TStringField;
     CDS_V_ParamLojaNecesIND_CURVA_E: TStringField;
     CDS_V_ParamLojaNecesCOD_LOJA: TStringField;
-    CDS_V_EstoquesNUM_LINHA: TIntegerField;
-    CDS_V_EstoquesALTERACAO: TStringField;
     IBQ_EstoqueLoja: TIBQuery;
     IBQ_EstoqueLojaCODFILIAL: TIBStringField;
     IBQ_EstoqueLojaCODPRODUTO: TIBStringField;
@@ -713,19 +697,7 @@ type
     IBQ_UsuarioTable: TIBQuery;
     IBQ_UsuarioTableNOME_CAMPO: TIBStringField;
     CDS_V_NFeTOT_QTDS: TCurrencyField;
-    CDS_V_EstoquesVLR_DEMANDAS: TFMTBCDField;
-    CDS_V_EstoquesPER_PARTICIPACAO: TFMTBCDField;
-    CDS_V_EstoquesVLR_VENDAS_ACUM_OK: TFMTBCDField;
-    CDS_V_EstoquesQTD_ESTOQUE: TIntegerField;
-    CDS_V_EstoquesQTD_TRANSITO: TIntegerField;
-    CDS_V_EstoquesQTD_DISPONIVEL: TIntegerField;
-    CDS_V_EstoquesVLR_PC_VENDA: TFMTBCDField;
-    CDS_V_EstoquesVLR_TOTAL_VENDA: TFMTBCDField;
-    CDS_V_EstoquesEST_MAXIMO: TFMTBCDField;
-    CDS_V_EstoquesQTD_DEMANDAS: TIntegerField;
-    CDS_V_EstoquesVLR_VENDAS_ACUM: TFMTBCDField;
     CDS_V_ParamLojaNecesIND_ATIVO: TStringField;
-    CDS_V_EstoquesQTD_DEMANDA: TIntegerField;
     DS_V_EstoqueLojas: TDataSource;
     IBQ_EstoqueLojaPRINCIPALFOR: TIBStringField;
     CDS_V_EstoqueLojas: TClientDataSet;
@@ -743,10 +715,42 @@ type
     IBQ_EstoqueLojaCORREDOR: TIBStringField;
     IBQ_EstoqueLojaPRATELEIRA: TIBStringField;
     IBQ_EstoqueLojaGAVETA: TIBStringField;
-    CDS_V_EstoquesSEQ: TFMTBCDField;
-    CDS_V_EstoquesORDENAR: TFMTBCDField;
     CDS_V_EstoquesVLR_TOT_VENDAS_ANO: TAggregateField;
     CDS_V_EstoquesVLR_TOT_VENDAS_4M: TAggregateField;
+    CDS_V_EstoquesSEQ: TFMTBCDField;
+    CDS_V_EstoquesCOD_PRODUTO: TStringField;
+    CDS_V_EstoquesDES_PRODUTO: TStringField;
+    CDS_V_EstoquesIND_CURVA: TStringField;
+    CDS_V_EstoquesVLR_VENDAS_ANO: TFMTBCDField;
+    CDS_V_EstoquesVLR_VENDAS_4M: TFMTBCDField;
+    CDS_V_EstoquesQTD_VENDAS_ANO: TIntegerField;
+    CDS_V_EstoquesQTD_VENDAS_4M: TIntegerField;
+    CDS_V_EstoquesQTD_ESTOCAGEM_ANO: TIntegerField;
+    CDS_V_EstoquesQTD_ESTCAGEM_4M: TIntegerField;
+    CDS_V_EstoquesPER_PARTICIPACAO: TFMTBCDField;
+    CDS_V_EstoquesQTD_ESTOQUE: TIntegerField;
+    CDS_V_EstoquesQTD_TRANSITO: TIntegerField;
+    CDS_V_EstoquesQTD_DISPONIVEL: TIntegerField;
+    CDS_V_EstoquesEST_IDEAL: TIntegerField;
+    CDS_V_EstoquesEST_MAXIMO: TFMTBCDField;
+    CDS_V_EstoquesVLR_PC_VENDA: TFMTBCDField;
+    CDS_V_EstoquesVLR_TOTAL_VENDA: TFMTBCDField;
+    CDS_V_EstoquesDTA_INCLUSAO: TDateField;
+    CDS_V_EstoquesCODGRUPO: TStringField;
+    CDS_V_EstoquesNOMEGRUPO: TStringField;
+    CDS_V_EstoquesCODSUBGRUPO: TStringField;
+    CDS_V_EstoquesNOMESUBGRUPO: TStringField;
+    CDS_V_EstoquesCODGRUPOSUB: TStringField;
+    CDS_V_EstoquesIND_SITUACAO: TStringField;
+    CDS_V_EstoquesCOD_FORNECEDOR: TStringField;
+    CDS_V_EstoquesDES_FORNECEDOR: TStringField;
+    CDS_V_EstoquesVLR_VENDAS_ACUM: TFMTBCDField;
+    CDS_V_EstoquesORDENAR: TFMTBCDField;
+    CDS_V_EstoquesALTERACAO: TStringField;
+    CDS_V_EstoquesVLR_VENDAS_ACUM_OK: TFMTBCDField;
+    CDS_V_EstoquesNUM_DIASUTEIS: TIntegerField;
+    CDS_V_EstoquesDIAS_UTEIS_4M: TIntegerField;
+    CDS_V_EstoquesNUM_LINHA: TIntegerField;
     procedure CDS_V_GruposProdutosAfterScroll(DataSet: TDataSet);
     procedure CDS_V_EstFisFinanEmpAfterScroll(DataSet: TDataSet);
     procedure CDS_V_MargemLucroFornAfterScroll(DataSet: TDataSet);
@@ -790,9 +794,9 @@ var
 
   TD: TTransactionDesc;
 
-  iQtdEstMinOld,  iQtdEstMinNew,
-  iQtdDemandaOld, iQtdDemandaNew
-  : Integer;
+  iQtdEstMinOld, iQtdEstMinNew: Integer;
+//odirapagar - 02/09/2016
+//  iQtdDemandaOld, iQtdDemandaNew: Integer;
 
 implementation
 
@@ -889,7 +893,8 @@ begin
     If igNrEmpProc=1 Then bAtualizar:=True;
 
     iQtdEstMinNew :=CDS_V_EstoquesEST_IDEAL.AsInteger;
-    iQtdDemandaNew:=CDS_V_EstoquesQTD_DEMANDA.AsInteger;
+//odirapagar
+//    iQtdDemandaNew:=CDS_V_EstoquesQTD_DEMANDA.AsInteger;
   End;
 
   // Atualiza Produtos na Curva ABC Financeira ===============================
@@ -936,7 +941,9 @@ begin
   If Not FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly Then
   Begin
     iQtdEstMinOld :=CDS_V_EstoquesEST_IDEAL.AsInteger;
-    iQtdDemandaOld:=CDS_V_EstoquesQTD_DEMANDA.AsInteger;
+
+//odirapagar
+//    iQtdDemandaOld:=CDS_V_EstoquesQTD_DEMANDA.AsInteger;
   End;
 
 end;

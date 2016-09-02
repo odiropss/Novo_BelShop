@@ -308,7 +308,9 @@ Begin
     // Atualiza SIDICOM CD
     MySql:=' UPDATE PRODUTO pr'+
            ' SET pr.CLASSEABC='+QuotedStr('E')+
-           ' WHERE pr.PRINCIPALFOR NOT IN (''000300'', ''000500'', ''000883'', ''010000'', ''001072'')'+
+           ' WHERE ((pr.principalfor NOT IN (''000300'', ''000500'', ''001072'', ''000883'', ''010000''))'+
+           '         OR'+
+           '        (pr.codaplicacao <>''0016''))'+
            ' AND   pr.CLASSEABC<>'+QuotedStr('E');
     IBQ_MPMS.Close;
     IBQ_MPMS.SQL.Clear;
@@ -713,11 +715,9 @@ begin
                 ' SUM(ABS(COALESCE(mt.quant_ref,0))) Tot_Qtd_Demanda,'+
                 ' SUM(ABS(COALESCE(mt.preco,0))) Tot_Vlr_Demanda'+
 
-                ' FROM MOVTOS_EMPRESAS mt, PRODUTO pt, ESTOQUE es'+
+                ' FROM MOVTOS_EMPRESAS mt, PRODUTO pt'+
 
                 ' WHERE  mt.codproduto=pt.codproduto'+
-                ' AND    es.codfilial=mt.codfilial'+
-                ' AND    es.codproduto=mt.codproduto'+
                 ' AND    mt.ind_tipo=''DM'''+
                 ' AND    mt.dta_ref BETWEEN '+QuotedStr(sDtaDemI)+' and '+QuotedStr(sDtaDemF)+
                 ' AND    COALESCE(pt.situacaopro,0) in (0,3)'+ // Somente Ativo e Não Compra
@@ -819,13 +819,13 @@ begin
                 ' FROM PRODUTO pr'+
                 '        LEFT JOIN (SELECT md.codfilial,'+
                 '                          md.codproduto,'+
-                '                          CAST(SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.preco,0)))) AS NUMERIC(12,2)) VLR_DEMANDAS,'+
-                '                          CAST((((SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.preco,0)))))*100)/'+
+                '                          CAST(SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.preco,0)),0.00)) AS NUMERIC(12,2)) VLR_DEMANDAS,'+
+                '                          CAST((((SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.preco,0)),0.0000)))*100)/'+
                                                    sTotVlrDemandas+') AS NUMERIC(12,4)) PER_PARTICIPACAO,'+
-                '                          CAST(SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.quant_ref,0)))) AS INTEGER) QTD_DEMANDAS,'+
-                '                          CAST((((SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.quant_ref,0)))))*100)/'+
+                '                          CAST(SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.quant_ref,0)),0)) AS INTEGER) QTD_DEMANDAS,'+
+                '                          CAST((((SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.quant_ref,0)),0.0000)))*100)/'+
                                                    sTotQtdDemandas+') AS NUMERIC(12,4)) PER_PART_QTD,'+
-                '                          CAST(SUM(DECODE(md.ind_tipo,''TR'',ABS(COALESCE(md.quant_ref,0)))) AS INTEGER) QTD_TRANSITO'+
+                '                          CAST(SUM(DECODE(md.ind_tipo,''TR'',ABS(COALESCE(md.quant_ref,0)),0)) AS INTEGER) QTD_TRANSITO'+
                 '                   FROM MOVTOS_EMPRESAS md'+
                 '                   WHERE ((md.ind_tipo=''DM'' AND md.dta_ref BETWEEN '+QuotedStr(sDtaDemI)+' AND '+QuotedStr(sDtaDemF)+')'+
                 '                          OR'+
@@ -837,9 +837,9 @@ begin
                 '        LEFT JOIN ESTOQUE es  ON es.codproduto=pr.codproduto'+
                 '                             AND es.codfilial='+QuotedStr(sgCodLoja)+
                 ' WHERE COALESCE(pr.situacaopro,0) in (0,3)'+ // Somente Ativo e Não Compra
-                ' AND   Not ((pr.principalfor IN (''000300'', ''000500'', ''001072'', ''000883'', ''010000''))'+
-                '            or'+
-                '            (pr.codaplicacao =''0016''))'; // Brindes
+                ' AND   ((pr.principalfor NOT IN (''000300'', ''000500'', ''001072'', ''000883'', ''010000''))'+
+                '         OR'+
+                '        (pr.codaplicacao <>''0016''))';
        End
       Else // If sgCodLoja<>'99' Then
        Begin
@@ -882,7 +882,7 @@ begin
                 '       ((COALESCE(dem.VLR_DEMANDAS,0)*100)/'+sTotVlrDemandas+')'+
                 '    ELSE'+
                 '       0'+
-                ' END AS NUMERIC(12,4))  PER_PARTICIPACAO,'+
+                ' END AS NUMERIC(12,4)) PER_PARTICIPACAO,'+
 
                 ' ''E'' IND_CURVA,'+
                 sTotQtdDemandas+' Qtd_DEMANDAS_ANO,'+
@@ -920,13 +920,10 @@ begin
                 '                      AND es.codfilial='+QuotedStr(sgCodLoja)+
                 '    LEFT JOIN ES_FINAN_CURVA_ABC fc  ON fc.cod_produto=pr.codproduto'+
                 '                                    AND fc.cod_loja='+QuotedStr(sgCodLoja)+
-
-//odirapagar
-//                ' WHERE ((COALESCE(pr.situacaopro,0)=0) OR (COALESCE(pr.situacaopro,0)=3 AND COALESCE(es.saldoatual,0)>0))'+
                 ' WHERE COALESCE(pr.situacaopro,0) in (0,3)'+ // Somente Ativo e Não Compra
-                ' AND   Not ((pr.principalfor IN (''000300'', ''000500'', ''001072'', ''000883'', ''010000''))'+
-                '            or'+
-                '            (pr.codaplicacao =''0016''))'; // Brindes
+                ' AND   ((pr.principalfor NOT IN (''000300'', ''000500'', ''001072'', ''000883'', ''010000''))'+
+                '         OR'+
+                '        (pr.codaplicacao <>''0016''))';
        End; // If sgCodLoja<>'99' Then
       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 

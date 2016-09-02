@@ -74,7 +74,9 @@ object FrmEstoques: TFrmEstoques
           item
             Expanded = False
             FieldName = 'NUM_LINHA'
+            ReadOnly = True
             Title.Alignment = taCenter
+            Title.Caption = 'Seq'
             Width = 50
             Visible = True
           end
@@ -90,7 +92,7 @@ object FrmEstoques: TFrmEstoques
             Font.Style = [fsBold]
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 50
+            Width = 60
             Visible = True
           end
           item
@@ -124,36 +126,39 @@ object FrmEstoques: TFrmEstoques
             Color = clWhite
             Expanded = False
             FieldName = 'EST_IDEAL'
-            ReadOnly = True
             Title.Alignment = taRightJustify
             Width = 80
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'VLR_DEMANDAS'
+            FieldName = 'VLR_VENDAS_ANO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Title.Caption = 'Vendas Per'#237'odo'
-            Width = 100
+            Width = 95
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'VLR_VENDAS_ACUM'
+            FieldName = 'VLR_VENDAS_4M'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 125
+            Width = 115
             Visible = True
           end
           item
             Color = 15395562
             Expanded = False
-            FieldName = 'QTD_DEMANDA'
+            FieldName = 'QTD_VENDAS_ANO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Title.Caption = 'Qtd Venda/Dias Est'
-            Width = 125
+            Width = 100
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_VENDAS_4M'
+            ReadOnly = True
             Visible = True
           end
           item
@@ -180,7 +185,7 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'QTD_TRANSITO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 60
+            Width = 55
             Visible = True
           end
           item
@@ -189,16 +194,24 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'QTD_DISPONIVEL'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 80
+            Width = 70
             Visible = True
           end
           item
             Color = 15269887
             Expanded = False
-            FieldName = 'EST_MAXIMO'
+            FieldName = 'QTD_ESTOCAGEM_ANO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 90
+            Width = 120
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_ESTCAGEM_4M'
+            ReadOnly = True
+            Title.Alignment = taRightJustify
+            Width = 140
             Visible = True
           end
           item
@@ -207,7 +220,7 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'VLR_PC_VENDA'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 80
+            Width = 65
             Visible = True
           end
           item
@@ -225,8 +238,7 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'DTA_INCLUSAO'
             ReadOnly = True
             Title.Alignment = taCenter
-            Title.Caption = 'Inclus'#227'o'
-            Width = 80
+            Width = 90
             Visible = True
           end
           item
@@ -241,22 +253,23 @@ object FrmEstoques: TFrmEstoques
             Expanded = False
             FieldName = 'NOMEGRUPO'
             ReadOnly = True
-            Width = 180
+            Width = 150
             Visible = True
           end
           item
+            Alignment = taRightJustify
             Expanded = False
             FieldName = 'CODSUBGRUPO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 91
+            Width = 92
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'NOMESUBGRUPO'
             ReadOnly = True
-            Width = 180
+            Width = 150
             Visible = True
           end
           item
@@ -288,9 +301,10 @@ object FrmEstoques: TFrmEstoques
           item
             Expanded = False
             FieldName = 'NUM_DIASUTEIS'
+            ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 90
-            Visible = True
+            Width = -1
+            Visible = False
           end
           item
             Expanded = False
@@ -303,11 +317,13 @@ object FrmEstoques: TFrmEstoques
           item
             Expanded = False
             FieldName = 'ORDENAR'
+            ReadOnly = True
             Visible = False
           end
           item
             Expanded = False
             FieldName = 'NUM_LINHA'
+            ReadOnly = True
             Title.Caption = 'num_linha'
             Visible = False
           end>
@@ -324,8 +340,8 @@ object FrmEstoques: TFrmEstoques
           969
           55)
         object Bt_Odir: TJvTransparentButton
-          Left = 712
-          Top = 17
+          Left = 696
+          Top = 32
           Width = 109
           Height = 21
           Anchors = [akTop, akRight]
@@ -631,6 +647,7 @@ object FrmEstoques: TFrmEstoques
           DataField = 'VLR_TOT_VENDAS_ANO'
           DataSource = DMVirtual.DS_V_Estoques
           TabOrder = 6
+          Visible = False
           OnChange = DBE_EstoquesTOT1Change
         end
         object DBE_EstoquesTOT2: TDBEdit
@@ -639,10 +656,68 @@ object FrmEstoques: TFrmEstoques
           Width = 121
           Height = 19
           Anchors = [akTop, akRight]
-          DataField = 'VLR_TOT_VENDAS_ANO'
+          DataField = 'VLR_TOT_VENDAS_4M'
           DataSource = DMVirtual.DS_V_Estoques
           TabOrder = 7
+          Visible = False
           OnChange = DBE_EstoquesTOT1Change
+        end
+        object Bt_EstoquesDemonstrativo: TJvXPButton
+          Left = 666
+          Top = 2
+          Width = 164
+          Height = 25
+          Caption = 'Abrir Demonstrativo'
+          TabOrder = 8
+          TabStop = False
+          Glyph.Data = {
+            07544269746D6170AA040000424DAA0400000000000036000000280000001400
+            000013000000010018000000000074040000C30E0000C30E0000000000000000
+            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00000000000000000000
+            0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000
+            000000000000000000000000BFBFBF000000BFBFBFBFBFBFBFBFBFBFBFBF7F7F
+            7F000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F
+            00007F0000000000000000BFBFBFFFFFFFFFFFFF000000000000000000000000
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F00007F00
+            00000000BFBFBFFFFFFFFFFFFF000000BFBFBF00000000000000000000000000
+            0000000000000000000000BFBFBFBFBFBF7F00007F00007F00007F0000000000
+            BFBFBFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFF000000BFBFBFBFBFBFFF0000FF0000FF0000FF00000000007F7F7F7F
+            7F7F7F7F7F7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            000000BFBFBFBFBFBF7F00007F00007F00007F0000BFBFBFBFBFBFBFBFBF7F7F
+            7FFFFFFF7F00007F00007F00007F00007F00007F0000FFFFFFFFFFFF000000BF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F
+            00007F00007F00007F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F0000FFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFF7F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F00007F00007F0000
+            7F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBF7F7F7FFFFFFF7F00007F00007F00007F0000FFFFFFFFFFFFFFFF
+            FFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F
+            7FFFFFFF7F00007F00007F00007F00007F0000FFFFFFFFFFFFFFFFFF000000BF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F7F7F7F7F7F7F
+            7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7FBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF}
+          ShowFocusRect = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Visible = False
+          OnClick = Bt_EstoquesDemonstrativoClick
         end
       end
       object Panel66: TPanel
@@ -776,73 +851,14 @@ object FrmEstoques: TFrmEstoques
           ParentFont = False
           OnClick = Bt_EstoquesFecharClick
         end
-        object Bt_EstoquesDemonstrativo: TJvXPButton
-          Tag = 1
-          Left = 2
-          Top = 2
-          Width = 164
-          Height = 29
-          Caption = 'Abrir Demonstrativo'
-          TabOrder = 1
-          TabStop = False
-          Glyph.Data = {
-            07544269746D6170AA040000424DAA0400000000000036000000280000001400
-            000013000000010018000000000074040000C30E0000C30E0000000000000000
-            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00000000000000000000
-            0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000
-            000000000000000000000000BFBFBF000000BFBFBFBFBFBFBFBFBFBFBFBF7F7F
-            7F000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F
-            00007F0000000000000000BFBFBFFFFFFFFFFFFF000000000000000000000000
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F00007F00
-            00000000BFBFBFFFFFFFFFFFFF000000BFBFBF00000000000000000000000000
-            0000000000000000000000BFBFBFBFBFBF7F00007F00007F00007F0000000000
-            BFBFBFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFF000000BFBFBFBFBFBFFF0000FF0000FF0000FF00000000007F7F7F7F
-            7F7F7F7F7F7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            000000BFBFBFBFBFBF7F00007F00007F00007F0000BFBFBFBFBFBFBFBFBF7F7F
-            7FFFFFFF7F00007F00007F00007F00007F00007F0000FFFFFFFFFFFF000000BF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F
-            00007F00007F00007F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F0000FFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFF7F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F00007F00007F0000
-            7F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBF7F7F7FFFFFFF7F00007F00007F00007F0000FFFFFFFFFFFFFFFF
-            FFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F
-            7FFFFFFF7F00007F00007F00007F00007F0000FFFFFFFFFFFFFFFFFF000000BF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F7F7F7F7F7F7F
-            7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7FBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF}
-          ShowFocusRect = True
-          Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          Visible = False
-          OnClick = Bt_EstoquesDemonstrativoClick
-        end
         object Bt_EstoquesFiltros: TJvXPButton
           Tag = 92
-          Left = 166
+          Left = 2
           Top = 2
           Width = 99
           Height = 29
           Caption = 'Filtros'
-          TabOrder = 2
+          TabOrder = 1
           TabStop = False
           Glyph.Data = {
             07544269746D61705E060000424D5E0600000000000036040000280000001600
@@ -924,7 +940,7 @@ object FrmEstoques: TFrmEstoques
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          TabOrder = 3
+          TabOrder = 2
           Visible = False
         end
       end
@@ -1063,7 +1079,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 295
+          Left = 293
           Top = 11
           Width = 353
           Height = 13

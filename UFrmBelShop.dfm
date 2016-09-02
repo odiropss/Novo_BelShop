@@ -14064,7 +14064,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 527
+              Left = 525
               Top = 12
               Width = 31
               Height = 13
@@ -14120,7 +14120,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 561
+              Left = 559
               Top = 9
               Width = 51
               Height = 18
@@ -14133,7 +14133,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 616
+              Left = 614
               Top = 9
               Width = 50
               Height = 18
