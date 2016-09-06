@@ -76,7 +76,6 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'NUM_LINHA'
             ReadOnly = True
             Title.Alignment = taCenter
-            Title.Caption = 'Seq'
             Width = 50
             Visible = True
           end
@@ -303,7 +302,6 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'NUM_DIASUTEIS'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = -1
             Visible = False
           end
           item
@@ -1079,7 +1077,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 293
+          Left = 290
           Top = 11
           Width = 353
           Height = 13

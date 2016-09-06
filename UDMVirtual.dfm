@@ -3741,9 +3741,10 @@ object DMVirtual: TDMVirtual
       DisplayFormat = '0,'
     end
     object CDS_V_EstoquesNUM_LINHA: TIntegerField
-      DisplayLabel = 'Seq Linha'
+      DisplayLabel = 'Seq'
+      FieldKind = fkCalculated
       FieldName = 'NUM_LINHA'
-      Required = True
+      Calculated = True
     end
     object CDS_V_EstoquesVLR_TOT_VENDAS_ANO: TAggregateField
       Alignment = taRightJustify

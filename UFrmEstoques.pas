@@ -1156,6 +1156,7 @@ Var
 
   //OdirApagar - 02/09/2016
   //, iSeqOrdem: Integer;
+  sGenProd, sGenOrdem: String;
 
   hHrInicio, hHrFim: String;
 Begin
@@ -1264,9 +1265,31 @@ Begin
   iNumReg:=DMBelShop.SQLQ_Busca.FieldByName('NumReg').AsInteger;
   DMBelShop.SQLQ_Busca.Close;
 
+  // Abre Transação para Sequence's ============================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+
+  // Cria Sequence's ===========================================================
+  sGenProd :='Gen_Prod'+'10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time);
+  sGenOrdem:='Gen_Ordem'+'10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time);
+
+  MySql:=' CREATE SEQUENCE '+sGenProd;
+  DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+  MySql:=' ALTER SEQUENCE '+sGenProd+' RESTART WITH 0';
+  DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+  MySql:=' CREATE SEQUENCE '+sGenOrdem;
+  DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+  MySql:=' ALTER SEQUENCE '+sGenOrdem+' RESTART WITH 0';
+  DMBelShop.SQLC.Execute(MySql,nil,nil);
+
   // Busca Movtos ==============================================================
   MySql:=' SELECT'+
-         ' GEN_ID(GEN_ODIR,1) SEQ,'+
+         ' GEN_ID('+sGenProd+',1) SEQ,'+
+//         ' GEN_ID(GEN_ODIR,1) SEQ,'+
          ' pr.codproduto COD_PRODUTO,'+
          ' pr.apresentacao DES_PRODUTO,'+
          ' fc.ind_curva,'+
@@ -1321,7 +1344,8 @@ Begin
          ' pr.principalfor COD_FORNECEDOR,'+
          ' pr.nomefornecedor DES_FORNECEDOR,'+
          ' 0.00 VLR_VENDAS_ACUM,'+ // Não Usado
-         ' GEN_ID(gen_odir1,1)+12 ORDENAR,'+
+//         ' GEN_ID(GEN_ODIR1,1)+12 ORDENAR,'+
+         ' GEN_ID('+sGenOrdem+',1)+12 ORDENAR,'+
          ' ''NAO'' ALTERACAO,'+
          ' 0.00 VLR_VENDAS_ACUM_OK,'+ // Não Usado
          ' fc.num_dias_uteis NUM_DIASUTEIS,'+
@@ -1356,22 +1380,23 @@ Begin
          '            (pr.codaplicacao =''0016''))'+ // Brindes
 
          ' ORDER BY fc.ind_curva, fc.per_participacao desc, fc.vlr_demandas desc';
-  DMBelShop.CDS_SQLQ_Busca.DisableControls;
-  DMBelShop.SQLQ_Busca.DisableControls;
-  DMVirtual.CDS_V_Estoques.DisableControls;
-
   DMBelShop.CDS_SQLQ_Busca.close;
   DMBelShop.SQLQ_Busca.SQL.Clear;
   DMBelShop.SQLQ_Busca.SQL.Add(MySql);
   DMBelShop.CDS_SQLQ_Busca.Open;
-
   DMVirtual.CDS_V_Estoques.Data:=DMBelShop.CDS_SQLQ_Busca.Data;
-
-  DMBelShop.SQLQ_Busca.EnableControls;
-  DMBelShop.CDS_SQLQ_Busca.EnableControls;
-  DMVirtual.CDS_V_Estoques.EnableControls;
-
   DMBelShop.CDS_SQLQ_Busca.close;
+
+  // Drop Sequence's ===========================================================
+  MySql:=' DROP SEQUENCE '+sGenProd;
+  DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+  MySql:=' DROP SEQUENCE '+sGenOrdem;
+  DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+  // Rollback nas Sequence's ===================================================
+  DMBelShop.SQLC.Rollback(TD);
+
 {
   // Atualiza Client de Estoques ===============================================
   iSeqProd:=0;
