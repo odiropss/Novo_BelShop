@@ -1,6 +1,6 @@
 object FrmBelShop: TFrmBelShop
   Left = 240
-  Top = 111
+  Top = 106
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_EstoqueFisicoFinan
+    ActivePage = Ts_FinanObjetivos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -14064,7 +14064,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 525
+              Left = 521
               Top = 12
               Width = 31
               Height = 13
@@ -14120,7 +14120,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 559
+              Left = 555
               Top = 9
               Width = 51
               Height = 18
@@ -14133,7 +14133,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 614
+              Left = 610
               Top = 9
               Width = 50
               Height = 18
@@ -18457,7 +18457,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_FinanObjetivosManut
+        ActivePage = Ts_FinanObjetivosResultadosMeses
         Align = alClient
         TabOrder = 0
         OnChange = PC_FinanObjetivosChange
@@ -18476,7 +18476,7 @@ object FrmBelShop: TFrmBelShop
               Left = 2
               Top = 2
               Width = 375
-              Height = 412
+              Height = 414
               Align = alClient
               Color = 15004403
               DataSource = DMBelShop.DS_Objetivos
@@ -18579,7 +18579,7 @@ object FrmBelShop: TFrmBelShop
             end
             object dxStatusBar3: TdxStatusBar
               Left = 2
-              Top = 449
+              Top = 451
               Width = 375
               Height = 20
               Panels = <
@@ -18600,7 +18600,7 @@ object FrmBelShop: TFrmBelShop
             end
             object Panel91: TPanel
               Left = 2
-              Top = 414
+              Top = 416
               Width = 375
               Height = 35
               Align = alBottom
@@ -19167,7 +19167,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 1
                 Top = 14
                 Width = 262
-                Height = 206
+                Height = 208
                 Align = alClient
                 Color = 15004403
                 Ctl3D = False
@@ -19211,7 +19211,7 @@ object FrmBelShop: TFrmBelShop
               end
               object StBar_FinanObjetivosManutCalculaObjetivo: TStatusBar
                 Left = 1
-                Top = 220
+                Top = 222
                 Width = 262
                 Height = 19
                 Color = clSilver
@@ -19237,20 +19237,20 @@ object FrmBelShop: TFrmBelShop
                 580
                 192)
               object Gb_FinanObjetivosManutDesObjetivo: TGroupBox
-                Left = 4
+                Left = 1
                 Top = 4
-                Width = 291
+                Width = 274
                 Height = 40
                 Anchors = [akLeft, akTop, akRight]
                 Caption = ' Descri'#231#227'o do Objetivo '
                 TabOrder = 0
                 DesignSize = (
-                  291
+                  274
                   40)
                 object Dbe_FinanObjetivosManutDesObjetivo: TDBEdit
-                  Left = 9
+                  Left = 7
                   Top = 15
-                  Width = 272
+                  Width = 260
                   Height = 19
                   Anchors = [akLeft, akTop, akRight]
                   CharCase = ecUpperCase
@@ -19261,9 +19261,9 @@ object FrmBelShop: TFrmBelShop
                 end
               end
               object Gb_FinanObjetivosManutFormula: TGroupBox
-                Left = 4
+                Left = 1
                 Top = 46
-                Width = 569
+                Width = 574
                 Height = 95
                 Anchors = [akLeft, akTop, akRight]
                 Caption = ' F'#243'rmula '
@@ -19271,12 +19271,12 @@ object FrmBelShop: TFrmBelShop
                 ParentColor = False
                 TabOrder = 3
                 DesignSize = (
-                  569
+                  574
                   95)
                 object Dbe_FinanObjetivosManutFormula: TDBEdit
                   Left = 5
                   Top = 45
-                  Width = 558
+                  Width = 563
                   Height = 19
                   Anchors = [akLeft, akTop, akRight]
                   CharCase = ecUpperCase
@@ -19695,7 +19695,7 @@ object FrmBelShop: TFrmBelShop
                 end
               end
               object Gb_FinanObjetivosManutTpOperacao: TGroupBox
-                Left = 296
+                Left = 276
                 Top = 4
                 Width = 177
                 Height = 40
@@ -19703,7 +19703,7 @@ object FrmBelShop: TFrmBelShop
                 Caption = ' Tipo Opera'#231#227'o  '
                 TabOrder = 1
                 object Rb_FinanObjetivosManutTpOperacaoLoja: TJvRadioButton
-                  Left = 10
+                  Left = 7
                   Top = 16
                   Width = 46
                   Height = 17
@@ -19725,7 +19725,7 @@ object FrmBelShop: TFrmBelShop
                   LinkedControls = <>
                 end
                 object Rb_FinanObjetivosManutTpOperacaoSalao: TJvRadioButton
-                  Left = 58
+                  Left = 55
                   Top = 16
                   Width = 54
                   Height = 17
@@ -19747,7 +19747,7 @@ object FrmBelShop: TFrmBelShop
                   LinkedControls = <>
                 end
                 object Rb_FinanObjetivosManutTpOperacaoAmbos: TJvRadioButton
-                  Left = 114
+                  Left = 111
                   Top = 16
                   Width = 59
                   Height = 17
@@ -19766,17 +19766,30 @@ object FrmBelShop: TFrmBelShop
                 end
               end
               object Gb_FinanObjetivosManutUlt12Meses: TGroupBox
-                Left = 474
+                Left = 454
                 Top = 4
-                Width = 97
+                Width = 123
                 Height = 40
                 Anchors = [akTop, akRight]
-                Caption = ' Ult 12 Meses '
+                Caption = ' '#218'ltimos Meses '
                 TabOrder = 2
+                object Label1: TLabel
+                  Left = 84
+                  Top = 19
+                  Width = 31
+                  Height = 13
+                  Caption = 'Meses'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -11
+                  Font.Name = 'MS Sans Serif'
+                  Font.Style = []
+                  ParentFont = False
+                end
                 object Ckb_FinanObjetivosManutUlt12Meses: TJvXPCheckbox
-                  Left = 22
-                  Top = 16
-                  Width = 50
+                  Left = 6
+                  Top = 18
+                  Width = 46
                   Height = 17
                   Caption = 'SIM'
                   TabOrder = 0
@@ -19847,6 +19860,21 @@ object FrmBelShop: TFrmBelShop
                 TabOrder = 0
                 OnExit = EdtFinanObjetivosAnoExit
               end
+            end
+            object EdtFinanObjetivosMeses: TCurrencyEdit
+              Left = 515
+              Top = 23
+              Width = 22
+              Height = 18
+              AutoSize = False
+              DecimalPlaces = 0
+              DisplayFormat = '0'
+              Anchors = [akTop, akRight]
+              MaxLength = 2
+              MaxValue = 12.000000000000000000
+              MinValue = 1.000000000000000000
+              TabOrder = 5
+              Value = 12.000000000000000000
             end
           end
           object Panel73: TPanel
@@ -20260,7 +20288,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 452
+            Height = 454
             Align = alClient
             Color = 15004403
             DataSource = DMVirtual.DS_V_ObjetivosDias
@@ -20287,7 +20315,7 @@ object FrmBelShop: TFrmBelShop
           end
           object StatusBar2: TStatusBar
             Left = 0
-            Top = 452
+            Top = 454
             Width = 963
             Height = 19
             Color = clSilver
@@ -20310,7 +20338,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel78: TPanel
             Left = 0
-            Top = 471
+            Top = 473
             Width = 963
             Height = 35
             Align = alBottom
@@ -20566,13 +20594,13 @@ object FrmBelShop: TFrmBelShop
           end
         end
         object Ts_FinanObjetivosResultadosMeses: TTabSheet
-          Caption = 'Resultados Ultimos 12 Meses '
+          Caption = ' Resultados '#218'ltimos Meses '
           ImageIndex = 3
           object Dbg_FinanObjetivosResultadosMeses: TDBGrid
             Left = 0
             Top = 0
             Width = 963
-            Height = 452
+            Height = 454
             Align = alClient
             Color = 15004403
             DataSource = DMVirtual.DS_V_ObjetivosMeses
@@ -20599,7 +20627,7 @@ object FrmBelShop: TFrmBelShop
           end
           object StatusBar3: TStatusBar
             Left = 0
-            Top = 452
+            Top = 454
             Width = 963
             Height = 19
             Color = clSilver
@@ -20617,7 +20645,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel94: TPanel
             Left = 0
-            Top = 471
+            Top = 473
             Width = 963
             Height = 35
             Align = alBottom
@@ -30292,8 +30320,8 @@ object FrmBelShop: TFrmBelShop
     end
   end
   object OdirPanApres: TPanel
-    Left = 952
-    Top = 92
+    Left = 920
+    Top = 164
     Width = 89
     Height = 33
     BevelInner = bvLowered

@@ -1353,6 +1353,8 @@ type
     MenuEstoquesSimuladorEstoques: TMenuItem;
     SubMenuCentroDistAnaliseReposicoes: TMenuItem;
     Ckbx_ConsultaNFeApresParcela: TCheckBox;
+    Label1: TLabel;
+    EdtFinanObjetivosMeses: TCurrencyEdit;
 
     // Odir ====================================================================
 
@@ -10775,28 +10777,34 @@ Var
 Begin
   // Inicializa Arrays =========================================================
   Array_Objetivos:=nil;
-  SetLength(Array_Objetivos,14); 
+  SetLength(Array_Objetivos,14);
   Array_Realizados:=nil;
-  SetLength(Array_Realizados,14); 
+  SetLength(Array_Realizados,14);
 
   Array_ObjetivosTotal:=nil;
-  SetLength(Array_ObjetivosTotal,14); 
+  SetLength(Array_ObjetivosTotal,14);
   Array_RealizadosTotal:=nil;
-  SetLength(Array_RealizadosTotal,14); 
+  SetLength(Array_RealizadosTotal,14);
   Array_MesesTotal:=nil;
-  SetLength(Array_MesesTotal,14); 
+  SetLength(Array_MesesTotal,14);
 
   // Inicializa Arrays de Totais ===============================================
-  For i:=1 to 13 do
+// OdirApagar - 13/09/2016
+//For i:=1 to 13 do
+  For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
    Array_ObjetivosTotal[i]:=0;
-     
-  For i:=1 to 13 do
+
+// OdirApagar - 13/09/2016
+//For i:=1 to 13 do
+  For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
    Array_RealizadosTotal[i]:=0;
 
-  For i:=1 to 13 do
+// OdirApagar - 13/09/2016
+//For i:=1 to 13 do
+  For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
    Array_MesesTotal[i]:=0;
 
-  // Efetua os Calculos dos Objetivos ========================================== 
+  // Efetua os Calculos dos Objetivos ==========================================
   DMVirtual.CDS_V_ObjetivosMeses.First;
   While Not DMVirtual.CDS_V_ObjetivosMeses.Eof do
   Begin
@@ -10807,153 +10815,186 @@ Begin
       // Verifica se tem Valores Realizados -------------------------
       DMVirtual.CDS_V_ObjetivosMeses.Next;
       cValorTotalRealizado:=0;
-      For i:=6 to 17 do
+
+// OdirApagar - 13/09/2016
+//    For i:=6 to 17 do
+      For i:=6 to EdtFinanObjetivosMeses.AsInteger+5 do
       Begin
         cValorTotalRealizado:=cValorTotalRealizado+
                                  DMVirtual.CDS_V_ObjetivosMeses.Fields[i].Value;
       End;
-      
+
       If cValorTotalRealizado<>0 Then
       Begin
         DMVirtual.CDS_V_ObjetivosMeses.Prior;
 
         // Guarda Objetivos Totais ----------------------------------
-        For i:=1 to 13 do
+// OdirApagar - 13/09/2016
+//      For i:=1 to 13 do
+        For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         Begin
           s:=IntToStr(i);
           If i<10 Then
            s:='0'+s;
-         
-          If i<13 Then
+
+// OdirApagar - 13/09/2016
+//        If i<13 Then
+          If i<EdtFinanObjetivosMeses.AsInteger+1 Then
            Array_ObjetivosTotal[i]:=Array_ObjetivosTotal[i]+
               DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency
           Else
            Array_ObjetivosTotal[i]:=Array_ObjetivosTotal[i]+
            DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency;
-        End; // For i:=1 to 13 do
+
+        End; // For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
 
         // Guarda Objetivos -----------------------------------------
-        For i:=1 to 13 do
+// OdirApagar - 13/09/2016
+//      For i:=1 to 13 do
+        For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         Begin
           s:=IntToStr(i);
           If i<10 Then
            s:='0'+s;
-         
-          If i<13 Then 
+
+// OdirApagar - 13/09/2016
+//        If i<13 Then
+          If i<EdtFinanObjetivosMeses.AsInteger+1 Then
            Array_Objetivos[i]:=
              DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency
           Else
            Array_Objetivos[i]:=
            DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency;
-        End; // For i:=1 to 13 do
+        End; // For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
 
         // Guarda Realizados ----------------------------------------
-        DMVirtual.CDS_V_ObjetivosMeses.Next; 
-        For i:=1 to 13 do
+        DMVirtual.CDS_V_ObjetivosMeses.Next;
+// OdirApagar - 13/09/2016
+//      For i:=1 to 13 do
+        For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         Begin
           s:=IntToStr(i);
           If i<10 Then
            s:='0'+s;
-         
-          If i<13 Then 
+
+// OdirApagar - 13/09/2016
+//        If i<13 Then
+          If i<EdtFinanObjetivosMeses.AsInteger+1 Then
            Array_Realizados[i]:=
               DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency
           Else
            Array_Realizados[i]:=
            DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency;
-        End; // For i:=1 to 13 do
+        End; // For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
 
         // Guarda Realizados Totais ---------------------------------
-        For i:=1 to 13 do
+// OdirApagar - 13/09/2016
+//      For i:=1 to 13 do
+        For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         Begin
           s:=IntToStr(i);
           If i<10 Then
            s:='0'+s;
-         
-          If i<13 Then 
+
+// OdirApagar - 13/09/2016
+//        If i<13 Then
+          If i<EdtFinanObjetivosMeses.AsInteger+1 Then
            Array_RealizadosTotal[i]:=Array_RealizadosTotal[i]+
               DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency
           Else
            Array_RealizadosTotal[i]:=Array_RealizadosTotal[i]+
            DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency;
-        End; // For i:=1 to 13 do
+        End; // For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
 
         // Calcula Resultado em Valores -----------------------------
-        DMVirtual.CDS_V_ObjetivosMeses.Next; 
+        DMVirtual.CDS_V_ObjetivosMeses.Next;
         DMVirtual.CDS_V_ObjetivosMeses.Edit;
-        For i:=1 to 13 do
+// OdirApagar - 13/09/2016
+//      For i:=1 to 13 do
+        For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         Begin
           s:=IntToStr(i);
           If i<10 Then
            s:='0'+s;
 
-          If i<13 Then 
+// OdirApagar - 13/09/2016
+//        If i<13 Then
+          If i<EdtFinanObjetivosMeses.AsInteger+1 Then
            DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=
                                           Array_Realizados[i]-Array_Objetivos[i]
           Else
            DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency:=
                                           Array_Realizados[i]-Array_Objetivos[i];
-        End; // For i:=1 to 13 do
+        End; // For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         DMVirtual.CDS_V_ObjetivosMeses.Post;
-      
+
         // Calcula Resultado em Percentual --------------------------
-        DMVirtual.CDS_V_ObjetivosMeses.Next; 
+        DMVirtual.CDS_V_ObjetivosMeses.Next;
         DMVirtual.CDS_V_ObjetivosMeses.Edit;
-        For i:=1 to 13 do
+// OdirApagar - 13/09/2016
+//      For i:=1 to 13 do
+        For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         Begin
           s:=IntToStr(i);
           If i<10 Then
            s:='0'+s;
 
-          If i<13 Then 
+// OdirApagar - 13/09/2016
+//        If i<13 Then
+          If i<EdtFinanObjetivosMeses.AsInteger+1 Then
            Begin
-             DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=0; 
+             DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=0;
 
-             If Array_Objetivos[i]<>0 Then 
+             If Array_Objetivos[i]<>0 Then
               DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=
                                 RoundTo(((Array_Realizados[i]-Array_Objetivos[i])/
                                                       Array_Objetivos[i])*100,-2);
            End
-          Else // If i<13 Then 
+          Else // If i<EdtFinanObjetivosMeses.AsInteger+1 Then
            Begin
-             DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency:=0; 
+             DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency:=0;
 
              If Array_Objetivos[i]<>0 Then
               DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency:=
                                   RoundTo(((Array_Realizados[i]-Array_Objetivos[i])/
                                                         Array_Objetivos[i])*100,-2);
-           End; // If i<13 Then 
-        End; // For i:=1 to 13 do
+           End; // If i<EdtFinanObjetivosMeses.AsInteger+1 Then
+        End; // For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         DMVirtual.CDS_V_ObjetivosMeses.Post;
-        
+
         // Calcula Meses Totais ------------------------------------
-        DMVirtual.CDS_V_ObjetivosMeses.Next; 
-        For i:=1 to 13 do
+        DMVirtual.CDS_V_ObjetivosMeses.Next;
+// OdirApagar - 13/09/2016
+//      For i:=1 to 13 do
+        For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         Begin
           s:=IntToStr(i);
           If i<10 Then
            s:='0'+s;
-         
-          If i<13 Then 
+
+// OdirApagar - 13/09/2016
+//        If i<13 Then
+          If i<EdtFinanObjetivosMeses.AsInteger+1 Then
            Array_MesesTotal[i]:=Array_MesesTotal[i]+
               DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency
           Else
            Array_MesesTotal[i]:=Array_MesesTotal[i]+
            DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency;
         End; // For i:=1 to 13 do
-    End; // If cValorTotalRealizado>0 Then
-      
+      End; // If cValorTotalRealizado<>0 Then
     End; // If DMVirtual.CDS_V_ObjetivosMesesTipo.AsString='Objetivo' Then
 
     DMVirtual.CDS_V_ObjetivosMeses.Next;
-                                                       
+
     // Totais da Empresa --------------------------------------------
     If (DMVirtual.CDS_V_ObjetivosMesesDes_Empresa.AsString='Empresa') Then
     Begin
       // Guarda Objetivos Totais ------------------------------------
       DMVirtual.CDS_V_ObjetivosMeses.Edit;
 
-      For i:=1 to 13 do
+// OdirApagar - 13/09/2016
+//    For i:=1 to 13 do
+      For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
       Begin
         If Array_ObjetivosTotal[i]<>0 Then
          DMVirtual.CDS_V_ObjetivosMesesVlr_Objetivo.AsCurrency:=Array_ObjetivosTotal[i];
@@ -10965,124 +11006,150 @@ Begin
     Begin
       // Guarda Objetivos Totais ------------------------------------
       DMVirtual.CDS_V_ObjetivosMeses.Edit;
-      For i:=1 to 13 do
+// OdirApagar - 13/09/2016
+//    For i:=1 to 13 do
+      For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
       Begin
         s:=IntToStr(i);
         If i<10 Then
          s:='0'+s;
 
-        If i<13 Then 
+// OdirApagar - 13/09/2016
+//      If i<13 Then
+        If i<EdtFinanObjetivosMeses.AsInteger+1 Then
          Begin
           DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=Array_ObjetivosTotal[i];
          End
-        Else // If i<13 Then 
+        Else // If i<EdtFinanObjetivosMeses.AsInteger+1 Then
          Begin
           DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency:=Array_ObjetivosTotal[i];
-         End // If i<13 Then 
-                                 
-      End; // For i:=1 to 13 do
+         End // If i<EdtFinanObjetivosMeses.AsInteger+1 Then
+
+      End; // If i<EdtFinanObjetivosMeses.AsInteger+1 Then
       DMVirtual.CDS_V_ObjetivosMeses.Post;
 
       // Guarda Realizados Totais -----------------------------------
-      DMVirtual.CDS_V_ObjetivosMeses.Next; 
+      DMVirtual.CDS_V_ObjetivosMeses.Next;
       DMVirtual.CDS_V_ObjetivosMeses.Edit;
-      For i:=1 to 13 do
+// OdirApagar - 13/09/2016
+//    For i:=1 to 13 do
+      For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
       Begin
         s:=IntToStr(i);
         If i<10 Then
          s:='0'+s;
-         
-        If i<13 Then 
+
+// OdirApagar - 13/09/2016
+//      If i<13 Then
+        If i<EdtFinanObjetivosMeses.AsInteger+1 Then
          DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=Array_RealizadosTotal[i]
         Else
          DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency:=Array_RealizadosTotal[i];
       End; // For i:=1 to 13 do
       DMVirtual.CDS_V_ObjetivosMeses.Post;
-      
+
       // Calcula Resultado em Valores -------------------------------
-      DMVirtual.CDS_V_ObjetivosMeses.Next; 
+      DMVirtual.CDS_V_ObjetivosMeses.Next;
       DMVirtual.CDS_V_ObjetivosMeses.Edit;
-      For i:=1 to 13 do
+// OdirApagar - 13/09/2016
+//    For i:=1 to 13 do
+      For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
       Begin
         s:=IntToStr(i);
         If i<10 Then
          s:='0'+s;
 
-        If i<13 Then 
+// OdirApagar - 13/09/2016
+//      If i<13 Then
+        If i<EdtFinanObjetivosMeses.AsInteger+1 Then
          DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=
                                 Array_RealizadosTotal[i]-Array_ObjetivosTotal[i]
         Else
          DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency:=
                                Array_RealizadosTotal[i]-Array_ObjetivosTotal[i];
-      End; // For i:=1 to 13 do
+      End; // For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
       DMVirtual.CDS_V_ObjetivosMeses.Post;
-      
+
       // Calcula Resultado em Percentual ----------------------------
       DMVirtual.CDS_V_ObjetivosMeses.Next;
       DMVirtual.CDS_V_ObjetivosMeses.Edit;
-      For i:=1 to 13 do
+// OdirApagar - 13/09/2016
+//    For i:=1 to 13 do
+      For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
       Begin
         s:=IntToStr(i);
         If i<10 Then
          s:='0'+s;
 
-        If i<13 Then 
+// OdirApagar - 13/09/2016
+//      If i<13 Then
+        If i<EdtFinanObjetivosMeses.AsInteger+1 Then
          Begin
-           DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=0; 
-           If Array_ObjetivosTotal[i]<>0 Then 
+           DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=0;
+           If Array_ObjetivosTotal[i]<>0 Then
             DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=RoundTo(
                                     ((Array_RealizadosTotal[i]-Array_ObjetivosTotal[i])/
                                                        Array_ObjetivosTotal[i])*100,-2);
          End
-        Else // If i<13 Then 
+        Else // If i<EdtFinanObjetivosMeses.AsInteger+1 Then
          Begin
-           DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency:=0; 
-           If Array_ObjetivosTotal[i]<>0 Then 
+           DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency:=0;
+           If Array_ObjetivosTotal[i]<>0 Then
             DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency:=RoundTo(
                                       ((Array_RealizadosTotal[i]-Array_ObjetivosTotal[i])/
                                                          Array_ObjetivosTotal[i])*100,-2);
-         End; // If i<13 Then 
-      End; // For i:=1 to 13 do
+         End; // If i<EdtFinanObjetivosMeses.AsInteger+1 Then
+      End; // For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
       DMVirtual.CDS_V_ObjetivosMeses.Post;
 
       // Guarda Meses Totais ------------------------------------
-      DMVirtual.CDS_V_ObjetivosMeses.Next; 
+      DMVirtual.CDS_V_ObjetivosMeses.Next;
       DMVirtual.CDS_V_ObjetivosMeses.Edit;
-      For i:=1 to 13 do
+// OdirApagar - 13/09/2016
+//    For i:=1 to 13 do
+      For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
       Begin
         s:=IntToStr(i);
         If i<10 Then
          s:='0'+s;
 
-        If i<13 Then 
+// OdirApagar - 13/09/2016
+//      If i<13 Then
+        If i<EdtFinanObjetivosMeses.AsInteger+1 Then
          Begin
           DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=Array_MesesTotal[i];
          End
-        Else // If i<13 Then 
+        Else
          Begin
           DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Empresa').AsCurrency:=Array_MesesTotal[i];
-         End // If i<13 Then 
-                                 
-      End; // For i:=1 to 13 do
+         End
+
+      End; // For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
       DMVirtual.CDS_V_ObjetivosMeses.Post;
 
       // Inicializa Arrays de Totais --------------------------------
-      For i:=1 to 13 do
+// OdirApagar - 13/09/2016
+//    For i:=1 to 13 do
+      For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
        Array_ObjetivosTotal[i]:=0;
-     
-      For i:=1 to 13 do
+
+// OdirApagar - 13/09/2016
+//    For i:=1 to 13 do
+      For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
        Array_RealizadosTotal[i]:=0;
 
-      For i:=1 to 13 do
+// OdirApagar - 13/09/2016
+//    For i:=1 to 13 do
+      For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
        Array_MesesTotal[i]:=0;
 
-      DMVirtual.CDS_V_ObjetivosMeses.Next; 
+      DMVirtual.CDS_V_ObjetivosMeses.Next;
     End; // If (DMVirtual.CDS_V_ObjetivosMesesTipo.AsString='Objetivo') and (DMVirtual.CDS_V_ObjetivosMesesDes_Empresa.AsString='Empresa') Then
 
   End; // While Not DMVirtual.CDS_V_ObjetivosMeses.Eof do
 
   DMVirtual.CDS_V_ObjetivosMeses.First;
-  
+
 End; // // Calcula Resultado dos Objetivos por Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Objetivos/Metas Meses - Atualiza 12 Meses Outros >>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -11601,7 +11668,9 @@ Begin
           sCampo:=IBQ_ConsultaFilial.FieldByName('MesAno').AsString;
           cVlrCalculado:=IBQ_ConsultaFilial.FieldByName('Perc_Avarias').AsCurrency;
           cVlrAcumulado:=cVlrAcumulado+cVlrCalculado;
-          For ii:=6 to 17 do
+// OdirApagar - 13/09/2016
+//        For ii:=6 to 17 do
+          For ii:=6 to EdtFinanObjetivosMeses.AsInteger+5 do
           Begin
             If DMVirtual.CDS_V_ObjetivosMeses.Fields[ii].DisplayLabel=sCampo Then
             Begin
@@ -11620,7 +11689,7 @@ Begin
                Break;
              End;
             End; // If DMVirtual.CDS_V_ObjetivosMeses.Fields[ii].DisplayLabel=sCampo Then
-          End; // For ii:=6 to 17 do
+          End; // For ii:=6 to EdtFinanObjetivosMeses.AsInteger+5 do
 
           // Guarda Valor Mes -----------------------------------------
           sMes:=f_Troca('/','',sCampo);
@@ -11760,7 +11829,7 @@ Begin
        DMVirtual.CDS_V_ObjetivosAuditoriasPERCENTUAL.AsCurrency:=0.00;
        DMVirtual.CDS_V_ObjetivosAuditoriasCOR.AsString:='V';
        DMVirtual.CDS_V_ObjetivosAuditorias.Post;
-       
+
        DMBelShop.CDS_BuscaRapida.Close;
        Exit;
      End; // If Not DMBelShop.CDS_BuscaRapida.Eof do
@@ -11770,10 +11839,10 @@ Begin
     cPerAdimssAcum  :=0;
     cVlrAdmissAcum  :=0;
     cVlrEstFinalAcum:=0;
-    
+
     DMBelShop.CDS_BuscaRapida.Last;
     i:=DMBelShop.CDS_BuscaRapida.RecNo;
-    
+
     DMBelShop.CDS_BuscaRapida.First;
     While Not DMBelShop.CDS_BuscaRapida.Eof do
     Begin
@@ -11803,7 +11872,7 @@ Begin
                    DMBelShop.CDS_BuscaRapida.FieldByName('Percentual').AsString;
       DMVirtual.CDS_V_ObjetivosAuditoriasCOR.AsString:=
                      DMBelShop.CDS_BuscaRapida.FieldByName('Situacao').AsString;
-  
+
       DMVirtual.CDS_V_ObjetivosAuditorias.Post;
 
       // Acumulados para Totais da Empresa ----------------------------
@@ -11827,7 +11896,7 @@ Begin
     s:=CurrToStr(RoundTo((cPerAdimssAcum/i),-2));
     s:=ZerosCentavos(s,2);
     cPerAdimssAcum:=StrToCurr(s);
-    
+
     // Percentual Total Realizado -----------------------------------
     cPerRealizado:=RoundTo(((cVlrAdmissAcum*100)/cVlrEstFinalAcum),-2);
 
@@ -11846,13 +11915,13 @@ Begin
     DMVirtual.CDS_V_ObjetivosAuditoriasREALIZADO.AsCurrency:=cPerRealizado;
     DMVirtual.CDS_V_ObjetivosAuditoriasPERCENTUAL.AsCurrency:=cPerPercentual;
 
-    If (cPerPercentual>=-100) and (cPerPercentual<=100) Then 
+    If (cPerPercentual>=-100) and (cPerPercentual<=100) Then
      DMVirtual.CDS_V_ObjetivosAuditoriasCOR.AsString:='A'
     Else
      DMVirtual.CDS_V_ObjetivosAuditoriasCOR.AsString:='V';
 
     DMVirtual.CDS_V_ObjetivosAuditorias.Post;
-            
+
 End; // Objetivos/Metas Meses - Atualiza Auditoria >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Objetivos/Metas Meses - Calcula Objetivos/Metas das Empresa >>>>>>>>>>>>>>>>>
@@ -11884,10 +11953,10 @@ Begin
       While Not DMBelShop.CDS_Objetivos.Eof do
       Begin
         Refresh;
-        
+
         If ((DMBelShop.CDS_ObjetivosIND_ATIVO.AsString='SIM') and (DMBelShop.CDS_ObjetivosPROC.AsString='SIM')) Then
         Begin
-          
+
           If Ckb_FinanObjetivosManutAuditoria.Checked Then // Calcula Valores na Empresa (Auditoria) --------------------
            Begin
              bgAuditoria:=True;
@@ -11971,7 +12040,9 @@ Begin
       cVlrObj10:=0;
       cVlrObj11:=0;
       cVlrObj12:=0;
-      For i:=6 to 17 do
+// OdirApagar - 13/09/2016
+//    For i:=6 to 17 do
+      For i:=6 to EdtFinanObjetivosMeses.AsInteger+5 do
       Begin
         sMes:=Copy(DMVirtual.CDS_V_ObjetivosMeses.Fields[i].DisplayLabel,1,2);
         sAno:=Copy(DMVirtual.CDS_V_ObjetivosMeses.Fields[i].DisplayLabel,4,4);
@@ -12024,7 +12095,9 @@ Begin
       DMVirtual.CDS_V_ObjetivosMesesTipo.AsString:='Objetivo';
 
       // Acerta Valores do Objetivo -----------------------------
-      For i:=6 to 17 do
+// OdirApagar - 13/09/2016
+//    For i:=6 to 17 do
+      For i:=6 to EdtFinanObjetivosMeses.AsInteger+5 do
       Begin
         If DMVirtual.CDS_V_ObjetivosMeses.Fields[i].Visible Then
          Begin
@@ -12064,8 +12137,8 @@ Begin
          Begin
            DMVirtual.CDS_V_ObjetivosMeses.Fields[i].Value:=0;
          End; // If DMVirtual.CDS_V_ObjetivosMeses.Fields[i].Visible Then 
-      End; // For i:=6 to 17 do // Acerta Valores do Objetivo
-  
+      End; // For i:=6 to EdtFinanObjetivosMeses.AsInteger+5 do // Acerta Valores do Objetivo
+
       DMVirtual.CDS_V_ObjetivosMesesVlr_Empresa.AsCurrency:=cVlrObjTotal;
       inc(iIndicePlanMeses);
       DMVirtual.CDS_V_ObjetivosMesesINDICE.AsInteger:=iIndicePlanMeses;
@@ -12809,7 +12882,9 @@ Begin
   // Grafico de Tipo de Apresentaçãoem Meses ===================================
   If (Ckb_FinanObjetivosManutAvarias.Checked or Ckb_FinanObjetivosManutUlt12Meses.Checked) Then
   Begin
-    For i:=6 to 17 do
+// OdirApagar - 13/09/2016
+//  For i:=6 to 17 do
+    For i:=6 to EdtFinanObjetivosMeses.AsInteger+5 do
     Begin
       If DMVirtual.CDS_V_ObjetivosMeses.Fields[i].Visible Then
       Begin
@@ -12832,7 +12907,7 @@ Begin
          gsPizza.Add(DMVirtual.CDS_V_ObjetivosMeses.FieldByName(DMVirtual.CDS_V_ObjetivosMeses.Fields[i].FieldName).AsCurrency,
                      DMVirtual.CDS_V_ObjetivosMeses.Fields[i].DisplayLabel,Cor);
       End; // If DMVirtual.CDS_V_ObjetivosMeses.Fields[i].Visible Then
-    End; // For i:=6 to 17 do
+    End; // For i:=6 to EdtFinanObjetivosMeses.AsInteger+5 do
   End; // If Ckb_FinanObjetivosManutAvarias.Checked Then
 
   // Grafico de Tipo de Apresentaçãoem Auditoria ===============================
@@ -30710,6 +30785,7 @@ begin
   // Apresenta TabSheet ========================================================
   PC_FinanObjetivos.TabIndex:=0;
   EdtFinanObjetivosAno.AsInteger:=StrToInt(Copy(DateTimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)),7,4));
+  EdtFinanObjetivosMeses.AsInteger:=12;
 
   Ts_FinanObjetivosGraficos.TabVisible:=False;
   SelecionaTabSheet(Ts_FinanObjetivos);
@@ -31775,41 +31851,30 @@ Begin
   If Length(sDiaSemanaMes)<2 Then
    sDiaSemanaMes:='0'+sDiaSemanaMes;
 
+   //odirapagar
   // Mes/Ano para Planilha Meses ===============================================
   Dta:=DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor);
-  DecodeDate(dta, Ano, Mes, Dia);
-  Dta:=EncodeDate(Ano, Mes, 1);
+  Dta:=PrimeiroUltimoDia(Dta,'P');
+  Dta:=IncMonth(Dta,-EdtFinanObjetivosMeses.AsInteger);
+  sgPeriodo1:=DateToStr(Dta);
 
-  Dta:=dta-365;
-  sgPeriodo1:='';
-  For ii:=6 to 17 do
+  // Inicio da Montagem do Período =============================================
+  sgPeriodo1:='BETWEEN '+QuotedStr(DateToStr(Dta));
+
+  // Monta ClientDataSet de Meses ==============================================
+  For ii:=6 to EdtFinanObjetivosMeses.AsInteger+5 do
   Begin
     DMVirtual.CDS_V_ObjetivosMeses.Fields[ii].Visible:=True;
     DMVirtual.CDS_V_ObjetivosMeses.Fields[ii].DisplayLabel:=Copy(DateToStr(Dta),4,2)+'/'+Copy(DateToStr(Dta),7,4);
     Dbg_FinanObjetivosResultadosMeses.Columns[Dbg_FinanObjetivosResultadosMeses.Columns.Count-1].Width:=85;
     Dbg_FinanObjetivosResultadosMeses.Columns[Dbg_FinanObjetivosResultadosMeses.Columns.Count-1].Title.Alignment:=taRightJustify;
 
-    // Acerta Perirodo de Busca para Calculo por Meses --------------
-    If ii=6 Then
-     sgPeriodo1:='Between '+QuotedStr('01.'+Copy(DateToStr(Dta),4,2)+'.'+Copy(DateToStr(Dta),7,4));
-
-    If ii=17 Then
-    Begin
-     Dta:=PrimeiroUltimoDia(Dta, 'U');
-     sgPeriodo1:=sgPeriodo1+' and '+QuotedStr(f_Troca('/','.',DateToStr(Dta)));
-    End;
-
-    //  Próximo Mês -------------------------------------------------
-    sMes:=IntToStr(Numero_Mes_Anterior_Posterior(Dta,'P'));
-    DecodeDate(dta, Ano, Mes, Dia);
-
-    If sMes='1' Then
-     Ano:=Ano+1;
-
-    sAno:=VarToStr(Ano); 
-         
-    Dta:=StrToDate('01/'+sMes+'/'+sAno);
+    dta:=IncMonth(Dta,1);
   End;
+  dta:=Dta-1;
+
+  // Termina Montagem do Período ===============================================
+  sgPeriodo1:=sgPeriodo1+' AND '+QuotedStr(DateToStr(Dta));
 
   // Acerta Coluna de Totais Meses =============================================
   DMVirtual.CDS_V_ObjetivosMeses.Fields[18].Visible:=True;
@@ -31872,7 +31937,7 @@ Begin
   sgLojasNConectadas:='';
 
   OdirPanApres.Visible:=False;
-                        
+
   // Processa Empresas Selecionadas por Dia ====================================
   If bCalculoDias Then
   Begin
@@ -31899,7 +31964,7 @@ Begin
       For ii:=0 to DMVirtual.CDS_V_ObjetivosDias.Fields.Count-1 do
       Begin
         If (DMVirtual.CDS_V_ObjetivosDias.Fields[ii].Visible) and 
-           (DMVirtual.CDS_V_ObjetivosDias.Fields[ii].FieldName='Vlr_Dia'+s) Then 
+           (DMVirtual.CDS_V_ObjetivosDias.Fields[ii].FieldName='Vlr_Dia'+s) Then
          DMVirtual.CDS_V_ObjetivosDias.Fields[ii].Visible:=False
       End;
     End; // For i to 31 do
@@ -31912,6 +31977,7 @@ Begin
   If bCalculoMeses Then
   Begin
     THackDBGrid(Dbg_FinanObjetivosResultadosMeses).FixedCols:=5;
+    Ts_FinanObjetivosResultadosMeses.Caption:=' Resultados Últimos '+EdtFinanObjetivosMeses.Text+' Meses ';
     PC_FinanObjetivos.ActivePage:=Ts_FinanObjetivosResultadosMeses;
     Dbg_FinanObjetivosResultadosMeses.SetFocus;
 
@@ -31924,7 +31990,7 @@ Begin
     THackDBGrid(Dbg_FinanObjetivosResultadosMeses).FixedCols:=5;
     DMVirtual.CDS_V_ObjetivosMeses.First;
   End; // If bCalculoMeses Then
-                        
+
   DMBelShop.CDS_EmpProcessa.First;
   DMBelShop.CDS_Objetivos.First;
   DMVirtual.CDS_V_ObjetivosDias.First;
@@ -31949,7 +32015,9 @@ Begin
    msg('Lojas Não Conectadas: '+cr+cr+sgLojasNConectadas,'A');
 
   msg('Processamento Efetuado com Sucesso !!','A');
-        
+     Dta:=PrimeiroUltimoDia(Dta, 'U');
+     sgPeriodo1:=sgPeriodo1+' and '+QuotedStr(f_Troca('/','.',DateToStr(Dta)));
+
 end;
 
 procedure TFrmBelShop.Cbx_FinanObjetivosGerarMesExit(Sender: TObject);
