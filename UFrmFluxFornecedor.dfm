@@ -595,14 +595,14 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     TabOrder = 2
     object Bt_FluFornAtualizar: TJvXPButton
       Tag = 11
-      Left = 2
+      Left = 757
       Top = 2
       Width = 116
       Height = 29
-      Caption = 'Atualizar'
+      Caption = 'Atualizar (Odir)'
       TabOrder = 0
       ShowFocusRect = True
-      Align = alLeft
+      Align = alRight
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -613,11 +613,11 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     end
     object Bt_FluFornSalvaExcel: TJvXPButton
       Tag = 9
-      Left = 234
+      Left = 171
       Top = 2
-      Width = 152
+      Width = 118
       Height = 29
-      Caption = 'Salvar em Excel'
+      Caption = 'Salvar Excel'
       TabOrder = 2
       TabStop = False
       ShowFocusRect = True
@@ -632,14 +632,14 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     end
     object Bt_FluFornAcertaSaldos: TJvXPButton
       Tag = 11
-      Left = 118
+      Left = 633
       Top = 2
-      Width = 116
+      Width = 124
       Height = 29
-      Caption = 'Acerta Saldo'
+      Caption = 'Acerta Saldo (Odir)'
       TabOrder = 1
       ShowFocusRect = True
-      Align = alLeft
+      Align = alRight
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -649,7 +649,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       OnClick = Bt_FluFornAcertaSaldosClick
     end
     object EdtFluFornCodFornAcertar: TEdit
-      Left = 528
+      Left = 480
       Top = 8
       Width = 76
       Height = 19
@@ -676,7 +676,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       OnClick = Bt_FluFornFecharClick
     end
     object MaskEdit1: TMaskEdit
-      Left = 608
+      Left = 560
       Top = 8
       Width = 71
       Height = 19
@@ -684,6 +684,24 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       MaxLength = 10
       TabOrder = 5
       Text = '  .  .20  '
+    end
+    object Bt_FluFornFiltroComprador: TJvXPButton
+      Tag = 92
+      Left = 2
+      Top = 2
+      Width = 169
+      Height = 29
+      Caption = 'Seleciona Comprador'
+      TabOrder = 6
+      ShowFocusRect = True
+      Align = alLeft
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      OnClick = Bt_FluFornFiltroCompradorClick
     end
   end
   object OdirPanApres: TPanel

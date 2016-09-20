@@ -6935,6 +6935,9 @@ end;
 
 procedure TFrmSolicitacoes.Bt_SelectEmpProcMarcaTodosClick(Sender: TObject);
 begin
+  If DMBelShop.CDS_Busca.IsEmpty Then
+   Exit;
+
   DMBelShop.CDS_Busca.DisableControls;
   DMBelShop.CDS_Busca.First;
   While Not DMBelShop.CDS_Busca.Eof do
@@ -6954,6 +6957,9 @@ end;
 
 procedure TFrmSolicitacoes.Bt_SelectEmpProcDesMarcaTodosClick(Sender: TObject);
 begin
+  If DMBelShop.CDS_Busca.IsEmpty Then
+   Exit;
+
   DMBelShop.CDS_Busca.DisableControls;
   DMBelShop.CDS_Busca.First;
   While Not DMBelShop.CDS_Busca.Eof do

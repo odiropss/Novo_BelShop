@@ -21667,7 +21667,7 @@ Begin
 
   // Verifica Encerramento  ====================================================
   Des_Login:=FrmLogin.Login;
-               
+
   If Des_Login='' Then
   Begin
     FrmEntrada.Close;
