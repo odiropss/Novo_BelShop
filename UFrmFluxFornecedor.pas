@@ -72,7 +72,9 @@ type
 
     Procedure CalculaFluxoCaixaFornecedores(sDt: String=''; sCodForn: String ='');
 
-    Function DML_Historicos(sTipo, sCodHist: String; sDebCre: String=''; sDesHist: String=''): Boolean;
+    Procedure FiltraComprador(sCompradores: String; iNumLinhas: Integer); // sCompradores: Delimitador = ';'
+
+    Function  DML_Historicos(sTipo, sCodHist: String; sDebCre: String=''; sDesHist: String=''): Boolean;
                           // sTipo: (I)nserir
                           //        (E)xclur
     // ODIR ====================================================================
@@ -148,6 +150,101 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
 //==============================================================================
 // ODIR - INICIO ===============================================================
 //==============================================================================
+
+// Filtro Fornecedores pelos Compradores Selecionados >>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmFluxoFornecedor.FiltraComprador(sCompradores: String; iNumLinhas: Integer); // sCompradores: Delimitador = ';'
+Var
+  i: Integer;
+  MySql: String;
+Begin
+  DMBelShop.CDS_FluxoFornecedor.Close;
+  DMBelShop.CDS_FluxoFornecedor.Filtered:=False;
+  DMBelShop.CDS_FluxoFornecedor.Filter:='';
+
+  DMBelShop.CDS_FluxoFornecedores.Close;
+
+  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr1').AsString:= EmptyStr;
+  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr2').AsString :=EmptyStr;
+  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr3').AsString :=EmptyStr;
+  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr4').AsString :=EmptyStr;
+  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr5').AsString :=EmptyStr;
+  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr6').AsString :=EmptyStr;
+  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr7').AsString :=EmptyStr;
+  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr8').AsString :=EmptyStr;
+  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr9').AsString :=EmptyStr;
+  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr10').AsString:=EmptyStr;
+
+  If Trim(sCompradores)='' Then
+  Begin
+    // Busca Códigos de Compradores ==============================================
+    MySql:=' SELECT DISTINCT COALESCE(FF.CODCENTROCUSTO, 0) FORN'+
+           ' FROM FORNECEDOR FF';
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+
+    DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr1').AsString:= '99999999';
+    DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr2').AsString :='99999999';
+    DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr3').AsString :='99999999';
+    DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr4').AsString :='99999999';
+    DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr5').AsString :='99999999';
+    DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr6').AsString :='99999999';
+    DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr7').AsString :='99999999';
+    DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr8').AsString :='99999999';
+    DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr9').AsString :='99999999';
+    DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr10').AsString:='99999999';
+
+    iNumLinhas:=0;
+    While Not DMBelShop.CDS_BuscaRapida.Eof do
+    Begin
+      Inc(iNumLinhas);
+
+      sCompradores:=sCompradores+';'+DMBelShop.CDS_BuscaRapida.FieldByName('Forn').AsString;
+
+      DMBelShop.CDS_BuscaRapida.Next;
+    End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
+    DMBelShop.CDS_BuscaRapida.Close;
+
+    If Trim(sCompradores)<>'' Then
+     sCompradores:=sCompradores+';';
+
+  End; // If Trim(sCompradores)='' Then
+
+  For i:=1 to iNumLinhas do
+  Begin
+    If i=1 Then
+     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr1').AsString:=Separa_String(sCompradores,i+1);
+
+    If i=2 Then
+     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr2').AsString:=Separa_String(sCompradores,i+1);
+
+    If i=3 Then
+     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr3').AsString:=Separa_String(sCompradores,i+1);
+
+    If i=4 Then
+     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr4').AsString:=Separa_String(sCompradores,i+1);
+
+    If i=5 Then
+     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr5').AsString:=Separa_String(sCompradores,i+1);
+
+    If i=6 Then
+     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr6').AsString:=Separa_String(sCompradores,i+1);
+
+    If i=7 Then
+     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr7').AsString:=Separa_String(sCompradores,i+1);
+
+    If i=8 Then
+     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr8').AsString:=Separa_String(sCompradores,i+1);
+
+    If i=9 Then
+     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr9').AsString:=Separa_String(sCompradores,i+1);
+
+    If i=10 Then
+     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr10').AsString:=Separa_String(sCompradores,i+1);
+  End; // For i:=0 to iNumLinhas do
+  DMBelShop.CDS_FluxoFornecedores.Open;
+
+End; // Filtro Fornecedores pelos Compradores Selecionados >>>>>>>>>>>>>>>>>>>>>
 
 // Manutenção DML de Historicos de Fornecedores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmFluxoFornecedor.DML_Historicos(sTipo, sCodHist: String; sDebCre: String=''; sDesHist: String=''): Boolean;
@@ -919,72 +1016,7 @@ begin
   If DMBelShop.CDS_FluxoFornecedores.Active Then
    DMBelShop.CDS_FluxoFornecedores.Close;
 
-  // Busca Códigos de Compradores ==============================================
-  MySql:=' SELECT DISTINCT COALESCE(FF.CODCENTROCUSTO, 0) FORN'+
-         ' FROM FORNECEDOR FF';
-  DMBelShop.CDS_BuscaRapida.Close;
-  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-  DMBelShop.CDS_BuscaRapida.Open;
-
-  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr1').AsString:='0';
-  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr2').AsString:='0';
-  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr3').AsString:='0';
-  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr4').AsString:='0';
-  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr5').AsString:='0';
-  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr6').AsString:='0';
-  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr7').AsString:='0';
-  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr8').AsString:='0';
-  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr9').AsString:='0';
-  DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr10').AsString:='0';
-
-  While Not DMBelShop.CDS_BuscaRapida.Eof do
-  Begin
-    If DMBelShop.CDS_BuscaRapida.RecNo=1 Then
-     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr1').AsString:=
-                         DMBelShop.CDS_BuscaRapida.FieldByName('Forn').AsString;
-
-    If DMBelShop.CDS_BuscaRapida.RecNo=2 Then
-     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr2').AsString:=
-                         DMBelShop.CDS_BuscaRapida.FieldByName('Forn').AsString;
-
-    If DMBelShop.CDS_BuscaRapida.RecNo=3 Then
-     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr3').AsString:=
-                         DMBelShop.CDS_BuscaRapida.FieldByName('Forn').AsString;
-
-    If DMBelShop.CDS_BuscaRapida.RecNo=4 Then
-     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr4').AsString:=
-                         DMBelShop.CDS_BuscaRapida.FieldByName('Forn').AsString;
-
-    If DMBelShop.CDS_BuscaRapida.RecNo=5 Then
-     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr5').AsString:=
-                         DMBelShop.CDS_BuscaRapida.FieldByName('Forn').AsString;
-
-    If DMBelShop.CDS_BuscaRapida.RecNo=6 Then
-     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr6').AsString:=
-                         DMBelShop.CDS_BuscaRapida.FieldByName('Forn').AsString;
-
-    If DMBelShop.CDS_BuscaRapida.RecNo=7 Then
-     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr7').AsString:=
-                         DMBelShop.CDS_BuscaRapida.FieldByName('Forn').AsString;
-
-    If DMBelShop.CDS_BuscaRapida.RecNo=8 Then
-     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr8').AsString:=
-                         DMBelShop.CDS_BuscaRapida.FieldByName('Forn').AsString;
-
-    If DMBelShop.CDS_BuscaRapida.RecNo=9 Then
-     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr9').AsString:=
-                         DMBelShop.CDS_BuscaRapida.FieldByName('Forn').AsString;
-
-    If DMBelShop.CDS_BuscaRapida.RecNo=10 Then
-     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr10').AsString:=
-                         DMBelShop.CDS_BuscaRapida.FieldByName('Forn').AsString;
-
-    DMBelShop.CDS_BuscaRapida.Next;
-  End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
-  DMBelShop.CDS_BuscaRapida.Close;
-
-  // Busca Conta Corrente dos Fornecedores =====================================
-  DMBelShop.CDS_FluxoFornecedores.Open;
+  FiltraComprador('',0);
 
   Dbg_FluFornFornec.SetFocus;
 end;
@@ -993,7 +1025,11 @@ procedure TFrmFluxoFornecedor.PC_PrincipalChange(Sender: TObject);
 begin
   If (PC_Principal.ActivePage=Ts_FluxFornApres) And (Ts_FluxFornApres.CanFocus) Then
   Begin
+    DMBelShop.CDS_FluxoFornecedor.Filtered:=False;
+    DMBelShop.CDS_FluxoFornecedor.Filter:='';
+
     Bt_FluFornSalvaExcel.Visible:=False;
+    Bt_FluFornFiltroComprador.Caption:='Seleciona Comprador';
 
     Bt_FluFornFechar.Caption:='Fechar';
     Bt_FluFornFechar.Tag:=99;
@@ -1005,6 +1041,8 @@ begin
   If (PC_Principal.ActivePage=Ts_FluxFornCaixa) And (Ts_FluxFornCaixa.CanFocus) Then
   Begin
     Bt_FluFornSalvaExcel.Visible:=True;
+    Bt_FluFornFiltroComprador.Caption:='Seleciona Comprovante';
+
 
     Bt_FluFornFechar.Caption:='Voltar';
     Bt_FluFornFechar.Tag:=90;
@@ -1914,35 +1952,134 @@ end;
 
 procedure TFrmFluxoFornecedor.Bt_FluFornFiltroCompradorClick(Sender: TObject);
 Var
-  MySql: String;
+  s, MySql: String;
+  ii, i: Integer;
+  bFiltra: Boolean;
 begin
+
   // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
   FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
   FrmBelShop.AbreSolicitacoes(18);
 
-//  DMBelShop.CDS_OCComparaPedidos.Close;
-//  DMBelShop.SDS_OCComparaPedidos.Params.ParamByName('NumDoc').Value:=12;
-//  DMBelShop.CDS_OCComparaPedidos.Open;
-//
-//  bgProcessar:=False;
-//  FrmSolicitacoes.GridNewCriar(DMBelShop.DS_OCComparaPedidos, '', False);
-//  FrmSolicitacoes.Caption:='C O M P R A S';
-//  FrmSolicitacoes.Ts_QualquerCoisa.Caption:='Comparativo de Pedidos de Compra';
-//
-//  FrmSolicitacoes.AutoSize:=False;
-//  FrmSolicitacoes.Width:=1000;
-//  FrmSolicitacoes.AutoSize:=True;
-
-  bgProcessar:=False;
-  FrmSolicitacoes.ShowModal;
-  If bgProcessar Then
+  // Seleciona Comprador =======================================================
+  If Bt_FluFornFiltroComprador.Caption='Seleciona Comprador' Then
   Begin
+    // Apresenta Compradores ===================================================
+    MySql:=' SELECT ''NAO'' PROC, CC.NOMESUBCUSTO comprador, COALESCE(CC.CODCENTROCUSTO,0) codigo'+
+           ' FROM CENTROCUSTO CC'+
+           ' WHERE  CC.NOMECUSTO=''COMPRAS'''+
+           ' AND EXISTS(SELECT 1'+
+           '            FROM FORNECEDOR FF'+
+           '            WHERE FF.CODCENTROCUSTO=CC.CODCENTROCUSTO)'+
+           ' UNION'+
+           ' SELECT ''NAO'', ''SEM COMPRADOR'', 0'+
+           ' FROM RDB$DATABASE'+
+           ' ORDER BY 2';
+    DMBelShop.CDS_Busca.Close;
+    DMBelShop.SDS_Busca.CommandText:=MySql;
+    DMBelShop.CDS_Busca.Open;
+
+    FrmSolicitacoes.Caption:='SELECIONAR COMPRADOR';
+  End; // If Bt_FluFornFiltroComprador.Caption='Seleciona Comprador' Then
+
+  // Seleciona Comprovante =====================================================
+  If Bt_FluFornFiltroComprador.Caption='Seleciona Comprovante' Then
+  Begin
+    // Apresenta Comprovantes ==================================================
+    MySql:=' SELECT ''NAO'' PROC, H.COD_HISTORICO, H.DES_HISTORICO,'+
+           ' CASE'+
+           '   WHEN H.IND_DEBCRE=''D'' THEN'+
+           '     ''DÉBITO'''+
+           '   ELSE'+
+           '     ''CRÉDITO'''+
+           ' END DEB_CRE'+
+           ' FROM FL_CAIXA_HISTORICOS H'+
+           ' WHERE H.COD_HISTORICO<>0'+
+           ' AND   H.COD_HISTORICO<>999999'+
+           ' ORDER BY 2';
+    DMBelShop.CDS_Busca.Close;
+    DMBelShop.SDS_Busca.CommandText:=MySql;
+    DMBelShop.CDS_Busca.Open;
+
+    FrmSolicitacoes.Caption:='SELECIONAR COMPROVANTE';
+  End; // If Bt_FluFornFiltroComprador.Caption='Seleciona Comprovante' Then
+
+  FrmSolicitacoes.bgOK:=False;
+  FrmSolicitacoes.ShowModal;
+
+  If DMBelShop.CDS_FluxoFornecedor.Filtered Then
+  Begin
+    DMBelShop.CDS_FluxoFornecedor.Filtered:=False;
+    DMBelShop.CDS_FluxoFornecedor.Filter:='';
   End;
+  
+  If FrmSolicitacoes.bgOK Then
+  Begin
+    If Bt_FluFornFiltroComprador.Caption='Seleciona Comprador' Then
+    Begin
+      i:=0;
+      DMBelShop.CDS_Busca.First;
+      While Not DMBelShop.CDS_Busca.Eof do
+      Begin
+        If DMBelShop.CDS_Busca.FieldByName('PROC').AsString='SIM' Then
+        Begin
+          Inc(i);
+          s:=s+';'+DMBelShop.CDS_Busca.FieldByName('Codigo').AsString;
+        End;
 
-//  DMBelShop.CDS_OCComparaPedidos.Close;
+        DMBelShop.CDS_Busca.Next;
+      End; // While Not DMBelShop.CDS_Busca.Eof do
+      DMBelShop.CDS_Busca.Close;
+
+      If Trim(s)<>'' Then
+       s:=s+';';
+
+      FiltraComprador(s,i);
+    End; // If Bt_FluFornFiltroComprador.Caption='Seleciona Comprador' Then
+
+    If Bt_FluFornFiltroComprador.Caption='Seleciona Comprovante' Then
+    Begin
+      i:=0;
+      ii:=0;
+      s:='';
+      bFiltra:=True;
+      DMBelShop.CDS_Busca.First;
+      While Not DMBelShop.CDS_Busca.Eof do
+      Begin
+        If DMBelShop.CDS_Busca.FieldByName('PROC').AsString='SIM' Then
+         Begin
+           Inc(i);
+
+           If Trim(s)='' Then
+            s:='COD_HISTORICO='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Historico').AsString)
+           Else
+            s:=s+' OR COD_HISTORICO='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Historico').AsString);
+         End
+        Else
+         Begin
+           inc(ii);
+         End;
+
+        DMBelShop.CDS_Busca.Next;
+      End; // While Not DMBelShop.CDS_Busca.Eof do
+      If (i=DMBelShop.CDS_Busca.RecordCount) Or (ii=DMBelShop.CDS_Busca.RecordCount)  Then
+       bFiltra:=False;
+
+      DMBelShop.CDS_Busca.Close;
+
+      DMBelShop.CDS_FluxoFornecedor.Filtered:=False;
+      DMBelShop.CDS_FluxoFornecedor.Filter:='';
+      If bFiltra Then
+      Begin
+        DMBelShop.CDS_FluxoFornecedor.Filter:=s;
+        DMBelShop.CDS_FluxoFornecedor.Filtered:=True;
+      End;
+    End; // If Bt_FluFornFiltroComprador.Caption='Seleciona Comprovante' Then
+  End; // If FrmSolicitacoes.bgOK Then
+
+  DMBelShop.CDS_Busca.Close;
+
   FreeAndNil(FrmSolicitacoes);
-
-
 
 end;
 

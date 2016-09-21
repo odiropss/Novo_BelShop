@@ -92,7 +92,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Top = 56
     Width = 977
     Height = 487
-    ActivePage = Ts_FluxFornApres
+    ActivePage = Ts_FluxFornCaixa
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -613,7 +613,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     end
     object Bt_FluFornSalvaExcel: TJvXPButton
       Tag = 9
-      Left = 171
+      Left = 177
       Top = 2
       Width = 118
       Height = 29
@@ -689,7 +689,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       Tag = 92
       Left = 2
       Top = 2
-      Width = 169
+      Width = 175
       Height = 29
       Caption = 'Seleciona Comprador'
       TabOrder = 6

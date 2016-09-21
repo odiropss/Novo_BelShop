@@ -6869,14 +6869,26 @@ end;
 
 procedure TFrmSolicitacoes.Bt_SelecionarOKClick(Sender: TObject);
 begin
-  If FrmSolicitacoes.Caption='VERIFICA POSIÇÃO DE ESTOQUES DAS LOJAS' Then
+  // Verifica se Existe Registro Selecionado ===================================
+  bgOK:=False;
+  DMBelShop.CDS_Busca.First;
+  While Not DMBelShop.CDS_Busca.Eof do
+  Begin
+    If DMBelShop.CDS_Busca.FieldByName('PROC').AsString='SIM' Then
+    Begin
+      bgOK:=True;
+    End;
+
+    DMBelShop.CDS_Busca.Next;
+  End;
+
+  If (FrmSolicitacoes.Caption='VERIFICA POSIÇÃO DE ESTOQUES DAS LOJAS') And (bgOK) Then
   Begin
     BuscaEstoquesLojas;
     Lab_Conta.Visible:=False;
     Exit;
   End; // If FrmSolicitacoes.Caption='VERIFICA POSIÇÃO DE ESTOQUES DAS LOJAS' Then
 
-  bgOK:=True;
   Close;
 end;
 
