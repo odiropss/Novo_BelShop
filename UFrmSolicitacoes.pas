@@ -92,8 +92,8 @@ uses
   cxGroupBox, JvXPButtons, JvExControls, JvXPCore, JvXPCheckCtrls,
   ToolEdit, CurrEdit, DBXpress, Commctrl, ComCtrls, Math, StrUtils, DateUtils,
   Clipbrd, jpeg, cxSpinEdit, JvRadioButton, ADODB, Menus, IBQuery,
-  JvOutlookBar, RelVisual, AppEvnts;
-//  Último: RelVisual 
+  JvOutlookBar, RelVisual, AppEvnts, MMSystem;
+//  Último: MMSystem 
 
 type
   TFrmSolicitacoes = class(TForm)
@@ -8072,6 +8072,18 @@ begin
       EdtParamLojaReposCodForn.SetFocus;
       Exit;
     End;
+    PlaySound(PChar('SystemQuestion'), 0, SND_ASYNC);
+    PlaySound(PChar('SystemAsterisk'), 0, SND_ASYNC);
+    PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+    PlaySound(PChar('SystemQuestion'), 0, SND_ASYNC);
+
+    If Application.MessageBox('No Momento da Inclusão do Fornecedor TODOS os PRODUTOS'+cr+
+                              'Teram seus ESTOQUES MÍNIMO ZERADOS !!'+cr+cr+'DESEJA CONTINUAR ???????', 'ATENÇÃO !!', 292) = IdNo Then
+    Begin
+      EdtParamLojaReposCodForn.Text:='0';
+      EdtParamLojaReposCodForn.SetFocus;
+      Exit;
+    End;
 
     // Verifica se Transação esta Ativa
     If DMBelShop.SQLC.InTransaction Then
@@ -8086,9 +8098,20 @@ begin
       DateSeparator:='.';
       DecimalSeparator:='.';
 
+      // Insere Fornecedor
       MySql:=' UPDATE or INSERT INTO TAB_AUXILIAR'+
              ' (tip_aux, cod_aux, des_aux, des_aux1, vlr_aux, vlr_aux1)'+
              ' values (13, '+QuotedStr(DMBelShop.SQLQ_Busca.FieldByName('codfornecedor').AsString)+', null, null, null, null)';
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+      // Zera Estoques Minimos
+      MySql:=' UPDATE ES_FINAN_CURVA_ABC c'+
+             ' SET c.est_minimo=0'+
+             ' WHERE c.est_minimo<>0'+
+             ' AND EXISTS (SELECT 1'+
+             '             FROM PRODUTO p'+
+             '             WHERE p.codproduto=c.cod_produto'+
+             '             AND P.PRINCIPALFOR='+QuotedStr(DMBelShop.SQLQ_Busca.FieldByName('codfornecedor').AsString)+')';
       DMBelShop.SQLC.Execute(MySql,nil,nil);
 
       // Atualiza Transacao ======================================================

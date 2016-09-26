@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 432
-    ActivePage = Ts_Selecionar
+    ActivePage = Ts_ParametrosGerenciador
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -3065,7 +3065,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Top = 0
         Width = 625
         Height = 369
-        ActivePage = Ts_ParamLojaReposicoes
+        ActivePage = Ts_ParamLojaReposFornec
         Align = alClient
         MultiLine = True
         Style = tsButtons

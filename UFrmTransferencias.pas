@@ -399,12 +399,14 @@ Begin
          '     c.ind_curva'+
          ' END ind_curva,'+
 
-         ' CASE'+
-         '   WHEN ((p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva=''E'') AND (t.vlr_aux1>c.est_minimo)) THEN'+
-         '    CAST(t.vlr_aux1 AS INTEGER)'+
-         '   ELSE'+
-         '    CAST(c.est_minimo AS INTEGER)'+
-         ' END est_minimo,'+
+//odirapagar - 26/09/2016
+//         ' CASE'+
+//         '   WHEN ((p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva=''E'') AND (t.vlr_aux1>c.est_minimo)) THEN'+
+//         '    CAST(t.vlr_aux1 AS INTEGER)'+
+//         '   ELSE'+
+//         '    CAST(c.est_minimo AS INTEGER)'+
+//         ' END est_minimo,'+
+         ' CAST(c.est_minimo AS INTEGER) est_minimo,'+
 
          ' CAST(COALESCE(t.vlr_aux,0) AS INTEGER) Dias_Estocagem,'+
          ' CAST(COALESCE(e.saldoatual,0) AS INTEGER) saldoatual,'+
@@ -435,14 +437,17 @@ Begin
          '                                 AND t.tip_aux=2'+
 
          ' WHERE p.situacaopro in (0,3)'+
-         //odirapagar - 26/08/2016
-         // ' AND   c.est_minimo>0'+
-         ' AND CASE'+
-         '      WHEN ((p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva=''E'') AND (t.vlr_aux1>c.est_minimo)) THEN'+
-         '        CAST(t.vlr_aux1 AS INTEGER)'+
-         '      ELSE'+
-         '        CAST(c.est_minimo AS INTEGER)'+
-         '     END>0'+
+
+//odirapagar - 26/09/2016
+//         ' AND CASE'+
+//         '      WHEN ((p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva=''E'') AND (t.vlr_aux1>c.est_minimo)) THEN'+
+//         '        CAST(t.vlr_aux1 AS INTEGER)'+
+//         '      ELSE'+
+//         '        CAST(c.est_minimo AS INTEGER)'+
+//         '     END>0'+
+//         ' AND   c.est_minimo>0'+
+
+         ' AND CAST(COALESCE(c.est_minimo,0) AS INTEGER)>0'+
 
          ' AND   p.codaplicacao<>''0015'''+ // Não Processa: 0015=E-Commerce
          ' AND   p.codaplicacao<>''0016'''+ // Não Processa: 0016=Brindes
@@ -463,12 +468,12 @@ Begin
           MySql:=
            MySql+' AND    ((c.ind_curva in ('+sgCurvas+')) OR (p.datainclusao>='+QuotedStr(sDta)+' AND c.ind_curva=''E''))'+
                  ' AND NOT (((p.principalfor='+QuotedStr('000356')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''%YELLOW%''))'+
-                 '          OR'+
-                 '         ((p.principalfor='+QuotedStr('000677')+') AND (c.ind_curva in (''D'',''E'')))'+
-                 '          OR'+
-                 '         ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')))';
+                 '           OR'+
+                 '          ((p.principalfor='+QuotedStr('000677')+') AND (c.ind_curva in (''D'',''E'')))'+
+                 '           OR'+
+                 '          ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')))';
 
-  MySql:=
+  MySql:=                          
    MySql+' ORDER BY p.codproduto';
   DMTransferencias.CDS_CurvasLoja.Close;
   DMTransferencias.SDS_CurvasLoja.CommandText:=MySql;
@@ -621,17 +626,9 @@ Begin
           // Busca Tranferencias ------------------------------------
           MySql:=' SELECT mc.numero, mp.codproduto, mp.quantatendida'+
                  ' FROM MCLI mc, MCLIPRO mp'+
-                 ' WHERE mc.chavenf=mp.chavenf';
-
-                 If sCodLoja='01' Then
-                  MySql:=
-                   MySql+' AND   mc.codcomprovante=''009'''
-                 Else
-                  MySql:=
-                   MySql+' AND   mc.codcomprovante=''020''';
-
-          MySql:=
-           MySql+' AND   mc.codfilial=''99'''+
+                 ' WHERE mc.chavenf=mp.chavenf'+
+                 ' AND   mc.codcomprovante in (''009'',''020'')'+
+                 ' AND   mc.codfilial=''99'''+
                  ' AND   mc.situacaonf=''L'''+
                  ' AND   mc.datadocumento>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(IncDay(dgDtaHoje,-15)))))+
                  ' AND   mc.codcliente='+QuotedStr(sCodEmp)+
@@ -647,16 +644,9 @@ Begin
                    ' FROM MFOR mf'+
                    ' WHERE mf.situacaonf=1'+
                    ' AND   mf.codfornecedor=''000663'''+
-                   ' AND   mf.CodFilial='+QuotedStr(sCodLoja);
-
-                 If sCodLoja='01' Then
-                  MySql:=
-                   MySql+' AND   mf.codcomprovante=''010'''
-                 Else
-                  MySql:=
-                   MySql+' AND   mf.codcomprovante=''016''';
-            MySql:=
-             MySql+' AND mf.numero='+QuotedStr(IBQ_MPMS.FieldByName('numero').AsString);
+                   ' AND   mf.CodFilial='+QuotedStr(sCodLoja)+
+                   ' AND   mf.codcomprovante in (''010'',''016'')'+
+                   ' AND   mf.numero='+QuotedStr(IBQ_MPMS.FieldByName('numero').AsString);
             IBQ_TR_Filial.Close;
             IBQ_TR_Filial.SQL.Clear;
             IBQ_TR_Filial.SQL.Add(MySql);

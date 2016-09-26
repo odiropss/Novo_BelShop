@@ -18,6 +18,7 @@ type
     Procedure Demanda4Meses;
     Procedure BuscaMovtosDebCre;
     Procedure CalculaFluxoCaixaFornecedores(sDt: String=''; sCodForn: String ='');
+    Procedure CentroCustos;
 
     // ODIR ====================================================================
 
@@ -57,6 +58,112 @@ uses DK_Procs1, UDMConexoes, uj_001, uj_002, UDMAtualizaSeteHoras;
 //==============================================================================
 // ODIR - INICIO ===============================================================
 //==============================================================================
+
+// Atualiza Centro de Custos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAtualizaSeteHoras.CentroCustos;
+Var
+   bSiga: Boolean;
+   i: Integer;
+   MySql: String;
+   sCodForn, sNumSeq: String;
+Begin
+  bSiga:=False;
+  sgCodEmp:='99';
+
+  // Conecta Loja =======================================================
+  If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+   Begin
+     // Cria Query da Empresa ------------------------------------
+     CriaQueryIB('IBDB_'+sgCodEmp,'IBT_'+sgCodEmp, IBQ_ConsultaFilial, True);
+     bSiga:=True;
+   End
+  Else
+   Begin
+     bSiga:=False;
+   End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+
+  If bSiga Then
+  Begin
+    // Abre Query -----------------------------------------------
+    i:=0;
+    bSiga:=False;
+    While Not bSiga do
+    Begin
+      Try
+        MySql:=' SELECT S.CODCENTROCUSTO, S.CODCUSTO, C.NOMECUSTO,'+
+               '         S.CODSUBCUSTO, S.NOMESUBCUSTO'+
+               ' FROM CUSTO C, CUSTOSUB S'+
+               ' WHERE C.CODCUSTO = S.CODCUSTO';
+        IBQ_ConsultaFilial.Close;
+        IBQ_ConsultaFilial.SQL.Clear;
+        IBQ_ConsultaFilial.SQL.Add(MySql);
+        IBQ_ConsultaFilial.Open;
+
+        bSiga:=True;
+      Except
+        Inc(i);
+      End; // Try
+
+      If i>2 Then
+      Begin
+        Break;
+      End; // If i>10 Then
+    End; // While Not bSiga do
+
+    // Processamento ===========================================================
+    If bSiga Then // Query Executada
+    Begin
+      // Monta Transacao =======================================================
+      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+      TD.IsolationLevel:=xilREADCOMMITTED;
+      DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
+      Try
+        DateSeparator:='.';
+        DecimalSeparator:='.';
+
+        // Exclui Centro de Custos =============================================
+        MySql:=' DELETE FROM CENTROCUSTO';
+        DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+
+        While Not IBQ_ConsultaFilial.Eof do
+        Begin
+          // Insere Centro de Custos -------------------------------------------
+          MySql:=' INSERT INTO CENTROCUSTO ('+
+                 ' CODCENTROCUSTO, CODCUSTO, NOMECUSTO, CODSUBCUSTO, NOMESUBCUSTO)'+
+
+                 ' VALUES ('+
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODCENTROCUSTO').AsString)+', '+
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODCUSTO').AsString)+', '+
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('NOMECUSTO').AsString)+', '+
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODSUBCUSTO').AsString)+', '+
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('NOMESUBCUSTO').AsString)+')';
+          DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
+
+          IBQ_ConsultaFilial.Next;
+        End; // While Not IBQ_ConsultaFilial.Eof do
+        IBQ_ConsultaFilial.Close;
+
+        // Fecha Transacao =================================================
+        DMAtualizaSeteHoras.SQLC.Commit(TD);
+
+        DateSeparator:='/';
+        DecimalSeparator:=',';
+        Screen.Cursor:=crDefault;
+
+      Except
+        on e : Exception do
+        Begin
+          DMAtualizaSeteHoras.SQLC.Rollback(TD);
+
+          DateSeparator:='/';
+          DecimalSeparator:=',';
+        End; // on e : Exception do
+      End; // Try
+    End; // If bSiga Then
+    ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'F')
+  End; // If bSiga Then
+
+end; // Atualiza Centro de Custos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Calcula Demanda de 4 Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaSeteHoras.Demanda4Meses;
@@ -268,6 +375,8 @@ Begin
         End; // on e : Exception do
       End; // Try
     End; // If bSiga Then
+
+    ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'F')
   End; // If bSiga Then
 end; // Busca Movtos de Debito/Credito de Fornecedores >>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -595,6 +704,11 @@ begin
   Begin
     CalculaFluxoCaixaFornecedores(sgDtaInicio,Mem_Odir.Lines[i])
   End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
+
+  //============================================================================
+  // Atualiza Centro de Custos =================================================
+  //============================================================================
+  CentroCustos;
 
   // Encerra Programa ==========================================================
   Application.Terminate;
