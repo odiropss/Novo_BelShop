@@ -413,6 +413,10 @@ object DMSalao: TDMSalao
     object CDS_ProfissionaisSIT_PREVIDENCIARIA: TIntegerField
       FieldName = 'SIT_PREVIDENCIARIA'
     end
+    object CDS_ProfissionaisDES_SIT_PREVIDENCIARIA: TStringField
+      FieldName = 'DES_SIT_PREVIDENCIARIA'
+      Size = 30
+    end
   end
   object DS_Profissionais: TDataSource
     DataSet = CDS_Profissionais
@@ -1952,6 +1956,11 @@ object DMSalao: TDMSalao
       DisplayLabel = 'Pago ?'
       FieldName = 'PAGO'
       Size = 3
+    end
+    object CDS_V_InssSIT_PREVIDENCIARIA: TStringField
+      DisplayLabel = 'Situa'#231#227'o'
+      FieldName = 'SIT_PREVIDENCIARIA'
+      Size = 30
     end
     object CDS_V_InssNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'

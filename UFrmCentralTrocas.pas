@@ -248,6 +248,7 @@ type
     procedure Dbg_AnaliseReposCorredoresDrawDataCell(Sender: TObject;
       const Rect: TRect; Field: TField; State: TGridDrawState);
     procedure CkCbx_ReposLojasCorredorChange(Sender: TObject);
+    procedure Dbg_ReposLojasItensDblClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -4132,8 +4133,24 @@ Var
   MySql: String;
   b: Boolean;
 begin
+
+  // Ctrl + Delete
   If (Shift = [ssCtrl]) and (Key = 46) then
    Key := 0;
+
+  // Ctrl + P = Salvar Toais em Memória ========================================
+  if (Shift = [ssCtrl]) and (Key = 80) then
+  Begin
+    If (Not DMCentralTrocas.CDS_ReposicaoDocs.Active) Or (DMCentralTrocas.CDS_ReposicaoDocs.IsEmpty) Then
+     Exit;
+
+    Try
+      Dbg_ReposLojasDocs.SetFocus;
+      ExportDBGridExcel(True, Dbg_ReposLojasDocs, FrmCentralTrocas);
+      Exit;
+    Except
+    End;
+  End; // if (Shift = [ssCtrl]) and (Key = 80) then
 
   If Trim((Sender as TDBGrid).Name)='Dbg_ReposLojasItens' Then
   Begin
@@ -4679,7 +4696,7 @@ begin
     Exit;
   End;
 
-  // Verifica se Existem Itens a Exportar para o Peido do SIDICOM ==============
+  // Verifica se Existem Itens a Exportar para o Pedido do SIDICOM =============
   If Not VerificaExistenciaItens Then
   Begin
     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
@@ -6654,6 +6671,31 @@ begin
   End;
 
   DMCentralTrocas.CDS_ReposicaoDocsAfterScroll(DMCentralTrocas.CDS_ReposicaoDocs);
+end;
+
+procedure TFrmCentralTrocas.Dbg_ReposLojasItensDblClick(Sender: TObject);
+Var
+  sCod, sQtd, sObs: String;
+begin
+  // Apresenta Quantidade Sugerida =============================================
+  sCod:=DMCentralTrocas.CDS_ReposicaoTransfCOD_PRODUTO.AsString;
+  sObs:='Quantidade de Reposição Sugerida: ';
+  sQtd:='Odir';
+
+  If DMCentralTrocas.CDS_ReposicaoTransfQTD_TRANSF_OC.AsInteger<>0 Then
+   Begin
+     sQtd:=DMCentralTrocas.CDS_ReposicaoTransfQTD_TRANSF_OC.AsString;
+     sObs:='Quantidade de Reposição Sugerida (Compras): ';
+   End
+  Else If DMCentralTrocas.CDS_ReposicaoTransfQTD_TRANSF.AsInteger<>0 Then
+   Begin
+     sQtd:=DMCentralTrocas.CDS_ReposicaoTransfQTD_TRANSF.AsString;
+   End;
+
+  If sQtd<>'Odir' Then
+   Application.MessageBox(PChar(sObs+sQtd), PChar('Produto: '+sCod), 48)
+  Else
+   Application.MessageBox('Entrar em Contato com o ODIR !!', 'ATENÇÃO !!', 48);
 end;
 
 end.

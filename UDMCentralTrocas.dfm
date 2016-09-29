@@ -539,20 +539,52 @@ object DMCentralTrocas: TDMCentralTrocas
       Required = True
       DisplayFormat = '0,'
     end
+    object CDS_ReposicaoDocsQTD_SUG_TRANSF: TFMTBCDField
+      DisplayLabel = 'Total Sug Transf'
+      FieldName = 'QTD_SUGTRANSF'
+      DisplayFormat = '0,'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_ReposicaoDocsQTD_A_TRANSF: TFMTBCDField
+      DisplayLabel = 'Total a Transf'
+      FieldName = 'QTD_ATRANSF'
+      DisplayFormat = '0,'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_ReposicaoDocsQTD_NTRANSF: TFMTBCDField
+      DisplayLabel = 'Total '#209' Transf'
+      FieldName = 'QTD_NTRANSF'
+      DisplayFormat = '0,'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_ReposicaoDocsQTD_TRANSF: TFMTBCDField
+      DisplayLabel = 'Total Transf'
+      FieldName = 'QTD_TRANSF'
+      DisplayFormat = '0,'
+      Precision = 15
+      Size = 2
+    end
   end
   object SDS_ReposicaoDocs: TSQLDataSet
     CommandText = 
       'SELECT'#13#10'lo.cod_loja,'#13#10'em.razao_social,'#13#10'lo.num_docto,'#13#10'Count(lo.' +
-      'cod_produto) Num_Produtos'#13#10'FROM es_estoques_lojas lo, emp_conexo' +
-      'es em'#13#10'WHERE lo.cod_loja=em.cod_filial'#13#10'AND   lo.ind_transf='#39'SIM' +
-      #39#13#10'AND   lo.dta_movto= :sDta'#13#10'group by 1,2,3'#13#10'order by 1'
+      'cod_produto) Num_Produtos,'#13#10'sum(lo.qtd_transf) Qtd_SugTransf,'#13#10's' +
+      'um(lo.qtd_a_transf) Qtd_ATransf,'#13#10'sum(decode(lo.num_pedido,'#39'0000' +
+      '00'#39',lo.qtd_a_transf,0)) Qtd_NTransf,'#13#10'sum(decode(lo.num_pedido,'#39 +
+      '000000'#39',0,lo.qtd_a_transf)) Qtd_Transf'#13#10#13#10'FROM es_estoques_lojas' +
+      ' lo, emp_conexoes em'#13#10'WHERE lo.cod_loja=em.cod_filial'#13#10'AND   lo.' +
+      'ind_transf='#39'SIM'#39#13#10'AND   lo.dta_movto= :sDta'#13#10#13#10'group by 1,2,3'#13#10#13 +
+      #10'order by 1'
     MaxBlobSize = -1
     Params = <
       item
         DataType = ftString
         Name = 'sDta'
         ParamType = ptInput
-        Value = '25.09.2015'
+        Value = '01.08.2016'
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 392
@@ -614,31 +646,44 @@ object DMCentralTrocas: TDMCentralTrocas
       FieldName = 'ENDERECO'
       Size = 24
     end
+    object CDS_ReposicaoTransfQTD_TRANSF: TFMTBCDField
+      FieldName = 'QTD_TRANSF'
+      Visible = False
+      DisplayFormat = '0,'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_ReposicaoTransfQTD_TRANSF_OC: TFMTBCDField
+      FieldName = 'QTD_TRANSF_OC'
+      DisplayFormat = '0,'
+      Precision = 15
+      Size = 2
+    end
   end
   object SDS_ReposicaoTransf: TSQLDataSet
     CommandText = 
       'SELECT'#13#10'lo.Num_Seq,'#13#10'lo.cod_produto,'#13#10'pr.apresentacao Des_produt' +
       'o,'#13#10'lo.ind_curva ABC,'#13#10'lo.qtd_a_transf,'#13#10'lo.num_pedido,'#13#10'cd.end_' +
       'zona||'#39'.'#39'||cd.end_corredor||'#39'.'#39'||cd.end_prateleira||'#39'.'#39'||cd.end_' +
-      'gaveta Endereco'#13#10'FROM es_estoques_lojas lo, es_estoques_cd cd, p' +
-      'roduto pr'#13#10'WHERE lo.cod_produto=pr.codproduto'#13#10'AND   lo.cod_prod' +
-      'uto=cd.cod_produto'#13#10'AND   lo.dta_movto=cd.dta_movto'#13#10'AND   lo.in' +
-      'd_transf='#39'SIM'#39#13#10#13#10'AND   lo.dta_movto= :sDta'#13#10'AND   lo.num_docto=' +
-      ' :Doc'#13#10'AND   lo.qtd_a_transf> :QtdInicio'#13#10'AND   lo.qtd_a_transf<' +
-      ' :QtdFim'#13#10#13#10'ORDER BY 7,3'
+      'gaveta Endereco,'#13#10'lo.qtd_transf,'#13#10'lo.qtd_transf_oc'#13#10#13#10'FROM es_es' +
+      'toques_lojas lo, es_estoques_cd cd, produto pr'#13#10'WHERE lo.cod_pro' +
+      'duto=pr.codproduto'#13#10'AND   lo.cod_produto=cd.cod_produto'#13#10'AND   l' +
+      'o.dta_movto=cd.dta_movto'#13#10'AND   lo.ind_transf='#39'SIM'#39#13#10#13#10'AND   lo.' +
+      'dta_movto= :sDta'#13#10'AND   lo.num_docto= :Doc'#13#10'AND   lo.qtd_a_trans' +
+      'f> :QtdInicio'#13#10'AND   lo.qtd_a_transf< :QtdFim'#13#10#13#10'ORDER BY 7,3'
     MaxBlobSize = -1
     Params = <
       item
         DataType = ftString
         Name = 'sDta'
         ParamType = ptInput
-        Value = '25.09.2015'
+        Value = '01.08.2016'
       end
       item
         DataType = ftString
         Name = 'Doc'
         ParamType = ptInput
-        Value = '11'
+        Value = '3180'
       end
       item
         DataType = ftString
@@ -650,7 +695,7 @@ object DMCentralTrocas: TDMCentralTrocas
         DataType = ftString
         Name = 'QtdFim'
         ParamType = ptInput
-        Value = '9999999'
+        Value = '0'
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 392

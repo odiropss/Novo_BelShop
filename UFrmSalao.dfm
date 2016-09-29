@@ -405,7 +405,7 @@ object FrmSalao: TFrmSalao
     Top = 0
     Width = 977
     Height = 580
-    ActivePage = Ts_Profissionais
+    ActivePage = Ts_ProfMovtosRH
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -2978,7 +2978,7 @@ object FrmSalao: TFrmSalao
               Left = 352
               Top = 10
               Width = 303
-              Height = 95
+              Height = 101
               Caption = ' TecBiz '
               TabOrder = 1
               object Label23: TLabel
@@ -2998,7 +2998,7 @@ object FrmSalao: TFrmSalao
               end
               object Label24: TLabel
                 Left = 55
-                Top = 43
+                Top = 48
                 Width = 69
                 Height = 13
                 Caption = 'C'#243'digo TecBiz'
@@ -3013,7 +3013,7 @@ object FrmSalao: TFrmSalao
               end
               object Label22: TLabel
                 Left = 26
-                Top = 67
+                Top = 76
                 Width = 99
                 Height = 13
                 Caption = 'Comprovante TecBiz'
@@ -3027,7 +3027,7 @@ object FrmSalao: TFrmSalao
               end
               object Dbe_CadProfMatriculaTecBiz: TDBEdit
                 Left = 128
-                Top = 40
+                Top = 45
                 Width = 65
                 Height = 19
                 DataField = 'NUM_MATRICULA_TECBIZ'
@@ -3057,7 +3057,7 @@ object FrmSalao: TFrmSalao
               end
               object Dbe_CadProfCompTecBiz: TDBEdit
                 Left = 128
-                Top = 63
+                Top = 72
                 Width = 39
                 Height = 19
                 DataField = 'COD_COMPRV_TECBIZ'
@@ -3075,16 +3075,16 @@ object FrmSalao: TFrmSalao
               Left = 657
               Top = 10
               Width = 300
-              Height = 95
+              Height = 101
               Caption = ' INSS '
               TabOrder = 2
               OnExit = Gb_CadProfINSSExit
               object Label20: TLabel
-                Left = 20
-                Top = 20
-                Width = 101
+                Left = 11
+                Top = 15
+                Width = 58
                 Height = 13
-                Caption = 'N'#186' Inscri'#231'ao no INSS'
+                Caption = 'N'#186' Inscri'#231'ao'
                 FocusControl = Dbe_CadProfNumINSS
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
@@ -3095,11 +3095,11 @@ object FrmSalao: TFrmSalao
                 Transparent = True
               end
               object Label21: TLabel
-                Left = 42
-                Top = 44
-                Width = 79
+                Left = 18
+                Top = 36
+                Width = 51
                 Height = 13
-                Caption = 'Percentual INSS'
+                Caption = 'Percentual'
                 FocusControl = Dbe_CadProfPerINSS
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
@@ -3109,12 +3109,12 @@ object FrmSalao: TFrmSalao
                 ParentFont = False
                 Transparent = True
               end
-              object Label16: TLabel
-                Left = -86
-                Top = 59
-                Width = 106
+              object Lab_DesSitPrevidencia: TLabel
+                Left = 37
+                Top = 78
+                Width = 32
                 Height = 13
-                Caption = 'Comprovante do INSS'
+                Caption = 'Motivo'
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -11
@@ -3122,11 +3122,10 @@ object FrmSalao: TFrmSalao
                 Font.Style = []
                 ParentFont = False
                 Transparent = True
-                Visible = False
               end
               object Label73: TLabel
-                Left = 197
-                Top = 41
+                Left = 159
+                Top = 35
                 Width = 37
                 Height = 13
                 Caption = 'Cobrar?'
@@ -3140,11 +3139,11 @@ object FrmSalao: TFrmSalao
                 Transparent = True
               end
               object Label79: TLabel
-                Left = 9
-                Top = 70
-                Width = 112
+                Left = 27
+                Top = 56
+                Width = 42
                 Height = 13
-                Caption = 'Situa'#231#227'o Previdenci'#225'ria'
+                Caption = 'Situa'#231#227'o'
                 FocusControl = Cbx_CadProfSitPrevidencia
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
@@ -3154,25 +3153,24 @@ object FrmSalao: TFrmSalao
                 ParentFont = False
                 Transparent = True
               end
-              object Dbe_CadProfCompINSS: TDBEdit
-                Left = -25
-                Top = 39
-                Width = 39
+              object Dbe_CadProfDesSitPrevidencia: TDBEdit
+                Left = 73
+                Top = 77
+                Width = 220
                 Height = 19
-                DataField = 'COD_COMPRV_INSS'
+                DataField = 'DES_SIT_PREVIDENCIARIA'
                 DataSource = DMSalao.DS_Profissionais
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
-                Font.Style = []
+                Font.Style = [fsBold]
                 ParentFont = False
                 TabOrder = 4
-                Visible = False
               end
               object Dbe_CadProfPerINSS: TDBEdit
-                Left = 125
-                Top = 40
+                Left = 73
+                Top = 32
                 Width = 49
                 Height = 19
                 DataField = 'PER_INSS'
@@ -3187,8 +3185,8 @@ object FrmSalao: TFrmSalao
                 OnExit = Dbe_CadProfNumINSSExit
               end
               object Dbe_CadProfNumINSS: TDBEdit
-                Left = 125
-                Top = 16
+                Left = 73
+                Top = 11
                 Width = 167
                 Height = 19
                 DataField = 'NUM_INSS'
@@ -3203,8 +3201,8 @@ object FrmSalao: TFrmSalao
                 OnExit = Dbe_CadProfNumINSSExit
               end
               object Ckb_CadProfINSSCobrar: TJvCheckBox
-                Left = 239
-                Top = 39
+                Left = 201
+                Top = 33
                 Width = 40
                 Height = 17
                 Caption = 'SIM'
@@ -3227,9 +3225,9 @@ object FrmSalao: TFrmSalao
                 HotTrackFont.Style = []
               end
               object Cbx_CadProfSitPrevidencia: TComboBox
-                Left = 125
-                Top = 66
-                Width = 156
+                Left = 73
+                Top = 52
+                Width = 166
                 Height = 22
                 Style = csOwnerDrawFixed
                 Color = 8454143
@@ -3288,14 +3286,14 @@ object FrmSalao: TFrmSalao
             end
             object Gb_CadProfPlanoSaude: TGroupBox
               Left = 352
-              Top = 107
+              Top = 113
               Width = 606
-              Height = 268
+              Height = 262
               Caption = ' Plano de Sa'#250'de '
               TabOrder = 3
               object Label26: TLabel
                 Left = 47
-                Top = 22
+                Top = 18
                 Width = 76
                 Height = 13
                 Caption = 'Plano de Sa'#250'de'
@@ -3310,7 +3308,7 @@ object FrmSalao: TFrmSalao
               end
               object Label28: TLabel
                 Left = 201
-                Top = 46
+                Top = 40
                 Width = 157
                 Height = 13
                 Caption = 'Comprovante do Plano de Sa'#250'de'
@@ -3325,7 +3323,7 @@ object FrmSalao: TFrmSalao
               end
               object Label27: TLabel
                 Left = 20
-                Top = 46
+                Top = 40
                 Width = 103
                 Height = 13
                 Caption = 'Valor Plano de Sa'#250'de'
@@ -3340,7 +3338,7 @@ object FrmSalao: TFrmSalao
               end
               object Dbe_CadProfCodPlanoSaude: TDBEdit
                 Left = 126
-                Top = 18
+                Top = 14
                 Width = 30
                 Height = 19
                 DataField = 'COD_PLANO_SAUDE'
@@ -3356,7 +3354,7 @@ object FrmSalao: TFrmSalao
               end
               object EdtCadProfDesPlanoSaude: TEdit
                 Left = 160
-                Top = 18
+                Top = 14
                 Width = 380
                 Height = 19
                 TabStop = False
@@ -3470,7 +3468,7 @@ object FrmSalao: TFrmSalao
               end
               object Dbe_CadProfCompPlanoSaude: TDBEdit
                 Left = 361
-                Top = 42
+                Top = 36
                 Width = 39
                 Height = 19
                 DataField = 'COD_COMPRV_PL_SAUDE'
@@ -3485,7 +3483,7 @@ object FrmSalao: TFrmSalao
               end
               object Dbe_CadProfVlrPlanoSaude: TDBEdit
                 Left = 126
-                Top = 42
+                Top = 36
                 Width = 65
                 Height = 19
                 DataField = 'VLR_PLANO_SAUDE'
@@ -3500,7 +3498,7 @@ object FrmSalao: TFrmSalao
               end
               object Gb_CadProfDependentes: TGroupBox
                 Left = 1
-                Top = 67
+                Top = 61
                 Width = 604
                 Height = 200
                 Align = alBottom
@@ -8980,7 +8978,7 @@ object FrmSalao: TFrmSalao
                   Left = 411
                   Top = 1
                   Width = 86
-                  Height = 26
+                  Height = 27
                   Align = alRight
                   Caption = '  Calculo com  '#13#10'     Metas ?'
                   Visible = False
@@ -10269,7 +10267,7 @@ object FrmSalao: TFrmSalao
         Top = 0
         Width = 828
         Height = 514
-        ActivePage = Ts_ProfBeneficios
+        ActivePage = Ts_ProfINSS
         Align = alClient
         TabOrder = 0
         OnChange = PC_ProfMovtosRHChange
@@ -11826,6 +11824,14 @@ object FrmSalao: TFrmSalao
                 FieldName = 'PAGO'
                 Title.Alignment = taCenter
                 Visible = True
+              end
+              item
+                Color = 15329769
+                Expanded = False
+                FieldName = 'SIT_PREVIDENCIARIA'
+                Title.Caption = 'Situa'#231#227'o Tribut'#225'ria'
+                Width = 200
+                Visible = True
               end>
           end
         end
@@ -11976,7 +11982,7 @@ object FrmSalao: TFrmSalao
             Top = 0
             Width = 820
             Height = 486
-            ActivePage = Ts_BeneficiosManut
+            ActivePage = Ts_Beneficios
             Align = alClient
             TabOrder = 0
             OnChange = PC_BeneficiosChange
@@ -13781,24 +13787,24 @@ object FrmSalao: TFrmSalao
     Font.Style = [fsBold]
     StartColor = 16777088
     EndColor = 35840
-    Left = 896
-    Top = 272
+    Left = 888
+    Top = 328
   end
   object ACBrCEP: TACBrCEP
     ProxyPort = '8080'
     WebService = wsRepublicaVirtual
     PesquisarIBGE = True
     OnBuscaEfetuada = ACBrCEPBuscaEfetuada
-    Left = 896
-    Top = 344
+    Left = 888
+    Top = 400
   end
   object OpenFoto: TOpenPictureDialog
-    Left = 816
-    Top = 336
+    Left = 808
+    Top = 392
   end
   object ApplicationEventos: TApplicationEvents
     OnMessage = ApplicationEventosMessage
-    Left = 896
-    Top = 208
+    Left = 888
+    Top = 264
   end
 end

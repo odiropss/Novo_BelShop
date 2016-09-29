@@ -512,6 +512,8 @@ type
     CDS_BeneficiosATIVO: TStringField;
     CDS_BeneficiosDTA_INI_BENEFICIO: TDateField;
     CDS_BeneficiosDTA_FIM_BENEFICIO: TDateField;
+    CDS_ProfissionaisDES_SIT_PREVIDENCIARIA: TStringField;
+    CDS_V_InssSIT_PREVIDENCIARIA: TStringField;
     procedure CDS_HabilidadesAfterScroll(DataSet: TDataSet);
     procedure CDS_HabilidadesProfAfterScroll(DataSet: TDataSet);
     procedure CDS_ValesProfissionaisAfterScroll(DataSet: TDataSet);

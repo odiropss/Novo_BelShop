@@ -43610,8 +43610,6 @@ begin
     Dbg_FinanPlanFinanceira.SetFocus;
     ExportDBGridExcel(True, Dbg_FinanPlanFinanceira, FrmBelShop);
   End;
-
-
 end;
 
 procedure TFrmBelShop.SubMenuProtUsuariosPermAcessoSIDICOMClick(Sender: TObject);

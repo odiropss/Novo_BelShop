@@ -145,6 +145,12 @@ type
     CDS_RelReposicaoOBS_DOCTO: TStringField;
     DS_AnaliseReposicao: TDataSource;
     CDS_V_AnaliseReposicao: TClientDataSet;
+    CDS_ReposicaoDocsQTD_SUG_TRANSF: TFMTBCDField;
+    CDS_ReposicaoDocsQTD_A_TRANSF: TFMTBCDField;
+    CDS_ReposicaoDocsQTD_TRANSF: TFMTBCDField;
+    CDS_ReposicaoDocsQTD_NTRANSF: TFMTBCDField;
+    CDS_ReposicaoTransfQTD_TRANSF: TFMTBCDField;
+    CDS_ReposicaoTransfQTD_TRANSF_OC: TFMTBCDField;
 //    IBQ_SID_PedidoODIR: TIBQuery;
 //    IBU_SID_PedidoODIR: TIBUpdateSQL;
 //    IBQ_SID_PedidoODIRCODPEDIDO: TIBStringField;

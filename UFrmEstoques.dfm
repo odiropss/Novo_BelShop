@@ -134,7 +134,8 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'VLR_VENDAS_ANO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 95
+            Title.Caption = '$ Vd AA'
+            Width = 80
             Visible = True
           end
           item
@@ -142,7 +143,8 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'VLR_VENDAS_4M'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 115
+            Title.Caption = '$ Vd 4M'
+            Width = 80
             Visible = True
           end
           item
@@ -1077,7 +1079,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 290
+          Left = 289
           Top = 11
           Width = 353
           Height = 13

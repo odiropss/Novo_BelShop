@@ -405,7 +405,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
     Top = 0
     Width = 977
     Height = 578
-    ActivePage = Ts_ReposLojas
+    ActivePage = Ts_AnaliseReposicoes
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1609,6 +1609,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_ReposLojasItensDrawColumnCell
+        OnDblClick = Dbg_ReposLojasItensDblClick
         OnEnter = Dbg_ReposLojasItensEnter
         OnExit = Dbg_ReposLojasItensExit
         OnKeyDown = Dbg_ReposLojasDocsKeyDown
@@ -1741,6 +1742,38 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Title.Caption = 'Itens'
             Width = 53
             Visible = True
+          end
+          item
+            Color = 14737632
+            Expanded = False
+            FieldName = 'QTD_SUGTRANSF'
+            Title.Alignment = taRightJustify
+            Width = 110
+            Visible = True
+          end
+          item
+            Color = 14145495
+            Expanded = False
+            FieldName = 'QTD_ATRANSF'
+            Title.Alignment = taRightJustify
+            Width = 110
+            Visible = True
+          end
+          item
+            Color = 14671839
+            Expanded = False
+            FieldName = 'QTD_NTRANSF'
+            Title.Alignment = taRightJustify
+            Width = 110
+            Visible = True
+          end
+          item
+            Color = clSilver
+            Expanded = False
+            FieldName = 'QTD_TRANSF'
+            Title.Alignment = taRightJustify
+            Width = 110
+            Visible = True
           end>
       end
       object Sb_ReposLojas: TdxStatusBar
@@ -1749,6 +1782,13 @@ object FrmCentralTrocas: TFrmCentralTrocas
         Width = 969
         Height = 20
         Panels = <
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            Fixed = False
+            Text = '<Ctrl + P> Salva Totais em Mem'#243'ria'
+            Width = 137
+          end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter

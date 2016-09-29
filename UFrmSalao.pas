@@ -161,8 +161,8 @@ type
     Label22: TLabel;
     Label20: TLabel;
     Label21: TLabel;
-    Label16: TLabel;
-    Dbe_CadProfCompINSS: TDBEdit;
+    Lab_DesSitPrevidencia: TLabel;
+    Dbe_CadProfDesSitPrevidencia: TDBEdit;
     Dbe_CadProfPerINSS: TDBEdit;
     Dbe_CadProfNumINSS: TDBEdit;
     Label26: TLabel;
@@ -2738,7 +2738,7 @@ Begin
              ' TOT_PRESTACAO, NUM_PRAZO, DTA_PRIM_VENC,'+
              ' NUM_PRESTACAO, DTA_VENCIMENTO, VLR_PRESTACAO,'+
              ' VLR_DESCONTO, VLR_ACRESCIMOS, VLR_APAGAR, VLR_PAGO, NUM_DOCTO_PAGTO,'+
-             ' USU_INCLUI)'+
+             ' DES_ARQUIVO, USU_INCLUI)'+
 
              ' Values('+
              QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('Num_Seq').AsString)+', '+ // NUM_SEQ
@@ -2762,18 +2762,24 @@ Begin
 
              // VLR_PAGO
              If DMBelShop.CDS_Busca.FieldByName('Ind_Cobra_Inss').AsString='SIM' Then
-              MySql:=MySql+QuotedStr('0')+', '
+              MySql:=
+               MySql+QuotedStr('0')+', '
              Else
-              MySql:=MySql+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Vlr_Contrib').AsString)+', ';
+              MySql:=
+               MySql+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Vlr_Contrib').AsString)+', ';
 
              // NUM_DOCTO_PAGTO
              If DMBelShop.CDS_Busca.FieldByName('Ind_Cobra_Inss').AsString='SIM' Then
-              MySql:=MySql+QuotedStr('0')+', '
+              MySql:=
+               MySql+QuotedStr('0')+', '
              Else
-              MySql:=MySql+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Mes').AsString)+'||'+
-                           QuotedStr(DMBelShop.CDS_Busca.FieldByName('Ano').AsString)+', ';
+              MySql:=
+               MySql+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Mes').AsString)+'||'+
+                               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Ano').AsString)+', ';
 
-             MySql:=MySql+QuotedStr(Cod_Usuario)+
+             MySql:=
+              MySql+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Situacao').AsString)+', '+
+                    QuotedStr(Cod_Usuario)+
              ')';
       DMBelShop.SQLC.Execute(MySql,nil,nil);
 
@@ -2880,7 +2886,23 @@ Begin
            '   ELSE ''SIM'''+
            ' END Pago,'+
            ' i.num_seq, i.cod_loja, i.cod_pessoa Cod_Prof, i.num_docto,'+
-           ' i.vlr_apagar, i.vlr_pago, p.ind_cobra_inss'+
+           ' i.vlr_apagar, i.vlr_pago,';
+
+           If StrToInt(sgMesVenc+sgAnoVenc)<102016 Then
+            MySql:=
+             MySql+' p.ind_cobra_inss,'
+           Else
+            MySql:=
+             MySql+' Case'+
+                   '    When Trim(Coalesce(i.des_arquivo,''''))<>'''' then'+
+                   '     ''JAPAGO'''+
+                   '    When i.vlr_pago<>0  then'+
+                   '     ''NAO'''+
+                   '    Else'+
+                   '     ''SIM'''+
+                   ' End ind_cobra_inss,';
+    MySql:=
+     MySql+' i.Des_Arquivo Situacao'+ // Situação Previdenciaria
 
            ' FROM ps_vales_pessoas i, sal_profissionais p'+
 
@@ -2938,34 +2960,68 @@ Begin
     bQuebra:=False;
     While Not DMBelShop.CDS_Busca.Eof do
     Begin
-      If DMBelShop.CDS_Busca.FieldByName('ind_cobra_inss').AsString='SIM' Then
-      Begin
-        cVlrTotPaga:=cVlrTotPaga+DMBelShop.CDS_Busca.FieldByName('vlr_apagar').AsCurrency;
-      End; // If DMBelShop.CDS_Busca.FieldByName('ind_cobra_inss').AsString='SIM' Then
+      If DMBelShop.CDS_Busca.FieldByName('num_docto').AsInteger<102016 Then
+       Begin
+         If Trim(DMBelShop.CDS_Busca.FieldByName('ind_cobra_inss').AsString)='SIM'  Then
+         Begin
+           cVlrTotPaga:=cVlrTotPaga+DMBelShop.CDS_Busca.FieldByName('vlr_apagar').AsCurrency;
+         End; // If DMBelShop.CDS_Busca.FieldByName('ind_cobra_inss').AsString='SIM' Then
 
-      If DMBelShop.CDS_Busca.FieldByName('ind_cobra_inss').AsString='NAO' Then
-      Begin
-        If cVlrTotNPaga=0 Then
-        Begin
-          bQuebra:=True;
+         If Trim(DMBelShop.CDS_Busca.FieldByName('ind_cobra_inss').AsString)='NAO' Then
+         Begin
+           If cVlrTotNPaga=0 Then
+           Begin
+             bQuebra:=True;
 
-          // Cabecalho
-          DMSalao.CDS_V_Inss.Append;
-          DMSalao.CDS_V_InssNOME.AsString:='>> TOTAL DE CONTRIBUIÇÃO DE INSS >>>>>>>>';
-          DMSalao.CDS_V_InssVLR_APAGAR.AsCurrency:=cVlrTotPaga;
-          DMSalao.CDS_V_Inss.Post;
+             // Cabecalho
+             DMSalao.CDS_V_Inss.Append;
+             DMSalao.CDS_V_InssNOME.AsString:='>> TOTAL DE CONTRIBUIÇÃO DE INSS >>>>>>>>';
+             DMSalao.CDS_V_InssVLR_APAGAR.AsCurrency:=cVlrTotPaga;
+             DMSalao.CDS_V_Inss.Post;
 
-          DMSalao.CDS_V_Inss.Append;
-          DMSalao.CDS_V_InssNOME.AsString:='';
-          DMSalao.CDS_V_Inss.Post;
+             DMSalao.CDS_V_Inss.Append;
+             DMSalao.CDS_V_InssNOME.AsString:='';
+             DMSalao.CDS_V_Inss.Post;
 
-          DMSalao.CDS_V_Inss.Append;
-          DMSalao.CDS_V_InssNOME.AsString:='>> NÃO COBRAR CONTRIBUIÇÃO DE INSS >>>>>>>>';
-          DMSalao.CDS_V_Inss.Post;
-        End; // If cVlrTotNPaga=0 Then
+             DMSalao.CDS_V_Inss.Append;
+             DMSalao.CDS_V_InssNOME.AsString:='>> NÃO COBRAR CONTRIBUIÇÃO DE INSS >>>>>>>>';
+             DMSalao.CDS_V_Inss.Post;
+           End; // If cVlrTotNPaga=0 Then
 
-        cVlrTotNPaga:=cVlrTotNPaga+DMBelShop.CDS_Busca.FieldByName('vlr_apagar').AsCurrency;
-      End; // If DMBelShop.CDS_Busca.FieldByName('ind_cobra_inss').AsString='SIM' Then
+           cVlrTotNPaga:=cVlrTotNPaga+DMBelShop.CDS_Busca.FieldByName('vlr_apagar').AsCurrency;
+         End; // If DMBelShop.CDS_Busca.FieldByName('ind_cobra_inss').AsString='NAO' Then
+       End
+      Else // If (DMBelShop.CDS_Busca.FieldByName('num_docto').AsInteger<102016 Then
+       Begin
+         If Trim(DMBelShop.CDS_Busca.FieldByName('ind_cobra_inss').AsString)='SIM' Then
+         Begin
+           cVlrTotPaga:=cVlrTotPaga+DMBelShop.CDS_Busca.FieldByName('vlr_apagar').AsCurrency;
+         End; // If DMBelShop.CDS_Busca.FieldByName('ind_cobra_inss').AsString='SIM' Then
+
+         If Trim(DMBelShop.CDS_Busca.FieldByName('ind_cobra_inss').AsString)='JAPAGO' Then
+         Begin
+           If cVlrTotNPaga=0 Then
+           Begin
+             bQuebra:=True;
+
+             // Cabecalho
+             DMSalao.CDS_V_Inss.Append;
+             DMSalao.CDS_V_InssNOME.AsString:='>> TOTAL DE CONTRIBUIÇÃO DE INSS >>>>>>>>';
+             DMSalao.CDS_V_InssVLR_APAGAR.AsCurrency:=cVlrTotPaga;
+             DMSalao.CDS_V_Inss.Post;
+
+             DMSalao.CDS_V_Inss.Append;
+             DMSalao.CDS_V_InssNOME.AsString:='';
+             DMSalao.CDS_V_Inss.Post;
+
+             DMSalao.CDS_V_Inss.Append;
+             DMSalao.CDS_V_InssNOME.AsString:='>> NÃO COBRAR CONTRIBUIÇÃO DE INSS >>>>>>>>';
+             DMSalao.CDS_V_Inss.Post;
+           End; // If cVlrTotNPaga=0 Then
+
+           cVlrTotNPaga:=cVlrTotNPaga+DMBelShop.CDS_Busca.FieldByName('vlr_apagar').AsCurrency;
+         End; // If Trim(DMBelShop.CDS_Busca.FieldByName('ind_cobra_inss').AsString)='JAPAGO' Then
+       End; // If DMBelShop.CDS_Busca.FieldByName('num_docto').AsInteger<102016 Then
 
       DMSalao.CDS_V_Inss.Append;
       DMSalao.CDS_V_InssNOME.AsString:=DMBelShop.CDS_Busca.FieldByName('Des_Profissional').AsString;
@@ -2977,6 +3033,7 @@ Begin
       DMSalao.CDS_V_InssPAGO.AsString:=DMBelShop.CDS_Busca.FieldByName('Pago').AsString;
       DMSalao.CDS_V_InssCODIGO.AsString:=DMBelShop.CDS_Busca.FieldByName('Cod_Prof').AsString;
       DMSalao.CDS_V_InssLOJA.AsString:=DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString;
+      DMSalao.CDS_V_InssSIT_PREVIDENCIARIA.AsString:=DMBelShop.CDS_Busca.FieldByName('Situacao').AsString;
       DMSalao.CDS_V_InssNUM_SEQ.AsString:=DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString;
       DMSalao.CDS_V_INSS.Post;
 
@@ -6619,6 +6676,13 @@ Begin
         Exit;
       End;
 
+      If (Cbx_CadProfSitPrevidencia.ItemIndex=5) and (Trim(DMSalao.CDS_ProfissionaisDES_SIT_PREVIDENCIARIA.AsString)='') Then
+      Begin
+        msg('Favor Informar o Motivo da Situação Previdenciária !!','A');
+        Dbe_CadProfDesSitPrevidencia.SetFocus;
+        Exit;
+      End;
+
       If (Ckb_CadProfINSSCobrar.Checked) And
          ((Trim(DMSalao.CDS_ProfissionaisNUM_INSS.AsString)='') Or (DMSalao.CDS_ProfissionaisPER_INSS.AsCurrency=0) Or
          (DMSalao.CDS_ProfissionaisPER_INSS.AsString='') or (Cbx_CadProfSitPrevidencia.ItemIndex<>0)) Then
@@ -7080,6 +7144,16 @@ Begin
   Ckb_CadProfINSSCobrarClick(Self);
 
   Cbx_CadProfSitPrevidencia.ItemIndex:=DMSalao.CDS_ProfissionaisSIT_PREVIDENCIARIA.AsInteger;
+  If Cbx_CadProfSitPrevidencia.ItemIndex=5 Then
+   Begin
+     Dbe_CadProfDesSitPrevidencia.Visible:=True;
+     Lab_DesSitPrevidencia.Visible:=True;
+   End
+  Else
+   Begin
+     Dbe_CadProfDesSitPrevidencia.Visible:=False;
+     Lab_DesSitPrevidencia.Visible:=False;
+   End;
 
   // Plano de Saude/Dependentes ================================================
 
@@ -8769,6 +8843,7 @@ begin
   DMBelShop.CDS_Consistencias.Close;
   DMBelShop.SDS_Consistencias.Params.ParamByName('Codigo').AsInteger:=1;
   DMBelShop.CDS_Consistencias.Open;
+
   If Not ConsisteProfissional Then
   Begin
     DMBelShop.CDS_Consistencias.Close;
@@ -8807,7 +8882,7 @@ begin
              ' BLOB_OBS, NUM_ALVARA_LOCAL, NUM_SINDICATO, IND_TAXA_SINDICATO,'+
              ' VLR_TAXA_SINDICATO, COD_COMPRV_SINDICATO, IND_TAXA_NAOSOCIO,'+
              ' VLR_TAXA_NAOSOCIO, COD_COMPRV_NAOSOCIO,'+
-             ' NUM_INSS, PER_INSS, IND_COBRA_INSS, SIT_PREVIDENCIARIA, COD_COMPRV_INSS,'+
+             ' NUM_INSS, PER_INSS, IND_COBRA_INSS, SIT_PREVIDENCIARIA, DES_SIT_PREVIDENCIARIA, COD_COMPRV_INSS,'+
              ' NUM_TECBIZ, NUM_MATRICULA_TECBIZ,'+
              ' COD_COMPRV_TECBIZ, COD_PLANO_SAUDE, VLR_PLANO_SAUDE,'+
              ' COD_COMPRV_PL_SAUDE,'+
@@ -8861,7 +8936,7 @@ begin
              ' :BLOB_OBS, :NUM_ALVARA_LOCAL, :NUM_SINDICATO, :IND_TAXA_SINDICATO,'+
              ' :VLR_TAXA_SINDICATO, :COD_COMPRV_SINDICATO, :IND_TAXA_NAOSOCIO,'+
              ' :VLR_TAXA_NAOSOCIO, :COD_COMPRV_NAOSOCIO,'+
-             ' :NUM_INSS, :PER_INSS, :IND_COBRA_INSS, :SIT_PREVIDENCIARIA, :COD_COMPRV_INSS,'+
+             ' :NUM_INSS, :PER_INSS, :IND_COBRA_INSS, :SIT_PREVIDENCIARIA, :DES_SIT_PREVIDENCIARIA, :COD_COMPRV_INSS,'+
              ' :NUM_TECBIZ, :NUM_MATRICULA_TECBIZ,'+
              ' :COD_COMPRV_TECBIZ, :COD_PLANO_SAUDE, :VLR_PLANO_SAUDE,'+
              ' :COD_COMPRV_PL_SAUDE,'+
@@ -8940,7 +9015,8 @@ begin
              ', NUM_INSS=:NUM_INSS'+
              ', PER_INSS=:PER_INSS'+
              ', IND_COBRA_INSS=:IND_COBRA_INSS'+
-             ', SIT_PREVIDENCIARIA=:SIT_PREVIDENCIARIA'+ 
+             ', SIT_PREVIDENCIARIA=:SIT_PREVIDENCIARIA'+
+             ', DES_SIT_PREVIDENCIARIA=:DES_SIT_PREVIDENCIARIA'+
              ', COD_COMPRV_INSS=:COD_COMPRV_INSS'+
              ', NUM_TECBIZ=:NUM_TECBIZ'+
              ', NUM_MATRICULA_TECBIZ=:NUM_MATRICULA_TECBIZ'+
@@ -9158,6 +9234,9 @@ begin
     Else
      DMBelShop.SQLQuery1.Params.ParamByName('SIT_PREVIDENCIARIA').AsInteger:=
                                             Cbx_CadProfSitPrevidencia.ItemIndex;
+
+    DMBelShop.SQLQuery1.Params.ParamByName('DES_SIT_PREVIDENCIARIA').AsString:=
+                       DMSalao.CDS_ProfissionaisDES_SIT_PREVIDENCIARIA.AsString;
 
     DMBelShop.SQLQuery1.Params.ParamByName('COD_COMPRV_INSS').AsString:=
                               DMSalao.CDS_ProfissionaisCOD_COMPRV_INSS.AsString;
@@ -9735,9 +9814,13 @@ begin
     DMSalao.CDS_ProfissionaisPER_COMISSAO.AsCurrency:=0.00;
     DMSalao.CDS_ProfissionaisPER_COMISSAO_SUPERVISOR.AsCurrency:=0.00;
     DMSalao.CDS_ProfissionaisPER_EXTRA_ANO.AsCurrency:=0.00;
+
     DMSalao.CDS_ProfissionaisPER_INSS.AsCurrency:=0.00;
     DMSalao.CDS_ProfissionaisIND_COBRA_INSS.AsString:='NAO';
     DMSalao.CDS_ProfissionaisSIT_PREVIDENCIARIA.AsInteger:=0;
+    Dbe_CadProfDesSitPrevidencia.Visible:=False;
+    Lab_DesSitPrevidencia.Visible:=False;
+
     DMSalao.CDS_ProfissionaisPER_LOCADOR.AsCurrency:=0.00;
 
     DMSalao.CDS_ProfissionaisVLR_SID_QUOTA.AsCurrency:=0.00;
@@ -15108,15 +15191,17 @@ procedure TFrmSalao.Ckb_CadProfINSSCobrarClick(Sender: TObject);
 begin
   AcertaCkb_SN(Ckb_CadProfINSSCobrar);
 
-  If (Ckb_CadProfINSSCobrar.Checked) And
-     ((Trim(DMSalao.CDS_ProfissionaisNUM_INSS.AsString)='') Or (DMSalao.CDS_ProfissionaisPER_INSS.AsCurrency=0) Or
-     (DMSalao.CDS_ProfissionaisPER_INSS.AsString='') Or (Cbx_CadProfSitPrevidencia.ItemIndex<>0)) Then
+  If PC_CadProfissional.ActivePage=Ts_CadProfDoctos Then
   Begin
-    msg('Dados de INSS Inválidos !!','A');
-    Ckb_CadProfINSSCobrar.Checked:=False;
-    Dbe_CadProfNumINSS.SetFocus;
-  End;
-
+    If (Ckb_CadProfINSSCobrar.Checked) And
+       ((Trim(DMSalao.CDS_ProfissionaisNUM_INSS.AsString)='') Or (DMSalao.CDS_ProfissionaisPER_INSS.AsCurrency=0) Or
+       (DMSalao.CDS_ProfissionaisPER_INSS.AsString='') Or (Cbx_CadProfSitPrevidencia.ItemIndex<>0)) Then
+    Begin
+      msg('Dados de INSS Inválidos !!','A');
+      Ckb_CadProfINSSCobrar.Checked:=False;
+      Dbe_CadProfNumINSS.SetFocus;
+    End;
+  End; // If PC_CadProfissional.ActivePage=Ts_CadProfDoctos Then
 end;
 
 procedure TFrmSalao.Gb_CadProfINSSExit(Sender: TObject);
@@ -15500,44 +15585,6 @@ begin
         End;
       End; // If sgINSS_PS='I' Then
 
-// OdirApagar - 01/10/2015 - Plano de Suade é Importado e Não Mais Gerado
-//      // Verifica se Plano de Saude já Foi Cobrado =================================
-//      If sgINSS_PS='P' Then
-//      Begin
-//        MySql:=' SELECT d.num_planilha'+
-//               ' FROM ps_vales_pessoas i, sal_plan_debcred d'+
-//               ' WHERE i.cod_loja=d.cod_loja'+
-//               ' AND   i.num_seq=d.num_seq'+
-//               ' AND   i.num_docto=d.num_docto'+
-//               ' AND   i.dta_vencimento=d.dta_vencimento'+
-//               ' AND   i.tp_pessoa=1'+
-//               ' AND   d.tp_doc=3'+ // PLANO DE SAUDE
-//               ' AND   i.cod_loja='+QuotedStr(sCodFilial)+
-//               ' AND   i.ind_debcred='+QuotedStr('P')+
-//               ' AND   EXISTS (SELECT 1'+
-//               '               From TAB_AUXILIAR ps'+
-//               '               WHERE ps.tip_aux=4'+
-//               '               AND   Trim(ps.des_aux)=Trim(d.des_profissional))';
-//        DMBelShop.CDS_Busca.Close;
-//        DMBelShop.SDS_Busca.CommandText:=MySql;
-//        DMBelShop.CDS_Busca.Open;
-//        s:=DMBelShop.CDS_Busca.FieldByName('num_planilha').AsString;
-//        DMBelShop.CDS_Busca.Close;
-//
-//        If Trim(s)<>'' Then
-//        Begin
-//          sgMensagemERRO:=sgMensagemERRO+cr+'- Bel_'+sCodFilial+
-//                                            ' Não GERADA !! - Plano de Saúde da Competência de '+
-//                                            Cbx_INSS_PSMes.Text+'/'+EdtINSS_PSAno.Text+
-//                                            ' Já Cobrado na Planilha de Pagto Nº '+s;
-//          DMBelShop.CDS_EmpProcessa.Edit;
-//          DMBelShop.CDS_EmpProcessaPROC.AsString:='NAO';
-//          DMBelShop.CDS_EmpProcessa.Post;
-//
-//          iNrConexoes:=iNrConexoes-1;
-//        End;
-//      End; // If sgINSS_PS='P' Then
-
       // Verifica se Taxa Sindicato já Foi Cobrado =================================
       If sgINSS_PS='S' Then
       Begin
@@ -15590,9 +15637,6 @@ begin
   If sgINSS_PS='I' Then sgMensagem:='Contribuição de INSS';
   If sgINSS_PS='S' Then sgMensagem:='Taxas de Sindicato';
 
-// OdirApagar - 01/10/2015 - Plano de Suade é Importado e Não Mais Gerado
-//  If sgINSS_PS='P' Then sgMensagem:='Plano de Saúde';
-
   DMBelShop.CDS_EmpProcessa.First;
   While Not DMBelShop.CDS_EmpProcessa.Eof do
   Begin
@@ -15618,7 +15662,21 @@ begin
                ' pf.num_inss, pf.per_inss, pf.ind_cobra_inss,'+
                ' CAST(LPAD(EXTRACT(MONTH FROM CAST('+QuotedStr(f_Troca('/','.',f_Troca('-','.',DtaEdt_INSS_PSVenc.Text)))+' AS DATE)),2,''0'') AS VARCHAR(2)) Mes,'+
                ' CAST(LPAD(EXTRACT(year FROM CAST('+QuotedStr(f_Troca('/','.',f_Troca('-','.',DtaEdt_INSS_PSVenc.Text)))+' AS DATE)),4,''0'') AS VARCHAR(4)) ANO,'+
-               ' sm.Sal_Minimo, CAST((ROUND(((pf.per_inss*sm.Sal_Minimo)/100),2)) AS NUMERIC(12,2)) Vlr_Contrib'+
+               ' sm.Sal_Minimo, CAST((ROUND(((pf.per_inss*sm.Sal_Minimo)/100),2)) AS NUMERIC(12,2)) Vlr_Contrib,'+
+               ' Case'+
+               '    when (pf.ind_cobra_inss=''NAO'') AND (pf.sit_previdenciaria=0) Then'+
+               '      ''Não Cobrar'''+
+               '    when pf.sit_previdenciaria=1 Then'+
+               '      ''Aposentada(o)'''+
+               '    when pf.sit_previdenciaria=2 Then'+
+               '      ''Licença Maternidade'''+
+               '    when pf.sit_previdenciaria=3 Then'+
+               '      ''Licença Saúde'''+
+               '    when pf.sit_previdenciaria=4 Then'+
+               '      ''Seguro Desemprego'''+
+               '    when pf.sit_previdenciaria=5 Then'+
+               '      pf.des_sit_previdenciaria'+
+               '  end Situacao'+
 
                ' FROM SAL_PROFISSIONAIS pf,'+
                '     (SELECT ct.vlr_inicial Sal_Minimo'+
@@ -15651,48 +15709,6 @@ begin
                '     )'+
                ' ORDER BY 3';
       End; // If sgINSS_PS='I' Then
-
-// OdirApagar - 01/10/2015 - Plano de Suade é Importado e Não Mais Gerado
-//      // Plano de Saude ============================================================
-//      If sgINSS_PS='P' Then
-//      Begin
-//        Dbg_ProfPlanoSaude.SetFocus;
-//
-//        MySql:=' SELECT pf.cod_loja, pf.cod_profissional, pf.des_profissional, ps.des_aux DES_DOCTO,'+
-//               ' (CAST(LPAD(EXTRACT(MONTH FROM CAST('+QuotedStr(f_Troca('/','.',f_Troca('-','.',DtaEdt_INSS_PSVenc.Text)))+' AS DATE)),2,''0'') AS VARCHAR(2))) Mes,'+
-//               ' (CAST(LPAD(EXTRACT(YEAR FROM CAST('+QuotedStr(f_Troca('/','.',f_Troca('-','.',DtaEdt_INSS_PSVenc.Text)))+' AS DATE)),4,''0'') AS VARCHAR(4))) ANO,'+
-//               ' (COALESCE(pf.vlr_plano_saude,0)+SUM(COALESCE(de.vlr_plano_saude,0))) vlr_plano_saude,'+
-//               ' (CAST(COALESCE(dp.vlr_aux,0) AS INTEGER)) Num_Dep,'+
-//               ' (COALESCE(pf.vlr_plano_saude,0)+SUM(COALESCE(de.vlr_plano_saude,0))) Vlr_Apagar'+
-//
-//               '  FROM SAL_PROFISSIONAIS pf'+
-//               '     INNER JOIN tab_auxiliar ps       ON ps.cod_aux=pf.cod_plano_saude'+  // Plano de Saude
-//               '                                     AND ps.tip_aux=4'+
-//               '     LEFT  JOIN tab_auxiliar dp       ON dp.cod_aux=pf.cod_profissional'+ // Numero de Dependentes
-//               '                                     AND dp.tip_aux=6'+
-//               '                                     AND dp.des_aux=pf.cod_loja'+
-//               '     LEFT  JOIN ps_dependentes_ps de  ON de.cod_loja=pf.cod_loja'+   // Valor por Dependente
-//               '                                     AND de.cod_pessoa=pf.cod_profissional'+
-//               '                                     AND de.tp_pessoa=1'+
-//
-//               ' WHERE pf.cod_plano_saude<>0'+
-//               ' AND   pf.cod_loja='+QuotedStr(sCodFilial)+
-//               ' AND   pf.tip_pessoa='+QuotedStr('P')+
-//               ' AND   pf.ind_Ativo='+QuotedStr('SIM')+
-//               ' AND   NOT EXISTS (SELECT 1'+
-//               '                   FROM ps_vales_pessoas pl'+
-//               '                   WHERE pl.cod_pessoa=pf.cod_profissional'+
-//               '                   AND   pl.cod_loja=pf.cod_loja'+
-//               '                   AND   pl.tp_pessoa=1'+
-//               '                   AND   pl.vlr_pago<>0'+
-//               '                   AND   pl.ind_debcred='+QuotedStr('P')+
-//               '                   AND  pl.dta_vencimento='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DtaEdt_INSS_PSVenc.Text)))+')'+
-//
-//               ' GROUP BY pf.cod_loja, pf.cod_profissional, pf.des_profissional, des_docto,'+
-//               ' pf.vlr_plano_saude, Num_Dep'+
-//
-//               ' ORDER BY 3';
-//      End; // If sgINSS_PS='P' Then
 
       // Taxas de Sindicato ========================================================
       If sgINSS_PS='S' Then
@@ -15747,17 +15763,6 @@ begin
           sgMensagemERRO:=sgMensagemERRO+cr+'- Bel_'+sCodFilial+' Não GERADA !! - Erro no Caluclo de Contribuição de INSS !!';
         End;
       End; // If (bgSiga) and (sgINSS_PS='I') Then
-
-// OdirApagar - 01/10/2015 - Plano de Suade é Importado e Não Mais Gerado
-//      // Calcula Plano de Saude ====================================================
-//      If (bgSiga) and (sgINSS_PS='P') Then
-//      Begin
-//        If Not ProfCalculaPlanoSaude(f_Troca('/','.',f_Troca('-','.',DtaEdt_INSS_PSVenc.Text))) Then
-//        Begin
-//          DMBelShop.CDS_Busca.Close;
-//          sgMensagemERRO:=sgMensagemERRO+cr+'- Bel_'+sCodFilial+' Não GERADA !! - Erro no Caluclo de Plano de Saúde !!';
-//        End;
-//      End; // If (bgSiga) and (sgINSS_PS='P') Then
 
       // Calcula Taxa Sindicato ====================================================
       If (bgSiga) and (sgINSS_PS='S') Then
@@ -17925,6 +17930,20 @@ begin
   Ckb_CadProfINSSCobrar.Checked:=False;
   If Cbx_CadProfSitPrevidencia.ItemIndex=0 Then
    Ckb_CadProfINSSCobrar.Checked:=True;
+
+  // Outros Requer Motivo
+  If Cbx_CadProfSitPrevidencia.ItemIndex=5 Then
+   Begin
+     Dbe_CadProfDesSitPrevidencia.Visible:=True;
+     Lab_DesSitPrevidencia.Visible:=True;
+     Dbe_CadProfDesSitPrevidencia.SetFocus;
+   End
+  Else
+   Begin
+     Dbe_CadProfDesSitPrevidencia.Visible:=False;
+     Lab_DesSitPrevidencia.Visible:=False;
+     DMSalao.CDS_ProfissionaisDES_SIT_PREVIDENCIARIA.AsString:=EmptyStr;
+   End;
 
   Ckb_CadProfINSSCobrarClick(Self);
 end;

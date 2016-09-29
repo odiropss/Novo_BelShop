@@ -358,6 +358,12 @@ Begin
         End; // While Not IBQ_ConsultaFilial.Eof do
         IBQ_ConsultaFilial.Close;
 
+        //======================================================================
+        // Busva total de Compras ==============================================
+        //======================================================================
+
+
+
         // Fecha Transacao =================================================
         DMAtualizaSeteHoras.SQLC.Commit(TD);
 
