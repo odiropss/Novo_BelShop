@@ -405,7 +405,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
     Top = 0
     Width = 977
     Height = 578
-    ActivePage = Ts_AnaliseReposicoes
+    ActivePage = Ts_ReposLojas
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1652,6 +1652,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             FieldName = 'ABC'
             ReadOnly = True
             Title.Alignment = taCenter
+            Title.Caption = 'CL'
             Width = 30
             Visible = True
           end
@@ -1786,8 +1787,8 @@ object FrmCentralTrocas: TFrmCentralTrocas
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter
             Fixed = False
-            Text = '<Ctrl + P> Salva Totais em Mem'#243'ria'
-            Width = 137
+            Text = '<Ctrl + P> Salva Totais em Excel'
+            Width = 300
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
@@ -1795,7 +1796,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             PanelStyle.Color = 13303807
             Fixed = False
             Text = '<F6> Zera Quantidade de Reposi'#231#227'o'
-            Width = 110
+            Width = 200
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
@@ -1803,7 +1804,15 @@ object FrmCentralTrocas: TFrmCentralTrocas
             PanelStyle.Color = 13303807
             Fixed = False
             Text = '<F4> Localiza Produto'
-            Width = 110
+            Width = 130
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            Bevel = dxpbNone
+            Fixed = False
+            Text = 'Linha Cor Vermelha Produto Sem Pre'#231'o'
+            Width = 210
           end>
         PaintStyle = stpsOffice11
         Font.Charset = DEFAULT_CHARSET

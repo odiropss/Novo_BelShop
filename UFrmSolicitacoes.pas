@@ -592,6 +592,7 @@ type
     Label82: TLabel;
     Label187: TLabel;
     Label189: TLabel;
+    Bt_ReposLojasPreco: TJvXPButton;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -872,6 +873,7 @@ type
     procedure Cbx_ParamLojaNecesKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure Cbx_ParamLojaNecesClick(Sender: TObject);
+    procedure Bt_ReposLojasPrecoClick(Sender: TObject);
   private
     { Private declarations }
 
@@ -7645,6 +7647,16 @@ begin
 
   Bt_ReposLojasAlterar.Enabled:=False;
 
+  // Verifica se Existe Preco de Compra ========================================
+  if (DMCentralTrocas.CDS_ReposicaoTransfPRECOCOMPRA.AsCurrency<=0.00) And (EdtReposLojasQtdReposicao.AsInteger>0) Then
+  Begin
+    FrmSolicitacoes.Bt_ReposLojasPreco.Enabled:=True;
+    FrmSolicitacoes.EdtReposLojasSeq.SetFocus;
+
+    msg('Produto SEM PREÇO de COMPRA!!'+cr+'Solicitar o Cadastramento no SIDICOM !!'+cr+'Lista de Preços <0006>'+cr+'Após Atualize !','A');
+    Exit;
+  End;
+
   // Verifica se Transação esta Ativa
   If DMBelShop.SQLC.InTransaction Then
    DMBelShop.SQLC.Rollback(TD);
@@ -8311,6 +8323,151 @@ end;
 procedure TFrmSolicitacoes.Cbx_ParamLojaNecesClick(Sender: TObject);
 begin
   Cbx_ParamLojaNecesChange(Self);
+end;
+
+procedure TFrmSolicitacoes.Bt_ReposLojasPrecoClick(Sender: TObject);
+Var
+  IBQ_MPMS: TIBQuery;
+  MySql: String;
+  i, iNumDoc, iNumReg: Integer;
+begin
+  ConexaoEmpIndividual('IBDB_MPMS', 'IBT_MPMS', 'A');
+
+  // Cria Query da Empresa ------------------------------------
+  FrmBelShop.CriaQueryIB('IBDB_MPMS', 'IBT_MPMS', IBQ_MPMS, True, True);
+
+  // Busca Preco de Compra SIDICOM ---------------------------------------------
+  MySql:=' SELECT l.CODLISTA, l.CODPRODUTO, l.PRECOCOMPRA, l.MARGEM,'+
+         ' l.PRECOVENDA, l.PRECOANTERIOR, l.DATAALTERACAO, l.HORAALTERACAO,'+
+         ' l.DESCONTO, l.DESCONTOMAX, l.DESATIVADO, l.PRECODOLAR, l.ACRECIMOLISTA,'+
+         ' l.CUSTOSLISTA, CURRENT_DATE DTA_ATUALIZACAO'+
+         ' FROM LISTAPRE l'+
+         ' where l.codlista='+QuotedStr('0006')+
+         ' and l.codproduto='+QuotedStr(DMCentralTrocas.CDS_ReposicaoTransfCOD_PRODUTO.AsString);
+  IBQ_MPMS.Close;
+  IBQ_MPMS.SQL.Clear;
+  IBQ_MPMS.SQL.Add(MySql);
+  IBQ_MPMS.Open;
+
+  If Trim(IBQ_MPMS.FieldByName('CODPRODUTO').AsString)='' Then
+  Begin
+    IBQ_MPMS.Close;
+    ConexaoEmpIndividual('IBDB_MPMS', 'IBT_MPMS', 'A');
+    msg('Produto, Ainda, Não Cadastrado'+cr+'na Lista de Preços <0006>!!','A');
+    Exit;
+  End;
+
+  If (Trim(IBQ_MPMS.FieldByName('PRECOCOMPRA').AsString)='') Or (IBQ_MPMS.FieldByName('PRECOCOMPRA').AsCurrency=0.0000) Then
+  Begin
+    IBQ_MPMS.Close;
+    ConexaoEmpIndividual('IBDB_MPMS', 'IBT_MPMS', 'A');
+    msg('Produto Continua Sem Preço de Compra'+cr+'na Lista de Preços <0006>!!','A');
+    Exit;
+  End;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  PainelApresExp.Caption:='AGUARDE !! Atualizando Preço de Compra: Produto '+EdtReposLojasProduto.Text;
+  PainelApresExp.Width:=Length(PainelApresExp.Caption)*10;
+  PainelApresExp.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-PainelApresExp.Width)/2));
+  PainelApresExp.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-PainelApresExp.Height)/2))-20;
+  PainelApresExp.Color:=clSilver;
+  PainelApresExp.Font.Style:=[fsBold];
+  PainelApresExp.Parent:=FrmSolicitacoes;
+  PainelApresExp.Visible:=True;
+  Refresh;
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    MySql:=' UPDATE OR INSERT INTO LISTAPRE ('+
+           ' CODLISTA, CODPRODUTO, PRECOCOMPRA, MARGEM, PRECOVENDA,'+
+           ' PRECOANTERIOR, DATAALTERACAO, HORAALTERACAO, DESCONTO,'+
+           ' DESCONTOMAX, DESATIVADO, PRECODOLAR, ACRECIMOLISTA,'+
+           ' CUSTOSLISTA,DTA_ATUALIZACAO)'+
+           ' VALUES ('+
+           QuotedStr(IBQ_MPMS.FieldByName('CODLISTA').AsString)+', '+
+           QuotedStr(IBQ_MPMS.FieldByName('CODPRODUTO').AsString)+', '+
+           QuotedStr(IBQ_MPMS.FieldByName('PRECOCOMPRA').AsString)+', '+
+           QuotedStr(IBQ_MPMS.FieldByName('MARGEM').AsString)+', '+
+           QuotedStr(IBQ_MPMS.FieldByName('PRECOVENDA').AsString)+', '+
+           QuotedStr(IBQ_MPMS.FieldByName('PRECOANTERIOR').AsString)+', ';
+
+           If Trim(IBQ_MPMS.FieldByName('DATAALTERACAO').AsString)='' Then
+            MySql:=
+             MySql+' null, '
+           Else
+            MySql:=
+             MySql+QuotedStr(IBQ_MPMS.FieldByName('DATAALTERACAO').AsString)+', ';
+
+           If Trim(IBQ_MPMS.FieldByName('HORAALTERACAO').AsString)='' Then
+            MySql:=
+             MySql+' null, '
+           Else
+            MySql:=
+             MySql+QuotedStr(IBQ_MPMS.FieldByName('HORAALTERACAO').AsString)+', ';
+
+    MySql:=
+     MySql+QuotedStr(IBQ_MPMS.FieldByName('DESCONTO').AsString)+', '+
+           QuotedStr(IBQ_MPMS.FieldByName('DESCONTOMAX').AsString)+', '+
+           QuotedStr(IBQ_MPMS.FieldByName('DESATIVADO').AsString)+', '+
+           QuotedStr(IBQ_MPMS.FieldByName('PRECODOLAR').AsString)+', '+
+           QuotedStr(IBQ_MPMS.FieldByName('ACRECIMOLISTA').AsString)+', '+
+           QuotedStr(IBQ_MPMS.FieldByName('CUSTOSLISTA').AsString)+', '+
+           QuotedStr(IBQ_MPMS.FieldByName('DTA_ATUALIZACAO').AsString)+')'+
+           ' MATCHING (CODLISTA, CODPRODUTO)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    IBQ_MPMS.Close;
+
+    // Atualiza Transacao =======================================
+    DMBelShop.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+    Screen.Cursor:=crDefault;
+  Except
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+      Screen.Cursor:=crDefault;
+      PainelApresExp.Visible:=False;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Exit;
+    End; // on e : Exception do
+  End; // Try
+  ConexaoEmpIndividual('IBDB_MPMS', 'IBT_MPMS', 'F');
+
+  iNumReg:=DMCentralTrocas.CDS_ReposicaoTransfNUM_SEQ.AsInteger;
+  iNumDoc:=DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsInteger;
+
+  DMCentralTrocas.CDS_ReposicaoDocs.DisableControls;
+  DMCentralTrocas.CDS_ReposicaoDocs.Last;
+  DMCentralTrocas.CDS_ReposicaoDocs.First;
+  DMCentralTrocas.CDS_ReposicaoDocs.Locate('NUM_DOCTO',iNumDoc,[]);
+  DMCentralTrocas.CDS_ReposicaoTransf.Locate('NUM_SEQ',iNumReg,[]);
+  DMCentralTrocas.CDS_ReposicaoDocs.EnableControls;
+
+  Bt_ReposLojasPreco.Enabled:=False;
+  PainelApresExp.Visible:=False;
+  
+  msg('Atualização Efetuada com SUCESSO !!','A');
+
+  EdtReposLojasSeq.SetFocus;
+
 end;
 
 end.

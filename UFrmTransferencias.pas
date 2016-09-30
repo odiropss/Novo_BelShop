@@ -19,7 +19,7 @@ type
     Procedure MontaCurvas(sCodLoja: String);
     Procedure BuscaProdutosCurvas(sCodLoja: String);
 
-    Function  BuscaProdutosDemanda(sCodLoja, sCodProduto,sSaldo: String): Boolean;
+    Function  BuscaProdutosDemanda(sCodLoja, sCodProduto, sSaldo: String): Boolean;
 
     Function  AnalisaAtualizaTransferencias: Boolean;
 
@@ -697,11 +697,13 @@ Begin
           // Verifica se Tem Produto com Estoque no CD --------------
           If (DMTransferencias.CDS_EstoqueCD.Locate('COD_PRODUTO',sCodProduto,[])) Then
            Begin
-             // Verifica Percentual de 70 Para reposição ------------
              bRepoe:=True;
-             If (DMTransferencias.CDS_ProdutoDemandaQTD_ESTOQUE.AsInteger>0) Then
+             // Verifica Percentual de 80 Para Reposição Curvas A e B------------
+             If (DMTransferencias.CDS_ProdutoDemandaQTD_ESTOQUE.AsInteger>0) And
+                ((DMTransferencias.CDS_ProdutoDemandaIND_CURVA.AsString='A') Or
+                 (DMTransferencias.CDS_ProdutoDemandaIND_CURVA.AsString='B')) Then
               bRepoe:=(((DMTransferencias.CDS_ProdutoDemandaQTD_REPOSICAO.AsCurrency*100)/
-                         DMTransferencias.CDS_ProdutoDemandaQTD_ESTOQUE.AsCurrency)>30);
+                         DMTransferencias.CDS_ProdutoDemandaQTD_ESTOQUE.AsCurrency)>=20);
 
              // Inclui o Produto da Loja ----------------------------
              If bRepoe Then

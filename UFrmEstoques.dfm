@@ -76,7 +76,7 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'NUM_LINHA'
             ReadOnly = True
             Title.Alignment = taCenter
-            Width = 50
+            Width = 40
             Visible = True
           end
           item
@@ -91,7 +91,7 @@ object FrmEstoques: TFrmEstoques
             Font.Style = [fsBold]
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 60
+            Width = 50
             Visible = True
           end
           item
@@ -118,7 +118,8 @@ object FrmEstoques: TFrmEstoques
             Font.Style = [fsBold]
             ReadOnly = True
             Title.Alignment = taCenter
-            Width = 40
+            Title.Caption = 'Cl'
+            Width = 20
             Visible = True
           end
           item
@@ -126,7 +127,8 @@ object FrmEstoques: TFrmEstoques
             Expanded = False
             FieldName = 'EST_IDEAL'
             Title.Alignment = taRightJustify
-            Width = 80
+            Title.Caption = 'Est Min'
+            Width = 50
             Visible = True
           end
           item
@@ -153,13 +155,17 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'QTD_VENDAS_ANO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 100
+            Title.Caption = 'Qt Vd AA'
+            Width = 80
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'QTD_VENDAS_4M'
             ReadOnly = True
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Qt Vd 4M'
+            Width = 80
             Visible = True
           end
           item
@@ -168,7 +174,8 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'PER_PARTICIPACAO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 92
+            Title.Caption = '% Part'
+            Width = 50
             Visible = True
           end
           item
@@ -177,6 +184,7 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'QTD_ESTOQUE'
             ReadOnly = True
             Title.Alignment = taRightJustify
+            Title.Caption = 'Est'
             Width = 60
             Visible = True
           end
@@ -195,6 +203,7 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'QTD_DISPONIVEL'
             ReadOnly = True
             Title.Alignment = taRightJustify
+            Title.Caption = 'Disp'
             Width = 70
             Visible = True
           end
@@ -204,7 +213,8 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'QTD_ESTOCAGEM_ANO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 120
+            Title.Caption = 'Qt EstQ AA'
+            Width = 82
             Visible = True
           end
           item
@@ -212,7 +222,8 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'QTD_ESTCAGEM_4M'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 140
+            Title.Caption = 'Qt EstQ 4M'
+            Width = 82
             Visible = True
           end
           item
@@ -221,6 +232,7 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'VLR_PC_VENDA'
             ReadOnly = True
             Title.Alignment = taRightJustify
+            Title.Caption = 'P'#231' Vd'
             Width = 65
             Visible = True
           end
@@ -230,7 +242,8 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'VLR_TOTAL_VENDA'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 130
+            Title.Caption = 'Disp P'#231' Vd'
+            Width = 80
             Visible = True
           end
           item
@@ -239,6 +252,7 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'DTA_INCLUSAO'
             ReadOnly = True
             Title.Alignment = taCenter
+            Title.Caption = 'Dt Inclus'#227'o'
             Width = 90
             Visible = True
           end
@@ -1079,7 +1093,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 289
+          Left = 288
           Top = 11
           Width = 353
           Height = 13

@@ -151,6 +151,7 @@ type
     CDS_ReposicaoDocsQTD_NTRANSF: TFMTBCDField;
     CDS_ReposicaoTransfQTD_TRANSF: TFMTBCDField;
     CDS_ReposicaoTransfQTD_TRANSF_OC: TFMTBCDField;
+    CDS_ReposicaoTransfPRECOCOMPRA: TFMTBCDField;
 //    IBQ_SID_PedidoODIR: TIBQuery;
 //    IBU_SID_PedidoODIR: TIBUpdateSQL;
 //    IBQ_SID_PedidoODIRCODPEDIDO: TIBStringField;

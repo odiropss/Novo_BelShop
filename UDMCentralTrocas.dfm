@@ -659,43 +659,48 @@ object DMCentralTrocas: TDMCentralTrocas
       Precision = 15
       Size = 2
     end
+    object CDS_ReposicaoTransfPRECOCOMPRA: TFMTBCDField
+      FieldName = 'PRECOCOMPRA'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
   end
   object SDS_ReposicaoTransf: TSQLDataSet
     CommandText = 
       'SELECT'#13#10'lo.Num_Seq,'#13#10'lo.cod_produto,'#13#10'pr.apresentacao Des_produt' +
       'o,'#13#10'lo.ind_curva ABC,'#13#10'lo.qtd_a_transf,'#13#10'lo.num_pedido,'#13#10'cd.end_' +
       'zona||'#39'.'#39'||cd.end_corredor||'#39'.'#39'||cd.end_prateleira||'#39'.'#39'||cd.end_' +
-      'gaveta Endereco,'#13#10'lo.qtd_transf,'#13#10'lo.qtd_transf_oc'#13#10#13#10'FROM es_es' +
-      'toques_lojas lo, es_estoques_cd cd, produto pr'#13#10'WHERE lo.cod_pro' +
-      'duto=pr.codproduto'#13#10'AND   lo.cod_produto=cd.cod_produto'#13#10'AND   l' +
-      'o.dta_movto=cd.dta_movto'#13#10'AND   lo.ind_transf='#39'SIM'#39#13#10#13#10'AND   lo.' +
-      'dta_movto= :sDta'#13#10'AND   lo.num_docto= :Doc'#13#10'AND   lo.qtd_a_trans' +
-      'f> :QtdInicio'#13#10'AND   lo.qtd_a_transf< :QtdFim'#13#10#13#10'ORDER BY 7,3'
+      'gaveta Endereco,'#13#10'lo.qtd_transf,'#13#10'lo.qtd_transf_oc,'#13#10#13#10'CAST(COAL' +
+      'ESCE((SELECT Trim(COALESCE(lp.PrecoCompra,0))'#13#10' FROM LISTAPRE lp' +
+      #13#10' WHERE lp.codlista='#39'0006'#39#13#10' AND   lp.codproduto=pr.codproduto)' +
+      ',0.00) as NUMERIC(12,2)) PrecoCompra'#13#10#13#10'FROM es_estoques_lojas l' +
+      'o, es_estoques_cd cd, produto pr'#13#10'WHERE lo.cod_produto=pr.codpro' +
+      'duto'#13#10'AND   lo.cod_produto=cd.cod_produto'#13#10'AND   lo.dta_movto=cd' +
+      '.dta_movto'#13#10'AND   lo.ind_transf='#39'SIM'#39#13#10#13#10'AND   lo.dta_movto= :sD' +
+      'ta'#13#10'AND   lo.num_docto= :Doc'#13#10'AND   lo.qtd_a_transf> :QtdInicio'#13 +
+      #10'AND   lo.qtd_a_transf< :QtdFim'#13#10#13#10'ORDER BY 7,3'
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'sDta'
         ParamType = ptInput
-        Value = '01.08.2016'
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Doc'
         ParamType = ptInput
-        Value = '3180'
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'QtdInicio'
         ParamType = ptInput
-        Value = '0'
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'QtdFim'
         ParamType = ptInput
-        Value = '0'
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 392

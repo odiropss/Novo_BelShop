@@ -168,6 +168,7 @@ type
     Function  GeraPedidoSidicomCD: Boolean; // Gera Pedido no SIDICOM CD
 
     Function  VerificaExistenciaItens: Boolean;
+    Function  VerificaPrecosItens: Boolean;
 
     Function  ProcessaTranferenciasCompras: Boolean; // Localizando Transferencias Setor de Compras (Dia Anterior)
 
@@ -301,6 +302,26 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
 //==============================================================================
 // Odir - INICIO ===============================================================
 //==============================================================================
+
+// Verifica a Existencia de Produtos Sem Preco de Custo a Transferir para Pedido do SIDICOM
+Function TFrmCentralTrocas.VerificaPrecosItens: Boolean;
+Begin
+  Result:=False;
+
+  DMCentralTrocas.CDS_ReposicaoTransf.DisableControls;
+  DMCentralTrocas.CDS_ReposicaoTransf.First;
+  While Not DMCentralTrocas.CDS_ReposicaoTransf.Eof do
+  Begin
+    If (DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsCurrency>0.00) And (DMCentralTrocas.CDS_ReposicaoTransfPRECOCOMPRA.AsCurrency<=0.00) Then
+    Begin
+      Result:=True;
+      Break;
+    End;
+    DMCentralTrocas.CDS_ReposicaoTransf.Next;
+  End; // While Not DMCentralTrocas.CDS_ReposicaoTransf.Eof do
+  DMCentralTrocas.CDS_ReposicaoTransf.EnableControls;
+  DMCentralTrocas.CDS_ReposicaoTransf.First;
+End; // Verifica a Existencia de Produtos Sem Preco de Custo a Transferir para Pedido do SIDICOM
 
 // Localizando Transferencias Setor de Compras (Dia Anterior) >>>>>>>>>>>>>>>>>>
 Function TFrmCentralTrocas.ProcessaTranferenciasCompras: Boolean;
@@ -1209,8 +1230,9 @@ Begin
 
       pgProgBar.Position:=DMCentralTrocas.CDS_ReposicaoTransf.RecNo;
 
-      If (DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsInteger>0) and
-         (DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsString='000000') Then
+      If (DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsInteger>0) And
+         (DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsString='000000') And
+         (DMCentralTrocas.CDS_ReposicaoTransfPRECOCOMPRA.AsCurrency<>0.00) Then
       Begin
         // Verifica se Existe Controle de Estoque no CD =============
         MySql:=' SELECT e.codproduto'+
@@ -4350,11 +4372,17 @@ begin
   if not (gdSelected in State) Then
   Begin
     if DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsInteger<>0 Then
-    Begin
-      Dbg_ReposLojasItens.Canvas.Brush.Color:=clSkyBlue;
-      Dbg_ReposLojasItens.Canvas.FillRect(Rect);
-      Dbg_ReposLojasItens.DefaultDrawDataCell(Rect,Column.Field,state);
-    end;
+     Begin
+       Dbg_ReposLojasItens.Canvas.Brush.Color:=clSkyBlue;
+     End
+    Else if (DMCentralTrocas.CDS_ReposicaoTransfPRECOCOMPRA.AsCurrency<=0.00) And (DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsInteger>0) Then
+     Begin
+       Dbg_ReposLojasItens.Canvas.Brush.Color:=clRed;
+       Dbg_ReposLojasItens.Canvas.Font.Color:=clWhite;
+     End;
+
+    Dbg_ReposLojasItens.Canvas.FillRect(Rect);
+    Dbg_ReposLojasItens.DefaultDrawDataCell(Rect,Column.Field,state);
 
     // Alinhamento
     DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.Alignment:=taRightJustify;
@@ -4704,6 +4732,17 @@ begin
     Exit;
   End;
 
+  // Verifica se Existem Itens Com Quantidade e Sem Preco a Exportar para o Pedido do SIDICOM =============
+  If VerificaPrecosItens Then
+  Begin
+    PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
+    If Application.MessageBox(PChar('Existe(m) Produto(s) COM REPOSIÇÃO e SEM PREÇO de CUSCTO'+cr+
+                                    'Verifique e Solicite o Cadastramento no SIDICOM !!'+cr+cr+
+                                    'Se Desejar Continuar não Irão para o Pedido do SIDICOM !!'+cr+cr+
+                                    'DESEJA CONTINUAR ???'), 'ATENÇÃO !!', 292)=IdNo Then
+     Exit;
+  End;
+       
   If msg('Deseja Realmente Criar Pedido no SIDICOM '+cr+cr+
          'para o Docto Nº '+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
          ' da Loja Bel_'+DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString+' ??', 'C')=2 Then
@@ -6252,6 +6291,9 @@ begin
   DMBelShop.CDS_BuscaRapida.Open;
 
   CkCbx_ReposLojasCorredor.Items.Clear;
+  DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=False;
+  DMCentralTrocas.CDS_ReposicaoTransf.Filter:='';
+
   While Not DMBelShop.CDS_BuscaRapida.Eof do
   Begin
     CkCbx_ReposLojasCorredor.Items.Add(DMBelShop.CDS_BuscaRapida.FieldByName('Corredor').AsString);

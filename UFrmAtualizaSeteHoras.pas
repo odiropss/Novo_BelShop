@@ -170,8 +170,9 @@ Procedure TFrmAtualizaSeteHoras.Demanda4Meses;
 Var
   MySql: String;
   dDtaHoje, dDtaInicio, dDtaFim: TDate;
+  sMes1, sMes2, sMes3, sMes4, sMes5: String;
+  i, ii: Integer;
 Begin
-
   dDtaHoje  :=DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor);
   dDtaInicio:=IncMonth(dDtaHoje,-4);
   dDtaInicio:=PrimUltDia(dDtaInicio,'P');
@@ -182,6 +183,18 @@ Begin
   sgDtaFim   :=f_Troca('/','.',f_Troca('-','.',DateToStr(dDtaFim)));
 
   igDiasUteis:=DiasUteisBelShop(dDtaInicio, dDtaFim, False, True);
+
+  // Calcula os Meses de Demandas Vendas =======================================
+  i:=0;
+  For ii:=MonthOf(dDtaInicio) to MonthOf(dDtaFim) do
+  Begin
+    Inc(i);
+    if i=1 Then sMes1:=FormatFloat('00',ii);
+    if i=2 Then sMes2:=FormatFloat('00',ii);
+    if i=3 Then sMes3:=FormatFloat('00',ii);
+    if i=4 Then sMes4:=FormatFloat('00',ii);
+    if i=5 Then sMes5:=FormatFloat('00',ii);
+  End;
 
   // Verifica se Transação esta Ativa
   If DMAtualizaSeteHoras.SQLC.InTransaction Then
@@ -200,8 +213,92 @@ Begin
 
     MySql:=' INSERT INTO ES_DEMANDAS_4MESES'+
            ' SELECT dem.codfilial, dem.codproduto,'+
+
+           ' CAST(SUM('+
+           '   CASE'+
+           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+sMes1+' Then'+
+           '       CAST(dem.quant_ref AS INTEGER)'+
+           '     Else'+
+           '       0'+
+           '   End)'+
+           ' AS INTEGER) qtd_venda_M1,'+
+           ' CAST(SUM('+
+           '   CASE'+
+           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+sMes2+' Then'+
+           '       CAST(dem.quant_ref AS INTEGER)'+
+           '     Else'+
+           '       0'+
+           '   End)'+
+           ' AS INTEGER) qtd_venda_M2,'+
+           ' CAST(SUM('+
+           '   CASE'+
+           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+sMes3+' Then'+
+           '       CAST(dem.quant_ref AS INTEGER)'+
+           '     Else'+
+           '       0'+
+           '   End)'+
+           ' AS INTEGER) qtd_venda_M3,'+
+           ' CAST(SUM('+
+           '   CASE'+
+           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+sMes4+' Then'+
+           '       CAST(dem.quant_ref AS INTEGER)'+
+           '     Else'+
+           '       0'+
+           '   End)'+
+           ' AS INTEGER) qtd_venda_M4,'+
+           ' CAST(SUM('+
+           '   CASE'+
+           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+sMes5+' Then'+
+           '       CAST(dem.quant_ref AS INTEGER)'+
+           '     Else'+
+           '       0'+
+           '   End)'+
+           ' AS INTEGER) qtd_venda_M5,'+
+
            '        CAST(SUM(dem.quant_ref) AS INTEGER) qtd_venda,'+
            '        CAST((SUM(CAST(dem.quant_ref AS NUMERIC(12,4))) / '+IntToStr(igDiasUteis)+') AS NUMERIC(12,4)) qtd_venda_dia,'+
+
+           ' CAST(SUM('+
+           '   CASE'+
+           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+sMes1+' Then'+
+           '       CAST(dem.preco AS NUMERIC(12,2))'+
+           '     Else'+
+           '       0'+
+           '   End)'+
+           ' AS NUMERIC(12,2)) vlr_venda_M1,'+
+           ' CAST(SUM('+
+           '   CASE'+
+           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+sMes2+' Then'+
+           '       CAST(dem.preco AS NUMERIC(12,2))'+
+           '     Else'+
+           '       0'+
+           '   End)'+
+           ' AS NUMERIC(12,2)) vlr_venda_M2,'+
+           ' CAST(SUM('+
+           '   CASE'+
+           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+sMes3+' Then'+
+           '       CAST(dem.preco AS NUMERIC(12,2))'+
+           '     Else'+
+           '       0'+
+           '   End)'+
+           ' AS NUMERIC(12,2)) vlr_venda_M3,'+
+           ' CAST(SUM('+
+           '   CASE'+
+           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+sMes4+' Then'+
+           '       CAST(dem.preco AS NUMERIC(12,2))'+
+           '     Else'+
+           '       0'+
+           '   End)'+
+           ' AS NUMERIC(12,2)) vlr_venda_M4,'+
+           ' CAST(SUM('+
+           '   CASE'+
+           '     When Cast(lpad(extract(month from dem.dta_ref),2,''0'') as varchar(2))='+sMes5+' Then'+
+           '       CAST(dem.preco AS NUMERIC(12,2))'+
+           '     Else'+
+           '       0'+
+           '   End)'+
+           ' AS NUMERIC(12,2)) vlr_venda_M5,'+
+
            '        CAST(SUM(dem.preco) AS NUMERIC(12,2)) vlr_venda,'+
            '        CAST((SUM(CAST(dem.preco AS NUMERIC(12,4))) / '+IntToStr(igDiasUteis)+') AS NUMERIC(12,2)) vlr_venda_dia,'+
            '      '+QuotedStr(sgDtaInicio)+' periodo_inicio,'+
