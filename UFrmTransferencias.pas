@@ -56,8 +56,11 @@ var
   bgArqErros: Boolean;     // Se Salva Arquivo de Erros
   sgArqErros: String;      // Nome do Arquivo de Erros
 
+  // Percentuais de Corte de Reposição
+  igPer_CorteA, igPer_CorteB, igPer_CorteC, igPer_CorteD, igPer_CorteE: Integer;
+
   Flags : Cardinal; // Verifica Internet Ativo - Encerra Necessario
-    
+
 //  hHrInicio, hHrFim: String;
 
 implementation
@@ -85,9 +88,9 @@ End; // Salva Arquivo de Erros, se Houver >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Analisa e Atualiza Transferencias do Dia >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmTransferencias.AnalisaAtualizaTransferencias: Boolean;
 Var
-  s, MySql: String;
-  iQtdReposicao: Integer;
-  bMultiplo: Boolean;
+  s, sObs, MySql: String;
+  i, iQtdReposicao: Integer;
+  bMultiplo, bRepoe: Boolean;
   iMultiplo, iQtdMultiplo: Integer;
 Begin
   Result:=False;
@@ -233,32 +236,149 @@ Begin
            iQtdReposicao:=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger;
          End; // If iQtdReposicao>=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger Then
 
-         // Transferencia para Loja ---------------------------------
+         // Verifica Percentual de Corte da Cirva -------------------
+         bRepoe:=True;
+         sObs:='';
+         If (DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsInteger>0) And (iQtdReposicao>0) Then
+         Begin
+           If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='A') And (igPer_CorteA>0)  Then
+           Begin
+             bRepoe:=((iQtdReposicao*100)/DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency)>=(100-igPer_CorteA);
+             sObs:='Curva "A": Corte '+IntToStr(igPer_CorteA)+'%';
+           End;
+
+           If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='B') And (igPer_CorteB>0)  Then
+           Begin
+             bRepoe:=((iQtdReposicao*100)/DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency)>=(100-igPer_CorteB);
+             sObs:='Curva "B": Corte '+IntToStr(igPer_CorteB)+'%';
+           End;
+
+           If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='C') And (igPer_CorteC>0)  Then
+           Begin
+             bRepoe:=((iQtdReposicao*100)/DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency)>=(100-igPer_CorteC);
+             sObs:='Curva "C": Corte '+IntToStr(igPer_CorteC)+'%';
+           End;
+
+           If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='D') And (igPer_CorteD>0)  Then
+           Begin
+             bRepoe:=((iQtdReposicao*100)/DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency)>=(100-igPer_CorteD);
+             sObs:='Curva "D": Corte '+IntToStr(igPer_CorteD)+'%';
+           End;
+
+           If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='E') And (igPer_CorteE>0)  Then
+           Begin
+             bRepoe:=((iQtdReposicao*100)/DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency)>=(100-igPer_CorteE);
+             sObs:='Curva "E": Corte '+IntToStr(igPer_CorteE)+'%';
+           End;
+
+         End; // If (DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsInteger>0) And (iQtdReposicao>0) Then
+
          DMTransferencias.CDS_EstoqueLoja.Edit;
-         DMTransferencias.CDS_EstoqueLojaIND_TRANSF.AsString:='SIM';
-         DMTransferencias.CDS_EstoqueLojaQTD_TRANSF.AsInteger:=iQtdReposicao;
-         DMTransferencias.CDS_EstoqueLojaQTD_A_TRANSF.AsInteger:=iQtdReposicao;
+
+         // Se Repõe para Loja --------------------------------------
+         If bRepoe Then
+         Begin
+           DMTransferencias.CDS_EstoqueLojaIND_TRANSF.AsString:='SIM';
+           DMTransferencias.CDS_EstoqueLojaQTD_TRANSF.AsInteger:=iQtdReposicao;
+           DMTransferencias.CDS_EstoqueLojaQTD_A_TRANSF.AsInteger:=iQtdReposicao;
+
+           // Acerta Saldo no CD ------------------------------------
+           DMTransferencias.CDS_EstoqueCD.Edit;
+           DMTransferencias.CDS_EstoqueCDQTD_SAIDAS.AsInteger:=
+               DMTransferencias.CDS_EstoqueCDQTD_SAIDAS.AsInteger+iQtdReposicao;
+           DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger:=
+                DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger-iQtdReposicao;
+           DMTransferencias.CDS_EstoqueCD.Post;
+           DMTransferencias.CDS_EstoqueCD.ApplyUpdates(0);
+         End; // If bRepoe Then
+
+         If Not bRepoe Then
+         Begin
+           DMTransferencias.CDS_EstoqueLojaIND_TRANSF.AsString:='NAO';
+           DMTransferencias.CDS_EstoqueLojaQTD_TRANSF.AsInteger:=iQtdReposicao;
+           DMTransferencias.CDS_EstoqueLojaQTD_A_TRANSF.AsInteger:=0;
+           DMTransferencias.CDS_EstoqueLojaOBS_DOCTO.AsString:=sObs;
+         End; // If Not bRepoe Then
+
          DMTransferencias.CDS_EstoqueLoja.Post;
 
-         // Acerta Saldo no CD --------------------------------------
-         DMTransferencias.CDS_EstoqueCD.Edit;
-         DMTransferencias.CDS_EstoqueCDQTD_SAIDAS.AsInteger:=
-                             DMTransferencias.CDS_EstoqueCDQTD_SAIDAS.AsInteger+
-                                                                  iQtdReposicao;
-         DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger:=
-                              DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger-
-                                                                  iQtdReposicao;
-         DMTransferencias.CDS_EstoqueCD.Post;
-
-         DMTransferencias.CDS_EstoqueCD.ApplyUpdates(0);
        End; // If DMTransferencias.CDS_EstoqueCD.IsEmpty Then
       DMTransferencias.CDS_EstoqueCD.Close;
+      sObs:='';
 
       DMTransferencias.CDS_EstoqueLoja.Next;
     End; // While not DMTransferencias.CDS_EstoqueLoja.Eof do
 
     // Atualiza Transacao ======================================================
     DMTransferencias.CDS_EstoqueLoja.ApplyUpdates(0);
+
+    // Reorganiza NUN_SEQ ======================================================
+    MySql:=' UPDATE ES_ESTOQUES_LOJAS lo'+
+           ' SET lo.num_seq=0'+
+           ' WHERE lo.dta_movto=CURRENT_DATE'+
+           ' AND   lo.ind_transf=''NAO''';
+    DMTransferencias.SQLC.Execute(MySql,nil,nil);
+
+//odirApagar - 04/10/2016    
+//    MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH 0';
+//    DMTransferencias.SQLC.Execute(MySql,nil,nil);
+//
+//    MySql:=' UPDATE ES_ESTOQUES_LOJAS lo'+
+//           ' SET lo.num_seq=GEN_ID(GEN_ODIR,1)'+
+//           ' WHERE lo.dta_movto=CURRENT_DATE'+
+//           ' AND   lo.ind_transf=''SIM''';
+//    DMTransferencias.SQLC.Execute(MySql,nil,nil);
+
+    // Acerta Num_Seq ==========================================================
+    MySql:=' SELECT DISTINCT l.cod_loja, l.num_docto'+
+           ' FROM ES_ESTOQUES_LOJAS l'+
+           ' WHERE l.dta_movto = CURRENT_DATE'+
+           ' AND   l.ind_transf='+QuotedStr('SIM');
+    DMTransferencias.CDS_BuscaRapida.Close;
+    DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+    DMTransferencias.CDS_BuscaRapida.Open;
+
+    While Not DMTransferencias.CDS_BuscaRapida.Eof do
+    Begin
+      MySql:=' SELECT lo.num_seq, lo.cod_produto, TRIM(pr.apresentacao) nome_produto,'+
+             ' COALESCE(cd.end_zona,''0'')||''.''||COALESCE(cd.end_corredor,''000'')||''.''||'+
+             ' COALESCE(cd.end_prateleira,''000'')||''.''||COALESCE(cd.end_gaveta,''0000'') Enderecamento'+
+             ' FROM ES_ESTOQUES_LOJAS lo'+
+             '      LEFT JOIN PRODUTO        pr  ON pr.codproduto=lo.cod_produto'+
+             '      LEFT JOIN ES_ESTOQUES_CD cd  ON cd.dta_movto=lo.dta_movto'+
+             '                                  AND cd.cod_produto=lo.cod_produto'+
+             ' WHERE lo.dta_movto=CURRENT_DATE'+
+             ' AND   lo.ind_transf='+QuotedStr('SIM')+
+             ' AND   lo.num_docto='+QuotedStr(DMTransferencias.CDS_BuscaRapida.FieldByName('Num_Docto').AsString)+
+             ' AND   lo.cod_loja='+QuotedStr(DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Loja').AsString)+
+             ' ORDER BY 4,3';
+      DMTransferencias.CDS_Busca.Close;
+      DMTransferencias.SDS_Busca.CommandText:=MySql;
+      DMTransferencias.CDS_Busca.Open;
+
+      i:=0;
+      While Not DMTransferencias.CDS_Busca.Eof do
+      Begin
+        Inc(i);
+
+        MySql:=' UPDATE ES_ESTOQUES_LOJAS lo'+
+               ' SET lo.num_seq='+IntToStr(i)+
+               ' WHERE lo.dta_movto=CURRENT_DATE'+
+               ' AND   lo.num_docto='+QuotedStr(DMTransferencias.CDS_BuscaRapida.FieldByName('Num_Docto').AsString)+
+               ' AND   lo.cod_loja='+QuotedStr(DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Loja').AsString)+
+               ' AND   lo.num_seq='+DMTransferencias.CDS_Busca.FieldByName('Num_Seq').AsString+
+               ' AND   lo.cod_produto='+QuotedStr(DMTransferencias.CDS_Busca.FieldByName('cod_produto').AsString);
+        DMTransferencias.SQLC.Execute(MySql,nil,nil);
+
+        DMTransferencias.CDS_Busca.Next;
+      End; // While Not DMTransferencias.CDS_Busca.Eof do
+      DMTransferencias.CDS_Busca.Close;
+
+      DMTransferencias.CDS_BuscaRapida.Next;
+    End; // While Not DMTransferencias.CDS_BuscaRapida.Eof do
+    DMTransferencias.CDS_BuscaRapida.Close;
+
+    // Encerra Transação =======================================================
     DMTransferencias.SQLC.Commit(TD);
 
     DateSeparator:='/';
@@ -280,7 +400,6 @@ Begin
     End; // on e : Exception do
   End; // Try
   DMTransferencias.CDS_EstoqueLoja.Close;
-
 End; // Analisa e Atualiza Transferencias do Dia >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Busca Produto e Demanda >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -472,9 +591,9 @@ Begin
                  '          ((p.principalfor='+QuotedStr('000677')+') AND (c.ind_curva in (''D'',''E'')))'+
                  '           OR'+
                  '          ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')))';
-
-  MySql:=                          
+  MySql:=
    MySql+' ORDER BY p.codproduto';
+
   DMTransferencias.CDS_CurvasLoja.Close;
   DMTransferencias.SDS_CurvasLoja.CommandText:=MySql;
   DMTransferencias.CDS_CurvasLoja.Open;
@@ -544,7 +663,7 @@ Var
   MySql: String;
   sCodProduto, sCodLoja, sCodEmp: String;
   cQtdSaldo, cQtdMais: Currency;
-  bConetada, bSiga, bRepoe: Boolean;
+  bConetada, bSiga: Boolean;
 Begin
   Result:=False;
 
@@ -694,32 +813,69 @@ Begin
                  Ceil(DMTransferencias.CDS_ProdutoDemandaQTD_REPOSICAO.AsFloat);
           DMTransferencias.CDS_ProdutoDemanda.Post;
 
+//OdirApagar - 03/10/2016 - Inicio
+//          // Verifica se Tem Produto com Estoque no CD --------------
+//          If (DMTransferencias.CDS_EstoqueCD.Locate('COD_PRODUTO',sCodProduto,[])) Then
+//           Begin
+//             bRepoe:=True;
+//             // Verifica Percentual de 80 Para Reposição Curvas A e B------------
+//             If (DMTransferencias.CDS_ProdutoDemandaQTD_ESTOQUE.AsInteger>0) And
+//                ((DMTransferencias.CDS_ProdutoDemandaIND_CURVA.AsString='A') Or
+//                 (DMTransferencias.CDS_ProdutoDemandaIND_CURVA.AsString='B')) Then
+//              bRepoe:=(((DMTransferencias.CDS_ProdutoDemandaQTD_REPOSICAO.AsCurrency*100)/
+//                         DMTransferencias.CDS_ProdutoDemandaQTD_ESTOQUE.AsCurrency)>=20);
+//
+//             // Inclui o Produto da Loja ----------------------------
+//             If bRepoe Then
+//             Begin
+//               DMTransferencias.CDS_EstoqueLoja.Insert;
+//               For ii:=0 to DMTransferencias.CDS_ProdutoDemanda.FieldCount-1 do
+//               Begin
+//                 If AnsiUpperCase(DMTransferencias.CDS_ProdutoDemanda.Fields[ii].DisplayLabel)<>'CODGRUPOSUB' Then
+//                  DMTransferencias.CDS_EstoqueLoja.Fields[ii].Assign(DMTransferencias.CDS_ProdutoDemanda.Fields[ii]);
+//               End; // For ii:=0 to DMTransferencias.CDS_ProdutoDemanda.FieldCount-1 do
+//               DMTransferencias.CDS_EstoqueLoja.Post;
+//
+//               // Atualiza Apply --------------------------------------
+//               DMTransferencias.CDS_EstoqueLoja.ApplyUpdates(0);
+//             End; // If bRepoe Then
+//             DMTransferencias.CDS_ProdutoDemanda.Close;
+//
+//           End
+//          Else // If (DMTransferencias.CDS_EstoqueCD.Locate('COD_PRODUTO',sCodProduto,[]))Then
+//           Begin
+//             DateSeparator:='.';
+//             DecimalSeparator:='.';
+//
+//             // Apresentar para o Compras
+//             MySql:=' INSERT INTO ES_ESTOQUES_SEM (COD_LOJA, DTA_MOVTO, COD_PRODUTO, QTD_ESTOQUE, IND_CURVA)'+
+//                    ' VALUES ('+
+//                    QuotedStr(DMTransferencias.CDS_ProdutoDemandaCOD_LOJA.AsString)+', '+
+//                    QuotedStr(DMTransferencias.CDS_ProdutoDemandaDTA_MOVTO.AsString)+', '+
+//                    QuotedStr(DMTransferencias.CDS_ProdutoDemandaCOD_PRODUTO.AsString)+', '+
+//                    QuotedStr(DMTransferencias.CDS_ProdutoDemandaQTD_REPOSICAO.AsString)+', '+
+//                    QuotedStr(DMTransferencias.CDS_ProdutoDemandaIND_CURVA.AsString)+')';
+//             DMTransferencias.SQLC.Execute(MySql,nil,nil);
+//
+//             DateSeparator:='/';
+//             DecimalSeparator:=',';
+//           End; // If (DMTransferencias.CDS_EstoqueCD.Locate('COD_PRODUTO',sCodProduto,[]))Then
+//        End; // If BuscaProdutosDemanda(sCodLoja, sCodProduto, IntToStr(ParteInteiro(CurrToStr(cQtdSaldo)))) Then
+//OdirApagar - 03/10/2016 - Fim
+
           // Verifica se Tem Produto com Estoque no CD --------------
           If (DMTransferencias.CDS_EstoqueCD.Locate('COD_PRODUTO',sCodProduto,[])) Then
            Begin
-             bRepoe:=True;
-             // Verifica Percentual de 80 Para Reposição Curvas A e B------------
-             If (DMTransferencias.CDS_ProdutoDemandaQTD_ESTOQUE.AsInteger>0) And
-                ((DMTransferencias.CDS_ProdutoDemandaIND_CURVA.AsString='A') Or
-                 (DMTransferencias.CDS_ProdutoDemandaIND_CURVA.AsString='B')) Then
-              bRepoe:=(((DMTransferencias.CDS_ProdutoDemandaQTD_REPOSICAO.AsCurrency*100)/
-                         DMTransferencias.CDS_ProdutoDemandaQTD_ESTOQUE.AsCurrency)>=20);
-
-             // Inclui o Produto da Loja ----------------------------
-             If bRepoe Then
+             DMTransferencias.CDS_EstoqueLoja.Insert;
+             For ii:=0 to DMTransferencias.CDS_ProdutoDemanda.FieldCount-1 do
              Begin
-               DMTransferencias.CDS_EstoqueLoja.Insert;
-               For ii:=0 to DMTransferencias.CDS_ProdutoDemanda.FieldCount-1 do
-               Begin
-                 If AnsiUpperCase(DMTransferencias.CDS_ProdutoDemanda.Fields[ii].DisplayLabel)<>'CODGRUPOSUB' Then
-                  DMTransferencias.CDS_EstoqueLoja.Fields[ii].Assign(DMTransferencias.CDS_ProdutoDemanda.Fields[ii]);
-               End; // For ii:=0 to DMTransferencias.CDS_ProdutoDemanda.FieldCount-1 do
-               DMTransferencias.CDS_EstoqueLoja.Post;
+               If AnsiUpperCase(DMTransferencias.CDS_ProdutoDemanda.Fields[ii].DisplayLabel)<>'CODGRUPOSUB' Then
+                DMTransferencias.CDS_EstoqueLoja.Fields[ii].Assign(DMTransferencias.CDS_ProdutoDemanda.Fields[ii]);
+             End; // For ii:=0 to DMTransferencias.CDS_ProdutoDemanda.FieldCount-1 do
+             DMTransferencias.CDS_EstoqueLoja.Post;
 
-               // Atualiza Apply --------------------------------------
-               DMTransferencias.CDS_EstoqueLoja.ApplyUpdates(0);
-             End; // If bRepoe Then
-             DMTransferencias.CDS_ProdutoDemanda.Close;
+             // Atualiza Apply --------------------------------------
+             DMTransferencias.CDS_EstoqueLoja.ApplyUpdates(0);
            End
           Else // If (DMTransferencias.CDS_EstoqueCD.Locate('COD_PRODUTO',sCodProduto,[]))Then
            Begin
@@ -740,44 +896,49 @@ Begin
              DecimalSeparator:=',';
            End; // If (DMTransferencias.CDS_EstoqueCD.Locate('COD_PRODUTO',sCodProduto,[]))Then
         End; // If BuscaProdutosDemanda(sCodLoja, sCodProduto, IntToStr(ParteInteiro(CurrToStr(cQtdSaldo)))) Then
+        DMTransferencias.CDS_ProdutoDemanda.Close;
 
         DMTransferencias.CDS_CurvasLoja.Next;
       End; // While Not DMTransferencias.CDS_CurvasLoja.Eof do
       DMTransferencias.CDS_CurvasLoja.Close;
 
-      // Acerta Num_Seq ========================================================
-      MySql:=' SELECT lo.num_seq, lo.cod_produto, TRIM(pr.apresentacao) nome_produto,'+
-             ' COALESCE(cd.end_zona,''0'')||''.''||COALESCE(cd.end_corredor,''000'')||''.''||'+
-             ' COALESCE(cd.end_prateleira,''000'')||''.''||COALESCE(cd.end_gaveta,''0000'') Enderecamento'+
-             ' FROM ES_ESTOQUES_LOJAS lo'+
-             '      LEFT JOIN PRODUTO        pr  ON pr.codproduto=lo.cod_produto'+
-             '      LEFT JOIN ES_ESTOQUES_CD cd  ON cd.dta_movto=lo.dta_movto'+
-             '                                  AND cd.cod_produto=lo.cod_produto'+
-             ' WHERE lo.dta_movto=CURRENT_DATE'+
-             ' AND   lo.num_docto='+QuotedStr(sgNrDocto)+
-             ' AND   lo.cod_loja='+QuotedStr(sCodLoja)+
-             ' ORDER BY 4,3';
-      DMTransferencias.CDS_Busca.Close;
-      DMTransferencias.SDS_Busca.CommandText:=MySql;
-      DMTransferencias.CDS_Busca.Open;
-
-      ii:=0;
-      While Not DMTransferencias.CDS_Busca.Eof do
-      Begin
-        Inc(ii);
-
-        MySql:=' UPDATE ES_ESTOQUES_LOJAS lo'+
-               ' SET lo.num_seq='+IntToStr(ii)+
-               ' WHERE lo.dta_movto=CURRENT_DATE'+
-               ' AND   lo.num_docto='+QuotedStr(sgNrDocto)+
-               ' AND   lo.cod_loja='+QuotedStr(sCodLoja)+
-               ' AND   lo.num_seq='+DMTransferencias.CDS_Busca.FieldByName('Num_Seq').AsString+
-               ' AND   lo.cod_produto='+QuotedStr(DMTransferencias.CDS_Busca.FieldByName('cod_produto').AsString);
-        DMTransferencias.SQLC.Execute(MySql,nil,nil);
-
-        DMTransferencias.CDS_Busca.Next;
-      End; // While Not DMTransferencias.CDS_Busca.Eof do
-      DMTransferencias.CDS_Busca.Close;
+// OdirApagar - 04/10/2016 - Colocado em AnalisaAtualizaTransferencias
+//
+//      // Acerta Num_Seq ========================================================
+//      MySql:=' SELECT lo.num_seq, lo.cod_produto, TRIM(pr.apresentacao) nome_produto,'+
+//             ' COALESCE(cd.end_zona,''0'')||''.''||COALESCE(cd.end_corredor,''000'')||''.''||'+
+//             ' COALESCE(cd.end_prateleira,''000'')||''.''||COALESCE(cd.end_gaveta,''0000'') Enderecamento'+
+//             ' FROM ES_ESTOQUES_LOJAS lo'+
+//             '      LEFT JOIN PRODUTO        pr  ON pr.codproduto=lo.cod_produto'+
+//             '      LEFT JOIN ES_ESTOQUES_CD cd  ON cd.dta_movto=lo.dta_movto'+
+//             '                                  AND cd.cod_produto=lo.cod_produto'+
+//             ' WHERE lo.dta_movto=CURRENT_DATE'+
+//             ' AND   lo.num_docto='+QuotedStr(sgNrDocto)+
+//             ' AND   lo.cod_loja='+QuotedStr(sCodLoja)+
+//             ' ORDER BY 4,3';
+//      DMTransferencias.CDS_Busca.Close;
+//      DMTransferencias.SDS_Busca.CommandText:=MySql;
+//      DMTransferencias.CDS_Busca.Open;
+//
+//      ii:=0;
+//      While Not DMTransferencias.CDS_Busca.Eof do
+//      Begin
+//        Inc(ii);
+//
+//        MySql:=' UPDATE ES_ESTOQUES_LOJAS lo'+
+//               ' SET lo.num_seq='+IntToStr(ii)+
+//               ' WHERE lo.dta_movto=CURRENT_DATE'+
+//               ' AND   lo.num_docto='+QuotedStr(sgNrDocto)+
+//               ' AND   lo.cod_loja='+QuotedStr(sCodLoja)+
+//               ' AND   lo.num_seq='+DMTransferencias.CDS_Busca.FieldByName('Num_Seq').AsString+
+//               ' AND   lo.cod_produto='+QuotedStr(DMTransferencias.CDS_Busca.FieldByName('cod_produto').AsString);
+//        DMTransferencias.SQLC.Execute(MySql,nil,nil);
+//
+//        DMTransferencias.CDS_Busca.Next;
+//      End; // While Not DMTransferencias.CDS_Busca.Eof do
+//      DMTransferencias.CDS_Busca.Close;
+//
+// OdirApagar - 04/10/2016 - Colocado em AnalisaAtualizaTransferencias
 
       // Fecha Transacao ===================================================
       DMTransferencias.SQLC.Commit(TD);
@@ -1005,6 +1166,40 @@ begin
     Application.Terminate;
     Exit;
   End;
+
+  // Busca Percentuais de Cortes das Curvas ====================================
+  MySql:=' SELECT cc.Cod_Aux, COALESCE(cc.des_aux1,''0'') PerCorte'+
+         ' FROM TAB_AUXILIAR cc'+
+         ' WHERE cc.Tip_Aux=2'+
+         ' ORDER BY cc.Cod_Aux';
+  DMTransferencias.CDS_BuscaRapida.Close;
+  DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+  DMTransferencias.CDS_BuscaRapida.Open;
+  igPer_CorteA:=0;
+  igPer_CorteB:=0;
+  igPer_CorteC:=0;
+  igPer_CorteD:=0;
+  igPer_CorteE:=0;
+  While not DMTransferencias.CDS_BuscaRapida.Eof do
+  Begin
+    If DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Aux'). AsInteger=1 Then
+     igPer_CorteA:=DMTransferencias.CDS_BuscaRapida.FieldByName('PerCorte').AsInteger;
+
+    If DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Aux'). AsInteger=2 Then
+     igPer_CorteB:=DMTransferencias.CDS_BuscaRapida.FieldByName('PerCorte').AsInteger;
+
+    If DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Aux'). AsInteger=3 Then
+     igPer_CorteC:=DMTransferencias.CDS_BuscaRapida.FieldByName('PerCorte').AsInteger;
+
+    If DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Aux'). AsInteger=4 Then
+     igPer_CorteD:=DMTransferencias.CDS_BuscaRapida.FieldByName('PerCorte').AsInteger;
+
+    If DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Aux'). AsInteger=5 Then
+     igPer_CorteE:=DMTransferencias.CDS_BuscaRapida.FieldByName('PerCorte').AsInteger;
+
+    DMTransferencias.CDS_BuscaRapida.Next;
+  End; // While not DMTransferencias.CDS_BuscaRapida.Eof do
+  DMTransferencias.CDS_BuscaRapida.Close;
 
   // Zera Sequencia para Novo Docto ============================================
   MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH 0';

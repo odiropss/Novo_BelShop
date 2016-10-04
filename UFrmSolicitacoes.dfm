@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 432
-    ActivePage = Ts_ReposLojasDigita
+    ActivePage = Ts_ParametrosGerenciador
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -3065,7 +3065,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Top = 0
         Width = 625
         Height = 369
-        ActivePage = Ts_ParamLojaReposFornec
+        ActivePage = Ts_ParamLojaReposicoes
         Align = alClient
         MultiLine = True
         Style = tsButtons
@@ -4485,13 +4485,13 @@ object FrmSolicitacoes: TFrmSolicitacoes
               Caption = ' CURVAS '
               TabOrder = 0
               object Lab_ParamCurvaA: TLabel
-                Left = 146
+                Left = 129
                 Top = 61
-                Width = 286
+                Width = 358
                 Height = 13
                 Caption = 
                   'Curva A ........................................................' +
-                  '...'
+                  '.....................'
                 Color = clYellow
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
@@ -4502,7 +4502,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 ParentFont = False
               end
               object Label81: TLabel
-                Left = 251
+                Left = 234
                 Top = 57
                 Width = 16
                 Height = 20
@@ -4515,21 +4515,21 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 ParentFont = False
               end
               object Label64: TLabel
-                Left = 140
-                Top = 42
-                Width = 62
-                Height = 13
-                Caption = 'Percentual'
+                Left = 145
+                Top = 29
+                Width = 85
+                Height = 26
+                Caption = '      Curva'#13#10'% Participa'#231#227'o'
               end
               object Label46: TLabel
-                Left = 291
-                Top = 42
+                Left = 286
+                Top = 29
                 Width = 63
-                Height = 13
-                Caption = 'Estocagem'
+                Height = 26
+                Caption = '  Dias de'#13#10'Estocagem'
               end
               object Label45: TLabel
-                Left = 352
+                Left = 335
                 Top = 61
                 Width = 26
                 Height = 13
@@ -4542,36 +4542,36 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 ParentFont = False
               end
               object Label44: TLabel
-                Left = 408
-                Top = 42
-                Width = 68
-                Height = 13
-                Caption = 'Est. M'#237'nimo'
+                Left = 391
+                Top = 29
+                Width = 47
+                Height = 26
+                Caption = 'Estoque'#13#10'M'#237'nimo'
               end
               object Lab_ParamCurvaB: TLabel
-                Left = 146
+                Left = 129
                 Top = 92
-                Width = 286
+                Width = 358
                 Height = 13
                 Caption = 
                   'Curva B ........................................................' +
-                  '...'
+                  '.....................'
                 Color = 8454143
                 ParentColor = False
               end
               object Lab_ParamCurvaC: TLabel
-                Left = 146
+                Left = 129
                 Top = 124
-                Width = 286
+                Width = 354
                 Height = 13
                 Caption = 
                   'Curva C ........................................................' +
-                  '...'
+                  '....................'
                 Color = 8454143
                 ParentColor = False
               end
               object Label83: TLabel
-                Left = 251
+                Left = 234
                 Top = 120
                 Width = 16
                 Height = 20
@@ -4584,7 +4584,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 ParentFont = False
               end
               object Label51: TLabel
-                Left = 352
+                Left = 335
                 Top = 124
                 Width = 26
                 Height = 13
@@ -4597,29 +4597,29 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 ParentFont = False
               end
               object Lab_ParamCurvaE: TLabel
-                Left = 146
+                Left = 129
                 Top = 188
-                Width = 286
+                Width = 358
                 Height = 13
                 Caption = 
                   'Curva E ........................................................' +
-                  '...'
+                  '.....................'
                 Color = 8454143
                 ParentColor = False
               end
               object Lab_ParamCurvaD: TLabel
-                Left = 146
+                Left = 129
                 Top = 156
-                Width = 287
+                Width = 359
                 Height = 13
                 Caption = 
                   'Curva D ........................................................' +
-                  '...'
+                  '.....................'
                 Color = 8454143
                 ParentColor = False
               end
               object Label47: TLabel
-                Left = 352
+                Left = 335
                 Top = 92
                 Width = 26
                 Height = 13
@@ -4632,7 +4632,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 ParentFont = False
               end
               object Label49: TLabel
-                Left = 352
+                Left = 335
                 Top = 156
                 Width = 26
                 Height = 13
@@ -4645,7 +4645,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 ParentFont = False
               end
               object Label53: TLabel
-                Left = 352
+                Left = 335
                 Top = 188
                 Width = 26
                 Height = 13
@@ -4658,7 +4658,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 ParentFont = False
               end
               object Label82: TLabel
-                Left = 251
+                Left = 234
                 Top = 88
                 Width = 16
                 Height = 20
@@ -4671,7 +4671,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 ParentFont = False
               end
               object Label187: TLabel
-                Left = 251
+                Left = 234
                 Top = 152
                 Width = 16
                 Height = 20
@@ -4684,7 +4684,79 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 ParentFont = False
               end
               object Label189: TLabel
-                Left = 251
+                Left = 234
+                Top = 184
+                Width = 16
+                Height = 20
+                Caption = '%'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -16
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object Label65: TLabel
+                Left = 466
+                Top = 29
+                Width = 61
+                Height = 26
+                Caption = 'Reposi'#231#227'o'#13#10'  % Corte'
+              end
+              object Label76: TLabel
+                Left = 519
+                Top = 57
+                Width = 16
+                Height = 20
+                Caption = '%'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -16
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object Label77: TLabel
+                Left = 519
+                Top = 88
+                Width = 16
+                Height = 20
+                Caption = '%'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -16
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object Label78: TLabel
+                Left = 519
+                Top = 120
+                Width = 16
+                Height = 20
+                Caption = '%'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -16
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object Label79: TLabel
+                Left = 519
+                Top = 152
+                Width = 16
+                Height = 20
+                Caption = '%'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -16
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object Label80: TLabel
+                Left = 519
                 Top = 184
                 Width = 16
                 Height = 20
@@ -4697,10 +4769,11 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 ParentFont = False
               end
               object Ckb_ParamCurvaSelectA: TJvCheckBox
-                Left = 126
+                Left = 109
                 Top = 59
                 Width = 13
                 Height = 17
+                TabStop = False
                 BiDiMode = bdRightToLeft
                 Checked = True
                 Font.Charset = DEFAULT_CHARSET
@@ -4720,7 +4793,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 HotTrackFont.Style = []
               end
               object EdtParamCurvaALimite: TCurrencyEdit
-                Left = 210
+                Left = 193
                 Top = 57
                 Width = 40
                 Height = 21
@@ -4737,7 +4810,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 TabOrder = 1
               end
               object EdtParamCurvaADiasEst: TCurrencyEdit
-                Left = 303
+                Left = 286
                 Top = 57
                 Width = 48
                 Height = 21
@@ -4754,7 +4827,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 TabOrder = 2
               end
               object EdtParamCurvaAEstMinino: TCurrencyEdit
-                Left = 425
+                Left = 392
                 Top = 57
                 Width = 52
                 Height = 21
@@ -4770,7 +4843,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 TabOrder = 3
               end
               object EdtParamCurvaBEstMinino: TCurrencyEdit
-                Left = 425
+                Left = 392
                 Top = 88
                 Width = 52
                 Height = 21
@@ -4783,10 +4856,10 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 Font.Name = 'MS Sans Serif'
                 Font.Style = [fsBold]
                 ParentFont = False
-                TabOrder = 7
+                TabOrder = 8
               end
               object EdtParamCurvaBDiasEst: TCurrencyEdit
-                Left = 303
+                Left = 286
                 Top = 88
                 Width = 48
                 Height = 21
@@ -4800,10 +4873,10 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 Font.Style = [fsBold]
                 MaxLength = 3
                 ParentFont = False
-                TabOrder = 6
+                TabOrder = 7
               end
               object EdtParamCurvaBLimite: TCurrencyEdit
-                Left = 210
+                Left = 193
                 Top = 88
                 Width = 40
                 Height = 21
@@ -4817,13 +4890,14 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 Font.Style = [fsBold]
                 MaxLength = 2
                 ParentFont = False
-                TabOrder = 5
+                TabOrder = 6
               end
               object Ckb_ParamCurvaSelectB: TJvCheckBox
-                Left = 126
+                Left = 109
                 Top = 90
                 Width = 13
                 Height = 17
+                TabStop = False
                 BiDiMode = bdRightToLeft
                 Checked = True
                 Font.Charset = DEFAULT_CHARSET
@@ -4834,7 +4908,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 ParentBiDiMode = False
                 ParentFont = False
                 State = cbChecked
-                TabOrder = 4
+                TabOrder = 5
                 LinkedControls = <>
                 HotTrackFont.Charset = DEFAULT_CHARSET
                 HotTrackFont.Color = clWindowText
@@ -4843,10 +4917,11 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 HotTrackFont.Style = []
               end
               object Ckb_ParamCurvaSelectC: TJvCheckBox
-                Left = 126
+                Left = 109
                 Top = 122
                 Width = 13
                 Height = 17
+                TabStop = False
                 BiDiMode = bdRightToLeft
                 Checked = True
                 Font.Charset = DEFAULT_CHARSET
@@ -4857,7 +4932,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 ParentBiDiMode = False
                 ParentFont = False
                 State = cbChecked
-                TabOrder = 8
+                TabOrder = 10
                 LinkedControls = <>
                 HotTrackFont.Charset = DEFAULT_CHARSET
                 HotTrackFont.Color = clWindowText
@@ -4866,8 +4941,223 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 HotTrackFont.Style = []
               end
               object EdtParamCurvaCLimite: TCurrencyEdit
-                Left = 210
+                Left = 193
                 Top = 120
+                Width = 40
+                Height = 21
+                AutoSize = False
+                DecimalPlaces = 0
+                DisplayFormat = '0'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                MaxLength = 2
+                ParentFont = False
+                TabOrder = 11
+              end
+              object EdtParamCurvaCDiasEst: TCurrencyEdit
+                Left = 286
+                Top = 120
+                Width = 48
+                Height = 21
+                AutoSize = False
+                DecimalPlaces = 0
+                DisplayFormat = '0'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                MaxLength = 3
+                ParentFont = False
+                TabOrder = 12
+              end
+              object EdtParamCurvaCEstMinino: TCurrencyEdit
+                Left = 392
+                Top = 120
+                Width = 52
+                Height = 21
+                AutoSize = False
+                DecimalPlaces = 0
+                DisplayFormat = '0'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+                TabOrder = 13
+              end
+              object EdtParamCurvaDEstMinino: TCurrencyEdit
+                Left = 392
+                Top = 152
+                Width = 52
+                Height = 21
+                AutoSize = False
+                DecimalPlaces = 0
+                DisplayFormat = '0'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+                TabOrder = 18
+              end
+              object EdtParamCurvaEEstMinino: TCurrencyEdit
+                Left = 392
+                Top = 184
+                Width = 52
+                Height = 21
+                AutoSize = False
+                DecimalPlaces = 0
+                DisplayFormat = '0'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+                TabOrder = 23
+              end
+              object EdtParamCurvaDDiasEst: TCurrencyEdit
+                Left = 286
+                Top = 152
+                Width = 48
+                Height = 21
+                AutoSize = False
+                DecimalPlaces = 0
+                DisplayFormat = '0'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                MaxLength = 3
+                ParentFont = False
+                TabOrder = 17
+              end
+              object EdtParamCurvaEDiasEst: TCurrencyEdit
+                Left = 286
+                Top = 184
+                Width = 48
+                Height = 21
+                AutoSize = False
+                DecimalPlaces = 0
+                DisplayFormat = '0'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                MaxLength = 3
+                ParentFont = False
+                TabOrder = 22
+              end
+              object EdtParamCurvaDLimite: TCurrencyEdit
+                Left = 193
+                Top = 152
+                Width = 40
+                Height = 21
+                AutoSize = False
+                DecimalPlaces = 0
+                DisplayFormat = '0'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                MaxLength = 2
+                ParentFont = False
+                TabOrder = 16
+              end
+              object EdtParamCurvaELimite: TCurrencyEdit
+                Left = 193
+                Top = 184
+                Width = 40
+                Height = 21
+                AutoSize = False
+                DecimalPlaces = 0
+                DisplayFormat = '0'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                MaxLength = 2
+                ParentFont = False
+                TabOrder = 21
+              end
+              object Ckb_ParamCurvaSelectD: TJvCheckBox
+                Left = 109
+                Top = 154
+                Width = 13
+                Height = 17
+                TabStop = False
+                BiDiMode = bdRightToLeft
+                Checked = True
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentBiDiMode = False
+                ParentFont = False
+                State = cbChecked
+                TabOrder = 15
+                LinkedControls = <>
+                HotTrackFont.Charset = DEFAULT_CHARSET
+                HotTrackFont.Color = clWindowText
+                HotTrackFont.Height = -11
+                HotTrackFont.Name = 'MS Sans Serif'
+                HotTrackFont.Style = []
+              end
+              object Ckb_ParamCurvaSelectE: TJvCheckBox
+                Left = 109
+                Top = 186
+                Width = 13
+                Height = 17
+                TabStop = False
+                BiDiMode = bdRightToLeft
+                Checked = True
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentBiDiMode = False
+                ParentFont = False
+                State = cbChecked
+                TabOrder = 20
+                LinkedControls = <>
+                HotTrackFont.Charset = DEFAULT_CHARSET
+                HotTrackFont.Color = clWindowText
+                HotTrackFont.Height = -11
+                HotTrackFont.Name = 'MS Sans Serif'
+                HotTrackFont.Style = []
+              end
+              object EdtParamCurvaACorte: TCurrencyEdit
+                Left = 478
+                Top = 57
+                Width = 40
+                Height = 21
+                AutoSize = False
+                DecimalPlaces = 0
+                DisplayFormat = '0'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                MaxLength = 2
+                ParentFont = False
+                TabOrder = 4
+              end
+              object EdtParamCurvaBCorte: TCurrencyEdit
+                Left = 478
+                Top = 88
                 Width = 40
                 Height = 21
                 AutoSize = False
@@ -4882,10 +5172,10 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 ParentFont = False
                 TabOrder = 9
               end
-              object EdtParamCurvaCDiasEst: TCurrencyEdit
-                Left = 303
+              object EdtParamCurvaCCorte: TCurrencyEdit
+                Left = 478
                 Top = 120
-                Width = 48
+                Width = 40
                 Height = 21
                 AutoSize = False
                 DecimalPlaces = 0
@@ -4895,94 +5185,12 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = [fsBold]
-                MaxLength = 3
-                ParentFont = False
-                TabOrder = 10
-              end
-              object EdtParamCurvaCEstMinino: TCurrencyEdit
-                Left = 425
-                Top = 120
-                Width = 52
-                Height = 21
-                AutoSize = False
-                DecimalPlaces = 0
-                DisplayFormat = '0'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-                TabOrder = 11
-              end
-              object EdtParamCurvaDEstMinino: TCurrencyEdit
-                Left = 425
-                Top = 152
-                Width = 52
-                Height = 21
-                AutoSize = False
-                DecimalPlaces = 0
-                DisplayFormat = '0'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-                TabOrder = 15
-              end
-              object EdtParamCurvaEEstMinino: TCurrencyEdit
-                Left = 425
-                Top = 184
-                Width = 52
-                Height = 21
-                AutoSize = False
-                DecimalPlaces = 0
-                DisplayFormat = '0'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-                TabOrder = 19
-              end
-              object EdtParamCurvaDDiasEst: TCurrencyEdit
-                Left = 303
-                Top = 152
-                Width = 48
-                Height = 21
-                AutoSize = False
-                DecimalPlaces = 0
-                DisplayFormat = '0'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                MaxLength = 3
+                MaxLength = 2
                 ParentFont = False
                 TabOrder = 14
               end
-              object EdtParamCurvaEDiasEst: TCurrencyEdit
-                Left = 303
-                Top = 184
-                Width = 48
-                Height = 21
-                AutoSize = False
-                DecimalPlaces = 0
-                DisplayFormat = '0'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                MaxLength = 3
-                ParentFont = False
-                TabOrder = 18
-              end
-              object EdtParamCurvaDLimite: TCurrencyEdit
-                Left = 210
+              object EdtParamCurvaDCorte: TCurrencyEdit
+                Left = 478
                 Top = 152
                 Width = 40
                 Height = 21
@@ -4996,10 +5204,10 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 Font.Style = [fsBold]
                 MaxLength = 2
                 ParentFont = False
-                TabOrder = 13
+                TabOrder = 19
               end
-              object EdtParamCurvaELimite: TCurrencyEdit
-                Left = 210
+              object EdtParamCurvaECorte: TCurrencyEdit
+                Left = 478
                 Top = 184
                 Width = 40
                 Height = 21
@@ -5013,53 +5221,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 Font.Style = [fsBold]
                 MaxLength = 2
                 ParentFont = False
-                TabOrder = 17
-              end
-              object Ckb_ParamCurvaSelectD: TJvCheckBox
-                Left = 126
-                Top = 154
-                Width = 13
-                Height = 17
-                BiDiMode = bdRightToLeft
-                Checked = True
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentBiDiMode = False
-                ParentFont = False
-                State = cbChecked
-                TabOrder = 12
-                LinkedControls = <>
-                HotTrackFont.Charset = DEFAULT_CHARSET
-                HotTrackFont.Color = clWindowText
-                HotTrackFont.Height = -11
-                HotTrackFont.Name = 'MS Sans Serif'
-                HotTrackFont.Style = []
-              end
-              object Ckb_ParamCurvaSelectE: TJvCheckBox
-                Left = 126
-                Top = 186
-                Width = 13
-                Height = 17
-                BiDiMode = bdRightToLeft
-                Checked = True
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentBiDiMode = False
-                ParentFont = False
-                State = cbChecked
-                TabOrder = 16
-                LinkedControls = <>
-                HotTrackFont.Charset = DEFAULT_CHARSET
-                HotTrackFont.Color = clWindowText
-                HotTrackFont.Height = -11
-                HotTrackFont.Name = 'MS Sans Serif'
-                HotTrackFont.Style = []
+                TabOrder = 24
               end
             end
           end
@@ -9858,8 +10020,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
     end
   end
   object PainelApresExp: TPanel
-    Left = 537
-    Top = 68
+    Left = 289
+    Top = 284
     Width = 89
     Height = 33
     BevelInner = bvRaised
@@ -9899,7 +10061,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 489
+    Left = 521
     Top = 50
   end
 end

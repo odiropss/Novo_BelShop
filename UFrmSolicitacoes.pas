@@ -1,6 +1,6 @@
-{
- Width = 649
- Height = 470
+{                ok
+ Height = 470 - 432
+ Width  = 649 - 633
 ===============================================
 TABSHEET NÃO UTILIZADOS:
   - Ts_ParamIRRF
@@ -593,6 +593,17 @@ type
     Label187: TLabel;
     Label189: TLabel;
     Bt_ReposLojasPreco: TJvXPButton;
+    Label65: TLabel;
+    EdtParamCurvaACorte: TCurrencyEdit;
+    Label76: TLabel;
+    Label77: TLabel;
+    EdtParamCurvaBCorte: TCurrencyEdit;
+    EdtParamCurvaCCorte: TCurrencyEdit;
+    Label78: TLabel;
+    EdtParamCurvaDCorte: TCurrencyEdit;
+    Label79: TLabel;
+    Label80: TLabel;
+    EdtParamCurvaECorte: TCurrencyEdit;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -7005,14 +7016,29 @@ end;
 procedure TFrmSolicitacoes.Bt_ParamCurvaDiasUteisClick(Sender: TObject);
 begin
   Try
+    StrToDate(DtEdt_EdtParamCurvaInicio.Text);
+    StrToDate(DtEdt_EdtParamCurvaFim.Text);
+  Except
+    msg('Erro no Período Informado !!','A');
+    DtEdt_EdtParamCurvaInicio.SetFocus;
+    Exit;
+  End;
+
+  If DtEdt_EdtParamCurvaInicio.Date>DtEdt_EdtParamCurvaFim.Date Then
+  Begin
+    msg('Erro no Período Informado !!','A');
+    DtEdt_EdtParamCurvaInicio.SetFocus;
+    Exit;
+  End;
+
+  Try
     EdtParamCurvaDiasTotal.Text:=VarToStr((DtEdt_EdtParamCurvaFim.Date-DtEdt_EdtParamCurvaInicio.Date)+1);
     EdtParamCurvaDiasUteis.Value:=DiasUteisBelShop(DtEdt_EdtParamCurvaInicio.Date, DtEdt_EdtParamCurvaFim.Date,
-                                                             Ckb_ParamCurvaDomingo.Checked, Ckb_ParamCurvaSabado.Checked);
-
+                                                   Ckb_ParamCurvaDomingo.Checked, Ckb_ParamCurvaSabado.Checked);
   Except
     msg('Erro no Período Informado !!','A');
   End;
-  DtEdt_EdtParamCurvaInicio.SetFocus;
+
 end;
 
 procedure TFrmSolicitacoes.DtEdt_EdtParamCurvaInicioPropertiesChange(Sender: TObject);
@@ -8369,7 +8395,7 @@ begin
   If DMBelShop.SQLC.InTransaction Then
    DMBelShop.SQLC.Rollback(TD);
 
-  PainelApresExp.Caption:='AGUARDE !! Atualizando Preço de Compra: Produto '+EdtReposLojasProduto.Text;
+  PainelApresExp.Caption:='AGUARDE !! Atualizando Preço de Compra...';
   PainelApresExp.Width:=Length(PainelApresExp.Caption)*10;
   PainelApresExp.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-PainelApresExp.Width)/2));
   PainelApresExp.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-PainelApresExp.Height)/2))-20;

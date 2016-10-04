@@ -405,7 +405,7 @@ object FrmSalao: TFrmSalao
     Top = 0
     Width = 977
     Height = 580
-    ActivePage = Ts_ProfMovtosRH
+    ActivePage = Ts_Profissionais
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -8978,7 +8978,7 @@ object FrmSalao: TFrmSalao
                   Left = 411
                   Top = 1
                   Width = 86
-                  Height = 27
+                  Height = 26
                   Align = alRight
                   Caption = '  Calculo com  '#13#10'     Metas ?'
                   Visible = False

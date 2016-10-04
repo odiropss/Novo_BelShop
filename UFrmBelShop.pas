@@ -42072,9 +42072,10 @@ begin
 
   // Busca Valores da Curva ABC ================================================
   MySql:=' SELECT t.cod_aux Cod_Curva,'+
-         ' Coalesce(t.des_aux,0) Per_Curva,'+
-         ' Coalesce(t.vlr_aux,0) Qtd_Dias,'+
-         ' Coalesce(t.vlr_aux1,0) Qtd_Min'+
+         ' Coalesce(t.des_aux,0)  Per_Curva,'+
+         ' Coalesce(t.vlr_aux,0)  Qtd_Dias,'+
+         ' Coalesce(t.vlr_aux1,0) Qtd_Min,'+
+         ' Coalesce(t.des_aux1,0) Per_Corte'+
          ' FROM TAB_AUXILIAR t'+
          ' WHERE t.tip_aux=2'+
          ' ORDER BY t.cod_aux';
@@ -42084,39 +42085,49 @@ begin
 
   While Not DMBelShop.CDS_BuscaRapida.Eof do
   Begin
+    // Curva A ------------------------------------------------------
     If DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Curva').AsString='1' Then
     Begin
       FrmSolicitacoes.EdtParamCurvaALimite.Value   :=DMBelShop.CDS_BuscaRapida.FieldByName('Per_Curva').AsInteger;
       FrmSolicitacoes.EdtParamCurvaADiasEst.Value  :=DMBelShop.CDS_BuscaRapida.FieldByName('Qtd_Dias').AsInteger;
       FrmSolicitacoes.EdtParamCurvaAEstMinino.Value:=DMBelShop.CDS_BuscaRapida.FieldByName('Qtd_Min').AsInteger;
+      FrmSolicitacoes.EdtParamCurvaACorte.Value    :=DMBelShop.CDS_BuscaRapida.FieldByName('Per_Corte').AsInteger;
     End;
 
+    // Curva B ------------------------------------------------------
     If DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Curva').AsString='2' Then
     Begin
       FrmSolicitacoes.EdtParamCurvaBLimite.Value   :=DMBelShop.CDS_BuscaRapida.FieldByName('Per_Curva').AsInteger;
       FrmSolicitacoes.EdtParamCurvaBDiasEst.Value  :=DMBelShop.CDS_BuscaRapida.FieldByName('Qtd_Dias').AsInteger;
       FrmSolicitacoes.EdtParamCurvaBEstMinino.Value:=DMBelShop.CDS_BuscaRapida.FieldByName('Qtd_Min').AsInteger;
+      FrmSolicitacoes.EdtParamCurvaBCorte.Value    :=DMBelShop.CDS_BuscaRapida.FieldByName('Per_Corte').AsInteger;
     End;
 
+    // Curva C ------------------------------------------------------
     If DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Curva').AsString='3' Then
     Begin
       FrmSolicitacoes.EdtParamCurvaCLimite.Value   :=DMBelShop.CDS_BuscaRapida.FieldByName('Per_Curva').AsInteger;
       FrmSolicitacoes.EdtParamCurvaCDiasEst.Value  :=DMBelShop.CDS_BuscaRapida.FieldByName('Qtd_Dias').AsInteger;
       FrmSolicitacoes.EdtParamCurvaCEstMinino.Value:=DMBelShop.CDS_BuscaRapida.FieldByName('Qtd_Min').AsInteger;
+      FrmSolicitacoes.EdtParamCurvaCCorte.Value    :=DMBelShop.CDS_BuscaRapida.FieldByName('Per_Corte').AsInteger;
     End;
 
+    // Curva D ------------------------------------------------------
     If DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Curva').AsString='4' Then
     Begin
       FrmSolicitacoes.EdtParamCurvaDLimite.Value   :=DMBelShop.CDS_BuscaRapida.FieldByName('Per_Curva').AsInteger;
       FrmSolicitacoes.EdtParamCurvaDDiasEst.Value  :=DMBelShop.CDS_BuscaRapida.FieldByName('Qtd_Dias').AsInteger;
       FrmSolicitacoes.EdtParamCurvaDEstMinino.Value:=DMBelShop.CDS_BuscaRapida.FieldByName('Qtd_Min').AsInteger;
+      FrmSolicitacoes.EdtParamCurvaDCorte.Value    :=DMBelShop.CDS_BuscaRapida.FieldByName('Per_Corte').AsInteger;
     End;
 
+    // Curva E ------------------------------------------------------
     If DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Curva').AsString='5' Then
     Begin
       FrmSolicitacoes.EdtParamCurvaELimite.Value   :=DMBelShop.CDS_BuscaRapida.FieldByName('Per_Curva').AsInteger;
       FrmSolicitacoes.EdtParamCurvaEDiasEst.Value  :=DMBelShop.CDS_BuscaRapida.FieldByName('Qtd_Dias').AsInteger;
       FrmSolicitacoes.EdtParamCurvaEEstMinino.Value:=DMBelShop.CDS_BuscaRapida.FieldByName('Qtd_Min').AsInteger;
+      FrmSolicitacoes.EdtParamCurvaECorte.Value    :=DMBelShop.CDS_BuscaRapida.FieldByName('Per_Corte').AsInteger;
     End;
 
     DMBelShop.CDS_BuscaRapida.Next;
@@ -42191,7 +42202,7 @@ begin
 
       If FrmSolicitacoes.Ckb_ParamTaxaSindVlrTaxa.Checked Then
       Begin
-        If msg('Deseja Realmente Alterar os Valores de Taxa de Sindicato Para Todos os Profissinais ??','C')=1 Then
+        If msg('Deseja Realmente Alterar os Valores'+cr+'de Taxa de Sindicato Para'+cr+'Todos os Profissionais ??','C')=1 Then
         Begin
           MySql:=' UPDATE sal_profissionais p'+
                  ' SET p.vlr_taxa_sindicato='+QuotedStr(sgValor)+
@@ -42265,39 +42276,49 @@ begin
              ' WHERE tip_aux=2';
       DMBelShop.SQLC.Execute(MySql, nil, nil);
 
-      MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1)'+
+      // Curva A ----------------------------------------------------
+      MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1, DES_AUX1)'+
              ' VALUES (2, 1, '+
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaALimite.AsInteger))+', '+
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaADiasEst.AsInteger))+', '+
-             QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaAEstMinino.AsInteger))+')';
+             QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaAEstMinino.AsInteger))+', '+
+             QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaACorte.AsInteger))+')';
       DMBelShop.SQLC.Execute(MySql, nil, nil);
 
-      MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1)'+
+      // Curva B ----------------------------------------------------
+      MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1, DES_AUX1)'+
              ' Values (2, 2, '+
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaBLimite.AsInteger))+', '+
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaBDiasEst.AsInteger))+', '+
-             QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaBEstMinino.AsInteger))+')';
+             QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaBEstMinino.AsInteger))+', '+
+             QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaBCorte.AsInteger))+')';
       DMBelShop.SQLC.Execute(MySql, nil, nil);
 
-      MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1)'+
+      // Curva C ----------------------------------------------------
+      MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1, DES_AUX1)'+
              ' Values (2, 3, '+
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaCLimite.AsInteger))+', '+
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaCDiasEst.AsInteger))+', '+
-             QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaCEstMinino.AsInteger))+')';
+             QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaCEstMinino.AsInteger))+', '+
+             QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaCCorte.AsInteger))+')';
       DMBelShop.SQLC.Execute(MySql, nil, nil);
 
-      MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1)'+
+      // Curva D ----------------------------------------------------
+      MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1, DES_AUX1)'+
              ' Values (2, 4, '+
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaDLimite.AsInteger))+', '+
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaDDiasEst.AsInteger))+', '+
-             QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaDEstMinino.AsInteger))+')';
+             QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaDEstMinino.AsInteger))+', '+
+             QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaDCorte.AsInteger))+')';
       DMBelShop.SQLC.Execute(MySql, nil, nil);
 
-      MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1)'+
+      // Curva E ----------------------------------------------------
+      MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1, DES_AUX1)'+
              ' Values (2, 5, '+
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaELimite.AsInteger))+', '+
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaEDiasEst.AsInteger))+', '+
-             QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaEEstMinino.AsInteger))+')';
+             QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaEEstMinino.AsInteger))+', '+
+             QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaECorte.AsInteger))+')';
       DMBelShop.SQLC.Execute(MySql, nil, nil);
 
       // Atualiza Transacao ====================================================

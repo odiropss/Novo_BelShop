@@ -364,7 +364,6 @@ Begin
   TD.IsolationLevel:=xilREADCOMMITTED;
   DMBelShop.SQLC.StartTransaction(TD);
   Try
-
     Screen.Cursor:=crAppStart;
     DateSeparator:='.';
     DecimalSeparator:='.';
@@ -556,7 +555,8 @@ Begin
                ' FROM ES_ESTOQUES_LOJAS lo'+
                ' WHERE lo.Num_Docto='+QuotedStr(sDocTR)+
                ' AND   lo.Cod_Loja='+QuotedStr(mMemo.Lines[i])+
-               ' AND   lo.Cod_Produto='+QuotedStr(sgCodProduto);
+               ' AND   lo.Cod_Produto='+QuotedStr(sgCodProduto)+
+               ' AND   lo.Ind_Transf='+QuotedStr('SIM');
         DMBelShop.CDS_Busca1.Close;
         DMBelShop.SDS_Busca1.CommandText:=MySql;
         DMBelShop.CDS_Busca1.Open;
@@ -606,6 +606,7 @@ Begin
                   ',    lo.obs_docto=lo.obs_docto || ascii_char(13) || '+QuotedStr(DMBelShop.CDS_Busca.FieldByName('OBS_OC').AsString)+
                   ' WHERE lo.Num_Docto='+QuotedStr(sDocTR)+
                   ' AND   lo.Cod_Loja='+QuotedStr(mMemo.Lines[i])+
+                  ' AND   lo.Ind_Transf='+QuotedStr('SIM')+
                   ' AND   lo.Cod_Produto='+QuotedStr(sgCodProduto);
            End; // If DMBelShop.CDS_Busca.FieldByName('QTD_TRANSF_OC').AsCurrency>DMBelShop.CDS_Busca1.FieldByName('qtd_a_transf').AsCurrency Then
          End; // If Trim(DMBelShop.CDS_Busca1.FieldByName('Num_Docto').AsString)='' Then
@@ -1606,7 +1607,6 @@ Begin
            Else
             MySqlIteV:=
              MySqlIteV+QuotedStr('0')+', ';
-
 //odiraqui
 //           If ALIQICM.AsCurrency>0 Then
 //            VALICM.AsCurrency:=RoundTo(
@@ -4742,7 +4742,7 @@ begin
                                     'DESEJA CONTINUAR ???'), 'ATENÇÃO !!', 292)=IdNo Then
      Exit;
   End;
-       
+
   If msg('Deseja Realmente Criar Pedido no SIDICOM '+cr+cr+
          'para o Docto Nº '+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
          ' da Loja Bel_'+DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString+' ??', 'C')=2 Then

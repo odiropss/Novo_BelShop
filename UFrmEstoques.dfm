@@ -340,6 +340,11 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             Title.Caption = 'num_linha'
             Visible = False
+          end
+          item
+            Expanded = False
+            FieldName = 'EST_MAXIMO'
+            Visible = True
           end>
       end
       object Pan_Estoques: TPanel
@@ -1093,7 +1098,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 288
+          Left = 287
           Top = 11
           Width = 353
           Height = 13
