@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 432
-    ActivePage = Ts_ParametrosGerenciador
+    ActivePage = Ts_PlanilhaFinanceira
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -7995,7 +7995,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
               Top = 53
               Width = 437
               Height = 163
-              ActivePage = Ts_FinanPlanFinanceiraPeriodoData
+              ActivePage = Ts_FinanPlanFinanceiraPeriodoMesAno
               Align = alClient
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText

@@ -1355,6 +1355,9 @@ type
     Ckbx_ConsultaNFeApresParcela: TCheckBox;
     Label1: TLabel;
     EdtFinanObjetivosMeses: TCurrencyEdit;
+    SubMenuFinanComissoes: TMenuItem;
+    SubMenuComisVendedores: TMenuItem;
+    N48: TMenuItem;
 
     // Odir ====================================================================
 
@@ -2285,6 +2288,7 @@ type
     procedure Ckbx_ConsultaNFeApresParcelaClick(Sender: TObject);
     procedure Ckbx_ConsultaNFeApresParcelaKeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
+    procedure SubMenuComisVendedoresClick(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -2484,7 +2488,7 @@ uses DK_Procs1, UPermissao, UDMBelShop,
      UDMCentralTrocas, UFrmCentralTrocas,
      UFrmEstoques, UEntrada, UDMSidicom,
      UFrmFaltasCDLojas, UFrmControleKits, UFrmControleEstoques,
-     UFrmFluxFornecedor;
+     UFrmFluxFornecedor, UFrmComissaoVendedor;
 
 {$R *.dfm}
 {$R C:\Projetos\BelShop\Botoes\Botoes.res }
@@ -43555,24 +43559,11 @@ begin
 
   Bt_ConsultaNFeBuscaOCs.Visible:=True;
   Pan_ConsultaNFeOpcoes.Visible:=False;
-//  Bt_ConsultaNFeEmpresa.Visible:=False;
-//  Bt_ConsultaNFeLojas.Visible:=False;
-//  Bt_ConsultaNFeNotas.Visible:=False;
-//  Pan_ConsultaNFe_1.Visible:=False;
-//  Bt_ConsultaNFeSalvarClipboard.Visible:=False;
-//  Bt_ConsultaNFeSalvarCSV.Visible:=False;
 
   If (PC_ConsultaMovtoCompr.ActivePage=Ts_ConsultaNFeMovtoCompr) And (Ts_ConsultaNFeMovtoCompr.CanFocus) Then
   Begin
     Bt_ConsultaNFeBuscaOCs.Visible:=False;
     Pan_ConsultaNFeOpcoes.Visible:=True;
-//    Bt_ConsultaNFeEmpresa.Visible:=True;
-//    Bt_ConsultaNFeLojas.Visible:=True;
-//    Bt_ConsultaNFeNotas.Visible:=True;
-//    Pan_ConsultaNFe_1.Visible:=True;
-//    Bt_ConsultaNFeSalvarClipboard.Visible:=True;
-//    Bt_ConsultaNFeSalvarCSV.Visible:=True;
-
     Bt_ConsultaNFeEmpresa.SetFocus;
   End;
 end;
@@ -45193,6 +45184,17 @@ end;
 procedure TFrmBelShop.Ckbx_ConsultaNFeApresParcelaKeyUp(Sender: TObject;var Key: Word; Shift: TShiftState);
 begin
    Ckbx_ConsultaNFeApresParcelaClick(Self);
+end;
+
+procedure TFrmBelShop.SubMenuComisVendedoresClick(Sender: TObject);
+begin
+
+  // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
+  FrmComissaoVendedor:=TFrmComissaoVendedor.Create(Self);
+  FrmComissaoVendedor.ShowModal;
+
+  FreeAndNil(FrmComissaoVendedor);
+
 end;
 
 End.

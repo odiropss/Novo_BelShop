@@ -44,7 +44,9 @@ uses
   DK_Procs1 in '..\..\Rotinas Delphi\DK_Procs1.pas' {FDK_Procs1},
   uj_001 in '..\..\Rotinas Delphi\Janelas\J_001 Login\uj_001.pas' {J_001},
   uj_002 in '..\..\Rotinas Delphi\Janelas\J_002 Mensagens\uj_002.pas' {J_002},
-  UFrmFluxFornecedor in 'UFrmFluxFornecedor.pas' {FrmFluxoFornecedor};
+  UFrmFluxFornecedor in 'UFrmFluxFornecedor.pas' {FrmFluxoFornecedor},
+  UFrmComissaoVendedor in 'UFrmComissaoVendedor.pas' {FrmComissaoVendedor},
+  UDMComissaoVendedor in 'UDMComissaoVendedor.pas' {DMComissaoVendedor: TDataModule};
 
 {$R *.res}
 
@@ -76,6 +78,8 @@ begin
   Application.CreateForm(TJ_001, J_001);
   Application.CreateForm(TJ_002, J_002);
   Application.CreateForm(TFrmFluxoFornecedor, FrmFluxoFornecedor);
+  Application.CreateForm(TDMComissaoVendedor, DMComissaoVendedor);
+  // Application.CreateForm(TFrmComissaoVendedor, FrmComissaoVendedor);
   // Application.CreateForm(TFrmControleEstoques, FrmControleEstoques);
   // Application.CreateForm(TFrmCentralTrocas, FrmCentralTrocas);
   // Application.CreateForm(TDMCentralTrocas, DMCentralTrocas);

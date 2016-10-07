@@ -97,8 +97,7 @@ begin
 
 end;
 
-procedure TFrmPeriodoApropriacao.Bt_PeriodoAproprOKClick(
-  Sender: TObject);
+procedure TFrmPeriodoApropriacao.Bt_PeriodoAproprOKClick(Sender: TObject);
 Var
   sMensagem: String;
 begin

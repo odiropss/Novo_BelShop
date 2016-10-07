@@ -405,7 +405,7 @@ object FrmSalao: TFrmSalao
     Top = 0
     Width = 977
     Height = 580
-    ActivePage = Ts_Profissionais
+    ActivePage = Ts_ProfMetas
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
