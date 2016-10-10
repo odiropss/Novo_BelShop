@@ -797,6 +797,7 @@ Begin
 
             IBQ_MPMS.Next;
           End; // While Not IBQ_MPMS.Eof do
+
           IBQ_MPMS.Close;
         End; // if bConetada Then
 

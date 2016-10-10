@@ -1,7 +1,7 @@
 object FrmComissaoVendedor: TFrmComissaoVendedor
   Left = 238
   Top = 107
-  ActiveControl = Dbg_UltimaAtualizacao
+  ActiveControl = Dbg_FamiliaPrecos
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Comiss'#227'o Vendedores'
@@ -59,7 +59,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
     Top = 0
     Width = 977
     Height = 543
-    ActivePage = Ts_Produtos
+    ActivePage = Ts_ParametrosVendedores
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -78,9 +78,9 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         Width = 433
         Height = 515
         Align = alLeft
-        Caption = ' '#218'ltima Atualiza'#231'c'#227'o '
+        Caption = ' '#218'ltimas Atualiza'#231#245'es '
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = clBlue
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
@@ -98,7 +98,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           ParentCtl3D = False
           TabOrder = 0
           object Bt_ImportaVendas: TJvXPButton
-            Tag = 90
+            Tag = 91
             Left = 2
             Top = 2
             Width = 143
@@ -219,9 +219,9 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         Width = 536
         Height = 515
         Align = alClient
-        Caption = ' Produtos/Comiss'#227'o (Aplica'#231#227'o: 0006 - CAMPANHA DE VENDAS) '
+        Caption = ' Produtos/Comiss'#227'o '
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = clBlue
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
@@ -231,7 +231,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           Left = 1
           Top = 14
           Width = 534
-          Height = 476
+          Height = 441
           Align = alClient
           Color = 15004403
           Ctl3D = False
@@ -313,7 +313,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         end
         object dxStatusBar1: TdxStatusBar
           Left = 1
-          Top = 490
+          Top = 455
           Width = 534
           Height = 24
           Panels = <
@@ -334,11 +334,258 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           Font.Style = [fsBold]
           Color = clSilver
         end
+        object Panel2: TPanel
+          Left = 1
+          Top = 479
+          Width = 534
+          Height = 35
+          Align = alBottom
+          BevelInner = bvLowered
+          BorderStyle = bsSingle
+          Ctl3D = False
+          ParentCtl3D = False
+          TabOrder = 3
+          object JvXPButton2: TJvXPButton
+            Tag = 91
+            Left = 2
+            Top = 2
+            Width = 159
+            Height = 29
+            Caption = 'Busca Produtos CD'
+            TabOrder = 0
+            TabStop = False
+            ShowFocusRect = True
+            Align = alLeft
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_ImportaVendasClick
+          end
+        end
       end
     end
     object Ts_Comissoes: TTabSheet
       Caption = ' Comiss'#245'es '
       ImageIndex = 1
+    end
+    object Ts_ParametrosVendedores: TTabSheet
+      Caption = ' Parametros Vendedores '
+      ImageIndex = 2
+      DesignSize = (
+        969
+        515)
+      object Gb_FamiliaPrecos: TGroupBox
+        Left = 433
+        Top = 9
+        Width = 480
+        Height = 498
+        Caption = ' Agrupamentos de Pre'#231'os'
+        Color = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 0
+        object Dbg_FamiliaPrecos: TDBGridJul
+          Left = 1
+          Top = 47
+          Width = 478
+          Height = 450
+          Hint = '<Delete> Exclui Item da Lista'
+          Align = alClient
+          DataSource = DMComissaoVendedor.DS_V_FamiliaPrecos
+          FixedColor = clSilver
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clBlack
+          TitleFont.Height = -11
+          TitleFont.Name = 'Tahoma'
+          TitleFont.Style = [fsBold]
+          OnEnter = Dbg_FamiliaPrecosEnter
+          OnExit = Dbg_FamiliaPrecosExit
+          OnKeyUp = Dbg_FamiliaPrecosKeyUp
+          SairComEnter = False
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'DES_FAMILIA'
+              Width = 300
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'COD_FAMILIA'
+              Title.Alignment = taRightJustify
+              Width = 50
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'VLR_CONVERSAO'
+              Title.Alignment = taRightJustify
+              Title.Caption = 'Vlr Conv'
+              Width = 80
+              Visible = True
+            end>
+        end
+        object Pan_FamiliaPrecos: TPanel
+          Left = 1
+          Top = 14
+          Width = 478
+          Height = 33
+          Align = alTop
+          BevelInner = bvLowered
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 1
+          object Bt_BuscaFamiliaPreco: TJvXPButton
+            Tag = 92
+            Left = 81
+            Top = 4
+            Width = 24
+            Height = 26
+            TabOrder = 0
+            TabStop = False
+            ShowFocusRect = True
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object EdtCodFamiliaPrecos: TCurrencyEdit
+            Left = 11
+            Top = 7
+            Width = 66
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            TabOrder = 1
+          end
+        end
+      end
+      object Gb_Aplicacoes: TGroupBox
+        Left = 88
+        Top = 9
+        Width = 338
+        Height = 498
+        Anchors = [akTop, akRight]
+        Caption = ' Aplica'#231#245'es '
+        Color = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 1
+        object Dbg_Aplicacao: TDBGridJul
+          Left = 1
+          Top = 47
+          Width = 336
+          Height = 450
+          Hint = '<Delete> Exclui Item da Lista'
+          Align = alClient
+          DataSource = DMComissaoVendedor.DS_V_Aplicacao
+          FixedColor = clSilver
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clBlack
+          TitleFont.Height = -11
+          TitleFont.Name = 'Tahoma'
+          TitleFont.Style = [fsBold]
+          OnKeyUp = Dbg_AplicacaoKeyUp
+          SairComEnter = False
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'DES_APLICACAO'
+              ReadOnly = True
+              Width = 250
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'COD_APLICACAO'
+              ReadOnly = True
+              Title.Alignment = taRightJustify
+              Width = 50
+              Visible = True
+            end>
+        end
+        object Pan_Aplicacoes: TPanel
+          Left = 1
+          Top = 14
+          Width = 336
+          Height = 33
+          Align = alTop
+          BevelInner = bvLowered
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 1
+          object Bt_BuscaAplicacao: TJvXPButton
+            Tag = 92
+            Left = 81
+            Top = 4
+            Width = 24
+            Height = 26
+            TabOrder = 0
+            TabStop = False
+            ShowFocusRect = True
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object EdtCodAplicacao: TCurrencyEdit
+            Left = 11
+            Top = 7
+            Width = 66
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            TabOrder = 1
+          end
+        end
+      end
     end
   end
   object CorCaptionForm: TJvGradientCaption

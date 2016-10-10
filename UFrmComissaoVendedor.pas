@@ -16,7 +16,7 @@ uses
   dxSkinSharp, dxSkinSilver, dxSkinSpringTime, dxSkinStardust,
   dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
   dxSkinXmas2008Blue, dxSkinsdxStatusBarPainter, dxStatusBar, cxProgressBar, 
-  DBXpress, DBClient, SqlExpr, IBQuery;
+  DBXpress, DBClient, SqlExpr, IBQuery, Mask, ToolEdit, CurrEdit, DBGridJul;
 
 type
   TFrmComissaoVendedor = class(TForm)
@@ -35,6 +35,19 @@ type
     dxStatusBar2: TdxStatusBar;
     OdirPanApres: TPanel;
     dxStatusBar1: TdxStatusBar;
+    Ts_ParametrosVendedores: TTabSheet;
+    Gb_FamiliaPrecos: TGroupBox;
+    Gb_Aplicacoes: TGroupBox;
+    Dbg_Aplicacao: TDBGridJul;
+    Dbg_FamiliaPrecos: TDBGridJul;
+    Pan_Aplicacoes: TPanel;
+    Bt_BuscaAplicacao: TJvXPButton;
+    EdtCodAplicacao: TCurrencyEdit;
+    Pan_FamiliaPrecos: TPanel;
+    Bt_BuscaFamiliaPreco: TJvXPButton;
+    EdtCodFamiliaPrecos: TCurrencyEdit;
+    Panel2: TPanel;
+    JvXPButton2: TJvXPButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -48,7 +61,10 @@ type
     Procedure FechaTudoComVend;
 
     Procedure UltimasAtualizacoes;    // Busca Ultima Atualização das Lojas
-    Procedure ProdutosCampanhaVendas; // Busca Produtos da Aplicação: 0006-CAMPANHA DE VENDAS
+    Procedure ProdutosCampanhaVendas; // Busca Produtos da Aplicação e Família Preço
+
+    Procedure Aplicacoes_FamiliaPrecos; // Busca Aplicacoes e FamiliaPrecos
+
 
     Procedure MontaProgressBar(bCria: Boolean; Form: TForm);
     //==========================================================================
@@ -71,6 +87,12 @@ type
       State: TGridDrawState);
     procedure Dbg_ProdutosComissaoKeyPress(Sender: TObject; var Key: Char);
     procedure Dbg_UltimaAtualizacaoTitleClick(Column: TColumn);
+    procedure Dbg_AplicacaoKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_FamiliaPrecosKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_FamiliaPrecosExit(Sender: TObject);
+    procedure Dbg_FamiliaPrecosEnter(Sender: TObject);
 
   private
     { Private declarations }
@@ -91,7 +113,7 @@ var
 
 implementation
 
-uses DK_Procs1, UDMComissaoVendedor, UDMBelShop, UFrmBelShop;
+uses DK_Procs1, UDMComissaoVendedor, UDMBelShop, UFrmBelShop, DB;
 
 {$R *.dfm}
 
@@ -99,7 +121,55 @@ uses DK_Procs1, UDMComissaoVendedor, UDMBelShop, UFrmBelShop;
 // Odir - INICIO ===============================================================
 //==============================================================================
 
-// Busca Produtos da Aplicação: 0006-CAMPANHA DE VENDAS >>>>>>>>>>>>>>>>>>>>>>>>
+// Busca Aplicacoes e FamiliaPrecos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmComissaoVendedor.Aplicacoes_FamiliaPrecos;
+Var
+  MySql: String;
+Begin
+  // Busca Aplicaçoes ==========================================================
+  MySql:=' SELECT DISTINCT pr.nomeaplicacao DES_APLICACAO,'+
+         '                 pr.codaplicacao  COD_APLICACAO'+
+         ' FROM PRODUTO pr, TAB_AUXILIAR ap'+
+         ' WHERE pr.codaplicacao=ap.Des_Aux'+
+         ' AND   ap.tip_aux=15'+
+         ' ORDER BY 2';
+  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+  DMBelShop.CDS_BuscaRapida.Open;
+
+  If DMComissaoVendedor.CDS_V_Aplicacao.Active Then
+   DMComissaoVendedor.CDS_V_Aplicacao.Close;
+
+  DMComissaoVendedor.CDS_V_Aplicacao.CreateDataSet;
+  DMComissaoVendedor.CDS_V_Aplicacao.Open;
+
+  DMComissaoVendedor.CDS_V_Aplicacao.Data:=DMBelShop.CDS_BuscaRapida.Data;
+  DMBelShop.CDS_BuscaRapida.Close;
+
+  // Busca Familia de Preços ===================================================
+  MySql:=' SELECT DISTINCT pr.nomefamiliapreco des_familia,'+
+         '        pr.codfamiliapreco cod_familia,'+
+         '        fa.vlr_aux vlr_conversao'+
+         ' FROM PRODUTO pr, TAB_AUXILIAR fa'+
+         ' WHERE pr.codfamiliapreco=fa.Des_Aux'+
+         ' AND   fa.tip_aux=16'+
+         ' ORDER BY 2';
+  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+  DMBelShop.CDS_BuscaRapida.Open;
+
+  If DMComissaoVendedor.CDS_V_FamiliaPrecos.Active Then
+   DMComissaoVendedor.CDS_V_FamiliaPrecos.Close;
+
+  DMComissaoVendedor.CDS_V_FamiliaPrecos.CreateDataSet;
+  DMComissaoVendedor.CDS_V_FamiliaPrecos.Open;
+
+  DMComissaoVendedor.CDS_V_FamiliaPrecos.Data:=DMBelShop.CDS_BuscaRapida.Data;
+  DMBelShop.CDS_BuscaRapida.Close;
+
+End; // Busca Aplicacoes e FamiliaPrecos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Busca Produtos da Aplicação e Família Preço >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmComissaoVendedor.ProdutosCampanhaVendas;
 Var
   MySql: String;
@@ -181,7 +251,7 @@ Begin
     End; // on e : Exception do
   End; // Try
 
-End; // Busca Produtos da Aplicação: 0006-CAMPANHA DE VENDAS >>>>>>>>>>>>>>>>>>>
+End; // Busca Produtos da Aplicação e Família Preço >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Monta ProgressBar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmComissaoVendedor.MontaProgressBar(bCria: Boolean; Form: TForm);
@@ -284,11 +354,19 @@ begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
 
-  // Busca Ultimas Atualizações ================================================
-  UltimasAtualizacoes;
+  // Busca Ultimas Atualizações e Produtos da Aplicação, e Familia de Preços ===
+  If sgDescricao='Comissao' Then
+  Begin
+    UltimasAtualizacoes;
+    ProdutosCampanhaVendas;
+  End;
 
-  // Busca Produtos da Aplicação: 0006-CAMPANHA DE VENDAS ======================
-  ProdutosCampanhaVendas;
+  // Busca Aplicacoes e FamiliaPrecos ==========================================
+  If sgDescricao='Parametros' Then
+  Begin
+    Aplicacoes_FamiliaPrecos;
+  End;
+
 end;
 
 procedure TFrmComissaoVendedor.FormKeyPress(Sender: TObject; var Key: Char);
@@ -336,6 +414,10 @@ begin
     Dbg_UltimaAtualizacao.SetFocus;
   End;
 
+  If (PC_ComissaoVendedor.ActivePage=Ts_ParametrosVendedores) And (Ts_ParametrosVendedores.CanFocus) Then
+  Begin
+    Dbg_Aplicacao.SetFocus;
+  End;
 end;
 
 procedure TFrmComissaoVendedor.Dbg_UltimaAtualizacaoDblClick( Sender: TObject);
@@ -664,6 +746,7 @@ end;
 
 procedure TFrmComissaoVendedor.Dbg_ProdutosComissaoExit(Sender: TObject);
 begin
+  DMComissaoVendedor.CDS_V_ProdutosAfterPost(DMComissaoVendedor.CDS_V_Produtos);
   bEnterTab:=True;
 end;
 
@@ -783,6 +866,37 @@ begin
       OrderGrid:='Crescente';
     End; // If (OrderGrid='') or (OrderGrid='Crescente') Then
   End; // With DMComissaoVendedor.CDS_V_UltimaAtualizacao do
+
+end;
+
+procedure TFrmComissaoVendedor.Dbg_AplicacaoKeyUp(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  // Bloquea TECLA Ctrl+Del ====================================================
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
+end;
+
+procedure TFrmComissaoVendedor.Dbg_FamiliaPrecosKeyUp(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  // Bloquea TECLA Ctrl+Del ====================================================
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
+end;
+
+procedure TFrmComissaoVendedor.Dbg_FamiliaPrecosExit(Sender: TObject);
+begin
+  DMComissaoVendedor.CDS_V_FamiliaPrecosAfterPost(DMComissaoVendedor.CDS_V_FamiliaPrecos);
+  bEnterTab:=True;
+
+end;
+
+procedure TFrmComissaoVendedor.Dbg_FamiliaPrecosEnter(Sender: TObject);
+begin
+  bEnterTab:=False;
 
 end;
 

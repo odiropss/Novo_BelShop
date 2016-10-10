@@ -20,8 +20,17 @@ type
     CDS_V_ProdutosDTA_VALIDADE_INI: TDateField;
     CDS_V_ProdutosDTA_VALIDADE_FIM: TDateField;
     CDS_V_ProdutosAPRESENTACAO: TStringField;
+    CDS_V_Aplicacao: TClientDataSet;
+    CDS_V_AplicacaoDES_APLICACAO: TStringField;
+    CDS_V_AplicacaoCOD_APLICACAO: TStringField;
+    DS_V_Aplicacao: TDataSource;
+    CDS_V_FamiliaPrecos: TClientDataSet;
+    CDS_V_FamiliaPrecosDES_FAMILIA: TStringField;
+    CDS_V_FamiliaPrecosCOD_FAMILIA: TStringField;
+    DS_V_FamiliaPrecos: TDataSource;
+    CDS_V_FamiliaPrecosFAT_CONVERSAO: TFMTBCDField;
     procedure CDS_V_ProdutosAfterPost(DataSet: TDataSet);
-    procedure CDS_V_ProdutosBeforePost(DataSet: TDataSet);
+    procedure CDS_V_FamiliaPrecosAfterPost(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -115,31 +124,55 @@ begin
   DecimalSeparator:=',';
 end;
 
-procedure TDMComissaoVendedor.CDS_V_ProdutosBeforePost(DataSet: TDataSet);
+procedure TDMComissaoVendedor.CDS_V_FamiliaPrecosAfterPost(DataSet: TDataSet);
+Var
+  MySql: String;
 begin
-//  bgGravar:=True;
-//  If ((Trim(CDS_V_ProdutosDTA_VALIDADE_INI.AsString)='') And
-//      (Trim(CDS_V_ProdutosDTA_VALIDADE_FIM.AsString)<>''))
-//     Or
-//     ((Trim(CDS_V_ProdutosDTA_VALIDADE_INI.AsString)<>'') And
-//      (Trim(CDS_V_ProdutosDTA_VALIDADE_FIM.AsString)='')) Then
-//  Begin
-//    bgGravar:=False;
-//    msg('Período de Validade Inválido !!','A');
-//  End;
-//
-//  If Trim(CDS_V_ProdutosFAT_CONVERSAO.AsString)='' Then
-//  Begin
-//    bgGravar:=False;
-//    msg('Valor de Conversão Inválido !!','A');
-//  End;
-//
-//  If not bgGravar Then
-//  Begin
-//    If CDS_V_Produtos.State=dsEdit Then//    ) and (CDS_ObjetivosMetas.State<>dsInsert))
-//     CDS_V_Produtos.Cancel;
-//  End;
-//sgCodLojaUnica:='';
+  If Trim(CDS_V_FamiliaPrecosFAT_CONVERSAO.AsString)='' Then
+  Begin
+    msg('Valor de Conversão Inválido !!'+cr+'Alteração NÃO Será Salva !!','A');
+    exit;
+  End;
+
+  // Altera Comissão Vendedores ================================================
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR'+
+           ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
+           ' VALUES ('+
+           QuotedStr('16')+', '+ // TIP_AUX
+           IntToStr(CDS_V_FamiliaPrecosCOD_FAMILIA.AsInteger)+', '+ // COD_AUX
+           QuotedStr(CDS_V_FamiliaPrecosCOD_FAMILIA.AsString)+', '+ // DES_AUX
+           ' NULL, '+ // DES_AUX1
+           QuotedStr(f_Troca(',','.',Trim(CDS_V_FamiliaPrecosFAT_CONVERSAO.AsString)))+', '+ // VLR_AUX
+           ' NULL)'+ // VLR_AUX1
+           ' MATCHING (TIP_AUX, COD_AUX)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+  Except
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      msg(e.Message, 'X');
+    End; // on e : Exception do
+  End; // Try
+
+  DateSeparator:='/';
+  DecimalSeparator:=',';
 end;
 
 end.

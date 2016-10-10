@@ -1358,6 +1358,7 @@ type
     SubMenuFinanComissoes: TMenuItem;
     SubMenuComisVendedores: TMenuItem;
     N48: TMenuItem;
+    ParametrosVendedores1: TMenuItem;
 
     // Odir ====================================================================
 
@@ -2289,6 +2290,7 @@ type
     procedure Ckbx_ConsultaNFeApresParcelaKeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
     procedure SubMenuComisVendedoresClick(Sender: TObject);
+    procedure ParametrosVendedores1Click(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -45189,8 +45191,26 @@ end;
 procedure TFrmBelShop.SubMenuComisVendedoresClick(Sender: TObject);
 begin
 
-  // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
+  sgDescricao:='Comissao';
+
   FrmComissaoVendedor:=TFrmComissaoVendedor.Create(Self);
+  FrmComissaoVendedor.Ts_ParametrosVendedores.TabVisible:=False;
+  FrmComissaoVendedor.PC_ComissaoVendedor.TabIndex:=0;
+  FrmComissaoVendedor.ShowModal;
+
+  FreeAndNil(FrmComissaoVendedor);
+
+end;
+
+procedure TFrmBelShop.ParametrosVendedores1Click(Sender: TObject);
+begin
+
+  sgDescricao:='Parametros';
+
+  FrmComissaoVendedor:=TFrmComissaoVendedor.Create(Self);
+  FrmComissaoVendedor.Ts_Comissoes.TabVisible:=False;
+  FrmComissaoVendedor.Ts_Produtos.TabVisible:=False;
+  FrmComissaoVendedor.PC_ComissaoVendedor.TabIndex:=0;
   FrmComissaoVendedor.ShowModal;
 
   FreeAndNil(FrmComissaoVendedor);
