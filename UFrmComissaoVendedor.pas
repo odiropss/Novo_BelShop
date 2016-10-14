@@ -16,7 +16,8 @@ uses
   dxSkinSharp, dxSkinSilver, dxSkinSpringTime, dxSkinStardust,
   dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
   dxSkinXmas2008Blue, dxSkinsdxStatusBarPainter, dxStatusBar, cxProgressBar, 
-  DBXpress, DBClient, SqlExpr, IBQuery, Mask, ToolEdit, CurrEdit, DBGridJul;
+  DBXpress, DBClient, SqlExpr, IBQuery, Mask, ToolEdit, CurrEdit, DBGridJul,
+  AppEvnts;
 
 type
   TFrmComissaoVendedor = class(TForm)
@@ -47,7 +48,16 @@ type
     Bt_BuscaFamiliaPreco: TJvXPButton;
     EdtCodFamiliaPrecos: TCurrencyEdit;
     Panel2: TPanel;
-    JvXPButton2: TJvXPButton;
+    dxStatusBar3: TdxStatusBar;
+    Bt_ImportaProdutos: TJvXPButton;
+    Panel3: TPanel;
+    Bt_BuscaDocComissao: TJvXPButton;
+    EdtCodDocComissao: TCurrencyEdit;
+    Label1: TLabel;
+    Bt_SalvaComiisao: TJvXPButton;
+    Bt_CalculaComiisao: TJvXPButton;
+    Dbg_ComisVendedores: TDBGrid;
+    ApplicationEvents1: TApplicationEvents;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -65,8 +75,10 @@ type
 
     Procedure Aplicacoes_FamiliaPrecos; // Busca Aplicacoes e FamiliaPrecos
 
-
     Procedure MontaProgressBar(bCria: Boolean; Form: TForm);
+    Procedure AplicacoesSelecionadas;
+
+    Function  BuscaComissoes(sNrDoc: String): Boolean;
     //==========================================================================
     // Odir ====================================================================
     //==========================================================================
@@ -89,10 +101,29 @@ type
     procedure Dbg_UltimaAtualizacaoTitleClick(Column: TColumn);
     procedure Dbg_AplicacaoKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure Dbg_FamiliaPrecosKeyUp(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
     procedure Dbg_FamiliaPrecosExit(Sender: TObject);
     procedure Dbg_FamiliaPrecosEnter(Sender: TObject);
+    procedure EdtCodAplicacaoExit(Sender: TObject);
+    procedure Dbg_AplicacaoKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure EdtCodFamiliaPrecosExit(Sender: TObject);
+    procedure Bt_BuscaAplicacaoClick(Sender: TObject);
+    procedure Bt_BuscaFamiliaPrecoClick(Sender: TObject);
+    procedure Dbg_ProdutosComissaoTitleClick(Column: TColumn);
+    procedure Bt_ImportaProdutosClick(Sender: TObject);
+    procedure Bt_CalculaComiisaoClick(Sender: TObject);
+    procedure Bt_BuscaDocComissaoClick(Sender: TObject);
+    procedure EdtCodDocComissaoExit(Sender: TObject);
+    procedure Dbg_ComisVendedoresDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure EdtCodDocComissaoChange(Sender: TObject);
+    procedure Bt_SalvaComiisaoClick(Sender: TObject);
+    procedure ApplicationEvents1Message(var Msg: tagMSG;
+      var Handled: Boolean);
+    procedure Dbg_UltimaAtualizacaoEnter(Sender: TObject);
+    procedure Dbg_ComisVendedoresEnter(Sender: TObject);
+    procedure Dbg_AplicacaoEnter(Sender: TObject);
 
   private
     { Private declarations }
@@ -107,13 +138,14 @@ var
   FrmComissaoVendedor: TFrmComissaoVendedor;
 
   bgSairComVend: Boolean;
-  OrderGrid: String;    // Ordenar Grid
+  OrderGridDtaAtual, OrderGridProd: String;    // Ordenar Grid
 
   IBQ_ConsultaFilial  : TIBQuery;
 
 implementation
 
-uses DK_Procs1, UDMComissaoVendedor, UDMBelShop, UFrmBelShop, DB;
+uses DK_Procs1, UDMComissaoVendedor, UDMBelShop, UFrmBelShop, DB,
+  UPesquisaIB, UFrmPeriodoApropriacao, cxCalendar, UPesquisa;
 
 {$R *.dfm}
 
@@ -121,16 +153,210 @@ uses DK_Procs1, UDMComissaoVendedor, UDMBelShop, UFrmBelShop, DB;
 // Odir - INICIO ===============================================================
 //==============================================================================
 
+// Busca Aplicações Selecionadas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmComissaoVendedor.AplicacoesSelecionadas;
+Var
+  MySql: String;
+Begin
+  sgAplicacoes:='';
+  MySql:=' SELECT ap.des_aux'+
+         ' FROM TAB_AUXILIAR ap'+
+         ' WHERE ap.tip_aux = 15';
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:=MySql;
+  DMBelShop.CDS_Busca.Open;
+  While Not DMBelShop.CDS_Busca.Eof do
+  Begin
+    If sgAplicacoes='' Then
+     sgAplicacoes:=QuotedStr(DMBelShop.CDS_Busca.FieldByName('Des_Aux').AsString)
+    Else
+     sgAplicacoes:=sgAplicacoes+', '+
+                 QuotedStr(DMBelShop.CDS_Busca.FieldByName('Des_Aux').AsString);
+
+    DMBelShop.CDS_Busca.Next;
+  End; // While Not DMBelShop.CDS_Busca.Eof do
+  DMBelShop.CDS_Busca.Close;
+End; // Busca Aplicações Selecionadas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Busca Comissões >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TFrmComissaoVendedor.BuscaComissoes(sNrDoc: String): Boolean;
+Var
+  MySql: String;
+Begin
+  Result:=True;
+  DMComissaoVendedor.CDS_ComisVendedores.Close;
+
+  // Aplicacoes Selecionadas ===================================================
+  AplicacoesSelecionadas;
+
+  // Monta Select ==============================================================
+  MySql:=' select'+
+         ' ''Bel_''||cv.cod_loja cod_loja, em.razao_social Loja,'+
+         ' Trim(cv.cod_vendedor) cod_vendedor, cv.des_vendedor,'+
+         ' Count(distinct coalesce(cv.numero, 0)) Qtd_Notas,'+
+         ' sum(Cast(coalesce(cv.qtd_atendida, 0) as Integer)) Qtd_Venda,';
+
+  If sNrDoc='0' Then
+   MySql:=
+    MySql+' coalesce(cp.fat_conversao, 0.00) VLR_CONVERSAO,'+
+          ' sum(Cast(coalesce(cv.qtd_atendida, 0) as Integer)*coalesce(cp.fat_conversao, 0.00)) VLR_COMISSAO'
+  Else
+   MySql:=
+    MySql+' coalesce(cv.vlr_conversao, 0.00) VLR_CONVERSAO,'+
+          ' sum(Cast(coalesce(cv.qtd_atendida, 0) as Integer)*coalesce(cv.vlr_conversao, 0.00)) VLR_COMISSAO';
+
+  MySql:=
+   MySql+' from FIN_VEND_COMISSAO_VENDAS cv'+
+         '       Left Join emp_conexoes em            on em.cod_filial=cv.cod_loja';
+
+  If sNrDoc='0' Then
+   MySql:=
+    MySql+'       Left Join fin_vend_comissao_prod cp  on cp.cod_produto=cv.cod_produto';
+
+  MySql:=
+   MySql+' Where cv.num_docto='+sNrDoc;
+
+  If sNrDoc='0' Then
+   MySql:=
+    MySql+' and cv.dta_docto between '+QuotedStr(sgDtaInicio)+' and '+QuotedStr(sgDtaFim)+
+          ' and cv.cod_aplicacao in ('+sgAplicacoes+')';
+
+  MySql:=
+   MySql+' group by 1,2,3,4,7'+
+
+         'UNION'+
+
+         ' select'+
+         ' ''Bel_''||cv.cod_loja cod_loja, em.razao_social Loja,'+
+         ' ''TOTAL'' cod_vendedor, cv.des_vendedor,'+
+         ' Count(distinct coalesce(cv.numero, 0)) Qtd_Notas,'+
+         ' sum(Cast(coalesce(cv.qtd_atendida, 0) as Integer)) Qtd_Venda,'+
+         ' 0.00 VLR_CONVERSAO,';
+
+  If sNrDoc='0' Then
+   MySql:=
+    MySql+' sum(Cast(coalesce(cv.qtd_atendida, 0) as Integer)*coalesce(cp.fat_conversao, 0.00)) VLR_COMISSAO'
+  Else
+   MySql:=
+    MySql+' sum(Cast(coalesce(cv.qtd_atendida, 0) as Integer)*coalesce(cv.vlr_conversao, 0.00)) VLR_COMISSAO';
+
+  MySql:=
+   MySql+' from fin_vend_comissao_vendas cv'+
+         '       Left Join emp_conexoes em            on em.cod_filial=cv.cod_loja';
+
+  If sNrDoc='0' Then
+   MySql:=
+    MySql+'      Left Join fin_vend_comissao_prod cp  on cp.cod_produto=cv.cod_produto';
+
+  MySql:=
+   MySql+' Where cv.num_docto='+sNrDoc;
+
+  If sNrDoc='0' Then
+   MySql:=
+    MySql+' and cv.dta_docto between '+QuotedStr(sgDtaInicio)+' and '+QuotedStr(sgDtaFim)+
+          ' and cv.cod_aplicacao in ('+sgAplicacoes+')';
+
+  MySql:=
+   MySql+' group by 1,2,3,4'+
+
+         ' UNION'+
+
+         ' select'+
+         ' ''Bel_''||cv.cod_loja cod_loja, em.razao_social Loja,'+
+         ' ''TOTAL DA LOJA'' cod_vendedor, '''' des_vendedor,'+
+         ' Count(distinct coalesce(cv.numero, 0)) Qtd_Notas,'+
+         ' sum(Cast(coalesce(cv.qtd_atendida, 0) as Integer)) Qtd_Venda,'+
+         ' 0.00 VLR_CONVERSAO,';
+
+  If sNrDoc='0' Then
+   MySql:=
+    MySql+' sum(Cast(coalesce(cv.qtd_atendida, 0) as Integer)*coalesce(cp.fat_conversao, 0.00)) VLR_COMISSAO'
+  Else
+   MySql:=
+    MySql+' sum(Cast(coalesce(cv.qtd_atendida, 0) as Integer)*coalesce(cv.vlr_conversao, 0.00)) VLR_COMISSAO';
+
+  MySql:=
+   MySql+' from fin_vend_comissao_vendas cv'+
+         '       Left Join emp_conexoes em            on em.cod_filial=cv.cod_loja';
+
+  If sNrDoc='0' Then
+   MySql:=
+    MySql+'      Left Join fin_vend_comissao_prod cp  on cp.cod_produto=cv.cod_produto';
+
+  MySql:=
+   MySql+' Where cv.num_docto='+sNrDoc;
+
+  If sNrDoc='0' Then
+   MySql:=
+    MySql+' and cv.dta_docto between '+QuotedStr(sgDtaInicio)+' and '+QuotedStr(sgDtaFim)+
+          ' and cv.cod_aplicacao in ('+sgAplicacoes+')';
+
+  MySql:=
+   MySql+' group by 1,2,3,4'+
+
+         ' UNION'+
+
+         ' select'+
+
+         ' '''' cod_loja, ''TOTAL DA EMPRESA: ''||'+QuotedStr(sgDtaInicio)+'||'' a ''||'+QuotedStr(sgDtaFim)+' Loja,'+
+         ' '''' cod_vendedor, ''CAMPANHA DE VENDAS'' des_vendedor,'+
+         ' Count(distinct coalesce(cv.numero, 0)) Qtd_Notas,'+
+         ' sum(Cast(coalesce(cv.qtd_atendida, 0) as Integer)) Qtd_Venda,'+
+         ' 0.00 VLR_CONVERSAO,';
+
+  If sNrDoc='0' Then
+   MySql:=
+    MySql+' sum(Cast(coalesce(cv.qtd_atendida, 0) as Integer)*coalesce(cp.fat_conversao, 0.00)) VLR_COMISSAO'
+  Else
+   MySql:=
+    MySql+' sum(Cast(coalesce(cv.qtd_atendida, 0) as Integer)*coalesce(cv.vlr_conversao, 0.00)) VLR_COMISSAO';
+
+  MySql:=
+   MySql+' from fin_vend_comissao_vendas cv'+
+         '       Left Join emp_conexoes em            on em.cod_filial=cv.cod_loja';
+
+  If sNrDoc='0' Then
+   MySql:=
+    MySql+'      Left Join fin_vend_comissao_prod cp  on cp.cod_produto=cv.cod_produto';
+
+  MySql:=
+   MySql+' Where cv.num_docto='+sNrDoc;
+
+  If sNrDoc='0' Then
+   MySql:=
+    MySql+' and cv.dta_docto between '+QuotedStr(sgDtaInicio)+' and '+QuotedStr(sgDtaFim)+
+          ' and cv.cod_aplicacao in ('+sgAplicacoes+')';
+
+  MySql:=
+   MySql+' order by 1,4,3,2';
+  DMComissaoVendedor.CDS_ComisVendedores.Close;
+  DMComissaoVendedor.SDS_ComisVendedores.CommandText:=MySql;
+  DMComissaoVendedor.CDS_ComisVendedores.Open;
+
+  sgAplicacoes:='';
+
+  If DMComissaoVendedor.CDS_ComisVendedores.RecordCount<2 Then
+  Begin
+    Result:=False;
+    If sNrDoc='0' Then
+     msg('Sem Comissão no Período de'+cr+cr+QuotedStr(sgDtaInicio)+' a '+QuotedStr(sgDtaFim),'A')
+    Else
+     msg('Documento Não Encontrado !!','A');
+
+    DMComissaoVendedor.CDS_ComisVendedores.Close;
+  End;
+End; // Busca Comissões >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 // Busca Aplicacoes e FamiliaPrecos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmComissaoVendedor.Aplicacoes_FamiliaPrecos;
 Var
   MySql: String;
 Begin
   // Busca Aplicaçoes ==========================================================
-  MySql:=' SELECT DISTINCT pr.nomeaplicacao DES_APLICACAO,'+
-         '                 pr.codaplicacao  COD_APLICACAO'+
+  MySql:=' SELECT DISTINCT Trim(pr.nomeaplicacao) DES_APLICACAO,'+
+         '                 Trim(pr.codaplicacao)  COD_APLICACAO'+
          ' FROM PRODUTO pr, TAB_AUXILIAR ap'+
-         ' WHERE pr.codaplicacao=ap.Des_Aux'+
+         ' WHERE Trim(pr.codaplicacao)=Trim(ap.Des_Aux)'+
          ' AND   ap.tip_aux=15'+
          ' ORDER BY 2';
   DMBelShop.CDS_BuscaRapida.Close;
@@ -147,11 +373,11 @@ Begin
   DMBelShop.CDS_BuscaRapida.Close;
 
   // Busca Familia de Preços ===================================================
-  MySql:=' SELECT DISTINCT pr.nomefamiliapreco des_familia,'+
-         '        pr.codfamiliapreco cod_familia,'+
+  MySql:=' SELECT DISTINCT Trim(pr.nomefamiliapreco) des_familia,'+
+         '        Trim(pr.codfamiliapreco) cod_familia,'+
          '        fa.vlr_aux vlr_conversao'+
          ' FROM PRODUTO pr, TAB_AUXILIAR fa'+
-         ' WHERE pr.codfamiliapreco=fa.Des_Aux'+
+         ' WHERE Trim(pr.codfamiliapreco)=Trim(fa.Des_Aux)'+
          ' AND   fa.tip_aux=16'+
          ' ORDER BY 2';
   DMBelShop.CDS_BuscaRapida.Close;
@@ -189,11 +415,18 @@ Begin
 
     // Inclui Novos Produtos da Aplicação 0006
     MySql:=' INSERT INTO FIN_VEND_COMISSAO_PROD'+
-           ' SELECT pr.codproduto COD_PRODUTO, 0.00 FAT_CONVERSAO,'+
-           ' NULL DTA_VALIDADE_INI, NULL DTA_VALIDADE_FIM,'+
+           ' SELECT pr.codproduto COD_PRODUTO,'+
+           ' COALESCE(fp.vlr_aux, 0.00) FAT_CONVERSAO,'+
+           ' TRIM(pr.codaplicacao) COD_APLICACAO,'+
+           ' TRIM(pr.codfamiliapreco) COD_FAMILIA_PRECO,'+
+           ' NULL DTA_VALIDADE_INI, NULL DTA_VALIDADE_FIM, '+
            QuotedStr(Cod_Usuario)+' USU_INCLUI, CURRENT_TIMESTAMP DTA_INCLUI,'+
            ' NULL USU_ALTERA, NULL DTA_ALTERA'+
+
            ' FROM PRODUTO pr'+
+           '       LEFT JOIN  TAB_AUXILIAR fp  ON Trim(fp.des_aux)=Trim(pr.codfamiliapreco)'+
+           '                                  AND fp.tip_aux=16'+
+
            ' WHERE pr.codaplicacao=''0006'''+
            ' AND NOT EXISTS (SELECT 1'+
            '                 FROM FIN_VEND_COMISSAO_PROD vp'+
@@ -204,15 +437,15 @@ Begin
     MySql:=' DELETE FROM FIN_VEND_COMISSAO_PROD vp'+
            ' WHERE NOT EXISTS(SELECT 1'+
            '                  FROM PRODUTO pr'+
-           '                  WHERE pr.codaplicacao = ''0006'' AND'+
-           '                        pr.codproduto = vp.cod_produto)';
+           '                  WHERE pr.codaplicacao = ''0006'''+
+           '                  AND   pr.codproduto = vp.cod_produto)';
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
     // Apresenta Produtos da Aplicação 0006
-    MySql:=' SELECT VP.COD_PRODUTO, PR.APRESENTACAO, VP.FAT_CONVERSAO,'+
-           ' VP.DTA_VALIDADE_INI, VP.DTA_VALIDADE_FIM'+
-           ' FROM FIN_VEND_COMISSAO_PROD VP, PRODUTO PR'+
-           ' WHERE VP.COD_PRODUTO=PR.CODPRODUTO'+
+    MySql:=' SELECT vp.COD_PRODUTO, pr.APRESENTACAO, vp.FAT_CONVERSAO,'+
+           '        vp.DTA_VALIDADE_INI, vp.DTA_VALIDADE_FIM'+
+           ' FROM FIN_VEND_COMISSAO_PROD vp, PRODUTO pr'+
+           ' WHERE vp.COD_PRODUTO=pr.CODPRODUTO'+
            ' ORDER BY 2';
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -223,7 +456,6 @@ Begin
 
     DMComissaoVendedor.CDS_V_Produtos.CreateDataSet;
     DMComissaoVendedor.CDS_V_Produtos.Open;
-
     DMComissaoVendedor.CDS_V_Produtos.Data:=DMBelShop.CDS_BuscaRapida.Data;
     DMComissaoVendedor.CDS_V_ProdutosDTA_VALIDADE_INI.EditMask:='!99/99/2\099;1;_';
     DMComissaoVendedor.CDS_V_ProdutosDTA_VALIDADE_FIM.EditMask:='!99/99/2\099;1;_';
@@ -354,6 +586,9 @@ begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
 
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  Application.OnMessage := ApplicationEvents1Message;
+
   // Busca Ultimas Atualizações e Produtos da Aplicação, e Familia de Preços ===
   If sgDescricao='Comissao' Then
   Begin
@@ -366,6 +601,7 @@ begin
   Begin
     Aplicacoes_FamiliaPrecos;
   End;
+
 
 end;
 
@@ -396,6 +632,10 @@ begin
 
   PC_ComissaoVendedor.TabIndex:=0;
 
+  If (PC_ComissaoVendedor.ActivePage=Ts_ParametrosVendedores) And (Ts_ParametrosVendedores.CanFocus) Then
+  Begin
+    Dbg_Aplicacao.SetFocus;
+  End;
 end;
 
 procedure TFrmComissaoVendedor.Bt_FluFornFecharClick(Sender: TObject);
@@ -480,7 +720,7 @@ end;
 procedure TFrmComissaoVendedor.Bt_ImportaVendasClick(Sender: TObject);
 Var
   bProcOK, bSiga: Boolean;
-  dDtaOntem: TDate;
+  dDtaI, dDtaF: TDate;
   MySql: String;
   i: Integer;
 begin
@@ -509,14 +749,35 @@ begin
     Exit;
   End;
 
+  // Solicita o Periodo de Apropriação de Vendas dos Vendedores ===============
+  bgSiga:=False;
+  FrmPeriodoApropriacao:=TFrmPeriodoApropriacao.Create(Self);
+  FrmPeriodoApropriacao.sgTipoProc:='CV'; // Comissão de Vendedores
+  If Trim(DMComissaoVendedor.CDS_V_UltimaAtualizacaoDATA.AsString)='' Then
+   sgDtaInicio:='01/09/2016'
+  Else
+   sgDtaInicio:=DateToStr(DMComissaoVendedor.CDS_V_UltimaAtualizacaoDATA.AsDateTime+1);
+
+  FrmPeriodoApropriacao.ShowModal;
+
+  dDtaI:=FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date;
+  dDtaF:=FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date;
+
+  FreeAndNil(FrmPeriodoApropriacao);
+
+  If Not bgSiga Then
+   Exit;
+
   Screen.Cursor:=crAppStart;
+
+  // Aplicacoes Selecionadas ===================================================
+  AplicacoesSelecionadas;
 
   // Importa Vendas ============================================================
   sgLojasNConectadas:='';
   bProcOK:=False;
 
-  sgDtaFim:=DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)-1);
-  dDtaOntem:=StrToDate(sgDtaFim);
+  sgDtaFim:=DateToStr(dDtaF);
   sgDtaFim:=f_Troca('/','.',f_Troca('-','.',sgDtaFim));
 
   DMComissaoVendedor.CDS_V_UltimaAtualizacao.First;
@@ -525,11 +786,11 @@ begin
     Application.ProcessMessages;
 
     If Trim(DMComissaoVendedor.CDS_V_UltimaAtualizacaoDATA.AsString)='' Then
-     sgDtaInicio:='01/09/2016'
+     sgDtaInicio:=DateToStr(dDtaI)
     Else
      sgDtaInicio:=DateToStr(DMComissaoVendedor.CDS_V_UltimaAtualizacaoDATA.AsDateTime+1);
 
-    if (DMComissaoVendedor.CDS_V_UltimaAtualizacaoIMP.AsString='SIM') And (StrToDate(sgDtaInicio)<dDtaOntem) Then
+    if (DMComissaoVendedor.CDS_V_UltimaAtualizacaoIMP.AsString='SIM') And (StrToDate(sgDtaInicio)<dDtaF) Then
     Begin
       sgCodEmp:=Copy(DMComissaoVendedor.CDS_V_UltimaAtualizacaoCODIGO.AsString,5,2);
       sgDesLoja:=DMComissaoVendedor.CDS_V_UltimaAtualizacaoLOJA.AsString;
@@ -543,7 +804,7 @@ begin
       OdirPanApres.Parent:=FrmComissaoVendedor;
       OdirPanApres.Visible:=True;
       Application.ProcessMessages;
-      
+
       // Conecta Empresa =======================================================
       If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
        Begin
@@ -569,25 +830,35 @@ begin
         // Monta SQL ------------------------------------------------
         sgDtaInicio:=f_Troca('/','.',f_Troca('-','.',sgDtaInicio));
 
-        MySql:=' SELECT 0 NUM_DOCTO, nt.codfilial COD_LOJA, nt.datadocumento DTA_DOCTO,'+
-               ' nt.chavenf, nt.numero, nt.numerocupom, nt.serie, nt.codvendedor COD_VENDEDOR,'+
-               ' vd.nomevendedor DES_VENDEDOR, nt.codcomprovante COD_COMPROVANTE,'+
-               ' it.codproduto COD_PRODUTO, it.quantatendida QTD_ATENDIDA,'+
+        MySql:=' SELECT 0 NUM_DOCTO, nt.codfilial COD_LOJA,'+
+               ' nt.datadocumento DTA_DOCTO, nt.datacomprovante DTA_COMPRV,'+
+               ' nt.chavenf, nt.numero, nt.numerocupom, nt.serie,'+
+               ' Trim(nt.codvendedor) COD_VENDEDOR, Trim(vd.nomevendedor) DES_VENDEDOR,'+
+               ' nt.codcomprovante COD_COMPROVANTE,'+
+               ' it.codproduto COD_PRODUTO, pr.apresentacao DES_PRODUTO,'+
+               ' pr.codaplicacao COD_APLICACAO, ap.nomeaplicacao DES_APLICACAO,'+
+               ' pr.codfamiliapreco COD_FAMILIA_PRECO, fa.nomefamiliapreco DES_FAMILIAPRECO,'+
+               ' it.quantatendida QTD_ATENDIDA,'+
                ' it.preco VLR_PRECO, it.valbruto VLR_BRUTO, it.valdescitem VLR_DESCITEM,'+
-               ' it.valtotal VLR_TOTAL, 0.00 VLR_CONVERSAO'+
+               ' it.valtotal VLR_TOTAL, 0.00 VLR_CONVERSAO';
 
-               ' FROM MCLI nt'+
+  // Monta para Contagem
+  MySqlSelect:=' FROM MCLI nt'+
                '       LEFT JOIN MCLIPRO  it  ON it.chavenf=nt.chavenf'+
                '       LEFT JOIN VENDEDOR vd  ON vd.codvendedor=nt.codvendedor'+
                '       LEFT JOIN PRODUTO  pr  ON pr.codproduto=it.codproduto'+
+               '       LEFT JOIN APLICA   ap  ON ap.codaplicacao=pr.codaplicacao'+
+               '       LEFT JOIN FAMILIAP fa  ON fa.codfamiliapreco=pr.codfamiliapreco'+
 
-               ' WHERE nt.codcomprovante in (''002'', ''007'')'+
-               ' AND   pr.codaplicacao=''0006'''+
-               ' AND   nt.datadocumento Between '+QuotedStr(sgDtaInicio)+' AND '+QuotedStr(sgDtaFim)+
-               ' AND   nt.codfilial='+QuotedStr(sgCodEmp)+
-               ' oRDER BY nt.datadocumento, nt.numero';
-        IBQ_ConsultaFilial.SQL.Clear;
-        IBQ_ConsultaFilial.SQL.Add(MySql);
+               ' WHERE nt.codcomprovante in (''002'', ''007'')';
+
+               If Trim(sgAplicacoes)<>'' Then
+                MySqlSelect:=
+                 MySqlSelect+' AND   pr.codaplicacao in ('+sgAplicacoes+')';
+
+  MySqlSelect:=
+   MySqlSelect+' AND   nt.datadocumento Between '+QuotedStr(sgDtaInicio)+' AND '+QuotedStr(sgDtaFim)+
+               ' AND   nt.codfilial='+QuotedStr(sgCodEmp);
 
         // Abre Query -----------------------------------------------
         i:=0;
@@ -595,6 +866,10 @@ begin
         While Not bSiga do
         Begin
           Try
+            igTotInteiro:=FrmBelShop.TotalRegistros(IBQ_ConsultaFilial, MySqlSelect);
+
+            IBQ_ConsultaFilial.SQL.Clear;
+            IBQ_ConsultaFilial.SQL.Add(MySql+MySqlSelect);
             IBQ_ConsultaFilial.Open;
             bSiga:=True;
           Except
@@ -615,10 +890,10 @@ begin
         // Processamento =======================================================
         If bSiga Then // Query Executada
         Begin
-          IBQ_ConsultaFilial.Last;
           MontaProgressBar(True, FrmComissaoVendedor);
-          pgProgBar.Properties.Max:=IBQ_ConsultaFilial.RecordCount;
+          pgProgBar.Properties.Max:=igTotInteiro;
           pgProgBar.Position:=0;
+
           Application.ProcessMessages;
           IBQ_ConsultaFilial.First;
 
@@ -638,22 +913,31 @@ begin
 
               // Insere Movimento de Vendas -------------------------
               MySql:=' INSERT INTO FIN_VEND_COMISSAO_VENDAS ('+
-                     ' NUM_DOCTO, COD_LOJA, DTA_DOCTO, CHAVENF, NUMERO,'+
+                     ' NUM_DOCTO, COD_LOJA, DTA_DOCTO, DTA_COMPRV, CHAVENF, NUMERO,'+
                      ' NUMEROCUPOM, SERIE, COD_VENDEDOR, DES_VENDEDOR,'+
-                     ' COD_COMPROVANTE, COD_PRODUTO, QTD_ATENDIDA, VLR_PRECO,'+
+                     ' COD_COMPROVANTE, COD_PRODUTO, DES_PRODUTO,'+
+                     ' COD_APLICACAO, DES_APLICACAO,'+
+                     ' COD_FAMILIA_PRECO, DES_FAMILIAPRECO,'+
+                     ' QTD_ATENDIDA, VLR_PRECO,'+
                      ' VLR_BRUTO, VLR_DESCITEM, VLR_TOTAL, VLR_CONVERSAO)'+
                      ' VALUES ('+
                      QuotedStr(IBQ_ConsultaFilial.FieldByName('NUM_DOCTO').AsString)+', '+
                      QuotedStr(IBQ_ConsultaFilial.FieldByName('COD_LOJA').AsString)+', '+
                      QuotedStr(IBQ_ConsultaFilial.FieldByName('DTA_DOCTO').AsString)+', '+
+                     QuotedStr(IBQ_ConsultaFilial.FieldByName('DTA_COMPRV').AsString)+', '+
                      QuotedStr(IBQ_ConsultaFilial.FieldByName('CHAVENF').AsString)+', '+
                      QuotedStr(IBQ_ConsultaFilial.FieldByName('NUMERO').AsString)+', '+
                      QuotedStr(IBQ_ConsultaFilial.FieldByName('NUMEROCUPOM').AsString)+', '+
                      QuotedStr(IBQ_ConsultaFilial.FieldByName('SERIE').AsString)+', '+
-                     QuotedStr(IBQ_ConsultaFilial.FieldByName('COD_VENDEDOR').AsString)+', '+
-                     QuotedStr(IBQ_ConsultaFilial.FieldByName('DES_VENDEDOR').AsString)+', '+
+                     QuotedStr(Trim(IBQ_ConsultaFilial.FieldByName('COD_VENDEDOR').AsString))+', '+
+                     QuotedStr(Trim(IBQ_ConsultaFilial.FieldByName('DES_VENDEDOR').AsString))+', '+
                      QuotedStr(IBQ_ConsultaFilial.FieldByName('COD_COMPROVANTE').AsString)+', '+
                      QuotedStr(IBQ_ConsultaFilial.FieldByName('COD_PRODUTO').AsString)+', '+
+                     QuotedStr(Trim(IBQ_ConsultaFilial.FieldByName('DES_PRODUTO').AsString))+', '+
+                     QuotedStr(Trim(IBQ_ConsultaFilial.FieldByName('COD_APLICACAO').AsString))+', '+
+                     QuotedStr(Trim(IBQ_ConsultaFilial.FieldByName('DES_APLICACAO').AsString))+', '+
+                     QuotedStr(Trim(IBQ_ConsultaFilial.FieldByName('COD_FAMILIA_PRECO').AsString))+', '+
+                     QuotedStr(Trim(IBQ_ConsultaFilial.FieldByName('DES_FAMILIAPRECO').AsString))+', '+
                      QuotedStr(IBQ_ConsultaFilial.FieldByName('QTD_ATENDIDA').AsString)+', '+
                      QuotedStr(IBQ_ConsultaFilial.FieldByName('VLR_PRECO').AsString)+', '+
                      QuotedStr(IBQ_ConsultaFilial.FieldByName('VLR_BRUTO').AsString)+', '+
@@ -676,7 +960,8 @@ begin
             DMBelShop.SQLC.Execute(MySql,nil,nil);
 
             DMComissaoVendedor.CDS_V_UltimaAtualizacao.Edit;
-            DMComissaoVendedor.CDS_V_UltimaAtualizacaoDATA.AsDateTime:=DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)-1;
+            DMComissaoVendedor.CDS_V_UltimaAtualizacaoDATA.AsDateTime:=dDtaF;
+            DMComissaoVendedor.CDS_V_UltimaAtualizacaoIMP.AsString:='NAO';
             DMComissaoVendedor.CDS_V_UltimaAtualizacao.Post;
 
             // Fecha Transacao =================================================
@@ -709,10 +994,6 @@ begin
 
     End; // if DMComissaoVendedor.CDS_V_UltimaAtualizacaoPROC.AsString='SIM' Then
 
-    DMComissaoVendedor.CDS_V_UltimaAtualizacao.Edit;
-    DMComissaoVendedor.CDS_V_UltimaAtualizacaoIMP.AsString:='NAO';
-    DMComissaoVendedor.CDS_V_UltimaAtualizacao.Post;
-
     Application.ProcessMessages;
 
     DMComissaoVendedor.CDS_V_UltimaAtualizacao.Next;
@@ -742,11 +1023,19 @@ procedure TFrmComissaoVendedor.Dbg_ProdutosComissaoEnter(Sender: TObject);
 begin
   bEnterTab:=False;
   THackDBGrid(Dbg_ProdutosComissao).SelectedIndex:=2;
+
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_ProdutosComissaoEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
 end;
 
 procedure TFrmComissaoVendedor.Dbg_ProdutosComissaoExit(Sender: TObject);
 begin
-  DMComissaoVendedor.CDS_V_ProdutosAfterPost(DMComissaoVendedor.CDS_V_Produtos);
+  If (DMComissaoVendedor.CDS_V_Produtos.State=dsInsert) Or (DMComissaoVendedor.CDS_V_Produtos.State=dsEdit) Then
+   DMComissaoVendedor.CDS_V_ProdutosAfterPost(DMComissaoVendedor.CDS_V_Produtos);
+
   bEnterTab:=True;
 end;
 
@@ -852,19 +1141,19 @@ begin
 
    IndexFieldNames:='';
    IndexName:='';
-   If (OrderGrid='') or (OrderGrid='Crescente') Then
+   If (OrderGridDtaAtual='') or (OrderGridDtaAtual='Crescente') Then
     Begin
       AddIndex(Column.FieldName,Column.FieldName,[],Column.FieldName);
       IndexName:= Column.FieldName;
       IndexDefs.Update;
 
-      OrderGrid:='Descendente';
+      OrderGridDtaAtual:='Descendente';
     End
    Else
     Begin
       IndexFieldNames:=Column.FieldName;
-      OrderGrid:='Crescente';
-    End; // If (OrderGrid='') or (OrderGrid='Crescente') Then
+      OrderGridDtaAtual:='Crescente';
+    End; // If (OrderGridDtaAtual='') or (OrderGridDtaAtual='Crescente') Then
   End; // With DMComissaoVendedor.CDS_V_UltimaAtualizacao do
 
 end;
@@ -872,31 +1161,820 @@ end;
 procedure TFrmComissaoVendedor.Dbg_AplicacaoKeyUp(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
+  //============================================================================
+  // USADO NOS DOIS GRIDS ======================================================
+  //============================================================================
+
   // Bloquea TECLA Ctrl+Del ====================================================
   if (Shift = [ssCtrl]) and (Key = 46) then
     Key := 0;
-
-end;
-
-procedure TFrmComissaoVendedor.Dbg_FamiliaPrecosKeyUp(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
-begin
-  // Bloquea TECLA Ctrl+Del ====================================================
-  if (Shift = [ssCtrl]) and (Key = 46) then
-    Key := 0;
-
 end;
 
 procedure TFrmComissaoVendedor.Dbg_FamiliaPrecosExit(Sender: TObject);
 begin
-  DMComissaoVendedor.CDS_V_FamiliaPrecosAfterPost(DMComissaoVendedor.CDS_V_FamiliaPrecos);
-  bEnterTab:=True;
+  If (DMComissaoVendedor.CDS_V_FamiliaPrecos.State=dsInsert) Or (DMComissaoVendedor.CDS_V_FamiliaPrecos.State=dsEdit) Then
+   DMComissaoVendedor.CDS_V_FamiliaPrecosAfterPost(DMComissaoVendedor.CDS_V_FamiliaPrecos);
 
+  bEnterTab:=True;
 end;
 
 procedure TFrmComissaoVendedor.Dbg_FamiliaPrecosEnter(Sender: TObject);
 begin
   bEnterTab:=False;
+
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_FamiliaPrecosEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+end;
+
+procedure TFrmComissaoVendedor.EdtCodAplicacaoExit(Sender: TObject);
+Var
+  MySql: String;
+begin
+
+  If EdtCodAplicacao.Value<>0 Then
+  Begin
+    Screen.Cursor:=crAppStart;
+
+    If Not ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A') Then
+    Begin
+      msg('Erro de Conexão ao Banco de Dados do CD !!','X');
+      Exit;
+    end;
+
+    FrmBelShop.CriaQueryIB('IBDB_99','IBT_99', IBQ_ConsultaFilial, True, True);
+
+    // Busca Aplicaçoes ========================================================
+    MySql:=' SELECT a.NomeAplicacao, a.CodAplicacao'+
+           ' FROM APLICA a'+
+           ' WHERE a.CodAplicacao='+VarToStr(EdtCodAplicacao.Value);
+    IBQ_ConsultaFilial.Close;
+    IBQ_ConsultaFilial.SQL.Clear;
+    IBQ_ConsultaFilial.SQL.Add(MySql);
+    IBQ_ConsultaFilial.Open;
+
+    Screen.Cursor:=crDefault;
+
+    If Trim(IBQ_ConsultaFilial.FieldByName('CodAplicacao').AsString)='' Then
+    Begin
+      msg('Aplicação NÃO Encontrada !!!', 'A');
+
+      IBQ_ConsultaFilial.Close;
+      ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+      EdtCodAplicacao.Clear;
+      EdtCodAplicacao.SetFocus;
+      Exit;
+    End; // If Trim(IBQ_ConsultaFilial.FieldByName('CodAplicacao').AsString)='' Then
+
+    If DMComissaoVendedor.CDS_V_Aplicacao.Locate('Cod_Aplicacao',Trim(IBQ_ConsultaFilial.FieldByName('CodAplicacao').AsString),[]) Then
+    Begin
+      Begin
+        msg('Aplicação Já Informada !!','A');
+
+        IBQ_ConsultaFilial.Close;
+        ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+        EdtCodAplicacao.Clear;
+        EdtCodAplicacao.SetFocus;
+        Exit;
+      End;
+    End;
+
+    DMComissaoVendedor.CDS_V_Aplicacao.Insert;
+    DMComissaoVendedor.CDS_V_AplicacaoCod_Aplicacao.AsString:=
+                  Trim(IBQ_ConsultaFilial.FieldByName('CodAplicacao').AsString);
+    DMComissaoVendedor.CDS_V_AplicacaoDes_Aplicacao.AsString:=
+                 Trim(IBQ_ConsultaFilial.FieldByName('NomeAplicacao').AsString);
+    DMComissaoVendedor.CDS_V_Aplicacao.Post;
+
+    IBQ_ConsultaFilial.Close;
+    EdtCodAplicacao.Text:='0';
+    EdtCodAplicacao.SetFocus;
+
+    ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F')
+  End;
+end;
+
+procedure TFrmComissaoVendedor.Dbg_AplicacaoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  //============================================================================
+  // Tratamento Grid Dbg_Aplicacao =============================================
+  //============================================================================
+  If (Sender as TDBGrid).Name='Dbg_Aplicacao' Then
+  Begin
+    // Delete Aplicação ---------------------------------------------
+    If (Key=VK_Delete) And (Not DMComissaoVendedor.CDS_V_Aplicacao.IsEmpty) Then
+    Begin
+      If Trim(DMComissaoVendedor.CDS_V_AplicacaoCOD_APLICACAO.AsString)='0006' Then
+      Begin
+        msg('Impossível Excluir a Aplicação'+cr+cr+Trim(DMComissaoVendedor.CDS_V_AplicacaoDES_APLICACAO.AsString),'A');
+        Exit;
+      End;
+
+      If msg('Deseja Realmente EXCLUIR a'+cr+'Aplicação SELECIONADA ??','C')=2 Then
+       Exit;
+
+      DMComissaoVendedor.CDS_V_Aplicacao.Delete;
+    End; // If (Key=VK_Delete) And (Not DMComissaoVendedor.CDS_V_Aplicacao.IsEmpty) Then
+
+    Dbg_Aplicacao.SetFocus;
+  End; // If (Sender as TDBGrid).Name='Dbg_Aplicacao' Then
+
+  //============================================================================
+  // Tratamento Grid Dbg_FamiliaPrecos =========================================
+  //============================================================================
+  If (Sender as TDBGrid).Name='Dbg_FamiliaPrecos' Then
+  Begin
+    // Delete Familia de Preço --------------------------------------
+    If (Key=VK_Delete) And (Not DMComissaoVendedor.CDS_V_FamiliaPrecos.IsEmpty) Then
+    Begin
+      If msg('Deseja Realmente EXCLUIR o'+cr+'Agrupamento de Preço'+cr+'SELECIONADO ??','C')=2 Then
+       Exit;
+
+      DMComissaoVendedor.CDS_V_FamiliaPrecos.Delete;
+    End; // If (Key=VK_Delete) And (Not DMComissaoVendedor.CDS_V_FamiliaPrecos.IsEmpty) Then
+
+    Dbg_FamiliaPrecos.SetFocus;
+  End; // If (Sender as TDBGrid).Name='Dbg_FamiliaPrecos' Then
+
+end;
+
+procedure TFrmComissaoVendedor.EdtCodFamiliaPrecosExit(Sender: TObject);
+Var
+  MySql: String;
+begin
+
+  If EdtCodFamiliaPrecos.Value<>0 Then
+  Begin
+    Screen.Cursor:=crAppStart;
+
+    If Not ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A') Then
+    Begin
+      msg('Erro de Conexão ao Banco de Dados do CD !!','X');
+      Exit;
+    end;
+
+    FrmBelShop.CriaQueryIB('IBDB_99','IBT_99', IBQ_ConsultaFilial, True, True);
+
+    // Busca Aplicaçoes ========================================================
+    MySql:=' SELECT f.NomeFamiliaPreco, f.CodFamiliaPreco'+
+           ' FROM FAMILIAP f'+
+           ' WHERE f.CodFamiliaPreco='+VarToStr(EdtCodFamiliaPrecos.Value);
+    IBQ_ConsultaFilial.Close;
+    IBQ_ConsultaFilial.SQL.Clear;
+    IBQ_ConsultaFilial.SQL.Add(MySql);
+    IBQ_ConsultaFilial.Open;
+
+    Screen.Cursor:=crDefault;
+
+    If Trim(IBQ_ConsultaFilial.FieldByName('CodFamiliaPreco').AsString)='' Then
+    Begin
+      msg('Familia Preço NÃO Encontrada !!!', 'A');
+
+      IBQ_ConsultaFilial.Close;
+      ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+      EdtCodFamiliaPrecos.Clear;
+      EdtCodFamiliaPrecos.SetFocus;
+      Exit;
+    End; // If Trim(IBQ_ConsultaFilial.FieldByName('CodFamiliaPreco').AsString)='' Then
+
+    If DMComissaoVendedor.CDS_V_FamiliaPrecos.Locate('Cod_Familia',Trim(IBQ_ConsultaFilial.FieldByName('CodFamiliaPreco').AsString),[]) Then
+    Begin
+      Begin
+        msg('Familia Preço Já Informada !!','A');
+
+        IBQ_ConsultaFilial.Close;
+        ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+        EdtCodFamiliaPrecos.Clear;
+        EdtCodFamiliaPrecos.SetFocus;
+        Exit;
+      End;
+    End;
+
+    DMComissaoVendedor.CDS_V_FamiliaPrecos.Insert;
+    DMComissaoVendedor.CDS_V_FamiliaPrecosCOD_FAMILIA.AsString:=
+               Trim(IBQ_ConsultaFilial.FieldByName('CodFamiliaPreco').AsString);
+    DMComissaoVendedor.CDS_V_FamiliaPrecosDES_FAMILIA.AsString:=
+              Trim(IBQ_ConsultaFilial.FieldByName('NomeFamiliaPreco').AsString);
+    DMComissaoVendedor.CDS_V_FamiliaPrecosFAT_CONVERSAO.AsCurrency:=0.00;
+    DMComissaoVendedor.CDS_V_FamiliaPrecos.Post;
+
+    IBQ_ConsultaFilial.Close;
+    EdtCodFamiliaPrecos.Text:='0';
+    EdtCodFamiliaPrecos.SetFocus;
+
+    ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F')
+  End;
+end;
+
+procedure TFrmComissaoVendedor.Bt_BuscaAplicacaoClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  If Not ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A') Then
+  Begin
+    msg('Erro de Conexão ao Banco de Dados do CD !!','X');
+    Exit;
+  End;
+
+  FrmBelShop.CriaQueryIB('IBDB_99','IBT_99', IBQ_ConsultaFilial, True, True);
+
+  // ========== EFETUA A CONEXÃO ===============================================
+  FrmPesquisaIB:=TFrmPesquisaIB.Create(Self);
+
+  FrmPesquisaIB.IBCDS_Pesquisa.DBConnection:=IBQ_ConsultaFilial.Database;
+  FrmPesquisaIB.IBCDS_Pesquisa.DBTransaction:=IBQ_ConsultaFilial.Transaction;
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  // Busca Aplicações ==========================================================
+  MySql:=' SELECT a.NomeAplicacao, a.CodAplicacao'+
+         ' FROM APLICA a'+
+         ' ORDER BY a.NomeAplicacao';
+  FrmPesquisaIB.IBCDS_Pesquisa.Close;
+  FrmPesquisaIB.IBCDS_Pesquisa.CommandText:=MySql;
+  FrmPesquisaIB.IBCDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(FrmPesquisaIB.IBCDS_Pesquisa.FieldByName('CodAplicacao').AsString)='' Then
+  Begin
+    msg('Sem Registro a Listar !!','A');
+    EdtCodAplicacao.Clear;
+    ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+    FreeAndNil(FrmPesquisaIB);
+    EdtCodAplicacao.SetFocus;
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisaIB.Campo_pesquisa:='NomeAplicacao';
+  FrmPesquisaIB.Campo_Codigo:='CodAplicacao';
+  FrmPesquisaIB.Campo_Descricao:='NomeAplicacao';
+  FrmPesquisaIB.EdtDescricao.Clear;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisaIB.ShowModal;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0')Then
+  Begin
+    If DMComissaoVendedor.CDS_V_Aplicacao.Locate('COD_APLICACAO',Trim(FrmPesquisaIB.EdtCodigo.Text),[]) Then
+    Begin
+      Begin
+        msg('Aplicação Já Informada !!','A');
+        EdtCodAplicacao.Clear;
+        ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+        FreeAndNil(FrmPesquisaIB);
+        EdtCodAplicacao.SetFocus;
+        Exit;
+      End;
+    End;
+
+    DMComissaoVendedor.CDS_V_Aplicacao.Insert;
+    DMComissaoVendedor.CDS_V_AplicacaoCOD_APLICACAO.AsString:=Trim(FrmPesquisaIB.EdtCodigo.Text);
+    DMComissaoVendedor.CDS_V_AplicacaoDES_APLICACAO.AsString:=Trim(FrmPesquisaIB.EdtDescricao.Text);
+    DMComissaoVendedor.CDS_V_Aplicacao.Post;
+
+  End; // If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0')Then
+
+  ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+  FreeAndNil(FrmPesquisaIB);
+end;
+
+procedure TFrmComissaoVendedor.Bt_BuscaFamiliaPrecoClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  If Not ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A') Then
+  Begin
+    msg('Erro de Conexão ao Banco de Dados do CD !!','X');
+    Exit;
+  End;
+
+  FrmBelShop.CriaQueryIB('IBDB_99','IBT_99', IBQ_ConsultaFilial, True, True);
+
+  // ========== EFETUA A CONEXÃO ===============================================
+  FrmPesquisaIB:=TFrmPesquisaIB.Create(Self);
+
+  FrmPesquisaIB.IBCDS_Pesquisa.DBConnection:=IBQ_ConsultaFilial.Database;
+  FrmPesquisaIB.IBCDS_Pesquisa.DBTransaction:=IBQ_ConsultaFilial.Transaction;
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  // Busca Aplicações ==========================================================
+  MySql:=' SELECT f.NomeFamiliaPreco, f.CodFamiliaPreco'+
+         ' FROM FAMILIAP f'+
+         ' ORDER BY f.NomeFamiliaPreco';
+  FrmPesquisaIB.IBCDS_Pesquisa.Close;
+  FrmPesquisaIB.IBCDS_Pesquisa.CommandText:=MySql;
+  FrmPesquisaIB.IBCDS_Pesquisa.Open;
+                                                           
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(FrmPesquisaIB.IBCDS_Pesquisa.FieldByName('CodFamiliaPreco').AsString)='' Then
+  Begin
+    msg('Sem Registro a Listar !!','A');
+    EdtCodFamiliaPrecos.Clear;
+    ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+    FreeAndNil(FrmPesquisaIB);
+    EdtCodFamiliaPrecos.SetFocus;
+    Exit;
+  End;                                 
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisaIB.Campo_pesquisa:='NomeFamiliaPreco';
+  FrmPesquisaIB.Campo_Codigo:='CodFamiliaPreco';
+  FrmPesquisaIB.Campo_Descricao:='NomeFamiliaPreco';
+  FrmPesquisaIB.EdtDescricao.Clear;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisaIB.ShowModal;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0')Then
+  Begin
+    If DMComissaoVendedor.CDS_V_FamiliaPrecos.Locate('COD_FAMILIA',Trim(FrmPesquisaIB.EdtCodigo.Text),[]) Then
+    Begin
+      Begin
+        msg('Agrupamento de Precos Já Informada !!','A');
+        EdtCodFamiliaPrecos.Clear;
+        ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+        FreeAndNil(FrmPesquisaIB);
+        EdtCodFamiliaPrecos.SetFocus;
+        Exit;
+      End;
+    End;
+
+    DMComissaoVendedor.CDS_V_FamiliaPrecos.Insert;
+    DMComissaoVendedor.CDS_V_FamiliaPrecosCOD_FAMILIA.AsString:=Trim(FrmPesquisaIB.EdtCodigo.Text);
+    DMComissaoVendedor.CDS_V_FamiliaPrecosDES_FAMILIA.AsString:=Trim(FrmPesquisaIB.EdtDescricao.Text);
+    DMComissaoVendedor.CDS_V_FamiliaPrecosFAT_CONVERSAO.AsCurrency:=0.00;
+    DMComissaoVendedor.CDS_V_FamiliaPrecos.Post;
+
+  End; // If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0')Then
+
+  ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+  FreeAndNil(FrmPesquisaIB);
+end;
+
+procedure TFrmComissaoVendedor.Dbg_ProdutosComissaoTitleClick(Column: TColumn);
+begin
+  If DMComissaoVendedor.CDS_V_Produtos.IsEmpty Then
+   Exit;
+
+  With DMComissaoVendedor.CDS_V_Produtos do
+  Begin
+    If IndexDefs.Count>0 Then
+     IndexDefs.Delete(0);
+
+   IndexFieldNames:='';
+   IndexName:='';
+   If (OrderGridProd='') or (OrderGridProd='Crescente') Then
+    Begin
+      AddIndex(Column.FieldName,Column.FieldName,[],Column.FieldName);
+      IndexName:= Column.FieldName;
+      IndexDefs.Update;
+
+      OrderGridProd:='Descendente';
+    End
+   Else
+    Begin
+      IndexFieldNames:=Column.FieldName;
+      OrderGridProd:='Crescente';
+    End; // If (OrderGridProd='') or (OrderGridProd='Crescente') Then
+  End; // With DMComissaoVendedor.CDS_V_Produtos do
+
+end;
+
+procedure TFrmComissaoVendedor.Bt_ImportaProdutosClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  If Not ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A') Then
+  Begin
+    msg('Erro de Conexão ao Banco de Dados do CD !!','X');
+    Exit;
+  End;
+
+  If msg('Deseja Realmente IMPORTAR'+cr+'PRODUTOS AGORA ??','C')=2 Then
+   Exit;
+
+  OdirPanApres.Caption:='AGUARDE !! Importando Produtos';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmComissaoVendedor;
+  OdirPanApres.Visible:=True;
+  Application.ProcessMessages;
+
+  FrmBelShop.CriaQueryIB('IBDB_99','IBT_99', DMComissaoVendedor.IBQ_ProdutoMPMS, True, False);
+
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    DMComissaoVendedor.IBQ_ProdutoMPMS.Close;
+    DMComissaoVendedor.IBQ_ProdutoMPMS.Open;
+
+    While Not DMComissaoVendedor.IBQ_ProdutoMPMS.Eof do
+    Begin
+      MySql:=DMComissaoVendedor.IBQ_ProdutoMPMSUPDATE_INSERT.AsString;
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+     DMComissaoVendedor.IBQ_ProdutoMPMS.Next;
+    End; // While Not DMComissaoVendedor.IBQ_ProdutoMPMS.Eof do
+    DMComissaoVendedor.IBQ_ProdutoMPMS.Close;
+
+    // Atualiza Transacao =======================================
+    DMBelShop.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    msg('Importação de Produtos'+cr+'Efetuado com Sucesso !!','A');
+
+  Except
+    on e : Exception do
+    Begin
+      // Abandona Transacao =====================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      DMComissaoVendedor.IBQ_ProdutoMPMS.Close;
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+            
+    End; // on e : Exception do
+  End; // Try
+
+  OdirPanApres.Visible:=False;
+
+  ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+end;
+
+procedure TFrmComissaoVendedor.Bt_CalculaComiisaoClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  Dbg_ComisVendedores.SetFocus;
+
+  Bt_SalvaComiisao.Enabled:=False;
+  EdtCodDocComissao.Clear;
+
+  // Solicita o Periodo de Apropriação de Vendas dos Vendedores ===============
+  bgSiga:=False;
+  FrmPeriodoApropriacao:=TFrmPeriodoApropriacao.Create(Self);
+  FrmPeriodoApropriacao.sgTipoProc:='';
+
+  FrmPeriodoApropriacao.ShowModal;
+
+  sgDtaInicio:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date);
+  sgDtaFim   :=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date);
+
+  FreeAndNil(FrmPeriodoApropriacao);
+
+  If Not bgSiga Then
+   Exit;
+
+  // Analisa Data de Inicio do Periodo
+  MySql:=' SELECT Max(d.cod_aux) docto'+
+         ' FROM TAB_AUXILIAR d'+
+         ' WHERE d.tip_aux=17';
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:=MySql;
+  DMBelShop.CDS_Busca.Open;
+
+  If Trim(DMBelShop.CDS_Busca.FieldByName('Docto').AsString)<>'' Then
+  Begin
+    MySql:=' SELECT d.des_aux, d.des_aux1'+
+           ' FROM TAB_AUXILIAR d'+
+           ' WHERE d.tip_aux = 17'+
+           ' AND  d.cod_aux='+DMBelShop.CDS_Busca.FieldByName('Docto').AsString;
+    DMBelShop.CDS_Busca.Close;
+    DMBelShop.SDS_Busca.CommandText:=MySql;
+    DMBelShop.CDS_Busca.Open;
+
+    If (DMBelShop.CDS_Busca.FieldByName('Des_Aux1').AsDateTime>=StrToDate(sgDtaFim)) Or
+       (DMBelShop.CDS_Busca.FieldByName('Des_Aux1').AsDateTime>=StrToDate(sgDtaInicio)) Then
+    Begin
+      msg('Período Informado: '+cr+sgDtaInicio+' a '+sgDtaFim+cr+cr+' Diverge com o Período do Último Calculo:'+cr+
+          DMBelShop.CDS_Busca.FieldByName('Des_Aux').AsString+' a '+DMBelShop.CDS_Busca.FieldByName('Des_Aux1').AsString,'A');
+
+      DMBelShop.CDS_Busca.Close;
+      Exit;
+    End;
+  End; // If Not DMBelShop.CDS_Busca.IsEmpty Then
+  DMBelShop.CDS_Busca.Close;
+
+  // Apresenta Comissiões -----------------------------------------
+  sgDtaInicio:=f_Troca('/','.',f_Troca('-','.',sgDtaInicio));
+  sgDtaFim   :=f_Troca('/','.',f_Troca('-','.',sgDtaFim));
+
+  If Not BuscaComissoes('0') Then
+   Exit;
+
+  Bt_SalvaComiisao.Enabled:=True;
+end;
+
+procedure TFrmComissaoVendedor.Bt_BuscaDocComissaoClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  Dbg_ComisVendedores.SetFocus;
+  Bt_SalvaComiisao.Enabled:=True;
+
+  DMComissaoVendedor.CDS_ComisVendedores.Close;
+
+  FrmPesquisa:=TFrmPesquisa.Create(Self);
+
+  EdtCodDocComissao.Clear;
+  EdtCodDocComissao.SetFocus;
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+  DMBelShop.CDS_Pesquisa.Close;
+  MySql:=' SELECT d.cod_aux DOCTO, d.des_aux || '' a '' || d.des_aux1 PERIODO'+
+         ' FROM TAB_AUXILIAR d'+
+         ' WHERE d.tip_aux=17'+
+         ' ORDER BY 1';
+  DMBelShop.CDS_Pesquisa.Filtered:=False;
+  DMBelShop.SDS_Pesquisa.CommandText:=MySql;
+  DMBelShop.CDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(DMBelShop.CDS_Pesquisa.FieldByName('DOCTO').AsString)='' Then
+  Begin
+    DMBelShop.CDS_Pesquisa.Close;
+    msg('Sem Documento a Listar !!','A');
+    EdtCodDocComissao.SetFocus;
+    FrmPesquisa.Free;
+    FrmPesquisa:=nil;
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisa.Campo_pesquisa:='Periodo';
+  FrmPesquisa.Campo_Codigo:='Docto';
+  FrmPesquisa.Campo_Descricao:='Periodo';
+  //FrmPesquisa.EdtDescricao.Text:=FrmAcessos.EdtDescPessoa.Text;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisa.ShowModal;
+  DMBelShop.CDS_Pesquisa.Close;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+  Begin
+    EdtCodDocComissao.Value:=StrToInt(FrmPesquisa.EdtCodigo.Text);
+    EdtCodDocComissaoExit(Self);
+  End;
+
+  FrmPesquisa.Free;
+  FrmPesquisa:=nil;
+
+end;
+
+procedure TFrmComissaoVendedor.EdtCodDocComissaoExit(Sender: TObject);
+Var
+  MySql: String;
+begin
+  If EdtCodDocComissao.Value<>0 Then
+  Begin
+    Dbg_ComisVendedores.SetFocus;
+
+    DMComissaoVendedor.CDS_ComisVendedores.Close;
+
+    Screen.Cursor:=crAppStart;
+
+    // Busca Lojas =============================================================
+    MySql:=' SELECT d.cod_aux DOCTO, d.des_aux, d.des_aux1'+
+           ' FROM TAB_AUXILIAR d'+
+           ' WHERE d.tip_aux=17'+
+           ' AND d.Cod_Aux='+VarToStr(EdtCodDocComissao.Value);
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+
+    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Docto').AsString)='' Then
+    Begin
+      msg('Documento NÃO Encontrado !!!', 'A');
+      Screen.Cursor:=crDefault;
+      EdtCodDocComissao.Clear;
+      EdtCodDocComissao.SetFocus;
+      DMBelShop.CDS_BuscaRapida.Close;
+      Exit;
+    End;
+
+    sgDtaInicio:=f_Troca('/','.',f_Troca('-','.',DMBelShop.CDS_BuscaRapida.FieldByName('Des_Aux').AsString));
+    sgDtaFim   :=f_Troca('/','.',f_Troca('-','.',DMBelShop.CDS_BuscaRapida.FieldByName('Des_Aux1').AsString));
+
+    // Apresenta Comissiões -----------------------------------------
+    BuscaComissoes(DMBelShop.CDS_BuscaRapida.FieldByName('Docto').AsString);
+
+    DMBelShop.CDS_BuscaRapida.Close;
+
+    Screen.Cursor:=crDefault;
+  End;
+end;
+
+procedure TFrmComissaoVendedor.Dbg_ComisVendedoresDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn;
+  State: TGridDrawState);
+begin
+  If Not DMComissaoVendedor.CDS_ComisVendedores.IsEmpty Then
+  Begin
+    If not (gdSelected in State) Then
+    Begin
+      If Trim(DMComissaoVendedor.CDS_ComisVendedoresLOJA.AsString)='TOTAL DA EMPRESA' Then
+      Begin
+        Dbg_ComisVendedores.Canvas.Brush.Color:=clBlue;
+        Dbg_ComisVendedores.Canvas.Font.Color :=clWhite;
+      End;
+
+      If Trim(DMComissaoVendedor.CDS_ComisVendedoresCOD_VENDEDOR.AsString)='TOTAL DA LOJA' Then
+      Begin
+        Dbg_ComisVendedores.Canvas.Brush.Color:=clRed;
+        Dbg_ComisVendedores.Canvas.Font.Color :=clWhite;
+      End;
+
+      If Trim(DMComissaoVendedor.CDS_ComisVendedoresCOD_VENDEDOR.AsString)='TOTAL' Then
+      Begin
+        Dbg_ComisVendedores.Canvas.Brush.Color:=clSkyBlue;
+        Dbg_ComisVendedores.Canvas.Font.Style :=[fsBold];
+      End;
+
+      Dbg_ComisVendedores.Canvas.FillRect(Rect);
+      Dbg_ComisVendedores.DefaultDrawDataCell(Rect,Column.Field,state);
+    End; // if not (gdSelected in State) Then
+  End; // If Not DMComissaoVendedor.CDS_ComisVendedores.IsEmpty Then
+
+end;
+
+procedure TFrmComissaoVendedor.EdtCodDocComissaoChange(Sender: TObject);
+begin
+  DMComissaoVendedor.CDS_ComisVendedores.Close;
+  Bt_SalvaComiisao.Enabled:=False;
+
+end;
+
+procedure TFrmComissaoVendedor.Bt_SalvaComiisaoClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  Dbg_ComisVendedores.SetFocus;
+
+  If DMComissaoVendedor.CDS_ComisVendedores.IsEmpty Then
+   Exit;
+
+  If msg('Deseja Realmente Salvar o'+cr+'Documento Listado ??','C')=2 Then
+   Exit;
+
+  // Apresentacao ==========================================================
+  OdirPanApres.Caption:='AGUARDE !! Salvando Documento...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmComissaoVendedor;
+  OdirPanApres.Visible:=True;
+  Application.ProcessMessages;
+
+  // Aplicacoes Selecionadas ===================================================
+  AplicacoesSelecionadas;
+
+  // Numero do Proximo Docto ===================================================
+  MySql:=' SELECT COALESCE(MAX(d.cod_aux) + 1, 1) NrDoc'+
+         ' FROM TAB_AUXILIAR d'+
+         ' WHERE d.tip_aux = 17';
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:=MySql;
+  DMBelShop.CDS_Busca.Open;
+  sNumDoc:=DMBelShop.CDS_Busca.FieldByName('NrDoc').AsString;
+  DMBelShop.CDS_Busca.Close;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    // Grava Valores de Conversão e Numero do Docto ============================
+    MySql:=' UPDATE FIN_VEND_COMISSAO_VENDAS cv'+
+           ' SET cv.num_docto = '+QuotedStr(sNumDoc)+
+           ', cv.vlr_conversao = (COALESCE((SELECT COALESCE(cp.fat_conversao, 0.00)'+
+           '                                FROM fin_vend_comissao_prod cp'+
+           '                                WHERE cp.cod_produto = cv.cod_produto), 0.00))'+
+           ' WHERE cv.dta_docto between '+QuotedStr(sgDtaInicio)+' and '+QuotedStr(sgDtaFim)+
+           ' AND   cv.cod_aplicacao in ('+sgAplicacoes+')'+
+           ' AND   cv.num_docto = 0';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Grava  Numero e Periodo do Docto ========================================
+    MySql:=' INSERT INTO TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1)'+
+           ' VALUES ('+
+           QuotedStr('17')+', '+    // TIP_AUX
+           QuotedStr(sNumDoc)+', '+ // COD_AUX  = Número do Documento Gerado
+           QuotedStr(f_Troca('.','/',f_Troca('-','/',sgDtaInicio)))+', '+ // DES_AUX  = Data do Inicio do Período
+           QuotedStr(f_Troca('.','/',f_Troca('-','/',sgDtaFim)))+')';    // DES_AUX1 = Data do Fim do Período
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+    Screen.Cursor:=crDefault;
+    OdirPanApres.Visible:=False;
+
+    EdtCodDocComissao.Value:=StrToInt(sNumDoc);
+    EdtCodDocComissaoExit(Self);
+
+
+    msg('Documento Número: '+sNumDoc+cr+cr+'Salvo com SUCESSO !!','A');
+  Except
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+      Screen.Cursor:=crDefault;
+      OdirPanApres.Visible:=False;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try
+
+end;
+
+procedure TFrmComissaoVendedor.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
+var
+  Sentido: SmallInt;
+begin
+  // primeiramente verificamos se é o evento a ser tratado...
+  If Msg.message = WM_MOUSEWHEEL then
+  Begin
+//    If ActiveControl is TDBGrid then // If Somente DBGRID *** Testa se Classe é TDBGRID
+//    Begin
+      Msg.message := WM_KEYDOWN;
+      Msg.lParam := 0;
+      Sentido := HiWord(Msg.wParam);
+      if Sentido > 0 then
+       Msg.wParam := VK_UP
+      else
+       Msg.wParam := VK_DOWN;
+//    End; // If ActiveControl is TDBGrid then // If Somente DBGRID *** Testa se Classe é TDBGRID
+  End; // if Msg.message = WM_MOUSEWHEEL then
+end;
+
+procedure TFrmComissaoVendedor.Dbg_UltimaAtualizacaoEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_UltimaAtualizacaoEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmComissaoVendedor.Dbg_ComisVendedoresEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_ComisVendedoresEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmComissaoVendedor.Dbg_AplicacaoEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_AplicacaoEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
 
 end;
 

@@ -1,7 +1,7 @@
 object FrmComissaoVendedor: TFrmComissaoVendedor
   Left = 238
   Top = 107
-  ActiveControl = Dbg_FamiliaPrecos
+  ActiveControl = EdtCodDocComissao
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Comiss'#227'o Vendedores'
@@ -53,13 +53,33 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
       ParentFont = False
       OnClick = Bt_FluFornFecharClick
     end
+    object Bt_ImportaProdutos: TJvXPButton
+      Tag = 91
+      Left = 2
+      Top = 2
+      Width = 159
+      Height = 29
+      Caption = 'Busca Produtos CD'
+      TabOrder = 1
+      TabStop = False
+      ShowFocusRect = True
+      Align = alLeft
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Visible = False
+      OnClick = Bt_ImportaProdutosClick
+    end
   end
   object PC_ComissaoVendedor: TPageControl
     Left = 0
     Top = 0
     Width = 977
     Height = 543
-    ActivePage = Ts_ParametrosVendedores
+    ActivePage = Ts_Comissoes
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -144,6 +164,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           TitleFont.Style = [fsBold]
           OnDrawColumnCell = Dbg_UltimaAtualizacaoDrawColumnCell
           OnDblClick = Dbg_UltimaAtualizacaoDblClick
+          OnEnter = Dbg_UltimaAtualizacaoEnter
           OnKeyUp = Dbg_UltimaAtualizacaoKeyUp
           OnTitleClick = Dbg_UltimaAtualizacaoTitleClick
           Columns = <
@@ -256,6 +277,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           OnExit = Dbg_ProdutosComissaoExit
           OnKeyDown = Dbg_ProdutosComissaoKeyDown
           OnKeyPress = Dbg_ProdutosComissaoKeyPress
+          OnTitleClick = Dbg_ProdutosComissaoTitleClick
           Columns = <
             item
               Expanded = False
@@ -345,31 +367,205 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           Ctl3D = False
           ParentCtl3D = False
           TabOrder = 3
-          object JvXPButton2: TJvXPButton
-            Tag = 91
-            Left = 2
-            Top = 2
-            Width = 159
-            Height = 29
-            Caption = 'Busca Produtos CD'
-            TabOrder = 0
-            TabStop = False
-            ShowFocusRect = True
-            Align = alLeft
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            ParentFont = False
-            OnClick = Bt_ImportaVendasClick
-          end
         end
       end
     end
     object Ts_Comissoes: TTabSheet
       Caption = ' Comiss'#245'es '
       ImageIndex = 1
+      object Panel3: TPanel
+        Left = 0
+        Top = 0
+        Width = 969
+        Height = 38
+        Align = alTop
+        BevelInner = bvLowered
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        object Label1: TLabel
+          Left = 394
+          Top = 13
+          Width = 74
+          Height = 13
+          Caption = 'Busca Docto'
+        end
+        object Bt_BuscaDocComissao: TJvXPButton
+          Tag = 92
+          Left = 529
+          Top = 7
+          Width = 24
+          Height = 26
+          TabOrder = 0
+          TabStop = False
+          ShowFocusRect = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_BuscaDocComissaoClick
+        end
+        object EdtCodDocComissao: TCurrencyEdit
+          Left = 475
+          Top = 10
+          Width = 43
+          Height = 21
+          AutoSize = False
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          TabOrder = 1
+          OnChange = EdtCodDocComissaoChange
+          OnExit = EdtCodDocComissaoExit
+        end
+        object Bt_SalvaComiisao: TJvXPButton
+          Tag = 4
+          Left = 188
+          Top = 2
+          Width = 155
+          Height = 34
+          Caption = 'Salvar Docto'
+          Enabled = False
+          TabOrder = 2
+          TabStop = False
+          ShowFocusRect = True
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_SalvaComiisaoClick
+        end
+        object Bt_CalculaComiisao: TJvXPButton
+          Tag = 91
+          Left = 2
+          Top = 2
+          Width = 186
+          Height = 34
+          Caption = 'Calcular Novo Per'#237'odo'
+          TabOrder = 3
+          TabStop = False
+          ShowFocusRect = True
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_CalculaComiisaoClick
+        end
+      end
+      object Dbg_ComisVendedores: TDBGrid
+        Left = 0
+        Top = 38
+        Width = 969
+        Height = 477
+        Align = alClient
+        Color = 15004403
+        Ctl3D = False
+        DataSource = DMComissaoVendedor.DS_ComisVendedores
+        FixedColor = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+        ParentCtl3D = False
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clBlack
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = [fsBold]
+        OnDrawColumnCell = Dbg_ComisVendedoresDrawColumnCell
+        OnEnter = Dbg_ComisVendedoresEnter
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'COD_LOJA'
+            Title.Alignment = taCenter
+            Width = 45
+            Visible = True
+          end
+          item
+            Color = clSilver
+            Expanded = False
+            FieldName = 'LOJA'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            Width = 300
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'COD_VENDEDOR'
+            Title.Alignment = taCenter
+            Title.Caption = 'C'#243'd'
+            Width = 90
+            Visible = True
+          end
+          item
+            Color = clSilver
+            Expanded = False
+            FieldName = 'DES_VENDEDOR'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            Width = 180
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_NOTAS'
+            Title.Alignment = taRightJustify
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_VENDA'
+            Title.Alignment = taRightJustify
+            Width = 60
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_CONVERSAO'
+            Title.Alignment = taRightJustify
+            Width = 70
+            Visible = True
+          end
+          item
+            Color = clSilver
+            Expanded = False
+            FieldName = 'VLR_COMISSAO'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            Title.Alignment = taRightJustify
+            Width = 90
+            Visible = True
+          end>
+      end
     end
     object Ts_ParametrosVendedores: TTabSheet
       Caption = ' Parametros Vendedores '
@@ -381,7 +577,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         Left = 433
         Top = 9
         Width = 480
-        Height = 498
+        Height = 478
         Caption = ' Agrupamentos de Pre'#231'os'
         Color = clSilver
         Font.Charset = DEFAULT_CHARSET
@@ -396,7 +592,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           Left = 1
           Top = 47
           Width = 478
-          Height = 450
+          Height = 430
           Hint = '<Delete> Exclui Item da Lista'
           Align = alClient
           DataSource = DMComissaoVendedor.DS_V_FamiliaPrecos
@@ -418,18 +614,21 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           TitleFont.Style = [fsBold]
           OnEnter = Dbg_FamiliaPrecosEnter
           OnExit = Dbg_FamiliaPrecosExit
-          OnKeyUp = Dbg_FamiliaPrecosKeyUp
+          OnKeyDown = Dbg_AplicacaoKeyDown
+          OnKeyUp = Dbg_AplicacaoKeyUp
           SairComEnter = False
           Columns = <
             item
               Expanded = False
               FieldName = 'DES_FAMILIA'
+              ReadOnly = True
               Width = 300
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'COD_FAMILIA'
+              ReadOnly = True
               Title.Alignment = taRightJustify
               Width = 50
               Visible = True
@@ -472,6 +671,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
             ParentFont = False
+            OnClick = Bt_BuscaFamiliaPrecoClick
           end
           object EdtCodFamiliaPrecos: TCurrencyEdit
             Left = 11
@@ -482,6 +682,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
             DecimalPlaces = 0
             DisplayFormat = '0'
             TabOrder = 1
+            OnExit = EdtCodFamiliaPrecosExit
           end
         end
       end
@@ -489,7 +690,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         Left = 88
         Top = 9
         Width = 338
-        Height = 498
+        Height = 478
         Anchors = [akTop, akRight]
         Caption = ' Aplica'#231#245'es '
         Color = clSilver
@@ -505,7 +706,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           Left = 1
           Top = 47
           Width = 336
-          Height = 450
+          Height = 430
           Hint = '<Delete> Exclui Item da Lista'
           Align = alClient
           DataSource = DMComissaoVendedor.DS_V_Aplicacao
@@ -525,6 +726,8 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           TitleFont.Height = -11
           TitleFont.Name = 'Tahoma'
           TitleFont.Style = [fsBold]
+          OnEnter = Dbg_AplicacaoEnter
+          OnKeyDown = Dbg_AplicacaoKeyDown
           OnKeyUp = Dbg_AplicacaoKeyUp
           SairComEnter = False
           Columns = <
@@ -573,6 +776,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
             ParentFont = False
+            OnClick = Bt_BuscaAplicacaoClick
           end
           object EdtCodAplicacao: TCurrencyEdit
             Left = 11
@@ -583,8 +787,32 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
             DecimalPlaces = 0
             DisplayFormat = '0'
             TabOrder = 1
+            OnExit = EdtCodAplicacaoExit
           end
         end
+      end
+      object dxStatusBar3: TdxStatusBar
+        Left = 0
+        Top = 491
+        Width = 969
+        Height = 24
+        Panels = <
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            PanelStyle.Color = clSilver
+            Fixed = False
+            Text = '<Delete> Delete Item, Selecionado, da Lista'
+            Width = 65
+          end>
+        PaintStyle = stpsOffice11
+        SizeGrip = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        Color = clSilver
       end
     end
   end
@@ -611,5 +839,10 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
     EndColor = 8388863
     Left = 888
     Top = 352
+  end
+  object ApplicationEvents1: TApplicationEvents
+    OnMessage = ApplicationEvents1Message
+    Left = 685
+    Top = 128
   end
 end

@@ -6200,7 +6200,7 @@ end;
 
 procedure TFrmCentralTrocas.Panel66Click(Sender: TObject);
 begin
-  If AnsiUpperCase(Des_Login)='ODIR' Then
+  If (AnsiUpperCase(Des_Login)='ODIR') Or (AnsiUpperCase(Des_Login)='PEDRO') Then
   Begin
     Bt_ReposLojasAlterarQtd.Enabled:=(Not Bt_ReposLojasAlterarQtd.Enabled);
     Bt_ReposLojasGeraPedidoSIDICOM.Enabled:=(Not Bt_ReposLojasGeraPedidoSIDICOM.Enabled);

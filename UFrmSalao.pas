@@ -16696,7 +16696,6 @@ begin
   FrmPesquisa:=TFrmPesquisa.Create(Self);
 
   EdtPagtoCodPlan.Clear;
-
   EdtPagtoCodPlan.SetFocus;
 
   // ========== EXECUTA QUERY PARA PESQUISA ====================================

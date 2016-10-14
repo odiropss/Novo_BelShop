@@ -23476,7 +23476,6 @@ end;
 
 procedure TFrmBelShop.Dbg_FiltroFornecedoresKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-
   if (Key=VK_Delete) And (Trim(sgCodLojaUnica)='') Then
   Begin
     If Not DMVirtual.CDS_V_Fornecedores.IsEmpty Then
@@ -23503,44 +23502,38 @@ begin
       MontaSelectFornecedores;
     End; // If Not DMVirtual.CDS_V_Fornecedores.IsEmpty Then
   End; // if Key=VK_Delete Then
-
   Dbg_FiltroFornecedores.SetFocus;
-
 end;
 
 procedure TFrmBelShop.Dbg_FiltroGruposProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  if Key=VK_Delete Then
+  Begin
+    If Not DMVirtual.CDS_V_GruposProdutos.IsEmpty Then
+    Begin
+      // Excluir Sub-Grupo de Produto ===========================================
+      While Not DMVirtual.CDS_V_SubGruposProdutos.Eof do
+      Begin
+        Refresh;
 
- if Key=VK_Delete Then
- Begin
-   If Not DMVirtual.CDS_V_GruposProdutos.IsEmpty Then
-   Begin
-     // Excluir Sub-Grupo de Produto ===========================================
-     While Not DMVirtual.CDS_V_SubGruposProdutos.Eof do
-     Begin
-       Refresh;
+        DMVirtual.CDS_V_SubGruposProdutos.Delete;
+      End;
 
-       DMVirtual.CDS_V_SubGruposProdutos.Delete;
-     End;
+      // Excluir Grupo de Produto ===============================================
+      DMVirtual.CDS_V_GruposProdutos.Delete;
+    End; // If Not DMVirtual.CDS_V_GruposProdutos.IsEmpty Then
+  End; // if Key=VK_Delete Then
 
-     // Excluir Grupo de Produto ===============================================
-     DMVirtual.CDS_V_GruposProdutos.Delete;
-
-   End; // If Not DMVirtual.CDS_V_GruposProdutos.IsEmpty Then
- End; // if Key=VK_Delete Then
-
- Dbg_FiltroGruposProdutos.SetFocus;
-
+  Dbg_FiltroGruposProdutos.SetFocus;
 end;
 
 procedure TFrmBelShop.Dbg_FiltroSubGruposProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
- if Key=VK_Delete Then
-  If Not DMVirtual.CDS_V_SubGruposProdutos.IsEmpty Then
-   DMVirtual.CDS_V_SubGruposProdutos.Delete;
+  if Key=VK_Delete Then
+   If Not DMVirtual.CDS_V_SubGruposProdutos.IsEmpty Then
+    DMVirtual.CDS_V_SubGruposProdutos.Delete;
 
- Dbg_FiltroSubGruposProdutos.SetFocus;
-
+  Dbg_FiltroSubGruposProdutos.SetFocus;
 end;
 
 procedure TFrmBelShop.Bt_OCBuscaProdutosClick(Sender: TObject);
@@ -23838,7 +23831,7 @@ begin
     If DMVirtual.CDS_V_Aplicacao.Locate('Cod_Aplicacao',IBQ_MPMS.FieldByName('CodAplicacao').AsString,[]) Then
     Begin
       Begin
-        msg('Aplicacao Já Informada !!','A');
+        msg('Aplicação Já Informada !!','A');
         IBQ_MPMS.Close;
         EdtOCCodAplicacao.Clear;
         EdtOCCodAplicacao.SetFocus;
@@ -23859,16 +23852,13 @@ begin
   End;
 end;
 
-procedure TFrmBelShop.Dbg_OCAplicacaoKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmBelShop.Dbg_OCAplicacaoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  if Key=VK_Delete Then
+   If Not DMVirtual.CDS_V_Aplicacao.IsEmpty Then
+    DMVirtual.CDS_V_Aplicacao.Delete;
 
- if Key=VK_Delete Then
-  If Not DMVirtual.CDS_V_Aplicacao.IsEmpty Then
-   DMVirtual.CDS_V_Aplicacao.Delete;
-
- Dbg_OCAplicacao.SetFocus;
-
+  Dbg_OCAplicacao.SetFocus;
 end;
 
 procedure TFrmBelShop.EdtOCCodFamiliaPrecosExit(Sender: TObject);
@@ -23893,7 +23883,7 @@ begin
 
     If Trim(IBQ_MPMS.FieldByName('CodFamiliaPreco').AsString)='' Then
     Begin
-      msg('Familia Preco NÃO Encontrada !!!', 'A');
+      msg('Familia Preço NÃO Encontrada !!!', 'A');
       IBQ_MPMS.Close;
       EdtOCCodFamiliaPrecos.Clear;
       EdtOCCodFamiliaPrecos.SetFocus;
@@ -23903,7 +23893,7 @@ begin
     If DMVirtual.CDS_V_FamiliaPrecos.Locate('Cod_FamiliaPreco',IBQ_MPMS.FieldByName('CodFamiliaPreco').AsString,[]) Then
     Begin
       Begin
-        msg('Familia Preco Já Informada !!','A');
+        msg('Familia Preço Já Informada !!','A');
         IBQ_MPMS.Close;
         EdtOCCodFamiliaPrecos.Clear;
         EdtOCCodFamiliaPrecos.SetFocus;
@@ -23926,13 +23916,11 @@ end;
 
 procedure TFrmBelShop.Dbg_OCFamiliaPrecosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  if Key=VK_Delete Then
+   If Not DMVirtual.CDS_V_FamiliaPrecos.IsEmpty Then
+    DMVirtual.CDS_V_FamiliaPrecos.Delete;
 
- if Key=VK_Delete Then
-  If Not DMVirtual.CDS_V_FamiliaPrecos.IsEmpty Then
-   DMVirtual.CDS_V_FamiliaPrecos.Delete;
-
- Dbg_OCFamiliaPrecos.SetFocus;
-
+  Dbg_OCFamiliaPrecos.SetFocus;
 end;
 
 procedure TFrmBelShop.EdtFiltroCodGrupoSTExit(Sender: TObject);
@@ -23973,13 +23961,11 @@ end;
 
 procedure TFrmBelShop.Dbg_FiltroGrupoSTKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  if Key=VK_Delete Then
+   If Not DMVirtual.CDS_V_GrupoST.IsEmpty Then
+    DMVirtual.CDS_V_GrupoST.Delete;
 
- if Key=VK_Delete Then
-  If Not DMVirtual.CDS_V_GrupoST.IsEmpty Then
-   DMVirtual.CDS_V_GrupoST.Delete;
-
- Dbg_FiltroGrupoST.SetFocus;
-
+  Dbg_FiltroGrupoST.SetFocus;
 end;
 
 procedure TFrmBelShop.EdtFiltroCodProdutoExit(Sender: TObject);
@@ -24064,7 +24050,6 @@ end;
 
 procedure TFrmBelShop.Dbg_FiltroProdutoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-
   If Key=VK_Delete Then
   Begin
     If Not DMVirtual.CDS_V_Produtos.IsEmpty Then
@@ -24072,7 +24057,6 @@ begin
   End; // If Key=VK_Delete Then
 
   Dbg_FiltroProduto.SetFocus;
-
 end;
 
 procedure TFrmBelShop.EdtOCCodListaPrecoExit(Sender: TObject);
@@ -37775,7 +37759,6 @@ end;
 
 procedure TFrmBelShop.Dbg_FiltroComprovKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-
   If Key=VK_Delete Then
   Begin
    If Not DMVirtual.CDS_V_Comprovantes.IsEmpty Then
@@ -37783,7 +37766,6 @@ begin
   End; // If Key=VK_Delete Then
 
   Dbg_FiltroComprov.SetFocus;
-
 end;
 
 procedure TFrmBelShop.Rb_ConsultaNFeApresAnaliticaClick(Sender: TObject);
@@ -45208,8 +45190,10 @@ begin
   sgDescricao:='Parametros';
 
   FrmComissaoVendedor:=TFrmComissaoVendedor.Create(Self);
+
   FrmComissaoVendedor.Ts_Comissoes.TabVisible:=False;
   FrmComissaoVendedor.Ts_Produtos.TabVisible:=False;
+  FrmComissaoVendedor.Bt_ImportaProdutos.Visible:=True;
   FrmComissaoVendedor.PC_ComissaoVendedor.TabIndex:=0;
   FrmComissaoVendedor.ShowModal;
 

@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = TS_Filtros
+    ActivePage = Ts_FinanFechaCaixa
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -14064,7 +14064,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 505
+              Left = 503
               Top = 12
               Width = 31
               Height = 13
@@ -14120,7 +14120,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 539
+              Left = 537
               Top = 9
               Width = 51
               Height = 18
@@ -14133,7 +14133,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 594
+              Left = 592
               Top = 9
               Width = 50
               Height = 18
@@ -29001,7 +29001,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = TS_FiltroAplicacao
+        ActivePage = TS_FiltroFornecedor
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -29724,7 +29724,7 @@ object FrmBelShop: TFrmBelShop
             end
             object Panel27: TPanel
               Left = 1
-              Top = 58
+              Top = 60
               Width = 407
               Height = 447
               Hint = '<Delete> Exclui Item da Lista'
@@ -29812,7 +29812,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 2
                 Top = 2
                 Width = 548
-                Height = 441
+                Height = 443
                 Hint = '<Delete> Exclui Item da Lista'
                 Align = alClient
                 DataSource = DMVirtual.DS_V_SubGruposProdutos

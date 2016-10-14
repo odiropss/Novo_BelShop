@@ -23,24 +23,6 @@ uses
   dxSkinSummer2008, dxSkinValentine, dxSkinXmas2008Blue;
 //  Último: ExtCtrls;
 
-{
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, cxGraphics, cxControls, cxLookAndFeels, cxLookAndFeelPainters,
-  cxContainer, cxEdit, dxSkinsCore, dxSkinsDefaultPainters, cxTextEdit,
-  cxMaskEdit, cxDropDownEdit, cxCalendar, StdCtrls, JvExControls, JvXPCore,
-  Clipbrd, // PrintScreen
-  JvXPButtons, ExtCtrls, dxSkinBlack, dxSkinBlue, dxSkinCaramel,
-  dxSkinCoffee, dxSkinDarkRoom, dxSkinDarkSide, dxSkinFoggy,
-  dxSkinGlassOceans, dxSkiniMaginary, dxSkinLilian, dxSkinLiquidSky,
-  dxSkinLondonLiquidSky, dxSkinMcSkin, dxSkinMoneyTwins,
-  dxSkinOffice2007Black, dxSkinOffice2007Blue, dxSkinOffice2007Green,
-  dxSkinOffice2007Pink, dxSkinOffice2007Silver, dxSkinOffice2010Black,
-  dxSkinOffice2010Blue, dxSkinOffice2010Silver, dxSkinPumpkin, dxSkinSeven,
-  dxSkinSharp, dxSkinSilver, dxSkinSpringTime, dxSkinStardust,
-  dxSkinSummer2008, dxSkinValentine, dxSkinXmas2008Blue, Mask, JvExMask,
-  JvSpin, JvExStdCtrls, JvRadioButton;
-}
-
 type
   TFrmPeriodoApropriacao = class(TForm)
     Panel1: TPanel;
@@ -73,6 +55,7 @@ type
     { Private declarations }
   public
     { Public declarations }
+    sgTipoProc: String;
   end;
 
 var
@@ -134,6 +117,18 @@ begin
     If msg(sMensagem,'C')=2 Then
      Exit;
   End; // If Gb_PeriodoAproprAplicar.Visible Then
+
+  // Comissão de Vendedores
+  If sgTipoProc='CV' Then
+  Begin
+    If Application.MessageBox(PChar('Os PARAMETROS DE VENCECORES'+cr+
+                              'Estão Corretamente Preenchidos para o Período Solicitado??'+cr+cr+
+                              DtEdt_PeriodoAproprDtaInicio.Text+' a '+DtEdt_PeriodoAproprDtaFim.Text+cr+cr+
+                              'Após a Importação das Vendas'+cr+cr+
+                              'NÃO Haverá Mais Posiibilidade de Nova Importação'+cr+cr+
+                              'Desde Período !!'), 'ATENÇÃO !!', 292) =IdNo Then
+    Exit;
+  End; // If sgTipoProc='CV' Then
 
   If msg(DtEdt_PeriodoAproprDtaInicio.Text+' a '+DtEdt_PeriodoAproprDtaFim.Text+cr+cr+'O Período Esta CORRETO ??','C')=2 Then
   Begin
