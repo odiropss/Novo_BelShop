@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_FinanFechaCaixa
+    ActivePage = Ts_FinanMargemLucro
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -14064,7 +14064,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 503
+              Left = 501
               Top = 12
               Width = 31
               Height = 13
@@ -14120,7 +14120,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 537
+              Left = 535
               Top = 9
               Width = 51
               Height = 18
@@ -14133,7 +14133,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 592
+              Left = 590
               Top = 9
               Width = 50
               Height = 18
@@ -15681,7 +15681,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_FinanComprPlanFinanPlanilhaFinanceira
+        ActivePage = Ts_FinanComprPlanFinanRelacao
         Align = alClient
         TabOrder = 0
         OnChange = PC_FinanComprPlanFinanChange
@@ -16758,7 +16758,7 @@ object FrmBelShop: TFrmBelShop
               object Label77: TLabel
                 Left = 2
                 Top = 2
-                Width = 232
+                Width = 412
                 Height = 13
                 Align = alTop
                 Alignment = taCenter
@@ -18457,7 +18457,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_FinanObjetivosResultadosMeses
+        ActivePage = Ts_FinanObjetivosManut
         Align = alClient
         TabOrder = 0
         OnChange = PC_FinanObjetivosChange
@@ -21845,7 +21845,7 @@ object FrmBelShop: TFrmBelShop
           Left = 1
           Top = 14
           Width = 471
-          Height = 376
+          Height = 378
           Align = alClient
           Color = 15004403
           Ctl3D = False
@@ -21886,7 +21886,7 @@ object FrmBelShop: TFrmBelShop
         end
         object StatusBar1: TStatusBar
           Left = 1
-          Top = 390
+          Top = 392
           Width = 471
           Height = 19
           Color = clSilver

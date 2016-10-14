@@ -73,6 +73,109 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
       Visible = False
       OnClick = Bt_ImportaProdutosClick
     end
+    object Bt_Clipboard: TJvXPButton
+      Tag = 4
+      Left = 161
+      Top = 2
+      Width = 143
+      Height = 29
+      Caption = 'Salvar em Mem'#243'ria'
+      TabOrder = 2
+      Glyph.Data = {
+        0A544A504547496D6167655B040000FFD8FFE000104A46494600010101006000
+        600000FFDB004300020101020101020202020202020203050303030303060404
+        0305070607070706070708090B0908080A0807070A0D0A0A0B0C0C0C0C07090E
+        0F0D0C0E0B0C0C0CFFDB004301020202030303060303060C0807080C0C0C0C0C
+        0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C
+        0C0C0C0C0C0C0C0C0C0C0C0C0CFFC00011080018001203012200021101031101
+        FFC4001F0000010501010101010100000000000000000102030405060708090A
+        0BFFC400B5100002010303020403050504040000017D01020300041105122131
+        410613516107227114328191A1082342B1C11552D1F02433627282090A161718
+        191A25262728292A3435363738393A434445464748494A535455565758595A63
+        6465666768696A737475767778797A838485868788898A92939495969798999A
+        A2A3A4A5A6A7A8A9AAB2B3B4B5B6B7B8B9BAC2C3C4C5C6C7C8C9CAD2D3D4D5D6
+        D7D8D9DAE1E2E3E4E5E6E7E8E9EAF1F2F3F4F5F6F7F8F9FAFFC4001F01000301
+        01010101010101010000000000000102030405060708090A0BFFC400B5110002
+        0102040403040705040400010277000102031104052131061241510761711322
+        328108144291A1B1C109233352F0156272D10A162434E125F11718191A262728
+        292A35363738393A434445464748494A535455565758595A636465666768696A
+        737475767778797A82838485868788898A92939495969798999AA2A3A4A5A6A7
+        A8A9AAB2B3B4B5B6B7B8B9BAC2C3C4C5C6C7C8C9CAD2D3D4D5D6D7D8D9DAE2E3
+        E4E5E6E7E8E9EAF2F3F4F5F6F7F8F9FAFFDA000C03010002110311003F00FD78
+        D7BC3BF147E2B43A95F697E26B3B9D06FF0051D4F4C9F41BAB3B58ED6382DEE6
+        5B4D8D2342F24A2558D998165C16206463187F11FC51F13BE0DE9F75AC6BDE3D
+        D2F448EDED67BBD37478AC21BE82FDEDE232B44C16013C706D5264915FF76A78
+        2BF2D64FC41FDB0753FD913E19C9E23974483C45E1593C53AF585E4309920BBD
+        3EE1B59BF2939970F1B42C008CAB08CABEDC349BF09CE787EEB57F18FEC5FF00
+        15BE2878A6E2EDF5EF1D784F53BAB1B695D668F4BD38C13CB04103658AC4EAE2
+        43C827E40554A167FCAF1F9AD4A943FB2303ED3DBF27B59CE52A894172A7CCA4
+        A4B9B9DDE318465CB177728DA2E2FE4659A53953FAAD372F6AA1ED25772F755A
+        F7BDF54DE8A29DB7BAD1A3ECFB2BCB8BBB38666B46B669503986575F32224676
+        B6DDCB91D0E09191C1239A2AD515FA9462D2B377FBBFC8FAE3E11F197C788744
+        D0FC71F0FF00C51F057E36788F49D435CD761B89B4EF0B4AD65A85ADCEA3752A
+        34328911F063954875DA41E54E4035E77FB55FED03F117E397C18FF857DF0B3E
+        0D7C56F0FA6AE89A4B9BFF000B358C115AB218FC9465631C287E442CF8458CB7
+        2BC10515F92E231D8AAAE581F68E317EE5D28A972DED6E6B5F6BFDECFC4F1599
+        E32ACA780F68E3197EEDB4A2A5CB7B5B9B96FB37F7B3F4B96E55867E7E7D508F
+        E9451457EB87ED87FFD9}
+      ShowFocusRect = True
+      Align = alLeft
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      OnClick = Bt_ClipboardClick
+    end
+    object Rb_ComisVendSintetico: TJvRadioButton
+      Left = 328
+      Top = 9
+      Width = 72
+      Height = 17
+      Alignment = taLeftJustify
+      Caption = 'Sint'#233'tico'
+      Checked = True
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 3
+      TabStop = True
+      OnClick = Rb_ComisVendSinteticoClick
+      OnKeyUp = Rb_ComisVendSinteticoKeyUp
+      HotTrackFont.Charset = DEFAULT_CHARSET
+      HotTrackFont.Color = clWindowText
+      HotTrackFont.Height = -11
+      HotTrackFont.Name = 'MS Sans Serif'
+      HotTrackFont.Style = []
+      LinkedControls = <>
+    end
+    object Rb_ComisVendAnalitico: TJvRadioButton
+      Left = 404
+      Top = 9
+      Width = 63
+      Height = 17
+      Alignment = taLeftJustify
+      Caption = 'Anal'#237'tico'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 4
+      OnClick = Rb_ComisVendSinteticoClick
+      OnKeyUp = Rb_ComisVendSinteticoKeyUp
+      HotTrackFont.Charset = DEFAULT_CHARSET
+      HotTrackFont.Color = clWindowText
+      HotTrackFont.Height = -11
+      HotTrackFont.Name = 'MS Sans Serif'
+      HotTrackFont.Style = []
+      LinkedControls = <>
+    end
   end
   object PC_ComissaoVendedor: TPageControl
     Left = 0
@@ -165,6 +268,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           OnDrawColumnCell = Dbg_UltimaAtualizacaoDrawColumnCell
           OnDblClick = Dbg_UltimaAtualizacaoDblClick
           OnEnter = Dbg_UltimaAtualizacaoEnter
+          OnExit = Dbg_ComisVendedoresExit
           OnKeyUp = Dbg_UltimaAtualizacaoKeyUp
           OnTitleClick = Dbg_UltimaAtualizacaoTitleClick
           Columns = <
@@ -423,7 +527,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           OnChange = EdtCodDocComissaoChange
           OnExit = EdtCodDocComissaoExit
         end
-        object Bt_SalvaComiisao: TJvXPButton
+        object Bt_SalvaComissao: TJvXPButton
           Tag = 4
           Left = 188
           Top = 2
@@ -441,7 +545,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_SalvaComiisaoClick
+          OnClick = Bt_SalvaComissaoClick
         end
         object Bt_CalculaComiisao: TJvXPButton
           Tag = 91
@@ -490,6 +594,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_ComisVendedoresDrawColumnCell
         OnEnter = Dbg_ComisVendedoresEnter
+        OnExit = Dbg_ComisVendedoresExit
         Columns = <
           item
             Expanded = False
@@ -502,11 +607,6 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
             Color = clSilver
             Expanded = False
             FieldName = 'LOJA'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
             Width = 300
             Visible = True
           end
@@ -523,11 +623,6 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
             Color = clSilver
             Expanded = False
             FieldName = 'DES_VENDEDOR'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
             Width = 180
             Visible = True
           end
@@ -556,11 +651,6 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
             Color = clSilver
             Expanded = False
             FieldName = 'VLR_COMISSAO'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
             Title.Alignment = taRightJustify
             Width = 90
             Visible = True
@@ -727,6 +817,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           TitleFont.Name = 'Tahoma'
           TitleFont.Style = [fsBold]
           OnEnter = Dbg_AplicacaoEnter
+          OnExit = Dbg_ComisVendedoresExit
           OnKeyDown = Dbg_AplicacaoKeyDown
           OnKeyUp = Dbg_AplicacaoKeyUp
           SairComEnter = False

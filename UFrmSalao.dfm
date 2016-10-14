@@ -6140,25 +6140,21 @@ object FrmSalao: TFrmSalao
               item
                 Expanded = False
                 FieldName = 'DES_ABREVIATURA'
-                Width = 64
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'COD_SIDICOM'
-                Width = 64
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'VLR_HABSERV'
-                Width = 64
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'IND_ATIVO'
-                Width = 64
                 Visible = True
               end>
           end
@@ -8250,7 +8246,7 @@ object FrmSalao: TFrmSalao
         Top = 0
         Width = 969
         Height = 552
-        ActivePage = Ts_PagtoProfissionais
+        ActivePage = Ts_PagtoDebCred
         Align = alClient
         TabOrder = 0
         OnChange = PC_PagtoPlanilhaChange
@@ -9181,7 +9177,6 @@ object FrmSalao: TFrmSalao
                 Expanded = False
                 FieldName = 'VLR_DESCONTO'
                 Title.Alignment = taRightJustify
-                Width = 64
                 Visible = True
               end
               item

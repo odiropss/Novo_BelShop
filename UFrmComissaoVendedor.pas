@@ -15,9 +15,9 @@ uses
   dxSkinOffice2010Blue, dxSkinOffice2010Silver, dxSkinPumpkin, dxSkinSeven,
   dxSkinSharp, dxSkinSilver, dxSkinSpringTime, dxSkinStardust,
   dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
-  dxSkinXmas2008Blue, dxSkinsdxStatusBarPainter, dxStatusBar, cxProgressBar, 
+  dxSkinXmas2008Blue, dxSkinsdxStatusBarPainter, dxStatusBar, cxProgressBar,
   DBXpress, DBClient, SqlExpr, IBQuery, Mask, ToolEdit, CurrEdit, DBGridJul,
-  AppEvnts;
+  AppEvnts, jpeg, JvExStdCtrls, JvRadioButton;
 
 type
   TFrmComissaoVendedor = class(TForm)
@@ -54,10 +54,13 @@ type
     Bt_BuscaDocComissao: TJvXPButton;
     EdtCodDocComissao: TCurrencyEdit;
     Label1: TLabel;
-    Bt_SalvaComiisao: TJvXPButton;
+    Bt_SalvaComissao: TJvXPButton;
     Bt_CalculaComiisao: TJvXPButton;
     Dbg_ComisVendedores: TDBGrid;
     ApplicationEvents1: TApplicationEvents;
+    Bt_Clipboard: TJvXPButton;
+    Rb_ComisVendSintetico: TJvRadioButton;
+    Rb_ComisVendAnalitico: TJvRadioButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -118,12 +121,17 @@ type
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
     procedure EdtCodDocComissaoChange(Sender: TObject);
-    procedure Bt_SalvaComiisaoClick(Sender: TObject);
+    procedure Bt_SalvaComissaoClick(Sender: TObject);
     procedure ApplicationEvents1Message(var Msg: tagMSG;
       var Handled: Boolean);
     procedure Dbg_UltimaAtualizacaoEnter(Sender: TObject);
     procedure Dbg_ComisVendedoresEnter(Sender: TObject);
     procedure Dbg_AplicacaoEnter(Sender: TObject);
+    procedure Bt_ClipboardClick(Sender: TObject);
+    procedure Dbg_ComisVendedoresExit(Sender: TObject);
+    procedure Rb_ComisVendSinteticoClick(Sender: TObject);
+    procedure Rb_ComisVendSinteticoKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
 
   private
     { Private declarations }
@@ -185,6 +193,7 @@ Var
 Begin
   Result:=True;
   DMComissaoVendedor.CDS_ComisVendedores.Close;
+  DMComissaoVendedor.CDS_ComisVendedores.DisableControls;
 
   // Aplicacoes Selecionadas ===================================================
   AplicacoesSelecionadas;
@@ -332,6 +341,11 @@ Begin
   DMComissaoVendedor.CDS_ComisVendedores.Close;
   DMComissaoVendedor.SDS_ComisVendedores.CommandText:=MySql;
   DMComissaoVendedor.CDS_ComisVendedores.Open;
+
+  Rb_ComisVendAnalitico.Checked:=True;
+  Rb_ComisVendSinteticoClick(Self);
+
+  DMComissaoVendedor.CDS_ComisVendedores.EnableControls;
 
   sgAplicacoes:='';
 
@@ -519,7 +533,7 @@ Procedure TFrmComissaoVendedor.FechaTudoComVend;
 Var
   i: Integer;
 Begin
-                        
+
   // Fecha Componentes DMBelShop ===============================================
   For i:=0 to DMComissaoVendedor.ComponentCount-1 do
   Begin
@@ -607,7 +621,6 @@ end;
 
 procedure TFrmComissaoVendedor.FormKeyPress(Sender: TObject; var Key: Char);
 begin
-
   If bEnterTab Then
   Begin
     If Key = #13 Then
@@ -651,13 +664,22 @@ begin
 
   If (PC_ComissaoVendedor.ActivePage=Ts_Produtos) And (Ts_Produtos.CanFocus) Then
   Begin
+    Bt_Clipboard.Visible:=False;
     Dbg_UltimaAtualizacao.SetFocus;
   End;
 
   If (PC_ComissaoVendedor.ActivePage=Ts_ParametrosVendedores) And (Ts_ParametrosVendedores.CanFocus) Then
   Begin
+    Bt_Clipboard.Visible:=False;
     Dbg_Aplicacao.SetFocus;
   End;
+
+  If (PC_ComissaoVendedor.ActivePage=Ts_Comissoes) And (Ts_Comissoes.CanFocus) Then
+  Begin
+    Bt_Clipboard.Visible:=True;
+    Dbg_ComisVendedores.SetFocus;
+  End;
+
 end;
 
 procedure TFrmComissaoVendedor.Dbg_UltimaAtualizacaoDblClick( Sender: TObject);
@@ -1036,6 +1058,9 @@ begin
   If (DMComissaoVendedor.CDS_V_Produtos.State=dsInsert) Or (DMComissaoVendedor.CDS_V_Produtos.State=dsEdit) Then
    DMComissaoVendedor.CDS_V_ProdutosAfterPost(DMComissaoVendedor.CDS_V_Produtos);
 
+  ApplicationEvents1.OnActivate:=nil;
+  Application.OnMessage := nil;
+
   bEnterTab:=True;
 end;
 
@@ -1174,6 +1199,9 @@ procedure TFrmComissaoVendedor.Dbg_FamiliaPrecosExit(Sender: TObject);
 begin
   If (DMComissaoVendedor.CDS_V_FamiliaPrecos.State=dsInsert) Or (DMComissaoVendedor.CDS_V_FamiliaPrecos.State=dsEdit) Then
    DMComissaoVendedor.CDS_V_FamiliaPrecosAfterPost(DMComissaoVendedor.CDS_V_FamiliaPrecos);
+
+  ApplicationEvents1.OnActivate:=nil;
+  Application.OnMessage := nil;
 
   bEnterTab:=True;
 end;
@@ -1632,7 +1660,7 @@ Var
 begin
   Dbg_ComisVendedores.SetFocus;
 
-  Bt_SalvaComiisao.Enabled:=False;
+  Bt_SalvaComissao.Enabled:=False;
   EdtCodDocComissao.Clear;
 
   // Solicita o Periodo de Apropriação de Vendas dos Vendedores ===============
@@ -1687,7 +1715,7 @@ begin
   If Not BuscaComissoes('0') Then
    Exit;
 
-  Bt_SalvaComiisao.Enabled:=True;
+  Bt_SalvaComissao.Enabled:=True;
 end;
 
 procedure TFrmComissaoVendedor.Bt_BuscaDocComissaoClick(Sender: TObject);
@@ -1695,7 +1723,7 @@ Var
   MySql: String;
 begin
   Dbg_ComisVendedores.SetFocus;
-  Bt_SalvaComiisao.Enabled:=True;
+  Bt_SalvaComissao.Enabled:=False;
 
   DMComissaoVendedor.CDS_ComisVendedores.Close;
 
@@ -1756,6 +1784,7 @@ Var
 begin
   If EdtCodDocComissao.Value<>0 Then
   Begin
+    Bt_SalvaComissao.Enabled:=False;
     Dbg_ComisVendedores.SetFocus;
 
     DMComissaoVendedor.CDS_ComisVendedores.Close;
@@ -1788,7 +1817,6 @@ begin
     BuscaComissoes(DMBelShop.CDS_BuscaRapida.FieldByName('Docto').AsString);
 
     DMBelShop.CDS_BuscaRapida.Close;
-
     Screen.Cursor:=crDefault;
   End;
 end;
@@ -1801,7 +1829,7 @@ begin
   Begin
     If not (gdSelected in State) Then
     Begin
-      If Trim(DMComissaoVendedor.CDS_ComisVendedoresLOJA.AsString)='TOTAL DA EMPRESA' Then
+      If Copy(Trim(DMComissaoVendedor.CDS_ComisVendedoresLOJA.AsString),1,16)='TOTAL DA EMPRESA' Then
       Begin
         Dbg_ComisVendedores.Canvas.Brush.Color:=clBlue;
         Dbg_ComisVendedores.Canvas.Font.Color :=clWhite;
@@ -1829,11 +1857,11 @@ end;
 procedure TFrmComissaoVendedor.EdtCodDocComissaoChange(Sender: TObject);
 begin
   DMComissaoVendedor.CDS_ComisVendedores.Close;
-  Bt_SalvaComiisao.Enabled:=False;
+  Bt_SalvaComissao.Enabled:=False;
 
 end;
 
-procedure TFrmComissaoVendedor.Bt_SalvaComiisaoClick(Sender: TObject);
+procedure TFrmComissaoVendedor.Bt_SalvaComissaoClick(Sender: TObject);
 Var
   MySql: String;
 begin
@@ -1975,6 +2003,48 @@ begin
   ApplicationEvents1.OnActivate:=Dbg_AplicacaoEnter;
   Application.OnMessage := ApplicationEvents1Message;
   ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmComissaoVendedor.Bt_ClipboardClick(Sender: TObject);
+begin
+  If DMComissaoVendedor.CDS_ComisVendedores.IsEmpty Then
+   Exit;
+
+  DBGridClipboard(Dbg_ComisVendedores);
+end;
+
+procedure TFrmComissaoVendedor.Dbg_ComisVendedoresExit(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=nil;
+  Application.OnMessage := nil;
+
+end;
+
+procedure TFrmComissaoVendedor.Rb_ComisVendSinteticoClick(Sender: TObject);
+begin
+  AcertaRb_Style(Rb_ComisVendSintetico);
+  AcertaRb_Style(Rb_ComisVendAnalitico);
+
+  If DMComissaoVendedor.CDS_ComisVendedores.IsEmpty Then
+   Exit;
+
+  DMComissaoVendedor.CDS_ComisVendedores.Filtered:=False;
+  DMComissaoVendedor.CDS_ComisVendedores.Filter:='';
+
+  If Rb_ComisVendSintetico.Checked Then
+  Begin
+    DMComissaoVendedor.CDS_ComisVendedores.Filter:='TRIM(DES_VENDEDOR)=''CAMPANHA DE VENDAS'' OR TRIM(COD_VENDEDOR)=''TOTAL'' OR TRIM(COD_VENDEDOR)=''TOTAL DA LOJA''';
+    DMComissaoVendedor.CDS_ComisVendedores.Filtered:=True;
+  End;
+
+  Dbg_ComisVendedores.SetFocus;
+
+end;
+
+procedure TFrmComissaoVendedor.Rb_ComisVendSinteticoKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  Rb_ComisVendSinteticoClick(Self);
 
 end;
 

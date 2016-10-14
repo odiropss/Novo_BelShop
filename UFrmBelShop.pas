@@ -45178,6 +45178,8 @@ begin
   FrmComissaoVendedor:=TFrmComissaoVendedor.Create(Self);
   FrmComissaoVendedor.Ts_ParametrosVendedores.TabVisible:=False;
   FrmComissaoVendedor.PC_ComissaoVendedor.TabIndex:=0;
+  FrmComissaoVendedor.Bt_Clipboard.Visible:=False;
+
   FrmComissaoVendedor.ShowModal;
 
   FreeAndNil(FrmComissaoVendedor);
@@ -45193,7 +45195,10 @@ begin
 
   FrmComissaoVendedor.Ts_Comissoes.TabVisible:=False;
   FrmComissaoVendedor.Ts_Produtos.TabVisible:=False;
+
   FrmComissaoVendedor.Bt_ImportaProdutos.Visible:=True;
+  FrmComissaoVendedor.Bt_Clipboard.Visible:=False;
+
   FrmComissaoVendedor.PC_ComissaoVendedor.TabIndex:=0;
   FrmComissaoVendedor.ShowModal;
 
