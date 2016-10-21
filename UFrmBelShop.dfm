@@ -1,5 +1,5 @@
 object FrmBelShop: TFrmBelShop
-  Left = 240
+  Left = 256
   Top = 106
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_FinanMargemLucro
+    ActivePage = Ts_MovtoComprovForn
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -12550,7 +12550,7 @@ object FrmBelShop: TFrmBelShop
         Top = 61
         Width = 971
         Height = 431
-        ActivePage = Ts_ConsultaNFeMovtoCompr
+        ActivePage = TS_ConsultaNFeFiltros
         Align = alClient
         TabOrder = 1
         OnChange = PC_ConsultaMovtoComprChange
@@ -14064,7 +14064,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 501
+              Left = 499
               Top = 12
               Width = 31
               Height = 13
@@ -14120,7 +14120,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 535
+              Left = 533
               Top = 9
               Width = 51
               Height = 18
@@ -14133,7 +14133,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 590
+              Left = 588
               Top = 9
               Width = 50
               Height = 18
@@ -16758,7 +16758,7 @@ object FrmBelShop: TFrmBelShop
               object Label77: TLabel
                 Left = 2
                 Top = 2
-                Width = 412
+                Width = 232
                 Height = 13
                 Align = alTop
                 Alignment = taCenter
@@ -30338,7 +30338,7 @@ object FrmBelShop: TFrmBelShop
     Visible = False
   end
   object MainMenu1: TMainMenu
-    Left = 744
+    Left = 752
     Top = 216
     object MenuSistema: TMenuItem
       Tag = 15
@@ -31704,7 +31704,7 @@ object FrmBelShop: TFrmBelShop
           BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF0000000000FF00
           00FF00000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
           BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000000000BFBFBF00}
-        Caption = 'Estoques: M'#237'nimo/Demadas'
+        Caption = 'Estoques: M'#237'nimo/M'#225'ximo/Demadas'
         HelpContext = 1
         OnClick = SubMenuComprasEstoquesMinimoDemadasClick
       end

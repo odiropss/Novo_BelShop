@@ -8246,7 +8246,7 @@ object FrmSalao: TFrmSalao
         Top = 0
         Width = 969
         Height = 552
-        ActivePage = Ts_PagtoDebCred
+        ActivePage = Ts_PagtoProfissionais
         Align = alClient
         TabOrder = 0
         OnChange = PC_PagtoPlanilhaChange

@@ -118,8 +118,43 @@ object FrmEstoques: TFrmEstoques
             Font.Style = [fsBold]
             ReadOnly = True
             Title.Alignment = taCenter
-            Title.Caption = 'Cl'
             Width = 20
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_VD_M1'
+            ReadOnly = True
+            Width = 65
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_VD_M2'
+            ReadOnly = True
+            Width = 65
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_VD_M3'
+            ReadOnly = True
+            Width = 65
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_VD_M4'
+            ReadOnly = True
+            Width = 65
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_MEDIA_MES'
+            ReadOnly = True
+            Title.Alignment = taRightJustify
+            Width = 65
             Visible = True
           end
           item
@@ -127,8 +162,73 @@ object FrmEstoques: TFrmEstoques
             Expanded = False
             FieldName = 'EST_IDEAL'
             Title.Alignment = taRightJustify
-            Title.Caption = 'Est Min'
             Width = 50
+            Visible = True
+          end
+          item
+            Color = clWhite
+            Expanded = False
+            FieldName = 'EST_MAXIMO'
+            Title.Alignment = taRightJustify
+            Width = 50
+            Visible = True
+          end
+          item
+            Color = 15400917
+            Expanded = False
+            FieldName = 'QTD_ESTOQUE'
+            ReadOnly = True
+            Title.Alignment = taRightJustify
+            Width = 60
+            Visible = True
+          end
+          item
+            Color = 15395562
+            Expanded = False
+            FieldName = 'PER_PARTICIPACAO'
+            ReadOnly = True
+            Title.Alignment = taRightJustify
+            Width = 45
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'PC_CUSTO'
+            Title.Alignment = taRightJustify
+            Width = 60
+            Visible = True
+          end
+          item
+            Color = 15395541
+            Expanded = False
+            FieldName = 'PC_VENDA'
+            ReadOnly = True
+            Title.Alignment = taRightJustify
+            Width = 60
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'PER_MARGEM'
+            Title.Alignment = taRightJustify
+            Width = 60
+            Visible = True
+          end
+          item
+            Color = 14024703
+            Expanded = False
+            FieldName = 'COD_FORNECEDOR'
+            ReadOnly = True
+            Title.Alignment = taRightJustify
+            Width = 60
+            Visible = True
+          end
+          item
+            Color = 14024703
+            Expanded = False
+            FieldName = 'DES_FORNECEDOR'
+            ReadOnly = True
+            Width = 300
             Visible = True
           end
           item
@@ -136,7 +236,6 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'VLR_VENDAS_ANO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Title.Caption = '$ Vd AA'
             Width = 80
             Visible = True
           end
@@ -155,7 +254,6 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'QTD_VENDAS_ANO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Title.Caption = 'Qt Vd AA'
             Width = 80
             Visible = True
           end
@@ -166,26 +264,6 @@ object FrmEstoques: TFrmEstoques
             Title.Alignment = taRightJustify
             Title.Caption = 'Qt Vd 4M'
             Width = 80
-            Visible = True
-          end
-          item
-            Color = 15395562
-            Expanded = False
-            FieldName = 'PER_PARTICIPACAO'
-            ReadOnly = True
-            Title.Alignment = taRightJustify
-            Title.Caption = '% Part'
-            Width = 50
-            Visible = True
-          end
-          item
-            Color = 15400917
-            Expanded = False
-            FieldName = 'QTD_ESTOQUE'
-            ReadOnly = True
-            Title.Alignment = taRightJustify
-            Title.Caption = 'Est'
-            Width = 60
             Visible = True
           end
           item
@@ -229,17 +307,7 @@ object FrmEstoques: TFrmEstoques
           item
             Color = 15395541
             Expanded = False
-            FieldName = 'VLR_PC_VENDA'
-            ReadOnly = True
-            Title.Alignment = taRightJustify
-            Title.Caption = 'P'#231' Vd'
-            Width = 65
-            Visible = True
-          end
-          item
-            Color = 15395541
-            Expanded = False
-            FieldName = 'VLR_TOTAL_VENDA'
+            FieldName = 'VLR_DISP_PC_VENDA'
             ReadOnly = True
             Title.Alignment = taRightJustify
             Title.Caption = 'Disp P'#231' Vd'
@@ -297,23 +365,6 @@ object FrmEstoques: TFrmEstoques
             Visible = True
           end
           item
-            Color = 14024703
-            Expanded = False
-            FieldName = 'COD_FORNECEDOR'
-            ReadOnly = True
-            Title.Alignment = taRightJustify
-            Width = 60
-            Visible = True
-          end
-          item
-            Color = 14024703
-            Expanded = False
-            FieldName = 'DES_FORNECEDOR'
-            ReadOnly = True
-            Width = 300
-            Visible = True
-          end
-          item
             Expanded = False
             FieldName = 'NUM_DIASUTEIS'
             ReadOnly = True
@@ -340,11 +391,6 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             Title.Caption = 'num_linha'
             Visible = False
-          end
-          item
-            Expanded = False
-            FieldName = 'EST_MAXIMO'
-            Visible = True
           end>
       end
       object Pan_Estoques: TPanel
@@ -964,8 +1010,8 @@ object FrmEstoques: TFrmEstoques
         end
       end
       object Dbg_EstoquesDemFinan: TDBGrid
-        Left = 101
-        Top = 343
+        Left = 749
+        Top = 255
         Width = 500
         Height = 137
         DataSource = DMVirtual.DS_V_EstoquesFinan
@@ -1098,7 +1144,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 287
+          Left = 286
           Top = 11
           Width = 353
           Height = 13

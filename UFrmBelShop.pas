@@ -45179,6 +45179,8 @@ begin
   FrmComissaoVendedor.Ts_ParametrosVendedores.TabVisible:=False;
   FrmComissaoVendedor.PC_ComissaoVendedor.TabIndex:=0;
   FrmComissaoVendedor.Bt_Clipboard.Visible:=False;
+  FrmComissaoVendedor.Rb_ComisVendSintetico.Visible:=False;
+  FrmComissaoVendedor.Rb_ComisVendAnalitico.Visible:=False;
 
   FrmComissaoVendedor.ShowModal;
 
@@ -45198,6 +45200,8 @@ begin
 
   FrmComissaoVendedor.Bt_ImportaProdutos.Visible:=True;
   FrmComissaoVendedor.Bt_Clipboard.Visible:=False;
+  FrmComissaoVendedor.Rb_ComisVendSintetico.Visible:=False;
+  FrmComissaoVendedor.Rb_ComisVendAnalitico.Visible:=False;
 
   FrmComissaoVendedor.PC_ComissaoVendedor.TabIndex:=0;
   FrmComissaoVendedor.ShowModal;

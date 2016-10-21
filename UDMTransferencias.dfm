@@ -146,32 +146,32 @@ object DMTransferencias: TDMTransferencias
       'nd_curva'#13#10'END ind_curva,'#13#10'CASE'#13#10'   WHEN (p.datainclusao>='#39'18.01.' +
       '2016'#39') AND (c.ind_curva='#39'E'#39') AND (t.vlr_aux1>c.est_minimo) THEN'#13 +
       #10'     CAST(t.vlr_aux1 AS INTEGER)'#13#10'   ELSE'#13#10'     CAST(c.est_mini' +
-      'mo AS INTEGER)'#13#10'END est_minimo,'#13#10#13#10'CAST(COALESCE(t.vlr_aux,0) AS' +
-      ' INTEGER) Dias_Estocagem,'#13#10#13#10'CAST((CASE'#13#10'        WHEN COALESCE(e' +
-      '.pedidopendente,0)<0 THEN'#13#10'          COALESCE(e.saldoatual,0)'#13#10' ' +
-      '       WHEN COALESCE(e.pedidopendente,0)>COALESCE(e.saldoatual,0' +
-      ') THEN'#13#10'          0'#13#10'        ELSE'#13#10'          COALESCE(e.saldoatu' +
-      'al,0)-COALESCE(e.pedidopendente,0)'#13#10'      END)'#13#10'AS INTEGER) sald' +
-      'oatual,'#13#10'p.datainclusao,'#13#10'p.dataalteracao'#13#10#13#10'FROM ES_FINAN_CURVA' +
-      '_ABC c'#13#10'        LEFT JOIN PRODUTO      p  ON p.codproduto=c.cod_' +
-      'produto'#13#10'        LEFT JOIN ESTOQUE      e  ON e.codfilial=c.cod_' +
-      'loja'#13#10'                                 AND e.codproduto=c.cod_pr' +
-      'oduto'#13#10'        LEFT JOIN TAB_AUXILIAR t  ON CASE'#13#10'              ' +
-      '                         WHEN (p.datainclusao>'#39'18.01.2016'#39') AND ' +
-      '(c.ind_curva='#39'E'#39') THEN 3'#13#10'                                      ' +
-      ' WHEN c.ind_curva='#39'A'#39' THEN 1'#13#10'                                  ' +
-      '     WHEN c.ind_curva='#39'B'#39' THEN 2'#13#10'                              ' +
-      '         WHEN c.ind_curva='#39'C'#39' THEN 3'#13#10'                          ' +
-      '             WHEN c.ind_curva='#39'D'#39' THEN 4'#13#10'                      ' +
-      '                 WHEN c.ind_curva='#39'E'#39' THEN 5'#13#10'                  ' +
-      '                     END=t.cod_aux'#13#10'                            ' +
-      '      AND t.tip_aux=2'#13#10#13#10'WHERE c.est_minimo>0'#13#10'AND   p.situacaop' +
-      'ro in (0,3)'#13#10'AND   p.principalfor Not in ('#39'000050'#39', '#39'000453'#39', '#39'0' +
-      '00504'#39', '#39'000797'#39', '#39'000048'#39', '#39'000251'#39', '#39'000338'#39','#13#10'               ' +
-      '              '#39'000300'#39', '#39'000500'#39', '#39'000883'#39', '#39'010000'#39', '#39'001072'#39')'#13 +
-      #10#13#10'AND   ((c.ind_curva in ('#39'A'#39', '#39'B'#39', '#39'C'#39', '#39'D'#39')) OR (p.datainclus' +
-      'ao>='#39'18.01.2016'#39' AND c.ind_curva='#39'E'#39'))'#13#10'AND   c.cod_loja='#39'06'#39#13#10#13 +
-      #10#13#10
+      'mo AS INTEGER)'#13#10'END est_minimo,'#13#10#13#10'CAST(COALESCE(c.est_minimo,0)' +
+      ' AS INTEGER) Est_Maximo,'#13#10#13#10'CAST(COALESCE(t.vlr_aux,0) AS INTEGE' +
+      'R) Dias_Estocagem,'#13#10#13#10'CAST((CASE'#13#10'        WHEN COALESCE(e.pedido' +
+      'pendente,0)<0 THEN'#13#10'          COALESCE(e.saldoatual,0)'#13#10'        ' +
+      'WHEN COALESCE(e.pedidopendente,0)>COALESCE(e.saldoatual,0) THEN'#13 +
+      #10'          0'#13#10'        ELSE'#13#10'          COALESCE(e.saldoatual,0)-C' +
+      'OALESCE(e.pedidopendente,0)'#13#10'      END)'#13#10'AS INTEGER) saldoatual,' +
+      #13#10'p.datainclusao,'#13#10'p.dataalteracao'#13#10#13#10'FROM ES_FINAN_CURVA_ABC c'#13 +
+      #10'        LEFT JOIN PRODUTO      p  ON p.codproduto=c.cod_produto' +
+      #13#10'        LEFT JOIN ESTOQUE      e  ON e.codfilial=c.cod_loja'#13#10' ' +
+      '                                AND e.codproduto=c.cod_produto'#13#10 +
+      '        LEFT JOIN TAB_AUXILIAR t  ON CASE'#13#10'                     ' +
+      '                  WHEN (p.datainclusao>'#39'18.01.2016'#39') AND (c.ind_' +
+      'curva='#39'E'#39') THEN 3'#13#10'                                       WHEN c' +
+      '.ind_curva='#39'A'#39' THEN 1'#13#10'                                       WH' +
+      'EN c.ind_curva='#39'B'#39' THEN 2'#13#10'                                     ' +
+      '  WHEN c.ind_curva='#39'C'#39' THEN 3'#13#10'                                 ' +
+      '      WHEN c.ind_curva='#39'D'#39' THEN 4'#13#10'                             ' +
+      '          WHEN c.ind_curva='#39'E'#39' THEN 5'#13#10'                         ' +
+      '              END=t.cod_aux'#13#10'                                  A' +
+      'ND t.tip_aux=2'#13#10#13#10'WHERE c.est_minimo>0'#13#10'AND   p.situacaopro in (' +
+      '0,3)'#13#10'AND   p.principalfor Not in ('#39'000050'#39', '#39'000453'#39', '#39'000504'#39',' +
+      ' '#39'000797'#39', '#39'000048'#39', '#39'000251'#39', '#39'000338'#39','#13#10'                      ' +
+      '       '#39'000300'#39', '#39'000500'#39', '#39'000883'#39', '#39'010000'#39', '#39'001072'#39')'#13#10#13#10'AND ' +
+      '  ((c.ind_curva in ('#39'A'#39', '#39'B'#39', '#39'C'#39', '#39'D'#39')) OR (p.datainclusao>='#39'18' +
+      '.01.2016'#39' AND c.ind_curva='#39'E'#39'))'#13#10'AND   c.cod_loja='#39'06'#39#13#10#13#10#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -197,6 +197,9 @@ object DMTransferencias: TDMTransferencias
     object CDS_CurvasLojaEST_MINIMO: TIntegerField
       FieldName = 'EST_MINIMO'
     end
+    object CDS_CurvasLojaEST_MAXIMO: TIntegerField
+      FieldName = 'EST_MAXIMO'
+    end
     object CDS_CurvasLojaDIAS_ESTOCAGEM: TIntegerField
       FieldName = 'DIAS_ESTOCAGEM'
     end
@@ -219,27 +222,28 @@ object DMTransferencias: TDMTransferencias
     CommandText = 
       'SELECT'#13#10' CAST(GEN_ID(GEN_ODIR,1) AS INTEGER) Num_Seq,'#13#10' CURRENT_' +
       'DATE Dta_Movto,'#13#10' 1320 Num_Docto,'#13#10' '#39'01'#39' Cod_Loja,'#13#10' pr.codprodu' +
-      'to Cod_produto,'#13#10' 8 Est_Minimo,'#13#10' 3 qtd_estoque,'#13#10' SUM(COALESCE(' +
-      'dm.quant_ref,0)) Qtd_Vendas,'#13#10' '#39'C'#39' ind_curva,'#13#10' 60 dias_estocage' +
-      'm,'#13#10' 101 qtd_dias,'#13#10' ((SUM(COALESCE(dm.quant_ref,0)))/101) qtd_v' +
-      'enda_dia,'#13#10' CAST(((((SUM(COALESCE(dm.quant_ref,0)))/101)) * 60) ' +
-      'AS INTEGER) qtd_demanda,'#13#10#13#10' CASE'#13#10'    WHEN (CAST(((((SUM(COALES' +
-      'CE(dm.quant_ref,0)))/101)) * 60) AS INTEGER))>=8 Then'#13#10'      (CA' +
-      'ST((((((SUM(COALESCE(dm.quant_ref,0)))/101)) * 60) - 3) AS INTEG' +
-      'ER))'#13#10'    ELSE'#13#10'      8 - 3'#13#10' END qtd_reposicao,'#13#10#13#10' 0.00 qtd_tr' +
-      'ansf,'#13#10' 0.00 qtd_a_transf,'#13#10' '#39'000000'#39' num_pedido,'#13#10' '#39'CAL'#39' IND_TR' +
-      'ANSF,'#13#10' 0 usu_altera,'#13#10' CURRENT_TIMESTAMP dta_altera,'#13#10' 0 NUM_TR' +
-      '_GERADA,'#13#10' 0.00 QTD_TRANSF_OC,'#13#10' '#39' '#39' OBS_DOCTO,'#13#10' pr.codgruposub' +
-      #13#10#13#10' FROM PRODUTO pr'#13#10'       LEFT JOIN MOVTOS_EMPRESAS dm  ON dm' +
-      '.ind_tipo='#39'DM'#39#13#10'                                    AND dm.codpr' +
-      'oduto=pr.codproduto'#13#10'                                    AND dm.' +
-      'dta_ref>='#39'14.02.2016'#39#13#10'                                    AND d' +
-      'm.dta_ref<='#39'14.06.2016'#39#13#10'                                    AND' +
-      ' dm.codfilial='#39'01'#39#13#10#13#10'WHERE pr.codproduto='#39'000020'#39#13#10#13#10'GROUP BY  ' +
-      '5, 24'#13#10#13#10'HAVING (CASE'#13#10'           WHEN (CAST(((((SUM(COALESCE(dm' +
-      '.quant_ref,0)))/101)) * 60) AS INTEGER))>=8 Then'#13#10'             (' +
-      'CAST((((((SUM(COALESCE(dm.quant_ref,0)))/101)) * 60) - 3) AS INT' +
-      'EGER))'#13#10'           ELSE'#13#10'             8 - 3'#13#10'        END)>0'
+      'to Cod_produto,'#13#10' 8 Est_Minimo,'#13#10' 8 Est_Maximo,'#13#10' 3 qtd_estoque,' +
+      #13#10' SUM(COALESCE(dm.quant_ref,0)) Qtd_Vendas,'#13#10' '#39'C'#39' ind_curva,'#13#10' ' +
+      '60 dias_estocagem,'#13#10' 101 qtd_dias,'#13#10' ((SUM(COALESCE(dm.quant_ref' +
+      ',0)))/101) qtd_venda_dia,'#13#10' CAST(((((SUM(COALESCE(dm.quant_ref,0' +
+      ')))/101)) * 60) AS INTEGER) qtd_demanda,'#13#10#13#10' CASE'#13#10'    WHEN (CAS' +
+      'T(((((SUM(COALESCE(dm.quant_ref,0)))/101)) * 60) AS INTEGER))>=8' +
+      ' Then'#13#10'      (CAST((((((SUM(COALESCE(dm.quant_ref,0)))/101)) * 6' +
+      '0) - 3) AS INTEGER))'#13#10'    ELSE'#13#10'      8 - 3'#13#10' END qtd_reposicao,' +
+      #13#10#13#10' 0.00 qtd_transf,'#13#10' 0.00 qtd_a_transf,'#13#10' '#39'000000'#39' num_pedido' +
+      ','#13#10' '#39'CAL'#39' IND_TRANSF,'#13#10' 0 usu_altera,'#13#10' CURRENT_TIMESTAMP dta_al' +
+      'tera,'#13#10' 0 NUM_TR_GERADA,'#13#10' 0.00 QTD_TRANSF_OC,'#13#10' '#39' '#39' OBS_DOCTO,'#13 +
+      #10' pr.codgruposub'#13#10#13#10' FROM PRODUTO pr'#13#10'       LEFT JOIN MOVTOS_EM' +
+      'PRESAS dm  ON dm.ind_tipo='#39'DM'#39#13#10'                                ' +
+      '    AND dm.codproduto=pr.codproduto'#13#10'                           ' +
+      '         AND dm.dta_ref>='#39'14.02.2016'#39#13#10'                         ' +
+      '           AND dm.dta_ref<='#39'14.06.2016'#39#13#10'                       ' +
+      '             AND dm.codfilial='#39'01'#39#13#10#13#10'WHERE pr.codproduto='#39'00002' +
+      '0'#39#13#10#13#10'GROUP BY  5, 25'#13#10#13#10'HAVING (CASE'#13#10'           WHEN (CAST((((' +
+      '(SUM(COALESCE(dm.quant_ref,0)))/101)) * 60) AS INTEGER))>=8 Then' +
+      #13#10'             (CAST((((((SUM(COALESCE(dm.quant_ref,0)))/101)) *' +
+      ' 60) - 3) AS INTEGER))'#13#10'           ELSE'#13#10'             8 - 3'#13#10'   ' +
+      '     END)>0'
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -278,6 +282,10 @@ object DMTransferencias: TDMTransferencias
     end
     object CDS_ProdutoDemandaEST_MINIMO: TIntegerField
       FieldName = 'EST_MINIMO'
+      Required = True
+    end
+    object CDS_ProdutoDemandaEST_MAXIMO: TIntegerField
+      FieldName = 'EST_MAXIMO'
       Required = True
     end
     object CDS_ProdutoDemandaQTD_ESTOQUE: TIntegerField
@@ -412,6 +420,9 @@ object DMTransferencias: TDMTransferencias
     end
     object CDS_EstoqueLojaEST_MINIMO: TIntegerField
       FieldName = 'EST_MINIMO'
+    end
+    object CDS_EstoqueLojaEST_MAXIMO: TIntegerField
+      FieldName = 'EST_MAXIMO'
     end
     object CDS_EstoqueLojaQTD_ESTOQUE: TFMTBCDField
       FieldName = 'QTD_ESTOQUE'

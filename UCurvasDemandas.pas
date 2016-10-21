@@ -734,7 +734,7 @@ begin
                 ' SUM(f.qtd_demandas) Tot_Qtd_Demanda'+
                 ' FROM ES_FINAN_CURVA_ABC f'+
                 ' WHERE EXISTS (SELECT 1'+
-                '               FROM EMP_Conexoes c'+
+                '               FROM EMP_CONEXOES c'+
                 '               WHERE c.Ind_Ativo=''SIM'''+
                 '               AND c.cod_filial=f.cod_loja)'+
                 ' AND NOT EXISTS (SELECT 1'+
@@ -771,24 +771,17 @@ begin
       If sgCodLoja<>'99' Then
        Begin
          MySql:=' INSERT INTO ES_FINAN_CURVA_ABC'+
-                ' (COD_LOJA, COD_PRODUTO, EST_MINIMO, NUM_DIAS_UTEIS, VLR_DEMANDAS_ANO,'+
-                '  VLR_DEMANDAS, PER_PARTICIPACAO, IND_CURVA, QTD_DEMANDAS_ANO,'+
-                '  QTD_DEMANDAS, PER_PART_QTD, IND_CURVA_QTD, NUM_DIAS_ESTOCAGEM,'+
-                '  QTD_TRANSITO, DTA_ATUALIZACAO, HRA_ATUALIZACAO, USU_ALTERA,'+
-                '  DTA_ALTERA)'+
+                ' (COD_LOJA, COD_PRODUTO, EST_MINIMO, EST_MAXIMO, NUM_DIAS_UTEIS,'+
+                '  VLR_DEMANDAS_ANO, VLR_DEMANDAS, PER_PARTICIPACAO, IND_CURVA,'+
+                '  QTD_DEMANDAS_ANO, QTD_DEMANDAS, PER_PART_QTD, IND_CURVA_QTD,'+
+                '  NUM_DIAS_ESTOCAGEM, QTD_TRANSITO, DTA_ATUALIZACAO, HRA_ATUALIZACAO,'+
+                '  USU_ALTERA, DTA_ALTERA)'+
 
                 ' SELECT '+
                 QuotedStr(sgCodLoja)+' COD_LOJA,'+
                 ' pr.codproduto,'+
-
-// OdirApagar - 01/09/2016 - Estoque Minimo=0 para Produtos Novos
-//                ' CASE'+
-//                '   WHEN (pr.datainclusao>=current_date-30) Then'+
-//                '     COALESCE(fc.est_minimo,3)'+
-//                '   ELSE'+
-//                '     COALESCE(fc.est_minimo,0)'+
-//                ' END EST_MINIMO,'+
                 ' COALESCE(fc.est_minimo,0) EST_MINIMO,'+
+                ' COALESCE(fc.est_maximo,0) EST_MAXIMO,'+
 
                 ' ABS(CAST(CASE'+
                 '            WHEN pr.datainclusao<CAST('+QuotedStr(sDtaDemI)+' as Date) THEN'+
@@ -844,24 +837,17 @@ begin
       Else // If sgCodLoja<>'99' Then
        Begin
          MySql:=' INSERT INTO ES_FINAN_CURVA_ABC'+
-                ' (COD_LOJA, COD_PRODUTO, EST_MINIMO, NUM_DIAS_UTEIS, VLR_DEMANDAS_ANO,'+
-                '  VLR_DEMANDAS, PER_PARTICIPACAO, IND_CURVA, QTD_DEMANDAS_ANO,'+
-                '  QTD_DEMANDAS, PER_PART_QTD, IND_CURVA_QTD, NUM_DIAS_ESTOCAGEM,'+
-                '  QTD_TRANSITO, DTA_ATUALIZACAO, HRA_ATUALIZACAO, USU_ALTERA,'+
-                '  DTA_ALTERA)'+
+                ' (COD_LOJA, COD_PRODUTO, EST_MINIMO, EST_MAXIMO, NUM_DIAS_UTEIS,'+
+                '  VLR_DEMANDAS_ANO, VLR_DEMANDAS, PER_PARTICIPACAO, IND_CURVA,'+
+                '  QTD_DEMANDAS_ANO, QTD_DEMANDAS, PER_PART_QTD, IND_CURVA_QTD,'+
+                '  NUM_DIAS_ESTOCAGEM, QTD_TRANSITO, DTA_ATUALIZACAO, HRA_ATUALIZACAO,'+
+                '  USU_ALTERA, DTA_ALTERA)'+
 
                 ' SELECT '+
                 QuotedStr(sgCodLoja)+' COD_LOJA,'+
                 ' pr.codproduto COD_PRODUTO,'+
-
-// OdirApagar - 01/09/2016 - Estoque Minimo=0 para Produtos Novos
-//                ' CASE'+
-//                '   WHEN (pr.datainclusao>=current_date-30) Then'+
-//                '     COALESCE(fc.est_minimo,3)'+
-//                '   ELSE'+
-//                '     COALESCE(fc.est_minimo,0)'+
-//                ' END EST_MINIMO,'+
                 ' COALESCE(fc.est_minimo,0) EST_MINIMO,'+
+                ' COALESCE(fc.est_maximo,0) EST_MAXIMO,'+
 
                 ' ABS(CAST(CASE'+
                 '            WHEN pr.datainclusao<CAST('+QuotedStr(sDtaDemI)+' as Date) THEN'+
@@ -911,7 +897,7 @@ begin
                 '                      CAST(SUM(f.qtd_transito) AS INTEGER) qtd_transito'+
                 '               FROM ES_FINAN_CURVA_ABC f'+
                 '               WHERE EXISTS (SELECT 1'+
-                '                             FROM EMP_Conexoes c'+
+                '                             FROM EMP_CONEXOES c'+
                 '                             WHERE c.Ind_Ativo=''SIM'''+
                 '                             AND c.cod_filial=f.cod_loja)'+
                 '               GROUP BY 1) DEM ON dem.cod_produto=pr.codproduto'+

@@ -152,8 +152,8 @@ object DMComissaoVendedor: TDMComissaoVendedor
         'PRA, CODIPICOMPRA, CODIPIVENDA, ISS, PESO, PESOBRUTO, CODNACIONA' +
         'LIDADE, CONTROLALOTE, DIASVENCELOTE, NAOVENDEZERADO, CODMERCOSUL' +
         'NCM, GRUPOSTMVA, CODPISCOFINS_VENDA, CODPISCOFINS_COMPRA, ECOMME' +
-        'RCE_SN, PRECOCOMPRA, PRECOVENDA, DATAINCLUSAO, DATAALTERACAO, DT' +
-        'A_ATUALIZACAO) values ('#39'||'
+        'RCE_SN, PRECOCOMPRA, PRECOVENDA, MARGEM, DATAINCLUSAO, DATAALTER' +
+        'ACAO, DTA_ATUALIZACAO) values ('#39'||'
       #39#39#39#39'||pr.codproduto||'#39#39#39','#39'||'
       #39#39#39#39'||replace (COALESCE(pr.apresentacao,'#39#39'),'#39#39#39#39','#39'"'#39')||'#39#39#39','#39'||'
       #39#39#39#39'||COALESCE(pr.codbarra,'#39#39')||'#39#39#39','#39'||'
@@ -194,6 +194,7 @@ object DMComissaoVendedor: TDMComissaoVendedor
       #39#39#39#39'||COALESCE(pr.ecommerce_sn,'#39#39')||'#39#39#39','#39'||'
       #39#39#39#39'||COALESCE(lp.precocompra, 0.0000)||'#39#39#39','#39'||'
       #39#39#39#39'||COALESCE(lp.precovenda,0.0000)||'#39#39#39','#39'||'
+      #39#39#39#39'||COALESCE(lp.margem, 0.0000)||'#39#39#39','#39'||'
       #39#39#39#39'||pr.datainclusao||'#39#39#39','#39'||'
       #39#39#39#39'||pr.dataalteracao||'#39#39#39','#39'||'
       #39#39#39#39'||current_date||'#39#39#39#39'||'

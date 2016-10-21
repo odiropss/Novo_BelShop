@@ -99,6 +99,9 @@ type
     SQLQuery1SALDOATUAL: TIntegerField;
     SQLQuery1DATAINCLUSAO: TDateField;
     SQLQuery1DATAALTERACAO: TDateField;
+    CDS_EstoqueLojaEST_MAXIMO: TIntegerField;
+    CDS_CurvasLojaEST_MAXIMO: TIntegerField;
+    CDS_ProdutoDemandaEST_MAXIMO: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir ====================================================================

@@ -1,10 +1,9 @@
 object DMBelShop: TDMBelShop
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 61
-  Top = 4
+  Left = 82
   Height = 724
-  Width = 1305
+  Width = 1280
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
     DriverName = 'Interbase'

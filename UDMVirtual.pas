@@ -732,8 +732,7 @@ type
     CDS_V_EstoquesQTD_TRANSITO: TIntegerField;
     CDS_V_EstoquesQTD_DISPONIVEL: TIntegerField;
     CDS_V_EstoquesEST_IDEAL: TIntegerField;
-    CDS_V_EstoquesEST_MAXIMO: TFMTBCDField;
-    CDS_V_EstoquesVLR_PC_VENDA: TFMTBCDField;
+    CDS_V_EstoquesPC_VENDA: TFMTBCDField;
     CDS_V_EstoquesVLR_TOTAL_VENDA: TFMTBCDField;
     CDS_V_EstoquesDTA_INCLUSAO: TDateField;
     CDS_V_EstoquesCODGRUPO: TStringField;
@@ -751,6 +750,26 @@ type
     CDS_V_EstoquesNUM_DIASUTEIS: TIntegerField;
     CDS_V_EstoquesDIAS_UTEIS_4M: TIntegerField;
     CDS_V_EstoquesNUM_LINHA: TIntegerField;
+    CDS_V_EstoquesVLR_VD_M1: TFMTBCDField;
+    CDS_V_EstoquesVLR_VD_M2: TFMTBCDField;
+    CDS_V_EstoquesVLR_VD_M3: TFMTBCDField;
+    CDS_V_EstoquesVLR_VD_M4: TFMTBCDField;
+    CDS_V_EstoquesVLR_VD_M5: TFMTBCDField;
+    CDS_V_EstoquesVLR_MEDIA_MES: TFMTBCDField;
+    CDS_V_EstoquesVLR_MEDIA_DIA: TFMTBCDField;
+    CDS_V_EstoquesQTD_VD_M1: TIntegerField;
+    CDS_V_EstoquesQTD_VD_M2: TIntegerField;
+    CDS_V_EstoquesQTD_VD_M3: TIntegerField;
+    CDS_V_EstoquesQTD_VD_M4: TIntegerField;
+    CDS_V_EstoquesQTD_VD_M5: TIntegerField;
+    CDS_V_EstoquesQTD_MEDIA_MES: TIntegerField;
+    CDS_V_EstoquesQTD_MEDIA_DIA: TIntegerField;
+    CDS_V_EstoquesVLR_EST_PC_VENDA: TFMTBCDField;
+    CDS_V_EstoquesPC_CUSTO: TFMTBCDField;
+    CDS_V_EstoquesVLR_DISP_PC_CUSTO: TFMTBCDField;
+    CDS_V_EstoquesVLR_EST_PC_CUSTO: TFMTBCDField;
+    CDS_V_EstoquesPER_MARGEM: TFMTBCDField;
+    CDS_V_EstoquesEST_MAXIMO: TIntegerField;
     procedure CDS_V_GruposProdutosAfterScroll(DataSet: TDataSet);
     procedure CDS_V_EstFisFinanEmpAfterScroll(DataSet: TDataSet);
     procedure CDS_V_MargemLucroFornAfterScroll(DataSet: TDataSet);
@@ -767,7 +786,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    bSeProcessa1, // Se Libera FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly:=True
+    bSeProcessa1, // Se Libera FrmEstoques.Dbg_Estoques.Columns[9 e 10].ReadOnly:=True (Estoque Minimo/Maximo)
     bSeProcessa2, // Se Atualiza Valores de Estoques
     bSeCalcCurva  // Se Esta Calculando Curva ABC
     : Boolean;
@@ -795,6 +814,8 @@ var
   TD: TTransactionDesc;
 
   iQtdEstMinOld, iQtdEstMinNew: Integer;
+  iQtdEstMaxOld, iQtdEstMaxNew: Integer;
+
 //odirapagar - 02/09/2016
 //  iQtdDemandaOld, iQtdDemandaNew: Integer;
 
@@ -870,11 +891,20 @@ begin
 //       FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly:=True
 //      Else
 //       FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly:=False;
+//      If Trim(CDS_V_EstoquesCOD_PRODUTO.AsString)='' Then
+//       FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly:=True
+//      Else
+//       FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly:=False;
       If Trim(CDS_V_EstoquesCOD_PRODUTO.AsString)='' Then
-       FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly:=True
+       Begin
+         FrmEstoques.Dbg_Estoques.Columns[9].ReadOnly:=True;
+         FrmEstoques.Dbg_Estoques.Columns[10].ReadOnly:=True;
+       End
       Else
-       FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly:=False;
-
+       Begin
+         FrmEstoques.Dbg_Estoques.Columns[9].ReadOnly:=False;
+         FrmEstoques.Dbg_Estoques.Columns[10].ReadOnly:=False;
+       End
     End; // If bSeProcessa1 Then
   End; // If Not DMVirtual.CDS_V_Estoques.IsEmpty Then
 end;
@@ -888,13 +918,13 @@ begin
 
 //odirapagar
 //  If Not FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly Then
-  If Not FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly Then
+//  If Not FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly Then
+  If Not FrmEstoques.Dbg_Estoques.Columns[9].ReadOnly Then
   Begin
     If igNrEmpProc=1 Then bAtualizar:=True;
 
     iQtdEstMinNew :=CDS_V_EstoquesEST_IDEAL.AsInteger;
-//odirapagar
-//    iQtdDemandaNew:=CDS_V_EstoquesQTD_DEMANDA.AsInteger;
+    iQtdEstMaxNew :=CDS_V_EstoquesEST_MAXIMO.AsInteger;
   End;
 
   // Atualiza Produtos na Curva ABC Financeira ===============================
@@ -912,6 +942,7 @@ begin
       Try
         MySql:=' UPDATE ES_FINAN_CURVA_ABC c'+
                ' SET c.EST_MINIMO='+QuotedStr(CDS_V_EstoquesEST_IDEAL.AsString)+
+               ', c.EST_MAXIMO='+QuotedStr(CDS_V_EstoquesEST_MAXIMO.AsString)+
                ', c.USU_ALTERA='+QuotedStr(Cod_Usuario)+
                ', c.DTA_ALTERA=current_timestamp'+
                ' WHERE COD_LOJA='+QuotedStr(sgCodEmp)+
@@ -938,12 +969,11 @@ var
 begin
 //odirapagar
 //  If Not FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly Then
-  If Not FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly Then
+//  If Not FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly Then
+  If Not FrmEstoques.Dbg_Estoques.Columns[9].ReadOnly Then
   Begin
     iQtdEstMinOld :=CDS_V_EstoquesEST_IDEAL.AsInteger;
-
-//odirapagar
-//    iQtdDemandaOld:=CDS_V_EstoquesQTD_DEMANDA.AsInteger;
+    iQtdEstMaxOld :=CDS_V_EstoquesEST_MAXIMO.AsInteger;
   End;
 
 end;

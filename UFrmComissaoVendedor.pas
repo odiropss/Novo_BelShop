@@ -665,18 +665,24 @@ begin
   If (PC_ComissaoVendedor.ActivePage=Ts_Produtos) And (Ts_Produtos.CanFocus) Then
   Begin
     Bt_Clipboard.Visible:=False;
+    Rb_ComisVendSintetico.Visible:=False;
+    Rb_ComisVendAnalitico.Visible:=False;
     Dbg_UltimaAtualizacao.SetFocus;
   End;
 
   If (PC_ComissaoVendedor.ActivePage=Ts_ParametrosVendedores) And (Ts_ParametrosVendedores.CanFocus) Then
   Begin
     Bt_Clipboard.Visible:=False;
+    Rb_ComisVendSintetico.Visible:=False;
+    Rb_ComisVendAnalitico.Visible:=False;
     Dbg_Aplicacao.SetFocus;
   End;
 
   If (PC_ComissaoVendedor.ActivePage=Ts_Comissoes) And (Ts_Comissoes.CanFocus) Then
   Begin
     Bt_Clipboard.Visible:=True;
+    Rb_ComisVendSintetico.Visible:=True;
+    Rb_ComisVendAnalitico.Visible:=True;
     Dbg_ComisVendedores.SetFocus;
   End;
 
@@ -1399,6 +1405,8 @@ procedure TFrmComissaoVendedor.Bt_BuscaAplicacaoClick(Sender: TObject);
 Var
   MySql: String;
 begin
+  Dbg_Aplicacao.SetFocus;
+  
   If Not ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A') Then
   Begin
     msg('Erro de Conexão ao Banco de Dados do CD !!','X');
@@ -1476,6 +1484,8 @@ procedure TFrmComissaoVendedor.Bt_BuscaFamiliaPrecoClick(Sender: TObject);
 Var
   MySql: String;
 begin
+  Dbg_FamiliaPrecos.SetFocus;
+
   If Not ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A') Then
   Begin
     msg('Erro de Conexão ao Banco de Dados do CD !!','X');
@@ -1583,6 +1593,8 @@ procedure TFrmComissaoVendedor.Bt_ImportaProdutosClick(Sender: TObject);
 Var
   MySql: String;
 begin
+  Dbg_Aplicacao.SetFocus;
+
   If Not ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A') Then
   Begin
     msg('Erro de Conexão ao Banco de Dados do CD !!','X');
@@ -2008,6 +2020,8 @@ end;
 
 procedure TFrmComissaoVendedor.Bt_ClipboardClick(Sender: TObject);
 begin
+  Dbg_ComisVendedores.SetFocus;
+  
   If DMComissaoVendedor.CDS_ComisVendedores.IsEmpty Then
    Exit;
 

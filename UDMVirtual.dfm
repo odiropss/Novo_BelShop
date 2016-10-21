@@ -1,7 +1,7 @@
 object DMVirtual: TDMVirtual
   OldCreateOrder = False
-  Left = 223
-  Top = 82
+  Left = 232
+  Top = 72
   Height = 646
   Width = 1134
   object CDS_V_EmpConexoes: TClientDataSet
@@ -3554,151 +3554,258 @@ object DMVirtual: TDMVirtual
       Size = 0
     end
     object CDS_V_EstoquesCOD_PRODUTO: TStringField
-      DisplayLabel = 'C'#243'digo'
+      DisplayLabel = 'C'#243'd'
       FieldName = 'COD_PRODUTO'
       FixedChar = True
       Size = 6
     end
     object CDS_V_EstoquesDES_PRODUTO: TStringField
-      DisplayLabel = 'Descri'#231#227'o'
+      DisplayLabel = 'Desc Prod'
       FieldName = 'DES_PRODUTO'
       Size = 80
     end
     object CDS_V_EstoquesIND_CURVA: TStringField
       Alignment = taCenter
-      DisplayLabel = 'Curva'
+      DisplayLabel = 'CL'
       FieldName = 'IND_CURVA'
       Size = 1
     end
+    object CDS_V_EstoquesVLR_VD_M1: TFMTBCDField
+      FieldName = 'VLR_VD_M1'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_EstoquesVLR_VD_M2: TFMTBCDField
+      FieldName = 'VLR_VD_M2'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_EstoquesVLR_VD_M3: TFMTBCDField
+      FieldName = 'VLR_VD_M3'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_EstoquesVLR_VD_M4: TFMTBCDField
+      FieldName = 'VLR_VD_M4'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_EstoquesVLR_VD_M5: TFMTBCDField
+      FieldName = 'VLR_VD_M5'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
     object CDS_V_EstoquesVLR_VENDAS_ANO: TFMTBCDField
-      DisplayLabel = 'Vlr Vendas Ano'
+      DisplayLabel = '$ Vd AA'
       FieldName = 'VLR_VENDAS_ANO'
       DisplayFormat = '0.,00'
       Precision = 15
       Size = 2
     end
     object CDS_V_EstoquesVLR_VENDAS_4M: TFMTBCDField
-      DisplayLabel = 'Vlr Vendas 4Meses'
+      DisplayLabel = '$ Vd 4 M'
       FieldName = 'VLR_VENDAS_4M'
       DisplayFormat = '0.,00'
       Precision = 15
       Size = 2
     end
+    object CDS_V_EstoquesVLR_MEDIA_MES: TFMTBCDField
+      DisplayLabel = '$ '#215' Vd M'
+      FieldName = 'VLR_MEDIA_MES'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_EstoquesVLR_MEDIA_DIA: TFMTBCDField
+      DisplayLabel = '$ '#215' Vd Dia'
+      FieldName = 'VLR_MEDIA_DIA'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_EstoquesQTD_VD_M1: TIntegerField
+      FieldName = 'QTD_VD_M1'
+      DisplayFormat = '0,'
+    end
+    object CDS_V_EstoquesQTD_VD_M2: TIntegerField
+      FieldName = 'QTD_VD_M2'
+      DisplayFormat = '0,'
+    end
+    object CDS_V_EstoquesQTD_VD_M3: TIntegerField
+      FieldName = 'QTD_VD_M3'
+      DisplayFormat = '0,'
+    end
+    object CDS_V_EstoquesQTD_VD_M4: TIntegerField
+      FieldName = 'QTD_VD_M4'
+      DisplayFormat = '0,'
+    end
+    object CDS_V_EstoquesQTD_VD_M5: TIntegerField
+      FieldName = 'QTD_VD_M5'
+      DisplayFormat = '0,'
+    end
     object CDS_V_EstoquesQTD_VENDAS_ANO: TIntegerField
-      DisplayLabel = 'Qtd Vendas Ano'
+      DisplayLabel = 'Qt Vd AA'
       FieldName = 'QTD_VENDAS_ANO'
       DisplayFormat = '0,'
     end
     object CDS_V_EstoquesQTD_VENDAS_4M: TIntegerField
-      DisplayLabel = 'Qtd Vendas 4Meses'
+      DisplayLabel = 'Qt Vd 4 M'
       FieldName = 'QTD_VENDAS_4M'
       DisplayFormat = '0,'
     end
-    object CDS_V_EstoquesQTD_ESTOCAGEM_ANO: TIntegerField
-      DisplayLabel = 'Qtd Estocagem Ano'
-      FieldName = 'QTD_ESTOCAGEM_ANO'
+    object CDS_V_EstoquesQTD_MEDIA_MES: TIntegerField
+      DisplayLabel = 'Qt '#215' Vd M'
+      FieldName = 'QTD_MEDIA_MES'
+      DisplayFormat = '0,'
+    end
+    object CDS_V_EstoquesQTD_MEDIA_DIA: TIntegerField
+      DisplayLabel = 'Qt '#215' Vd Dia'
+      FieldName = 'QTD_MEDIA_DIA'
       DisplayFormat = '0,'
     end
     object CDS_V_EstoquesQTD_ESTCAGEM_4M: TIntegerField
-      DisplayLabel = 'Qtd Estocagem 4Meses'
+      DisplayLabel = 'Qt EstG 4 M'
       FieldName = 'QTD_ESTCAGEM_4M'
       DisplayFormat = '0,'
     end
+    object CDS_V_EstoquesQTD_ESTOCAGEM_ANO: TIntegerField
+      DisplayLabel = 'Qt EstG AA'
+      FieldName = 'QTD_ESTOCAGEM_ANO'
+      DisplayFormat = '0,'
+    end
     object CDS_V_EstoquesPER_PARTICIPACAO: TFMTBCDField
-      DisplayLabel = '% Participa'#231#227'o'
+      DisplayLabel = '% Part'
       FieldName = 'PER_PARTICIPACAO'
       DisplayFormat = '0.,0000'
       Precision = 15
       Size = 4
     end
     object CDS_V_EstoquesQTD_ESTOQUE: TIntegerField
-      DisplayLabel = 'Estoque'
+      DisplayLabel = 'Qt Est'
       FieldName = 'QTD_ESTOQUE'
       DisplayFormat = '0,'
     end
     object CDS_V_EstoquesQTD_TRANSITO: TIntegerField
-      DisplayLabel = 'Transito'
+      DisplayLabel = 'Qt Trans'
       FieldName = 'QTD_TRANSITO'
       DisplayFormat = '0,'
     end
     object CDS_V_EstoquesQTD_DISPONIVEL: TIntegerField
-      DisplayLabel = 'Dispon'#237'vel'
+      DisplayLabel = 'Qt Disp'
       FieldName = 'QTD_DISPONIVEL'
       DisplayFormat = '0,'
     end
     object CDS_V_EstoquesEST_IDEAL: TIntegerField
-      DisplayLabel = 'Est. M'#237'nimo'
+      DisplayLabel = 'Est M'#237'n'
       FieldName = 'EST_IDEAL'
       DisplayFormat = '0,'
     end
-    object CDS_V_EstoquesEST_MAXIMO: TFMTBCDField
-      DisplayLabel = 'Est. M'#225'ximo'
+    object CDS_V_EstoquesEST_MAXIMO: TIntegerField
+      DisplayLabel = 'Est M'#225'x'
       FieldName = 'EST_MAXIMO'
       DisplayFormat = '0,'
-      Precision = 15
-      Size = 4
     end
-    object CDS_V_EstoquesVLR_PC_VENDA: TFMTBCDField
-      DisplayLabel = 'P'#231' Venda'
-      FieldName = 'VLR_PC_VENDA'
+    object CDS_V_EstoquesPC_VENDA: TFMTBCDField
+      DisplayLabel = 'P'#231' Vd'
+      FieldName = 'PC_VENDA'
       DisplayFormat = '0.,00'
       Precision = 15
       Size = 4
     end
     object CDS_V_EstoquesVLR_TOTAL_VENDA: TFMTBCDField
-      DisplayLabel = 'Dispon'#237'vel P'#231' Venda'
-      FieldName = 'VLR_TOTAL_VENDA'
+      DisplayLabel = '$ Qt Disp P'#231' Vd'
+      FieldName = 'VLR_DISP_PC_VENDA'
       DisplayFormat = '0.,00'
       Precision = 15
       Size = 2
     end
+    object CDS_V_EstoquesVLR_EST_PC_VENDA: TFMTBCDField
+      DisplayLabel = '$ Qt Est P'#231' Vd'
+      FieldName = 'VLR_EST_PC_VENDA'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_EstoquesPC_CUSTO: TFMTBCDField
+      DisplayLabel = 'P'#231' Ct'
+      FieldName = 'PC_CUSTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_EstoquesVLR_DISP_PC_CUSTO: TFMTBCDField
+      DisplayLabel = '$ Qt Disp P'#231' Ct'
+      FieldName = 'VLR_DISP_PC_CUSTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_EstoquesVLR_EST_PC_CUSTO: TFMTBCDField
+      DisplayLabel = '$ Qt Est P'#231' Ct'
+      FieldName = 'VLR_EST_PC_CUSTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_EstoquesPER_MARGEM: TFMTBCDField
+      DisplayLabel = '% Mg Lc'
+      FieldName = 'PER_MARGEM'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 4
+    end
     object CDS_V_EstoquesDTA_INCLUSAO: TDateField
-      DisplayLabel = 'Data Inclus'#227'o'
+      DisplayLabel = 'Dt Incl'
       FieldName = 'DTA_INCLUSAO'
     end
     object CDS_V_EstoquesCODGRUPO: TStringField
-      DisplayLabel = 'C'#243'd Grupo'
+      DisplayLabel = 'C'#243'd Gr'
       FieldName = 'CODGRUPO'
       FixedChar = True
       Size = 3
     end
     object CDS_V_EstoquesNOMEGRUPO: TStringField
-      DisplayLabel = 'Nome Grupo'
+      DisplayLabel = 'Desc Gr'
       FieldName = 'NOMEGRUPO'
       FixedChar = True
       Size = 30
     end
     object CDS_V_EstoquesCODSUBGRUPO: TStringField
-      DisplayLabel = 'C'#243'd Sub-Grupo'
+      DisplayLabel = 'C'#243'd Sub-Gr'
       FieldName = 'CODSUBGRUPO'
       FixedChar = True
       Size = 4
     end
     object CDS_V_EstoquesNOMESUBGRUPO: TStringField
-      DisplayLabel = 'Nome Sub-Grupo'
+      DisplayLabel = 'Desc Sub-Gr'
       FieldName = 'NOMESUBGRUPO'
       FixedChar = True
       Size = 30
     end
     object CDS_V_EstoquesCODGRUPOSUB: TStringField
+      DisplayLabel = 'C'#243'd Gr Sub'
       FieldName = 'CODGRUPOSUB'
       FixedChar = True
       Size = 7
     end
     object CDS_V_EstoquesIND_SITUACAO: TStringField
-      DisplayLabel = 'Situa'#231#227'o'
+      DisplayLabel = 'Sit Prod'
       FieldName = 'IND_SITUACAO'
       Required = True
     end
     object CDS_V_EstoquesCOD_FORNECEDOR: TStringField
       Alignment = taRightJustify
-      DisplayLabel = 'Cod Forn'
+      DisplayLabel = 'C'#243'd Forn'
       FieldName = 'COD_FORNECEDOR'
       FixedChar = True
       Size = 6
     end
     object CDS_V_EstoquesDES_FORNECEDOR: TStringField
-      DisplayLabel = 'Fornecedor'
+      DisplayLabel = 'Desc Forn'
       FieldName = 'DES_FORNECEDOR'
       Size = 40
     end
