@@ -1136,6 +1136,18 @@ type
     CDS_FluxoFornecedorVLR_SALDO: TFloatField;
     CDS_FluxoFornHistoricoCOD_HISTORICO: TIntegerField;
     CDS_FluxoFornecedoresCOMPRADOR: TStringField;
+    SDS_EstoquePrevisao: TSQLDataSet;
+    DSP_EstoquePrevisao: TDataSetProvider;
+    CDS_EstoquePrevisao: TClientDataSet;
+    DS_EstoquePrevisao: TDataSource;
+    CDS_EstoquePrevisaoNUM_DIAS_ESTOCAGEM: TIntegerField;
+    CDS_EstoquePrevisaoQTD_ESTOQUE: TIntegerField;
+    CDS_EstoquePrevisaoEST_PC_CUSTO: TFMTBCDField;
+    CDS_EstoquePrevisaoEST_PC_VENDA: TFMTBCDField;
+    CDS_EstoquePrevisaoDM_PREVISTA: TIntegerField;
+    CDS_EstoquePrevisaoDM_PREV_PC_CUSTO: TFMTBCDField;
+    CDS_EstoquePrevisaoDM_PREV_PC_VENDA: TFMTBCDField;
+    CDS_EstoquePrevisaoQTD_VENDA_DIA: TFMTBCDField;
 
     //==========================================================================
     // Odir ====================================================================

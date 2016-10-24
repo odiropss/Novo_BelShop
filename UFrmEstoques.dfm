@@ -39,7 +39,7 @@ object FrmEstoques: TFrmEstoques
         Left = 0
         Top = 55
         Width = 969
-        Height = 431
+        Height = 420
         Align = alClient
         Color = 15004403
         Ctl3D = False
@@ -787,72 +787,20 @@ object FrmEstoques: TFrmEstoques
       end
       object Panel66: TPanel
         Left = 0
-        Top = 506
+        Top = 495
         Width = 969
-        Height = 35
+        Height = 46
         Align = alBottom
         BevelInner = bvLowered
         BorderStyle = bsSingle
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 1
-        object Label2: TLabel
-          Left = 279
-          Top = 10
-          Width = 100
-          Height = 13
-          Caption = 'Venda Total Ano:'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Lab_EstoquesVlrTotAno: TLabel
-          Left = 384
-          Top = 10
-          Width = 26
-          Height = 13
-          Caption = '0,00'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlue
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label3: TLabel
-          Left = 511
-          Top = 10
-          Width = 92
-          Height = 13
-          Caption = 'Venda 4 Meses:'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Lab_EstoquesVlrTot4Meses: TLabel
-          Left = 612
-          Top = 10
-          Width = 26
-          Height = 13
-          Caption = '0,00'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlue
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
         object Bt_EstoquesFechar: TJvXPButton
           Left = 878
           Top = 2
           Width = 87
-          Height = 29
+          Height = 40
           Caption = 'Fechar'
           TabOrder = 0
           TabStop = False
@@ -921,7 +869,7 @@ object FrmEstoques: TFrmEstoques
           Left = 2
           Top = 2
           Width = 99
-          Height = 29
+          Height = 40
           Caption = 'Filtros'
           TabOrder = 1
           TabStop = False
@@ -993,7 +941,7 @@ object FrmEstoques: TFrmEstoques
           Left = 787
           Top = 2
           Width = 91
-          Height = 29
+          Height = 40
           Align = alRight
           BevelInner = bvLowered
           BevelWidth = 2
@@ -1007,6 +955,85 @@ object FrmEstoques: TFrmEstoques
           ParentFont = False
           TabOrder = 2
           Visible = False
+        end
+        object Dbg_EstoquesPrev: TDBGrid
+          Left = 101
+          Top = 2
+          Width = 686
+          Height = 40
+          Align = alClient
+          DataSource = DMBelShop.DS_EstoquePrevisao
+          FixedColor = clSilver
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 3
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clBlack
+          TitleFont.Height = -11
+          TitleFont.Name = 'MS Sans Serif'
+          TitleFont.Style = [fsBold]
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'NUM_DIAS_ESTOCAGEM'
+              Title.Alignment = taRightJustify
+              Width = 70
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'QTD_VENDA_DIA'
+              Title.Alignment = taRightJustify
+              Width = 70
+              Visible = True
+            end
+            item
+              Color = 15395562
+              Expanded = False
+              FieldName = 'QTD_ESTOQUE'
+              Title.Alignment = taRightJustify
+              Width = 70
+              Visible = True
+            end
+            item
+              Color = 15395562
+              Expanded = False
+              FieldName = 'EST_PC_CUSTO'
+              Title.Alignment = taRightJustify
+              Width = 70
+              Visible = True
+            end
+            item
+              Color = 15395562
+              Expanded = False
+              FieldName = 'EST_PC_VENDA'
+              Title.Alignment = taRightJustify
+              Width = 70
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DM_PREVISTA'
+              Title.Alignment = taRightJustify
+              Width = 70
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DM_PREV_PC_CUSTO'
+              Title.Alignment = taRightJustify
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'DM_PREV_PC_VENDA'
+              Title.Alignment = taRightJustify
+              Visible = True
+            end>
         end
       end
       object Dbg_EstoquesDemFinan: TDBGrid
@@ -1076,7 +1103,7 @@ object FrmEstoques: TFrmEstoques
       end
       object Stb_Estoques: TdxStatusBar
         Left = 0
-        Top = 486
+        Top = 475
         Width = 969
         Height = 20
         Panels = <
@@ -1144,7 +1171,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 286
+          Left = 284
           Top = 11
           Width = 353
           Height = 13

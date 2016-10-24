@@ -700,17 +700,6 @@ type
     CDS_V_ParamLojaNecesIND_ATIVO: TStringField;
     DS_V_EstoqueLojas: TDataSource;
     IBQ_EstoqueLojaPRINCIPALFOR: TIBStringField;
-    CDS_V_EstoqueLojas: TClientDataSet;
-    CDS_V_EstoqueLojasCOD_LOJA: TStringField;
-    CDS_V_EstoqueLojasQTD_ESTOQUE: TIntegerField;
-    CDS_V_EstoqueLojasVLR_ESTOQUE: TCurrencyField;
-    CDS_V_EstoqueLojasQTD_VENDAS: TIntegerField;
-    CDS_V_EstoqueLojasEST_SIMULADO: TIntegerField;
-    CDS_V_EstoqueLojasVLR_SIMULADO: TCurrencyField;
-    CDS_V_EstoqueLojasPER_SIMULADOR: TCurrencyField;
-    CDS_V_EstoqueLojasDIA_UTEIS: TIntegerField;
-    CDS_V_EstoqueLojasDTA_INICIO: TDateField;
-    CDS_V_EstoqueLojasDTA_FIM: TDateField;
     IBQ_EstoqueLojaZONAENDERECO: TIntegerField;
     IBQ_EstoqueLojaCORREDOR: TIBStringField;
     IBQ_EstoqueLojaPRATELEIRA: TIBStringField;
@@ -756,20 +745,31 @@ type
     CDS_V_EstoquesVLR_VD_M4: TFMTBCDField;
     CDS_V_EstoquesVLR_VD_M5: TFMTBCDField;
     CDS_V_EstoquesVLR_MEDIA_MES: TFMTBCDField;
-    CDS_V_EstoquesVLR_MEDIA_DIA: TFMTBCDField;
     CDS_V_EstoquesQTD_VD_M1: TIntegerField;
     CDS_V_EstoquesQTD_VD_M2: TIntegerField;
     CDS_V_EstoquesQTD_VD_M3: TIntegerField;
     CDS_V_EstoquesQTD_VD_M4: TIntegerField;
     CDS_V_EstoquesQTD_VD_M5: TIntegerField;
-    CDS_V_EstoquesQTD_MEDIA_MES: TIntegerField;
-    CDS_V_EstoquesQTD_MEDIA_DIA: TIntegerField;
     CDS_V_EstoquesVLR_EST_PC_VENDA: TFMTBCDField;
     CDS_V_EstoquesPC_CUSTO: TFMTBCDField;
     CDS_V_EstoquesVLR_DISP_PC_CUSTO: TFMTBCDField;
     CDS_V_EstoquesVLR_EST_PC_CUSTO: TFMTBCDField;
     CDS_V_EstoquesPER_MARGEM: TFMTBCDField;
     CDS_V_EstoquesEST_MAXIMO: TIntegerField;
+    CDS_V_EstoquesVLR_MEDIA_DIA: TFMTBCDField;
+    CDS_V_EstoquesQTD_MEDIA_MES: TFMTBCDField;
+    CDS_V_EstoquesQTD_MEDIA_DIA: TFMTBCDField;
+    CDS_V_EstoqueLojas: TClientDataSet;
+    CDS_V_EstoqueLojasCOD_LOJA: TStringField;
+    CDS_V_EstoqueLojasQTD_ESTOQUE: TIntegerField;
+    CDS_V_EstoqueLojasVLR_ESTOQUE: TCurrencyField;
+    CDS_V_EstoqueLojasQTD_VENDAS: TIntegerField;
+    CDS_V_EstoqueLojasEST_SIMULADO: TIntegerField;
+    CDS_V_EstoqueLojasVLR_SIMULADO: TCurrencyField;
+    CDS_V_EstoqueLojasPER_SIMULADOR: TCurrencyField;
+    CDS_V_EstoqueLojasDIA_UTEIS: TIntegerField;
+    CDS_V_EstoqueLojasDTA_INICIO: TDateField;
+    CDS_V_EstoqueLojasDTA_FIM: TDateField;
     procedure CDS_V_GruposProdutosAfterScroll(DataSet: TDataSet);
     procedure CDS_V_EstFisFinanEmpAfterScroll(DataSet: TDataSet);
     procedure CDS_V_MargemLucroFornAfterScroll(DataSet: TDataSet);
@@ -881,8 +881,11 @@ begin
 end;
 
 procedure TDMVirtual.CDS_V_EstoquesAfterScroll(DataSet: TDataSet);
+Var
+  MySql: string;
+  sMediaDia, sEstoque, sPcCusto, sPcVenda: String;
 begin
-  If Not DMVirtual.CDS_V_Estoques.IsEmpty Then
+  If Not CDS_V_Estoques.IsEmpty Then
   Begin
     If bSeProcessa1 Then
     Begin
@@ -904,9 +907,36 @@ begin
        Begin
          FrmEstoques.Dbg_Estoques.Columns[9].ReadOnly:=False;
          FrmEstoques.Dbg_Estoques.Columns[10].ReadOnly:=False;
-       End
+       End;
+
+      // Apresenta Demanda Prevista ------------------------------
+      sMediaDia:=f_Troca(',','.', CDS_V_EstoquesQTD_MEDIA_DIA.AsString);
+      sEstoque :=f_Troca(',','.', CDS_V_EstoquesQTD_ESTOQUE.AsString);
+      sPcCusto :=f_Troca(',','.', CDS_V_EstoquesPC_CUSTO.AsString);
+      sPcVenda :=f_Troca(',','.', CDS_V_EstoquesPC_VENDA.AsString);
+
+      MySql:=' SELECT'+
+             ' CAST(fc.num_dias_estocagem AS INTEGER) NUM_DIAS_ESTOCAGEM,'+
+             ' CAST('+sMediaDia+' AS NUMERIC(12,4)) QTD_VENDA_DIA,'+
+             ' CAST('+sEstoque+' AS INTEGER) QTD_ESTOQUE,'+
+             ' CAST(('+sEstoque+' * '+sPcCusto+') AS NUMERIC(12,2)) EST_PC_CUSTO,'+
+             ' CAST(('+sEstoque+' * '+sPcVenda+') AS NUMERIC(12,2)) EST_PC_VENDA,'+
+             ' CAST((fc.num_dias_estocagem * '+sMediaDia+') AS INTEGER) DM_PREVISTA,'+
+             ' CAST(((fc.num_dias_estocagem * '+sMediaDia+') * '+sPcCusto+') AS NUMERIC(12,2)) DM_PREV_PC_CUSTO,'+
+             ' CAST(((fc.num_dias_estocagem * '+sMediaDia+') * '+sPcVenda+') AS NUMERIC(12,2)) DM_PREV_PC_VENDA'+
+             ' FROM ES_FINAN_CURVA_ABC fc'+
+             ' WHERE fc.cod_loja = '+QuotedStr(sgCodEmp)+
+             ' and   fc.cod_produto = '+QuotedStr(CDS_V_EstoquesCOD_PRODUTO.AsString);
+      DMBelShop.CDS_EstoquePrevisao.Close;
+      DMBelShop.SDS_EstoquePrevisao.CommandText:=MySql;
+      DMBelShop.CDS_EstoquePrevisao.Open;
+
+      sMediaDia:='';
+      sEstoque :='';
+      sPcCusto :='';
+      sPcVenda :='';
     End; // If bSeProcessa1 Then
-  End; // If Not DMVirtual.CDS_V_Estoques.IsEmpty Then
+  End; // If Not CDS_V_Estoques.IsEmpty Then
 end;
 
 procedure TDMVirtual.CDS_V_EstoquesAfterPost(DataSet: TDataSet);

@@ -72,11 +72,8 @@ type
     Bt_Odir: TJvTransparentButton;
     DBE_EstoquesTOT1: TDBEdit;
     DBE_EstoquesTOT2: TDBEdit;
-    Label2: TLabel;
-    Lab_EstoquesVlrTotAno: TLabel;
-    Label3: TLabel;
-    Lab_EstoquesVlrTot4Meses: TLabel;
     Bt_EstoquesDemonstrativo: TJvXPButton;
+    Dbg_EstoquesPrev: TDBGrid;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -1112,9 +1109,12 @@ end;
 procedure TFrmEstoques.Dbg_EstoquesDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
+  If DMVirtual.CDS_V_Estoques.IsEmpty Then
+   Exit;
+
   If Dbg_Estoques.DataSource.DataSet.State in [dsEdit, dsInsert, dsBrowse] Then
   Begin
-    //Cor da linha selecionada
+    // Cor da linha selecionada
     If Rect.Top = TStringGrid(Dbg_Estoques).CellRect(DataCol,TStringGrid(Dbg_Estoques).Row).Top Then
     Begin
       With Dbg_Estoques do
@@ -1122,7 +1122,6 @@ begin
         Canvas.FillRect(Rect);
         Canvas.Font.Style := Canvas.Font.Style + [fsBold];
         Canvas.Brush.Color:=clSkyBlue;
-        DefaultDrawDataCell(Rect,Column.Field,State)
       End;
     End;
 
@@ -1134,14 +1133,26 @@ begin
         Canvas.Font.Style := Canvas.Font.Style + [fsBold];
         Canvas.Brush.Color:=clWhite;//  -->> Cor da Celula
         Canvas.Font.Color := clBlack;
-        Canvas.FillRect(Rect);
-        DefaultDrawDataCell(Rect,Column.Field,State)
       End;
     End;
+
+    If (Column.FieldName='PER_MARGEM') Then // Este comando altera cor da Celula
+    Begin
+      If DMVirtual.CDS_V_EstoquesPER_MARGEM.AsCurrency<50.00 Then
+      Begin
+        Dbg_Estoques.Canvas.Font.Color:=clWhite; // Cor da Fonte
+        Dbg_Estoques.Canvas.Brush.Color:=clRed;  // Cor da Celula
+      End;
+    End;
+
+    Dbg_Estoques.Canvas.FillRect(Rect);
+    Dbg_Estoques.DefaultDrawDataCell(Rect,Column.Field,State);
+
 //OdirApagar
 //    Dbg_Estoques.Columns[4].ReadOnly:=False;
     Dbg_Estoques.Columns[9].ReadOnly:=False;
     Dbg_Estoques.Columns[10].ReadOnly:=False;
+
     DMVirtual.CDS_V_EstoquesDTA_INCLUSAO.Alignment:=taCenter;
     DMVirtual.CDS_V_EstoquesCODGRUPO.Alignment:=taRightJustify;
     DMVirtual.CDS_V_EstoquesCODSUBGRUPO.Alignment:=taRightJustify;
@@ -1163,10 +1174,6 @@ Var
 
   hHrInicio, hHrFim: String;
 Begin
-
-  // Zera Acumuladores =========================================================
-  Lab_EstoquesVlrTotAno.Caption:='0,00';
-  Lab_EstoquesVlrTot4Meses.Caption:='0,00';
 
   DMVirtual.CDS_V_Estoques.Data:=DMBelShop.CDS_SQLQ_Busca.Data;
 
@@ -1355,21 +1362,19 @@ Begin
          '           AS INTEGER)'+
          ' , 0) QTD_VENDAS_4M,'+
 
-         // ' CAST(COALESCE(e4.qtd_venda,0) AS INTEGER) QTD_VENDAS_4M,'+ //* Inclui Mes Corrente */
-
-         ' COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0)+'+
-         '                 COALESCE(e4.qtd_venda_m2,0)+'+
-         '                 COALESCE(e4.qtd_venda_m3,0)+'+
-         '                 COALESCE(e4.qtd_venda_m4,0))/4)'+
-         '          AS INTEGER)'+
+         ' COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.0000)+'+
+         '                 COALESCE(e4.qtd_venda_m2,0.0000)+'+
+         '                 COALESCE(e4.qtd_venda_m3,0.0000)+'+
+         '                 COALESCE(e4.qtd_venda_m4,0.0000))/4)'+
+         '          AS NUMERIC(12,4))'+
          ' , 0) QTD_MEDIA_MES,'+
 
-         ' COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0)+'+
-         '                 COALESCE(e4.qtd_venda_m2,0)+'+
-         '                 COALESCE(e4.qtd_venda_m3,0)+'+
-         '                 COALESCE(e4.qtd_venda_m4,0)+'+
-         '                 COALESCE(e4.qtd_venda_m5,0))/'+sDiasUteis+')'+
-         '         AS INTEGER)'+
+         ' COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.0000)+'+
+         '                 COALESCE(e4.qtd_venda_m2,0.0000)+'+
+         '                 COALESCE(e4.qtd_venda_m3,0.0000)+'+
+         '                 COALESCE(e4.qtd_venda_m4,0.0000)+'+
+         '                 COALESCE(e4.qtd_venda_m5,0.0000))/'+sDiasUteis+')'+
+         '         AS NUMERIC(12,4))'+
          ' , 0) QTD_MEDIA_DIA,'+
 
          ' CAST(CASE'+
@@ -1576,6 +1581,9 @@ Begin
 //  THackDBGrid(Dbg_Estoques).SelectedIndex:=4;
   THackDBGrid(Dbg_Estoques).SelectedIndex:=9;
   Dbg_Estoques.SetFocus;
+
+  // Apresenta Estoques e Demanda Prevista =====================================
+  DMVirtual.CDS_V_EstoquesAfterScroll(DMVirtual.CDS_V_Estoques);
 
   // APRESENTA O RESULTA DO TEMPO FINAL
   hHrFim:=TimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
@@ -2523,13 +2531,14 @@ end;
 
 procedure TFrmEstoques.DBE_EstoquesTOT1Change(Sender: TObject);
 begin
-  Lab_EstoquesVlrTotAno.Caption:='0,00';
-  Lab_EstoquesVlrTot4Meses.Caption:='0,00';
-  If trim(DBE_EstoquesTOT1.Text)<>'' Then
-   Lab_EstoquesVlrTotAno.Caption:=Formatfloat('R$ #,##0.00',StrToFloat(DBE_EstoquesTOT1.Text));
-
-  If trim(DBE_EstoquesTOT2.Text)<>'' Then
-   Lab_EstoquesVlrTot4Meses.Caption:=Formatfloat('R$ #,##0.00',StrToFloat(DBE_EstoquesTOT2.Text));
+// OdirApagar - 21/10/2016
+//  Lab_EstoquesVlrTotAno.Caption:='0,00';
+//  Lab_EstoquesVlrTot4Meses.Caption:='0,00';
+//  If trim(DBE_EstoquesTOT1.Text)<>'' Then
+//   Lab_EstoquesVlrTotAno.Caption:=Formatfloat('R$ #,##0.00',StrToFloat(DBE_EstoquesTOT1.Text));
+//
+//  If trim(DBE_EstoquesTOT2.Text)<>'' Then
+//   Lab_EstoquesVlrTot4Meses.Caption:=Formatfloat('R$ #,##0.00',StrToFloat(DBE_EstoquesTOT2.Text));
 
 end;
 

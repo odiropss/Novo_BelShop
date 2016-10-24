@@ -1,7 +1,7 @@
 object DMVirtual: TDMVirtual
   OldCreateOrder = False
-  Left = 232
-  Top = 72
+  Left = 238
+  Top = 106
   Height = 646
   Width = 1134
   object CDS_V_EmpConexoes: TClientDataSet
@@ -3547,6 +3547,7 @@ object DMVirtual: TDMVirtual
     Left = 413
     Top = 96
     object CDS_V_EstoquesSEQ: TFMTBCDField
+      DisplayLabel = 'Seq'
       FieldName = 'SEQ'
       Required = True
       DisplayFormat = '0,'
@@ -3624,7 +3625,7 @@ object DMVirtual: TDMVirtual
     object CDS_V_EstoquesVLR_MEDIA_DIA: TFMTBCDField
       DisplayLabel = '$ '#215' Vd Dia'
       FieldName = 'VLR_MEDIA_DIA'
-      DisplayFormat = '0.,00'
+      DisplayFormat = '0,.00'
       Precision = 15
       Size = 2
     end
@@ -3658,15 +3659,19 @@ object DMVirtual: TDMVirtual
       FieldName = 'QTD_VENDAS_4M'
       DisplayFormat = '0,'
     end
-    object CDS_V_EstoquesQTD_MEDIA_MES: TIntegerField
+    object CDS_V_EstoquesQTD_MEDIA_MES: TFMTBCDField
       DisplayLabel = 'Qt '#215' Vd M'
       FieldName = 'QTD_MEDIA_MES'
-      DisplayFormat = '0,'
+      DisplayFormat = '0,.0000'
+      Precision = 15
+      Size = 4
     end
-    object CDS_V_EstoquesQTD_MEDIA_DIA: TIntegerField
+    object CDS_V_EstoquesQTD_MEDIA_DIA: TFMTBCDField
       DisplayLabel = 'Qt '#215' Vd Dia'
       FieldName = 'QTD_MEDIA_DIA'
-      DisplayFormat = '0,'
+      DisplayFormat = '0,.0000'
+      Precision = 15
+      Size = 4
     end
     object CDS_V_EstoquesQTD_ESTCAGEM_4M: TIntegerField
       DisplayLabel = 'Qt EstG 4 M'
@@ -3878,7 +3883,7 @@ object DMVirtual: TDMVirtual
     IndexFieldNames = 'IND_CURVA'
     Params = <>
     Left = 413
-    Top = 152
+    Top = 176
     object CDS_V_EstoquesFinanIND_CURVA: TStringField
       DisplayLabel = 'Curvas'
       FieldName = 'IND_CURVA'
@@ -3908,7 +3913,7 @@ object DMVirtual: TDMVirtual
   object DS_V_EstoquesFinan: TDataSource
     DataSet = CDS_V_EstoquesFinan
     Left = 464
-    Top = 168
+    Top = 192
   end
   object CDS_V_ParamLojaNeces: TClientDataSet
     Aggregates = <>
@@ -4219,7 +4224,6 @@ object DMVirtual: TDMVirtual
     end
   end
   object DS_V_EstoqueLojas: TDataSource
-    DataSet = CDS_V_EstoqueLojas
     Left = 894
     Top = 499
   end
