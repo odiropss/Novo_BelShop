@@ -39,7 +39,7 @@ object FrmEstoques: TFrmEstoques
         Left = 0
         Top = 55
         Width = 969
-        Height = 420
+        Height = 419
         Align = alClient
         Color = 15004403
         Ctl3D = False
@@ -787,9 +787,9 @@ object FrmEstoques: TFrmEstoques
       end
       object Panel66: TPanel
         Left = 0
-        Top = 495
+        Top = 494
         Width = 969
-        Height = 46
+        Height = 47
         Align = alBottom
         BevelInner = bvLowered
         BorderStyle = bsSingle
@@ -800,7 +800,7 @@ object FrmEstoques: TFrmEstoques
           Left = 878
           Top = 2
           Width = 87
-          Height = 40
+          Height = 41
           Caption = 'Fechar'
           TabOrder = 0
           TabStop = False
@@ -869,7 +869,7 @@ object FrmEstoques: TFrmEstoques
           Left = 2
           Top = 2
           Width = 99
-          Height = 40
+          Height = 41
           Caption = 'Filtros'
           TabOrder = 1
           TabStop = False
@@ -941,7 +941,7 @@ object FrmEstoques: TFrmEstoques
           Left = 787
           Top = 2
           Width = 91
-          Height = 40
+          Height = 41
           Align = alRight
           BevelInner = bvLowered
           BevelWidth = 2
@@ -960,7 +960,7 @@ object FrmEstoques: TFrmEstoques
           Left = 101
           Top = 2
           Width = 686
-          Height = 40
+          Height = 41
           Align = alClient
           DataSource = DMBelShop.DS_EstoquePrevisao
           FixedColor = clSilver
@@ -995,6 +995,11 @@ object FrmEstoques: TFrmEstoques
               Color = 15395562
               Expanded = False
               FieldName = 'QTD_ESTOQUE'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
               Title.Alignment = taRightJustify
               Width = 70
               Visible = True
@@ -1018,6 +1023,11 @@ object FrmEstoques: TFrmEstoques
             item
               Expanded = False
               FieldName = 'DM_PREVISTA'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
               Title.Alignment = taRightJustify
               Width = 70
               Visible = True
@@ -1103,7 +1113,7 @@ object FrmEstoques: TFrmEstoques
       end
       object Stb_Estoques: TdxStatusBar
         Left = 0
-        Top = 475
+        Top = 474
         Width = 969
         Height = 20
         Panels = <
@@ -1171,7 +1181,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 284
+          Left = 283
           Top = 11
           Width = 353
           Height = 13
