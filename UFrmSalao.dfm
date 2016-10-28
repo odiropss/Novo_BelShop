@@ -405,7 +405,7 @@ object FrmSalao: TFrmSalao
     Top = 0
     Width = 977
     Height = 580
-    ActivePage = Ts_ProfPagtos
+    ActivePage = Ts_Habilidades
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1396,7 +1396,7 @@ object FrmSalao: TFrmSalao
         Top = 73
         Width = 969
         Height = 444
-        ActivePage = Ts_CadProfDoctos
+        ActivePage = Ts_CadProfDadosPessoais
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -5938,6 +5938,16 @@ object FrmSalao: TFrmSalao
           ParentCtl3D = False
           ParentFont = False
           TabOrder = 0
+          object Splitter_Habilidades: TSplitter
+            Left = 1
+            Top = 332
+            Width = 439
+            Height = 4
+            Cursor = crVSplit
+            Align = alBottom
+            Color = clRed
+            ParentColor = False
+          end
           object Panel5: TPanel
             Left = 1
             Top = 17
@@ -6078,7 +6088,7 @@ object FrmSalao: TFrmSalao
             Left = 1
             Top = 57
             Width = 439
-            Height = 492
+            Height = 275
             Align = alClient
             DataSource = DMSalao.DS_Habilidades
             FixedColor = clTeal
@@ -6099,6 +6109,7 @@ object FrmSalao: TFrmSalao
             TitleFont.Style = [fsBold]
             OnDblClick = Dbg_HabilidadesDblClick
             OnEnter = Dbg_ProfissionaisEnter
+            OnKeyDown = Dbg_HabilidadesKeyDown
             SairComEnter = False
             Columns = <
               item
@@ -6140,23 +6151,158 @@ object FrmSalao: TFrmSalao
               item
                 Expanded = False
                 FieldName = 'DES_ABREVIATURA'
+                Width = 64
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'COD_SIDICOM'
+                Width = 64
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'VLR_HABSERV'
+                Width = 64
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'IND_ATIVO'
+                Width = 64
                 Visible = True
               end>
+          end
+          object Gb_Comissoes: TGroupBox
+            Left = 1
+            Top = 336
+            Width = 439
+            Height = 213
+            Align = alBottom
+            Caption = ' Percentuais de Comiss'#245'es '
+            TabOrder = 2
+            object Dbg_ComissoesLojas: TDBGridJul
+              Left = 1
+              Top = 17
+              Width = 437
+              Height = 166
+              Align = alClient
+              DataSource = DMSalao.DS_V_ComissoesLojas
+              FixedColor = clTeal
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'Tahoma'
+              Font.Style = []
+              Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
+              ParentFont = False
+              ParentShowHint = False
+              ShowHint = False
+              TabOrder = 0
+              TitleFont.Charset = DEFAULT_CHARSET
+              TitleFont.Color = clWhite
+              TitleFont.Height = -11
+              TitleFont.Name = 'Tahoma'
+              TitleFont.Style = [fsBold]
+              OnDrawColumnCell = Dbg_ComissoesLojasDrawColumnCell
+              OnEnter = Dbg_ComissoesLojasEnter
+              OnExit = Dbg_ComissoesLojasExit
+              OnKeyDown = Dbg_HabilidadesKeyDown
+              SairComEnter = False
+              Columns = <
+                item
+                  Color = clSilver
+                  Expanded = False
+                  FieldName = 'COD_HABSERV'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -11
+                  Font.Name = 'Tahoma'
+                  Font.Style = [fsBold]
+                  Title.Alignment = taRightJustify
+                  Width = 50
+                  Visible = True
+                end
+                item
+                  Color = clSilver
+                  Expanded = False
+                  FieldName = 'DES_HABSERV'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -11
+                  Font.Name = 'Tahoma'
+                  Font.Style = [fsBold]
+                  Width = 200
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PORTOALEGRE'
+                  Title.Alignment = taCenter
+                  Width = 105
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'CANOAS'
+                  Title.Alignment = taCenter
+                  Width = 105
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'GRAVATAI'
+                  Title.Alignment = taCenter
+                  Width = 105
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'VIAMAO'
+                  Title.Alignment = taCenter
+                  Width = 105
+                  Visible = True
+                end>
+            end
+            object Panel10: TPanel
+              Left = 1
+              Top = 183
+              Width = 437
+              Height = 29
+              Align = alBottom
+              TabOrder = 1
+              object Bt_SalvarComissoes: TJvXPButton
+                Tag = 1
+                Left = 1
+                Top = 1
+                Width = 140
+                Height = 27
+                Caption = 'Salvar Comiss'#245'es'
+                TabOrder = 0
+                Glyph.Data = {
+                  07544269746D617066010000424D660100000000000076000000280000001400
+                  0000140000000100040000000000F00000000000000000000000100000001000
+                  0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+                  C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+                  FF00333333333333333333330000333333000000000000030000333333078888
+                  8888880300003333330F77777777780300003333330F99777777780300003333
+                  330FFFFFFFFFF703000033333300000000000003000033333333333333333333
+                  0000333333333333330033330000333333333333300003330000300000000333
+                  00000033000030FFFFFF033333003333000030F4444F033333003333000030FF
+                  FFFF033338003333000030F4444F030000083333000030FFFFFF030000833333
+                  000030F44F00033333333333000030FFFF003333333333330000300000033333
+                  333333330000333333333333333333330000}
+                ShowFocusRect = True
+                Align = alLeft
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+                OnClick = Bt_SalvarComissoesClick
+              end
+            end
           end
         end
         object Gb_Servicos: TGroupBox
@@ -6347,7 +6493,7 @@ object FrmSalao: TFrmSalao
             Top = 57
             Width = 524
             Height = 492
-            Align = alClient
+            Align = alBottom
             DataSource = DMSalao.DS_Servicos
             FixedColor = clTeal
             Font.Charset = DEFAULT_CHARSET
@@ -6367,6 +6513,7 @@ object FrmSalao: TFrmSalao
             TitleFont.Style = [fsBold]
             OnDblClick = Dbg_ServicosDblClick
             OnEnter = Dbg_ProfissionaisEnter
+            OnKeyDown = Dbg_HabilidadesKeyDown
             SairComEnter = False
             Columns = <
               item
@@ -8246,7 +8393,7 @@ object FrmSalao: TFrmSalao
         Top = 0
         Width = 969
         Height = 552
-        ActivePage = Ts_PagtoProfissionais
+        ActivePage = Ts_PagtoVendas
         Align = alClient
         TabOrder = 0
         OnChange = PC_PagtoPlanilhaChange
@@ -8974,7 +9121,7 @@ object FrmSalao: TFrmSalao
                   Left = 411
                   Top = 1
                   Width = 86
-                  Height = 27
+                  Height = 26
                   Align = alRight
                   Caption = '  Calculo com  '#13#10'     Metas ?'
                   Visible = False
@@ -9177,6 +9324,7 @@ object FrmSalao: TFrmSalao
                 Expanded = False
                 FieldName = 'VLR_DESCONTO'
                 Title.Alignment = taRightJustify
+                Width = 64
                 Visible = True
               end
               item

@@ -15762,6 +15762,12 @@ Begin
     Begin
       FrmSalao.OutLook_ProfMovtosRH.Pages[2].Buttons[0].Enabled:=False;
     End;
+
+    If TabSh.Name='Ts_Habilidades' Then
+    Begin
+      FrmSalao.Splitter_Habilidades.Visible:=False;
+      FrmSalao.Gb_Comissoes.Visible:=False;
+    End;
   End; // If FrmSalao<>nil Then
 
   // FrmEstoques ===============================================================
@@ -41915,6 +41921,8 @@ begin
 end;
 
 procedure TFrmBelShop.SubMenuSalaoHabilidadesServicosClick(Sender: TObject);
+Var
+  MySql: String;
 begin
   FrmSalao:=TFrmSalao.Create(Self);
   FrmSalao.CorCaptionForm.FormCaption:='Cadastro de Habilidades';
@@ -41923,10 +41931,62 @@ begin
   FrmSalao.Ts_Habilidades.TabVisible:=True;
   FrmSalao.Pan_Profissionais.Visible:=False;
 
+  //============================================================================
+  // Atualiza Comissões da Habilidades Por Cidade - INICIO =====================
+  //============================================================================
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try
+    Screen.Cursor:=crAppStart;
+
+    MySql:=' INSERT INTO TAB_AUXILIAR (tip_aux, cod_aux, des_aux)'+
+           ' SELECT 18 tip_aux, h.cod_habserv cod_aux, ''000.00;000.00;000.00;000.00;'' des_aux'+
+           ' FROM SAL_HAB_SERV h'+
+           ' WHERE h.tip_habserv = ''H'''+
+           ' AND NOT EXISTS(SELECT 1'+
+           '                FROM tab_auxiliar c'+
+           '                WHERE c.tip_aux = 18'+
+           '                AND   c.cod_aux = h.cod_habserv)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+    OdirPanApres.Visible:=False;
+
+    Screen.Cursor:=crDefault;
+
+  Except
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      Screen.Cursor:=crDefault;
+      MessageBox(Handle, pChar('Erro na Comissão da Habilidade:'+#13+e.message), 'Erro', MB_ICONERROR);
+
+      FreeAndNil(FrmSalao);
+
+      Exit;
+    End; // on e : Exception do
+  End; // Try
+  //============================================================================
+  // Atualiza Comissões da Habilidades Por Cidade - INICIO =====================
+  //============================================================================
+
   // Posiciona Painel Rodape
   FrmSalao.Pan_Profissionais.Visible:=False;
   FrmSalao.Pan_Rodape.Parent:=FrmSalao.Pan_HabilidadesServicos;
 
+  PermissaoVisual(FrmSalao.Ts_Habilidades);
   FrmSalao.ShowModal;
 
   FreeAndNil(FrmSalao);
