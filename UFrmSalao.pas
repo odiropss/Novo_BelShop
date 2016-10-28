@@ -618,11 +618,6 @@ type
     Bt_BenefManutAbandonar: TJvXPButton;
     Label84: TLabel;
     Cbx_CadProfServAtivo: TComboBox;
-    Gb_Comissoes: TGroupBox;
-    Dbg_ComissoesLojas: TDBGridJul;
-    Panel10: TPanel;
-    Bt_SalvarComissoes: TJvXPButton;
-    Splitter_Habilidades: TSplitter;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_SalaoChange(Sender: TObject);
     procedure Bt_AlterarClick(Sender: TObject);
@@ -642,13 +637,12 @@ type
     Procedure AcertaRolagemDBGid(Sender: TObject);
 
     Procedure DesabilitaTodasTabSheets(PC: TPageControl);
+
     ////////////////////////////////////////////////////////////////////////////
 
     // HABILIDADES /////////////////////////////////////////////////////////////
     Function ConsisteExcluao(sTipo: String): Boolean;
                              // Tipo: (H)abilidade (S)ervico
-
-    Procedure ComissoesHabilidadesCidades; // Apresenta Comissões da Habilidades Por Cidade
     ////////////////////////////////////////////////////////////////////////////
 
     // PROFISSIONAL ////////////////////////////////////////////////////////////
@@ -1050,13 +1044,6 @@ type
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
     procedure Cbx_CadProfServAtivoClick(Sender: TObject);
-    procedure Dbg_HabilidadesKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure Dbg_ComissoesLojasEnter(Sender: TObject);
-    procedure Dbg_ComissoesLojasExit(Sender: TObject);
-    procedure Dbg_ComissoesLojasDrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumn; State: TGridDrawState);
-    procedure Bt_SalvarComissoesClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -1103,11 +1090,6 @@ var
   cgPerComisSuper: Currency;
   sgCodSuperVisor: String;
 
-
-  // Porto Alegre / Canoas / Gravataí / Viamão
-  // Conforme Loja Secionada nos Cadastro de Profissionais
-  sgComissaoGeral, sgNomeCidade: String;
-
   cgTotVendas: Currency;
 
   sgPeriodoIni, sgPeriodoFim,
@@ -1133,35 +1115,6 @@ uses DK_Procs1, UFrmBelShop, UDMSalao, UDMBelShop, UPesquisa, UFrmSolicitacoes,
 {$R *.dfm}
 
 // Odir
-
-// HABILIDADES - Apresenta Comissões da Habilidades Por Cidade >>>>>>>>>>>>>>>>>
-Procedure TFrmSalao.ComissoesHabilidadesCidades;
-Var
-  MySql: String;
-Begin
-  If DMSalao.CDS_V_ComissoesLojas.Active Then
-   DMSalao.CDS_V_ComissoesLojas.Close;
-
-  DMSalao.CDS_V_ComissoesLojas.CreateDataSet;
-  DMSalao.CDS_V_ComissoesLojas.IndexFieldNames:='';
-  DMSalao.CDS_V_ComissoesLojas.Open;
-
-  MySql:=' SELECT h.cod_habserv, h.des_habserv, h.ind_ativo ativo,'+
-         '        CAST(SUBSTRING(c.des_aux FROM 1 FOR 6) AS NUMERIC(3,2)) portoalegre,'+
-         '        CAST(SUBSTRING(c.des_aux FROM 8 FOR 6) AS NUMERIC(3,2)) canoas,'+
-         '        CAST(SUBSTRING(c.des_aux FROM 15 FOR 6) AS NUMERIC(3,2)) gravatai,'+
-         '        CAST(SUBSTRING(c.des_aux FROM 22 FOR 6) AS NUMERIC(3,2)) viamao'+
-         ' FROM TAB_AUXILIAR c, SAL_HAB_SERV h'+
-         ' WHERE c.cod_aux = h.cod_habserv'+
-         ' AND   c.tip_aux = 18'+
-         ' AND   h.tip_habserv = ''H'''+
-         ' ORDER BY 2';
-  DMBelShop.CDS_BuscaRapida.Close;
-  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-  DMBelShop.CDS_BuscaRapida.Open;
-  DMSalao.CDS_V_ComissoesLojas.Data:=DMBelShop.CDS_BuscaRapida.Data;
-  DMBelShop.CDS_BuscaRapida.Close;
-End; // HABILIDADES - Apresenta Comissões da Habilidades Por Cidade ////////////
 
 // BENEFICIOS - Salva Beneficio ////////////////////////////////////////////////
 Function TFrmSalao.BeneficioSalvar: Boolean;
@@ -7490,23 +7443,15 @@ begin
 end;
 
 procedure TFrmSalao.PC_SalaoChange(Sender: TObject);
-Var
-  MySql: String;
 begin
   CorSelecaoTabSheet(PC_Salao);
 
   If (PC_Salao.ActivePage=Ts_Profissionais) And (Ts_Profissionais.CanFocus) Then
-  Begin
-    EdtCodLoja.SetFocus;
-  End;
+   EdtCodLoja.SetFocus;
 
   If (PC_Salao.ActivePage=Ts_Habilidades) And (Ts_Habilidades.CanFocus) Then
   Begin
     Bt_CadProfVerificaCad.Visible:=False;
-
-    // Busca Comissoes de Habilidades por Cidade --------------------
-    ComissoesHabilidadesCidades;
-
     Dbg_Habilidades.SetFocus;
   End;
 
@@ -7647,7 +7592,6 @@ Var
 begin
 
   EdtDesLoja.Clear;
-  sgNomeCidade:='';
   DMSalao.CDS_Profissionais.Close;
 
   If EdtCodLoja.Value<>0 Then
@@ -7655,10 +7599,10 @@ begin
     Screen.Cursor:=crAppStart;
 
     // Busca Lojas =============================================================
-    MySql:=' SELECT e.COD_FILIAL, e.RAZAO_SOCIAL, e.DES_CIDADE'+
-           ' FROM EMP_CONEXOES e'+
-           ' WHERE e.IND_ATIVO=''SIM'''+
-           ' AND   e.COD_FILIAL='+QuotedStr(FormatFloat('00',EdtCodLoja.AsInteger));
+    MySql:=' Select COD_FILIAL, RAZAO_SOCIAL'+
+           ' From EMP_CONEXOES'+
+           ' Where Ind_Ativo=''SIM'''+
+           ' And COD_FILIAL='+QuotedStr(FormatFloat('00',EdtCodLoja.AsInteger));
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
@@ -7673,38 +7617,16 @@ begin
       Exit;
     End;
     EdtDesLoja.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('Razao_Social').AsString;
-
-    sgNomeCidade:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Des_Cidade').AsString);
-    sgNomeCidade:=StringReplace(Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Des_Cidade').AsString), ' ', '', [rfReplaceAll]);
-
     DMBelShop.CDS_BuscaRapida.Close;
 
-    // Busca Comissoes de Habilidades por Cidade --------------------
-    ComissoesHabilidadesCidades;
-
-    // Pega Menor Comissão para Comissão Geral ----------------------
-    DMSalao.CDS_V_ComissoesLojas.First;
-    sgComissaoGeral:=f_Troca(',','.',ZerosCentavos(f_Troca('.',',',DMSalao.CDS_V_ComissoesLojas.FieldByName(sgNomeCidade).AsString),2));
-    While Not DMSalao.CDS_V_ComissoesLojas.Eof do
-    Begin
-      Application.ProcessMessages;
-
-      If (StrToCurr(f_Troca('.',',',sgComissaoGeral))>DMSalao.CDS_V_ComissoesLojas.FieldByName(sgNomeCidade).AsCurrency) AND
-         (DMSalao.CDS_V_ComissoesLojas.FieldByName(sgNomeCidade).AsCurrency<>0.00) Then
-       sgComissaoGeral:=f_Troca(',','.',ZerosCentavos(f_Troca('.',',',DMSalao.CDS_V_ComissoesLojas.FieldByName(sgNomeCidade).AsString),2));
-
-      DMSalao.CDS_V_ComissoesLojas.Next;
-    End; // While Not DMSalao.CDS_V_ComissoesLojas.Eof do
-    DMSalao.CDS_V_ComissoesLojas.First;
-    
-    // Apresenta Profissionais =================================================
     Ckb_Profissionais.Checked:=True;
     Ckb_Vendedores.Checked:=False;
     Cbx_SituacaoClick(Self);
 
     Dbg_Profissionais.SetFocus;
     Screen.Cursor:=crDefault;
-  End; // If EdtCodLoja.Value<>0 Then
+
+  End;
 end;
 
 procedure TFrmSalao.FormShow(Sender: TObject);
@@ -7808,7 +7730,6 @@ end;
 
 procedure TFrmSalao.EdtCodLojaChange(Sender: TObject);
 begin
-  sgComissaoGeral:='0.00';
   EdtDesLoja.Clear;
   FechaTudoSalao;
 end;
@@ -10039,9 +9960,6 @@ begin
   //////////////////////////////////////////////////////////////////////////////
 
   bgCalculoIndividual:=False;
-
-  // Zera Comissão por Local
-  sgComissaoGeral:='0.00';
 end;
 
 procedure TFrmSalao.Bt_CadProfLimpaEnderecoClick(Sender: TObject);
@@ -19700,167 +19618,6 @@ begin
     DMSalao.CDS_ServicosProf.Filter:='IND_ATIVO=''NAO''';
     DMSalao.CDS_ServicosProf.Filtered:=True;
   End;
-end;
-
-procedure TFrmSalao.Dbg_HabilidadesKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
- // Usado emn Outros Grids
- if (Shift = [ssCtrl]) and (Key = 46) then
-    Key := 0;
-
-end;
-
-procedure TFrmSalao.Dbg_ComissoesLojasEnter(Sender: TObject);
-begin
-  bEnterTab:=False;
-end;
-
-procedure TFrmSalao.Dbg_ComissoesLojasExit(Sender: TObject);
-begin
-  bEnterTab:=True;
-
-end;
-
-procedure TFrmSalao.Dbg_ComissoesLojasDrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumn;
-  State: TGridDrawState);
-begin
-  If (Column.FieldName='PORTOALEGRE') Then
-  Begin
-    If DMSalao.CDS_V_ComissoesLojasPORTOALEGRE.AsCurrency=0 Then
-    Begin
-      Dbg_ComissoesLojas.Canvas.Font.Color:=clWhite; //-->> Cor da Fonte
-      Dbg_ComissoesLojas.Canvas.Brush.Color:=clRed; // -->> Cor da Celula
-    End;
-  End;
-
-  If (Column.FieldName='CANOAS') Then
-  Begin
-    If DMSalao.CDS_V_ComissoesLojasCANOAS.AsCurrency=0 Then
-    Begin
-      Dbg_ComissoesLojas.Canvas.Font.Color:=clWhite; //-->> Cor da Fonte
-      Dbg_ComissoesLojas.Canvas.Brush.Color:=clRed; // -->> Cor da Celula
-    End;
-  End;
-
-  If (Column.FieldName='GRAVATAI') Then
-  Begin
-    If DMSalao.CDS_V_ComissoesLojasGRAVATAI.AsCurrency=0 Then
-    Begin
-      Dbg_ComissoesLojas.Canvas.Font.Color:=clWhite; //-->> Cor da Fonte
-      Dbg_ComissoesLojas.Canvas.Brush.Color:=clRed; // -->> Cor da Celula
-    End;
-  End;
-
-  If (Column.FieldName='VIAMAO') Then
-  Begin
-    If DMSalao.CDS_V_ComissoesLojasVIAMAO.AsCurrency=0 Then
-    Begin
-      Dbg_ComissoesLojas.Canvas.Font.Color:=clWhite; //-->> Cor da Fonte
-      Dbg_ComissoesLojas.Canvas.Brush.Color:=clRed; // -->> Cor da Celula
-    End;
-  End;
-
-  // Funciona Somente com Isto
-  Dbg_ComissoesLojas.Canvas.FillRect(Rect);
-  Dbg_ComissoesLojas.DefaultDrawDataCell(Rect,Column.Field,state);
-
-  // Alinhamento
-  DMSalao.CDS_V_ComissoesLojasCOD_HABSERV.Alignment:=taRightJustify;
-  DMSalao.CDS_V_ComissoesLojasPORTOALEGRE.Alignment:=taRightJustify;
-  DMSalao.CDS_V_ComissoesLojasCANOAS.Alignment:=taRightJustify;
-  DMSalao.CDS_V_ComissoesLojasGRAVATAI.Alignment:=taRightJustify;
-  DMSalao.CDS_V_ComissoesLojasVIAMAO.Alignment:=taRightJustify;
-
-end;
-
-procedure TFrmSalao.Bt_SalvarComissoesClick(Sender: TObject);
-Var
-  s, MySql: String;
-begin
-  OdirPanApres.Caption:='AGUARDE !! Salvando Comissões...';
-  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSalao.Width-OdirPanApres.Width)/2));
-  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmSalao.Height-OdirPanApres.Height)/2))-20;
-  OdirPanApres.Font.Style:=[fsBold];
-  OdirPanApres.Parent:=FrmSalao;
-  OdirPanApres.BringToFront();
-  OdirPanApres.Visible:=True;
-  Refresh;
-
-  // Verifica se Transação esta Ativa
-  If DMBelShop.SQLC.InTransaction Then
-   DMBelShop.SQLC.Rollback(TD);
-
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMBelShop.SQLC.StartTransaction(TD);
-  Try
-    Screen.Cursor:=crAppStart;
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    FrmBelShop.MontaProgressBar(True, FrmSalao);
-    pgProgBar.Properties.Max:=DMSalao.CDS_V_ComissoesLojas.RecordCount;
-    pgProgBar.Position:=0;
-
-    DMSalao.CDS_V_ComissoesLojas.First;
-    While Not DMSalao.CDS_V_ComissoesLojas.Eof do
-    Begin
-      Application.ProcessMessages;
-
-      s:=ZerosEsquerda(f_Troca(',','.',ZerosCentavos(f_Troca('.',',',DMSalao.CDS_V_ComissoesLojasPORTOALEGRE.AsString),2)),6)+';'+
-         ZerosEsquerda(f_Troca(',','.',ZerosCentavos(f_Troca('.',',',DMSalao.CDS_V_ComissoesLojasCANOAS.AsString),2)),6)+';'+
-         ZerosEsquerda(f_Troca(',','.',ZerosCentavos(f_Troca('.',',',DMSalao.CDS_V_ComissoesLojasGRAVATAI.AsString),2)),6)+';'+
-         ZerosEsquerda(f_Troca(',','.',ZerosCentavos(f_Troca('.',',',DMSalao.CDS_V_ComissoesLojasVIAMAO.AsString),2)),6)+';';
-
-      MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR'+
-             ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
-             ' VALUES (18, '+
-                       DMSalao.CDS_V_ComissoesLojasCOD_HABSERV.AsString+', '+
-                       QuotedStr(s)+', '+
-                       'NULL, NULL, NULL)'+
-             'MATCHING (TIP_AUX, COD_AUX)';
-      DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-      pgProgBar.Position:=DMSalao.CDS_V_ComissoesLojas.RecNo;
-
-      DMSalao.CDS_V_ComissoesLojas.Next;
-    End; // While Not DMSalao.CDS_V_ComissoesLojas.Eof do
-    FrmBelShop.MontaProgressBar(False, FrmSalao);
-
-    // Atualiza Transacao ======================================================
-    DMBelShop.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-
-    OdirPanApres.Visible:=False;
-
-    Screen.Cursor:=crDefault;
-
-    msg('Comissões Por Cidade'+cr+cr+'Salvas com SUCESSO !!','A');
-
-  Except
-    on e : Exception do
-    Begin
-      // Abandona Transacao ====================================================
-      DMBelShop.SQLC.Rollback(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-
-      OdirPanApres.Visible:=False;
-      FrmBelShop.MontaProgressBar(False, FrmSalao);
-
-      Screen.Cursor:=crDefault;
-
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-    End; // on e : Exception do
-  End; // Try
-  DMSalao.CDS_V_ComissoesLojas.First;
-
 end;
 
 end.
