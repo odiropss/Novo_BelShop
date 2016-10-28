@@ -885,7 +885,7 @@ Var
   MySql: string;
   sMediaDia, sEstoque, sPcCusto, sPcVenda: String;
 begin
-  If Not CDS_V_Estoques.IsEmpty Then
+  If (Not CDS_V_Estoques.IsEmpty) And (CDS_V_Estoques.RecNo>0) Then
   Begin
     If bSeProcessa1 Then
     Begin
@@ -960,7 +960,7 @@ begin
   // Atualiza Produtos na Curva ABC Financeira ===============================
   If (bAtualizar) and (Not bSeCalcCurva) Then
   Begin
-    If iQtdEstMinOld<>iQtdEstMinNew Then
+    If (iQtdEstMinOld<>iQtdEstMinNew) Or (iQtdEstMaxOld<>iQtdEstMaxNew)  Then
     Begin
       If DMBelShop.SQLC.InTransaction Then
        DMBelShop.SQLC.Rollback(TD);

@@ -793,39 +793,40 @@ begin
   sgFTPSenha        :=AnsiUpperCase(DMBelShop.CDS_BuscaRapida.FieldByName('FTP_Password').AsString);
   sgPastaAreaFTP    :='C:\Projetos\BelShop\AreaFTP\';
 
-  If (Login<>'ODIR') And (sgCodLojaUnica='') Then
-  Begin
-    If (Trim(sgParamAplicativo)='') and
-       ((AnsiUpperCase(sgNomeComputador)<>sgCompMaster) And (AnsiUpperCase(sgNomeComputador)<>sgCompServer)) Then
-    Begin
-      ShowMessage('Versão do Sistema Não Autorizada !!'+cr+cr+'Ligue para o ODIR...');
-
-      Application.Terminate;
-      Exit;
-    End; // If (Trim(sgParamAplicativo)='') and ((AnsiUpperCase(sgNomeComputador)<>sgCompMaster) And (AnsiUpperCase(sgNomeComputador)<>sgCompServer)) Then
-
-    If (AnsiUpperCase(sgNomeComputador)<>sgCompMaster) And (AnsiUpperCase(sgNomeComputador)<>sgCompServer) Then
-    Begin
-      sOrigem:=Copy(DateTimeToStr(FileDateToDateTime(
-                    FileAge(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+
-                    ExtractFileName(Application.ExeName)))),1,19);
-
-      sDestino:=Copy(DateTimeToStr(FileDateToDateTime(FileAge(sgParamAplicativo))),1,19);
-
-      If sDestino<>sOrigem Then
-      Begin
-        If MessageDlg('Versão do Sistema Diferente da Atual !!'+cr+cr+
-                      'Existe uma Nova Versão !'+cr+cr+
-                      '- Para usar a Nova  Versão Feche Todos os Gerenciador BelShop'+cr+
-                      '  Abertos em seu Computador e Entre Novamente !!'+cr+cr+
-                      '- Deseja Continuar na Versão que estas Usando ??', mtConfirmation, [mbYes, mbAbort], 0)=mrAbort Then
-        Begin
-          Application.Terminate;
-          Exit;
-        End;
-      End;
-    End; // If (AnsiUpperCase(sgNomeComputador)<>sgCompMaster) And (AnsiUpperCase(sgNomeComputador)<>sgCompServer) Then
-  End; // If Login<>'ODIR' Then
+//ODIROPSS  
+//  If (Login<>'ODIR') And (sgCodLojaUnica='') Then
+//  Begin
+//    If (Trim(sgParamAplicativo)='') and
+//       ((AnsiUpperCase(sgNomeComputador)<>sgCompMaster) And (AnsiUpperCase(sgNomeComputador)<>sgCompServer)) Then
+//    Begin
+//      ShowMessage('Versão do Sistema Não Autorizada !!'+cr+cr+'Ligue para o ODIR...');
+//
+//      Application.Terminate;
+//      Exit;
+//    End; // If (Trim(sgParamAplicativo)='') and ((AnsiUpperCase(sgNomeComputador)<>sgCompMaster) And (AnsiUpperCase(sgNomeComputador)<>sgCompServer)) Then
+//
+//    If (AnsiUpperCase(sgNomeComputador)<>sgCompMaster) And (AnsiUpperCase(sgNomeComputador)<>sgCompServer) Then
+//    Begin
+//      sOrigem:=Copy(DateTimeToStr(FileDateToDateTime(
+//                    FileAge(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+
+//                    ExtractFileName(Application.ExeName)))),1,19);
+//
+//      sDestino:=Copy(DateTimeToStr(FileDateToDateTime(FileAge(sgParamAplicativo))),1,19);
+//
+//      If sDestino<>sOrigem Then
+//      Begin
+//        If MessageDlg('Versão do Sistema Diferente da Atual !!'+cr+cr+
+//                      'Existe uma Nova Versão !'+cr+cr+
+//                      '- Para usar a Nova  Versão Feche Todos os Gerenciador BelShop'+cr+
+//                      '  Abertos em seu Computador e Entre Novamente !!'+cr+cr+
+//                      '- Deseja Continuar na Versão que estas Usando ??', mtConfirmation, [mbYes, mbAbort], 0)=mrAbort Then
+//        Begin
+//          Application.Terminate;
+//          Exit;
+//        End;
+//      End;
+//    End; // If (AnsiUpperCase(sgNomeComputador)<>sgCompMaster) And (AnsiUpperCase(sgNomeComputador)<>sgCompServer) Then
+//  End; // If Login<>'ODIR' Then
 
   DMBelShop.CDS_BuscaRapida.Close;
 end;

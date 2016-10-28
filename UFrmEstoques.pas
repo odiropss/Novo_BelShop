@@ -285,6 +285,8 @@ Begin
     DMVirtual.CDS_V_Fornecedores.Open;
   End; // If Not DMVirtual.CDS_V_Produtos.IsEmpty Then
 
+  FrmBelShop.SelecionaProdutos(False, True);
+
   // Fornecedores ==============================================================
   If Not DMVirtual.CDS_V_Fornecedores.IsEmpty Then
   Begin
@@ -799,6 +801,18 @@ begin
   // Monta o Filtro ============================================================
   MontaFiltros('EST');
 
+  // Incorpora Filtro de Likes =================================================
+  If Trim(sgLikeProdutos)<>'' Then
+  Begin
+    sgLikeProdutos:=f_Troca('pr.apresentacao', 'DES_PRODUTO', sgLikeProdutos);
+
+    If Trim(sgFiltros)<>'' Then
+     sgFiltros:=sgFiltros+' AND '+Trim(sgLikeProdutos)
+    Else
+     sgFiltros:=Trim(sgLikeProdutos);
+  End;
+  sgLikeProdutos:='';
+
   // Verifica a Existencia de Registros ========================================
   DMVirtual.CDS_V_Estoques.Filtered:=False;
   DMVirtual.CDS_V_Estoques.Filter:=sgFiltros;
@@ -864,6 +878,8 @@ end;
 
 procedure TFrmEstoques.Bt_EstoquesFiltrosClick(Sender: TObject);
 begin
+  Dbg_Estoques.SetFocus;
+
   If DMVirtual.CDS_V_Estoques.IsEmpty Then
    Exit;
 
@@ -933,7 +949,7 @@ begin
   // Filtor nao Produtos de Não Compra
   FrmBelShop.Painel_FiltroNaoCompra.Visible:=False;
   // Filtro para Busca Pelo Nome
-  FrmBelShop.Gb_CalculoFiltroNome.Visible:=False;
+  FrmBelShop.Gb_CalculoFiltroNome.Visible:=True;
   FrmBelShop.EdtCalculoFiltroNome1.Clear;
   FrmBelShop.EdtCalculoFiltroNome2.Clear;
   FrmBelShop.EdtCalculoFiltroNome3.Clear;

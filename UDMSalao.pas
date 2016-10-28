@@ -514,6 +514,14 @@ type
     CDS_BeneficiosDTA_FIM_BENEFICIO: TDateField;
     CDS_ProfissionaisDES_SIT_PREVIDENCIARIA: TStringField;
     CDS_V_InssSIT_PREVIDENCIARIA: TStringField;
+    CDS_V_ComissoesLojas: TClientDataSet;
+    DS_V_ComissoesLojas: TDataSource;
+    CDS_V_ComissoesLojasCOD_HABSERV: TIntegerField;
+    CDS_V_ComissoesLojasDES_HABSERV: TStringField;
+    CDS_V_ComissoesLojasPORTOALEGRE: TFMTBCDField;
+    CDS_V_ComissoesLojasCANOAS: TFMTBCDField;
+    CDS_V_ComissoesLojasGRAVATAI: TFMTBCDField;
+    CDS_V_ComissoesLojasVIAMAO: TFMTBCDField;
     procedure CDS_HabilidadesAfterScroll(DataSet: TDataSet);
     procedure CDS_HabilidadesProfAfterScroll(DataSet: TDataSet);
     procedure CDS_ValesProfissionaisAfterScroll(DataSet: TDataSet);
