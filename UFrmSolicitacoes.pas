@@ -3469,8 +3469,6 @@ begin
 end;
 
 procedure TFrmSolicitacoes.PC_PrincipalChange(Sender: TObject);
-Var
-  MySql: String;
 begin
   CorSelecaoTabSheet(PC_Principal);
 
@@ -3491,16 +3489,20 @@ begin
 
   If (PC_Principal.ActivePage=Ts_ManutDiversas) And (Ts_ManutDiversas.CanFocus) Then
   Begin
-    If (Gb_Desc10.Visible) and (Not EdtDesc10.ReadOnly) Then EdtDesc10.SetFocus;
-    If (Gb_Desc9.Visible)  and (Not EdtDesc9.ReadOnly)  Then EdtDesc9.SetFocus;
-    If (Gb_Desc8.Visible)  and (Not CkbDesc8.ReadOnly)  Then CkbDesc8.SetFocus;
-    If (Gb_Desc7.Visible)  and (Not MeDesc7.ReadOnly)   Then MeDesc7.SetFocus;
-    If (Gb_Desc6.Visible)  and (Not EdtDesc6.ReadOnly)  Then EdtDesc6.SetFocus;
-    If (Gb_Desc5.Visible)  and (Not EdtDesc5.ReadOnly)  Then EdtDesc5.SetFocus;
-    If (Gb_Desc4.Visible)  and (Not EdtDesc4.ReadOnly)  Then EdtDesc4.SetFocus;
-    If (Gb_Desc3.Visible)  and (Not EdtDesc3.ReadOnly)  Then EdtDesc3.SetFocus;
-    If (Gb_Desc2.Visible)  and (Not EdtDesc2.ReadOnly)  Then EdtDesc2.SetFocus;
-    If (Gb_Desc1.Visible)  and (Not EdtDesc1.ReadOnly)  Then EdtDesc1.SetFocus;
+    Try
+      If (Gb_Desc10.Visible) and (Not EdtDesc10.ReadOnly) Then EdtDesc10.SetFocus;
+      If (Gb_Desc9.Visible)  and (Not EdtDesc9.ReadOnly)  Then EdtDesc9.SetFocus;
+      If (Gb_Desc8.Visible)  and (Not CkbDesc8.ReadOnly)  Then CkbDesc8.SetFocus;
+      If (Gb_Desc7.Visible)  and (Not MeDesc7.ReadOnly)   Then MeDesc7.SetFocus;
+      If (Gb_Desc6.Visible)  and (Not EdtDesc6.ReadOnly)  Then EdtDesc6.SetFocus;
+      If (Gb_Desc5.Visible)  and (Not EdtDesc5.ReadOnly)  Then EdtDesc5.SetFocus;
+      If (Gb_Desc4.Visible)  and (Not EdtDesc4.ReadOnly)  Then EdtDesc4.SetFocus;
+      If (Gb_Desc3.Visible)  and (Not EdtDesc3.ReadOnly)  Then EdtDesc3.SetFocus;
+      If (Gb_Desc2.Visible)  and (Not EdtDesc2.ReadOnly)  Then EdtDesc2.SetFocus;
+      If (Gb_Desc1.Visible)  and (Not EdtDesc1.ReadOnly)  Then EdtDesc1.SetFocus;
+    Except
+      Bt_ManutDiversosVoltar.SetFocus;
+    End;
   End;
 
   If (PC_Principal.ActivePage=Ts_ParametrosGerenciador) And (Ts_ParametrosGerenciador.CanFocus) Then
@@ -3652,8 +3654,7 @@ begin
   
 end;
 
-procedure TFrmSolicitacoes.Ckb_SolicExpSoProdutoKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_SolicExpSoProdutoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckb_SolicExpSoProdutoClick(sELF);
 
@@ -3673,7 +3674,6 @@ end;
 procedure TFrmSolicitacoes.FormShow(Sender: TObject);
 begin
   PC_PrincipalChange(Self);
-
 end;
 
 procedure TFrmSolicitacoes.FormCreate(Sender: TObject);
@@ -3717,8 +3717,7 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.Ckb_SolicExpExcProdutoKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_SolicExpExcProdutoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   AcertaCkb_SN(Ckb_SolicExpExcProduto);
 
@@ -3786,29 +3785,25 @@ begin
   Ckb_FinanObjetivosHabDesPercentuaisClick(Self);
 end;
 
-procedure TFrmSolicitacoes.Ckb_FinanObjetivosHabDesResultadosKeyUp(
-  Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_FinanObjetivosHabDesResultadosKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckb_FinanObjetivosHabDesResultadosClick(Self);
 
 end;
 
-procedure TFrmSolicitacoes.Ckb_FinanObjetivosHabDesRealizadosKeyUp(
-  Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_FinanObjetivosHabDesRealizadosKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckb_FinanObjetivosHabDesRealizadosClick(Self);
 
 end;
 
-procedure TFrmSolicitacoes.Ckb_FinanObjetivosHabDesDiariosKeyUp(
-  Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_FinanObjetivosHabDesDiariosKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckb_FinanObjetivosHabDesDiariosClick(Self);
 
 end;
 
-procedure TFrmSolicitacoes.Ckb_FinanObjetivosHabDesObjetivosKeyUp(
-  Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_FinanObjetivosHabDesObjetivosKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckb_FinanObjetivosHabDesObjetivosClick(Self);
 
@@ -3857,15 +3852,13 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.Ckb_AtualizaSIDICOMCurvaABCKeyUp(
-  Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_AtualizaSIDICOMCurvaABCKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckb_AtualizaSIDICOMCurvaABCClick(Self);
 
 end;
 
-procedure TFrmSolicitacoes.Ckb_AtualizaSIDICOMEnderecoKeyUp(
-  Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_AtualizaSIDICOMEnderecoKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckb_AtualizaSIDICOMEnderecoClick(Self);
 
@@ -3902,9 +3895,8 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.Stg_FinanFechaCaixaCalendarioDrawCell(
-  Sender: TObject; ACol, ARow: Integer; Rect: TRect;
-  State: TGridDrawState);
+procedure TFrmSolicitacoes.Stg_FinanFechaCaixaCalendarioDrawCell(Sender: TObject; ACol,
+                     ARow: Integer; Rect: TRect; State: TGridDrawState);
 var
   DiaGrid : string;
   AlturaGrid, LarguraGrid, TopGrid, LeftGrid : Integer;
@@ -4241,6 +4233,14 @@ begin
       End;
       DMBelShop.CDS_BuscaRapida.Close;
     End; // If Trim(EdtHabServCodSidicom.Text)<>'' Then
+
+    If EdtHabServPreco.Value=0.00 Then
+    Begin
+      msg('Favor Informar o Preço !!','A');
+      EdtHabServPreco.SetFocus;
+      Exit;
+    End;
+
   End; // If Ts_HabServ.Caption:='Serviço' Then
 
   If Trim(EdtHabServDesc.Text)='' Then
@@ -4254,13 +4254,6 @@ begin
   Begin
     msg('Favor Informar a Abreviatura !!','A');
     EdtHabServAbrev.SetFocus;
-    Exit;
-  End;
-
-  If EdtHabServPreco.Value=0.00 Then
-  Begin
-    msg('Favor Informar o Preço !!','A');
-    EdtHabServPreco.SetFocus;
     Exit;
   End;
 
@@ -4306,6 +4299,14 @@ begin
         End;
       End;
       DMBelShop.CDS_BuscaRapida.Close;
+
+      If EdtHabServPreco.Value=0.00 Then
+      Begin
+        msg('Favor Informar o Preço !!','A');
+        EdtHabServPreco.SetFocus;
+        Exit;
+      End;
+
     End; // If Ts_HabServ.Caption='Serviço' Then
   End; // If Bt_HabServSalvar.Caption='Incluir' Then
 
@@ -4375,8 +4376,7 @@ begin
   End; // If Bt_HabServSalvar.Caption='Alterar' Then
 end;
 
-procedure TFrmSolicitacoes.Ckb_HabServAtivoKeyUp(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_HabServAtivoKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckb_HabServAtivoClick(Self);
 end;
@@ -4507,8 +4507,7 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.Dbg_IBGE1KeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFrmSolicitacoes.Dbg_IBGE1KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 Var
   sIBGE: String;
 begin
@@ -4553,8 +4552,7 @@ begin
   AcertaCkb_SN(CkbDesc8);
 end;
 
-procedure TFrmSolicitacoes.CkbDesc8KeyUp(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFrmSolicitacoes.CkbDesc8KeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   AcertaCkb_SN(CkbDesc8);
 end;
@@ -4576,8 +4574,7 @@ begin
   End; // If Gb_HabServAtivoAltera.Visible Then
 end;
 
-procedure TFrmSolicitacoes.Ckb_HabServAtivoAlteraKeyUp(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_HabServAtivoAlteraKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   AcertaCkb_SN(Ckb_HabServAtivoAltera);
 
@@ -4623,8 +4620,7 @@ begin
   AcertaCkb_SN(Ckb_ParamConsNfeOCSolic);
 end;
 
-procedure TFrmSolicitacoes.Ckb_ParamConsNfeOCSolicKeyUp(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_ParamConsNfeOCSolicKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   AcertaCkb_SN(Ckb_ParamConsNfeOCSolic);
 end;
@@ -4692,8 +4688,7 @@ begin
 end;
 
 procedure TFrmSolicitacoes.Dbg_ConsistenciasDrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumn;
-  State: TGridDrawState);
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
   If (Column.FieldName='IND_LIBERADO') Then // Este comando altera cor da Celula
   Begin
@@ -5366,9 +5361,8 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.Dbg_ParamSalMininoDrawColumnCell(
-  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
-  State: TGridDrawState);
+procedure TFrmSolicitacoes.Dbg_ParamSalMininoDrawColumnCell(Sender: TObject;
+          const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
   if not (gdSelected in State) Then
   Begin
@@ -5729,26 +5723,22 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.Ckb_ValesAtivosKeyUp(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_ValesAtivosKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckb_ValesInativosClick(Self);
 end;
 
-procedure TFrmSolicitacoes.Ckb_ValesInativosKeyUp(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_ValesInativosKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckb_ValesInativosClick(Self);
 end;
 
-procedure TFrmSolicitacoes.Ckb_SolicitFornLojasMostraLojaKeyUp(
-  Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_SolicitFornLojasMostraLojaKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckb_SolicitFornLojasMostraLojaClick(Self);
 end;
 
-procedure TFrmSolicitacoes.Dbg_SolicitFornLojasKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Dbg_SolicitFornLojasKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 Var
   s: String;
   i: Integer;
@@ -5784,8 +5774,7 @@ begin
   AcertaCkb_Style(Ckb_ParamTaxaSindVlrTaxa);
 end;
 
-procedure TFrmSolicitacoes.Ckb_ParamTaxaSindVlrTaxaKeyUp(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_ParamTaxaSindVlrTaxaKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckb_ParamTaxaSindVlrTaxaClick(Self);
 end;
@@ -5796,8 +5785,7 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.Ckb_MargemLucroPcCustoTEKeyUp(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_MargemLucroPcCustoTEKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckb_MargemLucroPcCustoTEClick(Self);
 end;
@@ -6048,8 +6036,7 @@ begin
 end;
 
 procedure TFrmSolicitacoes.Dbg_ProfSelecionaDrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumn;
-  State: TGridDrawState);
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
   If not (gdSelected in State) Then
   Begin
@@ -7456,8 +7443,7 @@ begin
 end;
 
 procedure TFrmSolicitacoes.Dbg_ParamLojaNecesDrawColumnCell(
-  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
-  State: TGridDrawState);
+  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
   If (Column.FieldName='IND_CURVA_A') Then // Este comando altera cor da Celula
   Begin
@@ -7534,8 +7520,7 @@ begin
   AcertaCkb_Style(Ckb_ParamLojaNecesE);
 end;
 
-procedure TFrmSolicitacoes.Ckb_ParamLojaNecesAKeyUp(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Ckb_ParamLojaNecesAKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckb_ParamLojaNecesAClick(Self);
 end;
@@ -7876,8 +7861,7 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.EdtLojaModeloKeyPress(Sender: TObject;
-  var Key: Char);
+procedure TFrmSolicitacoes.EdtLojaModeloKeyPress(Sender: TObject; var Key: Char);
 begin
   If not (key in ['0'..'9']) Then
   Begin
@@ -7887,8 +7871,7 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.OutLook_SalaoRelatoriosButtonClick(
-  Sender: TObject; Index: Integer);
+procedure TFrmSolicitacoes.OutLook_SalaoRelatoriosButtonClick(Sender: TObject; Index: Integer);
 begin
   OutLook_SalaoRelatorios.Pages[0].Buttons[Index].Down:=True;
   Pan_SalaoRelatorios.Caption:=OutLook_SalaoRelatorios.Pages[0].Buttons[Index].Caption;

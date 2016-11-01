@@ -1396,7 +1396,7 @@ object FrmSalao: TFrmSalao
         Top = 73
         Width = 969
         Height = 444
-        ActivePage = Ts_CadProfDadosPessoais
+        ActivePage = Ts_CadProfContrato
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -2294,6 +2294,7 @@ object FrmSalao: TFrmSalao
               Style = csOwnerDrawFixed
               Color = 8454143
               Ctl3D = False
+              Enabled = False
               ItemHeight = 16
               ItemIndex = 0
               ParentCtl3D = False
@@ -10410,7 +10411,7 @@ object FrmSalao: TFrmSalao
         Top = 0
         Width = 828
         Height = 514
-        ActivePage = Ts_ProfINSS
+        ActivePage = Ts_ProfImpPlanoSaude
         Align = alClient
         TabOrder = 0
         OnChange = PC_ProfMovtosRHChange
@@ -13938,12 +13939,12 @@ object FrmSalao: TFrmSalao
     WebService = wsRepublicaVirtual
     PesquisarIBGE = True
     OnBuscaEfetuada = ACBrCEPBuscaEfetuada
-    Left = 888
-    Top = 400
+    Left = 792
+    Top = 344
   end
   object OpenFoto: TOpenPictureDialog
-    Left = 808
-    Top = 392
+    Left = 768
+    Top = 288
   end
   object ApplicationEventos: TApplicationEvents
     OnMessage = ApplicationEventosMessage
