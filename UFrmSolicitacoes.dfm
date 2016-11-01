@@ -1,6 +1,6 @@
 object FrmSolicitacoes: TFrmSolicitacoes
-  Left = 258
-  Top = 121
+  Left = 429
+  Top = 118
   Width = 649
   Height = 470
   AutoSize = True
@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 432
-    ActivePage = Ts_PlanilhaFinanceira
+    ActivePage = Ts_HabServ
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -10020,8 +10020,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
     end
   end
   object PainelApresExp: TPanel
-    Left = 289
-    Top = 284
+    Left = 537
+    Top = 28
     Width = 89
     Height = 33
     BevelInner = bvRaised

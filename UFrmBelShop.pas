@@ -15716,8 +15716,9 @@ Var
   SName: String;
   i: Integer;
 Begin
-  If bgInd_Admin Then
-   Exit;
+//odiropss
+//  If bgInd_Admin Then
+//   Exit;
 
   // FrmBelShop ================================================================
   If TabSh.Name='Ts_FinanComprPlanFinan' Then
@@ -15750,12 +15751,27 @@ Begin
       FrmSalao.Bt_PagtoExcluirPlanilha.Visible:=False;
     End;
 
-    If TabSh.Name='Ts_Profissionais' Then
+    // Profissionais e Cadastro de Comissoes (FrmSolicitacoes)
+    If (TabSh.Name='Ts_Profissionais') And (FrmSolicitacoes<>nil) And ((SName='Comissao_Habilidade') Or (SName='Comissao_Servico')) Then
+    Begin
+      // Bloqueia Comissão Habilidade
+      FrmSolicitacoes.EdtDesc9.Enabled:=False;
+      FrmSolicitacoes.EdtDesc9.ReadOnly:=True;
+
+      // Bloqueia Comissão Serviço
+      FrmSolicitacoes.EdtDesc10.Enabled:=False;
+      FrmSolicitacoes.EdtDesc10.ReadOnly:=True;
+    End
+    Else If TabSh.Name='Ts_Profissionais' Then // Somente Profissionais
     Begin
       FrmSalao.Dbe_CadProfPerComissao.Enabled:=False;
       FrmSalao.Dbe_CadProfPerComissaoSupervisor.Enabled:=False;
       FrmSalao.Dbe_CadProfPerExtraAno.Enabled:=False;
+
       FrmSalao.Bt_LiberaConsistencias.Visible:=False;
+
+      FrmSalao.Bt_CadProfServAlterarTodos.Enabled:=False;
+      FrmSalao.EdtCadProfPerComissao.Enabled:=False;
     End;
 
     If TabSh.Name='Ts_ProfMovtosRH' Then
@@ -15791,11 +15807,13 @@ Begin
   DMBelShop.CDS_BuscaRapida.DisableControls;
   While Not DMBelShop.CDS_BuscaRapida.Eof do
   Begin
-    Refresh;
+    Application.ProcessMessages;
 
     SName:=DMBelShop.CDS_BuscaRapida.FieldByName('Des_Componente').AsString;
 
+    //==========================================================================
     // Formulario FrmBelShop ===================================================
+    //==========================================================================
     for i:=0 to FrmBelShop.ComponentCount - 1 do
     Begin
       If FrmBelShop.components[i].Name=SName Then
@@ -15825,7 +15843,9 @@ Begin
       End; // If FrmBelShop.components[i].Name=SName Then
     End; // for i:=0 to FrmBelShop.ComponentCount - 1 do
 
+    //==========================================================================
     // Formulario FrmSalao =====================================================
+    //==========================================================================
     If FrmSalao<>nil Then
     Begin
       for i:=0 to FrmSalao.ComponentCount - 1 do
@@ -15859,7 +15879,26 @@ Begin
 
       If SName='OutLook_ProfMovtosRH.Pages[2].Buttons[0]' Then
        FrmSalao.OutLook_ProfMovtosRH.Pages[2].Buttons[0].Enabled:=True;
+
+      // FrmSolicitacoes - Habilidades / Serviços - Comissões
+      If FrmSolicitacoes<>nil Then
+      Begin
+        If SName='Comissao_Habilidade' Then
+        Begin
+          // Desbloqueia Comissão Habilidade
+          FrmSolicitacoes.EdtDesc9.Enabled:=True;
+          FrmSolicitacoes.EdtDesc9.ReadOnly:=False;
+        End;
+
+        If SName='Comissao_Servico' Then
+        Begin
+          // Desbloqueia Comissão Serviço
+          FrmSolicitacoes.EdtDesc10.Enabled:=True;
+          FrmSolicitacoes.EdtDesc10.ReadOnly:=False;
+        End
+      End; // If FrmSolicitacoes<>nil Then
     End; // If FrmSalao<>nill Then
+
     DMBelShop.CDS_BuscaRapida.Next;
   End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
   DMBelShop.CDS_BuscaRapida.Close;

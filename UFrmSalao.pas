@@ -2335,7 +2335,7 @@ Begin
 
             ' UNION'+
 
-            //Rodape do Banco
+            // Rodape do Banco
             ' SELECT '+(IntToStr((StrToInt(sNumPlan)*10)+1))+' num_planilha, ''{ TOTAL: ''||pp.des_banco||'' }'','+
             ' CAST('+QuotedStr(sgDtaF)+' AS DATE) Fim_Contrato,'+
             ' SUM(pp.vlr_comissao) vlr_comissao,'+
@@ -4313,7 +4313,7 @@ Begin
                   ' AND   pp.cod_loja='+QuotedStr(FormatFloat('00',EdtPagtoCodLoja.AsInteger))+
                   ' AND   pf.cod_profissional  IN ('+sgProfissionais+')';
 
-//opssopss 1
+//odiropss 1 - OdirApagar - 01/10/2016
 //  // 10 - BENEFICIOS ===========================================================
 //  MySqlClausula4:=' UNION'+
 //                  ' SELECT pf.cod_loja, pf.cod_profissional, pf.des_profissional,'+
@@ -7356,7 +7356,7 @@ Begin
     MySql:=' SELECT distinct p.cod_profissional, p.des_profissional'+
            ' FROM sal_prof_habilidades h, sal_profissionais p'+
            ' WHERE  h.cod_profissional=p.cod_profissional'+
-           ' AND    h.Cod_loaj=p.Cod_Loja'+
+           ' AND    h.Cod_loja=p.Cod_Loja'+
            ' AND    p.tip_pessoa='+QuotedStr('P')+
            ' AND    h.cod_habilidade='+QuotedStr(DMSalao.CDS_HabilidadesCOD_HAB.AsString);
     DMBelShop.CDS_BuscaRapida.Close;
@@ -7558,8 +7558,6 @@ begin
 
   OdirPanApres.Visible:=False;
 
-  If Cbx_CadProfServAtivo.ItemIndex=1 Then
-
   If DMSalao.CDS_Profissionais.IsEmpty Then
   Begin
     msg('SEM Profissional a DETALHAR !!' ,'A');
@@ -7696,7 +7694,7 @@ begin
       DMSalao.CDS_V_ComissoesLojas.Next;
     End; // While Not DMSalao.CDS_V_ComissoesLojas.Eof do
     DMSalao.CDS_V_ComissoesLojas.First;
-    
+
     // Apresenta Profissionais =================================================
     Ckb_Profissionais.Checked:=True;
     Ckb_Vendedores.Checked:=False;
@@ -8156,10 +8154,10 @@ begin
 
     MySql:=' Delete From SAL_HAB_SERV h'+
            ' where h.tip_habserv=''H'''+
-           ' And h.cod_habserv='+QuotedStr(DMSalao.CDS_HabilidadesCOD_HAB.AsString);
+           ' And   h.cod_habserv='+QuotedStr(DMSalao.CDS_HabilidadesCOD_HAB.AsString);
     DMBelShop.SQLC.Execute(MySql, nil, nil);
 
-    MySql:=' DELETE FROM SAL_PROF_HABILIDADES h'+
+    MySql:=' DELETE FROM SAL_PROF_HABILIDADES ph'+
            ' WHERE ph.cod_habilidade='+QuotedStr(DMSalao.CDS_HabilidadesCOD_HAB.AsString);
     DMBelShop.SQLC.Execute(MySql, nil, nil);
 
@@ -8376,11 +8374,10 @@ Begin
 
   FrmSolicitacoes.Ckb_HabServAtivo.Checked:=True;
   AcertaCkb_SN(FrmSolicitacoes.Ckb_HabServAtivo);
-  
+
   FrmSolicitacoes.Gb_HabServPreco.Visible:=False;
   FrmSolicitacoes.Gb_HabServCodSidicom.Visible:=False;
   FrmSolicitacoes.Gb_HabServAtivo.Visible:=False;
-
 
   bgProcessar:=False;
   FrmSolicitacoes.ShowModal;
@@ -8522,7 +8519,7 @@ begin
 
       // Inclui Servico no Profisional que Contem a Habilidade =================
       MySql:=' SELECT ph.cod_loja, em.razao_social, ph.cod_profissional,'+
-             ' pr.des_profissional, ph.cod_habilidade, ph.ind_ativo'+
+             ' pr.des_profissional, ph.cod_habilidade, ph.per_comissao_hab, ph.ind_ativo'+
 
              ' FROM SAL_PROF_HABILIDADES ph, sal_profissionais pr, emp_conexoes em'+
 
@@ -8546,6 +8543,8 @@ begin
 
         If Not bTodaLoja Then
         Begin
+          cgPerPadrao:=DMBelShop.CDS_BuscaRapida.FieldByName('per_comissao_hab').AsString;
+
           FrmSalaoPercServico:=TFrmSalaoPercServico.Create(Self);
 
           FrmSalaoPercServico.EdtSalaoPercServCodLoja.Text:=
@@ -8565,6 +8564,7 @@ begin
 
           FrmSalaoPercServico.EdtSalaoPercServCodServ.Text:=Trim(FrmPesquisa.EdtCodigo.Text);
           FrmSalaoPercServico.EdtSalaoPercServDesServ.Text:=Trim(FrmPesquisa.EdtDescricao.Text);
+          FrmSalaoPercServico.EdtSalaoPercServPerCom.Value:=cgPerPadrao;
 
           FrmSalaoPercServico.ShowModal;
 
@@ -8717,7 +8717,7 @@ begin
 
       // Inclui Servico no Profisional que Contem a Habilidade =================
       MySql:=' SELECT ph.cod_loja, em.razao_social, ph.cod_profissional,'+
-             ' pr.des_profissional, ph.cod_habilidade, ph.ind_ativo'+
+             ' pr.des_profissional, ph.cod_habilidade, hp.per_comissao_hab, ph.ind_ativo'+
 
              ' FROM SAL_PROF_HABILIDADES ph, sal_profissionais pr, emp_conexoes em'+
 
@@ -8734,9 +8734,10 @@ begin
 
       sgCodLojas:='';
       bTodaLoja:=False;
-      cgPerPadrao:=0;
       While Not DMBelShop.CDS_BuscaRapida.Eof do
       Begin
+        cgPerPadrao:=DMBelShop.CDS_BuscaRapida.FieldByName('per_comissao_hab').AsString;
+
         If sgCodLojas<>DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Loja').AsString Then
          bTodaLoja:=False;
 
@@ -9823,32 +9824,35 @@ begin
             End
            Else
             Begin
-              OdirPanApres.Caption:='AGUARDE !! Analisando Código Informado para Loja: Bel_'+sCodLoja+'. OBS: Isto Poderá Levar Algum Tempo...';
-              OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-              OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSalao.Width-OdirPanApres.Width)/2));
-              OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmSalao.Height-OdirPanApres.Height)/2))-20;
-              OdirPanApres.Visible:=True;
-              Refresh;
-              If BuscaNumeradoLoja('11', 'N', sCodLoja, scodSIDICOM) Then
-               Begin
-                 OdirPanApres.Visible:=False;
-                 If StrToInt(sCodigo)>=StrToInt(scodSIDICOM) Then
-                  msg('Código Inválido para esta Loja !!','A')
-                 Else
+//odiropss 1
+//              OdirPanApres.Caption:='AGUARDE !! Analisando Código Informado para Loja: Bel_'+sCodLoja+'. OBS: Isto Poderá Levar Algum Tempo...';
+//              OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+//              OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSalao.Width-OdirPanApres.Width)/2));
+//              OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmSalao.Height-OdirPanApres.Height)/2))-20;
+//              OdirPanApres.Visible:=True;
+//              Refresh;
+//
+//              If BuscaNumeradoLoja('11', 'N', sCodLoja, scodSIDICOM) Then
+//               Begin
+//                 OdirPanApres.Visible:=False;
+//                 If StrToInt(sCodigo)>=StrToInt(scodSIDICOM) Then
+//                  msg('Código Inválido para esta Loja !!','A')
+//                 Else
                   Break;
-               End
-              Else
-               Begin
-                 OdirPanApres.Visible:=False;
-                 If msg('Loja: Bel_'+sCodLoja+' Não Conectada !!'+cr+cr+'Deseja Continuar ??','C')=2 Then
-                 Begin
-                   Exit;
-                 End
-                 Else
-                 Begin
-                   Break;
-                 End;
-               End;
+//               End
+//              Else
+//               Begin
+//                 OdirPanApres.Visible:=False;
+//                 If msg('Loja: Bel_'+sCodLoja+' Não Conectada !!'+cr+cr+'Deseja Continuar ??','C')=2 Then
+//                 Begin
+//                   Exit;
+//                 End
+//                 Else
+//                 Begin
+//                   Break;
+//                 End;
+//               End;
+//odiropss 2
             End;
          Except
            msg('Código Deve ser um Número Inteiro !!','A')
@@ -9875,6 +9879,7 @@ begin
     DMSalao.CDS_ProfissionaisCOD_LOJA.AsString:=FormatFloat('00',EdtCodLoja.AsInteger);
     DMSalao.CDS_ProfissionaisCOD_PROFISSIONAL.AsString:=sCodigo;
     DMSalao.CDS_ProfissionaisIND_LIBERADO.AsString:='SIM';
+    DMSalao.CDS_ProfissionaisTIP_PESSOA.AsString:='P';
     Ckb_CadProfLiberdo.Enabled:=True;
 
     DMSalao.CDS_ProfissionaisNUM_CONTRATO.AsInteger:=0;
@@ -9890,7 +9895,7 @@ begin
     DMSalao.CDS_ProfissionaisVLR_TAXA_NAOSOCIO.AsCurrency:=0.00;
     DMSalao.CDS_ProfissionaisVLR_TAXA_SINDICATO.AsCurrency:=0.00;
 
-    DMSalao.CDS_ProfissionaisPER_COMISSAO.AsCurrency:=0.00;
+    DMSalao.CDS_ProfissionaisPER_COMISSAO.AsCurrency:=StrToCurr(f_Troca('.',',',sgComissaoGeral));
     DMSalao.CDS_ProfissionaisPER_COMISSAO_SUPERVISOR.AsCurrency:=0.00;
     DMSalao.CDS_ProfissionaisPER_EXTRA_ANO.AsCurrency:=0.00;
 
@@ -11217,6 +11222,10 @@ Begin
     FrmSolicitacoes.Gb_Desc9.Top:=FrmSolicitacoes.Gb_Desc4.Top;
     FrmSolicitacoes.Gb_Desc9.Left:=FrmSolicitacoes.Gb_Desc4.Left;
 
+    // Busca Comissão da Habilidade ============================================
+    If DMSalao.CDS_V_ComissoesLojas.Locate('COD_HABSERV',DMBelShop.CDS_Pesquisa.FieldByName('Codigo').AsString,[]) Then
+     FrmSolicitacoes.EdtDesc9.Value:=DMSalao.CDS_V_ComissoesLojas.FieldByName(sgNomeCidade).AsCurrency;
+
     // Fecha Pesquisa
     DMBelShop.CDS_Pesquisa.Close;
 
@@ -11224,6 +11233,10 @@ Begin
     FrmSolicitacoes.sgComponentesConsiste:='EdtDesc2;';
     FrmSolicitacoes.Bt_ManutDiversosDML.Caption:='Incluir';
     bgProcessar:=False;
+
+    // Acerta Permissão para Comissão Habilidades ==============================
+    FrmBelShop.PermissaoVisual(FrmSalao.Ts_Profissionais);
+
     FrmSolicitacoes.ShowModal;
 
     If bgProcessar Then
@@ -11236,45 +11249,66 @@ Begin
              ' (COD_LOJA, COD_PROFISSIONAL, COD_HABILIDADE,'+
              '  PER_COMISSAO_HAB, IND_ATIVO, USU_INCLUI)'+
              ' Values('+
-             QuotedStr(DMSalao.CDS_ProfissionaisCOD_LOJA.AsString)+', '+
-             QuotedStr(DMSalao.CDS_ProfissionaisCOD_PROFISSIONAL.AsString)+', '+
-             QuotedStr(FrmSolicitacoes.EdtDesc1.Text)+', '+
-             QuotedStr(VarToStr(FrmSolicitacoes.EdtDesc9.Value))+', '+
-             '''SIM'', '+
-             QuotedStr(Cod_Usuario)+
+             QuotedStr(DMSalao.CDS_ProfissionaisCOD_LOJA.AsString)+', '+ // COD_LOJA
+             QuotedStr(DMSalao.CDS_ProfissionaisCOD_PROFISSIONAL.AsString)+', '+ // COD_PROFISSIONAL
+             QuotedStr(FrmSolicitacoes.EdtDesc1.Text)+', '+ // COD_HABILIDADE
+             QuotedStr(VarToStr(FrmSolicitacoes.EdtDesc9.Value))+', '+ // PER_COMISSAO_HAB
+             '''SIM'', '+ // IND_ATIVO
+             QuotedStr(Cod_Usuario)+ // USU_INCLUI
              ')';
       DMBelShop.SQLC.Execute(MySql,nil,nil);
 
-      // Insere Serviços =======================================================
-      MySql:=' SELECT l.cod_servico, s.vlr_habserv, s.ind_ativo'+
+//odiropss - odirApagar - 31/10/2016
+//      // Insere Serviços =======================================================
+//      MySql:=' SELECT l.cod_servico, s.vlr_habserv, s.ind_ativo'+
+//             ' FROM SAL_HAB_SERV_LINK l, SAL_HAB_SERV s'+
+//             ' WHERE l.cod_servico=s.cod_habserv'+
+//             ' AND s.tip_habserv=''S'''+
+//             ' AND l.cod_habilidade='+QuotedStr(FrmSolicitacoes.EdtDesc1.Text);
+//      DMBelShop.CDS_BuscaRapida.Close;
+//      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+//      DMBelShop.CDS_BuscaRapida.Open;
+//
+//      While Not DMBelShop.CDS_BuscaRapida.Eof do
+//      Begin
+//        MySql:=' Insert Into SAL_PROF_HABILIDADES ('+
+//               ' COD_LOJA, COD_PROFISSIONAL, COD_HABILIDADE, PER_COMISSAO_HAB,'+
+//               ' COD_SERVICO, VLR_SERVICO, IND_ATIVO, USU_INCLUI)'+
+//               ' Values ('+
+//               QuotedStr(DMSalao.CDS_ProfissionaisCOD_LOJA.AsString)+', '+ // COD_LOJA
+//               QuotedStr(DMSalao.CDS_ProfissionaisCOD_PROFISSIONAL.AsString)+', '+ // COD_PROFISSIONAL
+//               QuotedStr(FrmSolicitacoes.EdtDesc1.Text)+', '+ // COD_HABILIDADE
+//               QuotedStr(VarToStr(FrmSolicitacoes.EdtDesc9.Value))+', '+ // PER_COMISSAO_HAB
+//               QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Servico').AsString)+', '+ // COD_SERVICO
+//               QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('Vlr_HabServ').AsString)+', '+ // VLR_SERVICO
+//               QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('Ind_Ativo').AsString)+', '+ // IND_ATIVO
+//               QuotedStr(Cod_Usuario)+ // USU_INCLUI
+//               ')';
+//        DMBelShop.SQLC.Execute(MySql,nil,nil);
+//
+//        DMBelShop.CDS_BuscaRapida.Next;
+//      End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
+//      DMBelShop.CDS_BuscaRapida.Close;
+//odiropss - odirApagar - 31/10/2016
+
+      MySql:=' INSERT INTO SAL_PROF_HABILIDADES (cod_loja, cod_profissional, cod_habilidade, per_comissao_hab,'+
+             '                                   cod_servico, per_comissao_serv, vlr_servico, ind_ativo, usu_inclui)'+
+             ' SELECT '+
+             QuotedStr(DMSalao.CDS_ProfissionaisCOD_LOJA.AsString)+' COD_LOJA,'+
+             QuotedStr(DMSalao.CDS_ProfissionaisCOD_PROFISSIONAL.AsString)+' COD_PROFISSIONAL,'+
+             QuotedStr(FrmSolicitacoes.EdtDesc1.Text)+' COD_HABILIDADE,'+
+             QuotedStr(VarToStr(FrmSolicitacoes.EdtDesc9.Value))+' PER_COMISSAO_HAB,'+
+             ' l.cod_servico COD_SERVICO,'+
+             QuotedStr(VarToStr(FrmSolicitacoes.EdtDesc9.Value))+' PER_COMISSAO_SERV,'+
+             ' s.vlr_habserv VLR_SERVICO,'+
+             ' s.ind_ativo IND_ATIVO,'+
+             QuotedStr(Cod_Usuario)+' USU_INCLUI'+
+
              ' FROM SAL_HAB_SERV_LINK l, SAL_HAB_SERV s'+
-             ' WHERE l.cod_servico=s.cod_habserv'+
-             ' AND s.tip_habserv=''S'''+
-             ' AND l.cod_habilidade='+QuotedStr(FrmSolicitacoes.EdtDesc1.Text);
-      DMBelShop.CDS_BuscaRapida.Close;
-      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-      DMBelShop.CDS_BuscaRapida.Open;
-
-      While Not DMBelShop.CDS_BuscaRapida.Eof do
-      Begin
-        MySql:=' Insert Into SAL_PROF_HABILIDADES ('+
-               ' COD_LOJA, COD_PROFISSIONAL, COD_HABILIDADE, PER_COMISSAO_HAB,'+
-               ' COD_SERVICO, VLR_SERVICO, IND_ATIVO, USU_INCLUI)'+
-               ' Values ('+
-               QuotedStr(DMSalao.CDS_ProfissionaisCOD_LOJA.AsString)+', '+
-               QuotedStr(DMSalao.CDS_ProfissionaisCOD_PROFISSIONAL.AsString)+', '+
-               QuotedStr(FrmSolicitacoes.EdtDesc1.Text)+', '+
-               QuotedStr(VarToStr(FrmSolicitacoes.EdtDesc9.Value))+', '+
-               QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Servico').AsString)+', '+
-               QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('Vlr_HabServ').AsString)+', '+
-               QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('Ind_Ativo').AsString)+', '+
-               QuotedStr(Cod_Usuario)+
-               ')';
-        DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-        DMBelShop.CDS_BuscaRapida.Next;
-      End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
-      DMBelShop.CDS_BuscaRapida.Close;
+             ' WHERE l.cod_servico = s.cod_habserv'+
+             ' AND   s.tip_habserv = ''S'''+
+             ' AND   l.cod_habilidade='+QuotedStr(FrmSolicitacoes.EdtDesc1.Text);
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
 
       DateSeparator:='/';
       DecimalSeparator:=',';
@@ -11347,6 +11381,9 @@ Begin
   FrmSolicitacoes.sgComponentesConsiste:='EdtDesc2;';
   FrmSolicitacoes.Bt_ManutDiversosDML.Caption:='Alterar';
   bgProcessar:=False;
+
+  FrmBelShop.PermissaoVisual(FrmSalao.Ts_Profissionais);
+
   FrmSolicitacoes.ShowModal;
 
   If bgProcessar Then
@@ -11462,6 +11499,9 @@ begin
   FrmSolicitacoes.sgComponentesConsiste:='EdtDesc2;';
   FrmSolicitacoes.Bt_ManutDiversosDML.Caption:='Alterar';
   bgProcessar:=False;
+
+  FrmBelShop.PermissaoVisual(FrmSalao.Ts_Profissionais);
+
   FrmSolicitacoes.ShowModal;
 
   If bgProcessar Then
@@ -17529,12 +17569,15 @@ begin
     If DMSalao.CDS_ServicosProf.IsEmpty Then
      Exit;
 
-    If msg('Deseja Realmente Alterar'+cr+cr+'a Situação dos Serviços ?','C')=2 Then
+    If msg('Deseja Realmente Alterar'+cr+cr+'a Situação de TODOS os Serviços ??','C')=2 Then
      Exit;
 
     sSituacao:='SIM';
     If Application.MessageBox('Alterar a SITUAÇÂO de TODOS dos SERVIÇOS Para ?', 'ATIVO', 292) = idNo Then
      sSituacao:='NAO';
+
+    If msg('Deseja Realmente Alterar'+cr+cr+'a Situação de TODOS os Serviços'+cr+cr+'Para: "'+sSituacao+'" ??','C')=2 Then
+     Exit;
 
     Screen.Cursor:=crAppStart;
     DateSeparator:='.';
@@ -18135,6 +18178,12 @@ begin
     Begin
       msg(sgDtaFim+' - Dia NÃO Permitido para Cobrança'+cr+'de Plano de Saúde, deve ser, sempre,'+cr+'no dia 22  de Cada Mês!!','A');
       bgSiga:=False;
+
+      If bgInd_Admin Then
+      Begin
+        If msg('Deseja Confirmar o Novo Vencimento Para'+cr+cr+'O Dia '+sgDtaFim+' ??','C')=1 Then
+         bgSiga:=True;
+      End;
     End;
 
     If bgSiga Then
