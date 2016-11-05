@@ -5818,11 +5818,6 @@ Begin
                                                               ' ',ValuesCampos);
   DMBelShop.SDS_BuscaCurva.Close;
 
-//odirApagar - 25/05/2016
-//  ValuesCampos:=f_Troca(' CLA_CURVA_ABC ',' '+QuotedStr(
-//                          IBQ_ConsultaFilial.FieldByName('CLASSEABC').AsString)+
-//                                                              ' ',ValuesCampos);
-
   ValuesCampos:=f_Troca(' COD_BARRAS ',' '+QuotedStr(Trim(
                 IBQ_ConsultaFilial.FieldByName('CODBARRA').AsString))+' ',ValuesCampos);
 
@@ -6672,18 +6667,7 @@ begin
               ' pr.datainclusao, pr.codicmcompra, pr.codipicompra, pf.codauxiliar, it.preco,'+
               ' COALESCE(it.quantidade,0) quantidade,'+
               ' COALESCE(es.customedio,0) customedio,'+
-
-// OdirApagar - 15/06/2016
-//              ' CASE'+
-//              '    WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//              '      COALESCE(es.saldoatual,0)'+
-//              '    WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//              '      0'+
-//              '    ELSE'+
-//              '      COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//              ' END Qtd_Saldo,'+
               ' COALESCE(es.saldoatual,0) Qtd_Saldo,'+
-
               ' COALESCE(pf.unidadecaixa,1) uni_compra,'+
               ' COALESCE(pr.unidadeestoque,1) uni_venda,'+
               ' pr.codbarra, pr.codgruposub, gr.codgrupo, gr.nomegrupo, gs.codsubgrupo, gs.nomesubgrupo,'+
@@ -8762,15 +8746,6 @@ Begin
                ' From PRODUTO p'+
                '  Left Join (Select es.codproduto, es.codanomes codanomesI,'+
                '                    COALESCE(es.saldoatual,0) SaldoI'+
-// OdirApagar - 15/06/2016
-//               '                    CASE'+
-//               '                        WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//               '                            COALESCE(es.saldoatual,0)'+
-//               '                        WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//               '                            0'+
-//               '                        ELSE'+
-//               '                            COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//               '                    END SaldoI'+
                '             From estoqmes es'+
                '             Where es.codanomes='+QuotedStr(sAnoMesInicio)+
                '             And es.codfilial='+QuotedStr(sgCodEmp)+') EstI'+
@@ -8778,16 +8753,6 @@ Begin
 
                '  Left Join (Select es.codproduto, es.codanomes codanomesF,'+
                '                    COALESCE(es.saldoatual,0) SaldoF'+
-
-// OdirApagar - 15/06/2016
-//               '                    CASE'+
-//               '                        WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//               '                            COALESCE(es.saldoatual,0)'+
-//               '                        WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//               '                            0'+
-//               '                        ELSE'+
-//               '                            COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//               '                    END SaldoF'+
                '            From estoqmes es'+
                '            Where es.codanomes='+QuotedStr(sAnoMesFim)+
                '            And es.codfilial='+QuotedStr(sgCodEmp)+') EstF'+
@@ -9529,7 +9494,6 @@ Begin
   CDS_.FieldDefs.Add('Vlr_Total_Emp',ftCurrency);
   CDS_.CreateDataSet;
 
-//OdirApagar - 22/07/2016
   // Monta Sql de Movimentos de Entradas =======================================
   MySqlEnt:=' Select moe.codcomprovante, moe.numero, moe.serie,'+
             ' moe.datacomprovante datadocumento,'+
@@ -9543,9 +9507,6 @@ Begin
             '         1'+
             '     END'+
             ' ) totitens,'+
-//OODIRAPAGAR - 04/08/2016
-//            ' count(mpe.codproduto) totitens,'+
-
             ' CASE'+
             '   WHEN SUM(COALESCE(mpe.valtotal,0))<>0 THEN'+
             '     SUM(COALESCE(mpe.valtotal,0))'+
@@ -9624,9 +9585,6 @@ Begin
             '         1'+
             '     END'+
             ' ) totitens,'+
-//OODIRAPAGAR - 04/08/2016
-//          ' COUNT(mps.codproduto) totitens,'+
-
             ' SUM(mps.valtotal) totnota,'+
             ' cps.nomecomprovante,'+
             ' CASE'+
@@ -10795,18 +10753,12 @@ Begin
   SetLength(Array_MesesTotal,14);
 
   // Inicializa Arrays de Totais ===============================================
-// OdirApagar - 13/09/2016
-//For i:=1 to 13 do
   For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
    Array_ObjetivosTotal[i]:=0;
 
-// OdirApagar - 13/09/2016
-//For i:=1 to 13 do
   For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
    Array_RealizadosTotal[i]:=0;
 
-// OdirApagar - 13/09/2016
-//For i:=1 to 13 do
   For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
    Array_MesesTotal[i]:=0;
 
@@ -10822,8 +10774,6 @@ Begin
       DMVirtual.CDS_V_ObjetivosMeses.Next;
       cValorTotalRealizado:=0;
 
-// OdirApagar - 13/09/2016
-//    For i:=6 to 17 do
       For i:=6 to EdtFinanObjetivosMeses.AsInteger+5 do
       Begin
         cValorTotalRealizado:=cValorTotalRealizado+
@@ -10835,16 +10785,12 @@ Begin
         DMVirtual.CDS_V_ObjetivosMeses.Prior;
 
         // Guarda Objetivos Totais ----------------------------------
-// OdirApagar - 13/09/2016
-//      For i:=1 to 13 do
         For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         Begin
           s:=IntToStr(i);
           If i<10 Then
            s:='0'+s;
 
-// OdirApagar - 13/09/2016
-//        If i<13 Then
           If i<EdtFinanObjetivosMeses.AsInteger+1 Then
            Array_ObjetivosTotal[i]:=Array_ObjetivosTotal[i]+
               DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency
@@ -10855,16 +10801,12 @@ Begin
         End; // For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
 
         // Guarda Objetivos -----------------------------------------
-// OdirApagar - 13/09/2016
-//      For i:=1 to 13 do
         For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         Begin
           s:=IntToStr(i);
           If i<10 Then
            s:='0'+s;
 
-// OdirApagar - 13/09/2016
-//        If i<13 Then
           If i<EdtFinanObjetivosMeses.AsInteger+1 Then
            Array_Objetivos[i]:=
              DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency
@@ -10875,16 +10817,12 @@ Begin
 
         // Guarda Realizados ----------------------------------------
         DMVirtual.CDS_V_ObjetivosMeses.Next;
-// OdirApagar - 13/09/2016
-//      For i:=1 to 13 do
         For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         Begin
           s:=IntToStr(i);
           If i<10 Then
            s:='0'+s;
 
-// OdirApagar - 13/09/2016
-//        If i<13 Then
           If i<EdtFinanObjetivosMeses.AsInteger+1 Then
            Array_Realizados[i]:=
               DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency
@@ -10894,16 +10832,12 @@ Begin
         End; // For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
 
         // Guarda Realizados Totais ---------------------------------
-// OdirApagar - 13/09/2016
-//      For i:=1 to 13 do
         For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         Begin
           s:=IntToStr(i);
           If i<10 Then
            s:='0'+s;
 
-// OdirApagar - 13/09/2016
-//        If i<13 Then
           If i<EdtFinanObjetivosMeses.AsInteger+1 Then
            Array_RealizadosTotal[i]:=Array_RealizadosTotal[i]+
               DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency
@@ -10915,16 +10849,12 @@ Begin
         // Calcula Resultado em Valores -----------------------------
         DMVirtual.CDS_V_ObjetivosMeses.Next;
         DMVirtual.CDS_V_ObjetivosMeses.Edit;
-// OdirApagar - 13/09/2016
-//      For i:=1 to 13 do
         For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         Begin
           s:=IntToStr(i);
           If i<10 Then
            s:='0'+s;
 
-// OdirApagar - 13/09/2016
-//        If i<13 Then
           If i<EdtFinanObjetivosMeses.AsInteger+1 Then
            DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=
                                           Array_Realizados[i]-Array_Objetivos[i]
@@ -10937,16 +10867,12 @@ Begin
         // Calcula Resultado em Percentual --------------------------
         DMVirtual.CDS_V_ObjetivosMeses.Next;
         DMVirtual.CDS_V_ObjetivosMeses.Edit;
-// OdirApagar - 13/09/2016
-//      For i:=1 to 13 do
         For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         Begin
           s:=IntToStr(i);
           If i<10 Then
            s:='0'+s;
 
-// OdirApagar - 13/09/2016
-//        If i<13 Then
           If i<EdtFinanObjetivosMeses.AsInteger+1 Then
            Begin
              DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=0;
@@ -10970,16 +10896,12 @@ Begin
 
         // Calcula Meses Totais ------------------------------------
         DMVirtual.CDS_V_ObjetivosMeses.Next;
-// OdirApagar - 13/09/2016
-//      For i:=1 to 13 do
         For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
         Begin
           s:=IntToStr(i);
           If i<10 Then
            s:='0'+s;
 
-// OdirApagar - 13/09/2016
-//        If i<13 Then
           If i<EdtFinanObjetivosMeses.AsInteger+1 Then
            Array_MesesTotal[i]:=Array_MesesTotal[i]+
               DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency
@@ -10998,8 +10920,6 @@ Begin
       // Guarda Objetivos Totais ------------------------------------
       DMVirtual.CDS_V_ObjetivosMeses.Edit;
 
-// OdirApagar - 13/09/2016
-//    For i:=1 to 13 do
       For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
       Begin
         If Array_ObjetivosTotal[i]<>0 Then
@@ -11012,16 +10932,12 @@ Begin
     Begin
       // Guarda Objetivos Totais ------------------------------------
       DMVirtual.CDS_V_ObjetivosMeses.Edit;
-// OdirApagar - 13/09/2016
-//    For i:=1 to 13 do
       For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
       Begin
         s:=IntToStr(i);
         If i<10 Then
          s:='0'+s;
 
-// OdirApagar - 13/09/2016
-//      If i<13 Then
         If i<EdtFinanObjetivosMeses.AsInteger+1 Then
          Begin
           DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=Array_ObjetivosTotal[i];
@@ -11037,16 +10953,12 @@ Begin
       // Guarda Realizados Totais -----------------------------------
       DMVirtual.CDS_V_ObjetivosMeses.Next;
       DMVirtual.CDS_V_ObjetivosMeses.Edit;
-// OdirApagar - 13/09/2016
-//    For i:=1 to 13 do
       For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
       Begin
         s:=IntToStr(i);
         If i<10 Then
          s:='0'+s;
 
-// OdirApagar - 13/09/2016
-//      If i<13 Then
         If i<EdtFinanObjetivosMeses.AsInteger+1 Then
          DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=Array_RealizadosTotal[i]
         Else
@@ -11057,16 +10969,12 @@ Begin
       // Calcula Resultado em Valores -------------------------------
       DMVirtual.CDS_V_ObjetivosMeses.Next;
       DMVirtual.CDS_V_ObjetivosMeses.Edit;
-// OdirApagar - 13/09/2016
-//    For i:=1 to 13 do
       For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
       Begin
         s:=IntToStr(i);
         If i<10 Then
          s:='0'+s;
 
-// OdirApagar - 13/09/2016
-//      If i<13 Then
         If i<EdtFinanObjetivosMeses.AsInteger+1 Then
          DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=
                                 Array_RealizadosTotal[i]-Array_ObjetivosTotal[i]
@@ -11079,16 +10987,12 @@ Begin
       // Calcula Resultado em Percentual ----------------------------
       DMVirtual.CDS_V_ObjetivosMeses.Next;
       DMVirtual.CDS_V_ObjetivosMeses.Edit;
-// OdirApagar - 13/09/2016
-//    For i:=1 to 13 do
       For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
       Begin
         s:=IntToStr(i);
         If i<10 Then
          s:='0'+s;
 
-// OdirApagar - 13/09/2016
-//      If i<13 Then
         If i<EdtFinanObjetivosMeses.AsInteger+1 Then
          Begin
            DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=0;
@@ -11111,16 +11015,12 @@ Begin
       // Guarda Meses Totais ------------------------------------
       DMVirtual.CDS_V_ObjetivosMeses.Next;
       DMVirtual.CDS_V_ObjetivosMeses.Edit;
-// OdirApagar - 13/09/2016
-//    For i:=1 to 13 do
       For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
       Begin
         s:=IntToStr(i);
         If i<10 Then
          s:='0'+s;
 
-// OdirApagar - 13/09/2016
-//      If i<13 Then
         If i<EdtFinanObjetivosMeses.AsInteger+1 Then
          Begin
           DMVirtual.CDS_V_ObjetivosMeses.FieldByName('Vlr_Mes'+s).AsCurrency:=Array_MesesTotal[i];
@@ -11134,18 +11034,12 @@ Begin
       DMVirtual.CDS_V_ObjetivosMeses.Post;
 
       // Inicializa Arrays de Totais --------------------------------
-// OdirApagar - 13/09/2016
-//    For i:=1 to 13 do
       For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
        Array_ObjetivosTotal[i]:=0;
 
-// OdirApagar - 13/09/2016
-//    For i:=1 to 13 do
       For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
        Array_RealizadosTotal[i]:=0;
 
-// OdirApagar - 13/09/2016
-//    For i:=1 to 13 do
       For i:=1 to EdtFinanObjetivosMeses.AsInteger+1 do
        Array_MesesTotal[i]:=0;
 
@@ -11674,8 +11568,6 @@ Begin
           sCampo:=IBQ_ConsultaFilial.FieldByName('MesAno').AsString;
           cVlrCalculado:=IBQ_ConsultaFilial.FieldByName('Perc_Avarias').AsCurrency;
           cVlrAcumulado:=cVlrAcumulado+cVlrCalculado;
-// OdirApagar - 13/09/2016
-//        For ii:=6 to 17 do
           For ii:=6 to EdtFinanObjetivosMeses.AsInteger+5 do
           Begin
             If DMVirtual.CDS_V_ObjetivosMeses.Fields[ii].DisplayLabel=sCampo Then
@@ -12046,8 +11938,6 @@ Begin
       cVlrObj10:=0;
       cVlrObj11:=0;
       cVlrObj12:=0;
-// OdirApagar - 13/09/2016
-//    For i:=6 to 17 do
       For i:=6 to EdtFinanObjetivosMeses.AsInteger+5 do
       Begin
         sMes:=Copy(DMVirtual.CDS_V_ObjetivosMeses.Fields[i].DisplayLabel,1,2);
@@ -12101,8 +11991,6 @@ Begin
       DMVirtual.CDS_V_ObjetivosMesesTipo.AsString:='Objetivo';
 
       // Acerta Valores do Objetivo -----------------------------
-// OdirApagar - 13/09/2016
-//    For i:=6 to 17 do
       For i:=6 to EdtFinanObjetivosMeses.AsInteger+5 do
       Begin
         If DMVirtual.CDS_V_ObjetivosMeses.Fields[i].Visible Then
@@ -12888,8 +12776,6 @@ Begin
   // Grafico de Tipo de Apresentaçãoem Meses ===================================
   If (Ckb_FinanObjetivosManutAvarias.Checked or Ckb_FinanObjetivosManutUlt12Meses.Checked) Then
   Begin
-// OdirApagar - 13/09/2016
-//  For i:=6 to 17 do
     For i:=6 to EdtFinanObjetivosMeses.AsInteger+5 do
     Begin
       If DMVirtual.CDS_V_ObjetivosMeses.Fields[i].Visible Then
@@ -14729,45 +14615,12 @@ Begin
                ' pr.codproduto cod_produto, pr.apresentacao Des_produto, ''E'' IND_CURVA,'+
                ' 0.00 VLR_REFERENCIA, 0.00 PER_PARTICIPACAO, pr.datainclusao DTA_INCLUSAO,'+
                ' cast(coalesce(es.saldoatual,0) as numeric(12,2)) QTD_ESTOQUE,'+
-
-// OdirApagar - 15/06/2016
-//               ' CASE'+
-//               '    WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//               '      COALESCE(es.saldoatual,0)'+
-//               '    WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//               '      0'+
-//               '    ELSE'+
-//               '      COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//               ' END QTD_ESTOQUE,'+
-
                ' Coalesce(es.estoqueideal,0) EST_IDEAL,'+
                ' Coalesce(es.estoquemaximo,999999999) EST_MAXIMO,'+
                ' lp.precocompra VLR_PC_CUSTO,'+
                ' ((cast(coalesce(es.saldoatual,0) as numeric(12,2)))*lp.precocompra) VLR_TOTAL_CUSTO,'+
-
-// OdirApagar - 15/06/2016
-//               ' ((CAST((CASE'+
-//               '          WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//               '            COALESCE(es.saldoatual,0)'+
-//               '          WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//               '            0'+
-//               '          ELSE'+
-//               '            COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//               '        END) AS NUMERIC(12,2)))*lp.precocompra) VLR_TOTAL_CUSTO,'+
-
                ' lp.precovenda VLR_PC_VENDA,'+
                ' ((cast(coalesce(es.saldoatual,0) as numeric(12,2)))*lp.precovenda) VLR_TOTAL_VENDA,'+
-
-// OdirApagar - 15/06/2016
-//               ' ((cast((CASE'+
-//               '          WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//               '            COALESCE(es.saldoatual,0)'+
-//               '          WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//               '            0'+
-//               '          ELSE'+
-//               '            COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//               '        END) as numeric(12,2)))*lp.precovenda) VLR_TOTAL_VENDA,'+
-
                ' CASE'+
                '   WHEN (COALESCE(lp.precovenda,0)=0) OR (COALESCE(lp.precocompra,0)=0) THEN'+
                '    0'+
@@ -14777,25 +14630,6 @@ Begin
 
                ' ((cast(coalesce(es.saldoatual,0) as numeric(12,2)))*lp.precovenda)-'+
                ' ((cast(coalesce(es.saldoatual,0) as numeric(12,2)))*lp.precocompra) VLR_MARGEM,'+
-
-// OdirApagar - 15/06/2016
-//               ' ((cast((CASE'+
-//               '          WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//               '            COALESCE(es.saldoatual,0)'+
-//               '          WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//               '            0'+
-//               '          ELSE'+
-//               '            COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//               '         END) as numeric(12,2)))*lp.precovenda)-'+
-//               ' ((cast((CASE'+
-//               '          WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//               '            COALESCE(es.saldoatual,0)'+
-//               '          WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//               '            0'+
-//               '          ELSE'+
-//               '            COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//               '         END) as numeric(12,2)))*lp.precocompra) VLR_MARGEM,'+
-
                ' 0 DES_ZONA, ''000'' DES_CORREDOR, ''000'' DES_PRATELEIRA, ''0000'' DES_GAVETA,'+
 
                ' CASE'+
@@ -14819,16 +14653,6 @@ Begin
                ' AND   lp.codlista='+QuotedStr(FormatFloat('0000',EdtCurvaABCEndCodLista.AsInteger))+
                ' AND   es.codfilial='+QuotedStr(sgCodEmp)+
                ' AND   COALESCE(es.saldoatual,0)>0';
-
-// OdirApagar - 15/06/2016
-//               ' AND (CASE'+
-//               '        WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//               '          COALESCE(es.saldoatual,0)'+
-//               '        WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//               '          0'+
-//               '        ELSE'+
-//               '          COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//               '      END)>0';
 
                // Situação do Produto -------------------------------
                If Cbx_CurvaABCEndSituacaoProd.ItemIndex=0 Then
@@ -15716,9 +15540,9 @@ Var
   SName: String;
   i: Integer;
 Begin
-//odiropss
-//  If bgInd_Admin Then
-//   Exit;
+
+  If bgInd_Admin Then
+   Exit;
 
   // FrmBelShop ================================================================
   If TabSh.Name='Ts_FinanComprPlanFinan' Then
@@ -18440,16 +18264,6 @@ Begin
                  ' Coalesce(es.customedio,0) customedio,'+
                  ' Coalesce(es.saldoatual,0) Qtd_Saldo';
 
-// OdirApagar - 15/06/2016
-//                 ' (CASE'+
-//                 '     WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//                 '       COALESCE(es.saldoatual,0)'+
-//                 '     WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//                 '       0'+
-//                 '     ELSE'+
-//                 '       COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//                 '  END) Qtd_Saldo';
-
     MySqlClausula1:=' FROM produto pr'+
                     '                 left join estoque es  on pr.codproduto=es.codproduto'+
                     '                                      and Cast(es.codfilial as integer)=:pCodFilial'+
@@ -18510,16 +18324,6 @@ Begin
                  ' pr.codproduto, pr.datainclusao, pr.dataalteracao,'+
                  ' Coalesce(es.customedio,0) customedio,'+
                  ' Coalesce(es.saldoatual,0) Qtd_Saldo';
-
-// OdirApagar - 15/06/2016
-//                 ' (CASE'+
-//                 '     WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//                 '       COALESCE(es.saldoatual,0)'+
-//                 '     WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//                 '       0'+
-//                 '     ELSE'+
-//                 '       COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//                 '  END) Qtd_Saldo';
 
     MySqlClausula1:=' FROM produto pr'+
                     '                 left join estoque es  on pr.codproduto=es.codproduto'+
@@ -20866,30 +20670,8 @@ Begin
                ' pr.codproduto COD_ITEM, TRIM(pr.apresentacao) DES_ITEM,'+
                ' 0 QTD_SUGERIDA, 0 QTD_ACOMPRAR,'+
                ' COALESCE(es.saldoatual,0) QTD_SALDO,'+
-
-// OdirApagar - 15/06/2016
-//               ' (CASE'+
-//               '     WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//               '       COALESCE(es.saldoatual,0)'+
-//               '     WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//               '       0'+
-//               '     ELSE'+
-//               '       COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//               '  END) QTD_SALDO,'+
-
                ' 0 QTD_TRANSITO,'+
                ' COALESCE(es.saldoatual,0) QTD_DISPONIVEL,'+
-
-// OdirApagar - 15/06/2016
-//               ' (CASE'+
-//               '     WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//               '       COALESCE(es.saldoatual,0)'+
-//               '     WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//               '       0'+
-//               '     ELSE'+
-//               '       COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//               '  END) QTD_DISPONIVEL,'+
-
                ' 0 QTD_MEDIA_MES, 0 QTD_MEDIA_DIA,'+
                ' 0 QTD_DEM_MES1, 0 QTD_DEM_MES2, 0 QTD_DEM_MES3, 0 QTD_DEM_MES4,'+
                ' 0 QTD_DEM_MES5, 0 QTD_DEM_MES6, 0 QTD_DEM_MES7, 0 QTD_DEM_MES8,'+
@@ -31886,7 +31668,6 @@ Begin
   If Length(sDiaSemanaMes)<2 Then
    sDiaSemanaMes:='0'+sDiaSemanaMes;
 
-   //odirapagar
   // Mes/Ano para Planilha Meses ===============================================
   Dta:=DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor);
   Dta:=PrimeiroUltimoDia(Dta,'P');
@@ -33266,16 +33047,6 @@ begin
                ' p.principalfor, fo.nomefornecedor,'+
                ' Cast(Coalesce(es.saldoatual,0) as Numeric(12,2)) Qtd_Estoque'+
 
-// OdirApagar - 15/06/2016
-//               ' Cast((CASE'+
-//               '        WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//               '          COALESCE(es.saldoatual,0)'+
-//               '        WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//               '          0'+
-//               '        ELSE'+
-//               '          COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//               '       END) as Numeric(12,2)) Qtd_Estoque'+
-
                ' From Produto p'+
                '                left join estoque  es  on es.codproduto=p.codproduto'+
                '                                      and es.codfilial='+QuotedStr(sgCodEmp)+
@@ -33316,28 +33087,6 @@ begin
 
                If Rb_EstFisFinanSqlSaldoSem.Checked Then
                 MySql:=MySql+' and Cast(Coalesce(es.saldoatual,0) as Numeric(12,2))=0';
-
-// OdirApagar - 15/06/2016
-//               // Saldo ---------------------------------------------
-//               If Rb_EstFisFinanSqlSaldoCom.Checked Then
-//                MySql:=MySql+' and Cast((CASE'+
-//                             '              WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//                             '                COALESCE(es.saldoatual,0)'+
-//                             '              WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//                             '                0'+
-//                             '              ELSE'+
-//                             '                COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//                             '           END) as Numeric(12,2))>0';
-//
-//               If Rb_EstFisFinanSqlSaldoSem.Checked Then
-//                MySql:=MySql+' and Cast((CASE'+
-//                             '              WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
-//                             '                COALESCE(es.saldoatual,0)'+
-//                             '              WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
-//                             '                0'+
-//                             '              ELSE'+
-//                             '                COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
-//                             '           END) as Numeric(12,2))=0';
 
                MySql:=MySql+' Order By p.apresentacao';
         IBQ_ConsultaFilial.SQL.Clear;
@@ -44177,31 +43926,9 @@ begin
 
     MySql:=' SELECT s.codfilial Cod_loja, s.codproduto Cod_Produto, p.principalfor Cod_Fornecedor,'+
            '        s.saldoatual Qtd_Saldo'+
-
-// OdirApagar - 15/06/2016
-//           ' (CASE'+
-//           '     WHEN COALESCE(s.pedidopendente,0)<0 THEN'+
-//           '       COALESCE(s.saldoatual,0)'+
-//           '     WHEN COALESCE(s.pedidopendente,0)>COALESCE(s.saldoatual,0) THEN'+
-//           '       0'+
-//           '     ELSE'+
-//           '       COALESCE(s.saldoatual,0)-COALESCE(s.pedidopendente,0)'+
-//           '  END) Qtd_Saldo'+
-
            ' FROM ESTOQUE s, PRODUTO p'+
            ' WHERE s.codproduto=p.codproduto'+
            ' AND   s.saldoatual>0'+
-
-// OdirApagar - 15/06/2016
-//           ' AND (CASE'+
-//           '        WHEN COALESCE(s.pedidopendente,0)<0 THEN'+
-//           '          COALESCE(s.saldoatual,0)'+
-//           '        WHEN COALESCE(s.pedidopendente,0)>COALESCE(s.saldoatual,0) THEN'+
-//           '          0'+
-//           '        ELSE'+
-//           '          COALESCE(s.saldoatual,0)-COALESCE(s.pedidopendente,0)'+
-//           '      END)>0'+
-
            ' AND   s.codfilial='+QuotedStr('99')+
            ' AND   P.principalfor in ('+sgFornecedores+')';
     IBQ_MPMS.Close;

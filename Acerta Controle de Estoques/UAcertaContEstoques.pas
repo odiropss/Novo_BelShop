@@ -30,12 +30,14 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Lb_Total: TLabel;
-    lb_Atualizados: TLabel;
-    lb_NaoAtualizados: TLabel;
+    Lb_Atualizados: TLabel;
+    Lb_NaoAtualizados: TLabel;
     GroupBox5: TGroupBox;
     EdtLojaOrig: TCurrencyEdit;
     Label4: TLabel;
-    lb_Processados: TLabel;
+    Lb_Processados: TLabel;
+    GroupBox6: TGroupBox;
+    Bt_ZeraPedidosPendentes: TJvXPButton;
     procedure Bt_BuscaBancoClick(Sender: TObject);
     procedure Bt_ConectarClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -43,13 +45,23 @@ type
     procedure Bt_AcertarClick(Sender: TObject);
 
 
+    // ODIR - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    // Zera Acumuladores
     Procedure Zera;
+
+    // ODIR - FIM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure Bt_ZeraPedidosPendentesClick(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
   end;
+
+Const
+  cr = #13#10;
 
 var
   FrmAcertaContEstoques: TFrmAcertaContEstoques;
@@ -58,13 +70,22 @@ implementation
 
 {$R *.dfm}
 
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// ODIR - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Zera Acumuladores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAcertaContEstoques.Zera;
 Begin
- lb_Atualizados.Caption:='0';
- lb_NaoAtualizados.Caption:='0';
+ Lb_Atualizados.Caption:='0';
+ Lb_NaoAtualizados.Caption:='0';
  Lb_Total.Caption:='0';
- lb_Processados.Caption:='0';
-end;
+ Lb_Processados.Caption:='0';
+end; // Zera Acumuladores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// ODIR - FIM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TFrmAcertaContEstoques.Bt_BuscaBancoClick(Sender: TObject);
 begin
@@ -96,13 +117,15 @@ end;
 
 procedure TFrmAcertaContEstoques.Bt_ConectarClick(Sender: TObject);
 begin
+  // Zera Acumuladores
   Zera;
   EdtPedido.SetFocus;
 
   Bt_Acertar.Enabled:=False;
+  Bt_ZeraPedidosPendentes.Enabled:=False;
   If Trim(EdtBanco.Text)='' Then
   Begin
-    ShowMessage('Banco de Dados Não Encontrado !!');
+    Application.MessageBox('Banco de Dados Não Encontrado !!', 'ATENÇÃO !!', 16);
     EdtBanco.SetFocus;
     Exit;
   End;
@@ -113,13 +136,17 @@ begin
     IBDB.Connected:=True;
   Except
     IBDB.Connected:=False;
-    ShowMessage('Banco de Dados Não Conectado !!');
+
+    Application.MessageBox('Banco de Dados Não Conectado !!', 'ATENÇÃO !!', 16);
+
     Bt_BuscaBanco.SetFocus;
     Exit;
   End;
 
-  ShowMessage('Banco de Dados CONECTADO !!');
+  Application.MessageBox('Banco de Dados CONECTADO !!', 'ATENÇÃO !!', 48);
+
   Bt_Acertar.Enabled:=True;
+  Bt_ZeraPedidosPendentes.Enabled:=True;
   EdtPedido.SetFocus;
 
 end;
@@ -129,12 +156,12 @@ begin
   // Não Permite Movimentar o Formulário =======================================
   DeleteMenu(GetSystemMenu(Handle, False), SC_MOVE, MF_BYCOMMAND);
 
+  // Zera Acumuladores
   Zera;
 
 end;
 
-procedure TFrmAcertaContEstoques.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TFrmAcertaContEstoques.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   IBDB.Connected:=False;
 
@@ -206,101 +233,185 @@ Var
 
 begin
   EdtPedido.SetFocus;
+
+  // Zera Acumuladores
   Zera;
 
   If (Trim(EdtPedido.Text)='') Or (EdtPedido.Value=0) Then
   Begin
-    ShowMessage('Número do Pedido é Inválido !!');
+    Application.MessageBox('Número do Pedido é Inválido !!', 'ATENÇÃO !!', 16);
     EdtPedido.SetFocus;
     Exit;
   End;
 
   If (Trim(EdtLojaOrig.Text)='') Or (EdtLojaOrig.Value=0) Then
   Begin
-    ShowMessage('Número da Loja Origem é Inválido !!');
+    Application.MessageBox('Código da Loja ORIGEM é Inválido !!', 'ATENÇÃO !!', 16);
     EdtLojaOrig.SetFocus;
     Exit;
   End;
 
   If (Trim(EdtLojaDest.Text)='') Or (EdtLojaDest.Value=0) Then
   Begin
-    ShowMessage('Número da Loja Destino é Inválido !!');
+    Application.MessageBox('Código da Loja DESTINO é Inválido !!', 'ATENÇÃO !!', 16);
+
     EdtLojaDest.SetFocus;
     Exit;
   End;
 
-  If IBT.Active Then
-   IBT.Rollback;
+  Screen.Cursor:=crAppStart;
+  Try
+    DateSeparator:='.';
+    DecimalSeparator:='.';
 
-  IBT.StartTransaction;
+    If IBT.Active Then
+     IBT.Rollback;
 
-  MySql:=' select i.codproduto'+
-         ' from Pedido p, pedidoit i'+
-         ' where p.codpedido=i.codpedido'+
-         ' and p.codfilial='+QuotedStr(FormatFloat('00',StrToInt(EdtLojaOrig.text)))+
-         ' and p.codpedido='+EdtPedido.Text;
-  IBQ1.Close;
-  IBQ1.SQL.Clear;
-  IBQ1.SQL.Add(MySql);
-  IBQ1.Open;
+    IBT.StartTransaction;
 
-  If (IBQ1.IsEmpty) Or (Trim(IBQ1.FieldByName('codproduto').AsString)='') Then
-  Begin
+    MySql:=' select i.codproduto'+
+           ' from Pedido p, pedidoit i'+
+           ' where p.codpedido=i.codpedido'+
+           ' and p.codfilial='+QuotedStr(FormatFloat('00',StrToInt(EdtLojaOrig.text)))+
+           ' and p.codpedido='+EdtPedido.Text;
     IBQ1.Close;
-    ShowMessage('Pedido Inexistente ou Sem Produto !!');
-    EdtPedido.SetFocus;
-    Exit;
-  End;
+    IBQ1.SQL.Clear;
+    IBQ1.SQL.Add(MySql);
+    IBQ1.Open;
 
-  IBQ1.Last;
-  Lb_Total.Caption:=IntToStr(IBQ1.RecordCount);
-  IBQ1.First;
+    If (IBQ1.IsEmpty) Or (Trim(IBQ1.FieldByName('codproduto').AsString)='') Then
+    Begin
+      IBQ1.Close;
+      Application.MessageBox('Pedido Inexistente ou Sem Produto !!', 'ATENÇÃO !!', 16);
 
-  While Not IBQ1.Eof do
-  Begin
-    Application.ProcessMessages;
+      EdtPedido.SetFocus;
+      Exit;
+    End;
 
-    // Verifica se Existe Controle de Estoque no CD =============
-    MySql:=' SELECT e.codproduto'+
-           ' FROM ESTOQUE e'+
-           ' WHERE e.codproduto='+QuotedStr(IBQ1.FieldByName('codproduto').AsString)+
-           ' AND e.codfilial='+QuotedStr(FormatFloat('00',StrToInt(EdtLojaDest.text)));
-    IBQ2.Close;
-    IBQ2.SQL.Clear;
-    IBQ2.SQL.Add(MySql);
-    IBQ2.Open;
+    IBQ1.Last;
+    Lb_Total.Caption:=IntToStr(IBQ1.RecordCount);
+    IBQ1.First;
 
-    If Trim(IBQ2.FieldByName('CodProduto').AsString)='' Then
-     Begin
-       lb_Atualizados.Caption:=IntToStr(StrToInt(lb_Atualizados.Caption)+1);
+    While Not IBQ1.Eof do
+    Begin
+      Application.ProcessMessages;
 
-       // Gera Controle de Estoque no CD -------------------------
-       GeraEstoqueCD;
-     End
-    Else
-     Begin
-       lb_NaoAtualizados.Caption:=IntToStr(StrToInt(lb_NaoAtualizados.Caption)+1);
-     End;
-    IBQ2.Close;
+      // Verifica se Existe Controle de Estoque no CD =============
+      MySql:=' SELECT e.codproduto'+
+             ' FROM ESTOQUE e'+
+             ' WHERE e.codproduto='+QuotedStr(IBQ1.FieldByName('codproduto').AsString)+
+             ' AND e.codfilial='+QuotedStr(FormatFloat('00',StrToInt(EdtLojaDest.text)));
+      IBQ2.Close;
+      IBQ2.SQL.Clear;
+      IBQ2.SQL.Add(MySql);
+      IBQ2.Open;
 
-    lb_Processados.Caption:=IntToStr(IBQ1.RecordCount);
-    IBQ1.Next;
-  End;
-  IBT.Commit;
+      If Trim(IBQ2.FieldByName('CodProduto').AsString)='' Then
+       Begin
+         lb_Atualizados.Caption:=IntToStr(StrToInt(lb_Atualizados.Caption)+1);
 
-  ShowMessage('Pedido Executado com SUCESSO !!');
+         // Gera Controle de Estoque no CD -------------------------
+         GeraEstoqueCD;
+       End
+      Else
+       Begin
+         lb_NaoAtualizados.Caption:=IntToStr(StrToInt(lb_NaoAtualizados.Caption)+1);
+       End;
+      IBQ2.Close;
+
+      lb_Processados.Caption:=IntToStr(IBQ1.RecordCount);
+      IBQ1.Next;
+    End;
+    IBT.Commit;
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+    Screen.Cursor:=crDefault;
+
+    Application.MessageBox('Produtos do Pedido Executados com SUCESSO !!', 'ATENÇÃO !!', 48);
+  Except
+    On e : Exception do
+    Begin
+      IBT.Rollback;
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End;
+  End; // Try
   EdtPedido.SetFocus;
+
+  // Zera Acumuladores
   Zera;
 end;
 
-procedure TFrmAcertaContEstoques.FormKeyPress(Sender: TObject;
-  var Key: Char);
+procedure TFrmAcertaContEstoques.FormKeyPress(Sender: TObject; var Key: Char);
 begin
-    If Key = #13 Then
+  If Key = #13 Then
+  Begin
+    Key:=#0;
+    SelectNext(ActiveControl,True,True);
+  End;
+
+end;
+
+procedure TFrmAcertaContEstoques.Bt_ZeraPedidosPendentesClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  EdtBanco.SetFocus;
+
+  If (Trim(EdtLojaDest.Text)='') Or (EdtLojaDest.Value=0) Then
+  Begin
+    Application.MessageBox(PChar('Favor Informar o Código'+cr+cr+'da Loja DESTINO !!'), 'ATENÇÃO !!', 16);
+
+    EdtLojaDest.SetFocus;
+    Exit;
+  End;
+
+  If Application.MessageBox(PChar('O CÓDIGO da Loja '+FormatFloat('00',StrToInt(EdtLojaDest.text))+cr+cr+'Esta CORRETO ??'), 'ATENÇÃO !!', 292)=IdNo Then
+   Exit;
+
+  Screen.Cursor:=crAppStart;
+  Try
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    If IBT.Active Then
+     IBT.Rollback;
+
+    IBT.StartTransaction;
+
+    MySql:=' UPDATE ESTOQUE e'+
+           ' SET e.pedidopendente=0.0000'+
+           ' WHERE e.codfilial='+QuotedStr(FormatFloat('00',StrToInt(EdtLojaDest.text)))+
+           ' AND e.pedidopendente < 0.00000';
+    IBQ_Exec.Close;
+    IBQ_Exec.SQL.Clear;
+    IBQ_Exec.SQL.Add(MySql);
+    IBQ_Exec.ExecSQL;
+
+    IBT.Commit;
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    Application.MessageBox('Pedido Pendentes Zerados com SUCESSO !!', 'ATENÇÃO', 48);
+  Except
+    On e : Exception do
     Begin
-      Key:=#0;
-      SelectNext(ActiveControl,True,True);
+      IBT.Rollback;
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
     End;
+  End; // Try
+
+  Screen.Cursor:=crDefault;
 
 end;
 

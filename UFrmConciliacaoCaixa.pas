@@ -646,18 +646,10 @@ End; // Conciliação de Caixa Dia - Busca Movtos do Caixa do Operador >>>>>>>>>>>
 // Conciliação de Caixa Dia - Habilita Caixa Aberta/Fechada >>>>>>>>>>>>>>>>>>>>
 Procedure TFrmConciliacaoCaixa.FechaConcCaixaDiaHabilita(bFechado: Boolean);
 Begin
-//OK CONFERIDO
-
-//odirapagar - 15/12/2014
-//  Pan_ConcFechaCaixa.Enabled:=True;
-
   Bt_ConcFechaCaixaSituacao.Enabled:=True;
 
   Pan_ConcFechaCaixaSituacao.Caption:='';
   Pan_ConcFechaCaixaSituacao.Font.Color:=clWhite;
-
-//ODIRAPAGAR - 10/12/2014
-//  Dbg_ConcFechaCaixaTotal.ReadOnly:=Not bFechado;
 
   If bFechado Then
    Begin
@@ -969,8 +961,6 @@ Begin
   MySql:=' Select sum(Coalesce(m.totnota,0)) Tot_Debitos'+
          ' From mcli m, comprv c'+
          ' Where m.codcomprovante=c.codcomprovante'+
-// odirApagar - 08/01/2015
-//         ' And m.codcomprovante in (''002'', ''007'')'+
          ' And m.codcomprovante='+QuotedStr('002')+
          ' And m.codfilial='+QuotedStr(sCodFilial)+
          ' And m.datacomprovante='+QuotedStr(sDta);
@@ -1130,14 +1120,6 @@ Begin
          '   ELSE'+
          '     TRIM(fo.nomeforma)'+
          ' END NomeForma,'+
-
-         // OdirApagar - 18/06/2015
-//         ' SUM(CASE'+
-//         '       WHEN COALESCE(mf.valordaforma,0)=0 THEN'+
-//         '          COALESCE(mv.totnota,0)'+
-//         '       ELSE'+
-//         '          COALESCE(mf.valordaforma,0)'+
-//         '     END) Vlr_Total'+
          ' SUM(COALESCE(mf.valordaforma,0)) Vlr_Total'+
 
          ' FROM MCLI mv'+
@@ -2352,9 +2334,6 @@ end;
 
 procedure TFrmConciliacaoCaixa.EdtConcFechaCaixaCodFormaExit(Sender: TObject);
 begin
-//odirapagar - 07/01/2014
-//   AlinhaEditDireita(EdtConcFechaCaixaCodForma);
-
   If EdtConcFechaCaixaCodOper.Value=0 Then
   Begin
     msg('Favor Informar o Operador de Caixa !!','A');

@@ -5433,8 +5433,6 @@ Begin
      // Busca Todas as Lojas ----------------------------------------
      MySql:=' SELECT e.cod_filial'+
             ' FROM emp_conexoes e'+
-//odirapagar - 22/01/2016
-//            ' WHERE (e.ind_ativo=''SIM'' OR e.tip_emp=''M'')'+
             ' ORDER BY e.cod_filial';
      DMBelShop.CDS_BuscaRapida.Close;
      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -6226,8 +6224,6 @@ begin
     MySql:=' Select COD_FILIAL, RAZAO_SOCIAL'+
            ' From EMP_CONEXOES'+
            ' Where COD_FILIAL='+QuotedStr(FormatFloat('00',EdtCodLoja.AsInteger));
-//odirapagar - 22.01.2016
-//           (Ind_Ativo=''SIM'' or Cod_Filial=''99'')'+
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
@@ -6348,8 +6344,6 @@ begin
 
   MySql:=' Select COD_FILIAL, RAZAO_SOCIAL'+
          ' From EMP_CONEXOES'+
-//odirapagar - 22/01/2016
-//         ' Where (Ind_Ativo=''SIM'' or Cod_Filial=''99'')'+
          ' Order by RAZAO_SOCIAL';
   DMBelShop.CDS_Pesquisa.Close;
   DMBelShop.CDS_Pesquisa.Filtered:=False;
@@ -7956,8 +7950,6 @@ begin
     MySql:=' Select COD_FILIAL, RAZAO_SOCIAL'+
            ' From EMP_CONEXOES'+
            ' Where COD_FILIAL='+QuotedStr(FormatFloat('00',EdtConcCodLoja.AsInteger));
-//odirapagar - 22/01/2016
-          //  Ind_Ativo=''SIM'''+
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
@@ -8098,8 +8090,6 @@ begin
 
   MySql:=' Select COD_FILIAL, RAZAO_SOCIAL'+
          ' From EMP_CONEXOES'+
-//odirapagar - 22/01/2016
-//         ' Where IND_ATIVO=''SIM'''+
          ' Order by RAZAO_SOCIAL';
   DMBelShop.CDS_Pesquisa.Close;
   DMBelShop.CDS_Pesquisa.Filtered:=False;
@@ -9114,7 +9104,7 @@ begin
     // Concializa Por Tipo de Conciliação ou Por Pagto ou Extrato ==============
     // =========================================================================
 
-    // OdirApagar - Talvez (Tipo de Conciliação)
+    // OdirApagar - Talvez (Tipo de Conciliação) - OdirDuvida
 //    If ((igTotMarcaExt>0) And (igTotMarcaPag=0)) Or ((igTotMarcaExt=0) And (igTotMarcaPag>0)) Then
 //    Begin
 //    // Concializa Por Tipo de Conciliação --------------------------------------
