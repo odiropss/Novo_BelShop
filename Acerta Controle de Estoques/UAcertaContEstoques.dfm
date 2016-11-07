@@ -116,7 +116,7 @@ object FrmAcertaContEstoques: TFrmAcertaContEstoques
         Left = 47
         Top = 31
         Width = 525
-        Height = 21
+        Height = 19
         Anchors = [akLeft, akTop, akRight]
         Color = 15527167
         Font.Charset = DEFAULT_CHARSET
@@ -197,10 +197,10 @@ object FrmAcertaContEstoques: TFrmAcertaContEstoques
     end
     object GroupBox2: TGroupBox
       Left = 1
-      Top = 66
-      Width = 584
-      Height = 97
-      Align = alLeft
+      Top = 72
+      Width = 719
+      Height = 91
+      Align = alBottom
       Caption = ' Acerta Controle de Estoques  '
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clBlue
@@ -210,63 +210,63 @@ object FrmAcertaContEstoques: TFrmAcertaContEstoques
       ParentFont = False
       TabOrder = 1
       object Label1: TLabel
-        Left = 423
-        Top = 11
+        Left = 459
+        Top = 7
         Width = 102
         Height = 13
         Caption = 'Total de Produtos'
       end
       object Label2: TLabel
-        Left = 432
-        Top = 53
+        Left = 468
+        Top = 49
         Width = 93
         Height = 13
         Caption = 'N'#227'o Atualizados'
       end
       object Label3: TLabel
-        Left = 459
-        Top = 72
+        Left = 495
+        Top = 68
         Width = 66
         Height = 13
         Caption = 'Atualizados'
       end
       object Lb_Total: TLabel
-        Left = 532
-        Top = 12
+        Left = 568
+        Top = 8
         Width = 8
         Height = 13
         Caption = '0'
       end
-      object Lb_Atualizados: TLabel
-        Left = 532
-        Top = 73
+      object lb_Atualizados: TLabel
+        Left = 568
+        Top = 69
         Width = 8
         Height = 13
         Caption = '0'
       end
-      object Lb_NaoAtualizados: TLabel
-        Left = 532
-        Top = 54
+      object lb_NaoAtualizados: TLabel
+        Left = 568
+        Top = 50
         Width = 8
         Height = 13
         Caption = '0'
       end
       object Label4: TLabel
-        Left = 440
-        Top = 31
+        Left = 476
+        Top = 27
         Width = 85
         Height = 13
         Caption = 'Produtos Lidos'
       end
-      object Lb_Processados: TLabel
-        Left = 532
-        Top = 32
+      object lb_Processados: TLabel
+        Left = 568
+        Top = 28
         Width = 8
         Height = 13
         Caption = '0'
       end
       object GroupBox3: TGroupBox
-        Left = 6
+        Left = 10
         Top = 27
         Width = 102
         Height = 50
@@ -290,7 +290,7 @@ object FrmAcertaContEstoques: TFrmAcertaContEstoques
         end
       end
       object GroupBox4: TGroupBox
-        Left = 201
+        Left = 205
         Top = 27
         Width = 98
         Height = 50
@@ -320,8 +320,8 @@ object FrmAcertaContEstoques: TFrmAcertaContEstoques
       end
       object Bt_Acertar: TJvXPButton
         Tag = 4
-        Left = 304
-        Top = 28
+        Left = 332
+        Top = 26
         Width = 114
         Height = 46
         Caption = 'Efetuar Acertos'
@@ -392,7 +392,7 @@ object FrmAcertaContEstoques: TFrmAcertaContEstoques
         OnClick = Bt_AcertarClick
       end
       object GroupBox5: TGroupBox
-        Left = 108
+        Left = 112
         Top = 27
         Width = 93
         Height = 50
@@ -417,71 +417,6 @@ object FrmAcertaContEstoques: TFrmAcertaContEstoques
           MinValue = 99.000000000000000000
           TabOrder = 0
         end
-      end
-    end
-    object GroupBox6: TGroupBox
-      Left = 586
-      Top = 66
-      Width = 134
-      Height = 97
-      Align = alRight
-      Caption = ' Pedidos Pendentes '
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 2
-      object Bt_ZeraPedidosPendentes: TJvXPButton
-        Tag = 4
-        Left = 12
-        Top = 33
-        Width = 114
-        Height = 39
-        Caption = 'Zerar Qtds Negativas'
-        Enabled = False
-        TabOrder = 0
-        Glyph.Data = {
-          07544269746D6170AA030000424DAA0300000000000036000000280000001100
-          000011000000010018000000000074030000C30E0000C30E0000000000000000
-          0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000
-          000000BFBFBF000000000000BFBFBF00000000000000BFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000000000BFBFBF000000000000
-          BFBFBF00000000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00BFBF
-          BFBFBFBFBFBFBF7F7F7F000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBF0000007F7F7FBFBFBFBFBFBFBFBFBF00BFBFBFBFBFBFBFBFBF0000000000
-          7F000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000FFFFFF000000BFBFBFBF
-          BFBFBFBFBF00BFBFBFBFBFBFBFBFBFBFBFBF00000000007F000000BFBFBFBFBF
-          BFBFBFBF000000FFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBF00BFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBF00000000007F000000BFBFBF000000FFFFFF000000BFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBF00BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          00000000007F000000FFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BF00BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00000000007F000000
-          BFBFBFBFBFBFBFBFBFBFBFBF000000BFBFBFBFBFBF00BFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBF000000FFFFFF00000000007F000000BFBFBFBFBFBF000000
-          007F7F000000BFBFBF00BFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000FFFFFF00
-          0000BFBFBF00000000007F000000000000000000007F7F007F7F00000000BFBF
-          BF000000000000000000000000FFFFFF000000BFBFBFBFBFBFBFBFBF00000000
-          0000007F7F007F7F000000000000BFBFBF00BFBFBF0000000000000000000000
-          00000000BFBFBFBFBFBFBFBFBFBFBFBF000000007F7F007F7F007F7F000000BF
-          BFBFBFBFBF00BFBFBF0000007F7F7F7F7F7F000000000000BFBFBFBFBFBFBFBF
-          BF000000000000007F7F007F7F007F7F000000BFBFBFBFBFBF00BFBFBFBFBFBF
-          BFBFBF7F7F7F000000000000BFBFBF000000000000007F7F007F7F0000000000
-          00000000BFBFBFBFBFBFBFBFBF00BFBFBFBFBFBFBFBFBF000000000000000000
-          BFBFBFBFBFBF000000000000000000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BF00BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00}
-        ShowFocusRect = True
-        Spacing = 10
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        OnClick = Bt_ZeraPedidosPendentesClick
       end
     end
   end

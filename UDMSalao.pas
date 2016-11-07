@@ -526,7 +526,6 @@ type
     procedure CDS_HabilidadesProfAfterScroll(DataSet: TDataSet);
     procedure CDS_ValesProfissionaisAfterScroll(DataSet: TDataSet);
     procedure CDS_MetasProfissionaisAfterScroll(DataSet: TDataSet);
-    procedure CDS_V_ComissoesLojasAfterScroll(DataSet: TDataSet);
 
   private
     { Private declarations }
@@ -592,6 +591,9 @@ begin
            ' AND   v.tot_prestacao='+QuotedStr(CDS_ValesProfissionaisTOT_PRESTACAO.AsString)+
            ' AND   v.vlr_original='+StringReplace(CDS_ValesProfissionaisVLR_ORIGINAL.AsString,',', '.', [rfReplaceAll]);
 
+//odirapagar - 29/01/2015
+//           ' AND   v.vlr_original='+QuotedStr(CDS_ValesProfissionaisVLR_ORIGINAL.AsString);
+
           If (FrmSalao.Ckb_ValesAbertos.Checked) And (Not FrmSalao.Ckb_ValesFechados.Checked)Then
            MySql:=MySql+' AND v.vlr_pago=0';
 
@@ -640,12 +642,6 @@ begin
     If CDS_MetasProf.IsEmpty Then
      FrmSalao.CriaMetasProfissional;
   End; // If Not CDS_MetasProfissionais.IsEmpty Then
-end;
-
-procedure TDMSalao.CDS_V_ComissoesLojasAfterScroll(DataSet: TDataSet);
-begin
-  If CDS_V_ComissoesLojas.RecNo<1 Then
-   CDS_V_ComissoesLojas.First;
 end;
 
 end.

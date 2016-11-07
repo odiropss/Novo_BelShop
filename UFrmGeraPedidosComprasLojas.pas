@@ -2918,6 +2918,7 @@ Begin
   End; //   If Not (FrmBelShop.Rb_CalculoTpCurvaABCMix.Checked) Then
 
   // Curva ABC dos Produtos por Mix de Loja ------------------------------------
+//opss
   If FrmBelShop.Rb_CalculoTpCurvaABCMix.Checked Then
    FrmBelShop.BuscaMixLoja(sgCodLojaUnica);
 
@@ -2935,6 +2936,19 @@ Begin
                ' pr.datainclusao, pr.codicmcompra, pr.codipicompra, pf.codauxiliar,'+
                ' Coalesce(es.customedio,0) customedio,'+
                ' Coalesce(es.saldoatual,0) Qtd_Saldo,'+
+
+// OdirApagar - 15/06/2016
+//               ' (CASE'+
+//               '     WHEN COALESCE(es.pedidopendente,0)<0 THEN'+
+//               '       COALESCE(es.saldoatual,0)'+
+//               '     WHEN COALESCE(es.pedidopendente,0)>COALESCE(es.saldoatual,0) THEN'+
+//               '       0'+
+//               '     ELSE'+
+//               '       COALESCE(es.saldoatual,0)-COALESCE(es.pedidopendente,0)'+
+//               '  END) Qtd_Saldo,'+
+
+// OdirApagar - 01/06/2015
+//               ' Coalesce(pr.unidade,1) uni_compra,'+
                ' coalesce(pf.unidadecaixa,1) uni_compra,'+
 
                ' Coalesce(pr.unidadeestoque,1) uni_venda,'+
@@ -3161,6 +3175,7 @@ Begin
   ValuesCampos:=f_Troca(' VLR_CUSTO_MEDIO ',' '+QuotedStr(
                FrmBelShop.IBQ_Matriz.FieldByName('CUSTOMEDIO').AsString)+' ',ValuesCampos);
 
+//opss
   // Ultima Compra -------------------------------------------------------------
   MySql:=' SELECT p.codproduto, m.dataentrada dta_ref,'+
          ' pr.principalfor codfornecedor, f.nomefornecedor,'+
@@ -3591,6 +3606,9 @@ Begin
      cMediaMes:=0;
    End;
 
+//OdirApagar - 20/11/2014
+//  ValuesCampos:=f_Troca(' QTD_TRANSF ',' '+QuotedStr(CurrToStr(cMediaMes))+' ',ValuesCampos);
+//  ValuesCampos:=f_Troca(' IND_QTD_ACIMA ',' '+QuotedStr(CurrToStr(cMediaMes))+' ',ValuesCampos);
   ValuesCampos:=f_Troca(' QTD_TRANSF ',' '+QuotedStr('0')+' ',ValuesCampos);
   ValuesCampos:=f_Troca(' IND_QTD_ACIMA ',' '+QuotedStr('0')+' ',ValuesCampos);
 
@@ -4878,10 +4896,12 @@ begin
   CorSelecaoTabSheet(PC_GeraOCApresentacao);
 
   Try
+//odirapagar - 21/10/2014    Sb_SelectEmpProc2.Visible:=False;
     If (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) And (Ts_GeraOCGrid.CanFocus) Then
     Begin
       Pan_GeraOC.Visible:=True;
       Dbg_GeraOCGrid.SelectedIndex:=4;
+//odirapagar - 21/10/2014      Sb_SelectEmpProc2.Visible:=True;
       Dbg_GeraOCGrid.SetFocus;
     End;
 

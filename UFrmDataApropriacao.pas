@@ -70,6 +70,9 @@ var
 
 implementation
 
+// Odirapagar 22/05/2014
+// Retira do Uses: uj_001, uj_002,
+
 uses UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop, DK_Procs1, UPesquisaIB,
   DB;
 

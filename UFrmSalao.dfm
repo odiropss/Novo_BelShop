@@ -405,7 +405,7 @@ object FrmSalao: TFrmSalao
     Top = 0
     Width = 977
     Height = 580
-    ActivePage = Ts_CadProfissional
+    ActivePage = Ts_Habilidades
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -6494,7 +6494,7 @@ object FrmSalao: TFrmSalao
             Top = 57
             Width = 524
             Height = 492
-            Align = alClient
+            Align = alBottom
             DataSource = DMSalao.DS_Servicos
             FixedColor = clTeal
             Font.Charset = DEFAULT_CHARSET

@@ -2629,6 +2629,14 @@ Begin
     Exit;
   End;
 
+//odirapagar - Verificado em 25/01/2015 nã haviada data da alteração
+//  If EdtValesPrazo.Value=0 /hen/
+//  Begin
+//    msg('Favor Informar o Prazo Em Dias !!','A');
+//    EdtValesPrazo.SetFocus;
+//    Exit;
+//  End;
+
   Try
     StrToDate(DtEdt_ValesPrimVencto.Text);
   Except
@@ -3955,6 +3963,8 @@ begin
               Canvas.Brush.Color :=ArrayCores[iTipo]; //Odir
               Canvas.Font.Color  :=clWhite;     //Odir
 
+              // odirapagar 28/04/2015
+              //If (iTipo=3 Then
               If (iTipo in [3..4]) then
                Canvas.Font.Color  :=clWindowText;     //Odir
 
@@ -3967,6 +3977,8 @@ begin
               Canvas.Brush.Color :=ArrayCores[iTipo]; //Odir
               Canvas.Font.Color  :=clWhite;     //Odir
 
+              // odirapagar 28/04/2015
+              // If iTipo=3 Then
               If (iTipo in [3..4]) then
                Canvas.Font.Color  :=clWindowText;     //Odir
             End;
@@ -5076,6 +5088,7 @@ begin
     DMSalao.CDS_ValesVLR_APAGAR.AsCurrency:=DMSalao.CDS_ValesVLR_PRESTACAO.AsCurrency;
     DMSalao.CDS_ValesVLR_PAGO.AsCurrency:=0;
     DMSalao.CDS_ValesNUM_DOCTO_PAGTO.AsInteger:=0;
+//odirapagar    DMSalao.CDS_ValesDTA_PAGAMENTO,
     DMSalao.CDS_ValesUSU_INCLUI.AsString:=Cod_Usuario;
     DMSalao.CDS_ValesDTA_INCLUI.AsDateTime:=Now;
 
@@ -7051,6 +7064,7 @@ begin
     SalaoRelatorios;
     Exit;
   End; // If Trim((Sender as TJvXPButton).Name)='Bt_SalaoRelImprime' Then
+
 
   bgProcessar:=True;
   Close;

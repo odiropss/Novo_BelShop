@@ -46,6 +46,9 @@ var
 
 implementation
 
+// Odirapagar 22/05/2014
+// Retira do Uses: Uf_Conecta, uj_001, uj_002,
+
 uses UDMVirtual, DK_Procs1;
 
 {$R *.dfm}

@@ -2154,90 +2154,89 @@ begin
     // Atualiza LISTA DE PRECOS (MPMS) - FIM ===================================
     // =========================================================================
 
-//odiropss - SALAO
-//    // =========================================================================
-//    // Atualiza SERVIÇOS DE SALÃO (MPMS) - INICIO ==============================
-//    // =========================================================================
-//    MySql:=' SELECT m.ind_tipo'+
-//           ' FROM movtos_empresas m'+
-//           ' WHERE m.ind_tipo=''OK'''+
-//           ' AND m.nomefornecedor=''Servicos Salao''';
-//    DMMovtosEmpresas.CDS_Busca.Close;
-//    DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
-//    DMMovtosEmpresas.CDS_Busca.Open;
-//    bgNewIndTipo:=Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString)='';
-//    DMMovtosEmpresas.CDS_Busca.Close;
-//
-//    If bgNewIndTipo Then
-//    Begin
-//      MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
-//             ' Values ('+
-//             QuotedStr('OK')+', '+
-//             QuotedStr('Servicos Salao')+', '+
-//             QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
-//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-//
-//      AtualizaServicosSalao;
-//    End;
-//    // =========================================================================
-//    // Atualiza SERVIÇOS DE SALÃO (MPMS) - FIM =================================
-//    // =========================================================================
-//
-//    // =========================================================================
-//    // Atualiza COMISSÇÕES DE SERVIÇOS DE SALÃO (MPMS) - INICIO ================
-//    // =========================================================================
-//    MySql:=' SELECT m.ind_tipo'+
-//           ' FROM movtos_empresas m'+
-//           ' WHERE m.ind_tipo=''OK'''+
-//           ' AND m.nomefornecedor=''Comissões Servicos Salao''';
-//    DMMovtosEmpresas.CDS_Busca.Close;
-//    DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
-//    DMMovtosEmpresas.CDS_Busca.Open;
-//    bgNewIndTipo:=Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString)='';
-//    DMMovtosEmpresas.CDS_Busca.Close;
-//
-//    If bgNewIndTipo Then
-//    Begin
-//      MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
-//             ' Values ('+
-//             QuotedStr('OK')+', '+
-//             QuotedStr('Comissões Servicos Salao')+', '+
-//             QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
-//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-//
-//      AtualizaPercComissoesSalao;
-//    End;
-//    // =========================================================================
-//    // Atualiza COMISSÇÕES DE SERVIÇOS DE SALÃO (MPMS) - FIM ===================
-//    // =========================================================================
-//
-//    // =========================================================================
-//    // Atualiza COMISSÕES DE HABILIDADES E GERAL DO PROFISSIONAL (MPMS) - INICIO
-//    // =========================================================================
-//    MySql:=' SELECT m.ind_tipo'+
-//           ' FROM movtos_empresas m'+
-//           ' WHERE m.ind_tipo=''OK'''+
-//           ' AND m.nomefornecedor=''Comissões Hab/Prof Geral''';
-//    DMMovtosEmpresas.CDS_Busca.Close;
-//    DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
-//    DMMovtosEmpresas.CDS_Busca.Open;
-//    bgNewIndTipo:=Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString)='';
-//    DMMovtosEmpresas.CDS_Busca.Close;
-//
-//    If bgNewIndTipo Then
-//    Begin
-//      MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
-//             ' Values ('+
-//             QuotedStr('OK')+', '+
-//             QuotedStr('Comissões Hab/Prof Geral')+', '+
-//             QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
-//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-//
-//      AtualizaPercComissoesHabProf;
-//    End;
-//    // =========================================================================
-//    // Atualiza COMISSÕES DE HABILIDADES E GERAL DO PROFISSIONAL (MPMS) - FIM ==
-//    // =========================================================================
+    // =========================================================================
+    // Atualiza SERVIÇOS DE SALÃO (MPMS) - INICIO ==============================
+    // =========================================================================
+    MySql:=' SELECT m.ind_tipo'+
+           ' FROM movtos_empresas m'+
+           ' WHERE m.ind_tipo=''OK'''+
+           ' AND m.nomefornecedor=''Servicos Salao''';
+    DMMovtosEmpresas.CDS_Busca.Close;
+    DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
+    DMMovtosEmpresas.CDS_Busca.Open;
+    bgNewIndTipo:=Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString)='';
+    DMMovtosEmpresas.CDS_Busca.Close;
+
+    If bgNewIndTipo Then
+    Begin
+      MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
+             ' Values ('+
+             QuotedStr('OK')+', '+
+             QuotedStr('Servicos Salao')+', '+
+             QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
+      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+      AtualizaServicosSalao;
+    End;
+    // =========================================================================
+    // Atualiza SERVIÇOS DE SALÃO (MPMS) - FIM =================================
+    // =========================================================================
+
+    // =========================================================================
+    // Atualiza COMISSÇÕES DE SERVIÇOS DE SALÃO (MPMS) - INICIO ================
+    // =========================================================================
+    MySql:=' SELECT m.ind_tipo'+
+           ' FROM movtos_empresas m'+
+           ' WHERE m.ind_tipo=''OK'''+
+           ' AND m.nomefornecedor=''Comissões Servicos Salao''';
+    DMMovtosEmpresas.CDS_Busca.Close;
+    DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
+    DMMovtosEmpresas.CDS_Busca.Open;
+    bgNewIndTipo:=Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString)='';
+    DMMovtosEmpresas.CDS_Busca.Close;
+
+    If bgNewIndTipo Then
+    Begin
+      MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
+             ' Values ('+
+             QuotedStr('OK')+', '+
+             QuotedStr('Comissões Servicos Salao')+', '+
+             QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
+      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+      AtualizaPercComissoesSalao;
+    End;
+    // =========================================================================
+    // Atualiza COMISSÇÕES DE SERVIÇOS DE SALÃO (MPMS) - FIM ===================
+    // =========================================================================
+
+    // =========================================================================
+    // Atualiza COMISSÕES DE HABILIDADES E GERAL DO PROFISSIONAL (MPMS) - INICIO
+    // =========================================================================
+    MySql:=' SELECT m.ind_tipo'+
+           ' FROM movtos_empresas m'+
+           ' WHERE m.ind_tipo=''OK'''+
+           ' AND m.nomefornecedor=''Comissões Hab/Prof Geral''';
+    DMMovtosEmpresas.CDS_Busca.Close;
+    DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
+    DMMovtosEmpresas.CDS_Busca.Open;
+    bgNewIndTipo:=Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString)='';
+    DMMovtosEmpresas.CDS_Busca.Close;
+
+    If bgNewIndTipo Then
+    Begin
+      MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
+             ' Values ('+
+             QuotedStr('OK')+', '+
+             QuotedStr('Comissões Hab/Prof Geral')+', '+
+             QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
+      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+      AtualizaPercComissoesHabProf;
+    End;
+    // =========================================================================
+    // Atualiza COMISSÕES DE HABILIDADES E GERAL DO PROFISSIONAL (MPMS) - FIM ==
+    // =========================================================================
 
     // =========================================================================
     // Atualiza Dados da Tabela ESTOQUE - Central de Trocas ====================

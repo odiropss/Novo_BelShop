@@ -953,17 +953,7 @@ Var
                QuotedStr('0')+', '+  // TOTBASEICMS_DESONERADO
                QuotedStr('0')+', '+  // TOTICMS_DESONERADO
                QuotedStr('0')+', '+  // TOTBASEISS
-               QuotedStr('0')+', '+  // TOTDESC_LOTE
-               QuotedStr('0')+', '+  // TOTICM_UFDEST
-               QuotedStr('0')+', '+  // TOTICM_INTERNO
-               QuotedStr('0')+')';   // TOTICM_FCP
-
-    //==================================================================================
-    // Campo Sem Informação
-    //==================================================================================
-    // OBSINTERNA                 BLOB SUB_TYPE 1 SEGMENT SIZE 100,
-
-    //==================================================================================
+               QuotedStr('0')+')';   // TOTDESC_LOTE
     // Campos COMPUTED BY:
     //==================================================================================
     // TOTICM COMPUTED BY (COALESCE(TOTICMS_BRUTO, 0) - COALESCE(TOTICMS_DIFERIDO, 0))
@@ -1072,9 +1062,7 @@ Begin
                ' SOMOU_FRETE_SN, TRANPESOCUBADO, TRANMODAL_FRETE, TOT_RET_PIS,'+
                ' TOT_RET_COFINS, CODPEDIDO_NAOATEND, INDPRES, CONSUMIDOR_FINAL, NFCE_SN,'+
                ' TOTICMS_DIFERIDO, TOTICMS_BRUTO, TOTBASEICMS_DESONERADO,'+
-               ' TOTICMS_DESONERADO, TOTBASEISS, TOTDESC_LOTE, TOTICM_UFDEST,'+
-               ' TOTICM_INTERNO, TOTICM_FCP)';
-
+               ' TOTICMS_DESONERADO, TOTBASEISS, TOTDESC_LOTE)';
                //===============================
                // Campos Computer By:
                //===============================
@@ -1110,8 +1098,7 @@ Begin
                ' PRECOMAXCONSUMIDOR, CODKIT, CODAGRUPACARGA,'+
                ' COMISSAO4ALTERA, COMISSAO5ALTERA, COMISSAO4PERC, COMISSAO5PERC,'+
                ' VALDESCONTOSUFRAMA, USOU_MULTIPLO_SN, VALBASEISS, IPI_COD_ENQ,'+
-               ' DESCONTO_LOTE, VALDESC_LOTE, USA_DESC_FAIXA_NA_COMISSAO_SN,'+
-               ' REGRA_DESC_FAIXA)';
+               ' DESCONTO_LOTE, VALDESC_LOTE, USA_DESC_FAIXA_NA_COMISSAO_SN, REGRA_DESC_FAIXA)';
                //===============================
                // Campos Computer By:
                //===============================
@@ -1620,13 +1607,26 @@ Begin
            Else
             MySqlIteV:=
              MySqlIteV+QuotedStr('0')+', ';
+//odiraqui
+//           If ALIQICM.AsCurrency>0 Then
+//            VALICM.AsCurrency:=RoundTo(
+//                    (VALBASEICM.AsCurrency*
+//                    (ALIQICM.AsCurrency/100))-
+//                    VALREDUCAOICM.AsCurrency,-2)
+//           Else
+//            VALICM.AsCurrency:=0;
          End
         Else
          Begin
            MySqlIteV:=
             MySqlIteV+QuotedStr('0')+', '+ // VALBASEICM
                       QuotedStr('0')+', '; // VALREDUCAOICM
+//odiraqui
+//           VALICM.AsCurrency:=0;
          End; // If ISENTOICM.AsString:='N' And ...
+
+//odiraqui        cTotICMS_Bruto:=cTotICMS_Bruto+VALICM.AsCurrency;
+//odiraqui        cTotICM       :=cTotICM+VALICM.AsCurrency;
         //-----------------------------------------------------------
 
         // PIS / COFINS ---------------------------------------------
@@ -1754,12 +1754,6 @@ Begin
                    QuotedStr('0')+', '+ // VALDESC_LOTE,
                    QuotedStr('N')+', '+ // USA_DESC_FAIXA_NA_COMISSAO_SN,
                    QuotedStr('0')+')'; // REGRA_DESC_FAIXA
-
-        //===============================
-        // Campos Não Utilizados - Default 0
-        //===============================
-        // SEQORDEMCOMPRA
-
         //===============================
         // Campos Computer By:
         //===============================
@@ -4497,6 +4491,10 @@ begin
          ' AND   lo.qtd_a_transf<'+IntToStr(iQtdF)+
          ' AND   CAST(TRIM(COALESCE(lo.num_pedido,''0'')) AS INTEGER)=0';
 
+// Odirapagar - 08/08/2016
+//         If Cbx_ReposLojasCorredor.ItemIndex<>0 Then
+//          MySql:=
+//           MySql+' AND cd.end_zona||''.''||cd.end_corredor='+QuotedStr(Cbx_ReposLojasCorredor.Text);
          If (sgCorredores<>'') and (Not bgTodosCorredores) Then
           MySql:=
            MySql+' AND cd.end_zona||''.''||cd.end_corredor in ('+sgCorredores+')';
@@ -4540,7 +4538,11 @@ begin
            ' AND   l.qtd_a_transf<'+IntToStr(iQtdF)+
            ' AND   CAST(TRIM(COALESCE(l.num_pedido,''0'')) AS INTEGER)=0';
 
-           If (sgCorredores<>'') and (Not bgTodosCorredores) Then
+//odirapagar - 08/08/2016
+//           If Cbx_ReposLojasCorredor.ItemIndex<>0 Then
+//            MySql:=
+//             MySql+' AND c.end_zona||''.''||c.end_corredor='+QuotedStr(Cbx_ReposLojasCorredor.Text);
+            If (sgCorredores<>'') and (Not bgTodosCorredores) Then
             MySql:=
              MySql+' AND c.end_zona||''.''||c.end_corredor in ('+sgCorredores+')';
     DMBelShop.CDS_BuscaRapida.Close;
@@ -4599,6 +4601,8 @@ begin
 
   DMRelatorio.frReport1.Dictionary.Variables.Variable['Qtd']:=#39+s+#39;
 
+//odirapagar - 08/08/2016
+//  DMRelatorio.frReport1.Dictionary.Variables.Variable['Corredor']:=#39+Cbx_ReposLojasCorredor.Text+#39;
   If (bgTodosCorredores) or (igCorredores=0) Then
    DMRelatorio.frReport1.Dictionary.Variables.Variable['Corredor']:=#39+'TODOS'+#39
   Else
@@ -4679,9 +4683,9 @@ begin
   MySql:=' SELECT  Trim(cam.RDB$RELATION_NAME) Tabela,'+
          ' CASE'+
          '   WHEN Trim(cam.RDB$RELATION_NAME)=''PEDIDO'' THEN'+
-         '     COUNT(cam.RDB$FIELD_NAME)-113'+ // Total de CAMPOS no PEDIDO
+         '     COUNT(cam.RDB$FIELD_NAME)-110'+ // Total de CAMPOS no PEDIDO
          '   ELSE'+
-         '     COUNT(cam.RDB$FIELD_NAME)-111'+ // Total de CAMPOS no ITENS DO PEDIDO
+         '     COUNT(cam.RDB$FIELD_NAME)-110'+ // Total de CAMPOS no ITENS DO PEDIDO
          ' END Zerado'+
          ' FROM RDB$RELATION_FIELDS cam'+
          ' WHERE Trim(cam.RDB$RELATION_NAME) IN (''PEDIDO'', ''PEDIDOIT'')'+
