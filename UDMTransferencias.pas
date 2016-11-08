@@ -543,7 +543,7 @@ Var
   sEndIP: String;
 Begin
   Result:=False;
-
+  
   Try
     MySql:=' SELECT *'+
            ' FROM EMP_CONEXOES e'+

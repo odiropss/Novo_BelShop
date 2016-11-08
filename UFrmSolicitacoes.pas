@@ -6876,12 +6876,14 @@ begin
     Exit;
   End; // If FrmSolicitacoes.Caption='VERIFICA POSIÇÃO DE ESTOQUES DAS LOJAS' Then
 
+  bgProcessar:=True;
   Close;
 end;
 
 procedure TFrmSolicitacoes.Bt_SelecionarValtarClick(Sender: TObject);
 begin
   bgOK:=False;
+  bgProcessar:=False;
   Close;
 
 end;

@@ -539,6 +539,7 @@ begin
      sgCompradores:='';
 
      DMVirtual.CDS_V_Estoques.Close;
+     DMBelShop.CDS_EstoquePrevisao.Close;
      DMVirtual.CDS_V_EstoquesFinan.Close;
    End
   Else
@@ -1077,8 +1078,24 @@ begin
 
   // Recalcula Campos Aggregates ===============================================
   DMVirtual.CDS_V_Estoques.Close;
+  DMBelShop.CDS_EstoquePrevisao.Close;
+
   Recalculo_V_Estoques_Aggregates;
   DMVirtual.CDS_V_Estoques.Open;
+  DMBelShop.CDS_EstoquePrevisao.Open;
+
+  If DMVirtual.CDS_V_Estoques.IsEmpty Then
+  Begin
+    msg('Sem Produto a Listar !!'+cr+cr+'Filtro Será Retirado !!','A');
+    DMVirtual.CDS_V_Estoques.Close;
+    DMBelShop.CDS_EstoquePrevisao.Close;
+
+    DMVirtual.CDS_V_Estoques.Filter:='';
+    DMVirtual.CDS_V_Estoques.Filtered:=False;
+    Recalculo_V_Estoques_Aggregates;
+    DMVirtual.CDS_V_Estoques.Open;
+    DMBelShop.CDS_EstoquePrevisao.Open;
+  End;
 
   Ts_EstoquesFiltros.TabVisible:=False;
   Ts_Estoques.TabVisible:=True;
@@ -1412,7 +1429,10 @@ Begin
 
   // Inicializa Client CDS_V_Estoques ==========================================
   If DMVirtual.CDS_V_Estoques.Active Then
-   DMVirtual.CDS_V_Estoques.Close;
+  Begin
+    DMVirtual.CDS_V_Estoques.Close;
+    DMBelShop.CDS_EstoquePrevisao.Close;
+  End;
 
   DMVirtual.CDS_V_Estoques.CreateDataSet;
   DMVirtual.CDS_V_Estoques.IndexName:='';
@@ -2577,7 +2597,7 @@ end;
 
 procedure TFrmEstoques.Bt_EstoquesFiltroCompradorClick(Sender: TObject);
 Var
-  s, MySql: String;
+  sFiltroComp, MySql: String;
   ii, i: Integer;
   bFiltra: Boolean;
 begin
@@ -2593,6 +2613,12 @@ begin
   End;
 
   Dbg_Estoques.SetFocus;
+
+  If Trim(sgFiltros)<>'' Then
+  Begin
+    If msg('Existe Filtro Anterior !!'+cr+cr+'DESEJA RETIRÁ-LO ??','C')=1 Then
+     sgFiltros:='';
+  End;
 
   // Seleciona Comprador =======================================================
   FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
@@ -2616,38 +2642,35 @@ begin
 
   FrmSolicitacoes.Caption:='SELECIONAR COMPRADOR';
   FrmSolicitacoes.bgOK:=False;
+  bgProcessar:=False;
   FrmSolicitacoes.ShowModal;
 
+  // Monta Filtro ==============================================================
+  OdirPanApres.Caption:='AGUARDE !! Analisando Filtro Compradores...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmEstoques.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmEstoques.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
   Screen.Cursor:=crAppStart;
 
-  If DMVirtual.CDS_V_Estoques.Filtered Then
+  If bgProcessar Then
   Begin
-    DMVirtual.CDS_V_Estoques.DisableControls;
-    DMVirtual.CDS_V_Estoques.Close;
-    DMVirtual.CDS_V_Estoques.Filtered:=False;
-    DMVirtual.CDS_V_Estoques.Filter:='';
-
-    Recalculo_V_Estoques_Aggregates;
-    DMVirtual.CDS_V_Estoques.Open;
-    DMVirtual.CDS_V_Estoques.EnableControls;
-  End;
-
-  If FrmSolicitacoes.bgOK Then
-  Begin
+    sFiltroComp:='';
     DMBelShop.CDS_Busca.First;
-    s:='';
     While Not DMBelShop.CDS_Busca.Eof do
     Begin
       If DMBelShop.CDS_Busca.FieldByName('PROC').AsString='SIM' Then
       Begin
-        If Trim(s)='' Then
+        If Trim(sFiltroComp)='' Then
         Begin
-          s:='COD_COMPRADOR='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Codigo').AsString));
+          sFiltroComp:='COD_COMPRADOR='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Codigo').AsString));
           sgCompradores:=Trim(DMBelShop.CDS_Busca.FieldByName('Comprador').AsString);
         End
         Else
         Begin
-          s:=s+' OR COD_COMPRADOR='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Codigo').AsString));
+          sFiltroComp:=sFiltroComp+' OR COD_COMPRADOR='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Codigo').AsString));
           sgCompradores:=sgCompradores+' / '+Trim(DMBelShop.CDS_Busca.FieldByName('Comprador').AsString);
         End;
       End;
@@ -2656,17 +2679,44 @@ begin
     End; // While Not DMBelShop.CDS_Busca.Eof do
     DMBelShop.CDS_Busca.Close;
 
-    If Trim(s)<>'' Then
-    Begin
+//    If Trim(s)<>'' Then
+//    Begin
       DMVirtual.CDS_V_Estoques.DisableControls;
       DMVirtual.CDS_V_Estoques.Close;
-      DMVirtual.CDS_V_Estoques.Filter:=s;
+      DMBelShop.CDS_EstoquePrevisao.Close;
+
+      DMVirtual.CDS_V_Estoques.Filtered:=False;
+      DMVirtual.CDS_V_Estoques.Filter:='';
+
+      If (Trim(sgFiltros)<>'') And (Trim(sFiltroComp)<>'') Then
+       DMVirtual.CDS_V_Estoques.Filter:=sgFiltros+' AND ('+sFiltroComp+')'
+
+      Else If (Trim(sgFiltros)='') And (Trim(sFiltroComp)<>'') Then
+       DMVirtual.CDS_V_Estoques.Filter:=sFiltroComp
+
+      Else
+       DMVirtual.CDS_V_Estoques.Filter:=sgFiltros;
+
       DMVirtual.CDS_V_Estoques.Filtered:=True;
 
       Recalculo_V_Estoques_Aggregates;
       DMVirtual.CDS_V_Estoques.Open;
+      DMBelShop.CDS_EstoquePrevisao.Open;
       DMVirtual.CDS_V_Estoques.EnableControls;
-    End;
+
+      If DMVirtual.CDS_V_Estoques.IsEmpty Then
+      Begin
+        msg('Sem Produto a Listar !!'+cr+cr+'Filtro Será Retirado !!','A');
+        DMVirtual.CDS_V_Estoques.Close;
+        DMBelShop.CDS_EstoquePrevisao.Close;
+
+        DMVirtual.CDS_V_Estoques.Filter:='';
+        DMVirtual.CDS_V_Estoques.Filtered:=False;
+        Recalculo_V_Estoques_Aggregates;
+        DMVirtual.CDS_V_Estoques.Open;
+        DMBelShop.CDS_EstoquePrevisao.Open;
+      End;
+ //   End; // If Trim(s)<>'' Then
   End; // If FrmSolicitacoes.bgOK Then
 
   If DMBelShop.CDS_Busca.Active Then
@@ -2678,6 +2728,7 @@ begin
   Dbg_EstoquesColEnter(Self);
   Dbg_Estoques.SetFocus;
 
+  OdirPanApres.Visible:=False;
   Screen.Cursor:=crDefault;
 
 end;
