@@ -1678,14 +1678,15 @@ Function TFrmMovtosEmpresas.ConectaMPMS: Boolean;
 Var
   MySql: String;
   i: Integer;
-  s: String;
+  sConcTCP_IP, sConcNetBEUI: String;
+  sEndIP: String;
 Begin
   Result:=False;
 
   Try
     MySql:=' Select *'+
            ' From EMP_Conexoes e'+
-           ' Where e.cod_filial=99';
+           ' Where e.cod_filial='+QuotedStr('99');
     DMMovtosEmpresas.CDS_Busca.Close;
     DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
     DMMovtosEmpresas.CDS_Busca.Open;
@@ -1698,32 +1699,39 @@ Begin
         If (DMConexoes.Components[i] as TIBDatabase).Name='IBDB_MPMS' Then
         Begin
            (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
-           s:='\\';
 
-           // Se Conexão Local ou Externa ======================================
-           If (Not bgConexaoLocal) and (Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Endereco_IP_Externo').AsString)<>'') Then
-            s:=s+IncludeTrailingPathDelimiter(DMMovtosEmpresas.CDS_Busca.FieldByName('ENDERECO_IP_EXTERNO').AsString)
-           Else
-            s:=s+IncludeTrailingPathDelimiter(DMMovtosEmpresas.CDS_Busca.FieldByName('ENDERECO_IP').AsString);
+           sEndIP:=DMMovtosEmpresas.CDS_Busca.FieldByName('ENDERECO_IP').AsString;
 
-           s:=s+IncludeTrailingPathDelimiter(DMMovtosEmpresas.CDS_Busca.FieldByName('PASTA_BASE_DADOS').AsString)+
-                                             DMMovtosEmpresas.CDS_Busca.FieldByName('DES_BASE_DADOS').AsString;
-          //  \\201.86.212.10\C:\SIDICOM.NEW\BANCO.FDB
-          (DMConexoes.Components[i] as TIBDatabase).DatabaseName:=s;
+           // Tipo de Conexão: TCP/IP
+           sConcTCP_IP:=sEndIP+':'+        
+              IncludeTrailingPathDelimiter(DMMovtosEmpresas.CDS_Busca.FieldByName('PASTA_BASE_DADOS').AsString)+
+                                           DMMovtosEmpresas.CDS_Busca.FieldByName('DES_BASE_DADOS').AsString;
+
+           // Tipo de Conexão: NetBEUI
+           sConcNetBEUI:='\\'+sEndIP+'\'+
+              IncludeTrailingPathDelimiter(DMMovtosEmpresas.CDS_Busca.FieldByName('PASTA_BASE_DADOS').AsString)+
+                                           DMMovtosEmpresas.CDS_Busca.FieldByName('DES_BASE_DADOS').AsString;
+
+          (DMConexoes.Components[i] as TIBDatabase).DatabaseName:=sConcTCP_IP;
+
+          If Not ConexaoEmpIndividual('IBDB_MPMS', 'IBT_MPMS','A') Then
+          Begin
+            (DMConexoes.Components[i] as TIBDatabase).DatabaseName:=sConcNetBEUI;
+            If Not ConexaoEmpIndividual('IBDB_MPMS', 'IBT_MPMS','A') Then
+            Begin
+              msg('Erro de Conecxão ao Banco de Dados'+cr+' do CD, Avise o Odir Imediatamente !!','X');
+              Application.Terminate;
+              Exit;
+            End;
+          End;
+
           Break;
         End;
       End; // If DMConexoes.Components[i] is TIBDatabase Then
     End; // For i:=0 to DMConexoes.ComponentCount-1 do
 
-    If Not ConexaoEmpIndividual('IBDB_MPMS', 'IBT_MPMS','A') Then
-    Begin
-      DMMovtosEmpresas.CDS_Busca.Close;
-      Exit;
-    End;
-
     // Cria Querys da MPMS =====================================================
     CriaQueryIB('IBDB_MPMS', 'IBT_MPMS', IBQ_MPMS, True, True);
-
     DMMovtosEmpresas.CDS_Busca.Close;
 
     Result:=True;
@@ -1910,8 +1918,8 @@ begin
   // odiraqui1: Original: Nao Comentar 1 ///////////////////////
   If Trim(EdtParamStr.Text)='' Then
    EdtParamStr.Text:='ODIR'; // Agora é Direto por Agendamento
-//  EdtParamStr.Text:='OPSS';   // Não Libera Direto
-//  EdtParamStr.Text:='OPSS_N'; // Não Libera Direto
+// EdtParamStr.Text:='OPSS';   // Não Libera Direto
+// EdtParamStr.Text:='OPSS_N'; // Não Libera Direto
   // odiraqui2: Original: Nao Comentar 1 ///////////////////////
 
   If EdtParamStr.Text='' Then

@@ -31,11 +31,11 @@ begin
      Application.Initialize;
      Application.Title := 'BelShop - Transferências';
      Application.CreateForm(TDMConexoes, DMConexoes);
-  Application.CreateForm(TDMTransferencias, DMTransferencias);
-  Application.CreateForm(TFrmTransferencias, FrmTransferencias);
-  Application.CreateForm(TFDK_Procs1, FDK_Procs1);
-  Application.CreateForm(TJ_002, J_002);
-  Application.CreateForm(TJ_001, J_001);
-  Application.Run;
+     Application.CreateForm(TDMTransferencias, DMTransferencias);
+     Application.CreateForm(TFrmTransferencias, FrmTransferencias);
+     Application.CreateForm(TFDK_Procs1, FDK_Procs1);
+     Application.CreateForm(TJ_002, J_002);
+     Application.CreateForm(TJ_001, J_001);
+     Application.Run;
    End;
 end.

@@ -414,12 +414,12 @@ object FrmEstoques: TFrmEstoques
           969
           55)
         object Bt_Odir: TJvTransparentButton
-          Left = 568
+          Left = 557
           Top = 8
-          Width = 37
-          Height = 41
+          Width = 83
+          Height = 19
           Anchors = [akTop, akRight]
-          Caption = 'ODIR - Duplos'
+          Caption = 'ODIR-Duplos'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -771,9 +771,9 @@ object FrmEstoques: TFrmEstoques
         end
         object Bt_EstoquesFiltroComprador: TJvXPButton
           Tag = 92
-          Left = 628
+          Left = 643
           Top = 2
-          Width = 175
+          Width = 160
           Height = 51
           Caption = 'Seleciona Comprador'
           TabOrder = 7
@@ -1050,10 +1050,10 @@ object FrmEstoques: TFrmEstoques
         end
       end
       object Dbg_EstoquesDemFinan: TDBGrid
-        Left = 29
-        Top = 215
-        Width = 916
-        Height = 186
+        Left = 37
+        Top = 319
+        Width = 875
+        Height = 143
         DataSource = DMVirtual.DS_V_EstoquesFinan
         FixedColor = clSilver
         Font.Charset = DEFAULT_CHARSET
@@ -1084,31 +1084,11 @@ object FrmEstoques: TFrmEstoques
             Font.Style = [fsBold]
             Title.Alignment = taCenter
             Title.Caption = 'Classe'
-            Width = 40
+            Width = 45
             Visible = True
           end
           item
-            Color = 15000804
-            Expanded = False
-            FieldName = 'DM'
-            Title.Alignment = taRightJustify
-            Width = 80
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DM_PC'
-            Title.Alignment = taRightJustify
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DM_PV'
-            Title.Alignment = taRightJustify
-            Visible = True
-          end
-          item
-            Color = 15000804
+            Color = 16053492
             Expanded = False
             FieldName = 'EST'
             Title.Alignment = taRightJustify
@@ -1116,19 +1096,15 @@ object FrmEstoques: TFrmEstoques
             Visible = True
           end
           item
+            Color = 16053492
             Expanded = False
-            FieldName = 'EST_PC'
+            FieldName = 'DM'
             Title.Alignment = taRightJustify
+            Width = 80
             Visible = True
           end
           item
-            Expanded = False
-            FieldName = 'EST_PV'
-            Title.Alignment = taRightJustify
-            Visible = True
-          end
-          item
-            Color = 15000804
+            Color = 16053492
             Expanded = False
             FieldName = 'DIF_EST_DM'
             Title.Alignment = taRightJustify
@@ -1136,10 +1112,42 @@ object FrmEstoques: TFrmEstoques
             Visible = True
           end
           item
+            Color = 16765650
+            Expanded = False
+            FieldName = 'EST_PC'
+            Title.Alignment = taRightJustify
+            Width = 90
+            Visible = True
+          end
+          item
+            Color = 16765650
+            Expanded = False
+            FieldName = 'DM_PC'
+            Title.Alignment = taRightJustify
+            Width = 90
+            Visible = True
+          end
+          item
+            Color = 16765650
             Expanded = False
             FieldName = 'DIF_EST_DM_PC'
             Title.Alignment = taRightJustify
             Title.Caption = '# P'#231' Ct'
+            Width = 90
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'EST_PV'
+            Title.Alignment = taRightJustify
+            Width = 90
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DM_PV'
+            Title.Alignment = taRightJustify
+            Width = 90
             Visible = True
           end
           item
@@ -1147,6 +1155,7 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'DIF_EST_DM_PV'
             Title.Alignment = taRightJustify
             Title.Caption = '# P'#231' Pv'
+            Width = 90
             Visible = True
           end>
       end
@@ -1220,7 +1229,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 279
+          Left = 277
           Top = 11
           Width = 353
           Height = 13

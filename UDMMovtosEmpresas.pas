@@ -215,8 +215,9 @@ var
   DMMovtosEmpresas: TDMMovtosEmpresas;
 
   sgPath_Local: String;
-  sgTpConexao   : String;
-
+  sgNomeServidor, sgCodLojaUnica, sgTpConexao: String;
+  sgCompMaster, sgCompServer: String; // Dados dos Servidores, Computador Local
+  sgIPServer, sgIPInternetServer: String; // Ips do Servidor
 
   // Dias Uteis para BelShop
   function DiasUteisBelShop(dDataI, dDataF: TDateTime; bDomingo, bSabado: Boolean): Integer;
@@ -292,6 +293,7 @@ Begin
 
     { Realiza um loop em toda a lista }
     s:='';
+    sgNomeServidor:='';
     sgTpConexao   :='';
     For i := 0 to tsArquivo.Count - 1 do
     Begin
@@ -299,6 +301,8 @@ Begin
 
       If Trim(s)<>'' Then
       Begin
+        If i=0 Then sgNomeServidor:=Trim(s);
+        If i=1 Then sgCodLojaUnica:=Trim(s);
         If i=2 Then sgTpConexao:=Trim(s);
       End;
     End; // For i := 0 to tsArquivo.Count - 1 do
@@ -312,10 +316,23 @@ End;
 // Monta Empresas a Conectar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TDMMovtosEmpresas.MontaConexaoEmpresas;
 Var
-  s: String;
+  MySql, s: String;
   sEndIP: String;
   i: Integer;
 Begin
+  MySql:=' SELECT p.computer_master, p.computer_server, IP_Server, IP_Internet_Server'+
+         ' FROM PARAMETROS p';
+  CDS_BuscaRapida.Close;
+  SDS_BuscaRapida.CommandText:=MySql;
+  CDS_BuscaRapida.Open;
+
+  sgCompMaster      :=AnsiUpperCase(CDS_BuscaRapida.FieldByName('computer_master').AsString);
+  sgCompServer       :=AnsiUpperCase(CDS_BuscaRapida.FieldByName('computer_server').AsString);
+  sgIPServer        :=AnsiUpperCase(CDS_BuscaRapida.FieldByName('IP_Server').AsString);
+  sgIPInternetServer:=AnsiUpperCase(CDS_BuscaRapida.FieldByName('IP_Internet_Server').AsString);
+
+  CDS_BuscaRapida.Close;
+
 
   CDS_EmpProcessa.Close;
   CDS_EmpProcessa.Open;
@@ -334,27 +351,20 @@ Begin
 
           sEndIP:=CDS_EmpProcessaENDERECO_IP.AsString;
 
-          //Tipo de Conexão: TCP/IP NetBEUI
-          If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then
+          // Tipo de Conexão: NetBEUI
+          If (Trim(sgTpConexao)='')              Or (Trim(sgTpConexao)='NetBEUI') Or
+             (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgCompServer) Or
+             (AnsiUpperCase(sEndIP)=sgIPServer) Then
            s:='\\'+IncludeTrailingPathDelimiter(sEndIP)+
                    IncludeTrailingPathDelimiter(CDS_EmpProcessaPASTA_BASE_DADOS.AsString)+
                                                CDS_EmpProcessaDES_BASE_DADOS.AsString;
 
-          If Trim(sgTpConexao)='TCP/IP' Then
+          // Tipo de Conexão: TCP/IP
+          If (Trim(sgTpConexao)='TCP/IP')          and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and
+             (AnsiUpperCase(sEndIP)<>sgCompServer) and (AnsiUpperCase(sEndIP)<>sgIPServer) Then
            s:=sEndIP+':'+
               IncludeTrailingPathDelimiter(CDS_EmpProcessaPASTA_BASE_DADOS.AsString)+
                                            CDS_EmpProcessaDES_BASE_DADOS.AsString;
-
-//            // Se Conexão Local ou Externa ======================================
-//            //  \\201.86.212.10\C:\SIDICOM.NEW\BANCO.FDB
-//            If (Not bgConexaoLocal) and (Trim(CDS_EmpProcessaENDERECO_IP_EXTERNO.AsString)<>'') Then
-//             s:='\\'+IncludeTrailingPathDelimiter(CDS_EmpProcessaENDERECO_IP_EXTERNO.AsString)+
-//                     IncludeTrailingPathDelimiter(CDS_EmpProcessaPASTA_BASE_DADOS.AsString)+
-//                                                  CDS_EmpProcessaDES_BASE_DADOS.AsString
-//            Else
-//             s:='\\'+IncludeTrailingPathDelimiter(CDS_EmpProcessaENDERECO_IP.AsString)+
-//                     IncludeTrailingPathDelimiter(CDS_EmpProcessaPASTA_BASE_DADOS.AsString)+
-//                                                  CDS_EmpProcessaDES_BASE_DADOS.AsString;
 
           //==============================================================================
           // Acerta Conexao com a Loja 08 - 201.86.212.9:C:\SIDICOM.NEW\BIGNEW.FDB - TCPIP
@@ -393,14 +403,12 @@ begin
 
   if not InternetGetConnectedState(@Flags, 0) then
   Begin
-//odirapagar - 06/06/2016    msg('Você não está conectado à Internet !!'+cr+cr+'O Sistema Será Encerrado !!','A');
     Application.Terminate;
     Exit;
   End;
 
   If not(fileexists(IncludeTrailingPathDelimiter(sgPath_Local)+'PCTConect_IB.ini')) then
   Begin
-//odirapagar - 06/06/2016    msg('Arquivo PCTConect_IB.ini Não Encontrado !!','A');
     Application.Terminate;
     Exit;
   End;
@@ -538,46 +546,4 @@ begin
 end;
 
 end.
-
-// antiga consulta a produtos
-//select
-//pr.codproduto, pr.apresentacao, pr.codbarra, pr.situacaopro,
-//pr.unidade, pr.unidadeestoque,
-//pr.classeabc,
-//pr.principalfor, fo.nomefornecedor,
-//pr.referencia,
-//pr.codgruposub,
-//gr.codgrupo, gr.nomegrupo,
-//sg.codsubgrupo, sg.nomesubgrupo,
-//pr.codfamiliapreco, fp.nomefamiliapreco,
-//pr.nomegenerico,
-//pr.codaplicacao, ap.nomeaplicacao,
-//pr.codicmvenda, pr.codicmcompra,
-//pr.codipicompra, pr.codipivenda, pr.iss,
-//pr.peso, pr.pesobruto,
-//pr.codnacionalidade,
-//pr.controlalote,
-//pr.diasvencelote,
-//pr.naovendezerado,
-//pr.codmercosulncm,
-//pr.grupostmva,
-//pr.codpiscofins_venda,
-//pr.codpiscofins_compra,
-//pr.ecommerce_sn,
-//pr.datainclusao, pr.dataalteracao,
-//current_date DTA_ATUALIZACAO
-//
-//
-//from produto pr
-//     left join gruposub sg  on sg.codgruposub=pr.codgruposub
-//     left join grupo    gr  on gr.codgrupo=sg.codgrupo
-//     left join familiap fp  on fp.codfamiliapreco=pr.codfamiliapreco
-//     left join aplica   ap  on ap.codaplicacao=pr.codaplicacao
-//     left join forneced fo  on fo.codfornecedor=pr.principalfor
-//
-//Where ((Cast(pr.datainclusao as Date)>= :Dta1
-//              or
-//              Cast(pr.dataalteracao as Date)>= :Dta2))
-//
-
 

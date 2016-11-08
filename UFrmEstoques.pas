@@ -255,6 +255,7 @@ Begin
   Gb_EstoquesSituacaoProd.Enabled:=bLib;
 
   Dbg_Estoques.Enabled:=bLib;
+  Dbg_EstoquesPrev.Enabled:=bLib;
 
   Bt_EstoquesFiltros.Enabled:=bLib;
   Bt_EstoquesFechar.Enabled:=bLib;
@@ -535,6 +536,8 @@ begin
 
      FrmBelShop.FechaTudo;
 
+     sgCompradores:='';
+
      DMVirtual.CDS_V_Estoques.Close;
      DMVirtual.CDS_V_EstoquesFinan.Close;
    End
@@ -560,8 +563,6 @@ begin
   OrderGrid:='';
   bEnterTab:=True;
 
-//odirapagar - 01/11/2016
-//  Bt_EstoquesDemonstrativo.Visible:=False;
   Ts_EstoquesFiltros.TabVisible:=False;
 
   THackDBGrid(Dbg_Estoques).FixedCols:=4;
@@ -870,7 +871,7 @@ begin
      MySql:=
       MySql+' UNION '+
             ' SELECT'+
-            ' ''TOT'' CLASSE,'+
+            ' ''TOTAIS'' CLASSE,'+
             IntToStr(itDM)+' DM,'+
             f_Troca(',','.',CurrToStr(ctDM_PC))+' DM_PC,'+
             f_Troca(',','.',CurrToStr(ctDM_PV))+' DM_PV,'+
@@ -899,12 +900,21 @@ begin
 
      // Abre Apresentação Fisico / Financeiro ==================================
      FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+     FrmSolicitacoes.Bt_QualquerCoisaSalvar.Visible:=False;
+     FrmSolicitacoes.Bt_QualquerCoisaVoltar.Visible:=False;
+
+     FrmSolicitacoes.Pan_QualquerCoisa.Caption:='';
+     If Trim(sgCompradores)<>'' Then
+      FrmSolicitacoes.Pan_QualquerCoisa.Caption:='COMPRADOR(ES): '+sgCompradores
+     Else
+      FrmSolicitacoes.Pan_QualquerCoisa.Caption:='TOODS OS COMPRADORES';
+
+     // Ajusta Tamanho do Form =================================================
      FrmSolicitacoes.AutoSize    :=False;
-     FrmSolicitacoes.ClientHeight:=300;
-     FrmSolicitacoes.ClientWidth :=920;
+     FrmSolicitacoes.ClientHeight:=260; // nr1.AsInteger;// 250;
+     FrmSolicitacoes.ClientWidth :=875; // nr2.AsInteger;// 860;
      FrmSolicitacoes.AutoSize    :=True;
      FrmSolicitacoes.BorderStyle :=bsSingle;
-     FrmSolicitacoes.Pan_QualquerCoisa.Visible:=False;
 
      Dbg_EstoquesDemFinan.Parent:=FrmSolicitacoes.Ts_QualquerCoisa;
      Dbg_EstoquesDemFinan.Top:=30;
@@ -930,6 +940,7 @@ begin
 
      Bt_EstoquesDemonstrativo.Caption:='Abrir Demonstrativo';
 
+     FrmSolicitacoes.Pan_QualquerCoisa.Caption:='';
      FrmSolicitacoes.Close;
 
      Dbg_EstoquesDemFinan.Visible:=False;
@@ -968,6 +979,10 @@ begin
     Dbg_EstoquesDemFinan.Canvas.FillRect(Rect);
     Dbg_EstoquesDemFinan.DefaultDrawDataCell(Rect,Column.Field,state);
   End;
+
+  // Alinhamento
+  DMVirtual.CDS_V_EstoquesFinanCLASSE.Alignment:=taCenter;
+
 end;
 
 procedure TFrmEstoques.Dbg_EstoquesColEnter(Sender: TObject);
@@ -1528,7 +1543,7 @@ Begin
          ' GEN_ID('+sGenProd+',1) SEQ,'+
          ' pr.codproduto COD_PRODUTO,'+
          ' TRIM(pr.apresentacao) DES_PRODUTO,'+
-         ' fc.ind_curva IND_CURVA,'+
+         ' TRIM(fc.ind_curva) IND_CURVA,'+
 
          ' CAST(COALESCE(e4.vlr_venda_m1,0.00) AS NUMERIC(12,2)) VLR_VD_M1,'+
          ' CAST(COALESCE(e4.vlr_venda_m2,0.00) AS NUMERIC(12,2)) VLR_VD_M2,'+
@@ -2297,251 +2312,6 @@ begin
   // Destroi FrmSolicitacoes ===================================================
   FreeAndNil(FrmSolicitacoes);
 
-//OdirApagar - Não Rodar mais o Demonstrativo - OdirDuvida
-//  // Acerta Totalizadores ======================================================
-//  If DMVirtual.CDS_V_Estoques.IsEmpty Then
-//   Exit;
-//
-//  If (bgSiga) And (bgProcessar) Then
-//  Begin
-//    Ts_Estoques.Enabled:=False;
-//
-//    // Acerta Totalizador Curva A ==============================================
-//    DMVirtual.CDS_V_Estoques.DisableControls;
-//    If (iDiasEstA>=0) Or (iEstMinA>=0) Then
-//    Begin
-//      DMVirtual.CDS_V_Estoques.Filtered:=False;
-//      If sgFiltros='' Then
-//       DMVirtual.CDS_V_Estoques.Filter:='IND_CURVA=''A'''
-//      Else
-//       DMVirtual.CDS_V_Estoques.Filter:=sgFiltros+' AND IND_CURVA=''A''';
-//      DMVirtual.CDS_V_Estoques.Filtered:=True;
-//
-//      // Apresenta o Processamento =================================================
-//      OdirPanApres.Caption:='AGUARDE !! Atualizando Classificação Curva A...';
-//      OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-//      OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmEstoques.Width-OdirPanApres.Width)/2));
-//      OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmEstoques.Height-OdirPanApres.Height)/2))-100;
-//      OdirPanApres.BringToFront();
-//      OdirPanApres.Visible:=True;
-//      Refresh;
-//
-//      FrmBelShop.MontaProgressBar(True, FrmEstoques);
-//      pgProgBar.Properties.Max:=DMVirtual.CDS_V_Estoques.RecordCount;
-//      pgProgBar.Position:=0;
-//
-//      DMVirtual.CDS_V_Estoques.First;
-//      While Not DMVirtual.CDS_V_Estoques.Eof do
-//      Begin
-//        Application.ProcessMessages;
-//        pgProgBar.Position:=DMVirtual.CDS_V_Estoques.RecNo;
-//
-//        If Trim(DMVirtual.CDS_V_EstoquesCOD_PRODUTO.AsString)<>'' Then
-//        Begin
-//          DMVirtual.CDS_V_Estoques.Edit;
-//          If iDiasEstA>=0 Then
-//           DMVirtual.CDS_V_EstoquesQTD_DEMANDA.AsCurrency:=
-//                     (DMVirtual.CDS_V_EstoquesQTD_DEMANDAS.AsCurrency/
-//                      DMVirtual.CDS_V_EstoquesNUM_DIASUTEIS.AsInteger)*iDiasEstA;
-//
-//          If (iEstMinA>=0) And (DMVirtual.CDS_V_EstoquesEST_IDEAL.AsInteger>0) Then
-//           DMVirtual.CDS_V_EstoquesEST_IDEAL.AsCurrency:=iEstMinA;
-//
-//          DMVirtual.CDS_V_Estoques.Post;
-//        End; // If Trim(DMVirtual.CDS_V_EstoquesCOD_PRODUTO.AsString)<>'' Then
-//
-//        DMVirtual.CDS_V_Estoques.Next;
-//      End; // While Not DMVirtual.CDS_V_Estoques.Eof do
-//      FrmBelShop.MontaProgressBar(False, FrmEstoques);
-//    End; // If (iDiasEstA>=0) Or (iEstMinA>=0) Then
-//
-//    // Acerta Totalizador Curva B ==============================================
-//    If (iDiasEstB>=0) Or (iEstMinB>=0) Then
-//    Begin
-//      DMVirtual.CDS_V_Estoques.Filtered:=False;
-//      If sgFiltros='' Then
-//       DMVirtual.CDS_V_Estoques.Filter:='IND_CURVA=''B'''
-//      Else
-//       DMVirtual.CDS_V_Estoques.Filter:=sgFiltros+' AND IND_CURVA=''B''';
-//      DMVirtual.CDS_V_Estoques.Filtered:=True;
-//
-//      OdirPanApres.Caption:='AGUARDE !! Atualizando Classificação Curva B...';
-//      Refresh;
-//      FrmBelShop.MontaProgressBar(True, FrmEstoques);
-//      pgProgBar.Properties.Max:=DMVirtual.CDS_V_Estoques.RecordCount;
-//      pgProgBar.Position:=0;
-//
-//      DMVirtual.CDS_V_Estoques.First;
-//      While Not DMVirtual.CDS_V_Estoques.Eof do
-//      Begin
-//        Application.ProcessMessages;
-//        pgProgBar.Position:=DMVirtual.CDS_V_Estoques.RecNo;
-//
-//        If Trim(DMVirtual.CDS_V_EstoquesCOD_PRODUTO.AsString)<>'' Then
-//        Begin
-//          DMVirtual.CDS_V_Estoques.Edit;
-//          If iDiasEstB>=0 Then
-//           DMVirtual.CDS_V_EstoquesQTD_DEMANDA.AsCurrency:=
-//                     (DMVirtual.CDS_V_EstoquesQTD_DEMANDAS.AsCurrency/
-//                      DMVirtual.CDS_V_EstoquesNUM_DIASUTEIS.AsInteger)*iDiasEstB;
-//
-//          If (iEstMinB>=0) And (DMVirtual.CDS_V_EstoquesEST_IDEAL.AsInteger>0) Then
-//           DMVirtual.CDS_V_EstoquesEST_IDEAL.AsCurrency:=iEstMinB;
-//
-//          DMVirtual.CDS_V_Estoques.Post;
-//        End; // If Trim(DMVirtual.CDS_V_EstoquesCOD_PRODUTO.AsString)<>'' Then
-//
-//        DMVirtual.CDS_V_Estoques.Next;
-//      End; // While Not DMVirtual.CDS_V_Estoques.Eof do
-//      FrmBelShop.MontaProgressBar(False, FrmEstoques);
-//    End; // If (iDiasEstB>=0) Or (iEstMinB>=0) Then
-//
-//    // Acerta Totalizador Curva C ==============================================
-//    If (iDiasEstC>=0) Or (iEstMinC>=0) Then
-//    Begin
-//      DMVirtual.CDS_V_Estoques.Filtered:=False;
-//      If sgFiltros='' Then
-//       DMVirtual.CDS_V_Estoques.Filter:='IND_CURVA=''C'''
-//      Else
-//       DMVirtual.CDS_V_Estoques.Filter:=sgFiltros+' AND IND_CURVA=''C''';
-//      DMVirtual.CDS_V_Estoques.Filtered:=True;
-//
-//      OdirPanApres.Caption:='AGUARDE !! Atualizando Classificação Curva C...';
-//      Refresh;
-//      FrmBelShop.MontaProgressBar(True, FrmEstoques);
-//      pgProgBar.Properties.Max:=DMVirtual.CDS_V_Estoques.RecordCount;
-//      pgProgBar.Position:=0;
-//
-//      DMVirtual.CDS_V_Estoques.First;
-//      While Not DMVirtual.CDS_V_Estoques.Eof do
-//      Begin
-//        Application.ProcessMessages;
-//        pgProgBar.Position:=DMVirtual.CDS_V_Estoques.RecNo;
-//
-//        If Trim(DMVirtual.CDS_V_EstoquesCOD_PRODUTO.AsString)<>'' Then
-//        Begin
-//          DMVirtual.CDS_V_Estoques.Edit;
-//          If iDiasEstC>=0 Then
-//           DMVirtual.CDS_V_EstoquesQTD_DEMANDA.AsCurrency:=
-//                     (DMVirtual.CDS_V_EstoquesQTD_DEMANDAS.AsCurrency/
-//                      DMVirtual.CDS_V_EstoquesNUM_DIASUTEIS.AsInteger)*iDiasEstC;
-//
-//          If (iEstMinC>=0) And (DMVirtual.CDS_V_EstoquesEST_IDEAL.AsInteger>0) Then
-//           DMVirtual.CDS_V_EstoquesEST_IDEAL.AsCurrency:=iEstMinC;
-//
-//          DMVirtual.CDS_V_Estoques.Post;
-//        End; // If Trim(DMVirtual.CDS_V_EstoquesCOD_PRODUTO.AsString)<>'' Then
-//
-//        DMVirtual.CDS_V_Estoques.Next;
-//      End; // While Not DMVirtual.CDS_V_Estoques.Eof do
-//      FrmBelShop.MontaProgressBar(False, FrmEstoques);
-//    End; // If (iDiasEstC>=0) Or (iEstMinC>=0) Then
-//
-//    // Acerta Totalizador Curva D ==============================================
-//    If (iDiasEstD>=0) Or (iEstMinD>=0) Then
-//    Begin
-//      DMVirtual.CDS_V_Estoques.Filtered:=False;
-//      If sgFiltros='' Then
-//       DMVirtual.CDS_V_Estoques.Filter:='IND_CURVA=''D'''
-//      Else
-//       DMVirtual.CDS_V_Estoques.Filter:=sgFiltros+' AND IND_CURVA=''D''';
-//      DMVirtual.CDS_V_Estoques.Filtered:=True;
-//
-//      OdirPanApres.Caption:='AGUARDE !! Atualizando Classificação Curva D...';
-//      Refresh;
-//      FrmBelShop.MontaProgressBar(True, FrmEstoques);
-//      pgProgBar.Properties.Max:=DMVirtual.CDS_V_Estoques.RecordCount;
-//      pgProgBar.Position:=0;
-//
-//      DMVirtual.CDS_V_Estoques.First;
-//      While Not DMVirtual.CDS_V_Estoques.Eof do
-//      Begin
-//        Application.ProcessMessages;
-//        pgProgBar.Position:=DMVirtual.CDS_V_Estoques.RecNo;
-//
-//        If Trim(DMVirtual.CDS_V_EstoquesCOD_PRODUTO.AsString)<>'' Then
-//        Begin
-//          DMVirtual.CDS_V_Estoques.Edit;
-//          If iDiasEstD>=0 Then
-//           DMVirtual.CDS_V_EstoquesQTD_DEMANDA.AsCurrency:=
-//                     (DMVirtual.CDS_V_EstoquesQTD_DEMANDAS.AsCurrency/
-//                      DMVirtual.CDS_V_EstoquesNUM_DIASUTEIS.AsInteger)*iDiasEstD;
-//
-//          If (iEstMinD>=0) And (DMVirtual.CDS_V_EstoquesEST_IDEAL.AsInteger>0) Then
-//           DMVirtual.CDS_V_EstoquesEST_IDEAL.AsCurrency:=iEstMinD;
-//
-//          DMVirtual.CDS_V_Estoques.Post;
-//        End; // If Trim(DMVirtual.CDS_V_EstoquesCOD_PRODUTO.AsString)<>'' Then
-//
-//        DMVirtual.CDS_V_Estoques.Next;
-//      End; // While Not DMVirtual.CDS_V_Estoques.Eof do
-//      FrmBelShop.MontaProgressBar(False, FrmEstoques);
-//    End; // If (iDiasEstD>=0) Or (iEstMinD>=0) Then
-//
-//    // Acerta Totalizador Curva E ==============================================
-//    If (iDiasEstE>=0) Or (iEstMinE>=0) Then
-//    Begin
-//      DMVirtual.CDS_V_Estoques.Filtered:=False;
-//      If sgFiltros='' Then
-//       DMVirtual.CDS_V_Estoques.Filter:='IND_CURVA=''E'''
-//      Else
-//       DMVirtual.CDS_V_Estoques.Filter:=sgFiltros+' AND IND_CURVA=''E''';
-//      DMVirtual.CDS_V_Estoques.Filtered:=True;
-//
-//      OdirPanApres.Caption:='AGUARDE !! Atualizando Classificação Curva E...';
-//      Refresh;
-//      FrmBelShop.MontaProgressBar(True, FrmEstoques);
-//      pgProgBar.Properties.Max:=DMVirtual.CDS_V_Estoques.RecordCount;
-//      pgProgBar.Position:=0;
-//
-//      DMVirtual.CDS_V_Estoques.First;
-//      While Not DMVirtual.CDS_V_Estoques.Eof do
-//      Begin
-//        Application.ProcessMessages;
-//        pgProgBar.Position:=DMVirtual.CDS_V_Estoques.RecNo;
-//
-//        If Trim(DMVirtual.CDS_V_EstoquesCOD_PRODUTO.AsString)<>'' Then
-//        Begin
-//          DMVirtual.CDS_V_Estoques.Edit;
-//          If iDiasEstE>=0 Then
-//           DMVirtual.CDS_V_EstoquesQTD_DEMANDA.AsCurrency:=
-//                     (DMVirtual.CDS_V_EstoquesQTD_DEMANDAS.AsCurrency/
-//                      DMVirtual.CDS_V_EstoquesNUM_DIASUTEIS.AsInteger)*iDiasEstE;
-//
-//          If (iEstMinE>=0) And (DMVirtual.CDS_V_EstoquesEST_IDEAL.AsInteger>0) Then
-//           DMVirtual.CDS_V_EstoquesEST_IDEAL.AsCurrency:=iEstMinE;
-//
-//          DMVirtual.CDS_V_Estoques.Post;
-//        End; // If Trim(DMVirtual.CDS_V_EstoquesCOD_PRODUTO.AsString)<>'' Then
-//
-//        DMVirtual.CDS_V_Estoques.Next;
-//      End; // While Not DMVirtual.CDS_V_Estoques.Eof do
-//      FrmBelShop.MontaProgressBar(False, FrmEstoques);
-//      OdirPanApres.Visible:=False;
-//    End; // If (iDiasEstE>=0) Or (iEstMinE>=0) Then
-//
-//    // Salva Resultados dos ClientDataSet's ====================================
-//    DMVirtual.CDS_V_Estoques.Filtered:=False;
-//
-//    If sgFiltros<>'' Then
-//     Begin
-//       DMVirtual.CDS_V_Estoques.Filter:=sgFiltros;
-//       DMVirtual.CDS_V_Estoques.Filtered:=True;
-//     End
-//    Else
-//     Begin
-//       DMVirtual.CDS_V_Estoques.Filter:='';
-//     End;
-//    DMVirtual.CDS_V_Estoques.First;
-//
-//    DMVirtual.CDS_V_Estoques.EnableControls;
-//
-//    // Acerta Totalizador Geral ================================================
-//    Ts_Estoques.Enabled:=True;
-//
-//    msg('Novos Parametros'+cr+cr+'Calculados com SUCESSO !!','A');
-//  End; // If (bgSiga) And (bgProcessar) Then
-
 end;
 
 procedure TFrmEstoques.PopM_EstoquesAlterarTodosEstMnimosClick(Sender: TObject);
@@ -2824,11 +2594,12 @@ begin
 
   Dbg_Estoques.SetFocus;
 
-  // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
+  // Seleciona Comprador =======================================================
   FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
   FrmBelShop.AbreSolicitacoes(18);
 
-  // Seleciona Comprador =======================================================
+  sgCompradores:='';
+
   MySql:=' SELECT ''NAO'' PROC, CC.NOMESUBCUSTO comprador, COALESCE(CC.CODCENTROCUSTO,0) codigo'+
          ' FROM CENTROCUSTO CC'+
          ' WHERE  CC.NOMECUSTO=''COMPRAS'''+
@@ -2870,9 +2641,15 @@ begin
       If DMBelShop.CDS_Busca.FieldByName('PROC').AsString='SIM' Then
       Begin
         If Trim(s)='' Then
-         s:='COD_COMPRADOR='+QuotedStr(TRIM(DMBelShop.CDS_Busca.FieldByName('Codigo').AsString))
+        Begin
+          s:='COD_COMPRADOR='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Codigo').AsString));
+          sgCompradores:=Trim(DMBelShop.CDS_Busca.FieldByName('Comprador').AsString);
+        End
         Else
-         s:=s+' OR COD_COMPRADOR='+QuotedStr(TRIM(DMBelShop.CDS_Busca.FieldByName('Codigo').AsString))
+        Begin
+          s:=s+' OR COD_COMPRADOR='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Codigo').AsString));
+          sgCompradores:=sgCompradores+' / '+Trim(DMBelShop.CDS_Busca.FieldByName('Comprador').AsString);
+        End;
       End;
 
       DMBelShop.CDS_Busca.Next;

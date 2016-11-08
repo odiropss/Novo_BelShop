@@ -3261,14 +3261,17 @@ Begin
 
           sEndIP:=DMVirtual.CDS_V_EmpConexoesENDERECO_IP.AsString;
 
-          // Tipo de Conexão: TCP/IP NetBEUI
+          // Tipo de Conexão: NetBEUI
           If (Trim(sgTpConexao)='')              Or (Trim(sgTpConexao)='NetBEUI') Or
-             (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgCompServer) Then
+             (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgCompServer) Or
+             (AnsiUpperCase(sEndIP)=sgIPServer) Then
            s:='\\'+IncludeTrailingPathDelimiter(sEndIP)+
                    IncludeTrailingPathDelimiter(DMVirtual.CDS_V_EmpConexoesPASTA_BASE_DADOS.AsString)+
                                                DMVirtual.CDS_V_EmpConexoesDES_BASE_DADOS.AsString;
 
-          If (Trim(sgTpConexao)='TCP/IP') and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and (AnsiUpperCase(sEndIP)<>sgCompServer) Then
+          // Tipo de Conexão: TCP/IP
+          If (Trim(sgTpConexao)='TCP/IP')          and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and
+             (AnsiUpperCase(sEndIP)<>sgCompServer) and (AnsiUpperCase(sEndIP)<>sgIPServer) Then
            s:=sEndIP+':'+
               IncludeTrailingPathDelimiter(DMVirtual.CDS_V_EmpConexoesPASTA_BASE_DADOS.AsString)+
                                            DMVirtual.CDS_V_EmpConexoesDES_BASE_DADOS.AsString;
@@ -3298,7 +3301,7 @@ Begin
   MySql:='Select *'+
          ' From EMP_Conexoes e'+
          ' Where e.Ind_Ativo=''NAO'''+
-         ' And e.cod_filial>30'+
+         ' And e.cod_filial>40'+
          ' Order by Cod_Emp';
   CDS_ConectaEmpresa.Close;
   SDS_ConectaEmpresa.CommandText:=MySql;
@@ -3316,9 +3319,10 @@ Begin
 
            sEndIP:=CDS_ConectaEmpresa.FieldByName('ENDERECO_IP').AsString;
 
-           //Tipo de Conexão: TCP/IP NetBEUI
-           If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI')  Or
-              (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgCompServer) Then
+           // Tipo de Conexão: NetBEUI
+           If (Trim(sgTpConexao)='')              Or (Trim(sgTpConexao)='NetBEUI')  Or
+              (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgIPServer) Or
+              (AnsiUpperCase(sEndIP)=sgCompServer) Then
            Begin
              s:='\\';
 
@@ -3331,9 +3335,11 @@ Begin
 
              s:=s+IncludeTrailingPathDelimiter(CDS_ConectaEmpresa.FieldByName('Pasta_Base_Dados').AsString)+
                                                CDS_ConectaEmpresa.FieldByName('Des_Base_Dados').AsString;
-           End; // If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then
+           End; // If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then ...
 
-           If (Trim(sgTpConexao)='TCP/IP') and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and (AnsiUpperCase(sEndIP)<>sgCompServer) Then
+           // Tipo de Conexão: TCP/IP
+           If (Trim(sgTpConexao)='TCP/IP')          and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and
+              (AnsiUpperCase(sEndIP)<>sgCompServer) and (AnsiUpperCase(sEndIP)<>sgIPServer) Then
            Begin
              s:=sEndIP+':'+
                 IncludeTrailingPathDelimiter(CDS_ConectaEmpresa.FieldByName('Pasta_Base_Dados').AsString)+

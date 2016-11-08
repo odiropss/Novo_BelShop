@@ -186,7 +186,6 @@ Begin
         If i=2 Then sgTpConexao:=Trim(s);
       End;
     End; // For i := 0 to tsArquivo.Count - 1 do
-
   Finally // Try
     { Libera a instancia da lista da memória }
     FreeAndNil(tsArquivo);
@@ -238,14 +237,17 @@ Begin
           Else
            sEndIP:=CDS_Busca.FieldByName('Endereco_IP').AsString;
 
-          // Tipo de Conexão: TCP/IP NetBEUI
+          // Tipo de Conexão: NetBEUI
           If (Trim(sgTpConexao)='')              Or (Trim(sgTpConexao)='NetBEUI') Or
-             (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgCompServer) Then
+             (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgCompServer)  Or
+             (AnsiUpperCase(sEndIP)=sgIPServer) Then
            s:='\\'+IncludeTrailingPathDelimiter(sEndIP)+
                    IncludeTrailingPathDelimiter(CDS_Busca.FieldByName('Pasta_Base_Dados').AsString)+
                                                 CDS_Busca.FieldByName('DES_BASE_DADOS').AsString;
 
-          If (Trim(sgTpConexao)='TCP/IP') and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and (AnsiUpperCase(sEndIP)<>sgCompServer) Then
+          // Tipo de Conexão: TCP/IP
+          If (Trim(sgTpConexao)='TCP/IP') and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and
+             (AnsiUpperCase(sEndIP)<>sgCompServer) and (AnsiUpperCase(sEndIP)<>sgIPServer) Then
            s:=sEndIP+':'+
               IncludeTrailingPathDelimiter(CDS_Busca.FieldByName('Pasta_Base_Dados').AsString)+
                                            CDS_Busca.FieldByName('DES_BASE_DADOS').AsString;
@@ -537,7 +539,7 @@ Function TDMTransferencias.ConectaMPMS: Boolean;
 Var
   MySql: String;
   i: Integer;
-  s: String;
+  sConcTCP_IP, sConcNetBEUI: String;
   sEndIP: String;
 Begin
   Result:=False;
@@ -562,17 +564,34 @@ Begin
            sEndIP:=DMTransferencias.CDS_Busca.FieldByName('ENDERECO_IP').AsString;
 
            // Tipo de Conexão: TCP/IP
-           s:=sEndIP+':'+
+           sConcTCP_IP:=sEndIP+':'+
               IncludeTrailingPathDelimiter(DMTransferencias.CDS_Busca.FieldByName('PASTA_BASE_DADOS').AsString)+
                                            DMTransferencias.CDS_Busca.FieldByName('DES_BASE_DADOS').AsString;
 
-          (DMConexoes.Components[i] as TIBDatabase).DatabaseName:=s;
+           // Tipo de Conexão: NetBEUI
+           sConcNetBEUI:='\\'+sEndIP+'\'+
+              IncludeTrailingPathDelimiter(DMTransferencias.CDS_Busca.FieldByName('PASTA_BASE_DADOS').AsString)+
+                                           DMTransferencias.CDS_Busca.FieldByName('DES_BASE_DADOS').AsString;
+
+          (DMConexoes.Components[i] as TIBDatabase).DatabaseName:=sConcTCP_IP;
+
+          If Not ConexaoEmpIndividual('IBDB_MPMS', 'IBT_MPMS','A') Then
+          Begin
+            (DMConexoes.Components[i] as TIBDatabase).DatabaseName:=sConcNetBEUI;
+            If Not ConexaoEmpIndividual('IBDB_MPMS', 'IBT_MPMS','A') Then
+            Begin
+              msg('Erro de Conecxão ao Banco de Dados'+cr+' do CD, Avise o Odir Imediatamente !!','X');
+              Application.Terminate;
+              Exit;
+            End;
+          End;
+
           Break;
         End;
       End; // If DMConexoes.Components[i] is TIBDatabase Then
     End; // For i:=0 to DMConexoes.ComponentCount-1 do
 
-    ConexaoEmpIndividual('IBDB_MPMS', 'IBT_MPMS','A');
+    // Cria Querys da MPMS =====================================================
     CriaQueryIB('IBDB_MPMS', 'IBT_MPMS', IBQ_MPMS, True);
     DMTransferencias.CDS_Busca.Close;
 
@@ -728,6 +747,7 @@ begin
   SQLC.Connected:=False;
 
   ConectaBanco;
+
   MontaConexaoEmpresas;
 
 end;

@@ -2448,7 +2448,8 @@ var
   iNumSeqDoc: Integer;
   sNumDoc: String;
 
-  sgProdutos, sgLikeProdutos, sgFornecedores, sgGrupos, sgSubGrupos: String;
+  sgProdutos, sgLikeProdutos, sgFornecedores, sgCompradores,
+  sgGrupos, sgSubGrupos,
   sgAplicacoes, sgFamiliaPrecos, sgGruposST: String;
   sgCurvas: String;
 
@@ -17489,25 +17490,22 @@ Begin
           // Conexõesa CD=99 e Central de Trocas -------------------------------
           If ((sCodMatriz='99') Or (sCodMatriz='50')) Then
            Begin
-//             If AnsiUpperCase(sEndIP)<>'LOCALHOST' Then // 192.168.0.252:E:\SIDICOM.NEW\BelShop_CD.FDB
-//              s:=sEndIP+':'+IncludeTrailingPathDelimiter(
-//                            DMBelShop.CDS_ConectaEmpresa.FieldByName('PASTA_BASE_DADOS').AsString)+
-//                            DMBelShop.CDS_ConectaEmpresa.FieldByName('DES_BASE_DADOS').AsString
-//             Else
-              s:='\\'+IncludeTrailingPathDelimiter(sEndIP)+IncludeTrailingPathDelimiter(
-                      DMBelShop.CDS_ConectaEmpresa.FieldByName('PASTA_BASE_DADOS').AsString)+
-                      DMBelShop.CDS_ConectaEmpresa.FieldByName('DES_BASE_DADOS').AsString
+             s:='\\'+IncludeTrailingPathDelimiter(sEndIP)+IncludeTrailingPathDelimiter(
+                     DMBelShop.CDS_ConectaEmpresa.FieldByName('PASTA_BASE_DADOS').AsString)+
+                     DMBelShop.CDS_ConectaEmpresa.FieldByName('DES_BASE_DADOS').AsString
            End // If ((sCodMatriz='99') Or (sCodMatriz='50')) Then
 
           // Tipo de Conexão: NetBEUI ------------------------------------------
-          Else If (Trim(sgTpConexao)='')              Or (Trim(sgTpConexao)='NetBEUI') Or
-                  (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgCompServer) Then
+          Else If (Trim(sgTpConexao)='')              Or (Trim(sgTpConexao)='NetBEUI')        Or
+                  (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgCompServer) Or
+                  (AnsiUpperCase(sEndIP)=sgIPServer) Then
            s:='\\'+IncludeTrailingPathDelimiter(sEndIP)+IncludeTrailingPathDelimiter(
                                                DMBelShop.CDS_ConectaEmpresa.FieldByName('PASTA_BASE_DADOS').AsString)+
                                                DMBelShop.CDS_ConectaEmpresa.FieldByName('DES_BASE_DADOS').AsString
 
           // Tipo de Conexão: TCP/IP -------------------------------------------
-          Else If (Trim(sgTpConexao)='TCP/IP') and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and (AnsiUpperCase(sEndIP)<>sgCompServer) Then
+          Else If (Trim(sgTpConexao)='TCP/IP')          and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and
+                  (AnsiUpperCase(sEndIP)<>sgCompServer) and (AnsiUpperCase(sEndIP)<>sgIPServer) Then
            s:=sEndIP+':'+
               IncludeTrailingPathDelimiter(DMBelShop.CDS_ConectaEmpresa.FieldByName('PASTA_BASE_DADOS').AsString)+
                                            DMBelShop.CDS_ConectaEmpresa.FieldByName('DES_BASE_DADOS').AsString;
@@ -17596,25 +17594,22 @@ Begin
           // Conexõesa CD=99 e Central de Trocas -------------------------------
           If ((sCodMatriz='99') Or (sCodMatriz='50')) Then
            Begin
-//             If AnsiUpperCase(sEndIP)<>'LOCALHOST' Then // 192.168.0.252:E:\SIDICOM.NEW\BelShop_CD.FDB
-//              s:=sEndIP+':'+IncludeTrailingPathDelimiter(
-//                            DMBelShop.CDS_ConectaEmpresa.FieldByName('PASTA_BASE_DADOS').AsString)+
-//                            DMBelShop.CDS_ConectaEmpresa.FieldByName('DES_BASE_DADOS').AsString
-//             Else
               s:='\\'+IncludeTrailingPathDelimiter(sEndIP)+IncludeTrailingPathDelimiter(
                       DMBelShop.CDS_ConectaEmpresa.FieldByName('PASTA_BASE_DADOS').AsString)+
                       DMBelShop.CDS_ConectaEmpresa.FieldByName('DES_BASE_DADOS').AsString
            End // If ((sCodMatriz='99') Or (sCodMatriz='50')) Then
 
           // Tipo de Conexão: NetBEUI ------------------------------------------
-          Else If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Or
-               (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgCompServer) Then
+          Else If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI')                  Or
+               (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgCompServer) Or
+               (AnsiUpperCase(sEndIP)=sgIPServer) Then
            s:='\\'+IncludeTrailingPathDelimiter(sEndIP)+IncludeTrailingPathDelimiter(
                                                DMBelShop.CDS_ConectaEmpresa.FieldByName('PASTA_BASE_DADOS').AsString)+
                                                DMBelShop.CDS_ConectaEmpresa.FieldByName('DES_BASE_DADOS').AsString
 
           // Tipo de Conexão: TCP/IP -------------------------------------------
-          Else If (Trim(sgTpConexao)='TCP/IP') and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and (AnsiUpperCase(sEndIP)<>sgCompServer) Then
+          Else If (Trim(sgTpConexao)='TCP/IP')          and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and
+                  (AnsiUpperCase(sEndIP)<>sgCompServer) and (AnsiUpperCase(sEndIP)<>sgIPServer) Then
            s:=sEndIP+':'+
               IncludeTrailingPathDelimiter(DMBelShop.CDS_ConectaEmpresa.FieldByName('PASTA_BASE_DADOS').AsString)+
                                            DMBelShop.CDS_ConectaEmpresa.FieldByName('DES_BASE_DADOS').AsString;
