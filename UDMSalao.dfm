@@ -3029,6 +3029,7 @@ object DMSalao: TDMSalao
   object CDS_V_ComissoesLojas: TClientDataSet
     Aggregates = <>
     Params = <>
+    AfterScroll = CDS_V_ComissoesLojasAfterScroll
     Left = 472
     Top = 472
     object CDS_V_ComissoesLojasCOD_HABSERV: TIntegerField

@@ -169,9 +169,6 @@ var
   
 implementation
 
-// Odirapagar 22/05/2014
-// Retira do Uses: Uf_Conecta, uj_001, uj_002, 
-
 uses DK_Procs1, UDMBelShop, UDMVirtual, Math;
 
 {$R *.dfm}

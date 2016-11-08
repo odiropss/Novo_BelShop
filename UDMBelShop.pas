@@ -818,7 +818,6 @@ type
     DS_Seguranca: TDataSource;
     SQLSP: TSQLStoredProc;
     CDS_EmpProcessaCOD_LISTAPRE: TStringField;
-    Timer1: TTimer;
     CDS_EmpresaNUM_SINDICATO: TStringField;
     CDS_EmpresaNUM_ALVARA_MUN: TStringField;
     IBQ_Contar: TIBQuery;
@@ -1206,7 +1205,6 @@ type
     procedure CDS_Gr_FinanceiroAfterScroll(DataSet: TDataSet);
     procedure CDS_ObjetivosAfterScroll(DataSet: TDataSet);
     procedure CDS_ObjetivosEmpresasAfterScroll(DataSet: TDataSet);
-    procedure Timer1Timer(Sender: TObject);
     procedure IBQ_AComprarAfterOpen(DataSet: TDataSet);
     procedure CDS_FluxoFornecedoresAfterScroll(DataSet: TDataSet);
 
@@ -1288,9 +1286,6 @@ var
   sDMFilial: String;
 
   sgTipoImpressao: String;
-
-  // OdirApagar - 23/05/2016
-  // sgHrConsisteNFeOC: String;
 
   TD : TTransactionDesc; // Ponteiro de Transação
 
@@ -3266,14 +3261,17 @@ Begin
 
           sEndIP:=DMVirtual.CDS_V_EmpConexoesENDERECO_IP.AsString;
 
-          // Tipo de Conexão: TCP/IP NetBEUI
+          // Tipo de Conexão: NetBEUI
           If (Trim(sgTpConexao)='')              Or (Trim(sgTpConexao)='NetBEUI') Or
-             (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgCompServer) Then
+             (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgCompServer) Or
+             (AnsiUpperCase(sEndIP)=sgIPServer) Then
            s:='\\'+IncludeTrailingPathDelimiter(sEndIP)+
                    IncludeTrailingPathDelimiter(DMVirtual.CDS_V_EmpConexoesPASTA_BASE_DADOS.AsString)+
                                                DMVirtual.CDS_V_EmpConexoesDES_BASE_DADOS.AsString;
 
-          If (Trim(sgTpConexao)='TCP/IP') and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and (AnsiUpperCase(sEndIP)<>sgCompServer) Then
+          // Tipo de Conexão: TCP/IP
+          If (Trim(sgTpConexao)='TCP/IP')          and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and
+             (AnsiUpperCase(sEndIP)<>sgCompServer) and (AnsiUpperCase(sEndIP)<>sgIPServer) Then
            s:=sEndIP+':'+
               IncludeTrailingPathDelimiter(DMVirtual.CDS_V_EmpConexoesPASTA_BASE_DADOS.AsString)+
                                            DMVirtual.CDS_V_EmpConexoesDES_BASE_DADOS.AsString;
@@ -3303,7 +3301,7 @@ Begin
   MySql:='Select *'+
          ' From EMP_Conexoes e'+
          ' Where e.Ind_Ativo=''NAO'''+
-         ' And e.cod_filial>30'+
+         ' And e.cod_filial>40'+
          ' Order by Cod_Emp';
   CDS_ConectaEmpresa.Close;
   SDS_ConectaEmpresa.CommandText:=MySql;
@@ -3321,9 +3319,10 @@ Begin
 
            sEndIP:=CDS_ConectaEmpresa.FieldByName('ENDERECO_IP').AsString;
 
-           //Tipo de Conexão: TCP/IP NetBEUI
-           If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI')  Or
-              (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgCompServer) Then
+           // Tipo de Conexão: NetBEUI
+           If (Trim(sgTpConexao)='')              Or (Trim(sgTpConexao)='NetBEUI')  Or
+              (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgIPServer) Or
+              (AnsiUpperCase(sEndIP)=sgCompServer) Then
            Begin
              s:='\\';
 
@@ -3336,9 +3335,11 @@ Begin
 
              s:=s+IncludeTrailingPathDelimiter(CDS_ConectaEmpresa.FieldByName('Pasta_Base_Dados').AsString)+
                                                CDS_ConectaEmpresa.FieldByName('Des_Base_Dados').AsString;
-           End; // If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then
+           End; // If (Trim(sgTpConexao)='') Or (Trim(sgTpConexao)='NetBEUI') Then ...
 
-           If (Trim(sgTpConexao)='TCP/IP') and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and (AnsiUpperCase(sEndIP)<>sgCompServer) Then
+           // Tipo de Conexão: TCP/IP
+           If (Trim(sgTpConexao)='TCP/IP')          and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and
+              (AnsiUpperCase(sEndIP)<>sgCompServer) and (AnsiUpperCase(sEndIP)<>sgIPServer) Then
            Begin
              s:=sEndIP+':'+
                 IncludeTrailingPathDelimiter(CDS_ConectaEmpresa.FieldByName('Pasta_Base_Dados').AsString)+
@@ -3670,17 +3671,6 @@ begin
   ConectaBanco;
 
   MontaConexaoEmpresas;
-
-// OdirApagar - 23/05/2016
-//  // Guarda Horario de Inicio de Verificação de Inconsistencia de NFe/OC ========
-//  MySql:=' SELECT p.hr_in_cons_nfe_oc'+
-//         ' FROM PARAMETROS p';
-//  CDS_BuscaRapida.Close;
-//  SDS_BuscaRapida.CommandText:=MySql;
-//  CDS_BuscaRapida.Open;
-//  sgHrConsisteNFeOC:=CDS_BuscaRapida.FieldByName('hr_in_cons_nfe_oc').AsString;
-//  CDS_BuscaRapida.Close;
-
 end;
 
 procedure TDMBelShop.CDS_AComprarOCsAfterScroll(DataSet: TDataSet);
@@ -3766,14 +3756,6 @@ begin
   IBT_BelShop.CommitRetaining;
   IBT_BelShop.Commit;
 
-//odirApagar - 12/08/2015
-//  IBQ_AComprar.DisableControls;
-//  CDS_AComprarItens.DisableControls;
-//
-//  CDS_AComprarItens.Close;
-//  IBQ_AComprar.Close;
-//  CDS_AComprarOCs.Close;
-
   // Calucla os Totais do Documento
   If Not Doc_CalculaValores(sDoc, sCodItem, sCodLoja) Then
    msg('Erro no Totalizador !!'+cr+cr+'Entrar em Contato com o Odir !!','A');
@@ -3797,10 +3779,6 @@ begin
    FrmBelShop.AlteraAComprar(IBQ_AComprar, 'Q', VarToStr(FrmBelShop.EdtGeraOCBuscaDocto.Value))
   Else
    FrmBelShop.AlteraAComprar(IBQ_AComprar, 'Q', VarToStr(FrmGeraPedidosComprasLojas.EdtGeraOCBuscaDocto.Value));
-
-//odirApagar - 12/08/2015
-//  IBQ_AComprar.EnableControls;
-//  CDS_AComprarItens.EnableControls;
 
 end;
 
@@ -4064,19 +4042,6 @@ begin
 
   End; // If Trim(sgCodLojaUnica)<>'' Then
 
-  // OdirApagar - 12/08/2015
-//  If Trim(sgCodLojaUnica)='' Then
-//  Begin
-//    If FrmBelShop.PC_GeraOCApresentacao.ActivePage=FrmBelShop.Ts_GeraOCGrid Then
-//    Begin
-//      If FrmBelShop.Dbg_GeraOCGrid.SelectedIndex<>9 Then
-//      Begin
-//        FrmBelShop.Dbg_GeraOCGrid.SelectedIndex:=0;
-//        FrmBelShop.Dbg_GeraOCGrid.SelectedIndex:=3;
-//      End;
-//    End;
-//  End;
-
 end;
 
 procedure TDMBelShop.CDS_Gr_FinanceiroAfterScroll(DataSet: TDataSet);
@@ -4193,65 +4158,7 @@ begin
 
 end;
 
-// OdirApagar - 23/05/2016 - Excluir Componente Timer1
-procedure TDMBelShop.Timer1Timer(Sender: TObject);
-//Var
-//  MySql, sHora: String;
-begin
-//  If FrmBelShop.PC_Principal.ActivePage=FrmBelShop.Ts_OrdemCompra Then
-//  Begin
-//    sHora:='';
-//    MySql:=' SELECT p.ind_consiste_nfe'+
-//           ' FROM PARAMETROS p'+
-//           ' WHERE p.ind_consiste_nfe=''SIM''';
-//    CDS_BuscaRapida.Close;
-//    SDS_BuscaRapida.CommandText:=MySql;
-//    CDS_BuscaRapida.Open;
-//    sHora:=CDS_BuscaRapida.FieldByName('ind_consiste_nfe').AsString;
-//    CDS_BuscaRapida.Close;
-//
-//    If sHora<>'' Then
-//    Begin
-//      sHora:=TimeToStr(DataHoraServidorFI(SDS_DtaHoraServidor));
-//      sHora:=Copy(sHora,1,2);
-//
-//      If sHora=sgHrConsisteNFeOC Then
-//       Begin
-//         sgHrConsisteNFeOC:=IntToStr(StrToInt(sgHrConsisteNFeOC)+1);
-//
-//         If sgHrConsisteNFeOC='18' Then
-//         Begin
-//           MySql:=' SELECT p.hr_in_cons_nfe_oc'+
-//                  ' FROM PARAMETROS p';
-//           CDS_BuscaRapida.Close;
-//           SDS_BuscaRapida.CommandText:=MySql;
-//           CDS_BuscaRapida.Open;
-//           sgHrConsisteNFeOC:=CDS_BuscaRapida.FieldByName('hr_in_cons_nfe_oc').AsString;
-//           CDS_BuscaRapida.Close;
-//         End;
-//
-//         // Verifica se Existe Registro a Consistir =============================
-//         MySql:=' SELECT FIRST 1 c.ind_liberado'+
-//                ' FROM CONSISTENCIAS_OC_NFE c'+
-//                ' WHERE c.ind_liberado=''NAO''';
-//         CDS_BuscaRapida.Close;
-//         SDS_BuscaRapida.CommandText:=MySql;
-//         CDS_BuscaRapida.Open;
-//         sHora:=CDS_BuscaRapida.FieldByName('ind_liberado').AsString;
-//         CDS_BuscaRapida.Close;
-//
-//         If Trim(sHora)<>'' Then
-//          msg('Existem Incosistencias NFe/OC !!'+cr+'Favor Verificar...','A');
-//       End // If sHora=sgHrConsisteNFeOC Then
-//      Else If StrToInt(sHora)>StrToInt(sgHrConsisteNFeOC) Then
-//       Begin
-//         sgHrConsisteNFeOC:=IntToStr(StrToInt(sgHrConsisteNFeOC)+1);
-//       End; // If sHora=sgHrConsisteNFeOC Then
-//
-//    End; // If sHora<>'' Then
-//  End; // If FrmBelShop.PC_Principal.ActivePage=FrmBelShop.Ts_OrdemCompra Then
-end;
-
+// OdirApagar - 23/05/2016 - Excluir Componente Timer1 - OdirDuvida
 procedure TDMBelShop.IBQ_AComprarAfterOpen(DataSet: TDataSet);
 begin
   sgIndOCGerada:='';

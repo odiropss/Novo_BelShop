@@ -194,6 +194,7 @@ object FrmEstoques: TFrmEstoques
           item
             Expanded = False
             FieldName = 'PC_CUSTO'
+            ReadOnly = True
             Title.Alignment = taRightJustify
             Width = 60
             Visible = True
@@ -210,6 +211,7 @@ object FrmEstoques: TFrmEstoques
           item
             Expanded = False
             FieldName = 'PER_MARGEM'
+            ReadOnly = True
             Title.Alignment = taRightJustify
             Width = 60
             Visible = True
@@ -229,6 +231,13 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'DES_FORNECEDOR'
             ReadOnly = True
             Width = 300
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DES_COMPRADOR'
+            ReadOnly = True
+            Width = 100
             Visible = True
           end
           item
@@ -405,12 +414,12 @@ object FrmEstoques: TFrmEstoques
           969
           55)
         object Bt_Odir: TJvTransparentButton
-          Left = 696
-          Top = 32
-          Width = 109
-          Height = 21
+          Left = 557
+          Top = 8
+          Width = 83
+          Height = 19
           Anchors = [akTop, akRight]
-          Caption = 'ODIR - Duplos'
+          Caption = 'ODIR-Duplos'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -703,37 +712,13 @@ object FrmEstoques: TFrmEstoques
               'Ativo/N'#227'o Compra')
           end
         end
-        object DBE_EstoquesTOT1: TDBEdit
-          Left = 840
-          Top = 8
-          Width = 121
-          Height = 19
-          Anchors = [akTop, akRight]
-          DataField = 'VLR_TOT_VENDAS_ANO'
-          DataSource = DMVirtual.DS_V_Estoques
-          TabOrder = 6
-          Visible = False
-          OnChange = DBE_EstoquesTOT1Change
-        end
-        object DBE_EstoquesTOT2: TDBEdit
-          Left = 840
-          Top = 28
-          Width = 121
-          Height = 19
-          Anchors = [akTop, akRight]
-          DataField = 'VLR_TOT_VENDAS_4M'
-          DataSource = DMVirtual.DS_V_Estoques
-          TabOrder = 7
-          Visible = False
-          OnChange = DBE_EstoquesTOT1Change
-        end
         object Bt_EstoquesDemonstrativo: TJvXPButton
-          Left = 666
+          Left = 803
           Top = 2
           Width = 164
-          Height = 25
+          Height = 51
           Caption = 'Abrir Demonstrativo'
-          TabOrder = 8
+          TabOrder = 6
           TabStop = False
           Glyph.Data = {
             07544269746D6170AA040000424DAA0400000000000036000000280000001400
@@ -775,14 +760,32 @@ object FrmEstoques: TFrmEstoques
             BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
             BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF}
           ShowFocusRect = True
+          Align = alRight
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          Visible = False
           OnClick = Bt_EstoquesDemonstrativoClick
+        end
+        object Bt_EstoquesFiltroComprador: TJvXPButton
+          Tag = 92
+          Left = 643
+          Top = 2
+          Width = 160
+          Height = 51
+          Caption = 'Seleciona Comprador'
+          TabOrder = 7
+          ShowFocusRect = True
+          Align = alRight
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_EstoquesFiltroCompradorClick
         end
       end
       object Panel66: TPanel
@@ -1047,10 +1050,10 @@ object FrmEstoques: TFrmEstoques
         end
       end
       object Dbg_EstoquesDemFinan: TDBGrid
-        Left = 749
-        Top = 255
-        Width = 500
-        Height = 137
+        Left = 37
+        Top = 319
+        Width = 875
+        Height = 143
         DataSource = DMVirtual.DS_V_EstoquesFinan
         FixedColor = clSilver
         Font.Charset = DEFAULT_CHARSET
@@ -1070,43 +1073,88 @@ object FrmEstoques: TFrmEstoques
         OnDrawColumnCell = Dbg_EstoquesDemFinanDrawColumnCell
         Columns = <
           item
-            Color = clYellow
+            Alignment = taCenter
+            Color = 8454143
             Expanded = False
-            FieldName = 'IND_CURVA'
+            FieldName = 'CLASSE'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
             Title.Alignment = taCenter
-            Width = 55
+            Title.Caption = 'Classe'
+            Width = 45
+            Visible = True
+          end
+          item
+            Color = 16053492
+            Expanded = False
+            FieldName = 'EST'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Color = 16053492
+            Expanded = False
+            FieldName = 'DM'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Color = 16053492
+            Expanded = False
+            FieldName = 'DIF_EST_DM'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Color = 16765650
+            Expanded = False
+            FieldName = 'EST_PC'
+            Title.Alignment = taRightJustify
+            Width = 90
+            Visible = True
+          end
+          item
+            Color = 16765650
+            Expanded = False
+            FieldName = 'DM_PC'
+            Title.Alignment = taRightJustify
+            Width = 90
+            Visible = True
+          end
+          item
+            Color = 16765650
+            Expanded = False
+            FieldName = 'DIF_EST_DM_PC'
+            Title.Alignment = taRightJustify
+            Title.Caption = '# P'#231' Ct'
+            Width = 90
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'QTD_ITENS'
+            FieldName = 'EST_PV'
             Title.Alignment = taRightJustify
+            Width = 90
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'VLR_ESTOQUE_PV'
+            FieldName = 'DM_PV'
             Title.Alignment = taRightJustify
-            Width = 120
+            Width = 90
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'VLR_DEMANDA_PV'
+            FieldName = 'DIF_EST_DM_PV'
             Title.Alignment = taRightJustify
-            Width = 120
-            Visible = True
-          end
-          item
-            Color = clYellow
-            Expanded = False
-            FieldName = 'PER_NIVELSERVICO'
-            Title.Alignment = taRightJustify
+            Title.Caption = '# P'#231' Pv'
             Width = 90
             Visible = True
           end>
@@ -1181,7 +1229,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 283
+          Left = 277
           Top = 11
           Width = 353
           Height = 13

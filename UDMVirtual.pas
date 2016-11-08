@@ -662,13 +662,6 @@ type
     CDS_V_CurvaABCEnderecoQTD_DEMANDA: TCurrencyField;
     CDS_V_Estoques: TClientDataSet;
     DS_V_Estoques: TDataSource;
-    CDS_V_EstoquesFinan: TClientDataSet;
-    DS_V_EstoquesFinan: TDataSource;
-    CDS_V_EstoquesFinanIND_CURVA: TStringField;
-    CDS_V_EstoquesFinanVLR_DEMANDA_PV: TCurrencyField;
-    CDS_V_EstoquesFinanPER_NIVELSERVICO: TCurrencyField;
-    CDS_V_EstoquesFinanVLR_ESTOQUE_PV: TCurrencyField;
-    CDS_V_EstoquesFinanQTD_ITENS: TIntegerField;
     CDS_V_ParamLojaNeces: TClientDataSet;
     DS_V_ParamLojaNeces: TDataSource;
     CDS_V_ParamLojaNecesDES_LOJA: TStringField;
@@ -704,8 +697,8 @@ type
     IBQ_EstoqueLojaCORREDOR: TIBStringField;
     IBQ_EstoqueLojaPRATELEIRA: TIBStringField;
     IBQ_EstoqueLojaGAVETA: TIBStringField;
-    CDS_V_EstoquesVLR_TOT_VENDAS_ANO: TAggregateField;
-    CDS_V_EstoquesVLR_TOT_VENDAS_4M: TAggregateField;
+    CDS_V_EstoquesDM_CURVA_A: TAggregateField;
+    CDS_V_EstoquesDM_CURVA_B: TAggregateField;
     CDS_V_EstoquesSEQ: TFMTBCDField;
     CDS_V_EstoquesCOD_PRODUTO: TStringField;
     CDS_V_EstoquesDES_PRODUTO: TStringField;
@@ -770,6 +763,78 @@ type
     CDS_V_EstoqueLojasDIA_UTEIS: TIntegerField;
     CDS_V_EstoqueLojasDTA_INICIO: TDateField;
     CDS_V_EstoqueLojasDTA_FIM: TDateField;
+    CDS_V_EstoquesDM_CURVAA: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVAB: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVAC: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVAD: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVAE: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVA_C: TAggregateField;
+    CDS_V_EstoquesDM_CURVA_D: TAggregateField;
+    CDS_V_EstoquesDM_CURVA_E: TAggregateField;
+    CDS_V_EstoquesFinan: TClientDataSet;
+    DS_V_EstoquesFinan: TDataSource;
+    CDS_V_EstoquesFinanCLASSE: TStringField;
+    CDS_V_EstoquesFinanDM: TIntegerField;
+    CDS_V_EstoquesFinanDM_PC: TFMTBCDField;
+    CDS_V_EstoquesFinanDM_PV: TFMTBCDField;
+    CDS_V_EstoquesFinanEST: TIntegerField;
+    CDS_V_EstoquesFinanEST_PC: TFMTBCDField;
+    CDS_V_EstoquesFinanEST_PV: TFMTBCDField;
+    CDS_V_EstoquesFinanDIF_EST_DM: TIntegerField;
+    CDS_V_EstoquesFinanDIF_EST_DM_PC: TFMTBCDField;
+    CDS_V_EstoquesFinanDIF_EST_DM_PV: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVAA_PC: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVAB_PC: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVAC_PC: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVAD_PC: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVAE_PC: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVAA_PV: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVAB_PV: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVAC_PV: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVAD_PV: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVAE_PV: TFMTBCDField;
+    CDS_V_EstoquesDM_CURVA_A_PC: TAggregateField;
+    CDS_V_EstoquesDM_CURVA_B_PC: TAggregateField;
+    CDS_V_EstoquesDM_CURVA_C_PC: TAggregateField;
+    CDS_V_EstoquesDM_CURVA_D_PC: TAggregateField;
+    CDS_V_EstoquesDM_CURVA_E_PC: TAggregateField;
+    CDS_V_EstoquesDM_CURVA_A_PV: TAggregateField;
+    CDS_V_EstoquesDM_CURVA_B_PV: TAggregateField;
+    CDS_V_EstoquesDM_CURVA_C_PV: TAggregateField;
+    CDS_V_EstoquesDM_CURVA_D_PV: TAggregateField;
+    CDS_V_EstoquesDM_CURVA_E_PV: TAggregateField;
+    CDS_V_EstoquesEST_CURVAA: TIntegerField;
+    CDS_V_EstoquesEST_CURVAB: TIntegerField;
+    CDS_V_EstoquesEST_CURVAC: TIntegerField;
+    CDS_V_EstoquesEST_CURVAD: TIntegerField;
+    CDS_V_EstoquesEST_CURVAE: TIntegerField;
+    CDS_V_EstoquesEST_CURVAA_PC: TFMTBCDField;
+    CDS_V_EstoquesEST_CURVAB_PC: TFMTBCDField;
+    CDS_V_EstoquesEST_CURVAC_PC: TFMTBCDField;
+    CDS_V_EstoquesEST_CURVAD_PC: TFMTBCDField;
+    CDS_V_EstoquesEST_CURVAE_PC: TFMTBCDField;
+    CDS_V_EstoquesEST_CURVAA_PV: TFMTBCDField;
+    CDS_V_EstoquesEST_CURVAB_PV: TFMTBCDField;
+    CDS_V_EstoquesEST_CURVAC_PV: TFMTBCDField;
+    CDS_V_EstoquesEST_CURVAD_PV: TFMTBCDField;
+    CDS_V_EstoquesEST_CURVAE_PV: TFMTBCDField;
+    CDS_V_EstoquesEST_CURVA_E_PV: TAggregateField;
+    CDS_V_EstoquesEST_CURVA_D_PV: TAggregateField;
+    CDS_V_EstoquesEST_CURVA_C_PV: TAggregateField;
+    CDS_V_EstoquesEST_CURVA_B_PV: TAggregateField;
+    CDS_V_EstoquesEST_CURVA_A_PV: TAggregateField;
+    CDS_V_EstoquesEST_CURVA_E_PC: TAggregateField;
+    CDS_V_EstoquesEST_CURVA_D_PC: TAggregateField;
+    CDS_V_EstoquesEST_CURVA_C_PC: TAggregateField;
+    CDS_V_EstoquesEST_CURVA_B_PC: TAggregateField;
+    CDS_V_EstoquesEST_CURVA_A_PC: TAggregateField;
+    CDS_V_EstoquesEST_CURVA_E: TAggregateField;
+    CDS_V_EstoquesEST_CURVA_D: TAggregateField;
+    CDS_V_EstoquesEST_CURVA_C: TAggregateField;
+    CDS_V_EstoquesEST_CURVA_A: TAggregateField;
+    CDS_V_EstoquesEST_CURVA_B: TAggregateField;
+    CDS_V_EstoquesCOD_COMPRADOR: TStringField;
+    CDS_V_EstoquesDES_COMPRADOR: TStringField;
     procedure CDS_V_GruposProdutosAfterScroll(DataSet: TDataSet);
     procedure CDS_V_EstFisFinanEmpAfterScroll(DataSet: TDataSet);
     procedure CDS_V_MargemLucroFornAfterScroll(DataSet: TDataSet);
@@ -815,9 +880,6 @@ var
 
   iQtdEstMinOld, iQtdEstMinNew: Integer;
   iQtdEstMaxOld, iQtdEstMaxNew: Integer;
-
-//odirapagar - 02/09/2016
-//  iQtdDemandaOld, iQtdDemandaNew: Integer;
 
 implementation
 
@@ -889,15 +951,6 @@ begin
   Begin
     If bSeProcessa1 Then
     Begin
-//odirapagar
-//      If Trim(CDS_V_EstoquesCOD_PRODUTO.AsString)='' Then
-//       FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly:=True
-//      Else
-//       FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly:=False;
-//      If Trim(CDS_V_EstoquesCOD_PRODUTO.AsString)='' Then
-//       FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly:=True
-//      Else
-//       FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly:=False;
       If Trim(CDS_V_EstoquesCOD_PRODUTO.AsString)='' Then
        Begin
          FrmEstoques.Dbg_Estoques.Columns[9].ReadOnly:=True;
@@ -946,9 +999,6 @@ var
 begin
   bAtualizar:=False;
 
-//odirapagar
-//  If Not FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly Then
-//  If Not FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly Then
   If Not FrmEstoques.Dbg_Estoques.Columns[9].ReadOnly Then
   Begin
     If igNrEmpProc=1 Then bAtualizar:=True;
@@ -997,9 +1047,6 @@ procedure TDMVirtual.CDS_V_EstoquesAfterEdit(DataSet: TDataSet);
 var
  MySql, s: string;
 begin
-//odirapagar
-//  If Not FrmEstoques.Dbg_Estoques.Columns[11].ReadOnly Then
-//  If Not FrmEstoques.Dbg_Estoques.Columns[4].ReadOnly Then
   If Not FrmEstoques.Dbg_Estoques.Columns[9].ReadOnly Then
   Begin
     iQtdEstMinOld :=CDS_V_EstoquesEST_IDEAL.AsInteger;
