@@ -81,7 +81,7 @@ type
     procedure PC_EstoquesPrincipalChange(Sender: TObject);
 
     // Odir ====================================================================
-    Procedure CreateToolTips(hWnd: Cardinal); // Cria Show Hint em Forma de Balï¿½o
+    Procedure CreateToolTips(hWnd: Cardinal); // Cria Show Hint em Forma de Balao
     Procedure FocoToControl(Sender: TControl); // Posiciona no Componente
 
     Procedure MontaFiltros(sTipo: String);
@@ -134,13 +134,13 @@ type
 var
   FrmEstoques: TFrmEstoques;
 
-  // Show Hint em Forma de Balï¿½o
+  // Show Hint em Forma de Balao
   hTooltip: Cardinal;
   ti: TToolInfo;
   buffer : array[0..255] of char;
   ///////////////////////////////
 
-  // Cria Ponteiro de transacï¿½o ================================================
+  // Cria Ponteiro de transação ================================================
   TD: TTransactionDesc;
 
   bgSairEstoques: Boolean;
@@ -261,7 +261,7 @@ Begin
   Bt_EstoquesFechar.Enabled:=bLib;
 End;
 
-// Show Hint em Forma de Balï¿½o >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Show Hint em Forma de Balao >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 procedure TFrmEstoques.CreateToolTips(hWnd: Cardinal);
 begin
   hToolTip := CreateWindowEx(0, 'Tooltips_Class32', nil, TTS_ALWAYSTIP or TTS_BALLOON,
@@ -275,9 +275,9 @@ begin
     ti.uFlags := TTF_SUBCLASS;
     ti.hInst := hInstance;
   end;
-end; // Show Hint em Forma de Balï¿½o >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+end; // Show Hint em Forma de Balao >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Show Hint em Forma de Balï¿½o - Usado no FormCreate >>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Show Hint em Forma de Balao - Usado no FormCreate >>>>>>>>>>>>>>>>>>>>>>>>>>>
 procedure AddToolTip(hwnd: dword; lpti: PToolInfo; IconType: Integer; Text, Title: PChar);
 var
   Item: THandle;
@@ -300,9 +300,9 @@ begin
 
     SendMessage(hToolTip, TTM_SETTITLE, IconType, Integer(@buffer));
   end;
-end; // Show Hint em Forma de Balï¿½o - Usado no FormCreate >>>>>>>>>>>>>>>>>>>>>>
+end; // Show Hint em Forma de Balao - Usado no FormCreate >>>>>>>>>>>>>>>>>>>>>>
 
-// Show Hint em Forma de Balï¿½o - Posiciona do Componente >>>>>>>>>>>>>>>>>>>>>>
+// Show Hint em Forma de Balao - Posiciona do Componente >>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmEstoques.FocoToControl(Sender: TControl);
 Var
  NewPos: TPoint;
@@ -314,7 +314,7 @@ Begin
    NewPos:=Sender.Parent.ClientToScreen(NewPos);
 
   SetCursorPos(NewPos.x,NewPos.y)
-End; // Show Hint em Forma de Balï¿½o - Posiciona do Componente >>>>>>>>>>>>>>>>>>
+End; // Show Hint em Forma de Balao - Posiciona do Componente >>>>>>>>>>>>>>>>>>
 
 // Monta Filtros >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmEstoques.MontaFiltros(sTipo: String);
@@ -364,7 +364,7 @@ Begin
     If (sTipo='EST') And (sgFiltros<>'') Then
      sgFiltros:=sgFiltros+')';
 
-    // Se Tem Produto Nï¿½o Busca Pelo Fornecedor
+    // Se Tem Produto Não Busca Pelo Fornecedor
     If DMVirtual.CDS_V_Fornecedores.Active Then
      DMVirtual.CDS_V_Fornecedores.Close;
 
@@ -545,21 +545,21 @@ begin
   Else
    Begin
      PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-     msg('Para Fechar Tecle no Botï¿½o <Fechar>...','A');
+     msg('Para Fechar Tecle no Botão <Fechar>...','A');
      Action := caNone;
    End;
 end;
 
 procedure TFrmEstoques.FormCreate(Sender: TObject);
 const  
-  TipoDoIcone = 1; // Show Hint em Forma de Balï¿½o
+  TipoDoIcone = 1; // Show Hint em Forma de Balao
 begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
 
-  // Show Hint em Forma de Balï¿½o
+  // Show Hint em Forma de Balao
   CreateToolTips(Self.Handle);
-  AddToolTip(Pan_EstoquesProdNovo.Handle, @ti, TipoDoIcone, 'Cadastrado a'+#13+'MENOS de um Mï¿½S !!', 'PRODUTO NOVO !!');
+  AddToolTip(Pan_EstoquesProdNovo.Handle, @ti, TipoDoIcone, 'Cadastrado a'+#13+'MENOS de um MÊS !!', 'PRODUTO NOVO !!');
 
   OrderGrid:='';
   bEnterTab:=True;
@@ -896,10 +896,10 @@ begin
      DMVirtual.CDS_V_EstoquesFinan.Data:=DMBelShop.CDS_Busca.Data;
      DMBelShop.CDS_Busca.Close;
 
-     // Libera para Salvar em Memï¿½ria ==========================================
-     Bt_EstoquesFiltroComprador.Caption:='Salvar em Memï¿½ria';
+     // Libera para Salvar em Memória ==========================================
+     Bt_EstoquesFiltroComprador.Caption:='Salvar em Memória';
 
-     // Abre Apresentaï¿½ï¿½o Fisico / Financeiro ==================================
+     // Abre Apresentação Fisico / Financeiro ==================================
      FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
      FrmSolicitacoes.Bt_QualquerCoisaSalvar.Visible:=False;
      FrmSolicitacoes.Bt_QualquerCoisaVoltar.Visible:=False;
@@ -924,7 +924,7 @@ begin
      FrmBelShop.AbreSolicitacoes(19);
 
      FrmSolicitacoes.Caption:='DEMONSTRATIVO DE ESTOQUES';
-     FrmSolicitacoes.Ts_QualquerCoisa.Caption:='Fï¿½sico/Financeiro';
+     FrmSolicitacoes.Ts_QualquerCoisa.Caption:='Físico/Financeiro';
 
      FrmSolicitacoes.Parent:=nil;
      FrmSolicitacoes.Parent:=FrmEstoques;
@@ -1018,7 +1018,7 @@ begin
   Refresh;
   Screen.Cursor:=crAppStart;
 
-  // Retorna Valores Originais se Nï¿½o Houve Filtro =============================
+  // Retorna Valores Originais se Não Houve Filtro =============================
   bOriginal:=(Trim(sgFiltros)<>'');
   If bOriginal Then
   Begin
@@ -1086,7 +1086,7 @@ begin
 
   If DMVirtual.CDS_V_Estoques.IsEmpty Then
   Begin
-    msg('Sem Produto a Listar !!'+cr+cr+'Filtro Serï¿½ Retirado !!','A');
+    msg('Sem Produto a Listar !!'+cr+cr+'Filtro Será Retirado !!','A');
     DMVirtual.CDS_V_Estoques.Close;
     DMBelShop.CDS_EstoquePrevisao.Close;
 
@@ -1175,7 +1175,7 @@ begin
   FrmBelShop.TS_FiltroFornecedor.Visible:=True;
   // Curva ABC no Fornecedor
   FrmBelShop.Painel_FiltroOC.Visible:=False;
-  // Obs para Utilizaï¿½ï¿½o no Movto de Comprovantes
+  // Obs para Utilização no Movto de Comprovantes
   FrmBelShop.Label_MovtoComprovForn.Visible:=False;
   FrmBelShop.Label_MovtoComprovForn.Top:=FrmBelShop.Painel_FiltroOC.Top;
 
@@ -1183,7 +1183,7 @@ begin
   // Filtro de Produtos ---------------------------------------------
   //-----------------------------------------------------------------
   FrmBelShop.TS_FiltroProdutos.TabVisible:=True;
-  // Filtor nao Produtos de Nï¿½o Compra
+  // Filtor nao Produtos de Não Compra
   FrmBelShop.Painel_FiltroNaoCompra.Visible:=False;
   // Filtro para Busca Pelo Nome
   FrmBelShop.Gb_CalculoFiltroNome.Visible:=True;
@@ -1198,12 +1198,12 @@ begin
   FrmBelShop.TS_FiltroGrupos.TabVisible:=True;
 
   //-----------------------------------------------------------------
-  // Filtro de Aplicaï¿½ï¿½es dos Produtos ------------------------------
+  // Filtro de Aplicações dos Produtos ------------------------------
   //-----------------------------------------------------------------
   FrmBelShop.TS_FiltroAplicacao.TabVisible:=False;
 
   //-----------------------------------------------------------------
-  // Filtro de Familia de Preï¿½os ------------------------------------
+  // Filtro de Familia de Preços ------------------------------------
   //-----------------------------------------------------------------
   FrmBelShop.TS_FiltroFamiliaPreco.TabVisible:=False;
 
@@ -1288,7 +1288,7 @@ begin
       If Not b Then
       Begin
         DMVirtual.CDS_V_Estoques.RecNo:=iIndex;
-        msg('Produto Nï¿½o Localizado !!','A');
+        msg('Produto Não Localizado !!','A');
       End;
     End; // If Not DMVirtual.CDS_V_Estoques.IsEmpty Then
   End; // If Key=Vk_F4 Then
@@ -1350,7 +1350,7 @@ end;
 
 procedure TFrmEstoques.Dbg_EstoquesKeyDown(Sender: TObject; var Key: Word;Shift: TShiftState);
 begin
-  // Acerta Posiciï¿½ï¿½o na Celula ================================================
+  // Acerta Posição na Celula ================================================
   if (Key = VK_Left) and (THackDBGrid(Dbg_Estoques).SelectedIndex = 3) then
   Begin
     Key := VK_Clear;
@@ -1380,7 +1380,7 @@ begin
 
     If gdSelected in State Then
     Begin
-      //Cor da cï¿½lula selecionada
+      //Cor da Célula selecionada
       With Dbg_Estoques do
       Begin
         Canvas.Font.Style := Canvas.Font.Style + [fsBold];
@@ -1464,7 +1464,7 @@ Begin
   // Somente uma Loja ==========================================================
   If igNrEmpProc>1 Then
   Begin
-    msg('ï¿½ Permitido Somente uma Loja por Vez !!','A');
+    msg('É Permitido Somente uma Loja por Vez !!','A');
     Dbg_Estoques.SetFocus;
     Exit;
   End; // If igNrEmpProc>1 Then
@@ -1526,7 +1526,7 @@ Begin
   iNumReg:=DMBelShop.SQLQ_Busca.FieldByName('NumReg').AsInteger;
   DMBelShop.SQLQ_Busca.Close;
 
-  // Abre Transaï¿½ï¿½o para Sequence's ============================================
+  // Abre Transação para Sequence's ============================================
   TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
   TD.IsolationLevel:=xilREADCOMMITTED;
   DMBelShop.SQLC.StartTransaction(TD);
@@ -1673,9 +1673,9 @@ Begin
          '      WHEN pr.situacaopro=0 THEN ''Ativo'''+
          '      WHEN pr.situacaopro=1 THEN ''Bloqueado'''+
          '      WHEN pr.situacaopro=2 THEN ''Excluido'''+
-         '      WHEN pr.situacaopro=3 THEN ''Nï¿½o Compra'''+
-         '      WHEN pr.situacaopro=4 THEN ''Nï¿½o Venda'''+
-         '      ELSE ''Sem Informaï¿½ï¿½o'''+
+         '      WHEN pr.situacaopro=3 THEN ''Não Compra'''+
+         '      WHEN pr.situacaopro=4 THEN ''Não Venda'''+
+         '      ELSE ''Sem Informação'''+
          '   END'+
          '  ,20, '' '') AS VARCHAR(20)) IND_SITUACAO,'+
 
@@ -1684,10 +1684,10 @@ Begin
          ' TRIM(fo.codcentrocusto) COD_COMPRADOR,'+
          ' TRIM(cp.nomesubcusto) DES_COMPRADOR,'+
 
-         ' 0.00 VLR_VENDAS_ACUM,'+ // Nï¿½o Usado
+         ' 0.00 VLR_VENDAS_ACUM,'+ // Não Usado
          ' GEN_ID('+sGenOrdem+',1)+12 ORDENAR,'+
          ' ''NAO'' ALTERACAO,'+
-         ' 0.00 VLR_VENDAS_ACUM_OK,'+ // Nï¿½o Usado
+         ' 0.00 VLR_VENDAS_ACUM_OK,'+ // Não Usado
          ' COALESCE(fc.num_dias_uteis,0) NUM_DIASUTEIS,'+
          ' COALESCE('+sDiasUteis+',0)    DIAS_UTEIS_4M,'+
          ' 0 NUM_LINHA,'+
@@ -2088,7 +2088,7 @@ Begin
   // Se Atualiza Valores de Estoques ===========================================
   DMVirtual.bSeProcessa2:=False;
 
-  // Fecha Apresentaï¿½ï¿½es =======================================================
+  // Fecha Apresentações =======================================================
   OdirPanApres.Visible:=False;
   Screen.Cursor:=crDefault;
 
@@ -2119,7 +2119,7 @@ Var
 begin
   If Not bgInd_Admin Then
   Begin
-    msg('Opï¿½ï¿½o Somente para o'+cr+cr+'Administrador do Sistema !!','A');
+    msg('Opção Somente para o'+cr+cr+'Administrador do Sistema !!','A');
     Exit;
   End;
 
@@ -2267,7 +2267,7 @@ begin
   // Monta FrmSolicitacoes =====================================================
   FrmBelShop.AbreSolicitacoes(19);
 
-  FrmSolicitacoes.Caption:='Parï¿½metros';
+  FrmSolicitacoes.Caption:='Parâmetros';
   FrmSolicitacoes.Ts_QualquerCoisa.Caption:='Parametros de Estoque';
 
   FrmSolicitacoes.EdtParamCurvaALimite.Enabled:=False;
@@ -2323,7 +2323,7 @@ begin
 
   FrmSolicitacoes.Bt_QualquerCoisaSalvar.Visible:=False;
 
-  // Transfere Painel dos Parametros da Curva ABC para Form de Solicitaï¿½ï¿½es ====
+  // Transfere Painel dos Parametros da Curva ABC para Form de Solicitações ====
   FrmSolicitacoes.Gb_ParamCurvaABCDados.Parent:=FrmSolicitacoes.Ts_QualquerCoisa;
 
   // Abre FrmSolicitacoes ======================================================
@@ -2340,13 +2340,13 @@ Var
   b: Boolean;
   iIndex: Integer;
 begin
-  // Altera os Estoques Mï¿½nimos ================================================
+  // Altera os Estoques Mínimos ================================================
   If DMVirtual.CDS_V_Estoques.IsEmpty Then
    Exit;
 
   If Trim(sgFiltros)='' Then
   Begin
-    If msg('Todos os FORNECEDORES ESTï¿½O Selecionados ??'+cr+cr+'DESEJA CONTINUAR ??','C')=2 Then
+    If msg('Todos os FORNECEDORES ESTÃO Selecionados ??'+cr+cr+'DESEJA CONTINUAR ??','C')=2 Then
      Exit;
   End;
 
@@ -2356,15 +2356,15 @@ begin
      Exit;
   End;
 
-  If msg('Deseja Realmente Alterar O ESTOQUE Mï¿½NIMO'+cr+cr+'DE TODOS OS PRODUTOS SELECIONADOS ??','C')=2 Then
+  If msg('Deseja Realmente Alterar O ESTOQUE Mínimo'+cr+cr+'DE TODOS OS PRODUTOS SELECIONADOS ??','C')=2 Then
    Exit;
 
-  // Solicita o Estoque Mï¿½nimo =================================================
+  // Solicita o Estoque Mínimo =================================================
   sEstMinimo:='';
   b:=True;
   While b do
   Begin
-    sEstMinimo:=InputBoxInteiro('Estoque Mï¿½nimo de Todos os Produtos Selecionados', 'Informe o Novo Est. Mï¿½nimo',sEstMinimo);
+    sEstMinimo:=InputBoxInteiro('Estoque Mínimo de Todos os Produtos Selecionados', 'Informe o Novo Est. Mínimo',sEstMinimo);
 
     If Trim(sEstMinimo)='' Then
      Exit;
@@ -2372,7 +2372,7 @@ begin
     Try
       StrToInt(sEstMinimo);
 
-      If msg('O NOVO Estoque Mï¿½nimo: '+sEstMinimo+cr+cr+'Esta CORRETO ??','C')=2 Then
+      If msg('O NOVO Estoque Mínimo: '+sEstMinimo+cr+cr+'Esta CORRETO ??','C')=2 Then
        Exit;
 
       Break;
@@ -2409,24 +2409,24 @@ procedure TFrmEstoques.PopM_EstoquesReplicarEstMinLojasClick(Sender: TObject);
 Var
   MySql: String;
 begin
-  // Altera os Estoques Mï¿½nimos em Outras Lojas ================================
+  // Altera os Estoques Mínimos em Outras Lojas ================================
   If DMVirtual.CDS_V_Estoques.IsEmpty Then
    Exit;
 
   If Trim(sgFiltros)='' Then
   Begin
-    If msg('Todos os FORNECEDORES ESTï¿½O Selecionados ??'+cr+cr+'DESEJA CONTINUAR ??','C')=2 Then
+    If msg('Todos os FORNECEDORES ESTÃO Selecionados ??'+cr+cr+'DESEJA CONTINUAR ??','C')=2 Then
      Exit;
   End;
 
-  If Application.MessageBox('Deseja REALMENTE Replicar'+cr+cr+'TODOS OS ESTOQUE Mï¿½NIMOS'+cr+cr+'do FILTRO Selecionado para'+cr+cr+'Outra(s) Loja(s) ??', 'ATENï¿½ï¿½O !!', 292) = Idno Then
+  If Application.MessageBox('Deseja REALMENTE Replicar'+cr+cr+'TODOS OS ESTOQUE MínimoS'+cr+cr+'do FILTRO Selecionado para'+cr+cr+'Outra(s) Loja(s) ??', 'ATENÇÃO !!', 292) = Idno Then
    Exit;
 
   sgOutrasEmpresa:='(99)';
   sgEmpresaNao:='('+sgCodEmp+')';
   FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
   FrmSelectEmpProcessamento.bUsarMatriz:=False;
-  FrmSelectEmpProcessamento.Gb_SelectEmpProc.Caption:='SELECIONE AS LOJAS A REPLICAR OS ESTOQUES Mï¿½NIMOS';
+  FrmSelectEmpProcessamento.Gb_SelectEmpProc.Caption:='SELECIONE AS LOJAS A REPLICAR OS ESTOQUES MínimoS';
 
   FrmSelectEmpProcessamento.ShowModal;
 
@@ -2457,10 +2457,10 @@ begin
     DMBelShop.CDS_EmpProcessa.Next;
   End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
 
-  If Application.MessageBox(pChar('Deseja REALMENTE Replicar'+cr+cr+'TODOS OS ESTOQUE Mï¿½NIMOS'+cr+cr+'do FILTRO Selecionado para'+cr+cr+'a(s) Loja(s):'+cr+cr+sgCodLojas+cr+cr+' ?????????'), 'ATENï¿½ï¿½O !!', 292) = Idno Then
+  If Application.MessageBox(pChar('Deseja REALMENTE Replicar'+cr+cr+'TODOS OS ESTOQUE MínimoS'+cr+cr+'do FILTRO Selecionado para'+cr+cr+'a(s) Loja(s):'+cr+cr+sgCodLojas+cr+cr+' ?????????'), 'ATENÇÃO !!', 292) = Idno Then
    Exit;
 
-  OdirPanApres.Caption:='AGUARDE !! Replicando Estoques Mï¿½nimo...';
+  OdirPanApres.Caption:='AGUARDE !! Replicando Estoques Mínimo...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmEstoques.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmEstoques.Height-OdirPanApres.Height)/2))-20;
@@ -2468,7 +2468,7 @@ begin
   OdirPanApres.Visible:=True;
   Refresh;
 
-  // Verifica se Transaï¿½ï¿½o esta Ativa
+  // Verifica se Transação esta Ativa
   If DMBelShop.SQLC.InTransaction Then
    DMBelShop.SQLC.Rollback(TD);
 
@@ -2605,7 +2605,7 @@ begin
   If DMVirtual.CDS_V_Estoques.IsEmpty Then
    Exit;
 
-  If Bt_EstoquesFiltroComprador.Caption='Salvar em Memï¿½ria' Then
+  If Bt_EstoquesFiltroComprador.Caption='Salvar em Memória' Then
   Begin
     Dbg_EstoquesDemFinan.SetFocus;
     DBGridClipboard(Dbg_EstoquesDemFinan);
@@ -2616,7 +2616,7 @@ begin
 
   If Trim(sgFiltros)<>'' Then
   Begin
-    If msg('Existe Filtro Anterior !!'+cr+cr+'DESEJA RETIRï¿½-LO ??','C')=1 Then
+    If msg('Existe Filtro Anterior !!'+cr+cr+'DESEJA RETIRÁ-LO ??','C')=1 Then
      sgFiltros:='';
   End;
 
@@ -2679,44 +2679,41 @@ begin
     End; // While Not DMBelShop.CDS_Busca.Eof do
     DMBelShop.CDS_Busca.Close;
 
-//    If Trim(s)<>'' Then
-//    Begin
-      DMVirtual.CDS_V_Estoques.DisableControls;
+    DMVirtual.CDS_V_Estoques.DisableControls;
+    DMVirtual.CDS_V_Estoques.Close;
+    DMBelShop.CDS_EstoquePrevisao.Close;
+
+    DMVirtual.CDS_V_Estoques.Filtered:=False;
+    DMVirtual.CDS_V_Estoques.Filter:='';
+
+    If (Trim(sgFiltros)<>'') And (Trim(sFiltroComp)<>'') Then
+     DMVirtual.CDS_V_Estoques.Filter:=sgFiltros+' AND ('+sFiltroComp+')'
+
+    Else If (Trim(sgFiltros)='') And (Trim(sFiltroComp)<>'') Then
+     DMVirtual.CDS_V_Estoques.Filter:=sFiltroComp
+
+    Else
+     DMVirtual.CDS_V_Estoques.Filter:=sgFiltros;
+
+    DMVirtual.CDS_V_Estoques.Filtered:=True;
+
+    Recalculo_V_Estoques_Aggregates;
+    DMVirtual.CDS_V_Estoques.Open;
+    DMBelShop.CDS_EstoquePrevisao.Open;
+    DMVirtual.CDS_V_Estoques.EnableControls;
+
+    If DMVirtual.CDS_V_Estoques.IsEmpty Then
+    Begin
+      msg('Sem Produto a Listar !!'+cr+cr+'Filtro Será Retirado !!','A');
       DMVirtual.CDS_V_Estoques.Close;
       DMBelShop.CDS_EstoquePrevisao.Close;
 
-      DMVirtual.CDS_V_Estoques.Filtered:=False;
       DMVirtual.CDS_V_Estoques.Filter:='';
-
-      If (Trim(sgFiltros)<>'') And (Trim(sFiltroComp)<>'') Then
-       DMVirtual.CDS_V_Estoques.Filter:=sgFiltros+' AND ('+sFiltroComp+')'
-
-      Else If (Trim(sgFiltros)='') And (Trim(sFiltroComp)<>'') Then
-       DMVirtual.CDS_V_Estoques.Filter:=sFiltroComp
-
-      Else
-       DMVirtual.CDS_V_Estoques.Filter:=sgFiltros;
-
-      DMVirtual.CDS_V_Estoques.Filtered:=True;
-
+      DMVirtual.CDS_V_Estoques.Filtered:=False;
       Recalculo_V_Estoques_Aggregates;
       DMVirtual.CDS_V_Estoques.Open;
       DMBelShop.CDS_EstoquePrevisao.Open;
-      DMVirtual.CDS_V_Estoques.EnableControls;
-
-      If DMVirtual.CDS_V_Estoques.IsEmpty Then
-      Begin
-        msg('Sem Produto a Listar !!'+cr+cr+'Filtro Serï¿½ Retirado !!','A');
-        DMVirtual.CDS_V_Estoques.Close;
-        DMBelShop.CDS_EstoquePrevisao.Close;
-
-        DMVirtual.CDS_V_Estoques.Filter:='';
-        DMVirtual.CDS_V_Estoques.Filtered:=False;
-        Recalculo_V_Estoques_Aggregates;
-        DMVirtual.CDS_V_Estoques.Open;
-        DMBelShop.CDS_EstoquePrevisao.Open;
-      End;
- //   End; // If Trim(s)<>'' Then
+    End;
   End; // If FrmSolicitacoes.bgOK Then
 
   If DMBelShop.CDS_Busca.Active Then

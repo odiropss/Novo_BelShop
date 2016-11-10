@@ -1,6 +1,6 @@
 object FrmSalao: TFrmSalao
   Left = 243
-  Top = 110
+  Top = 105
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Sal'#227'o'
@@ -405,7 +405,7 @@ object FrmSalao: TFrmSalao
     Top = 0
     Width = 977
     Height = 580
-    ActivePage = Ts_CadProfissional
+    ActivePage = Ts_Habilidades
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1396,7 +1396,7 @@ object FrmSalao: TFrmSalao
         Top = 73
         Width = 969
         Height = 444
-        ActivePage = Ts_CadProfContrato
+        ActivePage = Ts_CadProfDadosPessoais
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -5924,7 +5924,7 @@ object FrmSalao: TFrmSalao
         object Gb_Habilidades: TGroupBox
           Left = 1
           Top = 1
-          Width = 441
+          Width = 345
           Height = 550
           Align = alClient
           Caption = ' Habilidades '
@@ -5942,7 +5942,7 @@ object FrmSalao: TFrmSalao
           object Splitter_Habilidades: TSplitter
             Left = 1
             Top = 332
-            Width = 439
+            Width = 343
             Height = 4
             Cursor = crVSplit
             Align = alBottom
@@ -5952,20 +5952,22 @@ object FrmSalao: TFrmSalao
           object Panel5: TPanel
             Left = 1
             Top = 17
-            Width = 439
+            Width = 343
             Height = 40
             Align = alTop
-            BevelOuter = bvNone
+            BevelInner = bvRaised
+            BevelOuter = bvLowered
+            BevelWidth = 2
             Caption = ' '
             Color = 14342874
             TabOrder = 0
             DesignSize = (
-              439
+              343
               40)
             object Bt_HabNova: TJvXPButton
               Tag = 1
-              Left = 28
-              Top = 9
+              Left = 11
+              Top = 6
               Width = 102
               Height = 28
               Caption = 'Nova'
@@ -5991,8 +5993,8 @@ object FrmSalao: TFrmSalao
             end
             object Bt_HabAterar: TJvXPButton
               Tag = 2
-              Left = 169
-              Top = 9
+              Left = 121
+              Top = 6
               Width = 102
               Height = 28
               Caption = 'Alterar'
@@ -6021,8 +6023,8 @@ object FrmSalao: TFrmSalao
             end
             object Bt_HabExcluir: TJvXPButton
               Tag = 3
-              Left = 310
-              Top = 9
+              Left = 231
+              Top = 6
               Width = 102
               Height = 28
               Caption = 'Excluir'
@@ -6088,7 +6090,7 @@ object FrmSalao: TFrmSalao
           object Dbg_Habilidades: TDBGridJul
             Left = 1
             Top = 57
-            Width = 439
+            Width = 343
             Height = 275
             Align = alClient
             DataSource = DMSalao.DS_Habilidades
@@ -6096,7 +6098,7 @@ object FrmSalao: TFrmSalao
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
-            Font.Name = 'Tahoma'
+            Font.Name = 'MS Sans Serif'
             Font.Style = []
             Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
             ParentFont = False
@@ -6106,7 +6108,7 @@ object FrmSalao: TFrmSalao
             TitleFont.Charset = DEFAULT_CHARSET
             TitleFont.Color = clWhite
             TitleFont.Height = -11
-            TitleFont.Name = 'Tahoma'
+            TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDblClick = Dbg_HabilidadesDblClick
             OnEnter = Dbg_ProfissionaisEnter
@@ -6117,67 +6119,33 @@ object FrmSalao: TFrmSalao
                 Expanded = False
                 FieldName = 'COD_HAB'
                 Title.Alignment = taRightJustify
-                Width = 50
+                Width = 60
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'DES_HABILIDADE'
-                Width = 200
+                Width = 300
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'IND_ATIVO'
                 Title.Alignment = taCenter
-                Width = 40
+                Width = 50
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'DES_ABREVIATURA'
-                Width = 120
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'COD_HAB'
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'DES_HABILIDADE'
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'DES_ABREVIATURA'
-                Width = 64
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'COD_SIDICOM'
-                Width = 64
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'VLR_HABSERV'
-                Width = 64
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'IND_ATIVO'
-                Width = 64
+                Width = 200
                 Visible = True
               end>
           end
           object Gb_Comissoes: TGroupBox
             Left = 1
             Top = 336
-            Width = 439
+            Width = 343
             Height = 213
             Align = alBottom
             Caption = ' Percentuais de Comiss'#245'es '
@@ -6185,7 +6153,7 @@ object FrmSalao: TFrmSalao
             object Dbg_ComissoesLojas: TDBGridJul
               Left = 1
               Top = 17
-              Width = 437
+              Width = 341
               Height = 166
               Align = alClient
               DataSource = DMSalao.DS_V_ComissoesLojas
@@ -6193,7 +6161,7 @@ object FrmSalao: TFrmSalao
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clWindowText
               Font.Height = -11
-              Font.Name = 'Tahoma'
+              Font.Name = 'MS Sans Serif'
               Font.Style = []
               Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
               ParentFont = False
@@ -6203,7 +6171,7 @@ object FrmSalao: TFrmSalao
               TitleFont.Charset = DEFAULT_CHARSET
               TitleFont.Color = clWhite
               TitleFont.Height = -11
-              TitleFont.Name = 'Tahoma'
+              TitleFont.Name = 'MS Sans Serif'
               TitleFont.Style = [fsBold]
               OnDrawColumnCell = Dbg_ComissoesLojasDrawColumnCell
               OnEnter = Dbg_ComissoesLojasEnter
@@ -6268,7 +6236,7 @@ object FrmSalao: TFrmSalao
             object Panel10: TPanel
               Left = 1
               Top = 183
-              Width = 437
+              Width = 341
               Height = 29
               Align = alBottom
               TabOrder = 1
@@ -6307,9 +6275,9 @@ object FrmSalao: TFrmSalao
           end
         end
         object Gb_Servicos: TGroupBox
-          Left = 442
+          Left = 346
           Top = 1
-          Width = 526
+          Width = 622
           Height = 550
           Align = alRight
           Caption = ' Servi'#231'os '
@@ -6327,19 +6295,21 @@ object FrmSalao: TFrmSalao
           object Panel4: TPanel
             Left = 1
             Top = 17
-            Width = 524
+            Width = 620
             Height = 40
             Align = alTop
-            BevelOuter = bvNone
+            BevelInner = bvRaised
+            BevelOuter = bvLowered
+            BevelWidth = 2
             Color = 14342874
             TabOrder = 0
             DesignSize = (
-              524
+              620
               40)
             object Bt_ServNovo: TJvXPButton
               Tag = 1
-              Left = 153
-              Top = 9
+              Left = 119
+              Top = 6
               Width = 102
               Height = 28
               Caption = 'Novo '
@@ -6365,8 +6335,8 @@ object FrmSalao: TFrmSalao
             end
             object Bt_ServAlterar: TJvXPButton
               Tag = 2
-              Left = 270
-              Top = 9
+              Left = 258
+              Top = 6
               Width = 102
               Height = 28
               Caption = 'Alterar'
@@ -6395,8 +6365,8 @@ object FrmSalao: TFrmSalao
             end
             object Bt_ServExcluir: TJvXPButton
               Tag = 3
-              Left = 387
-              Top = 9
+              Left = 396
+              Top = 6
               Width = 102
               Height = 28
               Caption = 'Excluir'
@@ -6458,41 +6428,11 @@ object FrmSalao: TFrmSalao
               ParentFont = False
               OnClick = Bt_ServExcluirClick
             end
-            object Bt_ServIncluir: TJvXPButton
-              Tag = 1
-              Left = 36
-              Top = 9
-              Width = 102
-              Height = 28
-              Caption = 'Incluir'
-              TabOrder = 3
-              Glyph.Data = {
-                07544269746D617042010000424D420100000000000076000000280000001100
-                0000110000000100040000000000CC0000000000000000000000100000001000
-                0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
-                C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-                FF0077777777777777777000000070000000000007777000000070FFFFFFFFFF
-                07777000000070FCCFCCCCCF07777000000070FFFFFFFFFF07777000000070FC
-                CFCCCCCF07777000000070FFFFFFFFFF07777000000070FFFFFFF0FF07777000
-                000070F00FFF0B0F07770000000070F0F0F0B0F000700000000070FF0B0B0F0F
-                BF0000000000700000F0F0FBFBF0000000007777770B0FBFBFB0000000007777
-                7770FBFBFB000000000077777777000000700000000077777777777777777000
-                0000777777777777777770000000}
-              ShowFocusRect = True
-              Anchors = [akTop]
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-              OnClick = Bt_ServIncluirClick
-            end
           end
           object Dbg_Servicos: TDBGridJul
             Left = 1
             Top = 57
-            Width = 524
+            Width = 620
             Height = 492
             Align = alClient
             DataSource = DMSalao.DS_Servicos
@@ -6500,7 +6440,7 @@ object FrmSalao: TFrmSalao
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
-            Font.Name = 'Tahoma'
+            Font.Name = 'MS Sans Serif'
             Font.Style = []
             Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
             ParentFont = False
@@ -6510,7 +6450,7 @@ object FrmSalao: TFrmSalao
             TitleFont.Charset = DEFAULT_CHARSET
             TitleFont.Color = clWhite
             TitleFont.Height = -11
-            TitleFont.Name = 'Tahoma'
+            TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDblClick = Dbg_ServicosDblClick
             OnEnter = Dbg_ProfissionaisEnter
@@ -6521,34 +6461,34 @@ object FrmSalao: TFrmSalao
                 Expanded = False
                 FieldName = 'COD_SERVICO'
                 Title.Alignment = taRightJustify
-                Width = 50
+                Width = 60
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'DES_SERVICO'
-                Width = 250
+                Width = 300
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'VLR_HABSERV'
                 Title.Alignment = taRightJustify
-                Width = 60
+                Width = 80
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'COD_SIDICOM'
                 Title.Alignment = taCenter
-                Width = 80
+                Width = 100
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'IND_ATIVO'
                 Title.Alignment = taCenter
-                Width = 40
+                Width = 50
                 Visible = True
               end>
           end

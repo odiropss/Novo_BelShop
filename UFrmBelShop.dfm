@@ -1,6 +1,6 @@
 object FrmBelShop: TFrmBelShop
-  Left = 256
-  Top = 106
+  Left = 238
+  Top = 105
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -12550,7 +12550,7 @@ object FrmBelShop: TFrmBelShop
         Top = 61
         Width = 971
         Height = 431
-        ActivePage = TS_ConsultaNFeFiltros
+        ActivePage = Ts_ConsultaNFeMovtoCompr
         Align = alClient
         TabOrder = 1
         OnChange = PC_ConsultaMovtoComprChange
@@ -14064,7 +14064,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 489
+              Left = 483
               Top = 12
               Width = 31
               Height = 13
@@ -14120,7 +14120,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 523
+              Left = 517
               Top = 9
               Width = 51
               Height = 18
@@ -14133,7 +14133,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 578
+              Left = 572
               Top = 9
               Width = 50
               Height = 18
