@@ -5147,15 +5147,27 @@ Begin
          ' CAST(SUM(COALESCE(ve.vlr_totalitem,0)) AS NUMERIC(12,2)) Total_Vendas'+
 
          ' FROM sal_movtos_vendas ve'+
-         '   LEFT JOIN produto pr               ON pr.codproduto=ve.cod_produto'+
-         '                                     AND pr.principalfor in (''000500'',''000883'')'+
-         '   LEFT JOIN comprv cp                ON cp.codloja=ve.cod_loja'+
+         '   LEFT JOIN produto pr               ON pr.codproduto=ve.cod_produto';
+
+         // Odir Alterou Fornecedor 883 - 18/11/2016
+         If StrToDate(f_Troca('.','/',sgDtaF))<StrToDate('16/11/2016') Then
+          MySql:=
+           MySql+'                             AND pr.principalfor in (''000500'',''000883'')';
+
+  MySql:=
+   MySql+'   LEFT JOIN comprv cp                ON cp.codloja=ve.cod_loja'+
          '                                     AND cp.codcomprovante=ve.cod_comprov'+
          '   LEFT JOIN sal_profissionais pf     ON pf.cod_loja=ve.cod_loja'+
          '                                     AND pf.cod_profissional=ve.cod_profissional'+
-         '                                     AND pf.cod_loja=ve.cod_loja'+
-         '                                     AND pf.tip_pessoa='+QuotedStr('P')+
-         '   LEFT JOIN sal_hab_serv se          ON se.cod_sidicom=ve.cod_produto'+
+         '                                     AND pf.cod_loja=ve.cod_loja';
+
+         // Odir Alterou Fornecedor 883 - 18/11/2016
+         If StrToDate(f_Troca('.','/',sgDtaF))<StrToDate('16/11/2016') Then
+          MySql:=
+           MySql+'                                     AND pf.tip_pessoa='+QuotedStr('P');
+
+  MySql:=
+   MySql+'   LEFT JOIN sal_hab_serv se          ON se.cod_sidicom=ve.cod_produto'+
          '                                     AND se.tip_habserv=''S'''+
          '   LEFT JOIN sal_prof_habilidades ps  ON ps.cod_profissional=pf.cod_profissional'+
          '                                     AND ps.cod_loja=pf.cod_loja'+
@@ -5171,8 +5183,16 @@ Begin
          '                                     AND ph.cod_servico IS NULL'+
          '                                     AND ph.ind_ativo=''SIM'''+
 
-         ' WHERE ve.cod_loja='+QuotedStr(FormatFloat('00',EdtPagtoCodLoja.AsInteger))+
-         ' AND ('+sFiltro+')'+
+         ' WHERE ve.cod_loja='+QuotedStr(FormatFloat('00',EdtPagtoCodLoja.AsInteger));
+
+         // Odir Alterou Fornecedor 883 - 18/11/2016
+         If StrToDate(f_Troca('.','/',sgDtaF))>StrToDate('15/11/2016') Then
+          MySql:=
+           MySql+' AND pr.principalfor=''000500'''+
+                 ' AND pf.tip_pessoa='+QuotedStr('P');
+
+  MySql:=
+   MySql+' AND ('+sFiltro+')'+
          ' GROUP BY 1,2,3';
   DMBelShop.CDS_Pesquisa.Close;
   DMBelShop.CDS_Pesquisa.Filtered:=False;
@@ -5279,15 +5299,27 @@ Begin
          ' ve.per_comissao_tab5, ve.per_comissao_tab6, ve.per_comissao_tab7, ve.per_comissao_tab8'+
 
          ' FROM sal_movtos_vendas ve'+
-         '   LEFT JOIN produto pr               ON pr.codproduto=ve.cod_produto'+
-         '                                     AND pr.principalfor in (''000500'',''000883'')'+
-         '   LEFT JOIN comprv cp                ON cp.codloja=ve.cod_loja'+
+         '   LEFT JOIN produto pr               ON pr.codproduto=ve.cod_produto';
+
+         // Odir Alterou Fornecedor 883 - 18/11/2016
+         If StrToDate(f_Troca('.','/',sgDtaF))<StrToDate('16/11/2016') Then
+          MySql:=
+           MySql+'                                     AND pr.principalfor in (''000500'',''000883'')';
+
+  MySql:=
+   MySql+'   LEFT JOIN comprv cp                ON cp.codloja=ve.cod_loja'+
          '                                     AND cp.codcomprovante=ve.cod_comprov'+
          '   LEFT JOIN sal_profissionais pf     ON pf.cod_loja=ve.cod_loja'+
          '                                     AND pf.cod_profissional=ve.cod_profissional'+
-         '                                     AND pf.cod_loja=ve.cod_loja'+
-         '                                     AND pf.tip_pessoa='+QuotedStr('P')+
-         '   LEFT JOIN sal_hab_serv se          ON se.cod_sidicom=ve.cod_produto'+
+         '                                     AND pf.cod_loja=ve.cod_loja';
+
+         // Odir Alterou Fornecedor 883 - 18/11/2016
+         If StrToDate(f_Troca('.','/',sgDtaF))<StrToDate('16/11/2016') Then
+          MySql:=
+           MySql+'                                     AND pf.tip_pessoa='+QuotedStr('P');
+
+  MySql:=
+   MySql+'   LEFT JOIN sal_hab_serv se          ON se.cod_sidicom=ve.cod_produto'+
          '                                     AND se.tip_habserv=''S'''+
          '   LEFT JOIN sal_prof_habilidades ps  ON ps.cod_profissional=pf.cod_profissional'+
          '                                     AND ps.cod_loja=pf.cod_loja'+
@@ -5303,8 +5335,16 @@ Begin
          '                                     AND ph.cod_servico IS NULL'+
          '                                     AND ph.ind_ativo=''SIM'''+
 
-         ' WHERE ve.cod_loja='+QuotedStr(FormatFloat('00',EdtPagtoCodLoja.AsInteger))+
-         ' AND ('+sFiltro+')';
+         ' WHERE ve.cod_loja='+QuotedStr(FormatFloat('00',EdtPagtoCodLoja.AsInteger));
+
+         // Odir Alterou Fornecedor 883 - 18/11/2016
+         If StrToDate(f_Troca('.','/',sgDtaF))>StrToDate('15/11/2016') Then
+          MySql:=
+           MySql+' AND pr.principalfor=''000500'''+
+                 ' AND pf.tip_pessoa='+QuotedStr('P');
+
+  MySql:=
+   MySql+' AND ('+sFiltro+')';
 
          //======================================================================
          // Comissao Supervisor =================================================
@@ -5318,7 +5358,7 @@ Begin
            MySqlClausula1:=' UNION'+
                            ' SELECT '+QuotedStr(DMSalao.CDS_V_PagtoProfCODIGO.AsString)+' Cod_Prof, '+
                            QuotedStr(DMSalao.CDS_V_PagtoProfNOME.AsString)+' des_profissional, '+
-                           QuotedStr('COMISSÃO SUPERVIDOR -'+CurrToStr(cgPerComisSuper)+'%')+' COMISSAO_APLICADA, '+
+                           QuotedStr('COMISSÃO SUPERVIDOR - '+CurrToStr(cgPerComisSuper)+'%')+' COMISSAO_APLICADA, '+
                            f_Troca(',','.',CurrToStr(cVlrComisSuper))+' VLR_TOT_COMISSAO, '+
                            QuotedStr('Sem')+' num_docto, current_date dta_comprov,'+
                            ' '''' cod_comprov, '''' TIP_DOCTO, '''' cod_produto,'+
