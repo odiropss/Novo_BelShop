@@ -1,6 +1,6 @@
 object FrmSolicitacoes: TFrmSolicitacoes
-  Left = 551
-  Top = 100
+  Left = 311
+  Top = 133
   Width = 649
   Height = 470
   AutoSize = True
@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 432
-    ActivePage = Ts_HabServ
+    ActivePage = Ts_Selecionar
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
