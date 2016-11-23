@@ -3,6 +3,7 @@ object DMBelShop: TDMBelShop
   OnCreate = DataModuleCreate
   Left = 81
   Height = 724
+  VerticalOffset = 1
   Width = 1277
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'

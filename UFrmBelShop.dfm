@@ -1,5 +1,5 @@
 object FrmBelShop: TFrmBelShop
-  Left = 238
+  Left = 254
   Top = 105
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
@@ -12090,7 +12090,7 @@ object FrmBelShop: TFrmBelShop
       Tag = 116
       Caption = 'Movtos de Comprovantes '
       ImageIndex = 16
-      object Panel104: TPanel
+      object Pan_ConsultaNFePrincpal: TPanel
         Left = 0
         Top = 492
         Width = 971
@@ -12287,14 +12287,14 @@ object FrmBelShop: TFrmBelShop
           TabOrder = 0
           object Label181: TLabel
             Left = 109
-            Top = 21
+            Top = 26
             Width = 8
             Height = 13
             Caption = 'a'
           end
           object DtEdt_ConsultaNFeDtFim: TcxDateEdit
-            Left = 125
-            Top = 15
+            Left = 123
+            Top = 20
             ParentFont = False
             Style.Font.Charset = DEFAULT_CHARSET
             Style.Font.Color = clWindowText
@@ -12308,8 +12308,8 @@ object FrmBelShop: TFrmBelShop
             Width = 94
           end
           object DtEdt_ConsultaNFeDtInicio: TcxDateEdit
-            Left = 11
-            Top = 15
+            Left = 9
+            Top = 20
             ParentFont = False
             Style.Font.Charset = DEFAULT_CHARSET
             Style.Font.Color = clWindowText
@@ -12374,7 +12374,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Ckbx_ConsultaNFeApresParcela: TCheckBox
             Left = 8
-            Top = 35
+            Top = 34
             Width = 113
             Height = 17
             Caption = 'Parcelamentos'
@@ -12400,7 +12400,7 @@ object FrmBelShop: TFrmBelShop
           TabOrder = 3
           object Rb_ConsultaNFeTpMovtoAmbos: TJvRadioButton
             Left = 7
-            Top = 20
+            Top = 17
             Width = 59
             Height = 17
             Alignment = taLeftJustify
@@ -12419,7 +12419,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Rb_ConsultaNFeTpMovtoEnt: TJvRadioButton
             Left = 68
-            Top = 20
+            Top = 17
             Width = 63
             Height = 17
             Alignment = taLeftJustify
@@ -12442,7 +12442,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Rb_ConsultaNFeTpMovtoSai: TJvRadioButton
             Left = 141
-            Top = 20
+            Top = 17
             Width = 55
             Height = 17
             Alignment = taLeftJustify
@@ -12463,6 +12463,24 @@ object FrmBelShop: TFrmBelShop
             HotTrackFont.Style = []
             LinkedControls = <>
           end
+          object Ckbx_ConsultaNFeApresProduto: TCheckBox
+            Left = 8
+            Top = 34
+            Width = 160
+            Height = 17
+            Caption = 'Resultado de Produtos'
+            Checked = True
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            State = cbChecked
+            TabOrder = 3
+            OnClick = Ckbx_ConsultaNFeApresParcelaClick
+            OnKeyUp = Ckbx_ConsultaNFeApresParcelaKeyUp
+          end
         end
         object Gb_ConsultaNFeParticipacao: TGroupBox
           Left = 751
@@ -12475,7 +12493,7 @@ object FrmBelShop: TFrmBelShop
           TabOrder = 4
           object Ckb_ConsultaNFeParticipacao: TJvXPCheckbox
             Left = 25
-            Top = 20
+            Top = 25
             Width = 53
             Height = 17
             Caption = 'NAO'
@@ -12507,7 +12525,7 @@ object FrmBelShop: TFrmBelShop
           TabOrder = 1
           object Cbx_ConsultaNfeSituacaoProd: TComboBox
             Left = 9
-            Top = 18
+            Top = 22
             Width = 136
             Height = 22
             Style = csOwnerDrawFixed
@@ -12550,7 +12568,7 @@ object FrmBelShop: TFrmBelShop
         Top = 61
         Width = 971
         Height = 431
-        ActivePage = Ts_ConsultaNFeMovtoCompr
+        ActivePage = Ts_ConsultaNFeProdutos
         Align = alClient
         TabOrder = 1
         OnChange = PC_ConsultaMovtoComprChange
@@ -13002,6 +13020,186 @@ object FrmBelShop: TFrmBelShop
               end>
           end
         end
+        object Ts_ConsultaNFeProdutos: TTabSheet
+          Caption = ' Produtos '
+          ImageIndex = 2
+          object Pan_ConsultaNFeProdutos: TPanel
+            Left = 0
+            Top = 359
+            Width = 963
+            Height = 44
+            Align = alBottom
+            BevelInner = bvLowered
+            BorderStyle = bsSingle
+            Ctl3D = False
+            ParentCtl3D = False
+            TabOrder = 0
+            object Bt_ConsultaNFeProdSalvarClipboard: TJvXPButton
+              Tag = 4
+              Left = 2
+              Top = 2
+              Width = 168
+              Height = 38
+              Caption = 'Salvar (Mem'#243'ria)'
+              TabOrder = 0
+              ShowFocusRect = True
+              Align = alLeft
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              OnClick = Bt_ConsultaNFeSalvarClipboardClick
+            end
+            object Bt_ConsultaNFeProdSalvarCSV: TJvXPButton
+              Tag = 4
+              Left = 170
+              Top = 2
+              Width = 190
+              Height = 38
+              Caption = 'Salvar Arquivo CSV'
+              TabOrder = 1
+              ShowFocusRect = True
+              Align = alLeft
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              OnClick = Bt_ConsultaNFeSalvarCSVClick
+            end
+            object Ckbx_ConsultaNFeApresTotais: TJvXPCheckbox
+              Left = 376
+              Top = 10
+              Width = 164
+              Height = 23
+              Caption = 'Somente TOTAIS'
+              TabOrder = 2
+              ParentColor = False
+              Color = clRed
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWhite
+              Font.Height = -16
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+              OnClick = Ckbx_ConsultaNFeApresTotaisClick
+              OnKeyUp = Ckbx_ConsultaNFeApresTotaisKeyUp
+            end
+          end
+          object Dbg_ConsultaNFeProdutos: TDBGrid
+            Left = 330
+            Top = 0
+            Width = 633
+            Height = 359
+            Align = alClient
+            Color = 15004403
+            Ctl3D = False
+            DataSource = DMVirtual.DS_V_NFeProdutos
+            FixedColor = clSilver
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+            ParentCtl3D = False
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 1
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clBlack
+            TitleFont.Height = -11
+            TitleFont.Name = 'MS Sans Serif'
+            TitleFont.Style = [fsBold]
+            OnDrawColumnCell = Dbg_ConsultaNFeProdutosDrawColumnCell
+            Columns = <
+              item
+                Expanded = False
+                FieldName = 'COD_PROD'
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_PROD'
+                Width = 300
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_COMPRV'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'C'#243'd Comp'
+                Width = 62
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_COMPRV'
+                Width = 150
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_TOTAL'
+                Title.Alignment = taRightJustify
+                Width = 65
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_TOTAL'
+                Title.Alignment = taRightJustify
+                Width = 90
+                Visible = True
+              end>
+          end
+          object Dbg_ConsultaNFeProdLojas: TDBGrid
+            Left = 0
+            Top = 0
+            Width = 330
+            Height = 359
+            Align = alLeft
+            Color = 15004403
+            Ctl3D = False
+            DataSource = DMVirtual.DS_SelectLoja
+            FixedColor = clSilver
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+            ParentCtl3D = False
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 2
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clBlack
+            TitleFont.Height = -11
+            TitleFont.Name = 'MS Sans Serif'
+            TitleFont.Style = [fsBold]
+            Columns = <
+              item
+                Alignment = taCenter
+                Color = 8454143
+                Expanded = False
+                FieldName = 'COD_LOJA'
+                Width = 40
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'RAZAO_SOCIAL'
+                Width = 250
+                Visible = True
+              end>
+          end
+        end
       end
     end
     object Ts_CurvaABCEndereco: TTabSheet
@@ -13025,7 +13223,7 @@ object FrmBelShop: TFrmBelShop
             Top = 55
             Width = 963
             Height = 453
-            ActivePage = Ts_CurvaABCFiltros
+            ActivePage = Ts_CurvaABCMixProd
             Align = alClient
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
@@ -14064,7 +14262,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 483
+              Left = 479
               Top = 12
               Width = 31
               Height = 13
@@ -14120,7 +14318,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 517
+              Left = 513
               Top = 9
               Width = 51
               Height = 18
@@ -14133,7 +14331,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 572
+              Left = 568
               Top = 9
               Width = 50
               Height = 18
@@ -36251,13 +36449,13 @@ object FrmBelShop: TFrmBelShop
     Top = 376
   end
   object Trad_Localizer: TcxLocalizer
-    Left = 800
-    Top = 416
+    Left = 808
+    Top = 400
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 812
-    Top = 351
+    Left = 828
+    Top = 343
   end
   object PopM_OCRomaneio: TPopupMenu
     Left = 752

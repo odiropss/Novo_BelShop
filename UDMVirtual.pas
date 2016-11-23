@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Classes, DB, DBClient, Math, DBXpress, IBCustomDataSet, IBQuery,
   FMTBcd, SqlExpr, Provider;
-//  Último: DBXpress;
+//  Último: Provider;
 
 type
   TDMVirtual = class(TDataModule)
@@ -835,6 +835,21 @@ type
     CDS_V_EstoquesEST_CURVA_B: TAggregateField;
     CDS_V_EstoquesCOD_COMPRADOR: TStringField;
     CDS_V_EstoquesDES_COMPRADOR: TStringField;
+    DS_V_NFeProdutos: TDataSource;
+    CDS_V_NFeProdutos: TClientDataSet;
+    CDS_V_NFeProdutosCOD_LOJA: TStringField;
+    CDS_V_NFeProdutosCOD_PROD: TStringField;
+    CDS_V_NFeProdutosDES_PROD: TStringField;
+    CDS_V_NFeProdutosCOD_COMPRV: TStringField;
+    CDS_V_NFeProdutosDES_COMPRV: TStringField;
+    CDS_V_NFeProdutosQTD_TOTAL: TIntegerField;
+    CDS_V_NFeProdutosVLR_TOTAL: TFMTBCDField;
+    DSP_SelectLoja: TDataSetProvider;
+    CDS_SelectLoja: TClientDataSet;
+    DS_SelectLoja: TDataSource;
+    SDS_SelectLoja: TSQLDataSet;
+    CDS_SelectLojaCOD_LOJA: TStringField;
+    CDS_SelectLojaRAZAO_SOCIAL: TStringField;
     procedure CDS_V_GruposProdutosAfterScroll(DataSet: TDataSet);
     procedure CDS_V_EstFisFinanEmpAfterScroll(DataSet: TDataSet);
     procedure CDS_V_MargemLucroFornAfterScroll(DataSet: TDataSet);
@@ -846,6 +861,8 @@ type
 
     procedure CDS_V_EstoquesAfterEdit(DataSet: TDataSet);
     procedure CDS_V_EstoquesCalcFields(DataSet: TDataSet);
+    procedure CDS_SelectLojaAfterScroll(DataSet: TDataSet);
+    procedure CDS_V_NFeProdutosAfterScroll(DataSet: TDataSet);
 
   private
     { Private declarations }
@@ -871,6 +888,8 @@ type
 
     gCDS_V5: TClientDataSet;
     gDS_V5: TDataSource;
+
+    bgNFeProdutos: Boolean; // Se Executa o Evento: TDMVirtual.CDS_V_NFeProdutosAfterScroll(DataSet: TDataSet);
   end;
 
 var
@@ -1059,6 +1078,29 @@ procedure TDMVirtual.CDS_V_EstoquesCalcFields(DataSet: TDataSet);
 begin
   // Acerta Número do Registro =================================================
   CDS_V_EstoquesNUM_LINHA.AsInteger:=CDS_V_Estoques.RecNo;
+end;
+
+procedure TDMVirtual.CDS_SelectLojaAfterScroll(DataSet: TDataSet);
+begin
+  If bgNFeProdutos Then
+  Begin
+    CDS_V_NFeProdutos.DisableControls;
+    CDS_V_NFeProdutos.Close;
+    CDS_V_NFeProdutos.Filtered:=False;
+    CDS_V_NFeProdutos.Filter:='COD_LOJA='+QuotedStr(Copy(CDS_SelectLojaCOD_LOJA.AsString,5,2));
+    CDS_V_NFeProdutos.Filtered:=True;
+    CDS_V_NFeProdutos.Open;
+    CDS_V_NFeProdutos.EnableControls;
+  End;
+end;
+
+procedure TDMVirtual.CDS_V_NFeProdutosAfterScroll(DataSet: TDataSet);
+begin
+  If (CDS_V_NFeProdutosCOD_PROD.AsString='TOTAIS') And (bgNFeProdutos) Then
+  Begin
+    CDS_V_NFeProdutos.Next;
+  End;
+
 end;
 
 end.

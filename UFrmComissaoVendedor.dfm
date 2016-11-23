@@ -1,7 +1,7 @@
 object FrmComissaoVendedor: TFrmComissaoVendedor
   Left = 238
   Top = 107
-  ActiveControl = Dbg_FamiliaPrecos
+  ActiveControl = Dbg_UltimaAtualizacao
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Comiss'#227'o Vendedores'
@@ -182,7 +182,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
     Top = 0
     Width = 977
     Height = 543
-    ActivePage = Ts_ParametrosVendedores
+    ActivePage = Ts_Produtos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

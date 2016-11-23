@@ -392,7 +392,7 @@ type
     Panel44: TPanel;
     Bt_ConsultaOCFechar: TJvXPButton;
     Bt_ConsultaOCImprime: TJvXPButton;
-    Panel104: TPanel;
+    Pan_ConsultaNFePrincpal: TPanel;
     Bt_ConsultaNFeFechar: TJvXPButton;
     Pan_ConsultaNFe: TPanel;
     Bt_ConsultaNFeBuscaOCs: TJvXPButton;
@@ -1359,6 +1359,14 @@ type
     SubMenuComisVendedores: TMenuItem;
     N48: TMenuItem;
     ParametrosVendedores1: TMenuItem;
+    Ts_ConsultaNFeProdutos: TTabSheet;
+    Pan_ConsultaNFeProdutos: TPanel;
+    Bt_ConsultaNFeProdSalvarClipboard: TJvXPButton;
+    Bt_ConsultaNFeProdSalvarCSV: TJvXPButton;
+    Ckbx_ConsultaNFeApresProduto: TCheckBox;
+    Dbg_ConsultaNFeProdutos: TDBGrid;
+    Dbg_ConsultaNFeProdLojas: TDBGrid;
+    Ckbx_ConsultaNFeApresTotais: TJvXPCheckbox;
 
     // Odir ====================================================================
 
@@ -1491,8 +1499,8 @@ type
     ////////////////////////////////////////////////////////////////////////////
 
 
-    // NOTAS FISCAIS DE ENTRADA ////////////////////////////////////////////////
-    Function  ApresentaNFe: Boolean;
+    // BUSCA MOVTOS DE COMPROVANTES- Antigo: NOTAS FISCAIS DE ENTRADA //////////
+    Function  BuscaMovtosComprov: Boolean; // Antigo ApresentaNFe: Boolean;
     ////////////////////////////////////////////////////////////////////////////
 
     // PLANILHA FINANCEIRA /////////////////////////////////////////////////////
@@ -2291,6 +2299,12 @@ type
       var Key: Word; Shift: TShiftState);
     procedure SubMenuComisVendedoresClick(Sender: TObject);
     procedure ParametrosVendedores1Click(Sender: TObject);
+    procedure Dbg_ConsultaNFeProdutosDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure Ckbx_ConsultaNFeApresTotaisClick(Sender: TObject);
+    procedure Ckbx_ConsultaNFeApresTotaisKeyUp(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -9334,10 +9348,14 @@ Begin
   
 End; // Objetivos/Metas - Habilita / Desabilita LInha >>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// NOTAS FISCAIS DE ENTRADA - Busca NFe >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Function TFrmBelShop.ApresentaNFe: Boolean;
+// BUSCA MOVTOS DE COMPROVANTES- Antigo: NOTAS FISCAIS DE ENTRADA //////////
+Function TFrmBelShop.BuscaMovtosComprov: Boolean; // Antigo ApresentaNFe: Boolean;
 Var
-  MySql, MySqlEnt, MySqlSai: String;
+  MySql, MySqlProd,
+  sFiltroEnt, MySqlEnt, sWhereEnt,
+  sFiltroSai, MySqlSai, sWhereSai,
+  sProdEnt, sProdSai: String;
+
   sDti, sDtf: String;
   cVlrEmpresa, cVlrLoja,
   cQtdsEmpresa, cQtdsLoja: Currency;
@@ -9354,6 +9372,7 @@ Begin
   Result:=True;
 
   sgLojasNConectadas:='';
+  DMVirtual.bgNFeProdutos:=True; // Se Executa o Evento: TDMVirtual.CDS_V_NFeProdutosAfterScroll(DataSet: TDataSet);
 
   // Seleciona Empresa =========================================================
   sgOutrasEmpresa:='(50,99)';
@@ -9496,6 +9515,8 @@ Begin
   CDS_.CreateDataSet;
 
   // Monta Sql de Movimentos de Entradas =======================================
+  sFiltroEnt:='';
+  sWhereEnt :='';
   MySqlEnt:=' Select moe.codcomprovante, moe.numero, moe.serie,'+
             ' moe.datacomprovante datadocumento,'+
             ' moe.dataentrada,'+
@@ -9516,65 +9537,77 @@ Begin
             ' END totnota,'+
 
             ' cpe.nomecomprovante,'+
-            ' moe.codfornecedor, foe.nomefornecedor'+
+            ' moe.codfornecedor, foe.nomefornecedor';
 
-            '  From MFOR moe'+
-            '      LEFT JOIN COMPRV   cpe ON cpe.codcomprovante=moe.codcomprovante'+
-            '      LEFT JOIN FORNECED foe ON foe.codfornecedor=moe.codfornecedor'+
-            '      LEFT JOIN MFORPRO  mpe ON mpe.CHAVENF=moe.CHAVENF'+
-            '      LEFT JOIN PRODUTO  pe  ON pe.codproduto=mpe.CodProduto'+
-            '      LEFT JOIN gruposub gse ON gse.codgruposub=pe.codgruposub'+
-            '      LEFT JOIN grupo    gre ON gre.codgrupo=gse.codgrupo'+
+  sWhereEnt:='  From MFOR moe'+
+             '      LEFT JOIN COMPRV   cpe ON cpe.codcomprovante=moe.codcomprovante'+
+             '      LEFT JOIN FORNECED foe ON foe.codfornecedor=moe.codfornecedor'+
+             '      LEFT JOIN MFORPRO  mpe ON mpe.CHAVENF=moe.CHAVENF'+
+             '      LEFT JOIN PRODUTO  pe  ON pe.codproduto=mpe.CodProduto'+
+             '      LEFT JOIN gruposub gse ON gse.codgruposub=pe.codgruposub'+
+             '      LEFT JOIN grupo    gre ON gre.codgrupo=gse.codgrupo'+
 
-            ' Where moe.dataentrada Between '+QuotedStr(sDti)+' And '+QuotedStr(sDtf)+
-            ' And   moe.codfilial = :CodLoja';
+             ' Where moe.dataentrada Between '+QuotedStr(sDti)+' And '+QuotedStr(sDtf)+
+             ' And   moe.codfilial = :CodLoja';
 
             // Numero do Docto
             If EdtConsultaNFeDocto.Value<>0 Then
-             MySqlEnt:=MySqlEnt+' AND moe.numero='+QuotedStr(VarToStr(EdtConsultaNFeDocto.Value));
+             sFiltroEnt:=
+              sFiltroEnt+' AND moe.numero='+QuotedStr(VarToStr(EdtConsultaNFeDocto.Value));
 
             // Valor do Docto
             If EdtConsultaNFeVlr.Value<>0 Then
-             MySqlEnt:=MySqlEnt+' AND CAST(moe.totnota as Numeric(12,2))='+QuotedStr(f_Troca(',','.',VarToStr(EdtConsultaNFeVlr.Value)));
+             sFiltroEnt:=
+              sFiltroEnt+' AND CAST(moe.totnota as Numeric(12,2))='+QuotedStr(f_Troca(',','.',VarToStr(EdtConsultaNFeVlr.Value)));
 
             // Situacao dos Produtos
             If Cbx_ConsultaNfeSituacaoProd.ItemIndex=0 Then
-             MySqlEnt:=MySqlEnt+' AND COALESCE(pe.situacaopro,0)=0';
+             sFiltroEnt:=
+              sFiltroEnt+' AND COALESCE(pe.situacaopro,0)=0';
 
             If Cbx_ConsultaNfeSituacaoProd.ItemIndex=1 Then
-             MySqlEnt:=MySqlEnt+' AND COALESCE(pe.situacaopro,3)=3';
+             sFiltroEnt:=
+              sFiltroEnt+' AND COALESCE(pe.situacaopro,3)=3';
 
             If Cbx_ConsultaNfeSituacaoProd.ItemIndex=2 Then
-             MySqlEnt:=MySqlEnt+' AND COALESCE(pe.situacaopro,0) in (0,3)';
+             sFiltroEnt:=
+              sFiltroEnt+' AND COALESCE(pe.situacaopro,0) in (0,3)';
 
             If Trim(sComprov)<>'' Then
-             MySqlEnt:=MySqlEnt+' AND moe.codcomprovante in ('+sComprov+')';
+             sFiltroEnt:=
+              sFiltroEnt+' AND moe.codcomprovante in ('+sComprov+')';
 
             If Trim(sgFornecedores)<>''  Then
-             MySqlEnt:=MySqlEnt+' AND moe.codfornecedor in ('+sgFornecedores+')';
+             sFiltroEnt:=
+              sFiltroEnt+' AND moe.codfornecedor in ('+sgFornecedores+')';
 
             // Produtos Codigos e/ou Produtos Like ---------------------
             If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
-             MySqlEnt:=
-              MySqlEnt+' AND (pe.CodProduto in ('+sgProdutos+') Or '+f_Troca('pr.','pe.',sgLikeProdutos)+')'
+             sFiltroEnt:=
+              sFiltroEnt+' AND (pe.CodProduto in ('+sgProdutos+') Or '+f_Troca('pr.','pe.',sgLikeProdutos)+')'
             Else If Trim(sgProdutos)<>'' Then
-             MySqlEnt:=
-              MySqlEnt+' AND pe.CodProduto in ('+sgProdutos+')'
-            ELse If Trim(sgLikeProdutos)<>'' Then
-             MySqlEnt:=
-              MySqlEnt+' AND '+f_Troca('pr.','pe.',sgLikeProdutos);
+             sFiltroEnt:=
+              sFiltroEnt+' AND pe.CodProduto in ('+sgProdutos+')'
+            Else If Trim(sgLikeProdutos)<>'' Then
+             sFiltroEnt:=
+              sFiltroEnt+' AND '+f_Troca('pr.','pe.',sgLikeProdutos);
 
             // Grupos e SubGrupos --------------------------------------
             If Trim(sgGrupos)<>'' Then
-             MySqlEnt:=MySqlEnt+' AND '+f_Troca('pr.','pe.',f_Troca('gr.','gre.',sgGrupos));
+             sFiltroEnt:=
+              sFiltroEnt+' AND '+f_Troca('pr.','pe.',f_Troca('gr.','gre.',sgGrupos));
 
             // Aplicacoes ----------------------------------------------
             If Trim(sgAplicacoes)<>'' Then
-             MySqlEnt:=MySqlEnt+' AND pe.CodAplicacao in ('+sgAplicacoes+')';
+             sFiltroEnt:=
+              sFiltroEnt+' AND pe.CodAplicacao in ('+sgAplicacoes+')';
 
-            MySqlEnt:=MySqlEnt+' GROUP BY 1, 2, 3, 4, 5, 9, 10, 11';
+            sFiltroEnt:=
+             sFiltroEnt+' GROUP BY 1, 2, 3, 4, 5, 9, 10, 11';
 
   // Monta Sql de Movimentos de Saidas =========================================
+  sFiltroSai:='';
+  sWhereSai :='';
   MySqlSai:=' SELECT mos.codcomprovante, mos.numero, mos.serie,'+
             ' mos.datacomprovante datadocumento, mos.datadocumento dataentrada,'+
             ' SUM(mps.quantatendida) totqtd,'+
@@ -9599,79 +9632,157 @@ Begin
             '     ''SEM FORNECEDOR INFORMADO'''+
             '   ELSE'+
             '     fos.nomefornecedor'+
-            ' END nomefornecedor'+
+            ' END nomefornecedor';
 
-            ' FROM MCLI mos'+
-            '      LEFT JOIN COMPRV   cps ON cps.codcomprovante=mos.codcomprovante'+
-            '      LEFT JOIN MCLIPRO  mps ON mps.CHAVENF=mos.CHAVENF'+
-            '      LEFT JOIN PRODUTO  ps  ON ps.codproduto=mps.codproduto'+
-            '      LEFT JOIN FORNECED fos ON fos.codfornecedor=ps.principalfor'+
-            '      LEFT JOIN gruposub gss ON gss.codgruposub=ps.codgruposub'+
-            '      LEFT JOIN grupo    grs ON grs.codgrupo=gss.codgrupo'+
+  sWhereSai:=' FROM MCLI mos'+
+             '      LEFT JOIN COMPRV   cps ON cps.codcomprovante=mos.codcomprovante'+
+             '      LEFT JOIN MCLIPRO  mps ON mps.CHAVENF=mos.CHAVENF'+
+             '      LEFT JOIN PRODUTO  ps  ON ps.codproduto=mps.codproduto'+
+             '      LEFT JOIN FORNECED fos ON fos.codfornecedor=ps.principalfor'+
+             '      LEFT JOIN gruposub gss ON gss.codgruposub=ps.codgruposub'+
+             '      LEFT JOIN grupo    grs ON grs.codgrupo=gss.codgrupo'+
 
-            ' WHERE mos.datadocumento Between '+QuotedStr(sDti)+' And '+QuotedStr(sDtf)+
-            ' AND mos.codfilial = :CodLoja';
+             ' WHERE mos.datadocumento Between '+QuotedStr(sDti)+' And '+QuotedStr(sDtf)+
+             ' AND mos.codfilial = :CodLoja';
 
             // Numero do Docto
             If EdtConsultaNFeDocto.Value<>0 Then
-             MySqlSai:=MySqlSai+' AND mos.numero='+QuotedStr(VarToStr(EdtConsultaNFeDocto.Value));
+             sFiltroSai:=
+              sFiltroSai+' AND mos.numero='+QuotedStr(VarToStr(EdtConsultaNFeDocto.Value));
 
             // Valor do Docto
             If EdtConsultaNFeVlr.Value<>0 Then
-             MySqlSai:=MySqlSai+' AND CAST(mos.totnota as Numeric(12,2))='+QuotedStr(f_Troca(',','.',VarToStr(EdtConsultaNFeVlr.Value)));
+             sFiltroSai:=
+              sFiltroSai+' AND CAST(mos.totnota as Numeric(12,2))='+QuotedStr(f_Troca(',','.',VarToStr(EdtConsultaNFeVlr.Value)));
 
             // Situacao dos Produtos
             If Cbx_ConsultaNfeSituacaoProd.ItemIndex=0 Then
-             MySqlSai:=MySqlSai+' AND COALESCE(ps.situacaopro,0)=0';
+             sFiltroSai:=
+              sFiltroSai+' AND COALESCE(ps.situacaopro,0)=0';
 
             If Cbx_ConsultaNfeSituacaoProd.ItemIndex=1 Then
-             MySqlSai:=MySqlSai+' AND COALESCE(ps.situacaopro,3)=3';
+             sFiltroSai:=
+              sFiltroSai+' AND COALESCE(ps.situacaopro,3)=3';
 
             If Cbx_ConsultaNfeSituacaoProd.ItemIndex=2 Then
-             MySqlSai:=MySqlSai+' AND COALESCE(ps.situacaopro,0) in (0,3)';
+             sFiltroSai:=
+              sFiltroSai+' AND COALESCE(ps.situacaopro,0) in (0,3)';
 
             If Trim(sComprov)<>'' Then
-             MySqlSai:=MySqlSai+' AND mos.codcomprovante in ('+sComprov+')';
+             sFiltroSai:=
+              sFiltroSai+' AND mos.codcomprovante in ('+sComprov+')';
 
             If Trim(sgFornecedores)<>''  Then
-             MySqlSai:=MySqlSai+' AND ps.principalfor in ('+sgFornecedores+')';
+             sFiltroSai:=
+              sFiltroSai+' AND ps.principalfor in ('+sgFornecedores+')';
 
             // Produtos Codigos e/ou Produtos Like ---------------------
             If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
-             MySqlSai:=
-              MySqlSai+' AND (ps.CodProduto in ('+sgProdutos+') Or '+f_Troca('pr.','ps.',sgLikeProdutos)+')'
+             sFiltroSai:=
+              sFiltroSai+' AND (ps.CodProduto in ('+sgProdutos+') Or '+f_Troca('pr.','ps.',sgLikeProdutos)+')'
             Else If Trim(sgProdutos)<>'' Then
-             MySqlSai:=
-              MySqlSai+' AND ps.CodProduto in ('+sgProdutos+')'
+             sFiltroSai:=
+              sFiltroSai+' AND ps.CodProduto in ('+sgProdutos+')'
             Else If Trim(sgLikeProdutos)<>'' Then
-             MySqlSai:=
-              MySqlSai+'AND'+f_Troca('pr.','ps.', sgLikeProdutos);
+             sFiltroSai:=
+              sFiltroSai+' AND '+f_Troca('pr.','ps.', sgLikeProdutos);
 
             // Grupos e SubGrupos --------------------------------------
             If Trim(sgGrupos)<>'' Then
-             MySqlSai:=MySqlSai+' AND '+f_Troca('pr.','ps.',f_Troca('gr.','grs.',sgGrupos));
+             sFiltroSai:=
+              sFiltroSai+' AND '+f_Troca('pr.','ps.',f_Troca('gr.','grs.',sgGrupos));
 
             // Aplicacoes ----------------------------------------------
             If Trim(sgAplicacoes)<>'' Then
-             MySqlSai:=MySqlSai+' AND ps.CodAplicacao in ('+sgAplicacoes+')';
+             sFiltroSai:=
+              sFiltroSai+' AND ps.CodAplicacao in ('+sgAplicacoes+')';
 
-            MySqlSai:=MySqlSai+' GROUP BY 1, 2, 3, 4, 5, 9, 10, 11';
+            sFiltroSai:=
+             sFiltroSai+' GROUP BY 1, 2, 3, 4, 5, 9, 10, 11';
 
-            If Rb_ConsultaNFeTpMovtoAmbos.Checked Then
-             Begin
-               MySql:=MySqlEnt+' UNION '+MySqlSai+MySqlOrderGrup;
-             End
-            Else If Rb_ConsultaNFeTpMovtoEnt.Checked Then
-             Begin
-               MySql:=MySqlEnt+MySqlOrderGrup;
-             End
-            Else // If Rb_ConsultaNFeTpMovtoSai.Checked Then
-             Begin
-               MySql:=MySqlSai+MySqlOrderGrup;
-             End; // If Rb_ConsultaNFeTpMovtoAmbos.Checked Then
-            MySql:=MySql+' ORDER BY 10, 4, 1';
+  // Monta Clausulas com Filtros ===============================================
+  MySqlEnt:=MySqlEnt+sWhereEnt+sFiltroEnt;
+  MySqlSai:=MySqlSai+sWhereSai+sFiltroSai;
+
+  // Executa UNION Conforme Solicitado =========================================
+  If Rb_ConsultaNFeTpMovtoAmbos.Checked Then
+   Begin
+     MySql:=MySqlEnt+' UNION '+MySqlSai; // Odirapagar - 22/11/2016-> +MySqlOrderGrup;
+   End
+  Else If Rb_ConsultaNFeTpMovtoEnt.Checked Then
+   Begin
+     MySql:=MySqlEnt; // Odirapagar - 22/11/2016-> +MySqlOrderGrup;
+   End
+  Else // If Rb_ConsultaNFeTpMovtoSai.Checked Then
+   Begin
+     MySql:=MySqlSai; // Odirapagar - 22/11/2016->+MySqlOrderGrup;
+   End; // If Rb_ConsultaNFeTpMovtoAmbos.Checked Then
+  MySql:=
+   MySql+' ORDER BY 10, 4, 1';
+
+  // Manta SQL para Busca Resultado de Produtos ================================
+  If Ckbx_ConsultaNFeApresProduto.Checked Then
+  Begin
+    // Produtos de Entrada --------------------------------------
+    sProdEnt:=' SELECT moe.codfilial Cod_Loja, ''TOTAIS'' Cod_Prod,'+
+              ' ''-> LOJA: Bel_''||moe.codfilial Des_Prod,'+
+              ' cpe.codcomprovante Cod_Comprv, cpe.nomecomprovante Des_Comprv,'+
+              ' Cast(SUM(coalesce(mpe.quant,0)) as Integer) Qtd_Total,'+
+              'Cast(SUM(coalesce(mpe.valtotal,0)) as Numeric(12,2)) Vlr_Total'+
+              sWhereEnt+
+              sFiltroEnt+
+
+              ' UNION '+
+
+              ' SELECT moe.codfilial Cod_Loja, mpe.codproduto Cod_Prod,'+
+              ' pe.apresentacao Des_Prod,'+
+              ' cpe.codcomprovante Cod_Comprv, cpe.nomecomprovante Des_Comprv,'+
+              ' Cast(SUM(coalesce(mpe.quant,0)) as Integer) Qtd_Total,'+
+              ' Cast(SUM(coalesce(mpe.valtotal,0)) as Numeric(12,2)) Vlr_Total'+
+              sWhereEnt+
+              sFiltroEnt;
+
+    // Produtosa de Saida ---------------------------------------
+    sProdSai:=' SELECT mos.codfilial Cod_Loja, ''TOTAIS'' Cod_Prod,'+
+              ' ''-> LOJA: Bel_''||mos.codfilial Des_Prod,'+
+              ' cps.codcomprovante Cod_Comprv, cps.nomecomprovante Des_Comprv,'+
+              ' Cast(SUM(coalesce(mps.quantatendida,0)) as Integer) Qtd_Total,'+
+              ' Cast(SUM(coalesce(mps.valtotal,0)) as Numeric(12,2)) Vlr_Total'+
+              sWhereSai+
+              sFiltroSai+
+
+              ' UNION '+
+
+              ' SELECT mos.codfilial Cod_Loja, mps.codproduto Cod_Prod,'+
+              ' ps.apresentacao Des_Prod,'+
+              ' cps.codcomprovante Cod_Comprv, cps.nomecomprovante Des_Comprv,'+
+              ' Cast(SUM(coalesce(mps.quantatendida,0)) as Integer) Qtd_Total,'+
+              ' Cast(SUM(coalesce(mps.valtotal,0)) as Numeric(12,2)) Vlr_Total'+
+              sWhereSai+
+              sFiltroSai;
+
+    // Executa UNION Conforme Solicitado ===============================
+    If Rb_ConsultaNFeTpMovtoAmbos.Checked Then
+     Begin
+       MySqlProd:=sProdEnt+' UNION '+sProdSai;
+     End
+    Else If Rb_ConsultaNFeTpMovtoEnt.Checked Then
+     Begin
+       MySqlProd:=sProdEnt;
+     End
+    Else // If Rb_ConsultaNFeTpMovtoSai.Checked Then
+     Begin
+       MySqlProd:=sProdSai;
+     End; // If Rb_ConsultaNFeTpMovtoAmbos.Checked Then
+
+    // Troca GROUP BY e Coloca ORDER BY
+    MySqlProd:=f_Troca('GROUP BY 1, 2, 3, 4, 5, 9, 10, 11','GROUP BY 1, 2, 3, 4, 5',AnsiUpperCase(MySqlProd));
+    MySqlProd:=
+     MySqlProd+' ORDER BY 3,5 ';
+  End; // If Ckbx_ConsultaNFeApresProduto.Checked Then
 
   // Inicia Processamento ======================================================
+  sgCodLojas:='';
   cVlrEmpresa:=0;
   cQtdsEmpresa:=0;
   iItensEmpresa:=0;
@@ -9686,6 +9797,11 @@ Begin
     Begin
       // Guarda Codigo Empresa =================================================
       sgCodEmp:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+
+      If sgCodLojas='' Then
+       sgCodLojas:=QuotedStr(sgCodEmp)
+      Else
+       sgCodLojas:=sgCodLojas+','+QuotedStr(sgCodEmp);
 
       // Apresentacao ==========================================================
       OdirPanApres.Caption:='AGUARDE !! Processando Loja: Bel_'+sgCodEmp+' - '+
@@ -9982,11 +10098,11 @@ Begin
                 DMVirtual.CDS_V_NFeORDEM.AsInteger:=iOrdem;
                 DMVirtual.CDS_V_NFe.Post;
               End; // If CDS_.FieldByName('Qtd_Docs').AsInteger<>0 Then
-            
+
               CDS_.Next;
             End; // While Not CDS_.Eof do
           End; // If Ckb_ConsultaNFeParticipacao.Checked Then
-          
+
           // Grava Total de Loja -----------------------------------------------
           DMVirtual.CDS_V_NFe.Insert;
           DMVirtual.CDS_V_NFeCOD_LOJA.AsString:=sgCodEmp;
@@ -10009,17 +10125,49 @@ Begin
           DMVirtual.CDS_V_NFeORDEM.AsInteger:=iOrdem;
           DMVirtual.CDS_V_NFe.Post;
 
+          // Busca Resultado de Produtos ===========================================
+          If Ckbx_ConsultaNFeApresProduto.Checked Then
+          Begin
+            IBQ_ConsultaFilial.Close;
+            IBQ_ConsultaFilial.SQL.Clear;
+            IBQ_ConsultaFilial.SQL.Add(MySqlProd);
+            IBQ_ConsultaFilial.Params.ParamByName('CodLoja').AsString:=sgCodEmp;
+            IBQ_ConsultaFilial.Open;
+
+            While not IBQ_ConsultaFilial.Eof do
+            Begin
+              DMVirtual.CDS_V_NFeProdutos.Insert;
+              For i:=0 to IBQ_ConsultaFilial.FieldCount-1 do
+               DMVirtual.CDS_V_NFeProdutos.Fields[i].Assign(IBQ_ConsultaFilial.Fields[i]);
+
+              DMVirtual.CDS_V_NFeProdutos.Post;
+
+              IBQ_ConsultaFilial.Next;
+            End;
+            IBQ_ConsultaFilial.Close;
+          End; // If Ckbx_ConsultaNFeApresProduto.Checked Then
+
           Screen.Cursor:=crDefault;
         End; // If bSiga Then // Query Executada
       End; // If bSiga Then // Empresa Conectada
 
       // Fecha Conexão ---------------------------------------------------------
       ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'F');
-
     End; // if DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
 
     DMBelShop.CDS_EmpProcessa.Next;
   End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
+
+  If (Ckbx_ConsultaNFeApresProduto.Checked) And (Trim(sgCodLojas)<>'') Then
+  Begin
+    MySql:=' SELECT ''Bel_''||e.cod_filial cod_loja, e.razao_social'+
+           ' FROM EMP_CONEXOES e'+
+           ' WHERE e.cod_filial IN ('+sgCodLojas+')'+
+           ' ORDER BY 1';
+    DMVirtual.CDS_SelectLoja.Close;
+    DMVirtual.SDS_SelectLoja.CommandText:=MySql;
+    DMVirtual.CDS_SelectLoja.Open;
+  End; // If (Ckbx_ConsultaNFeApresProduto.Checked) And (Trim(sgCodLojas)<>'') Then
 
   // Grava Total de Empresa ====================================================
   DMVirtual.CDS_V_NFe.Insert;
@@ -10077,7 +10225,7 @@ Begin
   // Apresenta Lojas Não Conectadas ============================================
   If sgLojasNConectadas<>'' Then
    msg('Lojas Não Conectadas: '+cr+cr+sgLojasNConectadas,'A');
-                                          
+
 End; // NOTAS FISCAIS DE ENTRADA - Busca NFe >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // DIVERSOS - Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) >>>>>
@@ -35688,6 +35836,7 @@ end;
 
 procedure TFrmBelShop.Bt_ConsultaNFeBuscaOCsClick(Sender: TObject);
 begin
+// OdirApagar - 21/11/2016
 //  If Cbx_ConsultaNfeSituacaoProd.ItemIndex=-1 Then
 //  Begin
 //    msg('Favor Informar a Situações dos Produtos !!','A');
@@ -35753,7 +35902,20 @@ begin
   If msg('O Período Informado de '+cr+DtEdt_ConsultaNFeDtInicio.Text+' a '+DtEdt_ConsultaNFeDtFim.Text+cr+cr+'Esta CORRETO ??','C')=2 Then
    Exit;
 
-  // Cria DataSet ==============================================================
+  // Inicializa Apresentação do Resultado dos Produtos =========================
+  DMVirtual.CDS_SelectLoja.Close;
+  Ckbx_ConsultaNFeApresTotais.Checked:=False;
+  Ckbx_ConsultaNFeApresTotaisClick(Self);
+
+  // Libera ClientDataSet de Produtos -------------------------------
+  If DMVirtual.CDS_V_NFeProdutos.Active Then
+   DMVirtual.CDS_V_NFeProdutos.Close;
+
+  DMVirtual.CDS_V_NFeProdutos.CreateDataSet;
+  DMVirtual.CDS_V_NFeProdutos.IndexFieldNames:='';
+  DMVirtual.CDS_V_NFeProdutos.Open;
+
+  // Cria DataSet NFe ==========================================================
   If DMVirtual.CDS_V_NFe.Active Then
    DMVirtual.CDS_V_NFe.Close;
 
@@ -35761,7 +35923,7 @@ begin
   DMVirtual.CDS_V_NFe.Open;
 
   // Busca Comprovantes ========================================================
-  If ApresentaNFe Then
+  If BuscaMovtosComprov Then // If ApresentaNFe Then // Antigo ApresentaNFe: Boolean;
   Begin
     // Apresenta Resultado -----------------------------------------------------
     Bt_ConsultaNFeEmpresaClick(Self);
@@ -35820,36 +35982,60 @@ end;
 
 procedure TFrmBelShop.Bt_ConsultaNFeSalvarClipboardClick(Sender: TObject);
 begin
-  If Not DMVirtual.CDS_V_NFe.Active Then
-   Exit;
 
-  If Dbg_ConsultaNFeLojas.Visible Then
-   DBGridClipboard(Dbg_ConsultaNFeLojas);
+  If (PC_ConsultaMovtoCompr.ActivePage=Ts_ConsultaNFeMovtoCompr) And (Ts_ConsultaNFeMovtoCompr.CanFocus) Then
+  Begin
+    If Not DMVirtual.CDS_V_NFe.Active Then
+     Exit;
 
-  If Dbg_ConsultaNFeEmpresa.Visible Then
-   DBGridClipboard(Dbg_ConsultaNFeEmpresa);
+    If Dbg_ConsultaNFeLojas.Visible Then
+     DBGridClipboard(Dbg_ConsultaNFeLojas);
 
-  If Dbg_ConsultaNFeNotasLojas.Visible Then
-   DBGridClipboard(Dbg_ConsultaNFeNotasLojas);
+    If Dbg_ConsultaNFeEmpresa.Visible Then
+     DBGridClipboard(Dbg_ConsultaNFeEmpresa);
+
+    If Dbg_ConsultaNFeNotasLojas.Visible Then
+     DBGridClipboard(Dbg_ConsultaNFeNotasLojas);
+  End; // If (PC_ConsultaMovtoCompr.ActivePage=Ts_ConsultaNFeMovtoCompr) And (Ts_ConsultaNFeMovtoCompr.CanFocus) Then
+
+  If (PC_ConsultaMovtoCompr.ActivePage=Ts_ConsultaNFeProdutos) And (Ts_ConsultaNFeProdutos.CanFocus) Then
+  Begin
+    If Not DMVirtual.CDS_V_NFeProdutos.Active Then
+     Exit;
+
+     DBGridClipboard(Dbg_ConsultaNFeProdutos);
+  End;
 
 end;
 
 procedure TFrmBelShop.Bt_ConsultaNFeSalvarCSVClick(Sender: TObject);
 begin
-  If Not DMVirtual.CDS_V_NFe.Active Then
-   Exit;
+  If (PC_ConsultaMovtoCompr.ActivePage=Ts_ConsultaNFeMovtoCompr) And (Ts_ConsultaNFeMovtoCompr.CanFocus) Then
+  Begin
+    If Not DMVirtual.CDS_V_NFe.Active Then
+     Exit;
 
-  PC_ConsultaMovtoCompr.ActivePage:=Ts_ConsultaNFeMovtoCompr;
+    PC_ConsultaMovtoCompr.ActivePage:=Ts_ConsultaNFeMovtoCompr;
 
-  If Dbg_ConsultaNFeLojas.Visible Then
-   SalvaResultado_CLI_DisplayName(DMVirtual.CDS_V_NFe,Dbg_ConsultaNFeLojas, Mem_Salvar);
+    If Dbg_ConsultaNFeLojas.Visible Then
+     SalvaResultado_CLI_DisplayName(DMVirtual.CDS_V_NFe,Dbg_ConsultaNFeLojas, Mem_Salvar);
 
-  If Dbg_ConsultaNFeEmpresa.Visible Then
-   SalvaResultado_CLI_DisplayName(DMVirtual.CDS_V_NFe,Dbg_ConsultaNFeEmpresa, Mem_Salvar);
+    If Dbg_ConsultaNFeEmpresa.Visible Then
+     SalvaResultado_CLI_DisplayName(DMVirtual.CDS_V_NFe,Dbg_ConsultaNFeEmpresa, Mem_Salvar);
 
-  If Dbg_ConsultaNFeNotasLojas.Visible Then
-   SalvaResultado_CLI_DisplayName(DMVirtual.CDS_V_NFe,Dbg_ConsultaNFeNotasLojas, Mem_Salvar);
-   
+    If Dbg_ConsultaNFeNotasLojas.Visible Then
+     SalvaResultado_CLI_DisplayName(DMVirtual.CDS_V_NFe,Dbg_ConsultaNFeNotasLojas, Mem_Salvar);
+  End; // If (PC_ConsultaMovtoCompr.ActivePage=Ts_ConsultaNFeMovtoCompr) And (Ts_ConsultaNFeMovtoCompr.CanFocus) Then
+
+
+  If (PC_ConsultaMovtoCompr.ActivePage=Ts_ConsultaNFeProdutos) And (Ts_ConsultaNFeProdutos.CanFocus) Then
+  Begin
+    If Not DMVirtual.CDS_V_NFeProdutos.Active Then
+     Exit;
+
+    SalvaResultado_CLI_DisplayName(DMVirtual.CDS_V_NFeProdutos,Dbg_ConsultaNFeProdutos, Mem_Salvar);
+  End; // If (PC_ConsultaMovtoCompr.ActivePage=Ts_ConsultaNFeMovtoCompr) And (Ts_ConsultaNFeMovtoCompr.CanFocus) Then
+
 end;
 
 procedure TFrmBelShop.Ckb_FinanObjetivosManutUlt12MesesClick(Sender: TObject);
@@ -43386,13 +43572,31 @@ begin
 
   Bt_ConsultaNFeBuscaOCs.Visible:=True;
   Pan_ConsultaNFeOpcoes.Visible:=False;
+  Pan_ConsultaNFePrincpal.Visible:=True;
+  Bt_ConsultaNFeFechar.Parent:=Pan_ConsultaNFe;
 
   If (PC_ConsultaMovtoCompr.ActivePage=Ts_ConsultaNFeMovtoCompr) And (Ts_ConsultaNFeMovtoCompr.CanFocus) Then
   Begin
     Bt_ConsultaNFeBuscaOCs.Visible:=False;
     Pan_ConsultaNFeOpcoes.Visible:=True;
+
     Bt_ConsultaNFeEmpresa.SetFocus;
   End;
+
+  If (PC_ConsultaMovtoCompr.ActivePage=Ts_ConsultaNFeProdutos) And (Ts_ConsultaNFeProdutos.CanFocus) Then
+  Begin
+    Pan_ConsultaNFePrincpal.Visible:=False;
+    Bt_ConsultaNFeFechar.Parent:=Pan_ConsultaNFeProdutos;
+
+    Dbg_ConsultaNFeProdLojas.SetFocus;
+
+    If Not DMVirtual.CDS_SelectLoja.IsEmpty Then
+    Begin
+      DMVirtual.CDS_SelectLoja.Next;
+      DMVirtual.CDS_SelectLoja.First;
+    End;
+  End;
+
 end;
 
 procedure TFrmBelShop.PC_AudCompVendChange(Sender: TObject);
@@ -44983,6 +45187,17 @@ end;
 procedure TFrmBelShop.Ckbx_ConsultaNFeApresParcelaClick(Sender: TObject);
 begin
   AcertaCkb_Style(Ckbx_ConsultaNFeApresParcela);
+  AcertaCkb_Style(Ckbx_ConsultaNFeApresProduto);
+
+  Ts_ConsultaNFeProdutos.TabVisible:=False;
+
+  // Inicial TabSheet -----------------------------------------------
+  If Ckbx_ConsultaNFeApresProduto.Checked Then
+  Begin
+    Ts_ConsultaNFeProdutos.TabVisible:=True;
+  End;
+
+  PC_ConsultaMovtoComprChange(Self);
 
 end;
 
@@ -45029,6 +45244,66 @@ begin
 
   FreeAndNil(FrmComissaoVendedor);
 
+end;
+
+procedure TFrmBelShop.Dbg_ConsultaNFeProdutosDrawColumnCell(Sender: TObject; const Rect: TRect;
+              DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if not (gdSelected in State) Then
+  Begin
+    if DMVirtual.CDS_V_NFeProdutosCOD_PROD.AsString='TOTAIS' Then
+    Begin
+      Dbg_ConsultaNFeProdutos.Canvas.Font.Style:=[fsBold];
+      Dbg_ConsultaNFeProdutos.Canvas.Font.Color:=clWhite;  //-->> Cor da Fonte
+      Dbg_ConsultaNFeProdutos.Canvas.Brush.Color:=clRed; // -->> Cor das Celulas
+    end;
+  End; // if not (gdSelected in State) Then
+
+  Dbg_ConsultaNFeProdutos.Canvas.FillRect(Rect);
+  Dbg_ConsultaNFeProdutos.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  // Alinhamento
+  DMVirtual.CDS_V_NFeProdutosCOD_LOJA.Alignment:=taCenter;
+  DMVirtual.CDS_V_NFeProdutosCOD_PROD.Alignment:=taRightJustify;
+  DMVirtual.CDS_V_NFeProdutosCOD_COMPRV.Alignment:=taRightJustify;
+end;
+
+procedure TFrmBelShop.Ckbx_ConsultaNFeApresTotaisClick(Sender: TObject);
+begin
+
+  AcertaCkb_Style(Ckbx_ConsultaNFeApresTotais);
+
+  If DMVirtual.CDS_V_NFeProdutos.IsEmpty Then
+  Begin
+    Ckbx_ConsultaNFeApresTotais.Checked:=False;
+    AcertaCkb_Style(Ckbx_ConsultaNFeApresTotais);
+    Exit;
+  End;
+
+  If Ckbx_ConsultaNFeApresTotais.Checked  Then
+   Begin
+     DMVirtual.CDS_V_NFeProdutos.DisableControls;
+     DMVirtual.CDS_V_NFeProdutos.Close;
+     DMVirtual.CDS_V_NFeProdutos.Filtered:=False;
+     DMVirtual.CDS_V_NFeProdutos.Filter:='COD_PROD='+QuotedStr('TOTAIS');
+     DMVirtual.CDS_V_NFeProdutos.Filtered:=True;
+     DMVirtual.CDS_V_NFeProdutos.Open;
+     DMVirtual.CDS_V_NFeProdutos.EnableControls;
+
+     DMVirtual.bgNFeProdutos:=False; // Se Executa o Evento: TDMVirtual.CDS_V_NFeProdutosAfterScroll(DataSet: TDataSet);
+     Dbg_ConsultaNFeProdutos.SetFocus;
+   End
+  Else // If Ckbx_ConsultaNFeApresTotais.Checked Then
+   Begin
+     DMVirtual.bgNFeProdutos:=True; // Se Executa o Evento: TDMVirtual.CDS_V_NFeProdutosAfterScroll(DataSet: TDataSet);
+     DMVirtual.CDS_SelectLojaAfterScroll(DMVirtual.CDS_V_NFeProdutos);
+   End; // If Ckbx_ConsultaNFeApresTotais.Checked Then
+
+end;
+
+procedure TFrmBelShop.Ckbx_ConsultaNFeApresTotaisKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  Ckbx_ConsultaNFeApresTotaisClick(Self);
 end;
 
 End.

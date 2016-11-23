@@ -1,6 +1,6 @@
 object DMComissaoVendedor: TDMComissaoVendedor
   OldCreateOrder = False
-  Left = 242
+  Left = 258
   Top = 116
   Height = 572
   Width = 935
