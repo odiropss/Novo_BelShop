@@ -176,7 +176,7 @@ Begin
   IBQ_ConsultaCreDeb.Close;
   IBQ_ConsultaCreDeb.Free;
 
-End;
+End; // Negociações Cretidos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Atualiza Fluxo de Caixa >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmDataApropriacao.AtualizaFluxoCaixa;
@@ -439,7 +439,7 @@ Begin
 
   Lb_Partes.Caption:='Parte 0/2';
 
-End;
+End; // Atualiza Fluxo de Caixa >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TFrmDataApropriacao.Bt_AproprFecharClick(Sender: TObject);
 begin

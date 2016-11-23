@@ -401,7 +401,6 @@ Begin
   SetCursorPos(NewPos.x,NewPos.y)
 End; // Show Hint em Forma de Balão - Posiciona do Componente >>>>>>>>>>>>>>>>>>
 
-
 // Atualiza Descrição dos Comprovantes de Conta Corrente >>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmFluxoFornecedor.AtualizaDescComprvCCorrente;
 Var

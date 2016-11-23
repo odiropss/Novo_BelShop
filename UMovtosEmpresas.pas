@@ -3471,7 +3471,7 @@ begin
           MySql:=' select p.codproduto,'+
                  ' m.dataentrada,'+ // DTA_REF
                  ' sum(Coalesce(p.quant,0)) quant,'+ // QUANT_REF
-                 ' sum(Coalesce(p.preco,0)) preco,'+ // PRECO
+                 ' (sum(Coalesce(p.preco,0))/count(p.codproduto)) preco,'+ // PRECO
                  ' sum(Coalesce(p.valipi,0)) valipi,'+ // DES_SITUACAO ==>> Atenção esta em String
                  ' sum(Coalesce(p.valbruto,0)) valbruto,'+ // VALBRUTO
                  ' sum(Coalesce(p.valdesconto,0)) valdesconto,'+ // VALDESCONTO

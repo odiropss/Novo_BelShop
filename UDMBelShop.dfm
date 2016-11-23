@@ -3,7 +3,6 @@ object DMBelShop: TDMBelShop
   OnCreate = DataModuleCreate
   Left = 81
   Height = 724
-  VerticalOffset = 1
   Width = 1277
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
@@ -2778,14 +2777,14 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 920
-    Top = 535
+    Top = 540
   end
   object CDS_FluxoFornecedor: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FluxoFornecedor'
     Left = 999
-    Top = 534
+    Top = 539
     object CDS_FluxoFornecedorDATA: TDateField
       FieldName = 'DATA'
     end
@@ -2875,12 +2874,12 @@ object DMBelShop: TDMBelShop
     DataSet = SDS_FluxoFornecedor
     Options = [poRetainServerOrder]
     Left = 962
-    Top = 551
+    Top = 556
   end
   object DS_FluxoFornecedor: TDataSource
     DataSet = CDS_FluxoFornecedor
     Left = 1037
-    Top = 551
+    Top = 556
   end
   object SDS_While: TSQLDataSet
     MaxBlobSize = -1
@@ -6442,7 +6441,7 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_AuditoriaAnalise'
     StoreDefs = True
     Left = 990
-    Top = 403
+    Top = 395
     object StringField1: TStringField
       Alignment = taCenter
       DisplayLabel = 'C'#243'd Loja'
@@ -6514,12 +6513,12 @@ object DMBelShop: TDMBelShop
   object DataSetProvider1: TDataSetProvider
     DataSet = SDS_SidicomPermissoes
     Left = 955
-    Top = 419
+    Top = 411
   end
   object DataSource2: TDataSource
     DataSet = ClientDataSet1
     Left = 1030
-    Top = 419
+    Top = 411
   end
   object SDS_SidicomPermissoes: TSQLDataSet
     CommandText = 
@@ -6534,7 +6533,7 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 920
-    Top = 403
+    Top = 395
   end
   object SDS_CurvaFinanceira: TSQLDataSet
     CommandText = 'SELECT *'#13#10'FROM es_finan_curva_abc c'#13#10'WHERE c.cod_loja=999'
@@ -8781,7 +8780,7 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 920
-    Top = 471
+    Top = 476
   end
   object CDS_FluxoFornecedores: TClientDataSet
     Aggregates = <>
@@ -8789,7 +8788,7 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_FluxoFornecedores'
     AfterScroll = CDS_FluxoFornecedoresAfterScroll
     Left = 999
-    Top = 470
+    Top = 475
     object CDS_FluxoFornecedoresORDEM: TIntegerField
       FieldName = 'ORDEM'
       Required = True
@@ -8850,32 +8849,32 @@ object DMBelShop: TDMBelShop
   object DSP_FluxoFornecedores: TDataSetProvider
     DataSet = SDS_FluxoFornecedores
     Left = 962
-    Top = 487
+    Top = 492
   end
   object DS_FluxoFornecedores: TDataSource
     DataSet = CDS_FluxoFornecedores
     Left = 1037
-    Top = 487
+    Top = 492
   end
   object SDS_FluxoFornHistorico: TSQLDataSet
     CommandText = 
-      'select'#13#10'h.cod_historico,'#13#10'h.cod_historico||'#39' - '#39'||h.des_historic' +
-      'o Des_Historico,'#13#10'Case'#13#10'  when h.ind_debcre='#39'D'#39' Then'#13#10'    '#39'D'#233'bit' +
-      'o'#39#13#10'  Else'#13#10'    '#39'Cr'#233'dito'#39#13#10'End Deb_Cre'#13#10'from fl_caixa_historicos' +
-      ' h'#13#10'where h.cod_historico<>0'#13#10'and   h.cod_historico<>999999'#13#10'ord' +
-      'er by 2'
+      'select'#13#10'h.cod_historico,'#13#10'Lpad(h.cod_historico,3,0)||'#39' - '#39'||h.de' +
+      's_historico Des_Historico,'#13#10'Case'#13#10'  when h.ind_debcre='#39'D'#39' Then'#13#10 +
+      '    '#39'D'#233'bito'#39#13#10'  Else'#13#10'    '#39'Cr'#233'dito'#39#13#10'End Deb_Cre'#13#10'from fl_caixa_' +
+      'historicos h'#13#10'where h.cod_historico<>0'#13#10'and   h.cod_historico<>9' +
+      '99999'#13#10'order by 2'
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 920
-    Top = 599
+    Top = 604
   end
   object CDS_FluxoFornHistorico: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FluxoFornHistorico'
     Left = 999
-    Top = 598
+    Top = 603
     object CDS_FluxoFornHistoricoDES_HISTORICO: TStringField
       DisplayLabel = 'Descri'#231#227'o'
       FieldName = 'DES_HISTORICO'
@@ -8898,12 +8897,12 @@ object DMBelShop: TDMBelShop
   object DSP_FluxoFornHistorico: TDataSetProvider
     DataSet = SDS_FluxoFornHistorico
     Left = 962
-    Top = 615
+    Top = 620
   end
   object DS_FluxoFornHistorico: TDataSource
     DataSet = CDS_FluxoFornHistorico
     Left = 1037
-    Top = 615
+    Top = 620
   end
   object SDS_EstoquePrevisao: TSQLDataSet
     CommandText = 
