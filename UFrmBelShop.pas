@@ -1366,6 +1366,7 @@ type
     Ckbx_ConsultaNFeApresProduto: TCheckBox;
     Dbg_ConsultaNFeProdutos: TDBGrid;
     Dbg_ConsultaNFeProdLojas: TDBGrid;
+    Panel10: TPanel;
     Ckbx_ConsultaNFeApresTotais: TJvXPCheckbox;
 
     // Odir ====================================================================

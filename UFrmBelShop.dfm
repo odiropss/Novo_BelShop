@@ -13070,23 +13070,34 @@ object FrmBelShop: TFrmBelShop
               ParentFont = False
               OnClick = Bt_ConsultaNFeSalvarCSVClick
             end
-            object Ckbx_ConsultaNFeApresTotais: TJvXPCheckbox
-              Left = 376
-              Top = 10
-              Width = 164
-              Height = 23
-              Caption = 'Somente TOTAIS'
+            object Panel10: TPanel
+              Left = 364
+              Top = 2
+              Width = 181
+              Height = 39
+              BevelInner = bvRaised
+              BevelOuter = bvLowered
+              BevelWidth = 7
+              BorderStyle = bsSingle
               TabOrder = 2
-              ParentColor = False
-              Color = clRed
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWhite
-              Font.Height = -16
-              Font.Name = 'MS Sans Serif'
-              Font.Style = []
-              ParentFont = False
-              OnClick = Ckbx_ConsultaNFeApresTotaisClick
-              OnKeyUp = Ckbx_ConsultaNFeApresTotaisKeyUp
+              object Ckbx_ConsultaNFeApresTotais: TJvXPCheckbox
+                Left = 7
+                Top = 7
+                Width = 164
+                Height = 23
+                Caption = 'Somente TOTAIS'
+                TabOrder = 0
+                ParentColor = False
+                Color = clRed
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWhite
+                Font.Height = -16
+                Font.Name = 'MS Sans Serif'
+                Font.Style = []
+                ParentFont = False
+                OnClick = Ckbx_ConsultaNFeApresTotaisClick
+                OnKeyUp = Ckbx_ConsultaNFeApresTotaisKeyUp
+              end
             end
           end
           object Dbg_ConsultaNFeProdutos: TDBGrid
@@ -14262,7 +14273,7 @@ object FrmBelShop: TFrmBelShop
               961
               38)
             object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 479
+              Left = 477
               Top = 12
               Width = 31
               Height = 13
@@ -14318,7 +14329,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
             object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 513
+              Left = 511
               Top = 9
               Width = 51
               Height = 18
@@ -14331,7 +14342,7 @@ object FrmBelShop: TFrmBelShop
               TabOrder = 3
             end
             object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 568
+              Left = 566
               Top = 9
               Width = 50
               Height = 18
