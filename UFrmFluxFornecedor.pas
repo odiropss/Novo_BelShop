@@ -30,7 +30,6 @@ type
     Ts_FluxFornApres: TTabSheet;
     Ts_FluxFornCaixa: TTabSheet;
     Panel38: TPanel;
-    Bt_FluFornAtualizar: TJvXPButton;
     Bt_FluFornSalvaExcel: TJvXPButton;
     Gb_FluxFornComprov: TGroupBox;
     Gb_FluxFornFornec: TGroupBox;
@@ -39,7 +38,6 @@ type
     OdirPanApres: TPanel;
     Panel1: TPanel;
     dxStatusBar1: TdxStatusBar;
-    Bt_FluFornAcertaSaldos: TJvXPButton;
     EdtFluFornCodFornAcertar: TEdit;
     Bt_FluFornFechar: TJvXPButton;
     Dbg_FluFornCaixa: TDBGrid;
@@ -54,12 +52,14 @@ type
     Rb_FluFornDebito: TJvRadioButton;
     Rb_FluFornCredito: TJvRadioButton;
     Bt_FluFornFiltroComprador: TJvXPButton;
+    Bt_FluFornAtualizar1: TJvXPButton;
+    Bt_FluFornAcertaSaldos1: TJvXPButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
     procedure PC_PrincipalChange(Sender: TObject);
-    procedure Bt_FluFornAtualizarClick(Sender: TObject);
+    procedure Bt_FluFornAtualizar1Click(Sender: TObject);
 
     // ODIR ====================================================================
     // Hint em Fortma de Balão
@@ -81,7 +81,7 @@ type
 
     procedure Dbg_FluFornFornecKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure Dbg_FluFornFornecKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure Bt_FluFornAcertaSaldosClick(Sender: TObject);
+    procedure Bt_FluFornAcertaSaldos1Click(Sender: TObject);
     procedure Dbg_FluFornFornecDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
@@ -111,6 +111,8 @@ type
     procedure Rb_FluFornDebitoKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure Bt_FluFornFiltroCompradorClick(Sender: TObject);
+    procedure Dbg_FluFornComprovKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
 
   private
     { Private declarations }
@@ -794,25 +796,6 @@ Begin
         DateSeparator:='.';
         DecimalSeparator:='.';
 
-//        // Exclui Lançamentos para Substituição e Inclução de todos ============
-//        If bgExcluiFF Then
-//        Begin
-//          sCodForn:='';
-//          If (Trim(EdtFluFornCodFornAcertar.Text)<>'Cód a Acertar') and (Trim(EdtFluFornCodFornAcertar.Text)<>'') Then
-//           sCodForn:=FormatFloat('000000',StrToInt(EdtFluFornCodFornAcertar.text));
-//
-//          MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES f'+
-//                 ' WHERE f.cod_empresa='+QuotedStr(sgCodEmp);
-//
-//          If MaskEdit1.Text<>'  .  .20  ' Then
-//           MySql:=
-//            MySql+' AND f.dta_caixa>='+QuotedStr(MaskEdit1.Text);
-//
-//          If (Trim(sCodForn)<>'') Then
-//           MySql:=
-//            MySql+' AND f.cod_fornecedor='+QuotedStr(sCodForn);
-//           DMBelShop.SQLC.Execute(MySql,nil,nil);
-//        End;
         // Exclui Lançamentos para Substituição e Inclução de todos ============
         sCodForn:='';
         If (Trim(EdtFluFornCodFornAcertar.Text)<>'Cód a Acertar') and (Trim(EdtFluFornCodFornAcertar.Text)<>'') Then
@@ -828,7 +811,7 @@ Begin
         If (Trim(sCodForn)<>'') Then
          MySql:=
           MySql+' AND f.cod_fornecedor='+QuotedStr(sCodForn);
-         DMBelShop.SQLC.Execute(MySql,nil,nil);
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
 
         While Not IBQ_ConsultaFilial.Eof do
         Begin
@@ -853,13 +836,14 @@ Begin
 
           // Insere Caixa -----------------------------------------------
           MySql:=' INSERT INTO FL_CAIXA_fORNECEDORES ('+
-                 ' COD_FORNECEDOR, DES_FORNECEDOR, DTA_CAIXA, NUM_SEQ,'+
+                 ' COD_FORNECEDOR, DES_FORNECEDOR, DTA_REGISTRO, DTA_CAIXA, NUM_SEQ,'+
                  ' NUM_CHAVENF, COD_EMPRESA, COD_HISTORICO, TXT_OBS,'+
                  ' NUM_DOCUMENTO, NUM_SERIE, TIP_DEBCRE, VLR_CAIXA, VLR_SALDO)'+
 
                  ' VALUES ('+
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('CODFORNECEDOR').AsString)+', '+
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('NOMEFORNECEDOR').AsString)+', '+
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('DATACOMPROVANTE').AsString)+', '+
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('DATAENTRADA').AsString)+', '+
                  sgNumSeq+', '+
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('CHAVENF').AsString)+', '+
@@ -993,16 +977,16 @@ begin
 
   bgSairFF:=False;
 
-  Bt_FluFornAtualizar.Visible:=False;
-  Bt_FluFornAcertaSaldos.Visible:=False;
+  Bt_FluFornAtualizar1.Visible:=False;
+  Bt_FluFornAcertaSaldos1.Visible:=False;
   EdtFluFornCodFornAcertar.Visible:=False;
   MaskEdit1.Visible:=False;
   If AnsiUpperCase(Des_Login)='ODIR' Then
   Begin
     MaskEdit1.Visible:=True;
     EdtFluFornCodFornAcertar.Visible:=True;
-    Bt_FluFornAcertaSaldos.Visible:=True;
-    Bt_FluFornAtualizar.Visible:=True;
+    Bt_FluFornAcertaSaldos1.Visible:=True;
+    Bt_FluFornAtualizar1.Visible:=True;
   End; // If AnsiUpperCase(Des_Login)='ODIR' Then
 
   PC_Principal.TabIndex:=0;
@@ -1010,7 +994,14 @@ begin
 
   If DMBelShop.CDS_FluxoFornHistorico.Active Then
    DMBelShop.CDS_FluxoFornHistorico.Close;
+  try
   DMBelShop.CDS_FluxoFornHistorico.Open;
+  except
+    on e : Exception do
+    Begin
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End;
 
   If DMBelShop.CDS_FluxoFornecedores.Active Then
    DMBelShop.CDS_FluxoFornecedores.Close;
@@ -1055,12 +1046,15 @@ begin
 
 end;
 
-procedure TFrmFluxoFornecedor.Bt_FluFornAtualizarClick(Sender: TObject);
+procedure TFrmFluxoFornecedor.Bt_FluFornAtualizar1Click(Sender: TObject);
 Var
   MySql: String;
   i: Integer;
   sCompDeb, sCompCre, sCodForn: String;
 begin
+  If AnsiUpperCase(Des_Login)<>'ODIR' Then
+   Exit;
+
   PC_Principal.TabIndex:=0;
   Dbg_FluFornFornec.SetFocus;
 
@@ -1069,7 +1063,7 @@ begin
     MaskEdit1.SetFocus;
     Exit;
   End;
-
+  showmessage('0');
   sCodForn:='';
   If (Trim(EdtFluFornCodFornAcertar.Text)<>'Cód a Acertar') and (Trim(EdtFluFornCodFornAcertar.Text)<>'') Then
    sCodForn:=FormatFloat('000000',StrToInt(EdtFluFornCodFornAcertar.text));
@@ -1129,7 +1123,7 @@ begin
 
   // Monta Select de Busca de Debitos e Créditos ===============================
   MySqlSelect:=' SELECT mf.codfornecedor, f.nomefornecedor,'+
-               ' mf.dataentrada, mf.codcomprovante,'+
+               ' mf.datacomprovante, mf.dataentrada, mf.codcomprovante,'+
                ' CASE'+
                '   WHEN mf.codcomprovante IN ('+sCompCre+') Then'+
                '    ''C'''+
@@ -1205,19 +1199,9 @@ end;
 
 procedure TFrmFluxoFornecedor.Dbg_FluFornFornecKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  If DMBelShop.CDS_FluxoFornHistorico.IsEmpty Then
-   Exit;
-
   // BLOQUEAR TECLA Ctrl+Del ===================================================
   if (Shift=[ssCtrl]) and (Key=46) then
     Key:=0;
-
-  // Exclui Comprovante ========================================================
-  if (Key=VK_Delete) Then
-  Begin
-    If Not DML_Historicos('E',DMBelShop.CDS_FluxoFornHistoricoCOD_HISTORICO.AsString) Then
-     MessageBox(Handle, pChar(sgMensagemERRO), 'Erro', MB_ICONERROR);
-  End; // if (Key=VK_Delete) Then
 
 end;
 
@@ -1385,10 +1369,19 @@ begin
   Dbg_FluFornFornec.SetFocus;
 end;
 
-procedure TFrmFluxoFornecedor.Bt_FluFornAcertaSaldosClick(Sender: TObject);
+procedure TFrmFluxoFornecedor.Bt_FluFornAcertaSaldos1Click(Sender: TObject);
 Var
   i: Integer;
 begin
+  If AnsiUpperCase(Des_Login)<>'ODIR' Then
+   Exit;
+
+  If msg('ATENÇÃO !!'+cr+cr+'Deseja Realmente Acertar Saldos ??','C')=2 Then
+  Begin
+    MaskEdit1.SetFocus;
+    Exit;
+  End;
+
   DMBelShop.CDS_FluxoFornecedores.Close;
 
   PC_Principal.ActivePage:=Ts_FluxFornApres;
@@ -2006,12 +1999,13 @@ begin
   FrmSolicitacoes.bgOK:=False;
   FrmSolicitacoes.ShowModal;
 
+  Screen.Cursor:=crAppStart;
   If DMBelShop.CDS_FluxoFornecedor.Filtered Then
   Begin
     DMBelShop.CDS_FluxoFornecedor.Filtered:=False;
     DMBelShop.CDS_FluxoFornecedor.Filter:='';
   End;
-  
+
   If FrmSolicitacoes.bgOK Then
   Begin
     If Bt_FluFornFiltroComprador.Caption='Seleciona Comprador' Then
@@ -2075,10 +2069,29 @@ begin
       End;
     End; // If Bt_FluFornFiltroComprador.Caption='Seleciona Comprovante' Then
   End; // If FrmSolicitacoes.bgOK Then
+  Screen.Cursor:=crDefault;
 
   DMBelShop.CDS_Busca.Close;
 
   FreeAndNil(FrmSolicitacoes);
+
+end;
+
+procedure TFrmFluxoFornecedor.Dbg_FluFornComprovKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  If DMBelShop.CDS_FluxoFornHistorico.IsEmpty Then
+   Exit;
+
+  // BLOQUEAR TECLA Ctrl+Del ===================================================
+  if (Shift=[ssCtrl]) and (Key=46) then
+    Key:=0;
+
+  // Exclui Comprovante ========================================================
+  if (Key=VK_Delete) Then
+  Begin
+    If Not DML_Historicos('E',DMBelShop.CDS_FluxoFornHistoricoCOD_HISTORICO.AsString) Then
+     MessageBox(Handle, pChar(sgMensagemERRO), 'Erro', MB_ICONERROR);
+  End; // if (Key=VK_Delete) Then
 
 end;
 

@@ -416,14 +416,15 @@ Begin
           DMAtualizaSeteHoras.CDS_Busca.Close;
 
           // Insere Caixa -----------------------------------------------
-          MySql:=' INSERT INTO FL_CAIXA_fORNECEDORES ('+
-                 ' COD_FORNECEDOR, DES_FORNECEDOR, DTA_CAIXA, NUM_SEQ,'+
+          MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES ('+
+                 ' COD_FORNECEDOR, DES_FORNECEDOR, DTA_REGISTRO, DTA_CAIXA, NUM_SEQ,'+
                  ' NUM_CHAVENF, COD_EMPRESA, COD_HISTORICO, TXT_OBS,'+
                  ' NUM_DOCUMENTO, NUM_SERIE, TIP_DEBCRE, VLR_CAIXA, VLR_SALDO)'+
 
                  ' VALUES ('+
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('CODFORNECEDOR').AsString)+', '+
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('NOMEFORNECEDOR').AsString)+', '+
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('DATACOMPROVANTE').AsString)+', '+
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('DATAENTRADA').AsString)+', '+
                  sNumSeq+', '+
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('CHAVENF').AsString)+', '+
@@ -757,7 +758,7 @@ begin
 
   // Monta Select de Busca de Debitos e Créditos ===============================
   MySqlSelect:=' SELECT mf.codfornecedor, f.nomefornecedor,'+
-               ' mf.dataentrada, mf.codcomprovante,'+
+               ' mf.datacomprovante, mf.dataentrada, mf.codcomprovante,'+
                ' CASE'+
                '   WHEN mf.codcomprovante IN ('+sCompCre+') Then'+
                '    ''C'''+

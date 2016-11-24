@@ -12,7 +12,7 @@ object DMBelShop: TDMBelShop
     LoginPrompt = False
     Params.Strings = (
       'DriverName=Interbase'
-      'Database=\\LOCALHOST\C:\Projetos\BelShop\Dados\BELSHOP.FDB'
+      'Database=C:\Projetos\BelShop\Dados\BELSHOP.FDB'
       'RoleName=RoleName'
       'User_Name=sysdba'
       'Password=masterkey'
@@ -2732,48 +2732,48 @@ object DMBelShop: TDMBelShop
       'DATA,'#13#10'*/'#13#10'FF.DTA_CAIXA DATA,'#13#10#13#10#39'Bel_'#39'||FF.COD_EMPRESA LOJA,'#13#10#13 +
       #10'CASE'#13#10'  WHEN (FF.COD_HISTORICO=0) OR (FF.COD_HISTORICO=999999) ' +
       'THEN'#13#10'   NULL'#13#10'  ELSE'#13#10'    FF.COD_HISTORICO'#13#10'END COD_HISTORICO,'#13 +
-      #10#13#10'FC.DES_HISTORICO,'#13#10'FF.NUM_DOCUMENTO, FF.NUM_SERIE, '#13#10#13#10'CASE'#13#10 +
-      '   WHEN FF.TIP_DEBCRE='#39'C'#39' THEN'#13#10'     FF.VLR_CAIXA'#13#10'   WHEN (FF.N' +
-      'UM_SEQ=0) or (FF.NUM_SEQ=999999) Then'#13#10'     null'#13#10'   ELSE'#13#10'     ' +
-      '0.00'#13#10'END VLR_CREDITO,'#13#10#13#10'CASE'#13#10'   WHEN FF.TIP_DEBCRE='#39'D'#39' THEN'#13#10 +
-      '      FF.VLR_CAIXA'#13#10'    WHEN (FF.NUM_SEQ=0) or (FF.NUM_SEQ=99999' +
-      '9) Then'#13#10'      null'#13#10'   ELSE'#13#10'      0.00'#13#10'END VLR_DEBITO,'#13#10'/*'#13#10'C' +
-      'ASE FF.NUM_SEQ'#13#10'   WHEN 0 THEN'#13#10'      FF.VLR_SALDO'#13#10'   WHEN 9999' +
-      '99 THEN'#13#10'     FF.VLR_SALDO'#13#10'END VLR_SALDO,'#13#10'*/'#13#10'CASE FF.NUM_SEQ'#13 +
-      #10'   WHEN 0 THEN'#13#10'      FF.VLR_SALDO- :Valor1'#13#10'   WHEN 999999 THE' +
-      'N'#13#10'     FF.VLR_SALDO- :Valor2'#13#10'END VLR_SALDO,'#13#10#13#10'FF.TXT_OBS,'#13#10#13#10 +
-      'FF.COD_EMPRESA, EMP.RAZAO_SOCIAL,'#13#10#13#10'FF.COD_FORNECEDOR, FF.DES_F' +
-      'ORNECEDOR,'#13#10'FF.NUM_SEQ, FF.NUM_CHAVENF,'#13#10'FF.TIP_DEBCRE'#13#10#13#10'FROM  ' +
-      'FL_CAIXA_FORNECEDORES FF'#13#10'      LEFT JOIN FL_CAIXA_HISTORICOS FC' +
-      ' ON FC.COD_HISTORICO=FF.COD_HISTORICO'#13#10'      LEFT JOIN EMP_CONEX' +
-      'OES EMP ON EMP.COD_FILIAL=FF.COD_EMPRESA'#13#10#13#10'WHERE FF.COD_FORNECE' +
-      'DOR= :CodForn'#13#10'AND   ff.dta_caixa>= :Data'#13#10#13#10'ORDER BY FF.DTA_CAI' +
-      'XA, FF.NUM_SEQ'#13#10
+      #10#13#10'FC.DES_HISTORICO,'#13#10'FF.NUM_DOCUMENTO, FF.NUM_SERIE, DTA_REGIST' +
+      'RO,'#13#10#13#10'CASE'#13#10'   WHEN FF.TIP_DEBCRE='#39'C'#39' THEN'#13#10'     FF.VLR_CAIXA'#13#10 +
+      '   WHEN (FF.NUM_SEQ=0) or (FF.NUM_SEQ=999999) Then'#13#10'     null'#13#10' ' +
+      '  ELSE'#13#10'     0.00'#13#10'END VLR_CREDITO,'#13#10#13#10'CASE'#13#10'   WHEN FF.TIP_DEBC' +
+      'RE='#39'D'#39' THEN'#13#10'      FF.VLR_CAIXA'#13#10'    WHEN (FF.NUM_SEQ=0) or (FF.' +
+      'NUM_SEQ=999999) Then'#13#10'      null'#13#10'   ELSE'#13#10'      0.00'#13#10'END VLR_D' +
+      'EBITO,'#13#10'/*'#13#10'CASE FF.NUM_SEQ'#13#10'   WHEN 0 THEN'#13#10'      FF.VLR_SALDO'#13 +
+      #10'   WHEN 999999 THEN'#13#10'     FF.VLR_SALDO'#13#10'END VLR_SALDO,'#13#10'*/'#13#10'CAS' +
+      'E FF.NUM_SEQ'#13#10'   WHEN 0 THEN'#13#10'      FF.VLR_SALDO- :Valor1'#13#10'   WH' +
+      'EN 999999 THEN'#13#10'     FF.VLR_SALDO- :Valor2'#13#10'END VLR_SALDO,'#13#10#13#10'FF' +
+      '.TXT_OBS,'#13#10#13#10'FF.COD_EMPRESA, EMP.RAZAO_SOCIAL,'#13#10#13#10'FF.COD_FORNECE' +
+      'DOR, FF.DES_FORNECEDOR,'#13#10'FF.NUM_SEQ, FF.NUM_CHAVENF,'#13#10'FF.TIP_DEB' +
+      'CRE'#13#10#13#10'FROM  FL_CAIXA_FORNECEDORES FF'#13#10'      LEFT JOIN FL_CAIXA_' +
+      'HISTORICOS FC ON FC.COD_HISTORICO=FF.COD_HISTORICO'#13#10'      LEFT J' +
+      'OIN EMP_CONEXOES EMP ON EMP.COD_FILIAL=FF.COD_EMPRESA'#13#10#13#10'WHERE F' +
+      'F.COD_FORNECEDOR= :CodForn'#13#10'AND   ff.dta_caixa>= :Data'#13#10#13#10'ORDER ' +
+      'BY FF.DTA_CAIXA, FF.NUM_SEQ'#13#10
     MaxBlobSize = -1
     Params = <
       item
         DataType = ftString
         Name = 'Valor1'
         ParamType = ptInput
-        Value = '1'
+        Value = '0'
       end
       item
         DataType = ftString
         Name = 'Valor2'
         ParamType = ptInput
-        Value = '2'
+        Value = '0'
       end
       item
         DataType = ftString
         Name = 'CodForn'
         ParamType = ptInput
-        Value = '3'
+        Value = '000050'
       end
       item
         DataType = ftString
         Name = 'Data'
         ParamType = ptInput
-        Value = '01.01.2000'
+        Value = '01/01/1990'
       end>
     SQLConnection = SQLC
     Left = 920
@@ -2808,6 +2808,10 @@ object DMBelShop: TDMBelShop
       FieldName = 'NUM_SERIE'
       Size = 4
     end
+    object CDS_FluxoFornecedorDTA_REGISTRO: TDateField
+      DisplayLabel = 'Dt Origem'
+      FieldName = 'DTA_REGISTRO'
+    end
     object CDS_FluxoFornecedorVLR_CREDITO: TFMTBCDField
       DisplayLabel = 'Valor Cr'#233'dito'
       FieldName = 'VLR_CREDITO'
@@ -2816,14 +2820,14 @@ object DMBelShop: TDMBelShop
       Size = 2
     end
     object CDS_FluxoFornecedorVLR_DEBITO: TFMTBCDField
-      DisplayLabel = 'Valor D'#233'bito'
+      DisplayLabel = '$ D'#233'bito'
       FieldName = 'VLR_DEBITO'
       DisplayFormat = '0.,00'
       Precision = 15
       Size = 2
     end
     object CDS_FluxoFornecedorVLR_SALDO: TFloatField
-      DisplayLabel = 'Valor Saldo'
+      DisplayLabel = '$ Saldo'
       FieldName = 'VLR_SALDO'
       DisplayFormat = '0,.00'
     end
@@ -8858,11 +8862,11 @@ object DMBelShop: TDMBelShop
   end
   object SDS_FluxoFornHistorico: TSQLDataSet
     CommandText = 
-      'select'#13#10'h.cod_historico,'#13#10'Lpad(h.cod_historico,3,0)||'#39' - '#39'||h.de' +
-      's_historico Des_Historico,'#13#10'Case'#13#10'  when h.ind_debcre='#39'D'#39' Then'#13#10 +
-      '    '#39'D'#233'bito'#39#13#10'  Else'#13#10'    '#39'Cr'#233'dito'#39#13#10'End Deb_Cre'#13#10'from fl_caixa_' +
-      'historicos h'#13#10'where h.cod_historico<>0'#13#10'and   h.cod_historico<>9' +
-      '99999'#13#10'order by 2'
+      'select'#13#10'h.cod_historico,'#13#10'h.cod_historico||'#39' - '#39'||h.des_historic' +
+      'o Des_Historico,'#13#10'Case'#13#10'  when h.ind_debcre='#39'D'#39' Then'#13#10'    '#39'D'#233'bit' +
+      'o'#39#13#10'  Else'#13#10'    '#39'Cr'#233'dito'#39#13#10'End Deb_Cre'#13#10'from fl_caixa_historicos' +
+      ' h'#13#10'where h.cod_historico<>0'#13#10'and   h.cod_historico<>999999'#13#10'ord' +
+      'er by 2'
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -8891,11 +8895,11 @@ object DMBelShop: TDMBelShop
     object CDS_FluxoFornHistoricoCOD_HISTORICO: TIntegerField
       FieldName = 'COD_HISTORICO'
       Required = True
-      Visible = False
     end
   end
   object DSP_FluxoFornHistorico: TDataSetProvider
     DataSet = SDS_FluxoFornHistorico
+    Options = [poRetainServerOrder]
     Left = 962
     Top = 620
   end

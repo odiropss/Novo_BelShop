@@ -129,7 +129,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Color = 15004403
           Ctl3D = False
           DataSource = DMBelShop.DS_FluxoFornHistorico
-          FixedColor = clSilver
+          FixedColor = clTeal
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -143,13 +143,13 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           ShowHint = True
           TabOrder = 0
           TitleFont.Charset = DEFAULT_CHARSET
-          TitleFont.Color = clBlack
+          TitleFont.Color = clWhite
           TitleFont.Height = -11
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = [fsBold]
           OnDrawColumnCell = Dbg_FluFornComprovDrawColumnCell
           OnEnter = Dbg_FluFornComprovEnter
-          OnKeyDown = Dbg_FluFornFornecKeyDown
+          OnKeyDown = Dbg_FluFornComprovKeyDown
           Columns = <
             item
               Expanded = False
@@ -160,11 +160,6 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             item
               Expanded = False
               FieldName = 'DEB_CRE'
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
               Title.Alignment = taCenter
               Width = 55
               Visible = True
@@ -302,7 +297,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Color = 15004403
           Ctl3D = False
           DataSource = DMBelShop.DS_FluxoFornecedores
-          FixedColor = clSilver
+          FixedColor = clTeal
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -315,7 +310,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           ReadOnly = True
           TabOrder = 0
           TitleFont.Charset = DEFAULT_CHARSET
-          TitleFont.Color = clBlack
+          TitleFont.Color = clWhite
           TitleFont.Height = -11
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = [fsBold]
@@ -453,7 +448,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         Color = 15004403
         Ctl3D = False
         DataSource = DMBelShop.DS_FluxoFornecedor
-        FixedColor = clSilver
+        FixedColor = clTeal
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -465,7 +460,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         ReadOnly = True
         TabOrder = 0
         TitleFont.Charset = DEFAULT_CHARSET
-        TitleFont.Color = clBlack
+        TitleFont.Color = clWhite
         TitleFont.Height = -11
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
@@ -518,6 +513,14 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             Expanded = False
             FieldName = 'NUM_SERIE'
             Width = 60
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'DTA_REGISTRO'
+            Title.Alignment = taCenter
+            Width = 65
             Visible = True
           end
           item
@@ -593,24 +596,6 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Ctl3D = False
     ParentCtl3D = False
     TabOrder = 2
-    object Bt_FluFornAtualizar: TJvXPButton
-      Tag = 11
-      Left = 757
-      Top = 2
-      Width = 116
-      Height = 29
-      Caption = 'Atualizar (Odir)'
-      TabOrder = 0
-      ShowFocusRect = True
-      Align = alRight
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      OnClick = Bt_FluFornAtualizarClick
-    end
     object Bt_FluFornSalvaExcel: TJvXPButton
       Tag = 9
       Left = 177
@@ -618,7 +603,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       Width = 118
       Height = 29
       Caption = 'Salvar Excel'
-      TabOrder = 2
+      TabOrder = 1
       TabStop = False
       ShowFocusRect = True
       Align = alLeft
@@ -630,30 +615,12 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       ParentFont = False
       OnClick = Bt_FluFornSalvaExcelClick
     end
-    object Bt_FluFornAcertaSaldos: TJvXPButton
-      Tag = 11
-      Left = 633
-      Top = 2
-      Width = 124
-      Height = 29
-      Caption = 'Acerta Saldo (Odir)'
-      TabOrder = 1
-      ShowFocusRect = True
-      Align = alRight
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      OnClick = Bt_FluFornAcertaSaldosClick
-    end
     object EdtFluFornCodFornAcertar: TEdit
-      Left = 480
+      Left = 424
       Top = 8
       Width = 76
       Height = 19
-      TabOrder = 3
+      TabOrder = 4
       Text = 'C'#243'd a Acertar'
     end
     object Bt_FluFornFechar: TJvXPButton
@@ -663,7 +630,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       Width = 100
       Height = 29
       Caption = 'Fechar'
-      TabOrder = 4
+      TabOrder = 6
       TabStop = False
       ShowFocusRect = True
       Align = alRight
@@ -676,7 +643,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       OnClick = Bt_FluFornFecharClick
     end
     object MaskEdit1: TMaskEdit
-      Left = 560
+      Left = 504
       Top = 8
       Width = 71
       Height = 19
@@ -692,7 +659,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       Width = 175
       Height = 29
       Caption = 'Seleciona Comprador'
-      TabOrder = 6
+      TabOrder = 0
       ShowFocusRect = True
       Align = alLeft
       Font.Charset = DEFAULT_CHARSET
@@ -702,6 +669,41 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       Font.Style = [fsBold]
       ParentFont = False
       OnClick = Bt_FluFornFiltroCompradorClick
+    end
+    object Bt_FluFornAtualizar1: TJvXPButton
+      Tag = 11
+      Left = 728
+      Top = 2
+      Width = 119
+      Height = 29
+      Hint = 'Busca Movtos nas Lojas'
+      Caption = 'Atualizar (Odir)'
+      TabOrder = 3
+      ShowFocusRect = True
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      OnClick = Bt_FluFornAtualizar1Click
+    end
+    object Bt_FluFornAcertaSaldos1: TJvXPButton
+      Tag = 11
+      Left = 577
+      Top = 2
+      Width = 150
+      Height = 29
+      Caption = 'Acerta Saldo (Odir)'
+      TabOrder = 2
+      ShowFocusRect = True
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      OnClick = Bt_FluFornAcertaSaldos1Click
     end
   end
   object OdirPanApres: TPanel

@@ -3545,7 +3545,7 @@ Var
   ii, i: Integer;
   s, MySql: String;
   bSiga: Boolean;
-  sCodLoja, sCodProf: String;
+  sCodLoja, sCodProf, sNomeArq: String;
 Begin
 
   gCDS_V1:=TClientDataSet.Create(Self);
@@ -3581,7 +3581,10 @@ Begin
 
     For i:=0 to Lbx_ProfPlanoSaudeImpArqSel.Items.Count-1 do
     Begin
+      LimpaStringGrid(Strg_ProfPlanoSaudeImpArquivo);
+
       Lbx_ProfPlanoSaudeImpArqSel.Selected[i];
+      sNomeArq:=Lbx_ProfPlanoSaudeImpArqSel.Items[i];
 
       XlsToStringGrid(Strg_ProfPlanoSaudeImpArquivo,IncludeTrailingPathDelimiter(EdtProfPlanoSaudePastaArquivo.Text)+Lbx_ProfPlanoSaudeImpArqSel.Items[i]);
 
