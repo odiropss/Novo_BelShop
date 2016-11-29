@@ -1,6 +1,6 @@
 object FrmControleKits: TFrmControleKits
-  Left = 382
-  Top = 66
+  Left = 236
+  Top = 110
   Align = alClient
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
@@ -131,7 +131,7 @@ object FrmControleKits: TFrmControleKits
       Width = 100
       Height = 29
       Caption = 'Fechar'
-      TabOrder = 3
+      TabOrder = 2
       TabStop = False
       ShowFocusRect = True
       Align = alRight
@@ -143,33 +143,14 @@ object FrmControleKits: TFrmControleKits
       ParentFont = False
       OnClick = Bt_KitFecharClick
     end
-    object Bt_KitSalvaExcel: TJvXPButton
-      Tag = 9
-      Left = 339
-      Top = 2
-      Width = 152
-      Height = 29
-      Caption = 'Salvar em Excel'
-      TabOrder = 1
-      TabStop = False
-      ShowFocusRect = True
-      Align = alLeft
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      OnClick = Bt_KitSalvaExcelClick
-    end
     object Bt_KitClipboard: TJvXPButton
       Tag = 8
-      Left = 491
+      Left = 339
       Top = 2
       Width = 162
       Height = 29
       Caption = 'Salvar em Mem'#243'ria'
-      TabOrder = 2
+      TabOrder = 1
       ShowFocusRect = True
       Align = alLeft
       Font.Charset = DEFAULT_CHARSET
@@ -205,7 +186,7 @@ object FrmControleKits: TFrmControleKits
       Height = 29
       Align = alLeft
       BevelOuter = bvNone
-      TabOrder = 4
+      TabOrder = 3
       object Rb_KitAnalitico: TJvRadioButton
         Left = 36
         Top = 8

@@ -417,25 +417,27 @@ Begin
 
           // Insere Caixa -----------------------------------------------
           MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES ('+
-                 ' COD_FORNECEDOR, DES_FORNECEDOR, DTA_REGISTRO, DTA_CAIXA, NUM_SEQ,'+
+                 ' COD_FORNECEDOR, DES_FORNECEDOR, VLR_ORIGEM, DTA_ORIGEM, DTA_CAIXA, NUM_SEQ,'+
                  ' NUM_CHAVENF, COD_EMPRESA, COD_HISTORICO, TXT_OBS,'+
-                 ' NUM_DOCUMENTO, NUM_SERIE, TIP_DEBCRE, VLR_CAIXA, VLR_SALDO)'+
+                 ' NUM_DOCUMENTO, NUM_SERIE, PER_REDUCAO, TIP_DEBCRE, VLR_CAIXA, VLR_SALDO)'+
 
                  ' VALUES ('+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODFORNECEDOR').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('NOMEFORNECEDOR').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('DATACOMPROVANTE').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('DATAENTRADA').AsString)+', '+
-                 sNumSeq+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CHAVENF').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODFILIAL').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODCOMPROVANTE').AsString)+', '+
-                 QuotedStr(AnsiUpperCase(IBQ_ConsultaFilial.FieldByName('OBSERVACAO').AsString))+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('NUMERO').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('SERIE').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('TP_DEBCRE').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString)+', '+
-                 ' 0)';
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODFORNECEDOR').AsString)+', '+ // COD_FORNECEDOR
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('NOMEFORNECEDOR').AsString)+', '+ // DES_FORNECEDOR
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString)+', '+ // VLR_ORIGEM
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('DATACOMPROVANTE').AsString)+', '+ // DTA_ORIGEM
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('DATAENTRADA').AsString)+', '+ // DTA_CAIXA
+                 sNumSeq+', '+ // NUM_SEQ
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CHAVENF').AsString)+', '+ // NUM_CHAVENF
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODFILIAL').AsString)+', '+ // COD_EMPRESA
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODCOMPROVANTE').AsString)+', '+ // COD_HISTORICO,
+                 QuotedStr(AnsiUpperCase(IBQ_ConsultaFilial.FieldByName('OBSERVACAO').AsString))+', '+ // TXT_OBS
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('NUMERO').AsString)+', '+ // NUM_DOCUMENTO
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('SERIE').AsString)+', '+ // NUM_SERIE
+                 ' 0.00, '+ // PER_REDUCAO,
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('TP_DEBCRE').AsString)+', '+ // TIP_DEBCRE
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString)+', '+ // VLR_CAIXA
+                 ' 0)'; // VLR_SALDO
           DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
 
           // Guarda Codigo do Fornecedor ----------------------------
@@ -455,12 +457,6 @@ Begin
           IBQ_ConsultaFilial.Next;
         End; // While Not IBQ_ConsultaFilial.Eof do
         IBQ_ConsultaFilial.Close;
-
-        //======================================================================
-        // Busva total de Compras ==============================================
-        //======================================================================
-
-
 
         // Fecha Transacao =================================================
         DMAtualizaSeteHoras.SQLC.Commit(TD);
@@ -700,7 +696,7 @@ begin
   //============================================================================
   // Atualiza Demanda 4 Meses ==================================================
   //============================================================================
-  Demanda4Meses;
+//  Demanda4Meses;
 
   //============================================================================
   // VERIFICA SE A INTERNET ESTA CONECTADA =====================================

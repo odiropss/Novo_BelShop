@@ -1147,7 +1147,9 @@ type
     CDS_FluxoFornHistoricoDES_HISTORICO: TStringField;
     CDS_FluxoFornHistoricoDEB_CRE: TStringField;
     CDS_FluxoFornHistoricoCOD_HISTORICO: TIntegerField;
-    CDS_FluxoFornecedorDTA_REGISTRO: TDateField;
+    CDS_FluxoFornecedorDTA_ORIGEM: TDateField;
+    CDS_FluxoFornecedorVLR_ORIGEM: TFMTBCDField;
+    CDS_FluxoFornecedorPER_REDUCAO: TFMTBCDField;
 
     //==========================================================================
     // Odir ====================================================================

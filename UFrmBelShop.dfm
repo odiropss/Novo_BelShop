@@ -13234,7 +13234,7 @@ object FrmBelShop: TFrmBelShop
             Top = 55
             Width = 963
             Height = 453
-            ActivePage = Ts_CurvaABCMixProd
+            ActivePage = Ts_CurvaABCFiltros
             Align = alClient
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
@@ -14269,17 +14269,6 @@ object FrmBelShop: TFrmBelShop
             Ctl3D = False
             ParentCtl3D = False
             TabOrder = 2
-            DesignSize = (
-              961
-              38)
-            object Lab_CurvaABCEndTotalProdutos: TLabel
-              Left = 477
-              Top = 12
-              Width = 31
-              Height = 13
-              Anchors = [akTop, akRight]
-              Caption = 'Prod:'
-            end
             object Bt_CurvaABCEndDistrEndereco: TJvXPButton
               Tag = 6
               Left = 2
@@ -14328,32 +14317,6 @@ object FrmBelShop: TFrmBelShop
               Align = alLeft
               OnClick = Bt_CurvaABCEndAtualizaSidicomClick
             end
-            object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
-              Left = 511
-              Top = 9
-              Width = 51
-              Height = 18
-              AutoSize = False
-              Color = 14013951
-              DecimalPlaces = 0
-              DisplayFormat = '0,'
-              Enabled = False
-              Anchors = [akTop, akRight]
-              TabOrder = 3
-            end
-            object EdtCurvaABCEndTotalProc: TCurrencyEdit
-              Left = 566
-              Top = 9
-              Width = 50
-              Height = 18
-              AutoSize = False
-              Color = 14013951
-              DecimalPlaces = 0
-              DisplayFormat = '0,'
-              Enabled = False
-              Anchors = [akTop, akRight]
-              TabOrder = 4
-            end
             object Bt_CurvaABCEndSalvaProdExcel: TJvXPButton
               Tag = 9
               Left = 198
@@ -14361,7 +14324,7 @@ object FrmBelShop: TFrmBelShop
               Width = 152
               Height = 34
               Caption = 'Produtos '#13#10'Salvar em Excel'
-              TabOrder = 5
+              TabOrder = 3
               TabStop = False
               ShowFocusRect = True
               Spacing = 10
@@ -14381,7 +14344,7 @@ object FrmBelShop: TFrmBelShop
               Width = 152
               Height = 34
               Caption = 'Fornecedores '#13#10'Salvar  em Excel'
-              TabOrder = 6
+              TabOrder = 4
               TabStop = False
               ShowFocusRect = True
               Spacing = 10
@@ -14393,6 +14356,52 @@ object FrmBelShop: TFrmBelShop
               Font.Style = [fsBold]
               ParentFont = False
               OnClick = Bt_CurvaABCEndSalvaFornExcelClick
+            end
+            object Panel11: TPanel
+              Left = 711
+              Top = 2
+              Width = 148
+              Height = 34
+              Align = alRight
+              BevelOuter = bvNone
+              TabOrder = 5
+              DesignSize = (
+                148
+                34)
+              object Lab_CurvaABCEndTotalProdutos: TLabel
+                Left = 4
+                Top = 11
+                Width = 31
+                Height = 13
+                Anchors = [akTop, akRight]
+                Caption = 'Prod:'
+              end
+              object EdtCurvaABCEndTotalProdutos: TCurrencyEdit
+                Left = 38
+                Top = 9
+                Width = 51
+                Height = 18
+                AutoSize = False
+                Color = 14013951
+                DecimalPlaces = 0
+                DisplayFormat = '0,'
+                Enabled = False
+                Anchors = [akTop, akRight]
+                TabOrder = 0
+              end
+              object EdtCurvaABCEndTotalProc: TCurrencyEdit
+                Left = 93
+                Top = 9
+                Width = 50
+                Height = 18
+                AutoSize = False
+                Color = 14013951
+                DecimalPlaces = 0
+                DisplayFormat = '0,'
+                Enabled = False
+                Anchors = [akTop, akRight]
+                TabOrder = 1
+              end
             end
           end
         end
@@ -16967,7 +16976,7 @@ object FrmBelShop: TFrmBelShop
               object Label77: TLabel
                 Left = 2
                 Top = 2
-                Width = 232
+                Width = 412
                 Height = 13
                 Align = alTop
                 Alignment = taCenter
@@ -24406,7 +24415,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 471
+            Height = 473
             Align = alClient
             Color = 15004403
             Ctl3D = False
@@ -25021,7 +25030,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel18: TPanel
             Left = 0
-            Top = 471
+            Top = 473
             Width = 963
             Height = 35
             Align = alBottom
@@ -36376,6 +36385,15 @@ object FrmBelShop: TFrmBelShop
   object PopM_FinanPlanFInanceira: TPopupMenu
     Left = 880
     Top = 226
+    object PopM_PlanFinanceiraMemoria: TMenuItem
+      Caption = 'Salvar Planilha Financeira em Mem'#243'ria'
+      HelpContext = 999999
+      OnClick = PopM_PlanFinanceiraMemoriaClick
+    end
+    object N7: TMenuItem
+      Caption = '-'
+      HelpContext = 999999
+    end
     object PopM_PlanFinanceiraSalvar: TMenuItem
       Bitmap.Data = {
         66010000424D6601000000000000760000002800000014000000140000000100
@@ -36390,18 +36408,9 @@ object FrmBelShop: TFrmBelShop
         000030F4444F030000083333000030FFFFFF030000833333000030F44F000333
         33333333000030FFFF0033333333333300003000000333333333333300003333
         33333333333333330000}
-      Caption = 'Salvar Planilha Financeira (CSV ;)'
+      Caption = 'Salvar Planilha Financeira (CSV <;>)'
       HelpContext = 999999
       OnClick = PopM_PlanFinanceiraSalvarClick
-    end
-    object N7: TMenuItem
-      Caption = '-'
-      HelpContext = 999999
-    end
-    object PopM_PlanFinanceiraEXCEL: TMenuItem
-      Caption = 'Salvar Planilha Financeira (EXCEL)'
-      HelpContext = 999999
-      OnClick = PopM_PlanFinanceiraEXCELClick
     end
     object N22: TMenuItem
       Caption = '-'

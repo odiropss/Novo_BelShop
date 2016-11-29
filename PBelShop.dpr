@@ -12,7 +12,6 @@ uses
   UDMVirtual in 'UDMVirtual.pas' {DMVirtual: TDataModule},
   UDMRelatorio in 'UDMRelatorio.pas' {DMRelatorio: TDataModule},
   UFrmAuditoria in 'UFrmAuditoria.pas' {FrmAuditoria},
-  UFrmDataApropriacao in 'UFrmDataApropriacao.pas' {FrmDataApropriacao},
   UFrmSelectEmpProcessamento in 'UFrmSelectEmpProcessamento.pas' {FrmSelectEmpProcessamento},
   UFrmOCObservacao in 'UFrmOCObservacao.pas' {FrmOCObservacao},
   UVerTransito in 'UVerTransito.pas' {FrmVerTransito},
@@ -71,7 +70,6 @@ begin
   Application.CreateForm(TDMRelatorio, DMRelatorio);
   Application.CreateForm(TDMSidicom, DMSidicom);
   Application.CreateForm(TDMCentralTrocas, DMCentralTrocas);
-  Application.CreateForm(TFrmDataApropriacao, FrmDataApropriacao);
   Application.CreateForm(TFrmBancoExtratos, FrmBancoExtratos);
   Application.CreateForm(TFrmGeraPedidosComprasLojas, FrmGeraPedidosComprasLojas);
   Application.CreateForm(TFDK_Procs1, FDK_Procs1);

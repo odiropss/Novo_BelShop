@@ -17,7 +17,6 @@ type
     EdtKitDesLoja: TEdit;
     Panel10: TPanel;
     Bt_KitFechar: TJvXPButton;
-    Bt_KitSalvaExcel: TJvXPButton;
     Bt_KitClipboard: TJvXPButton;
     Bt_KitBuscaKits: TJvXPButton;
     Pan_KitsApresentacao: TPanel;
@@ -44,7 +43,6 @@ type
       State: TGridDrawState);
     procedure PC_KitChange(Sender: TObject);
     procedure Bt_KitClipboardClick(Sender: TObject);
-    procedure Bt_KitSalvaExcelClick(Sender: TObject);
     procedure Rb_KitAnaliticoClick(Sender: TObject);
     procedure Rb_KitAnaliticoKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -895,22 +893,6 @@ begin
      Exit;
 
     DBGridClipboard(Dbg_KitNotas);
-    Dbg_KitNotas.SetFocus;
-  End;
-
-end;
-
-procedure TFrmControleKits.Bt_KitSalvaExcelClick(Sender: TObject);
-begin
-  If (PC_Kit.ActivePage=Ts_KitKits)  and (Not DMVirtual.CDS_V_Kits.IsEmpty) Then
-  Begin
-    ExportDBGridExcel(True, Dbg_KitKits, FrmBelShop);
-    Dbg_KitKits.SetFocus;
-  End;
-
-  If (PC_Kit.ActivePage=Ts_KitNotas) and (Not DMVirtual.CDS_V_KitsNotas.IsEmpty) Then
-  Begin
-    ExportDBGridExcel(True, Dbg_KitNotas, FrmBelShop);
     Dbg_KitNotas.SetFocus;
   End;
 

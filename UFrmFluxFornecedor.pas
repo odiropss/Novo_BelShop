@@ -30,14 +30,10 @@ type
     Ts_FluxFornApres: TTabSheet;
     Ts_FluxFornCaixa: TTabSheet;
     Panel38: TPanel;
-    Bt_FluFornSalvaExcel: TJvXPButton;
-    Gb_FluxFornComprov: TGroupBox;
+    Bt_FluFornSalvaMemoria: TJvXPButton;
     Gb_FluxFornFornec: TGroupBox;
     Dbg_FluFornFornec: TDBGrid;
-    Dbg_FluFornComprov: TDBGrid;
     OdirPanApres: TPanel;
-    Panel1: TPanel;
-    dxStatusBar1: TdxStatusBar;
     EdtFluFornCodFornAcertar: TEdit;
     Bt_FluFornFechar: TJvXPButton;
     Dbg_FluFornCaixa: TDBGrid;
@@ -47,13 +43,27 @@ type
     PopM_FluFornSIM: TMenuItem;
     PopM_FluFornNAO: TMenuItem;
     Stb_FluForn: TdxStatusBar;
+    Bt_FluFornFiltroComprador: TJvXPButton;
+    Bt_FluFornAtualizar1: TJvXPButton;
+    Bt_FluFornAcertaSaldos1: TJvXPButton;
+    PC_FluxFornParametros: TPageControl;
+    Ts_FluxFornParamComprv: TTabSheet;
+    Ts_FluxFornParamReducao: TTabSheet;
+    Pan_FluFornComprov: TPanel;
     Bt_FluFornComprovante: TJvXPButton;
     EdtFluFornComprovante: TEdit;
     Rb_FluFornDebito: TJvRadioButton;
     Rb_FluFornCredito: TJvRadioButton;
-    Bt_FluFornFiltroComprador: TJvXPButton;
-    Bt_FluFornAtualizar1: TJvXPButton;
-    Bt_FluFornAcertaSaldos1: TJvXPButton;
+    Dbg_FluFornComprov: TDBGrid;
+    dxStatusBar1: TdxStatusBar;
+    Pan_FluFornReducao: TPanel;
+    Bt_FluFornCodFornReducao: TJvXPButton;
+    EdtFluFornDesFornReducao: TEdit;
+    Dbg_FluFornReducao: TDBGrid;
+    dxStatusBar2: TdxStatusBar;
+    Label1: TLabel;
+    DBGrid1: TDBGrid;
+    Splitter1: TSplitter;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -101,7 +111,7 @@ type
     procedure Dbg_FluFornComprovEnter(Sender: TObject);
     procedure Bt_FluFornBuscaFornecedorClick(Sender: TObject);
     procedure Dbg_FluFornFornecDblClick(Sender: TObject);
-    procedure Bt_FluFornSalvaExcelClick(Sender: TObject);
+    procedure Bt_FluFornSalvaMemoriaClick(Sender: TObject);
     procedure Dbg_FluFornComprovDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
@@ -113,6 +123,7 @@ type
     procedure Bt_FluFornFiltroCompradorClick(Sender: TObject);
     procedure Dbg_FluFornComprovKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure PC_FluxFornParametrosChange(Sender: TObject);
 
   private
     { Private declarations }
@@ -366,7 +377,7 @@ end; // Show Hint em Forma de Balão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Show Hint em Forma de Balão - Usado no FormCreate >>>>>>>>>>>>>>>>>>>>>>>>>>>
 procedure AddToolTip(hwnd: dword; lpti: PToolInfo; IconType: Integer; Text, Title: PChar);
-var 
+var
   Item: THandle; 
   Rect: TRect; 
 begin 
@@ -836,25 +847,27 @@ Begin
 
           // Insere Caixa -----------------------------------------------
           MySql:=' INSERT INTO FL_CAIXA_fORNECEDORES ('+
-                 ' COD_FORNECEDOR, DES_FORNECEDOR, DTA_REGISTRO, DTA_CAIXA, NUM_SEQ,'+
+                 ' COD_FORNECEDOR, DES_FORNECEDOR, VLR_ORIGEM, DTA_ORIGEM, DTA_CAIXA, NUM_SEQ,'+
                  ' NUM_CHAVENF, COD_EMPRESA, COD_HISTORICO, TXT_OBS,'+
-                 ' NUM_DOCUMENTO, NUM_SERIE, TIP_DEBCRE, VLR_CAIXA, VLR_SALDO)'+
+                 ' NUM_DOCUMENTO, NUM_SERIE, PER_REDUCAO, TIP_DEBCRE, VLR_CAIXA, VLR_SALDO)'+
 
                  ' VALUES ('+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODFORNECEDOR').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('NOMEFORNECEDOR').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('DATACOMPROVANTE').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('DATAENTRADA').AsString)+', '+
-                 sgNumSeq+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CHAVENF').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODFILIAL').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODCOMPROVANTE').AsString)+', '+
-                 QuotedStr(AnsiUpperCase(IBQ_ConsultaFilial.FieldByName('OBSERVACAO').AsString))+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('NUMERO').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('SERIE').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('TP_DEBCRE').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString)+', '+
-                 ' 0)';
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODFORNECEDOR').AsString)+', '+ // COD_FORNECEDOR
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('NOMEFORNECEDOR').AsString)+', '+ // DES_FORNECEDOR
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString)+', '+ // VLR_ORIGEM
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('DATACOMPROVANTE').AsString)+', '+ // DTA_ORIGEM
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('DATAENTRADA').AsString)+', '+ // DTA_CAIXA
+                 sgNumSeq+', '+ // NUM_SEQ
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CHAVENF').AsString)+', '+ // NUM_CHAVENF
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODFILIAL').AsString)+', '+ // COD_EMPRESA,
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODCOMPROVANTE').AsString)+', '+ // COD_HISTORICO
+                 QuotedStr(AnsiUpperCase(IBQ_ConsultaFilial.FieldByName('OBSERVACAO').AsString))+', '+ // TXT_OBS
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('NUMERO').AsString)+', '+ // NUM_DOCUMENTO
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('SERIE').AsString)+', '+ // NUM_SERIE
+                 ' 0.00, '+ // PER_REDUCAO,
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('TP_DEBCRE').AsString)+', '+ // TIP_DEBCRE
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString)+', '+ // VLR_CAIXA
+                 ' 0)'; // VLR_SALDO
           DMBelShop.SQLC.Execute(MySql, nil, nil);
 
           pgProgBar.Position:=IBQ_ConsultaFilial.RecNo;
@@ -992,6 +1005,9 @@ begin
   PC_Principal.TabIndex:=0;
   PC_PrincipalChange(Self);
 
+  PC_FluxFornParametros.TabIndex:=0;
+  PC_FluxFornParametrosChange(Self);
+
   If DMBelShop.CDS_FluxoFornHistorico.Active Then
    DMBelShop.CDS_FluxoFornHistorico.Close;
   try
@@ -1013,12 +1029,14 @@ end;
 
 procedure TFrmFluxoFornecedor.PC_PrincipalChange(Sender: TObject);
 begin
+  CorSelecaoTabSheet(PC_Principal);
+
   If (PC_Principal.ActivePage=Ts_FluxFornApres) And (Ts_FluxFornApres.CanFocus) Then
   Begin
     DMBelShop.CDS_FluxoFornecedor.Filtered:=False;
     DMBelShop.CDS_FluxoFornecedor.Filter:='';
 
-    Bt_FluFornSalvaExcel.Visible:=False;
+    Bt_FluFornSalvaMemoria.Visible:=False;
     Bt_FluFornFiltroComprador.Caption:='Seleciona Comprador';
 
     Bt_FluFornFechar.Caption:='Fechar';
@@ -1030,7 +1048,7 @@ begin
 
   If (PC_Principal.ActivePage=Ts_FluxFornCaixa) And (Ts_FluxFornCaixa.CanFocus) Then
   Begin
-    Bt_FluFornSalvaExcel.Visible:=True;
+    Bt_FluFornSalvaMemoria.Visible:=True;
     Bt_FluFornFiltroComprador.Caption:='Seleciona Comprovante';
 
 
@@ -1666,6 +1684,12 @@ begin
       Dbg_FluFornCaixa.Canvas.Font.Style:=[fsBold];
     End;
 
+    If (Column.FieldName='PER_REDUCAO') Then // Este comando altera cor da Celula
+    Begin
+      If DMBelShop.CDS_FluxoFornecedorPER_REDUCAO.AsCurrency>0.00 then
+       Dbg_FluFornCaixa.Canvas.Font.Style:=[fsBold];
+    End;
+
     Dbg_FluFornCaixa.Canvas.FillRect(Rect);
     Dbg_FluFornCaixa.DefaultDrawDataCell(Rect,Column.Field,state);
   End;
@@ -1795,11 +1819,11 @@ begin
   EdtFluFornCodFornecedorExit(Self);
 end;
 
-procedure TFrmFluxoFornecedor.Bt_FluFornSalvaExcelClick(Sender: TObject);
+procedure TFrmFluxoFornecedor.Bt_FluFornSalvaMemoriaClick(Sender: TObject);
 begin
   If Not DMBelShop.CDS_FluxoFornecedor.IsEmpty Then
   Begin
-    ExportDBGridExcel(True, Dbg_FluFornCaixa, FrmBelShop);
+    DBGridClipboard(Dbg_FluFornCaixa);
     Dbg_FluFornCaixa.SetFocus;
   End;
                                  
@@ -2092,6 +2116,30 @@ begin
     If Not DML_Historicos('E',DMBelShop.CDS_FluxoFornHistoricoCOD_HISTORICO.AsString) Then
      MessageBox(Handle, pChar(sgMensagemERRO), 'Erro', MB_ICONERROR);
   End; // if (Key=VK_Delete) Then
+
+end;
+
+procedure TFrmFluxoFornecedor.PC_FluxFornParametrosChange(Sender: TObject);
+begin
+  CorSelecaoTabSheet(PC_FluxFornParametros);
+
+  If (PC_FluxFornParametros.ActivePage=Ts_FluxFornParamComprv) And (Ts_FluxFornParamComprv.CanFocus) Then
+  Begin
+    Dbg_FluFornComprov.SetFocus;
+  End;
+
+  If (PC_Principal.ActivePage=Ts_FluxFornCaixa) And (Ts_FluxFornCaixa.CanFocus) Then
+  Begin
+    Bt_FluFornSalvaMemoria.Visible:=True;
+    Bt_FluFornFiltroComprador.Caption:='Seleciona Comprovante';
+
+
+    Bt_FluFornFechar.Caption:='Voltar';
+    Bt_FluFornFechar.Tag:=90;
+    Bt_FluFornFechar.Glyph:=Nil;
+
+    Dbg_FluFornCaixa.SetFocus;
+  End;
 
 end;
 

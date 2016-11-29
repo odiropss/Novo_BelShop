@@ -128,7 +128,6 @@ type
     Bt_ReposLojasFonts: TJvXPButton;
     Ts_AnaliseReposicoes: TTabSheet;
     Pan_AnaliseRepos: TPanel;
-    Bt_AnaliseReposSalvaExcel: TJvXPButton;
     Bt_AnaliseReposClipboard: TJvXPButton;
     Pan_AnaliseReposSolic: TPanel;
     Dbg_AnaliseReposicoes: TDBGrid;
@@ -240,7 +239,6 @@ type
     procedure DtaEdt_ReposLojasExit(Sender: TObject);
     procedure DtaEdt_ReposLojasEnter(Sender: TObject);
     procedure DtaEdt_ReposLojasPropertiesChange(Sender: TObject);
-    procedure Bt_AnaliseReposSalvaExcelClick(Sender: TObject);
     procedure Bt_AnaliseReposBuscarClick(Sender: TObject);
     procedure Bt_AnaliseReposClipboardClick(Sender: TObject);
     procedure Dbg_AnaliseReposicoesTitleClick(Column: TColumn);
@@ -6313,17 +6311,6 @@ begin
     DMCentralTrocas.CDS_ReposicaoDocs.Close;
     DMCentralTrocas.CDS_ReposicaoTransf.Close;
   End;
-end;
-
-procedure TFrmCentralTrocas.Bt_AnaliseReposSalvaExcelClick(Sender: TObject);
-begin
-  If DMCentralTrocas.CDS_V_AnaliseReposicao.IsEmpty Then
-   Exit;
-
-  Dbg_AnaliseReposicoes.Columns[0].Visible:=True;
-  ExportDBGridExcel(True, Dbg_AnaliseReposicoes, FrmCentralTrocas);
-  Dbg_AnaliseReposicoes.Columns[0].Visible:=False;
-
 end;
 
 procedure TFrmCentralTrocas.Bt_AnaliseReposBuscarClick(Sender: TObject);

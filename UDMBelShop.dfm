@@ -2732,23 +2732,23 @@ object DMBelShop: TDMBelShop
       'DATA,'#13#10'*/'#13#10'FF.DTA_CAIXA DATA,'#13#10#13#10#39'Bel_'#39'||FF.COD_EMPRESA LOJA,'#13#10#13 +
       #10'CASE'#13#10'  WHEN (FF.COD_HISTORICO=0) OR (FF.COD_HISTORICO=999999) ' +
       'THEN'#13#10'   NULL'#13#10'  ELSE'#13#10'    FF.COD_HISTORICO'#13#10'END COD_HISTORICO,'#13 +
-      #10#13#10'FC.DES_HISTORICO,'#13#10'FF.NUM_DOCUMENTO, FF.NUM_SERIE, DTA_REGIST' +
-      'RO,'#13#10#13#10'CASE'#13#10'   WHEN FF.TIP_DEBCRE='#39'C'#39' THEN'#13#10'     FF.VLR_CAIXA'#13#10 +
-      '   WHEN (FF.NUM_SEQ=0) or (FF.NUM_SEQ=999999) Then'#13#10'     null'#13#10' ' +
-      '  ELSE'#13#10'     0.00'#13#10'END VLR_CREDITO,'#13#10#13#10'CASE'#13#10'   WHEN FF.TIP_DEBC' +
-      'RE='#39'D'#39' THEN'#13#10'      FF.VLR_CAIXA'#13#10'    WHEN (FF.NUM_SEQ=0) or (FF.' +
-      'NUM_SEQ=999999) Then'#13#10'      null'#13#10'   ELSE'#13#10'      0.00'#13#10'END VLR_D' +
-      'EBITO,'#13#10'/*'#13#10'CASE FF.NUM_SEQ'#13#10'   WHEN 0 THEN'#13#10'      FF.VLR_SALDO'#13 +
-      #10'   WHEN 999999 THEN'#13#10'     FF.VLR_SALDO'#13#10'END VLR_SALDO,'#13#10'*/'#13#10'CAS' +
-      'E FF.NUM_SEQ'#13#10'   WHEN 0 THEN'#13#10'      FF.VLR_SALDO- :Valor1'#13#10'   WH' +
-      'EN 999999 THEN'#13#10'     FF.VLR_SALDO- :Valor2'#13#10'END VLR_SALDO,'#13#10#13#10'FF' +
-      '.TXT_OBS,'#13#10#13#10'FF.COD_EMPRESA, EMP.RAZAO_SOCIAL,'#13#10#13#10'FF.COD_FORNECE' +
-      'DOR, FF.DES_FORNECEDOR,'#13#10'FF.NUM_SEQ, FF.NUM_CHAVENF,'#13#10'FF.TIP_DEB' +
-      'CRE'#13#10#13#10'FROM  FL_CAIXA_FORNECEDORES FF'#13#10'      LEFT JOIN FL_CAIXA_' +
-      'HISTORICOS FC ON FC.COD_HISTORICO=FF.COD_HISTORICO'#13#10'      LEFT J' +
-      'OIN EMP_CONEXOES EMP ON EMP.COD_FILIAL=FF.COD_EMPRESA'#13#10#13#10'WHERE F' +
-      'F.COD_FORNECEDOR= :CodForn'#13#10'AND   ff.dta_caixa>= :Data'#13#10#13#10'ORDER ' +
-      'BY FF.DTA_CAIXA, FF.NUM_SEQ'#13#10
+      #10#13#10'FC.DES_HISTORICO,'#13#10'FF.NUM_DOCUMENTO, FF.NUM_SERIE, '#13#10'FF.DTA_O' +
+      'RIGEM, FF.VLR_ORIGEM, FF.PER_REDUCAO,'#13#10#13#10'CASE'#13#10'   WHEN FF.TIP_DE' +
+      'BCRE='#39'C'#39' THEN'#13#10'     FF.VLR_CAIXA'#13#10'   WHEN (FF.NUM_SEQ=0) or (FF.' +
+      'NUM_SEQ=999999) Then'#13#10'     null'#13#10'   ELSE'#13#10'     0.00'#13#10'END VLR_CRE' +
+      'DITO,'#13#10#13#10'CASE'#13#10'   WHEN FF.TIP_DEBCRE='#39'D'#39' THEN'#13#10'      FF.VLR_CAIX' +
+      'A'#13#10'    WHEN (FF.NUM_SEQ=0) or (FF.NUM_SEQ=999999) Then'#13#10'      nu' +
+      'll'#13#10'   ELSE'#13#10'      0.00'#13#10'END VLR_DEBITO,'#13#10'/*'#13#10'CASE FF.NUM_SEQ'#13#10' ' +
+      '  WHEN 0 THEN'#13#10'      FF.VLR_SALDO'#13#10'   WHEN 999999 THEN'#13#10'     FF.' +
+      'VLR_SALDO'#13#10'END VLR_SALDO,'#13#10'*/'#13#10'CASE FF.NUM_SEQ'#13#10'   WHEN 0 THEN'#13#10 +
+      '      FF.VLR_SALDO- :Valor1'#13#10'   WHEN 999999 THEN'#13#10'     FF.VLR_SA' +
+      'LDO- :Valor2'#13#10'END VLR_SALDO,'#13#10#13#10'FF.TXT_OBS,'#13#10#13#10'FF.COD_EMPRESA, E' +
+      'MP.RAZAO_SOCIAL,'#13#10#13#10'FF.COD_FORNECEDOR, FF.DES_FORNECEDOR,'#13#10'FF.NU' +
+      'M_SEQ, FF.NUM_CHAVENF,'#13#10'FF.TIP_DEBCRE'#13#10#13#10'FROM  FL_CAIXA_FORNECED' +
+      'ORES FF'#13#10'      LEFT JOIN FL_CAIXA_HISTORICOS FC ON FC.COD_HISTOR' +
+      'ICO=FF.COD_HISTORICO'#13#10'      LEFT JOIN EMP_CONEXOES EMP ON EMP.CO' +
+      'D_FILIAL=FF.COD_EMPRESA'#13#10#13#10'WHERE FF.COD_FORNECEDOR= :CodForn'#13#10'AN' +
+      'D   ff.dta_caixa>= :Data'#13#10#13#10'ORDER BY FF.DTA_CAIXA, FF.NUM_SEQ'#13#10
     MaxBlobSize = -1
     Params = <
       item
@@ -2773,7 +2773,7 @@ object DMBelShop: TDMBelShop
         DataType = ftString
         Name = 'Data'
         ParamType = ptInput
-        Value = '01/01/1990'
+        Value = '01.11.2016'
       end>
     SQLConnection = SQLC
     Left = 920
@@ -2808,12 +2808,26 @@ object DMBelShop: TDMBelShop
       FieldName = 'NUM_SERIE'
       Size = 4
     end
-    object CDS_FluxoFornecedorDTA_REGISTRO: TDateField
+    object CDS_FluxoFornecedorDTA_ORIGEM: TDateField
       DisplayLabel = 'Dt Origem'
-      FieldName = 'DTA_REGISTRO'
+      FieldName = 'DTA_ORIGEM'
+    end
+    object CDS_FluxoFornecedorVLR_ORIGEM: TFMTBCDField
+      DisplayLabel = '$ Origem'
+      FieldName = 'VLR_ORIGEM'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_FluxoFornecedorPER_REDUCAO: TFMTBCDField
+      DisplayLabel = '% Red'
+      FieldName = 'PER_REDUCAO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
     end
     object CDS_FluxoFornecedorVLR_CREDITO: TFMTBCDField
-      DisplayLabel = 'Valor Cr'#233'dito'
+      DisplayLabel = '$ Cr'#233'dito'
       FieldName = 'VLR_CREDITO'
       DisplayFormat = '0.,00'
       Precision = 15

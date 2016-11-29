@@ -691,12 +691,9 @@ type
     Splitter3: TSplitter;
     Dbg_CurvaABCEndCurvaABCForn: TDBGrid;
     Pan_CurvaABCEndABC: TPanel;
-    Lab_CurvaABCEndTotalProdutos: TLabel;
     Bt_CurvaABCEndDistrEndereco: TJvXPButton;
     Bt_CurvaABCEndVoltar: TJvXPButton;
     Bt_CurvaABCEndAtualizaSidicom: TJvXPButton;
-    EdtCurvaABCEndTotalProdutos: TCurrencyEdit;
-    EdtCurvaABCEndTotalProc: TCurrencyEdit;
     Gb_CurvaABCEndEnderecamentos: TGroupBox;
     Label125: TLabel;
     Label126: TLabel;
@@ -1201,7 +1198,7 @@ type
     SubMenuFinanExportImportArquivos: TMenuItem;
     SubMenuFinanExpImpArquivosProSoft1: TMenuItem;
     N22: TMenuItem;
-    PopM_PlanFinanceiraEXCEL: TMenuItem;
+    PopM_PlanFinanceiraMemoria: TMenuItem;
     Panel27: TPanel;
     Dbg_FiltroGruposProdutos: TDBGridJul;
     Dbg_ConEmpresas: TDBGrid;
@@ -1368,6 +1365,10 @@ type
     Dbg_ConsultaNFeProdLojas: TDBGrid;
     Panel10: TPanel;
     Ckbx_ConsultaNFeApresTotais: TJvXPCheckbox;
+    Panel11: TPanel;
+    Lab_CurvaABCEndTotalProdutos: TLabel;
+    EdtCurvaABCEndTotalProdutos: TCurrencyEdit;
+    EdtCurvaABCEndTotalProc: TCurrencyEdit;
 
     // Odir ====================================================================
 
@@ -2244,7 +2245,7 @@ type
     procedure PC_AudCompVendChange(Sender: TObject);
     procedure SubMenuFinanVerificaExtratosClick(Sender: TObject);
     procedure SubMenuFinanExpImpArquivosProSoft1Click(Sender: TObject);
-    procedure PopM_PlanFinanceiraEXCELClick(Sender: TObject);
+    procedure PopM_PlanFinanceiraMemoriaClick(Sender: TObject);
     procedure SubMenuProtUsuariosPermAcessoSIDICOMClick(Sender: TObject);
     procedure Rb_ConsultaNFeTpMovtoAmbosKeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
@@ -2497,7 +2498,7 @@ implementation
 
 uses DK_Procs1, UPermissao, UDMBelShop,
      UPesquisa, UDMConexoes, UPesquisaIB, UDMVirtual, UDMRelatorio,
-     UFrmAuditoria, UFrmDataApropriacao, UFrmSelectEmpProcessamento,
+     UFrmAuditoria, UFrmSelectEmpProcessamento,
      UFrmOCObservacao, UVerTransito, UFrmPlanFinanApresComrprovantes,
      UFrmPeriodoApropriacao, UFrmObjetivosFormula, UFrmFinanObjetivosMovtos,
      UFrmSolicitacoes, UFrmGrafico, UFrmAcessosUsuario, UFrmBancoExtratos,
@@ -43647,13 +43648,21 @@ begin
   FreeAndNil(FrmSolicitacoes);
 end;
 
-procedure TFrmBelShop.PopM_PlanFinanceiraEXCELClick(Sender: TObject);
+procedure TFrmBelShop.PopM_PlanFinanceiraMemoriaClick(Sender: TObject);
 begin
   If Not DMVirtual.CDS_V_PlanFinanceira.IsEmpty Then
   Begin
     Dbg_FinanPlanFinanceira.SetFocus;
-    ExportDBGridExcel(True, Dbg_FinanPlanFinanceira, FrmBelShop);
+
+    DBGridClipboard(Dbg_FinanPlanFinanceira);
   End;
+
+//OdirApagar - 28/11/2016
+//  If Not DMVirtual.CDS_V_PlanFinanceira.IsEmpty Then
+//  Begin
+//    Dbg_FinanPlanFinanceira.SetFocus;
+//    ExportDBGridExcel(True, Dbg_FinanPlanFinanceira, FrmBelShop);
+//  End;
 end;
 
 procedure TFrmBelShop.SubMenuProtUsuariosPermAcessoSIDICOMClick(Sender: TObject);
