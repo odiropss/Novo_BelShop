@@ -17,7 +17,8 @@ uses
   dxSkinSharp, dxSkinSilver, dxSkinSpringTime, dxSkinStardust,
   dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
   dxSkinXmas2008Blue, dxSkinsdxStatusBarPainter, dxStatusBar, AppEvnts,
-  Menus, Commctrl, JvExStdCtrls, JvRadioButton;
+  Menus, Commctrl, JvExStdCtrls, JvRadioButton, cxContainer, cxEdit,
+  cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar;
 
 type
   TFrmFluxoFornecedor = class(TForm)
@@ -44,8 +45,8 @@ type
     PopM_FluFornNAO: TMenuItem;
     Stb_FluForn: TdxStatusBar;
     Bt_FluFornFiltroComprador: TJvXPButton;
-    Bt_FluFornAtualizar1: TJvXPButton;
-    Bt_FluFornAcertaSaldos1: TJvXPButton;
+    Bt_FluFornAtualizar: TJvXPButton;
+    Bt_FluFornAcertaSaldos: TJvXPButton;
     PC_FluxFornParametros: TPageControl;
     Ts_FluxFornParamComprv: TTabSheet;
     Ts_FluxFornParamReducao: TTabSheet;
@@ -57,19 +58,40 @@ type
     Dbg_FluFornComprov: TDBGrid;
     dxStatusBar1: TdxStatusBar;
     Pan_FluFornReducao: TPanel;
-    Bt_FluFornCodFornReducao: TJvXPButton;
-    EdtFluFornDesFornReducao: TEdit;
-    Dbg_FluFornReducao: TDBGrid;
-    dxStatusBar2: TdxStatusBar;
-    Label1: TLabel;
-    DBGrid1: TDBGrid;
+    Dbg_FluFornPercReducao: TDBGrid;
+    Dbg_FluFornFornReducao: TDBGrid;
     Splitter1: TSplitter;
+    Splitter2: TSplitter;
+    Bt_FluxFornManutReducaoExcluir: TJvXPButton;
+    Bt_FluxFornManutReducaoIncluir: TJvXPButton;
+    Bt_FluxFornManutReducaoAlterar: TJvXPButton;
+    Panel1: TPanel;
+    Ts_FluxFornManutReducao: TTabSheet;
+    Gb_FluxFornManutReducao: TGroupBox;
+    Panel2: TPanel;
+    Bt_FluxFornManutReducaoVoltar: TJvXPButton;
+    Bt_FluxFornManutReducaoSalvar: TJvXPButton;
+    Gb_FluxFornManutForn: TGroupBox;
+    Bt_FluxFornManutBuscaForn: TJvXPButton;
+    EdtFluxFornManutDesForn: TEdit;
+    Gb_FluxFornManutValidade: TGroupBox;
+    DtEdt_FluxFornManutDtaInicial: TcxDateEdit;
+    DtEdt_FluxFornManutDtaFinal: TcxDateEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    Gb_FluxFornManutPercent: TGroupBox;
+    EdtFluxFornManutPercentual: TCurrencyEdit;
+    EdtFluxFornManutCodForn: TCurrencyEdit;
+    Gb_FluxFornManutComprv: TGroupBox;
+    Bt_FluxFornManutBuscaComprv: TJvXPButton;
+    EdtFluxFornManutDesComprv: TEdit;
+    EdtFluxFornManutCodComprv: TCurrencyEdit;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
     procedure PC_PrincipalChange(Sender: TObject);
-    procedure Bt_FluFornAtualizar1Click(Sender: TObject);
+    procedure Bt_FluFornAtualizarClick(Sender: TObject);
 
     // ODIR ====================================================================
     // Hint em Fortma de Balão
@@ -79,6 +101,9 @@ type
     Procedure AtualizaDescComprvCCorrente;
 
     Procedure BuscaMovtosDebCre;
+
+    Procedure CalculaPercReducao;
+    Procedure PercReducaoHabiita_GroupBox(bHabilita: Boolean);
 
     Procedure CalculaFluxoCaixaFornecedores(sDt: String=''; sCodForn: String ='');
 
@@ -91,7 +116,7 @@ type
 
     procedure Dbg_FluFornFornecKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure Dbg_FluFornFornecKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure Bt_FluFornAcertaSaldos1Click(Sender: TObject);
+    procedure Bt_FluFornAcertaSaldosClick(Sender: TObject);
     procedure Dbg_FluFornFornecDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
@@ -124,6 +149,20 @@ type
     procedure Dbg_FluFornComprovKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure PC_FluxFornParametrosChange(Sender: TObject);
+    procedure Bt_FluxFornManutReducaoVoltarClick(Sender: TObject);
+    procedure Bt_FluxFornManutReducaoIncluirClick(Sender: TObject);
+    procedure Ts_FluxFornManutReducaoExit(Sender: TObject);
+    procedure Bt_FluxFornManutReducaoSalvarClick(Sender: TObject);
+    procedure Dbg_FluFornPercReducaoKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_FluFornFornReducaoKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure EdtFluxFornManutCodFornExit(Sender: TObject);
+    procedure Bt_FluxFornManutBuscaFornClick(Sender: TObject);
+    procedure EdtFluxFornManutCodComprvExit(Sender: TObject);
+    procedure Bt_FluxFornManutBuscaComprvClick(Sender: TObject);
+    procedure Bt_FluxFornManutReducaoAlterarClick(Sender: TObject);
+    procedure Bt_FluxFornManutReducaoExcluirClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -140,16 +179,18 @@ const
 var
   FrmFluxoFornecedor: TFrmFluxoFornecedor;
 
+  bgVoltaPerReducao, // Se Deve Fechar Ts_FluxFornManutReducao Automatico
   bgSairFF, bgExcluiFF: Boolean;
 
-  OrderGrid: String;    // Ordenar Grid
+  sgDtaMinCC: String; // Menor data do Conta Correte para Recalculo do Fornecedor
+  OrderGrid : String; // Ordenar Grid
 
   IBQ_ConsultaFilial: TIBQuery;
   TD : TTransactionDesc; // Ponteiro de Transação
 
   // Show Hint em Forma de Balão
-  hTooltip: Cardinal; 
-  ti: TToolInfo; 
+  hTooltip: Cardinal;
+  ti: TToolInfo;
   buffer : array[0..255] of char;
   ///////////////////////////////
 
@@ -163,6 +204,145 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
 //==============================================================================
 // ODIR - INICIO ===============================================================
 //==============================================================================
+
+// Habilita/Desabilita GroupBox de Percentual de Redução >>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmFluxoFornecedor.PercReducaoHabiita_GroupBox(bHabilita: Boolean);
+Begin
+  Gb_FluxFornManutForn.Enabled    :=bHabilita;
+  Gb_FluxFornManutComprv.Enabled  :=bHabilita;
+  Gb_FluxFornManutValidade.Enabled:=bHabilita;
+  Gb_FluxFornManutPercent.Enabled :=bHabilita;
+End; // Habilita/Desabilita GroupBox de Percentual de Redução >>>>>>>>>>>>>>>>>>
+
+// Calcula Percentual de Redução >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmFluxoFornecedor.CalculaPercReducao;
+Var
+  MySql: String;
+Begin
+  OdirPanApres.Caption:='AGUARDE !! Atualizando Percentuais de Redução...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmFluxoFornecedor;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    // Zera Percentual de Redução do Num_Seq ===================================
+    MySql:=' UPDATE FL_CAIXA_FORNECEDORES f'+
+           ' SET f.per_reducao = 0.00,'+
+           '     f.vlr_caixa = f.vlr_origem'+
+           ' WHERE EXISTS (SELECT 1'+
+           '               FROM FL_CAIXA_PERC_REDUCAO p'+
+           '               WHERE p.cod_fornecedor = f.cod_fornecedor'+
+           '               AND   p.cod_comprovante = f.cod_historico'+
+           '               AND   p.num_seq = '+sgNumSeq+
+           '               AND   f.dta_caixa BETWEEN p.dta_incio AND COALESCE(p.dta_fim, CAST(''31.12.3000'' AS DATE)))';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Excluir Registro de Percentualde Redução ================================
+    If Bt_FluxFornManutReducaoSalvar.Caption='Excluir' Then
+    Begin
+      MySql:=' DELETE FROM FL_CAIXA_PERC_REDUCAO r'+
+             ' WHERE r.num_seq = '+sgNumSeq;
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+    End; // If Bt_FluxFornManutReducaoSalvar.Caption='Excluir' Then
+
+    // INSERE OU ALTERA Registro de Percentualde Redução =======================
+    If Bt_FluxFornManutReducaoSalvar.Caption<>'Excluir' Then
+    Begin
+      // Insere Novo Novo Percentual de Redução do Num_Seq =======================
+      MySql:=' UPDATE OR INSERT INTO FL_CAIXA_PERC_REDUCAO'+
+             ' (NUM_SEQ, COD_FORNECEDOR, COD_COMPROVANTE, PER_REDUCAO, DTA_INCIO, DTA_FIM)'+
+             ' VALUES ('+
+             QuotedStr(sgNumSeq)+', '+ // NUM_SEQ
+             QuotedStr(FormatFloat('000000',StrToInt(EdtFluxFornManutCodForn.text)))+', '+ // COD_FORNECEDOR
+             QuotedStr(FormatFloat('000',StrToInt(EdtFluxFornManutCodComprv.text)))+', '+ // COD_COMPROVANTE
+             f_Troca(',','.',EdtFluxFornManutPercentual.Text)+', '+ // PER_REDUCAO
+             QuotedStr(f_Troca('/','.',f_Troca('-','.',DtEdt_FluxFornManutDtaInicial.Text)))+', '; // DTA_INCIO
+
+             // DTA_FIM
+             If (Trim(DtEdt_FluxFornManutDtaFinal.Text)='') Or (Trim(DtEdt_FluxFornManutDtaFinal.Text)='/  /') Then
+              MySql:=
+               MySql+' null)'
+             Else
+              MySql:=
+               MySql+QuotedStr(f_Troca('/','.',f_Troca('-','.',DtEdt_FluxFornManutDtaFinal.Text)))+')';
+
+      MySql:=
+       MySql+' MATCHING (NUM_SEQ)';
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+      // Atualiza Novo Percentual de Redução do Num_Seq ==========================
+      MySql:=' UPDATE FL_CAIXA_FORNECEDORES f'+
+             ' SET f.per_reducao = (SELECT p.per_reducao'+
+             '                      FROM FL_CAIXA_PERC_REDUCAO p'+
+             '                      WHERE p.cod_fornecedor = f.cod_fornecedor'+
+             '                      AND   p.cod_comprovante = f.cod_historico'+
+             '                      AND   p.num_seq = '+sgNumSeq+
+             '                      AND   f.dta_caixa BETWEEN p.dta_incio AND COALESCE(p.dta_fim, CAST(''31.12.3000'' AS DATE))),'+
+             ' f.vlr_caixa = ROUND(f.vlr_origem * (1 - (f.per_reducao / 100)), 2)'+
+
+             ' WHERE EXISTS(SELECT 1'+
+             '              FROM FL_CAIXA_PERC_REDUCAO p'+
+             '              WHERE p.cod_fornecedor = f.cod_fornecedor'+
+             '              AND   p.cod_comprovante = f.cod_historico'+
+             '              AND   p.num_seq = '+sgNumSeq+
+             '              AND   f.dta_caixa BETWEEN p.dta_incio AND COALESCE(p.dta_fim, CAST(''31.12.3000'' AS DATE)))';
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+    End; // If Bt_FluxFornManutReducaoSalvar.Caption<>'Excluir' Then]
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    // Recalcula Fluxo de Caixa de Fornecedor ==================================
+    CalculaFluxoCaixaFornecedores(f_Troca('.','/',f_Troca('-','/',sgDtaMinCC)),FormatFloat('000000',StrToInt(EdtFluxFornManutCodForn.text)));
+
+    // Reapresenta Fornecedores =================================================
+    If DMBelShop.CDS_FluxoFornecedores.Active Then
+     DMBelShop.CDS_FluxoFornecedores.Close;
+
+    FiltraComprador('',0);
+    DMBelShop.CDS_FluxoFornecedores.Locate('COD_FORNECEDOR', FormatFloat('000000',StrToInt(EdtFluxFornManutCodForn.text)),[]);
+
+    OdirPanApres.Visible:=False;
+    Screen.Cursor:=crDefault;
+
+  Except
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      OdirPanApres.Visible:=False;
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Exit;
+    End; // on e : Exception do
+  End; // Try
+
+End; // Calcula Percentual de Redução >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Filtro Fornecedores pelos Compradores Selecionados >>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmFluxoFornecedor.FiltraComprador(sCompradores: String; iNumLinhas: Integer); // sCompradores: Delimitador = ';'
@@ -963,6 +1143,8 @@ begin
   CreateToolTips(Self.Handle);
   AddToolTip(Bt_FluFornBuscaFornecedor.Handle, @ti, TipoDoIcone, 'Selecionar o'+#13+'Fornecedor', 'SELECIONAR !!');
 
+  bgVoltaPerReducao:=False;
+  PercReducaoHabiita_GroupBox(True);
 end;
 
 procedure TFrmFluxoFornecedor.FormKeyPress(Sender: TObject; var Key: Char);
@@ -990,35 +1172,52 @@ begin
 
   bgSairFF:=False;
 
-  Bt_FluFornAtualizar1.Visible:=False;
-  Bt_FluFornAcertaSaldos1.Visible:=False;
+  Bt_FluFornAtualizar.Visible:=False;
+  Bt_FluFornAcertaSaldos.Visible:=False;
   EdtFluFornCodFornAcertar.Visible:=False;
   MaskEdit1.Visible:=False;
   If AnsiUpperCase(Des_Login)='ODIR' Then
   Begin
     MaskEdit1.Visible:=True;
     EdtFluFornCodFornAcertar.Visible:=True;
-    Bt_FluFornAcertaSaldos1.Visible:=True;
-    Bt_FluFornAtualizar1.Visible:=True;
+    Bt_FluFornAcertaSaldos.Visible:=True;
+    Bt_FluFornAtualizar.Visible:=True;
   End; // If AnsiUpperCase(Des_Login)='ODIR' Then
 
   PC_Principal.TabIndex:=0;
   PC_PrincipalChange(Self);
 
   PC_FluxFornParametros.TabIndex:=0;
+  Ts_FluxFornManutReducao.TabVisible:=False;
   PC_FluxFornParametrosChange(Self);
 
+  // Apresenta Históricos ======================================================
   If DMBelShop.CDS_FluxoFornHistorico.Active Then
    DMBelShop.CDS_FluxoFornHistorico.Close;
   try
-  DMBelShop.CDS_FluxoFornHistorico.Open;
+    DMBelShop.CDS_FluxoFornHistorico.Open;
   except
     on e : Exception do
     Begin
       MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Exit;
     End; // on e : Exception do
   End;
 
+  // Apresenta Percentuais de Redução ==========================================
+  If DMBelShop.CDS_FluxoFornReducao.Active Then
+   DMBelShop.CDS_FluxoFornReducao.Close;
+  try
+    DMBelShop.CDS_FluxoFornReducao.Open;
+  except
+    on e : Exception do
+    Begin
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Exit;
+    End; // on e : Exception do
+  End;
+
+  // Apresernta Fornecedores ===================================================
   If DMBelShop.CDS_FluxoFornecedores.Active Then
    DMBelShop.CDS_FluxoFornecedores.Close;
 
@@ -1064,12 +1263,18 @@ begin
 
 end;
 
-procedure TFrmFluxoFornecedor.Bt_FluFornAtualizar1Click(Sender: TObject);
+procedure TFrmFluxoFornecedor.Bt_FluFornAtualizarClick(Sender: TObject);
 Var
   MySql: String;
   i: Integer;
   sCompDeb, sCompCre, sCodForn: String;
 begin
+  If (PC_Principal.ActivePage=Ts_FluxFornApres) And (Ts_FluxFornApres.CanFocus) Then
+   Dbg_FluFornFornec.SetFocus;
+
+  If (PC_Principal.ActivePage=Ts_FluxFornCaixa) And (Ts_FluxFornCaixa.CanFocus) Then
+   Dbg_FluFornCaixa.SetFocus;
+
   If AnsiUpperCase(Des_Login)<>'ODIR' Then
    Exit;
 
@@ -1387,10 +1592,16 @@ begin
   Dbg_FluFornFornec.SetFocus;
 end;
 
-procedure TFrmFluxoFornecedor.Bt_FluFornAcertaSaldos1Click(Sender: TObject);
+procedure TFrmFluxoFornecedor.Bt_FluFornAcertaSaldosClick(Sender: TObject);
 Var
   i: Integer;
 begin
+  If (PC_Principal.ActivePage=Ts_FluxFornApres) And (Ts_FluxFornApres.CanFocus) Then
+   Dbg_FluFornFornec.SetFocus;
+
+  If (PC_Principal.ActivePage=Ts_FluxFornCaixa) And (Ts_FluxFornCaixa.CanFocus) Then
+   Dbg_FluFornCaixa.SetFocus;
+
   If AnsiUpperCase(Des_Login)<>'ODIR' Then
    Exit;
 
@@ -1404,7 +1615,7 @@ begin
 
   PC_Principal.ActivePage:=Ts_FluxFornApres;
   PC_PrincipalChange(Self);
-  Dbg_FluFornFornec.SetFocus;
+
   If (Trim(EdtFluFornCodFornAcertar.Text)<>'Cód a Acertar') and (Trim(EdtFluFornCodFornAcertar.Text)<>'') Then
   Begin
     CalculaFluxoCaixaFornecedores('',EdtFluFornCodFornAcertar.Text);
@@ -1430,6 +1641,10 @@ begin
 
   DMBelShop.CDS_Busca.Close;
   DMBelShop.CDS_FluxoFornecedores.Close;
+
+  FiltraComprador('',0);
+
+  DMBelShop.CDS_FluxoFornecedores.Locate('COD_FORNECEDOR', FormatFloat('000000',StrToInt(EdtFluFornCodFornAcertar.Text)),[]);
 
   msg('Processamento Efetuado com SUCESSO !!','A');
 end;
@@ -1681,6 +1896,7 @@ begin
 
     If DMBelShop.CDS_FluxoFornecedorNUM_SEQ.AsInteger=999999 then
     Begin
+      Dbg_FluFornCaixa.Canvas.Brush.Color:=$00D5FFD5;
       Dbg_FluFornCaixa.Canvas.Font.Style:=[fsBold];
     End;
 
@@ -1821,6 +2037,12 @@ end;
 
 procedure TFrmFluxoFornecedor.Bt_FluFornSalvaMemoriaClick(Sender: TObject);
 begin
+  If (PC_Principal.ActivePage=Ts_FluxFornApres) And (Ts_FluxFornApres.CanFocus) Then
+   Dbg_FluFornFornec.SetFocus;
+
+  If (PC_Principal.ActivePage=Ts_FluxFornCaixa) And (Ts_FluxFornCaixa.CanFocus) Then
+   Dbg_FluFornCaixa.SetFocus;
+
   If Not DMBelShop.CDS_FluxoFornecedor.IsEmpty Then
   Begin
     DBGridClipboard(Dbg_FluFornCaixa);
@@ -1972,6 +2194,11 @@ Var
   ii, i: Integer;
   bFiltra: Boolean;
 begin
+  If (PC_Principal.ActivePage=Ts_FluxFornApres) And (Ts_FluxFornApres.CanFocus) Then
+   Dbg_FluFornFornec.SetFocus;
+
+  If (PC_Principal.ActivePage=Ts_FluxFornCaixa) And (Ts_FluxFornCaixa.CanFocus) Then
+   Dbg_FluFornCaixa.SetFocus;
 
   // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
   FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
@@ -2128,19 +2355,526 @@ begin
     Dbg_FluFornComprov.SetFocus;
   End;
 
-  If (PC_Principal.ActivePage=Ts_FluxFornCaixa) And (Ts_FluxFornCaixa.CanFocus) Then
+  If (PC_FluxFornParametros.ActivePage=Ts_FluxFornParamReducao) And (Ts_FluxFornParamReducao.CanFocus) Then
   Begin
-    Bt_FluFornSalvaMemoria.Visible:=True;
-    Bt_FluFornFiltroComprador.Caption:='Seleciona Comprovante';
-
-
-    Bt_FluFornFechar.Caption:='Voltar';
-    Bt_FluFornFechar.Tag:=90;
-    Bt_FluFornFechar.Glyph:=Nil;
-
-    Dbg_FluFornCaixa.SetFocus;
+    Ts_FluxFornManutReducao.TabVisible:=False;
+    Dbg_FluFornFornReducao.SetFocus;
   End;
 
+  If (PC_FluxFornParametros.ActivePage=Ts_FluxFornManutReducao) And (Ts_FluxFornManutReducao.CanFocus) Then
+  Begin
+    Try
+      EdtFluxFornManutCodForn.SetFocus;
+    Except
+     Gb_FluxFornManutReducao.SetFocus;
+    End;
+  End;
+end;
+
+procedure TFrmFluxoFornecedor.Bt_FluxFornManutReducaoVoltarClick(Sender: TObject);
+begin
+ bgVoltaPerReducao:=False;
+ PercReducaoHabiita_GroupBox(True);
+
+ Ts_FluxFornParamComprv.TabVisible:=True;
+ Ts_FluxFornParamReducao.TabVisible:=True;
+ Ts_FluxFornManutReducao.TabVisible:=False;
+
+ Dbg_FluFornFornec.SetFocus;
+end;
+
+procedure TFrmFluxoFornecedor.Bt_FluxFornManutReducaoIncluirClick(Sender: TObject);
+begin
+
+  // Inicializa Campos =========================================================
+  EdtFluxFornManutCodForn.Clear;
+  EdtFluxFornManutDesForn.Clear;
+  EdtFluxFornManutCodComprv.Clear;
+  EdtFluxFornManutDesComprv.Clear;
+
+  sgDtaMinCC:='';
+
+  DtEdt_FluxFornManutDtaInicial.Date:=StrToDate(DateToStr(
+                            DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)));
+  DtEdt_FluxFornManutDtaFinal.Clear;
+
+  EdtFluxFornManutPercentual.Value:=0.00;
+
+  // Libera Campos se Sair do Ts_FluxFornManutReducao ==========================
+  bgVoltaPerReducao:=True;
+  PercReducaoHabiita_GroupBox(True);
+
+  // Apresenta Ts_FluxFornManutReducao =========================================
+  Ts_FluxFornParamComprv.TabVisible:=False;
+  Ts_FluxFornParamReducao.TabVisible:=False;
+  Ts_FluxFornManutReducao.TabVisible:=True;
+  PC_FluxFornParametrosChange(Self);
+  Bt_FluxFornManutReducaoSalvar.Caption:='Incluir';
+
+end;
+
+procedure TFrmFluxoFornecedor.Ts_FluxFornManutReducaoExit(Sender: TObject);
+begin
+  If bgVoltaPerReducao Then
+   Bt_FluxFornManutReducaoVoltarClick(Self);
+
+  PercReducaoHabiita_GroupBox(True); 
+end;
+
+procedure TFrmFluxoFornecedor.Bt_FluxFornManutReducaoSalvarClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  Gb_FluxFornManutReducao.SetFocus;
+  
+  //============================================================================
+  // EXCUIR PERCENTUAL DE REDUÇÃO ==============================================
+  //============================================================================
+  If Bt_FluxFornManutReducaoSalvar.Caption='Excluir' Then
+  Begin
+    If msg('Deseja Realmente EXCLUIR o Percentual'+cr+cr+'de Redução Selecionado ??','C')=2 Then
+    Begin
+      Bt_FluxFornManutReducaoVoltarClick(Self);
+      Exit
+    End;
+
+    sgNumSeq:=DMBelShop.CDS_FluxoPercReducaoNUM_SEQ.AsString;
+
+    // Processa Percentual de Redução ============================================
+    CalculaPercReducao;
+
+    // Reabre Client's de Percentual de Redução ==================================
+    DMBelShop.CDS_FluxoPercReducao.Close;
+
+    DMBelShop.CDS_FluxoFornReducao.Close;
+    DMBelShop.CDS_FluxoFornReducao.Open;
+    DMBelShop.CDS_FluxoFornReducao.Locate('COD_FORNECEDOR', FormatFloat('000000',StrToInt(EdtFluxFornManutCodForn.text)),[]);
+
+    DMBelShop.CDS_FluxoPercReducao.Locate('NUM_SEQ', sgNumSeq,[]);
+
+    sgNumSeq  :='';
+    sgDtaF    :='';
+    sgDtaI    :='';
+    sgDtaMinCC:='';
+
+    // Volta =====================================================================
+    Bt_FluxFornManutReducaoVoltarClick(Self);
+    
+    Exit
+  End;
+
+  //============================================================================
+  // Consiste - INICIO =========================================================
+  //============================================================================
+  If EdtFluxFornManutCodForn.AsInteger=0 Then
+  Begin
+    msg('Favor Informar o Fornecedor !!','A');
+    EdtFluxFornManutCodForn.SetFocus;
+    Exit;
+  End;
+
+  If EdtFluxFornManutCodComprv.AsInteger=0 Then
+  Begin
+    msg('Favor Informar o Comprovante !!','A');
+    EdtFluxFornManutCodComprv.SetFocus;
+    Exit;
+  End;
+
+  // Consiste Período ==========================================================
+  If (Trim(DtEdt_FluxFornManutDtaInicial.Text)<>'') Or (Trim(DtEdt_FluxFornManutDtaFinal.Text)<>'') Then
+   Begin
+     Try
+       StrToDate(DtEdt_FluxFornManutDtaInicial.Text);
+     Except
+       msg('Data Inicial do Período Inválida !!','A');
+       DtEdt_FluxFornManutDtaInicial.SetFocus;
+       Exit;
+     End;
+
+     If Trim(DtEdt_FluxFornManutDtaFinal.Text)<>'' Then
+     Begin
+       Try
+         StrToDate(DtEdt_FluxFornManutDtaFinal.Text);
+       Except
+         msg('Data Final do Período Inválida !!','A');
+         DtEdt_FluxFornManutDtaFinal.SetFocus;
+         Exit;
+       End;
+
+       If DtEdt_FluxFornManutDtaFinal.Date<DtEdt_FluxFornManutDtaInicial.Date Then
+       Begin
+         msg('Período Inválido !!','A');
+         DtEdt_FluxFornManutDtaInicial.SetFocus;
+         Exit;
+       End;
+     End; // If Trim(DtEdt_FluxFornManutDtaFinal.Text)<>'') Then
+   End
+  Else // If (Trim(DtEdt_FluxFornManutDtaInicial.Text)<>'') Or (Trim(DtEdt_FluxFornManutDtaFinal.Text)<>'') Then
+   Begin
+     msg('Período Inválido !!','A');
+     DtEdt_FluxFornManutDtaInicial.SetFocus;
+     Exit;
+   End; // If (Trim(DtEdt_FluxFornManutDtaInicial.Text)<>'') Or (Trim(DtEdt_FluxFornManutDtaFinal.Text)<>'') Then
+  //============================================================================
+  // Consiste - FIM ============================================================
+  //============================================================================
+
+  // Examina Conflito de Datas =================================================
+  sgDtaI:=f_Troca('/','.',f_Troca('-','.',DtEdt_FluxFornManutDtaInicial.Text));
+  sgDtaF:=f_Troca('/','.',f_Troca('-','.',DtEdt_FluxFornManutDtaFinal.Text));
+
+  // Acerta Data Minima para Calculo ===========================================
+  If Trim(sgDtaMinCC)='' Then
+   sgDtaMinCC:=sgDtaI;
+
+  If StrToDate(f_Troca('.','/',sgDtaMinCC))>StrToDate(f_Troca('.','/',sgDtaI)) Then
+   sgDtaMinCC:=sgDtaI;
+
+  // Apropria Num_Seq ==========================================================
+  sgNumSeq:='';
+  If Bt_FluxFornManutReducaoSalvar.Caption='Alterar' Then
+   sgNumSeq:=DMBelShop.CDS_FluxoPercReducaoNUM_SEQ.AsString;
+
+  MySql:=' SELECT fr.num_seq'+
+         ' FROM FL_CAIXA_PERC_REDUCAO fr'+
+         ' WHERE fr.cod_fornecedor='+QuotedStr(FormatFloat('000000',StrToInt(EdtFluxFornManutCodForn.text)))+
+         ' AND   fr.cod_comprovante='+QuotedStr(FormatFloat('000',StrToInt(EdtFluxFornManutCodComprv.text)))+
+
+         ' AND ((CAST('+QuotedStr(sgDtaI)+' AS DATE) BETWEEN fr.dta_incio AND COALESCE(fr.dta_fim,cast(''31.12.3000'' as Date)))'+
+         '       OR';
+
+         If Trim(sgDtaF)<>'' Then
+          MySql:=
+           MySql+'      (CAST('+QuotedStr(sgDtaF)+' AS DATE) BETWEEN fr.dta_incio AND COALESCE(fr.dta_fim,cast(''31.12.3000'' as Date))))'
+         Else
+          MySql:=
+           MySql+'      (CAST(''31.12.3000'' AS DATE) BETWEEN fr.dta_incio AND COALESCE(fr.dta_fim,cast(''31.12.3000'' as Date))))';
+
+         If Trim(sgNumSeq)<>'' Then
+          MySql:=
+           MySql+' AND   fr.num_seq<>'+QuotedStr(sgNumSeq);
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:=MySql;
+  DMBelShop.CDS_Busca.Open;
+
+  If Trim(DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString)<>'' Then
+  Begin
+    msg('Detectado Conflito de Datas !!'+cr+cr+'Favor Examinar !!', 'A');
+    DMBelShop.CDS_Busca.Close;
+    EdtFluxFornManutCodForn.SetFocus;
+    Exit;
+  End;
+  DMBelShop.CDS_Busca.Close;
+
+  // Busca Num_Seq =============================================================
+  If Trim(sgNumSeq)='' Then
+  Begin
+    MySql:=' SELECT COALESCE(MAX(r.num_seq) + 1, 1) num_seq'+
+           ' FROM FL_CAIXA_PERC_REDUCAO r';
+    DMBelShop.CDS_Busca.Close;
+    DMBelShop.SDS_Busca.CommandText:=MySql;
+    DMBelShop.CDS_Busca.Open;
+    sgNumSeq:=DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString;
+    DMBelShop.CDS_Busca.Close;
+  End; // If Trim(sgNumSeq)='' Then
+
+  // Processa Percentual de Redução ============================================
+  CalculaPercReducao;
+
+  // Reabre Client's de Percentual de Redução ==================================
+  DMBelShop.CDS_FluxoPercReducao.Close;
+
+  DMBelShop.CDS_FluxoFornReducao.Close;
+  DMBelShop.CDS_FluxoFornReducao.Open;
+  DMBelShop.CDS_FluxoFornReducao.Locate('COD_FORNECEDOR', FormatFloat('000000',StrToInt(EdtFluxFornManutCodForn.text)),[]);
+
+  DMBelShop.CDS_FluxoPercReducao.Locate('NUM_SEQ', sgNumSeq,[]);
+
+  sgNumSeq  :='';
+  sgDtaF    :='';
+  sgDtaI    :='';
+  sgDtaMinCC:='';
+
+  // Volta =====================================================================
+  Bt_FluxFornManutReducaoVoltarClick(Self);
+end;
+
+procedure TFrmFluxoFornecedor.Dbg_FluFornPercReducaoKeyDown(
+  Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // BLOQUEAR TECLA Ctrl+Del ===================================================
+  if (Shift=[ssCtrl]) and (Key=46) then
+    Key:=0;
+
+end;
+
+procedure TFrmFluxoFornecedor.Dbg_FluFornFornReducaoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // BLOQUEAR TECLA Ctrl+Del ===================================================
+  if (Shift=[ssCtrl]) and (Key=46) then
+    Key:=0;
+end;
+
+procedure TFrmFluxoFornecedor.EdtFluxFornManutCodFornExit(Sender: TObject);
+Var
+  MySql: String;
+begin
+
+  EdtFluxFornManutDesForn.Clear;
+  If EdtFluxFornManutCodForn.Value<>0 Then
+  Begin
+    Screen.Cursor:=crAppStart;
+
+    // Busca Fornecedores ======================================================
+    MySql:=' SELECT fo.codfornecedor, fo.nomefornecedor'+
+           ' FROM FORNECEDOR fo'+
+           ' WHERE EXISTS(SELECT 1'+
+           '              FROM FL_CAIXA_FORNECEDORES cf'+
+           '              WHERE cf.cod_fornecedor = fo.codfornecedor)'+
+           ' AND fo.codfornecedor='+QuotedStr(FormatFloat('000000',StrToInt(EdtFluxFornManutCodForn.Text)));
+    DMBelShop.CDS_Busca.Close;
+    DMBelShop.SDS_Busca.CommandText:=MySql;
+    DMBelShop.CDS_Busca.Open;
+
+    Screen.Cursor:=crDefault;
+
+    If Trim(DMBelShop.CDS_Busca.FieldByName('codfornecedor').AsString)='' Then
+    Begin
+      msg('Fornecedor NÃO Encontrado !!!', 'A');
+      DMBelShop.CDS_Busca.Close;
+      EdtFluxFornManutCodForn.Clear;
+      EdtFluxFornManutCodForn.SetFocus;
+      Exit;
+    End;
+
+    EdtFluxFornManutDesForn.Text:=Trim(DMBelShop.CDS_Busca.FieldByName('NomeFornecedor').AsString);
+
+    DMBelShop.CDS_Busca.Close;
+  End;
+end;
+
+procedure TFrmFluxoFornecedor.Bt_FluxFornManutBuscaFornClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+
+  FrmPesquisa:=TFrmPesquisa.Create(Self);
+
+  EdtFluxFornManutCodForn.Clear;
+  EdtFluxFornManutDesForn.Clear;
+  EdtFluxFornManutCodForn.SetFocus;
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+    // Busca Fornecedores ======================================================
+    MySql:=' SELECT fo.nomefornecedor, fo.codfornecedor'+
+           ' FROM FORNECEDOR fo'+
+           ' WHERE EXISTS(SELECT 1'+
+           '              FROM FL_CAIXA_FORNECEDORES cf'+
+           '              WHERE cf.cod_fornecedor = fo.codfornecedor)'+
+           ' ORDER BY 1';
+  DMBelShop.CDS_Pesquisa.Filtered:=False;
+  DMBelShop.SDS_Pesquisa.CommandText:=MySql;
+  DMBelShop.CDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(DMBelShop.CDS_Pesquisa.FieldByName('CodFornecedor').AsString)='' Then
+  Begin
+    DMBelShop.CDS_Pesquisa.Close;
+    msg('Sem Fornecedor a Listar !!','A');
+    EdtFluxFornManutCodForn.SetFocus;
+    FreeAndNil(FrmPesquisa);
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisa.Campo_pesquisa:='nomefornecedor';
+  FrmPesquisa.Campo_Codigo:='codfornecedor';
+  FrmPesquisa.Campo_Descricao:='nomefornecedor';
+  //FrmPesquisa.EdtDescricao.Text:=FrmAcessos.EdtDescPessoa.Text;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisa.ShowModal;
+  DMBelShop.CDS_Pesquisa.Close;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+   Begin
+     EdtFluxFornManutCodForn.Text:=FrmPesquisa.EdtCodigo.Text;
+     EdtFluxFornManutCodFornExit(Self);
+   End
+  Else
+   Begin
+     EdtFluxFornManutCodForn.Clear;
+     EdtFluxFornManutDesForn.Clear;
+     EdtFluxFornManutCodForn.SetFocus;
+   End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+
+  FreeAndNil(FrmPesquisa);
+end;
+
+procedure TFrmFluxoFornecedor.EdtFluxFornManutCodComprvExit(Sender: TObject);
+Var
+  MySql: String;
+begin
+                          
+  EdtFluxFornManutDesComprv.Clear;
+  If EdtFluxFornManutCodComprv.Value<>0 Then
+  Begin
+    Screen.Cursor:=crAppStart;
+
+    // Busca Fornecedores ======================================================
+    MySql:=' SELECT hi.des_historico, hi.cod_historico'+
+           ' FROM fl_caixa_historicos hi'+
+           ' WHERE hi.cod_historico NOT IN (0, 999999)'+
+           ' AND   hi.cod_historico='+EdtFluxFornManutCodComprv.Text;
+    DMBelShop.CDS_Busca.Close;
+    DMBelShop.SDS_Busca.CommandText:=MySql;
+    DMBelShop.CDS_Busca.Open;
+
+    Screen.Cursor:=crDefault;
+
+    If Trim(DMBelShop.CDS_Busca.FieldByName('cod_historico').AsString)='' Then
+    Begin
+      msg('Comprovante NÃO Encontrado !!!', 'A');
+      DMBelShop.CDS_Busca.Close;
+      EdtFluxFornManutCodComprv.Clear;
+      EdtFluxFornManutCodComprv.SetFocus;
+      Exit;
+    End;
+
+    EdtFluxFornManutDesComprv.Text:=Trim(DMBelShop.CDS_Busca.FieldByName('Des_Historico').AsString);
+
+    DMBelShop.CDS_Busca.Close;
+  End;
+end;
+
+procedure TFrmFluxoFornecedor.Bt_FluxFornManutBuscaComprvClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+
+  FrmPesquisa:=TFrmPesquisa.Create(Self);
+
+  EdtFluxFornManutCodComprv.Clear;
+  EdtFluxFornManutDesComprv.Clear;
+  EdtFluxFornManutCodComprv.SetFocus;
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+    // Busca Fornecedores ======================================================
+    MySql:=' SELECT hi.des_historico, hi.cod_historico'+
+           ' FROM fl_caixa_historicos hi'+
+           ' WHERE hi.cod_historico NOT IN (0, 999999)'+
+           ' ORDER BY 1';
+  DMBelShop.CDS_Pesquisa.Filtered:=False;
+  DMBelShop.SDS_Pesquisa.CommandText:=MySql;
+  DMBelShop.CDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(DMBelShop.CDS_Pesquisa.FieldByName('cod_historico').AsString)='' Then
+  Begin
+    DMBelShop.CDS_Pesquisa.Close;
+    msg('Sem Comprovante a Listar !!','A');
+    EdtFluxFornManutCodComprv.SetFocus;
+    FreeAndNil(FrmPesquisa);
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisa.Campo_pesquisa:='des_historico';
+  FrmPesquisa.Campo_Codigo:='cod_historico';
+  FrmPesquisa.Campo_Descricao:='des_historico';
+  //FrmPesquisa.EdtDescricao.Text:=FrmAcessos.EdtDescPessoa.Text;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisa.ShowModal;
+  DMBelShop.CDS_Pesquisa.Close;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+   Begin
+     EdtFluxFornManutCodComprv.Text:=FrmPesquisa.EdtCodigo.Text;
+     EdtFluxFornManutCodComprvExit(Self);
+   End
+  Else
+   Begin
+     EdtFluxFornManutCodComprv.Clear;
+     EdtFluxFornManutDesComprv.Clear;
+     EdtFluxFornManutCodComprv.SetFocus;
+   End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+
+  FreeAndNil(FrmPesquisa);
+end;
+
+procedure TFrmFluxoFornecedor.Bt_FluxFornManutReducaoAlterarClick(Sender: TObject);
+begin
+  If DMBelShop.CDS_FluxoFornReducao.IsEmpty Then
+   Exit;
+
+  // Inicializa Campos =========================================================
+  EdtFluxFornManutCodForn.Text:=DMBelShop.CDS_FluxoFornReducaoCOD_FORNECEDOR.AsString;
+  EdtFluxFornManutDesForn.Text:=DMBelShop.CDS_FluxoFornReducaoNOMEFORNECEDOR.AsString;
+  EdtFluxFornManutCodComprv.Text:=DMBelShop.CDS_FluxoPercReducaoCOD_COMPRV.AsString;
+  EdtFluxFornManutDesComprv.Text:=DMBelShop.CDS_FluxoPercReducaoNOMECOMPROVANTE.AsString;
+
+  DtEdt_FluxFornManutDtaInicial.Text:=DMBelShop.CDS_FluxoPercReducaoDTA_INCIO.AsString;
+  DtEdt_FluxFornManutDtaFinal.Text:=DMBelShop.CDS_FluxoPercReducaoDTA_FIM.AsString;
+
+  EdtFluxFornManutPercentual.Value:=DMBelShop.CDS_FluxoPercReducaoPER_REDUCAO.AsFloat;
+
+  sgDtaMinCC:=DMBelShop.CDS_FluxoPercReducaoDTA_INCIO.AsString;
+
+  // Libera Campos se Sair do Ts_FluxFornManutReducao ==========================
+  bgVoltaPerReducao:=True;
+  PercReducaoHabiita_GroupBox(True);
+
+  // Apresenta Ts_FluxFornManutReducao =========================================
+  Ts_FluxFornParamComprv.TabVisible:=False;
+  Ts_FluxFornParamReducao.TabVisible:=False;
+  Ts_FluxFornManutReducao.TabVisible:=True;
+  PC_FluxFornParametrosChange(Self);
+  Bt_FluxFornManutReducaoSalvar.Caption:='Alterar';
+
+end;
+
+procedure TFrmFluxoFornecedor.Bt_FluxFornManutReducaoExcluirClick(Sender: TObject);
+begin
+  If DMBelShop.CDS_FluxoFornReducao.IsEmpty Then
+   Exit;
+
+  // Inicializa Campos =========================================================
+  EdtFluxFornManutCodForn.Text:=DMBelShop.CDS_FluxoFornReducaoCOD_FORNECEDOR.AsString;
+  EdtFluxFornManutDesForn.Text:=DMBelShop.CDS_FluxoFornReducaoNOMEFORNECEDOR.AsString;
+  EdtFluxFornManutCodComprv.Text:=DMBelShop.CDS_FluxoPercReducaoCOD_COMPRV.AsString;
+  EdtFluxFornManutDesComprv.Text:=DMBelShop.CDS_FluxoPercReducaoNOMECOMPROVANTE.AsString;
+
+  DtEdt_FluxFornManutDtaInicial.Text:=DMBelShop.CDS_FluxoPercReducaoDTA_INCIO.AsString;
+  DtEdt_FluxFornManutDtaFinal.Text:=DMBelShop.CDS_FluxoPercReducaoDTA_FIM.AsString;
+
+  EdtFluxFornManutPercentual.Value:=DMBelShop.CDS_FluxoPercReducaoPER_REDUCAO.AsFloat;
+
+  sgDtaMinCC:=DMBelShop.CDS_FluxoPercReducaoDTA_INCIO.AsString;
+
+  // Habilita/Desabilita GroupBox de Percentual de Redução =====================
+  PercReducaoHabiita_GroupBox(False);
+
+  // Libera Campos se Sair do Ts_FluxFornManutReducao ==========================
+  bgVoltaPerReducao:=True;
+  PercReducaoHabiita_GroupBox(False);
+
+  // Apresenta Ts_FluxFornManutReducao =========================================
+  Ts_FluxFornParamComprv.TabVisible:=False;
+  Ts_FluxFornParamReducao.TabVisible:=False;
+  Ts_FluxFornManutReducao.TabVisible:=True;
+  PC_FluxFornParametrosChange(Self);
+  Bt_FluxFornManutReducaoSalvar.Caption:='Excluir';
 end;
 
 end.

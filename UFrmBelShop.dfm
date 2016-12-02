@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_MovtoComprovForn
+    ActivePage = Ts_ConsultaOC
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -7012,7 +7012,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_OCGeraOrdemCompra
+        ActivePage = Ts_OCBuscaProdutos
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -9921,7 +9921,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 0
                 Top = 44
                 Width = 785
-                Height = 361
+                Height = 363
                 Hint = '<Duplo Click> Alterar Gerar'
                 Align = alClient
                 Color = 15004403
@@ -12568,7 +12568,7 @@ object FrmBelShop: TFrmBelShop
         Top = 61
         Width = 971
         Height = 431
-        ActivePage = Ts_ConsultaNFeProdutos
+        ActivePage = TS_ConsultaNFeFiltros
         Align = alClient
         TabOrder = 1
         OnChange = PC_ConsultaMovtoComprChange
@@ -16976,7 +16976,7 @@ object FrmBelShop: TFrmBelShop
               object Label77: TLabel
                 Left = 2
                 Top = 2
-                Width = 412
+                Width = 232
                 Height = 13
                 Align = alTop
                 Alignment = taCenter

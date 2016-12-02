@@ -24,6 +24,7 @@ type
     Function  AnalisaAtualizaTransferencias: Boolean;
 
     Procedure SalvaErros;
+    Procedure SalvaProcessamento(s:String);
     // ODIR ====================================================================
 
   private
@@ -56,6 +57,9 @@ var
   bgArqErros: Boolean;     // Se Salva Arquivo de Erros
   sgArqErros: String;      // Nome do Arquivo de Erros
 
+  tgArqProc : TStringList; // Arquivo de Acompanhamento de Processamento
+  sgArqProc : String;      // Acompanhamento de Processamento
+
   // Percentuais de Corte de Reposição
   igPer_CorteA, igPer_CorteB, igPer_CorteC, igPer_CorteD, igPer_CorteE: Integer;
 
@@ -72,6 +76,13 @@ uses DK_Procs1, UDMConexoes, uj_001, uj_002, UDMTransferencias, DB,
 //==============================================================================
 // ODIR - INICIO ===============================================================
 //==============================================================================
+
+// Salva Arquivo de Acompanhamento de Processamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmTransferencias.SalvaProcessamento(s:String);
+Begin
+  tgArqProc.Add(s);
+  tgArqProc.SaveToFile(sgArqProc);
+End; // Salva Arquivo de Acompanhamento de Processamento >>>>>>>>>>>>>>>>>>>>>>>
 
 // Salva Arquivo de Erros, se Houver >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmTransferencias.SalvaErros;
@@ -345,16 +356,6 @@ Begin
            ' AND   lo.ind_transf=''NAO''';
     DMTransferencias.SQLC.Execute(MySql,nil,nil);
 
-//odirApagar - 04/10/2016
-//    MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH 0';
-//    DMTransferencias.SQLC.Execute(MySql,nil,nil);
-//
-//    MySql:=' UPDATE ES_ESTOQUES_LOJAS lo'+
-//           ' SET lo.num_seq=GEN_ID(GEN_ODIR,1)'+
-//           ' WHERE lo.dta_movto=CURRENT_DATE'+
-//           ' AND   lo.ind_transf=''SIM''';
-//    DMTransferencias.SQLC.Execute(MySql,nil,nil);
-
     // Acerta Num_Seq ==========================================================
     MySql:=' SELECT DISTINCT l.cod_loja, l.num_docto'+
            ' FROM ES_ESTOQUES_LOJAS l'+
@@ -546,15 +547,8 @@ Begin
          '     c.ind_curva'+
          ' END ind_curva,'+
 
-//odirapagar - 26/09/2016
-//         ' CASE'+
-//         '   WHEN ((p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva=''E'') AND (t.vlr_aux1>c.est_minimo)) THEN'+
-//         '    CAST(t.vlr_aux1 AS INTEGER)'+
-//         '   ELSE'+
-//         '    CAST(c.est_minimo AS INTEGER)'+
-//         ' END est_minimo,'+
-         ' CAST(c.est_minimo AS INTEGER) est_minimo,'+
-         ' CAST(c.est_maximo AS INTEGER) est_maximo,'+
+         ' CAST(COALESCE(c.est_minimo,0) AS INTEGER) est_minimo,'+
+         ' CAST(COALESCE(c.est_maximo,0) AS INTEGER) est_maximo,'+
 
          ' CAST(COALESCE(t.vlr_aux,0) AS INTEGER) Dias_Estocagem,'+
          ' CAST(COALESCE(e.saldoatual,0) AS INTEGER) saldoatual,'+
@@ -562,8 +556,8 @@ Begin
 
          ' FROM PRODUTO p'+
          '        LEFT JOIN ES_FINAN_CURVA_ABC c  ON c.cod_produto=p.codproduto'+
-         '        LEFT JOIN ESTOQUE      e  ON e.codfilial=c.cod_loja'+
-         '                                 AND e.codproduto=p.codproduto'+
+         '        LEFT JOIN ESTOQUE e             ON e.codfilial=c.cod_loja'+
+         '                                       AND e.codproduto=p.codproduto'+
          '        LEFT JOIN TAB_AUXILIAR t  ON CASE';
 
          If bCurvaC Then
@@ -585,15 +579,6 @@ Begin
          '                                 AND t.tip_aux=2'+
 
          ' WHERE p.situacaopro in (0,3)'+
-
-//odirapagar - 26/09/2016
-//         ' AND CASE'+
-//         '      WHEN ((p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva=''E'') AND (t.vlr_aux1>c.est_minimo)) THEN'+
-//         '        CAST(t.vlr_aux1 AS INTEGER)'+
-//         '      ELSE'+
-//         '        CAST(c.est_minimo AS INTEGER)'+
-//         '     END>0'+
-//         ' AND   c.est_minimo>0'+
 
          ' AND CAST(COALESCE(c.est_minimo,0) AS INTEGER)>0'+
 
@@ -704,6 +689,9 @@ Begin
   DMTransferencias.CDS_EstoqueCD.Close;
   DMTransferencias.SDS_EstoqueCD.CommandText:=MySql;
   DMTransferencias.CDS_EstoqueCD.Open;
+  //============================================================================
+  SalvaProcessamento('10.01/999 - Busca Produtos do CD - '+TimeToStr(Time));
+  //============================================================================
 
   // Abre ClientDataSet para Inclusao de Produtos da Loja ======================
   MySql:=' SELECT *'+
@@ -712,7 +700,13 @@ Begin
   DMTransferencias.CDS_EstoqueLoja.Close;
   DMTransferencias.SDS_EstoqueLoja.CommandText:=MySql;
   DMTransferencias.CDS_EstoqueLoja.Open;
+  //============================================================================
+  SalvaProcessamento('10.02/999 - Abre ClientDataSet para Inclusao de Produtos da Loja - '+TimeToStr(Time));
+  //============================================================================
 
+  //============================================================================
+  SalvaProcessamento('10.03/999 - PROCESSAMENTO DAS LOJAS - INICIO - '+TimeToStr(Time));
+  //============================================================================
   For i:=0 to mgMemo.Lines.Count-1 do
   Begin
     // Zera Sequencia para Novo Docto ==========================================
@@ -732,11 +726,17 @@ Begin
 
     // Monta Curvas da Loja ====================================================
     MontaCurvas(sCodLoja);
+    //==========================================================================
+    SalvaProcessamento('10.03.01/999 - Monta Curvas da Loja - '+sCodLoja+' - '+TimeToStr(Time));
+    //==========================================================================
 
     // Busca Produtos das Curvas da Loja =======================================
     BuscaProdutosCurvas(sCodLoja);
+    //==========================================================================
+    SalvaProcessamento('10.03.02/999 - Busca Produtos das Curvas da Loja - '+sCodLoja+' - '+TimeToStr(Time));
+    //==========================================================================
 
-    // Conecta Empresa =======================================================
+    // Conecta Loja ============================================================
     bConetada:=False;
     If ConexaoEmpIndividual('IBDB_'+sCodLoja, 'IBT_'+sCodLoja, 'A') Then
     Begin
@@ -747,6 +747,9 @@ Begin
         bConetada:=False;
       End;
     End;
+    //==========================================================================
+    SalvaProcessamento('10.03.03/999 - Conecta Loja - '+sCodLoja+' - '+TimeToStr(Time));
+    //==========================================================================
 
     // Monta Transacao ===================================================
     TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
@@ -763,6 +766,10 @@ Begin
       sCodEmp:=DMTransferencias.CDS_BuscaRapida.FieldByName('Codigo').AsString;
       DMTransferencias.CDS_BuscaRapida.Close;
 
+      //========================================================================
+      SalvaProcessamento('10.04/999 - PROCESSA PRODUTOS SELECIONADOS DA LOJA - '+sCodLoja+' - INICIO - '+TimeToStr(Time));
+      //========================================================================
+      // PROCESSA PRODUTOS SELECIONADOS DA LOJA ================================
       While Not DMTransferencias.CDS_CurvasLoja.Eof do
       Begin
         sCodProduto:=DMTransferencias.CDS_CurvasLojaCOD_PRODUTO.AsString;
@@ -881,8 +888,11 @@ Begin
         DMTransferencias.CDS_CurvasLoja.Next;
       End; // While Not DMTransferencias.CDS_CurvasLoja.Eof do
       DMTransferencias.CDS_CurvasLoja.Close;
+      //========================================================================
+      SalvaProcessamento('10.04/999 - PROCESSA PRODUTOS SELECIONADOS DA LOJA - '+sCodLoja+' - FIM - '+TimeToStr(Time));
+      //========================================================================
 
-      // Fecha Transacao ===================================================
+      // Fecha Transacao =======================================================
       DMTransferencias.SQLC.Commit(TD);
 
       bgArqErros:=True;
@@ -908,6 +918,9 @@ Begin
   End; // For i:=0 to mgMemo.Lines.Count-1 do
   DMTransferencias.CDS_EstoqueCD.Close;
   DMTransferencias.CDS_EstoqueLoja.Close;
+  //============================================================================
+  SalvaProcessamento('10.03/999 - PROCESSAMENTO DAS LOJAS - FIM - '+TimeToStr(Time));
+  //============================================================================
 
 End; // Busca Produtos das Lojas/Calcula Necessidade de Compras >>>>>>>>>>>>>>>>
 
@@ -1030,7 +1043,7 @@ begin
 //  ApagaUltProcesso('PCurvasDemandas.exe');
   //============================================================================
 
-  // Windows: Nome do Usuario e do Computador =================================
+  // Windows: Nome do Usuario e do Computador ==================================
   UsuarioComputadorWindows(sUsuarioWindows, sComputadorWindows);
 
 //  hHrInicio:=TimeToStr(DataHoraServidorFI(DMTransferencias.SDS));
@@ -1038,6 +1051,9 @@ begin
   sDta:=DateToStr(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor));
   sDta:=f_Troca('/','',f_Troca('.','',f_Troca('-','',sDta)));
 
+  //============================================================================
+  // Monta Arquivo Texto de Status =============================================
+  //============================================================================
   sgArqErros:=IncludeTrailingPathDelimiter(sgPath_Local+'Arquivo Status Transf');
   If (Trim(sgCompServer)<>Trim(sComputadorWindows)) And (Trim(sComputadorWindows)<>'ODIR-PC') Then
   Begin
@@ -1055,7 +1071,28 @@ begin
   bgArqErros:=False;
   tgArqErros:=TStringList.Create;
 
+  //============================================================================
+  // Monta Arquivo Texto de Acompanhamento Processamento =======================
+  //============================================================================
+  sgArqProc:=IncludeTrailingPathDelimiter(sgPath_Local+'Arquivo Status Transf');
+  If (Trim(sgCompServer)<>Trim(sComputadorWindows)) And (Trim(sComputadorWindows)<>'ODIR-PC') Then
+  Begin
+    sgArqProc:=f_Troca('C:\','',sgArqProc);
+    sgArqProc:='\\'+sgIPInternetServer+'\'+sgArqProc;
+  End;
+
+  If not DirectoryExists(sgArqProc) then
+   ForceDirectories(sgArqProc);
+
+  sgArqProc:=sgArqProc+'Processamento_'+sDta+'.txt';
+
+  DeleteFile(sgArqProc);
+
+  tgArqProc:=TStringList.Create;
+
+  //============================================================================
   // Fornecedores que Não São Processados ======================================
+  //============================================================================
   MySql:=' SELECT CAST(LPAD(t.cod_aux,6,0) AS VARCHAR(6)) Forn_Nao'+
          ' FROM TAB_AUXILIAR t'+
          ' WHERE t.tip_aux=13';
@@ -1079,6 +1116,9 @@ begin
    sgFornNAO:='''000300'', ''000500'', ''000883'', ''010000'', ''001072'''
   Else
    sgFornNAO:=sgFornNAO+', ''000300'', ''000500'', ''000883'', ''010000'', ''001072''';
+  //============================================================================
+  SalvaProcessamento('01/999 - Fornecedores que Não São Processados - '+TimeToStr(Time));
+  //============================================================================
 
   // Numero do Dia da Semana ===================================================
   igDiaSemana:=DayOfWeek(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor))+110;
@@ -1108,6 +1148,9 @@ begin
     Application.Terminate;
     Exit;
   End;
+  //============================================================================
+  SalvaProcessamento('02/999 - Busca Lojas do Dia - '+TimeToStr(Time));
+  //============================================================================
 
   // Busca Percentuais de Cortes das Curvas ====================================
   MySql:=' SELECT cc.Cod_Aux, COALESCE(cc.des_aux1,''0'') PerCorte'+
@@ -1142,10 +1185,16 @@ begin
     DMTransferencias.CDS_BuscaRapida.Next;
   End; // While not DMTransferencias.CDS_BuscaRapida.Eof do
   DMTransferencias.CDS_BuscaRapida.Close;
+  //============================================================================
+  SalvaProcessamento('03/999 - Busca Percentuais de Cortes das Curvas - '+TimeToStr(Time));
+  //============================================================================
 
   // Zera Sequencia para Novo Docto ============================================
   MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH 0';
   DMTransferencias.SQLC.Execute(MySql,nil,nil);
+  //============================================================================
+  SalvaProcessamento('04/999 - Zera Sequencia para Novo Docto - '+TimeToStr(Time));
+  //============================================================================
 
   // Cria Memo para Codigos de Lojas ===========================================
   mgMemo:=TMemo.Create(Self);
@@ -1161,6 +1210,9 @@ begin
     DMTransferencias.CDS_Busca.Next;
   End; // While Not DMTransferencias.CDS_Busca.Eof do
   DMTransferencias.CDS_BuscaRapida.Close;
+  //============================================================================
+  SalvaProcessamento('05/999 - Cria Memo para Codigos de Lojas - '+TimeToStr(Time));
+  //============================================================================
 
   // Calcula Dias Uteis no Período =============================================
   dgDtaHoje  :=DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor);
@@ -1170,6 +1222,9 @@ begin
   dgDtaFim   :=StrToDate(DateToStr(dgDtaFim));
 
   igDiasUteis:=DiasUteisBelShop(dgDtaInicio, dgDtaFim, False, True);
+  //============================================================================
+  SalvaProcessamento('06/999 - Calcula Dias Uteis no Período - '+TimeToStr(Time));
+  //============================================================================
 
   // Conecta CD ================================================================
   If Not DMTransferencias.ConectaMPMS Then
@@ -1182,6 +1237,9 @@ begin
     Application.Terminate;
     Exit;
   End;
+  //============================================================================
+  SalvaProcessamento('07/999 - Conecta CD - '+TimeToStr(Time));
+  //============================================================================
 
   // Busca Produtos com Saldo no CD ============================================
   If Not BuscaProdutosCD Then
@@ -1194,6 +1252,9 @@ begin
     Application.Terminate;
     Exit;
   End;
+  //============================================================================
+  SalvaProcessamento('08/999 - Busca Produtos com Saldo no CD - '+TimeToStr(Time));
+  //============================================================================
 
   // Insere Produtos do CD =====================================================
   If Not InsereProdutosCD Then
@@ -1204,7 +1265,13 @@ begin
     Application.Terminate;
     Exit;
   End;
+  //============================================================================
+  SalvaProcessamento('09/999 - Insere Produtos do CD - '+TimeToStr(Time));
+  //============================================================================
 
+  //============================================================================
+  SalvaProcessamento('10/999 - Busca Produtos nas Lojas com Necessidade de Compras - INICIO - '+TimeToStr(Time));
+  //============================================================================
   // Busca Produtos nas Lojas com Necessidade de Compras =======================
   If Not BuscaProdutosLojas Then
   Begin
@@ -1214,7 +1281,13 @@ begin
     Application.Terminate;
     Exit;
   End;
+  //============================================================================
+  SalvaProcessamento('10/999 - Busca Produtos nas Lojas com Necessidade de Compras - FIM - '+TimeToStr(Time));
+  //============================================================================
 
+  //============================================================================
+  SalvaProcessamento('11/999 - Analisa e Atualiza Transferencias do Dia - INICIO - '+TimeToStr(Time));
+  //============================================================================
   // Analisa e Atualiza Transferencias do Dia ==================================
   If Not AnalisaAtualizaTransferencias Then
   Begin
@@ -1224,6 +1297,9 @@ begin
     Application.Terminate;
     Exit;
   End;
+  //============================================================================
+  SalvaProcessamento('11/999 - Analisa e Atualiza Transferencias do Dia - FIM - '+TimeToStr(Time));
+  //============================================================================
 
   // Enceerra Programa =========================================================
   If tgArqErros.Count>0 Then
@@ -1232,10 +1308,16 @@ begin
     SalvaErros;
   End;
 
+  //============================================================================
+  SalvaProcessamento('12/999 - FIM - '+TimeToStr(Time));
+  //============================================================================
+
   Application.Terminate;
   Exit;
 
 end;
 
 end.
-
+{
+1 - Fornecedores que Não São Processados
+}

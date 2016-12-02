@@ -1150,6 +1150,22 @@ type
     CDS_FluxoFornecedorDTA_ORIGEM: TDateField;
     CDS_FluxoFornecedorVLR_ORIGEM: TFMTBCDField;
     CDS_FluxoFornecedorPER_REDUCAO: TFMTBCDField;
+    SDS_FluxoFornReducao: TSQLDataSet;
+    CDS_FluxoFornReducao: TClientDataSet;
+    DSP_FluxoFornReducao: TDataSetProvider;
+    DS_FluxoFornReducao: TDataSource;
+    SDS_FluxoPercReducao: TSQLDataSet;
+    CDS_FluxoPercReducao: TClientDataSet;
+    DSP_FluxoPercReducao: TDataSetProvider;
+    DS_FluxoPercReducao: TDataSource;
+    CDS_FluxoFornReducaoCOD_FORNECEDOR: TStringField;
+    CDS_FluxoFornReducaoNOMEFORNECEDOR: TStringField;
+    CDS_FluxoPercReducaoCOD_COMPRV: TStringField;
+    CDS_FluxoPercReducaoNOMECOMPROVANTE: TStringField;
+    CDS_FluxoPercReducaoDTA_INCIO: TDateField;
+    CDS_FluxoPercReducaoDTA_FIM: TDateField;
+    CDS_FluxoPercReducaoPER_REDUCAO: TFMTBCDField;
+    CDS_FluxoPercReducaoNUM_SEQ: TIntegerField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -1210,6 +1226,7 @@ type
     procedure CDS_ObjetivosEmpresasAfterScroll(DataSet: TDataSet);
     procedure IBQ_AComprarAfterOpen(DataSet: TDataSet);
     procedure CDS_FluxoFornecedoresAfterScroll(DataSet: TDataSet);
+    procedure CDS_FluxoFornReducaoAfterScroll(DataSet: TDataSet);
 
   private
     { Private declarations }
@@ -4176,6 +4193,18 @@ begin
   Begin
     DMBelShop.CDS_FluxoFornecedores.RecNo:=4;
   End;
+
+end;
+
+procedure TDMBelShop.CDS_FluxoFornReducaoAfterScroll(DataSet: TDataSet);
+begin
+  CDS_FluxoPercReducao.Close;
+  If Not CDS_FluxoFornReducao.IsEmpty Then
+  Begin
+    SDS_FluxoPercReducao.Params.ParamByName('CodForn').AsString:=
+                                    CDS_FluxoFornReducaoCOD_FORNECEDOR.AsString;
+    CDS_FluxoPercReducao.Open;
+  End; // If Not CDS_FluxoFornReducao.IsEmpty Then
 
 end;
 
