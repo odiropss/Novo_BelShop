@@ -784,7 +784,7 @@ begin
 
   sgFTPUsar         :=DMBelShop.CDS_BuscaRapida.FieldByName('FTP_Usar').AsString;
   sgCompMaster      :=AnsiUpperCase(DMBelShop.CDS_BuscaRapida.FieldByName('computer_master').AsString);
-  sgCompServer       :=AnsiUpperCase(DMBelShop.CDS_BuscaRapida.FieldByName('computer_server').AsString);
+  sgCompServer      :=AnsiUpperCase(DMBelShop.CDS_BuscaRapida.FieldByName('computer_server').AsString);
 
   sgIPServer        :=AnsiUpperCase(DMBelShop.CDS_BuscaRapida.FieldByName('IP_Server').AsString);
   sgIPInternetServer:=AnsiUpperCase(DMBelShop.CDS_BuscaRapida.FieldByName('IP_Internet_Server').AsString);
@@ -796,8 +796,7 @@ begin
 //ODIROPSS - INICIO - Comentar para Passar por Usuário Diferente de Odir
   If (Login<>'ODIR') And (sgCodLojaUnica='') Then
   Begin
-    If (Trim(sgParamAplicativo)='') and
-       ((AnsiUpperCase(sgNomeComputador)<>sgCompMaster) And (AnsiUpperCase(sgNomeComputador)<>sgCompServer)) Then
+    If (Trim(sgParamAplicativo)='') and ((AnsiUpperCase(sgNomeComputador)<>sgCompMaster) And (AnsiUpperCase(sgNomeComputador)<>sgCompServer)) Then
     Begin
       ShowMessage('Versão do Sistema Não Autorizada !!'+cr+cr+'Ligue para o ODIR...');
 

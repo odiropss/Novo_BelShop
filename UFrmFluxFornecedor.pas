@@ -56,7 +56,7 @@ type
     Rb_FluFornDebito: TJvRadioButton;
     Rb_FluFornCredito: TJvRadioButton;
     Dbg_FluFornComprov: TDBGrid;
-    dxStatusBar1: TdxStatusBar;
+    Stb_FluFornComprv: TdxStatusBar;
     Pan_FluFornReducao: TPanel;
     Dbg_FluFornPercReducao: TDBGrid;
     Dbg_FluFornFornReducao: TDBGrid;
@@ -194,6 +194,8 @@ var
   buffer : array[0..255] of char;
   ///////////////////////////////
 
+  bgPodeUsar: Boolean; // Se Usuario Pode Usar Eventos
+
 implementation
 
 uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
@@ -295,7 +297,7 @@ Begin
              '                      AND   p.cod_comprovante = f.cod_historico'+
              '                      AND   p.num_seq = '+sgNumSeq+
              '                      AND   f.dta_caixa BETWEEN p.dta_incio AND COALESCE(p.dta_fim, CAST(''31.12.3000'' AS DATE))),'+
-             ' f.vlr_caixa = ROUND(f.vlr_origem * (1 - (f.per_reducao / 100)), 2)'+
+             ' f.vlr_caixa = ROUND(f.vlr_origem * (1 - (COALESCE(f.per_reducao,0.00) / 100)), 2)'+
 
              ' WHERE EXISTS(SELECT 1'+
              '              FROM FL_CAIXA_PERC_REDUCAO p'+
@@ -1172,10 +1174,24 @@ begin
 
   bgSairFF:=False;
 
+  bgPodeUsar:=False;
+
+  // Componentes do Odir =======================================================
   Bt_FluFornAtualizar.Visible:=False;
   Bt_FluFornAcertaSaldos.Visible:=False;
   EdtFluFornCodFornAcertar.Visible:=False;
   MaskEdit1.Visible:=False;
+
+  // Componentes do Odir/Anna/Renato ===========================================
+  Pan_FluFornReducao.Visible:=False;
+  Pan_FluFornComprov.Visible:=False;
+
+  Stb_FluFornComprv.Visible:=False;
+  Stb_FluForn.Panels[0].Visible:=False;
+  Stb_FluForn.Panels[1].Visible:=False;
+
+  Dbg_FluFornFornec.PopupMenu:=nil;
+
   If AnsiUpperCase(Des_Login)='ODIR' Then
   Begin
     MaskEdit1.Visible:=True;
@@ -1183,6 +1199,20 @@ begin
     Bt_FluFornAcertaSaldos.Visible:=True;
     Bt_FluFornAtualizar.Visible:=True;
   End; // If AnsiUpperCase(Des_Login)='ODIR' Then
+
+  If (Cod_Usuario='1') Or (Cod_Usuario='3') Or (AnsiUpperCase(Des_Login)='ODIR') Then
+  Begin
+    bgPodeUsar:=True;
+
+    Pan_FluFornReducao.Visible:=True;
+    Pan_FluFornComprov.Visible:=True;
+
+    Stb_FluFornComprv.Visible:=True;
+    Stb_FluForn.Panels[0].Visible:=True;
+    Stb_FluForn.Panels[1].Visible:=True;
+
+    Dbg_FluFornFornec.PopupMenu:=PopM_Forn;
+  End;
 
   PC_Principal.TabIndex:=0;
   PC_PrincipalChange(Self);
@@ -1440,7 +1470,7 @@ begin
   sForn:= DMBelShop.CDS_FluxoFornecedoresCOD_FORNECEDOR.AsString;
 
   // Altera Data do Conta Corrente (Processamento) =============================
-  If Key=Vk_F2 Then
+  If (Key=Vk_F2) And (bgPodeUsar) Then
   Begin
     //function InputBoxData(ACaption, APrompt: string; sData: string=''; bErro: Boolean=True): string; ForWard;
                                                                      // bErro=False - Passa Data = 99/99/9999
@@ -1896,7 +1926,7 @@ begin
 
     If DMBelShop.CDS_FluxoFornecedorNUM_SEQ.AsInteger=999999 then
     Begin
-      Dbg_FluFornCaixa.Canvas.Brush.Color:=$00D5FFD5;
+      Dbg_FluFornCaixa.Canvas.Brush.Color:=clSilver;
       Dbg_FluFornCaixa.Canvas.Font.Style:=[fsBold];
     End;
 
@@ -2338,7 +2368,7 @@ begin
     Key:=0;
 
   // Exclui Comprovante ========================================================
-  if (Key=VK_Delete) Then
+  if (Key=VK_Delete) And (bgPodeUsar) Then
   Begin
     If Not DML_Historicos('E',DMBelShop.CDS_FluxoFornHistoricoCOD_HISTORICO.AsString) Then
      MessageBox(Handle, pChar(sgMensagemERRO), 'Erro', MB_ICONERROR);
@@ -2348,7 +2378,9 @@ end;
 
 procedure TFrmFluxoFornecedor.PC_FluxFornParametrosChange(Sender: TObject);
 begin
-  CorSelecaoTabSheet(PC_FluxFornParametros);
+
+  If bgPodeUsar Then
+   CorSelecaoTabSheet(PC_FluxFornParametros);
 
   If (PC_FluxFornParametros.ActivePage=Ts_FluxFornParamComprv) And (Ts_FluxFornParamComprv.CanFocus) Then
   Begin

@@ -65,7 +65,6 @@ Var
    bSiga: Boolean;
    i: Integer;
    MySql: String;
-   sCodForn, sNumSeq: String;
 Begin
   bSiga:=False;
   sgCodEmp:='99';
@@ -338,7 +337,7 @@ Var
    bSiga: Boolean;
    i: Integer;
    MySql: String;
-   sCodForn, sNumSeq: String;
+   sCodForn, sNumSeq, sPercRed: String;
 Begin
   bSiga:=False;
 
@@ -415,6 +414,21 @@ Begin
           sNumSeq:=Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('Num_Seq').AsString);
           DMAtualizaSeteHoras.CDS_Busca.Close;
 
+          // Busca Percentual de Redução --------------------------------
+          MySql:=' SELECT r.per_reducao'+
+                 ' FROM FL_CAIXA_PERC_REDUCAO r'+
+                 ' WHERE r.cod_fornecedor ='+QuotedStr(IBQ_ConsultaFilial.FieldByName('CODFORNECEDOR').AsString)+
+                 ' AND   r.cod_comprovante='+QuotedStr(IBQ_ConsultaFilial.FieldByName('CODCOMPROVANTE').AsString)+
+                 ' AND   CAST('+QuotedStr(IBQ_ConsultaFilial.FieldByName('DATAENTRADA').AsString)+' AS DATE)'+
+                 '                    BETWEEN r.dta_incio AND COALESCE(r.dta_fim, CAST(''31.12.3000'' AS DATE))';
+          DMAtualizaSeteHoras.CDS_Busca.Close;
+          DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
+          DMAtualizaSeteHoras.CDS_Busca.Open;
+          sPercRed:='0.00';
+          If Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('per_reducao').AsString)<>'' Then
+           sPercRed:=f_Troca(',','.',DMAtualizaSeteHoras.CDS_Busca.FieldByName('per_reducao').AsString);
+          DMAtualizaSeteHoras.CDS_Busca.Close;
+
           // Insere Caixa -----------------------------------------------
           MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES ('+
                  ' COD_FORNECEDOR, DES_FORNECEDOR, VLR_ORIGEM, DTA_ORIGEM, DTA_CAIXA, NUM_SEQ,'+
@@ -424,7 +438,7 @@ Begin
                  ' VALUES ('+
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('CODFORNECEDOR').AsString)+', '+ // COD_FORNECEDOR
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('NOMEFORNECEDOR').AsString)+', '+ // DES_FORNECEDOR
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString)+', '+ // VLR_ORIGEM
+                 IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString+', '+ // VLR_ORIGEM
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('DATACOMPROVANTE').AsString)+', '+ // DTA_ORIGEM
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('DATAENTRADA').AsString)+', '+ // DTA_CAIXA
                  sNumSeq+', '+ // NUM_SEQ
@@ -434,9 +448,9 @@ Begin
                  QuotedStr(AnsiUpperCase(IBQ_ConsultaFilial.FieldByName('OBSERVACAO').AsString))+', '+ // TXT_OBS
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('NUMERO').AsString)+', '+ // NUM_DOCUMENTO
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('SERIE').AsString)+', '+ // NUM_SERIE
-                 ' 0.00, '+ // PER_REDUCAO,
+                 sPercRed+', '+ // PER_REDUCAO,
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('TP_DEBCRE').AsString)+', '+ // TIP_DEBCRE
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString)+', '+ // VLR_CAIXA
+                 ' ROUND('+IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString+' * (1 - ('+sPercRed+' / 100)), 2), '+ // VLR_CAIXA
                  ' 0)'; // VLR_SALDO
           DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
 
@@ -696,7 +710,7 @@ begin
   //============================================================================
   // Atualiza Demanda 4 Meses ==================================================
   //============================================================================
-//  Demanda4Meses;
+  Demanda4Meses;
 
   //============================================================================
   // VERIFICA SE A INTERNET ESTA CONECTADA =====================================
