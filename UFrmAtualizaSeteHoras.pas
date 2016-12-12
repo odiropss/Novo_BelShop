@@ -420,6 +420,10 @@ Begin
             Mem_Odir.Lines.Add(sCodForn);
           End;
 
+//OPSS
+//          If sCodForn='000050' Then
+//           sCodForn:=sCodForn;
+
           // Exclui Lançamentos para Substituição e Inclução ------
           MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES f'+
                  ' WHERE f.cod_fornecedor = '+QuotedStr(sCodForn)+
@@ -487,7 +491,11 @@ Begin
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('SERIE').AsString)+', '+ // NUM_SERIE
                  sPercRed+', '+ // PER_REDUCAO,
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('TP_DEBCRE').AsString)+', '+ // TIP_DEBCRE
-                 ' ROUND('+IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString+' * (1 - ('+sPercRed+' / 100)), 2), '+ // VLR_CAIXA
+
+                 'CAST(('+IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString+
+                        '-(('+sPercRed+' * '+IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString+
+                        ') / 100)) AS NUMERIC(12,2)),'+ // VLR_CAIXA
+
                  ' 0)'; // VLR_SALDO
           DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
 
@@ -543,12 +551,15 @@ Begin
              MySql+' WHERE c.DTA_CAIXA>='+QuotedStr(f_Troca('/','.',sDt));
 
            If (Trim(sCodForn)<>'') and (Trim(sDt)<>'') Then
-            MySql:=MySql+' And c.COD_FORNECEDOR='+QuotedStr(sCodForn);
+            MySql:=
+             MySql+' And c.COD_FORNECEDOR='+QuotedStr(sCodForn);
 
            If (Trim(sCodForn)<>'') and (Trim(sDt)='') Then
-            MySql:=MySql+' WHERE c.COD_FORNECEDOR='+QuotedStr(sCodForn);
+            MySql:=
+             MySql+' WHERE c.COD_FORNECEDOR='+QuotedStr(sCodForn);
 
-           MySql:=MySql+' ORDER BY c.COD_FORNECEDOR';
+    MySql:=
+     MySql+' ORDER BY c.COD_FORNECEDOR';
     DMAtualizaSeteHoras.CDS_While.Close;
     DMAtualizaSeteHoras.SDS_While.CommandText:=MySql;
     DMAtualizaSeteHoras.CDS_While.Open;
@@ -610,13 +621,14 @@ Begin
 
                    If Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('DtAnterior').AsString)='' Then
                     Begin
-                      MySql:=MySql+QuotedStr('0')+')';
+                      MySql:=
+                       MySql+QuotedStr('0')+')';
                       cVlrSaldo:=0;
                     End
                    Else // If Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('DtAnterior').AsString)='' Then
                     Begin
-                      MySql:=MySql+QuotedStr(
-                      DMAtualizaSeteHoras.CDS_Busca.FieldByName('Vlr_Saldo').AsString)+')';
+                      MySql:=
+                       MySql+QuotedStr(DMAtualizaSeteHoras.CDS_Busca.FieldByName('Vlr_Saldo').AsString)+')';
                       cVlrSaldo:=DMAtualizaSeteHoras.CDS_Busca.FieldByName('Vlr_Saldo').AsCurrency;
                     End;
              DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
@@ -654,10 +666,11 @@ Begin
           Else
            cVlrSaldo:=cVlrSaldo-DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Vlr_Caixa').AsCurrency;
 
-          MySql:=MySql+' SET Vlr_Saldo='+QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)))+
-                       ' WHERE DTA_CAIXA='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
-                       ' And NUM_SEQ='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Num_Seq').AsString)+
-                       ' And COD_FORNECEDOR='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('COD_FORNECEDOR').AsString);
+          MySql:=
+           MySql+' SET Vlr_Saldo='+QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)))+
+                 ' WHERE DTA_CAIXA='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
+                 ' And NUM_SEQ='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Num_Seq').AsString)+
+                 ' And COD_FORNECEDOR='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('COD_FORNECEDOR').AsString);
           DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
         End; // If (DMAtualizaSeteHoras.CDS_Pesquisa.RecNo<>iUltmio) and (DMAtualizaSeteHoras.CDS_Pesquisa.RecNo<>1)Then
 
@@ -835,6 +848,8 @@ begin
     sgCodEmp:=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('COD_FILIAL').AsString;
 
     BuscaMovtosDebCre;
+////opss
+//    Break;
 
     DMAtualizaSeteHoras.CDS_Lojas.Next;
   End; // While Not DMAtualizaSeteHoras.CDS_Busca.Eof do
@@ -849,6 +864,7 @@ begin
   //============================================================================
   // Atualiza Centro de Custos =================================================
   //============================================================================
+
   CentroCustos;
 
   // Encerra Programa ==========================================================
