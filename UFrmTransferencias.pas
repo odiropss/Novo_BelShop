@@ -1,5 +1,7 @@
 unit UFrmTransferencias;
 
+// LojaBel_18
+
 interface
 
 uses
@@ -202,7 +204,7 @@ Begin
            MySql:=' SELECT p.codproduto'+
                   ' FROM PRODUTO p'+
                   ' WHERE p.codproduto='+QuotedStr(DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString)+
-                  ' AND P.CODGRUPOSUB='+QuotedStr('0100003');
+                  ' AND P.CODGRUPOSUB='+QuotedStr('0100003'); // Sub-Grupo: Esmalte
            DMTransferencias.CDS_BuscaRapida.Close;
            DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
            DMTransferencias.CDS_BuscaRapida.Open;
@@ -487,10 +489,18 @@ Begin
          '                                   AND dm.dta_ref>='+
          QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(PrimUltDia(dgDtaInicio,'P')))))+
          '                                   AND dm.dta_ref<='+
-         QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(dgDtaFim))))+
-         '                                   AND dm.codfilial='+QuotedStr(sCodLoja)+
+         QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(dgDtaFim))));
 
-         ' WHERE pr.codproduto='+QuotedStr(sCodProduto)+
+         // LojaBel_18
+         If sCodLoja='18' Then
+          MySql:=
+           MySql+'                                   AND dm.codfilial='+QuotedStr('09')
+         Else
+          MySql:=
+           MySql+'                                   AND dm.codfilial='+QuotedStr(sCodLoja);
+
+  MySql:=
+   MySql+' WHERE pr.codproduto='+QuotedStr(sCodProduto)+
 
          ' GROUP BY 5,25'+
 
@@ -511,7 +521,7 @@ Begin
   End;
 
 end; // Busca Produto e Demanda >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
+                                                                                  
 // Busca Produtos das Curvas da Loja >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmTransferencias.BuscaProdutosCurvas(sCodLoja: String);
 Var
@@ -536,7 +546,6 @@ Begin
                  '         ((p.principalfor='+QuotedStr('000356')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''%YELLOW%'')) OR'+
                  '         ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')) OR'+
                  '         ((p.principalfor='+QuotedStr('000677')+') AND (c.ind_curva in (''D'',''E''))) THEN'
-
          Else
           MySql:=
            MySql+'    WHEN (p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva=''E'') THEN';
@@ -550,9 +559,18 @@ Begin
          ' CAST(COALESCE(c.est_minimo,0) AS INTEGER) est_minimo,'+
          ' CAST(COALESCE(c.est_maximo,0) AS INTEGER) est_maximo,'+
 
-         ' CAST(COALESCE(t.vlr_aux,0) AS INTEGER) Dias_Estocagem,'+
-         ' CAST(COALESCE(e.saldoatual,0) AS INTEGER) saldoatual,'+
-         ' p.datainclusao, p.dataalteracao'+
+         ' CAST(COALESCE(t.vlr_aux,0) AS INTEGER) Dias_Estocagem,';
+
+         // LojaBel_18
+         If sCodLoja='18' Then
+          MySql:=
+           MySql+' 0 saldoatual,'
+         Else
+          MySql:=
+           MySql+' CAST(COALESCE(e.saldoatual,0) AS INTEGER) saldoatual,';
+
+  MySql:=
+   MySql+' p.datainclusao, p.dataalteracao'+
 
          ' FROM PRODUTO p'+
          '        LEFT JOIN ES_FINAN_CURVA_ABC c  ON c.cod_produto=p.codproduto'+
@@ -569,6 +587,7 @@ Begin
          Else
           MySql:=
            MySql+'                               WHEN (p.datainclusao>'+QuotedStr(sDta)+') AND (c.ind_curva=''E'') THEN 3';
+
   MySql:=
    MySql+'                                       WHEN c.ind_curva=''A'' THEN 1'+
          '                                       WHEN c.ind_curva=''B'' THEN 2'+
@@ -580,7 +599,7 @@ Begin
 
          ' WHERE p.situacaopro in (0,3)'+
 
-         ' AND CAST(COALESCE(c.est_minimo,0) AS INTEGER)>0'+
+         ' AND   CAST(COALESCE(c.est_minimo,0) AS INTEGER)>0'+
 
          ' AND   p.codaplicacao<>''0015'''+ // Não Processa: 0015=E-Commerce
          ' AND   p.codaplicacao<>''0016'''+ // Não Processa: 0016=Brindes

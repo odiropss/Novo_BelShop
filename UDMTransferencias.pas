@@ -475,7 +475,7 @@ Begin
       End;
     End; // Try
 
-    If (ii=0) or (ii>2) Then // 2 vezes
+    If (ii=0) or (ii>1) Then // 2 vezes
      Break;
   End; // While Not b do
 End; // Conexao IB Individual >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

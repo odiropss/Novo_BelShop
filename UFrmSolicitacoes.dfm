@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 432
-    ActivePage = Ts_ManutDiversas
+    ActivePage = Ts_ReposLojasDigita
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

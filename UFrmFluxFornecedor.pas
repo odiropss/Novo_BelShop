@@ -601,6 +601,7 @@ Procedure TFrmFluxoFornecedor.AtualizaDescComprvCCorrente;
 Var
   MySql: String;
 Begin
+
   MySql:=' select H.COD_HISTORICO'+
          ' from FL_CAIXA_HISTORICOS H'+
          ' where H.COD_HISTORICO <> 0 and'+
@@ -631,7 +632,6 @@ Begin
     TD.IsolationLevel:=xilREADCOMMITTED;
     DMBelShop.SQLC.StartTransaction(TD);
     Try
-      Screen.Cursor:=crAppStart;
       DateSeparator:='.';
       DecimalSeparator:='.';
 
@@ -664,7 +664,6 @@ Begin
         MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
       End; // on e : Exception do
     End; // Try
-    Screen.Cursor:=crDefault;
     DateSeparator:='/';
     DecimalSeparator:=',';
   End; // If sgCodigo<>'' Then
@@ -1129,12 +1128,6 @@ begin
   // Acertar Erro na Rolagem do Mouse ==========================================
   Application.OnMessage := ApplicationEvents1Message;
 
-  // Atualiza Descrição dos Comprovantes de Conta Corrente =====================
-  If FrmBelShop.ConectaMPMS Then
-  Begin
-    AtualizaDescComprvCCorrente;
-  End;
-
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
 
@@ -1144,9 +1137,6 @@ begin
 
   CreateToolTips(Self.Handle);
   AddToolTip(Bt_FluFornBuscaFornecedor.Handle, @ti, TipoDoIcone, 'Selecionar o'+#13+'Fornecedor', 'SELECIONAR !!');
-
-  bgVoltaPerReducao:=False;
-  PercReducaoHabiita_GroupBox(True);
 end;
 
 procedure TFrmFluxoFornecedor.FormKeyPress(Sender: TObject; var Key: Char);
@@ -1165,16 +1155,14 @@ procedure TFrmFluxoFornecedor.FormShow(Sender: TObject);
 Var
   MySql: String;
 begin
+  Screen.Cursor:=crAppStart;
+
   // Coloca BitMaps em Componentes =============================================
   BitMaps(FrmFluxoFornecedor);
 
   // Cor Form
   CorCaptionForm.Active:=False;
   CorCaptionForm.Active:=True;
-
-  bgSairFF:=False;
-
-  bgPodeUsar:=False;
 
   // Componentes do Odir =======================================================
   Bt_FluFornAtualizar.Visible:=False;
@@ -1221,6 +1209,18 @@ begin
   Ts_FluxFornManutReducao.TabVisible:=False;
   PC_FluxFornParametrosChange(Self);
 
+  bgSairFF:=False;
+  bgPodeUsar:=False;
+
+  bgVoltaPerReducao:=False;
+  PercReducaoHabiita_GroupBox(True);
+
+  // Atualiza Descrição dos Comprovantes de Conta Corrente =====================
+  If FrmBelShop.ConectaMPMS Then
+  Begin
+    AtualizaDescComprvCCorrente;
+  End;
+
   // Apresenta Históricos ======================================================
   If DMBelShop.CDS_FluxoFornHistorico.Active Then
    DMBelShop.CDS_FluxoFornHistorico.Close;
@@ -1230,6 +1230,7 @@ begin
     on e : Exception do
     Begin
       MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Screen.Cursor:=crDefault;
       Exit;
     End; // on e : Exception do
   End;
@@ -1243,6 +1244,7 @@ begin
     on e : Exception do
     Begin
       MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Screen.Cursor:=crDefault;
       Exit;
     End; // on e : Exception do
   End;
@@ -1252,6 +1254,7 @@ begin
    DMBelShop.CDS_FluxoFornecedores.Close;
 
   FiltraComprador('',0);
+  Screen.Cursor:=crDefault;
 
   Dbg_FluFornFornec.SetFocus;
 end;
@@ -1307,6 +1310,9 @@ begin
 
   If AnsiUpperCase(Des_Login)<>'ODIR' Then
    Exit;
+
+  msg('ODIR NÃO USA ESTE !!'+cr+cr+'Usa o PAtualizaSeteHoras com'+cr+'Parametro','A');
+  Exit;
 
   PC_Principal.TabIndex:=0;
   Dbg_FluFornFornec.SetFocus;
@@ -1674,9 +1680,11 @@ begin
 
   FiltraComprador('',0);
 
-  DMBelShop.CDS_FluxoFornecedores.Locate('COD_FORNECEDOR', FormatFloat('000000',StrToInt(EdtFluFornCodFornAcertar.Text)),[]);
+  If (Trim(EdtFluFornCodFornAcertar.Text)<>'Cód a Acertar') and (Trim(EdtFluFornCodFornAcertar.Text)<>'') and (DMBelShop.CDS_FluxoFornecedores.Active)Then
+   DMBelShop.CDS_FluxoFornecedores.Locate('COD_FORNECEDOR', FormatFloat('000000',StrToInt(EdtFluFornCodFornAcertar.Text)),[]);
 
   msg('Processamento Efetuado com SUCESSO !!','A');
+
 end;
 
 procedure TFrmFluxoFornecedor.Dbg_FluFornFornecDrawColumnCell(Sender: TObject;

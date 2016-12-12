@@ -389,11 +389,48 @@ Begin
         DateSeparator:='.';
         DecimalSeparator:='.';
 
-        // Exclui Lançamentos para Substituição e Inclução de todos ============
-        MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES f'+
-               ' WHERE  (f.cod_empresa='+QuotedStr(sgCodEmp)+' or (f.cod_historico=0 or f.cod_historico=999999))'+
-               ' AND    f.dta_caixa>='+QuotedStr(sgDtaInicio);
-        DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+        // Guarda Codigo do Fornecedor =========================================
+        MySql:=' SELECT DISTINCT f.cod_fornecedor'+
+               ' FROM FL_CAIXA_FORNECEDORES f'+
+               ' WHERE f.cod_empresa='+QuotedStr(sgCodEmp)+
+               ' AND   f.dta_caixa>='+QuotedStr(sgDtaInicio);
+
+               If Trim(sgCodForn)<>'' Then
+                MySql:=
+                 MySql+' AND f.cod_fornecedor in ('+sgCodForn+')';
+        DMAtualizaSeteHoras.CDS_Busca.Close;
+        DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
+        DMAtualizaSeteHoras.CDS_Busca.Open;
+
+        While Not DMAtualizaSeteHoras.CDS_Busca.Eof do
+        Begin
+          sCodForn:=DMAtualizaSeteHoras.CDS_Busca.FieldByName('cod_fornecedor').AsString;
+          bgProcessar:=True;
+          For i:=0 to Mem_Odir.Lines.Count-1 do
+          Begin
+             If Mem_Odir.Lines[i]=sCodForn Then
+             Begin
+               bgProcessar:=False;
+               Break;
+             End;
+          End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
+
+          If bgProcessar Then
+          Begin
+            Mem_Odir.Lines.Add(sCodForn);
+          End;
+
+          // Exclui Lançamentos para Substituição e Inclução ------
+          MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES f'+
+                 ' WHERE f.cod_fornecedor = '+QuotedStr(sCodForn)+
+                 ' AND   f.dta_caixa>='+QuotedStr(sgDtaInicio)+
+                 ' AND ((f.cod_historico=0 or f.cod_historico=999999)'+
+                 '      OR'+
+                 '      (f.cod_empresa='+QuotedStr(sgCodEmp)+'))';
+          DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+
+          DMAtualizaSeteHoras.CDS_Busca.Next;
+        End; // While Not DMAtualizaSeteHoras.CDS_Busca.Eof do
 
         While Not IBQ_ConsultaFilial.Eof do
         Begin
@@ -453,20 +490,6 @@ Begin
                  ' ROUND('+IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString+' * (1 - ('+sPercRed+' / 100)), 2), '+ // VLR_CAIXA
                  ' 0)'; // VLR_SALDO
           DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
-
-          // Guarda Codigo do Fornecedor ----------------------------
-          bgProcessar:=True;
-          For i:=0 to Mem_Odir.Lines.Count-1 do
-          Begin
-             If Mem_Odir.Lines[i]=sCodForn Then
-             Begin
-               bgProcessar:=False;
-               Break;
-             End;
-          End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
-
-          If bgProcessar Then
-           Mem_Odir.Lines.Add(sCodForn);
 
           IBQ_ConsultaFilial.Next;
         End; // While Not IBQ_ConsultaFilial.Eof do
@@ -725,12 +748,13 @@ begin
   // ATUALIZA CONTA CORRENTE FORNECEDORES ======================================
   //============================================================================
   // Verifica Parametro Enviado ================================================
+  // OBS: Enviar com Aspas é utilizado na clausula < in >: '000297','001196'
   sgCodForn:='';
   for i := 1 to ParamCount do
    sgCodForn:=LowerCase(ParamStr(i));
 
   // Inicializa Data Inicial ===================================================
-  sgDtaInicio:=DateToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor)-31);
+  sgDtaInicio:=DateToStr(IncYear(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor),-1));
   sgDtaInicio:=f_Troca('/','.',f_Troca('-','.',sgDtaInicio));
 
   // Busca Comprovantes ========================================================

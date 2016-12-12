@@ -893,6 +893,8 @@ type
 
   public
     { Public declarations }
+
+    bgFechaRepos, // Se Deve Fechar Digitação de Alteração de Qtd de reposição Depois de Salvar...
     bgOK: Boolean;
 
     sgCodLoja, sgCodContabil: String;
@@ -3532,7 +3534,15 @@ begin
 
   If (PC_Principal.ActivePage=Ts_ReposLojasDigita) And (Ts_ReposLojasDigita.CanFocus) Then
   Begin
-    EdtReposLojasSeq.SetFocus;
+    If EdtReposLojasSeq.AsInteger=0 Then
+     Begin
+       EdtReposLojasSeq.SetFocus;
+     End
+    Else
+     Begin
+       EdtReposLojasSeqExit(Self);
+       EdtReposLojasQtdReposicao.SetFocus;
+     End;
   End;
 end;
 
@@ -3701,6 +3711,7 @@ begin
   PainelApresExp.Height:=42;
 
   bRelSimples:=False;
+  bgFechaRepos:=False;
 end;
 
 procedure TFrmSolicitacoes.Ckb_SolicExpExcProdutoClick(Sender: TObject);
@@ -7710,6 +7721,11 @@ begin
   EdtReposLojasQtdReposicao.Value:=0;
   EdtReposLojasSeq.SetFocus;
   EdtReposLojasSeq.Clear;
+
+  // Se Deve Fechar Digitação de Alteração de Qtd de Reposição Depois de Salvar...
+  If bgFechaRepos Then
+   Bt_ReposLojasVoltarClick(Self);
+
 
 end;
 

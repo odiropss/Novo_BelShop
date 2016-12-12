@@ -1833,8 +1833,7 @@ Begin
       Inc(ii);
     End; // Try
 
-//    If (ii=0) or (ii>50) Then
-    If (ii=0) or (ii>2) Then
+    If (ii=0) or (ii>1) Then  // 2 Vezes
      Break;
   End; // While Not b do
 

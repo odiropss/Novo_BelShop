@@ -405,7 +405,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
     Top = 0
     Width = 977
     Height = 578
-    ActivePage = Ts_AnaliseReposicoes
+    ActivePage = Ts_ReposLojas
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1705,6 +1705,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         TitleFont.Height = -11
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
+        OnDblClick = Dbg_ReposLojasDocsDblClick
         OnEnter = Dbg_ReposLojasDocsEnter
         OnKeyDown = Dbg_ReposLojasDocsKeyDown
         CorComFoco = 16776176
@@ -1822,7 +1823,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         Font.Style = [fsBold]
         Color = 13303807
       end
-      object Panel66: TPanel
+      object Pan_ReposLojas: TPanel
         Left = 0
         Top = 508
         Width = 969
@@ -1833,7 +1834,6 @@ object FrmCentralTrocas: TFrmCentralTrocas
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 4
-        OnClick = Panel66Click
         object Bt_ReposLojasEmissaoDoc: TJvXPButton
           Tag = 5
           Left = 102
