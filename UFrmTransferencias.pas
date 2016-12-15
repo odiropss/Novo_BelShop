@@ -71,8 +71,7 @@ var
 
 implementation
 
-uses DK_Procs1, UDMConexoes, uj_001, uj_002, UDMTransferencias, DB,
-  DateUtils, Math;
+uses DK_Procs1, UDMConexoes, uj_001, uj_002, UDMTransferencias, DB, DateUtils, Math;
 
 {$R *.dfm}
 //==============================================================================
@@ -215,6 +214,7 @@ Begin
            Begin
              iMultiplo:=6;
              iQtdMultiplo:=iMultiplo;
+
              While bMultiplo do
              Begin
                If iQtdReposicao<iQtdMultiplo Then
@@ -225,18 +225,20 @@ Begin
                iQtdMultiplo:=iQtdMultiplo+iMultiplo;
              End; // While bMultiplo do
            End; // If bMultiplo Then
-           bMultiplo:=False;
            //=====================================================================
            // ESMALTE - Acerta Quantidade de Reposição para Multiplo de 6
            //=====================================================================
 
            //=====================================================================
-           // PRODUTO CÓDIGO 923834 - Acerta Quantidade de Reposição para Multiplo de 25
+           // PRODUTO CÓDIGO 923834 - DERMABEL 2,8ML
+           // Acerta Quantidade de Reposição para Multiplo de 25
            //=====================================================================
-           If DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString='923834' Then
+           If (DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString='923834') And (not bMultiplo) Then
            Begin
              iMultiplo:=25;
              iQtdMultiplo:=iMultiplo;
+
+             bMultiplo:=True;
              While bMultiplo do
              Begin
                If iQtdReposicao<iQtdMultiplo Then
@@ -246,12 +248,48 @@ Begin
                End;
                iQtdMultiplo:=iQtdMultiplo+iMultiplo;
              End; // While bMultiplo do
-           End; // If DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString='923834' Then
-           bMultiplo:=False;
+           End; // If (DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString='923834') And (not bMultiplo) Then
            //=====================================================================
-           // PRODUTO CÓDIGO 923834 - Acerta Quantidade de Reposição para Multiplo de 25
+           // PRODUTO CÓDIGO 923834 - DERMABEL 2,8ML
+           // Acerta Quantidade de Reposição para Multiplo de 25
            //=====================================================================
 
+           //=====================================================================
+           // LUVAS - Acerta Quantidade de Reposição para Multiplo de Seis (100)
+           //=====================================================================
+           If not bMultiplo Then
+           Begin
+             MySql:=' SELECT p.codproduto'+
+                    ' FROM PRODUTO p'+
+                    ' WHERE p.codproduto='+QuotedStr(DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString)+
+                    ' AND UPPER(p.apresentacao) LIKE ''LUVA%'''; // Nome que Contenha "LUVA"
+             DMTransferencias.CDS_BuscaRapida.Close;
+             DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+             DMTransferencias.CDS_BuscaRapida.Open;
+             bMultiplo:=(Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('CodProduto').AsString)<>'');
+             DMTransferencias.CDS_BuscaRapida.Close;
+
+             If bMultiplo Then
+             Begin
+               iMultiplo:=100;
+               iQtdMultiplo:=iMultiplo;
+
+               While bMultiplo do
+               Begin
+                 If iQtdReposicao<iQtdMultiplo Then
+                 Begin
+                   iQtdReposicao:=iQtdMultiplo;
+                   Break;
+                 End;
+                 iQtdMultiplo:=iQtdMultiplo+iMultiplo;
+               End; // While bMultiplo do
+             End; // If bMultiplo Then
+           End; // If not bMultiplo Then
+           //=====================================================================
+           // LUVAS - Acerta Quantidade de Reposição para Multiplo de Seis (100)
+           //=====================================================================
+
+           bMultiplo:=False;
            If iQtdReposicao>=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger Then
            Begin
              // Apresentar para o Compras
@@ -1019,9 +1057,40 @@ Begin
   Result:=True;
 
   MySql:=' SELECT CURRENT_DATE DTA_MOVTO, e.codproduto cod_produto,'+
-         ' COALESCE(e.saldoatual,0) qtd_estoque,'+
+
+//OdirApagar - 14/12/2016
+//         ' COALESCE(e.saldoatual,0) qtd_estoque,'+
+//         ' 0.00 qtd_saidas,'+
+//         ' COALESCE(e.saldoatual,0) qtd_saldo,'+
+
+         // Acerta Multiplos
+         ' CAST(CASE'+
+         '         WHEN p.codgruposub=''0100003'' THEN'+ // ESMALTES - Multiplo de 6
+         '            COALESCE(e.saldoatual,0)/6'+
+         '         WHEN p.codproduto=''923834'' THEN'+ // DERMABEL 2,8ML - Multiplo de 25
+         '            COALESCE(e.saldoatual,0)/25'+
+         '         WHEN UPPER(p.apresentacao) LIKE ''LUVA%'' THEN'+ // LUVAS - Multiplo de 100
+         '            COALESCE(e.saldoatual,0)/100'+
+         '         ELSE'+
+         '            COALESCE(e.saldoatual,0)'+
+         '      END'+
+         ' AS INTEGER) qtd_estoque,'+
+
          ' 0.00 qtd_saidas,'+
-         ' COALESCE(e.saldoatual,0) qtd_saldo,'+
+
+         // Acerta Multiplos
+         ' CAST(CASE'+
+         '         WHEN p.codgruposub=''0100003'' THEN'+ // ESMALTES - Multiplo de 6
+         '            COALESCE(e.saldoatual,0)/6'+
+         '         WHEN p.codproduto=''923834'' THEN'+ // DERMABEL 2,8ML - Multiplo de 25
+         '            COALESCE(e.saldoatual,0)/25'+
+         '         WHEN UPPER(p.apresentacao) LIKE ''LUVA%'' THEN'+ // LUVAS - Multiplo de 100
+         '            COALESCE(e.saldoatual,0)/100'+
+         '         ELSE'+
+         '            COALESCE(e.saldoatual,0)'+
+         '      END'+
+         ' AS INTEGER) qtd_saldo,'+
+         
          ' COALESCE(e.zonaendereco,''0'') end_zona,'+
          ' COALESCE(e.corredor,''000'') end_corredor,'+
          ' COALESCE(e.prateleira,''000'') end_prateleira,'+

@@ -6744,8 +6744,12 @@ begin
 end;
 
 procedure TFrmCentralTrocas.Dbg_ReposLojasDocsDblClick(Sender: TObject);
+Var
+  s: String;
 begin
-  If (AnsiUpperCase(Des_Login)='ODIR') Or (AnsiUpperCase(Des_Login)='PEDRO') Then
+  s:='ODIR PEDRO WESLEY GEVERTON CRISTIANO';
+
+  If Pos(AnsiUpperCase(Des_Login), s)<>0 Then
   Begin
     Bt_ReposLojasAlterarQtd.Enabled:=(Not Bt_ReposLojasAlterarQtd.Enabled);
     Bt_ReposLojasGeraPedidoSIDICOM.Enabled:=(Not Bt_ReposLojasGeraPedidoSIDICOM.Enabled);

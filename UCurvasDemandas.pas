@@ -22,7 +22,7 @@ type
         // IBQ_Free     = Nome do TIBQuery a Destruir e Reconstruir
         // bMatriz      = Se Conexão é Matriz (Não Gera Sql Automaticamente)
         // bCriaIBQ     = Se Destruir e Reconstruir IBQuery
-    Function IBTransacao(sSituacao, sTransaction: String): Boolean;
+    Function  IBTransacao(sSituacao, sTransaction: String): Boolean;
 
     Procedure CalculaCurvas;
 
@@ -578,7 +578,7 @@ end;
 // Atualiza Curvas e Demandas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 procedure TFrmCurvasDemandas.Bt_AtualizarClick(Sender: TObject);
 Var
-  MySql,
+  MySql, MySql1,
   sTotQtdDemandas, sTotVlrDemandas,
   sDtaDemI, sDtaDemF, sDtaTra: String;
 
@@ -813,11 +813,9 @@ begin
                 '        LEFT JOIN (SELECT md.codfilial,'+
                 '                          md.codproduto,'+
                 '                          CAST(SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.preco,0)),0.00)) AS NUMERIC(12,2)) VLR_DEMANDAS,'+
-                '                          CAST((((SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.preco,0)),0.0000)))*100)/'+
-                                                   sTotVlrDemandas+') AS NUMERIC(12,4)) PER_PARTICIPACAO,'+
+                '                          CAST((((SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.preco,0)),0.0000)))*100)/'+sTotVlrDemandas+') AS NUMERIC(12,4)) PER_PARTICIPACAO,'+
                 '                          CAST(SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.quant_ref,0)),0)) AS INTEGER) QTD_DEMANDAS,'+
-                '                          CAST((((SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.quant_ref,0)),0.0000)))*100)/'+
-                                                   sTotQtdDemandas+') AS NUMERIC(12,4)) PER_PART_QTD,'+
+                '                          CAST((((SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.quant_ref,0)),0.0000)))*100)/'+sTotQtdDemandas+') AS NUMERIC(12,4)) PER_PART_QTD,'+
                 '                          CAST(SUM(DECODE(md.ind_tipo,''TR'',ABS(COALESCE(md.quant_ref,0)),0)) AS INTEGER) QTD_TRANSITO'+
                 '                   FROM MOVTOS_EMPRESAS md'+
                 '                   WHERE ((md.ind_tipo=''DM'' AND md.dta_ref BETWEEN '+QuotedStr(sDtaDemI)+' AND '+QuotedStr(sDtaDemF)+')'+
@@ -856,8 +854,7 @@ begin
                 '              1'+
                 '            ELSE'+
                 '              ((DATEDIFF(DAY FROM pr.datainclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))-'+
-                '               ((DATEDIFF(DAY FROM pr.datainclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))/7)-'+
-                                IntToStr(iTotFeriados)+')'+
+                '               ((DATEDIFF(DAY FROM pr.datainclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))/7)-'+IntToStr(iTotFeriados)+')'+
                 '          END AS INTEGER)) NUM_DIAS_UTEIS, '+
                 sTotVlrDemandas+' Vlr_DEMANDAS_ANO,'+
                 ' CAST(COALESCE(dem.VLR_DEMANDAS,0) AS NUMERIC(12,2)) VLR_DEMANDAS,'+

@@ -1238,6 +1238,7 @@ begin
   // Apresenta Percentuais de Redução ==========================================
   If DMBelShop.CDS_FluxoFornReducao.Active Then
    DMBelShop.CDS_FluxoFornReducao.Close;
+
   try
     DMBelShop.CDS_FluxoFornReducao.Open;
   except

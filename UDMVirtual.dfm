@@ -4563,6 +4563,7 @@ object DMVirtual: TDMVirtual
     end
   end
   object DS_V_EstoqueLojas: TDataSource
+    DataSet = CDS_V_EstoqueLojas
     Left = 894
     Top = 499
   end
