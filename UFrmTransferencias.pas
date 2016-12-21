@@ -559,7 +559,7 @@ Begin
   End;
 
 end; // Busca Produto e Demanda >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                                                  
+
 // Busca Produtos das Curvas da Loja >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmTransferencias.BuscaProdutosCurvas(sCodLoja: String);
 Var
@@ -643,7 +643,8 @@ Begin
          ' AND   p.codaplicacao<>''0016'''+ // Não Processa: 0016=Brindes
 
          ' AND   c.cod_loja='+QuotedStr(sCodLoja)+
-         ' AND   p.principalfor Not in ('+sgFornNAO+')';
+         ' AND   p.principalfor Not in ('+sgFornNAO+')'+ // Tira Fornecedores que Não Entram no Processo de Reposição Automática
+         ' AND   UPPER(p.apresentacao) NOT LIKE ''LUVA%'''; // Tira todas as Luvas
 
          If bCurvaC Then
           MySql:=
@@ -664,7 +665,6 @@ Begin
                  '          ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')))';
   MySql:=
    MySql+' ORDER BY p.codproduto';
-
   DMTransferencias.CDS_CurvasLoja.Close;
   DMTransferencias.SDS_CurvasLoja.CommandText:=MySql;
   DMTransferencias.CDS_CurvasLoja.Open;
