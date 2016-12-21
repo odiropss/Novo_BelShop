@@ -644,7 +644,7 @@ type
     ////////////////////////////////////////////////////////////////////////////
 
     // HABILIDADES /////////////////////////////////////////////////////////////
-    Function ConsisteExcluao(sTipo: String): Boolean;
+    Function ConsisteExclusao(sTipo: String): Boolean;
                              // Tipo: (H)abilidade (S)ervico
 
     Procedure ComissoesHabilidadesCidades; // Apresenta Comissões da Habilidades Por Cidade
@@ -3866,6 +3866,7 @@ Begin
         Begin
           msg('Arquivo: '+Lbx_ProfTecBizImpArqSel.Items[i]+cr+'Com Estrutura Inválida !!'+cr+cr+'Verifique o Arquivo !!','A');
           bSiga:=False;
+          Break;
         End;
 
         // Verifica se Arquivo já Foi Cobrado ==================================
@@ -4050,9 +4051,10 @@ Begin
     End; // For i:=0 to Lbx_ProfTecBizImpArqSel.Items.Count-1 do
 
     FrmBelShop.MontaProgressBar(False, FrmSalao);
-
     DMBelShop.SQLC.Commit(TD);
-    msg('Importação Efetuada Com SUCESSO !!','A');
+
+    If bSiga Then
+     msg('Importação Efetuada Com SUCESSO !!','A');
 
     LimpaStringGrid(Strg_ProfTecBizImpArquivo);
     EdtProfTecBizPastaArquivo.Clear;
@@ -7327,7 +7329,7 @@ Begin
 End; // PROFISSIONAL - Dados do Profissional >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // HABILIDADES - consistem Exclusão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Function TFrmSalao.ConsisteExcluao(sTipo: String): Boolean;
+Function TFrmSalao.ConsisteExclusao(sTipo: String): Boolean;
 Var
   MySql: String;
   sProf: String;
@@ -8138,7 +8140,7 @@ begin
    Exit;
 
   // Consiste Exclusão =========================================================
-  If Not ConsisteExcluao('H') Then
+  If Not ConsisteExclusao('H') Then
   Begin
     If sgMensagem<>'' Then
      msg(sgMensagem,'A');
@@ -8315,7 +8317,7 @@ begin
    Exit;
 
   // Consiste Exclusão =========================================================
-  If Not ConsisteExcluao('S') Then
+  If Not ConsisteExclusao('S') Then
   Begin
     If sgMensagem<>'' Then
      msg(sgMensagem,'A');
@@ -17929,7 +17931,6 @@ begin
   // Ajusta Colunas para Direita
   C := ACol;
   R := ARow;
-//  if (ACol > 1) and (ARow > 0) then
   If ACol =4 Then
   Begin
     With Sender as TStringGrid do

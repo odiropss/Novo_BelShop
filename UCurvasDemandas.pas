@@ -919,20 +919,21 @@ begin
       // Calcula Curvas de Valores e Quantidades ===============================
       CalculaCurvas;
 
-      // Atualiza TABELA ES_CURVA_ABC ==========================================
-      MySql:=' DELETE FROM ES_CURVA_ABC ec'+
-             ' WHERE ec.cod_loja='+QuotedStr(sgCodLoja);
-      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-
-      MySql:=' INSERT INTO ES_CURVA_ABC'+
-             ' SELECT ff.cod_loja COD_LOJA, ff.cod_produto COD_PRODUTO,'+
-             '        ff.ind_curva IND_CURVA, pr.datainclusao DTA_INCLUSAO,'+
-             '        ff.dta_atualizacao DTA_ATUALIZACAO'+
-             ' FROM ES_FINAN_CURVA_ABC ff, PRODUTO pr'+
-             ' WHERE ff.cod_produto=pr.codproduto'+
-             ' AND   ff.cod_loja='+QuotedStr(sgCodLoja)+
-             ' ORDER BY ff.cod_produto';
-      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+// OdirApagar - 16/12/2016
+//      // Atualiza TABELA ES_CURVA_ABC ==========================================
+//      MySql:=' DELETE FROM ES_CURVA_ABC ec'+
+//             ' WHERE ec.cod_loja='+QuotedStr(sgCodLoja);
+//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+//
+//      MySql:=' INSERT INTO ES_CURVA_ABC'+
+//             ' SELECT ff.cod_loja COD_LOJA, ff.cod_produto COD_PRODUTO,'+
+//             '        ff.ind_curva IND_CURVA, pr.datainclusao DTA_INCLUSAO,'+
+//             '        ff.dta_atualizacao DTA_ATUALIZACAO'+
+//             ' FROM ES_FINAN_CURVA_ABC ff, PRODUTO pr'+
+//             ' WHERE ff.cod_produto=pr.codproduto'+
+//             ' AND   ff.cod_loja='+QuotedStr(sgCodLoja)+
+//             ' ORDER BY ff.cod_produto';
+//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
       // Atualiza Transacao ====================================================
       DMMovtosEmpresas.SQLC.Commit(TD);

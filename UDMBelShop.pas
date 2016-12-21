@@ -1,7 +1,7 @@
 {
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// Todos os Controles estão em: C:\Projetos\BelShop\Documentos\@Coisas BelShop.doc
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Todos os Controles estão em: C:\Projetos\BelShop\Outras Pastas\Documentos\@Coisas BelShop.doc
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
 
 unit UDMBelShop;
@@ -3395,6 +3395,13 @@ begin
       Application.Terminate;
       Exit;
     End;
+  End;
+                     
+  If Not (FileExists(sPath_Local+sgPCTConect_IB)) Then
+  Begin
+    msg('Arquivo de Configuração Não Existe...'+cr+'O Sistema será Encerrado !!','A');
+    Application.Terminate;
+    Exit;
   End;
 
   If SQLC.Connected Then

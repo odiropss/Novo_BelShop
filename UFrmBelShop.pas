@@ -693,7 +693,6 @@ type
     Pan_CurvaABCEndABC: TPanel;
     Bt_CurvaABCEndDistrEndereco: TJvXPButton;
     Bt_CurvaABCEndVoltar: TJvXPButton;
-    Bt_CurvaABCEndAtualizaSidicom: TJvXPButton;
     Gb_CurvaABCEndEnderecamentos: TGroupBox;
     Label125: TLabel;
     Label126: TLabel;
@@ -1220,8 +1219,8 @@ type
     Dbe_ConEmpresasCodContabil: TDBEdit;
     N24: TMenuItem;
     Ckb_CalculoCurvaE: TJvXPCheckbox;
-    Bt_CurvaABCEndSalvaProdExcel: TJvXPButton;
-    Bt_CurvaABCEndSalvaFornExcel: TJvXPButton;
+    Bt_CurvaABCEndSalvaProdClipboard: TJvXPButton;
+    Bt_CurvaABCEndSalvaFornClipboard: TJvXPButton;
     SubMenuComprasEstoquesMinimoDemadas: TMenuItem;
     Dbg_CurvaABCMixProd: TDBGrid;
     Panel118: TPanel;
@@ -1321,7 +1320,6 @@ type
     N39: TMenuItem;
     SubMenuMenuGerenciaContasReceber: TMenuItem;
     MenuCentroDistr: TMenuItem;
-    SubMenuCentroDistrAjustesEstoque: TMenuItem;
     SubMenuCentroDistrReposicoesLojas: TMenuItem;
     MenuCentroDistrCentralTrocas: TMenuItem;
     N40: TMenuItem;
@@ -1523,7 +1521,6 @@ type
 
     // CURVA ABC - ENDEREÇAMENTOS //////////////////////////////////////////////
     Function  CalculaCurvaABCEndereco: Boolean;
-    Function  AtualizaCurvaABC(sCodLoja: String): Boolean;
     Procedure BuscaEnderecamentos;
     Function  EnderecamentoProduto: Boolean;
     Procedure AtualizaEnderecamentos(bManter: Boolean);
@@ -1898,7 +1895,6 @@ type
     procedure Dbg_EstFisFinanLojasDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure Bt_EstFisFinanSalvarLojasClick(Sender: TObject);
-    procedure Bt_CurvaABCEndAtualizaSidicomClick(Sender: TObject);
     procedure PC_CurvaABCFornEndChange(Sender: TObject);
     procedure Bt_CurvaABCEndDistrEnderecoClick(Sender: TObject);
     procedure Dbg_FinanObjetivosManutEmpresasKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -2251,8 +2247,7 @@ type
       var Key: Word; Shift: TShiftState);
     procedure Rb_CurvaABCEndTipoCalculoUnidadesKeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
-    procedure Bt_CurvaABCEndSalvaFornExcelClick(Sender: TObject);
-    procedure Bt_CurvaABCEndSalvaProdExcelClick(Sender: TObject);
+    procedure Bt_CurvaABCEndSalvaProdClipboardClick(Sender: TObject);
     procedure SubMenuComprasEstoquesMinimoDemadasClick(Sender: TObject);
     procedure Rb_GeraOCEditaTodosItensKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -2280,7 +2275,6 @@ type
     procedure SubMenuMenuGerenciaContasReceberClick(Sender: TObject);
     procedure SubMenuCentroDistrReposicoesLojasClick(Sender: TObject);
     procedure SubMenuCentralTrocasNotasEntradaDevolucaoClick(Sender: TObject);
-    procedure SubMenuCentroDistrAjustesEstoqueClick(Sender: TObject);
     procedure SubMenuAtualizaTabelasSPEDClick(Sender: TObject);
     procedure SubMenuVerificaImportacaoEstoquesClick(Sender: TObject);
     procedure DiasInformadosClick(Sender: TObject);
@@ -3270,7 +3264,7 @@ Begin
      If (Form.Components[i] as TcxTabSheet).Tag=9999 Then
      (Form.Components[i] as TcxTabSheet).TabVisible:=False;
   End;
-End; // // CONTROLE DE TABSHEET - Torna TabSheets Nao Visivel >>>>>>>>>>>>>>>>>>
+End; // CONTROLE DE TABSHEET - Torna TabSheets Nao Visivel >>>>>>>>>>>>>>>>>>>>>
 
 // DIVERSOS - Monta ProgressBar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBelShop.MontaProgressBar(bCria: Boolean; Form: TForm);
@@ -8511,114 +8505,6 @@ Begin
     End; // on e : Exception do
   End; // Try
 End; // // Curva ABC - Endereçamentos - Atualiza Enderecamento do CD >>>>>>>>>>>
-
-// Curva ABC - Endereçamentos - Atualiza Curva ABC >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Function TFrmBelShop.AtualizaCurvaABC(sCodLoja: String): Boolean;
-Var
-  MySql: String;
-
-  wDia, wMes, wAno: Word;
-  dDta: TDateTime;
-Begin
-  Result:=False;
-
-  // Desmembra Data
-  dDta:=PrimUltDia(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor),'P');
-  DecodeDate(dDta, wAno, wMes, wDia);
-
-  // Monta Data
-  dDta:=EncodeDate(wAno-1, wMes, wDia);
-
-  // Verifica se Transação esta Ativa
-  If DMBelShop.SQLC.InTransaction Then
-   DMBelShop.SQLC.Rollback(TD);
-
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMBelShop.SQLC.StartTransaction(TD);
-  Try
-    Screen.Cursor:=crAppStart;
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    // Coloca Todas as Classificações para CURVA E ------------------
-    MySql:=' DELETE FROM ES_CURVA_ABC c'+
-           ' WHERE c.COD_LOJA='+QuotedStr(sCodLoja);
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-    MySql:=' INSERT INTO ES_CURVA_ABC'+
-           ' SELECT'+
-           QuotedStr(sCodLoja)+' COD_LOJA,'+
-           ' p.codproduto,'+
-           ' ''E'' IND_CURVA,'+
-           ' p.datainclusao,'+
-           ' CURRENT_DATE'+
-
-           ' FROM PRODUTO p'+
-           ' WHERE p.principalfor NOT IN (''010000'', ''000300'', ''000500'', ''001072'')'+
-           ' AND   Coalesce(p.situacaopro,0) IN (0,3)';
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-    // Atualiza Curva ABC ---------------------------------------------
-    EdtCurvaABCEndTotalProc.Value:=0;
-    DMVirtual.CDS_V_CurvaABCEndereco.First;
-    While Not DMVirtual.CDS_V_CurvaABCEndereco.Eof do
-    Begin
-      Application.ProcessMessages;
-      Refresh;
-
-      If (Trim(DMVirtual.CDS_V_CurvaABCEnderecoCOD_PRODUTO.AsString)<>'') And
-         (Trim(DMVirtual.CDS_V_CurvaABCEnderecoIND_EMP_ATUALIZADA.AsString)='NAO') And
-         (Trim(DMVirtual.CDS_V_CurvaABCEnderecoIND_CURVA.AsString)<>'E') Then
-      Begin
-        MySql:=' UPDATE ES_CURVA_ABC'+
-               ' SET IND_CURVA='+QuotedStr(DMVirtual.CDS_V_CurvaABCEnderecoIND_CURVA.AsString)+
-               ' WHERE COD_LOJA='+QuotedStr(sCodLoja)+
-               ' AND   COD_PRODUTO='+QuotedStr(DMVirtual.CDS_V_CurvaABCEnderecoCOD_PRODUTO.AsString);
-        DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-        DMVirtual.CDS_V_CurvaABCEndereco.Edit;
-        DMVirtual.CDS_V_CurvaABCEnderecoIND_EMP_ATUALIZADA.AsString:='SIM';
-        DMVirtual.CDS_V_CurvaABCEndereco.Post;
-      End; // If (Trim(DMVirtual.CDS_V_CurvaABCEnderecoCOD_PRODUTO.AsString)<>'') And (Trim(DMVirtual.CDS_V_CurvaABCEnderecoIND_EMP_ATUALIZADA.AsString)='NAO') Then
-
-      EdtCurvaABCEndTotalProc.AsInteger:=DMVirtual.CDS_V_CurvaABCEndereco.RecNo;
-
-      DMVirtual.CDS_V_CurvaABCEndereco.Next;
-    End; // While Not DMVirtual.CDS_V_CurvaABCEndereco.Eof do
-    DMVirtual.CDS_V_CurvaABCEndereco.First;
-
-    // Insere o Produtos Que faltam ============================================
-    // Atualiza Transacao ======================================================
-    DMBelShop.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-    Screen.Cursor:=crDefault;
-
-    Result:=True;
-  Except
-    on e : Exception do
-    Begin
-      // Abandona Transacao ====================================================
-      DMBelShop.SQLC.Rollback(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-      OdirPanApres.Visible:=False;
-      MontaProgressBar(False, FrmBelShop);
-
-      Screen.Cursor:=crDefault;
-
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-      exit;
-    End; // on e : Exception do
-  End; // Try 
-
-  OdirPanApres.Visible:=False;
-
-End; // // Curva ABC - Endereçamentos - Atualiza Curva ABC >>>>>>>>>>>>>>>>>>>>>
 
 // Ordem de Compra - Busca Curva ABC por Mix de Loja >>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBelShop.BuscaMixLoja(sLoja: String);
@@ -14430,7 +14316,6 @@ Begin
   Begin
     If DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
      Begin
-       // Guarda Codigo da Filial para Atualiza SIDICOM Quando 1 Empresa (Bt_CurvaABCEndAtualizaSidicom)
        sgCodEmp:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
 
        // Atualiza sEmpresa para Sql ---------------------------------
@@ -14447,28 +14332,8 @@ Begin
     DMBelShop.CDS_EmpProcessa.Next;
   End; //   While Not DMBelShop.CDS_EmpProcessa.Eof do
 
-  // Verifica se Pode Atualizar SIDICOM ========================================
-  Bt_CurvaABCEndAtualizaSidicom.Enabled:=True;
-  If (bgTodasEmpresas) and (DMVirtual.CDS_V_Fornecedores.IsEmpty) Then
-   Begin
-     Bt_CurvaABCEndAtualizaSidicom.Caption:='Atualizar MPMS - Lj: 99';
-     sEmpresas:='';
-   End
-  Else If sEmpresas<>'' Then
-   Begin
-     If (iNrEmpProc=1) and (DMVirtual.CDS_V_Fornecedores.IsEmpty) Then
-      Begin
-        Bt_CurvaABCEndAtualizaSidicom.Caption:='Atualiza Curva ABC - Lj: '+sgCodEmp;
-      End
-     Else
-      Begin
-        Bt_CurvaABCEndAtualizaSidicom.Caption:='Atualiza Curva ABC';
-        Bt_CurvaABCEndAtualizaSidicom.Enabled:=False;
-      End;
-   End; // If (bgTodasEmpresas) and (DMVirtual.CDS_V_Fornecedores.IsEmpty) Then
-
-   If Trim(sEmpresas)<>'' Then
-    sEmpresas:='('+sEmpresas+')';
+  If Trim(sEmpresas)<>'' Then
+   sEmpresas:='('+sEmpresas+')';
 
   // Apresenta o Processamento =================================================
   OdirPanApres.Caption:='AGUARDE !! Fase 1/4: Localizando Produtos e Demandas...';
@@ -15331,7 +15196,6 @@ Begin
   DMVirtual.CDS_V_CurvaABCEndereco.First;
   Result:=True;
   OdirPanApres.Visible:=False;
-
 End; // Calcula Curva ABC e Endereçamentos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Calcula Planiha Demonstrativo de Resultados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -15706,11 +15570,6 @@ Begin
     Bt_FinanPlanDemonsResultados.Visible:=False;
     PopM_PlanFinanceiraSalvar.Visible:=False;
     Pan_FinanVisualGrFinanceiro.Visible:=False;
-  End;
-
-  If TabSh.Name='Ts_CurvaABCEndCurvaABC' Then
-  Begin
-    Bt_CurvaABCEndAtualizaSidicom.Visible:=False;
   End;
 
   // FrmSalao ==================================================================
@@ -18695,7 +18554,7 @@ Begin
               bgProcCurva:=True;
 
               b:=False;
-              While Not b do // Verifica se Existe na Tabela ES_CURVA_ABC
+              While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
               Begin
                 If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,[]) Then
                  Begin
@@ -18739,7 +18598,7 @@ Begin
                       b:=True;
                     End;
                  End; // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,[]) Then
-              End; // While Not b do // Verifica se Existe na Tabela ES_CURVA_ABC
+              End; // While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
 
               // Busca o Produto Existente na Matriz ----------------
               If bgProcCurva Then
@@ -19009,7 +18868,7 @@ Begin
             bgProcCurva:=True;
 
             b:=False;
-            While Not b do // Verifica se Existe na Tabela ES_CURVA_ABC
+            While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
             Begin
               If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,[]) Then
                Begin
@@ -19053,7 +18912,7 @@ Begin
                     b:=True;
                   End;
                End; // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,[]) Then
-            End; // While Not b do // Verifica se Existe na Tabela ES_CURVA_ABC
+            End; // While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
 
             // Busca o Produto Existente na Matriz ----------------
             If bgProcCurva Then
@@ -20206,7 +20065,7 @@ Begin
       bgProcCurva:=True;
 
       b:=False;
-      While Not b do // Verifica se Existe na Tabela ES_CURVA_ABC
+      While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
       Begin
         If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_Matriz.FieldByName('COD_ITEM').AsString,[]) Then
          Begin
@@ -20250,7 +20109,7 @@ Begin
               b:=True;
             End;
          End;
-      End; // While Not b do // Verifica se Existe na Tabela ES_CURVA_ABC
+      End; // While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
 
       // Ultima Compra ----------------------------------------------
       sDta_Ref:='';
@@ -33569,120 +33428,6 @@ begin
 
 end;
 
-procedure TFrmBelShop.Bt_CurvaABCEndAtualizaSidicomClick(Sender: TObject);
-Var
-  sCodLoja: String;
-  sMensagem: String;
-
-  bCurvas, bEnderecos: Boolean;
-  i: Integer;
-begin
-  Dbg_CurvaABCEndCurvaABC.SetFocus;
-
-  If DMVirtual.CDS_V_CurvaABCEndereco.IsEmpty Then
-   Exit;
-
-  If (Not bgTodasEmpresas) and (igNrEmpProc>1)  Then
-  Begin
-    MessageBox(Handle, pChar('Para Atualizar A CURVA ABC nos Produtos'+cr+
-                             'o Calculo Deve ser de uma Loja Específica ou Todas !!'),
-                             'IMPOSSÍVEL ATUALIZAR !!', MB_ICONERROR);
-    Exit;
-  End;
-
-  If Trim(sgGrupos)<>'' Then
-  Begin
-    MessageBox(Handle, pChar('Para Atualizar A CURVA ABC nos Produtos'+cr+
-                             'não pode Existir Grupo/SubGrupo Selecionado !!'),
-                             'IMPOSSÍVEL ATUALIZAR !!', MB_ICONERROR);
-    Exit;
-  End;
-
-  If bgUsaFornecedores Then
-  Begin
-    MessageBox(Handle, pChar('Para Atualizar A CURVA ABC nos Produtos'+cr+
-                             'não pode Existir Fornecedor Selecionado !!'),
-                             'IMPOSSÍVEL ATUALIZAR !!', MB_ICONERROR);
-    Exit;
-  End;
-
-  // Deve ser sempre Index =2 (Ativo/Não Compra)
-  If sCbx_SituacaoProd<>'2' Then
-  Begin
-    MessageBox(Handle, pChar('Para Atualizar A CURVA ABC nos Produtos'+cr+
-                             'a Situação dos Produtos Selecionada deve ser'+cr+
-                             '"Ativo/Não Compra" !!'),
-                             'IMPOSSÍVEL ATUALIZAR !!', MB_ICONERROR);
-    Exit;
-  End;
-
-  // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
-  FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
-  AbreSolicitacoes(3);
-
-  FrmSolicitacoes.Ckb_AtualizaSIDICOMEndereco.Caption:='NAO';
-  FrmSolicitacoes.Ckb_AtualizaSIDICOMEndereco.Checked:=False;
-  FrmSolicitacoes.Ckb_AtualizaSIDICOMEndereco.Enabled:=False;
-  FrmSolicitacoes.Ckb_AtualizaSIDICOMEnderecoClick(Self);
-
-  bgProcessar:=False;
-  FrmSolicitacoes.ShowModal;
-
-  bCurvas:=False;
-  If FrmSolicitacoes.Ckb_AtualizaSIDICOMCurvaABC.Checked Then
-   bCurvas:=True;
-
-  bEnderecos:=False;
-  If FrmSolicitacoes.Ckb_AtualizaSIDICOMEndereco.Checked Then
-   bEnderecos:=True;
-
-  FreeAndNil(FrmSolicitacoes);
-
-  If Not bgProcessar Then
-    Exit;
-
-  // Pega Codigo da Loja =======================================================
-  i:=pos('Lj: ',Bt_CurvaABCEndAtualizaSidicom.Caption);
-  sCodLoja:=Copy(Bt_CurvaABCEndAtualizaSidicom.Caption, i+4, Length(Bt_CurvaABCEndAtualizaSidicom.Caption));
-
-  // Verifica Continuidade =====================================================
-  If (bCurvas) and (bEnderecos) Then
-   sMensagem:='a Curva ABC e Endereçamento'
-  Else If (bCurvas) and (Not bEnderecos) Then
-   sMensagem:='a Curva ABC'
-  Else If (Not bCurvas) and (bEnderecos) Then
-   sMensagem:='o Endereçamento'
-  Else
-   Begin
-    msg('Tipo de Atualização - Loja '+sCodLoja+cr+cr+'NÃO Informado !!','A');
-    Exit;
-   End;
-
-  If msg('Deseja Realmente Atualizar '+sMensagem+cr+cr+'Loja '+sCodLoja+' ??','C')=2 Then
-    Exit;
-
-  // Apresentacao ==============================================================
-  OdirPanApres.Caption:='AGUARDE !! Atualizando '+sMensagem+' - Loja: '+sCodLoja;
-  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
-  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
-  OdirPanApres.Visible:=True;
-  Refresh;
-  Screen.Cursor:=crAppStart;
-
-  // Atualiza Curva ABC ========================================================
-  If bCurvas Then
-  Begin
-    If AtualizaCurvaABC(sCodLoja) Then
-    Begin
-      msg('Atualização da Cusva ABC'+cr+'Efetuada com SUCESSO !!','A');
-      Exit;
-    End;
-
-  End; // If bCurvas Then
-
-end;
-
 procedure TFrmBelShop.PC_CurvaABCFornEndChange(Sender: TObject);
 begin
   CorSelecaoTabSheet(PC_CurvaABCFornEnd);
@@ -43698,23 +43443,30 @@ begin
 
 end;
 
-procedure TFrmBelShop.Bt_CurvaABCEndSalvaFornExcelClick(Sender: TObject);
+procedure TFrmBelShop.Bt_CurvaABCEndSalvaProdClipboardClick(Sender: TObject);
 begin
-  If (gCDS_V_Geral<>nil) and (Not gCDS_V_Geral.IsEmpty) Then
-  Begin
-    Dbg_CurvaABCEndCurvaABCForn.SetFocus;
-    ExportDBGridExcel(True, Dbg_CurvaABCEndCurvaABCForn, FrmBelShop);
-  End;
 
-end;
-
-procedure TFrmBelShop.Bt_CurvaABCEndSalvaProdExcelClick(Sender: TObject);
-begin
-  If Not DMVirtual.CDS_V_CurvaABCEndereco.IsEmpty Then
+  If Trim((Sender as TJvXPButton).Name)='Bt_CurvaABCEndSalvaProdClipboard' Then
   Begin
-    Dbg_CurvaABCEndCurvaABC.SetFocus;
-    ExportDBGridExcel(True, Dbg_CurvaABCEndCurvaABC, FrmBelShop);
-  End;
+    If Not DMVirtual.CDS_V_CurvaABCEndereco.IsEmpty Then
+    Begin
+      Dbg_CurvaABCEndCurvaABC.SetFocus;
+      DBGridClipboard(Dbg_CurvaABCEndCurvaABC);
+      // OdirApagar - 19/12/2016
+      // ExportDBGridExcel(True, Dbg_CurvaABCEndCurvaABC, FrmBelShop);
+    End;
+  End; // If Trim((Sender as TJvXPButton).Name)='Bt_CurvaABCEndSalvaProdClipboard' Then
+
+  If Trim((Sender as TJvXPButton).Name)='Bt_CurvaABCEndSalvaFornClipboard' Then
+  Begin
+    If (gCDS_V_Geral<>nil) and (Not gCDS_V_Geral.IsEmpty) Then
+    Begin
+      Dbg_CurvaABCEndCurvaABCForn.SetFocus;
+      DBGridClipboard(Dbg_CurvaABCEndCurvaABCForn);
+      // OdirApagar - 19/12/2016
+      // ExportDBGridExcel(True, Dbg_CurvaABCEndCurvaABCForn, FrmBelShop);
+    End;
+  End; // If Trim((Sender as TJvXPButton).Name)='Bt_CurvaABCEndSalvaFornClipboard' Then
 
 end;
 
@@ -44535,44 +44287,6 @@ begin
 
   FreeAndNil(FrmCentralTrocas);
 
-end;
-
-procedure TFrmBelShop.SubMenuCentroDistrAjustesEstoqueClick(Sender: TObject);
-begin
-//odirapagar - 28/10/2015
-  msg('Opção em Desenvolvimento !!','A');
-  Exit;
-
-  If Not ConectaMPMS Then
-  Begin
-    msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
-    Close;
-    Exit;
-  End;
-
-  FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
-
-  igTagPermissao:=(Sender as TMenuItem).Tag;
-  BloqueioBotoes(FrmCentralTrocas, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
-
-//  // Permissões de Visualização ================================================
-//  PermissaoVisual(FrmSalao.Ts_Profissionais);
-
-  // Apresenta TabSheet ========================================================
-  TabSheetInvisivel(FrmCentralTrocas);
-  FrmCentralTrocas.Ts_AjustesSIDICOM.TabVisible:=True;
-
-  // Limpa Componetes ==========================================================
-  FrmCentralTrocas.EdtAjustesCodProduto.Clear;
-  FrmCentralTrocas.EdtAjustesDesProduto.Clear;
-  FrmCentralTrocas.EdtAjustesQtdAjuste.Clear;
-  FrmCentralTrocas.EdtAjustesNumDocto.Clear;
-  FrmCentralTrocas.DtaEdtAjustesDocto.Date:=DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor);
-
-  FrmCentralTrocas.CorCaptionForm.FormCaption:='CENTRO DE DISTRIBUIÇÃO';
-  FrmCentralTrocas.ShowModal;
-
-  FreeAndNil(FrmCentralTrocas);
 end;
 
 procedure TFrmBelShop.SubMenuAtualizaTabelasSPEDClick(Sender: TObject);

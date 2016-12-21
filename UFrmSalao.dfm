@@ -9062,7 +9062,7 @@ object FrmSalao: TFrmSalao
                   Left = 411
                   Top = 1
                   Width = 86
-                  Height = 27
+                  Height = 26
                   Align = alRight
                   Caption = '  Calculo com  '#13#10'     Metas ?'
                   Visible = False
@@ -9265,6 +9265,7 @@ object FrmSalao: TFrmSalao
                 Expanded = False
                 FieldName = 'VLR_DESCONTO'
                 Title.Alignment = taRightJustify
+                Width = 64
                 Visible = True
               end
               item
@@ -10350,7 +10351,7 @@ object FrmSalao: TFrmSalao
         Top = 0
         Width = 828
         Height = 514
-        ActivePage = Ts_ProfImpPlanoSaude
+        ActivePage = Ts_ProfImpTecBiz
         Align = alClient
         TabOrder = 0
         OnChange = PC_ProfMovtosRHChange

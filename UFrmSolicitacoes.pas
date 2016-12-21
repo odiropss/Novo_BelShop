@@ -46,7 +46,8 @@ TabIndex:
    0 = Exporta OC Para Outra - Ts_SolicitacoesExporta
    1 = Habilita/Desabilita Linha nos Objetivos/Metas - Ts_FinanObjetivosHabilitaDesabilita
    2 = Importa Arquivo para ProSoft - Ts_ProSoftImpArquivo
-   3 = Atualiza Curva ABC e/ou Enderecamento no Sidicom - Ts_AtualizaSIDICOMCurvaABCEndereco
+   3 = LIBERADO PARA USO
+       - Antigo=Atualiza Curva ABC e/ou Enderecamento no Sidicom - Ts_AtualizaSIDICOMCurvaABCEndereco
    4 = Legenda de Cores no Pedido OC - Ts_GeraOCLegendaCores
    5 = Calendario de Fechamento de Caixas - Ts_FinanFechaCaixaLanctos
    6 = Calculo de Margem de Lucro - Ts_MargemLucro
@@ -222,13 +223,6 @@ type
     Panel2: TPanel;
     Bt_FinanObjetivosHabDeVoltar: TJvXPButton;
     Bt_FinanObjetivosHabDeOK: TJvXPButton;
-    Gb_AtualizaSIDICOMCurvaABCEndereco: TcxGroupBox;
-    Lb_AtualizaSIDICOMCurvaABC: TLabel;
-    Lb_AtualizaSIDICOMEndereco: TLabel;
-    Label13: TLabel;
-    Bv_AtualizaSIDICOMCurvaABCEnderec: TBevel;
-    Ckb_AtualizaSIDICOMCurvaABC: TJvCheckBox;
-    Ckb_AtualizaSIDICOMEndereco: TJvCheckBox;
     Panel8: TPanel;
     Bt_AtualizaSIDICOMCurvaABCEnderecoVoltar: TJvXPButton;
     Bt_AtualizaSIDICOMCurvaABCEnderecoOK: TJvXPButton;
@@ -604,6 +598,7 @@ type
     Label79: TLabel;
     Label80: TLabel;
     EdtParamCurvaECorte: TCurrencyEdit;
+    Label84: TLabel;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -708,12 +703,6 @@ type
     procedure Bt_FinanObjetivosHabDeOKClick(Sender: TObject);
     procedure Bt_AtualizaSIDICOMCurvaABCEnderecoVoltarClick(Sender: TObject);
     procedure Bt_AtualizaSIDICOMCurvaABCEnderecoOKClick(Sender: TObject);
-    procedure Ckb_AtualizaSIDICOMEnderecoClick(Sender: TObject);
-    procedure Ckb_AtualizaSIDICOMCurvaABCClick(Sender: TObject);
-    procedure Ckb_AtualizaSIDICOMCurvaABCKeyUp(Sender: TObject;
-      var Key: Word; Shift: TShiftState);
-    procedure Ckb_AtualizaSIDICOMEnderecoKeyUp(Sender: TObject;
-      var Key: Word; Shift: TShiftState);
     procedure Bt_GeraOCLegendaCoresVoltarClick(Sender: TObject);
     procedure Bt_FinanFechaCaixaVoltarClick(Sender: TObject);
     procedure mem_FinanFechaCaixaChange(Sender: TObject);
@@ -3830,40 +3819,6 @@ begin
   bgProcessar:=True;
 
   Close;
-
-end;
-
-procedure TFrmSolicitacoes.Ckb_AtualizaSIDICOMEnderecoClick(Sender: TObject);
-begin
-  AcertaCkb_SN(Ckb_AtualizaSIDICOMEndereco);
-
-  If Ckb_AtualizaSIDICOMEndereco.Checked Then
-   Lb_AtualizaSIDICOMEndereco.Color:=$00DADADA
-  Else
-   Lb_AtualizaSIDICOMEndereco.Color:=clBtnFace;
-
-end;
-
-procedure TFrmSolicitacoes.Ckb_AtualizaSIDICOMCurvaABCClick(Sender: TObject);
-begin
-  AcertaCkb_SN(Ckb_AtualizaSIDICOMCurvaABC);
-
-  If Ckb_AtualizaSIDICOMCurvaABC.Checked Then
-   Lb_AtualizaSIDICOMCurvaABC.Color:=$00DADADA
-  Else
-   Lb_AtualizaSIDICOMCurvaABC.Color:=clBtnFace;
-
-end;
-
-procedure TFrmSolicitacoes.Ckb_AtualizaSIDICOMCurvaABCKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  Ckb_AtualizaSIDICOMCurvaABCClick(Self);
-
-end;
-
-procedure TFrmSolicitacoes.Ckb_AtualizaSIDICOMEnderecoKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  Ckb_AtualizaSIDICOMEnderecoClick(Self);
 
 end;
 

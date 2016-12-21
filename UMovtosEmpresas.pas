@@ -125,9 +125,6 @@ type
     Procedure AtualizaLP(sDta: String);
     Procedure AtualizaForn(sDta: String);
 
-    // Odir Não Executar CURVA ABC
-//    Procedure AtualizaProdutosCurvas;
-
     // Salão
     Procedure AtualizaServicosSalao;
     Procedure AtualizaPercComissoesSalao;
@@ -1397,103 +1394,6 @@ Begin
 
 End; // Atualiza Lista de Precos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Odir Não Executar CURVA ABC
-//// Atualiza PRODUTOS Novos na Curva ABC - ES_FINAN_CURVA_ABC (MPMS) >>>>>>>>>>>>
-//Procedure TFrmMovtosEmpresas.AtualizaProdutosCurvas;
-//Var
-//  MySql, sCodLoja: String;
-//Begin
-//  MySql:=' SELECT e.cod_filial'+
-//         ' FROM EMP_CONEXOES e'+
-//         ' WHERE ((e.ind_ativo=''SIM'') OR (e.cod_filial=''99''))'+
-//         ' ORDER BY e.cod_filial';
-//  DMMovtosEmpresas.CDS_Busca.Close;
-//  DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
-//  DMMovtosEmpresas.CDS_Busca.Open;
-//
-//  While Not DMMovtosEmpresas.CDS_Busca.Eof do
-//  Begin
-//    sCodLoja:=DMMovtosEmpresas.CDS_Busca.FieldByName('Cod_Filial').AsString;
-//
-//    // Verificva se Transação esta Ativa
-//    If DMMovtosEmpresas.SQLC.InTransaction Then
-//     DMMovtosEmpresas.SQLC.Rollback(TD);
-//
-//    // Monta Transacao ===========================================================
-//    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-//    TD.IsolationLevel:=xilREADCOMMITTED;
-//    DMMovtosEmpresas.SQLC.StartTransaction(TD);
-//    Try
-//      DateSeparator:='.';
-//      DecimalSeparator:='.';
-//
-//      MySql:=' INSERT INTO ES_FINAN_CURVA_ABC (COD_LOJA, COD_PRODUTO, USU_ALTERA)'+
-//             ' SELECT '+
-//             QuotedStr(sCodLoja)+' COD_LOJA,'+
-//             ' pr.codproduto COD_PRODUTO,'+
-//             ' 0 USU_ALTERA'+
-//             ' FROM PRODUTO pr'+
-//             ' WHERE pr.situacaopro=0'+
-//             ' AND   pr.principalfor NOT IN (''010000'', ''000300'', ''000500'', ''001072'')'+
-//             ' AND   NOT EXISTS (SELECT 1'+
-//             ' FROM ES_FINAN_CURVA_ABC ec'+
-//             ' WHERE ec.cod_loja='+QuotedStr(sCodLoja)+
-//             ' AND   ec.cod_produto=pr.codproduto)';
-//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-//
-//      MySql:=' INSERT INTO ES_CURVA_ABC (COD_LOJA, COD_PRODUTO, IND_CURVA, DTA_INCLUSAO, DTA_ATUALIZACAO)'+
-//             ' SELECT '+
-//             QuotedStr(sCodLoja)+' COD_LOJA,'+
-//             ' pr.codproduto COD_PRODUTO,'+
-//             ' ''E'' IND_CURVA,'+
-//             ' pr.datainclusao DTA_INCLUSAO,'+
-//             ' CURRENT_DATE DTA_ATUALIZACAO'+
-//             ' FROM PRODUTO pr'+
-//             ' WHERE pr.situacaopro=0'+
-//             ' AND   pr.principalfor NOT IN (''010000'', ''000300'', ''000500'', ''001072'')'+
-//             ' AND   NOT EXISTS (SELECT 1'+
-//             ' FROM ES_CURVA_ABC ca'+
-//             ' WHERE ca.cod_loja='+QuotedStr(sCodLoja)+
-//             ' AND   ca.cod_produto=pr.codproduto)';
-//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-//
-//      // Atualiza Transacao =======================================
-//      DMMovtosEmpresas.SQLC.Commit(TD);
-//
-//      DateSeparator:='/';
-//      DecimalSeparator:=',';
-//    Except
-//      on e : Exception do
-//      Begin
-//        // Abandona Transacao =====================================
-//        DMMovtosEmpresas.SQLC.Rollback(TD);
-//
-//        DateSeparator:='/';
-//        DecimalSeparator:=',';
-//
-//        MySql:=' DELETE FROM movtos_empresas m'+
-//               ' Where m.Ind_Tipo=''OK'''+
-//               ' And m.NomeFornecedor=''Curva ABC''';
-//        DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-//
-//        sgMensagem:='Curva ABC - '+sCodLoja+' - '+e.Message;
-//        sgMensagem:=copy(sgMensagem,1,200);
-//        MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
-//               ' Values ('+
-//               QuotedStr('Er')+', '+
-//               QuotedStr(sgMensagem)+', '+
-//               QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
-//        DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-//
-//      End; // on e : Exception do
-//    End; // Try
-//
-//    DMMovtosEmpresas.CDS_Busca.Next;
-//  End; // While Not DMMovtosEmpresas.CDS_Busca.Eof do
-//  DMMovtosEmpresas.CDS_Busca.Close;
-//
-//End; // Atualiza PRODUTOS Novos na Curva ABC - ES_FINAN_CURVA_ABC (MPMS) >>>>>>>
-
 // Atualiza Produtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmMovtosEmpresas.AtualizaProdutos;//(sDta: String);
 Var
@@ -2096,36 +1996,6 @@ begin
     // =========================================================================
     // Atualiza PRODUTOS (MPMS) - FIM ==========================================
     // =========================================================================
-
-// Odir Não Executar CURVA ABC
-//    // =========================================================================
-//    // Atualiza PRODUTOS Novos na Curva ABC - ES_FINAN_CURVA_ABC (MPMS) - INICIO
-//    // =========================================================================
-//    MySql:=' SELECT m.ind_tipo'+
-//           ' FROM movtos_empresas m'+
-//           ' WHERE m.ind_tipo=''OK'''+
-//           ' AND m.nomefornecedor=''Curva ABC''';
-//    DMMovtosEmpresas.CDS_Busca.Close;
-//    DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
-//    DMMovtosEmpresas.CDS_Busca.Open;
-//    bgNewIndTipo:=Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString)='';
-//    DMMovtosEmpresas.CDS_Busca.Close;
-//
-//    If bgNewIndTipo Then
-//    Begin
-//      MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
-//             ' Values ('+
-//             QuotedStr('OK')+', '+
-//             QuotedStr('Curva ABC')+', '+
-//             QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
-//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-//
-//      // Atualiza PRODUTOS Novos na Curva ABC (MPMS)
-//      AtualizaProdutosCurvas;
-//    End;
-//    // =========================================================================
-//    // Atualiza PRODUTOS Novos na Curva ABC - ES_FINAN_CURVA_ABC (MPMS) - FIM ==
-//    // =========================================================================
 
     // =========================================================================
     // Atualiza LISTA DE PRECOS (MPMS) - INICIO ================================

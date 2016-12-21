@@ -1,6 +1,6 @@
 object FrmBelShop: TFrmBelShop
-  Left = 254
-  Top = 105
+  Left = 237
+  Top = 106
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_ConsultaOC
+    ActivePage = Ts_EstoqueFisicoFinan
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -7012,7 +7012,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_OCBuscaProdutos
+        ActivePage = Ts_OCGeraOrdemCompra
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -8639,7 +8639,7 @@ object FrmBelShop: TFrmBelShop
             Top = 53
             Width = 793
             Height = 435
-            ActivePage = Ts_GeraOCGrid
+            ActivePage = Ts_GeraOCOrdensCompra
             Align = alClient
             MultiLine = True
             TabOrder = 3
@@ -14306,24 +14306,33 @@ object FrmBelShop: TFrmBelShop
               ParentFont = False
               OnClick = Bt_CurvaABCEndVoltarClick
             end
-            object Bt_CurvaABCEndAtualizaSidicom: TJvXPButton
-              Tag = 10
-              Left = 502
-              Top = 2
-              Width = 208
-              Height = 34
-              Caption = 'Atualizar SIDICOM'
-              TabOrder = 2
-              Align = alLeft
-              OnClick = Bt_CurvaABCEndAtualizaSidicomClick
-            end
-            object Bt_CurvaABCEndSalvaProdExcel: TJvXPButton
+            object Bt_CurvaABCEndSalvaProdClipboard: TJvXPButton
               Tag = 9
               Left = 198
               Top = 2
               Width = 152
               Height = 34
-              Caption = 'Produtos '#13#10'Salvar em Excel'
+              Caption = 'Produtos Salvar '#13#10'  em Mem'#243'ria'
+              TabOrder = 2
+              TabStop = False
+              ShowFocusRect = True
+              Spacing = 10
+              Align = alLeft
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              OnClick = Bt_CurvaABCEndSalvaProdClipboardClick
+            end
+            object Bt_CurvaABCEndSalvaFornClipboard: TJvXPButton
+              Tag = 9
+              Left = 350
+              Top = 2
+              Width = 152
+              Height = 34
+              Caption = 'Fornecedores '#13#10'Salvar em Mem'#243'ria'
               TabOrder = 3
               TabStop = False
               ShowFocusRect = True
@@ -14335,27 +14344,6 @@ object FrmBelShop: TFrmBelShop
               Font.Name = 'MS Sans Serif'
               Font.Style = [fsBold]
               ParentFont = False
-              OnClick = Bt_CurvaABCEndSalvaProdExcelClick
-            end
-            object Bt_CurvaABCEndSalvaFornExcel: TJvXPButton
-              Tag = 9
-              Left = 350
-              Top = 2
-              Width = 152
-              Height = 34
-              Caption = 'Fornecedores '#13#10'Salvar  em Excel'
-              TabOrder = 4
-              TabStop = False
-              ShowFocusRect = True
-              Spacing = 10
-              Align = alLeft
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-              OnClick = Bt_CurvaABCEndSalvaFornExcelClick
             end
             object Panel11: TPanel
               Left = 711
@@ -14364,7 +14352,7 @@ object FrmBelShop: TFrmBelShop
               Height = 34
               Align = alRight
               BevelOuter = bvNone
-              TabOrder = 5
+              TabOrder = 4
               DesignSize = (
                 148
                 34)
@@ -14940,7 +14928,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_EstFisFinaFiltros
+        ActivePage = Ts_EstFisFinaResutadoFisicoFinan
         Align = alClient
         TabOrder = 0
         OnChange = PC_EstoqueFisicoFinanChange
@@ -32076,44 +32064,6 @@ object FrmBelShop: TFrmBelShop
         Caption = 'Analise de Reposi'#231#245'es Lojas'
         HelpContext = 1
         OnClick = SubMenuCentroDistAnaliseReposicoesClick
-      end
-      object SubMenuCentroDistrAjustesEstoque: TMenuItem
-        Tag = 1602
-        Bitmap.Data = {
-          B6030000424DB603000000000000360000002800000012000000100000000100
-          1800000000008003000000000000000000000000000000000000C0C0C0000000
-          000000000000000000000000000000000000000000000000000000000000C0C0
-          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000C0C0C0000000FFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000C0C0C0C0C0C0C0C0C0C0
-          C0C0C0C0C0C0C0C00000C0C0C0000000FFFFFFFFFFFFFFFFFF00000000000000
-          0000000000000000FFFFFF000000C0C0C0C0C0C0C0C0C0C0C0C0800000C0C0C0
-          0000C0C0C0000000FFFFFF000000808000000000FFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFF000000C0C0C0C0C0C0C0C0C0800000800000C0C0C00000C0C0C0000000
-          FFFFFF000000808000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000C0C0
-          C0C0C0C0800000800000800000C0C0C00000C0C0C0000000FFFFFFFFFFFFFFFF
-          FF0000FF0000FF0000FF0000FF0000FFFFFFFF000000C0C0C080000080000080
-          0000800000C0C0C00000C0C0C0000000FFFFFF0000008080000000FFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFF000000C0C0C0C0C0C0800000800000800000C0C0C0
-          0000C0C0C0000000FFFFFF000000808000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFF000000C0C0C0C0C0C0C0C0C0800000800000C0C0C00000C0C0C0000000
-          FFFFFFFFFFFFFFFFFF000000000000000000000000000000FFFFFF000000C0C0
-          C0C0C0C0C0C0C0C0C0C0800000C0C0C00000C0C0C0000000FFFFFF0000008080
-          00000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000C0C0C0C0C0C0C0C0C0C0
-          C0C0C0C0C0C0C0C00000C0C0C0000000FFFFFF000000808000FFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFF000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-          0000C0C0C0000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFF000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000C0C0C0800000
-          800000800000800000800000800000800000800000800000800000800000C0C0
-          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000C0C0C0800000FFFFFFFFFFFF8000
-          00800000800000800000800000800000800000800000C0C0C0C0C0C0C0C0C0C0
-          C0C0C0C0C0C0C0C00000C0C0C080000080000080000080000080000080000080
-          0000800000800000800000800000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-          0000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
-          C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C00000}
-        Caption = 'Ajustes de Estoque (SIDICOM)'
-        Enabled = False
-        HelpContext = 1
-        OnClick = SubMenuCentroDistrAjustesEstoqueClick
       end
       object N40: TMenuItem
         Caption = '-'

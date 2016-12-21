@@ -3023,13 +3023,14 @@ Begin
     Result:=True;
 
     // Cruva ABC da Loja
-    MySql:=' Select c.cod_loja, c.cod_produto, c.ind_curva, c.dta_inclusao,'+
-           ' Case'+
-           '   When (c.ind_curva in ('+sgCurvas+') or (c.dta_inclusao>='+QuotedStr(sgDtaInicio)+'))  Then ''SIM'''+
-           '   Else ''NAO'''+
-           ' End Usar_Curva'+
-           ' From ES_CURVA_ABC c'+
-           ' where c.cod_loja='+QuotedStr(sgCodLojaUnica);
+    MySql:=' SELECT c.cod_loja, c.cod_produto, c.ind_curva, p.datainclusao dta_inclusao,'+
+           ' CASE'+
+           '   WHEN (c.ind_curva IN ('+sgCurvas+') OR (p.datainclusao>='+QuotedStr(sgDtaInicio)+'))  Then ''SIM'''+
+           '   ELSE ''NAO'''+
+           ' END Usar_Curva'+
+           ' FROM ES_FINAN_CURVA_ABC c, PRODUTO p'+
+           ' WHERE c.cod_produto = p.codproduto'+
+           ' AND   c.cod_loja='+QuotedStr(sgCodLojaUnica);
     DMBelShop.CDS_Join.Close;
     DMBelShop.SDS_Join.CommandText:=MySql;
     DMBelShop.CDS_Join.Open;
@@ -5275,7 +5276,7 @@ begin
 
       bgProcCurva:=True;
       b:=False;
-      While Not b do // Verifica se Existe na Tabela ES_CURVA_ABC
+      While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
       Begin
         If DMBelShop.CDS_Join.Locate('COD_PRODUTO',FrmBelShop.IBQ_Matriz.FieldByName('COD_ITEM').AsString,[]) Then
          Begin
@@ -5300,25 +5301,30 @@ begin
          End // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',FrmBelShop.IBQ_Matriz.FieldByName('COD_ITEM').AsString,[]) Then
         Else
          Begin
-           If StrToDate(FrmBelShop.IBQ_Matriz.FieldByName('datainclusao').AsString)>=StrToDate(sgDtaInicio) Then
-            Begin
-              DMBelShop.CDS_Join.Close;
-              MySql:=' Insert into ES_CURVA_ABC'+
-                      ' (COD_LOJA, COD_PRODUTO, IND_CURVA, DTA_INCLUSAO)'+
-                      ' Values ('+
-                      QuotedStr(sCodMatriz)+', '+
-                      QuotedStr(FrmBelShop.IBQ_Matriz.FieldByName('COD_ITEM').AsString)+', '+
-                      QuotedStr('E')+', '+
-                      QuotedStr(FrmBelShop.IBQ_Matriz.FieldByName('datainclusao').AsString)+')';
-              DMBelShop.SQLC.Execute(MySql,nil,nil);
-              DMBelShop.CDS_Join.Open;
-            End
-           Else
-            Begin
-              b:=True;
-            End;
+           b:=True;
          End;
-      End; // While Not b do // Verifica se Existe na Tabela ES_CURVA_ABC
+
+// OdirApagar - 16/12/2016
+//         Begin
+//           If StrToDate(FrmBelShop.IBQ_Matriz.FieldByName('datainclusao').AsString)>=StrToDate(sgDtaInicio) Then
+//            Begin
+//              DMBelShop.CDS_Join.Close;
+//              MySql:=' Insert into ES_CURVA_ABC'+
+//                      ' (COD_LOJA, COD_PRODUTO, IND_CURVA, DTA_INCLUSAO)'+
+//                      ' Values ('+
+//                      QuotedStr(sCodMatriz)+', '+
+//                      QuotedStr(FrmBelShop.IBQ_Matriz.FieldByName('COD_ITEM').AsString)+', '+
+//                      QuotedStr('E')+', '+
+//                      QuotedStr(FrmBelShop.IBQ_Matriz.FieldByName('datainclusao').AsString)+')';
+//              DMBelShop.SQLC.Execute(MySql,nil,nil);
+//              DMBelShop.CDS_Join.Open;
+//            End
+//           Else
+//            Begin
+//              b:=True;
+//            End;
+//         End;
+      End; // While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
 
       // Num_Seq de Documento --------------------------------------------------
       If bgProcCurva Then

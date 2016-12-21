@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 432
-    ActivePage = Ts_ReposLojasDigita
+    ActivePage = Ts_AtualizaSIDICOMCurvaABCEndereco
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1307,100 +1307,21 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
     end
     object Ts_AtualizaSIDICOMCurvaABCEndereco: TTabSheet
-      Caption = 'Atualiza SIDICOM'
+      Caption = '(N'#195'O UTILIZADO MAIS) Atualiza SIDICOM'
       Highlighted = True
       ImageIndex = 4
-      object Gb_AtualizaSIDICOMCurvaABCEndereco: TcxGroupBox
-        Left = 140
-        Top = 77
-        Caption = ' Informe o Tipo de Atualiza'#231#227'o '
-        TabOrder = 0
-        Height = 172
-        Width = 346
-        object Lb_AtualizaSIDICOMCurvaABC: TLabel
-          Left = 52
-          Top = 81
-          Width = 202
-          Height = 13
-          Caption = 'Curva ABC ..................................'
-          Color = 14342874
-          ParentColor = False
-        end
-        object Lb_AtualizaSIDICOMEndereco: TLabel
-          Left = 52
-          Top = 123
-          Width = 215
-          Height = 13
-          Caption = 'Endere'#231'amentos .............................'
-          Color = 14342874
-          ParentColor = False
-        end
-        object Label13: TLabel
-          Left = 195
-          Top = 44
-          Width = 130
-          Height = 19
-          Alignment = taCenter
-          AutoSize = False
-          Caption = 'Habilitar ?'
-          Color = 14211288
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlue
-          Font.Height = -13
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentColor = False
-          ParentFont = False
-        end
-        object Bv_AtualizaSIDICOMCurvaABCEnderec: TBevel
-          Left = 192
-          Top = 40
-          Width = 137
-          Height = 112
-          Shape = bsSpacer
-        end
-        object Ckb_AtualizaSIDICOMCurvaABC: TJvCheckBox
-          Left = 240
-          Top = 80
-          Width = 44
-          Height = 17
-          Caption = 'SIM'
-          Checked = True
-          State = cbChecked
-          TabOrder = 0
-          OnClick = Ckb_AtualizaSIDICOMCurvaABCClick
-          OnKeyUp = Ckb_AtualizaSIDICOMCurvaABCKeyUp
-          LinkedControls = <>
-          HotTrackFont.Charset = DEFAULT_CHARSET
-          HotTrackFont.Color = clWindowText
-          HotTrackFont.Height = -11
-          HotTrackFont.Name = 'MS Sans Serif'
-          HotTrackFont.Style = []
-        end
-        object Ckb_AtualizaSIDICOMEndereco: TJvCheckBox
-          Left = 240
-          Top = 121
-          Width = 44
-          Height = 17
-          Caption = 'SIM'
-          Checked = True
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          State = cbChecked
-          TabOrder = 1
-          OnClick = Ckb_AtualizaSIDICOMEnderecoClick
-          OnKeyUp = Ckb_AtualizaSIDICOMEnderecoKeyUp
-          LinkedControls = <>
-          HotTrackFont.Charset = DEFAULT_CHARSET
-          HotTrackFont.Color = clWindowText
-          HotTrackFont.Height = -11
-          HotTrackFont.Name = 'MS Sans Serif'
-          HotTrackFont.Style = []
-        end
+      object Label84: TLabel
+        Left = 24
+        Top = 104
+        Width = 562
+        Height = 31
+        Caption = 'Antigo Atualiza'#231#227'o de Curva e Endere'#231'o no Sidicom'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -27
+        Font.Name = 'Nyala'
+        Font.Style = [fsBold]
+        ParentFont = False
       end
       object Panel8: TPanel
         Left = 0
@@ -1412,7 +1333,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         BorderStyle = bsSingle
         Ctl3D = False
         ParentCtl3D = False
-        TabOrder = 1
+        TabOrder = 0
         object Bt_AtualizaSIDICOMCurvaABCEnderecoVoltar: TJvXPButton
           Left = 521
           Top = 2
@@ -10056,8 +9977,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
     CursorType = ctStatic
     LockType = ltReadOnly
     TableDirect = True
-    Left = 591
-    Top = 136
+    Left = 559
+    Top = 176
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
