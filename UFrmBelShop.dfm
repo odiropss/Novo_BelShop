@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_EstoqueFisicoFinan
+    ActivePage = TS_Filtros
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -29207,7 +29207,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = TS_FiltroFornecedor
+        ActivePage = TS_FiltroGrupos
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -29990,7 +29990,7 @@ object FrmBelShop: TFrmBelShop
             Width = 554
             Height = 508
             Align = alClient
-            Caption = '  Sub-Grupo de Produtos  '
+            Caption = '  SubGrupo de Produtos  '
             Color = 13092807
             Ctl3D = False
             Font.Charset = DEFAULT_CHARSET
@@ -30044,7 +30044,7 @@ object FrmBelShop: TFrmBelShop
                   item
                     Expanded = False
                     FieldName = 'Des_SubGrupo'
-                    Title.Caption = 'Descri'#231#227'o Sub-Grupo'
+                    Title.Caption = 'Descri'#231#227'o SubGrupo'
                     Width = 250
                     Visible = True
                   end
@@ -32064,6 +32064,27 @@ object FrmBelShop: TFrmBelShop
         Caption = 'Analise de Reposi'#231#245'es Lojas'
         HelpContext = 1
         OnClick = SubMenuCentroDistAnaliseReposicoesClick
+      end
+      object N49: TMenuItem
+        Caption = '-'
+      end
+      object SubMenuCentroDistQtdCaixaCD: TMenuItem
+        Tag = 1602
+        Bitmap.Data = {
+          42010000424D4201000000000000760000002800000011000000110000000100
+          040000000000CC00000000000000000000001000000010000000000000000000
+          BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000808080000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00777777777777
+          777770000000777777770000000770000000777777770FFFFF07700000007777
+          77770FCCCF0770000000777777770FFFFF0770000000777000000FCCCF077000
+          0000777077770FFFFF077000000070007CCC0FCCCF0770000000706077770FFF
+          FF077000000070607CCC00000007700000007060777770777777700000007060
+          7CCC707777747000000070607777707777444000000070600000007777747000
+          0000706666607774777470000000700000007777444770000000777777777777
+          777770000000}
+        Caption = 'Quantidade/Caixa Sa'#237'das'
+        HelpContext = 1
+        OnClick = SubMenuCentroDistQtdCaixaCDClick
       end
       object N40: TMenuItem
         Caption = '-'

@@ -1,8 +1,8 @@
 object DMCentralTrocas: TDMCentralTrocas
   OldCreateOrder = False
-  Left = 242
-  Top = 120
-  Height = 598
+  Left = 241
+  Top = 114
+  Height = 607
   Width = 1053
   object SDS_Transf_Cd: TSQLDataSet
     CommandText = 
@@ -747,6 +747,7 @@ object DMCentralTrocas: TDMCentralTrocas
     Top = 248
   end
   object CDS_RelReposicao: TClientDataSet
+    Active = True
     Aggregates = <>
     AggregatesActive = True
     Params = <>

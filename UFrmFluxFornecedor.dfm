@@ -282,7 +282,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Top = 14
           Width = 398
           Height = 424
-          ActivePage = Ts_FluxFornManutReducao
+          ActivePage = Ts_FluxFornParamComprv
           Align = alRight
           TabOrder = 2
           OnChange = PC_FluxFornParametrosChange

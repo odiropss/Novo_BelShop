@@ -1367,6 +1367,8 @@ type
     Lab_CurvaABCEndTotalProdutos: TLabel;
     EdtCurvaABCEndTotalProdutos: TCurrencyEdit;
     EdtCurvaABCEndTotalProc: TCurrencyEdit;
+    N49: TMenuItem;
+    SubMenuCentroDistQtdCaixaCD: TMenuItem;
 
     // Odir ====================================================================
 
@@ -2301,6 +2303,7 @@ type
     procedure Ckbx_ConsultaNFeApresTotaisClick(Sender: TObject);
     procedure Ckbx_ConsultaNFeApresTotaisKeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
+    procedure SubMenuCentroDistQtdCaixaCDClick(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -44888,8 +44891,6 @@ begin
 end;
 
 procedure TFrmBelShop.SubMenuCentroDistAnaliseReposicoesClick(Sender: TObject);
-Var
-  MySql: String;
 begin
   FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
 
@@ -45028,6 +45029,28 @@ end;
 procedure TFrmBelShop.Ckbx_ConsultaNFeApresTotaisKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Ckbx_ConsultaNFeApresTotaisClick(Self);
+end;
+
+procedure TFrmBelShop.SubMenuCentroDistQtdCaixaCDClick(Sender: TObject);
+begin
+
+//  msg('Opção em Desenvolvimento !!','A');
+ // Exit;
+
+  FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
+
+  FrmCentralTrocas.Bt_NotasEntDevFechar.Parent:=FrmCentralTrocas.Pan_QtdCaixaCD;
+
+  igTagPermissao:=(Sender as TMenuItem).Tag;
+  BloqueioBotoes(FrmCentralTrocas, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
+
+  // Apresenta TabSheet ========================================================
+  TabSheetInvisivel(FrmCentralTrocas);
+  FrmCentralTrocas.Ts_QtdCaixaCD.TabVisible:=True;
+
+  FrmCentralTrocas.ShowModal;
+
+  FreeAndNil(FrmCentralTrocas);
 end;
 
 End.

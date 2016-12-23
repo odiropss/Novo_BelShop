@@ -405,7 +405,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
     Top = 0
     Width = 977
     Height = 578
-    ActivePage = Ts_ReposLojas
+    ActivePage = Ts_QtdCaixaCD
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1786,19 +1786,32 @@ object FrmCentralTrocas: TFrmCentralTrocas
         Panels = <
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
             PanelStyle.EllipsisType = dxetSmartPath
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clWindowText
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = [fsBold]
+            PanelStyle.ParentFont = False
             Fixed = False
-            Text = '<Ctrl + P> Salva Totais em Mem'#243'ria'
-            Width = 180
+            Text = '<Ctrl + T> Salva Totais (Mem'#243'ria)'
+            Width = 190
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter
             PanelStyle.Color = 13303807
             PanelStyle.EllipsisType = dxetSmartPath
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clBlue
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = [fsBold]
+            PanelStyle.ParentFont = False
             Fixed = False
-            Text = '<F6> Zera Quantidade de Reposi'#231#227'o'
-            Width = 186
+            Text = '<F6> Zera Quant. Reposi'#231#227'o'
+            Width = 170
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
@@ -1812,15 +1825,28 @@ object FrmCentralTrocas: TFrmCentralTrocas
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter
-            Text = '<F5> Cx. Embarque'
-            Width = 140
+            PanelStyle.EllipsisType = dxetSmartPath
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clBlue
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = [fsBold]
+            PanelStyle.ParentFont = False
+            Text = '<Ctrl + P> Emiss'#227'o Doc Separa'#231#227'o'
+            Width = 206
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter
-            Bevel = dxpbNone
+            PanelStyle.EllipsisType = dxetSmartPath
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clRed
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = [fsBold]
+            PanelStyle.ParentFont = False
             Fixed = False
-            Text = 'Linha Cor Vermelha Produto Sem Pre'#231'o'
+            Text = 'Cor Vermelha Produto Sem Pre'#231'o'
             Width = 210
           end>
         PaintStyle = stpsOffice11
@@ -2408,6 +2434,561 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Expanded = False
             Visible = True
           end>
+      end
+    end
+    object Ts_QtdCaixaCD: TTabSheet
+      Tag = 9999
+      Caption = 'Quantidades / Caixas de Sa'#237'das'
+      ImageIndex = 3
+      object Pan_QtdCaixaCD: TPanel
+        Left = 0
+        Top = 515
+        Width = 969
+        Height = 35
+        Align = alBottom
+        BevelInner = bvLowered
+        BorderStyle = bsSingle
+        TabOrder = 0
+      end
+      object Gb_QtdCaixaCDProdutos: TGroupBox
+        Left = 0
+        Top = 0
+        Width = 482
+        Height = 515
+        Caption = ' Produtos '
+        TabOrder = 1
+        object Pan_QtdCaixaCDProdutos: TPanel
+          Left = 1
+          Top = 14
+          Width = 480
+          Height = 81
+          Align = alTop
+          TabOrder = 0
+          object Label8: TLabel
+            Left = 9
+            Top = 12
+            Width = 104
+            Height = 13
+            Caption = 'C'#243'digo Interno/Barras'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label9: TLabel
+            Left = 169
+            Top = 11
+            Width = 99
+            Height = 13
+            Caption = 'Quantidade na Caixa'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label10: TLabel
+            Left = 174
+            Top = 34
+            Width = 94
+            Height = 13
+            Caption = 'Percentual de Corte'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object EdtQtdCaixaCDCodProd: TEdit
+            Left = 8
+            Top = 28
+            Width = 114
+            Height = 19
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            MaxLength = 13
+            ParentFont = False
+            TabOrder = 0
+            Text = '0'
+            OnKeyPress = EdtNotasEntDevCodProdutoKeyPress
+          end
+          object EdtQtdCaixaCDDesProd: TEdit
+            Left = 8
+            Top = 59
+            Width = 462
+            Height = 19
+            TabStop = False
+            Color = 13553407
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 5
+          end
+          object Bt_QtdCaixaCDBuscaProd: TJvXPButton
+            Left = 127
+            Top = 18
+            Width = 29
+            Height = 30
+            TabOrder = 4
+            TabStop = False
+            Glyph.Data = {
+              07544269746D61705E060000424D5E0600000000000036040000280000001600
+              000017000000010008000000000028020000C30E0000C30E0000000100000000
+              000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
+              FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
+              FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000010101010101010101010101010101010101010101010000010101010101
+              0101010101010101010101040404030100000101010101010101010101010101
+              0101040701070401000001010101010101010101010101010104070101070401
+              0000010101010101010101010101010104070101070704010000010101010101
+              0101010101010104070101070704010100000101010101010101010101010407
+              0101070704010101000001010101010101010101010407010107070401010101
+              0000010101010101010101010407010107070401010101010000010101010101
+              0101010404040307070401010101010100000101010101010404040404040407
+              0401010101010101000001010101040406010601010404040101010101010101
+              0000010101040106010601010101040101010101010101010000010101040601
+              0601060106010401010101010101010100000101040601060101010601060104
+              0101010101010101000001010401060106010601060101040101010101010101
+              0000010104060106010601060106010401010101010101010000010104010601
+              0601060106010104010101010101010100000101010401060101010601060401
+              0101010101010101000001010104060106010601060104010101010101010101
+              0000010101010404010101060404010101010101010101010000010101010101
+              0404040401010101010101010101010100000101010101010101010101010101
+              01010101010101010000}
+            ShowFocusRect = True
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ParentShowHint = False
+            ShowHint = False
+            OnClick = Bt_NotasEntDevBuscaProdutoClick
+          end
+          object EdtQtdCaixaCDQtdCxProd: TCurrencyEdit
+            Left = 271
+            Top = 7
+            Width = 59
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = ',0'
+            TabOrder = 1
+          end
+          object EdtQtdCaixaCDPercCxProd: TCurrencyEdit
+            Left = 271
+            Top = 30
+            Width = 59
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = ',0'
+            TabOrder = 2
+          end
+          object Bt_QtdCaixaCDIncluirProd: TJvXPButton
+            Tag = 1
+            Left = 356
+            Top = 14
+            Width = 112
+            Height = 31
+            Caption = 'Incluir'
+            TabOrder = 3
+            Glyph.Data = {
+              07544269746D61708A010000424D8A0100000000000076000000280000001800
+              000017000000010004000000000014010000130B0000130B0000100000000000
+              0000000000000000800000800000008080008000000080008000808000008080
+              8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF00888888888888888888888888888888877777777777777777888888000000
+              0000000000078888880FFFFFFFFFFFFFFF078888880F000FF000FF000F078888
+              880FFFFFFFFFFFFFFF078888880F000FF000FF000F078888880FFFFFFFFFFFFF
+              FF078888880F000FF000FF000F07888887BFFFFFFFFFFFFFFF07BF8887FBF0BF
+              F000FF000F07878887BFFF7BFFFFFFFFFF0788B887FFF7B4444444444447888F
+              B7BB7FF44FFF44FFF44777777BFBB44444444444444888B87FBFF77777788888
+              8888888BFBFFBFBFB88888888888888FB7BB7B8888888888888888FB87F887B8
+              8888888888888FB887B8887B8888888888888B8887F88887B888888888888888
+              87B88888888888888888888887888888888888888888}
+            Spacing = 10
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ParentShowHint = False
+            ShowHint = False
+            OnClick = Bt_NotasEntDevIncluirClick
+          end
+        end
+        object Dbg_QtdsCaixaCDProdutos: TDBGridJul
+          Left = 1
+          Top = 95
+          Width = 480
+          Height = 419
+          Align = alClient
+          FixedColor = clSilver
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = False
+          TabOrder = 1
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -11
+          TitleFont.Name = 'MS Sans Serif'
+          TitleFont.Style = [fsBold]
+          CorComFoco = clWindow
+          SairComEnter = False
+        end
+      end
+      object Gb_QtdCaixaCDGrupos: TGroupBox
+        Left = 487
+        Top = 0
+        Width = 481
+        Height = 515
+        Caption = ' Grupos / SubGrupos '
+        TabOrder = 2
+        object Panel2: TPanel
+          Left = 1
+          Top = 14
+          Width = 479
+          Height = 81
+          Align = alTop
+          TabOrder = 0
+          object Label11: TLabel
+            Left = 29
+            Top = 12
+            Width = 74
+            Height = 13
+            Caption = 'Localizar Grupo'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label12: TLabel
+            Left = 169
+            Top = 11
+            Width = 99
+            Height = 13
+            Caption = 'Quantidade na Caixa'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label13: TLabel
+            Left = 174
+            Top = 34
+            Width = 94
+            Height = 13
+            Caption = 'Percentual de Corte'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label14: TLabel
+            Left = 10
+            Top = 37
+            Width = 93
+            Height = 13
+            Caption = 'Localizar SubGrupo'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object EdtQtdCaixaCDDesGrupo: TEdit
+            Left = 8
+            Top = 59
+            Width = 462
+            Height = 19
+            TabStop = False
+            Color = 13553407
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 4
+          end
+          object Bt_QtdCaixaCDBuscaGrupo: TJvXPButton
+            Left = 107
+            Top = 4
+            Width = 25
+            Height = 25
+            TabOrder = 3
+            TabStop = False
+            Glyph.Data = {
+              07544269746D61705E060000424D5E0600000000000036040000280000001600
+              000017000000010008000000000028020000C30E0000C30E0000000100000000
+              000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
+              FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
+              FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000010101010101010101010101010101010101010101010000010101010101
+              0101010101010101010101040404030100000101010101010101010101010101
+              0101040701070401000001010101010101010101010101010104070101070401
+              0000010101010101010101010101010104070101070704010000010101010101
+              0101010101010104070101070704010100000101010101010101010101010407
+              0101070704010101000001010101010101010101010407010107070401010101
+              0000010101010101010101010407010107070401010101010000010101010101
+              0101010404040307070401010101010100000101010101010404040404040407
+              0401010101010101000001010101040406010601010404040101010101010101
+              0000010101040106010601010101040101010101010101010000010101040601
+              0601060106010401010101010101010100000101040601060101010601060104
+              0101010101010101000001010401060106010601060101040101010101010101
+              0000010104060106010601060106010401010101010101010000010104010601
+              0601060106010104010101010101010100000101010401060101010601060401
+              0101010101010101000001010104060106010601060104010101010101010101
+              0000010101010404010101060404010101010101010101010000010101010101
+              0404040401010101010101010101010100000101010101010101010101010101
+              01010101010101010000}
+            ShowFocusRect = True
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ParentShowHint = False
+            ShowHint = False
+            OnClick = Bt_NotasEntDevBuscaProdutoClick
+          end
+          object EdtQtdCaixaCDQtdCxGrupo: TCurrencyEdit
+            Left = 273
+            Top = 7
+            Width = 59
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = ',0'
+            TabOrder = 0
+          end
+          object EdtQtdCaixaCDPercCxGrupo: TCurrencyEdit
+            Left = 273
+            Top = 30
+            Width = 59
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = ',0'
+            TabOrder = 1
+          end
+          object Bt_QtdCaixaCDIncluirGrupo: TJvXPButton
+            Tag = 1
+            Left = 356
+            Top = 14
+            Width = 112
+            Height = 31
+            Caption = 'Incluir'
+            TabOrder = 2
+            Glyph.Data = {
+              07544269746D61708A010000424D8A0100000000000076000000280000001800
+              000017000000010004000000000014010000130B0000130B0000100000000000
+              0000000000000000800000800000008080008000000080008000808000008080
+              8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF00888888888888888888888888888888877777777777777777888888000000
+              0000000000078888880FFFFFFFFFFFFFFF078888880F000FF000FF000F078888
+              880FFFFFFFFFFFFFFF078888880F000FF000FF000F078888880FFFFFFFFFFFFF
+              FF078888880F000FF000FF000F07888887BFFFFFFFFFFFFFFF07BF8887FBF0BF
+              F000FF000F07878887BFFF7BFFFFFFFFFF0788B887FFF7B4444444444447888F
+              B7BB7FF44FFF44FFF44777777BFBB44444444444444888B87FBFF77777788888
+              8888888BFBFFBFBFB88888888888888FB7BB7B8888888888888888FB87F887B8
+              8888888888888FB887B8887B8888888888888B8887F88887B888888888888888
+              87B88888888888888888888887888888888888888888}
+            Spacing = 10
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ParentShowHint = False
+            ShowHint = False
+            OnClick = Bt_NotasEntDevIncluirClick
+          end
+          object Bt_QtdCaixaCDBuscaSubGrupo: TJvXPButton
+            Left = 107
+            Top = 31
+            Width = 25
+            Height = 25
+            TabOrder = 5
+            TabStop = False
+            Glyph.Data = {
+              07544269746D61705E060000424D5E0600000000000036040000280000001600
+              000017000000010008000000000028020000C30E0000C30E0000000100000000
+              000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
+              FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
+              FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000000000000000
+              0000010101010101010101010101010101010101010101010000010101010101
+              0101010101010101010101040404030100000101010101010101010101010101
+              0101040701070401000001010101010101010101010101010104070101070401
+              0000010101010101010101010101010104070101070704010000010101010101
+              0101010101010104070101070704010100000101010101010101010101010407
+              0101070704010101000001010101010101010101010407010107070401010101
+              0000010101010101010101010407010107070401010101010000010101010101
+              0101010404040307070401010101010100000101010101010404040404040407
+              0401010101010101000001010101040406010601010404040101010101010101
+              0000010101040106010601010101040101010101010101010000010101040601
+              0601060106010401010101010101010100000101040601060101010601060104
+              0101010101010101000001010401060106010601060101040101010101010101
+              0000010104060106010601060106010401010101010101010000010104010601
+              0601060106010104010101010101010100000101010401060101010601060401
+              0101010101010101000001010104060106010601060104010101010101010101
+              0000010101010404010101060404010101010101010101010000010101010101
+              0404040401010101010101010101010100000101010101010101010101010101
+              01010101010101010000}
+            ShowFocusRect = True
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ParentShowHint = False
+            ShowHint = False
+            OnClick = Bt_NotasEntDevBuscaProdutoClick
+          end
+        end
+        object DBGridJul1: TDBGridJul
+          Left = 1
+          Top = 95
+          Width = 479
+          Height = 419
+          Align = alClient
+          FixedColor = clSilver
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = False
+          TabOrder = 1
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -11
+          TitleFont.Name = 'MS Sans Serif'
+          TitleFont.Style = [fsBold]
+          CorComFoco = clWindow
+          SairComEnter = False
+        end
       end
     end
   end

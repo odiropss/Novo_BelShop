@@ -1,6 +1,6 @@
 object FrmSolicitacoes: TFrmSolicitacoes
-  Left = 311
-  Top = 133
+  Left = 258
+  Top = 132
   Width = 649
   Height = 470
   AutoSize = True
@@ -1052,7 +1052,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_AtualizaSIDICOMCurvaABCEnderecoVoltarClick
+          OnClick = Bt_QtdCaixaCDVoltarClick
         end
         object Bt_ProSoftImpArqImporta: TJvXPButton
           Tag = 1
@@ -1307,22 +1307,9 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
     end
     object Ts_AtualizaSIDICOMCurvaABCEndereco: TTabSheet
-      Caption = '(N'#195'O UTILIZADO MAIS) Atualiza SIDICOM'
+      Caption = 'Sem Uso no Momento'
       Highlighted = True
       ImageIndex = 4
-      object Label84: TLabel
-        Left = 24
-        Top = 104
-        Width = 562
-        Height = 31
-        Caption = 'Antigo Atualiza'#231#227'o de Curva e Endere'#231'o no Sidicom'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -27
-        Font.Name = 'Nyala'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
       object Panel8: TPanel
         Left = 0
         Top = 369
@@ -1334,7 +1321,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 0
-        object Bt_AtualizaSIDICOMCurvaABCEnderecoVoltar: TJvXPButton
+        object Bt_QtdCaixaCDVoltar: TJvXPButton
           Left = 521
           Top = 2
           Width = 100
@@ -1360,31 +1347,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_AtualizaSIDICOMCurvaABCEnderecoVoltarClick
-        end
-        object Bt_AtualizaSIDICOMCurvaABCEnderecoOK: TJvXPButton
-          Tag = 2
-          Left = 2
-          Top = 2
-          Width = 100
-          Height = 29
-          Caption = 'OK'
-          TabOrder = 1
-          Glyph.Data = {
-            07544269746D61705A010000424D5A0100000000000076000000280000001200
-            0000130000000100040000000000E4000000CE0E0000C40E0000100000000000
-            000000000000000080000080000000808000800000008000800080800000C0C0
-            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-            FF00777778877777777777000000777784487777777777000000777844448777
-            77777700000077844444487777777700000078444C4444877777770000007444
-            C4C444877777770000007C4C444C444877777700000078C44444C44487777700
-            00008444C4444C44487777000000444C7C4448C4448777000000C4C777C4448C
-            4448770000007C77777C4448C4448700000077777777C4448C44870000007777
-            77777C4448C4470000007777777777C4448C7700000077777777777C44487700
-            0000777777777777C448770000007777777777777C4477000000777777777777
-            77C777000000}
-          Align = alLeft
-          OnClick = Bt_AtualizaSIDICOMCurvaABCEnderecoOKClick
+          OnClick = Bt_QtdCaixaCDVoltarClick
         end
       end
     end

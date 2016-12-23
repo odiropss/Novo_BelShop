@@ -224,8 +224,7 @@ type
     Bt_FinanObjetivosHabDeVoltar: TJvXPButton;
     Bt_FinanObjetivosHabDeOK: TJvXPButton;
     Panel8: TPanel;
-    Bt_AtualizaSIDICOMCurvaABCEnderecoVoltar: TJvXPButton;
-    Bt_AtualizaSIDICOMCurvaABCEnderecoOK: TJvXPButton;
+    Bt_QtdCaixaCDVoltar: TJvXPButton;
     Panel19: TPanel;
     Panel20: TPanel;
     Panel17: TPanel;
@@ -598,7 +597,6 @@ type
     Label79: TLabel;
     Label80: TLabel;
     EdtParamCurvaECorte: TCurrencyEdit;
-    Label84: TLabel;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -701,7 +699,7 @@ type
     procedure Ckb_FinanObjetivosHabDesObjetivosKeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
     procedure Bt_FinanObjetivosHabDeOKClick(Sender: TObject);
-    procedure Bt_AtualizaSIDICOMCurvaABCEnderecoVoltarClick(Sender: TObject);
+    procedure Bt_QtdCaixaCDVoltarClick(Sender: TObject);
     procedure Bt_AtualizaSIDICOMCurvaABCEnderecoOKClick(Sender: TObject);
     procedure Bt_GeraOCLegendaCoresVoltarClick(Sender: TObject);
     procedure Bt_FinanFechaCaixaVoltarClick(Sender: TObject);
@@ -3808,7 +3806,7 @@ begin
   Close;
 end;
 
-procedure TFrmSolicitacoes.Bt_AtualizaSIDICOMCurvaABCEnderecoVoltarClick(Sender: TObject);
+procedure TFrmSolicitacoes.Bt_QtdCaixaCDVoltarClick(Sender: TObject);
 begin
   Close;
 

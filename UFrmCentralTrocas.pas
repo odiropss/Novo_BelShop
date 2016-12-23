@@ -104,6 +104,33 @@ type
     EdtAnaliseReposAno: TcxSpinEdit;
     Dbg_AnaliseReposCorredores: TDBGrid;
     CkCbx_ReposLojasCorredor: TJvCheckedComboBox;
+    Ts_QtdCaixaCD: TTabSheet;
+    Pan_QtdCaixaCD: TPanel;
+    Gb_QtdCaixaCDProdutos: TGroupBox;
+    Gb_QtdCaixaCDGrupos: TGroupBox;
+    Pan_QtdCaixaCDProdutos: TPanel;
+    Dbg_QtdsCaixaCDProdutos: TDBGridJul;
+    EdtQtdCaixaCDCodProd: TEdit;
+    EdtQtdCaixaCDDesProd: TEdit;
+    Bt_QtdCaixaCDBuscaProd: TJvXPButton;
+    Label8: TLabel;
+    EdtQtdCaixaCDQtdCxProd: TCurrencyEdit;
+    EdtQtdCaixaCDPercCxProd: TCurrencyEdit;
+    Label9: TLabel;
+    Label10: TLabel;
+    Bt_QtdCaixaCDIncluirProd: TJvXPButton;
+    Panel2: TPanel;
+    Label11: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
+    EdtQtdCaixaCDDesGrupo: TEdit;
+    Bt_QtdCaixaCDBuscaGrupo: TJvXPButton;
+    EdtQtdCaixaCDQtdCxGrupo: TCurrencyEdit;
+    EdtQtdCaixaCDPercCxGrupo: TCurrencyEdit;
+    Bt_QtdCaixaCDIncluirGrupo: TJvXPButton;
+    DBGridJul1: TDBGridJul;
+    Label14: TLabel;
+    Bt_QtdCaixaCDBuscaSubGrupo: TJvXPButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -2665,7 +2692,8 @@ end;
 
 procedure TFrmCentralTrocas.Bt_NotasEntDevFecharClick(Sender: TObject);
 begin
-  // Tambem Usado em Pan_AnaliseReposicoes
+  // Tambem Usado em: - Pan_AnaliseReposicoes
+  //                  - Pan_QtdCaixaCD
 
   DMCentralTrocas.FechaTudoCentralTrocas;
   DMConexoes.FechaTudoIBDataBases;
@@ -2778,6 +2806,8 @@ end;
 
 procedure TFrmCentralTrocas.EdtNotasEntDevCodProdutoKeyPress(Sender: TObject; var Key: Char);
 begin
+  // Usando também em: EdtQtdsCaixasCDCodProd
+
   If not (key in ['0'..'9', Chr(8), Chr(22)]) then
   Begin
     Key := #0;
@@ -4110,8 +4140,14 @@ begin
   If (Shift = [ssCtrl]) and (Key = 46) then
    Key := 0;
 
-  // Ctrl + P = Salvar Toais em Memória ========================================
+  // Ctrl + P (Key = 80) = Emissãso de Docto de Separação9 ================================
   if (Shift = [ssCtrl]) and (Key = 80) then
+  Begin
+    Bt_ReposLojasEmissaoDocClick(Self);
+  End; // if (Shift = [ssCtrl]) and (Key = VK_KEY_M) then
+
+  // Ctrl + M (Key = 77) = Salvar Toais em Memória ========================================
+  if (Shift = [ssCtrl]) and (Key = 77) then
   Begin
     If (Not DMCentralTrocas.CDS_ReposicaoDocs.Active) Or (DMCentralTrocas.CDS_ReposicaoDocs.IsEmpty) Then
      Exit;
@@ -4293,7 +4329,7 @@ begin
         Exit;
       End; // on e : Exception do
     End; // Try
-  End; // If Key=VK_F4 Then
+  End; // If (Key=VK_F6) And (Bt_ReposLojasAlterarQtd.Enabled) Then
 end;
 
 procedure TFrmCentralTrocas.Dbg_ReposLojasItensEnter(Sender: TObject);
@@ -4385,14 +4421,14 @@ Var
 begin
   Dbg_ReposLojasDocs.SetFocus;
 
+  If DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty Then
+   Exit;
+
   If (igCorredores<>CkCbx_ReposLojasCorredor.Items.Count) and (igCorredores>1) Then
   Begin
     msg(' Relatório deve Conter: '+cr+'TODOS os Corredores ou Somente UM !!','A');
     Exit;
   End; // If Not bgTodosCorredores Then
-
-  If DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty Then
-   Exit;
 
   // Verifica se Existem Itens a Exportar para o Peido do SIDICOM ==============
   If Not VerificaExistenciaItens Then
@@ -4530,6 +4566,11 @@ begin
     Begin
       If (Pos('Calculado em:',FrmBelShop.Memo2.Lines[i])=0) And
          (Pos('Romaneio de Separação CD Gerado em',FrmBelShop.Memo2.Lines[i])=0) And
+         (Pos('CD Gerado em',FrmBelShop.Memo2.Lines[i])=0) And
+         (Pos(': Corte',FrmBelShop.Memo2.Lines[i])=0) And
+         (Pos('Sem Reposição Pelo',FrmBelShop.Memo2.Lines[i])=0) And
+         (Pos('Pelo Usuário:',FrmBelShop.Memo2.Lines[i])=0) And
+         (Pos('Corte Pelo',FrmBelShop.Memo2.Lines[i])=0) And
          (Trim(FrmBelShop.Memo2.Lines[i])<>'') Then
       Begin
         If FrmBelShop.Mem_Odir.Lines.Count<1 Then
@@ -4546,7 +4587,7 @@ begin
     dir_relat       := dir_padrao +'Relatorios\';
   {$ENDIF}
 
-  If FrmBelShop.Mem_Odir.Lines.Count>0 Then
+  If FrmBelShop.Mem_Odir.Lines.Count>1 Then
    Begin
      DMRelatorio.frReport1.LoadFromFile(Dir_Relat+'RomaneioReposicoes.frf');
      DMRelatorio.frReport1.Dictionary.Variables.Variable['Obs']:=#39+FrmBelShop.Mem_Odir.Text+#39;
@@ -5052,16 +5093,6 @@ begin
     DMBelShop.CDS_BuscaRapida.Close;
 
     DtaEdt_ReposLojas.SetFocus;
-  End;
-
-  If (PC_Principal.ActivePage=Ts_AjustesSIDICOM) And (Ts_AjustesSIDICOM.CanFocus) Then
-  Begin
-    EdtAjustesCodProduto.SetFocus;
-  End;
-
-  If (PC_Principal.ActivePage=Ts_AjustesSIDICOM) And (Ts_AjustesSIDICOM.CanFocus) Then
-  Begin
-    EdtAjustesCodProduto.SetFocus;
   End;
 
   If (PC_Principal.ActivePage=Ts_AnaliseReposicoes) And (Ts_AnaliseReposicoes.CanFocus) Then
