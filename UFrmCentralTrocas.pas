@@ -128,9 +128,11 @@ type
     EdtQtdCaixaCDQtdCxGrupo: TCurrencyEdit;
     EdtQtdCaixaCDPercCxGrupo: TCurrencyEdit;
     Bt_QtdCaixaCDIncluirGrupo: TJvXPButton;
-    DBGridJul1: TDBGridJul;
+    Dbg_QtdsCaixaCDGrupos: TDBGridJul;
     Label14: TLabel;
     Bt_QtdCaixaCDBuscaSubGrupo: TJvXPButton;
+    Edit1: TEdit;
+    Edit2: TEdit;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -163,6 +165,12 @@ type
     Function  VerificaPrecosItens: Boolean;
 
     Function  ProcessaTranferenciasCompras: Boolean; // Localizando Transferencias Setor de Compras (Dia Anterior)
+
+    Procedure AtualizaPROD_CAIXA_CD(sTipo: String); // Atualiza PROD_CAIXA_CD
+                                 // sTipo: (iP) Inclui Produto
+                                 //        (eP) Exclui Produto
+                                 //        (iG) Inclui Grupo/SubGrupo
+                                 //        (eG) Exclui Grupo/SubGrupo
 
     // Odir ====================================================================
 
@@ -226,6 +234,16 @@ type
     procedure CkCbx_ReposLojasCorredorChange(Sender: TObject);
     procedure Dbg_ReposLojasItensDblClick(Sender: TObject);
     procedure Dbg_ReposLojasDocsDblClick(Sender: TObject);
+    procedure EdtQtdCaixaCDCodProdExit(Sender: TObject);
+    procedure Bt_QtdCaixaCDBuscaProdClick(Sender: TObject);
+    procedure Bt_QtdCaixaCDBuscaGrupoClick(Sender: TObject);
+    procedure Bt_QtdCaixaCDBuscaSubGrupoClick(Sender: TObject);
+    procedure Bt_QtdCaixaCDIncluirGrupoClick(Sender: TObject);
+    procedure Bt_QtdCaixaCDIncluirProdClick(Sender: TObject);
+    procedure Dbg_QtdsCaixaCDProdutosKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_QtdsCaixaCDGruposKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
 
   private
     { Private declarations }
@@ -254,9 +272,12 @@ var
   bgChange: Boolean;
 
   sgCorredores,
-  sgCodProduto, sgCodBarras: String;
+  sgCodProduto, sgCodBarras,
+  sgCodGrupo, sgDesGrupo,
+  sgCodSubGrupo, sgDesSubGrupo: String;
 
   igCorredores: Integer;
+
 
   // Cria Ponteiro de transacão ================================================
   TD: TTransactionDesc;
@@ -278,6 +299,147 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
 //==============================================================================
 // Odir - INICIO ===============================================================
 //==============================================================================
+
+// Atualiza PROD_CAIXA_CD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmCentralTrocas.AtualizaPROD_CAIXA_CD(sTipo: String);
+Var
+  MySql: String;
+Begin
+  // sTipo: (iP) Inclui Produto
+  //        (eP) Exclui Produto
+  //        (iG) Inclui Grupo/SubGrupo
+  //        (eG) Exclui Grupo/SubGrupo
+
+  OdirPanApres.Caption:='AGUARDE !! Atualizando QUANTIDADE/CAIXA CD...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    // Inclui Produto -----------------------------------------------
+    If sTipo='iP' Then
+    Begin
+      MySql:=' UPDATE OR INSERT INTO PROD_CAIXA_CD'+
+             ' (COD_PRODUTO, COD_GRUPO, DES_GRUPO, COD_SUBGRUPO, DES_SUBGRUPO,'+
+             '  QTD_CAIXA, PER_CORTE, USU_ALTERA, DTA_ALTERA)'+
+             ' VALUES ('+
+             QuotedStr(sgCodProduto)+', '+
+             'NULL, NULL, NULL, NULL, '+
+             VarToStr(EdtQtdCaixaCDQtdCxProd.AsInteger)+', '+
+             VarToStr(EdtQtdCaixaCDPercCxProd.AsInteger)+', '+
+             Cod_Usuario+', current_timestamp)'+
+             ' MATCHING (COD_PRODUTO)';
+    End; //If sTipo='P' Then
+
+    // Exclui Produto -----------------------------------------------
+    If sTipo='eP' Then
+    Begin
+      MySql:=' DELETE FROM PROD_CAIXA_CD p'+
+             ' WHERE p.cod_produto='+QuotedStr(DMCentralTrocas.CDS_QtdCxCDProdutosCODIGO.AsString);
+    End; //If sTipo='P' Then
+
+    // Inclui Grupo/SubGrupo ----------------------------------------
+    If sTipo='iG' Then
+    Begin
+      MySql:=' UPDATE OR INSERT INTO PROD_CAIXA_CD'+
+             ' (COD_PRODUTO, COD_GRUPO, DES_GRUPO, COD_SUBGRUPO, DES_SUBGRUPO,'+
+             '  QTD_CAIXA, PER_CORTE, USU_ALTERA, DTA_ALTERA)'+
+             ' VALUES (NULL, '+
+             QuotedStr(sgCodGrupo)+', '+
+             QuotedStr(sgDesGrupo)+', ';
+
+             If Trim(sgCodSubGrupo)<>'' Then
+              MySql:=
+               MySql+QuotedStr(sgCodSubGrupo)+', '+
+                     QuotedStr(sgDesSubGrupo)+', '
+             Else
+              MySql:=
+               MySql+'NULL, NULL, ';
+
+      MySql:=
+       MySql+VarToStr(EdtQtdCaixaCDQtdCxGrupo.AsInteger)+', '+
+             VarToStr(EdtQtdCaixaCDPercCxGrupo.AsInteger)+', '+
+             Cod_Usuario+', current_timestamp)'+
+             ' MATCHING (COD_GRUPO, COD_SUBGRUPO)';
+    End; // If sTipo='G' Then
+
+    // Exclui Grupo/SubGrupo ----------------------------------------
+    If sTipo='eG' Then
+    Begin
+      MySql:=' DELETE FROM PROD_CAIXA_CD p'+
+             ' WHERE TRIM(p.cod_grupo)||TRIM(COALESCE(p.cod_subgrupo,''''))='+
+              QuotedStr(Trim(DMCentralTrocas.CDS_QtdCxCDGruposCODIGO.AsString));
+    End; //If sTipo='P' Then
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+    If Pos('P', sTipo)<>0 Then
+    Begin
+      DMCentralTrocas.CDS_QtdCxCDProdutos.Close;
+      DMCentralTrocas.CDS_QtdCxCDProdutos.Open;
+      DMCentralTrocas.CDS_QtdCxCDProdutos.Locate('CODIGO',sgCodProduto,[]);
+    End;
+
+    If Pos('G', sTipo)<>0 Then
+    Begin
+      DMCentralTrocas.CDS_QtdCxCDGrupos.Close;
+      DMCentralTrocas.CDS_QtdCxCDGrupos.Open;
+      DMCentralTrocas.CDS_QtdCxCDGrupos.Locate('CODIGO',sgCodGrupo+sgCodSubGrupo,[]);
+    End;
+  Except
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      OdirPanApres.Visible:=False;
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try
+
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+
+  // lIMPA cOMPONETES ==========================================================
+  sgCodProduto:='';
+  EdtQtdCaixaCDCodProd.Clear;
+  EdtQtdCaixaCDQtdCxProd.Clear;
+  EdtQtdCaixaCDPercCxProd.Clear;
+  EdtQtdCaixaCDDesProd.Clear;
+
+  sgCodGrupo   :='';
+  sgDesGrupo   :='';
+  sgCodSubGrupo:='';
+  sgDesSubGrupo:='';
+
+  EdtQtdCaixaCDQtdCxGrupo.Clear;
+  EdtQtdCaixaCDPercCxGrupo.Clear;
+  EdtQtdCaixaCDDesGrupo.Clear;
+End; // Atualiza PROD_CAIXA_CD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Verifica a Existencia de Produtos Sem Preco de Custo a Transferir para Pedido do SIDICOM
 Function TFrmCentralTrocas.VerificaPrecosItens: Boolean;
@@ -2733,20 +2895,24 @@ begin
            ' FROM PRODUTO pr';
 
            If bCodBarras Then
-            MySql:=MySql+' WHERE Trim(pr.codbarra)='+QuotedStr(EdtNotasEntDevCodProduto.Text)
+            MySql:=
+             MySql+' WHERE Trim(pr.codbarra)='+QuotedStr(EdtNotasEntDevCodProduto.Text)
            Else
-            MySql:=MySql+' WHERE pr.codproduto='+QuotedStr(EdtNotasEntDevCodProduto.Text);
+            MySql:=
+             MySql+' WHERE pr.codproduto='+QuotedStr(EdtNotasEntDevCodProduto.Text);
     MySql:=
      MySql+' UNION'+
 
            ' SELECT p.apresentacao, b.codproduto'+
            ' FROM PRODUTO p, PRODUTOSBARRA b'+
            ' WHERE p.codproduto=b.codproduto';
-                                                              
+
            If bCodBarras Then
-            MySql:=MySql+' AND Trim(b.codbarra)='+QuotedStr(EdtNotasEntDevCodProduto.Text)
+            MySql:=
+             MySql+' AND Trim(b.codbarra)='+QuotedStr(EdtNotasEntDevCodProduto.Text)
            Else
-            MySql:=MySql+' AND   p.codproduto='+QuotedStr(EdtNotasEntDevCodProduto.Text);
+            MySql:=
+             MySql+' AND   p.codproduto='+QuotedStr(EdtNotasEntDevCodProduto.Text);
     IBQ_MPMS.Close;
     IBQ_MPMS.SQL.Clear;
     IBQ_MPMS.SQL.Add(MySql);
@@ -3018,8 +3184,10 @@ begin
   // ========== EXECUTA QUERY PARA PESQUISA ====================================
   Screen.Cursor:=crAppStart;
 
-  MySql:=' select p.Apresentacao Produto, p.CodProduto'+
-         ' from produto p'+
+  MySql:=' SELECT p.Apresentacao Produto, p.CodProduto'+
+         ' FROM PRODUTO p'+
+         ' WHERE p.principalfor NOT IN (''000300'', ''000500'', ''000883'', ''010000'', ''001072'')'+
+         ' AND   p.codaplicacao NOT IN (''0016'', ''0015'', ''0017'')'+
          ' Order by p.Apresentacao';
   FrmPesquisaIB.IBCDS_Pesquisa.Close;
   FrmPesquisaIB.IBCDS_Pesquisa.CommandText:=MySql;
@@ -3057,7 +3225,6 @@ begin
     EdtNotasEntDevDesProduto.Text:=FrmPesquisaIB.IBCDS_Pesquisa.FieldByName('Produto').AsString;
     EdtNotasEntDevQtdDevulocao.SetFocus;
   End; // If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0')Then
-
 
   FrmPesquisaIB.IBCDS_Pesquisa.Close;
   FreeAndNil(FrmPesquisaIB);
@@ -3846,6 +4013,8 @@ end;
 
 procedure TFrmCentralTrocas.EdtNotasEntDevCodProdutoChange(Sender: TObject);
 begin
+  // Usado em: EdtQtdCaixaCDCodProdChange
+
   If Trim((Sender as TEdit).Name)='EdtNotasEntDevCodProduto' Then
   Begin
     If Length(EdtNotasEntDevCodProduto.Text)=13 Then
@@ -3855,6 +4024,15 @@ begin
     End;
   End;
 
+  If Trim((Sender as TEdit).Name)='EdtQtdCaixaCDCodProd' Then
+  Begin
+    If (Length(EdtQtdCaixaCDCodProd.Text)<6) Or ((Length(EdtQtdCaixaCDCodProd.Text)>6) and (Length(EdtQtdCaixaCDCodProd.Text)<13)) Then
+    Begin
+      EdtQtdCaixaCDQtdCxProd.Value:=0;
+      EdtQtdCaixaCDPercCxProd.Value:=0;
+      EdtQtdCaixaCDDesProd.Clear;
+    End;
+  End;
 end;
 
 procedure TFrmCentralTrocas.EdtNotasEntDevContaBarrasChange(Sender: TObject);
@@ -5058,7 +5236,7 @@ end;
 
 procedure TFrmCentralTrocas.PC_PrincipalChange(Sender: TObject);
 Var
-  MySqL: String;
+  MySql: String;
 begin
   CorSelecaoTabSheet(PC_Principal);
 
@@ -5100,6 +5278,18 @@ begin
     Cbx_AnaliseReposMes.ItemIndex:=MonthOf(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor))-1;
     Cbx_AnaliseReposMes.SetFocus;
   End;
+
+  If (PC_Principal.ActivePage=Ts_QtdCaixaCD) And (Ts_QtdCaixaCD.CanFocus) Then
+  Begin
+    Screen.Cursor:=crAppStart;
+
+    DMCentralTrocas.CDS_QtdCxCDProdutos.Open;
+    DMCentralTrocas.CDS_QtdCxCDGrupos.Open;
+
+    EdtQtdCaixaCDCodProd.SetFocus;
+    Screen.Cursor:=crDefault;
+  End; // If (PC_Principal.ActivePage=Ts_QtdCaixaCD) And (Ts_QtdCaixaCD.CanFocus) Then
+
 end;
 
 procedure TFrmCentralTrocas.CkB_ReposLojasOBSClick(Sender: TObject);
@@ -5657,6 +5847,407 @@ begin
     Bt_ReposLojasGeraPedidoSIDICOM.Enabled:=(Not Bt_ReposLojasGeraPedidoSIDICOM.Enabled);
   End;
 
+end;
+
+procedure TFrmCentralTrocas.EdtQtdCaixaCDCodProdExit(Sender: TObject);
+Var
+  MySql: String;
+  bCodBarras: Boolean;
+begin
+
+  // Verifica se é Busca por Codigo dxe Barras =================================
+  bCodBarras:=True;
+  If Length(EdtQtdCaixaCDCodProd.Text)<7 Then
+   bCodBarras:=False;
+
+  sgCodProduto:='';
+  EdtQtdCaixaCDQtdCxProd.Value:=0;
+  EdtQtdCaixaCDPercCxProd.Value:=0;
+  EdtQtdCaixaCDDesProd.Clear;
+
+  If Trim(EdtQtdCaixaCDCodProd.Text)='' Then
+   EdtQtdCaixaCDCodProd.Text:='0';
+
+  If (Length(EdtQtdCaixaCDCodProd.Text)<7) and (Trim(EdtQtdCaixaCDCodProd.Text)<>'0') Then
+   EdtQtdCaixaCDCodProd.Text:=FormatFloat('000000',StrToInt(EdtQtdCaixaCDCodProd.Text));
+
+  If (EdtQtdCaixaCDCodProd.Text<>'000000') And (EdtQtdCaixaCDCodProd.Text<>'0') Then
+  Begin
+    Screen.Cursor:=crAppStart;
+
+    // Busca Produtos ==========================================================
+    MySql:=' SELECT pr.apresentacao, pr.codproduto'+
+           ' FROM PRODUTO pr';
+
+           If bCodBarras Then
+            MySql:=
+             MySql+' WHERE Trim(pr.codbarra)='+QuotedStr(EdtQtdCaixaCDCodProd.Text)
+           Else
+            MySql:=
+             MySql+' WHERE pr.codproduto='+QuotedStr(EdtQtdCaixaCDCodProd.Text);
+
+    MySql:=
+     MySql+' UNION'+
+
+           ' SELECT p.apresentacao, b.codproduto'+
+           ' FROM PRODUTO p, PRODUTOSBARRA b'+
+           ' WHERE p.codproduto=b.codproduto';
+
+           If bCodBarras Then
+            MySql:=
+             MySql+' AND Trim(b.codbarra)='+QuotedStr(EdtQtdCaixaCDCodProd.Text)
+           Else
+            MySql:=
+             MySql+' AND   p.codproduto='+QuotedStr(EdtQtdCaixaCDCodProd.Text);
+    IBQ_MPMS.Close;
+    IBQ_MPMS.SQL.Clear;
+    IBQ_MPMS.SQL.Add(MySql);
+    IBQ_MPMS.Open;
+
+    Screen.Cursor:=crDefault;
+
+    If Trim(IBQ_MPMS.FieldByName('CodProduto').AsString)='' Then
+    Begin
+      msg('Produto NÃO Encontrado !!!', 'A');
+      IBQ_MPMS.Close;
+      EdtQtdCaixaCDCodProd.Text:='0';
+      EdtQtdCaixaCDCodProd.SetFocus;
+      Exit;
+    End; // If Trim(IBQ_MPMS.FieldByName('CodProduto').AsString)='' Then
+
+    sgCodProduto:=IBQ_MPMS.FieldByName('CodProduto').AsString;
+    EdtQtdCaixaCDDesProd.Text:=IBQ_MPMS.FieldByName('Apresentacao').AsString;
+
+    IBQ_MPMS.Close;
+
+    EdtQtdCaixaCDQtdCxProd.SetFocus;
+  End; // If EdtQtdCaixaCDCodProd.Text<>'000000' Then
+end;
+
+procedure TFrmCentralTrocas.Bt_QtdCaixaCDBuscaProdClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  EdtQtdCaixaCDCodProd.SetFocus;
+
+  sgCodProduto:='';
+  EdtQtdCaixaCDCodProd.Clear;
+  EdtQtdCaixaCDQtdCxProd.Value:=0;
+  EdtQtdCaixaCDPercCxProd.Value:=0;
+  EdtQtdCaixaCDDesProd.Clear;
+  Refresh;
+
+  // ========== EFETUA A CONEXÃO ===============================================
+  FrmPesquisaIB:=TFrmPesquisaIB.Create(Self);
+
+  FrmPesquisaIB.IBCDS_Pesquisa.DBConnection:=IBQ_MPMS.Database;
+  FrmPesquisaIB.IBCDS_Pesquisa.DBTransaction:=IBQ_MPMS.Transaction;
+
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  MySql:=' SELECT TRIM(p.Apresentacao) Produto, p.CodProduto'+
+         ' FROM PRODUTO p'+
+         ' WHERE p.principalfor NOT IN (''000300'', ''000500'', ''000883'', ''010000'', ''001072'')'+
+         ' AND   p.codaplicacao NOT IN (''0016'', ''0015'', ''0017'')'+
+         ' Order by p.Apresentacao';
+  FrmPesquisaIB.IBCDS_Pesquisa.Close;
+  FrmPesquisaIB.IBCDS_Pesquisa.CommandText:=MySql;
+  FrmPesquisaIB.IBCDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(FrmPesquisaIB.IBCDS_Pesquisa.FieldByName('CodProduto').AsString)='' Then
+  Begin
+    msg('Sem Produto a Listar !!','A');
+    EdtQtdCaixaCDCodProd.Clear;
+    FrmPesquisaIB.IBCDS_Pesquisa.Close;
+    FreeAndNil(FrmPesquisaIB);
+    EdtQtdCaixaCDCodProd.SetFocus;
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisaIB.Campo_pesquisa:='Produto';
+  FrmPesquisaIB.Campo_Codigo:='CodProduto';
+  FrmPesquisaIB.Campo_Descricao:='Produto';
+  FrmPesquisaIB.EdtDescricao.Clear;
+  FrmPesquisaIB.Campo_Retorno1:='';
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisaIB.ShowModal;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0')Then
+  Begin
+    sgCodProduto:=FrmPesquisaIB.IBCDS_Pesquisa.FieldByName('CodProduto').AsString;
+
+    EdtQtdCaixaCDCodProd.Text:=FrmPesquisaIB.IBCDS_Pesquisa.FieldByName('CodProduto').AsString;
+    EdtQtdCaixaCDDesProd.Text:=FrmPesquisaIB.IBCDS_Pesquisa.FieldByName('Produto').AsString;
+    EdtQtdCaixaCDQtdCxProd.SetFocus;
+  End; // If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0')Then
+
+  FrmPesquisaIB.IBCDS_Pesquisa.Close;
+  FreeAndNil(FrmPesquisaIB);
+end;
+
+procedure TFrmCentralTrocas.Bt_QtdCaixaCDBuscaGrupoClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  sgCodGrupo   :='';
+  sgDesGrupo   :='';
+  sgCodSubGrupo:='';
+  sgDesSubGrupo:='';
+
+  EdtQtdCaixaCDDesGrupo.Clear;
+
+  // ========== EFETUA A CONEXÃO ===============================================
+  FrmPesquisaIB:=TFrmPesquisaIB.Create(Self);
+
+  FrmPesquisaIB.IBCDS_Pesquisa.DBConnection:=IBQ_MPMS.Database;
+  FrmPesquisaIB.IBCDS_Pesquisa.DBTransaction:=IBQ_MPMS.Transaction;
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  MySql:=' select TRIM(g.NomeGrupo) NomeGrupo, TRIM(g.CodGrupo) CodGrupo'+
+         ' from Grupo g'+
+         ' order by g.nomegrupo';
+  FrmPesquisaIB.IBCDS_Pesquisa.Close;
+  FrmPesquisaIB.IBCDS_Pesquisa.CommandText:=MySql;
+  FrmPesquisaIB.IBCDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(FrmPesquisaIB.IBCDS_Pesquisa.FieldByName('CodGrupo').AsString)='' Then
+  Begin
+    msg('Sem Grupo a Listar !!','A');
+    FreeAndNil(FrmPesquisaIB);
+    Dbg_QtdsCaixaCDGrupos.SetFocus;
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisaIB.Campo_pesquisa:='NomeGrupo';
+  FrmPesquisaIB.Campo_Codigo:='CodGrupo';
+  FrmPesquisaIB.Campo_Descricao:='NomeGrupo';
+  FrmPesquisaIB.EdtDescricao.Clear;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisaIB.ShowModal;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') And (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0') Then
+  Begin
+    EdtQtdCaixaCDDesGrupo.Text:=FrmPesquisaIB.EdtDescricao.Text;
+
+    sgCodGrupo:=FrmPesquisaIB.EdtCodigo.Text;
+    sgDesGrupo:=FrmPesquisaIB.EdtDescricao.Text;
+  End; // If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') And (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0') Then
+
+  FreeAndNil(FrmPesquisaIB);
+end;
+
+procedure TFrmCentralTrocas.Bt_QtdCaixaCDBuscaSubGrupoClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  If Trim(sgDesGrupo)='' Then
+  Begin
+    msg('Favor Informar o Grupo de Produtos !!','A');
+    Dbg_QtdsCaixaCDGrupos.SetFocus;
+    Exit;
+  End;
+
+  // ========== EFETUA A CONEXÃO ===============================================
+  FrmPesquisaIB:=TFrmPesquisaIB.Create(Self);
+
+  FrmPesquisaIB.IBCDS_Pesquisa.DBConnection:=IBQ_MPMS.Database;
+  FrmPesquisaIB.IBCDS_Pesquisa.DBTransaction:=IBQ_MPMS.Transaction;
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  MySql:=' select TRIM(sg.NomeSubGrupo) NomeSubGrupo, TRIM(sg.CodSubGrupo) CodSubGrupo'+
+         ' from GrupoSub sg'+
+         ' where sg.codgrupo='+QuotedStr(sgCodGrupo)+
+         ' order by sg.NomeSubGrupo';
+  FrmPesquisaIB.IBCDS_Pesquisa.Close;
+  FrmPesquisaIB.IBCDS_Pesquisa.CommandText:=MySql;
+  FrmPesquisaIB.IBCDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(FrmPesquisaIB.IBCDS_Pesquisa.FieldByName('CodSubGrupo').AsString)='' Then
+  Begin
+    msg('Sem Registro a Listar !!','A');
+    FreeAndNil(FrmPesquisaIB);
+    Dbg_QtdsCaixaCDGrupos.SetFocus;
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisaIB.Campo_pesquisa:='NomeSubGrupo';
+  FrmPesquisaIB.Campo_Codigo:='CodSubGrupo';
+  FrmPesquisaIB.Campo_Descricao:='NomeSubGrupo';
+  FrmPesquisaIB.EdtDescricao.Clear;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisaIB.ShowModal;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') And (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0') Then
+  Begin
+    sgCodSubGrupo:=FrmPesquisaIB.EdtCodigo.Text;
+    sgDesSubGrupo:=FrmPesquisaIB.EdtDescricao.Text;
+
+    EdtQtdCaixaCDDesGrupo.Text:=sgDesGrupo+' - '+FrmPesquisaIB.EdtDescricao.Text;
+  End; // If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') And (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0') Then
+
+  FreeAndNil(FrmPesquisaIB);
+  SelectNext(ActiveControl,True,True);
+end;
+
+procedure TFrmCentralTrocas.Bt_QtdCaixaCDIncluirGrupoClick(Sender: TObject);
+begin
+  If Trim(sgDesGrupo)='' Then
+  Begin
+    msg('Favor Informar o Grupo de Produtos !!','A');
+    Dbg_QtdsCaixaCDGrupos.SetFocus;
+    Exit;
+  End;
+
+  If Trim(sgCodSubGrupo)='' Then
+  Begin
+    If msg('SubGrupo Não Informado ??'+cr+cr+'Manter SEM ??','C')=2 Then
+    Begin
+      Dbg_QtdsCaixaCDGrupos.SetFocus;
+      Exit;
+    End;
+  End;
+
+  If EdtQtdCaixaCDQtdCxGrupo.Value<1 Then
+  Begin
+    msg('Favor Informar a Quantidade'+cr+cr+'por Caixa do Grupo !!','A');
+    EdtQtdCaixaCDQtdCxGrupo.SetFocus;
+    Exit;
+  End;
+
+  If EdtQtdCaixaCDPercCxGrupo.Value=0 Then
+  Begin
+    If msg('O Percentual Zero Esta Correto ??','C')=2 Then
+    Begin
+      EdtQtdCaixaCDPercCxGrupo.SetFocus;
+      Exit;
+    End;
+  End;
+
+  // Verifica a Existencia do Grupo/SubGrupo ===================================
+  If DMCentralTrocas.CDS_QtdCxCDGrupos.Locate('CODIGO',sgCodGrupo+sgCodSubGrupo,[]) Then
+  Begin
+    If msg('Grupo/SubGrupo Já Informado !!'+cr+cr+'Deseja Alterá-lo ??','C')=2 Then
+    Begin
+      sgCodGrupo   :='';
+      sgDesGrupo   :='';
+      sgCodSubGrupo:='';
+      sgDesSubGrupo:='';
+
+      EdtQtdCaixaCDQtdCxGrupo.Clear;
+      EdtQtdCaixaCDPercCxGrupo.Value:=0;
+      EdtQtdCaixaCDDesGrupo.Clear;
+
+      Dbg_QtdsCaixaCDGrupos.SetFocus;
+      Exit;
+    End;
+  End;
+
+  // Atualiza PROD_CAIXA_CD ====================================================
+  AtualizaPROD_CAIXA_CD('iG');
+
+  Dbg_QtdsCaixaCDGrupos.SetFocus;
+
+end;
+
+procedure TFrmCentralTrocas.Bt_QtdCaixaCDIncluirProdClick(Sender: TObject);
+begin
+  If Trim(EdtQtdCaixaCDDesProd.Text)='' Then
+  Begin
+    msg('Favor Informar o Produto !!','A');
+    EdtQtdCaixaCDCodProd.SetFocus;
+    Exit;
+  End;
+
+  If EdtQtdCaixaCDQtdCxProd.Value<1 Then
+  Begin
+    msg('Favor Informar a Quantidade'+cr+cr+'por Caixa do Produto !!','A');
+    EdtQtdCaixaCDQtdCxProd.SetFocus;
+    Exit;
+  End;
+
+  If EdtQtdCaixaCDPercCxProd.Value=0 Then
+  Begin
+    If msg('O Percentual Zero Esta Correto ??','C')=2 Then
+    Begin
+      EdtQtdCaixaCDPercCxProd.SetFocus;
+      Exit;
+    End;
+  End;
+
+  // Verifica a Existencia do Produto ==========================================
+  If DMCentralTrocas.CDS_QtdCxCDProdutos.Locate('CODIGO',sgCodProduto,[]) Then
+  Begin
+    If msg('Produto Já Informado !!'+cr+cr+'Deseja Alterá-lo ??','C')=2 Then
+    Begin
+      sgCodProduto:='';
+      EdtQtdCaixaCDCodProd.Clear;
+      EdtQtdCaixaCDQtdCxProd.Value:=0;
+      EdtQtdCaixaCDPercCxProd.Value:=0;
+      EdtQtdCaixaCDDesProd.Clear;
+
+      EdtQtdCaixaCDCodProd.SetFocus;
+      Exit;
+    End;
+  End;
+
+  // Atualiza PROD_CAIXA_CD ====================================================
+  AtualizaPROD_CAIXA_CD('iP');
+
+  EdtQtdCaixaCDCodProd.SetFocus;
+end;
+
+procedure TFrmCentralTrocas.Dbg_QtdsCaixaCDProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  If DMCentralTrocas.CDS_QtdCxCDProdutos.IsEmpty Then
+   Exit;
+
+  // Exclui Produto ============================================================
+  If (Key=VK_Delete) Then
+  Begin
+    If msg('Deseja Realmente EXCLUIR'+cr+cr+'o Produto Selecionado ??','C')=2 Then
+     Exit;
+
+    AtualizaPROD_CAIXA_CD('eP');
+  End; // If (Key=VK_Delete) Then
+end;
+
+procedure TFrmCentralTrocas.Dbg_QtdsCaixaCDGruposKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  If DMCentralTrocas.CDS_QtdCxCDGrupos.IsEmpty Then
+   Exit;
+
+  // Exclui Produto ============================================================
+  If (Key=VK_Delete) Then
+  Begin
+    If msg('Deseja Realmente EXCLUIR'+cr+cr+'o Grupo/SubGrupo Selecionado ??','C')=2 Then
+     Exit;
+
+    AtualizaPROD_CAIXA_CD('eG');
+  End; // If (Key=VK_Delete) Then
 end;
 
 end.

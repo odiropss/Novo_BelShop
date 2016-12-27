@@ -26,12 +26,12 @@ object DMCentralTrocas: TDMCentralTrocas
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 48
-    Top = 8
+    Top = 40
   end
   object DSP_Transf_Cd: TDataSetProvider
     DataSet = SDS_Transf_Cd
     Left = 104
-    Top = 24
+    Top = 56
   end
   object CDS_Transf_Cd: TClientDataSet
     Aggregates = <>
@@ -40,7 +40,7 @@ object DMCentralTrocas: TDMCentralTrocas
     ProviderName = 'DSP_Transf_Cd'
     AfterScroll = CDS_Transf_CdAfterScroll
     Left = 165
-    Top = 8
+    Top = 40
     object CDS_Transf_CdNUM_SOLICITACAO: TIntegerField
       FieldName = 'NUM_SOLICITACAO'
     end
@@ -120,14 +120,14 @@ object DMCentralTrocas: TDMCentralTrocas
   object DS_Transf_Cd: TDataSource
     DataSet = CDS_Transf_Cd
     Left = 216
-    Top = 24
+    Top = 56
   end
   object CDS_NotasEntrada: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_NotasEntrada'
     Left = 155
-    Top = 80
+    Top = 112
     object CDS_NotasEntradaNUM_SOLICITACAO: TIntegerField
       FieldName = 'NUM_SOLICITACAO'
     end
@@ -237,17 +237,17 @@ object DMCentralTrocas: TDMCentralTrocas
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 40
-    Top = 80
+    Top = 112
   end
   object DSP_NotasEntrada: TDataSetProvider
     DataSet = SDS_NotasEntrada
     Left = 96
-    Top = 96
+    Top = 128
   end
   object DS_NotasEntrada: TDataSource
     DataSet = CDS_NotasEntrada
     Left = 208
-    Top = 96
+    Top = 128
   end
   object CDS_NotasEntr: TClientDataSet
     Aggregates = <>
@@ -514,7 +514,7 @@ object DMCentralTrocas: TDMCentralTrocas
     Params = <>
     ProviderName = 'DSP_ReposicaoDocs'
     AfterScroll = CDS_ReposicaoDocsAfterScroll
-    Left = 515
+    Left = 507
     Top = 96
     object CDS_ReposicaoDocsCOD_LOJA: TStringField
       Alignment = taRightJustify
@@ -597,7 +597,7 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DS_ReposicaoDocs: TDataSource
     DataSet = CDS_ReposicaoDocs
-    Left = 584
+    Left = 576
     Top = 112
   end
   object CDS_ReposicaoTransf: TClientDataSet
@@ -605,7 +605,7 @@ object DMCentralTrocas: TDMCentralTrocas
     IndexFieldNames = 'ENDERECO; DES_PRODUTO'
     Params = <>
     ProviderName = 'DSP_ReposicaoTransf'
-    Left = 515
+    Left = 507
     Top = 160
     object CDS_ReposicaoTransfNUM_SEQ: TSmallintField
       DisplayLabel = 'Seq'
@@ -713,7 +713,7 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DS_ReposicaoTransf: TDataSource
     DataSet = CDS_ReposicaoTransf
-    Left = 584
+    Left = 576
     Top = 176
   end
   object SDS_RelReposicao: TSQLDataSet
@@ -753,7 +753,7 @@ object DMCentralTrocas: TDMCentralTrocas
     Params = <>
     ProviderName = 'DSP_RelReposicao'
     AfterScroll = CDS_Transf_CdAfterScroll
-    Left = 510
+    Left = 507
     Top = 232
     object CDS_RelReposicaoLOJA: TStringField
       FieldName = 'LOJA'
@@ -822,5 +822,108 @@ object DMCentralTrocas: TDMCentralTrocas
     AfterScroll = CDS_Transf_CdAfterScroll
     Left = 790
     Top = 48
+  end
+  object CDS_QtdCxCDProdutos: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_QtdCxCDProdutos'
+    Left = 512
+    Top = 352
+    object CDS_QtdCxCDProdutosCODIGO: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'C'#243'd'
+      FieldName = 'CODIGO'
+      FixedChar = True
+      Size = 6
+    end
+    object CDS_QtdCxCDProdutosDESCRICAO: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      FieldName = 'DESCRICAO'
+      Size = 80
+    end
+    object CDS_QtdCxCDProdutosQTD_CAIXA: TIntegerField
+      DisplayLabel = 'Qt Caixa'
+      FieldName = 'QTD_CAIXA'
+      DisplayFormat = '0,'
+    end
+    object CDS_QtdCxCDProdutosPER_CORTE: TIntegerField
+      DisplayLabel = '% Corte Cx'
+      FieldName = 'PER_CORTE'
+      DisplayFormat = '0, %'
+    end
+  end
+  object SDS_QtdCxCDProdutos: TSQLDataSet
+    CommandText = 
+      'select'#13#10'c.cod_produto Codigo,'#13#10'Trim(p.apresentacao) Descricao,'#13#10 +
+      'c.qtd_caixa,'#13#10'c.per_corte'#13#10#13#10'from prod_caixa_cd c, produto p'#13#10'wh' +
+      'ere p.codproduto=c.cod_produto'#13#10'order by 2'
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 400
+    Top = 352
+  end
+  object DSP_QtdCxCDProdutos: TDataSetProvider
+    DataSet = SDS_QtdCxCDProdutos
+    Options = [poRetainServerOrder]
+    Left = 456
+    Top = 368
+  end
+  object DS_QtdCxCDProdutos: TDataSource
+    DataSet = CDS_QtdCxCDProdutos
+    Left = 573
+    Top = 368
+  end
+  object CDS_QtdCxCDGrupos: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_QtdCxCDGrupos'
+    Left = 512
+    Top = 424
+    object CDS_QtdCxCDGruposCODIGO: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Cod'
+      FieldName = 'CODIGO'
+      Size = 7
+    end
+    object CDS_QtdCxCDGruposDESCRICAO: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      FieldName = 'DESCRICAO'
+      Size = 63
+    end
+    object CDS_QtdCxCDGruposQTD_CAIXA: TIntegerField
+      DisplayLabel = 'Qt Caixa'
+      FieldName = 'QTD_CAIXA'
+      DisplayFormat = '0,'
+    end
+    object CDS_QtdCxCDGruposPER_CORTE: TIntegerField
+      DisplayLabel = '% Corte Cx'
+      FieldName = 'PER_CORTE'
+      DisplayFormat = '0, %'
+    end
+  end
+  object SDS_QtdCxCDGrupos: TSQLDataSet
+    CommandText = 
+      'select'#13#10'c.cod_grupo||coalesce(c.cod_subgrupo,'#39#39') Codigo,'#13#10'Case'#13#10 +
+      '  when coalesce(Trim(c.des_subgrupo),'#39#39')='#39#39' Then'#13#10'    Trim(c.des' +
+      '_grupo)'#13#10'  Else'#13#10'    Trim(c.des_grupo)||'#39' - '#39'||coalesce(Trim(c.d' +
+      'es_subgrupo),'#39#39')'#13#10'end Descricao,'#13#10'c.qtd_caixa,'#13#10'c.per_corte'#13#10#13#10'f' +
+      'rom prod_caixa_cd c'#13#10'Where c.cod_produto is null'#13#10'order by 2'#13#10
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 400
+    Top = 424
+  end
+  object DSP_QtdCxCDGrupos: TDataSetProvider
+    DataSet = SDS_QtdCxCDGrupos
+    Options = [poRetainServerOrder]
+    Left = 456
+    Top = 440
+  end
+  object DS_QtdCxCDGrupos: TDataSource
+    DataSet = CDS_QtdCxCDGrupos
+    Left = 573
+    Top = 440
   end
 end

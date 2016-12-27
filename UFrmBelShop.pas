@@ -25890,7 +25890,7 @@ begin
   // ========== EXECUTA QUERY PARA PESQUISA ====================================
   Screen.Cursor:=crAppStart;
 
-  MySql:='select g.nomegrupo, g.codGrupo'+
+  MySql:=' select TRIM(g.NomeGrupo) NomeGrupo, TRIM(g.CodGrupo) CodGrupo'+
          ' from Grupo g'+
          ' order by g.nomegrupo';
   FrmPesquisaIB.IBCDS_Pesquisa.Close;
@@ -25962,7 +25962,7 @@ begin
   // ========== EXECUTA QUERY PARA PESQUISA ====================================
   Screen.Cursor:=crAppStart;
 
-  MySql:='select sg.NomeSubGrupo, sg.CodSubGrupo'+
+  MySql:=' select TRIM(sg.NomeSubGrupo) NomeSubGrupo, TRIM(sg.CodSubGrupo) CodSubGrupo'+
          ' from GrupoSub sg'+
          ' where sg.codgrupo='+
          QuotedStr(DMVirtual.CDS_V_GruposProdutosCod_Grupo.AsString)+

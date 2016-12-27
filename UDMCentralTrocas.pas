@@ -131,6 +131,22 @@ type
     CDS_ReposicaoTransfQTD_TRANSF: TFMTBCDField;
     CDS_ReposicaoTransfQTD_TRANSF_OC: TFMTBCDField;
     CDS_ReposicaoTransfPRECOCOMPRA: TFMTBCDField;
+    CDS_QtdCxCDProdutos: TClientDataSet;
+    SDS_QtdCxCDProdutos: TSQLDataSet;
+    DSP_QtdCxCDProdutos: TDataSetProvider;
+    DS_QtdCxCDProdutos: TDataSource;
+    CDS_QtdCxCDGrupos: TClientDataSet;
+    SDS_QtdCxCDGrupos: TSQLDataSet;
+    DSP_QtdCxCDGrupos: TDataSetProvider;
+    DS_QtdCxCDGrupos: TDataSource;
+    CDS_QtdCxCDGruposCODIGO: TStringField;
+    CDS_QtdCxCDGruposDESCRICAO: TStringField;
+    CDS_QtdCxCDGruposQTD_CAIXA: TIntegerField;
+    CDS_QtdCxCDGruposPER_CORTE: TIntegerField;
+    CDS_QtdCxCDProdutosCODIGO: TStringField;
+    CDS_QtdCxCDProdutosDESCRICAO: TStringField;
+    CDS_QtdCxCDProdutosQTD_CAIXA: TIntegerField;
+    CDS_QtdCxCDProdutosPER_CORTE: TIntegerField;
 //    IBQ_SID_PedidoODIR: TIBQuery;
 //    IBU_SID_PedidoODIR: TIBUpdateSQL;
 //    IBQ_SID_PedidoODIRCODPEDIDO: TIBStringField;
@@ -502,3 +518,4 @@ begin
 end;
 
 end.
+

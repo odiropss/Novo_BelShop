@@ -4952,7 +4952,7 @@ begin
       Break;
     End; // If iNumTentativas>9 Then
 
-    // Enceera se Chegou as 08 horas da Manhã ==================================
+    // Encerra se Chegou as 08 horas da Manhã ==================================
     If StrToInt(copy(TimeToStr(Now),1,2))=8 Then
     Begin
       Lbx_EmpresasProcessar.Items.Clear;
@@ -4962,11 +4962,13 @@ begin
     DMMovtosEmpresas.CDS_EmpProcessa.Next;
   End; // While Not DMMovtosEmpresas.CDS_EmpProcessa.Eof do
 
-  If Lbx_EmpresasProcessar.Items.Count>0 Then
-  Begin
-    Bt_AtualizarClick(Self);
-    Exit;
-  End;
+// Retirei Não Roda mais de uma vez ===================
+//  If Lbx_EmpresasProcessar.Items.Count>0 Then
+//  Begin
+//    Bt_AtualizarClick(Self);
+//    Exit;
+//  End;
+// Retirei Não Roda mais de uma vez ===================
 
   // Verifica Processamento ====================================================
   VerificaProcessamento;

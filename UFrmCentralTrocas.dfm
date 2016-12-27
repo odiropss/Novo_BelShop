@@ -2449,6 +2449,28 @@ object FrmCentralTrocas: TFrmCentralTrocas
         BevelInner = bvLowered
         BorderStyle = bsSingle
         TabOrder = 0
+        object Edit1: TEdit
+          Left = 7
+          Top = 8
+          Width = 453
+          Height = 19
+          Enabled = False
+          ParentColor = True
+          TabOrder = 0
+          Text = 
+            'Percentual = 0 <zero> a Reposi'#231#227'o Ser'#225' pelo Multiplo da Quantida' +
+            'de da Caixa'
+        end
+        object Edit2: TEdit
+          Left = 463
+          Top = 8
+          Width = 282
+          Height = 19
+          Enabled = False
+          ParentColor = True
+          TabOrder = 1
+          Text = 'Para Exluir: Selecione no Grid e Tecle <Delete>'
+        end
       end
       object Gb_QtdCaixaCDProdutos: TGroupBox
         Left = 0
@@ -2517,6 +2539,8 @@ object FrmCentralTrocas: TFrmCentralTrocas
             ParentFont = False
             TabOrder = 0
             Text = '0'
+            OnChange = EdtNotasEntDevCodProdutoChange
+            OnExit = EdtQtdCaixaCDCodProdExit
             OnKeyPress = EdtNotasEntDevCodProdutoKeyPress
           end
           object EdtQtdCaixaCDDesProd: TEdit
@@ -2604,7 +2628,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             ParentFont = False
             ParentShowHint = False
             ShowHint = False
-            OnClick = Bt_NotasEntDevBuscaProdutoClick
+            OnClick = Bt_QtdCaixaCDBuscaProdClick
           end
           object EdtQtdCaixaCDQtdCxProd: TCurrencyEdit
             Left = 271
@@ -2623,16 +2647,17 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Height = 21
             AutoSize = False
             DecimalPlaces = 0
-            DisplayFormat = ',0'
+            DisplayFormat = ',0 %'
+            MaxValue = 100.000000000000000000
             TabOrder = 2
           end
           object Bt_QtdCaixaCDIncluirProd: TJvXPButton
             Tag = 1
-            Left = 356
-            Top = 14
-            Width = 112
-            Height = 31
-            Caption = 'Incluir'
+            Left = 360
+            Top = 11
+            Width = 105
+            Height = 37
+            Caption = ' Incluir Produto'
             TabOrder = 3
             Glyph.Data = {
               07544269746D61708A010000424D8A0100000000000076000000280000001800
@@ -2657,7 +2682,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             ParentFont = False
             ParentShowHint = False
             ShowHint = False
-            OnClick = Bt_NotasEntDevIncluirClick
+            OnClick = Bt_QtdCaixaCDIncluirProdClick
           end
         end
         object Dbg_QtdsCaixaCDProdutos: TDBGridJul
@@ -2666,6 +2691,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Width = 480
           Height = 419
           Align = alClient
+          DataSource = DMCentralTrocas.DS_QtdCxCDProdutos
           FixedColor = clSilver
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -2682,8 +2708,39 @@ object FrmCentralTrocas: TFrmCentralTrocas
           TitleFont.Height = -11
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = [fsBold]
-          CorComFoco = clWindow
+          OnKeyDown = Dbg_QtdsCaixaCDProdutosKeyDown
           SairComEnter = False
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'CODIGO'
+              Title.Alignment = taCenter
+              Width = 42
+              Visible = True
+            end
+            item
+              Color = 14737632
+              Expanded = False
+              FieldName = 'DESCRICAO'
+              Width = 280
+              Visible = True
+            end
+            item
+              Color = 14737632
+              Expanded = False
+              FieldName = 'QTD_CAIXA'
+              Title.Alignment = taRightJustify
+              Title.Caption = 'Qt Cx'
+              Width = 45
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'PER_CORTE'
+              Title.Alignment = taRightJustify
+              Width = 70
+              Visible = True
+            end>
         end
       end
       object Gb_QtdCaixaCDGrupos: TGroupBox
@@ -2702,7 +2759,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           TabOrder = 0
           object Label11: TLabel
             Left = 29
-            Top = 12
+            Top = 10
             Width = 74
             Height = 13
             Caption = 'Localizar Grupo'
@@ -2714,7 +2771,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             ParentFont = False
           end
           object Label12: TLabel
-            Left = 169
+            Left = 171
             Top = 11
             Width = 99
             Height = 13
@@ -2727,7 +2784,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             ParentFont = False
           end
           object Label13: TLabel
-            Left = 174
+            Left = 176
             Top = 34
             Width = 94
             Height = 13
@@ -2741,7 +2798,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           end
           object Label14: TLabel
             Left = 10
-            Top = 37
+            Top = 38
             Width = 93
             Height = 13
             Caption = 'Localizar SubGrupo'
@@ -2766,14 +2823,14 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Font.Style = [fsBold]
             ParentFont = False
             ReadOnly = True
-            TabOrder = 4
+            TabOrder = 5
           end
           object Bt_QtdCaixaCDBuscaGrupo: TJvXPButton
             Left = 107
             Top = 4
             Width = 25
             Height = 25
-            TabOrder = 3
+            TabOrder = 0
             TabStop = False
             Glyph.Data = {
               07544269746D61705E060000424D5E0600000000000036040000280000001600
@@ -2837,7 +2894,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             ParentFont = False
             ParentShowHint = False
             ShowHint = False
-            OnClick = Bt_NotasEntDevBuscaProdutoClick
+            OnClick = Bt_QtdCaixaCDBuscaGrupoClick
           end
           object EdtQtdCaixaCDQtdCxGrupo: TCurrencyEdit
             Left = 273
@@ -2847,7 +2904,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             AutoSize = False
             DecimalPlaces = 0
             DisplayFormat = ',0'
-            TabOrder = 0
+            TabOrder = 2
           end
           object EdtQtdCaixaCDPercCxGrupo: TCurrencyEdit
             Left = 273
@@ -2856,17 +2913,18 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Height = 21
             AutoSize = False
             DecimalPlaces = 0
-            DisplayFormat = ',0'
-            TabOrder = 1
+            DisplayFormat = ',0 %'
+            MaxValue = 100.000000000000000000
+            TabOrder = 3
           end
           object Bt_QtdCaixaCDIncluirGrupo: TJvXPButton
             Tag = 1
-            Left = 356
-            Top = 14
-            Width = 112
-            Height = 31
-            Caption = 'Incluir'
-            TabOrder = 2
+            Left = 338
+            Top = 10
+            Width = 135
+            Height = 37
+            Caption = '      Incluir  Grupo SubGrupo'
+            TabOrder = 4
             Glyph.Data = {
               07544269746D61708A010000424D8A0100000000000076000000280000001800
               000017000000010004000000000014010000130B0000130B0000100000000000
@@ -2890,14 +2948,14 @@ object FrmCentralTrocas: TFrmCentralTrocas
             ParentFont = False
             ParentShowHint = False
             ShowHint = False
-            OnClick = Bt_NotasEntDevIncluirClick
+            OnClick = Bt_QtdCaixaCDIncluirGrupoClick
           end
           object Bt_QtdCaixaCDBuscaSubGrupo: TJvXPButton
             Left = 107
             Top = 31
             Width = 25
             Height = 25
-            TabOrder = 5
+            TabOrder = 1
             TabStop = False
             Glyph.Data = {
               07544269746D61705E060000424D5E0600000000000036040000280000001600
@@ -2961,15 +3019,16 @@ object FrmCentralTrocas: TFrmCentralTrocas
             ParentFont = False
             ParentShowHint = False
             ShowHint = False
-            OnClick = Bt_NotasEntDevBuscaProdutoClick
+            OnClick = Bt_QtdCaixaCDBuscaSubGrupoClick
           end
         end
-        object DBGridJul1: TDBGridJul
+        object Dbg_QtdsCaixaCDGrupos: TDBGridJul
           Left = 1
           Top = 95
           Width = 479
           Height = 419
           Align = alClient
+          DataSource = DMCentralTrocas.DS_QtdCxCDGrupos
           FixedColor = clSilver
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -2986,8 +3045,40 @@ object FrmCentralTrocas: TFrmCentralTrocas
           TitleFont.Height = -11
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = [fsBold]
-          CorComFoco = clWindow
+          OnKeyDown = Dbg_QtdsCaixaCDGruposKeyDown
           SairComEnter = False
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'CODIGO'
+              Title.Alignment = taCenter
+              Title.Caption = 'C'#243'd'
+              Width = 48
+              Visible = True
+            end
+            item
+              Color = 14737632
+              Expanded = False
+              FieldName = 'DESCRICAO'
+              Width = 276
+              Visible = True
+            end
+            item
+              Color = 14737632
+              Expanded = False
+              FieldName = 'QTD_CAIXA'
+              Title.Alignment = taRightJustify
+              Title.Caption = 'Qt Cx'
+              Width = 45
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'PER_CORTE'
+              Title.Alignment = taRightJustify
+              Width = 70
+              Visible = True
+            end>
         end
       end
     end

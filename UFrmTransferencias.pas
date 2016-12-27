@@ -1406,6 +1406,4 @@ begin
 end;
 
 end.
-{
-1 - Fornecedores que Não São Processados
-}
+
