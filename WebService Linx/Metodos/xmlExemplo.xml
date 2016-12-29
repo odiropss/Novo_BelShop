@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinxMicrovix>
+<Authentication user="linx_export" password="linx_export" />
+<ResponseFormat>xml</ResponseFormat>
+<Command>
+<Name>LinxMetodos</Name>
+</Command>
+</LinxMicrovix>

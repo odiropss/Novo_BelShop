@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LinxMicrovix>
+<Authentication user="linx_export" password="linx_export"></Authentication>
+<ResponseFormat>xml</ResponseFormat>
+<Command>
+<Name>LinxMovimento</Name>
+<Parameters>
+<Parameter id="chave">d52511f4-3541-4a65-9adc-665513ea3207</Parameter>
+<Parameter id="cnpjEmp">03772229001880</Parameter>
+<Parameter id="data_inicial">2014-01-01</Parameter>
+<Parameter id="data_fim">2016-11-26</Parameter>				
+</Parameters>
+</Command>
+</LinxMicrovix>

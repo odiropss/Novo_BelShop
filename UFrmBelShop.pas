@@ -43454,9 +43454,13 @@ begin
     If Not DMVirtual.CDS_V_CurvaABCEndereco.IsEmpty Then
     Begin
       Dbg_CurvaABCEndCurvaABC.SetFocus;
+      Screen.Cursor:=crAppStart;
+
       DBGridClipboard(Dbg_CurvaABCEndCurvaABC);
       // OdirApagar - 19/12/2016
       // ExportDBGridExcel(True, Dbg_CurvaABCEndCurvaABC, FrmBelShop);
+
+      Screen.Cursor:=crDefault;
     End;
   End; // If Trim((Sender as TJvXPButton).Name)='Bt_CurvaABCEndSalvaProdClipboard' Then
 
@@ -43464,10 +43468,14 @@ begin
   Begin
     If (gCDS_V_Geral<>nil) and (Not gCDS_V_Geral.IsEmpty) Then
     Begin
+      Screen.Cursor:=crAppStart;
+
       Dbg_CurvaABCEndCurvaABCForn.SetFocus;
       DBGridClipboard(Dbg_CurvaABCEndCurvaABCForn);
       // OdirApagar - 19/12/2016
       // ExportDBGridExcel(True, Dbg_CurvaABCEndCurvaABCForn, FrmBelShop);
+
+      Screen.Cursor:=crDefault;
     End;
   End; // If Trim((Sender as TJvXPButton).Name)='Bt_CurvaABCEndSalvaFornClipboard' Then
 
@@ -44232,7 +44240,25 @@ procedure TFrmBelShop.SubMenuCentroDistrReposicoesLojasClick(Sender: TObject);
 Var
   MySql: String;
   b: Boolean;
+  sArq, dir_padrao: String;
+
+  Arq: TextFile;
+  sLinha: String;
 begin
+  dir_padrao   := IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName));
+
+  sArq:=IncludeTrailingPathDelimiter(dir_padrao)+'Arquivo Status Transf\Odir.Txt';
+
+  If FileExists(sArq) Then
+  Begin
+    AssignFile(Arq,sArq);
+    Reset(Arq);
+    Readln(Arq,sLinha);
+    CloseFile(Arq);
+
+    msg(sLinha,'A');
+    Exit;
+  End; // If FileExists(sArq) Then
 
   If Not ConectaMPMS Then
   Begin

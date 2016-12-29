@@ -678,29 +678,40 @@ object DMCentralTrocas: TDMCentralTrocas
       'o, es_estoques_cd cd, produto pr'#13#10'WHERE lo.cod_produto=pr.codpro' +
       'duto'#13#10'AND   lo.cod_produto=cd.cod_produto'#13#10'AND   lo.dta_movto=cd' +
       '.dta_movto'#13#10'AND   lo.ind_transf='#39'SIM'#39#13#10#13#10'AND   lo.dta_movto= :sD' +
-      'ta'#13#10'AND   lo.num_docto= :Doc'#13#10'AND   lo.qtd_a_transf> :QtdInicio'#13 +
-      #10'AND   lo.qtd_a_transf< :QtdFim'#13#10#13#10'ORDER BY 7,3'
+      'ta'#13#10'AND   lo.num_docto= :Doc'#13#10'AND   lo.cod_loja= :CodLoja'#13#10'AND  ' +
+      ' lo.qtd_a_transf> :QtdInicio'#13#10'AND   lo.qtd_a_transf< :QtdFim'#13#10#13#10 +
+      'ORDER BY 7,3'
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'sDta'
         ParamType = ptInput
+        Value = '29.12.2016'
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Doc'
         ParamType = ptInput
+        Value = '3168'
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
+        Name = 'CodLoja'
+        ParamType = ptInput
+        Value = '04'
+      end
+      item
+        DataType = ftString
         Name = 'QtdInicio'
         ParamType = ptInput
+        Value = '0'
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'QtdFim'
         ParamType = ptInput
+        Value = '9999'
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 392
@@ -747,12 +758,10 @@ object DMCentralTrocas: TDMCentralTrocas
     Top = 248
   end
   object CDS_RelReposicao: TClientDataSet
-    Active = True
     Aggregates = <>
     AggregatesActive = True
     Params = <>
     ProviderName = 'DSP_RelReposicao'
-    AfterScroll = CDS_Transf_CdAfterScroll
     Left = 507
     Top = 232
     object CDS_RelReposicaoLOJA: TStringField

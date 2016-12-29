@@ -1188,7 +1188,9 @@ begin
     Bt_FluFornAtualizar.Visible:=True;
   End; // If AnsiUpperCase(Des_Login)='ODIR' Then
 
-  If (Cod_Usuario='1') Or (Cod_Usuario='3') Or (AnsiUpperCase(Des_Login)='ODIR') Then
+  bgPodeUsar:=False;
+  // Renato / Anna / Zilandra
+  If (Cod_Usuario='1') Or (Cod_Usuario='3') Or (Cod_Usuario='11') Or (AnsiUpperCase(Des_Login)='ODIR') Then
   Begin
     bgPodeUsar:=True;
 
@@ -1210,7 +1212,6 @@ begin
   PC_FluxFornParametrosChange(Self);
 
   bgSairFF:=False;
-  bgPodeUsar:=False;
 
   bgVoltaPerReducao:=False;
   PercReducaoHabiita_GroupBox(True);

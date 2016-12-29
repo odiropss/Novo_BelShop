@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = TS_Filtros
+    ActivePage = Ts_CurvaABCEndereco
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -13222,7 +13222,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_CurvaABCEndMantencao
+        ActivePage = Ts_CurvaABCEndCurvaABC
         Align = alClient
         TabOrder = 0
         OnChange = PC_CurvaABCEnderecamentosChange
@@ -14307,7 +14307,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndVoltarClick
             end
             object Bt_CurvaABCEndSalvaProdClipboard: TJvXPButton
-              Tag = 9
+              Tag = 8
               Left = 198
               Top = 2
               Width = 152
@@ -14327,7 +14327,7 @@ object FrmBelShop: TFrmBelShop
               OnClick = Bt_CurvaABCEndSalvaProdClipboardClick
             end
             object Bt_CurvaABCEndSalvaFornClipboard: TJvXPButton
-              Tag = 9
+              Tag = 8
               Left = 350
               Top = 2
               Width = 152
@@ -14344,6 +14344,7 @@ object FrmBelShop: TFrmBelShop
               Font.Name = 'MS Sans Serif'
               Font.Style = [fsBold]
               ParentFont = False
+              OnClick = Bt_CurvaABCEndSalvaProdClipboardClick
             end
             object Panel11: TPanel
               Left = 711

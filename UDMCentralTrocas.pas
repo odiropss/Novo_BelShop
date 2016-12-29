@@ -508,6 +508,7 @@ begin
   CDS_ReposicaoTransf.Close;
   SDS_ReposicaoTransf.Params.ParamByName('sDta').AsDate:=FrmCentralTrocas.DtaEdt_ReposLojas.Date;
   SDS_ReposicaoTransf.Params.ParamByName('Doc').AsInteger:=CDS_ReposicaoDocsNUM_DOCTO.AsInteger;
+  SDS_ReposicaoTransf.Params.ParamByName('CodLoja').AsString:=CDS_ReposicaoDocsCOD_LOJA.AsString;
   SDS_ReposicaoTransf.Params.ParamByName('QtdInicio').AsInteger:=iQtdI;
   SDS_ReposicaoTransf.Params.ParamByName('QtdFim').AsInteger:=iQtdF;
   CDS_ReposicaoTransf.Open;
