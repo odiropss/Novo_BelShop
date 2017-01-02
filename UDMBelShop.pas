@@ -1246,7 +1246,7 @@ var
   sgMensagemERRO: String;
 
   sPath_Local, // Somente a Pasta do Executável
-  sgServerPastaExecutavel: String; // Pasta e Executável no Servidor (FrmBelShop)
+  sgPastaExecutavelServer: String; // Pasta e Executável no Servidor (FrmBelShop)
 
   sgNomeServidor: String;
   sgCodLojaUnica: String;
@@ -3449,7 +3449,7 @@ begin
   // ===========================================================================
   AssignFile(Arq,IncludeTrailingPathDelimiter(sPath_Local)+sgPCTConect_IB);
 
-  sgServerPastaExecutavel:='';
+  sgPastaExecutavelServer:='';
   Reset(Arq);
   While not Eof(Arq) do
   Begin
@@ -3469,8 +3469,14 @@ begin
 
    If sBancoIB<>'' Then
    Begin
-//     sgServerPastaExecutavel
-//     Database=\\192.168.0.252\E:\Projetos\BelShop\Dados\BELSHOP.FDBselect *
+     sgPastaExecutavelServer:=ExtractFilePath(sBancoIB);
+
+     i:=Pos('\BelShop\',Trim(sgPastaExecutavelServer));
+     sgPastaExecutavelServer:=Copy(sgPastaExecutavelServer,1, i+8);
+
+     i:=Pos(AnsiUpperCase('\\localhost\'),Trim(AnsiUpperCase(sgPastaExecutavelServer)));
+     If i>0 Then
+      sgPastaExecutavelServer:=Copy(sgPastaExecutavelServer, i+12, Length(sgPastaExecutavelServer));
 
      Break;
    End; // If sBancoIB<>'' Then

@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 432
-    ActivePage = Ts_AtualizaSIDICOMCurvaABCEndereco
+    ActivePage = Ts_Selecionar
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

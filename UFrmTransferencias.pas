@@ -100,11 +100,13 @@ End; // Salva Arquivo de Erros, se Houver >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Analisa e Atualiza Transferencias do Dia >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmTransferencias.AnalisaAtualizaTransferencias: Boolean;
 Var
-  s, sObs, MySql: String;
+  MySql: String;
+  s, sObs, sCodProd, sCodGrupo, sCodSubGrupo: String;
   i, iQtdReposicao: Integer;
   bMultiplo, bRepoe: Boolean;
   iMultiplo, iQtdMultiplo: Integer;
   iQtdEst, iQtdMax: Integer;
+  cReposicao: Currency;
 Begin
   Result:=False;
 
@@ -182,12 +184,12 @@ Begin
            If iQtdMax<=iQtdEst Then
             Begin
               iQtdReposicao:=0;
-              sObs:=' - Sem Reposição Pelo Estoque Máximo';
+              sObs:=' - Sem Reposição Pelo Estoque Máximo Menor que Saldo';
               bRepoe:=False;
             End
            Else If (iQtdMax-iQtdEst)<iQtdReposicao Then
             Begin
-              sObs:=' - Corte Pelo Estoque Máximo';
+              sObs:=' - Corte Pela Reposição Maior que Diferença Entre Estoque Máximo Saldo';
               iQtdReposicao:=(iQtdMax-iQtdEst);
             End;
          End;
@@ -197,22 +199,40 @@ Begin
          //=====================================================================
          If bRepoe Then
          Begin
-           //=====================================================================
-           // ESMALTE - Acerta Quantidade de Reposição para Multiplo de Seis (6)
-           //=====================================================================
-           MySql:=' SELECT p.codproduto'+
-                  ' FROM PRODUTO p'+
-                  ' WHERE p.codproduto='+QuotedStr(DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString)+
-                  ' AND P.CODGRUPOSUB='+QuotedStr('0100003'); // Sub-Grupo: Esmalte
+           //===================================================================
+           // Busca Produto Caixa Embarque =====================================
+           //===================================================================
+           sCodProd:=DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString;
+
+           MySql:=' SELECT Trim(pr.codgrupo) CodGrupo, Trim(pr.codsubgrupo) CodSubGrupo'+
+                  ' FROM PRODUTO pr'+
+                  ' WHERE pr.codproduto='+QuotedStr(sCodProd);
            DMTransferencias.CDS_BuscaRapida.Close;
            DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
            DMTransferencias.CDS_BuscaRapida.Open;
-           bMultiplo:=(Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('CodProduto').AsString)<>'');
+           sCodGrupo   :=DMTransferencias.CDS_BuscaRapida.FieldByName('CodGrupo').AsString;
+           sCodSubGrupo:=DMTransferencias.CDS_BuscaRapida.FieldByName('CodSubGrupo').AsString;
            DMTransferencias.CDS_BuscaRapida.Close;
 
-           If bMultiplo Then
+           MySql:=' SELECT cp.Cod_Produto, cp.cod_grupo,  cp.cod_subgrupo,'+
+                  '        cp.Qtd_Caixa, cp.Per_Corte'+
+                  ' FROM PROD_CAIXA_CD cp'+
+                  ' WHERE ((cp.cod_produto='+QuotedStr(sCodProd)+')'+
+                  '        OR'+
+                  '        ((cp.cod_grupo='+QuotedStr(sCodGrupo)+') and (cp.cod_subgrupo is null))'+
+                  '        OR'+
+                  '        ((cp.cod_grupo='+QuotedStr(sCodGrupo)+') and (cp.cod_subgrupo='+QuotedStr(sCodSubGrupo)+')))'+
+                  ' ORDER BY 1 desc, 4 desc';
+           DMTransferencias.CDS_BuscaRapida.Close;
+           DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+           DMTransferencias.CDS_BuscaRapida.Open;
+
+           bMultiplo:=(DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsInteger=0);
+
+           // Calcula Multiplo =================================================
+           If (bMultiplo) and (Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsString)<>'') Then
            Begin
-             iMultiplo:=6;
+             iMultiplo:=DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsInteger;
              iQtdMultiplo:=iMultiplo;
 
              While bMultiplo do
@@ -224,130 +244,191 @@ Begin
                End;
                iQtdMultiplo:=iQtdMultiplo+iMultiplo;
              End; // While bMultiplo do
+
+             sObs:=Trim(sObs)+' - Utilizado Conforme Multiplo Qtd/Caixa: '+
+                   DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsString+
+                   ' Corte: '+DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsString+'%';
+
            End; // If bMultiplo Then
-           //=====================================================================
-           // ESMALTE - Acerta Quantidade de Reposição para Multiplo de 6
-           //=====================================================================
 
-           //=====================================================================
-           // PRODUTO CÓDIGO 923834 - DERMABEL 2,8ML
-           // Acerta Quantidade de Reposição para Multiplo de 25
-           //=====================================================================
-           If (DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString='923834') And (not bMultiplo) Then
+           // Calcula Por Percentual de Corte ==================================
+           If (Not bMultiplo) and (Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsString)<>'') Then
            Begin
-             iMultiplo:=25;
-             iQtdMultiplo:=iMultiplo;
+             cReposicao:=RoundTo(iQtdReposicao/DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsInteger,-2);
+             iQtdReposicao:=ParteInteiro(CurrToStr(cReposicao));
+             cReposicao:=(cReposicao-iQtdReposicao)*100;
 
-             bMultiplo:=True;
-             While bMultiplo do
+             If cReposicao>=DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsCurrency Then
+              iQtdReposicao:=iQtdReposicao+1;
+
+             // Acerta Quantidade Final de Reposição ===========================
+             iQtdReposicao:=iQtdReposicao*
+                            DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsInteger;
+
+             bRepoe:=(iQtdReposicao>0);
+
+             sObs:=Trim(sObs)+' - Utilizado Conforme Corte Qtd/Caixa: '+
+                   DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsString+
+                   ' Corte: '+DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsString+'%';
+           End; // If Not bMultiplo Then
+           DMTransferencias.CDS_BuscaRapida.Close;
+
+// OdirApagar - 02/01/2017 - Substituido pela Utilização da Tabela PROD_CAIXA_CD
+//           //=====================================================================
+//           // ESMALTE - Acerta Quantidade de Reposição para Multiplo de Seis (6)
+//           //=====================================================================
+//           MySql:=' SELECT p.codproduto'+
+//                  ' FROM PRODUTO p'+
+//                  ' WHERE p.codproduto='+QuotedStr(DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString)+
+//                  ' AND P.CODGRUPOSUB='+QuotedStr('0100003'); // Sub-Grupo: Esmalte
+//           DMTransferencias.CDS_BuscaRapida.Close;
+//           DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+//           DMTransferencias.CDS_BuscaRapida.Open;
+//           bMultiplo:=(Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('CodProduto').AsString)<>'');
+//           DMTransferencias.CDS_BuscaRapida.Close;
+//
+//           If bMultiplo Then
+//           Begin
+//             iMultiplo:=6;
+//             iQtdMultiplo:=iMultiplo;
+//
+//             While bMultiplo do
+//             Begin
+//               If iQtdReposicao<iQtdMultiplo Then
+//               Begin
+//                 iQtdReposicao:=iQtdMultiplo;
+//                 Break;
+//               End;
+//               iQtdMultiplo:=iQtdMultiplo+iMultiplo;
+//             End; // While bMultiplo do
+//           End; // If bMultiplo Then
+//           //=====================================================================
+//           // ESMALTE - Acerta Quantidade de Reposição para Multiplo de 6
+//           //=====================================================================
+//
+//           //=====================================================================
+//           // PRODUTO CÓDIGO 923834 - DERMABEL 2,8ML
+//           // Acerta Quantidade de Reposição para Multiplo de 25
+//           //=====================================================================
+//           If (DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString='923834') And (not bMultiplo) Then
+//           Begin
+//             iMultiplo:=25;
+//             iQtdMultiplo:=iMultiplo;
+//
+//             bMultiplo:=True;
+//             While bMultiplo do
+//             Begin
+//               If iQtdReposicao<iQtdMultiplo Then
+//               Begin
+//                 iQtdReposicao:=iQtdMultiplo;
+//                 Break;
+//               End;
+//               iQtdMultiplo:=iQtdMultiplo+iMultiplo;
+//             End; // While bMultiplo do
+//           End; // If (DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString='923834') And (not bMultiplo) Then
+//           //=====================================================================
+//           // PRODUTO CÓDIGO 923834 - DERMABEL 2,8ML
+//           // Acerta Quantidade de Reposição para Multiplo de 25
+//           //=====================================================================
+//
+//           //=====================================================================
+//           // LUVAS - Acerta Quantidade de Reposição para Multiplo de Seis (100)
+//           //=====================================================================
+//           If not bMultiplo Then
+//           Begin
+//             MySql:=' SELECT p.codproduto'+
+//                    ' FROM PRODUTO p'+
+//                    ' WHERE p.codproduto='+QuotedStr(DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString)+
+//                    ' AND UPPER(p.apresentacao) LIKE ''LUVA%'''; // Nome que Contenha "LUVA"
+//             DMTransferencias.CDS_BuscaRapida.Close;
+//             DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+//             DMTransferencias.CDS_BuscaRapida.Open;
+//             bMultiplo:=(Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('CodProduto').AsString)<>'');
+//             DMTransferencias.CDS_BuscaRapida.Close;
+//
+//             If bMultiplo Then
+//             Begin
+//               iMultiplo:=100;
+//               iQtdMultiplo:=iMultiplo;
+//
+//               While bMultiplo do
+//               Begin
+//                 If iQtdReposicao<iQtdMultiplo Then
+//                 Begin
+//                   iQtdReposicao:=iQtdMultiplo;
+//                   Break;
+//                 End;
+//                 iQtdMultiplo:=iQtdMultiplo+iMultiplo;
+//               End; // While bMultiplo do
+//             End; // If bMultiplo Then
+//           End; // If not bMultiplo Then
+//           //=====================================================================
+//           // LUVAS - Acerta Quantidade de Reposição para Multiplo de Seis (100)
+//           //=====================================================================
+//
+//           bMultiplo:=False;
+
+           If bRepoe Then
+           Begin
+             If iQtdReposicao>=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger Then
              Begin
-               If iQtdReposicao<iQtdMultiplo Then
+               // Apresentar para o Compras
+               If iQtdReposicao>DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger Then
                Begin
-                 iQtdReposicao:=iQtdMultiplo;
-                 Break;
+                 DateSeparator:='.';
+                 DecimalSeparator:='.';
+
+                 MySql:=' INSERT INTO ES_ESTOQUES_SEM (COD_LOJA, DTA_MOVTO, COD_PRODUTO, QTD_ESTOQUE, IND_CURVA)'+
+                        ' VALUES ('+
+                        QuotedStr(DMTransferencias.CDS_EstoqueLojaCOD_LOJA.AsString)+', '+
+                        QuotedStr(DMTransferencias.CDS_EstoqueLojaDTA_MOVTO.AsString)+', '+
+                        QuotedStr(DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString)+', '+
+                        QuotedStr(IntToStr(iQtdReposicao-DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger))+', '+
+                        QuotedStr(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)+')';
+                 DMTransferencias.SQLC.Execute(MySql,nil,nil);
+
+                 DateSeparator:='/';
+                 DecimalSeparator:=',';
+               End; // If iQtdReposicao>DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger Then
+
+               iQtdReposicao:=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger;
+             End; // If iQtdReposicao>=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger Then
+
+             // Verifica Percentual de Corte da Curva -------------------
+             bRepoe:=True;
+             If (DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsInteger>0) And (iQtdReposicao>0) Then
+             Begin
+               If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='A') And (igPer_CorteA>0)  Then
+               Begin
+                 bRepoe:=((iQtdReposicao*100)/DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency)>=(100-igPer_CorteA);
+                 sObs:=Trim(sObs)+' - Curva "A": Corte '+IntToStr(igPer_CorteA)+'%';
                End;
-               iQtdMultiplo:=iQtdMultiplo+iMultiplo;
-             End; // While bMultiplo do
-           End; // If (DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString='923834') And (not bMultiplo) Then
-           //=====================================================================
-           // PRODUTO CÓDIGO 923834 - DERMABEL 2,8ML
-           // Acerta Quantidade de Reposição para Multiplo de 25
-           //=====================================================================
 
-           //=====================================================================
-           // LUVAS - Acerta Quantidade de Reposição para Multiplo de Seis (100)
-           //=====================================================================
-           If not bMultiplo Then
-           Begin
-             MySql:=' SELECT p.codproduto'+
-                    ' FROM PRODUTO p'+
-                    ' WHERE p.codproduto='+QuotedStr(DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString)+
-                    ' AND UPPER(p.apresentacao) LIKE ''LUVA%'''; // Nome que Contenha "LUVA"
-             DMTransferencias.CDS_BuscaRapida.Close;
-             DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
-             DMTransferencias.CDS_BuscaRapida.Open;
-             bMultiplo:=(Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('CodProduto').AsString)<>'');
-             DMTransferencias.CDS_BuscaRapida.Close;
-
-             If bMultiplo Then
-             Begin
-               iMultiplo:=100;
-               iQtdMultiplo:=iMultiplo;
-
-               While bMultiplo do
+               If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='B') And (igPer_CorteB>0)  Then
                Begin
-                 If iQtdReposicao<iQtdMultiplo Then
-                 Begin
-                   iQtdReposicao:=iQtdMultiplo;
-                   Break;
-                 End;
-                 iQtdMultiplo:=iQtdMultiplo+iMultiplo;
-               End; // While bMultiplo do
-             End; // If bMultiplo Then
-           End; // If not bMultiplo Then
-           //=====================================================================
-           // LUVAS - Acerta Quantidade de Reposição para Multiplo de Seis (100)
-           //=====================================================================
+                 bRepoe:=((iQtdReposicao*100)/DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency)>=(100-igPer_CorteB);
+                 sObs:=Trim(sObs)+' - Curva "B": Corte '+IntToStr(igPer_CorteB)+'%';
+               End;
 
-           bMultiplo:=False;
-           If iQtdReposicao>=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger Then
-           Begin
-             // Apresentar para o Compras
-             If iQtdReposicao>DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger Then
-             Begin
-               DateSeparator:='.';
-               DecimalSeparator:='.';
+               If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='C') And (igPer_CorteC>0)  Then
+               Begin
+                 bRepoe:=((iQtdReposicao*100)/DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency)>=(100-igPer_CorteC);
+                 sObs:=Trim(sObs)+' - Curva "C": Corte '+IntToStr(igPer_CorteC)+'%';
+               End;
 
-               MySql:=' INSERT INTO ES_ESTOQUES_SEM (COD_LOJA, DTA_MOVTO, COD_PRODUTO, QTD_ESTOQUE, IND_CURVA)'+
-                      ' VALUES ('+
-                      QuotedStr(DMTransferencias.CDS_EstoqueLojaCOD_LOJA.AsString)+', '+
-                      QuotedStr(DMTransferencias.CDS_EstoqueLojaDTA_MOVTO.AsString)+', '+
-                      QuotedStr(DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString)+', '+
-                      QuotedStr(IntToStr(iQtdReposicao-DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger))+', '+
-                      QuotedStr(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)+')';
-               DMTransferencias.SQLC.Execute(MySql,nil,nil);
+               If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='D') And (igPer_CorteD>0)  Then
+               Begin
+                 bRepoe:=((iQtdReposicao*100)/DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency)>=(100-igPer_CorteD);
+                 sObs:=Trim(sObs)+' - Curva "D": Corte '+IntToStr(igPer_CorteD)+'%';
+               End;
 
-               DateSeparator:='/';
-               DecimalSeparator:=',';
-             End; // If iQtdReposicao>DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger Then
-
-             iQtdReposicao:=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger;
-           End; // If iQtdReposicao>=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger Then
-
-           // Verifica Percentual de Corte da Cirva -------------------
-           bRepoe:=True;
-           If (DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsInteger>0) And (iQtdReposicao>0) Then
-           Begin
-             If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='A') And (igPer_CorteA>0)  Then
-             Begin
-               bRepoe:=((iQtdReposicao*100)/DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency)>=(100-igPer_CorteA);
-               sObs:=Trim(sObs)+' - Curva "A": Corte '+IntToStr(igPer_CorteA)+'%';
-             End;
-
-             If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='B') And (igPer_CorteB>0)  Then
-             Begin
-               bRepoe:=((iQtdReposicao*100)/DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency)>=(100-igPer_CorteB);
-               sObs:=Trim(sObs)+' - Curva "B": Corte '+IntToStr(igPer_CorteB)+'%';
-             End;
-
-             If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='C') And (igPer_CorteC>0)  Then
-             Begin
-               bRepoe:=((iQtdReposicao*100)/DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency)>=(100-igPer_CorteC);
-               sObs:=Trim(sObs)+' - Curva "C": Corte '+IntToStr(igPer_CorteC)+'%';
-             End;
-
-             If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='D') And (igPer_CorteD>0)  Then
-             Begin
-               bRepoe:=((iQtdReposicao*100)/DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency)>=(100-igPer_CorteD);
-               sObs:=Trim(sObs)+' - Curva "D": Corte '+IntToStr(igPer_CorteD)+'%';
-             End;
-
-             If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='E') And (igPer_CorteE>0)  Then
-             Begin
-               bRepoe:=((iQtdReposicao*100)/DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency)>=(100-igPer_CorteE);
-               sObs:=Trim(sObs)+' - Curva "E": Corte '+IntToStr(igPer_CorteE)+'%';
-             End;
-           End; // If (DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsInteger>0) And (iQtdReposicao>0) Then
+               If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='E') And (igPer_CorteE>0)  Then
+               Begin
+                 bRepoe:=((iQtdReposicao*100)/DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency)>=(100-igPer_CorteE);
+                 sObs:=Trim(sObs)+' - Curva "E": Corte '+IntToStr(igPer_CorteE)+'%';
+               End;
+             End; // If (DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsInteger>0) And (iQtdReposicao>0) Then
+           End; // If bRepoe Then
          End; // If bRepoe Then
          DMTransferencias.CDS_EstoqueLoja.Edit;
 
@@ -643,6 +724,7 @@ Begin
          ' AND   p.codaplicacao<>''0016'''+ // Não Processa: 0016=Brindes
 
          ' AND   c.cod_loja='+QuotedStr(sCodLoja)+
+
          ' AND   p.principalfor Not in ('+sgFornNAO+')'+ // Tira Fornecedores que Não Entram no Processo de Reposição Automática
          ' AND   UPPER(p.apresentacao) NOT LIKE ''LUVA%'''; // Tira todas as Luvas
 
@@ -657,7 +739,7 @@ Begin
                  '        ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')))'
          Else
           MySql:=
-           MySql+' AND    ((c.ind_curva in ('+sgCurvas+')) OR (p.datainclusao>='+QuotedStr(sDta)+' AND c.ind_curva=''E''))'+
+           MySql+' AND     ((c.ind_curva in ('+sgCurvas+')) OR (p.datainclusao>='+QuotedStr(sDta)+' AND c.ind_curva=''E''))'+
                  ' AND NOT (((p.principalfor='+QuotedStr('000356')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''%YELLOW%''))'+
                  '           OR'+
                  '          ((p.principalfor='+QuotedStr('000677')+') AND (c.ind_curva in (''D'',''E'')))'+
@@ -1056,41 +1138,48 @@ Var
 Begin
   Result:=True;
 
-  MySql:=' SELECT CURRENT_DATE DTA_MOVTO, e.codproduto cod_produto,'+
-
-//OdirApagar - 14/12/2016
+// OdirApagar Inicio - 02/01/2017
+//  MySql:=' SELECT CURRENT_DATE DTA_MOVTO, e.codproduto cod_produto,'+
+//
 //         ' COALESCE(e.saldoatual,0) qtd_estoque,'+
 //         ' 0.00 qtd_saidas,'+
 //         ' COALESCE(e.saldoatual,0) qtd_saldo,'+
+//
+//         // Acerta Multiplos
+//         ' CAST(CASE'+
+//         '         WHEN p.codgruposub=''0100003'' THEN'+ // ESMALTES - Multiplo de 6
+//         '            COALESCE(e.saldoatual,0)/6'+
+//         '         WHEN p.codproduto=''923834'' THEN'+ // DERMABEL 2,8ML - Multiplo de 25
+//         '            COALESCE(e.saldoatual,0)/25'+
+//         '         WHEN UPPER(p.apresentacao) LIKE ''LUVA%'' THEN'+ // LUVAS - Multiplo de 100
+//         '            COALESCE(e.saldoatual,0)/100'+
+//         '         ELSE'+
+//         '            COALESCE(e.saldoatual,0)'+
+//         '      END'+
+//         ' AS INTEGER) qtd_estoque,'+
+//
+//         ' 0.00 qtd_saidas,'+
+//
+//         // Acerta Multiplos
+//         ' CAST(CASE'+
+//         '         WHEN p.codgruposub=''0100003'' THEN'+ // ESMALTES - Multiplo de 6
+//         '            COALESCE(e.saldoatual,0)/6'+
+//         '         WHEN p.codproduto=''923834'' THEN'+ // DERMABEL 2,8ML - Multiplo de 25
+//         '            COALESCE(e.saldoatual,0)/25'+
+//         '         WHEN UPPER(p.apresentacao) LIKE ''LUVA%'' THEN'+ // LUVAS - Multiplo de 100
+//         '            COALESCE(e.saldoatual,0)/100'+
+//         '         ELSE'+
+//         '            COALESCE(e.saldoatual,0)'+
+//         '      END'+
+//         ' AS INTEGER) qtd_saldo,'+
+// OdirApagar Fim - 02/01/2017
 
-         // Acerta Multiplos
-         ' CAST(CASE'+
-         '         WHEN p.codgruposub=''0100003'' THEN'+ // ESMALTES - Multiplo de 6
-         '            COALESCE(e.saldoatual,0)/6'+
-         '         WHEN p.codproduto=''923834'' THEN'+ // DERMABEL 2,8ML - Multiplo de 25
-         '            COALESCE(e.saldoatual,0)/25'+
-         '         WHEN UPPER(p.apresentacao) LIKE ''LUVA%'' THEN'+ // LUVAS - Multiplo de 100
-         '            COALESCE(e.saldoatual,0)/100'+
-         '         ELSE'+
-         '            COALESCE(e.saldoatual,0)'+
-         '      END'+
-         ' AS INTEGER) qtd_estoque,'+
+  MySql:=' SELECT CURRENT_DATE DTA_MOVTO, e.codproduto cod_produto,'+
 
+         ' COALESCE(e.saldoatual,0) qtd_estoque,'+
          ' 0.00 qtd_saidas,'+
+         ' COALESCE(e.saldoatual,0) qtd_saldo,'+
 
-         // Acerta Multiplos
-         ' CAST(CASE'+
-         '         WHEN p.codgruposub=''0100003'' THEN'+ // ESMALTES - Multiplo de 6
-         '            COALESCE(e.saldoatual,0)/6'+
-         '         WHEN p.codproduto=''923834'' THEN'+ // DERMABEL 2,8ML - Multiplo de 25
-         '            COALESCE(e.saldoatual,0)/25'+
-         '         WHEN UPPER(p.apresentacao) LIKE ''LUVA%'' THEN'+ // LUVAS - Multiplo de 100
-         '            COALESCE(e.saldoatual,0)/100'+
-         '         ELSE'+
-         '            COALESCE(e.saldoatual,0)'+
-         '      END'+
-         ' AS INTEGER) qtd_saldo,'+
-         
          ' COALESCE(e.zonaendereco,''0'') end_zona,'+
          ' COALESCE(e.corredor,''000'') end_corredor,'+
          ' COALESCE(e.prateleira,''000'') end_prateleira,'+

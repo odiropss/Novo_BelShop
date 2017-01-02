@@ -1369,6 +1369,7 @@ type
     EdtCurvaABCEndTotalProc: TCurrencyEdit;
     N49: TMenuItem;
     SubMenuCentroDistQtdCaixaCD: TMenuItem;
+    JvXPButton1: TJvXPButton;
 
     // Odir ====================================================================
 
@@ -44238,27 +44239,51 @@ end;
 
 procedure TFrmBelShop.SubMenuCentroDistrReposicoesLojasClick(Sender: TObject);
 Var
-  MySql: String;
-  b: Boolean;
-  sArq, dir_padrao: String;
-
   Arq: TextFile;
-  sLinha: String;
+  sArq, sLinha: String;
+  b: Boolean;
 begin
-  dir_padrao   := IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName));
 
-  sArq:=IncludeTrailingPathDelimiter(dir_padrao)+'Arquivo Status Transf\Odir.Txt';
-
-  If FileExists(sArq) Then
+  sArq:=AnsiUpperCase(IncludeTrailingPathDelimiter(sgPastaExecutavelServer)+'Arquivo Status Transf\Odir.Txt');
+  While b do
   Begin
-    AssignFile(Arq,sArq);
-    Reset(Arq);
-    Readln(Arq,sLinha);
-    CloseFile(Arq);
+    If FileExists(sArq) Then
+    Begin
+      AssignFile(Arq,sArq);
+      Reset(Arq);
+      Readln(Arq,sLinha);
+      CloseFile(Arq);
 
-    msg(sLinha,'A');
-    Exit;
-  End; // If FileExists(sArq) Then
+      msg(sLinha,'A');
+      Exit;
+    End;
+
+    sArq:=f_Troca('E:\','',sArq);
+    If FileExists(sArq) Then
+    Begin
+      AssignFile(Arq,sArq);
+      Reset(Arq);
+      Readln(Arq,sLinha);
+      CloseFile(Arq);
+
+      msg(sLinha,'A');
+      Exit;
+    End;
+
+    sArq:=f_Troca('C:\','',sArq);
+    If FileExists(sArq) Then
+    Begin
+      AssignFile(Arq,sArq);
+      Reset(Arq);
+      Readln(Arq,sLinha);
+      CloseFile(Arq);
+
+      msg(sLinha,'A');
+      Exit;
+    End;
+
+    Break;
+  End; // While b do
 
   If Not ConectaMPMS Then
   Begin

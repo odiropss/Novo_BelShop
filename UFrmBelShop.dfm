@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_CurvaABCEndereco
+    ActivePage = Ts_OrdemCompra
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -7012,7 +7012,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_OCGeraOrdemCompra
+        ActivePage = Ts_OCBuscaProdutos
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -7139,6 +7139,23 @@ object FrmBelShop: TFrmBelShop
                   ReadOnly = True
                   TabOrder = 0
                 end
+              end
+              object JvXPButton1: TJvXPButton
+                Tag = 92
+                Left = 592
+                Top = 2
+                Width = 139
+                Height = 36
+                Caption = 'Acerta Exporta'#231#227'o '#13#10'      SIDICOM'
+                TabOrder = 5
+                ShowFocusRect = True
+                Align = alRight
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
               end
             end
             object Pan_CalculoOC: TPanel
@@ -8639,7 +8656,7 @@ object FrmBelShop: TFrmBelShop
             Top = 53
             Width = 793
             Height = 435
-            ActivePage = Ts_GeraOCOrdensCompra
+            ActivePage = Ts_GeraOCGrid
             Align = alClient
             MultiLine = True
             TabOrder = 3
@@ -13222,7 +13239,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_CurvaABCEndCurvaABC
+        ActivePage = Ts_CurvaABCEndMantencao
         Align = alClient
         TabOrder = 0
         OnChange = PC_CurvaABCEnderecamentosChange

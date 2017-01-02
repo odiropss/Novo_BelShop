@@ -1994,7 +1994,6 @@ begin
 
 End; // ATUALIZA PERMISSOES USUARIOS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-
 // BUSCA ESTOQUES DAS LOJAS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmSolicitacoes.BuscaEstoquesLojas;
 Var
