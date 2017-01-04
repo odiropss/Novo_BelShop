@@ -7581,6 +7581,19 @@ begin
     EdtReposLojasProduto.Text:=DMCentralTrocas.CDS_ReposicaoTransfDES_PRODUTO.AsString;
     EdtReposLojasQtdReposicao.Value:=DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsInteger;
 
+    If DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsInteger=999999 Then
+    Begin
+      MessageBox(Handle, pChar('IMPOSSÍVEL ALTERAR !!'+cr+cr+
+                               'Produto Transferido para o'+cr+
+                               'Próximo Dia de Separação !!!'), 'ATENÇÃO !!', MB_ICONERROR);
+      EdtReposLojasProduto.Clear;
+      EdtReposLojasQtdReposicao.Value:=0;
+      EdtReposLojasSeq.Value:=0;
+      EdtReposLojasSeq.SetFocus;
+      Exit;
+    End;
+
+
     If DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsInteger<>0 Then
     Begin
       MessageBox(Handle, pChar('IMPOSSÍVEL ALTERAR !!'+cr+cr+

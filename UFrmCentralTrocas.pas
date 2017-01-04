@@ -469,7 +469,6 @@ Var
   sEnd_Zona, sEnd_Corredor, sEnd_Prateleira, sEnd_Gaveta: String;
 
   mMemo: TMemo;
-  bEncontrouDoc: Boolean;
   ii, i: Integer;
 Begin
 
@@ -554,12 +553,9 @@ Begin
       sDocTR:=Trim(DMBelShop.CDS_Busca.FieldByName('Num_Docto').AsString);
       DMBelShop.CDS_Busca.Close;
 
-      bEncontrouDoc:=True;
       If sDocTR='' Then
       Begin
-        // Busca Numero do Docto ===================================================
-        bEncontrouDoc:=False;
-
+        // Busca Numero do Docto ===============================================
         MySql:=' SELECT COALESCE(MAX(el.num_docto)+1 ,1) Nr_Docto'+
                ' FROM ES_ESTOQUES_LOJAS el';
         DMBelShop.CDS_BuscaRapida.Close;
@@ -568,11 +564,23 @@ Begin
         sDocTR:=DMBelShop.CDS_BuscaRapida.FieldByName('Nr_Docto').AsString;
         DMBelShop.CDS_BuscaRapida.Close;
       End; // If sDocTR='' Then
-      DMBelShop.CDS_Busca.Close;
 
+      // Atualiza Numerador para Num_Seq da Seleção ============================
+      MySql:=' SELECT COALESCE(MAX(lo.num_seq)+1 ,1) Num_Seq'+
+             ' FROM ES_ESTOQUES_LOJAS lo'+
+             ' WHERE lo.cod_loja='+QuotedStr(mMemo.Lines[i])+
+             ' AND   lo.dta_movto='+QuotedStr(sgDtaLimTransf);
+      DMBelShop.CDS_Busca.Close;
+      DMBelShop.SDS_Busca.CommandText:=MySql;
+      DMBelShop.CDS_Busca.Open;
+
+      MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH '+DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString;
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+      DMBelShop.CDS_Busca.Close;
       // Busca Produtos de Transferencia =========================================
       MySql:=' SELECT'+
              ' o.NUM_SEQ, '+
+             ' GEN_ID(GEN_ODIR,1) NEW_NUM_SEQ, '+
              QuotedStr(sgDtaLimTransf)+' DTA_MOVTO,'+
              ' COALESCE(o.num_documento,0) Doc_Origem, '+
              sDocTR+' NUM_DOCTO,'+
@@ -609,6 +617,7 @@ Begin
 
              ' SELECT'+
              ' l.NUM_SEQ, '+
+             ' GEN_ID(GEN_ODIR,1) NEW_NUM_SEQ, '+
              QuotedStr(sgDtaLimTransf)+' DTA_MOVTO,'+
              ' l.num_docto Doc_Origem, '+
              sDocTR+' NUM_DOCTO,'+
@@ -644,6 +653,11 @@ Begin
       DMBelShop.SDS_Busca.CommandText:=MySql;
       DMBelShop.CDS_Busca.Open;
 
+      // Retorna Generator para 0 ==============================================
+      MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH 0';
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+      // Atualiza ES_ESTOQUE_LOJAS =============================================
       FrmBelShop.MontaProgressBar(True, FrmCentralTrocas);
       pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
       pgProgBar.Position:=0;
@@ -678,8 +692,7 @@ Begin
         If DMBelShop.CDS_Busca.FieldByName('Compras').AsString='NAO' Then
         Begin
           MySql:=' UPDATE ES_ESTOQUES_LOJAS l'+
-                 ' SET l.num_pedido=''999999'','+
-                 '     l.ind_transf=''NAO'''+
+                 ' SET l.num_pedido=''999999'''+
                  ' WHERE l.num_seq='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString)+
                  ' AND   l.num_docto='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Doc_Origem').AsString)+
                  ' AND   l.cod_loja='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_loja').AsString)+
@@ -780,7 +793,7 @@ Begin
                   ' NUM_PEDIDO, IND_TRANSF, USU_ALTERA, DTA_ALTERA, OBS_DOCTO)'+
 
                   ' VALUES ('+
-                  QuotedStr(DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString)+', '+ // NUM_SEQ
+                  QuotedStr(DMBelShop.CDS_Busca.FieldByName('New_Num_Seq').AsString)+', '+ // NUM_SEQ
                   QuotedStr(sgDtaLimTransf)+', '+ // DTA_MOVTO
                   QuotedStr(sDocTR)+', '+ // NUM_DOCTO
                   QuotedStr(mMemo.Lines[i])+', '+ // COD_LOJA
@@ -864,7 +877,7 @@ Begin
 
     End; // For i:=0 to mMemo.Lines.Count-1 do
     FrmBelShop.MontaProgressBar(False, FrmCentralTrocas);
-
+                                                                        
     // Atualiza Transacao ======================================================
     DMBelShop.SQLC.Commit(TD);
 
@@ -2763,6 +2776,8 @@ begin
 end;
 
 procedure TFrmCentralTrocas.FormCreate(Sender: TObject);
+Var
+  MySql: String;
 const
   TipoDoIcone = 1; // Show Hint em Forma de Balão
 begin
@@ -2811,6 +2826,30 @@ begin
   CreateToolTips(Self.Handle);
   AddToolTip(DtaEdt_ReposLojas.Handle,  @ti, TipoDoIcone, 'TECLE <Enter>...', 'CENTRAL DE TROCAS');
   // Show Hint em Forma de Balão - FIM =========================================
+
+  // Atualiza Endereços para Seleção ===========================================
+  Screen.Cursor:=crAppStart;
+  MySql:=' SELECT DISTINCT p.zonaendereco||''.''||p.corredor Corredor'+
+         ' FROM ESTOQUE p'+
+         ' WHERE p.codfilial=''99'''+
+         ' AND   p.zonaendereco is not null'+
+         ' AND   p.corredor is not null'+
+         ' AND   trim(p.zonaendereco)<>'''''+
+         ' AND   trim(p.corredor)<>'''''+
+         ' ORDER BY 1';
+  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+  DMBelShop.CDS_BuscaRapida.Open;
+
+  CkCbx_ReposLojasCorredor.Items.Clear;
+  While Not DMBelShop.CDS_BuscaRapida.Eof do
+  Begin
+    CkCbx_ReposLojasCorredor.Items.Add(DMBelShop.CDS_BuscaRapida.FieldByName('Corredor').AsString);
+
+    DMBelShop.CDS_BuscaRapida.Next;
+  End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
+  DMBelShop.CDS_BuscaRapida.Close;
+  Screen.Cursor:=crDefault;
 
 end;
 
@@ -4572,6 +4611,12 @@ begin
        Dbg_ReposLojasItens.Canvas.Font.Color:=clWhite;
      End;
 
+    If (Column.FieldName='COD_PRODUTO') And (DMCentralTrocas.CDS_ReposicaoTransfQTD_TRANSF_OC.AsInteger<>0) Then
+    Begin
+      Dbg_ReposLojasItens.Canvas.Font.Style:=[fsBold];
+      Dbg_ReposLojasItens.Canvas.Font.Color:=clWhite; // -->> Cor da Fonte
+      Dbg_ReposLojasItens.Canvas.Brush.Color:=clBlue; //  -->> Cor da Celula
+    End;
     Dbg_ReposLojasItens.Canvas.FillRect(Rect);
     Dbg_ReposLojasItens.DefaultDrawDataCell(Rect,Column.Field,state);
 
@@ -5312,8 +5357,6 @@ begin
 end;
 
 procedure TFrmCentralTrocas.DtaEdt_ReposLojasExit(Sender: TObject);
-Var
-  MySq: String;
 begin
   Screen.Cursor:=crAppStart;
 
@@ -5323,24 +5366,6 @@ begin
   DtaEdt_ReposLojas.Style.Color:=clBlue;
   DtaEdt_ReposLojas.Style.Font.Color:=clWhite;
   DtaEdt_ReposLojas.DroppedDown:=False;
-
-  // Atualiza Endereços para Seleção ===========================================
-  MySq:=' SELECT DISTINCT cd.end_zona||''.''||cd.end_corredor Corredor'+
-        ' FROM es_estoques_cd cd'+
-        ' WHERE cd.dta_movto='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtaEdt_ReposLojas.Date))))+
-        ' ORDER BY 1';
-  DMBelShop.CDS_BuscaRapida.Close;
-  DMBelShop.SDS_BuscaRapida.CommandText:=MySq;
-  DMBelShop.CDS_BuscaRapida.Open;
-
-  CkCbx_ReposLojasCorredor.Items.Clear;
-  While Not DMBelShop.CDS_BuscaRapida.Eof do
-  Begin
-    CkCbx_ReposLojasCorredor.Items.Add(DMBelShop.CDS_BuscaRapida.FieldByName('Corredor').AsString);
-
-    DMBelShop.CDS_BuscaRapida.Next;
-  End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
-  DMBelShop.CDS_BuscaRapida.Close;
 
   // Fecha Client's de Reposições ==============================================
   DMCentralTrocas.CDS_ReposicaoDocs.Close;
