@@ -397,7 +397,7 @@ Begin
 
                If Trim(sgCodForn)<>'' Then
                 MySql:=
-                 MySql+' AND f.cod_fornecedor in ('+sgCodForn+')';
+                 MySql+' AND f.cod_fornecedor in ('+QuotedStr(sgCodForn)+')';
         DMAtualizaSeteHoras.CDS_Busca.Close;
         DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
         DMAtualizaSeteHoras.CDS_Busca.Open;
@@ -405,6 +405,8 @@ Begin
         While Not DMAtualizaSeteHoras.CDS_Busca.Eof do
         Begin
           sCodForn:=DMAtualizaSeteHoras.CDS_Busca.FieldByName('cod_fornecedor').AsString;
+
+          // Guarda Fornecedor a Processar Conta Correte ------------
           bgProcessar:=True;
           For i:=0 to Mem_Odir.Lines.Count-1 do
           Begin
@@ -491,13 +493,28 @@ Begin
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('SERIE').AsString)+', '+ // NUM_SERIE
                  sPercRed+', '+ // PER_REDUCAO,
                  QuotedStr(IBQ_ConsultaFilial.FieldByName('TP_DEBCRE').AsString)+', '+ // TIP_DEBCRE
-
                  'CAST(('+IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString+
                         '-(('+sPercRed+' * '+IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString+
                         ') / 100)) AS NUMERIC(12,2)),'+ // VLR_CAIXA
 
                  ' 0)'; // VLR_SALDO
           DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
+
+          // Guarda Fornecedor a Processar Conta Correte ------------
+          bgProcessar:=True;
+          For i:=0 to Mem_Odir.Lines.Count-1 do
+          Begin
+             If Mem_Odir.Lines[i]=sCodForn Then
+             Begin
+               bgProcessar:=False;
+               Break;
+             End;
+          End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
+
+          If bgProcessar Then
+          Begin
+            Mem_Odir.Lines.Add(sCodForn);
+          End;
 
           IBQ_ConsultaFilial.Next;
         End; // While Not IBQ_ConsultaFilial.Eof do
@@ -746,7 +763,8 @@ begin
   //============================================================================
   // Atualiza Demanda 4 Meses ==================================================
   //============================================================================
-  Demanda4Meses;
+//opss
+//  Demanda4Meses;
 
   //============================================================================
   // VERIFICA SE A INTERNET ESTA CONECTADA =====================================
@@ -765,6 +783,9 @@ begin
   sgCodForn:='';
   for i := 1 to ParamCount do
    sgCodForn:=LowerCase(ParamStr(i));
+
+//opss
+//sgCodForn:='000050';
 
   // Inicializa Data Inicial ===================================================
   sgDtaInicio:=DateToStr(IncYear(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor),-1));
@@ -823,7 +844,7 @@ begin
 
                If Trim(sgCodForn)<>'' Then
                 MySqlSelect:=
-                 MySqlSelect+' AND mf.codfornecedor in ('+sgCodForn+')';
+                 MySqlSelect+' AND mf.codfornecedor in ('+QuotedStr(sgCodForn)+')';
 
                MySqlSelect:=
                 MySqlSelect+' ORDER BY mf.codfornecedor, mf.dataentrada';
@@ -837,7 +858,7 @@ begin
          ' WHERE ((e.ind_ativo = ''SIM'') OR'+
          '        (e.cod_filial = ''99'') OR'+
          '        (e.cod_filial = ''50''))'+
-         ' ORDER BY 1';
+         ' ORDER BY 1 desc';
   DMAtualizaSeteHoras.CDS_Lojas.Close;
   DMAtualizaSeteHoras.SDS_Lojas.CommandText:=MySql;
   DMAtualizaSeteHoras.CDS_Lojas.Open;
@@ -848,7 +869,7 @@ begin
     sgCodEmp:=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('COD_FILIAL').AsString;
 
     BuscaMovtosDebCre;
-////opss
+//opss
 //    Break;
 
     DMAtualizaSeteHoras.CDS_Lojas.Next;
@@ -864,7 +885,8 @@ begin
   //============================================================================
   // Atualiza Centro de Custos =================================================
   //============================================================================
-  CentroCustos;
+//opss
+//  CentroCustos;
 
   // Encerra Programa ==========================================================
   Application.Terminate;

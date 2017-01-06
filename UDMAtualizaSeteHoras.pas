@@ -123,7 +123,6 @@ Var
   sEndIP: String;
   i: Integer;
 Begin
-
   MySql:=' SELECT p.computer_master, p.computer_server, IP_Server, IP_Internet_Server'+
          ' FROM PARAMETROS p';
   CDS_BuscaRapida.Close;
@@ -155,19 +154,19 @@ Begin
         Begin
           (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
 
-          If (Not bgConexaoLocal) and (Trim(CDS_Busca.FieldByName('Endereco_IP_Externo').AsString)<>'') Then
-           sEndIP:=CDS_Busca.FieldByName('Endereco_IP_Externo').AsString
-          Else
-           sEndIP:=CDS_Busca.FieldByName('Endereco_IP').AsString;
+          sEndIP:=CDS_Busca.FieldByName('Endereco_IP').AsString;
 
-          // Tipo de Conexão: TCP/IP NetBEUI
+          // Tipo de Conexão: NetBEUI
           If (Trim(sgTpConexao)='')              Or (Trim(sgTpConexao)='NetBEUI') Or
-             (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgCompServer) Then
+             (AnsiUpperCase(sEndIP)='LOCALHOST') Or (AnsiUpperCase(sEndIP)=sgCompServer) Or
+             (AnsiUpperCase(sEndIP)=sgIPServer) Then
            s:='\\'+IncludeTrailingPathDelimiter(sEndIP)+
                    IncludeTrailingPathDelimiter(CDS_Busca.FieldByName('Pasta_Base_Dados').AsString)+
                                                 CDS_Busca.FieldByName('DES_BASE_DADOS').AsString;
 
-          If (Trim(sgTpConexao)='TCP/IP') and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and (AnsiUpperCase(sEndIP)<>sgCompServer) Then
+          // Tipo de Conexão: TCP/IP
+          If (Trim(sgTpConexao)='TCP/IP')          and (AnsiUpperCase(sEndIP)<>'LOCALHOST') and
+             (AnsiUpperCase(sEndIP)<>sgCompServer) and (AnsiUpperCase(sEndIP)<>sgIPServer) Then
            s:=sEndIP+':'+
               IncludeTrailingPathDelimiter(CDS_Busca.FieldByName('Pasta_Base_Dados').AsString)+
                                            CDS_Busca.FieldByName('DES_BASE_DADOS').AsString;
@@ -395,7 +394,7 @@ Begin
       End;
     End; // Try
 
-    If (ii=0) or (ii>2) Then // 2 vezes
+    If (ii=0) or (ii>1) Then // 2 vezes
      Break;
   End; // While Not b do
 End; // Conexao IB Individual >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

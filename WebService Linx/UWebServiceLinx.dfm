@@ -30,304 +30,175 @@ object FrmWebServiceLinx: TFrmWebServiceLinx
         Width = 904
         Height = 41
         Align = alTop
-        Caption = 'Panel1'
         TabOrder = 0
         object Button1: TButton
-          Left = 72
-          Top = 8
+          Left = 776
+          Top = 0
           Width = 75
           Height = 25
           Caption = 'POST'
           TabOrder = 0
           OnClick = Button1Click
         end
-        object Button2: TButton
-          Left = 176
-          Top = 16
-          Width = 75
-          Height = 25
-          Caption = 'Button2'
-          TabOrder = 1
-        end
-        object Edit1: TEdit
-          Left = 272
-          Top = 16
-          Width = 121
-          Height = 21
-          TabOrder = 2
-          Text = '5'
-        end
         object Button4: TButton
-          Left = 504
-          Top = 8
+          Left = 832
+          Top = 16
           Width = 75
           Height = 25
           Caption = 'Button4'
-          TabOrder = 3
+          TabOrder = 1
           OnClick = Button4Click
         end
         object Button5: TButton
-          Left = 616
-          Top = 8
+          Left = 856
+          Top = 0
           Width = 75
           Height = 25
           Caption = 'Button5'
-          TabOrder = 4
+          TabOrder = 2
           OnClick = Button5Click
         end
+        object Bt_LinxLojas: TJvXPButton
+          Left = 1
+          Top = 1
+          Width = 76
+          Height = 39
+          Caption = 'LinxLojas '
+          TabOrder = 3
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_LinxLojasClick
+        end
+        object Bt_LinxClientesFornec: TJvXPButton
+          Left = 77
+          Top = 1
+          Width = 123
+          Height = 39
+          Caption = 'LinxClientesFornec'
+          TabOrder = 4
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_LinxClientesFornecClick
+        end
+        object Bt_LinxMovimento: TJvXPButton
+          Left = 547
+          Top = 1
+          Width = 102
+          Height = 39
+          Caption = 'LinxMovimento'
+          TabOrder = 5
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_LinxMovimentoClick
+        end
+        object Bt_LinxVendedores: TJvXPButton
+          Left = 200
+          Top = 1
+          Width = 105
+          Height = 39
+          Caption = 'LinxVendedores'
+          TabOrder = 6
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_LinxVendedoresClick
+        end
+        object Bt_LinxProdutosDetalhes: TJvXPButton
+          Left = 405
+          Top = 1
+          Width = 142
+          Height = 39
+          Caption = 'LinxProdutosDetalhes'
+          TabOrder = 7
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_LinxProdutosDetalhesClick
+        end
+        object Bt_LinxProdutos: TJvXPButton
+          Left = 305
+          Top = 1
+          Width = 100
+          Height = 39
+          Caption = 'LinxProdutos'
+          TabOrder = 8
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_LinxProdutosClick
+        end
+        object Bt_LinxFaturas: TJvXPButton
+          Left = 649
+          Top = 1
+          Width = 102
+          Height = 39
+          Caption = 'LinxFaturas'
+          TabOrder = 9
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_LinxFaturasClick
+        end
       end
-      object Memo1: TMemo
+      object JvEditor1: TJvEditor
         Left = 0
         Top = 41
         Width = 904
         Height = 484
+        Cursor = crIBeam
+        GutterWidth = 0
+        RightMarginColor = clSilver
+        Completion.ItemHeight = 13
+        Completion.Interval = 800
+        Completion.ListBoxStyle = lbStandard
+        Completion.CaretChar = '|'
+        Completion.CRLF = '/n'
+        Completion.Separator = '='
+        TabStops = '3 5'
+        BracketHighlighting.StringEscape = #39#39
+        SelForeColor = clHighlightText
+        SelBackColor = clHighlight
         Align = alClient
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        Lines.Strings = (
-          'Memo1')
-        ParentFont = False
-        TabOrder = 1
-      end
-    end
-    object TabSheet2: TTabSheet
-      Caption = 'TabSheet2'
-      ImageIndex = 1
-      object JvRichEdit1: TJvRichEdit
-        Left = 0
-        Top = 0
-        Width = 904
-        Height = 525
-        Align = alClient
-        AutoSize = False
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
-        Font.Height = -7
-        Font.Name = 'Candara'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
-      end
-      object Button3: TButton
-        Left = 456
-        Top = 24
-        Width = 75
-        Height = 25
-        Caption = 'Button3'
-        TabOrder = 1
-        OnClick = Button3Click
-      end
-    end
-    object TabSheet3: TTabSheet
-      Caption = 'TabSheet3'
-      ImageIndex = 2
-      object JvEditor1: TJvEditor
-        Left = 0
-        Top = 0
-        Width = 904
-        Height = 525
-        Cursor = crIBeam
-        GutterWidth = 0
-        RightMarginColor = clSilver
-        Completion.ItemHeight = 13
-        Completion.Interval = 800
-        Completion.ListBoxStyle = lbStandard
-        Completion.CaretChar = '|'
-        Completion.CRLF = '/n'
-        Completion.Separator = '='
-        TabStops = '3 5'
-        BracketHighlighting.StringEscape = #39#39
-        SelForeColor = clHighlightText
-        SelBackColor = clHighlight
-        Align = alClient
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Courier New'
+        Font.Height = -11
+        Font.Name = 'Arial Narrow'
         Font.Style = []
         ParentColor = False
         ParentFont = False
         TabStop = True
         UseDockManager = False
-      end
-    end
-    object TabSheet4: TTabSheet
-      Caption = 'TabSheet4'
-      ImageIndex = 3
-      object JvHLEditor1: TJvHLEditor
-        Left = 0
-        Top = 0
-        Width = 904
-        Height = 525
-        Cursor = crIBeam
-        GutterWidth = 0
-        RightMarginColor = clSilver
-        Completion.ItemHeight = 13
-        Completion.Interval = 800
-        Completion.ListBoxStyle = lbStandard
-        Completion.CaretChar = '|'
-        Completion.CRLF = '/n'
-        Completion.Separator = '='
-        TabStops = '3 5'
-        BracketHighlighting.StringEscape = #39#39
-        SelForeColor = clHighlightText
-        SelBackColor = clHighlight
-        Align = alClient
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Courier New'
-        Font.Style = []
-        ParentColor = False
-        ParentFont = False
-        TabStop = True
-        UseDockManager = False
-        Colors.Comment.Style = [fsItalic]
-        Colors.Comment.ForeColor = clOlive
-        Colors.Comment.BackColor = clWindow
-        Colors.Number.ForeColor = clNavy
-        Colors.Number.BackColor = clWindow
-        Colors.Strings.ForeColor = clPurple
-        Colors.Strings.BackColor = clWindow
-        Colors.Symbol.ForeColor = clBlue
-        Colors.Symbol.BackColor = clWindow
-        Colors.Reserved.Style = [fsBold]
-        Colors.Reserved.ForeColor = clWindowText
-        Colors.Reserved.BackColor = clWindow
-        Colors.Identifier.ForeColor = clWindowText
-        Colors.Identifier.BackColor = clWindow
-        Colors.Preproc.ForeColor = clGreen
-        Colors.Preproc.BackColor = clWindow
-        Colors.FunctionCall.ForeColor = clWindowText
-        Colors.FunctionCall.BackColor = clWindow
-        Colors.Declaration.ForeColor = clWindowText
-        Colors.Declaration.BackColor = clWindow
-        Colors.Statement.Style = [fsBold]
-        Colors.Statement.ForeColor = clWindowText
-        Colors.Statement.BackColor = clWindow
-        Colors.PlainText.ForeColor = clWindowText
-        Colors.PlainText.BackColor = clWindow
-      end
-    end
-    object TabSheet5: TTabSheet
-      Caption = 'TabSheet5'
-      ImageIndex = 4
-      object JvWideEditor1: TJvWideEditor
-        Left = 0
-        Top = 0
-        Width = 904
-        Height = 525
-        Cursor = crIBeam
-        GutterWidth = 0
-        RightMarginColor = clSilver
-        Completion.ItemHeight = 13
-        Completion.Interval = 800
-        Completion.ListBoxStyle = lbStandard
-        Completion.CRLF = '/n'
-        Completion.Separator = '='
-        TabStops = '3 5'
-        BracketHighlighting.StringEscape = #39#39
-        SelForeColor = clHighlightText
-        SelBackColor = clHighlight
-        Align = alClient
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Courier New'
-        Font.Style = []
-        ParentColor = False
-        ParentFont = False
-        TabStop = True
-        UseDockManager = False
-      end
-    end
-    object TabSheet6: TTabSheet
-      Caption = 'TabSheet6'
-      ImageIndex = 5
-      object JvWideHLEditor1: TJvWideHLEditor
-        Left = 0
-        Top = 0
-        Width = 904
-        Height = 525
-        Cursor = crIBeam
-        GutterWidth = 0
-        RightMarginColor = clSilver
-        Completion.ItemHeight = 13
-        Completion.Interval = 800
-        Completion.ListBoxStyle = lbStandard
-        Completion.CRLF = '/n'
-        Completion.Separator = '='
-        TabStops = '3 5'
-        BracketHighlighting.StringEscape = #39#39
-        SelForeColor = clHighlightText
-        SelBackColor = clHighlight
-        Align = alClient
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Courier New'
-        Font.Style = []
-        ParentColor = False
-        ParentFont = False
-        TabStop = True
-        UseDockManager = False
-        Colors.Comment.Style = [fsItalic]
-        Colors.Comment.ForeColor = clOlive
-        Colors.Comment.BackColor = clWindow
-        Colors.Number.ForeColor = clNavy
-        Colors.Number.BackColor = clWindow
-        Colors.Strings.ForeColor = clPurple
-        Colors.Strings.BackColor = clWindow
-        Colors.Symbol.ForeColor = clBlue
-        Colors.Symbol.BackColor = clWindow
-        Colors.Reserved.Style = [fsBold]
-        Colors.Reserved.ForeColor = clWindowText
-        Colors.Reserved.BackColor = clWindow
-        Colors.Identifier.ForeColor = clWindowText
-        Colors.Identifier.BackColor = clWindow
-        Colors.Preproc.ForeColor = clGreen
-        Colors.Preproc.BackColor = clWindow
-        Colors.FunctionCall.ForeColor = clWindowText
-        Colors.FunctionCall.BackColor = clWindow
-        Colors.Declaration.ForeColor = clWindowText
-        Colors.Declaration.BackColor = clWindow
-        Colors.Statement.Style = [fsBold]
-        Colors.Statement.ForeColor = clWindowText
-        Colors.Statement.BackColor = clWindow
-        Colors.PlainText.ForeColor = clWindowText
-        Colors.PlainText.BackColor = clWindow
-      end
-    end
-    object TabSheet7: TTabSheet
-      Caption = 'TabSheet7'
-      ImageIndex = 6
-      object JvMemo1: TJvMemo
-        Left = 0
-        Top = 0
-        Width = 904
-        Height = 525
-        AutoSize = False
-        MaxLines = 0
-        HideCaret = False
-        Align = alClient
-        Lines.Strings = (
-          'JvMemo1')
-        TabOrder = 0
-      end
-    end
-    object TabSheet8: TTabSheet
-      Caption = 'TabSheet8'
-      ImageIndex = 7
-      object RxRichEdit1: TRxRichEdit
-        Left = 0
-        Top = 0
-        Width = 904
-        Height = 525
-        Align = alClient
-        TabOrder = 0
       end
     end
   end

@@ -1733,7 +1733,7 @@ Begin
       Inc(ii);
     End; // Try
 
-    If (ii=0) or (ii>1) Then  // 2 Vezes
+    If (ii=0) or (ii>0) Then  // 1 Vezes
      Break;
   End; // While Not b do
 
@@ -1908,7 +1908,8 @@ begin
     DMMovtosEmpresas.CDS_EmpProcessa.First;
     While Not DMMovtosEmpresas.CDS_EmpProcessa.Eof do
     Begin
-      Lbx_EmpresasProcessar.Items.Add(DMMovtosEmpresas.CDS_EmpProcessaCOD_FILIAL.AsString);
+      If DMMovtosEmpresas.CDS_EmpProcessaCOD_FILIAL.AsString<>'18' Then
+       Lbx_EmpresasProcessar.Items.Add(DMMovtosEmpresas.CDS_EmpProcessaCOD_FILIAL.AsString);
 
       DMMovtosEmpresas.CDS_EmpProcessa.Next;
     End; // While Not DMMovtosEmpresas.CDS_EmpProcessa.Eof do
@@ -2136,6 +2137,9 @@ begin
   DMMovtosEmpresas.CDS_EmpProcessa.First;
   While Not DMMovtosEmpresas.CDS_EmpProcessa.Eof do
   Begin
+    If DMMovtosEmpresas.CDS_EmpProcessaCOD_FILIAL.AsString='18' Then
+     DMMovtosEmpresas.CDS_EmpProcessa.Next;
+
     // Sem Internet Encerra ====================================================
     if not InternetGetConnectedState(@Flags, 0) then
     Begin

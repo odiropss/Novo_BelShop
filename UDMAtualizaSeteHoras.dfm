@@ -39,6 +39,7 @@ object DMAtualizaSeteHoras: TDMAtualizaSeteHoras
   end
   object DSP_Busca: TDataSetProvider
     DataSet = SDS_Busca
+    Options = [poRetainServerOrder]
     Left = 98
     Top = 94
   end
@@ -68,6 +69,7 @@ object DMAtualizaSeteHoras: TDMAtualizaSeteHoras
   end
   object DSP_BuscaRapida: TDataSetProvider
     DataSet = SDS_BuscaRapida
+    Options = [poRetainServerOrder]
     Left = 98
     Top = 166
   end
@@ -87,6 +89,7 @@ object DMAtualizaSeteHoras: TDMAtualizaSeteHoras
   end
   object DSP_Lojas: TDataSetProvider
     DataSet = SDS_Lojas
+    Options = [poRetainServerOrder]
     Left = 98
     Top = 270
   end
@@ -106,6 +109,7 @@ object DMAtualizaSeteHoras: TDMAtualizaSeteHoras
   end
   object DSP_While: TDataSetProvider
     DataSet = SDS_While
+    Options = [poRetainServerOrder]
     Left = 98
     Top = 342
   end
@@ -125,6 +129,7 @@ object DMAtualizaSeteHoras: TDMAtualizaSeteHoras
   end
   object DSP_Pesquisa: TDataSetProvider
     DataSet = SDS_Pesquisa
+    Options = [poRetainServerOrder]
     Left = 98
     Top = 414
   end
