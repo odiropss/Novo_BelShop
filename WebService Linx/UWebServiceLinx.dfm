@@ -12,6 +12,7 @@ object FrmWebServiceLinx: TFrmWebServiceLinx
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
@@ -75,7 +76,7 @@ object FrmWebServiceLinx: TFrmWebServiceLinx
           OnClick = Bt_LinxLojasClick
         end
         object Bt_LinxClientesFornec: TJvXPButton
-          Left = 77
+          Left = 182
           Top = 1
           Width = 123
           Height = 39
@@ -107,7 +108,7 @@ object FrmWebServiceLinx: TFrmWebServiceLinx
           OnClick = Bt_LinxMovimentoClick
         end
         object Bt_LinxVendedores: TJvXPButton
-          Left = 200
+          Left = 77
           Top = 1
           Width = 105
           Height = 39
