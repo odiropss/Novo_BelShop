@@ -1,0 +1,3 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?><Microvix><ResponseData /><ResponseResult><ResponseSuccess>False</ResponseSuccess><ResponseError><Message>Ocorreu um erro inesperado.</Message><Message>Linx.Microvix.WebApi.Custom.PortalNotFoundException: Não foi encontrado nenhum portal com o cnpj informado.
+   at Linx.Microvix.WebApi.Custom.CnpjEmpCommandParameterSourceSelector.GetSourceSettings(RequestCommand command)
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.ExecuteIntegration(String requestXml, Stream Stream)</Message></ResponseError></ResponseResult></Microvix>

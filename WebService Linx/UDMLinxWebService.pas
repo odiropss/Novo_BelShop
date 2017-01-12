@@ -1,0 +1,94 @@
+unit UDMLinxWebService;
+
+interface
+
+uses
+  SysUtils, Classes, DBXpress, FMTBcd, DB, SqlExpr, DBClient, Provider;
+
+type
+  TDMLinxWebService = class(TDataModule)
+    SQLC: TSQLConnection;
+    SDS_DtaHoraServidor: TSQLDataSet;
+    SDS_Busca: TSQLDataSet;
+    DSP_Busca: TDataSetProvider;
+    CDS_Busca: TClientDataSet;
+
+    // Odir
+    Function ConectaBanco: Boolean;
+    // Odir
+
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+Const
+   sUser_Name: String='SYSDBA';
+   sPassword: String='masterkey';
+   cr = #13#10;
+
+var
+  DMLinxWebService: TDMLinxWebService;
+
+implementation
+
+uses UWebServiceLinx;
+
+{$R *.dfm}
+
+//==============================================================================
+// Odir - Inicio ===============================================================
+//==============================================================================
+
+// Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TDMLinxWebService.ConectaBanco: Boolean;
+Var
+  Arq: TextFile;
+  s, sBancoIB: String;
+  i: Integer;
+  b: Boolean;
+  Flags : Cardinal;
+begin
+
+  Result:=True;
+
+  If SQLC.Connected Then
+   SQLC.Connected:=False;
+
+  // ===========================================================================
+  // Conexão DBExpress BelShop =================================================
+  // ===========================================================================
+  with SQLC do
+  Begin
+    try
+      SQLC.Params.Clear;
+      LoadParamsFromIniFile(sgPastaBelShop+'PCTConect_IB.ini');
+
+      Params.Add('User_Name='+sUser_Name);
+      Params.Add('Password='+sPassword);
+      b:=False;
+      While Not b do
+      Begin
+        Try
+          Connected:=True;
+          Break;
+        Except
+          on e : Exception do
+          Begin
+            sgMensagem:='Mensagem de erro do sistema:'+#13+e.message;
+            Result:=False;
+            exit;
+          End; // on e : Exception do
+        End;
+      End;
+    Except // finally
+    End;
+  end; // with SQLC do
+End; // Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+//==============================================================================
+// Odir - Fim ==================================================================
+//==============================================================================
+
+end.

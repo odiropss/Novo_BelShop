@@ -1,0 +1,56 @@
+Segue abaixo primeiras solicitações e dúvidas:
+
+- Dúvidas de Importação de Dados Web Service:
+	- Movimentações Entradas/Saídas e Faturas:
+		- Sempre vou importa os últimos 15 dias.
+			- No Sistema existe alguma possibilidade de documentos gravados a mais de 15 dias 
+			  serem alterados ou excluídos ?
+
+	- XML: LinxMovimento 
+		- Campo: Transacao (Integer - Código interno do Microvix) 
+			- Cada Registro tem e nunca se Repete ? 
+
+	- XML: LinxFaturas:
+		- Campo: Receber_Pagar (Char(1) - Identifica se a fatura é a receber ou a pagar)
+			- Sem Definição
+			- Seria ?: (R)eceber (P)agar
+
+	- XML: LinxClientesFornec:
+		- Falta o Campo Cod_Auxiliar (Contem o Código do Fornecedor no Sistema Anterior)
+		- Campo Tipo_Cliente (Char(1) - Tipo)
+			- Definição enviada não é correta: Física ou Jurídica
+			- Qual é a Correta ?
+
+	- XML: linxVendedores:
+		- Campo: Tipo_Vendedor (Char(1) - Tipo)
+			- A Definição Correta é esta?
+				- (V) Vendedor
+				- (C) Comprador 
+				- (A) Ambos
+
+	- Tabelas LinxMovimentos e LinxFaturas 
+		- O Campo IDENTIFICADOR Nunca se Repetem,  cada registro contém o seu Identificador?
+
+	- Conforme documentação de HTTP POST temos as seguintes Observações:
+		- Método LinsProdutosDetalhes:
+			- Obs: As datas informadas na chamada do método, servirá como base para filtrar 
+			  somente produtos que tiveram movimentação no período, 
+			  mas o saldo do produto retornado é sempre o atual.
+		- Abaixo temos esta OBS:
+			- No método que retorna o estoque, somente serão fornecidos os registros de 
+			  produtos com saldo diferente de zero.
+		- Como posso interpretar isto?
+			- O que acontece se o Produto tiver Movimento mas o Estoque é zero.
+
+OBS: Os Post's estão perfeitos, após, vou começar a trabalhar os dados e, neste momento, 
+          poderei analisar e verificar a falta de mais informações as quais estarei solicitando.
+
+- Outras Dúvidas:
+	- SÃO TABELA ÚNICAS, SEM IDENTIFICAÇÃO DE EMPRESA/LOJA (Favor Confirmar):
+		- LinxLojas
+		- LinxVendedores
+		- LinxClientesFornec
+		- LinxProdutos
+
+	- Código de Barras
+		- Em caso de haver produto com mais de um Código de Barras Como Fica ?

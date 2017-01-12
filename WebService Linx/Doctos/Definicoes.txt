@@ -1,0 +1,32 @@
+LinxLojas
+	- empresa
+	- cnpj_emp
+
+LinxVendedores
+	- cod_vendedor
+
+LinxClientesFornec
+	- cod_cliente
+
+LinxProdutos
+	- cod_produto
+
+LinxProdutosDetalhes
+	- empresa
+	- cnpj_emp
+	- cod_produto
+
+LinxMovimentos ( Exclui e Busca Ultimos 15 Dias )
+	- empresa
+	- cnpj_emp
+	- transacao
+	- documento
+	- chave_nf
+
+
+LinxFaturas ( Exclui e Busca Ultimos 15 Dias )
+	- empresa
+	- cnpj_emp
+	- codigo_fatura
+	- documento
+	- serie
