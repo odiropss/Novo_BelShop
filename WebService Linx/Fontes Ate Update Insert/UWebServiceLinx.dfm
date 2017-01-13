@@ -26,7 +26,7 @@ object FrmWebServiceLinx: TFrmWebServiceLinx
     TabOrder = 0
     Align = alLeft
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clRed
+    Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
@@ -42,7 +42,7 @@ object FrmWebServiceLinx: TFrmWebServiceLinx
     TabOrder = 1
     Align = alLeft
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clRed
+    Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
@@ -58,7 +58,7 @@ object FrmWebServiceLinx: TFrmWebServiceLinx
     TabOrder = 2
     Align = alLeft
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clRed
+    Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
@@ -74,7 +74,7 @@ object FrmWebServiceLinx: TFrmWebServiceLinx
     TabOrder = 3
     Align = alLeft
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clRed
+    Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
@@ -90,7 +90,7 @@ object FrmWebServiceLinx: TFrmWebServiceLinx
     TabOrder = 4
     Align = alLeft
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clRed
+    Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
@@ -106,7 +106,7 @@ object FrmWebServiceLinx: TFrmWebServiceLinx
     TabOrder = 5
     Align = alLeft
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clRed
+    Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
@@ -122,7 +122,7 @@ object FrmWebServiceLinx: TFrmWebServiceLinx
     TabOrder = 6
     Align = alLeft
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clRed
+    Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]

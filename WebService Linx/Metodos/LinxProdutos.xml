@@ -12,7 +12,7 @@
 			<Parameter id="id_marca">NULL</Parameter>
 			<Parameter id="id_colecao">NULL</Parameter>
 			<Parameter id="dt_update_inicio">2016-12-20</Parameter>
-			<Parameter id="dt_update_fim">2017-05-01</Parameter>
+			<Parameter id="dt_update_fim">2017-01-07</Parameter>
 		</Parameters>
 	</Command>
 </LinxMicrovix>

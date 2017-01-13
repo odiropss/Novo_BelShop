@@ -12,11 +12,6 @@ type
     SDS_Busca: TSQLDataSet;
     DSP_Busca: TDataSetProvider;
     CDS_Busca: TClientDataSet;
-    SDS_Lojas: TSQLDataSet;
-    DSP_Lojas: TDataSetProvider;
-    CDS_Lojas: TClientDataSet;
-    CDS_LojasCOD_FILIAL: TStringField;
-    CDS_LojasNUM_CNPJ: TStringField;
 
     // Odir
     Function ConectaBanco: Boolean;

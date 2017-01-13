@@ -3,12 +3,16 @@
 	<Authentication password="linx_export" user="linx_export"/>
 	<ResponseFormat>xml</ResponseFormat>
 	<Command>
-		<Name>LinxVendedores</Name>
+		<Name>LinxProdutos</Name>
 		<Parameters>
 			<Parameter id="chave">d52511f4-3541-4a65-9adc-665513ea3207</Parameter>
 			<Parameter id="cnpjEmp">03772229001880</Parameter>
-			<Parameter id="data_upd_inicial">NULL</Parameter>
-			<Parameter id="data_upd_fim">NULL</Parameter>
+			<Parameter id="id_setor">NULL</Parameter>
+			<Parameter id="id_linha">NULL</Parameter>
+			<Parameter id="id_marca">NULL</Parameter>
+			<Parameter id="id_colecao">NULL</Parameter>
+			<Parameter id="dt_update_inicio">2016-12-20</Parameter>
+			<Parameter id="dt_update_fim">2017-05-01</Parameter>
 		</Parameters>
 	</Command>
 </LinxMicrovix>

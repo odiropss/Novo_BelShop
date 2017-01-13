@@ -26,6 +26,7 @@ object DMLinxWebService: TDMLinxWebService
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'gds32.dll'
+    Connected = True
     Left = 48
     Top = 16
   end
@@ -58,37 +59,5 @@ object DMLinxWebService: TDMLinxWebService
     ProviderName = 'DSP_Busca'
     Left = 136
     Top = 89
-  end
-  object SDS_Lojas: TSQLDataSet
-    CommandText = 
-      'SELECT em.cod_filial, em.num_cnpj'#13#10'FROM emp_conexoes em'#13#10'WHERE e' +
-      'm.cod_filial = '#39'18'#39#13#10'ORDER BY 1  '
-    MaxBlobSize = -1
-    Params = <>
-    SQLConnection = SQLC
-    Left = 40
-    Top = 152
-  end
-  object DSP_Lojas: TDataSetProvider
-    DataSet = SDS_Lojas
-    Options = [poRetainServerOrder]
-    Left = 89
-    Top = 166
-  end
-  object CDS_Lojas: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    ProviderName = 'DSP_Lojas'
-    Left = 136
-    Top = 153
-    object CDS_LojasCOD_FILIAL: TStringField
-      FieldName = 'COD_FILIAL'
-      Required = True
-      Size = 2
-    end
-    object CDS_LojasNUM_CNPJ: TStringField
-      FieldName = 'NUM_CNPJ'
-      Size = 18
-    end
   end
 end

@@ -12,8 +12,8 @@ uses
 
 begin
   Application.Initialize;
-  Application.CreateForm(TDMLinxWebService, DMLinxWebService);
   Application.CreateForm(TFrmWebServiceLinx, FrmWebServiceLinx);
+  Application.CreateForm(TDMLinxWebService, DMLinxWebService);
   Application.CreateForm(TFDK_Procs1, FDK_Procs1);
   Application.CreateForm(TJ_001, J_001);
   Application.CreateForm(TJ_002, J_002);
