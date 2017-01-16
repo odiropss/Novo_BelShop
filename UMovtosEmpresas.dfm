@@ -24,7 +24,6 @@ object FrmMovtosEmpresas: TFrmMovtosEmpresas
     Width = 664
     Height = 325
     Align = alClient
-    DataSource = DMMovtosEmpresas.DS_EmpProcessa
     FixedColor = clTeal
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

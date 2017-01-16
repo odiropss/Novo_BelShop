@@ -811,48 +811,56 @@ Begin
 
       If sgMetodo='LinxVendedores' Then
       Begin
-        sgDtaInicio:='NULL';
-        sgDtaFim   :='NULL';
+//        sgDtaInicio:='NULL';
+//        sgDtaFim   :='NULL';
+        sgDtaInicio:='2005-01-01';
+        sgDtaFim   :='2017-01-16';
 
         MontaMetodoXMLPost();
       End;
 
       If sgMetodo='LinxClientesFornec' Then
       Begin
-        sgDtaInicio:='2017-01-01'; // ODIR Altera para NULL a Primeira Vez
-        sgDtaFim   :='2017-01-07'; // ODIR Altera para NULL a Primeira Vez
+//        sgDtaInicio:='2017-01-01';
+//        sgDtaFim   :='2017-01-07';
+        sgDtaInicio:='2005-01-01';
+        sgDtaFim   :='2017-01-16';
 
         MontaMetodoXMLPost();
       End;
 
       If sgMetodo='LinxProdutos' Then
       Begin
-        sgDtaInicio:='2016-12-20'; // ODIR Altera para NULL a Primeira Vez
-        sgDtaFim   :='2017-01-07'; // ODIR Altera para NULL a Primeira Vez
+        sgDtaInicio:='2005-01-01';
+        sgDtaFim   :='2017-01-16';
+//        sgDtaInicio:='NULL'; //
+//        sgDtaFim   :='NULL'; //
 
         MontaMetodoXMLPost('NULL', 'NULL', 'NULL', 'NULL');
       End;
 
       If sgMetodo='LinxProdutosDetalhes' Then
       Begin
-        sgDtaInicio:='2016-12-20'; // ODIR Altera para NULL a Primeira Vez
-        sgDtaFim   :='2017-01-07'; // ODIR Altera para NULL a Primeira Vez
+        sgDtaInicio:='2005-01-01';
+        sgDtaFim   :='2017-01-16';
+//        sgDtaInicio:='NULL'; // ODIR Altera para NULL a Primeira Vez
+//        sgDtaFim   :='NULL'; // ODIR Altera para NULL a Primeira Vez
 
         MontaMetodoXMLPost();
       End;
 
       If sgMetodo='LinxMovimento' Then
       Begin
-        sgDtaInicio:='2017-01-01'; // ODIR Altera para '2016-12-13' a Primeira Vez
-        sgDtaFim   :='2017-01-07'; // ODIR Altera para 'data mais atual' a Primeira Vez
+        sgDtaInicio:='2016-12-13'; // ODIR Altera para '2016-12-13' a Primeira Vez
+        sgDtaFim   :='2017-01-16'; // ODIR Altera para 'data mais atual' a Primeira Vez
 
         MontaMetodoXMLPost();
       End;
 
       If sgMetodo='LinxFaturas' Then
       Begin
-        sgDtaInicio:='2017-01-01'; // ODIR Altera para '2016-12-13' a Primeira Vez
-        sgDtaFim   :='2017-01-07'; // ODIR Altera para 'data mais atual' a Primeira Vez
+        sgDtaInicio:='2016-12-13'; // ODIR Altera para '2016-12-13' a Primeira Vez
+        sgDtaFim   :='2017-01-16'; // ODIR Altera para 'data mais atual' a Primeira Vez
 
         MontaMetodoXMLPost();
       End;

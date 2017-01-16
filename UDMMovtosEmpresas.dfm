@@ -50,11 +50,6 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     Left = 148
     Top = 230
   end
-  object DS_Busca: TDataSource
-    DataSet = CDS_Busca
-    Left = 247
-    Top = 228
-  end
   object SDS_EmpProcessa: TSQLDataSet
     CommandText = 
       'Select '#13#10'c.COD_FILIAL, c.ENDERECO_IP, c.endereco_ip_externo,'#13#10'c.' +
@@ -130,11 +125,6 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     DataSet = SDS_EmpProcessa
     Options = [poRetainServerOrder]
     Left = 144
-    Top = 164
-  end
-  object DS_EmpProcessa: TDataSource
-    DataSet = CDS_EmpProcessa
-    Left = 272
     Top = 164
   end
   object SDS_DtaHoraServidor: TSQLDataSet
@@ -896,11 +886,6 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     Left = 148
     Top = 302
   end
-  object DS_BuscaRapida: TDataSource
-    DataSet = CDS_BuscaRapida
-    Left = 247
-    Top = 300
-  end
   object SDS_Pesquisa: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
@@ -920,11 +905,6 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     Options = [poRetainServerOrder]
     Left = 148
     Top = 382
-  end
-  object DS_Pesquisa: TDataSource
-    DataSet = CDS_Pesquisa
-    Left = 247
-    Top = 380
   end
   object IBQ_EstoqueLoja: TIBQuery
     Database = DMConexoes.IBDB_01
@@ -1093,5 +1073,25 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     SQLConnection = SQLC
     Left = 247
     Top = 33
+  end
+  object SDS_Loja18: TSQLDataSet
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 71
+    Top = 457
+  end
+  object CDS_Loja18: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_Loja18'
+    Left = 165
+    Top = 456
+  end
+  object DSP_Loja18: TDataSetProvider
+    DataSet = SDS_Loja18
+    Options = [poRetainServerOrder]
+    Left = 116
+    Top = 470
   end
 end

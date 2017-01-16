@@ -26,11 +26,9 @@ type
     SDS_Busca: TSQLDataSet;
     CDS_Busca: TClientDataSet;
     DSP_Busca: TDataSetProvider;
-    DS_Busca: TDataSource;
     SDS_EmpProcessa: TSQLDataSet;
     CDS_EmpProcessa: TClientDataSet;
     DSP_EmpProcessa: TDataSetProvider;
-    DS_EmpProcessa: TDataSource;
     CDS_EmpProcessaCOD_FILIAL: TStringField;
     CDS_EmpProcessaENDERECO_IP: TStringField;
     CDS_EmpProcessaPASTA_BASE_DADOS: TStringField;
@@ -158,11 +156,9 @@ type
     SDS_BuscaRapida: TSQLDataSet;
     CDS_BuscaRapida: TClientDataSet;
     DSP_BuscaRapida: TDataSetProvider;
-    DS_BuscaRapida: TDataSource;
     SDS_Pesquisa: TSQLDataSet;
     CDS_Pesquisa: TClientDataSet;
     DSP_Pesquisa: TDataSetProvider;
-    DS_Pesquisa: TDataSource;
     IBQ_EstoqueLoja: TIBQuery;
     IBQ_EstoqueLojaCODFILIAL: TIBStringField;
     IBQ_EstoqueLojaCODPRODUTO: TIBStringField;
@@ -189,6 +185,9 @@ type
     IBQ_EstoqueLojaPRATELEIRA: TIBStringField;
     IBQ_EstoqueLojaGAVETA: TIBStringField;
     IBQ_EstoqueLojaPRINCIPALFOR: TIBStringField;
+    SDS_Loja18: TSQLDataSet;
+    CDS_Loja18: TClientDataSet;
+    DSP_Loja18: TDataSetProvider;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir
