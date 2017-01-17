@@ -147,6 +147,7 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
   end
   object DSP_Produto: TDataSetProvider
     DataSet = SDS_Produto
+    Options = [poRetainServerOrder]
     Left = 562
     Top = 66
   end
@@ -356,6 +357,7 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
   end
   object DSP_ListaPrecos: TDataSetProvider
     DataSet = SDS_ListaPrecos
+    Options = [poRetainServerOrder]
     Left = 436
     Top = 200
   end
@@ -685,6 +687,7 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
   end
   object DSP_Fornecedores: TDataSetProvider
     DataSet = SDS_Fornecedores
+    Options = [poRetainServerOrder]
     Left = 521
     Top = 352
   end

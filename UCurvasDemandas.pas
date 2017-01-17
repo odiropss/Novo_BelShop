@@ -582,9 +582,14 @@ Var
   sTotQtdDemandas, sTotVlrDemandas,
   sDtaDemI, sDtaDemF, sDtaTra: String;
 
+  sDtaDemI_18: String;
+
+  sDtaExcluir: String;
+
   wAnoH, wMesH, wDiaH: Word;
 
-  iTotFeriados, iTotDiasUteis: Integer;
+  iTotFeriados,    iTotDiasUteis   : Integer;
+  iTotFeriados_18, iTotDiasUteis_18: Integer;
 begin
 // =============================================================================
 // INICIO DO PROCESSO ==========================================================
@@ -664,18 +669,26 @@ begin
   DecodeDate(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor), wAnoH, wMesH, wDiaH);
   sDtaDemI:='01.';
   If wMesH<10 Then
-   sDtaDemI:=sDtaDemI+'0'+IntToStr(wMesH)+'.'+IntToStr(wAnoH-1)
+   sDtaDemI:=
+    sDtaDemI+'0'+IntToStr(wMesH)+'.'+IntToStr(wAnoH-1)
   Else
-   sDtaDemI:=sDtaDemI+IntToStr(wMesH)+'.'+IntToStr(wAnoH-1);
+   sDtaDemI:=
+    sDtaDemI+IntToStr(wMesH)+'.'+IntToStr(wAnoH-1);
 
   sDtaDemF:='01.';
   If wMesH<10 Then
-   sDtaDemF:=sDtaDemF+'0'+IntToStr(wMesH)+'.'+IntToStr(wAnoH)
+   sDtaDemF:=
+    sDtaDemF+'0'+IntToStr(wMesH)+'.'+IntToStr(wAnoH)
   Else
-   sDtaDemF:=sDtaDemF+IntToStr(wMesH)+'.'+IntToStr(wAnoH);
+   sDtaDemF:=
+    sDtaDemF+IntToStr(wMesH)+'.'+IntToStr(wAnoH);
+
+  // Data Inicio do Periodo Loja 18
+  sDtaDemI_18:='01.12.2016';
 
   // Dias Uteis no Periodo =====================================================
-  iTotDiasUteis:=DiasUteisBelShop(StrToDate(f_Troca('.','/',sDtaDemI)),StrToDate(f_Troca('.','/',sDtaDemF))-1, False, True);
+  iTotDiasUteis   :=DiasUteisBelShop(StrToDate(f_Troca('.','/',sDtaDemI)),StrToDate(f_Troca('.','/',sDtaDemF))-1, False, True);
+  iTotDiasUteis_18:=DiasUteisBelShop(StrToDate(f_Troca('.','/',sDtaDemI_18)),StrToDate(f_Troca('.','/',sDtaDemF))-1, False, True);
 
   // Dias de Feriados no Periodo ===============================================
   MySql:=' SELECT COUNT(f.dta_feriado) Feriados'+
@@ -688,15 +701,37 @@ begin
   iTotFeriados:=DMMovtosEmpresas.CDS_BuscaRapida.FieldByName('Feriados').AsInteger;
   DMMovtosEmpresas.CDS_BuscaRapida.Close;
 
+  // Dias de Feriados no Periodo Loja 18 =======================================
+  MySql:=' SELECT COUNT(f.dta_feriado) Feriados'+
+         ' FROM FIN_FERIADOS_ANO f'+
+         ' WHERE f.dta_feriado BETWEEN '+QuotedStr(sDtaDemI_18)+' and '+QuotedStr(sDtaDemF)+
+         ' AND   f.ind_ativo=''SIM''';
+  DMMovtosEmpresas.CDS_BuscaRapida.Close;
+  DMMovtosEmpresas.SDS_BuscaRapida.CommandText:=MySql;
+  DMMovtosEmpresas.CDS_BuscaRapida.Open;
+  iTotFeriados_18:=DMMovtosEmpresas.CDS_BuscaRapida.FieldByName('Feriados').AsInteger;
+  DMMovtosEmpresas.CDS_BuscaRapida.Close;
+
   // Verifica se Transação esta Ativa
   If DMMovtosEmpresas.SQLC.InTransaction Then
    DMMovtosEmpresas.SQLC.Rollback(TD);
 
-  // Busca Lojas ===============================================================
-  DMMovtosEmpresas.CDS_EmpProcessa.Close;
-  DMMovtosEmpresas.CDS_EmpProcessa.Open;
-  DMMovtosEmpresas.CDS_EmpProcessa.First;
-  While Not DMMovtosEmpresas.CDS_EmpProcessa.Eof do
+  //===========================================================================
+  // INICIA PROCESSO ===========================================================
+  MySql:=' SELECT'+
+         ' CASE'+
+         '    WHEN e.cod_filial = ''99'' THEN ''-99'''+
+         '    ELSE e.cod_filial'+
+         ' END cod_filial'+
+         ' FROM EMP_CONEXOES e'+
+         ' WHERE ((e.ind_ativo = ''SIM'') OR (e.cod_filial = ''99''))'+
+         ' AND e.cod_filial<>''18'''+
+         ' ORDER BY 1 DESC';
+  DMMovtosEmpresas.CDS_Pesquisa.Close;
+  DMMovtosEmpresas.SDS_Pesquisa.CommandText:=MySql;
+  DMMovtosEmpresas.CDS_Pesquisa.Open;
+
+  While Not DMMovtosEmpresas.CDS_Pesquisa.Eof do
   Begin
     // Monta Transacao =========================================================
     TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
@@ -706,7 +741,9 @@ begin
       DateSeparator:='.';
       DecimalSeparator:='.';
 
-      sgCodLoja:=DMMovtosEmpresas.CDS_EmpProcessaCOD_FILIAL.AsString;
+      sgCodLoja:=DMMovtosEmpresas.CDS_Pesquisa.FieldByName('COD_FILIAL').AsString;
+      If sgCodLoja='-99' Then
+       sgCodLoja:='99';
 
       // Busca Valor e Quantidade Total de Demandas ============================
       If sgCodLoja<>'99' Then
@@ -718,9 +755,18 @@ begin
                 ' FROM MOVTOS_EMPRESAS mt, PRODUTO pt'+
 
                 ' WHERE  mt.codproduto=pt.codproduto'+
-                ' AND    mt.ind_tipo=''DM'''+
-                ' AND    mt.dta_ref BETWEEN '+QuotedStr(sDtaDemI)+' and '+QuotedStr(sDtaDemF)+
-                ' AND    COALESCE(pt.situacaopro,0) in (0,3)'+ // Somente Ativo e Não Compra
+                ' AND    mt.ind_tipo=''DM''';
+
+                If sgCodLoja<>'18' Then
+                 MySql:=
+                  MySql+' AND    mt.dta_ref BETWEEN '+QuotedStr(sDtaDemI)+' and '+QuotedStr(sDtaDemF);
+
+                If sgCodLoja='18' Then
+                 MySql:=
+                  MySql+' AND    mt.dta_ref BETWEEN '+QuotedStr(sDtaDemI_18)+' and '+QuotedStr(sDtaDemF);
+
+         MySql:=
+          MySql+' AND    COALESCE(pt.situacaopro,0) in (0,3)'+ // Somente Ativo e Não Compra
                 ' AND    ((pt.principalfor NOT IN (''010000'', ''000300'', ''000500'', ''001072'', ''000883''))'+
                 '          OR'+
                 '         (pt.codaplicacao <>''0016''))'+
@@ -736,14 +782,13 @@ begin
                 ' WHERE EXISTS (SELECT 1'+
                 '               FROM EMP_CONEXOES c'+
                 '               WHERE c.Ind_Ativo=''SIM'''+
-                '               AND c.cod_filial=f.cod_loja)'+
-                ' AND NOT EXISTS (SELECT 1'+
-                '                 FROM PRODUTO p'+
-                '                 WHERE p.codproduto=f.cod_produto'+
-                '                 AND    ((p.principalfor IN (''010000'', ''000300'', ''000500'', ''001072'', ''000883''))'+
-                '                          OR'+
-                '                         (p.codaplicacao =''0016'')))'; // Brindes
-
+                '               AND   c.cod_filial=f.cod_loja)';
+//                ' AND NOT EXISTS (SELECT 1'+
+//                '                 FROM PRODUTO p'+
+//                '                 WHERE p.codproduto=f.cod_produto'+
+//                '                 AND    ((p.principalfor IN (''010000'', ''000300'', ''000500'', ''001072'', ''000883''))'+
+//                '                          OR'+
+//                '                         (p.codaplicacao =''0016'')))'; // Brindes
        End; // If sgCodLoja<>'99' Then
       DMMovtosEmpresas.SDS.Close;
       DMMovtosEmpresas.SDS.CommandText:=MySql;
@@ -761,11 +806,22 @@ begin
 
       DMMovtosEmpresas.SDS.Close;
 
-      // Coloca num_dias_uteis = 999999 para excluir após Insert ES_FINAN_CURVA_ABC ===
-      MySql:=' UPDATE ES_FINAN_CURVA_ABC ff'+
-             ' SET ff.num_dias_uteis=999999'+
+//      // Coloca num_dias_uteis = 999999 para excluir após Insert ES_FINAN_CURVA_ABC ===
+//      MySql:=' UPDATE ES_FINAN_CURVA_ABC ff'+
+//             ' SET ff.num_dias_uteis=999999'+
+//             ' WHERE ff.cod_loja='+QuotedStr(sgCodLoja);
+//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+      // Data para Exclusão ES_FINAN_CURVA_ABC =================================
+      MySql:=' select first 1 ff.dta_atualizacao'+
+             ' FROM ES_FINAN_CURVA_ABC ff'+
              ' WHERE ff.cod_loja='+QuotedStr(sgCodLoja);
-      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+      DMMovtosEmpresas.CDS_BuscaRapida.Close;
+      DMMovtosEmpresas.SDS_BuscaRapida.CommandText:=MySql;
+      DMMovtosEmpresas.CDS_BuscaRapida.Open;
+      sDtaExcluir:=DMMovtosEmpresas.CDS_BuscaRapida.FieldByName('dta_atualizacao').AsString;
+      sDtaExcluir:=f_Troca('/','.',f_Troca('-','.',sDtaExcluir));
+      DMMovtosEmpresas.CDS_BuscaRapida.Close;
 
       // Insere ES_FINAN_CURVA_ABC =============================================
       If sgCodLoja<>'99' Then
@@ -781,20 +837,36 @@ begin
                 QuotedStr(sgCodLoja)+' COD_LOJA,'+
                 ' pr.codproduto,'+
                 ' COALESCE(fc.est_minimo,0) EST_MINIMO,'+
-                ' COALESCE(fc.est_maximo,0) EST_MAXIMO,'+
+                ' COALESCE(fc.est_maximo,0) EST_MAXIMO,';
 
-                ' ABS(CAST(CASE'+
-                '            WHEN pr.datainclusao<CAST('+QuotedStr(sDtaDemI)+' as Date) THEN'+
-                '              '+QuotedStr(IntToStr(iTotDiasUteis))+
-                '            WHEN pr.datainclusao>cast('+QuotedStr(sDtaDemF)+' as Date) THEN'+
-                '              1'+
-                '            ELSE'+
-                '              ((DATEDIFF(DAY FROM pr.datainclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))-'+
-                '               ((DATEDIFF(DAY FROM pr.datainclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))/7)-'+
-                                IntToStr(iTotFeriados)+')'+
-                '          END AS INTEGER)) NUM_DIAS_UTEIS, '+
+                If sgCodLoja<>'18' Then
+                 MySql:=
+                  MySql+' ABS(CAST(CASE'+
+                        '            WHEN pr.datainclusao<CAST('+QuotedStr(sDtaDemI)+' as Date) THEN'+
+                        '              '+QuotedStr(IntToStr(iTotDiasUteis))+
+                        '            WHEN pr.datainclusao>cast('+QuotedStr(sDtaDemF)+' as Date) THEN'+
+                        '              1'+
+                        '            ELSE'+
+                        '              ((DATEDIFF(DAY FROM pr.datainclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))-'+
+                        '               ((DATEDIFF(DAY FROM pr.datainclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))/7)-'+
+                                        IntToStr(iTotFeriados)+')'+
+                        '          END AS INTEGER)) NUM_DIAS_UTEIS, ';
 
-                sTotVlrDemandas+' Vlr_DEMANDAS_ANO,'+
+                If sgCodLoja='18' Then
+                 MySql:=
+                  MySql+' ABS(CAST(CASE'+
+                        '            WHEN pr.datainclusao<CAST('+QuotedStr(sDtaDemI_18)+' as Date) THEN'+
+                        '              '+QuotedStr(IntToStr(iTotDiasUteis_18))+
+                        '            WHEN pr.datainclusao>cast('+QuotedStr(sDtaDemF)+' as Date) THEN'+
+                        '              1'+
+                        '            ELSE'+
+                        '              ((DATEDIFF(DAY FROM pr.datainclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))-'+
+                        '               ((DATEDIFF(DAY FROM pr.datainclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))/7)-'+
+                                        IntToStr(iTotFeriados_18)+')'+
+                        '          END AS INTEGER)) NUM_DIAS_UTEIS, ';
+
+         MySql:=
+          MySql+sTotVlrDemandas+' Vlr_DEMANDAS_ANO,'+
                 ' COALESCE(dem.VLR_DEMANDAS,0) VLR_DEMANDAS,'+
                 ' COALESCE(dem.PER_PARTICIPACAO,0) PER_PARTICIPACAO,'+
                 ' ''E'' IND_CURVA, '+
@@ -817,9 +889,19 @@ begin
                 '                          CAST(SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.quant_ref,0)),0)) AS INTEGER) QTD_DEMANDAS,'+
                 '                          CAST((((SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.quant_ref,0)),0.0000)))*100)/'+sTotQtdDemandas+') AS NUMERIC(12,4)) PER_PART_QTD,'+
                 '                          CAST(SUM(DECODE(md.ind_tipo,''TR'',ABS(COALESCE(md.quant_ref,0)),0)) AS INTEGER) QTD_TRANSITO'+
-                '                   FROM MOVTOS_EMPRESAS md'+
-                '                   WHERE ((md.ind_tipo=''DM'' AND md.dta_ref BETWEEN '+QuotedStr(sDtaDemI)+' AND '+QuotedStr(sDtaDemF)+')'+
-                '                          OR'+
+                '                   FROM MOVTOS_EMPRESAS md';
+
+                If sgCodLoja<>'18' Then
+                 MySql:=
+                  MySql+'           WHERE ((md.ind_tipo=''DM'' AND md.dta_ref BETWEEN '+QuotedStr(sDtaDemI)+' AND '+
+                                                                                        QuotedStr(sDtaDemF)+')';
+                If sgCodLoja='18' Then
+                 MySql:=
+                  MySql+'           WHERE ((md.ind_tipo=''DM'' AND md.dta_ref BETWEEN '+QuotedStr(sDtaDemI_18)+' AND '+
+                                                                                        QuotedStr(sDtaDemF)+')';
+
+         MySql:=
+          MySql+'                          OR'+
                 '                          (md.ind_tipo=''TR'' AND md.dta_ref>='+QuotedStr(sDtaTra)+'))'+
                 '                   GROUP BY 1,2) DEM  ON dem.codproduto=pr.codproduto'+
                 '                                     AND dem.codfilial='+QuotedStr(sgCodLoja)+
@@ -832,7 +914,7 @@ begin
                 '         OR'+
                 '        (pr.codaplicacao <>''0016''))';
        End
-      Else // If sgCodLoja<>'99' Then
+      Else // If sgCodLoja='99' Then
        Begin
          MySql:=' INSERT INTO ES_FINAN_CURVA_ABC'+
                 ' (COD_LOJA, COD_PRODUTO, EST_MINIMO, EST_MAXIMO, NUM_DIAS_UTEIS,'+
@@ -856,6 +938,7 @@ begin
                 '              ((DATEDIFF(DAY FROM pr.datainclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))-'+
                 '               ((DATEDIFF(DAY FROM pr.datainclusao TO CAST('+QuotedStr(sDtaDemF)+' AS DATE)))/7)-'+IntToStr(iTotFeriados)+')'+
                 '          END AS INTEGER)) NUM_DIAS_UTEIS, '+
+
                 sTotVlrDemandas+' Vlr_DEMANDAS_ANO,'+
                 ' CAST(COALESCE(dem.VLR_DEMANDAS,0) AS NUMERIC(12,2)) VLR_DEMANDAS,'+
 
@@ -908,13 +991,19 @@ begin
                 '         OR'+
                 '        (pr.codaplicacao <>''0016''))';
        End; // If sgCodLoja<>'99' Then
-      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
-      // Exclui Movtos com Num_Dias_Uteis = 999999 ES_FINAN_CURVA_ABC =================
+      // Exclui Movtos Anterior Pela dta_atualizacao ES_FINAN_CURVA_ABC ========
       MySql:=' DELETE FROM ES_FINAN_CURVA_ABC ff'+
              ' WHERE ff.cod_loja='+QuotedStr(sgCodLoja)+
-             ' AND   ff.num_dias_uteis=999999';
+             ' AND   ff.dta_atualizacao='+QuotedStr(sDtaExcluir);
       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+//      // Exclui Movtos com Num_Dias_Uteis = 999999 ES_FINAN_CURVA_ABC =================
+//      MySql:=' DELETE FROM ES_FINAN_CURVA_ABC ff'+
+//             ' WHERE ff.cod_loja='+QuotedStr(sgCodLoja)+
+//             ' AND   ff.num_dias_uteis=999999';
+//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
       // Calcula Curvas de Valores e Quantidades ===============================
       CalculaCurvas;
@@ -951,9 +1040,10 @@ begin
       End; // on e : Exception do
     End; // Try
 
-    DMMovtosEmpresas.CDS_EmpProcessa.Next;
+    DMMovtosEmpresas.CDS_Pesquisa.Next;
   End; // If Lbx_EmpresasProcessar.Items.Count=0 Then
-  DMMovtosEmpresas.CDS_EmpProcessa.Close;
+  DMMovtosEmpresas.CDS_Pesquisa.Close;
+
 
   // Atualiza Curva ABC no CD - SIDICOM
   AtualizaCurvaCD;

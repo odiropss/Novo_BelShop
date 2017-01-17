@@ -831,8 +831,8 @@ Begin
 
       If sgMetodo='LinxProdutos' Then
       Begin
-        sgDtaInicio:='2005-01-01';
-        sgDtaFim   :='2017-01-16';
+        sgDtaInicio:='2017-01-01';
+        sgDtaFim   :='2017-01-17';
 //        sgDtaInicio:='NULL'; //
 //        sgDtaFim   :='NULL'; //
 
@@ -842,7 +842,7 @@ Begin
       If sgMetodo='LinxProdutosDetalhes' Then
       Begin
         sgDtaInicio:='2005-01-01';
-        sgDtaFim   :='2017-01-16';
+        sgDtaFim   :='2017-01-17';
 //        sgDtaInicio:='NULL'; // ODIR Altera para NULL a Primeira Vez
 //        sgDtaFim   :='NULL'; // ODIR Altera para NULL a Primeira Vez
 

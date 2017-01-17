@@ -45,6 +45,9 @@ type
     IBQ_EstoqueLojaCORREDOR: TIBStringField;
     IBQ_EstoqueLojaPRATELEIRA: TIBStringField;
     IBQ_EstoqueLojaGAVETA: TIBStringField;
+    SDS_Loja18: TSQLDataSet;
+    CDS_Loja18: TClientDataSet;
+    DSP_Loja18: TDataSetProvider;
 
     // Odir
     Procedure ConectaBanco;

@@ -1,6 +1,6 @@
 object FrmCurvasDemandas: TFrmCurvasDemandas
-  Left = 266
-  Top = 108
+  Left = 252
+  Top = 176
   Width = 680
   Height = 416
   Caption = 'Atualiza Curvas ABC e Demanda Ano'
@@ -23,7 +23,6 @@ object FrmCurvasDemandas: TFrmCurvasDemandas
     Width = 664
     Height = 325
     Align = alClient
-    DataSource = DMMovtosEmpresas.DS_EmpProcessa
     FixedColor = clTeal
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -82,7 +81,7 @@ object FrmCurvasDemandas: TFrmCurvasDemandas
       664
       53)
     object Bt_Atualizar: TJvXPButton
-      Left = 268
+      Left = 267
       Top = 11
       Width = 129
       Height = 33

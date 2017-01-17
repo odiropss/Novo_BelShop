@@ -1,10 +1,10 @@
 object DMAtualizaEstoques: TDMAtualizaEstoques
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 812
-  Top = 70
-  Height = 444
-  Width = 333
+  Left = 336
+  Top = 89
+  Height = 604
+  Width = 631
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
     DriverName = 'Interbase'
@@ -246,5 +246,25 @@ object DMAtualizaEstoques: TDMAtualizaEstoques
       Required = True
       Size = 6
     end
+  end
+  object SDS_Loja18: TSQLDataSet
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 239
+    Top = 225
+  end
+  object CDS_Loja18: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_Loja18'
+    Left = 333
+    Top = 224
+  end
+  object DSP_Loja18: TDataSetProvider
+    DataSet = SDS_Loja18
+    Options = [poRetainServerOrder]
+    Left = 284
+    Top = 238
   end
 end

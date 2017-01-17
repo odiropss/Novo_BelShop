@@ -260,7 +260,8 @@ begin
            '           FROM LINXMOVIMENTO m'+
            '           WHERE m.empresa = '+QuotedStr(sCodLoja)+
            '           AND   m.operacao = ''E'''+
-           '           AND   ((m.tipo_transacao=''S'') OR (m.tipo_transacao=''E'') OR (m.tipo_transacao IS NULL))'+
+//           '           AND   ((m.tipo_transacao=''S'') OR (m.tipo_transacao=''E'') OR (m.tipo_transacao IS NULL))'+
+           '           AND   m.tipo_transacao=''E'''+
            '           AND   m.cancelado=''N'''+
            '           AND   m.excluido=''N'''+
            '           AND   m.cod_produto = lpd.cod_produto'+
@@ -273,9 +274,9 @@ begin
            ' pr.principalfor principalfor,'+
            ' current_date DTA_ATUALIZACAO, '+QuotedStr(sHora)+' HRA_ATUALIZACAO'+
 
-           ' FROM linxprodutosdetalhes lpd'+
-           '          LEFT JOIN linxprodutos lp ON lp.cod_produto = lpd.cod_produto'+
-           '          LEFT JOIN produto pr ON pr.codproduto = lp.cod_auxiliar'+
+           ' FROM LINXPRODUTOSDETALHES lpd'+
+           '          LEFT JOIN LINXPRODUTOS lp ON lp.cod_produto = lpd.cod_produto'+
+           '          LEFT JOIN PRODUTO pr ON pr.codproduto = lp.cod_auxiliar'+
            ' WHERE lpd.empresa = '+sCodLoja+
            ' AND   lp.cod_auxiliar IS NOT NULL';
     DMMovtosEmpresas.CDS_Loja18.Close;
@@ -2463,25 +2464,27 @@ sCodEmpresa:='18';
         End; // If Lbx_EmpresasProcessar.Items[i]=sCodEmpresa Then
       End; // for i:=0 to Lbx_EmpresasProcessar.Items.Count-1 do
       bSiga:=False;
-    End; // If (Not bProcDemanda)   and (Not bProcTransito)  and (Not bProcUltCompra) and ...
+    End; // If (Not bProcDemanda) and (Not bProcTransito) and (Not bProcUltCompra) and ...
 
     If sCodEmpresa='18' Then
     Begin
-      bProcDemanda:=True;
+      // odiropss - Alterar para bProcDemanda:=True;
+      bProcDemanda:=False;
       bProcTransito:=False;
+      // odiropss - Alterar para bProcUltCompra:=True;
       bProcUltCompra:=False;
       bProcEstFinal:=False;
-      bProcTransfSai:=False;
-      bProcTransfEnt:=False;
-      bProcPcCusto:=False;
-      bProcComprov:=False;
-      bProcAjTrAvPe:=False;
-      bProcBonifca:=False;
-      bProcDescFinan:=False;
-      bProcPagtoST:=False;
-      bProcVlrContab:=False;
-      bProcSaldoProd:=False;
-      bProcEstoque:=False;
+        bProcTransfSai:=False;
+        bProcTransfEnt:=False;
+        bProcPcCusto:=False;
+        bProcComprov:=False;
+        bProcAjTrAvPe:=False;
+        bProcBonifca:=False;
+        bProcDescFinan:=False;
+        bProcPagtoST:=False;
+        bProcVlrContab:=False;
+        bProcSaldoProd:=False;
+        bProcEstoque:=False;
     End; // If sCodEmpresa='18' Then
 
     If bSiga Then // Se já faz mais de 5 horas a Ultima Atualização da Empresa
@@ -2958,21 +2961,21 @@ sCodEmpresa:='18';
             If StrToDate(sDtaUltAtualizacao)<StrToDate('13.12.2016') Then
              sDtaUltAtualizacao:='13.12.2016';
 
-            MySql:=' SELECT pr.codproduto,'+
+            MySql:=' SELECT lp.cod_auxiliar codproduto,'+
                    ' CAST(EXTRACT(YEAR FROM lm.data_documento) AS VARCHAR(4))||''/''||'+
                    ' CAST(LPAD(EXTRACT(MONTH FROM lm.data_documento), 2, ''0'') AS VARCHAR(2)) comp_anomes,'+
                    ' SUM(DECODE(lm.operacao, ''S'', lm.quantidade, -lm.quantidade)) demanda,'+
                    ' SUM(DECODE(lm.operacao, ''S'', lm.valor_total, -lm.valor_total)) vlr_total'+
 
-                   ' FROM LINXMOVIMENTO lm, LINXPRODUTOS lp, PRODUTO pr'+
-                   ' WHERE lm.cod_produto      = lp.cod_produto'+
-                   ' AND   lp.cod_auxiliar     = pr.codproduto'+
+                   ' FROM LINXMOVIMENTO lm, LINXPRODUTOS lp'+
+                   ' WHERE lm.cod_produto=lp.cod_produto'+
 
                    ' AND   ((lm.operacao=''S'' AND lm.tipo_transacao=''V'')'+
                    '        OR'+
                    '        (lm.operacao=''DE'' AND ((lm.tipo_transacao = ''E'') OR (lm.tipo_transacao IS NULL))))'+
                    ' AND   lm.cancelado = ''N'''+
                    ' AND   lm.excluido  = ''N'''+
+                   ' AND   lp.cod_auxiliar IS NOT NUll'+
                    ' AND   lm.cod_loja  = '+QuotedStr(sCodEmpresa)+
                    ' AND   lm.data_documento >='+QuotedStr(sDtaUltAtualizacao)+
 
@@ -3010,6 +3013,7 @@ sCodEmpresa:='18';
                   // Acerta Data da Venda ---------------------------------
                   s:=IBQ_Consulta.FieldByName('comp_anomes').AsString;
                   i:=pos('/',s);
+
                   sDtaUltAtualizacao:=Copy(s,i+1,length(s));
                   If length(sDtaUltAtualizacao)<2 Then
                    sDtaUltAtualizacao:='0'+sDtaUltAtualizacao;
@@ -3158,16 +3162,19 @@ sCodEmpresa:='18';
           DecimalSeparator:=',';
 
           // Cria Query da Empresa ------------------------------------
-          CriaQueryIB('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, IBQ_Consulta, False, True);
+          If sCodEmpresa<>'18' Then
+          Begin
+            CriaQueryIB('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, IBQ_Consulta, False, True);
+          End; // If sCodEmpresa<>'18' Then
 
           DateSeparator:='.';
           DecimalSeparator:='.';
-          
-          // (TS) Busca Transferencias de Saida
+
           sDtaUltAtualizacao:=DateTimeToStr(PrimeiroUltimoDia(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor)-60,'P'));
           sDtaUltAtualizacao:=f_Troca('/','.',sDtaUltAtualizacao);
           sDtaUltAtualizacao:=f_Troca('-','.',sDtaUltAtualizacao);
 
+          // (TS) Busca Transferencias de Saida
           MySql:=' Select p.codproduto, m.comp_anomes,'+
                  ' sum(coalesce(p.quantatendida,0)) Transf,'+
                  ' sum(coalesce(p.valtotal,0)) Vlr_Total'+
@@ -3512,7 +3519,10 @@ sCodEmpresa:='18';
           DecimalSeparator:=',';
 
           // Cria Query da Empresa ------------------------------------
-          CriaQueryIB('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, IBQ_Consulta, False, True);
+          If sCodEmpresa<>'18' Then
+          Begin
+            CriaQueryIB('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, IBQ_Consulta, False, True);
+          End; // If sCodEmpresa<>'18' Then
 
           DateSeparator:='.';
           DecimalSeparator:='.';
@@ -3521,58 +3531,93 @@ sCodEmpresa:='18';
           sDtaUltAtualizacao:=DateTimeToStr(PrimeiroUltimoDia(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor)-60,'P'));
           sDtaUltAtualizacao:=f_Troca('/','.',sDtaUltAtualizacao);
           sDtaUltAtualizacao:=f_Troca('-','.',sDtaUltAtualizacao);
-//        sDtaUltAtualizacao:='03.01.2011';
 
-          MySql:=' select p.codproduto,'+
-                 ' m.dataentrada,'+ // DTA_REF
-                 ' sum(Coalesce(p.quant,0)) quant,'+ // QUANT_REF
-                 ' (sum(Coalesce(p.preco,0))/count(p.codproduto)) preco,'+ // PRECO
-                 ' sum(Coalesce(p.valipi,0)) valipi,'+ // DES_SITUACAO ==>> Atenção esta em String
-                 ' sum(Coalesce(p.valbruto,0)) valbruto,'+ // VALBRUTO
-                 ' sum(Coalesce(p.valdesconto,0)) valdesconto,'+ // VALDESCONTO
-                 ' sum(Coalesce(p.valsubstituicao,0)) valsubstituicao,'+ // VALSUBSTITUICAO
-                 ' sum(Coalesce(p.valtotal,0)) valtotal'+ // VLR_TOTAL_REF
-
-                 ' From mfor m, mforpro p'+
-
-                 ' where m.chavenf=p.chavenf'+
-                 ' and m.codcomprovante in (''010'', ''012'')'+
-
-                 ' and m.dataentrada=('+
-                 ' select Max(m1.dataentrada)'+
-                 ' from mfor m1, mforpro p1'+
-                 ' where m1.chavenf=p1.chavenf'+
-                 ' and p1.entradasaida = ''E'''+
-                 ' and m1.dataentrada>='+QuotedStr(sDtaUltAtualizacao)+
-                 ' and m1.codfilial = '+QuotedStr(sCodEmpresa)+
-                 ' and m1.codcomprovante in (''010'', ''012'')'+
-                 ' and p1.codproduto=p.codproduto'+
-                 ')'+
-
-                 ' and p.entradasaida = ''E'''+
-                 ' and m.dataentrada>='+QuotedStr(sDtaUltAtualizacao)+
-                 ' and m.codfilial = '+QuotedStr(sCodEmpresa)+
-                 ' group by 1,2'+
-                 ' order by 1,2';
-          IBQ_Consulta.Close;
-          IBQ_Consulta.SQL.Clear;
-          IBQ_Consulta.SQL.Add(MySql);
-
-          // Busca Iens da Empresa ----------------------------------
-          i:=0;
-          bSiga:=False;
-          While Not bSiga do
+          If sCodEmpresa<>'18' Then
           Begin
-            Try
-              IBQ_Consulta.Open;
-              bSiga:=True;
-            Except
-              Inc(i);
-            End; // Try
+            MySql:=' select p.codproduto,'+
+                   ' m.dataentrada,'+ // DTA_REF
+                   ' sum(Coalesce(p.quant,0)) quant,'+ // QUANT_REF
+                   ' (sum(Coalesce(p.preco,0))/count(p.codproduto)) preco,'+ // PRECO
+                   ' sum(Coalesce(p.valipi,0)) valipi,'+ // DES_SITUACAO ==>> Atenção esta em String
+                   ' sum(Coalesce(p.valbruto,0)) valbruto,'+ // VALBRUTO
+                   ' sum(Coalesce(p.valdesconto,0)) valdesconto,'+ // VALDESCONTO
+                   ' sum(Coalesce(p.valsubstituicao,0)) valsubstituicao,'+ // VALSUBSTITUICAO
+                   ' sum(Coalesce(p.valtotal,0)) valtotal'+ // VLR_TOTAL_REF
 
-            If i>99 Then
-              Break;
-          End; // While Not bSiga do
+                   ' From mfor m, mforpro p'+
+
+                   ' where m.chavenf=p.chavenf'+
+                   ' and m.codcomprovante in (''010'', ''012'')'+
+
+                   ' and m.dataentrada=(select Max(m1.dataentrada)'+
+                   '                    from mfor m1, mforpro p1'+
+                   '                    where m1.chavenf=p1.chavenf'+
+                   '                    and p1.entradasaida = ''E'''+
+                   '                    and m1.dataentrada>='+QuotedStr(sDtaUltAtualizacao)+
+                   '                    and m1.codfilial = '+QuotedStr(sCodEmpresa)+
+                   '                    and m1.codcomprovante in (''010'', ''012'')'+
+                   '                    and p1.codproduto=p.codproduto)'+
+
+                   ' and p.entradasaida = ''E'''+
+                   ' and m.dataentrada>='+QuotedStr(sDtaUltAtualizacao)+
+                   ' and m.codfilial = '+QuotedStr(sCodEmpresa)+
+                   ' group by 1,2'+
+                   ' order by 1,2';
+            IBQ_Consulta.Close;
+            IBQ_Consulta.SQL.Clear;
+            IBQ_Consulta.SQL.Add(MySql);
+
+            // Busca Iens da Empresa ----------------------------------
+            i:=0;
+            bSiga:=False;
+            While Not bSiga do
+            Begin
+              Try
+                IBQ_Consulta.Open;
+                bSiga:=True;
+              Except
+                Inc(i);
+              End; // Try
+
+              If i>99 Then
+                Break;
+            End; // While Not bSiga do
+          End; // If sCodEmpresa<>'18' Then
+
+          If sCodEmpresa='18' Then
+          Begin
+            If StrToDate(sDtaUltAtualizacao)<StrToDate('13.12.2016') Then
+             sDtaUltAtualizacao:='13.12.2016';
+
+            MySql:=' SELECT '+
+                   ' pl.cod_auxiliar CODPRODUTO, cast(ml.data_lancamento as date) DATAENTRADA,'+
+                   ' ml.quantidade QUANT, ml.valor_liquido PRECO, ml.valor_ipi VALIPI,'+
+                   ' (ml.preco_custo * ml.quantidade) VALBRUTO, ml.desconto VALDESCONTO,'+
+                   ' ml.valor_icms_st VALSUBSTITUICAO, ml.valor_total VALTOTAL'+
+
+                   ' FROM LINXMOVIMENTO ml, LINXPRODUTOS pl'+
+                   ' WHERE ml.cod_produto=pl.cod_produto'+
+                   ' AND   pl.cod_auxiliar is not null'+
+                   ' AND   ml.empresa='+QuotedStr(sCodEmpresa)+
+                   ' AND   ml.operacao=''E'''+
+                   ' AND   ((ml.tipo_transacao=''S'') OR (ml.tipo_transacao=''E'') OR (ml.tipo_transacao IS NULL))'+
+                   ' AND   ml.cancelado=''N'''+
+                   ' AND   ml.excluido=''N'''+
+                   ' AND   ml.data_lancamento>='+QuotedStr(sDtaUltAtualizacao)+
+                   ' AND   ml.data_lancamento='+
+                   '                  (SELECT max(ml1.data_lancamento)'+
+                   '                   FROM LINXMOVIMENTO ml1'+
+                   '                   WHERE ml1.cod_produto=ml.cod_produto'+
+                   '                   AND   ml1.empresa = ml.empresa'+
+                   '                   AND   ml1.operacao = ml.operacao'+
+                   '                   AND   ((ml1.tipo_transacao=''S'') OR (ml1.tipo_transacao=''E'') OR (ml1.tipo_transacao IS NULL))'+
+                   '                   AND   ml1.cancelado=''N'''+
+                   '                   AND   ml1.excluido=''N'')';
+            DMMovtosEmpresas.CDS_Loja18.Close;
+            DMMovtosEmpresas.SDS_Loja18.CommandText:=MySql;
+            DMMovtosEmpresas.CDS_Loja18.Open;
+            bSiga:=True;
+          End; // If sCodEmpresa='18' Then
 
           // Processamento  -------------------------------------------
           If bSiga Then // Consulta Ultima Compra
@@ -3586,53 +3631,109 @@ sCodEmpresa:='18';
               DateSeparator:='.';
               DecimalSeparator:='.';
 
-              While Not IBQ_Consulta.Eof do
+              If sCodEmpresa<>'18' Then
               Begin
-                // Exclui Movto da Empresa --------------------------------
-                MySql:=' Delete From MOVTOS_EMPRESAS'+
-                       ' Where Ind_Tipo='+QuotedStr('UC')+
-                       ' And   codproduto='+QuotedStr(IBQ_Consulta.FieldByName('codproduto').AsString)+
-                       ' And   CodFilial='+QuotedStr(sCodEmpresa);
-                DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-
-                MySql:=' Insert Into MOVTOS_EMPRESAS ('+
-                       ' CODFILIAL, IND_TIPO, CODPRODUTO, CODFORNECEDOR,'+
-                       ' NOMEFORNECEDOR, DTA_REF, QUANT_REF, PRECO, DES_SITUACAO,'+
-                       ' VALBRUTO, VALDESCONTO, VALSUBSTITUICAO, VLR_TOTAL_REF,'+
-                       ' DTA_ATUALIZACAO)'+
-                       ' Values ('+
-                       QuotedStr(sCodEmpresa)+', '+ // CODFILIAL
-                       QuotedStr('UC')+', '+ // IND_TIPO
-                       QuotedStr(IBQ_Consulta.FieldByName('codproduto').AsString)+', '+ // CODPRODUTO
-                       'Null, '+ // CODFORNECEDOR
-                       'Null, '+ // NOMEFORNECEDOR
-                       QuotedStr(IBQ_Consulta.FieldByName('dataentrada').AsString)+', '+ // DTA_REF
-                       QuotedStr(IBQ_Consulta.FieldByName('quant').AsString)+', '+ // QUANT_REF
-                       QuotedStr(IBQ_Consulta.FieldByName('preco').AsString)+', '+ // PRECO
-                       QuotedStr(f_Troca('.',',',IBQ_Consulta.FieldByName('valipi').AsString))+', '+ // DES_SITUACAO
-                       QuotedStr(IBQ_Consulta.FieldByName('valbruto').AsString)+', '+ // VALBRUTO
-                       QuotedStr(IBQ_Consulta.FieldByName('valdesconto').AsString)+', '+ // VALDESCONTO
-                       QuotedStr(IBQ_Consulta.FieldByName('valsubstituicao').AsString)+', '+ // VALSUBSTITUICAO
-                       QuotedStr(IBQ_Consulta.FieldByName('valtotal').AsString)+', '+
-                       QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
-                DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-
-                If Not bExec Then
+                While Not IBQ_Consulta.Eof do
                 Begin
-                  // Grava Loja em Processamento --------------------------
+                  // Exclui Movto da Empresa --------------------------------
+                  MySql:=' Delete From MOVTOS_EMPRESAS'+
+                         ' Where Ind_Tipo='+QuotedStr('UC')+
+                         ' And   codproduto='+QuotedStr(IBQ_Consulta.FieldByName('codproduto').AsString)+
+                         ' And   CodFilial='+QuotedStr(sCodEmpresa);
+                  DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
                   MySql:=' Insert Into MOVTOS_EMPRESAS ('+
-                         ' IND_TIPO, NOMEFORNECEDOR, DTA_ATUALIZACAO)'+
+                         ' CODFILIAL, IND_TIPO, CODPRODUTO, CODFORNECEDOR,'+
+                         ' NOMEFORNECEDOR, DTA_REF, QUANT_REF, PRECO, DES_SITUACAO,'+
+                         ' VALBRUTO, VALDESCONTO, VALSUBSTITUICAO, VLR_TOTAL_REF,'+
+                         ' DTA_ATUALIZACAO)'+
                          ' Values ('+
-                         QuotedStr('OK')+', '+
-                         QuotedStr('Ultima Compra_Exec Loja: '+sCodEmpresa)+', '+
+                         QuotedStr(sCodEmpresa)+', '+ // CODFILIAL
+                         QuotedStr('UC')+', '+ // IND_TIPO
+                         QuotedStr(IBQ_Consulta.FieldByName('codproduto').AsString)+', '+ // CODPRODUTO
+                         'Null, '+ // CODFORNECEDOR
+                         'Null, '+ // NOMEFORNECEDOR
+                         QuotedStr(IBQ_Consulta.FieldByName('dataentrada').AsString)+', '+ // DTA_REF
+                         QuotedStr(IBQ_Consulta.FieldByName('quant').AsString)+', '+ // QUANT_REF
+                         QuotedStr(IBQ_Consulta.FieldByName('preco').AsString)+', '+ // PRECO
+                         QuotedStr(f_Troca('.',',',IBQ_Consulta.FieldByName('valipi').AsString))+', '+ // DES_SITUACAO
+                         QuotedStr(IBQ_Consulta.FieldByName('valbruto').AsString)+', '+ // VALBRUTO
+                         QuotedStr(IBQ_Consulta.FieldByName('valdesconto').AsString)+', '+ // VALDESCONTO
+                         QuotedStr(IBQ_Consulta.FieldByName('valsubstituicao').AsString)+', '+ // VALSUBSTITUICAO
+                         QuotedStr(IBQ_Consulta.FieldByName('valtotal').AsString)+', '+
                          QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
                   DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
-                  bExec:=True;
-                End;
+                  If Not bExec Then
+                  Begin
+                    // Grava Loja em Processamento --------------------------
+                    MySql:=' Insert Into MOVTOS_EMPRESAS ('+
+                           ' IND_TIPO, NOMEFORNECEDOR, DTA_ATUALIZACAO)'+
+                           ' Values ('+
+                           QuotedStr('OK')+', '+
+                           QuotedStr('Ultima Compra_Exec Loja: '+sCodEmpresa)+', '+
+                           QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
+                    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
-                IBQ_Consulta.Next;
-              End; // While Not IBQ_Consulta.Eof do
+                    bExec:=True;
+                  End;
+
+                  IBQ_Consulta.Next;
+                End; // While Not IBQ_Consulta.Eof do
+                IBQ_Consulta.Close;
+              End; // If sCodEmpresa<>'18' Then
+
+              If sCodEmpresa='18' Then
+              Begin
+                While Not DMMovtosEmpresas.CDS_Loja18.Eof do
+                Begin
+                  // Exclui Movto da Empresa --------------------------------
+                  MySql:=' Delete From MOVTOS_EMPRESAS'+
+                         ' Where Ind_Tipo='+QuotedStr('UC')+
+                         ' And   codproduto='+QuotedStr(DMMovtosEmpresas.CDS_Loja18.FieldByName('codproduto').AsString)+
+                         ' And   CodFilial='+QuotedStr(sCodEmpresa);
+                  DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+                  MySql:=' Insert Into MOVTOS_EMPRESAS ('+
+                         ' CODFILIAL, IND_TIPO, CODPRODUTO, CODFORNECEDOR,'+
+                         ' NOMEFORNECEDOR, DTA_REF, QUANT_REF, PRECO, DES_SITUACAO,'+
+                         ' VALBRUTO, VALDESCONTO, VALSUBSTITUICAO, VLR_TOTAL_REF,'+
+                         ' DTA_ATUALIZACAO)'+
+                         ' Values ('+
+                         QuotedStr(sCodEmpresa)+', '+ // CODFILIAL
+                         QuotedStr('UC')+', '+ // IND_TIPO
+                         QuotedStr(DMMovtosEmpresas.CDS_Loja18.FieldByName('codproduto').AsString)+', '+ // CODPRODUTO
+                         'Null, '+ // CODFORNECEDOR
+                         'Null, '+ // NOMEFORNECEDOR
+                         QuotedStr(DMMovtosEmpresas.CDS_Loja18.FieldByName('dataentrada').AsString)+', '+ // DTA_REF
+                         QuotedStr(DMMovtosEmpresas.CDS_Loja18.FieldByName('quant').AsString)+', '+ // QUANT_REF
+                         QuotedStr(DMMovtosEmpresas.CDS_Loja18.FieldByName('preco').AsString)+', '+ // PRECO
+                         QuotedStr(f_Troca('.',',',DMMovtosEmpresas.CDS_Loja18.FieldByName('valipi').AsString))+', '+ // DES_SITUACAO
+                         QuotedStr(DMMovtosEmpresas.CDS_Loja18.FieldByName('valbruto').AsString)+', '+ // VALBRUTO
+                         QuotedStr(DMMovtosEmpresas.CDS_Loja18.FieldByName('valdesconto').AsString)+', '+ // VALDESCONTO
+                         QuotedStr(DMMovtosEmpresas.CDS_Loja18.FieldByName('valsubstituicao').AsString)+', '+ // VALSUBSTITUICAO
+                         QuotedStr(DMMovtosEmpresas.CDS_Loja18.FieldByName('valtotal').AsString)+', '+
+                         QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
+                  DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+                  If Not bExec Then
+                  Begin
+                    // Grava Loja em Processamento --------------------------
+                    MySql:=' Insert Into MOVTOS_EMPRESAS ('+
+                           ' IND_TIPO, NOMEFORNECEDOR, DTA_ATUALIZACAO)'+
+                           ' Values ('+
+                           QuotedStr('OK')+', '+
+                           QuotedStr('Ultima Compra_Exec Loja: '+sCodEmpresa)+', '+
+                           QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
+                    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+                    bExec:=True;
+                  End;
+
+                  DMMovtosEmpresas.CDS_Loja18.Next;
+                End; // While Not DMMovtosEmpresas.CDS_Loja18.Eof do
+                DMMovtosEmpresas.CDS_Loja18.Close;
+              End; // If sCodEmpresa='18' Then
 
               DMMovtosEmpresas.SQLC.Commit(TD);
 
@@ -3723,7 +3824,7 @@ sCodEmpresa:='18';
 
                  ' and oc.situacao < 2'+
                  ' and oc.datapedido>='+QuotedStr(sDtaUltAtualizacao)+
-                 
+
                  ' and oc.codfilial='+QuotedStr(sCodEmpresa);
           IBQ_Consulta.Close;
           IBQ_Consulta.SQL.Clear;
