@@ -578,7 +578,7 @@ end;
 // Atualiza Curvas e Demandas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 procedure TFrmCurvasDemandas.Bt_AtualizarClick(Sender: TObject);
 Var
-  MySql, MySql1,
+  MySql,
   sTotQtdDemandas, sTotVlrDemandas,
   sDtaDemI, sDtaDemF, sDtaTra: String;
 
@@ -588,6 +588,7 @@ Var
 
   wAnoH, wMesH, wDiaH: Word;
 
+  iRegNo: Integer;
   iTotFeriados,    iTotDiasUteis   : Integer;
   iTotFeriados_18, iTotDiasUteis_18: Integer;
 begin
@@ -783,12 +784,6 @@ begin
                 '               FROM EMP_CONEXOES c'+
                 '               WHERE c.Ind_Ativo=''SIM'''+
                 '               AND   c.cod_filial=f.cod_loja)';
-//                ' AND NOT EXISTS (SELECT 1'+
-//                '                 FROM PRODUTO p'+
-//                '                 WHERE p.codproduto=f.cod_produto'+
-//                '                 AND    ((p.principalfor IN (''010000'', ''000300'', ''000500'', ''001072'', ''000883''))'+
-//                '                          OR'+
-//                '                         (p.codaplicacao =''0016'')))'; // Brindes
        End; // If sgCodLoja<>'99' Then
       DMMovtosEmpresas.SDS.Close;
       DMMovtosEmpresas.SDS.CommandText:=MySql;
@@ -805,12 +800,6 @@ begin
        sTotVlrDemandas:=sTotVlrDemandas+'.00';
 
       DMMovtosEmpresas.SDS.Close;
-
-//      // Coloca num_dias_uteis = 999999 para excluir após Insert ES_FINAN_CURVA_ABC ===
-//      MySql:=' UPDATE ES_FINAN_CURVA_ABC ff'+
-//             ' SET ff.num_dias_uteis=999999'+
-//             ' WHERE ff.cod_loja='+QuotedStr(sgCodLoja);
-//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
       // Data para Exclusão ES_FINAN_CURVA_ABC =================================
       MySql:=' select first 1 ff.dta_atualizacao'+
@@ -835,7 +824,7 @@ begin
 
                 ' SELECT '+
                 QuotedStr(sgCodLoja)+' COD_LOJA,'+
-                ' pr.codproduto,'+
+                ' pr.codproduto COD_PRODUTO,'+
                 ' COALESCE(fc.est_minimo,0) EST_MINIMO,'+
                 ' COALESCE(fc.est_maximo,0) EST_MAXIMO,';
 
@@ -912,7 +901,7 @@ begin
                 ' WHERE COALESCE(pr.situacaopro,0) in (0,3)'+ // Somente Ativo e Não Compra
                 ' AND   ((pr.principalfor NOT IN (''000300'', ''000500'', ''001072'', ''000883'', ''010000''))'+
                 '         OR'+
-                '        (pr.codaplicacao <>''0016''))';
+                '        (pr.codaplicacao Not in (''0015'',''0016'',''0017'')))';
        End
       Else // If sgCodLoja='99' Then
        Begin
@@ -989,9 +978,16 @@ begin
                 ' WHERE COALESCE(pr.situacaopro,0) in (0,3)'+ // Somente Ativo e Não Compra
                 ' AND   ((pr.principalfor NOT IN (''000300'', ''000500'', ''001072'', ''000883'', ''010000''))'+
                 '         OR'+
-                '        (pr.codaplicacao <>''0016''))';
+                '        (pr.codaplicacao Not in (''0015'',''0016'',''0017'')))';
        End; // If sgCodLoja<>'99' Then
-       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+//       DMMovtosEmpresas.SQLQ.Close;
+//       DMMovtosEmpresas.SQLQ.SQL.Clear;
+//       DMMovtosEmpresas.SQLQ.SQL.Add(MySql);
+//       DMMovtosEmpresas.SQLQ.ExecSQL();
+
+       sgCodLojaUnica:=TimeToStr(Time);
+
 
       // Exclui Movtos Anterior Pela dta_atualizacao ES_FINAN_CURVA_ABC ========
       MySql:=' DELETE FROM ES_FINAN_CURVA_ABC ff'+
@@ -999,30 +995,8 @@ begin
              ' AND   ff.dta_atualizacao='+QuotedStr(sDtaExcluir);
       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
-//      // Exclui Movtos com Num_Dias_Uteis = 999999 ES_FINAN_CURVA_ABC =================
-//      MySql:=' DELETE FROM ES_FINAN_CURVA_ABC ff'+
-//             ' WHERE ff.cod_loja='+QuotedStr(sgCodLoja)+
-//             ' AND   ff.num_dias_uteis=999999';
-//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-
       // Calcula Curvas de Valores e Quantidades ===============================
       CalculaCurvas;
-
-// OdirApagar - 16/12/2016
-//      // Atualiza TABELA ES_CURVA_ABC ==========================================
-//      MySql:=' DELETE FROM ES_CURVA_ABC ec'+
-//             ' WHERE ec.cod_loja='+QuotedStr(sgCodLoja);
-//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-//
-//      MySql:=' INSERT INTO ES_CURVA_ABC'+
-//             ' SELECT ff.cod_loja COD_LOJA, ff.cod_produto COD_PRODUTO,'+
-//             '        ff.ind_curva IND_CURVA, pr.datainclusao DTA_INCLUSAO,'+
-//             '        ff.dta_atualizacao DTA_ATUALIZACAO'+
-//             ' FROM ES_FINAN_CURVA_ABC ff, PRODUTO pr'+
-//             ' WHERE ff.cod_produto=pr.codproduto'+
-//             ' AND   ff.cod_loja='+QuotedStr(sgCodLoja)+
-//             ' ORDER BY ff.cod_produto';
-//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
       // Atualiza Transacao ====================================================
       DMMovtosEmpresas.SQLC.Commit(TD);
@@ -1043,7 +1017,6 @@ begin
     DMMovtosEmpresas.CDS_Pesquisa.Next;
   End; // If Lbx_EmpresasProcessar.Items.Count=0 Then
   DMMovtosEmpresas.CDS_Pesquisa.Close;
-
 
   // Atualiza Curva ABC no CD - SIDICOM
   AtualizaCurvaCD;
@@ -1080,6 +1053,7 @@ begin
 end;
 
 end.
+
 
 
 

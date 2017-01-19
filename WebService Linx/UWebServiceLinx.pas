@@ -755,6 +755,9 @@ Begin
   // Conecta o Banco de Dados ==================================================
   If Not DMLinxWebService.ConectaBanco Then
   Begin
+    If Trim(sgArqProc)='' Then
+     sgArqProc:=sgPastaRetornos+'@LinxWebService_NAO_CONECTOU.txt';
+
     SalvaProcessamento('Erro de Conexão!! '+sgMensagem);
     Application.Terminate;
     Exit;
@@ -766,6 +769,8 @@ Begin
 
   // Salva Pasta e Nome do Arquivo de Acompanhamento de Processamento ==========
   sgArqProc:=sgPastaRetornos+'@LinxWebService_'+sgDta+'.txt';
+//ShowMessage('Criou: '+sgPastaRetornos+'@LinxWebService_'+sgDta+'.txt');
+
   DeleteFile(sgArqProc);
 ///////////////////
 
@@ -814,7 +819,7 @@ Begin
 //        sgDtaInicio:='NULL';
 //        sgDtaFim   :='NULL';
         sgDtaInicio:='2005-01-01';
-        sgDtaFim   :='2017-01-16';
+        sgDtaFim   :='2017-01-18';
 
         MontaMetodoXMLPost();
       End;
@@ -824,15 +829,15 @@ Begin
 //        sgDtaInicio:='2017-01-01';
 //        sgDtaFim   :='2017-01-07';
         sgDtaInicio:='2005-01-01';
-        sgDtaFim   :='2017-01-16';
+        sgDtaFim   :='2017-01-18';
 
         MontaMetodoXMLPost();
       End;
 
       If sgMetodo='LinxProdutos' Then
       Begin
-        sgDtaInicio:='2017-01-01';
-        sgDtaFim   :='2017-01-17';
+        sgDtaInicio:='2005-01-01';
+        sgDtaFim   :='2017-01-18';
 //        sgDtaInicio:='NULL'; //
 //        sgDtaFim   :='NULL'; //
 
@@ -842,7 +847,7 @@ Begin
       If sgMetodo='LinxProdutosDetalhes' Then
       Begin
         sgDtaInicio:='2005-01-01';
-        sgDtaFim   :='2017-01-17';
+        sgDtaFim   :='2017-01-18';
 //        sgDtaInicio:='NULL'; // ODIR Altera para NULL a Primeira Vez
 //        sgDtaFim   :='NULL'; // ODIR Altera para NULL a Primeira Vez
 
@@ -852,7 +857,7 @@ Begin
       If sgMetodo='LinxMovimento' Then
       Begin
         sgDtaInicio:='2016-12-13'; // ODIR Altera para '2016-12-13' a Primeira Vez
-        sgDtaFim   :='2017-01-16'; // ODIR Altera para 'data mais atual' a Primeira Vez
+        sgDtaFim   :='2017-01-18'; // ODIR Altera para 'data mais atual' a Primeira Vez
 
         MontaMetodoXMLPost();
       End;
@@ -860,7 +865,7 @@ Begin
       If sgMetodo='LinxFaturas' Then
       Begin
         sgDtaInicio:='2016-12-13'; // ODIR Altera para '2016-12-13' a Primeira Vez
-        sgDtaFim   :='2017-01-16'; // ODIR Altera para 'data mais atual' a Primeira Vez
+        sgDtaFim   :='2017-01-18'; // ODIR Altera para 'data mais atual' a Primeira Vez
 
         MontaMetodoXMLPost();
       End;

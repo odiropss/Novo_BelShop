@@ -1981,9 +1981,9 @@ begin
   bExcluir:=False;
   bProcessou:=True;
 
-
 //odiropss - tirar
-bgJaProcessouUmaVez:=True;
+//bgJaProcessouUmaVez:=True;
+
   // ===========================================================================
   // PROCESSAMENTOS SOMENTE UMA VEZ - INICIO ===================================
   // ===========================================================================
@@ -2192,8 +2192,8 @@ bgJaProcessouUmaVez:=True;
     sCodEmpresa:=DMMovtosEmpresas.CDS_EmpProcessaCOD_FILIAL.AsString;
 
 //odiropss Tirar
-if sCodEmpresa='01' Then
-sCodEmpresa:='18';
+//if sCodEmpresa='01' Then
+//sCodEmpresa:='18';
 
     // Sem Internet Encerra ====================================================
     if not InternetGetConnectedState(@Flags, 0) then
@@ -2469,11 +2469,12 @@ sCodEmpresa:='18';
     If sCodEmpresa='18' Then
     Begin
       // odiropss - Alterar para bProcDemanda:=True;
-      bProcDemanda:=False;
-      bProcTransito:=False;
+      bProcDemanda:=True;
       // odiropss - Alterar para bProcUltCompra:=True;
-      bProcUltCompra:=False;
-      bProcEstFinal:=False;
+      bProcUltCompra:=True;
+
+      bProcTransito:=False;
+        bProcEstFinal:=False;
         bProcTransfSai:=False;
         bProcTransfEnt:=False;
         bProcPcCusto:=False;
@@ -2538,7 +2539,7 @@ sCodEmpresa:='18';
         If (EdtParamStr.Text<>'OPSS') And (EdtParamStr.Text<>'OPSS_N') Then
         Begin
           //odiropss - Retirar comentario
-          //AtualizaTabelaEstoque(sCodEmpresa);
+          AtualizaTabelaEstoque(sCodEmpresa);
         End;
 
         dDtaProc:=DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor);

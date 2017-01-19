@@ -116,9 +116,9 @@ object FrmMovtosEmpresas: TFrmMovtosEmpresas
     object Bt_Estoques: TJvXPButton
       Left = 69
       Top = 3
-      Width = 76
-      Height = 16
-      Caption = 'Estoques'
+      Width = 148
+      Height = 38
+      Caption = 'Estoques N'#227'o Usar Devido a Bel_18'
       TabOrder = 3
       Anchors = [akTop]
       Font.Charset = DEFAULT_CHARSET
