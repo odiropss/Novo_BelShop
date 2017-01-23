@@ -394,6 +394,13 @@ Begin
                iQtdReposicao:=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger;
              End; // If iQtdReposicao>=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger Then
 
+             //===========================================================================================
+             // Mantem Quantidade Maxima de Reposição da Loja 18 em 12 Unidades ==========================
+             //===========================================================================================
+             If (Trim(DMTransferencias.CDS_EstoqueLojaCOD_LOJA.AsString)='18') and (iQtdReposicao>12) Then
+              iQtdReposicao:=12;
+             //===========================================================================================
+
              // Verifica Percentual de Corte da Curva -------------------
              bRepoe:=True;
              If (DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsInteger>0) And (iQtdReposicao>0) Then
@@ -608,15 +615,8 @@ Begin
          '                                   AND dm.dta_ref>='+
          QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(PrimUltDia(dgDtaInicio,'P')))))+
          '                                   AND dm.dta_ref<='+
-         QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(dgDtaFim))));
-
-         // LojaBel_18
-         If sCodLoja='18' Then
-          MySql:=
-           MySql+'                                   AND dm.codfilial='+QuotedStr('09')
-         Else
-          MySql:=
-           MySql+'                                   AND dm.codfilial='+QuotedStr(sCodLoja);
+         QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(dgDtaFim))))+
+         '                                   AND dm.codfilial='+QuotedStr(sCodLoja);
 
   MySql:=
    MySql+' WHERE pr.codproduto='+QuotedStr(sCodProduto)+
@@ -678,18 +678,9 @@ Begin
          ' CAST(COALESCE(c.est_minimo,0) AS INTEGER) est_minimo,'+
          ' CAST(COALESCE(c.est_maximo,0) AS INTEGER) est_maximo,'+
 
-         ' CAST(COALESCE(t.vlr_aux,0) AS INTEGER) Dias_Estocagem,';
-
-         // LojaBel_18
-         If sCodLoja='18' Then
-          MySql:=
-           MySql+' 0 saldoatual,'
-         Else
-          MySql:=
-           MySql+' CAST(COALESCE(e.saldoatual,0) AS INTEGER) saldoatual,';
-
-  MySql:=
-   MySql+' p.datainclusao, p.dataalteracao'+
+         ' CAST(COALESCE(t.vlr_aux,0) AS INTEGER) Dias_Estocagem,'+
+         ' CAST(COALESCE(e.saldoatual,0) AS INTEGER) saldoatual,'+
+         ' p.datainclusao, p.dataalteracao'+
 
          ' FROM PRODUTO p'+
          '        LEFT JOIN ES_FINAN_CURVA_ABC c  ON c.cod_produto=p.codproduto'+
@@ -877,15 +868,19 @@ Begin
 
     // Conecta Loja ============================================================
     bConetada:=False;
-    If ConexaoEmpIndividual('IBDB_'+sCodLoja, 'IBT_'+sCodLoja, 'A') Then
+
+    If sCodLoja<>'18' Then
     Begin
-      bConetada:=True;
-      try
-        CriaQueryIB('IBDB_'+sCodLoja,'IBT_'+sCodLoja,IBQ_TR_Filial, True);
-      Except
-        bConetada:=False;
+      If ConexaoEmpIndividual('IBDB_'+sCodLoja, 'IBT_'+sCodLoja, 'A') Then
+      Begin
+        bConetada:=True;
+        try
+          CriaQueryIB('IBDB_'+sCodLoja,'IBT_'+sCodLoja,IBQ_TR_Filial, True);
+        Except
+          bConetada:=False;
+        End;
       End;
-    End;
+    End; // If sCodLoja<>'18' Then
     //==========================================================================
     SalvaProcessamento('10.03.03/999 - Conecta Loja - '+sCodLoja+' - '+TimeToStr(Time));
     //==========================================================================

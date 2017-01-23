@@ -697,6 +697,9 @@ Var
 
   MySql: String;
   bSiga: Boolean;
+
+  dDtaUltAtual, dDtaHoje: TDate;
+  wDia, wMes, wAno: Word;
 Begin
 
   // Cria Arquivo de Metodos a Processar =======================================
@@ -796,7 +799,7 @@ Begin
 
   While Not DMLinxWebService.CDS_Lojas.Eof do
   Begin
-    // Apropria Variaveis=====================================================
+    // Apropria Variaveis=======================================================
     sgCNPJProc:=Trim(DMLinxWebService.CDS_LojasNUM_CNPJ.AsString);
     sgCodLoja :=Trim(DMLinxWebService.CDS_LojasCOD_FILIAL.AsString);
 
@@ -808,76 +811,101 @@ Begin
       sgMetodo  :=tgMetodos[iFor];
       sgArqXMLRet:='Retorno_'+sgMetodo+'.XML';
 
+      // Data Hoje e Ultima Atualização ==========================================
+      dDtaHoje:=DataHoraServidorFI(DMLinxWebService.SDS_DtaHoraServidor);
+      MySql:=' SELECT MAX(dta_atualizacao) Dta'+
+             ' FROM '+sgMetodo;
+      DMLinxWebService.CDS_Busca.Close;
+      DMLinxWebService.SDS_Busca.CommandText:=MySql;
+      DMLinxWebService.CDS_Busca.Open;
+      dDtaUltAtual:=DMLinxWebService.CDS_Busca.FieldByName('Dta').AsDateTime;
+      DMLinxWebService.CDS_Busca.Close;
+
       // Montagem do Http.Post =================================================
       If sgMetodo='LinxLojas' Then
       Begin
         MontaMetodoXMLPost();
       End; // If sgMetodo='LinxLojas' Then
 
+
       If sgMetodo='LinxVendedores' Then
       Begin
-//        sgDtaInicio:='NULL';
-//        sgDtaFim   :='NULL';
-        sgDtaInicio:='2005-01-01';
-        sgDtaFim   :='2017-01-18';
+        DecodeDate(dDtaUltAtual-4, wAno, wMes, wDia);
+        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        DecodeDate(dDtaHoje-1, wAno, wMes, wDia);
+        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         MontaMetodoXMLPost();
-      End;
+      End; // If sgMetodo='LinxVendedores' Then
 
       If sgMetodo='LinxClientesFornec' Then
       Begin
-//        sgDtaInicio:='2017-01-01';
-//        sgDtaFim   :='2017-01-07';
-        sgDtaInicio:='2005-01-01';
-        sgDtaFim   :='2017-01-18';
+        DecodeDate(dDtaUltAtual-4, wAno, wMes, wDia);
+        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        DecodeDate(dDtaHoje-1, wAno, wMes, wDia);
+        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         MontaMetodoXMLPost();
-      End;
+      End; // If sgMetodo='LinxClientesFornec' Then
 
       If sgMetodo='LinxProdutos' Then
       Begin
-        sgDtaInicio:='2005-01-01';
-        sgDtaFim   :='2017-01-18';
-//        sgDtaInicio:='NULL'; //
-//        sgDtaFim   :='NULL'; //
+        DecodeDate(dDtaUltAtual-4, wAno, wMes, wDia);
+        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        DecodeDate(dDtaHoje-1, wAno, wMes, wDia);
+        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         MontaMetodoXMLPost('NULL', 'NULL', 'NULL', 'NULL');
-      End;
+      End; // If sgMetodo='LinxProdutos' Then
 
       If sgMetodo='LinxProdutosDetalhes' Then
       Begin
-        sgDtaInicio:='2005-01-01';
-        sgDtaFim   :='2017-01-18';
-//        sgDtaInicio:='NULL'; // ODIR Altera para NULL a Primeira Vez
-//        sgDtaFim   :='NULL'; // ODIR Altera para NULL a Primeira Vez
+        DecodeDate(dDtaUltAtual-4, wAno, wMes, wDia);
+        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        DecodeDate(dDtaHoje-1, wAno, wMes, wDia);
+        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         MontaMetodoXMLPost();
-      End;
+      End; // If sgMetodo='LinxProdutosDetalhes' Then
 
       If sgMetodo='LinxMovimento' Then
       Begin
-        sgDtaInicio:='2016-12-13'; // ODIR Altera para '2016-12-13' a Primeira Vez
-        sgDtaFim   :='2017-01-18'; // ODIR Altera para 'data mais atual' a Primeira Vez
+        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        DecodeDate(dDtaHoje-1, wAno, wMes, wDia);
+        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         MontaMetodoXMLPost();
-      End;
+      End; // If sgMetodo='LinxMovimento' Then
 
       If sgMetodo='LinxFaturas' Then
       Begin
-        sgDtaInicio:='2016-12-13'; // ODIR Altera para '2016-12-13' a Primeira Vez
-        sgDtaFim   :='2017-01-18'; // ODIR Altera para 'data mais atual' a Primeira Vez
+        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        DecodeDate(dDtaHoje-1, wAno, wMes, wDia);
+        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         MontaMetodoXMLPost();
-      End;
+      End; // If sgMetodo='LinxFaturas' Then
 
       // Envio do Http.post ====================================================
       bSiga:=True;
       If Not EnviaMetodoXMLPost Then
-       bSiga:=False;
+      Begin
+        bSiga:=False;
+      End; // If Not EnviaMetodoXMLPost Then
 
       // Ler XML de Retorno e Salva no Banco de Dados ==========================
       If bSiga Then
-       LeMetodoXMLRetorno;
+      Begin
+        LeMetodoXMLRetorno;
+      End; // If bSiga Then
 
     End; // For iFor:=0 to tgMetodos.Count-1 do
     //==========================================================================

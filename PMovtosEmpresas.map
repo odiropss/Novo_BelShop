@@ -1,6 +1,6 @@
 
  Start         Length     Name                   Class
- 0001:00000000 00200240H .text                   CODE
+ 0001:00000000 00200DE4H .text                   CODE
  0002:00000000 000087D8H .data                   DATA
  0002:000087D8 00002165H .bss                    BSS
 
@@ -290,9 +290,9 @@ Detailed map of segments
  0001:001E2914 000008EC C=CODE     S=.text    G=(none)   M=uj_002   ACBP=A9
  0001:001E3200 00001A64 C=CODE     S=.text    G=(none)   M=DK_Procs1 ACBP=A9
  0001:001E4C64 00002514 C=CODE     S=.text    G=(none)   M=UDMMovtosEmpresas ACBP=A9
- 0001:001E7178 00018198 C=CODE     S=.text    G=(none)   M=UMovtosEmpresas ACBP=A9
- 0001:001FF310 000004D0 C=CODE     S=.text    G=(none)   M=uj_001   ACBP=A9
- 0001:001FF7E0 00000A60 C=CODE     S=.text    G=(none)   M=PMovtosEmpresas ACBP=A9
+ 0001:001E7178 00018D3C C=CODE     S=.text    G=(none)   M=UMovtosEmpresas ACBP=A9
+ 0001:001FFEB4 000004D0 C=CODE     S=.text    G=(none)   M=uj_001   ACBP=A9
+ 0001:00200384 00000A60 C=CODE     S=.text    G=(none)   M=PMovtosEmpresas ACBP=A9
  0002:00000000 000000A4 C=DATA     S=.data    G=DGROUP   M=System   ACBP=A9
  0002:000000A4 00000020 C=DATA     S=.data    G=DGROUP   M=SysInit  ACBP=A9
  0002:000000C4 00000274 C=DATA     S=.data    G=DGROUP   M=SysUtils ACBP=A9
@@ -1563,7 +1563,7 @@ Detailed map of segments
  0001:0000EA04       AnsiUpperCaseFileName
  0001:00016B34       AnyOp
  0001:00015FB4       AnyToIntf
- 0001:001FF5F0       Apaga
+ 0001:00200194       Apaga
  0001:001E3898       ApagaUltProcesso
  0002:000068BC       APainterMap
  0002:00007200       APaintingPositionIndexMap
@@ -3747,13 +3747,13 @@ Detailed map of segments
  0001:000753B4       Finalization
  0001:000742C0       Finalization
  0001:0007525C       Finalization
- 0001:001FF2B0       Finalization
+ 0001:001FFE54       Finalization
  0001:00074A84       Finalization
  0001:00075100       Finalization
  0001:00074C00       Finalization
  0001:00074D60       Finalization
- 0001:001FF7A8       Finalization
- 0001:001FF7E0       Finalization
+ 0001:0020034C       Finalization
+ 0001:00200384       Finalization
  0001:00074EB8       Finalization
  0001:0000554C       FinalizeArray
  0001:00075620       FinalizeMMFHandleList
@@ -5808,7 +5808,7 @@ Detailed map of segments
  0001:001524E0       PlaceRows
  0001:00007044       PlayEnhMetaFile
  0002:00007040       PlusMinusAngleMap
- 0001:00200100       PMovtosEmpresas
+ 0001:00200CA4       PMovtosEmpresas
  0002:0000AB14       PNGCodec
  0001:0001DC50       Point
  0001:00006828       Point
@@ -9062,19 +9062,19 @@ Detailed map of segments
  0001:000D723C       TCustomForm.ActionUpdate
  0001:0006B200       TCustomForm.Activate
  0001:000D4D30       TCustomForm.Activate
- 0001:0006B004       TCustomForm.ActiveChanged
  0001:000D4D90       TCustomForm.ActiveChanged
- 0001:000D4D94       TCustomForm.AfterConstruction
+ 0001:0006B004       TCustomForm.ActiveChanged
  0001:000685B4       TCustomForm.AfterConstruction
+ 0001:000D4D94       TCustomForm.AfterConstruction
  0001:000D7E7C       TCustomForm.AlignControls
  0001:00069A44       TCustomForm.AlignControls
  0001:000D8290       TCustomForm.AppendMDIChild
  0001:00068768       TCustomForm.BeforeDestruction
  0001:000D4DC8       TCustomForm.BeforeDestruction
- 0001:00068E94       TCustomForm.BeginAutoDrag
  0001:000D7B94       TCustomForm.BeginAutoDrag
- 0001:00068E98       TCustomForm.ChangeScale
+ 0001:00068E94       TCustomForm.BeginAutoDrag
  0001:000D4E44       TCustomForm.ChangeScale
+ 0001:00068E98       TCustomForm.ChangeScale
  0001:000D7C78       TCustomForm.CheckGripper
  0001:00069864       TCustomForm.ClientWndProc
  0001:000D4EE0       TCustomForm.Close
@@ -9103,10 +9103,10 @@ Detailed map of segments
  0001:0006C550       TCustomForm.CMUIActivate
  0001:000D7B98       TCustomForm.ColorChanged
  0001:000D4FE8       TCustomForm.ControlsListChanging
- 0001:000D5064       TCustomForm.Create
  0001:00068428       TCustomForm.Create
- 0001:000685EC       TCustomForm.CreateNew
+ 0001:000D5064       TCustomForm.Create
  0001:000D51D8       TCustomForm.CreateNew
+ 0001:000685EC       TCustomForm.CreateNew
  0001:0006A708       TCustomForm.CreateParams
  0001:000D7D10       TCustomForm.CreateWidget
  0001:0006AA68       TCustomForm.CreateWindowHandle
@@ -9116,8 +9116,8 @@ Detailed map of segments
  0001:0006ABE4       TCustomForm.DefaultHandler
  0001:000D5370       TCustomForm.DefineProperties
  0001:00068D50       TCustomForm.DefineProperties
- 0001:0006AD00       TCustomForm.DefocusControl
  0001:000D5648       TCustomForm.DefocusControl
+ 0001:0006AD00       TCustomForm.DefocusControl
  0001:000D5690       TCustomForm.Destroy
  0001:000687D0       TCustomForm.Destroy
  0001:0006ABA0       TCustomForm.DestroyWindowHandle
@@ -9126,22 +9126,22 @@ Detailed map of segments
  0001:000D5794       TCustomForm.DoClose
  0001:000688B4       TCustomForm.DoCreate
  0001:000D57B4       TCustomForm.DoCreate
- 0001:00068930       TCustomForm.DoDestroy
  0001:000D5830       TCustomForm.DoDestroy
+ 0001:00068930       TCustomForm.DoDestroy
  0001:00069C78       TCustomForm.DoDock
  0001:00069000       TCustomForm.DoHide
  0001:000D5890       TCustomForm.DoHide
  0001:000D7A5C       TCustomForm.DoLoaded
- 0001:000D58BC       TCustomForm.DoShow
  0001:00069020       TCustomForm.DoShow
+ 0001:000D58BC       TCustomForm.DoShow
  0001:000D72C8       TCustomForm.EventFilter
- 0001:000D5A08       TCustomForm.FocusControl
  0001:0006AD48       TCustomForm.FocusControl
+ 0001:000D5A08       TCustomForm.FocusControl
  0001:000D839C       TCustomForm.FontChanged
  0001:00069CCC       TCustomForm.GetActiveMDIChild
  0001:000D82D4       TCustomForm.GetActiveMDIChild
- 0001:000D5A2C       TCustomForm.GetCanvas
  0001:00069EB4       TCustomForm.GetCanvas
+ 0001:000D5A2C       TCustomForm.GetCanvas
  0001:000690C8       TCustomForm.GetChildren
  0001:000D5A34       TCustomForm.GetChildren
  0001:000D82C0       TCustomForm.GetClientHandle
@@ -9159,13 +9159,13 @@ Detailed map of segments
  0001:000D7D60       TCustomForm.GetParentWidget
  0001:0006A214       TCustomForm.GetPixelsPerInch
  0001:000D5AA0       TCustomForm.GetPixelsPerInch
- 0001:000D5AB8       TCustomForm.GetScaled
  0001:0006A278       TCustomForm.GetScaled
+ 0001:000D5AB8       TCustomForm.GetScaled
  0001:000D54D4       TCustomForm.GetTextHeight
  0001:00068E70       TCustomForm.GetTextHeight
  0001:000D54F4       TCustomForm.GetTextWidth
- 0001:000D7FCC       TCustomForm.HandleCreateException
  0001:0006CF7C       TCustomForm.HandleCreateException
+ 0001:000D7FCC       TCustomForm.HandleCreateException
  0001:0006C790       TCustomForm.Hide
  0001:000D5AC4       TCustomForm.Hide
  0001:000D5ADC       TCustomForm.IconChanged
@@ -9175,17 +9175,17 @@ Detailed map of segments
  0001:000D7AA0       TCustomForm.InitWidget
  0001:000D5B44       TCustomForm.InvokeHelp
  0001:00068FAC       TCustomForm.IsAutoScrollStored
- 0001:000D5B0C       TCustomForm.IsClientSizeStored
  0001:00068F74       TCustomForm.IsClientSizeStored
- 0001:000D6E0C       TCustomForm.IsForm
+ 0001:000D5B0C       TCustomForm.IsClientSizeStored
  0001:00069EC8       TCustomForm.IsForm
+ 0001:000D6E0C       TCustomForm.IsForm
  0001:00068F84       TCustomForm.IsFormSizeStored
  0001:000D5B1C       TCustomForm.IsFormSizeStored
  0001:00069ED0       TCustomForm.IsIconStored
  0001:000D6D78       TCustomForm.IsShortCut
  0001:0006CE8C       TCustomForm.IsShortCut
- 0001:000D5BE8       TCustomForm.Loaded
  0001:00068990       TCustomForm.Loaded
+ 0001:000D5BE8       TCustomForm.Loaded
  0001:000D8024       TCustomForm.MDIChildActivated
  0001:000D8194       TCustomForm.MDIChildLeft
  0001:000D81E0       TCustomForm.MDIChildList
@@ -9205,10 +9205,10 @@ Detailed map of segments
  0001:000D7B0C       TCustomForm.QueryInterface
  0001:0006CF08       TCustomForm.QueryInterface
  0001:00068E00       TCustomForm.ReadIgnoreFontProperty
- 0001:00068AD8       TCustomForm.ReadState
  0001:000D5EA4       TCustomForm.ReadState
- 0001:00068E20       TCustomForm.ReadTextHeight
+ 0001:00068AD8       TCustomForm.ReadState
  0001:000D5450       TCustomForm.ReadTextHeight
+ 0001:00068E20       TCustomForm.ReadTextHeight
  0001:000D5468       TCustomForm.ReadTextWidth
  0001:00069F78       TCustomForm.RefreshMDIMenu
  0001:000D610C       TCustomForm.Release
@@ -9219,16 +9219,16 @@ Detailed map of segments
  0001:0006B890       TCustomForm.Resizing
  0001:0006B0BC       TCustomForm.SendCancelMode
  0001:0006B058       TCustomForm.SetActive
- 0001:0006AC48       TCustomForm.SetActiveControl
  0001:000D6134       TCustomForm.SetActiveControl
+ 0001:0006AC48       TCustomForm.SetActiveControl
  0001:0006D064       TCustomForm.SetAlphaBlend
  0001:0006D078       TCustomForm.SetAlphaBlendValue
- 0001:000D6F20       TCustomForm.SetBorderIcons
  0001:00069BD0       TCustomForm.SetBorderIcons
- 0001:000D6E10       TCustomForm.SetBorderStyle
+ 0001:000D6F20       TCustomForm.SetBorderIcons
  0001:00069BFC       TCustomForm.SetBorderStyle
- 0001:000D6230       TCustomForm.SetChildOrder
+ 0001:000D6E10       TCustomForm.SetBorderStyle
  0001:00069160       TCustomForm.SetChildOrder
+ 0001:000D6230       TCustomForm.SetChildOrder
  0001:0006924C       TCustomForm.SetClientHeight
  0001:000D62C4       TCustomForm.SetClientHeight
  0001:000D62F0       TCustomForm.SetClientWidth
@@ -9244,17 +9244,17 @@ Detailed map of segments
  0001:000D7630       TCustomForm.SetInitialBounds
  0001:0006CF8C       TCustomForm.SetLayeredAttribs
  0001:000D7DF8       TCustomForm.SetMDIParent
- 0001:0006A040       TCustomForm.SetMenu
  0001:000D6684       TCustomForm.SetMenu
+ 0001:0006A040       TCustomForm.SetMenu
  0001:000D7A30       TCustomForm.SetModalResult
  0001:00069FF4       TCustomForm.SetObjectMenuItem
  0001:000D67D8       TCustomForm.SetParent
  0001:00069328       TCustomForm.SetParent
  0001:000691F4       TCustomForm.SetParentBiDiMode
- 0001:0006A228       TCustomForm.SetPixelsPerInch
  0001:000D67E0       TCustomForm.SetPixelsPerInch
- 0001:000D7838       TCustomForm.SetPosition
+ 0001:0006A228       TCustomForm.SetPixelsPerInch
  0001:0006A25C       TCustomForm.SetPosition
+ 0001:000D7838       TCustomForm.SetPosition
  0001:000D6814       TCustomForm.SetScaled
  0001:0006A284       TCustomForm.SetScaled
  0001:0006D0A0       TCustomForm.SetTransparentColor
@@ -9270,16 +9270,16 @@ Detailed map of segments
  0001:000D68AC       TCustomForm.Show
  0001:0006C798       TCustomForm.Show
  0001:000D7878       TCustomForm.ShowingChanged
- 0001:0006C848       TCustomForm.ShowModal
  0001:000D68D8       TCustomForm.ShowModal
+ 0001:0006C848       TCustomForm.ShowModal
  0001:000D7B48       TCustomForm.ShowWindowState
  0001:000D6C70       TCustomForm.UpdateActions
  0001:0006CB90       TCustomForm.UpdateActions
- 0001:00069360       TCustomForm.ValidateRename
  0001:000D6CD8       TCustomForm.ValidateRename
+ 0001:00069360       TCustomForm.ValidateRename
  0001:000D7F0C       TCustomForm.ViewportRect
- 0001:000D8338       TCustomForm.VisibleChanging
  0001:000692C0       TCustomForm.VisibleChanging
+ 0001:000D8338       TCustomForm.VisibleChanging
  0001:00069324       TCustomForm.WantChildKey
  0001:000D7F4C       TCustomForm.WantKey
  0001:000D7FDC       TCustomForm.WidgetDestroyed
@@ -9310,8 +9310,8 @@ Detailed map of segments
  0001:000693A0       TCustomForm.WndProc
  0001:000D75BC       TCustomForm.WorkSpaceMainEventFilter
  0001:000D8088       TCustomForm.WorkspaceNeeded
- 0001:000D5480       TCustomForm.WritePixelsPerInch
  0001:00068E54       TCustomForm.WritePixelsPerInch
+ 0001:000D5480       TCustomForm.WritePixelsPerInch
  0001:00068E38       TCustomForm.WriteTextHeight
  0001:000D549C       TCustomForm.WriteTextHeight
  0001:000D54B8       TCustomForm.WriteTextWidth
@@ -9470,8 +9470,8 @@ Detailed map of segments
  0001:0005DBA4       TCustomImageList.AssignTo
  0001:0005E5B0       TCustomImageList.BeginUpdate
  0001:000CF22C       TCustomImageList.BeginUpdate
- 0001:000CEE08       TCustomImageList.Change
  0001:0005DCF4       TCustomImageList.Change
+ 0001:000CEE08       TCustomImageList.Change
  0001:000CEE58       TCustomImageList.CheckImage
  0001:0005DC54       TCustomImageList.CheckImage
  0001:0005D66C       TCustomImageList.Clear
@@ -9483,18 +9483,18 @@ Detailed map of segments
  0001:0005D0A4       TCustomImageList.CreateImageList
  0001:0005CCBC       TCustomImageList.CreateSize
  0001:000CF1B4       TCustomImageList.DefaultMask
- 0001:000CF3F4       TCustomImageList.DefineProperties
  0001:0005DF2C       TCustomImageList.DefineProperties
+ 0001:000CF3F4       TCustomImageList.DefineProperties
  0001:000CED44       TCustomImageList.Delete
  0001:0005D5E0       TCustomImageList.Delete
- 0001:0005CD10       TCustomImageList.Destroy
  0001:000CECB0       TCustomImageList.Destroy
+ 0001:0005CD10       TCustomImageList.Destroy
  0001:000CF55C       TCustomImageList.DoDelete
- 0001:000CF620       TCustomImageList.DoDraw
  0001:0005D6D8       TCustomImageList.DoDraw
- 0001:0005D8D0       TCustomImageList.Draw
- 0001:000CED5C       TCustomImageList.Draw
+ 0001:000CF620       TCustomImageList.DoDraw
  0001:0005D8AC       TCustomImageList.Draw
+ 0001:000CED5C       TCustomImageList.Draw
+ 0001:0005D8D0       TCustomImageList.Draw
  0001:0005E5B4       TCustomImageList.EndUpdate
  0001:000CF230       TCustomImageList.EndUpdate
  0001:000CF0C4       TCustomImageList.Equal
@@ -9517,8 +9517,8 @@ Detailed map of segments
  0001:000CF7FC       TCustomImageList.HandleMultipleImages
  0001:0005CE3C       TCustomImageList.HandleNeeded
  0001:0005CE48       TCustomImageList.InitBitmap
- 0001:000CEF8C       TCustomImageList.Initialize
  0001:0005CD7C       TCustomImageList.Initialize
+ 0001:000CEF8C       TCustomImageList.Initialize
  0001:000CED88       TCustomImageList.Move
  0001:000D0348       TCustomImageList.ReadClxStream
  0001:0005DF84       TCustomImageList.ReadD2Stream
@@ -9534,15 +9534,15 @@ Detailed map of segments
  0001:0005D678       TCustomImageList.SetBkColor
  0001:0005DCCC       TCustomImageList.SetDrawingStyle
  0001:0005CFCC       TCustomImageList.SetHandle
- 0001:0005CF88       TCustomImageList.SetHeight
  0001:000CFB60       TCustomImageList.SetHeight
+ 0001:0005CF88       TCustomImageList.SetHeight
  0001:0005CF0C       TCustomImageList.SetNewDimensions
- 0001:0005CF44       TCustomImageList.SetWidth
  0001:000CFB9C       TCustomImageList.SetWidth
- 0001:0005DD44       TCustomImageList.UnRegisterChanges
+ 0001:0005CF44       TCustomImageList.SetWidth
  0001:000CEDC4       TCustomImageList.UnRegisterChanges
- 0001:0005E46C       TCustomImageList.WriteData
+ 0001:0005DD44       TCustomImageList.UnRegisterChanges
  0001:000D04E0       TCustomImageList.WriteData
+ 0001:0005E46C       TCustomImageList.WriteData
  0001:0003F120       TCustomIniFile.Create
  0001:0003F740       TCustomIniFile.ReadBinaryStream
  0001:0003F27C       TCustomIniFile.ReadBool
@@ -9859,8 +9859,8 @@ Detailed map of segments
  0001:00019584       TCustomVariantType.CastToOle
  0001:00019540       TCustomVariantType.Compare
  0001:0001954C       TCustomVariantType.CompareOp
- 0001:000195C0       TCustomVariantType.Create
  0001:00019604       TCustomVariantType.Create
+ 0001:000195C0       TCustomVariantType.Create
  0001:0001988C       TCustomVariantType.Destroy
  0001:000199A4       TCustomVariantType.DispInvoke
  0001:00019918       TCustomVariantType.IsClear
@@ -9909,13 +9909,13 @@ Detailed map of segments
  0001:0016CAD4       TcxBitmap.ChangeLocked
  0001:0016D29C       TcxBitmap.Compress
  0001:0016D018       TcxBitmap.CompressByBlock
- 0001:0016C9CC       TcxBitmap.CopyBitmap
  0001:0016C998       TcxBitmap.CopyBitmap
+ 0001:0016C9CC       TcxBitmap.CopyBitmap
  0001:0016C7CC       TcxBitmap.Create
- 0001:0016C8F4       TcxBitmap.CreateSize
  0001:0016C8A0       TcxBitmap.CreateSize
  0001:0016C85C       TcxBitmap.CreateSize
  0001:0016C808       TcxBitmap.CreateSize
+ 0001:0016C8F4       TcxBitmap.CreateSize
  0001:0016D330       TcxBitmap.Decompress1
  0001:0016D344       TcxBitmap.Decompress2
  0001:0016D1C0       TcxBitmap.DecompressByBlock
@@ -9930,8 +9930,8 @@ Detailed map of segments
  0001:0016CCB8       TcxBitmap.WriteData
  0001:0016D4C4       TcxBitmap32.AlphaBlend
  0001:0016D500       TcxBitmap32.Clear
- 0001:0016D448       TcxBitmap32.CreateSize
  0001:0016D3F4       TcxBitmap32.CreateSize
+ 0001:0016D448       TcxBitmap32.CreateSize
  0001:0016D538       TcxBitmap32.Filter
  0001:0016D48C       TcxBitmap32.GetBitmapColors
  0001:0016D5E0       TcxBitmap32.GetIsAlphaUsed
@@ -10318,8 +10318,8 @@ Detailed map of segments
  0001:00174200       TcxControl.CancelMouseOperations
  0001:00174218       TcxControl.CanDrag
  0001:0017506C       TcxControl.CanFocusEx
- 0001:00174268       TcxControl.CanFocusOnClick
  0001:00174224       TcxControl.CanFocusOnClick
+ 0001:00174268       TcxControl.CanFocusOnClick
  0001:00174668       TcxControl.CanScrollLineWithoutScrollBars
  0001:0017466C       TcxControl.CheckNeedsScrollBars
  0001:00172C10       TcxControl.CMColorChanged
@@ -10799,8 +10799,8 @@ Detailed map of segments
  0001:00195F9C       TcxCustomEdit.BeforePosting
  0001:00195FA4       TcxCustomEdit.ButtonVisibleIndexAt
  0001:00194FA8       TcxCustomEdit.CalculateAnchors
- 0001:00195FFC       TcxCustomEdit.CalculateViewInfo
  0001:00196034       TcxCustomEdit.CalculateViewInfo
+ 0001:00195FFC       TcxCustomEdit.CalculateViewInfo
  0001:001960E0       TcxCustomEdit.CanAutoHeight
  0001:001960BC       TcxCustomEdit.CanAutoSize
  0001:001960E4       TcxCustomEdit.CanAutoWidth
@@ -10820,8 +10820,8 @@ Detailed map of segments
  0001:00198A54       TcxCustomEdit.CMHintShow
  0001:00198BE8       TcxCustomEdit.CMShowingChanged
  0001:00194B04       TcxCustomEdit.CopyToClipboard
- 0001:00194638       TcxCustomEdit.Create
  0001:001946B0       TcxCustomEdit.Create
+ 0001:00194638       TcxCustomEdit.Create
  0001:00195EC4       TcxCustomEdit.CreateHandle
  0001:001962A8       TcxCustomEdit.CreateInnerEdit
  0001:00196360       TcxCustomEdit.CreateViewData
@@ -11334,8 +11334,8 @@ Detailed map of segments
  0001:0018F354       TcxCustomEditViewInfo.IsCustomButtonBackground
  0001:0018F364       TcxCustomEditViewInfo.IsCustomButtonBorder
  0001:0018F37C       TcxCustomEditViewInfo.IsCustomDrawButton
- 0001:0018F3B4       TcxCustomEditViewInfo.IsHotTrack
  0001:0018F3EC       TcxCustomEditViewInfo.IsHotTrack
+ 0001:0018F3B4       TcxCustomEditViewInfo.IsHotTrack
  0001:00190614       TcxCustomEditViewInfo.IsNativeBackground
  0001:0018FB10       TcxCustomEditViewInfo.IsRepaintOnStateChangingNeeded
  0001:0019063C       TcxCustomEditViewInfo.IsTransparent
@@ -11676,8 +11676,8 @@ Detailed map of segments
  0001:001579E8       TcxCustomLookAndFeelPainter.DrawButtonInGroup
  0001:00157D90       TcxCustomLookAndFeelPainter.DrawCheck
  0001:00157E30       TcxCustomLookAndFeelPainter.DrawCheckBorder
- 0001:00157EBC       TcxCustomLookAndFeelPainter.DrawCheckButton
  0001:00157E38       TcxCustomLookAndFeelPainter.DrawCheckButton
+ 0001:00157EBC       TcxCustomLookAndFeelPainter.DrawCheckButton
  0001:00159840       TcxCustomLookAndFeelPainter.DrawClock
  0001:00156628       TcxCustomLookAndFeelPainter.DrawContent
  0001:00159984       TcxCustomLookAndFeelPainter.DrawDateNavigatorDateHeader
@@ -12644,9 +12644,9 @@ Detailed map of segments
  0001:0016F11C       TcxImageList.GetCompressData
  0001:0016F134       TcxImageList.GetHandle
  0001:0016F600       TcxImageList.GetImageHandle
- 0001:0016E8E0       TcxImageList.GetImageInfo
- 0001:0016E988       TcxImageList.GetImageInfo
  0001:0016F0CC       TcxImageList.GetImageInfo
+ 0001:0016E988       TcxImageList.GetImageInfo
+ 0001:0016E8E0       TcxImageList.GetImageInfo
  0001:0016EAF4       TcxImageList.GetImageInfo
  0001:0016EB6C       TcxImageList.GetPixelFormat
  0001:0016ED70       TcxImageList.Initialize
@@ -13664,8 +13664,8 @@ Detailed map of segments
  0001:001A8960       TcxRegExprStarQuantifier.CanRepeat
  0001:001A8964       TcxRegExprStarQuantifier.Clone
  0001:001A8974       TcxRegExprStarQuantifier.Print
- 0001:001A8098       TcxRegExprState.Add
  0001:001A80A4       TcxRegExprState.Add
+ 0001:001A8098       TcxRegExprState.Add
  0001:001A80B0       TcxRegExprState.Check
  0001:001A80C0       TcxRegExprState.Clone
  0001:001A8024       TcxRegExprState.Create
@@ -13700,18 +13700,18 @@ Detailed map of segments
  0001:001A7E70       TcxRegExprUserEnumeration.Item
  0001:0016AD1C       TcxRegion.Combine
  0001:0016ABDC       TcxRegion.Create
+ 0001:0016AC20       TcxRegion.Create
  0001:0016AC60       TcxRegion.Create
  0001:0016ABA0       TcxRegion.Create
- 0001:0016AC20       TcxRegion.Create
  0001:0016ACBC       TcxRegion.Destroy
  0001:0016AD04       TcxRegion.DestroyHandle
  0001:0016ACE8       TcxRegion.GetIsEmpty
  0001:0016AD74       TcxRegion.IsEqual
  0001:0016ADAC       TcxRegion.IsEqual
- 0001:0016ADD4       TcxRegion.Offset
  0001:0016ADC8       TcxRegion.Offset
- 0001:0016AE00       TcxRegion.PtInRegion
+ 0001:0016ADD4       TcxRegion.Offset
  0001:0016ADE0       TcxRegion.PtInRegion
+ 0001:0016AE00       TcxRegion.PtInRegion
  0001:0014D324       TcxRegisteredClasses.Clear
  0001:0014D290       TcxRegisteredClasses.CompareItems
  0001:0014D18C       TcxRegisteredClasses.Create
@@ -13818,8 +13818,8 @@ Detailed map of segments
  0001:00183120       TcxSmallintValueType.SetDataValue
  0001:00183134       TcxSmallintValueType.WriteDataValue
  0001:00184314       TcxSolidBrushCache.Clear
- 0001:00184204       TcxSolidBrushCache.Create
  0001:001841C8       TcxSolidBrushCache.Create
+ 0001:00184204       TcxSolidBrushCache.Create
  0001:001842B4       TcxSolidBrushCache.Destroy
  0001:00184524       TcxSolidBrushCache.GetBrush
  0001:001845A0       TcxSolidBrushCache.SystemPaletteChanged
@@ -14115,8 +14115,8 @@ Detailed map of segments
  0001:0015E5D8       TcxWinXPLookAndFeelPainter.DefaultSchedulerBorderColor
  0001:0015FBF8       TcxWinXPLookAndFeelPainter.DefaultSchedulerViewContentColor
  0001:0015FEF0       TcxWinXPLookAndFeelPainter.DoDrawSizeGrip
- 0001:0015E624       TcxWinXPLookAndFeelPainter.DrawArrow
  0001:0015E60C       TcxWinXPLookAndFeelPainter.DrawArrow
+ 0001:0015E624       TcxWinXPLookAndFeelPainter.DrawArrow
  0001:0015E698       TcxWinXPLookAndFeelPainter.DrawArrowBorder
  0001:0015E714       TcxWinXPLookAndFeelPainter.DrawBorder
  0001:0015EA44       TcxWinXPLookAndFeelPainter.DrawButton
@@ -14393,9 +14393,9 @@ Detailed map of segments
  0001:000B7EA8       TDataSet.GetDetailLinkFields
  0001:000B7F34       TDataSet.GetFieldClass
  0001:000B8634       TDataSet.GetFieldCount
- 0001:000B86FC       TDataSet.GetFieldData
  0001:000B8720       TDataSet.GetFieldData
  0001:000B86F8       TDataSet.GetFieldData
+ 0001:000B86FC       TDataSet.GetFieldData
  0001:000B7F40       TDataSet.GetFieldFullName
  0001:000BAC18       TDataSet.GetFieldList
  0001:000B8B18       TDataSet.GetFieldNames
@@ -14804,14 +14804,14 @@ Detailed map of segments
  0001:00058058       TDragImageList.SetDragImage
  0001:00058210       TDragImageList.ShowDragImage
  0001:0004D2C4       TDragObject.AfterConstruction
- 0001:000E8AB4       TDragObject.Assign
  0001:0004D0A4       TDragObject.Assign
+ 0001:000E8AB4       TDragObject.Assign
  0001:0004D2B4       TDragObject.BeforeDestruction
  0001:0004D0E4       TDragObject.Capture
  0001:000E8AC4       TDragObject.Create
  0001:000E8AFC       TDragObject.Destroy
- 0001:000E8B24       TDragObject.Finished
  0001:0004D0FC       TDragObject.Finished
+ 0001:000E8B24       TDragObject.Finished
  0001:0004D240       TDragObject.GetDragCursor
  0001:000E8B2C       TDragObject.GetDragImageHotSpot
  0001:000E8B40       TDragObject.GetDragImageIndex
@@ -14823,8 +14823,8 @@ Detailed map of segments
  0001:0004D268       TDragObject.MainWndProc
  0001:0004D12C       TDragObject.ReleaseCapture
  0001:000E8B48       TDragObject.SetDragImage
- 0001:000E8BF0       TDragObject.ShowDragImage
  0001:0004D264       TDragObject.ShowDragImage
+ 0001:000E8BF0       TDragObject.ShowDragImage
  0001:0004D140       TDragObject.WndProc
  0001:0014BCA0       TdxFormatSettings.GetCurrencyDecimals
  0001:0014BCA8       TdxFormatSettings.GetCurrencyFormat
@@ -14864,8 +14864,8 @@ Detailed map of segments
  0001:001665BC       TdxGPImage.DrawEx
  0001:001666EC       TdxGPImage.FreeHandle
  0001:001665D8       TdxGPImage.GetAsBitmap
- 0001:00166640       TdxGPImage.GetBitmapBits
  0001:0016661C       TdxGPImage.GetBitmapBits
+ 0001:00166640       TdxGPImage.GetBitmapBits
  0001:00166688       TdxGPImage.GetClientRect
  0001:001666AC       TdxGPImage.GetHeight
  0001:001666CC       TdxGPImage.GetWidth
@@ -15180,16 +15180,16 @@ Detailed map of segments
  0001:000B0220       TFloatField.SetVarValue
  0001:000B0244       TFloatField.UpdateCheckRange
  0001:000A064C       TFMTBcdData.Compare
+ 0001:000A097C       TFMTBcdData.Create
  0001:000A086C       TFMTBcdData.Create
  0001:000A08B4       TFMTBcdData.Create
- 0001:000A097C       TFMTBcdData.Create
  0001:000A0A2C       TFMTBcdData.Create
  0001:000A058C       TFMTBcdData.DoAdd
  0001:000A05B4       TFMTBcdData.DoAdd
  0001:000A0620       TFMTBcdData.DoDivide
  0001:000A05F4       TFMTBcdData.DoMultiply
- 0001:000A05E8       TFMTBcdData.DoSubtract
  0001:000A05C0       TFMTBcdData.DoSubtract
+ 0001:000A05E8       TFMTBcdData.DoSubtract
  0001:000A072C       TFMTBcdData.GetAsCurrency
  0001:000A0678       TFMTBcdData.GetAsDouble
  0001:000A06D0       TFMTBcdData.GetAsInteger
@@ -15235,42 +15235,42 @@ Detailed map of segments
  0001:000CAC30       TFont.Assign
  0001:0002C458       TFont.Assign
  0001:0002C43C       TFont.Changed
- 0001:000CADC0       TFont.Create
  0001:0002C3C0       TFont.Create
+ 0001:000CADC0       TFont.Create
  0001:000CAE20       TFont.Destroy
  0001:0002C414       TFont.Destroy
  0001:000CAE5C       TFont.FreeHandle
  0001:0002C8BC       TFont.GetCharset
  0001:0002C52C       TFont.GetData
  0001:0002C5A8       TFont.GetHandle
- 0001:000CAE70       TFont.GetHeight
  0001:0002C774       TFont.GetHeight
+ 0001:000CAE70       TFont.GetHeight
  0001:0002C7A4       TFont.GetName
  0001:000CAE7C       TFont.GetName
- 0001:000CAED0       TFont.GetPitch
  0001:0002C88C       TFont.GetPitch
- 0001:0002C818       TFont.GetSize
+ 0001:000CAED0       TFont.GetPitch
  0001:000CAEEC       TFont.GetSize
- 0001:0002C854       TFont.GetStyle
+ 0001:0002C818       TFont.GetSize
  0001:000CAEF8       TFont.GetStyle
+ 0001:0002C854       TFont.GetStyle
  0001:000CAF50       TFont.GetWeight
  0001:000CAF5C       TFont.IsWeightStored
  0001:000CAF7C       TFont.SetCharSet
  0001:0002C8C4       TFont.SetCharset
- 0001:000CAFD0       TFont.SetColor
  0001:0002C594       TFont.SetColor
+ 0001:000CAFD0       TFont.SetColor
  0001:0002C544       TFont.SetData
  0001:0002C750       TFont.SetHandle
- 0001:0002C77C       TFont.SetHeight
  0001:000CB040       TFont.SetHeight
- 0001:000CB084       TFont.SetName
+ 0001:0002C77C       TFont.SetHeight
  0001:0002C7BC       TFont.SetName
+ 0001:000CB084       TFont.SetName
  0001:000CB104       TFont.SetPitch
  0001:0002C894       TFont.SetPitch
- 0001:0002C834       TFont.SetSize
  0001:000CB138       TFont.SetSize
- 0001:0002C860       TFont.SetStyle
+ 0001:0002C834       TFont.SetSize
  0001:000CB170       TFont.SetStyle
+ 0001:0002C860       TFont.SetStyle
  0001:000CB204       TFont.SetWeight
  0001:000E88A4       TFrameControl.BorderStyleChanged
  0001:000E88A8       TFrameControl.Create
@@ -15285,26 +15285,27 @@ Detailed map of segments
  0001:000E8A60       TFrameControl.SetBorderStyle
  0001:000E8A10       TFrameControl.SetLineWidth
  0001:000E8A38       TFrameControl.SetMidLineWidth
- 0001:001ED214       TFrmMovtosEmpresas.AtualizaForn
- 0001:001ED908       TFrmMovtosEmpresas.AtualizaLP
- 0001:001E8924       TFrmMovtosEmpresas.AtualizaPercComissoesHabProf
- 0001:001E8F20       TFrmMovtosEmpresas.AtualizaPercComissoesSalao
- 0001:001EDEF8       TFrmMovtosEmpresas.AtualizaProdutos
- 0001:001E9BAC       TFrmMovtosEmpresas.AtualizaServicosSalao
- 0001:001E7564       TFrmMovtosEmpresas.AtualizaTabelaEstoque
- 0001:001EF310       TFrmMovtosEmpresas.Bt_AtualizarClick
- 0001:001FE8AC       TFrmMovtosEmpresas.Bt_EstoquesClick
- 0001:001E8744       TFrmMovtosEmpresas.BuscaCodLista
- 0001:001EE3C8       TFrmMovtosEmpresas.ConectaCentralTrocas
- 0001:001EE76C       TFrmMovtosEmpresas.ConectaMPMS
- 0001:001EEC64       TFrmMovtosEmpresas.ConexaoEmpIndividual
- 0001:001EEFA0       TFrmMovtosEmpresas.CriaQueryIB
- 0001:001FE81C       TFrmMovtosEmpresas.FormClose
- 0001:001FE864       TFrmMovtosEmpresas.FormCloseQuery
- 0001:001EF160       TFrmMovtosEmpresas.FormCreate
- 0001:001FE548       TFrmMovtosEmpresas.FormShow
- 0001:001E86D8       TFrmMovtosEmpresas.ParaProcessamentoLoja
- 0001:001EEBAC       TFrmMovtosEmpresas.VerificaProcessamento
+ 0001:001EDDAC       TFrmMovtosEmpresas.AtualizaForn
+ 0001:001EE4A0       TFrmMovtosEmpresas.AtualizaLP
+ 0001:001E893C       TFrmMovtosEmpresas.AtualizaPercComissoesHabProf
+ 0001:001E8F38       TFrmMovtosEmpresas.AtualizaPercComissoesSalao
+ 0001:001EEA90       TFrmMovtosEmpresas.AtualizaProdutos
+ 0001:001E9BC4       TFrmMovtosEmpresas.AtualizaServicosSalao
+ 0001:001E757C       TFrmMovtosEmpresas.AtualizaTabelaEstoque
+ 0001:001EFEA8       TFrmMovtosEmpresas.Bt_AtualizarClick
+ 0001:001FF450       TFrmMovtosEmpresas.Bt_EstoquesClick
+ 0001:001E875C       TFrmMovtosEmpresas.BuscaCodLista
+ 0001:001EEF60       TFrmMovtosEmpresas.ConectaCentralTrocas
+ 0001:001EF304       TFrmMovtosEmpresas.ConectaMPMS
+ 0001:001EF7FC       TFrmMovtosEmpresas.ConexaoEmpIndividual
+ 0001:001EFB38       TFrmMovtosEmpresas.CriaQueryIB
+ 0001:001ED22C       TFrmMovtosEmpresas.Es_Finan_Curva_ABC
+ 0001:001FF3C0       TFrmMovtosEmpresas.FormClose
+ 0001:001FF408       TFrmMovtosEmpresas.FormCloseQuery
+ 0001:001EFCF8       TFrmMovtosEmpresas.FormCreate
+ 0001:001FF0EC       TFrmMovtosEmpresas.FormShow
+ 0001:001E86F0       TFrmMovtosEmpresas.ParaProcessamentoLoja
+ 0001:001EF744       TFrmMovtosEmpresas.VerificaProcessamento
  0001:0003C524       TGlyphCache.Create
  0001:0003C568       TGlyphCache.Destroy
  0001:0003C61C       TGlyphCache.Empty
@@ -15330,10 +15331,10 @@ Detailed map of segments
  0001:00079480       TGnuGettextInstance.WhenNewLanguage
  0001:000CD3F4       TGraphic.Assigns
  0001:000CD3FC       TGraphic.AssignsTo
- 0001:000CD404       TGraphic.Changed
  0001:0002EF44       TGraphic.Changed
- 0001:000CD41C       TGraphic.Create
+ 0001:000CD404       TGraphic.Changed
  0001:0002EF0C       TGraphic.Create
+ 0001:000CD41C       TGraphic.Create
  0001:000CD4AC       TGraphic.DefineProperties
  0001:0002EFB4       TGraphic.DefineProperties
  0001:000CD4F8       TGraphic.Equals
@@ -15341,27 +15342,27 @@ Detailed map of segments
  0001:0002F148       TGraphic.GetPalette
  0001:000CD640       TGraphic.GetTransparent
  0001:0002F14C       TGraphic.GetTransparent
- 0001:0002F150       TGraphic.LoadFromFile
  0001:000CD644       TGraphic.LoadFromFile
- 0001:0002F1A4       TGraphic.Progress
+ 0001:0002F150       TGraphic.LoadFromFile
  0001:000CD698       TGraphic.Progress
- 0001:000CD6A0       TGraphic.ReadData
+ 0001:0002F1A4       TGraphic.Progress
  0001:0002F1CC       TGraphic.ReadData
- 0001:000CD6AC       TGraphic.SaveToFile
+ 0001:000CD6A0       TGraphic.ReadData
  0001:0002F1D8       TGraphic.SaveToFile
+ 0001:000CD6AC       TGraphic.SaveToFile
  0001:0002F230       TGraphic.SetPalette
  0001:000CD704       TGraphic.SetTransparent
  0001:0002F234       TGraphic.SetTransparent
  0001:000CD714       TGraphic.TiledDraw
- 0001:0002F244       TGraphic.WriteData
  0001:000CD788       TGraphic.WriteData
+ 0001:0002F244       TGraphic.WriteData
  0001:00057808       TGraphicControl.Create
  0001:00057864       TGraphicControl.Destroy
  0001:0005794C       TGraphicControl.Paint
  0001:000578A4       TGraphicControl.WMPaint
  0001:000B2880       TGraphicField.Create
- 0001:000CABE8       TGraphicsObject.Changed
  0001:0002C104       TGraphicsObject.Changed
+ 0001:000CABE8       TGraphicsObject.Changed
  0001:000CAC08       TGraphicsObject.DisableChanged
  0001:000CAC0C       TGraphicsObject.EnableChanged
  0001:000CAC28       TGraphicsObject.Lock
@@ -15445,12 +15446,12 @@ Detailed map of segments
  0002:00007074       ThinFrameLineColorA
  0001:000D10BC       THintAction.Create
  0001:000495A8       THintAction.Create
- 0001:00057C38       THintWindow.ActivateHint
  0001:000E8674       THintWindow.ActivateHint
+ 0001:00057C38       THintWindow.ActivateHint
  0001:00057E20       THintWindow.ActivateHintData
  0001:000E87E8       THintWindow.ActivateHintData
- 0001:00057E48       THintWindow.CalcHintRect
  0001:000E8810       THintWindow.CalcHintRect
+ 0001:00057E48       THintWindow.CalcHintRect
  0001:00057BA0       THintWindow.CMTextChanged
  0001:000E8454       THintWindow.Create
  0001:00057950       THintWindow.Create
@@ -15575,8 +15576,8 @@ Detailed map of segments
  0001:000F5828       TIBCustomDataSet.GetDataSource
  0001:000F376C       TIBCustomDataSet.GetDeleteSQL
  0001:000F583C       TIBCustomDataSet.GetFieldClass
- 0001:000F5A50       TIBCustomDataSet.GetFieldData
  0001:000F5AA8       TIBCustomDataSet.GetFieldData
+ 0001:000F5A50       TIBCustomDataSet.GetFieldData
  0001:000F3778       TIBCustomDataSet.GetInsertSQL
  0001:000F37C0       TIBCustomDataSet.GetModifySQL
  0001:000F5AD4       TIBCustomDataSet.GetRecNo
@@ -15649,8 +15650,8 @@ Detailed map of segments
  0001:000F46DC       TIBCustomDataSet.SetDatabase
  0001:000F6DA8       TIBCustomDataSet.SetDataSource
  0001:000F4748       TIBCustomDataSet.SetDeleteSQL
- 0001:000F78CC       TIBCustomDataSet.SetFieldData
  0001:000F790C       TIBCustomDataSet.SetFieldData
+ 0001:000F78CC       TIBCustomDataSet.SetFieldData
  0001:000F79B8       TIBCustomDataSet.SetGeneratorField
  0001:000F47D0       TIBCustomDataSet.SetInsertSQL
  0001:000F4858       TIBCustomDataSet.SetInternalSQLParams
@@ -15919,33 +15920,33 @@ Detailed map of segments
  0001:000CDA64       TIcon.Destroy
  0001:000CDA9C       TIcon.Draw
  0001:00033704       TIcon.Draw
- 0001:00033744       TIcon.GetEmpty
  0001:000CDAB4       TIcon.GetEmpty
- 0001:0003375C       TIcon.GetHandle
+ 0001:00033744       TIcon.GetEmpty
  0001:000CDAFC       TIcon.GetHandle
- 0001:000CDADC       TIcon.GetHeight
+ 0001:0003375C       TIcon.GetHandle
  0001:00033770       TIcon.GetHeight
- 0001:00033784       TIcon.GetWidth
+ 0001:000CDADC       TIcon.GetHeight
  0001:000CDB10       TIcon.GetWidth
+ 0001:00033784       TIcon.GetWidth
  0001:00033798       TIcon.HandleNeeded
  0001:00033810       TIcon.ImageNeeded
  0001:00033A64       TIcon.LoadFromClipboardFormat
  0001:000CDB30       TIcon.LoadFromMimeSource
- 0001:000338C4       TIcon.LoadFromStream
  0001:000CDB3C       TIcon.LoadFromStream
- 0001:0003397C       TIcon.NewImage
+ 0001:000338C4       TIcon.LoadFromStream
  0001:000CDE4C       TIcon.NewImage
+ 0001:0003397C       TIcon.NewImage
  0001:00033A78       TIcon.SaveToClipboardFormat
  0001:000CDFD0       TIcon.SaveToMimeSource
  0001:000CDFDC       TIcon.SaveToStream
  0001:00033A3C       TIcon.SaveToStream
  0001:000339F0       TIcon.SetHandle
- 0001:00033A08       TIcon.SetHeight
  0001:000CE008       TIcon.SetHeight
+ 0001:00033A08       TIcon.SetHeight
  0001:00033A20       TIcon.SetTransparent
  0001:000CE02C       TIcon.SetTransparent
- 0001:00033A24       TIcon.SetWidth
  0001:000CE030       TIcon.SetWidth
+ 0001:00033A24       TIcon.SetWidth
  0001:000335D8       TIconImage.Destroy
  0001:00033608       TIconImage.FreeHandle
  0001:000B3B18       TIDispatchField.Create
@@ -16139,8 +16140,8 @@ Detailed map of segments
  0001:0008AA9C       TJPEGImage.SetWidth
  0001:0008AAE4       TJPEGImage.WriteData
  0001:0009CD38       TJvAppStoragePropertyEngineList.Destroy
- 0001:000765C4       TJvExCustomControl.BaseWndProc
  0001:000765FC       TJvExCustomControl.BaseWndProc
+ 0001:000765C4       TJvExCustomControl.BaseWndProc
  0001:00076634       TJvExCustomControl.BaseWndProcEx
  0001:00076864       TJvExCustomControl.BoundsChanged
  0001:000766D8       TJvExCustomControl.ColorChanged
@@ -16243,11 +16244,11 @@ Detailed map of segments
  0001:0007DC84       TJvXPStyleManager.RegisterControls
  0001:0007DC60       TJvXPStyleManager.SetTheme
  0001:0007DCB4       TJvXPStyleManager.UnregisterControls
- 0001:001FF6DC       TJ_001.Edit1KeyPress
- 0001:001FF6F8       TJ_001.Edit2KeyPress
- 0001:001FF78C       TJ_001.FormKeyUp
- 0001:001FF6D4       TJ_001.FormShow
- 0001:001FF6CC       TJ_001.SpeedButton1Click
+ 0001:00200280       TJ_001.Edit1KeyPress
+ 0001:0020029C       TJ_001.Edit2KeyPress
+ 0001:00200330       TJ_001.FormKeyUp
+ 0001:00200278       TJ_001.FormShow
+ 0001:00200270       TJ_001.SpeedButton1Click
  0001:001E3120       TJ_002.FormClose
  0001:001E31A8       TJ_002.FormCreate
  0001:001E3180       TJ_002.FormKeyPress
@@ -16274,8 +16275,8 @@ Detailed map of segments
  0001:0001F2B4       TList.Clear
  0001:0001F2CC       TList.Delete
  0001:0001F260       TList.Destroy
- 0001:0001F368       TList.Error
  0001:0001F330       TList.Error
+ 0001:0001F368       TList.Error
  0001:0001F3BC       TList.Exchange
  0001:0001F40C       TList.Expand
  0001:0001F6C0       TList.Extract
@@ -16349,10 +16350,10 @@ Detailed map of segments
  0001:000DFB6C       TMainMenu.MenuDataHandle
  0001:000DFC68       TMainMenu.Merge
  0001:00064098       TMainMenu.Merge
- 0001:00064020       TMainMenu.SetAutoMerge
  0001:000DFC64       TMainMenu.SetAutoMerge
- 0001:000DFC84       TMainMenu.Unmerge
+ 0001:00064020       TMainMenu.SetAutoMerge
  0001:000640B4       TMainMenu.Unmerge
+ 0001:000DFC84       TMainMenu.Unmerge
  0001:000B4D10       TMasterDataLink.ActiveChanged
  0001:000B4DE0       TMasterDataLink.CheckBrowseMode
  0001:000B4C94       TMasterDataLink.Create
@@ -16391,22 +16392,22 @@ Detailed map of segments
  0001:000DF440       TMenu.ColorChanged
  0001:00063230       TMenu.Create
  0001:000DF31C       TMenu.Create
- 0001:000DF400       TMenu.Destroy
  0001:000632CC       TMenu.Destroy
+ 0001:000DF400       TMenu.Destroy
  0001:000634B8       TMenu.DispatchCommand
  0001:000634D4       TMenu.DispatchPopup
  0001:00063838       TMenu.DoBiDiModeChanged
- 0001:000DF468       TMenu.DoChange
  0001:00063B0C       TMenu.DoChange
+ 0001:000DF468       TMenu.DoChange
  0001:00063EC0       TMenu.DoGetMenuString
  0001:00063418       TMenu.FindItem
  0001:000DF518       TMenu.FindItem
- 0001:00063FE0       TMenu.GetAutoHotkeys
  0001:000DF548       TMenu.GetAutoHotkeys
+ 0001:00063FE0       TMenu.GetAutoHotkeys
  0001:00064000       TMenu.GetAutoLineReduction
  0001:000DF558       TMenu.GetBitmap
- 0001:000DF584       TMenu.GetChildren
  0001:00063304       TMenu.GetChildren
+ 0001:000DF584       TMenu.GetChildren
  0001:00063320       TMenu.GetHandle
  0001:00063448       TMenu.GetHelpContext
  0001:000DF5B8       TMenu.HighlightedHook
@@ -16416,12 +16417,12 @@ Detailed map of segments
  0001:000DF630       TMenu.IsBitmapStored
  0001:0006359C       TMenu.IsOwnerDraw
  0001:00063BEC       TMenu.IsRightToLeft
- 0001:000DF7D0       TMenu.IsShortCut
  0001:00063714       TMenu.IsShortCut
- 0001:00063B24       TMenu.Loaded
+ 0001:000DF7D0       TMenu.IsShortCut
  0001:000DF870       TMenu.Loaded
- 0001:00063B3C       TMenu.MenuChanged
+ 0001:00063B24       TMenu.Loaded
  0001:000DF894       TMenu.MenuChanged
+ 0001:00063B3C       TMenu.MenuChanged
  0001:000DF8D0       TMenu.Notification
  0001:00063BC0       TMenu.Notification
  0001:000DF8FC       TMenu.PaletteChanged
@@ -16437,39 +16438,39 @@ Detailed map of segments
  0001:000DF5A0       TMenu.SetChildOrder
  0001:000DF960       TMenu.SetColor
  0001:000DF970       TMenu.SetForm
- 0001:00063B84       TMenu.SetImages
  0001:000DFA00       TMenu.SetImages
+ 0001:00063B84       TMenu.SetImages
  0001:00063A48       TMenu.SetOwnerDraw
  0001:00063F7C       TMenu.SetParentBiDiMode
  0001:00063AD4       TMenu.SetWindowHandle
  0001:000639C4       TMenu.UpdateImage
  0001:000DFAA0       TMenu.UpdateItemImages
  0001:00063368       TMenu.UpdateItems
- 0001:0005FB4C       TMenuActionLink.AssignClient
  0001:000DCB98       TMenuActionLink.AssignClient
+ 0001:0005FB4C       TMenuActionLink.AssignClient
  0001:0005FB68       TMenuActionLink.IsAutoCheckLinked
- 0001:0005FB90       TMenuActionLink.IsCaptionLinked
  0001:000DCBB4       TMenuActionLink.IsCaptionLinked
+ 0001:0005FB90       TMenuActionLink.IsCaptionLinked
  0001:0005FBC8       TMenuActionLink.IsCheckedLinked
  0001:000DCBEC       TMenuActionLink.IsCheckedLinked
- 0001:0005FBF8       TMenuActionLink.IsEnabledLinked
  0001:000DCC1C       TMenuActionLink.IsEnabledLinked
+ 0001:0005FBF8       TMenuActionLink.IsEnabledLinked
  0001:0005FC8C       TMenuActionLink.IsGroupIndexLinked
  0001:0005FC28       TMenuActionLink.IsHelpContextLinked
  0001:000DCC4C       TMenuActionLink.IsHelpLinked
- 0001:000DCCB4       TMenuActionLink.IsHintLinked
  0001:0005FC58       TMenuActionLink.IsHintLinked
- 0001:000DCCE8       TMenuActionLink.IsImageIndexLinked
+ 0001:000DCCB4       TMenuActionLink.IsHintLinked
  0001:0005FCC8       TMenuActionLink.IsImageIndexLinked
+ 0001:000DCCE8       TMenuActionLink.IsImageIndexLinked
  0001:0005FD64       TMenuActionLink.IsOnExecuteLinked
  0001:000DCD80       TMenuActionLink.IsOnExecuteLinked
- 0001:0005FCFC       TMenuActionLink.IsShortCutLinked
  0001:000DCD1C       TMenuActionLink.IsShortCutLinked
- 0001:000DCD50       TMenuActionLink.IsVisibleLinked
+ 0001:0005FCFC       TMenuActionLink.IsShortCutLinked
  0001:0005FD30       TMenuActionLink.IsVisibleLinked
+ 0001:000DCD50       TMenuActionLink.IsVisibleLinked
  0001:0005FD8C       TMenuActionLink.SetAutoCheck
- 0001:000DCDA8       TMenuActionLink.SetCaption
  0001:0005FDAC       TMenuActionLink.SetCaption
+ 0001:000DCDA8       TMenuActionLink.SetCaption
  0001:0005FDCC       TMenuActionLink.SetChecked
  0001:000DCDC8       TMenuActionLink.SetChecked
  0001:000DCDE8       TMenuActionLink.SetEnabled
@@ -16480,29 +16481,29 @@ Detailed map of segments
  0001:000DCE48       TMenuActionLink.SetHelpType
  0001:0005FE28       TMenuActionLink.SetHint
  0001:000DCE64       TMenuActionLink.SetHint
- 0001:000DCE88       TMenuActionLink.SetImageIndex
  0001:0005FE4C       TMenuActionLink.SetImageIndex
- 0001:000DCEE8       TMenuActionLink.SetOnExecute
+ 0001:000DCE88       TMenuActionLink.SetImageIndex
  0001:0005FEAC       TMenuActionLink.SetOnExecute
- 0001:000DCEA8       TMenuActionLink.SetShortCut
+ 0001:000DCEE8       TMenuActionLink.SetOnExecute
  0001:0005FE6C       TMenuActionLink.SetShortCut
+ 0001:000DCEA8       TMenuActionLink.SetShortCut
  0001:0005FE8C       TMenuActionLink.SetVisible
  0001:000DCEC8       TMenuActionLink.SetVisible
  0001:000DE8AC       TMenuItem.ActionChange
  0001:000625BC       TMenuItem.ActionChange
  0001:000DCF14       TMenuItem.ActivatedHook
- 0001:000DD924       TMenuItem.Add
  0001:00062340       TMenuItem.Add
+ 0001:000DD924       TMenuItem.Add
  0001:00061A68       TMenuItem.AdvancedDrawItem
  0001:00060008       TMenuItem.AppendTo
- 0001:00062820       TMenuItem.AssignTo
  0001:000DEB10       TMenuItem.AssignTo
+ 0001:00062820       TMenuItem.AssignTo
  0001:000DD060       TMenuItem.BitmapChanged
  0001:000DEFF4       TMenuItem.ChangePixmap
  0001:000DD940       TMenuItem.Click
  0001:00062278       TMenuItem.Click
- 0001:000DDA14       TMenuItem.Create
  0001:0005FED8       TMenuItem.Create
+ 0001:000DDA14       TMenuItem.Create
  0001:000DDB58       TMenuItem.CreateWidget
  0001:00060564       TMenuItem.DefineProperties
  0001:00062204       TMenuItem.Delete
@@ -16519,25 +16520,25 @@ Detailed map of segments
  0001:000DEE28       TMenuItem.FindItem
  0001:000DDD3C       TMenuItem.GetAction
  0001:00061FAC       TMenuItem.GetAction
- 0001:000DDD4C       TMenuItem.GetActionLinkClass
  0001:00061FBC       TMenuItem.GetActionLinkClass
- 0001:000DD0C4       TMenuItem.GetAutoHotkeys
+ 0001:000DDD4C       TMenuItem.GetActionLinkClass
  0001:000631D8       TMenuItem.GetAutoHotkeys
+ 0001:000DD0C4       TMenuItem.GetAutoHotkeys
  0001:00063204       TMenuItem.GetAutoLineReduction
  0001:00062420       TMenuItem.GetBitmap
  0001:000DDA74       TMenuItem.GetBitmap
  0001:000DDAA0       TMenuItem.GetChildren
  0001:0006208C       TMenuItem.GetChildren
- 0001:00061FC4       TMenuItem.GetCount
  0001:000DDD54       TMenuItem.GetCount
+ 0001:00061FC4       TMenuItem.GetCount
  0001:000DDD64       TMenuItem.GetHandle
  0001:00060518       TMenuItem.GetHandle
- 0001:00061B9C       TMenuItem.GetImageList
  0001:000DF0EC       TMenuItem.GetImageList
+ 0001:00061B9C       TMenuItem.GetImageList
  0001:00061FD4       TMenuItem.GetItem
  0001:000DDD74       TMenuItem.GetItem
- 0001:000DDD98       TMenuItem.GetMenuIndex
  0001:0006202C       TMenuItem.GetMenuIndex
+ 0001:000DDD98       TMenuItem.GetMenuIndex
  0001:000DDDB4       TMenuItem.GetParentComponent
  0001:00062518       TMenuItem.GetParentComponent
  0001:00062580       TMenuItem.GetParentMenu
@@ -16549,8 +16550,8 @@ Detailed map of segments
  0001:000DDE68       TMenuItem.HighlightedHook
  0001:000DDEE4       TMenuItem.HookEvents
  0001:00062928       TMenuItem.ImageListChange
- 0001:00062328       TMenuItem.IndexOf
  0001:000DDF60       TMenuItem.IndexOf
+ 0001:00062328       TMenuItem.IndexOf
  0001:000DD148       TMenuItem.InitiateAction
  0001:00062140       TMenuItem.InitiateAction
  0001:000624EC       TMenuItem.InitiateActions
@@ -16562,24 +16563,24 @@ Detailed map of segments
  0001:00063080       TMenuItem.InternalRethinkLines
  0001:000DE174       TMenuItem.InvokeHelp
  0001:000DEDE8       TMenuItem.IsBitmapStored
- 0001:00062700       TMenuItem.IsCaptionStored
  0001:000DE9F0       TMenuItem.IsCaptionStored
- 0001:000DEA10       TMenuItem.IsCheckedStored
+ 0001:00062700       TMenuItem.IsCaptionStored
  0001:00062720       TMenuItem.IsCheckedStored
+ 0001:000DEA10       TMenuItem.IsCheckedStored
  0001:00062740       TMenuItem.IsEnabledStored
  0001:000DEA30       TMenuItem.IsEnabledStored
  0001:00062780       TMenuItem.IsHelpContextStored
  0001:000DEA70       TMenuItem.IsHelpContextStored
- 0001:000DEA50       TMenuItem.IsHintStored
  0001:00062760       TMenuItem.IsHintStored
- 0001:000627A0       TMenuItem.IsImageIndexStored
+ 0001:000DEA50       TMenuItem.IsHintStored
  0001:000DEA90       TMenuItem.IsImageIndexStored
+ 0001:000627A0       TMenuItem.IsImageIndexStored
  0001:0006305C       TMenuItem.IsLine
  0001:000DE1E0       TMenuItem.IsLine
  0001:000DEAF0       TMenuItem.IsOnClickStored
  0001:00062800       TMenuItem.IsOnClickStored
- 0001:000DEAB0       TMenuItem.IsShortCutStored
  0001:000627C0       TMenuItem.IsShortCutStored
+ 0001:000DEAB0       TMenuItem.IsShortCutStored
  0001:000DEAD0       TMenuItem.IsVisibleStored
  0001:000627E0       TMenuItem.IsVisibleStored
  0001:000DD0F8       TMenuItem.ItemHandleNeeded
@@ -16597,57 +16598,57 @@ Detailed map of segments
  0001:00060318       TMenuItem.ReadShortCutText
  0001:000603E8       TMenuItem.RebuildHandle
  0001:000DE490       TMenuItem.RebuildMenu
- 0001:000DE508       TMenuItem.Remove
  0001:0006235C       TMenuItem.Remove
+ 0001:000DE508       TMenuItem.Remove
  0001:000DD8EC       TMenuItem.RemoveItemHandle
  0001:000DEE90       TMenuItem.RemoveQtItemFromParent
- 0001:00062448       TMenuItem.SetAction
  0001:000DE530       TMenuItem.SetAction
+ 0001:00062448       TMenuItem.SetAction
  0001:000DD90C       TMenuItem.SetAutoHotkeys
  0001:0006304C       TMenuItem.SetAutoHotkeys
  0001:000631C8       TMenuItem.SetAutoLineReduction
- 0001:000DE5A0       TMenuItem.SetBitmap
  0001:000624B8       TMenuItem.SetBitmap
+ 0001:000DE5A0       TMenuItem.SetBitmap
  0001:00061E1C       TMenuItem.SetBreak
- 0001:000DE650       TMenuItem.SetCaption
  0001:00061E2C       TMenuItem.SetCaption
+ 0001:000DE650       TMenuItem.SetCaption
  0001:000DE70C       TMenuItem.SetChecked
  0001:00061E9C       TMenuItem.SetChecked
- 0001:000DDAD8       TMenuItem.SetChildOrder
  0001:000620C4       TMenuItem.SetChildOrder
+ 0001:000DDAD8       TMenuItem.SetChildOrder
  0001:000620E4       TMenuItem.SetDefault
- 0001:000DE764       TMenuItem.SetEnabled
  0001:00061EF0       TMenuItem.SetEnabled
- 0001:00061F68       TMenuItem.SetGroupIndex
+ 0001:000DE764       TMenuItem.SetEnabled
  0001:000DE7A8       TMenuItem.SetGroupIndex
+ 0001:00061F68       TMenuItem.SetGroupIndex
  0001:0006201C       TMenuItem.SetImageIndex
  0001:000DEFE0       TMenuItem.SetImageIndex
- 0001:00062044       TMenuItem.SetMenuIndex
  0001:000DE7EC       TMenuItem.SetMenuIndex
+ 0001:00062044       TMenuItem.SetMenuIndex
  0001:0006252C       TMenuItem.SetParentComponent
  0001:000DE838       TMenuItem.SetParentComponent
  0001:000DE890       TMenuItem.SetRadioItem
  0001:00062590       TMenuItem.SetRadioItem
- 0001:00061FF8       TMenuItem.SetShortCut
  0001:000DEBE4       TMenuItem.SetShortCut
+ 0001:00061FF8       TMenuItem.SetShortCut
  0001:000628EC       TMenuItem.SetSubMenuImages
- 0001:0006200C       TMenuItem.SetVisible
  0001:000DEC2C       TMenuItem.SetVisible
+ 0001:0006200C       TMenuItem.SetVisible
  0001:000DEDA8       TMenuItem.Show
  0001:000DEF2C       TMenuItem.ShowHook
  0001:000DEEE4       TMenuItem.Showing
  0001:000623C8       TMenuItem.SubItemChanged
  0001:000DEC60       TMenuItem.SubItemChanged
- 0001:00061E54       TMenuItem.TurnSiblingsOff
  0001:000DECB0       TMenuItem.TurnSiblingsOff
+ 0001:00061E54       TMenuItem.TurnSiblingsOff
  0001:000DED30       TMenuItem.UpdateItems
  0001:0006295C       TMenuItem.UpdateItems
- 0001:000604B8       TMenuItem.VerifyGroupIndex
  0001:000DED40       TMenuItem.VerifyGroupIndex
+ 0001:000604B8       TMenuItem.VerifyGroupIndex
  0001:000DF170       TMenuItem.VisibleCount
  0001:000DEDA0       TMenuItem.WidgetDestroyed
- 0001:000648F4       TMenuItemStack.ClearItem
  0001:000DCB5C       TMenuItemStack.ClearItem
+ 0001:000648F4       TMenuItemStack.ClearItem
  0001:000373DC       TMessageForm.CreateNew
  0001:0003746C       TMessageForm.CustomKeyDown
  0001:00037614       TMessageForm.GetFormText
@@ -16696,19 +16697,19 @@ Detailed map of segments
  0001:0006D534       TMonitor.GetTop
  0001:0006D54C       TMonitor.GetWidth
  0001:0006D598       TMonitor.GetWorkareaRect
- 0001:000E8D64       TMouse.Create
  0001:0005AE08       TMouse.Create
- 0001:000E8DA4       TMouse.Destroy
+ 0001:000E8D64       TMouse.Create
  0001:0005AE98       TMouse.Destroy
+ 0001:000E8DA4       TMouse.Destroy
  0001:000E8DD4       TMouse.GetCapture
  0001:0005AEC8       TMouse.GetCapture
- 0001:000E8DDC       TMouse.GetCursorPos
  0001:0005AED0       TMouse.GetCursorPos
+ 0001:000E8DDC       TMouse.GetCursorPos
  0001:0005AEE0       TMouse.GetMouseData
  0001:0005AEFC       TMouse.GetNativeData
  0001:0005AF2C       TMouse.GetRegisteredData
- 0001:0005AF54       TMouse.SetCapture
  0001:000E8DE4       TMouse.SetCapture
+ 0001:0005AF54       TMouse.SetCapture
  0001:0005AF7C       TMouse.SettingChanged
  0001:0017190C       TMouseTrackingTimer.Create
  0001:00171A90       TMouseTrackingTimer.TimerHandler
@@ -16936,20 +16937,20 @@ Detailed map of segments
  0001:000BC100       TPasswordDialog.RemoveAllButtonClick
  0001:000BC090       TPasswordDialog.RemoveButtonClick
  0001:00033C50       TPatternManager.AllocPattern
- 0001:00033BD4       TPatternManager.Create
  0001:000CD7F0       TPatternManager.Create
+ 0001:00033BD4       TPatternManager.Create
  0001:00033D04       TPatternManager.CreateBitmap
  0001:00033C0C       TPatternManager.Destroy
  0001:000CD828       TPatternManager.Destroy
- 0001:000CD86C       TPatternManager.FreePatterns
  0001:00033E04       TPatternManager.FreePatterns
- 0001:000CD854       TPatternManager.Lock
+ 0001:000CD86C       TPatternManager.FreePatterns
  0001:00033C38       TPatternManager.Lock
+ 0001:000CD854       TPatternManager.Lock
  0001:00033C44       TPatternManager.Unlock
  0001:000CD860       TPatternManager.Unlock
  0002:00003D8C       TPBConstantNames
- 0001:0002C958       TPen.Assign
  0001:000CB24C       TPen.Assign
+ 0001:0002C958       TPen.Assign
  0001:000CB354       TPen.Create
  0001:0002C8EC       TPen.Create
  0001:0002C930       TPen.Destroy
@@ -16958,20 +16959,20 @@ Detailed map of segments
  0001:0002CA78       TPen.GetColor
  0001:0002CA10       TPen.GetData
  0001:0002CAA8       TPen.GetHandle
- 0001:000CB3E8       TPen.GetStyle
  0001:0002CB74       TPen.GetStyle
- 0001:000CB3FC       TPen.GetWidth
+ 0001:000CB3E8       TPen.GetStyle
  0001:0002CBA4       TPen.GetWidth
+ 0001:000CB3FC       TPen.GetWidth
  0001:0002CA80       TPen.SetColor
  0001:000CB408       TPen.SetColor
  0001:0002CA28       TPen.SetData
  0001:0002CB40       TPen.SetHandle
- 0001:0002CB60       TPen.SetMode
  0001:000CB478       TPen.SetMode
- 0001:000CB488       TPen.SetStyle
+ 0001:0002CB60       TPen.SetMode
  0001:0002CB7C       TPen.SetStyle
- 0001:000CB4C0       TPen.SetWidth
+ 0001:000CB488       TPen.SetStyle
  0001:0002CBAC       TPen.SetWidth
+ 0001:000CB4C0       TPen.SetWidth
  0001:000200A0       TPersistent.Assign
  0001:000200B4       TPersistent.AssignError
  0001:00020184       TPersistent.AssignTo
@@ -17016,16 +17017,16 @@ Detailed map of segments
  0001:000DFC90       TPopupMenu.Create
  0001:000DFCE4       TPopupMenu.CreateWidget
  0001:00064754       TPopupMenu.Destroy
- 0001:000DFD30       TPopupMenu.DoPopup
  0001:00064788       TPopupMenu.DoPopup
+ 0001:000DFD30       TPopupMenu.DoPopup
  0001:000DFD5C       TPopupMenu.GetHandle
  0001:0006479C       TPopupMenu.GetHelpContext
  0001:000DFD6C       TPopupMenu.HighlightedHook
  0001:000DFDEC       TPopupMenu.HookEvents
  0001:000DFE68       TPopupMenu.InvokeHelp
  0001:000DFEC8       TPopupMenu.MenuDataHandle
- 0001:00064840       TPopupMenu.Popup
  0001:000DFEDC       TPopupMenu.Popup
+ 0001:00064840       TPopupMenu.Popup
  0001:000647AC       TPopupMenu.SetBiDiModeFromPopupControl
  0001:000647A4       TPopupMenu.SetHelpContext
  0001:000DFF74       TPopupMenu.ShowHook
@@ -17056,12 +17057,12 @@ Detailed map of segments
  0001:000E51F8       TranslatePoint
  0001:0001168C       TranslateResult
  0001:0002DF00       TransparentStretchBlt
- 0001:000D6C00       TraverseClients
- 0001:000D71C0       TraverseClients
  0001:0006CD68       TraverseClients
+ 0001:000D71C0       TraverseClients
  0001:000D70C8       TraverseClients
- 0001:0006CB20       TraverseClients
+ 0001:000D6C00       TraverseClients
  0001:0006CC68       TraverseClients
+ 0001:0006CB20       TraverseClients
  0001:00055648       TraverseControls
  0001:00130740       TRDSConnection.CheckInactive
  0001:00130760       TRDSConnection.ClearRefs
@@ -17211,9 +17212,9 @@ Detailed map of segments
  0001:0000B7E4       TryStrToCurr
  0001:0000D220       TryStrToDate
  0001:0000D2F0       TryStrToDateTime
- 0001:0000B77C       TryStrToFloat
- 0001:0000B734       TryStrToFloat
  0001:0000B750       TryStrToFloat
+ 0001:0000B734       TryStrToFloat
+ 0001:0000B77C       TryStrToFloat
  0001:000096E0       TryStrToInt
  0001:00009744       TryStrToInt64
  0001:0009FF50       TryStrToSQLTimeStamp
@@ -17224,21 +17225,21 @@ Detailed map of segments
  0001:00103134       TSchema.FreeNodes
  0001:00103198       TSchema.Has_COMPUTED_BLR
  0001:00103248       TSchema.Has_DEFAULT_VALUE
- 0001:000D83BC       TScreen.AddDataModule
  0001:0006D96C       TScreen.AddDataModule
+ 0001:000D83BC       TScreen.AddDataModule
  0001:000D83C8       TScreen.AddForm
  0001:0006D8E4       TScreen.AddForm
  0001:0006E448       TScreen.AlignForm
  0001:0006E3C0       TScreen.AlignForms
- 0001:0006D5C8       TScreen.Create
  0001:000D83F8       TScreen.Create
- 0001:0006D984       TScreen.CreateCursors
+ 0001:0006D5C8       TScreen.Create
  0001:000D851C       TScreen.CreateCursors
+ 0001:0006D984       TScreen.CreateCursors
  0001:0006DA58       TScreen.DeleteCursor
- 0001:0006D720       TScreen.Destroy
  0001:000D85A4       TScreen.Destroy
- 0001:000D8578       TScreen.DestroyCursors
+ 0001:0006D720       TScreen.Destroy
  0001:0006D9E0       TScreen.DestroyCursors
+ 0001:000D8578       TScreen.DestroyCursors
  0001:0006DFDC       TScreen.DisableAlign
  0001:0006DFE4       TScreen.EnableAlign
  0001:000D860C       TScreen.GetCursors
@@ -17249,15 +17250,15 @@ Detailed map of segments
  0001:000D8630       TScreen.GetCustomForms
  0001:0006DD58       TScreen.GetDataModule
  0001:000D8644       TScreen.GetDataModule
- 0001:0006DD6C       TScreen.GetDataModuleCount
  0001:000D8658       TScreen.GetDataModuleCount
+ 0001:0006DD6C       TScreen.GetDataModuleCount
  0001:0006DCEC       TScreen.GetDefaultIME
  0001:0006D818       TScreen.GetDesktopHeight
  0001:0006D80C       TScreen.GetDesktopLeft
  0001:0006D800       TScreen.GetDesktopTop
  0001:0006D824       TScreen.GetDesktopWidth
- 0001:0006D860       TScreen.GetForm
  0001:000D8660       TScreen.GetForm
+ 0001:0006D860       TScreen.GetForm
  0001:0006D874       TScreen.GetFormCount
  0001:000D8674       TScreen.GetFormCount
  0001:0006D7E8       TScreen.GetHeight
@@ -17271,8 +17272,8 @@ Detailed map of segments
  0001:000D8730       TScreen.GetWidth
  0001:0006D7F4       TScreen.GetWidth
  0001:0006DD08       TScreen.IconFontChanged
- 0001:000D8740       TScreen.InsertCursor
  0001:0006DAC4       TScreen.InsertCursor
+ 0001:000D8740       TScreen.InsertCursor
  0001:000D8704       TScreen.InternalHintFontChanged
  0001:0006E004       TScreen.Realign
  0001:0006D978       TScreen.RemoveDataModule
@@ -17428,14 +17429,14 @@ Detailed map of segments
  0001:0004D00C       TSiteList.Clear
  0001:0004CF54       TSiteList.Find
  0001:0004D040       TSiteList.GetTopSite
- 0001:0004E934       TSizeConstraints.AssignTo
  0001:000E8E3C       TSizeConstraints.AssignTo
+ 0001:0004E934       TSizeConstraints.AssignTo
  0001:000E9078       TSizeConstraints.Change
  0001:0004EA08       TSizeConstraints.Change
  0001:0004E8F8       TSizeConstraints.Create
  0001:000E8E00       TSizeConstraints.Create
- 0001:0004E97C       TSizeConstraints.SetConstraints
  0001:000E8E84       TSizeConstraints.SetConstraints
+ 0001:0004E97C       TSizeConstraints.SetConstraints
  0001:000AF8CC       TSmallintField.Create
  0001:000AF920       TSmallintField.GetDataSize
  0001:0003E178       TSpeedButton.ActionChange
@@ -17584,10 +17585,10 @@ Detailed map of segments
  0001:0009F58C       TSQLTimeStampData.AdjustMonths
  0001:0009F69C       TSQLTimeStampData.AdjustSeconds
  0001:0009F7F8       TSQLTimeStampData.Compare
+ 0001:0009F9FC       TSQLTimeStampData.Create
  0001:0009F954       TSQLTimeStampData.Create
  0001:0009F8F8       TSQLTimeStampData.Create
  0001:0009F9AC       TSQLTimeStampData.Create
- 0001:0009F9FC       TSQLTimeStampData.Create
  0001:0009F74C       TSQLTimeStampData.DaysInMonth
  0001:0009F7A4       TSQLTimeStampData.DoAdd
  0001:0009F764       TSQLTimeStampData.DoSubtract
@@ -17633,11 +17634,11 @@ Detailed map of segments
  0001:000225E4       TStream.GetSize
  0001:000227DC       TStream.ReadBuffer
  0001:00022940       TStream.ReadComponent
- 0001:0002276C       TStream.Seek
  0001:000226E8       TStream.Seek
+ 0001:0002276C       TStream.Seek
  0001:000225D0       TStream.SetPosition
- 0001:00022648       TStream.SetSize
  0001:00022630       TStream.SetSize
+ 0001:00022648       TStream.SetSize
  0001:00022634       TStream.SetSize64
  0001:00022814       TStream.WriteBuffer
  0001:00029B40       TStreamAdapter.Clone
@@ -17721,8 +17722,8 @@ Detailed map of segments
  0001:00020B68       TStrings.Destroy
  0001:00020DEC       TStrings.EndUpdate
  0001:00020E00       TStrings.Equals
- 0001:00020EE4       TStrings.Error
  0001:00020EAC       TStrings.Error
+ 0001:00020EE4       TStrings.Error
  0001:00020F3C       TStrings.Exchange
  0001:00021024       TStrings.ExtractName
  0001:000210A0       TStrings.GetCapacity
@@ -17860,16 +17861,16 @@ Detailed map of segments
  0001:0000F780       TThreadLocalCounter.Recycle
  0001:000B0C44       TTimeField.Create
  0001:000B0C98       TTimeField.GetDataSize
- 0001:0003A0A8       TTimer.Create
  0001:000E9B94       TTimer.Create
+ 0001:0003A0A8       TTimer.Create
  0001:000E9CEC       TTimer.CreateWidget
  0001:0003A0F8       TTimer.Destroy
  0001:000E9BE0       TTimer.GetHandle
  0001:000E9CB4       TTimer.HookEvents
  0001:000E9BF0       TTimer.SetEnabled
  0001:0003A230       TTimer.SetEnabled
- 0001:0003A240       TTimer.SetInterval
  0001:000E9C30       TTimer.SetInterval
+ 0001:0003A240       TTimer.SetInterval
  0001:0003A250       TTimer.SetOnTimer
  0001:000E9C60       TTimer.Timer
  0001:0003A268       TTimer.Timer
@@ -18366,10 +18367,10 @@ Detailed map of segments
  0001:0001BE6C       TypInfo
  0001:00104EF0       UDMConexoes
  0001:001E7170       UDMMovtosEmpresas
- 0001:001FF7D8       uj_001
+ 0001:0020037C       uj_001
  0001:001E31F8       uj_002
  0002:00006EC8       UltraFlatPainterButtonWidthA
- 0001:001FF308       UMovtosEmpresas
+ 0001:001FFEAC       UMovtosEmpresas
  0001:0001A1B8       Unassigned
  0001:00000358       UnhandledExceptionFilter
  0001:0006E69C       UnhookHintHooks
@@ -18463,9 +18464,9 @@ Detailed map of segments
  0001:00081534       UpdateExtents
  0001:00051B3C       UpdateFloatingDockSitePos
  0001:000DFA3C       UpdateImage
- 0001:00062934       UpdateItem
- 0001:00063340       UpdateItem
  0001:000DED00       UpdateItem
+ 0001:00063340       UpdateItem
+ 0001:00062934       UpdateItem
  0001:00160428       UpdateScrollBarBitmaps
  0001:000679D8       UpdateScrollProperties
  0001:001633EC       UpdateThumbnail
@@ -18480,17 +18481,17 @@ Detailed map of segments
  0002:00003808       UserWndProc
  0001:000C2E94       UsesBitmap
  0001:00036B9C       UseThemes
- 0001:00077514       Utf8Decode
  0001:000063C0       UTF8Decode
- 0001:00077484       Utf8Encode
+ 0001:00077514       Utf8Decode
  0001:00006314       UTF8Encode
+ 0001:00077484       Utf8Encode
  0001:00077344       Utf8EncodeChar
  0001:000061DC       Utf8ToUnicode
  0002:000006DC       UtilWindowClass
  0001:00036C18       UxTheme
  0001:000D926C       ValidAppHandle
- 0001:000D9990       ValidateHintWindow
  0001:00070D1C       ValidateHintWindow
+ 0001:000D9990       ValidateHintWindow
  0001:001DF1B4       ValidateRect
  0001:00007794       ValidateRect
  0001:00150EF4       ValidateTextRows
@@ -18500,13 +18501,13 @@ Detailed map of segments
  0001:000D92D8       ValidMainForm
  0002:00000F98       ValidMenuHotkeys
  0002:00003810       ValidMenuHotkeys
- 0001:000D366C       ValidParentForm
  0001:00066FEC       ValidParentForm
+ 0001:000D366C       ValidParentForm
  0002:00006844       ValTtoVarT
  0001:000A2044       ValueOverOne
  0002:00000CFC       Values
- 0002:00000CF4       Values
  0002:00002B80       Values
+ 0002:00000CF4       Values
  0001:000B2D04       ValueToStr
  0002:000097B0       VarAdd
  0002:00000014       VarAddRefProc
@@ -18536,15 +18537,15 @@ Detailed map of segments
  0001:000124E4       VarCastAsInterface
  0001:00012400       VarCastAsOleStr
  0001:0001244C       VarCastAsString
- 0001:00011404       VarCastError
  0001:00011458       VarCastError
+ 0001:00011404       VarCastError
  0001:000125B0       VarCastRare
  0001:00012530       VarCastViaOS
  0001:00011C14       VarClearDeep
  0002:00000010       VarClearProc
  0002:000097D4       VarCmp
- 0001:00017E64       VarCompare
  0001:00180B24       VarCompare
+ 0001:00017E64       VarCompare
  0001:000175B0       VarCompareAny
  0001:00017A44       VarCompareRare
  0001:000178B8       VarCompareSimple
@@ -18567,9 +18568,9 @@ Detailed map of segments
  0001:00180B58       VarEquals
  0001:00180B70       VarEqualsExact
  0001:000A0E5C       VarFMTBcd
- 0001:000A0E24       VarFMTBcdCreate
  0001:000A0DE4       VarFMTBcdCreate
  0001:000A0DA0       VarFMTBcdCreate
+ 0001:000A0E24       VarFMTBcdCreate
  0001:000A0E54       VarFMTBcdCreate
  0001:000183FC       VarFromDateTime
  0002:000097D8       VarI4FromStr
@@ -18603,8 +18604,8 @@ Detailed map of segments
  0001:0001159C       VarOverflowError
  0002:000097DC       VarR4FromStr
  0002:000097E0       VarR8FromStr
- 0001:000118EC       VarResultCheck
  0001:000118E0       VarResultCheck
+ 0001:000118EC       VarResultCheck
  0001:00018434       VarSameValue
  0001:0009FDAC       VarSQLTimeStamp
  0001:0009FD74       VarSQLTimeStampCreate
@@ -18679,8 +18680,8 @@ Detailed map of segments
  0001:00006DCC       VerQueryValue
  0001:00075044       VersionFixedFileInfo
  0002:00009B34       ViewerName
- 0001:00006D74       VirtualAlloc
  0001:000004A4       VirtualAlloc
+ 0001:00006D74       VirtualAlloc
  0001:00006D7C       VirtualFree
  0001:000004AC       VirtualFree
  0001:00006D8C       VirtualProtect
@@ -18733,11 +18734,11 @@ Detailed map of segments
  0001:00073AE0       WinSock
  0001:00035D68       WinSpool
  0001:00178F64       WMPaintWindowOnGlass
- 0001:000D8DDC       WndProc
  0001:0017FA60       WndProc
+ 0001:000D8DDC       WndProc
  0002:00000A18       WndProcPtrAtom
- 0002:00000D9C       WordWraps
  0002:00000DA0       WordWraps
+ 0002:00000D9C       WordWraps
  0001:001813B4       WriteAnsiString
  0001:00180D64       WriteAnsiStringProc
  0001:001814E8       WriteArrayProc
@@ -18814,8 +18815,8 @@ Detailed map of segments
  0001:00089694       _free
  0001:000896EC       _fwrite
  0001:000A256C       _GetRemainder
- 0001:001564E0       _GetSize
  0001:00157090       _GetSize
+ 0001:001564E0       _GetSize
  0001:000A257C       _GetSubRemainder
  0001:00034668       _GetSystemMetrics
  0002:0000A150       _Heap32First
@@ -35046,38 +35047,39 @@ Detailed map of segments
  0001:001E6CE4       TDMMovtosEmpresas.DataModuleCreate
  0001:001E70DC       Finalization
  0001:001E7170       UDMMovtosEmpresas
- 0001:001E7564       TFrmMovtosEmpresas.AtualizaTabelaEstoque
- 0001:001E86D8       TFrmMovtosEmpresas.ParaProcessamentoLoja
- 0001:001E8744       TFrmMovtosEmpresas.BuscaCodLista
- 0001:001E8924       TFrmMovtosEmpresas.AtualizaPercComissoesHabProf
- 0001:001E8F20       TFrmMovtosEmpresas.AtualizaPercComissoesSalao
- 0001:001E9BAC       TFrmMovtosEmpresas.AtualizaServicosSalao
- 0001:001ED214       TFrmMovtosEmpresas.AtualizaForn
- 0001:001ED908       TFrmMovtosEmpresas.AtualizaLP
- 0001:001EDEF8       TFrmMovtosEmpresas.AtualizaProdutos
- 0001:001EE3C8       TFrmMovtosEmpresas.ConectaCentralTrocas
- 0001:001EE76C       TFrmMovtosEmpresas.ConectaMPMS
- 0001:001EEBAC       TFrmMovtosEmpresas.VerificaProcessamento
- 0001:001EEC64       TFrmMovtosEmpresas.ConexaoEmpIndividual
- 0001:001EEFA0       TFrmMovtosEmpresas.CriaQueryIB
- 0001:001EF160       TFrmMovtosEmpresas.FormCreate
- 0001:001EF310       TFrmMovtosEmpresas.Bt_AtualizarClick
- 0001:001FE548       TFrmMovtosEmpresas.FormShow
- 0001:001FE81C       TFrmMovtosEmpresas.FormClose
- 0001:001FE864       TFrmMovtosEmpresas.FormCloseQuery
- 0001:001FE8AC       TFrmMovtosEmpresas.Bt_EstoquesClick
- 0001:001FF2B0       Finalization
- 0001:001FF308       UMovtosEmpresas
- 0001:001FF5F0       Apaga
- 0001:001FF6CC       TJ_001.SpeedButton1Click
- 0001:001FF6D4       TJ_001.FormShow
- 0001:001FF6DC       TJ_001.Edit1KeyPress
- 0001:001FF6F8       TJ_001.Edit2KeyPress
- 0001:001FF78C       TJ_001.FormKeyUp
- 0001:001FF7A8       Finalization
- 0001:001FF7D8       uj_001
- 0001:001FF7E0       Finalization
- 0001:00200100       PMovtosEmpresas
+ 0001:001E757C       TFrmMovtosEmpresas.AtualizaTabelaEstoque
+ 0001:001E86F0       TFrmMovtosEmpresas.ParaProcessamentoLoja
+ 0001:001E875C       TFrmMovtosEmpresas.BuscaCodLista
+ 0001:001E893C       TFrmMovtosEmpresas.AtualizaPercComissoesHabProf
+ 0001:001E8F38       TFrmMovtosEmpresas.AtualizaPercComissoesSalao
+ 0001:001E9BC4       TFrmMovtosEmpresas.AtualizaServicosSalao
+ 0001:001ED22C       TFrmMovtosEmpresas.Es_Finan_Curva_ABC
+ 0001:001EDDAC       TFrmMovtosEmpresas.AtualizaForn
+ 0001:001EE4A0       TFrmMovtosEmpresas.AtualizaLP
+ 0001:001EEA90       TFrmMovtosEmpresas.AtualizaProdutos
+ 0001:001EEF60       TFrmMovtosEmpresas.ConectaCentralTrocas
+ 0001:001EF304       TFrmMovtosEmpresas.ConectaMPMS
+ 0001:001EF744       TFrmMovtosEmpresas.VerificaProcessamento
+ 0001:001EF7FC       TFrmMovtosEmpresas.ConexaoEmpIndividual
+ 0001:001EFB38       TFrmMovtosEmpresas.CriaQueryIB
+ 0001:001EFCF8       TFrmMovtosEmpresas.FormCreate
+ 0001:001EFEA8       TFrmMovtosEmpresas.Bt_AtualizarClick
+ 0001:001FF0EC       TFrmMovtosEmpresas.FormShow
+ 0001:001FF3C0       TFrmMovtosEmpresas.FormClose
+ 0001:001FF408       TFrmMovtosEmpresas.FormCloseQuery
+ 0001:001FF450       TFrmMovtosEmpresas.Bt_EstoquesClick
+ 0001:001FFE54       Finalization
+ 0001:001FFEAC       UMovtosEmpresas
+ 0001:00200194       Apaga
+ 0001:00200270       TJ_001.SpeedButton1Click
+ 0001:00200278       TJ_001.FormShow
+ 0001:00200280       TJ_001.Edit1KeyPress
+ 0001:0020029C       TJ_001.Edit2KeyPress
+ 0001:00200330       TJ_001.FormKeyUp
+ 0001:0020034C       Finalization
+ 0001:0020037C       uj_001
+ 0001:00200384       Finalization
+ 0001:00200CA4       PMovtosEmpresas
  0002:00000000       ExitCode
  0002:00000004       ErrorAddr
  0002:00000008       RandSeed
@@ -46334,526 +46336,533 @@ Line numbers for UDMMovtosEmpresas(UDMMovtosEmpresas.pas) segment .text
 
 Line numbers for UMovtosEmpresas(UMovtosEmpresas.pas) segment .text
 
-   211 0001:001E7564   212 0001:001E7593   217 0001:001E75A7   218 0001:001E75AF
-   220 0001:001E75B7   221 0001:001E75C6   224 0001:001E75CE   226 0001:001E75E1
-   228 0001:001E761A   229 0001:001E7630   231 0001:001E7642   232 0001:001E7660
-   234 0001:001E767E   245 0001:001E76C0   246 0001:001E76D2   247 0001:001E76EA
-   251 0001:001E7705   253 0001:001E7718   282 0001:001E77DE   283 0001:001E77F0
-   284 0001:001E7808   288 0001:001E781A   289 0001:001E781E   291 0001:001E782D
-   293 0001:001E7832   296 0001:001E7838   297 0001:001E7846   298 0001:001E7858
-   300 0001:001E786B   303 0001:001E7873   294 0001:001E7879   309 0001:001E787F
-   311 0001:001E7889   313 0001:001E7897   314 0001:001E78DE   315 0001:001E78E5
-   317 0001:001E78F9   318 0001:001E7901   320 0001:001E7909   333 0001:001E7916
-   337 0001:001E792E   338 0001:001E7936   341 0001:001E7955   343 0001:001E7987
-   349 0001:001E79CF   350 0001:001E7A00   352 0001:001E7A45   354 0001:001E7A52
-   338 0001:001E7A55   357 0001:001E7A5C   358 0001:001E7A74   360 0001:001E7A8A
-   335 0001:001E7A9C   362 0001:001E7AB6   365 0001:001E7AC8   369 0001:001E7AE0
-   370 0001:001E7AE8   373 0001:001E7B07   375 0001:001E7B39   380 0001:001E7B81
-   381 0001:001E7BB2   383 0001:001E7BF7   385 0001:001E7C04   370 0001:001E7C07
-   388 0001:001E7C0E   389 0001:001E7C26   391 0001:001E7C3C   367 0001:001E7C4E
-   393 0001:001E7C68   396 0001:001E7C7A   398 0001:001E7C8E   399 0001:001E7C96
-   403 0001:001E7CB9   404 0001:001E7CCD   406 0001:001E7CDF   407 0001:001E7CE7
-   413 0001:001E7CF4   414 0001:001E7D03   416 0001:001E7D1A   417 0001:001E7D22
-   419 0001:001E7D61   423 0001:001E86D8   424 0001:001E86DF   425 0001:001E86E6
-   426 0001:001E86ED   427 0001:001E86F4   428 0001:001E86FB   429 0001:001E8702
-   431 0001:001E8709   432 0001:001E8710   433 0001:001E8717   434 0001:001E871E
-   435 0001:001E8725   436 0001:001E872C   437 0001:001E8733   439 0001:001E873A
-   440 0001:001E8741   445 0001:001E8744   446 0001:001E8772   449 0001:001E878D
-   450 0001:001E879A   451 0001:001E87AD   452 0001:001E87BA   453 0001:001E87D3
-   455 0001:001E87E0   457 0001:001E87F0   460 0001:001E87FD   461 0001:001E880A
-   462 0001:001E881D   463 0001:001E882A   464 0001:001E8843   467 0001:001E8872
-   473 0001:001E8924   475 0001:001E893B   487 0001:001E8948   490 0001:001E895E
-   502 0001:001E899A   504 0001:001E89D2   514 0001:001E8F20   517 0001:001E8F43
-   518 0001:001E8F45   521 0001:001E8F49   522 0001:001E8F54   524 0001:001E8F58
-   526 0001:001E8F59   519 0001:001E8F5E   530 0001:001E8F62   534 0001:001E8F6A
-   535 0001:001E8F7D   538 0001:001E8F91   539 0001:001E8FE3   540 0001:001E8FEA
-   541 0001:001E8FFE   542 0001:001E900C   543 0001:001E9014   546 0001:001E901C
-   548 0001:001E9021   561 0001:001E907A   562 0001:001E9089   563 0001:001E909E
-   565 0001:001E90AD   568 0001:001E90BA   570 0001:001E90E4   572 0001:001E90F5
-   573 0001:001E9102   574 0001:001E9118   578 0001:001E9120   579 0001:001E9144
-   583 0001:001E9192   584 0001:001E919C   585 0001:001E91AC   586 0001:001E91BF
-   587 0001:001E91C9   588 0001:001E91F6   590 0001:001E9200   591 0001:001E9211
-   593 0001:001E921E   601 0001:001E92EE   604 0001:001E92FD   611 0001:001E93BD
-   613 0001:001E93D9   566 0001:001E93E8   615 0001:001E93FF   546 0001:001E9400
-   616 0001:001E9409   619 0001:001E9418   620 0001:001E9425   621 0001:001E943B
-   624 0001:001E9443   626 0001:001E9457   627 0001:001E945F   629 0001:001E9467
-   630 0001:001E9479   631 0001:001E948B   632 0001:001E949A   635 0001:001E94C2
-   638 0001:001E94C4   640 0001:001E94D8   641 0001:001E94EA   642 0001:001E94FC
-   643 0001:001E950B   645 0001:001E9515   646 0001:001E951D   648 0001:001E9525
-   651 0001:001E9532   653 0001:001E9548   654 0001:001E955A   655 0001:001E9573
-   660 0001:001E9617   665 0001:001E9657   676 0001:001E9BAC   678 0001:001E9BCE
-   679 0001:001E9BD0   682 0001:001E9BD4   683 0001:001E9BDF   685 0001:001E9BE3
-   687 0001:001E9BE4   680 0001:001E9BE9   691 0001:001E9BED   695 0001:001E9BF5
-   696 0001:001E9C08   699 0001:001E9C1C   700 0001:001E9C6E   701 0001:001E9C75
-   702 0001:001E9C89   703 0001:001E9C97   704 0001:001E9C9F   709 0001:001E9CA7
-   713 0001:001E9CAF   717 0001:001E9CD6   718 0001:001E9CE5   719 0001:001E9CFA
-   722 0001:001E9D09   725 0001:001E9D16   728 0001:001E9D2A   729 0001:001E9D4E
-   731 0001:001E9D75   733 0001:001E9D84   738 0001:001E9DBF   740 0001:001E9DCE
-   745 0001:001E9E09   726 0001:001E9E18   748 0001:001E9E2F   752 0001:001E9E49
-   755 0001:001E9E5D   756 0001:001E9E81   758 0001:001E9EA8   760 0001:001E9EB7
-   766 0001:001E9EF7   768 0001:001E9F06   773 0001:001E9F41   753 0001:001E9F50
-   775 0001:001E9F67   777 0001:001E9F76   807 0001:001EA003   808 0001:001EA00D
-   809 0001:001EA01D   810 0001:001EA030   815 0001:001EA03F   820 0001:001EA041
-   822 0001:001EA076   825 0001:001EA078   829 0001:001EA0CF   830 0001:001EA0DE
-   831 0001:001EA0F3   832 0001:001EA102   833 0001:001EA129   835 0001:001EA138
-   838 0001:001EA142   842 0001:001EA187   845 0001:001EA19D   848 0001:001EA1CD
-   856 0001:001EA1E3   858 0001:001EA220   864 0001:001EA222   866 0001:001EA263
-   869 0001:001EA265   873 0001:001EA2D4   874 0001:001EA2E3   875 0001:001EA2F8
-   878 0001:001EA307   881 0001:001EA344   885 0001:001EA387   886 0001:001EA399
-   887 0001:001EA3B1   889 0001:001EA3C3   890 0001:001EA3E2   893 0001:001EA3F4
-   895 0001:001EA401   896 0001:001EA413   897 0001:001EA42B   899 0001:001EA43D
-   900 0001:001EA45C   903 0001:001EA46E   907 0001:001EA4F0   908 0001:001EA502
-   909 0001:001EA51A   911 0001:001EA52C   912 0001:001EA54C   915 0001:001EA55E
-   927 0001:001EA6E2   930 0001:001EA6F8   936 0001:001EA757   938 0001:001EA76D
-   945 0001:001EA77C   948 0001:001EA784   958 0001:001EA855   959 0001:001EA864
-   960 0001:001EA879   962 0001:001EA888   968 0001:001EA8C5   973 0001:001EA9A5
-   976 0001:001EA9BB   980 0001:001EAA80   992 0001:001EAA9B   996 0001:001EAB0A
-   997 0001:001EAB1C   998 0001:001EAB34  1000 0001:001EAB46  1001 0001:001EAB65
-  1004 0001:001EAB77  1007 0001:001EAB81  1009 0001:001EAB91  1012 0001:001EABA7
-  1014 0001:001EABB7  1017 0001:001EABCD  1020 0001:001EABFD  1027 0001:001EAC13
-  1031 0001:001EAC82  1032 0001:001EAC94  1033 0001:001EACAC  1035 0001:001EACBE
-  1036 0001:001EACDD  1039 0001:001EACEF  1041 0001:001EACFC  1042 0001:001EAD0E
-  1043 0001:001EAD26  1045 0001:001EAD38  1046 0001:001EAD57  1049 0001:001EAD69
-  1053 0001:001EADEB  1054 0001:001EADFD  1055 0001:001EAE15  1057 0001:001EAE27
-  1058 0001:001EAE47  1061 0001:001EAE59  1073 0001:001EAFDD  1076 0001:001EAFF3
-  1082 0001:001EB052  1085 0001:001EB068  1093 0001:001EB139  1094 0001:001EB14B
-  1095 0001:001EB163  1097 0001:001EB175  1098 0001:001EB194  1099 0001:001EB1B3
-  1105 0001:001EB1C5  1112 0001:001EB1DF  1113 0001:001EB1F1  1114 0001:001EB209
-  1118 0001:001EB220  1121 0001:001EB236  1125 0001:001EB2DB  1126 0001:001EB2ED
-  1127 0001:001EB305  1129 0001:001EB317  1130 0001:001EB337  1134 0001:001EB349
-  1148 0001:001EB457  1149 0001:001EB48B  1152 0001:001EB4F2  1153 0001:001EB526
-  1156 0001:001EB58D  1157 0001:001EB5C1  1160 0001:001EB628  1161 0001:001EB65C
-  1164 0001:001EB6C3  1165 0001:001EB6F7  1168 0001:001EB75E  1169 0001:001EB792
-  1172 0001:001EB7F9  1173 0001:001EB82D  1176 0001:001EB894  1177 0001:001EB8C8
-  1181 0001:001EB92C  1184 0001:001EB939  1187 0001:001EB9AB  1189 0001:001EB9C1
-  1116 0001:001EB9D3  1191 0001:001EB9ED  1194 0001:001EB9FF  1198 0001:001EBA0E
-   812 0001:001EBA18  1201 0001:001EBA2A  1204 0001:001EBA37  1207 0001:001EBA4D
-  1209 0001:001EBA61  1210 0001:001EBA69  1212 0001:001EBA71  1213 0001:001EBA83
-  1214 0001:001EBA95  1215 0001:001EBAA4  1218 0001:001EBACC  1221 0001:001EBACE
-  1223 0001:001EBAE2  1224 0001:001EBAF4  1225 0001:001EBB06  1226 0001:001EBB15
-  1228 0001:001EBB1F  1229 0001:001EBB27  1231 0001:001EBB2F  1234 0001:001EBB3C
-  1236 0001:001EBB52  1237 0001:001EBB64  1238 0001:001EBB7D  1243 0001:001EBC21
-  1248 0001:001EBCB4  1256 0001:001ED214  1259 0001:001ED237  1260 0001:001ED23C
-  1263 0001:001ED240  1264 0001:001ED24B  1266 0001:001ED24F  1268 0001:001ED252
-  1261 0001:001ED258  1272 0001:001ED25C  1276 0001:001ED264  1277 0001:001ED283
-  1280 0001:001ED2A2  1281 0001:001ED2B5  1284 0001:001ED2C9  1285 0001:001ED31B
-  1286 0001:001ED322  1287 0001:001ED336  1288 0001:001ED344  1289 0001:001ED34C
-  1291 0001:001ED354  1292 0001:001ED366  1294 0001:001ED378  1295 0001:001ED385
-  1297 0001:001ED39B  1301 0001:001ED3B2  1302 0001:001ED3C4  1304 0001:001ED3E9
-  1305 0001:001ED410  1307 0001:001ED44B  1308 0001:001ED482  1302 0001:001ED485
-  1310 0001:001ED48C  1312 0001:001ED4A1  1313 0001:001ED4C2  1315 0001:001ED4D9
-  1299 0001:001ED4EB  1318 0001:001ED505  1320 0001:001ED517  1323 0001:001ED524
-  1326 0001:001ED53A  1327 0001:001ED551  1329 0001:001ED565  1330 0001:001ED56D
-  1332 0001:001ED575  1333 0001:001ED587  1335 0001:001ED5B7  1338 0001:001ED5B9
-  1340 0001:001ED5CD  1341 0001:001ED5DF  1343 0001:001ED5F1  1344 0001:001ED5F9
-  1346 0001:001ED601  1349 0001:001ED60E  1351 0001:001ED624  1354 0001:001ED683
-  1356 0001:001ED69C  1361 0001:001ED722  1366 0001:001ED767  1374 0001:001ED908
-  1377 0001:001ED92B  1378 0001:001ED92D  1381 0001:001ED931  1382 0001:001ED93C
-  1384 0001:001ED940  1386 0001:001ED941  1379 0001:001ED946  1390 0001:001ED94A
-  1394 0001:001ED952  1395 0001:001ED971  1398 0001:001ED990  1399 0001:001ED9A3
-  1402 0001:001ED9B7  1403 0001:001EDA09  1404 0001:001EDA10  1405 0001:001EDA24
-  1406 0001:001EDA32  1407 0001:001EDA3A  1409 0001:001EDA42  1410 0001:001EDA54
-  1412 0001:001EDA66  1413 0001:001EDA73  1415 0001:001EDA89  1419 0001:001EDAA0
-  1420 0001:001EDAB2  1421 0001:001EDACE  1420 0001:001EDB04  1423 0001:001EDB07
-  1425 0001:001EDB1C  1426 0001:001EDB3D  1428 0001:001EDB54  1417 0001:001EDB66
-  1431 0001:001EDB80  1433 0001:001EDB92  1436 0001:001EDB9F  1439 0001:001EDBB5
-  1440 0001:001EDBCC  1442 0001:001EDBE0  1443 0001:001EDBE8  1445 0001:001EDBF0
-  1446 0001:001EDC02  1449 0001:001EDC32  1452 0001:001EDC34  1454 0001:001EDC48
-  1455 0001:001EDC5A  1457 0001:001EDC6C  1458 0001:001EDC74  1460 0001:001EDC7C
-  1463 0001:001EDC89  1465 0001:001EDC9F  1466 0001:001EDCB1  1467 0001:001EDCCA
-  1472 0001:001EDD50  1477 0001:001EDD8D  1485 0001:001EDEF8  1488 0001:001EDF1A
-  1489 0001:001EDF1C  1492 0001:001EDF20  1493 0001:001EDF2B  1495 0001:001EDF2F
-  1497 0001:001EDF30  1490 0001:001EDF35  1501 0001:001EDF39  1505 0001:001EDF41
-  1506 0001:001EDF60  1509 0001:001EDF7F  1510 0001:001EDF92  1513 0001:001EDFA6
-  1514 0001:001EDFF8  1515 0001:001EDFFF  1516 0001:001EE013  1517 0001:001EE021
-  1518 0001:001EE029  1520 0001:001EE031  1521 0001:001EE043  1524 0001:001EE057
-  1525 0001:001EE06C  1527 0001:001EE082  1522 0001:001EE094  1529 0001:001EE0AA
-  1531 0001:001EE0BC  1534 0001:001EE0C9  1537 0001:001EE0DF  1539 0001:001EE0F3
-  1540 0001:001EE0FB  1542 0001:001EE121  1545 0001:001EE123  1547 0001:001EE137
-  1549 0001:001EE149  1550 0001:001EE151  1552 0001:001EE159  1555 0001:001EE166
-  1557 0001:001EE17C  1558 0001:001EE19B  1559 0001:001EE1B4  1564 0001:001EE23A
-  1569 0001:001EE277  1577 0001:001EE3C8  1578 0001:001EE3EA  1580 0001:001EE3EE
-  1581 0001:001EE3FC  1584 0001:001EE409  1585 0001:001EE418  1586 0001:001EE42D
-  1589 0001:001EE43C  1591 0001:001EE456  1593 0001:001EE477  1595 0001:001EE4A3
-  1596 0001:001EE4C3  1599 0001:001EE4D0  1600 0001:001EE506  1602 0001:001EE53A
-  1604 0001:001EE56C  1607 0001:001EE5C5  1608 0001:001EE5E6  1611 0001:001EE5E8
-  1589 0001:001EE5E9  1613 0001:001EE5F0  1615 0001:001EE60A  1616 0001:001EE619
-  1618 0001:001EE623  1620 0001:001EE632  1622 0001:001EE645  1623 0001:001EE66F
-  1633 0001:001EE76C  1634 0001:001EE78E  1636 0001:001EE792  1637 0001:001EE7A0
-  1640 0001:001EE7BD  1641 0001:001EE7CC  1642 0001:001EE7E1  1645 0001:001EE7F0
-  1647 0001:001EE80A  1649 0001:001EE82B  1651 0001:001EE857  1653 0001:001EE877
-  1656 0001:001EE893  1661 0001:001EE8F1  1665 0001:001EE954  1667 0001:001EE975
-  1669 0001:001EE98F  1670 0001:001EE9B0  1672 0001:001EE9CA  1673 0001:001EE9D9
-  1674 0001:001EE9E5  1681 0001:001EE9EF  1645 0001:001EE9F0  1684 0001:001EE9F7
-  1685 0001:001EEA11  1687 0001:001EEA20  1689 0001:001EEA33  1690 0001:001EEA5D
-  1695 0001:001EEBAC  1697 0001:001EEBC1  1699 0001:001EEBDE  1700 0001:001EEC16
-  1708 0001:001EEC64  1709 0001:001EEC8E  1710 0001:001EEC92  1712 0001:001EEC96
-  1713 0001:001EEC9B  1716 0001:001EECA5  1717 0001:001EECB3  1719 0001:001EECBD
-  1721 0001:001EECDD  1723 0001:001EECFF  1727 0001:001EED2A  1729 0001:001EED3D
-  1730 0001:001EED60  1732 0001:001EED81  1733 0001:001EED8F  1734 0001:001EEDB0
-  1735 0001:001EEDB4  1736 0001:001EEDBB  1738 0001:001EEDD5  1742 0001:001EEDDA
-  1744 0001:001EEDE9  1745 0001:001EEE0A  1746 0001:001EEE0E  1747 0001:001EEE15
-  1752 0001:001EEE1A  1719 0001:001EEE1D  1758 0001:001EEE2B  1760 0001:001EEE3E
-  1761 0001:001EEE61  1763 0001:001EEE82  1764 0001:001EEE90  1765 0001:001EEEB1
-  1766 0001:001EEEB5  1767 0001:001EEEBC  1769 0001:001EEEDE  1773 0001:001EEEE3
-  1775 0001:001EEEF2  1776 0001:001EEF13  1777 0001:001EEF17  1778 0001:001EEF1E
-  1783 0001:001EEF37  1786 0001:001EEF3F  1714 0001:001EEF4B  1790 0001:001EEF7D
-  1799 0001:001EEFA0  1801 0001:001EEFD0  1803 0001:001EEFD5  1805 0001:001EEFDB
-  1806 0001:001EEFE9  1807 0001:001EEFF1  1809 0001:001EF00A  1811 0001:001EF00F
-  1812 0001:001EF023  1815 0001:001EF02D  1817 0001:001EF037  1819 0001:001EF051
-  1821 0001:001EF06E  1823 0001:001EF094  1824 0001:001EF0B9  1828 0001:001EF0BC
-  1830 0001:001EF0D9  1832 0001:001EF0FF  1833 0001:001EF124  1837 0001:001EF127
-  1841 0001:001EF12D  1817 0001:001EF12E  1843 0001:001EF157  1848 0001:001EF160
-  1849 0001:001EF17F  1852 0001:001EF186  1856 0001:001EF190  1858 0001:001EF1A0
-  1859 0001:001EF1AC  1863 0001:001EF1B1  1864 0001:001EF1BF  1865 0001:001EF1CF
-  1864 0001:001EF1F3  1868 0001:001EF1F6  1869 0001:001EF215  1874 0001:001EF225
-  1876 0001:001EF239  1877 0001:001EF245  1880 0001:001EF247  1881 0001:001EF24E
-  1883 0001:001EF255  1885 0001:001EF27D  1890 0001:001EF286  1893 0001:001EF291
-  1894 0001:001EF2D9  1917 0001:001EF310  1942 0001:001EF337  1945 0001:001EF370
-  1947 0001:001EF3BC  1950 0001:001EF3C3  1951 0001:001EF3CF  1953 0001:001EF3D5
-  1954 0001:001EF3E8  1956 0001:001EF3F7  1958 0001:001EF40F  1961 0001:001EF420
-  1963 0001:001EF44F  1959 0001:001EF45E  1965 0001:001EF471  1969 0001:001EF480
-  1970 0001:001EF488  1971 0001:001EF490  1977 0001:001EF534  1978 0001:001EF54A
-  1979 0001:001EF552  1981 0001:001EF55A  1982 0001:001EF561  1990 0001:001EF568
-  1995 0001:001EF575  1999 0001:001EF582  2000 0001:001EF591  2001 0001:001EF5A6
-  2002 0001:001EF5B5  2003 0001:001EF5F3  2005 0001:001EF602  2007 0001:001EF60F
-  2012 0001:001EF6B3  2015 0001:001EF6C9  2016 0001:001EF6F0  2017 0001:001EF717
-  2019 0001:001EF73E  2028 0001:001EF749  2032 0001:001EF756  2033 0001:001EF765
-  2034 0001:001EF77A  2035 0001:001EF789  2036 0001:001EF7C7  2038 0001:001EF7D6
-  2040 0001:001EF7E3  2045 0001:001EF887  2047 0001:001EF89D  2056 0001:001EF8A5
-  2060 0001:001EF8B2  2061 0001:001EF8C1  2062 0001:001EF8D6  2063 0001:001EF8E5
-  2064 0001:001EF923  2066 0001:001EF932  2068 0001:001EF93F  2073 0001:001EF9E3
-  2076 0001:001EF9F9  2077 0001:001EFA20  2078 0001:001EFA47  2080 0001:001EFA6E
-  2174 0001:001EFA79  2176 0001:001EFAC5  2184 0001:001EFAD2  2189 0001:001EFAD9
-  2192 0001:001EFAED  2199 0001:001EFAFF  2201 0001:001EFB0F  2202 0001:001EFB1B
-  2204 0001:001EFB20  2206 0001:001EFB27  2208 0001:001EFB2E  2209 0001:001EFB35
-  2210 0001:001EFB3C  2211 0001:001EFB43  2212 0001:001EFB4A  2213 0001:001EFB51
-  2214 0001:001EFB58  2215 0001:001EFB5F  2217 0001:001EFB66  2218 0001:001EFB6D
-  2219 0001:001EFB74  2220 0001:001EFB7B  2221 0001:001EFB82  2223 0001:001EFB89
-  2230 0001:001EFB90  2233 0001:001EFBBA  2240 0001:001EFBE5  2241 0001:001EFBF4
-  2242 0001:001EFC09  2251 0001:001EFC1D  2253 0001:001EFC4B  2255 0001:001EFC84
-  2256 0001:001EFCA8  2263 0001:001EFCAF  2265 0001:001EFCE0  2267 0001:001EFD19
-  2268 0001:001EFD3D  2275 0001:001EFD44  2277 0001:001EFD75  2279 0001:001EFDAE
-  2280 0001:001EFDD2  2287 0001:001EFDD9  2289 0001:001EFE0A  2291 0001:001EFE43
-  2292 0001:001EFE67  2299 0001:001EFE6E  2301 0001:001EFE9F  2303 0001:001EFED8
-  2304 0001:001EFEFC  2311 0001:001EFF03  2313 0001:001EFF34  2315 0001:001EFF6D
-  2316 0001:001EFF91  2323 0001:001EFF98  2325 0001:001EFFC9  2327 0001:001F0002
-  2328 0001:001F0026  2335 0001:001F002D  2337 0001:001F005E  2339 0001:001F0097
-  2340 0001:001F00BB  2347 0001:001F00C2  2349 0001:001F00F3  2351 0001:001F012C
-  2352 0001:001F0150  2359 0001:001F0157  2361 0001:001F0188  2363 0001:001F01C1
-  2364 0001:001F01E5  2371 0001:001F01EC  2373 0001:001F021D  2375 0001:001F0256
-  2376 0001:001F027A  2380 0001:001F0281  2245 0001:001F0290  2382 0001:001F02A7
-  2389 0001:001F02B6  2390 0001:001F02CC  2391 0001:001F02E0  2392 0001:001F02ED
-  2394 0001:001F0301  2395 0001:001F0320  2396 0001:001F033F  2397 0001:001F034C
-  2399 0001:001F035C  2400 0001:001F037B  2401 0001:001F0388  2403 0001:001F0398
-  2404 0001:001F039F  2411 0001:001F0406  2412 0001:001F0415  2413 0001:001F042A
-  2415 0001:001F0439  2416 0001:001F044C  2418 0001:001F0453  2421 0001:001F0462
-  2422 0001:001F0469  2428 0001:001F0494  2429 0001:001F04A3  2430 0001:001F04B8
-  2432 0001:001F04C7  2433 0001:001F04DA  2435 0001:001F04E1  2438 0001:001F04F0
-  2439 0001:001F04F4  2443 0001:001F0517  2445 0001:001F0544  2446 0001:001F0548
-  2448 0001:001F054A  2439 0001:001F054D  2450 0001:001F0550  2456 0001:001F060B
-  2460 0001:001F062E  2462 0001:001F065B  2463 0001:001F0672  2465 0001:001F0674
-  2456 0001:001F0677  2466 0001:001F067A  2469 0001:001F067E  2472 0001:001F068D
-  2474 0001:001F0694  2476 0001:001F069B  2477 0001:001F06A2  2478 0001:001F06A9
-  2479 0001:001F06B0  2480 0001:001F06B7  2481 0001:001F06BE  2482 0001:001F06C5
-  2483 0001:001F06CC  2484 0001:001F06D3  2485 0001:001F06DA  2486 0001:001F06E1
-  2487 0001:001F06E8  2488 0001:001F06EF  2491 0001:001F06F6  2493 0001:001F0700
-  2495 0001:001F070F  2497 0001:001F071D  2500 0001:001F0721  2501 0001:001F0766
-  2505 0001:001F0779  2515 0001:001F0782  2518 0001:001F078C  2526 0001:001F0844
-  2530 0001:001F085A  2539 0001:001F0892  2542 0001:001F08DE  2545 0001:001F08E9
-  2549 0001:001F08FF  2550 0001:001F0903  2552 0001:001F0910  2554 0001:001F0926
-  2555 0001:001F092E  2558 0001:001F0936  2564 0001:001F09EE  2566 0001:001F0A04
-  2567 0001:001F0A0C  2570 0001:001F0A14  2572 0001:001F0A59  2573 0001:001F0A61
-  2575 0001:001F0A69  2579 0001:001F0A76  2580 0001:001F0A80  2581 0001:001F0A90
-  2584 0001:001F0AA3  2585 0001:001F0AA8  2588 0001:001F0AAE  2589 0001:001F0ABC
-  2590 0001:001F0AC6  2592 0001:001F0AD9  2595 0001:001F0AE1  2586 0001:001F0AE7
-  2600 0001:001F0AED  2602 0001:001F0AF7  2604 0001:001F0B05  2605 0001:001F0B5B
-  2606 0001:001F0B62  2608 0001:001F0B76  2609 0001:001F0B7E  2612 0001:001F0B86
-  2614 0001:001F0BA7  2619 0001:001F0BC2  2630 0001:001F0D57  2632 0001:001F0D6D
-  2635 0001:001F0D77  2641 0001:001F0E2F  2643 0001:001F0E45  2646 0001:001F0E49
-  2616 0001:001F0E53  2649 0001:001F0E65  2651 0001:001F0E79  2652 0001:001F0E81
-  2654 0001:001F0EA7  2656 0001:001F0EAA  2657 0001:001F0EBE  2659 0001:001F0EC5
-  2660 0001:001F0ECD  2662 0001:001F0ED5  2663 0001:001F0EF7  2664 0001:001F0F10
-  2669 0001:001F0FB4  2674 0001:001F0FCF  2675 0001:001F0FD7  2679 0001:001F0FDF
-  2680 0001:001F1011  2685 0001:001F1019  2686 0001:001F101D  2688 0001:001F102A
-  2690 0001:001F1040  2691 0001:001F1048  2694 0001:001F1050  2700 0001:001F1108
-  2702 0001:001F111E  2703 0001:001F1126  2706 0001:001F112E  2708 0001:001F1173
-  2709 0001:001F117B  2712 0001:001F1183  2713 0001:001F11BB  2714 0001:001F11E2
-  2716 0001:001F1209  2747 0001:001F124D  2748 0001:001F1257  2749 0001:001F1267
-  2752 0001:001F127A  2753 0001:001F127F  2756 0001:001F1285  2757 0001:001F1293
-  2758 0001:001F129D  2760 0001:001F12B0  2763 0001:001F12B8  2754 0001:001F12BE
-  2768 0001:001F12C4  2770 0001:001F12CE  2772 0001:001F12DC  2773 0001:001F1332
-  2774 0001:001F1339  2776 0001:001F134D  2777 0001:001F1355  2780 0001:001F135D
-  2784 0001:001F13B7  2789 0001:001F13D2  2790 0001:001F13E9  2791 0001:001F13F9
-  2792 0001:001F1413  2793 0001:001F1420  2794 0001:001F1430  2795 0001:001F1469
-  2796 0001:001F1490  2806 0001:001F14B7  2826 0001:001F1748  2828 0001:001F175E
-  2831 0001:001F1768  2837 0001:001F1820  2839 0001:001F1836  2842 0001:001F183A
-  2786 0001:001F1844  2845 0001:001F1856  2847 0001:001F186A  2848 0001:001F1872
-  2850 0001:001F1898  2852 0001:001F189B  2853 0001:001F18AF  2855 0001:001F18B6
-  2856 0001:001F18BE  2858 0001:001F18C6  2859 0001:001F18E8  2860 0001:001F1901
-  2865 0001:001F19A5  2871 0001:001F19C0  2872 0001:001F19C8  2876 0001:001F19D0
-  2877 0001:001F1A02  2882 0001:001F1A0A  2883 0001:001F1A0E  2885 0001:001F1A1B
-  2887 0001:001F1A31  2888 0001:001F1A39  2891 0001:001F1A41  2897 0001:001F1AF9
-  2899 0001:001F1B0F  2900 0001:001F1B17  2903 0001:001F1B1F  2905 0001:001F1B2E
-  2908 0001:001F1B73  2909 0001:001F1B7B  2912 0001:001F1B83  2913 0001:001F1BBB
-  2914 0001:001F1BE2  2916 0001:001F1C09  2918 0001:001F1C1C  2927 0001:001F1C29
-  2928 0001:001F1C38  2931 0001:001F1C54  2933 0001:001F1C61  2939 0001:001F1CAD
-  2940 0001:001F1CB7  2941 0001:001F1CC7  2944 0001:001F1CDA  2945 0001:001F1CDF
-  2948 0001:001F1CE5  2949 0001:001F1CF3  2950 0001:001F1CFD  2952 0001:001F1D10
-  2955 0001:001F1D18  2946 0001:001F1D1E  2960 0001:001F1D24  2962 0001:001F1D37
-  2963 0001:001F1D5B  2965 0001:001F1D68  2985 0001:001F1DB1  2986 0001:001F1DC3
-  2987 0001:001F1DDB  2988 0001:001F1DED  2992 0001:001F1DF1  2994 0001:001F1DFB
-  2996 0001:001F1E09  2997 0001:001F1E5F  2998 0001:001F1E66  3000 0001:001F1E7A
-  3001 0001:001F1E82  3004 0001:001F1E8A  3008 0001:001F1EE4  3010 0001:001F1EFA
-  3015 0001:001F1F12  3016 0001:001F1F29  3018 0001:001F1F39  3019 0001:001F1F53
-  3020 0001:001F1F60  3021 0001:001F1F70  3022 0001:001F1FA9  3023 0001:001F1FD0
-  3025 0001:001F1FF7  3039 0001:001F215E  3041 0001:001F2174  3044 0001:001F217E
-  3050 0001:001F2236  3052 0001:001F224C  3055 0001:001F2250  3012 0001:001F225A
-  3059 0001:001F226C  3064 0001:001F2284  3065 0001:001F22A3  3067 0001:001F22B3
-  3068 0001:001F22CD  3069 0001:001F22DA  3070 0001:001F22EA  3071 0001:001F2323
-  3072 0001:001F234A  3074 0001:001F2371  3088 0001:001F24F0  3090 0001:001F2506
-  3093 0001:001F2510  3099 0001:001F25C8  3101 0001:001F25DE  3104 0001:001F25E2
-  3061 0001:001F25F4  3108 0001:001F260E  3110 0001:001F2622  3111 0001:001F262A
-  3113 0001:001F2650  3115 0001:001F2653  3116 0001:001F2667  3118 0001:001F266E
-  3119 0001:001F2676  3121 0001:001F267E  3122 0001:001F26A0  3123 0001:001F26B9
-  3128 0001:001F275D  3134 0001:001F2778  3135 0001:001F2780  3139 0001:001F2788
-  3140 0001:001F27BA  3145 0001:001F27C2  3146 0001:001F27C6  3148 0001:001F27D3
-  3150 0001:001F27E9  3151 0001:001F27F1  3154 0001:001F27F9  3160 0001:001F28B1
-  3162 0001:001F28C7  3163 0001:001F28CF  3166 0001:001F28D7  3168 0001:001F28E6
-  3171 0001:001F292B  3172 0001:001F2933  3174 0001:001F293B  3175 0001:001F2973
-  3176 0001:001F299A  3179 0001:001F29C1  3195 0001:001F2A0F  3196 0001:001F2A19
-  3197 0001:001F2A29  3200 0001:001F2A3C  3201 0001:001F2A41  3204 0001:001F2A47
-  3205 0001:001F2A55  3206 0001:001F2A5F  3208 0001:001F2A72  3211 0001:001F2A7A
-  3202 0001:001F2A80  3216 0001:001F2A86  3218 0001:001F2A90  3220 0001:001F2A9E
-  3221 0001:001F2AF4  3222 0001:001F2AFB  3224 0001:001F2B0F  3225 0001:001F2B17
-  3228 0001:001F2B1F  3232 0001:001F2B79  3237 0001:001F2B94  3238 0001:001F2BAB
-  3239 0001:001F2BBB  3240 0001:001F2BD5  3241 0001:001F2BE2  3242 0001:001F2BF2
-  3243 0001:001F2C2B  3244 0001:001F2C52  3246 0001:001F2C79  3260 0001:001F2DE0
-  3262 0001:001F2DF6  3265 0001:001F2E00  3271 0001:001F2EB8  3273 0001:001F2ECE
-  3276 0001:001F2ED2  3234 0001:001F2EDC  3279 0001:001F2EEE  3281 0001:001F2F02
-  3282 0001:001F2F0A  3284 0001:001F2F30  3286 0001:001F2F33  3287 0001:001F2F47
-  3289 0001:001F2F4E  3290 0001:001F2F56  3292 0001:001F2F5E  3293 0001:001F2F80
-  3294 0001:001F2F99  3299 0001:001F303D  3305 0001:001F3058  3306 0001:001F3060
-  3310 0001:001F3068  3311 0001:001F309A  3316 0001:001F30A2  3317 0001:001F30A6
-  3319 0001:001F30B3  3321 0001:001F30C9  3322 0001:001F30D1  3325 0001:001F30D9
-  3331 0001:001F3191  3333 0001:001F31A7  3334 0001:001F31AF  3337 0001:001F31B7
-  3339 0001:001F31FC  3340 0001:001F3204  3343 0001:001F320C  3344 0001:001F3244
-  3345 0001:001F326B  3347 0001:001F3292  3381 0001:001F3344  3382 0001:001F334E
-  3383 0001:001F335E  3386 0001:001F3371  3387 0001:001F3376  3390 0001:001F337C
-  3391 0001:001F338A  3392 0001:001F3394  3394 0001:001F33A7  3397 0001:001F33AF
-  3388 0001:001F33B5  3402 0001:001F33BB  3404 0001:001F33C5  3406 0001:001F33D3
-  3407 0001:001F3429  3408 0001:001F3430  3410 0001:001F3444  3411 0001:001F344C
-  3414 0001:001F3454  3418 0001:001F34AE  3423 0001:001F34C9  3424 0001:001F34E0
-  3425 0001:001F34F0  3426 0001:001F350A  3427 0001:001F3517  3428 0001:001F3527
-  3429 0001:001F3560  3430 0001:001F3587  3432 0001:001F35AE  3446 0001:001F3715
-  3448 0001:001F372B  3451 0001:001F3735  3457 0001:001F37ED  3459 0001:001F3803
-  3462 0001:001F3807  3420 0001:001F3811  3465 0001:001F3823  3467 0001:001F3837
-  3468 0001:001F383F  3470 0001:001F3865  3472 0001:001F3868  3473 0001:001F387C
-  3475 0001:001F3883  3476 0001:001F388B  3478 0001:001F3893  3479 0001:001F38B5
-  3480 0001:001F38CE  3485 0001:001F3972  3491 0001:001F398D  3492 0001:001F3995
-  3496 0001:001F399D  3497 0001:001F39CF  3502 0001:001F39D7  3503 0001:001F39DB
-  3505 0001:001F39E8  3507 0001:001F39FE  3508 0001:001F3A06  3511 0001:001F3A0E
-  3517 0001:001F3AC6  3519 0001:001F3ADC  3520 0001:001F3AE4  3523 0001:001F3AEC
-  3525 0001:001F3AFB  3528 0001:001F3B40  3529 0001:001F3B48  3532 0001:001F3B50
-  3533 0001:001F3B88  3534 0001:001F3BAF  3536 0001:001F3BD6  3538 0001:001F3BE9
-  3567 0001:001F3C73  3568 0001:001F3C7D  3569 0001:001F3C8D  3572 0001:001F3CA0
-  3573 0001:001F3CA5  3576 0001:001F3CAB  3577 0001:001F3CB9  3578 0001:001F3CC3
-  3580 0001:001F3CD6  3583 0001:001F3CDE  3574 0001:001F3CE4  3588 0001:001F3CEA
-  3590 0001:001F3CFD  3591 0001:001F3D21  3593 0001:001F3D2E  3617 0001:001F3DAE
-  3618 0001:001F3DC0  3619 0001:001F3DD8  3620 0001:001F3DEA  3624 0001:001F3DEE
-  3626 0001:001F3DF8  3628 0001:001F3E06  3629 0001:001F3E5C  3630 0001:001F3E63
-  3632 0001:001F3E77  3633 0001:001F3E7F  3635 0001:001F3E87  3640 0001:001F3E9F
-  3644 0001:001F3F16  3646 0001:001F3F2C  3666 0001:001F41DA  3668 0001:001F41F0
-  3671 0001:001F41FA  3677 0001:001F42B2  3679 0001:001F42C8  3682 0001:001F42CC
-  3637 0001:001F42D6  3684 0001:001F42E8  3687 0001:001F42F2  3692 0001:001F430A
-  3696 0001:001F4389  3698 0001:001F439F  3718 0001:001F4695  3720 0001:001F46AB
-  3723 0001:001F46B5  3729 0001:001F476D  3731 0001:001F4783  3734 0001:001F4787
-  3689 0001:001F4799  3736 0001:001F47B3  3739 0001:001F47C5  3741 0001:001F47D9
-  3742 0001:001F47E1  3744 0001:001F4807  3746 0001:001F480A  3747 0001:001F481E
-  3749 0001:001F4825  3750 0001:001F482D  3752 0001:001F4835  3753 0001:001F4857
-  3754 0001:001F4870  3759 0001:001F4914  3765 0001:001F492F  3766 0001:001F4937
-  3770 0001:001F493F  3771 0001:001F4971  3776 0001:001F4979  3777 0001:001F497D
-  3779 0001:001F498A  3781 0001:001F49A0  3782 0001:001F49A8  3785 0001:001F49B0
-  3791 0001:001F4A68  3793 0001:001F4A7E  3794 0001:001F4A86  3797 0001:001F4A8E
-  3799 0001:001F4AD3  3800 0001:001F4ADB  3803 0001:001F4AE3  3804 0001:001F4B1B
-  3805 0001:001F4B42  3807 0001:001F4B69  3830 0001:001F4BA8  3831 0001:001F4BB2
-  3832 0001:001F4BC2  3835 0001:001F4BD5  3836 0001:001F4BDA  3839 0001:001F4BE0
-  3840 0001:001F4BEE  3841 0001:001F4BF8  3843 0001:001F4C0B  3846 0001:001F4C13
-  3837 0001:001F4C19  3851 0001:001F4C1F  3853 0001:001F4C29  3855 0001:001F4C37
-  3856 0001:001F4C8D  3857 0001:001F4C94  3859 0001:001F4CA8  3860 0001:001F4CB0
-  3863 0001:001F4CB8  3867 0001:001F4D12  3871 0001:001F4D2D  3893 0001:001F505C
-  3895 0001:001F5072  3898 0001:001F507C  3904 0001:001F5134  3906 0001:001F514A
-  3909 0001:001F514E  3869 0001:001F5158  3912 0001:001F516A  3914 0001:001F517E
-  3915 0001:001F5186  3917 0001:001F51AC  3919 0001:001F51AF  3920 0001:001F51C3
-  3922 0001:001F51CA  3923 0001:001F51D2  3925 0001:001F51DA  3926 0001:001F51FC
-  3927 0001:001F5215  3932 0001:001F52B9  3938 0001:001F52D4  3939 0001:001F52DC
-  3943 0001:001F52E4  3944 0001:001F5316  3949 0001:001F531E  3950 0001:001F5322
-  3952 0001:001F532F  3954 0001:001F5345  3955 0001:001F534D  3958 0001:001F5355
-  3964 0001:001F540D  3966 0001:001F5423  3967 0001:001F542B  3970 0001:001F5433
-  3972 0001:001F5478  3973 0001:001F5480  3976 0001:001F5488  3979 0001:001F54A9
-  3980 0001:001F54B8  3981 0001:001F54CD  3982 0001:001F54DC  3983 0001:001F54F8
-  3985 0001:001F5507  3987 0001:001F551E  3990 0001:001F552B  3991 0001:001F553A
-  3992 0001:001F554F  3993 0001:001F555E  3994 0001:001F557A  3997 0001:001F5589
-  4018 0001:001F5613  4019 0001:001F561D  4020 0001:001F562D  4023 0001:001F5640
-  4024 0001:001F5645  4027 0001:001F564B  4028 0001:001F5659  4029 0001:001F5663
-  4031 0001:001F5676  4034 0001:001F567E  4025 0001:001F5684  4039 0001:001F568A
-  4041 0001:001F5694  4043 0001:001F56A2  4044 0001:001F56F8  4045 0001:001F56FF
-  4047 0001:001F5713  4048 0001:001F571B  4052 0001:001F5728  4054 0001:001F574B
-  4056 0001:001F5752  4061 0001:001F577D  4063 0001:001F5787  4064 0001:001F5796
-  4069 0001:001F584F  4071 0001:001F5859  4072 0001:001F5868  4077 0001:001F5921
-  4079 0001:001F592B  4080 0001:001F593A  4085 0001:001F59F3  4087 0001:001F59FD
-  4088 0001:001F5A0C  4093 0001:001F5AC5  4095 0001:001F5AD2  4096 0001:001F5AE8
-  4054 0001:001F5AEB  4099 0001:001F5AF5  4102 0001:001F5AFF  4108 0001:001F5BB7
-  4110 0001:001F5BCD  4113 0001:001F5BD1  4050 0001:001F5BDB  4116 0001:001F5BED
-  4118 0001:001F5C01  4119 0001:001F5C09  4121 0001:001F5C2F  4123 0001:001F5C32
-  4124 0001:001F5C46  4126 0001:001F5C4D  4127 0001:001F5C55  4129 0001:001F5C5D
-  4130 0001:001F5C85  4131 0001:001F5C9E  4136 0001:001F5D42  4142 0001:001F5D5D
-  4143 0001:001F5D65  4147 0001:001F5D6D  4148 0001:001F5D9F  4153 0001:001F5DA7
-  4154 0001:001F5DAB  4156 0001:001F5DB8  4158 0001:001F5DCE  4159 0001:001F5DD6
-  4162 0001:001F5DDE  4168 0001:001F5E96  4170 0001:001F5EAC  4171 0001:001F5EB4
-  4174 0001:001F5EBC  4176 0001:001F5F01  4177 0001:001F5F09  4180 0001:001F5F11
-  4181 0001:001F5F49  4182 0001:001F5F70  4184 0001:001F5F97  4209 0001:001F5FDB
-  4210 0001:001F5FE5  4211 0001:001F5FF5  4214 0001:001F6008  4215 0001:001F600D
-  4218 0001:001F6013  4219 0001:001F6021  4220 0001:001F602B  4222 0001:001F603E
-  4225 0001:001F6046  4216 0001:001F604C  4230 0001:001F6052  4232 0001:001F605C
-  4234 0001:001F606A  4235 0001:001F60C0  4236 0001:001F60C7  4238 0001:001F60DB
-  4239 0001:001F60E3  4242 0001:001F60EB  4246 0001:001F6145  4250 0001:001F6160
-  4270 0001:001F6470  4272 0001:001F6486  4275 0001:001F6490  4281 0001:001F6548
-  4283 0001:001F655E  4286 0001:001F6562  4248 0001:001F656C  4289 0001:001F657E
-  4291 0001:001F6592  4292 0001:001F659A  4294 0001:001F65C0  4296 0001:001F65C6
-  4297 0001:001F65DA  4299 0001:001F65E1  4300 0001:001F65E9  4302 0001:001F65F1
-  4303 0001:001F6616  4304 0001:001F662F  4309 0001:001F66D3  4314 0001:001F66EE
-  4315 0001:001F66F6  4319 0001:001F66FE  4320 0001:001F6730  4325 0001:001F6738
-  4326 0001:001F673C  4328 0001:001F6749  4330 0001:001F675F  4331 0001:001F6767
-  4334 0001:001F676F  4340 0001:001F6827  4342 0001:001F683D  4343 0001:001F6845
-  4346 0001:001F684D  4348 0001:001F6892  4349 0001:001F689A  4352 0001:001F68A2
-  4353 0001:001F68DA  4354 0001:001F6901  4356 0001:001F6928  4378 0001:001F696C
-  4379 0001:001F6976  4380 0001:001F6986  4383 0001:001F6999  4384 0001:001F699E
-  4387 0001:001F69A4  4388 0001:001F69B2  4389 0001:001F69BC  4391 0001:001F69CF
-  4394 0001:001F69D7  4385 0001:001F69DD  4399 0001:001F69E3  4401 0001:001F69ED
-  4403 0001:001F69FB  4404 0001:001F6A51  4405 0001:001F6A58  4407 0001:001F6A6C
-  4408 0001:001F6A74  4411 0001:001F6A7C  4415 0001:001F6AD6  4419 0001:001F6AF1
-  4439 0001:001F6E01  4441 0001:001F6E17  4444 0001:001F6E21  4450 0001:001F6ED9
-  4452 0001:001F6EEF  4455 0001:001F6EF3  4417 0001:001F6EFD  4458 0001:001F6F0F
-  4460 0001:001F6F23  4461 0001:001F6F2B  4463 0001:001F6F51  4465 0001:001F6F57
-  4466 0001:001F6F6B  4468 0001:001F6F72  4469 0001:001F6F7A  4471 0001:001F6F82
-  4472 0001:001F6FA7  4473 0001:001F6FC0  4478 0001:001F7064  4483 0001:001F707F
-  4484 0001:001F7087  4488 0001:001F708F  4489 0001:001F70C1  4494 0001:001F70C9
-  4495 0001:001F70CD  4497 0001:001F70DA  4499 0001:001F70F0  4500 0001:001F70F8
-  4503 0001:001F7100  4509 0001:001F71B8  4511 0001:001F71CE  4512 0001:001F71D6
-  4515 0001:001F71DE  4517 0001:001F7223  4518 0001:001F722B  4521 0001:001F7233
-  4522 0001:001F726B  4523 0001:001F7292  4525 0001:001F72B9  4562 0001:001F730C
-  4563 0001:001F7316  4564 0001:001F7326  4567 0001:001F7339  4568 0001:001F733E
-  4571 0001:001F7344  4572 0001:001F7352  4573 0001:001F735C  4575 0001:001F736F
-  4578 0001:001F7377  4569 0001:001F737D  4583 0001:001F7383  4585 0001:001F738D
-  4587 0001:001F739B  4588 0001:001F73F1  4589 0001:001F73F8  4591 0001:001F740C
-  4592 0001:001F7414  4595 0001:001F741C  4599 0001:001F7476  4603 0001:001F7491
-  4604 0001:001F74BD  4606 0001:001F74C8  4621 0001:001F7637  4622 0001:001F7674
-  4624 0001:001F76BC  4626 0001:001F76E7  4633 0001:001F78B3  4635 0001:001F78C9
-  4638 0001:001F78D3  4644 0001:001F798B  4646 0001:001F79A1  4649 0001:001F79A5
-  4601 0001:001F79AF  4652 0001:001F79C1  4654 0001:001F79D5  4655 0001:001F79DD
-  4657 0001:001F7A03  4659 0001:001F7A09  4660 0001:001F7A1D  4662 0001:001F7A24
-  4663 0001:001F7A2C  4665 0001:001F7A34  4666 0001:001F7A59  4667 0001:001F7A72
-  4672 0001:001F7B16  4677 0001:001F7B31  4678 0001:001F7B39  4682 0001:001F7B41
-  4683 0001:001F7B73  4688 0001:001F7B7B  4689 0001:001F7B7F  4691 0001:001F7B8C
-  4693 0001:001F7BA2  4694 0001:001F7BAA  4697 0001:001F7BB2  4703 0001:001F7C6A
-  4705 0001:001F7C80  4706 0001:001F7C88  4709 0001:001F7C90  4711 0001:001F7CD5
-  4712 0001:001F7CDD  4715 0001:001F7CE5  4716 0001:001F7D1D  4717 0001:001F7D44
-  4719 0001:001F7D6B  4754 0001:001F7DCD  4755 0001:001F7DD7  4756 0001:001F7DE7
-  4759 0001:001F7DFA  4760 0001:001F7DFF  4763 0001:001F7E05  4764 0001:001F7E13
-  4765 0001:001F7E1D  4767 0001:001F7E30  4770 0001:001F7E38  4761 0001:001F7E3E
-  4775 0001:001F7E44  4777 0001:001F7E4E  4779 0001:001F7E5C  4780 0001:001F7EB2
-  4781 0001:001F7EB9  4783 0001:001F7ECD  4784 0001:001F7ED5  4787 0001:001F7EDD
-  4791 0001:001F7F37  4795 0001:001F7F52  4810 0001:001F80C1  4811 0001:001F80FE
-  4813 0001:001F8146  4815 0001:001F8171  4822 0001:001F833D  4824 0001:001F8353
-  4827 0001:001F835D  4833 0001:001F8415  4835 0001:001F842B  4838 0001:001F842F
-  4793 0001:001F8439  4841 0001:001F844B  4843 0001:001F845F  4844 0001:001F8467
-  4846 0001:001F848D  4848 0001:001F8493  4849 0001:001F84A7  4851 0001:001F84AE
-  4852 0001:001F84B6  4854 0001:001F84BE  4855 0001:001F84E3  4856 0001:001F84FC
-  4861 0001:001F85A0  4866 0001:001F85BB  4867 0001:001F85C3  4871 0001:001F85CB
-  4872 0001:001F85FD  4877 0001:001F8605  4878 0001:001F8609  4880 0001:001F8616
-  4882 0001:001F862C  4883 0001:001F8634  4886 0001:001F863C  4892 0001:001F86F4
-  4894 0001:001F870A  4895 0001:001F8712  4898 0001:001F871A  4900 0001:001F875F
-  4901 0001:001F8767  4904 0001:001F876F  4905 0001:001F87A7  4906 0001:001F87CE
-  4908 0001:001F87F5  4941 0001:001F8852  4942 0001:001F885C  4943 0001:001F886C
-  4946 0001:001F887F  4947 0001:001F8884  4950 0001:001F888A  4951 0001:001F8898
-  4952 0001:001F88A2  4954 0001:001F88B5  4957 0001:001F88BD  4948 0001:001F88C3
-  4962 0001:001F88C9  4964 0001:001F88D3  4966 0001:001F88E1  4967 0001:001F8937
-  4968 0001:001F893E  4970 0001:001F8952  4971 0001:001F895A  4974 0001:001F8962
-  4978 0001:001F89BC  4982 0001:001F89D7  4997 0001:001F8B46  4998 0001:001F8B83
-  5000 0001:001F8BCB  5002 0001:001F8BF6  5009 0001:001F8DC2  5011 0001:001F8DD8
-  5014 0001:001F8DE2  5020 0001:001F8E9A  5022 0001:001F8EB0  5025 0001:001F8EB4
-  4980 0001:001F8EBE  5028 0001:001F8ED0  5030 0001:001F8EE4  5031 0001:001F8EEC
-  5033 0001:001F8F12  5035 0001:001F8F18  5036 0001:001F8F2C  5038 0001:001F8F33
-  5039 0001:001F8F3B  5041 0001:001F8F43  5042 0001:001F8F68  5043 0001:001F8F81
-  5048 0001:001F9025  5053 0001:001F9040  5054 0001:001F9048  5058 0001:001F9050
-  5059 0001:001F9082  5064 0001:001F908A  5065 0001:001F908E  5067 0001:001F909B
-  5069 0001:001F90B1  5070 0001:001F90B9  5073 0001:001F90C1  5079 0001:001F9179
-  5081 0001:001F918F  5082 0001:001F9197  5085 0001:001F919F  5087 0001:001F91E4
-  5088 0001:001F91EC  5091 0001:001F91F4  5092 0001:001F922C  5093 0001:001F9253
-  5095 0001:001F927A  5097 0001:001F92C2  5105 0001:001F9301  5106 0001:001F930B
-  5107 0001:001F931B  5110 0001:001F932E  5111 0001:001F9333  5114 0001:001F9339
-  5115 0001:001F9347  5116 0001:001F9351  5118 0001:001F9364  5121 0001:001F936C
-  5112 0001:001F9372  5126 0001:001F9378  5128 0001:001F9382  5130 0001:001F9390
-  5131 0001:001F93E6  5132 0001:001F93ED  5134 0001:001F9401  5135 0001:001F9409
-  5138 0001:001F9411  5141 0001:001F9450  5145 0001:001F946B  5153 0001:001F958B
-  5155 0001:001F95A1  5158 0001:001F95AB  5164 0001:001F9663  5166 0001:001F9679
-  5169 0001:001F967D  5143 0001:001F9687  5172 0001:001F9699  5174 0001:001F96AD
-  5175 0001:001F96B5  5177 0001:001F96DB  5179 0001:001F96E1  5180 0001:001F96F5
-  5182 0001:001F96FC  5183 0001:001F9704  5185 0001:001F970C  5186 0001:001F9731
-  5187 0001:001F974A  5192 0001:001F97EE  5197 0001:001F9809  5198 0001:001F9811
-  5202 0001:001F9819  5203 0001:001F984B  5206 0001:001F9853  5208 0001:001F985C
-  5212 0001:001F987F  5214 0001:001F98AC  5215 0001:001F98C3  5217 0001:001F98C5
-  5208 0001:001F98C8  5221 0001:001F98CB  5227 0001:001F9983  5238 0001:001F9999
-  5241 0001:001F99DA  5243 0001:001F99E3  5244 0001:001F99F7  5248 0001:001F99F9
-  5250 0001:001F9A3C  5251 0001:001F9A50  5254 0001:001F9A52  2190 0001:001F9A61
-  5266 0001:001F9A78  5268 0001:001F9A80  5269 0001:001F9A8C  5274 0001:001F9CDF
-  5280 0001:001FE548  5286 0001:001FE570  5288 0001:001FE59B  5289 0001:001FE5A7
-  5293 0001:001FE5AC  5296 0001:001FE5D5  5299 0001:001FE5F2  5300 0001:001FE5FC
-  5301 0001:001FE60C  5303 0001:001FE616  5305 0001:001FE642  5307 0001:001FE68D
-  5309 0001:001FE6AA  5313 0001:001FE6BD  5314 0001:001FE6C9  5317 0001:001FE6CB
-  5319 0001:001FE6D5  5320 0001:001FE6DC  5321 0001:001FE6E5  5323 0001:001FE71D
-  5327 0001:001FE81C  5328 0001:001FE822  5330 0001:001FE827  5331 0001:001FE835
-  5332 0001:001FE841  5334 0001:001FE858  5335 0001:001FE85D  5339 0001:001FE864
-  5340 0001:001FE86A  5342 0001:001FE86F  5343 0001:001FE87D  5344 0001:001FE889
-  5346 0001:001FE8A0  5348 0001:001FE8A5  5359 0001:001FE8AC  5360 0001:001FE8D0
-  5361 0001:001FE8E3  5364 0001:001FE8F2  5367 0001:001FE906  5369 0001:001FE918
-  5372 0001:001FE92C  5373 0001:001FE93A  5375 0001:001FE973  5379 0001:001FE979
-  5382 0001:001FE98C  5385 0001:001FE995  5390 0001:001FE99F  5391 0001:001FE9A7
-  5394 0001:001FE9AF  5396 0001:001FE9E8  5397 0001:001FE9FE  5399 0001:001FEA10
-  5400 0001:001FEA2E  5402 0001:001FEA4C  5413 0001:001FEA8E  5414 0001:001FEAA0
-  5415 0001:001FEAB8  5418 0001:001FEAD3  5419 0001:001FEAD8  5422 0001:001FEADE
-  5423 0001:001FEAEC  5424 0001:001FEAFE  5426 0001:001FEB11  5429 0001:001FEB19
-  5420 0001:001FEB1F  5434 0001:001FEB25  5436 0001:001FEB2F  5438 0001:001FEB3D
-  5439 0001:001FEB84  5440 0001:001FEB8B  5442 0001:001FEB9F  5443 0001:001FEBA7
-  5446 0001:001FEBAF  5459 0001:001FEBC1  5460 0001:001FEBC9  5463 0001:001FEBE8
-  5465 0001:001FEC1A  5471 0001:001FEC62  5472 0001:001FEC93  5474 0001:001FECD8
-  5476 0001:001FECE5  5460 0001:001FECE8  5479 0001:001FECEF  5480 0001:001FED07
-  5482 0001:001FED1D  5457 0001:001FED2F  5484 0001:001FED49  5486 0001:001FED5B
-  5488 0001:001FED6F  5489 0001:001FED77  5491 0001:001FED9A  5493 0001:001FED9C
-  5494 0001:001FEDB0  5496 0001:001FEDC2  5497 0001:001FEDCA  5503 0001:001FEDD7
-  5504 0001:001FEDDF  5510 0001:001FEDE7  5513 0001:001FEE1C  5365 0001:001FEE2B
-  5515 0001:001FEE42  5520 0001:001FEE80  5522 0001:001FF308  5522 0001:001FF30F
+   213 0001:001E757C   214 0001:001E75AB   219 0001:001E75BF   220 0001:001E75C7
+   222 0001:001E75CF   223 0001:001E75DE   226 0001:001E75E6   228 0001:001E75F9
+   230 0001:001E7632   231 0001:001E7648   233 0001:001E765A   234 0001:001E7678
+   236 0001:001E7696   247 0001:001E76D8   248 0001:001E76EA   249 0001:001E7702
+   253 0001:001E771D   255 0001:001E7730   284 0001:001E77F6   285 0001:001E7808
+   286 0001:001E7820   290 0001:001E7832   291 0001:001E7836   293 0001:001E7845
+   295 0001:001E784A   298 0001:001E7850   299 0001:001E785E   300 0001:001E7870
+   302 0001:001E7883   305 0001:001E788B   296 0001:001E7891   311 0001:001E7897
+   313 0001:001E78A1   315 0001:001E78AF   316 0001:001E78F6   317 0001:001E78FD
+   319 0001:001E7911   320 0001:001E7919   322 0001:001E7921   335 0001:001E792E
+   339 0001:001E7946   340 0001:001E794E   343 0001:001E796D   345 0001:001E799F
+   351 0001:001E79E7   352 0001:001E7A18   354 0001:001E7A5D   356 0001:001E7A6A
+   340 0001:001E7A6D   359 0001:001E7A74   360 0001:001E7A8C   362 0001:001E7AA2
+   337 0001:001E7AB4   364 0001:001E7ACE   367 0001:001E7AE0   371 0001:001E7AF8
+   372 0001:001E7B00   375 0001:001E7B1F   377 0001:001E7B51   382 0001:001E7B99
+   383 0001:001E7BCA   385 0001:001E7C0F   387 0001:001E7C1C   372 0001:001E7C1F
+   390 0001:001E7C26   391 0001:001E7C3E   393 0001:001E7C54   369 0001:001E7C66
+   395 0001:001E7C80   398 0001:001E7C92   400 0001:001E7CA6   401 0001:001E7CAE
+   405 0001:001E7CD1   406 0001:001E7CE5   408 0001:001E7CF7   409 0001:001E7CFF
+   415 0001:001E7D0C   416 0001:001E7D1B   418 0001:001E7D32   419 0001:001E7D3A
+   421 0001:001E7D79   425 0001:001E86F0   426 0001:001E86F7   427 0001:001E86FE
+   428 0001:001E8705   429 0001:001E870C   430 0001:001E8713   431 0001:001E871A
+   433 0001:001E8721   434 0001:001E8728   435 0001:001E872F   436 0001:001E8736
+   437 0001:001E873D   438 0001:001E8744   439 0001:001E874B   441 0001:001E8752
+   442 0001:001E8759   447 0001:001E875C   448 0001:001E878A   451 0001:001E87A5
+   452 0001:001E87B2   453 0001:001E87C5   454 0001:001E87D2   455 0001:001E87EB
+   457 0001:001E87F8   459 0001:001E8808   462 0001:001E8815   463 0001:001E8822
+   464 0001:001E8835   465 0001:001E8842   466 0001:001E885B   469 0001:001E888A
+   475 0001:001E893C   477 0001:001E8953   489 0001:001E8960   492 0001:001E8976
+   504 0001:001E89B2   506 0001:001E89EA   516 0001:001E8F38   519 0001:001E8F5B
+   520 0001:001E8F5D   523 0001:001E8F61   524 0001:001E8F6C   526 0001:001E8F70
+   528 0001:001E8F71   521 0001:001E8F76   532 0001:001E8F7A   536 0001:001E8F82
+   537 0001:001E8F95   540 0001:001E8FA9   541 0001:001E8FFB   542 0001:001E9002
+   543 0001:001E9016   544 0001:001E9024   545 0001:001E902C   548 0001:001E9034
+   550 0001:001E9039   563 0001:001E9092   564 0001:001E90A1   565 0001:001E90B6
+   567 0001:001E90C5   570 0001:001E90D2   572 0001:001E90FC   574 0001:001E910D
+   575 0001:001E911A   576 0001:001E9130   580 0001:001E9138   581 0001:001E915C
+   585 0001:001E91AA   586 0001:001E91B4   587 0001:001E91C4   588 0001:001E91D7
+   589 0001:001E91E1   590 0001:001E920E   592 0001:001E9218   593 0001:001E9229
+   595 0001:001E9236   603 0001:001E9306   606 0001:001E9315   613 0001:001E93D5
+   615 0001:001E93F1   568 0001:001E9400   617 0001:001E9417   548 0001:001E9418
+   618 0001:001E9421   621 0001:001E9430   622 0001:001E943D   623 0001:001E9453
+   626 0001:001E945B   628 0001:001E946F   629 0001:001E9477   631 0001:001E947F
+   632 0001:001E9491   633 0001:001E94A3   634 0001:001E94B2   637 0001:001E94DA
+   640 0001:001E94DC   642 0001:001E94F0   643 0001:001E9502   644 0001:001E9514
+   645 0001:001E9523   647 0001:001E952D   648 0001:001E9535   650 0001:001E953D
+   653 0001:001E954A   655 0001:001E9560   656 0001:001E9572   657 0001:001E958B
+   662 0001:001E962F   667 0001:001E966F   678 0001:001E9BC4   680 0001:001E9BE6
+   681 0001:001E9BE8   684 0001:001E9BEC   685 0001:001E9BF7   687 0001:001E9BFB
+   689 0001:001E9BFC   682 0001:001E9C01   693 0001:001E9C05   697 0001:001E9C0D
+   698 0001:001E9C20   701 0001:001E9C34   702 0001:001E9C86   703 0001:001E9C8D
+   704 0001:001E9CA1   705 0001:001E9CAF   706 0001:001E9CB7   711 0001:001E9CBF
+   715 0001:001E9CC7   719 0001:001E9CEE   720 0001:001E9CFD   721 0001:001E9D12
+   724 0001:001E9D21   727 0001:001E9D2E   730 0001:001E9D42   731 0001:001E9D66
+   733 0001:001E9D8D   735 0001:001E9D9C   740 0001:001E9DD7   742 0001:001E9DE6
+   747 0001:001E9E21   728 0001:001E9E30   750 0001:001E9E47   754 0001:001E9E61
+   757 0001:001E9E75   758 0001:001E9E99   760 0001:001E9EC0   762 0001:001E9ECF
+   768 0001:001E9F0F   770 0001:001E9F1E   775 0001:001E9F59   755 0001:001E9F68
+   777 0001:001E9F7F   779 0001:001E9F8E   809 0001:001EA01B   810 0001:001EA025
+   811 0001:001EA035   812 0001:001EA048   817 0001:001EA057   822 0001:001EA059
+   824 0001:001EA08E   827 0001:001EA090   831 0001:001EA0E7   832 0001:001EA0F6
+   833 0001:001EA10B   834 0001:001EA11A   835 0001:001EA141   837 0001:001EA150
+   840 0001:001EA15A   844 0001:001EA19F   847 0001:001EA1B5   850 0001:001EA1E5
+   858 0001:001EA1FB   860 0001:001EA238   866 0001:001EA23A   868 0001:001EA27B
+   871 0001:001EA27D   875 0001:001EA2EC   876 0001:001EA2FB   877 0001:001EA310
+   880 0001:001EA31F   883 0001:001EA35C   887 0001:001EA39F   888 0001:001EA3B1
+   889 0001:001EA3C9   891 0001:001EA3DB   892 0001:001EA3FA   895 0001:001EA40C
+   897 0001:001EA419   898 0001:001EA42B   899 0001:001EA443   901 0001:001EA455
+   902 0001:001EA474   905 0001:001EA486   909 0001:001EA508   910 0001:001EA51A
+   911 0001:001EA532   913 0001:001EA544   914 0001:001EA564   917 0001:001EA576
+   929 0001:001EA6FA   932 0001:001EA710   938 0001:001EA76F   940 0001:001EA785
+   947 0001:001EA794   950 0001:001EA79C   960 0001:001EA86D   961 0001:001EA87C
+   962 0001:001EA891   964 0001:001EA8A0   970 0001:001EA8DD   975 0001:001EA9BD
+   978 0001:001EA9D3   982 0001:001EAA98   994 0001:001EAAB3   998 0001:001EAB22
+   999 0001:001EAB34  1000 0001:001EAB4C  1002 0001:001EAB5E  1003 0001:001EAB7D
+  1006 0001:001EAB8F  1009 0001:001EAB99  1011 0001:001EABA9  1014 0001:001EABBF
+  1016 0001:001EABCF  1019 0001:001EABE5  1022 0001:001EAC15  1029 0001:001EAC2B
+  1033 0001:001EAC9A  1034 0001:001EACAC  1035 0001:001EACC4  1037 0001:001EACD6
+  1038 0001:001EACF5  1041 0001:001EAD07  1043 0001:001EAD14  1044 0001:001EAD26
+  1045 0001:001EAD3E  1047 0001:001EAD50  1048 0001:001EAD6F  1051 0001:001EAD81
+  1055 0001:001EAE03  1056 0001:001EAE15  1057 0001:001EAE2D  1059 0001:001EAE3F
+  1060 0001:001EAE5F  1063 0001:001EAE71  1075 0001:001EAFF5  1078 0001:001EB00B
+  1084 0001:001EB06A  1087 0001:001EB080  1095 0001:001EB151  1096 0001:001EB163
+  1097 0001:001EB17B  1099 0001:001EB18D  1100 0001:001EB1AC  1101 0001:001EB1CB
+  1107 0001:001EB1DD  1114 0001:001EB1F7  1115 0001:001EB209  1116 0001:001EB221
+  1120 0001:001EB238  1123 0001:001EB24E  1127 0001:001EB2F3  1128 0001:001EB305
+  1129 0001:001EB31D  1131 0001:001EB32F  1132 0001:001EB34F  1136 0001:001EB361
+  1150 0001:001EB46F  1151 0001:001EB4A3  1154 0001:001EB50A  1155 0001:001EB53E
+  1158 0001:001EB5A5  1159 0001:001EB5D9  1162 0001:001EB640  1163 0001:001EB674
+  1166 0001:001EB6DB  1167 0001:001EB70F  1170 0001:001EB776  1171 0001:001EB7AA
+  1174 0001:001EB811  1175 0001:001EB845  1178 0001:001EB8AC  1179 0001:001EB8E0
+  1183 0001:001EB944  1186 0001:001EB951  1189 0001:001EB9C3  1191 0001:001EB9D9
+  1118 0001:001EB9EB  1193 0001:001EBA05  1196 0001:001EBA17  1200 0001:001EBA26
+   814 0001:001EBA30  1203 0001:001EBA42  1206 0001:001EBA4F  1209 0001:001EBA65
+  1211 0001:001EBA79  1212 0001:001EBA81  1214 0001:001EBA89  1215 0001:001EBA9B
+  1216 0001:001EBAAD  1217 0001:001EBABC  1220 0001:001EBAE4  1223 0001:001EBAE6
+  1225 0001:001EBAFA  1226 0001:001EBB0C  1227 0001:001EBB1E  1228 0001:001EBB2D
+  1230 0001:001EBB37  1231 0001:001EBB3F  1233 0001:001EBB47  1236 0001:001EBB54
+  1238 0001:001EBB6A  1239 0001:001EBB7C  1240 0001:001EBB95  1245 0001:001EBC39
+  1250 0001:001EBCCC  1256 0001:001ED22C  1257 0001:001ED258  1259 0001:001ED266
+  1260 0001:001ED2AD  1261 0001:001ED2B4  1263 0001:001ED2C8  1264 0001:001ED2D0
+  1266 0001:001ED2D8  1271 0001:001ED36C  1274 0001:001ED382  1279 0001:001ED39D
+  1280 0001:001ED3AF  1281 0001:001ED3C7  1284 0001:001ED3D9  1310 0001:001ED51A
+  1311 0001:001ED52C  1313 0001:001ED542  1316 0001:001ED55C  1318 0001:001ED572
+  1320 0001:001ED586  1321 0001:001ED58E  1325 0001:001ED5B1  1326 0001:001ED5C5
+  1328 0001:001ED5D7  1329 0001:001ED5DF  1334 0001:001ED60E  1342 0001:001EDDAC
+  1345 0001:001EDDCF  1346 0001:001EDDD4  1349 0001:001EDDD8  1350 0001:001EDDE3
+  1352 0001:001EDDE7  1354 0001:001EDDEA  1347 0001:001EDDF0  1358 0001:001EDDF4
+  1362 0001:001EDDFC  1363 0001:001EDE1B  1366 0001:001EDE3A  1367 0001:001EDE4D
+  1370 0001:001EDE61  1371 0001:001EDEB3  1372 0001:001EDEBA  1373 0001:001EDECE
+  1374 0001:001EDEDC  1375 0001:001EDEE4  1377 0001:001EDEEC  1378 0001:001EDEFE
+  1380 0001:001EDF10  1381 0001:001EDF1D  1383 0001:001EDF33  1387 0001:001EDF4A
+  1388 0001:001EDF5C  1390 0001:001EDF81  1391 0001:001EDFA8  1393 0001:001EDFE3
+  1394 0001:001EE01A  1388 0001:001EE01D  1396 0001:001EE024  1398 0001:001EE039
+  1399 0001:001EE05A  1401 0001:001EE071  1385 0001:001EE083  1404 0001:001EE09D
+  1406 0001:001EE0AF  1409 0001:001EE0BC  1412 0001:001EE0D2  1413 0001:001EE0E9
+  1415 0001:001EE0FD  1416 0001:001EE105  1418 0001:001EE10D  1419 0001:001EE11F
+  1421 0001:001EE14F  1424 0001:001EE151  1426 0001:001EE165  1427 0001:001EE177
+  1429 0001:001EE189  1430 0001:001EE191  1432 0001:001EE199  1435 0001:001EE1A6
+  1437 0001:001EE1BC  1440 0001:001EE21B  1442 0001:001EE234  1447 0001:001EE2BA
+  1452 0001:001EE2FF  1460 0001:001EE4A0  1463 0001:001EE4C3  1464 0001:001EE4C5
+  1467 0001:001EE4C9  1468 0001:001EE4D4  1470 0001:001EE4D8  1472 0001:001EE4D9
+  1465 0001:001EE4DE  1476 0001:001EE4E2  1480 0001:001EE4EA  1481 0001:001EE509
+  1484 0001:001EE528  1485 0001:001EE53B  1488 0001:001EE54F  1489 0001:001EE5A1
+  1490 0001:001EE5A8  1491 0001:001EE5BC  1492 0001:001EE5CA  1493 0001:001EE5D2
+  1495 0001:001EE5DA  1496 0001:001EE5EC  1498 0001:001EE5FE  1499 0001:001EE60B
+  1501 0001:001EE621  1505 0001:001EE638  1506 0001:001EE64A  1507 0001:001EE666
+  1506 0001:001EE69C  1509 0001:001EE69F  1511 0001:001EE6B4  1512 0001:001EE6D5
+  1514 0001:001EE6EC  1503 0001:001EE6FE  1517 0001:001EE718  1519 0001:001EE72A
+  1522 0001:001EE737  1525 0001:001EE74D  1526 0001:001EE764  1528 0001:001EE778
+  1529 0001:001EE780  1531 0001:001EE788  1532 0001:001EE79A  1535 0001:001EE7CA
+  1538 0001:001EE7CC  1540 0001:001EE7E0  1541 0001:001EE7F2  1543 0001:001EE804
+  1544 0001:001EE80C  1546 0001:001EE814  1549 0001:001EE821  1551 0001:001EE837
+  1552 0001:001EE849  1553 0001:001EE862  1558 0001:001EE8E8  1563 0001:001EE925
+  1571 0001:001EEA90  1574 0001:001EEAB2  1575 0001:001EEAB4  1578 0001:001EEAB8
+  1579 0001:001EEAC3  1581 0001:001EEAC7  1583 0001:001EEAC8  1576 0001:001EEACD
+  1587 0001:001EEAD1  1591 0001:001EEAD9  1592 0001:001EEAF8  1595 0001:001EEB17
+  1596 0001:001EEB2A  1599 0001:001EEB3E  1600 0001:001EEB90  1601 0001:001EEB97
+  1602 0001:001EEBAB  1603 0001:001EEBB9  1604 0001:001EEBC1  1606 0001:001EEBC9
+  1607 0001:001EEBDB  1610 0001:001EEBEF  1611 0001:001EEC04  1613 0001:001EEC1A
+  1608 0001:001EEC2C  1615 0001:001EEC42  1617 0001:001EEC54  1620 0001:001EEC61
+  1623 0001:001EEC77  1625 0001:001EEC8B  1626 0001:001EEC93  1628 0001:001EECB9
+  1631 0001:001EECBB  1633 0001:001EECCF  1635 0001:001EECE1  1636 0001:001EECE9
+  1638 0001:001EECF1  1641 0001:001EECFE  1643 0001:001EED14  1644 0001:001EED33
+  1645 0001:001EED4C  1650 0001:001EEDD2  1655 0001:001EEE0F  1663 0001:001EEF60
+  1664 0001:001EEF82  1666 0001:001EEF86  1667 0001:001EEF94  1670 0001:001EEFA1
+  1671 0001:001EEFB0  1672 0001:001EEFC5  1675 0001:001EEFD4  1677 0001:001EEFEE
+  1679 0001:001EF00F  1681 0001:001EF03B  1682 0001:001EF05B  1685 0001:001EF068
+  1686 0001:001EF09E  1688 0001:001EF0D2  1690 0001:001EF104  1693 0001:001EF15D
+  1694 0001:001EF17E  1697 0001:001EF180  1675 0001:001EF181  1699 0001:001EF188
+  1701 0001:001EF1A2  1702 0001:001EF1B1  1704 0001:001EF1BB  1706 0001:001EF1CA
+  1708 0001:001EF1DD  1709 0001:001EF207  1719 0001:001EF304  1720 0001:001EF326
+  1722 0001:001EF32A  1723 0001:001EF338  1726 0001:001EF355  1727 0001:001EF364
+  1728 0001:001EF379  1731 0001:001EF388  1733 0001:001EF3A2  1735 0001:001EF3C3
+  1737 0001:001EF3EF  1739 0001:001EF40F  1742 0001:001EF42B  1747 0001:001EF489
+  1751 0001:001EF4EC  1753 0001:001EF50D  1755 0001:001EF527  1756 0001:001EF548
+  1758 0001:001EF562  1759 0001:001EF571  1760 0001:001EF57D  1767 0001:001EF587
+  1731 0001:001EF588  1770 0001:001EF58F  1771 0001:001EF5A9  1773 0001:001EF5B8
+  1775 0001:001EF5CB  1776 0001:001EF5F5  1781 0001:001EF744  1783 0001:001EF759
+  1785 0001:001EF776  1786 0001:001EF7AE  1794 0001:001EF7FC  1795 0001:001EF826
+  1796 0001:001EF82A  1798 0001:001EF82E  1799 0001:001EF833  1802 0001:001EF83D
+  1803 0001:001EF84B  1805 0001:001EF855  1807 0001:001EF875  1809 0001:001EF897
+  1813 0001:001EF8C2  1815 0001:001EF8D5  1816 0001:001EF8F8  1818 0001:001EF919
+  1819 0001:001EF927  1820 0001:001EF948  1821 0001:001EF94C  1822 0001:001EF953
+  1824 0001:001EF96D  1828 0001:001EF972  1830 0001:001EF981  1831 0001:001EF9A2
+  1832 0001:001EF9A6  1833 0001:001EF9AD  1838 0001:001EF9B2  1805 0001:001EF9B5
+  1844 0001:001EF9C3  1846 0001:001EF9D6  1847 0001:001EF9F9  1849 0001:001EFA1A
+  1850 0001:001EFA28  1851 0001:001EFA49  1852 0001:001EFA4D  1853 0001:001EFA54
+  1855 0001:001EFA76  1859 0001:001EFA7B  1861 0001:001EFA8A  1862 0001:001EFAAB
+  1863 0001:001EFAAF  1864 0001:001EFAB6  1869 0001:001EFACF  1872 0001:001EFAD7
+  1800 0001:001EFAE3  1876 0001:001EFB15  1885 0001:001EFB38  1887 0001:001EFB68
+  1889 0001:001EFB6D  1891 0001:001EFB73  1892 0001:001EFB81  1893 0001:001EFB89
+  1895 0001:001EFBA2  1897 0001:001EFBA7  1898 0001:001EFBBB  1901 0001:001EFBC5
+  1903 0001:001EFBCF  1905 0001:001EFBE9  1907 0001:001EFC06  1909 0001:001EFC2C
+  1910 0001:001EFC51  1914 0001:001EFC54  1916 0001:001EFC71  1918 0001:001EFC97
+  1919 0001:001EFCBC  1923 0001:001EFCBF  1927 0001:001EFCC5  1903 0001:001EFCC6
+  1929 0001:001EFCEF  1934 0001:001EFCF8  1935 0001:001EFD17  1938 0001:001EFD1E
+  1942 0001:001EFD28  1944 0001:001EFD38  1945 0001:001EFD44  1949 0001:001EFD49
+  1950 0001:001EFD57  1951 0001:001EFD67  1950 0001:001EFD8B  1954 0001:001EFD8E
+  1955 0001:001EFDAD  1960 0001:001EFDBD  1962 0001:001EFDD1  1963 0001:001EFDDD
+  1966 0001:001EFDDF  1967 0001:001EFDE6  1969 0001:001EFDED  1971 0001:001EFE15
+  1976 0001:001EFE1E  1979 0001:001EFE29  1980 0001:001EFE71  2003 0001:001EFEA8
+  2028 0001:001EFECF  2031 0001:001EFF08  2033 0001:001EFF54  2036 0001:001EFF5B
+  2037 0001:001EFF67  2039 0001:001EFF6D  2040 0001:001EFF80  2042 0001:001EFF8F
+  2044 0001:001EFFA7  2047 0001:001EFFB8  2049 0001:001EFFE7  2045 0001:001EFFF6
+  2051 0001:001F0009  2055 0001:001F0018  2056 0001:001F0020  2057 0001:001F0028
+  2063 0001:001F00CC  2064 0001:001F00E2  2065 0001:001F00EA  2067 0001:001F00F2
+  2068 0001:001F00F9  2076 0001:001F0100  2081 0001:001F010D  2085 0001:001F011A
+  2086 0001:001F0129  2087 0001:001F013E  2088 0001:001F014D  2089 0001:001F018B
+  2091 0001:001F019A  2093 0001:001F01A7  2098 0001:001F024B  2101 0001:001F0261
+  2102 0001:001F0288  2103 0001:001F02AF  2105 0001:001F02D6  2114 0001:001F02E1
+  2118 0001:001F02EE  2119 0001:001F02FD  2120 0001:001F0312  2121 0001:001F0321
+  2122 0001:001F035F  2124 0001:001F036E  2126 0001:001F037B  2131 0001:001F041F
+  2133 0001:001F0435  2142 0001:001F043D  2146 0001:001F044A  2147 0001:001F0459
+  2148 0001:001F046E  2149 0001:001F047D  2150 0001:001F04BB  2152 0001:001F04CA
+  2154 0001:001F04D7  2159 0001:001F057B  2162 0001:001F0591  2163 0001:001F05B8
+  2164 0001:001F05DF  2166 0001:001F0606  2260 0001:001F0611  2262 0001:001F065D
+  2270 0001:001F066A  2275 0001:001F0671  2278 0001:001F0685  2285 0001:001F0697
+  2287 0001:001F06A7  2288 0001:001F06B3  2292 0001:001F06B8  2295 0001:001F06C3
+  2296 0001:001F06CA  2298 0001:001F06D1  2299 0001:001F06D8  2300 0001:001F06DF
+  2301 0001:001F06E6  2302 0001:001F06ED  2303 0001:001F06F4  2304 0001:001F06FB
+  2305 0001:001F0702  2307 0001:001F0709  2308 0001:001F0710  2309 0001:001F0717
+  2310 0001:001F071E  2311 0001:001F0725  2313 0001:001F072C  2320 0001:001F0733
+  2323 0001:001F075D  2330 0001:001F0788  2331 0001:001F0797  2332 0001:001F07AC
+  2341 0001:001F07C0  2343 0001:001F07EE  2345 0001:001F0827  2346 0001:001F084B
+  2353 0001:001F0852  2355 0001:001F0883  2357 0001:001F08BC  2358 0001:001F08E0
+  2365 0001:001F08E7  2367 0001:001F0918  2369 0001:001F0951  2370 0001:001F0975
+  2377 0001:001F097C  2379 0001:001F09AD  2381 0001:001F09E6  2382 0001:001F0A0A
+  2389 0001:001F0A11  2391 0001:001F0A42  2393 0001:001F0A7B  2394 0001:001F0A9F
+  2401 0001:001F0AA6  2403 0001:001F0AD7  2405 0001:001F0B10  2406 0001:001F0B34
+  2413 0001:001F0B3B  2415 0001:001F0B6C  2417 0001:001F0BA5  2418 0001:001F0BC9
+  2425 0001:001F0BD0  2427 0001:001F0C01  2429 0001:001F0C3A  2430 0001:001F0C5E
+  2437 0001:001F0C65  2439 0001:001F0C96  2441 0001:001F0CCF  2442 0001:001F0CF3
+  2449 0001:001F0CFA  2451 0001:001F0D2B  2453 0001:001F0D64  2454 0001:001F0D88
+  2461 0001:001F0D8F  2463 0001:001F0DC0  2465 0001:001F0DF9  2466 0001:001F0E1D
+  2470 0001:001F0E24  2335 0001:001F0E33  2472 0001:001F0E4A  2479 0001:001F0E59
+  2480 0001:001F0E6F  2481 0001:001F0E83  2482 0001:001F0E90  2484 0001:001F0EA4
+  2485 0001:001F0EC3  2486 0001:001F0EE2  2487 0001:001F0EEF  2489 0001:001F0EFF
+  2490 0001:001F0F1E  2491 0001:001F0F2B  2493 0001:001F0F3B  2494 0001:001F0F42
+  2501 0001:001F0FA9  2502 0001:001F0FB8  2503 0001:001F0FCD  2505 0001:001F0FDC
+  2506 0001:001F0FEF  2508 0001:001F0FF6  2511 0001:001F1005  2512 0001:001F100C
+  2518 0001:001F1037  2519 0001:001F1046  2520 0001:001F105B  2522 0001:001F106A
+  2523 0001:001F107D  2525 0001:001F1084  2528 0001:001F1093  2529 0001:001F1097
+  2533 0001:001F10BA  2535 0001:001F10E7  2536 0001:001F10EB  2538 0001:001F10ED
+  2529 0001:001F10F0  2540 0001:001F10F3  2546 0001:001F11AE  2550 0001:001F11D1
+  2552 0001:001F11FE  2553 0001:001F1215  2555 0001:001F1217  2546 0001:001F121A
+  2556 0001:001F121D  2559 0001:001F1221  2562 0001:001F1230  2564 0001:001F1237
+  2566 0001:001F123E  2567 0001:001F1245  2568 0001:001F124C  2569 0001:001F1253
+  2570 0001:001F125A  2571 0001:001F1261  2572 0001:001F1268  2573 0001:001F126F
+  2574 0001:001F1276  2575 0001:001F127D  2576 0001:001F1284  2577 0001:001F128B
+  2578 0001:001F1292  2581 0001:001F1299  2583 0001:001F12A3  2585 0001:001F12B2
+  2587 0001:001F12C0  2590 0001:001F12C4  2591 0001:001F1309  2595 0001:001F131C
+  2605 0001:001F1325  2608 0001:001F132F  2616 0001:001F13E7  2620 0001:001F13FD
+  2629 0001:001F1435  2632 0001:001F1481  2635 0001:001F148C  2639 0001:001F14A2
+  2640 0001:001F14A6  2642 0001:001F14B3  2644 0001:001F14C9  2645 0001:001F14D1
+  2648 0001:001F14D9  2654 0001:001F1591  2656 0001:001F15A7  2657 0001:001F15AF
+  2660 0001:001F15B7  2662 0001:001F15FC  2663 0001:001F1604  2665 0001:001F160C
+  2669 0001:001F1619  2670 0001:001F1623  2671 0001:001F1633  2674 0001:001F1646
+  2675 0001:001F164B  2678 0001:001F1651  2679 0001:001F165F  2680 0001:001F1669
+  2682 0001:001F167C  2685 0001:001F1684  2676 0001:001F168A  2690 0001:001F1690
+  2692 0001:001F169A  2694 0001:001F16A8  2695 0001:001F16FE  2696 0001:001F1705
+  2698 0001:001F1719  2699 0001:001F1721  2702 0001:001F1729  2704 0001:001F174A
+  2709 0001:001F1765  2720 0001:001F18FA  2722 0001:001F1910  2725 0001:001F191A
+  2731 0001:001F19D2  2733 0001:001F19E8  2736 0001:001F19EC  2706 0001:001F19F6
+  2739 0001:001F1A08  2741 0001:001F1A1C  2742 0001:001F1A24  2744 0001:001F1A4A
+  2746 0001:001F1A4D  2747 0001:001F1A61  2749 0001:001F1A68  2750 0001:001F1A70
+  2752 0001:001F1A78  2753 0001:001F1A9A  2754 0001:001F1AB3  2759 0001:001F1B57
+  2764 0001:001F1B72  2765 0001:001F1B7A  2769 0001:001F1B82  2770 0001:001F1BB4
+  2775 0001:001F1BBC  2776 0001:001F1BC0  2778 0001:001F1BCD  2780 0001:001F1BE3
+  2781 0001:001F1BEB  2784 0001:001F1BF3  2790 0001:001F1CAB  2792 0001:001F1CC1
+  2793 0001:001F1CC9  2796 0001:001F1CD1  2798 0001:001F1D16  2799 0001:001F1D1E
+  2802 0001:001F1D26  2803 0001:001F1D5E  2804 0001:001F1D85  2806 0001:001F1DAC
+  2837 0001:001F1DF0  2838 0001:001F1DFA  2839 0001:001F1E0A  2842 0001:001F1E1D
+  2843 0001:001F1E22  2846 0001:001F1E28  2847 0001:001F1E36  2848 0001:001F1E40
+  2850 0001:001F1E53  2853 0001:001F1E5B  2844 0001:001F1E61  2858 0001:001F1E67
+  2860 0001:001F1E71  2862 0001:001F1E7F  2863 0001:001F1ED5  2864 0001:001F1EDC
+  2866 0001:001F1EF0  2867 0001:001F1EF8  2870 0001:001F1F00  2874 0001:001F1F5A
+  2879 0001:001F1F75  2880 0001:001F1F8C  2881 0001:001F1F9C  2882 0001:001F1FB6
+  2883 0001:001F1FC3  2884 0001:001F1FD3  2885 0001:001F200C  2886 0001:001F2033
+  2896 0001:001F205A  2916 0001:001F22EB  2918 0001:001F2301  2921 0001:001F230B
+  2927 0001:001F23C3  2929 0001:001F23D9  2932 0001:001F23DD  2876 0001:001F23E7
+  2935 0001:001F23F9  2937 0001:001F240D  2938 0001:001F2415  2940 0001:001F243B
+  2942 0001:001F243E  2943 0001:001F2452  2945 0001:001F2459  2946 0001:001F2461
+  2948 0001:001F2469  2949 0001:001F248B  2950 0001:001F24A4  2955 0001:001F2548
+  2961 0001:001F2563  2962 0001:001F256B  2966 0001:001F2573  2967 0001:001F25A5
+  2972 0001:001F25AD  2973 0001:001F25B1  2975 0001:001F25BE  2977 0001:001F25D4
+  2978 0001:001F25DC  2981 0001:001F25E4  2987 0001:001F269C  2989 0001:001F26B2
+  2990 0001:001F26BA  2993 0001:001F26C2  2995 0001:001F26D1  2998 0001:001F2716
+  2999 0001:001F271E  3002 0001:001F2726  3003 0001:001F275E  3004 0001:001F2785
+  3006 0001:001F27AC  3008 0001:001F27BF  3017 0001:001F27CC  3018 0001:001F27DB
+  3021 0001:001F27F7  3023 0001:001F2804  3029 0001:001F2850  3030 0001:001F285A
+  3031 0001:001F286A  3034 0001:001F287D  3035 0001:001F2882  3038 0001:001F2888
+  3039 0001:001F2896  3040 0001:001F28A0  3042 0001:001F28B3  3045 0001:001F28BB
+  3036 0001:001F28C1  3050 0001:001F28C7  3052 0001:001F28DA  3053 0001:001F28FE
+  3055 0001:001F290B  3075 0001:001F2954  3076 0001:001F2966  3077 0001:001F297E
+  3078 0001:001F2990  3082 0001:001F2994  3084 0001:001F299E  3086 0001:001F29AC
+  3087 0001:001F2A02  3088 0001:001F2A09  3090 0001:001F2A1D  3091 0001:001F2A25
+  3094 0001:001F2A2D  3098 0001:001F2A87  3100 0001:001F2A9D  3105 0001:001F2AB5
+  3106 0001:001F2ACC  3108 0001:001F2ADC  3109 0001:001F2AF6  3110 0001:001F2B03
+  3111 0001:001F2B13  3112 0001:001F2B4C  3113 0001:001F2B73  3115 0001:001F2B9A
+  3129 0001:001F2D01  3131 0001:001F2D17  3134 0001:001F2D21  3140 0001:001F2DD9
+  3142 0001:001F2DEF  3145 0001:001F2DF3  3102 0001:001F2DFD  3149 0001:001F2E0F
+  3154 0001:001F2E27  3155 0001:001F2E46  3157 0001:001F2E56  3158 0001:001F2E70
+  3159 0001:001F2E7D  3160 0001:001F2E8D  3161 0001:001F2EC6  3162 0001:001F2EED
+  3164 0001:001F2F14  3178 0001:001F3093  3180 0001:001F30A9  3183 0001:001F30B3
+  3189 0001:001F316B  3191 0001:001F3181  3194 0001:001F3185  3151 0001:001F3197
+  3198 0001:001F31B1  3200 0001:001F31C5  3201 0001:001F31CD  3203 0001:001F31F3
+  3205 0001:001F31F6  3206 0001:001F320A  3208 0001:001F3211  3209 0001:001F3219
+  3211 0001:001F3221  3212 0001:001F3243  3213 0001:001F325C  3218 0001:001F3300
+  3224 0001:001F331B  3225 0001:001F3323  3229 0001:001F332B  3230 0001:001F335D
+  3235 0001:001F3365  3236 0001:001F3369  3238 0001:001F3376  3240 0001:001F338C
+  3241 0001:001F3394  3244 0001:001F339C  3250 0001:001F3454  3252 0001:001F346A
+  3253 0001:001F3472  3256 0001:001F347A  3258 0001:001F3489  3261 0001:001F34CE
+  3262 0001:001F34D6  3264 0001:001F34DE  3265 0001:001F3516  3266 0001:001F353D
+  3269 0001:001F3564  3285 0001:001F35B2  3286 0001:001F35BC  3287 0001:001F35CC
+  3290 0001:001F35DF  3291 0001:001F35E4  3294 0001:001F35EA  3295 0001:001F35F8
+  3296 0001:001F3602  3298 0001:001F3615  3301 0001:001F361D  3292 0001:001F3623
+  3306 0001:001F3629  3308 0001:001F3633  3310 0001:001F3641  3311 0001:001F3697
+  3312 0001:001F369E  3314 0001:001F36B2  3315 0001:001F36BA  3318 0001:001F36C2
+  3322 0001:001F371C  3327 0001:001F3737  3328 0001:001F374E  3329 0001:001F375E
+  3330 0001:001F3778  3331 0001:001F3785  3332 0001:001F3795  3333 0001:001F37CE
+  3334 0001:001F37F5  3336 0001:001F381C  3350 0001:001F3983  3352 0001:001F3999
+  3355 0001:001F39A3  3361 0001:001F3A5B  3363 0001:001F3A71  3366 0001:001F3A75
+  3324 0001:001F3A7F  3369 0001:001F3A91  3371 0001:001F3AA5  3372 0001:001F3AAD
+  3374 0001:001F3AD3  3376 0001:001F3AD6  3377 0001:001F3AEA  3379 0001:001F3AF1
+  3380 0001:001F3AF9  3382 0001:001F3B01  3383 0001:001F3B23  3384 0001:001F3B3C
+  3389 0001:001F3BE0  3395 0001:001F3BFB  3396 0001:001F3C03  3400 0001:001F3C0B
+  3401 0001:001F3C3D  3406 0001:001F3C45  3407 0001:001F3C49  3409 0001:001F3C56
+  3411 0001:001F3C6C  3412 0001:001F3C74  3415 0001:001F3C7C  3421 0001:001F3D34
+  3423 0001:001F3D4A  3424 0001:001F3D52  3427 0001:001F3D5A  3429 0001:001F3D9F
+  3430 0001:001F3DA7  3433 0001:001F3DAF  3434 0001:001F3DE7  3435 0001:001F3E0E
+  3437 0001:001F3E35  3471 0001:001F3EE7  3472 0001:001F3EF1  3473 0001:001F3F01
+  3476 0001:001F3F14  3477 0001:001F3F19  3480 0001:001F3F1F  3481 0001:001F3F2D
+  3482 0001:001F3F37  3484 0001:001F3F4A  3487 0001:001F3F52  3478 0001:001F3F58
+  3492 0001:001F3F5E  3494 0001:001F3F68  3496 0001:001F3F76  3497 0001:001F3FCC
+  3498 0001:001F3FD3  3500 0001:001F3FE7  3501 0001:001F3FEF  3504 0001:001F3FF7
+  3508 0001:001F4051  3513 0001:001F406C  3514 0001:001F4083  3515 0001:001F4093
+  3516 0001:001F40AD  3517 0001:001F40BA  3518 0001:001F40CA  3519 0001:001F4103
+  3520 0001:001F412A  3522 0001:001F4151  3536 0001:001F42B8  3538 0001:001F42CE
+  3541 0001:001F42D8  3547 0001:001F4390  3549 0001:001F43A6  3552 0001:001F43AA
+  3510 0001:001F43B4  3555 0001:001F43C6  3557 0001:001F43DA  3558 0001:001F43E2
+  3560 0001:001F4408  3562 0001:001F440B  3563 0001:001F441F  3565 0001:001F4426
+  3566 0001:001F442E  3568 0001:001F4436  3569 0001:001F4458  3570 0001:001F4471
+  3575 0001:001F4515  3581 0001:001F4530  3582 0001:001F4538  3586 0001:001F4540
+  3587 0001:001F4572  3592 0001:001F457A  3593 0001:001F457E  3595 0001:001F458B
+  3597 0001:001F45A1  3598 0001:001F45A9  3601 0001:001F45B1  3607 0001:001F4669
+  3609 0001:001F467F  3610 0001:001F4687  3613 0001:001F468F  3615 0001:001F469E
+  3618 0001:001F46E3  3619 0001:001F46EB  3622 0001:001F46F3  3623 0001:001F472B
+  3624 0001:001F4752  3626 0001:001F4779  3628 0001:001F478C  3657 0001:001F4816
+  3658 0001:001F4820  3659 0001:001F4830  3662 0001:001F4843  3663 0001:001F4848
+  3666 0001:001F484E  3667 0001:001F485C  3668 0001:001F4866  3670 0001:001F4879
+  3673 0001:001F4881  3664 0001:001F4887  3678 0001:001F488D  3680 0001:001F48A0
+  3681 0001:001F48C4  3683 0001:001F48D1  3707 0001:001F4951  3708 0001:001F4963
+  3709 0001:001F497B  3710 0001:001F498D  3714 0001:001F4991  3716 0001:001F499B
+  3718 0001:001F49A9  3719 0001:001F49FF  3720 0001:001F4A06  3722 0001:001F4A1A
+  3723 0001:001F4A22  3725 0001:001F4A2A  3730 0001:001F4A42  3734 0001:001F4AB9
+  3736 0001:001F4ACF  3756 0001:001F4D7D  3758 0001:001F4D93  3761 0001:001F4D9D
+  3767 0001:001F4E55  3769 0001:001F4E6B  3772 0001:001F4E6F  3727 0001:001F4E79
+  3774 0001:001F4E8B  3777 0001:001F4E95  3782 0001:001F4EAD  3786 0001:001F4F2C
+  3788 0001:001F4F42  3808 0001:001F5238  3810 0001:001F524E  3813 0001:001F5258
+  3819 0001:001F5310  3821 0001:001F5326  3824 0001:001F532A  3779 0001:001F533C
+  3826 0001:001F5356  3829 0001:001F5368  3831 0001:001F537C  3832 0001:001F5384
+  3834 0001:001F53AA  3836 0001:001F53AD  3837 0001:001F53C1  3839 0001:001F53C8
+  3840 0001:001F53D0  3842 0001:001F53D8  3843 0001:001F53FA  3844 0001:001F5413
+  3849 0001:001F54B7  3855 0001:001F54D2  3856 0001:001F54DA  3860 0001:001F54E2
+  3861 0001:001F5514  3866 0001:001F551C  3867 0001:001F5520  3869 0001:001F552D
+  3871 0001:001F5543  3872 0001:001F554B  3875 0001:001F5553  3881 0001:001F560B
+  3883 0001:001F5621  3884 0001:001F5629  3887 0001:001F5631  3889 0001:001F5676
+  3890 0001:001F567E  3893 0001:001F5686  3894 0001:001F56BE  3895 0001:001F56E5
+  3897 0001:001F570C  3920 0001:001F574B  3921 0001:001F5755  3922 0001:001F5765
+  3925 0001:001F5778  3926 0001:001F577D  3929 0001:001F5783  3930 0001:001F5791
+  3931 0001:001F579B  3933 0001:001F57AE  3936 0001:001F57B6  3927 0001:001F57BC
+  3941 0001:001F57C2  3943 0001:001F57CC  3945 0001:001F57DA  3946 0001:001F5830
+  3947 0001:001F5837  3949 0001:001F584B  3950 0001:001F5853  3953 0001:001F585B
+  3957 0001:001F58B5  3961 0001:001F58D0  3983 0001:001F5BFF  3985 0001:001F5C15
+  3988 0001:001F5C1F  3994 0001:001F5CD7  3996 0001:001F5CED  3999 0001:001F5CF1
+  3959 0001:001F5CFB  4002 0001:001F5D0D  4004 0001:001F5D21  4005 0001:001F5D29
+  4007 0001:001F5D4F  4009 0001:001F5D52  4010 0001:001F5D66  4012 0001:001F5D6D
+  4013 0001:001F5D75  4015 0001:001F5D7D  4016 0001:001F5D9F  4017 0001:001F5DB8
+  4022 0001:001F5E5C  4028 0001:001F5E77  4029 0001:001F5E7F  4033 0001:001F5E87
+  4034 0001:001F5EB9  4039 0001:001F5EC1  4040 0001:001F5EC5  4042 0001:001F5ED2
+  4044 0001:001F5EE8  4045 0001:001F5EF0  4048 0001:001F5EF8  4054 0001:001F5FB0
+  4056 0001:001F5FC6  4057 0001:001F5FCE  4060 0001:001F5FD6  4062 0001:001F601B
+  4063 0001:001F6023  4066 0001:001F602B  4069 0001:001F604C  4070 0001:001F605B
+  4071 0001:001F6070  4072 0001:001F607F  4073 0001:001F609B  4075 0001:001F60AA
+  4077 0001:001F60C1  4080 0001:001F60CE  4081 0001:001F60DD  4082 0001:001F60F2
+  4083 0001:001F6101  4084 0001:001F611D  4087 0001:001F612C  4108 0001:001F61B6
+  4109 0001:001F61C0  4110 0001:001F61D0  4113 0001:001F61E3  4114 0001:001F61E8
+  4117 0001:001F61EE  4118 0001:001F61FC  4119 0001:001F6206  4121 0001:001F6219
+  4124 0001:001F6221  4115 0001:001F6227  4129 0001:001F622D  4131 0001:001F6237
+  4133 0001:001F6245  4134 0001:001F629B  4135 0001:001F62A2  4137 0001:001F62B6
+  4138 0001:001F62BE  4142 0001:001F62CB  4144 0001:001F62EE  4146 0001:001F62F5
+  4151 0001:001F6320  4153 0001:001F632A  4154 0001:001F6339  4159 0001:001F63F2
+  4161 0001:001F63FC  4162 0001:001F640B  4167 0001:001F64C4  4169 0001:001F64CE
+  4170 0001:001F64DD  4175 0001:001F6596  4177 0001:001F65A0  4178 0001:001F65AF
+  4183 0001:001F6668  4185 0001:001F6675  4186 0001:001F668B  4144 0001:001F668E
+  4189 0001:001F6698  4192 0001:001F66A2  4198 0001:001F675A  4200 0001:001F6770
+  4203 0001:001F6774  4140 0001:001F677E  4206 0001:001F6790  4208 0001:001F67A4
+  4209 0001:001F67AC  4211 0001:001F67D2  4213 0001:001F67D5  4214 0001:001F67E9
+  4216 0001:001F67F0  4217 0001:001F67F8  4219 0001:001F6800  4220 0001:001F6828
+  4221 0001:001F6841  4226 0001:001F68E5  4232 0001:001F6900  4233 0001:001F6908
+  4237 0001:001F6910  4238 0001:001F6942  4243 0001:001F694A  4244 0001:001F694E
+  4246 0001:001F695B  4248 0001:001F6971  4249 0001:001F6979  4252 0001:001F6981
+  4258 0001:001F6A39  4260 0001:001F6A4F  4261 0001:001F6A57  4264 0001:001F6A5F
+  4266 0001:001F6AA4  4267 0001:001F6AAC  4270 0001:001F6AB4  4271 0001:001F6AEC
+  4272 0001:001F6B13  4274 0001:001F6B3A  4299 0001:001F6B7E  4300 0001:001F6B88
+  4301 0001:001F6B98  4304 0001:001F6BAB  4305 0001:001F6BB0  4308 0001:001F6BB6
+  4309 0001:001F6BC4  4310 0001:001F6BCE  4312 0001:001F6BE1  4315 0001:001F6BE9
+  4306 0001:001F6BEF  4320 0001:001F6BF5  4322 0001:001F6BFF  4324 0001:001F6C0D
+  4325 0001:001F6C63  4326 0001:001F6C6A  4328 0001:001F6C7E  4329 0001:001F6C86
+  4332 0001:001F6C8E  4336 0001:001F6CE8  4340 0001:001F6D03  4360 0001:001F7013
+  4362 0001:001F7029  4365 0001:001F7033  4371 0001:001F70EB  4373 0001:001F7101
+  4376 0001:001F7105  4338 0001:001F710F  4379 0001:001F7121  4381 0001:001F7135
+  4382 0001:001F713D  4384 0001:001F7163  4386 0001:001F7169  4387 0001:001F717D
+  4389 0001:001F7184  4390 0001:001F718C  4392 0001:001F7194  4393 0001:001F71B9
+  4394 0001:001F71D2  4399 0001:001F7276  4404 0001:001F7291  4405 0001:001F7299
+  4409 0001:001F72A1  4410 0001:001F72D3  4415 0001:001F72DB  4416 0001:001F72DF
+  4418 0001:001F72EC  4420 0001:001F7302  4421 0001:001F730A  4424 0001:001F7312
+  4430 0001:001F73CA  4432 0001:001F73E0  4433 0001:001F73E8  4436 0001:001F73F0
+  4438 0001:001F7435  4439 0001:001F743D  4442 0001:001F7445  4443 0001:001F747D
+  4444 0001:001F74A4  4446 0001:001F74CB  4468 0001:001F750F  4469 0001:001F7519
+  4470 0001:001F7529  4473 0001:001F753C  4474 0001:001F7541  4477 0001:001F7547
+  4478 0001:001F7555  4479 0001:001F755F  4481 0001:001F7572  4484 0001:001F757A
+  4475 0001:001F7580  4489 0001:001F7586  4491 0001:001F7590  4493 0001:001F759E
+  4494 0001:001F75F4  4495 0001:001F75FB  4497 0001:001F760F  4498 0001:001F7617
+  4501 0001:001F761F  4505 0001:001F7679  4509 0001:001F7694  4529 0001:001F79A4
+  4531 0001:001F79BA  4534 0001:001F79C4  4540 0001:001F7A7C  4542 0001:001F7A92
+  4545 0001:001F7A96  4507 0001:001F7AA0  4548 0001:001F7AB2  4550 0001:001F7AC6
+  4551 0001:001F7ACE  4553 0001:001F7AF4  4555 0001:001F7AFA  4556 0001:001F7B0E
+  4558 0001:001F7B15  4559 0001:001F7B1D  4561 0001:001F7B25  4562 0001:001F7B4A
+  4563 0001:001F7B63  4568 0001:001F7C07  4573 0001:001F7C22  4574 0001:001F7C2A
+  4578 0001:001F7C32  4579 0001:001F7C64  4584 0001:001F7C6C  4585 0001:001F7C70
+  4587 0001:001F7C7D  4589 0001:001F7C93  4590 0001:001F7C9B  4593 0001:001F7CA3
+  4599 0001:001F7D5B  4601 0001:001F7D71  4602 0001:001F7D79  4605 0001:001F7D81
+  4607 0001:001F7DC6  4608 0001:001F7DCE  4611 0001:001F7DD6  4612 0001:001F7E0E
+  4613 0001:001F7E35  4615 0001:001F7E5C  4652 0001:001F7EAF  4653 0001:001F7EB9
+  4654 0001:001F7EC9  4657 0001:001F7EDC  4658 0001:001F7EE1  4661 0001:001F7EE7
+  4662 0001:001F7EF5  4663 0001:001F7EFF  4665 0001:001F7F12  4668 0001:001F7F1A
+  4659 0001:001F7F20  4673 0001:001F7F26  4675 0001:001F7F30  4677 0001:001F7F3E
+  4678 0001:001F7F94  4679 0001:001F7F9B  4681 0001:001F7FAF  4682 0001:001F7FB7
+  4685 0001:001F7FBF  4689 0001:001F8019  4693 0001:001F8034  4694 0001:001F8060
+  4696 0001:001F806B  4711 0001:001F81DA  4712 0001:001F8217  4714 0001:001F825F
+  4716 0001:001F828A  4723 0001:001F8456  4725 0001:001F846C  4728 0001:001F8476
+  4734 0001:001F852E  4736 0001:001F8544  4739 0001:001F8548  4691 0001:001F8552
+  4742 0001:001F8564  4744 0001:001F8578  4745 0001:001F8580  4747 0001:001F85A6
+  4749 0001:001F85AC  4750 0001:001F85C0  4752 0001:001F85C7  4753 0001:001F85CF
+  4755 0001:001F85D7  4756 0001:001F85FC  4757 0001:001F8615  4762 0001:001F86B9
+  4767 0001:001F86D4  4768 0001:001F86DC  4772 0001:001F86E4  4773 0001:001F8716
+  4778 0001:001F871E  4779 0001:001F8722  4781 0001:001F872F  4783 0001:001F8745
+  4784 0001:001F874D  4787 0001:001F8755  4793 0001:001F880D  4795 0001:001F8823
+  4796 0001:001F882B  4799 0001:001F8833  4801 0001:001F8878  4802 0001:001F8880
+  4805 0001:001F8888  4806 0001:001F88C0  4807 0001:001F88E7  4809 0001:001F890E
+  4844 0001:001F8970  4845 0001:001F897A  4846 0001:001F898A  4849 0001:001F899D
+  4850 0001:001F89A2  4853 0001:001F89A8  4854 0001:001F89B6  4855 0001:001F89C0
+  4857 0001:001F89D3  4860 0001:001F89DB  4851 0001:001F89E1  4865 0001:001F89E7
+  4867 0001:001F89F1  4869 0001:001F89FF  4870 0001:001F8A55  4871 0001:001F8A5C
+  4873 0001:001F8A70  4874 0001:001F8A78  4877 0001:001F8A80  4881 0001:001F8ADA
+  4885 0001:001F8AF5  4900 0001:001F8C64  4901 0001:001F8CA1  4903 0001:001F8CE9
+  4905 0001:001F8D14  4912 0001:001F8EE0  4914 0001:001F8EF6  4917 0001:001F8F00
+  4923 0001:001F8FB8  4925 0001:001F8FCE  4928 0001:001F8FD2  4883 0001:001F8FDC
+  4931 0001:001F8FEE  4933 0001:001F9002  4934 0001:001F900A  4936 0001:001F9030
+  4938 0001:001F9036  4939 0001:001F904A  4941 0001:001F9051  4942 0001:001F9059
+  4944 0001:001F9061  4945 0001:001F9086  4946 0001:001F909F  4951 0001:001F9143
+  4956 0001:001F915E  4957 0001:001F9166  4961 0001:001F916E  4962 0001:001F91A0
+  4967 0001:001F91A8  4968 0001:001F91AC  4970 0001:001F91B9  4972 0001:001F91CF
+  4973 0001:001F91D7  4976 0001:001F91DF  4982 0001:001F9297  4984 0001:001F92AD
+  4985 0001:001F92B5  4988 0001:001F92BD  4990 0001:001F9302  4991 0001:001F930A
+  4994 0001:001F9312  4995 0001:001F934A  4996 0001:001F9371  4998 0001:001F9398
+  5031 0001:001F93F5  5032 0001:001F93FF  5033 0001:001F940F  5036 0001:001F9422
+  5037 0001:001F9427  5040 0001:001F942D  5041 0001:001F943B  5042 0001:001F9445
+  5044 0001:001F9458  5047 0001:001F9460  5038 0001:001F9466  5052 0001:001F946C
+  5054 0001:001F9476  5056 0001:001F9484  5057 0001:001F94DA  5058 0001:001F94E1
+  5060 0001:001F94F5  5061 0001:001F94FD  5064 0001:001F9505  5068 0001:001F955F
+  5072 0001:001F957A  5087 0001:001F96E9  5088 0001:001F9726  5090 0001:001F976E
+  5092 0001:001F9799  5099 0001:001F9965  5101 0001:001F997B  5104 0001:001F9985
+  5110 0001:001F9A3D  5112 0001:001F9A53  5115 0001:001F9A57  5070 0001:001F9A61
+  5118 0001:001F9A73  5120 0001:001F9A87  5121 0001:001F9A8F  5123 0001:001F9AB5
+  5125 0001:001F9ABB  5126 0001:001F9ACF  5128 0001:001F9AD6  5129 0001:001F9ADE
+  5131 0001:001F9AE6  5132 0001:001F9B0B  5133 0001:001F9B24  5138 0001:001F9BC8
+  5143 0001:001F9BE3  5144 0001:001F9BEB  5148 0001:001F9BF3  5149 0001:001F9C25
+  5154 0001:001F9C2D  5155 0001:001F9C31  5157 0001:001F9C3E  5159 0001:001F9C54
+  5160 0001:001F9C5C  5163 0001:001F9C64  5169 0001:001F9D1C  5171 0001:001F9D32
+  5172 0001:001F9D3A  5175 0001:001F9D42  5177 0001:001F9D87  5178 0001:001F9D8F
+  5181 0001:001F9D97  5182 0001:001F9DCF  5183 0001:001F9DF6  5185 0001:001F9E1D
+  5187 0001:001F9E65  5195 0001:001F9EA4  5196 0001:001F9EAE  5197 0001:001F9EBE
+  5200 0001:001F9ED1  5201 0001:001F9ED6  5204 0001:001F9EDC  5205 0001:001F9EEA
+  5206 0001:001F9EF4  5208 0001:001F9F07  5211 0001:001F9F0F  5202 0001:001F9F15
+  5216 0001:001F9F1B  5218 0001:001F9F25  5220 0001:001F9F33  5221 0001:001F9F89
+  5222 0001:001F9F90  5224 0001:001F9FA4  5225 0001:001F9FAC  5228 0001:001F9FB4
+  5231 0001:001F9FF3  5235 0001:001FA00E  5243 0001:001FA12E  5245 0001:001FA144
+  5248 0001:001FA14E  5254 0001:001FA206  5256 0001:001FA21C  5259 0001:001FA220
+  5233 0001:001FA22A  5262 0001:001FA23C  5264 0001:001FA250  5265 0001:001FA258
+  5267 0001:001FA27E  5269 0001:001FA284  5270 0001:001FA298  5272 0001:001FA29F
+  5273 0001:001FA2A7  5275 0001:001FA2AF  5276 0001:001FA2D4  5277 0001:001FA2ED
+  5282 0001:001FA391  5287 0001:001FA3AC  5288 0001:001FA3B4  5292 0001:001FA3BC
+  5293 0001:001FA3EE  5296 0001:001FA3F6  5298 0001:001FA3FF  5302 0001:001FA422
+  5304 0001:001FA44F  5305 0001:001FA466  5307 0001:001FA468  5298 0001:001FA46B
+  5311 0001:001FA46E  5317 0001:001FA526  5328 0001:001FA53C  5331 0001:001FA57D
+  5333 0001:001FA586  5334 0001:001FA59A  5338 0001:001FA59C  5340 0001:001FA5DF
+  5341 0001:001FA5F3  5344 0001:001FA5F5  2276 0001:001FA604  5356 0001:001FA61B
+  5358 0001:001FA623  5359 0001:001FA62F  5364 0001:001FA882  5370 0001:001FF0EC
+  5376 0001:001FF114  5378 0001:001FF13F  5379 0001:001FF14B  5383 0001:001FF150
+  5386 0001:001FF179  5389 0001:001FF196  5390 0001:001FF1A0  5391 0001:001FF1B0
+  5393 0001:001FF1BA  5395 0001:001FF1E6  5397 0001:001FF231  5399 0001:001FF24E
+  5403 0001:001FF261  5404 0001:001FF26D  5407 0001:001FF26F  5409 0001:001FF279
+  5410 0001:001FF280  5411 0001:001FF289  5413 0001:001FF2C1  5417 0001:001FF3C0
+  5418 0001:001FF3C6  5420 0001:001FF3CB  5421 0001:001FF3D9  5422 0001:001FF3E5
+  5424 0001:001FF3FC  5425 0001:001FF401  5429 0001:001FF408  5430 0001:001FF40E
+  5432 0001:001FF413  5433 0001:001FF421  5434 0001:001FF42D  5436 0001:001FF444
+  5438 0001:001FF449  5449 0001:001FF450  5450 0001:001FF474  5451 0001:001FF487
+  5454 0001:001FF496  5457 0001:001FF4AA  5459 0001:001FF4BC  5462 0001:001FF4D0
+  5463 0001:001FF4DE  5465 0001:001FF517  5469 0001:001FF51D  5472 0001:001FF530
+  5475 0001:001FF539  5480 0001:001FF543  5481 0001:001FF54B  5484 0001:001FF553
+  5486 0001:001FF58C  5487 0001:001FF5A2  5489 0001:001FF5B4  5490 0001:001FF5D2
+  5492 0001:001FF5F0  5503 0001:001FF632  5504 0001:001FF644  5505 0001:001FF65C
+  5508 0001:001FF677  5509 0001:001FF67C  5512 0001:001FF682  5513 0001:001FF690
+  5514 0001:001FF6A2  5516 0001:001FF6B5  5519 0001:001FF6BD  5510 0001:001FF6C3
+  5524 0001:001FF6C9  5526 0001:001FF6D3  5528 0001:001FF6E1  5529 0001:001FF728
+  5530 0001:001FF72F  5532 0001:001FF743  5533 0001:001FF74B  5536 0001:001FF753
+  5549 0001:001FF765  5550 0001:001FF76D  5553 0001:001FF78C  5555 0001:001FF7BE
+  5561 0001:001FF806  5562 0001:001FF837  5564 0001:001FF87C  5566 0001:001FF889
+  5550 0001:001FF88C  5569 0001:001FF893  5570 0001:001FF8AB  5572 0001:001FF8C1
+  5547 0001:001FF8D3  5574 0001:001FF8ED  5576 0001:001FF8FF  5578 0001:001FF913
+  5579 0001:001FF91B  5581 0001:001FF93E  5583 0001:001FF940  5584 0001:001FF954
+  5586 0001:001FF966  5587 0001:001FF96E  5593 0001:001FF97B  5594 0001:001FF983
+  5600 0001:001FF98B  5603 0001:001FF9C0  5455 0001:001FF9CF  5605 0001:001FF9E6
+  5610 0001:001FFA24  5612 0001:001FFEAC  5612 0001:001FFEB3
 
 Line numbers for uj_001(..\..\..\..\Projetos\Rotinas Delphi\Janelas\J_001 Login\uj_001.pas) segment .text
 
-    64 0001:001FF5F0    67 0001:001FF5F6    68 0001:001FF605    69 0001:001FF614
-    70 0001:001FF626    71 0001:001FF638    72 0001:001FF64A    73 0001:001FF65C
-    74 0001:001FF66E    75 0001:001FF680    76 0001:001FF68C    78 0001:001FF69C
-    82 0001:001FF6CC    83 0001:001FF6D1    87 0001:001FF6D4    88 0001:001FF6D9
-    91 0001:001FF6DC    92 0001:001FF6DF    94 0001:001FF6E4    95 0001:001FF6E7
-    97 0001:001FF6F5   100 0001:001FF6F8   101 0001:001FF6FB   103 0001:001FF700
-   104 0001:001FF703   105 0001:001FF713   106 0001:001FF723   107 0001:001FF733
-   108 0001:001FF73F   109 0001:001FF749   110 0001:001FF74E   112 0001:001FF75C
-   118 0001:001FF78C   119 0001:001FF78F   120 0001:001FF795   122 0001:001FF7A1
-   124 0001:001FF7D8   124 0001:001FF7DF
+    64 0001:00200194    67 0001:0020019A    68 0001:002001A9    69 0001:002001B8
+    70 0001:002001CA    71 0001:002001DC    72 0001:002001EE    73 0001:00200200
+    74 0001:00200212    75 0001:00200224    76 0001:00200230    78 0001:00200240
+    82 0001:00200270    83 0001:00200275    87 0001:00200278    88 0001:0020027D
+    91 0001:00200280    92 0001:00200283    94 0001:00200288    95 0001:0020028B
+    97 0001:00200299   100 0001:0020029C   101 0001:0020029F   103 0001:002002A4
+   104 0001:002002A7   105 0001:002002B7   106 0001:002002C7   107 0001:002002D7
+   108 0001:002002E3   109 0001:002002ED   110 0001:002002F2   112 0001:00200300
+   118 0001:00200330   119 0001:00200333   120 0001:00200339   122 0001:00200345
+   124 0001:0020037C   124 0001:00200383
 
 Line numbers for PMovtosEmpresas(C:\Projetos\BelShop\Fontes\PMovtosEmpresas.dpr) segment .text
 
-    18 0001:00200100    21 0001:00200111    22 0001:0020011F    24 0001:0020012B
-    28 0001:00200138    29 0001:00200144    30 0001:00200155    32 0001:00200160
-    33 0001:00200178    34 0001:00200190    35 0001:002001A8    36 0001:002001C0
-    37 0001:002001D8    38 0001:002001F0    41 0001:002001FC
+    18 0001:00200CA4    21 0001:00200CB5    22 0001:00200CC3    24 0001:00200CCF
+    28 0001:00200CDC    29 0001:00200CE8    30 0001:00200CF9    32 0001:00200D04
+    33 0001:00200D1C    34 0001:00200D34    35 0001:00200D4C    36 0001:00200D64
+    37 0001:00200D7C    38 0001:00200D94    41 0001:00200DA0
 
 Bound resource files
 
@@ -46892,4 +46901,4 @@ PMovtosEmpresas.res
 PMovtosEmpresas.drf
 
 
-Program entry point at 0001:00200100
+Program entry point at 0001:00200CA4

@@ -125,6 +125,8 @@ type
     Procedure AtualizaLP(sDta: String);
     Procedure AtualizaForn(sDta: String);
 
+    Procedure Es_Finan_Curva_ABC(sCodLoja: String);
+
     // Salão
     Procedure AtualizaServicosSalao;
     Procedure AtualizaPercComissoesSalao;
@@ -153,7 +155,7 @@ const //  RODA PROGRAMA NA BARRA DE TAREFAS
 var
   FrmMovtosEmpresas: TFrmMovtosEmpresas;
 
-  bgNewIndTipo: Boolean; // Se Insere Ind_tipo=OK - INSERT INTO movtos_empresas (ind_tipo,  
+  bgNewIndTipo: Boolean; // Se Insere Ind_tipo=OK - INSERT INTO movtos_empresas (ind_tipo,
 
   // Oque Processar ////////////////////////////////////////////////////////////
   bProcEstoque, // Processa Tabela ESTOQUE
@@ -1247,6 +1249,90 @@ begin
 
 End; // Atualiza Serviços de Profissionais de Salão >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// Insere Novos Produtos no Controle de Estoques >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmMovtosEmpresas.Es_Finan_Curva_ABC(sCodLoja: String);
+Var
+  MySql: String;
+Begin
+  Try
+    // Monta Transacao =========================================================
+    TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMMovtosEmpresas.SQLC.StartTransaction(TD);
+
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
+           ' Values ('+
+           QuotedStr('OK')+', '+
+           QuotedStr('Es_Finan_Curva_ABC: Bel_'+sCodLoja)+', '+
+           QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
+    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+    // Busca Informações Atuais em Es_Finan_Curva_ABC da Loja  =================
+    MySql:=' SELECT FIRST 1 num_dias_uteis, vlr_demandas_ano, qtd_demandas_ano, num_dias_estocagem'+
+           ' FROM ES_FINAN_CURVA_ABC f'+
+           ' WHERE f.ind_curva=''E'''+
+           ' AND   f.per_participacao=0.0000'+
+           ' and   f.cod_loja='+QuotedStr(sCodLoja);
+    DMMovtosEmpresas.CDS_BuscaRapida.Close;
+    DMMovtosEmpresas.SDS_BuscaRapida.CommandText:=MySql;
+    DMMovtosEmpresas.CDS_BuscaRapida.Open;
+
+    // Insere Novo Produtos na Loja  ===========================================
+    MySql:=' INSERT INTO ES_FINAN_CURVA_ABC'+
+           ' (cod_loja, cod_produto, est_minimo, est_maximo, num_dias_uteis, vlr_demandas_ano,'+
+           '  vlr_demandas, per_participacao, ind_curva, qtd_demandas_ano, qtd_demandas, per_part_qtd,'+
+           '  ind_curva_qtd, num_dias_estocagem, qtd_transito, dta_atualizacao, hra_atualizacao,'+
+           '  usu_altera, dta_altera)'+
+
+           ' SELECT '+QuotedStr(sCodLoja)+' cod_loja, pr.codproduto cod_produto,'+
+           ' 0 est_minimo, 0 est_maximo,'+
+           QuotedStr(DMMovtosEmpresas.CDS_BuscaRapida.FieldByName('num_dias_uteis').AsString)+' num_dias_uteis,'+
+           QuotedStr(DMMovtosEmpresas.CDS_BuscaRapida.FieldByName('vlr_demandas_ano').AsString)+' vlr_demandas_ano,'+
+           ' 0.00 vlr_demandas, 0.0000 per_participacao, ''E'' ind_curva,'+
+           QuotedStr(DMMovtosEmpresas.CDS_BuscaRapida.FieldByName('qtd_demandas_ano').AsString)+' qtd_demandas_ano,'+
+           ' 0 qtd_demandas, 0.0000 per_part_qtd, ''E'' ind_curva_qtd,'+
+           QuotedStr(DMMovtosEmpresas.CDS_BuscaRapida.FieldByName('num_dias_estocagem').AsString)+' num_dias_estocagem,'+
+           ' 0 qtd_transito, CURRENT_DATE dta_atualizacao, CURRENT_TIME hra_atualizacao,'+
+           ' 0 usu_altera, CURRENT_TIMESTAMP dta_altera'+
+
+           ' FROM PRODUTO pr'+
+           ' WHERE pr.principalfor NOT IN (''000300'', ''000500'', ''000883'', ''010000'', ''001072'')'+
+           ' AND   pr.codaplicacao NOT IN (''0016'', ''0015'', ''0017'')'+
+           ' AND   pr.situacaopro IN (0, 3)'+
+           ' AND   pr.datainclusao > CURRENT_DATE - 10'+
+           ' AND   NOT EXISTS(SELECT 1'+
+           '                  FROM es_finan_curva_abc ef'+
+           '                  WHERE ef.cod_loja = '+QuotedStr(sCodLoja)+
+           '                  AND   ef.cod_produto = pr.codproduto)';
+    DMMovtosEmpresas.CDS_BuscaRapida.Close;
+    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+    MySql:=' DELETE FROM movtos_empresas m'+
+           ' Where m.Ind_Tipo=''OK'''+
+           ' And m.NomeFornecedor=''Es_Finan_Curva_ABC: Bel_'+sCodLoja+'''';
+    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+    DMMovtosEmpresas.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+  Except
+    on e : Exception do
+    Begin
+      DMMovtosEmpresas.SQLC.Rollback(TD);
+      DMMovtosEmpresas.IBQ_EstoqueLoja.Close;
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+    End; // on e : Exception do
+  End; // Try
+
+End; // Insere Novos Produtos no Controle de Estoques >>>>>>>>>>>>>>>>>>>>>>>>>>
+
 // Atualiza Fornecedores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmMovtosEmpresas.AtualizaForn(sDta: String);
 Var
@@ -1981,8 +2067,8 @@ begin
   bExcluir:=False;
   bProcessou:=True;
 
-//odiropss - tirar
-//bgJaProcessouUmaVez:=True;
+// odiropss - tirar
+// bgJaProcessouUmaVez:=True;
 
   // ===========================================================================
   // PROCESSAMENTOS SOMENTE UMA VEZ - INICIO ===================================
@@ -2201,8 +2287,12 @@ begin
       Application.Terminate;
       Exit;
     End;
-    bExcluir:=False;
 
+    // ATUALIZA ES_FINAN_CURVA_ABC DA LOJA =====================================
+    Es_Finan_Curva_ABC(sCodEmpresa);
+
+    // Inicializa Variaveis ====================================================
+    bExcluir:=False;
     bProcEstoque  :=True;
 
     bProcEstFinal :=True;
