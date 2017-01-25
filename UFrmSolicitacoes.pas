@@ -225,13 +225,13 @@ type
     Bt_FinanObjetivosHabDeOK: TJvXPButton;
     Panel8: TPanel;
     Bt_QtdCaixaCDVoltar: TJvXPButton;
-    Panel19: TPanel;
-    Panel20: TPanel;
-    Panel17: TPanel;
-    Panel14: TPanel;
-    Panel16: TPanel;
-    Panel18: TPanel;
-    Panel15: TPanel;
+    Pan_Cor1: TPanel;
+    Pan_Cor2: TPanel;
+    Pan_Cor3: TPanel;
+    Pan_Cor4: TPanel;
+    Pan_Cor5: TPanel;
+    Pan_Cor6: TPanel;
+    Pan_Cor7: TPanel;
     Panel10: TPanel;
     Bt_GeraOCLegendaCoresVoltar: TJvXPButton;
     Gb_FinanFechaCaixaLegenda: TcxGroupBox;
@@ -3466,6 +3466,10 @@ begin
      EdtHabServAbrev.SetFocus;
   End;
 
+  If (PC_Principal.ActivePage=Ts_GeraOCLegendaCores) And (Ts_GeraOCLegendaCores.CanFocus) Then
+  Begin
+    Bt_GeraOCLegendaCoresVoltar.SetFocus;
+  End;
 
   If (PC_Principal.ActivePage=Ts_ManutDiversas) And (Ts_ManutDiversas.CanFocus) Then
   Begin

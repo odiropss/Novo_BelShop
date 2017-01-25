@@ -3,7 +3,7 @@ unit UDMLinxWebService;
 interface
 
 uses
-  SysUtils, Classes, DBXpress, FMTBcd, DB, SqlExpr, DBClient, Provider;
+  SysUtils, Classes, DBXpress, FMTBcd, DB, SqlExpr, DBClient, Provider, Dialogs;
 
 type
   TDMLinxWebService = class(TDataModule)
@@ -57,7 +57,7 @@ Var
 begin
 
   Result:=True;
-
+//ShowMessage('001');
   If SQLC.Connected Then
    SQLC.Connected:=False;
 
@@ -90,6 +90,8 @@ begin
     Except // finally
     End;
   end; // with SQLC do
+//ShowMessage('002');
+
 End; // Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 //==============================================================================

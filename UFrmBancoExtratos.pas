@@ -19,7 +19,7 @@ uses
   cxCalendar, JvEditorCommon, JvEditor, ToolEdit, CurrEdit, JvExControls,
   JvXPCore, JvXPButtons, ExtCtrls, DBGrids, Classes, SysUtils, Comobj, Variants,
   StrUtils, Messages, Dialogs,
-  IBQuery, DBXpress, DBClient;
+  IBQuery, DBXpress, DBClient, dxSkinsdxStatusBarPainter, dxStatusBar;
   //  Último: DBClient;
 
   { RETIRADOS - 15/09/2015
@@ -156,7 +156,6 @@ type
     Bt_ConcManutSalvaCSV: TJvXPButton;
     Bt_ConcManutVoltar: TJvXPButton;
     Dbg_ConcManutTotalPagtos: TDBGrid;
-    StatusBar2: TStatusBar;
     MenuHistoricosBancarios: TMenuItem;
     SubMenuConcilicaoAutomatica: TMenuItem;
     Ts_HistConcAuto: TTabSheet;
@@ -206,6 +205,7 @@ type
     Pan_HistConcAutoDuplica: TPanel;
     JvXPButton1: TJvXPButton;
     Edit1: TEdit;
+    dxStatusBar3: TdxStatusBar;
     procedure FormCreate(Sender: TObject);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SairClick(Sender: TObject);
@@ -6948,16 +6948,12 @@ begin
         If Not bGrava Then
          Begin
            sgDesMovto:=Trim(sgDesMovto+' '+Trim(Copy(slinha,5,40)));
-//           sgDocto:=Trim(Copy(slinha,46,6));
-//           sgValor:=Trim(Copy(slinha,53,28));
            sgDocto:=Trim(Copy(slinha,iPosDocto,10));
            sgValor:=Trim(Copy(slinha,iPosDocto+11,80-(iPosDocto+10)));
          End
         Else
          Begin
            sgDesMovto:=Trim(Copy(slinha,5,40));
-//           sgDocto:=Trim(Copy(slinha,46,6));
-//           sgValor:=Trim(Copy(slinha,53,28));
            sgDocto:=Trim(Copy(slinha,iPosDocto,10));
            sgValor:=Trim(Copy(slinha,iPosDocto+11,80-(iPosDocto+10)));
          End;
@@ -7590,7 +7586,9 @@ begin
              ExtratosSalvar;
           End; // If sgSaldo='0' Then
 
-          If (sgDesMovto<>'SALDO ANTERIOR') and (sgSaldo<>'0') Then
+//odirapagar - 25/01/2017
+//          If (sgDesMovto<>'SALDO ANTERIOR') and ((sgSaldo<>'0') Or (sgSaldo<>'')) Then
+          if i=Strg_SantanderImpExtrato.RowCount-1 Then
           Begin
             // Não Processa Data de Hoje
             s:=f_Troca('/','.',sgDtaServidor);
@@ -7607,8 +7605,8 @@ begin
               sgDocto:='';
               ExtratosSalvar;
             End;
-          End; // If (sgDesMovto<>'SALDO ANTERIOR') and (sgSaldo<>'0') Then
-        End; // If Trim(Strg_SantanderImpExtrato.Cells[1,i])<>'SALDO ANTERIOR' Then
+          End; // if i=Strg_SantanderImpExtrato.RowCount-1 Then
+        End; // If sgDesMovto<>'SALDO ANTERIOR' Then
 
       End; // If Trim(sgdta)<>'' Then
     End; // For i:=1 to Strg_SantanderImpExtrato.RowCount-1 do
@@ -9766,8 +9764,53 @@ begin
 
       Dbg_ConcManutTotalPagtos.SetFocus;
     End; // If Not DMConciliacao.CDS_CMPagtos.IsEmpty Then
-  end; // If Key=Vk_F11 Then
+  end; // If (Key=Vk_F11) And (DMConciliacao.CDS_CMPagtos.Active) Then
 
+  // Apresenta Legenda de Cores ================================================
+  If (Key=Vk_F1) And (PC_Principal.ActivePage=Ts_ConciliacaoManut) And
+     ((DMConciliacao.CDS_CMPagtos.Active) Or (DMConciliacao.CDS_CMExtratos.Active)) Then
+  Begin                                       
+    // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
+    FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+    FrmSolicitacoes.Caption:='Manutençao de Conciliações';
+    FrmBelShop.AbreSolicitacoes(4);
+
+    FrmSolicitacoes.Pan_Cor1.Font.Color:=clWindowText;
+    FrmSolicitacoes.Pan_Cor1.Font.Style:=[fsBold];
+    FrmSolicitacoes.Pan_Cor1.Color  :=clWhite;
+    FrmSolicitacoes.Pan_Cor1.Caption:='Item Sem Definição para Conciliação (Ainda Não Conciliado)';
+
+    FrmSolicitacoes.Pan_Cor2.Font.Color:=clWindowText;
+    FrmSolicitacoes.Pan_Cor2.Font.Style:=[fsBold];
+    FrmSolicitacoes.Pan_Cor2.Color  :=clYellow;
+    FrmSolicitacoes.Pan_Cor2.Caption:='Item Selecionado para Conciliação (Ainda Não Conciliado)';
+
+    FrmSolicitacoes.Pan_Cor3.Font.Color:=clWindowText;
+    FrmSolicitacoes.Pan_Cor3.Font.Style:=[fsBold];
+    FrmSolicitacoes.Pan_Cor3.Color  :=clLime;
+    FrmSolicitacoes.Pan_Cor3.Caption:='Conciliado Pelo Sistema - Automático';
+
+    FrmSolicitacoes.Pan_Cor4.Font.Color:=clWindowText;
+    FrmSolicitacoes.Pan_Cor4.Font.Style:=[fsBold];
+    FrmSolicitacoes.Pan_Cor4.Color  :=$00BBBBFF;
+    FrmSolicitacoes.Pan_Cor4.Caption:='Conciliado Pelo Usuário - Manual';
+
+    FrmSolicitacoes.Pan_Cor5.Font.Color:=clWindowText;
+    FrmSolicitacoes.Pan_Cor5.Font.Style:=[fsBold];
+    FrmSolicitacoes.Pan_Cor5.Color  :=$00FF75BA;
+    FrmSolicitacoes.Pan_Cor5.Caption:='Conciliado Pelo Usuário - Manual (Sem Extrato)';
+
+    FrmSolicitacoes.Pan_Cor6.Font.Color:=clWindowText;
+    FrmSolicitacoes.Pan_Cor6.Font.Style:=[fsBold];
+    FrmSolicitacoes.Pan_Cor6.Color  :=clAqua;
+    FrmSolicitacoes.Pan_Cor6.Caption:='Conciliado Pelo Usuário - Manual (Com Dinheiro)';
+
+    FrmSolicitacoes.Pan_Cor7.Visible:=False;
+
+    bgProcessar:=False;
+    FrmSolicitacoes.ShowModal;
+    FreeAndNil(FrmSolicitacoes);
+  End; // If (Key=Vk_F1) And (PC_Principal.ActivePage=Ts_ConciliacoesManut) Then
 end;
 
 procedure TFrmBancoExtratos.SubMenuConcilicaoAutomaticaClick(

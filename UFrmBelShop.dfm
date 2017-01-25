@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_OrdemCompra
+    ActivePage = Ts_FinanObjetivos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -7139,23 +7139,6 @@ object FrmBelShop: TFrmBelShop
                   ReadOnly = True
                   TabOrder = 0
                 end
-              end
-              object JvXPButton1: TJvXPButton
-                Tag = 92
-                Left = 592
-                Top = 2
-                Width = 139
-                Height = 36
-                Caption = 'Acerta Exporta'#231#227'o '#13#10'      SIDICOM'
-                TabOrder = 5
-                ShowFocusRect = True
-                Align = alRight
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
               end
             end
             object Pan_CalculoOC: TPanel
@@ -15905,7 +15888,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_FinanComprPlanFinanRelacao
+        ActivePage = Ts_FinanComprPlanFinanPlanilhaFinanceira
         Align = alClient
         TabOrder = 0
         OnChange = PC_FinanComprPlanFinanChange
@@ -27099,7 +27082,7 @@ object FrmBelShop: TFrmBelShop
         Top = 43
         Width = 971
         Height = 493
-        ActivePage = Ts_FinanMLFiltros
+        ActivePage = Ts_FinanMLFat
         Align = alClient
         TabOrder = 1
         OnChange = PC_FinanMargemLucroChange
@@ -29225,7 +29208,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = TS_FiltroGrupos
+        ActivePage = TS_FiltroFornecedor
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText

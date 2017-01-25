@@ -1369,7 +1369,6 @@ type
     EdtCurvaABCEndTotalProc: TCurrencyEdit;
     N49: TMenuItem;
     SubMenuCentroDistQtdCaixaCD: TMenuItem;
-    JvXPButton1: TJvXPButton;
 
     // Odir ====================================================================
 
@@ -18258,7 +18257,7 @@ Begin
   End;
 
   // Monta Sql Busca na Loja (Conexão Remoto)
-  If Rb_CalculoTpProcLoja.Checked Then
+  If (Rb_CalculoTpProcLoja.Checked) And (sCodFilial<>'18') Then
   Begin
     IBQ.Close;
     IBQ.SQL.Clear;
@@ -18321,10 +18320,10 @@ Begin
     IBQ.Close;
     IBQ.SQL.Clear;
     IBQ.SQL.Add(MySqlSelect+MySqlClausula1+MySqlClausula2+MySqlOrderGrup);
-  End; // If Rb_CalculoTpProcLoja.Checked Then // Monta Sql Busca na Loja (Conexão Remoto)
+  End; // If (Rb_CalculoTpProcLoja.Checked) And (sCodFilial<>'18') Then // Monta Sql Busca na Loja (Conexão Remoto)
 
   // Monta Sql Busca da Loja LOCAL (Conexão Local)
-  If Rb_CalculoTpProcLocal.Checked Then
+  If (Rb_CalculoTpProcLocal.Checked) or (sCodFilial='18') Then
   Begin
     // Monta Select para Filiais =================================================
     MySqlSelect:='SELECT'+
@@ -18379,7 +18378,7 @@ Begin
     IBQ.Close;
     IBQ.SQL.Clear;
     IBQ.SQL.Add(MySqlSelect+MySqlClausula1+MySqlClausula2+MySqlOrderGrup);
-  End; // If Rb_CalculoTpProcLoja.Checked Then
+  End; // If (Rb_CalculoTpProcLocal.Checked) or (sCodFilial='18') Then // Monta Sql Busca da Loja LOCAL (Conexão Local)
 
 End; // Monta Select para Filial >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -18392,326 +18391,319 @@ Var
   MySql: String;
   cDemanda: Currency;
 Begin
+// OdirApagar - Loja 18 Agora Sempre Local - 24/01/2017
+//  MontaProgressBar(True, FrmBelShop);
+//
+//  sgLojasNConectadas:='';
+//  DMBelShop.CDS_EmpProcessa.First;
+//  While Not DMBelShop.CDS_EmpProcessa.Eof do
+//  Begin
+//    pgProgBar.Position:=0;
+//    Refresh;
+//
+//    if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
+//    Begin
+//      sCodFilial:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
 
-  MontaProgressBar(True, FrmBelShop);
+  // Apresentacao ==========================================================
+  OdirPanApres.Caption:='AGUARDE !! Processando Loja: Bel_'+sCodFilial+' - '+
+                             DMBelShop.CDS_EmpProcessaRAZAO_SOCIAL.AsString;
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Visible:=True;
+  Refresh;
 
-  sgLojasNConectadas:='';
-  DMBelShop.CDS_EmpProcessa.First;
-  While Not DMBelShop.CDS_EmpProcessa.Eof do
+  // Conecta Empresa =======================================================
+  If ConexaoEmpIndividual('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'A') Then
+   Begin
+     bSiga:=True;
+   End
+  Else
+   Begin
+     If sgLojasNConectadas='' Then
+      sgLojasNConectadas:='Bel_'+sCodFilial
+     Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sCodFilial) then
+      sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sCodFilial;
+
+     bSiga:=False;
+   End; // If ConexaoEmpIndividual('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'A') Then
+
+  // Inicia Processamento ==================================================
+  If bSiga Then
   Begin
-    pgProgBar.Position:=0;
-    Refresh;
+    // Cria Query da Empresa ------------------------------------
+    CriaQueryIB('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString,
+                'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString,
+                IBQ_ConsultaFilial, False, True);
 
-    if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
+    // Apropria Parametros da Filial ----------------------------
+    IBQ_ConsultaFilial.Params.ParamByName('pCodFilial').Value:=StrToInt(sCodFilial);
+
+    // Busca Itens da Filial  -----------------------------------
+    i:=0;
+    bSiga:=False;
+    While Not bSiga do
     Begin
-      sCodFilial:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+      Try
+        IBQ_ConsultaFilial.Open;
+        bSiga:=True;
+      Except
+        Inc(i);
+      End; // Try
 
-      // Apresentacao ==========================================================
-      OdirPanApres.Caption:='AGUARDE !! Processando Loja: Bel_'+sCodFilial+' - '+
-                                 DMBelShop.CDS_EmpProcessaRAZAO_SOCIAL.AsString;
-      OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-      OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
-      OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
-      OdirPanApres.Visible:=True;
-      Refresh;
-
-      // Conecta Empresa =======================================================
-      If ConexaoEmpIndividual('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'A') Then
-       Begin
-         bSiga:=True;
-       End
-      Else
-       Begin
-         If sgLojasNConectadas='' Then
-          sgLojasNConectadas:='Bel_'+sCodFilial
-         Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sCodFilial) then
-          sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sCodFilial;
-
-         bSiga:=False;
-       End; // If ConexaoEmpIndividual('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'A') Then
-
-      // Inicia Processamento ==================================================
-      If bSiga Then
+      If i>10 Then
       Begin
-        // Cria Query da Empresa ------------------------------------
-        CriaQueryIB('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString,
-                    'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString,
-                    IBQ_ConsultaFilial, False, True);
+        If sgLojasNConectadas='' Then
+         sgLojasNConectadas:='Bel_'+sCodFilial
+        Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sCodFilial) then
+         sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sCodFilial;
 
-        // Apropria Parametros da Filial ----------------------------
-        IBQ_ConsultaFilial.Params.ParamByName('pCodFilial').Value:=StrToInt(sCodFilial);
+        Break;
+      End; // If i>10 Then
+    End; // While Not bSiga do
 
-        // Busca Itens da Filial  -----------------------------------
-        i:=0;
-        bSiga:=False;
-        While Not bSiga do
+    // Processamento  -------------------------------------------
+    If bSiga Then
+    Begin
+      // Busca Curvas Selecionadas e Estoque Minino Produtos
+      MySql:=' SELECT c.cod_loja, c.cod_produto, c.ind_curva,'+
+             ' p.datainclusao, c.est_minimo,'+
+             ' CASE'+
+             '   When (c.ind_curva in ('+sgCurvas+') or (p.datainclusao>='+QuotedStr(sgDtaInicio)+')) Then'+
+             '    ''SIM'''+
+             '   Else'+
+             '    ''NAO'''+
+             ' END Usar_Curva,'+
+             ' COALESCE(T.vlr_aux,0) Dias_Estocagem'+
+
+             ' FROM ES_FINAN_CURVA_ABC c'+
+             '        LEFT JOIN PRODUTO p      ON c.cod_produto=p.codproduto'+
+             '        LEFT JOIN TAB_AUXILIAR t ON CASE'+
+             '                                       WHEN c.ind_curva=''A'' THEN 1'+
+             '                                       WHEN c.ind_curva=''B'' THEN 2'+
+             '                                       WHEN c.ind_curva=''C'' THEN 3'+
+             '                                       WHEN c.ind_curva=''D'' THEN 4'+
+             '                                       WHEN c.ind_curva=''E'' THEN 5'+
+             '                                    END=t.cod_aux'+
+
+             ' WHERE c.est_minimo>0'+
+             ' AND   t.tip_aux=2'+
+             ' AND   c.cod_loja='+QuotedStr(sCodFilial);
+
+             // Produtos Não Compra -------------------------------------
+             If Not Ckb_FiltroProdNaoCompra.Checked Then
+              MySql:=MySql+' AND Coalesce(p.situacaopro,0)=0'
+             Else
+              MySql:=MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
+
+             // Produtos Codigos e/ou Produtos Like ---------------------
+             If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
+              MySql:=
+               MySql+' AND (p.CodProduto in ('+sgProdutos+') Or '+f_Troca('pr.','p.',sgLikeProdutos)+')'
+             Else If Trim(sgProdutos)<>'' Then
+              MySql:=
+               MySql+' and p.CodProduto in ('+sgProdutos+')'
+             Else If Trim(sgLikeProdutos)<>'' Then
+              MySql:=
+               MySql+' AND '+f_Troca('pr.','p.',sgLikeProdutos);
+
+             // Fornecedores --------------------------------------------
+             If Trim(sgFornecedores)<>'' Then
+              MySql:=MySql+' and p.principalfor in ('+sgFornecedores+')'
+             Else
+              MySql:=MySql+' AND p.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
+
+             If bgECommerce Then
+              MySql:=MySql+' and p.ECOMMERCE_SN='+QuotedStr('S');
+
+      MySql:=
+       MySql+' ORDER BY 2';
+      DMBelShop.CDS_Join.Close;
+      DMBelShop.SDS_Join.CommandText:=MySql;
+      DMBelShop.CDS_Join.Open;
+
+      // Monta Demandas ==========================================================
+      MontaDemandasNovo(sCodFilial);
+
+      Try
+        // Monta Transacao  -------------------------------------
+        TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
+        TD.IsolationLevel:=xilREADCOMMITTED;
+        DMBelShop.SQLC.StartTransaction(TD);
+
+        // Inicia Processamento  ----------------------------------
+        IBQ_ConsultaFilial.Last;
+        iNrRegistros:=IBQ_ConsultaFilial.RecordCount;
+        pgProgBar.Properties.Max:=iNrRegistros;
+        Edt_OCTotProdutos.Value:=iNrRegistros;
+        bgOC_COMPRAR_Docs:=True;
+        pgProgBar.Position:=0;
+
+        DMBelShop.IBQ_OC_ComprarAdd.Close;
+        DMBelShop.IBQ_OC_ComprarAdd.SQL.Clear;
+        DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' Select *');
+        DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' From oc_comprar oc');
+        DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' Where oc.num_documento<1');
+        DMBelShop.IBQ_OC_ComprarAdd.Open;
+
+        IBQ_ConsultaFilial.First;
+        While Not IBQ_ConsultaFilial.Eof do
         Begin
-          Try
-            IBQ_ConsultaFilial.Open;
-            bSiga:=True;
-          Except
-            Inc(i);
-          End; // Try
+          Application.ProcessMessages;
+          pgProgBar.Position:=pgProgBar.Position+1;
+          Refresh;
 
-          If i>10 Then
+          bgProcCurva:=True;
+
+          b:=False;
+          While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
           Begin
-            If sgLojasNConectadas='' Then
-             sgLojasNConectadas:='Bel_'+sCodFilial
-            Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sCodFilial) then
-             sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sCodFilial;
+            If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,[]) Then
+             Begin
+               b:=True;
 
-            Break;
-          End; // If i>10 Then
-        End; // While Not bSiga do
-
-        // Processamento  -------------------------------------------
-        If bSiga Then
-        Begin
-          // Busca Curvas Selecionadas e Estoque Minino Produtos
-          MySql:=' SELECT c.cod_loja, c.cod_produto, c.ind_curva,'+
-                 ' p.datainclusao, c.est_minimo,'+
-                 ' CASE'+
-                 '   When (c.ind_curva in ('+sgCurvas+') or (p.datainclusao>='+QuotedStr(sgDtaInicio)+')) Then'+
-                 '    ''SIM'''+
-                 '   Else'+
-                 '    ''NAO'''+
-                 ' END Usar_Curva,'+
-                 ' COALESCE(T.vlr_aux,0) Dias_Estocagem'+
-
-                 ' FROM ES_FINAN_CURVA_ABC c'+
-                 '        LEFT JOIN PRODUTO p      ON c.cod_produto=p.codproduto'+
-                 '        LEFT JOIN TAB_AUXILIAR t ON CASE'+
-                 '                                       WHEN c.ind_curva=''A'' THEN 1'+
-                 '                                       WHEN c.ind_curva=''B'' THEN 2'+
-                 '                                       WHEN c.ind_curva=''C'' THEN 3'+
-                 '                                       WHEN c.ind_curva=''D'' THEN 4'+
-                 '                                       WHEN c.ind_curva=''E'' THEN 5'+
-                 '                                    END=t.cod_aux'+
-
-                 ' WHERE c.est_minimo>0'+
-                 ' AND   t.tip_aux=2'+
-                 ' AND   c.cod_loja='+QuotedStr(sCodFilial);
-
-                 // Produtos Não Compra -------------------------------------
-                 If Not Ckb_FiltroProdNaoCompra.Checked Then
-                  MySql:=MySql+' AND Coalesce(p.situacaopro,0)=0'
-                 Else
-                  MySql:=MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
-
-                 // Produtos Codigos e/ou Produtos Like ---------------------
-                 If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
-                  MySql:=
-                   MySql+' AND (p.CodProduto in ('+sgProdutos+') Or '+f_Troca('pr.','p.',sgLikeProdutos)+')'
-                 Else If Trim(sgProdutos)<>'' Then
-                  MySql:=
-                   MySql+' and p.CodProduto in ('+sgProdutos+')'
-                 Else If Trim(sgLikeProdutos)<>'' Then
-                  MySql:=
-                   MySql+' AND '+f_Troca('pr.','p.',sgLikeProdutos);
-
-                 // Fornecedores --------------------------------------------
-                 If Trim(sgFornecedores)<>'' Then
-                  MySql:=MySql+' and p.principalfor in ('+sgFornecedores+')'
-                 Else
-                  MySql:=MySql+' AND p.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
-
-                 If bgECommerce Then
-                  MySql:=MySql+' and p.ECOMMERCE_SN='+QuotedStr('S');
-
-          MySql:=
-           MySql+' ORDER BY 2';
-          DMBelShop.CDS_Join.Close;
-          DMBelShop.SDS_Join.CommandText:=MySql;
-          DMBelShop.CDS_Join.Open;
-
-          // Monta Demandas ==========================================================
-          MontaDemandasNovo(sCodFilial);
-
-          Try
-            // Monta Transacao  -------------------------------------
-            TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
-            TD.IsolationLevel:=xilREADCOMMITTED;
-            DMBelShop.SQLC.StartTransaction(TD);
-
-            // Inicia Processamento  ----------------------------------
-            IBQ_ConsultaFilial.Last;
-            iNrRegistros:=IBQ_ConsultaFilial.RecordCount;
-            pgProgBar.Properties.Max:=iNrRegistros;
-            Edt_OCTotProdutos.Value:=iNrRegistros;
-            bgOC_COMPRAR_Docs:=True;
-            pgProgBar.Position:=0;
-
-            DMBelShop.IBQ_OC_ComprarAdd.Close;
-            DMBelShop.IBQ_OC_ComprarAdd.SQL.Clear;
-            DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' Select *');
-            DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' From oc_comprar oc');
-            DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' Where oc.num_documento<1');
-            DMBelShop.IBQ_OC_ComprarAdd.Open;
-
-            IBQ_ConsultaFilial.First;
-            While Not IBQ_ConsultaFilial.Eof do
-            Begin
-              Application.ProcessMessages;
-              pgProgBar.Position:=pgProgBar.Position+1;
-              Refresh;
-
-              bgProcCurva:=True;
-
-              b:=False;
-              While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
-              Begin
-                If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,[]) Then
-                 Begin
-                   b:=True;
-
-                   // Curvas Por Loja ou Por MPMS
-                   If ((Gb_CalculoTpCurvaABC.Visible) Or (Gb_CalculoApresCurva.Visible)) and (Gb_CalculoApresCurva.Visible) Then
-                   Begin
-                     If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Not Ckb_CalculoApresCurvaFora.Checked) Then
-                      Begin
-                        bgProcCurva:=False;
-                      End
-                     Else If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Ckb_CalculoApresCurvaFora.Checked) Then
-                      Begin
-                        If (Rb_CalculoApresCurvaEstCom.Checked) and (IBQ_ConsultaFilial.FieldByName('QTD_SALDO').AsInteger=0) Then
-                         bgProcCurva:=False
-                        Else If (Rb_CalculoApresCurvaEstSem.Checked) and (IBQ_ConsultaFilial.FieldByName('QTD_SALDO').AsInteger<>0) Then
-                         bgProcCurva:=False
-                      End;
-                   End; // If Gb_CalculoTpCurvaABC.Visible Then
-                 End
-                Else // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString),[]) Then
-                 Begin
-                   If (StrToDate(IBQ_ConsultaFilial.FieldByName('DATAINCLUSAO').AsString)>=StrToDate(sgDtaInicio)) Or
-                      (StrToDate(IBQ_ConsultaFilial.FieldByName('DATAALTERACAO').AsString)>=StrToDate(sgDtaInicio)) Then
-                    Begin
-                      DMBelShop.CDS_Join.Locate('IND_CURVA','E',[]);
-                      MySql:=DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString;
-                      DMBelShop.CDS_Join.Insert;
-                      DMBelShop.CDS_Join.FieldByName('COD_LOJA').AsString:=sCodFilial;
-                      DMBelShop.CDS_Join.FieldByName('COD_PRODUTO').AsString:=IBQ_ConsultaFilial.FieldByName('CodProduto').AsString;
-                      DMBelShop.CDS_Join.FieldByName('IND_CURVA').AsString:='E';
-                      DMBelShop.CDS_Join.FieldByName('DATAINCLUSAO').AsString:=IBQ_ConsultaFilial.FieldByName('DATAINCLUSAO').AsString;
-                      DMBelShop.CDS_Join.FieldByName('EST_MINIMO').AsString:='3';
-                      DMBelShop.CDS_Join.FieldByName('USAR_CURVA').AsString:='SIM';
-                      DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString:=MySql;
-                    End
-                   Else // If StrToDate(IBQ_ConsultaFilial.FieldByName('datainclusao').AsString)>=StrToDate(sgDtaInicio) Then
-                    Begin
-                      bgProcCurva:=False;
-                      b:=True;
-                    End;
-                 End; // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,[]) Then
-              End; // While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
-
-              // Busca o Produto Existente na Matriz ----------------
-              If bgProcCurva Then
-              Begin
-                bSiga:=False;
-                MySql:=' Select *'+
-                       ' From OC_COMPRAR'+
-                       ' Where num_documento='+sNumDoc+
-                       ' And Cod_Empresa='+QuotedStr(sCodMatriz)+
-                       ' And Cod_Item='+QuotedStr(IBQ_ConsultaFilial.FieldByName('CodProduto').AsString);
-                DMBelShop.CDS_Busca.Close;
-                DMBelShop.SDS_Busca.CommandText:=MySql;
-                DMBelShop.CDS_Busca.Open;
-
-                If Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Item').AsString)<>'' Then
-                 bSiga:=True;
-
-                // Se Produto Existe na Matriz Processa ---------------
-                If bSiga Then
+               // Curvas Por Loja ou Por MPMS
+               If ((Gb_CalculoTpCurvaABC.Visible) Or (Gb_CalculoApresCurva.Visible)) and (Gb_CalculoApresCurva.Visible) Then
+               Begin
+                 If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Not Ckb_CalculoApresCurvaFora.Checked) Then
+                  Begin
+                    bgProcCurva:=False;
+                  End
+                 Else If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Ckb_CalculoApresCurvaFora.Checked) Then
+                  Begin
+                    If (Rb_CalculoApresCurvaEstCom.Checked) and (IBQ_ConsultaFilial.FieldByName('QTD_SALDO').AsInteger=0) Then
+                     bgProcCurva:=False
+                    Else If (Rb_CalculoApresCurvaEstSem.Checked) and (IBQ_ConsultaFilial.FieldByName('QTD_SALDO').AsInteger<>0) Then
+                     bgProcCurva:=False
+                  End;
+               End; // If Gb_CalculoTpCurvaABC.Visible Then
+             End
+            Else // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString),[]) Then
+             Begin
+               If (StrToDate(IBQ_ConsultaFilial.FieldByName('DATAINCLUSAO').AsString)>=StrToDate(sgDtaInicio)) Or
+                  (StrToDate(IBQ_ConsultaFilial.FieldByName('DATAALTERACAO').AsString)>=StrToDate(sgDtaInicio)) Then
                 Begin
-                  bMesmoItem:=False;
-                  Inc(iNumSeqDoc);
+                  DMBelShop.CDS_Join.Locate('IND_CURVA','E',[]);
+                  MySql:=DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString;
+                  DMBelShop.CDS_Join.Insert;
+                  DMBelShop.CDS_Join.FieldByName('COD_LOJA').AsString:=sCodFilial;
+                  DMBelShop.CDS_Join.FieldByName('COD_PRODUTO').AsString:=IBQ_ConsultaFilial.FieldByName('CodProduto').AsString;
+                  DMBelShop.CDS_Join.FieldByName('IND_CURVA').AsString:='E';
+                  DMBelShop.CDS_Join.FieldByName('DATAINCLUSAO').AsString:=IBQ_ConsultaFilial.FieldByName('DATAINCLUSAO').AsString;
+                  DMBelShop.CDS_Join.FieldByName('EST_MINIMO').AsString:='3';
+                  DMBelShop.CDS_Join.FieldByName('USAR_CURVA').AsString:='SIM';
+                  DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString:=MySql;
+                End
+               Else // If StrToDate(IBQ_ConsultaFilial.FieldByName('datainclusao').AsString)>=StrToDate(sgDtaInicio) Then
+                Begin
+                  bgProcCurva:=False;
+                  b:=True;
+                End;
+             End; // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,[]) Then
+          End; // While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
 
-                  // Inicializa Variaveis de Demanda ---------------------------------------
-                  igNrDias:=0;
-                  igNrMeses:=0;
-                  igTotMeses:=igTotMeses;
-                  cgOutras_Demandas:=0;
-                  cgTotal_Demandas:=0;
+          // Busca o Produto Existente na Matriz ----------------
+          If bgProcCurva Then
+          Begin
+            bSiga:=False;
+            MySql:=' Select *'+
+                   ' From OC_COMPRAR'+
+                   ' Where num_documento='+sNumDoc+
+                   ' And Cod_Empresa='+QuotedStr(sCodMatriz)+
+                   ' And Cod_Item='+QuotedStr(IBQ_ConsultaFilial.FieldByName('CodProduto').AsString);
+            DMBelShop.CDS_Busca.Close;
+            DMBelShop.SDS_Busca.CommandText:=MySql;
+            DMBelShop.CDS_Busca.Open;
 
-                  // Demandas da Filial ------------------------------------------------------
-                  bgDemandaNovo:=True;
-//                  bgDemandaNovo:=False;
+            If Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Item').AsString)<>'' Then
+             bSiga:=True;
 
-//                  If sCodFilial='17' Then // LojaBel_17
-//                   BuscaDemanda(CB_Mes1, ME_Ano1, IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,
-//                                '09', cDemanda, igNrDias, igNrMeses, True)
-//                  Else
-//                   BuscaDemanda(CB_Mes1, ME_Ano1, IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,
-//                                sCodFilial, cDemanda, igNrDias, igNrMeses, True);
-                  BuscaDemanda(CB_Mes1, ME_Ano1, IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,
-                               sCodFilial, cDemanda, igNrDias, igNrMeses, True);
-                  bgDemandaNovo:=False;
-
-                  // Processa Filial ------------------------------------
-                  If Not OCProcessaFilial Then
-                   Break;
-
-                  DMBelShop.CDS_Busca.Close;
-                End; // If bSiga Then
-              End; // If bgProcCurva Then
-
-              IBQ_ConsultaFilial.Next;
-            End; // While Not IBQ_ConsultaFilial.Eof do
-
-            Try
-              DMBelShop.CDS_Join.Close;
-              DMBelShop.CDS_Busca.Close;
-              DMBelShop.IBQ_OC_ComprarAdd.Close;
-              IBQ_ConsultaFilial.Close;
-            Except
-            End;
-
-            // Atualiza OC_COMPRAR_DOCS ========================================
-            If bgOC_COMPRAR_Docs Then
+            // Se Produto Existe na Matriz Processa ---------------
+            If bSiga Then
             Begin
-              OC_COMPRAR_DOCS('I', sNumDoc, 'BelShop');
-              bgOC_COMPRAR_Docs:=False;
-            End;
+              bMesmoItem:=False;
+              Inc(iNumSeqDoc);
 
-            OdirPanApres.Visible:=False;
-            DMBelShop.SQLC.Commit(TD);
-          Except
-            on e : Exception do
-            Begin
-              DMBelShop.SQLC.Rollback(TD);
+              // Inicializa Variaveis de Demanda ---------------------------------------
+              igNrDias:=0;
+              igNrMeses:=0;
+              igTotMeses:=igTotMeses;
+              cgOutras_Demandas:=0;
+              cgTotal_Demandas:=0;
 
-              DMBelShop.CDS_Join.Close;
+              // Demandas da Filial ------------------------------------------------------
+              bgDemandaNovo:=True;
+              BuscaDemanda(CB_Mes1, ME_Ano1, IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,
+                           sCodFilial, cDemanda, igNrDias, igNrMeses, True);
+              bgDemandaNovo:=False;
+
+              // Processa Filial ------------------------------------
+              If Not OCProcessaFilial Then
+               Break;
+
               DMBelShop.CDS_Busca.Close;
-              DMBelShop.IBQ_OC_ComprarAdd.Close;
-              IBQ_ConsultaFilial.Close;
+            End; // If bSiga Then
+          End; // If bgProcCurva Then
 
-              OdirPanApres.Visible:=False;
-              MontaProgressBar(False, FrmBelShop);
+          IBQ_ConsultaFilial.Next;
+        End; // While Not IBQ_ConsultaFilial.Eof do
 
-              If sgLojasNConectadas='' Then
-               sgLojasNConectadas:='Bel_'+sCodFilial
-              Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sCodFilial) then
-               sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sCodFilial;
-            End;
-          End; // Try
-        End; // If bSiga Then
-        Lb_EmpProcessadas.Caption:=IntToStr(StrToInt(Lb_EmpProcessadas.Caption)+1);
+        Try
+          DMBelShop.CDS_Join.Close;
+          DMBelShop.CDS_Busca.Close;
+          DMBelShop.IBQ_OC_ComprarAdd.Close;
+          IBQ_ConsultaFilial.Close;
+        Except
+        End;
+
+        // Atualiza OC_COMPRAR_DOCS ========================================
+        If bgOC_COMPRAR_Docs Then
+        Begin
+          OC_COMPRAR_DOCS('I', sNumDoc, 'BelShop');
+          bgOC_COMPRAR_Docs:=False;
+        End;
 
         OdirPanApres.Visible:=False;
-      End; // If bSiga Then
+        DMBelShop.SQLC.Commit(TD);
+      Except
+        on e : Exception do
+        Begin
+          DMBelShop.SQLC.Rollback(TD);
 
-      // Fecha Conexão ------------------------------------------------
-      ConexaoEmpIndividual('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'F');
-      DMBelShop.CDS_Join.Close;
-    End; // if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and  (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
+          DMBelShop.CDS_Join.Close;
+          DMBelShop.CDS_Busca.Close;
+          DMBelShop.IBQ_OC_ComprarAdd.Close;
+          IBQ_ConsultaFilial.Close;
+
+          OdirPanApres.Visible:=False;
+
+          If sgLojasNConectadas='' Then
+           sgLojasNConectadas:='Bel_'+sCodFilial
+          Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sCodFilial) then
+           sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sCodFilial;
+        End;
+      End; // Try
+    End; // If bSiga Then
+    Lb_EmpProcessadas.Caption:=IntToStr(StrToInt(Lb_EmpProcessadas.Caption)+1);
 
     OdirPanApres.Visible:=False;
-    Refresh;
+  End; // If bSiga Then
 
-    DMBelShop.CDS_EmpProcessa.Next;
-  End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
-  MontaProgressBar(False, FrmBelShop);
-  DMBelShop.CDS_UltCompraTransito.Close;
+  // Fecha Conexão ------------------------------------------------
+  ConexaoEmpIndividual('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'F');
+  DMBelShop.CDS_Join.Close;
+
+// OdirApagar - Loja 18 Agora Sempre Local - 24/01/2017
+//    End; // if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and  (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
+//
+//    OdirPanApres.Visible:=False;
+//    Refresh;
+//
+//    DMBelShop.CDS_EmpProcessa.Next;
+//  End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
+//  MontaProgressBar(False, FrmBelShop);
+//  DMBelShop.CDS_UltCompraTransito.Close;
 
 End; // Calculo e Analise Produtos Filiais >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -18725,315 +18717,304 @@ Var
   cDemanda: Currency;
 Begin
 
-  MontaProgressBar(True, FrmBelShop);
+// OdirApagar - Loja 18 Agora Sempre Local - 24/01/2017
+//  MontaProgressBar(True, FrmBelShop);
+//
+//  DMBelShop.CDS_EmpProcessa.First;
+//  While Not DMBelShop.CDS_EmpProcessa.Eof do
+//  Begin
+//    pgProgBar.Position:=0;
+//    Refresh;
+//
+//    if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
+//    Begin
+//      sCodFilial:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
 
-  DMBelShop.CDS_EmpProcessa.First;
-  While Not DMBelShop.CDS_EmpProcessa.Eof do
+  // Apresentacao ==========================================================
+  OdirPanApres.Caption:='AGUARDE !! Processando Loja: Bel_'+sCodFilial+' - '+DMBelShop.CDS_EmpProcessaRAZAO_SOCIAL.AsString;
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Inicia Processamento ==================================================
+  // Cria Query da Empresa ------------------------------------
+  CriaQueryIB('IBDB_BelShop', 'IBT_BelShop',IBQ_ConsultaFilial, True, True);
+
+  // Monta Sql Loja Local -------------------------------------
+  MontaSelectFilial(IBQ_ConsultaFilial);
+
+  // Apropria Parametros da Filial ----------------------------
+  IBQ_ConsultaFilial.Params.ParamByName('pCodFilial').Value:=StrToInt(sCodFilial);
+
+  // Busca Itens da Filial  -----------------------------------
+  i:=0;
+  bSiga:=False;
+  While Not bSiga do
   Begin
-    pgProgBar.Position:=0;
-    Refresh;
+    Try
+      IBQ_ConsultaFilial.Open;
+      bSiga:=True;
+    Except
+      on e : Exception do
+      Begin
+        Inc(i);
+      End;
+    End; // Try
 
-    if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
+    If i>10 Then
     Begin
-      sCodFilial:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+      If sgLojasNConectadas='' Then
+       sgLojasNConectadas:='Bel_'+sCodFilial
+      Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sCodFilial) then
+       sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sCodFilial;
 
-      // Apresentacao ==========================================================
-      OdirPanApres.Caption:='AGUARDE !! Processando Loja: Bel_'+sCodFilial+' - '+DMBelShop.CDS_EmpProcessaRAZAO_SOCIAL.AsString;
-      OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-      OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
-      OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
-      OdirPanApres.Visible:=True;
-      Refresh;
+      Break;
+    End; // If i>10 Then
+  End; // While Not bSiga do
 
-      // Inicia Processamento ==================================================
-      // Cria Query da Empresa ------------------------------------
-      CriaQueryIB('IBDB_BelShop', 'IBT_BelShop',IBQ_ConsultaFilial, True, True);
+  // Processamento  -------------------------------------------
+  If bSiga Then
+  Begin
+    // Busca Curvas Selecionadas e Estoque Minino Produtos
+    MySql:=' SELECT c.cod_loja, c.cod_produto, c.ind_curva,'+
+           ' p.datainclusao, c.est_minimo,'+
+           ' CASE'+
+           '   When (c.ind_curva in ('+sgCurvas+') or (p.datainclusao>='+QuotedStr(sgDtaInicio)+')) Then'+
+           '    ''SIM'''+
+           '   Else'+
+           '    ''NAO'''+
+           ' END Usar_Curva,'+
+           ' COALESCE(T.vlr_aux,0) Dias_Estocagem'+
 
-      // Monta Sql Loja Local -------------------------------------
-      MontaSelectFilial(IBQ_ConsultaFilial);
+           ' FROM ES_FINAN_CURVA_ABC c'+
+           '        LEFT JOIN PRODUTO p      ON c.cod_produto=p.codproduto'+
+           '        LEFT JOIN TAB_AUXILIAR t ON CASE'+
+           '                                       WHEN c.ind_curva=''A'' THEN 1'+
+           '                                       WHEN c.ind_curva=''B'' THEN 2'+
+           '                                       WHEN c.ind_curva=''C'' THEN 3'+
+           '                                       WHEN c.ind_curva=''D'' THEN 4'+
+           '                                       WHEN c.ind_curva=''E'' THEN 5'+
+           '                                    END=t.cod_aux'+
 
-      // Apropria Parametros da Filial ----------------------------
-      IBQ_ConsultaFilial.Params.ParamByName('pCodFilial').Value:=StrToInt(sCodFilial);
+           ' WHERE c.est_minimo>0'+
+           ' AND   t.tip_aux=2'+
+           ' AND   c.cod_loja='+QuotedStr(sCodFilial);
 
-      // Busca Itens da Filial  -----------------------------------
-      i:=0;
-      bSiga:=False;
-      While Not bSiga do
+           // Produtos Não Compra -------------------------------------
+           If Not Ckb_FiltroProdNaoCompra.Checked Then
+            MySql:=MySql+' AND Coalesce(p.situacaopro,0)=0'
+           Else
+            MySql:=MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
+
+           // Produtos Codigos e/ou Produtos Like ---------------------
+           If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
+            MySql:=
+             MySql+' AND (p.CodProduto in ('+sgProdutos+') Or '+f_Troca('pr.','p.',sgLikeProdutos)+')'
+           Else If Trim(sgProdutos)<>'' Then
+            MySql:=
+             MySql+' and p.CodProduto in ('+sgProdutos+')'
+           Else If Trim(sgLikeProdutos)<>'' Then
+            MySql:=
+             MySql+' AND '+f_Troca('pr.','p.',sgLikeProdutos);
+
+           // Fornecedores --------------------------------------------
+           If Trim(sgFornecedores)<>'' Then
+            MySql:=MySql+' and p.principalfor in ('+sgFornecedores+')'
+           Else
+            MySql:=MySql+' AND p.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
+
+           If bgECommerce Then
+            MySql:=MySql+' and p.ECOMMERCE_SN='+QuotedStr('S');
+
+    MySql:=
+     MySql+' ORDER BY 2';
+    DMBelShop.CDS_Join.Close;
+    DMBelShop.SDS_Join.CommandText:=MySql;
+    DMBelShop.CDS_Join.Open;
+
+    // Monta Demandas ==========================================================
+    MontaDemandasNovo(sCodFilial);
+
+    Try
+      // Monta Transacao  -------------------------------------
+      TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
+      TD.IsolationLevel:=xilREADCOMMITTED;
+      DMBelShop.SQLC.StartTransaction(TD);
+
+      // Inicia Processamento  ----------------------------------
+      IBQ_ConsultaFilial.Last;
+      iNrRegistros:=IBQ_ConsultaFilial.RecordCount;
+      pgProgBar.Properties.Max:=iNrRegistros;
+      Edt_OCTotProdutos.Value:=iNrRegistros;
+      bgOC_COMPRAR_Docs:=True;
+      pgProgBar.Position:=0;
+
+      DMBelShop.IBQ_OC_ComprarAdd.Close;
+      DMBelShop.IBQ_OC_ComprarAdd.SQL.Clear;
+      DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' Select *');
+      DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' From oc_comprar oc');
+      DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' Where oc.num_documento<1');
+      DMBelShop.IBQ_OC_ComprarAdd.Open;
+
+      IBQ_ConsultaFilial.First;
+      While Not IBQ_ConsultaFilial.Eof do
       Begin
-        Try
-          IBQ_ConsultaFilial.Open;
-          bSiga:=True;
-        Except
-          on e : Exception do
-          Begin
-            MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-            Inc(i);
+        Application.ProcessMessages;
+        pgProgBar.Position:=pgProgBar.Position+1;
+        Refresh;
 
-          End;
-        End; // Try
+        bgProcCurva:=True;
 
-        If i>10 Then
+        b:=False;
+        While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
         Begin
-          Break;
-        End; // If i>10 Then
-      End; // While Not bSiga do
+          If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,[]) Then
+           Begin
+             b:=True;
 
-      // Processamento  -------------------------------------------
-      If bSiga Then
-      Begin
-        // Busca Curvas Selecionadas e Estoque Minino Produtos
-        MySql:=' SELECT c.cod_loja, c.cod_produto, c.ind_curva,'+
-               ' p.datainclusao, c.est_minimo,'+
-               ' CASE'+
-               '   When (c.ind_curva in ('+sgCurvas+') or (p.datainclusao>='+QuotedStr(sgDtaInicio)+')) Then'+
-               '    ''SIM'''+
-               '   Else'+
-               '    ''NAO'''+
-               ' END Usar_Curva,'+
-               ' COALESCE(T.vlr_aux,0) Dias_Estocagem'+
-
-               ' FROM ES_FINAN_CURVA_ABC c'+
-               '        LEFT JOIN PRODUTO p      ON c.cod_produto=p.codproduto'+
-               '        LEFT JOIN TAB_AUXILIAR t ON CASE'+
-               '                                       WHEN c.ind_curva=''A'' THEN 1'+
-               '                                       WHEN c.ind_curva=''B'' THEN 2'+
-               '                                       WHEN c.ind_curva=''C'' THEN 3'+
-               '                                       WHEN c.ind_curva=''D'' THEN 4'+
-               '                                       WHEN c.ind_curva=''E'' THEN 5'+
-               '                                    END=t.cod_aux'+
-
-               ' WHERE c.est_minimo>0'+
-               ' AND   t.tip_aux=2'+
-               ' AND   c.cod_loja='+QuotedStr(sCodFilial);
-
-               // Produtos Não Compra -------------------------------------
-               If Not Ckb_FiltroProdNaoCompra.Checked Then
-                MySql:=MySql+' AND Coalesce(p.situacaopro,0)=0'
-               Else
-                MySql:=MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
-
-               // Produtos Codigos e/ou Produtos Like ---------------------
-               If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
-                MySql:=
-                 MySql+' AND (p.CodProduto in ('+sgProdutos+') Or '+f_Troca('pr.','p.',sgLikeProdutos)+')'
-               Else If Trim(sgProdutos)<>'' Then
-                MySql:=
-                 MySql+' and p.CodProduto in ('+sgProdutos+')'
-               Else If Trim(sgLikeProdutos)<>'' Then
-                MySql:=
-                 MySql+' AND '+f_Troca('pr.','p.',sgLikeProdutos);
-
-               // Fornecedores --------------------------------------------
-               If Trim(sgFornecedores)<>'' Then
-                MySql:=MySql+' and p.principalfor in ('+sgFornecedores+')'
-               Else
-                MySql:=MySql+' AND p.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
-
-               If bgECommerce Then
-                MySql:=MySql+' and p.ECOMMERCE_SN='+QuotedStr('S');
-
-        MySql:=
-         MySql+' ORDER BY 2';
-        DMBelShop.CDS_Join.Close;
-        DMBelShop.SDS_Join.CommandText:=MySql;
-        DMBelShop.CDS_Join.Open;
-
-        // Monta Demandas ==========================================================
-        MontaDemandasNovo(sCodFilial);
-
-        Try
-          // Monta Transacao  -------------------------------------
-          TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
-          TD.IsolationLevel:=xilREADCOMMITTED;
-          DMBelShop.SQLC.StartTransaction(TD);
-
-          // Inicia Processamento  ----------------------------------
-          IBQ_ConsultaFilial.Last;
-          iNrRegistros:=IBQ_ConsultaFilial.RecordCount;
-          pgProgBar.Properties.Max:=iNrRegistros;
-          Edt_OCTotProdutos.Value:=iNrRegistros;
-          bgOC_COMPRAR_Docs:=True;
-          pgProgBar.Position:=0;
-
-          DMBelShop.IBQ_OC_ComprarAdd.Close;
-          DMBelShop.IBQ_OC_ComprarAdd.SQL.Clear;
-          DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' Select *');
-          DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' From oc_comprar oc');
-          DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' Where oc.num_documento<1');
-          DMBelShop.IBQ_OC_ComprarAdd.Open;
-
-          IBQ_ConsultaFilial.First;
-          While Not IBQ_ConsultaFilial.Eof do
-          Begin
-            Application.ProcessMessages;
-            pgProgBar.Position:=pgProgBar.Position+1;
-            Refresh;
-
-            bgProcCurva:=True;
-
-            b:=False;
-            While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
-            Begin
-              If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,[]) Then
-               Begin
-                 b:=True;
-
-                 // Curvas Por Loja ou Por MPMS
-                 If ((Gb_CalculoTpCurvaABC.Visible) Or (Gb_CalculoApresCurva.Visible)) and (Gb_CalculoApresCurva.Visible) Then
-                 Begin
-                   If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Not Ckb_CalculoApresCurvaFora.Checked) Then
-                    Begin
-                      bgProcCurva:=False;
-                    End
-                   Else If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Ckb_CalculoApresCurvaFora.Checked) Then
-                    Begin
-                      If (Rb_CalculoApresCurvaEstCom.Checked) and (IBQ_ConsultaFilial.FieldByName('QTD_SALDO').AsInteger=0) Then
-                       bgProcCurva:=False
-                      Else If (Rb_CalculoApresCurvaEstSem.Checked) and (IBQ_ConsultaFilial.FieldByName('QTD_SALDO').AsInteger<>0) Then
-                       bgProcCurva:=False
-                    End;
-                 End; // If Gb_CalculoTpCurvaABC.Visible Then
-               End
-              Else // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString),[]) Then
-               Begin
-                 If (StrToDate(IBQ_ConsultaFilial.FieldByName('DATAINCLUSAO').AsString)>=StrToDate(sgDtaInicio)) Or
-                    (StrToDate(IBQ_ConsultaFilial.FieldByName('DATAALTERACAO').AsString)>=StrToDate(sgDtaInicio)) Then
-                  Begin
-                    DMBelShop.CDS_Join.Locate('IND_CURVA','E',[]);
-                    MySql:=DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString;
-                    DMBelShop.CDS_Join.Insert;
-                    DMBelShop.CDS_Join.FieldByName('COD_LOJA').AsString:=sCodFilial;
-                    DMBelShop.CDS_Join.FieldByName('COD_PRODUTO').AsString:=IBQ_ConsultaFilial.FieldByName('CodProduto').AsString;
-                    DMBelShop.CDS_Join.FieldByName('IND_CURVA').AsString:='E';
-                    DMBelShop.CDS_Join.FieldByName('DATAINCLUSAO').AsString:=IBQ_ConsultaFilial.FieldByName('DATAINCLUSAO').AsString;
-                    DMBelShop.CDS_Join.FieldByName('EST_MINIMO').AsString:='3';
-                    DMBelShop.CDS_Join.FieldByName('USAR_CURVA').AsString:='SIM';
-                    DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString:=MySql;
-                  End
-                 Else // If StrToDate(IBQ_ConsultaFilial.FieldByName('datainclusao').AsString)>=StrToDate(sgDtaInicio) Then
-                  Begin
-                    bgProcCurva:=False;
-                    b:=True;
-                  End;
-               End; // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,[]) Then
-            End; // While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
-
-            // Busca o Produto Existente na Matriz ----------------
-            If bgProcCurva Then
-            Begin
-              bSiga:=False;
-              MySql:=' Select *'+
-                     ' From OC_COMPRAR'+
-                     ' Where num_documento='+sNumDoc+
-                     ' And Cod_Empresa='+QuotedStr(sCodMatriz)+
-                     ' And Cod_Item='+QuotedStr(IBQ_ConsultaFilial.FieldByName('CodProduto').AsString);
-              DMBelShop.CDS_Busca.Close;
-              DMBelShop.SDS_Busca.CommandText:=MySql;
-              DMBelShop.CDS_Busca.Open;
-
-              If Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Item').AsString)<>'' Then
-               bSiga:=True;
-
-              // Se Produto Existe na Matriz Processa ---------------
-              If bSiga Then
+             // Curvas Por Loja ou Por MPMS
+             If ((Gb_CalculoTpCurvaABC.Visible) Or (Gb_CalculoApresCurva.Visible)) and (Gb_CalculoApresCurva.Visible) Then
+             Begin
+               If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Not Ckb_CalculoApresCurvaFora.Checked) Then
+                Begin
+                  bgProcCurva:=False;
+                End
+               Else If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Ckb_CalculoApresCurvaFora.Checked) Then
+                Begin
+                  If (Rb_CalculoApresCurvaEstCom.Checked) and (IBQ_ConsultaFilial.FieldByName('QTD_SALDO').AsInteger=0) Then
+                   bgProcCurva:=False
+                  Else If (Rb_CalculoApresCurvaEstSem.Checked) and (IBQ_ConsultaFilial.FieldByName('QTD_SALDO').AsInteger<>0) Then
+                   bgProcCurva:=False
+                End;
+             End; // If Gb_CalculoTpCurvaABC.Visible Then
+           End
+          Else // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString),[]) Then
+           Begin
+             If (StrToDate(IBQ_ConsultaFilial.FieldByName('DATAINCLUSAO').AsString)>=StrToDate(sgDtaInicio)) Or
+                (StrToDate(IBQ_ConsultaFilial.FieldByName('DATAALTERACAO').AsString)>=StrToDate(sgDtaInicio)) Then
               Begin
-                bMesmoItem:=False;
-                Inc(iNumSeqDoc);
+                DMBelShop.CDS_Join.Locate('IND_CURVA','E',[]);
+                MySql:=DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString;
+                DMBelShop.CDS_Join.Insert;
+                DMBelShop.CDS_Join.FieldByName('COD_LOJA').AsString:=sCodFilial;
+                DMBelShop.CDS_Join.FieldByName('COD_PRODUTO').AsString:=IBQ_ConsultaFilial.FieldByName('CodProduto').AsString;
+                DMBelShop.CDS_Join.FieldByName('IND_CURVA').AsString:='E';
+                DMBelShop.CDS_Join.FieldByName('DATAINCLUSAO').AsString:=IBQ_ConsultaFilial.FieldByName('DATAINCLUSAO').AsString;
+                DMBelShop.CDS_Join.FieldByName('EST_MINIMO').AsString:='3';
+                DMBelShop.CDS_Join.FieldByName('USAR_CURVA').AsString:='SIM';
+                DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString:=MySql;
+              End
+             Else // If StrToDate(IBQ_ConsultaFilial.FieldByName('datainclusao').AsString)>=StrToDate(sgDtaInicio) Then
+              Begin
+                bgProcCurva:=False;
+                b:=True;
+              End;
+           End; // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,[]) Then
+        End; // While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
 
-                // Inicializa Variaveis de Demanda ---------------------------------------
-                igNrDias:=0;
-                igNrMeses:=0;
-                igTotMeses:=igTotMeses;
-                cgOutras_Demandas:=0;
-                cgTotal_Demandas:=0;
+        // Busca o Produto Existente na Matriz ----------------
+        If bgProcCurva Then
+        Begin
+          bSiga:=False;
+          MySql:=' Select *'+
+                 ' From OC_COMPRAR'+
+                 ' Where num_documento='+sNumDoc+
+                 ' And Cod_Empresa='+QuotedStr(sCodMatriz)+
+                 ' And Cod_Item='+QuotedStr(IBQ_ConsultaFilial.FieldByName('CodProduto').AsString);
+          DMBelShop.CDS_Busca.Close;
+          DMBelShop.SDS_Busca.CommandText:=MySql;
+          DMBelShop.CDS_Busca.Open;
 
-                // Demandas da Filial ------------------------------------------------------
-                bgDemandaNovo:=True;
-//                bgDemandaNovo:=False;
+          If Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Item').AsString)<>'' Then
+           bSiga:=True;
 
-//                  If sCodFilial='17' Then // LojaBel_17
-//                   BuscaDemanda(CB_Mes1, ME_Ano1, IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,
-//                                '09', cDemanda, igNrDias, igNrMeses, True)
-//                  Else
-//                   BuscaDemanda(CB_Mes1, ME_Ano1, IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,
-//                                sCodFilial, cDemanda, igNrDias, igNrMeses, True);
-                BuscaDemanda(CB_Mes1, ME_Ano1, IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,
-                             sCodFilial, cDemanda, igNrDias, igNrMeses, True);
-                bgDemandaNovo:=False;
-
-                // Processa Filial ------------------------------------
-                If Not OCProcessaFilial Then
-                 Break;
-
-                DMBelShop.CDS_Busca.Close;
-              End; // If bSiga Then
-            End; // If bgProcCurva Then
-
-            IBQ_ConsultaFilial.Next;
-          End; // While Not IBQ_ConsultaFilial.Eof do
-
-          Try
-            sgMensagemERRO:='CDS_Join';
-            DMBelShop.CDS_Join.Close;
-            sgMensagemERRO:='CDS_Busca';
-            DMBelShop.CDS_Busca.Close;
-            sgMensagemERRO:='IBQ_OC_ComprarAdd';
-            DMBelShop.IBQ_OC_ComprarAdd.Close;
-            sgMensagemERRO:='IBQ_ConsultaFilial';
-            IBQ_ConsultaFilial.Close;
-            sgMensagemERRO:='Passou';
-          Except
-          End;
-
-          // Atualiza OC_COMPRAR_DOCS ========================================
-          If bgOC_COMPRAR_Docs Then
+          // Se Produto Existe na Matriz Processa ---------------
+          If bSiga Then
           Begin
-            sgMensagemERRO:='OC_COMPRAR_DOCS';
-            OC_COMPRAR_DOCS('I', sNumDoc, 'BelShop');
-            bgOC_COMPRAR_Docs:=False;
-            sgMensagemERRO:='OC_COMPRAR_DOCS- OK';
-          End;
+            bMesmoItem:=False;
+            Inc(iNumSeqDoc);
 
-          OdirPanApres.Visible:=False;
-          DMBelShop.SQLC.Commit(TD);
-          sgMensagemERRO:='Commit';
-        Except
-          on e : Exception do
-          Begin
-            DMBelShop.SQLC.Rollback(TD);
+            // Inicializa Variaveis de Demanda ---------------------------------------
+            igNrDias:=0;
+            igNrMeses:=0;
+            igTotMeses:=igTotMeses;
+            cgOutras_Demandas:=0;
+            cgTotal_Demandas:=0;
 
-            DMBelShop.CDS_Join.Close;
+            // Demandas da Filial ------------------------------------------------------
+            bgDemandaNovo:=True;
+            BuscaDemanda(CB_Mes1, ME_Ano1, IBQ_ConsultaFilial.FieldByName('CodProduto').AsString,
+                         sCodFilial, cDemanda, igNrDias, igNrMeses, True);
+            bgDemandaNovo:=False;
+
+            // Processa Filial ------------------------------------
+            If Not OCProcessaFilial Then
+             Break;
+
             DMBelShop.CDS_Busca.Close;
-            DMBelShop.IBQ_OC_ComprarAdd.Close;
-            IBQ_ConsultaFilial.Close;
+          End; // If bSiga Then
+        End; // If bgProcCurva Then
 
-            OdirPanApres.Visible:=False;
-            MontaProgressBar(False, FrmBelShop);
-            MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-          End;
-        End; // Try
-      End; // If bSiga Then
-      Lb_EmpProcessadas.Caption:=IntToStr(StrToInt(Lb_EmpProcessadas.Caption)+1);
+        IBQ_ConsultaFilial.Next;
+      End; // While Not IBQ_ConsultaFilial.Eof do
+
+      Try
+        DMBelShop.CDS_Join.Close;
+        DMBelShop.CDS_Busca.Close;
+        DMBelShop.IBQ_OC_ComprarAdd.Close;
+        IBQ_ConsultaFilial.Close;
+      Except
+      End;
+
+      // Atualiza OC_COMPRAR_DOCS ========================================
+      If bgOC_COMPRAR_Docs Then
+      Begin
+        OC_COMPRAR_DOCS('I', sNumDoc, 'BelShop');
+        bgOC_COMPRAR_Docs:=False;
+      End;
 
       OdirPanApres.Visible:=False;
+      DMBelShop.SQLC.Commit(TD);
+    Except
+      on e : Exception do
+      Begin
+        DMBelShop.SQLC.Rollback(TD);
 
-      // Fecha Conexão ------------------------------------------------
-      sgMensagemERRO:='Fecha Loja';
-      ConexaoEmpIndividual('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'F');
-      sgMensagemERRO:='Fecha Join';
-      DMBelShop.CDS_Join.Close;
-      sgMensagemERRO:='OK1';
-    End; // if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and  (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
+        DMBelShop.CDS_Join.Close;
+        DMBelShop.CDS_Busca.Close;
+        DMBelShop.IBQ_OC_ComprarAdd.Close;
+        IBQ_ConsultaFilial.Close;
 
-    OdirPanApres.Visible:=False;
-    Refresh;
+        OdirPanApres.Visible:=False;
 
-    DMBelShop.CDS_EmpProcessa.Next;
-    sgMensagemERRO:='Proximo'+IntToStr(DMBelShop.CDS_EmpProcessa.RecNo);
-  End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
-  sgMensagemERRO:='FIM';
-  MontaProgressBar(False, FrmBelShop);
-  DMBelShop.CDS_UltCompraTransito.Close;
+        If sgLojasNConectadas='' Then
+         sgLojasNConectadas:='Bel_'+sCodFilial
+        Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sCodFilial) then
+         sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sCodFilial;
+      End;
+    End; // Try
+  End; // If bSiga Then
+  Lb_EmpProcessadas.Caption:=IntToStr(StrToInt(Lb_EmpProcessadas.Caption)+1);
+
+  OdirPanApres.Visible:=False;
+
+  // Fecha Conexão ------------------------------------------------
+  ConexaoEmpIndividual('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'F');
+  DMBelShop.CDS_Join.Close;
+
+// OdirApagar - Loja 18 Agora Sempre Local - 24/01/2017
+//    End; // if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and  (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
+//
+//    OdirPanApres.Visible:=False;
+//    Refresh;
+//
+//    DMBelShop.CDS_EmpProcessa.Next;
+//  End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
+//  sgMensagemERRO:='FIM';
+//  MontaProgressBar(False, FrmBelShop);
+//  DMBelShop.CDS_UltCompraTransito.Close;
 End; // Calculo e Analise Produtos Lojas - LOCAL >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Atualiza Numero dos Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -21502,6 +21483,7 @@ Begin
 
   FrmEntrada.Close;
   FrmLogin.ShowModal;
+
   FrmEntrada.Show;
   FrmEntrada.Refresh;
   Application.ProcessMessages;
@@ -23387,7 +23369,7 @@ begin
     msg('Favor Selecionar o'+cr+'Tipo de Processamento !!','A');
     Rb_CalculoTpProcLocal.SetFocus;
     Exit;
-  End;
+  End; // If (Not Rb_CalculoTpProcLocal.Checked) and (Not Rb_CalculoTpProcLoja.Checked) Then
 
   sgOutrasEmpresa:='(99)';
   FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
@@ -23500,23 +23482,53 @@ begin
   DecimalSeparator:='.';
   DateSeparator:='.';
 
-  try
-    sgLojasNConectadas:='';
+  sgLojasNConectadas:='';
+  DMBelShop.CDS_EmpProcessa.First;
+  While Not DMBelShop.CDS_EmpProcessa.Eof do
+  Begin
+    Refresh;
 
-    // Processamento na Loja ----------------------------------------
-    If Rb_CalculoTpProcLoja.Checked Then
-     CalculaFilial;
-
-    // Processamento Local ------------------------------------------
-    If Rb_CalculoTpProcLocal.Checked Then
-     CalculaFilialLocal;
-  except
-    on e : Exception do
+    if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
     Begin
-      MessageBox(Handle, pChar('Mensagem de erro:'+sgMensagemERRO+#13+e.message), 'Erro', MB_ICONERROR);
-      exit;
-    End; // on e : Exception do
-  End; // Try
+      sCodFilial:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+
+      MontaProgressBar(True, FrmBelShop);
+
+      // Processamento na Loja ----------------------------------------
+      If (Rb_CalculoTpProcLoja.Checked) And (sCodFilial<>'18') Then
+       CalculaFilial;
+
+      // Processamento Local ------------------------------------------
+      If (Rb_CalculoTpProcLocal.Checked) Or (sCodFilial='18') Then
+       CalculaFilialLocal;
+
+      MontaProgressBar(False, FrmBelShop);
+    End; // if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and  (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
+
+    OdirPanApres.Visible:=False;
+    DMBelShop.CDS_EmpProcessa.Next;
+  End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
+  DMBelShop.CDS_UltCompraTransito.Close;
+
+
+// OdirApagar - Loja 18 Agora Sempre Local - 24/01/2017
+//  try
+//    sgLojasNConectadas:='';
+//
+//    // Processamento na Loja ----------------------------------------
+//    If (Rb_CalculoTpProcLoja.Checked) Then
+//     CalculaFilial;
+//
+//    // Processamento Local ------------------------------------------
+//    If Rb_CalculoTpProcLocal.Checked Then
+//     CalculaFilialLocal;
+//  except
+//    on e : Exception do
+//    Begin
+//      MessageBox(Handle, pChar('Mensagem de erro:'+sgMensagemERRO+#13+e.message), 'Erro', MB_ICONERROR);
+//      exit;
+//    End; // on e : Exception do
+//  End; // Try
 
   DecimalSeparator:=',';
   DateSeparator:='/';
@@ -44243,7 +44255,6 @@ Var
   sArq, sLinha: String;
   b: Boolean;
 begin
-
   sArq:=AnsiUpperCase(IncludeTrailingPathDelimiter(sgPastaExecutavelServer)+'Arquivo Status Transf\Odir.Txt');
   While b do
   Begin

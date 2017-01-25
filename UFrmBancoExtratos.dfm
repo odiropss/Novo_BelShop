@@ -407,7 +407,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Top = 0
     Width = 1047
     Height = 525
-    ActivePage = Ts_ConciliacaoManut
+    ActivePage = Ts_ExtratosManut
     Align = alClient
     TabOrder = 0
     OnChange = PC_PrincipalChange
@@ -1126,7 +1126,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Top = 74
             Width = 1031
             Height = 395
-            ActivePage = Ts_ExtratoConsulta
+            ActivePage = Ts_ExtratoSantander
             Align = alClient
             TabOrder = 1
             OnChange = PC_ExtExtratosChange
@@ -2531,7 +2531,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
           Left = 1
           Top = 226
           Width = 1037
-          Height = 251
+          Height = 250
           Align = alClient
           Caption = ' Movimentos de Pagamentos '
           Font.Charset = DEFAULT_CHARSET
@@ -2545,7 +2545,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Left = 2
             Top = 15
             Width = 1033
-            Height = 234
+            Height = 233
             Align = alClient
             Color = 15004403
             DataSource = DMConciliacao.DS_CMPagtos
@@ -3213,37 +3213,77 @@ object FrmBancoExtratos: TFrmBancoExtratos
             end
           end
         end
-        object StatusBar2: TStatusBar
+        object dxStatusBar3: TdxStatusBar
           Left = 1
-          Top = 477
+          Top = 476
           Width = 1037
-          Height = 19
-          Color = clSilver
+          Height = 20
           Panels = <
             item
-              Alignment = taCenter
-              Bevel = pbRaised
-              Text = '<Duplo Click> Marca/Desmarca para Concilia'#231#227'o'
-              Width = 280
+              PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+              PanelStyle.Alignment = taCenter
+              PanelStyle.Color = clSilver
+              PanelStyle.EllipsisType = dxetSmartPath
+              Bevel = dxpbRaised
+              BiDiMode = bdRightToLeft
+              Fixed = False
+              ParentBiDiMode = False
+              Text = '<F1> Legenda de Cores'
+              Width = 42
             end
             item
-              Alignment = taCenter
-              Bevel = pbRaised
-              Text = '<F6> No Grid para Verificar a Concilia'#231#227'o'
-              Width = 250
+              PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+              PanelStyle.Alignment = taCenter
+              PanelStyle.Font.Charset = DEFAULT_CHARSET
+              PanelStyle.Font.Color = clBlue
+              PanelStyle.Font.Height = -11
+              PanelStyle.Font.Name = 'MS Sans Serif'
+              PanelStyle.Font.Style = [fsBold]
+              PanelStyle.ParentFont = False
+              Bevel = dxpbNone
+              Fixed = False
+              Text = '<Duplo Click> Marca/Desmarca p/Concilia'#231#227'o'
+              Width = 80
             end
             item
-              Alignment = taCenter
-              Bevel = pbRaised
-              Text = 'Para Localizar Tecle no T'#237'tulo'
-              Width = 200
-            end
-            item
-              Alignment = taCenter
-              Bevel = pbRaised
-              Text = '<F11> Totalizador Movtos Pagamentos  Loja/Dia'
+              PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+              PanelStyle.Alignment = taCenter
+              PanelStyle.EllipsisType = dxetSmartPath
+              Bevel = dxpbRaised
+              Fixed = False
+              Text = '<F6> Verificar a Concilia'#231#227'o'
               Width = 50
+            end
+            item
+              PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+              PanelStyle.Alignment = taCenter
+              PanelStyle.Font.Charset = DEFAULT_CHARSET
+              PanelStyle.Font.Color = clBlue
+              PanelStyle.Font.Height = -11
+              PanelStyle.Font.Name = 'MS Sans Serif'
+              PanelStyle.Font.Style = [fsBold]
+              PanelStyle.ParentFont = False
+              Bevel = dxpbNone
+              Fixed = False
+              Text = 'Para Localizar Tecle no T'#237'tulo'
+              Width = 56
+            end
+            item
+              PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+              PanelStyle.Alignment = taCenter
+              PanelStyle.AutoHint = True
+              PanelStyle.EllipsisType = dxetSmartPath
+              Bevel = dxpbRaised
+              Fixed = False
+              Text = '<F11> Totalizador Movtos Pagtos  Loja/Dia'
+              Width = 75
             end>
+          PaintStyle = stpsOffice11
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
         end
       end
     end

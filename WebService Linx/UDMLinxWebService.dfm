@@ -1,7 +1,7 @@
 object DMLinxWebService: TDMLinxWebService
   OldCreateOrder = False
-  Left = 242
-  Top = 116
+  Left = 414
+  Top = 100
   Height = 368
   Width = 598
   object SQLC: TSQLConnection

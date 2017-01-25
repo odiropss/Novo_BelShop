@@ -1,6 +1,6 @@
 object FrmSolicitacoes: TFrmSolicitacoes
-  Left = 258
-  Top = 132
+  Left = 234
+  Top = 186
   Width = 649
   Height = 470
   AutoSize = True
@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 432
-    ActivePage = Ts_ReposLojasDigita
+    ActivePage = Ts_GeraOCLegendaCores
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1355,7 +1355,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       Caption = 'Legenda de Cores'
       Highlighted = True
       ImageIndex = 5
-      object Panel19: TPanel
+      object Pan_Cor1: TPanel
         Left = 72
         Top = 32
         Width = 485
@@ -1371,7 +1371,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         ParentFont = False
         TabOrder = 0
       end
-      object Panel20: TPanel
+      object Pan_Cor2: TPanel
         Left = 72
         Top = 64
         Width = 485
@@ -1387,9 +1387,9 @@ object FrmSolicitacoes: TFrmSolicitacoes
         ParentFont = False
         TabOrder = 1
       end
-      object Panel17: TPanel
+      object Pan_Cor3: TPanel
         Left = 72
-        Top = 112
+        Top = 94
         Width = 485
         Height = 27
         BorderStyle = bsSingle
@@ -1403,7 +1403,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         ParentFont = False
         TabOrder = 2
       end
-      object Panel14: TPanel
+      object Pan_Cor4: TPanel
         Left = 72
         Top = 156
         Width = 485
@@ -1419,7 +1419,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         ParentFont = False
         TabOrder = 3
       end
-      object Panel16: TPanel
+      object Pan_Cor5: TPanel
         Left = 72
         Top = 188
         Width = 485
@@ -1435,7 +1435,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         ParentFont = False
         TabOrder = 4
       end
-      object Panel18: TPanel
+      object Pan_Cor6: TPanel
         Left = 72
         Top = 220
         Width = 485
@@ -1453,7 +1453,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         ParentFont = False
         TabOrder = 5
       end
-      object Panel15: TPanel
+      object Pan_Cor7: TPanel
         Left = 72
         Top = 272
         Width = 485
@@ -9925,27 +9925,27 @@ object FrmSolicitacoes: TFrmSolicitacoes
   object CDS_: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 596
-    Top = 240
+    Left = 588
+    Top = 280
   end
   object ADOC_Excel: TADOConnection
     LoginPrompt = False
     Mode = cmShareDenyNone
     Provider = 'Microsoft.Jet.OLEDB.4.0'
-    Left = 596
-    Top = 192
+    Left = 588
+    Top = 224
   end
   object ADOT_Dcto: TADOTable
     Connection = ADOC_Excel
     CursorType = ctStatic
     LockType = ltReadOnly
     TableDirect = True
-    Left = 559
-    Top = 176
+    Left = 583
+    Top = 168
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 521
-    Top = 50
+    Left = 593
+    Top = 90
   end
 end

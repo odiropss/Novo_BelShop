@@ -4709,7 +4709,7 @@ begin
          ' cd.end_zona||''.''||cd.end_corredor||''.''||cd.end_prateleira||''.''||cd.end_gaveta Enderecamento,'+
          ' lo.qtd_a_transf,'+
          ' ''_____'' qtd_disponivel,'+
-         ' lo.cod_produto, TRIM(pr.codbarra) codbarra, TRIM(pr.apresentacao) Des_produto, '+
+         ' lo.cod_produto, TRIM(pr.codbarra) codbarra, Trim(pr.referencia) referencia, TRIM(pr.apresentacao) Des_produto, '+
          QuotedStr(Des_Usuario)+' Usuario,'+
          ' lo.obs_docto'+
 

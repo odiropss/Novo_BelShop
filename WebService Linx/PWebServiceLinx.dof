@@ -126,13 +126,3 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=1.0.0.0
-InternalName=
-LegalCopyright=
-LegalTrademarks=
-OriginalFilename=
-ProductName=
-ProductVersion=1.0.0.0
-Comments=
-[Excluded Packages]
-C:\Program Files (x86)\Borland\Delphi7\Bin\QR5DesignD7.bpl=QuickReport 5.02 Components Delphi 7
