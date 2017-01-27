@@ -1097,4 +1097,9 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     Left = 116
     Top = 470
   end
+  object DS_EmpProcessa: TDataSource
+    DataSet = CDS_EmpProcessa
+    Left = 272
+    Top = 168
+  end
 end

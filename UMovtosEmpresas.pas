@@ -2026,7 +2026,7 @@ begin
 // =============================================================================
   // Guarda Parametro ==========================================================
   EdtParamStr.Text:=AnsiUpperCase(EdtParamStr.Text);
-
+                  
   // Se Processamento Manual NÃO Efetua Processamento Somente Uma Vez ==========
   If (EdtParamStr.Text='OPSS') Or (EdtParamStr.Text='OPSS_N') Then
   Begin
@@ -2279,7 +2279,12 @@ begin
 
 //odiropss Tirar
 //if sCodEmpresa='01' Then
-//sCodEmpresa:='18';
+//sCodEmpresa:='18'
+//else
+//begin
+// Application.Terminate;
+// exit;
+//End;
 
     // Sem Internet Encerra ====================================================
     if not InternetGetConnectedState(@Flags, 0) then
@@ -2619,9 +2624,6 @@ begin
         // sDtaUltAtualizacao:='01.01.2013';
         sDtaUltAtualizacao:=DateTimeToStr(PrimeiroUltimoDia(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor)-60,'P'));
         // odiraqui2 Original: Vale 2ª Linha ///////////////////
-
-//odirapagar - 16/01/2017
-//        sCodEmpresa:=DMMovtosEmpresas.CDS_EmpProcessaCOD_FILIAL.AsString;
 
         // ============================================================
         // Atualiza Dados da Tabela ESTOQUE ===========================
@@ -3049,6 +3051,7 @@ begin
 
           If sCodEmpresa='18' Then
           Begin
+// odiropss Tirar Comentario
             If StrToDate(sDtaUltAtualizacao)<StrToDate('13.12.2016') Then
              sDtaUltAtualizacao:='13.12.2016';
 
@@ -3061,11 +3064,11 @@ begin
                    ' FROM LINXMOVIMENTO lm, LINXPRODUTOS lp'+
                    ' WHERE lm.cod_produto=lp.cod_produto'+
 
-                   ' AND   ((lm.operacao=''S'' AND lm.tipo_transacao=''V'')'+
-                   '        OR'+
-                   '        (lm.operacao=''DE'' AND ((lm.tipo_transacao = ''E'') OR (lm.tipo_transacao IS NULL))))'+
-                   ' AND   lm.cancelado = ''N'''+
-                   ' AND   lm.excluido  = ''N'''+
+                   ' AND lm.operacao in (''S'',''DS'')'+
+                   ' AND ((lm.tipo_transacao in (''V'',''S'')) or (lm.tipo_transacao is null) or (Trim(lm.tipo_transacao)=''''))'+
+                   ' AND lm.cancelado = ''N'''+
+                   ' AND lm.excluido  = ''N'''+
+                   ' AND lm.soma_relatorio=''S'''+
                    ' AND   lp.cod_auxiliar IS NOT NUll'+
                    ' AND   lm.cod_loja  = '+QuotedStr(sCodEmpresa)+
                    ' AND   lm.data_documento >='+QuotedStr(sDtaUltAtualizacao)+

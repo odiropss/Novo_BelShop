@@ -297,8 +297,8 @@ Begin
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (empresa, cnpj_emp, transacao, documento, '+
-                                           'chave_nf, codigo_cliente, operacao, tipo_transacao, '+
-                                           'cod_produto, cod_barra, identificador)';
+                                           'codigo_cliente, operacao, tipo_transacao, '+
+                                           'cod_produto, identificador)';
 
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas') Then
                sSqlUpInValores:=
@@ -640,6 +640,9 @@ Begin
     //==========================================================================
     For iFor:=0 to tgMetodos.Count-1 do
     Begin
+      If Trim(tgMetodos[iFor])='' Then
+       Break;
+
       sgMetodo  :=tgMetodos[iFor];
       sgArqXMLRet:='Retorno_'+sgMetodo+'.XML';
 

@@ -188,6 +188,7 @@ type
     SDS_Loja18: TSQLDataSet;
     CDS_Loja18: TClientDataSet;
     DSP_Loja18: TDataSetProvider;
+    DS_EmpProcessa: TDataSource;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir
