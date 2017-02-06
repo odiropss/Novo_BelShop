@@ -1552,6 +1552,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Align = alRight
           Caption = ' Observa'#231#245'es '
           TabOrder = 5
+          OnDblClick = Gb_ReposLojasOBSDblClick
           object CkB_ReposLojasOBS: TCheckBox
             Left = 24
             Top = 16

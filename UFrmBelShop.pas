@@ -2466,7 +2466,7 @@ var
   sgAplicacoes, sgFamiliaPrecos, sgGruposST: String;
   sgCurvas: String;
 
-  sgCodEmp, sgDesLoja: String; // Usado, Também, para Editar Pedido de Ordem de Compra
+  sgCodLojaLinx, sgCodEmp, sgDesLoja: String; // Usado, Também, para Editar Pedido de Ordem de Compra
 
   sgMesAnoPlanFinanceira: String;
 
@@ -6783,8 +6783,9 @@ begin
 
     if DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
     Begin
-      sgCodEmp:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
-      sgDesLoja:=DMBelShop.CDS_EmpProcessaRAZAO_SOCIAL.AsString;
+      sgCodEmp     :=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+      sgCodLojaLinx:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+      sgDesLoja    :=DMBelShop.CDS_EmpProcessaRAZAO_SOCIAL.AsString;
 
       // Lista de Preco da Loja ------------------------------------------------
       sgCodListaPreco:=FormatFloat('0000',EdtOCCodListaPreco.AsInteger);
@@ -7064,7 +7065,7 @@ begin
 
   If sgLojasNConectadas<>'' Then
    msg('Lojas Não Conectadas: '+cr+cr+sgLojasNConectadas,'A');
-
+           
 End; // Ordens de Compra das Lojas - Busca OCs nas Loajs ///////////////////////
 
 // Fechamento Diario de Lojas - Executa DML >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

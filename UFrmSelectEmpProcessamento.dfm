@@ -801,64 +801,14 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
             Expanded = False
             FieldName = 'PROC'
             Title.Alignment = taCenter
-            Width = 80
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'COD_FILIAL'
-            Title.Alignment = taRightJustify
-            Width = 60
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'ENDERECO_IP'
-            Font.Charset = ANSI_CHARSET
-            Font.Color = clBlack
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            Width = 140
-            Visible = True
-          end
-          item
-            Alignment = taCenter
-            Expanded = False
-            FieldName = 'COD_EMP'
-            Font.Charset = ANSI_CHARSET
-            Font.Color = clBlack
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            Title.Alignment = taCenter
-            Width = 70
+            Width = 75
             Visible = True
           end
           item
             Color = 12189695
             Expanded = False
             FieldName = 'RAZAO_SOCIAL'
-            Width = 400
-            Visible = True
-          end
-          item
-            Alignment = taCenter
-            Expanded = False
-            FieldName = 'TIP_EMP'
-            Title.Alignment = taCenter
-            Visible = True
-          end
-          item
-            Alignment = taCenter
-            Expanded = False
-            FieldName = 'COD_UF'
-            Font.Charset = ANSI_CHARSET
-            Font.Color = clBlack
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            Title.Alignment = taCenter
+            Width = 330
             Visible = True
           end
           item
@@ -871,6 +821,54 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
             Font.Name = 'MS Sans Serif'
             Font.Style = []
             Title.Alignment = taCenter
+            Width = 100
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'TIP_EMP'
+            Title.Alignment = taCenter
+            Width = 30
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DES_CIDADE'
+            Title.Caption = 'Cidade'
+            Width = 130
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'COD_UF'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            Title.Alignment = taCenter
+            Title.Caption = 'UF'
+            Width = 30
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'COD_FILIAL'
+            Title.Alignment = taCenter
+            Title.Caption = 'Sid'
+            Width = 40
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'COD_LINX'
+            Title.Alignment = taCenter
+            Title.Caption = 'Linx'
+            Width = 40
             Visible = True
           end>
       end

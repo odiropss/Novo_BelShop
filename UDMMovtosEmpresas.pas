@@ -189,6 +189,7 @@ type
     CDS_Loja18: TClientDataSet;
     DSP_Loja18: TDataSetProvider;
     DS_EmpProcessa: TDataSource;
+    CDS_EmpProcessaCOD_LINX: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir

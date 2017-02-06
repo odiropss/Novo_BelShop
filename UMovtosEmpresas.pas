@@ -157,6 +157,8 @@ var
 
   bgNewIndTipo: Boolean; // Se Insere Ind_tipo=OK - INSERT INTO movtos_empresas (ind_tipo,
 
+  sCodEmpresa, sCodLojaLinx: String;
+
   // Oque Processar ////////////////////////////////////////////////////////////
   bProcEstoque, // Processa Tabela ESTOQUE
   bProcDemanda , bProcTransito , bProcUltCompra,
@@ -1950,7 +1952,7 @@ begin
   for i := 1 to ParamCount do
    EdtParamStr.Text:=LowerCase(ParamStr(i));
 
-  // odiraqui1: Original: Nao Comentar 1 ///////////////////////
+  // odiropss odiraqui1: Original: Nao Comentar 1 ///////////////////////
   If Trim(EdtParamStr.Text)='' Then
    EdtParamStr.Text:='ODIR'; // Agora é Direto por Agendamento
 // EdtParamStr.Text:='OPSS';   // Não Libera Direto
@@ -1987,7 +1989,7 @@ Var
   bExec: Boolean; // Se Executou Processamento
 
   MySql: String;
-  sCodEmpresa: String;
+
   i: Integer;
   s, sDtaUltAtualizacao, sDta: String;
 
@@ -2275,7 +2277,8 @@ begin
   DMMovtosEmpresas.CDS_EmpProcessa.First;
   While Not DMMovtosEmpresas.CDS_EmpProcessa.Eof do
   Begin
-    sCodEmpresa:=DMMovtosEmpresas.CDS_EmpProcessaCOD_FILIAL.AsString;
+    sCodEmpresa :=DMMovtosEmpresas.CDS_EmpProcessaCOD_FILIAL.AsString;
+    sCodLojaLinx:=DMMovtosEmpresas.CDS_EmpProcessaCOD_LINX.AsString;
 
 //odiropss Tirar
 //if sCodEmpresa='01' Then

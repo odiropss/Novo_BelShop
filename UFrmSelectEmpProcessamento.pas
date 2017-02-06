@@ -283,7 +283,8 @@ begin
     Dbg_SelectEmpProc.DefaultDrawDataCell(Rect,Column.Field,state);
   End;
 
-  DMBelShop.CDS_EmpProcessaCOD_EMP.Alignment:=taCenter;
+  DMBelShop.CDS_EmpProcessaCOD_FILIAL.Alignment:=taCenter;
+  DMBelShop.CDS_EmpProcessaCOD_LINX.Alignment:=taCenter;
   DMBelShop.CDS_EmpProcessaTIP_EMP.Alignment:=taCenter;
   DMBelShop.CDS_EmpProcessaCOD_UF.Alignment:=taCenter;
   DMBelShop.CDS_EmpProcessaNUM_CNPJ.Alignment:=taCenter;
@@ -324,7 +325,7 @@ begin
          '   When ''M'' Then ''SIM'''+
          '   Else ''Não'''+
          ' End  PROC,'+
-         ' e.COD_FILIAL,';
+         ' e.COD_FILIAL, e.COD_LINX,';
 
          // Se Conexão Externa =================================================
          If (Not bgConexaoLocal) Then

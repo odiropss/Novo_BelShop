@@ -55,8 +55,9 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
       'Select '#13#10'c.COD_FILIAL, c.ENDERECO_IP, c.endereco_ip_externo,'#13#10'c.' +
       'PASTA_BASE_DADOS, c.DES_BASE_DADOS, c.COD_EMP, c.RAZAO_SOCIAL, c' +
       '.TIP_EMP,'#13#10'c.IND_ATIVO,'#13#10#39'IBDB_'#39'||c.COD_FILIAL "DATABASE",'#13#10#39'IBT' +
-      '_'#39'||c.COD_FILIAL  "TRANSACAO"'#13#10#13#10'From EMP_Conexoes c'#13#10'Where (c.I' +
-      'nd_Ativo='#39'SIM'#39' or c.cod_filial=99)'#13#10'Order by c.Cod_Emp'#13#10#13#10
+      '_'#39'||c.COD_FILIAL  "TRANSACAO",'#13#10'c.COD_LINX'#13#10#13#10'From EMP_Conexoes ' +
+      'c'#13#10'Where (c.Ind_Ativo='#39'SIM'#39' or c.cod_filial=99)'#13#10'Order by c.Cod_' +
+      'Emp'#13#10#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -119,6 +120,9 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
       FieldName = 'TRANSACAO'
       Required = True
       Size = 6
+    end
+    object CDS_EmpProcessaCOD_LINX: TIntegerField
+      FieldName = 'COD_LINX'
     end
   end
   object DSP_EmpProcessa: TDataSetProvider

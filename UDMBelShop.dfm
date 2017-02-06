@@ -2922,12 +2922,12 @@ object DMBelShop: TDMBelShop
   object SDS_EmpProcessa: TSQLDataSet
     CommandText = 
       'Select '#13#10'Case TIP_EMP'#13#10'  When '#39'M'#39' Then '#39'SIM'#39#13#10'  Else '#39'N'#227'o'#39#13#10'End ' +
-      ' PROC, '#13#10'COD_FILIAL, ENDERECO_IP, PASTA_BASE_DADOS, DES_BASE_DAD' +
-      'OS, COD_EMP, RAZAO_SOCIAL, TIP_EMP, '#13#10'DES_BAIRRO, DES_CIDADE, CO' +
-      'D_UF, COD_CEP, NUM_CNPJ, INSCR_ESTADUAL, DES_ENDERECO, NUM_ENDER' +
-      'ECO, '#13#10'COMPL_ENDERECO, IND_ATIVO, USU_INCLUI, DTA_INCLUI, USU_AL' +
-      'TERA, DTA_ALTERA, COD_LISTAPRE'#13#10#13#10'From EMP_Conexoes'#13#10'Where Ind_A' +
-      'tivo='#39'SIM'#39#13#10'Order by Cod_Emp'#13#10
+      ' PROC, '#13#10'COD_FILIAL, COD_LINX, ENDERECO_IP, PASTA_BASE_DADOS, DE' +
+      'S_BASE_DADOS, COD_EMP, RAZAO_SOCIAL, TIP_EMP, '#13#10'DES_BAIRRO, DES_' +
+      'CIDADE, COD_UF, COD_CEP, NUM_CNPJ, INSCR_ESTADUAL, DES_ENDERECO,' +
+      ' NUM_ENDERECO, '#13#10'COMPL_ENDERECO, IND_ATIVO, USU_INCLUI, DTA_INCL' +
+      'UI, USU_ALTERA, DTA_ALTERA, COD_LISTAPRE'#13#10#13#10'From EMP_Conexoes'#13#10'W' +
+      'here Ind_Ativo='#39'SIM'#39#13#10'Order by Cod_Emp'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -3043,6 +3043,9 @@ object DMBelShop: TDMBelShop
     object CDS_EmpProcessaCOD_LISTAPRE: TStringField
       FieldName = 'COD_LISTAPRE'
       Size = 4
+    end
+    object CDS_EmpProcessaCOD_LINX: TIntegerField
+      FieldName = 'COD_LINX'
     end
   end
   object DSP_EmpProcessa: TDataSetProvider

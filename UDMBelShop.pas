@@ -1166,6 +1166,7 @@ type
     CDS_FluxoPercReducaoDTA_FIM: TDateField;
     CDS_FluxoPercReducaoPER_REDUCAO: TFMTBCDField;
     CDS_FluxoPercReducaoNUM_SEQ: TIntegerField;
+    CDS_EmpProcessaCOD_LINX: TIntegerField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -3583,7 +3584,7 @@ begin
   UsuarioComputadorWindows(sgNomeUsuario, sgNomeComputador);
 
   // Pasta Executavel ==========================================================
-  sPath_Local:=IncludeTrailingPathDelimiter(ExtractFilePAth(Application.ExeName));
+  sPath_Local:=IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName));
 
   // Adiciona PBelShop no FireWall =============================================
   Try

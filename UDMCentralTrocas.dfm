@@ -760,7 +760,6 @@ object DMCentralTrocas: TDMCentralTrocas
     Top = 248
   end
   object CDS_RelReposicao: TClientDataSet
-    Active = True
     Aggregates = <>
     AggregatesActive = True
     Params = <>

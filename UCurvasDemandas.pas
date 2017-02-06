@@ -310,7 +310,7 @@ Begin
            ' SET pr.CLASSEABC='+QuotedStr('E')+
            ' WHERE ((pr.principalfor NOT IN (''000300'', ''000500'', ''001072'', ''000883'', ''010000''))'+
            '         OR'+
-           '        (pr.codaplicacao <>''0016''))'+
+           '        (pr.codaplicacao Not in (''0015'',''0016'',''0017'')))'+
            ' AND   pr.CLASSEABC<>'+QuotedStr('E');
     IBQ_MPMS.Close;
     IBQ_MPMS.SQL.Clear;
@@ -719,18 +719,31 @@ begin
 
   //===========================================================================
   // INICIA PROCESSO ===========================================================
-  MySql:=' SELECT'+
-         ' CASE'+
-         '    WHEN e.cod_filial = ''99'' THEN ''-99'''+
-         '    ELSE e.cod_filial'+
-         ' END cod_filial'+
+//  MySql:=' SELECT'+
+//         ' CASE'+
+//         '    WHEN e.cod_filial = ''99'' THEN ''-99'''+
+//         '    ELSE e.cod_filial'+
+//         ' END cod_filial'+
+//         ' FROM EMP_CONEXOES e'+
+//         ' WHERE ((e.ind_ativo = ''SIM'') OR (e.cod_filial = ''99''))'+
+//         ' AND e.cod_filial<>''18'''+
+//         ' ORDER BY 1 DESC
+
+  MySql:=' SELECT e.cod_filial'+
          ' FROM EMP_CONEXOES e'+
          ' WHERE ((e.ind_ativo = ''SIM'') OR (e.cod_filial = ''99''))'+
-         ' AND e.cod_filial<>''18'''+
-         ' ORDER BY 1 DESC';
+         ' ORDER BY 1';
   DMMovtosEmpresas.CDS_Pesquisa.Close;
   DMMovtosEmpresas.SDS_Pesquisa.CommandText:=MySql;
   DMMovtosEmpresas.CDS_Pesquisa.Open;
+
+//odiropss - Comentar somente loja 18
+//  MySql:=' SELECT e.cod_filial'+
+//         ' FROM EMP_CONEXOES e'+
+//         ' WHERE e.cod_filial=''18''';
+//  DMMovtosEmpresas.CDS_Pesquisa.Close;
+//  DMMovtosEmpresas.SDS_Pesquisa.CommandText:=MySql;
+//  DMMovtosEmpresas.CDS_Pesquisa.Open;
 
   While Not DMMovtosEmpresas.CDS_Pesquisa.Eof do
   Begin
@@ -743,8 +756,8 @@ begin
       DecimalSeparator:='.';
 
       sgCodLoja:=DMMovtosEmpresas.CDS_Pesquisa.FieldByName('COD_FILIAL').AsString;
-      If sgCodLoja='-99' Then
-       sgCodLoja:='99';
+//      If sgCodLoja='-99' Then
+//       sgCodLoja:='99';
 
       // Busca Valor e Quantidade Total de Demandas ============================
       If sgCodLoja<>'99' Then
@@ -770,7 +783,7 @@ begin
           MySql+' AND    COALESCE(pt.situacaopro,0) in (0,3)'+ // Somente Ativo e Não Compra
                 ' AND    ((pt.principalfor NOT IN (''010000'', ''000300'', ''000500'', ''001072'', ''000883''))'+
                 '          OR'+
-                '         (pt.codaplicacao <>''0016''))'+
+                '         (pt.codaplicacao Not in (''0015'',''0016'',''0017'')))'+
 
                 ' AND    mt.codfilial='+QuotedStr(sgCodLoja);
        End
@@ -801,16 +814,9 @@ begin
 
       DMMovtosEmpresas.SDS.Close;
 
-      // Data para Exclusão ES_FINAN_CURVA_ABC =================================
-      MySql:=' select first 1 ff.dta_atualizacao'+
-             ' FROM ES_FINAN_CURVA_ABC ff'+
-             ' WHERE ff.cod_loja='+QuotedStr(sgCodLoja);
-      DMMovtosEmpresas.CDS_BuscaRapida.Close;
-      DMMovtosEmpresas.SDS_BuscaRapida.CommandText:=MySql;
-      DMMovtosEmpresas.CDS_BuscaRapida.Open;
-      sDtaExcluir:=DMMovtosEmpresas.CDS_BuscaRapida.FieldByName('dta_atualizacao').AsString;
+      // Data para Não Exclusão ES_FINAN_CURVA_ABC =============================
+      sDtaExcluir:=DateToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor));
       sDtaExcluir:=f_Troca('/','.',f_Troca('-','.',sDtaExcluir));
-      DMMovtosEmpresas.CDS_BuscaRapida.Close;
 
       // Insere ES_FINAN_CURVA_ABC =============================================
       If sgCodLoja<>'99' Then
@@ -981,18 +987,13 @@ begin
                 '        (pr.codaplicacao Not in (''0015'',''0016'',''0017'')))';
        End; // If sgCodLoja<>'99' Then
       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-//       DMMovtosEmpresas.SQLQ.Close;
-//       DMMovtosEmpresas.SQLQ.SQL.Clear;
-//       DMMovtosEmpresas.SQLQ.SQL.Add(MySql);
-//       DMMovtosEmpresas.SQLQ.ExecSQL();
 
-       sgCodLojaUnica:=TimeToStr(Time);
-
+      sgCodLojaUnica:=TimeToStr(Time);
 
       // Exclui Movtos Anterior Pela dta_atualizacao ES_FINAN_CURVA_ABC ========
       MySql:=' DELETE FROM ES_FINAN_CURVA_ABC ff'+
              ' WHERE ff.cod_loja='+QuotedStr(sgCodLoja)+
-             ' AND   ff.dta_atualizacao='+QuotedStr(sDtaExcluir);
+             ' AND   ff.dta_atualizacao<'+QuotedStr(sDtaExcluir);
       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
       // Calcula Curvas de Valores e Quantidades ===============================
@@ -1018,6 +1019,7 @@ begin
   End; // If Lbx_EmpresasProcessar.Items.Count=0 Then
   DMMovtosEmpresas.CDS_Pesquisa.Close;
 
+//odiropss - Retirar Comentário somente Loja 18
   // Atualiza Curva ABC no CD - SIDICOM
   AtualizaCurvaCD;
 
