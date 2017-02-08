@@ -61,8 +61,8 @@ object DMLinxWebService: TDMLinxWebService
   end
   object SDS_Lojas: TSQLDataSet
     CommandText = 
-      'SELECT em.cod_filial, em.num_cnpj'#13#10'FROM emp_conexoes em'#13#10'WHERE e' +
-      'm.cod_filial = '#39'18'#39#13#10'ORDER BY 1  '
+      'SELECT em.cod_filial, em.num_cnpj, em.cod_linx, em.dta_inicio_li' +
+      'nx'#13#10'FROM EMP_CONEXOES em'#13#10'WHERE em.cod_linx<>0'#13#10'ORDER BY 1'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -89,6 +89,12 @@ object DMLinxWebService: TDMLinxWebService
     object CDS_LojasNUM_CNPJ: TStringField
       FieldName = 'NUM_CNPJ'
       Size = 18
+    end
+    object CDS_LojasCOD_LINX: TIntegerField
+      FieldName = 'COD_LINX'
+    end
+    object CDS_LojasDTA_INICIO_LINX: TDateField
+      FieldName = 'DTA_INICIO_LINX'
     end
   end
 end

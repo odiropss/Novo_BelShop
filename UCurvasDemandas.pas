@@ -719,16 +719,6 @@ begin
 
   //===========================================================================
   // INICIA PROCESSO ===========================================================
-//  MySql:=' SELECT'+
-//         ' CASE'+
-//         '    WHEN e.cod_filial = ''99'' THEN ''-99'''+
-//         '    ELSE e.cod_filial'+
-//         ' END cod_filial'+
-//         ' FROM EMP_CONEXOES e'+
-//         ' WHERE ((e.ind_ativo = ''SIM'') OR (e.cod_filial = ''99''))'+
-//         ' AND e.cod_filial<>''18'''+
-//         ' ORDER BY 1 DESC
-
   MySql:=' SELECT e.cod_filial'+
          ' FROM EMP_CONEXOES e'+
          ' WHERE ((e.ind_ativo = ''SIM'') OR (e.cod_filial = ''99''))'+
@@ -736,14 +726,6 @@ begin
   DMMovtosEmpresas.CDS_Pesquisa.Close;
   DMMovtosEmpresas.SDS_Pesquisa.CommandText:=MySql;
   DMMovtosEmpresas.CDS_Pesquisa.Open;
-
-//odiropss - Comentar somente loja 18
-//  MySql:=' SELECT e.cod_filial'+
-//         ' FROM EMP_CONEXOES e'+
-//         ' WHERE e.cod_filial=''18''';
-//  DMMovtosEmpresas.CDS_Pesquisa.Close;
-//  DMMovtosEmpresas.SDS_Pesquisa.CommandText:=MySql;
-//  DMMovtosEmpresas.CDS_Pesquisa.Open;
 
   While Not DMMovtosEmpresas.CDS_Pesquisa.Eof do
   Begin
@@ -756,8 +738,6 @@ begin
       DecimalSeparator:='.';
 
       sgCodLoja:=DMMovtosEmpresas.CDS_Pesquisa.FieldByName('COD_FILIAL').AsString;
-//      If sgCodLoja='-99' Then
-//       sgCodLoja:='99';
 
       // Busca Valor e Quantidade Total de Demandas ============================
       If sgCodLoja<>'99' Then

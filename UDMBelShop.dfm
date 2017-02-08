@@ -285,6 +285,18 @@ object DMBelShop: TDMBelShop
         Name = 'COD_CONTABIL'
         DataType = ftString
         Size = 10
+      end
+      item
+        Name = 'DTA_ULT_ATUAL_VEND'
+        DataType = ftDate
+      end
+      item
+        Name = 'COD_LINX'
+        DataType = ftInteger
+      end
+      item
+        Name = 'DTA_INICIO_LINX'
+        DataType = ftDate
       end>
     IndexDefs = <>
     IndexFieldNames = 'RAZAO_SOCIAL'
@@ -412,6 +424,15 @@ object DMBelShop: TDMBelShop
     object CDS_EmpresaCOD_CONTABIL: TStringField
       FieldName = 'COD_CONTABIL'
       Size = 10
+    end
+    object CDS_EmpresaDTA_ULT_ATUAL_VEND: TDateField
+      FieldName = 'DTA_ULT_ATUAL_VEND'
+    end
+    object CDS_EmpresaCOD_LINX: TIntegerField
+      FieldName = 'COD_LINX'
+    end
+    object CDS_EmpresaDTA_INICIO_LINX: TDateField
+      FieldName = 'DTA_INICIO_LINX'
     end
   end
   object DS_Empresa: TDataSource
@@ -2921,13 +2942,14 @@ object DMBelShop: TDMBelShop
   end
   object SDS_EmpProcessa: TSQLDataSet
     CommandText = 
-      'Select '#13#10'Case TIP_EMP'#13#10'  When '#39'M'#39' Then '#39'SIM'#39#13#10'  Else '#39'N'#227'o'#39#13#10'End ' +
-      ' PROC, '#13#10'COD_FILIAL, COD_LINX, ENDERECO_IP, PASTA_BASE_DADOS, DE' +
-      'S_BASE_DADOS, COD_EMP, RAZAO_SOCIAL, TIP_EMP, '#13#10'DES_BAIRRO, DES_' +
-      'CIDADE, COD_UF, COD_CEP, NUM_CNPJ, INSCR_ESTADUAL, DES_ENDERECO,' +
-      ' NUM_ENDERECO, '#13#10'COMPL_ENDERECO, IND_ATIVO, USU_INCLUI, DTA_INCL' +
-      'UI, USU_ALTERA, DTA_ALTERA, COD_LISTAPRE'#13#10#13#10'From EMP_Conexoes'#13#10'W' +
-      'here Ind_Ativo='#39'SIM'#39#13#10'Order by Cod_Emp'#13#10
+      'Select '#13#10'Case e.TIP_EMP'#13#10'  When '#39'M'#39' Then '#39'SIM'#39#13#10'  Else '#39'N'#227'o'#39#13#10'En' +
+      'd  PROC, '#13#10#13#10'e.COD_FILIAL, e.COD_LINX, e.ENDERECO_IP, e.PASTA_BA' +
+      'SE_DADOS, e.DES_BASE_DADOS,'#13#10'e.COD_EMP, e.RAZAO_SOCIAL, e.TIP_EM' +
+      'P, e.DES_BAIRRO, e.DES_CIDADE, e.COD_UF,'#13#10'e.COD_CEP, e.NUM_CNPJ,' +
+      ' e.INSCR_ESTADUAL, e.DES_ENDERECO, e.NUM_ENDERECO,'#13#10'e.COMPL_ENDE' +
+      'RECO, e.IND_ATIVO, e.USU_INCLUI, e.DTA_INCLUI, e.USU_ALTERA,'#13#10'e.' +
+      'DTA_ALTERA, e.COD_LISTAPRE, e.dta_inicio_linx'#13#10#13#10'From emp_conexo' +
+      'es e'#13#10'Where e.ind_ativo='#39'SIM'#39#13#10'Order by e.cod_filial'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -3046,6 +3068,9 @@ object DMBelShop: TDMBelShop
     end
     object CDS_EmpProcessaCOD_LINX: TIntegerField
       FieldName = 'COD_LINX'
+    end
+    object CDS_EmpProcessaDTA_INICIO_LINX: TDateField
+      FieldName = 'DTA_INICIO_LINX'
     end
   end
   object DSP_EmpProcessa: TDataSetProvider

@@ -1,9 +1,9 @@
 object DMVirtual: TDMVirtual
   OldCreateOrder = False
-  Left = 156
-  Top = 82
-  Height = 646
-  Width = 1134
+  Left = 241
+  Top = 105
+  Height = 615
+  Width = 1115
   object CDS_V_EmpConexoes: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'COD_EMP'
@@ -103,6 +103,12 @@ object DMVirtual: TDMVirtual
     object CDS_V_EmpConexoesCOD_LISTAPRE: TStringField
       FieldName = 'COD_LISTAPRE'
       Size = 4
+    end
+    object CDS_V_EmpConexoesCOD_LINX: TIntegerField
+      FieldName = 'COD_LINX'
+    end
+    object CDS_V_EmpConexoesDTA_INICIO_LINX: TDateField
+      FieldName = 'DTA_INICIO_LINX'
     end
   end
   object DS_V_GruposProdutos: TDataSource
@@ -1322,7 +1328,7 @@ object DMVirtual: TDMVirtual
     Params = <>
     AfterScroll = CDS_V_EstFisFinanEmpAfterScroll
     Left = 616
-    Top = 418
+    Top = 346
     object CDS_V_EstFisFinanEmpCOD_PRODUTO: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'Cod Prod'
@@ -1376,7 +1382,7 @@ object DMVirtual: TDMVirtual
   object DS_V_EstFisFinanEmp: TDataSource
     DataSet = CDS_V_EstFisFinanEmp
     Left = 659
-    Top = 431
+    Top = 359
   end
   object DS_V_EmpConexoes: TDataSource
     DataSet = CDS_V_EmpConexoes
@@ -1388,7 +1394,7 @@ object DMVirtual: TDMVirtual
     IndexFieldNames = 'INDICE'
     Params = <>
     Left = 616
-    Top = 482
+    Top = 410
     object CDS_V_EstFisFinanLojasCOD_PRODUTO: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'Cod Prod'
@@ -1442,7 +1448,7 @@ object DMVirtual: TDMVirtual
   object DS_V_EstFisFinanLojas: TDataSource
     DataSet = CDS_V_EstFisFinanLojas
     Left = 661
-    Top = 498
+    Top = 426
   end
   object DS_V_ObjetivosMeses: TDataSource
     DataSet = CDS_V_ObjetivosMeses
@@ -1778,14 +1784,14 @@ object DMVirtual: TDMVirtual
   object DS_V_GiroEstoque: TDataSource
     DataSet = CDS_V_GiroEstoque
     Left = 664
-    Top = 553
+    Top = 481
   end
   object CDS_V_GiroEstoque: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'ORDEM'
     Params = <>
     Left = 608
-    Top = 545
+    Top = 473
     object CDS_V_GiroEstoqueCOD_LOJA: TStringField
       Alignment = taCenter
       DisplayLabel = 'Loja'
@@ -1871,13 +1877,13 @@ object DMVirtual: TDMVirtual
   object DS_V_Mix_Prod: TDataSource
     DataSet = CDS_V_Mix_Prod
     Left = 664
-    Top = 370
+    Top = 298
   end
   object CDS_V_Mix_Prod: TClientDataSet
     Aggregates = <>
     Params = <>
     Left = 608
-    Top = 362
+    Top = 290
     object CDS_V_Mix_ProdCOD_LOJA: TStringField
       Alignment = taCenter
       DisplayLabel = 'Cod Loja'

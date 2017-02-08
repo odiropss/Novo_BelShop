@@ -6,9 +6,9 @@
 		<Name>LinxProdutosDetalhes</Name>
 		<Parameters>
 			<Parameter id="chave">d52511f4-3541-4a65-9adc-665513ea3207</Parameter>
-			<Parameter id="cnpjEmp">03772229001880</Parameter>
-			<Parameter id="data_mov_ini">2017-01-15</Parameter>
-			<Parameter id="data_mov_fim">2017-01-25</Parameter>
+			<Parameter id="cnpjEmp">05110757000151</Parameter>
+			<Parameter id="data_mov_ini">1899-12-26</Parameter>
+			<Parameter id="data_mov_fim">2017-02-07</Parameter>
 		</Parameters>
 	</Command>
 </LinxMicrovix>

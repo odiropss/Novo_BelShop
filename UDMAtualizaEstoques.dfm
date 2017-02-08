@@ -172,12 +172,12 @@ object DMAtualizaEstoques: TDMAtualizaEstoques
   end
   object SDS_EmpProcessa: TSQLDataSet
     CommandText = 
-      'Select '#13#10'c.COD_FILIAL, c.ENDERECO_IP, c.endereco_ip_externo,'#13#10'c.' +
-      'PASTA_BASE_DADOS, c.DES_BASE_DADOS, c.COD_EMP, c.RAZAO_SOCIAL, c' +
-      '.TIP_EMP,'#13#10'c.IND_ATIVO,'#13#10#39'IBDB_'#39'||c.COD_FILIAL "DATABASE",'#13#10#39'IBT' +
-      '_'#39'||c.COD_FILIAL  "TRANSACAO"'#13#10#13#10'From EMP_Conexoes c'#13#10'Where (c.I' +
-      'nd_Ativo='#39'SIM'#39' or c.cod_filial='#39'99'#39' or c.cod_filial='#39'50'#39')'#13#10'Order' +
-      ' by c.Cod_Emp'#13#10#13#10
+      'Select '#13#10'c.COD_FILIAL, c.COD_LINX, c.ENDERECO_IP, c.endereco_ip_' +
+      'externo,'#13#10'c.PASTA_BASE_DADOS, c.DES_BASE_DADOS, c.COD_EMP, c.RAZ' +
+      'AO_SOCIAL, c.TIP_EMP,'#13#10'c.IND_ATIVO, c.DTA_INICIO_LINX,'#13#10#39'IBDB_'#39'|' +
+      '|c.COD_FILIAL "DATABASE",'#13#10#39'IBT_'#39'||c.COD_FILIAL  "TRANSACAO"'#13#10#13#10 +
+      'From EMP_Conexoes c'#13#10'Where (c.Ind_Ativo='#39'SIM'#39' or c.cod_filial='#39'9' +
+      '9'#39' or c.cod_filial='#39'50'#39')'#13#10'Order by c.Cod_Emp'
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -246,23 +246,29 @@ object DMAtualizaEstoques: TDMAtualizaEstoques
       Required = True
       Size = 6
     end
+    object CDS_EmpProcessaCOD_LINX: TIntegerField
+      FieldName = 'COD_LINX'
+    end
+    object CDS_EmpProcessaDTA_INICIO_LINX: TDateField
+      FieldName = 'DTA_INICIO_LINX'
+    end
   end
-  object SDS_Loja18: TSQLDataSet
+  object SDS_LojaLinx: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 239
     Top = 225
   end
-  object CDS_Loja18: TClientDataSet
+  object CDS_LojaLinx: TClientDataSet
     Aggregates = <>
     Params = <>
-    ProviderName = 'DSP_Loja18'
+    ProviderName = 'DSP_LojaLinx'
     Left = 333
     Top = 224
   end
-  object DSP_Loja18: TDataSetProvider
-    DataSet = SDS_Loja18
+  object DSP_LojaLinx: TDataSetProvider
+    DataSet = SDS_LojaLinx
     Options = [poRetainServerOrder]
     Left = 284
     Top = 238

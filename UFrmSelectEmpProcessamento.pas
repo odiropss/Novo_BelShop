@@ -347,7 +347,7 @@ begin
                 ' e.TIP_EMP, e.DES_BAIRRO, e.DES_CIDADE, e.COD_UF, e.COD_CEP,'+
                 ' e.NUM_CNPJ, e.INSCR_ESTADUAL, e.DES_ENDERECO, e.NUM_ENDERECO,'+
                 ' e.COMPL_ENDERECO, e.IND_ATIVO, e.USU_INCLUI, e.DTA_INCLUI,'+
-                ' e.USU_ALTERA, e.DTA_ALTERA, e.COD_LISTAPRE'+
+                ' e.USU_ALTERA, e.DTA_ALTERA, e.COD_LISTAPRE, e.DTA_INICIO_LINX'+
 
                 ' From EMP_CONEXOES e';
 

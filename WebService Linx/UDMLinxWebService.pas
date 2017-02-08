@@ -17,6 +17,8 @@ type
     CDS_Lojas: TClientDataSet;
     CDS_LojasCOD_FILIAL: TStringField;
     CDS_LojasNUM_CNPJ: TStringField;
+    CDS_LojasCOD_LINX: TIntegerField;
+    CDS_LojasDTA_INICIO_LINX: TDateField;
 
     // Odir
     Function ConectaBanco: Boolean;

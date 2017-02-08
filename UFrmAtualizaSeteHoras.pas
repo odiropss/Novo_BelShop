@@ -321,9 +321,6 @@ Begin
 
            ' CAST(SUM(dem.preco) AS NUMERIC(12,2)) vlr_venda,'+
 
-// Odirapagar - 19/01/2017
-//           ' CAST((SUM(CAST(dem.preco AS NUMERIC(12,4))) / '+IntToStr(igDiasUteis)+') AS NUMERIC(12,2)) vlr_venda_dia,'+
-
            ' case'+
            '   when dem.codfilial=''18'' Then'+
            '      CAST((SUM(CAST(dem.preco AS NUMERIC(12,4))) / '+IntToStr(igDiasUteis_18)+') AS NUMERIC(12,2))'+
@@ -334,8 +331,6 @@ Begin
            ' '+QuotedStr(sgDtaInicio)+' periodo_inicio,'+
            ' '+QuotedStr(sgDtaFim)+'    periodo_fim,'+
 
-// Odirapagar - 19/01/2017
-//           ' '+IntToStr(igDiasUteis)+'  dias_uteis,'+
            ' case'+
            '   when dem.codfilial=''18'' Then'+
            '      '+IntToStr(igDiasUteis_18)+
@@ -893,7 +888,7 @@ begin
   Mem_Odir.Lines.Clear;
 
   // Busca Lojas ===============================================================
-  MySql:=' SELECT e.cod_filial'+
+  MySql:=' SELECT e.cod_filial, e.cod_linx'+
          ' FROM EMP_CONEXOES e'+
          ' WHERE ((e.ind_ativo = ''SIM'') OR'+
          '        (e.cod_filial = ''99'') OR'+
@@ -906,7 +901,7 @@ begin
   DMAtualizaSeteHoras.CDS_Lojas.First;
   While Not DMAtualizaSeteHoras.CDS_Lojas.Eof do
   Begin
-    If Trim(DMAtualizaSeteHoras.CDS_Lojas.FieldByName('COD_FILIAL').AsString)='18' Then
+    If DMAtualizaSeteHoras.CDS_Lojas.FieldByName('COD_LINX').AsInteger<>0 Then
     Begin
       DMAtualizaSeteHoras.CDS_Lojas.Next;
     End;

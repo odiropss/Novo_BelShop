@@ -185,9 +185,9 @@ type
     IBQ_EstoqueLojaPRATELEIRA: TIBStringField;
     IBQ_EstoqueLojaGAVETA: TIBStringField;
     IBQ_EstoqueLojaPRINCIPALFOR: TIBStringField;
-    SDS_Loja18: TSQLDataSet;
-    CDS_Loja18: TClientDataSet;
-    DSP_Loja18: TDataSetProvider;
+    SDS_LojaLinx: TSQLDataSet;
+    CDS_LojaLinx: TClientDataSet;
+    DSP_LojaLinx: TDataSetProvider;
     DS_EmpProcessa: TDataSource;
     CDS_EmpProcessaCOD_LINX: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);

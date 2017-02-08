@@ -1167,6 +1167,10 @@ type
     CDS_FluxoPercReducaoPER_REDUCAO: TFMTBCDField;
     CDS_FluxoPercReducaoNUM_SEQ: TIntegerField;
     CDS_EmpProcessaCOD_LINX: TIntegerField;
+    CDS_EmpProcessaDTA_INICIO_LINX: TDateField;
+    CDS_EmpresaDTA_ULT_ATUAL_VEND: TDateField;
+    CDS_EmpresaCOD_LINX: TIntegerField;
+    CDS_EmpresaDTA_INICIO_LINX: TDateField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -2310,11 +2314,12 @@ Var
   MySql: String;
 Begin
   Result:=True;
+  sgMensagem:='';
 
-  // Codigo da Empresa
+  // Codigo da Empresa - SIDICOM
   If Trim(FrmBelShop.Dbe_ConEmpresasCodEmp.Text)='' Then
   Begin
-    sgMensagem:='Favor Informar o Código !!';
+    sgMensagem:='Favor Informar o Código - SIDICOM !!';
     FrmBelShop.Dbe_ConEmpresasCodEmp.SetFocus;
     Result:=False;
     Exit;
@@ -2322,19 +2327,47 @@ Begin
 
   MySql:=' Select Cod_Emp'+
          ' From EMP_Conexoes'+
-         ' Where Cod_Emp='+QuotedStr(CDS_Empresa.FieldByName('Cod_Emp').NewValue)+
-         ' And Cod_Emp<>'+QuotedStr(CDS_Empresa.FieldByName('Cod_Emp').OldValue);
+         ' Where Cod_Emp='+QuotedStr(CDS_EmpresaCOD_EMP.NewValue)+
+         ' And Cod_Emp<>'+QuotedStr(CDS_EmpresaCOD_EMP.OldValue);
   CDS_ConectaEmpresa.Close;
   SDS_ConectaEmpresa.CommandText:=MySql;
   CDS_ConectaEmpresa.Open;
 
   If Trim(CDS_ConectaEmpresa.FieldByName('Cod_Emp').AsString)<>'' Then
   Begin
-    sgMensagem:='Codigo da Empresa Já Existente !!';
+    sgMensagem:='Codigo (SIDICOM) da Empresa Já Existente !!';
     FrmBelShop.Dbe_ConEmpresasCodEmp.SetFocus;
     Result:=False;
     Exit;
   end;
+
+  // Codigo da Empresa - LINX
+  If (Trim(FrmBelShop.Dbe_ConEmpresasCodLojaLinx.Text)<>'') and (Trim(FrmBelShop.Dbe_ConEmpresasCodLojaLinx.Text)<>'0') Then
+  Begin
+    MySql:=' Select Cod_Linx'+
+           ' From EMP_Conexoes'+
+           ' Where Cod_Linx='+QuotedStr(CDS_EmpresaCOD_LINX.NewValue)+
+           ' And Cod_Linx<>'+QuotedStr(CDS_EmpresaCOD_LINX.OldValue);
+    CDS_ConectaEmpresa.Close;
+    SDS_ConectaEmpresa.CommandText:=MySql;
+    CDS_ConectaEmpresa.Open;
+
+    If Trim(CDS_ConectaEmpresa.FieldByName('Cod_Linx').AsString)<>'' Then
+    Begin
+      sgMensagem:='Codigo (Linx) da Empresa Já Existente !!';
+      FrmBelShop.Dbe_ConEmpresasCodLojaLinx.SetFocus;
+      Result:=False;
+      Exit;
+    End;
+
+    If (Trim(FrmBelShop.EdtDta_ConEmpresasInicioLinx.Text)='') Or (Trim(FrmBelShop.EdtDta_ConEmpresasInicioLinx.Text)='/  /') Then
+    Begin
+      sgMensagem:='Favor Informar a Data de Início'+cr+'da Loja no Sistema Linx !!';
+      FrmBelShop.EdtDta_ConEmpresasInicioLinx.SetFocus;
+      Result:=False;
+      Exit;
+    End;
+  End; // If Trim(FrmBelShop.Dbe_ConEmpresasCodLojaLinx.Text)<>'' Then
 
   // Tipo da Empresa
   If (Trim(FrmBelShop.Dbcb_ConEmpresasTipo.Text)<>'F') and (Trim(FrmBelShop.Dbcb_ConEmpresasTipo.Text)<>'M') Then
@@ -2370,10 +2403,10 @@ Begin
   End; // If Trim(FrmBelShop.Dbcb_ConEmpresasTipo.Text)='M' Then
 
   // Ativo/Inativo da Empresa
-  If (Trim(FrmBelShop.Dbcb_ConEmpresasAtvio.Text)<>'NAO') and (Trim(FrmBelShop.Dbcb_ConEmpresasAtvio.Text)<>'SIM') Then
+  If (Trim(FrmBelShop.Dbcb_ConEmpresasAtivo.Text)<>'NAO') and (Trim(FrmBelShop.Dbcb_ConEmpresasAtivo.Text)<>'SIM') Then
   Begin
     sgMensagem:='Ativo Inálido !!'+cr+cr+'(SIM) ou (NAO)';
-    FrmBelShop.Dbcb_ConEmpresasAtvio.SetFocus;
+    FrmBelShop.Dbcb_ConEmpresasAtivo.SetFocus;
     Result:=False;
     Exit;
   End;
@@ -3254,21 +3287,25 @@ Begin
                           CDS_ConectaEmpresa.FieldByName('Ind_Ativo').AsString;
 
     DMVirtual.CDS_V_EmpConexoesINSCR_ESTADUAL.AsString:=
-                     CDS_ConectaEmpresa.FieldByName('Inscr_Estadual').AsString;
+                      CDS_ConectaEmpresa.FieldByName('Inscr_Estadual').AsString;
     DMVirtual.CDS_V_EmpConexoesNUM_CNPJ.AsString:=
-                           CDS_ConectaEmpresa.FieldByName('Num_CNPJ').AsString;
+                            CDS_ConectaEmpresa.FieldByName('Num_CNPJ').AsString;
     DMVirtual.CDS_V_EmpConexoesNUM_ENDERECO.AsString:=
-                       CDS_ConectaEmpresa.FieldByName('Num_Endereco').AsString;
+                         CDS_ConectaEmpresa.FieldByName('Num_Endereco').AsString;
     DMVirtual.CDS_V_EmpConexoesPASTA_BASE_DADOS.AsString:=
-                   CDS_ConectaEmpresa.FieldByName('Pasta_Base_Dados').AsString;
+                     CDS_ConectaEmpresa.FieldByName('Pasta_Base_Dados').AsString;
     DMVirtual.CDS_V_EmpConexoesRAZAO_SOCIAL.AsString:=
-                       CDS_ConectaEmpresa.FieldByName('Razao_Social').AsString;
+                         CDS_ConectaEmpresa.FieldByName('Razao_Social').AsString;
     DMVirtual.CDS_V_EmpConexoesTIP_EMP.AsString:=
-                            CDS_ConectaEmpresa.FieldByName('Tip_Emp').AsString;
+                              CDS_ConectaEmpresa.FieldByName('Tip_Emp').AsString;
     DMVirtual.CDS_V_EmpConexoesDATABASE.AsString:='IBDB_'+
-                         CDS_ConectaEmpresa.FieldByName('Cod_Filial').AsString;
+                           CDS_ConectaEmpresa.FieldByName('Cod_Filial').AsString;
     DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString:='IBT_'+
-                         CDS_ConectaEmpresa.FieldByName('Cod_Filial').AsString;
+                           CDS_ConectaEmpresa.FieldByName('Cod_Filial').AsString;
+    DMVirtual.CDS_V_EmpConexoesCOD_LINX.AsString:=
+                             CDS_ConectaEmpresa.FieldByName('Cod_Linx').AsString;
+    DMVirtual.CDS_V_EmpConexoesDTA_INICIO_LINX.AsString:=
+                      CDS_ConectaEmpresa.FieldByName('Dta_Inicio_linx').AsString;
     DMVirtual.CDS_V_EmpConexoes.Post;
 
     // Monta Conexões de Empresas Ativas =======================================
@@ -3532,21 +3569,23 @@ Var
   s:String;
   MySql: String;
 begin
-  s:=Tira_Mascara(Trim(CDS_Empresa.FieldByName('Num_CNPJ').AsString));
+  s:=Tira_Mascara(Trim(CDS_EmpresaNUM_CNPJ.AsString));
   FrmBelShop.Me_ConEmpresasCNPJ.Text:=tbFmtCPForCNPJ(ZerosEsquerda(s,14));
 
-  s:=Tira_Mascara(Trim(CDS_Empresa.FieldByName('Cod_Cep').AsString));
+  s:=Tira_Mascara(Trim(CDS_EmpresaCOD_CEP.AsString));
   FrmBelShop.Me_ConEmpresasCEP.Text:=tbFmtCEP(s);
 
-  s:=FrmBelShop.NomeUfEstado(CDS_Empresa.FieldByName('Cod_UF').AsString);
+  s:=FrmBelShop.NomeUfEstado(CDS_EmpresaCOD_UF.AsString);
   FrmBelShop.EdtConEmpresasEstado.Text:=Separa_String(s,1);
 
+  FrmBelShop.EdtDta_ConEmpresasInicioLinx.Text:=CDS_EmpresaDTA_INICIO_LINX.Text;
+
   FrmBelShop.EdtConEmpresasUsuInclui.Clear;
-  If Trim(CDS_Empresa.FieldByName('Usu_Inclui').AsString)<>'' Then
+  If Trim(CDS_EmpresaUSU_INCLUI.AsString)<>'' Then
   Begin
     MySql:='Select Des_Login'+
            ' From PS_Usuarios'+
-           ' Where Cod_Usuario='+CDS_Empresa.FieldByName('Usu_Inclui').AsString;
+           ' Where Cod_Usuario='+CDS_EmpresaUSU_INCLUI.AsString;
     SDS_Busca.Close;
     SDS_Busca.CommandText:=MySql;
     SDS_Busca.Open;
@@ -3555,11 +3594,11 @@ begin
   End;
 
   FrmBelShop.EdtConEmpresasUsuAltera.Clear;
-  If Trim(CDS_Empresa.FieldByName('Usu_Altera').AsString)<>'' Then
+  If Trim(CDS_EmpresaUSU_ALTERA.AsString)<>'' Then
   Begin
     MySql:='Select Des_Login'+
            ' From PS_Usuarios'+
-           ' Where Cod_Usuario='+CDS_Empresa.FieldByName('Usu_Altera').AsString;
+           ' Where Cod_Usuario='+CDS_EmpresaUSU_ALTERA.AsString;
     SDS_Busca.Close;
     SDS_Busca.CommandText:=MySql;
     SDS_Busca.Open;

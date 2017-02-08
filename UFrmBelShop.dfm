@@ -1,6 +1,6 @@
 object FrmBelShop: TFrmBelShop
-  Left = 237
-  Top = 106
+  Left = 241
+  Top = 110
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_OrdemCompra
+    ActivePage = Ts_ConexaoEmpresas
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -5155,35 +5155,9 @@ object FrmBelShop: TFrmBelShop
         DesignSize = (
           651
           501)
-        object Label15: TLabel
-          Left = 46
-          Top = 24
-          Width = 40
-          Height = 13
-          Caption = 'C'#243'digo'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label16: TLabel
-          Left = 146
-          Top = 24
-          Width = 68
-          Height = 13
-          Caption = 'C'#243'digo Loja'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
         object Label17: TLabel
           Left = 25
-          Top = 51
+          Top = 87
           Width = 85
           Height = 13
           Caption = 'Raz'#227'o Social *'
@@ -5197,7 +5171,7 @@ object FrmBelShop: TFrmBelShop
           ParentFont = False
         end
         object Label21: TLabel
-          Left = 358
+          Left = 462
           Top = 24
           Width = 114
           Height = 13
@@ -5211,7 +5185,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Label38: TLabel
           Left = 24
-          Top = 95
+          Top = 131
           Width = 41
           Height = 13
           Caption = 'CNPJ *'
@@ -5224,14 +5198,14 @@ object FrmBelShop: TFrmBelShop
         end
         object Label49: TLabel
           Left = 525
-          Top = 24
+          Top = 56
           Width = 30
           Height = 13
           Caption = 'Ativo'
         end
         object Label50: TLabel
           Left = 202
-          Top = 95
+          Top = 131
           Width = 115
           Height = 13
           Caption = 'Inscri'#231#227'o Estadual *'
@@ -5244,7 +5218,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Label45: TLabel
           Left = 25
-          Top = 120
+          Top = 150
           Width = 74
           Height = 13
           Caption = 'Logradouro *'
@@ -5257,7 +5231,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Label51: TLabel
           Left = 25
-          Top = 160
+          Top = 190
           Width = 85
           Height = 13
           Caption = 'Complemento *'
@@ -5270,7 +5244,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Label52: TLabel
           Left = 181
-          Top = 160
+          Top = 190
           Width = 43
           Height = 13
           Anchors = [akLeft, akTop, akRight]
@@ -5284,7 +5258,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Label53: TLabel
           Left = 497
-          Top = 160
+          Top = 190
           Width = 34
           Height = 13
           Anchors = [akTop, akRight]
@@ -5298,7 +5272,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Label55: TLabel
           Left = 25
-          Top = 199
+          Top = 227
           Width = 26
           Height = 13
           Caption = 'UF *'
@@ -5311,7 +5285,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Label56: TLabel
           Left = 376
-          Top = 199
+          Top = 227
           Width = 66
           Height = 13
           Anchors = [akTop, akRight]
@@ -5325,7 +5299,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Label57: TLabel
           Left = 497
-          Top = 120
+          Top = 150
           Width = 53
           Height = 13
           Anchors = [akTop, akRight]
@@ -5339,7 +5313,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Label200: TLabel
           Left = 449
-          Top = 95
+          Top = 131
           Width = 89
           Height = 13
           Caption = 'Lista de Pre'#231'os'
@@ -5352,7 +5326,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Label193: TLabel
           Left = 25
-          Top = 245
+          Top = 271
           Width = 236
           Height = 13
           Caption = 'Inscri'#231#227'o Sindicato dos Sal'#245'es de Beleza'
@@ -5365,7 +5339,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Label201: TLabel
           Left = 90
-          Top = 267
+          Top = 293
           Width = 171
           Height = 13
           Caption = 'N'#250'mero do Alvar'#225' Municip'#225'rio'
@@ -5378,7 +5352,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Label69: TLabel
           Left = 369
-          Top = 267
+          Top = 293
           Width = 90
           Height = 13
           Caption = 'C'#243'digo Contabil'
@@ -5389,34 +5363,10 @@ object FrmBelShop: TFrmBelShop
           Font.Style = [fsBold]
           ParentFont = False
         end
-        object Dbe_ConEmpresasCodEmp: TDBEdit
-          Left = 89
-          Top = 21
-          Width = 50
-          Height = 19
-          CharCase = ecUpperCase
-          Ctl3D = False
-          DataField = 'COD_EMP'
-          DataSource = DMBelShop.DS_Empresa
-          ParentCtl3D = False
-          TabOrder = 0
-        end
-        object Dbe_ConEmpresasCodFilial: TDBEdit
-          Left = 217
-          Top = 21
-          Width = 53
-          Height = 19
-          CharCase = ecUpperCase
-          Ctl3D = False
-          DataField = 'COD_FILIAL'
-          DataSource = DMBelShop.DS_Empresa
-          ParentCtl3D = False
-          TabOrder = 1
-        end
         object Dbe_ConEmpresasRazaoSocial: TDBEdit
           Left = 25
-          Top = 65
-          Width = 587
+          Top = 101
+          Width = 599
           Height = 19
           Anchors = [akLeft, akTop, akRight]
           CharCase = ecUpperCase
@@ -5445,9 +5395,11 @@ object FrmBelShop: TFrmBelShop
           object Label66: TLabel
             Left = 206
             Top = 9
-            Width = 405
+            Width = 440
             Height = 13
-            Caption = 'Estas Informa'#231#245'es devem ser ALTERADAS no SIDICOM ( CD / MPMS )'
+            Caption = 
+              'Estas Informa'#231#245'es devem ser ALTERADAS no SIDICOM ( CD / BelShop_' +
+              'CD )'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clRed
             Font.Height = -11
@@ -5507,9 +5459,9 @@ object FrmBelShop: TFrmBelShop
             OnClick = Bt_ConEmpresasVoltarClick
           end
         end
-        object Dbcb_ConEmpresasAtvio: TDBComboBox
-          Left = 559
-          Top = 21
+        object Dbcb_ConEmpresasAtivo: TDBComboBox
+          Left = 562
+          Top = 53
           Width = 60
           Height = 21
           CharCase = ecUpperCase
@@ -5523,7 +5475,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Dbe_ConEmpresasInscrEstadual: TDBEdit
           Left = 320
-          Top = 92
+          Top = 128
           Width = 120
           Height = 19
           CharCase = ecUpperCase
@@ -5542,7 +5494,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Dbe_ConEmpresasComplemento: TDBEdit
           Left = 25
-          Top = 175
+          Top = 205
           Width = 150
           Height = 19
           CharCase = ecUpperCase
@@ -5561,7 +5513,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Dbe_ConEmpresasBairro: TDBEdit
           Left = 181
-          Top = 175
+          Top = 205
           Width = 310
           Height = 19
           Anchors = [akLeft, akTop, akRight]
@@ -5581,7 +5533,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Dbe_ConEmpresasNumero: TDBEdit
           Left = 497
-          Top = 136
+          Top = 166
           Width = 129
           Height = 19
           Anchors = [akTop, akRight]
@@ -5601,7 +5553,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Dbe_ConEmpresasEndereco: TDBEdit
           Left = 25
-          Top = 136
+          Top = 166
           Width = 467
           Height = 19
           Anchors = [akLeft, akTop, akRight]
@@ -5621,7 +5573,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Dbe_ConEmpresasUF: TDBEdit
           Left = 25
-          Top = 213
+          Top = 241
           Width = 26
           Height = 19
           TabStop = False
@@ -5642,7 +5594,7 @@ object FrmBelShop: TFrmBelShop
         end
         object EdtConEmpresasEstado: TEdit
           Left = 56
-          Top = 213
+          Top = 241
           Width = 284
           Height = 19
           TabStop = False
@@ -5661,7 +5613,7 @@ object FrmBelShop: TFrmBelShop
         object Bt_ConEmpresasBuscaMunicipio: TJvXPButton
           Tag = 92
           Left = 600
-          Top = 208
+          Top = 236
           Width = 24
           Height = 26
           TabOrder = 17
@@ -5679,7 +5631,7 @@ object FrmBelShop: TFrmBelShop
         object Bt_ConEmpresasBuscaEstado: TJvXPButton
           Tag = 92
           Left = 344
-          Top = 210
+          Top = 238
           Width = 23
           Height = 24
           TabOrder = 15
@@ -5695,7 +5647,7 @@ object FrmBelShop: TFrmBelShop
           OnClick = Bt_ConEmpresasBuscaEstadoClick
         end
         object Dbcb_ConEmpresasTipo: TDBComboBox
-          Left = 474
+          Left = 578
           Top = 21
           Width = 45
           Height = 21
@@ -5712,7 +5664,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Me_ConEmpresasCNPJ: TMaskEdit
           Left = 68
-          Top = 92
+          Top = 128
           Width = 129
           Height = 19
           CharCase = ecUpperCase
@@ -5730,7 +5682,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Dbe_ConEmpresasMunicipio: TDBEdit
           Left = 376
-          Top = 213
+          Top = 241
           Width = 220
           Height = 19
           TabStop = False
@@ -5752,7 +5704,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Me_ConEmpresasCEP: TMaskEdit
           Left = 497
-          Top = 175
+          Top = 205
           Width = 68
           Height = 19
           Anchors = [akTop, akRight]
@@ -5863,9 +5815,9 @@ object FrmBelShop: TFrmBelShop
         end
         object Gb_ConEmpresasConexao: TGroupBox
           Left = 2
-          Top = 295
+          Top = 308
           Width = 647
-          Height = 119
+          Height = 106
           Align = alBottom
           Caption = ' Conex'#227'o Banco de Dados '
           Font.Charset = DEFAULT_CHARSET
@@ -5877,10 +5829,10 @@ object FrmBelShop: TFrmBelShop
           TabOrder = 21
           DesignSize = (
             647
-            119)
+            106)
           object Label19: TLabel
             Left = 25
-            Top = 76
+            Top = 62
             Width = 184
             Height = 13
             Caption = 'Pasta - Local da Base de Dados'
@@ -5893,7 +5845,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Label20: TLabel
             Left = 68
-            Top = 98
+            Top = 84
             Width = 141
             Height = 13
             Caption = 'Nome da Base de Dados'
@@ -5906,7 +5858,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Dbe_ConEmpresasBaseDados: TDBEdit
             Left = 213
-            Top = 95
+            Top = 81
             Width = 185
             Height = 19
             Anchors = [akLeft, akTop, akRight]
@@ -5925,7 +5877,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Dbe_ConEmpresasPastaBD: TDBEdit
             Left = 213
-            Top = 73
+            Top = 59
             Width = 407
             Height = 19
             Anchors = [akLeft, akTop, akRight]
@@ -5944,9 +5896,9 @@ object FrmBelShop: TFrmBelShop
           end
           object Gb_ConEmpresasEnderecoIP: TGroupBox
             Left = 14
-            Top = 21
+            Top = 15
             Width = 273
-            Height = 47
+            Height = 41
             Anchors = [akTop]
             Caption = ' IP do Servidor (Lojas ou Local para Matriz) '
             Font.Charset = DEFAULT_CHARSET
@@ -5958,7 +5910,7 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 0
             object Dbe_ConEmpresasIP: TDBEdit
               Left = 9
-              Top = 20
+              Top = 17
               Width = 256
               Height = 19
               CharCase = ecUpperCase
@@ -5971,9 +5923,9 @@ object FrmBelShop: TFrmBelShop
           end
           object Gb_ConEmpresasEnderecoIPExterno: TGroupBox
             Left = 288
-            Top = 21
+            Top = 15
             Width = 336
-            Height = 47
+            Height = 41
             Anchors = [akTop]
             Caption = ' IP do Modem para Conex'#227'o Externa ao Servidor  Matriz '
             Font.Charset = DEFAULT_CHARSET
@@ -5985,7 +5937,7 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 1
             object Dbe_ConEmpresasIPExterno: TDBEdit
               Left = 14
-              Top = 19
+              Top = 16
               Width = 315
               Height = 19
               CharCase = ecUpperCase
@@ -5999,7 +5951,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Dbe_ConEmpresasCodLP: TDBEdit
           Left = 542
-          Top = 92
+          Top = 128
           Width = 53
           Height = 19
           CharCase = ecUpperCase
@@ -6012,7 +5964,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Dbe_ConEmpresasNumSindicato: TDBEdit
           Left = 264
-          Top = 242
+          Top = 268
           Width = 94
           Height = 19
           CharCase = ecUpperCase
@@ -6024,7 +5976,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Dbe_ConEmpresasNumAlvaraMun: TDBEdit
           Left = 264
-          Top = 264
+          Top = 290
           Width = 94
           Height = 19
           CharCase = ecUpperCase
@@ -6036,7 +5988,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Dbe_ConEmpresasCodContabil: TDBEdit
           Left = 462
-          Top = 264
+          Top = 290
           Width = 53
           Height = 19
           CharCase = ecUpperCase
@@ -6046,6 +5998,144 @@ object FrmBelShop: TFrmBelShop
           ParentCtl3D = False
           TabOrder = 20
           OnExit = Dbe_ConEmpresasCodLPExit
+        end
+        object Gb_Sidicom: TGroupBox
+          Left = 24
+          Top = 11
+          Width = 174
+          Height = 72
+          Caption = ' S I D I C O M '
+          Color = clSilver
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlue
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+          TabOrder = 0
+          object Label16: TLabel
+            Left = 34
+            Top = 21
+            Width = 68
+            Height = 13
+            Caption = 'C'#243'digo Loja'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Label15: TLabel
+            Left = 10
+            Top = 44
+            Width = 92
+            Height = 13
+            Caption = 'C'#243'digo Empresa'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Dbe_ConEmpresasCodFilial: TDBEdit
+            Left = 105
+            Top = 18
+            Width = 53
+            Height = 19
+            CharCase = ecUpperCase
+            Ctl3D = False
+            DataField = 'COD_FILIAL'
+            DataSource = DMBelShop.DS_Empresa
+            ParentCtl3D = False
+            TabOrder = 0
+          end
+          object Dbe_ConEmpresasCodEmp: TDBEdit
+            Left = 105
+            Top = 41
+            Width = 53
+            Height = 19
+            CharCase = ecUpperCase
+            Ctl3D = False
+            DataField = 'COD_EMP'
+            DataSource = DMBelShop.DS_Empresa
+            ParentCtl3D = False
+            TabOrder = 1
+          end
+        end
+        object GroupBox1: TGroupBox
+          Left = 201
+          Top = 11
+          Width = 225
+          Height = 72
+          Caption = ' L I N X '
+          Color = clSilver
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlue
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+          TabOrder = 1
+          object Label2: TLabel
+            Left = 42
+            Top = 21
+            Width = 68
+            Height = 13
+            Caption = 'C'#243'digo Loja'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Label71: TLabel
+            Left = 9
+            Top = 45
+            Width = 100
+            Height = 13
+            Caption = 'Data In'#237'cio (Linx)'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Dbe_ConEmpresasCodLojaLinx: TDBEdit
+            Left = 113
+            Top = 18
+            Width = 53
+            Height = 19
+            CharCase = ecUpperCase
+            Ctl3D = False
+            DataField = 'COD_LINX'
+            DataSource = DMBelShop.DS_Empresa
+            ParentCtl3D = False
+            TabOrder = 0
+            OnExit = Dbe_ConEmpresasCodLojaLinxExit
+            OnKeyPress = Dbe_ConEmpresasCodLojaLinxKeyPress
+          end
+          object EdtDta_ConEmpresasInicioLinx: TcxDateEdit
+            Left = 113
+            Top = 39
+            ParentFont = False
+            Properties.OnChange = EdtDta_ConEmpresasInicioLinxPropertiesChange
+            Style.Font.Charset = DEFAULT_CHARSET
+            Style.Font.Color = clBlue
+            Style.Font.Height = -13
+            Style.Font.Name = 'MS Sans Serif'
+            Style.Font.Style = [fsBold]
+            Style.IsFontAssigned = True
+            StyleFocused.BorderStyle = ebsOffice11
+            TabOrder = 1
+            OnEditing = DtEdt_ConsultaNFeDtFimEditing
+            Width = 96
+          end
         end
       end
       object Panel16: TPanel
@@ -30527,8 +30617,8 @@ object FrmBelShop: TFrmBelShop
     end
   end
   object OdirPanApres: TPanel
-    Left = 920
-    Top = 164
+    Left = 864
+    Top = 140
     Width = 89
     Height = 33
     BevelInner = bvLowered
@@ -30545,8 +30635,8 @@ object FrmBelShop: TFrmBelShop
     Visible = False
   end
   object MainMenu1: TMainMenu
-    Left = 752
-    Top = 216
+    Left = 568
+    Top = 448
     object MenuSistema: TMenuItem
       Tag = 15
       Caption = 'SISTEMA'
@@ -36342,8 +36432,8 @@ object FrmBelShop: TFrmBelShop
   end
   object PopM_UsuSenha: TPopupMenu
     OnPopup = PopM_UsuSenhaPopup
-    Left = 920
-    Top = 280
+    Left = 784
+    Top = 512
     object Senha1: TMenuItem
       Caption = 'Senha'
       HelpContext = 999999
@@ -36351,12 +36441,12 @@ object FrmBelShop: TFrmBelShop
   end
   object PopM_Auditoria: TPopupMenu
     OnPopup = PopM_AuditoriaPopup
-    Left = 832
-    Top = 280
+    Left = 648
+    Top = 488
   end
   object PopM_FinanPlanFInanceira: TPopupMenu
-    Left = 880
-    Top = 226
+    Left = 696
+    Top = 434
     object PopM_PlanFinanceiraMemoria: TMenuItem
       Caption = 'Salvar Planilha Financeira em Mem'#243'ria'
       HelpContext = 999999
@@ -36437,21 +36527,21 @@ object FrmBelShop: TFrmBelShop
     Font.Style = [fsBold]
     StartColor = 15522303
     EndColor = 8388863
-    Left = 896
-    Top = 376
+    Left = 712
+    Top = 488
   end
   object Trad_Localizer: TcxLocalizer
-    Left = 808
-    Top = 400
+    Left = 624
+    Top = 512
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 828
-    Top = 343
+    Left = 644
+    Top = 455
   end
   object PopM_OCRomaneio: TPopupMenu
-    Left = 752
-    Top = 296
+    Left = 568
+    Top = 504
     object PopM_OCRomaneioVoltar: TMenuItem
       Bitmap.Data = {
         F6000000424DF600000000000000760000002800000010000000100000000100
@@ -36594,8 +36684,8 @@ object FrmBelShop: TFrmBelShop
     end
   end
   object PopM_GeraOC: TPopupMenu
-    Left = 686
-    Top = 269
+    Left = 462
+    Top = 501
     object PopM_GeraOCVoltar1: TMenuItem
       Bitmap.Data = {
         F6000000424DF600000000000000760000002800000010000000100000000100

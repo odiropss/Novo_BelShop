@@ -1081,22 +1081,22 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     Left = 247
     Top = 33
   end
-  object SDS_Loja18: TSQLDataSet
+  object SDS_LojaLinx: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 71
     Top = 457
   end
-  object CDS_Loja18: TClientDataSet
+  object CDS_LojaLinx: TClientDataSet
     Aggregates = <>
     Params = <>
-    ProviderName = 'DSP_Loja18'
+    ProviderName = 'DSP_LojaLinx'
     Left = 165
     Top = 456
   end
-  object DSP_Loja18: TDataSetProvider
-    DataSet = SDS_Loja18
+  object DSP_LojaLinx: TDataSetProvider
+    DataSet = SDS_LojaLinx
     Options = [poRetainServerOrder]
     Left = 116
     Top = 470

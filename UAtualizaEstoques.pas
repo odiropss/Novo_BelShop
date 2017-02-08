@@ -44,7 +44,7 @@ var
 
 implementation
 
-uses UDMAtualizaEstoques, UDMConexoes, DK_Procs1;
+uses UDMAtualizaEstoques, UDMConexoes, DK_Procs1, DB;
 
 {$R *.dfm}
 
@@ -207,7 +207,10 @@ var
 
   MySql,
   sCodEmpresa, sHora,
+  sDtaLinx,
   sgDML, sgValues: String;
+
+  iCodLinx: Integer;
 
   i: Integer;
 begin
@@ -225,13 +228,19 @@ begin
       Exit;
     End;
 
+    Try
+     iCodLinx:=DMAtualizaEstoques.CDS_EmpProcessaCOD_LINX.AsInteger;
+    Except
+      iCodLinx:=0;
+    End;
+    sDtaLinx   :=DMAtualizaEstoques.CDS_EmpProcessaDTA_INICIO_LINX.AsString;
     sCodEmpresa:=DMAtualizaEstoques.CDS_EmpProcessaCOD_FILIAL.AsString;
 
     sHora:=TimeToStr(Time);
 
     // Conecta Empresa =======================================================
     bSiga:=True;
-    If sCodEmpresa<>'18' Then
+    If iCodLinx=0 Then
     Begin
       Try
         If ConexaoEmpIndividual('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, 'A') Then
@@ -245,7 +254,7 @@ begin
       Except
         bSiga:=False;
       End; // Try
-    End; // If sCodEmpresa<>'18' Then
+    End; // If iCodLinx=0 Then
 
     If bSiga Then // Conexão
     Begin
@@ -255,7 +264,7 @@ begin
       DateSeparator:='.';
       DecimalSeparator:='.';
 
-      If sCodEmpresa<>'18' Then
+      If iCodLinx=0 Then
       Begin
         // Cria Query da Empresa --------------------------------------
         CriaQueryIB('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, IBQ_Consulta, False, True);
@@ -296,10 +305,10 @@ begin
           If i>2 Then
            Break;
         End; // While Not bSiga do
-      End; // If sCodEmpresa<>'18' Then
+      End; // If iCodLinx=0 Then
 
       // Loja 18 MicroVix ==========================================================
-      If sCodEmpresa='18' Then
+      If iCodLinx<>0 Then
       Begin
         MySql:=' SELECT '+
                QuotedStr(sCodEmpresa)+' codfilial,'+
@@ -309,7 +318,7 @@ begin
                ' lpd.custo_medio cusmedvalor, lpd.custo_medio customedio,'+
                ' COALESCE((SELECT FIRST 1 m.valor_liquido'+
                '           FROM LINXMOVIMENTO m'+
-               '           WHERE m.empresa = '+QuotedStr(sCodEmpresa)+
+               '           WHERE m.empresa = '+IntToStr(iCodLinx)+
                '           AND   m.operacao = ''E'''+
                '           AND   ((m.tipo_transacao=''S'') OR (m.tipo_transacao=''E'') OR (m.tipo_transacao IS NULL))'+
                '           AND   m.cancelado=''N'''+
@@ -327,13 +336,12 @@ begin
                ' FROM LINXPRODUTOSDETALHES lpd'+
                '          LEFT JOIN LINXPRODUTOS lp ON lp.cod_produto = lpd.cod_produto'+
                '          LEFT JOIN PRODUTO pr ON pr.codproduto = lp.cod_auxiliar'+
-               ' WHERE lpd.empresa = '+sCodEmpresa+
+               ' WHERE lpd.empresa = '+IntToStr(iCodLinx)+
                ' AND   lp.cod_auxiliar IS NOT NULL';
-        DMAtualizaEstoques.CDS_Loja18.Close;
-        DMAtualizaEstoques.SDS_Loja18.CommandText:=MySql;
-        DMAtualizaEstoques.CDS_Loja18.Open;
-      End; // If sCodEmpresa='18' Then
-
+        DMAtualizaEstoques.CDS_LojaLinx.Close;
+        DMAtualizaEstoques.SDS_LojaLinx.CommandText:=MySql;
+        DMAtualizaEstoques.CDS_LojaLinx.Open;
+      End; // If iCodLinx<>0 Then
 
       // Processamento  -------------------------------------------
       If bSiga Then // Consulta Transferencias de Entrada
@@ -360,7 +368,7 @@ begin
                  ' VALUES (';
 
           // Atualiza Estoques da Loja ----------------------------------
-          If sCodEmpresa<>'18' Then ///////////////////////////////////////////////////
+          If iCodLinx=0 Then // SIDICOM ////////////////////////////////////////
           Begin
             While Not DMAtualizaEstoques.IBQ_EstoqueLoja.Eof do
             Begin
@@ -390,38 +398,38 @@ begin
               DMAtualizaEstoques.IBQ_EstoqueLoja.Next;
             End; // While Not DMAtualizaEstoques.IBQ_EstoqueLoja.Eof do
             DMAtualizaEstoques.IBQ_EstoqueLoja.Close;
-          End; // sCodEmpresa<>'18'
+          End; // If iCodLinx=0 Then // SIDICOM ////////////////////////////////
 
-          If sCodEmpresa='18' Then ////////////////////////////////////////////////////
-          Begin                
-            While Not DMAtualizaEstoques.CDS_Loja18.Eof do
+          If iCodLinx<>0 Then // LINX //////////////////////////////////////////
+          Begin
+            While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
             Begin
               sgValues:='';
-              For i:=0 to DMAtualizaEstoques.CDS_Loja18.FieldCount-1 do
+              For i:=0 to DMAtualizaEstoques.CDS_LojaLinx.FieldCount-1 do
               Begin
                 // ULTIMO CAMPO - HRA_ATUALIZACAO ==================================
-                If Trim(DMAtualizaEstoques.CDS_Loja18.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
+                If Trim(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
                  Begin
-                   sgValues:=sgValues+QuotedStr(DMAtualizaEstoques.CDS_Loja18.Fields[i].AsString)+')';
-                 End // If Trim(DMAtualizaEstoques.CDS_Loja18.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
+                   sgValues:=sgValues+QuotedStr(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].AsString)+')';
+                 End // If Trim(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
                 Else
                  Begin
                    // Grava Resto do Registro
-                   If Trim(DMAtualizaEstoques.CDS_Loja18.Fields[i].AsString)<>'' Then
-                    sgValues:=sgValues+QuotedStr(DMAtualizaEstoques.CDS_Loja18.Fields[i].AsString)+', '
+                   If Trim(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].AsString)<>'' Then
+                    sgValues:=sgValues+QuotedStr(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].AsString)+', '
                    Else
                     sgValues:=sgValues+'NULL, ';
                  End;
-              End; // For i:=0 to DMAtualizaEstoques.CDS_Loja18.FieldCount-1 do
+              End; // For i:=0 to DMAtualizaEstoques.CDS_LojaLinx.FieldCount-1 do
 
               // UPDATE OR INSERT INTO MCLI ========================================
               MySql:=sgDML+sgValues+' MATCHING (CODFILIAL, CODPRODUTO)';
               DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
-              DMAtualizaEstoques.CDS_Loja18.Next;
-            End; // While Not DMAtualizaEstoques.CDS_Loja18.Eof do
-            DMAtualizaEstoques.CDS_Loja18.Close;
-          End; // If sCodEmpresa='18' Then
+              DMAtualizaEstoques.CDS_LojaLinx.Next;
+            End; // While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
+            DMAtualizaEstoques.CDS_LojaLinx.Close;
+          End; // If iCodLinx<>0 Then // LINX //////////////////////////////////
 
           DMAtualizaEstoques.SQLC.Commit(TD);
 
@@ -447,7 +455,8 @@ begin
       // =====================================================================
 
       // Fecha Conexão =======================================================
-      ConexaoEmpIndividual('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, 'F');
+      If iCodLinx=0 Then // SIDICOM
+       ConexaoEmpIndividual('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, 'F');
     End; // If bSiga Then // Conexão
 
     DMAtualizaEstoques.CDS_EmpProcessa.Next;
