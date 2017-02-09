@@ -924,8 +924,7 @@ Begin
 
         // Busca Transferencias =====================================
         cQtdMais:=0;
-
-        if bConetada Then // SIDICOM
+        if (bConetada) Or (igCodLojaLinx<>0) Then // SIDICOM
         Begin
           // Busca Tranferencias ------------------------------------
           MySql:=' SELECT mc.numero, mp.codproduto, mp.quantatendida'+
@@ -944,41 +943,65 @@ Begin
 
           While Not IBQ_MPMS.Eof do
           Begin
-            MySql:=' SELECT mf.numero'+
-                   ' FROM MFOR mf'+
-                   ' WHERE mf.situacaonf=1'+
-                   ' AND   mf.codfornecedor=''000663'''+
-                   ' AND   mf.CodFilial='+QuotedStr(sCodLoja)+
-                   ' AND   mf.codcomprovante in (''010'',''016'')'+
-                   ' AND   mf.numero='+QuotedStr(IBQ_MPMS.FieldByName('numero').AsString);
-            IBQ_TR_Filial.Close;
-            IBQ_TR_Filial.SQL.Clear;
-            IBQ_TR_Filial.SQL.Add(MySql);
-
-            // Abre Query -------------------------------------------
-            ii:=0;
-            bSiga:=False;
-            While Not bSiga do
+            If bConetada Then // SIDICOM
             Begin
-              Try
-                IBQ_TR_Filial.Open;
-                bSiga:=True;
-              Except
-                Inc(ii);
-              End; // Try
+              MySql:=' SELECT mf.numero'+
+                     ' FROM MFOR mf'+
+                     ' WHERE mf.situacaonf=1'+
+                     ' AND   mf.codfornecedor=''000663'''+
+                     ' AND   mf.CodFilial='+QuotedStr(sCodLoja)+
+                     ' AND   mf.codcomprovante in (''010'',''016'')'+
+                     ' AND   mf.numero='+QuotedStr(IBQ_MPMS.FieldByName('numero').AsString);
+              IBQ_TR_Filial.Close;
+              IBQ_TR_Filial.SQL.Clear;
+              IBQ_TR_Filial.SQL.Add(MySql);
 
-              If ii>2 Then
+              // Abre Query -------------------------------------------
+              ii:=0;
+              bSiga:=False;
+              While Not bSiga do
               Begin
-                IBQ_TR_Filial.Close;
-                Break;
-              End; // If i>2 Then
-            End; // While Not bSiga do
+                Try
+                  IBQ_TR_Filial.Open;
+                  bSiga:=True;
+                Except
+                  Inc(ii);
+                End; // Try
 
-            If (bSiga) and (Trim(IBQ_TR_Filial.FieldByName('numero').AsString)='') Then
+                If ii>2 Then
+                Begin
+                  IBQ_TR_Filial.Close;
+                  Break;
+                End; // If i>2 Then
+              End; // While Not bSiga do
+
+              If (bSiga) and (Trim(IBQ_TR_Filial.FieldByName('Numero').AsString)='') Then
+              Begin
+                cQtdMais:=cQtdMais+IBQ_MPMS.FieldByName('QuantAtendida').AsCurrency;
+              End;
+              IBQ_TR_Filial.Close;
+            End; // If bConetada Then // SIDICOM
+
+            If igCodLojaLinx<>0 Then // LINX
             Begin
-              cQtdMais:=cQtdMais+IBQ_MPMS.FieldByName('quantatendida').AsCurrency;
-            End;
-            IBQ_TR_Filial.Close;
+              MySql:=' SELECT FIRST 1 m.documento numero'+
+                     ' FROM LINXMOVIMENTO m'+
+                     ' WHERE m.codigo_cliente=13'+ // Codigo CD - Linx
+                     ' AND   m.operacao=''E'''+
+                     ' AND   m.tipo_transacao is null'+
+                     ' AND   m.cancelado=''N'''+
+                     ' AND   m.excluido=''N'''+
+                     ' and   m.empresa='+IntToStr(igCodLojaLinx)+
+                     ' and   m.documento='+IBQ_MPMS.FieldByName('Numero').AsString;
+              DMTransferencias.CDS_BuscaRapida.Close;
+              DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+              DMTransferencias.CDS_BuscaRapida.Open;
+              If Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Numero').AsString)='' Then
+              Begin
+                cQtdMais:=cQtdMais+IBQ_MPMS.FieldByName('QuantAtendida').AsCurrency;
+              End;
+              DMTransferencias.CDS_BuscaRapida.Close;
+            End; // If igCodLojaLinx<>0 Then // LINX
 
             IBQ_MPMS.Next;
           End; // While Not IBQ_MPMS.Eof do

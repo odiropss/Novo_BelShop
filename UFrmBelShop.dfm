@@ -1,6 +1,6 @@
 object FrmBelShop: TFrmBelShop
-  Left = 241
-  Top = 110
+  Left = 242
+  Top = 114
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -6219,6 +6219,16 @@ object FrmBelShop: TFrmBelShop
           Font.Style = [fsBold]
           ParentFont = False
           OnClick = Bt_ConEmpresasUsuWindowsClick
+        end
+        object Button1: TButton
+          Left = 384
+          Top = 6
+          Width = 87
+          Height = 25
+          Caption = 'Tabela: Odir1'
+          TabOrder = 4
+          Visible = False
+          OnClick = Button1Click
         end
       end
       object Dbg_ConEmpresas: TDBGrid
@@ -36684,8 +36694,8 @@ object FrmBelShop: TFrmBelShop
     end
   end
   object PopM_GeraOC: TPopupMenu
-    Left = 462
-    Top = 501
+    Left = 486
+    Top = 485
     object PopM_GeraOCVoltar1: TMenuItem
       Bitmap.Data = {
         F6000000424DF600000000000000760000002800000010000000100000000100

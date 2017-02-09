@@ -1362,6 +1362,7 @@ type
     Dbe_ConEmpresasCodLojaLinx: TDBEdit;
     EdtDta_ConEmpresasInicioLinx: TcxDateEdit;
     Label71: TLabel;
+    Button1: TButton;
 
     // Odir ====================================================================
 
@@ -2302,6 +2303,7 @@ type
     procedure EdtDta_ConEmpresasInicioLinxPropertiesChange(
       Sender: TObject);
     procedure Dbe_ConEmpresasCodLojaLinxExit(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -2795,9 +2797,11 @@ Begin
          ' Case '+sCaseDiasMeses+' End Num_Dias,';
 
          If (sFilial<>'99') And (Trim(sFilial)<>'') Then
-          MySql:=MySql+' Coalesce(Dem.quant_ref,0) dem'
+          MySql:=
+           MySql+' Coalesce(Dem.quant_ref,0) dem'
          Else
-          MySql:=MySql+' SUM(Coalesce(Dem.quant_ref,0)) dem';
+          MySql:=
+           MySql+' SUM(Coalesce(Dem.quant_ref,0)) dem';
 
   MySql:=
    MySql+' From MOVTOS_EMPRESAS Dem, PRODUTO pr'+
@@ -2805,9 +2809,11 @@ Begin
 
          sgEmpresas:=sgEmpresas;
          If bgECommerce Then
-          MySql:=MySql+' And   Dem.codfilial='+QuotedStr('99')
+          MySql:=
+           MySql+' And   Dem.codfilial='+QuotedStr('99')
          Else If (sFilial<>'99') And (Trim(sFilial)<>'') Then
-          MySql:=MySql+' And   Dem.codfilial='+QuotedStr(sFilial);
+          MySql:=
+           MySql+' And   Dem.codfilial='+QuotedStr(sFilial);
 
   MySql:=
    MySql+' And   Dem.ind_tipo=''DM'''+
@@ -2815,9 +2821,11 @@ Begin
 
          // Produtos Não Compra -------------------------------------
          If Not Ckb_FiltroProdNaoCompra.Checked Then
-          MySql:=MySql+' AND Coalesce(pr.situacaopro,0)=0'
+          MySql:=
+           MySql+' AND Coalesce(pr.situacaopro,0)=0'
          Else
-          MySql:=MySql+' AND Coalesce(pr.situacaopro,0) in (0,3)';
+          MySql:=
+           MySql+' AND Coalesce(pr.situacaopro,0) in (0,3)';
 
          // Produtos Codigos e/ou Produtos Like ---------------------
          If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
@@ -2832,12 +2840,15 @@ Begin
 
          // Fornecedores --------------------------------------------
          If Trim(sgFornecedores)<>'' Then
-          MySql:=MySql+' AND pr.principalfor in ('+sgFornecedores+')'
+          MySql:=
+           MySql+' AND pr.principalfor in ('+sgFornecedores+')'
          Else
-          MySql:=MySql+' AND pr.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
+          MySql:=
+           MySql+' AND pr.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
 
          If (sFilial='99') Or (bgECommerce) Then
-          MySql:=MySql+' Group by 1,2';
+          MySql:=
+           MySql+' Group by 1,2';
 
   MySql:=
    MySql+' UNION';
@@ -2853,15 +2864,19 @@ Begin
                                      ' AND '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFimAno)));
 
          If bgECommerce Then
-          MySql:=MySql+' And   Dm.codfilial='+QuotedStr('99')
+          MySql:=
+           MySql+' And   Dm.codfilial='+QuotedStr('99')
          Else If (sFilial<>'99') And (Trim(sFilial)<>'') Then
-          MySql:=MySql+' And   Dm.codfilial='+QuotedStr(sFilial);
+          MySql:=
+           MySql+' And   Dm.codfilial='+QuotedStr(sFilial);
 
          // Produtos Não Compra -------------------------------------
          If Not Ckb_FiltroProdNaoCompra.Checked Then
-          MySql:=MySql+' AND Coalesce(p.situacaopro,0)=0'
+          MySql:=
+           MySql+' AND Coalesce(p.situacaopro,0)=0'
          Else
-          MySql:=MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
+          MySql:=
+           MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
 
          // Produtos Codigos e/ou Produtos Like ---------------------
          If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
@@ -2876,9 +2891,11 @@ Begin
 
          // Fornecedores --------------------------------------------
          If Trim(sgFornecedores)<>'' Then
-          MySql:=MySql+' AND p.principalfor in ('+sgFornecedores+')'
+          MySql:=
+           MySql+' AND p.principalfor in ('+sgFornecedores+')'
          Else
-          MySql:=MySql+' AND p.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
+          MySql:=
+           MySql+' AND p.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
 
   MySql:=
    MySql+' GROUP BY 1, 2'+
@@ -14366,14 +14383,8 @@ Begin
 
          // Loja
          If Not bgTodasEmpresas Then
-         Begin
-           If (sEmpresas<>'99') And (Trim(sEmpresas)<>'') Then
-            MySql:=
-             MySql+' AND   mt.codfilial IN '+sEmpresas
-           Else If bgECommerce Then
-            MySql:=
-             MySql+' And   mt.codfilial='+QuotedStr('99');
-         End;
+          MySql:=
+           MySql+' AND   mt.codfilial IN '+sEmpresas;
 
          // Produtos Codigos e/ou Produtos Like ---------------------
          If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
@@ -14414,7 +14425,11 @@ Begin
 
         If Trim(sgAplicacoes)<>'' Then
          MySql:=
-          MySql+' and pt.CodAplicacao in ('+sgAplicacoes+')';
+          MySql+' AND pt.CodAplicacao in ('+sgAplicacoes+')';
+
+        If bgECommerce Then
+         MySql:=
+          MySql+' AND pt.ecommerce_sn=''S''';
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
   DMBelShop.CDS_BuscaRapida.Open;
@@ -14490,14 +14505,8 @@ Begin
 
          // Loja
          If Not bgTodasEmpresas Then
-         Begin
-           If (sEmpresas<>'99') And (Trim(sEmpresas)<>'') Then
-            MySql:=
-             MySql+' AND   md.codfilial IN '+sEmpresas
-           Else If bgECommerce Then
-            MySql:=
-             MySql+' And   md.codfilial='+QuotedStr('99');
-         End;
+          MySql:=
+           MySql+' AND   md.codfilial IN '+sEmpresas;
 
          // Produtos Codigos e/ou Produtos Like ---------------------
          If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
@@ -14540,6 +14549,10 @@ Begin
           MySql:=
            MySql+' AND pr.CodAplicacao in ('+sgAplicacoes+')';
 
+        If bgECommerce Then
+         MySql:=
+          MySql+' AND pr.ecommerce_sn=''S''';
+
   MySql:=
    MySql+' GROUP BY 2,3,4,7,11,13,21,22,23'+
          ' ORDER BY 2, 4';
@@ -14549,7 +14562,7 @@ Begin
 
   // Insere Produtos Sem Movimentação mais Ativos ==============================
   OdirPanApres.Caption:='AGUARDE !! Fase 2/4: Analisando Produtos para Calculo da Curva ABC...';
-  Refresh;       
+  Refresh;
 
   MontaProgressBar(True, FrmBelShop);
   pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
@@ -14712,6 +14725,10 @@ Begin
               If Trim(sgAplicacoes)<>'' Then
                MySqlClausula1:=
                 MySqlClausula1+' and pr.CodAplicacao in ('+sgAplicacoes+')';
+
+              If bgECommerce Then
+               MySqlClausula1:=
+                MySqlClausula1+' AND pr.ecommerce_sn=''S''';
 
         MySqlOrderBy:=
                ' ORDER BY es.codproduto';
@@ -18492,9 +18509,11 @@ Begin
 
              // Produtos Não Compra -------------------------------------
              If Not Ckb_FiltroProdNaoCompra.Checked Then
-              MySql:=MySql+' AND Coalesce(p.situacaopro,0)=0'
+              MySql:=
+               MySql+' AND Coalesce(p.situacaopro,0)=0'
              Else
-              MySql:=MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
+              MySql:=
+               MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
 
              // Produtos Codigos e/ou Produtos Like ---------------------
              If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
@@ -18509,12 +18528,15 @@ Begin
 
              // Fornecedores --------------------------------------------
              If Trim(sgFornecedores)<>'' Then
-              MySql:=MySql+' and p.principalfor in ('+sgFornecedores+')'
+              MySql:=
+               MySql+' and p.principalfor in ('+sgFornecedores+')'
              Else
-              MySql:=MySql+' AND p.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
+              MySql:=
+               MySql+' AND p.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
 
              If bgECommerce Then
-              MySql:=MySql+' and p.ECOMMERCE_SN='+QuotedStr('S');
+              MySql:=
+               MySql+' and p.ECOMMERCE_SN='+QuotedStr('S');
 
       MySql:=
        MySql+' ORDER BY 2';
@@ -18803,9 +18825,11 @@ Begin
 
            // Produtos Não Compra -------------------------------------
            If Not Ckb_FiltroProdNaoCompra.Checked Then
-            MySql:=MySql+' AND Coalesce(p.situacaopro,0)=0'
+            MySql:=
+             MySql+' AND Coalesce(p.situacaopro,0)=0'
            Else
-            MySql:=MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
+            MySql:=
+             MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
 
            // Produtos Codigos e/ou Produtos Like ---------------------
            If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
@@ -18820,12 +18844,15 @@ Begin
 
            // Fornecedores --------------------------------------------
            If Trim(sgFornecedores)<>'' Then
-            MySql:=MySql+' and p.principalfor in ('+sgFornecedores+')'
+            MySql:=
+             MySql+' and p.principalfor in ('+sgFornecedores+')'
            Else
-            MySql:=MySql+' AND p.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
+            MySql:=
+             MySql+' AND p.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
 
            If bgECommerce Then
-            MySql:=MySql+' and p.ECOMMERCE_SN='+QuotedStr('S');
+            MySql:=
+             MySql+' and p.ECOMMERCE_SN='+QuotedStr('S');
 
     MySql:=
      MySql+' ORDER BY 2';
@@ -19945,9 +19972,11 @@ Begin
 
            // Produtos Não Compra -------------------------------------
            If Not Ckb_FiltroProdNaoCompra.Checked Then
-            MySql:=MySql+' AND Coalesce(pr.situacaopro,0)=0'
+            MySql:=
+             MySql+' AND Coalesce(pr.situacaopro,0)=0'
            Else
-            MySql:=MySql+' AND Coalesce(pr.situacaopro,0) in (0,3)';
+            MySql:=
+             MySql+' AND Coalesce(pr.situacaopro,0) in (0,3)';
 
            // Produtos Codigos e/ou Produtos Like ---------------------
            If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
@@ -19962,12 +19991,15 @@ Begin
 
            // Fornecedores --------------------------------------------
            If Trim(sgFornecedores)<>'' Then
-            MySql:=MySql+' AND pr.principalfor in ('+sgFornecedores+')'
+            MySql:=
+             MySql+' AND pr.principalfor in ('+sgFornecedores+')'
            Else
-            MySql:=MySql+' AND pr.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
+            MySql:=
+             MySql+' AND pr.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
 
            If bgECommerce Then
-            MySql:=MySql+' AND pr.ECOMMERCE_SN='+QuotedStr('S');
+            MySql:=
+             MySql+' AND pr.ECOMMERCE_SN='+QuotedStr('S');
 
     // Verifica se Busca Transito ==============================================
     If CkB_CalculoTransito.Checked Then
@@ -19986,13 +20018,16 @@ Begin
              ' AND   t.dta_ref>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_CalculoTransito.Date))));
 
              If Not bgTodasEmpresas Then
-              MySql:=MySql+' AND   t.codfilial in ('+sgEmpresas+')';
+              MySql:=
+               MySql+' AND   t.codfilial in ('+sgEmpresas+')';
 
              // Produtos Não Compra -------------------------------------
              If Not Ckb_FiltroProdNaoCompra.Checked Then
-              MySql:=MySql+' AND Coalesce(p.situacaopro,0)=0'
+              MySql:=
+               MySql+' AND Coalesce(p.situacaopro,0)=0'
              Else
-              MySql:=MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
+              MySql:=
+               MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
 
              // Produtos Codigos e/ou Produtos Like ---------------------
              If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
@@ -20007,12 +20042,15 @@ Begin
 
              // Fornecedores --------------------------------------------
              If Trim(sgFornecedores)<>'' Then
-              MySql:=MySql+' AND p.principalfor in ('+sgFornecedores+')'
+              MySql:=
+               MySql+' AND p.principalfor in ('+sgFornecedores+')'
              Else
-              MySql:=MySql+' AND p.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
+              MySql:=
+               MySql+' AND p.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
 
              If bgECommerce Then
-              MySql:=MySql+' AND p.ECOMMERCE_SN='+QuotedStr('S');
+              MySql:=
+               MySql+' AND p.ECOMMERCE_SN='+QuotedStr('S');
 
       MySql:=
        MySql+' GROUP BY 1, 2';
@@ -20753,9 +20791,11 @@ Begin
 
                  // Produtos Não Compra -------------------------------------
                  If Not Ckb_FiltroProdNaoCompra.Checked Then
-                  MySqlClausula2:=MySqlClausula2+' where Coalesce(pr.situacaopro,0)=0'
+                  MySqlClausula2:=
+                   MySqlClausula2+' where Coalesce(pr.situacaopro,0)=0'
                  Else
-                  MySqlClausula2:=MySqlClausula2+' where Coalesce(pr.situacaopro,0) in (0,3)';
+                  MySqlClausula2:=
+                   MySqlClausula2+' where Coalesce(pr.situacaopro,0) in (0,3)';
 
                  // Produtos Codigos e/ou Produtos Like ---------------------
                  If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
@@ -20770,28 +20810,35 @@ Begin
 
                  // Fornecedores --------------------------------------------
                  If Trim(sgFornecedores)<>'' Then
-                  MySqlClausula2:=MySqlClausula2+' and pr.principalfor in ('+sgFornecedores+')'
+                  MySqlClausula2:=
+                   MySqlClausula2+' and pr.principalfor in ('+sgFornecedores+')'
                  Else
-                  MySqlClausula2:=MySqlClausula2+' AND pr.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
+                  MySqlClausula2:=
+                   MySqlClausula2+' AND pr.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
 
                  // Grupos e SubGrupos --------------------------------------
                  If Trim(sgGrupos)<>'' Then
-                  MySqlClausula2:=MySqlClausula2+' and '+sgGrupos;
+                  MySqlClausula2:=
+                   MySqlClausula2+' and '+sgGrupos;
 
                  // Aplicacoes ----------------------------------------------
                  If Trim(sgAplicacoes)<>'' Then
-                  MySqlClausula2:=MySqlClausula2+' and pr.CodAplicacao in ('+sgAplicacoes+')';
+                  MySqlClausula2:=
+                   MySqlClausula2+' and pr.CodAplicacao in ('+sgAplicacoes+')';
 
                  // Familias Preços -----------------------------------------
                  If Trim(sgFamiliaPrecos)<>'' Then
-                  MySqlClausula2:=MySqlClausula2+' and pr.CodFamiliaPreco in ('+sgFamiliaPrecos+')';
+                  MySqlClausula2:=
+                   MySqlClausula2+' and pr.CodFamiliaPreco in ('+sgFamiliaPrecos+')';
 
                  // Grupos ST -----------------------------------------------
                  If Trim(sgGruposST)<>'' Then
-                  MySqlClausula2:=MySqlClausula2+' and pr.grupostmva in ('+sgGruposST+')';
+                  MySqlClausula2:=
+                   MySqlClausula2+' and pr.grupostmva in ('+sgGruposST+')';
 
                  If bgECommerce Then
-                  MySqlClausula2:=MySqlClausula2+' and pr.ECOMMERCE_SN='+QuotedStr('S');
+                  MySqlClausula2:=
+                   MySqlClausula2+' and pr.ECOMMERCE_SN='+QuotedStr('S');
 
   MySqlOrderGrup:=' order by pr.apresentacao, pr.codicmcompra, fo.Estado';
   IBQ_Matriz.Close;
@@ -20831,9 +20878,11 @@ Begin
 
             // Produtos Não Compra -------------------------------------
             If Not Ckb_FiltroProdNaoCompra.Checked Then
-             MySql:=MySql+' AND Coalesce(p.situacaopro,0)=0'
+             MySql:=
+              MySql+' AND Coalesce(p.situacaopro,0)=0'
             Else
-             MySql:=MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
+             MySql:=
+              MySql+' AND Coalesce(p.situacaopro,0) in (0,3)';
 
             // Produtos Codigos e/ou Produtos Like ---------------------
             If (Trim(sgProdutos)<>'') And (Trim(sgLikeProdutos)<>'') Then
@@ -20848,12 +20897,15 @@ Begin
 
             // Fornecedores --------------------------------------------
             If Trim(sgFornecedores)<>'' Then
-             MySql:=MySql+' and p.principalfor in ('+sgFornecedores+')'
+             MySql:=
+              MySql+' and p.principalfor in ('+sgFornecedores+')'
             Else
-             MySql:=MySql+' AND p.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
+             MySql:=
+              MySql+' AND p.principalfor Not in (''010000'', ''000300'', ''000500'', ''001072'')';
 
             If bgECommerce Then
-             MySql:=MySql+' and p.ECOMMERCE_SN='+QuotedStr('S');
+             MySql:=
+              MySql+' and p.ECOMMERCE_SN='+QuotedStr('S');
 
      MySql:=
       MySql+' ORDER BY 2';
@@ -45139,6 +45191,85 @@ begin
     EdtDta_ConEmpresasInicioLinx.Clear;
   End;
 
+end;
+
+procedure TFrmBelShop.Button1Click(Sender: TObject);
+begin
+  MySqlSelect:=' select *'+
+               ' from odir1 pl'+
+               ' order by pl.cod_loja, pl.num_planilha, pl."INDEX" desc';
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:=MySqlSelect;
+  DMBelShop.CDS_Busca.Open;
+
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    MontaProgressBar(True, FrmBelShop);
+    pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
+    pgProgBar.Position:=0;
+
+    While not DMBelShop.CDS_Busca.Eof do
+    Begin
+      Application.ProcessMessages;
+      pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
+
+      If (Trim(DMBelShop.CDS_Busca.FieldByName('COD_PROFISSIONAL').AsString)='') and
+         (DMBelShop.CDS_Busca.FieldByName('INDEX').AsInteger=igNrDias-1) And
+         (igNrEmpProc=DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsInteger) Then
+      Begin
+         MySqlClausula1:=' update  odir1 pl'+
+                         ' set pl.cod_profissional='+QuotedStr(sgCodProd)+
+                         ' , pl.des_profissional='+QuotedStr(sgDescricao)+
+                         ' where pl.cod_loja='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('COD_LOJA').AsString)+
+                         ' and pl.num_planilha='+DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsString+
+                         ' and pl."INDEX"='+DMBelShop.CDS_Busca.FieldByName('INDEX').AsString;
+         DMBelShop.SQLC.Execute(MySqlClausula1,nil,nil);
+
+
+      End;
+
+      igNrEmpProc:=DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsInteger;
+      igNrDias   :=DMBelShop.CDS_Busca.FieldByName('INDEX').AsInteger;
+      sgCodProd  :=DMBelShop.CDS_Busca.FieldByName('COD_PROFISSIONAL').AsString;
+      sgDescricao:=DMBelShop.CDS_Busca.FieldByName('DES_PROFISSIONAL').AsString;
+
+      DMBelShop.CDS_Busca.Next
+    End;
+    DMBelShop.CDS_Busca.Close;
+    MontaProgressBar(False, FrmBelShop);
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    Screen.Cursor:=crDefault;
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      MontaProgressBar(False, FrmBelShop);
+
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Exit;
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  msg('fim','A');
 end;
 
 End.
