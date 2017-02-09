@@ -46,6 +46,7 @@ var
   IBQ_TR_Filial,
   IBQ_MPMS: TIBQuery;
 
+  igCodLojaLinx,
   igDiasUteis, igDiaSemana: Integer;
 
   dgDtaHoje, dgDtaInicio, dgDtaFim: TDate;
@@ -397,7 +398,7 @@ Begin
              //===========================================================================================
              // Mantem Quantidade Maxima de Reposição da Loja 18 em 12 Unidades ==========================
              //===========================================================================================
-             If (Trim(DMTransferencias.CDS_EstoqueLojaCOD_LOJA.AsString)='18') and (iQtdReposicao>12) Then
+             If (igCodLojaLinx<>0) and (iQtdReposicao>12) Then
               iQtdReposicao:=12;
              //===========================================================================================
 
@@ -711,13 +712,13 @@ Begin
 
          ' AND   CAST(COALESCE(c.est_minimo,0) AS INTEGER)>0'+
 
-         ' AND   p.codaplicacao<>''0015'''+ // Não Processa: 0015=E-Commerce
-         ' AND   p.codaplicacao<>''0016'''+ // Não Processa: 0016=Brindes
-
-         ' AND   c.cod_loja='+QuotedStr(sCodLoja)+
-
+         ' AND   p.codaplicacao<>''0015'''+ // Não Processa: 0015 = E-Commerce
+         ' AND   p.codaplicacao<>''0016'''+ // Não Processa: 0016 = Brindes
+         ' AND   p.codaplicacao<>''0017'''+ // Não Processa: 0017 = Provadores
          ' AND   p.principalfor Not in ('+sgFornNAO+')'+ // Tira Fornecedores que Não Entram no Processo de Reposição Automática
-         ' AND   UPPER(p.apresentacao) NOT LIKE ''LUVA%'''; // Tira todas as Luvas
+         ' AND   UPPER(p.apresentacao) NOT LIKE ''LUVA%'''+ // Tira todas as Luvas
+
+         ' AND   c.cod_loja='+QuotedStr(sCodLoja);
 
          If bCurvaC Then
           MySql:=
@@ -805,7 +806,10 @@ Function  TFrmTransferencias.BuscaProdutosLojas: Boolean;
 Var
   ii, i: Integer;
   MySql: String;
-  sCodProduto, sCodLoja, sCodEmp: String;
+
+  sCodProduto,
+  sCodLoja, sCodEmp: String;
+
   cQtdSaldo, cQtdMais: Currency;
   bConetada, bSiga: Boolean;
 Begin
@@ -854,6 +858,17 @@ Begin
 
     sCodLoja:=Trim(mgMemo.Lines[i]);
 
+    // Busca Código da Loja Linx ===============================================
+    MySql:=' SELECT COALESCE(e.cod_linx,0) cod_linx'+
+           ' FROM EMP_CONEXOES e'+
+           ' WHERE e.cod_filial='+QuotedStr(sCodLoja);
+    DMTransferencias.CDS_BuscaRapida.Close;
+    DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+    DMTransferencias.CDS_BuscaRapida.Open;
+    igCodLojaLinx:=DMTransferencias.CDS_BuscaRapida.FieldByName('cod_linx').AsInteger;
+    DMTransferencias.CDS_BuscaRapida.Close;
+
+
     // Monta Curvas da Loja ====================================================
     MontaCurvas(sCodLoja);
     //==========================================================================
@@ -866,10 +881,9 @@ Begin
     SalvaProcessamento('10.03.02/999 - Busca Produtos das Curvas da Loja - '+sCodLoja+' - '+TimeToStr(Time));
     //==========================================================================
 
-    // Conecta Loja ============================================================
+    // Conecta Loja - SIDICOM ==================================================
     bConetada:=False;
-
-    If sCodLoja<>'18' Then
+    If igCodLojaLinx=0 Then // SIDICOM
     Begin
       If ConexaoEmpIndividual('IBDB_'+sCodLoja, 'IBT_'+sCodLoja, 'A') Then
       Begin
@@ -880,7 +894,7 @@ Begin
           bConetada:=False;
         End;
       End;
-    End; // If sCodLoja<>'18' Then
+    End; // If igCodLojaLinx=0 Then // SIDICOM
     //==========================================================================
     SalvaProcessamento('10.03.03/999 - Conecta Loja - '+sCodLoja+' - '+TimeToStr(Time));
     //==========================================================================
@@ -908,9 +922,10 @@ Begin
       Begin
         sCodProduto:=DMTransferencias.CDS_CurvasLojaCOD_PRODUTO.AsString;
 
-        // Se Loja Conectada - Busca Transferencias -----------------
+        // Busca Transferencias =====================================
         cQtdMais:=0;
-        if bConetada Then
+
+        if bConetada Then // SIDICOM
         Begin
           // Busca Tranferencias ------------------------------------
           MySql:=' SELECT mc.numero, mp.codproduto, mp.quantatendida'+
@@ -969,12 +984,12 @@ Begin
           End; // While Not IBQ_MPMS.Eof do
 
           IBQ_MPMS.Close;
-        End; // if bConetada Then
+        End; // if bConetada Then // SIDICOM
 
         // Atualiza o Saldo do Produto ------------------------------
         cQtdSaldo:=DMTransferencias.CDS_CurvasLojaSALDOATUAL.AsCurrency+cQtdMais;
 
-        // Busca Demanda/Quantidade de reposição --------------------
+        // Busca Demanda/Quantidade de Reposição --------------------
         If BuscaProdutosDemanda(sCodLoja, sCodProduto, IntToStr(ParteInteiro(CurrToStr(cQtdSaldo)))) Then
         Begin
 

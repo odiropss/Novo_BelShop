@@ -223,7 +223,7 @@ begin
    ConectaCentralTrocas;
 
   // Cria Query da Empresa ------------------------------------
-  If sCodLoja<>'18' Then
+  If iCodLojaLinx=0 Then // SIDICOM
   Begin
     CriaQueryIB('IBDB_'+sCodLoja, 'IBT_'+sCodLoja, IBQ_Consulta, False, True);
 
@@ -247,10 +247,10 @@ begin
     DMMovtosEmpresas.IBQ_EstoqueLoja.Close;
     DMMovtosEmpresas.IBQ_EstoqueLoja.SQL.Clear;
     DMMovtosEmpresas.IBQ_EstoqueLoja.SQL.Add(MySql);
-  End; // If sCodLoja<>'18' Then
+  End; // If iCodLojaLinx=0 Then // SIDICOM
 
-  // Loja 18 MicroVix ==========================================================
-  If sCodLoja='18' Then
+  // Linx ======================================================================
+  If iCodLojaLinx<>0 Then // LINX
   Begin
     MySql:=' SELECT '+
            QuotedStr(sCodLoja)+' codfilial,'+
@@ -260,10 +260,9 @@ begin
            ' lpd.custo_medio cusmedvalor, lpd.custo_medio customedio,'+
            ' COALESCE((SELECT FIRST 1 m.valor_liquido'+
            '           FROM LINXMOVIMENTO m'+
-           '           WHERE m.empresa = '+QuotedStr(sCodLoja)+
+           '           WHERE m.empresa = '+IntToStr(iCodLojaLinx)+
            '           AND   m.operacao = ''E'''+
-//           '           AND   ((m.tipo_transacao=''S'') OR (m.tipo_transacao=''E'') OR (m.tipo_transacao IS NULL))'+
-           '           AND   m.tipo_transacao=''E'''+
+           '           AND   ((m.tipo_transacao=''S'') OR (m.tipo_transacao=''E'') OR (m.tipo_transacao IS NULL))'+
            '           AND   m.cancelado=''N'''+
            '           AND   m.excluido=''N'''+
            '           AND   m.cod_produto = lpd.cod_produto'+
@@ -279,16 +278,16 @@ begin
            ' FROM LINXPRODUTOSDETALHES lpd'+
            '          LEFT JOIN LINXPRODUTOS lp ON lp.cod_produto = lpd.cod_produto'+
            '          LEFT JOIN PRODUTO pr ON pr.codproduto = lp.cod_auxiliar'+
-           ' WHERE lpd.empresa = '+sCodLoja+
+           ' WHERE lpd.empresa = '+IntToStr(iCodLojaLinx)+
            ' AND   lp.cod_auxiliar IS NOT NULL';
     DMMovtosEmpresas.CDS_LojaLinx.Close;
     DMMovtosEmpresas.SDS_LojaLinx.CommandText:=MySql;
     DMMovtosEmpresas.CDS_LojaLinx.Open;
-  End; // If sCodLoja='18' Then
+  End; // If iCodLojaLinx<>0 Then // LINX
 
   // Abre Query da no Banco de Dados da Loja -----------------
   bSiga:=True;
-  If sCodLoja<>'18' Then
+  If iCodLojaLinx=0 Then // SIDICOM
   Begin
     i:=0;
 
@@ -305,7 +304,7 @@ begin
       If i>2 Then
        Break;
     End; // While Not bSiga do
-  End; // If sCodLoja<>'18' Then
+  End; // If iCodLojaLinx=0 Then // SIDICOM
 
   // Processamento ==============================================================
   If bSiga Then // Consulta Transferencias de Entrada
@@ -332,7 +331,7 @@ begin
 
 
       // Atualiza Estoques da Loja ----------------------------------
-      If sCodLoja<>'18' Then ///////////////////////////////////////////////////
+      If iCodLojaLinx=0 Then // SIDICOM
       Begin
         While Not DMMovtosEmpresas.IBQ_EstoqueLoja.Eof do
         Begin
@@ -362,9 +361,9 @@ begin
           DMMovtosEmpresas.IBQ_EstoqueLoja.Next;
         End; // While Not DMMovtosEmpresas.IBQ_EstoqueLoja.Eof do
         DMMovtosEmpresas.IBQ_EstoqueLoja.Close;
-      End; // If sCodLoja<>'18' Then
+      End; // If iCodLojaLinx=0 Then // SIDICOM
 
-      If sCodLoja='18' Then ////////////////////////////////////////////////////
+      If iCodLojaLinx<>0 Then // LINX
       Begin
         While Not DMMovtosEmpresas.CDS_LojaLinx.Eof do
         Begin
@@ -393,7 +392,7 @@ begin
           DMMovtosEmpresas.CDS_LojaLinx.Next;
         End; // While Not DMMovtosEmpresas.CDS_LojaLinx.Eof do
         DMMovtosEmpresas.CDS_LojaLinx.Close;
-      End; // If sCodLoja='18' Then
+      End; // If iCodLojaLinx<>0 Then // LINX
 
       DMMovtosEmpresas.SQLC.Commit(TD);
 
@@ -489,19 +488,19 @@ Begin
   DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
   // Atualiza Percentuais da Camissão Geral dos Profissionais ==================
-  MySql:=' UPDATE sal_profissionais p'+
-         ' SET p.per_comissao=COALESCE((SELECT FIRST 1 DISTINCT ps.per_comissao_hab'+
-         '                              FROM sal_prof_habilidades ps'+
-         '                              WHERE ps.cod_loja=p.cod_loja'+
-         '                              AND ps.cod_profissional=p.cod_profissional'+
-         '                              AND ps.cod_servico IS NULL'+
-         '                              AND ps.per_comissao_hab>0'+
-         '                              GROUP BY 1'+
-         '                              ORDER BY COUNT(DISTINCT ps.per_comissao_hab) DESC),0)'+
-         ' WHERE p.tip_pessoa='+QuotedStr('P')+
-         ' AND p.ind_ativo='+QuotedStr('SIM')+
-         ' AND p.per_comissao=0';
-  DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+//  MySql:=' UPDATE sal_profissionais p'+
+//         ' SET p.per_comissao=COALESCE((SELECT FIRST 1 DISTINCT ps.per_comissao_hab'+
+//         '                              FROM sal_prof_habilidades ps'+
+//         '                              WHERE ps.cod_loja=p.cod_loja'+
+//         '                              AND ps.cod_profissional=p.cod_profissional'+
+//         '                              AND ps.cod_servico IS NULL'+
+//         '                              AND ps.per_comissao_hab>0'+
+//         '                              GROUP BY 1'+
+//         '                              ORDER BY COUNT(DISTINCT ps.per_comissao_hab) DESC),0)'+
+//         ' WHERE p.tip_pessoa='+QuotedStr('P')+
+//         ' AND p.ind_ativo='+QuotedStr('SIM')+
+//         ' AND p.per_comissao=0';
+//  DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
 End; // Atualiza Comissões de Habilidades e Comissão Geral do Profissionais >>>>
 
@@ -2068,7 +2067,7 @@ begin
   bExcluir:=False;
   bProcessou:=True;
 
-// odiropss - tirar
+// odiropss - Comentar
 // bgJaProcessouUmaVez:=True;
 
   // ===========================================================================
@@ -2171,34 +2170,34 @@ begin
     // =========================================================================
 
 //odiropss - SALAO
-//    // =========================================================================
-//    // Atualiza SERVIÇOS DE SALÃO (MPMS) - INICIO ==============================
-//    // =========================================================================
-//    MySql:=' SELECT m.ind_tipo'+
-//           ' FROM movtos_empresas m'+
-//           ' WHERE m.ind_tipo=''OK'''+
-//           ' AND m.nomefornecedor=''Servicos Salao''';
-//    DMMovtosEmpresas.CDS_Busca.Close;
-//    DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
-//    DMMovtosEmpresas.CDS_Busca.Open;
-//    bgNewIndTipo:=Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString)='';
-//    DMMovtosEmpresas.CDS_Busca.Close;
-//
-//    If bgNewIndTipo Then
-//    Begin
-//      MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
-//             ' Values ('+
-//             QuotedStr('OK')+', '+
-//             QuotedStr('Servicos Salao')+', '+
-//             QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
-//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-//
-//      AtualizaServicosSalao;
-//    End;
-//    // =========================================================================
-//    // Atualiza SERVIÇOS DE SALÃO (MPMS) - FIM =================================
-//    // =========================================================================
-//
+    // =========================================================================
+    // Atualiza SERVIÇOS DE SALÃO (MPMS) - INICIO ==============================
+    // =========================================================================
+    MySql:=' SELECT m.ind_tipo'+
+           ' FROM movtos_empresas m'+
+           ' WHERE m.ind_tipo=''OK'''+
+           ' AND m.nomefornecedor=''Servicos Salao''';
+    DMMovtosEmpresas.CDS_Busca.Close;
+    DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
+    DMMovtosEmpresas.CDS_Busca.Open;
+    bgNewIndTipo:=Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString)='';
+    DMMovtosEmpresas.CDS_Busca.Close;
+
+    If bgNewIndTipo Then
+    Begin
+      MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
+             ' Values ('+
+             QuotedStr('OK')+', '+
+             QuotedStr('Servicos Salao')+', '+
+             QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
+      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+      AtualizaServicosSalao;
+    End;
+    // =========================================================================
+    // Atualiza SERVIÇOS DE SALÃO (MPMS) - FIM =================================
+    // =========================================================================
+
 //    // =========================================================================
 //    // Atualiza COMISSÇÕES DE SERVIÇOS DE SALÃO (MPMS) - INICIO ================
 //    // =========================================================================
@@ -2283,7 +2282,8 @@ begin
     Except
       iCodLojaLinx:=0;
     End;
-//odiropss Tirar
+    
+//odiropss Comentar
 //iCodLojaLinx:=18;
 //if sCodEmpresa='01' Then
 //sCodEmpresa:='18'

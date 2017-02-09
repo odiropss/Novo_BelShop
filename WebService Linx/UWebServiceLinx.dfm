@@ -1,6 +1,6 @@
 object FrmWebServiceLinx: TFrmWebServiceLinx
-  Left = 476
-  Top = 300
+  Left = 473
+  Top = 195
   Width = 269
   Height = 77
   Caption = 'FrmWebServiceLinx'
