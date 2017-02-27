@@ -2604,6 +2604,7 @@ Begin
 
     MySql:=' Select ec.cod_emp'+
            ' From EMP_CONEXOES ec'+
+           ' WHERE ec.COD_FILIAL<>''88'''+
            ' Order by ec.cod_emp';
     CDS_Busca.Close;
     SDS_Busca.CommandText:=MySql;

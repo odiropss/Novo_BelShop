@@ -6230,6 +6230,16 @@ object FrmBelShop: TFrmBelShop
           Visible = False
           OnClick = Button1Click
         end
+        object Button3: TButton
+          Left = 488
+          Top = 8
+          Width = 106
+          Height = 25
+          Caption = 'Extratos Duplo'
+          TabOrder = 5
+          Visible = False
+          OnClick = Button3Click
+        end
       end
       object Dbg_ConEmpresas: TDBGrid
         Left = 0
@@ -30645,8 +30655,8 @@ object FrmBelShop: TFrmBelShop
     Visible = False
   end
   object MainMenu1: TMainMenu
-    Left = 568
-    Top = 448
+    Left = 624
+    Top = 352
     object MenuSistema: TMenuItem
       Tag = 15
       Caption = 'SISTEMA'
@@ -36442,8 +36452,8 @@ object FrmBelShop: TFrmBelShop
   end
   object PopM_UsuSenha: TPopupMenu
     OnPopup = PopM_UsuSenhaPopup
-    Left = 784
-    Top = 512
+    Left = 840
+    Top = 416
     object Senha1: TMenuItem
       Caption = 'Senha'
       HelpContext = 999999
@@ -36451,12 +36461,12 @@ object FrmBelShop: TFrmBelShop
   end
   object PopM_Auditoria: TPopupMenu
     OnPopup = PopM_AuditoriaPopup
-    Left = 648
-    Top = 488
+    Left = 816
+    Top = 312
   end
   object PopM_FinanPlanFInanceira: TPopupMenu
-    Left = 696
-    Top = 434
+    Left = 752
+    Top = 338
     object PopM_PlanFinanceiraMemoria: TMenuItem
       Caption = 'Salvar Planilha Financeira em Mem'#243'ria'
       HelpContext = 999999
@@ -36537,21 +36547,21 @@ object FrmBelShop: TFrmBelShop
     Font.Style = [fsBold]
     StartColor = 15522303
     EndColor = 8388863
-    Left = 712
-    Top = 488
+    Left = 768
+    Top = 392
   end
   object Trad_Localizer: TcxLocalizer
-    Left = 624
-    Top = 512
+    Left = 680
+    Top = 416
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 644
-    Top = 455
+    Left = 700
+    Top = 359
   end
   object PopM_OCRomaneio: TPopupMenu
-    Left = 568
-    Top = 504
+    Left = 624
+    Top = 408
     object PopM_OCRomaneioVoltar: TMenuItem
       Bitmap.Data = {
         F6000000424DF600000000000000760000002800000010000000100000000100
@@ -36694,8 +36704,8 @@ object FrmBelShop: TFrmBelShop
     end
   end
   object PopM_GeraOC: TPopupMenu
-    Left = 486
-    Top = 485
+    Left = 542
+    Top = 389
     object PopM_GeraOCVoltar1: TMenuItem
       Bitmap.Data = {
         F6000000424DF600000000000000760000002800000010000000100000000100

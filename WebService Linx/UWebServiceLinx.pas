@@ -311,6 +311,9 @@ Begin
 
               // Executa Sql Update/Insert -----------------
               MySql:=sSqlUpInCampos+sSqlUpInValores;
+              MySql:=F_Troca(#$A#$A, ' ', MySql);
+              MySql:=F_Troca(#$A, ' ', MySql);
+
               DMLinxWebService.SQLC.Execute(MySql, nil, nil);
             End; // If Assigned(Node_Valores) Then // Libera Node "R" Para Leitura
           End; // If VarToStr(Node_Valores.NodeName)='R' Then // Node "R"
@@ -332,7 +335,7 @@ Begin
           DecimalSeparator:=',';
 
           sMensagem:='Erro DML: '+e.message;
-          SalvaProcessamento(sgMetodo+': '+sMensagem);
+          SalvaProcessamento(sgMetodo+'_'+sgCodLojaLinx+': '+sMensagem);
           SalvaProcessamento('=====================================');
         End; // on e : Exception do
       End; // Try da Transação  ////////////////////////////////////////////////
@@ -663,7 +666,7 @@ Begin
       sgMetodo  :=tgMetodos[iFor];
 
       // odiropss - Comentar
-      //sgMetodo:='LinxProdutosDetalhes';
+      // sgMetodo:='LinxMovimento';
 
       sgArqXMLRet:='Retorno_'+sgMetodo+'.XML';
 

@@ -1363,6 +1363,7 @@ type
     EdtDta_ConEmpresasInicioLinx: TcxDateEdit;
     Label71: TLabel;
     Button1: TButton;
+    Button3: TButton;
 
     // Odir ====================================================================
 
@@ -2304,6 +2305,7 @@ type
       Sender: TObject);
     procedure Dbe_ConEmpresasCodLojaLinxExit(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -45270,6 +45272,59 @@ begin
   End; // Try da Transação
 
   msg('fim','A');
+end;
+
+procedure TFrmBelShop.Button3Click(Sender: TObject);
+begin
+{
+  MySqlClausula1:=' select e.cod_banco, e.dta_extrato, e.vlr_docto'+
+                  ' from fin_bancos_extratos e, fin_bancos b'+
+                  ' where e.cod_banco=b.cod_banco'+
+                  ' and b.num_banco=33'+
+                  ' and e.num_seq=999999'+
+                  ' and e.vlr_docto=0'+
+                  ' order by e.dta_extrato';
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:=MySqlClausula1;
+  DMBelShop.CDS_Busca.Open;
+
+  While not DMBelShop.CDS_Busca.Eof do
+  Begin
+    MySqlClausula1:=' select e.num_docto, e.vlr_docto'+
+                    ' from fin_bancos_extratos e'+
+                    ' where e.cod_banco='+DMBelShop.CDS_Busca.FieldByName('Cod_Banco').AsString+
+                    ' and e.dta_extrato='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DMBelShop.CDS_Busca.FieldByName('Dta_Extrato').AsString)))+
+                    ' and e.num_seq<>999999'+
+                    ' order by e.num_docto, e.vlr_docto';
+    DMBelShop.CDS_Busca1.Close;
+    DMBelShop.SDS_Busca1.CommandText:=MySqlClausula1;
+    DMBelShop.CDS_Busca1.Open;
+
+    sgNumSeq:=''; //Docto
+    sgValor:='';
+    While Not DMBelShop.CDS_Busca1.Eof do
+    Begin
+      If (sgNumSeq=DMBelShop.CDS_Busca1.FieldByName('Num_Docto').AsString) and
+         (sgValor =DMBelShop.CDS_Busca1.FieldByName('Vlr_Docto').AsString) Then
+      Begin
+        Memo1.Lines.Add('Banco: '+DMBelShop.CDS_Busca.FieldByName('Cod_Banco').AsString+' - '+DMBelShop.CDS_Busca.FieldByName('Dta_Extrato').AsString);
+        Break;
+      end;
+
+      sgNumSeq:=DMBelShop.CDS_Busca1.FieldByName('Num_Docto').AsString;
+      sgValor :=DMBelShop.CDS_Busca1.FieldByName('Vlr_Docto').AsString;
+
+      DMBelShop.CDS_Busca1.Next;
+    End;
+
+    DMBelShop.CDS_Busca1.Close;
+
+    DMBelShop.CDS_Busca.Next;
+  End;
+  DMBelShop.CDS_Busca.Close;
+
+  msg('FIM','A');
+ }
 end;
 
 End.

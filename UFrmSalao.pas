@@ -622,6 +622,16 @@ type
     Panel10: TPanel;
     Bt_SalvarComissoes: TJvXPButton;
     Splitter_Habilidades: TSplitter;
+    Ts_PagtoMovtos: TcxTabSheet;
+    Panel24: TPanel;
+    Bt_PagtoMovtosClipboard: TJvXPButton;
+    Bt_PagtoMovtosSintetica: TJvXPButton;
+    Bt_PagtoMovtosAnalitica: TJvXPButton;
+    Dbg_PagtoMovtos: TDBGrid;
+    Panel25: TPanel;
+    EdtPagtoCodLojaBD: TCurrencyEdit;
+    Label16: TLabel;
+    Panel26: TPanel;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_SalaoChange(Sender: TObject);
     procedure Bt_AlterarClick(Sender: TObject);
@@ -1055,6 +1065,8 @@ type
     procedure Dbg_ComissoesLojasDrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure Bt_SalvarComissoesClick(Sender: TObject);
+    procedure Bt_PagtoMovtosClipboardClick(Sender: TObject);
+    procedure Bt_PagtoMovtosAnaliticaClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -7689,7 +7701,7 @@ begin
     // Pega Menor Comissão para Comissão Geral ----------------------
     DMSalao.CDS_V_ComissoesLojas.First;
     try
-    sgComissaoGeral:=f_Troca(',','.',ZerosCentavos(f_Troca('.',',',DMSalao.CDS_V_ComissoesLojas.FieldByName(sgNomeCidade).AsString),2));
+      sgComissaoGeral:=f_Troca(',','.',ZerosCentavos(f_Troca('.',',',DMSalao.CDS_V_ComissoesLojas.FieldByName(sgNomeCidade).AsString),2));
       While Not DMSalao.CDS_V_ComissoesLojas.Eof do
       Begin
         Application.ProcessMessages;
@@ -7711,6 +7723,18 @@ begin
 
     Dbg_Profissionais.SetFocus;
     Screen.Cursor:=crDefault;
+
+    If EdtCodLoja.AsInteger=11 Then
+    Begin
+      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+      MessageBox(Handle, pChar('==============================================='+cr+cr+
+                               'ESTA LOJA NO GERENCIADOR BELSHOP'+cr+cr+
+                               'NÃO ESTA VINCULADA COM A LOJA SIDICOM - CANOAS'+cr+cr+
+                               'NADA AQUI SERÁ SALVO NO SIDICOM !!'+cr+cr+
+                               '==============================================='
+                               ), 'ATENÇÃO !!', MB_ICONERROR);
+    End; // If EdtCodLoja.AsInteger=11 Then
+    
   End; // If EdtCodLoja.Value<>0 Then
 end;
 
@@ -9447,7 +9471,7 @@ begin
   Refresh;
 
   // Verifica Inclusão no SIDICOM ==============================================
-  If (DMSalao.CDS_ProfissionaisIND_LIBERADO.AsString='SIM') And (bgSiga)Then
+  If (DMSalao.CDS_ProfissionaisIND_LIBERADO.AsString='SIM') And (bgSiga) And (DMSalao.CDS_ProfissionaisCOD_LOJA.AsString<>'11')  Then
   Begin
     If msg('Deseja INCLUIR/ALTERAR'+cr+cr+'o Profissional no SIDICOM ??','C')=1 Then
     Begin
@@ -13597,6 +13621,9 @@ begin
   If (PC_PagtoPlanilha.ActivePage=Ts_PagtoDebCred) And (Ts_PagtoDebCred.CanFocus) Then
    Dbg_PagtosDebCred.SetFocus;
 
+  If (PC_PagtoPlanilha.ActivePage=Ts_PagtoMovtos) And (Ts_PagtoMovtos.CanFocus) Then
+   EdtPagtoCodLojaBD.SetFocus;
+
 end;
 
 procedure TFrmSalao.EdtPagtoCodLojaChange(Sender: TObject);
@@ -14034,6 +14061,18 @@ begin
   If DMSalao.CDS_V_PagtoProf.IsEmpty Then
    Exit;
 
+  If EdtPagtoCodLoja.AsInteger=11 Then
+  Begin
+    PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+    MessageBox(Handle, pChar('==============================================='+cr+cr+
+                             'ESTA LOJA NO GERENCIADOR BELSHOP'+cr+cr+
+                             'NÃO ESTA VINCULADA COM A LOJA SIDICOM - CANOAS'+cr+cr+
+                             'SEM POSSIBILIDADES DE BUSCA DE MOVIMENTOS DE SERVIÇOS'+cr+cr+
+                             'DO SALÃO NO SIDICOM !!'+cr+cr+
+                             '==============================================='
+                             ), 'ATENÇÃO !!', MB_ICONERROR);
+  End; // If EdtPagtoCodLoja.AsInteger=11 Then
+
   If bgPeriodoForcado Then
   Begin
     If msg('Período de Calculo foi Forçado...'+cr+'Fora do Padrão !!'+cr+cr+'Deseja Continuar ??','C')=2 Then
@@ -14353,17 +14392,19 @@ begin
     Exit;
 
   // Busca Vendas dos Profissionais da Loja Selecionada ========================
-  sgMensagem:='DESEJA BUSCAR AS VENDAS'+cr+cr+'DOS PROFISSIONAIS DA LOJA Bel_'+FormatFloat('00',EdtPagtoCodLoja.AsInteger)+' ??';
-  If msg(sgMensagem,'C')=1 Then
+  If EdtPagtoCodLoja.AsInteger<>11 Then
   Begin
-    If Not ProfBuscaVendas Then
+    sgMensagem:='DESEJA BUSCAR SERVIÇOS'+cr+cr+'DOS PROFISSIONAIS DA LOJA Bel_'+FormatFloat('00',EdtPagtoCodLoja.AsInteger)+' ??';
+    If msg(sgMensagem,'C')=1 Then
     Begin
-      FrmBelShop.gCDS_V_Geral.Free;
-      FrmBelShop.gCDS_V_Geral:=nil;
-      Exit;
-    End;
-  End; // If msg(sgMensagem,'C')=1 Then
-
+      If Not ProfBuscaVendas Then
+      Begin
+        FrmBelShop.gCDS_V_Geral.Free;
+        FrmBelShop.gCDS_V_Geral:=nil;
+        Exit;
+      End;
+    End; // If msg(sgMensagem,'C')=1 Then
+  End; // If EdtPagtoCodLoja.AsInteger<>11 Then
   //============================================================================
   // GERA MOVIMENTAÇÃO DE BENEFICIO NA TABELA PS_VALES_PESSOAS =================
   //============================================================================
@@ -16353,6 +16394,10 @@ end;
 
 procedure TFrmSalao.Dbg_PagtoPlanilhaKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Não Permite Exclusão no DBGrid
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   // Acerta Posicição na Celula ================================================
   if (Key = VK_Left) and (THackDBGridSalao(Dbg_PagtoPlanilha).SelectedIndex=1) then
   Begin
@@ -19420,6 +19465,13 @@ end;
 procedure TFrmSalao.EdtPagtoCodLojaEnter(Sender: TObject);
 begin
   EdtPagtoCodLoja.Value:=0;
+  EdtPagtoCodLojaBD.Value:=0;
+
+  If IBQ_Loja<>Nil Then
+  Begin
+    IBQ_Loja.Close;
+    ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'F');
+  End;
 end;
 
 procedure TFrmSalao.Dbg_CadProfServDrawColumnCell(Sender: TObject;
@@ -19620,6 +19672,211 @@ begin
     End; // on e : Exception do
   End; // Try
   DMSalao.CDS_V_ComissoesLojas.First;
+
+end;
+
+procedure TFrmSalao.Bt_PagtoMovtosClipboardClick(Sender: TObject);
+begin
+  If IBQ_Loja<>Nil Then
+  Begin
+    If IBQ_Loja.IsEmpty Then
+     Exit;
+
+    DBGridClipboard(Dbg_PagtoMovtos);
+  End; // If IBQ_Loja<>Nil Then
+
+end;
+
+procedure TFrmSalao.Bt_PagtoMovtosAnaliticaClick(Sender: TObject);
+Var
+  b, bSiga: Boolean;
+  i: Integer;
+  MySqlA, MySqlS: String;
+  dDta: TDate;
+begin
+  If EdtPagtoCodLoja.Value=0 Then
+  Begin
+    msg('Favor Informar a Loja !!','A');
+    PC_PagtoPlanilha.ActivePage:=Ts_PagtoProfissionais;
+    EdtPagtoCodLoja.Value:=0;
+    EdtPagtoCodLoja.SetFocus;
+    Exit;
+  End;
+
+  If EdtPagtoCodLojaBD.Value=0 Then
+  Begin
+    msg('Favor Informar o Código da Loja'+cr+'Vinculada no Banco de Dados !!','A');
+    EdtPagtoCodLojaBD.Value:=0;
+    EdtPagtoCodLojaBD.SetFocus;
+    Exit;
+  End;
+
+  // Período de Aprorpiação ====================================================
+  bgSiga:=False;
+  FrmPeriodoApropriacao:=TFrmPeriodoApropriacao.Create(Self);
+
+  If sgDtaI='' Then
+   Begin
+     dDta:=DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor);
+
+     b:=True;
+     While b do
+     Begin
+       If AnsiUpperCase(DiaSemanaNome(dDta))=AnsiUpperCase('Terça') Then
+       Begin
+         FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Text:=DateToStr(dDta-6);
+         FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Text   :=DateToStr(dDta);
+         b:=False;
+         Break;
+       End;
+       dDta:=dDta-1;
+     End; // While b do
+   End
+  Else
+   Begin
+     FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Text:=sgDtaI;
+     FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Text   :=sgDtaF;
+   End; // If sgDtaI='' Then
+
+  FrmPeriodoApropriacao.ShowModal;
+
+  If Not bgSiga Then
+  Begin
+    FrmPeriodoApropriacao.Free;
+    FrmPeriodoApropriacao:=nil;
+    Exit;
+  End;
+
+  sgDtaI:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date);
+  sgDtaF:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date);
+
+  FrmPeriodoApropriacao.Free;
+  FrmPeriodoApropriacao:=nil;
+
+  sgCodEmp:=FormatFloat('00',EdtPagtoCodLoja.AsInteger);
+
+  // Select Analitico ==========================================================
+  MySqlA:=' SELECT '+QuotedStr(sgCodEmp)+' Cod_Loja, '+QuotedStr(EdtPagtoCodLojaBD.Text)+' Cod_Loja_Vinculada,'+
+          '        nt.codvendedor Cod_Profissional, vd.nomevendedor Nome_Profissional,'+
+          '        nt.codcomprovante Cod_Comprov, cp.nomecomprovante,'+
+          '        nt.numero Num_Docto, nt.serie Num_Serie,'+
+          '        nt.datadocumento Dta_Docto, nt.datacomprovante Dta_Comprov,'+
+          '        nt.situacaonf Ind_SituacaoNF, nt.codcliente Cod_Cliente,'+
+          '        nt.totitens Qtd_Itens,'+
+          '        nt.totbruto Vlr_BrutoNF, nt.totdescitem Vlr_DescNF, nt.totnota Vlr_TotalNF,'+
+          '        pr.principalfor,'+
+          '        it.codproduto Cod_Produto, pr.apresentacao Des_produto,'+
+          '        it.quantatendida Qtd_AtendidaItem,'+
+          '        it.preco Vlr_PrecoItem,'+
+          '        it.desconto1 Vlr_Desc1Item, it.desconto2 Vlr_Desc2Item,'+
+          '        it.desconto3 Vlr_Desc3Item, it.desconto4 Vlr_Desc4Item,  it.descontocalc Vlr_DescCalcItem,'+
+          '        it.valbruto Vlr_BrutoItem,  it.valdescitem Vlr_DescItem, it.valtotal Vlr_TotalItem'+
+
+          ' FROM mcli nt'+
+          '       LEFT JOIN mclipro it   ON nt.chavenf=it.chavenf'+
+          '       LEFT JOIN vendedor vd  ON nt.codvendedor=vd.codvendedor'+
+          '       LEFT JOIN produto pr   ON it.codproduto=pr.codproduto'+
+          '       LEFT JOIN procomis c   ON c.codproduto=it.codproduto'+
+          '                             AND c.codnivelcomissao=1'+
+          '       left join comprv cp  on nt.codcomprovante=cp.codcomprovante'+
+
+          ' WHERE nt.codcomprovante in (''002'', ''007'')'+
+          ' AND   nt.datacomprovante BETWEEN :Dta1 and :Dta2'+
+          ' AND   pr.principalfor in (''000500'',''000883'')'+
+          ' AND   nt.codfilial=:CodLoja'+
+          ' ORDER BY vd.nomevendedor';
+
+  // Select Sintetico ==========================================================
+  MySqlS:=' SELECT '+QuotedStr(sgCodEmp)+' Cod_Loja, '+QuotedStr(EdtPagtoCodLojaBD.Text)+' Cod_Loja_Vinculada,'+
+          '        nt.codvendedor Cod_Profissional, vd.nomevendedor Nome_Profissional,'+
+          '        sum(it.quantatendida) Qtd_Total,'+
+          '        sum(it.valtotal) Vlr_Total'+
+
+          ' FROM mcli nt'+
+          '       LEFT JOIN mclipro it   ON nt.chavenf=it.chavenf'+
+          '       LEFT JOIN vendedor vd  ON nt.codvendedor=vd.codvendedor'+
+          '       LEFT JOIN produto pr   ON it.codproduto=pr.codproduto'+
+          '       LEFT JOIN procomis c   ON c.codproduto=it.codproduto'+
+          '                             AND c.codnivelcomissao=1'+
+          '       left join comprv cp  on nt.codcomprovante=cp.codcomprovante'+
+
+          ' WHERE nt.codcomprovante in (''002'', ''007'')'+
+          ' AND   nt.datacomprovante BETWEEN :Dta1 and :Dta2'+
+          ' AND   pr.principalfor in (''000500'',''000883'')'+
+          ' AND   nt.codfilial=:CodLoja'+
+          ' GROUP BY 1,2,3,4'+
+          ' ORDER BY vd.nomevendedor';
+
+  // Apresentacao ==============================================================
+  OdirPanApres.Caption:='AGUARDE !! Localizando Vendas de Profissionais na Loja: Bel_'+sgCodEmp;
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSalao.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmSalao.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Conecta Empresa ===========================================================
+  If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+   Begin
+     bSiga:=True;
+   End
+  Else
+   Begin
+     FrmSalao.Refresh;
+     bSiga:=False;
+
+     msg('Loja Bel_'+sgCodEmp+' Não Conectada !!'+cr+cr+'Tente Mais Tarde..','A');
+     OdirPanApres.Visible:=False;
+     Exit;
+   End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+
+  If bSiga Then // Empresa Conectada
+  Begin
+    // Cria Query da Empresa ----------------------------------------
+    FrmBelShop.CriaQueryIB('IBDB_'+sgCodEmp,'IBT_'+sgCodEmp,IBQ_Loja, True, True);
+
+    IBQ_Loja.SQL.Clear;
+
+    If (Sender as TJvXPButton).Name='Bt_PagtoMovtosAnalitica' Then
+     IBQ_Loja.SQL.Add(MySqlA);
+
+    If (Sender as TJvXPButton).Name='Bt_PagtoMovtosSintetica' Then
+     IBQ_Loja.SQL.Add(MySqlS);
+
+    IBQ_Loja.Params.ParamByName('Dta1').AsDate:=StrToDate(sgDtaI);
+    IBQ_Loja.Params.ParamByName('Dta2').AsDate:=StrToDate(sgDtaF);
+    IBQ_Loja.Params.ParamByName('CodLoja').AsString:=FormatFloat('00',EdtPagtoCodLojaBD.AsInteger);
+    i:=0;
+    bSiga:=False;
+    While Not bSiga do
+    Begin
+      Try
+        IBQ_Loja.Open;
+        bSiga:=True;
+      Except
+        on e : Exception do
+        Begin
+          Inc(i);
+          sgMensagem:=e.message;
+        End; // on e : Exception do
+      End; // Try
+
+      If i>2 Then
+      Begin
+        // Fecha Conexão =======================================================
+        ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'F');
+
+        msg('Loja Bel'+sgCodEmp+' Perdeu a Não Conexão !!'+cr+cr+'Tente Mais Tarde..','A');
+        MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+sgMensagem), 'Erro', MB_ICONERROR);
+
+        OdirPanApres.Visible:=False;
+        Exit;
+      End; // If i>10 Then
+    End; // While Not bSiga do
+
+    DMSalao.DS_PagtoMovtos.DataSet:=IBQ_Loja;
+    OdirPanApres.Visible:=False;
+  End; // If bSiga Then // Empresa Conectada
 
 end;
 

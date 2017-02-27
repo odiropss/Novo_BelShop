@@ -1,7 +1,7 @@
 object DMSalao: TDMSalao
   OldCreateOrder = False
-  Left = 187
-  Top = 90
+  Left = 239
+  Top = 100
   Height = 638
   Width = 1105
   object SDS_Profissionais: TSQLDataSet
@@ -2927,20 +2927,20 @@ object DMSalao: TDMSalao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 488
-    Top = 97
+    Left = 504
+    Top = 33
   end
   object DSP_Beneficios: TDataSetProvider
     DataSet = SDS_Beneficios
-    Left = 528
-    Top = 113
+    Left = 544
+    Top = 49
   end
   object CDS_Beneficios: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Beneficios'
-    Left = 568
-    Top = 97
+    Left = 584
+    Top = 33
     object CDS_BeneficiosCOD_LOJA: TStringField
       DisplayLabel = 'Loja'
       FieldName = 'COD_LOJA'
@@ -3023,15 +3023,15 @@ object DMSalao: TDMSalao
   end
   object DS_Beneficios: TDataSource
     DataSet = CDS_Beneficios
-    Left = 616
-    Top = 113
+    Left = 632
+    Top = 49
   end
   object CDS_V_ComissoesLojas: TClientDataSet
     Aggregates = <>
     Params = <>
     AfterScroll = CDS_V_ComissoesLojasAfterScroll
-    Left = 472
-    Top = 472
+    Left = 520
+    Top = 256
     object CDS_V_ComissoesLojasCOD_HABSERV: TIntegerField
       DisplayLabel = 'C'#243'd'
       FieldName = 'COD_HABSERV'
@@ -3083,7 +3083,11 @@ object DMSalao: TDMSalao
   end
   object DS_V_ComissoesLojas: TDataSource
     DataSet = CDS_V_ComissoesLojas
-    Left = 528
-    Top = 488
+    Left = 576
+    Top = 272
+  end
+  object DS_PagtoMovtos: TDataSource
+    Left = 536
+    Top = 424
   end
 end

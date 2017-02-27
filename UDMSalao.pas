@@ -522,6 +522,7 @@ type
     CDS_V_ComissoesLojasCANOAS: TFMTBCDField;
     CDS_V_ComissoesLojasGRAVATAI: TFMTBCDField;
     CDS_V_ComissoesLojasVIAMAO: TFMTBCDField;
+    DS_PagtoMovtos: TDataSource;
     procedure CDS_HabilidadesAfterScroll(DataSet: TDataSet);
     procedure CDS_HabilidadesProfAfterScroll(DataSet: TDataSet);
     procedure CDS_ValesProfissionaisAfterScroll(DataSet: TDataSet);
