@@ -5419,12 +5419,18 @@ begin
   If DMCentralTrocas.CDS_ReposicaoDocs.IsEmpty Then
   Begin
     Screen.Cursor:=crDefault;
-    msg('Sem Produtos para Reposição'+cr+'em '+DateToStr(DtaEdt_ReposLojas.Date)+' !!','A');
     DMCentralTrocas.CDS_ReposicaoDocs.Close;
     DMCentralTrocas.CDS_ReposicaoTransf.Close;
+
+    If msg('Sem Produtos para Reposição'+cr+'em '+DateToStr(DtaEdt_ReposLojas.Date)+' !!'+cr+cr+'Deseja Sair ??','C')=1 Then
+    Begin
+      Bt_NotasEntDevFecharClick(Self);
+      Exit;
+    End;
+
     DtaEdt_ReposLojas.SetFocus;
     Exit;
-  End;
+  End; // If DMCentralTrocas.CDS_ReposicaoDocs.IsEmpty Then
   DMCentralTrocas.CDS_ReposicaoDocs.First;
 
   If DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty Then

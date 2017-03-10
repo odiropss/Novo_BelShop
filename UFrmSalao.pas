@@ -680,11 +680,10 @@ type
                              // Tipo: (H)abilidade (S)ervico
     ////////////////////////////////////////////////////////////////////////////
 
-    // INSS-PLANO DE SAUDE-SINDICATO ///////////////////////////////////////////
+    // INSS-SINDICATO //////////////////////////////////////////////////////////
     Function ProfBuscaDebitos(sTipo: String): Boolean;
                             // sTipo: (I) Contribuiçao INSS
                             //        (S) Taxa Sindicato
-                            //        (P) Plano de Saude
 
     Function  ProfCalculaINSS(sDta: String): Boolean;
     Function  ProfCalculaTaxaSindicato(sDta: String): Boolean;
@@ -1108,6 +1107,7 @@ var
   IBQ_Loja  : TIBQuery;
 
   // Calculo de Comissão
+  sgProfLojaCanoas,       // Codigos dos Profissionasi de Canoas (DePara)
   sgProfComissao: String; // Clausula IN de Codigos de Profissionais e Periodos
   sgProfissionais: String; // Clausula IN de Codigos de Profissionais
   cgPerComisSuper: Currency;
@@ -1952,6 +1952,28 @@ Begin
     Screen.Cursor:=crAppStart;
     DecimalSeparator:='.';
 
+    // ARREDONDAMENTO ==========================================================
+    MySql:=' SELECT max(t.cod_aux) Planilha'+
+           ' FROM TAB_AUXILIAR t'+
+           ' WHERE t.tip_aux=7'+
+           ' AND   t.des_aux1 is null'+
+           ' AND   SUBSTRING(t.des_aux FROM CHAR_LENGTH(t.des_aux)-1 FOR 2)='+QuotedStr(sCodLoja)+
+           ' and   t.cod_aux<'+sNrPlan;
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+
+    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Planilha').AsString)<>'' Then
+    Begin
+      MySql:=' UPDATE SAL_PLAN_PAGTO pp'+
+             ' SET pp.ind_arrendonda=''NAO'''+
+             ' WHERE pp.vlr_arredonda<>0'+
+             ' AND pp.cod_loja='+QuotedStr(sCodLoja)+
+             ' AND   pp.num_planilha='+Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Planilha').AsString);
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+    End; // If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Planilha').AsString)<>'' Then
+    DMBelShop.CDS_BuscaRapida.Close;
+
     // TECBIZ ==================================================================
     MySql:=' UPDATE PS_TECBIZ T'+
            ' SET T.ind_pago=''NAO'''+
@@ -2110,7 +2132,7 @@ Begin
            ' AND   ta.cod_aux='+sNrPlan+
            ' AND   ta.des_aux='+QuotedStr(sDesAux);
     DMBelShop.SQLC.Execute(MySql,nil,nil);
-
+                                  
     // Atualiza Transacao ======================================================
     DMBelShop.SQLC.Commit(TD);
 
@@ -2582,7 +2604,7 @@ Begin
                                           
 End; // PLANILHA DE PAGAMENTOS - Apresenta Planilha de Pagamentos //////////////
 
-// CONTRIBUIÇÃO INSS / PLANODE SAUDE - Calcula Taxa Sindicato //////////////////
+// CONTRIBUIÇÃO INSS / PLANO DE SAUDE - Calcula Taxa Sindicato /////////////////
 Function TFrmSalao.ProfCalculaTaxaSindicato(sDta: String): Boolean;
 Var
   s, MySql: String;
@@ -2902,7 +2924,7 @@ Begin
 
 End; // CONTRIBUIÇÃO INSS / PLANODE SAUDE - Calcula Contibuições de INSS ///////
 
-// INSS-PLANO DE SAUDE-SINDICATO - Busca Movtos ////////////////////////////////
+// INSS-SINDICATO - Busca Movtos ///////////////////////////////////////////////
 Function TFrmSalao.ProfBuscaDebitos(sTipo: String): Boolean;
 Var
   MySql: String;
@@ -3224,7 +3246,7 @@ Begin
 
   Result:=True;
   Screen.Cursor:=crDefault;
-End; // INSS-PLANO DE SAUDE-SINDICATO - Busca Movtos ///////////////////////////
+End; // INSS-SINDICATO - Busca Movtos //////////////////////////////////////////
 
 // PLANILHA DE PAGAMENTOS - Apresenta no Grid Profissionais de Recebimentos ////
 Procedure TFrmSalao.ProfSemRecebementos(Var iIndex:Integer);
@@ -4153,7 +4175,6 @@ Begin
   End;
   DMSalao.CDS_ApresGrid.Close;
 
-
 End; // IMPORTAÇÃO DEBITOS RH - TECBIZ /////////////////////////////////////////
 
 // PLANILHA DE PAGAMENTOS - Busca Débitos de Profissionais /////////////////////
@@ -4806,11 +4827,15 @@ Begin
 
          ' FROM PS_BENEFICIOS_PESSOAS b'+
          ' WHERE b.tp_pessoa=1'+
-         ' AND   b.ind_ativo='+QuotedStr('S')+
+         ' AND   b.ind_ativo=''S'''+
          ' AND   b.cod_loja='+QuotedStr(FormatFloat('00',EdtPagtoCodLoja.AsInteger))+
          ' AND   b.dta_ini_beneficio<='+QuotedStr(sgDtaF)+
-         ' AND   ((b.dta_ult_geracao<'+QuotedStr(sgDtaF)+') OR (b.dta_ult_geracao IS NULL) OR'+
-         '       ((b.ind_uma_vez='+QuotedStr('S')+') AND (b.dta_ult_geracao IS NULL)))'+
+
+         ' AND   ('+
+         '        (((b.dta_ult_geracao<'+QuotedStr(sgDtaF)+') OR (b.dta_ult_geracao IS NULL)) and (b.ind_uma_vez=''NAO''))'+
+         '        OR'+
+         '        ((b.ind_uma_vez=''SIM'') AND (b.dta_ult_geracao IS NULL))'+
+         '       )'+
 
          ' ORDER BY b.cod_pessoa, b.ind_uma_vez, b.ind_diariamente, b.ind_semanamente, b.ind_mensalmente';
   DMBelShop.CDS_Busca.Close;
@@ -5523,9 +5548,17 @@ Begin
            '       LEFT JOIN mclipro it   ON nt.chavenf=it.chavenf'+
            '       LEFT JOIN produto pr   ON it.codproduto=pr.codproduto'+
            '                             AND pr.principalfor in (''000500'',''000883'')'+
-           ' WHERE nt.codcomprovante in (''002'', ''007'')'+
-           ' AND ('+sgProfComissao+')'+
-           ' AND nt.codfilial='+QuotedStr(sgCodEmp);
+           ' WHERE nt.codcomprovante in (''002'', ''007'')';
+
+           // Salão - Canoas
+           If EdtPagtoCodLoja.AsInteger=11 Then
+            MySql:=
+             MySql+' AND ('+sgProfLojaCanoas+')'+
+                   ' AND nt.codfilial='+QuotedStr('02')
+           Else
+            MySql:=
+             MySql+' AND ('+sgProfComissao+')'+
+                   ' AND nt.codfilial='+QuotedStr(sgCodEmp);
     IBQ_Loja.SQL.Clear;
     IBQ_Loja.SQL.Add(MySql);
     i:=0;
@@ -5553,9 +5586,25 @@ Begin
     End; // While Not bSiga do
 
     // Monta SQL ----------------------------------------------------
-    MySql:=' SELECT'+
-           ' nt.codvendedor Cod_Profissional,'+
-           ' nt.codvendedor2 Cod_Supervisor,'+
+    MySql:=' SELECT';
+           // Salão - Canoas
+           If EdtPagtoCodLoja.AsInteger=11 Then
+            MySql:=
+             MySql+' Case'+
+                   '   When nt.codvendedor=''000400'' then ''000040'''+
+                   '   When nt.codvendedor=''000480'' then ''000048'''+
+                   '   When nt.codvendedor=''000470'' then ''000047'''+
+                   '   When nt.codvendedor=''000460'' then ''000046'''+
+                   '   When nt.codvendedor=''000490'' then ''000049'''+
+                   '   When nt.codvendedor=''000240'' then ''000024'''+
+                   '   Else nt.codvendedor'+
+                   ' End Cod_Profissional,'
+           Else
+            MySql:=
+             MySql+' nt.codvendedor Cod_Profissional,';
+
+    MySql:=
+     MySql+' nt.codvendedor2 Cod_Supervisor,'+
            ' nt.chavenf Num_Chavenf, nt.codcomprovante Cod_Comprov,'+
            ' nt.numero Num_Docto, nt.serie Num_Serie,'+
            ' nt.datadocumento Dta_Docto, nt.datacomprovante Dta_Comprov,'+
@@ -5580,11 +5629,19 @@ Begin
            '       LEFT JOIN procomis c   ON c.codproduto=it.codproduto'+
            '                             AND c.codnivelcomissao=1'+
 
-           ' WHERE nt.codcomprovante in (''002'', ''007'')'+
-           ' AND ('+sgProfComissao+')'+
+           ' WHERE nt.codcomprovante in (''002'', ''007'')';
 
-           ' AND nt.codfilial='+QuotedStr(sgCodEmp)+
-           ' ORDER BY nt.numero, pr.apresentacao';
+           If EdtPagtoCodLoja.AsInteger=11 Then
+            MySql:=
+             MySql+' AND ('+sgProfLojaCanoas+')'+
+                   ' AND nt.codfilial='+QuotedStr('02')
+           Else
+            MySql:=
+             MySql+' AND ('+sgProfComissao+')'+
+                   ' AND nt.codfilial='+QuotedStr(sgCodEmp);
+
+    MySql:=
+     MySql+' ORDER BY nt.numero, pr.apresentacao';
     IBQ_Loja.SQL.Clear;
     IBQ_Loja.SQL.Add(MySql);
     i:=0;
@@ -7724,6 +7781,7 @@ begin
     Dbg_Profissionais.SetFocus;
     Screen.Cursor:=crDefault;
 
+//////////////////// Profissionais
     If EdtCodLoja.AsInteger=11 Then
     Begin
       PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
@@ -9470,6 +9528,7 @@ begin
    bgSiga:=True;
   Refresh;
 
+//////////////////// Profissionais
   // Verifica Inclusão no SIDICOM ==============================================
   If (DMSalao.CDS_ProfissionaisIND_LIBERADO.AsString='SIM') And (bgSiga) And (DMSalao.CDS_ProfissionaisCOD_LOJA.AsString<>'11')  Then
   Begin
@@ -14048,6 +14107,9 @@ begin
 end;
 
 procedure TFrmSalao.Bt_PagtoVendasClick(Sender: TObject);
+Const
+  sProfLojaCanoas='''000040'', ''000400'', ''000030'', ''000003'', ''000480'', ''000043'', ''000470'', ''000460'', ''000004'', ''000490'', ''000240'', ''000035''';
+
 Var
   i: Integer;
   dDta: TDateTime;
@@ -14061,17 +14123,18 @@ begin
   If DMSalao.CDS_V_PagtoProf.IsEmpty Then
    Exit;
 
-  If EdtPagtoCodLoja.AsInteger=11 Then
-  Begin
-    PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
-    MessageBox(Handle, pChar('==============================================='+cr+cr+
-                             'ESTA LOJA NO GERENCIADOR BELSHOP'+cr+cr+
-                             'NÃO ESTA VINCULADA COM A LOJA SIDICOM - CANOAS'+cr+cr+
-                             'SEM POSSIBILIDADES DE BUSCA DE MOVIMENTOS DE SERVIÇOS'+cr+cr+
-                             'DO SALÃO NO SIDICOM !!'+cr+cr+
-                             '==============================================='
-                             ), 'ATENÇÃO !!', MB_ICONERROR);
-  End; // If EdtPagtoCodLoja.AsInteger=11 Then
+// OdirApagar - 07/03/2017
+//  If EdtPagtoCodLoja.AsInteger=11 Then
+//  Begin
+//    PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+//    MessageBox(Handle, pChar('==============================================='+cr+cr+
+//                             'ESTA LOJA NO GERENCIADOR BELSHOP'+cr+cr+
+//                             'NÃO ESTA VINCULADA COM A LOJA SIDICOM - CANOAS'+cr+cr+
+//                             'SEM POSSIBILIDADES DE BUSCA DE MOVIMENTOS DE SERVIÇOS'+cr+cr+
+//                             'DO SALÃO NO SIDICOM !!'+cr+cr+
+//                             '==============================================='
+//                             ), 'ATENÇÃO !!', MB_ICONERROR);
+//  End; // If EdtPagtoCodLoja.AsInteger=11 Then
 
   If bgPeriodoForcado Then
   Begin
@@ -14199,6 +14262,7 @@ begin
 
   sgProfComissao:='';
   sgProfissionais:='';
+  sgProfLojaCanoas:='';
   FrmBelShop.gCDS_V_Geral.First;
   While Not FrmBelShop.gCDS_V_Geral.Eof do
   Begin
@@ -14209,6 +14273,37 @@ begin
     sgDtaF:=FrmBelShop.gCDS_V_Geral.FieldByName('DtaF').AsString;
     sgDtaF:=f_Troca('/','.',sgDtaF);
     sgDtaF:=f_Troca('-','.',sgDtaF);
+
+    // Salão Canoas Profissionais =====================
+    // DePara =========================================
+    // Gerenciador	Salão-Canoas
+    //         40	  400 <<<===
+    //         40	  40
+    //         30	  30
+    //          3	  3
+    //         48	  480 <<<===
+    //         43	  43
+    //         47	  470 <<<===
+    //         46	  460 <<<===
+    //          4	  4
+    //         49	  490 <<<===
+    //         24	  240 <<<===
+    //         35	  35
+    If EdtPagtoCodLoja.AsInteger=11 Then
+    Begin
+      If sgProfLojaCanoas<>'' Then
+       sgProfLojaCanoas:=sgProfLojaCanoas+' or  (nt.codvendedor in ('+
+                             sProfLojaCanoas+
+                             ') and nt.datacomprovante BETWEEN '+
+                             QuotedStr(sgDtaI)+' And '+QuotedStr(sgDtaF)+')';
+
+      If sgProfLojaCanoas='' Then
+       sgProfLojaCanoas:='(nt.codvendedor in ('+
+                             sProfLojaCanoas+
+                             ') and nt.datacomprovante BETWEEN '+
+                             QuotedStr(sgDtaI)+' And '+QuotedStr(sgDtaF)+')';
+    End; // If EdtPagtoCodLoja.AsInteger=11 Then
+    //==================================================
 
     If sgProfComissao<>'' Then
      sgProfComissao:=sgProfComissao+' or  (nt.codvendedor in ('+
@@ -14392,19 +14487,17 @@ begin
     Exit;
 
   // Busca Vendas dos Profissionais da Loja Selecionada ========================
-  If EdtPagtoCodLoja.AsInteger<>11 Then
+  sgMensagem:='DESEJA BUSCAR SERVIÇOS'+cr+cr+'DOS PROFISSIONAIS DA LOJA Bel_'+FormatFloat('00',EdtPagtoCodLoja.AsInteger)+' ??';
+  If msg(sgMensagem,'C')=1 Then
   Begin
-    sgMensagem:='DESEJA BUSCAR SERVIÇOS'+cr+cr+'DOS PROFISSIONAIS DA LOJA Bel_'+FormatFloat('00',EdtPagtoCodLoja.AsInteger)+' ??';
-    If msg(sgMensagem,'C')=1 Then
+    If Not ProfBuscaVendas Then
     Begin
-      If Not ProfBuscaVendas Then
-      Begin
-        FrmBelShop.gCDS_V_Geral.Free;
-        FrmBelShop.gCDS_V_Geral:=nil;
-        Exit;
-      End;
-    End; // If msg(sgMensagem,'C')=1 Then
-  End; // If EdtPagtoCodLoja.AsInteger<>11 Then
+      FrmBelShop.gCDS_V_Geral.Free;
+      FrmBelShop.gCDS_V_Geral:=nil;
+      Exit;
+    End;
+  End; // If msg(sgMensagem,'C')=1 Then
+
   //============================================================================
   // GERA MOVIMENTAÇÃO DE BENEFICIO NA TABELA PS_VALES_PESSOAS =================
   //============================================================================

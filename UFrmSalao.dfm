@@ -1,6 +1,6 @@
 object FrmSalao: TFrmSalao
-  Left = 248
-  Top = 105
+  Left = 240
+  Top = 108
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Sal'#227'o'
@@ -8334,7 +8334,7 @@ object FrmSalao: TFrmSalao
         Top = 0
         Width = 969
         Height = 552
-        ActivePage = Ts_PagtoMovtos
+        ActivePage = Ts_PagtoProfissionais
         Align = alClient
         TabOrder = 0
         OnChange = PC_PagtoPlanilhaChange
@@ -9265,7 +9265,6 @@ object FrmSalao: TFrmSalao
                 Expanded = False
                 FieldName = 'VLR_DESCONTO'
                 Title.Alignment = taRightJustify
-                Width = 64
                 Visible = True
               end
               item
@@ -10552,7 +10551,7 @@ object FrmSalao: TFrmSalao
         Top = 0
         Width = 828
         Height = 514
-        ActivePage = Ts_ProfImpTecBiz
+        ActivePage = Ts_ProfBeneficios
         Align = alClient
         TabOrder = 0
         OnChange = PC_ProfMovtosRHChange
@@ -10821,12 +10820,12 @@ object FrmSalao: TFrmSalao
                 Left = 0
                 Top = 0
                 Width = 577
-                Height = 52
+                Height = 45
                 Align = alTop
                 TabOrder = 0
                 DesignSize = (
                   577
-                  52)
+                  45)
                 object Gb_ProfTecBizConsulta: TGroupBox
                   Left = 3
                   Top = 1
@@ -10884,7 +10883,7 @@ object FrmSalao: TFrmSalao
                 end
                 object Bt_ProfTecBizSalvaExcel: TJvXPButton
                   Tag = 4
-                  Left = 371
+                  Left = 426
                   Top = 10
                   Width = 100
                   Height = 31
@@ -10943,7 +10942,7 @@ object FrmSalao: TFrmSalao
                 end
                 object Bt_ProfTecBizClipboard: TJvXPButton
                   Tag = 4
-                  Left = 472
+                  Left = 527
                   Top = 10
                   Width = 100
                   Height = 31
@@ -11031,9 +11030,9 @@ object FrmSalao: TFrmSalao
               end
               object Dbg_ProfTecBizImportados: TDBGrid
                 Left = 0
-                Top = 52
+                Top = 45
                 Width = 577
-                Height = 350
+                Height = 357
                 Align = alClient
                 Color = 15004403
                 Ctl3D = False

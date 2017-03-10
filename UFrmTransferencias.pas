@@ -27,6 +27,7 @@ type
 
     Procedure SalvaErros;
     Procedure SalvaProcessamento(s:String);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     // ODIR ====================================================================
 
   private
@@ -53,6 +54,8 @@ var
 
   sgFornNAO, sgCodLoja,
   sgNrDocto, sgCurvas: String;
+
+  sgPastaStatus: String;
 
   mgMemo: TMemo;
 
@@ -102,7 +105,8 @@ End; // Salva Arquivo de Erros, se Houver >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmTransferencias.AnalisaAtualizaTransferencias: Boolean;
 Var
   MySql: String;
-  s, sObs, sCodProd, sCodGrupo, sCodSubGrupo: String;
+  sCodLoja,
+  sObs, sCodProd, sCodGrupo, sCodSubGrupo: String;
   i, iQtdReposicao: Integer;
   bMultiplo, bRepoe: Boolean;
   iMultiplo, iQtdMultiplo: Integer;
@@ -133,12 +137,27 @@ Begin
   TD.IsolationLevel:=xilREADCOMMITTED;
   DMTransferencias.SQLC.StartTransaction(TD);
   Try
+    sCodLoja:='';
+    igCodLojaLinx:=0;
     DMTransferencias.CDS_EstoqueLoja.First;
     While not DMTransferencias.CDS_EstoqueLoja.Eof do
     Begin
       sObs:='';
 
-      s:=DMTransferencias.CDS_EstoqueLojaCOD_LOJA.AsString;
+      If sCodLoja<>DMTransferencias.CDS_EstoqueLojaCOD_LOJA.AsString Then
+      Begin
+        sCodLoja:=DMTransferencias.CDS_EstoqueLojaCOD_LOJA.AsString;
+
+        // Busca Código da Loja Linx ===============================================
+        MySql:=' SELECT COALESCE(e.cod_linx,0) cod_linx'+
+               ' FROM EMP_CONEXOES e'+
+               ' WHERE e.cod_filial='+QuotedStr(sCodLoja);
+        DMTransferencias.CDS_BuscaRapida.Close;
+        DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+        DMTransferencias.CDS_BuscaRapida.Open;
+        igCodLojaLinx:=DMTransferencias.CDS_BuscaRapida.FieldByName('cod_linx').AsInteger;
+        DMTransferencias.CDS_BuscaRapida.Close;
+      End; // If sCodLoja<>DMTransferencias.CDS_EstoqueLojaCOD_LOJA.AsString Then
 
       // Busca Produto com Saldo do CD ------------------------------
       MySql:=' SELECT *'+
@@ -552,10 +571,11 @@ Begin
       DecimalSeparator:=',';
 
       bgArqErros:=True;
-      tgArqErros.Add('AnalisaAtualizaTransferencias: '+s+' - '+e.message)
+      tgArqErros.Add('AnalisaAtualizaTransferencias: '+sCodLoja+' - '+e.message)
     End; // on e : Exception do
   End; // Try
   DMTransferencias.CDS_EstoqueLoja.Close;
+
 End; // Analisa e Atualiza Transferencias do Dia >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Busca Produto e Demanda >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -867,7 +887,6 @@ Begin
     DMTransferencias.CDS_BuscaRapida.Open;
     igCodLojaLinx:=DMTransferencias.CDS_BuscaRapida.FieldByName('cod_linx').AsInteger;
     DMTransferencias.CDS_BuscaRapida.Close;
-
 
     // Monta Curvas da Loja ====================================================
     MontaCurvas(sCodLoja);
@@ -1271,15 +1290,23 @@ begin
     sgArqErros:='\\'+sgIPInternetServer+'\'+sgArqErros;
   End;
 
+  sgPastaStatus:=IncludeTrailingPathDelimiter(sgArqErros);
+
   If not DirectoryExists(sgArqErros) then
    ForceDirectories(sgArqErros);
 
+  // Monta Caminha para Arquivo de Status
   sgArqErros:=sgArqErros+'ErrosTransf_'+sDta+'.txt';
 
   DeleteFile(sgArqErros);
 
   bgArqErros:=False;
   tgArqErros:=TStringList.Create;
+
+  //============================================================================
+  // Tranca Separação no CD ====================================================
+  //============================================================================
+  CopyFile(PChar(sgPastaStatus+'@Odir.txt'), PChar(sgPastaStatus+'Odir.txt'), True);
 
   //============================================================================
   // Monta Arquivo Texto de Acompanhamento Processamento =======================
@@ -1519,11 +1546,22 @@ begin
   End;
 
   //============================================================================
+  // Libera Separação no CD ====================================================
+  //============================================================================
+  DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
+
+  //============================================================================
   SalvaProcessamento('12/999 - FIM - '+TimeToStr(Time));
   //============================================================================
 
   Application.Terminate;
   Exit;
+
+end;
+
+procedure TFrmTransferencias.FormCloseQuery(Sender: TObject;var CanClose: Boolean);
+begin
+ DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
 
 end;
 

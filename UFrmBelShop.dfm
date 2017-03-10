@@ -1,6 +1,6 @@
 object FrmBelShop: TFrmBelShop
-  Left = 242
-  Top = 114
+  Left = 243
+  Top = 106
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle

@@ -1,6 +1,6 @@
 object DMVirtual: TDMVirtual
   OldCreateOrder = False
-  Left = 241
+  Left = 176
   Top = 105
   Height = 615
   Width = 1115

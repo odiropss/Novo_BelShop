@@ -1,7 +1,7 @@
 object DMSalao: TDMSalao
   OldCreateOrder = False
-  Left = 239
-  Top = 100
+  Left = 187
+  Top = 90
   Height = 638
   Width = 1105
   object SDS_Profissionais: TSQLDataSet

@@ -44308,6 +44308,7 @@ Var
   sArq, sLinha: String;
   b: Boolean;
 begin
+
   sArq:=AnsiUpperCase(IncludeTrailingPathDelimiter(sgPastaExecutavelServer)+'Arquivo Status Transf\Odir.Txt');
   While b do
   Begin
