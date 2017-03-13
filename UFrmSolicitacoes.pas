@@ -46,8 +46,7 @@ TabIndex:
    0 = Exporta OC Para Outra - Ts_SolicitacoesExporta
    1 = Habilita/Desabilita Linha nos Objetivos/Metas - Ts_FinanObjetivosHabilitaDesabilita
    2 = Importa Arquivo para ProSoft - Ts_ProSoftImpArquivo
-   3 = LIBERADO PARA USO
-       - Antigo=Atualiza Curva ABC e/ou Enderecamento no Sidicom - Ts_AtualizaSIDICOMCurvaABCEndereco
+   3 = Viculos de Códigos Loja - CANOAS - Ts_SalaoCodigosViculados
    4 = Legenda de Cores no Pedido OC - Ts_GeraOCLegendaCores
    5 = Calendario de Fechamento de Caixas - Ts_FinanFechaCaixaLanctos
    6 = Calculo de Margem de Lucro - Ts_MargemLucro
@@ -101,7 +100,7 @@ type
     PC_Principal: TPageControl;
     Ts_SolicitacoesExporta: TTabSheet;
     Ts_FinanObjetivosHabilitaDesabilita: TTabSheet;
-    Ts_AtualizaSIDICOMCurvaABCEndereco: TTabSheet;
+    Ts_SalaoCodigosViculados: TTabSheet;
     Ts_GeraOCLegendaCores: TTabSheet;
     Ts_ProfSelecina: TTabSheet;
     Ts_FinanFechaCaixaLanctos: TTabSheet;
@@ -597,6 +596,8 @@ type
     Label79: TLabel;
     Label80: TLabel;
     EdtParamCurvaECorte: TCurrencyEdit;
+    Dbg_CodigosViculados: TDBGrid;
+    JvXPButton1: TJvXPButton;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -872,6 +873,7 @@ type
       Shift: TShiftState);
     procedure Cbx_ParamLojaNecesClick(Sender: TObject);
     procedure Bt_ReposLojasPrecoClick(Sender: TObject);
+    procedure JvXPButton1Click(Sender: TObject);
   private
     { Private declarations }
 
@@ -8449,6 +8451,20 @@ begin
   msg('Atualização Efetuada com SUCESSO !!','A');
 
   EdtReposLojasSeq.SetFocus;
+
+end;
+
+procedure TFrmSolicitacoes.JvXPButton1Click(Sender: TObject);
+begin
+
+  If msg('Deseja Realmente Salvar  ??','C')=2 Then
+  Begin
+    Dbg_CodigosViculados.SetFocus;
+    Exit;
+  End;
+
+  bgProcessar:=True;
+  Close;
 
 end;
 

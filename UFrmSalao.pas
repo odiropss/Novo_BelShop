@@ -450,7 +450,7 @@ type
     Bt_PagtoGeraPlanilha: TJvXPButton;
     Pan_ProfBranco: TPanel;
     Pan_PlanilhaBottom: TPanel;
-    Bt_PagtoPlansVoltar: TJvXPButton;
+    Bt_PagtoPlanVoltar: TJvXPButton;
     Bt_PagtoPlanSalvaExcel: TJvXPButton;
     Bt_PagtoPlanClipboard: TJvXPButton;
     Rb_PagtoPlanTodos: TJvRadioButton;
@@ -632,6 +632,8 @@ type
     EdtPagtoCodLojaBD: TCurrencyEdit;
     Label16: TLabel;
     Panel26: TPanel;
+    Bt_PagtoMovtosVoltar: TJvXPButton;
+    Bt_CodViculados: TJvXPButton;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_SalaoChange(Sender: TObject);
     procedure Bt_AlterarClick(Sender: TObject);
@@ -673,6 +675,13 @@ type
     Function  AtualizaProfissionalSIDICOM(sDML: String): Boolean;
                                        // sDML: (A)Alteração
                                        //       (I)Inclusão
+
+    Procedure CodigoVinculados(sCodLoja:String; bClient:Boolean; bCase:Boolean; sCodSIDICOM:String; sCodGerenciador: String);
+                               // Quem Recebe:
+                               // bClient ==>> Se True => gCDS_V1
+                               // bCase   ==>> sgVinculadoCodCASEVendas
+                               // sCodSIDICOM ==>> Se Vazio Busca Codigo SIDICOM Conf Codigo sCodGerenciador
+                               // sCodGerenciador ==>> Se Vazio Busca Codigo GERENCIADOR Conf Codigo sbCodSIDICOM
     ////////////////////////////////////////////////////////////////////////////
 
     // METAS ///////////////////////////////////////////////////////////////////
@@ -1066,6 +1075,7 @@ type
     procedure Bt_SalvarComissoesClick(Sender: TObject);
     procedure Bt_PagtoMovtosClipboardClick(Sender: TObject);
     procedure Bt_PagtoMovtosAnaliticaClick(Sender: TObject);
+    procedure Bt_CodViculadosClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -1132,6 +1142,10 @@ var
 
   gCDS_V1: TClientDataSet;
 
+  // Variaveis Utilizadas no Vinculo de Codigos de Profissionasi de Salão
+  sgVinculadoCodCASEVendas, sgVinculadoCodSIDICOM, sgVinculadoCodGERENCIADOR,
+  sgVinculadoCodigosSIDICOM: String;
+
 implementation
 
 uses DK_Procs1, UFrmBelShop, UDMSalao, UDMBelShop, UPesquisa, UFrmSolicitacoes,
@@ -1143,6 +1157,113 @@ uses DK_Procs1, UFrmBelShop, UDMSalao, UDMBelShop, UPesquisa, UFrmSolicitacoes,
 {$R *.dfm}
 
 // Odir
+
+// PROFISSIONAL - Efetuao Vínculo de Codigo de Profissionais de Salão >>>>>>>>>>
+Procedure TFrmSalao.CodigoVinculados(sCodLoja:String; bClient:Boolean; bCase:Boolean; sCodSIDICOM:String; sCodGerenciador: String);
+Var
+  tsArquivo: TStringList;
+  i: Integer;
+  s: String;
+Begin
+  // Quem Recebe:
+  // bClient ==>> Se True => gCDS_V1
+  // bCase   ==>> sgVinculadoCodCASEVendas
+  // sCodSIDICOM ==>> Se Vazio Busca Codigo SIDICOM Conf Codigo sCodGerenciador
+  // sCodGerenciador ==>> Se Vazio Busca Codigo GERENCIADOR Conf Codigo sbCodSIDICOM
+
+  If bClient Then
+  Begin
+    gCDS_V1:=TClientDataSet.Create(Self);
+    gCDS_V1.FieldDefs.Clear;
+    gCDS_V1.FieldDefs.Add('Gerenciador',ftString,6);
+    gCDS_V1.FieldDefs.Add('Sidicom',ftString,6);
+    gCDS_V1.CreateDataSet;
+    gCDS_V1.Open;
+  End; // If bClient Then
+
+
+  { Instancia a variável arquivo }
+  tsArquivo:=TStringList.Create;
+
+  Try
+    { Carrega o conteúdo do arquivo texto para a   memória }
+    tsArquivo.LoadFromFile(IncludeTrailingPathDelimiter(f_Troca('PBELSHOP.EXE','',AnsiUpperCase(sgPastaExecutavel)))+'Salao_DeParaCodigos.ini');
+
+    sgVinculadoCodCASEVendas:='';
+    sgVinculadoCodGERENCIADOR:='';
+    sgVinculadoCodSIDICOM:='';
+    sgVinculadoCodigosSIDICOM:='';
+    { Realiza um loop em toda a lista }
+    For i := 0 to tsArquivo.Count - 1 do
+    Begin
+      s:=tsArquivo[i];
+
+      If (i>3) and (sCodLoja=FormatFloat('00',StrToCurr(Separa_String(s,1)))) Then
+      Begin
+        // Monta ClientDataSet =================================================
+        If bClient Then
+        Begin
+          gCDS_V1.Append;
+          gCDS_V1.FieldByName('Gerenciador').AsString:=Separa_String(s,2);
+          gCDS_V1.FieldByName('Sidicom').AsString:=Separa_String(s,3);
+          gCDS_V1.Post;
+        End; // If bClient Then
+
+        // Pega Codigo do Sidicom ==============================================
+        If (sCodGerenciador<>'') and
+           (sCodGerenciador=FormatFloat('000000',StrToCurr(Separa_String(s,2)))) And
+           (sCodGerenciador<>FormatFloat('000000',StrToCurr(Separa_String(s,3)))) Then
+        Begin
+          sgVinculadoCodSIDICOM:=FormatFloat('000000',StrToCurr(Separa_String(s,3)));
+          Break;
+        End; // If (sCodGerenciador<>'') and (sCodGerenciador=FormatFloat('000000',StrToCurr(Separa_String(s,2)))) Then
+
+        // Pega Codigo do Gerenciador ==========================================
+        If (sCodSIDICOM<>'') and
+           (sCodSIDICOM=FormatFloat('000000',StrToCurr(Separa_String(s,3)))) and
+           (sCodSIDICOM<>FormatFloat('000000',StrToCurr(Separa_String(s,2)))) Then
+        Begin
+          sgVinculadoCodGERENCIADOR:=FormatFloat('000000',StrToCurr(Separa_String(s,2)));
+        End; // If (sCodSIDICOM<>'') and (sCodSIDICOM=FormatFloat('000000',StrToCurr(Separa_String(s,3)))) Then
+
+        // Monta Case Busca de Vendas dos Serviços de Salão ====================
+        If (bCase) Then
+        Begin
+          If Trim(Separa_String(s,3))<>Trim(Separa_String(s,2)) Then
+          Begin
+            If Trim(sgVinculadoCodCASEVendas)='' Then
+             sgVinculadoCodCASEVendas:=' CASE ';
+
+            sgVinculadoCodCASEVendas:=
+             sgVinculadoCodCASEVendas+'   When nt.codvendedor='+QuotedStr(FormatFloat('000000',StrToCurr(Separa_String(s,3))))+' then '+
+                                             QuotedStr(FormatFloat('000000',StrToCurr(Separa_String(s,2))));
+          End; // If Trim(Separa_String(s,3))<>Trim(Separa_String(s,2)) Then
+        End; // If (bCase) Then
+
+        // Monta Todos os Código do Sidicom ====================================
+        If Trim(sgVinculadoCodigosSIDICOM)='' Then
+         Begin
+           sgVinculadoCodigosSIDICOM:=QuotedStr(FormatFloat('000000',StrToCurr(Separa_String(s,3))));
+         End
+        Else
+         Begin
+           sgVinculadoCodigosSIDICOM:=
+            sgVinculadoCodigosSIDICOM+', '+QuotedStr(FormatFloat('000000',StrToCurr(Separa_String(s,3))));
+         End; // If Trim(sgVinculadoCodigosSIDICOM)='' Then
+
+      End; // If i>3 Then
+    End; // For i := 0 to tsArquivo.Count - 1 do
+  Finally // Try
+    { Libera a instancia da lista da memória }
+    FreeAndNil(tsArquivo);
+  End; // Try
+
+  If Trim(sgVinculadoCodCASEVendas)<>'' Then
+   sgVinculadoCodCASEVendas:=
+    sgVinculadoCodCASEVendas+'    Else nt.codvendedor'+
+                             ' End Cod_Profissional,';
+
+End; // // PROFISSIONAL - Efetuao Vínculo de Codigo de Profissionais de Salão >>
 
 // HABILIDADES - Apresenta Comissões da Habilidades Por Cidade >>>>>>>>>>>>>>>>>
 Procedure TFrmSalao.ComissoesHabilidadesCidades;
@@ -5590,15 +5711,17 @@ Begin
            // Salão - Canoas
            If EdtPagtoCodLoja.AsInteger=11 Then
             MySql:=
-             MySql+' Case'+
-                   '   When nt.codvendedor=''000400'' then ''000040'''+
-                   '   When nt.codvendedor=''000480'' then ''000048'''+
-                   '   When nt.codvendedor=''000470'' then ''000047'''+
-                   '   When nt.codvendedor=''000460'' then ''000046'''+
-                   '   When nt.codvendedor=''000490'' then ''000049'''+
-                   '   When nt.codvendedor=''000240'' then ''000024'''+
-                   '   Else nt.codvendedor'+
-                   ' End Cod_Profissional,'
+             MySql+sgVinculadoCodCASEVendas
+// OdirApagar - 13/036/2017             
+//             MySql+' Case'+
+//                   '   When nt.codvendedor=''000400'' then ''000040'''+
+//                   '   When nt.codvendedor=''000480'' then ''000048'''+
+//                   '   When nt.codvendedor=''000470'' then ''000047'''+
+//                   '   When nt.codvendedor=''000460'' then ''000046'''+
+//                   '   When nt.codvendedor=''000490'' then ''000049'''+
+//                   '   When nt.codvendedor=''000240'' then ''000024'''+
+//                   '   Else nt.codvendedor'+
+//                   ' End Cod_Profissional,'
            Else
             MySql:=
              MySql+' nt.codvendedor Cod_Profissional,';
@@ -7719,10 +7842,10 @@ procedure TFrmSalao.EdtCodLojaExit(Sender: TObject);
 Var
   MySql: String;
 begin
-
   EdtDesLoja.Clear;
   sgNomeCidade:='';
   DMSalao.CDS_Profissionais.Close;
+  Bt_CodViculados.Visible:=False;
 
   If EdtCodLoja.Value<>0 Then
   Begin
@@ -7781,6 +7904,9 @@ begin
     Dbg_Profissionais.SetFocus;
     Screen.Cursor:=crDefault;
 
+    If EdtCodLoja.AsInteger=11 Then
+     Bt_CodViculados.Visible:=True;
+
 //////////////////// Profissionais
     If EdtCodLoja.AsInteger=11 Then
     Begin
@@ -7792,7 +7918,7 @@ begin
                                '==============================================='
                                ), 'ATENÇÃO !!', MB_ICONERROR);
     End; // If EdtCodLoja.AsInteger=11 Then
-    
+
   End; // If EdtCodLoja.Value<>0 Then
 end;
 
@@ -7897,6 +8023,7 @@ end;
 
 procedure TFrmSalao.EdtCodLojaChange(Sender: TObject);
 begin
+  Bt_CodViculados.Visible:=False;
   sgComissaoGeral:='0.00';
   EdtDesLoja.Clear;
   FechaTudoSalao;
@@ -8773,6 +8900,18 @@ Var
   bAtivo: Boolean;
   s: String;
 begin
+//////////////////// Profissionais
+  If EdtCodLoja.AsInteger=11 Then
+  Begin
+    PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+    MessageBox(Handle, pChar('==============================================='+cr+cr+
+                             'ESTA LOJA NO GERENCIADOR BELSHOP'+cr+cr+
+                             'NÃO ESTA VINCULADA COM A LOJA SIDICOM - CANOAS ||'+cr+cr+
+                             'AS ALTERAÇÔES DEVM SER FEITAS DIRETAMENTE NO SIDICOM !!'+cr+cr+
+                             '==============================================='
+                             ), 'ATENÇÃO !!', MB_ICONERROR);
+  End; // If EdtCodLoja.AsInteger=11 Then
+
   sgMensagem:='';
 
   Dbe_CadProfCodigo.SetFocus;
@@ -9610,8 +9749,6 @@ begin
 
   Screen.Cursor:=crDefault;
   Dbg_Profissionais.SetFocus;
-
-//INSS
 end;
 
 procedure TFrmSalao.Bt_NovoClick(Sender: TObject);
@@ -12222,7 +12359,6 @@ begin
 
   FrmSolicitacoes.gDS_V1:=TDataSource.Create(Self);
   FrmSolicitacoes.gDS_V1.DataSet:=FrmSolicitacoes.gCDS_V1;
-
   FrmSolicitacoes.Dbg_Consistencias.DataSource:=FrmSolicitacoes.gDS_V1;
 
   bgProcessar:=False;
@@ -13687,6 +13823,7 @@ end;
 
 procedure TFrmSalao.EdtPagtoCodLojaChange(Sender: TObject);
 begin
+
   EdtPagtoDesLoja.Clear;
   Lab_TotalProf.Caption:='0';
   FechaTudoSalao;
@@ -13700,9 +13837,7 @@ Var
 begin
 
   EdtPagtoDesLoja.Clear;
-
   DMSalao.CDS_V_PagtoProf.Close;
-
   sgDtaIniSemana:='';
   bgPeriodoForcado:=False;
 
@@ -14107,9 +14242,6 @@ begin
 end;
 
 procedure TFrmSalao.Bt_PagtoVendasClick(Sender: TObject);
-Const
-  sProfLojaCanoas='''000040'', ''000400'', ''000030'', ''000003'', ''000480'', ''000043'', ''000470'', ''000460'', ''000004'', ''000490'', ''000240'', ''000035''';
-
 Var
   i: Integer;
   dDta: TDateTime;
@@ -14260,6 +14392,12 @@ begin
   End; // While Not DMSalao.CDS_V_PagtoProf.Eof do
   DMSalao.CDS_V_PagtoProf.First;
 
+  // Vinculo de Codigo SIDICOM
+  If EdtPagtoCodLoja.AsInteger=11 Then
+   CodigoVinculados('11',    False,    True,    '',          '');
+//                 sCodLoja  bClient   bCase   sCodSIDICOM  sCodGerenciador
+
+
   sgProfComissao:='';
   sgProfissionais:='';
   sgProfLojaCanoas:='';
@@ -14293,13 +14431,13 @@ begin
     Begin
       If sgProfLojaCanoas<>'' Then
        sgProfLojaCanoas:=sgProfLojaCanoas+' or  (nt.codvendedor in ('+
-                             sProfLojaCanoas+
+                             sgVinculadoCodigosSIDICOM+
                              ') and nt.datacomprovante BETWEEN '+
                              QuotedStr(sgDtaI)+' And '+QuotedStr(sgDtaF)+')';
 
       If sgProfLojaCanoas='' Then
        sgProfLojaCanoas:='(nt.codvendedor in ('+
-                             sProfLojaCanoas+
+                             sgVinculadoCodigosSIDICOM+
                              ') and nt.datacomprovante BETWEEN '+
                              QuotedStr(sgDtaI)+' And '+QuotedStr(sgDtaF)+')';
     End; // If EdtPagtoCodLoja.AsInteger=11 Then
@@ -14536,6 +14674,7 @@ begin
   Ts_PagtoVendas.TabVisible:=True;
   Ts_PagtoDebCred.TabVisible:=True;
   Ts_PagtoProfissionais.TabVisible:=False;
+  Ts_PagtoMovtos.TabVisible:=False;
   PC_PagtoPlanilha.ActivePage:=Ts_PagtoDebCred;
 
   // Coloca Como Sintético =====================================================
@@ -14718,6 +14857,7 @@ begin
   Ts_PagtoVendas.TabVisible:=False;
   Ts_PagtoDebCred.TabVisible:=False;
   Ts_PagtoProfissionais.TabVisible:=True;
+  Ts_PagtoMovtos.TabVisible:=True;
   Dbg_PagtoProfissionais.Visible:=True;
 
   DMSalao.CDS_PagtosPlan.Close;
@@ -16656,10 +16796,11 @@ begin
   Screen.Cursor:=crDefault;
   THackDBGridSalao(Dbg_PagtoPlanilha).FixedCols:=2;
 
+  Ts_PagtoProfissionais.TabVisible:=False;
+  Ts_PagtoMovtos.TabVisible:=False;
   Ts_PagtoPlanilha.TabVisible:=True;
   Ts_PagtoVendas.TabVisible:=True;
   Ts_PagtoDebCred.TabVisible:=True;
-  Ts_PagtoProfissionais.TabVisible:=False;
   PC_PagtoPlanilha.ActivePage:=Ts_PagtoPlanilha;
   PC_PagtoPlanilha.Refresh;
 
@@ -19971,6 +20112,75 @@ begin
     OdirPanApres.Visible:=False;
   End; // If bSiga Then // Empresa Conectada
 
+end;
+
+procedure TFrmSalao.Bt_CodViculadosClick(Sender: TObject);
+Var
+  txtArq:TextFile;
+  sArq:String;
+  sLinha:String;
+begin
+
+  // Busca Codigos Vinculados ==================================================
+  CodigoVinculados(EdtCodLoja.Text, True,    False,  '',          '');
+//                 sCodLoja         bClient  bCase   sCodSIDICOM  sCodGerenciador
+
+  // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
+  FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+  FrmSolicitacoes.Ts_SalaoCodigosViculados.Caption:=EdtDesLoja.Text;
+  FrmSolicitacoes.Caption:='Viculos de Códigos';
+  FrmBelShop.AbreSolicitacoes(3);
+
+  FrmSolicitacoes.gDS_V1:=TDataSource.Create(Self);
+  FrmSolicitacoes.gDS_V1.DataSet:=gCDS_V1;
+  FrmSolicitacoes.Dbg_CodigosViculados.DataSource:=FrmSolicitacoes.gDS_V1;
+  gCDS_V1.First;
+
+  FrmSolicitacoes.Dbg_CodigosViculados.Columns[0].Width:=120;
+  FrmSolicitacoes.Dbg_CodigosViculados.Columns[0].Alignment:=taRightJustify;
+  FrmSolicitacoes.Dbg_CodigosViculados.Columns[0].Title.Alignment:=taRightJustify;
+  FrmSolicitacoes.Dbg_CodigosViculados.Columns[1].Width:=120;
+  FrmSolicitacoes.Dbg_CodigosViculados.Columns[1].Alignment:=taRightJustify;
+  FrmSolicitacoes.Dbg_CodigosViculados.Columns[1].Title.Alignment:=taRightJustify;
+
+  bgProcessar:=False;
+  FrmSolicitacoes.ShowModal;
+
+  If bgProcessar Then
+  Begin
+    // Exclui Arquino Atual
+    DeleteFile(IncludeTrailingPathDelimiter(f_Troca('PBELSHOP.EXE','',AnsiUpperCase(sgPastaExecutavel)))+'Salao_DeParaCodigos.ini');
+
+    // Cria Novo Arquivo
+    sArq:=IncludeTrailingPathDelimiter(f_Troca('PBELSHOP.EXE','',AnsiUpperCase(sgPastaExecutavel)))+'Salao_DeParaCodigos.ini';
+    AssignFile(txtArq,sArq);
+    Rewrite(txtArq);
+
+    // Grava Cabeçalho
+    Writeln(txtArq,'- Para Busca Usar Codigos SIDICOM');
+    Writeln(txtArq,'- Para Gravar Usar Codigo GERENCIADOR');
+    Writeln(txtArq,'');
+    Writeln(txtArq,'LOJA;COD GERENCIADOR;COD SIDICOM;');
+
+    // Grava Codigos Viculados
+    gCDS_V1.First;
+    While Not gCDS_V1.Eof do
+    Begin
+
+      If (Trim(gCDS_V1.FieldByName('Gerenciador').AsString)<>'') And (Trim(gCDS_V1.FieldByName('Sidicom').AsString)<>'') Then
+      Begin
+        sLinha:=EdtCodLoja.Text+';'+gCDS_V1.FieldByName('Gerenciador').AsString+';'+gCDS_V1.FieldByName('Sidicom').AsString+';';
+        Writeln(txtArq,sLinha);
+      End;
+
+      gCDS_V1.Next;
+    End; // While Not gCDS_V1.Eof do
+    CloseFile(txtArq);
+  End; // If bgProcessar Then
+
+  FreeAndNil(gCDS_V1);
+  FreeAndNil(FrmSolicitacoes.gDS_V1);
+  FreeAndNil(FrmSolicitacoes);
 end;
 
 end.

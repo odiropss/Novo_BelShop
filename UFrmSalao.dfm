@@ -405,7 +405,7 @@ object FrmSalao: TFrmSalao
     Top = 0
     Width = 977
     Height = 580
-    ActivePage = Ts_ProfPagtos
+    ActivePage = Ts_CadProfissional
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -807,6 +807,35 @@ object FrmSalao: TFrmSalao
           HotTrackFont.Height = -11
           HotTrackFont.Name = 'MS Sans Serif'
           HotTrackFont.Style = []
+        end
+        object Bt_CodViculados: TJvXPButton
+          Left = 169
+          Top = 72
+          Width = 124
+          Height = 25
+          Caption = 'C'#243'd Vinculados'
+          TabOrder = 6
+          TabStop = False
+          Glyph.Data = {
+            07544269746D617042010000424D420100000000000076000000280000001100
+            0000110000000100040000000000CC0000000000000000000000100000001000
+            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00777777777777777770000000777777777777777770000000777774747474
+            7477700000007777747777777777700000007777444777777477700000007777
+            7477777777777000000077777777777774777000000077700000077000000000
+            00007000FBFB0000FBFB0000000070F0000000F000000000000070FFFFF070FF
+            FFF07000000070F888F070F888F07000000070FFFFF070FFFFF07000000070F8
+            88F070F888F07000000070FFFFF070FFFFF07000000070000000700000007000
+            0000777777777777777770000000}
+          ShowFocusRect = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_CodViculadosClick
         end
       end
       object Gb_Profissionais: TGroupBox
@@ -9974,7 +10003,7 @@ object FrmSalao: TFrmSalao
             Ctl3D = False
             ParentCtl3D = False
             TabOrder = 0
-            object Bt_PagtoPlansVoltar: TJvXPButton
+            object Bt_PagtoPlanVoltar: TJvXPButton
               Left = 849
               Top = 2
               Width = 108
@@ -10510,6 +10539,37 @@ object FrmSalao: TFrmSalao
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 4
+            end
+            object Bt_PagtoMovtosVoltar: TJvXPButton
+              Left = 849
+              Top = 2
+              Width = 108
+              Height = 29
+              Caption = 'Voltar'
+              TabOrder = 5
+              TabStop = False
+              Glyph.Data = {
+                07544269746D617066010000424D660100000000000076000000280000001400
+                0000140000000100040000000000F00000000000000000000000100000001000
+                0000000000000000800000800000008080008000000080008000808000008080
+                8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+                FF00888888888888888888880000888888888888888888880000888888888888
+                77888888000088777777777077778888000080000000007000777888000080FF
+                FFFFF07000007788000080F44F44F07000000778000080FFFFFFF07887000077
+                000080F44444F07888870077000080FFFFFFF07888887007000080F44444F078
+                88788007000080FFFFFFF07880788007000080F44FFFF07800770078000080FF
+                FF00008000000788000080F44F0F088000078888000080FFFF00888800788888
+                0000800000088888808888880000888888888888888888880000888888888888
+                888888880000888888888888888888880000}
+              ShowFocusRect = True
+              Align = alRight
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              OnClick = Bt_PagtoVendasVoltarClick
             end
           end
           object Dbg_PagtoMovtos: TDBGrid

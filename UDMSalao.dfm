@@ -1,8 +1,8 @@
 object DMSalao: TDMSalao
   OldCreateOrder = False
-  Left = 187
-  Top = 90
-  Height = 638
+  Left = 238
+  Top = 108
+  Height = 609
   Width = 1105
   object SDS_Profissionais: TSQLDataSet
     CommandText = 'SELECT *'#13#10'FROM sal_profissionais p'#13#10'ORDER BY p.des_profissional'
@@ -709,12 +709,12 @@ object DMSalao: TDMSalao
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 40
-    Top = 296
+    Top = 272
   end
   object DSP_HabilidadesProf: TDataSetProvider
     DataSet = SDS_HabilidadesProf
     Left = 80
-    Top = 312
+    Top = 288
   end
   object CDS_HabilidadesProf: TClientDataSet
     Aggregates = <>
@@ -722,7 +722,7 @@ object DMSalao: TDMSalao
     ProviderName = 'DSP_HabilidadesProf'
     AfterScroll = CDS_HabilidadesProfAfterScroll
     Left = 120
-    Top = 296
+    Top = 272
     object CDS_HabilidadesProfHABILIDADE: TStringField
       DisplayLabel = 'Habilidade'
       FieldName = 'HABILIDADE'
@@ -774,7 +774,7 @@ object DMSalao: TDMSalao
   object DS_HabilidadesProf: TDataSource
     DataSet = CDS_HabilidadesProf
     Left = 168
-    Top = 312
+    Top = 288
   end
   object SDS_ServicosProf: TSQLDataSet
     CommandText = 
@@ -807,19 +807,19 @@ object DMSalao: TDMSalao
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 40
-    Top = 368
+    Top = 344
   end
   object DSP_ServicosProf: TDataSetProvider
     DataSet = SDS_ServicosProf
     Left = 80
-    Top = 384
+    Top = 360
   end
   object CDS_ServicosProf: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ServicosProf'
     Left = 120
-    Top = 368
+    Top = 344
     object CDS_ServicosProfSERVICO: TStringField
       DisplayLabel = 'Servi'#231'o'
       FieldName = 'SERVICO'
@@ -856,14 +856,14 @@ object DMSalao: TDMSalao
   object DS_ServicosProf: TDataSource
     DataSet = CDS_ServicosProf
     Left = 168
-    Top = 384
+    Top = 360
   end
   object CDS_SID_Supervisor: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_SID_Supervisor'
     Left = 112
-    Top = 450
+    Top = 426
     object CDS_SID_SupervisorCODIGO: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'C'#243'digo'
@@ -880,14 +880,14 @@ object DMSalao: TDMSalao
   object DS_SID_Supervisor: TDataSource
     DataSet = CDS_SID_Supervisor
     Left = 161
-    Top = 466
+    Top = 442
   end
   object CDS_SID_Vendedores: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_SID_Vendedores'
     Left = 112
-    Top = 514
+    Top = 490
     object CDS_SID_VendedoresCODIGO: TStringField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'CODIGO'
@@ -904,7 +904,7 @@ object DMSalao: TDMSalao
   object DS_SID_Vendedores: TDataSource
     DataSet = CDS_SID_Vendedores
     Left = 161
-    Top = 537
+    Top = 513
   end
   object SDS_SID_Supervisor: TSQLDataSet
     CommandText = 
@@ -926,12 +926,12 @@ object DMSalao: TDMSalao
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 48
-    Top = 448
+    Top = 424
   end
   object DSP_SID_Supervisor: TDataSetProvider
     DataSet = SDS_SID_Supervisor
     Left = 80
-    Top = 464
+    Top = 440
   end
   object SDS_SID_Vendedores: TSQLDataSet
     CommandText = 
@@ -954,12 +954,12 @@ object DMSalao: TDMSalao
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 48
-    Top = 520
+    Top = 496
   end
   object DSP_SID_Vendedores: TDataSetProvider
     DataSet = SDS_SID_Vendedores
     Left = 80
-    Top = 536
+    Top = 512
   end
   object CDS_ValesProfissionais: TClientDataSet
     Aggregates = <>
@@ -2513,7 +2513,7 @@ object DMSalao: TDMSalao
     Aggregates = <>
     Params = <>
     Left = 296
-    Top = 528
+    Top = 496
     object CDS_V_TaxaSindicatoLOJA: TStringField
       Alignment = taCenter
       DisplayLabel = 'Loja'
@@ -2585,7 +2585,7 @@ object DMSalao: TDMSalao
   object DS_V_TaxaSindicato: TDataSource
     DataSet = CDS_V_TaxaSindicato
     Left = 352
-    Top = 544
+    Top = 512
   end
   object CDS_V_ProfSeleciona: TClientDataSet
     Aggregates = <>

@@ -41693,6 +41693,7 @@ begin
 
   TabSheetInvisivel(FrmSalao);
   FrmSalao.Ts_Profissionais.TabVisible:=True;
+  FrmSalao.Bt_CodViculados.Visible:=False;
 
   igTagPermissao:=(Sender as TMenuItem).Tag;
   BloqueioBotoes(FrmSalao, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
