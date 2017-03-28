@@ -4962,6 +4962,11 @@ object DMBelShop: TDMBelShop
         Size = 30
       end
       item
+        Name = 'ENDERECO_IP_EXTERNO'
+        DataType = ftString
+        Size = 30
+      end
+      item
         Name = 'PASTA_BASE_DADOS'
         Attributes = [faRequired]
         DataType = ftString
@@ -5035,6 +5040,19 @@ object DMBelShop: TDMBelShop
         Size = 30
       end
       item
+        Name = 'DTA_LIM_TRANSF'
+        DataType = ftDate
+      end
+      item
+        Name = 'QTD_TRANSF_DIA'
+        DataType = ftInteger
+      end
+      item
+        Name = 'COD_LISTAPRE'
+        DataType = ftString
+        Size = 4
+      end
+      item
         Name = 'IND_ATIVO'
         DataType = ftString
         Size = 3
@@ -5055,6 +5073,33 @@ object DMBelShop: TDMBelShop
       item
         Name = 'DTA_ALTERA'
         DataType = ftTimeStamp
+      end
+      item
+        Name = 'NUM_SINDICATO'
+        DataType = ftString
+        Size = 25
+      end
+      item
+        Name = 'NUM_ALVARA_MUN'
+        DataType = ftString
+        Size = 25
+      end
+      item
+        Name = 'COD_CONTABIL'
+        DataType = ftString
+        Size = 10
+      end
+      item
+        Name = 'DTA_ULT_ATUAL_VEND'
+        DataType = ftDate
+      end
+      item
+        Name = 'COD_LINX'
+        DataType = ftInteger
+      end
+      item
+        Name = 'DTA_INICIO_LINX'
+        DataType = ftDate
       end>
     IndexDefs = <>
     ObjectView = False
@@ -5064,6 +5109,23 @@ object DMBelShop: TDMBelShop
     AfterScroll = CDS_ObjetivosEmpresasAfterScroll
     Left = 774
     Top = 68
+    object CDS_ObjetivosEmpresasCOD_FILIAL: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'Cod'
+      FieldName = 'COD_FILIAL'
+      Required = True
+      Size = 2
+    end
+    object CDS_ObjetivosEmpresasRAZAO_SOCIAL: TStringField
+      DisplayLabel = 'Raz'#227'o Social'
+      FieldName = 'RAZAO_SOCIAL'
+      Size = 60
+    end
+    object CDS_ObjetivosEmpresasCOD_LINX: TIntegerField
+      Alignment = taCenter
+      DisplayLabel = 'Cod Linx'
+      FieldName = 'COD_LINX'
+    end
   end
   object DS_ObjetivosEmpresas: TDataSource
     DataSet = CDS_ObjetivosEmpresas

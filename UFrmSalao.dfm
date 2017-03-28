@@ -1425,7 +1425,7 @@ object FrmSalao: TFrmSalao
         Top = 73
         Width = 969
         Height = 444
-        ActivePage = Ts_CadProfDadosPessoais
+        ActivePage = Ts_CadProfContrato
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -8363,7 +8363,7 @@ object FrmSalao: TFrmSalao
         Top = 0
         Width = 969
         Height = 552
-        ActivePage = Ts_PagtoProfissionais
+        ActivePage = Ts_PagtoVendas
         Align = alClient
         TabOrder = 0
         OnChange = PC_PagtoPlanilhaChange
@@ -9091,7 +9091,7 @@ object FrmSalao: TFrmSalao
                   Left = 411
                   Top = 1
                   Width = 86
-                  Height = 27
+                  Height = 26
                   Align = alRight
                   Caption = '  Calculo com  '#13#10'     Metas ?'
                   Visible = False
@@ -10611,7 +10611,7 @@ object FrmSalao: TFrmSalao
         Top = 0
         Width = 828
         Height = 514
-        ActivePage = Ts_ProfBeneficios
+        ActivePage = Ts_ProfINSS
         Align = alClient
         TabOrder = 0
         OnChange = PC_ProfMovtosRHChange

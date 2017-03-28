@@ -1364,6 +1364,7 @@ type
     Label71: TLabel;
     Button1: TButton;
     Button3: TButton;
+    Bt_AcertaPromocao: TButton;
 
     // Odir ====================================================================
 
@@ -1533,11 +1534,14 @@ type
     Procedure HabilitaDesabilitaManutencaoObjetivos(bTipo: Boolean);
                                                     // bTipo: True=Habilita False=Desabilita
     Procedure CalculaValoresObjetivo(sCodObj, sCodObj1, sCodObj2, sTipOper: String);
+
+    // Objetivos Dias
     Procedure MontaPlanilhaObjetivosDias(sDiaSemanaMes: string;iNumDiasUteis: Integer; Var iIndicePlan: Integer);
     Procedure CaluclaObjetivosMetasDias;
     Procedure AtualizaValorObjetivosMetasDias;
     Procedure CaluclaResltadosObjetivosMetasDias;
 
+    // Objetivos Meses
     Procedure MontaPlanilhaObjetivosMeses(Var iIndicePlanMeses: Integer);
     Procedure CaluclaObjetivosMetasMeses;
     Procedure CaluclaResltadosObjetivosMetasMeses;
@@ -1549,6 +1553,7 @@ type
     Procedure ApresentaMovtosObjetivos(TipCalculo: String);
                                       // TipCalculo= (D)ias (M)eses
 
+    // Gráficos
     Procedure FechaSeriesGraficos;
     Procedure ApresentaGraficoObjetivosMetas;
     Procedure GraficoObjetivos(DBGrafico: TDBChart; CDS: TClientDataSet; TipoGraf, Titulo, Descr, Valor: String);
@@ -2306,6 +2311,12 @@ type
     procedure Dbe_ConEmpresasCodLojaLinxExit(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure Dbg_FinanObjetivosManutEmpresasDrawColumnCell(
+      Sender: TObject; const Rect: TRect; DataCol: Integer;
+      Column: TColumn; State: TGridDrawState);
+    procedure Ckb_FinanObjetivosManutNaoCompraKeyUp(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Bt_AcertaPromocaoClick(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -2446,8 +2457,8 @@ var
 
   iNrRegistros:Integer;
 
-  sCodMatriz: String;
-  sCodFilial: String;
+  sCodMatriz, sCodFilial: String;
+  iCodLinx: Integer;
 
   sgNumSeq: String;
   sgDescricao: String;
@@ -10378,7 +10389,7 @@ Begin
 End; // Auditoria - Cria Nova Auditoria >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Apresenta Movtos de Objetivos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmBelShop.ApresentaMovtosObjetivos(TipCalculo: String); 
+Procedure TFrmBelShop.ApresentaMovtosObjetivos(TipCalculo: String);
 Var
   i: Integer;
 Begin
@@ -10416,7 +10427,7 @@ Begin
     DMVirtual.CDS_V_ObjetivosMovtos.Filtered:=True;
   End; // If TipCalculo='D' Then
 
-  If TipCalculo='M' Then                                       
+  If TipCalculo='M' Then
   Begin
     DMVirtual.CDS_V_ObjetivosMovtos.Filtered:=False;
     DMVirtual.CDS_V_ObjetivosMovtos.Filter:=
@@ -11266,7 +11277,7 @@ Begin
                            ' Cast(lpad(extract(year from m.datacomprovante),4,''0'') as varchar(4)),'+
                            ' Cast(lpad(extract(month from m.datacomprovante),2,''0'') as varchar(2))';
         IBQ_ConsultaFilial.SQL.Clear;
-        IBQ_ConsultaFilial.SQL.Add(MySql);
+        IBQ_ConsultaFilial.SQL.Add(MySql); //(ODIRK3)
 
         // Abre Query --------------------------------------------
         ii:=0;
@@ -11572,7 +11583,7 @@ Begin
                            '    Cast(lpad(extract(year  from m.datacomprovante),4,''0'') as varchar(4)),'+
                            '    Cast(lpad(extract(month from m.datacomprovante),2,''0'') as varchar(2))';
       IBQ_ConsultaFilial.SQL.Clear;
-      IBQ_ConsultaFilial.SQL.Add(MySql);
+      IBQ_ConsultaFilial.SQL.Add(MySql); //(ODIRK2)
 
       // Abre Query --------------------------------------------
       ii:=0;
@@ -11926,7 +11937,7 @@ Begin
            Begin
              AtualizaValorObjetivosMetasMesesOutros;
            End;
-           
+
         End; // If ((DMBelShop.CDS_ObjetivosIND_ATIVO.AsString='SIM') and (DMBelShop.CDS_ObjetivosPROC.AsString='SIM')) and
 
         DMBelShop.CDS_Objetivos.Next;
@@ -13529,7 +13540,7 @@ Begin
                            ' Group by 1'+
                            ' Order by 1';
         IBQ_ConsultaFilial.SQL.Clear;
-        IBQ_ConsultaFilial.SQL.Add(MySql);
+        IBQ_ConsultaFilial.SQL.Add(MySql); //(ODIRK1)
 
         // Abre Query --------------------------------------------
         ii:=0;
@@ -13795,9 +13806,9 @@ Begin
              Break;
           End; // While b do // Busca Codigos de Comprovantes da Formula
 
-          // Busca Valores na Empresa ===============================
+          // Busca Valores na Empresa para Montar Formula ======================
           AtualizaValorObjetivosMetasDias;
-          
+
         End; // If ((DMBelShop.CDS_ObjetivosIND_ATIVO.AsString='SIM') and (DMBelShop.CDS_ObjetivosPROC.AsString='SIM') and
 
         DMBelShop.CDS_Objetivos.Next;
@@ -13806,7 +13817,7 @@ Begin
       // Fecha Conexão =========================================================
       ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'F');
     End; // if DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
-    
+
     // Apresenta o Processamento ------------------------------------
     OdirPanApres.Caption:='AGUARDE !! Efetuando Processamento ...';
     Refresh;
@@ -18275,7 +18286,9 @@ Begin
   End;
 
   // Monta Sql Busca na Loja (Conexão Remoto)
-  If (Rb_CalculoTpProcLoja.Checked) And (sCodFilial<>'18') Then
+  // OdirApagar
+  //If (Rb_CalculoTpProcLoja.Checked) And (sCodFilial<>'18') Then // Monta Sql Busca na Loja (Conexão Remoto)
+  If (Rb_CalculoTpProcLoja.Checked) And (iCodLinx=0) Then
   Begin
     IBQ.Close;
     IBQ.SQL.Clear;
@@ -18338,10 +18351,12 @@ Begin
     IBQ.Close;
     IBQ.SQL.Clear;
     IBQ.SQL.Add(MySqlSelect+MySqlClausula1+MySqlClausula2+MySqlOrderGrup);
-  End; // If (Rb_CalculoTpProcLoja.Checked) And (sCodFilial<>'18') Then // Monta Sql Busca na Loja (Conexão Remoto)
+  End; // If (Rb_CalculoTpProcLoja.Checked) And (iCodLinx=0) Then // Monta Sql Busca na Loja (Conexão Remoto)
 
   // Monta Sql Busca da Loja LOCAL (Conexão Local)
-  If (Rb_CalculoTpProcLocal.Checked) or (sCodFilial='18') Then
+  // OdirApagar - 27/03/2017
+  // If (Rb_CalculoTpProcLocal.Checked) or (sCodFilial<>'18') Then
+  If (Rb_CalculoTpProcLocal.Checked) Or ((Rb_CalculoTpProcLoja.Checked) And (iCodLinx<>0)) Then
   Begin
     // Monta Select para Filiais =================================================
     MySqlSelect:='SELECT'+
@@ -18351,8 +18366,8 @@ Begin
                  ' Coalesce(es.saldoatual,0) Qtd_Saldo';
 
     MySqlClausula1:=' FROM produto pr'+
-                    '                 left join estoque es  on pr.codproduto=es.codproduto'+
-                    '                                      and Cast(es.codfilial as integer)=:pCodFilial';
+                    '         left join estoque es  on pr.codproduto=es.codproduto'+
+                    '                              and Cast(es.codfilial as integer)=:pCodFilial';
 
                     If Not Ckb_FiltroProdNaoCompra.Checked Then
                      MySqlClausula2:=' WHERE Coalesce(pr.situacaopro,0)=0'
@@ -18396,7 +18411,7 @@ Begin
     IBQ.Close;
     IBQ.SQL.Clear;
     IBQ.SQL.Add(MySqlSelect+MySqlClausula1+MySqlClausula2+MySqlOrderGrup);
-  End; // If (Rb_CalculoTpProcLocal.Checked) or (sCodFilial='18') Then // Monta Sql Busca da Loja LOCAL (Conexão Local)
+  End; // If Rb_CalculoTpProcLocal.Checked Then // Monta Sql Busca da Loja LOCAL (Conexão Local)
 
 End; // Monta Select para Filial >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -18409,20 +18424,6 @@ Var
   MySql: String;
   cDemanda: Currency;
 Begin
-// OdirApagar - Loja 18 Agora Sempre Local - 24/01/2017
-//  MontaProgressBar(True, FrmBelShop);
-//
-//  sgLojasNConectadas:='';
-//  DMBelShop.CDS_EmpProcessa.First;
-//  While Not DMBelShop.CDS_EmpProcessa.Eof do
-//  Begin
-//    pgProgBar.Position:=0;
-//    Refresh;
-//
-//    if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
-//    Begin
-//      sCodFilial:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
-
   // Apresentacao ==========================================================
   OdirPanApres.Caption:='AGUARDE !! Processando Loja: Bel_'+sCodFilial+' - '+
                              DMBelShop.CDS_EmpProcessaRAZAO_SOCIAL.AsString;
@@ -18717,17 +18718,6 @@ Begin
   ConexaoEmpIndividual('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'F');
   DMBelShop.CDS_Join.Close;
 
-// OdirApagar - Loja 18 Agora Sempre Local - 24/01/2017
-//    End; // if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and  (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
-//
-//    OdirPanApres.Visible:=False;
-//    Refresh;
-//
-//    DMBelShop.CDS_EmpProcessa.Next;
-//  End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
-//  MontaProgressBar(False, FrmBelShop);
-//  DMBelShop.CDS_UltCompraTransito.Close;
-
 End; // Calculo e Analise Produtos Filiais >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Calculo e Analise Produtos Lojas - LOCAL >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -18739,19 +18729,6 @@ Var
   MySql: String;
   cDemanda: Currency;
 Begin
-
-// OdirApagar - Loja 18 Agora Sempre Local - 24/01/2017
-//  MontaProgressBar(True, FrmBelShop);
-//
-//  DMBelShop.CDS_EmpProcessa.First;
-//  While Not DMBelShop.CDS_EmpProcessa.Eof do
-//  Begin
-//    pgProgBar.Position:=0;
-//    Refresh;
-//
-//    if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
-//    Begin
-//      sCodFilial:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
 
   // Apresentacao ==========================================================
   OdirPanApres.Caption:='AGUARDE !! Processando Loja: Bel_'+sCodFilial+' - '+DMBelShop.CDS_EmpProcessaRAZAO_SOCIAL.AsString;
@@ -19031,18 +19008,6 @@ Begin
   // Fecha Conexão ------------------------------------------------
   ConexaoEmpIndividual('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString, 'F');
   DMBelShop.CDS_Join.Close;
-
-// OdirApagar - Loja 18 Agora Sempre Local - 24/01/2017
-//    End; // if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and  (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
-//
-//    OdirPanApres.Visible:=False;
-//    Refresh;
-//
-//    DMBelShop.CDS_EmpProcessa.Next;
-//  End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
-//  sgMensagemERRO:='FIM';
-//  MontaProgressBar(False, FrmBelShop);
-//  DMBelShop.CDS_UltCompraTransito.Close;
 End; // Calculo e Analise Produtos Lojas - LOCAL >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Atualiza Numero dos Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -23544,16 +23509,20 @@ begin
     if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
     Begin
       sCodFilial:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+      iCodLinx  :=DMBelShop.CDS_EmpProcessaCOD_LINX.AsInteger;
 
       MontaProgressBar(True, FrmBelShop);
 
-      // Processamento na Loja ----------------------------------------
-      If (Rb_CalculoTpProcLoja.Checked) And (sCodFilial<>'18') Then
-       CalculaFilial;
-
-      // Processamento Local ------------------------------------------
-      If (Rb_CalculoTpProcLocal.Checked) Or (sCodFilial='18') Then
+      // Processamento na Loja ou Então Local ==================================
+      If (Rb_CalculoTpProcLoja.Checked) And (iCodLinx=0) Then
+       CalculaFilial
+      Else
        CalculaFilialLocal;
+
+      // OdirApagar - 27/03/2017
+      // Processamento Local ------------------------------------------
+//      If ((Rb_CalculoTpProcLocal.Checked) Or (iCodLinx<>0)) Or
+//         ((Rb_CalculoTpProcLoja.Checked) And (iCodLinx<>0)) Then
 
       MontaProgressBar(False, FrmBelShop);
     End; // if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and  (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
@@ -23562,26 +23531,6 @@ begin
     DMBelShop.CDS_EmpProcessa.Next;
   End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
   DMBelShop.CDS_UltCompraTransito.Close;
-
-
-// OdirApagar - Loja 18 Agora Sempre Local - 24/01/2017
-//  try
-//    sgLojasNConectadas:='';
-//
-//    // Processamento na Loja ----------------------------------------
-//    If (Rb_CalculoTpProcLoja.Checked) Then
-//     CalculaFilial;
-//
-//    // Processamento Local ------------------------------------------
-//    If Rb_CalculoTpProcLocal.Checked Then
-//     CalculaFilialLocal;
-//  except
-//    on e : Exception do
-//    Begin
-//      MessageBox(Handle, pChar('Mensagem de erro:'+sgMensagemERRO+#13+e.message), 'Erro', MB_ICONERROR);
-//      exit;
-//    End; // on e : Exception do
-//  End; // Try
 
   DecimalSeparator:=',';
   DateSeparator:='/';
@@ -30659,7 +30608,7 @@ begin
   DMBelShop.CDS_Objetivos.Open;
 
   // Busca Empresa  ============================================================
-  MySql:=' Select e.cod_filial, e.razao_social'+
+  MySql:=' Select e.cod_filial, e.razao_social, e.Cod_Linx'+
          ' From emp_conexoes e'+
          ' Where ((e.ind_ativo=''SIM'') or (e.tip_emp=''M''))'+
          ' Order By e.cod_filial';
@@ -30688,8 +30637,7 @@ begin
   // Acerta Tamanho da Coluna do Grid ========================================== 
   Dbg_FinanObjetivosManutEmpresas.Columns[1].Width:=
                                           Dbg_FinanObjetivosManutEmpresas.Width-
-                          (Dbg_FinanObjetivosManutEmpresas.Columns[0].Width+35);
-   
+                          (Dbg_FinanObjetivosManutEmpresas.Columns[0].Width+92);
   Dbg_FinanObjetivosManut.SetFocus;
 
 end;
@@ -31537,6 +31485,13 @@ Begin
     Exit;
   End;
 
+  OdirPanApres.Caption:='AGUARDE !! Analisando Objetivos Selecionados...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Visible:=True;
+  Refresh;
+
   DMBelShop.CDS_Objetivos.DisableControls;
   DMBelShop.CDS_Objetivos.First;
   b :=False;
@@ -31548,11 +31503,12 @@ Begin
 
     If DMBelShop.CDS_ObjetivosPROC.AsString='SIM' Then
      bb:=True;
-     
-    DMBelShop.CDS_Objetivos.Next; 
+
+    DMBelShop.CDS_Objetivos.Next;
   End; // While b do
   DMBelShop.CDS_Objetivos.First;
   DMBelShop.CDS_Objetivos.EnableControls;
+  OdirPanApres.Visible:=False;
 
   If (Not b) Or (Not bb) Then
   Begin
@@ -31560,7 +31516,7 @@ Begin
     Dbg_FinanObjetivosManut.SetFocus;
     Exit;
   End;
-  
+
   Screen.Cursor:=crAppStart;
   Dbg_FinanObjetivosManut.SetFocus;
   iIndicePlan:=0;
@@ -31598,7 +31554,7 @@ Begin
   // Cria ClientDataSet Dias ===================================================
   If DMVirtual.CDS_V_ObjetivosDias.Active Then
    DMVirtual.CDS_V_ObjetivosDias.Close;
-     
+
   DMVirtual.CDS_V_ObjetivosDias.CreateDataSet;
   DMVirtual.CDS_V_ObjetivosDias.Open;
   DMVirtual.CDS_V_ObjetivosDias.Filtered:=False;
@@ -31650,7 +31606,7 @@ Begin
 
   bCalculoDias:=False;
   bCalculoMeses:=False;
-  
+
   // Acerta CDS_V_ObjetivosDias ================================================
   For i:=0 to DMVirtual.CDS_V_ObjetivosDias.Fields.Count-1 do
    DMVirtual.CDS_V_ObjetivosDias.Fields[i].Visible:=False;
@@ -31659,7 +31615,7 @@ Begin
   For i:=0 to DMVirtual.CDS_V_ObjetivosMeses.Fields.Count-1 do
    DMVirtual.CDS_V_ObjetivosMeses.Fields[i].Visible:=False;
 
-  // Libera Colunas Principais CDS_V_ObjetivosDias ============================= 
+  // Libera Colunas Principais CDS_V_ObjetivosDias =============================
   DMVirtual.CDS_V_ObjetivosDias.Fields[1].Visible:=True;
   Dbg_FinanObjetivosResultadosDias.Columns[0].Width:=100;
   DMVirtual.CDS_V_ObjetivosDias.Fields[2].Visible:=True;
@@ -31670,7 +31626,7 @@ Begin
   DMVirtual.CDS_V_ObjetivosDias.Fields[5].Visible:=True;
   Dbg_FinanObjetivosResultadosDias.Columns[3].Width:=90;
 
-  // Libera Colunas Principais CDS_V_ObjetivosMeses ============================ 
+  // Libera Colunas Principais CDS_V_ObjetivosMeses ============================
   DMVirtual.CDS_V_ObjetivosMeses.Fields[1].Visible:=True;
   Dbg_FinanObjetivosResultadosMeses.Columns[0].Width:=100;
   DMVirtual.CDS_V_ObjetivosMeses.Fields[2].Visible:=True;
@@ -31772,6 +31728,7 @@ Begin
 
   // Monta Planilha de Objetivos ===============================================
   DMBelShop.CDS_Objetivos.First;
+  DMBelShop.CDS_Objetivos.DisableControls;
   While Not DMBelShop.CDS_Objetivos.Eof do
   Begin
     Refresh;
@@ -31805,6 +31762,7 @@ Begin
 
     DMBelShop.CDS_Objetivos.Next;
   End;// While Not DMBelShop.CDS_Objetivos.Eof do
+  DMBelShop.CDS_Objetivos.EnableControls;
   DMVirtual.CDS_V_ObjetivosDias.First;
   DMBelShop.CDS_EmpProcessa.First;
   DMBelShop.CDS_Objetivos.First;
@@ -31835,7 +31793,7 @@ Begin
     Dbg_FinanObjetivosResultadosDias.SetFocus;
 
     // Calcula por Dia ----------------------------------------------
-    CaluclaObjetivosMetasDias; 
+    CaluclaObjetivosMetasDias;
 
     // Calcula Resultado dos Objetivos por Dia ----------------------
     CaluclaResltadosObjetivosMetasDias;
@@ -34055,15 +34013,17 @@ begin
 
   If Not Ckb_FinanObjetivosManutAuditoria.Checked Then
    Begin
-     Gb_FinanObjetivosManutUlt12Meses.Visible:=True
+     Gb_FinanObjetivosManutUlt12Meses.Visible:=True;
+     EdtFinanObjetivosMeses.Visible:=True;
    End
   Else
    Begin
      Ckb_FinanObjetivosManutUlt12Meses.Checked:=False;
      Gb_FinanObjetivosManutUlt12Meses.Visible:=False;
+     EdtFinanObjetivosMeses.Visible:=False;
    End;
   AcertaCkb_SN(FrmBelShop.Ckb_FinanObjetivosManutUlt12Meses);
- 
+
 end;
 
 procedure TFrmBelShop.Ckb_FinanObjetivosManutAuditoriaKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -42360,6 +42320,11 @@ begin
   igTagPermissao:=(Sender as TMenuItem).Tag;
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
+  Bt_ConEmpresasUsuWindows.Visible:=(AnsiUpperCase(Des_Login)='ODIR');
+  Button1.Visible:=(AnsiUpperCase(Des_Login)='ODIR');
+  Button3.Visible:=(AnsiUpperCase(Des_Login)='ODIR');
+  Bt_AcertaPromocao.Visible:=(AnsiUpperCase(Des_Login)='ODIR');
+
   OrderGrid:='';
   SelecionaTabSheet(Ts_ConexaoEmpresas);
   DMBelShop.CDS_Empresa.IndexFieldNames:='';
@@ -45199,81 +45164,81 @@ end;
 
 procedure TFrmBelShop.Button1Click(Sender: TObject);
 begin
-  MySqlSelect:=' select *'+
-               ' from odir1 pl'+
-               ' order by pl.cod_loja, pl.num_planilha, pl."INDEX" desc';
-  DMBelShop.CDS_Busca.Close;
-  DMBelShop.SDS_Busca.CommandText:=MySqlSelect;
-  DMBelShop.CDS_Busca.Open;
-
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMBelShop.SQLC.StartTransaction(TD);
-  Try // Try da Transação
-    Screen.Cursor:=crAppStart;
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    MontaProgressBar(True, FrmBelShop);
-    pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
-    pgProgBar.Position:=0;
-
-    While not DMBelShop.CDS_Busca.Eof do
-    Begin
-      Application.ProcessMessages;
-      pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
-
-      If (Trim(DMBelShop.CDS_Busca.FieldByName('COD_PROFISSIONAL').AsString)='') and
-         (DMBelShop.CDS_Busca.FieldByName('INDEX').AsInteger=igNrDias-1) And
-         (igNrEmpProc=DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsInteger) Then
-      Begin
-         MySqlClausula1:=' update  odir1 pl'+
-                         ' set pl.cod_profissional='+QuotedStr(sgCodProd)+
-                         ' , pl.des_profissional='+QuotedStr(sgDescricao)+
-                         ' where pl.cod_loja='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('COD_LOJA').AsString)+
-                         ' and pl.num_planilha='+DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsString+
-                         ' and pl."INDEX"='+DMBelShop.CDS_Busca.FieldByName('INDEX').AsString;
-         DMBelShop.SQLC.Execute(MySqlClausula1,nil,nil);
-
-
-      End;
-
-      igNrEmpProc:=DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsInteger;
-      igNrDias   :=DMBelShop.CDS_Busca.FieldByName('INDEX').AsInteger;
-      sgCodProd  :=DMBelShop.CDS_Busca.FieldByName('COD_PROFISSIONAL').AsString;
-      sgDescricao:=DMBelShop.CDS_Busca.FieldByName('DES_PROFISSIONAL').AsString;
-
-      DMBelShop.CDS_Busca.Next
-    End;
-    DMBelShop.CDS_Busca.Close;
-    MontaProgressBar(False, FrmBelShop);
-
-    // Atualiza Transacao ======================================================
-    DMBelShop.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-
-    Screen.Cursor:=crDefault;
-  Except // Except da Transação
-    on e : Exception do
-    Begin
-      // Abandona Transacao ====================================================
-      DMBelShop.SQLC.Rollback(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-
-      MontaProgressBar(False, FrmBelShop);
-
-      Screen.Cursor:=crDefault;
-
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-      Exit;
-    End; // on e : Exception do
-  End; // Try da Transação
-
-  msg('fim','A');
+//  MySqlSelect:=' select *'+
+//               ' from odir1 pl'+
+//               ' order by pl.cod_loja, pl.num_planilha, pl."INDEX" desc';
+//  DMBelShop.CDS_Busca.Close;
+//  DMBelShop.SDS_Busca.CommandText:=MySqlSelect;
+//  DMBelShop.CDS_Busca.Open;
+//
+//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+//  TD.IsolationLevel:=xilREADCOMMITTED;
+//  DMBelShop.SQLC.StartTransaction(TD);
+//  Try // Try da Transação
+//    Screen.Cursor:=crAppStart;
+//    DateSeparator:='.';
+//    DecimalSeparator:='.';
+//
+//    MontaProgressBar(True, FrmBelShop);
+//    pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
+//    pgProgBar.Position:=0;
+//
+//    While not DMBelShop.CDS_Busca.Eof do
+//    Begin
+//      Application.ProcessMessages;
+//      pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
+//
+//      If (Trim(DMBelShop.CDS_Busca.FieldByName('COD_PROFISSIONAL').AsString)='') and
+//         (DMBelShop.CDS_Busca.FieldByName('INDEX').AsInteger=igNrDias-1) And
+//         (igNrEmpProc=DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsInteger) Then
+//      Begin
+//         MySqlClausula1:=' update  odir1 pl'+
+//                         ' set pl.cod_profissional='+QuotedStr(sgCodProd)+
+//                         ' , pl.des_profissional='+QuotedStr(sgDescricao)+
+//                         ' where pl.cod_loja='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('COD_LOJA').AsString)+
+//                         ' and pl.num_planilha='+DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsString+
+//                         ' and pl."INDEX"='+DMBelShop.CDS_Busca.FieldByName('INDEX').AsString;
+//         DMBelShop.SQLC.Execute(MySqlClausula1,nil,nil);
+//
+//
+//      End;
+//
+//      igNrEmpProc:=DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsInteger;
+//      igNrDias   :=DMBelShop.CDS_Busca.FieldByName('INDEX').AsInteger;
+//      sgCodProd  :=DMBelShop.CDS_Busca.FieldByName('COD_PROFISSIONAL').AsString;
+//      sgDescricao:=DMBelShop.CDS_Busca.FieldByName('DES_PROFISSIONAL').AsString;
+//
+//      DMBelShop.CDS_Busca.Next
+//    End;
+//    DMBelShop.CDS_Busca.Close;
+//    MontaProgressBar(False, FrmBelShop);
+//
+//    // Atualiza Transacao ======================================================
+//    DMBelShop.SQLC.Commit(TD);
+//
+//    DateSeparator:='/';
+//    DecimalSeparator:=',';
+//
+//    Screen.Cursor:=crDefault;
+//  Except // Except da Transação
+//    on e : Exception do
+//    Begin
+//      // Abandona Transacao ====================================================
+//      DMBelShop.SQLC.Rollback(TD);
+//
+//      DateSeparator:='/';
+//      DecimalSeparator:=',';
+//
+//      MontaProgressBar(False, FrmBelShop);
+//
+//      Screen.Cursor:=crDefault;
+//
+//      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+//      Exit;
+//    End; // on e : Exception do
+//  End; // Try da Transação
+//
+//  msg('fim','A');
 end;
 
 procedure TFrmBelShop.Button3Click(Sender: TObject);
@@ -45327,6 +45292,139 @@ begin
 
   msg('FIM','A');
  }
+end;
+
+procedure TFrmBelShop.Dbg_FinanObjetivosManutEmpresasDrawColumnCell(
+  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+  State: TGridDrawState);
+begin
+  if not (gdSelected in State) Then
+  Begin
+    if DMBelShop.CDS_ObjetivosEmpresas.FieldByName('Cod_Linx').AsInteger<>0 then
+     Dbg_FinanObjetivosManutEmpresas.Canvas.Brush.Color:=clLime;
+
+    Dbg_FinanObjetivosManutEmpresas.Canvas.FillRect(Rect);
+    Dbg_FinanObjetivosManutEmpresas.DefaultDrawDataCell(Rect,Column.Field,state);
+  End;
+
+  DMBelShop.CDS_ObjetivosEmpresasCOD_FILIAL.Alignment:=taCenter;
+  DMBelShop.CDS_ObjetivosEmpresasCOD_LINX.Alignment:=taCenter;
+
+end;
+
+procedure TFrmBelShop.Ckb_FinanObjetivosManutNaoCompraKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  Ckb_FinanObjetivosManutNaoCompraClick(Self);
+end;
+
+procedure TFrmBelShop.Bt_AcertaPromocaoClick(Sender: TObject);
+Var
+  iNumPlan: Integer; // NUM_PLANILHA
+  iIndex  : Integer; // INDEX
+  sCodProf: String;  // COD_PROFISSIONAL
+begin
+  MySqlSelect:=' SELECT pl.cod_loja, pl.cod_profissional, pl.num_planilha, pl."INDEX"'+
+               ' FROM ODIR_PROMOCAO pl'+
+               ' order by pl.cod_loja, pl.num_planilha, pl."INDEX" desc';
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:=MySqlSelect;
+  DMBelShop.CDS_Busca.Open;
+
+  iNumPlan:=0; // NUM_PLANILHA
+  iIndex  :=0; // INDEX
+  sCodProf:=''; // COD_PROFISSIONAL
+
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    MontaProgressBar(True, FrmBelShop);
+    pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
+    pgProgBar.Position:=0;
+
+    While not DMBelShop.CDS_Busca.Eof do
+    Begin
+      Application.ProcessMessages;
+      pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
+
+      If (Trim(DMBelShop.CDS_Busca.FieldByName('COD_PROFISSIONAL').AsString)='') and
+         (DMBelShop.CDS_Busca.FieldByName('INDEX').AsInteger       =iIndex-1) And
+         (DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsInteger=iNumPlan) Then
+      Begin
+        MySqlClausula1:=' update ODIR_PROMOCAO pl'+
+                        ' set pl.cod_profissional='+QuotedStr(sCodProf)+
+                        ' where pl.cod_loja='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('COD_LOJA').AsString)+
+                        ' and pl.num_planilha='+DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsString+
+                        ' and pl."INDEX"='+DMBelShop.CDS_Busca.FieldByName('INDEX').AsString;
+        DMBelShop.SQLC.Execute(MySqlClausula1,nil,nil);
+      End
+      Else
+      If (Trim(DMBelShop.CDS_Busca.FieldByName('COD_PROFISSIONAL').AsString)='') and
+         (DMBelShop.CDS_Busca.FieldByName('INDEX').AsInteger       <>iIndex-1) Then
+      Begin
+        MySqlSelect:=' SELECT v.cod_profissional'+
+                     ' FROM SAL_PLAN_VENDAS v'+
+                     ' WHERE v.num_planilha='+DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsString+
+                     ' AND   v.cod_loja='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('COD_LOJA').AsString)+
+                     ' and   v."INDEX" BETWEEN '+IntToStr(DMBelShop.CDS_Busca.FieldByName('INDEX').AsInteger-2)+' and '+
+                                                 IntToStr(DMBelShop.CDS_Busca.FieldByName('INDEX').AsInteger+2)+
+                     ' ORDER BY v."INDEX"';
+        DMBelShop.CDS_Busca1.Close;
+        DMBelShop.SDS_Busca1.CommandText:=MySqlSelect;
+        DMBelShop.CDS_Busca1.Open;
+
+        If Trim(DMBelShop.CDS_Busca1.FieldByName('cod_profissional').AsString)<>'' Then
+        Begin
+          MySqlClausula1:=' update ODIR_PROMOCAO pl'+
+                          ' set pl.cod_profissional='+QuotedStr(DMBelShop.CDS_Busca1.FieldByName('cod_profissional').AsString)+
+                          ' where pl.cod_loja='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('COD_LOJA').AsString)+
+                          ' and pl.num_planilha='+DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsString+
+                          ' and pl."INDEX"='+DMBelShop.CDS_Busca.FieldByName('INDEX').AsString;
+          DMBelShop.SQLC.Execute(MySqlClausula1,nil,nil);
+        End;
+        DMBelShop.CDS_Busca1.Close;
+      End;
+
+      iNumPlan:=DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsInteger;
+      iIndex  :=DMBelShop.CDS_Busca.FieldByName('INDEX').AsInteger;
+      sCodProf:=DMBelShop.CDS_Busca.FieldByName('COD_PROFISSIONAL').AsString;
+
+      DMBelShop.CDS_Busca.Next
+    End;
+    DMBelShop.CDS_Busca.Close;
+    MontaProgressBar(False, FrmBelShop);
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    Screen.Cursor:=crDefault;
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      MontaProgressBar(False, FrmBelShop);
+
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Exit;
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  msg('fim','A');
+
 end;
 
 End.

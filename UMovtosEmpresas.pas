@@ -194,7 +194,8 @@ var
 
 implementation
 
-uses UDMConexoes, UDMMovtosEmpresas, DK_Procs1, DateUtils, IBCustomDataSet;
+uses UDMConexoes, UDMMovtosEmpresas, DK_Procs1, DateUtils, IBCustomDataSet,
+  RTLConsts;
 
 {$R *.dfm}
 
@@ -1955,6 +1956,25 @@ begin
    EdtParamStr.Text:='ODIR'; // Agora é Direto por Agendamento
 // EdtParamStr.Text:='OPSS';   // Não Libera Direto
 // EdtParamStr.Text:='OPSS_N'; // Não Libera Direto
+
+//==========================
+// Se Parametro = OPSS
+//==========================
+  // PROCESSA TUDO
+//==========================
+// Se Parametro = OPSS
+//==========================
+  // NÃO ATUALIZA ESTOQUES (AtualizaTabelaEstoque(Cod_Empresa))
+  // NÃO PROCESSA "UMA VEZ" bgJaProcessouUmaVez=True (Fica Como Já Processado)
+  // PROCESSA: VERIFICA SE PROCESSA <IND_TIPO> DA EMPRESA (Se Já Processada)
+//==========================
+// Se Parametro = OPSS_N
+//==========================
+  // NÃO ATUALIZA ESTOQUES (AtualizaTabelaEstoque(Cod_Empresa))
+  // NÃO PROCESSA "UMA VEZ" bgJaProcessouUmaVez=True (Fica Como Já Processado)
+  // NÃO PROCESSA: VERIFICA SE PROCESSA <IND_TIPO> DA EMPRESA (Se Já Processada)
+                  // Sempre Processa Lojas Selecionadas.
+//==========================
   // odiraqui2: Original: Nao Comentar 1 ///////////////////////
 
   If EdtParamStr.Text='' Then
@@ -2300,7 +2320,7 @@ begin
       Exit;
     End;
 
-    // ATUALIZA ES_FINAN_CURVA_ABC DA LOJA =====================================
+    // INSERE NOVO PRODUTO EM ES_FINAN_CURVA_ABC DA LOJA =======================
     Es_Finan_Curva_ABC(sCodEmpresa);
 
     // Inicializa Variaveis ====================================================
@@ -2560,24 +2580,32 @@ begin
 
     If iCodLojaLinx<>0 Then // LINX
     Begin
-      // odiropss - Alterar para bProcDemanda:=True;
-      bProcDemanda:=True;
-      // odiropss - Alterar para bProcUltCompra:=True;
-      bProcUltCompra:=True;
+      // PROCESSOS LIBERADOS
+      //===============================
+      // bProcDemanda:=True;
+      // bProcUltCompra:=True;
+      // bProcEstFinal:=True;
 
+      // PROCESSOS NÂO LIBERADOS
+      //===============================
+
+      // ANALISAR NO LINX
+      //===============================
       bProcTransito:=False;
-        bProcEstFinal:=False;
-        bProcTransfSai:=False;
-        bProcTransfEnt:=False;
-        bProcPcCusto:=False;
-        bProcComprov:=False;
-        bProcAjTrAvPe:=False;
-        bProcBonifca:=False;
-        bProcDescFinan:=False;
-        bProcPagtoST:=False;
-        bProcVlrContab:=False;
-        bProcSaldoProd:=False;
-        bProcEstoque:=False;
+
+      // PROCESSOS AINDA NÂO LIBERADOS
+      //===============================
+      bProcTransfSai:=False;
+      bProcTransfEnt:=False;
+      bProcPcCusto:=False;
+      bProcComprov:=False;
+      bProcAjTrAvPe:=False;
+      bProcBonifca:=False;
+      bProcDescFinan:=False;
+      bProcPagtoST:=False;
+      bProcVlrContab:=False;
+      bProcSaldoProd:=False;
+      bProcEstoque:=False;
     End; // If iCodLojaLinx<>0 Then // LINX
 
     If bSiga Then // Se já faz mais de 5 horas a Ultima Atualização da Empresa
@@ -4050,74 +4078,94 @@ begin
           DateSeparator:='/';
           DecimalSeparator:=',';
 
-          // Cria Query da Empresa ------------------------------------
-          CriaQueryIB('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, IBQ_Consulta, False, True);
+        If iCodLojaLinx<>0 Then // LINX
+        Begin
+          MySql:=' SELECT e.cod_loja CODFILIAL,'+ // CODIGO SIDICOM
+                 ' ''01.'+sMes+'.'+sAno+''' Dia,'+ // Primeiro Dia do Mes
+                 ' Cast(coalesce(sum(Coalesce(e.quantidade,0)),0) as numeric(12,2)) Est_Final,'+
+                 ' Cast(Coalesce(sum(Coalesce(e.quantidade*e.preco_venda,0)),0) as Numeric(12,2)) Est_Finan_Venda,'+
+                 ' Cast(Coalesce(sum(Coalesce(e.quantidade*e.preco_custo,0)),0) as Numeric(12,2)) Est_Finan_Compra,'+
+                 ' Cast(Coalesce(sum(Coalesce(e.quantidade*(e.preco_venda-e.preco_custo),0)),0) as Numeric(12,2)) Est_Finan_Margem'+
 
-          DateSeparator:='.';
-          DecimalSeparator:='.';
-
-          // Busca Lista de Precos da Loja =====================================
-          MySql:=' SELECT e.cod_listapre'+
-                 ' FROM emp_conexoes e'+
-                 ' WHERE e.cod_filial='+QuotedStr(sCodEmpresa);
+                 ' FROM LINXPRODUTOSDETALHES e'+
+                 ' WHERE e.empresa='+IntToStr(iCodLojaLinx)+ // CODIGO LINX
+                 ' GROUP BY 1,2';
           DMMovtosEmpresas.CDS_Busca.Close;
           DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
           DMMovtosEmpresas.CDS_Busca.Open;
-          sCodListaPreco:=DMMovtosEmpresas.CDS_Busca.FieldByName('cod_listapre').AsString;
-          DMMovtosEmpresas.CDS_Busca.Close;
+        End; // If iCodLojaLinx<>0 Then // LINX
 
-          If Trim(sCodListaPreco)='' Then
+        If iCodLojaLinx=0 Then // SIDICOM
           Begin
+            // Cria Query da Empresa ------------------------------------
+            CriaQueryIB('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, IBQ_Consulta, False, True);
+
+            DateSeparator:='.';
+            DecimalSeparator:='.';
+
+            // Busca Lista de Precos da Loja =====================================
             MySql:=' SELECT e.cod_listapre'+
                    ' FROM emp_conexoes e'+
-                   ' WHERE e.cod_filial=''99''';
+                   ' WHERE e.cod_filial='+QuotedStr(sCodEmpresa);
             DMMovtosEmpresas.CDS_Busca.Close;
             DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
             DMMovtosEmpresas.CDS_Busca.Open;
             sCodListaPreco:=DMMovtosEmpresas.CDS_Busca.FieldByName('cod_listapre').AsString;
             DMMovtosEmpresas.CDS_Busca.Close;
-          End;
 
-          MySql:=' Select'+
-                 ' e.codfilial,'+
-                 ' Cast(''01.''||substring(e.codanomes from 5 for 2)||''.''||substring(e.codanomes from 1 for 4) as Date) Dia,'+
+            If Trim(sCodListaPreco)='' Then
+            Begin
+              MySql:=' SELECT e.cod_listapre'+
+                     ' FROM emp_conexoes e'+
+                     ' WHERE e.cod_filial=''99''';
+              DMMovtosEmpresas.CDS_Busca.Close;
+              DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
+              DMMovtosEmpresas.CDS_Busca.Open;
+              sCodListaPreco:=DMMovtosEmpresas.CDS_Busca.FieldByName('cod_listapre').AsString;
+              DMMovtosEmpresas.CDS_Busca.Close;
+            End;
 
-                 ' Cast(coalesce(sum(Coalesce(e.saldoatual,0)),0) as numeric(12,2)) Est_Final,'+
-                 ' Cast(Coalesce(sum(Coalesce(e.saldoatual*preco.precovenda,0)),0) as Numeric(12,2)) Est_Finan_Venda,'+
-                 ' Cast(Coalesce(sum(Coalesce(e.saldoatual*preco.precocompra,0)),0) as Numeric(12,2)) Est_Finan_Compra,'+
-                 ' Cast(Coalesce(sum(Coalesce(e.saldoatual*preco.Margem,0)),0) as Numeric(12,2)) Est_Finan_Margem'+
+            MySql:=' Select'+
+                   ' e.codfilial,'+
+                   ' Cast(''01.''||substring(e.codanomes from 5 for 2)||''.''||substring(e.codanomes from 1 for 4) as Date) Dia,'+
 
-                 ' From estoqmes e, produto p,'+
-                 '      (Select lpi.codproduto, lpi.precocompra, lpi.precovenda, lpi.margem'+
-                 '       From listapre lpi'+
-                 '       Where lpi.codlista='+QuotedStr(sCodListaPreco)+') Preco'+
+                   ' Cast(coalesce(sum(Coalesce(e.saldoatual,0)),0) as numeric(12,2)) Est_Final,'+
+                   ' Cast(Coalesce(sum(Coalesce(e.saldoatual*preco.precovenda,0)),0) as Numeric(12,2)) Est_Finan_Venda,'+
+                   ' Cast(Coalesce(sum(Coalesce(e.saldoatual*preco.precocompra,0)),0) as Numeric(12,2)) Est_Finan_Compra,'+
+                   ' Cast(Coalesce(sum(Coalesce(e.saldoatual*preco.Margem,0)),0) as Numeric(12,2)) Est_Finan_Margem'+
 
-                 ' where e.codproduto=p.codproduto'+
-                 ' and   e.codproduto=preco.codproduto'+
-                 ' and   p.principalfor Not In (''000300'', ''000500'', ''000883'', ''010000'', ''001072'')'+
-                 ' and   e.codfilial='+QuotedStr(sCodEmpresa)+
-                 ' and   e.codanomes='+QuotedStr(sAno+sMes)+
-                 ' Group by 1,2'+
-                 ' Order by 1';
-          IBQ_Consulta.Close;
-          IBQ_Consulta.SQL.Clear;
-          IBQ_Consulta.SQL.Add(MySql);
+                   ' From estoqmes e, produto p,'+
+                   '      (Select lpi.codproduto, lpi.precocompra, lpi.precovenda, lpi.margem'+
+                   '       From listapre lpi'+
+                   '       Where lpi.codlista='+QuotedStr(sCodListaPreco)+') Preco'+
 
-          // Busca Iens da Empresa ----------------------------------
-          i:=0;
-          bSiga:=False;
-          While Not bSiga do
-          Begin
-            Try
-              IBQ_Consulta.Open;
-              bSiga:=True;
-            Except
-              Inc(i);
-            End; // Try
+                   ' where e.codproduto=p.codproduto'+
+                   ' and   e.codproduto=preco.codproduto'+
+                   ' and   p.principalfor Not In (''000300'', ''000500'', ''000883'', ''010000'', ''001072'')'+
+                   ' and   e.codfilial='+QuotedStr(sCodEmpresa)+
+                   ' and   e.codanomes='+QuotedStr(sAno+sMes)+
+                   ' Group by 1,2'+
+                   ' Order by 1';
+            IBQ_Consulta.Close;
+            IBQ_Consulta.SQL.Clear;
+            IBQ_Consulta.SQL.Add(MySql);
 
-            If i>99 Then
-              Break;
-          End; // While Not bSiga do
+            // Busca Iens da Empresa ----------------------------------
+            i:=0;
+            bSiga:=False;
+            While Not bSiga do
+            Begin
+              Try
+                IBQ_Consulta.Open;
+                bSiga:=True;
+              Except
+                Inc(i);
+              End; // Try
+
+              If i>99 Then
+                Break;
+            End; // While Not bSiga do
+          End; // If iCodLojaLinx=0 Then // SIDICOM
 
           // Processamento  -----------------------------------------
           If bSiga Then // Consulta Estoques Final dos Meses
@@ -4131,71 +4179,143 @@ begin
               DateSeparator:='.';
               DecimalSeparator:='.';
 
-              While Not IBQ_Consulta.Eof do
+              If iCodLojaLinx=0 Then // SIDICOM
               Begin
-                If IBQ_Consulta.FieldByName('Est_Final').AsCurrency<>0 Then
+                While Not IBQ_Consulta.Eof do
                 Begin
-                  For i:=1 to 4 do
+                  If IBQ_Consulta.FieldByName('Est_Final').AsCurrency<>0 Then
                   Begin
-                    MySql:=' Insert into MOVTOS_EMPRESAS'+
-                           ' (CODFILIAL, IND_TIPO, DTA_REF, QUANT_REF, VLR_TOTAL_REF, DTA_ATUALIZACAO)'+
-                           ' Values('+
-                           QuotedStr(sCodEmpresa)+', ';
+                    For i:=1 to 4 do
+                    Begin
+                      MySql:=' Insert into MOVTOS_EMPRESAS'+
+                             ' (CODFILIAL, IND_TIPO, DTA_REF, QUANT_REF, VLR_TOTAL_REF, DTA_ATUALIZACAO)'+
+                             ' Values('+
+                             QuotedStr(sCodEmpresa)+', ';
 
-                           If i=1 Then
-                           Begin
-                             sgMensagem:='EF';
-                             MySql:=MySql+' ''EF'','+
-                                    QuotedStr(f_Troca('/','.',IBQ_Consulta.FieldByName('Dia').AsString))+', '+
-                                    QuotedStr(f_Troca(',','.',IBQ_Consulta.FieldByName('Est_Final').AsString))+', null, current_date';
-                           End;
+                             If i=1 Then
+                             Begin
+                               sgMensagem:='EF';
+                               MySql:=MySql+' ''EF'','+
+                                      QuotedStr(f_Troca('/','.',IBQ_Consulta.FieldByName('Dia').AsString))+', '+
+                                      QuotedStr(f_Troca(',','.',IBQ_Consulta.FieldByName('Est_Final').AsString))+', null, current_date';
+                             End;
 
-                           If i=2 Then
-                           Begin
-                             sgMensagem:='EV';
-                             MySql:=MySql+' ''EV'','+
-                                    QuotedStr(f_Troca('/','.',IBQ_Consulta.FieldByName('Dia').AsString))+', null,'+
-                                    QuotedStr(f_Troca(',','.',IBQ_Consulta.FieldByName('EST_FINAN_VENDA').AsString))+', current_date';
-                           End;
+                             If i=2 Then
+                             Begin
+                               sgMensagem:='EV';
+                               MySql:=MySql+' ''EV'','+
+                                      QuotedStr(f_Troca('/','.',IBQ_Consulta.FieldByName('Dia').AsString))+', null,'+
+                                      QuotedStr(f_Troca(',','.',IBQ_Consulta.FieldByName('EST_FINAN_VENDA').AsString))+', current_date';
+                             End;
 
-                           If i=3 Then
-                           Begin
-                             sgMensagem:='EC';
-                             MySql:=MySql+' ''EC'','+
-                                    QuotedStr(f_Troca('/','.',IBQ_Consulta.FieldByName('Dia').AsString))+', null,'+
-                                    QuotedStr(f_Troca(',','.',IBQ_Consulta.FieldByName('EST_FINAN_COMPRA').AsString))+', current_date';               
-                           End;
-           
-                           If i=4 Then
-                           Begin
-                             sgMensagem:='EM';
-                             MySql:=MySql+' ''EM'','+
-                                    QuotedStr(f_Troca('/','.',IBQ_Consulta.FieldByName('Dia').AsString))+', null,'+
-                                    QuotedStr(f_Troca(',','.',IBQ_Consulta.FieldByName('EST_FINAN_MARGEM').AsString))+', current_date';
-                           End;
+                             If i=3 Then
+                             Begin
+                               sgMensagem:='EC';
+                               MySql:=MySql+' ''EC'','+
+                                      QuotedStr(f_Troca('/','.',IBQ_Consulta.FieldByName('Dia').AsString))+', null,'+
+                                      QuotedStr(f_Troca(',','.',IBQ_Consulta.FieldByName('EST_FINAN_COMPRA').AsString))+', current_date';
+                             End;
 
-                           MySql:=MySql+')';
-                         
+                             If i=4 Then
+                             Begin
+                               sgMensagem:='EM';
+                               MySql:=MySql+' ''EM'','+
+                                      QuotedStr(f_Troca('/','.',IBQ_Consulta.FieldByName('Dia').AsString))+', null,'+
+                                      QuotedStr(f_Troca(',','.',IBQ_Consulta.FieldByName('EST_FINAN_MARGEM').AsString))+', current_date';
+                             End;
+
+                             MySql:=MySql+')';
+
+                      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+                    End; // For i:=1 to 4 do
+                  End; // If IBQ_Consulta.FieldByName('Est_Final').AsCurrency<>0 Then
+
+                  If Not bExec Then
+                  Begin
+                    // Grava Loja em Processamento --------------------------
+                    MySql:=' Insert Into MOVTOS_EMPRESAS ('+
+                           ' IND_TIPO, NOMEFORNECEDOR, DTA_ATUALIZACAO)'+
+                           ' Values ('+
+                           QuotedStr('OK')+', '+
+                           QuotedStr('EstoqueFinal_Exec Loja: '+sCodEmpresa)+', '+
+                           QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
                     DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-                  End; // For i:=1 to 4 do
-                End; // If IBQ_Consulta.FieldByName('Est_Final').AsCurrency<>0 Then
 
-                If Not bExec Then
+                    bExec:=True;
+                  End;
+
+                  IBQ_Consulta.Next;
+                End; // While Not IBQ_Consulta.Eof do
+              End; // If iCodLojaLinx=0 Then // SIDICOM
+
+              If iCodLojaLinx<>0 Then // LINX
+              Begin
+                While Not DMMovtosEmpresas.CDS_Busca.Eof do
                 Begin
-                  // Grava Loja em Processamento --------------------------
-                  MySql:=' Insert Into MOVTOS_EMPRESAS ('+
-                         ' IND_TIPO, NOMEFORNECEDOR, DTA_ATUALIZACAO)'+
-                         ' Values ('+
-                         QuotedStr('OK')+', '+
-                         QuotedStr('EstoqueFinal_Exec Loja: '+sCodEmpresa)+', '+
-                         QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
-                  DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+                  If DMMovtosEmpresas.CDS_Busca.FieldByName('Est_Final').AsCurrency<>0 Then
+                  Begin
+                    For i:=1 to 4 do
+                    Begin
+                      MySql:=' Insert into MOVTOS_EMPRESAS'+
+                             ' (CODFILIAL, IND_TIPO, DTA_REF, QUANT_REF, VLR_TOTAL_REF, DTA_ATUALIZACAO)'+
+                             ' Values('+
+                             QuotedStr(sCodEmpresa)+', ';
 
-                  bExec:=True;
-                End;
+                             If i=1 Then
+                             Begin
+                               sgMensagem:='EF';
+                               MySql:=MySql+' ''EF'','+
+                                      QuotedStr(f_Troca('/','.',DMMovtosEmpresas.CDS_Busca.FieldByName('Dia').AsString))+', '+
+                                      QuotedStr(f_Troca(',','.',DMMovtosEmpresas.CDS_Busca.FieldByName('Est_Final').AsString))+', null, current_date';
+                             End;
 
-                IBQ_Consulta.Next;
-              End; // While Not IBQ_Consulta.Eof do
+                             If i=2 Then
+                             Begin
+                               sgMensagem:='EV';
+                               MySql:=MySql+' ''EV'','+
+                                      QuotedStr(f_Troca('/','.',DMMovtosEmpresas.CDS_Busca.FieldByName('Dia').AsString))+', null,'+
+                                      QuotedStr(f_Troca(',','.',DMMovtosEmpresas.CDS_Busca.FieldByName('EST_FINAN_VENDA').AsString))+', current_date';
+                             End;
+
+                             If i=3 Then
+                             Begin
+                               sgMensagem:='EC';
+                               MySql:=MySql+' ''EC'','+
+                                      QuotedStr(f_Troca('/','.',DMMovtosEmpresas.CDS_Busca.FieldByName('Dia').AsString))+', null,'+
+                                      QuotedStr(f_Troca(',','.',DMMovtosEmpresas.CDS_Busca.FieldByName('EST_FINAN_COMPRA').AsString))+', current_date';
+                             End;
+
+                             If i=4 Then
+                             Begin
+                               sgMensagem:='EM';
+                               MySql:=MySql+' ''EM'','+
+                                      QuotedStr(f_Troca('/','.',DMMovtosEmpresas.CDS_Busca.FieldByName('Dia').AsString))+', null,'+
+                                      QuotedStr(f_Troca(',','.',DMMovtosEmpresas.CDS_Busca.FieldByName('EST_FINAN_MARGEM').AsString))+', current_date';
+                             End;
+
+                             MySql:=MySql+')';
+
+                      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+                    End; // For i:=1 to 4 do
+                  End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Est_Final').AsCurrency<>0 Then
+
+                  If Not bExec Then
+                  Begin
+                    // Grava Loja em Processamento --------------------------
+                    MySql:=' Insert Into MOVTOS_EMPRESAS ('+
+                           ' IND_TIPO, NOMEFORNECEDOR, DTA_ATUALIZACAO)'+
+                           ' Values ('+
+                           QuotedStr('OK')+', '+
+                           QuotedStr('EstoqueFinal_Exec Loja: '+sCodEmpresa)+', '+
+                           QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
+                    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+                    bExec:=True;
+                  End;
+
+                  DMMovtosEmpresas.CDS_Busca.Next;
+                End; // While Not DMMovtosEmpresas.CDS_Busca.Eof do
+              End; // If iCodLojaLinx<>0 Then // LINX
 
               DMMovtosEmpresas.SQLC.Commit(TD);
 
@@ -4222,7 +4342,7 @@ begin
               End; // on e : Exception do
             End; // Try
           End; // If bSiga Then // Consulta Estoques Final dos Meses
-          
+
           DateSeparator:='/';
           DecimalSeparator:=',';
         End; // If bProcEstFinal Then

@@ -52,6 +52,11 @@ var
   tgMetodos: TStringList; // Contem osd Metodos a Processar
                           // Vem do Arquivo:  C:\Projetos\BelShop\Fontes\WebService Linx\Linx_WebService.Ini
 
+  sgParametroMetodo,  // Parametro: Metodo a Processar
+  sgParametroCodLoja, // Paraemtro: Loja a Processar
+  sgParametroMetodos, sgParametroRetornos, // Parametro: Pastas de Geração de Metodos e Retornos
+  
+  sgCampoUpdate,
   sgMetodo,    // Metodo em Processamento
   sgArqXMLRet, // Nome do Arquivo de Retorno
   sgCNPJProc,  // CNPJ da Empresa Em Processamento
@@ -82,7 +87,7 @@ uses
 Procedure TFrmWebServiceLinx.LeMetodoXMLRetorno;
 Var
   MySql: String;
-  sMensagem, sCampoDta: String;
+  sObs, sMensagem, sCampoDta, sConteudoCampo: String;
 
   iii, ii, i: Integer;
 
@@ -92,6 +97,7 @@ Var
 
   tgCamposBD: TStringList;
 Begin
+
   // Verifica se Transação esta Ativa
   If DMLinxWebService.SQLC.InTransaction Then
    DMLinxWebService.SQLC.Rollback(TD);
@@ -122,10 +128,6 @@ Begin
   // Le XML de Retorno e Atualiza Banco de Dados ===============================
   For i:=0 to DOC.ChildNodes.Nodes['Microvix'].ChildNodes.Count-1 do
   Begin
-//    // Guarda Código da Empresa ==============================================
-//    if AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLojas') Then
-//     sgCodLojaLinx:=DOC.ChildNodes.Nodes['Microvix'].ChildNodes['ResponseData'].ChildNodes['R'].ChildNodes[1].NodeValue;
-
     Note_Response := DOC.ChildNodes.Nodes['Microvix'].ChildNodes[i];
 
     If Note_Response.NodeName = 'ResponseData' Then
@@ -194,6 +196,7 @@ Begin
       Try // Try da Transação //////////////////////////////////////////////////
         DateSeparator:='.';
         DecimalSeparator:='.';
+        sObs:='';
 
         // Le Valores dos Campos = Node "R" ====================================
         For iii:=0 to Note_Response.ChildNodes.Count - 1 do // Node "C"
@@ -216,7 +219,8 @@ Begin
                 If ((AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas'))   Or
                     (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento')) Or
                     (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxVendedores')) Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes'))) And (ii=1) Then
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes'))) And
+                    (ii=1) Then // COLOCA COD_EMPRES NO MICROVIX
                 Begin
                   sSqlUpInValores:=
                    sSqlUpInValores+QuotedStr(sgCodLojaLinx)+', ';
@@ -253,8 +257,13 @@ Begin
                     End
                    Else
                     Begin
+                      sConteudoCampo:=Trim(Node_Valores.ChildNodes[ii].NodeValue);
+
+                      If (sgMetodo='LinxMovimento') and (Length(sConteudoCampo)>1000) Then
+                        sConteudoCampo:=Copy(sConteudoCampo,1,1000);
+
                       sSqlUpInValores:=
-                       sSqlUpInValores+QuotedStr(Trim(Node_Valores.ChildNodes[ii].NodeValue))+', ';
+                       sSqlUpInValores+QuotedStr(sConteudoCampo)+', ';
                     End; // If Trim(sCampoDta)<>'' Then
                  End; // if VarIsNull(Node_Valores.ChildNodes[ii].NodeValue) Then
               End; // For ii:=0 to Node_Valores.ChildNodes.Count-1 do // Le Node "R"
@@ -319,6 +328,61 @@ Begin
           End; // If VarToStr(Node_Valores.NodeName)='R' Then // Node "R"
         End; // For iii:=0 to Note_Response.ChildNodes.Count - 1 do // Node "C"
 
+        //======================================================================
+        // Acerta LinxProduto.COD_AUXILIAR para 6 Caracteres (SIDICOM) =========
+        //======================================================================
+        If sgMetodo='LinxProdutos' Then
+        Begin
+          // Verifica se Existe
+          MySql:=' SELECT ptl.cod_auxiliar'+
+                 ' FROM LINXPRODUTOS ptl'+
+                 ' WHERE ptl.cod_auxiliar IS NOT NULL'+
+                 ' AND CHAR_LENGTH(Trim(ptl.cod_auxiliar))<6';
+          DMLinxWebService.CDS_Busca.Close;
+          DMLinxWebService.SDS_Busca.CommandText:=MySql;
+          DMLinxWebService.CDS_Busca.Open;
+
+          If Trim(DMLinxWebService.CDS_Busca.FieldByName('Cod_auxiliar').AsString)<>'' Then
+          Begin
+            sObs:='ERRO em Acerta LinxProduto.COD_AUXILIAR';
+
+            MySql:=' UPDATE LINXPRODUTOS ptl'+
+                   ' SET ptl.cod_auxiliar=lpad(Trim(ptl.cod_auxiliar),6,''0'')'+
+                   ' WHERE ptl.cod_auxiliar IS NOT NULL'+
+                   ' AND CHAR_LENGTH(Trim(ptl.cod_auxiliar))<6';
+            DMLinxWebService.SQLC.Execute(MySql, nil, nil);
+          End; // If Trim(DMLinxWebService.CDS_Busca.FieldByName('Cod_auxiliar').AsString)<>'' Then
+          DMLinxWebService.CDS_Busca.Close;
+          sObs:='';
+        End; // If sgMetodo='LinxProdutos' Then
+
+        //======================================================================
+        // Atualiza Tabela LinxProdutoDetalhes com Produto Sem Saldo ===========
+        //======================================================================
+        If sgMetodo='LinxProdutosDetalhes' Then
+        Begin
+          sOBS:='ERRO em Atualiza Tabela LinxProdutoDetalhes com Produto Sem Saldo';
+
+          MySql:=' INSERT INTO LINXPRODUTOSDETALHES'+
+                 ' SELECT'+
+                 ' lp.portal,'+
+                 sgCodLojaLinx+' EMPRESA,'+ // CODIGO EMPRESA MICROVIX
+                 sgCNPJProc+' CNPJ_EMP,'+ // CNPJ DA EMPRESA
+                 ' LP.cod_produto COD_PRODUTO, LP.cod_barra COD_BARRA,'+
+                 ' 0.0000 QUANTIDADE, 0.0000 PRECO_CUSTO, 0.0000 PRECO_VENDA, 0.0000 CUSTO_MEDIO,'+
+                 ' NULL ID_CONFIG_TRIBUTARIA, NULL DESC_CONFIG_TRIBUTARIA,'+
+                 QuotedStr(sgCodLoja)+' COD_LOJA,'+ // CODIGO EMPRESA SIDICOM
+                 ' current_date DTA_ATUALIZACAO, current_time HRA_ATUALIZACAO'+
+
+                 ' FROM LINXPRODUTOS lp'+
+                 ' WHERE NOT EXISTS (SELECT 1'+
+                 '                   FROM LINXPRODUTOSDETALHES lpd'+
+                 '                   WHERE lpd.cod_produto=lp.cod_produto'+
+                 '                   AND   lpd.empresa='+sgCodLojaLinx+')'; // CODIGO EMPRESA MICROVIX
+          DMLinxWebService.SQLC.Execute(MySql, nil, nil);
+          sOBS:='';
+        End; // If sgMetodo='LinxProdutosDetalhes' Then
+
         // Atualiza Transacao ============================================
         DMLinxWebService.SQLC.Commit(TD);
 
@@ -334,8 +398,12 @@ Begin
           DateSeparator:='/';
           DecimalSeparator:=',';
 
+          If Trim(sMensagem)<>'' Then
+           SalvaProcessamento(sgMetodo+'_'+sgCodLojaLinx+'(Último Erro): '+sMensagem);
+
           sMensagem:='Erro DML: '+e.message;
           SalvaProcessamento(sgMetodo+'_'+sgCodLojaLinx+': '+sMensagem);
+
           SalvaProcessamento('=====================================');
         End; // on e : Exception do
       End; // Try da Transação  ////////////////////////////////////////////////
@@ -446,6 +514,10 @@ Begin
     Writeln(txtArq,sXML);
     sXML:='			<Parameter id="data_upd_fim">'+sgDtaFim+'</Parameter>';
     Writeln(txtArq,sXML);
+
+    // Parametro Opcional
+    // sXML:='			<Parameter id="cod_vendedor">'+Codigo do Vendedor - INTEIRO+'</Parameter>';
+    // Writeln(txtArq,sXML);
   End; // If sgMetodo='LinxVendedores' Then
 
   // ===========================================================================
@@ -536,13 +608,57 @@ Var
 
   MySql: String;
 
-  bUmaVez,
+  bUmaVez, 
   bSiga: Boolean;
 
   dDtaUltAtual, dDtaHoje: TDate;
   wDia, wMes, wAno: Word;
+
+  hHrInicio: String; // Não permite rodar com Parametro entre as 16 e 18 Horas - Existe um processo rodando
 Begin
+
+  // Parametro: Somente o Metodo Enviado =======================================
+  sgParametroMetodo   :=''; // Metodo a Processar
+  sgParametroCodLoja  :=''; // Loja a Processar
+  sgParametroMetodos  :=''; // Pasta Metodo  - \\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\
+  sgParametroRetornos :=''; // Pasta Retorno - \\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\
+
+  // OdirAqui - Utiliza Parametro
+  // Estrutura (Paramentros Separedos por Espaço ' ';
+  // NomeMetodo Codigo_Loja_Linx Pasta_Metodos Pasta_Retornos
+  // sgParametroMetodo:='LinxMovimento;3;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;';
+  // sgParametroMetodo:='LinxLojas;4;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;';
+  // sgParametroMetodo:='LinxMovimento;15;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;';
+  // ======>> Este esta OK <<============
+  // sgParametroMetodo:='LinxLojas;15;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;';
+  // Parametro: Somente o Metodo Enviado =======================================
+
+  // Pasta Executável PWebServiceLinx Não Rede
   sgPastaExecutavel:=IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName));
+
+  // Parametros na Rede
+  sgParametroMetodo:=ParamStr(1);
+  If Trim(sgParametroMetodo)<>'' Then
+  Begin
+    hHrInicio:=TimeToStr(DataHoraServidorFI(DMLinxWebService.SDS_DtaHoraServidor));
+    If (StrToTime(hHrInicio)>StrToTime('16:00:00')) and (StrToTime(hHrInicio)<StrToTime('18:00:00')) Then
+    Begin
+      Application.Terminate;
+      Exit;
+    End;
+    sgParametroMetodo  :=Trim(ParamStr(1));
+    sgParametroCodLoja :=Trim(ParamStr(2));
+    sgParametroMetodos :=Trim(ParamStr(3));
+    sgParametroRetornos:=Trim(ParamStr(4));
+
+    sgPastaExecutavel:=Copy(sgParametroMetodos,1,Pos('Metodos\', sgParametroMetodos)-1);
+  End;
+//odirapagar
+//  ShowMessage('Metodo: '+sgParametroMetodo);
+//  ShowMessage('Loja: '+sgParametroCodLoja);
+//  ShowMessage('Pasta Metodos: '+sgParametroMetodos);
+//  ShowMessage('Pasta Retornos: '+sgParametroRetornos);
+//  ShowMessage('Pasta Exec: '+sgPastaExecutavel);
 
   // Cria Arquivo de Metodos a Processar =======================================
   tgMetodos:=TStringList.Create;
@@ -558,11 +674,11 @@ Begin
 
     If i=0 Then
      Begin
-       sgPastaMetodos:=Trim(sLinha);
+       sgPastaMetodos:=IncludeTrailingPathDelimiter(Trim(sLinha));
      End
     Else If i=1 Then
      Begin
-       sgPastaRetornos:=Trim(sLinha);
+       sgPastaRetornos:=IncludeTrailingPathDelimiter(Trim(sLinha));
      End
     Else
      Begin
@@ -572,6 +688,15 @@ Begin
     Inc(i);
   End; // While not Eof(Arq) do
   CloseFile(Arq);
+
+  //============================================================================
+  // Se Processamento por PARAMETRO Atualiza Pastas ============================
+  //============================================================================
+  If sgParametroMetodo<>'' Then
+  Begin
+    sgPastaMetodos :=IncludeTrailingPathDelimiter(sgParametroMetodos);
+    sgPastaRetornos:=IncludeTrailingPathDelimiter(sgParametroRetornos);
+  End; // If sgParametroMetodo<>'' Then
 
   // Pasta BelShop =============================================================
   i:=pos('BelShop',sgPastaMetodos);
@@ -638,9 +763,15 @@ Begin
 
   // Processa Lojas ============================================================
   MySql:=' SELECT em.num_cnpj, em.cod_filial, em.cod_linx, em.dta_inicio_linx'+
-         ' FROM EMP_CONEXOES em'+
-         ' WHERE em.cod_linx<>0'+
-         ' ORDER BY 3';
+         ' FROM EMP_CONEXOES em';
+
+         If sgParametroCodLoja<>'' tHEN
+          MySql:=
+           MySql+' WHERE em.cod_linx='+sgParametroCodLoja
+         Else
+          MySql:=
+           MySql+' WHERE em.cod_linx<>0'+
+                 ' ORDER BY 3';
   DMLinxWebService.CDS_Lojas.Close;
   DMLinxWebService.SDS_Lojas.CommandText:=MySql;
   DMLinxWebService.CDS_Lojas.Open;
@@ -662,19 +793,36 @@ Begin
       If Trim(tgMetodos[iFor])='' Then
        Break;
 
-      // odiropss - Retirar Comentario
       sgMetodo  :=tgMetodos[iFor];
 
-      // odiropss - Comentar
-      // sgMetodo:='LinxMovimento';
+      // Somente o Metodo Conforme Parametro Enviado ===========================
+      If Trim(sgParametroMetodo)<>'' Then
+       sgMetodo:=sgParametroMetodo;
 
       sgArqXMLRet:='Retorno_'+sgMetodo+'.XML';
 
-      // Data Hoje e Ultima Atualização ==========================================
+      // Data Hoje =============================================================
       dDtaHoje:=DataHoraServidorFI(DMLinxWebService.SDS_DtaHoraServidor);
 
-      MySql:=' SELECT MAX(dta_atualizacao) Dta'+
-             ' FROM '+sgMetodo;
+      //========================================================================
+      // TODOS OS METODOS - Data Ultima Atualização Linx =======================
+      //========================================================================
+      // Campo: dt_upd ----------------------------------------------
+      If (AnsiUpperCase(sgMetodo)='LINXVENDEDORES')  Then
+       sgCampoUpdate:='Dt_Upd'
+      Else If (AnsiUpperCase(sgMetodo)='LINXCLIENTESFORNEC') or (AnsiUpperCase(sgMetodo)='LINXPRODUTOS') Then
+       sgCampoUpdate:='Dt_Update'
+      Else If (AnsiUpperCase(sgMetodo)='LINXPRODUTOSDETALHES') or (AnsiUpperCase(sgMetodo)='LINXLOJAS') Then
+       sgCampoUpdate:='Dta_Atualizacao'
+      Else If (AnsiUpperCase(sgMetodo)='LINXMOVIMENTO') Then
+       sgCampoUpdate:='Data_Documento'
+      Else If (AnsiUpperCase(sgMetodo)='LINXFATURAS') Then
+       sgCampoUpdate:='Data_Emissao'
+      ELSE
+       sgCampoUpdate:='Dta_Atualizacao';
+
+      MySql:=' SELECT CAST(MAX(Lx.'+sgCampoUpdate+') AS DATE) Dta_Ult_Alteracao'+
+             ' FROM '+sgMetodo+' lx';
 
              If (AnsiUpperCase(sgMetodo)='LINXFATURAS')   or
                 (AnsiUpperCase(sgMetodo)='LINXLOJAS')     or
@@ -682,11 +830,11 @@ Begin
                 (AnsiUpperCase(sgMetodo)='LINXVENDEDORES') or
                 (AnsiUpperCase(sgMetodo)='LINXPRODUTOSDETALHES') Then
               MySql:=
-               MySql+' WHERE Empresa='+sgCodLojaLinx;
+               MySql+' WHERE lx.Empresa='+sgCodLojaLinx;
       DMLinxWebService.CDS_Busca.Close;
       DMLinxWebService.SDS_Busca.CommandText:=MySql;
       DMLinxWebService.CDS_Busca.Open;
-      dDtaUltAtual:=DMLinxWebService.CDS_Busca.FieldByName('Dta').AsDateTime;
+      dDtaUltAtual:=DMLinxWebService.CDS_Busca.FieldByName('Dta_Ult_Alteracao').AsDateTime;
       DMLinxWebService.CDS_Busca.Close;
 
       // Montagem do Http.Post =================================================
@@ -715,6 +863,21 @@ Begin
 
            DecodeDate(dDtaHoje, wAno, wMes, wDia);
            sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+           // Metodo por Parametro (Acerta Data Inicial
+           If Trim(sgParametroMetodo)<>'' Then
+           Begin
+             If dDtaUltAtual=dDtaHoje Then
+             Begin
+               sgDtaInicio:=sgDtaFim
+             End;
+
+             If dDtaUltAtual<dDtaHoje Then
+             Begin
+               DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+               sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+             End;
+           End; // If Trim(sgParametroMetodo)<>'' Then
          End; // If dDtaUltAtual=0 Then
 
         MontaMetodoXMLPost();
@@ -726,13 +889,28 @@ Begin
       If sgMetodo='LinxClientesFornec' Then
       Begin
         If dDtaUltAtual=0 Then
-         dDtaUltAtual:=StrToDate('01/10/2016');
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+4;;
 
         DecodeDate(dDtaUltAtual-4, wAno, wMes, wDia);
         sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
         sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        // Metodo por Parametro (Acerta Data Inicial
+        If Trim(sgParametroMetodo)<>'' Then
+        Begin
+          If dDtaUltAtual=dDtaHoje Then
+          Begin
+            sgDtaInicio:=sgDtaFim
+          End;
+
+          If dDtaUltAtual<dDtaHoje Then
+          Begin
+            DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+          End;
+        End; // If Trim(sgParametroMetodo)<>'' Then
 
         MontaMetodoXMLPost();
       End; // If (sgMetodo='LinxClientesFornec') And (Not bUmaVez) Then Then
@@ -752,8 +930,24 @@ Begin
            DecodeDate(dDtaUltAtual-4, wAno, wMes, wDia);
            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
-           DecodeDate(dDtaHoje, wAno, wMes, wDia);
+           DecodeDate(dDtaHoje+1, wAno, wMes, wDia);
            sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+           // Metodo por Parametro (Acerta Data Inicial
+           If Trim(sgParametroMetodo)<>'' Then
+           Begin
+             If dDtaUltAtual=dDtaHoje Then
+             Begin
+               DecodeDate(dDtaHoje, wAno, wMes, wDia);
+               sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+             End;
+
+             If dDtaUltAtual<dDtaHoje Then
+             Begin
+               DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+               sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+             End;
+           End; // If Trim(sgParametroMetodo)<>'' Then
          End; // If dDtaUltAtual=0 Then
 
         MontaMetodoXMLPost('NULL', 'NULL', 'NULL', 'NULL');
@@ -774,8 +968,24 @@ Begin
            DecodeDate(dDtaUltAtual-4, wAno, wMes, wDia);
            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
-           DecodeDate(dDtaHoje, wAno, wMes, wDia);
+           DecodeDate(dDtaHoje+1, wAno, wMes, wDia);
            sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+           // Metodo por Parametro (Acerta Data Inicial
+           If Trim(sgParametroMetodo)<>'' Then
+           Begin
+             If dDtaUltAtual=dDtaHoje Then
+             Begin
+               DecodeDate(dDtaHoje, wAno, wMes, wDia);
+               sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+             End;
+
+             If dDtaUltAtual<dDtaHoje Then
+             Begin
+               DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+               sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+             End;
+           End; // If Trim(sgParametroMetodo)<>'' Then
          End; // If dDtaUltAtual=0 Then
 
         MontaMetodoXMLPost();
@@ -794,6 +1004,21 @@ Begin
 
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
         sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        // Metodo por Parametro (Acerta Data Inicial
+        If Trim(sgParametroMetodo)<>'' Then
+        Begin
+          If dDtaUltAtual=dDtaHoje Then
+          Begin
+            sgDtaInicio:=sgDtaFim;
+          End;
+
+          If dDtaUltAtual<dDtaHoje Then
+          Begin
+            DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+          End;
+        End; // If Trim(sgParametroMetodo)<>'' Then
 
         MontaMetodoXMLPost();
       End; // If sgMetodo='LinxMovimento' Then
@@ -815,6 +1040,21 @@ Begin
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
         sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
+        // Metodo por Parametro (Acerta Data Inicial
+        If Trim(sgParametroMetodo)<>'' Then
+        Begin
+          If dDtaUltAtual=dDtaHoje Then
+          Begin
+            sgDtaInicio:=sgDtaFim;
+          End;
+
+          If dDtaUltAtual<dDtaHoje Then
+          Begin
+            DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+          End;
+        End; // If Trim(sgParametroMetodo)<>'' Then
+
         MontaMetodoXMLPost();
       End; // If sgMetodo='LinxFaturas' Then
 
@@ -831,9 +1071,9 @@ Begin
         LeMetodoXMLRetorno;
       End; // If bSiga Then
 
-      // odiropss - Comentar
-//      If sgMetodo='LinxProdutosDetalhes' Then
-//       Break;
+      // Qunado Somente Um Metodo Conforme Parametro Envia ======================
+      If Trim(sgParametroMetodo)<>'' Then
+       Break;
     End; // For iFor:=0 to tgMetodos.Count-1 do
     //==========================================================================
     // Loop nos Metodos - FIM ==================================================

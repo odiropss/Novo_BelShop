@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_ConexaoEmpresas
+    ActivePage = Ts_OrdemCompra
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -6218,12 +6218,13 @@ object FrmBelShop: TFrmBelShop
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
+          Visible = False
           OnClick = Bt_ConEmpresasUsuWindowsClick
         end
         object Button1: TButton
           Left = 384
           Top = 6
-          Width = 87
+          Width = 93
           Height = 25
           Caption = 'Tabela: Odir1'
           TabOrder = 4
@@ -6232,13 +6233,23 @@ object FrmBelShop: TFrmBelShop
         end
         object Button3: TButton
           Left = 488
-          Top = 8
+          Top = 6
           Width = 106
           Height = 25
           Caption = 'Extratos Duplo'
           TabOrder = 5
           Visible = False
           OnClick = Button3Click
+        end
+        object Bt_AcertaPromocao: TButton
+          Left = 648
+          Top = 5
+          Width = 151
+          Height = 25
+          Caption = 'Acerta Odir_promocao'
+          TabOrder = 6
+          Visible = False
+          OnClick = Bt_AcertaPromocaoClick
         end
       end
       object Dbg_ConEmpresas: TDBGrid
@@ -15998,7 +16009,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_FinanComprPlanFinanPlanilhaFinanceira
+        ActivePage = Ts_FinanComprPlanFinanManutComprov
         Align = alClient
         TabOrder = 0
         OnChange = PC_FinanComprPlanFinanChange
@@ -19505,17 +19516,21 @@ object FrmBelShop: TFrmBelShop
                 TitleFont.Height = -11
                 TitleFont.Name = 'MS Sans Serif'
                 TitleFont.Style = [fsBold]
+                OnDrawColumnCell = Dbg_FinanObjetivosManutEmpresasDrawColumnCell
                 OnEnter = Dbg_FinanObjetivosManutEmpresasEnter
                 OnExit = Dbg_FinanObjetivosManutEmpresasExit
                 OnKeyDown = Dbg_FinanObjetivosManutEmpresasKeyDown
                 Columns = <
                   item
-                    Alignment = taRightJustify
                     Color = 14811135
                     Expanded = False
                     FieldName = 'COD_FILIAL'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWindowText
+                    Font.Height = -11
+                    Font.Name = 'MS Sans Serif'
+                    Font.Style = [fsBold]
                     Title.Alignment = taRightJustify
-                    Title.Caption = 'Cod'
                     Width = 30
                     Visible = True
                   end
@@ -19523,6 +19538,19 @@ object FrmBelShop: TFrmBelShop
                     Expanded = False
                     FieldName = 'RAZAO_SOCIAL'
                     Width = 350
+                    Visible = True
+                  end
+                  item
+                    Color = 14811135
+                    Expanded = False
+                    FieldName = 'COD_LINX'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWindowText
+                    Font.Height = -11
+                    Font.Name = 'MS Sans Serif'
+                    Font.Style = [fsBold]
+                    Title.Alignment = taCenter
+                    Width = 55
                     Visible = True
                   end>
               end
@@ -19929,7 +19957,7 @@ object FrmBelShop: TFrmBelShop
                   Font.Style = []
                   ParentFont = False
                   OnClick = Ckb_FinanObjetivosManutNaoCompraClick
-                  OnKeyUp = Ckb_FinanObjetivosManutAvariasKeyUp
+                  OnKeyUp = Ckb_FinanObjetivosManutNaoCompraKeyUp
                 end
               end
               object Gb_FinanObjetivosManutVlrFixo: TGroupBox

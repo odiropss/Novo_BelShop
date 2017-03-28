@@ -2721,7 +2721,7 @@ Begin
   sL19.Free;
   sL19:=nil;
   sL20.Free;
-  sL20:=nil;               
+  sL20:=nil;
                                           
 End; // PLANILHA DE PAGAMENTOS - Apresenta Planilha de Pagamentos //////////////
 
@@ -2774,47 +2774,52 @@ Begin
       pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
       pgProgBar.Refresh;
 
-      // Busca Num_Seq ------------------------------------------------
-      MySql:='SELECT GEN_ID(GEN_VALES,1) Num_Seq'+
-             ' FROM RDB$DATABASE';
-      DMBelShop.CDS_BuscaRapida.Close;
-      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-      DMBelShop.CDS_BuscaRapida.Open;
+      // Não Processo Profissionais que Entraram no ano de Calculo
+      If (Trim(DMBelShop.CDS_Busca.FieldByName('Ano_inicio').AsString)<>'') And
+         (DMBelShop.CDS_Busca.FieldByName('Ano_inicio').AsString<>DMBelShop.CDS_Busca.FieldByName('Ano_Atual').AsString) Then
+      Begin
+        // Busca Num_Seq ------------------------------------------------
+        MySql:='SELECT GEN_ID(GEN_VALES,1) Num_Seq'+
+               ' FROM RDB$DATABASE';
+        DMBelShop.CDS_BuscaRapida.Close;
+        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+        DMBelShop.CDS_BuscaRapida.Open;
 
-      MySql:=' Insert into PS_VALES_PESSOAS ('+
-             ' NUM_SEQ, TP_PESSOA, COD_LOJA, COD_PESSOA,'+
-             ' NUM_DOCTO, DES_DOCTO, IND_DEBCRED, VLR_ORIGINAL,'+
-             ' TOT_PRESTACAO, NUM_PRAZO, DTA_PRIM_VENC,'+
-             ' NUM_PRESTACAO, DTA_VENCIMENTO, VLR_PRESTACAO,'+
-             ' VLR_DESCONTO, VLR_ACRESCIMOS, VLR_APAGAR, VLR_PAGO, NUM_DOCTO_PAGTO,'+
-             ' USU_INCLUI)'+
+        MySql:=' Insert into PS_VALES_PESSOAS ('+
+               ' NUM_SEQ, TP_PESSOA, COD_LOJA, COD_PESSOA,'+
+               ' NUM_DOCTO, DES_DOCTO, IND_DEBCRED, VLR_ORIGINAL,'+
+               ' TOT_PRESTACAO, NUM_PRAZO, DTA_PRIM_VENC,'+
+               ' NUM_PRESTACAO, DTA_VENCIMENTO, VLR_PRESTACAO,'+
+               ' VLR_DESCONTO, VLR_ACRESCIMOS, VLR_APAGAR, VLR_PAGO, NUM_DOCTO_PAGTO,'+
+               ' USU_INCLUI)'+
 
-             ' Values('+
-             QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('Num_Seq').AsString)+', '+ // NUM_SEQ
-             QuotedStr('1')+', '+ // TP_PESSOA
-             QuotedStr(sCodFilial)+', '+ // COD_LOJA
-             QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Profissional').AsString)+', '+ // COD_PESSOA
-             QuotedStr(DMBelShop.CDS_Busca.FieldByName('Mes').AsString)+'||'+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Ano').AsString)+', '+ // NUM_DOCTO
-             QuotedStr(DMBelShop.CDS_Busca.FieldByName('Des_Docto').AsString)+', '+ // DES_DOCTO
-             QuotedStr('S')+', '+ // IND_DEBCRED
-             QuotedStr(DMBelShop.CDS_Busca.FieldByName('Vlr_Apagar').AsString)+', '+ // VLR_ORIGINAL
-             QuotedStr('1')+', '+ // TOT_PRESTACAO
-             QuotedStr('0')+', '+ // NUM_PRAZO
-             QuotedStr(sDta)+', '+ // DTA_PRIM_VENC
-             QuotedStr('1')+', '+ // NUM_PRESTACAO
-             QuotedStr(sDta)+', '+ // DTA_VENCIMENTO
-             QuotedStr(DMBelShop.CDS_Busca.FieldByName('Vlr_Apagar').AsString)+', '+ // VLR_PRESTACAO
-             QuotedStr('0')+', '+ // VLR_DESCONTO
-             QuotedStr('0')+', '+ // VLR_ACRESCIMOS
-             QuotedStr(DMBelShop.CDS_Busca.FieldByName('Vlr_Apagar').AsString)+', '+ // VLR_APAGAR
-             QuotedStr('0')+', '+ // VLR_PAGO
-             QuotedStr('0')+', '+ // NUM_DOCTO_PAGTO
-             QuotedStr(Cod_Usuario)+
-             ')';
+               ' Values('+
+               QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('Num_Seq').AsString)+', '+ // NUM_SEQ
+               QuotedStr('1')+', '+ // TP_PESSOA
+               QuotedStr(sCodFilial)+', '+ // COD_LOJA
+               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Profissional').AsString)+', '+ // COD_PESSOA
+               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Mes').AsString)+'||'+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Ano').AsString)+', '+ // NUM_DOCTO
+               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Des_Docto').AsString)+', '+ // DES_DOCTO
+               QuotedStr('S')+', '+ // IND_DEBCRED
+               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Vlr_Apagar').AsString)+', '+ // VLR_ORIGINAL
+               QuotedStr('1')+', '+ // TOT_PRESTACAO
+               QuotedStr('0')+', '+ // NUM_PRAZO
+               QuotedStr(sDta)+', '+ // DTA_PRIM_VENC
+               QuotedStr('1')+', '+ // NUM_PRESTACAO
+               QuotedStr(sDta)+', '+ // DTA_VENCIMENTO
+               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Vlr_Apagar').AsString)+', '+ // VLR_PRESTACAO
+               QuotedStr('0')+', '+ // VLR_DESCONTO
+               QuotedStr('0')+', '+ // VLR_ACRESCIMOS
+               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Vlr_Apagar').AsString)+', '+ // VLR_APAGAR
+               QuotedStr('0')+', '+ // VLR_PAGO
+               QuotedStr('0')+', '+ // NUM_DOCTO_PAGTO
+               QuotedStr(Cod_Usuario)+
+               ')';
 
-      DMBelShop.SQLC.Execute(MySql,nil,nil);
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
 
-      DMBelShop.CDS_BuscaRapida.Close;
+        DMBelShop.CDS_BuscaRapida.Close;
+      End; //       If DMBelShop.CDS_BuscaRapida.FieldByName('Ano_inicio').AsString<>DMBelShop.CDS_BuscaRapida.FieldByName('Ano_inicio').Ano_Atual Then
 
       DMBelShop.CDS_Busca.Next;
     End; // While Not DMBelShop.CDS_Busca.Eof do
@@ -6032,7 +6037,7 @@ End; // PLANILHA DE PAGAMENTOS - Calcula Período para Calculo //////////////////
 Function TFrmSalao.ProfissionaisCalcular: Boolean;
 Var
   MySql: String;
-  sSalMinimo, sDta, sDiaI, sDiaF: String;
+  sSalMinimo, sDta: String;
 Begin
   Result:=False;
 
@@ -7689,8 +7694,6 @@ begin
 end;
 
 procedure TFrmSalao.PC_SalaoChange(Sender: TObject);
-Var
-  MySql: String;
 begin
   CorSelecaoTabSheet(PC_Salao);
 
@@ -8681,7 +8684,6 @@ procedure TFrmSalao.Bt_ServNovoClick(Sender: TObject);
 Var
   MySql: String;
   iCodHab: Integer;
-  sAtivo: String;
 begin
   Dbg_Servicos.SetFocus;
 
@@ -9769,9 +9771,22 @@ begin
 
   sCodLoja:=FormatFloat('00',EdtCodLoja.AsInteger);
 
-  bCodAuto:=True;
-  if Application.MessageBox('Buscar Código Automático na Loja ??', 'ATENÇÃO !!', 36)=IdNo Then
-   bCodAuto:=False;
+  bCodAuto:=False;
+  If EdtCodLoja.AsInteger<>11 Then
+   Begin
+     bCodAuto:=True;
+     if Application.MessageBox('Buscar Código Automático na Loja ??', 'ATENÇÃO !!', 36)=IdNo Then
+      bCodAuto:=False;
+   End
+  Else
+   Begin
+     If Application.MessageBox('NOVO PROFISSIONAL deve ser Cadastrado'+cr+
+                               'Primeiramente no SIDICOM !!'+cr+
+                               'Após Utilize o Código Gerado no SIDICOM'+cr+
+                               'para Cadastrar no GERENCIADOR !!'+cr+cr+
+                               'VOCÊ JÁ CONTÉM O NOVO CÓDIGO DO PROFISSIONAL ???', 'ATENÇÃO - SALÃO CANOAS !!', 292)=idNo Then Exit;
+
+   End; // If EdtCodLoja.AsInteger<>'11' Then
 
   // Codigo Automático - Busca na Loja =========================================
   sCodigo:='';
@@ -14255,19 +14270,6 @@ begin
   If DMSalao.CDS_V_PagtoProf.IsEmpty Then
    Exit;
 
-// OdirApagar - 07/03/2017
-//  If EdtPagtoCodLoja.AsInteger=11 Then
-//  Begin
-//    PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
-//    MessageBox(Handle, pChar('==============================================='+cr+cr+
-//                             'ESTA LOJA NO GERENCIADOR BELSHOP'+cr+cr+
-//                             'NÃO ESTA VINCULADA COM A LOJA SIDICOM - CANOAS'+cr+cr+
-//                             'SEM POSSIBILIDADES DE BUSCA DE MOVIMENTOS DE SERVIÇOS'+cr+cr+
-//                             'DO SALÃO NO SIDICOM !!'+cr+cr+
-//                             '==============================================='
-//                             ), 'ATENÇÃO !!', MB_ICONERROR);
-//  End; // If EdtPagtoCodLoja.AsInteger=11 Then
-
   If bgPeriodoForcado Then
   Begin
     If msg('Período de Calculo foi Forçado...'+cr+'Fora do Padrão !!'+cr+cr+'Deseja Continuar ??','C')=2 Then
@@ -15845,6 +15847,10 @@ begin
 
         MySql:=' SELECT pf.cod_loja, pf.cod_profissional, pf.des_profissional,'+
                ' pf.num_sindicato Insc_SINDICATO, ''TAXA SINDICATO'' Des_docto,'+
+
+               ' Cast(lpad(extract(Year from pf.dta_ini_contrato),4,''0'') as varchar(4)) Ano_inicio,'+
+               ' Cast(lpad(extract(Year from current_date),4,''0'') as varchar(4)) Ano_Atual,'+
+
                ' (CAST(LPAD(EXTRACT(MONTH FROM CAST('+QuotedStr(f_Troca('/','.',f_Troca('-','.',DtaEdt_INSS_PSVenc.Text)))+' AS DATE)),2,''0'') AS VARCHAR(2))) Mes,'+
                ' (CAST(LPAD(EXTRACT(YEAR FROM CAST('+QuotedStr(f_Troca('/','.',f_Troca('-','.',DtaEdt_INSS_PSVenc.Text)))+' AS DATE)),4,''0'') AS VARCHAR(4))) ANO,'+
                ' pf.vlr_taxa_sindicato, pf.vlr_taxa_sindicato Vlr_Apagar'+
@@ -15864,7 +15870,7 @@ begin
                '                 AND   pl.tp_pessoa=1'+
                '                 AND   pl.vlr_pago<>0'+
                '                 AND   pl.ind_debcred='+QuotedStr('S')+
-               '                 AND  pl.dta_vencimento='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DtaEdt_INSS_PSVenc.Text)))+')'+
+               '                 AND   pl.dta_vencimento='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DtaEdt_INSS_PSVenc.Text)))+')'+
 
                ' ORDER BY 3';
       End; // If sgINSS_PS='S' Then

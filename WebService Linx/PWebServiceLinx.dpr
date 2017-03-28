@@ -11,6 +11,7 @@ uses
 {$R *.res}
 
 begin
+  Application.ShowMainForm:=False;
   Application.Initialize;
   Application.CreateForm(TDMLinxWebService, DMLinxWebService);
   Application.CreateForm(TFrmWebServiceLinx, FrmWebServiceLinx);

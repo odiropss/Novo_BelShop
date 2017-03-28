@@ -57,8 +57,9 @@ Const
 var
   DMGraficos: TDMGraficos;
 
-  sgPath_Local: String;
-
+  sgPath_Local, // Somente a Pasta do Executável
+  sgPastaExecServer, // Somente a Pasta do Executável no Servidor
+  sgPastaWebService, // Pasta WebService
   sgTpConexao, sgNomeServidor, sgCodLojaUnica: String;
 
   sgCompMaster, sgComServer: String; // Dados dos Servidores, Computador Local
@@ -159,6 +160,20 @@ Begin
   sgFTPUser         :=AnsiUpperCase(DMGraficos.CDS_Busca.FieldByName('FTP_User').AsString);
   sgFTPSenha        :=AnsiUpperCase(DMGraficos.CDS_Busca.FieldByName('FTP_Password').AsString);
   sgPastaAreaFTP    :='C:\Projetos\BelShop\AreaFTP\';
+
+
+  // Pasta Executavel no Servidor ==============================================
+  If (Pos(':',sgIPServer)<>0) Or (Copy(sgIPServer,1,2)='\\') Then
+   sgPastaExecServer:=IncludeTrailingPathDelimiter(sgIPServer)+'Projetos\BelShop\'
+  Else
+   sgPastaExecServer:=IncludeTrailingPathDelimiter('\\'+sgIPServer)+'Projetos\BelShop\';
+
+  // Pasta Executavel WebService ===============================================
+  sgPastaWebService:=sgPastaExecServer;
+  if DirectoryExists(IncludeTrailingPathDelimiter(sgPastaWebService)+'WebService Linx\') then
+   sgPastaWebService:=IncludeTrailingPathDelimiter(sgPastaWebService)+'WebService Linx\'
+  Else
+   sgPastaWebService:=IncludeTrailingPathDelimiter(sgPastaWebService)+'Fontes\WebService Linx\';
 
   MySql:=' Select *'+
          ' From EMP_Conexoes e'+

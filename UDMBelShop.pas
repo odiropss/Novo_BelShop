@@ -1171,6 +1171,9 @@ type
     CDS_EmpresaDTA_ULT_ATUAL_VEND: TDateField;
     CDS_EmpresaCOD_LINX: TIntegerField;
     CDS_EmpresaDTA_INICIO_LINX: TDateField;
+    CDS_ObjetivosEmpresasCOD_FILIAL: TStringField;
+    CDS_ObjetivosEmpresasRAZAO_SOCIAL: TStringField;
+    CDS_ObjetivosEmpresasCOD_LINX: TIntegerField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -1253,9 +1256,11 @@ var
   sPath_Local, // Somente a Pasta do Executável
   sgPastaExecutavelServer: String; // Pasta e Executável no Servidor (FrmBelShop)
 
-  sgNomeServidor: String;
   sgCodLojaUnica: String;
   sgPCTConect_IB: String;
+  sgNomeServidor: String; // Cointem IP ou Nome do Servidor
+                          // Contem Drive onde esta a Plasta Principal (BelShop).
+                          // \\192.168.0.252\E:\
 
   sgTpConexao   : String;
   igTentaConexao: Integer;
@@ -1634,7 +1639,6 @@ Procedure TDMBelShop.SelecionaOCRomaneiro(sTipo: String; bMarcar, bAberto: Boole
 Var
   s: String;
   bOK: Boolean;
-  i: Integer;
 Begin
   If CDS_AComprarOCs.IsEmpty Then
    Exit;
@@ -1643,7 +1647,6 @@ Begin
   If sTipo='TR' Then s:='SEM Romaneio(s) Selecionado(s) !!';
 
   bgSiga:=False;
-  i:=0;
 
   CDS_AComprarOCs.First;
   While Not CDS_AComprarOCs.Eof do
@@ -2730,7 +2733,9 @@ Var
   i: Integer;
 Begin
   // sNumerado =  Codigo do Numerado
-  // sAdicionar = somar numerado (S) Soma (N) Não Soma
+  // sAdicionar = Somar Numerado:
+  //                      - (S) Soma
+  //                      - (N) Não Soma
 
   Result:=False;
 
@@ -3616,7 +3621,6 @@ Var
   sArquivo: TStringList;
   sLinha: String;
   sNewIP: String;
-  MySql: String;
   b, bTestaConexao: Boolean;
 begin
 // odir - Apresenta Erro ao sair do Programa
