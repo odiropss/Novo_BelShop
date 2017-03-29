@@ -608,7 +608,7 @@ Var
 
   MySql: String;
 
-  bUmaVez, 
+  bUmaVez,
   bSiga: Boolean;
 
   dDtaUltAtual, dDtaHoje: TDate;
@@ -616,45 +616,55 @@ Var
 
   hHrInicio: String; // Não permite rodar com Parametro entre as 16 e 18 Horas - Existe um processo rodando
 Begin
-
   // Parametro: Somente o Metodo Enviado =======================================
   sgParametroMetodo   :=''; // Metodo a Processar
   sgParametroCodLoja  :=''; // Loja a Processar
   sgParametroMetodos  :=''; // Pasta Metodo  - \\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\
   sgParametroRetornos :=''; // Pasta Retorno - \\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\
 
-  // OdirAqui - Utiliza Parametro
+  // Le Parametros Enviado =====================================================
+  sgParametroMetodo:=ParamStr(1);
+
+  // OdirAqui - Utiliza Parametro ==============================================
   // Estrutura (Paramentros Separedos por Espaço ' ';
   // NomeMetodo Codigo_Loja_Linx Pasta_Metodos Pasta_Retornos
-  // sgParametroMetodo:='LinxMovimento;3;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;';
-  // sgParametroMetodo:='LinxLojas;4;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;';
-  // sgParametroMetodo:='LinxMovimento;15;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;';
-  // ======>> Este esta OK <<============
-  // sgParametroMetodo:='LinxLojas;15;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;';
-  // Parametro: Somente o Metodo Enviado =======================================
+  // >>>>>>>>>>>>>> EXEMPLO PELO PARAMETRO <<<<<<<<<<<
+  // \\192.168.0.252\Projetos\BelShop\WebService Linx\PWebServiceLinx.exe LinxMovimento 15 "\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\" "\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\"
+  // >>>>>>>>>>>>>> EXEMPLO PELO ODIR (Separados por (;) <<<<<<<<<<<
+  // sgParametroMetodo:='\\192.168.0.252\Projetos\BelShop\WebService Linx\PWebServiceLinx.exe LinxMovimento;15;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;';
 
   // Pasta Executável PWebServiceLinx Não Rede
+  // OdirAqui
   sgPastaExecutavel:=IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName));
 
   // Parametros na Rede
-  sgParametroMetodo:=ParamStr(1);
   If Trim(sgParametroMetodo)<>'' Then
   Begin
-    hHrInicio:=TimeToStr(DataHoraServidorFI(DMLinxWebService.SDS_DtaHoraServidor));
-    If (StrToTime(hHrInicio)>StrToTime('16:00:00')) and (StrToTime(hHrInicio)<StrToTime('18:00:00')) Then
+    // Executa pelo Parametro ==================================================
+    If Trim(ParamStr(1))<>'' Then
     Begin
-      Application.Terminate;
-      Exit;
+      sgParametroMetodo  :=Trim(ParamStr(1));
+      sgParametroCodLoja :=Trim(ParamStr(2));
+      sgParametroMetodos :=Trim(ParamStr(3));
+      sgParametroRetornos:=Trim(ParamStr(4));
     End;
-    sgParametroMetodo  :=Trim(ParamStr(1));
-    sgParametroCodLoja :=Trim(ParamStr(2));
-    sgParametroMetodos :=Trim(ParamStr(3));
-    sgParametroRetornos:=Trim(ParamStr(4));
+
+    // Executa pelo Odir =======================================================
+    If Trim(ParamStr(1))='' Then
+    Begin
+      sgParametroCodLoja :=Separa_String(Trim(sgParametroMetodo),2);
+      sgParametroMetodos :=Separa_String(Trim(sgParametroMetodo),3);
+      sgParametroRetornos:=Separa_String(Trim(sgParametroMetodo),4);
+      sgParametroMetodo  :=Separa_String(Trim(sgParametroMetodo),1); // Ultimo Devido a substituição do
+                                                                     // Conteudo da Variavel sgParametroMetodo
+    End;
 
     sgPastaExecutavel:=Copy(sgParametroMetodos,1,Pos('Metodos\', sgParametroMetodos)-1);
   End;
-//odirapagar
+
+  //odirAqui
 //  ShowMessage('Metodo: '+sgParametroMetodo);
+//  ShowMessage('demonstracao '+sgParametroMetodo);
 //  ShowMessage('Loja: '+sgParametroCodLoja);
 //  ShowMessage('Pasta Metodos: '+sgParametroMetodos);
 //  ShowMessage('Pasta Retornos: '+sgParametroRetornos);
@@ -728,6 +738,14 @@ Begin
      sgArqProc:=sgPastaRetornos+'@LinxWebService_NAO_CONECTOU.txt';
 
     SalvaProcessamento('Erro de Conexão!! '+sgMensagem);
+    Application.Terminate;
+    Exit;
+  End;
+
+  // Se Periodo Já em Execução Encerra =========================================
+  hHrInicio:=TimeToStr(DataHoraServidorFI(DMLinxWebService.SDS_DtaHoraServidor));
+  If (StrToTime(hHrInicio)>StrToTime('16:00:00')) and (StrToTime(hHrInicio)<StrToTime('18:00:00')) Then
+  Begin
     Application.Terminate;
     Exit;
   End;

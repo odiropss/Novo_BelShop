@@ -601,7 +601,7 @@ object FrmGrafico: TFrmGrafico
         BevelOuter = bvNone
         TabOrder = 3
         object Panel3: TPanel
-          Left = 122
+          Left = 2
           Top = 17
           Width = 120
           Height = 17
@@ -617,8 +617,8 @@ object FrmGrafico: TFrmGrafico
           TabOrder = 0
         end
         object Panel5: TPanel
-          Left = 2
-          Top = 0
+          Left = 122
+          Top = 17
           Width = 120
           Height = 18
           BevelInner = bvLowered
@@ -634,7 +634,7 @@ object FrmGrafico: TFrmGrafico
         end
         object Panel4: TPanel
           Left = 2
-          Top = 17
+          Top = 0
           Width = 120
           Height = 16
           BevelInner = bvLowered

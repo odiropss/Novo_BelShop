@@ -192,6 +192,7 @@ Begin
    Begin
      DMGraficos.CDS_V_Grafico.Insert;
      DMGraficos.CDS_V_GraficoCOD_LOJA.AsString:='Bel_R1';
+     DMGraficos.CDS_V_GraficoCOD_LINX.AsInteger:=0;
 
      DMGraficos.CDS_V_GraficoVLR_TOTAL.AsCurrency:=0;
      DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsCurrency:=0;
@@ -223,6 +224,7 @@ Begin
    Begin
      DMGraficos.CDS_V_Grafico.Insert;
      DMGraficos.CDS_V_GraficoCOD_LOJA.AsString:='Bel_R2';
+     DMGraficos.CDS_V_GraficoCOD_LINX.AsInteger:=0;
 
      DMGraficos.CDS_V_GraficoVLR_TOTAL.AsCurrency:=0;
      DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsCurrency:=0;
@@ -254,6 +256,7 @@ Begin
    Begin
      DMGraficos.CDS_V_Grafico.Insert;
      DMGraficos.CDS_V_GraficoCOD_LOJA.AsString:='Bel_R3';
+     DMGraficos.CDS_V_GraficoCOD_LINX.AsInteger:=0;
 
      DMGraficos.CDS_V_GraficoVLR_TOTAL.AsCurrency:=0;
      DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsCurrency:=0;
@@ -285,6 +288,7 @@ Begin
    Begin
      DMGraficos.CDS_V_Grafico.Insert;
      DMGraficos.CDS_V_GraficoCOD_LOJA.AsString:='Bel_RE';
+     DMGraficos.CDS_V_GraficoCOD_LINX.AsInteger:=0;
 
      DMGraficos.CDS_V_GraficoVLR_TOTAL.AsCurrency:=0;
      DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsCurrency:=0;
@@ -395,6 +399,8 @@ Begin
       sParametro:=sParametro+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Metodos')+'"'; // Pasta dos Metodos
       sParametro:=sParametro+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Retornos')+'"'; // Pasta dos Retornos
 
+      // OdirAqui - Parametro Enviado
+      // ShowMessage(sParametro);
       CreateProcessSimple(sParametro);
 
       //========================================================================
@@ -438,7 +444,6 @@ Begin
     //==========================================================================
     // Loja é Linx - FIM =======================================================
     //==========================================================================
-
 
     //==========================================================================
     // Processa com Resultado do SIDICOM - INICIO ==============================
@@ -559,7 +564,6 @@ Begin
             DMGraficos.CDS_Busca.EnableControls;
             DMGraficos.CDS_Busca.Close;
           End; // If DMGraficos.CDS_V_GraficoCONECTADO.AsString='N' Then
-
 
           DMGraficos.CDS_V_Grafico.Edit;
 
@@ -795,7 +799,7 @@ End; // Busca Vendas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmGrafico.Grafico(CDS: TClientDataSet; TipoGraf, Titulo: String);
 Var
   cPerMetaAceita: Currency;
-  s : String;
+  s, sLoja : String;
   Cor: TColor;
 Begin
 
@@ -919,6 +923,12 @@ Begin
   CDS.DisableControls;
   While Not CDS.Eof do
   Begin
+    sLoja:=CDS.FieldByName('COD_LOJA').AsString;
+    If CDS.FieldByName('Cod_Linx').AsInteger<>0 Then
+     sLoja:='Linx_'+FormatFloat('00',CDS.FieldByName('Cod_Linx').AsInteger);
+
+
+
     // VERMELHO - Meta Abaixo do Limite Aceitável ==============================
     If CDS.FieldByName('PER_ALCANCADO').AsCurrency<0 Then
     Begin
@@ -950,15 +960,22 @@ Begin
     End;
 
     If TipoGraf='B' Then
-     gsBarra.Add(CDS.FieldByName('PER_ALCANCADO').AsCurrency, CDS.FieldByName('COD_LOJA').AsString, Cor);
+     gsBarra.Add(CDS.FieldByName('PER_ALCANCADO').AsCurrency, sLoja, Cor);
+// odirapagar - 29/03/2017
+//     gsBarra.Add(CDS.FieldByName('PER_ALCANCADO').AsCurrency, CDS.FieldByName('COD_LOJA').AsString, Cor);
+
 
     // Grava Series (Linha) -------------------------------------
     If TipoGraf='L' Then
-     gsLinha.Add(CDS.FieldByName('PER_ALCANCADO').AsCurrency, CDS.FieldByName('COD_LOJA').AsString, Cor);
+     gsLinha.Add(CDS.FieldByName('PER_ALCANCADO').AsCurrency, sLoja, Cor);
+// odirapagar - 29/03/2017
+//    gsLinha.Add(CDS.FieldByName('PER_ALCANCADO').AsCurrency, CDS.FieldByName('COD_LOJA').AsString, Cor);
 
     // Grava Series (Pizza) -------------------------------------
     If TipoGraf='P' Then
-     gsPizza.Add(CDS.FieldByName('PER_ALCANCADO').AsCurrency, CDS.FieldByName('COD_LOJA').AsString, Cor);
+     gsPizza.Add(CDS.FieldByName('PER_ALCANCADO').AsCurrency, sLoja, Cor);
+// odirapagar - 29/03/2017
+//     gsPizza.Add(CDS.FieldByName('PER_ALCANCADO').AsCurrency, CDS.FieldByName('COD_LOJA').AsString, Cor);
 
     CDS.Next;
   End; // While Not CDS.Eof do
@@ -1063,7 +1080,8 @@ Begin
    sgPerLimite:='99';
 
   // Busca Objetivo ============================================================
-  MySql:=' SELECT ''Bel_''||em.cod_filial Cod_loja, ob.cod_objetivo, ob.des_objetivo,'+
+  MySql:=' SELECT ''Bel_''||em.cod_filial Cod_Loja, em.Cod_Linx,'+
+         ' ob.cod_objetivo, ob.des_objetivo,'+
          ' COALESCE(om.obj_mes'+FormatFloat('00',wgMesH)+',0) Objetivo,'+
 
          ' ROUND((COALESCE(om.obj_mes'+FormatFloat('00',wgMesH)+',0)/'+
@@ -1100,6 +1118,7 @@ Begin
      Begin
        DMGraficos.CDS_V_Grafico.Insert;
        DMGraficos.CDS_V_GraficoCOD_LOJA.AsString:=DMGraficos.CDS_Busca.FieldByName('Cod_Loja').AsString;
+       DMGraficos.CDS_V_GraficoCOD_LINX.AsInteger:=DMGraficos.CDS_Busca.FieldByName('Cod_Linx').AsInteger;
 
        DMGraficos.CDS_V_GraficoVLR_TOTAL.AsFloat:=0;
        DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsFloat:=0;
@@ -1454,12 +1473,14 @@ Var
 
   sCodObjetivo, sHoraPausa, sPerLimite: string;
 begin
-
   If sgParametro='Comercial' Then
   Begin
     Application.Terminate;
     exit;
   End;
+
+  If msg('Deseja Realmente Alterar'+cr+cr+'as CONFIGURAÇÕES ??','C')=2 Then
+   Exit;
 
   // If sgParametro='' Then ====================================================
   bgExiste:=True;

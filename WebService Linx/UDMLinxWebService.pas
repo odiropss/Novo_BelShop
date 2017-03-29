@@ -57,9 +57,7 @@ Var
   b: Boolean;
   Flags : Cardinal;
 begin
-
   Result:=True;
-//ShowMessage('001');
   If SQLC.Connected Then
    SQLC.Connected:=False;
 
@@ -92,7 +90,6 @@ begin
     Except // finally
     End;
   end; // with SQLC do
-//ShowMessage('002');
 
 End; // Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

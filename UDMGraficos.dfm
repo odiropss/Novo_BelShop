@@ -123,5 +123,8 @@ object DMGraficos: TDMGraficos
       FieldName = 'CONECTADO'
       Size = 1
     end
+    object CDS_V_GraficoCOD_LINX: TIntegerField
+      FieldName = 'COD_LINX'
+    end
   end
 end

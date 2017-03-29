@@ -26,6 +26,7 @@ type
     CDS_V_GraficoVLR_SALAO_OBJETIVO: TCurrencyField;
     CDS_V_GraficoPER_SALAO: TCurrencyField;
     CDS_V_GraficoCONECTADO: TStringField;
+    CDS_V_GraficoCOD_LINX: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir ====================================================================

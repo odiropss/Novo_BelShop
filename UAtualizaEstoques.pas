@@ -238,7 +238,9 @@ begin
 
     sHora:=TimeToStr(Time);
 
-    // Conecta Empresa =======================================================
+    // =========================================================================
+    // SIDICOM =================================================================
+    // =========================================================================
     bSiga:=True;
     If iCodLinx=0 Then
     Begin
@@ -255,15 +257,20 @@ begin
         bSiga:=False;
       End; // Try
     End; // If iCodLinx=0 Then
+    // SIDICOM =================================================================
 
-    If bSiga Then // Conexão
+    // Entra no Processamento ==================================================
+    If bSiga Then
     Begin
-      // =====================================================================
-      // Busca ESTOQUE =======================================================
-      // =====================================================================
+      // =======================================================================
+      // Busca ESTOQUE =========================================================
+      // =======================================================================
       DateSeparator:='.';
       DecimalSeparator:='.';
 
+      // =======================================================================
+      // SIDICOM ===============================================================
+      // =======================================================================
       If iCodLinx=0 Then
       Begin
         // Cria Query da Empresa --------------------------------------
@@ -305,9 +312,11 @@ begin
           If i>2 Then
            Break;
         End; // While Not bSiga do
-      End; // If iCodLinx=0 Then
+      End; // If iCodLinx=0 Then // SIDICOM ====================================
 
-      // Loja 18 MicroVix ==========================================================
+      // =======================================================================
+      // LINX ==================================================================
+      // =======================================================================
       If iCodLinx<>0 Then
       Begin
         MySql:=' SELECT '+
@@ -341,10 +350,10 @@ begin
         DMAtualizaEstoques.CDS_LojaLinx.Close;
         DMAtualizaEstoques.SDS_LojaLinx.CommandText:=MySql;
         DMAtualizaEstoques.CDS_LojaLinx.Open;
-      End; // If iCodLinx<>0 Then
+      End; // If iCodLinx<>0 Then // LINX ======================================
 
-      // Processamento  -------------------------------------------
-      If bSiga Then // Consulta Transferencias de Entrada
+      // Processamento =========================================================
+      If bSiga Then
       Begin
         Try
           // Monta Transacao  -------------------------------------
@@ -446,18 +455,15 @@ begin
 
           End; // on e : Exception do
         End; // Try
-      End; // If bSiga Then // Consulta Transferencias de Entrada
+      End; // If bSiga Then // Processamento ===================================
 
       DateSeparator:='/';
       DecimalSeparator:=',';
-      // =====================================================================
-      // Busca ESTOQUE =======================================================
-      // =====================================================================
 
-      // Fecha Conexão =======================================================
+      // Fecha Conexão =========================================================
       If iCodLinx=0 Then // SIDICOM
        ConexaoEmpIndividual('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, 'F');
-    End; // If bSiga Then // Conexão
+    End; // If bSiga Then // Entra no Processamento ============================
 
     DMAtualizaEstoques.CDS_EmpProcessa.Next;
   End; // While Not DMAtualizaEstoques.CDS_EmpProcessa.Eof do

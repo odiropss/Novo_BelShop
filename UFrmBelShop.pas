@@ -11213,6 +11213,7 @@ Begin
       // Busca Comprovantes e Atualiza Planilha ============================
       For i:=0 to memo2.Lines.Count-1 do
       Begin
+        //(ODIRK3) - AtualizaValorObjetivosMetasMesesOutros;
         // Monta SQL --------------------------------------------
         MySql:=' Select'+
                ' Cast(lpad(extract(month from m.datacomprovante),2,''0'') as varchar(2))||''/''||'+
@@ -11530,6 +11531,7 @@ Begin
     // Inicia Processamento ================================================
     If bSiga Then // Empresa Conectada
     Begin
+      //(ODIRK2) - AtualizaValorObjetivosMetasMesesAvarias;
       // Cria Query da Empresa --------------------------------------
       CriaQueryIB('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString,
                   'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString,
@@ -13430,7 +13432,7 @@ Var
 Begin
   // Array para Formulas =======================================================
   Array_Campos:=nil;
-  SetLength(Array_Campos,32); 
+  SetLength(Array_Campos,32);
 
   // Localiza Empresa na Planilha ==============================================
   iCodObj:=DMBelShop.CDS_ObjetivosCOD_OBJETIVO.AsInteger;
@@ -13462,6 +13464,7 @@ Begin
       // Busca Comprovantes e Atualiza Planilha ============================
       For i:=0 to memo2.Lines.Count-1 do
       Begin
+        //(ODIRK1) - AtualizaValorObjetivosMetasDias;
         // Monta SQL --------------------------------------------
         MySql:=' Select'+
                ' Cast(lpad(extract(day from m.datacomprovante),2,''0'') as varchar(2)) Dia,';
@@ -13473,7 +13476,7 @@ Begin
 
                                ' Coalesce((Count(case When m.codcomprovante=''002'' then mp.codproduto End)-'+
                                '           Count(case When m.codcomprovante=''007'' then mp.codproduto End)),0) TOT_ITENS,'+
-// alterado em 04/03/2013                              
+// alterado em 04/03/2013
 //                               ' Coalesce(('+
 //                               '           (Sum(Coalesce(mp.valtotal,0)))/'+
 //                               '           ((Count(distinct case When m.codcomprovante=''002'' then m.chavenf End)-'+
