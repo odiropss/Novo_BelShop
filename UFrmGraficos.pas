@@ -97,7 +97,8 @@ var
 
   bgParaMemo, // Se para While Quando mgLojas Estiver Vazio;
   bgSiga, // Se para o Processamento
-  bgSair, bgExiste: Boolean;
+  bgSair, bgExiste,
+  bgSalao: Boolean;
 
   sgTitulo: String;
   sgTempoPausa: String;
@@ -117,13 +118,13 @@ var
 
   sgR1, // => Codigo das Lojas que Participam do Resultado 1 = Total de Vendas Loja e Salão
   sgR2, // => Codigo das Lojas que Participam do Resultado 2 = Total de Vendas Loja e Salão
-  sgR3, // => Codigo das Lojas que Participam do Resultado 3 = Total de Vendas Salão
+  sgR3, // => Codigo das Lojas que == NÃO == Participam do Resultado 3 = Total de Vendas Salão
   sgRE, // => Codigo das Lojas que == NÃO == Participam do Resultado Total da Empresa = Total de Vendas Loja e Salão
   sgCodObjetivo, sgPerLimite: String;
 
 implementation
 
-uses UDMConexoes, UDMGraficos, DK_Procs1;
+uses UDMConexoes, UDMGraficos, DK_Procs1, StrUtils;
 
 {$R *.dfm}
 
@@ -324,7 +325,8 @@ Var
 
   // Lojas Linx =========================
   sParametro,
-  sCodLojaLinx, sVlrLinx,
+  sCodLojaLinx,
+  sVlrLinx, sVlrSalao,
   sDtaComecoLinx,
   sDtaIncioLinx, sDtaFimLinx: String;
   bSoLinx: Boolean;
@@ -371,6 +373,10 @@ Begin
     sCodLoja:=DMGraficos.CDS_V_GraficoCOD_LOJA.AsString;
     sCodLoja:=Copy(sCodLoja,5,Length(sCodLoja));
 
+    // Verifica se a Loja tem Salão ============================================
+    sVlrSalao:='0.00';
+    bgSalao:=(AnsiContainsStr(sgR3, sCodLoja)=False);
+
     //==========================================================================
     // Loja é Linx - INICIO ====================================================
     //==========================================================================
@@ -406,16 +412,17 @@ Begin
       //========================================================================
       // Atualiza Movimentos Linx - FIM ========================================
       //========================================================================
-
       If (StrToDate(sDtaComecoLinx)<=StrToDate(sgDtaFim)) Then
       Begin
         If (StrToDate(sDtaComecoLinx)<=StrToDate(sgDtaInicio)) Then
          Begin
            sDtaIncioLinx:=sgDtaInicio;
            bSoLinx:=True;
-         End
+         End                           
         Else
-         sDtaIncioLinx:=sDtaComecoLinx;
+         Begin
+           sDtaIncioLinx:=sDtaComecoLinx;
+         End;
 
         sDtaFimLinx:=sgDtaFim;
       End; // If (StrToDate(sDtaComecoLinx)<=StrToDate(sgDtaFim)) Then
@@ -448,7 +455,7 @@ Begin
     //==========================================================================
     // Processa com Resultado do SIDICOM - INICIO ==============================
     //==========================================================================
-    If (StrToIntDef(sCodLoja,0)<>0) And (Not bSoLinx) Then // Não Processa Grupos
+    If ((StrToIntDef(sCodLoja,0)<>0) And (Not bSoLinx)) Or (bgSalao) Then // Não Processa Grupos
     Begin
       IBDB:='IBDB_'+sCodLoja;
       IBT :='IBT_'+sCodLoja;
@@ -476,16 +483,28 @@ Begin
           End; // While Not b do
 
           // Faturamento do Mes das Lojas ======================================
-          MySql:=' SELECT'+
-                 ' COALESCE(SUM(COALESCE(mp.valtotal,0)),0)+'+f_Troca(',','.',sVlrLinx)+' VLR_TOTAL,'+
-                 ' COALESCE(SUM(CASE'+
-                 '                WHEN pr.principalfor IN (''000500'',''000883'') THEN'+
-                 '                   COALESCE(mp.valtotal,0)'+
-                 '              ELSE'+
-                 '                   0'+
-                 '              END),0) VLR_SALAO'+
+          MySql:=' SELECT';
 
-                 ' FROM MCLI mo, MCLIPRO mp, PRODUTO pr'+
+                 If Not bSoLinx Then
+                  MySql:=
+                   MySql+' COALESCE(SUM(COALESCE(mp.valtotal,0)),0)+'+f_Troca(',','.',sVlrLinx)+' VLR_TOTAL';
+
+                 If (Not bSoLinx) and (bgSalao) Then
+                  MySql:=
+                   MySql+',';
+
+                 If bgSalao Then
+                  MySql:=
+                   MySql+' COALESCE(SUM(CASE'+
+                         '                WHEN pr.principalfor IN (''000500'',''000883'') THEN'+
+                         '                   COALESCE(mp.valtotal,0)'+
+                         '              ELSE'+
+                         '                   0'+
+                         '              END)'+
+                         ' ,0) VLR_SALAO';
+
+          MySql:=
+           MySql+' FROM MCLI mo, MCLIPRO mp, PRODUTO pr'+
                  ' WHERE mo.chavenf=mp.chavenf'+
                  ' AND   mp.codproduto=pr.codproduto'+
                  ' AND   mo.codfilial='+QuotedStr(sCodLoja);
@@ -509,7 +528,9 @@ Begin
           // Busca Objetivos da Loja Conectada =================================
           If DMGraficos.CDS_V_GraficoCONECTADO.AsString='N' Then
           Begin
-            MySql:=' SELECT om.cod_objetivo, ob.des_objetivo,'+
+            MySql:=' SELECT om.cod_objetivo,'+
+                   //odirapagar  -30/03/2017
+                   // ob.des_objetivo,'+
                    ' COALESCE(om.obj_mes'+FormatFloat('00',wgMesH)+',0) Objetivo,'+
 
                    ' ROUND((COALESCE(om.obj_mes'+FormatFloat('00',wgMesH)+',0)/'+
@@ -520,7 +541,7 @@ Begin
                                             IntToStr(igNumDiasUteisHoje)+'),2) Objetivo_Hoje'+
 
                    ' FROM FIN_OBJETIVOS_METAS om'+
-                   ' WHERE om.cod_objetivo in ('+sgCodObjetivo+', 5)'+
+                   ' WHERE om.cod_objetivo in ('+sgCodObjetivo+', 5)'+ // 5 = Venda Salão
                    ' AND   om.des_ano='+VarToStr(wgAnoH)+
                    ' AND   om.cod_filial='+QuotedStr(sCodLoja);
             DMGraficos.CDS_Busca.Close;
@@ -568,24 +589,30 @@ Begin
           DMGraficos.CDS_V_Grafico.Edit;
 
           // Atualiza Valor Total de Venda =====================================
-          DMGraficos.CDS_V_GraficoPER_ALCANCADO.AsFloat:=0;
-          DMGraficos.CDS_V_GraficoVLR_TOTAL.AsFloat:=IBQ_Filial.FieldByName('VLR_TOTAL').AsFloat;
-
-          If (DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsFloat<>0) and (DMGraficos.CDS_V_GraficoVLR_TOTAL.AsFloat<>0) Then
+          If Not bSoLinx Then
           Begin
-            c:=(((DMGraficos.CDS_V_GraficoVLR_TOTAL.AsFloat*100)/DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsFloat)-100);
-            DMGraficos.CDS_V_GraficoPER_ALCANCADO.AsFloat:=Round_5(c,2);
-          End;
+            DMGraficos.CDS_V_GraficoPER_ALCANCADO.AsFloat:=0;
+            DMGraficos.CDS_V_GraficoVLR_TOTAL.AsFloat:=IBQ_Filial.FieldByName('VLR_TOTAL').AsFloat;
+
+            If (DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsFloat<>0) and (DMGraficos.CDS_V_GraficoVLR_TOTAL.AsFloat<>0) Then
+            Begin
+              c:=(((DMGraficos.CDS_V_GraficoVLR_TOTAL.AsFloat*100)/DMGraficos.CDS_V_GraficoVLR_OBJETIVO.AsFloat)-100);
+              DMGraficos.CDS_V_GraficoPER_ALCANCADO.AsFloat:=Round_5(c,2);
+            End;
+          End; // If Not bSoLinx Then
 
           // Atualiza Valor Total do Salão =====================================
-          DMGraficos.CDS_V_GraficoPER_SALAO.AsFloat:=0;
-          DMGraficos.CDS_V_GraficoVLR_SALAO.AsFloat:=IBQ_Filial.FieldByName('VLR_SALAO').AsFloat;
-
-          If (DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat<>0) and (DMGraficos.CDS_V_GraficoVLR_SALAO.AsFloat<>0) Then
+          If bgSalao Then
           Begin
-            c:=(((DMGraficos.CDS_V_GraficoVLR_SALAO.AsFloat*100)/DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat)-100);
-            DMGraficos.CDS_V_GraficoPER_SALAO.AsFloat:=Round_5(c,2);
-          End;
+            DMGraficos.CDS_V_GraficoPER_SALAO.AsFloat:=0;
+            DMGraficos.CDS_V_GraficoVLR_SALAO.AsFloat:=IBQ_Filial.FieldByName('VLR_SALAO').AsFloat;
+
+            If (DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat<>0) and (DMGraficos.CDS_V_GraficoVLR_SALAO.AsFloat<>0) Then
+            Begin
+              c:=(((DMGraficos.CDS_V_GraficoVLR_SALAO.AsFloat*100)/DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat)-100);
+              DMGraficos.CDS_V_GraficoPER_SALAO.AsFloat:=Round_5(c,2);
+            End;
+          End; // If bgSalao Then
 
           DMGraficos.CDS_V_Grafico.Post;
           IBQ_Filial.Close;
@@ -655,7 +682,11 @@ Begin
       // Busca Objetivos da Loja Conectada =================================
       If DMGraficos.CDS_V_GraficoCONECTADO.AsString='N' Then
       Begin
-        MySql:=' SELECT om.cod_objetivo, ob.des_objetivo,'+
+        MySql:=' SELECT om.cod_objetivo,'+
+               // odirapagar  -30/03/2017
+               // ob.des_objetivo,'+
+               // ' COALESCE(ob.obj_mes'+FormatFloat('00',wgMesH)+',0) Objetivo,'+
+
                ' COALESCE(om.obj_mes'+FormatFloat('00',wgMesH)+',0) Objetivo,'+
 
                ' ROUND((COALESCE(om.obj_mes'+FormatFloat('00',wgMesH)+',0)/'+
@@ -666,7 +697,7 @@ Begin
                                         IntToStr(igNumDiasUteisHoje)+'),2) Objetivo_Hoje'+
 
                ' FROM FIN_OBJETIVOS_METAS om'+
-               ' WHERE om.cod_objetivo in ('+sgCodObjetivo+', 5)'+
+               ' WHERE om.cod_objetivo in ('+sgCodObjetivo+', 5)'+ // 5 = Venda Salão
                ' AND   om.des_ano='+VarToStr(wgAnoH)+
                ' AND   om.cod_filial='+QuotedStr(sCodLoja);
         DMGraficos.CDS_Busca.Close;
@@ -723,15 +754,17 @@ Begin
         DMGraficos.CDS_V_GraficoPER_ALCANCADO.AsFloat:=Round_5(c,2);
       End;
 
-      // Atualiza Valor Total do Salão =====================================
-      DMGraficos.CDS_V_GraficoPER_SALAO.AsFloat:=0;
-      DMGraficos.CDS_V_GraficoVLR_SALAO.AsFloat:=StrToFloat(f_Troca('.',',',sVlrLinx));
-
-      If (DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat<>0) and (DMGraficos.CDS_V_GraficoVLR_SALAO.AsFloat<>0) Then
-      Begin
-        c:=(((DMGraficos.CDS_V_GraficoVLR_SALAO.AsFloat*100)/DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat)-100);
-        DMGraficos.CDS_V_GraficoPER_SALAO.AsFloat:=Round_5(c,2);
-      End;
+// SEM SALÃO NO LINX ///////////////////////////////////////////////////////////
+//      // Atualiza Valor Total do Salão =====================================
+//      DMGraficos.CDS_V_GraficoPER_SALAO.AsFloat:=0;
+//      DMGraficos.CDS_V_GraficoVLR_SALAO.AsFloat:=StrToFloat(f_Troca('.',',',sVlrLinx));
+//
+//      If (DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat<>0) and (DMGraficos.CDS_V_GraficoVLR_SALAO.AsFloat<>0) Then
+//      Begin
+//        c:=(((DMGraficos.CDS_V_GraficoVLR_SALAO.AsFloat*100)/DMGraficos.CDS_V_GraficoVLR_SALAO_OBJETIVO.AsFloat)-100);
+//        DMGraficos.CDS_V_GraficoPER_SALAO.AsFloat:=Round_5(c,2);
+//      End;
+////////////////////////////////////////////////////////////////////////////////
 
       DMGraficos.CDS_V_Grafico.Post;
 
@@ -745,7 +778,6 @@ Begin
     //==========================================================================
     // Processa Somente Resultado do Linx - FIM ================================
     //==========================================================================
-
 
     DbGrafico.Refresh;
     DMGraficos.CDS_V_Grafico.Next;
@@ -927,8 +959,6 @@ Begin
     If CDS.FieldByName('Cod_Linx').AsInteger<>0 Then
      sLoja:='Linx_'+FormatFloat('00',CDS.FieldByName('Cod_Linx').AsInteger);
 
-
-
     // VERMELHO - Meta Abaixo do Limite Aceitável ==============================
     If CDS.FieldByName('PER_ALCANCADO').AsCurrency<0 Then
     Begin
@@ -1093,7 +1123,7 @@ Begin
 
          ' FROM EMP_CONEXOES em'+
          '     LEFT JOIN FIN_OBJETIVOS_METAS om  ON om.cod_filial=em.cod_filial'+
-         '                                      AND om.cod_objetivo in ('+sgCodObjetivo+', 5)'+
+         '                                      AND om.cod_objetivo in ('+sgCodObjetivo+', 5)'+ // 5 = Venda Salão
          '                                      AND om.des_ano='+VarToStr(wgAnoH)+
          '     LEFT JOIN FIN_OBJETIVOS       ob  ON ob.cod_objetivo=om.cod_objetivo'+
 
@@ -1534,11 +1564,12 @@ begin
   tsArquivo.Free;
 
   // Solicita Configuração =====================================================
-  sCodObjetivo:=InputBoxInteiro('OBJETIVO', 'Código do Objetivo', sCodObjetivo);
-
-  If Trim(sCodObjetivo)='' Then
-   Exit;
-
+// OdirAqui - Não Solicita Mais o Objetivos - Sempre é o Código 7 /////////////////
+//  sCodObjetivo:=InputBoxInteiro('OBJETIVO', 'Código do Objetivo', sCodObjetivo);
+//
+//  If Trim(sCodObjetivo)='' Then
+//   Exit;
+///////////////////////////////////////////////////////////////////////////////////
   b:=True;
   While b do
   Begin
@@ -1572,10 +1603,10 @@ begin
      End
   End; // While b do
 
-  sgR1:=InputBox('GRUPO R1: Resultado Total Lojas', 'Código das Lojas', sgR1);
-  sgR2:=InputBox('GRUPO R2: Resultado Total Lojas', 'Código das Lojas', sgR2);
-  sgR3:=InputBox('GRUPO R3: Resultado Salão Lojas', 'Código das Lojas que NÃO PARTICIPAM', sgR3);
-  sgRE:=InputBox('GRUPO RE: Resultado EMPRESA', 'Código das Lojas que NÃO PARTICIPAM', sgRE);
+  sgR1:=InputBox('GRUPO R1: Resultado Total Lojas',   'Código das Lojas (SIDICOM)', sgR1);
+  sgR2:=InputBox('GRUPO R2: Resultado Total Lojas',   'Código das Lojas (SIDICOM)', sgR2);
+  sgR3:=InputBox('GRUPO R3: Resultado Salão Lojas',   'Código das Lojas (SIDICOM) que NÃO PARTICIPAM', sgR3);
+  sgRE:=InputBox('GRUPO RE: Resultado Total EMPRESA', 'Código das Lojas (SIDICOM) que NÃO PARTICIPAM', sgRE);
 
   // Grava Configuração
   tsArquivo:= TStringList.Create;

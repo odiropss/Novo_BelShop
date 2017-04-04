@@ -742,13 +742,16 @@ Begin
     Exit;
   End;
 
-  // Se Periodo Já em Execução Encerra =========================================
-  hHrInicio:=TimeToStr(DataHoraServidorFI(DMLinxWebService.SDS_DtaHoraServidor));
-  If (StrToTime(hHrInicio)>StrToTime('16:00:00')) and (StrToTime(hHrInicio)<StrToTime('18:00:00')) Then
+  // Se Progrma Já em Execução Encerra =========================================
+  If Trim(sgParametroMetodo)<>'' Then
   Begin
-    Application.Terminate;
-    Exit;
-  End;
+    hHrInicio:=TimeToStr(DataHoraServidorFI(DMLinxWebService.SDS_DtaHoraServidor));
+    If (StrToTime(hHrInicio)>StrToTime('16:00:00')) and (StrToTime(hHrInicio)<StrToTime('18:00:00')) Then
+    Begin
+      Application.Terminate;
+      Exit;
+    End;
+  End; // If Trim(sgParametroMetodo)<>'' Then
 
   // Data Inicio da Atualização ================================================
   sgDta:=DateToStr(DataHoraServidorFI(DMLinxWebService.SDS_DtaHoraServidor));

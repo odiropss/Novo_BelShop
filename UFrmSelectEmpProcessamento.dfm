@@ -801,56 +801,8 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
             Expanded = False
             FieldName = 'PROC'
             Title.Alignment = taCenter
-            Width = 75
-            Visible = True
-          end
-          item
-            Color = 12189695
-            Expanded = False
-            FieldName = 'RAZAO_SOCIAL'
-            Width = 330
-            Visible = True
-          end
-          item
-            Alignment = taCenter
-            Expanded = False
-            FieldName = 'NUM_CNPJ'
-            Font.Charset = ANSI_CHARSET
-            Font.Color = clBlack
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            Title.Alignment = taCenter
-            Width = 100
-            Visible = True
-          end
-          item
-            Alignment = taCenter
-            Expanded = False
-            FieldName = 'TIP_EMP'
-            Title.Alignment = taCenter
-            Width = 30
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DES_CIDADE'
-            Title.Caption = 'Cidade'
-            Width = 130
-            Visible = True
-          end
-          item
-            Alignment = taCenter
-            Expanded = False
-            FieldName = 'COD_UF'
-            Font.Charset = ANSI_CHARSET
-            Font.Color = clBlack
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            Title.Alignment = taCenter
-            Title.Caption = 'UF'
-            Width = 30
+            Title.Caption = 'Selec'
+            Width = 45
             Visible = True
           end
           item
@@ -870,6 +822,43 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
             Title.Caption = 'Linx'
             Width = 40
             Visible = True
+          end
+          item
+            Color = 12189695
+            Expanded = False
+            FieldName = 'RAZAO_SOCIAL'
+            Width = 350
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'NUM_CNPJ'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            Title.Alignment = taCenter
+            Width = 100
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Color = 12189695
+            Expanded = False
+            FieldName = 'DTA_INICIO_LINX'
+            Title.Alignment = taCenter
+            Title.Caption = 'In'#237'cio Linx'
+            Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DES_CIDADE'
+            Title.Caption = 'Cidade'
+            Width = 125
+            Visible = True
           end>
       end
       object Sb_SelectEmpProc: TdxStatusBar
@@ -884,7 +873,7 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
             PanelStyle.Color = clSilver
             BiDiMode = bdRightToLeft
             ParentBiDiMode = False
-            Text = '<Duplo Click> Alterar se Processa'
+            Text = '<Duplo Click> Alterar se Seleciona...'
           end>
         PaintStyle = stpsOffice11
         Font.Charset = DEFAULT_CHARSET

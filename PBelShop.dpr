@@ -45,7 +45,8 @@ uses
   uj_002 in '..\..\Rotinas Delphi\Janelas\J_002 Mensagens\uj_002.pas' {J_002},
   UFrmFluxFornecedor in 'UFrmFluxFornecedor.pas' {FrmFluxoFornecedor},
   UFrmComissaoVendedor in 'UFrmComissaoVendedor.pas' {FrmComissaoVendedor},
-  UDMComissaoVendedor in 'UDMComissaoVendedor.pas' {DMComissaoVendedor: TDataModule};
+  UDMComissaoVendedor in 'UDMComissaoVendedor.pas' {DMComissaoVendedor: TDataModule},
+  UDMLinx in 'UDMLinx.pas' {DMLinx: TDataModule};
 
 {$R *.res}
 
@@ -77,6 +78,7 @@ begin
   Application.CreateForm(TJ_002, J_002);
   Application.CreateForm(TFrmFluxoFornecedor, FrmFluxoFornecedor);
   Application.CreateForm(TDMComissaoVendedor, DMComissaoVendedor);
+  Application.CreateForm(TDMLinx, DMLinx);
   // Application.CreateForm(TFrmComissaoVendedor, FrmComissaoVendedor);
   // Application.CreateForm(TFrmControleEstoques, FrmControleEstoques);
   // Application.CreateForm(TFrmCentralTrocas, FrmCentralTrocas);

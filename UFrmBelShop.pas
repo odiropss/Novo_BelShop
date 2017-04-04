@@ -1431,6 +1431,9 @@ type
     Procedure DesabilitaScrollMouse(var Msg: TMsg; var Handled: Boolean);
     Procedure HabilitaScrollMouse(var Msg: TMsg; var Handled: Boolean);
 
+    // Bloquear PrintScreen
+    procedure AntiCopia(Sender: TObject; Var Done: Boolean);
+
     ////////////////////////////////////////////////////////////////////////////
 
     // ORDEM DE COMPRA /////////////////////////////////////////////////////////
@@ -1539,14 +1542,16 @@ type
     Procedure MontaPlanilhaObjetivosDias(sDiaSemanaMes: string;iNumDiasUteis: Integer; Var iIndicePlan: Integer);
     Procedure CaluclaObjetivosMetasDias;
     Procedure AtualizaValorObjetivosMetasDias;
-    Procedure CaluclaResltadosObjetivosMetasDias;
+    Procedure CaluclaResultadosObjetivosMetasDias;
 
     // Objetivos Meses
     Procedure MontaPlanilhaObjetivosMeses(Var iIndicePlanMeses: Integer);
     Procedure CaluclaObjetivosMetasMeses;
-    Procedure CaluclaResltadosObjetivosMetasMeses;
-    Procedure AtualizaValorObjetivosMetasMesesAuditoria;
-    Procedure AtualizaValorObjetivosMetasMesesAvarias;
+    Procedure CaluclaResultadosObjetivosMetasMeses;
+
+      Procedure AtualizaValorObjetivosMetasMesesAuditoria;
+      Procedure AtualizaValorObjetivosMetasMesesAvarias;
+
     Procedure AtualizaValorObjetivosMetasMesesOutros;
     Procedure AuditoriaTotalEmpresa;
 
@@ -1559,6 +1564,11 @@ type
     Procedure GraficoObjetivos(DBGrafico: TDBChart; CDS: TClientDataSet; TipoGraf, Titulo, Descr, Valor: String);
 
     Procedure HabilitaDesabilitaLinha(CDS: TClientDataSet; sCol1, sConteudoCol1: String; bHabilita: Boolean=True);
+
+    // LINX - MICRIVIX - Busca Vendas
+    Function  BuscaMovtosVendasLINX(mMemo: TMemo; sTipo: String): Boolean;
+                                               // sTipo= (D)Dias  (M)Meses
+
     ////////////////////////////////////////////////////////////////////////////
 
     // AUDITORIA ///////////////////////////////////////////////////////////////
@@ -1612,9 +1622,6 @@ type
     Procedure CalculaTotaisMargens;
     Procedure CalculaMargemFinal(sCodLoja: String; cVlrVenda, cVlrCusto: Currency);
     ////////////////////////////////////////////////////////////////////////////
-
-    // Bloquear PrintScreen
-    procedure AntiCopia(Sender: TObject; Var Done: Boolean);
 
     // Odir ====================================================================
 
@@ -2479,7 +2486,7 @@ var
   sgAplicacoes, sgFamiliaPrecos, sgGruposST: String;
   sgCurvas: String;
 
-  sgCodLojaLinx, sgCodEmp, sgDesLoja: String; // Usado, Também, para Editar Pedido de Ordem de Compra
+  sgCodEmp, sgDesLoja: String; // Usado, Também, para Editar Pedido de Ordem de Compra
 
   sgMesAnoPlanFinanceira: String;
 
@@ -2504,6 +2511,17 @@ var
   sCbx_FinanPlanFinanceiraMes1, sEdtFinanPlanFinanceiraAno1, sCbx_FinanPlanFinanceiraMes2, sEdtFinanPlanFinanceiraAno2: String;
   dDtEdt_FinanPlanFinanceiraPeriodoDtaInicio, dDtEdt_FinanPlanFinanceiraPeriodoDtaFim: TDate;
 
+  // Lojas Linx =========================
+  sgParametroLinx,
+  sgVlrLinx, sgVlrSalaoLinx,
+  sgDtaComecoLinx,
+  sgDtaIncioLinx, sgDtaFimLinx: String;
+
+  igCodLojaLinx: Integer;
+
+  bgSoLinx: Boolean;
+  //=====================================
+
 implementation
 
 uses DK_Procs1, UPermissao, UDMBelShop,
@@ -2517,7 +2535,7 @@ uses DK_Procs1, UPermissao, UDMBelShop,
      UDMCentralTrocas, UFrmCentralTrocas,
      UFrmEstoques, UEntrada, UDMSidicom,
      UFrmFaltasCDLojas, UFrmControleKits, UFrmControleEstoques,
-     UFrmFluxFornecedor, UFrmComissaoVendedor;
+     UFrmFluxFornecedor, UFrmComissaoVendedor, UDMLinx, RTLConsts;
 
 {$R *.dfm}
 {$R C:\Projetos\BelShop\Botoes\Botoes.res }
@@ -2525,6 +2543,126 @@ uses DK_Procs1, UPermissao, UDMBelShop,
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // ODIR INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// OBJETIVOS - METAS - LINX - MICRIVIX - Busca Vendas >>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TFrmBelShop.BuscaMovtosVendasLINX(mMemo: TMemo; sTipo: String): Boolean;
+Var
+  sSelect, MySql: String;
+Begin
+  // sTipo= (D)Dias  (M)Meses
+  MySql:=' SELECT';
+
+  If sTipo='D' Then
+   MySql:=
+    MySql+' CAST(LPAD(EXTRACT(DAY FROM mv.data_documento), 2, ''0'') AS VARCHAR(2)) Dia,';
+
+  If sTipo='M' Then
+   MySql:=
+    MySql+' CAST(LPAD(EXTRACT(MONTH FROM mv.data_documento), 2, ''0'') AS VARCHAR(2))||''/''||'+
+          ' CAST(LPAD(EXTRACT(YEAR  FROM mv.data_documento), 4, ''0'') AS VARCHAR(4)) MesAno,';
+
+  MySql:=
+   MySql+' COALESCE((COUNT(DISTINCT'+
+         '                 CASE'+
+         '                   WHEN mv.operacao = ''S'' THEN mv.documento'+
+         '                 END) - '+
+         '           COUNT(DISTINCT'+
+         '                 CASE'+
+         '                   WHEN mv.operacao = ''DS'' THEN mv.documento'+
+         '                 END))'+
+         ' , 0) Qtd_Comprov,'+
+
+         ' COALESCE((COUNT(CASE'+
+         '                   WHEN mv.operacao = ''S'' THEN mv.cod_produto'+
+         '                 END) - '+
+         '           COUNT(CASE'+
+         '                   WHEN mv.operacao = ''DS'' THEN mv.cod_produto'+
+         '                 END))'+
+         ' , 0) Tot_Itens,'+
+
+         ' CAST(CASE'+
+         '        WHEN ((SUM(COALESCE(mv.valor_total, 0.00))) <> 0) AND'+
+         '             ((COUNT(DISTINCT CASE WHEN mv.operacao = ''S''  THEN mv.documento END) - '+
+         '              (COUNT(DISTINCT CASE WHEN mv.operacao = ''DS'' THEN mv.documento END)))) <> 0 THEN'+
+         '                      COALESCE(((SUM(COALESCE(mv.valor_total, 0))) / '+
+         '                               ((COUNT(DISTINCT CASE WHEN mv.operacao = ''S''  THEN mv.documento END) - '+
+         '                                 COUNT(DISTINCT CASE WHEN mv.operacao = ''DS'' THEN mv.documento END)))), 0.00)'+
+         '        ELSE'+
+         '          0'+
+         '        END AS NUMERIC(12,2)) Ticket_Medio,'+
+
+         ' CAST(COALESCE(SUM(COALESCE(mv.desconto, 0)), 0.00) AS NUMERIC(12,2)) Tot_Desc_Item,'+
+         ' CAST(COALESCE(SUM(COALESCE(mv.quantidade, 0.00) * COALESCE(mv.preco_unitario, 0.00)), 0.00) AS NUMERIC(12,2)) Tot_Bruto,'+
+         ' CAST(COALESCE(SUM(COALESCE(mv.valor_total, 0.00)), 0.00) AS NUMERIC(12,2)) Tot_Nota,'+
+         ' CAST(COALESCE(SUM(COALESCE(mv.frete, 0.00)), 0.00) AS NUMERIC(12,2)) Tot_Frete,'+
+         ' 0.00 Tot_Despesas'+
+
+         ' FROM LINXMOVIMENTO mv'+
+         ' WHERE mv.operacao IN (''S'', ''DS'')'+
+         ' AND   ((mv.tipo_transacao IN (''V'', ''S'')) OR (mv.tipo_transacao IS NULL) OR (TRIM(mv.tipo_transacao) = ''''))'+
+         ' AND   mv.cancelado = ''N'''+
+         ' AND   mv.excluido = ''N'''+
+         ' AND   mv.soma_relatorio = ''S'''+
+         ' AND   mv.data_documento BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaIncioLinx)))+' AND '+
+                                             QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFimLinx)))+
+         ' AND   mv.Empresa='+IntToStr(igCodLojaLinx); // Loja Linx
+
+   If sTipo='D' Then
+    MySql:=
+     MySql+' GROUP BY 1';
+
+   If sTipo='M' Then
+    MySql:=
+     MySql+' GROUP BY'+
+           ' CAST(LPAD(EXTRACT(YEAR  FROM mv.data_documento), 4, ''0'') AS VARCHAR(4)),'+
+           ' CAST(LPAD(EXTRACT(MONTH FROM mv.data_documento), 2, ''0'') AS VARCHAR(2))';
+
+  MySql:=
+   MySql+' ORDER BY 1';
+  DMLinx.CDS_Busca.Close;
+  DMLinx.SDS_Busca.CommandText:=MySql;
+  DMLinx.CDS_Busca.Open;
+
+  DMLinx.CDS_Busca.DisableControls;
+  While Not DMLinx.CDS_Busca.Eof do
+  Begin
+
+    If DMLinx.CDS_Busca.RecNo=1 Then
+     Begin
+       sSelect:=' SELECT ';
+     End
+    Else
+     Begin
+       sSelect:=' UNION SELECT ';
+     End; // If DMLinx.CDS_Busca.RecNo=1 Then
+
+    If sTipo='D' Then
+     sSelect:=
+      sSelect+DMLinx.CDS_Busca.FieldByName('DIA').AsString+' DIA, '; // DIA
+
+    If sTipo='M' Then
+     sSelect:=
+      sSelect+DMLinx.CDS_Busca.FieldByName('MESANO').AsString+' MESANO, '; // MESANO
+
+    sSelect:=
+     sSelect+DMLinx.CDS_Busca.FieldByName('QTD_COMPROV').AsString+' QTD_COMPROV, '+ // QTD_COMPROV
+             DMLinx.CDS_Busca.FieldByName('TOT_ITENS').AsString+' TOT_ITENS, '+ // TOT_ITENS
+             f_Troca(',','.',DMLinx.CDS_Busca.FieldByName('TICKET_MEDIO').AsString)+' TICKET_MEDIO, '+ // TICKET_MEDIO
+             f_Troca(',','.',DMLinx.CDS_Busca.FieldByName('TOT_DESC_ITEM').AsString)+' TOT_DESC_ITEM, '+ // TOT_DESC_ITEM
+             f_Troca(',','.',DMLinx.CDS_Busca.FieldByName('TOT_BRUTO').AsString)+' TOT_BRUTO, '+ // TOT_BRUTO
+             f_Troca(',','.',DMLinx.CDS_Busca.FieldByName('TOT_NOTA').AsString)+' TOT_NOTA, '+ // TOT_NOTA
+             f_Troca(',','.',DMLinx.CDS_Busca.FieldByName('TOT_FRETE').AsString)+' TOT_FRETE, '+ // TOT_FRETE
+             f_Troca(',','.',DMLinx.CDS_Busca.FieldByName('TOT_DESPESAS').AsString)+' TOT_DESPESAS'+ // TOT_DESPESAS
+             ' FROM RDB$DATABASE';
+
+    mMemo.Lines.Add(sSelect);
+
+    DMLinx.CDS_Busca.Next;
+  End; // While Not DMLinx.CDS_Busca.Eof do
+  DMLinx.CDS_Busca.EnableControls;
+  DMLinx.CDS_Busca.Close;
+
+End; // OBJETIVOS - METAS - LINX - MICRIVIX - Busca Vendas >>>>>>>>>>>>>>>>>>>>>
 
 // DIVERSOS - Controel de Apresentação do Menu >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBelShop.ControleMenu(bControle: Boolean);
@@ -6812,7 +6950,7 @@ begin
     if DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
     Begin
       sgCodEmp     :=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
-      sgCodLojaLinx:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+      igCodLojaLinx:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsInteger;
       sgDesLoja    :=DMBelShop.CDS_EmpProcessaRAZAO_SOCIAL.AsString;
 
       // Lista de Preco da Loja ------------------------------------------------
@@ -9627,15 +9765,15 @@ Begin
   // Executa UNION Conforme Solicitado =========================================
   If Rb_ConsultaNFeTpMovtoAmbos.Checked Then
    Begin
-     MySql:=MySqlEnt+' UNION '+MySqlSai; // Odirapagar - 22/11/2016-> +MySqlOrderGrup;
+     MySql:=MySqlEnt+' UNION '+MySqlSai;
    End
   Else If Rb_ConsultaNFeTpMovtoEnt.Checked Then
    Begin
-     MySql:=MySqlEnt; // Odirapagar - 22/11/2016-> +MySqlOrderGrup;
+     MySql:=MySqlEnt;
    End
   Else // If Rb_ConsultaNFeTpMovtoSai.Checked Then
    Begin
-     MySql:=MySqlSai; // Odirapagar - 22/11/2016->+MySqlOrderGrup;
+     MySql:=MySqlSai;
    End; // If Rb_ConsultaNFeTpMovtoAmbos.Checked Then
   MySql:=
    MySql+' ORDER BY 10, 4, 1';
@@ -10795,7 +10933,7 @@ begin
 End; // Busca Enderecamentos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Calcula Resultado dos Objetivos por Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmBelShop.CaluclaResltadosObjetivosMetasMeses;                                 
+Procedure TFrmBelShop.CaluclaResultadosObjetivosMetasMeses;
 Var
   i: Integer;
   s: String;
@@ -11132,10 +11270,20 @@ Var
   bSiga: Boolean;
 
   b: Boolean;
-  i, ii, iii: Integer;
+  i, ii, iii, iLinx: Integer;
   s, sCodComprov: String;
   sMes: String;
+
+  mMemLinx: TMemo;
+
 Begin
+  // Cria Componente Memo para Vendas Linx =====================================
+  mMemLinx:=TMemo.Create(Self);
+  mMemLinx.Visible:=False;
+  mMemLinx.Parent:=FrmBelShop;
+  mMemLinx.Width:=500;
+  mMemLinx.Lines.Clear;
+
   // Busca Codigos de Comprovantes da Formula ---------------
   b:=True;
   Memo2.Lines.Clear;
@@ -11187,96 +11335,174 @@ Begin
   if DMVirtual.CDS_V_ObjetivosMeses.Locate('Cod_Objetivo; Cod_Emp; Tipo', VarArrayOf([iCodObj,sgCodEmp, 'Realizado']),[]) Then
   Begin
     // Conecta Empresa =====================================================
-    If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
-     Begin
-       bSiga:=True;
-     End
-    Else // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
-     Begin
-       If sgLojasNConectadas='' Then
-        sgLojasNConectadas:='Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString
-       Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString) then
-        sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+    bSiga:=True;
+    If sgCodEmp<>'18' Then
+    Begin
+      If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+       Begin
+         bSiga:=True;
+       End
+      Else // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+       Begin
+         If sgLojasNConectadas='' Then
+          sgLojasNConectadas:='Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString
+         Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString) then
+          sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
 
-       Refresh;
-       bSiga:=False;
-     End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+         bSiga:=False;
+       End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+    End; // If sgCodEmp<>'18' Then
 
     // Inicia Processamento ================================================
     If bSiga Then // Empresa Conectada
     Begin
+      DMLinx.CDS_Busca.Close;
+      mMemLinx.Lines.Clear;
+
       // Cria Query da Empresa ----------------------------------
-      CriaQueryIB('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString,
-                  'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString,
-                  IBQ_ConsultaFilial, True, True);
+      CriaQueryIB('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, IBQ_ConsultaFilial, True, True);
 
       // Busca Comprovantes e Atualiza Planilha ============================
       For i:=0 to memo2.Lines.Count-1 do
       Begin
         //(ODIRK3) - AtualizaValorObjetivosMetasMesesOutros;
-        // Monta SQL --------------------------------------------
-        MySql:=' Select'+
-               ' Cast(lpad(extract(month from m.datacomprovante),2,''0'') as varchar(2))||''/''||'+
-               ' Cast(lpad(extract(year from m.datacomprovante),4,''0'') as varchar(4)) MesAno,';
+        //=================================================//
 
-               If Memo2.Lines[i]='002' Then
-                Begin
-                  MySql:=MySql+' Coalesce((Count(distinct case When m.codcomprovante=''002'' then m.chavenf End)-'+
-                               '           Count(distinct case When m.codcomprovante=''007'' then m.chavenf End)),0) QTD_COMPROV,'+
+        // Movimentação Linx (Vendas)--------------------------------
+        DMLinx.CDS_Busca.Close;
+        mMemLinx.Lines.Clear;
+        If (Memo2.Lines[i]='002') And (igCodLojaLinx<>0) And
+           (Not Rb_FinanObjetivosManutTpOperacaoSalao.Checked) And
+           (Not Ckb_FinanObjetivosManutNaoCompra.Checked) Then
+        Begin
+          // Acerta Período de Busca Linx =================================
+          sgDtaI  :=sgDtaIniAno;
+          sgDtaFim:=sgDtaFimAno;
 
-                               ' Coalesce((Count(case When m.codcomprovante=''002'' then mp.codproduto End)-'+
-                               '           Count(case When m.codcomprovante=''007'' then mp.codproduto End)),0) TOT_ITENS,'+
-
-                               ' Coalesce(('+
-                               '           (Sum(Coalesce(mp.valtotal,0)))/'+
-                               '           ((Count(distinct case When m.codcomprovante=''002'' then m.chavenf End)-'+
-                               '             Count(distinct case When m.codcomprovante=''007'' then m.chavenf End)))'+
-                               '          ),0) Ticket_Medio,';
-                End
-               Else // If Memo2.Lines[i]='002' Then
-                Begin
-                  MySql:=MySql+' Coalesce((Count(distinct case When m.codcomprovante='+QuotedStr(Memo2.Lines[i])+' then m.chavenf End)),0) QTD_COMPROV,'+
-
-                               ' Coalesce((Count(case When m.codcomprovante='+QuotedStr(Memo2.Lines[i])+' then mp.codproduto End)),0) TOT_ITENS,'+
-
-                               ' Coalesce((Sum(Coalesce(mp.valtotal,0)))/'+
-                               '         (Count(distinct case When m.codcomprovante='+QuotedStr(Memo2.Lines[i])+' then m.chavenf End)),0) Ticket_Medio,';
-                End; // If Memo2.Lines[i]='002' Then
-
-               MySql:=MySql+' Coalesce(Sum(Coalesce(mp.valdescitem,0)),0) TOT_DESC_ITEM,'+
-                            ' Coalesce(Sum(Coalesce(mp.valbruto,0)),0) TOT_BRUTO,'+
-                            ' Coalesce(Sum(Coalesce(mp.valtotal,0)),0) TOT_NOTA,'+
-                            ' Coalesce(Sum(Coalesce(mp.valfrete,0)),0) TOT_FRETE,'+
-                            ' Coalesce(Sum(Coalesce(mp.valdespesas,0)),0) TOT_DESPESAS'+
-
-                            ' From MCLI m, MCLIPRO mp, PRODUTO p'+
-
-                            ' Where m.chavenf=mp.chavenf'+
-                            ' AND mp.codproduto=p.codproduto';
-
-              If Rb_FinanObjetivosManutTpOperacaoLoja.Checked Then
-               MySql:=MySql+' and p.principalfor not in (''000500'',''000883'')';
-
-              If Rb_FinanObjetivosManutTpOperacaoSalao.Checked Then
-               MySql:=MySql+' and p.principalfor in (''000500'',''000883'')';
-
-              If Ckb_FinanObjetivosManutNaoCompra.Checked Then
-               MySql:=MySql+' and Coalesce(p.situacaopro,1) in (1,3)';
-
-              MySql:=MySql+' and m.codfilial='+QuotedStr(sgCodEmp);
-
-              If Memo2.Lines[i]='002' Then
-               MySql:=MySql+' and m.codcomprovante in (''002'',''007'')'
+          // Acerta Período de Busca Linx =================================
+          if StrToDate(sgDtaFim)>=StrToDate(sgDtaComecoLinx) Then
+          Begin
+            If (StrToDate(sgDtaComecoLinx)<=StrToDate(sgDtaFim)) Then
+            Begin
+              If (StrToDate(sgDtaComecoLinx)<=StrToDate(sgDtaI)) Then
+               Begin
+                 sgDtaIncioLinx:=sgDtaI;
+               End
               Else
-               MySql:=MySql+' and m.codcomprovante='+QuotedStr(Memo2.Lines[i]);
+               Begin
+                 sgDtaIncioLinx:=sgDtaComecoLinx;
+               End;
 
-              MySql:=MySql+' and m.datacomprovante '+f_Troca('/','.',f_Troca('-','.',sgPeriodo1))+
-                           ' Group by'+
-                           ' Cast(lpad(extract(year from m.datacomprovante),4,''0'') as varchar(4)),'+
-                           ' Cast(lpad(extract(month from m.datacomprovante),2,''0'') as varchar(2))'+
-                           ' Order by'+
-                           ' Cast(lpad(extract(year from m.datacomprovante),4,''0'') as varchar(4)),'+
-                           ' Cast(lpad(extract(month from m.datacomprovante),2,''0'') as varchar(2))';
+              sgDtaFimLinx:=sgDtaFim;
+            End; // If (StrToDate(sDtaComecoLinx)<=StrToDate(sgDtaFim)) Then
+
+            // Busca Movimentos de Vendas Linx ============================
+            BuscaMovtosVendasLINX(mMemLinx, 'M');
+
+          End; // if StrToDate(sgDtaFim)>StrToDate(sgDtaComecoLinx) Then
+        End; // If Memo2.Lines[i]='002' ........ Then
+
+        // Monta SQL Somente Loja Com SIDICOM ----------------------------------
+        If sgCodEmp<>'18' Then
+        Begin
+          MySql:=' Select'+
+                 ' Cast(lpad(extract(month from m.datacomprovante),2,''0'') as varchar(2))||''/''||'+
+                 ' Cast(lpad(extract(year from m.datacomprovante),4,''0'') as varchar(4)) MesAno,';
+
+                 If Memo2.Lines[i]='002' Then
+                  Begin
+                    MySql:=
+                     MySql+' Coalesce((Count(distinct case When m.codcomprovante=''002'' then m.chavenf End)-'+
+                           '           Count(distinct case When m.codcomprovante=''007'' then m.chavenf End)),0) QTD_COMPROV,'+
+
+                           ' Coalesce((Count(case When m.codcomprovante=''002'' then mp.codproduto End)-'+
+                           '           Count(case When m.codcomprovante=''007'' then mp.codproduto End)),0) TOT_ITENS,'+
+
+                           ' Coalesce(('+
+                           '           (Sum(Coalesce(mp.valtotal,0.00)))/'+
+                           '           ((Count(distinct case When m.codcomprovante=''002'' then m.chavenf End)-'+
+                           '             Count(distinct case When m.codcomprovante=''007'' then m.chavenf End)))'+
+                           '          ),0.00) Ticket_Medio,';
+                  End
+                 Else // If Memo2.Lines[i]='002' Then
+                  Begin
+                    MySql:=
+                     MySql+' Coalesce((Count(distinct case When m.codcomprovante='+QuotedStr(Memo2.Lines[i])+' then m.chavenf End)),0) QTD_COMPROV,'+
+
+                           ' Coalesce((Count(case When m.codcomprovante='+QuotedStr(Memo2.Lines[i])+' then mp.codproduto End)),0) TOT_ITENS,'+
+
+                           ' Coalesce((Sum(Coalesce(mp.valtotal,0.00)))/'+
+                           '         (Count(distinct case When m.codcomprovante='+QuotedStr(Memo2.Lines[i])+' then m.chavenf End)),0.00) Ticket_Medio,';
+                  End; // If Memo2.Lines[i]='002' Then
+
+                 MySql:=
+                  MySql+' Coalesce(Sum(Coalesce(mp.valdescitem,0.00)),0.00) TOT_DESC_ITEM,'+
+                        ' Coalesce(Sum(Coalesce(mp.valbruto,0.00)),0.00) TOT_BRUTO,'+
+                        ' Coalesce(Sum(Coalesce(mp.valtotal,0.00)),0.00) TOT_NOTA,'+
+                        ' Coalesce(Sum(Coalesce(mp.valfrete,0.00)),0.00) TOT_FRETE,'+
+                        ' Coalesce(Sum(Coalesce(mp.valdespesas,0.00)),0.00) TOT_DESPESAS'+
+
+                        ' From MCLI m, MCLIPRO mp, PRODUTO p'+
+
+                        ' Where m.chavenf=mp.chavenf'+
+                        ' AND   mp.codproduto=p.codproduto';
+
+                 If Rb_FinanObjetivosManutTpOperacaoLoja.Checked Then
+                  MySql:=
+                   MySql+' and p.principalfor not in (''000500'',''000883'')';
+
+                 If Rb_FinanObjetivosManutTpOperacaoSalao.Checked Then
+                  MySql:=
+                   MySql+' and p.principalfor in (''000500'',''000883'')';
+
+                 If Ckb_FinanObjetivosManutNaoCompra.Checked Then
+                  MySql:=
+                   MySql+' and Coalesce(p.situacaopro,1) in (1,3)';
+
+                 MySql:=
+                  MySql+' and m.codfilial='+QuotedStr(sgCodEmp);
+
+                 If Memo2.Lines[i]='002' Then
+                  MySql:=
+                   MySql+' and m.codcomprovante in (''002'',''007'')'
+                 Else
+                  MySql:=
+                   MySql+' and m.codcomprovante='+QuotedStr(Memo2.Lines[i]);
+
+                 MySql:=
+                  MySql+' and m.datacomprovante '+f_Troca('/','.',f_Troca('-','.',sgPeriodo1))+
+                        ' Group by'+
+                        ' Cast(lpad(extract(year from m.datacomprovante),4,''0'') as varchar(4)),'+
+                        ' Cast(lpad(extract(month from m.datacomprovante),2,''0'') as varchar(2))';
+        End; // If sgCodEmp<>'18' Then // Monta SQL Somente Loja Com SIDICOM ---
+
+        // Ingrementa Dias do Linx =============================================
+        If mMemLinx.Lines.Count>1 Then
+        Begin
+          For iLinx:=0 to mMemLinx.Lines.Count-1 do
+          Begin
+            If sgCodEmp='18' Then // Monta SQL com Loja Somente LINX
+            Begin
+              MySql:=
+               MySql+mMemLinx.Lines[iLinx];
+            End
+            Else If iLinx=0 Then // Monta SQL com Loja Somente LINX
+            Begin
+              MySql:=
+               MySql+' UNION '+mMemLinx.Lines[iLinx];
+            End
+            Else
+            Begin
+              MySql:=
+               MySql+mMemLinx.Lines[iLinx];
+            End;
+          End; // For i:=0 to mMemo.Lines.Count-1 do
+        End; // If mMemLinx.Lines.Count>1 Then
+
+        MySql:=
+         MySql+' Order by'+
+               ' Cast(lpad(extract(year from m.datacomprovante),4,''0'') as varchar(4)),'+
+               ' Cast(lpad(extract(month from m.datacomprovante),2,''0'') as varchar(2))';
         IBQ_ConsultaFilial.SQL.Clear;
         IBQ_ConsultaFilial.SQL.Add(MySql); //(ODIRK3)
 
@@ -11294,12 +11520,12 @@ Begin
 
           If ii>10 Then
           Begin
-//            msg('Loja: Bel_ '+sgCodEmp+cr+cr+'Conexão Perdida'+cr+' NÃO Será Gerado Resultados/Mês !!','A');
-//            Break;
-           If sgLojasNConectadas='' Then
-            sgLojasNConectadas:='Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString
-           Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString) then
-            sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+            If sgLojasNConectadas='' Then
+             sgLojasNConectadas:='Bel_'+sgCodEmp
+            Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sgCodEmp) then
+             sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sgCodEmp;
+
+            Break;
           End; // If ii>10 Then
         End; // While Not bSiga do
 
@@ -11308,7 +11534,7 @@ Begin
         Begin
           // Posiciona TabSheet -------------------------------------
           PC_FinanObjetivos.TabIndex:=2;
-          
+
           iOrdemMov:=0;
           iOrdemMov:=0;
           cVlrAcumulado:=0;
@@ -11360,8 +11586,8 @@ Begin
             If Array_Campos[iMes]='' Then
              Array_Campos[iMes]:=DMBelShop.CDS_ObjetivosDES_FORMULA.AsString;
             Array_Campos[iMes]:=StringReplace(Array_Campos[iMes], sCampoSubst, sVlrSubst, [rfReplaceAll]);
-                                                                                          
-            sCampoSubst:='CP'+Memo2.Lines[i]+'.TOT_BRUTO';                                            
+
+            sCampoSubst:='CP'+Memo2.Lines[i]+'.TOT_BRUTO';
             sVlrSubst:=CurrToStr(Abs(IBQ_ConsultaFilial.FieldByName('TOT_BRUTO').AsCurrency));
             If Array_Campos[iMes]='' Then
              Array_Campos[iMes]:=DMBelShop.CDS_ObjetivosDES_FORMULA.AsString;
@@ -11428,7 +11654,7 @@ Begin
           End; // If (Array_Campos[i]<>'') and
         End; // for i:=Low(Array_Campos) to High(Array_Campos) do
       End; // For i:=0 to memo2.Lines.Count-1 do
-          
+
       // Calcula Formula e Atualiza Planilha de Objetivos ==================
       cVlrAcumulado:=0;
       For i:=Low(Array_Campos) to High(Array_Campos) do
@@ -11485,9 +11711,11 @@ Begin
           DMVirtual.CDS_V_ObjetivosMeses.Locate('Cod_Objetivo; Cod_Emp; Tipo', VarArrayOf([iCodObj,sgCodEmp, 'Realizado']),[]);
         End; // If Array_Campos[i]<>'' Then
       End; // for i:=Low(Array_Campos) to High(Array_Campos) do // Calcula Formula e Atualiza Planilha de Objetivos
-          
+
     End; //If bSiga Then // Empresa Conectada
-  End; // if DMVirtual.CDS_V_ObjetivosMeses.Locate('Cod_Objetivo; Cod_Emp; Tipo', 
+  End; // if DMVirtual.CDS_V_ObjetivosMeses.Locate('Cod_Objetivo; Cod_Emp; Tipo',
+
+  FreeAndNil(mMemLinx);
 
 End; // Objetivos/Metas Meses - Atualiza 12 Meses Outros >>>>>>>>>>>>>>>>>>>>>>>
 
@@ -11528,29 +11756,30 @@ Begin
        bSiga:=False;
      End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
 
+
     // Inicia Processamento ================================================
     If bSiga Then // Empresa Conectada
     Begin
-      //(ODIRK2) - AtualizaValorObjetivosMetasMesesAvarias;
       // Cria Query da Empresa --------------------------------------
       CriaQueryIB('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString,
                   'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString,
                   IBQ_ConsultaFilial, True, True);
 
+      //(ODIRK2) - AtualizaValorObjetivosMetasMesesAvarias;
       // Busca Auditoria =======================================================
       MySql:=' Select'+
              ' Cast(lpad(extract(month from m.datacomprovante),2,''0'') as varchar(2))||''/''||'+
              ' Cast(lpad(extract(year  from m.datacomprovante),4,''0'') as varchar(4)) MesAno,'+
 
              ' Cast((Coalesce(Sum(case When m.codcomprovante=''015'' then'+
-             '                          Coalesce(mp.valtotal,0) End),0))as numeric(12,2)) Tot_Comp_15,'+
+             '                          Coalesce(mp.valtotal,0.00) End),0.00))as numeric(12,2)) Tot_Comp_15,'+
 
-             ' Cast(Coalesce(Sum(case When m.codcomprovante=''002'' then Coalesce(mp.valtotal,0) End),0)+'+
-             '      Coalesce(Sum(case When m.codcomprovante=''007'' then Coalesce(mp.valtotal,0) End),0) as numeric(12,2)) Tot_Vendas,'+
+             ' Cast(Coalesce(Sum(case When m.codcomprovante=''002'' then Coalesce(mp.valtotal,0.00) End),0.00)+'+
+             '      Coalesce(Sum(case When m.codcomprovante=''007'' then Coalesce(mp.valtotal,0.00) End),0.00) as numeric(12,2)) Tot_Vendas,'+
 
-             '  Cast(Coalesce(((Coalesce(Sum(case When m.codcomprovante=''015'' then Coalesce(mp.valtotal,0) End),0))*100)/'+
-             '                 (Coalesce(Sum(case When m.codcomprovante=''002'' then Coalesce(mp.valtotal,0) End),0)+'+
-             '                  Coalesce(Sum(case When m.codcomprovante=''007'' then Coalesce(mp.valtotal,0) End),0)'+
+             '  Cast(Coalesce(((Coalesce(Sum(case When m.codcomprovante=''015'' then Coalesce(mp.valtotal,0.00) End),0.00))*100)/'+
+             '                 (Coalesce(Sum(case When m.codcomprovante=''002'' then Coalesce(mp.valtotal,0.00) End),0.00)+'+
+             '                  Coalesce(Sum(case When m.codcomprovante=''007'' then Coalesce(mp.valtotal,0.00) End),0.00)'+
              '       ),0) as numeric(12,2)) Perc_Avarias'+
 
              ' From MCLI m, MCLIPRO mp';
@@ -11586,7 +11815,7 @@ Begin
                            '    Cast(lpad(extract(month from m.datacomprovante),2,''0'') as varchar(2))';
       IBQ_ConsultaFilial.SQL.Clear;
       IBQ_ConsultaFilial.SQL.Add(MySql); //(ODIRK2)
-
+              
       // Abre Query --------------------------------------------
       ii:=0;
       bSiga:=False;
@@ -11907,6 +12136,8 @@ Begin
     Begin
       // Guarda Codigo Empresa =================================================
       sgCodEmp:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+      igCodLojaLinx  :=DMBelShop.CDS_EmpProcessaCOD_LINX.AsInteger;
+      sgDtaComecoLinx:=DMBelShop.CDS_EmpProcessaDTA_INICIO_LINX.AsString;
 
       // Apresentacao ==========================================================
       OdirPanApres.Caption:='AGUARDE !! Processando Loja: Bel_'+sgCodEmp+' - '+
@@ -13102,7 +13333,7 @@ Begin
 End; // Calcula Valores do Objetivo >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Calcula Resultado dos Objetivos por Dias >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmBelShop.CaluclaResltadosObjetivosMetasDias;                                 
+Procedure TFrmBelShop.CaluclaResultadosObjetivosMetasDias;                                 
 Var
   i: Integer;
   s: String;
@@ -13424,12 +13655,21 @@ Procedure TFrmBelShop.AtualizaValorObjetivosMetasDias;
 Var
   MySql: String;
   iOrdemMov, iCodObj: Integer;
-  i, ii: Integer;
+  i, ii, iLinx: Integer;
   iDia: Integer;
   sCampoSubst, sVlrSubst, sCampo: String;
   cVlrAcumulado: Currency;
   bSiga: Boolean;
+
+  mMemLinx: TMemo;
 Begin
+  // Cria Componente Memo para Vendas Linx =====================================
+  mMemLinx:=TMemo.Create(Self);
+  mMemLinx.Visible:=False;
+  mMemLinx.Parent:=FrmBelShop;
+  mMemLinx.Width:=500;
+  mMemLinx.Lines.Clear;
+
   // Array para Formulas =======================================================
   Array_Campos:=nil;
   SetLength(Array_Campos,32);
@@ -13438,114 +13678,179 @@ Begin
   iCodObj:=DMBelShop.CDS_ObjetivosCOD_OBJETIVO.AsInteger;
   if DMVirtual.CDS_V_ObjetivosDias.Locate('Cod_Objetivo; Cod_Emp; Tipo', VarArrayOf([iCodObj,sgCodEmp, 'Realizado']),[]) Then
   Begin
-    // Conecta Empresa =====================================================
-    If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
-     Begin
-       bSiga:=True;
-     End
-    Else // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
-     Begin
-       If sgLojasNConectadas='' Then
-        sgLojasNConectadas:='Bel_'+sgCodEmp
-       Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sgCodEmp) then
-        sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sgCodEmp;
+    // Conecta Empresa =========================================================
+    bSiga:=True;
+    If sgCodEmp<>'18' Then
+    Begin
+      If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+       Begin
+         bSiga:=True;
+       End
+      Else // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+       Begin
+         If sgLojasNConectadas='' Then
+          sgLojasNConectadas:='Bel_'+sgCodEmp
+         Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sgCodEmp) then
+          sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sgCodEmp;
 
-       bSiga:=False;
-     End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+         bSiga:=False;
+       End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+    End; // If sgCodEmp<>'18' Then
 
-    // Inicia Processamento ================================================
+    // Inicia Processamento ====================================================
     If bSiga Then // Empresa Conectada
     Begin
+      DMLinx.CDS_Busca.Close;
+      mMemLinx.Lines.Clear;
+
       // Cria Query da Empresa ----------------------------------
-      CriaQueryIB('IBDB_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString,
-                  'IBT_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString,
-                  IBQ_ConsultaFilial, True, True);
+      CriaQueryIB('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, IBQ_ConsultaFilial, True, True);
 
       // Busca Comprovantes e Atualiza Planilha ============================
       For i:=0 to memo2.Lines.Count-1 do
       Begin
         //(ODIRK1) - AtualizaValorObjetivosMetasDias;
-        // Monta SQL --------------------------------------------
-        MySql:=' Select'+
-               ' Cast(lpad(extract(day from m.datacomprovante),2,''0'') as varchar(2)) Dia,';
+        //===========================================//
 
-               If Memo2.Lines[i]='002' Then
-                Begin
-                  MySql:=MySql+' Coalesce((Count(distinct case When m.codcomprovante=''002'' then m.chavenf End)-'+
-                               '           Count(distinct case When m.codcomprovante=''007'' then m.chavenf End)),0) QTD_COMPROV,'+
-
-                               ' Coalesce((Count(case When m.codcomprovante=''002'' then mp.codproduto End)-'+
-                               '           Count(case When m.codcomprovante=''007'' then mp.codproduto End)),0) TOT_ITENS,'+
-// alterado em 04/03/2013
-//                               ' Coalesce(('+
-//                               '           (Sum(Coalesce(mp.valtotal,0)))/'+
-//                               '           ((Count(distinct case When m.codcomprovante=''002'' then m.chavenf End)-'+
-//                               '             Count(distinct case When m.codcomprovante=''007'' then m.chavenf End)))'+
-//                               '          ),0) Ticket_Medio,';
-
-                               ' case'+
-                               '   When ((Sum(Coalesce(mp.valtotal,0)))<>0) and'+
-                               '        ((Count(distinct case When m.codcomprovante=''002'' then m.chavenf End)-'+
-                               '         (Count(distinct case When m.codcomprovante=''007'' then m.chavenf End))))<>0 Then'+
-                               '                  Coalesce(((Sum(Coalesce(mp.valtotal,0)))/'+
-                               '                           ((Count(distinct case When m.codcomprovante=''002'' then m.chavenf End)-'+
-                               '                             Count(distinct case When m.codcomprovante=''007'' then m.chavenf End)))),0)'+
-                               '   Else 0'+
-                               ' End Ticket_Medio,';
-
-                End
-               Else // If Memo2.Lines[i]='002' Then
-                Begin
-                  MySql:=MySql+' Coalesce((Count(distinct case When m.codcomprovante='+QuotedStr(Memo2.Lines[i])+' then m.chavenf End)),0) QTD_COMPROV,'+
-
-                               ' Coalesce((Count(case When m.codcomprovante='+QuotedStr(Memo2.Lines[i])+' then mp.codproduto End)),0) TOT_ITENS,'+
-
-                               ' case'+
-                               '   When ((Sum(Coalesce(mp.valtotal,0)))<>0) and'+
-                               '        ((Count(distinct case When m.codcomprovante='+QuotedStr(Memo2.Lines[i])+' then m.chavenf End)))<>0 Then'+
-                               '                   Coalesce((Sum(Coalesce(mp.valtotal,0)))/'+
-                               '                            (Count(distinct case When m.codcomprovante='+QuotedStr(Memo2.Lines[i])+' then m.chavenf End)),0)'+
-                               '   Else 0'+
-                               ' End Ticket_Medio,';
-
-//                               ' Coalesce((Sum(Coalesce(mp.valtotal,0)))/'+
-//                               '         (Count(distinct case When m.codcomprovante='+QuotedStr(Memo2.Lines[i])+' then m.chavenf End)),0) Ticket_Medio,';
-                End; // If Memo2.Lines[i]='002' Then
-
-               MySql:=MySql+' Coalesce(Sum(Coalesce(mp.valdescitem,0)),0) TOT_DESC_ITEM,'+
-                            ' Coalesce(Sum(Coalesce(mp.valbruto,0)),0) TOT_BRUTO,'+
-                            ' Coalesce(Sum(Coalesce(mp.valtotal,0)),0) TOT_NOTA,'+
-                            ' Coalesce(Sum(Coalesce(mp.valfrete,0)),0) TOT_FRETE,'+
-                            ' Coalesce(Sum(Coalesce(mp.valdespesas,0)),0) TOT_DESPESAS'+
-
-                            ' from MCLI m, MCLIPRO mp, PRODUTO p'+
-
-                            ' Where m.chavenf=mp.chavenf'+
-                            ' AND  mp.codproduto=p.codproduto';
-
-              If Rb_FinanObjetivosManutTpOperacaoLoja.Checked Then
-               MySql:=MySql+' and p.principalfor not in (''000500'',''000883'')';
-
-              If Rb_FinanObjetivosManutTpOperacaoSalao.Checked Then
-               MySql:=MySql+' and p.principalfor in (''000500'',''000883'')';
-
-              If Ckb_FinanObjetivosManutNaoCompra.Checked Then
-               MySql:=MySql+' and Coalesce(p.situacaopro,1) in (1,3)';
-
-              MySql:=MySql+' and m.codfilial='+QuotedStr(sgCodEmp);
-
-              If Memo2.Lines[i]='002' Then
-               MySql:=MySql+' and m.codcomprovante in (''002'',''007'')'
+        // Movimentação Linx (Vendas)--------------------------------
+        DMLinx.CDS_Busca.Close;
+        mMemLinx.Lines.Clear;
+        If (Memo2.Lines[i]='002') And (igCodLojaLinx<>0) And
+           (Not Rb_FinanObjetivosManutTpOperacaoSalao.Checked) And
+           (Not Ckb_FinanObjetivosManutNaoCompra.Checked) Then
+        Begin
+          if StrToDate(sgDtaFim)>=StrToDate(sgDtaComecoLinx) Then
+          Begin
+            If (StrToDate(sgDtaComecoLinx)<=StrToDate(sgDtaFim)) Then
+            Begin
+              If (StrToDate(sgDtaComecoLinx)<=StrToDate(sgDtaI)) Then
+               Begin
+                 sgDtaIncioLinx:=sgDtaI;
+               End
               Else
-               MySql:=MySql+' and m.codcomprovante='+QuotedStr(Memo2.Lines[i]);
+               Begin
+                 sgDtaIncioLinx:=sgDtaComecoLinx;
+               End;
 
-              MySql:=MySql+' and m.datacomprovante '+f_Troca('/','.',f_Troca('=','.',sgPeriodo))+
-                           ' Group by 1'+
-                           ' Order by 1';
+              sgDtaFimLinx:=sgDtaFim;
+            End; // If (StrToDate(sDtaComecoLinx)<=StrToDate(sgDtaFim)) Then
+
+            // Busca Movimentos de Vendas Linx ============================
+            BuscaMovtosVendasLINX(mMemLinx, 'D');
+
+          End; // if StrToDate(sgDtaFim)>StrToDate(sgDtaComecoLinx) Then
+        End; // If Memo2.Lines[i]='002' ........ Then
+
+        // Monta SQL Somente Loja Com SIDICOM ----------------------------------
+        If sgCodEmp<>'18' Then
+        Begin
+          MySql:=' Select'+
+                 ' Cast(lpad(extract(day from m.datacomprovante),2,''0'') as varchar(2)) Dia,';
+
+                 If Memo2.Lines[i]='002' Then
+                  Begin
+                    MySql:=
+                     MySql+' Coalesce((Count(distinct case When m.codcomprovante=''002'' then m.chavenf End)-'+
+                           '           Count(distinct case When m.codcomprovante=''007'' then m.chavenf End)),0) QTD_COMPROV,'+
+
+                           ' Coalesce((Count(case When m.codcomprovante=''002'' then mp.codproduto End)-'+
+                           '           Count(case When m.codcomprovante=''007'' then mp.codproduto End)),0) TOT_ITENS,'+
+
+                           ' case'+
+                           '   When ((Sum(Coalesce(mp.valtotal,0.00)))<>0) and'+
+                           '        ((Count(distinct case When m.codcomprovante=''002'' then m.chavenf End)-'+
+                           '         (Count(distinct case When m.codcomprovante=''007'' then m.chavenf End))))<>0 Then'+
+                           '                  Coalesce(((Sum(Coalesce(mp.valtotal,0.00)))/'+
+                           '                           ((Count(distinct case When m.codcomprovante=''002'' then m.chavenf End)-'+
+                           '                             Count(distinct case When m.codcomprovante=''007'' then m.chavenf End)))),0)'+
+                           '   Else 0'+
+                           ' End Ticket_Medio,';
+
+                  End
+                 Else // If Memo2.Lines[i]='002' Then
+                  Begin
+                    MySql:=
+                     MySql+' Coalesce((Count(distinct case When m.codcomprovante='+QuotedStr(Memo2.Lines[i])+' then m.chavenf End)),0) QTD_COMPROV,'+
+
+                           ' Coalesce((Count(case When m.codcomprovante='+QuotedStr(Memo2.Lines[i])+' then mp.codproduto End)),0) TOT_ITENS,'+
+
+                           ' case'+
+                           '   When ((Sum(Coalesce(mp.valtotal,0.00)))<>0) and'+
+                           '        ((Count(distinct case When m.codcomprovante='+QuotedStr(Memo2.Lines[i])+' then m.chavenf End)))<>0 Then'+
+                           '                   Coalesce((Sum(Coalesce(mp.valtotal,0.00)))/'+
+                           '                            (Count(distinct case When m.codcomprovante='+QuotedStr(Memo2.Lines[i])+' then m.chavenf End)),0)'+
+                           '   Else 0'+
+                           ' End Ticket_Medio,';
+                  End; // If Memo2.Lines[i]='002' Then
+
+                 MySql:=
+                  MySql+' Coalesce(Sum(Coalesce(mp.valdescitem,0.00)),0) TOT_DESC_ITEM,'+
+                        ' Coalesce(Sum(Coalesce(mp.valbruto,0.00)),0.00) TOT_BRUTO,'+
+                        ' Coalesce(Sum(Coalesce(mp.valtotal,0.00)),0.00) TOT_NOTA,'+
+                        ' Coalesce(Sum(Coalesce(mp.valfrete,0.00)),0.00) TOT_FRETE,'+
+                        ' Coalesce(Sum(Coalesce(mp.valdespesas,0)),0.00) TOT_DESPESAS'+
+
+                        ' from MCLI m, MCLIPRO mp, PRODUTO p'+
+
+                        ' Where m.chavenf=mp.chavenf'+
+                        ' AND  mp.codproduto=p.codproduto';
+
+                 If Rb_FinanObjetivosManutTpOperacaoLoja.Checked Then
+                  MySql:=
+                   MySql+' and p.principalfor not in (''000500'',''000883'')';
+
+                 If Rb_FinanObjetivosManutTpOperacaoSalao.Checked Then
+                  MySql:=
+                   MySql+' and p.principalfor in (''000500'',''000883'')';
+
+                 If Ckb_FinanObjetivosManutNaoCompra.Checked Then
+                  MySql:=
+                   MySql+' and Coalesce(p.situacaopro,1) in (1,3)';
+
+                 MySql:=
+                  MySql+' and m.codfilial='+QuotedStr(sgCodEmp);
+
+                 If Memo2.Lines[i]='002' Then
+                  MySql:=
+                   MySql+' and m.codcomprovante in (''002'',''007'')'
+                 Else
+                  MySql:=
+                   MySql+' and m.codcomprovante='+QuotedStr(Memo2.Lines[i]);
+
+                 MySql:=
+                  MySql+' and m.datacomprovante '+f_Troca('/','.',f_Troca('=','.',sgPeriodo))+
+                        ' Group by 1';
+        End; // If sgCodEmp<>'18' Then // Monta SQL Somente Loja Com SIDICOM ---
+
+        // Ingremente dias do Linx =============================================
+        If mMemLinx.Lines.Count>1 Then
+        Begin
+          For iLinx:=0 to mMemLinx.Lines.Count-1 do
+          Begin
+            If sgCodEmp='18' Then // Monta SQL com Loja Somente LINX
+            Begin
+              MySql:=
+               MySql+mMemLinx.Lines[iLinx];
+            End
+            Else If iLinx=0 Then // Monta SQL com Loja Somente LINX
+            Begin
+              MySql:=
+               MySql+' UNION '+mMemLinx.Lines[iLinx];
+            End
+            Else
+            Begin
+              MySql:=
+               MySql+mMemLinx.Lines[iLinx];
+            End;
+          End; // For i:=0 to mMemo.Lines.Count-1 do
+        End; // If mMemLinx.Lines.Count>1 Then
+
+        MySql:=
+         MySql+' Order by 1';
         IBQ_ConsultaFilial.SQL.Clear;
         IBQ_ConsultaFilial.SQL.Add(MySql); //(ODIRK1)
 
-        // Abre Query --------------------------------------------
+        // Abre Query -----------------------------------------------
         ii:=0;
         bSiga:=False;
         While Not bSiga do
@@ -13559,7 +13864,11 @@ Begin
 
           If ii>10 Then
           Begin
-            msg('Loja: Bel_ '+sgCodEmp+cr+cr+'Conexão Perdida'+cr+' NÃO Será Gerado Resultados/Mês !!','A');
+            If sgLojasNConectadas='' Then
+             sgLojasNConectadas:='Bel_'+sgCodEmp
+            Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sgCodEmp) then
+             sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sgCodEmp;
+
             Break;
           End; // If ii>10 Then
         End; // While Not bSiga do
@@ -13569,7 +13878,7 @@ Begin
         Begin
           // Posiciona TabSheet -------------------------------------
           PC_FinanObjetivos.TabIndex:=1;
-          
+
           iOrdemMov:=0;
           While Not IBQ_ConsultaFilial.Eof do
           Begin
@@ -13720,7 +14029,7 @@ Begin
           DMVirtual.CDS_V_ObjetivosDias.Edit;
           DMVirtual.CDS_V_ObjetivosDias.FieldByName(sCampo).AsCurrency:=StrToCurr(sVlrSubst);
           DMVirtual.CDS_V_ObjetivosDias.Post;
-            
+
           // Retorno para o Objetivo da Loja -------------------
           DMVirtual.CDS_V_ObjetivosDias.Locate('Cod_Objetivo; Cod_Emp; Tipo', VarArrayOf([iCodObj,sgCodEmp, 'Realizado']),[]);
         End; // If i<>0 Then
@@ -13728,6 +14037,8 @@ Begin
 
     End; //If bSiga Then // Empresa Conectada
   End; // if DMVirtual.CDS_V_ObjetivosDias.Locate('Cod_Objetivo; Cod_Emp; Tipo',
+
+  FreeAndNil(mMemLinx);
 
 End; // Objetivos/Metas Dias - Busca Valores das Empresas e Atualiza Planilha >>
 
@@ -13749,6 +14060,8 @@ Begin
     Begin
       // Guarda Codigo Empresa =================================================
       sgCodEmp:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+      igCodLojaLinx  :=DMBelShop.CDS_EmpProcessaCOD_LINX.AsInteger;
+      sgDtaComecoLinx:=DMBelShop.CDS_EmpProcessaDTA_INICIO_LINX.AsString;
 
       // Apresentacao ==========================================================
       OdirPanApres.Caption:='AGUARDE !! Processando Loja: Bel_'+sgCodEmp+' - '+
@@ -15356,7 +15669,7 @@ Begin
                   sVlrComprovante:=DMVirtual.CDS_V_PlanFinanceira.FieldByName(sCampo).AsString;
 
                  // Acerta Valor Negativo -------------------------------
-                 If StrToCurr(sVlrComprovante)<0 Then 
+                 If StrToCurr(sVlrComprovante)<0 Then
                   sVlrComprovante:='('+sVlrComprovante+')';
               
                  sFormula:=StringReplace(sFormula, 'CP'+sCodComprov, sVlrComprovante, [rfReplaceAll]);
@@ -18289,8 +18602,6 @@ Begin
   End;
 
   // Monta Sql Busca na Loja (Conexão Remoto)
-  // OdirApagar
-  //If (Rb_CalculoTpProcLoja.Checked) And (sCodFilial<>'18') Then // Monta Sql Busca na Loja (Conexão Remoto)
   If (Rb_CalculoTpProcLoja.Checked) And (iCodLinx=0) Then
   Begin
     IBQ.Close;
@@ -18357,8 +18668,6 @@ Begin
   End; // If (Rb_CalculoTpProcLoja.Checked) And (iCodLinx=0) Then // Monta Sql Busca na Loja (Conexão Remoto)
 
   // Monta Sql Busca da Loja LOCAL (Conexão Local)
-  // OdirApagar - 27/03/2017
-  // If (Rb_CalculoTpProcLocal.Checked) or (sCodFilial<>'18') Then
   If (Rb_CalculoTpProcLocal.Checked) Or ((Rb_CalculoTpProcLoja.Checked) And (iCodLinx<>0)) Then
   Begin
     // Monta Select para Filiais =================================================
@@ -20960,6 +21269,7 @@ Procedure TFrmBelShop.CriaQueryIB(sDataBase, sTransaction: String; Var IBQ_Free:
 Var
   i: Integer;
   iOk: Integer;
+  sCodLojaSidicom: String;
 Begin
   iOk:=0;
 
@@ -20978,6 +21288,15 @@ Begin
   End;
 
   IBQ_Free.Close;
+
+  // Loja Sem SIDICOM
+  sCodLojaSidicom:=Copy(sDataBase,6,2);
+  If sCodLojaSidicom='18' Then
+  Begin
+    IBQ_Free.Database   :=DMBelShop.IBDB_BelShop;
+    IBQ_Free.Transaction:=DMBelShop.IBT_BelShop;
+    Exit;
+  End; // If sCodLojaSidicom='18' Then
 
   For i:=0 to DMConexoes.ComponentCount-1 do
   Begin
@@ -21009,6 +21328,7 @@ Begin
       Break;
     End;
   End;
+
 End; // Atualiza Conexao TIBQuery >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Verifica se Existe Meses Iguais >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -23521,11 +23841,6 @@ begin
        CalculaFilial
       Else
        CalculaFilialLocal;
-
-      // OdirApagar - 27/03/2017
-      // Processamento Local ------------------------------------------
-//      If ((Rb_CalculoTpProcLocal.Checked) Or (iCodLinx<>0)) Or
-//         ((Rb_CalculoTpProcLoja.Checked) And (iCodLinx<>0)) Then
 
       MontaProgressBar(False, FrmBelShop);
     End; // if (DMBelShop.CDS_EmpProcessaPROC.AsString='SIM') and  (DMBelShop.CDS_EmpProcessaTIP_EMP.AsString<>'M') Then
@@ -31640,12 +31955,16 @@ Begin
   DMVirtual.CDS_V_ObjetivosMeses.Fields[5].Visible:=True;
   Dbg_FinanObjetivosResultadosMeses.Columns[3].Width:=90;
 
-  // Libera Colunas de Dias Úteis ==============================================
+  // Apropria Datas de Incio e Fim do Periodo ==================================
   i:=pos('Between ', sgPeriodo);
   sgDtaInicio:=Copy(sgPeriodo,i+9,10);
   i:=pos(' and ', sgPeriodo);
   sgDtaFim:=Copy(sgPeriodo,i+6,10);
 
+  // Guarda Data (Dias) de Início para Verificação com Inicio Linx -------------
+  sgDtaI:=sgDtaInicio;
+
+  // Libera Colunas de Dias Úteis ==============================================
   // Busca Feriados -------------------------------------------------
   iNumDiasUteis:=0;
   While StrToDate(sgDtaInicio)<=StrToDate(sgDtaFim) do
@@ -31706,6 +32025,9 @@ Begin
   Dta:=IncMonth(Dta,-EdtFinanObjetivosMeses.AsInteger);
   sgPeriodo1:=DateToStr(Dta);
 
+  // Guarda Data (Meses) de Início para Verificação com Inicio Linx ------------
+  sgDtaIniAno:=sgPeriodo1;
+
   // Inicio da Montagem do Período =============================================
   sgPeriodo1:='BETWEEN '+QuotedStr(DateToStr(Dta));
 
@@ -31719,7 +32041,10 @@ Begin
 
     dta:=IncMonth(Dta,1);
   End;
-  dta:=Dta-1;
+  Dta:=Dta-1;
+
+  // Guarda Data (Meses) de FIM para Verificação com Inicio Linx ---------------
+  sgDtaFimAno:=DateToStr(Dta);
 
   // Termina Montagem do Período ===============================================
   sgPeriodo1:=sgPeriodo1+' AND '+QuotedStr(DateToStr(Dta));
@@ -31744,7 +32069,6 @@ Begin
       bCalculoDias:=True;
       MontaPlanilhaObjetivosDias(sDiaSemanaMes, iNumDiasUteis, iIndicePlan);
     End; // If ((DMBelShop.CDS_ObjetivosIND_ATIVO.AsString='SIM') and (DMBelShop.CDS_ObjetivosPROC.AsString='SIM')) and
-
 
     // Monta Planilha de Objetivos por Meses -------------------------
     If ((DMBelShop.CDS_ObjetivosIND_ATIVO.AsString='SIM') and (DMBelShop.CDS_ObjetivosPROC.AsString='SIM')) and
@@ -31799,7 +32123,7 @@ Begin
     CaluclaObjetivosMetasDias;
 
     // Calcula Resultado dos Objetivos por Dia ----------------------
-    CaluclaResltadosObjetivosMetasDias;
+    CaluclaResultadosObjetivosMetasDias;
 
     // Retira Colunas de Dias a Não Usar ----------------------------
     ii:=DayOf(DtEdt_FinanObjetivosGerarUltDia.Date);
@@ -31810,10 +32134,10 @@ Begin
        s:='0'+IntToStr(i)
       Else
        s:=IntToStr(i);
-    
+
       For ii:=0 to DMVirtual.CDS_V_ObjetivosDias.Fields.Count-1 do
       Begin
-        If (DMVirtual.CDS_V_ObjetivosDias.Fields[ii].Visible) and 
+        If (DMVirtual.CDS_V_ObjetivosDias.Fields[ii].Visible) and
            (DMVirtual.CDS_V_ObjetivosDias.Fields[ii].FieldName='Vlr_Dia'+s) Then
          DMVirtual.CDS_V_ObjetivosDias.Fields[ii].Visible:=False
       End;
@@ -31822,7 +32146,7 @@ Begin
     THackDBGrid(Dbg_FinanObjetivosResultadosDias).FixedCols:=5;
     DMVirtual.CDS_V_ObjetivosDias.First;
   End; // If bCalculoDias Then
-  
+
   // Processa Empresas Selecionadas por Meses ==================================
   If bCalculoMeses Then
   Begin
@@ -31835,7 +32159,7 @@ Begin
     CaluclaObjetivosMetasMeses;
 
     // Calcula Resultado dos Objetivos por Meses --------------------
-    CaluclaResltadosObjetivosMetasMeses;
+    CaluclaResultadosObjetivosMetasMeses;
 
     THackDBGrid(Dbg_FinanObjetivosResultadosMeses).FixedCols:=5;
     DMVirtual.CDS_V_ObjetivosMeses.First;
@@ -31846,7 +32170,7 @@ Begin
   DMVirtual.CDS_V_ObjetivosDias.First;
   DMVirtual.CDS_V_ObjetivosMeses.First;
   DMVirtual.CDS_V_ObjetivosAuditorias.First;
-  
+
   OdirPanApres.Visible:=False;
   Screen.Cursor:=crDefault;
   Refresh;
@@ -31861,12 +32185,14 @@ Begin
    Dbg_FinanObjetivosResultadosAuditoria.SetFocus;
 
   StatusBar2.Panels[2].Text:='Gerado em: '+TimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
-  If sgLojasNConectadas<>'' Then
-   msg('Lojas Não Conectadas: '+cr+cr+sgLojasNConectadas,'A');
 
-  msg('Processamento Efetuado com Sucesso !!','A');
-     Dta:=PrimeiroUltimoDia(Dta, 'U');
-     sgPeriodo1:=sgPeriodo1+' and '+QuotedStr(f_Troca('/','.',DateToStr(Dta)));
+  If sgLojasNConectadas<>'' Then
+   MessageBox(Handle, pChar('Loja(s) Não Conectada(s)'+cr+'ou'+cr+'SEM Movimento no Período !!'+cr+cr+sgLojasNConectadas), 'Erro', MB_ICONERROR)
+  Else
+   msg('Processamento Efetuado com Sucesso !!','A');
+
+  Dta:=PrimeiroUltimoDia(Dta, 'U');
+  sgPeriodo1:=sgPeriodo1+' and '+QuotedStr(f_Troca('/','.',DateToStr(Dta)));
 
 end;
 
@@ -35615,13 +35941,6 @@ end;
 
 procedure TFrmBelShop.Bt_ConsultaNFeBuscaOCsClick(Sender: TObject);
 begin
-// OdirApagar - 21/11/2016
-//  If Cbx_ConsultaNfeSituacaoProd.ItemIndex=-1 Then
-//  Begin
-//    msg('Favor Informar a Situações dos Produtos !!','A');
-//    Cbx_ConsultaNfeSituacaoProd.SetFocus;
-//    Exit;
-//  End; // If (Trim(DtEdt_ConsultaOCDtInicio.Text)<>'') Or (Trim(DtEdt_ConsultaOCDtFim.Text)='') Then
 
   // Inicializa Tudo ===========================================================
   DtEdt_ConsultaNFeDtInicio.SetFocus;
@@ -43439,13 +43758,6 @@ begin
 
     DBGridClipboard(Dbg_FinanPlanFinanceira);
   End;
-
-//OdirApagar - 28/11/2016
-//  If Not DMVirtual.CDS_V_PlanFinanceira.IsEmpty Then
-//  Begin
-//    Dbg_FinanPlanFinanceira.SetFocus;
-//    ExportDBGridExcel(True, Dbg_FinanPlanFinanceira, FrmBelShop);
-//  End;
 end;
 
 procedure TFrmBelShop.SubMenuProtUsuariosPermAcessoSIDICOMClick(Sender: TObject);
@@ -43492,8 +43804,6 @@ begin
       Screen.Cursor:=crAppStart;
 
       DBGridClipboard(Dbg_CurvaABCEndCurvaABC);
-      // OdirApagar - 19/12/2016
-      // ExportDBGridExcel(True, Dbg_CurvaABCEndCurvaABC, FrmBelShop);
 
       Screen.Cursor:=crDefault;
     End;
@@ -43507,8 +43817,6 @@ begin
 
       Dbg_CurvaABCEndCurvaABCForn.SetFocus;
       DBGridClipboard(Dbg_CurvaABCEndCurvaABCForn);
-      // OdirApagar - 19/12/2016
-      // ExportDBGridExcel(True, Dbg_CurvaABCEndCurvaABCForn, FrmBelShop);
 
       Screen.Cursor:=crDefault;
     End;
@@ -44551,12 +44859,9 @@ begin
          ' em.RAZAO_SOCIAL,'+
          ' es.dta_atualizacao,'+
          ' es.hra_atualizacao'+
-//         '        , em.ENDERECO_IP, em.PASTA_BASE_DADOS, em.DES_BASE_DADOS,'+
-//         '        em.COD_EMP, em.TIP_EMP'+
          ' FROM EMP_CONEXOES em'+
          '     LEFT JOIN ESTOQUE es ON em.cod_filial=es.codfilial'+
          ' WHERE (em.Ind_Ativo=''SIM'' OR em.Cod_Filial IN (''99'') OR em.Cod_Filial IN (''50''))'+
-//         ' GROUP BY 2,3,4,5'+
          ' ORDER BY em.Cod_Filial';
   DMBelShop.CDS_Busca.Close;
   DMBelShop.SDS_Busca.CommandText:=MySql;
