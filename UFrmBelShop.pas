@@ -1378,7 +1378,7 @@ type
     Function  ConectaMatriz(bTestar: Boolean=False): Boolean;
     Function  ConectaMPMS(bTestar: Boolean=False): Boolean;
 
-    Procedure CriaQueryIB(sDataBase, sTransaction: String; Var IBQ_Free: TIBQuery; bMatriz, bCriaIBQ: Boolean);
+    Procedure CriaQueryIB(sDataBase, sTransaction: String; Var IBQ_Free: TIBQuery; bMatriz, bCriaIBQ: Boolean;);
         // sDataBase    = Database a Conectar
         // sTransaction = Transaction a Conectar
         // IBQ_Free     = Nome do TIBQuery a Destruir e Reconstruir
@@ -21370,13 +21370,13 @@ Begin
   IBQ_Free.Close;
 
   // Loja Sem SIDICOM
-  sCodLojaSidicom:=Copy(sDataBase,6,2);
-  If sCodLojaSidicom='18' Then
-  Begin
-    IBQ_Free.Database   :=DMBelShop.IBDB_BelShop;
-    IBQ_Free.Transaction:=DMBelShop.IBT_BelShop;
-    Exit;
-  End; // If sCodLojaSidicom='18' Then
+//  sCodLojaSidicom:=Copy(sDataBase,6,2);
+//  If sCodLojaSidicom='18' Then
+//  Begin
+//    IBQ_Free.Database   :=DMBelShop.IBDB_BelShop;
+//    IBQ_Free.Transaction:=DMBelShop.IBT_BelShop;
+//    Exit;
+//  End; // If sCodLojaSidicom='18' Then
 
   For i:=0 to DMConexoes.ComponentCount-1 do
   Begin

@@ -50,8 +50,9 @@ type
     DSP_LojaLinx: TDataSetProvider;
     CDS_EmpProcessaCOD_LINX: TIntegerField;
     CDS_EmpProcessaDTA_INICIO_LINX: TDateField;
-    CDS_EmpProcessaDTA_INVENTARIO_LINX: TDateField;
-    IBQ_EstoqueLojaSALDO_FINAL_SIDICOM: TIBBCDField;
+    SDS_Busca: TSQLDataSet;
+    CDS_Busca: TClientDataSet;
+    DSP_Busca: TDataSetProvider;
 
     // Odir
     Procedure ConectaBanco;
@@ -328,3 +329,5 @@ begin
 end;
 
 end.
+
+
