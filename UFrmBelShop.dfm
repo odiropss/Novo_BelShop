@@ -1,6 +1,6 @@
 object FrmBelShop: TFrmBelShop
-  Left = 243
-  Top = 106
+  Left = 240
+  Top = 104
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_FinanObjetivos
+    ActivePage = Ts_ConexaoEmpresas
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -5171,11 +5171,11 @@ object FrmBelShop: TFrmBelShop
           ParentFont = False
         end
         object Label21: TLabel
-          Left = 462
-          Top = 24
-          Width = 114
+          Left = 550
+          Top = 13
+          Width = 81
           Height = 13
-          Caption = 'Tipo: (M)atriz (F)ilial'
+          Caption = '(M)atriz (F)ilial'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -5197,7 +5197,7 @@ object FrmBelShop: TFrmBelShop
           ParentFont = False
         end
         object Label49: TLabel
-          Left = 525
+          Left = 572
           Top = 56
           Width = 30
           Height = 13
@@ -5460,8 +5460,8 @@ object FrmBelShop: TFrmBelShop
           end
         end
         object Dbcb_ConEmpresasAtivo: TDBComboBox
-          Left = 562
-          Top = 53
+          Left = 564
+          Top = 72
           Width = 60
           Height = 21
           CharCase = ecUpperCase
@@ -5647,8 +5647,8 @@ object FrmBelShop: TFrmBelShop
           OnClick = Bt_ConEmpresasBuscaEstadoClick
         end
         object Dbcb_ConEmpresasTipo: TDBComboBox
-          Left = 578
-          Top = 21
+          Left = 570
+          Top = 29
           Width = 45
           Height = 21
           CharCase = ecUpperCase
@@ -6068,7 +6068,7 @@ object FrmBelShop: TFrmBelShop
         object GroupBox1: TGroupBox
           Left = 201
           Top = 11
-          Width = 225
+          Width = 345
           Height = 72
           Caption = ' L I N X '
           Color = clSilver
@@ -6081,7 +6081,7 @@ object FrmBelShop: TFrmBelShop
           ParentFont = False
           TabOrder = 1
           object Label2: TLabel
-            Left = 42
+            Left = 10
             Top = 21
             Width = 68
             Height = 13
@@ -6096,9 +6096,22 @@ object FrmBelShop: TFrmBelShop
           object Label71: TLabel
             Left = 9
             Top = 45
-            Width = 100
+            Width = 65
             Height = 13
-            Caption = 'Data In'#237'cio (Linx)'
+            Caption = 'Data In'#237'cio'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
+          object Label72: TLabel
+            Left = 144
+            Top = 21
+            Width = 89
+            Height = 13
+            Caption = 'Data Invent'#225'rio'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
@@ -6107,7 +6120,7 @@ object FrmBelShop: TFrmBelShop
             ParentFont = False
           end
           object Dbe_ConEmpresasCodLojaLinx: TDBEdit
-            Left = 113
+            Left = 81
             Top = 18
             Width = 53
             Height = 19
@@ -6121,7 +6134,7 @@ object FrmBelShop: TFrmBelShop
             OnKeyPress = Dbe_ConEmpresasCodLojaLinxKeyPress
           end
           object EdtDta_ConEmpresasInicioLinx: TcxDateEdit
-            Left = 113
+            Left = 81
             Top = 39
             ParentFont = False
             Properties.OnChange = EdtDta_ConEmpresasInicioLinxPropertiesChange
@@ -6133,7 +6146,21 @@ object FrmBelShop: TFrmBelShop
             Style.IsFontAssigned = True
             StyleFocused.BorderStyle = ebsOffice11
             TabOrder = 1
-            OnEditing = DtEdt_ConsultaNFeDtFimEditing
+            Width = 96
+          end
+          object EdtDta_ConEmpresasInventLinx: TcxDateEdit
+            Left = 238
+            Top = 15
+            ParentFont = False
+            Properties.OnChange = EdtDta_ConEmpresasInicioLinxPropertiesChange
+            Style.Font.Charset = DEFAULT_CHARSET
+            Style.Font.Color = clBlue
+            Style.Font.Height = -13
+            Style.Font.Name = 'MS Sans Serif'
+            Style.Font.Style = [fsBold]
+            Style.IsFontAssigned = True
+            StyleFocused.BorderStyle = ebsOffice11
+            TabOrder = 2
             Width = 96
           end
         end

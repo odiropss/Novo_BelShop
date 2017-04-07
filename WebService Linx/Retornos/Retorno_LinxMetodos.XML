@@ -17,4 +17,12 @@
 	
 	LinxGrupoLojas - Retorna o CNPJ e nome das lojas de um grupo: (chave, grupo)
 	
-	LinxMovimentoTrocas - Retorna os valores e números das trocas realizadas nas vendas (chave, cnpjEmp, identificador)</D></R></ResponseData><ResponseResult><ResponseSuccess>True</ResponseSuccess></ResponseResult></Microvix>
+	LinxMovimentoTrocas - Retorna os valores e números das trocas realizadas nas vendas (chave, cnpjEmp, identificador)
+	
+	LinxMovimentoSerial - Retorna os Código de Seriais realizadas nas movimentações (chave, cnpjEmp, identificador, data_inicial, data_fim)
+	
+	LinxMovimentoPlanos - Retorna os Planos de Pagamentos realizados nas movimentações (chave, cnpjEmp, identificador, data_inicial, data_fim)
+	
+	LinxMovimentoAcoesPromocionais - Retorna as Ações Promocionais realizadas nas movimentações (chave, cnpjEmp, identificador, data_inicial, data_fim)
+
+	LinxAcoesPromocionais - Retorna as Ações Promocionais cadastradas no Microvix (chave, cnpjEmp, ativa, data_inicial, data_fim, integrada)</D></R></ResponseData><ResponseResult><ResponseSuccess>True</ResponseSuccess></ResponseResult></Microvix>

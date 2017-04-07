@@ -1174,6 +1174,7 @@ type
     CDS_ObjetivosEmpresasCOD_FILIAL: TStringField;
     CDS_ObjetivosEmpresasRAZAO_SOCIAL: TStringField;
     CDS_ObjetivosEmpresasCOD_LINX: TIntegerField;
+    CDS_EmpresaDTA_INVENTARIO_LINX: TDateField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -2370,6 +2371,26 @@ Begin
       Result:=False;
       Exit;
     End;
+
+    If ((Trim(FrmBelShop.EdtDta_ConEmpresasInicioLinx.Text)='')  Or  (Trim(FrmBelShop.EdtDta_ConEmpresasInicioLinx.Text)='/  /')) and
+       ((Trim(FrmBelShop.EdtDta_ConEmpresasInventLinx.Text)<>'') Or  (Trim(FrmBelShop.EdtDta_ConEmpresasInventLinx.Text)='/  /')) Then
+    Begin
+      sgMensagem:='Loja SEM Data de Início Linx !!';
+      FrmBelShop.EdtDta_ConEmpresasInventLinx.Clear;
+      FrmBelShop.EdtDta_ConEmpresasInventLinx.SetFocus;
+      Result:=False;
+      Exit;
+    End;
+
+    If ((FrmBelShop.EdtDta_ConEmpresasInicioLinx.Date>FrmBelShop.EdtDta_ConEmpresasInventLinx.Date)) And
+       ((Trim(FrmBelShop.EdtDta_ConEmpresasInventLinx.Text)<>'') Or  (Trim(FrmBelShop.EdtDta_ConEmpresasInventLinx.Text)='/  /')) Then
+    Begin
+      sgMensagem:='Data de Inventário NÃO Pode Ser'+cr+'Menor Que de Início Linx !!';
+      FrmBelShop.EdtDta_ConEmpresasInventLinx.Clear;
+      FrmBelShop.EdtDta_ConEmpresasInventLinx.SetFocus;
+      Result:=False;
+      Exit;
+    End;
   End; // If Trim(FrmBelShop.Dbe_ConEmpresasCodLojaLinx.Text)<>'' Then
 
   // Tipo da Empresa
@@ -3311,7 +3332,9 @@ Begin
     DMVirtual.CDS_V_EmpConexoesCOD_LINX.AsString:=
                              CDS_ConectaEmpresa.FieldByName('Cod_Linx').AsString;
     DMVirtual.CDS_V_EmpConexoesDTA_INICIO_LINX.AsString:=
-                      CDS_ConectaEmpresa.FieldByName('Dta_Inicio_linx').AsString;
+                      CDS_ConectaEmpresa.FieldByName('Dta_Inicio_Linx').AsString;
+    DMVirtual.CDS_V_EmpConexoesDTA_INVENTARIO_LINX.AsString:=
+                      CDS_ConectaEmpresa.FieldByName('Dta_Inventario_Linx').AsString;
     DMVirtual.CDS_V_EmpConexoes.Post;
 
     // Monta Conexões de Empresas Ativas =======================================
@@ -3585,6 +3608,7 @@ begin
   FrmBelShop.EdtConEmpresasEstado.Text:=Separa_String(s,1);
 
   FrmBelShop.EdtDta_ConEmpresasInicioLinx.Text:=CDS_EmpresaDTA_INICIO_LINX.Text;
+  FrmBelShop.EdtDta_ConEmpresasInventLinx.Text:=CDS_EmpresaDTA_INVENTARIO_LINX.Text;
 
   FrmBelShop.EdtConEmpresasUsuInclui.Clear;
   If Trim(CDS_EmpresaUSU_INCLUI.AsString)<>'' Then

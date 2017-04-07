@@ -110,6 +110,9 @@ object DMVirtual: TDMVirtual
     object CDS_V_EmpConexoesDTA_INICIO_LINX: TDateField
       FieldName = 'DTA_INICIO_LINX'
     end
+    object CDS_V_EmpConexoesDTA_INVENTARIO_LINX: TDateField
+      FieldName = 'DTA_INVENTARIO_LINX'
+    end
   end
   object DS_V_GruposProdutos: TDataSource
     DataSet = CDS_V_GruposProdutos

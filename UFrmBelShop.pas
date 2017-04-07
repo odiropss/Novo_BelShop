@@ -1365,6 +1365,8 @@ type
     Button1: TButton;
     Button3: TButton;
     Bt_AcertaPromocao: TButton;
+    Label72: TLabel;
+    EdtDta_ConEmpresasInventLinx: TcxDateEdit;
 
     // Odir ====================================================================
 
@@ -2638,11 +2640,11 @@ Begin
 
     If sTipo='D' Then
      sSelect:=
-      sSelect+DMLinx.CDS_Busca.FieldByName('DIA').AsString+' DIA, '; // DIA
+      sSelect+QuotedStr(DMLinx.CDS_Busca.FieldByName('DIA').AsString)+' DIA, '; // DIA
 
     If sTipo='M' Then
      sSelect:=
-      sSelect+DMLinx.CDS_Busca.FieldByName('MESANO').AsString+' MESANO, '; // MESANO
+      sSelect+QuotedStr(DMLinx.CDS_Busca.FieldByName('MESANO').AsString)+' MESANO, '; // MESANO
 
     sSelect:=
      sSelect+DMLinx.CDS_Busca.FieldByName('QTD_COMPROV').AsString+' QTD_COMPROV, '+ // QTD_COMPROV
@@ -7002,7 +7004,8 @@ begin
          If sgLojasNConectadas='' Then
           sgLojasNConectadas:='Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString
          Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString) then
-          sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+          sgLojasNConectadas:=
+           sgLojasNConectadas+', Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
        End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
 
       // Inicia Processamento ==================================================
@@ -7033,7 +7036,8 @@ begin
             If sgLojasNConectadas='' Then
              sgLojasNConectadas:='Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString
             Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString) then
-             sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+             sgLojasNConectadas:=
+              sgLojasNConectadas+', Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
 
             Break;
           End; // If i>10 Then
@@ -8792,10 +8796,11 @@ Begin
          Refresh;
          bSiga:=False;
 
-         If sgLojasNConectadas='' Then 
+         If sgLojasNConectadas='' Then
           sgLojasNConectadas:='Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString
          Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString) then
-          sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+          sgLojasNConectadas:=
+           sgLojasNConectadas+', Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
        End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
 
       // Inicia Processamento ==================================================
@@ -8888,7 +8893,8 @@ Begin
             If sgLojasNConectadas='' Then 
              sgLojasNConectadas:='Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString
             Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString) then
-             sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+             sgLojasNConectadas:=
+              sgLojasNConectadas+', Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
           End; // If i>10 Then
         End; // While Not bSiga do
 
@@ -11265,6 +11271,8 @@ Var
   MySql: String;
   iOrdemMov, iCodObj: Integer;
   iMes: Integer;
+
+  sDesObj,
   sCampoSubst, sVlrSubst, sCampo: String;
   cVlrCalculado, cVlrAcumulado: Currency;
   bSiga: Boolean;
@@ -11277,6 +11285,10 @@ Var
   mMemLinx: TMemo;
 
 Begin
+
+  //(ODIRK3) - INICIO - AtualizaValorObjetivosMetasMesesOutros;
+  //=========================================================//
+
   // Cria Componente Memo para Vendas Linx =====================================
   mMemLinx:=TMemo.Create(Self);
   mMemLinx.Visible:=False;
@@ -11332,6 +11344,7 @@ Begin
 
   // Localiza Empresa na Planilha ==============================================
   iCodObj:=DMBelShop.CDS_ObjetivosCOD_OBJETIVO.AsInteger;
+  sDesObj:=DMBelShop.CDS_ObjetivosDES_OBJETIVO.AsString;
   if DMVirtual.CDS_V_ObjetivosMeses.Locate('Cod_Objetivo; Cod_Emp; Tipo', VarArrayOf([iCodObj,sgCodEmp, 'Realizado']),[]) Then
   Begin
     // Conecta Empresa =====================================================
@@ -11345,9 +11358,10 @@ Begin
       Else // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
        Begin
          If sgLojasNConectadas='' Then
-          sgLojasNConectadas:='Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString
-         Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString) then
-          sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+          sgLojasNConectadas:=sDesObj+': Bel_'+sgCodEmp
+         Else 
+          sgLojasNConectadas:=
+           sgLojasNConectadas+cr+sDesObj+': Bel_'+sgCodEmp;
 
          bSiga:=False;
        End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
@@ -11371,6 +11385,9 @@ Begin
         // Movimentação Linx (Vendas)--------------------------------
         DMLinx.CDS_Busca.Close;
         mMemLinx.Lines.Clear;
+        sgDtaFimLinx  :='';
+        sgDtaIncioLinx:='';
+
         If (Memo2.Lines[i]='002') And (igCodLojaLinx<>0) And
            (Not Rb_FinanObjetivosManutTpOperacaoSalao.Checked) And
            (Not Ckb_FinanObjetivosManutNaoCompra.Checked) Then
@@ -11398,14 +11415,27 @@ Begin
 
             // Busca Movimentos de Vendas Linx ============================
             BuscaMovtosVendasLINX(mMemLinx, 'M');
-
+            
           End; // if StrToDate(sgDtaFim)>StrToDate(sgDtaComecoLinx) Then
         End; // If Memo2.Lines[i]='002' ........ Then
 
         // Monta SQL Somente Loja Com SIDICOM ----------------------------------
         If sgCodEmp<>'18' Then
         Begin
-          MySql:=' Select'+
+          MySql:=' SELECT'+
+                 ' MESANO,'+
+                 ' SUM(QTD_COMPROV) QTD_COMPROV,'+
+                 ' SUM(TOT_ITENS) TOT_ITENS,'+
+                 ' SUM(TICKET_MEDIO) TICKET_MEDIO,'+
+                 ' SUM(TOT_DESC_ITEM) TOT_DESC_ITEM,'+
+                 ' SUM(TOT_BRUTO) TOT_BRUTO,'+
+                 ' SUM(TOT_NOTA) TOT_NOTA,'+
+                 ' SUM(TOT_FRETE) TOT_FRETE,'+
+                 ' SUM(TOT_DESPESAS) TOT_DESPESAS'+
+                 ' FROM'+
+
+                 ' ('+
+                 ' Select'+
                  ' Cast(lpad(extract(month from m.datacomprovante),2,''0'') as varchar(2))||''/''||'+
                  ' Cast(lpad(extract(year from m.datacomprovante),4,''0'') as varchar(4)) MesAno,';
 
@@ -11469,11 +11499,23 @@ Begin
                   MySql:=
                    MySql+' and m.codcomprovante='+QuotedStr(Memo2.Lines[i]);
 
+                 If Trim(sgDtaIncioLinx)='' Then
+                  Begin
+                    MySql:=
+                     MySql+' and m.datacomprovante '+f_Troca('/','.',f_Troca('-','.',sgPeriodo1));
+                  End
+                 Else
+                  Begin
+                    // Acerta Final do Periodo do SIDICOM -----------
+                    MySql:=
+                     MySql+' and m.datacomprovante '+f_Troca('/','.',f_Troca('-','.',
+                                                     Copy(AnsiUpperCase(sgPeriodo1),1,pos('AND',AnsiUpperCase(sgPeriodo1))+3)+
+                                                     QuotedStr(DateToStr(StrToDate(sgDtaIncioLinx)-1))));
+                  End; // If Trim(sgDtaIncioLinx)='' Then
+
                  MySql:=
-                  MySql+' and m.datacomprovante '+f_Troca('/','.',f_Troca('-','.',sgPeriodo1))+
-                        ' Group by'+
-                        ' Cast(lpad(extract(year from m.datacomprovante),4,''0'') as varchar(4)),'+
-                        ' Cast(lpad(extract(month from m.datacomprovante),2,''0'') as varchar(2))';
+                  MySql+' Group by 1';
+
         End; // If sgCodEmp<>'18' Then // Monta SQL Somente Loja Com SIDICOM ---
 
         // Ingrementa Dias do Linx =============================================
@@ -11499,10 +11541,14 @@ Begin
           End; // For i:=0 to mMemo.Lines.Count-1 do
         End; // If mMemLinx.Lines.Count>1 Then
 
-        MySql:=
-         MySql+' Order by'+
-               ' Cast(lpad(extract(year from m.datacomprovante),4,''0'') as varchar(4)),'+
-               ' Cast(lpad(extract(month from m.datacomprovante),2,''0'') as varchar(2))';
+        If sgCodEmp<>'18' Then
+        Begin
+          MySql:=
+           MySql+')'+
+                 ' GROUP BY  1'+
+                 ' ORDER BY 1';
+        End; // If sgCodEmp<>'18' Then
+
         IBQ_ConsultaFilial.SQL.Clear;
         IBQ_ConsultaFilial.SQL.Add(MySql); //(ODIRK3)
 
@@ -11521,9 +11567,10 @@ Begin
           If ii>10 Then
           Begin
             If sgLojasNConectadas='' Then
-             sgLojasNConectadas:='Bel_'+sgCodEmp
-            Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sgCodEmp) then
-             sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sgCodEmp;
+             sgLojasNConectadas:=sDesObj+': Bel_'+sgCodEmp
+            Else
+             sgLojasNConectadas:=
+              sgLojasNConectadas+cr+sDesObj+':  Bel_'+sgCodEmp;
 
             Break;
           End; // If ii>10 Then
@@ -11725,6 +11772,8 @@ Var
   MySql: String;
   iOrdemMov, iCodObj: Integer;
   i, ii: Integer;
+
+  sDesObj,
   sCampo: String;
   cVlrCalculado, cVlrAcumulado: Currency;
   bSiga: Boolean;
@@ -11733,11 +11782,14 @@ Var
   sMes: String;
   iMes: Integer;
 Begin
+  //(ODIRK2) - INICIO - AtualizaValorObjetivosMetasMesesAvarias;
+  //==========================================================//
   Array_MesesTotal:=nil;
-  SetLength(Array_MesesTotal,205000); 
-   
+  SetLength(Array_MesesTotal,205000);
+
   // Localiza Empresa na Planilha ==============================================
   iCodObj:= DMBelShop.CDS_ObjetivosCOD_OBJETIVO.AsInteger;
+  sDesObj:= DMBelShop.CDS_ObjetivosDES_OBJETIVO.AsString;
   if DMVirtual.CDS_V_ObjetivosMeses.Locate('Cod_Objetivo; Cod_Emp; Tipo', VarArrayOf([iCodObj,sgCodEmp, 'Realizado']),[]) Then
   Begin
     // Conecta Empresa =====================================================
@@ -11748,9 +11800,10 @@ Begin
     Else // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
      Begin
        If sgLojasNConectadas='' Then
-        sgLojasNConectadas:='Bel_'+sgCodEmp
-       Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sgCodEmp) then
-        sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sgCodEmp;
+        sgLojasNConectadas:=sDesObj+': Bel_'+sgCodEmp
+       Else
+        sgLojasNConectadas:=
+         sgLojasNConectadas+cr+sDesObj+':  Bel_'+sgCodEmp;
 
        Refresh;
        bSiga:=False;
@@ -11766,6 +11819,7 @@ Begin
                   IBQ_ConsultaFilial, True, True);
 
       //(ODIRK2) - AtualizaValorObjetivosMetasMesesAvarias;
+      //==================================================//
       // Busca Auditoria =======================================================
       MySql:=' Select'+
              ' Cast(lpad(extract(month from m.datacomprovante),2,''0'') as varchar(2))||''/''||'+
@@ -11831,9 +11885,10 @@ Begin
         If ii>10 Then
         Begin
           If sgLojasNConectadas='' Then
-           sgLojasNConectadas:='Bel_'+sgCodEmp
-          Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sgCodEmp) then
-           sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sgCodEmp;
+           sgLojasNConectadas:=sDesObj+': Bel_'+sgCodEmp
+          Else
+           sgLojasNConectadas:=
+            sgLojasNConectadas+cr+sDesObj+':  Bel_'+sgCodEmp;
           Break;
         End; // If ii>10 Then
       End; // While Not bSiga do
@@ -13657,12 +13712,17 @@ Var
   iOrdemMov, iCodObj: Integer;
   i, ii, iLinx: Integer;
   iDia: Integer;
+
+  sDesObj,
   sCampoSubst, sVlrSubst, sCampo: String;
   cVlrAcumulado: Currency;
   bSiga: Boolean;
 
   mMemLinx: TMemo;
 Begin
+  //(ODIRK1) - INICIO - AtualizaValorObjetivosMetasDias;
+  //=================================================//
+
   // Cria Componente Memo para Vendas Linx =====================================
   mMemLinx:=TMemo.Create(Self);
   mMemLinx.Visible:=False;
@@ -13676,6 +13736,7 @@ Begin
 
   // Localiza Empresa na Planilha ==============================================
   iCodObj:=DMBelShop.CDS_ObjetivosCOD_OBJETIVO.AsInteger;
+  sDesObj:=DMBelShop.CDS_ObjetivosDES_OBJETIVO.AsString;
   if DMVirtual.CDS_V_ObjetivosDias.Locate('Cod_Objetivo; Cod_Emp; Tipo', VarArrayOf([iCodObj,sgCodEmp, 'Realizado']),[]) Then
   Begin
     // Conecta Empresa =========================================================
@@ -13689,9 +13750,10 @@ Begin
       Else // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
        Begin
          If sgLojasNConectadas='' Then
-          sgLojasNConectadas:='Bel_'+sgCodEmp
-         Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sgCodEmp) then
-          sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sgCodEmp;
+          sgLojasNConectadas:=sDesObj+': Bel_'+sgCodEmp
+         Else
+          sgLojasNConectadas:=
+           sgLojasNConectadas+cr+sDesObj+': Bel_'+sgCodEmp;
 
          bSiga:=False;
        End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
@@ -13715,6 +13777,9 @@ Begin
         // Movimentação Linx (Vendas)--------------------------------
         DMLinx.CDS_Busca.Close;
         mMemLinx.Lines.Clear;
+        sgDtaFimLinx  :='';
+        sgDtaIncioLinx:='';
+
         If (Memo2.Lines[i]='002') And (igCodLojaLinx<>0) And
            (Not Rb_FinanObjetivosManutTpOperacaoSalao.Checked) And
            (Not Ckb_FinanObjetivosManutNaoCompra.Checked) Then
@@ -13817,9 +13882,23 @@ Begin
                   MySql:=
                    MySql+' and m.codcomprovante='+QuotedStr(Memo2.Lines[i]);
 
+                 If Trim(sgDtaIncioLinx)='' Then
+                  Begin
+                    MySql:=
+                     MySql+' and m.datacomprovante '+f_Troca('/','.',f_Troca('-','.',sgPeriodo));
+                  End
+                 Else
+                  Begin
+                    // Acerta Final do Periodo do SIDICOM -----------
+                    MySql:=
+                     MySql+' and m.datacomprovante '+f_Troca('/','.',f_Troca('-','.',
+                                                     Copy(AnsiUpperCase(sgPeriodo),1,pos('AND',AnsiUpperCase(sgPeriodo))+3)+
+                                                     QuotedStr(DateToStr(StrToDate(sgDtaIncioLinx)-1))));
+                  End; // If Trim(sgDtaIncioLinx)='' Then
+
                  MySql:=
-                  MySql+' and m.datacomprovante '+f_Troca('/','.',f_Troca('=','.',sgPeriodo))+
-                        ' Group by 1';
+                  MySql+' Group by 1';
+
         End; // If sgCodEmp<>'18' Then // Monta SQL Somente Loja Com SIDICOM ---
 
         // Ingremente dias do Linx =============================================
@@ -13865,9 +13944,10 @@ Begin
           If ii>10 Then
           Begin
             If sgLojasNConectadas='' Then
-             sgLojasNConectadas:='Bel_'+sgCodEmp
-            Else If Not AnsiContainsStr(sgLojasNConectadas, 'Bel_'+sgCodEmp) then
-             sgLojasNConectadas:=sgLojasNConectadas+', Bel_'+sgCodEmp;
+             sgLojasNConectadas:=sDesObj+': Bel_'+sgCodEmp
+            Else
+             sgLojasNConectadas:=
+              sgLojasNConectadas+cr+sDesObj+': Bel_'+sgCodEmp;
 
             Break;
           End; // If ii>10 Then
@@ -13967,7 +14047,7 @@ Begin
         for ii:=Low(Array_Campos) to High(Array_Campos) do
         Begin
           If (Array_Campos[ii]<>'') Then
-          Begin                                                                      
+          Begin
             sCampoSubst:='CP'+Memo2.Lines[i]+'.QTD_COMPROV';
             Array_Campos[ii]:=StringReplace(Array_Campos[ii], sCampoSubst, sVlrSubst, [rfReplaceAll]);
             
@@ -13992,7 +14072,7 @@ Begin
           End; // If (Array_Campos[i]<>'') and
         End; // for i:=Low(Array_Campos) to High(Array_Campos) do
       End; // For i:=0 to memo2.Lines.Count-1 do
-          
+
       // Calcula Formula e Atualiza Planilha de Objetivos ==================
       cVlrAcumulado:=0;
       for i:=Low(Array_Campos) to High(Array_Campos) do
@@ -23016,6 +23096,7 @@ begin
   Me_ConEmpresasCEP.Clear;
   Me_ConEmpresasCNPJ.Clear;
   EdtDta_ConEmpresasInicioLinx.Clear;
+  EdtDta_ConEmpresasInventLinx.Clear;
   EdtConEmpresasEstado.Clear;
 
   // Libera Inserção ===========================================================
@@ -23111,7 +23192,7 @@ begin
               ' DES_CIDADE, COD_UF, COD_CEP, NUM_CNPJ, INSCR_ESTADUAL,'+
               ' DES_ENDERECO, NUM_ENDERECO, COMPL_ENDERECO, COD_LISTAPRE, IND_ATIVO,'+
               ' USU_INCLUI, NUM_SINDICATO, NUM_ALVARA_MUN, COD_CONTABIL,'+
-              ' COD_LINX, DTA_INICIO_LINX)'+
+              ' COD_LINX, DTA_INICIO_LINX, DTA_INVENTARIO_LINX)'+
 
               ' Values('+
               ' :COD_FILIAL, :ENDERECO_IP, :ENDERECO_IP_EXTERNO, :PASTA_BASE_DADOS,'+
@@ -23119,7 +23200,7 @@ begin
               ' :DES_CIDADE, :COD_UF, :COD_CEP, :NUM_CNPJ, :INSCR_ESTADUAL,'+
               ' :DES_ENDERECO, :NUM_ENDERECO, :COMPL_ENDERECO, :COD_LISTAPRE, :IND_ATIVO,'+
               ' :USU_INCLUI, :NUM_SINDICATO, :NUM_ALVARA_MUN, :COD_CONTABIL,'+
-              ' :COD_LINX, :DTA_INICIO_LINX)';
+              ' :COD_LINX, :DTA_INICIO_LINX, :DTA_INVENTARIO_LINX)';
        DMBelShop.SQLQuery1.Close;
        DMBelShop.SQLQuery1.SQL.Clear;
        DMBelShop.SQLQuery1.SQL.Add(MySql);
@@ -23148,6 +23229,7 @@ begin
        DMBelShop.SQLQuery1.Params.ParamByName('COD_CONTABIL').AsString        :=DMBelShop.CDS_EmpresaCOD_CONTABIL.AsString;
        DMBelShop.SQLQuery1.Params.ParamByName('COD_LINX').AsString            :=DMBelShop.CDS_EmpresaCOD_LINX.AsString;
        DMBelShop.SQLQuery1.Params.ParamByName('DTA_INICIO_LINX').AsString     :=DMBelShop.CDS_EmpresaDTA_INICIO_LINX.AsString;
+       DMBelShop.SQLQuery1.Params.ParamByName('DTA_INVENTARIO_LINX').AsString :=DMBelShop.CDS_EmpresaDTA_INVENTARIO_LINX.AsString;
        DMBelShop.SQLQuery1.Params.ParamByName('USU_INCLUI').AsString          :=Cod_Usuario;
        DMBelShop.SQLQuery1.ExecSQL;
      End
@@ -23188,6 +23270,17 @@ begin
                Begin
                  MySql:=
                   MySql+ ' DTA_INICIO_LINX=NULL, ';
+               End;
+
+              If (Trim(EdtDta_ConEmpresasInventLinx.Text)<>'') and (Trim(EdtDta_ConEmpresasInventLinx.Text)<>'/  /') Then
+               Begin
+                 MySql:=
+                  MySql+ ' DTA_INVENTARIO_LINX='+QuotedStr(f_Troca('/','.',f_Troca('-','.',EdtDta_ConEmpresasInventLinx.Text)))+', ';
+               End
+              Else
+               Begin
+                 MySql:=
+                  MySql+ ' DTA_INVENTARIO_LINX=NULL, ';
                End;
 
        MySql:=
@@ -23269,8 +23362,9 @@ begin
         DMVirtual.CDS_V_EmpConexoesCOMPL_ENDERECO.AsString  :=Dbe_ConEmpresasComplemento.Text;
         DMVirtual.CDS_V_EmpConexoesIND_ATIVO.AsString       :=Dbcb_ConEmpresasAtivo.Text;
 
-        DMVirtual.CDS_V_EmpConexoesCOD_LINX.AsString        :=Dbe_ConEmpresasCodLojaLinx.Text;
-        DMVirtual.CDS_V_EmpConexoesDTA_INICIO_LINX.AsDateTime:=EdtDta_ConEmpresasInicioLinx.Date;
+        DMVirtual.CDS_V_EmpConexoesCOD_LINX.AsString             :=Dbe_ConEmpresasCodLojaLinx.Text;
+        DMVirtual.CDS_V_EmpConexoesDTA_INICIO_LINX.AsDateTime    :=EdtDta_ConEmpresasInicioLinx.Date;
+        DMVirtual.CDS_V_EmpConexoesDTA_INVENTARIO_LINX.AsDateTime:=EdtDta_ConEmpresasInventLinx.Date;
 
         If (bDesconecta) or (DMVirtual.CDS_V_EmpConexoes.State=dsInsert) Then
          DMVirtual.CDS_V_EmpConexoesCONEXAO.AsString:='Não';
@@ -32106,9 +32200,6 @@ Begin
   EdtFinanObjetivosResultMesesTamColuna3.Value:=Dbg_FinanObjetivosResultadosMeses.Columns[2].Width;
   EdtFinanObjetivosResultMesesTamColuna4.Value:=Dbg_FinanObjetivosResultadosMeses.Columns[3].Width;
   EdtFinanObjetivosResultMesesTamNaoFixas.Value:=Dbg_FinanObjetivosResultadosMeses.Columns[4].Width;
-
-  // Apresenta Planilha de Resultados de Objetivos =============================
-  sgLojasNConectadas:='';
 
   OdirPanApres.Visible:=False;
 
@@ -45457,7 +45548,10 @@ end;
 procedure TFrmBelShop.EdtDta_ConEmpresasInicioLinxPropertiesChange(Sender: TObject);
 begin
   If (Trim(Dbe_ConEmpresasCodLojaLinx.Text)='') or (Trim(Dbe_ConEmpresasCodLojaLinx.Text)='0') Then
-   EdtDta_ConEmpresasInicioLinx.Clear;
+  Begin
+    EdtDta_ConEmpresasInicioLinx.Clear;
+    EdtDta_ConEmpresasInventLinx.Clear;
+  End;
 end;
 
 procedure TFrmBelShop.Dbe_ConEmpresasCodLojaLinxExit(Sender: TObject);
@@ -45466,6 +45560,7 @@ begin
   Begin
     Dbe_ConEmpresasCodLojaLinx.Text:='0';
     EdtDta_ConEmpresasInicioLinx.Clear;
+    EdtDta_ConEmpresasInventLinx.Clear;
   End;
 
 end;

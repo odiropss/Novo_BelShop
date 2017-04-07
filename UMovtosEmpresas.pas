@@ -2277,10 +2277,10 @@ begin
     // =========================================================================
     // Atualiza Dados da Tabela ESTOQUE - Central de Trocas ====================
     // =========================================================================
-    If (EdtParamStr.Text<>'OPSS') And (EdtParamStr.Text<>'OPSS_N') Then
-    Begin
-      AtualizaTabelaEstoque('50');
-    End;
+//    If (EdtParamStr.Text<>'OPSS') And (EdtParamStr.Text<>'OPSS_N') Then
+//    Begin
+//      AtualizaTabelaEstoque('50');
+//    End;
 
   End; // If Not bgJaProcessouUmaVez Then
   // ===========================================================================
@@ -2649,11 +2649,11 @@ begin
         // ============================================================
         // Atualiza Dados da Tabela ESTOQUE ===========================
         // ============================================================
-        If (EdtParamStr.Text<>'OPSS') And (EdtParamStr.Text<>'OPSS_N') Then
-        Begin
-          //odiropss - Retirar comentario
-          AtualizaTabelaEstoque(sCodEmpresa);
-        End;
+//        If (EdtParamStr.Text<>'OPSS') And (EdtParamStr.Text<>'OPSS_N') Then
+//        Begin
+//          //odiropss - Retirar comentario
+//          AtualizaTabelaEstoque(sCodEmpresa);
+//        End;
 
         dDtaProc:=DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor);
         // ============================================================

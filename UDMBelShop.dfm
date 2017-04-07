@@ -297,6 +297,10 @@ object DMBelShop: TDMBelShop
       item
         Name = 'DTA_INICIO_LINX'
         DataType = ftDate
+      end
+      item
+        Name = 'DTA_INVENTARIO_LINX'
+        DataType = ftDate
       end>
     IndexDefs = <>
     IndexFieldNames = 'RAZAO_SOCIAL'
@@ -433,6 +437,9 @@ object DMBelShop: TDMBelShop
     end
     object CDS_EmpresaDTA_INICIO_LINX: TDateField
       FieldName = 'DTA_INICIO_LINX'
+    end
+    object CDS_EmpresaDTA_INVENTARIO_LINX: TDateField
+      FieldName = 'DTA_INVENTARIO_LINX'
     end
   end
   object DS_Empresa: TDataSource

@@ -56,8 +56,8 @@ object DMAtualizaEstoques: TDMAtualizaEstoques
         'ZACAO FROM ESTOQUE e'
       '      LEFT JOIN PRODUTO p on e.codproduto=p.codproduto '
       'WHERE e.codfilial='#39'99'#39)
-    Left = 80
-    Top = 224
+    Left = 56
+    Top = 296
     object IBQ_EstoqueLojaCODFILIAL: TIBStringField
       FieldName = 'CODFILIAL'
       Origin = 'ESTOQUE.CODFILIAL'
@@ -176,8 +176,8 @@ object DMAtualizaEstoques: TDMAtualizaEstoques
       'externo,'#13#10'c.PASTA_BASE_DADOS, c.DES_BASE_DADOS, c.COD_EMP, c.RAZ' +
       'AO_SOCIAL, c.TIP_EMP,'#13#10'c.IND_ATIVO, c.DTA_INICIO_LINX,'#13#10#39'IBDB_'#39'|' +
       '|c.COD_FILIAL "DATABASE",'#13#10#39'IBT_'#39'||c.COD_FILIAL  "TRANSACAO"'#13#10#13#10 +
-      'From EMP_Conexoes c'#13#10'Where (c.Ind_Ativo='#39'SIM'#39' or c.cod_filial='#39'9' +
-      '9'#39' or c.cod_filial='#39'50'#39')'#13#10'Order by c.Cod_Emp'
+      'From EMP_Conexoes c'#13#10'Where ((c.ind_ativo='#39'SIM'#39') or (c.cod_filial' +
+      '=99))'#13#10'order by c.Cod_Emp'
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -257,20 +257,40 @@ object DMAtualizaEstoques: TDMAtualizaEstoques
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 239
-    Top = 225
+    Left = 215
+    Top = 297
   end
   object CDS_LojaLinx: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_LojaLinx'
-    Left = 333
-    Top = 224
+    Left = 309
+    Top = 296
   end
   object DSP_LojaLinx: TDataSetProvider
     DataSet = SDS_LojaLinx
     Options = [poRetainServerOrder]
-    Left = 284
-    Top = 238
+    Left = 260
+    Top = 310
+  end
+  object SDS_Busca: TSQLDataSet
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 56
+    Top = 184
+  end
+  object CDS_Busca: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_Busca'
+    Left = 160
+    Top = 184
+  end
+  object DSP_Busca: TDataSetProvider
+    DataSet = SDS_Busca
+    Options = [poRetainServerOrder]
+    Left = 104
+    Top = 200
   end
 end

@@ -852,6 +852,7 @@ type
     CDS_SelectLojaRAZAO_SOCIAL: TStringField;
     CDS_V_EmpConexoesCOD_LINX: TIntegerField;
     CDS_V_EmpConexoesDTA_INICIO_LINX: TDateField;
+    CDS_V_EmpConexoesDTA_INVENTARIO_LINX: TDateField;
     procedure CDS_V_GruposProdutosAfterScroll(DataSet: TDataSet);
     procedure CDS_V_EstFisFinanEmpAfterScroll(DataSet: TDataSet);
     procedure CDS_V_MargemLucroFornAfterScroll(DataSet: TDataSet);
