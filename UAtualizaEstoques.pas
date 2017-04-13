@@ -132,6 +132,15 @@ Begin
     MySql:=' DELETE FROM W_LINX_MOVTOS';
     DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
+    MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo)'+
+           ' VALUES ('+
+           QuotedStr(sCodBelShop)+', '+
+           sCodLinx+', '+
+           'CURRENT_TIMESTAMP,'+
+           QuotedStr('LsI')+')'+ // Linx Sem Inventário
+           'MATCHING (COD_LOJA, COD_LINX)';
+    DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
     // Atualiza Transacao ======================================================
     DMAtualizaEstoques.SQLC.Commit(TD);
 
@@ -308,7 +317,14 @@ procedure TFrmAtualizaEstoques.Bt_AtualizarClick(Sender: TObject);
 var
   bSiga: Boolean;
 
-  MySql,
+  MySql: String;
+
+  sTipo: String; // Tipo de Processamento:
+                 // Sdm = Sidicom
+                 // LsI = Linx Sem Inventário
+                 // LcI = Linx Com Inventário
+
+
   sCodEmpresa, sHora,
   sDtaLinx, sDtaInventLinx,
   sgDML, sgValues: String;
@@ -362,12 +378,13 @@ begin
 //    sDtaInventLinx:='02/04/2017';
 //    sCodEmpresa   :='06';
 
-    // Só Atualiza Estoques com Movtos Ent/Sai Linx
+    // Só Atualiza Estoques com Movtos Ent/Sai Linx (Com Linx Sem Inventário)
+    sTipo:='';
     bSoAtulMovtoLinx:=False;
     If (iCodLinx<>0) and (sDtaInventLinx='') Then
     Begin
       AtualizaEstoquesMovtosLinx(IntToStr(iCodLinx), sCodEmpresa, sDtaLinx);
-      
+
       bSoAtulMovtoLinx:=True;
     End; // If (iCodLinx<>0) and (sDtaInventLinx='') Then
 
@@ -450,6 +467,8 @@ begin
             If i>2 Then
              Break;
           End; // While Not bSiga do
+
+          sTipo:='Sdm'; // Sidicom
         End; // If iCodLinx=0 Then
         // =====================================================================
         // SIDICOM DIRETO ======================================================
@@ -491,6 +510,8 @@ begin
           DMAtualizaEstoques.CDS_LojaLinx.Close;
           DMAtualizaEstoques.SDS_LojaLinx.CommandText:=MySql;
           DMAtualizaEstoques.CDS_LojaLinx.Open;
+
+          sTipo:='LcI'; // Linx Com Inventário
         End; // If (iCodLinx<>0) and (sDtaInventLinx<>'') Then
         // =====================================================================
         // LINX COM INVENTARIO - LINX DIRETO ===================================
@@ -605,11 +626,12 @@ begin
             // LINX COM INVENTARIO - LINX DIRETO ===============================
             // =================================================================
 
-            MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc)'+
+            MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo)'+
                    ' VALUES ('+
                    QuotedStr(sCodEmpresa)+', '+
-                   IntToStr(iCodLinx)+
-                   ', current_timestamp)'+
+                   IntToStr(iCodLinx)+', '+
+                   ' CURRENT_TIMESTAMP,'+
+                   QuotedStr(sTipo)+')'+ // Linx Com Inventário
                    'MATCHING (COD_LOJA, COD_LINX)';
             DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 

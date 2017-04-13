@@ -4046,7 +4046,7 @@ begin
               End; // on e : Exception do
             End; // Try
           End; // If bSiga Then // Consulta Transito
-          
+
           DateSeparator:='/';
           DecimalSeparator:=',';
         End; // If bProcTransito Then
@@ -5253,7 +5253,7 @@ begin
               End; // on e : Exception do
             End; // Try
           End; // If bSiga Then // Consulta Valor Contabil
-          
+
           DateSeparator:='/';
           DecimalSeparator:=',';
         End; // If bProcVlrContab Then

@@ -1175,6 +1175,7 @@ type
     CDS_ObjetivosEmpresasRAZAO_SOCIAL: TStringField;
     CDS_ObjetivosEmpresasCOD_LINX: TIntegerField;
     CDS_EmpresaDTA_INVENTARIO_LINX: TDateField;
+    CDS_AComprarOCsCOD_LINX: TIntegerField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -1367,6 +1368,7 @@ uses DK_Procs1, UFrmBelShop, UDMConexoes,  UFrmSolicitacoes, UDMVirtual,
   UFrmGeraPedidosComprasLojas, UWindowsFirewall, UEntrada,
   UDMBancosConciliacao;
      // DBGrids, Variants, RTLConsts,
+
 {$R *.dfm}
 
 // =============================================================================
@@ -3463,7 +3465,7 @@ begin
       Exit;
     End;
   End;
-                     
+
   If Not (FileExists(sPath_Local+sgPCTConect_IB)) Then
   Begin
     msg('Arquivo de Configuração Não Existe...'+cr+'O Sistema será Encerrado !!','A');
@@ -3567,7 +3569,7 @@ begin
          If i=2 Then
          Begin
            s:=e.message;
-           MessageBox(Application.Handle, pChar('Erro ao Conectar Bando BelShop !!'+cr+e.message), 'Erro', MB_ICONERROR);
+           MessageBox(Application.Handle, pChar('Erro ao Conectar Banco BelShop !!'+cr+e.message), 'Erro', MB_ICONERROR);
            Application.Terminate;
            b:=True;
          End;
@@ -3592,7 +3594,7 @@ End; // Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // =============================================================================
 // Odir - FIM ==================================================================
 // =============================================================================
-          
+
 procedure TDMBelShop.CDS_EmpresaAfterScroll(DataSet: TDataSet);
 Var
   s:String;

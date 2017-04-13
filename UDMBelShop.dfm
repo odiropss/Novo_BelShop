@@ -552,6 +552,10 @@ object DMBelShop: TDMBelShop
         Size = 60
       end
       item
+        Name = 'COD_LINX'
+        DataType = ftInteger
+      end
+      item
         Name = 'IND_OC_GERADA'
         DataType = ftString
         Size = 1
@@ -695,9 +699,13 @@ object DMBelShop: TDMBelShop
     end
     object CDS_AComprarOCsCOD_EMP_FIL: TStringField
       Alignment = taCenter
-      DisplayLabel = 'C'#243'd Loja'
+      DisplayLabel = 'Sidicom'
       FieldName = 'COD_EMP_FIL'
       Size = 6
+    end
+    object CDS_AComprarOCsCOD_LINX: TIntegerField
+      DisplayLabel = 'Linx'
+      FieldName = 'COD_LINX'
     end
     object CDS_AComprarOCsDES_EMP_FIL: TStringField
       DisplayLabel = 'Raz'#227'o Social'
@@ -864,34 +872,36 @@ object DMBelShop: TDMBelShop
     CommandText = 
       'select '#39'N'#39' Gerar,'#13#10'case'#13#10'  when Coalesce(oc.qtd_transf,0)>0 Then' +
       #13#10'    '#39'TR'#39#13#10'  Else'#13#10'    '#39'OC'#39#13#10'end Tipo,'#13#10#13#10'oc.cod_empresa Cod_Em' +
-      'p_Fil, oc.des_empresa des_emp_fil, oc.ind_oc_gerada,'#13#10'oc.cod_for' +
-      'necedor,  oc.des_fornecedor Fornecedor,'#13#10'sum(Coalesce(oc.vlr_bru' +
-      'to,0)) Total_Bruto,'#13#10'sum(Coalesce(oc.vlr_descontos,0)) Total_Des' +
-      'contos,'#13#10'sum(Coalesce(oc.vlr_ipi,0)) Total_IPI,'#13#10'sum(Coalesce(oc' +
-      '.vlr_despesas,0)) Total_Despesas,'#13#10'sum(Coalesce(oc.vlr_st,0)) To' +
-      'tal_ST,'#13#10'sum(Coalesce(oc.vlr_frete,0)) Total_Frete,'#13#10'sum(Coalesc' +
-      'e(oc.vlr_icms,0)) Total_ICMS,'#13#10'sum(Coalesce(oc.vlr_repasse,0)) T' +
-      'otal_Repasse,'#13#10#13#10'sum(case'#13#10'      when oc.qtd_transf=0 Then'#13#10'    ' +
-      '    Coalesce(oc.vlr_tot_compra,0)'#13#10'      Else'#13#10'       0'#13#10'end) To' +
-      'tal_OCs,'#13#10#13#10'sum(Coalesce(oc.vlr_tot_compra,0)) Total_OC,'#13#10#13#10'sum(' +
-      'Coalesce(oc.vlr_tot_venda,0)) Total_Venda,'#13#10'oc.num_documento,'#13#10'o' +
-      'c.num_oc_gerada, '#13#10'cast(oc.dta_oc_gerada as Date) dta_oc_gerada,' +
-      #13#10'oc.cod_comprovante_icms,'#13#10'Count(oc.cod_item) Total_Itens,'#13#10'Sum' +
-      '(Coalesce(oc.qtd_acomprar,0)) Total_Qtd,'#13#10'Sum(Coalesce(oc.qtd_tr' +
-      'ansf,0)) Total_Qtd_Transf,'#13#10#13#10'SUM('#13#10'Case'#13#10'   When oc.QTD_ACOMPRA' +
-      'R>0 Then'#13#10'   1'#13#10'   Else'#13#10'   0'#13#10'End) Total_Itens_Acomprar'#13#10#13#10'from' +
-      ' oc_comprar oc'#13#10#13#10'Where oc.num_documento=:NrDocto'#13#10#13#10'group by Ti' +
-      'po, Cod_Emp_Fil, oc.des_empresa, oc.ind_oc_gerada,'#13#10'oc.cod_forne' +
-      'cedor, Fornecedor,'#13#10'oc.num_documento, oc.num_oc_gerada, '#13#10'cast(o' +
-      'c.dta_oc_gerada as Date),'#13#10'oc.cod_comprovante_icms'#13#10#13#10'Order by C' +
-      'od_Emp_Fil, Fornecedor, oc.num_oc_gerada'#13#10#13#10#13#10#13#10
+      'p_Fil, oc.des_empresa des_emp_fil, '#13#10#13#10'Case'#13#10'  When em.cod_linx<' +
+      '>0 Then'#13#10'    em.cod_linx'#13#10'End cod_linx,'#13#10#13#10'oc.ind_oc_gerada,'#13#10'oc' +
+      '.cod_fornecedor,  oc.des_fornecedor Fornecedor,'#13#10'sum(Coalesce(oc' +
+      '.vlr_bruto,0)) Total_Bruto,'#13#10'sum(Coalesce(oc.vlr_descontos,0)) T' +
+      'otal_Descontos,'#13#10'sum(Coalesce(oc.vlr_ipi,0)) Total_IPI,'#13#10'sum(Coa' +
+      'lesce(oc.vlr_despesas,0)) Total_Despesas,'#13#10'sum(Coalesce(oc.vlr_s' +
+      't,0)) Total_ST,'#13#10'sum(Coalesce(oc.vlr_frete,0)) Total_Frete,'#13#10'sum' +
+      '(Coalesce(oc.vlr_icms,0)) Total_ICMS,'#13#10'sum(Coalesce(oc.vlr_repas' +
+      'se,0)) Total_Repasse,'#13#10#13#10'sum(case'#13#10'      when oc.qtd_transf=0 Th' +
+      'en'#13#10'        Coalesce(oc.vlr_tot_compra,0)'#13#10'      Else'#13#10'       0'#13 +
+      #10'end) Total_OCs,'#13#10#13#10'sum(Coalesce(oc.vlr_tot_compra,0)) Total_OC,' +
+      #13#10#13#10'sum(Coalesce(oc.vlr_tot_venda,0)) Total_Venda,'#13#10'oc.num_docum' +
+      'ento,'#13#10'oc.num_oc_gerada, '#13#10'cast(oc.dta_oc_gerada as Date) dta_oc' +
+      '_gerada,'#13#10'oc.cod_comprovante_icms,'#13#10'Count(oc.cod_item) Total_Ite' +
+      'ns,'#13#10'Sum(Coalesce(oc.qtd_acomprar,0)) Total_Qtd,'#13#10'Sum(Coalesce(o' +
+      'c.qtd_transf,0)) Total_Qtd_Transf,'#13#10#13#10'SUM('#13#10'Case'#13#10'   When oc.QTD' +
+      '_ACOMPRAR>0 Then'#13#10'   1'#13#10'   Else'#13#10'   0'#13#10'End) Total_Itens_Acomprar' +
+      #13#10#13#10'from oc_comprar oc, emp_conexoes em'#13#10#13#10'Where oc.cod_empresa=' +
+      'em.cod_filial'#13#10'and      oc.num_documento=:NrDocto'#13#10#13#10'group by Ti' +
+      'po, Cod_Emp_Fil, oc.des_empresa, em.cod_linx,'#13#10'oc.ind_oc_gerada,' +
+      #13#10'oc.cod_fornecedor, Fornecedor,'#13#10'oc.num_documento, oc.num_oc_ge' +
+      'rada, '#13#10'cast(oc.dta_oc_gerada as Date),'#13#10'oc.cod_comprovante_icms' +
+      #13#10#13#10'Order by Cod_Emp_Fil, Fornecedor, oc.num_oc_gerada'#13#10#13#10#13#10#13#10
     MaxBlobSize = -1
     Params = <
       item
         DataType = ftString
         Name = 'NrDocto'
         ParamType = ptInput
-        Value = '10178'
+        Value = '0'
       end>
     SQLConnection = SQLC
     Left = 240
@@ -1447,6 +1457,7 @@ object DMBelShop: TDMBelShop
     Top = 441
   end
   object IBDB_BelShop: TIBDatabase
+    Connected = True
     DatabaseName = 'localhost:C:\Projetos\BelShop\Dados\BelShop.FDB'
     Params.Strings = (
       'user_name=SYSDBA'
@@ -1460,7 +1471,7 @@ object DMBelShop: TDMBelShop
     Top = 21
   end
   object IBT_BelShop: TIBTransaction
-    Active = False
+    Active = True
     DefaultDatabase = IBDB_BelShop
     AutoStopAction = saNone
     Left = 1258

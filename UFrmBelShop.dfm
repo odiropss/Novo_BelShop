@@ -8787,7 +8787,7 @@ object FrmBelShop: TFrmBelShop
             Top = 53
             Width = 793
             Height = 422
-            ActivePage = Ts_GeraOCOrdensCompra
+            ActivePage = Ts_GeraOCGrid
             Align = alClient
             MultiLine = True
             TabOrder = 3
@@ -10165,9 +10165,16 @@ object FrmBelShop: TFrmBelShop
                   item
                     Expanded = False
                     FieldName = 'COD_EMP_FIL'
-                    ReadOnly = False
                     Title.Alignment = taCenter
-                    Width = 60
+                    Width = 50
+                    Visible = True
+                  end
+                  item
+                    Alignment = taCenter
+                    Expanded = False
+                    FieldName = 'COD_LINX'
+                    Title.Alignment = taCenter
+                    Width = 40
                     Visible = True
                   end
                   item
@@ -12985,7 +12992,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 384
+            Height = 371
             Align = alClient
             Color = 15004403
             DataSource = DMVirtual.DS_V_NFe
@@ -13157,7 +13164,7 @@ object FrmBelShop: TFrmBelShop
           end
           object SBar_ConsultaNFeNotasLojas: TStatusBar
             Left = 0
-            Top = 384
+            Top = 371
             Width = 963
             Height = 19
             Panels = <
@@ -13173,7 +13180,7 @@ object FrmBelShop: TFrmBelShop
           ImageIndex = 2
           object Pan_ConsultaNFeProdutos: TPanel
             Left = 0
-            Top = 359
+            Top = 346
             Width = 963
             Height = 44
             Align = alBottom
@@ -13252,7 +13259,7 @@ object FrmBelShop: TFrmBelShop
             Left = 330
             Top = 0
             Width = 633
-            Height = 359
+            Height = 346
             Align = alClient
             Color = 15004403
             Ctl3D = False
@@ -13321,7 +13328,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 330
-            Height = 359
+            Height = 346
             Align = alLeft
             Color = 15004403
             Ctl3D = False
@@ -13465,7 +13472,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Panel66: TPanel
                 Left = 0
-                Top = 385
+                Top = 372
                 Width = 955
                 Height = 40
                 Align = alBottom
@@ -15503,7 +15510,7 @@ object FrmBelShop: TFrmBelShop
           ImageIndex = 1
           object Splitter2: TSplitter
             Left = 0
-            Top = 320
+            Top = 307
             Width = 963
             Height = 4
             Cursor = crVSplit
@@ -15515,7 +15522,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 320
+            Height = 307
             Align = alClient
             Color = 15004403
             DataSource = DMVirtual.DS_V_EstFisFinanEmp
@@ -15611,7 +15618,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Dbg_EstFisFinanLojas: TDBGrid
             Left = 0
-            Top = 324
+            Top = 311
             Width = 963
             Height = 149
             Align = alBottom
@@ -15702,7 +15709,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Pan_EstFisFinaResutadoGiroFisicoFinan: TPanel
             Left = 0
-            Top = 473
+            Top = 460
             Width = 963
             Height = 35
             Align = alBottom
@@ -18595,7 +18602,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 41
         Width = 971
-        Height = 460
+        Height = 447
         Align = alClient
         Color = 15004403
         DataSource = DMVirtual.DS_V_PlanoContasCompr200
@@ -18621,7 +18628,7 @@ object FrmBelShop: TFrmBelShop
       end
       object Panel70: TPanel
         Left = 0
-        Top = 501
+        Top = 488
         Width = 971
         Height = 35
         Align = alBottom
@@ -18831,7 +18838,7 @@ object FrmBelShop: TFrmBelShop
               Left = 2
               Top = 2
               Width = 375
-              Height = 414
+              Height = 401
               Align = alClient
               Color = 15004403
               DataSource = DMBelShop.DS_Objetivos
@@ -18934,7 +18941,7 @@ object FrmBelShop: TFrmBelShop
             end
             object dxStatusBar3: TdxStatusBar
               Left = 2
-              Top = 451
+              Top = 438
               Width = 375
               Height = 20
               Panels = <
@@ -18955,7 +18962,7 @@ object FrmBelShop: TFrmBelShop
             end
             object Panel91: TPanel
               Left = 2
-              Top = 416
+              Top = 403
               Width = 375
               Height = 35
               Align = alBottom
@@ -19522,7 +19529,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 1
                 Top = 14
                 Width = 262
-                Height = 208
+                Height = 195
                 Align = alClient
                 Color = 15004403
                 Ctl3D = False
@@ -19583,7 +19590,7 @@ object FrmBelShop: TFrmBelShop
               end
               object StBar_FinanObjetivosManutCalculaObjetivo: TStatusBar
                 Left = 1
-                Top = 222
+                Top = 209
                 Width = 262
                 Height = 19
                 Color = clSilver
@@ -22217,7 +22224,7 @@ object FrmBelShop: TFrmBelShop
           Left = 1
           Top = 14
           Width = 471
-          Height = 378
+          Height = 365
           Align = alClient
           Color = 15004403
           Ctl3D = False
@@ -22258,7 +22265,7 @@ object FrmBelShop: TFrmBelShop
         end
         object StatusBar1: TStatusBar
           Left = 1
-          Top = 392
+          Top = 379
           Width = 471
           Height = 19
           Color = clSilver
@@ -24431,7 +24438,7 @@ object FrmBelShop: TFrmBelShop
           Highlighted = True
           object Panel13: TPanel
             Left = 0
-            Top = 473
+            Top = 460
             Width = 963
             Height = 35
             Align = alBottom
@@ -25483,7 +25490,7 @@ object FrmBelShop: TFrmBelShop
             Left = 1
             Top = 14
             Width = 918
-            Height = 269
+            Height = 256
             Align = alClient
             Color = 15004403
             Ctl3D = False
@@ -25584,7 +25591,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Dbg_FinanFechaCaixaTotal: TDBGrid
             Left = 1
-            Top = 302
+            Top = 289
             Width = 918
             Height = 49
             Align = alBottom
@@ -25687,7 +25694,7 @@ object FrmBelShop: TFrmBelShop
           end
           object StatusBar5: TStatusBar
             Left = 1
-            Top = 283
+            Top = 270
             Width = 918
             Height = 19
             Panels = <
@@ -30692,8 +30699,8 @@ object FrmBelShop: TFrmBelShop
     end
   end
   object OdirPanApres: TPanel
-    Left = 864
-    Top = 140
+    Left = 888
+    Top = 164
     Width = 89
     Height = 33
     BevelInner = bvLowered

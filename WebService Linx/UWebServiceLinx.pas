@@ -515,9 +515,13 @@ Begin
     sXML:='			<Parameter id="data_upd_fim">'+sgDtaFim+'</Parameter>';
     Writeln(txtArq,sXML);
 
-    // Parametro Opcional
-    // sXML:='			<Parameter id="cod_vendedor">'+Codigo do Vendedor - INTEIRO+'</Parameter>';
-    // Writeln(txtArq,sXML);
+    //====================================
+    // PARAMETRO OPCIONAL E NÃO UTILIZADOS
+    //====================================
+    //       Metodo         Parametro
+    //--------------------  --------------
+    // LinxVendedores       Cod_Vendedor
+    //====================================
   End; // If sgMetodo='LinxVendedores' Then
 
   // ===========================================================================
@@ -529,6 +533,22 @@ Begin
     Writeln(txtArq,sXML);
     sXML:='			<Parameter id="data_fim">'+sgDtaFim+'</Parameter>';
     Writeln(txtArq,sXML);
+
+    If (sgMetodo='LinxMovimento') Then
+    Begin
+      sXML:='			<Parameter id="hora_inicial">'+'NULL'+'</Parameter>';
+      Writeln(txtArq,sXML);
+      sXML:='			<Parameter id="hora_fim">'+'NULL'+'</Parameter>';
+      Writeln(txtArq,sXML);
+    End; // If (sgMetodo='LinxMovimento') Then
+
+    //====================================
+    // PARAMETRO OPCIONAL E NÃO UTILIZADOS
+    //====================================
+    //       Metodo         Parametro
+    //--------------------  --------------
+    // LinxClientesFornec   Cod_Cliente
+    //====================================
   End; // If (sgMetodo='LinxClientesFornec') Or (sgMetodo='LinxMovimento') Then
 
   // ===========================================================================
@@ -548,6 +568,14 @@ Begin
     Writeln(txtArq,sXML);
     sXML:='			<Parameter id="dt_update_fim">'+sgDtaFim+'</Parameter>';
     Writeln(txtArq,sXML);
+
+    //====================================
+    // PARAMETRO OPCIONAL E NÃO UTILIZADOS
+    //====================================
+    //       Metodo         Parametro
+    //--------------------  --------------
+    // LinxProdutos         Cod_Produto
+    //====================================
   End; // If sgMetodo='LinxProdutos' Then
 
   // ===========================================================================
@@ -559,6 +587,14 @@ Begin
     Writeln(txtArq,sXML);
     sXML:='			<Parameter id="data_mov_fim">'+sgDtaFim+'</Parameter>';
     Writeln(txtArq,sXML);
+
+    //====================================
+    // PARAMETRO OPCIONAL E NÃO UTILIZADOS
+    //====================================
+    //       Metodo         Parametro
+    //--------------------  --------------
+    // LinxProdutosDetalhes Cod_Produto
+    //====================================
   End; // If sgMetodo='LinxProdutosDetalhes' Then
 
   // ===========================================================================
@@ -574,6 +610,14 @@ Begin
     Writeln(txtArq,sXML);
     sXML:='			<Parameter id="data_fim_pag">'+'NULL'+'</Parameter>';
     Writeln(txtArq,sXML);
+
+    //====================================
+    // PARAMETRO OPCIONAL E NÃO UTILIZADOS
+    //====================================
+    //       Metodo         Parametro
+    //--------------------  --------------
+    // LinxFaturas          Identificador
+    //====================================
   End; // If (sgMetodo='LinxFaturas') Then
 
   // ===========================================================================
@@ -590,8 +634,6 @@ Begin
 
   sXML:='</LinxMicrovix>';
   Writeln(txtArq,sXML);
-
-  CloseFile(txtArq);
 
 End; // Monta Metodos Post >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -806,6 +848,7 @@ Begin
     sgCodLojaLinx   :=Trim(DMLinxWebService.CDS_LojasCOD_LINX.AsString);
     sgDtaInicioLinx :=Trim(DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsString);
 
+    // sgCodLojaLinx:='13';
     //==========================================================================
     // Loop nos Metodos - INICIO ===============================================
     //==========================================================================

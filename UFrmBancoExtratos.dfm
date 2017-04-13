@@ -1126,7 +1126,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Top = 74
             Width = 1031
             Height = 395
-            ActivePage = Ts_ExtratoSantander
+            ActivePage = Ts_ExtratoConsulta
             Align = alClient
             TabOrder = 1
             OnChange = PC_ExtExtratosChange
@@ -1885,7 +1885,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
         Top = 0
         Width = 1039
         Height = 497
-        ActivePage = Ts_ConcConciliar
+        ActivePage = Ts_ConcConciliando
         Align = alClient
         TabOrder = 1
         OnChange = PC_ConcConciliarChange
