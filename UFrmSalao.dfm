@@ -1,5 +1,5 @@
 object FrmSalao: TFrmSalao
-  Left = 240
+  Left = 251
   Top = 108
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle

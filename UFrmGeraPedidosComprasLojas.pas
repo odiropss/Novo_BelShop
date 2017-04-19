@@ -4928,10 +4928,10 @@ begin
   Refresh;
 
   MySql:=' SELECT CAST(d.num_docto AS VARCHAR(15)) Num_Documento,'+
-         ' d.des_comprador, d.origem, d.dta_docto Dta_Documento, d.cod_comprador'+
+         '        d.des_comprador, d.origem, d.dta_docto Dta_Documento, d.cod_comprador'+
          ' FROM oc_comprar_docs d'+
-         ' WHERE  d.dta_docto='+
-         QuotedStr(f_Troca('/','.',(f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date)))))+
+         ' WHERE d.dta_docto='+QuotedStr(f_Troca('/','.',(f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date)))))+
+         ' AND   d.Origem<>'+QuotedStr('Linx')+
          ' ORDER BY 1';
   DMBelShop.CDS_Pesquisa.Close;
   DMBelShop.CDS_Pesquisa.Filtered:=False;
@@ -5006,6 +5006,7 @@ end;
 procedure TFrmGeraPedidosComprasLojas.EdtGeraOCBuscaDoctoExit(Sender: TObject);
 Var
   b: Boolean;
+  MySql: String;
 begin
   LojaApresSolicitacoesAbertas;
 
@@ -5044,8 +5045,16 @@ begin
   Refresh;
 
   // Busca Itens do Documento ------------------------------------------------
+  MySql:=' SELECT DISTINCT oc.cod_item, oc.des_item, oc.num_documento,'+
+         '                 oc.dta_documento, oc.cod_comprador, us.des_usuario'+
+         ' FROM OC_COMPRAR oc'+
+         '       LEFT JOIN PS_USUARIOS us     ON us.cod_usuario = oc.cod_comprador'+
+         '       LEFT JOIN OC_COMPRAR_DOCS od ON od.num_docto = oc.num_documento'+
+         ' WHERE od.origem<>'+QuotedStr('Linx')+
+         ' AND   oc.num_documento='+VarToStr(EdtGeraOCBuscaDocto.Value)+
+         ' ORDER BY oc.des_item';
   DMBelShop.CDS_AComprarItens.Close;
-  DMBelShop.SDS_AComprarItens.Params.ParamByName('NumDocto').Value:=EdtGeraOCBuscaDocto.Value;
+  DMBelShop.SDS_AComprarItens.CommandText:=MySql;
   DMBelShop.CDS_AComprarItens.Open;
 
   OdirPanApres.Visible:=False;
@@ -5996,7 +6005,7 @@ begin
 
     // Deleta OC_COMPRAR_DOCS ==================================================
     If Not bExcFornSolic Then
-     OC_COMPRAR_DOCS('D', VarToStr(EdtGeraOCBuscaDocto.Value));
+     OC_COMPRAR_DOCS('D', VarToStr(EdtGeraOCBuscaDocto.Value), '<>''Linx''');
 
     // Exclui Docto de OC Importada ============================================
     If Not bExcFornSolic Then

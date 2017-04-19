@@ -3406,7 +3406,7 @@ Begin
     DMBelShop.CDS_BuscaRapida.Open;
 
     If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_documento').AsString)='' Then
-     OC_COMPRAR_DOCS('D', VarToStr(EdtSolicExpDoctoOrigem.Value));
+     OC_COMPRAR_DOCS('D', VarToStr(EdtSolicExpDoctoOrigem.Value), '<>''Linx''');
 
     DMBelShop.CDS_BuscaRapida.Close;
 

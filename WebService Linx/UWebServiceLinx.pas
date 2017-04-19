@@ -305,17 +305,17 @@ Begin
 
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes') Then
                sSqlUpInValores:=
-                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, cod_produto)';
+                sSqlUpInValores+' MATCHING (empresa, cod_produto)';
 
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento') Then
                sSqlUpInValores:=
-                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, transacao, documento, '+
+                sSqlUpInValores+' MATCHING (empresa, transacao, documento, '+
                                            'codigo_cliente, operacao, tipo_transacao, '+
                                            'cod_produto, identificador)';
 
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas') Then
                sSqlUpInValores:=
-                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, codigo_fatura, data_emissao, '+
+                sSqlUpInValores+' MATCHING (empresa, codigo_fatura, data_emissao, '+
                                            'cod_cliente, documento, serie, identificador)';
 
               // Executa Sql Update/Insert -----------------
@@ -367,7 +367,7 @@ Begin
                  ' SELECT'+
                  ' lp.portal,'+
                  sgCodLojaLinx+' EMPRESA,'+ // CODIGO EMPRESA MICROVIX
-                 sgCNPJProc+' CNPJ_EMP,'+ // CNPJ DA EMPRESA
+                 QuotedStr(sgCNPJProc)+' CNPJ_EMP,'+ // CNPJ DA EMPRESA
                  ' LP.cod_produto COD_PRODUTO, LP.cod_barra COD_BARRA,'+
                  ' 0.0000 QUANTIDADE, 0.0000 PRECO_CUSTO, 0.0000 PRECO_VENDA, 0.0000 CUSTO_MEDIO,'+
                  ' NULL ID_CONFIG_TRIBUTARIA, NULL DESC_CONFIG_TRIBUTARIA,'+
@@ -634,6 +634,8 @@ Begin
 
   sXML:='</LinxMicrovix>';
   Writeln(txtArq,sXML);
+
+  CloseFile(txtArq);
 
 End; // Monta Metodos Post >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

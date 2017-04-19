@@ -2236,7 +2236,8 @@ Begin
   If sTipo='D' Then
   Begin
     MySql:=' DELETE FROM OC_COMPRAR_DOCS d'+
-           ' WHERE d.num_docto='+QuotedStr(sDoc);
+           ' WHERE d.Origem'+sOrigem+
+           ' AND   d.num_docto='+QuotedStr(sDoc);
     DMBelShop.SQLC.Execute(MySql,nil,nil);
     Exit;
   End; // If sTipo='D' Then

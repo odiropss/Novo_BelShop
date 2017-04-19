@@ -462,19 +462,8 @@ object DMBelShop: TDMBelShop
     Top = 229
   end
   object SDS_AComprarItens: TSQLDataSet
-    CommandText = 
-      'Select distinct oc.cod_item, oc.des_item,'#13#10'oc.num_documento, oc.' +
-      'dta_documento,'#13#10'oc.cod_comprador, us.des_usuario'#13#10#13#10'From oc_comp' +
-      'rar oc'#13#10'   Left Join ps_usuarios us on us.cod_usuario=oc.cod_com' +
-      'prador'#13#10#13#10'Where oc.num_documento= :NumDocto'#13#10#13#10'Order By oc.des_i' +
-      'tem'#13#10
     MaxBlobSize = -1
-    Params = <
-      item
-        DataType = ftUnknown
-        Name = 'NumDocto'
-        ParamType = ptInput
-      end>
+    Params = <>
     SQLConnection = SQLC
     Left = 240
     Top = 388
@@ -869,40 +858,8 @@ object DMBelShop: TDMBelShop
   end
   object SDS_AComprarOCs: TSQLDataSet
     ObjectView = True
-    CommandText = 
-      'select '#39'N'#39' Gerar,'#13#10'case'#13#10'  when Coalesce(oc.qtd_transf,0)>0 Then' +
-      #13#10'    '#39'TR'#39#13#10'  Else'#13#10'    '#39'OC'#39#13#10'end Tipo,'#13#10#13#10'oc.cod_empresa Cod_Em' +
-      'p_Fil, oc.des_empresa des_emp_fil, '#13#10#13#10'Case'#13#10'  When em.cod_linx<' +
-      '>0 Then'#13#10'    em.cod_linx'#13#10'End cod_linx,'#13#10#13#10'oc.ind_oc_gerada,'#13#10'oc' +
-      '.cod_fornecedor,  oc.des_fornecedor Fornecedor,'#13#10'sum(Coalesce(oc' +
-      '.vlr_bruto,0)) Total_Bruto,'#13#10'sum(Coalesce(oc.vlr_descontos,0)) T' +
-      'otal_Descontos,'#13#10'sum(Coalesce(oc.vlr_ipi,0)) Total_IPI,'#13#10'sum(Coa' +
-      'lesce(oc.vlr_despesas,0)) Total_Despesas,'#13#10'sum(Coalesce(oc.vlr_s' +
-      't,0)) Total_ST,'#13#10'sum(Coalesce(oc.vlr_frete,0)) Total_Frete,'#13#10'sum' +
-      '(Coalesce(oc.vlr_icms,0)) Total_ICMS,'#13#10'sum(Coalesce(oc.vlr_repas' +
-      'se,0)) Total_Repasse,'#13#10#13#10'sum(case'#13#10'      when oc.qtd_transf=0 Th' +
-      'en'#13#10'        Coalesce(oc.vlr_tot_compra,0)'#13#10'      Else'#13#10'       0'#13 +
-      #10'end) Total_OCs,'#13#10#13#10'sum(Coalesce(oc.vlr_tot_compra,0)) Total_OC,' +
-      #13#10#13#10'sum(Coalesce(oc.vlr_tot_venda,0)) Total_Venda,'#13#10'oc.num_docum' +
-      'ento,'#13#10'oc.num_oc_gerada, '#13#10'cast(oc.dta_oc_gerada as Date) dta_oc' +
-      '_gerada,'#13#10'oc.cod_comprovante_icms,'#13#10'Count(oc.cod_item) Total_Ite' +
-      'ns,'#13#10'Sum(Coalesce(oc.qtd_acomprar,0)) Total_Qtd,'#13#10'Sum(Coalesce(o' +
-      'c.qtd_transf,0)) Total_Qtd_Transf,'#13#10#13#10'SUM('#13#10'Case'#13#10'   When oc.QTD' +
-      '_ACOMPRAR>0 Then'#13#10'   1'#13#10'   Else'#13#10'   0'#13#10'End) Total_Itens_Acomprar' +
-      #13#10#13#10'from oc_comprar oc, emp_conexoes em'#13#10#13#10'Where oc.cod_empresa=' +
-      'em.cod_filial'#13#10'and      oc.num_documento=:NrDocto'#13#10#13#10'group by Ti' +
-      'po, Cod_Emp_Fil, oc.des_empresa, em.cod_linx,'#13#10'oc.ind_oc_gerada,' +
-      #13#10'oc.cod_fornecedor, Fornecedor,'#13#10'oc.num_documento, oc.num_oc_ge' +
-      'rada, '#13#10'cast(oc.dta_oc_gerada as Date),'#13#10'oc.cod_comprovante_icms' +
-      #13#10#13#10'Order by Cod_Emp_Fil, Fornecedor, oc.num_oc_gerada'#13#10#13#10#13#10#13#10
     MaxBlobSize = -1
-    Params = <
-      item
-        DataType = ftString
-        Name = 'NrDocto'
-        ParamType = ptInput
-        Value = '0'
-      end>
+    Params = <>
     SQLConnection = SQLC
     Left = 240
     Top = 456
@@ -1437,15 +1394,22 @@ object DMBelShop: TDMBelShop
   end
   object SDS_Sugestao: TSQLDataSet
     CommandText = 
-      'Select *'#13#10'From oc_comprar oc'#13#10'Where oc.num_documento= :NumDocto'#13 +
-      #10#13#10'Order By oc.cod_item'#13#10#13#10
+      'Select *'#13#10#13#10'From oc_comprar oc'#13#10#13#10'Where oc.num_documento= :NumDo' +
+      'cto'#13#10'and  Cast(oc.dta_documento as Date)= :Dta'#13#10#13#10'Order By oc.co' +
+      'd_item'#13#10
     MaxBlobSize = -1
     Params = <
       item
         DataType = ftString
         Name = 'NumDocto'
         ParamType = ptInput
-        Value = '5'
+        Value = '18541'
+      end
+      item
+        DataType = ftString
+        Name = 'Dta'
+        ParamType = ptInput
+        Value = '01/01/2017'
       end>
     SQLConnection = SQLC
     Left = 1208
@@ -1457,7 +1421,6 @@ object DMBelShop: TDMBelShop
     Top = 441
   end
   object IBDB_BelShop: TIBDatabase
-    Connected = True
     DatabaseName = 'localhost:C:\Projetos\BelShop\Dados\BelShop.FDB'
     Params.Strings = (
       'user_name=SYSDBA'
@@ -1471,7 +1434,7 @@ object DMBelShop: TDMBelShop
     Top = 21
   end
   object IBT_BelShop: TIBTransaction
-    Active = True
+    Active = False
     DefaultDatabase = IBDB_BelShop
     AutoStopAction = saNone
     Left = 1258
@@ -4803,7 +4766,7 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 240
+    Left = 224
     Top = 192
   end
   object DSP_Demandas: TDataSetProvider

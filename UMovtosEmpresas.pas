@@ -3713,19 +3713,19 @@ begin
                    ' AND   pl.cod_auxiliar is not null'+
                    ' AND   ml.empresa='+IntToStr(iCodLojaLinx)+
                    ' AND   ml.operacao=''E'''+
-                   ' AND   ((ml.tipo_transacao=''S'') OR (ml.tipo_transacao=''E'') OR (ml.tipo_transacao IS NULL))'+
+                   ' AND   ((ml.tipo_transacao=''E'') OR (ml.tipo_transacao IS NULL))'+
                    ' AND   ml.cancelado=''N'''+
                    ' AND   ml.excluido=''N'''+
-                   ' AND   ml.data_lancamento>='+QuotedStr(sDtaUltAtualizacao)+
                    ' AND   ml.data_lancamento='+
                    '                  (SELECT max(ml1.data_lancamento)'+
                    '                   FROM LINXMOVIMENTO ml1'+
                    '                   WHERE ml1.cod_produto=ml.cod_produto'+
                    '                   AND   ml1.empresa = ml.empresa'+
                    '                   AND   ml1.operacao = ml.operacao'+
-                   '                   AND   ((ml1.tipo_transacao=''S'') OR (ml1.tipo_transacao=''E'') OR (ml1.tipo_transacao IS NULL))'+
-                   '                   AND   ml1.cancelado=''N'''+
-                   '                   AND   ml1.excluido=''N'')';
+                   '                   AND   ((ml1.tipo_transacao=''E'') OR (ml1.tipo_transacao IS NULL))'+
+                   '                   AND   ml1.cancelado=ml.cancelado'+
+                   '                   AND   ml1.excluido=ml.excluido'+
+                   '                   AND   CAST(ml1.data_documento as Date)>='+QuotedStr(sDtaUltAtualizacao)+')';
             DMMovtosEmpresas.CDS_LojaLinx.Close;
             DMMovtosEmpresas.SDS_LojaLinx.CommandText:=MySql;
             DMMovtosEmpresas.CDS_LojaLinx.Open;

@@ -1003,7 +1003,6 @@ end;
 procedure TFrmEstoques.Bt_FiltrosOKClick(Sender: TObject);
 Var
   bOriginal:Boolean;
-  cVlrVendaAcum: Currency;
 begin
 
   Ts_EstoquesFiltros.SetFocus;
