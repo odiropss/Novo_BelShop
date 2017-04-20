@@ -90,7 +90,7 @@ object FrmOCLinx: TFrmOCLinx
             Glyph.Data = {
               0B546478504E47496D61676589504E470D0A1A0A0000000D4948445200000039
               000000220806000000E50971DD000000017352474200AECE1CE9000000046741
-              4D410000B18F0BFC6105000000097048597300000EC300000EC301C76FA86400
+              4D410000B18F0BFC6105000000097048597300000EC000000EC0016AD6890900
               00029A494441545847ED973D68154110C70FACEC04C1AF424408A8043F083162
               E107BC8844C432898D10448C365ABFC628044C63F0055324606761611A8B94B1
               B2D3C6DAC2562C532429C6FDEFBBD99B9BDBBB7797B74AF6E90FA6988FCCE4CF
@@ -185,7 +185,7 @@ object FrmOCLinx: TFrmOCLinx
             Picture.Data = {
               0B546478504E47496D61676589504E470D0A1A0A0000000D494844520000013A
               0000010C0802000000DB03EDBB000000017352474200AECE1CE9000000046741
-              4D410000B18F0BFC6105000000097048597300000EC000000EC0016AD6890900
+              4D410000B18F0BFC6105000000097048597300000EBD00000EBD0147FB90AD00
               00CBB049444154785EEC9D07601CD771B021AA77B18344AFEC15008B244B6E91
               E3B8C42D89EDF8771CA7FF7FF2C7B1133B4E9CEAC48E93D8B17F5BB62412B8B2
               77008BBA28896243EF850DBD973BE07ADDBEAFFC33BB0708A6448B90D98DD1E8
@@ -5350,7 +5350,7 @@ object FrmOCLinx: TFrmOCLinx
               Color = clBtnFace
               DisplayFormat = ',0.00'
               ReadOnly = True
-              TabOrder = 2
+              TabOrder = 1
             end
             object Bt_GeraOCGeraOC: TJvXPButton
               Tag = 4
@@ -5377,7 +5377,7 @@ object FrmOCLinx: TFrmOCLinx
               Width = 132
               Height = 36
               Caption = 'Imprime OC'
-              TabOrder = 5
+              TabOrder = 4
               Glyph.Data = {
                 07544269746D617046090000424D460900000000000036040000280000002100
                 0000240000000100080000000000100500000000000000000000000100000000
@@ -5462,6 +5462,7 @@ object FrmOCLinx: TFrmOCLinx
               Font.Name = 'MS Sans Serif'
               Font.Style = [fsBold]
               ParentFont = False
+              OnClick = Bt_GeraOCImpEditOCClick
             end
             object DbeGeraOCTotalProdutos: TDBEdit
               Left = 459
@@ -5471,7 +5472,7 @@ object FrmOCLinx: TFrmOCLinx
               Color = clBtnFace
               DataField = 'TOTAL_ITENS'
               DataSource = DMBelShop.DS_AComprarOCs
-              TabOrder = 3
+              TabOrder = 2
             end
             object DbeGeraOCQtdOCs: TDBEdit
               Left = 560
@@ -5481,14 +5482,14 @@ object FrmOCLinx: TFrmOCLinx
               Color = clBtnFace
               DataField = 'TOTAL_QTD'
               DataSource = DMBelShop.DS_AComprarOCs
-              TabOrder = 4
+              TabOrder = 3
             end
             object Bt_GeraOCGraficoImprime: TJvXPButton
               Left = 611
               Top = 24
               Width = 8
               Caption = 'Bt_GeraOCGraficoImprime'
-              TabOrder = 6
+              TabOrder = 5
               Glyph.Data = {
                 07544269746D617046090000424D460900000000000036040000280000002100
                 0000240000000100080000000000100500000000000000000000000100000000
@@ -5572,7 +5573,7 @@ object FrmOCLinx: TFrmOCLinx
               Top = 25
               Width = 8
               Caption = 'Bt_GraficoImprime'
-              TabOrder = 7
+              TabOrder = 6
               Glyph.Data = {
                 07544269746D6170D60B0000424DD60B00000000000036000000280000002000
                 00001F0000000100180000000000A00B0000C30E0000C30E0000000000000000
@@ -5672,23 +5673,6 @@ object FrmOCLinx: TFrmOCLinx
                 C0C0}
               Visible = False
             end
-            object Bt_GeraOCDocSeparacao: TJvXPButton
-              Tag = 4
-              Left = 114
-              Top = 4
-              Width = 111
-              Height = 36
-              Caption = 'Romaneio Separa'#231#227'o'
-              TabOrder = 1
-              ShowFocusRect = True
-              Align = alLeft
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
           end
           object Dbg_GeraOCTotalGeral: TDBGridJul
             Left = 0
@@ -5717,6 +5701,8 @@ object FrmOCLinx: TFrmOCLinx
             TitleFont.Height = -11
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
+            OnDrawColumnCell = Dbg_GeraOCTotalGeralDrawColumnCell
+            OnDblClick = Dbg_GeraOCTotalGeralDblClick
             CorComFoco = 15004403
             SairComEnter = False
             EditDataSetCheck = False
@@ -5789,7 +5775,6 @@ object FrmOCLinx: TFrmOCLinx
                 Expanded = False
                 FieldName = 'COD_EMP_FIL'
                 Title.Alignment = taCenter
-                Width = -1
                 Visible = False
               end
               item
@@ -6008,6 +5993,7 @@ object FrmOCLinx: TFrmOCLinx
     Top = 352
   end
   object PopM_GeraOC: TPopupMenu
+    OwnerDraw = True
     Left = 542
     Top = 389
     object PopM_GeraOCVoltar1: TMenuItem
@@ -8748,6 +8734,7 @@ object FrmOCLinx: TFrmOCLinx
     end
   end
   object PopM_OCRomaneio: TPopupMenu
+    OwnerDraw = True
     Left = 624
     Top = 408
     object PopM_OCRomaneioVoltar: TMenuItem

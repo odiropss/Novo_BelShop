@@ -5719,6 +5719,7 @@ begin
   msg('Processmento Efetuado com Sucesso !!','A');
 
   DMBelShop.IBT_BelShop.Commit;
+
   DMBelShop.IBQ_AComprar.Close;
   DMBelShop.IBQ_AComprar.Open;
 

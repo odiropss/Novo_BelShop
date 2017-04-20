@@ -7170,7 +7170,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 523
-        ActivePage = Ts_OCGeraOrdemCompra
+        ActivePage = Ts_OCBuscaProdutos
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -30727,6 +30727,7 @@ object FrmBelShop: TFrmBelShop
     Visible = False
   end
   object MainMenu1: TMainMenu
+    OwnerDraw = True
     Left = 624
     Top = 352
     object MenuSistema: TMenuItem
@@ -47163,6 +47164,7 @@ object FrmBelShop: TFrmBelShop
     Top = 359
   end
   object PopM_OCRomaneio: TPopupMenu
+    OwnerDraw = True
     Left = 624
     Top = 408
     object PopM_OCRomaneioVoltar: TMenuItem
@@ -47307,6 +47309,7 @@ object FrmBelShop: TFrmBelShop
     end
   end
   object PopM_GeraOC: TPopupMenu
+    OwnerDraw = True
     Left = 542
     Top = 389
     object PopM_GeraOCVoltar1: TMenuItem

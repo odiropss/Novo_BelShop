@@ -116,7 +116,6 @@ Begin
          ' where oc.num_documento='+QuotedStr(sNumDocto)+
          ' and   oc.cod_empresa='+ QuotedStr(sCodLoja)+
          ' and   oc.num_oc_gerada='+ QuotedStr(sNumOCGerada)+
-
          ' order by Enderecamento, oc.des_item';
   DMBelShop.IBQ_OrdemCompra.Close;
   DMBelShop.IBQ_OrdemCompra.SQL.Clear;

@@ -598,6 +598,7 @@ type
     EdtParamCurvaECorte: TCurrencyEdit;
     Dbg_CodigosViculados: TDBGrid;
     JvXPButton1: TJvXPButton;
+    DtaEdtSolicExpDoctoDestino: TDateTimePicker;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -874,6 +875,7 @@ type
     procedure Cbx_ParamLojaNecesClick(Sender: TObject);
     procedure Bt_ReposLojasPrecoClick(Sender: TObject);
     procedure JvXPButton1Click(Sender: TObject);
+    procedure EdtSolicExpDoctoDestinoEnter(Sender: TObject);
   private
     { Private declarations }
 
@@ -3230,6 +3232,7 @@ Begin
     MySql:=' Select o.num_oc_gerada'+
            ' From oc_comprar o'+
            ' Where o.num_documento='+VarToStr(EdtSolicExpDoctoDestino.Value)+
+           ' And   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtaEdtSolicExpDoctoDestino.Date))))+
            ' And o.cod_item='+QuotedStr(DMBelShop.IBQ_AComprarCOD_ITEM.AsString)+
            ' And o.cod_empresa='+QuotedStr(DMBelShop.IBQ_AComprarCOD_EMPRESA.AsString);
     DMBelShop.CDS_BuscaRapida.Close;
@@ -3265,7 +3268,8 @@ Begin
     // Busca Num_Seq e Comprador do Documento de DESTINO -----------------------
     MySql:=' Select Coalesce(max(o.num_seq) ,1) num_seq'+
            ' From OC_COMPRAR o'+
-           ' Where o.num_documento='+VarToStr(EdtSolicExpDoctoDestino.Value);
+           ' Where o.num_documento='+VarToStr(EdtSolicExpDoctoDestino.Value)+
+           ' And   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtaEdtSolicExpDoctoDestino.Date))));
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
@@ -3274,7 +3278,8 @@ Begin
 
     MySql:=' Select first 1 o.cod_comprador'+
            ' From OC_COMPRAR o'+
-           ' Where o.num_documento='+VarToStr(EdtSolicExpDoctoDestino.Value);
+           ' Where o.num_documento='+VarToStr(EdtSolicExpDoctoDestino.Value)+
+           ' And   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtaEdtSolicExpDoctoDestino.Date))));
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
@@ -3290,10 +3295,11 @@ Begin
       Inc(InumSeq);
 
       // Busca Data do Produto no Documento de DESTINO -------------------------
-      MySql:=' Select substring(Cast(Max(o.dta_documento) as varchar(30))From 1 for 19) dta_documento'+
+      MySql:=' Select substring(Cast(Max(o.dta_documento) as varchar(30)) From 1 for 19) dta_documento'+
              ' From OC_COMPRAR o'+
              ' Where o.num_documento='+VarToStr(EdtSolicExpDoctoDestino.Value)+
-             ' And o.cod_item='+QuotedStr(DMBelShop.IBQ_AComprarCOD_ITEM.AsString);
+             ' And   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DMBelShop.IBQ_AComprarDTA_DOCUMENTO.AsDateTime))))+
+             ' And   o.cod_item='+QuotedStr(DMBelShop.IBQ_AComprarCOD_ITEM.AsString);
       DMBelShop.CDS_BuscaRapida.Close;
       DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
       DMBelShop.CDS_BuscaRapida.Open;
@@ -3309,16 +3315,18 @@ Begin
       // Exclui Produto do Docto DESTINO ---------------------------------------
       MySql:=' Delete From oc_comprar o'+
              ' Where o.num_documento='+VarToStr(EdtSolicExpDoctoDestino.Value)+
-             ' And o.cod_item='+QuotedStr(DMBelShop.IBQ_AComprarCOD_ITEM.AsString)+
-             ' And o.cod_empresa='+QuotedStr(DMBelShop.IBQ_AComprarCOD_EMPRESA.AsString);
+             ' And   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtaEdtSolicExpDoctoDestino.Date))))+
+             ' And   o.cod_item='+QuotedStr(DMBelShop.IBQ_AComprarCOD_ITEM.AsString)+
+             ' And   o.cod_empresa='+QuotedStr(DMBelShop.IBQ_AComprarCOD_EMPRESA.AsString);
       DMBelShop.SQLC.Execute(MySql,nil,nil);
 
       // Busca Produto do Docto ORIGEM -----------------------------------------
       MySql:=' Select *'+
              ' From oc_comprar o'+
              ' Where o.num_documento='+VarToStr(EdtSolicExpDoctoOrigem.Value)+
-             ' And o.cod_empresa='+QuotedStr(DMBelShop.IBQ_AComprarCOD_EMPRESA.AsString)+
-             ' And o.cod_item='+QuotedStr(DMBelShop.IBQ_AComprarCOD_ITEM.AsString);
+             ' And   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DMBelShop.IBQ_AComprarDTA_DOCUMENTO.AsDateTime))))+
+             ' And   o.cod_empresa='+QuotedStr(DMBelShop.IBQ_AComprarCOD_EMPRESA.AsString)+
+             ' And   o.cod_item='+QuotedStr(DMBelShop.IBQ_AComprarCOD_ITEM.AsString);
       DMBelShop.CDS_Busca.Close;
       DMBelShop.SDS_Busca.CommandText:=MySql;
       DMBelShop.CDS_Busca.Open;
@@ -3337,7 +3345,8 @@ Begin
       MySql:=' Select *'+
              ' From oc_comprar o'+
              ' Where o.num_documento='+VarToStr(EdtSolicExpDoctoOrigem.Value)+
-             ' And o.cod_empresa='+QuotedStr(sCodEmp)+
+             ' And   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DMBelShop.IBQ_AComprarDTA_DOCUMENTO.AsDateTime))))+
+             ' And   o.cod_empresa='+QuotedStr(sCodEmp)+
              ' Order by o.Des_Item';
       DMBelShop.CDS_Busca.Close;
       DMBelShop.SDS_Busca.CommandText:=MySql;
@@ -3354,8 +3363,9 @@ Begin
           MySql:=' Select o.num_oc_gerada'+
                  ' From oc_comprar o'+
                  ' Where o.num_documento='+VarToStr(EdtSolicExpDoctoDestino.Value)+
-                 ' And o.cod_item='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Item').AsString)+
-                 ' And o.cod_empresa='+QuotedStr(sCodEmp);
+                 ' And   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtaEdtSolicExpDoctoDestino.Date))))+
+                 ' And   o.cod_item='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Item').AsString)+
+                 ' And   o.cod_empresa='+QuotedStr(sCodEmp);
           DMBelShop.CDS_BuscaRapida.Close;
           DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
           DMBelShop.CDS_BuscaRapida.Open;
@@ -3363,10 +3373,10 @@ Begin
           If Trim(DMBelShop.CDS_BuscaRapida.FieldBYName('num_oc_gerada').AsString)='' Then
           Begin
             // Busca Data do Produto no Documento de DESTINO -------------------------
-            MySql:=' Select substring(Cast(Max(o.dta_documento) as varchar(30))From 1 for 19) dta_documento'+
+            MySql:=' Select Max(o.dta_documento) dta_documento'+
                    ' From OC_COMPRAR o'+
                    ' Where o.num_documento='+VarToStr(EdtSolicExpDoctoDestino.Value)+
-                   ' And o.cod_item='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Item').AsString);
+                   ' And   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtaEdtSolicExpDoctoDestino.Date))));
             DMBelShop.CDS_BuscaRapida.Close;
             DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
             DMBelShop.CDS_BuscaRapida.Open;
@@ -3374,14 +3384,14 @@ Begin
             sDta:=DateTimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
             If Trim(DMBelShop.CDS_BuscaRapida.FieldBYName('dta_documento').AsString)<>'' Then
              sDta   :=DMBelShop.CDS_BuscaRapida.FieldBYName('dta_documento').AsString;
-            sDta   :=F_Troca('/','.',sDta);
-            sDta   :=F_Troca('-','.',sDta);
+            sDta   :=f_Troca('/','.',f_Troca('-','.',sDta));
 
             // Exclui Produto no Docto de DESTINO ----------------------------
             MySql:=' Delete From oc_comprar o'+
                    ' Where o.num_documento='+VarToStr(EdtSolicExpDoctoDestino.Value)+
-                   ' And o.cod_item='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Item').AsString)+
-                   ' And o.cod_empresa='+QuotedStr(sCodEmp);
+                   ' And   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtaEdtSolicExpDoctoDestino.Date))))+
+                   ' And   o.cod_item='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Item').AsString)+
+                   ' And   o.cod_empresa='+QuotedStr(sCodEmp);
             DMBelShop.SQLC.Execute(MySql,nil,nil);
 
             // Exporta Produto -------------------------------------------------
@@ -3400,13 +3410,17 @@ Begin
     // Deleta OC_COMPRAR_DOCS ==================================================
     MySql:=' SELECT First 1 oc.num_documento'+
            ' FROM oc_comprar oc'+
-           ' WHERE oc.num_documento='+VarToStr(EdtSolicExpDoctoOrigem.Value);
+           ' WHERE oc.num_documento='+VarToStr(EdtSolicExpDoctoOrigem.Value)+
+           ' And   Cast(oc.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DMBelShop.IBQ_AComprarDTA_DOCUMENTO.AsDateTime))));
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
 
-    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_documento').AsString)='' Then
+    If (Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_documento').AsString)='') And (Not bgLinxChamada) Then
      OC_COMPRAR_DOCS('D', VarToStr(EdtSolicExpDoctoOrigem.Value), '<>''Linx''');
+
+    If (Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_documento').AsString)='') And (bgLinxChamada) Then
+     OC_COMPRAR_DOCS('D', VarToStr(EdtSolicExpDoctoOrigem.Value), '=''Linx''');
 
     DMBelShop.CDS_BuscaRapida.Close;
 
@@ -3566,30 +3580,13 @@ Var
   MySql: String;
 begin
   EdtSolicExpDoctoDestino.SetFocus;
-  
+
   If EdtSolicExpDoctoDestino.AsInteger=0 Then
   Begin
     msg('Favor Informar o Número do'+cr+cr+'Documento de Destino !!','A');
     EdtSolicExpDoctoDestino.SetFocus;
     Exit;
   End;
-
-  // Verifica se Existe o Docto de Destino ===================================== 
-  MySql:=' Select o.num_seq'+
-         ' From oc_comprar o'+
-         ' Where o.num_documento='+VarToStr(EdtSolicExpDoctoDestino.Value);
-  DMBelShop.CDS_BuscaRapida.Close;
-  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-  DMBelShop.CDS_BuscaRapida.Open;
-
-  If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_seq').AsString)='' Then
-  Begin
-    DMBelShop.CDS_BuscaRapida.Close;
-    msg('Documento de DESTINO Não Existe !!','A');
-    EdtSolicExpDoctoDestino.SetFocus;
-    Exit;
-  End;
-  DMBelShop.CDS_BuscaRapida.Close;
 
   If Ckb_SolicExpSoProduto.Checked Then
    Begin
@@ -3599,7 +3596,7 @@ begin
        Ckb_SolicExpSoProduto.SetFocus;
        Exit;
      End;
-   
+
      If msg('Deseja Realmente Exportar o Produto:'+cr+cr+EdtSolicExpTpExportacao.Text+' ??','C')=2 Then
      Begin
        Ckb_SolicExpSoProduto.SetFocus;
@@ -3620,13 +3617,12 @@ begin
        Ckb_SolicExpSoProduto.SetFocus;
        Exit;
      End;
-     
+
    End; // If Ckb_SolicExpSoProduto.Checked Then
 
   // Exporta Documento =========================================================
-  PainelApresExp.Caption:='AGUARDE !! Exportando Empresa: '+
-                               DMBelShop.IBQ_AComprarCOD_EMPRESA.AsString+' - '+
-                               DMBelShop.IBQ_AComprarDES_EMPRESA.AsString;
+  PainelApresExp.Caption:='AGUARDE !! Exportando Empresa: '+DMBelShop.IBQ_AComprarCOD_EMPRESA.AsString+' - '+
+                                                            DMBelShop.IBQ_AComprarDES_EMPRESA.AsString;
   PainelApresExp.Width:=Length(PainelApresExp.Caption)*10;
   PainelApresExp.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-PainelApresExp.Width)/2));
   PainelApresExp.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-PainelApresExp.Height)/2));
@@ -3635,7 +3631,7 @@ begin
   PainelApresExp.Parent:=FrmSolicitacoes;
   PainelApresExp.Visible:=True;
   Refresh;
-  
+
   If OcExportaDocumento Then
   Begin
     PainelApresExp.Visible:=False;
@@ -3655,7 +3651,13 @@ begin
 end;
 
 procedure TFrmSolicitacoes.EdtSolicExpDoctoDestinoExit(Sender: TObject);
+Var
+  MySql: String;
 begin
+
+  If EdtSolicExpDoctoDestino.AsInteger=0 Then
+   Exit;
+
   If EdtSolicExpDoctoOrigem.Value=EdtSolicExpDoctoDestino.Value Then
   Begin
     msg('Impossível Exportar'+cr+'para o Mesmo Documento !!','A');
@@ -3663,6 +3665,32 @@ begin
     EdtSolicExpDoctoDestino.SetFocus;
     Exit;
   End;
+
+  // Verifica se Existe o Docto de Destino =====================================
+  MySql:=' Select d.dta_docto'+
+         ' FROM OC_COMPRAR_DOCS d'+
+         ' Where d.num_docto='+IntToStr(EdtSolicExpDoctoDestino.AsInteger);
+
+         If bgLinxChamada Then
+          MySql:=
+           MySql+' AND d.origem='+QuotedStr('Linx')
+         Else
+          MySql:=
+           MySql+' AND d.origem<>'+QuotedStr('Linx');
+  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+  DMBelShop.CDS_BuscaRapida.Open;
+
+  If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('dta_docto').AsString)='' Then
+  Begin
+    DMBelShop.CDS_BuscaRapida.Close;
+    msg('Documento de DESTINO Não Existe !!','A');
+    EdtSolicExpDoctoDestino.SetFocus;
+    Exit;
+  End;
+  DtaEdtSolicExpDoctoDestino.Date:=DMBelShop.CDS_BuscaRapida.FieldByName('dta_docto').AsDateTime;
+  DMBelShop.CDS_BuscaRapida.Close;
+  Bt_SoliciExpExportar.Enabled:=True;
 end;
 
 procedure TFrmSolicitacoes.FormShow(Sender: TObject);
@@ -8466,6 +8494,11 @@ begin
   bgProcessar:=True;
   Close;
 
+end;
+
+procedure TFrmSolicitacoes.EdtSolicExpDoctoDestinoEnter(Sender: TObject);
+begin
+   Bt_SoliciExpExportar.Enabled:=False;
 end;
 
 end.

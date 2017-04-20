@@ -1192,18 +1192,18 @@ type
     // CHAMDAS INTERNAS ========================================================
 
     // Manutenção de Produto no Docto ==========================================
-    Function  DML_ProdutoDocto(sTpProc, sDoc: String; var sNumSeqDoc: String): Boolean;
+    Function  DML_ProdutoDocto(sTpProc, sDoc, sDtaDocto: String; var sNumSeqDoc: String): Boolean;
 
     // Calucla os Totais do Documento ==========================================
-    Function  Doc_CalculaValores(sDoc: String; sCodProd: String='0'; sCodLoja: String='0'): Boolean;
+    Function  Doc_CalculaValores(sDoc, sDtaDocto: String; sCodProd: String='0'; sCodLoja: String='0'): Boolean;
 
     // Acerta Compra para CD (Conforme Transferencias) =========================
     // Colocar Dentro de Uma Transação ==========================
-    Procedure AcertaCompraCD(sDocto: String; bSoma: Boolean; bUsatIBQ: Boolean; sCodProd: String = '0');
+    Procedure AcertaCompraCD(sDocto, sDtaDocto: String; bSoma, bUsatIBQ: Boolean; sCodProd: String = '0');
 
     // Atualiza Transferencia do CD (99)
     // Colocar Dentro de Uma Transação ==========================
-    Procedure AtualizaTransfCD(sDoc: String);
+    Procedure AtualizaTransfCD(sDoc, sDtaDocto: String);
 
     // Atualiza Endereçamento dos Produtos (Colocar Dentro de Uma Transação) ===
     Procedure AtualizaEnderecamentoProduto(sCodLoja, sCodProd, sQuemExecuta: String);
@@ -1711,13 +1711,19 @@ Begin
 End; // Seleciona OC ou Romaneiros >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Atualiza Transferencia do CD (99) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TDMBelShop.AtualizaTransfCD(sDoc: String);
+Procedure TDMBelShop.AtualizaTransfCD(sDoc, sDtaDocto: String);
 Var
   MySql: String;
   sCod_Loja, sCod_Forn, sCod_Prod: String;
   cQtd_Trans: Currency;
 Begin
   // Colocar Dentro de Uma Transação ==========================
+
+  Try
+    sDtaDocto:=DateToStr(StrToDate(sDtaDocto));
+  Except
+    sDtaDocto:=DateToStr(StrToDate(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+  End;
 
   // Busca Produtos com Quantidade a Comprar ===================================
   MySql:=' SELECT o.num_seq, o.cod_empresa, o.cod_fornecedor, o.cod_item, o.qtd_acomprar'+
@@ -1726,6 +1732,7 @@ Begin
          ' AND   o.qtd_transf=0'+
          ' AND   o.cod_empresa<>'+QuotedStr('99')+
          ' AND   o.num_documento='+sDoc+
+         ' And   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaDocto)))+
          ' ORDER BY o.cod_item, o.Num_Seq';
   CDS_Busca.Close;
   SDS_Busca.CommandText:=MySql;
@@ -1738,7 +1745,8 @@ Begin
   // Sequencia do Regiatro no Docto ============================================
   MySql:=' SELECT COALESCE(MAX(o.num_seq) ,0) Num_seq'+
          ' FROM OC_COMPRAR o'+
-         ' WHERE o.num_documento='+sDoc;
+         ' WHERE o.num_documento='+sDoc+
+         ' And   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaDocto)));
   CDS_BuscaRapida.Close;
   SDS_BuscaRapida.CommandText:=MySql;
   CDS_BuscaRapida.Open;
@@ -1808,14 +1816,16 @@ Begin
                  ' FROM OC_COMPRAR o'+
 
                  ' WHERE o.num_documento='+sDoc+
+                 ' And   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaDocto)))+
                  ' AND o.NUM_SEQ='+CDS_Busca.FieldByName('Num_Seq').AsString;
           SQLC.Execute(MySql,nil,nil);
 
           // Atualiza Qtd A Comprar ============================================
-          MySql:= ' UPDATE OC_COMPRAR o'+
-                  ' SET Qtd_AComprar=Qtd_AComprar-'+f_Troca(',','.',CurrToStr(cQtd_Trans))+
-                  ' WHERE o.num_documento='+sDoc+
-                  ' AND o.NUM_SEQ='+CDS_Busca.FieldByName('Num_Seq').AsString;
+          MySql:=' UPDATE OC_COMPRAR o'+
+                 ' SET Qtd_AComprar=Qtd_AComprar-'+f_Troca(',','.',CurrToStr(cQtd_Trans))+
+                 ' WHERE o.num_documento='+sDoc+
+                 ' And   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaDocto)))+
+                 ' AND o.NUM_SEQ='+CDS_Busca.FieldByName('Num_Seq').AsString;
           SQLC.Execute(MySql,nil,nil);
 
           // Atualiza Saldo Disponivel =========================================
@@ -1828,6 +1838,7 @@ Begin
           MySql:=' Select dc.cod_empresa'+
                  ' From oc_comprar dc'+
                  ' WHERE dc.num_documento='+sDoc+
+                 ' And   Cast(dc.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaDocto)))+
                  ' AND   dc.cod_empresa='+QuotedStr(sCod_Loja)+
                  ' AND   dc.ind_oc_gerada='+QuotedStr('N')+
                  ' AND   dc.Cod_Item='+QuotedStr(sCod_Prod);
@@ -1872,6 +1883,7 @@ Begin
                    ' FROM OC_COMPRAR o'+
 
                    ' WHERE o.num_documento='+sDoc+
+                   ' And   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaDocto)))+
                    ' AND   o.cod_empresa='+QuotedStr(sCod_Loja)+
                    ' AND   o.ind_oc_gerada='+QuotedStr('S')+
                    ' AND   o.Cod_Item='+QuotedStr(sCod_Prod);
@@ -1892,10 +1904,17 @@ Begin
 End; // Atualiza Transferencia do CD (99) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Acerta Compra para CD (Conforme Transferencias >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TDMBelShop.AcertaCompraCD(sDocto: String; bSoma: Boolean; bUsatIBQ: Boolean; sCodProd: String = '0');
+Procedure TDMBelShop.AcertaCompraCD(sDocto, sDtaDocto: String; bSoma, bUsatIBQ: Boolean; sCodProd: String = '0');
 Var
   MySql: String;
 Begin
+
+  Try
+    sDtaDocto:=DateToStr(StrToDate(sDtaDocto));
+  Except
+    sDtaDocto:=DateToStr(StrToDate(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+  End;
+
   // Colocar Dentro de Uma Transação ==========================
   MySql:=' UPDATE oc_comprar dc';
 
@@ -1904,19 +1923,22 @@ Begin
            MySql+' SET dc.qtd_acomprar=dc.qtd_acomprar + Coalesce((SELECT SUM(oc.qtd_transf)'+
                  '                                               FROM oc_comprar oc'+
                  '                                               WHERE oc.num_documento=dc.num_documento'+
-                 '                                               AND oc.cod_item=dc.cod_item'+
-                 '                                               AND oc.qtd_transf<>0'+
-                 '                                               AND oc.ind_oc_gerada=''N''),0)'
+                 '                                               AND   oc.dta_documento=dc.dta_documento'+
+                 '                                               AND   oc.cod_item=dc.cod_item'+
+                 '                                               AND   oc.qtd_transf<>0'+
+                 '                                               AND   oc.ind_oc_gerada=''N''),0)'
          Else
           MySql:=
            MySql+' SET dc.qtd_acomprar=dc.qtd_acomprar - Coalesce((SELECT SUM(oc.qtd_transf)'+
                  '                                               FROM oc_comprar oc'+
                  '                                               WHERE oc.num_documento=dc.num_documento'+
-                 '                                               AND oc.cod_item=dc.cod_item'+
-                 '                                               AND oc.qtd_transf<>0'+
-                 '                                               AND oc.ind_oc_gerada=''N''),0)';
+                 '                                               AND   oc.dta_documento=dc.dta_documento'+
+                 '                                               AND   oc.cod_item=dc.cod_item'+
+                 '                                               AND   oc.qtd_transf<>0'+
+                 '                                               AND   oc.ind_oc_gerada=''N''),0)';
   MySql:=
    MySql+' WHERE dc.num_documento='+sDocto+
+         ' And   Cast(dc.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaDocto)))+
          ' AND   dc.cod_empresa=''99'''+
          ' AND dc.ind_oc_gerada=''N''';
 
@@ -1949,7 +1971,7 @@ Begin
          '        COALESCE(lc.gaveta, ''0000'') gaveta'+
          ' FROM estoque lc'+
          ' WHERE lc.codfilial='+QuotedStr(sCodLoja)+
-         ' AND lc.codproduto ='+QuotedStr(sCodProd);
+         ' AND   lc.codproduto ='+QuotedStr(sCodProd);
   FrmBelShop.IBQ_MPMS.Close;
   FrmBelShop.IBQ_MPMS.SQL.Clear;
   FrmBelShop.IBQ_MPMS.SQL.Add(MySql);
@@ -2011,11 +2033,17 @@ Begin
 End; // Atualiza Endereçamento dos Produtos (Colocar Dentro de Uma Transação) >>
 
 // Calucla os Totais do Documento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Function TDMBelShop.Doc_CalculaValores(sDoc: String; sCodProd: String='0'; sCodLoja: String='0'): Boolean;
+Function TDMBelShop.Doc_CalculaValores(sDoc, sDtaDocto: String; sCodProd: String='0'; sCodLoja: String='0'): Boolean;
 Var
   MySql: String;
 Begin
   Result:=False;
+
+  Try
+    sDtaDocto:=DateToStr(StrToDate(sDtaDocto));
+  Except
+    sDtaDocto:=DateToStr(StrToDate(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+  End;
 
   // Verifica se Transação esta Ativa
   If SQLC.InTransaction Then
@@ -2041,7 +2069,8 @@ Begin
            ', VLR_TOT_VENDA=QTD_ACOMPRAR*VLR_UNI_VENDA'+
 
            ' WHERE Ind_OC_Gerada=''N'''+
-           ' AND Num_Documento='+QuotedStr(sDoc);
+           ' AND   Num_Documento='+QuotedStr(sDoc)+
+           ' And   Cast(dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaDocto)));
 
            If sCodProd<>'0' Then
             MySql:=MySql+' AND Cod_Item='+QuotedStr(sCodProd);
@@ -2074,7 +2103,7 @@ Begin
 End; // Calucla os Totais do Documento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Manutenção de Produto no Docto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Function  TDMBelShop.DML_ProdutoDocto(sTpProc, sDoc: String; var sNumSeqDoc: String): Boolean;
+Function  TDMBelShop.DML_ProdutoDocto(sTpProc, sDoc, sDtaDocto: String; var sNumSeqDoc: String): Boolean;
 Var
   i: Integer;
   MySql: String;
@@ -2084,6 +2113,12 @@ Begin
   sgSeqDeletar:='';
   Result:=False;
   s:='';
+
+  Try
+    sDtaDocto:=DateToStr(StrToDate(sDtaDocto));
+  Except
+    sDtaDocto:=DateToStr(StrToDate(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+  End;
 
   cQtdSaldo:=0;
   If IBQ_AComprarQTD_ACOMPRAR.AsCurrency > IBQ_AComprarQTD_TRANSF.AsCurrency Then
@@ -2098,6 +2133,7 @@ Begin
     MySql:=' SELECT o.Num_Seq'+
            ' FROM   OC_COMPRAR o'+
            ' WHERE  o.num_documento='+sDoc+
+           ' AND    Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaDocto)))+
            ' AND    o.cod_item='+QuotedStr(IBQ_AComprarCOD_ITEM.AsString)+
            ' AND    o.cod_empresa='+QuotedStr(IBQ_AComprarCOD_EMPRESA.AsString)+
            ' AND    o.num_seq<>'+QuotedStr(IBQ_AComprarNUM_SEQ.AsString)+
@@ -2119,7 +2155,8 @@ Begin
      Begin
        MySql:=' SELECT COALESCE(MAX(o.num_seq)+1 ,1) Num_seq'+
               ' FROM OC_COMPRAR o'+
-              ' WHERE o.num_documento='+sDoc;
+              ' WHERE o.num_documento='+sDoc+
+              ' AND   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaDocto)));
        CDS_BuscaRapida.Close;
        SDS_BuscaRapida.CommandText:=MySql;
        CDS_BuscaRapida.Open;
@@ -2158,7 +2195,8 @@ Begin
               ' FROM OC_COMPRAR o'+
 
               ' WHERE o.num_documento='+sDoc+
-              ' AND o.NUM_SEQ='+sNumSeqDoc;
+              ' AND   Cast(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaDocto)))+
+              ' AND   o.NUM_SEQ='+sNumSeqDoc;
        IBQ_Executa.Close;
        IBQ_Executa.SQL.Clear;
        IBQ_Executa.SQL.Add(MySql);
@@ -2174,6 +2212,7 @@ Begin
          MySql:=' UPDATE oc_comprar c'+
                 ' SET    c.qtd_acomprar=c.qtd_acomprar+'+f_Troca(',','.',IBQ_AComprarQTD_TRANSF.OldValue)+
                 ' WHERE  c.num_documento='+sDoc+
+                ' AND    Cast(c.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaDocto)))+
                 ' AND    c.num_seq='+sNumSeqDoc;
          IBQ_Executa.Close;
          IBQ_Executa.SQL.Clear;
@@ -2222,7 +2261,9 @@ End; // Verifica Se ClientDataSet Contém CAMPO (sCampo) Preenchido com sContem >
 Procedure OC_COMPRAR_DOCS(sTipo, sDoc: String; sOrigem: String='');
 Var
   MySql: String;
-  bOrigem: Boolean;
+  bOrigem, bLinx: Boolean;
+//  bTransacao: Boolean; // Se Transação Proria da Procedure
+  sDateSeparator, sDecimalSeparator: String;
 Begin
   //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
   // OBS: DEVE ESTAR DENTRO DE UMA TRANSAÇÃO
@@ -2232,87 +2273,148 @@ Begin
   // sOrigem  = '' - Busca as lojas do Docto
   //          = 'BelShop' - Vale o seu Conteudo
   //          = 'OC(s) Importada(s):' - Busca as lojas do Docto
+  //          = 'Linx' Somente Linx
 
-  If sTipo='D' Then
-  Begin
-    MySql:=' DELETE FROM OC_COMPRAR_DOCS d'+
-           ' WHERE d.Origem'+sOrigem+
-           ' AND   d.num_docto='+QuotedStr(sDoc);
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
-    Exit;
-  End; // If sTipo='D' Then
+  // odirApagar - 20/04/2017
+  // Verifica se Transação esta Aberta =========================================
+//  bTransacao:=False;
+//  If Not DMBelShop.SQLC.InTransaction Then
+//  Begin
+//    // Monta Transacao
+//    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+//    TD.IsolationLevel:=xilREADCOMMITTED;
+//    DMBelShop.SQLC.StartTransaction(TD);
+//
+//    sDateSeparator:=DateSeparator;
+//    sDecimalSeparator:=DecimalSeparator;
+//
+////    bTransacao:=True;
+//  End; // If Not DMBelShop.SQLC.InTransaction Then
+//
+//  Try // Try da Transação
+//
+//    if bTransacao Then
+//    Begin
+//      DateSeparator:='.';
+//      DecimalSeparator:='.';
+//    End;
 
-  If sTipo='I' Then
-  Begin
-    MySql:=' SELECT d.num_docto'+
-           ' FROM oc_comprar_docs d'+
-           ' WHERE d.num_docto='+sDoc;
-    DMBelShop.CDS_BuscaRapida.Close;
-    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-    DMBelShop.CDS_BuscaRapida.Open;
-
-    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_docto').AsString)='' Then
+    // Deleta Documento ==========================================================
+    If sTipo='D' Then
     Begin
-      bOrigem:=False;
-      If (Trim(sOrigem)='') Or (Trim(sOrigem)='OC(s) Importada(s):') Then
-       bOrigem:=True;
-
-      MySql:=' SELECT DISTINCT CAST(c.dta_documento AS DATE) Dta_Doc,'+
-             ' c.cod_comprador,'+
-             ' CASE'+
-             '   WHEN u.des_usuario IS NULL THEN ''Usuário Excluído'''+
-             '   ELSE u.des_usuario'+
-             ' END des_Comprador';
-
-             If bOrigem Then
-              MySql:=MySql+',  ''BEL_''||c.cod_empresa Cod_Loja';
-
-      MySql:=
-       MySql+' FROM oc_comprar c'+
-             '    LEFT JOIN ps_usuarios u ON u.cod_usuario=c.cod_comprador'+
-             ' WHERE c.num_documento='+QuotedStr(sDoc);
-      DMBelShop.CDS_Busca.Close;
-      DMBelShop.SDS_Busca.CommandText:=MySql;
-      DMBelShop.CDS_Busca.Open;
-
-      If bOrigem Then
-      Begin
-        While Not DMBelShop.CDS_Busca.Eof do
-        Begin
-          If Trim(sOrigem)='' Then
-           Begin
-             sOrigem:=DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString;
-           End
-          Else // If Trim(sOrigem)='' Then
-           Begin
-             If sOrigem='OC(s) Importada(s):' Then
-              sOrigem:=sOrigem+' '+DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString
-             Else
-              sOrigem:=sOrigem+' / '+DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString;
-           End; // If Trim(sOrigem)='' Then
-
-          DMBelShop.CDS_Busca.Next;
-        End; // While Not DMBelShop.CDS_Busca.Eof do
-      End; // If bOrigem Then
-
-      DMBelShop.CDS_Busca.First;
-      MySql:=' INSERT INTO OC_COMPRAR_DOCS'+
-             ' (NUM_DOCTO, DTA_DOCTO, COD_COMPRADOR, DES_COMPRADOR, ORIGEM)'+
-             ' VALUES ('+
-             QuotedStr(sDoc)+', '+
-             QuotedStr(f_Troca('/','.',(f_Troca('-','.',DMBelShop.CDS_Busca.FieldByName('Dta_Doc').AsString))))+', '+
-             QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Comprador').AsString)+', '+
-             QuotedStr(DMBelShop.CDS_Busca.FieldByName('Des_Comprador').AsString)+', '+
-             QuotedStr(sOrigem)+')';
+      MySql:=' DELETE FROM OC_COMPRAR_DOCS d'+
+             ' WHERE d.Origem'+sOrigem+
+             ' AND   d.num_docto='+QuotedStr(sDoc);
       DMBelShop.SQLC.Execute(MySql,nil,nil);
+      Exit;
+    End; // If sTipo='D' Then
 
-      DMBelShop.CDS_Busca.Close;
-    End; // If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_docto').AsString)='' Then
-    DMBelShop.CDS_BuscaRapida.Close;
+    // Verifica se é Somente Linx ================================================
+    bLinx:=False;
+    If AnsiContainsStr(sOrigem, 'Linx') Then
+     bLinx:=True;
 
-    Exit;
-  End; // If sTipo='I' Then
+    // Inclui Documento ==========================================================
+    If sTipo='I' Then
+    Begin
+      MySql:=' SELECT d.num_docto'+
+             ' FROM oc_comprar_docs d'+
+             ' WHERE d.num_docto='+sDoc;
 
+             If bLinx Then
+              MySql:=
+               MySql+' AND d.Origem='+QuotedStr('Linx')
+             Else
+              MySql:=
+               MySql+' AND d.Origem<>'+QuotedStr('Linx');
+      DMBelShop.CDS_BuscaRapida.Close;
+      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+      DMBelShop.CDS_BuscaRapida.Open;
+
+      If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_docto').AsString)='' Then
+      Begin
+        bOrigem:=False;
+        If (Trim(sOrigem)='') Or (Trim(sOrigem)='OC(s) Importada(s):') Then
+         bOrigem:=True;
+
+        MySql:=' SELECT DISTINCT CAST(c.dta_documento AS DATE) Dta_Doc,'+
+               ' c.cod_comprador,'+
+               ' CASE'+
+               '   WHEN u.des_usuario IS NULL THEN ''Usuário Excluído'''+
+               '   ELSE u.des_usuario'+
+               ' END des_Comprador';
+
+               If bOrigem Then
+                MySql:=MySql+',  ''BEL_''||c.cod_empresa Cod_Loja';
+
+        MySql:=
+         MySql+' FROM oc_comprar c'+
+               '    LEFT JOIN ps_usuarios u ON u.cod_usuario=c.cod_comprador'+
+               ' WHERE c.num_documento='+QuotedStr(sDoc)+
+               ' And   Cast(c.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(Date))));
+        DMBelShop.CDS_Busca.Close;
+        DMBelShop.SDS_Busca.CommandText:=MySql;
+        DMBelShop.CDS_Busca.Open;
+
+        If bOrigem Then
+        Begin
+          While Not DMBelShop.CDS_Busca.Eof do
+          Begin
+            If Trim(sOrigem)='' Then
+             Begin
+               sOrigem:=DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString;
+             End
+            Else // If Trim(sOrigem)='' Then
+             Begin
+               If sOrigem='OC(s) Importada(s):' Then
+                sOrigem:=sOrigem+' '+DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString
+               Else
+                sOrigem:=sOrigem+' / '+DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString;
+             End; // If Trim(sOrigem)='' Then
+
+            DMBelShop.CDS_Busca.Next;
+          End; // While Not DMBelShop.CDS_Busca.Eof do
+        End; // If bOrigem Then
+
+        DMBelShop.CDS_Busca.First;
+        MySql:=' INSERT INTO OC_COMPRAR_DOCS'+
+               ' (NUM_DOCTO, DTA_DOCTO, COD_COMPRADOR, DES_COMPRADOR, ORIGEM)'+
+               ' VALUES ('+
+               QuotedStr(sDoc)+', '+
+               QuotedStr(f_Troca('/','.',(f_Troca('-','.',DMBelShop.CDS_Busca.FieldByName('Dta_Doc').AsString))))+', '+
+               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Comprador').AsString)+', '+
+               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Des_Comprador').AsString)+', '+
+               QuotedStr(sOrigem)+')';
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+        DMBelShop.CDS_Busca.Close;
+      End; // If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_docto').AsString)='' Then
+      DMBelShop.CDS_BuscaRapida.Close;
+
+      Exit;
+    End; // If sTipo='I' Then
+
+// odirApagar - 20/04/2017
+//    // Atualiza Transacao ======================================================
+//    if bTransacao Then
+//    Begin
+//      DMBelShop.SQLC.Commit(TD);
+//      If sDateSeparator='/' Then DateSeparator:='/' Else DateSeparator:='.';
+//      If sDecimalSeparator=',' Then DecimalSeparator:=',' Else DecimalSeparator:='.';
+//    End;
+//  Except // Except da Transação
+//    on e : Exception do
+//    Begin
+//      if bTransacao Then
+//      Begin
+//        DMBelShop.SQLC.Rollback(TD);
+//        If sDateSeparator='/' Then DateSeparator:='/' Else DateSeparator:='.';
+//        If sDecimalSeparator=',' Then DecimalSeparator:=',' Else DecimalSeparator:='.';
+//
+//        MessageBox(Application.Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+//      End; // if bTransacao Then
+//    End; // on e : Exception do
+//  End; // Try da Transação
 End; // Manutenção do Arquivo de Documentos de OC >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Consiste Conexão Empresas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -3832,8 +3934,9 @@ end;
 
 procedure TDMBelShop.IBQ_AComprarAfterPost(DataSet: TDataSet);
 Var
-  sCodItem, sCodLoja, sDoc: String;
+  sCodItem, sCodLoja, sDoc, sDtaDoc: String;
   sCodItemDel, sCodLojaDel: String;
+
   iSeq: Integer;
 begin
   If sgSeqDeletar<>'' Then
@@ -3860,6 +3963,14 @@ begin
   sCodItem:=CDS_AComprarItensCOD_ITEM.AsString;
   sCodLoja:=IBQ_AComprarCOD_EMPRESA.AsString;
 
+
+  sDtaDoc:=IBQ_AComprarDTA_DOCUMENTO.AsString;
+  Try
+    sDtaDoc:=DateToStr(StrToDate(sDtaDoc));
+  Except
+    sDtaDoc:=DateToStr(StrToDate(f_Troca('/','.',f_Troca('-','.',sDtaDoc))));
+  End;
+
   // Retirado Não Atualuza Qtd_Acomprar do CD (99) Com as Transferencias
   // AcertaCompraCD(sDoc, True, True);
 
@@ -3868,7 +3979,7 @@ begin
   IBT_BelShop.Commit;
 
   // Calucla os Totais do Documento
-  If Not Doc_CalculaValores(sDoc, sCodItem, sCodLoja) Then
+  If Not Doc_CalculaValores(sDoc, sDtaDoc, sCodItem, sCodLoja) Then
    msg('Erro no Totalizador !!'+cr+cr+'Entrar em Contato com o Odir !!','A');
 
   CDS_AComprarItens.Open;
@@ -3951,6 +4062,7 @@ begin
        MySql:=' SELECT o.Num_Seq, Coalesce(o.qtd_acomprar,0) qtd_acomprar'+
               ' FROM   OC_COMPRAR o'+
               ' WHERE  o.num_documento='+IBQ_AComprarNUM_DOCUMENTO.AsString+
+              ' AND    CAST(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(IBQ_AComprarDTA_DOCUMENTO.AsDateTime))))+
               ' AND    o.cod_item='+QuotedStr(IBQ_AComprarCOD_ITEM.AsString)+
               ' AND    o.cod_empresa='+QuotedStr(IBQ_AComprarCOD_EMPRESA.AsString)+
               ' AND    o.num_seq<>'+QuotedStr(IBQ_AComprarNUM_SEQ.AsString)+
@@ -3972,7 +4084,7 @@ begin
         End
        Else // If Trim(s)<>'' Then
         Begin
-          DML_ProdutoDocto('I', IBQ_AComprarNUM_DOCUMENTO.AsString, sgNumSeq);
+          DML_ProdutoDocto('I', IBQ_AComprarNUM_DOCUMENTO.AsString, DateToStr(IBQ_AComprarDTA_DOCUMENTO.AsDateTime), sgNumSeq);
 
           IBQ_AComprarQTD_ACOMPRAR.AsCurrency:=IBQ_AComprarQTD_TRANSF.AsCurrency;
         End;
@@ -3985,7 +4097,7 @@ begin
      Begin
        sgNumSeq:=IBQ_AComprarNUM_SEQ.AsString;
 
-       DML_ProdutoDocto('A', IBQ_AComprarNUM_DOCUMENTO.AsString, sgNumSeq);
+       DML_ProdutoDocto('A', IBQ_AComprarNUM_DOCUMENTO.AsString, DateToStr(IBQ_AComprarDTA_DOCUMENTO.AsDateTime), sgNumSeq);
      End; // If (IBQ_AComprarQTD_TRANSF.AsCurrency=0) and (IBQ_AComprarQTD_TRANSF.OldValue<>0) Then
 
      //=========================================================================
@@ -3997,6 +4109,7 @@ begin
        MySql:=' SELECT o.Num_Seq, Coalesce(o.qtd_acomprar,0) qtd_acomprar'+
               ' FROM   OC_COMPRAR o'+
               ' WHERE  o.num_documento='+IBQ_AComprarNUM_DOCUMENTO.AsString+
+              ' AND    CAST(o.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(IBQ_AComprarDTA_DOCUMENTO.AsDateTime))))+
               ' AND    o.cod_item='+QuotedStr(IBQ_AComprarCOD_ITEM.AsString)+
               ' AND    o.cod_empresa='+QuotedStr(IBQ_AComprarCOD_EMPRESA.AsString)+
               ' AND    o.num_seq<>'+QuotedStr(IBQ_AComprarNUM_SEQ.AsString)+
@@ -4016,6 +4129,7 @@ begin
        MySql:=' UPDATE oc_comprar c'+
               ' SET    c.qtd_acomprar='+F_Troca(',','.',CurrToStr(cQtdComp))+
               ' WHERE  c.num_documento='+IBQ_AComprarNUM_DOCUMENTO.AsString+
+              ' AND    CAST(c.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(IBQ_AComprarDTA_DOCUMENTO.AsDateTime))))+
               ' AND    c.num_seq='+sNumSeq;
        SQLC.Execute(MySql,nil, nil);
 

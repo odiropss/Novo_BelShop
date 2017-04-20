@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 432
-    ActivePage = Ts_SalaoCodigosViculados
+    ActivePage = Ts_SolicitacoesExporta
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -485,6 +485,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         DecimalPlaces = 0
         DisplayFormat = '0'
         TabOrder = 2
+        OnEnter = EdtSolicExpDoctoDestinoEnter
         OnExit = EdtSolicExpDoctoDestinoExit
       end
       object Ckb_SolicExpSoProduto: TJvXPCheckbox
@@ -655,6 +656,17 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Align = alLeft
           OnClick = Bt_SoliciExpExportarClick
         end
+      end
+      object DtaEdtSolicExpDoctoDestino: TDateTimePicker
+        Left = 325
+        Top = 104
+        Width = 100
+        Height = 21
+        Date = 0.867170775462000200
+        Time = 0.867170775462000200
+        Color = 14737632
+        Enabled = False
+        TabOrder = 8
       end
     end
     object Ts_FinanObjetivosHabilitaDesabilita: TTabSheet
