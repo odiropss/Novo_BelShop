@@ -1176,6 +1176,7 @@ type
     CDS_ObjetivosEmpresasCOD_LINX: TIntegerField;
     CDS_EmpresaDTA_INVENTARIO_LINX: TDateField;
     CDS_AComprarOCsCOD_LINX: TIntegerField;
+    CDS_EmpProcessaDTA_INVENTARIO_LINX: TDateField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -1720,9 +1721,9 @@ Begin
   // Colocar Dentro de Uma Transação ==========================
 
   Try
-    sDtaDocto:=DateToStr(StrToDate(sDtaDocto));
+    sDtaDocto:=DateToStr(StrToDateTime(sDtaDocto));
   Except
-    sDtaDocto:=DateToStr(StrToDate(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+    sDtaDocto:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
   End;
 
   // Busca Produtos com Quantidade a Comprar ===================================
@@ -1910,9 +1911,9 @@ Var
 Begin
 
   Try
-    sDtaDocto:=DateToStr(StrToDate(sDtaDocto));
+    sDtaDocto:=DateToStr(StrToDateTime(sDtaDocto));
   Except
-    sDtaDocto:=DateToStr(StrToDate(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+    sDtaDocto:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
   End;
 
   // Colocar Dentro de Uma Transação ==========================
@@ -2040,9 +2041,9 @@ Begin
   Result:=False;
 
   Try
-    sDtaDocto:=DateToStr(StrToDate(sDtaDocto));
+    sDtaDocto:=DateToStr(StrToDateTime(sDtaDocto));
   Except
-    sDtaDocto:=DateToStr(StrToDate(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+    sDtaDocto:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
   End;
 
   // Verifica se Transação esta Ativa
@@ -2115,9 +2116,9 @@ Begin
   s:='';
 
   Try
-    sDtaDocto:=DateToStr(StrToDate(sDtaDocto));
+    sDtaDocto:=DateToStr(StrToDateTime(sDtaDocto));
   Except
-    sDtaDocto:=DateToStr(StrToDate(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+    sDtaDocto:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
   End;
 
   cQtdSaldo:=0;
@@ -3966,9 +3967,9 @@ begin
 
   sDtaDoc:=IBQ_AComprarDTA_DOCUMENTO.AsString;
   Try
-    sDtaDoc:=DateToStr(StrToDate(sDtaDoc));
+    sDtaDoc:=DateToStr(StrToDateTime(sDtaDoc));
   Except
-    sDtaDoc:=DateToStr(StrToDate(f_Troca('/','.',f_Troca('-','.',sDtaDoc))));
+    sDtaDoc:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDoc))));
   End;
 
   // Retirado Não Atualuza Qtd_Acomprar do CD (99) Com as Transferencias

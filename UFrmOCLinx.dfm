@@ -90,7 +90,7 @@ object FrmOCLinx: TFrmOCLinx
             Glyph.Data = {
               0B546478504E47496D61676589504E470D0A1A0A0000000D4948445200000039
               000000220806000000E50971DD000000017352474200AECE1CE9000000046741
-              4D410000B18F0BFC6105000000097048597300000EC000000EC0016AD6890900
+              4D410000B18F0BFC6105000000097048597300000EBE00000EBE01EA42B1C000
               00029A494441545847ED973D68154110C70FACEC04C1AF424408A8043F083162
               E107BC8844C432898D10448C365ABFC628044C63F0055324606761611A8B94B1
               B2D3C6DAC2562C532429C6FDEFBBD99B9BDBBB7797B74AF6E90FA6988FCCE4CF
@@ -122,6 +122,7 @@ object FrmOCLinx: TFrmOCLinx
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
             ParentFont = False
+            OnClick = Bt_OCBuscaProdutosClick
           end
           object Panel8: TPanel
             Left = 641
@@ -185,7 +186,7 @@ object FrmOCLinx: TFrmOCLinx
             Picture.Data = {
               0B546478504E47496D61676589504E470D0A1A0A0000000D494844520000013A
               0000010C0802000000DB03EDBB000000017352474200AECE1CE9000000046741
-              4D410000B18F0BFC6105000000097048597300000EBD00000EBD0147FB90AD00
+              4D410000B18F0BFC6105000000097048597300000EBC00000EBC0195BC724900
               00CBB049444154785EEC9D07601CD771B021AA77B18344AFEC15008B244B6E91
               E3B8C42D89EDF8771CA7FF7FF2C7B1133B4E9CEAC48E93D8B17F5BB62412B8B2
               77008BBA28896243EF850DBD973BE07ADDBEAFFC33BB0708A6448B90D98DD1E8
@@ -2675,7 +2676,7 @@ object FrmOCLinx: TFrmOCLinx
           Top = 153
           Width = 965
           Height = 351
-          ActivePage = TS_FiltroComprovantes
+          ActivePage = TS_FiltroProdutos
           Align = alClient
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -2726,6 +2727,7 @@ object FrmOCLinx: TFrmOCLinx
                 DecimalPlaces = 0
                 DisplayFormat = '0'
                 TabOrder = 0
+                OnExit = EdtFiltroCodFornExit
               end
               object Bt_FiltroBuscaForn: TJvXPButton
                 Tag = 92
@@ -2743,6 +2745,7 @@ object FrmOCLinx: TFrmOCLinx
                 Font.Name = 'MS Sans Serif'
                 Font.Style = [fsBold]
                 ParentFont = False
+                OnClick = Bt_FiltroBuscaFornClick
               end
               object Painel_FiltroOC: TPanel
                 Left = 3
@@ -3057,6 +3060,7 @@ object FrmOCLinx: TFrmOCLinx
               TitleFont.Height = -11
               TitleFont.Name = 'Tahoma'
               TitleFont.Style = [fsBold]
+              OnKeyDown = Dbg_FiltroFornecedoresKeyDown
               SairComEnter = False
               Columns = <
                 item
@@ -3116,6 +3120,7 @@ object FrmOCLinx: TFrmOCLinx
                 DecimalPlaces = 0
                 DisplayFormat = '0'
                 TabOrder = 0
+                OnExit = EdtFiltroCodProdutoExit
               end
               object Bt_FiltroBuscaProdtudo: TJvXPButton
                 Tag = 92
@@ -3133,6 +3138,7 @@ object FrmOCLinx: TFrmOCLinx
                 Font.Name = 'MS Sans Serif'
                 Font.Style = [fsBold]
                 ParentFont = False
+                OnClick = Bt_FiltroBuscaProdtudoClick
               end
               object Painel_FiltroNaoCompra: TPanel
                 Left = 3
@@ -3181,7 +3187,7 @@ object FrmOCLinx: TFrmOCLinx
                 Left = 7
                 Top = 112
                 Width = 297
-                Height = 199
+                Height = 202
                 Caption = ' Seleciona Pelo Nome (4 Possibilidades) '
                 TabOrder = 3
                 object Label186: TLabel
@@ -3211,6 +3217,15 @@ object FrmOCLinx: TFrmOCLinx
                   Width = 48
                   Height = 13
                   Caption = 'Terceira'
+                end
+                object Label73: TLabel
+                  Left = 1
+                  Top = 188
+                  Width = 295
+                  Height = 13
+                  Align = alBottom
+                  Alignment = taCenter
+                  Caption = ' Somente p/Calculo de Pedido SEM Efeito no Filtro '
                 end
                 object EdtCalculoFiltroNome1: TEdit
                   Left = 14
@@ -3270,6 +3285,7 @@ object FrmOCLinx: TFrmOCLinx
               TitleFont.Height = -11
               TitleFont.Name = 'Tahoma'
               TitleFont.Style = [fsBold]
+              OnKeyDown = Dbg_FiltroProdutoKeyDown
               SairComEnter = False
               Columns = <
                 item
@@ -4415,7 +4431,7 @@ object FrmOCLinx: TFrmOCLinx
         Top = 53
         Width = 799
         Height = 475
-        ActivePage = Ts_GeraOCOrdensCompra
+        ActivePage = Ts_GeraOCGrid
         Align = alClient
         MultiLine = True
         TabOrder = 3

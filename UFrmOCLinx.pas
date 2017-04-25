@@ -259,6 +259,7 @@ type
     Image1: TImage;
     ApplicationEvents1: TApplicationEvents;
     Trad_Localizer: TcxLocalizer;
+    Label73: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -276,7 +277,27 @@ type
     // Desabilita e Habilita Scroll do Mouse no DBGrid
     Procedure DesabilitaScrollMouse(var Msg: TMsg; var Handled: Boolean);
     Procedure HabilitaScrollMouse(var Msg: TMsg; var Handled: Boolean);
-    
+
+    // ORDEM DE COMPRA /////////////////////////////////////////////////////////
+    Function  ConsisteBuscaProdutos: Boolean;
+
+    Function  BuscaProdutosAnalise: Boolean;
+
+    Procedure CriaPedidoOC;
+    Procedure AtualizaNumeroDosMeses;
+    Procedure MontaDemandasNovo(sFilial: String);
+
+    Procedure BuscaDemanda(sCodProduto: String; var iNrDias: Integer; Var iNrMeses: Integer);
+    ////////////////////////////////////////////////////////////////////////////
+
+    // DIVERSOS ////////////////////////////////////////////////////////////////
+    Procedure SelecionaProdutos(bProd, bLike: Boolean);
+                             // bProd = True - Seleciona Produto (Codigo)
+                             // bLike = True - Seleciona Produto (Nome)
+                             // Like Montado com Alias < pr. >
+                             //      USAR: MySql:=MySql+f_Troca('pr.','p.',sgLikeProdutos);
+    ////////////////////////////////////////////////////////////////////////////
+
     // Odir ====================================================================
 
     procedure PC_GeraOCApresentacaoChange(Sender: TObject);
@@ -330,6 +351,15 @@ type
     procedure Dbg_GeraOCTotalGeralDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
+    procedure Bt_OCBuscaProdutosClick(Sender: TObject);
+    procedure EdtFiltroCodFornExit(Sender: TObject);
+    procedure Bt_FiltroBuscaFornClick(Sender: TObject);
+    procedure EdtFiltroCodProdutoExit(Sender: TObject);
+    procedure Dbg_FiltroFornecedoresKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_FiltroProdutoKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Bt_FiltroBuscaProdtudoClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -350,17 +380,1442 @@ var
   bgSairLinx, bgEnterTab: Boolean;
 
   sgOrderGrid,
-  sgFornecedores: String;
+  sgFornecedoresLinx,
+  sgLikeProdutosLinx, sgProdutosLinx: String;
+
+  igNumSeqPed: Integer;
+  sgNumPed: String;
 
 implementation
 
 uses DK_Procs1, UDMBelShop, UDMRelatorio, UDMVirtual, UPesquisa,
-  UFrmBelShop, UFrmOCObservacao, DB;
+  UFrmBelShop, UFrmOCObservacao, DB, UFrmSelectEmpProcessamento, UDMLinx;
 
 {$R *.dfm}
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // ODIR INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// ORDEM DE COMPRA - Busca Demanda e Numeros de Dias e Meses >>>>>>>>>>>>>>>>>>>
+Procedure TFrmOCLinx.BuscaDemanda(sCodProduto: String; var iNrDias: Integer; Var iNrMeses: Integer);
+Var
+  ii: Integer;
+  sDta, MySql: String;
+  sDem1, sDem2, sDem3, sDem4, sDem5, sDem6, sDem7, sDem8: String;
+
+  dDta: TDateTime;
+
+  sCase, sCaseDiasMeses, sIN: String;
+  sDateSeparator: String;
+Begin
+
+  // Busca de Demandas =========================================================
+  DMBelShop.CDS_DemandasNovo.Filter:='CodProduto='+QuotedStr(sCodProduto);
+  DMBelShop.CDS_DemandasNovo.Filtered:=True;
+
+  sDem1:='0';
+  If DMBelShop.CDS_DemandasNovo.Locate('Demanda','Dem1',[]) Then
+   sDem1:=DMBelShop.CDS_DemandasNovo.FieldByName('Dem').AsString;
+
+  If StrToIntDef(sMes2,0)<>0 Then
+  Begin
+    sDem2:='0';
+    If DMBelShop.CDS_DemandasNovo.Locate('Demanda','Dem2',[]) Then
+     sDem2:=DMBelShop.CDS_DemandasNovo.FieldByName('Dem').AsString;
+  End;
+
+  If StrToIntDef(sMes3,0)<>0 Then
+  Begin
+    sDem3:='0';
+    If DMBelShop.CDS_DemandasNovo.Locate('Demanda','Dem3',[]) Then
+     sDem3:=DMBelShop.CDS_DemandasNovo.FieldByName('Dem').AsString;
+  End;
+
+  If StrToIntDef(sMes4,0)<>0 Then
+  Begin
+    sDem4:='0';
+    If DMBelShop.CDS_DemandasNovo.Locate('Demanda','Dem4',[]) Then
+     sDem4:=DMBelShop.CDS_DemandasNovo.FieldByName('Dem').AsString;
+  End;
+
+  If StrToIntDef(sMes5,0)<>0 Then
+  Begin
+    sDem5:='0';
+    If DMBelShop.CDS_DemandasNovo.Locate('Demanda','Dem5',[]) Then
+     sDem5:=DMBelShop.CDS_DemandasNovo.FieldByName('Dem').AsString;
+  End;
+
+  If StrToIntDef(sMes6,0)<>0 Then
+  Begin
+    sDem6:='0';
+    If DMBelShop.CDS_DemandasNovo.Locate('Demanda','Dem6',[]) Then
+     sDem6:=DMBelShop.CDS_DemandasNovo.FieldByName('Dem').AsString;
+  End;
+
+  If StrToIntDef(sMes7,0)<>0 Then
+  Begin
+    sDem7:='0';
+    If DMBelShop.CDS_DemandasNovo.Locate('Demanda','Dem7',[]) Then
+     sDem7:=DMBelShop.CDS_DemandasNovo.FieldByName('Dem').AsString;
+  End;
+
+  If StrToIntDef(sMes8,0)<>0 Then
+  Begin
+    sDem8:='0';
+    If DMBelShop.CDS_DemandasNovo.Locate('Demanda','Dem8',[]) Then
+     sDem8:=DMBelShop.CDS_DemandasNovo.FieldByName('Dem').AsString;
+  End;
+
+  // Calculo numero de Dias e Meses ==========================================
+  iNrDias:=0;
+  iNrMeses:=0;
+  DecodeDate(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor), wgAnoH, wgMesH, wgDiaH);
+
+  sDateSeparator:=DateSeparator;
+  DateSeparator:='/';
+
+  cgDemAno:=0;
+  cgDemAnoDia:=0;
+  DMBelShop.CDS_DemandasNovo.First;
+  While Not DMBelShop.CDS_DemandasNovo.Eof do
+  Begin
+    ii:=StrToInt(copy(DMBelShop.CDS_DemandasNovo.FieldByName('dta_ref').AsString,4,2));
+
+    // Demandas Meses -------------------------------------------
+    If Trim(DMBelShop.CDS_DemandasNovo.FieldByName('Demanda').AsString)<>'ANO' Then
+    Begin
+      // NÃO Conta Mês Atual ------------------------------------
+      If AnsiUpperCase(ShortMonthNames[wgMesH])+IntToStr(wgAnoH)<>
+         AnsiUpperCase(ShortMonthNames[ii])+copy(DMBelShop.CDS_DemandasNovo.FieldByName('dta_ref').AsString,7,4) Then
+      Begin
+        Inc(iNrMeses);
+      End;
+
+      If Trim(DMBelShop.CDS_DemandasNovo.FieldByName('Demanda').AsString)<>'ANO' Then
+      Begin
+         iNrDias:=iNrDias+DMBelShop.CDS_DemandasNovo.FieldByName('Num_Dias').AsInteger;
+      End;
+    End; // If Trim(DMBelShop.CDS_DemandasNovo.FieldByName('Demanda').AsString)<>'ANO' Then
+
+    // Demandas Ano ---------------------------------------------
+    If Trim(DMBelShop.CDS_DemandasNovo.FieldByName('Demanda').AsString)='ANO' Then
+    Begin
+      cgDemAno   :=DMBelShop.CDS_DemandasNovo.FieldByName('Dem').AsCurrency;
+
+      // Verifica Dias Uteis ------------------------------------
+      If (Trim(DMBelShop.CDS_DemandasNovo.FieldByName('dta_ref').AsString)='') Or
+         (DMBelShop.CDS_DemandasNovo.FieldByName('dta_ref').AsDateTime<=StrToDate(sgDtaIniAno)) Then
+       Begin
+         igNrDiasAno:=DMBelShop.CDS_DemandasNovo.FieldByName('Num_Dias').AsInteger;
+       End
+      Else if (DMBelShop.CDS_DemandasNovo.FieldByName('dta_ref').AsDateTime>StrToDate(sgDtaFimAno)) Then
+       Begin
+        igNrDiasAno:=1;
+       End
+      Else
+       Begin
+         igNrDiasAno:=DiasUteisBelShop(DMBelShop.CDS_DemandasNovo.FieldByName('dta_ref').AsDateTime, StrToDate(sgDtaFimAno)-1, False, True);
+       End; // If Trim(DMVirtual.CDS_V_EstoquesDTA_INCLUSAO.AsString)='' Then
+
+      cgDemAnoDia:=cgDemAno/igNrDiasAno;
+    End; // If Trim(DMBelShop.CDS_DemandasNovo.FieldByName('Demanda').AsString)='ANO' Then
+
+    DMBelShop.CDS_DemandasNovo.Next;
+  End; // While Not DMBelShop.CDS_DemandasNovo.Eof do
+
+  If sDateSeparator='/' Then DateSeparator:='/' Else DateSeparator:='.';
+
+  // Monta SQL com as Demandas ===============================================
+  MySql:='Select '+sDem1+' Dem1';
+         If sDem2<>'' Then MySql:=MySql+', '+sDem2+' Dem2';
+         If sDem3<>'' Then MySql:=MySql+', '+sDem3+' Dem3';
+         If sDem4<>'' Then MySql:=MySql+', '+sDem4+' Dem4';
+         If sDem5<>'' Then MySql:=MySql+', '+sDem5+' Dem5';
+         If sDem6<>'' Then MySql:=MySql+', '+sDem6+' Dem6';
+         If sDem7<>'' Then MySql:=MySql+', '+sDem7+' Dem7';
+         If sDem8<>'' Then MySql:=MySql+', '+sDem8+' Dem8';
+  MySql:=
+   MySql+' From RDB$DATABASE';
+  DMBelShop.CDS_Demandas.Close;
+  DMBelShop.SDS_Demandas.CommandText:=MySql;
+  DMBelShop.CDS_Demandas.Open;
+
+  // Busca de Demandas Novo - Limpa Filtra ===================================
+  DMBelShop.CDS_DemandasNovo.Filtered:=False;
+  DMBelShop.CDS_DemandasNovo.Filter:='';
+
+End; // ORDEM DE COMPRA - Busca Demanda e Numeros de Dias e Meses >>>>>>>>>>>>>>
+
+// ORDEM DE COMPRA - Monta Demandas para Novo Calculo do Compras >>>>>>>>>>>>>>>
+Procedure TFrmOCLinx.MontaDemandasNovo(sFilial: String);
+Var
+  sDta, MySql: String;
+  dDta: TDateTime;
+  sCase, sIN, sCaseDiasMeses: String;
+Begin
+  // Monta Scripts para Buscar Demandas ======================================
+  dDta:=DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor);
+  sCaseDiasMeses:=' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+                  '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) ='+
+                  '      ''01.''||Cast(lpad(extract(month from current_date),2,''0'') as varchar(2))||''.''||'+
+                  '               Cast(lpad(extract(Year  from current_date),4,''0'') as varchar(4)) Then '+
+                  IntToStr(DiasUteisBelShop(PrimUltDia(dDta,'P'), dDta, False, True));
+
+  sDta:='';
+  If StrToIntDef(sMes1,0)<>0 Then
+  Begin
+    sDta:=QuotedStr('01.'+sMes1+'.'+ME_Ano1.Text);
+
+    sCase:=
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem1''';
+
+    dDta:=EncodeDate(StrToInt(ME_Ano1.Text), StrToInt(sMes1), 1);
+    sCaseDiasMeses:=
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+
+    If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
+  End;
+
+  If StrToIntDef(sMes2,0)<>0 Then
+  Begin
+    sDta:=QuotedStr('01.'+sMes2+'.'+ME_Ano2.Text);
+
+    sCase:=
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem2''' ;
+
+    dDta:=EncodeDate(StrToInt(ME_Ano2.Text), StrToInt(sMes2), 1);
+    sCaseDiasMeses:=
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+
+    If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
+  End;
+
+  If StrToIntDef(sMes3,0)<>0 Then
+  Begin
+    sDta:=QuotedStr('01.'+sMes3+'.'+ME_Ano3.Text);
+
+    sCase:=
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem3''';
+
+    dDta:=EncodeDate(StrToInt(ME_Ano3.Text), StrToInt(sMes3), 1);
+    sCaseDiasMeses:=
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+
+    If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
+  End;
+
+  If StrToIntDef(sMes4,0)<>0 Then
+  Begin
+    sDta:=QuotedStr('01.'+sMes4+'.'+ME_Ano4.Text);
+
+    sCase:=
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem4''';
+
+    dDta:=EncodeDate(StrToInt(ME_Ano4.Text), StrToInt(sMes4), 1);
+    sCaseDiasMeses:=
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+
+    If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
+  End;
+
+  If StrToIntDef(sMes5,0)<>0 Then
+  Begin
+    sDta:=QuotedStr('01.'+sMes5+'.'+ME_Ano5.Text);
+
+    sCase:=
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem5''';
+
+    dDta:=EncodeDate(StrToInt(ME_Ano5.Text), StrToInt(sMes5), 1);
+    sCaseDiasMeses:=
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+
+    If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
+  End;
+
+  If StrToIntDef(sMes6,0)<>0 Then
+  Begin
+    sDta:=QuotedStr('01.'+sMes6+'.'+ME_Ano6.Text);
+
+    sCase:=
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem6''';
+
+    dDta:=EncodeDate(StrToInt(ME_Ano6.Text), StrToInt(sMes6), 1);
+    sCaseDiasMeses:=
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+
+    If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
+  End;
+
+  If StrToIntDef(sMes7,0)<>0 Then
+  Begin
+    sDta:=QuotedStr('01.'+sMes7+'.'+ME_Ano7.Text);
+
+    sCase:=
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem7''';
+
+    dDta:=EncodeDate(StrToInt(ME_Ano7.Text), StrToInt(sMes7), 1);
+    sCaseDiasMeses:=
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+
+    If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
+  End;
+
+  If StrToIntDef(sMes8,0)<>0 Then
+  Begin
+    sDta:=QuotedStr('01.'+sMes8+'.'+ME_Ano8.Text);
+
+    sCase:=
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem8''';
+
+    dDta:=EncodeDate(StrToInt(ME_Ano8.Text), StrToInt(sMes8), 1);
+    sCaseDiasMeses:=
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+
+    If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
+  End;
+
+  sIN:='('+sIN+')';
+
+  // Busca Demandas ==========================================================
+  MySql:=' Select CAST(LPAD(ml.cod_produto,6,'''') AS VARCHAR(6)) CodProduto,'+
+         ' CAST(''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+         '          Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) as Date) Dta_Ref,'+
+         ' Case '+sCase+' End Demanda,'+
+         ' Case '+sCaseDiasMeses+' End Num_Dias,'+
+         ' CAST(SUM(ml.quantidade) AS NUMERIC(12,2)) DEM'+
+
+         ' FROM LINXMOVIMENTO ml, LINXPRODUTOS pr'+
+         ' WHERE ml.cod_produto=pr.cod_produto'+
+         ' AND   ml.operacao=''S'''+
+         ' AND   ((ml.tipo_transacao=''V'') OR (ml.tipo_transacao IS NULL))'+
+         ' AND   ml.cancelado=''N'''+
+         ' AND   ml.excluido=''N'''+
+         ' AND   pr.desativado=''N'''+
+         ' AND   cast(''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
+         '                     Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) as Date) in '+sIN+
+         ' AND   ml.empresa='+sCodFilial;
+
+         // Fornecedores --------------------------------------------
+         If Trim(sgFornecedoresLinx)<>'' Then
+          MySql:=
+           MySql+' AND pr.cod_fornecedor in ('+sgFornecedoresLinx+')';
+
+         If Ckb_FiltroProdNaoCompra.Checked Then
+          MySql:=
+           MySql+' AND ((pr.id_colecao = 197) OR (UPPER(pr.desc_colecao) = ''NAO COMPRA''))';
+
+         // Produtos Codigos e/ou Produtos Like ---------------------
+         If (Trim(sgProdutosLinx)<>'') And (Trim(sgLikeProdutosLinx)<>'') Then
+          MySql:=
+           MySql+' AND (pr.Cod_Produto in ('+sgProdutosLinx+') Or '+sgLikeProdutosLinx+')'
+         Else If Trim(sgProdutosLinx)<>'' Then
+          MySql:=
+           MySql+' AND pr.Cod_Produto in ('+sgProdutosLinx+')'
+         Else If Trim(sgLikeProdutosLinx)<>'' Then
+          MySql:=
+           MySql+' AND '+sgLikeProdutosLinx;
+
+  MySql:=
+   MySql+' Group by 1,2,3,4'+
+
+         ' UNION';
+
+  MySql:=
+   MySql+' SELECT CAST(LPAD(pr.cod_produto,6,'''') AS VARCHAR(6)) CodProduto,'+
+         ' CAST(''01.''||Cast(lpad(extract(month from pr.dta_atualizacao),2,''0'') as varchar(2))||''.''||'+
+         '          Cast(lpad(extract(Year  from pr.dta_atualizacao),4,''0'') as varchar(4)) AS DATE) Dta_Ref,'+
+         ' ''ANO'' Demanda,'+
+         IntToStr(igNrDiasAno)+' Num_Dias,'+
+         ' SUM(COALESCE(ma.quantidade,0)) dem'+
+
+         ' FROM LINXMOVIMENTO ma, LINXPRODUTOS pr'+
+         ' WHERE ma.cod_produto=pr.cod_produto'+
+         ' AND   ma.operacao=''S'''+
+         ' AND   ((ma.tipo_transacao=''V'') OR (ma.tipo_transacao IS NULL))'+
+         ' AND   ma.cancelado=''N'''+
+         ' AND   ma.excluido=''N'''+
+         ' AND   pr.desativado=''N'''+
+         ' AND   ma.data_documento Between '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaIniAno)))+
+                                     ' AND '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFimAno)))+
+          ' AND   ma.empresa='+sCodFilial;
+
+         // Fornecedores --------------------------------------------
+         If Trim(sgFornecedoresLinx)<>'' Then
+          MySql:=
+           MySql+' AND pr.cod_fornecedor in ('+sgFornecedoresLinx+')';
+
+         If Ckb_FiltroProdNaoCompra.Checked Then
+          MySql:=
+           MySql+' AND ((pr.id_colecao = 197) OR (UPPER(pr.desc_colecao) = ''NAO COMPRA''))';
+
+         // Produtos Codigos e/ou Produtos Like ---------------------
+         If (Trim(sgProdutosLinx)<>'') And (Trim(sgLikeProdutosLinx)<>'') Then
+          MySql:=
+           MySql+' AND (pr.Cod_Produto in ('+sgProdutosLinx+') Or '+sgLikeProdutosLinx+')'
+         Else If Trim(sgProdutosLinx)<>'' Then
+          MySql:=
+           MySql+' AND pr.Cod_Produto in ('+sgProdutosLinx+')'
+         Else If Trim(sgLikeProdutosLinx)<>'' Then
+          MySql:=
+           MySql+' AND '+sgLikeProdutosLinx;
+
+  MySql:=
+   MySql+' Group by 1, 2'+
+         ' ORDER BY 1, 2';
+  DMBelShop.CDS_DemandasNovo.Close;
+  DMBelShop.CDS_DemandasNovo.Filtered:=False;
+  DMBelShop.CDS_DemandasNovo.Filter:='';
+  DMBelShop.SDS_DemandasNovo.CommandText:=MySql;
+  DMBelShop.CDS_DemandasNovo.Open;
+
+End; // ORDEM DE COMPRA - Monta Demandas para Novo Calculo do Compras >>>>>>>>>>
+
+// ORDEM DE COMPRA - Atualiza Numero dos Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmOCLinx.AtualizaNumeroDosMeses;
+Var
+  MySql: String;
+Begin
+  sMes1:='0';
+  sMes2:='0';
+  sMes3:='0';
+  sMes4:='0';
+  sMes5:='0';
+  sMes6:='0';
+  sMes7:='0';
+  sMes8:='0';
+
+  sMes1:=FormatFloat('00',CB_Mes1.ItemIndex+1);
+  sAno1:=Trim(ME_Ano1.Text);
+
+  sMes2:=FormatFloat('00',CB_Mes2.ItemIndex);
+  sAno2:=Trim(ME_Ano2.Text);
+
+  sMes3:=FormatFloat('00',CB_Mes3.ItemIndex);
+  sAno3:=Trim(ME_Ano3.Text);
+
+  sMes4:=FormatFloat('00',CB_Mes4.ItemIndex);
+  sAno4:=Trim(ME_Ano4.Text);
+
+  sMes5:=FormatFloat('00',CB_Mes5.ItemIndex);
+  sAno5:=Trim(ME_Ano5.Text);
+
+  sMes6:=FormatFloat('00',CB_Mes6.ItemIndex);
+  sAno6:=Trim(ME_Ano6.Text);
+
+  sMes7:=FormatFloat('00',CB_Mes7.ItemIndex);
+  sAno7:=Trim(ME_Ano7.Text);
+
+  sMes8:=FormatFloat('00',CB_Mes8.ItemIndex);
+  sAno8:=Trim(ME_Ano8.Text);
+
+  // Guarde Mese para Demonstratrar no Grid ====================================
+  MySql:='Insert Into OC_COMPRAR_MESES'+
+         ' Values('+sgNumPed+', '+
+         QuotedStr(CB_Mes1.Text+'/'+ME_Ano1.Text)+', ';
+
+         If CB_Mes2.ItemIndex<>0 Then
+          MySql:=MySql+QuotedStr(CB_Mes2.Text+'/'+ME_Ano2.Text)+', '
+         Else
+          MySql:=MySql+'Null, ';
+
+         If CB_Mes3.ItemIndex<>0 Then
+          MySql:=MySql+QuotedStr(CB_Mes3.Text+'/'+ME_Ano3.Text)+', '
+         Else
+          MySql:=MySql+'Null, ';
+
+         If CB_Mes4.ItemIndex<>0 Then
+          MySql:=MySql+QuotedStr(CB_Mes4.Text+'/'+ME_Ano4.Text)+', '
+         Else
+          MySql:=MySql+'Null, ';
+
+         If CB_Mes5.ItemIndex<>0 Then
+          MySql:=MySql+QuotedStr(CB_Mes5.Text+'/'+ME_Ano5.Text)+', '
+         Else
+          MySql:=MySql+'Null, ';
+
+         If CB_Mes6.ItemIndex<>0 Then
+          MySql:=MySql+QuotedStr(CB_Mes6.Text+'/'+ME_Ano6.Text)+', '
+         Else
+          MySql:=MySql+'Null, ';
+
+         If CB_Mes7.ItemIndex<>0 Then
+          MySql:=MySql+QuotedStr(CB_Mes7.Text+'/'+ME_Ano7.Text)+', '
+         Else
+          MySql:=MySql+'Null, ';
+
+         If CB_Mes8.ItemIndex<>0 Then
+          MySql:=MySql+QuotedStr(CB_Mes8.Text+'/'+ME_Ano8.Text)+')'
+         Else
+          MySql:=MySql+'Null)';
+  DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+End; // ORDEM DE COMPRA - Atualiza Numero dos Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// ORDEM DE COMPRA - Novo Calculode Pedido de Compra do Linx >>>>>>>>>>>>>>>>>>>
+Procedure TFrmOCLinx.CriaPedidoOC;
+Var
+  s, ss, MySql: String;
+  b: Boolean;
+  i: Integer;
+
+  iQtdMediaDia, iQtdMediaMes: Integer; // Indices dos Campos para Calcular Depois
+
+  sDta_Ref, sCodForn,  sNomeForn: String;
+  cQuant_Ref, cPreco, cPrecoUnit, cVlr_Total_Ref, cQtdTransito,
+  cMediaMes, cDemanda: Currency;
+
+  // Tributação
+  sCOD_ICMS, sEstado, sTIP_PESSOA,
+  sCodICM, sSittributaria, sSomaIPIBase, sSomaFreteBase, sSomaDespesaBase,
+  sSubstituicao, sSubstValPer, sSomaIPIBaseSubst, sSomaFreteBaseST,
+  sSomaDespesaBaseST: String;
+  cAliquota, cReducao, cSubstMargem, cSubstAliquota, cAliqRepasse: Currency;
+Begin
+  // Busca Numero de Documento =================================================
+  MySql:=' SELECT GEN_ID(GEN_NUM_DOC_CALCULO_LINX,1) Codigo'+
+         ' FROM RDB$DATABASE';
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:=MySql;
+  DMBelShop.CDS_Busca.Open;
+  sgNumPed:=DMBelShop.CDS_Busca.FieldByName('Codigo').AsString;
+  DMBelShop.SDS_Busca.Close;
+
+  // Atualiza Numero dos Meses =================================================
+  AtualizaNumeroDosMeses;
+
+  //============================================================================
+  // Novo Processo de Calculo Usando IBQ_OC_ComprarAdd =========================
+  //============================================================================
+  Try // IBQ_OC_ComprarAdd
+    If Not DMBelShop.IBT_BelShop.Active Then
+     DMBelShop.IBT_BelShop.StartTransaction;
+
+    pgProgBar.Properties.Max:=DMLinx.CDS_OCProdLinx.RecordCount;
+    pgProgBar.Position:=0;
+    Edt_OCTotProdutos.Value:=DMLinx.CDS_OCProdLinx.RecordCount;
+
+    // Monta Demandas ==========================================================
+    MontaDemandasNovo(IntToStr(igCodLojaLinx));
+
+    // Efetua o Calculo Para Analise Matriz ====================================
+    sCOD_ICMS  :='';
+    sEstado    :='';
+    sTIP_PESSOA:='';
+
+    DMBelShop.IBQ_OC_ComprarAdd.Close;
+    DMBelShop.IBQ_OC_ComprarAdd.SQL.Clear;
+    DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' Select *');
+    DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' From oc_comprar oc');
+    DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' Where oc.num_documento<1');
+    DMBelShop.IBQ_OC_ComprarAdd.Open;
+
+    DMLinx.CDS_OCProdLinx.First;
+    While not DMLinx.CDS_OCProdLinx.Eof do
+    Begin
+      Application.ProcessMessages;
+      pgProgBar.Position:=DMLinx.CDS_OCProdLinx.RecNo;
+
+// CURVA ABC - OdirApagar
+//      bgProcCurva:=True;
+//      b:=False;
+//      While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
+//      Begin
+//        If DMBelShop.CDS_Join.Locate('COD_PRODUTO',DMLinx.CDS_OCProdLinx.FieldByName('COD_ITEM').AsString,[]) Then
+//         Begin
+//           b:=True;
+//
+//           // Curvas Por Loja ou Por MPMS
+//           If ((Gb_CalculoTpCurvaABC.Visible) Or (Gb_CalculoApresCurva.Visible)) and (Gb_CalculoApresCurva.Visible) Then
+//           Begin
+//             If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Not Ckb_CalculoApresCurvaFora.Checked) Then
+//              Begin
+//                bgProcCurva:=False;
+//              End
+//             Else If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Ckb_CalculoApresCurvaFora.Checked) Then
+//              Begin
+//                If (Rb_CalculoApresCurvaEstCom.Checked) and (DMLinx.CDS_OCProdLinx.FieldByName('QTD_SALDO').AsInteger=0) Then
+//                  bgProcCurva:=False
+//                Else If (Rb_CalculoApresCurvaEstSem.Checked) and (DMLinx.CDS_OCProdLinx.FieldByName('QTD_SALDO').AsInteger<>0) Then
+//                  bgProcCurva:=False
+//              End;
+//           End; // If Gb_CalculoTpCurvaABC.Visible Then
+//         End
+//        Else // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',DMLinx.CDS_OCProdLinx.FieldByName('COD_ITEM').AsString,[]) Then
+//         Begin
+//           If (StrToDate(DMLinx.CDS_OCProdLinx.FieldByName('DATAINCLUSAO').AsString)>=StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio)))) Or
+//              (StrToDate(DMLinx.CDS_OCProdLinx.FieldByName('DATAALTERACAO').AsString)>=StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio)))) Then
+//            Begin
+//              DMBelShop.CDS_Join.Locate('IND_CURVA','E',[]);
+//              MySql:=DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString;
+//              DMBelShop.CDS_Join.Insert;
+//              DMBelShop.CDS_Join.FieldByName('COD_LOJA').AsString:=sCodMatriz;
+//              DMBelShop.CDS_Join.FieldByName('COD_PRODUTO').AsString:=DMLinx.CDS_OCProdLinx.FieldByName('COD_ITEM').AsString;
+//              DMBelShop.CDS_Join.FieldByName('IND_CURVA').AsString:='E';
+//              DMBelShop.CDS_Join.FieldByName('DATAINCLUSAO').AsString:=DMLinx.CDS_OCProdLinx.FieldByName('DATAINCLUSAO').AsString;
+//              DMBelShop.CDS_Join.FieldByName('EST_MINIMO').AsString:='3';
+//              DMBelShop.CDS_Join.FieldByName('USAR_CURVA').AsString:='SIM';
+//              DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString:=MySql;
+//            End
+//           Else
+//            Begin
+//              bgProcCurva:=False;
+//              b:=True;
+//            End;
+//         End;
+//      End; // While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
+
+//Ultima Compra e Transito - OdirApagar
+//      // Ultima Compra ----------------------------------------------
+//      sDta_Ref:='';
+//      sCodForn:='';
+//      sNomeForn:='';
+//      cQuant_Ref:=0;
+//      cPreco:=0;
+//      cPrecoUnit:=0;
+//      cVlr_Total_Ref:=0;
+//
+//      s :=Trim(DMLinx.CDS_OCProdLinx.FieldByName('COD_EMPRESA').AsString)(;
+//      ss:=Trim(DMLinx.CDS_OCProdLinx.FieldByName('COD_ITEM').AsString);
+//      If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'UC']),[]) Then
+//       Begin
+//         sDta_Ref      :=DMBelShop.CDS_UltCompraTransito.FieldByName('Dta_Ref').AsString;
+//         sCodForn      :=DMBelShop.CDS_UltCompraTransito.FieldByName('CodFornecedor').AsString;
+//         sNomeForn     :=DMBelShop.CDS_UltCompraTransito.FieldByName('NomeFornecedor').AsString;
+//         cQuant_Ref    :=DMBelShop.CDS_UltCompraTransito.FieldByName('Quant_Ref').AsCurrency;
+//         cPreco        :=DMBelShop.CDS_UltCompraTransito.FieldByName('Preco').AsCurrency;
+//         cPrecoUnit    :=DMBelShop.CDS_UltCompraTransito.FieldByName('Preco').AsCurrency;
+//         cVlr_Total_Ref:=DMBelShop.CDS_UltCompraTransito.FieldByName('Vlr_Total_Ref').AsCurrency;
+//       End
+//      Else If DMBelShop.CDS_UltCompraTransito.Locate('CodProduto;Tipo',VarArrayOf([ss, 'UC']),[]) Then
+//       Begin
+//         cPrecoUnit    :=DMBelShop.CDS_UltCompraTransito.FieldByName('Preco').AsCurrency;
+//       End;// If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'UC']),[]) Then
+//
+//      // Transito ---------------------------------------------------
+//      cQtdTransito:=0;
+//      If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'TR']),[]) Then
+//      Begin
+//        cQtdTransito  :=DMBelShop.CDS_UltCompraTransito.FieldByName('Quant_Ref').AsCurrency;
+//      End; // If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'TR']),[]) Then
+
+      // Inicializa Variaveis de Demanda ---------------------------------------
+      igNrDias:=0;
+      igNrMeses:=0;
+      cgOutras_Demandas:=0;
+      cgTotal_Demandas:=0;
+
+      // Busca Demandas e Totais Dias para Mes 1 -------------------------------
+      bgDemandaNovo:=True;
+      BuscaDemanda(DMLinx.CDS_OCProdLinx.FieldByName('Cod_Item').AsString,igNrDias, igNrMeses);
+      bgDemandaNovo:=False;
+
+      // Tributação ------------------------------------------------------------
+      If (sCOD_ICMS  <>DMLinx.CDS_OCProdLinx.FieldByName('COD_ICMS').AsString) Or
+         (sEstado    <>DMLinx.CDS_OCProdLinx.FieldByName('Estado').AsString)   Or
+         (sTIP_PESSOA<>DMLinx.CDS_OCProdLinx.FieldByName('TIP_PESSOA').AsString) Then
+      Begin
+        sCodICM           :='';
+        sSittributaria    :='';
+        sSubstituicao     :='';
+        sSomaIPIBase      :='N';
+        sSomaFreteBase    :='N';
+        sSomaDespesaBase  :='N';
+        sSomaIPIBaseSubst :='N';
+        sSomaFreteBaseST  :='N';
+        sSomaDespesaBaseST:='N';
+        cReducao          :=0;
+        cAliquota         :=0;
+        cSubstMargem      :=0;
+        sSubstValPer      :='P';
+        cSubstAliquota    :=0;
+        cAliqRepasse      :=0;
+
+        sCOD_ICMS  :=DMLinx.CDS_OCProdLinx.FieldByName('COD_ICMS').AsString;
+        sEstado    :=DMLinx.CDS_OCProdLinx.FieldByName('Estado').AsString;
+        sTIP_PESSOA:=DMLinx.CDS_OCProdLinx.FieldByName('TIP_PESSOA').AsString;
+
+// OdirApagar
+//        If IBQ_ConsultaMatriz.Locate('CODICM;CODESTADO;REVENDACONSUMOFJ',VarArrayOf([sCOD_ICMS,sEstado,sTIP_PESSOA]),[]) Then
+//        Begin
+//          sCodICM           :=IBQ_ConsultaMatriz.FieldByName('CODICM').AsString;
+//          sSittributaria    :=IBQ_ConsultaMatriz.FieldByName('SITTRIBUTARIA').AsString;
+//          sSomaIPIBase      :=IBQ_ConsultaMatriz.FieldByName('SOMAIPIBASE').AsString;
+//          sSomaFreteBase    :=IBQ_ConsultaMatriz.FieldByName('SOMAFRETEBASE').AsString;
+//          sSomaDespesaBase  :=IBQ_ConsultaMatriz.FieldByName('SOMADESPESABASE').AsString;
+//          sSubstituicao     :=IBQ_ConsultaMatriz.FieldByName('SUBSTITUICAO').AsString;
+//          sSubstValPer      :=IBQ_ConsultaMatriz.FieldByName('SUBSTVALPER').AsString;
+//          sSomaIPIBaseSubst :=IBQ_ConsultaMatriz.FieldByName('SOMAIPIBASESUBST').AsString;
+//          sSomaFreteBaseST  :=IBQ_ConsultaMatriz.FieldByName('SOMAFRETEBASEST').AsString;
+//          sSomaDespesaBaseST:=IBQ_ConsultaMatriz.FieldByName('SOMADESPESABASEST').AsString;
+//          cAliquota         :=IBQ_ConsultaMatriz.FieldByName('ALIQUOTA').AsCurrency;
+//          cReducao          :=IBQ_ConsultaMatriz.FieldByName('REDUCAO').AsCurrency;
+//          cSubstMargem      :=IBQ_ConsultaMatriz.FieldByName('SUBSTMARGEM').AsCurrency;
+//          cSubstAliquota    :=IBQ_ConsultaMatriz.FieldByName('SUBSTALIQUOTA').AsCurrency;
+//          cAliqRepasse      :=IBQ_ConsultaMatriz.FieldByName('ALIQREPASSE').AsCurrency;
+//        End; // If IBQ_ConsultaMatriz.Locate('CODICM;CODESTADO;REVENDACONSUMOFJ',VarArrayOf([sCOD_ICMS,sEstado,sTIP_PESSOA]),[]) Then
+      End; // If (sCOD_ICMS  <>DMLinx.CDS_OCProdLinx.FieldByName('COD_ICMS').AsString) Or
+
+      // Num_Seq de Documento --------------------------------------------------
+      Inc(igNumSeqPed);
+
+      // Insere Documento OC_COMPRAR -------------------------------------------
+      DMBelShop.IBQ_OC_ComprarAdd.Insert;
+      For i:=0 to DMLinx.CDS_OCProdLinx.FieldCount-1 do
+      Begin
+        // Trata Campos =============================================
+
+        If AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='NUM_SEQ' Then
+         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=iNumSeqDoc
+
+        Else If AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='NUM_DOCUMENTO' Then
+         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=StrToInt(sgNumPed)
+
+        Else if (AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_DEM_MES1') And (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem1').AsString)<>'') Then
+         Begin
+           cgTotal_Demandas:=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem1').AsCurrency;
+
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem1').AsCurrency;
+         End
+
+        Else if (AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_DEM_MES2') And (StrToIntDef(sMes2,0)<>0) And
+                (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem2').AsString)<>'') Then
+         Begin
+           cgOutras_Demandas:=cgOutras_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem2').AsCurrency;
+           cgTotal_Demandas:=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem2').AsCurrency;
+
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem2').AsCurrency;
+         End
+
+        Else if (AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_DEM_MES3') And (StrToIntDef(sMes3,0)<>0) And
+                (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem3').AsString)<>'') Then
+         Begin
+           cgOutras_Demandas:=cgOutras_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem3').AsCurrency;
+           cgTotal_Demandas:=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem3').AsCurrency;
+
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem3').AsCurrency;
+         End
+
+        Else if (AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_DEM_MES4') And (StrToIntDef(sMes4,0)<>0) And
+                (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem4').AsString)<>'') Then
+         Begin
+           cgOutras_Demandas:=cgOutras_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem4').AsCurrency;
+           cgTotal_Demandas:=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem4').AsCurrency;
+
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem4').AsCurrency;
+         End
+
+        Else if (AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_DEM_MES5') And (StrToIntDef(sMes5,0)<>0) And
+                (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem5').AsString)<>'') Then
+         Begin
+           cgOutras_Demandas:=cgOutras_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem5').AsCurrency;
+           cgTotal_Demandas:=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem5').AsCurrency;
+
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem5').AsCurrency;
+         End
+
+        Else if (AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_DEM_MES6') And (StrToIntDef(sMes6,0)<>0) And
+                (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem6').AsString)<>'') Then
+         Begin
+           cgOutras_Demandas:=cgOutras_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem6').AsCurrency;
+           cgTotal_Demandas:=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem6').AsCurrency;
+
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem6').AsCurrency;
+         End
+
+        Else if (AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_DEM_MES7') And (StrToIntDef(sMes7,0)<>0) And
+                (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem7').AsString)<>'') Then
+         Begin
+           cgOutras_Demandas:=cgOutras_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem7').AsCurrency;
+           cgTotal_Demandas:=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem7').AsCurrency;
+
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem7').AsCurrency;
+         End
+
+        Else if (AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_DEM_MES8') And (StrToIntDef(sMes8,0)<>0) And
+                (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem8').AsString)<>'') Then
+         Begin
+           cgOutras_Demandas:=cgOutras_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem8').AsCurrency;
+           cgTotal_Demandas:=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem8').AsCurrency;
+
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem8').AsCurrency;
+         End
+
+        Else if AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_NR_DIAS' Then
+         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=igNrDias
+
+        Else if AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_NR_MESES' Then
+         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=igNrMeses
+
+        Else if AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_TOT_MESES' Then
+         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=igTotMeses
+
+        Else if AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_MEDIA_MES' Then
+         iQtdMediaMes:=i
+
+        Else if (AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_MEDIA_DIA') Then
+         iQtdMediaDia:=i
+
+        Else If AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_DEMANDA_DIA' Then
+         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cgDemAnoDia
+
+        Else If AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_DEMANDA_ANO' Then
+         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cgDemAno
+
+        Else If AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='QTD_DIAS_ANO' Then
+         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=igNrDiasAno
+
+        Else
+         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].Assign(DMLinx.CDS_OCProdLinx.Fields[i]);
+
+      End; // For i:=0 to DMLinx.CDS_OCProdLinx.FieldCount-1 do
+
+      // Acerta Media (QTD_MEDIA_MES) ============================================
+      If igNrMeses<igTotMeses Then
+       Begin
+         If igNrMeses<>0 Then
+          cMediaMes:=RoundTo((cgOutras_Demandas/igNrMeses),-4)
+         Else
+          cMediaMes:=0;
+       End
+      Else
+       Begin
+         cMediaMes:=RoundTo((cgTotal_Demandas/igTotMeses),-4);
+       End; // If igNrMeses<igTotMeses Then
+
+       DMBelShop.IBQ_OC_ComprarAdd.Fields[iQtdMediaMes].AsCurrency:=cMediaMes;
+
+      // Acerta Media (QTD_MEDIA_DIA) ============================================
+      If igNrDias<>0 Then
+       DMBelShop.IBQ_OC_ComprarAdd.Fields[iQtdMediaDia].AsCurrency:=RoundTo((cgTotal_Demandas/igNrDias),-4)
+      Else
+       DMBelShop.IBQ_OC_ComprarAdd.Fields[iQtdMediaDia].AsCurrency:=0;
+
+      DMBelShop.IBQ_OC_ComprarAdd.Post;
+
+      DMLinx.CDS_OCProdLinx.Next;
+    End; // While not DMLinx.CDS_OCProdLinx.Eof do
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.IBQ_OC_ComprarAdd.ApplyUpdates;
+    DMBelShop.IBT_BelShop.CommitRetaining;
+    DMBelShop.IBT_BelShop.Commit;
+
+    DMBelShop.CDS_DemandasNovo.Close;
+    DMBelShop.IBQ_OC_ComprarAdd.Close;
+    DMLinx.CDS_OCProdLinx.Close;
+
+    // Atualiza OC_COMPRAR_DOCS ================================================
+    OC_COMPRAR_DOCS('I', sNumDoc, 'Linx');
+
+  Except // Try // IBQ_OC_ComprarAdd
+    On e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      OdirPanApres.Visible:=False;
+      DMBelShop.IBT_BelShop.Rollback;
+
+      DMBelShop.CDS_DemandasNovo.Close;
+      DMBelShop.IBQ_OC_ComprarAdd.Close;
+      DMLinx.CDS_OCProdLinx.Close;
+
+//odirapagar      msg('Erro na Geração dos Produtos !!'+cr+cr+'Filial: '+sCodMatriz +' !!','A');
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // On e : Exception do
+  End; // Try // IBQ_OC_ComprarAdd
+
+End; // ORDEM DE COMPRA - Novo Calculode Pedido de Compra do Linx >>>>>>>>>>>>>>
+
+// ORDEM DE COMPRA - Busca Produtos para Analise >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TFrmOCLinx.BuscaProdutosAnalise: Boolean;
+Begin
+  Result:=False;
+
+  // ODIR 1
+  // Busca Produtos MPMS =======================================================
+  MySqlSelect:=' SELECT 0 NUM_SEQ, 0 NUM_DOCUMENTO, current_timestamp DTA_DOCUMENTO,'+
+               ' ''N'' IND_OC_GERADA, NULL DTA_OC_GERADA, NULL NUM_OC_GERADA,'+
+               QuotedStr('Calculado em: '+DateTimeToStr(DataHoraServidorFI(
+                                          DMBelShop.SDS_DtaHoraServidor))+' por '+Des_Usuario)+' OBS_OC,'+
+               ' fi.empresa COD_EMPRESA, TRIM(fi.nome_emp) DES_EMPRESA,'+
+               ' pr.cod_produto COD_ITEM, TRIM(pr.nome) DES_ITEM,'+
+               ' 0 QTD_SUGERIDA, 0 QTD_ACOMPRAR, COALESCE(es.quantidade,0) QTD_SALDO,'+
+               ' 0 QTD_TRANSITO, COALESCE(es.quantidade,0) QTD_DISPONIVEL,'+
+               ' 0 QTD_MEDIA_MES, 0 QTD_MEDIA_DIA, 0 QTD_DEM_MES1, 0 QTD_DEM_MES2, 0 QTD_DEM_MES3,'+
+               ' 0 QTD_DEM_MES4, 0 QTD_DEM_MES5, 0 QTD_DEM_MES6, 0 QTD_DEM_MES7, 0 QTD_DEM_MES8,'+
+               ' 1 UNI_COMPRA,'+ // LINX ?
+               ' 1 UNI_VENDA,'+ // LINX ?
+               ' TRIM(pr.cod_barra) COD_BARRAS,'+
+               ' pr.id_setor COD_GRUPO, TRIM(pr.desc_setor) DES_GRUPO,'+
+               ' pr.id_linha COD_SUBGRUPO, TRIM(pr.desc_linha) DES_SUBGRUPO,'+
+               ' NULL DES_GENERICO, pr.id_classificacao COD_APLICACAO,'+
+               ' pr.desc_classificacao DES_APLICACAO, TRIM(pr.referencia) COD_REFERENCIA,'+
+               ' NULL CLA_CURVA_ABC,'+
+               ' NULL COD_FAMILIA_PRECO, NULL DES_FAMILIA_PRECO,'+
+
+               ' uc.DTA_ULT_COMPRA, uc.COD_FOR_ULT_COMPRA, uc.DES_FOR_ULT_COMPRA,'+
+               ' COALESCE(uc.QTD_ULT_COMPRA,0.00) QTD_ULT_COMPRA,'+
+               ' COALESCE(uc.VLR_UNI_ULT_COMPRA,0.00) VLR_UNI_ULT_COMPRA,'+
+               ' COALESCE(uc.VLR_TOT_ULT_COMPRA, 0.00) VLR_TOT_ULT_COMPRA,'+
+               ' COALESCE(uc.VLR_UNI_ULT_COMPRA,0.00) VLR_UNI_COMPRA,'+
+               ' 0 PER_DESCONTO,'+
+               ' NULL DTA_ULT_VENDA, NULL COD_CLI_ULT_VENDA, NULL DES_CLI_ULT_VENDA,'+
+               ' NULL QTD_ULT_VENDA, NULL VLR_UNI_ULT_VENDA, NULL VLR_TOT_ULT_VENDA,'+
+
+               ' CAST(ROUND(COALESCE(es.preco_venda,0),2) AS NUMERIC(12,2)) VLR_UNI_VENDA,'+
+               ' NULL COD_LISTA_VENDA, NULL DES_LISTA_VENDA,'+
+               ' NULL COD_LISTA_COMPRA, NULL DES_LISTA_COMPRA,'+
+
+               ' COALESCE(es.custo_medio,0) VLR_CUSTO_MEDIO,'+
+
+               ' 0.00 VLR_TOT_VENDA, 0.00 VLR_TOT_COMPRA, 0.00 VLR_BRUTO,'+
+               ' 0.00 VLR_DESCONTOS, 0.00 VLR_DESPESAS, 0.00 VLR_FRETE,'+
+
+               ' ''N'' IND_SOMA_IPI_BASE_ICMS, ''N'' IND_SOMA_FRETE_BASE_ICMS,'+
+               ' ''N'' IND_SOMA_DESPESA_BASE_ICMS, ''N'' IND_SOMA_IPI_BASE_ST,'+
+               ' ''N'' IND_SOMA_FRETE_BASE_ST, ''N'' IND_SOMA_DESPESA_BASE_ST,'+
+               ' NULL COD_SIT_TRIBUTARIA, ''00'' COD_IPI, ''P'' IND_IPI,'+
+               ' 0.00 PER_IPI, 0.00 VLR_IPI, null COD_ICMS,'+
+               ' 0.00 PER_REDUCAO_ICMS, 0.00 VLR_REDUCAO_ICMS, 0.00 VLR_BASE_ICMS,'+
+               ' 0.00 PER_ICMS, 0.00 VLR_ICMS, NULL COD_GRUPO_ST, NULL DES_GRUPO_ST,'+
+               ' 0.00 PER_MARGEM_ST, NULL IND_ST, 0.00 VLR_BASE_ST, 0.00 PER_ST,'+
+               ' 0.00 VLR_ST, 0.00 PER_REPASSE, 0.00 VLR_REPASSE,'+
+               ' NULL COD_COMPROVANTE_ICMS,'+
+               ' SUBSTRING(TRIM(pr.referencia) FROM 1 FOR 30) COD_REFERENCIA_FORN,'+
+               ' pr.cod_fornecedor COD_FORNECEDOR, TRIM(fo.nome_cliente) DES_FORNECEDOR,'+
+               ' fo.tipo_cliente TIP_PESSOA, TRIM(fo.email_cliente) DES_EMAIL,'+
+               ' 0 QTD_NR_DIAS,'+
+               ' 0 QTD_NR_MESES,'+
+               ' 0 QTD_TOT_MESES,'+
+               ' 0 COD_COMPRADOR,'+
+               QuotedStr('Calculado em: '+DateTimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor))+
+                                          ' por '+Des_Usuario)+' BLOB_TEXTO,'+
+               ' ''N'' IND_TRANSF, NULL DTA_LIM_TRANSF, 0 QTD_TRANSF,'+
+               ' ''SIM'' IND_USAR, 0 IND_QTD_ACIMA, 0 QTD_SUGERIDA_ANO,'+
+               ' 0 QTD_TRANSF_PERIODO, 0 QTD_TRANSF_ANO,'+
+               ' 0 EST_MINIMO, 0 DIAS_ESTOCAGEM, 0 QTD_DEMANDA_DIA,'+
+               ' 0 QTD_DEMANDA_ANO, 0 QTD_DIAS_ANO,'+
+               ' pr.dt_update DATAINCLUSAO,'+
+               ' TRIM(fo.uf_cliente) ESTADO,'+
+               ' pr.dt_update DATAALTERACAO';
+
+  MySqlClausula1:=' FROM LINXPRODUTOS pr'+
+                  '          LEFT JOIN LINXLOJAS fi              on fi.empresa='+IntToStr(igCodLojaLinx)+
+                  '          LEFT JOIN linxprodutosdetalhes es   on es.cod_produto=pr.cod_produto'+
+                  '                                             and es.empresa = fi.empresa'+
+                  '          LEFT JOIN linxclientesfornec fo     on fo.cod_cliente=pr.cod_fornecedor'+
+                  '                                             AND fo.tipo_cliente in (''F'', ''A'')'+
+                  '          LEFT JOIN (select ml.cod_produto, ml.empresa,'+  // Ultima Compra
+                  '                     cast(ml.data_documento as Date) DTA_ULT_COMPRA,'+
+                  '                     ml.codigo_cliente COD_FOR_ULT_COMPRA,'+
+                  '                     cl.nome_cliente DES_FOR_ULT_COMPRA,'+
+                  '                     cast(ml.quantidade as Numeric(12,2)) QTD_ULT_COMPRA,'+
+                  '                     Cast(COALESCE(ml.preco_unitario,0.00) as Numeric(12,2)) VLR_UNI_ULT_COMPRA,'+
+                  '                     Cast(ml.valor_total as Numeric(12,2)) VLR_TOT_ULT_COMPRA'+
+                  '                     FROM LINXMOVIMENTO ml, LINXCLIENTESFORNEC cl'+
+                  '                     WHERE ml.codigo_cliente=cl.cod_cliente'+
+                  '                     AND   cl.tipo_cliente in (''F'', ''A'')'+
+                  '                     AND   ml.operacao=''E'''+
+                  '                     AND   ((ml.tipo_transacao=''E'') OR (ml.tipo_transacao IS NULL))'+
+                  '                     AND   ml.cancelado=''N'''+
+                  '                     AND   ml.excluido=''N'''+
+                  '                     AND   ml.data_lancamento=(SELECT max(ml1.data_lancamento)'+
+                  '                                               FROM LINXMOVIMENTO ml1'+
+                  '                                               WHERE ml1.cod_produto=ml.cod_produto'+
+                  '                                               AND   ml1.empresa = ml.empresa'+
+                  '                                               AND   ml1.operacao = ml.operacao'+
+                  '                                               AND   ((ml1.tipo_transacao=''E'') OR (ml1.tipo_transacao IS NULL))'+
+                  '                                               AND   ml1.cancelado=ml.cancelado'+
+                  '                                               AND   ml1.excluido=ml.excluido)) uc  on uc.cod_produto=pr.cod_produto'+
+                  '                                                                                   AND uc.empresa=fi.empresa'+
+
+                  ' WHERE pr.desativado=''N''';
+
+                 If Ckb_FiltroProdNaoCompra.Checked Then
+                  MySqlClausula1:=
+                   MySqlClausula1+' AND ((pr.id_colecao = 197) OR (UPPER(pr.desc_colecao) = ''NAO COMPRA''))';
+
+                 // Produtos Codigos e/ou Produtos Like ---------------------
+                 If (Trim(sgProdutosLinx)<>'') And (Trim(sgLikeProdutosLinx)<>'') Then
+                  MySqlClausula1:=
+                   MySqlClausula1+' AND (pr.cod_produto in ('+sgProdutosLinx+') Or '+sgLikeProdutosLinx+')'
+                 Else If Trim(sgProdutosLinx)<>'' Then
+                  MySqlClausula1:=
+                   MySqlClausula1+' and pr.cod_produto in ('+sgProdutosLinx+')'
+                 Else If Trim(sgLikeProdutosLinx)<>'' Then
+                  MySqlClausula1:=
+                   MySqlClausula1+' AND'+sgLikeProdutosLinx;
+
+                 // Fornecedores --------------------------------------------
+                 If Trim(sgFornecedoresLinx)<>'' Then
+                  MySqlClausula1:=
+                   MySqlClausula1+' and pr.cod_fornecedor in ('+sgFornecedoresLinx+')';
+
+  MySqlOrderGrup:=' ORDER BY pr.nome';
+  DMLinx.CDS_OCProdLinx.Close;
+  DMLinx.SQLQ_OCProdLinx.SQL.Clear;
+  DMLinx.SQLQ_OCProdLinx.SQL.Add(MySqlSelect+MySqlClausula1+MySqlOrderGrup);
+  DMLinx.CDS_OCProdLinx.Open;
+
+  sgDtaDoc:=DateToStr(DMLinx.CDS_OCProdLinx.FieldByName('DTA_DOCUMENTO').AsDateTime);
+  Try
+    sgDtaDoc:=DateToStr(StrToDateTime(sgDtaDoc));
+  Except
+    sgDtaDoc:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sgDtaDoc))));
+  End;
+
+  Screen.Cursor:=crDefault;
+  OdirPanApres.Visible:=False;
+
+  If DMLinx.CDS_OCProdLinx.IsEmpty Then
+  Begin
+    DMLinx.CDS_OCProdLinx.Close;
+    Exit;
+  End; // If DMLinx.CDS_OCProdLinx.IsEmpty Then
+
+  Result:=True;
+End; // ORDEM DE COMPRA - Busca Produtos para Analise >>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// DIVERSOS - Seleciona Produtos TS_Filtros >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmOCLinx.SelecionaProdutos(bProd, bLike: Boolean);
+Begin
+  // bProd = True - Seleciona Produto (Codigo)
+  // bLike = True - Seleciona Produto (Nome)
+  // Like Montado com Alias < pr. >
+  //       SE NECESSARIO USAR: MySql:=MySql+' AND '+f_Troca('pr.','p.',sgLikeProdutosLinx);
+
+  // Seleção Produtos ==========================================================
+  sgProdutosLinx:='';
+  If bProd Then
+  Begin
+    If Not DMVirtual.CDS_V_Produtos.IsEmpty Then
+    Begin
+
+      DMVirtual.CDS_V_Produtos.First;
+      While Not DMVirtual.CDS_V_Produtos.Eof do
+      Begin
+        Refresh;
+
+        If sgProdutosLinx='' Then
+         sgProdutosLinx:=QuotedStr(DMVirtual.CDS_V_ProdutosCod_Produto.AsString)
+        Else
+         sgProdutosLinx:=sgProdutosLinx+', '+
+                          QuotedStr(DMVirtual.CDS_V_ProdutosCod_Produto.AsString);
+
+        DMVirtual.CDS_V_Produtos.Next;
+      End; // While Not DMVirtual.CDS_V_Produtos.Eof do
+      DMVirtual.CDS_V_Produtos.First;
+
+    End; // If Not DMVirtual.CDS_V_Produtos.IsEmpty Then
+  End; // If bProd Then
+
+  // Like Produtos =============================================================
+  sgLikeProdutosLinx:='';
+  If bLike Then
+  Begin
+    If Trim(EdtCalculoFiltroNome1.Text)<>'' Then
+     sgLikeProdutosLinx:=' pr.nome like ''%'+Trim(EdtCalculoFiltroNome1.Text)+'%''';
+
+    If (Trim(EdtCalculoFiltroNome2.Text)<>'') And (sgLikeProdutosLinx='') Then
+     sgLikeProdutosLinx:=' pr.nome like ''%'+Trim(EdtCalculoFiltroNome2.Text)+'%'''
+    Else If (Trim(EdtCalculoFiltroNome2.Text)<>'') Then
+     sgLikeProdutosLinx:=sgLikeProdutosLinx+' OR pr.nome like ''%'+Trim(EdtCalculoFiltroNome2.Text)+'%''';
+
+    If (Trim(EdtCalculoFiltroNome3.Text)<>'') And (sgLikeProdutosLinx='') Then
+     sgLikeProdutosLinx:=' pr.nome like ''%'+Trim(EdtCalculoFiltroNome3.Text)+'%'''
+    Else If (Trim(EdtCalculoFiltroNome3.Text)<>'') Then
+     sgLikeProdutosLinx:=sgLikeProdutosLinx+' OR pr.nome like ''%'+Trim(EdtCalculoFiltroNome3.Text)+'%''';
+
+    If (Trim(EdtCalculoFiltroNome4.Text)<>'') And (sgLikeProdutosLinx='') Then
+     sgLikeProdutosLinx:=' pr.nome like ''%'+Trim(EdtCalculoFiltroNome4.Text)+'%'''
+    Else If (Trim(EdtCalculoFiltroNome4.Text)<>'') Then
+     sgLikeProdutosLinx:=sgLikeProdutosLinx+' OR pr.nome like ''%'+Trim(EdtCalculoFiltroNome4.Text)+'%''';
+
+    If sgLikeProdutosLinx<>'' Then
+     sgLikeProdutosLinx:='('+sgLikeProdutosLinx+')';
+  End; // If bLike Then
+End; // DIVERSOS - Seleciona Produtos TS_Filtros >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// ORDEM DE COMPRA - Verifica se Existe Meses Iguais >>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TFrmOCLinx.ConsisteBuscaProdutos: Boolean;
+Begin
+  DecimalSeparator:=',';
+  DateSeparator:='/';
+
+  Result:=False;
+
+  // Analisa Mes Inválido =================================================
+  If not CB_Mes1.ItemIndex in [0..11] Then
+  Begin
+    msg('Informação do Mes 1 Inválida !!','A');
+    CB_Mes1.SetFocus;
+    Exit;
+  End;
+
+  If not CB_Mes2.ItemIndex in [0..12] Then
+  Begin
+    msg('Informação do Mes 2 Inválida !!','A');
+    CB_Mes2.SetFocus;
+    Exit;
+  End;
+
+  If not CB_Mes3.ItemIndex in [0..12] Then
+  Begin
+    msg('Informação do Mes 3 Inválida !!','A');
+    CB_Mes3.SetFocus;
+    Exit;
+  End;
+
+  If not CB_Mes4.ItemIndex in [0..12] Then
+  Begin
+    msg('Informação do Mes 4 Inválida !!','A');
+    CB_Mes4.SetFocus;
+    Exit;
+  End;
+
+  If not CB_Mes5.ItemIndex in [0..12] Then
+  Begin
+    msg('Informação do Mes 5 Inválida !!','A');
+    CB_Mes5.SetFocus;
+    Exit;
+  End;
+
+  If not CB_Mes6.ItemIndex in [0..12] Then
+  Begin
+    msg('Informação do Mes 6 Inválida !!','A');
+    CB_Mes6.SetFocus;
+    Exit;
+  End;
+
+  If not CB_Mes7.ItemIndex in [0..12] Then
+  Begin
+    msg('Informação do Mes 7 Inválida !!','A');
+    CB_Mes7.SetFocus;
+    Exit;
+  End;
+
+  If not CB_Mes8.ItemIndex in [0..12] Then
+  Begin
+    msg('Informação do Mes 8 Inválida !!','A');
+    CB_Mes8.SetFocus;
+    Exit;
+  End;
+
+  // Analisa Mes em Duplicidde =================================================
+  If CB_Mes1.Text+ME_Ano1.Text=CB_Mes2.Text+ME_Ano2.Text Then
+  Begin
+    CB_Mes2.SetFocus;
+    msg('Mês 1 Igual a Mês 2 !!','A');
+    Exit;
+  End;
+
+  If CB_Mes1.Text+ME_Ano1.Text=CB_Mes3.Text+ME_Ano3.Text Then
+  Begin
+    CB_Mes3.SetFocus;
+    msg('Mês 1 Igual a Mês 3 !!','A');
+    Exit;
+  End;
+
+  If CB_Mes1.Text+ME_Ano1.Text=CB_Mes4.Text+ME_Ano4.Text Then
+  Begin
+    CB_Mes4.SetFocus;
+    msg('Mês 1 Igual a Mês 4!!','A');
+    Exit;
+  End;
+
+  If CB_Mes1.Text+ME_Ano1.Text=CB_Mes5.Text+ME_Ano5.Text Then
+  Begin
+    CB_Mes5.SetFocus;
+    msg('Mês 1 Igual a Mês 5 !!','A');
+    Exit;
+  End;
+
+  If CB_Mes1.Text+ME_Ano1.Text=CB_Mes6.Text+ME_Ano6.Text Then
+  Begin
+    CB_Mes6.SetFocus;
+    msg('Mês 1 Igual a Mês 6 !!','A');
+    Exit;
+  End;
+
+  If CB_Mes1.Text+ME_Ano1.Text=CB_Mes7.Text+ME_Ano7.Text Then
+  Begin
+    CB_Mes7.SetFocus;
+    msg('Mês 1 Igual a Mês 7 !!','A');
+    Exit;
+  End;
+
+  If CB_Mes1.Text+ME_Ano1.Text=CB_Mes8.Text+ME_Ano8.Text Then
+  Begin
+    CB_Mes8.SetFocus;
+    msg('Mês 1 Igual a Mês 8 !!','A');
+    Exit;
+  End;
+
+  If CB_Mes2.ItemIndex<>0 Then
+  Begin
+    If CB_Mes2.Text+ME_Ano2.Text=CB_Mes3.Text+ME_Ano3.Text Then
+    Begin
+      CB_Mes3.SetFocus;
+      msg('Mês 2 Igual a Mês 3 !!','A');
+      Exit;
+    End;
+
+    If CB_Mes2.Text+ME_Ano2.Text=CB_Mes4.Text+ME_Ano4.Text Then
+    Begin
+      CB_Mes4.SetFocus;
+      msg('Mês 2 Igual a Mês 4 !!','A');
+      Exit;
+    End;
+
+    If CB_Mes2.Text+ME_Ano2.Text=CB_Mes5.Text+ME_Ano5.Text Then
+    Begin
+      CB_Mes5.SetFocus;
+      msg('Mês 2 Igual a Mês 5 !!','A');
+      Exit;
+    End;
+
+    If CB_Mes2.Text+ME_Ano2.Text=CB_Mes6.Text+ME_Ano6.Text Then
+    Begin
+      CB_Mes6.SetFocus;
+      msg('Mês 2 Igual a Mês 6 !!','A');
+      Exit;
+    End;
+
+    If CB_Mes2.Text+ME_Ano2.Text=CB_Mes7.Text+ME_Ano7.Text Then
+    Begin
+      CB_Mes7.SetFocus;
+      msg('Mês 2 Igual a Mês 7 !!','A');
+      Exit;
+    End;
+
+    If CB_Mes2.Text+ME_Ano2.Text=CB_Mes8.Text+ME_Ano8.Text Then
+    Begin
+      CB_Mes8.SetFocus;
+      msg('Mês 2 Igual a Mês 8 !!','A');
+      Exit;
+    End;
+  End; // If CB_Mes2.ItemIndex<>0 Then
+
+  If CB_Mes3.ItemIndex<>0 Then
+  Begin
+    If CB_Mes3.Text+ME_Ano3.Text=CB_Mes4.Text+ME_Ano4.Text Then
+    Begin
+      CB_Mes4.SetFocus;
+      msg('Mês 3 Igual a Mês 4 !!','A');
+      Exit;
+    End;
+
+    If CB_Mes3.Text+ME_Ano3.Text=CB_Mes5.Text+ME_Ano5.Text Then
+    Begin
+      CB_Mes5.SetFocus;
+      msg('Mês 3 Igual a Mês 5 !!','A');
+      Exit;
+    End;
+
+    If CB_Mes3.Text+ME_Ano3.Text=CB_Mes6.Text+ME_Ano6.Text Then
+    Begin
+      CB_Mes6.SetFocus;
+      msg('Mês 3 Igual a Mês 6 !!','A');
+      Exit;
+    End;
+
+    If CB_Mes3.Text+ME_Ano3.Text=CB_Mes7.Text+ME_Ano7.Text Then
+    Begin
+      CB_Mes7.SetFocus;
+      msg('Mês 3 Igual a Mês 7 !!','A');
+      Exit;
+    End;
+
+    If CB_Mes3.Text+ME_Ano3.Text=CB_Mes8.Text+ME_Ano8.Text Then
+    Begin
+      CB_Mes8.SetFocus;
+      msg('Mês 3 Igual a Mês 8 !!','A');
+      Exit;
+    End;
+  End; // If CB_Mes3.ItemIndex<>0 Then
+
+  If CB_Mes4.ItemIndex<>0 Then
+  Begin
+    If CB_Mes4.Text+ME_Ano4.Text=CB_Mes5.Text+ME_Ano5.Text Then
+    Begin
+      CB_Mes5.SetFocus;
+      msg('Mês 4 Igual a Mês 5 !!','A');
+      Exit;
+    End;
+
+    If CB_Mes4.Text+ME_Ano4.Text=CB_Mes6.Text+ME_Ano6.Text Then
+    Begin
+      CB_Mes6.SetFocus;
+      msg('Mês 4 Igual a Mês 6 !!','A');
+      Exit;
+    End;
+
+    If CB_Mes4.Text+ME_Ano4.Text=CB_Mes7.Text+ME_Ano7.Text Then
+    Begin
+      CB_Mes7.SetFocus;
+      msg('Mês 4 Igual a Mês 7 !!','A');
+      Exit;
+    End;
+
+    If CB_Mes4.Text+ME_Ano4.Text=CB_Mes8.Text+ME_Ano8.Text Then
+    Begin
+      CB_Mes8.SetFocus;
+      msg('Mês 4 Igual a Mês 8 !!','A');
+      Exit;
+    End;
+  End; // If CB_Mes4.ItemIndex<>0 Then
+
+  If CB_Mes5.ItemIndex<>0 Then
+  Begin
+    If CB_Mes5.Text+ME_Ano5.Text=CB_Mes6.Text+ME_Ano6.Text Then
+    Begin
+      CB_Mes6.SetFocus;
+      msg('Mês 5 Igual a Mês 6 !!','A');
+      Exit;
+    End;
+
+    If CB_Mes5.Text+ME_Ano5.Text=CB_Mes7.Text+ME_Ano7.Text Then
+    Begin
+      CB_Mes7.SetFocus;
+      msg('Mês 5 Igual a Mês 7 !!','A');
+      Exit;
+    End;
+
+    If CB_Mes5.Text+ME_Ano5.Text=CB_Mes8.Text+ME_Ano8.Text Then
+    Begin
+      CB_Mes8.SetFocus;
+      msg('Mês 5 Igual a Mês 8 !!','A');
+      Exit;
+    End;
+  End; // If CB_Mes5.ItemIndex<>0 Then
+
+  If CB_Mes6.ItemIndex<>0 Then
+  Begin
+    If CB_Mes6.Text+ME_Ano6.Text=CB_Mes7.Text+ME_Ano7.Text Then
+    Begin
+      CB_Mes7.SetFocus;
+      msg('Mês 6 Igual a Mês 7 !!','A');
+      Exit;
+    End;
+
+    If CB_Mes6.Text+ME_Ano6.Text=CB_Mes8.Text+ME_Ano8.Text Then
+    Begin
+      CB_Mes8.SetFocus;
+      msg('Mês 6 Igual a Mês 8 !!','A');
+      Exit;
+    End;
+  End; // If CB_Mes6.ItemIndex<>0 Then
+
+  If CB_Mes7.ItemIndex<>0 Then
+  Begin
+    If CB_Mes7.Text+ME_Ano7.Text=CB_Mes8.Text+ME_Ano8.Text Then
+    Begin
+      CB_Mes8.SetFocus;
+      msg('Mês 7 Igual a Mês 8 !!','A');
+      Exit;
+    End;
+  End; // If CB_Mes7.ItemIndex<>0 Then
+
+  // Analisa Ano Inválido =======================================================
+  If (CB_Mes1.ItemIndex in [0..11]) and (ME_Ano1.Text='20  ') Then
+  Begin
+    ME_Ano1.SetFocus;
+    msg('Ano Inválido em Mês 1 !!','A');
+    Exit;
+  End;
+
+  If (CB_Mes2.ItemIndex in [1..12]) and (ME_Ano2.Text='20  ') Then
+  Begin
+    ME_Ano2.SetFocus;
+    msg('Ano Inválido em Mês 2 !!','A');
+    Exit;
+  End;
+
+  If (CB_Mes3.ItemIndex in [1..12]) and (ME_Ano3.Text='20  ') Then
+  Begin
+    ME_Ano3.SetFocus;
+    msg('Ano Inválido em Mês 3 !!','A');
+    Exit;
+  End;
+
+  If (CB_Mes4.ItemIndex in [1..12]) and (ME_Ano4.Text='20  ') Then
+  Begin
+    ME_Ano4.SetFocus;
+    msg('Ano Inválido em Mês 4 !!','A');
+    Exit;
+  End;
+
+  If (CB_Mes5.ItemIndex in [1..12]) and (ME_Ano5.Text='20  ') Then
+  Begin
+    ME_Ano5.SetFocus;
+    msg('Ano Inválido em Mês 5 !!','A');
+    Exit;
+  End;
+
+  If (CB_Mes6.ItemIndex in [1..12]) and (ME_Ano6.Text='20  ') Then
+  Begin
+    ME_Ano6.SetFocus;
+    msg('Ano Inválido em Mês 6 !!','A');
+    Exit;
+  End;
+
+  If (CB_Mes7.ItemIndex in [1..12]) and (ME_Ano7.Text='20  ') Then
+  Begin
+    ME_Ano7.SetFocus;
+    msg('Ano Inválido em Mês 7 !!','A');
+    Exit;
+  End;
+
+  If (CB_Mes8.ItemIndex in [1..12]) and (ME_Ano8.Text='20  ') Then
+  Begin
+    ME_Ano8.SetFocus;
+    msg('Ano Inválido em Mês 8 !!','A');
+    Exit;
+  End;
+
+  // Verifica Limite Para Busca de Transito ====================================
+  If (CkB_CalculoTransito.Checked) and (Trim(DtEdt_CalculoTransito.Text)<>'') Then
+   Begin
+     Try
+       StrToDate(DtEdt_CalculoTransito.Text);
+     Except
+       msg('Data Limite para Transito Inválida !!','A');
+       DtEdt_CalculoTransito.SetFocus;
+       Exit;
+     End;
+   End
+  Else If (CkB_CalculoTransito.Checked) and (Trim(DtEdt_CalculoTransito.Text)='') Then
+   Begin
+     msg('Data Limite para Transito Inválida !!','A');
+     DtEdt_CalculoTransito.SetFocus;
+     Exit;
+   End; // If (CkB_CalculoTransito.Checked) and Trim(DtEdt_CalculoTransito.Text)<>'' Then
+
+  If DtEdt_CalculoTransito.Date<StrToDate('01/01/2011') Then
+  Begin
+    msg('Data Limite para Transito'+cr+'deve Ser MAIOR que 31/12/2010 !!','A');
+    DtEdt_CalculoTransito.SetFocus;
+    Exit;
+  End; // If DtEdt_CalculoInicio.Date<StrToDate('01/01/2011') Then
+
+  Result:=True;
+
+End; // ORDEM DE COMPRA - Verifica se Existe Meses Iguais >>>>>>>>>>>>>>>>>>>>>>
 
 // DIVERSOS - Desbilita o Scroll do Mouse no DbGrid >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmOCLinx.DesabilitaScrollMouse(var Msg: TMsg; var Handled: Boolean);
@@ -611,17 +2066,17 @@ End; // Acerta Nome dos Meses de Demandas no Grid >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmOCLinx.MontaSelectFornecedoresLinx;
 Begin
   // Fornecedores Selecionados =================================================
-  sgFornecedores:='';
+  sgFornecedoresLinx:='';
   If Not DMVirtual.CDS_V_Fornecedores.IsEmpty Then
   Begin
     DMVirtual.CDS_V_Fornecedores.First;
     While Not DMVirtual.CDS_V_Fornecedores.Eof do
     Begin
-      If sgFornecedores='' Then
-       sgFornecedores:=
+      If sgFornecedoresLinx='' Then
+       sgFornecedoresLinx:=
                   QuotedStr(DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsString)
       Else
-       sgFornecedores:=sgFornecedores+', '+
+       sgFornecedoresLinx:=sgFornecedoresLinx+', '+
                  QuotedStr(DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsString);
 
       DMVirtual.CDS_V_Fornecedores.Next;
@@ -629,7 +2084,7 @@ Begin
     DMVirtual.CDS_V_Fornecedores.First;
 
   End; // If Not DMVirtual.CDS_V_Fornecedores.IsEmpty Then
-End; // Monta sgFornecedores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+End; // Monta sgFornecedoresLinx >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Inicializa Meses para Busca de Demandas para Calculo de Médias >>>>>>>>>>>>>>
 Procedure TFrmOCLinx.InicializaMesesLinx;
@@ -703,7 +2158,7 @@ begin
    Begin
      Action := caFree;
 
-     //FechaTudoModelo;
+     FrmBelShop.FechaTudo;
    End
   Else
    Begin
@@ -1548,7 +3003,7 @@ begin
   // Cria Componente Memo ======================================================
   mMemo:=TMemo.Create(Self);
   mMemo.Visible:=False;
-  mMemo.Parent:=FrmBelShop; 
+  mMemo.Parent:=FrmOCLinx;
   mMemo.Width:=500;
   mMemo.Lines.Clear;
 
@@ -2087,8 +3542,11 @@ begin
 
     OdirPanApres.Caption:='AGUARDE !! Montando Relatório...';
     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
-    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmOCLinx.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmOCLinx.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmOCLinx;
+    OdirPanApres.BringToFront();
     OdirPanApres.Visible:=True;
     Refresh;
 
@@ -2319,6 +3777,511 @@ begin
   Dbg_GeraOCTotalGeral.Canvas.FillRect(Rect);
   Dbg_GeraOCTotalGeral.DefaultDrawDataCell(Rect,Column.Field,state);
 
+end;
+
+procedure TFrmOCLinx.Bt_OCBuscaProdutosClick(Sender: TObject);
+Var
+  MySql: String;
+
+  hHrInicio, hHrFim,
+  sDtaDocto: String;
+
+  bCriaPedidoOC: Boolean;
+begin
+
+  Lb_EmpAprocessar.Caption:='0';
+
+  sgOutrasEmpresa:='';
+  bgSelectSoLinx:=True;
+  FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
+  FrmSelectEmpProcessamento.bUsarMatriz:=False;
+  FrmSelectEmpProcessamento.Pan_SelectEmpProcECommerce.Visible:=False;
+
+  FrmSelectEmpProcessamento.ShowModal;
+  bgSelectSoLinx:=False;
+
+  // Se Processa Produtos E-Commerce ===========================================
+  bgECommerce:=FrmSelectEmpProcessamento.Ckb_SelectEmpProcECommerce.Checked;
+  Lb_EmpAprocessar.Caption:=IntToStr(FrmSelectEmpProcessamento.iNrEmpProc);
+
+  FreeAndNil(FrmSelectEmpProcessamento);
+
+  // Verifica se Processa Todas as Empresas ====================================
+  sgEmpresas:='';
+  bgTodasEmpresas:=True;
+  While Not DMBelShop.CDS_EmpProcessa.Eof do
+  Begin
+    If DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
+     Begin
+       // Atualiza sgEmpresa para Sql ---------------------------------
+       If sgEmpresas='' Then
+        sgEmpresas:=QuotedStr(DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString)
+       Else
+        sgEmpresas:=sgEmpresas+', '+QuotedStr(DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString);
+     End
+    Else // If DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
+     Begin
+       bgTodasEmpresas:=False;
+     End; // If DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
+
+    DMBelShop.CDS_EmpProcessa.Next;
+  End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
+
+  If sgEmpresas='' Then
+  Begin
+    CB_Mes1.SetFocus;
+    Exit;
+  End; // If sgEmpresas='' Then
+
+  If msg('Deseja Realmente Iniciar o Calculo ??','C')=2 Then
+  Begin
+    Lb_EmpAprocessar.Caption:='0';
+    CB_Mes1.SetFocus;
+    Exit;
+  End;
+
+  // Inicia o Processameto =====================================================
+  hHrInicio:=TimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+  hHrFim:='';
+
+  CB_Mes1.SetFocus;
+  Lb_EmpProcessadas.Caption:='0';
+
+  If Not ConsisteBuscaProdutos Then
+   Exit;
+
+
+  OdirPanApres.Caption:='AGUARDE !! Inicializando Processos...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmOCLinx.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmOCLinx.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmOCLinx;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Numero de Meses Total -------------------------------------------------
+  igTotMeses:=1; // CB_Mes1 - Sempre Soma
+  If CB_Mes2.Text<>'NAO USAR' Then igTotMeses:=igTotMeses+1;
+  If CB_Mes3.Text<>'NAO USAR' Then igTotMeses:=igTotMeses+1;
+  If CB_Mes4.Text<>'NAO USAR' Then igTotMeses:=igTotMeses+1;
+  If CB_Mes5.Text<>'NAO USAR' Then igTotMeses:=igTotMeses+1;
+  If CB_Mes6.Text<>'NAO USAR' Then igTotMeses:=igTotMeses+1;
+  If CB_Mes7.Text<>'NAO USAR' Then igTotMeses:=igTotMeses+1;
+  If CB_Mes8.Text<>'NAO USAR' Then igTotMeses:=igTotMeses+1;
+
+  Screen.Cursor:=crAppStart;
+
+  // Produtos Selecionados =====================================================
+  SelecionaProdutos(True, True);
+
+  // Calcula Dias Uteis no Ultimo Ano ==========================================
+  DecodeDate(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor), wgAnoH, wgMesH, wgDiaH);
+  sgDtaIniAno:=DateToStr(EncodeDate(wgAnoH-1, wgMesH, 1));
+  sgDtaFimAno:=DateToStr(EncodeDate(wgAnoH, wgMesH, wgDiaH));
+
+  igNrDiasAno:=DiasUteisBelShop(StrToDateTime(sgDtaIniAno),StrToDateTime(sgDtaFimAno)-1, False, True);
+
+  //============================================================================
+  // PROCESSA LOJAS ============================================================
+  //============================================================================
+  DecimalSeparator:='.';
+  DateSeparator:='.';
+  igNumSeqPed:=0;
+
+  DMBelShop.CDS_EmpProcessa.First;
+  While Not DMBelShop.CDS_EmpProcessa.Eof do
+  Begin
+    Refresh;
+
+    if DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
+    Begin
+      sCodFilial   :=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
+      igCodLojaLinx:=DMBelShop.CDS_EmpProcessaCOD_LINX.AsInteger;
+
+      FrmBelShop.MontaProgressBar(True, FrmOCLinx);
+
+      OdirPanApres.Caption:='AGUARDE !! Processando Loja (Linx): '+IntToStr(igCodLojaLinx)+' - '+DMBelShop.CDS_EmpProcessaRAZAO_SOCIAL.AsString;
+      OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+      OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmOCLinx.Width-OdirPanApres.Width)/2));
+      OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmOCLinx.Height-OdirPanApres.Height)/2))-20;
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmOCLinx;
+      OdirPanApres.BringToFront();
+      OdirPanApres.Visible:=True;
+      Refresh;
+
+      // Busca Produtos ========================================================
+      bCriaPedidoOC:=True;
+      If Not BuscaProdutosAnalise Then
+       bCriaPedidoOC:=False;
+
+       If bCriaPedidoOC Then
+        CriaPedidoOC;
+
+      FrmBelShop.MontaProgressBar(False, FrmOCLinx);
+    End; // if DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
+
+    OdirPanApres.Visible:=False;
+    DMBelShop.CDS_EmpProcessa.Next;
+  End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
+{
+  //?????????????????????
+  DMBelShop.CDS_UltCompraTransito.Close;
+  //?????????????????????
+
+  DecimalSeparator:=',';
+  DateSeparator:='/';
+
+  Screen.Cursor:=crDefault;
+  //IBT_BelShop.
+  // Calcula Sugestões / Transferencias / Estoque Excedente ====================
+  OCCalculaSugTransfExc(sNumDoc, sgDtaDoc);
+
+  // Busca Totais das OCs ======================================================
+  TotaisOC(sNumDoc);
+ }
+  // Encerramento ==============================================================
+  hHrFim:=TimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+
+  Edt_OCTotProdutos.Value:=0;
+
+  msg('Analise dos Produtos'+cr+'Efetuada com SUCESSO !!'+cr+cr+
+      ' TEMPO: '+TimeToStr(StrToTime(hHrFim)-StrToTime(hHrInicio)),'A');
+
+  Lb_EmpAprocessar.Caption:='0';
+  Lb_EmpProcessadas.Caption:='0';
+
+  PC_OrdemCompra.TabIndex:=1;
+  PC_OrdemCompraChange(Self);
+
+  EdtGeraOCBuscaDocto.Value:=StrToInt(sNumDoc);
+  EdtGeraOCBuscaDoctoExit(Sender);
+
+end;
+
+procedure TFrmOCLinx.EdtFiltroCodFornExit(Sender: TObject);
+Var
+  MySql: String;
+  bSiga: Boolean;
+begin
+
+  If EdtFiltroCodForn.Value<>0 Then
+  Begin
+    Screen.Cursor:=crAppStart;
+
+    // Busca Fornecedores ======================================================
+    MySql:=' SELECT fo.nome_cliente nomefornecedor, fo.cod_cliente codfornecedor'+
+           ' FROM LINXCLIENTESFORNEC fo'+
+           ' WHERE fo.tipo_cliente IN (''F'', ''A'')'+
+           ' AND   EXISTS(SELECT 1'+
+           '              FROM LINXPRODUTOS pr'+
+           '              WHERE pr.cod_fornecedor = fo.cod_cliente'+
+           '              AND   pr.desativado = ''N''';
+
+           If Ckb_FiltroProdNaoCompra.Checked Then
+            MySql:=
+             MySql+' AND ((pr.id_colecao = 197) OR (UPPER(pr.desc_colecao) = ''NAO COMPRA''))';
+
+     MySql:=
+      MySql+')'+
+            ' AND fo.cod_cliente = '+EdtFiltroCodForn.Text;
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+
+    Screen.Cursor:=crDefault;
+
+    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('codfornecedor').AsString)='' Then
+    Begin
+      msg('Fornecedor NÃO Encontrado !!!', 'A');
+      DMBelShop.CDS_BuscaRapida.Close;
+      EdtFiltroCodForn.Clear;
+      EdtFiltroCodForn.SetFocus;
+      Exit;
+    End;
+
+    If DMVirtual.CDS_V_Fornecedores.Locate('Cod_Fornecedor',DMBelShop.CDS_BuscaRapida.FieldByName('CodFornecedor').AsString,[]) Then
+    Begin
+      Begin
+        msg('Fornecedor Já Informado !!','A');
+        DMBelShop.CDS_BuscaRapida.Close;
+        EdtFiltroCodForn.Clear;
+        EdtFiltroCodForn.SetFocus;
+        Exit;
+      End;
+    End;
+
+    DMVirtual.CDS_V_Fornecedores.Insert;
+    DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsString:=DMBelShop.CDS_BuscaRapida.FieldByName('CodFornecedor').AsString;
+    DMVirtual.CDS_V_FornecedoresDes_Fornecedor.AsString:=DMBelShop.CDS_BuscaRapida.FieldByName('NomeFornecedor').AsString;
+    DMVirtual.CDS_V_Fornecedores.Post;
+
+    // Monta sFornecedore
+    MontaSelectFornecedoresLinx;
+
+    DMBelShop.CDS_BuscaRapida.Close;
+    EdtFiltroCodForn.Text:='0';
+    EdtFiltroCodForn.SetFocus;
+  End;
+end;
+
+procedure TFrmOCLinx.Bt_FiltroBuscaFornClick(Sender: TObject);
+Var
+  MySql: String;
+  bSiga: Boolean;
+begin
+
+  // ========== EFETUA A CONEXÃO ===============================================
+  FrmPesquisa:=TFrmPesquisa.Create(Self);
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  // Busca Fornecedores ======================================================
+  MySql:=' SELECT fo.nome_cliente nomefornecedor, fo.cod_cliente codfornecedor'+
+         ' FROM LINXCLIENTESFORNEC fo'+
+         ' WHERE fo.tipo_cliente IN (''F'', ''A'')'+
+         ' AND   EXISTS(SELECT 1'+
+         '              FROM LINXPRODUTOS pr'+
+         '              WHERE pr.cod_fornecedor = fo.cod_cliente'+
+         '              AND   pr.desativado = ''N''';
+
+         If Ckb_FiltroProdNaoCompra.Checked Then
+          MySql:=
+           MySql+' AND ((pr.id_colecao = 197) OR (UPPER(pr.desc_colecao) = ''NAO COMPRA''))';
+
+  MySql:=
+   MySql+')'+
+         ' order by fo.nome_cliente';
+  DMBelShop.CDS_Pesquisa.Close;
+  DMBelShop.CDS_Pesquisa.Filtered:=False;
+  DMBelShop.SDS_Pesquisa.CommandText:=MySql;
+  DMBelShop.CDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(DMBelShop.CDS_Pesquisa.FieldByName('codfornecedor').AsString)='' Then
+  Begin
+    msg('Sem Registro a Listar !!','A');
+    EdtFiltroCodForn.Clear;
+    FreeAndNil(FrmPesquisa);
+    EdtFiltroCodForn.SetFocus;
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisa.Campo_pesquisa:='NomeFornecedor';
+  FrmPesquisa.Campo_Codigo:='CodFornecedor';
+  FrmPesquisa.Campo_Descricao:='NomeFornecedor';
+  FrmPesquisa.EdtDescricao.Clear;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisa.ShowModal;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtCodigo.Text)<>'0')Then
+  Begin
+    If DMVirtual.CDS_V_Fornecedores.Locate('Cod_Fornecedor',FrmPesquisa.EdtCodigo.Text,[]) Then
+    Begin
+      Begin
+        msg('Fornecedor Já Informado !!','A');
+        EdtFiltroCodForn.Clear;
+        FreeAndNil(FrmPesquisa);
+        EdtFiltroCodForn.SetFocus;
+        Exit;
+      End;
+    End;
+
+    DMVirtual.CDS_V_Fornecedores.Insert;
+    DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsString:=FrmPesquisa.EdtCodigo.Text;
+    DMVirtual.CDS_V_FornecedoresDes_Fornecedor.AsString:=FrmPesquisa.EdtDescricao.Text;
+    DMVirtual.CDS_V_Fornecedores.Post;
+
+    // Monta sFornecedore
+    MontaSelectFornecedoresLinx;
+  End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtCodigo.Text)<>'0')Then
+
+  FreeAndNil(FrmPesquisa);
+
+end;
+
+procedure TFrmOCLinx.EdtFiltroCodProdutoExit(Sender: TObject);
+Var
+  MySql: String;
+begin
+
+  If EdtFiltroCodProduto.Value<>0 Then
+  Begin
+    Screen.Cursor:=crAppStart;
+
+    // Busca Produtos ==========================================================
+    MySql:=' SELECT pr.nome Des_Produto, pr.cod_produto, pr.cod_fornecedor'+
+           ' FROM LINXPRODUTOS pr'+
+           ' WHERE pr.desativado = ''N'''+
+           ' AND   pr.cod_produto='+IntToStr(EdtFiltroCodProduto.AsInteger);
+
+           If Ckb_FiltroProdNaoCompra.Checked Then
+            MySql:=
+             MySql+' AND ((pr.id_colecao = 197) OR (UPPER(pr.desc_colecao) = ''NAO COMPRA''))';
+
+           If Trim(sgFornecedoresLinx)<>'' Then
+            MySql:=
+             MySql+' And pr.cod_fornecedor in ('+sgFornecedoresLinx+')';
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+
+    Screen.Cursor:=crDefault;
+
+    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)='' Then
+    Begin
+      msg('Produto NÃO Encontrado !!!', 'A');
+      DMBelShop.CDS_BuscaRapida.Close;
+      EdtFiltroCodProduto.Clear;
+      EdtFiltroCodProduto.SetFocus;
+      Exit;
+    End;
+
+    If DMVirtual.CDS_V_Produtos.Locate('Cod_Produto',DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString,[]) Then
+    Begin
+      msg('Produto Já Informado !!','A');
+      DMBelShop.CDS_BuscaRapida.Close;
+      EdtFiltroCodProduto.Clear;
+      EdtFiltroCodProduto.SetFocus;
+      Exit;
+    End;
+
+    DMVirtual.CDS_V_Produtos.Insert;
+    DMVirtual.CDS_V_ProdutosCod_Produto.AsString:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString;
+    DMVirtual.CDS_V_ProdutosDes_Produto.AsString:=DMBelShop.CDS_BuscaRapida.FieldByName('Des_Produto').AsString;
+    DMVirtual.CDS_V_ProdutosCod_Fornecedor.AsString:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsString;
+    DMVirtual.CDS_V_Produtos.Post;
+
+    DMBelShop.CDS_BuscaRapida.Close;
+    EdtFiltroCodProduto.Text:='0';
+    EdtFiltroCodProduto.SetFocus;
+  End;
+end;
+
+procedure TFrmOCLinx.Dbg_FiltroFornecedoresKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  If Not DMVirtual.CDS_V_Fornecedores.IsEmpty Then
+  Begin
+    // Excluir os Itens --------------------------------------------
+    If Not DMVirtual.CDS_V_Produtos.IsEmpty Then
+    Begin
+      DMVirtual.CDS_V_Produtos.Filtered:=False;
+      DMVirtual.CDS_V_Produtos.Filter:='Cod_Fornecedor='+DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsString;
+      DMVirtual.CDS_V_Produtos.Filtered:=True;
+
+      DMVirtual.CDS_V_Produtos.First;
+      While Not DMVirtual.CDS_V_Produtos.Eof do
+       DMVirtual.CDS_V_Produtos.Delete;
+
+      DMVirtual.CDS_V_Produtos.Filtered:=False;
+      DMVirtual.CDS_V_Produtos.First;
+    End; // If Not DMVirtual.CDS_V_Produtos.IsEmpty Then
+
+    // Excluir o Fornecedor ----------------------------------------
+    DMVirtual.CDS_V_Fornecedores.Delete;
+
+    // Monta sFornecedore
+    MontaSelectFornecedoresLinx;
+  End; // If Not DMVirtual.CDS_V_Fornecedores.IsEmpty Then
+  Dbg_FiltroFornecedores.SetFocus;
+
+end;
+
+procedure TFrmOCLinx.Dbg_FiltroProdutoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  If Key=VK_Delete Then
+  Begin
+    If Not DMVirtual.CDS_V_Produtos.IsEmpty Then
+     DMVirtual.CDS_V_Produtos.Delete;
+  End; // If Key=VK_Delete Then
+
+  Dbg_FiltroProduto.SetFocus;
+
+end;
+
+procedure TFrmOCLinx.Bt_FiltroBuscaProdtudoClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+
+  // ========== EFETUA A CONEXÃO ===============================================
+  FrmPesquisa:=TFrmPesquisa.Create(Self);
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  MySqlClausula1:='';
+  MySql:=' SELECT pr.nome Des_Produto, pr.cod_produto, pr.cod_fornecedor'+
+         ' FROM LINXPRODUTOS pr'+
+         ' WHERE pr.desativado = ''N''';
+
+         If Ckb_FiltroProdNaoCompra.Checked Then
+          MySql:=
+           MySql+' AND ((pr.id_colecao = 197) OR (UPPER(pr.desc_colecao) = ''NAO COMPRA''))';
+
+         If Trim(sgFornecedoresLinx)<>'' Then
+          MySql:=
+           MySql+' And pr.cod_fornecedor in ('+sgFornecedoresLinx+')';
+
+  MySql:=
+   MySql+' Order by pr.Nome';
+  DMBelShop.CDS_Pesquisa.Close;
+  DMBelShop.CDS_Pesquisa.Filtered:=False;
+  DMBelShop.SDS_Pesquisa.CommandText:=MySql;
+  DMBelShop.CDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim( DMBelShop.CDS_Pesquisa.FieldByName('Cod_Fornecedor').AsString)='' Then
+  Begin
+    msg('Sem Registro a Listar !!','A');
+    EdtFiltroCodProduto.Clear;
+    FreeAndNil(FrmPesquisa);
+    EdtFiltroCodProduto.SetFocus;
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisa.Campo_pesquisa:='Des_Produto';
+  FrmPesquisa.Campo_Codigo:='Cod_Produto';
+  FrmPesquisa.Campo_Descricao:='Des_Produto';
+  FrmPesquisa.EdtDescricao.Clear;
+  FrmPesquisa.Campo_Retorno1:='Cod_Fornecedor';
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisa.ShowModal;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtCodigo.Text)<>'0')Then
+  Begin
+    If DMVirtual.CDS_V_Produtos.Locate('Cod_Produto',FrmPesquisa.EdtCodigo.Text,[]) Then
+    Begin
+      Begin
+        msg('Produto Já Informado !!','A');
+        EdtFiltroCodProduto.Clear;
+        FreeAndNil(FrmPesquisa);
+        EdtFiltroCodProduto.SetFocus;
+        Exit;
+      End;
+    End;
+
+    DMVirtual.CDS_V_Produtos.Insert;
+    DMVirtual.CDS_V_ProdutosCod_Produto.AsString:=FrmPesquisa.EdtCodigo.Text;
+    DMVirtual.CDS_V_ProdutosDes_Produto.AsString:=FrmPesquisa.EdtDescricao.Text;
+    DMVirtual.CDS_V_ProdutosCod_Fornecedor.AsString:=FrmPesquisa.Retorno1;
+    DMVirtual.CDS_V_Produtos.Post;
+  End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtCodigo.Text)<>'0')Then
+
+  FreeAndNil(FrmPesquisa);
 end;
 
 end.

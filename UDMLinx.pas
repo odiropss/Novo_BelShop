@@ -11,6 +11,9 @@ type
     DS_Busca: TDataSource;
     DSP_Busca: TDataSetProvider;
     CDS_Busca: TClientDataSet;
+    DSP_OCProdLinx: TDataSetProvider;
+    CDS_OCProdLinx: TClientDataSet;
+    SQLQ_OCProdLinx: TSQLQuery;
   private
     { Private declarations }
   public

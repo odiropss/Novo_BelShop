@@ -43,11 +43,9 @@ type
     procedure Bt_SelectEmpProcDesMarcaTodosClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Dbg_SelectEmpProcDrawColumnCell(Sender: TObject;
-      const Rect: TRect; DataCol: Integer; Column: TColumn;
-      State: TGridDrawState);
+      const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure FormKeyUp(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
     procedure Ckb_SelectEmpProcECommerceClick(Sender: TObject);
   private
@@ -90,8 +88,7 @@ begin
   Screen.Cursor:=crDefault;
 end;
 
-procedure TFrmSelectEmpProcessamento.Dbg_SelectEmpProcDblClick(
-  Sender: TObject);
+procedure TFrmSelectEmpProcessamento.Dbg_SelectEmpProcDblClick(Sender: TObject);
 begin
   If (Pan_SelectEmpProcECommerce.Visible) and (Ckb_SelectEmpProcECommerce.Checked) Then
   Begin
@@ -114,8 +111,7 @@ begin
   DMBelShop.CDS_EmpProcessa.Post;
 end;
 
-procedure TFrmSelectEmpProcessamento.Bt_SelectEmpProcFecharClick(
-  Sender: TObject);
+procedure TFrmSelectEmpProcessamento.Bt_SelectEmpProcFecharClick(Sender: TObject);
 begin
   bOK    :=False;
 
@@ -149,7 +145,7 @@ begin
 
     If DMBelShop.CDS_EmpProcessaPROC.AsString='Não' Then
      b:=False;
-     
+
     DMBelShop.CDS_EmpProcessa.Next;
   End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
   DMBelShop.CDS_EmpProcessa.EnableControls;
@@ -189,8 +185,7 @@ begin
   Close;
 end;
 
-procedure TFrmSelectEmpProcessamento.Bt_SelectEmpProcMarcaTodosClick(
-  Sender: TObject);
+procedure TFrmSelectEmpProcessamento.Bt_SelectEmpProcMarcaTodosClick(Sender: TObject);
 begin
   If (Pan_SelectEmpProcECommerce.Visible) and (Ckb_SelectEmpProcECommerce.Checked) and (DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString<>'99') Then
   Begin
@@ -215,8 +210,7 @@ begin
 
 end;
 
-procedure TFrmSelectEmpProcessamento.Bt_SelectEmpProcDesMarcaTodosClick(
-  Sender: TObject);
+procedure TFrmSelectEmpProcessamento.Bt_SelectEmpProcDesMarcaTodosClick(Sender: TObject);
 begin
   DMBelShop.CDS_EmpProcessa.First;
   DMBelShop.CDS_EmpProcessa.DisableControls;
@@ -258,8 +252,7 @@ begin
 
 end;
 
-procedure TFrmSelectEmpProcessamento.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TFrmSelectEmpProcessamento.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   sgOutrasEmpresa:='';
   sgEmpresaNao   :='';
@@ -268,9 +261,8 @@ begin
    DMBelShop.CDS_EmpProcessa.Close;
 end;
 
-procedure TFrmSelectEmpProcessamento.Dbg_SelectEmpProcDrawColumnCell(
-  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
-  State: TGridDrawState);
+procedure TFrmSelectEmpProcessamento.Dbg_SelectEmpProcDrawColumnCell( Sender: TObject;
+          const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
   if not (gdSelected in State) Then
   Begin
@@ -285,14 +277,12 @@ begin
 
   DMBelShop.CDS_EmpProcessaCOD_FILIAL.Alignment:=taCenter;
   DMBelShop.CDS_EmpProcessaCOD_LINX.Alignment:=taCenter;
-  DMBelShop.CDS_EmpProcessaTIP_EMP.Alignment:=taCenter;
-  DMBelShop.CDS_EmpProcessaCOD_UF.Alignment:=taCenter;
   DMBelShop.CDS_EmpProcessaNUM_CNPJ.Alignment:=taCenter;
-
+  DMBelShop.CDS_EmpProcessaDTA_INICIO_LINX.Alignment:=taCenter;
+  DMBelShop.CDS_EmpProcessaDTA_INVENTARIO_LINX.Alignment:=taCenter;
 end;
 
-procedure TFrmSelectEmpProcessamento.FormKeyPress(Sender: TObject;
-  var Key: Char);
+procedure TFrmSelectEmpProcessamento.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   If Key = #13 Then
   Begin
@@ -302,8 +292,7 @@ begin
 
 end;
 
-procedure TFrmSelectEmpProcessamento.FormKeyUp(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmSelectEmpProcessamento.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Key=44   Then
    Clipboard.AsText:='';
@@ -319,52 +308,114 @@ begin
 
   Ckb_SelectEmpProcECommerce.Checked:=False;
 
-  // Busca Bancos de Dados =====================================================
-  MySql:='Select'+
-         ' Case e.TIP_EMP'+
-         '   When ''M'' Then ''SIM'''+
-         '   Else ''Não'''+
-         ' End  PROC,'+
-         ' e.COD_FILIAL, e.COD_LINX,';
 
-         // Se Conexão Externa =================================================
-         If (Not bgConexaoLocal) Then
-          MySql:=
-           MySql+' Case '+
-                 '    When Trim(e.Endereco_IP_Externo)<>'''' Then'+
-                 '       e.ENDERECO_IP_EXTERNO'+
-                 '    Else'+
-                 '       e.ENDERECO_IP'+
-                 ' End ENDERECO_IP,';
+         If bgSelectSoLinx Then
+          Dbg_SelectEmpProc.Columns[1].Visible:=False;
 
-         // Se Conexão Local ===================================================
-         If  bgConexaoLocal Then
-          MySql:=
-           MySql+' e.ENDERECO_IP,';
+  // Busca Dados das Lojs SIDICOM ==============================================
+  If Not bgSelectSoLinx Then
+  Begin
+    // Acerta DBGrid ------------------------------------------------
+    Dbg_SelectEmpProc.Columns[1].Visible:=True;
 
-         MySql:=
-          MySql+' e.PASTA_BASE_DADOS, e.DES_BASE_DADOS, e.COD_EMP, e.RAZAO_SOCIAL,'+
-                ' e.TIP_EMP, e.DES_BAIRRO, e.DES_CIDADE, e.COD_UF, e.COD_CEP,'+
-                ' e.NUM_CNPJ, e.INSCR_ESTADUAL, e.DES_ENDERECO, e.NUM_ENDERECO,'+
-                ' e.COMPL_ENDERECO, e.IND_ATIVO, e.USU_INCLUI, e.DTA_INCLUI,'+
-                ' e.USU_ALTERA, e.DTA_ALTERA, e.COD_LISTAPRE,'+
-                ' e.DTA_INICIO_LINX, e.DTA_INVENTARIO_LINX'+
+    MySql:=' Select'+
+           ' Case e.TIP_EMP'+
+           '   When ''M'' Then ''SIM'''+
+           '   Else ''Não'''+
+           ' End  PROC,'+
+           ' e.COD_FILIAL, e.COD_LINX,';
 
-                ' From EMP_CONEXOES e';
+           // Se Conexão Externa =================================================
+           If (Not bgConexaoLocal) Then
+            MySql:=
+             MySql+' Case '+
+                   '    When Trim(e.Endereco_IP_Externo)<>'''' Then'+
+                   '       e.ENDERECO_IP_EXTERNO'+
+                   '    Else'+
+                   '       e.ENDERECO_IP'+
+                   ' End ENDERECO_IP,';
 
-                If Trim(sgOutrasEmpresa)='' Then
-                 MySql:=
-                  MySql+' Where e.Ind_Ativo=''SIM'''
-                Else
-                 MySql:=
-                  MySql+' Where (e.Ind_Ativo=''SIM'' Or e.Cod_Filial in '+sgOutrasEmpresa+')';
+           // Se Conexão Local ===================================================
+           If  bgConexaoLocal Then
+            MySql:=
+             MySql+' e.ENDERECO_IP,';
 
-                If Trim(sgEmpresaNao)<>'' Then
-                 MySql:=
-                  MySql+' AND e.Cod_Filial Not in '+sgEmpresaNao;
+           MySql:=
+            MySql+' e.PASTA_BASE_DADOS, e.DES_BASE_DADOS, e.COD_EMP, e.RAZAO_SOCIAL,'+
+                  ' e.TIP_EMP, e.DES_BAIRRO, e.DES_CIDADE, e.COD_UF, e.COD_CEP,'+
 
-                MySql:=
-                 MySql+' Order by 2';
+                  ' substring(e.NUM_CNPJ from 1 for 2) || ''.'' ||'+
+                  ' substring(e.NUM_CNPJ from 3 for 3) || ''.'' ||'+
+                  ' substring(e.NUM_CNPJ from 6 for 3) || ''/'' ||'+
+                  ' substring(e.NUM_CNPJ from 9 for 4) || ''-'' ||'+
+                  ' substring(e.NUM_CNPJ from 13 for 2) NUM_CNPJ,'+
+
+                  ' e.INSCR_ESTADUAL, e.DES_ENDERECO, e.NUM_ENDERECO,'+
+                  ' e.COMPL_ENDERECO, e.IND_ATIVO, e.USU_INCLUI, e.DTA_INCLUI,'+
+                  ' e.USU_ALTERA, e.DTA_ALTERA, e.COD_LISTAPRE,'+
+                  ' e.DTA_INICIO_LINX, e.DTA_INVENTARIO_LINX'+
+
+                  ' From EMP_CONEXOES e';
+
+                  If Trim(sgOutrasEmpresa)='' Then
+                   MySql:=
+                    MySql+' Where e.Ind_Ativo=''SIM'''
+                  Else
+                   MySql:=
+                    MySql+' Where (e.Ind_Ativo=''SIM'' Or e.Cod_Filial in '+sgOutrasEmpresa+')';
+
+                  If Trim(sgEmpresaNao)<>'' Then
+                   MySql:=
+                    MySql+' AND e.Cod_Filial Not in '+sgEmpresaNao;
+
+                   MySql:=
+                    MySql+' Order by e.COD_FILIAL';
+  End; // If Not bgSelectSoLinx Then
+
+  // Busca Dados das Lojs Lix ==================================================
+  If bgSelectSoLinx Then
+  Begin
+    // Acerta DBGrid ------------------------------------------------
+    Dbg_SelectEmpProc.Columns[1].Visible:=False;
+
+    MySql:=' Select'+
+           ' ''Não'' PROC,'+
+           ' coalesce(e.cod_filial,''00'') COD_FILIAL,'+
+           ' l.empresa COD_LINX,'+
+           ' cast(LPad('''',  30,'' '') as varchar(30))  ENDERECO_IP,'+
+           ' cast(LPad('''', 100,'' '') as varchar(100)) PASTA_BASE_DADOS,'+
+           ' cast(LPad('''', 100,'' '') as varchar(100)) DES_BASE_DADOS,'+
+           ' cast(LPad('''',   6,'' '') as varchar(6))   COD_EMP,'+
+           ' cast(RPad(l.nome_emp, 60,'' '') as varchar(60)) RAZAO_SOCIAL,'+
+           ' NULL TIP_EMP,'+
+           ' l.bairro_emp DES_BAIRRO,'+
+           ' cast(RPad(l.cidade_emp, 60,'' '') as varchar(60)) DES_CIDADE,'+
+           ' l.estado_emp COD_UF,'+
+           ' l.cep_emp COD_CEP,'+
+
+           ' substring(l.cnpj_emp from 1 for 2) || ''.'' ||'+
+           ' substring(l.cnpj_emp from 3 for 3) || ''.'' ||'+
+           ' substring(l.cnpj_emp from 6 for 3) || ''/'' ||'+
+           ' substring(l.cnpj_emp from 9 for 4) || ''-'' ||'+
+           ' substring(l.cnpj_emp from 13 for 2) NUM_CNPJ,'+
+
+           ' l.inscricao_emp INSCR_ESTADUAL,'+
+           ' l.endereco_emp DES_ENDERECO,'+
+           ' Cast(l.num_emp as VarChar(30)) NUM_ENDERECO,'+
+           ' l.complement_emp COMPL_ENDERECO,'+
+           ' cast(LPad('''',   3,'' '') as varchar(3)) IND_ATIVO,'+
+           ' 0 USU_INCLUI,'+
+           ' current_timestamp DTA_INCLUI,'+
+           ' 0 USU_ALTERA,'+
+           ' current_timestamp DTA_ALTERA,'+
+           ' cast(LPad('''',   4,'' '') as varchar(4)) COD_LISTAPRE,'+
+           ' e.DTA_INICIO_LINX,'+
+           ' e.DTA_INVENTARIO_LINX'+
+
+           ' From LINXLOJAS l'+
+           '      Left Join EMP_CONEXOES e on e.cod_linx=l.empresa'+
+           ' Order by l.nome_emp';
+  End; // If bgSelectSoLinx Then
   DMBelShop.CDS_EmpProcessa.Close;
   DMBelShop.SDS_EmpProcessa.CommandText:=MySql;
   DMBelShop.CDS_EmpProcessa.Open;
@@ -397,8 +448,7 @@ begin
   End; // If sgCodLojaUnica<>'' Then
 end;
 
-procedure TFrmSelectEmpProcessamento.Ckb_SelectEmpProcECommerceClick(
-  Sender: TObject);
+procedure TFrmSelectEmpProcessamento.Ckb_SelectEmpProcECommerceClick(Sender: TObject);
 begin
   AcertaCkb_Style(Ckb_SelectEmpProcECommerce);
 

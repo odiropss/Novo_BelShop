@@ -63,7 +63,7 @@ type
     PopM_Auditoria: TPopupMenu;
     N4: TMenuItem;
     SubMenuComprasContaCorreteForn: TMenuItem;
-    SubMenuComprasGeraOrdemdeCompra: TMenuItem;
+    SubMenuComprasGeraOC: TMenuItem;
     SubMenuComprasConsultaOC: TMenuItem;
     Ts_ConsultaOC: TTabSheet;
     LB_DML: TLabel;
@@ -1365,7 +1365,9 @@ type
     N46: TMenuItem;
     N47: TMenuItem;
     N50: TMenuItem;
-    SubMenuComprasGeraPedidoCompraLinx: TMenuItem;
+    SubMenuComprasGeraOCLinx: TMenuItem;
+    N29: TMenuItem;
+    Label73: TLabel;
 
     // Odir ====================================================================
 
@@ -1715,7 +1717,7 @@ type
     procedure PC_GeraOCEditaApresentacaoChange(Sender: TObject);
     procedure Bt_GeraOCEditaVoltarClick(Sender: TObject);
     procedure Rb_GeraOCEditaTodosItensClick(Sender: TObject);
-    procedure SubMenuComprasGeraOrdemdeCompraClick(Sender: TObject);
+    procedure SubMenuComprasGeraOCClick(Sender: TObject);
     procedure SubMenuComprasConsultaOCClick(Sender: TObject);
     procedure Bt_ConsultaOCBuscaOCsClick(Sender: TObject);
     procedure DtEdt_ConsultaOCDtInicioEditing(Sender: TObject; var CanEdit: Boolean);
@@ -2319,7 +2321,7 @@ type
       var Key: Word; Shift: TShiftState);
     procedure Bt_AcertaPromocaoClick(Sender: TObject);
     procedure Button4Click(Sender: TObject);
-    procedure SubMenuComprasGeraPedidoCompraLinxClick(Sender: TObject);
+    procedure SubMenuComprasGeraOCLinxClick(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -2380,6 +2382,7 @@ var
   // UFrmSelectEmpProcessamento;
   sgOutrasEmpresa,       // Usar (...) - Incluir Outras Empresas Separadas por <,> - '(99, 50)'
   sgEmpresaNao: String;  // Usar (...) - Não Apresenta Empresas Separadas por <,>  - '(02, 09)'
+  bgSelectSoLinx: Boolean; // Só Apresenta Lojas Linx
 
   bgOnActivate, // Se Ja Executou o Evento do Form OnActivate  
   bgConexaoLocal, // Se Conexão com o Servidor do Banco MPMS é Local - Verifica a Existencia do Arquivo "ConexaoExterna.ini"
@@ -2468,7 +2471,7 @@ var
   bgProcCurva: Boolean; // False = Produto MPMS será Excluido
                         // Não Pertence a Curva Mas fica na Emp 99 para Verificar se é Curva Solicitada na Loja
                         // Para Filial: True = Processa Produto
-
+              
   // Critica para Ataualização de Curva ABC
   bgUsaFornecedores: Boolean; // Seu Utiliza Seleção de Fornecedor
   sCbx_SituacaoProd: String; // Deve ser sempre Index =2 (Ativo/Não Compra)
@@ -2683,6 +2686,7 @@ Var
   MySql: String;
   cQtdSugerida: Currency; // EST_MINIMO - cQtdSugerida Se Zero Utiliza Qtd_Sugerida
 Begin
+
   OdirPanApres.Caption:='AGUARDE !! Gerando Sugestões de Compras...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
@@ -2691,9 +2695,9 @@ Begin
   Refresh;
 
   Try
-    sDtaDoc:=DateToStr(StrToDate(sDtaDoc));
+    sDtaDoc:=DateToStr(StrToDateTime(sDtaDoc));
   Except
-    sDtaDoc:=DateToStr(StrToDate(f_Troca('/','.',f_Troca('-','.',sDtaDoc))));
+    sDtaDoc:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDoc))));
   End;
 
   Try // IBQ_OC_ComprarAdd
@@ -5968,9 +5972,9 @@ Begin
            DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)))+' ',ValuesCampos);
   sgDtaDoc:=DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
   Try
-    sgDtaDoc:=DateToStr(StrToDate(sgDtaDoc));
+    sgDtaDoc:=DateToStr(StrToDateTime(sgDtaDoc));
   Except
-    sgDtaDoc:=DateToStr(StrToDate(f_Troca('/','.',f_Troca('-','.',sgDtaDoc))));
+    sgDtaDoc:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sgDtaDoc))));
   End;
 
   ValuesCampos:=f_Troca(' IND_OC_GERADA ',' '+QuotedStr('N')+' ',ValuesCampos);
@@ -20001,7 +20005,6 @@ Begin
       DMBelShop.CDS_DemandasNovo.Filter:='';
     End; // If bgDemandaNovo Then
   End; // If bConsulta Then
-
 End; // Busca Demanda e Numeros de Dias e Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Novo Calculo de Pedido de Compra das Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -21333,9 +21336,9 @@ Begin
 
   sgDtaDoc:=DateToStr(IBQ_Matriz.FieldByName('DTA_DOCUMENTO').AsDateTime);
   Try
-    sgDtaDoc:=DateToStr(StrToDate(sgDtaDoc));
+    sgDtaDoc:=DateToStr(StrToDateTime(sgDtaDoc));
   Except
-    sgDtaDoc:=DateToStr(StrToDate(f_Troca('/','.',f_Troca('-','.',sgDtaDoc))));
+    sgDtaDoc:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sgDtaDoc))));
   End;
 
   Screen.Cursor:=crDefault;
@@ -22347,7 +22350,8 @@ Var
   b: TNavigateBtn;
   i: Integer;
 Begin
-  bgOnActivate:=False;
+  bgOnActivate  :=False;
+  bgSelectSoLinx:=False;
 
   // Coloca BitMaps em Componentes =============================================
   BitMaps(FrmBelShop);
@@ -26446,7 +26450,7 @@ begin
 
   // ========== EXECUTA QUERY PARA PESQUISA ====================================
   Screen.Cursor:=crAppStart;
-                    
+
   MySqlClausula1:='';
   MySql:=' select p.Apresentacao Des_Produto, p.CodProduto, p.PrincipalFor'+
          ' from produto p';
@@ -26968,7 +26972,7 @@ begin
   Dbg_GeraOCEditaGrid.SetFocus;
 end;
 
-procedure TFrmBelShop.SubMenuComprasGeraOrdemdeCompraClick(Sender: TObject);
+procedure TFrmBelShop.SubMenuComprasGeraOCClick(Sender: TObject);
 Var
   s: String;
   i: Integer;
@@ -44370,9 +44374,9 @@ begin
   sNumDoc:=EdtGeraOCBuscaDocto.Text;
   sgDtaDoc:=DateToStr(DtEdt_GeraOCDataDocto.Date);
   Try
-    sgDtaDoc:=DateToStr(StrToDate(sgDtaDoc));
+    sgDtaDoc:=DateToStr(StrToDateTime(sgDtaDoc));
   Except
-    sgDtaDoc:=DateToStr(StrToDate(f_Troca('/','.',f_Troca('-','.',sgDtaDoc))));
+    sgDtaDoc:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sgDtaDoc))));
   End;
   
   // ClientDataSet Virtual de Sados Disponiveis ================================
@@ -46130,8 +46134,12 @@ begin
 
 end;
 
-procedure TFrmBelShop.SubMenuComprasGeraPedidoCompraLinxClick(Sender: TObject);
+procedure TFrmBelShop.SubMenuComprasGeraOCLinxClick(Sender: TObject);
 begin
+//OdirApagar
+//  msg('Opção em Desenvolvimento'+cr+'Liberação Entre 24/04/2017 e 28/04/2017','A');
+//  Exit;
+
   FrmOCLinx:=TFrmOCLinx.Create(Self);
 
   igTagPermissao:=(Sender as TMenuItem).Tag;

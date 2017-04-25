@@ -801,7 +801,6 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
             Expanded = False
             FieldName = 'PROC'
             Title.Alignment = taCenter
-            Title.Caption = 'Selec'
             Width = 45
             Visible = True
           end
@@ -810,7 +809,6 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
             Expanded = False
             FieldName = 'COD_FILIAL'
             Title.Alignment = taCenter
-            Title.Caption = 'Sid'
             Width = 40
             Visible = True
           end
@@ -819,7 +817,6 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
             Expanded = False
             FieldName = 'COD_LINX'
             Title.Alignment = taCenter
-            Title.Caption = 'Linx'
             Width = 40
             Visible = True
           end
@@ -840,7 +837,7 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
             Font.Name = 'MS Sans Serif'
             Font.Style = []
             Title.Alignment = taCenter
-            Width = 100
+            Width = 115
             Visible = True
           end
           item
@@ -849,15 +846,21 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
             Expanded = False
             FieldName = 'DTA_INICIO_LINX'
             Title.Alignment = taCenter
-            Title.Caption = 'In'#237'cio Linx'
-            Width = 80
+            Width = 85
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'DES_CIDADE'
-            Title.Caption = 'Cidade'
             Width = 125
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'DTA_INVENTARIO_LINX'
+            Title.Alignment = taCenter
+            Width = 106
             Visible = True
           end>
       end

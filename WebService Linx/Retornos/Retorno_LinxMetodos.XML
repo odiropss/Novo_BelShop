@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?><Microvix><ResponseData><C /><R><D>
+	LinxLojas - Retorna os dados de uma loja, conforme pesquisa: (chave, cnpjEmp)
+	
+	LinxClientesFornec - Retorna os Clientes/Fornecedores cadastrados na loja e data pesquisada: (chave, cnpjEmp, data_inicial, data_fim, cod_cliente)
+	
+	LinxMovimento - Retorna as movimentações de entradas e saídas de acordo com a loja e data pesquisada: (chave, cnpjEmp, data_inicial, data_fim, hora_inicial, hora_fim, operacao, tipo_transacao)
+	
+	LinxVendedores - Retorna os Vendedores cadastrados na loja: (chave, cnpjEmp, data_upd_inicial, data_upd_fim, cod_vendedor)
+	
+	LinxProdutosDetalhes - Retorna informações dos produtos de acordo com a loja pesquisada: (chave, cnpjEmp, data_mov_ini, data_mov_fim, cod_produto)
+	
+	LinxProdutos - Retorna o cadastro de produtos de acordo com a loja pesquisada ou dados da estrutura mercadológica: (chave, cnpjEmp, id_setor, id_linha, id_marca, id_colecao, dt_update_inicio, dt_update_fim, cod_produto)
+	
+	LinxFaturas - Retorna as faturas a receber ou a pagar de uma loja: (chave, cnpjEmp, data_inicial, data_fim, data_inicial_pag, data_fim_pag, identificador)
+	
+	LinxLancContabil - Retorna informações dos Lançamentos Contábeis por conta e empresa: (chave, cnpjEmp, data_lanc_ini, data_lanc_fim, cod_cc, cod_conta, identificador)
+	
+	LinxGrupoLojas - Retorna o CNPJ e nome das lojas de um grupo: (chave, grupo)
+	
+	LinxMovimentoTrocas - Retorna os valores e números das trocas realizadas nas vendas (chave, cnpjEmp, identificador, data_inicial, data_fim)
+	
+	LinxMovimentoSerial - Retorna os Código de Seriais realizadas nas movimentações (chave, cnpjEmp, identificador, data_inicial, data_fim)
+	
+	LinxMovimentoPlanos - Retorna os Planos de Pagamentos realizados nas movimentações (chave, cnpjEmp, identificador, data_inicial, data_fim)
+	
+	LinxMovimentoAcoesPromocionais - Retorna as Ações Promocionais realizadas nas movimentações (chave, cnpjEmp, identificador, data_inicial, data_fim)
+
+	LinxAcoesPromocionais - Retorna as Ações Promocionais cadastradas no Microvix (chave, cnpjEmp, ativa, data_inicial, data_fim, integrada)
+	
+	LinxMovimentoOrigemDevolucoes - Retorna os documentos de origem relacionados as devoluções (chave, cnpjEmp, identificador, data_inicial, data_fim)</D></R></ResponseData><ResponseResult><ResponseSuccess>True</ResponseSuccess></ResponseResult></Microvix>

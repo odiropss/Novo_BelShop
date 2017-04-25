@@ -27,6 +27,7 @@ object DMBelShop: TDMBelShop
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
+    Connected = True
     Left = 40
     Top = 16
   end
@@ -1421,6 +1422,7 @@ object DMBelShop: TDMBelShop
     Top = 441
   end
   object IBDB_BelShop: TIBDatabase
+    Connected = True
     DatabaseName = 'localhost:C:\Projetos\BelShop\Dados\BelShop.FDB'
     Params.Strings = (
       'user_name=SYSDBA'
@@ -1434,7 +1436,7 @@ object DMBelShop: TDMBelShop
     Top = 21
   end
   object IBT_BelShop: TIBTransaction
-    Active = False
+    Active = True
     DefaultDatabase = IBDB_BelShop
     AutoStopAction = saNone
     Left = 1258
@@ -2929,8 +2931,9 @@ object DMBelShop: TDMBelShop
       'P, e.DES_BAIRRO, e.DES_CIDADE, e.COD_UF,'#13#10'e.COD_CEP, e.NUM_CNPJ,' +
       ' e.INSCR_ESTADUAL, e.DES_ENDERECO, e.NUM_ENDERECO,'#13#10'e.COMPL_ENDE' +
       'RECO, e.IND_ATIVO, e.USU_INCLUI, e.DTA_INCLUI, e.USU_ALTERA,'#13#10'e.' +
-      'DTA_ALTERA, e.COD_LISTAPRE, e.dta_inicio_linx'#13#10#13#10'From emp_conexo' +
-      'es e'#13#10'Where e.ind_ativo='#39'SIM'#39#13#10'Order by e.cod_filial'#13#10
+      'DTA_ALTERA, e.COD_LISTAPRE, '#13#10'e.DTA_INICIO_LINX, e.DTA_INVENTARI' +
+      'O_LINX'#13#10#13#10'From emp_conexoes e'#13#10'Where e.ind_ativo='#39'SIM'#39#13#10'Order by' +
+      ' e.cod_filial'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -2944,7 +2947,7 @@ object DMBelShop: TDMBelShop
     Left = 319
     Top = 132
     object CDS_EmpProcessaPROC: TStringField
-      DisplayLabel = 'Processar ?'
+      DisplayLabel = 'Selec'
       FieldName = 'PROC'
       Required = True
       FixedChar = True
@@ -2952,10 +2955,14 @@ object DMBelShop: TDMBelShop
     end
     object CDS_EmpProcessaCOD_FILIAL: TStringField
       Alignment = taRightJustify
-      DisplayLabel = 'C'#243'digo'
+      DisplayLabel = 'Sid'
       FieldName = 'COD_FILIAL'
       Required = True
       Size = 2
+    end
+    object CDS_EmpProcessaCOD_LINX: TIntegerField
+      DisplayLabel = 'Linx'
+      FieldName = 'COD_LINX'
     end
     object CDS_EmpProcessaENDERECO_IP: TStringField
       DisplayLabel = 'Endere'#231'o IP'
@@ -2994,6 +3001,7 @@ object DMBelShop: TDMBelShop
       Size = 30
     end
     object CDS_EmpProcessaDES_CIDADE: TStringField
+      DisplayLabel = 'Cidade'
       FieldName = 'DES_CIDADE'
       Size = 60
     end
@@ -3047,11 +3055,13 @@ object DMBelShop: TDMBelShop
       FieldName = 'COD_LISTAPRE'
       Size = 4
     end
-    object CDS_EmpProcessaCOD_LINX: TIntegerField
-      FieldName = 'COD_LINX'
-    end
     object CDS_EmpProcessaDTA_INICIO_LINX: TDateField
+      DisplayLabel = 'In'#237'cio Linx'
       FieldName = 'DTA_INICIO_LINX'
+    end
+    object CDS_EmpProcessaDTA_INVENTARIO_LINX: TDateField
+      DisplayLabel = 'Invent'#225'rio Linx'
+      FieldName = 'DTA_INVENTARIO_LINX'
     end
   end
   object DSP_EmpProcessa: TDataSetProvider
