@@ -715,7 +715,6 @@ type
     DS_AuditoriaDatas: TDataSource;
     SDS_AuditoriaDatas: TSQLDataSet;
     CDS_AuditoriaDatasDTA_AUDITORIA: TDateField;
-    CDS_AComprarItensDTA_DOCUMENTO: TSQLTimeStampField;
     CDS_ObjetivosULT_12_MESES: TStringField;
     CDS_AuditoriaAnalise: TClientDataSet;
     DSP_AuditoriaAnalise: TDataSetProvider;
@@ -1177,6 +1176,7 @@ type
     CDS_EmpresaDTA_INVENTARIO_LINX: TDateField;
     CDS_AComprarOCsCOD_LINX: TIntegerField;
     CDS_EmpProcessaDTA_INVENTARIO_LINX: TDateField;
+    CDS_AComprarItensDTA_DOCUMENTO: TDateField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -1367,7 +1367,7 @@ implementation
 
 uses DK_Procs1, UFrmBelShop, UDMConexoes,  UFrmSolicitacoes, UDMVirtual,
   UFrmGeraPedidosComprasLojas, UWindowsFirewall, UEntrada,
-  UDMBancosConciliacao;
+  UDMBancosConciliacao, UFrmOCLinx;
      // DBGrids, Variants, RTLConsts,
 
 {$R *.dfm}
@@ -1723,7 +1723,11 @@ Begin
   Try
     sDtaDocto:=DateToStr(StrToDateTime(sDtaDocto));
   Except
-    sDtaDocto:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+    Try
+      sDtaDocto:=DateToStr(StrToDateTime(f_Troca('.','/',f_Troca('-','/',sDtaDocto))));
+    Except
+      sDtaDocto:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+    End;
   End;
 
   // Busca Produtos com Quantidade a Comprar ===================================
@@ -1913,7 +1917,11 @@ Begin
   Try
     sDtaDocto:=DateToStr(StrToDateTime(sDtaDocto));
   Except
-    sDtaDocto:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+    Try
+      sDtaDocto:=DateToStr(StrToDateTime(f_Troca('.','/',f_Troca('-','/',sDtaDocto))));
+    Except
+      sDtaDocto:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+    End;
   End;
 
   // Colocar Dentro de Uma Transação ==========================
@@ -2043,7 +2051,11 @@ Begin
   Try
     sDtaDocto:=DateToStr(StrToDateTime(sDtaDocto));
   Except
-    sDtaDocto:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+    Try
+      sDtaDocto:=DateToStr(StrToDateTime(f_Troca('.','/',f_Troca('-','/',sDtaDocto))));
+    Except
+      sDtaDocto:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+    End;
   End;
 
   // Verifica se Transação esta Ativa
@@ -2118,7 +2130,11 @@ Begin
   Try
     sDtaDocto:=DateToStr(StrToDateTime(sDtaDocto));
   Except
-    sDtaDocto:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+    Try
+      sDtaDocto:=DateToStr(StrToDateTime(f_Troca('.','/',f_Troca('-','/',sDtaDocto))));
+    Except
+      sDtaDocto:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDocto))));
+    End;
   End;
 
   cQtdSaldo:=0;
@@ -3969,7 +3985,11 @@ begin
   Try
     sDtaDoc:=DateToStr(StrToDateTime(sDtaDoc));
   Except
-    sDtaDoc:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDoc))));
+    Try
+      sDtaDoc:=DateToStr(StrToDateTime(f_Troca('.','/',f_Troca('-','/',sDtaDoc))));
+    Except
+      sDtaDoc:=DateToStr(StrToDateTime(f_Troca('/','.',f_Troca('-','.',sDtaDoc))));
+    End;
   End;
 
   // Retirado Não Atualuza Qtd_Acomprar do CD (99) Com as Transferencias
@@ -3999,9 +4019,16 @@ begin
    End; // If Trim(sCodItemDel)<>'' Then
 
   If sgCodLojaUnica='' Then
-   FrmBelShop.AlteraAComprar(IBQ_AComprar, 'Q', VarToStr(FrmBelShop.EdtGeraOCBuscaDocto.Value))
+   Begin
+     If FrmBelShop.EdtGeraOCBuscaDocto.AsInteger<>0 Then
+      FrmBelShop.AlteraAComprar(IBQ_AComprar, 'Q', VarToStr(FrmBelShop.EdtGeraOCBuscaDocto.Value), DateToStr(FrmBelShop.DtEdt_GeraOCDataDocto.Date))
+     Else
+      FrmBelShop.AlteraAComprar(IBQ_AComprar, 'Q', VarToStr(FrmOCLinx.EdtGeraOCBuscaDocto.Value), DateToStr(FrmOCLinx.DtEdt_GeraOCDataDocto.Date));
+   End
   Else
-   FrmBelShop.AlteraAComprar(IBQ_AComprar, 'Q', VarToStr(FrmGeraPedidosComprasLojas.EdtGeraOCBuscaDocto.Value));
+   Begin
+     FrmBelShop.AlteraAComprar(IBQ_AComprar, 'Q', VarToStr(FrmGeraPedidosComprasLojas.EdtGeraOCBuscaDocto.Value), DateToStr(FrmGeraPedidosComprasLojas.DtEdt_GeraOCDataDocto.Date));
+   End;
 
 end;
 
@@ -4184,11 +4211,17 @@ begin
 
   FrmBelShop.TotaisPedOC(sTotal_Valor, sTotal_Itens, sTotal_Qtd, sDoc, sCodLoja, s, '', sCodForn);
 
-
   If sgCodLojaUnica='' Then
-   FrmBelShop.AlteraAComprar(IBQ_AComprarEdita, 'Q', VarToStr(FrmBelShop.EdtGeraOCBuscaDocto.Value))
+   Begin
+     If FrmBelShop.EdtGeraOCBuscaDocto.AsInteger<>0 Then
+      FrmBelShop.AlteraAComprar(IBQ_AComprarEdita, 'Q', VarToStr(FrmBelShop.EdtGeraOCBuscaDocto.Value), DateToStr(FrmBelShop.DtEdt_GeraOCDataDocto.Date))
+     Else
+      FrmBelShop.AlteraAComprar(IBQ_AComprar, 'Q', VarToStr(FrmOCLinx.EdtGeraOCBuscaDocto.Value), DateToStr(FrmOCLinx.DtEdt_GeraOCDataDocto.Date));
+   End
   Else
-   FrmBelShop.AlteraAComprar(IBQ_AComprarEdita, 'Q', VarToStr(FrmGeraPedidosComprasLojas.EdtGeraOCBuscaDocto.Value));
+   Begin
+     FrmBelShop.AlteraAComprar(IBQ_AComprarEdita, 'Q', VarToStr(FrmGeraPedidosComprasLojas.EdtGeraOCBuscaDocto.Value), DateToStr(FrmOCLinx.DtEdt_GeraOCDataDocto.Date));
+   End;
 
   FrmBelShop.EdtGeraOCEditaTotalGeral.Value  :=StrToCurr(sTotal_Valor);
   FrmBelShop.EdtGeraOCEditaTotalItens.Value  :=StrToCurr(sTotal_Itens);

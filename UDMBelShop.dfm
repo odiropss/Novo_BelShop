@@ -1,10 +1,10 @@
 object DMBelShop: TDMBelShop
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 241
-  Top = 115
-  Height = 611
-  Width = 1109
+  Left = 242
+  Top = 111
+  Height = 614
+  Width = 1115
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
     DriverName = 'Interbase'
@@ -27,7 +27,6 @@ object DMBelShop: TDMBelShop
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
-    Connected = True
     Left = 40
     Top = 16
   end
@@ -463,6 +462,13 @@ object DMBelShop: TDMBelShop
     Top = 229
   end
   object SDS_AComprarItens: TSQLDataSet
+    CommandText = 
+      'SELECT DISTINCT oc.cod_item, oc.des_item,'#13#10'oc.num_documento,'#13#10'ca' +
+      'st(oc.dta_documento as Date) dta_documento,'#13#10'oc.cod_comprador, u' +
+      's.des_usuario'#13#10'FROM OC_COMPRAR oc'#13#10'        LEFT JOIN PS_USUARIOS' +
+      ' us     ON us.cod_usuario = oc.cod_comprador'#13#10'        LEFT JOIN ' +
+      'OC_COMPRAR_DOCS od ON od.num_docto = oc.num_documento'#13#10'WHERE od.' +
+      'origem='#39'Linx'#39#13#10'AND   oc.num_documento=18'#13#10'ORDER BY oc.des_item'
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -489,7 +495,7 @@ object DMBelShop: TDMBelShop
       FieldName = 'NUM_DOCUMENTO'
       Required = True
     end
-    object CDS_AComprarItensDTA_DOCUMENTO: TSQLTimeStampField
+    object CDS_AComprarItensDTA_DOCUMENTO: TDateField
       FieldName = 'DTA_DOCUMENTO'
     end
     object CDS_AComprarItensCOD_COMPRADOR: TIntegerField
@@ -2311,9 +2317,8 @@ object DMBelShop: TDMBelShop
       '  QTD_TRANSF = :QTD_TRANSF,'
       '  VLR_UNI_COMPRA = :VLR_UNI_COMPRA,'
       '  PER_DESCONTO = :PER_DESCONTO,'
-      
-        '  VLR_DESCONTOS=((QTD_ACOMPRAR*VLR_UNI_COMPRA)*(PER_DESCONTO/100' +
-        ')),'
+      '  VLR_DESCONTOS=((QTD_ACOMPRAR*VLR_UNI_COMPRA)*'
+      '(PER_DESCONTO/100)),'
       '  VLR_BRUTO=(QTD_ACOMPRAR*VLR_UNI_COMPRA)-VLR_DESCONTOS,'
       '  VLR_BASE_ICMS=VLR_BRUTO,'
       
@@ -2322,7 +2327,8 @@ object DMBelShop: TDMBelShop
       '  VLR_IPI=Cast(((VLR_BRUTO*PER_IPI)/100) as Numeric(12,2)),'
       
         '  VLR_BASE_ST=VLR_BRUTO+(Cast(((VLR_BRUTO*PER_MARGEM_ST)/100) as' +
-        ' Numeric(12,2))),'
+        ' '
+      'Numeric(12,2))),'
       
         '  VLR_ST=(Cast(((VLR_BASE_ST*PER_ST)/100) as Numeric(12,2))-VLR_' +
         'ICMS),'
@@ -2612,11 +2618,11 @@ object DMBelShop: TDMBelShop
     end
     object IBQ_OrdemCompraCOD_CEP: TIBStringField
       FieldName = 'COD_CEP'
-      Size = 17
+      Size = 9
     end
     object IBQ_OrdemCompraNUM_CNPJ: TIBStringField
       FieldName = 'NUM_CNPJ'
-      Size = 94
+      Size = 18
     end
     object IBQ_OrdemCompraINSCR_ESTADUAL: TIBStringField
       FieldName = 'INSCR_ESTADUAL'

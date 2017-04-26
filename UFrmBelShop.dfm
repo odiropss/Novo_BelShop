@@ -1,11 +1,11 @@
 object FrmBelShop: TFrmBelShop
-  Left = 239
+  Left = 243
   Top = 75
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Gerenciador BelShop'
-  ClientHeight = 551
+  ClientHeight = 556
   ClientWidth = 979
   Color = clSilver
   Ctl3D = False
@@ -404,14 +404,14 @@ object FrmBelShop: TFrmBelShop
   OnShow = FormShow
   DesignSize = (
     979
-    551)
+    556)
   PixelsPerInch = 96
   TextHeight = 13
   object CorTelaForm: TJvGradient
     Left = 0
     Top = 0
     Width = 979
-    Height = 551
+    Height = 556
     Visible = False
     StartColor = clWhite
     EndColor = clWhite
@@ -428,7 +428,7 @@ object FrmBelShop: TFrmBelShop
     Left = 0
     Top = 0
     Width = 979
-    Height = 551
+    Height = 556
     Align = alClient
     Picture.Data = {
       0B546478504E47496D61676589504E470D0A1A0A0000000D49484452000013A1
@@ -4986,7 +4986,7 @@ object FrmBelShop: TFrmBelShop
   end
   object SBt_Sair: TSpeedButton
     Left = 832
-    Top = 506
+    Top = 511
     Width = 144
     Height = 41
     Anchors = [akRight, akBottom]
@@ -5075,7 +5075,7 @@ object FrmBelShop: TFrmBelShop
   end
   object Mem_Salvar: TMemo
     Left = 875
-    Top = 507
+    Top = 512
     Width = 49
     Height = 20
     Anchors = [akBottom]
@@ -5088,7 +5088,7 @@ object FrmBelShop: TFrmBelShop
   end
   object Memo3: TMemo
     Left = 851
-    Top = 499
+    Top = 504
     Width = 41
     Height = 20
     Anchors = [akBottom]
@@ -5101,7 +5101,7 @@ object FrmBelShop: TFrmBelShop
   end
   object Memo2: TMemo
     Left = 827
-    Top = 499
+    Top = 504
     Width = 48
     Height = 20
     Anchors = [akBottom]
@@ -5126,7 +5126,7 @@ object FrmBelShop: TFrmBelShop
     Left = 0
     Top = 0
     Width = 979
-    Height = 551
+    Height = 556
     ActivePage = Ts_OrdemCompra
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
@@ -5147,14 +5147,14 @@ object FrmBelShop: TFrmBelShop
         Left = 320
         Top = 0
         Width = 651
-        Height = 488
+        Height = 493
         Align = alClient
         BevelInner = bvLowered
         Enabled = False
         TabOrder = 0
         DesignSize = (
           651
-          488)
+          493)
         object Label17: TLabel
           Left = 25
           Top = 87
@@ -5385,7 +5385,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Panel21: TPanel
           Left = 2
-          Top = 451
+          Top = 456
           Width = 647
           Height = 35
           Align = alBottom
@@ -5722,7 +5722,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Panel9: TPanel
           Left = 2
-          Top = 401
+          Top = 406
           Width = 647
           Height = 50
           Align = alBottom
@@ -5815,7 +5815,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Gb_ConEmpresasConexao: TGroupBox
           Left = 2
-          Top = 295
+          Top = 300
           Width = 647
           Height = 106
           Align = alBottom
@@ -6167,7 +6167,7 @@ object FrmBelShop: TFrmBelShop
       end
       object Panel16: TPanel
         Left = 0
-        Top = 488
+        Top = 493
         Width = 971
         Height = 35
         Align = alBottom
@@ -6293,7 +6293,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 320
-        Height = 488
+        Height = 493
         Align = alLeft
         DataSource = DMBelShop.DS_Empresa
         FixedColor = clTeal
@@ -6584,7 +6584,7 @@ object FrmBelShop: TFrmBelShop
       end
       object Panel5: TPanel
         Left = 0
-        Top = 488
+        Top = 493
         Width = 971
         Height = 35
         Align = alBottom
@@ -6680,7 +6680,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 92
         Width = 971
-        Height = 396
+        Height = 401
         Align = alClient
         Color = 15004403
         Ctl3D = False
@@ -6751,10 +6751,10 @@ object FrmBelShop: TFrmBelShop
       ImageIndex = 4
       DesignSize = (
         971
-        523)
+        528)
       object Panel7: TPanel
         Left = 0
-        Top = 488
+        Top = 493
         Width = 971
         Height = 35
         Align = alBottom
@@ -6804,7 +6804,7 @@ object FrmBelShop: TFrmBelShop
         Left = 12
         Top = 53
         Width = 947
-        Height = 366
+        Height = 371
         Anchors = [akLeft, akTop, akRight, akBottom]
         Caption = '  Usu'#225'rio  '
         Color = 14342874
@@ -6820,10 +6820,10 @@ object FrmBelShop: TFrmBelShop
         TabOrder = 1
         DesignSize = (
           947
-          366)
+          371)
         object Label37: TLabel
           Left = 8
-          Top = 77
+          Top = 78
           Width = 131
           Height = 52
           Anchors = [akLeft]
@@ -6839,7 +6839,7 @@ object FrmBelShop: TFrmBelShop
         end
         object GB_UsuManutCodigo: TGroupBox
           Left = 9
-          Top = 27
+          Top = 28
           Width = 98
           Height = 44
           Anchors = [akLeft]
@@ -6870,7 +6870,7 @@ object FrmBelShop: TFrmBelShop
         end
         object GB_UsuManutNome: TGroupBox
           Left = 109
-          Top = 27
+          Top = 28
           Width = 491
           Height = 44
           Anchors = [akLeft, akRight]
@@ -6905,7 +6905,7 @@ object FrmBelShop: TFrmBelShop
         end
         object GB_UsuManutLogin: TGroupBox
           Left = 601
-          Top = 27
+          Top = 28
           Width = 155
           Height = 44
           Anchors = [akRight]
@@ -6936,7 +6936,7 @@ object FrmBelShop: TFrmBelShop
         end
         object GB_UsuManutAdmin: TGroupBox
           Left = 757
-          Top = 27
+          Top = 28
           Width = 98
           Height = 44
           Anchors = [akRight]
@@ -6967,7 +6967,7 @@ object FrmBelShop: TFrmBelShop
         end
         object GB_UsuManutAtivo: TGroupBox
           Left = 856
-          Top = 27
+          Top = 28
           Width = 79
           Height = 44
           Anchors = [akRight]
@@ -6999,7 +6999,7 @@ object FrmBelShop: TFrmBelShop
         object Bt_UsuManutSenha: TJvXPButton
           Tag = 7
           Left = 426
-          Top = 80
+          Top = 81
           Width = 100
           Height = 31
           Caption = 'Senha'
@@ -7016,7 +7016,7 @@ object FrmBelShop: TFrmBelShop
         end
         object Gb_UsuManutSenha: TGroupBox
           Left = 202
-          Top = 111
+          Top = 114
           Width = 545
           Height = 159
           Anchors = [akLeft, akRight]
@@ -7169,7 +7169,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 523
+        Height = 528
         ActivePage = Ts_OCGeraOrdemCompra
         Align = alClient
         TabOrder = 0
@@ -7182,14 +7182,14 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 495
+            Height = 500
             Align = alClient
             BevelInner = bvLowered
             Color = 14342874
             TabOrder = 0
             object Panel22: TPanel
               Left = 2
-              Top = 451
+              Top = 456
               Width = 959
               Height = 42
               Align = alBottom
@@ -8434,6 +8434,7 @@ object FrmBelShop: TFrmBelShop
                 DialogTitle = 'Selecione a Data do Docto'
                 NumGlyphs = 2
                 TabOrder = 1
+                OnChange = EdtGeraOCBuscaDoctoChange
               end
               object Bt_GeraOCBuscaDocto: TJvXPButton
                 Tag = 92
@@ -8657,7 +8658,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 53
             Width = 102
-            Height = 422
+            Height = 427
             ActivePage = Ts_GeraOCProdutos
             Align = alLeft
             TabOrder = 1
@@ -8670,7 +8671,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 0
                 Top = 0
                 Width = 94
-                Height = 379
+                Height = 384
                 Align = alClient
                 DataSource = DMBelShop.DS_AComprarItens
                 Font.Charset = DEFAULT_CHARSET
@@ -8713,7 +8714,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Panel4: TPanel
                 Left = 0
-                Top = 379
+                Top = 384
                 Width = 94
                 Height = 15
                 Align = alBottom
@@ -8725,7 +8726,7 @@ object FrmBelShop: TFrmBelShop
             Left = 102
             Top = 53
             Width = 68
-            Height = 422
+            Height = 427
             ActivePage = Ts_GeraOCFiliais
             Align = alLeft
             TabOrder = 2
@@ -8738,7 +8739,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 0
                 Top = 0
                 Width = 60
-                Height = 379
+                Height = 384
                 Align = alClient
                 Ctl3D = False
                 DataSource = DMBelShop.DS_AComprar
@@ -8784,7 +8785,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Panel3: TPanel
                 Left = 0
-                Top = 379
+                Top = 384
                 Width = 60
                 Height = 15
                 Align = alBottom
@@ -8796,8 +8797,8 @@ object FrmBelShop: TFrmBelShop
             Left = 170
             Top = 53
             Width = 793
-            Height = 422
-            ActivePage = Ts_GeraOCOrdensCompra
+            Height = 427
+            ActivePage = Ts_GeraOCGrid
             Align = alClient
             MultiLine = True
             TabOrder = 3
@@ -8810,7 +8811,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 0
                 Top = 0
                 Width = 785
-                Height = 394
+                Height = 399
                 Align = alClient
                 DataSource = DMBelShop.DS_AComprar
                 Font.Charset = DEFAULT_CHARSET
@@ -9759,7 +9760,7 @@ object FrmBelShop: TFrmBelShop
                   Top = 4
                   Width = 132
                   Height = 36
-                  Caption = 'Imprime OC'
+                  Caption = 'Imprimor OC'
                   TabOrder = 5
                   Glyph.Data = {
                     07544269746D617046090000424D460900000000000036040000280000002100
@@ -10079,7 +10080,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 0
                 Top = 44
                 Width = 785
-                Height = 350
+                Height = 355
                 Hint = '<Duplo Click> Alterar Gerar'
                 Align = alClient
                 Color = 15004403
@@ -10315,7 +10316,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Sb_GeraOC: TdxStatusBar
             Left = 0
-            Top = 475
+            Top = 480
             Width = 963
             Height = 20
             Panels = <
@@ -10586,7 +10587,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 61
             Width = 963
-            Height = 434
+            Height = 439
             ActivePage = Ts_GeraOCEditaGrid
             Align = alClient
             MultiLine = True
@@ -10600,7 +10601,7 @@ object FrmBelShop: TFrmBelShop
               object Splitter1: TSplitter
                 Left = 320
                 Top = 0
-                Height = 343
+                Height = 348
                 Color = clRed
                 ParentColor = False
               end
@@ -10608,7 +10609,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 323
                 Top = 0
                 Width = 632
-                Height = 343
+                Height = 348
                 Align = alClient
                 DataSource = DMBelShop.DS_AComprarEdita
                 Font.Charset = DEFAULT_CHARSET
@@ -11344,7 +11345,7 @@ object FrmBelShop: TFrmBelShop
               end
               object dxStatusBar1: TdxStatusBar
                 Left = 0
-                Top = 343
+                Top = 348
                 Width = 955
                 Height = 20
                 Panels = <
@@ -11401,7 +11402,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 0
                 Top = 0
                 Width = 320
-                Height = 343
+                Height = 348
                 Align = alLeft
                 DataSource = DMBelShop.DS_AComprarEdita
                 FixedColor = clTeal
@@ -11447,7 +11448,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Panel43: TPanel
                 Left = 0
-                Top = 363
+                Top = 368
                 Width = 955
                 Height = 40
                 Align = alBottom
@@ -11662,7 +11663,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 194
         Width = 971
-        Height = 294
+        Height = 299
         Align = alClient
         Caption = ' Ordens de Compra  '
         Font.Charset = DEFAULT_CHARSET
@@ -11748,7 +11749,7 @@ object FrmBelShop: TFrmBelShop
           Left = 1
           Top = 58
           Width = 969
-          Height = 235
+          Height = 240
           Hint = '<Duplo Click> Alterar Gerar'
           Align = alClient
           Color = 15004403
@@ -12203,7 +12204,7 @@ object FrmBelShop: TFrmBelShop
       end
       object Panel44: TPanel
         Left = 0
-        Top = 488
+        Top = 493
         Width = 971
         Height = 35
         Align = alBottom
@@ -12257,7 +12258,7 @@ object FrmBelShop: TFrmBelShop
       ImageIndex = 16
       object Pan_ConsultaNFePrincpal: TPanel
         Left = 0
-        Top = 479
+        Top = 484
         Width = 971
         Height = 44
         Align = alBottom
@@ -12732,7 +12733,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 61
         Width = 971
-        Height = 418
+        Height = 423
         ActivePage = TS_ConsultaNFeFiltros
         Align = alClient
         TabOrder = 1
@@ -13386,7 +13387,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 523
+        Height = 528
         ActivePage = Ts_CurvaABCEndMantencao
         Align = alClient
         TabOrder = 0
@@ -13398,7 +13399,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 55
             Width = 963
-            Height = 440
+            Height = 445
             ActivePage = Ts_CurvaABCFiltros
             Align = alClient
             Font.Charset = DEFAULT_CHARSET
@@ -13482,7 +13483,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Panel66: TPanel
                 Left = 0
-                Top = 372
+                Top = 377
                 Width = 955
                 Height = 40
                 Align = alBottom
@@ -14039,7 +14040,7 @@ object FrmBelShop: TFrmBelShop
           ImageIndex = 1
           object Splitter3: TSplitter
             Left = 0
-            Top = 358
+            Top = 363
             Width = 963
             Height = 4
             Cursor = crVSplit
@@ -14051,7 +14052,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 358
+            Height = 363
             Align = alClient
             Color = 15004403
             Ctl3D = False
@@ -14274,7 +14275,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Dbg_CurvaABCEndCurvaABCForn: TDBGrid
             Left = 0
-            Top = 362
+            Top = 367
             Width = 963
             Height = 93
             Align = alBottom
@@ -14425,7 +14426,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Pan_CurvaABCEndABC: TPanel
             Left = 0
-            Top = 455
+            Top = 460
             Width = 963
             Height = 40
             Align = alBottom
@@ -14955,7 +14956,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 107
             Width = 963
-            Height = 348
+            Height = 353
             Align = alClient
             Color = 15004403
             DataSource = DMBelShop.DS_Enderecamento
@@ -15072,7 +15073,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Pan_CurvaABCEndEndereca: TPanel
             Left = 0
-            Top = 455
+            Top = 460
             Width = 963
             Height = 40
             Align = alBottom
@@ -15093,7 +15094,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 523
+        Height = 528
         ActivePage = Ts_EstFisFinaResutadoFisicoFinan
         Align = alClient
         TabOrder = 0
@@ -15103,7 +15104,7 @@ object FrmBelShop: TFrmBelShop
           Highlighted = True
           object Panel81: TPanel
             Left = 0
-            Top = 452
+            Top = 457
             Width = 963
             Height = 43
             Align = alBottom
@@ -15826,7 +15827,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 460
+            Height = 465
             Align = alClient
             Color = 15004403
             DataSource = DMVirtual.DS_V_GiroEstoque
@@ -15997,7 +15998,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Pan_EstFisFinaResutadoGiroEstoque: TPanel
             Left = 0
-            Top = 460
+            Top = 465
             Width = 963
             Height = 35
             Align = alBottom
@@ -16052,7 +16053,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 523
+        Height = 528
         ActivePage = Ts_FinanComprPlanFinanManutComprov
         Align = alClient
         TabOrder = 0
@@ -16062,7 +16063,7 @@ object FrmBelShop: TFrmBelShop
           Highlighted = True
           object Panel48: TPanel
             Left = 0
-            Top = 460
+            Top = 465
             Width = 963
             Height = 35
             Align = alBottom
@@ -16178,7 +16179,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 460
+            Height = 465
             Align = alClient
             Color = 15004403
             Ctl3D = False
@@ -16288,7 +16289,7 @@ object FrmBelShop: TFrmBelShop
           ImageIndex = 1
           DesignSize = (
             963
-            495)
+            500)
           object Gb_FinanManutComprovComprovante: TGroupBox
             Left = 256
             Top = 8
@@ -16526,7 +16527,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel50: TPanel
             Left = 0
-            Top = 460
+            Top = 465
             Width = 963
             Height = 35
             Align = alBottom
@@ -16885,7 +16886,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 543
-            Height = 460
+            Height = 465
             Align = alLeft
             Color = 15004403
             Ctl3D = False
@@ -16959,17 +16960,17 @@ object FrmBelShop: TFrmBelShop
             Left = 543
             Top = 0
             Width = 420
-            Height = 460
+            Height = 465
             Align = alClient
             BevelInner = bvLowered
             Enabled = False
             TabOrder = 1
             DesignSize = (
               420
-              460)
+              465)
             object Panel54: TPanel
               Left = 2
-              Top = 423
+              Top = 428
               Width = 416
               Height = 35
               Align = alBottom
@@ -17121,7 +17122,7 @@ object FrmBelShop: TFrmBelShop
               Left = 2
               Top = 156
               Width = 416
-              Height = 267
+              Height = 272
               Align = alBottom
               Anchors = [akLeft, akTop, akRight, akBottom]
               BevelInner = bvLowered
@@ -17354,7 +17355,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel53: TPanel
             Left = 0
-            Top = 460
+            Top = 465
             Width = 963
             Height = 35
             Align = alBottom
@@ -17561,7 +17562,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 963
-            Height = 495
+            Height = 500
             ActivePage = Ts_FinanComprPlanFinanManutDemonsResultados
             Align = alClient
             TabOrder = 0
@@ -17837,17 +17838,17 @@ object FrmBelShop: TFrmBelShop
                 Left = 379
                 Top = 55
                 Width = 576
-                Height = 377
+                Height = 382
                 Align = alClient
                 BevelInner = bvLowered
                 Enabled = False
                 TabOrder = 1
                 DesignSize = (
                   576
-                  377)
+                  382)
                 object Panel63: TPanel
                   Left = 2
-                  Top = 340
+                  Top = 345
                   Width = 572
                   Height = 35
                   Align = alBottom
@@ -18082,7 +18083,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 0
                 Top = 55
                 Width = 379
-                Height = 377
+                Height = 382
                 Align = alLeft
                 Color = 15004403
                 Ctl3D = False
@@ -18131,7 +18132,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Panel58: TPanel
                 Left = 0
-                Top = 432
+                Top = 437
                 Width = 955
                 Height = 35
                 Align = alBottom
@@ -18828,7 +18829,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 523
+        Height = 528
         ActivePage = Ts_FinanObjetivosManut
         Align = alClient
         TabOrder = 0
@@ -18840,7 +18841,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 379
-            Height = 460
+            Height = 465
             Align = alLeft
             BevelInner = bvLowered
             TabOrder = 0
@@ -19107,16 +19108,16 @@ object FrmBelShop: TFrmBelShop
             Left = 379
             Top = 0
             Width = 584
-            Height = 460
+            Height = 465
             Align = alClient
             BevelInner = bvLowered
             TabOrder = 1
             DesignSize = (
               584
-              460)
+              465)
             object Panel80: TPanel
               Left = 2
-              Top = 423
+              Top = 428
               Width = 580
               Height = 35
               Align = alBottom
@@ -19187,17 +19188,17 @@ object FrmBelShop: TFrmBelShop
               Left = 266
               Top = 194
               Width = 316
-              Height = 229
+              Height = 234
               Align = alRight
               Caption = ' Objetivos '
               Enabled = False
               TabOrder = 3
               DesignSize = (
                 316
-                229)
+                234)
               object Label91: TLabel
                 Left = 12
-                Top = 56
+                Top = 57
                 Width = 21
                 Height = 13
                 Anchors = []
@@ -19205,7 +19206,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label95: TLabel
                 Left = 11
-                Top = 85
+                Top = 87
                 Width = 22
                 Height = 13
                 Anchors = []
@@ -19213,7 +19214,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label96: TLabel
                 Left = 11
-                Top = 112
+                Top = 115
                 Width = 22
                 Height = 13
                 Anchors = []
@@ -19221,7 +19222,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label97: TLabel
                 Left = 13
-                Top = 140
+                Top = 143
                 Width = 20
                 Height = 13
                 Anchors = []
@@ -19229,7 +19230,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label98: TLabel
                 Left = 159
-                Top = 85
+                Top = 87
                 Width = 23
                 Height = 13
                 Anchors = []
@@ -19237,7 +19238,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label99: TLabel
                 Left = 165
-                Top = 56
+                Top = 57
                 Width = 17
                 Height = 13
                 Anchors = []
@@ -19245,7 +19246,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label100: TLabel
                 Left = 12
-                Top = 194
+                Top = 198
                 Width = 21
                 Height = 13
                 Anchors = []
@@ -19253,7 +19254,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label101: TLabel
                 Left = 12
-                Top = 166
+                Top = 170
                 Width = 21
                 Height = 13
                 Anchors = []
@@ -19261,7 +19262,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label102: TLabel
                 Left = 159
-                Top = 194
+                Top = 198
                 Width = 23
                 Height = 13
                 Anchors = []
@@ -19269,7 +19270,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label103: TLabel
                 Left = 158
-                Top = 166
+                Top = 170
                 Width = 24
                 Height = 13
                 Anchors = []
@@ -19277,7 +19278,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label104: TLabel
                 Left = 161
-                Top = 140
+                Top = 143
                 Width = 21
                 Height = 13
                 Anchors = []
@@ -19285,7 +19286,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Label105: TLabel
                 Left = 162
-                Top = 112
+                Top = 115
                 Width = 20
                 Height = 13
                 Anchors = []
@@ -19293,7 +19294,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutJan: TDBEdit
                 Left = 37
-                Top = 53
+                Top = 54
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19305,7 +19306,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutFev: TDBEdit
                 Left = 37
-                Top = 82
+                Top = 84
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19317,7 +19318,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutMar: TDBEdit
                 Left = 37
-                Top = 109
+                Top = 112
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19329,7 +19330,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutAbr: TDBEdit
                 Left = 37
-                Top = 137
+                Top = 140
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19341,7 +19342,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutMai: TDBEdit
                 Left = 37
-                Top = 163
+                Top = 167
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19353,7 +19354,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutJun: TDBEdit
                 Left = 37
-                Top = 191
+                Top = 195
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19365,7 +19366,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutJul: TDBEdit
                 Left = 186
-                Top = 53
+                Top = 54
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19377,7 +19378,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutAgo: TDBEdit
                 Left = 186
-                Top = 82
+                Top = 84
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19389,7 +19390,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutSet: TDBEdit
                 Left = 186
-                Top = 109
+                Top = 112
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19401,7 +19402,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutOut: TDBEdit
                 Left = 186
-                Top = 137
+                Top = 140
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19413,7 +19414,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutNov: TDBEdit
                 Left = 186
-                Top = 163
+                Top = 167
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19425,7 +19426,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Dbe_FinanObjetivosManutDez: TDBEdit
                 Left = 186
-                Top = 191
+                Top = 195
                 Width = 113
                 Height = 19
                 Anchors = []
@@ -19531,7 +19532,7 @@ object FrmBelShop: TFrmBelShop
               Left = 2
               Top = 194
               Width = 264
-              Height = 229
+              Height = 234
               Align = alClient
               Caption = ' Empresas '
               TabOrder = 2
@@ -20268,7 +20269,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel73: TPanel
             Left = 0
-            Top = 460
+            Top = 465
             Width = 963
             Height = 35
             Align = alBottom
@@ -21505,7 +21506,7 @@ object FrmBelShop: TFrmBelShop
           ImageIndex = 2
           object Panel93: TPanel
             Left = 0
-            Top = 460
+            Top = 465
             Width = 963
             Height = 35
             Align = alBottom
@@ -21944,7 +21945,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 68
             Width = 963
-            Height = 373
+            Height = 378
             BackImageMode = pbmCenter
             BackWall.Brush.Color = clWhite
             BackWall.Color = 16777088
@@ -22022,7 +22023,7 @@ object FrmBelShop: TFrmBelShop
           end
           object ScrollBar2: TScrollBar
             Left = 0
-            Top = 441
+            Top = 446
             Width = 963
             Height = 19
             Align = alBottom
@@ -22038,7 +22039,7 @@ object FrmBelShop: TFrmBelShop
       ImageIndex = 13
       DesignSize = (
         971
-        523)
+        528)
       object Pan_FinanFeriadosAnoInformacoes: TPanel
         Left = 37
         Top = 11
@@ -22226,7 +22227,7 @@ object FrmBelShop: TFrmBelShop
         Left = 250
         Top = 81
         Width = 473
-        Height = 399
+        Height = 404
         Anchors = [akTop, akBottom]
         Caption = ' Datas Feriado '
         TabOrder = 1
@@ -22299,7 +22300,7 @@ object FrmBelShop: TFrmBelShop
       end
       object Panel75: TPanel
         Left = 0
-        Top = 488
+        Top = 493
         Width = 971
         Height = 35
         Align = alBottom
@@ -22386,7 +22387,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 523
+        Height = 528
         ActivePage = Ts_FinanAuditoriaManut
         Align = alClient
         TabOrder = 0
@@ -22621,14 +22622,14 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 42
             Width = 963
-            Height = 376
+            Height = 381
             Align = alClient
             Caption = ' Auditoria '
             Enabled = False
             TabOrder = 1
             DesignSize = (
               963
-              376)
+              381)
             object Gb_FinanAuditoriaManutEstoques: TGroupBox
               Left = 1
               Top = 16
@@ -23727,7 +23728,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel99: TPanel
             Left = 0
-            Top = 418
+            Top = 423
             Width = 963
             Height = 42
             Align = alBottom
@@ -23884,7 +23885,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel98: TPanel
             Left = 0
-            Top = 460
+            Top = 465
             Width = 963
             Height = 35
             Align = alBottom
@@ -24166,18 +24167,18 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 45
             Width = 963
-            Height = 415
+            Height = 420
             Align = alClient
             Caption = ' Auditorias '
             TabOrder = 1
             DesignSize = (
               963
-              415)
+              420)
             object Dbg_FinanAuditoriaAnalise: TDBGrid
               Left = 2
               Top = 16
               Width = 961
-              Height = 399
+              Height = 404
               Anchors = [akLeft, akTop, akRight, akBottom]
               Color = 15004403
               Ctl3D = False
@@ -24267,7 +24268,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel107: TPanel
             Left = 0
-            Top = 460
+            Top = 465
             Width = 963
             Height = 35
             Align = alBottom
@@ -24438,7 +24439,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 523
+        Height = 528
         ActivePage = Ts_AudCompVendFiltros
         Align = alClient
         TabOrder = 0
@@ -25479,7 +25480,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 76
         Width = 971
-        Height = 412
+        Height = 417
         Align = alClient
         BevelInner = bvLowered
         BevelWidth = 2
@@ -25487,12 +25488,12 @@ object FrmBelShop: TFrmBelShop
         TabOrder = 1
         DesignSize = (
           971
-          412)
+          417)
         object Gb_FinanFechaCaixaLancamentos: TGroupBox
           Left = 24
           Top = 63
           Width = 920
-          Height = 339
+          Height = 344
           Anchors = [akTop, akBottom]
           Caption = ' Lan'#231'amentos de Cr'#233'ditos '
           TabOrder = 1
@@ -25875,7 +25876,7 @@ object FrmBelShop: TFrmBelShop
       end
       object Panel121: TPanel
         Left = 0
-        Top = 488
+        Top = 493
         Width = 971
         Height = 35
         Align = alBottom
@@ -26306,7 +26307,7 @@ object FrmBelShop: TFrmBelShop
       end
       object Panel124: TPanel
         Left = 0
-        Top = 488
+        Top = 493
         Width = 971
         Height = 35
         Align = alBottom
@@ -26388,13 +26389,13 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 43
         Width = 971
-        Height = 445
+        Height = 450
         ActivePage = Ts_FinanFechaDiarioLancto
         Align = alClient
         LookAndFeel.SkinName = 'UserSkin'
         TabOrder = 2
         OnChange = PC_FinanFechaDiarioChange
-        ClientRectBottom = 441
+        ClientRectBottom = 446
         ClientRectLeft = 4
         ClientRectRight = 967
         ClientRectTop = 24
@@ -26403,7 +26404,7 @@ object FrmBelShop: TFrmBelShop
           ImageIndex = 0
           DesignSize = (
             963
-            417)
+            422)
           object Gb_FinanFechaDiarioMovtos: TcxGroupBox
             Left = 11
             Top = 130
@@ -27263,7 +27264,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 43
         Width = 971
-        Height = 480
+        Height = 485
         ActivePage = Ts_FinanMLFiltros
         Align = alClient
         TabOrder = 1
@@ -28173,7 +28174,7 @@ object FrmBelShop: TFrmBelShop
           ImageIndex = 2
           DesignSize = (
             963
-            452)
+            457)
           object Sbt_FinanMLResFinal: TSpeedButton
             Left = 4
             Top = 247
@@ -28218,7 +28219,7 @@ object FrmBelShop: TFrmBelShop
             Left = 2
             Top = 0
             Width = 959
-            Height = 233
+            Height = 238
             TabStop = False
             Anchors = [akTop, akBottom]
             Color = 15004403
@@ -28345,7 +28346,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Dbg_FinanMLResFinal: TDBGrid
             Left = 165
-            Top = 242
+            Top = 247
             Width = 634
             Height = 167
             TabStop = False
@@ -28420,7 +28421,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Panel130: TPanel
             Left = 0
-            Top = 417
+            Top = 422
             Width = 963
             Height = 35
             Align = alBottom
@@ -29389,7 +29390,7 @@ object FrmBelShop: TFrmBelShop
         Left = 0
         Top = 0
         Width = 971
-        Height = 523
+        Height = 528
         ActivePage = TS_FiltroProdutos
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
@@ -29408,7 +29409,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 316
-            Height = 495
+            Height = 500
             Align = alLeft
             Caption = '  Fornecedores  '
             Color = 13092807
@@ -29424,7 +29425,7 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 0
             DesignSize = (
               316
-              495)
+              500)
             object Label188: TLabel
               Left = 282
               Top = 29
@@ -29794,7 +29795,7 @@ object FrmBelShop: TFrmBelShop
             Left = 316
             Top = 0
             Width = 647
-            Height = 495
+            Height = 500
             Hint = '<Delete> Exclui Fornecedor da Lista'
             Align = alClient
             DataSource = DMVirtual.DS_V_Fornecedores
@@ -29841,7 +29842,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 316
-            Height = 495
+            Height = 500
             Align = alLeft
             Caption = '  Produtos  '
             Color = 13092807
@@ -29857,7 +29858,7 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 0
             DesignSize = (
               316
-              495)
+              500)
             object Label3: TLabel
               Left = 282
               Top = 29
@@ -30021,7 +30022,7 @@ object FrmBelShop: TFrmBelShop
             Left = 316
             Top = 0
             Width = 647
-            Height = 495
+            Height = 500
             Hint = '<Delete> Exclui Item da Lista'
             Align = alClient
             DataSource = DMVirtual.DS_V_Produtos
@@ -30077,7 +30078,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 409
-            Height = 495
+            Height = 500
             Align = alLeft
             Anchors = [akLeft, akTop, akRight, akBottom]
             Caption = '  Grupo de Produtos  '
@@ -30180,7 +30181,7 @@ object FrmBelShop: TFrmBelShop
             Left = 409
             Top = 0
             Width = 554
-            Height = 495
+            Height = 500
             Align = alClient
             Caption = '  SubGrupo de Produtos  '
             Color = 13092807
@@ -30196,12 +30197,12 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 1
             DesignSize = (
               554
-              495)
+              500)
             object Panel32: TPanel
               Left = 1
               Top = 60
               Width = 552
-              Height = 434
+              Height = 439
               Align = alBottom
               Anchors = [akLeft, akTop, akRight, akBottom]
               BevelInner = bvLowered
@@ -30296,7 +30297,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 177
-            Height = 495
+            Height = 500
             Align = alLeft
             Caption = '  Aplica'#231#245'es  '
             Color = 13092807
@@ -30312,7 +30313,7 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 0
             DesignSize = (
               177
-              495)
+              500)
             object Label4: TLabel
               Left = 143
               Top = 29
@@ -30354,7 +30355,7 @@ object FrmBelShop: TFrmBelShop
             Left = 177
             Top = 0
             Width = 786
-            Height = 495
+            Height = 500
             Hint = '<Delete> Exclui Item da Lista'
             Align = alClient
             DataSource = DMVirtual.DS_V_Aplicacao
@@ -30401,7 +30402,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 177
-            Height = 495
+            Height = 500
             Align = alLeft
             Caption = '  Familias Pre'#231'os  '
             Color = 13092807
@@ -30417,7 +30418,7 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 0
             DesignSize = (
               177
-              495)
+              500)
             object Label5: TLabel
               Left = 143
               Top = 29
@@ -30459,7 +30460,7 @@ object FrmBelShop: TFrmBelShop
             Left = 177
             Top = 0
             Width = 786
-            Height = 495
+            Height = 500
             Hint = '<Delete> Exclui Item da Lista'
             Align = alClient
             DataSource = DMVirtual.DS_V_FamiliaPrecos
@@ -30506,7 +30507,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 177
-            Height = 495
+            Height = 500
             Align = alLeft
             Caption = '  Grupos ST  '
             Color = 13092807
@@ -30522,7 +30523,7 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 0
             DesignSize = (
               177
-              495)
+              500)
             object Label6: TLabel
               Left = 143
               Top = 29
@@ -30564,7 +30565,7 @@ object FrmBelShop: TFrmBelShop
             Left = 177
             Top = 0
             Width = 786
-            Height = 495
+            Height = 500
             Hint = '<Delete> Exclui Item da Lista'
             Align = alClient
             DataSource = DMVirtual.DS_V_GrupoST
@@ -30609,7 +30610,7 @@ object FrmBelShop: TFrmBelShop
             Left = 0
             Top = 0
             Width = 177
-            Height = 495
+            Height = 500
             Align = alLeft
             Caption = '  Comprovantes  '
             Color = 13092807
@@ -30625,7 +30626,7 @@ object FrmBelShop: TFrmBelShop
             TabOrder = 0
             DesignSize = (
               177
-              495)
+              500)
             object Label14: TLabel
               Left = 143
               Top = 29
@@ -30667,7 +30668,7 @@ object FrmBelShop: TFrmBelShop
             Left = 177
             Top = 0
             Width = 786
-            Height = 495
+            Height = 500
             Hint = '<Delete> Exclui Item da Lista'
             Align = alClient
             Color = 15004403
@@ -31727,48 +31728,200 @@ object FrmBelShop: TFrmBelShop
         object SubMenuComprasGeraOC: TMenuItem
           Tag = 120301
           Bitmap.Data = {
-            26050000424D260500000000000036040000280000000F0000000F0000000100
-            080000000000F0000000400B0000400B00000001000000000000000000000000
-            BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000C0DCC000F0CA
-            A600800000008080000000800000008080000000800080008000FFFBF0008080
-            400000FF800000404000A6CAF0000080FF00A0A0A40000408000FF0080004000
-            8000804000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            000000000000000000000000000000000000F0FBFF00A4A0A000808080000000
-            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00070707070707
-            F7F70707070707070700070707070707F7F9F707070707070700070707070707
-            F7F9F9F7070707070700070707070707F7F9F9F9F7070707070007F7F7F7F7F7
-            F7F9F9F9F9F70707070007F7F9F9F9F9F9F9F9F9F9F9F707070007F7F9F9F9F9
-            F9F9F9F9F9F9F9F7070007F7F9F9F9F9F9F9F9F9F9F9F9F9070007F7F9F9F9F9
-            F9F9F9F9F9F9F90707000707F9F9F9F9F9F9F9F9F9F907070700070707070707
-            07F9F9F9F9070707070007070707070707F9F9F9070707070700070707070707
-            07F9F90707070707070007070707070707F90707070707070700070707070707
-            07070707070707070700}
+            36180000424D3618000000000000360000002800000030000000200000000100
+            2000000000000018000000000000000000000000000000000000FFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF90DBFFFF0000
+            3AFF000000FF000000FF000000FF000000FF000000FF000000FF3A0000FFFFDB
+            90FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF0066B6FF000000FF000000FF000000FF000000FFFFB666FFFFFF
+            FFFF0066B6FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF66B6FFFF000000FF000000FF0000
+            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+            00FF3A0000FFFFDB90FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB6FF
+            FFFF000066FF000000FF000000FF000000FF000000FF000000FF000000FFB666
+            00FF0066B6FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFF66B6FFFF000000FF000000FF000000FF0000
+            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+            00FF000000FF000000FFFFB666FFFFFFFFFFFFFFFFFFFFFFFFFFDBFFFFFF003A
+            90FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+            00FF000000FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFB6FFFFFF000066FF000000FF000000FF000000FF0000
+            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+            00FF000000FF000000FF3A0000FFFFDB90FFFFFFFFFFFFFFFFFF66B6FFFF0000
+            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+            00FF000000FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFF3A90DBFF000000FF000000FF000000FF000000FF0000
+            00FF000000FFFFB666FFFFFFFFFFFFFFFFFFFFFFFFFF0066B6FF000000FF0000
+            00FF000000FF000000FF000000FFDB903AFFFFFFFFFFFFFFFFFF0066B6FF0000
+            00FF000000FF000000FF000000FF3A0000FFFFDB90FFFFFFFFFFDBFFFFFF003A
+            90FF000000FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDBFF
+            FFFFDBFFFFFFFFFFFFFF0066B6FF000000FF000000FF000000FF000000FF0000
+            00FFFFB666FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB6FFFFFF000066FF0000
+            00FF000000FF000000FF000000FF903A00FFFFFFDBFFB6FFFFFF000066FF0000
+            00FF000000FF000000FF000000FFDB903AFFFFFFFFFFFFFFFFFFFFFFFFFF90DB
+            FFFF00003AFF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFDBFFFFFF003A90FF000000FF000000FF000000FF000000FF903A
+            00FFFFFFDBFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB6FFFFFF000066FF0000
+            00FF000000FF000000FF000000FF903A00FFFFFFDBFFB6FFFFFF000066FF0000
+            00FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFFFFFFFFFFFFFFB6FF
+            FFFF000066FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF90DBFFFF00003AFF000000FF0000
+            00FF000000FF000000FF000000FF903A00FFFFFFDBFFB6FFFFFF000066FF0000
+            00FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFFFFFFFFFFFFFFB6FF
+            FFFF000066FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFDBFFFFFF003A90FF000000FF000000FF000000FF000000FF000000FF0000
+            00FF000000FF000000FF000000FFDB903AFFFFFFFFFFB6FFFFFF000066FF0000
+            00FF000000FF000000FF000000FFDB903AFFFFFFFFFFFFFFFFFFFFFFFFFF90DB
+            FFFF00003AFF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDBFFFFFF003A90FF0000
+            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+            00FF000000FF000000FF660000FFFFFFB6FFFFFFFFFFDBFFFFFF003A90FF0000
+            00FF000000FF000000FF000000FF3A0000FFFFDB90FFFFFFFFFFDBFFFFFF003A
+            90FF000000FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF3A90DBFF000000FF000000FF0000
+            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+            00FF000000FF660000FFFFFFB6FFFFFFFFFFFFFFFFFFFFFFFFFF3A90DBFF0000
+            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+            00FF000000FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFF66B6FFFF000000FF000000FF000000FF0000
+            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+            00FFDB903AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB6FFFFFF0000
+            66FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+            00FF000000FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFDBFFFFFF003A90FF000000FF000000FF000000FF0000
+            00FF000000FF000000FF000000FF000000FF000000FFDB903AFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF90DB
+            FFFF00003AFF000000FF000000FF000000FF000000FF000000FF000000FF3A3A
+            00FF00003AFF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFF90DBFFFF00003AFF000000FF000000FF000000FF0000
+            00FF000000FFFFB666FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFF0066B6FF000000FF000000FF000000FF000000FFFFB666FFB6FF
+            FFFF000066FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFF90DBFFFF00003AFF000000FF000000FF000000FF0000
+            00FFFFB666FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF3A90DBFF000000FF0000
+            00FF000000FF000000FF3A0000FFFFDB90FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB6FF
+            FFFF000066FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFB6FFFFFF000066FF000000FF000000FF000000FF0000
+            00FF903A00FFFFFFDBFFFFFFFFFFFFFFFFFF66B6FFFF000000FF000000FF0000
+            00FF000000FF000000FF660000FFFFFFB6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB6FF
+            FFFF000066FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFF0066B6FF000000FF000000FF000000FF0000
+            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+            00FF000000FF000000FFB66600FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB6FF
+            FFFF000066FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFB6FFFFFF000066FF000000FF000000FF0000
+            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+            00FF000000FF660000FFFFFFB6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB6FF
+            FFFF000066FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB6FFFFFF000066FF000000FF0000
+            00FF000000FF000000FF000000FF000000FF000000FF000000FF000000FF0000
+            00FF3A0000FFFFDB90FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB6FF
+            FFFF000066FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB6FFFFFF0000
+            66FF000000FF000000FF000000FF000000FF000000FF000000FF660000FFFFFF
+            B6FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB6FF
+            FFFF000066FF000000FF000000FF000000FF000000FFFFB666FFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
           Caption = 'GERA ORDEM DE COMPRA - SIDICOM'
           HelpContext = 1
           OnClick = SubMenuComprasGeraOCClick
@@ -31873,6 +32026,9 @@ object FrmBelShop: TFrmBelShop
           Caption = 'Faltas de Reposi'#231#245'es (CD => Lojas)'
           HelpContext = 1
           OnClick = SubMenuFaltasReposicoesCDLojasClick
+        end
+        object N51: TMenuItem
+          Caption = '-'
         end
         object N50: TMenuItem
           Caption = '-'
@@ -32075,9 +32231,11 @@ object FrmBelShop: TFrmBelShop
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
           Caption = 'GERA ORDEM DE COMPRA - LINX'
-          Default = True
           HelpContext = 1
           OnClick = SubMenuComprasGeraOCLinxClick
+        end
+        object N52: TMenuItem
+          Caption = '-'
         end
         object N47: TMenuItem
           Caption = '-'
@@ -36850,7 +37008,7 @@ object FrmBelShop: TFrmBelShop
   end
   object PopM_OCRomaneio: TPopupMenu
     OwnerDraw = True
-    Left = 624
+    Left = 544
     Top = 408
     object PopM_OCRomaneioVoltar: TMenuItem
       Bitmap.Data = {
@@ -36995,8 +37153,8 @@ object FrmBelShop: TFrmBelShop
   end
   object PopM_GeraOC: TPopupMenu
     OwnerDraw = True
-    Left = 542
-    Top = 389
+    Left = 526
+    Top = 341
     object PopM_GeraOCVoltar1: TMenuItem
       Bitmap.Data = {
         F6000000424DF600000000000000760000002800000010000000100000000100

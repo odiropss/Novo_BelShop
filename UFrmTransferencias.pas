@@ -1377,6 +1377,8 @@ begin
 
   If DMTransferencias.CDS_Busca.Eof Then
   Begin
+    DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
+
     tgArqErros.Add('Sem Loja Para Processamento no Dia '+DateToStr(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor)));
 
     bgArqErros:=True;
