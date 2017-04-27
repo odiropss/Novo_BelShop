@@ -14,6 +14,7 @@ object DMSalao: TDMSalao
   end
   object DSP_Profissionais: TDataSetProvider
     DataSet = SDS_Profissionais
+    Options = [poRetainServerOrder]
     Left = 80
     Top = 40
   end
@@ -437,6 +438,7 @@ object DMSalao: TDMSalao
   end
   object DSP_Habilidades: TDataSetProvider
     DataSet = SDS_Habilidades
+    Options = [poRetainServerOrder]
     Left = 80
     Top = 136
   end
@@ -509,6 +511,7 @@ object DMSalao: TDMSalao
   end
   object DSP_Servicos: TDataSetProvider
     DataSet = SDS_Servicos
+    Options = [poRetainServerOrder]
     Left = 80
     Top = 208
   end
@@ -713,6 +716,7 @@ object DMSalao: TDMSalao
   end
   object DSP_HabilidadesProf: TDataSetProvider
     DataSet = SDS_HabilidadesProf
+    Options = [poRetainServerOrder]
     Left = 80
     Top = 288
   end
@@ -811,6 +815,7 @@ object DMSalao: TDMSalao
   end
   object DSP_ServicosProf: TDataSetProvider
     DataSet = SDS_ServicosProf
+    Options = [poRetainServerOrder]
     Left = 80
     Top = 360
   end
@@ -930,6 +935,7 @@ object DMSalao: TDMSalao
   end
   object DSP_SID_Supervisor: TDataSetProvider
     DataSet = SDS_SID_Supervisor
+    Options = [poRetainServerOrder]
     Left = 80
     Top = 440
   end
@@ -958,6 +964,7 @@ object DMSalao: TDMSalao
   end
   object DSP_SID_Vendedores: TDataSetProvider
     DataSet = SDS_SID_Vendedores
+    Options = [poRetainServerOrder]
     Left = 80
     Top = 512
   end
@@ -1042,6 +1049,7 @@ object DMSalao: TDMSalao
   end
   object DSP_ValesProfissionais: TDataSetProvider
     DataSet = SDS_ValesProfissionais
+    Options = [poRetainServerOrder]
     Left = 312
     Top = 48
   end
@@ -1176,6 +1184,7 @@ object DMSalao: TDMSalao
   end
   object DSP_Vales: TDataSetProvider
     DataSet = SDS_Vales
+    Options = [poRetainServerOrder]
     Left = 312
     Top = 120
   end
@@ -1224,6 +1233,7 @@ object DMSalao: TDMSalao
   end
   object DSP_MetasProfissionais: TDataSetProvider
     DataSet = SDS_MetasProfissionais
+    Options = [poRetainServerOrder]
     Left = 312
     Top = 208
   end
@@ -1264,6 +1274,7 @@ object DMSalao: TDMSalao
   end
   object DSP_MetasHabilidades: TDataSetProvider
     DataSet = SDS_MetasHabilidades
+    Options = [poRetainServerOrder]
     Left = 312
     Top = 280
   end
@@ -1499,6 +1510,7 @@ object DMSalao: TDMSalao
   end
   object DSP_MetasProf: TDataSetProvider
     DataSet = SDS_MetasProf
+    Options = [poRetainServerOrder]
     Left = 312
     Top = 354
   end
@@ -2102,6 +2114,7 @@ object DMSalao: TDMSalao
   end
   object DSP_PagtosPlan: TDataSetProvider
     DataSet = SDS_PagtosPlan
+    Options = [poRetainServerOrder]
     Left = 712
     Top = 232
   end
@@ -2251,6 +2264,7 @@ object DMSalao: TDMSalao
   end
   object DSP_PagtosDebCred: TDataSetProvider
     DataSet = SDS_PagtosDebCred
+    Options = [poRetainServerOrder]
     Left = 712
     Top = 297
   end
@@ -2362,6 +2376,7 @@ object DMSalao: TDMSalao
   end
   object DSP_PagtosVendas: TDataSetProvider
     DataSet = SDS_PagtosVendas
+    Options = [poRetainServerOrder]
     Left = 712
     Top = 361
   end
@@ -2655,6 +2670,7 @@ object DMSalao: TDMSalao
   end
   object DSP_ApresGrid: TDataSetProvider
     DataSet = SDS_ApresGrid
+    Options = [poRetainServerOrder]
     Left = 920
     Top = 353
   end
@@ -2722,6 +2738,7 @@ object DMSalao: TDMSalao
   end
   object DSP_TecBizApres: TDataSetProvider
     DataSet = SDS_TecBizApres
+    Options = [poRetainServerOrder]
     Left = 920
     Top = 441
   end
@@ -2882,6 +2899,7 @@ object DMSalao: TDMSalao
   end
   object DSP_PlanoSaudeApres: TDataSetProvider
     DataSet = SDS_PlanoSaudeApres
+    Options = [poRetainServerOrder]
     Left = 912
     Top = 513
   end
@@ -2932,6 +2950,7 @@ object DMSalao: TDMSalao
   end
   object DSP_Beneficios: TDataSetProvider
     DataSet = SDS_Beneficios
+    Options = [poRetainServerOrder]
     Left = 544
     Top = 49
   end

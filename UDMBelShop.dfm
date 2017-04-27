@@ -28,19 +28,20 @@ object DMBelShop: TDMBelShop
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
     Left = 40
-    Top = 16
+    Top = 18
   end
   object SDS_Busca: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 35
-    Top = 319
+    Top = 321
   end
   object DSP_Usuario: TDataSetProvider
     DataSet = SDS_Usuario
+    Options = [poRetainServerOrder]
     Left = 73
-    Top = 562
+    Top = 564
   end
   object CDS_Usuario: TClientDataSet
     Aggregates = <>
@@ -98,12 +99,12 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_Usuario'
     StoreDefs = True
     Left = 113
-    Top = 551
+    Top = 553
   end
   object DS_Usuario: TDataSource
     DataSet = CDS_Usuario
     Left = 149
-    Top = 564
+    Top = 566
   end
   object SDS_Usuario: TSQLDataSet
     ObjectView = True
@@ -112,36 +113,38 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 32
-    Top = 549
+    Top = 551
   end
   object SDS_Pesquisa: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 32
-    Top = 480
+    Top = 482
   end
   object CDS_Pesquisa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Pesquisa'
     Left = 113
-    Top = 493
+    Top = 495
   end
   object DSP_Pesquisa: TDataSetProvider
     DataSet = SDS_Pesquisa
+    Options = [poRetainServerOrder]
     Left = 73
-    Top = 505
+    Top = 507
   end
   object DS_Pesquisa: TDataSource
     DataSet = CDS_Pesquisa
     Left = 149
-    Top = 505
+    Top = 507
   end
   object DSP_Empresa: TDataSetProvider
     DataSet = SDS_Empresa
+    Options = [poRetainServerOrder]
     Left = 73
-    Top = 620
+    Top = 622
   end
   object CDS_Empresa: TClientDataSet
     Aggregates = <>
@@ -310,7 +313,7 @@ object DMBelShop: TDMBelShop
     StoreDefs = True
     AfterScroll = CDS_EmpresaAfterScroll
     Left = 113
-    Top = 608
+    Top = 610
     object CDS_EmpresaCOD_FILIAL: TStringField
       Alignment = taRightJustify
       FieldName = 'COD_FILIAL'
@@ -445,7 +448,7 @@ object DMBelShop: TDMBelShop
   object DS_Empresa: TDataSource
     DataSet = CDS_Empresa
     Left = 149
-    Top = 622
+    Top = 624
   end
   object SDS_Empresa: TSQLDataSet
     ObjectView = True
@@ -454,12 +457,12 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 32
-    Top = 600
+    Top = 602
   end
   object DS_AComprar: TDataSource
     DataSet = IBQ_AComprar
-    Left = 1298
-    Top = 229
+    Left = 1266
+    Top = 231
   end
   object SDS_AComprarItens: TSQLDataSet
     CommandText = 
@@ -473,7 +476,7 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 240
-    Top = 388
+    Top = 390
   end
   object CDS_AComprarItens: TClientDataSet
     Aggregates = <>
@@ -482,7 +485,7 @@ object DMBelShop: TDMBelShop
     BeforeScroll = CDS_AComprarItensBeforeScroll
     AfterScroll = CDS_AComprarItensAfterScroll
     Left = 319
-    Top = 386
+    Top = 388
     object CDS_AComprarItensCOD_ITEM: TStringField
       FieldName = 'COD_ITEM'
       Size = 6
@@ -508,18 +511,20 @@ object DMBelShop: TDMBelShop
   end
   object DSP_AComprarItens: TDataSetProvider
     DataSet = SDS_AComprarItens
+    Options = [poRetainServerOrder]
     Left = 282
-    Top = 404
+    Top = 406
   end
   object DS_AComprarItens: TDataSource
     DataSet = CDS_AComprarItens
     Left = 357
-    Top = 404
+    Top = 406
   end
   object DSP_AComprarOCs: TDataSetProvider
     DataSet = SDS_AComprarOCs
+    Options = [poRetainServerOrder]
     Left = 282
-    Top = 469
+    Top = 471
   end
   object CDS_AComprarOCs: TClientDataSet
     Aggregates = <>
@@ -679,7 +684,7 @@ object DMBelShop: TDMBelShop
     StoreDefs = True
     AfterScroll = CDS_AComprarOCsAfterScroll
     Left = 319
-    Top = 457
+    Top = 459
     object CDS_AComprarOCsGERAR: TStringField
       FieldName = 'GERAR'
       Required = True
@@ -861,22 +866,21 @@ object DMBelShop: TDMBelShop
   object DS_AComprarOCs: TDataSource
     DataSet = CDS_AComprarOCs
     Left = 357
-    Top = 470
+    Top = 472
   end
   object SDS_AComprarOCs: TSQLDataSet
-    ObjectView = True
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 240
-    Top = 456
+    Top = 458
   end
   object CDS_Sugestao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Sugestao'
-    Left = 1289
-    Top = 425
+    Left = 1257
+    Top = 427
     object CDS_SugestaoNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Required = True
@@ -1419,16 +1423,15 @@ object DMBelShop: TDMBelShop
         Value = '01/01/2017'
       end>
     SQLConnection = SQLC
-    Left = 1208
-    Top = 425
+    Left = 1176
+    Top = 427
   end
   object DSP_Sugestao: TDataSetProvider
     DataSet = SDS_Sugestao
-    Left = 1250
-    Top = 441
+    Left = 1218
+    Top = 443
   end
   object IBDB_BelShop: TIBDatabase
-    Connected = True
     DatabaseName = 'localhost:C:\Projetos\BelShop\Dados\BelShop.FDB'
     Params.Strings = (
       'user_name=SYSDBA'
@@ -1438,15 +1441,15 @@ object DMBelShop: TDMBelShop
     IdleTimer = 0
     SQLDialect = 3
     TraceFlags = []
-    Left = 1218
-    Top = 21
+    Left = 1186
+    Top = 23
   end
   object IBT_BelShop: TIBTransaction
-    Active = True
+    Active = False
     DefaultDatabase = IBDB_BelShop
     AutoStopAction = saNone
-    Left = 1258
-    Top = 34
+    Left = 1226
+    Top = 36
   end
   object IBQ_AComprar: TIBQuery
     Database = IBDB_BelShop
@@ -1463,11 +1466,12 @@ object DMBelShop: TDMBelShop
       'From oc_comprar oc'
       'Where oc.num_documento= :Num_Documento'
       'and oc.cod_item = :Cod_Item'
+      'AND CAST(oc.dta_documento AS DATE)= :dta_documento'
       'ORDER BY oc.cod_empresa, oc.qtd_transf desc'
       '')
     UpdateObject = IBU_AComprar
-    Left = 1210
-    Top = 229
+    Left = 1178
+    Top = 231
     ParamData = <
       item
         DataType = ftInteger
@@ -1480,6 +1484,11 @@ object DMBelShop: TDMBelShop
         Name = 'COD_ITEM'
         ParamType = ptUnknown
         Size = 7
+      end
+      item
+        DataType = ftUnknown
+        Name = 'dta_documento'
+        ParamType = ptUnknown
       end>
     object IBQ_AComprarNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
@@ -2494,29 +2503,29 @@ object DMBelShop: TDMBelShop
       'where'
       '  NUM_SEQ = :NUM_SEQ'
       '  and NUM_DOCUMENTO = :NUM_DOCUMENTO')
-    Left = 1258
-    Top = 243
+    Left = 1226
+    Top = 245
   end
   object IBQ_Executa: TIBQuery
     Database = IBDB_BelShop
     Transaction = IBT_BelShop
     BufferChunks = 1000
     CachedUpdates = False
-    Left = 1218
-    Top = 152
+    Left = 1186
+    Top = 154
   end
   object IBQ_Busca: TIBQuery
     Database = IBDB_BelShop
     Transaction = IBT_BelShop
     BufferChunks = 1000
     CachedUpdates = False
-    Left = 1218
-    Top = 88
+    Left = 1186
+    Top = 90
   end
   object DS_OrdemCompra: TDataSource
     DataSet = IBQ_OrdemCompra
-    Left = 1258
-    Top = 520
+    Left = 1226
+    Top = 522
   end
   object IBQ_OrdemCompra: TIBQuery
     Database = IBDB_BelShop
@@ -2586,8 +2595,8 @@ object DMBelShop: TDMBelShop
       'AND   oc.num_oc_gerada=1000043'
       ''
       'ORDER BY Enderecamento,oc.des_item')
-    Left = 1210
-    Top = 509
+    Left = 1178
+    Top = 511
     object IBQ_OrdemCompraDES_EMPRESA: TIBStringField
       FieldName = 'DES_EMPRESA'
       Origin = 'OC_COMPRAR.DES_EMPRESA'
@@ -2725,7 +2734,7 @@ object DMBelShop: TDMBelShop
   object DS_Busca: TDataSource
     DataSet = CDS_Busca
     Left = 152
-    Top = 336
+    Top = 338
   end
   object SDS_DtaHoraServidor: TSQLDataSet
     CommandText = 
@@ -2735,7 +2744,7 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 121
-    Top = 3
+    Top = 5
   end
   object SDS_FluxoFornecedor: TSQLDataSet
     CommandText = 
@@ -2788,14 +2797,14 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 920
-    Top = 462
+    Top = 459
   end
   object CDS_FluxoFornecedor: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FluxoFornecedor'
     Left = 1001
-    Top = 461
+    Top = 458
     object CDS_FluxoFornecedorDATA: TDateField
       FieldName = 'DATA'
     end
@@ -2903,31 +2912,32 @@ object DMBelShop: TDMBelShop
     DataSet = SDS_FluxoFornecedor
     Options = [poRetainServerOrder]
     Left = 961
-    Top = 470
+    Top = 467
   end
   object DS_FluxoFornecedor: TDataSource
     DataSet = CDS_FluxoFornecedor
     Left = 1037
-    Top = 470
+    Top = 467
   end
   object SDS_While: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 35
-    Top = 263
+    Top = 265
   end
   object CDS_While: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_While'
     Left = 116
-    Top = 268
+    Top = 270
   end
   object DSP_While: TDataSetProvider
     DataSet = SDS_While
+    Options = [poRetainServerOrder]
     Left = 76
-    Top = 280
+    Top = 282
   end
   object SDS_EmpProcessa: TSQLDataSet
     CommandText = 
@@ -2944,14 +2954,14 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 240
-    Top = 131
+    Top = 133
   end
   object CDS_EmpProcessa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_EmpProcessa'
     Left = 319
-    Top = 132
+    Top = 134
     object CDS_EmpProcessaPROC: TStringField
       DisplayLabel = 'Selec'
       FieldName = 'PROC'
@@ -3072,18 +3082,19 @@ object DMBelShop: TDMBelShop
   end
   object DSP_EmpProcessa: TDataSetProvider
     DataSet = SDS_EmpProcessa
+    Options = [poRetainServerOrder]
     Left = 282
-    Top = 148
+    Top = 150
   end
   object DS_EmpProcessa: TDataSource
     DataSet = CDS_EmpProcessa
     Left = 357
-    Top = 148
+    Top = 150
   end
   object DS_AComprarEdita: TDataSource
     DataSet = IBQ_AComprarEdita
-    Left = 1298
-    Top = 286
+    Left = 1266
+    Top = 288
   end
   object IBQ_AComprarEdita: TIBQuery
     Database = IBDB_BelShop
@@ -3098,8 +3109,8 @@ object DMBelShop: TDMBelShop
       'from oc_comprar o'
       'where o.num_seq<14')
     UpdateObject = IBU_AComprarEdita
-    Left = 1210
-    Top = 293
+    Left = 1178
+    Top = 295
     object IBQ_AComprarEditaNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Origin = 'OC_COMPRAR.NUM_SEQ'
@@ -4102,13 +4113,14 @@ object DMBelShop: TDMBelShop
       'where'
       '  NUM_SEQ = :NUM_SEQ'
       '  and NUM_DOCUMENTO = :NUM_DOCUMENTO')
-    Left = 1258
-    Top = 299
+    Left = 1226
+    Top = 301
   end
   object DSP_OCs: TDataSetProvider
     DataSet = SDS_OCs
+    Options = [poRetainServerOrder]
     Left = 282
-    Top = 594
+    Top = 596
   end
   object CDS_OCs: TClientDataSet
     Aggregates = <>
@@ -4218,7 +4230,7 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_OCs'
     StoreDefs = True
     Left = 319
-    Top = 578
+    Top = 580
     object CDS_OCsNUM_DOCUMENTO: TIntegerField
       FieldName = 'NUM_DOCUMENTO'
       Required = True
@@ -4335,22 +4347,21 @@ object DMBelShop: TDMBelShop
   object DS_OCs: TDataSource
     DataSet = CDS_OCs
     Left = 357
-    Top = 595
+    Top = 597
   end
   object SDS_OCs: TSQLDataSet
-    ObjectView = True
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 240
-    Top = 581
+    Top = 583
   end
   object CDS_VerTransito: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_VerTransito'
     Left = 548
-    Top = 254
+    Top = 256
     object CDS_VerTransitoCODFILIAL: TStringField
       FieldName = 'CODFILIAL'
       Size = 2
@@ -4430,13 +4441,14 @@ object DMBelShop: TDMBelShop
   end
   object DSP_VerTransito: TDataSetProvider
     DataSet = SDS_VerTransito
+    Options = [poRetainServerOrder]
     Left = 504
-    Top = 270
+    Top = 272
   end
   object DS_VerTransito: TDataSource
     DataSet = CDS_VerTransito
     Left = 595
-    Top = 270
+    Top = 272
   end
   object SDS_VerTransito: TSQLDataSet
     CommandText = 
@@ -4459,38 +4471,39 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 464
-    Top = 254
+    Top = 256
   end
   object SDS_BuscaRapida: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 35
-    Top = 377
+    Top = 379
   end
   object CDS_BuscaRapida: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_BuscaRapida'
     Left = 116
-    Top = 382
+    Top = 384
   end
   object DSP_BuscaRapida: TDataSetProvider
     DataSet = SDS_BuscaRapida
+    Options = [poRetainServerOrder]
     Left = 76
-    Top = 394
+    Top = 396
   end
   object DS_BuscaRapida: TDataSource
     DataSet = CDS_BuscaRapida
     Left = 152
-    Top = 394
+    Top = 396
   end
   object CDS_Comprovantes: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Comprovantes'
     Left = 548
-    Top = 325
+    Top = 327
     object CDS_ComprovantesCOD_COMPROV: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'Cod Comp'
@@ -4550,13 +4563,14 @@ object DMBelShop: TDMBelShop
   end
   object DSP_Comprovantes: TDataSetProvider
     DataSet = SDS_Comprovantes
+    Options = [poRetainServerOrder]
     Left = 504
-    Top = 341
+    Top = 343
   end
   object DS_Comprovantes: TDataSource
     DataSet = CDS_Comprovantes
     Left = 595
-    Top = 341
+    Top = 343
   end
   object SDS_Comprovantes: TSQLDataSet
     CommandText = 
@@ -4569,14 +4583,14 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 464
-    Top = 325
+    Top = 327
   end
   object CDS_Comprovante: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Comprovante'
     Left = 548
-    Top = 390
+    Top = 392
     object CDS_ComprovanteCOD_COMPROV: TStringField
       FieldName = 'COD_COMPROV'
       Required = True
@@ -4631,13 +4645,14 @@ object DMBelShop: TDMBelShop
   end
   object DSP_Comprovante: TDataSetProvider
     DataSet = SDS_Comprovante
+    Options = [poRetainServerOrder]
     Left = 504
-    Top = 405
+    Top = 407
   end
   object DS_Comprovante: TDataSource
     DataSet = CDS_Comprovante
     Left = 595
-    Top = 406
+    Top = 408
   end
   object SDS_Comprovante: TSQLDataSet
     CommandText = 'select *'#13#10'from fin_comprovantes'#13#10'Where cod_gr_finan<0'#13#10
@@ -4645,7 +4660,7 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 464
-    Top = 390
+    Top = 392
   end
   object CDS_Gr_Financeiro: TClientDataSet
     Aggregates = <>
@@ -4653,7 +4668,7 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_Gr_Financeiro'
     AfterScroll = CDS_Gr_FinanceiroAfterScroll
     Left = 548
-    Top = 454
+    Top = 456
     object CDS_Gr_FinanceiroCOD_GR_FINAN: TIntegerField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_GR_FINAN'
@@ -4694,13 +4709,14 @@ object DMBelShop: TDMBelShop
   end
   object DSP_Gr_Financeiro: TDataSetProvider
     DataSet = SDS_Gr_Financeiro
+    Options = [poRetainServerOrder]
     Left = 504
-    Top = 470
+    Top = 472
   end
   object DS_Gr_Financeiro: TDataSource
     DataSet = CDS_Gr_Financeiro
     Left = 595
-    Top = 470
+    Top = 472
   end
   object SDS_Gr_Financeiro: TSQLDataSet
     CommandText = 'select *'#13#10'from fin_gr_financeiro'#13#10'order by DES_GR_FINAN'#13#10
@@ -4708,14 +4724,14 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 464
-    Top = 454
+    Top = 456
   end
   object CDS_DemonsResultado: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_DemonsResultado'
     Left = 548
-    Top = 526
+    Top = 528
     object CDS_DemonsResultadoCOD_VISAO: TIntegerField
       DisplayLabel = 'Cod_Visao'
       FieldName = 'COD_VISAO'
@@ -4760,13 +4776,14 @@ object DMBelShop: TDMBelShop
   end
   object DSP_DemonsResultado: TDataSetProvider
     DataSet = SDS_DemonsResultado
+    Options = [poRetainServerOrder]
     Left = 504
-    Top = 542
+    Top = 544
   end
   object DS_DemonsResultado: TDataSource
     DataSet = CDS_DemonsResultado
     Left = 595
-    Top = 542
+    Top = 544
   end
   object SDS_DemonsResultado: TSQLDataSet
     CommandText = 
@@ -4776,33 +4793,34 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 464
-    Top = 526
+    Top = 528
   end
   object SDS_Demandas: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 224
-    Top = 192
+    Left = 240
+    Top = 194
   end
   object DSP_Demandas: TDataSetProvider
     DataSet = SDS_Demandas
+    Options = [poRetainServerOrder]
     Left = 282
-    Top = 208
+    Top = 210
   end
   object CDS_Demandas: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Demandas'
     Left = 319
-    Top = 189
+    Top = 191
   end
   object CDS_VisualObjetos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_VisualObjetos'
     Left = 548
-    Top = 187
+    Top = 189
     object CDS_VisualObjetosCOD_USUARIO: TIntegerField
       DisplayLabel = 'Cod'
       FieldName = 'COD_USUARIO'
@@ -4815,13 +4833,14 @@ object DMBelShop: TDMBelShop
   end
   object DSP_VisualObjetos: TDataSetProvider
     DataSet = SDS_VisualObjetos
+    Options = [poRetainServerOrder]
     Left = 504
-    Top = 203
+    Top = 205
   end
   object DS_VisualObjetos: TDataSource
     DataSet = CDS_VisualObjetos
     Left = 595
-    Top = 203
+    Top = 205
   end
   object SDS_VisualObjetos: TSQLDataSet
     CommandText = 
@@ -4845,7 +4864,7 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 464
-    Top = 187
+    Top = 189
   end
   object CDS_Objetivos: TClientDataSet
     Aggregates = <>
@@ -4853,7 +4872,7 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_Objetivos'
     AfterScroll = CDS_ObjetivosAfterScroll
     Left = 774
-    Top = 9
+    Top = 11
     object CDS_ObjetivosPROC: TStringField
       DisplayLabel = 'Proc?'
       FieldName = 'PROC'
@@ -4920,13 +4939,14 @@ object DMBelShop: TDMBelShop
   end
   object DSP_Objetivos: TDataSetProvider
     DataSet = SDS_Objetivos
+    Options = [poRetainServerOrder]
     Left = 739
-    Top = 25
+    Top = 27
   end
   object DS_Objetivos: TDataSource
     DataSet = CDS_Objetivos
     Left = 814
-    Top = 25
+    Top = 27
   end
   object SDS_Objetivos: TSQLDataSet
     CommandText = 
@@ -4936,12 +4956,13 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 704
-    Top = 9
+    Top = 11
   end
   object DSP_ObjetivosEmpresas: TDataSetProvider
     DataSet = SDS_ObjetivosEmpresas
+    Options = [poRetainServerOrder]
     Left = 739
-    Top = 88
+    Top = 90
   end
   object CDS_ObjetivosEmpresas: TClientDataSet
     Aggregates = <>
@@ -5105,7 +5126,7 @@ object DMBelShop: TDMBelShop
     StoreDefs = True
     AfterScroll = CDS_ObjetivosEmpresasAfterScroll
     Left = 774
-    Top = 68
+    Top = 70
     object CDS_ObjetivosEmpresasCOD_FILIAL: TStringField
       Alignment = taCenter
       DisplayLabel = 'Cod'
@@ -5127,7 +5148,7 @@ object DMBelShop: TDMBelShop
   object DS_ObjetivosEmpresas: TDataSource
     DataSet = CDS_ObjetivosEmpresas
     Left = 814
-    Top = 90
+    Top = 92
   end
   object SDS_ObjetivosEmpresas: TSQLDataSet
     ObjectView = True
@@ -5138,14 +5159,14 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 704
-    Top = 76
+    Top = 78
   end
   object CDS_ObjetivosMetas: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ObjetivosMetas'
     Left = 774
-    Top = 145
+    Top = 147
     object CDS_ObjetivosMetasCOD_FILIAL: TStringField
       FieldName = 'COD_FILIAL'
       Size = 2
@@ -5243,13 +5264,14 @@ object DMBelShop: TDMBelShop
   end
   object DSP_ObjetivosMetas: TDataSetProvider
     DataSet = SDS_ObjetivosMetas
+    Options = [poRetainServerOrder]
     Left = 739
-    Top = 161
+    Top = 163
   end
   object DS_ObjetivosMetas: TDataSource
     DataSet = CDS_ObjetivosMetas
     Left = 814
-    Top = 161
+    Top = 163
   end
   object SDS_ObjetivosMetas: TSQLDataSet
     CommandText = 'Select *'#13#10'From fin_objetivos_metas e'#13#10
@@ -5257,14 +5279,14 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 704
-    Top = 145
+    Top = 147
   end
   object CDS_FeriadosAno: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FeriadosAno'
     Left = 324
-    Top = 640
+    Top = 642
     object CDS_FeriadosAnoDTA_FERIADO: TDateField
       Alignment = taCenter
       DisplayLabel = 'Dia'
@@ -5287,6 +5309,7 @@ object DMBelShop: TDMBelShop
   end
   object DSP_FeriadosAno: TDataSetProvider
     DataSet = SDS_FeriadosAno
+    Options = [poRetainServerOrder]
     Left = 280
     Top = 656
   end
@@ -5301,7 +5324,7 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 240
-    Top = 640
+    Top = 642
   end
   object SDS_Enderecamento: TSQLDataSet
     CommandText = 
@@ -5318,19 +5341,20 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 704
-    Top = 211
+    Top = 213
   end
   object DSP_Enderecamento: TDataSetProvider
     DataSet = SDS_Enderecamento
+    Options = [poRetainServerOrder]
     Left = 739
-    Top = 225
+    Top = 227
   end
   object CDS_Enderecamento: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Enderecamento'
     Left = 774
-    Top = 203
+    Top = 205
     object CDS_EnderecamentoCOD_ZONA: TIntegerField
       FieldName = 'COD_ZONA'
     end
@@ -5398,33 +5422,34 @@ object DMBelShop: TDMBelShop
   object DS_Enderecamento: TDataSource
     DataSet = CDS_Enderecamento
     Left = 814
-    Top = 227
+    Top = 229
   end
   object SDS_ConectaEmpresa: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 45
-    Top = 199
+    Top = 201
   end
   object CDS_ConectaEmpresa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ConectaEmpresa'
     Left = 116
-    Top = 204
+    Top = 206
   end
   object DSP_ConectaEmpresa: TDataSetProvider
     DataSet = SDS_ConectaEmpresa
+    Options = [poRetainServerOrder]
     Left = 76
-    Top = 216
+    Top = 218
   end
   object CDS_Auditorias: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Auditorias'
     Left = 774
-    Top = 277
+    Top = 279
     object CDS_AuditoriasCOD_LOJA: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'Cod Loja'
@@ -5657,13 +5682,14 @@ object DMBelShop: TDMBelShop
   end
   object DSP_Auditorias: TDataSetProvider
     DataSet = SDS_Auditorias
+    Options = [poRetainServerOrder]
     Left = 739
-    Top = 292
+    Top = 294
   end
   object DS_Auditorias: TDataSource
     DataSet = CDS_Auditorias
     Left = 814
-    Top = 293
+    Top = 295
   end
   object SDS_Auditorias: TSQLDataSet
     CommandText = 'Select *'#13#10'From AUDITORIAS'#13#10
@@ -5671,14 +5697,14 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 704
-    Top = 277
+    Top = 279
   end
   object CDS_AuditoriaDatas: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_AuditoriaDatas'
     Left = 774
-    Top = 341
+    Top = 343
     object CDS_AuditoriaDatasDTA_AUDITORIA: TDateField
       FieldName = 'DTA_AUDITORIA'
       Required = True
@@ -5686,13 +5712,14 @@ object DMBelShop: TDMBelShop
   end
   object DSP_AuditoriaDatas: TDataSetProvider
     DataSet = SDS_AuditoriaDatas
+    Options = [poRetainServerOrder]
     Left = 739
-    Top = 357
+    Top = 359
   end
   object DS_AuditoriaDatas: TDataSource
     DataSet = CDS_AuditoriaDatas
     Left = 814
-    Top = 357
+    Top = 359
   end
   object SDS_AuditoriaDatas: TSQLDataSet
     CommandText = 
@@ -5702,7 +5729,7 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 704
-    Top = 341
+    Top = 343
   end
   object CDS_AuditoriaAnalise: TClientDataSet
     Aggregates = <>
@@ -5770,7 +5797,7 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_AuditoriaAnalise'
     StoreDefs = True
     Left = 774
-    Top = 405
+    Top = 407
     object CDS_AuditoriaAnaliseCOD_LOJA: TStringField
       Alignment = taCenter
       DisplayLabel = 'C'#243'd Loja'
@@ -5841,13 +5868,14 @@ object DMBelShop: TDMBelShop
   end
   object DSP_AuditoriaAnalise: TDataSetProvider
     DataSet = SDS_AuditoriaAnalise
+    Options = [poRetainServerOrder]
     Left = 739
-    Top = 421
+    Top = 423
   end
   object DS_AuditoriaAnalise: TDataSource
     DataSet = CDS_AuditoriaAnalise
     Left = 814
-    Top = 421
+    Top = 423
   end
   object SDS_AuditoriaAnalise: TSQLDataSet
     CommandText = 
@@ -5862,55 +5890,57 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 704
-    Top = 405
+    Top = 407
   end
   object SDS_Join: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 32
-    Top = 139
+    Top = 141
   end
   object DSP_Join: TDataSetProvider
     DataSet = SDS_Join
+    Options = [poRetainServerOrder]
     Left = 74
-    Top = 155
+    Top = 157
   end
   object CDS_Join: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Join'
     Left = 111
-    Top = 139
+    Top = 141
   end
   object DS_Join: TDataSource
     DataSet = CDS_Join
     Left = 149
-    Top = 155
+    Top = 157
   end
   object SDS_FechaCaixa: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 920
-    Top = 12
+    Top = 9
   end
   object DS_FechaCaixa: TDataSource
     DataSet = CDS_FechaCaixa
     Left = 1037
-    Top = 28
+    Top = 25
   end
   object DSP_FechaCaixa: TDataSetProvider
     DataSet = SDS_FechaCaixa
+    Options = [poRetainServerOrder]
     Left = 961
-    Top = 28
+    Top = 25
   end
   object CDS_FechaCaixa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FechaCaixa'
     Left = 1001
-    Top = 16
+    Top = 13
     object CDS_FechaCaixaCOD_CREDITO: TIntegerField
       DisplayLabel = 'Cod'
       FieldName = 'COD_CREDITO'
@@ -5966,24 +5996,25 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 920
-    Top = 76
+    Top = 73
   end
   object DS_FechaCaixaTotais: TDataSource
     DataSet = CDS_FechaCaixaTotais
     Left = 1037
-    Top = 92
+    Top = 89
   end
   object DSP_FechaCaixaTotais: TDataSetProvider
     DataSet = SDS_FechaCaixaTotais
+    Options = [poRetainServerOrder]
     Left = 961
-    Top = 92
+    Top = 89
   end
   object CDS_FechaCaixaTotais: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FechaCaixaTotais'
     Left = 1001
-    Top = 80
+    Top = 77
     object CDS_FechaCaixaTotaisCOD_CREDITO: TIntegerField
       DisplayLabel = 'Cod'
       FieldName = 'COD_CREDITO'
@@ -6061,19 +6092,20 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 920
-    Top = 202
+    Top = 199
   end
   object DSP_FechaDiarioMov: TDataSetProvider
     DataSet = SDS_FechaDiarioMov
+    Options = [poRetainServerOrder]
     Left = 961
-    Top = 218
+    Top = 215
   end
   object CDS_FechaDiarioMov: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FechaDiarioMov'
     Left = 1001
-    Top = 206
+    Top = 203
     object CDS_FechaDiarioMovNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Required = True
@@ -6138,7 +6170,7 @@ object DMBelShop: TDMBelShop
   object DS_FechaDiarioMov: TDataSource
     DataSet = CDS_FechaDiarioMov
     Left = 1037
-    Top = 218
+    Top = 215
   end
   object SDS_FechaDiarioTot: TSQLDataSet
     CommandText = 
@@ -6162,19 +6194,20 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 920
-    Top = 266
+    Top = 263
   end
   object DSP_FechaDiarioTot: TDataSetProvider
     DataSet = SDS_FechaDiarioTot
+    Options = [poRetainServerOrder]
     Left = 961
-    Top = 282
+    Top = 279
   end
   object CDS_FechaDiarioTot: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FechaDiarioTot'
     Left = 1001
-    Top = 270
+    Top = 267
     object CDS_FechaDiarioTotNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Required = True
@@ -6204,11 +6237,11 @@ object DMBelShop: TDMBelShop
   object DS_FechaDiarioTot: TDataSource
     DataSet = CDS_FechaDiarioTot
     Left = 1037
-    Top = 282
+    Top = 279
   end
   object DS_Geral: TDataSource
     Left = 240
-    Top = 8
+    Top = 10
   end
   object SDS_Seguranca: TSQLDataSet
     CommandText = 
@@ -6223,12 +6256,13 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 696
-    Top = 592
+    Top = 594
   end
   object DSP_Seguranca: TDataSetProvider
     DataSet = SDS_Seguranca
+    Options = [poRetainServerOrder]
     Left = 736
-    Top = 608
+    Top = 610
   end
   object CDS_Seguranca: TClientDataSet
     Aggregates = <>
@@ -6240,7 +6274,7 @@ object DMBelShop: TDMBelShop
       end>
     ProviderName = 'DSP_Seguranca'
     Left = 776
-    Top = 600
+    Top = 602
     object CDS_SegurancaUSUARIO: TStringField
       FieldName = 'USUARIO'
       Required = True
@@ -6269,20 +6303,20 @@ object DMBelShop: TDMBelShop
   object DS_Seguranca: TDataSource
     DataSet = CDS_Seguranca
     Left = 824
-    Top = 608
+    Top = 610
   end
   object SQLSP: TSQLStoredProc
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 192
-    Top = 16
+    Top = 18
   end
   object IBQ_Contar: TIBQuery
     BufferChunks = 1000
     CachedUpdates = False
     Left = 368
-    Top = 6
+    Top = 8
   end
   object SDS_ParametrosSis: TSQLDataSet
     CommandText = 'Select *'#13#10'from PARAMETROS'
@@ -6290,14 +6324,14 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 461
-    Top = 63
+    Top = 65
   end
   object CDS_ParametrosSis: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ParametrosSIS'
     Left = 550
-    Top = 68
+    Top = 70
     object CDS_ParametrosSisNUM_DIAS_CONCILIA: TIntegerField
       FieldName = 'NUM_DIAS_CONCILIA'
     end
@@ -6362,13 +6396,14 @@ object DMBelShop: TDMBelShop
   end
   object DSP_ParametrosSis: TDataSetProvider
     DataSet = SDS_ParametrosSis
+    Options = [poRetainServerOrder]
     Left = 502
-    Top = 80
+    Top = 82
   end
   object DS_ParametrosSis: TDataSource
     DataSet = CDS_ParametrosSis
     Left = 600
-    Top = 80
+    Top = 82
   end
   object SDS_Consistencias: TSQLDataSet
     CommandText = 
@@ -6384,19 +6419,20 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 704
-    Top = 467
+    Top = 469
   end
   object DSP_Consistencias: TDataSetProvider
     DataSet = SDS_Consistencias
+    Options = [poRetainServerOrder]
     Left = 746
-    Top = 483
+    Top = 485
   end
   object CDS_Consistencias: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Consistencias'
     Left = 783
-    Top = 467
+    Top = 469
     object CDS_ConsistenciasNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Visible = False
@@ -6441,45 +6477,46 @@ object DMBelShop: TDMBelShop
   object DS_Consistencias: TDataSource
     DataSet = CDS_Consistencias
     Left = 821
-    Top = 483
+    Top = 485
   end
   object SDS_EmpBusca: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 464
-    Top = 124
+    Top = 126
   end
   object CDS_EmpBusca: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_EmpBusca'
     Left = 548
-    Top = 129
+    Top = 131
   end
   object DSP_EmpBusca: TDataSetProvider
     DataSet = SDS_EmpBusca
+    Options = [poRetainServerOrder]
     Left = 504
-    Top = 141
+    Top = 143
   end
   object DS_EmpBusca: TDataSource
     DataSet = CDS_EmpBusca
     Left = 595
-    Top = 141
+    Top = 143
   end
   object SQLQuery2: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 89
-    Top = 83
+    Top = 85
   end
   object SQLQuery3: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 153
-    Top = 83
+    Top = 85
   end
   object ClientDataSet1: TClientDataSet
     Aggregates = <>
@@ -6547,7 +6584,7 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_AuditoriaAnalise'
     StoreDefs = True
     Left = 1001
-    Top = 329
+    Top = 326
     object StringField1: TStringField
       Alignment = taCenter
       DisplayLabel = 'C'#243'd Loja'
@@ -6618,13 +6655,14 @@ object DMBelShop: TDMBelShop
   end
   object DataSetProvider1: TDataSetProvider
     DataSet = SDS_SidicomPermissoes
+    Options = [poRetainServerOrder]
     Left = 961
-    Top = 345
+    Top = 342
   end
   object DataSource2: TDataSource
     DataSet = ClientDataSet1
     Left = 1037
-    Top = 345
+    Top = 342
   end
   object SDS_SidicomPermissoes: TSQLDataSet
     CommandText = 
@@ -6639,7 +6677,7 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 920
-    Top = 329
+    Top = 326
   end
   object SDS_CurvaFinanceira: TSQLDataSet
     CommandText = 'SELECT *'#13#10'FROM es_finan_curva_abc c'#13#10'WHERE c.cod_loja=999'
@@ -6647,24 +6685,25 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 920
-    Top = 140
+    Top = 137
   end
   object DS_CurvaFinanceira: TDataSource
     DataSet = CDS_CurvaFinanceira
     Left = 1037
-    Top = 156
+    Top = 153
   end
   object DSP_CurvaFinanceira: TDataSetProvider
     DataSet = SDS_CurvaFinanceira
+    Options = [poRetainServerOrder]
     Left = 961
-    Top = 156
+    Top = 153
   end
   object CDS_CurvaFinanceira: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CurvaFinanceira'
     Left = 1001
-    Top = 144
+    Top = 141
     object CDS_CurvaFinanceiraCOD_LOJA: TStringField
       FieldName = 'COD_LOJA'
       Required = True
@@ -6701,8 +6740,8 @@ object DMBelShop: TDMBelShop
       'From oc_comprar oc'
       'Where oc.num_documento<1')
     UpdateObject = IBUP_OC_ComprarAdd
-    Left = 1210
-    Top = 349
+    Left = 1178
+    Top = 351
     object IntegerField1: TIntegerField
       FieldName = 'NUM_SEQ'
       Origin = 'OC_COMPRAR.NUM_SEQ'
@@ -7771,8 +7810,8 @@ object DMBelShop: TDMBelShop
       'where'
       '  NUM_SEQ = :NUM_SEQ'
       '  and NUM_DOCUMENTO = :NUM_DOCUMENTO')
-    Left = 1258
-    Top = 363
+    Left = 1226
+    Top = 365
   end
   object SDS_DemandasNovo: TSQLDataSet
     GetMetadata = False
@@ -7799,19 +7838,20 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 240
-    Top = 258
+    Top = 260
   end
   object DSP_DemandasNovo: TDataSetProvider
     DataSet = SDS_DemandasNovo
+    Options = [poRetainServerOrder]
     Left = 282
-    Top = 274
+    Top = 276
   end
   object CDS_DemandasNovo: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_DemandasNovo'
     Left = 319
-    Top = 255
+    Top = 257
     object CDS_DemandasNovoCODPRODUTO: TStringField
       FieldName = 'CODPRODUTO'
       Required = True
@@ -7840,24 +7880,26 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 240
-    Top = 323
+    Top = 325
   end
   object DSP_UltCompraTransito: TDataSetProvider
     DataSet = SDS_UltCompraTransito
+    Options = [poRetainServerOrder]
     Left = 282
-    Top = 339
+    Top = 341
   end
   object CDS_UltCompraTransito: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_UltCompraTransito'
     Left = 319
-    Top = 320
+    Top = 322
   end
   object DSP_OCComparaPedidos: TDataSetProvider
     DataSet = SDS_OCComparaPedidos
+    Options = [poRetainServerOrder]
     Left = 282
-    Top = 534
+    Top = 536
   end
   object CDS_OCComparaPedidos: TClientDataSet
     Aggregates = <>
@@ -7976,7 +8018,7 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_OCComparaPedidos'
     StoreDefs = True
     Left = 319
-    Top = 518
+    Top = 520
     object CDS_OCComparaPedidosCOD_LOJA: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'Cod Loja'
@@ -8106,10 +8148,9 @@ object DMBelShop: TDMBelShop
   object DS_OCComparaPedidos: TDataSource
     DataSet = CDS_OCComparaPedidos
     Left = 357
-    Top = 535
+    Top = 537
   end
   object SDS_OCComparaPedidos: TSQLDataSet
-    ObjectView = True
     CommandText = 
       'SELECT '#13#10'oc.cod_empresa Cod_Loja,'#13#10'oc.des_empresa Des_Loja,'#13#10#39'A ' +
       'COMPRAR'#39' Pedidos,'#13#10'oc.cod_fornecedor Cod_Forn,'#13#10'oc.des_fornecedo' +
@@ -8130,237 +8171,275 @@ object DMBelShop: TDMBelShop
       'acomprar,0)) AS NUMERIC(12,2)),2) Total_Qtds,'#13#10#13#10'SUM('#13#10'CASE'#13#10'   ' +
       'WHEN oc.QTD_ACOMPRAR>0 THEN'#13#10'   1'#13#10'   ELSE'#13#10'   0'#13#10'END) Total_Ite' +
       'ns_Comprar'#13#10#13#10'FROM oc_comprar oc'#13#10#13#10'WHERE oc.num_documento=:NumD' +
-      'oc'#13#10'AND   oc.qtd_transf=0'#13#10'AND   oc.ind_oc_gerada='#39'N'#39#13#10'GROUP BY ' +
-      '1, 2, 4,  5, 16'#13#10#13#10'UNION -----------------------'#13#10#13#10'SELECT'#13#10'mc.c' +
-      'od_empresa Cod_Loja,'#13#10'mc.des_empresa Des_Loja,'#13#10#39'MESES'#39' Pedidos,' +
-      #13#10'mc.cod_fornecedor Cod_Forn,'#13#10'mc.des_fornecedor Des_Fornecedor,' +
-      #13#10#13#10'ROUND(CAST(SUM('#13#10'(COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vl' +
-      'r_uni_compra,0))-((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_u' +
-      'ni_compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10'              ' +
-      '      +'#13#10'                    (CAST((((COALESCE(mc.qtd_sugerida,0' +
+      'oc'#13#10'AND   CAST(oc.dta_documento as Date)=:DtaDoc'#13#10'AND   oc.qtd_t' +
+      'ransf=0'#13#10'AND   oc.ind_oc_gerada='#39'N'#39#13#10'GROUP BY 1, 2, 4,  5, 16'#13#10#13 +
+      #10'UNION -----------------------'#13#10#13#10'SELECT'#13#10'mc.cod_empresa Cod_Loj' +
+      'a,'#13#10'mc.des_empresa Des_Loja,'#13#10#39'MESES'#39' Pedidos,'#13#10'mc.cod_fornecedo' +
+      'r Cod_Forn,'#13#10'mc.des_fornecedor Des_Fornecedor,'#13#10#13#10'ROUND(CAST(SUM' +
+      '('#13#10'(COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))-(' +
+      '(COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*(COA' +
+      'LESCE(mc.per_desconto,0)/100))'#13#10'                    +'#13#10'         ' +
+      '           (CAST((((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_' +
+      'uni_compra,0))-((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni' +
+      '_compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10'                ' +
+      '    +'#13#10'                    (CAST((((COALESCE(mc.qtd_sugerida,0)*' +
+      'COALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_sugerida,0)*COA' +
+      'LESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10 +
+      '                    *'#13#10'                    COALESCE(mc.PER_MARGE' +
+      'M_ST,0))/100) AS NUMERIC(12,2)))'#13#10'                    *'#13#10'       ' +
+      '             COALESCE(PER_ST,0))/100) AS NUMERIC(12,2))'#13#10'       ' +
+      '             -'#13#10'                    CAST((((COALESCE(mc.qtd_suge' +
+      'rida,0)*COALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_sugerid' +
+      'a,0)*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per_desconto,0)' +
+      '/100))'#13#10'                    *'#13#10'                    COALESCE(mc.p' +
+      'er_icms,0))/100) AS NUMERIC(12,2)))'#13#10'                    +'#13#10'    ' +
+      '                (CAST((((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc' +
+      '.vlr_uni_compra,0))-((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vl' +
+      'r_uni_compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10'           ' +
+      '         *'#13#10'                    COALESCE(mc.per_ipi, 0))/100) AS' +
+      ' NUMERIC(12,2)))'#13#10') AS NUMERIC(12,2)),2) Total_Pedido,'#13#10#13#10'ROUND(' +
+      'CAST(SUM('#13#10'(COALESCE(mc.qtd_sugerida,0)'#13#10'                    *'#13#10 +
+      '                    COALESCE(mc.VLR_UNI_VENDA,0))'#13#10') AS NUMERIC(' +
+      '12,2)),2) Total_Venda,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(COALESCE(mc.qtd_suge' +
+      'rida,0)*COALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_sugerid' +
+      'a,0)*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per_desconto,0)' +
+      '/100))'#13#10') AS NUMERIC(12,2)),2) Total_Bruto,'#13#10#13#10'ROUND(CAST(SUM('#13#10 +
+      '((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*(CO' +
+      'ALESCE(mc.per_desconto,0)/100))'#13#10') AS NUMERIC(12,2)),2) Total_De' +
+      'scontos,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(CAST((((COALESCE(mc.qtd_sugerida,0' +
       ')*COALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_sugerida,0)*C' +
       'OALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per_desconto,0)/100))' +
-      #13#10'                    +'#13#10'                    (CAST((((COALESCE(m' +
+      #13#10'                    *'#13#10'                    COALESCE(mc.per_ipi' +
+      ', 0))/100) AS NUMERIC(12,2)))'#13#10') AS NUMERIC(12,2)),2) Total_IPI,' +
+      #13#10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(mc.vlr_despesas,0)'#13#10') AS NUMERIC(1' +
+      '2,2)),2) Total_Despesas,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(CAST((((COALESCE(m' +
       'c.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.q' +
       'td_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per_d' +
-      'esconto,0)/100))'#13#10'                    *'#13#10'                    COA' +
-      'LESCE(mc.PER_MARGEM_ST,0))/100) AS NUMERIC(12,2)))'#13#10'            ' +
-      '        *'#13#10'                    COALESCE(PER_ST,0))/100) AS NUMER' +
-      'IC(12,2))'#13#10'                    -'#13#10'                    CAST((((CO' +
-      'ALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))-((COALE' +
-      'SCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(' +
-      'mc.per_desconto,0)/100))'#13#10'                    *'#13#10'               ' +
-      '     COALESCE(mc.per_icms,0))/100) AS NUMERIC(12,2)))'#13#10'         ' +
-      '           +'#13#10'                    (CAST((((COALESCE(mc.qtd_suger' +
-      'ida,0)*COALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_sugerida' +
-      ',0)*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per_desconto,0)/' +
-      '100))'#13#10'                    *'#13#10'                    COALESCE(mc.pe' +
-      'r_ipi, 0))/100) AS NUMERIC(12,2)))'#13#10') AS NUMERIC(12,2)),2) Total' +
-      '_Pedido,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(COALESCE(mc.qtd_sugerida,0)'#13#10'     ' +
-      '               *'#13#10'                    COALESCE(mc.VLR_UNI_VENDA,' +
-      '0))'#13#10') AS NUMERIC(12,2)),2) Total_Venda,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(CO' +
-      'ALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))-((COALE' +
-      'SCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(' +
-      'mc.per_desconto,0)/100))'#13#10') AS NUMERIC(12,2)),2) Total_Bruto,'#13#10#13 +
-      #10'ROUND(CAST(SUM('#13#10'((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_' +
-      'uni_compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10') AS NUMERIC(' +
-      '12,2)),2) Total_Descontos,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(CAST((((COALESCE' +
-      '(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc' +
-      '.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per' +
-      '_desconto,0)/100))'#13#10'                    *'#13#10'                    C' +
-      'OALESCE(mc.per_ipi, 0))/100) AS NUMERIC(12,2)))'#13#10') AS NUMERIC(12' +
-      ',2)),2) Total_IPI,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(mc.vlr_despesas,' +
-      '0)'#13#10') AS NUMERIC(12,2)),2) Total_Despesas,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(' +
-      'CAST((((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0' +
-      '))-((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*' +
-      '(COALESCE(mc.per_desconto,0)/100))'#13#10'                    +'#13#10'     ' +
-      '               (CAST((((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.' +
-      'vlr_uni_compra,0))-((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr' +
-      '_uni_compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10'            ' +
-      '        *'#13#10'                    COALESCE(mc.PER_MARGEM_ST,0))/100' +
-      ') AS NUMERIC(12,2)))'#13#10'                    *'#13#10'                   ' +
-      ' COALESCE(PER_ST,0))/100) AS NUMERIC(12,2))'#13#10'                   ' +
-      ' -'#13#10'                    CAST((((COALESCE(mc.qtd_sugerida,0)*COAL' +
-      'ESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_sugerida,0)*COALESC' +
-      'E(mc.vlr_uni_compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10'    ' +
-      '                *'#13#10'                    COALESCE(mc.per_icms,0))/' +
-      '100) AS NUMERIC(12,2)))'#13#10') AS NUMERIC(12,2)),2) Total_ST,'#13#10#13#10'ROU' +
-      'ND(CAST(SUM('#13#10'COALESCE(mc.vlr_frete,0)'#13#10') AS NUMERIC(12,2)),2) T' +
-      'otal_Frete,'#13#10#13#10'ROUND(CAST(SUM('#13#10'CAST((((COALESCE(mc.qtd_sugerida' +
-      ',0)*COALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_sugerida,0)' +
-      '*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per_desconto,0)/100' +
-      '))'#13#10'                    *'#13#10'                    COALESCE(mc.per_i' +
-      'cms,0))/100) AS NUMERIC(12,2))'#13#10') AS NUMERIC(12,2)),2) Total_ICM' +
-      'S,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(mc.vlr_repasse,0)'#13#10') AS NUMERIC(' +
-      '12,2)),2) Total_Repasse,'#13#10#13#10'mc.num_documento Num_Docto,'#13#10#13#10'COUNT' +
-      '(mc.cod_item) Total_Itens,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(mc.qtd_s' +
-      'ugerida,0)'#13#10') AS NUMERIC(12,2)),2) Total_Qtds,'#13#10#13#10'SUM('#13#10'CASE'#13#10'  ' +
-      ' WHEN COALESCE(mc.qtd_sugerida,0)>0 THEN'#13#10'   1'#13#10'   ELSE'#13#10'   0'#13#10'E' +
-      'ND) Total_Itens_Comprar'#13#10#13#10'FROM oc_comprar mc'#13#10#13#10'WHERE mc.num_do' +
-      'cumento=:NumDoc'#13#10'AND   mc.qtd_transf=0'#13#10'AND   mc.ind_oc_gerada='#39 +
-      'N'#39#13#10'GROUP BY 1, 2, 4,  5, 16'#13#10#13#10'UNION -------------------------'#13 +
-      #10#13#10'SELECT'#13#10'ac.cod_empresa Cod_Loja,'#13#10'ac.des_empresa Des_Loja,'#13#10#39 +
-      'ANO'#39' Pedidos,'#13#10'ac.cod_fornecedor Cod_Forn,'#13#10'ac.des_fornecedor De' +
-      's_Fornecedor,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(COALESCE(ac.qtd_sugerida_ano,' +
-      '0)*COALESCE(ac.vlr_uni_compra,0))-((COALESCE(ac.qtd_sugerida_ano' +
-      ',0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE(ac.per_desconto,0)/' +
-      '100))'#13#10'                    +'#13#10'                    (CAST((((COALE' +
-      'SCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((COAL' +
-      'ESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(COAL' +
-      'ESCE(ac.per_desconto,0)/100))'#13#10'                    +'#13#10'          ' +
-      '          (CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.v' +
+      'esconto,0)/100))'#13#10'                    +'#13#10'                    (CA' +
+      'ST((((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))' +
+      '-((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*(C' +
+      'OALESCE(mc.per_desconto,0)/100))'#13#10'                    *'#13#10'       ' +
+      '             COALESCE(mc.PER_MARGEM_ST,0))/100) AS NUMERIC(12,2)' +
+      '))'#13#10'                    *'#13#10'                    COALESCE(PER_ST,0' +
+      '))/100) AS NUMERIC(12,2))'#13#10'                    -'#13#10'              ' +
+      '      CAST((((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_co' +
+      'mpra,0))-((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compr' +
+      'a,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10'                    *'#13 +
+      #10'                    COALESCE(mc.per_icms,0))/100) AS NUMERIC(12' +
+      ',2)))'#13#10') AS NUMERIC(12,2)),2) Total_ST,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COAL' +
+      'ESCE(mc.vlr_frete,0)'#13#10') AS NUMERIC(12,2)),2) Total_Frete,'#13#10#13#10'ROU' +
+      'ND(CAST(SUM('#13#10'CAST((((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vl' +
+      'r_uni_compra,0))-((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_u' +
+      'ni_compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10'              ' +
+      '      *'#13#10'                    COALESCE(mc.per_icms,0))/100) AS NU' +
+      'MERIC(12,2))'#13#10') AS NUMERIC(12,2)),2) Total_ICMS,'#13#10#13#10'ROUND(CAST(S' +
+      'UM('#13#10'COALESCE(mc.vlr_repasse,0)'#13#10') AS NUMERIC(12,2)),2) Total_Re' +
+      'passe,'#13#10#13#10'mc.num_documento Num_Docto,'#13#10#13#10'COUNT(mc.cod_item) Tota' +
+      'l_Itens,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(mc.qtd_sugerida,0)'#13#10') AS N' +
+      'UMERIC(12,2)),2) Total_Qtds,'#13#10#13#10'SUM('#13#10'CASE'#13#10'   WHEN COALESCE(mc.' +
+      'qtd_sugerida,0)>0 THEN'#13#10'   1'#13#10'   ELSE'#13#10'   0'#13#10'END) Total_Itens_Co' +
+      'mprar'#13#10#13#10'FROM oc_comprar mc'#13#10#13#10'WHERE mc.num_documento=:NumDoc'#13#10'A' +
+      'ND   CAST(mc.dta_documento as Date)=:DtaDoc'#13#10'AND   mc.qtd_transf' +
+      '=0'#13#10'AND   mc.ind_oc_gerada='#39'N'#39#13#10'GROUP BY 1, 2, 4,  5, 16'#13#10#13#10'UNIO' +
+      'N -------------------------'#13#10#13#10'SELECT'#13#10'ac.cod_empresa Cod_Loja,'#13 +
+      #10'ac.des_empresa Des_Loja,'#13#10#39'ANO'#39' Pedidos,'#13#10'ac.cod_fornecedor Cod' +
+      '_Forn,'#13#10'ac.des_fornecedor Des_Fornecedor,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(C' +
+      'OALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((' +
+      'COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(' +
+      'COALESCE(ac.per_desconto,0)/100))'#13#10'                    +'#13#10'      ' +
+      '              (CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(' +
+      'ac.vlr_uni_compra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE' +
+      '(ac.vlr_uni_compra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10'     ' +
+      '               +'#13#10'                    (CAST((((COALESCE(ac.qtd_s' +
+      'ugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((COALESCE(ac.qtd_' +
+      'sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE(ac.per_' +
+      'desconto,0)/100))'#13#10'                    *'#13#10'                    CO' +
+      'ALESCE(ac.PER_MARGEM_ST,0))/100) AS NUMERIC(12,2)))'#13#10'           ' +
+      '         *'#13#10'                    COALESCE(PER_ST,0))/100) AS NUME' +
+      'RIC(12,2))'#13#10'                    -'#13#10'                    CAST((((C' +
+      'OALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((' +
+      'COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(' +
+      'COALESCE(ac.per_desconto,0)/100))'#13#10'                    *'#13#10'      ' +
+      '              COALESCE(ac.per_icms,0))/100) AS NUMERIC(12,2)))'#13#10 +
+      '                    +'#13#10'                    (CAST((((COALESCE(ac.' +
+      'qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((COALESCE(ac' +
+      '.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE(ac' +
+      '.per_desconto,0)/100))'#13#10'                    *'#13#10'                 ' +
+      '   COALESCE(ac.per_ipi, 0))/100) AS NUMERIC(12,2)))'#13#10') AS NUMERI' +
+      'C(12,2)),2) Total_Pedido,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(COALESCE(ac.qtd_s' +
+      'ugerida_ano,0)'#13#10'                    *'#13#10'                    COALE' +
+      'SCE(ac.VLR_UNI_VENDA,0))'#13#10') AS NUMERIC(12,2)),2) Total_Venda,'#13#10#13 +
+      #10'ROUND(CAST(SUM('#13#10'(COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.v' +
       'lr_uni_compra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.' +
-      'vlr_uni_compra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10'         ' +
-      '           *'#13#10'                    COALESCE(ac.PER_MARGEM_ST,0))/' +
-      '100) AS NUMERIC(12,2)))'#13#10'                    *'#13#10'                ' +
-      '    COALESCE(PER_ST,0))/100) AS NUMERIC(12,2))'#13#10'                ' +
-      '    -'#13#10'                    CAST((((COALESCE(ac.qtd_sugerida_ano,' +
-      '0)*COALESCE(ac.vlr_uni_compra,0))-((COALESCE(ac.qtd_sugerida_ano' +
-      ',0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE(ac.per_desconto,0)/' +
-      '100))'#13#10'                    *'#13#10'                    COALESCE(ac.pe' +
-      'r_icms,0))/100) AS NUMERIC(12,2)))'#13#10'                    +'#13#10'     ' +
-      '               (CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE' +
-      '(ac.vlr_uni_compra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALESC' +
-      'E(ac.vlr_uni_compra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10'    ' +
-      '                *'#13#10'                    COALESCE(ac.per_ipi, 0))/' +
-      '100) AS NUMERIC(12,2)))'#13#10') AS NUMERIC(12,2)),2) Total_Pedido,'#13#10#13 +
-      #10'ROUND(CAST(SUM('#13#10'(COALESCE(ac.qtd_sugerida_ano,0)'#13#10'            ' +
-      '        *'#13#10'                    COALESCE(ac.VLR_UNI_VENDA,0))'#13#10') ' +
-      'AS NUMERIC(12,2)),2) Total_Venda,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(COALESCE(' +
-      'ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((COALESCE' +
-      '(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE' +
-      '(ac.per_desconto,0)/100))'#13#10') AS NUMERIC(12,2)),2) Total_Bruto,'#13#10 +
-      #13#10'ROUND(CAST(SUM('#13#10'((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac' +
-      '.vlr_uni_compra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10') AS NUM' +
-      'ERIC(12,2)),2) Total_Descontos,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(CAST((((COA' +
-      'LESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((CO' +
-      'ALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(CO' +
-      'ALESCE(ac.per_desconto,0)/100))'#13#10'                    *'#13#10'        ' +
-      '            COALESCE(ac.per_ipi, 0))/100) AS NUMERIC(12,2)))'#13#10') ' +
-      'AS NUMERIC(12,2)),2) Total_IPI,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(ac.' +
-      'vlr_despesas,0)'#13#10') AS NUMERIC(12,2)),2) Total_Despesas,'#13#10#13#10'ROUND' +
-      '(CAST(SUM('#13#10'(CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac' +
-      '.vlr_uni_compra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(a' +
-      'c.vlr_uni_compra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10'       ' +
-      '             +'#13#10'                    (CAST((((COALESCE(ac.qtd_sug' +
-      'erida_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((COALESCE(ac.qtd_su' +
-      'gerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE(ac.per_de' +
-      'sconto,0)/100))'#13#10'                    *'#13#10'                    COAL' +
-      'ESCE(ac.PER_MARGEM_ST,0))/100) AS NUMERIC(12,2)))'#13#10'             ' +
-      '       *'#13#10'                    COALESCE(PER_ST,0))/100) AS NUMERI' +
-      'C(12,2))'#13#10'                    -'#13#10'                    CAST((((COA' +
-      'LESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((CO' +
-      'ALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(CO' +
-      'ALESCE(ac.per_desconto,0)/100))'#13#10'                    *'#13#10'        ' +
-      '            COALESCE(ac.per_icms,0))/100) AS NUMERIC(12,2)))'#13#10') ' +
-      'AS NUMERIC(12,2)),2) Total_ST,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(ac.v' +
-      'lr_frete,0)'#13#10') AS NUMERIC(12,2)),2) Total_Frete,'#13#10#13#10'ROUND(CAST(S' +
-      'UM('#13#10'CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni' +
-      '_compra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_un' +
-      'i_compra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10'               ' +
-      '     *'#13#10'                    COALESCE(ac.per_icms,0))/100) AS NUM' +
-      'ERIC(12,2))'#13#10') AS NUMERIC(12,2)),2) Total_ICMS,'#13#10#13#10'ROUND(CAST(SU' +
-      'M('#13#10'COALESCE(ac.vlr_repasse,0)'#13#10') AS NUMERIC(12,2)),2) Total_Rep' +
-      'asse,'#13#10#13#10'ac.num_documento Num_Docto,'#13#10#13#10'COUNT(ac.cod_item) Total' +
-      '_Itens,'#13#10#13#10'ROUND(CAST(SUM(                                      ' +
-      '      '#13#10'COALESCE(ac.qtd_sugerida_ano,0)'#13#10') AS NUMERIC(12,2)),2) ' +
-      'Total_Qtds,'#13#10#13#10'SUM('#13#10'CASE'#13#10'   WHEN COALESCE(ac.qtd_sugerida_ano,' +
-      '0)>0 THEN'#13#10'   1'#13#10'   ELSE'#13#10'   0'#13#10'END) Total_Itens_Comprar'#13#10#13#10'FROM' +
-      ' oc_comprar ac'#13#10#13#10'WHERE ac.num_documento=:NumDoc'#13#10'AND   ac.qtd_t' +
-      'ransf=0'#13#10'AND   ac.ind_oc_gerada='#39'N'#39#13#10'GROUP BY 1, 2, 4,  5, 16'#13#10#13 +
-      #10'UNION -------------------------'#13#10#13#10'SELECT '#13#10#39'XX'#39' Cod_Loja,'#13#10#39'TO' +
-      'TAL GERAL'#39' Des_Loja,'#13#10#39'A COMPRAR'#39' Pedidos,'#13#10#39#39' Cod_Forn,'#13#10#39#39' Des' +
-      '_Fornecedor,'#13#10#13#10'ROUND(CAST(SUM(COALESCE(oc.vlr_tot_compra,0)) AS' +
-      ' NUMERIC(12,2)),2) Total_Pedido,'#13#10'ROUND(CAST(SUM(COALESCE(oc.vlr' +
-      '_tot_venda,0)) AS NUMERIC(12,2)),2) Total_Venda,'#13#10#13#10'ROUND(CAST(S' +
-      'UM(COALESCE(oc.vlr_bruto,0)) AS NUMERIC(12,2)),2) Total_Bruto,'#13#10 +
-      'ROUND(CAST(SUM(COALESCE(oc.vlr_descontos,0)) AS NUMERIC(12,2)),2' +
-      ') Total_Descontos,'#13#10'ROUND(CAST(SUM(COALESCE(oc.vlr_ipi,0)) AS NU' +
-      'MERIC(12,2)),2) Total_IPI,'#13#10'ROUND(CAST(SUM(COALESCE(oc.vlr_despe' +
-      'sas,0)) AS NUMERIC(12,2)),2) Total_Despesas,'#13#10'ROUND(CAST(SUM(COA' +
-      'LESCE(oc.vlr_st,0)) AS NUMERIC(12,2)),2) Total_ST,'#13#10'ROUND(CAST(S' +
-      'UM(COALESCE(oc.vlr_frete,0)) AS NUMERIC(12,2)),2) Total_Frete,'#13#10 +
-      'ROUND(CAST(SUM(COALESCE(oc.vlr_icms,0)) AS NUMERIC(12,2)),2) Tot' +
-      'al_ICMS,'#13#10'ROUND(CAST(SUM(COALESCE(oc.vlr_repasse,0)) AS NUMERIC(' +
-      '12,2)),2) Total_Repasse,'#13#10#13#10'oc.num_documento Num_Docto,'#13#10#13#10'COUNT' +
-      '(oc.cod_item) Total_Itens,'#13#10'ROUND(CAST(SUM(COALESCE(oc.qtd_acomp' +
-      'rar,0)) AS NUMERIC(12,2)),2) Total_Qtds,'#13#10#13#10'SUM('#13#10'CASE'#13#10'   WHEN ' +
-      'oc.QTD_ACOMPRAR>0 THEN'#13#10'   1'#13#10'   ELSE'#13#10'   0'#13#10'END) Total_Itens_Co' +
-      'mprar'#13#10#13#10'FROM oc_comprar oc'#13#10#13#10'WHERE oc.num_documento=:NumDoc'#13#10'A' +
-      'ND   oc.qtd_transf=0'#13#10'AND   oc.ind_oc_gerada='#39'N'#39#13#10'GROUP BY 16'#13#10#13 +
-      #10'UNION -----------------------'#13#10#13#10'SELECT'#13#10#39'XX'#39' Cod_Loja,'#13#10#39'TOTAL' +
-      ' GERAL'#39' Des_Loja,'#13#10#39'MESES'#39' Pedidos,'#13#10#39#39' Cod_Forn,'#13#10#39#39' Des_Fornec' +
-      'edor,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(COALESCE(mc.qtd_sugerida,0)*COALESCE(' +
-      'mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.' +
-      'vlr_uni_compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10'         ' +
-      '           +'#13#10'                    (CAST((((COALESCE(mc.qtd_suger' +
-      'ida,0)*COALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_sugerida' +
-      ',0)*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per_desconto,0)/' +
-      '100))'#13#10'                    +'#13#10'                    (CAST((((COALE' +
+      'vlr_uni_compra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10') AS NUME' +
+      'RIC(12,2)),2) Total_Bruto,'#13#10#13#10'ROUND(CAST(SUM('#13#10'((COALESCE(ac.qtd' +
+      '_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE(ac.per' +
+      '_desconto,0)/100))'#13#10') AS NUMERIC(12,2)),2) Total_Descontos,'#13#10#13#10'R' +
+      'OUND(CAST(SUM('#13#10'(CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COALESC' +
+      'E(ac.vlr_uni_compra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALES' +
+      'CE(ac.vlr_uni_compra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10'   ' +
+      '                 *'#13#10'                    COALESCE(ac.per_ipi, 0))' +
+      '/100) AS NUMERIC(12,2)))'#13#10') AS NUMERIC(12,2)),2) Total_IPI,'#13#10#13#10'R' +
+      'OUND(CAST(SUM('#13#10'COALESCE(ac.vlr_despesas,0)'#13#10') AS NUMERIC(12,2))' +
+      ',2) Total_Despesas,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(CAST((((COALESCE(ac.qtd' +
+      '_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((COALESCE(ac.qt' +
+      'd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE(ac.pe' +
+      'r_desconto,0)/100))'#13#10'                    +'#13#10'                    ' +
+      '(CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_com' +
+      'pra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_co' +
+      'mpra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10'                   ' +
+      ' *'#13#10'                    COALESCE(ac.PER_MARGEM_ST,0))/100) AS NU' +
+      'MERIC(12,2)))'#13#10'                    *'#13#10'                    COALES' +
+      'CE(PER_ST,0))/100) AS NUMERIC(12,2))'#13#10'                    -'#13#10'   ' +
+      '                 CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COALESC' +
+      'E(ac.vlr_uni_compra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALES' +
+      'CE(ac.vlr_uni_compra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10'   ' +
+      '                 *'#13#10'                    COALESCE(ac.per_icms,0))' +
+      '/100) AS NUMERIC(12,2)))'#13#10') AS NUMERIC(12,2)),2) Total_ST,'#13#10#13#10'RO' +
+      'UND(CAST(SUM('#13#10'COALESCE(ac.vlr_frete,0)'#13#10') AS NUMERIC(12,2)),2) ' +
+      'Total_Frete,'#13#10#13#10'ROUND(CAST(SUM('#13#10'CAST((((COALESCE(ac.qtd_sugerid' +
+      'a_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((COALESCE(ac.qtd_sugeri' +
+      'da_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE(ac.per_descon' +
+      'to,0)/100))'#13#10'                    *'#13#10'                    COALESCE' +
+      '(ac.per_icms,0))/100) AS NUMERIC(12,2))'#13#10') AS NUMERIC(12,2)),2) ' +
+      'Total_ICMS,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(ac.vlr_repasse,0)'#13#10') AS' +
+      ' NUMERIC(12,2)),2) Total_Repasse,'#13#10#13#10'ac.num_documento Num_Docto,' +
+      #13#10#13#10'COUNT(ac.cod_item) Total_Itens,'#13#10#13#10'ROUND(CAST(SUM(          ' +
+      '                                  '#13#10'COALESCE(ac.qtd_sugerida_ano' +
+      ',0)'#13#10') AS NUMERIC(12,2)),2) Total_Qtds,'#13#10#13#10'SUM('#13#10'CASE'#13#10'   WHEN C' +
+      'OALESCE(ac.qtd_sugerida_ano,0)>0 THEN'#13#10'   1'#13#10'   ELSE'#13#10'   0'#13#10'END)' +
+      ' Total_Itens_Comprar'#13#10#13#10'FROM oc_comprar ac'#13#10#13#10'WHERE ac.num_docum' +
+      'ento=:NumDoc'#13#10'AND   CAST(ac.dta_documento as Date)=:DtaDoc'#13#10'AND ' +
+      '  ac.qtd_transf=0'#13#10'AND   ac.ind_oc_gerada='#39'N'#39#13#10'GROUP BY 1, 2, 4,' +
+      '  5, 16'#13#10#13#10'UNION -------------------------'#13#10#13#10'SELECT '#13#10#39'XX'#39' Cod_' +
+      'Loja,'#13#10#39'TOTAL GERAL'#39' Des_Loja,'#13#10#39'A COMPRAR'#39' Pedidos,'#13#10#39#39' Cod_For' +
+      'n,'#13#10#39#39' Des_Fornecedor,'#13#10#13#10'ROUND(CAST(SUM(COALESCE(oc.vlr_tot_com' +
+      'pra,0)) AS NUMERIC(12,2)),2) Total_Pedido,'#13#10'ROUND(CAST(SUM(COALE' +
+      'SCE(oc.vlr_tot_venda,0)) AS NUMERIC(12,2)),2) Total_Venda,'#13#10#13#10'RO' +
+      'UND(CAST(SUM(COALESCE(oc.vlr_bruto,0)) AS NUMERIC(12,2)),2) Tota' +
+      'l_Bruto,'#13#10'ROUND(CAST(SUM(COALESCE(oc.vlr_descontos,0)) AS NUMERI' +
+      'C(12,2)),2) Total_Descontos,'#13#10'ROUND(CAST(SUM(COALESCE(oc.vlr_ipi' +
+      ',0)) AS NUMERIC(12,2)),2) Total_IPI,'#13#10'ROUND(CAST(SUM(COALESCE(oc' +
+      '.vlr_despesas,0)) AS NUMERIC(12,2)),2) Total_Despesas,'#13#10'ROUND(CA' +
+      'ST(SUM(COALESCE(oc.vlr_st,0)) AS NUMERIC(12,2)),2) Total_ST,'#13#10'RO' +
+      'UND(CAST(SUM(COALESCE(oc.vlr_frete,0)) AS NUMERIC(12,2)),2) Tota' +
+      'l_Frete,'#13#10'ROUND(CAST(SUM(COALESCE(oc.vlr_icms,0)) AS NUMERIC(12,' +
+      '2)),2) Total_ICMS,'#13#10'ROUND(CAST(SUM(COALESCE(oc.vlr_repasse,0)) A' +
+      'S NUMERIC(12,2)),2) Total_Repasse,'#13#10#13#10'oc.num_documento Num_Docto' +
+      ','#13#10#13#10'COUNT(oc.cod_item) Total_Itens,'#13#10'ROUND(CAST(SUM(COALESCE(oc' +
+      '.qtd_acomprar,0)) AS NUMERIC(12,2)),2) Total_Qtds,'#13#10#13#10'SUM('#13#10'CASE' +
+      #13#10'   WHEN oc.QTD_ACOMPRAR>0 THEN'#13#10'   1'#13#10'   ELSE'#13#10'   0'#13#10'END) Tota' +
+      'l_Itens_Comprar'#13#10#13#10'FROM oc_comprar oc'#13#10#13#10'WHERE oc.num_documento=' +
+      ':NumDoc'#13#10'AND   CAST(oc.dta_documento as Date)=:DtaDoc'#13#10'AND   oc.' +
+      'qtd_transf=0'#13#10'AND   oc.ind_oc_gerada='#39'N'#39#13#10'GROUP BY 16'#13#10#13#10'UNION -' +
+      '----------------------'#13#10#13#10'SELECT'#13#10#39'XX'#39' Cod_Loja,'#13#10#39'TOTAL GERAL'#39' ' +
+      'Des_Loja,'#13#10#39'MESES'#39' Pedidos,'#13#10#39#39' Cod_Forn,'#13#10#39#39' Des_Fornecedor,'#13#10#13 +
+      #10'ROUND(CAST(SUM('#13#10'(COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_u' +
+      'ni_compra,0))-((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_' +
+      'compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10'                 ' +
+      '   +'#13#10'                    (CAST((((COALESCE(mc.qtd_sugerida,0)*C' +
+      'OALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_sugerida,0)*COAL' +
+      'ESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10' ' +
+      '                   +'#13#10'                    (CAST((((COALESCE(mc.q' +
+      'td_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_' +
+      'sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per_desc' +
+      'onto,0)/100))'#13#10'                    *'#13#10'                    COALES' +
+      'CE(mc.PER_MARGEM_ST,0))/100) AS NUMERIC(12,2)))'#13#10'               ' +
+      '     *'#13#10'                    COALESCE(PER_ST,0))/100) AS NUMERIC(' +
+      '12,2))'#13#10'                    -'#13#10'                    CAST((((COALE' +
       'SCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))-((COALESCE' +
       '(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.' +
       'per_desconto,0)/100))'#13#10'                    *'#13#10'                  ' +
-      '  COALESCE(mc.PER_MARGEM_ST,0))/100) AS NUMERIC(12,2)))'#13#10'       ' +
-      '             *'#13#10'                    COALESCE(PER_ST,0))/100) AS ' +
-      'NUMERIC(12,2))'#13#10'                    -'#13#10'                    CAST(' +
-      '(((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))-((' +
-      'COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*(COAL' +
-      'ESCE(mc.per_desconto,0)/100))'#13#10'                    *'#13#10'          ' +
-      '          COALESCE(mc.per_icms,0))/100) AS NUMERIC(12,2)))'#13#10'    ' +
-      '                +'#13#10'                    (CAST((((COALESCE(mc.qtd_' +
-      'sugerida,0)*COALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_sug' +
-      'erida,0)*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per_descont' +
-      'o,0)/100))'#13#10'                    *'#13#10'                    COALESCE(' +
-      'mc.per_ipi, 0))/100) AS NUMERIC(12,2)))'#13#10') AS NUMERIC(12,2)),2) ' +
-      'Total_Pedido,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(COALESCE(mc.qtd_sugerida,0)'#13#10 +
-      '                    *'#13#10'                    COALESCE(mc.VLR_UNI_V' +
-      'ENDA,0))'#13#10') AS NUMERIC(12,2)),2) Total_Venda,'#13#10#13#10'ROUND(CAST(SUM(' +
-      #13#10'(COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))-((' +
-      'COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*(COAL' +
-      'ESCE(mc.per_desconto,0)/100))'#13#10') AS NUMERIC(12,2)),2) Total_Brut' +
-      'o,'#13#10#13#10'ROUND(CAST(SUM('#13#10'((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc' +
-      '.vlr_uni_compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10') AS NUM' +
-      'ERIC(12,2)),2) Total_Descontos,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(CAST((((COA' +
-      'LESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))-((COALES' +
-      'CE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(m' +
-      'c.per_desconto,0)/100))'#13#10'                    *'#13#10'                ' +
-      '    COALESCE(mc.per_ipi, 0))/100) AS NUMERIC(12,2)))'#13#10') AS NUMER' +
-      'IC(12,2)),2) Total_IPI,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(mc.vlr_desp' +
-      'esas,0)'#13#10') AS NUMERIC(12,2)),2) Total_Despesas,'#13#10#13#10'ROUND(CAST(SU' +
-      'M('#13#10'(CAST((((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_com' +
-      'pra,0))-((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra' +
-      ',0))*(COALESCE(mc.per_desconto,0)/100))'#13#10'                    +'#13#10 +
-      '                    (CAST((((COALESCE(mc.qtd_sugerida,0)*COALESC' +
+      '  COALESCE(mc.per_icms,0))/100) AS NUMERIC(12,2)))'#13#10'            ' +
+      '        +'#13#10'                    (CAST((((COALESCE(mc.qtd_sugerida' +
+      ',0)*COALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_sugerida,0)' +
+      '*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per_desconto,0)/100' +
+      '))'#13#10'                    *'#13#10'                    COALESCE(mc.per_i' +
+      'pi, 0))/100) AS NUMERIC(12,2)))'#13#10') AS NUMERIC(12,2)),2) Total_Pe' +
+      'dido,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(COALESCE(mc.qtd_sugerida,0)'#13#10'        ' +
+      '            *'#13#10'                    COALESCE(mc.VLR_UNI_VENDA,0))' +
+      #13#10') AS NUMERIC(12,2)),2) Total_Venda,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(COALE' +
+      'SCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))-((COALESCE' +
+      '(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.' +
+      'per_desconto,0)/100))'#13#10') AS NUMERIC(12,2)),2) Total_Bruto,'#13#10#13#10'RO' +
+      'UND(CAST(SUM('#13#10'((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni' +
+      '_compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10') AS NUMERIC(12,' +
+      '2)),2) Total_Descontos,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(CAST((((COALESCE(mc' +
+      '.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.qt' +
+      'd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per_de' +
+      'sconto,0)/100))'#13#10'                    *'#13#10'                    COAL' +
+      'ESCE(mc.per_ipi, 0))/100) AS NUMERIC(12,2)))'#13#10') AS NUMERIC(12,2)' +
+      '),2) Total_IPI,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(mc.vlr_despesas,0)'#13 +
+      #10') AS NUMERIC(12,2)),2) Total_Despesas,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(CAS' +
+      'T((((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))-' +
+      '((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_uni_compra,0))*(CO' +
+      'ALESCE(mc.per_desconto,0)/100))'#13#10'                    +'#13#10'        ' +
+      '            (CAST((((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr' +
+      '_uni_compra,0))-((COALESCE(mc.qtd_sugerida,0)*COALESCE(mc.vlr_un' +
+      'i_compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10'               ' +
+      '     *'#13#10'                    COALESCE(mc.PER_MARGEM_ST,0))/100) A' +
+      'S NUMERIC(12,2)))'#13#10'                    *'#13#10'                    CO' +
+      'ALESCE(PER_ST,0))/100) AS NUMERIC(12,2))'#13#10'                    -'#13 +
+      #10'                    CAST((((COALESCE(mc.qtd_sugerida,0)*COALESC' +
       'E(mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_sugerida,0)*COALESCE(m' +
       'c.vlr_uni_compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13#10'       ' +
-      '             *'#13#10'                    COALESCE(mc.PER_MARGEM_ST,0)' +
-      ')/100) AS NUMERIC(12,2)))'#13#10'                    *'#13#10'              ' +
-      '      COALESCE(PER_ST,0))/100) AS NUMERIC(12,2))'#13#10'              ' +
-      '      -'#13#10'                    CAST((((COALESCE(mc.qtd_sugerida,0)' +
+      '             *'#13#10'                    COALESCE(mc.per_icms,0))/100' +
+      ') AS NUMERIC(12,2)))'#13#10') AS NUMERIC(12,2)),2) Total_ST,'#13#10#13#10'ROUND(' +
+      'CAST(SUM('#13#10'COALESCE(mc.vlr_frete,0)'#13#10') AS NUMERIC(12,2)),2) Tota' +
+      'l_Frete,'#13#10#13#10'ROUND(CAST(SUM('#13#10'CAST((((COALESCE(mc.qtd_sugerida,0)' +
       '*COALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_sugerida,0)*CO' +
       'ALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per_desconto,0)/100))'#13 +
       #10'                    *'#13#10'                    COALESCE(mc.per_icms' +
-      ',0))/100) AS NUMERIC(12,2)))'#13#10') AS NUMERIC(12,2)),2) Total_ST,'#13#10 +
-      #13#10'ROUND(CAST(SUM('#13#10'COALESCE(mc.vlr_frete,0)'#13#10') AS NUMERIC(12,2))' +
-      ',2) Total_Frete,'#13#10#13#10'ROUND(CAST(SUM('#13#10'CAST((((COALESCE(mc.qtd_sug' +
-      'erida,0)*COALESCE(mc.vlr_uni_compra,0))-((COALESCE(mc.qtd_sugeri' +
-      'da,0)*COALESCE(mc.vlr_uni_compra,0))*(COALESCE(mc.per_desconto,0' +
-      ')/100))'#13#10'                    *'#13#10'                    COALESCE(mc.' +
-      'per_icms,0))/100) AS NUMERIC(12,2))'#13#10') AS NUMERIC(12,2)),2) Tota' +
-      'l_ICMS,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(mc.vlr_repasse,0)'#13#10') AS NUM' +
-      'ERIC(12,2)),2) Total_Repasse,'#13#10#13#10'mc.num_documento Num_Docto,'#13#10#13#10 +
-      'COUNT(mc.cod_item) Total_Itens,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(mc.' +
-      'qtd_sugerida,0)'#13#10') AS NUMERIC(12,2)),2) Total_Qtds,'#13#10#13#10'SUM('#13#10'CAS' +
-      'E'#13#10'   WHEN COALESCE(mc.qtd_sugerida,0)>0 THEN'#13#10'   1'#13#10'   ELSE'#13#10'  ' +
-      ' 0'#13#10'END) Total_Itens_Comprar'#13#10#13#10'FROM oc_comprar mc'#13#10#13#10'WHERE mc.n' +
-      'um_documento=:NumDoc'#13#10'AND   mc.qtd_transf=0'#13#10'AND   mc.ind_oc_ger' +
-      'ada='#39'N'#39#13#10'GROUP BY 16'#13#10#13#10'UNION -------------------------'#13#10#13#10'SELEC' +
-      'T'#13#10#39'XX'#39' Cod_Loja,'#13#10#39'TOTAL GERAL'#39' Des_Loja,'#13#10#39'ANO'#39' Pedidos,'#13#10#39#39' C' +
-      'od_Forn,'#13#10#39#39' Des_Fornecedor,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(COALESCE(ac.qt' +
+      ',0))/100) AS NUMERIC(12,2))'#13#10') AS NUMERIC(12,2)),2) Total_ICMS,'#13 +
+      #10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(mc.vlr_repasse,0)'#13#10') AS NUMERIC(12,' +
+      '2)),2) Total_Repasse,'#13#10#13#10'mc.num_documento Num_Docto,'#13#10#13#10'COUNT(mc' +
+      '.cod_item) Total_Itens,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(mc.qtd_suge' +
+      'rida,0)'#13#10') AS NUMERIC(12,2)),2) Total_Qtds,'#13#10#13#10'SUM('#13#10'CASE'#13#10'   WH' +
+      'EN COALESCE(mc.qtd_sugerida,0)>0 THEN'#13#10'   1'#13#10'   ELSE'#13#10'   0'#13#10'END)' +
+      ' Total_Itens_Comprar'#13#10#13#10'FROM oc_comprar mc'#13#10#13#10'WHERE mc.num_docum' +
+      'ento=:NumDoc'#13#10'AND   CAST(mc.dta_documento as Date)=:DtaDoc'#13#10'AND ' +
+      '  mc.qtd_transf=0'#13#10'AND   mc.ind_oc_gerada='#39'N'#39#13#10'GROUP BY 16'#13#10#13#10'UN' +
+      'ION -------------------------'#13#10#13#10'SELECT'#13#10#39'XX'#39' Cod_Loja,'#13#10#39'TOTAL ' +
+      'GERAL'#39' Des_Loja,'#13#10#39'ANO'#39' Pedidos,'#13#10#39#39' Cod_Forn,'#13#10#39#39' Des_Fornecedo' +
+      'r,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(COALESCE(ac.qtd_sugerida_ano,0)*COALESCE' +
+      '(ac.vlr_uni_compra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALESC' +
+      'E(ac.vlr_uni_compra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10'    ' +
+      '                +'#13#10'                    (CAST((((COALESCE(ac.qtd_' +
+      'sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((COALESCE(ac.qtd' +
+      '_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE(ac.per' +
+      '_desconto,0)/100))'#13#10'                    +'#13#10'                    (' +
+      'CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_comp' +
+      'ra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_com' +
+      'pra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10'                    ' +
+      '*'#13#10'                    COALESCE(ac.PER_MARGEM_ST,0))/100) AS NUM' +
+      'ERIC(12,2)))'#13#10'                    *'#13#10'                    COALESC' +
+      'E(PER_ST,0))/100) AS NUMERIC(12,2))'#13#10'                    -'#13#10'    ' +
+      '                CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE' +
+      '(ac.vlr_uni_compra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALESC' +
+      'E(ac.vlr_uni_compra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10'    ' +
+      '                *'#13#10'                    COALESCE(ac.per_icms,0))/' +
+      '100) AS NUMERIC(12,2)))'#13#10'                    +'#13#10'                ' +
+      '    (CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni' +
+      '_compra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_un' +
+      'i_compra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10'               ' +
+      '     *'#13#10'                    COALESCE(ac.per_ipi, 0))/100) AS NUM' +
+      'ERIC(12,2)))'#13#10') AS NUMERIC(12,2)),2) Total_Pedido,'#13#10#13#10'ROUND(CAST' +
+      '(SUM('#13#10'(COALESCE(ac.qtd_sugerida_ano,0)'#13#10'                    *'#13#10 +
+      '                    COALESCE(ac.VLR_UNI_VENDA,0))'#13#10') AS NUMERIC(' +
+      '12,2)),2) Total_Venda,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(COALESCE(ac.qtd_suge' +
+      'rida_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((COALESCE(ac.qtd_sug' +
+      'erida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE(ac.per_des' +
+      'conto,0)/100))'#13#10') AS NUMERIC(12,2)),2) Total_Bruto,'#13#10#13#10'ROUND(CAS' +
+      'T(SUM('#13#10'((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_co' +
+      'mpra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10') AS NUMERIC(12,2))' +
+      ',2) Total_Descontos,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(CAST((((COALESCE(ac.qt' +
       'd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((COALESCE(ac.q' +
       'td_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE(ac.p' +
-      'er_desconto,0)/100))'#13#10'                    +'#13#10'                   ' +
-      ' (CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_co' +
+      'er_desconto,0)/100))'#13#10'                    *'#13#10'                   ' +
+      ' COALESCE(ac.per_ipi, 0))/100) AS NUMERIC(12,2)))'#13#10') AS NUMERIC(' +
+      '12,2)),2) Total_IPI,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(ac.vlr_despesa' +
+      's,0)'#13#10') AS NUMERIC(12,2)),2) Total_Despesas,'#13#10#13#10'ROUND(CAST(SUM('#13 +
+      #10'(CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_co' +
       'mpra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_c' +
       'ompra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10'                  ' +
       '  +'#13#10'                    (CAST((((COALESCE(ac.qtd_sugerida_ano,0' +
@@ -8373,146 +8452,142 @@ object DMBelShop: TDMBelShop
       'd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((COALESCE(ac.q' +
       'td_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE(ac.p' +
       'er_desconto,0)/100))'#13#10'                    *'#13#10'                   ' +
-      ' COALESCE(ac.per_icms,0))/100) AS NUMERIC(12,2)))'#13#10'             ' +
-      '       +'#13#10'                    (CAST((((COALESCE(ac.qtd_sugerida_' +
-      'ano,0)*COALESCE(ac.vlr_uni_compra,0))-((COALESCE(ac.qtd_sugerida' +
-      '_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE(ac.per_desconto' +
-      ',0)/100))'#13#10'                    *'#13#10'                    COALESCE(a' +
-      'c.per_ipi, 0))/100) AS NUMERIC(12,2)))'#13#10') AS NUMERIC(12,2)),2) T' +
-      'otal_Pedido,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(COALESCE(ac.qtd_sugerida_ano,0' +
-      ')'#13#10'                    *'#13#10'                    COALESCE(ac.VLR_UN' +
-      'I_VENDA,0))'#13#10') AS NUMERIC(12,2)),2) Total_Venda,'#13#10#13#10'ROUND(CAST(S' +
-      'UM('#13#10'(COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra' +
-      ',0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compr' +
-      'a,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10') AS NUMERIC(12,2)),2)' +
-      ' Total_Bruto,'#13#10#13#10'ROUND(CAST(SUM('#13#10'((COALESCE(ac.qtd_sugerida_ano' +
-      ',0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE(ac.per_desconto,0)/' +
-      '100))'#13#10') AS NUMERIC(12,2)),2) Total_Descontos,'#13#10#13#10'ROUND(CAST(SUM' +
-      '('#13#10'(CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_' +
-      'compra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni' +
-      '_compra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10'                ' +
-      '    *'#13#10'                    COALESCE(ac.per_ipi, 0))/100) AS NUME' +
-      'RIC(12,2)))'#13#10') AS NUMERIC(12,2)),2) Total_IPI,'#13#10#13#10'ROUND(CAST(SUM' +
-      '('#13#10'COALESCE(ac.vlr_despesas,0)'#13#10') AS NUMERIC(12,2)),2) Total_Des' +
-      'pesas,'#13#10#13#10'ROUND(CAST(SUM('#13#10'(CAST((((COALESCE(ac.qtd_sugerida_ano' +
-      ',0)*COALESCE(ac.vlr_uni_compra,0))-((COALESCE(ac.qtd_sugerida_an' +
-      'o,0)*COALESCE(ac.vlr_uni_compra,0))*(COALESCE(ac.per_desconto,0)' +
-      '/100))'#13#10'                    +'#13#10'                    (CAST((((COAL' +
-      'ESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))-((COA' +
-      'LESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))*(COA' +
-      'LESCE(ac.per_desconto,0)/100))'#13#10'                    *'#13#10'         ' +
-      '           COALESCE(ac.PER_MARGEM_ST,0))/100) AS NUMERIC(12,2)))' +
-      #13#10'                    *'#13#10'                    COALESCE(PER_ST,0))' +
-      '/100) AS NUMERIC(12,2))'#13#10'                    -'#13#10'                ' +
-      '    CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_' +
-      'compra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni' +
-      '_compra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10'                ' +
-      '    *'#13#10'                    COALESCE(ac.per_icms,0))/100) AS NUME' +
-      'RIC(12,2)))'#13#10') AS NUMERIC(12,2)),2) Total_ST,'#13#10#13#10'ROUND(CAST(SUM(' +
-      #13#10'COALESCE(ac.vlr_frete,0)'#13#10') AS NUMERIC(12,2)),2) Total_Frete,'#13 +
-      #10#13#10'ROUND(CAST(SUM('#13#10'CAST((((COALESCE(ac.qtd_sugerida_ano,0)*COAL' +
-      'ESCE(ac.vlr_uni_compra,0))-((COALESCE(ac.qtd_sugerida_ano,0)*COA' +
-      'LESCE(ac.vlr_uni_compra,0))*(COALESCE(ac.per_desconto,0)/100))'#13#10 +
-      '                    *'#13#10'                    COALESCE(ac.per_icms,' +
-      '0))/100) AS NUMERIC(12,2))'#13#10') AS NUMERIC(12,2)),2) Total_ICMS,'#13#10 +
-      #13#10'ROUND(CAST(SUM('#13#10'COALESCE(ac.vlr_repasse,0)'#13#10') AS NUMERIC(12,2' +
-      ')),2) Total_Repasse,'#13#10#13#10'ac.num_documento Num_Docto,'#13#10#13#10'COUNT(ac.' +
-      'cod_item) Total_Itens,'#13#10#13#10'ROUND(CAST(SUM(                       ' +
-      '                     '#13#10'COALESCE(ac.qtd_sugerida_ano,0)'#13#10') AS NUM' +
-      'ERIC(12,2)),2) Total_Qtds,'#13#10#13#10'SUM('#13#10'CASE'#13#10'   WHEN COALESCE(ac.qt' +
-      'd_sugerida_ano,0)>0 THEN'#13#10'   1'#13#10'   ELSE'#13#10'   0'#13#10'END) Total_Itens_' +
-      'Comprar'#13#10#13#10'FROM oc_comprar ac'#13#10#13#10'WHERE ac.num_documento=:NumDoc'#13 +
-      #10'AND   ac.qtd_transf=0'#13#10'AND   ac.ind_oc_gerada='#39'N'#39#13#10'GROUP BY 16'#13 +
-      #10#13#10'ORDER BY 1, 4, 3'
+      ' COALESCE(ac.per_icms,0))/100) AS NUMERIC(12,2)))'#13#10') AS NUMERIC(' +
+      '12,2)),2) Total_ST,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COALESCE(ac.vlr_frete,0)' +
+      #13#10') AS NUMERIC(12,2)),2) Total_Frete,'#13#10#13#10'ROUND(CAST(SUM('#13#10'CAST((' +
+      '((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0))' +
+      '-((COALESCE(ac.qtd_sugerida_ano,0)*COALESCE(ac.vlr_uni_compra,0)' +
+      ')*(COALESCE(ac.per_desconto,0)/100))'#13#10'                    *'#13#10'   ' +
+      '                 COALESCE(ac.per_icms,0))/100) AS NUMERIC(12,2))' +
+      #13#10') AS NUMERIC(12,2)),2) Total_ICMS,'#13#10#13#10'ROUND(CAST(SUM('#13#10'COALESC' +
+      'E(ac.vlr_repasse,0)'#13#10') AS NUMERIC(12,2)),2) Total_Repasse,'#13#10#13#10'ac' +
+      '.num_documento Num_Docto,'#13#10#13#10'COUNT(ac.cod_item) Total_Itens,'#13#10#13#10 +
+      'ROUND(CAST(SUM(                                            '#13#10'COA' +
+      'LESCE(ac.qtd_sugerida_ano,0)'#13#10') AS NUMERIC(12,2)),2) Total_Qtds,' +
+      #13#10#13#10'SUM('#13#10'CASE'#13#10'   WHEN COALESCE(ac.qtd_sugerida_ano,0)>0 THEN'#13#10 +
+      '   1'#13#10'   ELSE'#13#10'   0'#13#10'END) Total_Itens_Comprar'#13#10#13#10'FROM oc_comprar' +
+      ' ac'#13#10#13#10'WHERE ac.num_documento=:NumDoc'#13#10'AND   CAST(ac.dta_documen' +
+      'to as Date)=:DtaDoc'#13#10'AND   ac.qtd_transf=0'#13#10'AND   ac.ind_oc_gera' +
+      'da='#39'N'#39#13#10'GROUP BY 16'#13#10#13#10'ORDER BY 1, 4, 3'
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftString
-        Name = 'NumDoc'
-        ParamType = ptInput
-        Value = '12238'
-      end
-      item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'NumDoc'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
+        Name = 'DtaDoc'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
         Name = 'NumDoc'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
+        Name = 'DtaDoc'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
         Name = 'NumDoc'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
+        Name = 'DtaDoc'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
         Name = 'NumDoc'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
+        Name = 'DtaDoc'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
         Name = 'NumDoc'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'DtaDoc'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'NumDoc'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'DtaDoc'
         ParamType = ptInput
       end>
     SQLConnection = SQLC
     Left = 240
-    Top = 521
+    Top = 523
   end
   object SDS_Busca1: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 35
-    Top = 425
+    Top = 427
   end
   object CDS_Busca1: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Busca1'
     Left = 116
-    Top = 430
+    Top = 432
   end
   object DSP_Busca1: TDataSetProvider
     DataSet = SDS_Busca1
+    Options = [poRetainServerOrder]
     Left = 76
-    Top = 442
+    Top = 444
   end
   object DS_Busca1: TDataSource
     DataSet = CDS_Busca1
     Left = 152
-    Top = 442
+    Top = 444
   end
   object IBQ_ConsultaFilial: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 449
-    Top = 5
+    Top = 7
   end
   object IBQ_BuscaRapida: TIBQuery
     Database = IBDB_BelShop
     Transaction = IBT_BelShop
     BufferChunks = 1000
     CachedUpdates = False
-    Left = 1282
-    Top = 104
+    Left = 1250
+    Top = 106
   end
   object SQLQuery1: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 25
-    Top = 75
+    Top = 77
   end
   object SQLQ_Busca: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 244
-    Top = 69
+    Top = 71
   end
   object SDS_BuscaCurva: TSQLQuery
     MaxBlobSize = -1
@@ -8538,7 +8613,7 @@ object DMBelShop: TDMBelShop
       'AND c.cod_produto = :CodProd')
     SQLConnection = SQLC
     Left = 537
-    Top = 8
+    Top = 10
     object SDS_BuscaCurvaIND_CURVA_QTD: TStringField
       FieldName = 'IND_CURVA_QTD'
       Size = 1
@@ -8550,51 +8625,54 @@ object DMBelShop: TDMBelShop
   end
   object DSP_Busca: TDataSetProvider
     DataSet = SDS_Busca
+    Options = [poRetainServerOrder]
     Left = 84
-    Top = 336
+    Top = 338
   end
   object CDS_Busca: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Busca'
     Left = 124
-    Top = 324
+    Top = 326
   end
   object DSP_SQLQ_Busca: TDataSetProvider
     DataSet = SQLQ_Busca
+    Options = [poRetainServerOrder]
     Left = 290
-    Top = 83
+    Top = 85
   end
   object CDS_SQLQ_Busca: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_SQLQ_Busca'
     Left = 351
-    Top = 70
+    Top = 72
   end
   object SDS_FaltasCDLojas: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 464
-    Top = 596
+    Top = 598
   end
   object CDS_FaltasCDLojas: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FaltasCDLojas'
     Left = 548
-    Top = 601
+    Top = 603
   end
   object DSP_FaltasCDLojas: TDataSetProvider
     DataSet = SDS_FaltasCDLojas
+    Options = [poRetainServerOrder]
     Left = 504
-    Top = 613
+    Top = 615
   end
   object DS_FaltasCDLojas: TDataSource
     DataSet = CDS_FaltasCDLojas
     Left = 595
-    Top = 613
+    Top = 615
   end
   object SDS_FluxoFornecedores: TSQLDataSet
     CommandText = 
@@ -8886,7 +8964,7 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 920
-    Top = 398
+    Top = 395
   end
   object CDS_FluxoFornecedores: TClientDataSet
     Aggregates = <>
@@ -8894,7 +8972,7 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_FluxoFornecedores'
     AfterScroll = CDS_FluxoFornecedoresAfterScroll
     Left = 1001
-    Top = 397
+    Top = 394
     object CDS_FluxoFornecedoresORDEM: TIntegerField
       FieldName = 'ORDEM'
       Required = True
@@ -8954,13 +9032,14 @@ object DMBelShop: TDMBelShop
   end
   object DSP_FluxoFornecedores: TDataSetProvider
     DataSet = SDS_FluxoFornecedores
+    Options = [poRetainServerOrder]
     Left = 961
-    Top = 414
+    Top = 411
   end
   object DS_FluxoFornecedores: TDataSource
     DataSet = CDS_FluxoFornecedores
     Left = 1037
-    Top = 414
+    Top = 411
   end
   object SDS_FluxoFornHistorico: TSQLDataSet
     CommandText = 
@@ -8973,14 +9052,14 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 920
-    Top = 516
+    Top = 513
   end
   object CDS_FluxoFornHistorico: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FluxoFornHistorico'
     Left = 1001
-    Top = 515
+    Top = 512
     object CDS_FluxoFornHistoricoDES_HISTORICO: TStringField
       DisplayLabel = 'Descri'#231#227'o'
       FieldName = 'DES_HISTORICO'
@@ -9003,12 +9082,12 @@ object DMBelShop: TDMBelShop
     DataSet = SDS_FluxoFornHistorico
     Options = [poRetainServerOrder]
     Left = 961
-    Top = 527
+    Top = 524
   end
   object DS_FluxoFornHistorico: TDataSource
     DataSet = CDS_FluxoFornHistorico
     Left = 1037
-    Top = 527
+    Top = 524
   end
   object SDS_EstoquePrevisao: TSQLDataSet
     CommandText = 
@@ -9026,19 +9105,20 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 704
-    Top = 531
+    Top = 533
   end
   object DSP_EstoquePrevisao: TDataSetProvider
     DataSet = SDS_EstoquePrevisao
+    Options = [poRetainServerOrder]
     Left = 746
-    Top = 547
+    Top = 549
   end
   object CDS_EstoquePrevisao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_EstoquePrevisao'
     Left = 783
-    Top = 531
+    Top = 533
     object CDS_EstoquePrevisaoNUM_DIAS_ESTOCAGEM: TIntegerField
       DisplayLabel = 'Dias EstG'
       FieldName = 'NUM_DIAS_ESTOCAGEM'
@@ -9097,7 +9177,7 @@ object DMBelShop: TDMBelShop
   object DS_EstoquePrevisao: TDataSource
     DataSet = CDS_EstoquePrevisao
     Left = 821
-    Top = 547
+    Top = 549
   end
   object SDS_FluxoFornReducao: TSQLDataSet
     CommandText = 
@@ -9108,7 +9188,7 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 920
-    Top = 574
+    Top = 571
   end
   object CDS_FluxoFornReducao: TClientDataSet
     Aggregates = <>
@@ -9116,7 +9196,7 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_FluxoFornReducao'
     AfterScroll = CDS_FluxoFornReducaoAfterScroll
     Left = 1001
-    Top = 573
+    Top = 570
     object CDS_FluxoFornReducaoCOD_FORNECEDOR: TStringField
       DisplayLabel = 'C'#243'd Forn'
       FieldName = 'COD_FORNECEDOR'
@@ -9133,12 +9213,12 @@ object DMBelShop: TDMBelShop
     DataSet = SDS_FluxoFornReducao
     Options = [poRetainServerOrder]
     Left = 961
-    Top = 590
+    Top = 587
   end
   object DS_FluxoFornReducao: TDataSource
     DataSet = CDS_FluxoFornReducao
     Left = 1037
-    Top = 590
+    Top = 587
   end
   object SDS_FluxoPercReducao: TSQLDataSet
     CommandText = 
@@ -9156,14 +9236,14 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 920
-    Top = 637
+    Top = 634
   end
   object CDS_FluxoPercReducao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FluxoPercReducao'
     Left = 1001
-    Top = 636
+    Top = 633
     object CDS_FluxoPercReducaoNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
     end
@@ -9201,11 +9281,11 @@ object DMBelShop: TDMBelShop
     DataSet = SDS_FluxoPercReducao
     Options = [poRetainServerOrder]
     Left = 961
-    Top = 653
+    Top = 650
   end
   object DS_FluxoPercReducao: TDataSource
     DataSet = CDS_FluxoPercReducao
     Left = 1037
-    Top = 653
+    Top = 650
   end
 end

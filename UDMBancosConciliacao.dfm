@@ -16,6 +16,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DSP_Bancos: TDataSetProvider
     DataSet = SDS_Bancos
+    Options = [poRetainServerOrder]
     Left = 80
     Top = 32
   end
@@ -99,6 +100,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DSP_LojasBanco: TDataSetProvider
     DataSet = SDS_LojasBanco
+    Options = [poRetainServerOrder]
     Left = 80
     Top = 112
   end
@@ -215,6 +217,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DSP_Extrato: TDataSetProvider
     DataSet = SDS_Extrato
+    Options = [poRetainServerOrder]
     Left = 80
     Top = 184
   end
@@ -243,6 +246,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DSP_LojasBancos: TDataSetProvider
     DataSet = SDS_LojasBancos
+    Options = [poRetainServerOrder]
     Left = 80
     Top = 264
   end
@@ -358,6 +362,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DSP_ConcExtratos: TDataSetProvider
     DataSet = SDS_ConcExtratos
+    Options = [poRetainServerOrder]
     Left = 320
     Top = 32
   end
@@ -386,6 +391,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DSP_CMExtratos: TDataSetProvider
     DataSet = SDS_CMExtratos
+    Options = [poRetainServerOrder]
     Left = 320
     Top = 154
   end
@@ -706,6 +712,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DSP_CMPagtos: TDataSetProvider
     DataSet = SDS_CMPagtos
+    Options = [poRetainServerOrder]
     Left = 320
     Top = 232
   end
@@ -726,6 +733,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DSP_TpConciliacao: TDataSetProvider
     DataSet = SDS_TpConciliacao
+    Options = [poRetainServerOrder]
     Left = 608
     Top = 40
   end
@@ -797,6 +805,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DSP_CMApresPagtos: TDataSetProvider
     DataSet = SDS_CMApresPagtos
+    Options = [poRetainServerOrder]
     Left = 320
     Top = 306
   end
@@ -978,6 +987,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DSP_CMApresExtratos: TDataSetProvider
     DataSet = SDS_CMApresExtratos
+    Options = [poRetainServerOrder]
     Left = 320
     Top = 384
   end
@@ -1002,6 +1012,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DSP_CMTotalPagtos: TDataSetProvider
     DataSet = SDS_CMTotalPagtos
+    Options = [poRetainServerOrder]
     Left = 320
     Top = 456
   end
@@ -1078,6 +1089,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DSP_HistAuto: TDataSetProvider
     DataSet = SDS_HistAuto
+    Options = [poRetainServerOrder]
     Left = 80
     Top = 384
   end
@@ -1162,6 +1174,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DSP_ConcCaixaTotais: TDataSetProvider
     DataSet = SDS_ConcCaixaTotais
+    Options = [poRetainServerOrder]
     Left = 617
     Top = 204
   end
@@ -1314,6 +1327,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DSP_ConcCaixa: TDataSetProvider
     DataSet = SDS_ConcCaixa
+    Options = [poRetainServerOrder]
     Left = 617
     Top = 116
   end

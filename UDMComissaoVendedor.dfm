@@ -261,6 +261,7 @@ object DMComissaoVendedor: TDMComissaoVendedor
   end
   object DSP_ComisVendedores: TDataSetProvider
     DataSet = SDS_ComisVendedores
+    Options = [poRetainServerOrder]
     Left = 392
     Top = 304
   end

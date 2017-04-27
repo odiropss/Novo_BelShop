@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 432
-    ActivePage = Ts_SolicitacoesExporta
+    ActivePage = Ts_GeraOCLegendaCores
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1459,7 +1459,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Pan_Cor4: TPanel
         Left = 72
-        Top = 156
+        Top = 140
         Width = 485
         Height = 27
         BorderStyle = bsSingle
@@ -1475,7 +1475,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Pan_Cor5: TPanel
         Left = 72
-        Top = 188
+        Top = 172
         Width = 485
         Height = 27
         BorderStyle = bsSingle
@@ -1491,7 +1491,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Pan_Cor6: TPanel
         Left = 72
-        Top = 220
+        Top = 204
         Width = 485
         Height = 27
         BorderStyle = bsSingle
@@ -1509,7 +1509,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Pan_Cor7: TPanel
         Left = 72
-        Top = 272
+        Top = 243
         Width = 485
         Height = 27
         BorderStyle = bsSingle
@@ -1556,6 +1556,22 @@ object FrmSolicitacoes: TFrmSolicitacoes
           ParentFont = False
           OnClick = Bt_GeraOCLegendaCoresVoltarClick
         end
+      end
+      object Panel14: TPanel
+        Left = 72
+        Top = 283
+        Width = 485
+        Height = 27
+        BorderStyle = bsSingle
+        Caption = 'C'#233'lula Vermelha: Produto Sem Valor Unit'#225'rio de Compra'
+        Color = clRed
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 8
       end
     end
     object Ts_FinanFechaCaixaLanctos: TTabSheet

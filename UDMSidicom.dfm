@@ -181,6 +181,7 @@ object DMSidicom: TDMSidicom
   end
   object DSP_UsuaSidicom: TDataSetProvider
     DataSet = SDS_UsuaSidicom
+    Options = [poRetainServerOrder]
     Left = 96
     Top = 208
   end
@@ -265,6 +266,7 @@ object DMSidicom: TDMSidicom
   end
   object DSp_LojasSidicom: TDataSetProvider
     DataSet = SDS_LojasSidicom
+    Options = [poRetainServerOrder]
     Left = 96
     Top = 288
   end

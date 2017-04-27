@@ -599,6 +599,7 @@ type
     Dbg_CodigosViculados: TDBGrid;
     JvXPButton1: TJvXPButton;
     DtaEdtSolicExpDoctoDestino: TDateTimePicker;
+    Panel14: TPanel;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);

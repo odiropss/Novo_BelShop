@@ -30,6 +30,7 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DSP_Transf_Cd: TDataSetProvider
     DataSet = SDS_Transf_Cd
+    Options = [poRetainServerOrder]
     Left = 104
     Top = 56
   end
@@ -241,6 +242,7 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DSP_NotasEntrada: TDataSetProvider
     DataSet = SDS_NotasEntrada
+    Options = [poRetainServerOrder]
     Left = 96
     Top = 128
   end
@@ -323,6 +325,7 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DSP_NotasEntr: TDataSetProvider
     DataSet = SDS_NotasEntr
+    Options = [poRetainServerOrder]
     Left = 104
     Top = 320
   end
@@ -489,6 +492,7 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DSP_RomaneioDev: TDataSetProvider
     DataSet = SDS_RomaneioDev
+    Options = [poRetainServerOrder]
     Left = 104
     Top = 400
   end
@@ -592,6 +596,7 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DSP_ReposicaoDocs: TDataSetProvider
     DataSet = SDS_ReposicaoDocs
+    Options = [poRetainServerOrder]
     Left = 448
     Top = 112
   end
@@ -719,6 +724,7 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DSP_ReposicaoTransf: TDataSetProvider
     DataSet = SDS_ReposicaoTransf
+    Options = [poRetainServerOrder]
     Left = 448
     Top = 176
   end
@@ -756,6 +762,7 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DSP_RelReposicao: TDataSetProvider
     DataSet = SDS_RelReposicao
+    Options = [poRetainServerOrder]
     Left = 459
     Top = 248
   end

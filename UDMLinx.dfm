@@ -18,6 +18,7 @@ object DMLinx: TDMLinx
   end
   object DSP_Busca: TDataSetProvider
     DataSet = SDS_Busca
+    Options = [poRetainServerOrder]
     Left = 84
     Top = 48
   end
@@ -30,6 +31,7 @@ object DMLinx: TDMLinx
   end
   object DSP_OCProdLinx: TDataSetProvider
     DataSet = SQLQ_OCProdLinx
+    Options = [poRetainServerOrder]
     Left = 84
     Top = 125
   end

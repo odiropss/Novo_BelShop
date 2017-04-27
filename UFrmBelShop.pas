@@ -24582,6 +24582,7 @@ procedure TFrmBelShop.EdtGeraOCBuscaDoctoExit(Sender: TObject);
 Var
   b: Boolean;
   MySql: String;
+  i: Integer;
 begin
   If (EdtGeraOCBuscaDocto.Value=0) Or (PC_OrdemCompra.ActivePage<>Ts_OCGeraOrdemCompra) Then
    Exit;
@@ -24652,7 +24653,32 @@ begin
   Bt_GeraOCCalcular.Visible:=True;
 
   // Busca Dados dos Itens do Documento ========================================
-  DMBelShop.IBQ_AComprar.Open;
+  i:=0;
+  b:=False;
+  While Not b do
+  Begin
+    Inc(i);
+    DMBelShop.IBQ_AComprar.Close;
+    DMBelShop.IBQ_AComprar.Open;
+    If DMBelShop.IBQ_AComprar.IsEmpty Then
+     Begin
+       DMBelShop.CDS_AComprarItens.Close;
+       EdtGeraOCBuscaDoctoExit(Self);
+       Break;
+     End
+    Else
+     Begin
+       Break;;
+     End;
+
+     If i=3 Then
+     Begin
+       DMBelShop.CDS_AComprarItens.Close;
+       EdtGeraOCBuscaDocto.AsInteger:=0;
+       EdtGeraOCBuscaDocto.SetFocus;
+       Exit;
+     End;
+  End; // While Not b do
 
   // Acerta Nome dos Meses de Demandas no Grid =================================
   NomeMesesGrid;
@@ -24902,7 +24928,6 @@ end;
 procedure TFrmBelShop.Dbg_GeraOCGridDrawColumnCell(Sender: TObject; const Rect: TRect;
           DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
-
   If (Column.FieldName='QTD_SALDO') Or (Column.FieldName='IND_QTD_ACIMA')Then
   Begin
     If DMBelShop.IBQ_AComprarIND_QTD_ACIMA.AsCurrency>0 Then
@@ -24933,9 +24958,19 @@ begin
   If (Column.FieldName='VLR_UNI_COMPRA') Then
   Begin
     If DMBelShop.IBQ_AComprarVLR_UNI_COMPRA.AsCurrency=0 Then
-     Dbg_GeraOCGrid.Canvas.Font.Style:=[]
+     Begin
+       Dbg_GeraOCGrid.Canvas.Font.Style:=[];
+
+       If DMBelShop.IBQ_AComprarIND_OC_GERADA.AsString='N' Then
+       Begin
+         Dbg_GeraOCGrid.Canvas.Font.Color:=clWhite;
+         Dbg_GeraOCGrid.Canvas.Brush.Color:=clRed;
+       End; // If DMBelShop.IBQ_AComprarIND_OC_GERADA.AsString='N' Then
+     End
     Else
-     Dbg_GeraOCGrid.Canvas.Font.Style:=[fsBold];
+     Begin
+       Dbg_GeraOCGrid.Canvas.Font.Style:=[fsBold];
+     End; // If DMBelShop.IBQ_AComprarVLR_UNI_COMPRA.AsCurrency=0 Then
   End; // If (Column.FieldName='VLR_UNI_COMPRA') Then
 
   if not (gdSelected in State) Then
@@ -25183,6 +25218,8 @@ end;
 
 procedure TFrmBelShop.EdtGeraOCBuscaDoctoChange(Sender: TObject);
 begin
+  bEnterTab:=True;
+
   DMBelShop.IBQ_AComprar.Close;
   DMBelShop.CDS_AComprarItens.Close;
   DMBelShop.CDS_AComprarOCs.Close;
@@ -25357,7 +25394,7 @@ begin
             ' :VALSUBSTITUICAO, :VALBASEICM, :VALBASESUBST, :VALICM, :TOTALITEM,'+
             ' :ALIQREPASSE, :VALREPASSE, :VALPECAS)';
 
-  // Monta Busca OC para Gerar OC ==============================================
+  // Monta Busca Pedido para Gerar Ordem de Compra =============================
   MySql:=' Select *'+
          ' From OC_COMPRAR oc'+
          ' Where oc.qtd_acomprar>0'+
@@ -43912,6 +43949,12 @@ begin
   // Funciona Somente com Isto
   Dbg_GeraOCTotalGeral.Canvas.FillRect(Rect);
   Dbg_GeraOCTotalGeral.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  // Alinhamento
+  DMBelShop.CDS_AComprarOCsGERAR.Alignment:=taCenter;
+  DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.Alignment:=taCenter;
+  DMBelShop.CDS_AComprarOCsCOD_LINX.Alignment:=taCenter;
+  DMBelShop.CDS_AComprarOCsDTA_OC_GERADA.Alignment:=taCenter;
 end;
 
 procedure TFrmBelShop.PopM_OCRomaneioMarcarOCsAbertasClick(Sender: TObject);
@@ -44448,7 +44491,7 @@ procedure TFrmBelShop.PopM_GeraOCLegendaCoresClick(Sender: TObject);
 begin
   // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
   FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
-  FrmBelShop.AbreSolicitacoes(4);
+  AbreSolicitacoes(4);
 
   FrmSolicitacoes.ShowModal;
   FreeAndNil(FrmSolicitacoes);
@@ -44876,7 +44919,8 @@ begin
 
   // Monta Compração de Pedidos ================================================
   DMBelShop.CDS_OCComparaPedidos.Close;
-  DMBelShop.SDS_OCComparaPedidos.Params.ParamByName('NumDoc').Value:=EdtGeraOCBuscaDocto.Value;
+  DMBelShop.SDS_OCComparaPedidos.Params.ParamByName('NumDoc').AsInteger:=EdtGeraOCBuscaDocto.AsInteger;
+  DMBelShop.SDS_OCComparaPedidos.Params.ParamByName('DtaDoc').AsDate   :=DtEdt_GeraOCDataDocto.Date;
   DMBelShop.CDS_OCComparaPedidos.Open;
 
   If DMBelShop.CDS_OCComparaPedidos.IsEmpty Then
@@ -46243,7 +46287,7 @@ end;
 
 procedure TFrmBelShop.SubMenuComprasGeraOCLinxClick(Sender: TObject);
 begin
-//OdirApagar
+//  OdirApagar
 //  msg('Opção em Desenvolvimento'+cr+'Liberação Entre 24/04/2017 e 28/04/2017','A');
 //  Exit;
 

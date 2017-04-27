@@ -60,6 +60,7 @@ object DMLojaUnica: TDMLojaUnica
   end
   object DSP_ParamLjFornDia: TDataSetProvider
     DataSet = SDS_ParamLjFornDia
+    Options = [poRetainServerOrder]
     Left = 126
     Top = 76
   end
@@ -104,6 +105,7 @@ object DMLojaUnica: TDMLojaUnica
   end
   object DSP_ParamLojasFTP: TDataSetProvider
     DataSet = SDS_ParamLojasFTP
+    Options = [poRetainServerOrder]
     Left = 126
     Top = 210
   end
@@ -279,6 +281,7 @@ object DMLojaUnica: TDMLojaUnica
   end
   object DSP_ParametrosLoja: TDataSetProvider
     DataSet = SDS_ParametrosLoja
+    Options = [poRetainServerOrder]
     Left = 126
     Top = 149
   end
@@ -588,6 +591,7 @@ object DMLojaUnica: TDMLojaUnica
   end
   object DSP_AComprarOCs: TDataSetProvider
     DataSet = SDS_AComprarOCs
+    Options = [poRetainServerOrder]
     Left = 114
     Top = 306
   end
@@ -969,6 +973,7 @@ object DMLojaUnica: TDMLojaUnica
   end
   object DSP_ImpListaPreco: TDataSetProvider
     DataSet = SDS_ImpListaPreco
+    Options = [poRetainServerOrder]
     Left = 468
     Top = 54
   end
@@ -1156,6 +1161,7 @@ object DMLojaUnica: TDMLojaUnica
   end
   object DSP_ImpFornecedor: TDataSetProvider
     DataSet = SDS_ImpFornecedor
+    Options = [poRetainServerOrder]
     Left = 460
     Top = 134
   end
@@ -1357,6 +1363,7 @@ object DMLojaUnica: TDMLojaUnica
   end
   object DSP_ImpProdutos: TDataSetProvider
     DataSet = SDS_ImpProdutos
+    Options = [poRetainServerOrder]
     Left = 460
     Top = 206
   end
