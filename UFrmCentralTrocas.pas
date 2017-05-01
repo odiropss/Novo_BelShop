@@ -2748,32 +2748,28 @@ End; // Show Hint em Forma de Balão - Posiciona do Componente >>>>>>>>>>>>>>>>>>
 
 procedure TFrmCentralTrocas.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  if bgSair Then
-   Begin
-     If FrmPesquisaIB<>nil Then
-      FreeAndNil(FrmPesquisaIB);
+  if Not bgSair Then
+  Begin
+    PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
+    msg('Para SAIR, Primeiro Tecle no Botão <Fechar>...','A');
+    Action := caNone;
+    Exit;
+  End;
 
-     If FrmPesquisa<>nil Then
-      FreeAndNil(FrmPesquisa);
-
-     If FrmSolicitacoes<>nil Then
-      FreeAndNil(FrmSolicitacoes);
-
-     If FrmSelectEmpProcessamento<>nil Then
-      FreeAndNil(FrmSelectEmpProcessamento);
-
-      If IBQ_Filial<>nil Then
-       FreeAndNil(IBQ_Filial);
-
-     Action := caHide; // caFree;
-   End
-  Else
-   Begin
-     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-     msg('Para SAIR, Primeiro Tecle no Botão <Fechar>...','A');
-     Action := caNone;
-   End;
-
+//  If FrmPesquisaIB<>nil Then
+//   FreeAndNil(FrmPesquisaIB);
+//
+//  If FrmPesquisa<>nil Then
+//   FreeAndNil(FrmPesquisa);
+//
+//  If FrmSolicitacoes<>nil Then
+//   FreeAndNil(FrmSolicitacoes);
+//
+//  If FrmSelectEmpProcessamento<>nil Then
+//   FreeAndNil(FrmSelectEmpProcessamento);
+//
+//   If IBQ_Filial<>nil Then
+//    FreeAndNil(IBQ_Filial);
 end;
 
 procedure TFrmCentralTrocas.FormCreate(Sender: TObject);

@@ -251,8 +251,11 @@ Begin
   sEmpresas:='';
   bgTodasEmpresas:=True;
   DMBelShop.CDS_EmpProcessa.First;
+  DMBelShop.CDS_EmpProcessa.DisableControls;
   While Not DMBelShop.CDS_EmpProcessa.Eof do
   Begin
+    Application.ProcessMessages;
+
     If DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
      Begin
        // Atualiza sEmpresa para Sql ---------------------------------
@@ -267,7 +270,8 @@ Begin
      End; // If DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
 
     DMBelShop.CDS_EmpProcessa.Next;
-  End; //   While Not DMBelShop.CDS_EmpProcessa.Eof do
+  End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
+  DMBelShop.CDS_EmpProcessa.EnableControls;
   DMBelShop.CDS_EmpProcessa.First;
 
   If Trim(sEmpresas)='' Then
@@ -279,7 +283,10 @@ Begin
   OdirPanApres.Caption:='AGUARDE !! Busca Movimentos de Créditos';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmConciliacaoCaixa.Width-OdirPanApres.Width)/2));
-  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmConciliacaoCaixa.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmConciliacaoCaixa.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmConciliacaoCaixa;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -326,7 +333,8 @@ Begin
                         ' SUM(c.vlr_credito) Vlr_Tot_Sidicom,'+
                         ' SUM(c.vlr_informado) Vlr_Tot_Informado,'+
                         ' 1 Indice'+
-                        ' FROM fin_conciliacao_caixa c'+
+
+                        ' FROM FIN_CONCILIACAO_CAIXA c'+
                         ' WHERE  c.num_seqreg>6499';
 
            If Not bgTodasEmpresas Then
@@ -485,11 +493,13 @@ Begin
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
     // Inclui Novos Valores Digitados no Credito FIN_CONCILIACAO_CAIXA_SOMA ====
+    i:=0;
     gCDS_V_Geral.First;
     gCDS_V_Geral.DisableControls;
-    i:=0;
     While Not gCDS_V_Geral.Eof do
     Begin
+      Application.ProcessMessages;
+
       Inc(i);
 
       If gCDS_V_Geral.FieldByName('VLR_INFORMADO').AsCurrency<>0 Then
@@ -674,7 +684,6 @@ Var
   i: Integer;
   sDta: String;
 Begin
-  //OK CONFERIDO ODIR
   Result:=False;
 
   sDta:=f_Troca('/', '.',DtEdtConcFechaCaixaData.Text);
@@ -688,7 +697,7 @@ Begin
          '   Else'+
          '      ''Sem Informação'''+
          ' END nomeforma'+
-         ' FROM formapgto f'+
+         ' FROM FORMAPGTO f'+
          ' order by 2';
   FrmBelShop.IBQ_ConsultaFilial.Close;
   FrmBelShop.IBQ_ConsultaFilial.SQL.Clear;
@@ -728,7 +737,6 @@ Begin
     TD.IsolationLevel:=xilREADCOMMITTED;
     DMBelShop.SQLC.StartTransaction(TD);
     Try
-      Screen.Cursor:=crAppStart;
       DateSeparator:='.';
       DecimalSeparator:='.';
 
@@ -742,13 +750,14 @@ Begin
       DMBelShop.CDS_Busca.Open;
 
       DMBelShop.CDS_Busca.First;
+      DMBelShop.CDS_Busca.DisableControls;
       While Not DMBelShop.CDS_Busca.Eof do
       Begin
         FrmBelShop.IBQ_ConsultaFilial.First;
-
+        FrmBelShop.IBQ_ConsultaFilial.DisableControls;
         While Not FrmBelShop.IBQ_ConsultaFilial.Eof do
         Begin
-          Refresh;
+          Application.ProcessMessages;
 
           // Conciliação do Caixa da Loja --------------------------------
           MySql:=' SELECT cx.cod_credito'+
@@ -763,10 +772,10 @@ Begin
 
           If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('cod_credito').AsString)='' Then
            Begin
-             MySql:=' Insert into FIN_CONCILIACAO_CAIXA'+
+             MySql:=' INSERT INTO FIN_CONCILIACAO_CAIXA'+
                     ' (NUM_SEQREG, NUM_SEQ, COD_LOJA, DTA_CAIXA, COD_OPERADOR,'+
                     '  COD_CREDITO, DES_CREDITO, USU_INCLUI)'+
-                    ' Values ('+
+                    ' VALUES ('+
                     'GEN_ID(GEN_CONCILIACAO_CAIXA,1), '+ //  NUM_SEQREG
                     '1, '+ // NUM_SEQ
                     QuotedStr(sCodFilial)+', '+ // COD_LOJA
@@ -778,7 +787,7 @@ Begin
            End
           Else // If not DMBelShop.CDS_BuscaRapida.Locate('cod_credito',FrmBelShop.IBQ_ConsultaFilial.FieldByName('CodForma').AsInteger,[]) Then
            Begin
-             MySql:=' Update FIN_CONCILIACAO_CAIXA cx'+
+             MySql:=' UPDATE FIN_CONCILIACAO_CAIXA cx'+
                     ' Set cx.Vlr_Credito=0'+
                     ', cx.DES_CREDITO='+QuotedStr(Trim(FrmBelShop.IBQ_ConsultaFilial.FieldByName('NomeForma').AsString))+
                     ', cx.USU_ALTERA='+QuotedStr(Cod_Usuario)+
@@ -792,10 +801,12 @@ Begin
 
           FrmBelShop.IBQ_ConsultaFilial.Next;
         End; // While Not FrmBelShop.IBQ_ConsultaFilial.Eof do
+        FrmBelShop.IBQ_ConsultaFilial.EnableControls;
         DMBelShop.CDS_BuscaRapida.Close;
 
         DMBelShop.CDS_Busca.Next;
-      End;
+      End; // While Not DMBelShop.CDS_Busca.Eof do
+      DMBelShop.CDS_Busca.EnableControls;
       DMBelShop.CDS_Busca.Close;
 
       // Atualiza Transacao =======================================
@@ -804,8 +815,6 @@ Begin
       Result:=True;
       DateSeparator:='/';
       DecimalSeparator:=',';
-      Screen.Cursor:=crDefault;
-
     Except
       on e : Exception do
       Begin
@@ -814,7 +823,6 @@ Begin
 
         DateSeparator:='/';
         DecimalSeparator:=',';
-        Screen.Cursor:=crDefault;
         OdirPanApres.Visible:=False;
 
         bgSiga:=False;
@@ -822,8 +830,9 @@ Begin
         MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
       End; // on e : Exception do
     End; // Try
-
   End; // If bSiga Then // Query Executada
+  FrmBelShop.IBQ_ConsultaFilial.Close;
+
 End; // Fechamento de Caixa Dia - Busca Plano de Contas >>>>>>>>>>>>>>>>>>>>>>>>
 
 // Conciliação de Caixa Dia - Busca Operadores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -833,7 +842,6 @@ Var
   i: Integer;
   sDta: String;
 Begin
-  //OK CONFERIDO ODIR
   Result:=False;
 
   sDta:=f_Troca('/', '.',DtEdtConcFechaCaixaData.Text);
@@ -870,7 +878,6 @@ Begin
   // Atualiza Contas ===========================================================
   If bgSiga Then // Query Executada
   Begin
-
     // Verifica se Transação esta Ativa
     If DMBelShop.SQLC.InTransaction Then
      DMBelShop.SQLC.Rollback(TD);
@@ -880,13 +887,13 @@ Begin
     TD.IsolationLevel:=xilREADCOMMITTED;
     DMBelShop.SQLC.StartTransaction(TD);
     Try
-      Screen.Cursor:=crAppStart;
       DateSeparator:='.';
       DecimalSeparator:='.';
 
+      FrmBelShop.IBQ_ConsultaFilial.DisableControls;
       While Not FrmBelShop.IBQ_ConsultaFilial.Eof do
       Begin
-        Refresh;
+        Application.ProcessMessages;
 
         // Conciliação do Caixa da Loja --------------------------------
         MySql:=' SELECT cx.cod_operador'+
@@ -900,9 +907,9 @@ Begin
 
         If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Operador').AsString)='' Then
         Begin
-          MySql:=' Insert into FIN_CONCILIACAO_CAIXAS'+
+          MySql:=' INSERT INTO FIN_CONCILIACAO_CAIXAS'+
                  ' (NUM_SEQ, COD_LOJA, DTA_CAIXA, COD_OPERADOR, DES_OPERADOR)'+
-                 ' Values ('+
+                 ' VALUES ('+
 
                  '(SELECT COALESCE(MAX(cx.num_seq)+1 ,1) FROM fin_conciliacao_caixas cx)'+', '+ // NUM_SEQ
                  QuotedStr(sCodFilial)+', '+ // COD_LOJA
@@ -915,6 +922,7 @@ Begin
 
         FrmBelShop.IBQ_ConsultaFilial.Next;
       End; // While Not FrmBelShop.IBQ_ConsultaFilial.Eof do
+      FrmBelShop.IBQ_ConsultaFilial.EnableControls;
 
       // Atualiza Transacao =======================================
       DMBelShop.SQLC.Commit(TD);
@@ -922,7 +930,6 @@ Begin
       Result:=True;
       DateSeparator:='/';
       DecimalSeparator:=',';
-      Screen.Cursor:=crDefault;
 
     Except
       on e : Exception do
@@ -932,7 +939,6 @@ Begin
 
         DateSeparator:='/';
         DecimalSeparator:=',';
-        Screen.Cursor:=crDefault;
         OdirPanApres.Visible:=False;
 
         bgSiga:=False;
@@ -940,8 +946,9 @@ Begin
         MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
       End; // on e : Exception do
     End; // Try
-
   End; // If bSiga Then // Query Executada
+  FrmBelShop.IBQ_ConsultaFilial.Close;
+
 End; // Conciliação de Caixa Dia - Busca Operadores >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Conciliação de Caixa Dia - Busca Total de Déditos >>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -952,18 +959,25 @@ Var
   sDta: String;
   sTotDebitos: String;
 Begin
-  // CONFERIDO ODIR
   Result:=False;
 
   sDta:=f_Troca('/', '.',DtEdtConcFechaCaixaData.Text);
   sDta:=f_Troca('-', '.',sDta);
 
   MySql:=' Select sum(Coalesce(m.totnota,0)) Tot_Debitos'+
-         ' From mcli m, comprv c'+
+         ' From MCLI m, COMPRV c'+
          ' Where m.codcomprovante=c.codcomprovante'+
-         ' And m.codcomprovante='+QuotedStr('002')+
-         ' And m.codfilial='+QuotedStr(sCodFilial)+
-         ' And m.datacomprovante='+QuotedStr(sDta);
+         ' And m.codcomprovante='+QuotedStr('002');
+
+         If sCodFilial<>'11' Then
+          MySql:=
+           MySql+' And m.codfilial='+QuotedStr(sCodFilial)
+         Else
+          MySql:=
+           MySql+' And m.codfilial='+QuotedStr('02');
+
+  MySql:=
+   MySql+' And m.datacomprovante='+QuotedStr(sDta);
   FrmBelShop.IBQ_ConsultaFilial.Close;
   FrmBelShop.IBQ_ConsultaFilial.SQL.Clear;
   FrmBelShop.IBQ_ConsultaFilial.SQL.Add(MySql);
@@ -989,7 +1003,7 @@ Begin
     End; // If i>10 Then
   End; // While Not bSiga do
 
-  // Atualiza COntas =========================================================
+  // Atualiza Contas ===========================================================
   If bgSiga Then // Query Executada
   Begin
      sTotDebitos:=FrmBelShop.IBQ_ConsultaFilial.FieldByName('Tot_Debitos').AsString;
@@ -1005,7 +1019,6 @@ Begin
     TD.IsolationLevel:=xilREADCOMMITTED;
     DMBelShop.SQLC.StartTransaction(TD);
     Try
-      Screen.Cursor:=crAppStart;
       DateSeparator:='.';
       DecimalSeparator:='.';
 
@@ -1020,11 +1033,11 @@ Begin
 
       If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('cod_credito').AsString)='' Then
        Begin
-         MySql:=' Insert into FIN_CONCILIACAO_CAIXA'+
+         MySql:=' INSERT INTO FIN_CONCILIACAO_CAIXA'+
                 ' (NUM_SEQREG, NUM_SEQ, COD_LOJA, DTA_CAIXA, COD_OPERADOR,'+
                 '  COD_CREDITO, DES_CREDITO,  VLR_CREDITO, VLR_INFORMADO, VLR_DIFERENCA,'+
                 '  IND_INFORMADO, IND_FECHADO, USU_INCLUI)'+
-                ' Values ('+
+                ' VALUES ('+
                 'GEN_ID(GEN_CONCILIACAO_CAIXA,1), '+ // NUM_SEQREG
                 '9999, '+ // NUM_SEQ
                 QuotedStr(sCodFilial)+', '+ // COD_LOJA
@@ -1042,7 +1055,7 @@ Begin
        End
       Else // If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('cod_credito').AsString)='' Then
        Begin
-         MySql:=' Update FIN_CONCILIACAO_CAIXA cx'+
+         MySql:=' UPDATE FIN_CONCILIACAO_CAIXA cx'+
                 ' Set cx.VLR_CREDITO='+f_Troca(',','.',sTotDebitos)+
                 ', cx.VLR_DIFERENCA=cx.VLR_INFORMADO-'+f_Troca(',','.',sTotDebitos)+
                 ', cx.USU_ALTERA='+QuotedStr(Cod_Usuario)+
@@ -1068,8 +1081,6 @@ Begin
       Result:=True;
       DateSeparator:='/';
       DecimalSeparator:=',';
-      Screen.Cursor:=crDefault;
-
     Except
       on e : Exception do
       Begin
@@ -1079,15 +1090,15 @@ Begin
         DateSeparator:='/';
         DecimalSeparator:=',';
         OdirPanApres.Visible:=False;
-        Screen.Cursor:=crDefault;
 
         bgSiga:=False;
 
         MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
       End; // on e : Exception do
     End; // Try
-
   End; // If bSiga Then // Query Executada
+  FrmBelShop.IBQ_ConsultaFilial.Close;
+
 End; // Conciliação de Caixa Dia - Busca Total de Déditos >>>>>>>>>>>>>>>>>>>>>>
 
 // Conciliação de Caixa Dia - Busca Movtos de Créditos >>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1097,8 +1108,6 @@ Var
   i: Integer;
   sDta, sVlrTotal: String;
 Begin
-  // CONFERIDO ODIR
-
   Result:=False;
 
   sDta:=f_Troca('/', '.',DtEdtConcFechaCaixaData.Text);
@@ -1128,9 +1137,17 @@ Begin
          '   LEFT JOIN CAIXA     cx  ON cx.codcaixa=mv.codcaixa'+
 
          ' WHERE mv.datadocumento='+QuotedStr(sDta)+
-         ' AND   mv.codcomprovante='+QuotedStr('002')+
-         ' AND   mv.codfilial='+QuotedStr(sCodFilial)+
-         ' GROUP BY 1,2,3,4'+
+         ' AND   mv.codcomprovante='+QuotedStr('002');
+
+         If sCodFilial<>'11' Then
+          MySql:=
+           MySql+' AND   mv.codfilial='+QuotedStr(sCodFilial)
+         Else
+          MySql:=
+           MySql+' AND   mv.codfilial='+QuotedStr('02');
+
+  MySql:=
+   MySql+' GROUP BY 1,2,3,4'+
          ' ORDER BY 1,3';
   FrmBelShop.IBQ_ConsultaFilial.Close;
   FrmBelShop.IBQ_ConsultaFilial.SQL.Clear;
@@ -1170,13 +1187,13 @@ Begin
     TD.IsolationLevel:=xilREADCOMMITTED;
     DMBelShop.SQLC.StartTransaction(TD);
     Try
-      Screen.Cursor:=crAppStart;
       DateSeparator:='.';
       DecimalSeparator:='.';
 
+      FrmBelShop.IBQ_ConsultaFilial.DisableControls;
       While Not FrmBelShop.IBQ_ConsultaFilial.Eof do
       Begin
-        Refresh;
+        Application.ProcessMessages;
 
         sVlrTotal:=Trim(f_Troca(',','.',FrmBelShop.IBQ_ConsultaFilial.FieldByName('Vlr_Total').AsString));
         If sVlrTotal='' Then
@@ -1195,12 +1212,12 @@ Begin
 
         If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('cod_credito').AsString)='' Then
          Begin
-           MySql:=' Insert into FIN_CONCILIACAO_CAIXA'+
+           MySql:=' INSERT INTO FIN_CONCILIACAO_CAIXA'+
                   ' (NUM_SEQREG, NUM_SEQ, COD_LOJA, DTA_CAIXA, COD_OPERADOR,'+
                   '  COD_CREDITO, DES_CREDITO, VLR_CREDITO,'+
                   ' USU_INCLUI)'+
 
-                  ' Values ('+
+                  ' VALUES ('+
                   'GEN_ID(GEN_CONCILIACAO_CAIXA,1), '+ // NUM_SEQREG
                   '1, '+ // NUM_SEQ
                   QuotedStr(sCodFilial)+', '+ // COD_LOJA
@@ -1228,6 +1245,7 @@ Begin
 
         FrmBelShop.IBQ_ConsultaFilial.Next;
       End; // While Not FrmBelShop.IBQ_ConsultaFilial.Eof do
+      FrmBelShop.IBQ_ConsultaFilial.EnableControls;
       DMBelShop.CDS_BuscaRapida.Close;
 
       // Atualiza Transacao =======================================
@@ -1236,7 +1254,6 @@ Begin
       Result:=True;
       DateSeparator:='/';
       DecimalSeparator:=',';
-      Screen.Cursor:=crDefault;
     Except
       on e : Exception do
       Begin
@@ -1246,31 +1263,22 @@ Begin
         DateSeparator:='/';
         DecimalSeparator:=',';
         OdirPanApres.Visible:=False;
-        Screen.Cursor:=crDefault;
 
         bgSiga:=False;
 
         MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
       End; // on e : Exception do
     End; // Try
-
   End; // If bSiga Then // Query Executada
+  FrmBelShop.IBQ_ConsultaFilial.Close;
+
 End; // Conciliação de Caixa Dia - Busca Movtos de Créditos >>>>>>>>>>>>>>>>>>>>
 
 // Fechamento de Caixa Dia - Busca Movtos do Caixa do Dia da Loja >>>>>>>>>>>>>>
 Function TFrmConciliacaoCaixa.FechaConcCaixaBuscaMovtoCaixaDia(sCodLoja, sDesLoja: String): Boolean;
 Begin
-// CONFERIDO - ODIR
   Result:=False;
   sCodFilial:=FormatFloat('00',StrToInt(sCodLoja));
-
-  // Apresentacao ==============================================================
-  OdirPanApres.Caption:='AGUARDE !! Busca Movimento do Caixa da Loja: '+sCodFilial+' - '+sDesLoja;
-  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmConciliacaoCaixa.Width-OdirPanApres.Width)/2));
-  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmConciliacaoCaixa.Height-OdirPanApres.Height)/2));
-  OdirPanApres.Visible:=True;
-  Refresh;
 
   // Conecta Empresa individual ================================================
   If ConexaoEmpIndividual('IBDB_'+sCodFilial, 'IBT_'+sCodFilial, 'A') Then
@@ -1286,7 +1294,6 @@ Begin
   If not bgSiga Then
   Begin
     msg('ERRO na Conexão da Loja: Bel_'+sCodFilial,'A');
-    OdirPanApres.Visible:=False;
     Exit;
   End;
 
@@ -1297,28 +1304,60 @@ Begin
     FrmBelShop.CriaQueryIB('IBDB_'+sCodFilial,'IBT_'+sCodFilial,FrmBelShop.IBQ_ConsultaFilial, True, True);
 
     // Conciliação de Caixa Dia - Busca Total de Déditos -------------
+    OdirPanApres.Caption:='AGUARDE !! Parte 1/4 - Busca Total de Déditos da Loja: '+sCodFilial+' - '+sDesLoja;
+    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmConciliacaoCaixa.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmConciliacaoCaixa.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmConciliacaoCaixa;
+    OdirPanApres.BringToFront();
+    OdirPanApres.Visible:=True;
+    Refresh;
+    Screen.Cursor:=crAppStart;
+
     If Not FechaConcCaixaTotalDebitos Then
      Exit;
 
     // Conciliação de Caixa Dia - Busca Operadores -------------------
     If bgSiga Then
     Begin
+      OdirPanApres.Caption:='AGUARDE !! Parte 2/4 - Busca Operadores da Loja: '+sCodFilial+' - '+sDesLoja;
+      OdirPanApres.Visible:=True;
+      Refresh;
+
       If Not FechaConcCaixaOperadores Then
-       Exit;
+      Begin
+        Screen.Cursor:=crDefault;
+        Exit;
+      End;
     End;
 
     // Conciliação de Caixa Dia - Busca Plano de Contas --------------
     If bgSiga Then
     Begin
+      OdirPanApres.Caption:='AGUARDE !! Parte 3/4 - Busca Plano de Contas da Loja: '+sCodFilial+' - '+sDesLoja;
+      OdirPanApres.Visible:=True;
+      Refresh;
+
       If Not FechaConcCaixaPlanoContas Then
-       Exit;
+      Begin
+        Screen.Cursor:=crDefault;
+        Exit;
+      End;
     End;
 
     // Conciliação de Caixa Dia - Busca Movtos de Créditos -----------
     If bgSiga Then
     Begin
+      OdirPanApres.Caption:='AGUARDE !! Parte 4/4 - Busca Movtos de Créditos da Loja: '+sCodFilial+' - '+sDesLoja;
+      OdirPanApres.Visible:=True;
+      Refresh;
+
       If Not FechaConcCaixaMovtosCreditos Then
-       Exit;
+      Begin
+        Screen.Cursor:=crDefault;
+        Exit;
+      End;
 
       Result:=True;
     End; // If bgSiga Then
@@ -1328,6 +1367,7 @@ Begin
   ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'F');
 
   OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
 
 End; // Fechamento de Caixa Dia - Busca Movtos do Caixa do Dia da Loja >>>>>>>>>
 
@@ -1359,26 +1399,22 @@ begin
 
 end;
 
-procedure TFrmConciliacaoCaixa.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TFrmConciliacaoCaixa.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  if bgSairCaixa Then
-   Begin
-     Action := caHide; // caFree;
+  if Not bgSairCaixa Then
+  Begin
+    PC_ConcFechaCaixa.TabIndex:=0;
+    PC_ConcFechaCaixaChange(Self);
+    msg('Para Fechar Tecle no Botão <Fechar>...','A');
+    Action := caNone;
+    Exit;
+  End;
 
-     If DMBelShop.SQLC.InTransaction Then
-      DMBelShop.SQLC.Rollback(TD);
+  FrmBelShop.FechaTudo;
+  DMConciliacao.FechaTudoConciliacao;
 
-     FrmBelShop.FechaTudo;
-   End
-  Else
-   Begin
-     PC_ConcFechaCaixa.TabIndex:=0;
-     PC_ConcFechaCaixaChange(Self);
-     msg('Para Fechar Tecle no Botão <Fechar>...','A');
-     Action := caNone;
-   End;
-
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
 end;
 
 procedure TFrmConciliacaoCaixa.PC_PrincipalChange(Sender: TObject);
@@ -1802,7 +1838,10 @@ begin
   OdirPanApres.Caption:='AGUARDE !! Verificando Fechamento do Caixa...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmConciliacaoCaixa.Width-OdirPanApres.Width)/2));
-  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmConciliacaoCaixa.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmConciliacaoCaixa.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmConciliacaoCaixa;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -1811,6 +1850,7 @@ begin
    Begin
      s:='NAO';
      DMConciliacao.CDS_ConcCaixa.First;
+     DMConciliacao.CDS_ConcCaixa.DisableControls;
      While Not DMConciliacao.CDS_ConcCaixa.Eof do
      Begin
        If DMConciliacao.CDS_ConcCaixaIND_INFORMADO.AsString='SIM' Then
@@ -1819,7 +1859,8 @@ begin
          Break;
        End;
        DMConciliacao.CDS_ConcCaixa.Next;
-     End;
+     End; // While Not DMConciliacao.CDS_ConcCaixa.Eof do
+     DMConciliacao.CDS_ConcCaixa.EnableControls;
      DMConciliacao.CDS_ConcCaixa.First;
 
      If s='NAO' Then
@@ -1891,9 +1932,6 @@ end;
 procedure TFrmConciliacaoCaixa.Bt_ConcFechaCaixaFecharClick(
   Sender: TObject);
 begin
-  FrmBelShop.FechaTudo;
-  DMConciliacao.FechaTudoConciliacao;
-  
   bgSairCaixa:=True;
   Close;
 end;
@@ -2602,9 +2640,8 @@ begin
       sCodCredito:=DMConciliacao.CDS_ConcCaixaCOD_CREDITO.AsString;
       cValorTotal:=0;
 
-
-      DMConciliacao.CDS_ConcCaixa.DisableControls;
       DMConciliacao.CDS_ConcCaixa.First;
+      DMConciliacao.CDS_ConcCaixa.DisableControls;
       While Not DMConciliacao.CDS_ConcCaixa.Eof do
       Begin
         If sCodCredito=DMConciliacao.CDS_ConcCaixaCOD_CREDITO.AsString Then

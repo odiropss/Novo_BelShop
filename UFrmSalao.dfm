@@ -405,7 +405,7 @@ object FrmSalao: TFrmSalao
     Top = 0
     Width = 977
     Height = 580
-    ActivePage = Ts_Profissionais
+    ActivePage = Ts_ProfPagtos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -8363,7 +8363,7 @@ object FrmSalao: TFrmSalao
         Top = 0
         Width = 969
         Height = 552
-        ActivePage = Ts_PagtoVendas
+        ActivePage = Ts_PagtoMovtos
         Align = alClient
         TabOrder = 0
         OnChange = PC_PagtoPlanilhaChange

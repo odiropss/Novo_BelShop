@@ -19320,6 +19320,8 @@ Begin
   // Processamento  -------------------------------------------
   If bSiga Then
   Begin
+//odiropss
+//sgMensagemERRO:='DMBelShop.CDS_Join.';
     // Busca Curvas Selecionadas e Estoque Minino Produtos
     MySql:=' SELECT c.cod_loja, c.cod_produto, c.ind_curva,'+
            ' p.datainclusao, c.est_minimo,'+
@@ -19383,6 +19385,8 @@ Begin
     DMBelShop.CDS_Join.Open;
 
     // Monta Demandas ==========================================================
+//odiropss
+//sgMensagemERRO:='DemandaNovo';
     MontaDemandasNovo(sCodFilial);
 
     Try
@@ -19399,6 +19403,8 @@ Begin
       bgOC_COMPRAR_Docs:=True;
       pgProgBar.Position:=0;
 
+//odiropss
+//sgMensagemERRO:='DMBelShop.IBQ_OC_ComprarAdd.Open;';
       DMBelShop.IBQ_OC_ComprarAdd.Close;
       DMBelShop.IBQ_OC_ComprarAdd.SQL.Clear;
       DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' Select *');
@@ -19440,6 +19446,9 @@ Begin
            End
           Else // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString),[]) Then
            Begin
+//odiropss
+//sgMensagemERRO:='StrToDate(sgDtaInicio)) Or';
+
              If (StrToDate(IBQ_ConsultaFilial.FieldByName('DATAINCLUSAO').AsString)>=StrToDate(sgDtaInicio)) Or
                 (StrToDate(IBQ_ConsultaFilial.FieldByName('DATAALTERACAO').AsString)>=StrToDate(sgDtaInicio)) Then
               Begin
@@ -19502,6 +19511,8 @@ Begin
             bgDemandaNovo:=False;
 
             // Processa Filial ------------------------------------
+//odiropss
+//sgMensagemERRO:='OCProcessaFilial';
             If Not OCProcessaFilial Then
              Break;
 
@@ -19533,6 +19544,13 @@ Begin
       on e : Exception do
       Begin
         DMBelShop.SQLC.Rollback(TD);
+
+        MessageBox(Handle, pChar(e.message), 'Erro', MB_ICONERROR);
+        MessageBox(Handle, pChar('Reg: '+IntToStr(IBQ_ConsultaFilial.RecNo)+#13+
+                                 'Loja :'+sCodFilial+#13+
+                                 'Prod: '+IBQ_ConsultaFilial.FieldByName('CodProduto').AsString
+                                 ), 'Erro', MB_ICONERROR);
+        MessageBox(Handle, pChar(sgMensagem), 'Erro', MB_ICONERROR);
 
         DMBelShop.CDS_Join.Close;
         DMBelShop.CDS_Busca.Close;
@@ -20071,7 +20089,8 @@ Begin
      Begin
        cPrecoUnit    :=DMBelShop.CDS_UltCompraTransito.FieldByName('Preco').AsCurrency;
      End; // If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'UC']),[]) Then
-
+//odiropss
+//sgMensagem:=sgMensagem+sDta_Ref;
     // Transito ---------------------------------------------------
     cQtdTransito:=0;
     If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'TR']),[]) Then
@@ -20383,6 +20402,8 @@ Begin
       MessageBox(Handle, pChar(IntToStr(IBQ_ConsultaFilial.RecNo)+#13+e.message), 'Erro', MB_ICONERROR);
     End; // On e : Exception do
   End; // Try // IBQ_OC_ComprarAdd
+
+//odirapagar - dta_
 
 End; // Novo Calculo de Pedido de Compra das Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -21948,7 +21969,6 @@ Begin
   End;
 
   Result:=True;
-
 End; // Verifica se Existe Meses Iguais >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Busca Nome e UF do Estado >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -46287,17 +46307,6 @@ end;
 
 procedure TFrmBelShop.SubMenuComprasGeraOCLinxClick(Sender: TObject);
 begin
-//  OdirApagar
-//  msg('Opção em Desenvolvimento'+cr+'Liberação Entre 24/04/2017 e 28/04/2017','A');
-//  Exit;
-
-  If (Sender is TMenuItem) Then
-  Begin
-    igCodLojaLinx:=(Sender as TMenuItem).Tag;
-    If (Sender as TMenuItem).Tag<>120305 Then
-     Exit;
-  End;
-
   FrmOCLinx:=TFrmOCLinx.Create(Self);
 
   igTagPermissao:=(Sender as TMenuItem).Tag;

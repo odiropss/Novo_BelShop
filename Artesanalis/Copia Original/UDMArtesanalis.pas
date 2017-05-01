@@ -36,8 +36,6 @@ type
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     Procedure ConectaBanco;
-    Procedure FechaTudo;
-
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -69,24 +67,6 @@ uses  DK_Procs1;
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - Inicio >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// Fecha Todos os Client's >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TDMArtesanalis.FechaTudo;
-Var
-  i: Integer;
-Begin
-
-  // Fecha Componentes DMArtesanalis ===============================================
-  For i:=0 to DMArtesanalis.ComponentCount-1 do
-  Begin
-    If DMArtesanalis.Components[i] is TClientDataSet Then
-     If (DMArtesanalis.Components[i] as TClientDataSet).Active Then
-     (DMArtesanalis.Components[i] as TClientDataSet).Close;
-
-    If DMArtesanalis.Components[i] is TSQLQuery Then
-     If (DMArtesanalis.Components[i] as TSQLQuery).Active Then
-     (DMArtesanalis.Components[i] as TSQLQuery).Close;
-  End;
-end; // Fecha Todos os Client's >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TDMArtesanalis.ConectaBanco;
