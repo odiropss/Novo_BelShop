@@ -10,7 +10,8 @@ uses
   UFrmUnidades in 'UFrmUnidades.pas' {FrmUnidades},
   UFrmMateriaPrimaCadastro in 'UFrmMateriaPrimaCadastro.pas' {FrmMateriaPrimaCadastro},
   UFrmProducaoCadastro in 'UFrmProducaoCadastro.pas' {FrmProducaoCadastro},
-  UPesquisa in 'UPesquisa.pas' {FrmPesquisa};
+  UPesquisa in 'UPesquisa.pas' {FrmPesquisa},
+  UFrmProdutoCadastro in 'UFrmProdutoCadastro.pas' {FrmProdutoCadastro};
 
 {$R *.res}
 
@@ -25,6 +26,7 @@ begin
   Application.CreateForm(TFrmUnidades, FrmUnidades);
   Application.CreateForm(TFrmMateriaPrimaCadastro, FrmMateriaPrimaCadastro);
   Application.CreateForm(TFrmProducaoCadastro, FrmProducaoCadastro);
-//  Application.CreateForm(TFrmPesquisa, FrmPesquisa);
+  Application.CreateForm(TFrmProdutoCadastro, FrmProdutoCadastro);
+  //  Application.CreateForm(TFrmPesquisa, FrmPesquisa);
   Application.Run;
 end.

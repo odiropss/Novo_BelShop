@@ -39,7 +39,7 @@ type
     SubMenuMateriaPrimaSaldo: TMenuItem;
     SubMenuUnidadeCadastro: TMenuItem;
     SubMenuProducaoCadastro: TMenuItem;
-    SubMenuProducaoProducao: TMenuItem;
+    SubMenuProducaoVendas: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -50,6 +50,7 @@ type
     procedure MenuCalculadoraClick(Sender: TObject);
     procedure MenuVersaoClick(Sender: TObject);
     procedure SubMenuProducaoCadastroClick(Sender: TObject);
+    procedure SubMenuProdutoCadastroClick(Sender: TObject);
 
     // Odir ====================================================================
 
@@ -67,7 +68,7 @@ var
 implementation
 
 uses UDMArtesanalis, DK_Procs1, SysConst, UFrmUnidades, UFrmMateriaPrimaCadastro,
-     UFrmProducaoCadastro;
+     UFrmProducaoCadastro, UFrmProdutoCadastro;
 
 {$R *.dfm}
 
@@ -177,6 +178,16 @@ begin
   DMArtesanalis.CDS_ProducaoMatPrima.Open;
 
   FrmProducaoCadastro.Show;
+
+end;
+
+procedure TFrmArtesanalis.SubMenuProdutoCadastroClick(Sender: TObject);
+begin
+  DMArtesanalis.MemoAdicionaNomeForm('Cadastro de Produto');
+
+  DMArtesanalis.CDS_Produto.Open;
+
+  FrmProdutoCadastro.Show;
 
 end;
 

@@ -7156,6 +7156,7 @@ object FrmArtesanalis: TFrmArtesanalis
           8888000BB000888888880BBBBBB0888888880BBBBBB088888888000BB0008888
           8888880BB088888888888800008888888888}
         Caption = 'Cadastro'
+        OnClick = SubMenuProdutoCadastroClick
       end
       object SubMenuProdutoSaldo: TMenuItem
         Bitmap.Data = {
@@ -7215,7 +7216,7 @@ object FrmArtesanalis: TFrmArtesanalis
         Caption = 'Cadastro'
         OnClick = SubMenuProducaoCadastroClick
       end
-      object SubMenuProducaoProducao: TMenuItem
+      object SubMenuProducaoVendas: TMenuItem
         Bitmap.Data = {
           AA030000424DAA03000000000000360000002800000011000000110000000100
           18000000000074030000C30E0000C30E00000000000000000000BFBFBFBFBFBF
@@ -7247,7 +7248,7 @@ object FrmArtesanalis: TFrmArtesanalis
           00000000000000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00BFBFBFBFBFBF
           BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
           BFBFBFBFBFBFBFBFBFBFBFBFBF00}
-        Caption = 'Produ'#231#227'o'
+        Caption = 'Produ'#231#227'o Vendas'
       end
     end
     object MenuCalculadora: TMenuItem

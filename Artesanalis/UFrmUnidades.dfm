@@ -64,7 +64,7 @@ object FrmUnidades: TFrmUnidades
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
-        Font.Style = []
+        Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 0
         object EdtUnidadeCod: TCurrencyEdit
@@ -96,12 +96,12 @@ object FrmUnidades: TFrmUnidades
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
-        Font.Style = []
+        Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 1
         object EdtUnidadeAbrev: TEdit
           Left = 19
-          Top = 20
+          Top = 19
           Width = 57
           Height = 19
           CharCase = ecUpperCase
@@ -118,14 +118,14 @@ object FrmUnidades: TFrmUnidades
       object Gb_UnidadeQuantidade: TGroupBox
         Left = 199
         Top = 5
-        Width = 83
+        Width = 88
         Height = 51
         Caption = ' Quantidade '
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
-        Font.Style = []
+        Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 2
         object EdtUnidadeQtd: TCurrencyEdit
@@ -425,6 +425,8 @@ object FrmUnidades: TFrmUnidades
       TitleFont.Name = 'MS Sans Serif'
       TitleFont.Style = [fsBold]
       OnDblClick = Dbg_UnidadeDblClick
+      OnEnter = Dbg_UnidadeEnter
+      OnExit = Dbg_UnidadeExit
       OnKeyDown = Dbg_UnidadeKeyDown
       Columns = <
         item

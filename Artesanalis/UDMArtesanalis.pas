@@ -49,6 +49,18 @@ type
     CDS_Pesquisa: TClientDataSet;
     DS_Pesquisa: TDataSource;
     CDS_ProducaoMatPrimaCOD_PRODUCAO: TIntegerField;
+    SQLQ_Produto: TSQLQuery;
+    DSP_Produto: TDataSetProvider;
+    CDS_Produto: TClientDataSet;
+    DS_Produto: TDataSource;
+    CDS_ProdutoCOD_PRODUTO: TIntegerField;
+    CDS_ProdutoDES_PRODUTO: TStringField;
+    CDS_ProdutoCOD_UNIDADE: TIntegerField;
+    CDS_ProdutoDES_UNIDADE: TStringField;
+    CDS_ProdutoQTD_UNIDADE: TIntegerField;
+    CDS_ProdutoCOD_PRODUCAO: TIntegerField;
+    CDS_ProdutoDES_PRODUCAO: TStringField;
+    CDS_ProdutoVLR_UNITATIO: TFMTBCDField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -249,3 +261,4 @@ begin
 end;
 
 end.
+

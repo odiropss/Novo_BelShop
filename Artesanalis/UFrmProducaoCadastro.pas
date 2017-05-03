@@ -73,11 +73,20 @@ type
     procedure Dbg_ProducaoDblClick(Sender: TObject);
     procedure Dbg_ProducaoKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure Dbg_ProducaoCellClick(Column: TColumn);
     procedure EdtMateriaPrimaCodEnter(Sender: TObject);
     procedure EdtMateriaPrimaCodExit(Sender: TObject);
     procedure Dbg_MateriaPrimaDblClick(Sender: TObject);
     procedure Bt_MateriaPrimaBuscaClick(Sender: TObject);
+    procedure Dbg_ProducaoCellClick(Column: TColumn);
+    procedure Bt_MateriaPrimaAbandonarClick(Sender: TObject);
+    procedure Bt_MateriaPrimaSalvarClick(Sender: TObject);
+    procedure Bt_MateriaPrimaExcluirClick(Sender: TObject);
+    procedure Dbg_MateriaPrimaKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_ProducaoEnter(Sender: TObject);
+    procedure Dbg_ProducaoExit(Sender: TObject);
+    procedure Dbg_MateriaPrimaEnter(Sender: TObject);
+    procedure Dbg_MateriaPrimaExit(Sender: TObject);
   private
     { Private declarations }
   public
@@ -156,7 +165,7 @@ Begin
       DMArtesanalis.CDS_BuacaRapida.Close;
     End; // If sCod='0'Then
 
-    // (IAP) Incluir ou Alterar Produção ---------------------------
+    // (IAP) Incluir ou Alterar Produção =======================================
     If sTipo='IAP' Then
     Begin
       MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR'+
@@ -170,7 +179,7 @@ Begin
       DMArtesanalis.SQLC.Execute(MySql,nil,nil);
     End; // If sTipo='IAP' Then
 
-    // (EXP) Excluir Produção ---------------------------------------
+    // (EXP) Excluir Produção ==================================================
     If sTipo='EXP' Then
     Begin
       MySql:=' DELETE FROM PRODUCAO p'+
@@ -183,7 +192,7 @@ Begin
       DMArtesanalis.SQLC.Execute(MySql,nil,nil);
     End; // If sTipo='EXP' Then
 
-    // (IAM) Incluir ou Alterar Materia-Prima na Produção -----------
+    // (IAM) Incluir ou Alterar Materia-Prima na Produção ======================
     If sTipo='IAM' Then
     Begin
       MySql:=' UPDATE OR INSERT INTO PRODUCAO'+
@@ -196,7 +205,7 @@ Begin
       DMArtesanalis.SQLC.Execute(MySql,nil,nil);
     End; // If sTipo='IAP' Then
 
-    // (EXM) Excluir Materia-Prima da Produção ----------------------
+    // (EXM) Excluir Materia-Prima da Produção =================================
     If sTipo='EXM' Then
     Begin
       MySql:=' DELETE FROM PRODUCAO p'+
@@ -205,13 +214,13 @@ Begin
       DMArtesanalis.SQLC.Execute(MySql,nil,nil);
     End; // If sTipo='EXP' Then
 
-    // Atualiza Transacao ===========================================
+    // Atualiza Transacao ======================================================
     DMArtesanalis.SQLC.Commit(TD);
 
     DateSeparator:='/';
     DecimalSeparator:=',';
 
-    // Reabre Unidade -----------------------------------------------
+    // Reabre Unidade ==========================================================
     DMArtesanalis.CDS_ProducaoMatPrima.DisableControls;
     DMArtesanalis.CDS_Producao.DisableControls;
     DMArtesanalis.CDS_ProducaoMatPrima.Close;
@@ -222,6 +231,7 @@ Begin
     DMArtesanalis.CDS_ProducaoMatPrima.EnableControls;
 
     DMArtesanalis.CDS_Producao.Locate('DES_PRODUCAO', Trim(EdtProducaoDesc.Text),[]);
+    DMArtesanalis.CDS_ProducaoMatPrima.Locate('DES_MATERIAPRIMA', Trim(EdtMateriaPrimaDesc.Text),[]);
 
     OdirPanApres.Visible:=False;
 
@@ -320,12 +330,11 @@ begin
     Exit;
   End;
 
-  DMArtesanalis.FechaTudo;
+  DMArtesanalis.CDS_Producao.Close;
+  DMArtesanalis.CDS_ProducaoMatPrima.Close;
 
   // Permite Sair do Sistema ===================================================
   DMArtesanalis.MemoRetiraNomeForm('Cadastro de Produção');
-
-
 end;
 
 procedure TFrmProducaoCadastro.FormKeyPress(Sender: TObject; var Key: Char);
@@ -372,7 +381,7 @@ end;
 
 procedure TFrmProducaoCadastro.Bt_ProducaoSalvarClick(Sender: TObject);
 begin
-  // Consiste a Descrição da Matéria-Prima =====================================
+  // Consiste a Descrição Produção =============================================
   If Trim(EdtProducaoDesc.Text)='' Then
   Begin
     msg('Favor Informar a'+cr+cr+'Descrição da Produção !!','A');
@@ -380,7 +389,7 @@ begin
     Exit;
   End;
 
-  // Verifica a Exisatencia da Matéria-Prima ===================================
+  // Verifica a Existencia da Produção ========================================
   If (DMArtesanalis.CDS_Producao.Locate('DES_PRODUCAO', EdtProducaoDesc.Text,[])) And (Not bgAlterar) Then
   Begin
     msg('Produção Já Cadastra!!','A');
@@ -392,8 +401,8 @@ begin
   EdtMateriaPrimaDesc.Clear;
   EdtMateriaPrimaPerc.Value:=0.00;
 
-  // Executa DML ===============================================================
-  If not DMLProducao('IAP') Then   // (IAP) Incluir ou Alterar Produção
+  // (IAP) Incluir ou Alterar Produção =========================================
+  If not DMLProducao('IAP') Then
    MessageBox(Handle, pChar('Erro ao Incluir/Altera a Produção !!'+#13+sgMensagem), 'ATENÇÃO !!', MB_ICONERROR);
 
   EdtProducaoCodEnter(Self);
@@ -410,7 +419,7 @@ procedure TFrmProducaoCadastro.Bt_ProducaoExcluirClick(Sender: TObject);
 Var
   MySql: String;
 begin
-  If (DMArtesanalis.CDS_Producao.IsEmpty) Or (EdtProducaoCod.AsInteger=0) Then
+  If DMArtesanalis.CDS_Producao.IsEmpty Then
    Exit;
 
   If EdtProducaoCod.AsInteger=0 Then
@@ -446,7 +455,7 @@ begin
     Exit;
   End; // If Trim(sgMensagem)<>'' Then
 
-  // Executa DML ===============================================================
+  // (EXP) Excluir Produção ====================================================
   If not DMLProducao('EXP') Then
    MessageBox(Handle, pChar('Erro ao Excluir a Produção !!'+#13+sgMensagem), 'ATENÇÃO !!', MB_ICONERROR);
 
@@ -460,12 +469,12 @@ begin
   Usado em:
 
   Dbg_ProducaoCellClick
-  Dbg_ProducaoKeyDown
-  Dbg_ProducaoKeyUp
   }
 
-  If DMArtesanalis.CDS_Producao.IsEmpty Then
+  If (EdtProducaoCod.AsInteger=DMArtesanalis.CDS_ProducaoCOD_PRODUCAO.AsInteger) or
+     (DMArtesanalis.CDS_Producao.IsEmpty) Then
    Exit;
+
 
   EdtProducaoCodEnter(Self);
 
@@ -476,13 +485,54 @@ begin
 end;
 
 procedure TFrmProducaoCadastro.Dbg_ProducaoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+Var
+  s: String;
+  i: Integer;
 begin
-  Dbg_ProducaoDblClick(Self);
-end;
+  // Não Permite Excluir Registro Pelo Grid ====================================
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
 
-procedure TFrmProducaoCadastro.Dbg_ProducaoCellClick(Column: TColumn);
-begin
-  Dbg_ProducaoDblClick(Self);
+  If EdtProducaoCod.AsInteger<>0 Then
+  Begin
+    DMArtesanalis.CDS_Producao.DisableControls;
+    DMArtesanalis.CDS_Producao.Locate('COD_PRODUCAO', EdtProducaoCod.AsInteger,[]);
+    DMArtesanalis.CDS_Producao.EnableControls;
+    Exit;
+  End;
+
+  // Localiza Produção ====================================================
+  If Key=VK_F4 Then
+  Begin
+    If Not DMArtesanalis.CDS_Producao.IsEmpty Then
+    Begin
+      i:=DMArtesanalis.CDS_Producao.RecNo;
+
+      s:='';
+      If InputQuery('Localizar Produção','',s) then
+      Begin
+        if Trim(s)<>'' then
+        Begin
+          Try
+            StrToInt(s);
+            If Not DMArtesanalis.CDS_Producao.Locate('COD_PRODUCAO',StrToInt(s),[]) Then
+            Begin
+              DMArtesanalis.CDS_Producao.RecNo:=i;
+              msg('Produção Não Encontrada !!','A');
+            End;
+          Except
+            s:=AnsiUpperCase(s);
+            If Not LocalizaRegistro(DMArtesanalis.CDS_Producao, 'DES_PRODUCAO', s) Then
+            Begin
+              DMArtesanalis.CDS_Producao.RecNo:=i;
+              msg('Produção Não Encontrada !!','A');
+            End;
+          End; // Try
+        End; // if Trim(s)<>'' then
+      End; // If InputQuery('Localizar Produção','',s) then
+    End; // If Not DMArtesanalis.CDS_Producao.IsEmpty Then
+  End; //If Key=VK_F4 Then
+
 end;
 
 procedure TFrmProducaoCadastro.EdtMateriaPrimaCodEnter(Sender: TObject);
@@ -492,6 +542,8 @@ begin
 end;
 
 procedure TFrmProducaoCadastro.EdtMateriaPrimaCodExit(Sender: TObject);
+Var
+  MySql: String;
 begin
   If EdtMateriaPrimaCod.AsInteger=0 Then
    Exit;
@@ -500,22 +552,36 @@ begin
   Begin
     EdtMateriaPrimaDesc.Text:=DMArtesanalis.CDS_ProducaoMatPrimaDES_MATERIAPRIMA.AsString;
     EdtMateriaPrimaPerc.Text:=DMArtesanalis.CDS_ProducaoMatPrimaPER_UTILIZACAO.AsString;
-    bgAlterar:=True;
+    bgAlterarMP:=True;
     Exit;
-  End
+  End;
 
-  mysq
-procura
+  MySql:=' SELECT m.Cod_MateriaPrima, m.Des_MateriaPrima'+
+         ' FROM MATERIAPRIMA m'+
+         ' WHERE m.cod_materiaprima='+IntToStr(EdtMateriaPrimaCod.AsInteger);
+  DMArtesanalis.CDS_BuacaRapida.Close;
+  DMArtesanalis.SQLQ_BuacaRapida.SQL.Clear;
+  DMArtesanalis.SQLQ_BuacaRapida.SQL.Add(MySql);
+  DMArtesanalis.CDS_BuacaRapida.Open;
 
+  EdtMateriaPrimaDesc.Text:=Trim(DMArtesanalis.CDS_BuacaRapida.FieldByName('Des_MateriaPrima').AsString);
+  DMArtesanalis.CDS_BuacaRapida.Close;
 
-     msg('Matéria-Prima Não Encontrada !!','A');
-     bgAlterar:=False;
-     EdtMateriaPrimaCod.SetFocus;
+  bgAlterarMP:=True;
+  If EdtMateriaPrimaDesc.Text='' Then
+  Begin
+    msg('Matéria-Prima Não Encontrada !!','A');
+    LimpaComponentes(False);
+    EdtMateriaPrimaCod.SetFocus;
+    bgAlterarMP:=False;
+  End;
 end;
 
 procedure TFrmProducaoCadastro.Dbg_MateriaPrimaDblClick(Sender: TObject);
 begin
-  If (DMArtesanalis.CDS_Producao.IsEmpty) Or (DMArtesanalis.CDS_ProducaoMatPrima.IsEmpty) Then
+  If (DMArtesanalis.CDS_Producao.IsEmpty) Or
+     (DMArtesanalis.CDS_ProducaoMatPrima.IsEmpty) Or
+     (EdtProducaoCod.AsInteger=0) Then
    Exit;
 
   EdtMateriaPrimaCod.AsInteger:=DMArtesanalis.CDS_ProducaoMatPrimaCOD_MATERIAPRIMA.AsInteger;
@@ -530,6 +596,10 @@ procedure TFrmProducaoCadastro.Bt_MateriaPrimaBuscaClick(Sender: TObject);
 Var
   MySql: String;
 begin
+
+  Dbg_Producao.Enabled:=False;
+  bgAlterarMP:=False;
+
   FrmPesquisa:=TFrmPesquisa.Create(Self);
 
   EdtMateriaPrimaCod.Clear;
@@ -558,6 +628,7 @@ begin
     msg('Sem Materia-Prima a Listar !!','A');
     DMArtesanalis.CDS_Pesquisa.Close;
     FreeAndNil(FrmPesquisa);
+    Dbg_Producao.Enabled:=True;
     EdtMateriaPrimaCod.SetFocus;
     Exit;
   End;
@@ -597,14 +668,134 @@ begin
 
   FreeAndNil(FrmPesquisa);
 
-  EdtMateriaPrimaCodExit(self);
+  EdtMateriaPrimaCodExit(Self);
+
+  Dbg_Producao.Enabled:=True;
+
+  EdtMateriaPrimaPerc.SetFocus;
+
+end;
+
+procedure TFrmProducaoCadastro.Dbg_ProducaoCellClick(Column: TColumn);
+begin
+  If EdtProducaoCod.AsInteger<>0 Then
+  Begin
+    DMArtesanalis.CDS_Producao.DisableControls;
+    DMArtesanalis.CDS_Producao.Locate('COD_PRODUCAO', EdtProducaoCod.AsInteger,[]);
+    DMArtesanalis.CDS_Producao.EnableControls;
+  End;
+end;
+
+procedure TFrmProducaoCadastro.Bt_MateriaPrimaAbandonarClick(Sender: TObject);
+begin
+  LimpaComponentes(False);
+end;
+
+procedure TFrmProducaoCadastro.Bt_MateriaPrimaSalvarClick(Sender: TObject);
+begin
+  // Consiste o Percentual da Matéria-Prima ====================================
+  If EdtMateriaPrimaPerc.Value<=0.00000 Then
+  Begin
+    msg('Favor Informar o'+cr+cr+'Percentual de Utilização !!','A');
+    EdtMateriaPrimaPerc.SetFocus;
+    Exit;
+  End;
+
+  // (IAM) Incluir ou Alterar Materia-Prima na Produção ========================
+  If not DMLProducao('IAM') Then
+   MessageBox(Handle, pChar('Erro ao Incluir/Altera a Matéria-Prima !!'+#13+sgMensagem), 'ATENÇÃO !!', MB_ICONERROR);
+
+  LimpaComponentes(False);
+  EdtMateriaPrimaCod.SetFocus;
+end;
+
+procedure TFrmProducaoCadastro.Bt_MateriaPrimaExcluirClick(Sender: TObject);
+begin
+  If (DMArtesanalis.CDS_Producao.IsEmpty) Or (DMArtesanalis.CDS_ProducaoMatPrima.IsEmpty) Then
+   Exit;
+
+  If EdtMateriaPrimaCod.AsInteger=0 Then
+  Begin
+    msg('Favor Selecinar'+cr+cr+'A Matéria-Prima a Excluir !!','A');
+    EdtMateriaPrimaCod.SetFocus;
+    Exit;
+  End;
+
+  If msg('Deseja Realmente Excluir a'+cr+'Matéria-Prima Selecionada ??','C')=2 Then
+  Begin
+    EdtMateriaPrimaCod.SetFocus;
+    Exit;
+  End;
+
+  // (EXM) Excluir Materia-Prima da Produção ===================================
+  If not DMLProducao('EXM') Then
+   MessageBox(Handle, pChar('Erro ao Excluir a Matéria-Prima !!'+#13+sgMensagem), 'ATENÇÃO !!', MB_ICONERROR);
+
+  LimpaComponentes(False);
+  EdtMateriaPrimaCod.SetFocus;
+end;
+
+procedure TFrmProducaoCadastro.Dbg_MateriaPrimaKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+Var
+  s: String;
+  i: Integer;
+begin
+  // Não Permite Excluir Registro Pelo Grid ====================================
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
+  // Localiza Materia-Prima ====================================================
+  If Key=VK_F4 Then
+  Begin
+    If Not DMArtesanalis.CDS_ProducaoMatPrima.IsEmpty Then
+    Begin
+      i:=DMArtesanalis.CDS_ProducaoMatPrima.RecNo;
+
+      s:='';
+      If InputQuery('Localizar Matéria-Prima','',s) then
+      Begin
+        if Trim(s)<>'' then
+        Begin
+          Try
+            StrToInt(s);
+            If Not DMArtesanalis.CDS_ProducaoMatPrima.Locate('COD_MATERIAPRIMA',StrToInt(s),[]) Then
+            Begin
+              DMArtesanalis.CDS_ProducaoMatPrima.RecNo:=i;
+              msg('Matéria-Prima Não Encontrada !!','A');
+            End;
+          Except
+            s:=AnsiUpperCase(s);
+            If Not LocalizaRegistro(DMArtesanalis.CDS_ProducaoMatPrima, 'DES_MATERIAPRIMA', s) Then
+            Begin
+              DMArtesanalis.CDS_ProducaoMatPrima.RecNo:=i;
+              msg('Matéria-Prima Não Encontrada !!','A');
+            End;
+          End; // Try
+        End; // if Trim(s)<>'' then
+      End; // If InputQuery('Localizar Matéria-Prima','',s) then
+    End; // If Not DMArtesanalis.CDS_ProducaoMatPrima.IsEmpty Then
+  End; //If Key=VK_F4 Then
+end;
+
+procedure TFrmProducaoCadastro.Dbg_ProducaoEnter(Sender: TObject);
+begin
+  (Sender as TDBGrid).Color:=clMoneyGreen;
+end;
+
+procedure TFrmProducaoCadastro.Dbg_ProducaoExit(Sender: TObject);
+begin
+  (Sender as TDBGrid).Color:=clWindow;
+end;
+
+procedure TFrmProducaoCadastro.Dbg_MateriaPrimaEnter(Sender: TObject);
+begin
+  (Sender as TDBGrid).Color:=clMoneyGreen;
+end;
+
+procedure TFrmProducaoCadastro.Dbg_MateriaPrimaExit(Sender: TObject);
+begin
+  (Sender as TDBGrid).Color:=clWindow;
 end;
 
 end.
-
-// sTipo:
-  // (IAP) Incluir ou Alterar Produção
-  // (EXP) Excluir Produção
-// (IAM) Incluir ou Alterar Materia-Prima na Produção
-// (EXM) Excluir Materia-Prima da Produção
 

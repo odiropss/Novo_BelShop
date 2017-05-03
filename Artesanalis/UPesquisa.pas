@@ -104,6 +104,8 @@ type
 
     // Dbg_Pesquisa para Pesquisa de Documentos de OC ==============================
     Procedure Dbg_PesquisaPesquisaDoctosOC;
+    procedure Dbg_PesquisaKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
 
     // Odir ====================================================================
   private
@@ -195,11 +197,11 @@ procedure TFrmPesquisa.EdtDescricaoChange(Sender: TObject);
 begin
  Try
    DMArtesanalis.CDS_Pesquisa.Filtered:=False;
-   DMArtesanalis.CDS_Pesquisa.Filter:=Campo_Pesquisa+' LIKE ''%'+EdtDescricao.Text+'%''';
+   DMArtesanalis.CDS_Pesquisa.Filter:=AnsiUpperCase(Campo_Pesquisa)+' LIKE ''%'+AnsiUpperCase(EdtDescricao.Text)+'%''';
    DMArtesanalis.CDS_Pesquisa.Filtered:=True;
  Except
    DMArtesanalis.CDS_Pesquisa.Filtered:=False;
-   DMArtesanalis.CDS_Pesquisa.Filter:=Campo_Pesquisa+'='+QuotedStr(EdtDescricao.Text);
+   DMArtesanalis.CDS_Pesquisa.Filter:=AnsiUpperCase(Campo_Pesquisa)+'='+QuotedStr(AnsiUpperCase(EdtDescricao.Text));
    DMArtesanalis.CDS_Pesquisa.Filtered:=True;
  End;
 
@@ -291,6 +293,15 @@ procedure TFrmPesquisa.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftSt
 begin
   if Key=44   Then
    Clipboard.AsText:='';
+
+end;
+
+procedure TFrmPesquisa.Dbg_PesquisaKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Não Permite Excluir Registro Pelo Grid ====================================
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
 
 end;
 

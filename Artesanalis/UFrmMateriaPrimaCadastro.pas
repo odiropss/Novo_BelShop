@@ -60,6 +60,8 @@ type
       Shift: TShiftState);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
+    procedure Dbg_MateriaPrimaEnter(Sender: TObject);
+    procedure Dbg_MateriaPrimaExit(Sender: TObject);
 
   private
     { Private declarations }
@@ -134,8 +136,8 @@ Begin
     // (IA) Incluir ou Alterar -------------------------------------
     If sTipo='IA' Then
     Begin
-      MySql:=' UPDATE OR INSERT INTO MATERIAPRIMA (COD_MATERIAPRIMA,'+
-             ' DES_MATERIAPRIMA, QTD_CONVERSAO, VLR_UNITATIO)'+
+      MySql:=' UPDATE OR INSERT INTO MATERIAPRIMA'+
+             ' (COD_MATERIAPRIMA, DES_MATERIAPRIMA, QTD_CONVERSAO, VLR_UNITATIO)'+
              ' VALUES (';
 
              If StrToInt(sCodMat)=0 Then
@@ -223,7 +225,6 @@ end;
 
 procedure TFrmMateriaPrimaCadastro.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-
   if Not bgSairMateria Then
   Begin
     msg('Para Fechar Tecle '+cr+cr+'no Botão <Fechar>...','A');
@@ -231,11 +232,10 @@ begin
     Exit;
   End;
 
-  DMArtesanalis.FechaTudo;
+  DMArtesanalis.CDS_MateriaPrima.Close;
 
   // Permite Sair do Sistema ===================================================
   DMArtesanalis.MemoRetiraNomeForm('Cadastro de Matéria-Prima');
-
 end;
 
 procedure TFrmMateriaPrimaCadastro.EdtMateriaPrimaCodEnter(Sender: TObject);
@@ -316,7 +316,7 @@ begin
     Exit;
   End;
 
-  // Verifica a Exisatencia da Matéria-Prima ===================================
+  // Verifica a Existencia da Matéria-Prima ===================================
   If (DMArtesanalis.CDS_MateriaPrima.Locate('DES_MATERIAPRIMA', EdtMateriaPrimaDesc.Text,[])) And (Not bgAlterar) Then
   Begin
     msg('Matéria-Prima Já Cadastra!!','A');
@@ -389,7 +389,7 @@ begin
   if (Shift = [ssCtrl]) and (Key = 46) then
     Key := 0;
 
-  // Localiza Unidade ==========================================================
+  // Localiza Materia-Prima ====================================================
   If Key=VK_F4 Then
   Begin
     If Not DMArtesanalis.CDS_MateriaPrima.IsEmpty Then
@@ -412,7 +412,7 @@ begin
             s:=AnsiUpperCase(s);
             If Not LocalizaRegistro(DMArtesanalis.CDS_MateriaPrima, 'DES_MATERIAPRIMA', s) Then
             Begin
-              DMArtesanalis.CDS_Unidade.RecNo:=i;
+              DMArtesanalis.CDS_MateriaPrima.RecNo:=i;
               msg('Matéria-Prima Não Encontrada !!','A');
             End;
           End; // Try
@@ -436,6 +436,16 @@ begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
 
+end;
+
+procedure TFrmMateriaPrimaCadastro.Dbg_MateriaPrimaEnter(Sender: TObject);
+begin
+  (Sender as TDBGrid).Color:=clMoneyGreen;
+end;
+
+procedure TFrmMateriaPrimaCadastro.Dbg_MateriaPrimaExit(Sender: TObject);
+begin
+  (Sender as TDBGrid).Color:=clWindow;
 end;
 
 end.

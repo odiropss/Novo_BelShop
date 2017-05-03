@@ -1,6 +1,6 @@
 object FrmProducaoCadastro: TFrmProducaoCadastro
-  Left = 430
-  Top = 0
+  Left = 367
+  Top = 102
   Width = 890
   Height = 597
   AutoSize = True
@@ -395,7 +395,8 @@ object FrmProducaoCadastro: TFrmProducaoCadastro
           Width = 68
           Height = 21
           AutoSize = False
-          DisplayFormat = ',0.00'
+          DecimalPlaces = 5
+          DisplayFormat = ',0.00000'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -436,6 +437,7 @@ object FrmProducaoCadastro: TFrmProducaoCadastro
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
+        OnClick = Bt_MateriaPrimaSalvarClick
       end
       object Bt_MateriaPrimaAbandonar: TJvXPButton
         Tag = 99
@@ -464,6 +466,7 @@ object FrmProducaoCadastro: TFrmProducaoCadastro
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
+        OnClick = Bt_MateriaPrimaAbandonarClick
       end
       object Bt_MateriaPrimaExcluir: TJvXPButton
         Tag = 99
@@ -529,6 +532,7 @@ object FrmProducaoCadastro: TFrmProducaoCadastro
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
+        OnClick = Bt_MateriaPrimaExcluirClick
       end
     end
     object Pan_Solicitacoes: TPanel
@@ -649,6 +653,8 @@ object FrmProducaoCadastro: TFrmProducaoCadastro
         TitleFont.Style = [fsBold]
         OnCellClick = Dbg_ProducaoCellClick
         OnDblClick = Dbg_ProducaoDblClick
+        OnEnter = Dbg_ProducaoEnter
+        OnExit = Dbg_ProducaoExit
         OnKeyDown = Dbg_ProducaoKeyDown
         OnKeyUp = Dbg_ProducaoKeyDown
         Columns = <
@@ -696,6 +702,9 @@ object FrmProducaoCadastro: TFrmProducaoCadastro
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
         OnDblClick = Dbg_MateriaPrimaDblClick
+        OnEnter = Dbg_MateriaPrimaEnter
+        OnExit = Dbg_MateriaPrimaExit
+        OnKeyDown = Dbg_MateriaPrimaKeyDown
         Columns = <
           item
             Expanded = False

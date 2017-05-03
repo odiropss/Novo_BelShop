@@ -895,7 +895,7 @@ begin
     Exit;
   End;
 
-  // Verifica a Exisatencia da Unidade =========================================
+  // Verifica a Existencia da Unidade =========================================
   If (DMArtesanalis.CDS_Unidade.Locate('DES_UNIDADE', EdtUnidadeAbrev.Text,[])) And (Not bgAlterar) Then
   Begin
     If EdtUnidadeQtd.AsInteger=DMArtesanalis.CDS_UnidadeQTD_UNIDADE.AsInteger Then
@@ -987,7 +987,7 @@ begin
     Exit;
   End;
 
-  // Verifica a Exisatencia da Matéria-Prima ===================================
+  // Verifica a Existencia da Matéria-Prima ===================================
   If (DMArtesanalis.CDS_MateriaPrima.Locate('DES_MATERIAPRIMA', EdtMateriaPrimaDesc.Text,[])) And (Not bgAlterar) Then
   Begin
     msg('Matéria-Prima Já Cadastra!!','A');

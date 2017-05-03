@@ -57,6 +57,8 @@ type
     procedure Dbg_UnidadeDblClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
+    procedure Dbg_UnidadeExit(Sender: TObject);
+    procedure Dbg_UnidadeEnter(Sender: TObject);
 
   private
     { Private declarations }
@@ -130,7 +132,8 @@ Begin
     // (IA) Incluir ou Alterar -------------------------------------
     If sTipo='IA' Then
     Begin
-      MySql:=' UPDATE OR INSERT INTO UNIDADE (cod_unidade, des_unidade, qtd_unidade)'+
+      MySql:=' UPDATE OR INSERT INTO UNIDADE'+
+             ' (COD_UNIDADE, DES_UNIDADE, QTD_UNIDADE)'+
              ' VALUES (';
 
              If StrToInt(sCodUni)=0 Then
@@ -268,7 +271,7 @@ begin
     Exit;
   End;
 
-  DMArtesanalis.FechaTudo;
+  DMArtesanalis.CDS_Unidade.Close;
 
   // Permite Sair do Sistema ===================================================
   DMArtesanalis.MemoRetiraNomeForm('Cadastro de Unidades');
@@ -429,4 +432,15 @@ begin
 
 end;
 
+procedure TFrmUnidades.Dbg_UnidadeExit(Sender: TObject);
+begin
+  (Sender as TDBGrid).Color:=clWindow;
+end;
+
+procedure TFrmUnidades.Dbg_UnidadeEnter(Sender: TObject);
+begin
+  (Sender as TDBGrid).Color:=clMoneyGreen;
+end;
+
 end.
+

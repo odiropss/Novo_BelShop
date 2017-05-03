@@ -1,8 +1,9 @@
 object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
-  Left = 306
-  Top = 46
+  Left = 273
+  Top = 74
   Width = 928
-  Height = 594
+  Height = 592
+  AutoSize = True
   BorderIcons = [biSystemMenu]
   Caption = 'CADASTRO'
   Color = clBtnFace
@@ -24,7 +25,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
     Left = 0
     Top = 0
     Width = 912
-    Height = 556
+    Height = 554
     Align = alClient
     Caption = ' MAT'#201'RIA - PRIMA '
     Color = 16770250
@@ -54,7 +55,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
       ParentFont = False
       TabOrder = 0
       object Gb_MateriaPrimaCod: TGroupBox
-        Left = 13
+        Left = 11
         Top = 5
         Width = 76
         Height = 51
@@ -63,7 +64,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
-        Font.Style = []
+        Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 0
         object EdtMateriaPrimaCod: TCurrencyEdit
@@ -86,21 +87,21 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         end
       end
       object Gb_MateriaPrimaDesc: TGroupBox
-        Left = 90
+        Left = 88
         Top = 5
-        Width = 266
+        Width = 262
         Height = 51
         Caption = ' Descri'#231#227'o '
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
-        Font.Style = []
+        Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 1
         object EdtMateriaPrimaDesc: TEdit
-          Left = 14
-          Top = 20
+          Left = 13
+          Top = 19
           Width = 237
           Height = 19
           CharCase = ecUpperCase
@@ -115,20 +116,20 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         end
       end
       object Gb_MateriaPrimaQtdConv: TGroupBox
-        Left = 357
+        Left = 352
         Top = 5
-        Width = 94
+        Width = 107
         Height = 51
-        Caption = ' Qtd Convers'#227'o  '
+        Caption = ' Qtd Convers'#227'o '
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
-        Font.Style = []
+        Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 2
         object EdtMateriaPrimaQtdConv: TCurrencyEdit
-          Left = 20
+          Left = 28
           Top = 19
           Width = 52
           Height = 21
@@ -146,9 +147,9 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
       end
       object Bt_MateriaPrimaSalvar: TJvXPButton
         Tag = 99
-        Left = 555
+        Left = 569
         Top = 18
-        Width = 109
+        Width = 105
         Height = 28
         Caption = 'Salvar'
         TabOrder = 4
@@ -177,9 +178,9 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
       end
       object Bt_MateriaPrimaAbandonar: TJvXPButton
         Tag = 99
-        Left = 670
+        Left = 677
         Top = 18
-        Width = 109
+        Width = 105
         Height = 28
         Caption = 'Abandonar'
         TabOrder = 5
@@ -205,9 +206,9 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
       end
       object Bt_MateriaPrimaExcluir: TJvXPButton
         Tag = 99
-        Left = 785
+        Left = 786
         Top = 18
-        Width = 109
+        Width = 105
         Height = 28
         Caption = 'Excluir'
         TabOrder = 6
@@ -269,22 +270,22 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         OnClick = Bt_MateriaPrimaExcluirClick
       end
       object Gb_MateriaPrimaVlrUnit: TGroupBox
-        Left = 452
+        Left = 461
         Top = 5
-        Width = 94
+        Width = 100
         Height = 51
         Caption = ' Valor Unit'#225'rio '
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
-        Font.Style = []
+        Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 3
         object EdtMateriaPrimaVlrUnit: TCurrencyEdit
           Left = 13
           Top = 19
-          Width = 68
+          Width = 72
           Height = 21
           AutoSize = False
           DisplayFormat = ',0.00'
@@ -326,6 +327,8 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
         OnDblClick = Dbg_MateriaPrimaDblClick
+        OnEnter = Dbg_MateriaPrimaEnter
+        OnExit = Dbg_MateriaPrimaExit
         OnKeyDown = Dbg_MateriaPrimaKeyDown
         Columns = <
           item
@@ -394,7 +397,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
     end
     object Pan_Solicitacoes: TPanel
       Left = 2
-      Top = 524
+      Top = 522
       Width = 908
       Height = 30
       Align = alBottom

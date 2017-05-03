@@ -457,6 +457,7 @@ object FrmPesquisa: TFrmPesquisa
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = []
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
     ParentCtl3D = False
     ParentFont = False
     ParentShowHint = False
@@ -469,6 +470,7 @@ object FrmPesquisa: TFrmPesquisa
     TitleFont.Name = 'MS Sans Serif'
     TitleFont.Style = [fsBold]
     OnDblClick = Dbg_PesquisaDblClick
+    OnKeyDown = Dbg_PesquisaKeyDown
     OnKeyUp = Dbg_PesquisaKeyUp
     OnTitleClick = Dbg_PesquisaTitleClick
   end
