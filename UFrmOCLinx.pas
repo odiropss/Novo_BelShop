@@ -4340,13 +4340,11 @@ begin
   Begin
     If DMVirtual.CDS_V_Fornecedores.Locate('Cod_Fornecedor',FrmPesquisa.EdtCodigo.Text,[]) Then
     Begin
-      Begin
-        msg('Fornecedor Já Informado !!','A');
-        EdtFiltroCodForn.Clear;
-        FreeAndNil(FrmPesquisa);
-        EdtFiltroCodForn.SetFocus;
-        Exit;
-      End;
+      msg('Fornecedor Já Informado !!','A');
+      EdtFiltroCodForn.Clear;
+      FreeAndNil(FrmPesquisa);
+      EdtFiltroCodForn.SetFocus;
+      Exit;
     End;
 
     DMVirtual.CDS_V_Fornecedores.Insert;
@@ -4524,13 +4522,11 @@ begin
   Begin
     If DMVirtual.CDS_V_Produtos.Locate('Cod_Produto',FrmPesquisa.EdtCodigo.Text,[]) Then
     Begin
-      Begin
-        msg('Produto Já Informado !!','A');
-        EdtFiltroCodProduto.Clear;
-        FreeAndNil(FrmPesquisa);
-        EdtFiltroCodProduto.SetFocus;
-        Exit;
-      End;
+      msg('Produto Já Informado !!','A');
+      EdtFiltroCodProduto.Clear;
+      FreeAndNil(FrmPesquisa);
+      EdtFiltroCodProduto.SetFocus;
+      Exit;
     End;
 
     DMVirtual.CDS_V_Produtos.Insert;

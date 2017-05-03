@@ -1,9 +1,8 @@
 object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
-  Left = 412
-  Top = 26
-  Width = 949
+  Left = 306
+  Top = 46
+  Width = 928
   Height = 594
-  AutoSize = True
   BorderIcons = [biSystemMenu]
   Caption = 'CADASTRO'
   Color = clBtnFace
@@ -16,14 +15,15 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
+  OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object Gb_MateriaPrima: TGroupBox
+  object Gb_Principal: TGroupBox
     Left = 0
     Top = 0
-    Width = 933
+    Width = 912
     Height = 556
     Align = alClient
     Caption = ' MAT'#201'RIA - PRIMA '
@@ -37,10 +37,11 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
     ParentFont = False
     TabOrder = 0
     object Pan_MateriaPrimaSolic: TPanel
-      Left = 11
-      Top = 27
-      Width = 905
+      Left = 2
+      Top = 15
+      Width = 908
       Height = 64
+      Align = alTop
       BevelInner = bvLowered
       Color = 16770250
       Ctl3D = False
@@ -82,7 +83,6 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
           TabOrder = 0
           OnEnter = EdtMateriaPrimaCodEnter
           OnExit = EdtMateriaPrimaCodExit
-          OnKeyPress = EdtMateriaPrimaCodKeyPress
         end
       end
       object Gb_MateriaPrimaDesc: TGroupBox
@@ -109,7 +109,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          MaxLength = 6
+          MaxLength = 60
           ParentFont = False
           TabOrder = 0
         end
@@ -299,16 +299,16 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
       end
     end
     object Pan_MateriaPrima: TPanel
-      Left = 220
-      Top = 98
+      Left = 223
+      Top = 87
       Width = 466
-      Height = 416
+      Height = 431
       TabOrder = 1
       object Dbg_MateriaPrima: TDBGrid
         Left = 1
         Top = 1
         Width = 464
-        Height = 394
+        Height = 409
         Align = alClient
         DataSource = DMArtesanalis.DS_MateriaPrima
         FixedColor = 15000804
@@ -357,7 +357,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
       end
       object StB_MateriaPrima: TdxStatusBar
         Left = 1
-        Top = 395
+        Top = 410
         Width = 464
         Height = 20
         Panels = <
@@ -395,7 +395,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
     object Pan_Solicitacoes: TPanel
       Left = 2
       Top = 524
-      Width = 929
+      Width = 908
       Height = 30
       Align = alBottom
       BevelInner = bvLowered
@@ -404,7 +404,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
       TabOrder = 2
       object Bt_Fechar: TJvXPButton
         Tag = 99
-        Left = 829
+        Left = 808
         Top = 1
         Width = 99
         Height = 28
@@ -480,23 +480,23 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         OnClick = Bt_FecharClick
       end
     end
-  end
-  object OdirPanApres: TPanel
-    Left = 615
-    Top = 4
-    Width = 89
-    Height = 33
-    BevelInner = bvLowered
-    BevelWidth = 2
-    Caption = 'OdirPanApres'
-    Color = clSilver
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
-    Font.Style = [fsBold]
-    ParentFont = False
-    TabOrder = 1
-    Visible = False
+    object OdirPanApres: TPanel
+      Left = 736
+      Top = 176
+      Width = 89
+      Height = 33
+      BevelInner = bvLowered
+      BevelWidth = 2
+      Caption = 'OdirPanApres'
+      Color = clSilver
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 3
+      Visible = False
+    end
   end
 end

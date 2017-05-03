@@ -366,7 +366,7 @@ begin
 
                   If Trim(sgEmpresaNao)<>'' Then
                    MySql:=
-                    MySql+' AND e.Cod_Filial Not in '+sgEmpresaNao;
+                    MySql+' And e.Cod_Filial Not in '+sgEmpresaNao;
 
                    MySql:=
                     MySql+' Order by e.COD_FILIAL';

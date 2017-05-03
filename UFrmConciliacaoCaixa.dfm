@@ -1,6 +1,6 @@
 object FrmConciliacaoCaixa: TFrmConciliacaoCaixa
   Left = 241
-  Top = 117
+  Top = 110
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Concilia'#231#227'o de Caixa'

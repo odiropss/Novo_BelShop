@@ -2526,7 +2526,7 @@ Begin
 
   If Trim(FrmBelShop.Dbcb_ConEmpresasTipo.Text)='M' Then
   Begin
-    MySql:='Select Cod_Emp, Tip_Emp'+
+    MySql:=' Select Cod_Emp, Tip_Emp'+
            ' From Emp_Conexoes'+
            ' Where Tip_Emp=''M'''+
            ' And (Cod_Emp<>'+CDS_Empresa.FieldByName('Cod_Emp').OldValue+
@@ -2750,7 +2750,7 @@ Begin
 
     MySql:=' Select ec.cod_emp'+
            ' From EMP_CONEXOES ec'+
-           ' WHERE ec.COD_FILIAL<>''88'''+
+           ' WHERE ec.Cod_Emp<>''0'''+
            ' Order by ec.cod_emp';
     CDS_Busca.Close;
     SDS_Busca.CommandText:=MySql;

@@ -8,7 +8,9 @@ uses
   uj_001 in '..\..\..\Rotinas Delphi\Janelas\J_001 Login\uj_001.pas' {J_001},
   uj_002 in '..\..\..\Rotinas Delphi\Janelas\J_002 Mensagens\uj_002.pas' {J_002},
   UFrmUnidades in 'UFrmUnidades.pas' {FrmUnidades},
-  UFrmMateriaPrimaCadastro in 'UFrmMateriaPrimaCadastro.pas' {FrmMateriaPrimaCadastro};
+  UFrmMateriaPrimaCadastro in 'UFrmMateriaPrimaCadastro.pas' {FrmMateriaPrimaCadastro},
+  UFrmProducaoCadastro in 'UFrmProducaoCadastro.pas' {FrmProducaoCadastro},
+  UPesquisa in 'UPesquisa.pas' {FrmPesquisa};
 
 {$R *.res}
 
@@ -22,5 +24,7 @@ begin
   Application.CreateForm(TJ_002, J_002);
   Application.CreateForm(TFrmUnidades, FrmUnidades);
   Application.CreateForm(TFrmMateriaPrimaCadastro, FrmMateriaPrimaCadastro);
+  Application.CreateForm(TFrmProducaoCadastro, FrmProducaoCadastro);
+//  Application.CreateForm(TFrmPesquisa, FrmPesquisa);
   Application.Run;
 end.

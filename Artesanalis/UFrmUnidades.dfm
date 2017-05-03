@@ -1,7 +1,7 @@
 object FrmUnidades: TFrmUnidades
-  Left = 352
-  Top = 58
-  Width = 705
+  Left = 245
+  Top = 67
+  Width = 667
   Height = 555
   AutoSize = True
   BorderIcons = [biSystemMenu]
@@ -16,14 +16,15 @@ object FrmUnidades: TFrmUnidades
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
+  OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object Gb_Unidades: TGroupBox
+  object Gb_Principal: TGroupBox
     Left = 0
     Top = 0
-    Width = 689
+    Width = 651
     Height = 517
     Align = alClient
     Caption = ' UNIDADES '
@@ -37,10 +38,11 @@ object FrmUnidades: TFrmUnidades
     ParentFont = False
     TabOrder = 0
     object Pan_Unidade: TPanel
-      Left = 18
-      Top = 20
+      Left = 2
+      Top = 15
       Width = 647
       Height = 64
+      Align = alTop
       BevelInner = bvLowered
       Color = 16770250
       Ctl3D = False
@@ -271,7 +273,7 @@ object FrmUnidades: TFrmUnidades
     object StB_Unidade: TdxStatusBar
       Left = 2
       Top = 465
-      Width = 685
+      Width = 647
       Height = 20
       Panels = <
         item
@@ -284,7 +286,7 @@ object FrmUnidades: TFrmUnidades
           PanelStyle.Alignment = taCenter
           Fixed = False
           Text = '<C'#243'digo = 0> Nova'
-          Width = 60
+          Width = 100
         end
         item
           PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
@@ -294,13 +296,13 @@ object FrmUnidades: TFrmUnidades
           Fixed = False
           ParentBiDiMode = False
           Text = '<Duplo Click no Grid> Selecina'
-          Width = 100
+          Width = 150
         end
         item
           PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
           PanelStyle.Alignment = taCenter
           Text = '<F4 no Grid> Procura'
-          Width = 140
+          Width = 150
         end
         item
           PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
@@ -317,7 +319,7 @@ object FrmUnidades: TFrmUnidades
     object Pan_Solicitacoes: TPanel
       Left = 2
       Top = 485
-      Width = 685
+      Width = 647
       Height = 30
       Align = alBottom
       BevelInner = bvLowered
@@ -326,7 +328,7 @@ object FrmUnidades: TFrmUnidades
       TabOrder = 3
       object Bt_Fechar: TJvXPButton
         Tag = 99
-        Left = 585
+        Left = 547
         Top = 1
         Width = 99
         Height = 28
@@ -403,10 +405,10 @@ object FrmUnidades: TFrmUnidades
       end
     end
     object Dbg_Unidade: TDBGrid
-      Left = 206
-      Top = 96
+      Left = 192
+      Top = 88
       Width = 271
-      Height = 360
+      Height = 367
       DataSource = DMArtesanalis.DS_Unidade
       FixedColor = 15000804
       Font.Charset = DEFAULT_CHARSET
@@ -448,8 +450,8 @@ object FrmUnidades: TFrmUnidades
     end
   end
   object OdirPanApres: TPanel
-    Left = 544
-    Top = 4
+    Left = 512
+    Top = 116
     Width = 89
     Height = 33
     BevelInner = bvLowered

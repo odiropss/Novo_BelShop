@@ -295,7 +295,8 @@ Begin
      MySql:=MySql+'||'':''||emp.pasta_base_dados||''\''||emp.des_base_dados) Banco';
 
     MySql:=MySql+' from EMP_CONEXOES emp'+
-                 ' WHERE emp.tip_emp=''M''';
+                 ' WHERE emp.tip_emp=''M'''+
+                 ' AND   emp.Cod_Emp<>''0''';
     DMBelShop.CDS_Busca.Close;
     DMBelShop.SDS_Busca.CommandText:=MySql;
     DMBelShop.CDS_Busca.Open;
@@ -358,6 +359,7 @@ Begin
 
     MySql:=MySql+' From EMP_CONEXOES emp'+
                  ' Where emp.Ind_Ativo=''SIM'''+
+                 ' AND   emp.Cod_Emp<>''0'''+
                  ' Order by emp.Cod_Emp';
     DMBelShop.CDS_While.Close;
     DMBelShop.SDS_While.CommandText:=MySql;

@@ -19,7 +19,7 @@ uses
 
 type
   TFrmMateriaPrimaCadastro = class(TForm)
-    Gb_MateriaPrima: TGroupBox;
+    Gb_Principal: TGroupBox;
     Pan_MateriaPrimaSolic: TPanel;
     Gb_MateriaPrimaCod: TGroupBox;
     EdtMateriaPrimaCod: TCurrencyEdit;
@@ -43,10 +43,10 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure EdtMateriaPrimaCodEnter(Sender: TObject);
     procedure EdtMateriaPrimaCodExit(Sender: TObject);
-    procedure EdtMateriaPrimaCodKeyPress(Sender: TObject; var Key: Char);
     procedure Bt_MateriaPrimaAbandonarClick(Sender: TObject);
     procedure Dbg_MateriaPrimaDblClick(Sender: TObject);
     procedure Bt_MateriaPrimaSalvarClick(Sender: TObject);
+
     // Odir ====================================================================
     Function  DMLMateriaPrima(sTipo: String): Boolean;
                            // sTipo:
@@ -59,6 +59,7 @@ type
     procedure Dbg_MateriaPrimaKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure FormCreate(Sender: TObject);
 
   private
     { Private declarations }
@@ -130,35 +131,35 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
-     // (IA) Incluir ou Alterar -------------------------------------
-     If sTipo='IA' Then
-     Begin
-       MySql:=' UPDATE OR INSERT INTO MATERIAPRIMA (COD_MATERIAPRIMA,'+
-              ' DES_MATERIAPRIMA, QTD_CONVERSAO, VLR_UNITATIO)'+
-              ' VALUES (';
+    // (IA) Incluir ou Alterar -------------------------------------
+    If sTipo='IA' Then
+    Begin
+      MySql:=' UPDATE OR INSERT INTO MATERIAPRIMA (COD_MATERIAPRIMA,'+
+             ' DES_MATERIAPRIMA, QTD_CONVERSAO, VLR_UNITATIO)'+
+             ' VALUES (';
 
-              If StrToInt(sCodMat)=0 Then
-               MySql:=
-                MySql+' NULL, '
-              Else
-               MySql:=
-                MySql+sCodMat+', ';
+             If StrToInt(sCodMat)=0 Then
+              MySql:=
+               MySql+' NULL, '
+             Else
+              MySql:=
+               MySql+sCodMat+', ';
 
-               MySql:=
-                MySql+QuotedStr(sDescMat)+', '+
-                      sQtdMat+', '+
-                      QuotedStr(f_Troca(',','.',sVlrUMat))+')'+
-                      ' MATCHING (COD_MATERIAPRIMA)';
-     End; // If sTipo='IA' Then
+              MySql:=
+               MySql+QuotedStr(sDescMat)+', '+
+                     sQtdMat+', '+
+                     QuotedStr(f_Troca(',','.',sVlrUMat))+')'+
+                     ' MATCHING (COD_MATERIAPRIMA)';
+    End; // If sTipo='IA' Then
 
-     // (EX) Excluir ------------------------------------------------
-     If sTipo='EX' Then
-     Begin
-       MySql:=' DELETE FROM MATERIAPRIMA ma'+
-              ' WHERE  ma.cod_materiaprima='+sCodMat;
-     End; // If sTipo='EX' Then
+    // (EX) Excluir ------------------------------------------------
+    If sTipo='EX' Then
+    Begin
+      MySql:=' DELETE FROM MATERIAPRIMA ma'+
+             ' WHERE  ma.cod_materiaprima='+sCodMat;
+    End; // If sTipo='EX' Then
 
-     DMArtesanalis.SQLC.Execute(MySql,nil,nil);
+    DMArtesanalis.SQLC.Execute(MySql,nil,nil);
 
     // Atualiza Transacao ===========================================
     DMArtesanalis.SQLC.Commit(TD);
@@ -231,6 +232,10 @@ begin
   End;
 
   DMArtesanalis.FechaTudo;
+
+  // Permite Sair do Sistema ===================================================
+  DMArtesanalis.MemoRetiraNomeForm('Cadastro de Matéria-Prima');
+
 end;
 
 procedure TFrmMateriaPrimaCadastro.EdtMateriaPrimaCodEnter(Sender: TObject);
@@ -265,17 +270,6 @@ begin
      bgAlterar:=False;
      EdtMateriaPrimaCod.SetFocus;
    End; // If DMArtesanalis.CDS_MateriaPrima.Locate('COD_MATERIAPRIMA', EdtMateriaPrimaCod.AsInteger,[]) Then
-end;
-
-procedure TFrmMateriaPrimaCadastro.EdtMateriaPrimaCodKeyPress(Sender: TObject; var Key: Char);
-begin
-  // Somente Numeros ===========================================================
-  If not (key in ['0'..'9']) Then
-  Begin
-    Key := #0;
-    Exit;
-  End;
-
 end;
 
 procedure TFrmMateriaPrimaCadastro.Bt_MateriaPrimaAbandonarClick(Sender: TObject);
@@ -342,7 +336,7 @@ procedure TFrmMateriaPrimaCadastro.Bt_MateriaPrimaExcluirClick(Sender: TObject);
 Var
   MySql: String;
 begin
-  If DMArtesanalis.CDS_MateriaPrima.IsEmpty Then
+  If (DMArtesanalis.CDS_MateriaPrima.IsEmpty) or (EdtMateriaPrimaCod.AsInteger=0) Then
    Exit;
 
   If EdtMateriaPrimaCod.AsInteger=0 Then
@@ -428,14 +422,20 @@ begin
   End; //If Key=VK_F4 Then
 end;
 
-procedure TFrmMateriaPrimaCadastro.FormKeyPress(Sender: TObject;
-  var Key: Char);
+procedure TFrmMateriaPrimaCadastro.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   If Key = #13 Then
   Begin
     Key:=#0;
     SelectNext(ActiveControl,True,True);
   End;
+end;
+
+procedure TFrmMateriaPrimaCadastro.FormCreate(Sender: TObject);
+begin
+  // Coloca Icone no Form ======================================================
+  Icon:=Application.Icon;
+
 end;
 
 end.

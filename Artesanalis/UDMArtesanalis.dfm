@@ -27,6 +27,7 @@ object DMArtesanalis: TDMArtesanalis
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
+    Connected = True
     Left = 44
     Top = 16
   end
@@ -169,5 +170,134 @@ object DMArtesanalis: TDMArtesanalis
     DataSet = CDS_MateriaPrima
     Left = 196
     Top = 334
+  end
+  object SQLQ_Producao: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQL.Strings = (
+      'select pd.cod_aux cod_producao, pd.des_aux des_producao'
+      'from tab_auxiliar pd'
+      'where pd.tip_aux = 1'
+      'order by 2  ')
+    SQLConnection = SQLC
+    Left = 44
+    Top = 416
+  end
+  object DSP_Producao: TDataSetProvider
+    DataSet = SQLQ_Producao
+    Options = [poFetchBlobsOnDemand, poRetainServerOrder]
+    Left = 93
+    Top = 430
+  end
+  object CDS_Producao: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_Producao'
+    Left = 148
+    Top = 416
+    object CDS_ProducaoCOD_PRODUCAO: TIntegerField
+      DisplayLabel = 'C'#243'd'
+      FieldName = 'COD_PRODUCAO'
+      Required = True
+    end
+    object CDS_ProducaoDES_PRODUCAO: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      FieldName = 'DES_PRODUCAO'
+      Size = 50
+    end
+  end
+  object DS_Producao: TDataSource
+    DataSet = CDS_Producao
+    Left = 196
+    Top = 430
+  end
+  object SQLQ_ProducaoMatPrima: TSQLQuery
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftString
+        Name = 'Cod_Producao'
+        ParamType = ptInput
+        Value = '1'
+      end>
+    SQL.Strings = (
+      
+        'SELECT pd.cod_materiaprima, mp.des_materiaprima, pd.per_utilizac' +
+        'ao, pd.cod_producao'
+      'FROM producao pd, materiaprima mp'
+      'WHERE pd.cod_materiaprima = mp.cod_materiaprima AND'
+      '      pd.cod_producao = :Cod_Producao'
+      'ORDER BY 2  '
+      '')
+    SQLConnection = SQLC
+    Left = 44
+    Top = 480
+  end
+  object DSP_ProducaoMatPrima: TDataSetProvider
+    DataSet = SQLQ_ProducaoMatPrima
+    Options = [poFetchBlobsOnDemand, poRetainServerOrder]
+    Left = 93
+    Top = 494
+  end
+  object CDS_ProducaoMatPrima: TClientDataSet
+    Aggregates = <>
+    IndexFieldNames = 'COD_PRODUCAO'
+    MasterFields = 'COD_PRODUCAO'
+    MasterSource = DS_Producao
+    PacketRecords = 0
+    Params = <>
+    ProviderName = 'DSP_ProducaoMatPrima'
+    Left = 148
+    Top = 480
+    object CDS_ProducaoMatPrimaCOD_MATERIAPRIMA: TIntegerField
+      DisplayLabel = 'C'#243'd'
+      FieldName = 'COD_MATERIAPRIMA'
+      Required = True
+    end
+    object CDS_ProducaoMatPrimaDES_MATERIAPRIMA: TStringField
+      DisplayLabel = 'Descri'#231#227'o Mat'#233'ria-Prima'
+      FieldName = 'DES_MATERIAPRIMA'
+      Size = 60
+    end
+    object CDS_ProducaoMatPrimaPER_UTILIZACAO: TFMTBCDField
+      DisplayLabel = '% Utiliza'#231#227'o'
+      FieldName = 'PER_UTILIZACAO'
+      DisplayFormat = '0.,00'
+      Precision = 18
+      Size = 5
+    end
+    object CDS_ProducaoMatPrimaCOD_PRODUCAO: TIntegerField
+      FieldName = 'COD_PRODUCAO'
+    end
+  end
+  object Ds_ProducaoMatPrima: TDataSource
+    DataSet = CDS_ProducaoMatPrima
+    Left = 196
+    Top = 494
+  end
+  object SDS_Pesquisa: TSQLDataSet
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 256
+    Top = 10
+  end
+  object DSP_Pesquisa: TDataSetProvider
+    DataSet = SDS_Pesquisa
+    Options = [poRetainServerOrder]
+    Left = 297
+    Top = 27
+  end
+  object CDS_Pesquisa: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_Pesquisa'
+    Left = 337
+    Top = 7
+  end
+  object DS_Pesquisa: TDataSource
+    DataSet = CDS_Pesquisa
+    Left = 381
+    Top = 27
   end
 end

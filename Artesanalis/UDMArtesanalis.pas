@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Forms, SysUtils, Classes, DBXpress, FMTBcd, DB, DBClient, Provider, SqlExpr,
-  WinInet;
+  WinInet, StdCtrls;
 
 type
   TDMArtesanalis = class(TDataModule)
@@ -31,6 +31,24 @@ type
     CDS_MateriaPrimaDES_MATERIAPRIMA: TStringField;
     CDS_MateriaPrimaVLR_UNITATIO: TFMTBCDField;
     CDS_MateriaPrimaQTD_CONVERSAO: TIntegerField;
+    SQLQ_Producao: TSQLQuery;
+    DSP_Producao: TDataSetProvider;
+    CDS_Producao: TClientDataSet;
+    DS_Producao: TDataSource;
+    CDS_ProducaoCOD_PRODUCAO: TIntegerField;
+    CDS_ProducaoDES_PRODUCAO: TStringField;
+    SQLQ_ProducaoMatPrima: TSQLQuery;
+    DSP_ProducaoMatPrima: TDataSetProvider;
+    CDS_ProducaoMatPrima: TClientDataSet;
+    Ds_ProducaoMatPrima: TDataSource;
+    CDS_ProducaoMatPrimaCOD_MATERIAPRIMA: TIntegerField;
+    CDS_ProducaoMatPrimaDES_MATERIAPRIMA: TStringField;
+    CDS_ProducaoMatPrimaPER_UTILIZACAO: TFMTBCDField;
+    SDS_Pesquisa: TSQLDataSet;
+    DSP_Pesquisa: TDataSetProvider;
+    CDS_Pesquisa: TClientDataSet;
+    DS_Pesquisa: TDataSource;
+    CDS_ProducaoMatPrimaCOD_PRODUCAO: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -38,6 +56,8 @@ type
     Procedure ConectaBanco;
     Procedure FechaTudo;
 
+    Procedure MemoAdicionaNomeForm(sNome: String);
+    Procedure MemoRetiraNomeForm(sNome: String);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -58,6 +78,8 @@ var
 
   sgPastaExecutavel, sgPCTConect_FB: String;
 
+  mgMemo: TMemo; // Guarda Forms Abertos
+
   bgSair: Boolean;
 
 implementation
@@ -69,6 +91,42 @@ uses  DK_Procs1;
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - Inicio >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Adiciona Nome do Form na Relação de Forms Abertos >>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TDMArtesanalis.MemoAdicionaNomeForm(sNome: String);
+Var
+  i: Integer;
+  b: Boolean;
+Begin
+  b:=True;
+  For i:=0 to mgMemo.Lines.Count-1 do
+  Begin
+    If AnsiUpperCase(mgMemo.Lines[i])=AnsiUpperCase(sNome) Then
+    Begin
+      b:=False;
+      Break;
+    End;
+  End; // For i:=0 to mgMemo.Lines.Count-1 do
+
+  If b Then
+   mgMemo.Lines.Add(sNome);
+End; // Adiciona Nome do Form na Relação de Forms Abertos >>>>>>>>>>>>>>>>>>>>>>
+
+// Retira Nome do Form da Relação de Forms Abertos >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TDMArtesanalis.MemoRetiraNomeForm(sNome: String);
+Var
+  i: Integer;
+Begin
+  For i:=0 to mgMemo.Lines.Count-1 do
+  Begin
+    If AnsiUpperCase(mgMemo.Lines[i])=AnsiUpperCase(sNome) Then
+    Begin
+      mgMemo.Lines.Delete(i);
+      Break;
+    End;
+  End; // For i:=0 to mgMemo.Lines.Count-1 do
+End; // Retira Nome do Form da Relação de Formes Abertos >>>>>>>>>>>>>>>>>>>>>>>
+
 // Fecha Todos os Client's >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TDMArtesanalis.FechaTudo;
 Var

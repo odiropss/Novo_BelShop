@@ -22378,7 +22378,7 @@ end;
 
 procedure TFrmBelShop.MenuCalculadoraClick(Sender: TObject);
 begin
-  shellexecute(handle, 'open', 'calc.exe', '', nil, sw_shownormal);
+  ShellExecute(handle, 'open', 'calc.exe', '', nil, sw_shownormal);
 end;
 
 procedure TFrmBelShop.MenuVersaoClick(Sender: TObject);
@@ -22387,7 +22387,6 @@ begin
       FileAge(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+
       ExtractFileName(Application.ExeName)))),1,19)+cr+cr+
       'Login do Usuário Atual'+cr+cr+Des_Login,'A');
-
 end;
 
 procedure TFrmBelShop.PC_PrincipalChange(Sender: TObject);
@@ -27347,9 +27346,10 @@ begin
   Gb_CalculoApresCurva.Enabled:=False;
   Painel_FiltroOC.Height:=53;
 
-  // Tipo de Conexão ===========================================================
+  // Tipo de Calculo ===========================================================
   Rb_CalculoTpProcLoja.Checked:=False;
-  Rb_CalculoTpProcLocal.Checked:=False;
+  Rb_CalculoTpProcLocal.Checked:=True;
+  Rb_CalculoTpProcLocalClick(Self);
   Img_Calculo.Visible:=False;
 
   // Abre TabSheet =============================================================

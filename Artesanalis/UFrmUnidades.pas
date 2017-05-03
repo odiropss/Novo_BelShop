@@ -20,7 +20,7 @@ uses
 
 type
   TFrmUnidades = class(TForm)
-    Gb_Unidades: TGroupBox;
+    Gb_Principal: TGroupBox;
     Pan_Unidade: TPanel;
     Gb_UnidadeCodigo: TGroupBox;
     EdtUnidadeCod: TCurrencyEdit;
@@ -56,6 +56,7 @@ type
     procedure Bt_UnidadeExcluirClick(Sender: TObject);
     procedure Dbg_UnidadeDblClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure FormCreate(Sender: TObject);
 
   private
     { Private declarations }
@@ -126,33 +127,33 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
-     // (IA) Incluir ou Alterar -------------------------------------
-     If sTipo='IA' Then
-     Begin
-       MySql:=' UPDATE OR INSERT INTO UNIDADE (cod_unidade, des_unidade, qtd_unidade)'+
-              ' VALUES (';
+    // (IA) Incluir ou Alterar -------------------------------------
+    If sTipo='IA' Then
+    Begin
+      MySql:=' UPDATE OR INSERT INTO UNIDADE (cod_unidade, des_unidade, qtd_unidade)'+
+             ' VALUES (';
 
-              If StrToInt(sCodUni)=0 Then
-               MySql:=
-                MySql+' NULL, '
-              Else
-               MySql:=
-                MySql+sCodUni+', ';
+             If StrToInt(sCodUni)=0 Then
+              MySql:=
+               MySql+' NULL, '
+             Else
+              MySql:=
+               MySql+sCodUni+', ';
 
-               MySql:=
-                MySql+QuotedStr(sAbrevUni)+', '+
-                      sQtdUni+')'+
-                      ' MATCHING (cod_unidade)';
-     End; // If sTipo='IA' Then
+              MySql:=
+               MySql+QuotedStr(sAbrevUni)+', '+
+                     sQtdUni+')'+
+                     ' MATCHING (cod_unidade)';
+    End; // If sTipo='IA' Then
 
-     // (EX) Excluir ------------------------------------------------
-     If sTipo='EX' Then
-     Begin
-       MySql:=' DELETE FROM UNIDADE u'+
-              ' WHERE  u.cod_unidade='+sCodUni;
-     End; // If sTipo='EX' Then
+    // (EX) Excluir ------------------------------------------------
+    If sTipo='EX' Then
+    Begin
+      MySql:=' DELETE FROM UNIDADE u'+
+             ' WHERE  u.cod_unidade='+sCodUni;
+    End; // If sTipo='EX' Then
 
-     DMArtesanalis.SQLC.Execute(MySql,nil,nil);
+    DMArtesanalis.SQLC.Execute(MySql,nil,nil);
 
     // Atualiza Transacao ===========================================
     DMArtesanalis.SQLC.Commit(TD);
@@ -199,6 +200,7 @@ End; // Manipuação de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 procedure TFrmUnidades.Bt_FecharClick(Sender: TObject);
 begin
   bgSairUnidades:=True;
+
   Close;
 end;
 
@@ -268,6 +270,8 @@ begin
 
   DMArtesanalis.FechaTudo;
 
+  // Permite Sair do Sistema ===================================================
+  DMArtesanalis.MemoRetiraNomeForm('Cadastro de Unidades');
 end;
 
 procedure TFrmUnidades.EdtUnidadeCodEnter(Sender: TObject);
@@ -352,7 +356,7 @@ procedure TFrmUnidades.Bt_UnidadeExcluirClick(Sender: TObject);
 Var
   MySql: String;
 begin
-  If DMArtesanalis.CDS_Unidade.IsEmpty Then
+  If (DMArtesanalis.CDS_Unidade.IsEmpty) or (EdtUnidadeCod.AsInteger=0) Then
    Exit;
 
   If EdtUnidadeCod.AsInteger=0 Then
@@ -416,6 +420,13 @@ begin
     Key:=#0;
     SelectNext(ActiveControl,True,True);
   End;
+end;
+
+procedure TFrmUnidades.FormCreate(Sender: TObject);
+begin
+  // Coloca Icone no Form ======================================================
+  Icon:=Application.Icon;
+
 end;
 
 end.

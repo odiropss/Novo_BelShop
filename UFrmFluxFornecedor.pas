@@ -2186,13 +2186,11 @@ begin
     // Verifica se Já Existe ----------------------------------------
     If DMBelShop.CDS_FluxoFornHistorico.Locate('COD_HISTORICO',Trim(FrmPesquisa.EdtCodigo.Text),[]) Then
     Begin
-      Begin
-        msg('Comprovante Já Informado !!','A');
-        EdtFluFornComprovante.Clear;
-        FreeAndNil(FrmPesquisa);
-        Bt_FluFornComprovante.SetFocus;
-        Exit;
-      End;
+      msg('Comprovante Já Informado !!','A');
+      EdtFluFornComprovante.Clear;
+      FreeAndNil(FrmPesquisa);
+      Bt_FluFornComprovante.SetFocus;
+      Exit;
     End;
 
     s:='Débito';

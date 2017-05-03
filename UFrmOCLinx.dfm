@@ -1,6 +1,6 @@
 object FrmOCLinx: TFrmOCLinx
-  Left = 341
-  Top = 36
+  Left = 260
+  Top = 101
   Align = alClient
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
@@ -28,7 +28,7 @@ object FrmOCLinx: TFrmOCLinx
     Top = 0
     Width = 977
     Height = 576
-    ActivePage = Ts_OCGeraOrdemCompra
+    ActivePage = Ts_OCBuscaProdutos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
