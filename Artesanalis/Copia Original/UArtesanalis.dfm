@@ -1,7 +1,7 @@
 object FrmArtesanalis: TFrmArtesanalis
-  Left = 241
-  Top = 113
-  Width = 1099
+  Left = 239
+  Top = 110
+  Width = 894
   Height = 613
   Align = alTop
   BorderIcons = [biSystemMenu, biMinimize]
@@ -7066,871 +7066,24 @@ object FrmArtesanalis: TFrmArtesanalis
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
-  OnResize = FormResize
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object PC_Principal: TPageControl
-    Left = 0
-    Top = 0
-    Width = 1083
-    Height = 555
-    ActivePage = Ts_Unidade
-    Align = alClient
-    TabOrder = 0
-    object Ts_Unidade: TTabSheet
-      Caption = 'Unidade'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      object PC_Unidade: TPageControl
-        Left = 0
-        Top = 0
-        Width = 1075
-        Height = 527
-        ActivePage = Ts_UnidadeCadastro
-        Align = alClient
-        TabOrder = 0
-        object Ts_UnidadeCadastro: TTabSheet
-          Caption = 'Cadastro'
-          DesignSize = (
-            1067
-            499)
-          object Pan_Solicitacoes: TPanel
-            Left = 0
-            Top = 469
-            Width = 1067
-            Height = 30
-            Align = alBottom
-            TabOrder = 1
-            object Bt_Fechar: TJvXPButton
-              Tag = 99
-              Left = 967
-              Top = 1
-              Width = 99
-              Height = 28
-              Caption = 'Fechar'
-              TabOrder = 0
-              TabStop = False
-              Glyph.Data = {
-                07544269746D6170D6060000424DD60600000000000036040000280000001900
-                0000180000000100080000000000A0020000C30E0000C30E0000000100000000
-                0000000000007B000000FF000000007B00007B7B000000FF0000FFFF0000007B
-                7B007B7B7B00BDBDBD0000FFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00090909090909090909090909090909080909090909090909090000000909
-                0909090909090909090909090808080909090909090909000000090909090909
-                0909090909090909080404080909090909090900000009090909090909090909
-                0909090908060604080909090909090000000909090909090909090909090909
-                0806060404080909090909000000090909090909090909090909090908060604
-                0404080909090900000000000000000000000000090909090806060404040000
-                0000080000000909090909090909090008080808000606040404000809090900
-                0000090909090909090808000A0A0A0A07060604040400080909090000000909
-                09090909080004000A0A0A0A0706060404040008090909000000090909090909
-                080004000A0A0A0A070606040404000809090900000009090908080808040404
-                070A0A0A07060404000400080909090000000909080808080804060404070A0A
-                0706040800040008090909000000090400000000000406060404070A07060604
-                0404000809090900000008040606060606060606060404070706060404040008
-                0909090000000804060B0B0B0B0B0B0B06060407070606040404000809090900
-                0000090404040404040406060604070A07060604040400080909090000000909
-                080808080804060604070A0A0706060404040008090909000000090909090909
-                08040604070A0A0A070606040404000809090900000009090909090908040400
-                0A0A0A0A0704060404040008090909000000090909090909080000000A0A0A0A
-                0A070406040400080909090000000909090909090909080A0A0A0A0A0A0A0A04
-                0604000809090900000009090909090909090807070707070707070004040008
-                0909090000000909090909090909090808080808080808080808080909090900
-                0000}
-              ShowFocusRect = True
-              Spacing = 10
-              Align = alRight
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-              OnClick = Bt_FecharClick
-            end
-          end
-          object Pan_Unidade: TPanel
-            Left = 214
-            Top = 3
-            Width = 647
-            Height = 64
-            Anchors = [akTop]
-            BevelInner = bvLowered
-            Ctl3D = False
-            ParentCtl3D = False
-            TabOrder = 0
-            object Gb_UnidadeCodigo: TGroupBox
-              Left = 13
-              Top = 5
-              Width = 76
-              Height = 51
-              Caption = ' C'#243'digo '
-              TabOrder = 0
-              object EdtUnidadeCod: TCurrencyEdit
-                Left = 12
-                Top = 19
-                Width = 52
-                Height = 21
-                AutoSize = False
-                DecimalPlaces = 0
-                DisplayFormat = '0'
-                TabOrder = 0
-                OnEnter = EdtUnidadeCodEnter
-                OnExit = EdtUnidadeCodExit
-                OnKeyPress = EdtUnidadeCodKeyPress
-              end
-            end
-            object Gb_UnidadeDescricao: TGroupBox
-              Left = 90
-              Top = 5
-              Width = 107
-              Height = 51
-              Caption = ' Abrev. Unidade '
-              TabOrder = 1
-              object EdtUnidadeAbrev: TEdit
-                Left = 19
-                Top = 20
-                Width = 57
-                Height = 19
-                CharCase = ecUpperCase
-                MaxLength = 6
-                TabOrder = 0
-              end
-            end
-            object Gb_UnidadeQuantidade: TGroupBox
-              Left = 199
-              Top = 5
-              Width = 83
-              Height = 51
-              Caption = ' Quantidade '
-              TabOrder = 2
-              object EdtUnidadeQtd: TCurrencyEdit
-                Left = 12
-                Top = 19
-                Width = 52
-                Height = 21
-                AutoSize = False
-                DecimalPlaces = 0
-                DisplayFormat = '0'
-                TabOrder = 0
-                OnKeyPress = EdtUnidadeCodKeyPress
-              end
-            end
-            object Bt_UnidadeSalvar: TJvXPButton
-              Tag = 99
-              Left = 291
-              Top = 18
-              Width = 109
-              Height = 28
-              Caption = 'Salvar'
-              TabOrder = 3
-              TabStop = False
-              Glyph.Data = {
-                07544269746D617066010000424D660100000000000076000000280000001400
-                0000140000000100040000000000F00000000000000000000000100000001000
-                0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
-                C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-                FF00333333333333333333330000333333000000000000030000333333078888
-                8888880300003333330F77777777780300003333330F99777777780300003333
-                330FFFFFFFFFF703000033333300000000000003000033333333333333333333
-                0000333333333333330033330000333333333333300003330000300000000333
-                00000033000030FFFFFF033333003333000030F4444F033333003333000030FF
-                FFFF033338003333000030F4444F030000083333000030FFFFFF030000833333
-                000030F44F00033333333333000030FFFF003333333333330000300000033333
-                333333330000333333333333333333330000}
-              ShowFocusRect = True
-              Spacing = 5
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-              OnClick = Bt_UnidadeSalvarClick
-            end
-            object Bt_UnidadeAbandonar: TJvXPButton
-              Tag = 99
-              Left = 406
-              Top = 18
-              Width = 109
-              Height = 28
-              Caption = 'Abandonar'
-              TabOrder = 4
-              TabStop = False
-              Glyph.Data = {
-                07544269746D6170F6000000424DF60000000000000076000000280000001000
-                0000100000000100040000000000800000000000000000000000100000001000
-                0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
-                C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-                FF0077777700000087777777770AAAAA00877777770AAAAAA2077777770AAAAA
-                2A20777777000000A22077777777777700207777777777777700777707777777
-                77007770077777770020770A00000000A22070AAAAAAAAAA2A200AAAAAAAAAAA
-                A20770AAAAAAAAAA0077770A0000000087777770077777777777777707777777
-                7777}
-              ShowFocusRect = True
-              Spacing = 5
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-              OnClick = Bt_UnidadeAbandonarClick
-            end
-            object Bt_UnidadeExcluir: TJvXPButton
-              Tag = 99
-              Left = 521
-              Top = 18
-              Width = 109
-              Height = 28
-              Caption = 'Excluir'
-              TabOrder = 5
-              TabStop = False
-              Glyph.Data = {
-                07544269746D6170B2050000424DB20500000000000036040000280000001200
-                00001300000001000800000000007C010000C30E0000C30E0000000100000000
-                0000000000007B000000BD000000FF0000007B7B000000FF0000FFFF00000031
-                5A0008427300084A730000007B007B007B00084A7B0008527B0021527B00007B
-                7B007B7B7B00004A840008528400105284002963840008528C00085A8C00185A
-                8C0018638C0029638C0008529400185A9400296B9400316B9400297394003173
-                9400085A9C0018639C0018739C0029739C0031739C0031849C00005AA5002173
-                A5003973A500297BA500186BAD00106BB500317BB5002984B5004A8CB500086B
-                BD000073BD001073BD001873BD00217BBD004284BD00318CBD004A8CBD005294
-                BD005A9CBD00BDBDBD001073C600007BC600217BC600428CC6004A8CC6005A9C
-                C6000084CE000884CE00398CCE005A9CCE00639CCE001884D6002184D600088C
-                D600108CD6004294D600399CD6004A9CD600529CD6005A9CD6005AA5D60063AD
-                D6001884DE002184DE00188CDE001094DE001894DE003194DE00299CDE004AA5
-                DE005AA5DE004AB5DE00189CE700219CE700429CE7005AA5E7005AADE70063AD
-                E7006BB5E70021A5EF0029A5EF0031A5EF0063B5EF006BBDEF0029ADF70031AD
-                F7006BBDF7000000FF00FF00FF0031B5FF0039B5FF0042B5FF0039BDFF0042BD
-                FF0042C6FF004AC6FF006BC6FF004ACEFF0052CEFF0052D6FF005ADEFF0063E7
-                FF0000FFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00393939393939393939393939393939393969000039693939393939393939
-                3939393939396939000039696939391010101010101010101069393900003969
-                6969000000000000000000006969393900003939696900787979797879797969
-                6939393900003939396969790303030303037969103939390000393939696969
-                7978797979786969103939390000393939396969690303036969690010393939
-                0000393939390069696979786969790010393939000039393939007903696969
-                6903790010393939000039393939007979696969697879001039393900003939
-                3939007903696969690000001039393900003939393900786969790069697900
-                1039393900003939393900696969790069696969393939390000393939696969
-                7978790079003969693939390000396969696900000000000039393969693939
-                0000396969693939393939393939393939396939000039393939393939393939
-                393939393939396900003939393939393939393939393939393939390000}
-              ShowFocusRect = True
-              Spacing = 5
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-              OnClick = Bt_UnidadeExcluirClick
-            end
-          end
-          object StB_Unidade: TdxStatusBar
-            Left = 0
-            Top = 449
-            Width = 1067
-            Height = 20
-            Panels = <
-              item
-                PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-                Fixed = False
-                Width = 70
-              end
-              item
-                PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-                PanelStyle.Alignment = taCenter
-                Fixed = False
-                Text = '<C'#243'digo = 0> Novo'
-                Width = 40
-              end
-              item
-                PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-                PanelStyle.Alignment = taCenter
-                PanelStyle.Color = clSilver
-                BiDiMode = bdRightToLeft
-                Fixed = False
-                ParentBiDiMode = False
-                Text = '<Duplo Click no Grid> Selecina'
-                Width = 50
-              end
-              item
-                PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-                PanelStyle.Alignment = taCenter
-                Text = '<F4 no Grid> Procura'
-                Width = 150
-              end
-              item
-                PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-                Fixed = False
-                Width = 70
-              end>
-            PaintStyle = stpsOffice11
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-          end
-          object Gb_Unidade: TGroupBox
-            Left = 400
-            Top = 69
-            Width = 275
-            Height = 374
-            Anchors = [akTop, akBottom]
-            Caption = ' Unidades '
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            ParentFont = False
-            TabOrder = 3
-            object Dbg_Unidade: TDBGrid
-              Left = 2
-              Top = 15
-              Width = 271
-              Height = 357
-              Align = alClient
-              DataSource = DMArtesanalis.DS_Unidade
-              FixedColor = 15000804
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = []
-              Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-              ParentFont = False
-              TabOrder = 0
-              TitleFont.Charset = DEFAULT_CHARSET
-              TitleFont.Color = clWindowText
-              TitleFont.Height = -11
-              TitleFont.Name = 'MS Sans Serif'
-              TitleFont.Style = [fsBold]
-              OnDblClick = Dbg_UnidadeDblClick
-              OnKeyDown = Dbg_UnidadeKeyDown
-              Columns = <
-                item
-                  Expanded = False
-                  FieldName = 'COD_UNIDADE'
-                  Title.Alignment = taRightJustify
-                  Width = 45
-                  Visible = True
-                end
-                item
-                  Expanded = False
-                  FieldName = 'DES_UNIDADE'
-                  Width = 105
-                  Visible = True
-                end
-                item
-                  Expanded = False
-                  FieldName = 'QTD_UNIDADE'
-                  Title.Alignment = taRightJustify
-                  Width = 80
-                  Visible = True
-                end>
-            end
-          end
-        end
-      end
-    end
-    object Ts_MateriaPrima: TTabSheet
-      Caption = 'Mat'#233'ria-Prima'
-      ImageIndex = 1
-      object PC_MateriaPrima: TPageControl
-        Left = 0
-        Top = 0
-        Width = 1075
-        Height = 527
-        ActivePage = Ts_MateriaPrimaCadastro
-        Align = alClient
-        TabOrder = 0
-        object Ts_MateriaPrimaCadastro: TTabSheet
-          Caption = 'Cadastro'
-          DesignSize = (
-            1067
-            499)
-          object Gb_MateriaPrima: TGroupBox
-            Left = 300
-            Top = 69
-            Width = 467
-            Height = 399
-            Anchors = [akTop, akBottom]
-            Caption = ' Mat'#233'ria-Prima '
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            ParentFont = False
-            TabOrder = 1
-            object Dbg_MateriaPrima: TDBGrid
-              Left = 2
-              Top = 15
-              Width = 463
-              Height = 362
-              Align = alClient
-              DataSource = DMArtesanalis.DS_MateriaPrima
-              FixedColor = 15000804
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = []
-              Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-              ParentFont = False
-              TabOrder = 0
-              TitleFont.Charset = DEFAULT_CHARSET
-              TitleFont.Color = clWindowText
-              TitleFont.Height = -11
-              TitleFont.Name = 'MS Sans Serif'
-              TitleFont.Style = [fsBold]
-              OnDblClick = Dbg_UnidadeDblClick
-              OnKeyDown = Dbg_MateriaPrimaKeyDown
-              Columns = <
-                item
-                  Expanded = False
-                  FieldName = 'COD_MATERIAPRIMA'
-                  Width = 45
-                  Visible = True
-                end
-                item
-                  Expanded = False
-                  FieldName = 'DES_MATERIAPRIMA'
-                  Width = 200
-                  Visible = True
-                end
-                item
-                  Expanded = False
-                  FieldName = 'QTD_CONVERSAO'
-                  Title.Alignment = taRightJustify
-                  Width = 95
-                  Visible = True
-                end
-                item
-                  Expanded = False
-                  FieldName = 'VLR_UNITATIO'
-                  Title.Alignment = taRightJustify
-                  Width = 80
-                  Visible = True
-                end>
-            end
-            object StB_MateriaPrima: TdxStatusBar
-              Left = 2
-              Top = 377
-              Width = 463
-              Height = 20
-              Panels = <
-                item
-                  PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-                  PanelStyle.Alignment = taCenter
-                  Fixed = False
-                  Text = '<C'#243'digo = 0> Novo'
-                  Width = 130
-                end
-                item
-                  PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-                  PanelStyle.Alignment = taCenter
-                  PanelStyle.Color = clSilver
-                  BiDiMode = bdRightToLeft
-                  Fixed = False
-                  ParentBiDiMode = False
-                  Text = '<Duplo Click no Grid> Selecina'
-                  Width = 200
-                end
-                item
-                  PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-                  PanelStyle.Alignment = taCenter
-                  Text = '<F4 no Grid> Procura'
-                  Width = 140
-                end>
-              PaintStyle = stpsOffice11
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-            end
-          end
-          object Pan_MateriaPrima: TPanel
-            Left = 81
-            Top = 3
-            Width = 905
-            Height = 64
-            Anchors = [akTop]
-            BevelInner = bvLowered
-            Ctl3D = False
-            ParentCtl3D = False
-            TabOrder = 0
-            object Gb_MateriaPrimaCod: TGroupBox
-              Left = 13
-              Top = 5
-              Width = 76
-              Height = 51
-              Caption = ' C'#243'digo '
-              TabOrder = 0
-              object EdtMateriaPrimaCod: TCurrencyEdit
-                Left = 12
-                Top = 19
-                Width = 52
-                Height = 21
-                AutoSize = False
-                DecimalPlaces = 0
-                DisplayFormat = '0'
-                TabOrder = 0
-                OnEnter = EdtUnidadeCodEnter
-                OnExit = EdtUnidadeCodExit
-                OnKeyPress = EdtUnidadeCodKeyPress
-              end
-            end
-            object Gb_MateriaPrimaDesc: TGroupBox
-              Left = 90
-              Top = 5
-              Width = 266
-              Height = 51
-              Caption = ' Descri'#231#227'o '
-              TabOrder = 1
-              object EdtMateriaPrimaDesc: TEdit
-                Left = 14
-                Top = 20
-                Width = 237
-                Height = 19
-                CharCase = ecUpperCase
-                MaxLength = 6
-                TabOrder = 0
-              end
-            end
-            object Gb_MateriaPrimaQtdConv: TGroupBox
-              Left = 357
-              Top = 5
-              Width = 94
-              Height = 51
-              Caption = ' Qtd Convers'#227'o  '
-              TabOrder = 2
-              object EdtMateriaPrimaQtdConv: TCurrencyEdit
-                Left = 20
-                Top = 19
-                Width = 52
-                Height = 21
-                AutoSize = False
-                DecimalPlaces = 0
-                DisplayFormat = '0'
-                TabOrder = 0
-                OnKeyPress = EdtUnidadeCodKeyPress
-              end
-            end
-            object Bt_MateriaPrimaSalvar: TJvXPButton
-              Tag = 99
-              Left = 555
-              Top = 18
-              Width = 109
-              Height = 28
-              Caption = 'Salvar'
-              TabOrder = 3
-              TabStop = False
-              Glyph.Data = {
-                07544269746D617066010000424D660100000000000076000000280000001400
-                0000140000000100040000000000F00000000000000000000000100000001000
-                0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
-                C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-                FF00333333333333333333330000333333000000000000030000333333078888
-                8888880300003333330F77777777780300003333330F99777777780300003333
-                330FFFFFFFFFF703000033333300000000000003000033333333333333333333
-                0000333333333333330033330000333333333333300003330000300000000333
-                00000033000030FFFFFF033333003333000030F4444F033333003333000030FF
-                FFFF033338003333000030F4444F030000083333000030FFFFFF030000833333
-                000030F44F00033333333333000030FFFF003333333333330000300000033333
-                333333330000333333333333333333330000}
-              ShowFocusRect = True
-              Spacing = 5
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-              OnClick = Bt_MateriaPrimaSalvarClick
-            end
-            object Bt_MateriaPrimaAbandonar: TJvXPButton
-              Tag = 99
-              Left = 670
-              Top = 18
-              Width = 109
-              Height = 28
-              Caption = 'Abandonar'
-              TabOrder = 4
-              TabStop = False
-              Glyph.Data = {
-                07544269746D6170F6000000424DF60000000000000076000000280000001000
-                0000100000000100040000000000800000000000000000000000100000001000
-                0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
-                C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-                FF0077777700000087777777770AAAAA00877777770AAAAAA2077777770AAAAA
-                2A20777777000000A22077777777777700207777777777777700777707777777
-                77007770077777770020770A00000000A22070AAAAAAAAAA2A200AAAAAAAAAAA
-                A20770AAAAAAAAAA0077770A0000000087777770077777777777777707777777
-                7777}
-              ShowFocusRect = True
-              Spacing = 5
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-              OnClick = Bt_UnidadeAbandonarClick
-            end
-            object Bt_MateriaPrimaExcluir: TJvXPButton
-              Tag = 99
-              Left = 785
-              Top = 18
-              Width = 109
-              Height = 28
-              Caption = 'Excluir'
-              TabOrder = 5
-              TabStop = False
-              Glyph.Data = {
-                07544269746D6170B2050000424DB20500000000000036040000280000001200
-                00001300000001000800000000007C010000C30E0000C30E0000000100000000
-                0000000000007B000000BD000000FF0000007B7B000000FF0000FFFF00000031
-                5A0008427300084A730000007B007B007B00084A7B0008527B0021527B00007B
-                7B007B7B7B00004A840008528400105284002963840008528C00085A8C00185A
-                8C0018638C0029638C0008529400185A9400296B9400316B9400297394003173
-                9400085A9C0018639C0018739C0029739C0031739C0031849C00005AA5002173
-                A5003973A500297BA500186BAD00106BB500317BB5002984B5004A8CB500086B
-                BD000073BD001073BD001873BD00217BBD004284BD00318CBD004A8CBD005294
-                BD005A9CBD00BDBDBD001073C600007BC600217BC600428CC6004A8CC6005A9C
-                C6000084CE000884CE00398CCE005A9CCE00639CCE001884D6002184D600088C
-                D600108CD6004294D600399CD6004A9CD600529CD6005A9CD6005AA5D60063AD
-                D6001884DE002184DE00188CDE001094DE001894DE003194DE00299CDE004AA5
-                DE005AA5DE004AB5DE00189CE700219CE700429CE7005AA5E7005AADE70063AD
-                E7006BB5E70021A5EF0029A5EF0031A5EF0063B5EF006BBDEF0029ADF70031AD
-                F7006BBDF7000000FF00FF00FF0031B5FF0039B5FF0042B5FF0039BDFF0042BD
-                FF0042C6FF004AC6FF006BC6FF004ACEFF0052CEFF0052D6FF005ADEFF0063E7
-                FF0000FFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00393939393939393939393939393939393969000039693939393939393939
-                3939393939396939000039696939391010101010101010101069393900003969
-                6969000000000000000000006969393900003939696900787979797879797969
-                6939393900003939396969790303030303037969103939390000393939696969
-                7978797979786969103939390000393939396969690303036969690010393939
-                0000393939390069696979786969790010393939000039393939007903696969
-                6903790010393939000039393939007979696969697879001039393900003939
-                3939007903696969690000001039393900003939393900786969790069697900
-                1039393900003939393900696969790069696969393939390000393939696969
-                7978790079003969693939390000396969696900000000000039393969693939
-                0000396969693939393939393939393939396939000039393939393939393939
-                393939393939396900003939393939393939393939393939393939390000}
-              ShowFocusRect = True
-              Spacing = 5
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-              OnClick = Bt_MateriaPrimaExcluirClick
-            end
-            object Gb_MateriaPrimaVlrUnit: TGroupBox
-              Left = 452
-              Top = 5
-              Width = 94
-              Height = 51
-              Caption = ' Valor Unit'#225'rio '
-              TabOrder = 6
-              object EdtMateriaPrimaVlrUnit: TCurrencyEdit
-                Left = 13
-                Top = 19
-                Width = 68
-                Height = 21
-                AutoSize = False
-                DisplayFormat = ',0.00'
-                TabOrder = 0
-                OnKeyPress = EdtUnidadeCodKeyPress
-              end
-            end
-          end
-        end
-        object Ts_MateriaPrimaEntrada: TTabSheet
-          Caption = 'Entrada'
-          ImageIndex = 1
-          object Panel3: TPanel
-            Left = 536
-            Top = 4
-            Width = 2
-            Height = 484
-            Caption = 'Panel3'
-            TabOrder = 0
-          end
-        end
-        object Ts_MateriaPrimaSaldo: TTabSheet
-          Caption = 'Saldo'
-          ImageIndex = 2
-        end
-      end
-    end
-    object Ts_Produto: TTabSheet
-      Caption = 'Produto'
-      ImageIndex = 2
-      object PageControl1: TPageControl
-        Left = 0
-        Top = 0
-        Width = 1075
-        Height = 527
-        ActivePage = Ts_ProdutoCadastro
-        Align = alClient
-        TabOrder = 0
-        object Ts_ProdutoCadastro: TTabSheet
-          Caption = 'Cadastro'
-        end
-        object Ts_ProdutoSaldo: TTabSheet
-          Caption = 'Saldo'
-          ImageIndex = 1
-        end
-      end
-    end
-    object Ts_Producao: TTabSheet
-      Caption = 'Produ'#231#227'o'
-      ImageIndex = 3
-      object PageControl2: TPageControl
-        Left = 0
-        Top = 0
-        Width = 1075
-        Height = 527
-        ActivePage = Ts_ProducaoProducao
-        Align = alClient
-        TabOrder = 0
-        object Ts_ProducaoCadastro: TTabSheet
-          Caption = ' Cadastro '
-        end
-        object Ts_ProducaoProducao: TTabSheet
-          Caption = ' Produ'#231#227'o '
-          ImageIndex = 1
-        end
-      end
-    end
-  end
-  object OdirPanApres: TPanel
-    Left = 615
-    Top = 4
-    Width = 89
-    Height = 33
-    BevelInner = bvLowered
-    BevelWidth = 2
-    Caption = 'OdirPanApres'
-    Color = clSilver
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
-    Font.Style = [fsBold]
-    ParentFont = False
-    TabOrder = 1
-    Visible = False
-  end
   object MainMenu1: TMainMenu
-    Left = 728
+    Left = 400
+    Top = 144
     object MenuUnidade: TMenuItem
       Caption = 'Unidade'
       object SubMenuUnidadeCadastro: TMenuItem
         Bitmap.Data = {
-          76030000424D7603000000000000760000002800000015000000200000000100
-          0800000000000003000000000000000000001000000000000000000000000000
+          EE000000424DEE000000000000007600000028000000100000000F0000000100
+          04000000000078000000130B0000130B00001000000000000000000000000000
           8000008000000080800080000000800080008080000080808000C0C0C0000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00000000000000
-          0000000000000000000000000000000000000708080808080808080808080808
-          08080808080800000000070F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F080000
-          0000070F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0800000000070F0F0F0F0F
-          0F0F0F0F0F0F0F0F0F0F0F0F0F0800000000070F0F0C0C0C0C0C0C0C0C000F0F
-          0F0F0F0F0F0800000000070F0F0F0F0F0F0F0F0F0700000F0F0F0F0F0F080000
-          0000070F0F0C0C0C0C0C0C0C070F000C0C0C0C0F0F0800000000070F0F0F0F0F
-          0F0F0F070F0808000F0F0F0F0F0800000000070F0F0C0C0C0C0C0C070F080800
-          0C0C0C0F0F0800000000070F0F0F0F0F0F0F030B08080303000F0F0F0F080000
-          0000070F0F0C0C0C0C0C030B0F0B0803000C0C0F0F0800000000070F0F0F0F0F
-          0F0F030B0F0B0803000F0F0F0F0800000000070F0F0C0C0C0C0C030B0F0B0803
-          000C0C0F0F0800000000070F0F0F0F0F0F0F030B0F0B0803000F0F0F0F080000
-          0000070F0F0C0C0C0C0C030B0F0B0803000C0C0F0F0800000000070F0F0F0F0F
-          0F0F030B0F0B0803000F0F0F0F0800000000070F0F0C0C0C0C0C030B0F0B0803
-          000C0C0F0F0800000000070F0F0F0F0F0F0F030B0F0B0803000F0F0F0F080000
-          0000070F0F0C0C0C0C0C030B0F0B0803000C0C0F0F0800000000070F0F0F0F0F
-          0F0F030B0F0B0803000F0F0F0F0800000000070F0F0F0F0F0F0F030B0F0B0803
-          000F0F0F0F0800000000070F0F0F0F0F0F0F030B0F0B0803000F0F0F0F080000
-          0000070F0F0F0F0F0F0F030B0F0B0803000F0F0F0F0800000000070707070707
-          0707030B0F0B0803000707070707070000000808080808080808070808080707
-          000808080808080000000808080808080808070F0F0807070008080808080800
-          0000080808080808080807070808070700080808080808000000080808080808
-          0808010D01010101000808080808080000000808080808080808010D09090101
-          00080808080808000000080808080808080801090D0901010008080808080800
-          0000080808080808080808010101010008080808080808000000}
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00888888800000
+          000088888880FFFFFFF088888880F00F00F088888880FFFFFFF088888880F00F
+          00F088888880FFFFFFF088888884444444448800008444444444880BB0888888
+          8888000BB000888888880BBBBBB0888888880BBBBBB088888888000BB0008888
+          8888880BB088888888888800008888888888}
         Caption = 'Cadastro'
         OnClick = SubMenuUnidadeCadastroClick
       end
@@ -7939,345 +7092,172 @@ object FrmArtesanalis: TFrmArtesanalis
       Caption = 'Mat'#233'ria-Prima'
       object SubMenuMateriaPrimaCadastro: TMenuItem
         Bitmap.Data = {
-          26050000424D260500000000000036040000280000000F0000000F0000000100
-          080000000000F0000000400B0000400B00000001000000000000000000000000
-          BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000C0DCC000F0CA
-          A600800000008080000000800000008080000000800080008000FFFBF0008080
-          400000FF800000404000A6CAF0000080FF00A0A0A40000408000FF0080004000
-          8000804000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          000000000000000000000000000000000000F0FBFF00A4A0A000808080000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00070707070707
-          F7F70707070707070700070707070707F7F9F707070707070700070707070707
-          F7F9F9F7070707070700070707070707F7F9F9F9F7070707070007F7F7F7F7F7
-          F7F9F9F9F9F70707070007F7F9F9F9F9F9F9F9F9F9F9F707070007F7F9F9F9F9
-          F9F9F9F9F9F9F9F7070007F7F9F9F9F9F9F9F9F9F9F9F9F9070007F7F9F9F9F9
-          F9F9F9F9F9F9F90707000707F9F9F9F9F9F9F9F9F9F907070700070707070707
-          07F9F9F9F9070707070007070707070707F9F9F9070707070700070707070707
-          07F9F90707070707070007070707070707F90707070707070700070707070707
-          07070707070707070700}
+          EE000000424DEE000000000000007600000028000000100000000F0000000100
+          04000000000078000000130B0000130B00001000000000000000000000000000
+          8000008000000080800080000000800080008080000080808000C0C0C0000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00888888800000
+          000088888880FFFFFFF088888880F00F00F088888880FFFFFFF088888880F00F
+          00F088888880FFFFFFF088888884444444448800008444444444880BB0888888
+          8888000BB000888888880BBBBBB0888888880BBBBBB088888888000BB0008888
+          8888880BB088888888888800008888888888}
         Caption = 'Cadastro'
         OnClick = SubMenuMateriaPrimaCadastroClick
       end
       object SubMenuMateriaPrimaEntrada: TMenuItem
         Bitmap.Data = {
-          26050000424D260500000000000036040000280000000F0000000F0000000100
-          080000000000F0000000400B0000400B00000001000000000000000000000000
-          BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000C0DCC000F0CA
-          A600800000008080000000800000008080000000800080008000FFFBF0008080
-          400000FF800000404000A6CAF0000080FF00A0A0A40000408000FF0080004000
-          8000804000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          000000000000000000000000000000000000F0FBFF00A4A0A000808080000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00070707070707
-          F7F70707070707070700070707070707F7F9F707070707070700070707070707
-          F7F9F9F7070707070700070707070707F7F9F9F9F7070707070007F7F7F7F7F7
-          F7F9F9F9F9F70707070007F7F9F9F9F9F9F9F9F9F9F9F707070007F7F9F9F9F9
-          F9F9F9F9F9F9F9F7070007F7F9F9F9F9F9F9F9F9F9F9F9F9070007F7F9F9F9F9
-          F9F9F9F9F9F9F90707000707F9F9F9F9F9F9F9F9F9F907070700070707070707
-          07F9F9F9F9070707070007070707070707F9F9F9070707070700070707070707
-          07F9F90707070707070007070707070707F90707070707070700070707070707
-          07070707070707070700}
+          EE000000424DEE000000000000007600000028000000100000000F0000000100
+          04000000000078000000130B0000130B00001000000000000000000000000000
+          8000008000000080800080000000800080008080000080808000C0C0C0000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00888888888888
+          88888888888888888888888888800000000088088880FFFFFFF088008880F00F
+          00F000000880FFFFFFF000000080F00F00F000000880FFFFFFF088008884C4C4
+          C4C48808888CF4CF4CFC88888884C4C4C44C8888888888888888888888888888
+          888888888888888888888888888888888888}
         Caption = 'Entrada'
-        OnClick = SubMenuMateriaPrimaEntradaClick
       end
       object SubMenuMateriaPrimaSaldo: TMenuItem
         Bitmap.Data = {
-          26050000424D260500000000000036040000280000000F0000000F0000000100
-          080000000000F0000000400B0000400B00000001000000000000000000000000
-          BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000C0DCC000F0CA
-          A600800000008080000000800000008080000000800080008000FFFBF0008080
-          400000FF800000404000A6CAF0000080FF00A0A0A40000408000FF0080004000
-          8000804000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          000000000000000000000000000000000000F0FBFF00A4A0A000808080000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00070707070707
-          F7F70707070707070700070707070707F7F9F707070707070700070707070707
-          F7F9F9F7070707070700070707070707F7F9F9F9F7070707070007F7F7F7F7F7
-          F7F9F9F9F9F70707070007F7F9F9F9F9F9F9F9F9F9F9F707070007F7F9F9F9F9
-          F9F9F9F9F9F9F9F7070007F7F9F9F9F9F9F9F9F9F9F9F9F9070007F7F9F9F9F9
-          F9F9F9F9F9F9F90707000707F9F9F9F9F9F9F9F9F9F907070700070707070707
-          07F9F9F9F9070707070007070707070707F9F9F9070707070700070707070707
-          07F9F90707070707070007070707070707F90707070707070700070707070707
-          07070707070707070700}
+          D6020000424DD60200000000000036000000280000000F0000000E0000000100
+          180000000000A0020000C30E0000C30E00000000000000000000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0C0C0C0808080FF0000C0C0C0FF0000C0C0C0C0C0C0C0C0
+          C0C0C0C0C0C0C0000000C0C0C0C0C0C0C0C0C0C0C0C0808080FF0000FF000000
+          0000FFFFFF000000FF0000C0C0C0C0C0C0C0C0C0C0C0C0000000C0C0C0C0C0C0
+          C0C0C0808080FF0000008080000000FFFFFF000000FFFFFF000000FF0000C0C0
+          C0C0C0C0C0C0C0000000C0C0C0C0C0C0808080FF0000000000000000FFFFFFFF
+          FFFFFFFFFF000000FFFFFF000000FF0000C0C0C0C0C0C0000000808080FF0000
+          FF0000000000FFFFFFFFFFFFC0C0C0FFFFFFC0C0C0FFFFFF000000FFFFFF0000
+          00FF0000C0C0C0000000FF0000008080000000FFFFFF000000FFFFFFFFFFFFC0
+          C0C0C0C0C0FFFFFFFFFFFF000000FFFFFF000000FF0000000000000000000000
+          FFFFFFFFFFFFFFFFFF000000C0C0C0FFFFFFFFFFFFC0C0C0FFFFFFFFFFFF0000
+          00FFFFFF000000000000000000FFFFFFFFFFFFC0C0C0FFFFFFC0C0C0000000FF
+          FFFF000080FFFFFFFFFFFFC0C0C0FFFFFF000000FFFFFF000000C0C0C0000000
+          FFFFFFC0C0C0FFFFFFFFFFFFFFFFFF0000000000FF000080000080FFFFFFFFFF
+          FFFFFFFF000000000000C0C0C0C0C0C0000000FFFFFFFFFFFFC0C0C0FFFFFFC0
+          C0C00000800000FF000080000080000000000000C0C0C0000000C0C0C0C0C0C0
+          C0C0C0000000FFFFFFC0C0C0FFFFFFFFFFFF0000800000800000FF0000800000
+          FF000080C0C0C0000000C0C0C0C0C0C0C0C0C0C0C0C0000000FFFFFFFFFFFFFF
+          FFFF0000000000800000800000FF0000FF000080C0C0C0000000C0C0C0C0C0C0
+          C0C0C0C0C0C0C0C0C0000000000000000000C0C0C08080800000FF0000FF0000
+          FF000080C0C0C0000000C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0
+          C0C0C0C0C0808080000080000080000080000080C0C0C0000000}
         Caption = 'Saldo'
-        OnClick = SubMenuMateriaPrimaSaldoClick
       end
     end
     object MenuProduto: TMenuItem
       Caption = 'Produto'
       object SubMenuProdutoCadastro: TMenuItem
         Bitmap.Data = {
-          26050000424D260500000000000036040000280000000F0000000F0000000100
-          080000000000F0000000400B0000400B00000001000000000000000000000000
-          BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000C0DCC000F0CA
-          A600800000008080000000800000008080000000800080008000FFFBF0008080
-          400000FF800000404000A6CAF0000080FF00A0A0A40000408000FF0080004000
-          8000804000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          000000000000000000000000000000000000F0FBFF00A4A0A000808080000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00070707070707
-          F7F70707070707070700070707070707F7F9F707070707070700070707070707
-          F7F9F9F7070707070700070707070707F7F9F9F9F7070707070007F7F7F7F7F7
-          F7F9F9F9F9F70707070007F7F9F9F9F9F9F9F9F9F9F9F707070007F7F9F9F9F9
-          F9F9F9F9F9F9F9F7070007F7F9F9F9F9F9F9F9F9F9F9F9F9070007F7F9F9F9F9
-          F9F9F9F9F9F9F90707000707F9F9F9F9F9F9F9F9F9F907070700070707070707
-          07F9F9F9F9070707070007070707070707F9F9F9070707070700070707070707
-          07F9F90707070707070007070707070707F90707070707070700070707070707
-          07070707070707070700}
+          EE000000424DEE000000000000007600000028000000100000000F0000000100
+          04000000000078000000130B0000130B00001000000000000000000000000000
+          8000008000000080800080000000800080008080000080808000C0C0C0000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00888888800000
+          000088888880FFFFFFF088888880F00F00F088888880FFFFFFF088888880F00F
+          00F088888880FFFFFFF088888884444444448800008444444444880BB0888888
+          8888000BB000888888880BBBBBB0888888880BBBBBB088888888000BB0008888
+          8888880BB088888888888800008888888888}
         Caption = 'Cadastro'
         OnClick = SubMenuProdutoCadastroClick
       end
       object SubMenuProdutoSaldo: TMenuItem
         Bitmap.Data = {
-          26050000424D260500000000000036040000280000000F0000000F0000000100
-          080000000000F0000000400B0000400B00000001000000000000000000000000
-          BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000C0DCC000F0CA
-          A600800000008080000000800000008080000000800080008000FFFBF0008080
-          400000FF800000404000A6CAF0000080FF00A0A0A40000408000FF0080004000
-          8000804000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          000000000000000000000000000000000000F0FBFF00A4A0A000808080000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00070707070707
-          F7F70707070707070700070707070707F7F9F707070707070700070707070707
-          F7F9F9F7070707070700070707070707F7F9F9F9F7070707070007F7F7F7F7F7
-          F7F9F9F9F9F70707070007F7F9F9F9F9F9F9F9F9F9F9F707070007F7F9F9F9F9
-          F9F9F9F9F9F9F9F7070007F7F9F9F9F9F9F9F9F9F9F9F9F9070007F7F9F9F9F9
-          F9F9F9F9F9F9F90707000707F9F9F9F9F9F9F9F9F9F907070700070707070707
-          07F9F9F9F9070707070007070707070707F9F9F9070707070700070707070707
-          07F9F90707070707070007070707070707F90707070707070700070707070707
-          07070707070707070700}
+          AA040000424DAA04000000000000360000002800000014000000130000000100
+          18000000000074040000C30E0000C30E00000000000000000000BFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBF000000000000000000000000000000BFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF0000000000000000000000
+          00000000BFBFBF000000BFBFBFBFBFBFBFBFBFBFBFBF7F7F7F000000BFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F00007F0000000000
+          000000BFBFBFFFFFFFFFFFFF000000000000000000000000BFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F00007F0000000000BFBFBFFF
+          FFFFFFFFFF000000BFBFBF000000000000000000000000000000000000000000
+          000000BFBFBFBFBFBF7F00007F00007F00007F0000000000BFBFBFFFFFFFFFFF
+          FFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BF
+          BFBFBFBFBFFF0000FF0000FF0000FF00000000007F7F7F7F7F7F7F7F7F7F7F7F
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
+          BF7F00007F00007F00007F0000BFBFBFBFBFBFBFBFBF7F7F7FFFFFFF7F00007F
+          00007F00007F00007F00007F0000FFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F00007F00007F0000
+          7F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F0000FFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFF7F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBF7F7F7F7F00007F00007F00007F00007F00007F00007F00007F00
+          007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F
+          7FFFFFFF7F00007F00007F00007F0000FFFFFFFFFFFFFFFFFFFFFFFF000000BF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF7F00007F
+          00007F00007F00007F0000FFFFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F
+          7F7F7F7F7F7F7F7F7F7F7F7F7F7F7FBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBF}
         Caption = 'Vendas'
-        OnClick = SubMenuProdutoSaldoClick
       end
     end
     object MenuProducao: TMenuItem
       Caption = 'Produ'#231#227'o'
       object SubMenuProducaoCadastro: TMenuItem
         Bitmap.Data = {
-          26050000424D260500000000000036040000280000000F0000000F0000000100
-          080000000000F0000000400B0000400B00000001000000000000000000000000
-          BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000C0DCC000F0CA
-          A600800000008080000000800000008080000000800080008000FFFBF0008080
-          400000FF800000404000A6CAF0000080FF00A0A0A40000408000FF0080004000
-          8000804000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          000000000000000000000000000000000000F0FBFF00A4A0A000808080000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00070707070707
-          F7F70707070707070700070707070707F7F9F707070707070700070707070707
-          F7F9F9F7070707070700070707070707F7F9F9F9F7070707070007F7F7F7F7F7
-          F7F9F9F9F9F70707070007F7F9F9F9F9F9F9F9F9F9F9F707070007F7F9F9F9F9
-          F9F9F9F9F9F9F9F7070007F7F9F9F9F9F9F9F9F9F9F9F9F9070007F7F9F9F9F9
-          F9F9F9F9F9F9F90707000707F9F9F9F9F9F9F9F9F9F907070700070707070707
-          07F9F9F9F9070707070007070707070707F9F9F9070707070700070707070707
-          07F9F90707070707070007070707070707F90707070707070700070707070707
-          07070707070707070700}
+          EE000000424DEE000000000000007600000028000000100000000F0000000100
+          04000000000078000000130B0000130B00001000000000000000000000000000
+          8000008000000080800080000000800080008080000080808000C0C0C0000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00888888800000
+          000088888880FFFFFFF088888880F00F00F088888880FFFFFFF088888880F00F
+          00F088888880FFFFFFF088888884444444448800008444444444880BB0888888
+          8888000BB000888888880BBBBBB0888888880BBBBBB088888888000BB0008888
+          8888880BB088888888888800008888888888}
         Caption = 'Cadastro'
         OnClick = SubMenuProducaoCadastroClick
       end
-      object SubMenuProducaoProducao: TMenuItem
+      object SubMenuProducaoVendas: TMenuItem
         Bitmap.Data = {
-          26050000424D260500000000000036040000280000000F0000000F0000000100
-          080000000000F0000000400B0000400B00000001000000000000000000000000
-          BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000C0DCC000F0CA
-          A600800000008080000000800000008080000000800080008000FFFBF0008080
-          400000FF800000404000A6CAF0000080FF00A0A0A40000408000FF0080004000
-          8000804000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          000000000000000000000000000000000000F0FBFF00A4A0A000808080000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00070707070707
-          F7F70707070707070700070707070707F7F9F707070707070700070707070707
-          F7F9F9F7070707070700070707070707F7F9F9F9F7070707070007F7F7F7F7F7
-          F7F9F9F9F9F70707070007F7F9F9F9F9F9F9F9F9F9F9F707070007F7F9F9F9F9
-          F9F9F9F9F9F9F9F7070007F7F9F9F9F9F9F9F9F9F9F9F9F9070007F7F9F9F9F9
-          F9F9F9F9F9F9F90707000707F9F9F9F9F9F9F9F9F9F907070700070707070707
-          07F9F9F9F9070707070007070707070707F9F9F9070707070700070707070707
-          07F9F90707070707070007070707070707F90707070707070700070707070707
-          07070707070707070700}
-        Caption = 'Produ'#231#227'o'
-        OnClick = SubMenuProducaoProducaoClick
+          AA030000424DAA03000000000000360000002800000011000000110000000100
+          18000000000074030000C30E0000C30E00000000000000000000BFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000000000BFBFBF0000
+          00000000BFBFBF00000000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBF000000000000BFBFBF000000000000BFBFBF0000000000
+          0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00BFBFBFBFBFBFBFBFBF7F
+          7F7F000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF0000007F7F7F
+          BFBFBFBFBFBFBFBFBF00BFBFBFBFBFBFBFBFBF00000000007F000000BFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBF000000FFFFFF000000BFBFBFBFBFBFBFBFBF00BFBF
+          BFBFBFBFBFBFBFBFBFBF00000000007F000000BFBFBFBFBFBFBFBFBF000000FF
+          FFFF000000BFBFBFBFBFBFBFBFBFBFBFBF00BFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BF00000000007F000000BFBFBF000000FFFFFF000000BFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBF00BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00000000007F0000
+          00FFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00BFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00000000007F000000BFBFBFBFBFBFBFBF
+          BFBFBFBF000000BFBFBFBFBFBF00BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          000000FFFFFF00000000007F000000BFBFBFBFBFBF000000007F7F000000BFBF
+          BF00BFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000FFFFFF000000BFBFBF000000
+          00007F000000000000000000007F7F007F7F00000000BFBFBF00000000000000
+          0000000000FFFFFF000000BFBFBFBFBFBFBFBFBF000000000000007F7F007F7F
+          000000000000BFBFBF00BFBFBF000000000000000000000000000000BFBFBFBF
+          BFBFBFBFBFBFBFBF000000007F7F007F7F007F7F000000BFBFBFBFBFBF00BFBF
+          BF0000007F7F7F7F7F7F000000000000BFBFBFBFBFBFBFBFBF00000000000000
+          7F7F007F7F007F7F000000BFBFBFBFBFBF00BFBFBFBFBFBFBFBFBF7F7F7F0000
+          00000000BFBFBF000000000000007F7F007F7F000000000000000000BFBFBFBF
+          BFBFBFBFBF00BFBFBFBFBFBFBFBFBF000000000000000000BFBFBFBFBFBF0000
+          00000000000000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00BFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBF00}
+        Caption = 'Produ'#231#227'o Vendas'
       end
     end
     object MenuCalculadora: TMenuItem
       Caption = 'Calculadora'
+      OnClick = MenuCalculadoraClick
     end
     object MenuVersao: TMenuItem
       Caption = 'Vers'#227'o Sistema'
+      OnClick = MenuVersaoClick
     end
     object MenuSAIR: TMenuItem
       Caption = 'SAIR'
@@ -8297,18 +7277,15 @@ object FrmArtesanalis: TFrmArtesanalis
       end>
     DefaultFont = False
     FormCaption = '   Artesanalis'
-    FontInactiveColor = 16744448
+    FontInactiveColor = clBlack
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clBlack
+    Font.Color = clWhite
     Font.Height = -19
     Font.Name = 'Segoe UI'
     Font.Style = [fsBold]
-    StartColor = 15522303
-    EndColor = clYellow
-    Left = 816
-  end
-  object MainMenu2: TMainMenu
-    Left = 808
-    Top = 136
+    StartColor = clBlue
+    EndColor = 16770250
+    Left = 544
+    Top = 88
   end
 end

@@ -25,23 +25,19 @@ type
     EdtMateriaPrimaCod: TCurrencyEdit;
     Gb_MateriaPrimaDesc: TGroupBox;
     EdtMateriaPrimaDesc: TEdit;
-    Gb_MateriaPrimaUnid: TGroupBox;
-    Gb_MateriaPrimaCusto: TGroupBox;
-    EdtMateriaPrimaCusto: TCurrencyEdit;
+    Gb_MateriaPrimaQtdConv: TGroupBox;
+    EdtMateriaPrimaQtdConv: TCurrencyEdit;
+    Bt_MateriaPrimaSalvar: TJvXPButton;
+    Bt_MateriaPrimaAbandonar: TJvXPButton;
+    Bt_MateriaPrimaExcluir: TJvXPButton;
+    Gb_MateriaPrimaVlrUnit: TGroupBox;
+    EdtMateriaPrimaVlrUnit: TCurrencyEdit;
     Pan_MateriaPrima: TPanel;
     Dbg_MateriaPrima: TDBGrid;
     Pan_Solicitacoes: TPanel;
     Bt_Fechar: TJvXPButton;
     StB_MateriaPrima: TdxStatusBar;
     OdirPanApres: TPanel;
-    EdtMateriaPrimaUnid: TEdit;
-    Gb_MateriaPrimaCustoMedio: TGroupBox;
-    EdtMateriaPrimaCustoMedio: TCurrencyEdit;
-    Gb_MateriaPrimaQtdSaldo: TGroupBox;
-    EdtMateriaPrimaQtdSaldo: TCurrencyEdit;
-    Bt_MateriaPrimaSalvar: TJvXPButton;
-    Bt_MateriaPrimaAbandonar: TJvXPButton;
-    Bt_MateriaPrimaExcluir: TJvXPButton;
     procedure FormShow(Sender: TObject);
     procedure Bt_FecharClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -60,7 +56,8 @@ type
     // Odir ====================================================================
 
     procedure Bt_MateriaPrimaExcluirClick(Sender: TObject);
-    procedure Dbg_MateriaPrimaKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure Dbg_MateriaPrimaKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure Dbg_MateriaPrimaEnter(Sender: TObject);
@@ -84,7 +81,7 @@ var
 
 implementation
 
-uses UDMArtesanalis, DK_Procs1, DB;
+uses UDMArtesanalis, DK_Procs1;
 
 {$R *.dfm}
 
@@ -96,6 +93,8 @@ uses UDMArtesanalis, DK_Procs1, DB;
 Function TFrmMateriaPrimaCadastro.DMLMateriaPrima(sTipo: String): Boolean;
 Var
   MySql: String;
+
+  sCodMat, sDescMat, sQtdMat, sVlrUMat: String;
 Begin
   // sTipo:
   // (IA) Incluir ou Alterar
@@ -114,6 +113,13 @@ Begin
   OdirPanApres.Visible:=True;
   Refresh;
 
+  sCodMat  :=EdtMateriaPrimaCod.Text;
+  If sCodMat='' Then sCodMat:='0';
+
+  sDescMat:=EdtMateriaPrimaDesc.Text;
+  sQtdMat :=EdtMateriaPrimaQtdConv.Text;
+  sVlrUMat:=EdtMateriaPrimaVlrUnit.Text;
+
   // Verifica se Transação esta Ativa
   If DMArtesanalis.SQLC.InTransaction Then
    DMArtesanalis.SQLC.Rollback(TD);
@@ -131,33 +137,28 @@ Begin
     If sTipo='IA' Then
     Begin
       MySql:=' UPDATE OR INSERT INTO MATERIAPRIMA'+
-             ' (COD_MATERIAPRIMA, DES_MATERIAPRIMA, DES_UNIDADE,'+
-             '  PRECO_CUSTO, CUSTO_MEDIO, QTD_ESTOQUE)'+
-
+             ' (COD_MATERIAPRIMA, DES_MATERIAPRIMA, QTD_CONVERSAO, VLR_UNITATIO)'+
              ' VALUES (';
 
-             // COD_MATERIAPRIMA
-             If EdtMateriaPrimaCod.AsInteger=0 Then
+             If StrToInt(sCodMat)=0 Then
               MySql:=
                MySql+' NULL, '
              Else
               MySql:=
-               MySql+IntToStr(EdtMateriaPrimaCod.AsInteger)+', ';
+               MySql+sCodMat+', ';
 
-      MySql:=
-       MySql+QuotedStr(Trim(EdtMateriaPrimaDesc.Text))+', '+ // DES_MATERIAPRIMA
-             QuotedStr(Trim(EdtMateriaPrimaUnid.Text))+', '+ // DES_UNIDADE
-             QuotedStr(f_Troca(',','.',FloatToStr(EdtMateriaPrimaCusto.Value)))+', '+ // PRECO_CUSTO
-             QuotedStr(f_Troca(',','.',FloatToStr(EdtMateriaPrimaCustoMedio.Value)))+', '+ // CUSTO_MEDIO
-             QuotedStr(f_Troca(',','.',FloatToStr(EdtMateriaPrimaQtdSaldo.Value)))+')'+ // QTD_ESTOQUE
-             ' MATCHING (COD_MATERIAPRIMA)';
+              MySql:=
+               MySql+QuotedStr(sDescMat)+', '+
+                     sQtdMat+', '+
+                     QuotedStr(f_Troca(',','.',sVlrUMat))+')'+
+                     ' MATCHING (COD_MATERIAPRIMA)';
     End; // If sTipo='IA' Then
 
     // (EX) Excluir ------------------------------------------------
     If sTipo='EX' Then
     Begin
       MySql:=' DELETE FROM MATERIAPRIMA ma'+
-             ' WHERE  ma.cod_materiaprima='+IntToStr(EdtMateriaPrimaCod.AsInteger);
+             ' WHERE  ma.cod_materiaprima='+sCodMat;
     End; // If sTipo='EX' Then
 
     DMArtesanalis.SQLC.Execute(MySql,nil,nil);
@@ -168,13 +169,13 @@ Begin
     DateSeparator:='/';
     DecimalSeparator:=',';
 
-    // Reabre Materia-Prima ----------------------------------------
+    // Reabre Unidade -----------------------------------------------
     DMArtesanalis.CDS_MateriaPrima.DisableControls;
     DMArtesanalis.CDS_MateriaPrima.Close;
     DMArtesanalis.CDS_MateriaPrima.Open;
     DMArtesanalis.CDS_MateriaPrima.EnableControls;
 
-    DMArtesanalis.CDS_MateriaPrima.Locate('DES_MATERIAPRIMA', Trim(EdtMateriaPrimaDesc.Text),[]);
+    DMArtesanalis.CDS_MateriaPrima.Locate('DES_MATERIAPRIMA', sDescMat,[]);
 
     OdirPanApres.Visible:=False;
 
@@ -209,10 +210,8 @@ begin
 
   EdtMateriaPrimaCod.AsInteger:=0;
   EdtMateriaPrimaDesc.Clear;
-  EdtMateriaPrimaUnid.Clear;
-  EdtMateriaPrimaCusto.Value:=0.00;
-  EdtMateriaPrimaCustoMedio.Value:=0.00;
-  EdtMateriaPrimaQtdSaldo.Value:=0.0000;
+  EdtMateriaPrimaQtdConv.AsInteger:=0;
+  EdtMateriaPrimaVlrUnit.Value:=0.00;
 
   EdtMateriaPrimaCod.SetFocus;
 end;
@@ -247,10 +246,8 @@ begin
 
   EdtMateriaPrimaCod.Clear;
   EdtMateriaPrimaDesc.Clear;
-  EdtMateriaPrimaUnid.Clear;
-  EdtMateriaPrimaCusto.Value:=0.00;
-  EdtMateriaPrimaCustoMedio.Value:=0.00;
-  EdtMateriaPrimaQtdSaldo.Value:=0.0000;
+  EdtMateriaPrimaQtdConv.Clear;
+  EdtMateriaPrimaVlrUnit.Clear;
 
   bgAlterar:=False;
 end;
@@ -262,11 +259,9 @@ begin
 
   If DMArtesanalis.CDS_MateriaPrima.Locate('COD_MATERIAPRIMA', EdtMateriaPrimaCod.AsInteger,[]) Then
    Begin
-     EdtMateriaPrimaDesc.Text       :=DMArtesanalis.CDS_MateriaPrimaDES_MATERIAPRIMA.AsString;
-     EdtMateriaPrimaUnid.Text       :=DMArtesanalis.CDS_MateriaPrimaDES_UNIDADE.AsString;
-     EdtMateriaPrimaCusto.Value     :=DMArtesanalis.CDS_MateriaPrimaPRECO_CUSTO.AsCurrency;
-     EdtMateriaPrimaCustoMedio.Value:=DMArtesanalis.CDS_MateriaPrimaCUSTO_MEDIO.AsCurrency;
-     EdtMateriaPrimaQtdSaldo.Value  :=DMArtesanalis.CDS_MateriaPrimaQTD_ESTOQUE.AsFloat;
+     EdtMateriaPrimaDesc.Text    :=DMArtesanalis.CDS_MateriaPrimaDES_MATERIAPRIMA.AsString;
+     EdtMateriaPrimaQtdConv.Value:=DMArtesanalis.CDS_MateriaPrimaQTD_CONVERSAO.AsInteger;
+     EdtMateriaPrimaVlrUnit.Value:=DMArtesanalis.CDS_MateriaPrimaVLR_UNITATIO.AsInteger;
      bgAlterar:=True;
    End
   Else
@@ -288,8 +283,11 @@ begin
   If DMArtesanalis.CDS_MateriaPrima.IsEmpty Then
    Exit;
 
-  EdtMateriaPrimaCod.AsInteger:=DMArtesanalis.CDS_MateriaPrimaCOD_MATERIAPRIMA.AsInteger;
-  EdtMateriaPrimaCodExit(Self);
+  EdtMateriaPrimaCod.AsInteger    :=DMArtesanalis.CDS_MateriaPrimaCOD_MATERIAPRIMA.AsInteger;
+  EdtMateriaPrimaDesc.Text        :=DMArtesanalis.CDS_MateriaPrimaDES_MATERIAPRIMA.AsString;
+  EdtMateriaPrimaQtdConv.AsInteger:=DMArtesanalis.CDS_MateriaPrimaQTD_CONVERSAO.AsInteger;
+  EdtMateriaPrimaVlrUnit.Value    :=DMArtesanalis.CDS_MateriaPrimaVLR_UNITATIO.AsCurrency;
+  EdtMateriaPrimaDesc.SetFocus;
 end;
 
 procedure TFrmMateriaPrimaCadastro.Bt_MateriaPrimaSalvarClick(Sender: TObject);
@@ -302,11 +300,19 @@ begin
     Exit;
   End;
 
-  // Consiste a Unidade ========================================================
-  If Trim(EdtMateriaPrimaUnid.Text)='' Then
+  // Consiste a Quantidade de Conversão ========================================
+  If EdtMateriaPrimaQtdConv.AsInteger=0 Then
   Begin
-    msg('Favor Informar a'+cr+cr+'Unidade da Matéria-Prima !!','A');
-    EdtMateriaPrimaUnid.SetFocus;
+    msg('Favor Informar a'+cr+cr+'Quantidade de Conversão !!','A');
+    EdtMateriaPrimaQtdConv.SetFocus;
+    Exit;
+  End;
+
+  // Consiste o Valor Unitário =================================================
+  If EdtMateriaPrimaVlrUnit.AsInteger=0 Then
+  Begin
+    msg('Favor Informar o'+cr+cr+'Valor Unitário !!','A');
+    EdtMateriaPrimaVlrUnit.SetFocus;
     Exit;
   End;
 
@@ -322,7 +328,7 @@ procedure TFrmMateriaPrimaCadastro.Bt_MateriaPrimaExcluirClick(Sender: TObject);
 Var
   MySql: String;
 begin
-  If DMArtesanalis.CDS_MateriaPrima.IsEmpty Then
+  If (DMArtesanalis.CDS_MateriaPrima.IsEmpty) or (EdtMateriaPrimaCod.AsInteger=0) Then
    Exit;
 
   If EdtMateriaPrimaCod.AsInteger=0 Then
@@ -330,7 +336,7 @@ begin
     msg('Favor Selecinar'+cr+cr+'A Matéria-Prima a Excluir !!','A');
     EdtMateriaPrimaCod.SetFocus;
     Exit;
-  End; // If EdtMateriaPrimaCod.AsInteger=0 Then
+  End; // If EdtUnidadeCod.AsInteger=0 Then
 
   If msg('Deseja Realmente Excluir a'+cr+'Matéria-Prima Selecionada ??','C')=2 Then
   Begin
@@ -340,21 +346,20 @@ begin
 
   // Consiste Exclusão =========================================================
   sgMensagem:='';
-  MySql:=' SELECT pd.cod_produto, pr.des_produto'+
-         ' FROM PRODUCAO pd, PRODUTO pr'+
-         ' WHERE pd.cod_produto=pr.cod_produto'+
-         ' AND   pd.cod_materiaprima='+IntToStr(EdtMateriaPrimaCod.AsInteger);
+  MySql:=' SELECT p.Cod_MateriaPrima'+
+         ' FROM PRODUCAO p'+
+         ' WHERE p.cod_materiaprima='+EdtMateriaPrimaCod.Text;
   DMArtesanalis.CDS_Busca.Close;
   DMArtesanalis.SQLQ_Busca.SQL.Clear;
   DMArtesanalis.SQLQ_Busca.SQL.Add(MySql);
   DMArtesanalis.CDS_Busca.Open;
-  If Trim(DMArtesanalis.CDS_Busca.FieldByName('Cod_Produto').AsString)<>'' Then
-   sgMensagem:=Trim(DMArtesanalis.CDS_Busca.FieldByName('Des_Produto').AsString);
+  If Trim(DMArtesanalis.CDS_Busca.FieldByName('Cod_MateriaPrima').AsString)<>'' Then
+   sgMensagem:='PRODUÇÃO';
   DMArtesanalis.CDS_Busca.Close;
 
   If Trim(sgMensagem)<>'' Then
   Begin
-    MessageBox(Handle, pChar('Impossível Excluir !!'+cr+'Matéria-Prima Já Utilizada no Produto:'+cr+cr+sgMensagem), 'Erro', MB_ICONERROR);
+    MessageBox(Handle, pChar('Impossível Excluir !!'+cr+'Matéria-Prima Já Utilizada em:'+cr+cr+sgMensagem), 'Erro', MB_ICONERROR);
     EdtMateriaPrimaCod.SetFocus;
     Exit;
   End; // If Trim(sgMensagem)<>'' Then

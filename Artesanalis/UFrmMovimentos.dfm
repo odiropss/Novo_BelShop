@@ -1,11 +1,10 @@
-object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
-  Left = 387
-  Top = 32
-  Width = 798
-  Height = 592
-  AutoSize = True
+object FrmMovimentos: TFrmMovimentos
+  Left = 238
+  Top = 71
+  Width = 918
+  Height = 556
   BorderIcons = [biSystemMenu]
-  Caption = 'CADASTRO'
+  Caption = 'MOVIMENTOS'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -24,10 +23,10 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
   object Gb_Principal: TGroupBox
     Left = 0
     Top = 0
-    Width = 782
-    Height = 554
+    Width = 902
+    Height = 518
     Align = alClient
-    Caption = ' MAT'#201'RIA - PRIMA '
+    Caption = ' Movimentos de ENTRADA '
     Color = 16770250
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlue
@@ -40,7 +39,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
     object Pan_MateriaPrimaSolic: TPanel
       Left = 2
       Top = 15
-      Width = 778
+      Width = 898
       Height = 65
       Align = alTop
       BevelInner = bvLowered
@@ -82,8 +81,6 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
           Font.Style = []
           ParentFont = False
           TabOrder = 0
-          OnEnter = EdtMateriaPrimaCodEnter
-          OnExit = EdtMateriaPrimaCodExit
         end
       end
       object Gb_MateriaPrimaDesc: TGroupBox
@@ -240,7 +237,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
     end
     object Pan_MateriaPrima: TPanel
       Left = 74
-      Top = 87
+      Top = 239
       Width = 633
       Height = 429
       TabOrder = 1
@@ -265,10 +262,6 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         TitleFont.Height = -11
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
-        OnDblClick = Dbg_MateriaPrimaDblClick
-        OnEnter = Dbg_MateriaPrimaEnter
-        OnExit = Dbg_MateriaPrimaExit
-        OnKeyDown = Dbg_MateriaPrimaKeyDown
         Columns = <
           item
             Expanded = False
@@ -350,8 +343,8 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
     end
     object Pan_Solicitacoes: TPanel
       Left = 2
-      Top = 522
-      Width = 778
+      Top = 486
+      Width = 898
       Height = 30
       Align = alBottom
       BevelInner = bvLowered
@@ -360,7 +353,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
       TabOrder = 2
       object Bt_Fechar: TJvXPButton
         Tag = 99
-        Left = 678
+        Left = 798
         Top = 1
         Width = 99
         Height = 28
@@ -435,7 +428,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         ParentFont = False
         OnClick = Bt_FecharClick
       end
-      object Bt_MateriaPrimaSalvar: TJvXPButton
+      object Bt_Salvar: TJvXPButton
         Tag = 99
         Left = 1
         Top = 1
@@ -465,9 +458,8 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        OnClick = Bt_MateriaPrimaSalvarClick
       end
-      object Bt_MateriaPrimaAbandonar: TJvXPButton
+      object Bt_Abandonar: TJvXPButton
         Tag = 99
         Left = 106
         Top = 1
@@ -494,9 +486,8 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        OnClick = Bt_MateriaPrimaAbandonarClick
       end
-      object Bt_MateriaPrimaExcluir: TJvXPButton
+      object Bt_Excluir: TJvXPButton
         Tag = 99
         Left = 211
         Top = 1
@@ -560,12 +551,11 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        OnClick = Bt_MateriaPrimaExcluirClick
       end
     end
     object OdirPanApres: TPanel
-      Left = 568
-      Top = 112
+      Left = 792
+      Top = 80
       Width = 89
       Height = 33
       BevelInner = bvLowered

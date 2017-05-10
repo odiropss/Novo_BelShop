@@ -1,7 +1,7 @@
 unit UArtesanalis;
 
 // Cor Form/Painel Principal:  $00FFE4CA
-
+// Cort Componete Desabilitado: clMoneyGreen
 interface
 
 uses
@@ -27,30 +27,24 @@ type
     MenuCalculadora: TMenuItem;
     MenuVersao: TMenuItem;
     MenuSAIR: TMenuItem;
-    MenuProducao: TMenuItem;
     MenuMateriaPrima: TMenuItem;
     CorCaptionForm: TJvGradientCaption;
     MenuProduto: TMenuItem;
-    MenuUnidade: TMenuItem;
     SubMenuMateriaPrimaCadastro: TMenuItem;
     SubMenuMateriaPrimaEntrada: TMenuItem;
     SubMenuProdutoCadastro: TMenuItem;
-    SubMenuProdutoSaldo: TMenuItem;
+    SubMenuProdutoVendas: TMenuItem;
     SubMenuMateriaPrimaSaldo: TMenuItem;
-    SubMenuUnidadeCadastro: TMenuItem;
-    SubMenuProducaoCadastro: TMenuItem;
-    SubMenuProducaoVendas: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure MenuSAIRClick(Sender: TObject);
-    procedure SubMenuUnidadeCadastroClick(Sender: TObject);
     procedure SubMenuMateriaPrimaCadastroClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure MenuCalculadoraClick(Sender: TObject);
     procedure MenuVersaoClick(Sender: TObject);
-    procedure SubMenuProducaoCadastroClick(Sender: TObject);
     procedure SubMenuProdutoCadastroClick(Sender: TObject);
+    procedure SubMenuMateriaPrimaEntradaClick(Sender: TObject);
 
     // Odir ====================================================================
 
@@ -67,8 +61,8 @@ var
 
 implementation
 
-uses UDMArtesanalis, DK_Procs1, SysConst, UFrmUnidades, UFrmMateriaPrimaCadastro,
-     UFrmProducaoCadastro, UFrmProdutoCadastro;
+uses UDMArtesanalis, DK_Procs1, SysConst, UFrmMateriaPrimaCadastro,
+     UFrmProdutoCadastro, UFrmMovimentos;
 
 {$R *.dfm}
 
@@ -98,26 +92,26 @@ begin
   DeleteMenu(GetSystemMenu(Handle, False), SC_MOVE, MF_BYCOMMAND);
 
   // Cria Memo para Guardar Forms Abertos ======================================
-  mgMemo:=TMemo.Create(Self);
-  mgMemo.Visible:=False;
-  mgMemo.Parent:=FrmArtesanalis;
-  mgMemo.Width:=500;
-  mgMemo.Lines.Clear;
-
+  mgMemoForms:=TMemo.Create(Self);
+  mgMemoForms.Visible:=False;
+  mgMemoForms.Parent:=FrmArtesanalis;
+  mgMemoForms.Width:=500;
+  mgMemoForms.Lines.Clear;
 end;
 
 procedure TFrmArtesanalis.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  if mgMemo.Lines.Count>0 Then
+  if mgMemoForms.Lines.Count>0 Then
   Begin
     MessageBox(Handle, pChar('Existe(m) Janela(s) Aberta(s):'+cr+cr+
-                             mgMemo.Lines.Text+cr+cr+
+                             mgMemoForms.Lines.Text+cr+cr+
                              'Antes de Encerrar Feche Todas Primeiro...'), 'ATENÇÃO !!', MB_ICONERROR);
     Action := caNone;
     Exit;
   End;
 
-  FreeAndNil(mgMemo);
+  FreeAndNil(mgMemoForms);
+
   DMArtesanalis.FechaTudo;
 
   Application.Terminate;
@@ -126,16 +120,6 @@ end;
 procedure TFrmArtesanalis.MenuSAIRClick(Sender: TObject);
 begin
   Close;
-end;
-
-procedure TFrmArtesanalis.SubMenuUnidadeCadastroClick(Sender: TObject);
-begin
-  DMArtesanalis.MemoAdicionaNomeForm('Cadastro de Unidades');
-
-  DMArtesanalis.CDS_Unidade.Open;
-
-  FrmUnidades.Show;
-
 end;
 
 procedure TFrmArtesanalis.SubMenuMateriaPrimaCadastroClick(Sender: TObject);
@@ -170,24 +154,23 @@ begin
 
 end;
 
-procedure TFrmArtesanalis.SubMenuProducaoCadastroClick(Sender: TObject);
-begin
-  DMArtesanalis.MemoAdicionaNomeForm('Cadastro de Produção');
-
-  DMArtesanalis.CDS_Producao.Open;
-  DMArtesanalis.CDS_ProducaoMatPrima.Open;
-
-  FrmProducaoCadastro.Show;
-
-end;
-
 procedure TFrmArtesanalis.SubMenuProdutoCadastroClick(Sender: TObject);
 begin
   DMArtesanalis.MemoAdicionaNomeForm('Cadastro de Produto');
 
-  DMArtesanalis.CDS_Produto.Open;
+  DMArtesanalis.CDS_ProdutoMatPrima.Open;
 
   FrmProdutoCadastro.Show;
+
+end;
+
+procedure TFrmArtesanalis.SubMenuMateriaPrimaEntradaClick(Sender: TObject);
+begin
+  DMArtesanalis.MemoAdicionaNomeForm('Movimentos de Entrada');
+
+  FrmMovimentos.Gb_Principal.Caption:='Movimentos de ENTRADA';
+
+  FrmMovimentos.Show;
 
 end;
 
