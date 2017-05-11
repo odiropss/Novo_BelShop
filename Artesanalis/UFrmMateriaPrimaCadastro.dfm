@@ -69,9 +69,9 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         TabOrder = 0
         object EdtMateriaPrimaCod: TCurrencyEdit
           Left = 12
-          Top = 19
+          Top = 20
           Width = 52
-          Height = 21
+          Height = 19
           AutoSize = False
           DecimalPlaces = 0
           DisplayFormat = '0'
@@ -101,7 +101,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         TabOrder = 1
         object EdtMateriaPrimaDesc: TEdit
           Left = 13
-          Top = 19
+          Top = 20
           Width = 237
           Height = 19
           CharCase = ecUpperCase
@@ -130,7 +130,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         TabOrder = 2
         object EdtMateriaPrimaUnid: TEdit
           Left = 13
-          Top = 21
+          Top = 20
           Width = 79
           Height = 19
           CharCase = ecUpperCase
@@ -158,9 +158,9 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         TabOrder = 3
         object EdtMateriaPrimaCusto: TCurrencyEdit
           Left = 13
-          Top = 19
+          Top = 20
           Width = 61
-          Height = 21
+          Height = 19
           AutoSize = False
           Color = clMoneyGreen
           DisplayFormat = ',0.00'
@@ -189,9 +189,9 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         TabOrder = 4
         object EdtMateriaPrimaCustoMedio: TCurrencyEdit
           Left = 13
-          Top = 19
+          Top = 20
           Width = 69
-          Height = 21
+          Height = 19
           AutoSize = False
           Color = clMoneyGreen
           DisplayFormat = ',0.00'
@@ -220,9 +220,9 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         TabOrder = 5
         object EdtMateriaPrimaQtdSaldo: TCurrencyEdit
           Left = 13
-          Top = 19
+          Top = 20
           Width = 88
-          Height = 21
+          Height = 19
           AutoSize = False
           Color = clMoneyGreen
           DecimalPlaces = 4

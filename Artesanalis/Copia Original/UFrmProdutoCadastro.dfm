@@ -1,8 +1,9 @@
 object FrmProdutoCadastro: TFrmProdutoCadastro
-  Left = 385
-  Top = 56
-  Width = 820
-  Height = 586
+  Left = 244
+  Top = 110
+  Width = 1003
+  Height = 617
+  AutoSize = True
   BorderIcons = [biSystemMenu]
   Caption = 'CADASTRO'
   Color = clBtnFace
@@ -23,8 +24,8 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
   object Gb_Principal: TGroupBox
     Left = 0
     Top = 0
-    Width = 804
-    Height = 548
+    Width = 987
+    Height = 579
     Align = alClient
     Caption = ' PRODUTO  '
     Color = 16770250
@@ -38,17 +39,17 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
     TabOrder = 0
     object Pan_Solicitacoes: TPanel
       Left = 2
-      Top = 516
-      Width = 800
+      Top = 547
+      Width = 983
       Height = 30
       Align = alBottom
       BevelInner = bvLowered
       BevelOuter = bvNone
       Color = 16770250
-      TabOrder = 0
+      TabOrder = 1
       object Bt_Fechar: TJvXPButton
         Tag = 99
-        Left = 700
+        Left = 883
         Top = 1
         Width = 99
         Height = 28
@@ -127,9 +128,9 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         Tag = 99
         Left = 1
         Top = 1
-        Width = 109
+        Width = 124
         Height = 28
-        Caption = 'Salvar'
+        Caption = 'Salvar Produto'
         TabOrder = 1
         TabStop = False
         Glyph.Data = {
@@ -158,9 +159,9 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
       end
       object Bt_ProdutoAbandonar: TJvXPButton
         Tag = 99
-        Left = 110
+        Left = 125
         Top = 1
-        Width = 109
+        Width = 124
         Height = 28
         Caption = 'Abandonar'
         TabOrder = 2
@@ -188,11 +189,11 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
       end
       object Bt_ProdutoExcluir: TJvXPButton
         Tag = 99
-        Left = 219
+        Left = 249
         Top = 1
-        Width = 109
+        Width = 124
         Height = 28
-        Caption = 'Excluir'
+        Caption = 'Excluir Produto'
         TabOrder = 3
         TabStop = False
         Glyph.Data = {
@@ -257,8 +258,8 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
     object Pan_ProdutoSolic: TPanel
       Left = 2
       Top = 15
-      Width = 800
-      Height = 197
+      Width = 983
+      Height = 116
       Align = alTop
       BevelInner = bvLowered
       Color = 16770250
@@ -270,10 +271,10 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
       Font.Style = []
       ParentCtl3D = False
       ParentFont = False
-      TabOrder = 1
+      TabOrder = 0
       object Gb_Produto: TGroupBox
-        Left = 17
-        Top = 15
+        Left = 152
+        Top = 7
         Width = 667
         Height = 51
         Caption = ' Produto '
@@ -286,7 +287,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         TabOrder = 0
         object EdtProdutoDesc: TEdit
           Left = 101
-          Top = 19
+          Top = 20
           Width = 555
           Height = 19
           CharCase = ecUpperCase
@@ -298,12 +299,13 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
           MaxLength = 50
           ParentFont = False
           TabOrder = 1
+          OnExit = EdtProdutoDescExit
         end
         object EdtProdutoCod: TCurrencyEdit
           Left = 12
-          Top = 19
+          Top = 20
           Width = 53
-          Height = 21
+          Height = 19
           AutoSize = False
           DecimalPlaces = 0
           DisplayFormat = '0'
@@ -388,43 +390,12 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
           OnClick = Bt_ProdutoBuscaClick
         end
       end
-      object Gb_ProdutoVlrUnit: TGroupBox
-        Left = 686
-        Top = 15
-        Width = 94
-        Height = 51
-        Caption = ' Vlr Unit'#225'rio '
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        TabOrder = 1
-        object EdtProdutoVlrUnit: TCurrencyEdit
-          Left = 13
-          Top = 19
-          Width = 68
-          Height = 21
-          AutoSize = False
-          DecimalPlaces = 5
-          DisplayFormat = ',0.00'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          MaxValue = 100.000000000000000000
-          ParentFont = False
-          TabOrder = 0
-        end
-      end
-      object Gb_Unidade: TGroupBox
-        Left = 17
-        Top = 75
-        Width = 667
-        Height = 51
-        Caption = ' Unidade '
+      object Gb_ProdutoPcCusto: TGroupBox
+        Left = 210
+        Top = 60
+        Width = 108
+        Height = 50
+        Caption = ' P'#231' Custo '
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -432,131 +403,11 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 2
-        object EdtUnidadeDesc: TEdit
-          Left = 101
-          Top = 19
-          Width = 555
-          Height = 19
-          TabStop = False
-          CharCase = ecUpperCase
-          Color = clMoneyGreen
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          MaxLength = 50
-          ParentFont = False
-          ReadOnly = True
-          TabOrder = 1
-        end
-        object EdtUnidadeCod: TCurrencyEdit
-          Left = 12
-          Top = 19
-          Width = 53
-          Height = 21
-          AutoSize = False
-          DecimalPlaces = 0
-          DisplayFormat = '0'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 0
-          OnChange = EdtUnidadeCodChange
-          OnExit = EdtUnidadeCodExit
-        end
-        object Bt_UnidadeBusca: TJvXPButton
-          Tag = 92
-          Left = 71
-          Top = 17
-          Width = 24
-          Height = 26
-          TabOrder = 2
-          TabStop = False
-          Glyph.Data = {
-            07544269746D61705E060000424D5E0600000000000036040000280000001600
-            000017000000010008000000000028020000C30E0000C30E0000000100000000
-            000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
-            FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
-            FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000010101010101010101010101010101010101010101010000010101010101
-            0101010101010101010101040404030100000101010101010101010101010101
-            0101040701070401000001010101010101010101010101010104070101070401
-            0000010101010101010101010101010104070101070704010000010101010101
-            0101010101010104070101070704010100000101010101010101010101010407
-            0101070704010101000001010101010101010101010407010107070401010101
-            0000010101010101010101010407010107070401010101010000010101010101
-            0101010404040307070401010101010100000101010101010404040404040407
-            0401010101010101000001010101040406010601010404040101010101010101
-            0000010101040106010601010101040101010101010101010000010101040601
-            0601060106010401010101010101010100000101040601060101010601060104
-            0101010101010101000001010401060106010601060101040101010101010101
-            0000010104060106010601060106010401010101010101010000010104010601
-            0601060106010104010101010101010100000101010401060101010601060401
-            0101010101010101000001010104060106010601060104010101010101010101
-            0000010101010404010101060404010101010101010101010000010101010101
-            0404040401010101010101010101010100000101010101010101010101010101
-            01010101010101010000}
-          ShowFocusRect = True
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          OnClick = Bt_UnidadeBuscaClick
-        end
-      end
-      object Gb_UnidadeQtd: TGroupBox
-        Left = 686
-        Top = 75
-        Width = 94
-        Height = 51
-        Caption = ' Qtd Unidade  '
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        TabOrder = 3
-        object EdtUnidadeQtd: TCurrencyEdit
+        object EdtProdutoPcCusto: TCurrencyEdit
           Left = 13
-          Top = 19
-          Width = 68
-          Height = 21
+          Top = 20
+          Width = 82
+          Height = 20
           TabStop = False
           AutoSize = False
           Color = clMoneyGreen
@@ -567,33 +418,30 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          MaxValue = 100.000000000000000000
           ParentFont = False
           ReadOnly = True
           TabOrder = 0
         end
       end
-      object Gb_Producao: TGroupBox
-        Left = 17
-        Top = 135
-        Width = 667
-        Height = 51
-        Caption = ' Produ'#231#227'o '
+      object Gb_ProdutoUnidade: TGroupBox
+        Left = 100
+        Top = 60
+        Width = 108
+        Height = 50
+        Caption = ' Unidade '
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 4
-        object EdtProducaoDesc: TEdit
-          Left = 101
-          Top = 19
-          Width = 555
-          Height = 19
-          TabStop = False
+        TabOrder = 1
+        object EdtProdutoUnidade: TEdit
+          Left = 13
+          Top = 20
+          Width = 82
+          Height = 20
           CharCase = ecUpperCase
-          Color = clMoneyGreen
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -601,213 +449,446 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
           Font.Style = [fsBold]
           MaxLength = 50
           ParentFont = False
-          ReadOnly = True
-          TabOrder = 1
+          TabOrder = 0
         end
-        object EdtProducaoCod: TCurrencyEdit
-          Left = 12
-          Top = 19
-          Width = 53
-          Height = 21
+      end
+      object Gb_ProdutoCustoMedio: TGroupBox
+        Left = 320
+        Top = 60
+        Width = 108
+        Height = 50
+        Caption = ' Custo M'#233'dio '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 3
+        object EdtProdutoCustoMedio: TCurrencyEdit
+          Left = 13
+          Top = 20
+          Width = 82
+          Height = 20
+          TabStop = False
           AutoSize = False
-          DecimalPlaces = 0
-          DisplayFormat = '0'
+          Color = clMoneyGreen
+          DecimalPlaces = 5
+          DisplayFormat = ',0.00'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = []
           ParentFont = False
+          ReadOnly = True
           TabOrder = 0
-          OnChange = EdtProducaoCodChange
-          OnExit = EdtProducaoCodExit
         end
-        object Bt_ProducaoBusca: TJvXPButton
-          Tag = 92
-          Left = 71
-          Top = 17
-          Width = 24
-          Height = 26
-          TabOrder = 2
+      end
+      object Gb_ProdutoPcVenda: TGroupBox
+        Left = 430
+        Top = 60
+        Width = 108
+        Height = 50
+        Caption = ' P'#231' Venda '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 4
+        object EdtProdutoPcVenda: TCurrencyEdit
+          Left = 13
+          Top = 20
+          Width = 82
+          Height = 20
           TabStop = False
-          Glyph.Data = {
-            07544269746D61705E060000424D5E0600000000000036040000280000001600
-            000017000000010008000000000028020000C30E0000C30E0000000100000000
-            000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
-            FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
-            FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000010101010101010101010101010101010101010101010000010101010101
-            0101010101010101010101040404030100000101010101010101010101010101
-            0101040701070401000001010101010101010101010101010104070101070401
-            0000010101010101010101010101010104070101070704010000010101010101
-            0101010101010104070101070704010100000101010101010101010101010407
-            0101070704010101000001010101010101010101010407010107070401010101
-            0000010101010101010101010407010107070401010101010000010101010101
-            0101010404040307070401010101010100000101010101010404040404040407
-            0401010101010101000001010101040406010601010404040101010101010101
-            0000010101040106010601010101040101010101010101010000010101040601
-            0601060106010401010101010101010100000101040601060101010601060104
-            0101010101010101000001010401060106010601060101040101010101010101
-            0000010104060106010601060106010401010101010101010000010104010601
-            0601060106010104010101010101010100000101010401060101010601060401
-            0101010101010101000001010104060106010601060104010101010101010101
-            0000010101010404010101060404010101010101010101010000010101010101
-            0404040401010101010101010101010100000101010101010101010101010101
-            01010101010101010000}
-          ShowFocusRect = True
+          AutoSize = False
+          Color = clMoneyGreen
+          DecimalPlaces = 5
+          DisplayFormat = ',0.00'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
+          Font.Style = []
           ParentFont = False
-          OnClick = Bt_ProducaoBuscaClick
+          ReadOnly = True
+          TabOrder = 0
+        end
+      end
+      object Gb_ProdutoPercMargem: TGroupBox
+        Left = 540
+        Top = 60
+        Width = 108
+        Height = 50
+        Caption = ' % Margem '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 5
+        object EdtProdutoPercMargem: TCurrencyEdit
+          Left = 13
+          Top = 20
+          Width = 82
+          Height = 20
+          TabStop = False
+          AutoSize = False
+          Color = clMoneyGreen
+          DecimalPlaces = 5
+          DisplayFormat = ',0.00'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 0
+          OnChange = EdtProdutoPercMargemChange
+        end
+      end
+      object Gb_ProdutoQtdSaldo: TGroupBox
+        Left = 760
+        Top = 60
+        Width = 113
+        Height = 50
+        Caption = ' Qtd Saldo '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 7
+        object EdtProdutoQtdSaldo: TCurrencyEdit
+          Left = 13
+          Top = 20
+          Width = 88
+          Height = 20
+          TabStop = False
+          AutoSize = False
+          Color = clMoneyGreen
+          DecimalPlaces = 4
+          DisplayFormat = ',0.0000'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 0
+        end
+      end
+      object Gb_ProdutoVlrMatgem: TGroupBox
+        Left = 650
+        Top = 60
+        Width = 108
+        Height = 50
+        Caption = ' $ Margem '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 6
+        object EdtProdutoVlrMatgem: TCurrencyEdit
+          Left = 13
+          Top = 20
+          Width = 82
+          Height = 20
+          TabStop = False
+          AutoSize = False
+          Color = clMoneyGreen
+          DecimalPlaces = 5
+          DisplayFormat = ',0.00'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 0
+          OnChange = EdtProdutoVlrMatgemChange
         end
       end
     end
-    object Dbg_Produto: TDBGrid
+    object Gb_MateriaPrima: TGroupBox
       Left = 2
-      Top = 212
-      Width = 800
-      Height = 284
-      Align = alClient
-      DataSource = DMArtesanalis.DS_Produto
-      FixedColor = 15000804
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-      ParentFont = False
+      Top = 131
+      Width = 474
+      Height = 416
+      Align = alLeft
+      Caption = ' Mat'#233'ria-Prima '
       TabOrder = 2
-      TitleFont.Charset = DEFAULT_CHARSET
-      TitleFont.Color = clWindowText
-      TitleFont.Height = -11
-      TitleFont.Name = 'MS Sans Serif'
-      TitleFont.Style = [fsBold]
-      OnDblClick = Dbg_ProdutoDblClick
-      OnEnter = Dbg_ProdutoEnter
-      OnExit = Dbg_ProdutoExit
-      OnKeyDown = Dbg_ProdutoKeyDown
-      Columns = <
-        item
-          Expanded = False
-          FieldName = 'COD_PRODUTO'
-          Title.Alignment = taRightJustify
-          Width = 40
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'DES_PRODUTO'
-          Width = 200
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'COD_UNIDADE'
-          Title.Alignment = taRightJustify
-          Width = 65
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'DES_UNIDADE'
-          Width = 60
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'QTD_UNIDADE'
-          Title.Alignment = taRightJustify
-          Width = 70
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'COD_PRODUCAO'
-          Title.Alignment = taRightJustify
-          Width = 65
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'DES_PRODUCAO'
-          Width = 200
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'VLR_UNITATIO'
-          Title.Alignment = taRightJustify
-          Title.Caption = 'Valor Unit'
-          Width = 70
-          Visible = True
-        end>
+      object Dbg_ProdutoMatPrima: TDBGrid
+        Left = 2
+        Top = 15
+        Width = 470
+        Height = 379
+        Align = alClient
+        DataSource = DMArtesanalis.DS_ProdutoMatPrima
+        FixedColor = 15000804
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+        ParentFont = False
+        TabOrder = 0
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = [fsBold]
+        OnDblClick = Dbg_ProdutoMatPrimaDblClick
+        OnEnter = Dbg_ProdutoMatPrimaEnter
+        OnExit = Dbg_ProdutoMatPrimaExit
+        OnKeyDown = Dbg_ProdutoMatPrimaKeyDown
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'COD_MATERIAPRIMA'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'C'#243'd'
+            Width = 40
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DES_MATERIAPRIMA'
+            Width = 200
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DES_UNIDADE'
+            Width = 50
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'PRECO_CUSTO'
+            Title.Alignment = taRightJustify
+            Title.Caption = '$ Custo'
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'CUSTO_MEDIO'
+            Title.Alignment = taRightJustify
+            Title.Caption = '$ M'#233'dio'
+            Width = 70
+            Visible = True
+          end>
+      end
+      object StB_Produto: TdxStatusBar
+        Left = 2
+        Top = 394
+        Width = 470
+        Height = 20
+        Panels = <
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taRightJustify
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clWindowText
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = [fsBold]
+            PanelStyle.ParentFont = False
+            Bevel = dxpbNone
+            Fixed = False
+            Text = 'No Grid ==>>'
+            Width = 120
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clWindowText
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = []
+            PanelStyle.ParentFont = False
+            Fixed = False
+            Text = '<F4> Procura'
+            Width = 150
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clWindowText
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = []
+            PanelStyle.ParentFont = False
+            Fixed = False
+            Text = '<DuploClick> Seleciona para Produ'#231#227'o'
+            Width = 300
+          end>
+        PaintStyle = stpsOffice11
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+      end
     end
-    object StB_Produto: TdxStatusBar
-      Left = 2
-      Top = 496
-      Width = 800
-      Height = 20
-      Panels = <
-        item
-          PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-          PanelStyle.Alignment = taCenter
-          PanelStyle.Color = clSilver
-          BiDiMode = bdRightToLeft
-          ParentBiDiMode = False
-          Text = '<Duplo Click no Grid> Selecina'
-          Width = 400
-        end
-        item
-          PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-          PanelStyle.Alignment = taCenter
-          Fixed = False
-          Text = '<F4 no Grid> Procura'
-          Width = 400
-        end>
-      PaintStyle = stpsOffice11
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
+    object Gb_Producao: TGroupBox
+      Left = 485
+      Top = 131
+      Width = 500
+      Height = 416
+      Align = alClient
+      Caption = ' Produ'#231#227'o '
+      TabOrder = 3
+      object Dbg_ProdutoProducao: TDBGrid
+        Left = 2
+        Top = 15
+        Width = 496
+        Height = 379
+        Align = alClient
+        DataSource = DMArtesanalis.DS_ProdutoProducao
+        FixedColor = 15000804
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+        ParentFont = False
+        TabOrder = 0
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = [fsBold]
+        OnDrawColumnCell = Dbg_ProdutoProducaoDrawColumnCell
+        OnDblClick = Dbg_ProdutoProducaoDblClick
+        OnEnter = Dbg_ProdutoMatPrimaEnter
+        OnExit = Dbg_ProdutoMatPrimaExit
+        OnKeyDown = Dbg_ProdutoProducaoKeyDown
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'COD_MATERIAPRIMA'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'C'#243'd'
+            Width = 40
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DES_MATERIAPRIMA'
+            Width = 200
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'PER_UTILIZACAO'
+            Title.Alignment = taRightJustify
+            Title.Caption = '% Utilizar'
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'PRECO_CUSTO'
+            Title.Alignment = taRightJustify
+            Title.Caption = '$ Custo'
+            Width = 68
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'CUSTO_MEDIO'
+            Title.Alignment = taRightJustify
+            Title.Caption = '$ M'#233'dio'
+            Width = 68
+            Visible = True
+          end>
+      end
+      object dxStatusBar1: TdxStatusBar
+        Left = 2
+        Top = 394
+        Width = 496
+        Height = 20
+        Panels = <
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            PanelStyle.Color = clSilver
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clWindowText
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = []
+            PanelStyle.ParentFont = False
+            BiDiMode = bdRightToLeft
+            Fixed = False
+            ParentBiDiMode = False
+            Text = '<Duplo Click> % Utiliza'#231#227'o'
+            Width = 62
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clWindowText
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = []
+            PanelStyle.ParentFont = False
+            Fixed = False
+            Text = '<F4> Procura'
+            Width = 32
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clWindowText
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = []
+            PanelStyle.ParentFont = False
+            Fixed = False
+            Text = '<Delete> Exclui Produ'#231#227'o Selecionda'
+            Width = 90
+          end>
+        PaintStyle = stpsOffice11
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+      end
+    end
+    object Panel1: TPanel
+      Left = 476
+      Top = 131
+      Width = 9
+      Height = 416
+      Align = alLeft
+      BevelOuter = bvNone
+      Color = 16770250
+      TabOrder = 4
     end
   end
   object OdirPanApres: TPanel
-    Left = 696
-    Top = 161
+    Left = 864
+    Top = 25
     Width = 89
     Height = 33
     BevelInner = bvLowered

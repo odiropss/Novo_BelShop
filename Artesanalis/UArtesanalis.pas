@@ -19,7 +19,9 @@ uses
   dxSkinOffice2010Silver, dxSkinPumpkin, dxSkinSeven, dxSkinSharp,
   dxSkinSilver, dxSkinSpringTime, dxSkinStardust, dxSkinSummer2008,
   dxSkinsDefaultPainters, dxSkinValentine, dxSkinXmas2008Blue,
-  dxSkinsdxStatusBarPainter, dxStatusBar, Mask, ToolEdit, CurrEdit, Shellapi;
+  dxSkinsdxStatusBarPainter, dxStatusBar, Mask, ToolEdit, CurrEdit, Shellapi,
+  ComObj, // Alterar Resolução do Video
+  cxLocalization;
 
 type
   TFrmArtesanalis = class(TForm)
@@ -35,6 +37,11 @@ type
     SubMenuProdutoCadastro: TMenuItem;
     SubMenuProdutoVendas: TMenuItem;
     SubMenuMateriaPrimaSaldo: TMenuItem;
+    Trad_Localizer: TcxLocalizer;
+    MenuResolucaoVideo: TMenuItem;
+    SubMenuResolucaoMudar: TMenuItem;
+    N1: TMenuItem;
+    SubMenuResolucaoRetornar: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -45,6 +52,8 @@ type
     procedure MenuVersaoClick(Sender: TObject);
     procedure SubMenuProdutoCadastroClick(Sender: TObject);
     procedure SubMenuMateriaPrimaEntradaClick(Sender: TObject);
+    procedure SubMenuResolucaoMudarClick(Sender: TObject);
+    procedure SubMenuResolucaoRetornarClick(Sender: TObject);
 
     // Odir ====================================================================
 
@@ -59,6 +68,14 @@ type
 var
   FrmArtesanalis: TFrmArtesanalis;
 
+  // Alterar Resolução do Video ///////////////////////////
+  OldWidth, OldHeight : Integer;
+  a, b: word;
+  function TrocaResolucao(X, Y, a , b: word): Boolean;
+  function VoltaResolucao(a , b: word): Boolean;
+  ////////////////////////////////////////////////////////
+
+
 implementation
 
 uses UDMArtesanalis, DK_Procs1, SysConst, UFrmMateriaPrimaCadastro,
@@ -69,6 +86,32 @@ uses UDMArtesanalis, DK_Procs1, SysConst, UFrmMateriaPrimaCadastro,
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - Inicio >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+function TrocaResolucao(X, Y, a , b: word): Boolean;
+var
+  lpDevMode: TDeviceMode;
+begin
+  if EnumDisplaySettings(nil, 0, lpDevMode) then
+  begin
+    lpDevMode.dmFields := DM_PELSWIDTH Or DM_PELSHEIGHT;
+    a:= lpDevMode.dmPelsWidth;  // pega a resolução atual (horizontal)
+    b:= lpDevMode.dmPelsHeight; // pega a resolução atual  (vertical)
+    lpDevMode.dmPelsWidth := x;  // altera a resolução para a que voce voce desejou
+    lpDevMode.dmPelsHeight:= y;  // altera a resolução para a que voce voce desejou
+    Result := ChangeDisplaySettings(lpDevMode, 0) = DISP_CHANGE_SUCCESSFUL;
+  end;
+end;
+
+function VoltaResolucao(a , b: word): Boolean;
+var lpDevMode: TDeviceMode;
+begin
+  if EnumDisplaySettings(nil, 0, lpDevMode) then
+  begin
+    lpDevMode.dmFields := DM_PELSWIDTH Or DM_PELSHEIGHT;
+    lpDevMode.dmPelsWidth := a;  // ao fechar o programa recupera a resolução que vinha sendo usada
+    lpDevMode.dmPelsHeight:= b;  // ao fechar o programa recupera a resolução que vinha sendo usada
+    Result := ChangeDisplaySettings(lpDevMode, 0) = DISP_CHANGE_SUCCESSFUL;
+  end;
+end;
 
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -88,8 +131,17 @@ end;
 
 procedure TFrmArtesanalis.FormCreate(Sender: TObject);
 begin
+
   // Não Permite Movimentar o Formulário =======================================
   DeleteMenu(GetSystemMenu(Handle, False), SC_MOVE, MF_BYCOMMAND);
+
+  // Tradução DevExpress =======================================================
+  if FileExists(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+'TradDevExpBr.ini') then {Verifica se existe o arquivo dentro da pasta}
+  begin
+    Trad_Localizer.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+'TradDevExpBr.ini');
+    Trad_Localizer.LanguageIndex := 1; {Muda o idioma / linguagem}
+    Trad_Localizer.Active := TRUE;     {Ativa o componente / a tradução}
+  end;
 
   // Cria Memo para Guardar Forms Abertos ======================================
   mgMemoForms:=TMemo.Create(Self);
@@ -109,6 +161,9 @@ begin
     Action := caNone;
     Exit;
   End;
+
+  If SubMenuResolucaoRetornar.Enabled Then
+   VoltaResolucao(a , b);
 
   FreeAndNil(mgMemoForms);
 
@@ -166,11 +221,33 @@ end;
 
 procedure TFrmArtesanalis.SubMenuMateriaPrimaEntradaClick(Sender: TObject);
 begin
-  DMArtesanalis.MemoAdicionaNomeForm('Movimentos de Entrada');
+  DMArtesanalis.MemoAdicionaNomeForm('MATÉRIA-PRIMA - Documento de ENTRADA');
 
-  FrmMovimentos.Gb_Principal.Caption:='Movimentos de ENTRADA';
+  FrmMovimentos.Gb_Principal.Caption:=' MATÉRIA-PRIMA - Documento de ENTRADA';
 
   FrmMovimentos.Show;
+
+end;
+
+procedure TFrmArtesanalis.SubMenuResolucaoMudarClick(Sender: TObject);
+begin
+
+  If msg('Deseja Realmente Mudar a'+cr+' Resolução do Video ?','C')=2 Then
+   Exit;
+
+  TrocaResolucao(1024, 768, a , b);
+
+  SubMenuResolucaoMudar.Enabled   :=False;
+  SubMenuResolucaoRetornar.Enabled:=True;
+
+end;
+
+procedure TFrmArtesanalis.SubMenuResolucaoRetornarClick(Sender: TObject);
+begin
+  VoltaResolucao(a , b);
+
+  SubMenuResolucaoMudar.Enabled   :=True;
+  SubMenuResolucaoRetornar.Enabled:=False;
 
 end;
 

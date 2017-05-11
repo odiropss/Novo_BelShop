@@ -55,66 +55,23 @@ object DMArtesanalis: TDMArtesanalis
     Left = 220
     Top = 101
   end
-  object SQLQ_Unidade: TSQLQuery
-    MaxBlobSize = -1
-    Params = <>
-    SQL.Strings = (
-      'SELECT *'
-      'FROM UNIDADE un'
-      'ORDER BY un.des_unidade')
-    SQLConnection = SQLC
-    Left = 60
-    Top = 232
-  end
-  object DSP_Unidade: TDataSetProvider
-    DataSet = SQLQ_Unidade
-    Options = [poFetchBlobsOnDemand, poRetainServerOrder]
-    Left = 116
-    Top = 246
-  end
-  object CDS_Unidade: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    ProviderName = 'DSP_Unidade'
-    Left = 164
-    Top = 232
-    object CDS_UnidadeCOD_UNIDADE: TIntegerField
-      DisplayLabel = 'C'#243'digo'
-      FieldName = 'COD_UNIDADE'
-      Required = True
-    end
-    object CDS_UnidadeDES_UNIDADE: TStringField
-      DisplayLabel = 'Abrev. Unidade'
-      FieldName = 'DES_UNIDADE'
-      Size = 6
-    end
-    object CDS_UnidadeQTD_UNIDADE: TIntegerField
-      DisplayLabel = 'Quantidade'
-      FieldName = 'QTD_UNIDADE'
-    end
-  end
-  object DS_Unidade: TDataSource
-    DataSet = CDS_Unidade
-    Left = 220
-    Top = 246
-  end
-  object SQLQ_BuacaRapida: TSQLQuery
+  object SQLQ_BuscaRapida: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 60
     Top = 144
   end
-  object DSP_BuacaRapida: TDataSetProvider
-    DataSet = SQLQ_BuacaRapida
+  object DSP_BuscaRapida: TDataSetProvider
+    DataSet = SQLQ_BuscaRapida
     Options = [poFetchBlobsOnDemand, poRetainServerOrder]
     Left = 116
     Top = 159
   end
-  object CDS_BuacaRapida: TClientDataSet
+  object CDS_BuscaRapida: TClientDataSet
     Aggregates = <>
     Params = <>
-    ProviderName = 'DSP_BuacaRapida'
+    ProviderName = 'DSP_BuscaRapida'
     Left = 164
     Top = 144
   end
@@ -122,27 +79,25 @@ object DMArtesanalis: TDMArtesanalis
     MaxBlobSize = -1
     Params = <>
     SQL.Strings = (
-      
-        'select MA.COD_MATERIAPRIMA, MA.DES_MATERIAPRIMA, MA.QTD_CONVERSA' +
-        'O, MA.VLR_UNITATIO'
-      'from MATERIAPRIMA MA'
-      'order by 2  ')
+      'Select *'
+      'From MATERIAPRIMA ma'
+      'Order By ma.des_materiaprima')
     SQLConnection = SQLC
-    Left = 60
-    Top = 304
+    Left = 44
+    Top = 248
   end
   object DSP_MateriaPrima: TDataSetProvider
     DataSet = SQLQ_MateriaPrima
     Options = [poFetchBlobsOnDemand, poRetainServerOrder]
-    Left = 116
-    Top = 318
+    Left = 100
+    Top = 262
   end
   object CDS_MateriaPrima: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_MateriaPrima'
-    Left = 164
-    Top = 304
+    Left = 148
+    Top = 248
     object CDS_MateriaPrimaCOD_MATERIAPRIMA: TIntegerField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_MATERIAPRIMA'
@@ -153,126 +108,37 @@ object DMArtesanalis: TDMArtesanalis
       FieldName = 'DES_MATERIAPRIMA'
       Size = 60
     end
-    object CDS_MateriaPrimaQTD_CONVERSAO: TIntegerField
-      DisplayLabel = 'Qtd Convers'#227'o'
-      FieldName = 'QTD_CONVERSAO'
+    object CDS_MateriaPrimaDES_UNIDADE: TStringField
+      DisplayLabel = 'Unidade'
+      FieldName = 'DES_UNIDADE'
+      Size = 15
     end
-    object CDS_MateriaPrimaVLR_UNITATIO: TFMTBCDField
-      DisplayLabel = '$ Unit'#225'rio'
-      FieldName = 'VLR_UNITATIO'
+    object CDS_MateriaPrimaPRECO_CUSTO: TFMTBCDField
+      DisplayLabel = 'P'#231' Custo'
+      FieldName = 'PRECO_CUSTO'
       DisplayFormat = '0.,00'
       Precision = 18
       Size = 2
     end
+    object CDS_MateriaPrimaCUSTO_MEDIO: TFMTBCDField
+      DisplayLabel = 'Custo M'#233'dio'
+      FieldName = 'CUSTO_MEDIO'
+      DisplayFormat = '0.,00'
+      Precision = 18
+      Size = 2
+    end
+    object CDS_MateriaPrimaQTD_ESTOQUE: TFMTBCDField
+      DisplayLabel = 'Saldo'
+      FieldName = 'QTD_ESTOQUE'
+      DisplayFormat = '0.0000'
+      Precision = 18
+      Size = 4
+    end
   end
   object DS_MateriaPrima: TDataSource
     DataSet = CDS_MateriaPrima
-    Left = 220
-    Top = 318
-  end
-  object SQLQ_Producao: TSQLQuery
-    MaxBlobSize = -1
-    Params = <>
-    SQL.Strings = (
-      'select pd.cod_aux cod_producao, pd.des_aux des_producao'
-      'from tab_auxiliar pd'
-      'where pd.tip_aux = 1'
-      'order by 2  ')
-    SQLConnection = SQLC
-    Left = 60
-    Top = 416
-  end
-  object DSP_Producao: TDataSetProvider
-    DataSet = SQLQ_Producao
-    Options = [poFetchBlobsOnDemand, poRetainServerOrder]
-    Left = 116
-    Top = 430
-  end
-  object CDS_Producao: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    ProviderName = 'DSP_Producao'
-    Left = 164
-    Top = 416
-    object CDS_ProducaoCOD_PRODUCAO: TIntegerField
-      DisplayLabel = 'C'#243'd'
-      FieldName = 'COD_PRODUCAO'
-      Required = True
-    end
-    object CDS_ProducaoDES_PRODUCAO: TStringField
-      DisplayLabel = 'Descri'#231#227'o'
-      FieldName = 'DES_PRODUCAO'
-      Size = 50
-    end
-  end
-  object DS_Producao: TDataSource
-    DataSet = CDS_Producao
-    Left = 220
-    Top = 430
-  end
-  object SQLQ_ProducaoMatPrima: TSQLQuery
-    MaxBlobSize = -1
-    Params = <
-      item
-        DataType = ftString
-        Name = 'Cod_Producao'
-        ParamType = ptInput
-        Value = '1'
-      end>
-    SQL.Strings = (
-      
-        'SELECT pd.cod_materiaprima, mp.des_materiaprima, pd.per_utilizac' +
-        'ao, pd.cod_producao'
-      'FROM producao pd, materiaprima mp'
-      'WHERE pd.cod_materiaprima = mp.cod_materiaprima AND'
-      '      pd.cod_producao = :Cod_Producao'
-      'ORDER BY 2  '
-      '')
-    SQLConnection = SQLC
-    Left = 60
-    Top = 480
-  end
-  object DSP_ProducaoMatPrima: TDataSetProvider
-    DataSet = SQLQ_ProducaoMatPrima
-    Options = [poFetchBlobsOnDemand, poRetainServerOrder]
-    Left = 116
-    Top = 494
-  end
-  object CDS_ProducaoMatPrima: TClientDataSet
-    Aggregates = <>
-    IndexFieldNames = 'COD_PRODUCAO'
-    MasterFields = 'COD_PRODUCAO'
-    MasterSource = DS_Producao
-    PacketRecords = 0
-    Params = <>
-    ProviderName = 'DSP_ProducaoMatPrima'
-    Left = 164
-    Top = 480
-    object CDS_ProducaoMatPrimaCOD_MATERIAPRIMA: TIntegerField
-      DisplayLabel = 'C'#243'd'
-      FieldName = 'COD_MATERIAPRIMA'
-      Required = True
-    end
-    object CDS_ProducaoMatPrimaDES_MATERIAPRIMA: TStringField
-      DisplayLabel = 'Descri'#231#227'o Mat'#233'ria-Prima'
-      FieldName = 'DES_MATERIAPRIMA'
-      Size = 60
-    end
-    object CDS_ProducaoMatPrimaPER_UTILIZACAO: TFMTBCDField
-      DisplayLabel = '% Utiliza'#231#227'o'
-      FieldName = 'PER_UTILIZACAO'
-      DisplayFormat = '0.,00000'
-      Precision = 18
-      Size = 5
-    end
-    object CDS_ProducaoMatPrimaCOD_PRODUCAO: TIntegerField
-      FieldName = 'COD_PRODUCAO'
-    end
-  end
-  object Ds_ProducaoMatPrima: TDataSource
-    DataSet = CDS_ProducaoMatPrima
-    Left = 220
-    Top = 494
+    Left = 204
+    Top = 262
   end
   object SDS_Pesquisa: TSQLDataSet
     MaxBlobSize = -1
@@ -299,79 +165,291 @@ object DMArtesanalis: TDMArtesanalis
     Left = 381
     Top = 27
   end
-  object SQLQ_Produto: TSQLQuery
+  object SQLQ_ProdutoProducao: TSQLQuery
     MaxBlobSize = -1
-    Params = <>
+    Params = <
+      item
+        DataType = ftString
+        Name = 'CodProd'
+        ParamType = ptInput
+        Value = '1'
+      end
+      item
+        DataType = ftString
+        Name = 'CodProd'
+        ParamType = ptInput
+      end>
     SQL.Strings = (
-      'SELECT pr.cod_produto, pr.des_produto,'
-      'pr.cod_unidade, un.des_unidade, un.qtd_unidade,'
-      'pr.cod_producao, pd.des_aux des_producao,'
-      'pr.vlr_unitatio'
-      'FROM produto pr, unidade un, tab_auxiliar pd'
-      'WHERE pr.cod_unidade=un.cod_unidade'
-      'AND   pr.cod_producao=pd.cod_aux'
-      'AND   pd.tip_aux=1'
+      'SELECT pd.cod_materiaprima, mp.des_materiaprima,'
+      '       pd.per_utilizacao, pd.preco_custo, pd.custo_medio,'
+      '       pd.preco_venda, pd.per_margem, pd.vlr_margem'
+      'FROM PRODUCAO pd, MATERIAPRIMA mp'
       ''
-      'Order by pr.des_produto')
+      'WHERE pd.cod_materiaprima=mp.cod_materiaprima'
+      ''
+      'AND   pd.cod_produto=:CodProd'
+      ''
+      'union'
+      ''
+      'SELECT 999999 cod_materiaprima, '#39'TOTAIS'#39' des_materiaprima,'
+      '       0.00000 per_utilizacao,'
+      '       Sum(pd1.preco_custo) preco_custo,'
+      '       SUM(pd1.custo_medio) custo_medio,'
+      '       SUM(pd1.preco_venda) preco_venda,'
+      '       SUM(pd1.per_margem) per_margem,'
+      '       SUM(pd1.vlr_margem) vlr_margem'
+      'FROM PRODUCAO pd1'
+      ''
+      'WHERE pd1.cod_produto=:CodProd'
+      ''
+      'Group by 1,2'
+      ''
+      ''
+      'ORDER BY 2')
     SQLConnection = SQLC
-    Left = 300
-    Top = 224
+    Left = 422
+    Top = 248
   end
-  object DSP_Produto: TDataSetProvider
-    DataSet = SQLQ_Produto
+  object DSP_ProdutoProducao: TDataSetProvider
+    DataSet = SQLQ_ProdutoProducao
     Options = [poFetchBlobsOnDemand, poRetainServerOrder]
-    Left = 356
-    Top = 238
+    Left = 459
+    Top = 262
   end
-  object CDS_Produto: TClientDataSet
+  object CDS_ProdutoProducao: TClientDataSet
     Aggregates = <>
     Params = <>
-    ProviderName = 'DSP_Produto'
-    Left = 404
-    Top = 224
-    object CDS_ProdutoCOD_PRODUTO: TIntegerField
-      DisplayLabel = 'C'#243'd'
-      FieldName = 'COD_PRODUTO'
+    ProviderName = 'DSP_ProdutoProducao'
+    Left = 516
+    Top = 248
+    object CDS_ProdutoProducaoCOD_MATERIAPRIMA: TIntegerField
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'COD_MATERIAPRIMA'
       Required = True
     end
-    object CDS_ProdutoDES_PRODUTO: TStringField
-      DisplayLabel = 'Descri'#231#227'o Produto'
-      FieldName = 'DES_PRODUTO'
+    object CDS_ProdutoProducaoDES_MATERIAPRIMA: TStringField
+      DisplayLabel = 'Mat'#233'ria-Prima'
+      FieldName = 'DES_MATERIAPRIMA'
       Size = 60
     end
-    object CDS_ProdutoCOD_UNIDADE: TIntegerField
-      DisplayLabel = 'C'#243'd Unid'
-      FieldName = 'COD_UNIDADE'
+    object CDS_ProdutoProducaoPER_UTILIZACAO: TFMTBCDField
+      DisplayLabel = '% Utiliza'#231#227'o'
+      FieldName = 'PER_UTILIZACAO'
+      DisplayFormat = '0,.00000'
+      Precision = 18
+      Size = 5
     end
-    object CDS_ProdutoDES_UNIDADE: TStringField
-      DisplayLabel = 'Unidade'
-      FieldName = 'DES_UNIDADE'
-      Size = 6
+    object CDS_ProdutoProducaoPRECO_CUSTO: TFMTBCDField
+      DisplayLabel = 'P'#231' Custo'
+      FieldName = 'PRECO_CUSTO'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
     end
-    object CDS_ProdutoQTD_UNIDADE: TIntegerField
-      DisplayLabel = 'Qtd/Unid'
-      FieldName = 'QTD_UNIDADE'
+    object CDS_ProdutoProducaoCUSTO_MEDIO: TFMTBCDField
+      DisplayLabel = 'Custo M'#233'dio'
+      FieldName = 'CUSTO_MEDIO'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
     end
-    object CDS_ProdutoCOD_PRODUCAO: TIntegerField
-      DisplayLabel = 'C'#243'd Prod'
-      FieldName = 'COD_PRODUCAO'
+    object CDS_ProdutoProducaoPRECO_VENDA: TFMTBCDField
+      DisplayLabel = 'P'#231' Venda'
+      FieldName = 'PRECO_VENDA'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
     end
-    object CDS_ProdutoDES_PRODUCAO: TStringField
-      DisplayLabel = 'Produ'#231#227'o'
-      FieldName = 'DES_PRODUCAO'
-      Size = 50
+    object CDS_ProdutoProducaoPER_MARGEM: TFMTBCDField
+      DisplayLabel = '% Margem'
+      FieldName = 'PER_MARGEM'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
     end
-    object CDS_ProdutoVLR_UNITATIO: TFMTBCDField
-      DisplayLabel = 'Vlr Unit'
-      FieldName = 'VLR_UNITATIO'
+    object CDS_ProdutoProducaoVLR_MARGEM: TFMTBCDField
+      DisplayLabel = 'Vlr Margem'
+      FieldName = 'VLR_MARGEM'
       DisplayFormat = '0,.00'
       Precision = 18
       Size = 2
     end
   end
-  object DS_Produto: TDataSource
-    DataSet = CDS_Produto
-    Left = 460
-    Top = 238
+  object DS_ProdutoProducao: TDataSource
+    DataSet = CDS_ProdutoProducao
+    Left = 588
+    Top = 262
+  end
+  object SQLQ_ProdutoMatPrima: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQL.Strings = (
+      'Select *'
+      'From MATERIAPRIMA ma'
+      'Order By ma.des_materiaprima')
+    SQLConnection = SQLC
+    Left = 420
+    Top = 184
+  end
+  object DSP_ProdutoMatPrima: TDataSetProvider
+    DataSet = SQLQ_ProdutoMatPrima
+    Options = [poFetchBlobsOnDemand, poRetainServerOrder]
+    Left = 467
+    Top = 198
+  end
+  object CDS_ProdutoMatPrima: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_ProdutoMatPrima'
+    Left = 508
+    Top = 184
+    object CDS_ProdutoMatPrimaCOD_MATERIAPRIMA: TIntegerField
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'COD_MATERIAPRIMA'
+      Required = True
+    end
+    object CDS_ProdutoMatPrimaDES_MATERIAPRIMA: TStringField
+      DisplayLabel = 'Mat'#233'ria-Prima'
+      FieldName = 'DES_MATERIAPRIMA'
+      Size = 60
+    end
+    object CDS_ProdutoMatPrimaDES_UNIDADE: TStringField
+      DisplayLabel = 'Unid'
+      FieldName = 'DES_UNIDADE'
+      Size = 15
+    end
+    object CDS_ProdutoMatPrimaPRECO_CUSTO: TFMTBCDField
+      FieldName = 'PRECO_CUSTO'
+      Precision = 18
+      Size = 2
+    end
+    object CDS_ProdutoMatPrimaCUSTO_MEDIO: TFMTBCDField
+      FieldName = 'CUSTO_MEDIO'
+      Precision = 18
+      Size = 2
+    end
+    object CDS_ProdutoMatPrimaQTD_ESTOQUE: TFMTBCDField
+      FieldName = 'QTD_ESTOQUE'
+      Precision = 18
+      Size = 4
+    end
+  end
+  object DS_ProdutoMatPrima: TDataSource
+    DataSet = CDS_ProdutoMatPrima
+    Left = 564
+    Top = 198
+  end
+  object CDS_V_DoctoItens: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 60
+    Top = 360
+    object CDS_V_DoctoItensNUM_SEQ_DOCTO: TIntegerField
+      FieldName = 'NUM_SEQ_DOCTO'
+    end
+    object CDS_V_DoctoItensNUM_SEQ: TIntegerField
+      FieldName = 'NUM_SEQ'
+    end
+    object CDS_V_DoctoItensCOD_PRODUTO: TIntegerField
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'COD_PRODUTO'
+    end
+    object CDS_V_DoctoItensDES_PRODUTO: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      FieldName = 'DES_PRODUTO'
+      Size = 60
+    end
+    object CDS_V_DoctoItensQTD_MOVTO: TFMTBCDField
+      DisplayLabel = 'Quantidade'
+      FieldName = 'QTD_MOVTO'
+      DisplayFormat = '0,.0000'
+      Precision = 18
+      Size = 2
+    end
+    object CDS_V_DoctoItensVLT_UNITATIO: TFMTBCDField
+      DisplayLabel = 'Valor Unit'#225'rio'
+      FieldName = 'VLT_UNITATIO'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
+    end
+    object CDS_V_DoctoItensVLR_TOTAL: TFMTBCDField
+      DisplayLabel = 'Valor Total'
+      FieldName = 'VLR_TOTAL'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
+    end
+  end
+  object DS_V_DoctoItens: TDataSource
+    DataSet = CDS_V_DoctoItens
+    Left = 124
+    Top = 374
+  end
+  object SQLQuery1: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQL.Strings = (
+      'SELECT *'
+      'FROM DOCTOS_ITENS di'
+      'WHERE di.num_seq_docto = 1'
+      'ORDER BY di.num_seq  ')
+    SQLConnection = SQLC
+    Left = 420
+    Top = 384
+  end
+  object DataSetProvider1: TDataSetProvider
+    DataSet = SQLQuery1
+    Options = [poFetchBlobsOnDemand, poRetainServerOrder]
+    Left = 476
+    Top = 398
+  end
+  object ClientDataSet1: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DataSetProvider1'
+    Left = 548
+    Top = 376
+    object IntegerField1: TIntegerField
+      FieldName = 'NUM_SEQ_DOCTO'
+    end
+    object IntegerField2: TIntegerField
+      FieldName = 'NUM_SEQ'
+    end
+    object IntegerField3: TIntegerField
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'COD_PRODUTO'
+    end
+    object StringField1: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      FieldName = 'DES_PRODUTO'
+      Size = 60
+    end
+    object FMTBCDField1: TFMTBCDField
+      DisplayLabel = 'Quantidade'
+      FieldName = 'QTD_MOVTO'
+      DisplayFormat = '0,.0000'
+      Precision = 18
+      Size = 2
+    end
+    object FMTBCDField2: TFMTBCDField
+      DisplayLabel = 'Valor Unit'#225'rio'
+      FieldName = 'VLT_UNITATIO'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
+    end
+    object FMTBCDField3: TFMTBCDField
+      DisplayLabel = 'Valor Total'
+      FieldName = 'VLR_TOTAL'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
+    end
+  end
+  object DataSource1: TDataSource
+    DataSet = ClientDataSet1
+    Left = 612
+    Top = 390
   end
 end

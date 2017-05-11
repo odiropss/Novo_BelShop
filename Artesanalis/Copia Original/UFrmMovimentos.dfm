@@ -1,9 +1,9 @@
 object FrmMovimentos: TFrmMovimentos
-  Left = 436
-  Top = 23
-  Width = 746
+  Left = 249
+  Top = 87
+  Width = 750
   Height = 604
-  AutoSize = True
+  BorderIcons = [biSystemMenu]
   Caption = 'MOVIMENTOS'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -23,7 +23,7 @@ object FrmMovimentos: TFrmMovimentos
   object Gb_Principal: TGroupBox
     Left = 0
     Top = 0
-    Width = 730
+    Width = 734
     Height = 566
     Align = alClient
     Caption = ' MAT'#201'RIA-PRIMA - Documento de ENTRADA '
@@ -36,10 +36,10 @@ object FrmMovimentos: TFrmMovimentos
     ParentColor = False
     ParentFont = False
     TabOrder = 0
-    object Pan_Docto: TPanel
+    object Pan_Nota: TPanel
       Left = 2
       Top = 15
-      Width = 726
+      Width = 730
       Height = 120
       Align = alTop
       BevelInner = bvLowered
@@ -53,38 +53,9 @@ object FrmMovimentos: TFrmMovimentos
       ParentCtl3D = False
       ParentFont = False
       TabOrder = 0
-      object Gb_VlrTotal: TGroupBox
-        Left = 506
-        Top = 7
-        Width = 110
-        Height = 51
-        Caption = ' Valor Total  '
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        TabOrder = 4
-        object EdtVlrTotal: TCurrencyEdit
-          Left = 13
-          Top = 22
-          Width = 84
-          Height = 19
-          AutoSize = False
-          DisplayFormat = ',0.00'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 0
-        end
-      end
       object Gb_SerieDocto: TGroupBox
         Left = 181
-        Top = 7
+        Top = 61
         Width = 75
         Height = 51
         Caption = ' S'#233'rie '
@@ -94,7 +65,7 @@ object FrmMovimentos: TFrmMovimentos
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 1
+        TabOrder = 0
         object EdtSerieDocto: TEdit
           Left = 13
           Top = 22
@@ -112,7 +83,7 @@ object FrmMovimentos: TFrmMovimentos
       end
       object Gb_VlrProdutos: TGroupBox
         Left = 394
-        Top = 7
+        Top = 61
         Width = 110
         Height = 51
         Caption = ' Valor Produtos '
@@ -122,7 +93,7 @@ object FrmMovimentos: TFrmMovimentos
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 3
+        TabOrder = 1
         object EdtVlrProdutos: TCurrencyEdit
           Left = 13
           Top = 22
@@ -141,7 +112,7 @@ object FrmMovimentos: TFrmMovimentos
       end
       object Gb_NumDocto: TGroupBox
         Left = 90
-        Top = 7
+        Top = 61
         Width = 89
         Height = 51
         Caption = ' N'#186' Docto '
@@ -151,7 +122,7 @@ object FrmMovimentos: TFrmMovimentos
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 0
+        TabOrder = 2
         object EdtNumDocto: TCurrencyEdit
           Left = 13
           Top = 22
@@ -166,14 +137,13 @@ object FrmMovimentos: TFrmMovimentos
           Font.Name = 'MS Sans Serif'
           Font.Style = []
           ParentFont = False
+          ReadOnly = True
           TabOrder = 0
-          OnChange = EdtNumDoctoChange
-          OnExit = EdtNumDoctoExit
         end
       end
       object Gb_DtaDocto: TGroupBox
         Left = 258
-        Top = 7
+        Top = 61
         Width = 134
         Height = 51
         Caption = ' Data Emiss'#227'o '
@@ -183,7 +153,7 @@ object FrmMovimentos: TFrmMovimentos
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 2
+        TabOrder = 3
         object DtEdt_DtaDocto: TcxDateEdit
           Left = 13
           Top = 19
@@ -201,7 +171,7 @@ object FrmMovimentos: TFrmMovimentos
       end
       object Gb_Fornecedor: TGroupBox
         Left = 48
-        Top = 61
+        Top = 6
         Width = 634
         Height = 51
         Caption = ' Fornecedor '
@@ -211,14 +181,13 @@ object FrmMovimentos: TFrmMovimentos
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 5
+        TabOrder = 4
         object EdtDesFornecedor: TEdit
           Left = 101
           Top = 22
-          Width = 492
+          Width = 518
           Height = 19
           CharCase = ecUpperCase
-          Color = clMoneyGreen
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -226,7 +195,6 @@ object FrmMovimentos: TFrmMovimentos
           Font.Style = []
           MaxLength = 50
           ParentFont = False
-          ReadOnly = True
           TabOrder = 1
         end
         object EdtCodFornecedor: TCurrencyEdit
@@ -314,64 +282,50 @@ object FrmMovimentos: TFrmMovimentos
           Font.Style = [fsBold]
           ParentFont = False
         end
-        object Bt_NovoFornecedor: TJvXPButton
-          Tag = 92
-          Left = 598
-          Top = 19
-          Width = 24
-          Height = 26
-          TabOrder = 3
-          TabStop = False
-          Glyph.Data = {
-            07544269746D6170EE000000424DEE0000000000000076000000280000001000
-            00000F000000010004000000000078000000130B0000130B0000100000000000
-            0000000000000000800000800000008080008000000080008000808000008080
-            8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-            FF00888888800000000088888880FFFFFFF088888880F00F00F088888880FFFF
-            FFF088888880F00F00F088888880FFFFFFF08888888444444444880000844444
-            4444880BB08888888888000BB000888888880BBBBBB0888888880BBBBBB08888
-            8888000BB00088888888880BB088888888888800008888888888}
-          ShowFocusRect = True
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
       end
-      object EdtNumSeqDocto: TCurrencyEdit
-        Left = 13
-        Top = 22
-        Width = 17
-        Height = 19
-        AutoSize = False
-        DecimalPlaces = 0
-        DisplayFormat = '0,'
+      object Gb_VlrTotal: TGroupBox
+        Left = 506
+        Top = 61
+        Width = 110
+        Height = 51
+        Caption = ' Valor Total  '
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
-        Font.Style = []
+        Font.Style = [fsBold]
         ParentFont = False
-        ReadOnly = True
-        TabOrder = 6
-        Visible = False
+        TabOrder = 5
+        object EdtVlrTotal: TCurrencyEdit
+          Left = 13
+          Top = 22
+          Width = 84
+          Height = 19
+          AutoSize = False
+          DisplayFormat = ',0.00'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+        end
       end
     end
     object Pan_Solicitacoes: TPanel
       Left = 2
       Top = 534
-      Width = 726
+      Width = 730
       Height = 30
       Align = alBottom
       BevelInner = bvLowered
       BevelOuter = bvNone
       Color = 16770250
-      TabOrder = 3
+      TabOrder = 1
       object Bt_Fechar: TJvXPButton
         Tag = 99
-        Left = 626
+        Left = 630
         Top = 1
         Width = 99
         Height = 28
@@ -574,21 +528,21 @@ object FrmMovimentos: TFrmMovimentos
     object Rb_Produtos: TRadioGroup
       Left = 2
       Top = 179
-      Width = 726
+      Width = 730
       Height = 335
       Align = alClient
       Caption = ' Produtos '
-      TabOrder = 2
+      TabOrder = 3
     end
     object Pan_Produto: TPanel
       Left = 2
       Top = 135
-      Width = 726
+      Width = 730
       Height = 44
       Align = alTop
       BevelInner = bvLowered
       ParentColor = True
-      TabOrder = 1
+      TabOrder = 4
       object Label1: TLabel
         Left = 7
         Top = 4
@@ -645,6 +599,7 @@ object FrmMovimentos: TFrmMovimentos
         Font.Name = 'MS Sans Serif'
         Font.Style = []
         ParentFont = False
+        ReadOnly = True
         TabOrder = 0
       end
       object EdtCodProduto: TCurrencyEdit
@@ -661,6 +616,7 @@ object FrmMovimentos: TFrmMovimentos
         Font.Name = 'MS Sans Serif'
         Font.Style = []
         ParentFont = False
+        ReadOnly = True
         TabOrder = 1
       end
       object EdtDesProduto: TEdit
@@ -732,6 +688,7 @@ object FrmMovimentos: TFrmMovimentos
         Height = 26
         Caption = 'Inc'
         TabOrder = 6
+        TabStop = False
         ShowFocusRect = True
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -761,7 +718,7 @@ object FrmMovimentos: TFrmMovimentos
     object Dbg_Produtos: TDBGrid
       Left = 2
       Top = 179
-      Width = 726
+      Width = 730
       Height = 335
       Align = alClient
       DataSource = DMArtesanalis.DataSource1
@@ -840,13 +797,13 @@ object FrmMovimentos: TFrmMovimentos
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 4
+      TabOrder = 2
       Visible = False
     end
     object StB_Movtos: TdxStatusBar
       Left = 2
       Top = 514
-      Width = 726
+      Width = 730
       Height = 20
       Panels = <
         item

@@ -13,54 +13,65 @@ type
     DSP_Busca: TDataSetProvider;
     CDS_Busca: TClientDataSet;
     DS_Busca: TDataSource;
-    SQLQ_Unidade: TSQLQuery;
-    DSP_Unidade: TDataSetProvider;
-    CDS_Unidade: TClientDataSet;
-    DS_Unidade: TDataSource;
-    CDS_UnidadeCOD_UNIDADE: TIntegerField;
-    CDS_UnidadeQTD_UNIDADE: TIntegerField;
-    CDS_UnidadeDES_UNIDADE: TStringField;
-    SQLQ_BuacaRapida: TSQLQuery;
-    DSP_BuacaRapida: TDataSetProvider;
-    CDS_BuacaRapida: TClientDataSet;
+    SQLQ_BuscaRapida: TSQLQuery;
+    DSP_BuscaRapida: TDataSetProvider;
+    CDS_BuscaRapida: TClientDataSet;
     SQLQ_MateriaPrima: TSQLQuery;
     DSP_MateriaPrima: TDataSetProvider;
     CDS_MateriaPrima: TClientDataSet;
     DS_MateriaPrima: TDataSource;
     CDS_MateriaPrimaCOD_MATERIAPRIMA: TIntegerField;
     CDS_MateriaPrimaDES_MATERIAPRIMA: TStringField;
-    CDS_MateriaPrimaVLR_UNITATIO: TFMTBCDField;
-    CDS_MateriaPrimaQTD_CONVERSAO: TIntegerField;
-    SQLQ_Producao: TSQLQuery;
-    DSP_Producao: TDataSetProvider;
-    CDS_Producao: TClientDataSet;
-    DS_Producao: TDataSource;
-    CDS_ProducaoCOD_PRODUCAO: TIntegerField;
-    CDS_ProducaoDES_PRODUCAO: TStringField;
-    SQLQ_ProducaoMatPrima: TSQLQuery;
-    DSP_ProducaoMatPrima: TDataSetProvider;
-    CDS_ProducaoMatPrima: TClientDataSet;
-    Ds_ProducaoMatPrima: TDataSource;
-    CDS_ProducaoMatPrimaCOD_MATERIAPRIMA: TIntegerField;
-    CDS_ProducaoMatPrimaDES_MATERIAPRIMA: TStringField;
-    CDS_ProducaoMatPrimaPER_UTILIZACAO: TFMTBCDField;
     SDS_Pesquisa: TSQLDataSet;
     DSP_Pesquisa: TDataSetProvider;
     CDS_Pesquisa: TClientDataSet;
     DS_Pesquisa: TDataSource;
-    CDS_ProducaoMatPrimaCOD_PRODUCAO: TIntegerField;
-    SQLQ_Produto: TSQLQuery;
-    DSP_Produto: TDataSetProvider;
-    CDS_Produto: TClientDataSet;
-    DS_Produto: TDataSource;
-    CDS_ProdutoCOD_PRODUTO: TIntegerField;
-    CDS_ProdutoDES_PRODUTO: TStringField;
-    CDS_ProdutoCOD_UNIDADE: TIntegerField;
-    CDS_ProdutoDES_UNIDADE: TStringField;
-    CDS_ProdutoQTD_UNIDADE: TIntegerField;
-    CDS_ProdutoCOD_PRODUCAO: TIntegerField;
-    CDS_ProdutoDES_PRODUCAO: TStringField;
-    CDS_ProdutoVLR_UNITATIO: TFMTBCDField;
+    SQLQ_ProdutoProducao: TSQLQuery;
+    DSP_ProdutoProducao: TDataSetProvider;
+    CDS_ProdutoProducao: TClientDataSet;
+    DS_ProdutoProducao: TDataSource;
+    CDS_MateriaPrimaDES_UNIDADE: TStringField;
+    CDS_MateriaPrimaPRECO_CUSTO: TFMTBCDField;
+    CDS_MateriaPrimaCUSTO_MEDIO: TFMTBCDField;
+    CDS_MateriaPrimaQTD_ESTOQUE: TFMTBCDField;
+    SQLQ_ProdutoMatPrima: TSQLQuery;
+    DSP_ProdutoMatPrima: TDataSetProvider;
+    CDS_ProdutoMatPrima: TClientDataSet;
+    DS_ProdutoMatPrima: TDataSource;
+    CDS_ProdutoMatPrimaCOD_MATERIAPRIMA: TIntegerField;
+    CDS_ProdutoMatPrimaDES_MATERIAPRIMA: TStringField;
+    CDS_ProdutoMatPrimaDES_UNIDADE: TStringField;
+    CDS_ProdutoMatPrimaPRECO_CUSTO: TFMTBCDField;
+    CDS_ProdutoMatPrimaCUSTO_MEDIO: TFMTBCDField;
+    CDS_ProdutoMatPrimaQTD_ESTOQUE: TFMTBCDField;
+    CDS_ProdutoProducaoCOD_MATERIAPRIMA: TIntegerField;
+    CDS_ProdutoProducaoDES_MATERIAPRIMA: TStringField;
+    CDS_ProdutoProducaoPER_UTILIZACAO: TFMTBCDField;
+    CDS_ProdutoProducaoPRECO_CUSTO: TFMTBCDField;
+    CDS_ProdutoProducaoCUSTO_MEDIO: TFMTBCDField;
+    CDS_ProdutoProducaoPRECO_VENDA: TFMTBCDField;
+    CDS_ProdutoProducaoPER_MARGEM: TFMTBCDField;
+    CDS_ProdutoProducaoVLR_MARGEM: TFMTBCDField;
+    CDS_V_DoctoItens: TClientDataSet;
+    DS_V_DoctoItens: TDataSource;
+    CDS_V_DoctoItensNUM_SEQ_DOCTO: TIntegerField;
+    CDS_V_DoctoItensNUM_SEQ: TIntegerField;
+    CDS_V_DoctoItensCOD_PRODUTO: TIntegerField;
+    CDS_V_DoctoItensDES_PRODUTO: TStringField;
+    CDS_V_DoctoItensQTD_MOVTO: TFMTBCDField;
+    CDS_V_DoctoItensVLT_UNITATIO: TFMTBCDField;
+    CDS_V_DoctoItensVLR_TOTAL: TFMTBCDField;
+    SQLQuery1: TSQLQuery;
+    DataSetProvider1: TDataSetProvider;
+    ClientDataSet1: TClientDataSet;
+    IntegerField1: TIntegerField;
+    IntegerField2: TIntegerField;
+    IntegerField3: TIntegerField;
+    StringField1: TStringField;
+    FMTBCDField1: TFMTBCDField;
+    FMTBCDField2: TFMTBCDField;
+    FMTBCDField3: TFMTBCDField;
+    DataSource1: TDataSource;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -90,7 +101,7 @@ var
 
   sgPastaExecutavel, sgFBConect: String;
 
-  mgMemo: TMemo; // Guarda Forms Abertos
+  mgMemoForms: TMemo; // Guarda Forms Abertos
 
   bgSair: Boolean;
 
@@ -111,17 +122,17 @@ Var
   b: Boolean;
 Begin
   b:=True;
-  For i:=0 to mgMemo.Lines.Count-1 do
+  For i:=0 to mgMemoForms.Lines.Count-1 do
   Begin
-    If AnsiUpperCase(mgMemo.Lines[i])=AnsiUpperCase(sNome) Then
+    If AnsiUpperCase(mgMemoForms.Lines[i])=AnsiUpperCase(sNome) Then
     Begin
       b:=False;
       Break;
     End;
-  End; // For i:=0 to mgMemo.Lines.Count-1 do
+  End; // For i:=0 to mgMemoForms.Lines.Count-1 do
 
   If b Then
-   mgMemo.Lines.Add(sNome);
+   mgMemoForms.Lines.Add(sNome);
 End; // Adiciona Nome do Form na Relação de Forms Abertos >>>>>>>>>>>>>>>>>>>>>>
 
 // Retira Nome do Form da Relação de Forms Abertos >>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -129,14 +140,14 @@ Procedure TDMArtesanalis.MemoRetiraNomeForm(sNome: String);
 Var
   i: Integer;
 Begin
-  For i:=0 to mgMemo.Lines.Count-1 do
+  For i:=0 to mgMemoForms.Lines.Count-1 do
   Begin
-    If AnsiUpperCase(mgMemo.Lines[i])=AnsiUpperCase(sNome) Then
+    If AnsiUpperCase(mgMemoForms.Lines[i])=AnsiUpperCase(sNome) Then
     Begin
-      mgMemo.Lines.Delete(i);
+      mgMemoForms.Lines.Delete(i);
       Break;
     End;
-  End; // For i:=0 to mgMemo.Lines.Count-1 do
+  End; // For i:=0 to mgMemoForms.Lines.Count-1 do
 End; // Retira Nome do Form da Relação de Formes Abertos >>>>>>>>>>>>>>>>>>>>>>>
 
 // Fecha Todos os Client's >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -164,8 +175,7 @@ Var
   i: Integer;
   bConecta: Boolean;
   Flags : Cardinal;
-  s,
-  sErroLocal, sErroIntraNet, sErroInterNet: String;
+  s, sErroLocal, sErroIntraNet, sErroInterNet: String;
 begin
 
   if not InternetGetConnectedState(@Flags, 0) then
@@ -281,4 +291,6 @@ begin
 end;
 
 end.
+
+
 

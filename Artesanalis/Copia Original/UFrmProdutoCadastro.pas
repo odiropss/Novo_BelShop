@@ -16,7 +16,7 @@ uses
   dxSkinsDefaultPainters, dxSkinValentine, dxSkinXmas2008Blue,
   dxSkinsdxStatusBarPainter, dxStatusBar, Grids, DBGrids, JvExControls,
   JvXPCore, JvXPButtons, StdCtrls, Mask, ToolEdit, CurrEdit, ExtCtrls,
-  DBXpress;
+  DBXpress, Math;
 
 type
   TFrmProdutoCadastro = class(TForm)
@@ -29,22 +29,29 @@ type
     Pan_ProdutoSolic: TPanel;
     Gb_Produto: TGroupBox;
     EdtProdutoDesc: TEdit;
-    Gb_ProdutoVlrUnit: TGroupBox;
-    EdtProdutoVlrUnit: TCurrencyEdit;
-    Dbg_Produto: TDBGrid;
     EdtProdutoCod: TCurrencyEdit;
     Bt_ProdutoBusca: TJvXPButton;
-    Gb_Unidade: TGroupBox;
-    EdtUnidadeDesc: TEdit;
-    EdtUnidadeCod: TCurrencyEdit;
-    Bt_UnidadeBusca: TJvXPButton;
-    Gb_UnidadeQtd: TGroupBox;
-    EdtUnidadeQtd: TCurrencyEdit;
-    Gb_Producao: TGroupBox;
-    EdtProducaoDesc: TEdit;
-    EdtProducaoCod: TCurrencyEdit;
-    Bt_ProducaoBusca: TJvXPButton;
+    Gb_ProdutoPcCusto: TGroupBox;
+    EdtProdutoPcCusto: TCurrencyEdit;
+    Gb_ProdutoUnidade: TGroupBox;
+    EdtProdutoUnidade: TEdit;
+    Gb_ProdutoCustoMedio: TGroupBox;
+    EdtProdutoCustoMedio: TCurrencyEdit;
+    Gb_ProdutoPcVenda: TGroupBox;
+    EdtProdutoPcVenda: TCurrencyEdit;
+    Gb_ProdutoPercMargem: TGroupBox;
+    EdtProdutoPercMargem: TCurrencyEdit;
+    Gb_ProdutoQtdSaldo: TGroupBox;
+    EdtProdutoQtdSaldo: TCurrencyEdit;
+    Gb_ProdutoVlrMatgem: TGroupBox;
+    EdtProdutoVlrMatgem: TCurrencyEdit;
+    Gb_MateriaPrima: TGroupBox;
+    Dbg_ProdutoMatPrima: TDBGrid;
     StB_Produto: TdxStatusBar;
+    Gb_Producao: TGroupBox;
+    Dbg_ProdutoProducao: TDBGrid;
+    dxStatusBar1: TdxStatusBar;
+    Panel1: TPanel;
     OdirPanApres: TPanel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -54,31 +61,37 @@ type
 
     // Odir ====================================================================
 
-    Procedure LimpaComponentes(bCodProd: Boolean = True);
+    Procedure LimpaComponentes;
+    Procedure ProducaoBusca;
 
     Function  DMLProduto(sTipo: String): Boolean;
                       // sTipo:
-                      // (IA) Incluir ou Alterar Produto
-                      // (EX) Excluir Produto
+                      // (IA)  Incluir/Alterar Produto
+                      // (EX)  Excluir Produto
+                      // (IAM) Incluir/Alterar Matéria-Prima da Produção do Produto
+                      // (AM)  Alterar Matéria-Prima da Produção do Produto
+                      // (EXM) Excluir Matéria-Prima da Produção do Produto
 
     // Odir ====================================================================
 
     procedure EdtProdutoCodExit(Sender: TObject);
-    procedure Dbg_ProdutoExit(Sender: TObject);
-    procedure Dbg_ProdutoEnter(Sender: TObject);
-    procedure Dbg_ProdutoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure Dbg_ProdutoMatPrimaExit(Sender: TObject);
+    procedure Dbg_ProdutoMatPrimaEnter(Sender: TObject);
+    procedure Dbg_ProdutoMatPrimaKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure EdtProdutoCodChange(Sender: TObject);
     procedure Bt_ProdutoBuscaClick(Sender: TObject);
     procedure Bt_ProdutoAbandonarClick(Sender: TObject);
-    procedure EdtUnidadeCodExit(Sender: TObject);
-    procedure EdtUnidadeCodChange(Sender: TObject);
-    procedure Bt_UnidadeBuscaClick(Sender: TObject);
-    procedure EdtProducaoCodChange(Sender: TObject);
-    procedure EdtProducaoCodExit(Sender: TObject);
-    procedure Bt_ProducaoBuscaClick(Sender: TObject);
     procedure Bt_ProdutoExcluirClick(Sender: TObject);
-    procedure Dbg_ProdutoDblClick(Sender: TObject);
+    procedure Dbg_ProdutoMatPrimaDblClick(Sender: TObject);
     procedure Bt_ProdutoSalvarClick(Sender: TObject);
+    procedure Dbg_ProdutoProducaoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure Dbg_ProdutoProducaoDblClick(Sender: TObject);
+    procedure Dbg_ProdutoProducaoDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure EdtProdutoDescExit(Sender: TObject);
+    procedure EdtProdutoPercMargemChange(Sender: TObject);
+    procedure EdtProdutoVlrMatgemChange(Sender: TObject);
 
   private
     { Private declarations }
@@ -94,6 +107,7 @@ var
   bgAlterar,
   bgSairProduto: Boolean;
 
+  sgPercProducao,
   sgMensagem: String;
 
 implementation
@@ -106,14 +120,28 @@ uses UDMArtesanalis, DK_Procs1, UPesquisa, DB;
 // Odir - Inicio >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// BUSCA Matérias-Primas do Produto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmProdutoCadastro.ProducaoBusca;
+Begin
+  DMArtesanalis.CDS_ProdutoProducao.Close;
+  DMArtesanalis.SQLQ_ProdutoProducao.Params.ParamByName('CodProd').AsInteger:=EdtProdutoCod.AsInteger;
+  DMArtesanalis.CDS_ProdutoProducao.Open;
+end; // BUSCA Matérias-Primas do Produto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 // Manipuação de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmProdutoCadastro.DMLProduto(sTipo: String): Boolean;
 Var
   MySql: String;
+  sCalculo: String;
+  iCodMatPri: Integer;
+  cPcCusto, cPcVenda: Currency;
 Begin
   // sTipo:
-  // (IA) Incluir ou Alterar Produto
+  // (IA) Incluir/Alterar Produto
   // (EX) Excluir Produto
+  // (IAM) Incluir/Alterar Matéria-Prima da Produção do Produto
+  // (AM)  Alterar Matéria-Prima da Produção do Produto
+  // (EXM) Excluir Matéria-Prima da Produção do Produto
 
   Result:=True;
   sgMensagem:='';
@@ -141,44 +169,220 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
-    // (IA) Incluir ou Alterar -------------------------------------
+    // (IA) Incluir/Alterar Produto ============================================
     If sTipo='IA' Then
     Begin
       MySql:=' UPDATE OR INSERT INTO PRODUTO'+
-             ' (COD_PRODUTO, DES_PRODUTO, COD_UNIDADE, COD_PRODUCAO, VLR_UNITATIO)'+
+             ' (COD_PRODUTO, DES_PRODUTO, DES_UNIDADE, PRECO_CUSTO, CUSTO_MEDIO,'+
+             '  PRECO_VENDA, PER_MARGEM, VLR_MARGEM, QTD_ESTOQUE)'+
              ' VALUES ('+
              IntToStr(EdtProdutoCod.AsInteger)+', '+ // COD_PRODUTO
              QuotedStr(EdtProdutoDesc.Text)+', '+ // DES_PRODUTO
-             IntToStr(EdtUnidadeCod.AsInteger)+', '+ // COD_UNIDADE
-             IntToStr(EdtProducaoCod.AsInteger)+', '+ // COD_PRODUCAO
-             QuotedStr(f_Troca(',','.',VarToStr(EdtProdutoVlrUnit.Value)))+')'+ // VLR_UNITATIO
+             QuotedStr(EdtProdutoUnidade.Text)+', '+ // DES_UNIDADE,
+             QuotedStr(f_Troca(',','.',VarToStr(EdtProdutoPcCusto.Value)))+', '+ // PRECO_CUSTO
+             QuotedStr(f_Troca(',','.',VarToStr(EdtProdutoCustoMedio.Value)))+', '+ // CUSTO_MEDIO
+             QuotedStr(f_Troca(',','.',VarToStr(EdtProdutoPcVenda.Value)))+', '+ // PRECO_VENDA
+             QuotedStr(f_Troca(',','.',VarToStr(EdtProdutoPercMargem.Value)))+', '+ // PER_MARGEM
+             QuotedStr(f_Troca(',','.',VarToStr(EdtProdutoVlrMatgem.Value)))+', '+ // VLR_MARGEM
+             QuotedStr(f_Troca(',','.',VarToStr(EdtProdutoQtdSaldo.Value)))+')'+ // QTD_ESTOQUE
              ' MATCHING (COD_PRODUTO)';
+      DMArtesanalis.SQLC.Execute(MySql,nil,nil);
     End; // If sTipo='IA' Then
 
-    // (EX) Excluir ------------------------------------------------
+    // (EX) Excluir Produto ====================================================
     If sTipo='EX' Then
     Begin
+      MySql:=' DELETE FROM PRODUCAO pd'+
+             ' WHERE  pd.cod_produto='+IntToStr(EdtProdutoCod.AsInteger);
+      DMArtesanalis.SQLC.Execute(MySql,nil,nil);
+
       MySql:=' DELETE FROM PRODUTO pr'+
              ' WHERE  pr.cod_produto='+IntToStr(EdtProdutoCod.AsInteger);
+      DMArtesanalis.SQLC.Execute(MySql,nil,nil);
     End; // If sTipo='EX' Then
 
-    DMArtesanalis.SQLC.Execute(MySql,nil,nil);
+     // (AM) Alterar Materia-Prima da Produção do Produto ======================
+    If sTipo='AM' Then
+    Begin
+      DecimalSeparator:=',';
 
-    // Atualiza Transacao ===========================================
+      iCodMatPri:=DMArtesanalis.CDS_ProdutoProducaoCOD_MATERIAPRIMA.AsInteger;
+
+      MySql:=' UPDATE OR INSERT INTO PRODUCAO'+
+             ' (COD_PRODUTO, COD_MATERIAPRIMA, PER_UTILIZACAO, PRECO_CUSTO,'+
+             '  CUSTO_MEDIO, PRECO_VENDA, PER_MARGEM, VLR_MARGEM)'+
+             ' VALUES ('+
+             IntToStr(EdtProdutoCod.AsInteger)+', '+ // COD_PRODUTO
+             IntToStr(DMArtesanalis.CDS_ProdutoProducaoCOD_MATERIAPRIMA.AsInteger)+', '+ // COD_MATERIAPRIMA
+             QuotedStr(f_Troca(',','.',sgPercProducao))+', '; // PER_UTILIZACAO
+
+             // PRECO_CUSTO
+             cPcCusto:=0.00;
+             If DMArtesanalis.CDS_ProdutoMatPrimaPRECO_CUSTO.AsCurrency<>0 Then
+              cPcCusto:=RoundTo(((DMArtesanalis.CDS_ProdutoMatPrimaPRECO_CUSTO.AsCurrency * StrToCurr(sgPercProducao))/100),-2);
+      MySql:=
+       MySql+QuotedStr(f_Troca(',','.',CurrToStr(cPcCusto)))+', ';
+
+             // CUSTO_MEDIO
+             sCalculo:='0.00';
+             If DMArtesanalis.CDS_ProdutoMatPrimaCUSTO_MEDIO.AsCurrency<>0 Then
+              sCalculo:=VarToStr(RoundTo(((DMArtesanalis.CDS_ProdutoMatPrimaCUSTO_MEDIO.AsCurrency * StrToCurr(sgPercProducao))/100),-2));
+      MySql:=
+       MySql+QuotedStr(f_Troca(',','.',sCalculo))+', ';
+
+      // PRECO_VENDA, PER_MARGEM, VLR_MARGEM
+      MySql:=
+       MySql+' 0.00, 0.00, 0.00)'+
+             ' MATCHING (COD_PRODUTO, COD_MATERIAPRIMA)';
+
+      DecimalSeparator:='.';
+      DMArtesanalis.SQLC.Execute(MySql,nil,nil);
+    End; // If sTipo='AM' Then
+
+    // (IAM) Incluir/Alterar Materia-Prima da Produção do Produto ==============
+    If sTipo='IAM' Then
+    Begin
+      DecimalSeparator:=',';
+
+      iCodMatPri:=DMArtesanalis.CDS_ProdutoMatPrimaCOD_MATERIAPRIMA.AsInteger;
+
+      MySql:=' UPDATE OR INSERT INTO PRODUCAO'+
+             ' (COD_PRODUTO, COD_MATERIAPRIMA, PER_UTILIZACAO, PRECO_CUSTO,'+
+             '  CUSTO_MEDIO, PRECO_VENDA, PER_MARGEM, VLR_MARGEM)'+
+             ' VALUES ('+
+             IntToStr(EdtProdutoCod.AsInteger)+', '+ // COD_PRODUTO
+             IntToStr(DMArtesanalis.CDS_ProdutoMatPrimaCOD_MATERIAPRIMA.AsInteger)+', '+ // COD_MATERIAPRIMA
+             QuotedStr(f_Troca(',','.',sgPercProducao))+', '; // PER_UTILIZACAO
+
+             // PRECO_CUSTO
+             cPcCusto:=0.00;
+             If DMArtesanalis.CDS_ProdutoMatPrimaPRECO_CUSTO.AsCurrency<>0 Then
+              cPcCusto:=RoundTo(((DMArtesanalis.CDS_ProdutoMatPrimaPRECO_CUSTO.AsCurrency * StrToCurr(sgPercProducao))/100),-2);
+      MySql:=
+       MySql+QuotedStr(f_Troca(',','.',CurrToStr(cPcCusto)))+', ';
+
+             // CUSTO_MEDIO
+             sCalculo:='0.00';
+             If DMArtesanalis.CDS_ProdutoMatPrimaCUSTO_MEDIO.AsCurrency<>0 Then
+              sCalculo:=VarToStr(RoundTo(((DMArtesanalis.CDS_ProdutoMatPrimaCUSTO_MEDIO.AsCurrency * StrToCurr(sgPercProducao))/100),-2));
+      MySql:=
+       MySql+QuotedStr(f_Troca(',','.',sCalculo))+', ';
+
+      // PRECO_VENDA, PER_MARGEM, VLR_MARGEM
+      MySql:=
+       MySql+' 0.00, 0.00, 0.00)'+
+             ' MATCHING (COD_PRODUTO, COD_MATERIAPRIMA)';
+
+      DecimalSeparator:='.';
+      DMArtesanalis.SQLC.Execute(MySql,nil,nil);
+
+//OdirApagar - 09/05/2017
+//             // PRECO_VENDA
+//             cPcVenda:=0.00;
+//             If EdtProdutoPcVenda.Value<>0 Then
+//              cPcVenda:=RoundTo(((EdtProdutoPcVenda.Value * StrToCurr(sgPercProducao))/100),-2);
+//      MySql:=
+//       MySql+QuotedStr(f_Troca(',','.',CurrToStr(cPcVenda)))+', ';
+//
+//             // PER_MARGEM
+//             sCalculo:='0.00';
+//             If cPcVenda<>0 Then
+//              sCalculo:=VarToStr(RoundTo((((cPcVenda-cPcCusto)/cPcVenda)*100),-2));
+//      MySql:=
+//       MySql+QuotedStr(f_Troca(',','.',sCalculo))+', ';
+//
+//             // VLR_MARGEM
+//             sCalculo:='0.00';
+//             If cPcVenda<>0 Then
+//              sCalculo:=VarToStr(cPcVenda-cPcCusto);
+//      MySql:=
+//       MySql+QuotedStr(f_Troca(',','.',sCalculo))+')'+
+//
+//             ' MATCHING (COD_PRODUTO, COD_MATERIAPRIMA)';
+//
+//      DecimalSeparator:='.';
+//      DMArtesanalis.SQLC.Execute(MySql,nil,nil);
+    End; // If sTipo='IAM' Then
+
+    // (EXM) Excluir Materia-Prima da Produção do Produto ======================
+    If sTipo='EXM' Then
+    Begin
+      MySql:=' DELETE FROM PRODUCAO pd'+
+             ' WHERE  pd.cod_produto='+IntToStr(EdtProdutoCod.AsInteger)+
+             ' AND    pd.cod_materiaprima='+DMArtesanalis.CDS_ProdutoProducaoCOD_MATERIAPRIMA.AsString;
+      DMArtesanalis.SQLC.Execute(MySql,nil,nil);
+    End; // If sTipo='EXM' Then
+
+    // Acertas Valores do Produto ==============================================
+    If (sTipo='IAM') Or (sTipo='AM') Or (sTipo='EXM') Then
+    Begin
+      MySql:=' SELECT '+
+             ' SUM(pd.preco_custo) preco_custo,'+
+             ' SUM(pd.custo_medio) custo_medio,'+
+             ' CASE'+
+             '   WHEN (pr.preco_venda=0) AND (SUM(pd.preco_custo)=0) THEN'+
+             '      0.00'+
+             '   WHEN pr.preco_venda=0 THEN'+
+             '      -100.00'+
+             '   ELSE'+
+             '      ((pr.preco_venda - SUM(pd.preco_custo)) / pr.preco_venda) * 100'+
+             ' end per_margem,'+
+             ' (pr.preco_venda - SUM(pd.preco_custo)) vlr_margem'+
+
+             ' FROM PRODUCAO pd, PRODUTO pr'+
+             ' WHERE pd.cod_produto = pr.cod_produto'+
+             ' AND   pr.cod_produto = '+IntToStr(EdtProdutoCod.AsInteger)+
+
+             ' GROUP BY pr.preco_venda';
+      DMArtesanalis.CDS_Busca.Close;
+      DMArtesanalis.SQLQ_Busca.SQL.Clear;
+      DMArtesanalis.SQLQ_Busca.SQL.Add(MySql);
+      DMArtesanalis.CDS_Busca.Open;
+
+      EdtProdutoPcCusto.Value:=0.00;
+      If Trim(DMArtesanalis.CDS_Busca.FieldByName('Preco_Custo').AsString)<>'' Then
+       EdtProdutoPcCusto.Value:=DMArtesanalis.CDS_Busca.FieldByName('Preco_Custo').AsCurrency;
+
+      EdtProdutoCustoMedio.Value:=0.00;
+      If Trim(DMArtesanalis.CDS_Busca.FieldByName('Custo_Medio').AsString)<>'' Then
+       EdtProdutoCustoMedio.Value:=DMArtesanalis.CDS_Busca.FieldByName('Custo_Medio').AsCurrency;
+
+      EdtProdutoPercMargem.Value:=0.00;
+      If Trim(DMArtesanalis.CDS_Busca.FieldByName('Per_Margem').AsString)<>'' Then
+       EdtProdutoPercMargem.Value:=DMArtesanalis.CDS_Busca.FieldByName('Per_Margem').AsCurrency;
+
+      EdtProdutoVlrMatgem.Value:=0.00;
+      If Trim(DMArtesanalis.CDS_Busca.FieldByName('Vlr_Margem').AsString)<>'' Then
+       EdtProdutoVlrMatgem.Value:=DMArtesanalis.CDS_Busca.FieldByName('Vlr_Margem').AsCurrency;
+
+      DMArtesanalis.CDS_Busca.Close;
+
+      MySql:=' UPDATE PRODUTO pr'+
+             ' SET pr.preco_custo='+QuotedStr(f_Troca(',','.',FloatToStr(EdtProdutoPcCusto.Value)))+
+             ',    pr.custo_medio='+QuotedStr(f_Troca(',','.',FloatToStr(EdtProdutoCustoMedio.Value)))+
+             ',    pr.per_margem='+QuotedStr(f_Troca(',','.',FloatToStr(EdtProdutoPercMargem.Value)))+
+             ',    pr.vlr_margem='+QuotedStr(f_Troca(',','.',FloatToStr(EdtProdutoVlrMatgem.Value)))+
+             ' WHERE pr.cod_produto='+IntToStr(EdtProdutoCod.AsInteger);
+      DMArtesanalis.SQLC.Execute(MySql,nil,nil);
+    End; // If (sTipo='IAM') Or (sTipo='AM') Or (sTipo='EXM') Then
+
+    // Atualiza Transacao ======================================================
     DMArtesanalis.SQLC.Commit(TD);
 
     DateSeparator:='/';
     DecimalSeparator:=',';
 
-    // Reabre Unidade -----------------------------------------------
-    DMArtesanalis.CDS_Produto.DisableControls;
-    DMArtesanalis.CDS_Produto.Close;
-    DMArtesanalis.CDS_Produto.Open;
-    DMArtesanalis.CDS_Produto.EnableControls;
-
-    DMArtesanalis.CDS_Produto.Locate('COD_PRODUTO', EdtProdutoCod.AsInteger,[]);
-
     OdirPanApres.Visible:=False;
+
+    // (IAM) Incluir/Alterar Matéria-Prima da Produção do Produto
+    // (AM)  Alterar Matéria-Prima da Produção do Produto
+    // (EXM) Excluir Matéria-Prima da Produção do Produto
+    If (sTipo='IAM') Or (sTipo='AM') Or (sTipo='EXM') Then
+    Begin
+      DMArtesanalis.CDS_ProdutoProducao.Close;
+      DMArtesanalis.CDS_ProdutoProducao.Open;
+      DMArtesanalis.CDS_ProdutoProducao.Locate('COD_MATERIAPRIMA', iCodMatPri,[]);
+    End;
 
     Screen.Cursor:=crDefault;
 
@@ -197,12 +401,15 @@ Begin
       sgMensagem:=e.message;
 
       Result:=False;
+      Exit;
     End; // on e : Exception do
   End; // Try da Transação
 
+  msg('Operação Efetuada com SUCESSO !!','A');
+                         
 End; // Manipuação de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-Procedure TFrmProdutoCadastro.LimpaComponentes(bCodProd: Boolean = True);
+Procedure TFrmProdutoCadastro.LimpaComponentes;
 Var
   i: Integer;
 Begin
@@ -214,19 +421,14 @@ Begin
      (FrmProdutoCadastro.Components[i] as TEdit).Clear;
 
     If FrmProdutoCadastro.Components[i] is TCurrencyEdit Then
-    Begin
-      If (FrmProdutoCadastro.Components[i] as TCurrencyEdit).Name='EdtProdutoCod' Then
-       Begin
-         If bCodProd Then
-          (FrmProdutoCadastro.Components[i] as TCurrencyEdit).Value:=0;
-       End
-      Else
-       Begin
-         (FrmProdutoCadastro.Components[i] as TCurrencyEdit).Value:=0;
-       End;
-    End;
-  End;
+     (FrmProdutoCadastro.Components[i] as TCurrencyEdit).Value:=0;
+  End; // For i:=0 to FrmProdutoCadastro.ComponentCount-1 do
 
+  Bt_ProdutoSalvar.Enabled   :=False;
+  Bt_ProdutoAbandonar.Enabled:=False;
+  Bt_ProdutoExcluir.Enabled  :=False;
+
+  DMArtesanalis.CDS_ProdutoProducao.Close;
 End;
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -242,7 +444,8 @@ begin
     Exit;
   End;
 
-  DMArtesanalis.CDS_Produto.Close;
+  DMArtesanalis.CDS_ProdutoMatPrima.Close;
+  DMArtesanalis.CDS_ProdutoProducao.Close;
 
   // Permite Sair do Sistema ===================================================
   DMArtesanalis.MemoRetiraNomeForm('Cadastro de Produto');
@@ -270,7 +473,7 @@ procedure TFrmProdutoCadastro.FormShow(Sender: TObject);
 begin
   bgSairProduto:=False;
 
-  LimpaComponentes();
+  LimpaComponentes;
 
   EdtProdutoCod.SetFocus;
 end;
@@ -287,24 +490,18 @@ Var
   MySql: String;
 begin
   If EdtProdutoCod.AsInteger=0 Then
-    LimpaComponentes();
+  Begin
+    LimpaComponentes;
+  End;
 
   If EdtProdutoCod.AsInteger<>0 Then
   Begin
     Screen.Cursor:=crAppStart;
 
-    LimpaComponentes(False);
-
     // Busca Produtos ============================================================
-    MySql:=' SELECT pr.cod_produto, pr.des_produto,'+
-           ' pr.cod_unidade, un.des_unidade, un.qtd_unidade,'+
-           ' pr.cod_producao, pd.des_aux des_producao,'+
-           ' pr.vlr_unitatio'+
-           ' FROM PRODUTO pr, UNIDADE un, TAB_AUXILIAR pd'+
-           ' WHERE pr.cod_unidade=un.cod_unidade'+
-           ' AND   pr.cod_producao=pd.cod_aux'+
-           ' AND   pd.tip_aux=1'+
-           ' AND   pr.cod_produto='+IntToStr(EdtProdutoCod.AsInteger);
+    MySql:=' SELECT *'+
+           ' FROM PRODUTO pr'+
+           ' WHERE pr.cod_produto='+IntToStr(EdtProdutoCod.AsInteger);
     DMArtesanalis.CDS_Busca.Close;
     DMArtesanalis.SQLQ_Busca.SQL.Clear;
     DMArtesanalis.SQLQ_Busca.SQL.Add(MySql);
@@ -314,37 +511,39 @@ begin
 
     If Trim(DMArtesanalis.CDS_Busca.FieldByName('Cod_Produto').AsString)<>'' Then
     Begin
+      EdtProdutoDesc.Text       :=DMArtesanalis.CDS_Busca.FieldByName('DES_PRODUTO').AsString;
+      EdtProdutoUnidade.Text    :=DMArtesanalis.CDS_Busca.FieldByName('DES_UNIDADE').AsString;
 
-      DMArtesanalis.CDS_Produto.Locate('COD_PRODUTO',DMArtesanalis.CDS_Busca.FieldByName('Cod_Produto').AsInteger,[]);
+      EdtProdutoPcCusto.Value   :=DMArtesanalis.CDS_Busca.FieldByName('PRECO_CUSTO').AsFloat;
+      EdtProdutoCustoMedio.Value:=DMArtesanalis.CDS_Busca.FieldByName('CUSTO_MEDIO').AsFloat;
+      EdtProdutoPcVenda.Value   :=DMArtesanalis.CDS_Busca.FieldByName('PRECO_VENDA').AsFloat;
+      EdtProdutoPercMargem.Value:=DMArtesanalis.CDS_Busca.FieldByName('PER_MARGEM').AsFloat;
+      EdtProdutoVlrMatgem.Value :=DMArtesanalis.CDS_Busca.FieldByName('VLR_MARGEM').AsFloat;
+      EdtProdutoQtdSaldo.Value  :=DMArtesanalis.CDS_Busca.FieldByName('QTD_ESTOQUE').AsFloat;
 
-      EdtProdutoDesc.Text     :=DMArtesanalis.CDS_Busca.FieldByName('des_produto').AsString;
-      EdtProdutoVlrUnit.Value :=DMArtesanalis.CDS_Busca.FieldByName('vlr_unitatio').AsCurrency;
+      ProducaoBusca;
 
-      EdtUnidadeCod.AsInteger :=DMArtesanalis.CDS_Busca.FieldByName('cod_unidade').AsInteger;
-      EdtUnidadeDesc.Text     :=DMArtesanalis.CDS_Busca.FieldByName('des_unidade').AsString;
-      EdtUnidadeQtd.Value     :=DMArtesanalis.CDS_Busca.FieldByName('qtd_unidade').AsCurrency;
-
-      EdtProducaoCod.AsInteger:=DMArtesanalis.CDS_Busca.FieldByName('cod_producao').AsInteger;
-      EdtProducaoDesc.Text  :=DMArtesanalis.CDS_Busca.FieldByName('des_producao').AsString;
-
-    End;
+      Bt_ProdutoSalvar.Enabled   :=True;
+      Bt_ProdutoAbandonar.Enabled:=True;
+      Bt_ProdutoExcluir.Enabled  :=True;
+    End; // If Trim(DMArtesanalis.CDS_Busca.FieldByName('Cod_Produto').AsString)<>'' Then
     DMArtesanalis.CDS_Busca.Close;
 
     EdtProdutoDesc.SetFocus;
   End; // If EdtProdutoCod.AsInteger<>0 Then
 end;
 
-procedure TFrmProdutoCadastro.Dbg_ProdutoExit(Sender: TObject);
+procedure TFrmProdutoCadastro.Dbg_ProdutoMatPrimaExit(Sender: TObject);
 begin
   (Sender as TDBGrid).Color:=clWindow;
 end;
 
-procedure TFrmProdutoCadastro.Dbg_ProdutoEnter(Sender: TObject);
+procedure TFrmProdutoCadastro.Dbg_ProdutoMatPrimaEnter(Sender: TObject);
 begin
   (Sender as TDBGrid).Color:=clMoneyGreen;
 end;
 
-procedure TFrmProdutoCadastro.Dbg_ProdutoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFrmProdutoCadastro.Dbg_ProdutoMatPrimaKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 Var
   s: String;
   i: Integer;
@@ -356,39 +555,42 @@ Begin
   // Localiza Materia-Prima ====================================================
   If Key=VK_F4 Then
   Begin
-    If Not DMArtesanalis.CDS_Produto.IsEmpty Then
+    If Not DMArtesanalis.CDS_ProdutoMatPrima.IsEmpty Then
     Begin
-      i:=DMArtesanalis.CDS_Produto.RecNo;
+      i:=DMArtesanalis.CDS_ProdutoMatPrima.RecNo;
 
       s:='';
-      If InputQuery('Localizar Produto','',s) then
+      If InputQuery('Localizar Matéria-Prima','',s) then
       Begin
         if Trim(s)<>'' then
         Begin
           Try
             StrToInt(s);
-            If Not DMArtesanalis.CDS_Produto.Locate('COD_PRODUTO',StrToInt(s),[]) Then
+            If Not DMArtesanalis.CDS_ProdutoMatPrima.Locate('COD_MATERIAPRIMA',StrToInt(s),[]) Then
             Begin
-              DMArtesanalis.CDS_Produto.RecNo:=i;
-              msg('Produto Não Encontrado !!','A');
+              DMArtesanalis.CDS_ProdutoMatPrima.RecNo:=i;
+              msg('Matéria-Prima Não Encontrada !!','A');
             End;
           Except
             s:=AnsiUpperCase(s);
-            If Not LocalizaRegistro(DMArtesanalis.CDS_Produto, 'DES_PRODUTO', s) Then
+            If Not LocalizaRegistro(DMArtesanalis.CDS_ProdutoMatPrima, 'DES_MATERIAPRIMA', s) Then
             Begin
-              DMArtesanalis.CDS_Produto.RecNo:=i;
-              msg('Produto Não Encontrado !!','A');
+              DMArtesanalis.CDS_ProdutoMatPrima.RecNo:=i;
+              msg('Matéria-Prima Não Encontrada !!','A');
             End;
           End; // Try
         End; // if Trim(s)<>'' then
-      End; // If InputQuery('Localizar Produto','',s) then
-    End; // If Not DMArtesanalis.CDS_Produto.IsEmpty Then
+      End; // If InputQuery('Localizar Matéria-Prima','',s) then
+    End; // If Not DMArtesanalis.CDS_ProdutoMatPrima.IsEmpty Then
   End; //If Key=VK_F4 Then
 end;
 
 procedure TFrmProdutoCadastro.EdtProdutoCodChange(Sender: TObject);
 begin
-  LimpaComponentes(False);
+  If EdtProdutoCod.AsInteger=0 Then
+  Begin
+    LimpaComponentes;
+  End;
 end;
 
 procedure TFrmProdutoCadastro.Bt_ProdutoBuscaClick(Sender: TObject);
@@ -396,7 +598,7 @@ Var
   MySql: String;
 begin
 
-  LimpaComponentes();
+  LimpaComponentes;
 
   FrmPesquisa:=TFrmPesquisa.Create(Self);
 
@@ -445,315 +647,128 @@ end;
 
 procedure TFrmProdutoCadastro.Bt_ProdutoAbandonarClick(Sender: TObject);
 begin
-  LimpaComponentes();
+  Dbg_ProdutoMatPrima.SetFocus;
+
+  LimpaComponentes;
   EdtProdutoCod.SetFocus;
-end;
-
-procedure TFrmProdutoCadastro.EdtUnidadeCodExit(Sender: TObject);
-Var
-  MySql: String;
-begin
-  If EdtUnidadeCod.AsInteger=0 Then
-  Begin
-    EdtUnidadeCod.AsInteger:=0;
-    EdtUnidadeDesc.Clear;
-    EdtUnidadeQtd.Value:=0.00;
-  End; // If EdtUnidadeCod.AsInteger=0 Then
-
-  If EdtProdutoCod.AsInteger=0 Then
-  Begin
-    EdtUnidadeCod.AsInteger:=0;
-    EdtUnidadeDesc.Clear;
-    EdtUnidadeQtd.Value:=0.00;
-
-    EdtProdutoCod.SetFocus;
-    Exit;
-  End; // If EdtProdutoCod.AsInteger=0 Then
-
-  If EdtUnidadeCod.AsInteger<>0 Then
-  Begin
-    Screen.Cursor:=crAppStart;
-
-    // Busca Unidade ===========================================================
-    MySql:=' SELECT un.des_unidade, un.cod_unidade, un.qtd_unidade'+
-           ' FROM UNIDADE un'+
-           ' WHERE un.cod_unidade='+IntToStr(EdtUnidadeCod.AsInteger);
-    DMArtesanalis.CDS_Busca.Close;
-    DMArtesanalis.SQLQ_Busca.SQL.Clear;
-    DMArtesanalis.SQLQ_Busca.SQL.Add(MySql);
-    DMArtesanalis.CDS_Busca.Open;
-
-    EdtUnidadeCod.AsInteger:=0;
-    EdtUnidadeDesc.Clear;
-    EdtUnidadeQtd.Value:=0.00;
-
-    Screen.Cursor:=crDefault;
-
-    If Trim(DMArtesanalis.CDS_Busca.FieldByName('Cod_Unidade').AsString)='' Then
-    Begin
-      DMArtesanalis.CDS_Busca.Close;
-      msg('Unidade Não Encontrada !!','A');
-      EdtUnidadeCod.SetFocus;
-      FreeAndNil(FrmPesquisa);
-      Exit;
-    End;
-
-    EdtUnidadeCod.AsInteger:=DMArtesanalis.CDS_Busca.FieldByName('cod_unidade').AsInteger;
-    EdtUnidadeDesc.Text    :=DMArtesanalis.CDS_Busca.FieldByName('des_unidade').AsString;
-    EdtUnidadeQtd.Value    :=DMArtesanalis.CDS_Busca.FieldByName('qtd_unidade').AsCurrency;
-
-    DMArtesanalis.CDS_Busca.Close;
-
-    EdtProducaoCod.SetFocus;
-  End; // If EdtUnidadeCod.AsInteger<>0 Then
-end;
-
-procedure TFrmProdutoCadastro.EdtUnidadeCodChange(Sender: TObject);
-begin
-  EdtUnidadeDesc.Clear;
-  EdtUnidadeQtd.Value:=0.00;
-
-  If EdtProdutoCod.AsInteger=0 Then
-  Begin
-    EdtProdutoCod.SetFocus;
-    Exit;
-  End; // If EdtProdutoCod.AsInteger=0 Then
-
-end;
-
-procedure TFrmProdutoCadastro.Bt_UnidadeBuscaClick(Sender: TObject);
-Var
-  MySql: String;
-begin
-
-  If EdtProdutoCod.AsInteger=0 Then
-  Begin
-    EdtProdutoCod.SetFocus;
-    Exit;
-  End; // If EdtProdutoCod.AsInteger=0 Then
-
-  FrmPesquisa:=TFrmPesquisa.Create(Self);
-
-  // ========== EXECUTA QUERY PARA PESQUISA ====================================
-  Screen.Cursor:=crAppStart;
-
-  MySql:=' SELECT un.des_unidade, un.qtd_unidade, un.cod_unidade'+
-         ' FROM UNIDADE un'+
-         ' ORDER BY un.des_unidade';
-  DMArtesanalis.CDS_Pesquisa.Close;
-  DMArtesanalis.CDS_Pesquisa.Filtered:=False;
-  DMArtesanalis.SDS_Pesquisa.CommandText:=MySql;
-  DMArtesanalis.CDS_Pesquisa.Open;
-
-  Screen.Cursor:=crDefault;
-
-  // ============== Verifica Existencia de Dados ===============================
-  If Trim(DMArtesanalis.CDS_Pesquisa.FieldByName('des_unidade').AsString)='' Then
-  Begin
-    DMArtesanalis.CDS_Pesquisa.Close;
-    msg('Sem Unidade a Listar !!','A');
-    EdtUnidadeCod.SetFocus;
-    FreeAndNil(FrmPesquisa);
-    Exit;
-  End;
-
-  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
-  FrmPesquisa.Campo_pesquisa:='Des_Unidade';
-  FrmPesquisa.Campo_Codigo:='Cod_Unidade';
-  FrmPesquisa.Campo_Descricao:='Des_Unidade';
-  //FrmPesquisa.EdtDescricao.Text:=FrmAcessos.EdtDescPessoa.Text;
-
-  // ============= ABRE FORM DE PESQUISA =======================================
-  FrmPesquisa.ShowModal;
-  DMArtesanalis.CDS_Pesquisa.Close;
-
-  // ============= RETORNO =====================================================
-  If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
-  Begin
-    EdtUnidadeCod.Text:=FrmPesquisa.EdtCodigo.Text;
-    EdtUnidadeCodExit(Self);
-  End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
-
-  FreeAndNil(FrmPesquisa);
-end;
-
-procedure TFrmProdutoCadastro.EdtProducaoCodChange(Sender: TObject);
-begin
-  EdtProducaoDesc.Clear;
-
-  If EdtProdutoCod.AsInteger=0 Then
-  Begin
-    EdtProdutoCod.SetFocus;
-    Exit;
-  End; // If EdtProdutoCod.AsInteger=0 Then
-
-end;
-
-procedure TFrmProdutoCadastro.EdtProducaoCodExit(Sender: TObject);
-Var
-  MySql: String;
-begin
-  If EdtProducaoCod.AsInteger=0 Then
-  Begin
-    EdtProducaoCod.AsInteger:=0;
-    EdtProducaoDesc.Clear;
-  End; // If EdtProducaoCod.AsInteger=0 Then
-
-  If EdtProdutoCod.AsInteger=0 Then
-  Begin
-    EdtProducaoCod.AsInteger:=0;
-    EdtProducaoDesc.Clear;
-
-    EdtProdutoCod.SetFocus;
-    Exit;
-  End; // If EdtProdutoCod.AsInteger=0 Then
-
-  If EdtProducaoCod.AsInteger<>0 Then
-  Begin
-    Screen.Cursor:=crAppStart;
-
-    // Busca Produção ==========================================================
-    MySql:=' SELECT pd.cod_aux cod_producao, pd.des_aux des_producao'+
-           ' FROM TAB_AUXILIAR pd'+
-           ' WHERE pd.cod_aux='+IntToStr(EdtProducaoCod.AsInteger);
-    DMArtesanalis.CDS_Busca.Close;
-    DMArtesanalis.SQLQ_Busca.SQL.Clear;
-    DMArtesanalis.SQLQ_Busca.SQL.Add(MySql);
-    DMArtesanalis.CDS_Busca.Open;
-
-    EdtProducaoCod.AsInteger:=0;
-    EdtProducaoDesc.Clear;
-
-    Screen.Cursor:=crDefault;
-
-    If Trim(DMArtesanalis.CDS_Busca.FieldByName('Cod_Producao').AsString)='' Then
-    Begin
-      DMArtesanalis.CDS_Busca.Close;
-      msg('Producao Não Encontrada !!','A');
-      EdtProducaoCod.SetFocus;
-      FreeAndNil(FrmPesquisa);
-      Exit;
-    End;
-
-    EdtProducaoCod.AsInteger:=DMArtesanalis.CDS_Busca.FieldByName('Cod_Producao').AsInteger;
-    EdtProducaoDesc.Text    :=DMArtesanalis.CDS_Busca.FieldByName('Des_Producao').AsString;
-
-    DMArtesanalis.CDS_Busca.Close;
-
-    Dbg_Produto.SetFocus;
-  End; // If EdtProducaoCod.AsInteger<>0 Then
-
-end;
-
-procedure TFrmProdutoCadastro.Bt_ProducaoBuscaClick(Sender: TObject);
-Var
-  MySql: String;
-begin
-
-  If EdtProdutoCod.AsInteger=0 Then
-  Begin
-    EdtProdutoCod.SetFocus;
-    Exit;
-  End; // If EdtProdutoCod.AsInteger=0 Then
-
-  FrmPesquisa:=TFrmPesquisa.Create(Self);
-
-  // ========== EXECUTA QUERY PARA PESQUISA ====================================
-  Screen.Cursor:=crAppStart;
-
-  MySql:=' SELECT pd.des_aux des_producao, pd.cod_aux cod_producao'+
-         ' FROM TAB_AUXILIAR pd'+
-         ' ORDER BY pd.des_aux';
-  DMArtesanalis.CDS_Pesquisa.Close;
-  DMArtesanalis.CDS_Pesquisa.Filtered:=False;
-  DMArtesanalis.SDS_Pesquisa.CommandText:=MySql;
-  DMArtesanalis.CDS_Pesquisa.Open;
-
-  Screen.Cursor:=crDefault;
-
-  // ============== Verifica Existencia de Dados ===============================
-  If Trim(DMArtesanalis.CDS_Pesquisa.FieldByName('des_producao').AsString)='' Then
-  Begin
-    DMArtesanalis.CDS_Pesquisa.Close;
-    msg('Sem Producao a Listar !!','A');
-    EdtProducaoCod.SetFocus;
-    FreeAndNil(FrmPesquisa);
-    Exit;
-  End;
-
-  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
-  FrmPesquisa.Campo_pesquisa:='Des_Producao';
-  FrmPesquisa.Campo_Codigo:='Cod_Producao';
-  FrmPesquisa.Campo_Descricao:='Des_Producao';
-  //FrmPesquisa.EdtDescricao.Text:=FrmAcessos.EdtDescPessoa.Text;
-
-  // ============= ABRE FORM DE PESQUISA =======================================
-  FrmPesquisa.ShowModal;
-  DMArtesanalis.CDS_Pesquisa.Close;
-
-  // ============= RETORNO =====================================================
-  If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
-  Begin
-    EdtProducaoCod.Text:=FrmPesquisa.EdtCodigo.Text;
-    EdtProducaoCodExit(Self);
-
-    Dbg_Produto.SetFocus;
-  End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
-
-  FreeAndNil(FrmPesquisa);
 end;
 
 procedure TFrmProdutoCadastro.Bt_ProdutoExcluirClick(Sender: TObject);
 begin
-  If DMArtesanalis.CDS_Produto.IsEmpty Then
-   Exit;
+  Dbg_ProdutoMatPrima.SetFocus;
 
   If EdtProdutoCod.AsInteger=0 Then
-  Begin
-    msg('Favor Selecinar'+cr+cr+'O Produto a Excluir !!','A');
-    EdtProdutoCod.SetFocus;
-    Exit;
-  End; // If EdtProdutoCod.AsInteger=0 Then
+   Exit;
 
-  If msg('Deseja Realmente Excluir o'+cr+'Prodtudo Selecionado ??','C')=2 Then
+  If msg('Deseja Realmente Excluir o'+cr+'Produdo Selecionado ??','C')=2 Then
   Begin
     EdtProdutoCod.SetFocus;
     Exit;
   End;
 
-  // (EXP) Excluir Produto =====================================================
+  // (EX) Excluir Produto ======================================================
   If not DMLProduto('EX') Then
    MessageBox(Handle, pChar('Erro ao Excluir o Produto !!'+#13+sgMensagem), 'ATENÇÃO !!', MB_ICONERROR);
 
-  LimpaComponentes();
+  LimpaComponentes;
   EdtProdutoCod.SetFocus;
 
 end;
 
-procedure TFrmProdutoCadastro.Dbg_ProdutoDblClick(Sender: TObject);
+procedure TFrmProdutoCadastro.Dbg_ProdutoMatPrimaDblClick(Sender: TObject);
+Var
+  b: Boolean;
+  MySql: String;
 begin
-  If DMArtesanalis.CDS_Produto.IsEmpty Then
+  If DMArtesanalis.CDS_ProdutoMatPrima.IsEmpty Then
    Exit;
 
-  LimpaComponentes();
+  // Verifica Cadastramento do Produto =========================================
+  If (EdtProdutoCod.AsInteger=0) And ((Trim(EdtProdutoDesc.Text)<>'') Or (Trim(EdtProdutoUnidade.Text)<>'')) Then
+  Begin
+    msg('Favor, Primeiramente, Salvar o Produto !!','A');
+    EdtProdutoDesc.SetFocus;
+    Exit;
+  End;
 
-  EdtProdutoCod.AsInteger :=DMArtesanalis.CDS_ProdutoCOD_PRODUTO.AsInteger;
-  EdtProdutoDesc.Text     :=DMArtesanalis.CDS_ProdutoDES_PRODUTO.AsString;
-  EdtProdutoVlrUnit.Value :=DMArtesanalis.CDS_ProdutoVLR_UNITATIO.AsCurrency;
+  If EdtProdutoCod.AsInteger=0 Then
+  Begin
+    msg('Favor Selecionar um Produto !!','A');
+    EdtProdutoCod.SetFocus;
+    Exit;
+  End;
 
-  EdtUnidadeCod.AsInteger :=DMArtesanalis.CDS_ProdutoCOD_UNIDADE.AsInteger;
-  EdtUnidadeDesc.Text     :=DMArtesanalis.CDS_ProdutoDES_UNIDADE.AsString;
-  EdtUnidadeQtd.Value     :=DMArtesanalis.CDS_ProdutoQTD_UNIDADE.AsCurrency;
+  MySql:=' SELECT pr.cod_produto'+
+         ' FROM PRODUTO pr'+
+         ' WHERE pr.cod_produto='+IntToStr(EdtProdutoCod.AsInteger);
+  DMArtesanalis.CDS_Busca.Close;
+  DMArtesanalis.SQLQ_Busca.SQL.Clear;
+  DMArtesanalis.SQLQ_Busca.SQL.Add(MySql);
+  DMArtesanalis.CDS_Busca.Open;
 
-  EdtProducaoCod.AsInteger:=DMArtesanalis.CDS_ProdutoCOD_PRODUCAO.AsInteger;
-  EdtProducaoDesc.Text  :=DMArtesanalis.CDS_ProdutoDES_PRODUCAO.AsString;
+  If Trim(DMArtesanalis.CDS_Busca.FieldByName('Cod_Produto').AsString)='' Then
+  Begin
+    msg('Favor, Primeiramente, Salvar o Produto !!','A');
+    EdtProdutoDesc.SetFocus;
+    Exit;
+  End;
+  DMArtesanalis.CDS_Busca.Close;
 
-  EdtProdutoDesc.SetFocus;
+  sgPercProducao:='0,00000';
+
+  // Verifica se Materia-Prima ja esta Cadastrada ==============================
+  If Not DMArtesanalis.CDS_ProdutoProducao.IsEmpty Then
+  Begin
+    If DMArtesanalis.CDS_ProdutoProducao.Locate('COD_MATERIAPRIMA', DMArtesanalis.CDS_ProdutoMatPrimaCOD_MATERIAPRIMA.AsInteger,[]) Then
+    Begin
+      If msg('Matéria-Prima já Cadastrada como Produção !!'+cr+cr+'Deseja Continuar ??','A')=2 Then
+       Exit;
+
+      sgPercProducao:=DMArtesanalis.CDS_ProdutoProducaoPER_UTILIZACAO.AsString;
+    End; // If DMArtesanalis.CDS_ProdutoProducao.Locate('COD_MATERIAPRIMA', DMArtesanalis.CDS_ProdutoMatPrimaCOD_MATERIAPRIMA.AsInteger,[]) Then
+  End; // If Not DMArtesanalis.CDS_ProdutoProducao.IsEmpty Then
+
+  b:=True;
+  While b do
+  Begin
+    If InputQuery('Informe o % Utilização','',sgPercProducao) then
+     Begin
+       Try
+         StrToFloat(sgPercProducao);
+         If (StrToCurr(sgPercProducao)>100) Or (StrToCurr(sgPercProducao)<0) Or (StrToCurr(sgPercProducao)=0) Then
+          Begin
+            msg('Percentual Inválido !!','A');
+          End
+         Else
+          Begin
+            Break;
+          End;
+       Except
+         msg('Percentual Inválido !!','A')
+       End; // Try
+     End
+    Else
+     Begin
+       sgPercProducao:='';
+       Break;
+     End; // If InputQuery('Informe o Desconto','',sVlrDesc) then
+  End; // While b do
+
+  Dbg_ProdutoMatPrima.SetFocus;
+
+  If Trim(sgPercProducao)='' Then
+   Exit;
+
+  // (IAM) Incluir/Alterar Matéria-Prima da Produção do Produto ================
+  If not DMLProduto('IAM') Then
+   MessageBox(Handle, pChar('Erro ao Incluir/Altera a Matéria-Prima'+cr+'da Produção do Produto !!'+#13+sgMensagem), 'ATENÇÃO !!', MB_ICONERROR);
 
 end;
 
 procedure TFrmProdutoCadastro.Bt_ProdutoSalvarClick(Sender: TObject);
 begin
+  Dbg_ProdutoMatPrima.SetFocus;
+
   // Consiste a Código do Produto ==============================================
   If EdtProdutoCod.AsInteger=0 Then
   Begin
@@ -766,16 +781,209 @@ begin
   If Trim(EdtProdutoDesc.Text)='' Then
   Begin
     msg('Favor Informar a'+cr+cr+'Descrição da Produto !!','A');
-    EdtProducaoDesc.SetFocus;
+    EdtProdutoDesc.SetFocus;
     Exit;
   End;
 
-  // (IAP) Incluir ou Alterar Produção =========================================
+  // Consiste a Descrição Produto ==============================================
+  If Trim(EdtProdutoUnidade.Text)='' Then
+  Begin
+    msg('Favor Informar a'+cr+cr+'Unidade da Produto !!','A');
+    EdtProdutoUnidade.SetFocus;
+    Exit;
+  End;
+
+  // (IA) Incluir/Alterar Produto ==============================================
   If not DMLProduto('IA') Then
    MessageBox(Handle, pChar('Erro ao Incluir/Altera o Produto !!'+#13+sgMensagem), 'ATENÇÃO !!', MB_ICONERROR);
 
-  LimpaComponentes();
   EdtProdutoCod.SetFocus;
+  EdtProdutoCodExit(Self);
+end;
+
+procedure TFrmProdutoCadastro.Dbg_ProdutoProducaoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+Var
+  s: String;
+  i: Integer;
+begin
+  // Não Permite Excluir Registro Pelo Grid ====================================
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
+  If DMArtesanalis.CDS_ProdutoProducao.IsEmpty Then
+   Exit ;
+
+  // Exclur Materia-Prima da Produção ==========================================
+  If Key=VK_Delete Then
+  Begin
+    If msg('Deseja Realmente Excluir'+cr+'a Matéria-Prima da Produção'+cr+'Selecionada ??','C')=2 Then
+    Begin
+      Dbg_ProdutoProducao.SetFocus;
+      Exit;
+    End;
+
+    // (EX) Excluir Materia-Prima da Produção do Produto =======================
+    If not DMLProduto('EXM') Then
+     MessageBox(Handle, pChar('Erro ao Excluir a Matéria-Prima'+cr+'da Produção do Produto !!'+#13+sgMensagem), 'ATENÇÃO !!', MB_ICONERROR);
+
+  End; // If Key=VK_Delete Then
+
+  // Localiza Materia-Prima ====================================================
+  If Key=VK_F4 Then
+  Begin
+    i:=DMArtesanalis.CDS_ProdutoProducao.RecNo;
+
+    s:='';
+    If InputQuery('Localizar Matéria-Prima','',s) then
+    Begin
+      if Trim(s)<>'' then
+      Begin
+        Try
+          StrToInt(s);
+          If Not DMArtesanalis.CDS_ProdutoProducao.Locate('COD_MATERIAPRIMA',StrToInt(s),[]) Then
+          Begin
+            DMArtesanalis.CDS_ProdutoProducao.RecNo:=i;
+            msg('Matéria-Prima Não Encontrada !!','A');
+          End;
+        Except
+          s:=AnsiUpperCase(s);
+          If Not LocalizaRegistro(DMArtesanalis.CDS_ProdutoProducao, 'DES_MATERIAPRIMA', s) Then
+          Begin
+            DMArtesanalis.CDS_ProdutoProducao.RecNo:=i;
+            msg('Matéria-Prima Não Encontrada !!','A');
+          End;
+        End; // Try
+      End; // if Trim(s)<>'' then
+    End; // If InputQuery('Localizar Matéria-Prima','',s) then
+  End; //If Key=VK_F4 Then
+end;
+
+procedure TFrmProdutoCadastro.Dbg_ProdutoProducaoDblClick(Sender: TObject);
+Var
+  b: Boolean;
+begin
+  If DMArtesanalis.CDS_ProdutoProducao.IsEmpty Then
+   Exit;
+
+  If Not DMArtesanalis.CDS_ProdutoMatPrima.Locate('COD_MATERIAPRIMA',DMArtesanalis.CDS_ProdutoProducaoCOD_MATERIAPRIMA.AsString,[]) Then
+  Begin
+    msg('Matéria-Prima Não Encontrada'+cr+cr+'na Relação de Matérias-Primas !!','A');
+    Dbg_ProdutoProducao.SetFocus;
+    Exit;
+  End;
+
+  If msg('Deseja Realmente Alterar o Percentual'+cr+'de Utilização da Matéria-Prima Selecionada ??','C')=2 Then
+  Begin
+    Dbg_ProdutoProducao.SetFocus;
+    Exit;
+  End;
+
+  b:=True;
+  sgPercProducao:=DMArtesanalis.CDS_ProdutoProducaoPER_UTILIZACAO.AsString;
+  While b do
+  Begin
+    If InputQuery('Informe o % Utilização','',sgPercProducao) then
+     Begin
+       Try
+         StrToFloat(sgPercProducao);
+         If (StrToCurr(sgPercProducao)>100) Or (StrToCurr(sgPercProducao)<0) Or (StrToCurr(sgPercProducao)=0) Then
+          Begin
+            msg('Percentual Inválido !!','A');
+          End
+         Else
+          Begin
+            Break;
+          End;
+       Except
+         msg('Percentual Inválido !!','A')
+       End; // Try
+     End
+    Else
+     Begin
+       sgPercProducao:='';
+       Break;
+     End; // If InputQuery('Informe o Desconto','',sVlrDesc) then
+  End; // While b do
+
+  Dbg_ProdutoMatPrima.SetFocus;
+
+  If Trim(sgPercProducao)='' Then
+   Exit;
+
+  // (IAM) Incluir/Alterar Matéria-Prima da Produção do Produto ================
+  If not DMLProduto('AM') Then
+   MessageBox(Handle, pChar('Erro ao Incluir/Altera a Matéria-Prima'+cr+'da Produção do Produto !!'+#13+sgMensagem), 'ATENÇÃO !!', MB_ICONERROR);
+end;
+
+procedure TFrmProdutoCadastro.Dbg_ProdutoProducaoDrawColumnCell( Sender: TObject;
+          const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if not (gdSelected in State) Then
+  Begin
+    If DMArtesanalis.CDS_ProdutoProducaoCOD_MATERIAPRIMA.AsInteger=999999 Then
+    Begin
+      Dbg_ProdutoProducao.Canvas.Brush.Color:=clSkyBlue;
+      Dbg_ProdutoProducao.Canvas.Font.Style:=[fsBold];
+
+      Dbg_ProdutoProducao.Canvas.FillRect(Rect);
+      Dbg_ProdutoProducao.DefaultDrawDataCell(Rect,Column.Field,state);
+    End;
+  End; // if not (gdSelected in State) Then
+
+  // Alinhamento
+  DMArtesanalis.CDS_ProdutoProducaoCOD_MATERIAPRIMA.Alignment:=taRightJustify;
+  DMArtesanalis.CDS_ProdutoProducaoPER_UTILIZACAO.Alignment:=taRightJustify;
+  DMArtesanalis.CDS_ProdutoProducaoPRECO_CUSTO.Alignment:=taRightJustify;
+  DMArtesanalis.CDS_ProdutoProducaoCUSTO_MEDIO.Alignment:=taRightJustify;
+
+end;
+
+procedure TFrmProdutoCadastro.EdtProdutoDescExit(Sender: TObject);
+begin
+  Bt_ProdutoSalvar.Enabled   :=True;
+  Bt_ProdutoAbandonar.Enabled:=True;
+  Bt_ProdutoExcluir.Enabled  :=True;
+
+end;
+
+procedure TFrmProdutoCadastro.EdtProdutoPercMargemChange(Sender: TObject);
+begin
+
+  EdtProdutoPercMargem.Color:=clMoneyGreen;
+  EdtProdutoPercMargem.Font.Style:=[];
+  EdtProdutoPercMargem.Font.Color:=clWindowText;
+  If EdtProdutoPercMargem.Value<0 Then
+   Begin
+     EdtProdutoPercMargem.Color:=clRed;
+     EdtProdutoPercMargem.Font.Style:=[fsBold];
+     EdtProdutoPercMargem.Font.Color:=clWhite;
+   End
+  Else If EdtProdutoPercMargem.Value>0 Then
+   Begin
+     EdtProdutoPercMargem.Color:=clBlue;
+     EdtProdutoPercMargem.Font.Style:=[fsBold];
+     EdtProdutoPercMargem.Font.Color:=clWhite;
+   End;
+end;
+
+procedure TFrmProdutoCadastro.EdtProdutoVlrMatgemChange(Sender: TObject);
+begin
+  EdtProdutoVlrMatgem.Color:=clMoneyGreen;
+  EdtProdutoVlrMatgem.Font.Style:=[];
+  EdtProdutoVlrMatgem.Font.Color:=clWindowText;
+  If EdtProdutoVlrMatgem.Value<0 Then
+   Begin
+     EdtProdutoVlrMatgem.Color:=clRed;
+     EdtProdutoVlrMatgem.Font.Style:=[fsBold];
+     EdtProdutoVlrMatgem.Font.Color:=clWhite;
+   End
+  Else If EdtProdutoVlrMatgem.Value>0 Then
+   Begin
+     EdtProdutoVlrMatgem.Color:=clBlue;
+     EdtProdutoVlrMatgem.Font.Style:=[fsBold];
+     EdtProdutoVlrMatgem.Font.Color:=clWhite;
+   End;
+
 end;
 
 end.

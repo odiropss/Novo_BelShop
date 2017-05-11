@@ -1,6 +1,6 @@
 object FrmProdutoCadastro: TFrmProdutoCadastro
   Left = 244
-  Top = 110
+  Top = 68
   Width = 1003
   Height = 617
   AutoSize = True
@@ -287,7 +287,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         TabOrder = 0
         object EdtProdutoDesc: TEdit
           Left = 101
-          Top = 19
+          Top = 20
           Width = 555
           Height = 19
           CharCase = ecUpperCase
@@ -303,9 +303,9 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         end
         object EdtProdutoCod: TCurrencyEdit
           Left = 12
-          Top = 19
+          Top = 20
           Width = 53
-          Height = 21
+          Height = 19
           AutoSize = False
           DecimalPlaces = 0
           DisplayFormat = '0'
@@ -405,9 +405,9 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         TabOrder = 2
         object EdtProdutoPcCusto: TCurrencyEdit
           Left = 13
-          Top = 19
+          Top = 20
           Width = 82
-          Height = 21
+          Height = 20
           TabStop = False
           AutoSize = False
           Color = clMoneyGreen
@@ -438,7 +438,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         TabOrder = 1
         object EdtProdutoUnidade: TEdit
           Left = 13
-          Top = 19
+          Top = 20
           Width = 82
           Height = 19
           CharCase = ecUpperCase
@@ -467,9 +467,9 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         TabOrder = 3
         object EdtProdutoCustoMedio: TCurrencyEdit
           Left = 13
-          Top = 19
+          Top = 20
           Width = 82
-          Height = 21
+          Height = 20
           TabStop = False
           AutoSize = False
           Color = clMoneyGreen
@@ -500,9 +500,9 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         TabOrder = 4
         object EdtProdutoPcVenda: TCurrencyEdit
           Left = 13
-          Top = 19
+          Top = 20
           Width = 82
-          Height = 21
+          Height = 20
           TabStop = False
           AutoSize = False
           Color = clMoneyGreen
@@ -533,9 +533,9 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         TabOrder = 5
         object EdtProdutoPercMargem: TCurrencyEdit
           Left = 13
-          Top = 19
+          Top = 20
           Width = 82
-          Height = 21
+          Height = 20
           TabStop = False
           AutoSize = False
           Color = clMoneyGreen
@@ -567,9 +567,9 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         TabOrder = 7
         object EdtProdutoQtdSaldo: TCurrencyEdit
           Left = 13
-          Top = 19
+          Top = 20
           Width = 88
-          Height = 21
+          Height = 20
           TabStop = False
           AutoSize = False
           Color = clMoneyGreen
@@ -600,9 +600,9 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         TabOrder = 6
         object EdtProdutoVlrMatgem: TCurrencyEdit
           Left = 13
-          Top = 19
+          Top = 20
           Width = 82
-          Height = 21
+          Height = 20
           TabStop = False
           AutoSize = False
           Color = clMoneyGreen

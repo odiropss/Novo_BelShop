@@ -52,6 +52,26 @@ type
     CDS_ProdutoProducaoPRECO_VENDA: TFMTBCDField;
     CDS_ProdutoProducaoPER_MARGEM: TFMTBCDField;
     CDS_ProdutoProducaoVLR_MARGEM: TFMTBCDField;
+    CDS_V_DoctoItens: TClientDataSet;
+    DS_V_DoctoItens: TDataSource;
+    CDS_V_DoctoItensNUM_SEQ_DOCTO: TIntegerField;
+    CDS_V_DoctoItensNUM_SEQ: TIntegerField;
+    CDS_V_DoctoItensCOD_PRODUTO: TIntegerField;
+    CDS_V_DoctoItensDES_PRODUTO: TStringField;
+    CDS_V_DoctoItensQTD_MOVTO: TFMTBCDField;
+    CDS_V_DoctoItensVLT_UNITATIO: TFMTBCDField;
+    CDS_V_DoctoItensVLR_TOTAL: TFMTBCDField;
+    SQLQuery1: TSQLQuery;
+    DataSetProvider1: TDataSetProvider;
+    ClientDataSet1: TClientDataSet;
+    IntegerField1: TIntegerField;
+    IntegerField2: TIntegerField;
+    IntegerField3: TIntegerField;
+    StringField1: TStringField;
+    FMTBCDField1: TFMTBCDField;
+    FMTBCDField2: TFMTBCDField;
+    FMTBCDField3: TFMTBCDField;
+    DataSource1: TDataSource;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
