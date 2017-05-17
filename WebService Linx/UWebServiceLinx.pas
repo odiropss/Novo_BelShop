@@ -64,7 +64,7 @@ unit UWebServiceLinx;
 
 -> Produtos Detalhes: LinxProdutosDetalhes
    - Por Loja
-   ==========================
+   =======================================
    Irá conter as informações de produtos por empresa, comosaldo, preços,
    custos e configuração tributária
 
@@ -75,14 +75,28 @@ unit UWebServiceLinx;
 
 -> Produtos Cod Bar: LinxProdutosCodBar
    - 1 Vez
-   ======================
+   ====================================
    Irá listar as informações de códigos de barras de produtos.
 
--> Faturas: Irá conter as informações de faturas a receber e a pagar;
--> Lançamentos contábeis: Irá conter as informações dos lançamentos contábeis
-   por contas e empresas.
--> Pedidos de Compra: Irá conter as informações dos pedidos de compra;
--> Pedidos de venda: Irá conter as informações dos pedidos de venda;
+-> Faturas: LinxFaturas
+   - Por Loja
+   ====================
+   Irá conter as informações de faturas a receber e a pagar;
+
+-> Lançamentos contábeis: LinxLancContabil
+   - Por Loja
+   =======================================
+   Irá conter as informações dos lançamentos contábeis por contas e empresas.
+
+-> Pedidos de venda: LinxPedidosVenda
+   - Por Loja
+   ==================================
+   Irá conter as informações dos pedidos de venda
+
+-> Pedidos de Compra: LinxPedidosCompra
+   - Por Loja
+   =====================================
+   Irá conter as informações dos pedidos de compra
 }
 interface
 
@@ -169,7 +183,7 @@ implementation
 
 uses
   IdMultipartFormData, DK_Procs1, uj_001, uj_002, UDMLinxWebService,
-  StrUtils, DB;
+  StrUtils, DB, RTLConsts;
 
 {$R *.dfm}
 
@@ -279,6 +293,9 @@ Begin
               (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoOrigemDevolucoes'))  Or
               (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoAcoesPromocionais')) Or
               (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxAcoesPromocionais'))          Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLancContabil'))               Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosVenda'))               Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosCompra'))              Or
               (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes')))         And
               (ii>0) Then
            iii:=iii+1;
@@ -330,6 +347,9 @@ Begin
                     (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoOrigemDevolucoes'))  Or
                     (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoAcoesPromocionais')) Or
                     (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxAcoesPromocionais'))          Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLancContabil'))               Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosVenda'))               Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosCompra'))              Or
                     (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes')))         And
                     (ii=1) Then // COLOCA COD_EMPRESA NO MICROVIX
                 Begin
@@ -394,6 +414,9 @@ Begin
                  (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento'))                  Or
                  (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoAcoesPromocionais')) Or
                  (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxAcoesPromocionais'))          Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLancContabil'))               Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosVenda'))               Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosCompra'))              Or
                  (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes'))           Then
                Begin
                  sSqlUpInValores:=
@@ -404,73 +427,105 @@ Begin
                  sSqlUpInValores:=
                   sSqlUpInValores+' current_date, current_time)';
                End;
-               
+
 //OdirAqui 6 - Inclui MATCHING
+              //================================================================
               // Inclui MATCHING em sSqlUpInValores ----------------------------
+              //================================================================
+              // LinxGrupoLojas -------------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxGrupoLojas') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (empresa, cnpj)';
 
+              // LinxPedidosCompra ----------------------------------
+              If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosCompra') Then
+               sSqlUpInValores:=
+                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, cod_pedido, data_pedido, transacao)';
+
+              // LinxPedidosVenda -----------------------------------
+              If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosVenda') Then
+               sSqlUpInValores:=
+                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, cod_pedido, data_lancamento, transacao)';
+
+              // LinxLancContabil -----------------------------------
+              If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLancContabil') Then
+               sSqlUpInValores:=
+                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, cod_lanc, centro_custo, ind_conta, cod_conta, identificador)';
+
+              // LinxProdutosCodBar ---------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosCodBar') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (cod_produto, cod_barra)';
 
+              // LinxAcoesPromocionais ------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxAcoesPromocionais') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (empresa, cnpj_emp, id_acoes_promocionais)';
 
+              // LinxMovimentoAcoesPromocionais ---------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoAcoesPromocionais') Then
                sSqlUpInValores:=
-                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, identificador)';
+                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, identificador, transacao)';
 
+              // LinxMovimentoSerial --------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoSerial') Then
                sSqlUpInValores:=
-                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, identificador)';
+                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, identificador, transacao)';
 
+              // LinxMovimentoTrocas --------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoTrocas') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (empresa, cnpj_emp, identificador, num_vale)';
 
+              // LinxMovimentoPlanos --------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoPlanos') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (empresa, cnpj_emp, identificador, plano)';
 
+              // LinxMovimentoOrigemDevolucoes ----------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoOrigemDevolucoes') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (empresa, cnpj_emp, identificador, nota_origem)';
 
+              // LinxLojas ------------------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLojas') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (empresa, cnpj_emp)';
 
+              // LinxVendedores -------------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxVendedores') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (cod_vendedor, empresa)';
 
+              // LinxClientesFornec ---------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxClientesFornec') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (cod_cliente)';
 
+              // LinxProdutos ---------------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutos') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (cod_produto)';
 
+              // LinxProdutosDetalhes -------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (empresa, cod_produto)';
 
+              // LinxMovimento --------------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (empresa, transacao, documento, '+
                                            'codigo_cliente, operacao, tipo_transacao, '+
                                            'cod_produto, identificador)';
 
+              // LinxFaturas ----------------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (empresa, codigo_fatura, data_emissao, '+
                                            'cod_cliente, documento, serie, identificador)';
 
-              // Executa Sql Update/Insert -----------------
+              // Executa Sql Update/Insert --------------------------
               MySql:=sSqlUpInCampos+sSqlUpInValores;
               MySql:=F_Troca(#$A#$A, ' ', MySql);
               MySql:=F_Troca(#$A, ' ', MySql);
@@ -554,7 +609,7 @@ Begin
            SalvaProcessamento(sgMetodo+'_'+sgCodLojaLinx+'(Último Erro): '+sMensagem);
 
           sMensagem:='Erro DML: '+e.message;
-          SalvaProcessamento(sgMetodo+'_'+sgCodLojaLinx+': '+sMensagem);
+          SalvaProcessamento(sgMetodo+'_'+sgCodLojaLinx+'(Reg '+IntToStr(ii)+'): '+sMensagem);
 
           SalvaProcessamento('=====================================');
         End; // on e : Exception do
@@ -646,7 +701,10 @@ Begin
 
 //OdirAqui 7 - Acerta Post - Ultima Alteração
   // ===========================================================================
-  // Cabecalho de Parametro Padrão =============================================
+  // Cabecalho de Parametro Padrão para Todos os Metodos =======================
+  // Menos para os Metodos:
+  // LinxMetodos
+  // LinxGrupoLojas
   // ===========================================================================
   If (sgMetodo<>'LinxMetodos') And (sgMetodo<>'LinxGrupoLojas') Then
   Begin
@@ -676,7 +734,6 @@ Begin
   // ===========================================================================
   // Somente Parametros Padrões ================================================
   // LinxLojas =================================================================
-  // LinxProdutosCodBar ========================================================
   // ===========================================================================
 
   // ===========================================================================
@@ -723,11 +780,14 @@ Begin
   // LinxMovimentoSerial =======================================================
   // LinxMovimentoPlanos =======================================================
   // LinxMovimentoAcoesPromocionais ============================================
+  // LinxPedidosVenda ==========================================================
+  // LinxPedidosCompra =========================================================
   // ===========================================================================
   If (sgMetodo='LinxClientesFornec')  Or (sgMetodo='LinxMovimento') Or
      (sgMetodo='LinxMovimentoTrocas') Or (sgMetodo='LinxMovimentoOrigemDevolucoes') Or
      (sgMetodo='LinxMovimentoSerial') Or (sgMetodo='LinxMovimentoAcoesPromocionais') Or
-     (sgMetodo='LinxMovimentoPlanos') Then
+     (sgMetodo='LinxMovimentoPlanos') Or (sgMetodo='LinxPedidosVenda') Or
+     (sgMetodo='LinxPedidosCompra')   Then
   Begin
     //---------------------------------------------------------------
     // LinxMovimentoTrocas ------------------------------------------
@@ -752,6 +812,8 @@ Begin
     // LinxMovimentoSerial ------------------------------------------
     // LinxMovimentoPlanos ------------------------------------------
     // LinxMovimentoAcoesPromocionais -------------------------------
+    // LinxPedidosVenda ---------------------------------------------
+    // LinxPedidosCompra --------------------------------------------
     //---------------------------------------------------------------
     sXML:='			<Parameter id="data_inicial">'+sgDtaInicio+'</Parameter>';
     Writeln(txtArq,sXML);
@@ -760,13 +822,21 @@ Begin
 
     //---------------------------------------------------------------
     // LinxMovimento ------------------------------------------------
+    // LinxPedidosVenda ---------------------------------------------
     //---------------------------------------------------------------
-    If (sgMetodo='LinxMovimento') Then
+    If (sgMetodo='LinxMovimento') Or (sgMetodo='LinxPedidosVenda') Then
     Begin
       sXML:='			<Parameter id="hora_inicial">'+'NULL'+'</Parameter>';
       Writeln(txtArq,sXML);
       sXML:='			<Parameter id="hora_fim">'+'NULL'+'</Parameter>';
       Writeln(txtArq,sXML);
+    End; // If (sgMetodo='LinxMovimento') oR (sgMetodo='LinxPedidosVenda') Then
+
+    //---------------------------------------------------------------
+    // LinxMovimento ------------------------------------------------
+    //---------------------------------------------------------------
+    If (sgMetodo='LinxMovimento') Then
+    Begin
       sXML:='			<Parameter id="operacao">'+'NULL'+'</Parameter>';
       Writeln(txtArq,sXML);
       sXML:='			<Parameter id="tipo_transacao">'+'NULL'+'</Parameter>';
@@ -785,8 +855,9 @@ Begin
 
   // ===========================================================================
   // LinxProdutos ==============================================================
+  // LinxProdutosCodBar ========================================================
   // ===========================================================================
-  If sgMetodo='LinxProdutos' Then
+  If (sgMetodo='LinxProdutos') Or (sgMetodo='LinxProdutosCodBar') Then
   Begin
     sXML:='			<Parameter id="id_setor">'+sSetor+'</Parameter>';
     Writeln(txtArq,sXML);
@@ -796,6 +867,18 @@ Begin
     Writeln(txtArq,sXML);
     sXML:='			<Parameter id="id_colecao">'+sColecao+'</Parameter>';
     Writeln(txtArq,sXML);
+
+    //====================================
+    // PARAMETRO OPCIONAL E NÃO UTILIZADOS
+    //====================================
+    //       Metodo         Parametro
+    //--------------------  --------------
+    // LinxProdutosCodBar   Cod_Produto
+    //====================================
+  End; // If (sgMetodo='LinxProdutos') Or (sgMetodo='LinxProdutosCodBar') Then
+
+  If sgMetodo='LinxProdutos' Then
+  Begin
     sXML:='			<Parameter id="dt_update_inicio">'+sgDtaInicio+'</Parameter>';
     Writeln(txtArq,sXML);
     sXML:='			<Parameter id="dt_update_fim">'+sgDtaFim+'</Parameter>';
@@ -854,6 +937,23 @@ Begin
     //====================================
   End; // If (sgMetodo='LinxFaturas') Then
   // ===========================================================================
+
+  // ===========================================================================
+  // LinxLancContabil =====================================================
+  // ===========================================================================
+  If (sgMetodo='LinxLancContabil') Then
+  Begin
+    sXML:='			<Parameter id="data_lanc_ini">'+sgDtaInicio+'</Parameter>';
+    Writeln(txtArq,sXML);
+    sXML:='			<Parameter id="data_lanc_fim">'+sgDtaFim+'</Parameter>';
+    Writeln(txtArq,sXML);
+    sXML:='			<Parameter id="cod_cc">'+sSetor+'</Parameter>'; // Variavel sSetor Usada como Variavel cod_cc
+    Writeln(txtArq,sXML);
+    sXML:='			<Parameter id="cod_conta">'+sLinha+'</Parameter>'; // Variavel sLinha Usada como Variavel cod_conta
+    Writeln(txtArq,sXML);
+  End; // If (sgMetodo='LinxLancContabil') Then
+  // ===========================================================================
+
 
   // ===========================================================================
   // Grava Linhas de Encerramento XML ==========================================
@@ -1123,6 +1223,12 @@ Begin
        sgCampoUpdate:='Data_Documento'
       Else If (AnsiUpperCase(sgMetodo)='LINXFATURAS') Then
        sgCampoUpdate:='Data_Emissao'
+      Else If (AnsiUpperCase(sgMetodo)='LINXLANCCONTABIL') Then
+       sgCampoUpdate:='DATA_LANC'
+      Else If (AnsiUpperCase(sgMetodo)='LINXPEDIDOSVENDA') Then
+       sgCampoUpdate:='DATA_LANCAMENTO'
+      Else If (AnsiUpperCase(sgMetodo)='LINXPEDIDOSCOMPRA') Then
+       sgCampoUpdate:='DATA_PEDIDO'
       ELSE
        sgCampoUpdate:='Dta_Atualizacao';
 
@@ -1141,6 +1247,9 @@ Begin
                 (AnsiUpperCase(sgMetodo)='LINXMOVIMENTOPLANOS')            or
                 (AnsiUpperCase(sgMetodo)='LINXMOVIMENTOACOESPROMOCIONAIS') or
                 (AnsiUpperCase(sgMetodo)='LINXACOESPROMOCIONAIS')          or
+                (AnsiUpperCase(sgMetodo)='LINXLANCCONTABIL')               or
+                (AnsiUpperCase(sgMetodo)='LINXPEDIDOSVENDA')               or
+                (AnsiUpperCase(sgMetodo)='LINXPEDIDOSCOMPRA')              or
                 (AnsiUpperCase(sgMetodo)='LINXPRODUTOSDETALHES')           Then
               MySql:=
                MySql+' WHERE lx.Empresa='+sgCodLojaLinx;
@@ -1515,6 +1624,7 @@ Begin
            End; // If Trim(sgParametroMetodo)<>'' Then
          End; // If dDtaUltAtual=0 Then
 
+                         // Setor   Linha   Marca   Colecao
         MontaMetodoXMLPost('NULL', 'NULL', 'NULL', 'NULL');
       End; // If (sgMetodo='LinxProdutos') And (Not bUmaVez) Then
       //========================================================================
@@ -1563,7 +1673,8 @@ Begin
       //========================================================================
       If (sgMetodo='LinxProdutosCodBar') And (Not bUmaVez) Then
       Begin
-        MontaMetodoXMLPost();
+                         // Setor   Linha   Marca   Colecao
+        MontaMetodoXMLPost('NULL', 'NULL', 'NULL', 'NULL');
       End; // If (sgMetodo='LinxProdutosCodBar') And (Not bUmaVez) Then
 
       //========================================================================
@@ -1600,6 +1711,105 @@ Begin
 
         MontaMetodoXMLPost();
       End; // If sgMetodo='LinxFaturas' Then
+      //========================================================================
+
+      //========================================================================
+      // LinxLancContabil ======================================================
+      //========================================================================
+      If sgMetodo='LinxLancContabil' Then
+      Begin
+        If (dDtaUltAtual=0) Or ((dDtaUltAtual-15)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+15;
+
+        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        DecodeDate(dDtaHoje, wAno, wMes, wDia);
+        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        // Metodo por Parametro (Acerta Data Inicial)
+        If Trim(sgParametroMetodo)<>'' Then
+        Begin
+          If dDtaUltAtual=dDtaHoje Then
+          Begin
+            sgDtaInicio:=sgDtaFim;
+          End;
+
+          If dDtaUltAtual<dDtaHoje Then
+          Begin
+            DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+          End;
+        End; // If Trim(sgParametroMetodo)<>'' Then
+
+        MontaMetodoXMLPost('NULL', 'NULL');
+      End; // If sgMetodo='LinxLancContabil' Then
+      //========================================================================
+
+      //========================================================================
+      // LinxPedidosVenda ======================================================
+      //========================================================================
+      If sgMetodo='LinxPedidosVenda' Then
+      Begin
+        If (dDtaUltAtual=0) Or ((dDtaUltAtual-15)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+15;
+
+        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        DecodeDate(dDtaHoje, wAno, wMes, wDia);
+        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        // Metodo por Parametro (Acerta Data Inicial)
+        If Trim(sgParametroMetodo)<>'' Then
+        Begin
+          If dDtaUltAtual=dDtaHoje Then
+          Begin
+            sgDtaInicio:=sgDtaFim;
+          End;
+
+          If dDtaUltAtual<dDtaHoje Then
+          Begin
+            DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+          End;
+        End; // If Trim(sgParametroMetodo)<>'' Then
+
+        MontaMetodoXMLPost();
+      End; // If sgMetodo='LinxPedidosVenda' Then
+      //========================================================================
+
+      //========================================================================
+      // LinxPedidosCompra ======================================================
+      //========================================================================
+      If sgMetodo='LinxPedidosCompra' Then
+      Begin
+        If (dDtaUltAtual=0) Or ((dDtaUltAtual-15)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+15;
+
+        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        DecodeDate(dDtaHoje, wAno, wMes, wDia);
+        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        // Metodo por Parametro (Acerta Data Inicial)
+        If Trim(sgParametroMetodo)<>'' Then
+        Begin
+          If dDtaUltAtual=dDtaHoje Then
+          Begin
+            sgDtaInicio:=sgDtaFim;
+          End;
+
+          If dDtaUltAtual<dDtaHoje Then
+          Begin
+            DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+          End;
+        End; // If Trim(sgParametroMetodo)<>'' Then
+
+        MontaMetodoXMLPost();
+      End; // If sgMetodo='LinxPedidosCompra' Then
       //========================================================================
 
       //========================================================================
@@ -1659,11 +1869,16 @@ ALTERAR TABELAS
       COMMENT ON COLUMN LINXWEBSERVICE.GRUPOLOJAS IS
       'Chave para Acesso ao Método: LinxGrupoLojas';
 
-
   - LINXMOVIMENTO
     =============
     - Alteração do Tamanho
       - PROTOCOLO_AUT_NFE   VARCHAR(15)
+
+  - LINXFATURAS
+    ===========
+    DOCUMENTO_SEM_TEF varchar(60) - Descrição
+    AUTORIZACAO_SEM_TEF - Descrição
+    
 
 CRIAR NOVO
 ==========
@@ -1705,9 +1920,33 @@ CRIAR NOVO
 
   - CREATE TABLE LINXPRODUTOSCODBAR
                  ==================
+    - Baixou
 
-  - ATENÇÃO - LinxVendedores
-  ==========================
+  - CREATE TABLE LINXLANCCONTABIL
+                 ================
+    - Erro na Estrutura
+      - Web Service não apresenta Campos da Documentação
+          - cod_historico - Código do Histórico no Microvix   - INT
+          - desc_historico - Descrição do Histórico - VARCHAR(50)
+
+      - Erro no Tamanho do Campo
+        - compl_conta - Complemento - VARCHAR (60)
+          - Baixa mais de 60, Coloquei VARCHAR(300)
+        - nome_conta - Nome Conta - VARCHAR (30)
+          - Baixa mais de 30, Coloquei VARCHAR(60)
+    - Baixou
+
+  - CREATE TABLE LINXPEDIDOSVENDA
+                 ================
+    - Nao Baixou Nada
+
+  - CREATE TABLE LINXPEDIDOSCOMPRA
+                 =================
+    - Nao Baixou Nada
+
+ATENÇÃO
+========
+   - LinxVendedores
     - Não Consta na Relação no Inicio do Documento
 
 }
