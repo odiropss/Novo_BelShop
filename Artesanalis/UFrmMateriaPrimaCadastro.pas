@@ -261,20 +261,21 @@ begin
    Exit;
 
   If DMArtesanalis.CDS_MateriaPrima.Locate('COD_MATERIAPRIMA', EdtMateriaPrimaCod.AsInteger,[]) Then
-   Begin
-     EdtMateriaPrimaDesc.Text       :=DMArtesanalis.CDS_MateriaPrimaDES_MATERIAPRIMA.AsString;
-     EdtMateriaPrimaUnid.Text       :=DMArtesanalis.CDS_MateriaPrimaDES_UNIDADE.AsString;
-     EdtMateriaPrimaCusto.Value     :=DMArtesanalis.CDS_MateriaPrimaPRECO_CUSTO.AsCurrency;
-     EdtMateriaPrimaCustoMedio.Value:=DMArtesanalis.CDS_MateriaPrimaCUSTO_MEDIO.AsCurrency;
-     EdtMateriaPrimaQtdSaldo.Value  :=DMArtesanalis.CDS_MateriaPrimaQTD_ESTOQUE.AsFloat;
-     bgAlterar:=True;
-   End
-  Else
-   Begin
-     msg('Matéria-Prima Não Encontrada !!','A');
-     bgAlterar:=False;
-     EdtMateriaPrimaCod.SetFocus;
-   End; // If DMArtesanalis.CDS_MateriaPrima.Locate('COD_MATERIAPRIMA', EdtMateriaPrimaCod.AsInteger,[]) Then
+  Begin
+    EdtMateriaPrimaDesc.Text       :=DMArtesanalis.CDS_MateriaPrimaDES_MATERIAPRIMA.AsString;
+    EdtMateriaPrimaUnid.Text       :=DMArtesanalis.CDS_MateriaPrimaDES_UNIDADE.AsString;
+    EdtMateriaPrimaCusto.Value     :=DMArtesanalis.CDS_MateriaPrimaPRECO_CUSTO.AsCurrency;
+    EdtMateriaPrimaCustoMedio.Value:=DMArtesanalis.CDS_MateriaPrimaCUSTO_MEDIO.AsCurrency;
+    EdtMateriaPrimaQtdSaldo.Value  :=DMArtesanalis.CDS_MateriaPrimaQTD_ESTOQUE.AsFloat;
+    bgAlterar:=True;
+  End; // If DMArtesanalis.CDS_MateriaPrima.Locate('COD_MATERIAPRIMA', EdtMateriaPrimaCod.AsInteger,[]) Then
+//  End
+//  Else
+//   Begin
+//     msg('Matéria-Prima Não Encontrada !!','A');
+//     bgAlterar:=False;
+//     EdtMateriaPrimaCod.SetFocus;
+//   End; // If DMArtesanalis.CDS_MateriaPrima.Locate('COD_MATERIAPRIMA', EdtMateriaPrimaCod.AsInteger,[]) Then
 end;
 
 procedure TFrmMateriaPrimaCadastro.Bt_MateriaPrimaAbandonarClick(Sender: TObject);

@@ -7170,7 +7170,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 528
-        ActivePage = Ts_OCGeraOrdemCompra
+        ActivePage = Ts_OCBuscaProdutos
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -8256,6 +8256,7 @@ object FrmBelShop: TFrmBelShop
                   ParentColor = False
                   ParentFont = False
                   TabOrder = 4
+                  Visible = False
                   object Rb_CalculoTpProcLocal: TJvRadioButton
                     Left = 12
                     Top = 21
@@ -8263,6 +8264,7 @@ object FrmBelShop: TFrmBelShop
                     Height = 17
                     Alignment = taLeftJustify
                     Caption = 'Local'
+                    Checked = True
                     Font.Charset = DEFAULT_CHARSET
                     Font.Color = clWindowText
                     Font.Height = -11
@@ -8270,6 +8272,7 @@ object FrmBelShop: TFrmBelShop
                     Font.Style = []
                     ParentFont = False
                     TabOrder = 0
+                    TabStop = True
                     OnClick = Rb_CalculoTpProcLocalClick
                     OnKeyUp = Rb_CalculoTpProcLocalKeyUp
                     HotTrackFont.Charset = DEFAULT_CHARSET
@@ -8798,7 +8801,7 @@ object FrmBelShop: TFrmBelShop
             Top = 53
             Width = 793
             Height = 427
-            ActivePage = Ts_GeraOCOrdensCompra
+            ActivePage = Ts_GeraOCGrid
             Align = alClient
             MultiLine = True
             TabOrder = 3

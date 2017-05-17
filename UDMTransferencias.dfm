@@ -27,7 +27,7 @@ object DMTransferencias: TDMTransferencias
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'gds32.dll'
-    Left = 48
+    Left = 56
     Top = 16
   end
   object SDS_Busca: TSQLDataSet

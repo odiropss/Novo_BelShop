@@ -19045,8 +19045,9 @@ Begin
              '                                       WHEN c.ind_curva=''E'' THEN 5'+
              '                                    END=t.cod_aux'+
 
-             ' WHERE c.est_minimo>0'+
-             ' AND   t.tip_aux=2'+
+// Retira Conforme Solicitação da ANNA - 12/05/2017
+//             ' WHERE c.est_minimo>0'+
+             ' WHERE   t.tip_aux=2'+
              ' AND   c.cod_loja='+QuotedStr(sCodFilial);
 
              // Produtos Não Compra -------------------------------------
@@ -19343,8 +19344,9 @@ Begin
            '                                       WHEN c.ind_curva=''E'' THEN 5'+
            '                                    END=t.cod_aux'+
 
-           ' WHERE c.est_minimo>0'+
-           ' AND   t.tip_aux=2'+
+// Retira Conforme Solicitação da ANNA - 12/05/2017
+//           ' WHERE c.est_minimo>0'+
+           ' WHERE t.tip_aux=2'+
            ' AND   c.cod_loja='+QuotedStr(sCodFilial);
 
            // Produtos Não Compra -------------------------------------
@@ -21419,7 +21421,8 @@ Begin
             '                                    END=t.cod_aux'+
 
             ' WHERE t.tip_aux=2'+
-            ' AND   c.est_minimo>0'+
+// Retira Conforme Solicitação da ANNA - 12/05/2017
+//            ' AND   c.est_minimo>0'+
             ' AND   c.cod_loja='+QuotedStr(sCodMatriz);
 
             // Produtos Não Compra -------------------------------------

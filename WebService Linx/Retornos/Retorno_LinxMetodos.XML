@@ -27,4 +27,9 @@
 
 	LinxAcoesPromocionais - Retorna as Ações Promocionais cadastradas no Microvix (chave, cnpjEmp, ativa, data_inicial, data_fim, integrada)
 	
-	LinxMovimentoOrigemDevolucoes - Retorna os documentos de origem relacionados as devoluções (chave, cnpjEmp, identificador, data_inicial, data_fim)</D></R></ResponseData><ResponseResult><ResponseSuccess>True</ResponseSuccess></ResponseResult></Microvix>
+	LinxMovimentoOrigemDevolucoes - Retorna os documentos de origem relacionados as devoluções (chave, cnpjEmp, identificador, data_inicial, data_fim)
+	
+	LinxPedidosVenda - Retorna informações de pedidos de venda de acordo com a loja pesquisada (chave, cnpjEmp, data_inicial, data_fim, hora_inicial, hora_fim)
+
+	LinxPedidosCompra - Retorna informações de pedidos de compra de acordo com a loja pesquisada (chave, cnpjEmp, data_inicial, data_fim)
+	</D></R></ResponseData><ResponseResult><ResponseSuccess>True</ResponseSuccess></ResponseResult></Microvix>

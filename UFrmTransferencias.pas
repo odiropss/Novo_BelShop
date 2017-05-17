@@ -1,7 +1,5 @@
 unit UFrmTransferencias;
 
-// LojaBel_18
-
 interface
 
 uses
@@ -115,7 +113,7 @@ Var
 Begin
   Result:=False;
 
-  // Busca Produtos com Necessidades ============================================
+  // Busca Produtos com Necessidades de Reposição ==============================
   MySql:=' SELECT *'+
          ' FROM ES_ESTOQUES_LOJAS lo'+
          ' WHERE lo.dta_movto=CURRENT_DATE'+
@@ -417,8 +415,8 @@ Begin
              //===========================================================================================
              // Mantem Quantidade Maxima de Reposição da Loja 18 em 12 Unidades ==========================
              //===========================================================================================
-             If (igCodLojaLinx=18) and (iQtdReposicao>12) Then
-              iQtdReposicao:=12;
+//             If (igCodLojaLinx=18) and (iQtdReposicao>12) Then
+//              iQtdReposicao:=12;
              //===========================================================================================
 
              // Verifica Percentual de Corte da Curva -------------------
@@ -943,9 +941,11 @@ Begin
 
         // Busca Transferencias =====================================
         cQtdMais:=0;
-        if (bConetada) Or (igCodLojaLinx<>0) Then // SIDICOM
-        Begin
-          // Busca Tranferencias ------------------------------------
+
+//odirApagar - 12/05/217
+//        if (bConetada) Or (igCodLojaLinx<>0) Then // SIDICOM
+//        Begin
+          // Busca Tranferencias do CD Para a Loja ------------------
           MySql:=' SELECT mc.numero, mp.codproduto, mp.quantatendida'+
                  ' FROM MCLI mc, MCLIPRO mp'+
                  ' WHERE mc.chavenf=mp.chavenf'+
@@ -975,7 +975,7 @@ Begin
               IBQ_TR_Filial.SQL.Clear;
               IBQ_TR_Filial.SQL.Add(MySql);
 
-              // Abre Query -------------------------------------------
+              // Abre Query -----------------------------------------
               ii:=0;
               bSiga:=False;
               While Not bSiga do
@@ -1005,9 +1005,9 @@ Begin
             Begin
               MySql:=' SELECT FIRST 1 m.documento numero'+
                      ' FROM LINXMOVIMENTO m'+
-                     ' WHERE m.codigo_cliente=13'+ // Codigo CD - Linx
+                     ' WHERE m.codigo_cliente=13'+ // BELSHOP | CD | RS
                      ' AND   m.operacao=''E'''+
-                     ' AND   m.tipo_transacao is null'+
+                     ' AND   COALESCE(m.tipo_transacao,''E'')=''E'''+
                      ' AND   m.cancelado=''N'''+
                      ' AND   m.excluido=''N'''+
                      ' and   m.empresa='+IntToStr(igCodLojaLinx)+
@@ -1024,9 +1024,10 @@ Begin
 
             IBQ_MPMS.Next;
           End; // While Not IBQ_MPMS.Eof do
-
           IBQ_MPMS.Close;
-        End; // if bConetada Then // SIDICOM
+
+//odirApagar - 12/05/217
+//        End; // if bConetada Then // SIDICOM
 
         // Atualiza o Saldo do Produto ------------------------------
         cQtdSaldo:=DMTransferencias.CDS_CurvasLojaSALDOATUAL.AsCurrency+cQtdMais;
