@@ -281,14 +281,13 @@ Begin
         Begin
           iii:=ii;
 
-//odirAqui 3 - Campo "Empresa"
-          // Considera Campo "Empresa" das TABELAS =============================
+//odirAqui 3 - Campo "Empresa" COM Campo "Portal"
+          // Considera Campo "Empresa" COM Campo "Portal" das TABELAS ==========
           If ((AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas'))                    Or
               (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento'))                  Or
               (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoTrocas'))            Or
               (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxVendedores'))                 Or
               (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoPlanos'))            Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxGrupoLojas'))                 Or
               (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoSerial'))            Or
               (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoOrigemDevolucoes'))  Or
               (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoAcoesPromocionais')) Or
@@ -298,6 +297,14 @@ Begin
               (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosCompra'))              Or
               (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes')))         And
               (ii>0) Then
+           iii:=iii+1;
+
+// OdirApagar
+// sConteudoCampo:=Trim(Node_Campos.ChildNodes[ii].NodeValue);
+
+//odirAqui 4 - Campo "Empresa" SEM Campo "Portal"
+          // Considera Campo "Empresa" SEM Campo "Portal" das TABELAS ==========
+          If ((AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxGrupoLojas'))) Then
            iii:=iii+1;
 
           If AnsiUpperCase(Trim(Node_Campos.ChildNodes[ii].NodeValue))<>AnsiUpperCase(tgCamposBD[iii]) Then
@@ -335,7 +342,7 @@ Begin
               Begin
                 sCampoDta:='';
 
-//odiraqui 4 - Campo "Empresa"
+//odiraqui 5 - Campo "Empresa"
                 // Considera Campo "Empresa" das TABELAS ------------
                 If ((AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas'))                    Or
                     (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento'))                  Or
@@ -401,7 +408,7 @@ Begin
 
               // Termina de Montar sSqlUpInValores =============================
 
-//odiraqui 5 - Campo "Cod_Loja do SIDICOM"
+//odiraqui 6 - Campo "Cod_Loja do SIDICOM"
               // Considera Campo "Cod_Loja do SIDICOM" das TABELAS ------------
               If (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas'))                    Or
                  (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxGrupoLojas'))                 Or
@@ -428,7 +435,7 @@ Begin
                   sSqlUpInValores+' current_date, current_time)';
                End;
 
-//OdirAqui 6 - Inclui MATCHING
+//OdirAqui 7 - Inclui MATCHING
               //================================================================
               // Inclui MATCHING em sSqlUpInValores ----------------------------
               //================================================================
@@ -529,7 +536,7 @@ Begin
               MySql:=sSqlUpInCampos+sSqlUpInValores;
               MySql:=F_Troca(#$A#$A, ' ', MySql);
               MySql:=F_Troca(#$A, ' ', MySql);
-// odiraqui 8
+// odiraqui 9
               DMLinxWebService.SQLC.Execute(MySql, nil, nil);
             End; // If Assigned(Node_Valores) Then // Libera Node "R" Para Leitura
           End; // If VarToStr(Node_Valores.NodeName)='R' Then // Node "R"
@@ -699,7 +706,7 @@ Begin
   Writeln(txtArq,sXML);
   // ===========================================================================
 
-//OdirAqui 7 - Acerta Post - Ultima Alteração
+//OdirAqui 8 - Acerta Post - Ultima Alteração
   // ===========================================================================
   // Cabecalho de Parametro Padrão para Todos os Metodos =======================
   // Menos para os Metodos:
@@ -1878,7 +1885,7 @@ ALTERAR TABELAS
     ===========
     DOCUMENTO_SEM_TEF varchar(60) - Descrição
     AUTORIZACAO_SEM_TEF - Descrição
-    
+
 
 CRIAR NOVO
 ==========
@@ -1888,6 +1895,8 @@ CRIAR NOVO
 
   - CREATE TABLE LINXMOVIMENTOTROCAS
                  ===================
+    - Erro na Estrutura
+      - Web Service Com Campos Diferentes em Relação a Documentação
     - Baixou
 
   - CREATE TABLE LINXMOVIMENTOORIGEMDEVOLUCOES
@@ -1914,8 +1923,9 @@ CRIAR NOVO
                  =====================
     - Erro na Descrição do Campo
       - Na Estrutura Campo
-        - Ativa     BIT 1=Sim, 0=Não Correto Boolean
-        - Excluida  BIT 1=Sim, 0=Não Correto Boolean
+        - Ativa     BIT 1=Sim, 0=Não - Baixa Errado: TRUE/FALSE
+        - Excluida  BIT 1=Sim, 0=Não - Baixa Errado: TRUE/FALSE
+        - Integrada BIT 1=Sim, 0=Não - Baixa Correto: 1/0
     - Baixou
 
   - CREATE TABLE LINXPRODUTOSCODBAR
@@ -1926,7 +1936,7 @@ CRIAR NOVO
                  ================
     - Erro na Estrutura
       - Web Service não apresenta Campos da Documentação
-          - cod_historico - Código do Histórico no Microvix   - INT
+          - cod_historico  - Código do Histórico no Microvix   - INT
           - desc_historico - Descrição do Histórico - VARCHAR(50)
 
       - Erro no Tamanho do Campo
@@ -1947,7 +1957,9 @@ CRIAR NOVO
 ATENÇÃO
 ========
    - LinxVendedores
-    - Não Consta na Relação no Inicio do Documento
+    - Não Consta na Relação do Escopo do WebService no Inicio do Documento de
+      ESPECIFICAÇÃO Web Service Linx Microvix Padrão
+
 
 }
 
