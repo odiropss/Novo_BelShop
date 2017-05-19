@@ -36,7 +36,6 @@ unit UWebServiceLinx;
    ==========================================================
    Irá conter as informações de documentos de origem das devoluções relacionadas.
 
-
 -> Movimento Seriais: LinxMovimentoSerial
    - Por Loja
    ======================================
@@ -219,7 +218,8 @@ Begin
   If DOC.ChildNodes.Nodes['Microvix'].ChildNodes['ResponseResult'].ChildNodes['ResponseSuccess'].Text='False' Then
   Begin
     SalvaProcessamento('=====================================');
-    SalvaProcessamento(sgMetodo+' com Erro no Post !!');
+    SalvaProcessamento('Loja Linx: '+sgCodLojaLinx+' Metodo: '+sgMetodo+' Resposta Negativa !!');
+
     sMensagem:='';
     For i:=0 to DOC.ChildNodes.Nodes['Microvix'].ChildNodes['ResponseResult'].ChildNodes['ResponseError'].ChildNodes.Count-1 do
     Begin
@@ -457,7 +457,8 @@ Begin
               // LinxLancContabil -----------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLancContabil') Then
                sSqlUpInValores:=
-                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, cod_lanc, centro_custo, ind_conta, cod_conta, identificador)';
+                sSqlUpInValores+' MATCHING (empresa, identificador)';
+//                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, cod_lanc, centro_custo, ind_conta, cod_conta, identificador)';
 
               // LinxProdutosCodBar ---------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosCodBar') Then
@@ -637,6 +638,7 @@ begin
   fsParams := TFileStream.Create(sgPastaMetodos+sgMetodo+'.xml', fmOpenRead or fmShareDenyWrite);
 
   xml := TStringlist.Create;
+
   try
     IdHTTP.Request.ContentType := 'application/x-www-form-urlencoded';
     IdHTTP.Request.ContentEncoding := 'multipart/form-data';
@@ -649,7 +651,7 @@ begin
     Begin
       Result:=False;
       SalvaProcessamento('=====================================');
-      SalvaProcessamento(sgMetodo+' com Erro no Post !!');
+      SalvaProcessamento('Loja Linx: '+sgCodLojaLinx+' Metodo: '+sgMetodo+' com Erro no Post !!');
       SalvaProcessamento(sgMetodo+': '+E.Message);
       SalvaProcessamento('=====================================');
     End;
@@ -1324,10 +1326,10 @@ Begin
       //========================================================================
       If sgMetodo='LinxMovimento' Then
       Begin
-        If (dDtaUltAtual=0) Or ((dDtaUltAtual-15)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
-         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+15;
+        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
 
-        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
         sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
@@ -1357,10 +1359,10 @@ Begin
       //========================================================================
       If sgMetodo='LinxMovimentoTrocas' Then
       Begin
-        If (dDtaUltAtual=0) Or ((dDtaUltAtual-15)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
-         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+15;
+        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
 
-        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
         sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
@@ -1390,10 +1392,10 @@ Begin
       //========================================================================
       If sgMetodo='LinxMovimentoOrigemDevolucoes' Then
       Begin
-        If (dDtaUltAtual=0) Or ((dDtaUltAtual-15)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
-         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+15;
+        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
 
-        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
         sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
@@ -1423,10 +1425,10 @@ Begin
       //========================================================================
       If sgMetodo='LinxMovimentoSerial' Then
       Begin
-        If (dDtaUltAtual=0) Or ((dDtaUltAtual-15)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
-         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+15;
+        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
 
-        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
         sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
@@ -1456,10 +1458,10 @@ Begin
       //========================================================================
       If sgMetodo='LinxMovimentoPlanos' Then
       Begin
-        If (dDtaUltAtual=0) Or ((dDtaUltAtual-15)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
-         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+15;
+        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
 
-        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
         sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
@@ -1489,10 +1491,10 @@ Begin
       //========================================================================
       If sgMetodo='LinxMovimentoAcoesPromocionais' Then
       Begin
-        If (dDtaUltAtual=0) Or ((dDtaUltAtual-15)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
-         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+15;
+        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
 
-        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
         sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
@@ -1522,10 +1524,10 @@ Begin
       //========================================================================
       If sgMetodo='LinxAcoesPromocionais' Then
       Begin
-        If (dDtaUltAtual=0) Or ((dDtaUltAtual-15)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
-         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+15;
+        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
 
-        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
         sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
@@ -1692,10 +1694,10 @@ Begin
         // OBS: Só poderá ser fornecido um período de listagem (Emissão ou Pagamento),
         //      o outro deverá ficar como NULL. Mas deverá pelo menos ter um Período informado.</D>
 
-        If (dDtaUltAtual=0) Or ((dDtaUltAtual-15)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
-         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+15;
+        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
 
-        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
         sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
@@ -1725,10 +1727,10 @@ Begin
       //========================================================================
       If sgMetodo='LinxLancContabil' Then
       Begin
-        If (dDtaUltAtual=0) Or ((dDtaUltAtual-15)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
-         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+15;
+        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
 
-        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
         sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
@@ -1758,10 +1760,10 @@ Begin
       //========================================================================
       If sgMetodo='LinxPedidosVenda' Then
       Begin
-        If (dDtaUltAtual=0) Or ((dDtaUltAtual-15)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
-         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+15;
+        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
 
-        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
         sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
@@ -1791,10 +1793,10 @@ Begin
       //========================================================================
       If sgMetodo='LinxPedidosCompra' Then
       Begin
-        If (dDtaUltAtual=0) Or ((dDtaUltAtual-15)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
-         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+15;
+        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
 
-        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
         sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
@@ -1823,7 +1825,7 @@ Begin
       // Envio do Http.post
       // Ler XML de Retorno e Salva no Banco de Dados
       //========================================================================
-      If bgMontouPost Then
+      If bgMontouPost Then       
       Begin
         bSiga:=True;
         // Envio do Http.post ==================================================

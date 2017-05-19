@@ -58,7 +58,7 @@ Begin
   // Verifica se Transação esta Ativa
   If DMAtualizaEstoques.SQLC.InTransaction Then
    DMAtualizaEstoques.SQLC.Rollback(TD);
-  
+
   // Monta Transacao ===========================================================
   TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
   TD.IsolationLevel:=xilREADCOMMITTED;
@@ -91,8 +91,9 @@ Begin
            ' WHERE m.operacao in (''E'', ''DS'', ''S'', ''DE'')'+
            ' AND   m.cancelado=''N'''+
            ' AND   m.excluido =''N'''+
-           ' AND   m.soma_relatorio=''S'''+
+//           ' AND   m.soma_relatorio=''S'''+
            ' AND   p.cod_auxiliar IS NOT NULL'+
+           ' AND   Char_length(p.cod_auxiliar)<=6'+
            ' AND   m.data_documento>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaInicioLinx)))+
            ' AND   m.empresa='+sCodLinx+
 
@@ -132,13 +133,14 @@ Begin
     MySql:=' DELETE FROM W_LINX_MOVTOS';
     DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
-    MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo)'+
+    MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
            ' VALUES ('+
            QuotedStr(sCodBelShop)+', '+
            sCodLinx+', '+
            'CURRENT_TIMESTAMP,'+
-           QuotedStr('LsI')+')'+ // Linx Sem Inventário
-           'MATCHING (COD_LOJA, COD_LINX)';
+           QuotedStr('LsI')+', '+ // Linx Sem Inventário
+           '''OK'')'+
+           'MATCHING (COD_LOJA)';
     DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
     // Atualiza Transacao ======================================================
@@ -151,6 +153,22 @@ Begin
     Begin
       // Abandona Transacao ====================================================
       DMAtualizaEstoques.SQLC.Rollback(TD);
+
+      TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
+      TD.IsolationLevel:=xilREADCOMMITTED;
+      DMAtualizaEstoques.SQLC.StartTransaction(TD);
+
+      MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
+             ' VALUES ('+
+             QuotedStr(sCodBelShop)+', '+
+             sCodLinx+', '+
+             ' CURRENT_TIMESTAMP,'+
+             QuotedStr('LsI')+', '+ // Linx Sem Inventário
+             QuotedStr(MySql)+')'+
+             'MATCHING (COD_LOJA)';
+      DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
+      DMAtualizaEstoques.SQLC.Commit(TD);
 
       DateSeparator:='/';
       DecimalSeparator:=',';
@@ -373,10 +391,10 @@ begin
     sHora:=TimeToStr(Time);
 
     // Odir Roda Uma Loja Linx
-//    iCodLinx      :=13;
-//    sDtaLinx      :='20/02/2017';
-//    sDtaInventLinx:='02/04/2017';
-//    sCodEmpresa   :='06';
+//    iCodLinx      :=15;
+//    sDtaLinx      :='17/03/2017';
+//    sDtaInventLinx:='09/05/2017';
+//    sCodEmpresa   :='04';
 
     // Só Atualiza Estoques com Movtos Ent/Sai Linx (Com Linx Sem Inventário)
     sTipo:='';
@@ -481,7 +499,7 @@ begin
         Begin
           MySql:=' SELECT '+
                  QuotedStr(sCodEmpresa)+' codfilial,'+
-                 ' lp.cod_auxiliar codproduto,'+
+                 ' CAST(LPAD(lp.cod_auxiliar,6,0) AS VARCHAR(6)) codproduto,'+
                  ' lpd.quantidade saldoatual, 0.0000 pedidopendente,'+
                  ' 0 zonaendereco, ''000'' corredor, ''000'' prateleira, ''0000'' gaveta,'+
                  ' lpd.custo_medio cusmedvalor, lpd.custo_medio customedio,'+
@@ -506,7 +524,8 @@ begin
                  '          LEFT JOIN LINXPRODUTOS lp ON lp.cod_produto = lpd.cod_produto'+
                  '          LEFT JOIN PRODUTO pr ON pr.codproduto = CAST(LPAD(lp.cod_auxiliar,6,0) AS VARCHAR(6))'+
                  ' WHERE lpd.empresa = '+IntToStr(iCodLinx)+
-                 ' AND   lp.cod_auxiliar IS NOT NULL';
+                 ' AND   lp.cod_auxiliar IS NOT NULL'+
+                 ' AND   Char_length(lp.cod_auxiliar)<=6';
           DMAtualizaEstoques.CDS_LojaLinx.Close;
           DMAtualizaEstoques.SDS_LojaLinx.CommandText:=MySql;
           DMAtualizaEstoques.CDS_LojaLinx.Open;
@@ -626,13 +645,14 @@ begin
             // LINX COM INVENTARIO - LINX DIRETO ===============================
             // =================================================================
 
-            MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo)'+
+            MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
                    ' VALUES ('+
                    QuotedStr(sCodEmpresa)+', '+
                    IntToStr(iCodLinx)+', '+
                    ' CURRENT_TIMESTAMP,'+
-                   QuotedStr(sTipo)+')'+ // Linx Com Inventário
-                   'MATCHING (COD_LOJA, COD_LINX)';
+                   QuotedStr(sTipo)+', '+ // Linx Com Inventário
+                   '''OK'')'+
+                   'MATCHING (COD_LOJA)';
             DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
             DMAtualizaEstoques.SQLC.Commit(TD);
@@ -644,6 +664,22 @@ begin
             Begin
               DMAtualizaEstoques.SQLC.Rollback(TD);
               DMAtualizaEstoques.IBQ_EstoqueLoja.Close;
+
+              TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
+              TD.IsolationLevel:=xilREADCOMMITTED;
+              DMAtualizaEstoques.SQLC.StartTransaction(TD);
+
+              MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
+                     ' VALUES ('+
+                     QuotedStr(sCodEmpresa)+', '+
+                     IntToStr(iCodLinx)+', '+
+                     ' CURRENT_TIMESTAMP,'+
+                     QuotedStr(sTipo)+', '+ // Linx Com Inventário
+                     QuotedStr(MySql)+')'+
+                     'MATCHING (COD_LOJA)';
+              DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
+              DMAtualizaEstoques.SQLC.Commit(TD);
 
               DateSeparator:='/';
               DecimalSeparator:=',';
@@ -663,6 +699,8 @@ begin
          ConexaoEmpIndividual('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, 'F');
       End; // If bSiga Then // Entra no Processamento ==========================
     End; // If Not bSoAtulMovtoLinx Then
+
+//    Application.Terminate;
     DMAtualizaEstoques.CDS_EmpProcessa.Next;
   End; // While Not DMAtualizaEstoques.CDS_EmpProcessa.Eof do
   DMAtualizaEstoques.CDS_EmpProcessa.Close;
