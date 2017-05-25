@@ -437,8 +437,9 @@ Begin
                ' AND   ((m.tipo_transacao IN (''V'', ''S'')) OR (m.tipo_transacao IS NULL) OR (TRIM(m.tipo_transacao) = ''''))'+
                ' AND   m.cancelado = ''N'''+
                ' AND   m.excluido  = ''N'''+
-               ' AND   m.soma_relatorio = ''S'''+
-               ' AND   m.data_documento BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaIncioLinx)))+
+//odirapagar - 22/05/2017
+//               ' AND   m.soma_relatorio = ''S'''+
+               ' AND   m.data_lancamento BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaIncioLinx)))+
                                                 ' AND '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaFimLinx)))+
                ' AND   m.empresa = '+sCodLojaLinx;
         DMGraficos.CDS_BuscaRapida.Close;

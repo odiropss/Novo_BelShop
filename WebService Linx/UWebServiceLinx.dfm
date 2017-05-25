@@ -1,5 +1,5 @@
 object FrmWebServiceLinx: TFrmWebServiceLinx
-  Left = 473
+  Left = 505
   Top = 195
   Width = 269
   Height = 77

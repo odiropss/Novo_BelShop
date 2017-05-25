@@ -1,6 +1,6 @@
 object FrmBelShop: TFrmBelShop
-  Left = 243
-  Top = 75
+  Left = 260
+  Top = 112
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 556
-    ActivePage = Ts_OrdemCompra
+    ActivePage = Ts_FinanObjetivos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -18852,7 +18852,7 @@ object FrmBelShop: TFrmBelShop
               Left = 2
               Top = 2
               Width = 375
-              Height = 401
+              Height = 406
               Align = alClient
               Color = 15004403
               DataSource = DMBelShop.DS_Objetivos
@@ -18955,7 +18955,7 @@ object FrmBelShop: TFrmBelShop
             end
             object dxStatusBar3: TdxStatusBar
               Left = 2
-              Top = 438
+              Top = 443
               Width = 375
               Height = 20
               Panels = <
@@ -18976,7 +18976,7 @@ object FrmBelShop: TFrmBelShop
             end
             object Panel91: TPanel
               Left = 2
-              Top = 403
+              Top = 408
               Width = 375
               Height = 35
               Align = alBottom
@@ -19543,7 +19543,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 1
                 Top = 14
                 Width = 262
-                Height = 195
+                Height = 200
                 Align = alClient
                 Color = 15004403
                 Ctl3D = False
@@ -19604,7 +19604,7 @@ object FrmBelShop: TFrmBelShop
               end
               object StBar_FinanObjetivosManutCalculaObjetivo: TStatusBar
                 Left = 1
-                Top = 209
+                Top = 214
                 Width = 262
                 Height = 19
                 Color = clSilver

@@ -76,12 +76,13 @@ Begin
          '                   AND   uc.cancelado = ''N'''+
          '                   AND   uc.excluido = ''N'''+
          '                   AND   uc.empresa = '+sCodLojaLinx+
-         '                   ORDER BY uc.data_documento DESC) ulc ON ulc.cod_produto = m.cod_produto'+
+         '                   ORDER BY uc.data_lancamento DESC) ulc ON ulc.cod_produto = m.cod_produto'+
 
          ' WHERE m.operacao IN (''E'', ''DS'', ''S'', ''DE'')'+
          ' AND   m.cancelado = ''N'''+
          ' AND   m.excluido = ''N'''+
-         ' AND   m.soma_relatorio = ''S'''+
+//odirapagar - 22/05/2017
+//         ' AND   m.soma_relatorio = ''S'''+
          ' AND   p.cod_auxiliar IS NOT NULL'+
          ' AND   m.empresa ='+sCodLojaLinx+
          ' AND   m.cod_produto IN ('+sCodsInLinx+')'+
@@ -580,7 +581,7 @@ end.
 //               '           AND   m.cancelado=''N'''+
 //               '           AND   m.excluido=''N'''+
 //               '           AND   m.cod_produto = lpd.cod_produto'+
-//               '           ORDER BY m.data_documento DESC), 0.0000) lastprecocompra,'+
+//               '           ORDER BY m.data_lancamento DESC), 0.0000) lastprecocompra,'+
 //               ' lpd.custo_medio lastcustomedio,'+
 //               ' 0 estoqueideal, 0 estoquemaximo,'+
 //               ' lp.dt_update dataalteracadastro,'+

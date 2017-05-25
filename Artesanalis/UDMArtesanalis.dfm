@@ -366,9 +366,9 @@ object DMArtesanalis: TDMArtesanalis
       Precision = 18
       Size = 2
     end
-    object CDS_V_DoctoItensVLT_UNITATIO: TFMTBCDField
+    object CDS_V_DoctoItensVLR_UNITATIO: TFMTBCDField
       DisplayLabel = 'Valor Unit'#225'rio'
-      FieldName = 'VLT_UNITATIO'
+      FieldName = 'VLR_UNITATIO'
       DisplayFormat = '0,.00'
       Precision = 18
       Size = 2
@@ -385,71 +385,5 @@ object DMArtesanalis: TDMArtesanalis
     DataSet = CDS_V_DoctoItens
     Left = 124
     Top = 374
-  end
-  object SQLQuery1: TSQLQuery
-    MaxBlobSize = -1
-    Params = <>
-    SQL.Strings = (
-      'SELECT *'
-      'FROM DOCTOS_ITENS di'
-      'WHERE di.num_seq_docto = 1'
-      'ORDER BY di.num_seq  ')
-    SQLConnection = SQLC
-    Left = 420
-    Top = 384
-  end
-  object DataSetProvider1: TDataSetProvider
-    DataSet = SQLQuery1
-    Options = [poFetchBlobsOnDemand, poRetainServerOrder]
-    Left = 476
-    Top = 398
-  end
-  object ClientDataSet1: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    ProviderName = 'DataSetProvider1'
-    Left = 548
-    Top = 376
-    object IntegerField1: TIntegerField
-      FieldName = 'NUM_SEQ_DOCTO'
-    end
-    object IntegerField2: TIntegerField
-      FieldName = 'NUM_SEQ'
-    end
-    object IntegerField3: TIntegerField
-      DisplayLabel = 'C'#243'digo'
-      FieldName = 'COD_PRODUTO'
-    end
-    object StringField1: TStringField
-      DisplayLabel = 'Descri'#231#227'o'
-      FieldName = 'DES_PRODUTO'
-      Size = 60
-    end
-    object FMTBCDField1: TFMTBCDField
-      DisplayLabel = 'Quantidade'
-      FieldName = 'QTD_MOVTO'
-      DisplayFormat = '0,.0000'
-      Precision = 18
-      Size = 2
-    end
-    object FMTBCDField2: TFMTBCDField
-      DisplayLabel = 'Valor Unit'#225'rio'
-      FieldName = 'VLT_UNITATIO'
-      DisplayFormat = '0,.00'
-      Precision = 18
-      Size = 2
-    end
-    object FMTBCDField3: TFMTBCDField
-      DisplayLabel = 'Valor Total'
-      FieldName = 'VLR_TOTAL'
-      DisplayFormat = '0,.00'
-      Precision = 18
-      Size = 2
-    end
-  end
-  object DataSource1: TDataSource
-    DataSet = ClientDataSet1
-    Left = 612
-    Top = 390
   end
 end

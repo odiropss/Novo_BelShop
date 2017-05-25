@@ -1,6 +1,6 @@
 object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
-  Left = 387
-  Top = 32
+  Left = 356
+  Top = 112
   Width = 798
   Height = 592
   AutoSize = True

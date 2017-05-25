@@ -1,8 +1,8 @@
 object DMBelShop: TDMBelShop
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 242
-  Top = 111
+  Left = 238
+  Top = 108
   Height = 614
   Width = 1115
   object SQLC: TSQLConnection

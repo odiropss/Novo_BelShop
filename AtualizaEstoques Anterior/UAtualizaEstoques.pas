@@ -336,7 +336,7 @@ begin
                '           AND   m.cancelado=''N'''+
                '           AND   m.excluido=''N'''+
                '           AND   m.cod_produto = lpd.cod_produto'+
-               '           ORDER BY m.data_documento DESC), 0.0000) lastprecocompra,'+
+               '           ORDER BY m.data_lancamento DESC), 0.0000) lastprecocompra,'+
                ' lpd.custo_medio lastcustomedio,'+
                ' 0 estoqueideal, 0 estoquemaximo,'+
                ' lp.dt_update dataalteracadastro,'+

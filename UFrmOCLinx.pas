@@ -705,8 +705,8 @@ Var
 Begin
   // Monta Scripts para Buscar Demandas ======================================
   dDta:=DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor);
-  sCaseDiasMeses:=' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-                  '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) ='+
+  sCaseDiasMeses:=' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+                  '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) ='+
                   '      ''01.''||Cast(lpad(extract(month from current_date),2,''0'') as varchar(2))||''.''||'+
                   '               Cast(lpad(extract(Year  from current_date),4,''0'') as varchar(4)) Then '+
                   IntToStr(DiasUteisBelShop(PrimUltDia(dDta,'P'), dDta, False, True));
@@ -717,13 +717,13 @@ Begin
     sDta:=QuotedStr('01.'+sMes1+'.'+ME_Ano1.Text);
 
     sCase:=
-     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem1''';
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem1''';
 
     dDta:=EncodeDate(StrToInt(ME_Ano1.Text), StrToInt(sMes1), 1);
     sCaseDiasMeses:=
-     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
 
     If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
   End;
@@ -733,13 +733,13 @@ Begin
     sDta:=QuotedStr('01.'+sMes2+'.'+ME_Ano2.Text);
 
     sCase:=
-     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem2''' ;
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem2''' ;
 
     dDta:=EncodeDate(StrToInt(ME_Ano2.Text), StrToInt(sMes2), 1);
     sCaseDiasMeses:=
-     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
 
     If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
   End;
@@ -749,13 +749,13 @@ Begin
     sDta:=QuotedStr('01.'+sMes3+'.'+ME_Ano3.Text);
 
     sCase:=
-     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem3''';
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem3''';
 
     dDta:=EncodeDate(StrToInt(ME_Ano3.Text), StrToInt(sMes3), 1);
     sCaseDiasMeses:=
-     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
 
     If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
   End;
@@ -765,13 +765,13 @@ Begin
     sDta:=QuotedStr('01.'+sMes4+'.'+ME_Ano4.Text);
 
     sCase:=
-     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem4''';
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem4''';
 
     dDta:=EncodeDate(StrToInt(ME_Ano4.Text), StrToInt(sMes4), 1);
     sCaseDiasMeses:=
-     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
 
     If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
   End;
@@ -781,13 +781,13 @@ Begin
     sDta:=QuotedStr('01.'+sMes5+'.'+ME_Ano5.Text);
 
     sCase:=
-     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem5''';
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem5''';
 
     dDta:=EncodeDate(StrToInt(ME_Ano5.Text), StrToInt(sMes5), 1);
     sCaseDiasMeses:=
-     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
 
     If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
   End;
@@ -797,13 +797,13 @@ Begin
     sDta:=QuotedStr('01.'+sMes6+'.'+ME_Ano6.Text);
 
     sCase:=
-     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem6''';
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem6''';
 
     dDta:=EncodeDate(StrToInt(ME_Ano6.Text), StrToInt(sMes6), 1);
     sCaseDiasMeses:=
-     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
 
     If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
   End;
@@ -813,13 +813,13 @@ Begin
     sDta:=QuotedStr('01.'+sMes7+'.'+ME_Ano7.Text);
 
     sCase:=
-     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem7''';
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem7''';
 
     dDta:=EncodeDate(StrToInt(ME_Ano7.Text), StrToInt(sMes7), 1);
     sCaseDiasMeses:=
-     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
 
     If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
   End;
@@ -829,13 +829,13 @@ Begin
     sDta:=QuotedStr('01.'+sMes8+'.'+ME_Ano8.Text);
 
     sCase:=
-     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-           '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem8''';
+     sCase+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+           '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then ''Dem8''';
 
     dDta:=EncodeDate(StrToInt(ME_Ano8.Text), StrToInt(sMes8), 1);
     sCaseDiasMeses:=
-     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-                    '               Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
+     sCaseDiasMeses+' When ''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+                    '               Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) = '+sDta+' Then '+IntToStr(DiasUteisBelShop(dDta, PrimUltDia(dDta,'U'), False, True));
 
     If sIN='' Then sIN:=sDta Else sIN:=sIN+', '+sDta;
   End;
@@ -844,8 +844,8 @@ Begin
 
   // Busca Demandas ==========================================================
   MySql:=' Select CAST(LPAD(ml.cod_produto,6,'''') AS VARCHAR(6)) CodProduto,'+
-         ' CAST(''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-         '          Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) as Date) Dta_Ref,'+
+         ' CAST(''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+         '          Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) as Date) Dta_Ref,'+
          ' Case '+sCase+' End Demanda,'+
          ' Case '+sCaseDiasMeses+' End Num_Dias,'+
          ' CAST(SUM(ml.quantidade) AS NUMERIC(12,2)) DEM'+
@@ -857,8 +857,8 @@ Begin
          ' AND   ml.cancelado=''N'''+
          ' AND   ml.excluido=''N'''+
          ' AND   pr.desativado=''N'''+
-         ' AND   cast(''01.''||Cast(lpad(extract(month from ml.data_documento),2,''0'') as varchar(2))||''.''||'+
-         '                     Cast(lpad(extract(Year  from ml.data_documento),4,''0'') as varchar(4)) as Date) in '+sIN+
+         ' AND   cast(''01.''||Cast(lpad(extract(month from ml.data_lancamento),2,''0'') as varchar(2))||''.''||'+
+         '                     Cast(lpad(extract(Year  from ml.data_lancamento),4,''0'') as varchar(4)) as Date) in '+sIN+
          ' AND   ml.empresa='+sFilial;
 
          // Fornecedores --------------------------------------------
@@ -904,8 +904,8 @@ Begin
          ' AND   ma.cancelado=''N'''+
          ' AND   ma.excluido=''N'''+
          ' AND   pr.desativado=''N'''+
-         ' AND   ma.data_documento Between '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaIniAno)))+
-                                     ' AND '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFimAno)))+
+         ' AND   ma.data_lancamento Between '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaIniAno)))+
+                                      ' AND '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFimAno)))+
           ' AND   ma.empresa='+sFilial;
 
          // Fornecedores --------------------------------------------

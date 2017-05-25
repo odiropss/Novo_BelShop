@@ -1,7 +1,19 @@
 unit UArtesanalis;
+{
+- Cor Form/Painel Principal:  $00FFE4CA
+- Cort Componete Desabilitado: clMoneyGreen
 
-// Cor Form/Painel Principal:  $00FFE4CA
-// Cort Componete Desabilitado: clMoneyGreen
+procedure TFrmMateriaPrimaCadastro.Dbg_MateriaPrimaEnter(Sender: TObject);
+begin
+  (Sender as TDBGrid).Color:=clMoneyGreen;
+end;
+
+procedure TFrmMateriaPrimaCadastro.Dbg_MateriaPrimaExit(Sender: TObject);
+begin
+  (Sender as TDBGrid).Color:=clWindow;
+end;
+}
+
 interface
 
 uses
@@ -33,7 +45,7 @@ type
     CorCaptionForm: TJvGradientCaption;
     MenuProduto: TMenuItem;
     SubMenuMateriaPrimaCadastro: TMenuItem;
-    SubMenuMateriaPrimaEntrada: TMenuItem;
+    SubMenuMateriaPrimaMovimentacao: TMenuItem;
     SubMenuProdutoCadastro: TMenuItem;
     SubMenuProdutoVendas: TMenuItem;
     SubMenuMateriaPrimaSaldo: TMenuItem;
@@ -51,7 +63,7 @@ type
     procedure MenuCalculadoraClick(Sender: TObject);
     procedure MenuVersaoClick(Sender: TObject);
     procedure SubMenuProdutoCadastroClick(Sender: TObject);
-    procedure SubMenuMateriaPrimaEntradaClick(Sender: TObject);
+    procedure SubMenuMateriaPrimaMovimentacaoClick(Sender: TObject);
     procedure SubMenuResolucaoMudarClick(Sender: TObject);
     procedure SubMenuResolucaoRetornarClick(Sender: TObject);
 
@@ -219,11 +231,20 @@ begin
 
 end;
 
-procedure TFrmArtesanalis.SubMenuMateriaPrimaEntradaClick(Sender: TObject);
+procedure TFrmArtesanalis.SubMenuMateriaPrimaMovimentacaoClick(Sender: TObject);
 begin
-  DMArtesanalis.MemoAdicionaNomeForm('MATÉRIA-PRIMA - Documento de ENTRADA');
+  DMArtesanalis.MemoAdicionaNomeForm('MATÉRIA-PRIMA - Movimentações');
 
-  FrmMovimentos.Gb_Principal.Caption:=' MATÉRIA-PRIMA - Documento de ENTRADA';
+  FrmMovimentos.Gb_Principal.Caption:=' MATÉRIA-PRIMA - Movimentações ';
+
+  FrmMovimentos.CBx_TipoDocto.Items.Clear;
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Documento   de Entrada');
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Documento   de Saída');
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Devolução   de Entrada');
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Devolução   de Saída');
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Bonificação de Entrada');
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Bonificação de Saída');
+  FrmMovimentos.CBx_TipoDocto.ItemIndex:=-1;
 
   FrmMovimentos.Show;
 
@@ -252,4 +273,6 @@ begin
 end;
 
 end.
+{
 
+}

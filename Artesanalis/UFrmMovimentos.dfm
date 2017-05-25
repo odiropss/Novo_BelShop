@@ -1,6 +1,6 @@
 object FrmMovimentos: TFrmMovimentos
-  Left = 436
-  Top = 23
+  Left = 248
+  Top = 104
   Width = 746
   Height = 604
   AutoSize = True
@@ -26,7 +26,7 @@ object FrmMovimentos: TFrmMovimentos
     Width = 730
     Height = 566
     Align = alClient
-    Caption = ' MAT'#201'RIA-PRIMA - Documento de ENTRADA '
+    Caption = ' MAT'#201'RIA-PRIMA - Movimenta'#231#245'es'
     Color = 16770250
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clBlue
@@ -54,8 +54,8 @@ object FrmMovimentos: TFrmMovimentos
       ParentFont = False
       TabOrder = 0
       object Gb_VlrTotal: TGroupBox
-        Left = 506
-        Top = 7
+        Left = 592
+        Top = 61
         Width = 110
         Height = 51
         Caption = ' Valor Total  '
@@ -65,7 +65,7 @@ object FrmMovimentos: TFrmMovimentos
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 4
+        TabOrder = 6
         object EdtVlrTotal: TCurrencyEdit
           Left = 13
           Top = 22
@@ -83,8 +83,8 @@ object FrmMovimentos: TFrmMovimentos
         end
       end
       object Gb_SerieDocto: TGroupBox
-        Left = 181
-        Top = 7
+        Left = 267
+        Top = 61
         Width = 75
         Height = 51
         Caption = ' S'#233'rie '
@@ -94,7 +94,7 @@ object FrmMovimentos: TFrmMovimentos
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 1
+        TabOrder = 3
         object EdtSerieDocto: TEdit
           Left = 13
           Top = 22
@@ -111,8 +111,8 @@ object FrmMovimentos: TFrmMovimentos
         end
       end
       object Gb_VlrProdutos: TGroupBox
-        Left = 394
-        Top = 7
+        Left = 480
+        Top = 61
         Width = 110
         Height = 51
         Caption = ' Valor Produtos '
@@ -122,7 +122,7 @@ object FrmMovimentos: TFrmMovimentos
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 3
+        TabOrder = 5
         object EdtVlrProdutos: TCurrencyEdit
           Left = 13
           Top = 22
@@ -140,9 +140,9 @@ object FrmMovimentos: TFrmMovimentos
         end
       end
       object Gb_NumDocto: TGroupBox
-        Left = 90
-        Top = 7
-        Width = 89
+        Left = 15
+        Top = 61
+        Width = 86
         Height = 51
         Caption = ' N'#186' Docto '
         Font.Charset = DEFAULT_CHARSET
@@ -151,7 +151,7 @@ object FrmMovimentos: TFrmMovimentos
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 0
+        TabOrder = 1
         object EdtNumDocto: TCurrencyEdit
           Left = 13
           Top = 22
@@ -167,13 +167,12 @@ object FrmMovimentos: TFrmMovimentos
           Font.Style = []
           ParentFont = False
           TabOrder = 0
-          OnChange = EdtNumDoctoChange
           OnExit = EdtNumDoctoExit
         end
       end
       object Gb_DtaDocto: TGroupBox
-        Left = 258
-        Top = 7
+        Left = 344
+        Top = 61
         Width = 134
         Height = 51
         Caption = ' Data Emiss'#227'o '
@@ -183,7 +182,7 @@ object FrmMovimentos: TFrmMovimentos
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 2
+        TabOrder = 4
         object DtEdt_DtaDocto: TcxDateEdit
           Left = 13
           Top = 19
@@ -199,24 +198,25 @@ object FrmMovimentos: TFrmMovimentos
           Width = 106
         end
       end
-      object Gb_Fornecedor: TGroupBox
+      object Gb_Pessoa: TGroupBox
         Left = 48
-        Top = 61
+        Top = 7
         Width = 634
         Height = 51
-        Caption = ' Fornecedor '
+        Caption = ' Cliente / Fornecedor '
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 5
-        object EdtDesFornecedor: TEdit
+        TabOrder = 0
+        object EdtDesPessoa: TEdit
           Left = 101
           Top = 22
           Width = 492
           Height = 19
+          TabStop = False
           CharCase = ecUpperCase
           Color = clMoneyGreen
           Font.Charset = DEFAULT_CHARSET
@@ -229,7 +229,7 @@ object FrmMovimentos: TFrmMovimentos
           ReadOnly = True
           TabOrder = 1
         end
-        object EdtCodFornecedor: TCurrencyEdit
+        object EdtCodPessoa: TCurrencyEdit
           Left = 12
           Top = 22
           Width = 53
@@ -244,8 +244,10 @@ object FrmMovimentos: TFrmMovimentos
           Font.Style = []
           ParentFont = False
           TabOrder = 0
+          OnChange = EdtCodPessoaChange
+          OnExit = EdtCodPessoaExit
         end
-        object Bt_BuscaFornecedor: TJvXPButton
+        object Bt_BuscaPessoa: TJvXPButton
           Tag = 92
           Left = 71
           Top = 19
@@ -313,8 +315,9 @@ object FrmMovimentos: TFrmMovimentos
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
+          OnClick = Bt_BuscaPessoaClick
         end
-        object Bt_NovoFornecedor: TJvXPButton
+        object Bt_NovaPessoa: TJvXPButton
           Tag = 92
           Left = 598
           Top = 19
@@ -338,6 +341,7 @@ object FrmMovimentos: TFrmMovimentos
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
+          OnClick = Bt_NovaPessoaClick
         end
       end
       object EdtNumSeqDocto: TCurrencyEdit
@@ -355,8 +359,50 @@ object FrmMovimentos: TFrmMovimentos
         Font.Style = []
         ParentFont = False
         ReadOnly = True
-        TabOrder = 6
+        TabOrder = 7
         Visible = False
+      end
+      object GroupBox1: TGroupBox
+        Left = 103
+        Top = 61
+        Width = 162
+        Height = 51
+        Caption = ' Tipo do Documento '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 2
+        object CBx_TipoDocto: TComboBox
+          Left = 8
+          Top = 20
+          Width = 143
+          Height = 22
+          Style = csOwnerDrawFixed
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ItemHeight = 16
+          ParentFont = False
+          TabOrder = 0
+          Items.Strings = (
+            'Documento de Entrada - E'
+            'Devolu'#231#227'o  de Entrada - DE'
+            'Bonifica'#231#227'o de Entrada - BE')
+        end
+      end
+      object Button1: TButton
+        Left = 16
+        Top = 48
+        Width = 75
+        Height = 25
+        Caption = 'Button1'
+        TabOrder = 8
+        OnClick = Button1Click
       end
     end
     object Pan_Solicitacoes: TPanel
@@ -504,6 +550,7 @@ object FrmMovimentos: TFrmMovimentos
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
+        OnClick = Bt_AbandonarClick
       end
       object Bt_Excluir: TJvXPButton
         Tag = 99
@@ -573,9 +620,9 @@ object FrmMovimentos: TFrmMovimentos
     end
     object Rb_Produtos: TRadioGroup
       Left = 2
-      Top = 179
+      Top = 178
       Width = 726
-      Height = 335
+      Height = 336
       Align = alClient
       Caption = ' Produtos '
       TabOrder = 2
@@ -584,61 +631,99 @@ object FrmMovimentos: TFrmMovimentos
       Left = 2
       Top = 135
       Width = 726
-      Height = 44
+      Height = 43
       Align = alTop
       BevelInner = bvLowered
       ParentColor = True
       TabOrder = 1
       object Label1: TLabel
-        Left = 7
-        Top = 4
+        Left = 6
+        Top = 6
         Width = 23
         Height = 13
         Caption = 'Seq'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
       end
       object Label2: TLabel
         Left = 41
-        Top = 4
+        Top = 6
         Width = 40
         Height = 13
         Caption = 'C'#243'digo'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
       end
       object Label3: TLabel
         Left = 88
-        Top = 4
+        Top = 6
         Width = 124
         Height = 13
         Caption = 'Descri'#231#227'o do Produto'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
       end
       object Label4: TLabel
         Left = 404
-        Top = 4
+        Top = 6
         Width = 66
         Height = 13
         Caption = 'Quantidade'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
       end
       object Label5: TLabel
         Left = 486
-        Top = 4
+        Top = 6
         Width = 78
         Height = 13
         Caption = 'Valor Unit'#225'rio'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
       end
       object Label6: TLabel
         Left = 590
-        Top = 4
+        Top = 6
         Width = 63
         Height = 13
         Caption = 'Valor Total'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlack
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
       end
       object EdtSeqProduto: TCurrencyEdit
         Left = 4
-        Top = 18
+        Top = 20
         Width = 27
         Height = 19
         AutoSize = False
+        Color = clMoneyGreen
         DecimalPlaces = 0
         DisplayFormat = '0,'
+        Enabled = False
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -648,8 +733,8 @@ object FrmMovimentos: TFrmMovimentos
         TabOrder = 0
       end
       object EdtCodProduto: TCurrencyEdit
-        Left = 35
-        Top = 18
+        Left = 34
+        Top = 20
         Width = 49
         Height = 19
         AutoSize = False
@@ -662,13 +747,15 @@ object FrmMovimentos: TFrmMovimentos
         Font.Style = []
         ParentFont = False
         TabOrder = 1
+        OnEnter = EdtCodProdutoEnter
       end
       object EdtDesProduto: TEdit
         Left = 85
-        Top = 18
+        Top = 20
         Width = 298
         Height = 21
         CharCase = ecUpperCase
+        Color = clMoneyGreen
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -676,11 +763,12 @@ object FrmMovimentos: TFrmMovimentos
         Font.Style = []
         MaxLength = 50
         ParentFont = False
+        ReadOnly = True
         TabOrder = 2
       end
       object EdtQtdProduto: TCurrencyEdit
         Left = 385
-        Top = 18
+        Top = 20
         Width = 87
         Height = 19
         AutoSize = False
@@ -696,7 +784,7 @@ object FrmMovimentos: TFrmMovimentos
       end
       object EdtVltUnitProduto: TCurrencyEdit
         Left = 474
-        Top = 18
+        Top = 20
         Width = 89
         Height = 19
         AutoSize = False
@@ -711,7 +799,7 @@ object FrmMovimentos: TFrmMovimentos
       end
       object EdtVlrTotalProduto: TCurrencyEdit
         Left = 565
-        Top = 18
+        Top = 20
         Width = 89
         Height = 19
         AutoSize = False
@@ -726,8 +814,8 @@ object FrmMovimentos: TFrmMovimentos
       end
       object Bt_IncluiProduto: TJvXPButton
         Tag = 92
-        Left = 658
-        Top = 12
+        Left = 660
+        Top = 14
         Width = 29
         Height = 26
         Caption = 'Inc'
@@ -742,8 +830,8 @@ object FrmMovimentos: TFrmMovimentos
       end
       object Bt_ExcluiProduto: TJvXPButton
         Tag = 92
-        Left = 690
-        Top = 12
+        Left = 692
+        Top = 14
         Width = 29
         Height = 26
         Caption = 'Exc'
@@ -760,11 +848,11 @@ object FrmMovimentos: TFrmMovimentos
     end
     object Dbg_Produtos: TDBGrid
       Left = 2
-      Top = 179
+      Top = 178
       Width = 726
-      Height = 335
+      Height = 336
       Align = alClient
-      DataSource = DMArtesanalis.DataSource1
+      DataSource = DMArtesanalis.DS_V_DoctoItens
       FixedColor = 15000804
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -779,8 +867,11 @@ object FrmMovimentos: TFrmMovimentos
       TitleFont.Height = -11
       TitleFont.Name = 'MS Sans Serif'
       TitleFont.Style = [fsBold]
+      OnEnter = Dbg_ProdutosEnter
+      OnExit = Dbg_ProdutosExit
       Columns = <
         item
+          Color = clMoneyGreen
           Expanded = False
           FieldName = 'NUM_SEQ'
           Title.Alignment = taRightJustify
@@ -811,7 +902,7 @@ object FrmMovimentos: TFrmMovimentos
         end
         item
           Expanded = False
-          FieldName = 'VLT_UNITATIO'
+          FieldName = 'VLR_UNITATIO'
           Title.Alignment = taRightJustify
           Title.Caption = '$ Unit'#225'rio'
           Width = 90
@@ -866,5 +957,10 @@ object FrmMovimentos: TFrmMovimentos
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
     end
+  end
+  object ACBrValidador: TACBrValidador
+    IgnorarChar = './-'
+    Left = 264
+    Top = 344
   end
 end

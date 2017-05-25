@@ -299,8 +299,9 @@ Begin
               (ii>0) Then
            iii:=iii+1;
 
-// OdirApagar
-// sConteudoCampo:=Trim(Node_Campos.ChildNodes[ii].NodeValue);
+          // OdirAqui (Não Apagar)
+          // Verifica Conteúdo de Retorno do Campos
+          // sConteudoCampo:=Trim(Node_Campos.ChildNodes[ii].NodeValue);
 
 //odirAqui 4 - Campo "Empresa" SEM Campo "Portal"
           // Considera Campo "Empresa" SEM Campo "Portal" das TABELAS ==========
@@ -846,9 +847,9 @@ Begin
     //---------------------------------------------------------------
     If (sgMetodo='LinxMovimento') Then
     Begin
-      sXML:='			<Parameter id="operacao">'+'NULL'+'</Parameter>';
+      sXML:='			<Parameter id="operacao">'+sSetor+'</Parameter>'; // Variavel sSetor Usada como Variavel operacao
       Writeln(txtArq,sXML);
-      sXML:='			<Parameter id="tipo_transacao">'+'NULL'+'</Parameter>';
+      sXML:='			<Parameter id="tipo_transacao">'+sLinha+'</Parameter>'; // Variavel sLinha Usada como Variavel tipo_transacao
       Writeln(txtArq,sXML);
     End; // If (sgMetodo='LinxMovimento') Then
 
@@ -963,7 +964,6 @@ Begin
   End; // If (sgMetodo='LinxLancContabil') Then
   // ===========================================================================
 
-
   // ===========================================================================
   // Grava Linhas de Encerramento XML ==========================================
   // ===========================================================================
@@ -1002,6 +1002,8 @@ Var
   bUmaVez,
   bSiga: Boolean;
 
+  sMetodoEspecifico: String;
+
   dDtaUltAtual, dDtaHoje: TDate;
   wDia, wMes, wAno: Word;
 
@@ -1025,7 +1027,6 @@ Begin
   // sgParametroMetodo:='\\192.168.0.252\Projetos\BelShop\WebService Linx\PWebServiceLinx.exe LinxMovimento;15;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;';
 
   // Pasta Executável PWebServiceLinx Não Rede
-  // OdirOPSS
   sgPastaExecutavel:=IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName));
 
   // Parametros na Rede
@@ -1178,7 +1179,7 @@ Begin
   MySql:=' SELECT em.num_cnpj, em.cod_filial, em.cod_linx, em.dta_inicio_linx'+
          ' FROM EMP_CONEXOES em';
 
-         If sgParametroCodLoja<>'' tHEN
+         If sgParametroCodLoja<>'' Then
           MySql:=
            MySql+' WHERE em.cod_linx='+sgParametroCodLoja
          Else
@@ -1213,6 +1214,13 @@ Begin
       // Somente o Metodo Conforme Parametro Enviado ===========================
       If Trim(sgParametroMetodo)<>'' Then
        sgMetodo:=sgParametroMetodo;
+
+      sMetodoEspecifico:='';
+      If (sgMetodo='LinxMovtosAjustesEntradas') Or (sgMetodo='LinxMovtosAjustesSaidas') Then
+      Begin
+        sMetodoEspecifico:=sgMetodo;
+        sgMetodo:='LinxMovimento'
+      End; // If (sgMetodo='LinxMovtosAjustesEntradas') Or (sgMetodo='LinxMovtosAjustesSaidas') Then
 
       sgArqXMLRet:='Retorno_'+sgMetodo+'.XML';
 
@@ -1322,35 +1330,76 @@ Begin
       //========================================================================
 
       //========================================================================
-      // LinxMovimento =========================================================
+      // LinxMovimento e Ajustes ===============================================
       //========================================================================
-      If sgMetodo='LinxMovimento' Then
+      If (sgMetodo='LinxMovimento') Then
       Begin
-        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
-         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
-
-        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
-        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
-
-        DecodeDate(dDtaHoje, wAno, wMes, wDia);
-        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
-
-        // Metodo por Parametro (Acerta Data Inicial)
-        If Trim(sgParametroMetodo)<>'' Then
+        If (sMetodoEspecifico='') Then
         Begin
-          If dDtaUltAtual=dDtaHoje Then
+          If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+           dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
+
+          DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
+          sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+          DecodeDate(dDtaHoje, wAno, wMes, wDia);
+          sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+          // Metodo por Parametro (Acerta Data Inicial)
+          If Trim(sgParametroMetodo)<>'' Then
           Begin
-            sgDtaInicio:=sgDtaFim;
+            If dDtaUltAtual=dDtaHoje Then
+            Begin
+              sgDtaInicio:=sgDtaFim;
+            End;
+
+            If dDtaUltAtual<dDtaHoje Then
+            Begin
+              DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+              sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+            End;
+          End; // If Trim(sgParametroMetodo)<>'' Then
+
+          MontaMetodoXMLPost('NULL', 'NULL'); // operacao, tipo_transacao
+        End; // If (sMetodoEspecifico='') Then
+
+        // Busca Todos os Ajustes de Estoques desde o Inicio da Loja Linx ======
+        If (sMetodoEspecifico='LinxMovtosAjustesEntradas') Or (sMetodoEspecifico='LinxMovtosAjustesSaidas') Then
+        Begin
+          If (dDtaUltAtual=0) Or ((dDtaUltAtual-15)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+           dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+15;
+
+          DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
+          sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+          DecodeDate(dDtaHoje, wAno, wMes, wDia);
+          sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+          // Metodo por Parametro (Acerta Data Inicial)
+          If Trim(sgParametroMetodo)<>'' Then
+          Begin
+            If dDtaUltAtual=dDtaHoje Then
+            Begin
+              sgDtaInicio:=sgDtaFim;
+            End;
+
+            If dDtaUltAtual<dDtaHoje Then
+            Begin
+              DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+              sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+            End;
+          End; // If Trim(sgParametroMetodo)<>'' Then
+
+          If (sMetodoEspecifico='LinxMovtosAjustesEntradas') Then
+          Begin
+            MontaMetodoXMLPost('E', 'J'); // operacao, tipo_transacao
           End;
 
-          If dDtaUltAtual<dDtaHoje Then
+          If (sMetodoEspecifico='LinxMovtosAjustesSaidas') Then
           Begin
-            DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
-            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+            MontaMetodoXMLPost('S', 'J'); // operacao, tipo_transacao
           End;
-        End; // If Trim(sgParametroMetodo)<>'' Then
-
-        MontaMetodoXMLPost();
+        End; // If (sMetodoEspecifico='LinxMovtosAjustesEntradas') Or (sMetodoEspecifico='LinxMovtosAjustesSaidas') Then
       End; // If sgMetodo='LinxMovimento' Then
       //========================================================================
 
@@ -1751,7 +1800,7 @@ Begin
           End;
         End; // If Trim(sgParametroMetodo)<>'' Then
 
-        MontaMetodoXMLPost('NULL', 'NULL');
+        MontaMetodoXMLPost('NULL', 'NULL'); // cod_cc, cod_conta
       End; // If sgMetodo='LinxLancContabil' Then
       //========================================================================
 
@@ -1825,7 +1874,7 @@ Begin
       // Envio do Http.post
       // Ler XML de Retorno e Salva no Banco de Dados
       //========================================================================
-      If bgMontouPost Then       
+      If bgMontouPost Then
       Begin
         bSiga:=True;
         // Envio do Http.post ==================================================

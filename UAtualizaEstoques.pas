@@ -91,12 +91,13 @@ Begin
            ' WHERE m.operacao in (''E'', ''DS'', ''S'', ''DE'')'+
            ' AND   m.cancelado=''N'''+
            ' AND   m.excluido =''N'''+
+//odirapagar - 22/05/2017
 //           ' AND   m.soma_relatorio=''S'''+
            ' AND   p.cod_auxiliar IS NOT NULL'+
            ' AND   Char_length(p.cod_auxiliar)<=6'+
-           ' AND   m.data_documento>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaInicioLinx)))+
+           ' AND   m.data_lancamento>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaInicioLinx)))+
            ' AND   m.empresa='+sCodLinx+
-
+                                                
            ' GROUP BY 1';
     DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
@@ -105,10 +106,15 @@ Begin
            ' SET e.cusmedvalor=COALESCE((SELECT lm.cusmedvalor'+
            '                             FROM W_LINX_MOVTOS lm'+
            '                             WHERE lm.codproduto=e.codproduto), 0.0000)'+
+           ', e.dta_atualizacao=current_date'+
+           ', e.hra_atualizacao=current_time'+
            ' WHERE e.codfilial='+QuotedStr(sCodBelShop);
     DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
+    //==========================================================================
     // Atualiza Estoques e Outros Valores ======================================
+    // Saldo_Final_Sidicom >= 0 ================================================
+    //==========================================================================
     MySql:=' UPDATE ESTOQUE e'+
            ' SET e.saldoatual=e.saldo_final_sidicom+COALESCE((SELECT lm.qtd_movto'+
            '                                                  FROM W_LINX_MOVTOS lm'+
@@ -124,9 +130,39 @@ Begin
            ' e.lastcustomedio=e.cusmedvalor,'+
            ' e.dataalteracadastro=current_timestamp,'+
            ' e.dataalteraestoque=current_timestamp,'+
-           ' e.dataalteraestoque_ped=current_timestamp'+
+           ' e.dataalteraestoque_ped=current_timestamp,'+
+           ' e.dta_atualizacao=current_date,'+
+           ' e.hra_atualizacao=current_time'+
 
-           ' WHERE e.codfilial='+QuotedStr(sCodBelShop);
+           ' WHERE e.saldo_final_sidicom >= 0.00'+
+           ' AND   e.codfilial='+QuotedStr(sCodBelShop);
+    DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
+    //==========================================================================
+    // Atualiza Estoques e Outros Valores ======================================
+    // Saldo_Final_Sidicom < 0 =================================================
+    //==========================================================================
+    MySql:=' UPDATE ESTOQUE e'+
+           ' SET e.saldoatual=COALESCE((SELECT lm.qtd_movto'+
+           '                            FROM W_LINX_MOVTOS lm'+
+           '                            WHERE lm.codproduto=e.codproduto), 0.0000),'+
+           ' e.pedidopendente=0.0000,'+
+           ' e.zonaendereco=0,'+
+           ' e.corredor=''000'','+
+           ' e.prateleira=''000'','+
+           ' e.gaveta=''0000'','+
+           ' e.estoqueideal=0.0000,'+
+           ' e.estoquemaximo=0.0000,'+
+           ' e.customedio=e.cusmedvalor,'+
+           ' e.lastcustomedio=e.cusmedvalor,'+
+           ' e.dataalteracadastro=current_timestamp,'+
+           ' e.dataalteraestoque=current_timestamp,'+
+           ' e.dataalteraestoque_ped=current_timestamp,'+
+           ' e.dta_atualizacao=current_date,'+
+           ' e.hra_atualizacao=current_time'+
+
+           ' WHERE e.saldo_final_sidicom < 0.00'+
+           ' AND   e.codfilial='+QuotedStr(sCodBelShop);
     DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
     // Limpar Arquivo Work =====================================================
@@ -383,7 +419,7 @@ begin
      iCodLinx:=DMAtualizaEstoques.CDS_EmpProcessaCOD_LINX.AsInteger;
     Except
       iCodLinx:=0;
-    End;
+    End;                         
     sDtaLinx      :=DMAtualizaEstoques.CDS_EmpProcessaDTA_INICIO_LINX.AsString;
     sDtaInventLinx:=DMAtualizaEstoques.CDS_EmpProcessaDTA_INVENTARIO_LINX.AsString;
 
@@ -396,7 +432,10 @@ begin
 //    sDtaInventLinx:='09/05/2017';
 //    sCodEmpresa   :='04';
 
-    // Só Atualiza Estoques com Movtos Ent/Sai Linx (Com Linx Sem Inventário)
+    // =========================================================================
+    // LINX SEM INVENTARIO - LINX DIRETO =======================================
+    // Atualiza Estoques (LINX) com Movtos Ent/Sai Linx ========================
+    // =========================================================================
     sTipo:='';
     bSoAtulMovtoLinx:=False;
     If (iCodLinx<>0) and (sDtaInventLinx='') Then
@@ -511,7 +550,7 @@ begin
                  '           AND   m.cancelado=''N'''+
                  '           AND   m.excluido=''N'''+
                  '           AND   m.cod_produto = lpd.cod_produto'+
-                 '           ORDER BY m.data_documento DESC), 0.0000) lastprecocompra,'+
+                 '           ORDER BY m.data_lancamento DESC), 0.0000) lastprecocompra,'+
                  ' lpd.custo_medio lastcustomedio,'+
                  ' 0 estoqueideal, 0 estoquemaximo,'+
                  ' lp.dt_update dataalteracadastro,'+

@@ -7087,7 +7087,7 @@ object FrmArtesanalis: TFrmArtesanalis
         Caption = 'Cadastro'
         OnClick = SubMenuMateriaPrimaCadastroClick
       end
-      object SubMenuMateriaPrimaEntrada: TMenuItem
+      object SubMenuMateriaPrimaMovimentacao: TMenuItem
         Bitmap.Data = {
           EE000000424DEE000000000000007600000028000000100000000F0000000100
           04000000000078000000130B0000130B00001000000000000000000000000000
@@ -7097,9 +7097,8 @@ object FrmArtesanalis: TFrmArtesanalis
           00F000000880FFFFFFF000000080F00F00F000000880FFFFFFF088008884C4C4
           C4C48808888CF4CF4CFC88888884C4C4C44C8888888888888888888888888888
           888888888888888888888888888888888888}
-        Caption = 'Entrada'
-        Enabled = False
-        OnClick = SubMenuMateriaPrimaEntradaClick
+        Caption = 'Movimenta'#231#227'o'
+        OnClick = SubMenuMateriaPrimaMovimentacaoClick
       end
       object SubMenuMateriaPrimaSaldo: TMenuItem
         Bitmap.Data = {

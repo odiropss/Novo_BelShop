@@ -3092,10 +3092,11 @@ begin
                    '              (TRIM(lm.tipo_transacao) = ''''))'+
                    '       AND   lm.cancelado = ''N'''+
                    '       AND   lm.excluido = ''N'''+
-                   '       AND   lm.soma_relatorio = ''S'''+
+//odirapagar - 22/05/2017
+//                   '       AND   lm.soma_relatorio = ''S'''+
                    '       AND   lp.cod_auxiliar IS NOT NULL'+
                    '       AND   lm.empresa ='+IntToStr(iCodLojaLinx)+
-                   '       AND   lm.data_documento >= '+QuotedStr(sDtaUltAtualizacao)+
+                   '       AND   lm.data_lancamento >= '+QuotedStr(sDtaUltAtualizacao)+
                    '       GROUP BY 1, 2'+
 
                    '       UNION'+
@@ -3725,7 +3726,7 @@ begin
                    '                   AND   ((ml1.tipo_transacao=''E'') OR (ml1.tipo_transacao IS NULL))'+
                    '                   AND   ml1.cancelado=ml.cancelado'+
                    '                   AND   ml1.excluido=ml.excluido'+
-                   '                   AND   CAST(ml1.data_documento as Date)>='+QuotedStr(sDtaUltAtualizacao)+')';
+                   '                   AND   CAST(ml1.data_lancamento as Date)>='+QuotedStr(sDtaUltAtualizacao)+')';
             DMMovtosEmpresas.CDS_LojaLinx.Close;
             DMMovtosEmpresas.SDS_LojaLinx.CommandText:=MySql;
             DMMovtosEmpresas.CDS_LojaLinx.Open;

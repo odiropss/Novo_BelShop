@@ -7,12 +7,12 @@
 		<Parameters>
 			<Parameter id="chave">d52511f4-3541-4a65-9adc-665513ea3207</Parameter>
 			<Parameter id="cnpjEmp">03772229000132</Parameter>
-			<Parameter id="data_inicial">2017-04-25</Parameter>
-			<Parameter id="data_fim">2017-05-15</Parameter>
+			<Parameter id="data_inicial">2017-05-09</Parameter>
+			<Parameter id="data_fim">2017-05-25</Parameter>
 			<Parameter id="hora_inicial">NULL</Parameter>
 			<Parameter id="hora_fim">NULL</Parameter>
-			<Parameter id="operacao">NULL</Parameter>
-			<Parameter id="tipo_transacao">NULL</Parameter>
+			<Parameter id="operacao">S</Parameter>
+			<Parameter id="tipo_transacao">J</Parameter>
 		</Parameters>
 	</Command>
 </LinxMicrovix>
