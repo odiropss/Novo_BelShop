@@ -70,6 +70,8 @@ type
     { Private declarations }
   public
     { Public declarations }
+
+    bgTransportar: Boolean;
   end;
 
 var
@@ -220,6 +222,7 @@ end;
 procedure TFrmMateriaPrimaCadastro.Bt_FecharClick(Sender: TObject);
 begin
   bgSairMateria:=True;
+  bgTransportar:=False;
 
   Close;
 end;
@@ -261,20 +264,21 @@ begin
    Exit;
 
   If DMArtesanalis.CDS_MateriaPrima.Locate('COD_MATERIAPRIMA', EdtMateriaPrimaCod.AsInteger,[]) Then
-   Begin
-     EdtMateriaPrimaDesc.Text       :=DMArtesanalis.CDS_MateriaPrimaDES_MATERIAPRIMA.AsString;
-     EdtMateriaPrimaUnid.Text       :=DMArtesanalis.CDS_MateriaPrimaDES_UNIDADE.AsString;
-     EdtMateriaPrimaCusto.Value     :=DMArtesanalis.CDS_MateriaPrimaPRECO_CUSTO.AsCurrency;
-     EdtMateriaPrimaCustoMedio.Value:=DMArtesanalis.CDS_MateriaPrimaCUSTO_MEDIO.AsCurrency;
-     EdtMateriaPrimaQtdSaldo.Value  :=DMArtesanalis.CDS_MateriaPrimaQTD_ESTOQUE.AsFloat;
-     bgAlterar:=True;
-   End
-  Else
-   Begin
-     msg('Matéria-Prima Não Encontrada !!','A');
-     bgAlterar:=False;
-     EdtMateriaPrimaCod.SetFocus;
-   End; // If DMArtesanalis.CDS_MateriaPrima.Locate('COD_MATERIAPRIMA', EdtMateriaPrimaCod.AsInteger,[]) Then
+  Begin
+    EdtMateriaPrimaDesc.Text       :=DMArtesanalis.CDS_MateriaPrimaDES_MATERIAPRIMA.AsString;
+    EdtMateriaPrimaUnid.Text       :=DMArtesanalis.CDS_MateriaPrimaDES_UNIDADE.AsString;
+    EdtMateriaPrimaCusto.Value     :=DMArtesanalis.CDS_MateriaPrimaPRECO_CUSTO.AsCurrency;
+    EdtMateriaPrimaCustoMedio.Value:=DMArtesanalis.CDS_MateriaPrimaCUSTO_MEDIO.AsCurrency;
+    EdtMateriaPrimaQtdSaldo.Value  :=DMArtesanalis.CDS_MateriaPrimaQTD_ESTOQUE.AsFloat;
+    bgAlterar:=True;
+  End; // If DMArtesanalis.CDS_MateriaPrima.Locate('COD_MATERIAPRIMA', EdtMateriaPrimaCod.AsInteger,[]) Then
+//  End
+//  Else
+//   Begin
+//     msg('Matéria-Prima Não Encontrada !!','A');
+//     bgAlterar:=False;
+//     EdtMateriaPrimaCod.SetFocus;
+//   End; // If DMArtesanalis.CDS_MateriaPrima.Locate('COD_MATERIAPRIMA', EdtMateriaPrimaCod.AsInteger,[]) Then
 end;
 
 procedure TFrmMateriaPrimaCadastro.Bt_MateriaPrimaAbandonarClick(Sender: TObject);
@@ -312,7 +316,19 @@ begin
 
   // Executa DML ===============================================================
   If not DMLMateriaPrima('IA') Then
+  Begin
    MessageBox(Handle, pChar('Erro ao Incluir/Altera a Matéria-Prima !!'+#13+sgMensagem), 'ATENÇÃO !!', MB_ICONERROR);
+
+   If bgTransportar Then
+    Exit;
+  End;
+
+  If bgTransportar Then
+  Begin
+    Bt_FecharClick(Self);
+    bgTransportar:=True;
+    Exit;
+  End; // If bgTransportar Then
 
   EdtMateriaPrimaCodEnter(Self);
   EdtMateriaPrimaCod.SetFocus;
@@ -422,7 +438,6 @@ procedure TFrmMateriaPrimaCadastro.FormCreate(Sender: TObject);
 begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
-
 end;
 
 procedure TFrmMateriaPrimaCadastro.Dbg_MateriaPrimaEnter(Sender: TObject);

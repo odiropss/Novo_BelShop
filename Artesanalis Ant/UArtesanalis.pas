@@ -1,7 +1,24 @@
 unit UArtesanalis;
+{
+- Cor Form/Painel Principal:  $00FFE4CA
+- Cort Componete Desabilitado: clMoneyGreen
 
-// Cor Form/Painel Principal:  $00FFE4CA
-// Cort Componete Desabilitado: clMoneyGreen
+  // Não Permite Excluir Registro Pelo Grid ====================================
+  =============>>>> Dbg_MateriaPrimaKeyDown(
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
+procedure TFrmMateriaPrimaCadastro.Dbg_MateriaPrimaEnter(Sender: TObject);
+begin
+  (Sender as TDBGrid).Color:=clMoneyGreen;
+end;
+
+procedure TFrmMateriaPrimaCadastro.Dbg_MateriaPrimaExit(Sender: TObject);
+begin
+  (Sender as TDBGrid).Color:=clWindow;
+end;
+}
+
 interface
 
 uses
@@ -20,6 +37,7 @@ uses
   dxSkinSilver, dxSkinSpringTime, dxSkinStardust, dxSkinSummer2008,
   dxSkinsDefaultPainters, dxSkinValentine, dxSkinXmas2008Blue,
   dxSkinsdxStatusBarPainter, dxStatusBar, Mask, ToolEdit, CurrEdit, Shellapi,
+  ComObj, // Alterar Resolução do Video
   cxLocalization;
 
 type
@@ -28,15 +46,18 @@ type
     MenuCalculadora: TMenuItem;
     MenuVersao: TMenuItem;
     MenuSAIR: TMenuItem;
-    MenuMateriaPrima: TMenuItem;
     CorCaptionForm: TJvGradientCaption;
     MenuProduto: TMenuItem;
-    SubMenuMateriaPrimaCadastro: TMenuItem;
-    SubMenuMateriaPrimaEntrada: TMenuItem;
     SubMenuProdutoCadastro: TMenuItem;
     SubMenuProdutoVendas: TMenuItem;
-    SubMenuMateriaPrimaSaldo: TMenuItem;
     Trad_Localizer: TcxLocalizer;
+    MenuResolucaoVideo: TMenuItem;
+    SubMenuResolucaoMudar: TMenuItem;
+    N1: TMenuItem;
+    SubMenuResolucaoRetornar: TMenuItem;
+    MenuMateriaPrima: TMenuItem;
+    SubMenuMateriaPrimaCadastro: TMenuItem;
+    SubMenuMateriaPrimaMovimentacao: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -46,7 +67,9 @@ type
     procedure MenuCalculadoraClick(Sender: TObject);
     procedure MenuVersaoClick(Sender: TObject);
     procedure SubMenuProdutoCadastroClick(Sender: TObject);
-    procedure SubMenuMateriaPrimaEntradaClick(Sender: TObject);
+    procedure SubMenuMateriaPrimaMovimentacaoClick(Sender: TObject);
+    procedure SubMenuResolucaoMudarClick(Sender: TObject);
+    procedure SubMenuResolucaoRetornarClick(Sender: TObject);
 
     // Odir ====================================================================
 
@@ -61,6 +84,14 @@ type
 var
   FrmArtesanalis: TFrmArtesanalis;
 
+  // Alterar Resolução do Video ///////////////////////////
+  OldWidth, OldHeight : Integer;
+  a, b: word;
+  function TrocaResolucao(X, Y, a , b: word): Boolean;
+  function VoltaResolucao(a , b: word): Boolean;
+  ////////////////////////////////////////////////////////
+
+
 implementation
 
 uses UDMArtesanalis, DK_Procs1, SysConst, UFrmMateriaPrimaCadastro,
@@ -71,6 +102,32 @@ uses UDMArtesanalis, DK_Procs1, SysConst, UFrmMateriaPrimaCadastro,
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - Inicio >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+function TrocaResolucao(X, Y, a , b: word): Boolean;
+var
+  lpDevMode: TDeviceMode;
+begin
+  if EnumDisplaySettings(nil, 0, lpDevMode) then
+  begin
+    lpDevMode.dmFields := DM_PELSWIDTH Or DM_PELSHEIGHT;
+    a:= lpDevMode.dmPelsWidth;  // pega a resolução atual (horizontal)
+    b:= lpDevMode.dmPelsHeight; // pega a resolução atual  (vertical)
+    lpDevMode.dmPelsWidth := x;  // altera a resolução para a que voce voce desejou
+    lpDevMode.dmPelsHeight:= y;  // altera a resolução para a que voce voce desejou
+    Result := ChangeDisplaySettings(lpDevMode, 0) = DISP_CHANGE_SUCCESSFUL;
+  end;
+end;
+
+function VoltaResolucao(a , b: word): Boolean;
+var lpDevMode: TDeviceMode;
+begin
+  if EnumDisplaySettings(nil, 0, lpDevMode) then
+  begin
+    lpDevMode.dmFields := DM_PELSWIDTH Or DM_PELSHEIGHT;
+    lpDevMode.dmPelsWidth := a;  // ao fechar o programa recupera a resolução que vinha sendo usada
+    lpDevMode.dmPelsHeight:= b;  // ao fechar o programa recupera a resolução que vinha sendo usada
+    Result := ChangeDisplaySettings(lpDevMode, 0) = DISP_CHANGE_SUCCESSFUL;
+  end;
+end;
 
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -120,6 +177,9 @@ begin
     Action := caNone;
     Exit;
   End;
+
+  If SubMenuResolucaoRetornar.Enabled Then
+   VoltaResolucao(a , b);
 
   FreeAndNil(mgMemoForms);
 
@@ -175,15 +235,49 @@ begin
 
 end;
 
-procedure TFrmArtesanalis.SubMenuMateriaPrimaEntradaClick(Sender: TObject);
+procedure TFrmArtesanalis.SubMenuMateriaPrimaMovimentacaoClick(Sender: TObject);
 begin
-  DMArtesanalis.MemoAdicionaNomeForm('MATÉRIA-PRIMA - Documento de ENTRADA');
+  DMArtesanalis.MemoAdicionaNomeForm('MATÉRIA-PRIMA - Movimentações');
 
-  FrmMovimentos.Gb_Principal.Caption:=' MATÉRIA-PRIMA - Documento de ENTRADA';
+  FrmMovimentos.Gb_Principal.Caption:=' MATÉRIA-PRIMA - Movimentações ';
 
+  FrmMovimentos.CBx_TipoDocto.Items.Clear;
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Documento   de Entrada');
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Documento   de Saída');
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Devolução   de Entrada');
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Devolução   de Saída');
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Bonificação de Entrada');
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Bonificação de Saída');
+  FrmMovimentos.CBx_TipoDocto.ItemIndex:=-1;
+
+  FrmMovimentos.sgOrigem:='M'; // Materia-Prima
   FrmMovimentos.Show;
 
 end;
 
-end.
+procedure TFrmArtesanalis.SubMenuResolucaoMudarClick(Sender: TObject);
+begin
 
+  If msg('Deseja Realmente Mudar a'+cr+' Resolução do Video ?','C')=2 Then
+   Exit;
+
+  TrocaResolucao(1024, 768, a , b);
+
+  SubMenuResolucaoMudar.Enabled   :=False;
+  SubMenuResolucaoRetornar.Enabled:=True;
+
+end;
+
+procedure TFrmArtesanalis.SubMenuResolucaoRetornarClick(Sender: TObject);
+begin
+  VoltaResolucao(a , b);
+
+  SubMenuResolucaoMudar.Enabled   :=True;
+  SubMenuResolucaoRetornar.Enabled:=False;
+
+end;
+
+end.
+{
+
+}

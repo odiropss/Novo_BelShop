@@ -413,8 +413,6 @@ Procedure TFrmProdutoCadastro.LimpaComponentes;
 Var
   i: Integer;
 Begin
-
-  // Fecha Componentes DMArtesanalis ===============================================
   For i:=0 to FrmProdutoCadastro.ComponentCount-1 do
   Begin
     If FrmProdutoCadastro.Components[i] is TEdit Then

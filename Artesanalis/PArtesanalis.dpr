@@ -16,7 +16,7 @@ uses
 
 begin
   Application.Initialize;
-  Application.Title := 'Artesalalis';
+  Application.Title := 'Líxisse';
   Application.CreateForm(TFrmArtesanalis, FrmArtesanalis);
   Application.CreateForm(TDMArtesanalis, DMArtesanalis);
   Application.CreateForm(TFDK_Procs1, FDK_Procs1);

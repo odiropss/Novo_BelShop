@@ -101,7 +101,7 @@ DebugSourceDirs=
 UsePackages=0
 [Parameters]
 RunParams=
-HostApplication=
+HostApplication=C:\Projetos\BelShop\Fontes\Artesanalis\PLixisse.exe
 Launcher=
 UseLauncher=0
 DebugCWD=

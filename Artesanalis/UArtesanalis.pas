@@ -3,6 +3,11 @@ unit UArtesanalis;
 - Cor Form/Painel Principal:  $00FFE4CA
 - Cort Componete Desabilitado: clMoneyGreen
 
+  // Não Permite Excluir Registro Pelo Grid ====================================
+  =============>>>> Dbg_MateriaPrimaKeyDown(
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
 procedure TFrmMateriaPrimaCadastro.Dbg_MateriaPrimaEnter(Sender: TObject);
 begin
   (Sender as TDBGrid).Color:=clMoneyGreen;
@@ -41,19 +46,18 @@ type
     MenuCalculadora: TMenuItem;
     MenuVersao: TMenuItem;
     MenuSAIR: TMenuItem;
-    MenuMateriaPrima: TMenuItem;
     CorCaptionForm: TJvGradientCaption;
     MenuProduto: TMenuItem;
-    SubMenuMateriaPrimaCadastro: TMenuItem;
-    SubMenuMateriaPrimaMovimentacao: TMenuItem;
     SubMenuProdutoCadastro: TMenuItem;
     SubMenuProdutoVendas: TMenuItem;
-    SubMenuMateriaPrimaSaldo: TMenuItem;
     Trad_Localizer: TcxLocalizer;
     MenuResolucaoVideo: TMenuItem;
     SubMenuResolucaoMudar: TMenuItem;
     N1: TMenuItem;
     SubMenuResolucaoRetornar: TMenuItem;
+    MenuMateriaPrima: TMenuItem;
+    SubMenuMateriaPrimaCadastro: TMenuItem;
+    SubMenuMateriaPrimaMovimentacao: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -246,6 +250,7 @@ begin
   FrmMovimentos.CBx_TipoDocto.Items.Add('Bonificação de Saída');
   FrmMovimentos.CBx_TipoDocto.ItemIndex:=-1;
 
+  FrmMovimentos.sgOrigem:='M'; // Materia-Prima
   FrmMovimentos.Show;
 
 end;

@@ -70,6 +70,8 @@ type
     { Private declarations }
   public
     { Public declarations }
+
+    bgTransportar: Boolean;
   end;
 
 var
@@ -220,6 +222,7 @@ end;
 procedure TFrmMateriaPrimaCadastro.Bt_FecharClick(Sender: TObject);
 begin
   bgSairMateria:=True;
+  bgTransportar:=False;
 
   Close;
 end;
@@ -313,7 +316,19 @@ begin
 
   // Executa DML ===============================================================
   If not DMLMateriaPrima('IA') Then
+  Begin
    MessageBox(Handle, pChar('Erro ao Incluir/Altera a Matéria-Prima !!'+#13+sgMensagem), 'ATENÇÃO !!', MB_ICONERROR);
+
+   If bgTransportar Then
+    Exit;
+  End;
+
+  If bgTransportar Then
+  Begin
+    Bt_FecharClick(Self);
+    bgTransportar:=True;
+    Exit;
+  End; // If bgTransportar Then
 
   EdtMateriaPrimaCodEnter(Self);
   EdtMateriaPrimaCod.SetFocus;
@@ -423,7 +438,6 @@ procedure TFrmMateriaPrimaCadastro.FormCreate(Sender: TObject);
 begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
-
 end;
 
 procedure TFrmMateriaPrimaCadastro.Dbg_MateriaPrimaEnter(Sender: TObject);

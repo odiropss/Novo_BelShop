@@ -1,6 +1,6 @@
 object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
-  Left = 387
-  Top = 32
+  Left = 356
+  Top = 112
   Width = 798
   Height = 592
   AutoSize = True
@@ -162,7 +162,6 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
           Width = 61
           Height = 19
           AutoSize = False
-          Color = clMoneyGreen
           DisplayFormat = ',0.00'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -170,7 +169,6 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
           Font.Name = 'MS Sans Serif'
           Font.Style = []
           ParentFont = False
-          ReadOnly = True
           TabOrder = 0
         end
       end
@@ -192,6 +190,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
           Top = 20
           Width = 69
           Height = 19
+          TabStop = False
           AutoSize = False
           Color = clMoneyGreen
           DisplayFormat = ',0.00'
@@ -223,6 +222,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
           Top = 20
           Width = 88
           Height = 19
+          TabStop = False
           AutoSize = False
           Color = clMoneyGreen
           DecimalPlaces = 4

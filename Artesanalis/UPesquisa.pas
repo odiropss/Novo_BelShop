@@ -85,6 +85,7 @@ type
     EdtCodigo: TEdit;
     Bt_PesquisaOK: TJvXPButton;
     Bt_PesquisaRetorna: TJvXPButton;
+    Bt_PesquisaNovo: TJvXPButton;
     procedure EdtDescricaoChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -106,6 +107,7 @@ type
     Procedure Dbg_PesquisaPesquisaDoctosOC;
     procedure Dbg_PesquisaKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure Bt_PesquisaNovoClick(Sender: TObject);
 
     // Odir ====================================================================
   private
@@ -124,6 +126,8 @@ type
     Retorno1: String;
     Retorno2: String;
     Retorno3: String;
+
+    bgIncluirNovo: Boolean;
   end;
 
 var
@@ -131,7 +135,7 @@ var
 
 implementation
 
-uses UDMArtesanalis;
+uses UDMArtesanalis, DK_Procs1;
 
 {$R *.dfm}
 
@@ -287,6 +291,8 @@ begin
 
   Application.OnMessage := MouseAppEventsMessage;
 
+  bgIncluirNovo:=False;
+
 end;
 
 procedure TFrmPesquisa.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -303,6 +309,16 @@ begin
     Key := 0;
 
 
+end;
+
+procedure TFrmPesquisa.Bt_PesquisaNovoClick(Sender: TObject);
+begin
+  if msg('Deseja Relamente Incluir ??','C')=2 Then
+   Exit;
+
+  bgIncluirNovo:=True;
+
+  Bt_PesquisaRetornaClick(Self);
 end;
 
 end.

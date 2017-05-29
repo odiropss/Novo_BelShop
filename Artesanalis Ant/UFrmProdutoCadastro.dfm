@@ -1,6 +1,6 @@
 object FrmProdutoCadastro: TFrmProdutoCadastro
-  Left = 244
-  Top = 110
+  Left = 235
+  Top = 104
   Width = 1003
   Height = 617
   AutoSize = True
@@ -408,9 +408,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
           Top = 20
           Width = 82
           Height = 20
-          TabStop = False
           AutoSize = False
-          Color = clMoneyGreen
           DecimalPlaces = 5
           DisplayFormat = ',0.00'
           Font.Charset = DEFAULT_CHARSET
@@ -419,7 +417,6 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
           Font.Name = 'MS Sans Serif'
           Font.Style = []
           ParentFont = False
-          ReadOnly = True
           TabOrder = 0
         end
       end
@@ -440,7 +437,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
           Left = 13
           Top = 20
           Width = 82
-          Height = 20
+          Height = 19
           CharCase = ecUpperCase
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -503,9 +500,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
           Top = 20
           Width = 82
           Height = 20
-          TabStop = False
           AutoSize = False
-          Color = clMoneyGreen
           DecimalPlaces = 5
           DisplayFormat = ',0.00'
           Font.Charset = DEFAULT_CHARSET
@@ -514,7 +509,6 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
           Font.Name = 'MS Sans Serif'
           Font.Style = []
           ParentFont = False
-          ReadOnly = True
           TabOrder = 0
         end
       end

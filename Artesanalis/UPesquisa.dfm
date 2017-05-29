@@ -2,12 +2,11 @@ object FrmPesquisa: TFrmPesquisa
   Left = 275
   Top = 114
   ActiveControl = EdtDescricao
-  AutoSize = True
   BorderIcons = []
   BorderStyle = bsToolWindow
   Caption = 'Pesquisas/Consultas'
   ClientHeight = 350
-  ClientWidth = 481
+  ClientWidth = 549
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -404,7 +403,7 @@ object FrmPesquisa: TFrmPesquisa
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 481
+    Width = 549
     Height = 49
     Align = alTop
     BevelInner = bvLowered
@@ -414,7 +413,7 @@ object FrmPesquisa: TFrmPesquisa
     ParentCtl3D = False
     TabOrder = 0
     DesignSize = (
-      481
+      549
       49)
     object Label1: TLabel
       Left = 17
@@ -423,7 +422,7 @@ object FrmPesquisa: TFrmPesquisa
       Height = 13
       Caption = 'Descri'#231#227'o'
       Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
+      Font.Color = clWhite
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
@@ -432,7 +431,7 @@ object FrmPesquisa: TFrmPesquisa
     object EdtDescricao: TEdit
       Left = 16
       Top = 19
-      Width = 449
+      Width = 517
       Height = 19
       Anchors = [akLeft, akTop, akRight]
       CharCase = ecUpperCase
@@ -445,7 +444,7 @@ object FrmPesquisa: TFrmPesquisa
   object Dbg_Pesquisa: TDBGrid
     Left = 0
     Top = 49
-    Width = 481
+    Width = 549
     Height = 262
     Hint = 'Clique no T'#237'tulo da Coluna para Altera a Coluna de Pesquisa'
     Align = alClient
@@ -477,7 +476,7 @@ object FrmPesquisa: TFrmPesquisa
   object Panel2: TPanel
     Left = 0
     Top = 311
-    Width = 481
+    Width = 549
     Height = 39
     Align = alBottom
     BevelInner = bvLowered
@@ -487,11 +486,11 @@ object FrmPesquisa: TFrmPesquisa
     ParentCtl3D = False
     TabOrder = 2
     object EdtCodigo: TEdit
-      Left = 192
+      Left = 328
       Top = 8
       Width = 41
       Height = 21
-      TabOrder = 0
+      TabOrder = 3
       Visible = False
     end
     object Bt_PesquisaOK: TJvXPButton
@@ -500,7 +499,7 @@ object FrmPesquisa: TFrmPesquisa
       Width = 109
       Height = 31
       Caption = 'Selecionar'
-      TabOrder = 1
+      TabOrder = 0
       Glyph.Data = {
         07544269746D617002030000424D020300000000000036010000280000001300
         0000170000000100080000000000CC010000C30E0000C30E0000400000000000
@@ -538,7 +537,7 @@ object FrmPesquisa: TFrmPesquisa
       OnClick = Bt_PesquisaOKClick
     end
     object Bt_PesquisaRetorna: TJvXPButton
-      Left = 367
+      Left = 435
       Top = 4
       Width = 110
       Height = 31
@@ -563,6 +562,33 @@ object FrmPesquisa: TFrmPesquisa
       Font.Style = [fsBold]
       ParentFont = False
       OnClick = Bt_PesquisaRetornaClick
+    end
+    object Bt_PesquisaNovo: TJvXPButton
+      Left = 113
+      Top = 4
+      Width = 109
+      Height = 31
+      Caption = 'Incluir/Novo'
+      TabOrder = 1
+      Glyph.Data = {
+        07544269746D6170EE000000424DEE0000000000000076000000280000001000
+        00000F000000010004000000000078000000130B0000130B0000100000000000
+        0000000000000000800000800000008080008000000080008000808000008080
+        8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+        FF00888888800000000088888880FFFFFFF088888880F00F00F088888880FFFF
+        FFF088888880F00F00F088888880FFFFFFF08888888444444444880000844444
+        4444880BB08888888888000BB000888888880BBBBBB0888888880BBBBBB08888
+        8888000BB00088888888880BB088888888888800008888888888}
+      ShowFocusRect = True
+      Align = alLeft
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Visible = False
+      OnClick = Bt_PesquisaNovoClick
     end
   end
 end

@@ -59,8 +59,10 @@ type
     CDS_V_DoctoItensCOD_PRODUTO: TIntegerField;
     CDS_V_DoctoItensDES_PRODUTO: TStringField;
     CDS_V_DoctoItensQTD_MOVTO: TFMTBCDField;
-    CDS_V_DoctoItensVLR_UNITATIO: TFMTBCDField;
+    CDS_V_DoctoItensVLR_UNITARIO: TFMTBCDField;
     CDS_V_DoctoItensVLR_TOTAL: TFMTBCDField;
+    CDS_V_DoctoItensVlr_TotalCalculado: TAggregateField;
+    CDS_V_DoctoItensVLR_DESCONTO: TFMTBCDField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

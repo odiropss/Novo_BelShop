@@ -341,6 +341,8 @@ object DMArtesanalis: TDMArtesanalis
   end
   object CDS_V_DoctoItens: TClientDataSet
     Aggregates = <>
+    AggregatesActive = True
+    IndexFieldNames = 'NUM_SEQ'
     Params = <>
     Left = 60
     Top = 360
@@ -366,11 +368,17 @@ object DMArtesanalis: TDMArtesanalis
       Precision = 18
       Size = 2
     end
-    object CDS_V_DoctoItensVLR_UNITATIO: TFMTBCDField
+    object CDS_V_DoctoItensVLR_UNITARIO: TFMTBCDField
       DisplayLabel = 'Valor Unit'#225'rio'
-      FieldName = 'VLR_UNITATIO'
+      FieldName = 'VLR_UNITARIO'
       DisplayFormat = '0,.00'
       Precision = 18
+      Size = 2
+    end
+    object CDS_V_DoctoItensVLR_DESCONTO: TFMTBCDField
+      DisplayLabel = 'Valor Desconto'
+      FieldName = 'VLR_DESCONTO'
+      DisplayFormat = '0,.00'
       Size = 2
     end
     object CDS_V_DoctoItensVLR_TOTAL: TFMTBCDField
@@ -379,6 +387,15 @@ object DMArtesanalis: TDMArtesanalis
       DisplayFormat = '0,.00'
       Precision = 18
       Size = 2
+    end
+    object CDS_V_DoctoItensVlr_TotalCalculado: TAggregateField
+      Alignment = taRightJustify
+      DisplayLabel = '$ Total Calculado'
+      FieldName = 'Vlr_TotalCalculado'
+      Active = True
+      currency = True
+      DisplayFormat = '0,.00'
+      Expression = 'SUM(VLR_TOTAL)'
     end
   end
   object DS_V_DoctoItens: TDataSource

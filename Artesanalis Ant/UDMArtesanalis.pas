@@ -59,19 +59,10 @@ type
     CDS_V_DoctoItensCOD_PRODUTO: TIntegerField;
     CDS_V_DoctoItensDES_PRODUTO: TStringField;
     CDS_V_DoctoItensQTD_MOVTO: TFMTBCDField;
-    CDS_V_DoctoItensVLT_UNITATIO: TFMTBCDField;
+    CDS_V_DoctoItensVLR_UNITARIO: TFMTBCDField;
     CDS_V_DoctoItensVLR_TOTAL: TFMTBCDField;
-    SQLQuery1: TSQLQuery;
-    DataSetProvider1: TDataSetProvider;
-    ClientDataSet1: TClientDataSet;
-    IntegerField1: TIntegerField;
-    IntegerField2: TIntegerField;
-    IntegerField3: TIntegerField;
-    StringField1: TStringField;
-    FMTBCDField1: TFMTBCDField;
-    FMTBCDField2: TFMTBCDField;
-    FMTBCDField3: TFMTBCDField;
-    DataSource1: TDataSource;
+    CDS_V_DoctoItensVlr_TotalCalculado: TAggregateField;
+    CDS_V_DoctoItensVLR_DESCONTO: TFMTBCDField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
