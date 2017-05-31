@@ -1,42 +1,33 @@
-unit UFrmMovimentos;
+unit UFrmPedidoVenda;
 
 interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, cxGraphics, cxControls, cxLookAndFeels, cxLookAndFeelPainters,
-  dxSkinsCore, dxSkinBlack, dxSkinBlue, dxSkinCaramel, dxSkinCoffee,
-  dxSkinDarkRoom, dxSkinDarkSide, dxSkinFoggy, dxSkinGlassOceans,
-  dxSkiniMaginary, dxSkinLilian, dxSkinLiquidSky, dxSkinLondonLiquidSky,
-  dxSkinMcSkin, dxSkinMoneyTwins, dxSkinOffice2007Black,
-  dxSkinOffice2007Blue, dxSkinOffice2007Green, dxSkinOffice2007Pink,
-  dxSkinOffice2007Silver, dxSkinOffice2010Black, dxSkinOffice2010Blue,
-  dxSkinOffice2010Silver, dxSkinPumpkin, dxSkinSeven, dxSkinSharp,
-  dxSkinSilver, dxSkinSpringTime, dxSkinStardust, dxSkinSummer2008,
-  dxSkinsDefaultPainters, dxSkinValentine, dxSkinXmas2008Blue,
-  dxSkinsdxStatusBarPainter, JvExControls, JvXPCore, JvXPButtons,
-  dxStatusBar, Grids, DBGrids, StdCtrls, Mask, ToolEdit, CurrEdit, ExtCtrls,
-  DBXpress, ComCtrls, JvExComCtrls, JvDateTimePicker, JvDBDateTimePicker,
+  cxContainer, cxEdit, dxSkinsCore, dxSkinBlack, dxSkinBlue, dxSkinCaramel,
+  dxSkinCoffee, dxSkinDarkRoom, dxSkinDarkSide, dxSkinFoggy,
+  dxSkinGlassOceans, dxSkiniMaginary, dxSkinLilian, dxSkinLiquidSky,
+  dxSkinLondonLiquidSky, dxSkinMcSkin, dxSkinMoneyTwins,
+  dxSkinOffice2007Black, dxSkinOffice2007Blue, dxSkinOffice2007Green,
+  dxSkinOffice2007Pink, dxSkinOffice2007Silver, dxSkinOffice2010Black,
+  dxSkinOffice2010Blue, dxSkinOffice2010Silver, dxSkinPumpkin, dxSkinSeven,
+  dxSkinSharp, dxSkinSilver, dxSkinSpringTime, dxSkinStardust,
+  dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
+  dxSkinXmas2008Blue, dxSkinsdxStatusBarPainter, dxStatusBar, Grids,
+  DBGrids, StdCtrls, ExtCtrls, DBCtrls, JvExControls, JvXPCore,
+  JvXPButtons, cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, Mask,
   Commctrl, // SHOW HINT EM FORMA DE BALÃO
-  JvExMask, JvToolEdit, JvMaskEdit, JvCheckedMaskEdit, JvDatePickerEdit,
-  JvDBDatePickerEdit, cxContainer, cxEdit, cxTextEdit, cxMaskEdit,
-  cxDropDownEdit, cxCalendar, cxDBEdit,  MaskUtils, ACBrBase, ACBrValidador,
-  DBCtrls;
+  ToolEdit, CurrEdit, DBXpress;
 
 type
-  TFrmMovimentos = class(TForm)
+  TFrmPedidoVenda = class(TForm)
     Gb_Principal: TGroupBox;
     Pan_Docto: TPanel;
-    Pan_Solicitacoes: TPanel;
-    Bt_Fechar: TJvXPButton;
-    Bt_Salvar: TJvXPButton;
-    Bt_Abandonar: TJvXPButton;
-    Bt_Excluir: TJvXPButton;
-    OdirPanApres: TPanel;
-    Gb_SerieDocto: TGroupBox;
-    EdtSerieDocto: TEdit;
-    Gb_VlrProdutos: TGroupBox;
-    EdtVlrProdutos: TCurrencyEdit;
+    Gb_VlrTotal: TGroupBox;
+    EdtVlrTotal: TCurrencyEdit;
+    Gb_VlrDescontos: TGroupBox;
+    EdtVlrDescontos: TCurrencyEdit;
     Gb_NumDocto: TGroupBox;
     EdtNumDocto: TCurrencyEdit;
     Gb_DtaDocto: TGroupBox;
@@ -45,8 +36,16 @@ type
     EdtDesPessoa: TEdit;
     EdtCodPessoa: TCurrencyEdit;
     Bt_BuscaPessoa: TJvXPButton;
-    Gb_VlrTotal: TGroupBox;
-    EdtVlrTotal: TCurrencyEdit;
+    Bt_NovaPessoa: TJvXPButton;
+    EdtNumSeqDocto: TCurrencyEdit;
+    Dbe_VlrTotalCalculado: TDBEdit;
+    Gb_VlrTotalCalculado: TGroupBox;
+    EdtVlrTotalCalculado: TCurrencyEdit;
+    Pan_Solicitacoes: TPanel;
+    Bt_Fechar: TJvXPButton;
+    Bt_Salvar: TJvXPButton;
+    Bt_Abandonar: TJvXPButton;
+    Bt_Excluir: TJvXPButton;
     Rb_Produtos: TRadioGroup;
     Pan_Produto: TPanel;
     Label1: TLabel;
@@ -55,32 +54,20 @@ type
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
+    Label8: TLabel;
     EdtSeqProduto: TCurrencyEdit;
     EdtCodProduto: TCurrencyEdit;
     EdtDesProduto: TEdit;
     EdtQtdProduto: TCurrencyEdit;
     EdtVlrUnitProduto: TCurrencyEdit;
     EdtVlrTotalProduto: TCurrencyEdit;
-    Dbg_Produtos: TDBGrid;
     Bt_IncluiProduto: TJvXPButton;
     Bt_ExcluiProduto: TJvXPButton;
-    StB_Movtos: TdxStatusBar;
-    Bt_NovaPessoa: TJvXPButton;
-    EdtNumSeqDocto: TCurrencyEdit;
-    Gb_TipoDocto: TGroupBox;
-    CBx_TipoDocto: TComboBox;
-    ACBrValidador: TACBrValidador;
     Bt_AbandonarProduto: TJvXPButton;
-    Dbe_VlrTotalCalculado: TDBEdit;
-    Label8: TLabel;
     EdtVlrDescProduto: TCurrencyEdit;
-    Gb_VlrTotalCalculado: TGroupBox;
-    EdtVlrTotalCalculado: TCurrencyEdit;
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure FormCreate(Sender: TObject);
-    procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure FormShow(Sender: TObject);
-    procedure Bt_FecharClick(Sender: TObject);
+    Dbg_Produtos: TDBGrid;
+    OdirPanApres: TPanel;
+    StB_Movtos: TdxStatusBar;
 
     // Odir ====================================================================
 
@@ -93,51 +80,44 @@ type
     Procedure LimpaDocto;
     Procedure LimpaProduto(bCodigo: Boolean = True);
 
-    Function  DMLPessoas(sNomePessoa, sCnpjCpf: String; sCodPessoa: String = 'NULL';
-                         sTipoPessoa: String= 'F'): Boolean;
-
     Procedure ProdutoLocaliza;
 
-    Procedure DocumentoIncluirExcluir(sDML: String);
+    Procedure PedidoIncluirExcluir(sDML: String);
                                    // sDML: (I)Inclusão
                                    //       (E)Exclusão
 
     // Odir ====================================================================
 
-    procedure EdtNumDoctoExit(Sender: TObject);
+    procedure Bt_FecharClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure FormShow(Sender: TObject);
     procedure EdtCodPessoaChange(Sender: TObject);
-    procedure Bt_AbandonarClick(Sender: TObject);
-    procedure Dbg_ProdutosEnter(Sender: TObject);
-    procedure Dbg_ProdutosExit(Sender: TObject);
-    procedure EdtCodProdutoEnter(Sender: TObject);
     procedure EdtCodPessoaExit(Sender: TObject);
-    procedure Bt_BuscaPessoaClick(Sender: TObject);
-    procedure Bt_NovaPessoaClick(Sender: TObject);
-    procedure CBx_TipoDoctoSelect(Sender: TObject);
     procedure EdtCodPessoaKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure Bt_BuscaPessoaClick(Sender: TObject);
+    procedure Bt_NovaPessoaClick(Sender: TObject);
+    procedure EdtNumDoctoExit(Sender: TObject);
+    procedure EdtCodProdutoEnter(Sender: TObject);
+    procedure EdtCodProdutoExit(Sender: TObject);
     procedure EdtCodProdutoKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure EdtCodProdutoExit(Sender: TObject);
-    procedure Bt_ExcluiProdutoClick(Sender: TObject);
-    procedure Bt_IncluiProdutoClick(Sender: TObject);
+    procedure EdtQtdProdutoEnter(Sender: TObject);
+    procedure EdtVlrDescProdutoExit(Sender: TObject);
     procedure EdtVlrTotalProdutoEnter(Sender: TObject);
-    procedure Bt_SalvarClick(Sender: TObject);
-    procedure Bt_ExcluirClick(Sender: TObject);
-    procedure Dbg_ProdutosKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure Dbg_ProdutosDblClick(Sender: TObject);
-    procedure Bt_AbandonarProdutoClick(Sender: TObject);
+    procedure Bt_IncluiProdutoClick(Sender: TObject);
     procedure Bt_IncluiProdutoEnter(Sender: TObject);
     procedure Bt_ExcluiProdutoEnter(Sender: TObject);
+    procedure Bt_ExcluiProdutoClick(Sender: TObject);
+    procedure Bt_AbandonarProdutoClick(Sender: TObject);
     procedure Bt_AbandonarProdutoEnter(Sender: TObject);
-    procedure Dbe_VlrTotalCalculadoChange(Sender: TObject);
-    procedure EdtVlrDescProdutoExit(Sender: TObject);
-    procedure EdtQtdProdutoEnter(Sender: TObject); // Posiciona no Componente
-
+    procedure Bt_SalvarClick(Sender: TObject);
   private
     { Private declarations }
   public
+    { Public declarations }
     { Public declarations }
     sgOrigem: String; // Origem do Documentos
                       //   (M) Documentos de Entrada/Saída de Matéria-Prima
@@ -151,7 +131,7 @@ const
   //////////////////////////////
 
 var
-  FrmMovimentos: TFrmMovimentos;
+  FrmPedidoVenda: TFrmPedidoVenda;
 
   // Show Hint em Forma de Balão
   hTooltip: Cardinal;
@@ -165,15 +145,11 @@ var
   bgProdIncluir,
   bgProdAlterar: Boolean;
 
-  sgMensagem,
-  sgTpPesSelect, // Tipo de Pessoa na Seleção
-  sgTpPesDocto  // Tipo de Pessoa no Tipo de Documento
-  :String;
+  sgMensagem:String;
 
 implementation
 
-uses DK_Procs1, UDMArtesanalis, UPesquisa, DB, UFrmMateriaPrimaCadastro,
-  UFrmPessoaCadastro;
+uses UDMArtesanalis, UPesquisa, DK_Procs1, UFrmPessoaCadastro;
 
 {$R *.dfm}
 
@@ -181,23 +157,22 @@ uses DK_Procs1, UDMArtesanalis, UPesquisa, DB, UFrmMateriaPrimaCadastro,
 // Odir - Inicio >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Inclusão/Exclusão do Documento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmMovimentos.DocumentoIncluirExcluir(sDML: String);
+// Inclusão/Exclusão do Pedido >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmPedidoVenda.PedidoIncluirExcluir(sDML: String);
 Var
   MySql: String;
-  sTipoPessoa, sTipoDocto,
   sQtdSaldo: String;
 Begin
   // sDML: (I)Inclusão
   //       (E)Exclusão
 
-  If sDML='I' Then  OdirPanApres.Caption:='AGUARDE !! Efetuando a Inclusão do Documento !!';
-  If sDML='E' Then  OdirPanApres.Caption:='AGUARDE !! Efetuando a Exclusão do Documento !!';
+  If sDML='I' Then  OdirPanApres.Caption:='AGUARDE !! Efetuando a Inclusão do Pedido !!';
+  If sDML='E' Then  OdirPanApres.Caption:='AGUARDE !! Efetuando a Exclusão do Pedido !!';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmMovimentos.Width-OdirPanApres.Width)/2));
-  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmMovimentos.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmPedidoVenda.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmPedidoVenda.Height-OdirPanApres.Height)/2))-20;
   OdirPanApres.Font.Style:=[fsBold];
-  OdirPanApres.Parent:=FrmMovimentos;
+  OdirPanApres.Parent:=FrmPedidoVenda;
   OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
@@ -215,25 +190,43 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
-    // Tipo de Documento =======================================================
-    If CBx_TipoDocto.ItemIndex=0 Then sTipoDocto:='E';
-    If CBx_TipoDocto.ItemIndex=2 Then sTipoDocto:='S';
-    If CBx_TipoDocto.ItemIndex=3 Then sTipoDocto:='DE';
-    If CBx_TipoDocto.ItemIndex=4 Then sTipoDocto:='DS';
-    If CBx_TipoDocto.ItemIndex=5 Then sTipoDocto:='BE';
-    If CBx_TipoDocto.ItemIndex=6 Then sTipoDocto:='BS';
-
     //==========================================================================
-    // Exclusão do Documento ===================================================
+    // Exclusão do Pedido ======================================================
     //==========================================================================
     If sDML='E' Then
     Begin
+      // Retorna Quantidade da Matéria-Prima Utilizada =========================
+      MySql:=' SELECT pm.cod_materiaprima, pm.qtd_utilizada_mp'+
+             ' FROM DOCTOS_ITENS_MP pm'+
+             ' WHERE pm.num_seq_docto='+IntToStr(EdtNumSeqDocto.AsInteger);
+      DMArtesanalis.CDS_BuscaRapida.Close;
+      DMArtesanalis.SQLQ_BuscaRapida.SQL.Clear;
+      DMArtesanalis.SQLQ_BuscaRapida.SQL.Add(MySql);
+      DMArtesanalis.CDS_BuscaRapida.Open;
+
+      While Not DMArtesanalis.CDS_BuscaRapida.Eof do
+      Begin
+        sQtdSaldo:=QuotedStr(f_Troca(',','.',DMArtesanalis.CDS_BuscaRapida.FieldByName('qtd_utilizada_mp').AsString));
+        MySql:=' UPDATE MATERIAPRIMA m'+
+               ' SET m.qtd_estoque=m.qtd_estoque+'+sQtdSaldo+
+               ' WHERE m.cod_materiaprima='+DMArtesanalis.CDS_BuscaRapida.FieldByName('cod_materiaprima').AsString;
+        DMArtesanalis.SQLC.Execute(MySql,nil,nil);
+
+        DMArtesanalis.CDS_BuscaRapida.Next;
+      End; // While Not DMArtesanalis.CDS_BuscaRapida.Eof do
+      DMArtesanalis.CDS_BuscaRapida.Close;
+
+      // Exclui Materias-Primas Utilizadas no Pedido ===========================
+      MySql:=' DELETE FROM DOCTOS_ITENS_MP pm'+
+             ' WHERE mp.num_seq_docto='+IntToStr(EdtNumSeqDocto.AsInteger);
+      DMArtesanalis.SQLC.Execute(MySql,nil,nil);
+
       // Exclui Produtos =======================================================
       MySql:=' DELETE FROM DOCTOS_ITENS i'+
              ' WHERE i.num_seq_docto='+IntToStr(EdtNumSeqDocto.AsInteger);
       DMArtesanalis.SQLC.Execute(MySql,nil,nil);
 
-      // Exclui Documento ======================================================
+      // Exclui Pedido ======================================================
       MySql:=' DELETE FROM DOCTOS d'+
              ' WHERE d.num_seq_docto='+IntToStr(EdtNumSeqDocto.AsInteger);
       DMArtesanalis.SQLC.Execute(MySql,nil,nil);
@@ -243,60 +236,13 @@ Begin
       DMArtesanalis.CDS_V_DoctoItens.First;
       While Not DMArtesanalis.CDS_V_DoctoItens.Eof do
       Begin
-        If sTipoDocto='E' Then
-        Begin
-          // Calcula/Atualiza Novo Custo Médio =================================
-          MySql:=' SELECT sum(i.vlr_total)/sum(i.qtd_movto) Custo_Medio'+
-                 ' FROM DOCTOS_ITENS i'+
-                 ' WHERE i.cod_produto='+DMArtesanalis.CDS_V_DoctoItensCOD_PRODUTO.AsString+
-                 ' AND   EXISTS(SELECT 1'+
-                 '              FROM DOCTOS dc'+
-                 '              WHERE dc.origem = '+QuotedStr(sgOrigem)+ // Matéria-Prima
-                 '              AND   dc.tipo=''E'''+
-                 '              AND   dc.num_seq_docto = i.num_seq_docto)';
-          DMArtesanalis.CDS_BuscaRapida.Close;
-          DMArtesanalis.SQLQ_BuscaRapida.SQL.Clear;
-          DMArtesanalis.SQLQ_BuscaRapida.SQL.Add(MySql);
-          DMArtesanalis.CDS_BuscaRapida.Open;
-          If Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('Custo_Medio').AsString)<>'' Then
-          Begin
-            MySql:=' UPDATE MATERIAPRIMA m'+
-                   ' SET m.custo_medio='+QuotedStr(f_Troca(',','.',DMArtesanalis.CDS_BuscaRapida.FieldByName('Custo_Medio').AsString))+
-                   ' WHERE m.cod_materiaprima='+DMArtesanalis.CDS_V_DoctoItensCOD_PRODUTO.AsString;
-            DMArtesanalis.SQLC.Execute(MySql,nil,nil);
-          End;
-          DMArtesanalis.CDS_BuscaRapida.Close;
-
-          // Busca Preço Último Preço de Custo =================================
-          MySql:=' SELECT it.vlr_unitario'+
-                 ' FROM DOCTOS_ITENS it'+
-                 ' WHERE it.cod_produto='+DMArtesanalis.CDS_V_DoctoItensCOD_PRODUTO.AsString+
-                 ' AND   it.num_seq_docto in (SELECT MAX(dc.num_seq_docto)'+
-                 '                            FROM doctos dc'+
-                 '                            WHERE dc.origem = '+QuotedStr(sgOrigem)+ // Matéria-Prima
-                 '                            AND   dc.tipo='+QuotedStr('E')+')';
-          DMArtesanalis.CDS_BuscaRapida.Close;
-          DMArtesanalis.SQLQ_BuscaRapida.SQL.Clear;
-          DMArtesanalis.SQLQ_BuscaRapida.SQL.Add(MySql);
-          DMArtesanalis.CDS_BuscaRapida.Open;
-          If Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('Vlr_Unitario').AsString)<>'' Then
-          Begin
-            MySql:=' UPDATE MATERIAPRIMA m'+
-                   ' SET m.preco_custo='+QuotedStr(f_Troca(',','.',DMArtesanalis.CDS_BuscaRapida.FieldByName('Vlr_Unitario').AsString))+
-                   ' WHERE m.cod_materiaprima='+DMArtesanalis.CDS_V_DoctoItensCOD_PRODUTO.AsString;
-            DMArtesanalis.SQLC.Execute(MySql,nil,nil);
-          End;
-          DMArtesanalis.CDS_BuscaRapida.Close;
-        End; // If sTipoDocto='E' Then
-
         // Atualiza Saldo/Preco_Custo do Produto ===============================
         sQtdSaldo:=f_Troca(',','.',DMArtesanalis.CDS_V_DoctoItensQTD_MOVTO.AsString);
-        If (sTipoDocto='E') Or (sTipoDocto='DE') Or (sTipoDocto='BE') Then
-         sQtdSaldo:='-'+sQtdSaldo;
+        sQtdSaldo:='-'+sQtdSaldo;
 
-        MySql:=' UPDATE MATERIAPRIMA m'+
-               ' SET m.qtd_estoque=m.qtd_estoque+'+sQtdSaldo+
-               ' WHERE m.cod_materiaprima='+DMArtesanalis.CDS_V_DoctoItensCOD_PRODUTO.AsString;
+        MySql:=' UPDATE PRODUTO p'+
+               ' SET p.qtd_estoque=p.qtd_estoque+'+sQtdSaldo+
+               ' WHERE p.cod_produto='+DMArtesanalis.CDS_V_DoctoItensCOD_PRODUTO.AsString;
         DMArtesanalis.SQLC.Execute(MySql,nil,nil);
 
         DMArtesanalis.CDS_V_DoctoItens.Next;
@@ -304,10 +250,10 @@ Begin
       DMArtesanalis.CDS_V_DoctoItens.First;
       DMArtesanalis.CDS_V_DoctoItens.EnableControls;
     End; // If sDML='E' Then
-    // Exclusão do Documento ===================================================
+    // Exclusão do Pedido ======================================================
 
     //==========================================================================
-    // Inclusão do Documento ===================================================
+    // Inclusão do Pedido ======================================================
     //==========================================================================
     If sDML='I' Then
     Begin
@@ -321,12 +267,12 @@ Begin
       EdtNumSeqDocto.AsInteger:=DMArtesanalis.CDS_BuscaRapida.FieldByName('Num_Seq').AsInteger;
       DMArtesanalis.CDS_BuscaRapida.Close;
 
-      // Insere Documento ======================================================
+      // Insere Pedido =========================================================
       MySql:=' INSERT INTO DOCTOS'+
              ' (ORIGEM, NUM_SEQ_DOCTO, TIPO, NUM_DOCTO, NUM_SERIE, DTA_DOCTO, DTA_LANCAMENTO,'+
              '  COD_PESSOA, DES_PESSOA, VLR_PRODUTOS, VLR_TOTAL)'+
              ' VALUES ('+
-             QuotedStr(sgOrigem)+', '+ // ORIGEM - Matéria-Prima
+             QuotedStr(sgOrigem)+', '+ // ORIGEM - Pedido de Venda
              IntToStr(EdtNumSeqDocto.AsInteger)+', '+ // NUM_SEQ_DOCTO
              QuotedStr(sTipoDocto)+', '+ // Tipo do Documento
              IntToStr(EdtNumDocto.AsInteger)+', '+ // NUM_DOCTO
@@ -464,19 +410,18 @@ Begin
 End; // Inclusão/Exclusão do Documento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Localiza/Inclui Produto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmMovimentos.ProdutoLocaliza;
+Procedure TFrmPedidoVenda.ProdutoLocaliza;
 Var
   MySql: String;
 begin
 
   FrmPesquisa:=TFrmPesquisa.Create(Self);
-  FrmPesquisa.Bt_PesquisaNovo.Visible:=True;
 
   // ========== EXECUTA QUERY PARA PESQUISA ====================================
   Screen.Cursor:=crAppStart;
 
-  MySql:=' SELECT m.des_materiaprima Materia_Prima,  m.cod_materiaprima Codigo'+
-         ' FROM MATERIAPRIMA m'+
+  MySql:=' SELECT p.des_produto,  m.cod_produto Codigo'+
+         ' FROM PRODUTO p'+
          ' Order by 1';
   DMArtesanalis.CDS_Pesquisa.Close;
   DMArtesanalis.CDS_Pesquisa.Filtered:=False;
@@ -496,9 +441,9 @@ begin
   End;
 
   // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
-  FrmPesquisa.Campo_pesquisa:='Materia_Prima';
+  FrmPesquisa.Campo_pesquisa:='Des_produto';
   FrmPesquisa.Campo_Codigo:='Codigo';
-  FrmPesquisa.Campo_Descricao:='Materia_Prima';
+  FrmPesquisa.Campo_Descricao:='Des_produto';
   //FrmPesquisa.EdtDescricao.Text:=FrmAcessos.EdtDescPessoa.Text;
 
   // ============= ABRE FORM DE PESQUISA =======================================
@@ -512,106 +457,35 @@ begin
     EdtCodProdutoExit(Self);
   End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
 
-  If FrmPesquisa.bgIncluirNovo Then
-   bgProdIncluir:=True;
-
   FreeAndNil(FrmPesquisa);
 End; // Localiza/Inclui Produto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Manipulaçao Cadastro de Pessoas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Function TFrmMovimentos.DMLPessoas(sNomePessoa, sCnpjCpf: String; sCodPessoa: String = 'NULL';
-                                   sTipoPessoa: String= 'F'): Boolean;
-Var
-  MySql: String;
-Begin
-  Result:=False;
-
-  OdirPanApres.Caption:='AGUARDE !! Atualizando Cadastro de Pessoas !!';
-  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmMovimentos.Width-OdirPanApres.Width)/2));
-  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmMovimentos.Height-OdirPanApres.Height)/2))-20;
-  OdirPanApres.Font.Style:=[fsBold];
-  OdirPanApres.Parent:=FrmMovimentos;
-  OdirPanApres.BringToFront();
-  OdirPanApres.Visible:=True;
-  Refresh;
-
-  // Verifica se Transação esta Ativa
-  If DMArtesanalis.SQLC.InTransaction Then
-   DMArtesanalis.SQLC.Rollback(TD);
-
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMArtesanalis.SQLC.StartTransaction(TD);
-  Try // Try da Transação
-    Screen.Cursor:=crAppStart;
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    MySql:=' UPDATE OR INSERT INTO PESSOAS (TIPO, DES_PESSOA, NUM_CNPJCPF)'+
-           ' VALUES ('+
-           QuotedStr(AnsiUpperCase(sTipoPessoa))+', '+ // TIPO
-           QuotedStr(AnsiUpperCase(sNomePessoa))+', '+ // DES_PESSOA
-           QuotedStr(sCnpjCpf)+') '+ // NUM_CNPJCPF
-           ' MATCHING (NUM_CNPJCPF)';
-    DMArtesanalis.SQLC.Execute(MySql,nil,nil);
-
-    // Atualiza Transacao ======================================================
-    DMArtesanalis.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-
-    OdirPanApres.Visible:=False;
-
-    Screen.Cursor:=crDefault;
-    Result:=True;
-  Except // Except da Transação
-    on e : Exception do
-    Begin
-      // Abandona Transacao ====================================================
-      DMArtesanalis.SQLC.Rollback(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-
-      OdirPanApres.Visible:=False;
-
-      Screen.Cursor:=crDefault;
-
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-      Exit;
-    End; // on e : Exception do
-  End; // Try da Transação
-End; // Manipulaçao Cadastro de Pessoas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-// Habilita Dados do Docto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmMovimentos.HabilitaDocto(bHabilita: Boolean);
+// Habilita Dados do Docto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmPedidoVenda.HabilitaDocto(bHabilita: Boolean);
 Var
   i: Integer;
 Begin
 
-  For i:=0 to FrmMovimentos.ComponentCount-1 do
+  For i:=0 to FrmPedidoVenda.ComponentCount-1 do
   Begin
-    If FrmMovimentos.Components[i] is TEdit Then
-     (FrmMovimentos.Components[i] as TEdit).Enabled:=bHabilita;
+    If FrmPedidoVenda.Components[i] is TEdit Then
+     (FrmPedidoVenda.Components[i] as TEdit).Enabled:=bHabilita;
 
-    If FrmMovimentos.Components[i] is TCurrencyEdit Then
-     (FrmMovimentos.Components[i] as TCurrencyEdit).Enabled:=bHabilita;
+    If FrmPedidoVenda.Components[i] is TCurrencyEdit Then
+     (FrmPedidoVenda.Components[i] as TCurrencyEdit).Enabled:=bHabilita;
 
-    If FrmMovimentos.Components[i] is TcxDateEdit Then
-     (FrmMovimentos.Components[i] as TcxDateEdit).Enabled:=bHabilita;
+    If FrmPedidoVenda.Components[i] is TcxDateEdit Then
+     (FrmPedidoVenda.Components[i] as TcxDateEdit).Enabled:=bHabilita;
 
-    If FrmMovimentos.Components[i] is TComboBox Then
-     (FrmMovimentos.Components[i] as TComboBox).Enabled:=bHabilita;
-  End; // For i:=0 to FrmMovimentos.ComponentCount-1 do
+    If FrmPedidoVenda.Components[i] is TComboBox Then
+     (FrmPedidoVenda.Components[i] as TComboBox).Enabled:=bHabilita;
+  End; // For i:=0 to FrmPedidoVenda.ComponentCount-1 do
 
   EdtSeqProduto.Enabled:=False;
 End; // Habilita Dados do Docto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Habilita Botoes >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmMovimentos.HabilitaBotoes(bHabilita: Boolean);
+Procedure TFrmPedidoVenda.HabilitaBotoes(bHabilita: Boolean);
 Begin
   Bt_Salvar.Enabled   :=bHabilita;
   Bt_Abandonar.Enabled:=Not bHabilita;
@@ -627,30 +501,27 @@ Begin
 End; // Habilita Botoes >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Limpa Todo o Docto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmMovimentos.LimpaDocto;
+Procedure TFrmPedidoVenda.LimpaDocto;
 Var
   i: Integer;
 Begin
 
-  For i:=0 to FrmMovimentos.ComponentCount-1 do
+  For i:=0 to FrmPedidoVenda.ComponentCount-1 do
   Begin
-    If FrmMovimentos.Components[i] is TEdit Then
-     (FrmMovimentos.Components[i] as TEdit).Clear;
+    If FrmPedidoVenda.Components[i] is TEdit Then
+     (FrmPedidoVenda.Components[i] as TEdit).Clear;
 
-    If FrmMovimentos.Components[i] is TCurrencyEdit Then
-     (FrmMovimentos.Components[i] as TCurrencyEdit).Value:=0;
+    If FrmPedidoVenda.Components[i] is TCurrencyEdit Then
+     (FrmPedidoVenda.Components[i] as TCurrencyEdit).Value:=0;
 
-    If FrmMovimentos.Components[i] is TcxDateEdit Then
-     (FrmMovimentos.Components[i] as TcxDateEdit).Clear;
-
-    If FrmMovimentos.Components[i] is TComboBox Then
-     (FrmMovimentos.Components[i] as TComboBox).ItemIndex:=-1;
-  End; // For i:=0 to FrmMovimentos.ComponentCount-1 do
+    If FrmPedidoVenda.Components[i] is TcxDateEdit Then
+     (FrmPedidoVenda.Components[i] as TcxDateEdit).Clear;
+  End; // For i:=0 to FrmPedidoVenda.ComponentCount-1 do
 
 end; // Limpa Todo o Docto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Limpa Somente Digitação do Produto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmMovimentos.LimpaProduto(bCodigo: Boolean = True);
+Procedure TFrmPedidoVenda.LimpaProduto(bCodigo: Boolean = True);
 Begin
 
   If bCodigo Then
@@ -669,7 +540,7 @@ Begin
 End; // Limpa Somente Digitação do Produto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Show Hint em Forma de Balão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-procedure TFrmMovimentos.CreateToolTips(hWnd: Cardinal);
+procedure TFrmPedidoVenda.CreateToolTips(hWnd: Cardinal);
 begin
   hToolTip := CreateWindowEx(0, 'Tooltips_Class32', nil, TTS_ALWAYSTIP or TTS_BALLOON,
   Integer(CW_USEDEFAULT), Integer(CW_USEDEFAULT),Integer(CW_USEDEFAULT),
@@ -710,7 +581,7 @@ begin
 end; // Show Hint em Forma de Balão - Usado no FormCreate >>>>>>>>>>>>>>>>>>>>>>
 
 // Show Hint em Forma de Balão - Posiciona do Componente >>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmMovimentos.FocoToControl(Sender: TControl);
+Procedure TFrmPedidoVenda.FocoToControl(Sender: TControl);
 Var
  NewPos: TPoint;
 Begin
@@ -722,12 +593,24 @@ Begin
 
   SetCursorPos(NewPos.x,NewPos.y)
 End; // Show Hint em Forma de Balão - Posiciona do Componente >>>>>>>>>>>>>>>>>>
-
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - Fim >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-procedure TFrmMovimentos.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TFrmPedidoVenda.Bt_FecharClick(Sender: TObject);
+begin
+  Dbg_Produtos.SetFocus;
+
+  If DMArtesanalis.CDS_V_DoctoItens.Active Then
+   DMArtesanalis.CDS_V_DoctoItens.Close;
+
+  bgSairMovtos:=True;
+
+  Close;
+
+end;
+
+procedure TFrmPedidoVenda.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   If Not bgSairMovtos Then
   Begin
@@ -737,11 +620,11 @@ begin
   End;
 
   // Permite Sair do Sistema ===================================================
-  DMArtesanalis.MemoRetiraNomeForm('MATÉRIA-PRIMA - Movimentações');
+  DMArtesanalis.MemoRetiraNomeForm('PRODUTO - Pedido de Vendas');
 
 end;
 
-procedure TFrmMovimentos.FormCreate(Sender: TObject);
+procedure TFrmPedidoVenda.FormCreate(Sender: TObject);
 const
   TipoDoIcone = 1; // Show Hint em Forma de Balão
 begin
@@ -785,7 +668,7 @@ begin
   HabilitaBotoes(False);
 end;
 
-procedure TFrmMovimentos.FormKeyPress(Sender: TObject; var Key: Char);
+procedure TFrmPedidoVenda.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   If Key = #13 Then
   Begin
@@ -795,7 +678,7 @@ begin
 
 end;
 
-procedure TFrmMovimentos.FormShow(Sender: TObject);
+procedure TFrmPedidoVenda.FormShow(Sender: TObject);
 begin
   bgSairMovtos:=False;
 
@@ -819,31 +702,143 @@ begin
   DMArtesanalis.CDS_V_DoctoItens.Open;
 
   EdtCodPessoa.SetFocus;
+
 end;
 
-procedure TFrmMovimentos.Bt_FecharClick(Sender: TObject);
+procedure TFrmPedidoVenda.EdtCodPessoaChange(Sender: TObject);
+begin
+  // Incicializa Produtos ======================================================
+  If DMArtesanalis.CDS_V_DoctoItens.Active Then
+   DMArtesanalis.CDS_V_DoctoItens.Close;
+
+  DMArtesanalis.CDS_V_DoctoItens.CreateDataSet;
+  DMArtesanalis.CDS_V_DoctoItens.Open;
+
+end;
+
+procedure TFrmPedidoVenda.EdtCodPessoaExit(Sender: TObject);
+Var
+  MySql: String;
+begin
+  bgProdAlterar:=False;
+
+  If EdtCodPessoa.asInteger=0 Then
+   Exit;
+
+  Screen.Cursor:=crAppStart;
+
+  EdtDesPessoa.Clear;
+
+  MySql:=' SELECT p.des_pessoa nome, Tipo'+
+         ' FROM PESSOAS p'+
+         ' WHERE p.Tipo in (''A'', ''C'')'+
+         ' AND p.cod_pessoa='+IntToStr(EdtCodPessoa.AsInteger);
+  DMArtesanalis.CDS_BuscaRapida.Close;
+  DMArtesanalis.SQLQ_BuscaRapida.SQL.Clear;
+  DMArtesanalis.SQLQ_BuscaRapida.SQL.Add(MySql);
+  DMArtesanalis.CDS_BuscaRapida.Open;
+
+  If Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('Nome').AsString)='' Then
+  Begin
+    Screen.Cursor:=crDefault;
+    DMArtesanalis.CDS_BuscaRapida.Close;
+    msg('Cliente Não Encontrado !!'+cr+'Ou Não é Cliente !!','A');
+    EdtCodPessoa.SetFocus;
+    Exit;
+  End;
+  EdtDesPessoa.Text:=Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('Nome').AsString);
+  DMArtesanalis.CDS_BuscaRapida.Close;
+
+  Screen.Cursor:=crDefault;
+  EdtNumDocto.SetFocus;
+end;
+
+procedure TFrmPedidoVenda.EdtCodPessoaKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  // <F9> Busca Pessoa =========================================================
+  If Key=VK_F9 Then
+   Bt_BuscaPessoaClick(Self);
+
+end;
+
+procedure TFrmPedidoVenda.Bt_BuscaPessoaClick(Sender: TObject);
+Var
+  MySql: String;
 begin
   Dbg_Produtos.SetFocus;
 
-  If DMArtesanalis.CDS_V_DoctoItens.Active Then
-   DMArtesanalis.CDS_V_DoctoItens.Close;
-   
-  bgSairMovtos:=True;
+  FrmPesquisa:=TFrmPesquisa.Create(Self);
 
-  Close;
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  MySql:=' SELECT p.des_pessoa Nome, p.cod_pessoa Codigo'+
+         ' FROM PESSOAS p'+
+         ' WHERE p.Tipo in (''A'', ''C'')'+
+         ' ORDER BY p.des_pessoa';
+  DMArtesanalis.CDS_Pesquisa.Close;
+  DMArtesanalis.CDS_Pesquisa.Filtered:=False;
+  DMArtesanalis.SDS_Pesquisa.CommandText:=MySql;
+  DMArtesanalis.CDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(DMArtesanalis.CDS_Pesquisa.FieldByName('Nome').AsString)='' Then
+  Begin
+    DMArtesanalis.CDS_Pesquisa.Close;
+    msg('Sem Cliente a Listar !!','A');
+    EdtCodPessoa.SetFocus;
+    FreeAndNil(FrmPesquisa);
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisa.Campo_pesquisa:='Nome';
+  FrmPesquisa.Campo_Codigo:='Codigo';
+  FrmPesquisa.Campo_Descricao:='Nome';
+  //FrmPesquisa.EdtDescricao.Text:=FrmAcessos.EdtDescPessoa.Text;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisa.ShowModal;
+  DMArtesanalis.CDS_Pesquisa.Close;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+  Begin
+    EdtCodPessoa.AsInteger:=StrToInt(FrmPesquisa.EdtCodigo.Text);
+    EdtCodPessoaExit(Self);
+  End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+
+  FreeAndNil(FrmPesquisa);
+end;
+
+procedure TFrmPedidoVenda.Bt_NovaPessoaClick(Sender: TObject);
+begin
+  Dbg_Produtos.SetFocus;
+
+  FrmCadastroPessoa.bgTransportar:=True;
+
+  FrmCadastroPessoa.ShowModal;
+
+  If FrmCadastroPessoa.bgTransportar Then
+  Begin
+    EdtCodPessoa.AsInteger:=StrToInt(FrmCadastroPessoa.sgCodPesTransportar);
+    EdtCodPessoaExit(Self);
+  End;
 
 end;
 
-procedure TFrmMovimentos.EdtNumDoctoExit(Sender: TObject);
+procedure TFrmPedidoVenda.EdtNumDoctoExit(Sender: TObject);
 Var
   MySql: String;
-  s: String;
 begin
   bgProdAlterar:=False;
 
   If EdtCodPessoa.Value=0 Then
   Begin
-    msg('Favor Informar o Fornecedor !!','A');
+    msg('Favor Informar o Cliente !!','A');
     EdtCodPessoa.SetFocus;
     Exit;
   End;
@@ -861,7 +856,7 @@ begin
   MySql:=' SELECT dc.num_docto, dc.dta_docto Emissao,'+
          '        dc.des_pessoa Fornecedor, dc.vlr_total, dc.cod_pessoa Codigo'+
          ' FROM DOCTOS dc'+
-         ' WHERE dc.origem='+QuotedStr(sgOrigem)+ // ORIGEM - Matéria-Prima
+         ' WHERE dc.origem='+QuotedStr(sgOrigem)+ // ORIGEM - Pedido de Venda
          ' AND   dc.num_docto='+IntToStr(EdtNumDocto.AsInteger)+
          ' AND   dc.Cod_Pessoa='+IntToStr(EdtCodPessoa.AsInteger)+
          ' ORDER BY dc.des_pessoa';
@@ -886,7 +881,7 @@ begin
     Bt_AbandonarProduto.Enabled:=True;
     Bt_Salvar.Enabled:=True;
 
-    CBx_TipoDocto.SetFocus;
+    DtEdt_DtaDocto.SetFocus;
 
     Exit;
   End;
@@ -897,7 +892,7 @@ begin
          '        di.qtd_movto, di.vlr_unitario, di.vlr_desconto, di.vlr_total'+
          ' FROM DOCTOS dc, DOCTOS_ITENS di'+
          ' WHERE dc.num_seq_docto=di.num_seq_docto'+
-         ' AND   dc.origem='+QuotedStr(sgOrigem)+// ORIGEM - Matéria-Prima
+         ' AND   dc.origem='+QuotedStr(sgOrigem)+// ORIGEM - Pedido de Venda
          ' AND   dc.num_docto='+DMArtesanalis.CDS_Busca.FieldByName('num_docto').AsString+
          ' AND   dc.cod_pessoa='+DMArtesanalis.CDS_Busca.FieldByName('Codigo').AsString+
          ' ORDER BY di.num_seq';
@@ -911,18 +906,7 @@ begin
 
   EdtNumSeqDocto.AsInteger:=DMArtesanalis.CDS_Busca.FieldByName('num_seq_docto').AsInteger;
 
-  // Tipo de Documento
-  If Trim(DMArtesanalis.CDS_Busca.FieldByName('Tipo').AsString)='E'  Then  s:='Documento   de Entrada';
-  If Trim(DMArtesanalis.CDS_Busca.FieldByName('Tipo').AsString)='S'  Then  s:='Documento   de Saída';
-  If Trim(DMArtesanalis.CDS_Busca.FieldByName('Tipo').AsString)='DE' Then  s:='Devolução   de Entrada';
-  If Trim(DMArtesanalis.CDS_Busca.FieldByName('Tipo').AsString)='DS' Then  s:='Devolução   de Saída';
-  If Trim(DMArtesanalis.CDS_Busca.FieldByName('Tipo').AsString)='BE' Then  s:='Bonificação de Entrada';
-  If Trim(DMArtesanalis.CDS_Busca.FieldByName('Tipo').AsString)='BS' Then  s:='Bonificação de Saída';
-  CBx_TipoDocto.ItemIndex := CBx_TipoDocto.Items.IndexOf(s);
-
-  EdtSerieDocto.Text   :=DMArtesanalis.CDS_Busca.FieldByName('num_serie').AsString;
   DtEdt_DtaDocto.Date  :=DMArtesanalis.CDS_Busca.FieldByName('dta_docto').AsDateTime;
-  EdtVlrProdutos.Value :=DMArtesanalis.CDS_Busca.FieldByName('vlr_produtos').AsCurrency;
   EdtVlrTotal.Value    :=DMArtesanalis.CDS_Busca.FieldByName('vlr_total').AsCurrency;
 
   // Incicializa Produtos ======================================================
@@ -959,161 +943,47 @@ begin
   Dbg_Produtos.SetFocus;
 end;
 
-procedure TFrmMovimentos.EdtCodPessoaChange(Sender: TObject);
-begin
-  // Incicializa Produtos ======================================================
-  If DMArtesanalis.CDS_V_DoctoItens.Active Then
-   DMArtesanalis.CDS_V_DoctoItens.Close;
-
-  DMArtesanalis.CDS_V_DoctoItens.CreateDataSet;
-  DMArtesanalis.CDS_V_DoctoItens.Open;
-  sgTpPesSelect:='';
-end;
-
-procedure TFrmMovimentos.Bt_AbandonarClick(Sender: TObject);
-begin
-  Dbg_Produtos.SetFocus;
-
-  FormShow(Self);
-end;
-
-procedure TFrmMovimentos.Dbg_ProdutosEnter(Sender: TObject);
-begin
-  (Sender as TDBGrid).Color:=clMoneyGreen;
-end;
-
-procedure TFrmMovimentos.Dbg_ProdutosExit(Sender: TObject);
-begin
-  (Sender as TDBGrid).Color:=clWindow;
-end;
-
-procedure TFrmMovimentos.EdtCodProdutoEnter(Sender: TObject);
+procedure TFrmPedidoVenda.EdtCodProdutoEnter(Sender: TObject);
 begin
   FocoToControl(EdtCodProduto);
+
 end;
 
-procedure TFrmMovimentos.EdtCodPessoaExit(Sender: TObject);
+procedure TFrmPedidoVenda.EdtCodProdutoExit(Sender: TObject);
 Var
   MySql: String;
 begin
-  bgProdAlterar:=False;
 
-  If EdtCodPessoa.asInteger=0 Then
+  If EdtCodProduto.asInteger=0 Then
    Exit;
 
   Screen.Cursor:=crAppStart;
 
-  EdtDesPessoa.Clear;
-
-  MySql:=' SELECT p.des_pessoa nome, Tipo'+
-         ' FROM PESSOAS p'+
-         ' WHERE p.cod_pessoa='+IntToStr(EdtCodPessoa.AsInteger);
+  MySql:=' SELECT p.des_produto, p.cod_produto'+
+         ' FROM PRODUTO p'+
+         ' WHERE p.cod_produto='+IntToStr(EdtCodProduto.AsInteger);
   DMArtesanalis.CDS_BuscaRapida.Close;
   DMArtesanalis.SQLQ_BuscaRapida.SQL.Clear;
   DMArtesanalis.SQLQ_BuscaRapida.SQL.Add(MySql);
   DMArtesanalis.CDS_BuscaRapida.Open;
 
-  If Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('Nome').AsString)='' Then
+  If Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('cod_produto').AsString)='' Then
   Begin
     Screen.Cursor:=crDefault;
     DMArtesanalis.CDS_BuscaRapida.Close;
-    msg('Cliente/Fornecedor Não Encontrado !!','A');
-    EdtCodPessoa.SetFocus;
+    msg('Produto Não Encontrado !!','A');
+    EdtCodProduto.SetFocus;
     Exit;
   End;
-  EdtDesPessoa.Text:=Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('Nome').AsString);
-  sgTpPesSelect    :=Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('Tipo').AsString);
+  EdtDesProduto.Text:=Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('des_produto').AsString);
   DMArtesanalis.CDS_BuscaRapida.Close;
 
   Screen.Cursor:=crDefault;
-  EdtNumDocto.SetFocus;
 
+  EdtQtdProduto.SetFocus;
 end;
 
-procedure TFrmMovimentos.Bt_BuscaPessoaClick(Sender: TObject);
-Var
-  MySql: String;
-begin
-  Dbg_Produtos.SetFocus;
-
-  FrmPesquisa:=TFrmPesquisa.Create(Self);
-
-  // ========== EXECUTA QUERY PARA PESQUISA ====================================
-  Screen.Cursor:=crAppStart;
-
-  MySql:=' SELECT p.des_pessoa Nome, p.cod_pessoa Codigo'+
-         ' FROM PESSOAS p'+
-         ' ORDER BY p.des_pessoa';
-  DMArtesanalis.CDS_Pesquisa.Close;
-  DMArtesanalis.CDS_Pesquisa.Filtered:=False;
-  DMArtesanalis.SDS_Pesquisa.CommandText:=MySql;
-  DMArtesanalis.CDS_Pesquisa.Open;
-
-  Screen.Cursor:=crDefault;
-
-  // ============== Verifica Existencia de Dados ===============================
-  If Trim(DMArtesanalis.CDS_Pesquisa.FieldByName('Nome').AsString)='' Then
-  Begin
-    DMArtesanalis.CDS_Pesquisa.Close;
-    msg('Sem Cliente/Fornecedor a Listar !!','A');
-    EdtCodPessoa.SetFocus;
-    FreeAndNil(FrmPesquisa);
-    Exit;
-  End;
-
-  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
-  FrmPesquisa.Campo_pesquisa:='Nome';
-  FrmPesquisa.Campo_Codigo:='Codigo';
-  FrmPesquisa.Campo_Descricao:='Nome';
-  //FrmPesquisa.EdtDescricao.Text:=FrmAcessos.EdtDescPessoa.Text;
-
-  // ============= ABRE FORM DE PESQUISA =======================================
-  FrmPesquisa.ShowModal;
-  DMArtesanalis.CDS_Pesquisa.Close;
-
-  // ============= RETORNO =====================================================
-  If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
-  Begin
-    EdtCodPessoa.AsInteger:=StrToInt(FrmPesquisa.EdtCodigo.Text);
-    EdtCodPessoaExit(Self);
-  End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
-
-  FreeAndNil(FrmPesquisa);
-end;
-
-procedure TFrmMovimentos.Bt_NovaPessoaClick(Sender: TObject);
-begin
-  Dbg_Produtos.SetFocus;
-
-  FrmCadastroPessoa.bgTransportar:=True;
-
-  FrmCadastroPessoa.ShowModal;
-
-  If FrmCadastroPessoa.bgTransportar Then
-  Begin
-    EdtCodPessoa.AsInteger:=StrToInt(FrmCadastroPessoa.sgCodPesTransportar);
-    EdtCodPessoaExit(Self);
-  End;
-
-end;
-
-procedure TFrmMovimentos.CBx_TipoDoctoSelect(Sender: TObject);
-begin
-  If pos('Saída',CBx_TipoDocto.Text)<>0 Then
-   sgTpPesDocto:='C'
-  Else
-   sgTpPesDocto:='F';
-
-end;
-
-procedure TFrmMovimentos.EdtCodPessoaKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  // <F9> Busca Pessoa =========================================================
-  If Key=VK_F9 Then
-   Bt_BuscaPessoaClick(Self);
-end;
-
-procedure TFrmMovimentos.EdtCodProdutoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TFrmPedidoVenda.EdtCodProdutoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   // <F9> Busca Produto ========================================================
   If Key=VK_F9 Then
@@ -1124,112 +994,52 @@ begin
     // Busca Produtos -----------------------------------------------
     bgProdIncluir:=False;
     ProdutoLocaliza;
-
-    If bgProdIncluir Then
-    Begin
-      DMArtesanalis.CDS_MateriaPrima.Open;
-
-      FrmMateriaPrimaCadastro.bgTransportar:=True;
-
-      FrmMateriaPrimaCadastro.ShowModal;
-
-      If FrmMateriaPrimaCadastro.bgTransportar Then
-      Begin
-        EdtCodProduto.AsInteger:=FrmMateriaPrimaCadastro.EdtMateriaPrimaCod.AsInteger;
-        EdtCodProdutoExit(Self);
-      End;
-    End; // If bgProdIncluir Then
   End; // If Key=VK_F9 Then
 
 end;
 
-procedure TFrmMovimentos.EdtCodProdutoExit(Sender: TObject);
-Var
-  MySql: String;
+procedure TFrmPedidoVenda.EdtQtdProdutoEnter(Sender: TObject);
 begin
+  EdtVlrTotalProduto.Value:=(EdtQtdProduto.AsInteger*EdtVlrUnitProduto.Value)-EdtVlrDescProduto.Value;
 
-  If EdtCodProduto.asInteger=0 Then
-   Exit;
-
-  Screen.Cursor:=crAppStart;
-
-  MySql:=' SELECT m.des_materiaprima,  m.cod_materiaprima'+
-         ' FROM MATERIAPRIMA m'+
-         ' WHERE m.cod_materiaprima='+IntToStr(EdtCodProduto.AsInteger);
-  DMArtesanalis.CDS_BuscaRapida.Close;
-  DMArtesanalis.SQLQ_BuscaRapida.SQL.Clear;
-  DMArtesanalis.SQLQ_BuscaRapida.SQL.Add(MySql);
-  DMArtesanalis.CDS_BuscaRapida.Open;
-
-  If Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('cod_materiaprima').AsString)='' Then
-  Begin
-    Screen.Cursor:=crDefault;
-    DMArtesanalis.CDS_BuscaRapida.Close;
-    msg('Produto Não Encontrado !!','A');
-    EdtCodProduto.SetFocus;
-    Exit;
-  End;
-  EdtDesProduto.Text:=Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('des_materiaprima').AsString);
-  DMArtesanalis.CDS_BuscaRapida.Close;
-
-  Screen.Cursor:=crDefault;
-
-  EdtQtdProduto.SetFocus;
 end;
 
-procedure TFrmMovimentos.Bt_ExcluiProdutoClick(Sender: TObject);
-Var
-  i: Integer;
+procedure TFrmPedidoVenda.EdtVlrDescProdutoExit(Sender: TObject);
 begin
-  Dbg_Produtos.SetFocus;
-
-  If EdtSeqProduto.AsInteger=0 Then
+  If EdtVlrDescProduto.Value > (EdtQtdProduto.AsInteger*EdtVlrUnitProduto.Value) Then
   Begin
-    msg('Favor Selecionar o Produto a Excluir !!','A');
-    LimpaProduto();
-    Dbg_Produtos.SetFocus;
+    msg('Valor de Desconto NÃO Pode SER Maior'+cr+cr+'que o Valor Total do Produto !!','A');
+    EdtVlrDescProduto.Value:=0;
+    EdtVlrDescProduto.SetFocus;
     Exit;
   End;
 
-  if msg('Deseja Realmente Incluir'+cr+cr+'O Produto Selecionado ??','C')=2 Then
-   Exit;
+  EdtQtdProdutoEnter(Self);
 
-  If Not DMArtesanalis.CDS_V_DoctoItens.Locate('NUM_SEQ', EdtSeqProduto.AsInteger,[]) Then
-  Begin
-    msg('Produto Não Encontrado na Lista !!','A');
-    bgProdAlterar:=False;
-    LimpaProduto();
-    Dbg_Produtos.SetFocus;
-    Exit;
-  End;
-
-  DMArtesanalis.CDS_V_DoctoItens.Delete;
-
-  // Acerta Num_seq Produtos ===================================================
-  If Not DMArtesanalis.CDS_V_DoctoItens.IsEmpty Then
-  Begin
-    DMArtesanalis.CDS_V_DoctoItens.DisableControls;
-    DMArtesanalis.CDS_V_DoctoItens.First;
-    i:=0;
-    While Not DMArtesanalis.CDS_V_DoctoItens.Eof do
-    Begin
-      Inc(i);
-      DMArtesanalis.CDS_V_DoctoItens.Edit;
-      DMArtesanalis.CDS_V_DoctoItensNUM_SEQ.AsInteger:=i;
-      DMArtesanalis.CDS_V_DoctoItens.Post;
-
-      DMArtesanalis.CDS_V_DoctoItens.Next;
-    End; // While Not DMArtesanalis.CDS_V_DoctoItens.Eof do
-    DMArtesanalis.CDS_V_DoctoItens.First;
-    DMArtesanalis.CDS_V_DoctoItens.EnableControls;
-
-    LimpaProduto();
-  End; // If Not DMArtesanalis.CDS_V_DoctoItens.IsEmpty Then
-
-  bgProdAlterar:=False;
 end;
 
-procedure TFrmMovimentos.Bt_IncluiProdutoClick(Sender: TObject);
+procedure TFrmPedidoVenda.EdtVlrTotalProdutoEnter(Sender: TObject);
+begin
+
+  If EdtQtdProduto.AsInteger=0 Then
+  Begin
+    msg('Favor Informar a Quantidade'+cr+cr+'do Produto!!','A');
+    EdtQtdProduto.SetFocus;
+    Exit;
+  End;
+
+  If EdtVlrUnitProduto.Value=0 Then
+  Begin
+    msg('Favor Informar o Valor Unitário'+cr+cr+'do Produto !!','A');
+    EdtVlrUnitProduto.SetFocus;
+    Exit;
+  End;
+
+  EdtVlrTotalProduto.Value:=(EdtQtdProduto.AsInteger*EdtVlrUnitProduto.Value)-EdtVlrDescProduto.Value;
+
+end;
+
+procedure TFrmPedidoVenda.Bt_IncluiProdutoClick(Sender: TObject);
 Var
   iSeqProd: Integer;
   c: Currency;
@@ -1308,27 +1118,87 @@ begin
   EdtCodProduto.SetFocus;
 end;
 
-procedure TFrmMovimentos.EdtVlrTotalProdutoEnter(Sender: TObject);
+procedure TFrmPedidoVenda.Bt_IncluiProdutoEnter(Sender: TObject);
 begin
+  FocoToControl(Bt_IncluiProduto);
 
-  If EdtQtdProduto.AsInteger=0 Then
-  Begin
-    msg('Favor Informar a Quantidade'+cr+cr+'do Produto!!','A');
-    EdtQtdProduto.SetFocus;
-    Exit;
-  End;
-
-  If EdtVlrUnitProduto.Value=0 Then
-  Begin
-    msg('Favor Informar o Valor Unitário'+cr+cr+'do Produto !!','A');
-    EdtVlrUnitProduto.SetFocus;
-    Exit;
-  End;
-
-  EdtVlrTotalProduto.Value:=(EdtQtdProduto.AsInteger*EdtVlrUnitProduto.Value)-EdtVlrDescProduto.Value;
 end;
 
-procedure TFrmMovimentos.Bt_SalvarClick(Sender: TObject);
+procedure TFrmPedidoVenda.Bt_ExcluiProdutoEnter(Sender: TObject);
+begin
+  FocoToControl(Bt_ExcluiProduto);
+
+end;
+
+procedure TFrmPedidoVenda.Bt_ExcluiProdutoClick(Sender: TObject);
+Var
+  i: Integer;
+begin
+  Dbg_Produtos.SetFocus;
+
+  If EdtSeqProduto.AsInteger=0 Then
+  Begin
+    msg('Favor Selecionar o Produto a Excluir !!','A');
+    LimpaProduto();
+    Dbg_Produtos.SetFocus;
+    Exit;
+  End;
+
+  if msg('Deseja Realmente Incluir'+cr+cr+'O Produto Selecionado ??','C')=2 Then
+   Exit;
+
+  If Not DMArtesanalis.CDS_V_DoctoItens.Locate('NUM_SEQ', EdtSeqProduto.AsInteger,[]) Then
+  Begin
+    msg('Produto Não Encontrado na Lista !!','A');
+    bgProdAlterar:=False;
+    LimpaProduto();
+    Dbg_Produtos.SetFocus;
+    Exit;
+  End;
+
+  DMArtesanalis.CDS_V_DoctoItens.Delete;
+
+  // Acerta Num_seq Produtos ===================================================
+  If Not DMArtesanalis.CDS_V_DoctoItens.IsEmpty Then
+  Begin
+    DMArtesanalis.CDS_V_DoctoItens.DisableControls;
+    DMArtesanalis.CDS_V_DoctoItens.First;
+    i:=0;
+    While Not DMArtesanalis.CDS_V_DoctoItens.Eof do
+    Begin
+      Inc(i);
+      DMArtesanalis.CDS_V_DoctoItens.Edit;
+      DMArtesanalis.CDS_V_DoctoItensNUM_SEQ.AsInteger:=i;
+      DMArtesanalis.CDS_V_DoctoItens.Post;
+
+      DMArtesanalis.CDS_V_DoctoItens.Next;
+    End; // While Not DMArtesanalis.CDS_V_DoctoItens.Eof do
+    DMArtesanalis.CDS_V_DoctoItens.First;
+    DMArtesanalis.CDS_V_DoctoItens.EnableControls;
+
+    LimpaProduto();
+  End; // If Not DMArtesanalis.CDS_V_DoctoItens.IsEmpty Then
+
+  bgProdAlterar:=False;
+end;
+
+procedure TFrmPedidoVenda.Bt_AbandonarProdutoClick(Sender: TObject);
+begin
+  LimpaProduto();
+
+  bgProdAlterar:=False;
+
+  EdtCodProduto.SetFocus;
+
+end;
+
+procedure TFrmPedidoVenda.Bt_AbandonarProdutoEnter(Sender: TObject);
+begin
+  FocoToControl(Bt_AbandonarProduto);
+
+end;
+
+procedure TFrmPedidoVenda.Bt_SalvarClick(Sender: TObject);
 begin
   Dbg_Produtos.SetFocus;
 
@@ -1343,20 +1213,6 @@ begin
   Begin
     msg('Favor Informar o'+cr+cr+'Número do Documento !!','A');
     EdtNumDocto.SetFocus;
-    Exit;
-  End;
-
-  If CBx_TipoDocto.ItemIndex<0 Then
-  Begin
-    msg('Favor Informar o '+cr+cr+'Tipo do Documento !!','A');
-    CBx_TipoDocto.SetFocus;
-    Exit;
-  End;
-
-  If Trim(EdtSerieDocto.Text)='' Then
-  Begin
-    msg('Favor Informar a'+cr+cr+'Série do Documento !!','A');
-    EdtSerieDocto.SetFocus;
     Exit;
   End;
 
@@ -1404,138 +1260,7 @@ begin
   End;
 
   // Inclui Novo Documento =====================================================
-  DocumentoIncluirExcluir('I');
+  PedidoIncluirExcluir('I');
 end;
 
-procedure TFrmMovimentos.Bt_ExcluirClick(Sender: TObject);
-begin
-  Dbg_Produtos.SetFocus;
-
-  If (DMArtesanalis.CDS_V_DoctoItens.IsEmpty) Or (EdtCodProduto.Enabled) Then
-   Exit;
-
-
-  If msg('Deseja Realmente Excluir'+cr+cr+'O Documento Selecionado ??','C')=2 Then
-   Exit;
-
-  DocumentoIncluirExcluir('E');
-
-end;
-
-procedure TFrmMovimentos.Dbg_ProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-Var
-  i: Integer;
-  s: String;
-begin
-  // Não Permite Excluir Registro Pelo Grid ====================================
-  if (Shift = [ssCtrl]) and (Key = 46) then
-    Key := 0;
-
-  // Localiza Materia-Prima ====================================================
-  If Key=VK_F4 Then
-  Begin
-    If Not DMArtesanalis.CDS_V_DoctoItens.IsEmpty Then
-    Begin
-      i:=DMArtesanalis.CDS_V_DoctoItens.RecNo;
-
-      s:='';
-      If InputQuery('Localizar Produto','',s) then
-      Begin
-        if Trim(s)<>'' then
-        Begin
-          Try
-            StrToInt(s);
-            If Not DMArtesanalis.CDS_V_DoctoItens.Locate('COD_PRODUTO',StrToInt(s),[]) Then
-            Begin
-              DMArtesanalis.CDS_V_DoctoItens.RecNo:=i;
-              msg('Produto Não Encontrado !!','A');
-            End;
-          Except
-            s:=AnsiUpperCase(s);
-            If Not LocalizaRegistro(DMArtesanalis.CDS_V_DoctoItens, 'DES_PRODUTO', s) Then
-            Begin
-              DMArtesanalis.CDS_V_DoctoItens.RecNo:=i;
-              msg('Produto Não Encontrado !!','A');
-            End;
-          End; // Try
-        End; // if Trim(s)<>'' then
-      End; // If InputQuery('Localizar Produto','',s) then
-    End; // If Not DMArtesanalis.CDS_V_DoctoItens.IsEmpty Then
-  End; //If Key=VK_F4 Then
-
-end;
-
-procedure TFrmMovimentos.Dbg_ProdutosDblClick(Sender: TObject);
-begin
-  If (DMArtesanalis.CDS_V_DoctoItens.IsEmpty) Or (not EdtCodProduto.Enabled) Then
-   Exit;
-
-  LimpaProduto();
-
-  EdtSeqProduto.AsInteger :=DMArtesanalis.CDS_V_DoctoItensNUM_SEQ.AsInteger;
-  EdtCodProduto.AsInteger :=DMArtesanalis.CDS_V_DoctoItensCOD_PRODUTO.AsInteger;
-  EdtDesProduto.Text      :=DMArtesanalis.CDS_V_DoctoItensDES_PRODUTO.AsString;
-  EdtQtdProduto.Value     :=DMArtesanalis.CDS_V_DoctoItensQTD_MOVTO.AsCurrency;
-  EdtVlrUnitProduto.Value :=DMArtesanalis.CDS_V_DoctoItensVLR_UNITARIO.AsCurrency;
-  EdtVlrDescProduto.Value :=DMArtesanalis.CDS_V_DoctoItensVLR_DESCONTO.AsCurrency;
-  EdtVlrTotalProduto.Value:=DMArtesanalis.CDS_V_DoctoItensVLR_TOTAL.AsCurrency;
-
-  bgProdAlterar:=True;
-  EdtCodProduto.SetFocus;
-end;
-
-procedure TFrmMovimentos.Bt_AbandonarProdutoClick(Sender: TObject);
-begin
-  LimpaProduto();
-
-  bgProdAlterar:=False;
-
-  EdtCodProduto.SetFocus;
-end;
-
-procedure TFrmMovimentos.Bt_IncluiProdutoEnter(Sender: TObject);
-begin
-  FocoToControl(Bt_IncluiProduto);
-end;
-
-procedure TFrmMovimentos.Bt_ExcluiProdutoEnter(Sender: TObject);
-begin
-  FocoToControl(Bt_ExcluiProduto);
-
-end;
-
-procedure TFrmMovimentos.Bt_AbandonarProdutoEnter(Sender: TObject);
-begin
-  FocoToControl(Bt_AbandonarProduto);
-
-end;
-
-procedure TFrmMovimentos.Dbe_VlrTotalCalculadoChange(Sender: TObject);
-begin
-  Try
-    EdtVlrTotalCalculado.Value:=DMArtesanalis.CDS_V_DoctoItensVlr_TotalCalculado.Value;
-  Except
-    EdtVlrTotalCalculado.Value:=0.00;
-  End;
-end;
-
-procedure TFrmMovimentos.EdtVlrDescProdutoExit(Sender: TObject);
-begin
-  If EdtVlrDescProduto.Value > (EdtQtdProduto.AsInteger*EdtVlrUnitProduto.Value) Then
-  Begin
-    msg('Valor de Desconto NÃO Pode SER Maior'+cr+cr+'que o Valor Total do Produto !!','A');
-    EdtVlrDescProduto.Value:=0;
-    EdtVlrDescProduto.SetFocus;
-    Exit;
-  End;
-
-  EdtQtdProdutoEnter(Self);
-end;
-
-procedure TFrmMovimentos.EdtQtdProdutoEnter(Sender: TObject);
-begin
-  EdtVlrTotalProduto.Value:=(EdtQtdProduto.AsInteger*EdtVlrUnitProduto.Value)-EdtVlrDescProduto.Value;
-
-end;
-
-End.
+end.

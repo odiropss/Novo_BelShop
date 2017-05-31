@@ -49,7 +49,7 @@ type
     CorCaptionForm: TJvGradientCaption;
     MenuProduto: TMenuItem;
     SubMenuProdutoCadastro: TMenuItem;
-    SubMenuProdutoVendas: TMenuItem;
+    SubMenuProdutoPedidoVenda: TMenuItem;
     Trad_Localizer: TcxLocalizer;
     MenuResolucaoVideo: TMenuItem;
     SubMenuResolucaoMudar: TMenuItem;
@@ -58,6 +58,8 @@ type
     MenuMateriaPrima: TMenuItem;
     SubMenuMateriaPrimaCadastro: TMenuItem;
     SubMenuMateriaPrimaMovimentacao: TMenuItem;
+    MenuPessoas: TMenuItem;
+    SubMenuPessoasCadastro: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -70,6 +72,8 @@ type
     procedure SubMenuMateriaPrimaMovimentacaoClick(Sender: TObject);
     procedure SubMenuResolucaoMudarClick(Sender: TObject);
     procedure SubMenuResolucaoRetornarClick(Sender: TObject);
+    procedure SubMenuPessoasCadastroClick(Sender: TObject);
+    procedure SubMenuProdutoPedidoVendaClick(Sender: TObject);
 
     // Odir ====================================================================
 
@@ -95,7 +99,7 @@ var
 implementation
 
 uses UDMArtesanalis, DK_Procs1, SysConst, UFrmMateriaPrimaCadastro,
-     UFrmProdutoCadastro, UFrmMovimentos;
+     UFrmProdutoCadastro, UFrmMovimentos, UFrmPessoaCadastro;
 
 {$R *.dfm}
 
@@ -274,6 +278,22 @@ begin
 
   SubMenuResolucaoMudar.Enabled   :=True;
   SubMenuResolucaoRetornar.Enabled:=False;
+
+end;
+
+procedure TFrmArtesanalis.SubMenuPessoasCadastroClick(Sender: TObject);
+begin
+  DMArtesanalis.MemoAdicionaNomeForm('Cadastro - PESSOAS');
+
+  FrmCadastroPessoa.Show;
+
+end;
+
+procedure TFrmArtesanalis.SubMenuProdutoPedidoVendaClick(Sender: TObject);
+begin
+//  msg('Opção em Desenvolvimento !!','A');
+//  Exit;
+
 
 end;
 

@@ -16,6 +16,7 @@ uses
   dxSkinsDefaultPainters, dxSkinValentine, dxSkinXmas2008Blue,
   dxSkinsdxStatusBarPainter, dxStatusBar, Grids, DBGrids, JvExControls,
   JvXPCore, JvXPButtons, StdCtrls, Mask, ToolEdit, CurrEdit, ExtCtrls,
+  Commctrl, // SHOW HINT EM FORMA DE BALÃO
   DBXpress, Math;
 
 type
@@ -61,6 +62,10 @@ type
 
     // Odir ====================================================================
 
+    // Hint em Fortma de Balão
+    Procedure CreateToolTips(hWnd: Cardinal); // Cria Show Hint em Forma de Balão
+    Procedure FocoToControl(Sender: TControl); // Posiciona no Componente
+
     Procedure LimpaComponentes;
     Procedure ProducaoBusca;
 
@@ -99,8 +104,20 @@ type
     { Public declarations }
   end;
 
+const 
+  // Show Hint em Forma de Balão
+  TTS_BALLOON = $40; 
+  TTM_SETTITLE = (WM_USER + 32); 
+  //////////////////////////////
+
 var
   FrmProdutoCadastro: TFrmProdutoCadastro;
+
+  // Show Hint em Forma de Balão
+  hTooltip: Cardinal; 
+  ti: TToolInfo; 
+  buffer : array[0..255] of char;
+  ///////////////////////////////
 
   TD: TTransactionDesc;
 
@@ -429,6 +446,61 @@ Begin
   DMArtesanalis.CDS_ProdutoProducao.Close;
 End;
 
+// Show Hint em Forma de Balão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+procedure TFrmProdutoCadastro.CreateToolTips(hWnd: Cardinal);
+begin
+  hToolTip := CreateWindowEx(0, 'Tooltips_Class32', nil, TTS_ALWAYSTIP or TTS_BALLOON,
+  Integer(CW_USEDEFAULT), Integer(CW_USEDEFAULT),Integer(CW_USEDEFAULT),
+  Integer(CW_USEDEFAULT), hWnd, 0, hInstance, nil);
+
+  if hToolTip <> 0 then
+  begin
+    SetWindowPos(hToolTip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE or  SWP_NOSIZE or SWP_NOACTIVATE);
+    ti.cbSize := SizeOf(TToolInfo);
+    ti.uFlags := TTF_SUBCLASS;
+    ti.hInst := hInstance;
+  end;
+end; // Show Hint em Forma de Balão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Show Hint em Forma de Balão - Usado no FormCreate >>>>>>>>>>>>>>>>>>>>>>>>>>>
+procedure AddToolTip(hwnd: dword; lpti: PToolInfo; IconType: Integer; Text, Title: PChar);
+var
+  Item: THandle;
+  Rect: TRect;
+begin
+
+  Item := hWnd;
+
+  if (Item <> 0) and (GetClientRect(Item, Rect)) then
+  begin
+    lpti.hwnd := Item;
+    lpti.Rect := Rect;
+    lpti.lpszText := Text;
+    SendMessage(hToolTip, TTM_ADDTOOL, 0, Integer(lpti));
+    FillChar(buffer, sizeof(buffer), #0);
+    lstrcpy(buffer, Title);
+
+    if (IconType > 3) or (IconType < 0) then
+      IconType := 0;
+
+    SendMessage(hToolTip, TTM_SETTITLE, IconType, Integer(@buffer));
+  end;
+end; // Show Hint em Forma de Balão - Usado no FormCreate >>>>>>>>>>>>>>>>>>>>>>
+
+// Show Hint em Forma de Balão - Posiciona do Componente >>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmProdutoCadastro.FocoToControl(Sender: TControl);
+Var
+ NewPos: TPoint;
+Begin
+  NewPos.X:=Sender.Left+(Sender.Width div 2);
+  NewPos.y:=Sender.Top+(Sender.Height div 2);
+
+  If Sender.Parent<>Nil Then
+   NewPos:=Sender.Parent.ClientToScreen(NewPos);
+
+  SetCursorPos(NewPos.x,NewPos.y)
+End; // Show Hint em Forma de Balão - Posiciona do Componente >>>>>>>>>>>>>>>>>>
+
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - Fim >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -451,10 +523,27 @@ begin
 end;
 
 procedure TFrmProdutoCadastro.FormCreate(Sender: TObject);
+const  
+  TipoDoIcone = 1; // Show Hint em Forma de Balão
 begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
 
+  // Show Hint em Forma de Balão
+  CreateToolTips(Self.Handle);
+  AddToolTip(Bt_ProdutoBusca.Handle, @ti, TipoDoIcone, 'Localizar', 'PRODUTO');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Bt_ProdutoSalvar.Handle, @ti, TipoDoIcone, 'Incluir/Alterar', 'PRODUTO');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Bt_ProdutoAbandonar.Handle, @ti, TipoDoIcone, 'Abandonar', 'PRODUTO');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Bt_ProdutoExcluir.Handle, @ti, TipoDoIcone, 'Excluir', 'PRODUTO');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Bt_Fechar.Handle, @ti, TipoDoIcone, 'Fechar', 'PRODUTO');
 end;
 
 procedure TFrmProdutoCadastro.FormKeyPress(Sender: TObject; var Key: Char);

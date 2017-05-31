@@ -63,6 +63,23 @@ type
     CDS_V_DoctoItensVLR_TOTAL: TFMTBCDField;
     CDS_V_DoctoItensVlr_TotalCalculado: TAggregateField;
     CDS_V_DoctoItensVLR_DESCONTO: TFMTBCDField;
+    SQLQ_Pessoas: TSQLQuery;
+    DSP_Pessoas: TDataSetProvider;
+    CDS_Pessoas: TClientDataSet;
+    DS_Pessoas: TDataSource;
+    CDS_PessoasTIPO: TStringField;
+    CDS_PessoasCOD_PESSOA: TIntegerField;
+    CDS_PessoasDES_PESSOA: TStringField;
+    CDS_PessoasNUM_CNPJCPF: TStringField;
+    CDS_PessoasENDERECO: TStringField;
+    CDS_PessoasNUMERO: TStringField;
+    CDS_PessoasCOMPLEMENTO: TStringField;
+    CDS_PessoasBAIRRO: TStringField;
+    CDS_PessoasCEP: TStringField;
+    CDS_PessoasCIDADE: TStringField;
+    CDS_PessoasUF: TStringField;
+    CDS_PessoasFONE: TStringField;
+    CDS_PessoasEMAIL: TStringField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -72,6 +89,7 @@ type
 
     Procedure MemoAdicionaNomeForm(sNome: String);
     Procedure MemoRetiraNomeForm(sNome: String);
+    procedure CDS_PessoasAfterOpen(DataSet: TDataSet);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -280,6 +298,12 @@ begin
 
   ConectaBanco;
 end;
+
+procedure TDMArtesanalis.CDS_PessoasAfterOpen(DataSet: TDataSet);
+begin
+  DMArtesanalis.CDS_PessoasCEP.EditMask:='99999-999;0;_';
+
+end;                                        
 
 end.
 

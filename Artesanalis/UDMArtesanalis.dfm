@@ -403,4 +403,97 @@ object DMArtesanalis: TDMArtesanalis
     Left = 124
     Top = 374
   end
+  object SQLQ_Pessoas: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQL.Strings = (
+      'Select *'
+      'From PESSOAS p'
+      'Where p.Cod_pessoa<0')
+    SQLConnection = SQLC
+    Left = 36
+    Top = 448
+  end
+  object DSP_Pessoas: TDataSetProvider
+    DataSet = SQLQ_Pessoas
+    Options = [poFetchBlobsOnDemand, poRetainServerOrder]
+    Left = 92
+    Top = 462
+  end
+  object CDS_Pessoas: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_Pessoas'
+    AfterOpen = CDS_PessoasAfterOpen
+    Left = 140
+    Top = 448
+    object CDS_PessoasTIPO: TStringField
+      FieldName = 'TIPO'
+      Required = True
+      FixedChar = True
+      Size = 1
+    end
+    object CDS_PessoasCOD_PESSOA: TIntegerField
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'COD_PESSOA'
+      Required = True
+    end
+    object CDS_PessoasDES_PESSOA: TStringField
+      DisplayLabel = 'Nome'
+      FieldName = 'DES_PESSOA'
+      Size = 60
+    end
+    object CDS_PessoasNUM_CNPJCPF: TStringField
+      DisplayLabel = 'Cnpj/Cpf'
+      FieldName = 'NUM_CNPJCPF'
+      Size = 14
+    end
+    object CDS_PessoasENDERECO: TStringField
+      DisplayLabel = 'Endere'#231'o'
+      FieldName = 'ENDERECO'
+      Size = 60
+    end
+    object CDS_PessoasNUMERO: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'N'#250'mero'
+      FieldName = 'NUMERO'
+    end
+    object CDS_PessoasCOMPLEMENTO: TStringField
+      DisplayLabel = 'Complemento'
+      FieldName = 'COMPLEMENTO'
+    end
+    object CDS_PessoasBAIRRO: TStringField
+      DisplayLabel = 'Bairro'
+      FieldName = 'BAIRRO'
+      Size = 40
+    end
+    object CDS_PessoasCEP: TStringField
+      FieldName = 'CEP'
+      FixedChar = True
+      Size = 9
+    end
+    object CDS_PessoasCIDADE: TStringField
+      DisplayLabel = 'Cidade'
+      FieldName = 'CIDADE'
+      Size = 40
+    end
+    object CDS_PessoasUF: TStringField
+      FieldName = 'UF'
+      Size = 2
+    end
+    object CDS_PessoasFONE: TStringField
+      DisplayLabel = 'Fone'
+      FieldName = 'FONE'
+    end
+    object CDS_PessoasEMAIL: TStringField
+      DisplayLabel = 'E-Mail'
+      FieldName = 'EMAIL'
+      Size = 50
+    end
+  end
+  object DS_Pessoas: TDataSource
+    DataSet = CDS_Pessoas
+    Left = 196
+    Top = 462
+  end
 end

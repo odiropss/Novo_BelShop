@@ -1,6 +1,6 @@
 object FrmProdutoCadastro: TFrmProdutoCadastro
-  Left = 235
-  Top = 104
+  Left = 246
+  Top = 112
   Width = 1003
   Height = 617
   AutoSize = True
@@ -703,6 +703,19 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
             Bevel = dxpbNone
             Fixed = False
             Text = 'No Grid ==>>'
+            Width = 100
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clWindowText
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = [fsBold]
+            PanelStyle.ParentFont = False
+            Fixed = False
+            Text = '<F4> Procura'
             Width = 120
           end
           item
@@ -712,20 +725,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
             PanelStyle.Font.Color = clWindowText
             PanelStyle.Font.Height = -11
             PanelStyle.Font.Name = 'MS Sans Serif'
-            PanelStyle.Font.Style = []
-            PanelStyle.ParentFont = False
-            Fixed = False
-            Text = '<F4> Procura'
-            Width = 150
-          end
-          item
-            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-            PanelStyle.Alignment = taCenter
-            PanelStyle.Font.Charset = DEFAULT_CHARSET
-            PanelStyle.Font.Color = clWindowText
-            PanelStyle.Font.Height = -11
-            PanelStyle.Font.Name = 'MS Sans Serif'
-            PanelStyle.Font.Style = []
+            PanelStyle.Font.Style = [fsBold]
             PanelStyle.ParentFont = False
             Fixed = False
             Text = '<DuploClick> Seleciona para Produ'#231#227'o'
@@ -736,7 +736,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
+        Font.Style = []
       end
     end
     object Gb_Producao: TGroupBox
@@ -827,7 +827,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
             PanelStyle.Font.Color = clWindowText
             PanelStyle.Font.Height = -11
             PanelStyle.Font.Name = 'MS Sans Serif'
-            PanelStyle.Font.Style = []
+            PanelStyle.Font.Style = [fsBold]
             PanelStyle.ParentFont = False
             BiDiMode = bdRightToLeft
             Fixed = False
@@ -842,7 +842,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
             PanelStyle.Font.Color = clWindowText
             PanelStyle.Font.Height = -11
             PanelStyle.Font.Name = 'MS Sans Serif'
-            PanelStyle.Font.Style = []
+            PanelStyle.Font.Style = [fsBold]
             PanelStyle.ParentFont = False
             Fixed = False
             Text = '<F4> Procura'
@@ -855,7 +855,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
             PanelStyle.Font.Color = clWindowText
             PanelStyle.Font.Height = -11
             PanelStyle.Font.Name = 'MS Sans Serif'
-            PanelStyle.Font.Style = []
+            PanelStyle.Font.Style = [fsBold]
             PanelStyle.ParentFont = False
             Fixed = False
             Text = '<Delete> Exclui Produ'#231#227'o Selecionda'
@@ -866,7 +866,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
+        Font.Style = []
       end
     end
     object Panel1: TPanel
