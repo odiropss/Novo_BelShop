@@ -54,7 +54,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       ParentFont = False
       TabOrder = 0
       object Gb_VlrTotal: TGroupBox
-        Left = 474
+        Left = 530
         Top = 62
         Width = 110
         Height = 51
@@ -65,7 +65,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 4
+        TabOrder = 5
         object EdtVlrTotal: TCurrencyEdit
           Left = 13
           Top = 22
@@ -80,10 +80,12 @@ object FrmPedidoVenda: TFrmPedidoVenda
           Font.Style = []
           ParentFont = False
           TabOrder = 0
+          OnEnter = EdtVlrProdutosEnter
+          OnExit = EdtVlrProdutosEnter
         end
       end
       object Gb_VlrDescontos: TGroupBox
-        Left = 362
+        Left = 418
         Top = 62
         Width = 110
         Height = 51
@@ -94,7 +96,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 3
+        TabOrder = 4
         object EdtVlrDescontos: TCurrencyEdit
           Left = 13
           Top = 22
@@ -109,10 +111,12 @@ object FrmPedidoVenda: TFrmPedidoVenda
           Font.Style = []
           ParentFont = False
           TabOrder = 0
+          OnEnter = EdtVlrProdutosEnter
+          OnExit = EdtVlrProdutosEnter
         end
       end
       object Gb_NumDocto: TGroupBox
-        Left = 138
+        Left = 82
         Top = 62
         Width = 86
         Height = 51
@@ -143,7 +147,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         end
       end
       object Gb_DtaDocto: TGroupBox
-        Left = 226
+        Left = 170
         Top = 62
         Width = 134
         Height = 51
@@ -318,9 +322,9 @@ object FrmPedidoVenda: TFrmPedidoVenda
         end
       end
       object EdtNumSeqDocto: TCurrencyEdit
-        Left = 813
-        Top = 14
-        Width = 17
+        Left = 733
+        Top = 6
+        Width = 84
         Height = 19
         AutoSize = False
         DecimalPlaces = 0
@@ -332,21 +336,22 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Style = []
         ParentFont = False
         ReadOnly = True
-        TabOrder = 5
+        TabOrder = 7
         Visible = False
       end
       object Dbe_VlrTotalCalculado: TDBEdit
-        Left = 816
-        Top = 36
-        Width = 15
+        Left = 728
+        Top = 28
+        Width = 89
         Height = 19
         DataField = 'Vlr_TotalCalculado'
         DataSource = DMArtesanalis.DS_V_DoctoItens
-        TabOrder = 6
+        TabOrder = 8
         Visible = False
+        OnChange = Dbe_VlrTotalCalculadoChange
       end
       object Gb_VlrTotalCalculado: TGroupBox
-        Left = 586
+        Left = 642
         Top = 62
         Width = 124
         Height = 51
@@ -358,7 +363,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 7
+        TabOrder = 6
         object EdtVlrTotalCalculado: TCurrencyEdit
           Left = 14
           Top = 21
@@ -376,6 +381,48 @@ object FrmPedidoVenda: TFrmPedidoVenda
           ParentFont = False
           TabOrder = 0
         end
+      end
+      object Gb_VlrProdutos: TGroupBox
+        Left = 306
+        Top = 62
+        Width = 110
+        Height = 51
+        Caption = ' $ Produtos '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 3
+        object EdtVlrProdutos: TCurrencyEdit
+          Left = 13
+          Top = 22
+          Width = 84
+          Height = 19
+          AutoSize = False
+          DisplayFormat = ',0.00'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+          OnEnter = EdtVlrProdutosEnter
+          OnExit = EdtVlrProdutosEnter
+        end
+      end
+      object Dbe_VlrTotalDesconto: TDBEdit
+        Left = 776
+        Top = 52
+        Width = 69
+        Height = 19
+        DataField = 'Vlr_TotalDesconto'
+        DataSource = DMArtesanalis.DS_V_DoctoItens
+        TabOrder = 9
+        Visible = False
+        OnChange = Dbe_VlrTotalCalculadoChange
       end
     end
     object Pan_Solicitacoes: TPanel
@@ -524,6 +571,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
+        OnClick = Bt_AbandonarClick
       end
       object Bt_Excluir: TJvXPButton
         Tag = 99

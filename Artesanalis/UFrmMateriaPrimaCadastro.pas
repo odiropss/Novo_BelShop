@@ -72,6 +72,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure Dbg_MateriaPrimaEnter(Sender: TObject);
     procedure Dbg_MateriaPrimaExit(Sender: TObject);
+    procedure EdtMateriaPrimaCustoExit(Sender: TObject);
 
   private
     { Private declarations }
@@ -334,6 +335,7 @@ end;
 
 procedure TFrmMateriaPrimaCadastro.EdtMateriaPrimaCodExit(Sender: TObject);
 begin
+
   If EdtMateriaPrimaCod.AsInteger=0 Then
    Exit;
 
@@ -368,6 +370,8 @@ begin
 
   EdtMateriaPrimaCod.AsInteger:=DMArtesanalis.CDS_MateriaPrimaCOD_MATERIAPRIMA.AsInteger;
   EdtMateriaPrimaCodExit(Self);
+  EdtMateriaPrimaDesc.SetFocus;
+
 end;
 
 procedure TFrmMateriaPrimaCadastro.Bt_MateriaPrimaSalvarClick(Sender: TObject);
@@ -538,6 +542,11 @@ end;
 procedure TFrmMateriaPrimaCadastro.Dbg_MateriaPrimaExit(Sender: TObject);
 begin
   (Sender as TDBGrid).Color:=clWindow;
+end;
+
+procedure TFrmMateriaPrimaCadastro.EdtMateriaPrimaCustoExit(Sender: TObject);
+begin
+  EdtMateriaPrimaCustoMedio.Value:=EdtMateriaPrimaCusto.Value;
 end;
 
 end.

@@ -263,7 +263,7 @@ begin
            '           FROM LINXMOVIMENTO m'+
            '           WHERE m.empresa = '+IntToStr(iCodLojaLinx)+
            '           AND   m.operacao = ''E'''+
-           '           AND   ((m.tipo_transacao=''S'') OR (m.tipo_transacao=''E'') OR (m.tipo_transacao IS NULL))'+
+           '           AND   m.tipo_transacao=''E'''+
            '           AND   m.cancelado=''N'''+
            '           AND   m.excluido=''N'''+
            '           AND   m.cod_produto = lpd.cod_produto'+
@@ -3086,14 +3086,15 @@ begin
                    '              SUM(DECODE(lm.operacao, ''S'', lm.valor_total, -lm.valor_total)) vlr_total'+
                    '       FROM LINXMOVIMENTO lm, LINXPRODUTOS lp'+
                    '       WHERE lm.cod_produto = lp.cod_produto'+
-                   '       AND   lm.operacao IN (''S'', ''DS'')'+
-                   '       AND   ((lm.tipo_transacao IN (''V'', ''S'')) OR'+
-                   '              (lm.tipo_transacao IS NULL) OR'+
-                   '              (TRIM(lm.tipo_transacao) = ''''))'+
+
+                   '       AND  ('+
+                   '             (lm.operacao=''S'')  AND (lm.tipo_transacao=''V'')'+   // Saídas Vendas
+                   '            OR'+
+                   '             (lm.operacao=''DS'') AND (lm.tipo_transacao is null)'+ // Entradas Devoluções
+                   '            )'+
+
                    '       AND   lm.cancelado = ''N'''+
                    '       AND   lm.excluido = ''N'''+
-//odirapagar - 22/05/2017
-//                   '       AND   lm.soma_relatorio = ''S'''+
                    '       AND   lp.cod_auxiliar IS NOT NULL'+
                    '       AND   lm.empresa ='+IntToStr(iCodLojaLinx)+
                    '       AND   lm.data_lancamento >= '+QuotedStr(sDtaUltAtualizacao)+
@@ -3704,28 +3705,39 @@ begin
           If iCodLojaLinx<>0 Then // LINX
           Begin
             MySql:=' SELECT '+
-                   ' pl.cod_auxiliar CODPRODUTO, cast(ml.data_lancamento as date) DATAENTRADA,'+
-                   ' ml.quantidade QUANT, ml.valor_liquido PRECO, ml.valor_ipi VALIPI,'+
-                   ' (ml.preco_custo * ml.quantidade) VALBRUTO, ml.desconto VALDESCONTO,'+
-                   ' ml.valor_icms_st VALSUBSTITUICAO, ml.valor_total VALTOTAL'+
+                   ' pl.cod_auxiliar CODPRODUTO,'+
+                   ' cast(ml.data_lancamento as date) DATAENTRADA,'+
+                   ' ml.quantidade QUANT,'+
+                   ' ml.valor_liquido PRECO,'+
+                   ' ml.valor_ipi VALIPI,'+
+                   ' (ml.preco_custo * ml.quantidade) VALBRUTO,'+
+                   ' ml.desconto VALDESCONTO,'+
+                   ' ml.valor_icms_st VALSUBSTITUICAO,'+
+                   ' ml.valor_total VALTOTAL'+
 
                    ' FROM LINXMOVIMENTO ml, LINXPRODUTOS pl'+
                    ' WHERE ml.cod_produto=pl.cod_produto'+
                    ' AND   pl.cod_auxiliar is not null'+
                    ' AND   ml.empresa='+IntToStr(iCodLojaLinx)+
+
+                   // Entradas de Compras
                    ' AND   ml.operacao=''E'''+
-                   ' AND   ((ml.tipo_transacao=''E'') OR (ml.tipo_transacao IS NULL))'+
+                   ' AND   COALESCE(ml.tipo_transacao,''E'')=''E'''+
+                   ' AND   trim(ml.id_cfop) NOT IN (''1152'',''2152'', ''1409'', ''2409'', ''1910'', ''2910'')'+ // Retira Transferencias/Bonificações
+
                    ' AND   ml.cancelado=''N'''+
                    ' AND   ml.excluido=''N'''+
-                   ' AND   ml.data_lancamento='+
-                   '                  (SELECT max(ml1.data_lancamento)'+
+
+                   ' AND   cast(ml.data_lancamento as Date)='+
+                   '                  (SELECT max(cast(ml1.data_lancamento As date))'+
                    '                   FROM LINXMOVIMENTO ml1'+
                    '                   WHERE ml1.cod_produto=ml.cod_produto'+
-                   '                   AND   ml1.empresa = ml.empresa'+
-                   '                   AND   ml1.operacao = ml.operacao'+
-                   '                   AND   ((ml1.tipo_transacao=''E'') OR (ml1.tipo_transacao IS NULL))'+
+                   '                   AND   ml1.id_cfop=ml.id_cfop'+
+                   '                   AND   ml1.empresa=ml.empresa'+
+                   '                   AND   ml1.operacao=ml.operacao'+
+                   '                   AND   COALESCE(ml1.tipo_transacao,''E'')=''E'''+
                    '                   AND   ml1.cancelado=ml.cancelado'+
-                   '                   AND   ml1.excluido=ml.excluido'+
+                   '                   AND   ml1.excluido =ml.excluido'+
                    '                   AND   CAST(ml1.data_lancamento as Date)>='+QuotedStr(sDtaUltAtualizacao)+')';
             DMMovtosEmpresas.CDS_LojaLinx.Close;
             DMMovtosEmpresas.SDS_LojaLinx.CommandText:=MySql;

@@ -443,6 +443,7 @@ object FrmMovimentos: TFrmMovimentos
           Font.Style = [fsBold]
           ParentFont = False
           TabOrder = 0
+          OnChange = EdtVlrTotalCalculadoChange
         end
       end
     end

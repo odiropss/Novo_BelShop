@@ -80,6 +80,8 @@ type
     CDS_PessoasUF: TStringField;
     CDS_PessoasFONE: TStringField;
     CDS_PessoasEMAIL: TStringField;
+    CDS_V_DoctoItensVlr_TotalProdutos: TAggregateField;
+    CDS_V_DoctoItensVlr_TotalDesconto: TAggregateField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

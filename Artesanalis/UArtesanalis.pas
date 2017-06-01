@@ -99,7 +99,8 @@ var
 implementation
 
 uses UDMArtesanalis, DK_Procs1, SysConst, UFrmMateriaPrimaCadastro,
-     UFrmProdutoCadastro, UFrmMovimentos, UFrmPessoaCadastro;
+     UFrmProdutoCadastro, UFrmMovimentos, UFrmPessoaCadastro,
+  UFrmPedidoVenda;
 
 {$R *.dfm}
 
@@ -122,8 +123,10 @@ begin
 end;
 
 function VoltaResolucao(a , b: word): Boolean;
-var lpDevMode: TDeviceMode;
+var
+  lpDevMode: TDeviceMode;
 begin
+  Result:=False;
   if EnumDisplaySettings(nil, 0, lpDevMode) then
   begin
     lpDevMode.dmFields := DM_PELSWIDTH Or DM_PELSHEIGHT;
@@ -262,6 +265,14 @@ end;
 procedure TFrmArtesanalis.SubMenuResolucaoMudarClick(Sender: TObject);
 begin
 
+  if mgMemoForms.Lines.Count>0 Then
+  Begin
+    MessageBox(Handle, pChar('Existe(m) Janela(s) Aberta(s):'+cr+cr+
+                             mgMemoForms.Lines.Text+cr+cr+
+                             'Antes da ALTERAÇÃO Feche Todas Primeiro...'), 'ATENÇÃO !!', MB_ICONERROR);
+    Exit;
+  End;
+
   If msg('Deseja Realmente Mudar a'+cr+' Resolução do Video ?','C')=2 Then
    Exit;
 
@@ -294,10 +305,13 @@ begin
 //  msg('Opção em Desenvolvimento !!','A');
 //  Exit;
 
+  DMArtesanalis.MemoAdicionaNomeForm('PRODUTO - Pedido de Vendas');
+
+  FrmPedidoVenda.sgOrigem:='P'; // Pedido de Venda
+  FrmPedidoVenda.Show;
+
 
 end;
 
 end.
-{
 
-}

@@ -1,6 +1,6 @@
 object FrmProdutoCadastro: TFrmProdutoCadastro
   Left = 246
-  Top = 112
+  Top = 111
   Width = 1003
   Height = 617
   AutoSize = True

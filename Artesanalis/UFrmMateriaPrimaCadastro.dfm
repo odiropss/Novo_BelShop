@@ -170,6 +170,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
           Font.Style = []
           ParentFont = False
           TabOrder = 0
+          OnExit = EdtMateriaPrimaCustoExit
         end
       end
       object Gb_MateriaPrimaCustoMedio: TGroupBox
@@ -249,6 +250,7 @@ object FrmMateriaPrimaCadastro: TFrmMateriaPrimaCadastro
         Top = 1
         Width = 631
         Height = 407
+        TabStop = False
         Align = alClient
         DataSource = DMArtesanalis.DS_MateriaPrima
         FixedColor = 15000804

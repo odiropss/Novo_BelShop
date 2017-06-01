@@ -133,7 +133,8 @@ type
     procedure Bt_AbandonarProdutoEnter(Sender: TObject);
     procedure Dbe_VlrTotalCalculadoChange(Sender: TObject);
     procedure EdtVlrDescProdutoExit(Sender: TObject);
-    procedure EdtQtdProdutoEnter(Sender: TObject); // Posiciona no Componente
+    procedure EdtQtdProdutoEnter(Sender: TObject);
+    procedure EdtVlrTotalCalculadoChange(Sender: TObject); // Posiciona no Componente
 
   private
     { Private declarations }
@@ -217,11 +218,11 @@ Begin
 
     // Tipo de Documento =======================================================
     If CBx_TipoDocto.ItemIndex=0 Then sTipoDocto:='E';
-    If CBx_TipoDocto.ItemIndex=2 Then sTipoDocto:='S';
-    If CBx_TipoDocto.ItemIndex=3 Then sTipoDocto:='DE';
-    If CBx_TipoDocto.ItemIndex=4 Then sTipoDocto:='DS';
-    If CBx_TipoDocto.ItemIndex=5 Then sTipoDocto:='BE';
-    If CBx_TipoDocto.ItemIndex=6 Then sTipoDocto:='BS';
+    If CBx_TipoDocto.ItemIndex=1 Then sTipoDocto:='S';
+    If CBx_TipoDocto.ItemIndex=2 Then sTipoDocto:='DE';
+    If CBx_TipoDocto.ItemIndex=3 Then sTipoDocto:='DS';
+    If CBx_TipoDocto.ItemIndex=4 Then sTipoDocto:='BE';
+    If CBx_TipoDocto.ItemIndex=5 Then sTipoDocto:='BS';
 
     //==========================================================================
     // Exclusão do Documento ===================================================
@@ -324,7 +325,7 @@ Begin
       // Insere Documento ======================================================
       MySql:=' INSERT INTO DOCTOS'+
              ' (ORIGEM, NUM_SEQ_DOCTO, TIPO, NUM_DOCTO, NUM_SERIE, DTA_DOCTO, DTA_LANCAMENTO,'+
-             '  COD_PESSOA, DES_PESSOA, VLR_PRODUTOS, VLR_TOTAL)'+
+             '  COD_PESSOA, DES_PESSOA, VLR_PRODUTOS, VLR_DESCONTO, VLR_TOTAL)'+
              ' VALUES ('+
              QuotedStr(sgOrigem)+', '+ // ORIGEM - Matéria-Prima
              IntToStr(EdtNumSeqDocto.AsInteger)+', '+ // NUM_SEQ_DOCTO
@@ -336,6 +337,7 @@ Begin
              IntToStr(EdtCodPessoa.AsInteger)+', '+ // COD_PESSOA
              QuotedStr(EdtDesPessoa.Text)+', '+ // DES_PESSOA
              QuotedStr(f_Troca(',','.',VarToStr(EdtVlrProdutos.Value)))+', '+ // VLR_PRODUTOS
+             QuotedStr(f_Troca(',','.',DMArtesanalis.CDS_V_DoctoItensVlr_TotalDesconto.AsString))+', '+ // VLR_DESCONTO
              QuotedStr(f_Troca(',','.',VarToStr(EdtVlrTotal.Value)))+')'; // VLR_TOTAL
       DMArtesanalis.SQLC.Execute(MySql,nil,nil);
 
@@ -358,7 +360,7 @@ Begin
                 QuotedStr(DMArtesanalis.CDS_V_DoctoItensVLR_TOTAL.AsString)+')'; // VLR_TOTAL
         DMArtesanalis.SQLC.Execute(MySql,nil,nil);
 
-        // Calcula/Atualiza Novo Custo Médio =====================================
+        // Calcula/Atualiza Novo Custo Médio ===================================
         If sTipoDocto='E' Then
         Begin
           MySql:=' SELECT sum(i.vlr_total)/sum(i.qtd_movto) Custo_Medio'+
@@ -430,7 +432,7 @@ Begin
     If sDML='I' Then
     Begin
       msg('Documento INCLUÍDO com SUCESSO !!','A');
-      EdtCodPessoaExit(Self);
+      EdtNumDoctoExit(Self);
       Exit;
     End;
 
@@ -892,7 +894,8 @@ begin
   End;
 
   MySql:=' SELECT dc.num_seq_docto, dc.tipo, dc.num_docto, dc.num_serie, dc.dta_docto,'+
-         '        dc.cod_pessoa, dc.des_pessoa, dc.vlr_produtos, dc.vlr_total,'+
+         '        dc.cod_pessoa, dc.des_pessoa,'+
+         '        dc.vlr_produtos, dc.vlr_desconto, dc.vlr_total,'+
          '        di.num_seq, di.cod_produto, di.des_produto,'+
          '        di.qtd_movto, di.vlr_unitario, di.vlr_desconto, di.vlr_total'+
          ' FROM DOCTOS dc, DOCTOS_ITENS di'+
@@ -1535,6 +1538,16 @@ end;
 procedure TFrmMovimentos.EdtQtdProdutoEnter(Sender: TObject);
 begin
   EdtVlrTotalProduto.Value:=(EdtQtdProduto.AsInteger*EdtVlrUnitProduto.Value)-EdtVlrDescProduto.Value;
+
+end;
+
+procedure TFrmMovimentos.EdtVlrTotalCalculadoChange(Sender: TObject);
+begin
+  Try
+    EdtVlrTotalCalculado.Value:=DMArtesanalis.CDS_V_DoctoItensVlr_TotalCalculado.Value;
+  Except
+    EdtVlrTotalCalculado.Value:=0.00;
+  End;
 
 end;
 

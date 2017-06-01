@@ -320,16 +320,19 @@ object DMArtesanalis: TDMArtesanalis
     end
     object CDS_ProdutoMatPrimaPRECO_CUSTO: TFMTBCDField
       FieldName = 'PRECO_CUSTO'
+      DisplayFormat = '0,.00'
       Precision = 18
       Size = 2
     end
     object CDS_ProdutoMatPrimaCUSTO_MEDIO: TFMTBCDField
       FieldName = 'CUSTO_MEDIO'
+      DisplayFormat = '0,.00'
       Precision = 18
       Size = 2
     end
     object CDS_ProdutoMatPrimaQTD_ESTOQUE: TFMTBCDField
       FieldName = 'QTD_ESTOQUE'
+      DisplayFormat = '0,.00000'
       Precision = 18
       Size = 4
     end
@@ -393,9 +396,24 @@ object DMArtesanalis: TDMArtesanalis
       DisplayLabel = '$ Total Calculado'
       FieldName = 'Vlr_TotalCalculado'
       Active = True
-      currency = True
       DisplayFormat = '0,.00'
       Expression = 'SUM(VLR_TOTAL)'
+    end
+    object CDS_V_DoctoItensVlr_TotalProdutos: TAggregateField
+      Alignment = taRightJustify
+      DisplayLabel = '$ Total Produtos'
+      FieldName = 'Vlr_TotalProdutos'
+      Active = True
+      DisplayFormat = '0,.00'
+      Expression = 'SUM(QTD_MOVTO * VLR_UNITARIO)'
+    end
+    object CDS_V_DoctoItensVlr_TotalDesconto: TAggregateField
+      Alignment = taRightJustify
+      DisplayLabel = '$ Total Descontos'
+      FieldName = 'Vlr_TotalDesconto'
+      Active = True
+      DisplayFormat = '0,.00'
+      Expression = 'SUM(VLR_DESCONTO)'
     end
   end
   object DS_V_DoctoItens: TDataSource

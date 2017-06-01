@@ -68,6 +68,9 @@ type
     Dbg_Produtos: TDBGrid;
     OdirPanApres: TPanel;
     StB_Movtos: TdxStatusBar;
+    Gb_VlrProdutos: TGroupBox;
+    EdtVlrProdutos: TCurrencyEdit;
+    Dbe_VlrTotalDesconto: TDBEdit;
 
     // Odir ====================================================================
 
@@ -85,6 +88,8 @@ type
     Procedure PedidoIncluirExcluir(sDML: String);
                                    // sDML: (I)Inclusão
                                    //       (E)Exclusão
+
+    Procedure CalculaRateiroDescontos;
 
     // Odir ====================================================================
 
@@ -114,6 +119,9 @@ type
     procedure Bt_AbandonarProdutoClick(Sender: TObject);
     procedure Bt_AbandonarProdutoEnter(Sender: TObject);
     procedure Bt_SalvarClick(Sender: TObject);
+    procedure EdtVlrProdutosEnter(Sender: TObject);
+    procedure Bt_AbandonarClick(Sender: TObject);
+    procedure Dbe_VlrTotalCalculadoChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -149,7 +157,7 @@ var
 
 implementation
 
-uses UDMArtesanalis, UPesquisa, DK_Procs1, UFrmPessoaCadastro;
+uses UDMArtesanalis, UPesquisa, DK_Procs1, UFrmPessoaCadastro, DB, Math;
 
 {$R *.dfm}
 
@@ -157,12 +165,96 @@ uses UDMArtesanalis, UPesquisa, DK_Procs1, UFrmPessoaCadastro;
 // Odir - Inicio >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// Calcula Rateio de Descontos nos Produtos do Pedido >>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmPedidoVenda.CalculaRateiroDescontos;
+Var
+  iSeqProdMaiorVlr: Integer;
+  cTotalProduto: Currency;
+  cMaiorDesconto, cPerDesconto, cVlrDesconto: Currency;
+Begin
+  If DMArtesanalis.CDS_V_DoctoItens.IsEmpty Then
+   Exit;
+
+  // Retira Rateio de Descontos ================================================
+  If EdtVlrDescontos.Value=0 Then
+  Begin
+    DMArtesanalis.CDS_V_DoctoItens.DisableControls;
+    DMArtesanalis.CDS_V_DoctoItens.First;
+    While Not DMArtesanalis.CDS_V_DoctoItens.Eof do
+    Begin
+      cTotalProduto:=DMArtesanalis.CDS_V_DoctoItensQTD_MOVTO.AsCurrency*
+                     DMArtesanalis.CDS_V_DoctoItensVLR_UNITARIO.AsCurrency;
+
+      DMArtesanalis.CDS_V_DoctoItens.Edit;
+      DMArtesanalis.CDS_V_DoctoItensVLR_DESCONTO.AsCurrency:=0.00;
+      DMArtesanalis.CDS_V_DoctoItensVLR_TOTAL.AsCurrency:=cTotalProduto;
+      DMArtesanalis.CDS_V_DoctoItens.Post;
+
+      DMArtesanalis.CDS_V_DoctoItens.Next;
+    End; // While Not DMArtesanalis.CDS_V_DoctoItens.Eof do
+    DMArtesanalis.CDS_V_DoctoItens.First;
+    DMArtesanalis.CDS_V_DoctoItens.EnableControls;
+
+    Exit;
+  End; // If EdtVlrDescontos.Value<>0 Then
+
+  // Calcula Rateio de Descontos ===============================================
+  iSeqProdMaiorVlr:=0;
+  cMaiorDesconto:=0;
+
+  DMArtesanalis.CDS_V_DoctoItens.DisableControls;
+  DMArtesanalis.CDS_V_DoctoItens.First;
+  While Not DMArtesanalis.CDS_V_DoctoItens.Eof do
+  Begin
+    cTotalProduto:=DMArtesanalis.CDS_V_DoctoItensQTD_MOVTO.AsCurrency*
+                   DMArtesanalis.CDS_V_DoctoItensVLR_UNITARIO.AsCurrency;
+
+    cPerDesconto:=RoundTo(((cTotalProduto * 100 )/ EdtVlrProdutos.Value),-2);
+    cVlrDesconto:=RoundTo(((EdtVlrDescontos.Value*cPerDesconto)/100),-2);
+
+    If cMaiorDesconto<cVlrDesconto Then
+    Begin
+      iSeqProdMaiorVlr:=DMArtesanalis.CDS_V_DoctoItensNUM_SEQ.AsInteger;
+      cMaiorDesconto:=cVlrDesconto;
+    End;
+
+    DMArtesanalis.CDS_V_DoctoItens.Edit;
+    DMArtesanalis.CDS_V_DoctoItensVLR_DESCONTO.AsCurrency:=cVlrDesconto;
+    DMArtesanalis.CDS_V_DoctoItensVLR_TOTAL.AsCurrency:=cTotalProduto-cVlrDesconto;
+    DMArtesanalis.CDS_V_DoctoItens.Post;
+
+    DMArtesanalis.CDS_V_DoctoItens.Next;
+  End; // While Not DMArtesanalis.CDS_V_DoctoItens.Eof do
+  DMArtesanalis.CDS_V_DoctoItens.First;
+  DMArtesanalis.CDS_V_DoctoItens.EnableControls;
+
+  // Acerta Residuo de Desconto ==============================================
+  cVlrDesconto:=StrToCurr(Dbe_VlrTotalDesconto.Text);
+  cVlrDesconto:=EdtVlrDescontos.Value-cVlrDesconto;
+  If cVlrDesconto<>0 Then
+  Begin
+    DMArtesanalis.CDS_V_DoctoItens.Locate('NUM_SEQ', iSeqProdMaiorVlr,[]);
+
+    cTotalProduto:=DMArtesanalis.CDS_V_DoctoItensQTD_MOVTO.AsCurrency*
+                   DMArtesanalis.CDS_V_DoctoItensVLR_UNITARIO.AsCurrency;
+
+    DMArtesanalis.CDS_V_DoctoItens.Edit;
+    DMArtesanalis.CDS_V_DoctoItensVLR_DESCONTO.AsCurrency:=DMArtesanalis.CDS_V_DoctoItensVLR_DESCONTO.AsCurrency+
+                                                           cVlrDesconto;
+    DMArtesanalis.CDS_V_DoctoItensVLR_TOTAL.AsCurrency:=cTotalProduto-
+                                                        DMArtesanalis.CDS_V_DoctoItensVLR_DESCONTO.AsCurrency;
+    DMArtesanalis.CDS_V_DoctoItens.Post;
+  End; // If cVlrDesconto>0 Then
+End; // Calcula Rateio de Descontos nos Produtos do Pedido >>>>>>>>>>>>>>>>>>>>>
+
 // Inclusão/Exclusão do Pedido >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmPedidoVenda.PedidoIncluirExcluir(sDML: String);
 Var
   MySql: String;
-  sQtdSaldo: String;
+  sTipoDocto, sQtdSaldo: String;
+  cVlrProd: Currency;
 Begin
+
   // sDML: (I)Inclusão
   //       (E)Exclusão
 
@@ -253,7 +345,7 @@ Begin
     // Exclusão do Pedido ======================================================
 
     //==========================================================================
-    // Inclusão do Pedido ======================================================
+    // Inclusão do Pedido =====================================================
     //==========================================================================
     If sDML='I' Then
     Begin
@@ -267,21 +359,23 @@ Begin
       EdtNumSeqDocto.AsInteger:=DMArtesanalis.CDS_BuscaRapida.FieldByName('Num_Seq').AsInteger;
       DMArtesanalis.CDS_BuscaRapida.Close;
 
-      // Insere Pedido =========================================================
+      // Insere Documento ======================================================
+      sTipoDocto:='P';
       MySql:=' INSERT INTO DOCTOS'+
              ' (ORIGEM, NUM_SEQ_DOCTO, TIPO, NUM_DOCTO, NUM_SERIE, DTA_DOCTO, DTA_LANCAMENTO,'+
-             '  COD_PESSOA, DES_PESSOA, VLR_PRODUTOS, VLR_TOTAL)'+
+             '  COD_PESSOA, DES_PESSOA, VLR_PRODUTOS, VLR_DESCONTO, VLR_TOTAL)'+
              ' VALUES ('+
              QuotedStr(sgOrigem)+', '+ // ORIGEM - Pedido de Venda
              IntToStr(EdtNumSeqDocto.AsInteger)+', '+ // NUM_SEQ_DOCTO
-             QuotedStr(sTipoDocto)+', '+ // Tipo do Documento
+             QuotedStr(sTipoDocto)+', '+ // Tipo do Documento (P)edido
              IntToStr(EdtNumDocto.AsInteger)+', '+ // NUM_DOCTO
-             QuotedStr(EdtSerieDocto.Text)+', '+ // NUM_SERIE
+             'NULL , '+ // NUM_SERIE
              QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaDocto.Date))))+', '+ // DTA_DOCTO
              ' current_date, '+ // DTA_LANCAMENTO
              IntToStr(EdtCodPessoa.AsInteger)+', '+ // COD_PESSOA
              QuotedStr(EdtDesPessoa.Text)+', '+ // DES_PESSOA
              QuotedStr(f_Troca(',','.',VarToStr(EdtVlrProdutos.Value)))+', '+ // VLR_PRODUTOS
+             QuotedStr(f_Troca(',','.',VarToStr(EdtVlrDescontos.Value)))+', '+ // VLR_DESCONTO
              QuotedStr(f_Troca(',','.',VarToStr(EdtVlrTotal.Value)))+')'; // VLR_TOTAL
       DMArtesanalis.SQLC.Execute(MySql,nil,nil);
 
@@ -304,45 +398,11 @@ Begin
                 QuotedStr(DMArtesanalis.CDS_V_DoctoItensVLR_TOTAL.AsString)+')'; // VLR_TOTAL
         DMArtesanalis.SQLC.Execute(MySql,nil,nil);
 
-        // Calcula/Atualiza Novo Custo Médio =====================================
-        If sTipoDocto='E' Then
-        Begin
-          MySql:=' SELECT sum(i.vlr_total)/sum(i.qtd_movto) Custo_Medio'+
-                 ' FROM DOCTOS_ITENS i'+
-                 ' WHERE i.cod_produto='+DMArtesanalis.CDS_V_DoctoItensCOD_PRODUTO.AsString+
-                 ' AND   EXISTS(SELECT 1'+
-                 '              FROM DOCTOS dc'+
-                 '              WHERE dc.origem = '+QuotedStr(sgOrigem)+ // ORIGEM - Matéria-Prima
-                 '              AND   dc.tipo=''E'''+
-                 '              AND   dc.num_seq_docto = i.num_seq_docto)';
-          DMArtesanalis.CDS_BuscaRapida.Close;
-          DMArtesanalis.SQLQ_BuscaRapida.SQL.Clear;
-          DMArtesanalis.SQLQ_BuscaRapida.SQL.Add(MySql);
-          DMArtesanalis.CDS_BuscaRapida.Open;
-          If Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('Custo_Medio').AsString)<>'' Then
-          Begin
-            MySql:=' UPDATE MATERIAPRIMA m'+
-                   ' SET m.custo_medio='+QuotedStr(f_Troca(',','.',DMArtesanalis.CDS_BuscaRapida.FieldByName('Custo_Medio').AsString))+
-                   ' WHERE m.cod_materiaprima='+DMArtesanalis.CDS_V_DoctoItensCOD_PRODUTO.AsString;
-            DMArtesanalis.SQLC.Execute(MySql,nil,nil);
-          End;
-          DMArtesanalis.CDS_BuscaRapida.Close;
-        End; // If sTipoDocto='E' Then
-
         // Atualiza Saldo/Preco_Custo do Produto ===============================
         sQtdSaldo:=f_Troca(',','.',DMArtesanalis.CDS_V_DoctoItensQTD_MOVTO.AsString);
-        If (sTipoDocto='S') Or (sTipoDocto='DS') Or (sTipoDocto='BS') Then
-         sQtdSaldo:='-'+sQtdSaldo;
-
-        MySql:=' UPDATE MATERIAPRIMA m'+
-               ' SET m.qtd_estoque=m.qtd_estoque+'+sQtdSaldo;
-
-               If sTipoDocto='E' Then
-                MySql:=
-                 MySql+', m.preco_custo='+QuotedStr(DMArtesanalis.CDS_V_DoctoItensVLR_UNITARIO.AsString);
-
-        MySql:=
-         MySql+' WHERE m.cod_materiaprima='+DMArtesanalis.CDS_V_DoctoItensCOD_PRODUTO.AsString;
+        MySql:=' UPDATE PRODUTO p'+
+               ' SET p.qtd_estoque=p.qtd_estoque+'+sQtdSaldo+
+               ' WHERE m.cod_materiaprima='+DMArtesanalis.CDS_V_DoctoItensCOD_PRODUTO.AsString;
         DMArtesanalis.SQLC.Execute(MySql,nil,nil);
 
         DMArtesanalis.CDS_V_DoctoItens.Next;
@@ -350,17 +410,7 @@ Begin
       DMArtesanalis.CDS_V_DoctoItens.First;
       DMArtesanalis.CDS_V_DoctoItens.EnableControls;
     End; // If sDML='I' Then // Inclusão do Documento
-    // Inclusão do Documento ===================================================
-
-    // Tipo Pessoa =============================================================
-    sTipoPessoa:=sgTpPesSelect;
-    If sgTpPesDocto<>sgTpPesSelect Then
-     sTipoPessoa:='A'; // Ambos
-
-    MySql:=' UPDATE PESSOAS p'+
-           ' SET p.tipo='+QuotedStr(sTipoPessoa)+
-           ' WHERE p.cod_pessoa='+IntToStr(EdtCodPessoa.AsInteger);
-    DMArtesanalis.SQLC.Execute(MySql,nil,nil);
+    // Inclusão do Pedido ======================================================
 
     // Atualiza Transacao ======================================================
     DMArtesanalis.SQLC.Commit(TD);
@@ -372,17 +422,17 @@ Begin
 
     Screen.Cursor:=crDefault;
 
-    // Reapresenta Documento ===================================================
+    // Reapresenta Pedido ======================================================
     If sDML='I' Then
     Begin
-      msg('Documento INCLUÍDO com SUCESSO !!','A');
-      EdtCodPessoaExit(Self);
+      msg('Pedido INCLUÍDO com SUCESSO !!','A');
+      EdtNumDoctoExit(Self);
       Exit;
     End;
 
     If sDML='E' Then
     Begin
-      msg('Documento EXCLUÍDO com SUCESSO !!','A');
+      msg('Pedido EXCLUÍDO com SUCESSO !!','A');
       Bt_AbandonarClick(Self);
       Exit;
     End;
@@ -407,6 +457,7 @@ Begin
       Exit;
     End; // on e : Exception do
   End; // Try da Transação
+
 End; // Inclusão/Exclusão do Documento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Localiza/Inclui Produto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -975,6 +1026,25 @@ begin
     EdtCodProduto.SetFocus;
     Exit;
   End;
+
+  // Verifica se Existe Produção ===============================================
+  MySql:=' SELECT COUNT(pd.cod_produto) tot_itens'+
+         ' FROM PRODUCAO pd'+
+         ' where pd.cod_produto='+IntToStr(EdtCodProduto.AsInteger);
+  DMArtesanalis.CDS_BuscaRapida.Close;
+  DMArtesanalis.SQLQ_BuscaRapida.SQL.Clear;
+  DMArtesanalis.SQLQ_BuscaRapida.SQL.Add(MySql);
+  DMArtesanalis.CDS_BuscaRapida.Open;
+
+  If DMArtesanalis.CDS_BuscaRapida.FieldByName('Tot_Itens').AsInteger)=0 Then
+  Begin
+    Screen.Cursor:=crDefault;
+    DMArtesanalis.CDS_BuscaRapida.Close;
+    msg('Produto Sem Produção'+cr+cr+'Favor Cadastrar a Produção !!','A');
+    EdtCodProduto.SetFocus;
+    Exit;
+  End;
+
   EdtDesProduto.Text:=Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('des_produto').AsString);
   DMArtesanalis.CDS_BuscaRapida.Close;
 
@@ -1000,6 +1070,7 @@ end;
 
 procedure TFrmPedidoVenda.EdtQtdProdutoEnter(Sender: TObject);
 begin
+
   EdtVlrTotalProduto.Value:=(EdtQtdProduto.AsInteger*EdtVlrUnitProduto.Value)-EdtVlrDescProduto.Value;
 
 end;
@@ -1042,14 +1113,15 @@ end;
 procedure TFrmPedidoVenda.Bt_IncluiProdutoClick(Sender: TObject);
 Var
   iSeqProd: Integer;
-  c: Currency;
+  cTotalProduto: Currency;
 begin
+
   Dbg_Produtos.SetFocus;
 
-  c:=(EdtQtdProduto.AsInteger*EdtVlrUnitProduto.Value)-EdtVlrDescProduto.Value;
-  If EdtVlrTotalProduto.Value<>(c) Then
+  cTotalProduto:=EdtQtdProduto.AsInteger*EdtVlrUnitProduto.Value;
+  If EdtVlrTotalProduto.Value<>(cTotalProduto) Then
   Begin
-    msg('Valor Total do Produto Não esta Fechando !!'+cr+cr+'Valor Correto: '+cr+cr+FormatFloat('0,.00',c),'A');
+    msg('Valor Total do Produto Não esta Fechando !!'+cr+cr+'Valor Correto: '+cr+cr+FormatFloat('0,.00',cTotalProduto),'A');
     EdtQtdProduto.SetFocus;
     Exit;
   End;
@@ -1113,6 +1185,12 @@ begin
   DMArtesanalis.CDS_V_DoctoItens.Post;
 
   LimpaProduto();
+  Refresh;
+
+  // Rateio de Descontos nos Produtos ==========================================
+  CalculaRateiroDescontos;
+
+  // Posiciona no Produto ======================================================
   DMArtesanalis.CDS_V_DoctoItens.Locate('NUM_SEQ', iSeqProd,[]);
 
   EdtCodProduto.SetFocus;
@@ -1231,13 +1309,6 @@ begin
     Exit;
   End;
 
-  If EdtVlrProdutos.Value<=0 Then
-  Begin
-    msg('Favor Informar o'+cr+cr+'Valor dos Produtos !!','A');
-    EdtVlrProdutos.SetFocus;
-    Exit;
-  End;
-
   If EdtVlrTotal.Value<=0 Then
   Begin
     msg('Favor Informar o'+cr+cr+'Valor Total do Documento !!','A');
@@ -1263,4 +1334,31 @@ begin
   PedidoIncluirExcluir('I');
 end;
 
+procedure TFrmPedidoVenda.EdtVlrProdutosEnter(Sender: TObject);
+begin
+  EdtVlrTotal.Value:=EdtVlrProdutos.Value-EdtVlrDescontos.Value;
+
+   // Rateio de Descontos nos Produtos ==========================================
+  CalculaRateiroDescontos;
+end;
+
+procedure TFrmPedidoVenda.Bt_AbandonarClick(Sender: TObject);
+begin
+  Dbg_Produtos.SetFocus;
+
+  FormShow(Self);
+
+end;
+
+procedure TFrmPedidoVenda.Dbe_VlrTotalCalculadoChange(Sender: TObject);
+begin
+  Try
+    EdtVlrTotalCalculado.Value:=DMArtesanalis.CDS_V_DoctoItensVlr_TotalCalculado.Value;
+  Except
+    EdtVlrTotalCalculado.Value:=0.00;
+  End;
+
+end;
+
 end.
+
