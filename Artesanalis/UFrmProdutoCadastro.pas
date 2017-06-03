@@ -824,7 +824,7 @@ begin
          StrToFloat(sgPercProducao);
          If (StrToCurr(sgPercProducao)>100) Or (StrToCurr(sgPercProducao)<0) Or (StrToCurr(sgPercProducao)=0) Then
           Begin
-            msg('Percentual Inválido !!','A');
+            msg('Percentual Inválido !!'+cr+'Limite: Maior que 0% ou Menor/Igual a 100%','A');
           End
          Else
           Begin

@@ -313,7 +313,7 @@ end;
 
 procedure TFrmPesquisa.Bt_PesquisaNovoClick(Sender: TObject);
 begin
-  if msg('Deseja Relamente Incluir ??','C')=2 Then
+  if msg('Deseja Realmente Incluir ??','C')=2 Then
    Exit;
 
   bgIncluirNovo:=True;

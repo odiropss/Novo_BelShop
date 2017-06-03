@@ -1,6 +1,6 @@
 object FrmPedidoVenda: TFrmPedidoVenda
-  Left = 358
-  Top = 34
+  Left = 256
+  Top = 104
   Width = 867
   Height = 604
   AutoSize = True
@@ -422,7 +422,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
         DataSource = DMArtesanalis.DS_V_DoctoItens
         TabOrder = 9
         Visible = False
-        OnChange = Dbe_VlrTotalCalculadoChange
       end
     end
     object Pan_Solicitacoes: TPanel
@@ -637,6 +636,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
+        OnClick = Bt_ExcluirClick
       end
     end
     object Rb_Produtos: TRadioGroup

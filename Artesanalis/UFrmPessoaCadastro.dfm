@@ -1676,7 +1676,6 @@ object FrmCadastroPessoa: TFrmCadastroPessoa
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
-        MaxLength = 1
         ParentFont = False
         TabOrder = 1
       end

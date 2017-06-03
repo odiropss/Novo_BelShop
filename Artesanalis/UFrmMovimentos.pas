@@ -93,9 +93,6 @@ type
     Procedure LimpaDocto;
     Procedure LimpaProduto(bCodigo: Boolean = True);
 
-    Function  DMLPessoas(sNomePessoa, sCnpjCpf: String; sCodPessoa: String = 'NULL';
-                         sTipoPessoa: String= 'F'): Boolean;
-
     Procedure ProdutoLocaliza;
 
     Procedure DocumentoIncluirExcluir(sDML: String);
@@ -140,8 +137,8 @@ type
     { Private declarations }
   public
     { Public declarations }
-    sgOrigem: String; // Origem do Documentos
-                      //   (M) Documentos de Entrada/Saída de Matéria-Prima
+    sgOrigem: String; // Origem do Documento
+                      //   (M) Documento de Entrada/Saída de Matéria-Prima
                       //   (P) Pedido Venda de Produto
   end;
 
@@ -520,74 +517,6 @@ begin
   FreeAndNil(FrmPesquisa);
 End; // Localiza/Inclui Produto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Manipulaçao Cadastro de Pessoas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Function TFrmMovimentos.DMLPessoas(sNomePessoa, sCnpjCpf: String; sCodPessoa: String = 'NULL';
-                                   sTipoPessoa: String= 'F'): Boolean;
-Var
-  MySql: String;
-Begin
-  Result:=False;
-
-  OdirPanApres.Caption:='AGUARDE !! Atualizando Cadastro de Pessoas !!';
-  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmMovimentos.Width-OdirPanApres.Width)/2));
-  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmMovimentos.Height-OdirPanApres.Height)/2))-20;
-  OdirPanApres.Font.Style:=[fsBold];
-  OdirPanApres.Parent:=FrmMovimentos;
-  OdirPanApres.BringToFront();
-  OdirPanApres.Visible:=True;
-  Refresh;
-
-  // Verifica se Transação esta Ativa
-  If DMArtesanalis.SQLC.InTransaction Then
-   DMArtesanalis.SQLC.Rollback(TD);
-
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMArtesanalis.SQLC.StartTransaction(TD);
-  Try // Try da Transação
-    Screen.Cursor:=crAppStart;
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    MySql:=' UPDATE OR INSERT INTO PESSOAS (TIPO, DES_PESSOA, NUM_CNPJCPF)'+
-           ' VALUES ('+
-           QuotedStr(AnsiUpperCase(sTipoPessoa))+', '+ // TIPO
-           QuotedStr(AnsiUpperCase(sNomePessoa))+', '+ // DES_PESSOA
-           QuotedStr(sCnpjCpf)+') '+ // NUM_CNPJCPF
-           ' MATCHING (NUM_CNPJCPF)';
-    DMArtesanalis.SQLC.Execute(MySql,nil,nil);
-
-    // Atualiza Transacao ======================================================
-    DMArtesanalis.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-
-    OdirPanApres.Visible:=False;
-
-    Screen.Cursor:=crDefault;
-    Result:=True;
-  Except // Except da Transação
-    on e : Exception do
-    Begin
-      // Abandona Transacao ====================================================
-      DMArtesanalis.SQLC.Rollback(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-
-      OdirPanApres.Visible:=False;
-
-      Screen.Cursor:=crDefault;
-
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-      Exit;
-    End; // on e : Exception do
-  End; // Try da Transação
-End; // Manipulaçao Cadastro de Pessoas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
 // Habilita Dados do Docto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmMovimentos.HabilitaDocto(bHabilita: Boolean);
 Var
@@ -935,6 +864,7 @@ begin
   DMArtesanalis.CDS_V_DoctoItens.CreateDataSet;
   DMArtesanalis.CDS_V_DoctoItens.Open;
 
+  DMArtesanalis.CDS_Busca.DisableControls;
   While Not DMArtesanalis.CDS_Busca.Eof do
   Begin
     DMArtesanalis.CDS_V_DoctoItens.Append;
@@ -951,8 +881,9 @@ begin
 
     DMArtesanalis.CDS_Busca.Next;
   End; // While Not DMArtesanalis.CDS_Busca.Eof do
- DMArtesanalis.CDS_Busca.Close;
- DMArtesanalis.CDS_V_DoctoItens.First;
+  DMArtesanalis.CDS_Busca.EnableControls;
+  DMArtesanalis.CDS_Busca.Close;
+  DMArtesanalis.CDS_V_DoctoItens.First;
 
   HabilitaBotoes(False);
   Bt_Excluir.Enabled:=True;
@@ -1211,9 +1142,9 @@ begin
   // Acerta Num_seq Produtos ===================================================
   If Not DMArtesanalis.CDS_V_DoctoItens.IsEmpty Then
   Begin
+    i:=0;
     DMArtesanalis.CDS_V_DoctoItens.DisableControls;
     DMArtesanalis.CDS_V_DoctoItens.First;
-    i:=0;
     While Not DMArtesanalis.CDS_V_DoctoItens.Eof do
     Begin
       Inc(i);
@@ -1416,7 +1347,6 @@ begin
 
   If (DMArtesanalis.CDS_V_DoctoItens.IsEmpty) Or (EdtCodProduto.Enabled) Then
    Exit;
-
 
   If msg('Deseja Realmente Excluir'+cr+cr+'O Documento Selecionado ??','C')=2 Then
    Exit;

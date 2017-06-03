@@ -524,6 +524,7 @@ begin
   DMArtesanalis.SQLQ_Busca.SQL.Add(MySql);
   DMArtesanalis.CDS_Busca.Open;
 
+  DMArtesanalis.CDS_Busca.DisableControls;
   While not DMArtesanalis.CDS_Busca.Eof do
   Begin
     sTabela:=DMArtesanalis.CDS_Busca.FieldByName('Tabela').AsString;
@@ -549,6 +550,7 @@ begin
 
     DMArtesanalis.CDS_Busca.Next;
   End; // While not DMArtesanalis.CDS_Busca.Eof do
+  DMArtesanalis.CDS_Busca.EnableControls;
   DMArtesanalis.CDS_Busca.Close;
 
   If msg('Deseja Realmente Excluir a'+cr+'Pessoa Selecionada ??','C')=2 Then
