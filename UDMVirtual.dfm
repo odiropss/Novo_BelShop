@@ -1,7 +1,7 @@
 object DMVirtual: TDMVirtual
   OldCreateOrder = False
-  Left = 176
-  Top = 105
+  Left = 240
+  Top = 114
   Height = 615
   Width = 1115
   object CDS_V_EmpConexoes: TClientDataSet
@@ -4827,5 +4827,26 @@ object DMVirtual: TDMVirtual
     SQLConnection = DMBelShop.SQLC
     Left = 384
     Top = 384
+  end
+  object CDS_V_Creditos: TClientDataSet
+    Aggregates = <>
+    IndexFieldNames = 'Des_Credito'
+    Params = <>
+    Left = 984
+    Top = 427
+    object CDS_V_CreditosDes_Credito: TStringField
+      FieldName = 'Des_Credito'
+      Size = 30
+    end
+    object CDS_V_CreditosCod_Credito: TStringField
+      Alignment = taRightJustify
+      FieldName = 'Cod_Credito'
+      Size = 4
+    end
+  end
+  object Ds_V_Creditos: TDataSource
+    DataSet = CDS_V_Creditos
+    Left = 1036
+    Top = 443
   end
 end

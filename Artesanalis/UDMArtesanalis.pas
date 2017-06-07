@@ -82,6 +82,7 @@ type
     CDS_PessoasEMAIL: TStringField;
     CDS_V_DoctoItensVlr_TotalProdutos: TAggregateField;
     CDS_V_DoctoItensVlr_TotalDesconto: TAggregateField;
+    CDS_ProdutoProducaoQTD_UTILIZACAO: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

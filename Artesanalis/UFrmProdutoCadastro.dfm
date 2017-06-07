@@ -1,7 +1,7 @@
 object FrmProdutoCadastro: TFrmProdutoCadastro
   Left = 246
   Top = 111
-  Width = 1003
+  Width = 1054
   Height = 617
   AutoSize = True
   BorderIcons = [biSystemMenu]
@@ -24,7 +24,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
   object Gb_Principal: TGroupBox
     Left = 0
     Top = 0
-    Width = 987
+    Width = 1038
     Height = 579
     Align = alClient
     Caption = ' PRODUTO  '
@@ -40,7 +40,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
     object Pan_Solicitacoes: TPanel
       Left = 2
       Top = 547
-      Width = 983
+      Width = 1034
       Height = 30
       Align = alBottom
       BevelInner = bvLowered
@@ -49,7 +49,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
       TabOrder = 1
       object Bt_Fechar: TJvXPButton
         Tag = 99
-        Left = 883
+        Left = 934
         Top = 1
         Width = 99
         Height = 28
@@ -258,7 +258,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
     object Pan_ProdutoSolic: TPanel
       Left = 2
       Top = 15
-      Width = 983
+      Width = 1034
       Height = 116
       Align = alTop
       BevelInner = bvLowered
@@ -273,7 +273,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
       ParentFont = False
       TabOrder = 0
       object Gb_Produto: TGroupBox
-        Left = 152
+        Left = 184
         Top = 7
         Width = 667
         Height = 51
@@ -391,7 +391,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         end
       end
       object Gb_ProdutoPcCusto: TGroupBox
-        Left = 210
+        Left = 189
         Top = 60
         Width = 108
         Height = 50
@@ -408,7 +408,9 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
           Top = 20
           Width = 82
           Height = 20
+          TabStop = False
           AutoSize = False
+          Color = clMoneyGreen
           DecimalPlaces = 5
           DisplayFormat = ',0.00'
           Font.Charset = DEFAULT_CHARSET
@@ -417,11 +419,12 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
           Font.Name = 'MS Sans Serif'
           Font.Style = []
           ParentFont = False
+          ReadOnly = True
           TabOrder = 0
         end
       end
       object Gb_ProdutoUnidade: TGroupBox
-        Left = 100
+        Left = 79
         Top = 60
         Width = 108
         Height = 50
@@ -450,7 +453,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         end
       end
       object Gb_ProdutoCustoMedio: TGroupBox
-        Left = 320
+        Left = 299
         Top = 60
         Width = 108
         Height = 50
@@ -483,7 +486,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         end
       end
       object Gb_ProdutoPcVenda: TGroupBox
-        Left = 430
+        Left = 409
         Top = 60
         Width = 108
         Height = 50
@@ -510,10 +513,11 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
           Font.Style = []
           ParentFont = False
           TabOrder = 0
+          OnExit = EdtProdutoPcVendaExit
         end
       end
       object Gb_ProdutoPercMargem: TGroupBox
-        Left = 540
+        Left = 519
         Top = 60
         Width = 108
         Height = 50
@@ -547,18 +551,18 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         end
       end
       object Gb_ProdutoQtdSaldo: TGroupBox
-        Left = 760
+        Left = 849
         Top = 60
         Width = 113
         Height = 50
-        Caption = ' Qtd Saldo '
+        Caption = ' Qtd Venda '
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 7
+        TabOrder = 8
         object EdtProdutoQtdSaldo: TCurrencyEdit
           Left = 13
           Top = 20
@@ -579,20 +583,20 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
           TabOrder = 0
         end
       end
-      object Gb_ProdutoVlrMatgem: TGroupBox
-        Left = 650
+      object Gb_ProdutoPercMarkUp: TGroupBox
+        Left = 739
         Top = 60
         Width = 108
         Height = 50
-        Caption = ' $ Margem '
+        Caption = ' % MarkUp'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 6
-        object EdtProdutoVlrMatgem: TCurrencyEdit
+        TabOrder = 7
+        object EdtProdutoPercMarkUp: TCurrencyEdit
           Left = 13
           Top = 20
           Width = 82
@@ -610,7 +614,41 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
           ParentFont = False
           ReadOnly = True
           TabOrder = 0
-          OnChange = EdtProdutoVlrMatgemChange
+          OnChange = EdtProdutoPercMarkUpChange
+        end
+      end
+      object Gb_ProdutoVlrMargem: TGroupBox
+        Left = 629
+        Top = 60
+        Width = 108
+        Height = 50
+        Caption = ' Vlr Margem '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 6
+        object EdtProdutoVlrMargem: TCurrencyEdit
+          Left = 13
+          Top = 20
+          Width = 82
+          Height = 20
+          TabStop = False
+          AutoSize = False
+          Color = clMoneyGreen
+          DecimalPlaces = 5
+          DisplayFormat = ',0.00'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 0
+          OnChange = EdtProdutoPercMarkUpChange
         end
       end
     end
@@ -742,7 +780,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
     object Gb_Producao: TGroupBox
       Left = 485
       Top = 131
-      Width = 500
+      Width = 551
       Height = 416
       Align = alClient
       Caption = ' Produ'#231#227'o '
@@ -750,7 +788,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
       object Dbg_ProdutoProducao: TDBGrid
         Left = 2
         Top = 15
-        Width = 496
+        Width = 547
         Height = 379
         Align = alClient
         DataSource = DMArtesanalis.DS_ProdutoProducao
@@ -775,6 +813,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
         OnKeyDown = Dbg_ProdutoProducaoKeyDown
         Columns = <
           item
+            Color = 16250871
             Expanded = False
             FieldName = 'COD_MATERIAPRIMA'
             Title.Alignment = taRightJustify
@@ -783,12 +822,21 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
             Visible = True
           end
           item
+            Color = 16250871
             Expanded = False
             FieldName = 'DES_MATERIAPRIMA'
-            Width = 200
+            Width = 180
             Visible = True
           end
           item
+            Expanded = False
+            FieldName = 'QTD_UTILIZACAO'
+            Title.Alignment = taRightJustify
+            Width = 70
+            Visible = True
+          end
+          item
+            Color = 16250871
             Expanded = False
             FieldName = 'PER_UTILIZACAO'
             Title.Alignment = taRightJustify
@@ -797,6 +845,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
             Visible = True
           end
           item
+            Color = 16250871
             Expanded = False
             FieldName = 'PRECO_CUSTO'
             Title.Alignment = taRightJustify
@@ -805,6 +854,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
             Visible = True
           end
           item
+            Color = 16250871
             Expanded = False
             FieldName = 'CUSTO_MEDIO'
             Title.Alignment = taRightJustify
@@ -816,7 +866,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
       object dxStatusBar1: TdxStatusBar
         Left = 2
         Top = 394
-        Width = 496
+        Width = 547
         Height = 20
         Panels = <
           item
@@ -832,8 +882,8 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
             BiDiMode = bdRightToLeft
             Fixed = False
             ParentBiDiMode = False
-            Text = '<Duplo Click> % Utiliza'#231#227'o'
-            Width = 62
+            Text = '<Duplo Click> Quantidade Utiliza'#231#227'o'
+            Width = 66
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
@@ -846,7 +896,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
             PanelStyle.ParentFont = False
             Fixed = False
             Text = '<F4> Procura'
-            Width = 32
+            Width = 25
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
@@ -859,7 +909,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
             PanelStyle.ParentFont = False
             Fixed = False
             Text = '<Delete> Exclui Produ'#231#227'o Selecionda'
-            Width = 90
+            Width = 70
           end>
         PaintStyle = stpsOffice11
         Font.Charset = DEFAULT_CHARSET

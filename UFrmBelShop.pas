@@ -44075,6 +44075,7 @@ begin
   DMBelShop.CDS_FechaCaixaTotais.Close;
 
   FrmConciliacaoCaixa.PC_ConcFechaCaixa.TabIndex:=0;
+  FrmConciliacaoCaixa.PC_ApresResultado.TabIndex:=0;
 
   FrmConciliacaoCaixa.ShowModal;
 

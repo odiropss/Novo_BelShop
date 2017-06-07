@@ -1,6 +1,6 @@
 object FrmConciliacaoCaixa: TFrmConciliacaoCaixa
-  Left = 241
-  Top = 110
+  Left = 243
+  Top = 116
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Concilia'#231#227'o de Caixa'
@@ -611,7 +611,7 @@ object FrmConciliacaoCaixa: TFrmConciliacaoCaixa
         Top = 38
         Width = 969
         Height = 514
-        ActivePage = Ts_ConcFechaCaixaDoctos
+        ActivePage = Ts_ConcFechaCaixaResultado
         Align = alClient
         TabOrder = 1
         OnChange = PC_ConcFechaCaixaChange
@@ -1498,78 +1498,252 @@ object FrmConciliacaoCaixa: TFrmConciliacaoCaixa
         object Ts_ConcFechaCaixaResultado: TTabSheet
           Caption = 'Apresenta Resultado'
           ImageIndex = 2
-          object Dbg_ConcFechaCaixaResultado: TDBGrid
+          object PC_ApresResultado: TPageControl
             Left = 0
             Top = 44
             Width = 961
             Height = 442
+            ActivePage = Ts_ApresResultadoFiltros
             Align = alClient
-            Color = 15004403
-            Ctl3D = False
-            FixedColor = clSilver
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
             Font.Style = []
-            Options = [dgEditing, dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
-            ParentCtl3D = False
             ParentFont = False
-            TabOrder = 1
-            TitleFont.Charset = DEFAULT_CHARSET
-            TitleFont.Color = clBlack
-            TitleFont.Height = -11
-            TitleFont.Name = 'MS Sans Serif'
-            TitleFont.Style = [fsBold]
-            OnDrawColumnCell = Dbg_ConcFechaCaixaResultadoDrawColumnCell
-            OnEnter = Dbg_ConcFechaCaixaResultadoEnter
-            Columns = <
-              item
-                Expanded = False
-                FieldName = 'COD_LOJA'
-                Title.Alignment = taCenter
-                Title.Caption = 'C'#243'd'
-                Width = 40
-                Visible = True
+            TabOrder = 0
+            OnChange = PC_ApresResultadoChange
+            object Ts_ApresResultado: TTabSheet
+              Caption = 'Resultados'
+              object Dbg_ConcFechaCaixaResultado: TDBGrid
+                Left = 0
+                Top = 0
+                Width = 953
+                Height = 414
+                Align = alClient
+                Color = 15004403
+                Ctl3D = False
+                FixedColor = clSilver
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = []
+                Options = [dgEditing, dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
+                ParentCtl3D = False
+                ParentFont = False
+                TabOrder = 0
+                TitleFont.Charset = DEFAULT_CHARSET
+                TitleFont.Color = clBlack
+                TitleFont.Height = -11
+                TitleFont.Name = 'MS Sans Serif'
+                TitleFont.Style = [fsBold]
+                OnDrawColumnCell = Dbg_ConcFechaCaixaResultadoDrawColumnCell
+                OnEnter = Dbg_ConcFechaCaixaResultadoEnter
+                Columns = <
+                  item
+                    Expanded = False
+                    FieldName = 'COD_LOJA'
+                    Title.Alignment = taCenter
+                    Title.Caption = 'C'#243'd'
+                    Width = 40
+                    Visible = True
+                  end
+                  item
+                    Expanded = False
+                    FieldName = 'RAZAO_SOCIAL'
+                    Title.Caption = 'Raz'#227'o Social'
+                    Width = 350
+                    Visible = True
+                  end
+                  item
+                    Expanded = False
+                    FieldName = 'COD_CREDITO'
+                    Title.Alignment = taRightJustify
+                    Title.Caption = 'C'#243'd'
+                    Width = 40
+                    Visible = True
+                  end
+                  item
+                    Expanded = False
+                    FieldName = 'DES_CREDITO'
+                    Title.Caption = 'Descri'#231#227'o Cr'#233'dito'
+                    Width = 250
+                    Visible = True
+                  end
+                  item
+                    Expanded = False
+                    FieldName = 'VLR_TOT_SIDICOM'
+                    Title.Alignment = taRightJustify
+                    Title.Caption = 'Total Sidicom'
+                    Width = 110
+                    Visible = True
+                  end
+                  item
+                    Expanded = False
+                    FieldName = 'VLR_TOT_INFORMADO'
+                    Title.Alignment = taRightJustify
+                    Title.Caption = 'Total Informado'
+                    Width = 110
+                    Visible = True
+                  end>
               end
-              item
-                Expanded = False
-                FieldName = 'RAZAO_SOCIAL'
-                Title.Caption = 'Raz'#227'o Social'
-                Width = 370
-                Visible = True
+            end
+            object Ts_ApresResultadoFiltros: TTabSheet
+              Caption = ' Filtros '
+              ImageIndex = 1
+              object Gb_Credito: TGroupBox
+                Left = 0
+                Top = 0
+                Width = 177
+                Height = 414
+                Align = alLeft
+                Caption = ' Cr'#233'ditos '
+                Color = 13092807
+                Ctl3D = False
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentColor = False
+                ParentCtl3D = False
+                ParentFont = False
+                TabOrder = 0
+                DesignSize = (
+                  177
+                  414)
+                object Label5: TLabel
+                  Left = 143
+                  Top = 29
+                  Width = 29
+                  Height = 13
+                  Caption = '==>>'
+                end
+                object Bt_BuscaCredito: TJvXPButton
+                  Tag = 92
+                  Left = 113
+                  Top = 24
+                  Width = 24
+                  Height = 26
+                  TabOrder = 1
+                  TabStop = False
+                  Glyph.Data = {
+                    07544269746D61705E060000424D5E0600000000000036040000280000001600
+                    000017000000010008000000000028020000C30E0000C30E0000000100000000
+                    000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
+                    FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
+                    FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000000000000000000000000000000000000000000000000000000000000000
+                    0000010101010101010101010101010101010101010101010000010101010101
+                    0101010101010101010101040404030100000101010101010101010101010101
+                    0101040701070401000001010101010101010101010101010104070101070401
+                    0000010101010101010101010101010104070101070704010000010101010101
+                    0101010101010104070101070704010100000101010101010101010101010407
+                    0101070704010101000001010101010101010101010407010107070401010101
+                    0000010101010101010101010407010107070401010101010000010101010101
+                    0101010404040307070401010101010100000101010101010404040404040407
+                    0401010101010101000001010101040406010601010404040101010101010101
+                    0000010101040106010601010101040101010101010101010000010101040601
+                    0601060106010401010101010101010100000101040601060101010601060104
+                    0101010101010101000001010401060106010601060101040101010101010101
+                    0000010104060106010601060106010401010101010101010000010104010601
+                    0601060106010104010101010101010100000101010401060101010601060401
+                    0101010101010101000001010104060106010601060104010101010101010101
+                    0000010101010404010101060404010101010101010101010000010101010101
+                    0404040401010101010101010101010100000101010101010101010101010101
+                    01010101010101010000}
+                  ShowFocusRect = True
+                  Anchors = [akTop, akRight]
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -11
+                  Font.Name = 'MS Sans Serif'
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                  OnClick = Bt_BuscaCreditoClick
+                end
+                object EdtCodCredito: TEdit
+                  Left = 41
+                  Top = 27
+                  Width = 64
+                  Height = 19
+                  TabOrder = 0
+                  OnExit = EdtCodCreditoExit
+                end
               end
-              item
-                Expanded = False
-                FieldName = 'COD_CREDITO'
-                Title.Alignment = taRightJustify
-                Title.Caption = 'C'#243'd'
-                Width = 40
-                Visible = True
+              object Dbg_Credito: TDBGridJul
+                Left = 177
+                Top = 0
+                Width = 776
+                Height = 414
+                Hint = '<Delete> Exclui Item da Lista'
+                Align = alClient
+                DataSource = DMVirtual.Ds_V_Creditos
+                FixedColor = clTeal
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'Tahoma'
+                Font.Style = []
+                Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
+                ParentFont = False
+                ParentShowHint = False
+                ShowHint = True
+                TabOrder = 1
+                TitleFont.Charset = DEFAULT_CHARSET
+                TitleFont.Color = clWhite
+                TitleFont.Height = -11
+                TitleFont.Name = 'Tahoma'
+                TitleFont.Style = [fsBold]
+                OnKeyDown = Dbg_CreditoKeyDown
+                SairComEnter = False
+                Columns = <
+                  item
+                    Expanded = False
+                    FieldName = 'Des_Credito'
+                    Title.Caption = 'Descri'#231#227'o da Aplica'#231#227'o'
+                    Width = 350
+                    Visible = True
+                  end
+                  item
+                    Expanded = False
+                    FieldName = 'Cod_Credito'
+                    Title.Alignment = taRightJustify
+                    Title.Caption = 'C'#243'digo'
+                    Width = 100
+                    Visible = True
+                  end>
               end
-              item
-                Expanded = False
-                FieldName = 'DES_CREDITO'
-                Title.Caption = 'Descri'#231#227'o Cr'#233'dito'
-                Width = 250
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'VLR_TOT_SIDICOM'
-                Title.Alignment = taRightJustify
-                Title.Caption = 'Total Sidicom'
-                Width = 110
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'VLR_TOT_INFORMADO'
-                Title.Alignment = taRightJustify
-                Title.Caption = 'Total Informado'
-                Width = 110
-                Visible = True
-              end>
+            end
           end
           object Pan_ConcFechaCaixaResultadoSolic: TPanel
             Left = 0
@@ -1581,7 +1755,7 @@ object FrmConciliacaoCaixa: TFrmConciliacaoCaixa
             BorderStyle = bsSingle
             Ctl3D = False
             ParentCtl3D = False
-            TabOrder = 0
+            TabOrder = 1
             object Bt_ConcFechaCaixaResultadoSalvaExcel: TJvXPButton
               Tag = 4
               Left = 805

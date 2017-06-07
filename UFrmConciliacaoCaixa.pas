@@ -64,20 +64,28 @@ type
     Label3: TLabel;
     EdtConcFechaCaixaSelOper: TEdit;
     Ts_ConcFechaCaixaResultado: TTabSheet;
+    Bt_ConcFechaCaixaObs: TJvXPButton;
+    ApplicationEvents1: TApplicationEvents;
+    PC_ApresResultado: TPageControl;
+    Ts_ApresResultado: TTabSheet;
+    Ts_ApresResultadoFiltros: TTabSheet;
     Dbg_ConcFechaCaixaResultado: TDBGrid;
+    Gb_Credito: TGroupBox;
+    Label5: TLabel;
+    Bt_BuscaCredito: TJvXPButton;
+    Dbg_Credito: TDBGridJul;
     Pan_ConcFechaCaixaResultadoSolic: TPanel;
     Bt_ConcFechaCaixaResultadoSalvaExcel: TJvXPButton;
     Bt_ConcFechaCaixaResultadoClipboard: TJvXPButton;
     Panel3: TPanel;
     Label4: TLabel;
-    DtEdt_ConcFechaCaixaResultadoInicio: TcxDateEdit;
     Label16: TLabel;
+    DtEdt_ConcFechaCaixaResultadoInicio: TcxDateEdit;
     DtEdt_ConcFechaCaixaResultadoFim: TcxDateEdit;
     Bt_ConcFechaCaixaResultadoBusca: TJvXPButton;
     Rb_ConcFechaCaixaResultadoLoja: TRadioButton;
     Rb_ConcFechaCaixaResultadoGeral: TRadioButton;
-    Bt_ConcFechaCaixaObs: TJvXPButton;
-    ApplicationEvents1: TApplicationEvents;
+    EdtCodCredito: TEdit;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -94,6 +102,9 @@ type
 
     // DIVERSOS ////////////////////////////////////////////////////////////////
     function AlinhaEditDireita(Var Edt: TEdit): Boolean;
+
+    Function ConsistePeriodo: Boolean;
+
     // DIVERSOS ////////////////////////////////////////////////////////////////
 
     // CONCILIAÇÃO DE CAIXA DIA ////////////////////////////////////////////////
@@ -178,6 +189,11 @@ type
     procedure Dbg_ConcFechaCaixaDoctosEnter(Sender: TObject);
     procedure Dbg_ConcFechaCaixaTotalEnter(Sender: TObject);
     procedure Dbg_ConcFechaCaixaResultadoEnter(Sender: TObject);
+    procedure PC_ApresResultadoChange(Sender: TObject);
+    procedure Bt_BuscaCreditoClick(Sender: TObject);
+    procedure Dbg_CreditoKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure EdtCodCreditoExit(Sender: TObject);
   private
     { Private declarations }
   public
@@ -201,13 +217,44 @@ implementation
 
 uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
   UPesquisa, UFrmPeriodoApropriacao, UFrmSolicitacoes,
-  UFrmSelectEmpProcessamento, UDMBancosConciliacao;
+  UFrmSelectEmpProcessamento, UDMBancosConciliacao, ComConst;
 
 {$R *.dfm}
 
 //==============================================================================
 // Odir - INICIO ===============================================================
 //==============================================================================
+
+// Consiste Período >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TFrmConciliacaoCaixa.ConsistePeriodo: Boolean;
+Begin
+  Result:=False;
+
+  Try
+    StrToDate(DtEdt_ConcFechaCaixaResultadoInicio.Text);
+  Except
+    msg('Data Inicial do Período Inválida !!','A');
+    DtEdt_ConcFechaCaixaResultadoInicio.SetFocus;
+    Exit;
+  End;
+
+  Try
+    StrToDate(DtEdt_ConcFechaCaixaResultadoFim.Text);
+  Except
+    msg('Data Final do Período Inválida !!','A');
+    DtEdt_ConcFechaCaixaResultadoFim.SetFocus;
+    Exit;
+  End;
+
+  If DtEdt_ConcFechaCaixaResultadoFim.Date<DtEdt_ConcFechaCaixaResultadoInicio.Date Then
+  Begin
+    msg('Período Inválido !!','A');
+    DtEdt_ConcFechaCaixaResultadoInicio.SetFocus;
+    Exit;
+  End;
+
+  Result:=True;
+End; // Consiste Período >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // DIVERSOS - Alinha Edit a Direita >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 function TFrmConciliacaoCaixa.AlinhaEditDireita(Var Edt: TEdit): Boolean;
@@ -233,7 +280,7 @@ Procedure TFrmConciliacaoCaixa.FechaConcCaixaBuscaCreditos;
 Var
   MySql: String;
   iNrEmpProc: Integer;
-  sEmpresas: String;
+  sEmpresas, sCreditos: String;
 Begin
 
   // Solicita Lojas ============================================================
@@ -280,6 +327,26 @@ Begin
     Exit;
   End;
 
+  // Creditos Selecionados =====================================================
+  sCreditos:='';
+  If Not DMVirtual.CDS_V_Creditos.IsEmpty Then
+  Begin
+    DMVirtual.CDS_V_Creditos.First;
+    While Not DMVirtual.CDS_V_Creditos.Eof do
+    Begin
+      Refresh;
+
+      If sCreditos='' Then
+       sCreditos:=QuotedStr(DMVirtual.CDS_V_CreditosCod_Credito.AsString)
+      Else
+       sCreditos:=sCreditos+', '+
+                     QuotedStr(DMVirtual.CDS_V_CreditosCod_Credito.AsString);
+
+      DMVirtual.CDS_V_Creditos.Next;
+    End; // While Not DMVirtual.CDS_V_Creditos.Eof do
+    DMVirtual.CDS_V_Creditos.First;
+  End; // If Not DMVirtual.CDS_V_Creditos.IsEmpty Then
+
   OdirPanApres.Caption:='AGUARDE !! Busca Movimentos de Créditos';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmConciliacaoCaixa.Width-OdirPanApres.Width)/2));
@@ -301,49 +368,62 @@ Begin
            ' ''Relação de Créditos Lojas: ''';
 
            If bgTodasEmpresas Then
-            MySql:=MySql+'||''TODAS'' razao_social,'
+            MySql:=
+             MySql+'||''TODAS'' razao_social,'
            Else
-            MySql:=MySql+'||''Bel_: ''||'''+f_Troca('''','',sEmpresas)+''' razao_social,';
+            MySql:=
+             MySql+'||''Bel_: ''||'''+f_Troca('''','',sEmpresas)+''' razao_social,';
 
-           MySql:=MySql+''''' cod_credito,'+
-                        ' ''Período de ''||'+
-                        QuotedStr(DtEdt_ConcFechaCaixaResultadoInicio.Text)+'|| '' a '' ||'+
-                        QuotedStr(DtEdt_ConcFechaCaixaResultadoFim.Text)+' des_credito,'+
-                        ' SUM(c1.vlr_credito) Vlr_Tot_Sidicom,'+
-                        ' SUM(c1.vlr_informado) Vlr_Tot_Informado,'+
-                        ' 0 Indice'+
-                        ' FROM fin_conciliacao_caixa c1'+
-                        ' WHERE  c1.num_seqreg>6499';
-
-           If Not bgTodasEmpresas Then
-            MySql:=MySql+' AND    c1.cod_loja IN ('+sEmpresas+')';
-
-           MySql:=MySql+' AND    c1.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
-                        ' AND    c1.cod_credito<9000'+
-
-                        'UNION'+
-
-                        ' SELECT '''', '''', c.cod_credito,'+
-                        ' CASE'+
-                        '   WHEN (TRIM(c.des_credito)='''') OR (TRIM(c.des_credito)=''***'') THEN'+
-                        '    ''Sem Informação'''+
-                        '   ELSE'+
-                        '    TRIM(c.des_credito)'+
-                        ' END des_credito,'+
-                        ' SUM(c.vlr_credito) Vlr_Tot_Sidicom,'+
-                        ' SUM(c.vlr_informado) Vlr_Tot_Informado,'+
-                        ' 1 Indice'+
-
-                        ' FROM FIN_CONCILIACAO_CAIXA c'+
-                        ' WHERE  c.num_seqreg>6499';
+    MySql:=
+     MySql+''''' cod_credito,'+
+           ' ''Período de ''||'+
+           QuotedStr(DtEdt_ConcFechaCaixaResultadoInicio.Text)+'|| '' a '' ||'+
+           QuotedStr(DtEdt_ConcFechaCaixaResultadoFim.Text)+' des_credito,'+
+           ' SUM(c1.vlr_credito) Vlr_Tot_Sidicom,'+
+           ' SUM(c1.vlr_informado) Vlr_Tot_Informado,'+
+           ' 0 Indice'+
+           ' FROM fin_conciliacao_caixa c1'+
+           ' WHERE  c1.num_seqreg>6499';
 
            If Not bgTodasEmpresas Then
-            MySql:=MySql+' AND    c.cod_loja IN ('+sEmpresas+')';
+            MySql:=
+             MySql+' AND    c1.cod_loja IN ('+sEmpresas+')';
 
-           MySql:=MySql+' AND    c.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
-                        ' AND    c.cod_credito<9000'+
-                        ' GROUP BY 3,4,7'+
-                        ' ORDER BY 7,4';
+    MySql:=
+     MySql+' AND    c1.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
+           ' AND    c1.cod_credito<9000'+
+
+           'UNION'+
+
+           ' SELECT '''', '''', c.cod_credito,'+
+           ' CASE'+
+           '   WHEN (TRIM(c.des_credito)='''') OR (TRIM(c.des_credito)=''***'') THEN'+
+           '    ''Sem Informação'''+
+           '   ELSE'+
+           '    TRIM(c.des_credito)'+
+           ' END des_credito,'+
+           ' SUM(c.vlr_credito) Vlr_Tot_Sidicom,'+
+           ' SUM(c.vlr_informado) Vlr_Tot_Informado,'+
+           ' 1 Indice'+
+
+           ' FROM FIN_CONCILIACAO_CAIXA c'+
+           ' WHERE  c.num_seqreg>6499';
+
+           If Not bgTodasEmpresas Then
+            MySql:=
+             MySql+' AND    c.cod_loja IN ('+sEmpresas+')';
+
+    MySql:=
+     MySql+' AND    c.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
+           ' AND    c.cod_credito<9000';
+
+           If Trim(sCreditos)<>'' Then
+            MySql:=
+             MySql+' AND    c.cod_credito in ('+sCreditos+')';
+
+    MySql:=
+     MySql+' GROUP BY 3,4,7'+
+           ' ORDER BY 7,4';
   End; // If Rb_ConcFechaCaixaResultadoGeral.Checked Then
 
   If Rb_ConcFechaCaixaResultadoLoja.Checked Then
@@ -356,73 +436,87 @@ Begin
            ' WHERE  c2.num_seqreg>6499';
 
            If Not bgTodasEmpresas Then
-            MySql:=MySql+' AND    c2.cod_loja IN ('+sEmpresas+')';
+            MySql:=
+             MySql+' AND    c2.cod_loja IN ('+sEmpresas+')';
 
-           MySql:=MySql+' AND    c2.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
-                        ' AND    c2.cod_credito<9000'+
-                        ' GROUP BY c2.cod_loja'+
+    MySql:=
+     MySql+' AND    c2.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
+           ' AND    c2.cod_credito<9000'+
+           ' GROUP BY c2.cod_loja'+
 
-                        ' UNION'+
+           ' UNION'+
 
-                        ' SELECT '''' Cod_Loja, ''Relação de Créditos'' Razao_Social,'+
-                        ' '''' Cod_Credito,'+
-                        ' ''Período de ''||'+
-                        QuotedStr(DtEdt_ConcFechaCaixaResultadoInicio.Text)+'||'' a ''||'+
-                        QuotedStr(DtEdt_ConcFechaCaixaResultadoFim.Text)+' des_credito,'+
-                        ' 0.00 Vlr_Tot_Sidicom,'+
-                        ' 0.00 Vlr_Tot_Informado,'+
-                        ' 0 Indice, c2.cod_loja'+
-                        ' FROM fin_conciliacao_caixa c2'+
-                        ' WHERE  c2.num_seqreg>6499';
-
-           If Not bgTodasEmpresas Then
-            MySql:=MySql+' AND    c2.cod_loja IN ('+sEmpresas+')';
-
-           MySql:=MySql+' AND    c2.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
-                        ' AND    c2.cod_credito<9000'+
-                        ' GROUP BY c2.cod_loja'+
-
-                        ' UNION'+
-
-                        ' SELECT ''Bel_''||c.cod_loja, e.razao_social,'+
-                        ' '''' cod_credito, '''' des_credito,'+
-                        ' SUM(c.vlr_credito) Vlr_Tot_Sidicom,'+
-                        ' SUM(c.vlr_informado) Vlr_Tot_Informado,'+
-                        ' 2 Indice, c.cod_loja'+
-                        ' FROM fin_conciliacao_caixa c, emp_conexoes e'+
-                        ' WHERE  c.cod_loja=e.cod_filial'+
-                        ' AND    c.num_seqreg>6499';
+           ' SELECT '''' Cod_Loja, ''Relação de Créditos'' Razao_Social,'+
+           ' '''' Cod_Credito,'+
+           ' ''Período de ''||'+
+           QuotedStr(DtEdt_ConcFechaCaixaResultadoInicio.Text)+'||'' a ''||'+
+           QuotedStr(DtEdt_ConcFechaCaixaResultadoFim.Text)+' des_credito,'+
+           ' 0.00 Vlr_Tot_Sidicom,'+
+           ' 0.00 Vlr_Tot_Informado,'+
+           ' 0 Indice, c2.cod_loja'+
+           ' FROM fin_conciliacao_caixa c2'+
+           ' WHERE  c2.num_seqreg>6499';
 
            If Not bgTodasEmpresas Then
-            MySql:=MySql+' AND    c.cod_loja IN ('+sEmpresas+')';
+            MySql:=
+             MySql+' AND    c2.cod_loja IN ('+sEmpresas+')';
 
-           MySql:=MySql+' AND    c.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
-                        ' AND    c.cod_credito<9000'+
-                        ' GROUP BY 1,2,7,8'+
+    MySql:=
+     MySql+' AND    c2.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
+           ' AND    c2.cod_credito<9000'+
+           ' GROUP BY c2.cod_loja'+
 
-                        ' UNION'+
+           ' UNION'+
 
-                        ' SELECT '''' cod_loja, '''' razao_social,'+
-                        ' c1.cod_credito,'+
-                        ' CASE'+
-                        '   WHEN (TRIM(c1.des_credito)='''') OR (TRIM(c1.des_credito)=''***'') THEN'+
-                        '    ''Sem Informação'''+
-                        '   ELSE'+
-                        '    TRIM(c1.des_credito)'+
-                        ' END des_credito,'+
-                        ' SUM(c1.vlr_credito) Vlr_Tot_Sidicom,'+
-                        ' SUM(c1.vlr_informado) Vlr_Tot_Informado,'+
-                        ' 3 Indice, c1.cod_loja'+
-                        ' FROM fin_conciliacao_caixa c1'+
-                        ' WHERE  c1.num_seqreg>6499';
+           ' SELECT ''Bel_''||c.cod_loja, e.razao_social,'+
+           ' '''' cod_credito, '''' des_credito,'+
+           ' SUM(c.vlr_credito) Vlr_Tot_Sidicom,'+
+           ' SUM(c.vlr_informado) Vlr_Tot_Informado,'+
+           ' 2 Indice, c.cod_loja'+
+           ' FROM fin_conciliacao_caixa c, emp_conexoes e'+
+           ' WHERE  c.cod_loja=e.cod_filial'+
+           ' AND    c.num_seqreg>6499';
 
            If Not bgTodasEmpresas Then
-            MySql:=MySql+' AND    c1.cod_loja IN ('+sEmpresas+')';
+            MySql:=
+             MySql+' AND    c.cod_loja IN ('+sEmpresas+')';
 
-           MySql:=MySql+' AND    c1.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
-                        ' AND    c1.cod_credito<9000'+
-                        ' GROUP BY 3,4,7,8'+
-                        ' ORDER BY 8, 7, 1,2,4';
+    MySql:=
+     MySql+' AND    c.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
+           ' AND    c.cod_credito<9000'+
+           ' GROUP BY 1,2,7,8'+
+
+           ' UNION'+
+
+           ' SELECT '''' cod_loja, '''' razao_social,'+
+           ' c1.cod_credito,'+
+           ' CASE'+
+           '   WHEN (TRIM(c1.des_credito)='''') OR (TRIM(c1.des_credito)=''***'') THEN'+
+           '    ''Sem Informação'''+
+           '   ELSE'+
+           '    TRIM(c1.des_credito)'+
+           ' END des_credito,'+
+           ' SUM(c1.vlr_credito) Vlr_Tot_Sidicom,'+
+           ' SUM(c1.vlr_informado) Vlr_Tot_Informado,'+
+           ' 3 Indice, c1.cod_loja'+
+           ' FROM fin_conciliacao_caixa c1'+
+           ' WHERE  c1.num_seqreg>6499';
+
+           If Not bgTodasEmpresas Then
+            MySql:=
+             MySql+' AND    c1.cod_loja IN ('+sEmpresas+')';
+
+    MySql:=
+     MySql+' AND    c1.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
+           ' AND    c1.cod_credito<9000';
+
+           If Trim(sCreditos)<>'' Then
+            MySql:=
+             MySql+' AND    c1.cod_credito in ('+sCreditos+')';
+
+    MySql:=
+     MySql+' GROUP BY 3,4,7,8'+
+           ' ORDER BY 8, 7, 1,2,4';
   End; // If Rb_ConcFechaCaixaResultadoLoja.Checked Then
 
   DMBelShop.CDS_BuscaRapida.Close;
@@ -1394,6 +1488,14 @@ begin
   bEnterTab:=True;
   bgSairCaixa:=False;
 
+  try
+    DMVirtual.CDS_V_Creditos.CreateDataSet;
+    DMVirtual.CDS_V_Creditos.Open;
+  Except
+    DMVirtual.CDS_V_Creditos.EmptyDataSet;
+    DMVirtual.CDS_V_Creditos.Open;
+  End;
+
   If (PC_Principal.ActivePage=Ts_ConciliacaoCaixa) And (Ts_ConciliacaoCaixa.CanFocus) Then
    EdtConcFechaCaixaCodLoja.SetFocus;
 
@@ -1403,6 +1505,7 @@ procedure TFrmConciliacaoCaixa.FormClose(Sender: TObject; var Action: TCloseActi
 begin
   if Not bgSairCaixa Then
   Begin
+    DMVirtual.CDS_V_Creditos.Close;
     PC_ConcFechaCaixa.TabIndex:=0;
     PC_ConcFechaCaixaChange(Self);
     msg('Para Fechar Tecle no Botão <Fechar>...','A');
@@ -2502,39 +2605,17 @@ begin
   End;
 end;
 
-procedure TFrmConciliacaoCaixa.Bt_ConcFechaCaixaResultadoBuscaClick(
-  Sender: TObject);
+procedure TFrmConciliacaoCaixa.Bt_ConcFechaCaixaResultadoBuscaClick(Sender: TObject);
 begin
+  PC_ApresResultado.TabIndex:=0;
   Dbg_ConcFechaCaixaResultado.SetFocus;
 
   DMBelShop.CDS_BuscaRapida.Close;
   Dbg_ConcFechaCaixaResultado.DataSource:=nil;
 
-  Try
-    StrToDate(DtEdt_ConcFechaCaixaResultadoInicio.Text);
-  Except
-    msg('Data Inicial do Período Inválida !!','A');
-    DtEdt_ConcFechaCaixaResultadoInicio.SetFocus;
-    Exit;
-  End;
-
-  Try
-    StrToDate(DtEdt_ConcFechaCaixaResultadoFim.Text);
-  Except
-    msg('Data Final do Período Inválida !!','A');
-    DtEdt_ConcFechaCaixaResultadoFim.SetFocus;
-    Exit;
-  End;
-
-  If DtEdt_ConcFechaCaixaResultadoFim.Date<DtEdt_ConcFechaCaixaResultadoInicio.Date Then
-  Begin
-    msg('Período Inválido !!','A');
-    DtEdt_ConcFechaCaixaResultadoInicio.SetFocus;
-    Exit;
-  End;
-
   // Busca Movimentos de Debitos ===============================================
-  FechaConcCaixaBuscaCreditos;
+  If ConsistePeriodo Then
+   FechaConcCaixaBuscaCreditos;
 
 end;
 
@@ -2582,6 +2663,7 @@ end;
 procedure TFrmConciliacaoCaixa.Bt_ConcFechaCaixaResultadoClipboardClick(
   Sender: TObject);
 begin
+  PC_ApresResultado.TabIndex:=0;
   If DMBelShop.CDS_BuscaRapida.IsEmpty Then
    Exit;
 
@@ -2593,6 +2675,7 @@ end;
 procedure TFrmConciliacaoCaixa.Bt_ConcFechaCaixaResultadoSalvaExcelClick(
   Sender: TObject);
 begin
+  PC_ApresResultado.TabIndex:=0;
   If DMBelShop.CDS_BuscaRapida.IsEmpty Then
    Exit;
 
@@ -2666,7 +2749,7 @@ Var
 begin
 
   Dbg_ConcFechaCaixaTotal.SetFocus;
-  
+
   If DMConciliacao.CDS_ConcCaixaTotais.IsEmpty Then
    Exit;
 
@@ -2784,6 +2867,170 @@ begin
   Application.OnMessage := ApplicationEvents1Message;
   ApplicationEvents1.Activate;
 
+end;
+
+procedure TFrmConciliacaoCaixa.PC_ApresResultadoChange(Sender: TObject);
+begin
+  CorSelecaoTabSheet(PC_Principal);
+
+  If (PC_ApresResultado.ActivePage=Ts_ApresResultadoFiltros) And (Ts_ApresResultadoFiltros.CanFocus) Then
+   EdtCodCredito.SetFocus;
+
+end;
+
+procedure TFrmConciliacaoCaixa.Bt_BuscaCreditoClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  If Not ConsistePeriodo Then
+   Exit;
+
+  sgDtaI:=f_Troca('/','.',DtEdt_ConcFechaCaixaResultadoInicio.Text);
+  sgDtaI:=f_Troca('-','.',sgDtaI);
+  sgDtaF:=f_Troca('/','.',DtEdt_ConcFechaCaixaResultadoFim.Text);
+  sgDtaF:=f_Troca('-','.',sgDtaF);
+
+  // ========== EFETUA A CONEXÃO ===============================================
+  FrmPesquisa:=TFrmPesquisa.Create(Self);
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  // Busca Aplicações ==========================================================
+  MySql:=' SELECT DISTINCT TRIM(c1.des_credito) des_credito, c1.cod_credito'+
+         ' FROM FIN_CONCILIACAO_CAIXA c1'+
+         ' WHERE  c1.num_seqreg>6499'+
+         ' AND    c1.cod_credito<>999'+
+         ' AND    c1.cod_credito<9000'+
+         ' AND    c1.des_credito<>''Sem Informação'''+
+         ' AND    c1.des_credito<>'''''+
+         ' AND    c1.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
+         ' ORDER BY 1';
+  DMBelShop.CDS_Pesquisa.Close;
+  DMBelShop.CDS_Pesquisa.Filtered:=False;
+  DMBelShop.SDS_Pesquisa.CommandText:=MySql;
+  DMBelShop.CDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+    
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(DMBelShop.CDS_Pesquisa.FieldByName('cod_credito').AsString)='' Then
+  Begin
+    DMBelShop.CDS_Pesquisa.Close;
+    msg('Sem Registro a Listar !!','A');
+    FreeAndNil(FrmPesquisa);
+    EdtCodCredito.Clear;
+    EdtCodCredito.SetFocus;
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisa.Campo_pesquisa:='Des_Credito';
+  FrmPesquisa.Campo_Codigo:='Cod_Credito';
+  FrmPesquisa.Campo_Descricao:='Des_Credito';
+  FrmPesquisa.EdtDescricao.Clear;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisa.ShowModal;
+
+  // ============= RETORNO =====================================================
+  If Trim(FrmPesquisa.EdtCodigo.Text)<>'' Then
+  Begin
+    If DMVirtual.CDS_V_Creditos.Locate('Cod_Credito',FrmPesquisa.EdtCodigo.Text,[]) Then
+    Begin
+      Begin
+        msg('Crédito Já Informada !!','A');
+        EdtCodCredito.Clear;
+        FreeAndNil(FrmPesquisa);
+        EdtCodCredito.SetFocus;
+        Exit;
+      End;
+    End;
+
+    DMVirtual.CDS_V_Creditos.Insert;
+    DMVirtual.CDS_V_CreditosCod_Credito.AsString:=FrmPesquisa.EdtCodigo.Text;
+    DMVirtual.CDS_V_CreditosDes_Credito.AsString:=FrmPesquisa.EdtDescricao.Text;
+    DMVirtual.CDS_V_Creditos.Post;
+
+  End; // If Trim(FrmPesquisa.EdtCodigo.Text)<>'' Then
+
+  FreeAndNil(FrmPesquisa);
+end;
+
+procedure TFrmConciliacaoCaixa.Dbg_CreditoKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  If Key=VK_Delete Then
+  Begin
+    If Not DMVirtual.CDS_V_Creditos.IsEmpty Then
+     DMVirtual.CDS_V_Creditos.Delete;
+  End; // If Key=VK_Delete Then
+
+  Dbg_Credito.SetFocus;
+
+end;
+
+procedure TFrmConciliacaoCaixa.EdtCodCreditoExit(Sender: TObject);
+Var
+  MySql: String;
+begin
+  sgDtaI:=f_Troca('/','.',DtEdt_ConcFechaCaixaResultadoInicio.Text);
+  sgDtaI:=f_Troca('-','.',sgDtaI);
+  sgDtaF:=f_Troca('/','.',DtEdt_ConcFechaCaixaResultadoFim.Text);
+  sgDtaF:=f_Troca('-','.',sgDtaF);
+
+  If Not ConsistePeriodo Then
+   Exit;
+
+  If Trim(EdtCodCredito.Text)<>'' Then
+  Begin
+    Screen.Cursor:=crAppStart;
+
+    // Busca Aplicaçoes ========================================================
+    MySql:=' SELECT distinct TRIM(c1.des_credito) des_credito, c1.cod_credito'+
+           ' FROM FIN_CONCILIACAO_CAIXA c1'+
+           ' WHERE c1.num_seqreg>6499'+
+           ' AND   c1.cod_credito<>999'+
+           ' AND   c1.cod_credito<9000'+
+           ' AND   c1.des_credito<>''Sem Informação'''+
+           ' AND   c1.des_credito<>'''''+
+           ' AND   c1.cod_credito='+EdtCodCredito.Text+
+           ' AND   c1.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF);
+    DMBelShop.CDS_Busca.Close;
+    DMBelShop.SDS_Busca.CommandText:=MySql;
+    DMBelShop.CDS_Busca.Open;
+
+    Screen.Cursor:=crDefault;
+
+    If Trim(DMBelShop.CDS_Busca.FieldByName('cod_credito').AsString)='' Then
+    Begin
+      msg('Crédito NÃO Encontrado !!!', 'A');
+      DMBelShop.CDS_Busca.Close;
+      EdtCodCredito.Clear;
+      EdtCodCredito.SetFocus;
+      Exit;
+    End;
+
+    If DMVirtual.CDS_V_Creditos.Locate('Cod_Credito',DMBelShop.CDS_Busca.FieldByName('cod_credito').AsString,[]) Then
+    Begin
+      Begin
+        msg('Crédito Já Informado !!','A');
+        DMBelShop.CDS_Busca.Close;
+        EdtCodCredito.Clear;
+        EdtCodCredito.SetFocus;
+        Exit;
+      End;
+    End;
+
+    DMVirtual.CDS_V_Creditos.Insert;
+    DMVirtual.CDS_V_CreditosCod_Credito.AsString:=DMBelShop.CDS_Busca.FieldByName('cod_credito').AsString;
+    DMVirtual.CDS_V_CreditosDes_Credito.AsString:=DMBelShop.CDS_Busca.FieldByName('des_credito').AsString;
+    DMVirtual.CDS_V_Creditos.Post;
+
+    DMBelShop.CDS_Busca.Close;
+    EdtCodCredito.Clear;
+    EdtCodCredito.SetFocus;
+  End; // If Trim(EdtCodCredito.Text)<>'' Then
 end;
 
 end.

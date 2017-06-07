@@ -181,7 +181,8 @@ object DMArtesanalis: TDMArtesanalis
       end>
     SQL.Strings = (
       'SELECT pd.cod_materiaprima, mp.des_materiaprima,'
-      '       pd.per_utilizacao, pd.preco_custo, pd.custo_medio,'
+      '       pd.qtd_utilizacao, pd.per_utilizacao,'
+      '       pd.preco_custo, pd.custo_medio,'
       '       pd.preco_venda, pd.per_margem, pd.vlr_margem'
       'FROM PRODUCAO pd, MATERIAPRIMA mp'
       ''
@@ -192,7 +193,7 @@ object DMArtesanalis: TDMArtesanalis
       'union'
       ''
       'SELECT 999999 cod_materiaprima, '#39'TOTAIS'#39' des_materiaprima,'
-      '       0.00000 per_utilizacao,'
+      '       0 qtd_utilizacao, 0.00000 per_utilizacao,'
       '       Sum(pd1.preco_custo) preco_custo,'
       '       SUM(pd1.custo_medio) custo_medio,'
       '       SUM(pd1.preco_venda) preco_venda,'
@@ -232,6 +233,11 @@ object DMArtesanalis: TDMArtesanalis
       FieldName = 'DES_MATERIAPRIMA'
       Size = 60
     end
+    object CDS_ProdutoProducaoQTD_UTILIZACAO: TIntegerField
+      DisplayLabel = 'Qtd Utilizar'
+      FieldName = 'QTD_UTILIZACAO'
+      DisplayFormat = '0,'
+    end
     object CDS_ProdutoProducaoPER_UTILIZACAO: TFMTBCDField
       DisplayLabel = '% Utiliza'#231#227'o'
       FieldName = 'PER_UTILIZACAO'
@@ -242,42 +248,42 @@ object DMArtesanalis: TDMArtesanalis
     object CDS_ProdutoProducaoPRECO_CUSTO: TFMTBCDField
       DisplayLabel = 'P'#231' Custo'
       FieldName = 'PRECO_CUSTO'
-      DisplayFormat = '0,.00'
+      DisplayFormat = '0,.0000'
       Precision = 18
-      Size = 2
+      Size = 4
     end
     object CDS_ProdutoProducaoCUSTO_MEDIO: TFMTBCDField
       DisplayLabel = 'Custo M'#233'dio'
       FieldName = 'CUSTO_MEDIO'
-      DisplayFormat = '0,.00'
+      DisplayFormat = '0,.0000'
       Precision = 18
-      Size = 2
+      Size = 4
     end
     object CDS_ProdutoProducaoPRECO_VENDA: TFMTBCDField
       DisplayLabel = 'P'#231' Venda'
       FieldName = 'PRECO_VENDA'
-      DisplayFormat = '0,.00'
+      DisplayFormat = '0,.0000'
       Precision = 18
-      Size = 2
+      Size = 4
     end
     object CDS_ProdutoProducaoPER_MARGEM: TFMTBCDField
       DisplayLabel = '% Margem'
       FieldName = 'PER_MARGEM'
-      DisplayFormat = '0,.00'
+      DisplayFormat = '0,.00000'
       Precision = 18
-      Size = 2
+      Size = 5
     end
     object CDS_ProdutoProducaoVLR_MARGEM: TFMTBCDField
       DisplayLabel = 'Vlr Margem'
       FieldName = 'VLR_MARGEM'
-      DisplayFormat = '0,.00'
+      DisplayFormat = '0,.0000'
       Precision = 18
-      Size = 2
+      Size = 4
     end
   end
   object DS_ProdutoProducao: TDataSource
     DataSet = CDS_ProdutoProducao
-    Left = 588
+    Left = 572
     Top = 262
   end
   object SQLQ_ProdutoMatPrima: TSQLQuery

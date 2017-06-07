@@ -44,8 +44,8 @@ type
     EdtProdutoPercMargem: TCurrencyEdit;
     Gb_ProdutoQtdSaldo: TGroupBox;
     EdtProdutoQtdSaldo: TCurrencyEdit;
-    Gb_ProdutoVlrMatgem: TGroupBox;
-    EdtProdutoVlrMatgem: TCurrencyEdit;
+    Gb_ProdutoPercMarkUp: TGroupBox;
+    EdtProdutoPercMarkUp: TCurrencyEdit;
     Gb_MateriaPrima: TGroupBox;
     Dbg_ProdutoMatPrima: TDBGrid;
     StB_Produto: TdxStatusBar;
@@ -54,6 +54,8 @@ type
     dxStatusBar1: TdxStatusBar;
     Panel1: TPanel;
     OdirPanApres: TPanel;
+    Gb_ProdutoVlrMargem: TGroupBox;
+    EdtProdutoVlrMargem: TCurrencyEdit;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -96,7 +98,8 @@ type
       State: TGridDrawState);
     procedure EdtProdutoDescExit(Sender: TObject);
     procedure EdtProdutoPercMargemChange(Sender: TObject);
-    procedure EdtProdutoVlrMatgemChange(Sender: TObject);
+    procedure EdtProdutoPercMarkUpChange(Sender: TObject);
+    procedure EdtProdutoPcVendaExit(Sender: TObject);
 
   private
     { Private declarations }
@@ -114,17 +117,16 @@ var
   FrmProdutoCadastro: TFrmProdutoCadastro;
 
   // Show Hint em Forma de Balão
-  hTooltip: Cardinal; 
-  ti: TToolInfo; 
+  hTooltip: Cardinal;
+  ti: TToolInfo;
   buffer : array[0..255] of char;
   ///////////////////////////////
 
   TD: TTransactionDesc;
 
-  bgAlterar,
   bgSairProduto: Boolean;
 
-  sgPercProducao,
+  sgPercProducao, sgQtdProducao,
   sgMensagem: String;
 
 implementation
@@ -149,13 +151,12 @@ end; // BUSCA Matérias-Primas do Produto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmProdutoCadastro.DMLProduto(sTipo: String): Boolean;
 Var
   MySql: String;
-  sCalculo: String;
   iCodMatPri: Integer;
-  cPcCusto, cPcVenda: Currency;
+  cCustoMedio, cPcCusto: Currency;
 Begin
   // sTipo:
-  // (IA) Incluir/Alterar Produto
-  // (EX) Excluir Produto
+  // (IA)  Incluir/Alterar Produto
+  // (EX)  Excluir Produto
   // (IAM) Incluir/Alterar Matéria-Prima da Produção do Produto
   // (AM)  Alterar Matéria-Prima da Produção do Produto
   // (EXM) Excluir Matéria-Prima da Produção do Produto
@@ -187,11 +188,14 @@ Begin
     DecimalSeparator:='.';
 
     // (IA) Incluir/Alterar Produto ============================================
-    If sTipo='IA' Then
+    // (IAM) Incluir/Alterar Matéria-Prima da Produção do Produto
+    // (AM)  Alterar Matéria-Prima da Produção do Produto
+    // (EXM) Excluir Matéria-Prima da Produção do Produto
+    If (sTipo='IA') Or (sTipo='IAM') Or (sTipo='AM') Or (sTipo='EXM') Then
     Begin
       MySql:=' UPDATE OR INSERT INTO PRODUTO'+
              ' (COD_PRODUTO, DES_PRODUTO, DES_UNIDADE, PRECO_CUSTO, CUSTO_MEDIO,'+
-             '  PRECO_VENDA, PER_MARGEM, VLR_MARGEM, QTD_ESTOQUE)'+
+             '  PRECO_VENDA, PER_MARGEM, VLR_MARGEM, PER_MARKUP, QTD_ESTOQUE)'+
              ' VALUES ('+
              IntToStr(EdtProdutoCod.AsInteger)+', '+ // COD_PRODUTO
              QuotedStr(EdtProdutoDesc.Text)+', '+ // DES_PRODUTO
@@ -200,7 +204,8 @@ Begin
              QuotedStr(f_Troca(',','.',VarToStr(EdtProdutoCustoMedio.Value)))+', '+ // CUSTO_MEDIO
              QuotedStr(f_Troca(',','.',VarToStr(EdtProdutoPcVenda.Value)))+', '+ // PRECO_VENDA
              QuotedStr(f_Troca(',','.',VarToStr(EdtProdutoPercMargem.Value)))+', '+ // PER_MARGEM
-             QuotedStr(f_Troca(',','.',VarToStr(EdtProdutoVlrMatgem.Value)))+', '+ // VLR_MARGEM
+             QuotedStr(f_Troca(',','.',VarToStr(EdtProdutoVlrMargem.Value)))+', '+ // VLR_MARGEM
+             QuotedStr(f_Troca(',','.',VarToStr(EdtProdutoPercMarkUp.Value)))+', '+ // PER_MARKUP
              QuotedStr(f_Troca(',','.',VarToStr(EdtProdutoQtdSaldo.Value)))+')'+ // QTD_ESTOQUE
              ' MATCHING (COD_PRODUTO)';
       DMArtesanalis.SQLC.Execute(MySql,nil,nil);
@@ -226,26 +231,27 @@ Begin
       iCodMatPri:=DMArtesanalis.CDS_ProdutoProducaoCOD_MATERIAPRIMA.AsInteger;
 
       MySql:=' UPDATE OR INSERT INTO PRODUCAO'+
-             ' (COD_PRODUTO, COD_MATERIAPRIMA, PER_UTILIZACAO, PRECO_CUSTO,'+
-             '  CUSTO_MEDIO, PRECO_VENDA, PER_MARGEM, VLR_MARGEM)'+
+             ' (COD_PRODUTO, COD_MATERIAPRIMA, QTD_UTILIZACAO, PER_UTILIZACAO,'+
+             '  PRECO_CUSTO, CUSTO_MEDIO, PRECO_VENDA, PER_MARGEM, VLR_MARGEM)'+
              ' VALUES ('+
              IntToStr(EdtProdutoCod.AsInteger)+', '+ // COD_PRODUTO
              IntToStr(DMArtesanalis.CDS_ProdutoProducaoCOD_MATERIAPRIMA.AsInteger)+', '+ // COD_MATERIAPRIMA
+             QuotedStr(f_Troca(',','.',sgQtdProducao))+', '+ // PER_UTILIZACAO
              QuotedStr(f_Troca(',','.',sgPercProducao))+', '; // PER_UTILIZACAO
 
              // PRECO_CUSTO
-             cPcCusto:=0.00;
+             cPcCusto:=0.0000;
              If DMArtesanalis.CDS_ProdutoMatPrimaPRECO_CUSTO.AsCurrency<>0 Then
-              cPcCusto:=RoundTo(((DMArtesanalis.CDS_ProdutoMatPrimaPRECO_CUSTO.AsCurrency * StrToCurr(sgPercProducao))/100),-2);
+              cPcCusto:=RoundTo(((DMArtesanalis.CDS_ProdutoMatPrimaPRECO_CUSTO.AsCurrency * StrToCurr(sgPercProducao))/100),-4);
       MySql:=
        MySql+QuotedStr(f_Troca(',','.',CurrToStr(cPcCusto)))+', ';
 
              // CUSTO_MEDIO
-             sCalculo:='0.00';
+             cCustoMedio:=0.0000;
              If DMArtesanalis.CDS_ProdutoMatPrimaCUSTO_MEDIO.AsCurrency<>0 Then
-              sCalculo:=VarToStr(RoundTo(((DMArtesanalis.CDS_ProdutoMatPrimaCUSTO_MEDIO.AsCurrency * StrToCurr(sgPercProducao))/100),-2));
+              cCustoMedio:=RoundTo(((DMArtesanalis.CDS_ProdutoMatPrimaCUSTO_MEDIO.AsCurrency * StrToCurr(sgPercProducao))/100),-4);
       MySql:=
-       MySql+QuotedStr(f_Troca(',','.',sCalculo))+', ';
+       MySql+QuotedStr(f_Troca(',','.',CurrToStr(cCustoMedio)))+', ';
 
       // PRECO_VENDA, PER_MARGEM, VLR_MARGEM
       MySql:=
@@ -264,26 +270,27 @@ Begin
       iCodMatPri:=DMArtesanalis.CDS_ProdutoMatPrimaCOD_MATERIAPRIMA.AsInteger;
 
       MySql:=' UPDATE OR INSERT INTO PRODUCAO'+
-             ' (COD_PRODUTO, COD_MATERIAPRIMA, PER_UTILIZACAO, PRECO_CUSTO,'+
-             '  CUSTO_MEDIO, PRECO_VENDA, PER_MARGEM, VLR_MARGEM)'+
+             ' (COD_PRODUTO, COD_MATERIAPRIMA, QTD_UTILIZACAO, PER_UTILIZACAO,'+
+             '  PRECO_CUSTO, CUSTO_MEDIO, PRECO_VENDA, PER_MARGEM, VLR_MARGEM)'+
              ' VALUES ('+
              IntToStr(EdtProdutoCod.AsInteger)+', '+ // COD_PRODUTO
              IntToStr(DMArtesanalis.CDS_ProdutoMatPrimaCOD_MATERIAPRIMA.AsInteger)+', '+ // COD_MATERIAPRIMA
+             QuotedStr(f_Troca(',','.',sgQtdProducao))+', '+ // QTD_UTILIZACAO
              QuotedStr(f_Troca(',','.',sgPercProducao))+', '; // PER_UTILIZACAO
 
              // PRECO_CUSTO
-             cPcCusto:=0.00;
+             cPcCusto:=0.0000;
              If DMArtesanalis.CDS_ProdutoMatPrimaPRECO_CUSTO.AsCurrency<>0 Then
-              cPcCusto:=RoundTo(((DMArtesanalis.CDS_ProdutoMatPrimaPRECO_CUSTO.AsCurrency * StrToCurr(sgPercProducao))/100),-2);
+              cPcCusto:=RoundTo(((DMArtesanalis.CDS_ProdutoMatPrimaPRECO_CUSTO.AsCurrency * StrToCurr(sgPercProducao))/100),-4);
       MySql:=
        MySql+QuotedStr(f_Troca(',','.',CurrToStr(cPcCusto)))+', ';
 
              // CUSTO_MEDIO
-             sCalculo:='0.00';
+             cCustoMedio:=0.0000;
              If DMArtesanalis.CDS_ProdutoMatPrimaCUSTO_MEDIO.AsCurrency<>0 Then
-              sCalculo:=VarToStr(RoundTo(((DMArtesanalis.CDS_ProdutoMatPrimaCUSTO_MEDIO.AsCurrency * StrToCurr(sgPercProducao))/100),-2));
+              cCustoMedio:=RoundTo(((DMArtesanalis.CDS_ProdutoMatPrimaCUSTO_MEDIO.AsCurrency * StrToCurr(sgPercProducao))/100),-4);
       MySql:=
-       MySql+QuotedStr(f_Troca(',','.',sCalculo))+', ';
+       MySql+QuotedStr(f_Troca(',','.',CurrToStr(cCustoMedio)))+', ';
 
       // PRECO_VENDA, PER_MARGEM, VLR_MARGEM
       MySql:=
@@ -292,33 +299,6 @@ Begin
 
       DecimalSeparator:='.';
       DMArtesanalis.SQLC.Execute(MySql,nil,nil);
-
-//OdirApagar - 09/05/2017
-//             // PRECO_VENDA
-//             cPcVenda:=0.00;
-//             If EdtProdutoPcVenda.Value<>0 Then
-//              cPcVenda:=RoundTo(((EdtProdutoPcVenda.Value * StrToCurr(sgPercProducao))/100),-2);
-//      MySql:=
-//       MySql+QuotedStr(f_Troca(',','.',CurrToStr(cPcVenda)))+', ';
-//
-//             // PER_MARGEM
-//             sCalculo:='0.00';
-//             If cPcVenda<>0 Then
-//              sCalculo:=VarToStr(RoundTo((((cPcVenda-cPcCusto)/cPcVenda)*100),-2));
-//      MySql:=
-//       MySql+QuotedStr(f_Troca(',','.',sCalculo))+', ';
-//
-//             // VLR_MARGEM
-//             sCalculo:='0.00';
-//             If cPcVenda<>0 Then
-//              sCalculo:=VarToStr(cPcVenda-cPcCusto);
-//      MySql:=
-//       MySql+QuotedStr(f_Troca(',','.',sCalculo))+')'+
-//
-//             ' MATCHING (COD_PRODUTO, COD_MATERIAPRIMA)';
-//
-//      DecimalSeparator:='.';
-//      DMArtesanalis.SQLC.Execute(MySql,nil,nil);
     End; // If sTipo='IAM' Then
 
     // (EXM) Excluir Materia-Prima da Produção do Produto ======================
@@ -330,21 +310,54 @@ Begin
       DMArtesanalis.SQLC.Execute(MySql,nil,nil);
     End; // If sTipo='EXM' Then
 
+    // Atualiza Transacao ======================================================
+    DMArtesanalis.SQLC.Commit(TD);
+
+    // Reabre Transação ========================================================
+    DMArtesanalis.SQLC.StartTransaction(TD);
+
+    // Reabre Matéria-Prima da Produção do Produto =============================
+    // (IAM) Incluir/Alterar Matéria-Prima da Produção do Produto
+    // (AM)  Alterar Matéria-Prima da Produção do Produto
+    // (EXM) Excluir Matéria-Prima da Produção do Produto
+    If (sTipo='IAM') Or (sTipo='AM') Or (sTipo='EXM') Then
+    Begin
+      DMArtesanalis.CDS_ProdutoProducao.Close;
+      DMArtesanalis.CDS_ProdutoProducao.Open;
+    End;
+
     // Acertas Valores do Produto ==============================================
     If (sTipo='IAM') Or (sTipo='AM') Or (sTipo='EXM') Then
     Begin
+      // Localiza Preço de Custo =========================
+      DMArtesanalis.CDS_ProdutoProducao.Last;
+      cPcCusto   :=RoundTo(DMArtesanalis.CDS_ProdutoProducaoPRECO_CUSTO.AsCurrency,-2);
+      cCustoMedio:=RoundTo(DMArtesanalis.CDS_ProdutoProducaoCUSTO_MEDIO.AsCurrency,-2);
+
+      DMArtesanalis.CDS_ProdutoProducao.Locate('COD_MATERIAPRIMA', iCodMatPri,[]);
+
       MySql:=' SELECT '+
-             ' SUM(pd.preco_custo) preco_custo,'+
-             ' SUM(pd.custo_medio) custo_medio,'+
+             f_Troca(',','.',CurrToStr(cPcCusto))+' PRECO_CUSTO,'+
+             f_Troca(',','.',CurrToStr(cCustoMedio))+' CUSTO_MEDIO,'+
+
              ' CASE'+
-             '   WHEN (pr.preco_venda=0) AND (SUM(pd.preco_custo)=0) THEN'+
+             '   WHEN (pr.preco_venda=0) AND ('+f_Troca(',','.',CurrToStr(cPcCusto))+'=0) THEN'+
              '      0.00'+
              '   WHEN pr.preco_venda=0 THEN'+
              '      -100.00'+
              '   ELSE'+
-             '      ((pr.preco_venda - SUM(pd.preco_custo)) / pr.preco_venda) * 100'+
-             ' end per_margem,'+
-             ' (pr.preco_venda - SUM(pd.preco_custo)) vlr_margem'+
+             '      ((pr.preco_venda - '+f_Troca(',','.',CurrToStr(cPcCusto))+') / pr.preco_venda) * 100'+
+             ' end PER_MARGEM,'+
+             ' (pr.preco_venda - '+f_Troca(',','.',CurrToStr(cPcCusto))+') VLR_MARGEM,'+
+
+             ' CASE'+
+             '   WHEN (pr.preco_venda=0) AND ('+f_Troca(',','.',CurrToStr(cPcCusto))+'=0) THEN'+
+             '      0.00'+
+             '   WHEN pr.preco_venda=0 THEN'+
+             '      -100.00'+
+             '   ELSE'+
+             '     ((pr.preco_venda - '+f_Troca(',','.',CurrToStr(cPcCusto))+') * 100) / '+f_Troca(',','.',CurrToStr(cPcCusto))+
+             ' end PER_MARKUP'+
 
              ' FROM PRODUCAO pd, PRODUTO pr'+
              ' WHERE pd.cod_produto = pr.cod_produto'+
@@ -356,6 +369,7 @@ Begin
       DMArtesanalis.SQLQ_Busca.SQL.Add(MySql);
       DMArtesanalis.CDS_Busca.Open;
 
+      DecimalSeparator:=',';
       EdtProdutoPcCusto.Value:=0.00;
       If Trim(DMArtesanalis.CDS_Busca.FieldByName('Preco_Custo').AsString)<>'' Then
        EdtProdutoPcCusto.Value:=DMArtesanalis.CDS_Busca.FieldByName('Preco_Custo').AsCurrency;
@@ -368,17 +382,23 @@ Begin
       If Trim(DMArtesanalis.CDS_Busca.FieldByName('Per_Margem').AsString)<>'' Then
        EdtProdutoPercMargem.Value:=DMArtesanalis.CDS_Busca.FieldByName('Per_Margem').AsCurrency;
 
-      EdtProdutoVlrMatgem.Value:=0.00;
+      EdtProdutoVlrMargem.Value:=0.00;
       If Trim(DMArtesanalis.CDS_Busca.FieldByName('Vlr_Margem').AsString)<>'' Then
-       EdtProdutoVlrMatgem.Value:=DMArtesanalis.CDS_Busca.FieldByName('Vlr_Margem').AsCurrency;
+       EdtProdutoVlrMargem.Value:=DMArtesanalis.CDS_Busca.FieldByName('Vlr_Margem').AsCurrency;
 
+      EdtProdutoPercMarkUp.Value:=0.00;
+      If Trim(DMArtesanalis.CDS_Busca.FieldByName('Per_MarkUp').AsString)<>'' Then
+       EdtProdutoPercMarkUp.Value:=DMArtesanalis.CDS_Busca.FieldByName('Per_MarkUp').AsCurrency;
+
+      DecimalSeparator:='.';
       DMArtesanalis.CDS_Busca.Close;
 
       MySql:=' UPDATE PRODUTO pr'+
              ' SET pr.preco_custo='+QuotedStr(f_Troca(',','.',FloatToStr(EdtProdutoPcCusto.Value)))+
              ',    pr.custo_medio='+QuotedStr(f_Troca(',','.',FloatToStr(EdtProdutoCustoMedio.Value)))+
              ',    pr.per_margem='+QuotedStr(f_Troca(',','.',FloatToStr(EdtProdutoPercMargem.Value)))+
-             ',    pr.vlr_margem='+QuotedStr(f_Troca(',','.',FloatToStr(EdtProdutoVlrMatgem.Value)))+
+             ',    pr.vlr_margem='+QuotedStr(f_Troca(',','.',FloatToStr(EdtProdutoVlrMargem.Value)))+
+             ',    pr.per_markup='+QuotedStr(f_Troca(',','.',FloatToStr(EdtProdutoPercMarkUp.Value)))+
              ' WHERE pr.cod_produto='+IntToStr(EdtProdutoCod.AsInteger);
       DMArtesanalis.SQLC.Execute(MySql,nil,nil);
     End; // If (sTipo='IAM') Or (sTipo='AM') Or (sTipo='EXM') Then
@@ -388,18 +408,7 @@ Begin
 
     DateSeparator:='/';
     DecimalSeparator:=',';
-
     OdirPanApres.Visible:=False;
-
-    // (IAM) Incluir/Alterar Matéria-Prima da Produção do Produto
-    // (AM)  Alterar Matéria-Prima da Produção do Produto
-    // (EXM) Excluir Matéria-Prima da Produção do Produto
-    If (sTipo='IAM') Or (sTipo='AM') Or (sTipo='EXM') Then
-    Begin
-      DMArtesanalis.CDS_ProdutoProducao.Close;
-      DMArtesanalis.CDS_ProdutoProducao.Open;
-      DMArtesanalis.CDS_ProdutoProducao.Locate('COD_MATERIAPRIMA', iCodMatPri,[]);
-    End;
 
     Screen.Cursor:=crDefault;
 
@@ -422,8 +431,9 @@ Begin
     End; // on e : Exception do
   End; // Try da Transação
 
-  msg('Operação Efetuada com SUCESSO !!','A');
-                         
+  If (sTipo='IA') Then
+   msg('Inclusão/Alteração Efetuada com SUCESSO !!','A');
+
 End; // Manipuação de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 Procedure TFrmProdutoCadastro.LimpaComponentes;
@@ -605,9 +615,10 @@ begin
       EdtProdutoCustoMedio.Value:=DMArtesanalis.CDS_Busca.FieldByName('CUSTO_MEDIO').AsFloat;
       EdtProdutoPcVenda.Value   :=DMArtesanalis.CDS_Busca.FieldByName('PRECO_VENDA').AsFloat;
       EdtProdutoPercMargem.Value:=DMArtesanalis.CDS_Busca.FieldByName('PER_MARGEM').AsFloat;
-      EdtProdutoVlrMatgem.Value :=DMArtesanalis.CDS_Busca.FieldByName('VLR_MARGEM').AsFloat;
+      EdtProdutoVlrMargem.Value :=DMArtesanalis.CDS_Busca.FieldByName('VLR_MARGEM').AsFloat;
+      EdtProdutoPercMarkUp.Value:=DMArtesanalis.CDS_Busca.FieldByName('PER_MARKUP').AsFloat;
       EdtProdutoQtdSaldo.Value  :=DMArtesanalis.CDS_Busca.FieldByName('QTD_ESTOQUE').AsFloat;
-
+                         
       ProducaoBusca;
 
       Bt_ProdutoSalvar.Enabled   :=True;
@@ -628,6 +639,8 @@ end;
 procedure TFrmProdutoCadastro.Dbg_ProdutoMatPrimaEnter(Sender: TObject);
 begin
   (Sender as TDBGrid).Color:=clMoneyGreen;
+
+  (Sender as TDBGrid).SetFocus;
 end;
 
 procedure TFrmProdutoCadastro.Dbg_ProdutoMatPrimaKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -801,52 +814,55 @@ begin
   End;
   DMArtesanalis.CDS_Busca.Close;
 
-  sgPercProducao:='0,00000';
+  sgPercProducao:='';
+  sgQtdProducao :='';
 
   // Verifica se Materia-Prima ja esta Cadastrada ==============================
   If Not DMArtesanalis.CDS_ProdutoProducao.IsEmpty Then
   Begin
     If DMArtesanalis.CDS_ProdutoProducao.Locate('COD_MATERIAPRIMA', DMArtesanalis.CDS_ProdutoMatPrimaCOD_MATERIAPRIMA.AsInteger,[]) Then
     Begin
-      If msg('Matéria-Prima já Cadastrada como Produção !!'+cr+cr+'Deseja Continuar ??','A')=2 Then
+      If msg('Matéria-Prima já Cadastrada como Produção !!'+cr+cr+'Deseja Continuar ??','C')=2 Then
        Exit;
 
-      sgPercProducao:=DMArtesanalis.CDS_ProdutoProducaoPER_UTILIZACAO.AsString;
+      sgQtdProducao:=DMArtesanalis.CDS_ProdutoProducaoQTD_UTILIZACAO.AsString;
     End; // If DMArtesanalis.CDS_ProdutoProducao.Locate('COD_MATERIAPRIMA', DMArtesanalis.CDS_ProdutoMatPrimaCOD_MATERIAPRIMA.AsInteger,[]) Then
   End; // If Not DMArtesanalis.CDS_ProdutoProducao.IsEmpty Then
 
   b:=True;
   While b do
   Begin
-    If InputQuery('Informe o % Utilização','',sgPercProducao) then
+    If InputQuery('Quantidade de Utilização','',sgQtdProducao) then
      Begin
        Try
-         StrToFloat(sgPercProducao);
-         If (StrToCurr(sgPercProducao)>100) Or (StrToCurr(sgPercProducao)<0) Or (StrToCurr(sgPercProducao)=0) Then
+         StrToInt(sgQtdProducao);
+         If StrToInt(sgQtdProducao)<=0 Then
           Begin
-            msg('Percentual Inválido !!'+cr+'Limite: Maior que 0% ou Menor/Igual a 100%','A');
+            msg('Quantidade de Utilização Inválida !!'+cr+'Não Pode Ser Menor/Igual a 0 <Zero>','A');
           End
          Else
           Begin
             Break;
           End;
        Except
-         msg('Percentual Inválido !!','A')
+         msg('Quantidade de Utilização'+cr+cr+'Deve ser um INTEIRO !!','A')
        End; // Try
      End
     Else
      Begin
        sgPercProducao:='';
+       sgQtdProducao :='';
        Break;
-     End; // If InputQuery('Informe o Desconto','',sVlrDesc) then
+     End; // If InputBoxInteiro('Informe a Quantidade de Utilização','',sgQtdProducao) then
   End; // While b do
 
   Dbg_ProdutoMatPrima.SetFocus;
 
-  If Trim(sgPercProducao)='' Then
+  If Trim(sgQtdProducao)='' Then
    Exit;
 
   // (IAM) Incluir/Alterar Matéria-Prima da Produção do Produto ================
+  sgPercProducao:=CurrToStr(RoundTo(((1 / StrToCurr(sgQtdProducao))*100),-5));
   If not DMLProduto('IAM') Then
    MessageBox(Handle, pChar('Erro ao Incluir/Altera a Matéria-Prima'+cr+'da Produção do Produto !!'+#13+sgMensagem), 'ATENÇÃO !!', MB_ICONERROR);
 
@@ -949,7 +965,7 @@ procedure TFrmProdutoCadastro.Dbg_ProdutoProducaoDblClick(Sender: TObject);
 Var
   b: Boolean;
 begin
-  If DMArtesanalis.CDS_ProdutoProducao.IsEmpty Then
+  If (DMArtesanalis.CDS_ProdutoProducao.IsEmpty) Or (DMArtesanalis.CDS_ProdutoProducaoCOD_MATERIAPRIMA.AsInteger=999999) Then
    Exit;
 
   If Not DMArtesanalis.CDS_ProdutoMatPrima.Locate('COD_MATERIAPRIMA',DMArtesanalis.CDS_ProdutoProducaoCOD_MATERIAPRIMA.AsString,[]) Then
@@ -959,45 +975,42 @@ begin
     Exit;
   End;
 
-  If msg('Deseja Realmente Alterar o Percentual'+cr+'de Utilização da Matéria-Prima Selecionada ??','C')=2 Then
-  Begin
-    Dbg_ProdutoProducao.SetFocus;
-    Exit;
-  End;
-
+  sgQtdProducao:=DMArtesanalis.CDS_ProdutoProducaoQTD_UTILIZACAO.AsString;
+  sgPercProducao:='';
   b:=True;
-  sgPercProducao:=DMArtesanalis.CDS_ProdutoProducaoPER_UTILIZACAO.AsString;
   While b do
   Begin
-    If InputQuery('Informe o % Utilização','',sgPercProducao) then
+    If InputQuery('Quantidade de Utilização','',sgQtdProducao) then
      Begin
        Try
-         StrToFloat(sgPercProducao);
-         If (StrToCurr(sgPercProducao)>100) Or (StrToCurr(sgPercProducao)<0) Or (StrToCurr(sgPercProducao)=0) Then
+         StrToInt(sgQtdProducao);
+         If StrToInt(sgQtdProducao)<=0 Then
           Begin
-            msg('Percentual Inválido !!','A');
+            msg('Quantidade de Utilização Inválida !!','A');
           End
          Else
           Begin
             Break;
-          End;
+          End; // If StrToInt(sgQtdProducao)<=0 Then
        Except
-         msg('Percentual Inválido !!','A')
+         msg('Quantidade de Utilização'+cr+cr+'Deve ser um INTEIRO !!','A')
        End; // Try
      End
     Else
      Begin
        sgPercProducao:='';
+       sgQtdProducao :='';
        Break;
-     End; // If InputQuery('Informe o Desconto','',sVlrDesc) then
+     End; // If InputBoxInteiro('Informe a Quantidade de Utilização','',sgQtdProducao) then
   End; // While b do
 
   Dbg_ProdutoMatPrima.SetFocus;
 
-  If Trim(sgPercProducao)='' Then
+  If Trim(sgQtdProducao)='' Then
    Exit;
 
   // (IAM) Incluir/Alterar Matéria-Prima da Produção do Produto ================
+  sgPercProducao:=CurrToStr(RoundTo(((1 / StrToCurr(sgQtdProducao))*100),-5));
   If not DMLProduto('AM') Then
    MessageBox(Handle, pChar('Erro ao Incluir/Altera a Matéria-Prima'+cr+'da Produção do Produto !!'+#13+sgMensagem), 'ATENÇÃO !!', MB_ICONERROR);
 end;
@@ -1030,7 +1043,6 @@ begin
   Bt_ProdutoSalvar.Enabled   :=True;
   Bt_ProdutoAbandonar.Enabled:=True;
   Bt_ProdutoExcluir.Enabled  :=True;
-
 end;
 
 procedure TFrmProdutoCadastro.EdtProdutoPercMargemChange(Sender: TObject);
@@ -1053,24 +1065,31 @@ begin
    End;
 end;
 
-procedure TFrmProdutoCadastro.EdtProdutoVlrMatgemChange(Sender: TObject);
+procedure TFrmProdutoCadastro.EdtProdutoPercMarkUpChange(Sender: TObject);
 begin
-  EdtProdutoVlrMatgem.Color:=clMoneyGreen;
-  EdtProdutoVlrMatgem.Font.Style:=[];
-  EdtProdutoVlrMatgem.Font.Color:=clWindowText;
-  If EdtProdutoVlrMatgem.Value<0 Then
+  // Valor Margens Negativa ====================================================
+  EdtProdutoPercMarkUp.Color:=clMoneyGreen;
+  EdtProdutoPercMarkUp.Font.Style:=[];
+  EdtProdutoPercMarkUp.Font.Color:=clWindowText;
+  If EdtProdutoPercMarkUp.Value<0 Then
    Begin
-     EdtProdutoVlrMatgem.Color:=clRed;
-     EdtProdutoVlrMatgem.Font.Style:=[fsBold];
-     EdtProdutoVlrMatgem.Font.Color:=clWhite;
+     EdtProdutoPercMarkUp.Color:=clRed;
+     EdtProdutoPercMarkUp.Font.Style:=[fsBold];
+     EdtProdutoPercMarkUp.Font.Color:=clWhite;
    End
-  Else If EdtProdutoVlrMatgem.Value>0 Then
+  Else If EdtProdutoPercMarkUp.Value>0 Then
    Begin
-     EdtProdutoVlrMatgem.Color:=clBlue;
-     EdtProdutoVlrMatgem.Font.Style:=[fsBold];
-     EdtProdutoVlrMatgem.Font.Color:=clWhite;
+     EdtProdutoPercMarkUp.Color:=clBlue;
+     EdtProdutoPercMarkUp.Font.Style:=[fsBold];
+     EdtProdutoPercMarkUp.Font.Color:=clWhite;
    End;
+end;
 
+procedure TFrmProdutoCadastro.EdtProdutoPcVendaExit(Sender: TObject);
+begin
+  EdtProdutoPercMargem.Value:=((EdtProdutoPcVenda.Value - EdtProdutoPcCusto.Value) / EdtProdutoPcVenda.Value) * 100;
+  EdtProdutoVlrMargem.Value :=EdtProdutoPcVenda.Value-EdtProdutoPcCusto.Value;
+  EdtProdutoPercMarkUp.Value:=((EdtProdutoPcVenda.Value - EdtProdutoPcCusto.Value) / EdtProdutoPcCusto.Value) * 100;
 end;
 
 end.

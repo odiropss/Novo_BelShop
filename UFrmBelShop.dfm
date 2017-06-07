@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 556
-    ActivePage = Ts_FinanObjetivos
+    ActivePage = Ts_CurvaABCEndereco
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -13391,7 +13391,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 528
-        ActivePage = Ts_CurvaABCEndMantencao
+        ActivePage = Ts_CurvaABCEndCurvaABC
         Align = alClient
         TabOrder = 0
         OnChange = PC_CurvaABCEnderecamentosChange
@@ -25504,7 +25504,7 @@ object FrmBelShop: TFrmBelShop
             Left = 1
             Top = 14
             Width = 918
-            Height = 256
+            Height = 261
             Align = alClient
             Color = 15004403
             Ctl3D = False
@@ -25605,7 +25605,7 @@ object FrmBelShop: TFrmBelShop
           end
           object Dbg_FinanFechaCaixaTotal: TDBGrid
             Left = 1
-            Top = 289
+            Top = 294
             Width = 918
             Height = 49
             Align = alBottom
@@ -25708,7 +25708,7 @@ object FrmBelShop: TFrmBelShop
           end
           object StatusBar5: TStatusBar
             Left = 1
-            Top = 270
+            Top = 275
             Width = 918
             Height = 19
             Panels = <
@@ -27278,7 +27278,7 @@ object FrmBelShop: TFrmBelShop
           ImageIndex = 3
           object Panel131: TPanel
             Left = 0
-            Top = 430
+            Top = 422
             Width = 963
             Height = 35
             Align = alBottom
@@ -30126,7 +30126,7 @@ object FrmBelShop: TFrmBelShop
             end
             object Panel27: TPanel
               Left = 1
-              Top = 60
+              Top = 65
               Width = 407
               Height = 434
               Hint = '<Delete> Exclui Item da Lista'
@@ -30214,7 +30214,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 2
                 Top = 2
                 Width = 548
-                Height = 430
+                Height = 435
                 Hint = '<Delete> Exclui Item da Lista'
                 Align = alClient
                 DataSource = DMVirtual.DS_V_SubGruposProdutos
