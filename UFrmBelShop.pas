@@ -11388,8 +11388,8 @@ Begin
   Begin
     // Conecta Empresa =====================================================
     bSiga:=True;
-    If (StrToInt(sgCodEmp)<18) or (StrToInt(sgCodEmp)>45)  Then
-    Begin
+//    If (StrToInt(sgCodEmp)<18) or (StrToInt(sgCodEmp)>45)  Then
+//    Begin
       If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
        Begin
          bSiga:=True;
@@ -11398,13 +11398,13 @@ Begin
        Begin
          If sgLojasNConectadas='' Then
           sgLojasNConectadas:=sDesObj+': Bel_'+sgCodEmp
-         Else 
+         Else
           sgLojasNConectadas:=
            sgLojasNConectadas+cr+sDesObj+': Bel_'+sgCodEmp;
 
          bSiga:=False;
        End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
-    End; // If (StrToInt(sgCodEmp)<18) or (StrToInt(sgCodEmp)>45)  Then
+//    End; // If (StrToInt(sgCodEmp)<18) or (StrToInt(sgCodEmp)>45)  Then
 
     // Inicia Processamento ================================================
     If bSiga Then // Empresa Conectada
@@ -11454,7 +11454,7 @@ Begin
 
             // Busca Movimentos de Vendas Linx ============================
             BuscaMovtosVendasLINX(mMemLinx, 'M');
-            
+
           End; // if StrToDate(sgDtaFim)>StrToDate(sgDtaComecoLinx) Then
         End; // If Memo2.Lines[i]='002' ........ Then
 
@@ -11543,24 +11543,6 @@ Begin
 
                  MySql:=
                   MySql+' Group by 1';
-
-//                 If Trim(sgDtaIncioLinx)='' Then
-//                  Begin
-//                    MySql:=
-//                     MySql+' and m.datacomprovante '+f_Troca('/','.',f_Troca('-','.',sgPeriodo1));
-//                  End
-//                 Else
-//                  Begin
-//                    // Acerta Final do Periodo do SIDICOM -----------
-//                    MySql:=
-//                     MySql+' and m.datacomprovante '+f_Troca('/','.',f_Troca('-','.',
-//                                                     Copy(AnsiUpperCase(sgPeriodo1),1,pos('AND',AnsiUpperCase(sgPeriodo1))+3)+
-//                                                     QuotedStr(DateToStr(StrToDate(sgDtaIncioLinx)-1))));
-//                  End; // If Trim(sgDtaIncioLinx)='' Then
-//
-//                 MySql:=
-//                  MySql+' Group by 1';
-
         End; // If (StrToInt(sgCodEmp)<18) or (StrToInt(sgCodEmp)>45)  Then // Monta SQL Somente Loja Com SIDICOM ---
 
         // Ingrementa Dias do Linx =============================================
@@ -11582,7 +11564,7 @@ Begin
              Begin
                MySql:=
                 MySql+mMemLinx.Lines[iLinx];
-             End; // If (StrToInt(sgCodEmp)<18) or (StrToInt(sgCodEmp)>45)  Then
+             End; // If (StrToInt(sgCodEmp)<18) or (StrToInt(sgCodEmp)>45) Then
           End; // For i:=0 to mMemo.Lines.Count-1 do
         End; // If mMemLinx.Lines.Count>1 Then
 
@@ -13787,8 +13769,8 @@ Begin
   Begin
     // Conecta Empresa =========================================================
     bSiga:=True;
-    If (StrToInt(sgCodEmp)<18) or (StrToInt(sgCodEmp)>45)  Then
-    Begin
+//    If (StrToInt(sgCodEmp)<18) or (StrToInt(sgCodEmp)>45)  Then
+//    Begin
       If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
        Begin
          bSiga:=True;
@@ -13803,7 +13785,7 @@ Begin
 
          bSiga:=False;
        End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
-    End; // If (StrToInt(sgCodEmp)<18) or (StrToInt(sgCodEmp)>45)  Then
+//    End; // If (StrToInt(sgCodEmp)<18) or (StrToInt(sgCodEmp)>45)  Then
 
     // Inicia Processamento ====================================================
     If bSiga Then // Empresa Conectada
@@ -13907,17 +13889,17 @@ Begin
                            ' End Ticket_Medio,';
                   End; // If Memo2.Lines[i]='002' Then
 
-                 MySql:=
-                  MySql+' Coalesce(Sum(Coalesce(mp.valdescitem,0.00)),0) TOT_DESC_ITEM,'+
-                        ' Coalesce(Sum(Coalesce(mp.valbruto,0.00)),0.00) TOT_BRUTO,'+
-                        ' Coalesce(Sum(Coalesce(mp.valtotal,0.00)),0.00) TOT_NOTA,'+
-                        ' Coalesce(Sum(Coalesce(mp.valfrete,0.00)),0.00) TOT_FRETE,'+
-                        ' Coalesce(Sum(Coalesce(mp.valdespesas,0)),0.00) TOT_DESPESAS'+
+          MySql:=
+           MySql+' Coalesce(Sum(Coalesce(mp.valdescitem,0.00)),0) TOT_DESC_ITEM,'+
+                 ' Coalesce(Sum(Coalesce(mp.valbruto,0.00)),0.00) TOT_BRUTO,'+
+                 ' Coalesce(Sum(Coalesce(mp.valtotal,0.00)),0.00) TOT_NOTA,'+
+                 ' Coalesce(Sum(Coalesce(mp.valfrete,0.00)),0.00) TOT_FRETE,'+
+                 ' Coalesce(Sum(Coalesce(mp.valdespesas,0)),0.00) TOT_DESPESAS'+
 
-                        ' from MCLI m, MCLIPRO mp, PRODUTO p'+
+                 ' from MCLI m, MCLIPRO mp, PRODUTO p'+
 
-                        ' Where m.chavenf=mp.chavenf'+
-                        ' AND  mp.codproduto=p.codproduto';
+                 ' Where m.chavenf=mp.chavenf'+
+                 ' AND  mp.codproduto=p.codproduto';
 
                  If Rb_FinanObjetivosManutTpOperacaoLoja.Checked Then
                   MySql:=
@@ -13931,8 +13913,8 @@ Begin
                   MySql:=
                    MySql+' and Coalesce(p.situacaopro,1) in (1,3)';
 
-                 MySql:=
-                  MySql+' and m.codfilial='+QuotedStr(sgCodEmp);
+          MySql:=
+           MySql+' and m.codfilial='+QuotedStr(sgCodEmp);
 
                  If Memo2.Lines[i]='002' Then
                   MySql:=
@@ -13944,30 +13926,8 @@ Begin
                  MySql:=
                   MySql+' and m.datacomprovante '+f_Troca('/','.',f_Troca('-','.',sgPeriodo));
 
-                 MySql:=
-                  MySql+' Group by 1';
-
-//                 If Trim(sgDtaIncioLinx)='' Then
-//                  Begin
-//                    MySql:=
-//                     MySql+' and m.datacomprovante '+f_Troca('/','.',f_Troca('-','.',sgPeriodo));
-//                  End
-//                 Else
-//                  Begin
-//                    // Acerta Final do Periodo do SIDICOM -----------
-//                    MySql:=
-//                     MySql+' and m.datacomprovante between '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaIncioLinx)))+
-//                                                             ' AND '+
-//                                                             QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFimLinx)));
-//
-//// OdirApagar  - 22/05/2015
-////                     MySql+' and m.datacomprovante '+f_Troca('/','.',f_Troca('-','.',
-////                                                     Copy(AnsiUpperCase(sgPeriodo),1,pos('AND',AnsiUpperCase(sgPeriodo))+3)+
-////                                                     QuotedStr(DateToStr(StrToDate(sgDtaIncioLinx)-1))));
-//                  End; // If Trim(sgDtaIncioLinx)='' Then
-//
-//                 MySql:=
-//                  MySql+' Group by 1';
+           MySql:=
+            MySql+' Group by 1';
 
         End; // If (StrToInt(sgCodEmp)<18) or (StrToInt(sgCodEmp)>45)  Then // Monta SQL Somente Loja Com SIDICOM ---
 
@@ -14013,7 +13973,7 @@ Begin
             Inc(ii);
           End; // Try
 
-          If ii>10 Then
+          If ii>2 Then
           Begin
             If sgLojasNConectadas='' Then
              sgLojasNConectadas:=sDesObj+': Bel_'+sgCodEmp

@@ -302,8 +302,8 @@ end;
 
 procedure TFrmArtesanalis.SubMenuProdutoPedidoVendaClick(Sender: TObject);
 begin
-  msg('Opção em Desenvolvimento !!','A');
-  Exit;
+//  msg('Opção em Desenvolvimento !!','A');
+//  Exit;
 
   DMArtesanalis.MemoAdicionaNomeForm('PRODUTO - Pedido de Vendas');
 

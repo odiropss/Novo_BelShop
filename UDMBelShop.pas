@@ -1257,7 +1257,8 @@ var
   sgMensagemERRO: String;
 
   sPath_Local, // Somente a Pasta do Executável
-  sgPastaExecutavelServer: String; // Pasta e Executável no Servidor (FrmBelShop)
+  sgPastaExecutavelServer, // Pasta e Executável no Servidor (FrmBelShop)
+  sgPastaBancoBelShop: String; // Pasta do Banco de Dados BelShop.FDB
 
   sgCodLojaUnica: String;
   sgPCTConect_IB: String;
@@ -2279,7 +2280,7 @@ Procedure OC_COMPRAR_DOCS(sTipo, sDoc: String; sOrigem: String='');
 Var
   MySql: String;
   bOrigem, bLinx: Boolean;
-//  bTransacao: Boolean; // Se Transação Proria da Procedure
+//  bTransacao: Boolean; // Se Transação Propria da Procedure
   sDateSeparator, sDecimalSeparator: String;
 Begin
   //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -3415,8 +3416,6 @@ Begin
     DMVirtual.CDS_V_EmpConexoesCONEXAO.AsString:='Não';
     DMVirtual.CDS_V_EmpConexoesDES_BAIRRO.AsString:=
                          CDS_ConectaEmpresa.FieldByName('Des_Bairro').AsString;
-    DMVirtual.CDS_V_EmpConexoesDES_BASE_DADOS.AsString:=
-                     CDS_ConectaEmpresa.FieldByName('Des_Base_Dados').AsString;
     DMVirtual.CDS_V_EmpConexoesDES_CIDADE.AsString:=
                          CDS_ConectaEmpresa.FieldByName('Des_Cidade').AsString;
     DMVirtual.CDS_V_EmpConexoesDES_ENDERECO.AsString:=
@@ -3441,8 +3440,15 @@ Begin
                             CDS_ConectaEmpresa.FieldByName('Num_CNPJ').AsString;
     DMVirtual.CDS_V_EmpConexoesNUM_ENDERECO.AsString:=
                          CDS_ConectaEmpresa.FieldByName('Num_Endereco').AsString;
-    DMVirtual.CDS_V_EmpConexoesPASTA_BASE_DADOS.AsString:=
-                     CDS_ConectaEmpresa.FieldByName('Pasta_Base_Dados').AsString;
+
+    // Pasta_Base_Dados: Se Somente Linx Usa BelShop.FDB
+    DMVirtual.CDS_V_EmpConexoesPASTA_BASE_DADOS.AsString:=CDS_ConectaEmpresa.FieldByName('Pasta_Base_Dados').AsString;
+    If AnsiUpperCase(CDS_ConectaEmpresa.FieldByName('Pasta_Base_Dados').AsString)='SEM' Then
+     DMVirtual.CDS_V_EmpConexoesPASTA_BASE_DADOS.AsString:=sgPastaBancoBelShop;
+
+    DMVirtual.CDS_V_EmpConexoesDES_BASE_DADOS.AsString:=
+                     CDS_ConectaEmpresa.FieldByName('Des_Base_Dados').AsString;
+
     DMVirtual.CDS_V_EmpConexoesRAZAO_SOCIAL.AsString:=
                          CDS_ConectaEmpresa.FieldByName('Razao_Social').AsString;
     DMVirtual.CDS_V_EmpConexoesTIP_EMP.AsString:=
@@ -3491,6 +3497,13 @@ Begin
           If CDS_ConectaEmpresa.FieldByName('Cod_Filial').AsString='08' Then
            s:=sEndIP+':'+
               IncludeTrailingPathDelimiter(DMVirtual.CDS_V_EmpConexoesPASTA_BASE_DADOS.AsString)+
+                                           DMVirtual.CDS_V_EmpConexoesDES_BASE_DADOS.AsString;
+
+          //==============================================================================
+          // Lojas Linx
+          //==============================================================================
+           If AnsiUpperCase(CDS_ConectaEmpresa.FieldByName('Pasta_Base_Dados').AsString)='SEM' Then
+             s:=IncludeTrailingPathDelimiter(DMVirtual.CDS_V_EmpConexoesPASTA_BASE_DADOS.AsString)+
                                            DMVirtual.CDS_V_EmpConexoesDES_BASE_DADOS.AsString;
 
           //  \\201.86.212.10\C:\SIDICOM.NEW\BANCO.FDB
@@ -3659,18 +3672,20 @@ begin
    If sBancoIB<>'' Then
    Begin
      sgPastaExecutavelServer:=ExtractFilePath(sBancoIB);
+     sgPastaBancoBelShop    :=ExtractFilePath(sBancoIB);
 
      i:=Pos('\BelShop\',Trim(sgPastaExecutavelServer));
      sgPastaExecutavelServer:=Copy(sgPastaExecutavelServer,1, i+8);
 
      i:=Pos(AnsiUpperCase('\\localhost\'),Trim(AnsiUpperCase(sgPastaExecutavelServer)));
      If i>0 Then
-      sgPastaExecutavelServer:=Copy(sgPastaExecutavelServer, i+12, Length(sgPastaExecutavelServer));
+     Begin
+       sgPastaExecutavelServer:=Copy(sgPastaExecutavelServer, i+12, Length(sgPastaExecutavelServer));
+     End;
 
      Break;
    End; // If sBancoIB<>'' Then
-
-  End;
+  End; //While not Eof(Arq) do
   CloseFile(Arq);
 
   IBDB_BelShop.DatabaseName:=sBancoIB;
@@ -3735,7 +3750,7 @@ begin
   FrmBelShop.EdtConEmpresasUsuInclui.Clear;
   If Trim(CDS_EmpresaUSU_INCLUI.AsString)<>'' Then
   Begin
-    MySql:='Select Des_Login'+
+    MySql:=' Select Des_Login'+
            ' From PS_Usuarios'+
            ' Where Cod_Usuario='+CDS_EmpresaUSU_INCLUI.AsString;
     SDS_Busca.Close;
@@ -3748,7 +3763,7 @@ begin
   FrmBelShop.EdtConEmpresasUsuAltera.Clear;
   If Trim(CDS_EmpresaUSU_ALTERA.AsString)<>'' Then
   Begin
-    MySql:='Select Des_Login'+
+    MySql:=' Select Des_Login'+
            ' From PS_Usuarios'+
            ' Where Cod_Usuario='+CDS_EmpresaUSU_ALTERA.AsString;
     SDS_Busca.Close;

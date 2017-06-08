@@ -699,7 +699,7 @@ object FrmEntrada: TFrmEntrada
     end
   end
   object OdirPanApres: TPanel
-    Left = 280
+    Left = 344
     Top = 4
     Width = 89
     Height = 33

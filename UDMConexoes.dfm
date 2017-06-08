@@ -364,7 +364,7 @@ object DMConexoes: TDMConexoes
     Top = 90
   end
   object IBDB_19: TIBDatabase
-    DatabaseName = '\\187.5.214.83\C:\SIDICOM.NEW\BANCO.FDB'
+    DatabaseName = '\\LocalHost\C:\Projetos\BelShop\Dados\BELSHOP.FDB'
     Params.Strings = (
       'user_name=SYSDBA'
       'password=masterkey')
@@ -373,6 +373,7 @@ object DMConexoes: TDMConexoes
     IdleTimer = 0
     SQLDialect = 3
     TraceFlags = []
+    AllowStreamedConnected = False
     Left = 448
     Top = 198
   end
