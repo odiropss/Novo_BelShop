@@ -783,7 +783,7 @@ object FrmProdutoCadastro: TFrmProdutoCadastro
       Width = 551
       Height = 416
       Align = alClient
-      Caption = ' Produ'#231#227'o '
+      Caption = ' Produ'#231#227'o - Salvamento Autom'#225'tico'
       TabOrder = 3
       object Dbg_ProdutoProducao: TDBGrid
         Left = 2

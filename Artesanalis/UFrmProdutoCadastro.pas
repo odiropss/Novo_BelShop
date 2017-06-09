@@ -1087,9 +1087,12 @@ end;
 
 procedure TFrmProdutoCadastro.EdtProdutoPcVendaExit(Sender: TObject);
 begin
-  EdtProdutoPercMargem.Value:=((EdtProdutoPcVenda.Value - EdtProdutoPcCusto.Value) / EdtProdutoPcVenda.Value) * 100;
-  EdtProdutoVlrMargem.Value :=EdtProdutoPcVenda.Value-EdtProdutoPcCusto.Value;
-  EdtProdutoPercMarkUp.Value:=((EdtProdutoPcVenda.Value - EdtProdutoPcCusto.Value) / EdtProdutoPcCusto.Value) * 100;
+  If EdtProdutoPcCusto.Value<>0 Then
+  Begin
+    EdtProdutoPercMargem.Value:=((EdtProdutoPcVenda.Value - EdtProdutoPcCusto.Value) / EdtProdutoPcVenda.Value) * 100;
+    EdtProdutoVlrMargem.Value :=EdtProdutoPcVenda.Value-EdtProdutoPcCusto.Value;
+    EdtProdutoPercMarkUp.Value:=((EdtProdutoPcVenda.Value - EdtProdutoPcCusto.Value) / EdtProdutoPcCusto.Value) * 100;
+  End; // If EdtProdutoPcCusto.Value<>0 Then
 end;
 
 end.

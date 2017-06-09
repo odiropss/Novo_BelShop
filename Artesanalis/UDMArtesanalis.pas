@@ -83,6 +83,21 @@ type
     CDS_V_DoctoItensVlr_TotalProdutos: TAggregateField;
     CDS_V_DoctoItensVlr_TotalDesconto: TAggregateField;
     CDS_ProdutoProducaoQTD_UTILIZACAO: TIntegerField;
+    SQLQ_VerProducao: TSQLQuery;
+    DSP_VerProducao: TDataSetProvider;
+    CDS__VerProducao: TClientDataSet;
+    Ds_VerProducao: TDataSource;
+    CDS__VerProducaoCOD_MATERIAPRIMA: TIntegerField;
+    CDS__VerProducaoDES_MATERIAPRIMA: TStringField;
+    CDS__VerProducaoDES_UNIDADE: TStringField;
+    CDS__VerProducaoPRECO_CUSTO: TFMTBCDField;
+    CDS__VerProducaoSALDO_ATUAL: TFMTBCDField;
+    CDS__VerProducaoQTD_UTILIZACAO_MP: TIntegerField;
+    CDS__VerProducaoPER_UTILIZADO_MP: TFMTBCDField;
+    CDS__VerProducaoQTD_UNID_UTILIZADA_MP: TFMTBCDField;
+    CDS__VerProducaoQTD_BAIXA_EST_MP: TFMTBCDField;
+    CDS__VerProducaoVLR_UNITARIO_MP: TFMTBCDField;
+    CDS__VerProducaoVLR_TOTAL_MP: TFMTBCDField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

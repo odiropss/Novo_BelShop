@@ -520,4 +520,130 @@ object DMArtesanalis: TDMArtesanalis
     Left = 196
     Top = 462
   end
+  object SQLQ_VerProducao: TSQLQuery
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftString
+        Name = 'SeqDoc'
+        ParamType = ptInput
+        Value = '29'
+      end
+      item
+        DataType = ftString
+        Name = 'CodProd'
+        ParamType = ptInput
+        Value = '1'
+      end
+      item
+        DataType = ftString
+        Name = 'SeqItem'
+        ParamType = ptInput
+        Value = '1'
+      end>
+    SQL.Strings = (
+      'select'
+      'mp.cod_materiaprima, mp.des_materiaprima,'
+      'mp.des_unidade, mp.preco_custo, mp.qtd_estoque Saldo_Atual,'
+      
+        'pd.qtd_utilizacao_mp, pd.per_utilizado_mp, pd.qtd_unid_utilizada' +
+        '_mp,'
+      'pd.qtd_baixa_est_mp, pd.vlr_unitario_mp, pd.vlr_total_mp'
+      'from materiaprima mp, doctos_itens_mp pd'
+      'where mp.cod_materiaprima=pd.cod_materiaprima'
+      'and   pd.num_seq_docto=:SeqDoc'
+      'and   pd.cod_produto=:CodProd'
+      'And   pd.num_seq=:SeqItem'
+      'order by 2')
+    SQLConnection = SQLC
+    Left = 396
+    Top = 392
+  end
+  object DSP_VerProducao: TDataSetProvider
+    DataSet = SQLQ_VerProducao
+    Options = [poFetchBlobsOnDemand, poRetainServerOrder]
+    Left = 443
+    Top = 406
+  end
+  object CDS__VerProducao: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_VerProducao'
+    Left = 484
+    Top = 392
+    object CDS__VerProducaoCOD_MATERIAPRIMA: TIntegerField
+      DisplayLabel = 'C'#243'd'
+      FieldName = 'COD_MATERIAPRIMA'
+      Required = True
+    end
+    object CDS__VerProducaoDES_MATERIAPRIMA: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      FieldName = 'DES_MATERIAPRIMA'
+      Size = 60
+    end
+    object CDS__VerProducaoDES_UNIDADE: TStringField
+      DisplayLabel = 'Unid'
+      FieldName = 'DES_UNIDADE'
+      Size = 15
+    end
+    object CDS__VerProducaoPRECO_CUSTO: TFMTBCDField
+      DisplayLabel = '$ Custo'
+      FieldName = 'PRECO_CUSTO'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
+    end
+    object CDS__VerProducaoSALDO_ATUAL: TFMTBCDField
+      DisplayLabel = 'Saldo Atual'
+      FieldName = 'SALDO_ATUAL'
+      DisplayFormat = '0,.0000'
+      Precision = 18
+      Size = 4
+    end
+    object CDS__VerProducaoQTD_UTILIZACAO_MP: TIntegerField
+      DisplayLabel = 'Qtd Total Utiliza'#231#227'o'
+      FieldName = 'QTD_UTILIZACAO_MP'
+      DisplayFormat = ',0'
+    end
+    object CDS__VerProducaoPER_UTILIZADO_MP: TFMTBCDField
+      DisplayLabel = '% Total Utilizado'
+      FieldName = 'PER_UTILIZADO_MP'
+      DisplayFormat = '0,.00000'
+      Precision = 18
+      Size = 5
+    end
+    object CDS__VerProducaoQTD_UNID_UTILIZADA_MP: TFMTBCDField
+      DisplayLabel = 'Qtd Unid Utilizada'
+      FieldName = 'QTD_UNID_UTILIZADA_MP'
+      DisplayFormat = '0,.00000'
+      Precision = 18
+      Size = 5
+    end
+    object CDS__VerProducaoQTD_BAIXA_EST_MP: TFMTBCDField
+      DisplayLabel = 'Qtd Baixa Saldo'
+      FieldName = 'QTD_BAIXA_EST_MP'
+      DisplayFormat = '0,.00000'
+      Precision = 18
+      Size = 5
+    end
+    object CDS__VerProducaoVLR_UNITARIO_MP: TFMTBCDField
+      DisplayLabel = '$ Unit'#225'rio'
+      FieldName = 'VLR_UNITARIO_MP'
+      DisplayFormat = '0,.0000'
+      Precision = 18
+      Size = 4
+    end
+    object CDS__VerProducaoVLR_TOTAL_MP: TFMTBCDField
+      DisplayLabel = '$ Total'
+      FieldName = 'VLR_TOTAL_MP'
+      DisplayFormat = '0,.0000'
+      Precision = 18
+      Size = 4
+    end
+  end
+  object Ds_VerProducao: TDataSource
+    DataSet = CDS__VerProducao
+    Left = 540
+    Top = 406
+  end
 end

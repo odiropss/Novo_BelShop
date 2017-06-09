@@ -1,8 +1,8 @@
 object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
-  Left = 279
-  Top = 116
-  Width = 830
-  Height = 538
+  Left = 248
+  Top = 114
+  Width = 961
+  Height = 583
   AutoSize = True
   BorderIcons = []
   Caption = 'Sele'#231#227'o de Empresa para Processamento'
@@ -402,8 +402,8 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 814
-    Height = 500
+    Width = 945
+    Height = 545
     Align = alClient
     BevelInner = bvLowered
     Color = 14342874
@@ -412,15 +412,15 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
     TabOrder = 0
     object Panel13: TPanel
       Left = 2
-      Top = 463
-      Width = 810
+      Top = 508
+      Width = 941
       Height = 35
       Align = alBottom
       BevelInner = bvLowered
       BorderStyle = bsSingle
       TabOrder = 1
       object Bt_SelectEmpProcFechar: TJvXPButton
-        Left = 719
+        Left = 850
         Top = 2
         Width = 87
         Height = 29
@@ -711,8 +711,8 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
     object Gb_SelectEmpProc: TGroupBox
       Left = 2
       Top = 2
-      Width = 810
-      Height = 461
+      Width = 941
+      Height = 506
       Align = alClient
       Caption = '  Empresas a Selecionar para Processamento '
       Ctl3D = False
@@ -727,8 +727,8 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
       object Dbg_SelectEmpProc: TDBGridJul
         Left = 1
         Top = 14
-        Width = 808
-        Height = 426
+        Width = 939
+        Height = 471
         Align = alClient
         Color = 15004403
         DataSource = DMBelShop.DS_EmpProcessa
@@ -841,18 +841,18 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
             Visible = True
           end
           item
+            Expanded = False
+            FieldName = 'DES_CIDADE'
+            Width = 125
+            Visible = True
+          end
+          item
             Alignment = taCenter
             Color = 12189695
             Expanded = False
             FieldName = 'DTA_INICIO_LINX'
             Title.Alignment = taCenter
             Width = 85
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'DES_CIDADE'
-            Width = 125
             Visible = True
           end
           item
@@ -866,8 +866,8 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
       end
       object Sb_SelectEmpProc: TdxStatusBar
         Left = 1
-        Top = 440
-        Width = 808
+        Top = 485
+        Width = 939
         Height = 20
         Panels = <
           item

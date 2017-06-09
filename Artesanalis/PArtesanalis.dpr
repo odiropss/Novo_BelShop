@@ -12,7 +12,8 @@ uses
   UFrmProdutoCadastro in 'UFrmProdutoCadastro.pas' {FrmProdutoCadastro},
   UFrmMovimentos in 'UFrmMovimentos.pas' {FrmMovimentos},
   UFrmPedidoVenda in 'UFrmPedidoVenda.pas' {FrmPedidoVenda},
-  UFrmPessoaCadastro in 'UFrmPessoaCadastro.pas' {FrmCadastroPessoa};
+  UFrmPessoaCadastro in 'UFrmPessoaCadastro.pas' {FrmCadastroPessoa},
+  UFrmVerProducao in 'UFrmVerProducao.pas' {FrmVerProducao};
 
 {$R *.res}
 
@@ -29,6 +30,7 @@ begin
   Application.CreateForm(TFrmMovimentos, FrmMovimentos);
   Application.CreateForm(TFrmPedidoVenda, FrmPedidoVenda);
   Application.CreateForm(TFrmCadastroPessoa, FrmCadastroPessoa);
-  //  Application.CreateForm(TFrmPesquisa, FrmPesquisa);
+  // Application.CreateForm(TFrmVerProducao, FrmVerProducao);
+  // Application.CreateForm(TFrmPesquisa, FrmPesquisa);
   Application.Run;
 end.
