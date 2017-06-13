@@ -182,8 +182,9 @@ object DMAtualizaEstoques: TDMAtualizaEstoques
       '_externo,'#13#10'c.pasta_base_dados, c.des_base_dados, c.cod_emp, c.ra' +
       'zao_social, c.tip_emp,'#13#10'c.ind_ativo, c.dta_inicio_linx, c.dta_in' +
       'ventario_linx,'#13#10#39'IBDB_'#39'||c.cod_filial "DATABASE",'#13#10#39'IBT_'#39'||c.cod' +
-      '_filial  "TRANSACAO"'#13#10#13#10'From EMP_Conexoes c'#13#10'Where ((c.ind_ativo' +
-      '='#39'SIM'#39') or (c.cod_filial=99))'#13#10'order by c.cod_emp'#13#10
+      '_filial  "TRANSACAO"'#13#10#13#10'From emp_conexoes  c'#13#10'Where ((c.ind_ativ' +
+      'o='#39'SIM'#39')'#13#10'       or'#13#10'       (c.cod_filial=99)'#13#10'       or'#13#10'      ' +
+      ' (c.cod_filial=50)'#13#10'      )'#13#10'order by c.cod_filial'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC

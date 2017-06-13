@@ -504,6 +504,7 @@ Begin
       Screen.Cursor:=crDefault;
 
       MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      MessageBox(Handle, pChar(MySql), 'Erro', MB_ICONERROR);
 
       Dbg_Produtos.SetFocus;
 

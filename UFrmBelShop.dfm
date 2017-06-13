@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 556
-    ActivePage = Ts_FinanObjetivos
+    ActivePage = Ts_CurvaABCEndereco
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -7170,7 +7170,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 528
-        ActivePage = Ts_OCBuscaProdutos
+        ActivePage = Ts_OCGeraOrdemCompra
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -8801,7 +8801,7 @@ object FrmBelShop: TFrmBelShop
             Top = 53
             Width = 793
             Height = 427
-            ActivePage = Ts_GeraOCGrid
+            ActivePage = Ts_GeraOCOrdensCompra
             Align = alClient
             MultiLine = True
             TabOrder = 3
@@ -13391,7 +13391,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 528
-        ActivePage = Ts_CurvaABCEndCurvaABC
+        ActivePage = Ts_CurvaABCEndMantencao
         Align = alClient
         TabOrder = 0
         OnChange = PC_CurvaABCEnderecamentosChange
@@ -13544,7 +13544,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 0
                 Top = 0
                 Width = 955
-                Height = 390
+                Height = 382
                 Align = alClient
                 Color = 15004403
                 Ctl3D = False
@@ -13631,7 +13631,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Panel118: TPanel
                 Left = 0
-                Top = 390
+                Top = 382
                 Width = 955
                 Height = 35
                 Align = alBottom
@@ -14454,6 +14454,7 @@ object FrmBelShop: TFrmBelShop
               Font.Name = 'MS Sans Serif'
               Font.Style = [fsBold]
               ParentFont = False
+              Visible = False
               OnClick = Bt_CurvaABCEndDistrEnderecoClick
             end
             object Bt_CurvaABCEndVoltar: TJvXPButton
@@ -32313,7 +32314,7 @@ object FrmBelShop: TFrmBelShop
           747770000000000000007777744770FFFFFF000000007744444470FFFFFF0000
           00007777744770FFFFFF00000000777774777000000000000000777777777777
           777770000000}
-        Caption = 'Curva ABC - MIX - Endere'#231'amentos'
+        Caption = 'Curva ABC - MIX'
         HelpContext = 1
         OnClick = SubMenuComprasCurvaABCClick
       end

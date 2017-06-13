@@ -611,7 +611,7 @@ object FrmConciliacaoCaixa: TFrmConciliacaoCaixa
         Top = 38
         Width = 969
         Height = 514
-        ActivePage = Ts_ConcFechaCaixaResultado
+        ActivePage = Ts_ConcFechaCaixaDoctos
         Align = alClient
         TabOrder = 1
         OnChange = PC_ConcFechaCaixaChange

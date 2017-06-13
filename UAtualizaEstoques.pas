@@ -40,6 +40,8 @@ var
 
   bgConexaoLocal: Boolean; // Se Conexão com o Servidor da Matriz é Local - Verifica a Existencia do Arquivo "ConexaoExterna.ini"
 
+  sgDataAtual, sgHoraAtual: String;
+
   IBQ_Consulta: TIBQuery;
 
   TD : TTransactionDesc; // Ponteiro de Transação
@@ -106,9 +108,9 @@ Begin
            ' SET e.cusmedvalor=COALESCE((SELECT lm.cusmedvalor'+
            '                             FROM W_LINX_MOVTOS lm'+
            '                             WHERE lm.codproduto=e.codproduto), 0.0000)'+
-           ', e.dta_atualizacao=current_date'+
-           ', e.hra_atualizacao=current_time'+
-           ' WHERE e.codfilial='+QuotedStr(sCodBelShop);
+           ', e.dta_atualizacao='+QuotedStr(sgDataAtual)+
+           ', e.hra_atualizacao='+QuotedStr(sgHoraAtual)+
+           ' WHERE e.codfilial ='+QuotedStr(sCodBelShop);
     DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
     //==========================================================================
@@ -131,8 +133,8 @@ Begin
            ' e.dataalteracadastro=current_timestamp,'+
            ' e.dataalteraestoque=current_timestamp,'+
            ' e.dataalteraestoque_ped=current_timestamp,'+
-           ' e.dta_atualizacao=current_date,'+
-           ' e.hra_atualizacao=current_time'+
+           ' e.dta_atualizacao='+QuotedStr(sgDataAtual)+','+
+           ' e.hra_atualizacao='+QuotedStr(sgHoraAtual)+
 
            ' WHERE e.saldo_final_sidicom >= 0.00'+
            ' AND   e.codfilial='+QuotedStr(sCodBelShop);
@@ -158,8 +160,8 @@ Begin
            ' e.dataalteracadastro=current_timestamp,'+
            ' e.dataalteraestoque=current_timestamp,'+
            ' e.dataalteraestoque_ped=current_timestamp,'+
-           ' e.dta_atualizacao=current_date,'+
-           ' e.hra_atualizacao=current_time'+
+           ' e.dta_atualizacao='+QuotedStr(sgDataAtual)+','+
+           ' e.hra_atualizacao='+QuotedStr(sgHoraAtual)+
 
            ' WHERE e.saldo_final_sidicom < 0.00'+
            ' AND   e.codfilial='+QuotedStr(sCodBelShop);
@@ -354,8 +356,7 @@ Begin
 
 End;
 
-procedure TFrmAtualizaEstoques.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TFrmAtualizaEstoques.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Application.Terminate;
   Exit;
@@ -379,9 +380,9 @@ var
                  // LcI = Linx Com Inventário
 
 
-  sCodEmpresa, sHora,
+  sCodEmpresa, 
   sDtaLinx, sDtaInventLinx,
-  sgDML, sgValues: String;
+  sDML, sValues: String;
 
   iCodLinx: Integer;
 
@@ -408,23 +409,26 @@ begin
   DMAtualizaEstoques.CDS_EmpProcessa.First;
   While Not DMAtualizaEstoques.CDS_EmpProcessa.Eof do
   Begin
+// OdirApagar - 12/06/2017 - Não Necessita de Internet
+//    if not InternetGetConnectedState(@Flags, 0) then
+//    Begin
+//      Application.Terminate;
+//      Exit;
+//    End;
+    // Guarda Momento da Atualização ===========================================
+    sgDataAtual:=f_Troca('/','.',f_Troca('-','.',DateToStr(Date)));
+    sgHoraAtual:=TimeToStr(Time);
 
-    if not InternetGetConnectedState(@Flags, 0) then
-    Begin
-      Application.Terminate;
-      Exit;
-    End;
-
+    // Inicializa Variáveis da Loja ============================================
     Try
      iCodLinx:=DMAtualizaEstoques.CDS_EmpProcessaCOD_LINX.AsInteger;
     Except
       iCodLinx:=0;
-    End;                         
+    End;
     sDtaLinx      :=DMAtualizaEstoques.CDS_EmpProcessaDTA_INICIO_LINX.AsString;
     sDtaInventLinx:=DMAtualizaEstoques.CDS_EmpProcessaDTA_INVENTARIO_LINX.AsString;
 
     sCodEmpresa   :=DMAtualizaEstoques.CDS_EmpProcessaCOD_FILIAL.AsString;
-    sHora:=TimeToStr(Time);
 
     // Odir Roda Uma Loja Linx
 //    iCodLinx      :=15;
@@ -501,7 +505,8 @@ begin
                  ' e.dataalteracadastro, e.dataalteraestoque, e.dataalteraestoque_ped,'+
                  ' coalesce(p.principalfor,''000000'') principalfor,'+
                  ' e.saldoatual SALDO_FINAL_SIDICOM,'+
-                 ' current_date DTA_ATUALIZACAO, '+QuotedStr(sHora)+' HRA_ATUALIZACAO'+
+                 QuotedStr(sgDataAtual)+' DTA_ATUALIZACAO, '+
+                 QuotedStr(sgHoraAtual)+' HRA_ATUALIZACAO'+
                  ' FROM ESTOQUE e'+
                  '      LEFT JOIN PRODUTO p on e.codproduto=p.codproduto'+
                  ' WHERE e.codfilial='+QuotedStr(sCodEmpresa);
@@ -557,7 +562,8 @@ begin
                  ' lp.dt_update dataalteraestoque,'+
                  ' lp.dt_update dataalteraestoque_ped,'+
                  ' pr.principalfor principalfor,'+
-                 ' current_date DTA_ATUALIZACAO, '+QuotedStr(sHora)+' HRA_ATUALIZACAO'+
+                 QuotedStr(sgDataAtual)+' DTA_ATUALIZACAO, '+
+                 QuotedStr(sgHoraAtual)+' HRA_ATUALIZACAO'+
 
                  ' FROM LINXPRODUTOSDETALHES lpd'+
                  '          LEFT JOIN LINXPRODUTOS lp ON lp.cod_produto = lpd.cod_produto'+
@@ -592,20 +598,20 @@ begin
             DecimalSeparator:='.';
 
             // Atualiza Estoques da Loja ----------------------------
-            sgDML:=' UPDATE OR INSERT INTO ESTOQUE ('+
-                   ' CODFILIAL, CODPRODUTO, SALDOATUAL, PEDIDOPENDENTE,'+
-                   ' ZONAENDERECO, CORREDOR, PRATELEIRA, GAVETA,'+
-                   ' CUSMEDVALOR, CUSTOMEDIO, LASTPRECOCOMPRA, LASTCUSTOMEDIO,'+
-                   ' ESTOQUEIDEAL, ESTOQUEMAXIMO,'+
-                   ' DATAALTERACADASTRO, DATAALTERAESTOQUE, DATAALTERAESTOQUE_PED,'+
-                   ' PRINCIPALFOR,';
+            sDML:=' UPDATE OR INSERT INTO ESTOQUE ('+
+                  ' CODFILIAL, CODPRODUTO, SALDOATUAL, PEDIDOPENDENTE,'+
+                  ' ZONAENDERECO, CORREDOR, PRATELEIRA, GAVETA,'+
+                  ' CUSMEDVALOR, CUSTOMEDIO, LASTPRECOCOMPRA, LASTCUSTOMEDIO,'+
+                  ' ESTOQUEIDEAL, ESTOQUEMAXIMO,'+
+                  ' DATAALTERACADASTRO, DATAALTERAESTOQUE, DATAALTERAESTOQUE_PED,'+
+                  ' PRINCIPALFOR,';
 
-                   If iCodLinx=0 Then // Guarda Último Saldo de Estoque no SIDICOM
-                    sgDML:=
-                     sgDML+' SALDO_FINAL_SIDICOM,';
+                  If iCodLinx=0 Then // Guarda Último Saldo de Estoque no SIDICOM
+                   sDML:=
+                    sDML+' SALDO_FINAL_SIDICOM,';
 
-            sgDML:=
-             sgDML+' DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
+            sDML:=
+             sDML+' DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
                    ' VALUES (';
 
             // Atualiza Estoques da Loja ----------------------------------
@@ -616,27 +622,27 @@ begin
             Begin
               While Not DMAtualizaEstoques.IBQ_EstoqueLoja.Eof do
               Begin
-                sgValues:='';
+                sValues:='';
                 For i:=0 to DMAtualizaEstoques.IBQ_EstoqueLoja.FieldCount-1 do
                 Begin
                   // ULTIMO CAMPO - HRA_ATUALIZACAO ============================
                   If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
                   Begin
-                    sgValues:=sgValues+QuotedStr(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].AsString)+')';
+                    sValues:=sValues+QuotedStr(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].AsString)+')';
                   End // If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
 
                   // Grava Resto do Registro ===================================
                   Else
                    Begin
                      If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].AsString)<>'' Then
-                      sgValues:=sgValues+QuotedStr(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].AsString)+', '
+                      sValues:=sValues+QuotedStr(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].AsString)+', '
                      Else
-                      sgValues:=sgValues+'NULL, ';
+                      sValues:=sValues+'NULL, ';
                    End;
                 End; // For i:=0 to DMAtualizaEstoques.IBQ_EstoqueLoja.FieldCount-1 do
 
                 // UPDATE OR INSERT INTO MCLI ==================================
-                MySql:=sgDML+sgValues+' MATCHING (CODFILIAL, CODPRODUTO)';
+                MySql:=sDML+sValues+' MATCHING (CODFILIAL, CODPRODUTO)';
                 DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
                 DMAtualizaEstoques.IBQ_EstoqueLoja.Next;
@@ -654,26 +660,26 @@ begin
             Begin
               While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
               Begin
-                sgValues:='';
+                sValues:='';
                 For i:=0 to DMAtualizaEstoques.CDS_LojaLinx.FieldCount-1 do
                 Begin
                   // ULTIMO CAMPO - HRA_ATUALIZACAO ============================
                   If Trim(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
                    Begin
-                     sgValues:=sgValues+QuotedStr(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].AsString)+')';
+                     sValues:=sValues+QuotedStr(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].AsString)+')';
                    End // If Trim(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
                   Else
                    Begin
                      // Grava Resto do Registro
                      If Trim(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].AsString)<>'' Then
-                      sgValues:=sgValues+QuotedStr(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].AsString)+', '
+                      sValues:=sValues+QuotedStr(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].AsString)+', '
                      Else
-                      sgValues:=sgValues+'NULL, ';
+                      sValues:=sValues+'NULL, ';
                    End;
                 End; // For i:=0 to DMAtualizaEstoques.CDS_LojaLinx.FieldCount-1 do
 
                 // UPDATE OR INSERT INTO MCLI ==================================
-                MySql:=sgDML+sgValues+' MATCHING (CODFILIAL, CODPRODUTO)';
+                MySql:=sDML+sValues+' MATCHING (CODFILIAL, CODPRODUTO)';
                 DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
                 DMAtualizaEstoques.CDS_LojaLinx.Next;
