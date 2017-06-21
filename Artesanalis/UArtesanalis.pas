@@ -47,33 +47,44 @@ type
     MenuVersao: TMenuItem;
     MenuSAIR: TMenuItem;
     CorCaptionForm: TJvGradientCaption;
-    MenuProduto: TMenuItem;
-    SubMenuProdutoCadastro: TMenuItem;
-    SubMenuProdutoPedidoVenda: TMenuItem;
     Trad_Localizer: TcxLocalizer;
     MenuResolucaoVideo: TMenuItem;
     SubMenuResolucaoMudar: TMenuItem;
     N1: TMenuItem;
     SubMenuResolucaoRetornar: TMenuItem;
-    MenuMateriaPrima: TMenuItem;
-    SubMenuMateriaPrimaCadastro: TMenuItem;
-    SubMenuMateriaPrimaMovimentacao: TMenuItem;
-    MenuPessoas: TMenuItem;
-    SubMenuPessoasCadastro: TMenuItem;
+    MenuCADASTROS: TMenuItem;
+    SubMenuCadastroMateriasPrimas: TMenuItem;
+    SubMenuCadastroPessoasEntidades: TMenuItem;
+    SubMenuCadastroProdutos: TMenuItem;
+    N2: TMenuItem;
+    SubMenuCadastroDespesas: TMenuItem;
+    N3: TMenuItem;
+    MenuCOMPRAS: TMenuItem;
+    MenuVENDAS: TMenuItem;
+    SubMenuComprasLancamentoNotas: TMenuItem;
+    SubMenuVENDASPedidosVenda: TMenuItem;
+    SubMenuCOMPRASMateriasPrimas: TMenuItem;
+    N4: TMenuItem;
+    SubMenuComprrasOutrosInsumos: TMenuItem;
+    MenuRELATORIOS: TMenuItem;
+    Panel1: TPanel;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure MenuSAIRClick(Sender: TObject);
-    procedure SubMenuMateriaPrimaCadastroClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure MenuCalculadoraClick(Sender: TObject);
     procedure MenuVersaoClick(Sender: TObject);
-    procedure SubMenuProdutoCadastroClick(Sender: TObject);
-    procedure SubMenuMateriaPrimaMovimentacaoClick(Sender: TObject);
     procedure SubMenuResolucaoMudarClick(Sender: TObject);
     procedure SubMenuResolucaoRetornarClick(Sender: TObject);
-    procedure SubMenuPessoasCadastroClick(Sender: TObject);
-    procedure SubMenuProdutoPedidoVendaClick(Sender: TObject);
+    procedure SubMenuCadastroDespesasClick(Sender: TObject);
+    procedure SubMenuComprrasOutrosInsumosClick(Sender: TObject);
+    procedure MenuRELATORIOSClick(Sender: TObject);
+    procedure SubMenuCadastroMateriasPrimasClick(Sender: TObject);
+    procedure SubMenuCadastroProdutosClick(Sender: TObject);
+    procedure SubMenuCadastroPessoasEntidadesClick(Sender: TObject);
+    procedure SubMenuCOMPRASMateriasPrimasClick(Sender: TObject);
+    procedure SubMenuVENDASPedidosVendaClick(Sender: TObject);
 
     // Odir ====================================================================
 
@@ -144,9 +155,10 @@ end;
 procedure TFrmArtesanalis.FormShow(Sender: TObject);
 begin
   FrmArtesanalis.ClientHeight:=0;
-  FrmArtesanalis.Align:=alNone;
-  FrmArtesanalis.Height:=57;
-
+  FrmArtesanalis.Align:=alTop; // alNone;
+  FrmArtesanalis.Height:=64;
+  FrmArtesanalis.AutoSize:=True;
+  
   CorCaptionForm.Active:=False;
   CorCaptionForm.Active:=True;
 
@@ -200,15 +212,6 @@ begin
   Close;
 end;
 
-procedure TFrmArtesanalis.SubMenuMateriaPrimaCadastroClick(Sender: TObject);
-begin
-  DMArtesanalis.MemoAdicionaNomeForm('Cadastro de Matéria-Prima');
-
-  DMArtesanalis.CDS_MateriaPrima.Open;
-
-  FrmMateriaPrimaCadastro.Show;
-end;
-
 procedure TFrmArtesanalis.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   If Key = #13 Then
@@ -229,36 +232,6 @@ begin
   msg('Data da Última Alteração: '+Copy(DateTimeToStr(FileDateToDateTime(
       FileAge(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+
       ExtractFileName(Application.ExeName)))),1,19),'A');
-
-end;
-
-procedure TFrmArtesanalis.SubMenuProdutoCadastroClick(Sender: TObject);
-begin
-  DMArtesanalis.MemoAdicionaNomeForm('Cadastro de Produto');
-
-  DMArtesanalis.CDS_ProdutoMatPrima.Open;
-
-  FrmProdutoCadastro.Show;
-
-end;
-
-procedure TFrmArtesanalis.SubMenuMateriaPrimaMovimentacaoClick(Sender: TObject);
-begin
-  DMArtesanalis.MemoAdicionaNomeForm('MATÉRIA-PRIMA - Movimentações');
-
-  FrmMovimentos.Gb_Principal.Caption:=' MATÉRIA-PRIMA - Movimentações ';
-
-  FrmMovimentos.CBx_TipoDocto.Items.Clear;
-  FrmMovimentos.CBx_TipoDocto.Items.Add('Documento   de Entrada');
-  FrmMovimentos.CBx_TipoDocto.Items.Add('Documento   de Saída');
-  FrmMovimentos.CBx_TipoDocto.Items.Add('Devolução   de Entrada');
-  FrmMovimentos.CBx_TipoDocto.Items.Add('Devolução   de Saída');
-  FrmMovimentos.CBx_TipoDocto.Items.Add('Bonificação de Entrada');
-  FrmMovimentos.CBx_TipoDocto.Items.Add('Bonificação de Saída');
-  FrmMovimentos.CBx_TipoDocto.ItemIndex:=-1;
-
-  FrmMovimentos.sgOrigem:='M'; // Materia-Prima
-  FrmMovimentos.Show;
 
 end;
 
@@ -292,7 +265,47 @@ begin
 
 end;
 
-procedure TFrmArtesanalis.SubMenuPessoasCadastroClick(Sender: TObject);
+procedure TFrmArtesanalis.SubMenuCadastroDespesasClick(Sender: TObject);
+begin
+  msg('Opção em Desenvolvimento !!','A');
+  Exit;
+
+end;
+
+procedure TFrmArtesanalis.SubMenuComprrasOutrosInsumosClick(Sender: TObject);
+begin
+  msg('Opção em Desenvolvimento !!','A');
+  Exit;
+
+end;
+
+procedure TFrmArtesanalis.MenuRELATORIOSClick(Sender: TObject);
+begin
+  msg('Opção em Desenvolvimento !!','A');
+  Exit;
+
+end;
+
+procedure TFrmArtesanalis.SubMenuCadastroMateriasPrimasClick(Sender: TObject);
+begin
+  DMArtesanalis.MemoAdicionaNomeForm('Cadastro de Matéria-Prima');
+
+  DMArtesanalis.CDS_MateriaPrima.Open;
+
+  FrmMateriaPrimaCadastro.Show;
+
+end;
+
+procedure TFrmArtesanalis.SubMenuCadastroProdutosClick(Sender: TObject);
+begin
+  DMArtesanalis.MemoAdicionaNomeForm('Cadastro de Produto');
+
+  DMArtesanalis.CDS_ProdutoMatPrima.Open;
+
+  FrmProdutoCadastro.Show;
+end;
+
+procedure TFrmArtesanalis.SubMenuCadastroPessoasEntidadesClick(Sender: TObject);
 begin
   DMArtesanalis.MemoAdicionaNomeForm('Cadastro - PESSOAS');
 
@@ -300,17 +313,31 @@ begin
 
 end;
 
-procedure TFrmArtesanalis.SubMenuProdutoPedidoVendaClick(Sender: TObject);
+procedure TFrmArtesanalis.SubMenuCOMPRASMateriasPrimasClick(Sender: TObject);
 begin
-//  msg('Opção em Desenvolvimento !!','A');
-//  Exit;
+  DMArtesanalis.MemoAdicionaNomeForm('MATÉRIA-PRIMA - Movimentações');
 
+  FrmMovimentos.Gb_Principal.Caption:=' MATÉRIA-PRIMA - Movimentações ';
+
+  FrmMovimentos.CBx_TipoDocto.Items.Clear;
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Documento   de Entrada');
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Documento   de Saída');
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Devolução   de Entrada');
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Devolução   de Saída');
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Bonificação de Entrada');
+  FrmMovimentos.CBx_TipoDocto.Items.Add('Bonificação de Saída');
+  FrmMovimentos.CBx_TipoDocto.ItemIndex:=-1;
+
+  FrmMovimentos.sgOrigem:='M'; // Materia-Prima
+  FrmMovimentos.Show;
+end;
+
+procedure TFrmArtesanalis.SubMenuVENDASPedidosVendaClick(Sender: TObject);
+begin
   DMArtesanalis.MemoAdicionaNomeForm('PRODUTO - Pedido de Vendas');
 
   FrmPedidoVenda.sgOrigem:='P'; // Pedido de Venda
   FrmPedidoVenda.Show;
-
-
 end;
 
 end.

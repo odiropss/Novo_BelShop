@@ -22933,15 +22933,7 @@ begin
 
     If Bt_UsuManutSalvar.Caption='Incluir' Then
      Begin
-//       // Inclui Usuario ----------------------------------------
-//       MySql:='SELECT GEN_ID(gen_usuarios,1) Codigo'+
-//              ' FROM RDB$DATABASE';
-//       DMBelShop.CDS_Busca.Close;
-//       DMBelShop.SDS_Busca.CommandText:=MySql;
-//       DMBelShop.CDS_Busca.Open;
-//       Cod:=DMBelShop.CDS_Busca.FieldByName('Codigo').AsInteger;
-//       DMBelShop.SDS_Busca.Close;
-
+       // Inclui Usuario ----------------------------------------
        MySql:='Insert into PS_Usuarios Values('+
               QuotedStr(Dbe_UsuManutCodigo.Text)+', '+ // IntToStr(Cod)+', '+
               QuotedStr(Dbe_UsuManutNome.Text)+', '+
@@ -26222,6 +26214,8 @@ end;
 
 procedure TFrmBelShop.SubMenuComprasContaCorreteFornClick(Sender: TObject);
 begin
+//  msg('Opção em Alteração de'+cr+cr+'Vínculo SIDICOM / LINX !!','A');
+//  Exit;
 
   igTagPermissao:=(Sender as TMenuItem).Tag;
 

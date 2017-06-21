@@ -799,6 +799,21 @@ Begin
   Else // If StrToInt(sCodFilial)<18 Then // Só tem no LINX
    Begin
      MySql:=' SELECT 0 codforma, ''DINHEIRO'' nomeforma'+
+            ' FROM RDB$DATABASE'+
+            ' UNION'+
+            ' SELECT 1 codforma, ''TEF'' nomeforma'+
+            ' FROM RDB$DATABASE'+
+            ' UNION'+
+            ' SELECT 2 codforma, ''POS'' nomeforma'+
+            ' FROM RDB$DATABASE'+
+            ' UNION'+
+            ' SELECT 3 codforma, ''TEC BIZ'' nomeforma'+
+            ' FROM RDB$DATABASE'+
+            ' UNION'+
+            ' SELECT 4 codforma, ''CHEQUE PRESENTE'' nomeforma'+
+            ' FROM RDB$DATABASE'+
+            ' UNION'+
+            ' SELECT 5 codforma, ''DEVOLUÇÃO'' nomeforma'+
             ' FROM RDB$DATABASE';
    End; // If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
   FrmBelShop.IBQ_ConsultaFilial.Close;
@@ -1275,6 +1290,26 @@ Begin
    Begin
      MySql:=' SELECT ''999'' Cod_Operador, ''CAIXA SALÃO'' Des_Operador,'+
             ' 0 CodForma, ''DINHEIRO'' NomeForma, 0.00 Vlr_Total'+
+            ' FROM RDB$DATABASE'+
+            ' UNION'+
+            ' SELECT ''999'' Cod_Operador, ''CAIXA SALÃO'' Des_Operador,'+
+            ' 1 CodForma, ''TEF'' NomeForma, 0.00 Vlr_Total'+
+            ' FROM RDB$DATABASE'+
+            ' UNION'+
+            ' SELECT ''999'' Cod_Operador, ''CAIXA SALÃO'' Des_Operador,'+
+            ' 2 CodForma, ''POS'' NomeForma, 0.00 Vlr_Total'+
+            ' FROM RDB$DATABASE'+
+            ' UNION'+
+            ' SELECT ''999'' Cod_Operador, ''CAIXA SALÃO'' Des_Operador,'+
+            ' 3 CodForma, ''TEC BIZ'' NomeForma, 0.00 Vlr_Total'+
+            ' FROM RDB$DATABASE'+
+            ' UNION'+
+            ' SELECT ''999'' Cod_Operador, ''CAIXA SALÃO'' Des_Operador,'+
+            ' 4 CodForma, ''CHEQUE PRESENTE'' NomeForma, 0.00 Vlr_Total'+
+            ' FROM RDB$DATABASE'+
+            ' UNION'+
+            ' SELECT ''999'' Cod_Operador, ''CAIXA SALÃO'' Des_Operador,'+
+            ' 5 CodForma, ''DEVOLUÇÃO'' NomeForma, 0.00 Vlr_Total'+
             ' FROM RDB$DATABASE';
    End; // If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
   FrmBelShop.IBQ_ConsultaFilial.Close;

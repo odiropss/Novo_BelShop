@@ -798,8 +798,10 @@ begin
   //============================================================================
   // Atualiza Demanda 4 Meses ==================================================
   //============================================================================
-//opss
-//  Demanda4Meses;
+//opss - 13/06/2017
+  Demanda4Meses;
+  // Atualiza Demanda 4 Meses ==================================================
+  //============================================================================
 
   //============================================================================
   // VERIFICA SE A INTERNET ESTA CONECTADA =====================================
@@ -809,7 +811,7 @@ begin
     Application.Terminate;
     Exit;
   End;
-
+{
   //============================================================================
   // ATUALIZA CONTA CORRENTE FORNECEDORES ======================================
   //============================================================================
@@ -859,7 +861,8 @@ begin
   End; // While Not DMAtualizaSeteHoras.CDS_BuscaRapida.Eof do
   DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
 
-  // Monta Select de Busca de Debitos e Créditos ===============================
+  //============================================================================
+  // Monta Select de Busca de Debitos e Créditos (SIDICOM) =====================
   MySqlSelect:=' SELECT mf.codfornecedor, f.nomefornecedor,'+
                ' mf.datacomprovante, mf.dataentrada, mf.codcomprovante,'+
                ' CASE'+
@@ -883,6 +886,14 @@ begin
 
                MySqlSelect:=
                 MySqlSelect+' ORDER BY mf.codfornecedor, mf.dataentrada';
+  // Monta Select de Busca de Debitos e Créditos (SIDICOM) =====================
+  //============================================================================
+
+  //============================================================================
+  // Monta Select de Busca de Debitos e Créditos (LINX) ========================
+
+  // Monta Select de Busca de Debitos e Créditos (LINX) ========================
+  //============================================================================
 
   // Limpa Codigos de Fornecedores =============================================
   Mem_Odir.Lines.Clear;
@@ -908,8 +919,6 @@ begin
     sgCodEmp:=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('COD_FILIAL').AsString;
 
     BuscaMovtosDebCre;
-//opss
-//    Break;
 
     DMAtualizaSeteHoras.CDS_Lojas.Next;
   End; // While Not DMAtualizaSeteHoras.CDS_Busca.Eof do
@@ -920,11 +929,14 @@ begin
   Begin
     CalculaFluxoCaixaFornecedores(sgDtaInicio,Mem_Odir.Lines[i])
   End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
+  // ATUALIZA CONTA CORRENTE FORNECEDORES ======================================
+  //============================================================================
 
+}
   //============================================================================
   // Atualiza Centro de Custos =================================================
   //============================================================================
-//opss
+//opss - 13/06/2017
   CentroCustos;
 
   // Encerra Programa ==========================================================

@@ -328,3 +328,23 @@ begin
 end;
 
 end.
+{
+
+Select
+c.cod_filial, c.cod_linx, c.endereco_ip,
+c.endereco_ip_externo,
+c.pasta_base_dados, c.des_base_dados, c.cod_emp, c.razao_social, c.tip_emp,
+c.ind_ativo, c.dta_inicio_linx, c.dta_inventario_linx,
+'IBDB_'||c.cod_filial "DATABASE",
+'IBT_'||c.cod_filial  "TRANSACAO"
+
+From emp_conexoes  c
+Where ((c.ind_ativo='SIM')
+       or
+       (c.cod_filial=99)
+       or
+       (c.cod_filial=50)
+      )
+order by c.cod_filial
+
+}

@@ -333,7 +333,6 @@ type
     SDS_While: TSQLDataSet;
     CDS_While: TClientDataSet;
     DSP_While: TDataSetProvider;
-    CDS_FluxoFornecedorCOD_EMPRESA: TStringField;
     CDS_FluxoFornecedorRAZAO_SOCIAL: TStringField;
     CDS_FluxoFornecedorCOD_HISTORICO: TIntegerField;
     CDS_FluxoFornecedorDES_HISTORICO: TStringField;
@@ -342,7 +341,6 @@ type
     CDS_FluxoFornecedorVLR_CREDITO: TFMTBCDField;
     CDS_FluxoFornecedorVLR_DEBITO: TFMTBCDField;
     CDS_FluxoFornecedorTXT_OBS: TStringField;
-    CDS_FluxoFornecedorCOD_FORNECEDOR: TStringField;
     CDS_FluxoFornecedorDES_FORNECEDOR: TStringField;
     CDS_FluxoFornecedorDATA: TDateField;
     CDS_FluxoFornecedorNUM_SEQ: TIntegerField;
@@ -1115,7 +1113,6 @@ type
     CDS_FluxoFornecedores: TClientDataSet;
     DSP_FluxoFornecedores: TDataSetProvider;
     DS_FluxoFornecedores: TDataSource;
-    CDS_FluxoFornecedoresCOD_FORNECEDOR: TStringField;
     CDS_FluxoFornecedoresNOMEFORNECEDOR: TStringField;
     CDS_FluxoFornecedoresDTA_INICIAL: TDateField;
     CDS_FluxoFornecedoresDTA_FINAL: TDateField;
@@ -1157,7 +1154,6 @@ type
     CDS_FluxoPercReducao: TClientDataSet;
     DSP_FluxoPercReducao: TDataSetProvider;
     DS_FluxoPercReducao: TDataSource;
-    CDS_FluxoFornReducaoCOD_FORNECEDOR: TStringField;
     CDS_FluxoFornReducaoNOMEFORNECEDOR: TStringField;
     CDS_FluxoPercReducaoCOD_COMPRV: TStringField;
     CDS_FluxoPercReducaoNOMECOMPROVANTE: TStringField;
@@ -1177,6 +1173,10 @@ type
     CDS_AComprarOCsCOD_LINX: TIntegerField;
     CDS_EmpProcessaDTA_INVENTARIO_LINX: TDateField;
     CDS_AComprarItensDTA_DOCUMENTO: TDateField;
+    CDS_FluxoFornecedoresCOD_FORNECEDOR: TIntegerField;
+    CDS_FluxoFornecedorCOD_FORNECEDOR: TIntegerField;
+    CDS_FluxoFornecedorCOD_EMPRESA: TIntegerField;
+    CDS_FluxoFornReducaoCOD_FORNECEDOR: TIntegerField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -4463,4 +4463,278 @@ begin
 end;
 
 end.
+{
+==================================>>> SDS_FluxoFornecedores
+-- Todos os Fornecedores
+SELECT
+3 Ordem,
+t.des_aux,
+c.cod_fornecedor,
+TRIM(CASE
+      WHEN COALESCE(f.nomefornecedor, '0') = '0' THEN 
+          c.des_fornecedor
+      ELSE 
+           f.nomefornecedor
+END) nomefornecedor,
+
+CAST(MIN(c.dta_caixa) AS DATE) dta_inicial,
+CAST(MAX(c.dta_caixa) AS DATE) dta_final,
+
+SUM(DECODE(c.tip_debcre, 'D', -c.vlr_caixa, c.vlr_caixa)) vlr_saldo,
+
+CAST(CASE
+       WHEN COALESCE(t.des_aux, '0') = '0' THEN
+         NULL--MIN(c.dta_caixa)
+       ELSE
+         t.des_aux
+     END
+AS DATE) dta_cc,
+
+CASE
+  WHEN COALESCE(t.des_aux, '0') = '0' THEN
+    'NAO'
+  ELSE
+    'SIM'
+END LIMITE,
+cc.nomesubcusto Comprador
+
+
+FROM FL_CAIXA_FORNECEDORES  c
+     LEFT JOIN FORNECEDOR   f    ON f.codfornecedor = c.cod_fornecedor
+     LEFT JOIN TAB_AUXILIAR t  ON t.tip_aux = 14
+                              AND t.cod_aux = c.cod_fornecedor
+     LEFT JOIN CENTROCUSTO  cc ON cc.codcentrocusto=f.codcentrocusto
+
+WHERE c.cod_historico <> 0 AND
+      c.cod_historico <> 999999
+and (coalesce(f.codcentrocusto,0)=:Compr1
+    or
+     coalesce(f.codcentrocusto,0)=:Compr2
+    Or
+     coalesce(f.codcentrocusto,0)=:Compr3
+    or
+     coalesce(f.codcentrocusto,0)=:Compr4
+    or
+     coalesce(f.codcentrocusto,0)=:Compr5
+    or
+     coalesce(f.codcentrocusto,0)=:Compr6
+    or
+     coalesce(f.codcentrocusto,0)=:Compr7
+    or
+     coalesce(f.codcentrocusto,0)=:Compr8
+    or
+     coalesce(f.codcentrocusto,0)=:Compr9
+    or
+     coalesce(f.codcentrocusto,0)=:Compr10)
+GROUP BY 2, 3, 4, 10
+
+UNION
+
+-- Total Créditos dos Fornecedores
+SELECT
+0 Ordem,
+null des_aux,
+null cod_fornecedor,
+' TOTAL CRÉDITOS DOS FORNECEDORES' nomefornecedor,
+
+CAST(MIN(tc.dta_caixa) AS DATE) dta_inicial,
+CAST(MAX(tc.dta_caixa) AS DATE) dta_final,
+
+SUM(tc.vlr_caixa) vlr_saldo,
+
+NULL dta_cc,
+NULL LIMITE,
+NULL Comprador
+
+FROM FL_CAIXA_FORNECEDORES tc
+     LEFT JOIN FORNECEDOR   tf    ON tf.codfornecedor = tc.cod_fornecedor
+
+WHERE tc.cod_historico <> 0 AND
+      tc.cod_historico <> 999999
+AND   tc.tip_debcre='C'
+and (coalesce(tf.codcentrocusto,0)=:Compr1
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr2
+    Or
+     coalesce(tf.codcentrocusto,0)=:Compr3
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr4
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr5
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr6
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr7
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr8
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr9
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr10)
+
+UNION
+
+-- Total Débitos dos Fornecedores
+SELECT
+1 Ordem,
+null des_aux,
+null cod_fornecedor,
+' TOTAL DÉBITOS DOS FORNECEDORES' nomefornecedor,
+
+CAST(MIN(tc.dta_caixa) AS DATE) dta_inicial,
+CAST(MAX(tc.dta_caixa) AS DATE) dta_final,
+
+SUM(tc.vlr_caixa) vlr_saldo,
+
+NULL dta_cc,
+NULL LIMITE,
+NULL Comprador
+
+FROM FL_CAIXA_FORNECEDORES tc
+     LEFT JOIN FORNECEDOR   tf    ON tf.codfornecedor = tc.cod_fornecedor
+WHERE tc.cod_historico <> 0 AND
+      tc.cod_historico <> 999999
+AND   tc.tip_debcre='D'
+and (coalesce(tf.codcentrocusto,0)=:Compr1
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr2
+    Or
+     coalesce(tf.codcentrocusto,0)=:Compr3
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr4
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr5
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr6
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr7
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr8
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr9
+    or
+     coalesce(tf.codcentrocusto,0)=:Compr10)
+
+UNION
+
+-- Total Geral dos Fornecedores
+SELECT
+2 Ordem,
+null des_aux,
+null cod_fornecedor,
+' TOTAL GERAL: FORNECEDORES' nomefornecedor,
+
+CAST(MIN(ct.dta_caixa) AS DATE) dta_inicial, CAST(MAX(ct.dta_caixa) AS DATE) dta_final,
+
+SUM(DECODE(ct.tip_debcre, 'D', -ct.vlr_caixa, ct.vlr_caixa)) vlr_saldo,
+
+NULL dta_cc,
+NULL LIMITE,
+NULL Comprador
+
+FROM FL_CAIXA_FORNECEDORES ct
+     LEFT JOIN FORNECEDOR   ft    ON ft.codfornecedor = ct.cod_fornecedor
+WHERE ct.cod_historico <> 0 AND
+      ct.cod_historico <> 999999
+and (coalesce(ft.codcentrocusto,0)=:Compr1
+    or
+     coalesce(ft.codcentrocusto,0)=:Compr2
+    Or
+     coalesce(ft.codcentrocusto,0)=:Compr3
+    or
+     coalesce(ft.codcentrocusto,0)=:Compr4
+    or
+     coalesce(ft.codcentrocusto,0)=:Compr5
+    or
+     coalesce(ft.codcentrocusto,0)=:Compr6
+    or
+     coalesce(ft.codcentrocusto,0)=:Compr7
+    or
+     coalesce(ft.codcentrocusto,0)=:Compr8
+    or
+     coalesce(ft.codcentrocusto,0)=:Compr9
+    or
+     coalesce(ft.codcentrocusto,0)=:Compr10)
+
+ORDER BY 4
+
+========================>>> SDS_FluxoFornecedor
+SELECT
+/*
+CASE FF.NUM_SEQ
+   WHEN 0 THEN   FF.DTA_CAIXA
+END DATA,
+*/
+FF.DTA_CAIXA DATA,
+
+'Bel_'||FF.COD_EMPRESA LOJA,
+
+CASE
+  WHEN (FF.COD_HISTORICO=0) OR (FF.COD_HISTORICO=999999) THEN
+   NULL
+  ELSE
+    FF.COD_HISTORICO
+END COD_HISTORICO,
+
+FC.DES_HISTORICO,
+FF.NUM_DOCUMENTO, FF.NUM_SERIE,
+FF.DTA_ORIGEM, FF.VLR_ORIGEM, FF.PER_REDUCAO,
+
+CASE
+   WHEN FF.TIP_DEBCRE='C' THEN
+     FF.VLR_CAIXA
+   WHEN (FF.NUM_SEQ=0) or (FF.NUM_SEQ=999999) Then
+     null
+   ELSE
+     0.00
+END VLR_CREDITO,
+
+CASE
+   WHEN FF.TIP_DEBCRE='D' THEN
+      FF.VLR_CAIXA
+    WHEN (FF.NUM_SEQ=0) or (FF.NUM_SEQ=999999) Then
+      null
+   ELSE
+      0.00
+END VLR_DEBITO,
+/*
+CASE FF.NUM_SEQ
+   WHEN 0 THEN
+      FF.VLR_SALDO
+   WHEN 999999 THEN
+     FF.VLR_SALDO
+END VLR_SALDO,
+*/
+CASE FF.NUM_SEQ
+   WHEN 0 THEN
+      FF.VLR_SALDO- :Valor1
+   WHEN 999999 THEN
+     FF.VLR_SALDO- :Valor2
+END VLR_SALDO,
+
+FF.TXT_OBS,
+
+FF.COD_EMPRESA, EMP.RAZAO_SOCIAL,
+
+FF.COD_FORNECEDOR, FF.DES_FORNECEDOR,
+FF.NUM_SEQ, FF.NUM_CHAVENF,
+FF.TIP_DEBCRE
+
+FROM  FL_CAIXA_FORNECEDORES FF
+      LEFT JOIN FL_CAIXA_HISTORICOS FC ON FC.COD_HISTORICO=FF.COD_HISTORICO
+      LEFT JOIN EMP_CONEXOES EMP ON EMP.COD_FILIAL=FF.COD_EMPRESA
+
+WHERE FF.COD_FORNECEDOR= :CodForn
+AND   ff.dta_caixa>= :Data
+
+ORDER BY FF.DTA_CAIXA, FF.NUM_SEQ
+
+
+========================>>> SDS_FluxoFornReducao
+SELECT DISTINCT FR.cod_fornecedor, FF.nomefornecedor
+FROM fl_caixa_perc_reducao FR, fornecedor FF
+WHERE FR.cod_fornecedor=FF.codfornecedor
+ORDER BY 2
+
+}
 

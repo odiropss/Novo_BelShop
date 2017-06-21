@@ -282,7 +282,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Top = 14
           Width = 398
           Height = 424
-          ActivePage = Ts_FluxFornParamComprv
+          ActivePage = Ts_FluxFornManutReducao
           Align = alRight
           TabOrder = 2
           OnChange = PC_FluxFornParametrosChange
@@ -617,7 +617,6 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
               OnKeyDown = Dbg_FluFornFornReducaoKeyDown
               Columns = <
                 item
-                  Alignment = taRightJustify
                   Expanded = False
                   FieldName = 'COD_FORNECEDOR'
                   Title.Alignment = taRightJustify
@@ -1097,7 +1096,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       Top = 8
       Width = 76
       Height = 19
-      TabOrder = 4
+      TabOrder = 3
       Text = 'C'#243'd a Acertar'
     end
     object Bt_FluFornFechar: TJvXPButton
@@ -1107,7 +1106,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       Width = 100
       Height = 29
       Caption = 'Fechar'
-      TabOrder = 6
+      TabOrder = 5
       TabStop = False
       ShowFocusRect = True
       Align = alRight
@@ -1126,7 +1125,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       Height = 19
       EditMask = '!99.99.2\000;1;_'
       MaxLength = 10
-      TabOrder = 5
+      TabOrder = 4
       Text = '  .  .20  '
     end
     object Bt_FluFornFiltroComprador: TJvXPButton
@@ -1147,24 +1146,6 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       ParentFont = False
       OnClick = Bt_FluFornFiltroCompradorClick
     end
-    object Bt_FluFornAtualizar: TJvXPButton
-      Tag = 11
-      Left = 728
-      Top = 2
-      Width = 119
-      Height = 29
-      Hint = 'Busca Movtos nas Lojas'
-      Caption = 'Atualizar (Odir)'
-      TabOrder = 3
-      ShowFocusRect = True
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      OnClick = Bt_FluFornAtualizarClick
-    end
     object Bt_FluFornAcertaSaldos: TJvXPButton
       Tag = 11
       Left = 577
@@ -1181,6 +1162,16 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       Font.Style = [fsBold]
       ParentFont = False
       OnClick = Bt_FluFornAcertaSaldosClick
+    end
+    object Button1: TButton
+      Left = 752
+      Top = 7
+      Width = 105
+      Height = 25
+      Caption = 'Busca Cod Linx'
+      TabOrder = 6
+      Visible = False
+      OnClick = Button1Click
     end
   end
   object OdirPanApres: TPanel

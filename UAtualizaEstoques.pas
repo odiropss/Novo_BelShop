@@ -389,7 +389,7 @@ var
   i: Integer;
 
   // Só Atualiza Estoques com Movtos Ent/Sai Linx
-  bSoAtulMovtoLinx: Boolean;
+  bSoAtualMovtoLinx: Boolean;
 begin
 
 //=========  ===========  ===============  ================================  ============================================
@@ -409,12 +409,6 @@ begin
   DMAtualizaEstoques.CDS_EmpProcessa.First;
   While Not DMAtualizaEstoques.CDS_EmpProcessa.Eof do
   Begin
-// OdirApagar - 12/06/2017 - Não Necessita de Internet
-//    if not InternetGetConnectedState(@Flags, 0) then
-//    Begin
-//      Application.Terminate;
-//      Exit;
-//    End;
     // Guarda Momento da Atualização ===========================================
     sgDataAtual:=f_Troca('/','.',f_Troca('-','.',DateToStr(Date)));
     sgHoraAtual:=TimeToStr(Time);
@@ -441,15 +435,15 @@ begin
     // Atualiza Estoques (LINX) com Movtos Ent/Sai Linx ========================
     // =========================================================================
     sTipo:='';
-    bSoAtulMovtoLinx:=False;
+    bSoAtualMovtoLinx:=False;
     If (iCodLinx<>0) and (sDtaInventLinx='') Then
     Begin
       AtualizaEstoquesMovtosLinx(IntToStr(iCodLinx), sCodEmpresa, sDtaLinx);
 
-      bSoAtulMovtoLinx:=True;
+      bSoAtualMovtoLinx:=True;
     End; // If (iCodLinx<>0) and (sDtaInventLinx='') Then
 
-    If Not bSoAtulMovtoLinx Then
+    If Not bSoAtualMovtoLinx Then
     Begin
       // =======================================================================
       // SIDICOM DIRETO ========================================================
@@ -494,8 +488,9 @@ begin
           If DMAtualizaEstoques.IBQ_EstoqueLoja.Active Then
            DMAtualizaEstoques.IBQ_EstoqueLoja.Close;
 
-          DMAtualizaEstoques.IBQ_EstoqueLoja.Database:=IBQ_Consulta.Database;
-          DMAtualizaEstoques.IBQ_EstoqueLoja.Transaction:=IBQ_Consulta.Transaction;
+          CriaQueryIB('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, DMAtualizaEstoques.IBQ_EstoqueLoja, False, True);
+//          DMAtualizaEstoques.IBQ_EstoqueLoja.Database:=IBQ_Consulta.Database;
+//          DMAtualizaEstoques.IBQ_EstoqueLoja.Transaction:=IBQ_Consulta.Transaction;
 
           MySql:=' SELECT'+
                  ' e.codfilial, e.codproduto, e.saldoatual, e.pedidopendente,'+
@@ -743,7 +738,7 @@ begin
         If iCodLinx=0 Then // SIDICOM
          ConexaoEmpIndividual('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, 'F');
       End; // If bSiga Then // Entra no Processamento ==========================
-    End; // If Not bSoAtulMovtoLinx Then
+    End; // If Not bSoAtualMovtoLinx Then
 
 //    Application.Terminate;
     DMAtualizaEstoques.CDS_EmpProcessa.Next;
