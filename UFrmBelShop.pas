@@ -26214,9 +26214,6 @@ end;
 
 procedure TFrmBelShop.SubMenuComprasContaCorreteFornClick(Sender: TObject);
 begin
-//  msg('Opção em Alteração de'+cr+cr+'Vínculo SIDICOM / LINX !!','A');
-//  Exit;
-
   igTagPermissao:=(Sender as TMenuItem).Tag;
 
   BloqueioBotoes(FrmFluxoFornecedor, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);

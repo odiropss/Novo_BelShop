@@ -19,6 +19,12 @@ type
     CDS_LojasNUM_CNPJ: TStringField;
     CDS_LojasCOD_LINX: TIntegerField;
     CDS_LojasDTA_INICIO_LINX: TDateField;
+    SDS_BuscaRapida: TSQLDataSet;
+    DSP_BuscaRapida: TDataSetProvider;
+    CDS_BuscaRapida: TClientDataSet;
+    SDS_ProdutosZerados: TSQLDataSet;
+    DSP_ProdutosZerados: TDataSetProvider;
+    CDS_ProdutosZerados: TClientDataSet;
 
     // Odir
     Function ConectaBanco: Boolean;

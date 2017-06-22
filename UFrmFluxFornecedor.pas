@@ -173,8 +173,8 @@ var
   bgVoltaPerReducao, // Se Deve Fechar Ts_FluxFornManutReducao Automatico
   bgSairFF, bgExcluiFF: Boolean;
 
-  sgDtaMinCC: String; // Menor data do Conta Correte para Recalculo do Fornecedor
-  OrderGrid : String; // Ordenar Grid
+  sgDtaMinCC, // Menor data do Conta Correte para Recalculo do Fornecedor
+  OrderGrid: String; // Ordenar Grid
 
   IBQ_ConsultaFilial: TIBQuery;
   TD : TTransactionDesc; // Ponteiro de Transação
@@ -210,7 +210,10 @@ End; // Habilita/Desabilita GroupBox de Percentual de Redução >>>>>>>>>>>>>>>>>>
 // Calcula Percentual de Redução >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmFluxoFornecedor.CalculaPercReducao;
 Var
-  MySql: String;
+  MySql,
+  sCodFornAnt, // Código do Fornecedor do Percentual de Redução Anterior para Recalculo do Fornecedor
+  sDtaRedAnt   // Data do Conta Correte para Recalculo do Fornecedor Anterior Percentual de Redução
+  : String;
 Begin
   OdirPanApres.Caption:='AGUARDE !! Atualizando Percentuais de Redução...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
@@ -234,6 +237,21 @@ Begin
     Screen.Cursor:=crAppStart;
     DateSeparator:='.';
     DecimalSeparator:='.';
+
+    // Guarda Codigo Fornecedor Anterior =======================================
+    sDtaRedAnt:='';
+    If Bt_FluxFornManutReducaoSalvar.Caption='Alterar' Then
+    Begin
+      MySql:=' SELECT r.cod_fornecedor, r.dta_incio'+
+             ' FROM FL_CAIXA_PERC_REDUCAO r'+
+             ' WHERE r.num_seq='+sgNumSeq;
+      DMBelShop.CDS_BuscaRapida.Close;
+      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+      DMBelShop.CDS_BuscaRapida.Open;
+      sCodFornAnt:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsString;
+      sDtaRedAnt :=DMBelShop.CDS_BuscaRapida.FieldByName('dta_incio').AsString;
+      DMBelShop.CDS_BuscaRapida.Close;
+    End; // If Bt_FluxFornManutReducaoSalvar.Caption='Alterar' Then
 
     // Zera Percentual de Redução do Num_Seq ===================================
     MySql:=' UPDATE FL_CAIXA_FORNECEDORES f'+
@@ -307,10 +325,16 @@ Begin
     DateSeparator:='/';
     DecimalSeparator:=',';
 
-    // Recalcula Fluxo de Caixa de Fornecedor ==================================
 //odirapagar - 20/06/2017
+//    // Recalcula Fluxo de Caixa do Novo Fornecedor =============================
 //    CalculaFluxoCaixaFornecedores(f_Troca('.','/',f_Troca('-','/',sgDtaMinCC)),FormatFloat('000000',StrToInt(EdtFluxFornManutCodForn.text)));
+
+    // Recalcula Fluxo de Caixa do Novo Fornecedor =============================
     CalculaFluxoCaixaFornecedores(f_Troca('.','/',f_Troca('-','/',sgDtaMinCC)),IntToStr(EdtFluxFornManutCodForn.AsInteger));
+
+    // Recalcula Fluxo de Caixa do Fornecedor Anterior =========================
+    If Bt_FluxFornManutReducaoSalvar.Caption='Alterar' Then
+     CalculaFluxoCaixaFornecedores(f_Troca('.','/',f_Troca('-','/',sDtaRedAnt)),sCodFornAnt);
 
     // Reapresenta Fornecedores =================================================
     If DMBelShop.CDS_FluxoFornecedores.Active Then
@@ -581,7 +605,7 @@ begin
     lstrcpy(buffer, Title); 
 
     if (IconType > 3) or (IconType < 0) then 
-      IconType := 0; 
+      IconType := 0;
 
     SendMessage(hToolTip, TTM_SETTITLE, IconType, Integer(@buffer)); 
   end; 
@@ -755,6 +779,7 @@ Begin
              ' And   cx.COD_FORNECEDOR='+QuotedStr(DMBelShop.CDS_While.FieldByName('Cod_Fornecedor').AsString)+
              ' ORDER BY DTA_CAIXA, NUM_SEQ';
       DMBelShop.CDS_Pesquisa.Close;
+      DMBelShop.CDS_Pesquisa.Filtered:=False;
       DMBelShop.SDS_Pesquisa.CommandText:=MySql;
       DMBelShop.CDS_Pesquisa.Open;
 
@@ -2139,7 +2164,7 @@ Var
   MySql: String;
 begin
   Gb_FluxFornManutReducao.SetFocus;
-  
+
   //============================================================================
   // EXCUIR PERCENTUAL DE REDUÇÃO ==============================================
   //============================================================================
@@ -2174,7 +2199,7 @@ begin
 
     // Volta =====================================================================
     Bt_FluxFornManutReducaoVoltarClick(Self);
-    
+
     Exit
   End; // If Bt_FluxFornManutReducaoSalvar.Caption='Excluir' Then
 
@@ -2299,8 +2324,6 @@ begin
   CalculaPercReducao;
 
   // Reabre Client's de Percentual de Redução ==================================
-  DMBelShop.CDS_FluxoPercReducao.Close;
-
   DMBelShop.CDS_FluxoFornReducao.Close;
   DMBelShop.CDS_FluxoFornReducao.Open;
 //odirapagar - 20/06/2017

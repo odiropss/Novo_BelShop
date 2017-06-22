@@ -136,6 +136,7 @@ var
   sgCodLoja,    // Código da Loja/Empresa em Processamento (Codigo da Loja no SIDICOM)
   sgCodLojaLinx, // Código da Loja/Empresa em Processamento (Codigo da Loja no Microvix)
   sgDtaInicioLinx,  // Data que a Loija Inicio com o Sistema Linx
+  sgCodProduto,  // Codigo do Produto para Busca Individual
   sgMensagem, sgDta,
   sgPastaExecutavel, sgPastaBelShop, sgPastaRetornos, sgPastaMetodos:
   String;
@@ -577,6 +578,16 @@ Begin
         //======================================================================
         If sgMetodo='LinxProdutosDetalhes' Then
         Begin
+
+          sOBS:='ERRO em Atualiza Tabela LinxProdutoDetalhes Zera Produto Sem Saldo';
+
+          MySql:=' UPDATE LINXPRODUTOSDETALHES d'+
+                 ' SET d.quantidade=0.0000'+
+                 ' WHERE d.dta_atualizacao<>current_date'+
+                 ' AND d.quantidade<>0.000'+
+                 ' AND d.empresa='+sgCodLojaLinx;
+          DMLinxWebService.SQLC.Execute(MySql, nil, nil);
+
           sOBS:='ERRO em Atualiza Tabela LinxProdutoDetalhes com Produto Sem Saldo';
 
           MySql:=' INSERT INTO LINXPRODUTOSDETALHES'+
@@ -914,13 +925,14 @@ Begin
     sXML:='			<Parameter id="data_mov_fim">'+sgDtaFim+'</Parameter>';
     Writeln(txtArq,sXML);
 
-    //====================================
-    // PARAMETRO OPCIONAL E NÃO UTILIZADOS
-    //====================================
-    //       Metodo         Parametro
-    //--------------------  --------------
-    // LinxProdutosDetalhes Cod_Produto
-    //====================================
+    //===============================================
+    // PARAMETRO OPCIONAL: Cod_Produto (sgCodProduto)
+    //===============================================
+    If Trim(sgCodProduto)<>'' Then
+    Begin
+      sXML:='			<Parameter id="cod_produto">'+sgCodProduto+'</Parameter>';
+      Writeln(txtArq,sXML);
+    End; // If Trim(sgCodProduto)<>'' Then
   End; // If sgMetodo='LinxProdutosDetalhes' Then
   // ===========================================================================
 
@@ -1052,7 +1064,7 @@ Begin
     End;
 
     sgPastaExecutavel:=Copy(sgParametroMetodos,1,Pos('Metodos\', sgParametroMetodos)-1);
-  End;
+  End; // If Trim(sgParametroMetodo)<>'' Then
 
   //odirOPSS
 //  ShowMessage('Metodo: '+sgParametroMetodo);
@@ -1094,11 +1106,11 @@ Begin
   //============================================================================
   // Se Processamento por PARAMETRO Atualiza Pastas ============================
   //============================================================================
-  If sgParametroMetodo<>'' Then
+  If Trim(sgParametroMetodo)<>'' Then
   Begin
     sgPastaMetodos :=IncludeTrailingPathDelimiter(sgParametroMetodos);
     sgPastaRetornos:=IncludeTrailingPathDelimiter(sgParametroRetornos);
-  End; // If sgParametroMetodo<>'' Then
+  End; // If Trim(sgParametroMetodo)<>'' Then
 
   // Pasta BelShop =============================================================
   i:=pos('BelShop',sgPastaMetodos);
@@ -1205,6 +1217,8 @@ Begin
     //==========================================================================
     For iFor:=0 to tgMetodos.Count-1 do
     Begin
+      sgCodProduto:='';
+
       If Trim(tgMetodos[iFor])='' Then
        Break;
 
@@ -1213,7 +1227,9 @@ Begin
 
       // Somente o Metodo Conforme Parametro Enviado ===========================
       If Trim(sgParametroMetodo)<>'' Then
-       sgMetodo:=sgParametroMetodo;
+      Begin
+        sgMetodo:=sgParametroMetodo;
+      End; // If Trim(sgParametroMetodo)<>'' Then
 
       sMetodoEspecifico:='';
       If (sgMetodo='LinxMovtosAjustesEntradas') Or (sgMetodo='LinxMovtosAjustesSaidas') Then
@@ -1722,6 +1738,10 @@ Begin
            End; // If Trim(sgParametroMetodo)<>'' Then
          End; // If dDtaUltAtual=0 Then
 
+        // Atualiza o Saldo de Todos os Produtos com Saldo > 0.0000
+        sgDtaInicio:='NULL';
+        sgDtaFim:='NULL';
+
         MontaMetodoXMLPost();
       End; // If sgMetodo='LinxProdutosDetalhes' Then
       //========================================================================
@@ -1893,7 +1913,9 @@ Begin
 
       // Quando Somente Um Metodo Conforme Parametro Envia =====================
       If Trim(sgParametroMetodo)<>'' Then
-       Break;
+      Begin
+        Break;
+      End; // If Trim(sgParametroMetodo)<>'' Then
     End; // For iFor:=0 to tgMetodos.Count-1 do
     //==========================================================================
     // Loop nos Metodos - FIM ==================================================

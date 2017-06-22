@@ -2,8 +2,8 @@ object DMLinxWebService: TDMLinxWebService
   OldCreateOrder = False
   Left = 414
   Top = 100
-  Height = 368
-  Width = 598
+  Height = 334
+  Width = 507
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
     DriverName = 'Interbase'
@@ -66,21 +66,21 @@ object DMLinxWebService: TDMLinxWebService
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 40
-    Top = 152
+    Left = 272
+    Top = 96
   end
   object DSP_Lojas: TDataSetProvider
     DataSet = SDS_Lojas
     Options = [poRetainServerOrder]
-    Left = 89
-    Top = 166
+    Left = 321
+    Top = 110
   end
   object CDS_Lojas: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Lojas'
-    Left = 136
-    Top = 153
+    Left = 368
+    Top = 97
     object CDS_LojasCOD_FILIAL: TStringField
       FieldName = 'COD_FILIAL'
       Required = True
@@ -96,5 +96,45 @@ object DMLinxWebService: TDMLinxWebService
     object CDS_LojasDTA_INICIO_LINX: TDateField
       FieldName = 'DTA_INICIO_LINX'
     end
+  end
+  object SDS_BuscaRapida: TSQLDataSet
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 40
+    Top = 152
+  end
+  object DSP_BuscaRapida: TDataSetProvider
+    DataSet = SDS_BuscaRapida
+    Options = [poRetainServerOrder]
+    Left = 89
+    Top = 166
+  end
+  object CDS_BuscaRapida: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_BuscaRapida'
+    Left = 136
+    Top = 153
+  end
+  object SDS_ProdutosZerados: TSQLDataSet
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 272
+    Top = 176
+  end
+  object DSP_ProdutosZerados: TDataSetProvider
+    DataSet = SDS_ProdutosZerados
+    Options = [poRetainServerOrder]
+    Left = 321
+    Top = 190
+  end
+  object CDS_ProdutosZerados: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_ProdutosZerados'
+    Left = 368
+    Top = 177
   end
 end
