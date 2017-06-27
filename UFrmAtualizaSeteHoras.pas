@@ -91,7 +91,7 @@ Begin
                ' mf.codfilial,'+
                ' mf.observacao,'+
                ' TRIM(mf.chavenf) chavenf,'+
-               ' mf.numero,'+
+               ' CAST(SUBSTRING(mf.numero FROM 1 FOR 12) AS VARCHAR(12)) numero,'+
                ' Trim(mf.serie) serie,'+
                ' ABS(COALESCE(mf.totnota,0.00)) Vlr_Total'+
 
@@ -123,7 +123,7 @@ Begin
              ' ml.empresa codfilial,'+
              ' CAST(SUBSTRING(ml.obs FROM 1 FOR 200) AS VARCHAR(200)) observacao,'+
              ' TRIM(ml.chave_nf) chavenf,'+
-             ' CAST(ml.documento AS VARCHAR(6)) numero,'+
+             ' CAST(SUBSTRING(ml.documento FROM 1 FOR 12) AS VARCHAR(12)) numero,'+
              ' CAST(TRIM(ml.serie) AS VARCHAR(4)) serie,'+
              ' CAST((ROUND((SUM(ml.valor_total)), 2)) AS NUMERIC(18,2)) vlr_total,'+
              ' fs.codfornecedor Cod_Forn_Sidicom'+
@@ -177,7 +177,7 @@ Begin
              ' ml.empresa codfilial,'+
              ' CAST(SUBSTRING(ml.obs FROM 1 FOR 200) AS VARCHAR(200)) observacao,'+
              ' TRIM(ml.chave_nf) chavenf,'+
-             ' CAST(SUBSTRING(ml.documento FROM 1 FOR 6) AS VARCHAR(6)) numero,'+
+             ' CAST(SUBSTRING(ml.documento FROM 1 FOR 12) AS VARCHAR(12)) numero,'+
              ' CAST(TRIM(ml.serie) AS VARCHAR(4)) serie,'+
              ' CAST((ROUND((SUM(ml.valor_total)), 2)) AS NUMERIC(18,2)) vlr_total,'+
              ' fs.codfornecedor Cod_Forn_Sidicom'+
@@ -420,9 +420,6 @@ Begin
            ' AS INTEGER) qtd_venda_M5,'+
 
            ' CAST(SUM(dem.quant_ref) AS INTEGER) qtd_venda,'+
-
-// odirapagar - 19/01/2017
-//           ' CAST((SUM(CAST(dem.quant_ref AS NUMERIC(12,4))) / '+IntToStr(igDiasUteis)+') AS NUMERIC(12,4)) qtd_venda_dia,'+
 
            ' CASE'+
            '   WHEN dem.codfilial=''18'' THEN'+
@@ -816,8 +813,8 @@ Begin
           End;
 
 //OPSS
-//          If sCodForn='000050' Then
-//           sCodForn:=sCodForn;
+// If sCodForn='000050' Then
+//  sCodForn:=sCodForn;
 
           // Exclui Lançamentos para Substituição e Inclução ------
           MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES f'+
@@ -1211,7 +1208,7 @@ begin
   // Atualiza Demanda 4 Meses ==================================================
   //============================================================================
 //opss - 13/06/2017
-//  Demanda4Meses;
+  Demanda4Meses;
   // Atualiza Demanda 4 Meses ==================================================
   //============================================================================
 
@@ -1358,7 +1355,7 @@ begin
   // Atualiza Centro de Custos =================================================
   //============================================================================
 //opss - 13/06/2017
-//  CentroCustos;
+  CentroCustos;
 
   // Encerra Programa ==========================================================
   Application.Terminate;

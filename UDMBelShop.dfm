@@ -2777,24 +2777,28 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Valor1'
         ParamType = ptInput
+        Value = '1'
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Valor2'
         ParamType = ptInput
+        Value = '1'
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'CodForn'
         ParamType = ptInput
+        Value = '1'
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Data'
         ParamType = ptInput
+        Value = '01.01.2017'
       end>
     SQLConnection = SQLC
     Left = 923
@@ -2822,7 +2826,7 @@ object DMBelShop: TDMBelShop
       Alignment = taRightJustify
       DisplayLabel = 'N'#186' Docto'
       FieldName = 'NUM_DOCUMENTO'
-      Size = 6
+      Size = 12
     end
     object CDS_FluxoFornecedorNUM_SERIE: TStringField
       DisplayLabel = 'N'#186' S'#233'rie'
@@ -8751,202 +8755,212 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftUnknown
+        DataType = ftString
+        Name = 'Compr1'
+        ParamType = ptInput
+        Value = '1'
+      end
+      item
+        DataType = ftString
+        Name = 'Compr2'
+        ParamType = ptInput
+        Value = '1'
+      end
+      item
+        DataType = ftString
+        Name = 'Compr3'
+        ParamType = ptInput
+        Value = '1'
+      end
+      item
+        DataType = ftString
+        Name = 'Compr4'
+        ParamType = ptInput
+        Value = '1'
+      end
+      item
+        DataType = ftString
+        Name = 'Compr5'
+        ParamType = ptInput
+        Value = '1'
+      end
+      item
+        DataType = ftString
+        Name = 'Compr6'
+        ParamType = ptInput
+        Value = '1'
+      end
+      item
+        DataType = ftString
+        Name = 'Compr7'
+        ParamType = ptInput
+        Value = '1'
+      end
+      item
+        DataType = ftString
+        Name = 'Compr8'
+        ParamType = ptInput
+        Value = '1'
+      end
+      item
+        DataType = ftString
+        Name = 'Compr9'
+        ParamType = ptInput
+        Value = '1'
+      end
+      item
+        DataType = ftString
+        Name = 'Compr10'
+        ParamType = ptInput
+        Value = '1'
+      end
+      item
+        DataType = ftString
         Name = 'Compr1'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr2'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr3'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr4'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr5'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr6'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr7'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr8'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr9'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr10'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr1'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr2'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr3'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr4'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr5'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr6'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr7'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr8'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr9'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr10'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr1'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr2'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr3'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr4'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr5'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr6'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr7'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr8'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr9'
         ParamType = ptInput
       end
       item
-        DataType = ftUnknown
-        Name = 'Compr10'
-        ParamType = ptInput
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Compr1'
-        ParamType = ptInput
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Compr2'
-        ParamType = ptInput
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Compr3'
-        ParamType = ptInput
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Compr4'
-        ParamType = ptInput
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Compr5'
-        ParamType = ptInput
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Compr6'
-        ParamType = ptInput
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Compr7'
-        ParamType = ptInput
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Compr8'
-        ParamType = ptInput
-      end
-      item
-        DataType = ftUnknown
-        Name = 'Compr9'
-        ParamType = ptInput
-      end
-      item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Compr10'
         ParamType = ptInput
       end>

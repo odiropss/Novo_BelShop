@@ -1518,20 +1518,6 @@ begin
 
   Screen.Cursor:=crAppStart;
 
-// OdirApagar - 21/06/2014
-//  // Busca Fornecedores ========================================================
-//  MySql:=' SELECT DISTINCT'+
-//         ' CASE'+
-//         '   WHEN COALESCE(f.nomefornecedor,''0'')=''0'' Then'+
-//         '     c.des_fornecedor'+
-//         '   ELSE'+
-//         '     f.nomefornecedor'+
-//         ' End nomefornecedor,'+
-//         ' c.cod_fornecedor codfornecedor'+
-//         ' FROM FL_CAIXA_FORNECEDORES c'+
-//         '   LEFT JOIN FORNECEDOR f on c.cod_fornecedor=f.codfornecedor'+
-//         ' WHERE c.cod_fornecedor='+IntToStr(EdtFluFornCodFornecedor.AsInteger);
-
   // Busca Fornecedores ========================================================
   MySql:=' SELECT DISTINCT c.des_fornecedor nomefornecedor,'+
          '                 c.cod_fornecedor codfornecedor'+
@@ -1610,6 +1596,16 @@ begin
   End;
 
   // Busca Conta Corrente ======================================================
+  OdirPanApres.Caption:='AGUARDE !! Localizando Conta Corrente...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmFluxoFornecedor;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
   DMBelShop.CDS_FluxoFornecedor.Close;
   DMBelShop.SDS_FluxoFornecedor.Params[0].AsCurrency:=cValor;
   DMBelShop.SDS_FluxoFornecedor.Params[1].AsCurrency:=cValor;
@@ -1618,6 +1614,7 @@ begin
   DMBelShop.SDS_FluxoFornecedor.Params[2].AsInteger:=EdtFluFornCodFornecedor.AsInteger;
   DMBelShop.SDS_FluxoFornecedor.Params[3].AsString:=sDtaLimite;
   DMBelShop.CDS_FluxoFornecedor.Open;
+  OdirPanApres.Visible:=False;
 
   If DMBelShop.CDS_FluxoFornecedor.IsEmpty Then
   Begin

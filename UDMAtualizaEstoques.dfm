@@ -27,7 +27,7 @@ object DMAtualizaEstoques: TDMAtualizaEstoques
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'gds32.dll'
-    Left = 24
+    Left = 16
     Top = 16
   end
   object SDS_DtaHoraServidor: TSQLDataSet

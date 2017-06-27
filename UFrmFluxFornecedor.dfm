@@ -92,7 +92,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Top = 56
     Width = 977
     Height = 487
-    ActivePage = Ts_FluxFornApres
+    ActivePage = Ts_FluxFornCaixa
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -965,7 +965,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             Expanded = False
             FieldName = 'NUM_DOCUMENTO'
             Title.Alignment = taRightJustify
-            Width = 60
+            Width = 80
             Visible = True
           end
           item

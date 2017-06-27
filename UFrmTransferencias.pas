@@ -942,9 +942,6 @@ Begin
         // Busca Transferencias =====================================
         cQtdMais:=0;
 
-//odirApagar - 12/05/217
-//        if (bConetada) Or (igCodLojaLinx<>0) Then // SIDICOM
-//        Begin
           // Busca Tranferencias do CD Para a Loja ------------------
           MySql:=' SELECT mc.numero, mp.codproduto, mp.quantatendida'+
                  ' FROM MCLI mc, MCLIPRO mp'+
@@ -952,7 +949,7 @@ Begin
                  ' AND   mc.codcomprovante in (''009'',''020'')'+
                  ' AND   mc.codfilial=''99'''+
                  ' AND   mc.situacaonf=''L'''+
-                 ' AND   mc.datadocumento>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(IncDay(dgDtaHoje,-15)))))+
+                 ' AND   mc.datadocumento>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(IncDay(dgDtaHoje,-100)))))+
                  ' AND   mc.codcliente='+QuotedStr(sCodEmp)+
                  ' AND   mp.codproduto='+QuotedStr(sCodProduto);
           IBQ_MPMS.Close;
@@ -996,7 +993,7 @@ Begin
 
               If (bSiga) and (Trim(IBQ_TR_Filial.FieldByName('Numero').AsString)='') Then
               Begin
-                cQtdMais:=cQtdMais+IBQ_MPMS.FieldByName('QuantAtendida').AsCurrency;
+                cQtdMais:=cQtdMais + IBQ_MPMS.FieldByName('QuantAtendida').AsCurrency;
               End;
               IBQ_TR_Filial.Close;
             End; // If bConetada Then // SIDICOM
@@ -1017,7 +1014,7 @@ Begin
               DMTransferencias.CDS_BuscaRapida.Open;
               If Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Numero').AsString)='' Then
               Begin
-                cQtdMais:=cQtdMais+IBQ_MPMS.FieldByName('QuantAtendida').AsCurrency;
+                cQtdMais:=cQtdMais + IBQ_MPMS.FieldByName('QuantAtendida').AsCurrency;
               End;
               DMTransferencias.CDS_BuscaRapida.Close;
             End; // If igCodLojaLinx<>0 Then // LINX
@@ -1026,11 +1023,8 @@ Begin
           End; // While Not IBQ_MPMS.Eof do
           IBQ_MPMS.Close;
 
-//odirApagar - 12/05/217
-//        End; // if bConetada Then // SIDICOM
-
         // Atualiza o Saldo do Produto ------------------------------
-        cQtdSaldo:=DMTransferencias.CDS_CurvasLojaSALDOATUAL.AsCurrency+cQtdMais;
+        cQtdSaldo:=DMTransferencias.CDS_CurvasLojaSALDOATUAL.AsCurrency + cQtdMais;
 
         // Busca Demanda/Quantidade de Reposição --------------------
         If BuscaProdutosDemanda(sCodLoja, sCodProduto, IntToStr(ParteInteiro(CurrToStr(cQtdSaldo)))) Then
@@ -1190,42 +1184,6 @@ Var
   MySql: String;
 Begin
   Result:=True;
-
-// OdirApagar Inicio - 02/01/2017
-//  MySql:=' SELECT CURRENT_DATE DTA_MOVTO, e.codproduto cod_produto,'+
-//
-//         ' COALESCE(e.saldoatual,0) qtd_estoque,'+
-//         ' 0.00 qtd_saidas,'+
-//         ' COALESCE(e.saldoatual,0) qtd_saldo,'+
-//
-//         // Acerta Multiplos
-//         ' CAST(CASE'+
-//         '         WHEN p.codgruposub=''0100003'' THEN'+ // ESMALTES - Multiplo de 6
-//         '            COALESCE(e.saldoatual,0)/6'+
-//         '         WHEN p.codproduto=''923834'' THEN'+ // DERMABEL 2,8ML - Multiplo de 25
-//         '            COALESCE(e.saldoatual,0)/25'+
-//         '         WHEN UPPER(p.apresentacao) LIKE ''LUVA%'' THEN'+ // LUVAS - Multiplo de 100
-//         '            COALESCE(e.saldoatual,0)/100'+
-//         '         ELSE'+
-//         '            COALESCE(e.saldoatual,0)'+
-//         '      END'+
-//         ' AS INTEGER) qtd_estoque,'+
-//
-//         ' 0.00 qtd_saidas,'+
-//
-//         // Acerta Multiplos
-//         ' CAST(CASE'+
-//         '         WHEN p.codgruposub=''0100003'' THEN'+ // ESMALTES - Multiplo de 6
-//         '            COALESCE(e.saldoatual,0)/6'+
-//         '         WHEN p.codproduto=''923834'' THEN'+ // DERMABEL 2,8ML - Multiplo de 25
-//         '            COALESCE(e.saldoatual,0)/25'+
-//         '         WHEN UPPER(p.apresentacao) LIKE ''LUVA%'' THEN'+ // LUVAS - Multiplo de 100
-//         '            COALESCE(e.saldoatual,0)/100'+
-//         '         ELSE'+
-//         '            COALESCE(e.saldoatual,0)'+
-//         '      END'+
-//         ' AS INTEGER) qtd_saldo,'+
-// OdirApagar Fim - 02/01/2017
 
   MySql:=' SELECT CURRENT_DATE DTA_MOVTO, e.codproduto cod_produto,'+
 

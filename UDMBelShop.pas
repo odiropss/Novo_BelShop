@@ -336,7 +336,6 @@ type
     CDS_FluxoFornecedorRAZAO_SOCIAL: TStringField;
     CDS_FluxoFornecedorCOD_HISTORICO: TIntegerField;
     CDS_FluxoFornecedorDES_HISTORICO: TStringField;
-    CDS_FluxoFornecedorNUM_DOCUMENTO: TStringField;
     CDS_FluxoFornecedorNUM_SERIE: TStringField;
     CDS_FluxoFornecedorVLR_CREDITO: TFMTBCDField;
     CDS_FluxoFornecedorVLR_DEBITO: TFMTBCDField;
@@ -1177,6 +1176,7 @@ type
     CDS_FluxoFornecedorCOD_FORNECEDOR: TIntegerField;
     CDS_FluxoFornecedorCOD_EMPRESA: TIntegerField;
     CDS_FluxoFornReducaoCOD_FORNECEDOR: TIntegerField;
+    CDS_FluxoFornecedorNUM_DOCUMENTO: TStringField;
 
     //==========================================================================
     // Odir ====================================================================

@@ -99,7 +99,7 @@ Begin
            ' AND   Char_length(p.cod_auxiliar)<=6'+
            ' AND   m.data_lancamento>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaInicioLinx)))+
            ' AND   m.empresa='+sCodLinx+
-                                                
+
            ' GROUP BY 1';
     DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
@@ -380,9 +380,10 @@ var
                  // LcI = Linx Com Inventário
 
 
-  sCodEmpresa, 
+  sCodEmpresa,
   sDtaLinx, sDtaInventLinx,
-  sDML, sValues: String;
+  sDML, sValues,
+  sCodProd, sQtdSaldo: String;
 
   iCodLinx: Integer;
 
@@ -556,7 +557,7 @@ begin
                  ' lp.dt_update dataalteracadastro,'+
                  ' lp.dt_update dataalteraestoque,'+
                  ' lp.dt_update dataalteraestoque_ped,'+
-                 ' pr.principalfor principalfor,'+
+                 ' pr.principalfor principalfor, '+
                  QuotedStr(sgDataAtual)+' DTA_ATUALIZACAO, '+
                  QuotedStr(sgHoraAtual)+' HRA_ATUALIZACAO'+
 
@@ -565,7 +566,9 @@ begin
                  '          LEFT JOIN PRODUTO pr ON pr.codproduto = CAST(LPAD(lp.cod_auxiliar,6,0) AS VARCHAR(6))'+
                  ' WHERE lpd.empresa = '+IntToStr(iCodLinx)+
                  ' AND   lp.cod_auxiliar IS NOT NULL'+
-                 ' AND   Char_length(lp.cod_auxiliar)<=6';
+                 ' AND   Char_length(lp.cod_auxiliar)<=6'+
+
+                 ' ORDER BY lp.cod_auxiliar, lpd.quantidade';
           DMAtualizaEstoques.CDS_LojaLinx.Close;
           DMAtualizaEstoques.SDS_LojaLinx.CommandText:=MySql;
           DMAtualizaEstoques.CDS_LojaLinx.Open;
@@ -607,7 +610,7 @@ begin
 
             sDML:=
              sDML+' DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
-                   ' VALUES (';
+                  ' VALUES (';
 
             // Atualiza Estoques da Loja ----------------------------------
             // =================================================================
@@ -623,16 +626,19 @@ begin
                   // ULTIMO CAMPO - HRA_ATUALIZACAO ============================
                   If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
                   Begin
-                    sValues:=sValues+QuotedStr(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].AsString)+')';
+                    sValues:=
+                     sValues+QuotedStr(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].AsString)+')';
                   End // If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
 
                   // Grava Resto do Registro ===================================
                   Else
                    Begin
                      If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].AsString)<>'' Then
-                      sValues:=sValues+QuotedStr(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].AsString)+', '
+                      sValues:=
+                       sValues+QuotedStr(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].AsString)+', '
                      Else
-                      sValues:=sValues+'NULL, ';
+                      sValues:=
+                       sValues+'NULL, ';
                    End;
                 End; // For i:=0 to DMAtualizaEstoques.IBQ_EstoqueLoja.FieldCount-1 do
 
@@ -655,6 +661,11 @@ begin
             Begin
               While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
               Begin
+                If sCodProd=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('CodProduto').AsString Then
+                 sQtdSaldo:=CurrToStr(StrToCurr(sQtdSaldo)+DMAtualizaEstoques.CDS_LojaLinx.FieldByName('SaldoAtual').AsCurrency)
+                Else
+                 sQtdSaldo:=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('SaldoAtual').AsString;
+
                 sValues:='';
                 For i:=0 to DMAtualizaEstoques.CDS_LojaLinx.FieldCount-1 do
                 Begin
@@ -663,6 +674,15 @@ begin
                    Begin
                      sValues:=sValues+QuotedStr(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].AsString)+')';
                    End // If Trim(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
+
+                  // Saldo Saldo do Produto (SALDOATUAL) =======================
+                  Else
+                  If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='SALDOATUAL' Then
+                  Begin
+                    sValues:=
+                     sValues+QuotedStr(sQtdSaldo)+', ';
+                  End // If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
+
                   Else
                    Begin
                      // Grava Resto do Registro
@@ -676,6 +696,8 @@ begin
                 // UPDATE OR INSERT INTO MCLI ==================================
                 MySql:=sDML+sValues+' MATCHING (CODFILIAL, CODPRODUTO)';
                 DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
+                sCodProd:=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('CodProduto').AsString;
 
                 DMAtualizaEstoques.CDS_LojaLinx.Next;
               End; // While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
