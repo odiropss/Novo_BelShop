@@ -25,6 +25,9 @@ type
     SDS_Pesquisa: TSQLDataSet;
     DSP_Pesquisa: TDataSetProvider;
     CDS_Pesquisa: TClientDataSet;
+    SDS_MovtoLinx: TSQLDataSet;
+    DSP_MovtoLinx: TDataSetProvider;
+    CDS_MovtoLinx: TClientDataSet;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir ====================================================================

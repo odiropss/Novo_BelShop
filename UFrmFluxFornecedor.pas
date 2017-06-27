@@ -749,8 +749,8 @@ Begin
             MySql:=
              MySql+' WHERE c.COD_FORNECEDOR='+sCodForn;
 
-           MySql:=
-            MySql+' ORDER BY c.COD_FORNECEDOR';
+    MySql:=
+     MySql+' ORDER BY c.COD_FORNECEDOR';
     DMBelShop.CDS_While.Close;
     DMBelShop.SDS_While.CommandText:=MySql;
     DMBelShop.CDS_While.Open;
@@ -813,13 +813,14 @@ Begin
 
              MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES ('+
                     ' COD_FORNECEDOR, DES_FORNECEDOR, DTA_CAIXA, NUM_SEQ,'+
-                    ' COD_HISTORICO, VLR_SALDO)'+
+                    ' COD_HISTORICO, PER_REDUCAO, VLR_SALDO)'+
                     ' Values ('+
                     QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Cod_Fornecedor').AsString)+', '+
                     QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Des_Fornecedor').AsString)+', '+
                     QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+', '+
                     QuotedStr('0')+', '+
-                    QuotedStr('0')+', ';
+                    QuotedStr('0')+', '+
+                    ' NULL, ';
 
                    If Trim(DMBelShop.CDS_Busca.FieldByName('DtAnterior').AsString)='' Then
                     Begin
@@ -830,8 +831,7 @@ Begin
                    Else // If Trim(DMBelShop.CDS_Busca.FieldByName('DtAnterior').AsString)='' Then
                     Begin
                       MySql:=
-                       MySql+QuotedStr(
-                      DMBelShop.CDS_Busca.FieldByName('Vlr_Saldo').AsString)+')';
+                       MySql+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Vlr_Saldo').AsString)+')';
                       cVlrSaldo:=DMBelShop.CDS_Busca.FieldByName('Vlr_Saldo').AsCurrency;
                     End;
              DMBelShop.SQLC.Execute(MySql,nil,nil);
@@ -848,8 +848,17 @@ Begin
               Begin
                 // Atualiza Saldo Incial --------------------------------
                  MySql:=' UPDATE FL_CAIXA_FORNECEDORES'+
-                        ' SET Vlr_Saldo='+QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)))+
-                        ' WHERE DTA_CAIXA='+QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
+                        ' SET Vlr_Saldo='+QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)));
+
+                        If (DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger=0) Or
+                           (DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger=999999) Then
+                        Begin
+                          MySql:=
+                           MySql+', Per_Reducao=null';
+                        End;
+
+                 MySql:=
+                  MySql+' WHERE DTA_CAIXA='+QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
                         ' AND Num_Seq='+QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsString)+
                         ' AND COD_FORNECEDOR='+QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('COD_FORNECEDOR').AsString);
                  DMBelShop.SQLC.Execute(MySql,nil,nil);
@@ -874,8 +883,8 @@ Begin
           MySql:=
            MySql+' SET Vlr_Saldo='+QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)))+
                  ' WHERE DTA_CAIXA='+QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
-                 ' AND NUM_SEQ='+QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsString)+
-                 ' AND COD_FORNECEDOR='+QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('COD_FORNECEDOR').AsString);
+                 ' AND   NUM_SEQ='+QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsString)+
+                 ' AND   COD_FORNECEDOR='+QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('COD_FORNECEDOR').AsString);
           DMBelShop.SQLC.Execute(MySql,nil,nil);
         End; // If (DMBelShop.CDS_Pesquisa.RecNo<>iUltmio) and (DMBelShop.CDS_Pesquisa.RecNo<>1)Then
 
@@ -887,22 +896,32 @@ Begin
              // Insere Saldo Final ----------------------------------
              MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES ('+
                     ' COD_FORNECEDOR, DES_FORNECEDOR, DTA_CAIXA, NUM_SEQ,'+
-                    ' COD_HISTORICO, VLR_SALDO)'+
+                    ' COD_HISTORICO, PER_REDUCAO, VLR_SALDO)'+
                     ' VALUES ('+
-                    QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Cod_Fornecedor').AsString)+', '+
-                    QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Des_Fornecedor').AsString)+', '+
-                    QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+', '+
-                    QuotedStr('999999')+', '+
-                    QuotedStr('999999')+', '+
-                    QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)))+')';
+                    QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Cod_Fornecedor').AsString)+', '+ // COD_FORNECEDOR
+                    QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Des_Fornecedor').AsString)+', '+ // DES_FORNECEDOR
+                    QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+', '+ // DTA_CAIXA
+                    QuotedStr('999999')+', '+ // NUM_SEQ
+                    QuotedStr('999999')+', '+ // COD_HISTORICO
+                    ' NULL,'+ // PER_REDUCAO
+                    QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)))+')'; // VLR_SALDO
              DMBelShop.SQLC.Execute(MySql,nil,nil);
            End
           Else // If DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger<>999999 Then
            Begin
              // Atualiza Movto --------------------------------------
              MySql:=' UPDATE FL_CAIXA_FORNECEDORES'+
-                    ' SET Vlr_Saldo='+QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)))+
-                    ' WHERE DTA_CAIXA='+QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
+                    ' SET Vlr_Saldo='+QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)));
+
+                    If (DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger=0) Or
+                       (DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger=999999) Then
+                    Begin
+                      MySql:=
+                       MySql+', Per_Reducao=null';
+                    End;
+
+             MySql:=
+              MySql+' WHERE DTA_CAIXA='+QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
                     ' AND Num_Seq='+QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsString)+
                     ' AND COD_FORNECEDOR='+QuotedStr(DMBelShop.CDS_Pesquisa.FieldByName('COD_FORNECEDOR').AsString);
              DMBelShop.SQLC.Execute(MySql,nil,nil);
@@ -2717,7 +2736,7 @@ begin
 
             // Monta SQL ------------------------------------------------
             MySql:=' SELECT Trim(ff.nomefornecedor) nomefornecedor,'+
-                   ' replace(replace(replace(replace(Trim(ff.numerocgcmf), ''/'', ''''),''.'',''''),''-'',''''),'','','''') numerocgcmf'+
+                   ' replace(replace(replace(replace(TRIM(ff.numerocgcmf), ''/'', ''''),''.'',''''),''-'',''''),'','','''') numerocgcmf'+
                    ' FROM forneced ff'+
                    ' WHERE ff.codfornecedor='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('cod_fornecedor').AsString);
             IBQ_ConsultaFilial.SQL.Clear;

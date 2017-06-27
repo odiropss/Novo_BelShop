@@ -4,7 +4,7 @@ object DMAtualizaSeteHoras: TDMAtualizaSeteHoras
   Left = 321
   Top = 117
   Height = 539
-  Width = 600
+  Width = 699
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
     DriverName = 'Interbase'
@@ -85,59 +85,79 @@ object DMAtualizaSeteHoras: TDMAtualizaSeteHoras
     Params = <>
     SQLConnection = SQLC
     Left = 48
-    Top = 257
+    Top = 225
   end
   object DSP_Lojas: TDataSetProvider
     DataSet = SDS_Lojas
     Options = [poRetainServerOrder]
     Left = 98
-    Top = 270
+    Top = 238
   end
   object CDS_Lojas: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Lojas'
     Left = 149
-    Top = 256
+    Top = 224
   end
   object SDS_While: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 48
-    Top = 329
+    Left = 272
+    Top = 89
   end
   object DSP_While: TDataSetProvider
     DataSet = SDS_While
     Options = [poRetainServerOrder]
-    Left = 98
-    Top = 342
+    Left = 322
+    Top = 102
   end
   object CDS_While: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_While'
-    Left = 141
-    Top = 328
+    Left = 365
+    Top = 88
   end
   object SDS_Pesquisa: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 48
-    Top = 401
+    Left = 272
+    Top = 161
   end
   object DSP_Pesquisa: TDataSetProvider
     DataSet = SDS_Pesquisa
     Options = [poRetainServerOrder]
-    Left = 98
-    Top = 414
+    Left = 322
+    Top = 174
   end
   object CDS_Pesquisa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Pesquisa'
-    Left = 141
-    Top = 400
+    Left = 365
+    Top = 160
+  end
+  object SDS_MovtoLinx: TSQLDataSet
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 272
+    Top = 233
+  end
+  object DSP_MovtoLinx: TDataSetProvider
+    DataSet = SDS_MovtoLinx
+    Options = [poRetainServerOrder]
+    Left = 322
+    Top = 246
+  end
+  object CDS_MovtoLinx: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_MovtoLinx'
+    Left = 365
+    Top = 232
   end
 end

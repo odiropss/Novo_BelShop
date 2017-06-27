@@ -16,8 +16,12 @@ type
     // ODIR ====================================================================
 
     Procedure Demanda4Meses;
-    Procedure BuscaMovtosDebCre;
+
+    Procedure MontaSqlsSidicomLinx;
+    Procedure BuscaMovtosDebCreSIDICOM;
+    Procedure BuscaMovtosDebCreLINX;
     Procedure CalculaFluxoCaixaFornecedores(sDt: String=''; sCodForn: String ='');
+
     Procedure CentroCustos;
 
     // ODIR ====================================================================
@@ -41,10 +45,13 @@ var
 
   igDiasUteis, igDiasUteis_18: Integer;
 
-  MySqlSelect: String;
+  MySqlSelect, MySqlLinx: String;
 
-  sgDtaInicio, sgDtaFim, 
-  sgCodForn, sgCodEmp, sgDesLoja: String;
+  sgCompDeb, sgCompCre: String;
+
+  sgDtaInicio, sgDtaFim, sgDtaIniLINX,
+  sgCodForn,
+  sgCodEmpLINX, sgCodEmp, sgDesLoja: String;
 
   bgProcessar: Boolean;
 
@@ -58,6 +65,156 @@ uses DK_Procs1, UDMConexoes, uj_001, uj_002, UDMAtualizaSeteHoras;
 //==============================================================================
 // ODIR - INICIO ===============================================================
 //==============================================================================
+
+// Monta SQL's Para Busca SIDICOM / LINX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAtualizaSeteHoras.MontaSqlsSidicomLinx;
+Var
+  MySql: String;
+Begin
+  //============================================================================
+  // Monta Select de Busca de Débitos e Créditos (SIDICOM) =====================
+  MySqlSelect:=' SELECT'+
+               ' mf.codfornecedor,'+
+               ' f.nomefornecedor,'+
+               ' REPLACE(REPLACE(REPLACE(TRIM(f.numerocgcmf), ''/'', ''''),''.'',''''),''-'','''') Doc_Forn,'+
+               ' mf.datacomprovante,'+
+               ' mf.dataentrada,'+
+               ' mf.codcomprovante,'+
+
+               ' CASE'+
+               '   WHEN mf.codcomprovante IN ('+sgCompCre+') Then'+
+               '    ''C'''+
+               '   WHEN mf.codcomprovante IN ('+sgCompDeb+') Then'+
+               '    ''D'''+
+               ' End Tp_DebCre,'+
+
+               ' mf.codfilial,'+
+               ' mf.observacao,'+
+               ' TRIM(mf.chavenf) chavenf,'+
+               ' mf.numero,'+
+               ' Trim(mf.serie) serie,'+
+               ' ABS(COALESCE(mf.totnota,0.00)) Vlr_Total'+
+
+               ' FROM MFOR mf, FORNECED f'+
+               ' WHERE  mf.codfornecedor=f.codfornecedor'+
+               ' AND    mf.codfilial=:CodLoja'+
+               ' AND    mf.codcomprovante in ('+sgCompCre+', '+sgCompDeb+')'+
+               ' AND    mf.dataentrada>='+QuotedStr(sgDtaInicio);
+
+               If Trim(sgCodForn)<>'' Then
+                MySqlSelect:=
+                 MySqlSelect+' AND mf.codfornecedor = :CodForn';
+
+  MySqlSelect:=
+   MySqlSelect+' ORDER BY mf.codfornecedor, mf.dataentrada';
+  // Monta Select de Busca de Debitos e Créditos (SIDICOM) =====================
+  //============================================================================
+
+  //============================================================================
+  // Monta Select de Busca de Debitos e Créditos (LINX) ========================
+  // DE – Devolução de Saída de Entrada de Fornecedor ---------------
+  MySqlLinx:=' SELECT'+
+             ' fl.cod_cliente codfornecedor,'+
+             ' fl.nome_cliente nomefornecedor,'+
+             ' CAST(ml.data_documento AS DATE) datacomprovante,'+
+             ' CAST(ml.data_lancamento AS DATE) dataentrada,'+
+             ' ''011'' codcomprovante,'+
+             ' ''D'' tp_debcre,'+
+             ' ml.empresa codfilial,'+
+             ' CAST(SUBSTRING(ml.obs FROM 1 FOR 200) AS VARCHAR(200)) observacao,'+
+             ' TRIM(ml.chave_nf) chavenf,'+
+             ' CAST(ml.documento AS VARCHAR(6)) numero,'+
+             ' CAST(TRIM(ml.serie) AS VARCHAR(4)) serie,'+
+             ' CAST((ROUND((SUM(ml.valor_total)), 2)) AS NUMERIC(18,2)) vlr_total,'+
+             ' fs.codfornecedor Cod_Forn_Sidicom'+
+
+             ' FROM LINXMOVIMENTO ml'+
+             '      LEFT JOIN LINXCLIENTESFORNEC fl  ON fl.cod_cliente = ml.codigo_cliente'+
+             '                                      AND fl.tipo_cliente IN (''A'', ''F'')'+
+             '      LEFT JOIN FORNECEDOR fs ON REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
+             '                                 REPLACE(REPLACE(REPLACE(TRIM(fl.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''')'+
+
+             ' WHERE ml.operacao = ''DE'''+ // Saida de Devolução de Entrada
+             ' AND   ml.tipo_transacao IS NULL'+
+             ' AND   ml.cancelado = ''N'''+
+             ' AND   ml.excluido = ''N'''+
+             ' AND   TRIM(ml.id_cfop) IN (''5411'', ''6411'')'+
+
+             ' AND   ml.empresa = :CodEmpLINX'+
+             ' AND   CAST(ml.data_lancamento AS DATE) >= :DtaInicioLinx';
+
+             If Trim(sgCodForn)<>'' Then
+              MySql:=
+                MySql+' AND   ml.codigo_cliente = :CodForn';
+  MySqlLinx:=
+   MySqlLinx+' GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13'+
+
+             ' UNION'+ // <<====
+
+             // E - Operações De Entrada de Mercadorias por Bonificações de Fornecedor
+             // S - Operações De Saida   de Mercadorias por Bonificações de Fornecedor
+
+             ' SELECT'+
+             ' fl.cod_cliente codfornecedor,'+
+             ' fl.nome_cliente nomefornecedor,'+
+             ' CAST(ml.data_documento AS DATE) datacomprovante,'+
+             ' CAST(ml.data_lancamento AS DATE) dataentrada,'+
+
+             ' CASE'+
+             '   WHEN (TRIM(ml.id_cfop) = ''1910'') OR (TRIM(ml.id_cfop) = ''2910'') THEN'+
+             '     ''913'''+
+             '   WHEN (TRIM(ml.id_cfop) = ''5910'') OR (TRIM(ml.id_cfop) = ''6910'') THEN'+
+             '     ''027'''+
+             ' END codcomprovante,'+
+
+             ' CASE'+
+             '   WHEN (TRIM(ml.id_cfop) = ''1910'') OR (TRIM(ml.id_cfop) = ''2910'') THEN'+
+             '     ''C'''+
+             '   WHEN (TRIM(ml.id_cfop) = ''5910'') OR (TRIM(ml.id_cfop) = ''6910'') THEN'+
+             '     ''D'''+
+             ' END tp_debcre,'+
+
+             ' ml.empresa codfilial,'+
+             ' CAST(SUBSTRING(ml.obs FROM 1 FOR 200) AS VARCHAR(200)) observacao,'+
+             ' TRIM(ml.chave_nf) chavenf,'+
+             ' CAST(SUBSTRING(ml.documento FROM 1 FOR 6) AS VARCHAR(6)) numero,'+
+             ' CAST(TRIM(ml.serie) AS VARCHAR(4)) serie,'+
+             ' CAST((ROUND((SUM(ml.valor_total)), 2)) AS NUMERIC(18,2)) vlr_total,'+
+             ' fs.codfornecedor Cod_Forn_Sidicom'+
+
+             ' FROM LINXMOVIMENTO ml'+
+             '      LEFT JOIN linxclientesfornec fl  ON fl.cod_cliente = ml.codigo_cliente'+
+             '                                      AND fl.tipo_cliente IN (''A'', ''F'')'+
+             '      LEFT JOIN fornecedor fs ON REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
+             '                                 REPLACE(REPLACE(REPLACE(TRIM(fl.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''')'+
+
+             ' WHERE ml.cancelado = ''N'''+
+             ' AND   ml.excluido = ''N'''+
+             ' AND   COALESCE(ml.tipo_transacao, '''') <> ''J'''+ // NÃO Pode Ajustes de Estoques
+
+             ' AND   ('+
+             '        ((TRIM(ml.id_cfop) IN (''1910'', ''2910''))'+
+             '          AND'+
+             '         (ml.operacao = ''E''))'+ // Operação de Entrada de Mercadorias Bonificadas
+             '       OR'+
+             '        ((TRIM(ml.id_cfop) IN (''5910'', ''6910''))'+
+             '          AND (ml.operacao = ''S''))'+ // Operação de Saida de Mercadorias Bonificadas
+             '      )'+
+
+             ' AND   CAST(ml.data_lancamento AS DATE) >= :DtaInicioLinx'+
+             ' AND   ml.empresa = :CodEmpLinx';
+
+             If Trim(sgCodForn)<>'' Then
+              MySql:=
+                MySql+' AND   ml.codigo_cliente = :CodForn';
+
+  MySqlLinx:=
+   MySqlLinx+' GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13'+
+             ' ORDER BY 1, 4';
+  // Monta Select de Busca de Debitos e Créditos (LINX) ========================
+  //============================================================================
+
+end; // Monta SQL's Para Busca SIDICOM / LINX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Atualiza Centro de Custos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaSeteHoras.CentroCustos;
@@ -339,7 +496,7 @@ Begin
            ' End dias_uteis,'+
 
            ' CURRENT_DATE dta_atualizacao,'+
-           '  CURRENT_TIME hra_atualizacao'+
+           ' CURRENT_TIME hra_atualizacao'+
 
            ' FROM MOVTOS_EMPRESAS dem'+
            ' WHERE dem.ind_tipo = ''DM'''+
@@ -366,13 +523,210 @@ Begin
 
 End; // Calcula Demanda de 4 Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Busca Movtos de Debito/Credito de Fornecedores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmAtualizaSeteHoras.BuscaMovtosDebCre;
+//000000000000000000000000000000000000000000000000000000000000000000000000000000
+// Busca Movtos de Debito/Credito de Fornecedores LINX >>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAtualizaSeteHoras.BuscaMovtosDebCreLINX;
+Var
+   i: Integer;
+   MySql: String;
+   sCodFornLINX, sNomeFornLINX,
+   sNumSeq, sPercRed,
+   sDtaMovtoLinx: String;
+Begin
+
+  // Busca Movimentos ==========================================================
+  sDtaMovtoLinx:=sgDtaIniLINX;
+  If StrToDate(f_Troca('.','/',f_Troca('-','/',sDtaMovtoLinx)))<StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio))) Then
+   sDtaMovtoLinx:=sgDtaInicio;
+
+  sDtaMovtoLinx:=f_Troca('/','.',f_Troca('-','.',sDtaMovtoLinx));
+
+  DMAtualizaSeteHoras.CDS_MovtoLinx.Close;
+  DMAtualizaSeteHoras.SDS_MovtoLinx.CommandText:=MySqlLinx;
+  DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('CodEmpLINX').AsString:=sgCodEmpLINX;
+  DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('DtaInicioLinx').AsString:=sDtaMovtoLinx;
+
+  If Trim(sgCodForn)<>'' Then
+   DMAtualizaSeteHoras.CDS_MovtoLinx.Params.ParamByName('CodForn').AsString:=sgCodForn;
+
+  DMAtualizaSeteHoras.CDS_MovtoLinx.Open;
+
+  If Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('codfornecedor').AsString)='' Then
+  Begin
+    DMAtualizaSeteHoras.CDS_MovtoLinx.Close;
+    Exit;
+  End;
+
+  // Monta Transacao =======================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
+  Try
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    // Guarda Codigo do Fornecedor =========================================
+    MySql:=' SELECT DISTINCT f.cod_fornecedor'+
+           ' FROM FL_CAIXA_FORNECEDORES f'+
+           ' WHERE f.cod_empresa='+QuotedStr(sgCodEmpLINX)+
+           ' AND   f.dta_caixa>='+QuotedStr(sDtaMovtoLinx);
+
+           If Trim(sgCodForn)<>'' Then
+            MySql:=
+             MySql+' AND f.cod_fornecedor in ('+QuotedStr(sgCodForn)+')';
+    DMAtualizaSeteHoras.CDS_Busca.Close;
+    DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
+    DMAtualizaSeteHoras.CDS_Busca.Open;
+
+    While Not DMAtualizaSeteHoras.CDS_Busca.Eof do
+    Begin
+      sCodFornLINX:=DMAtualizaSeteHoras.CDS_Busca.FieldByName('cod_fornecedor').AsString;
+
+      // Guarda Fornecedor a Processar Conta Correte ------------
+      bgProcessar:=True;
+      For i:=0 to Mem_Odir.Lines.Count-1 do
+      Begin
+         If Mem_Odir.Lines[i]=sCodFornLINX Then
+         Begin
+           bgProcessar:=False;
+           Break;
+         End;
+      End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
+
+      If bgProcessar Then
+      Begin
+        Mem_Odir.Lines.Add(sCodFornLINX);
+      End;
+
+      // Exclui Lançamentos para Substituição e Inclução ------
+      MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES f'+
+             ' WHERE f.cod_fornecedor = '+QuotedStr(sCodFornLINX)+
+             ' AND   f.dta_caixa>='+QuotedStr(sDtaMovtoLinx)+
+             ' AND ((f.cod_historico=0 or f.cod_historico=999999)'+
+             '      OR'+
+             '      (f.cod_empresa='+QuotedStr(sgCodEmpLINX)+'))';
+      DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+
+      DMAtualizaSeteHoras.CDS_Busca.Next;
+    End; // While Not DMAtualizaSeteHoras.CDS_Busca.Eof do
+    DMAtualizaSeteHoras.CDS_Busca.Close;
+
+    sgDtaFim     :='';
+    sCodFornLINX :='';
+    sNomeFornLINX:='';
+    While Not DMAtualizaSeteHoras.CDS_MovtoLinx.Eof do
+    Begin
+      sgDtaFim:=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('dataentrada').AsString;
+      sCodFornLINX :=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('codfornecedor').AsString;
+      sNomeFornLINX:=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('nomefornecedor').AsString;
+
+      // Busca Num_seq do Dia do Fornecedor ---------------------
+      MySql:=' SELECT coalesce(max(cf.num_seq)+1 ,1) Num_Seq'+
+             ' FROM FL_CAIXA_FORNECEDORES cf'+
+             ' WHERE cf.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFim)))+
+             ' AND   cf.cod_fornecedor='+QuotedStr(sCodFornLINX)+
+             ' AND   cf.num_seq>0'+
+             ' AND   cf.num_seq<999999';
+      DMAtualizaSeteHoras.CDS_Busca.Close;
+      DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
+      DMAtualizaSeteHoras.CDS_Busca.Open;
+      sNumSeq:=Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('Num_Seq').AsString);
+      DMAtualizaSeteHoras.CDS_Busca.Close;
+
+      // Busca Percentual de Redução --------------------------------
+      MySql:=' SELECT r.per_reducao'+
+             ' FROM FL_CAIXA_PERC_REDUCAO r'+
+             ' WHERE r.cod_fornecedor ='+sCodFornLINX+
+             ' AND   r.cod_comprovante='+QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('CODCOMPROVANTE').AsString)+
+             ' AND   CAST('+QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DATAENTRADA').AsString)+' AS DATE)'+
+             '                 BETWEEN r.dta_incio AND COALESCE(r.dta_fim, CAST(''31.12.3000'' AS DATE))';
+      DMAtualizaSeteHoras.CDS_Busca.Close;
+      DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
+      DMAtualizaSeteHoras.CDS_Busca.Open;
+      sPercRed:='0.00';
+      If Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('per_reducao').AsString)<>'' Then
+       sPercRed:=f_Troca(',','.',DMAtualizaSeteHoras.CDS_Busca.FieldByName('per_reducao').AsString);
+      DMAtualizaSeteHoras.CDS_Busca.Close;
+
+      // Insere Caixa -----------------------------------------------
+      MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES ('+
+             ' COD_FORNECEDOR, DES_FORNECEDOR, VLR_ORIGEM, DTA_ORIGEM, DTA_CAIXA, NUM_SEQ,'+
+             ' NUM_CHAVENF, COD_EMPRESA, COD_HISTORICO, TXT_OBS,'+
+             ' NUM_DOCUMENTO, NUM_SERIE, PER_REDUCAO, TIP_DEBCRE, VLR_CAIXA, VLR_SALDO,'+
+             ' CODFORNECEDOR, COD_LOJA_LINX, COD_LOJA_SIDICOM)'+
+             ' VALUES ('+
+             sCodFornLINX+', '+ // COD_FORNECEDOR (LINX)
+             QuotedStr(sNomeFornLINX)+', '+ // DES_FORNECEDOR (LINX)
+             DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_TOTAL').AsString+', '+ // VLR_ORIGEM
+             QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DATACOMPROVANTE').AsString)+', '+ // DTA_ORIGEM
+             QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DATAENTRADA').AsString)+', '+ // DTA_CAIXA
+             sNumSeq+', '+ // NUM_SEQ
+             QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('CHAVENF').AsString)+', '+ // NUM_CHAVENF
+             QuotedStr(sgCodEmpLINX)+', '+ // COD_EMPRESA
+             QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('CODCOMPROVANTE').AsString)+', '+ // COD_HISTORICO,
+             QuotedStr(AnsiUpperCase(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('OBSERVACAO').AsString))+', '+ // TXT_OBS
+             QuotedStr(Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('NUMERO').AsString))+', '+ // NUM_DOCUMENTO
+             QuotedStr(Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('SERIE').AsString))+', '+ // NUM_SERIE
+             sPercRed+', '+ // PER_REDUCAO,
+             QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('TP_DEBCRE').AsString)+', '+ // TIP_DEBCRE
+             'CAST(('+DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_TOTAL').AsString+
+                    '-(('+sPercRed+' * '+DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_TOTAL').AsString+
+                    ') / 100)) AS NUMERIC(12,2)),'+ // VLR_CAIXA
+             ' 0.00,'+ // VLR_SALDO
+             QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('Cod_Forn_Sidicom').AsString)+', '+ // CODFORNECEDOR VARCHAR(6)
+             QuotedStr(sgCodEmpLINX)+', '+ // COD_LOJA_LINX INTEGER
+             QuotedStr(sgCodEmp)+')'; // COD_LOJA_SIDICOM VARCHAR(2)
+      DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
+
+      // Guarda Fornecedor a Processar Conta Correte ------------
+      bgProcessar:=True;
+      For i:=0 to Mem_Odir.Lines.Count-1 do
+      Begin
+         If Mem_Odir.Lines[i]=sCodFornLINX Then
+         Begin
+           bgProcessar:=False;
+           Break;
+         End;
+      End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
+
+      If bgProcessar Then
+      Begin
+        Mem_Odir.Lines.Add(sCodFornLINX);
+      End;
+
+      DMAtualizaSeteHoras.CDS_MovtoLinx.Next;
+    End; // While Not DMAtualizaSeteHoras.CDS_MovtoLinx.Eof do
+    DMAtualizaSeteHoras.CDS_MovtoLinx.Close;
+
+    // Fecha Transacao =================================================
+    DMAtualizaSeteHoras.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+    Screen.Cursor:=crDefault;
+
+  Except
+    on e : Exception do
+    Begin
+      DMAtualizaSeteHoras.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+    End; // on e : Exception do
+  End; // Try
+
+end; // Busca Movtos de Debito/Credito de Fornecedores LINX >>>>>>>>>>>>>>>>>>>>
+
+//000000000000000000000000000000000000000000000000000000000000000000000000000000
+// Busca Movtos de Debito/Credito de Fornecedores SIDICOM >>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAtualizaSeteHoras.BuscaMovtosDebCreSIDICOM;
 Var
    bSiga: Boolean;
    i: Integer;
    MySql: String;
-   sCodForn, sNumSeq, sPercRed: String;
+   sCodForn, sDocForn,
+   sCodFornLINX, sNomeFornLINX,
+   sNumSeq, sPercRed: String;
 Begin
   bSiga:=False;
 
@@ -400,6 +754,10 @@ Begin
         IBQ_ConsultaFilial.SQL.Clear;
         IBQ_ConsultaFilial.SQL.Add(MySqlSelect);
         IBQ_ConsultaFilial.ParamByName('CodLoja').AsString:=sgCodEmp;
+
+        If Trim(sgCodForn)<>'' Then
+         IBQ_ConsultaFilial.ParamByName('CodForn').AsString:=sgCodForn;
+
         IBQ_ConsultaFilial.Open;
 
         bSiga:=True;
@@ -472,84 +830,116 @@ Begin
 
           DMAtualizaSeteHoras.CDS_Busca.Next;
         End; // While Not DMAtualizaSeteHoras.CDS_Busca.Eof do
+        DMAtualizaSeteHoras.CDS_Busca.Close;
 
+        sCodForn     :='';
+        sgDtaFim     :='';
+        sDocForn     :='';
+        sCodFornLINX :='';
+        sNomeFornLINX:='';
         While Not IBQ_ConsultaFilial.Eof do
         Begin
-          sCodForn:=IBQ_ConsultaFilial.FieldByName('codfornecedor').AsString;
           sgDtaFim:=IBQ_ConsultaFilial.FieldByName('dataentrada').AsString;
 
-          // Busca Num_seq do Dia do Fornecedor ---------------------
-          MySql:=' SELECT coalesce(max(cf.num_seq)+1 ,1) Num_Seq'+
-                 ' FROM FL_CAIXA_FORNECEDORES cf'+
-                 ' WHERE cf.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFim)))+
-                 ' AND   cf.cod_fornecedor='+QuotedStr(sCodForn)+
-                 ' AND   cf.num_seq>0'+
-                 ' AND   cf.num_seq<999999';
-          DMAtualizaSeteHoras.CDS_Busca.Close;
-          DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
-          DMAtualizaSeteHoras.CDS_Busca.Open;
-
-          sNumSeq:=Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('Num_Seq').AsString);
-          DMAtualizaSeteHoras.CDS_Busca.Close;
-
-          // Busca Percentual de Redução --------------------------------
-          MySql:=' SELECT r.per_reducao'+
-                 ' FROM FL_CAIXA_PERC_REDUCAO r'+
-                 ' WHERE r.cod_fornecedor ='+QuotedStr(IBQ_ConsultaFilial.FieldByName('CODFORNECEDOR').AsString)+
-                 ' AND   r.cod_comprovante='+QuotedStr(IBQ_ConsultaFilial.FieldByName('CODCOMPROVANTE').AsString)+
-                 ' AND   CAST('+QuotedStr(IBQ_ConsultaFilial.FieldByName('DATAENTRADA').AsString)+' AS DATE)'+
-                 '                    BETWEEN r.dta_incio AND COALESCE(r.dta_fim, CAST(''31.12.3000'' AS DATE))';
-          DMAtualizaSeteHoras.CDS_Busca.Close;
-          DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
-          DMAtualizaSeteHoras.CDS_Busca.Open;
-          sPercRed:='0.00';
-          If Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('per_reducao').AsString)<>'' Then
-           sPercRed:=f_Troca(',','.',DMAtualizaSeteHoras.CDS_Busca.FieldByName('per_reducao').AsString);
-          DMAtualizaSeteHoras.CDS_Busca.Close;
-
-          // Insere Caixa -----------------------------------------------
-          MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES ('+
-                 ' COD_FORNECEDOR, DES_FORNECEDOR, VLR_ORIGEM, DTA_ORIGEM, DTA_CAIXA, NUM_SEQ,'+
-                 ' NUM_CHAVENF, COD_EMPRESA, COD_HISTORICO, TXT_OBS,'+
-                 ' NUM_DOCUMENTO, NUM_SERIE, PER_REDUCAO, TIP_DEBCRE, VLR_CAIXA, VLR_SALDO)'+
-
-                 ' VALUES ('+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODFORNECEDOR').AsString)+', '+ // COD_FORNECEDOR
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('NOMEFORNECEDOR').AsString)+', '+ // DES_FORNECEDOR
-                 IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString+', '+ // VLR_ORIGEM
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('DATACOMPROVANTE').AsString)+', '+ // DTA_ORIGEM
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('DATAENTRADA').AsString)+', '+ // DTA_CAIXA
-                 sNumSeq+', '+ // NUM_SEQ
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CHAVENF').AsString)+', '+ // NUM_CHAVENF
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODFILIAL').AsString)+', '+ // COD_EMPRESA
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODCOMPROVANTE').AsString)+', '+ // COD_HISTORICO,
-                 QuotedStr(AnsiUpperCase(IBQ_ConsultaFilial.FieldByName('OBSERVACAO').AsString))+', '+ // TXT_OBS
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('NUMERO').AsString)+', '+ // NUM_DOCUMENTO
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('SERIE').AsString)+', '+ // NUM_SERIE
-                 sPercRed+', '+ // PER_REDUCAO,
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('TP_DEBCRE').AsString)+', '+ // TIP_DEBCRE
-                 'CAST(('+IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString+
-                        '-(('+sPercRed+' * '+IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString+
-                        ') / 100)) AS NUMERIC(12,2)),'+ // VLR_CAIXA
-
-                 ' 0)'; // VLR_SALDO
-          DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
-
-          // Guarda Fornecedor a Processar Conta Correte ------------
-          bgProcessar:=True;
-          For i:=0 to Mem_Odir.Lines.Count-1 do
+          If sCodForn<>IBQ_ConsultaFilial.FieldByName('codfornecedor').AsString Then
           Begin
-             If Mem_Odir.Lines[i]=sCodForn Then
-             Begin
-               bgProcessar:=False;
-               Break;
-             End;
-          End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
+            sCodForn:=IBQ_ConsultaFilial.FieldByName('codfornecedor').AsString;
+            sDocForn:=IBQ_ConsultaFilial.FieldByName('Doc_Forn').AsString;
 
-          If bgProcessar Then
+            // Busca Código Fornecedor LINX ---------------------------
+            MySql:=' SELECT c.nome_cliente, c.cod_cliente'+
+                   ' FROM linxclientesfornec c'+
+                   ' WHERE REPLACE(REPLACE(REPLACE(TRIM(c.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''') = '+QuotedStr(sDocForn);
+            DMAtualizaSeteHoras.CDS_Busca.Close;
+            DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
+            DMAtualizaSeteHoras.CDS_Busca.Open;
+            sCodFornLINX :='';
+            sNomeFornLINX:='';
+            If Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('cod_cliente').AsString)<>'' Then
+            Begin
+              sCodFornLINX :=Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('cod_cliente').AsString);
+              sNomeFornLINX:=Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('nome_cliente').AsString)
+            End; // If Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('cod_cliente').AsString)<>'' Then
+            DMAtualizaSeteHoras.CDS_Busca.Close;
+          End; // If sCodForn<>IBQ_ConsultaFilial.FieldByName('codfornecedor').AsString Then
+
+          // Só Processa Se Encontrou o Fornecedor no LINX ----------
+          If sCodFornLINX<>'' Then
           Begin
-            Mem_Odir.Lines.Add(sCodForn);
-          End;
+            // Busca Num_seq do Dia do Fornecedor ---------------------
+            MySql:=' SELECT coalesce(max(cf.num_seq)+1 ,1) Num_Seq'+
+                   ' FROM FL_CAIXA_FORNECEDORES cf'+
+                   ' WHERE cf.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFim)))+
+                   ' AND   cf.cod_fornecedor='+QuotedStr(sCodFornLINX)+
+                   ' AND   cf.num_seq>0'+
+                   ' AND   cf.num_seq<999999';
+            DMAtualizaSeteHoras.CDS_Busca.Close;
+            DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
+            DMAtualizaSeteHoras.CDS_Busca.Open;
+            sNumSeq:=Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('Num_Seq').AsString);
+            DMAtualizaSeteHoras.CDS_Busca.Close;
+
+            // Busca Percentual de Redução --------------------------------
+            MySql:=' SELECT r.per_reducao'+
+                   ' FROM FL_CAIXA_PERC_REDUCAO r'+
+                   ' WHERE r.cod_fornecedor ='+sCodFornLINX+
+                   ' AND   r.cod_comprovante='+QuotedStr(IBQ_ConsultaFilial.FieldByName('CODCOMPROVANTE').AsString)+
+                   ' AND   CAST('+QuotedStr(IBQ_ConsultaFilial.FieldByName('DATAENTRADA').AsString)+' AS DATE)'+
+                   '                 BETWEEN r.dta_incio AND COALESCE(r.dta_fim, CAST(''31.12.3000'' AS DATE))';
+            DMAtualizaSeteHoras.CDS_Busca.Close;
+            DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
+            DMAtualizaSeteHoras.CDS_Busca.Open;
+            sPercRed:='0.00';
+            If Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('per_reducao').AsString)<>'' Then
+             sPercRed:=f_Troca(',','.',DMAtualizaSeteHoras.CDS_Busca.FieldByName('per_reducao').AsString);
+            DMAtualizaSeteHoras.CDS_Busca.Close;
+
+            // Insere Caixa -----------------------------------------------
+            MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES ('+
+                   ' COD_FORNECEDOR, DES_FORNECEDOR, VLR_ORIGEM, DTA_ORIGEM, DTA_CAIXA, NUM_SEQ,'+
+                   ' NUM_CHAVENF, COD_EMPRESA, COD_HISTORICO, TXT_OBS,'+
+                   ' NUM_DOCUMENTO, NUM_SERIE, PER_REDUCAO, TIP_DEBCRE, VLR_CAIXA, VLR_SALDO,'+
+                   ' CODFORNECEDOR, COD_LOJA_LINX, COD_LOJA_SIDICOM)'+
+                   ' VALUES ('+
+                   sCodFornLINX+', '+ // COD_FORNECEDOR (LINX)
+                   QuotedStr(sNomeFornLINX)+', '+ // DES_FORNECEDOR (LINX)
+                   IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString+', '+ // VLR_ORIGEM
+                   QuotedStr(IBQ_ConsultaFilial.FieldByName('DATACOMPROVANTE').AsString)+', '+ // DTA_ORIGEM
+                   QuotedStr(IBQ_ConsultaFilial.FieldByName('DATAENTRADA').AsString)+', '+ // DTA_CAIXA
+                   sNumSeq+', '+ // NUM_SEQ
+                   QuotedStr(IBQ_ConsultaFilial.FieldByName('CHAVENF').AsString)+', '+ // NUM_CHAVENF
+                   QuotedStr(sgCodEmp)+', '+ // COD_EMPRESA
+                   QuotedStr(IBQ_ConsultaFilial.FieldByName('CODCOMPROVANTE').AsString)+', '+ // COD_HISTORICO,
+                   QuotedStr(AnsiUpperCase(IBQ_ConsultaFilial.FieldByName('OBSERVACAO').AsString))+', '+ // TXT_OBS
+                   QuotedStr(Trim(IBQ_ConsultaFilial.FieldByName('NUMERO').AsString))+', '+ // NUM_DOCUMENTO
+                   QuotedStr(Trim(IBQ_ConsultaFilial.FieldByName('SERIE').AsString))+', '+ // NUM_SERIE
+                   sPercRed+', '+ // PER_REDUCAO,
+                   QuotedStr(IBQ_ConsultaFilial.FieldByName('TP_DEBCRE').AsString)+', '+ // TIP_DEBCRE
+                   'CAST(('+IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString+
+                          '-(('+sPercRed+' * '+IBQ_ConsultaFilial.FieldByName('VLR_TOTAL').AsString+
+                          ') / 100)) AS NUMERIC(12,2)),'+ // VLR_CAIXA
+                   ' 0.00,'+ // VLR_SALDO
+                   QuotedStr(sCodForn)+', '+ // CODFORNECEDOR VARCHAR(6)
+                   sgCodEmpLINX+', '+ // COD_LOJA_LINX INTEGER
+                   QuotedStr(sgCodEmp)+')'; // COD_LOJA_SIDICOM VARCHAR(2)
+            DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
+
+            // Guarda Fornecedor a Processar Conta Correte ------------
+            bgProcessar:=True;
+            For i:=0 to Mem_Odir.Lines.Count-1 do
+            Begin
+               If Mem_Odir.Lines[i]=sCodFornLINX Then
+               Begin
+                 bgProcessar:=False;
+                 Break;
+               End;
+            End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
+
+            If bgProcessar Then
+            Begin
+              Mem_Odir.Lines.Add(sCodFornLINX);
+            End;
+          End; // If sCodFornLINX<>'' Then
 
           IBQ_ConsultaFilial.Next;
         End; // While Not IBQ_ConsultaFilial.Eof do
@@ -575,7 +965,7 @@ Begin
 
     ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'F')
   End; // If bSiga Then
-end; // Busca Movtos de Debito/Credito de Fornecedores >>>>>>>>>>>>>>>>>>>>>>>>>
+end; // Busca Movtos de Debito/Credito de Fornecedores SIDICOM >>>>>>>>>>>>>>>>>
 
 // Calcula Fluxo de Caixo de Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaSeteHoras.CalculaFluxoCaixaFornecedores(sDt: String=''; sCodForn: String ='');
@@ -604,11 +994,11 @@ Begin
 
            If (Trim(sCodForn)<>'') and (Trim(sDt)<>'') Then
             MySql:=
-             MySql+' And c.COD_FORNECEDOR='+QuotedStr(sCodForn);
+             MySql+' And c.COD_FORNECEDOR='+sCodForn;
 
            If (Trim(sCodForn)<>'') and (Trim(sDt)='') Then
             MySql:=
-             MySql+' WHERE c.COD_FORNECEDOR='+QuotedStr(sCodForn);
+             MySql+' WHERE c.COD_FORNECEDOR='+sCodForn;
 
     MySql:=
      MySql+' ORDER BY c.COD_FORNECEDOR';
@@ -624,8 +1014,10 @@ Begin
 
       // Busca Fluxo de Caixa Fornecedores =========================================
       MySql:=' SELECT cx.COD_FORNECEDOR, cx.DES_FORNECEDOR, cx.DTA_CAIXA, cx.NUM_SEQ,'+
-             ' cx.TIP_DEBCRE, cx.VLR_CAIXA, cx.VLR_SALDO'+
+             '        cx.TIP_DEBCRE, cx.VLR_CAIXA, cx.VLR_SALDO'+
+
              ' FROM FL_CAIXA_FORNECEDORES cx'+
+
              ' WHERE cx.DTA_CAIXA='+QuotedStr(DMAtualizaSeteHoras.CDS_While.FieldByName('Dta_Caixa').AsString)+
              ' And   cx.COD_FORNECEDOR='+QuotedStr(DMAtualizaSeteHoras.CDS_While.FieldByName('Cod_Fornecedor').AsString)+
              ' ORDER BY cx.DTA_CAIXA, NUM_SEQ';
@@ -663,13 +1055,14 @@ Begin
 
              MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES ('+
                     ' COD_FORNECEDOR, DES_FORNECEDOR, DTA_CAIXA, NUM_SEQ,'+
-                    ' COD_HISTORICO, VLR_SALDO)'+
+                    ' COD_HISTORICO, PER_REDUCAO, VLR_SALDO)'+
                     ' Values ('+
                     QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Cod_Fornecedor').AsString)+', '+
                     QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Des_Fornecedor').AsString)+', '+
                     QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+', '+
                     QuotedStr('0')+', '+
-                    QuotedStr('0')+', ';
+                    QuotedStr('0')+', '+
+                    ' NULL, ';
 
                    If Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('DtAnterior').AsString)='' Then
                     Begin
@@ -697,8 +1090,17 @@ Begin
               Begin
                 // Atualiza Saldo Incial --------------------------------
                  MySql:=' UPDATE FL_CAIXA_FORNECEDORES'+
-                        ' SET Vlr_Saldo='+QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)))+
-                        ' WHERE DTA_CAIXA='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
+                        ' SET Vlr_Saldo='+QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)));
+
+                        If (DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger=0) Or
+                           (DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger=999999) Then
+                        Begin
+                          MySql:=
+                           MySql+', Per_Reducao=null';
+                        End;
+
+                 MySql:=
+                  MySql+' WHERE DTA_CAIXA='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
                         ' AND Num_Seq='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Num_Seq').AsString)+
                         ' AND COD_FORNECEDOR='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('COD_FORNECEDOR').AsString);
                  DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
@@ -714,15 +1116,17 @@ Begin
           MySql:='UPDATE FL_CAIXA_FORNECEDORES';
 
           If DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('TIP_DEBCRE').AsString='C' Then
-           cVlrSaldo:=cVlrSaldo+DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Vlr_Caixa').AsCurrency
+           cVlrSaldo:=
+            cVlrSaldo+DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Vlr_Caixa').AsCurrency
           Else
-           cVlrSaldo:=cVlrSaldo-DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Vlr_Caixa').AsCurrency;
+           cVlrSaldo:=
+            cVlrSaldo-DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Vlr_Caixa').AsCurrency;
 
           MySql:=
            MySql+' SET Vlr_Saldo='+QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)))+
                  ' WHERE DTA_CAIXA='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
-                 ' And NUM_SEQ='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Num_Seq').AsString)+
-                 ' And COD_FORNECEDOR='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('COD_FORNECEDOR').AsString);
+                 ' And   NUM_SEQ='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Num_Seq').AsString)+
+                 ' And   COD_FORNECEDOR='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('COD_FORNECEDOR').AsString);
           DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
         End; // If (DMAtualizaSeteHoras.CDS_Pesquisa.RecNo<>iUltmio) and (DMAtualizaSeteHoras.CDS_Pesquisa.RecNo<>1)Then
 
@@ -734,13 +1138,14 @@ Begin
              // Insere Saldo Final ----------------------------------
              MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES ('+
                     ' COD_FORNECEDOR, DES_FORNECEDOR, DTA_CAIXA, NUM_SEQ,'+
-                    ' COD_HISTORICO, VLR_SALDO)'+
+                    ' COD_HISTORICO, PER_REDUCAO, VLR_SALDO)'+
                     ' VALUES ('+
                     QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Cod_Fornecedor').AsString)+', '+
                     QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Des_Fornecedor').AsString)+', '+
                     QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+', '+
                     QuotedStr('999999')+', '+
                     QuotedStr('999999')+', '+
+                    ' NULL,'+ // PER_REDUCAO
                     QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)))+')';
              DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
            End
@@ -748,8 +1153,17 @@ Begin
            Begin
              // Atualiza Movto --------------------------------------
              MySql:=' UPDATE FL_CAIXA_FORNECEDORES'+
-                    ' SET Vlr_Saldo='+QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)))+
-                    ' WHERE DTA_CAIXA='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
+                    ' SET Vlr_Saldo='+QuotedStr(f_Troca(',','.',CurrToStr(cVlrSaldo)));
+
+                    If (DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger=0) Or
+                       (DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger=999999) Then
+                    Begin
+                      MySql:=
+                       MySql+', Per_Reducao=null';
+                    End;
+
+             MySql:=
+              MySql+' WHERE DTA_CAIXA='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Dta_Caixa').AsString)+
                     ' AND Num_Seq='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Num_Seq').AsString)+
                     ' AND COD_FORNECEDOR='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('COD_FORNECEDOR').AsString);
              DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
@@ -779,7 +1193,6 @@ Begin
       DecimalSeparator:=',';
     End;
   End;
-
 End; // Calcula Fluxo de Caixo de Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 //==============================================================================
@@ -792,14 +1205,13 @@ Var
 
   MySql: String;
   i: Integer;
-  sCompDeb, sCompCre: String;
 begin
 
   //============================================================================
   // Atualiza Demanda 4 Meses ==================================================
   //============================================================================
 //opss - 13/06/2017
-  Demanda4Meses;
+//  Demanda4Meses;
   // Atualiza Demanda 4 Meses ==================================================
   //============================================================================
 
@@ -816,10 +1228,13 @@ begin
   // ATUALIZA CONTA CORRENTE FORNECEDORES ======================================
   //============================================================================
   // Verifica Parametro Enviado ================================================
-  // OBS: Enviar com Aspas é utilizado na clausula < in >: '000297','001196'
+  // OBS: Enviar Somente Um Código por Vez
+  //======================================
   sgCodForn:='';
   for i := 1 to ParamCount do
-   sgCodForn:=LowerCase(ParamStr(i));
+  Begin
+    sgCodForn:=LowerCase(ParamStr(i));
+  End;
 
 //opss
 //sgCodForn:='000050';
@@ -837,74 +1252,43 @@ begin
   DMAtualizaSeteHoras.SDS_BuscaRapida.CommandText:=MySql;
   DMAtualizaSeteHoras.CDS_BuscaRapida.Open;
 
-  sCompCre:='';
-  sCompDeb:='';
+  sgCompCre:='';
+  sgCompDeb:='';
   While Not DMAtualizaSeteHoras.CDS_BuscaRapida.Eof do
   Begin
     If DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('ind_debcre').AsString='D' Then
     Begin
-      If Trim(sCompDeb)='' Then
-       sCompDeb:=QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString)
+      If Trim(sgCompDeb)='' Then
+       sgCompDeb:=QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString)
       Else
-       sCompDeb:=sCompDeb+', '+QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString);
+       sgCompDeb:=sgCompDeb+', '+QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString);
     End;
 
     If DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('ind_debcre').AsString='C' Then
     Begin
-      If Trim(sCompCre)='' Then
-       sCompCre:=QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString)
+      If Trim(sgCompCre)='' Then
+       sgCompCre:=QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString)
       Else
-       sCompCre:=sCompCre+', '+QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString);
+       sgCompCre:=sgCompCre+', '+QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString);
     End;
 
     DMAtualizaSeteHoras.CDS_BuscaRapida.Next;
   End; // While Not DMAtualizaSeteHoras.CDS_BuscaRapida.Eof do
   DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
 
-  //============================================================================
-  // Monta Select de Busca de Debitos e Créditos (SIDICOM) =====================
-  MySqlSelect:=' SELECT mf.codfornecedor, f.nomefornecedor,'+
-               ' mf.datacomprovante, mf.dataentrada, mf.codcomprovante,'+
-               ' CASE'+
-               '   WHEN mf.codcomprovante IN ('+sCompCre+') Then'+
-               '    ''C'''+
-               '   WHEN mf.codcomprovante IN ('+sCompDeb+') Then'+
-               '    ''D'''+
-               ' End Tp_DebCre,'+
-               ' mf.codfilial, mf.observacao, mf.chavenf, mf.numero, mf.serie,'+
-               ' ABS(COALESCE(mf.totnota,0.00)) Vlr_Total'+
-
-               ' FROM MFOR mf, FORNECED f'+
-               ' WHERE  mf.codfornecedor=f.codfornecedor'+
-               ' AND    mf.codfilial=:CodLoja'+
-               ' AND    mf.codcomprovante in ('+sCompCre+', '+sCompDeb+')'+
-               ' AND    mf.dataentrada>='+QuotedStr(sgDtaInicio);
-
-               If Trim(sgCodForn)<>'' Then
-                MySqlSelect:=
-                 MySqlSelect+' AND mf.codfornecedor in ('+QuotedStr(sgCodForn)+')';
-
-               MySqlSelect:=
-                MySqlSelect+' ORDER BY mf.codfornecedor, mf.dataentrada';
-  // Monta Select de Busca de Debitos e Créditos (SIDICOM) =====================
-  //============================================================================
-
-  //============================================================================
-  // Monta Select de Busca de Debitos e Créditos (LINX) ========================
-
-  // Monta Select de Busca de Debitos e Créditos (LINX) ========================
-  //============================================================================
+  // Monta SQL's Para Busca SIDICOM / LINX =====================================
+  MontaSqlsSidicomLinx;
 
   // Limpa Codigos de Fornecedores =============================================
   Mem_Odir.Lines.Clear;
 
   // Busca Lojas ===============================================================
-  MySql:=' SELECT e.cod_filial, e.cod_linx'+
+  MySql:=' SELECT e.cod_filial, e.cod_linx, e.dta_inicio_linx'+
          ' FROM EMP_CONEXOES e'+
          ' WHERE ((e.ind_ativo = ''SIM'') OR'+
          '        (e.cod_filial = ''99'') OR'+
          '        (e.cod_filial = ''50''))'+
-         ' ORDER BY 1 desc';
+         ' ORDER BY 1';// desc';
   DMAtualizaSeteHoras.CDS_Lojas.Close;
   DMAtualizaSeteHoras.SDS_Lojas.CommandText:=MySql;
   DMAtualizaSeteHoras.CDS_Lojas.Open;
@@ -912,13 +1296,50 @@ begin
   DMAtualizaSeteHoras.CDS_Lojas.First;
   While Not DMAtualizaSeteHoras.CDS_Lojas.Eof do
   Begin
-    If DMAtualizaSeteHoras.CDS_Lojas.FieldByName('COD_LINX').AsInteger<>0 Then
-    Begin
-      DMAtualizaSeteHoras.CDS_Lojas.Next;
-    End;
-    sgCodEmp:=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('COD_FILIAL').AsString;
+    sgCodEmp    :=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('COD_FILIAL').AsString;
+    sgCodEmpLINX:=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('COD_LINX').AsString;
+    sgDtaIniLINX:=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('DTA_INICIO_LINX').AsString;
 
-    BuscaMovtosDebCre;
+    // Busca Débitos/Crétidos no SIDICOM =======================================
+    If sgCodEmpLINX='0' Then
+    Begin
+      //============================================================================
+      // Quando Busca Por Codigo no SIDICOM Altera o Código para SIDICOM ===========
+      If Trim(sgCodForn)<>'' Then
+      Begin
+        MySql:=' SELECT'+
+               ' REPLACE(REPLACE(REPLACE(TRIM(f.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''') Doc_Forn'+
+               ' FROM LINXCLIENTESFORNEC f'+
+               ' WHERE f.cod_cliente='+sgCodForn;
+        DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
+        DMAtualizaSeteHoras.SDS_BuscaRapida.CommandText:=MySql;
+        DMAtualizaSeteHoras.CDS_BuscaRapida.Open;
+        sgCodForn:=DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('Doc_Forn').AsString;
+        DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
+
+        If Trim(sgCodForn)<>'' Then
+        Begin
+          MySql:=' SELECT fo.codfornecedor'+
+                 ' FROM FORNECEDOR fo'+
+                 ' WHERE REPLACE(REPLACE(REPLACE(fo.numerocgcmf, ''/'', ''''), ''.'', ''''), ''-'', '''') = '+QuotedStr(sgCodForn);
+          DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
+          DMAtualizaSeteHoras.SDS_BuscaRapida.CommandText:=MySql;
+          DMAtualizaSeteHoras.CDS_BuscaRapida.Open;
+          sgCodForn:=DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('codfornecedor').AsString;
+          DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
+        End; // If Trim(sgCodForn)<>'' Then
+      End; // If Trim(sgCodForn)<>'' Then
+      // Quando Busca Por Codigo no SIDICOM Altera o Código para SIDICOM ===========
+      //============================================================================
+
+      BuscaMovtosDebCreSIDICOM;
+    End;
+
+    // Busca Débitos/Crétidos no LINX ==========================================
+    If sgCodEmpLINX<>'0' Then
+    Begin
+      BuscaMovtosDebCreLINX;
+    End;
 
     DMAtualizaSeteHoras.CDS_Lojas.Next;
   End; // While Not DMAtualizaSeteHoras.CDS_Busca.Eof do
@@ -932,12 +1353,12 @@ begin
   // ATUALIZA CONTA CORRENTE FORNECEDORES ======================================
   //============================================================================
 
-
+  
   //============================================================================
   // Atualiza Centro de Custos =================================================
   //============================================================================
 //opss - 13/06/2017
-  CentroCustos;
+//  CentroCustos;
 
   // Encerra Programa ==========================================================
   Application.Terminate;
