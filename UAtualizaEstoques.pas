@@ -171,6 +171,14 @@ Begin
     MySql:=' DELETE FROM W_LINX_MOVTOS';
     DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
+    // Zera Produtos que não Foram Utilizados ==================================
+    MySql:=' UPDATE ESTOQUE es'+
+           ' SET es.saldoatual=0.0000'+
+           ' WHERE es.codfilial='+QuotedStr(sCodBelShop)+
+           ' AND   es.saldoatual<>0.0000'+
+           ' AND   es.dta_atualizacao<'+QuotedStr(sgDataAtual);
+    DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
     MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
            ' VALUES ('+
            QuotedStr(sCodBelShop)+', '+
@@ -490,8 +498,6 @@ begin
            DMAtualizaEstoques.IBQ_EstoqueLoja.Close;
 
           CriaQueryIB('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, DMAtualizaEstoques.IBQ_EstoqueLoja, False, True);
-//          DMAtualizaEstoques.IBQ_EstoqueLoja.Database:=IBQ_Consulta.Database;
-//          DMAtualizaEstoques.IBQ_EstoqueLoja.Transaction:=IBQ_Consulta.Transaction;
 
           MySql:=' SELECT'+
                  ' e.codfilial, e.codproduto, e.saldoatual, e.pedidopendente,'+
@@ -702,6 +708,14 @@ begin
                 DMAtualizaEstoques.CDS_LojaLinx.Next;
               End; // While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
               DMAtualizaEstoques.CDS_LojaLinx.Close;
+
+              // Zera Produtos que não Foram Utilizados ========================
+              MySql:=' UPDATE ESTOQUE es'+
+                     ' SET es.saldoatual=0.0000'+
+                     ' WHERE es.codfilial='+QuotedStr(sCodEmpresa)+
+                     ' AND   es.saldoatual<>0.0000'+
+                     ' AND   es.dta_atualizacao<'+QuotedStr(sgDataAtual);
+              DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
             End; // If (iCodLinx<>0) And (sDtaInventLinx<>'') Then
             // =================================================================
             // LINX COM INVENTARIO - LINX DIRETO ===============================

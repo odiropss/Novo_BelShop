@@ -18515,6 +18515,8 @@ begin
   // Desabilita Todas as TabSheets e Botoes de Calculo =========================
   DesabilitaTodasTabSheets(PC_ProfMovtosRH);
 
+  LimpaStringGrid(Strg_ProfPlanoSaudeImpArquivo);
+
   Bt_MovtosRHRetornar.Visible:=False;
   Bt_Fechar.Visible:=True;
 

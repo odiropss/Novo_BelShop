@@ -210,7 +210,7 @@ Begin
               sObs:=' - Corte Pela Reposição Maior que Diferença Entre Estoque Máximo Saldo';
               iQtdReposicao:=(iQtdMax-iQtdEst);
             End;
-         End;
+         End; // If (iQtdMax>0) Then
 
          //=====================================================================
          // CALCULA MULTIPLOS E PERCENTUAIS DE CORTES ==========================
@@ -266,7 +266,6 @@ Begin
              sObs:=Trim(sObs)+' - Utilizado Conforme Multiplo Qtd/Caixa: '+
                    DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsString+
                    ' Corte: '+DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsString+'%';
-
            End; // If bMultiplo Then
 
            // Calcula Por Percentual de Corte ==================================
@@ -290,101 +289,18 @@ Begin
                    ' Corte: '+DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsString+'%';
            End; // If Not bMultiplo Then
            DMTransferencias.CDS_BuscaRapida.Close;
-
-// OdirApagar - 02/01/2017 - Substituido pela Utilização da Tabela PROD_CAIXA_CD
-//           //=====================================================================
-//           // ESMALTE - Acerta Quantidade de Reposição para Multiplo de Seis (6)
-//           //=====================================================================
-//           MySql:=' SELECT p.codproduto'+
-//                  ' FROM PRODUTO p'+
-//                  ' WHERE p.codproduto='+QuotedStr(DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString)+
-//                  ' AND P.CODGRUPOSUB='+QuotedStr('0100003'); // Sub-Grupo: Esmalte
-//           DMTransferencias.CDS_BuscaRapida.Close;
-//           DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
-//           DMTransferencias.CDS_BuscaRapida.Open;
-//           bMultiplo:=(Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('CodProduto').AsString)<>'');
-//           DMTransferencias.CDS_BuscaRapida.Close;
-//
-//           If bMultiplo Then
-//           Begin
-//             iMultiplo:=6;
-//             iQtdMultiplo:=iMultiplo;
-//
-//             While bMultiplo do
-//             Begin
-//               If iQtdReposicao<iQtdMultiplo Then
-//               Begin
-//                 iQtdReposicao:=iQtdMultiplo;
-//                 Break;
-//               End;
-//               iQtdMultiplo:=iQtdMultiplo+iMultiplo;
-//             End; // While bMultiplo do
-//           End; // If bMultiplo Then
-//           //=====================================================================
-//           // ESMALTE - Acerta Quantidade de Reposição para Multiplo de 6
-//           //=====================================================================
-//
-//           //=====================================================================
-//           // PRODUTO CÓDIGO 923834 - DERMABEL 2,8ML
-//           // Acerta Quantidade de Reposição para Multiplo de 25
-//           //=====================================================================
-//           If (DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString='923834') And (not bMultiplo) Then
-//           Begin
-//             iMultiplo:=25;
-//             iQtdMultiplo:=iMultiplo;
-//
-//             bMultiplo:=True;
-//             While bMultiplo do
-//             Begin
-//               If iQtdReposicao<iQtdMultiplo Then
-//               Begin
-//                 iQtdReposicao:=iQtdMultiplo;
-//                 Break;
-//               End;
-//               iQtdMultiplo:=iQtdMultiplo+iMultiplo;
-//             End; // While bMultiplo do
-//           End; // If (DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString='923834') And (not bMultiplo) Then
-//           //=====================================================================
-//           // PRODUTO CÓDIGO 923834 - DERMABEL 2,8ML
-//           // Acerta Quantidade de Reposição para Multiplo de 25
-//           //=====================================================================
-//
-//           //=====================================================================
-//           // LUVAS - Acerta Quantidade de Reposição para Multiplo de Seis (100)
-//           //=====================================================================
-//           If not bMultiplo Then
-//           Begin
-//             MySql:=' SELECT p.codproduto'+
-//                    ' FROM PRODUTO p'+
-//                    ' WHERE p.codproduto='+QuotedStr(DMTransferencias.CDS_EstoqueLojaCOD_PRODUTO.AsString)+
-//                    ' AND UPPER(p.apresentacao) LIKE ''LUVA%'''; // Nome que Contenha "LUVA"
-//             DMTransferencias.CDS_BuscaRapida.Close;
-//             DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
-//             DMTransferencias.CDS_BuscaRapida.Open;
-//             bMultiplo:=(Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('CodProduto').AsString)<>'');
-//             DMTransferencias.CDS_BuscaRapida.Close;
-//
-//             If bMultiplo Then
-//             Begin
-//               iMultiplo:=100;
-//               iQtdMultiplo:=iMultiplo;
-//
-//               While bMultiplo do
-//               Begin
-//                 If iQtdReposicao<iQtdMultiplo Then
-//                 Begin
-//                   iQtdReposicao:=iQtdMultiplo;
-//                   Break;
-//                 End;
-//                 iQtdMultiplo:=iQtdMultiplo+iMultiplo;
-//               End; // While bMultiplo do
-//             End; // If bMultiplo Then
-//           End; // If not bMultiplo Then
-//           //=====================================================================
-//           // LUVAS - Acerta Quantidade de Reposição para Multiplo de Seis (100)
-//           //=====================================================================
-//
-//           bMultiplo:=False;
+ 
+           // Não Repõe Quantidade de Reposição < 3 para curvas para C, D, E ===
+           // Definido Pela Logistica: Eduardo, Pedro, Carlos.
+           If ((Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='C') Or
+               (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='D') Or
+               (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='E')) AND
+              (iQtdReposicao<3) Then
+           Begin
+              sObs:=Trim(sObs)+' - Não Repõe Quantidade Menor que 3 para Curva: '+
+                               Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)+'.';
+              bRepoe:=False;
+           End; // If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='C') Or ...
 
            If bRepoe Then
            Begin

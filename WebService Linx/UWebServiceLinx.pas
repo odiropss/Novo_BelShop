@@ -96,6 +96,13 @@ unit UWebServiceLinx;
    - Por Loja
    =====================================
    Irá conter as informações dos pedidos de compra
+
+-> Produtos Detalhes: LinxReducoesZ
+   - Por Loja
+   =======================================
+   Retorna as ReduçõesZ de acordo com a loja pesquisada, somente para clientes
+   que ainda utilizam a impressora fiscal
+
 }
 interface
 
@@ -137,7 +144,8 @@ var
   sgCodLojaLinx, // Código da Loja/Empresa em Processamento (Codigo da Loja no Microvix)
   sgDtaInicioLinx,  // Data que a Loija Inicio com o Sistema Linx
   sgCodProduto,  // Codigo do Produto para Busca Individual
-  sgMensagem, sgDta,
+  sgMensagem,
+  sgDta, sgCnpjPortal,
   sgPastaExecutavel, sgPastaBelShop, sgPastaRetornos, sgPastaMetodos:
   String;
 
@@ -282,8 +290,8 @@ Begin
         Begin
           iii:=ii;
 
-//odirAqui 3 - Campo "Empresa" COM Campo "Portal"
-          // Considera Campo "Empresa" COM Campo "Portal" das TABELAS ==========
+//odirAqui 3 - Campo "Empresa Colocado Pelo Odir" COM Campo "Portal"
+          // Considera Campo "Empresa (ODIR)" COM Campo "Portal" das TABELAS ==========
           If ((AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas'))                    Or
               (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento'))                  Or
               (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoTrocas'))            Or
@@ -344,7 +352,7 @@ Begin
               Begin
                 sCampoDta:='';
 
-//odiraqui 5 - Campo "Empresa"
+//odiraqui 5 - Campo "Empresa Colocado Pelo Odir"
                 // Considera Campo "Empresa" das TABELAS ------------
                 If ((AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas'))                    Or
                     (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento'))                  Or
@@ -361,7 +369,7 @@ Begin
                     (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosCompra'))              Or
                     (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes')))         And
                     (ii=1) Then // COLOCA COD_EMPRESA NO MICROVIX
-                Begin
+                Begin                                            
                   sSqlUpInValores:=
                    sSqlUpInValores+QuotedStr(sgCodLojaLinx)+', ';
                 End; // If ((AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas'))   Or...
@@ -426,6 +434,7 @@ Begin
                  (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLancContabil'))               Or
                  (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosVenda'))               Or
                  (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosCompra'))              Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxReducoesZ'))                  Or
                  (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes'))           Then
                Begin
                  sSqlUpInValores:=
@@ -535,6 +544,12 @@ Begin
                 sSqlUpInValores+' MATCHING (empresa, codigo_fatura, data_emissao, '+
                                            'cod_cliente, documento, serie, identificador)';
 
+              // LinxReducoesZ --------------------------------------
+              If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxReducoesZ') Then
+               sSqlUpInValores:=
+                sSqlUpInValores+' MATCHING (empresa, cnpj, data_fechamento, numero_ecf,'+
+                                           'numeroserie, data_mov)';
+                                           
               // Executa Sql Update/Insert --------------------------
               MySql:=sSqlUpInCampos+sSqlUpInValores;
               MySql:=F_Troca(#$A#$A, ' ', MySql);
@@ -803,12 +818,13 @@ Begin
   // LinxMovimentoAcoesPromocionais ============================================
   // LinxPedidosVenda ==========================================================
   // LinxPedidosCompra =========================================================
+  // LinxReducoesZ =============================================================
   // ===========================================================================
   If (sgMetodo='LinxClientesFornec')  Or (sgMetodo='LinxMovimento') Or
      (sgMetodo='LinxMovimentoTrocas') Or (sgMetodo='LinxMovimentoOrigemDevolucoes') Or
      (sgMetodo='LinxMovimentoSerial') Or (sgMetodo='LinxMovimentoAcoesPromocionais') Or
      (sgMetodo='LinxMovimentoPlanos') Or (sgMetodo='LinxPedidosVenda') Or
-     (sgMetodo='LinxPedidosCompra')   Then
+     (sgMetodo='LinxPedidosCompra')   Or (sgMetodo='LinxReducoesZ') Then
   Begin
     //---------------------------------------------------------------
     // LinxMovimentoTrocas ------------------------------------------
@@ -826,6 +842,15 @@ Begin
     End; // If (sgMetodo='LinxMovimentoTrocas') Then
 
     //---------------------------------------------------------------
+    // LinxReducoesZ ------------------------------------------------
+    //---------------------------------------------------------------
+    If (sgMetodo='LinxReducoesZ') Then
+    Begin
+      sXML:='			<Parameter id="cnpjPortal">'+sgCnpjPortal+'</Parameter>';
+      Writeln(txtArq,sXML);
+    End; // If (sgMetodo='LinxMovimentoTrocas') Then
+
+    //---------------------------------------------------------------
     // LinxClientesFornec -------------------------------------------
     // LinxMovimento ------------------------------------------------
     // LinxMovimentoTrocas ------------------------------------------
@@ -835,6 +860,7 @@ Begin
     // LinxMovimentoAcoesPromocionais -------------------------------
     // LinxPedidosVenda ---------------------------------------------
     // LinxPedidosCompra --------------------------------------------
+    // LinxReducoesZ ------------------------------------------------
     //---------------------------------------------------------------
     sXML:='			<Parameter id="data_inicial">'+sgDtaInicio+'</Parameter>';
     Writeln(txtArq,sXML);
@@ -1262,6 +1288,8 @@ Begin
        sgCampoUpdate:='DATA_LANCAMENTO'
       Else If (AnsiUpperCase(sgMetodo)='LINXPEDIDOSCOMPRA') Then
        sgCampoUpdate:='DATA_PEDIDO'
+      Else If (AnsiUpperCase(sgMetodo)='LINXREDUCOESZ') Then
+       sgCampoUpdate:='DATA_MOV'
       ELSE
        sgCampoUpdate:='Dta_Atualizacao';
 
@@ -1283,6 +1311,7 @@ Begin
                 (AnsiUpperCase(sgMetodo)='LINXLANCCONTABIL')               or
                 (AnsiUpperCase(sgMetodo)='LINXPEDIDOSVENDA')               or
                 (AnsiUpperCase(sgMetodo)='LINXPEDIDOSCOMPRA')              or
+                (AnsiUpperCase(sgMetodo)='LINXREDUCOESZ')                  or
                 (AnsiUpperCase(sgMetodo)='LINXPRODUTOSDETALHES')           Then
               MySql:=
                MySql+' WHERE lx.Empresa='+sgCodLojaLinx;
@@ -1888,6 +1917,45 @@ Begin
 
         MontaMetodoXMLPost();
       End; // If sgMetodo='LinxPedidosCompra' Then
+      //========================================================================
+
+      //========================================================================
+      // LinxReducoesZ =========================================================
+      //========================================================================
+      If sgMetodo='LinxReducoesZ' Then
+      Begin
+        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
+
+        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
+        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        DecodeDate(dDtaHoje, wAno, wMes, wDia);
+        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+        // Metodo por Parametro (Acerta Data Inicial)
+        If Trim(sgParametroMetodo)<>'' Then
+        Begin
+          If dDtaUltAtual=dDtaHoje Then
+          Begin
+            sgDtaInicio:=sgDtaFim;
+          End;
+
+          If dDtaUltAtual<dDtaHoje Then
+          Begin
+            DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+          End;
+        End; // If Trim(sgParametroMetodo)<>'' Then
+
+        // cnpjPortal -----------------------------------------------
+        // (S) = Retorna registros de todos CNPJs do Portal
+        //       (utiliza como base o cnpj informado nocampo cnpjEmp para pesquisar o portal).
+        // (N) = Retorna registros somente do CNPJ pesquisa
+        sgCnpjPortal:='N';
+
+        MontaMetodoXMLPost();
+      End; // If sgMetodo='LinxReducoesZ' Then
       //========================================================================
 
       //========================================================================

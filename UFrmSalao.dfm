@@ -405,7 +405,7 @@ object FrmSalao: TFrmSalao
     Top = 0
     Width = 977
     Height = 580
-    ActivePage = Ts_ProfPagtos
+    ActivePage = Ts_ProfMovtosRH
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -9294,7 +9294,6 @@ object FrmSalao: TFrmSalao
                 Expanded = False
                 FieldName = 'VLR_DESCONTO'
                 Title.Alignment = taRightJustify
-                Width = 64
                 Visible = True
               end
               item
@@ -10612,7 +10611,7 @@ object FrmSalao: TFrmSalao
         Top = 0
         Width = 828
         Height = 514
-        ActivePage = Ts_ProfINSS
+        ActivePage = Ts_ProfImpPlanoSaude
         Align = alClient
         TabOrder = 0
         OnChange = PC_ProfMovtosRHChange
