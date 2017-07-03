@@ -2748,51 +2748,45 @@ object DMBelShop: TDMBelShop
   end
   object SDS_FluxoFornecedor: TSQLDataSet
     CommandText = 
-      'SELECT'#13#10'FF.DTA_CAIXA DATA,'#13#10#13#10'CASE'#13#10'  WHEN ((FF.COD_EMPRESA=99) ' +
-      'or (FF.COD_EMPRESA=50)) THEN'#13#10'    '#39'Bel_'#39'||EMS.cod_filial'#13#10'  ELSE' +
-      #13#10'    '#39'Bel_'#39'||EMP.cod_linx'#13#10'end LOJA,'#13#10#13#10'CASE'#13#10'  WHEN (FF.COD_HI' +
-      'STORICO=0) OR (FF.COD_HISTORICO=999999) THEN'#13#10'   NULL'#13#10'  ELSE'#13#10' ' +
-      '   FF.COD_HISTORICO'#13#10'END COD_HISTORICO,'#13#10#13#10'FC.DES_HISTORICO,'#13#10'FF' +
-      '.NUM_DOCUMENTO, FF.NUM_SERIE,'#13#10'FF.DTA_ORIGEM, FF.VLR_ORIGEM, FF.' +
-      'PER_REDUCAO,'#13#10#13#10'CASE'#13#10'   WHEN FF.TIP_DEBCRE='#39'C'#39' THEN'#13#10'     FF.VL' +
-      'R_CAIXA'#13#10'   WHEN (FF.NUM_SEQ=0) or (FF.NUM_SEQ=999999) Then'#13#10'   ' +
-      '  null'#13#10'   ELSE'#13#10'     0.00'#13#10'END VLR_CREDITO,'#13#10#13#10'CASE'#13#10'   WHEN FF' +
-      '.TIP_DEBCRE='#39'D'#39' THEN'#13#10'      FF.VLR_CAIXA'#13#10'    WHEN (FF.NUM_SEQ=0' +
-      ') or (FF.NUM_SEQ=999999) Then'#13#10'      null'#13#10'   ELSE'#13#10'      0.00'#13#10 +
-      'END VLR_DEBITO,'#13#10'CASE FF.NUM_SEQ'#13#10'   WHEN 0 THEN'#13#10'      FF.VLR_S' +
-      'ALDO- :Valor1'#13#10'   WHEN 999999 THEN'#13#10'      FF.VLR_SALDO- :Valor2'#13 +
-      #10'END VLR_SALDO,'#13#10#13#10'FF.TXT_OBS,'#13#10#13#10'FF.COD_EMPRESA,'#13#10'CASE'#13#10'  WHEN ' +
-      '((FF.COD_EMPRESA=99) or (FF.COD_EMPRESA=50)) THEN'#13#10'    EMS.RAZAO' +
-      '_SOCIAL'#13#10'  ELSE'#13#10'   EMP.RAZAO_SOCIAL'#13#10'END RAZAO_SOCIAL,'#13#10'FF.COD_' +
-      'FORNECEDOR, FF.DES_FORNECEDOR,'#13#10'FF.NUM_SEQ, FF.NUM_CHAVENF,'#13#10'FF.' +
-      'TIP_DEBCRE'#13#10#13#10'FROM  FL_CAIXA_FORNECEDORES FF'#13#10'      LEFT JOIN FL' +
-      '_CAIXA_HISTORICOS FC ON FC.COD_HISTORICO=FF.COD_HISTORICO'#13#10'     ' +
-      ' LEFT JOIN (select e.cod_linx, e.razao_social'#13#10'                 ' +
-      'from EMP_CONEXOES e'#13#10'                 where e.cod_linx<>0) EMP O' +
-      'N EMP.cod_linx=FF.cod_empresa'#13#10'      LEFT JOIN (select s.cod_fil' +
-      'ial, s.razao_social'#13#10'                 from EMP_CONEXOES s'#13#10'     ' +
-      '            where s.cod_linx=0) EMS ON EMS.cod_filial=FF.cod_emp' +
-      'resa'#13#10#13#10'WHERE FF.COD_FORNECEDOR= :CodForn'#13#10'AND   ff.dta_caixa>= ' +
-      ':Data'#13#10#13#10'ORDER BY FF.DTA_CAIXA, FF.NUM_SEQ'#13#10#13#10#13#10#13#10
+      'SELECT'#13#10'FF.DTA_CAIXA DATA,'#13#10#39'Bel_'#39'||ff.cod_empresa LOJA,'#13#10#13#10'CASE' +
+      #13#10'  WHEN (FF.COD_HISTORICO=0) OR (FF.COD_HISTORICO=999999) THEN'#13 +
+      #10'   NULL'#13#10'  ELSE'#13#10'    FF.COD_HISTORICO'#13#10'END COD_HISTORICO,'#13#10#13#10'FC' +
+      '.DES_HISTORICO,'#13#10'FF.NUM_DOCUMENTO, FF.NUM_SERIE,'#13#10'FF.DTA_ORIGEM,' +
+      ' FF.VLR_ORIGEM, FF.PER_REDUCAO,'#13#10#13#10'CASE'#13#10'   WHEN FF.TIP_DEBCRE='#39 +
+      'C'#39' THEN'#13#10'     FF.VLR_CAIXA'#13#10'   WHEN (FF.NUM_SEQ=0) or (FF.NUM_SE' +
+      'Q=999999) Then'#13#10'     null'#13#10'   ELSE'#13#10'     0.00'#13#10'END VLR_CREDITO,'#13 +
+      #10#13#10'CASE'#13#10'   WHEN FF.TIP_DEBCRE='#39'D'#39' THEN'#13#10'      FF.VLR_CAIXA'#13#10'   ' +
+      ' WHEN (FF.NUM_SEQ=0) or (FF.NUM_SEQ=999999) Then'#13#10'      null'#13#10'  ' +
+      ' ELSE'#13#10'      0.00'#13#10'END VLR_DEBITO,'#13#10'CASE FF.NUM_SEQ'#13#10'   WHEN 0 T' +
+      'HEN'#13#10'      FF.VLR_SALDO- :Valor1'#13#10'   WHEN 999999 THEN'#13#10'      FF.' +
+      'VLR_SALDO- :Valor2'#13#10'END VLR_SALDO,'#13#10#13#10'FF.TXT_OBS,'#13#10#13#10'FF.COD_EMPR' +
+      'ESA,'#13#10#13#10#13#10'CASE'#13#10'  WHEN FF.COD_EMPRESA=50 THEN'#13#10'    '#39'CENTRA DE TR' +
+      'OCAS'#39#13#10'  ELSE'#13#10'   ll.nome_emp'#13#10'END RAZAO_SOCIAL,'#13#10#13#10'FF.COD_FORNE' +
+      'CEDOR, FF.DES_FORNECEDOR,'#13#10'FF.NUM_SEQ, FF.NUM_CHAVENF,'#13#10'FF.TIP_D' +
+      'EBCRE'#13#10#13#10'FROM  FL_CAIXA_FORNECEDORES FF'#13#10'      LEFT JOIN FL_CAIX' +
+      'A_HISTORICOS FC ON FC.COD_HISTORICO=FF.COD_HISTORICO'#13#10'      LEFT' +
+      ' JOIN linxlojas ll           ON ll.empresa=ff.cod_empresa'#13#10#13#10'WHE' +
+      'RE FF.COD_FORNECEDOR= :CodForn'#13#10'AND   ff.dta_caixa>= :Data'#13#10#13#10'OR' +
+      'DER BY FF.DTA_CAIXA, FF.NUM_SEQ'#13#10#13#10#13#10#13#10
     MaxBlobSize = -1
     Params = <
       item
         DataType = ftString
         Name = 'Valor1'
         ParamType = ptInput
-        Value = '1'
+        Value = '0'
       end
       item
         DataType = ftString
         Name = 'Valor2'
         ParamType = ptInput
-        Value = '1'
+        Value = '0'
       end
       item
         DataType = ftString
         Name = 'CodForn'
         ParamType = ptInput
-        Value = '1'
+        Value = '0'
       end
       item
         DataType = ftString
@@ -2882,7 +2876,7 @@ object DMBelShop: TDMBelShop
     object CDS_FluxoFornecedorRAZAO_SOCIAL: TStringField
       DisplayLabel = 'Empresa'
       FieldName = 'RAZAO_SOCIAL'
-      Size = 60
+      Size = 50
     end
     object CDS_FluxoFornecedorCOD_FORNECEDOR: TIntegerField
       FieldName = 'COD_FORNECEDOR'
@@ -8677,290 +8671,280 @@ object DMBelShop: TDMBelShop
   end
   object SDS_FluxoFornecedores: TSQLDataSet
     CommandText = 
-      '-- Todos os Fornecedores'#13#10'SELECT'#13#10'3 Ordem,'#13#10't.des_aux,'#13#10'c.cod_fo' +
-      'rnecedor,'#13#10#13#10'/*'#13#10'TRIM(CASE'#13#10'      WHEN COALESCE(f.nomefornecedor' +
-      ', '#39'0'#39') = '#39'0'#39' THEN '#13#10'          c.des_fornecedor'#13#10'      ELSE '#13#10'   ' +
-      '        f.nomefornecedor'#13#10'END) nomefornecedor,'#13#10'*/'#13#10'TRIM(c.des_f' +
-      'ornecedor) nomefornecedor,'#13#10#13#10'CAST(MIN(c.dta_caixa) AS DATE) dta' +
-      '_inicial,'#13#10'CAST(MAX(c.dta_caixa) AS DATE) dta_final,'#13#10#13#10'SUM(DECO' +
-      'DE(c.tip_debcre, '#39'D'#39', -c.vlr_caixa, c.vlr_caixa)) vlr_saldo,'#13#10#13#10 +
-      'CAST(CASE'#13#10'       WHEN COALESCE(t.des_aux, '#39'0'#39') = '#39'0'#39' THEN'#13#10'    ' +
-      '     NULL--MIN(c.dta_caixa)'#13#10'       ELSE'#13#10'         t.des_aux'#13#10'  ' +
-      '   END'#13#10'AS DATE) dta_cc,'#13#10#13#10'CASE'#13#10'  WHEN COALESCE(t.des_aux, '#39'0'#39 +
-      ') = '#39'0'#39' THEN'#13#10'    '#39'NAO'#39#13#10'  ELSE'#13#10'    '#39'SIM'#39#13#10'END LIMITE,'#13#10'cc.nome' +
-      'subcusto Comprador'#13#10#13#10#13#10'FROM FL_CAIXA_FORNECEDORES  c'#13#10'     LEFT' +
-      ' JOIN FORNECEDOR   f    ON f.codfornecedor = c.codfornecedor'#13#10'  ' +
-      '   LEFT JOIN TAB_AUXILIAR t  ON t.tip_aux = 14'#13#10'                ' +
-      '              AND t.cod_aux = c.cod_fornecedor'#13#10'     LEFT JOIN C' +
-      'ENTROCUSTO  cc ON cc.codcentrocusto=f.codcentrocusto'#13#10#13#10'WHERE c.' +
-      'cod_historico <> 0 AND'#13#10'      c.cod_historico <> 999999'#13#10#13#10'and (' +
-      'coalesce(f.codcentrocusto,0)=:Compr1'#13#10'    or'#13#10'     coalesce(f.co' +
-      'dcentrocusto,0)=:Compr2'#13#10'    Or'#13#10'     coalesce(f.codcentrocusto,' +
-      '0)=:Compr3'#13#10'    or'#13#10'     coalesce(f.codcentrocusto,0)=:Compr4'#13#10' ' +
-      '   or'#13#10'     coalesce(f.codcentrocusto,0)=:Compr5'#13#10'    or'#13#10'     c' +
-      'oalesce(f.codcentrocusto,0)=:Compr6'#13#10'    or'#13#10'     coalesce(f.cod' +
-      'centrocusto,0)=:Compr7'#13#10'    or'#13#10'     coalesce(f.codcentrocusto,0' +
-      ')=:Compr8'#13#10'    or'#13#10'     coalesce(f.codcentrocusto,0)=:Compr9'#13#10'  ' +
-      '  or'#13#10'     coalesce(f.codcentrocusto,0)=:Compr10)'#13#10#13#10'GROUP BY 2,' +
-      ' 3, 4, 10'#13#10#13#10'UNION'#13#10#13#10'-- Total Cr'#233'ditos dos Fornecedores'#13#10'SELECT' +
-      #13#10'0 Ordem,'#13#10'null des_aux,'#13#10'null cod_fornecedor,'#13#10#39' TOTAL CR'#201'DITO' +
-      'S DOS FORNECEDORES'#39' nomefornecedor,'#13#10#13#10'CAST(MIN(tc.dta_caixa) AS' +
-      ' DATE) dta_inicial,'#13#10'CAST(MAX(tc.dta_caixa) AS DATE) dta_final,'#13 +
-      #10#13#10'SUM(tc.vlr_caixa) vlr_saldo,'#13#10#13#10'NULL dta_cc,'#13#10'NULL LIMITE,'#13#10'N' +
-      'ULL Comprador'#13#10#13#10'FROM FL_CAIXA_FORNECEDORES tc'#13#10'     LEFT JOIN F' +
-      'ORNECEDOR   tf    ON tf.codfornecedor = tc.codfornecedor'#13#10#13#10'WHER' +
-      'E tc.cod_historico <> 0 AND'#13#10'      tc.cod_historico <> 999999'#13#10'A' +
-      'ND   tc.tip_debcre='#39'C'#39#13#10#13#10'and (coalesce(tf.codcentrocusto,0)=:Co' +
-      'mpr1'#13#10'    or'#13#10'     coalesce(tf.codcentrocusto,0)=:Compr2'#13#10'    Or' +
-      #13#10'     coalesce(tf.codcentrocusto,0)=:Compr3'#13#10'    or'#13#10'     coale' +
-      'sce(tf.codcentrocusto,0)=:Compr4'#13#10'    or'#13#10'     coalesce(tf.codce' +
-      'ntrocusto,0)=:Compr5'#13#10'    or'#13#10'     coalesce(tf.codcentrocusto,0)' +
-      '=:Compr6'#13#10'    or'#13#10'     coalesce(tf.codcentrocusto,0)=:Compr7'#13#10'  ' +
-      '  or'#13#10'     coalesce(tf.codcentrocusto,0)=:Compr8'#13#10'    or'#13#10'     c' +
-      'oalesce(tf.codcentrocusto,0)=:Compr9'#13#10'    or'#13#10'     coalesce(tf.c' +
-      'odcentrocusto,0)=:Compr10)'#13#10#13#10'UNION'#13#10#13#10'-- Total D'#233'bitos dos Forn' +
-      'ecedores'#13#10'SELECT'#13#10'1 Ordem,'#13#10'null des_aux,'#13#10'null cod_fornecedor,'#13 +
-      #10#39' TOTAL D'#201'BITOS DOS FORNECEDORES'#39' nomefornecedor,'#13#10#13#10'CAST(MIN(t' +
-      'c.dta_caixa) AS DATE) dta_inicial,'#13#10'CAST(MAX(tc.dta_caixa) AS DA' +
-      'TE) dta_final,'#13#10#13#10'SUM(tc.vlr_caixa) vlr_saldo,'#13#10#13#10'NULL dta_cc,'#13#10 +
-      'NULL LIMITE,'#13#10'NULL Comprador'#13#10#13#10'FROM FL_CAIXA_FORNECEDORES tc'#13#10' ' +
-      '    LEFT JOIN FORNECEDOR   tf    ON tf.codfornecedor = tc.codfor' +
-      'necedor'#13#10'WHERE tc.cod_historico <> 0 AND'#13#10'      tc.cod_historico' +
-      ' <> 999999'#13#10'AND   tc.tip_debcre='#39'D'#39#13#10#13#10'and (coalesce(tf.codcentr' +
-      'ocusto,0)=:Compr1'#13#10'    or'#13#10'     coalesce(tf.codcentrocusto,0)=:C' +
-      'ompr2'#13#10'    Or'#13#10'     coalesce(tf.codcentrocusto,0)=:Compr3'#13#10'    o' +
-      'r'#13#10'     coalesce(tf.codcentrocusto,0)=:Compr4'#13#10'    or'#13#10'     coal' +
-      'esce(tf.codcentrocusto,0)=:Compr5'#13#10'    or'#13#10'     coalesce(tf.codc' +
-      'entrocusto,0)=:Compr6'#13#10'    or'#13#10'     coalesce(tf.codcentrocusto,0' +
-      ')=:Compr7'#13#10'    or'#13#10'     coalesce(tf.codcentrocusto,0)=:Compr8'#13#10' ' +
-      '   or'#13#10'     coalesce(tf.codcentrocusto,0)=:Compr9'#13#10'    or'#13#10'     ' +
-      'coalesce(tf.codcentrocusto,0)=:Compr10)'#13#10#13#10'UNION'#13#10#13#10'-- Total Ger' +
-      'al dos Fornecedores'#13#10'SELECT'#13#10'2 Ordem,'#13#10'null des_aux,'#13#10'null cod_f' +
-      'ornecedor,'#13#10#39' TOTAL GERAL: FORNECEDORES'#39' nomefornecedor,'#13#10#13#10'CAST' +
-      '(MIN(ct.dta_caixa) AS DATE) dta_inicial, CAST(MAX(ct.dta_caixa) ' +
-      'AS DATE) dta_final,'#13#10#13#10'SUM(DECODE(ct.tip_debcre, '#39'D'#39', -ct.vlr_ca' +
-      'ixa, ct.vlr_caixa)) vlr_saldo,'#13#10#13#10'NULL dta_cc,'#13#10'NULL LIMITE,'#13#10'NU' +
-      'LL Comprador'#13#10#13#10'FROM FL_CAIXA_FORNECEDORES ct'#13#10'     LEFT JOIN FO' +
-      'RNECEDOR   ft    ON ft.codfornecedor = ct.codfornecedor'#13#10'WHERE c' +
-      't.cod_historico <> 0 AND'#13#10'      ct.cod_historico <> 999999'#13#10#13#10'an' +
-      'd (coalesce(ft.codcentrocusto,0)=:Compr1'#13#10'    or'#13#10'     coalesce(' +
-      'ft.codcentrocusto,0)=:Compr2'#13#10'    Or'#13#10'     coalesce(ft.codcentro' +
-      'custo,0)=:Compr3'#13#10'    or'#13#10'     coalesce(ft.codcentrocusto,0)=:Co' +
-      'mpr4'#13#10'    or'#13#10'     coalesce(ft.codcentrocusto,0)=:Compr5'#13#10'    or' +
-      #13#10'     coalesce(ft.codcentrocusto,0)=:Compr6'#13#10'    or'#13#10'     coale' +
-      'sce(ft.codcentrocusto,0)=:Compr7'#13#10'    or'#13#10'     coalesce(ft.codce' +
-      'ntrocusto,0)=:Compr8'#13#10'    or'#13#10'     coalesce(ft.codcentrocusto,0)' +
-      '=:Compr9'#13#10'    or'#13#10'     coalesce(ft.codcentrocusto,0)=:Compr10)'#13#10 +
-      #13#10'ORDER BY 4'#13#10
+      '-- Todos os Fornecedores'#13#10'SELECT'#13#10'3 Ordem,'#13#10#13#10'CAST(TRIM(t.des_au' +
+      'x) AS VARCHAR(10)) DES_AUX,'#13#10'c.cod_fornecedor,'#13#10'TRIM(c.des_forne' +
+      'cedor) nomefornecedor,'#13#10#13#10'CAST(MIN(c.dta_caixa) AS DATE) dta_ini' +
+      'cial,'#13#10'CAST(MAX(c.dta_caixa) AS DATE) dta_final,'#13#10#13#10'SUM(DECODE(c' +
+      '.tip_debcre, '#39'D'#39', -c.vlr_caixa, c.vlr_caixa)) vlr_saldo,'#13#10#13#10'CAST' +
+      '(CASE'#13#10'       WHEN COALESCE(t.des_aux, '#39'0'#39') = '#39'0'#39' THEN'#13#10'        ' +
+      ' NULL'#13#10'       ELSE'#13#10'         CAST(TRIM(t.des_aux) AS VARCHAR(10)' +
+      ')'#13#10'     END'#13#10'AS DATE) dta_cc,'#13#10#13#10'CASE'#13#10'  WHEN COALESCE(t.des_aux' +
+      ', '#39'0'#39') = '#39'0'#39' THEN'#13#10'    '#39'NAO'#39#13#10'  ELSE'#13#10'    '#39'SIM'#39#13#10'END LIMITE,'#13#10#13#10 +
+      'CAST(TRIM(t.des_aux1) AS VARCHAR(10)) Dta_Hist900,'#13#10'cc.nomesubcu' +
+      'sto Comprador'#13#10#13#10#13#10'FROM FL_CAIXA_FORNECEDORES  c'#13#10'     LEFT JOIN' +
+      ' FORNECEDOR   f    ON f.codfornecedor = c.codfornecedor'#13#10'     LE' +
+      'FT JOIN TAB_AUXILIAR t  ON t.tip_aux = 14'#13#10'                     ' +
+      '         AND t.cod_aux = c.cod_fornecedor'#13#10'     LEFT JOIN CENTRO' +
+      'CUSTO  cc ON cc.codcentrocusto=f.codcentrocusto'#13#10#13#10'WHERE c.cod_h' +
+      'istorico <> 0 AND'#13#10'      c.cod_historico <> 999999'#13#10#13#10'and (coale' +
+      'sce(f.codcentrocusto,0)=:Compr1'#13#10'    or'#13#10'     coalesce(f.codcent' +
+      'rocusto,0)=:Compr2'#13#10'    Or'#13#10'     coalesce(f.codcentrocusto,0)=:C' +
+      'ompr3'#13#10'    or'#13#10'     coalesce(f.codcentrocusto,0)=:Compr4'#13#10'    or' +
+      #13#10'     coalesce(f.codcentrocusto,0)=:Compr5'#13#10'    or'#13#10'     coales' +
+      'ce(f.codcentrocusto,0)=:Compr6'#13#10'    or'#13#10'     coalesce(f.codcentr' +
+      'ocusto,0)=:Compr7'#13#10'    or'#13#10'     coalesce(f.codcentrocusto,0)=:Co' +
+      'mpr8'#13#10'    or'#13#10'     coalesce(f.codcentrocusto,0)=:Compr9'#13#10'    or'#13 +
+      #10'     coalesce(f.codcentrocusto,0)=:Compr10)'#13#10#13#10'GROUP BY 2, 3, 4' +
+      ', 8, 9, 10, 11'#13#10#13#10'UNION'#13#10#13#10'-- Total Cr'#233'ditos dos Fornecedores'#13#10'S' +
+      'ELECT'#13#10'0 Ordem,'#13#10'null des_aux,'#13#10'null cod_fornecedor,'#13#10#39' TOTAL CR' +
+      #201'DITOS DOS FORNECEDORES'#39' nomefornecedor,'#13#10#13#10'CAST(MIN(tc.dta_caix' +
+      'a) AS DATE) dta_inicial,'#13#10'CAST(MAX(tc.dta_caixa) AS DATE) dta_fi' +
+      'nal,'#13#10#13#10'SUM(tc.vlr_caixa) vlr_saldo,'#13#10#13#10'NULL dta_cc,'#13#10'NULL LIMIT' +
+      'E,'#13#10'NULL Dta_Hist900,'#13#10'NULL Comprador'#13#10#13#10'FROM FL_CAIXA_FORNECEDO' +
+      'RES tc'#13#10'     LEFT JOIN FORNECEDOR   tf    ON tf.codfornecedor = ' +
+      'tc.codfornecedor'#13#10#13#10'WHERE tc.cod_historico <> 0 AND'#13#10'      tc.co' +
+      'd_historico <> 999999'#13#10'AND   tc.tip_debcre='#39'C'#39#13#10#13#10'and (coalesce(' +
+      'tf.codcentrocusto,0)=:Compr1'#13#10'    or'#13#10'     coalesce(tf.codcentro' +
+      'custo,0)=:Compr2'#13#10'    Or'#13#10'     coalesce(tf.codcentrocusto,0)=:Co' +
+      'mpr3'#13#10'    or'#13#10'     coalesce(tf.codcentrocusto,0)=:Compr4'#13#10'    or' +
+      #13#10'     coalesce(tf.codcentrocusto,0)=:Compr5'#13#10'    or'#13#10'     coale' +
+      'sce(tf.codcentrocusto,0)=:Compr6'#13#10'    or'#13#10'     coalesce(tf.codce' +
+      'ntrocusto,0)=:Compr7'#13#10'    or'#13#10'     coalesce(tf.codcentrocusto,0)' +
+      '=:Compr8'#13#10'    or'#13#10'     coalesce(tf.codcentrocusto,0)=:Compr9'#13#10'  ' +
+      '  or'#13#10'     coalesce(tf.codcentrocusto,0)=:Compr10)'#13#10#13#10'UNION'#13#10#13#10'-' +
+      '- Total D'#233'bitos dos Fornecedores'#13#10'SELECT'#13#10'1 Ordem,'#13#10'null des_aux' +
+      ','#13#10'null cod_fornecedor,'#13#10#39' TOTAL D'#201'BITOS DOS FORNECEDORES'#39' nomef' +
+      'ornecedor,'#13#10#13#10'CAST(MIN(tc.dta_caixa) AS DATE) dta_inicial,'#13#10'CAST' +
+      '(MAX(tc.dta_caixa) AS DATE) dta_final,'#13#10#13#10'SUM(tc.vlr_caixa) vlr_' +
+      'saldo,'#13#10#13#10'NULL dta_cc,'#13#10'NULL LIMITE,'#13#10'NULL Dta_Hist900,'#13#10'NULL Co' +
+      'mprador'#13#10#13#10'FROM FL_CAIXA_FORNECEDORES tc'#13#10'     LEFT JOIN FORNECE' +
+      'DOR   tf    ON tf.codfornecedor = tc.codfornecedor'#13#10'WHERE tc.cod' +
+      '_historico <> 0 AND'#13#10'      tc.cod_historico <> 999999'#13#10'AND   tc.' +
+      'tip_debcre='#39'D'#39#13#10#13#10'and (coalesce(tf.codcentrocusto,0)=:Compr1'#13#10'  ' +
+      '  or'#13#10'     coalesce(tf.codcentrocusto,0)=:Compr2'#13#10'    Or'#13#10'     c' +
+      'oalesce(tf.codcentrocusto,0)=:Compr3'#13#10'    or'#13#10'     coalesce(tf.c' +
+      'odcentrocusto,0)=:Compr4'#13#10'    or'#13#10'     coalesce(tf.codcentrocust' +
+      'o,0)=:Compr5'#13#10'    or'#13#10'     coalesce(tf.codcentrocusto,0)=:Compr6' +
+      #13#10'    or'#13#10'     coalesce(tf.codcentrocusto,0)=:Compr7'#13#10'    or'#13#10'  ' +
+      '   coalesce(tf.codcentrocusto,0)=:Compr8'#13#10'    or'#13#10'     coalesce(' +
+      'tf.codcentrocusto,0)=:Compr9'#13#10'    or'#13#10'     coalesce(tf.codcentro' +
+      'custo,0)=:Compr10)'#13#10#13#10'UNION'#13#10#13#10'-- Total Geral dos Fornecedores'#13#10 +
+      'SELECT'#13#10'2 Ordem,'#13#10'null des_aux,'#13#10'null cod_fornecedor,'#13#10#39' TOTAL G' +
+      'ERAL: FORNECEDORES'#39' nomefornecedor,'#13#10#13#10'CAST(MIN(ct.dta_caixa) AS' +
+      ' DATE) dta_inicial, CAST(MAX(ct.dta_caixa) AS DATE) dta_final,'#13#10 +
+      #13#10'SUM(DECODE(ct.tip_debcre, '#39'D'#39', -ct.vlr_caixa, ct.vlr_caixa)) v' +
+      'lr_saldo,'#13#10#13#10'NULL dta_cc,'#13#10'NULL LIMITE,'#13#10'NULL Dta_Hist900,'#13#10'NULL' +
+      ' Comprador'#13#10#13#10'FROM FL_CAIXA_FORNECEDORES ct'#13#10'     LEFT JOIN FORN' +
+      'ECEDOR   ft    ON ft.codfornecedor = ct.codfornecedor'#13#10'WHERE ct.' +
+      'cod_historico <> 0 AND'#13#10'      ct.cod_historico <> 999999'#13#10#13#10'and ' +
+      '(coalesce(ft.codcentrocusto,0)=:Compr1'#13#10'    or'#13#10'     coalesce(ft' +
+      '.codcentrocusto,0)=:Compr2'#13#10'    Or'#13#10'     coalesce(ft.codcentrocu' +
+      'sto,0)=:Compr3'#13#10'    or'#13#10'     coalesce(ft.codcentrocusto,0)=:Comp' +
+      'r4'#13#10'    or'#13#10'     coalesce(ft.codcentrocusto,0)=:Compr5'#13#10'    or'#13#10 +
+      '     coalesce(ft.codcentrocusto,0)=:Compr6'#13#10'    or'#13#10'     coalesc' +
+      'e(ft.codcentrocusto,0)=:Compr7'#13#10'    or'#13#10'     coalesce(ft.codcent' +
+      'rocusto,0)=:Compr8'#13#10'    or'#13#10'     coalesce(ft.codcentrocusto,0)=:' +
+      'Compr9'#13#10'    or'#13#10'     coalesce(ft.codcentrocusto,0)=:Compr10)'#13#10#13#10 +
+      'ORDER BY 4'#13#10
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftString
-        Name = 'Compr1'
-        ParamType = ptInput
-        Value = '1'
-      end
-      item
-        DataType = ftString
-        Name = 'Compr2'
-        ParamType = ptInput
-        Value = '1'
-      end
-      item
-        DataType = ftString
-        Name = 'Compr3'
-        ParamType = ptInput
-        Value = '1'
-      end
-      item
-        DataType = ftString
-        Name = 'Compr4'
-        ParamType = ptInput
-        Value = '1'
-      end
-      item
-        DataType = ftString
-        Name = 'Compr5'
-        ParamType = ptInput
-        Value = '1'
-      end
-      item
-        DataType = ftString
-        Name = 'Compr6'
-        ParamType = ptInput
-        Value = '1'
-      end
-      item
-        DataType = ftString
-        Name = 'Compr7'
-        ParamType = ptInput
-        Value = '1'
-      end
-      item
-        DataType = ftString
-        Name = 'Compr8'
-        ParamType = ptInput
-        Value = '1'
-      end
-      item
-        DataType = ftString
-        Name = 'Compr9'
-        ParamType = ptInput
-        Value = '1'
-      end
-      item
-        DataType = ftString
-        Name = 'Compr10'
-        ParamType = ptInput
-        Value = '1'
-      end
-      item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr1'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr2'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr3'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr4'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr5'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr6'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr7'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr8'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr9'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr10'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr1'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr2'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr3'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr4'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr5'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr6'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr7'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr8'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr9'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr10'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr1'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr2'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr3'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr4'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr5'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr6'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr7'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr8'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Compr9'
         ParamType = ptInput
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
+        Name = 'Compr10'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'Compr1'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'Compr2'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'Compr3'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'Compr4'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'Compr5'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'Compr6'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'Compr7'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'Compr8'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'Compr9'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
         Name = 'Compr10'
         ParamType = ptInput
       end>
@@ -8973,7 +8957,7 @@ object DMBelShop: TDMBelShop
     Params = <>
     ProviderName = 'DSP_FluxoFornecedores'
     AfterScroll = CDS_FluxoFornecedoresAfterScroll
-    Left = 1004
+    Left = 1012
     Top = 395
     object CDS_FluxoFornecedoresORDEM: TIntegerField
       FieldName = 'ORDEM'
@@ -8983,10 +8967,7 @@ object DMBelShop: TDMBelShop
       DisplayLabel = 'C'#243'digo'
       DisplayWidth = 6
       FieldName = 'COD_FORNECEDOR'
-    end
-    object CDS_FluxoFornecedoresDES_AUX: TStringField
-      FieldName = 'DES_AUX'
-      Size = 50
+      DisplayFormat = ',0'
     end
     object CDS_FluxoFornecedoresNOMEFORNECEDOR: TStringField
       DisplayLabel = 'Fornecedor'
@@ -9023,11 +9004,20 @@ object DMBelShop: TDMBelShop
       FixedChar = True
       Size = 3
     end
+    object CDS_FluxoFornecedoresDTA_HIST900: TStringField
+      DisplayLabel = 'Dt Hist 900'
+      FieldName = 'DTA_HIST900'
+      Size = 10
+    end
     object CDS_FluxoFornecedoresCOMPRADOR: TStringField
       DisplayLabel = 'Comprador'
       FieldName = 'COMPRADOR'
       FixedChar = True
       Size = 30
+    end
+    object CDS_FluxoFornecedoresDES_AUX: TStringField
+      FieldName = 'DES_AUX'
+      Size = 10
     end
   end
   object DSP_FluxoFornecedores: TDataSetProvider

@@ -26214,6 +26214,9 @@ end;
 
 procedure TFrmBelShop.SubMenuComprasContaCorreteFornClick(Sender: TObject);
 begin
+//  msg('Módulo em Manutenção !!'+cr+cr+'Aguarde Conclusão !!','A');
+//  Exit;
+
   igTagPermissao:=(Sender as TMenuItem).Tag;
 
   BloqueioBotoes(FrmFluxoFornecedor, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);

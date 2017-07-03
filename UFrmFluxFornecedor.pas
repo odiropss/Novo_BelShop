@@ -1440,6 +1440,16 @@ begin
   Dbg_FluFornFornec.Canvas.FillRect(Rect);
   Dbg_FluFornFornec.DefaultDrawDataCell(Rect,Column.Field,state);
 
+  // Alinhamento
+  DMBelShop.CDS_FluxoFornecedoresCOD_FORNECEDOR.Alignment:=taRightJustify;
+  DMBelShop.CDS_FluxoFornecedoresDTA_INICIAL.Alignment:=taCenter;
+  DMBelShop.CDS_FluxoFornecedoresDTA_FINAL.Alignment:=taCenter;
+  DMBelShop.CDS_FluxoFornecedoresVLR_SALDO.Alignment:=taRightJustify;
+  DMBelShop.CDS_FluxoFornecedoresDTA_CC.Alignment:=taCenter;
+  DMBelShop.CDS_FluxoFornecedoresLIMITE.Alignment:=taCenter;
+  DMBelShop.CDS_FluxoFornecedoresDTA_HIST900.Alignment:=taCenter;
+
+
 end;
 
 procedure TFrmFluxoFornecedor.Dbg_FluFornFornecTitleClick(Column: TColumn);

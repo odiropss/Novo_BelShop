@@ -1,8 +1,8 @@
-program PFrmGeraTtxLinx;
+program PFrmGeraTXT_Linx;
 
 uses
   Forms,
-  UFrmGeraTtxLinx in 'UFrmGeraTtxLinx.pas' {FrmGeraTtxLinx},
+  UFrmGeraTXT_Linx in 'UFrmGeraTXT_Linx.pas' {FrmGeraTtxLinx},
   DK_Procs1 in '..\..\..\Rotinas Delphi\DK_Procs1.pas' {FDK_Procs1},
   uj_001 in '..\..\..\Rotinas Delphi\Janelas\J_001 Login\uj_001.pas' {J_001},
   uj_002 in '..\..\..\Rotinas Delphi\Janelas\J_002 Mensagens\uj_002.pas' {J_002};

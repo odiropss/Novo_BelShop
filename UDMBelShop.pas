@@ -333,7 +333,6 @@ type
     SDS_While: TSQLDataSet;
     CDS_While: TClientDataSet;
     DSP_While: TDataSetProvider;
-    CDS_FluxoFornecedorRAZAO_SOCIAL: TStringField;
     CDS_FluxoFornecedorCOD_HISTORICO: TIntegerField;
     CDS_FluxoFornecedorDES_HISTORICO: TStringField;
     CDS_FluxoFornecedorNUM_SERIE: TStringField;
@@ -1123,7 +1122,6 @@ type
     CDS_FluxoFornecedoresVLR_SALDO: TFMTBCDField;
     CDS_FluxoFornecedoresDTA_CC: TDateField;
     CDS_FluxoFornecedoresORDEM: TIntegerField;
-    CDS_FluxoFornecedoresDES_AUX: TStringField;
     CDS_FluxoFornecedoresLIMITE: TStringField;
     CDS_FluxoFornecedorVLR_SALDO: TFloatField;
     CDS_FluxoFornecedoresCOMPRADOR: TStringField;
@@ -1177,6 +1175,9 @@ type
     CDS_FluxoFornecedorCOD_EMPRESA: TIntegerField;
     CDS_FluxoFornReducaoCOD_FORNECEDOR: TIntegerField;
     CDS_FluxoFornecedorNUM_DOCUMENTO: TStringField;
+    CDS_FluxoFornecedorRAZAO_SOCIAL: TStringField;
+    CDS_FluxoFornecedoresDTA_HIST900: TStringField;
+    CDS_FluxoFornecedoresDES_AUX: TStringField;
 
     //==========================================================================
     // Odir ====================================================================

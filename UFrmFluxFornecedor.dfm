@@ -1,6 +1,6 @@
 object FrmFluxoFornecedor: TFrmFluxoFornecedor
-  Left = 243
-  Top = 111
+  Left = 244
+  Top = 110
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -92,7 +92,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Top = 56
     Width = 977
     Height = 487
-    ActivePage = Ts_FluxFornCaixa
+    ActivePage = Ts_FluxFornApres
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -165,7 +165,8 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
               Expanded = False
               FieldName = 'COD_FORNECEDOR'
               Title.Alignment = taRightJustify
-              Width = 50
+              Title.Caption = 'C'#243'd'
+              Width = 35
               Visible = True
             end
             item
@@ -184,21 +185,22 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
               Expanded = False
               FieldName = 'DTA_INICIAL'
               Title.Alignment = taCenter
-              Width = 80
+              Title.Caption = 'Dt Inicial'
+              Width = 65
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'DTA_FINAL'
               Title.Alignment = taCenter
-              Width = 80
+              Title.Caption = 'Dt Final'
+              Width = 65
               Visible = True
             end
             item
               Expanded = False
               FieldName = 'VLR_SALDO'
               Title.Alignment = taRightJustify
-              Width = 120
               Visible = True
             end
             item
@@ -222,10 +224,25 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
               Visible = True
             end
             item
+              Alignment = taCenter
+              Color = 14548957
+              Expanded = False
+              FieldName = 'DTA_HIST900'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              Title.Alignment = taCenter
+              Title.Caption = '1'#170' Negocia'#231#227'o'
+              Width = 90
+              Visible = True
+            end
+            item
               Color = 15724527
               Expanded = False
               FieldName = 'COMPRADOR'
-              Width = 150
+              Width = 130
               Visible = True
             end>
         end
@@ -282,12 +299,12 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Top = 14
           Width = 398
           Height = 424
-          ActivePage = Ts_FluxFornManutReducao
+          ActivePage = Ts_FluxFornParamComprv
           Align = alRight
           TabOrder = 2
           OnChange = PC_FluxFornParametrosChange
           object Ts_FluxFornParamComprv: TTabSheet
-            Caption = ' Comprovantes '
+            Caption = ' Hist'#243'ricos '
             Highlighted = True
             object Pan_FluFornComprov: TPanel
               Left = 0

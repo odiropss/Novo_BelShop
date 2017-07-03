@@ -1,4 +1,4 @@
-unit UFrmGeraTtxLinx;
+unit UFrmGeraTXT_Linx;
 
 interface
 
