@@ -5670,9 +5670,9 @@ Begin
 
     // Monta SQL Total de Registros ---------------------------------
     MySql:=' SELECT Count(nt.codvendedor) TotReg'+
-           ' FROM mcli nt'+
-           '       LEFT JOIN mclipro it   ON nt.chavenf=it.chavenf'+
-           '       LEFT JOIN produto pr   ON it.codproduto=pr.codproduto'+
+           ' FROM MCLI nt'+
+           '       LEFT JOIN MCLIPRO it   ON nt.chavenf=it.chavenf'+
+           '       LEFT JOIN PRODUTO pr   ON it.codproduto=pr.codproduto'+
            '                             AND pr.principalfor in (''000500'',''000883'')'+
            ' WHERE nt.codcomprovante in (''002'', ''007'')';
 

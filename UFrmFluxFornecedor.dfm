@@ -29,12 +29,14 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Width = 977
     Height = 56
     Align = alTop
-    Caption = ' Fornecedor '
+    Caption = ' Fornecedor (LINX)'
+    Color = 15263976
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clBlue
+    Font.Color = clBlack
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
+    ParentColor = False
     ParentFont = False
     TabOrder = 0
     DesignSize = (
@@ -43,9 +45,9 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     object Bt_FluFornBuscaFornecedor: TJvXPButton
       Tag = 92
       Left = 86
-      Top = 21
+      Top = 24
       Width = 23
-      Height = 25
+      Height = 22
       TabOrder = 1
       TabStop = False
       ShowFocusRect = True
@@ -91,8 +93,8 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Left = 0
     Top = 56
     Width = 977
-    Height = 487
-    ActivePage = Ts_FluxFornApres
+    Height = 479
+    ActivePage = Ts_FluxFornLanctos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -109,7 +111,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         Left = 0
         Top = 0
         Width = 969
-        Height = 459
+        Height = 451
         Align = alClient
         Caption = ' Fornecedores '
         Font.Charset = DEFAULT_CHARSET
@@ -123,7 +125,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Left = 566
           Top = 14
           Width = 4
-          Height = 424
+          Height = 416
           Align = alRight
           Color = clRed
           ParentColor = False
@@ -132,7 +134,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Left = 1
           Top = 14
           Width = 565
-          Height = 424
+          Height = 416
           Align = alClient
           Color = 15004403
           Ctl3D = False
@@ -248,7 +250,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         end
         object Stb_FluForn: TdxStatusBar
           Left = 1
-          Top = 438
+          Top = 430
           Width = 967
           Height = 20
           Panels = <
@@ -298,7 +300,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Left = 570
           Top = 14
           Width = 398
-          Height = 424
+          Height = 416
           ActivePage = Ts_FluxFornParamComprv
           Align = alRight
           TabOrder = 2
@@ -397,7 +399,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
               Left = 0
               Top = 46
               Width = 390
-              Height = 330
+              Height = 322
               Hint = 'Tecle <Dekete> Para Excluir'
               Align = alClient
               Color = 15004403
@@ -441,7 +443,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             end
             object Stb_FluFornComprv: TdxStatusBar
               Left = 0
-              Top = 376
+              Top = 368
               Width = 390
               Height = 20
               Panels = <
@@ -655,7 +657,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             OnExit = Ts_FluxFornManutReducaoExit
             DesignSize = (
               390
-              396)
+              388)
             object Gb_FluxFornManutReducao: TGroupBox
               Left = 3
               Top = 16
@@ -912,13 +914,13 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       end
     end
     object Ts_FluxFornCaixa: TTabSheet
-      Caption = 'Fluxo de Caixa'
+      Caption = ' Conta Corrente '
       ImageIndex = 1
       object Dbg_FluFornCaixa: TDBGrid
         Left = 0
         Top = 0
         Width = 969
-        Height = 459
+        Height = 451
         Align = alClient
         Color = 15004403
         Ctl3D = False
@@ -1077,43 +1079,332 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           end>
       end
     end
+    object Ts_FluxFornLanctos: TTabSheet
+      Caption = ' Lan'#231'amentos '
+      ImageIndex = 2
+      DesignSize = (
+        969
+        451)
+      object Panel5: TPanel
+        Left = 484
+        Top = 0
+        Width = 2
+        Height = 452
+        Caption = 'Panel5'
+        TabOrder = 1
+      end
+      object Pan_Lanctos: TPanel
+        Left = 132
+        Top = 48
+        Width = 705
+        Height = 348
+        Anchors = []
+        BevelInner = bvRaised
+        BevelWidth = 3
+        TabOrder = 0
+        OnEnter = Pan_LanctosEnter
+        DesignSize = (
+          705
+          348)
+        object Label9: TLabel
+          Left = 67
+          Top = 35
+          Width = 53
+          Height = 13
+          Caption = 'N'#186' Docto'
+        end
+        object Label10: TLabel
+          Left = 52
+          Top = 62
+          Width = 68
+          Height = 13
+          Caption = 'S'#233'rie Docto'
+        end
+        object Label5: TLabel
+          Left = 31
+          Top = 89
+          Width = 89
+          Height = 13
+          Caption = 'Data da Origem'
+        end
+        object Label4: TLabel
+          Left = 39
+          Top = 115
+          Width = 81
+          Height = 13
+          Caption = 'Data do Caixa'
+        end
+        object Label3: TLabel
+          Left = 90
+          Top = 143
+          Width = 30
+          Height = 13
+          Caption = 'Valor'
+        end
+        object Label11: TLabel
+          Left = 92
+          Top = 228
+          Width = 26
+          Height = 13
+          Caption = 'Tipo'
+        end
+        object Label7: TLabel
+          Left = 69
+          Top = 202
+          Width = 51
+          Height = 13
+          Caption = 'Hist'#243'rico'
+        end
+        object Label6: TLabel
+          Left = 95
+          Top = 173
+          Width = 25
+          Height = 13
+          Caption = 'Loja'
+        end
+        object Label8: TLabel
+          Left = 51
+          Top = 257
+          Width = 69
+          Height = 13
+          Caption = 'Observa'#231#227'o'
+        end
+        object EdtNumDoc: TEdit
+          Left = 124
+          Top = 32
+          Width = 69
+          Height = 19
+          TabOrder = 0
+        end
+        object EdtSerieDoc: TEdit
+          Left = 124
+          Top = 59
+          Width = 68
+          Height = 19
+          TabOrder = 1
+        end
+        object EdtDtOrigemDoc: TJvDateTimePicker
+          Left = 124
+          Top = 85
+          Width = 99
+          Height = 21
+          Date = 42921.573094155090000000
+          Time = 42921.573094155090000000
+          TabOrder = 2
+          OnDropDown = EdtDtOrigemDocDropDown
+          DropDownDate = 42921.000000000000000000
+        end
+        object EdtDtCaixaDoc: TJvDateTimePicker
+          Left = 124
+          Top = 112
+          Width = 99
+          Height = 21
+          Date = 42921.573094155090000000
+          Time = 42921.573094155090000000
+          TabOrder = 3
+          OnDropDown = EdtDtOrigemDocDropDown
+          DropDownDate = 42921.000000000000000000
+        end
+        object EdtValorDoc: TCurrencyEdit
+          Left = 124
+          Top = 140
+          Width = 97
+          Height = 21
+          AutoSize = False
+          DisplayFormat = ',0.00'
+          TabOrder = 4
+        end
+        object EdtCodLojaDoc: TCurrencyEdit
+          Left = 124
+          Top = 169
+          Width = 41
+          Height = 21
+          AutoSize = False
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          TabOrder = 5
+          OnChange = EdtCodLojaDocChange
+          OnExit = EdtCodLojaDocExit
+        end
+        object EdtCodHistDoc: TCurrencyEdit
+          Left = 124
+          Top = 198
+          Width = 41
+          Height = 21
+          AutoSize = False
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          TabOrder = 6
+          OnChange = EdtCodHistDocChange
+          OnExit = EdtCodHistDocExit
+        end
+        object EdtObsDoc: TEdit
+          Left = 124
+          Top = 254
+          Width = 552
+          Height = 19
+          TabOrder = 7
+        end
+        object EdtBuscaLojaDoc: TJvXPButton
+          Tag = 92
+          Left = 171
+          Top = 168
+          Width = 23
+          Height = 25
+          TabOrder = 8
+          TabStop = False
+          ShowFocusRect = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = EdtBuscaLojaDocClick
+        end
+        object EdtBuscaHistDoc: TJvXPButton
+          Tag = 92
+          Left = 171
+          Top = 197
+          Width = 23
+          Height = 25
+          TabOrder = 9
+          TabStop = False
+          ShowFocusRect = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = EdtBuscaHistDocClick
+        end
+        object EdtLojaDoc: TEdit
+          Left = 200
+          Top = 171
+          Width = 472
+          Height = 19
+          TabStop = False
+          Anchors = [akLeft, akTop, akRight]
+          Color = 12171775
+          ReadOnly = True
+          TabOrder = 10
+        end
+        object EdtHistDoc: TEdit
+          Left = 200
+          Top = 201
+          Width = 472
+          Height = 19
+          TabStop = False
+          Anchors = [akLeft, akTop, akRight]
+          Color = 12171775
+          ReadOnly = True
+          TabOrder = 11
+        end
+        object Panel6: TPanel
+          Left = 6
+          Top = 301
+          Width = 693
+          Height = 41
+          Align = alBottom
+          BevelInner = bvLowered
+          BorderStyle = bsSingle
+          TabOrder = 12
+          object Bt_LanctosSalvar: TJvXPButton
+            Tag = 1
+            Left = 2
+            Top = 2
+            Width = 95
+            Height = 35
+            Caption = 'Salvar'
+            TabOrder = 0
+            TabStop = False
+            ShowFocusRect = True
+            Align = alLeft
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_LanctosSalvarClick
+          end
+          object Bt_LanctosAbandonar: TJvXPButton
+            Tag = 1
+            Left = 585
+            Top = 2
+            Width = 104
+            Height = 35
+            Caption = 'Abandonar'
+            TabOrder = 1
+            TabStop = False
+            Glyph.Data = {
+              07544269746D617066010000424D660100000000000076000000280000001400
+              0000140000000100040000000000F00000000000000000000000100000001000
+              0000000000000000800000800000008080008000000080008000808000008080
+              8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF00888888888888888888880000888888888888888888980000889888888888
+              8888898800008899887777777777988800008899900000000009988800008889
+              90BFFFBFFF9988880000888899FCCCCCCF97888800008888999FBFFFB9978888
+              000088888999CCC9990788880000888880999FB99F0788880000888880FC9999
+              CF0788880000888880FF9999BF0788880000888880FC99990007888800008888
+              80B99F099F0788880000888880999F099998888800008888999FBF0F08998888
+              0000889999000000888998880000889998888888888889880000888888888888
+              888888980000888888888888888888880000}
+            ShowFocusRect = True
+            Align = alRight
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_LanctosAbandonarClick
+          end
+        end
+        object EdtDebCreDoc: TEdit
+          Left = 124
+          Top = 227
+          Width = 67
+          Height = 19
+          TabStop = False
+          Anchors = [akLeft, akTop, akRight]
+          Color = 12171775
+          ReadOnly = True
+          TabOrder = 13
+        end
+      end
+    end
+    object Ts_FluxFornGraficos: TTabSheet
+      Caption = ' Graficos '
+      ImageIndex = 3
+      object Edit2: TEdit
+        Left = 568
+        Top = 304
+        Width = 121
+        Height = 19
+        TabOrder = 0
+        Text = 'Edit2'
+      end
+    end
   end
   object Panel38: TPanel
     Left = 0
-    Top = 543
+    Top = 535
     Width = 977
-    Height = 35
+    Height = 43
     Align = alBottom
     BevelInner = bvLowered
     BorderStyle = bsSingle
     Ctl3D = False
     ParentCtl3D = False
     TabOrder = 2
-    object Bt_FluFornSalvaMemoria: TJvXPButton
-      Tag = 4
-      Left = 177
-      Top = 2
-      Width = 154
-      Height = 29
-      Caption = 'Salvar em  Mem'#243'ria'
-      TabOrder = 1
-      TabStop = False
-      ShowFocusRect = True
-      Align = alLeft
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      OnClick = Bt_FluFornSalvaMemoriaClick
-    end
     object EdtFluFornCodFornAcertar: TEdit
-      Left = 424
-      Top = 8
+      Left = 568
+      Top = 12
       Width = 76
       Height = 19
-      TabOrder = 3
+      TabOrder = 0
       Text = 'C'#243'd a Acertar'
     end
     object Bt_FluFornFechar: TJvXPButton
@@ -1121,9 +1412,9 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       Left = 873
       Top = 2
       Width = 100
-      Height = 29
+      Height = 37
       Caption = 'Fechar'
-      TabOrder = 5
+      TabOrder = 3
       TabStop = False
       ShowFocusRect = True
       Align = alRight
@@ -1136,40 +1427,21 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       OnClick = Bt_FluFornFecharClick
     end
     object MaskEdit1: TMaskEdit
-      Left = 504
-      Top = 8
+      Left = 646
+      Top = 12
       Width = 71
       Height = 19
       EditMask = '!99.99.2\000;1;_'
       MaxLength = 10
-      TabOrder = 4
+      TabOrder = 1
       Text = '  .  .20  '
     end
-    object Bt_FluFornFiltroComprador: TJvXPButton
-      Tag = 92
-      Left = 2
-      Top = 2
-      Width = 175
-      Height = 29
-      Caption = 'Seleciona Comprador'
-      TabOrder = 0
-      ShowFocusRect = True
-      Align = alLeft
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      OnClick = Bt_FluFornFiltroCompradorClick
-    end
     object Bt_FluFornAcertaSaldos: TJvXPButton
-      Tag = 11
-      Left = 577
-      Top = 2
-      Width = 150
+      Left = 722
+      Top = 7
+      Width = 85
       Height = 29
-      Caption = 'Acerta Saldo (Odir)'
+      Caption = 'Acerta Saldo'#13#10'     (Odir)'
       TabOrder = 2
       ShowFocusRect = True
       Font.Charset = DEFAULT_CHARSET
@@ -1180,15 +1452,138 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       ParentFont = False
       OnClick = Bt_FluFornAcertaSaldosClick
     end
-    object Button1: TButton
-      Left = 752
-      Top = 7
-      Width = 105
-      Height = 25
-      Caption = 'Busca Cod Linx'
-      TabOrder = 6
-      Visible = False
-      OnClick = Button1Click
+    object Panel3: TPanel
+      Left = 2
+      Top = 2
+      Width = 547
+      Height = 37
+      Align = alLeft
+      BevelOuter = bvNone
+      TabOrder = 4
+      object Bt_FluFornFiltroComprador: TJvXPButton
+        Tag = 92
+        Left = 1
+        Top = 1
+        Width = 110
+        Height = 35
+        Caption = 'Seleciona Comprador'
+        TabOrder = 0
+        ShowFocusRect = True
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = Bt_FluFornFiltroCompradorClick
+      end
+      object Bt_FluFornSalvaMemoria: TJvXPButton
+        Tag = 4
+        Left = 405
+        Top = 1
+        Width = 104
+        Height = 35
+        Caption = 'Salva em'#13#10' Mem'#243'ria'
+        TabOrder = 1
+        TabStop = False
+        ShowFocusRect = True
+        Spacing = 5
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = Bt_FluFornSalvaMemoriaClick
+      end
+      object Bt_FluFornIncluir: TJvXPButton
+        Tag = 1
+        Left = 213
+        Top = 1
+        Width = 95
+        Height = 35
+        Caption = 'Incluir'
+        TabOrder = 2
+        TabStop = False
+        ShowFocusRect = True
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = Bt_FluFornIncluirClick
+      end
+      object Bt_FluFornAlterar: TJvXPButton
+        Tag = 2
+        Left = 309
+        Top = 1
+        Width = 95
+        Height = 35
+        Caption = 'Alterar'
+        TabOrder = 3
+        TabStop = False
+        ShowFocusRect = True
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = Bt_FluFornIncluirClick
+      end
+      object Bt_FluFornGraficos: TJvXPButton
+        Left = 112
+        Top = 1
+        Width = 100
+        Height = 35
+        Caption = 'Graficos'
+        TabOrder = 4
+        TabStop = False
+        Glyph.Data = {
+          07544269746D6170F6030000424DF60300000000000076000000280000001F00
+          00001C0000000100080000000000800300000000000000000000100000000000
+          0000000000000000800000800000008080008000000080008000808000008080
+          8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+          FF00080800080800080800080800080800080800080800080800080800080800
+          0805080808080808080808080808080808080808080808080808080808080808
+          0805070000000000000000000000000000000000000000000000000000000000
+          0705000F080F080F080F080F080F080F080F080F080F080F080F080F080F080F
+          000500080F080F080F080F080F080F080F080F080F080F080F080F080F080F08
+          0005000808000000000008080000000000080800000000000808000000000008
+          0005000800000E0E06000808000E0E06000808000E0E06000808000E0E060008
+          000500080B000E0E06000808000E0E06000808000E0E06000808000E0E060008
+          000500080B0B000E06000808000E0E06000808000E0E06000808000E0E060008
+          00050008080B0B0006000800000E0E06000808000E0E06000808000E0E060008
+          0005000808000B0B0000000B000E0E06000808000E0E06000808000E0E060008
+          0005000808000E0B0B000B0B0B000E06000808000E0E06000808000E0E060008
+          0005000808000E0E0B0B0B080B0B0006000808000E0E06000808000E0E060008
+          0005000808000E0E060B0808000B0B00000808000E0E06000800000E0E060008
+          0005000808000E0E06000808000E0B0B000808000E0E0600000B000E0E060008
+          0005000808000E0E06000808000E0E0B0B0008000E0E06000B0B0B000E060008
+          0005000808000E0E06000808000E0E060B0B00000E0E000B0B080B0B00060008
+          0005000808000E0E06000808000E0E06000B0B000E000B0B0808000B0B000008
+          0005000808000E0E06000808000E0E0600080B0B000B0B000808000F0B0B0008
+          0005000808000E0E06000808000E0E060008080B0B0B060008080800000B0B00
+          0005000808000E0E06000808000F0F0E000808000B0E06000808080808080B0B
+          0005000808000E0E0600080808000000080808000E0E0600080808080808080B
+          0005000808000E0E0600080808080808080808000E0E06000808080808080808
+          0005000808000E0E0600080808080808080808000F0F0E000808080808080808
+          0005000F08000F0F0E00080F080F080F080F080F0000000F080F080F080F080F
+          000500080F08000000080F080F080F080F080F080F080F080F080F080F080F08
+          0005000F080F080F080F080F080F080F080F080F080F080F080F080F080F080F
+          0005070000000000000000000000000000000000000000000000000000000000
+          0705}
+        ShowFocusRect = True
+        Spacing = 6
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = Bt_FluFornGraficosClick
+      end
     end
   end
   object OdirPanApres: TPanel
@@ -1230,17 +1625,17 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Font.Style = [fsBold]
     StartColor = 15522303
     EndColor = 8388863
-    Left = 416
-    Top = 336
+    Left = 856
+    Top = 88
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 412
-    Top = 423
+    Left = 924
+    Top = 103
   end
   object PopM_Forn: TPopupMenu
-    Left = 255
-    Top = 368
+    Left = 791
+    Top = 40
     object PopM_FluFornSIM: TMenuItem
       Bitmap.Data = {
         B6030000424DB603000000000000360000002800000012000000100000000100

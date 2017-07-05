@@ -9294,6 +9294,7 @@ object FrmSalao: TFrmSalao
                 Expanded = False
                 FieldName = 'VLR_DESCONTO'
                 Title.Alignment = taRightJustify
+                Width = 64
                 Visible = True
               end
               item
