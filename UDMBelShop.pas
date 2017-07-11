@@ -1164,6 +1164,10 @@ type
     CDS_FluxoFornecedorRAZAO_SOCIAL: TStringField;
     CDS_FluxoFornecedoresDTA_HIST900: TStringField;
     CDS_FluxoFornecedoresDES_AUX: TStringField;
+    CDS_FluxoFornecedorUSU_INCLUI: TIntegerField;
+    CDS_FluxoFornecedorDTA_INCLUI: TSQLTimeStampField;
+    CDS_FluxoFornecedorUSU_ALTERA: TIntegerField;
+    CDS_FluxoFornecedorDTA_ALTERA: TSQLTimeStampField;
 
     //==========================================================================
     // Odir ====================================================================

@@ -2763,11 +2763,12 @@ object DMBelShop: TDMBelShop
       'ESA,'#13#10#13#10#13#10'CASE'#13#10'  WHEN FF.COD_EMPRESA=50 THEN'#13#10'    '#39'CENTRA DE TR' +
       'OCAS'#39#13#10'  ELSE'#13#10'   ll.nome_emp'#13#10'END RAZAO_SOCIAL,'#13#10#13#10'FF.COD_FORNE' +
       'CEDOR, FF.DES_FORNECEDOR,'#13#10'FF.NUM_SEQ, FF.NUM_CHAVENF,'#13#10'FF.TIP_D' +
-      'EBCRE'#13#10#13#10'FROM  FL_CAIXA_FORNECEDORES FF'#13#10'      LEFT JOIN FL_CAIX' +
-      'A_HISTORICOS FC ON FC.COD_HISTORICO=FF.COD_HISTORICO'#13#10'      LEFT' +
-      ' JOIN linxlojas ll           ON ll.empresa=ff.cod_empresa'#13#10#13#10'WHE' +
-      'RE FF.COD_FORNECEDOR= :CodForn'#13#10'AND   ff.dta_caixa>= :Data'#13#10#13#10'OR' +
-      'DER BY FF.DTA_CAIXA, FF.NUM_SEQ'#13#10#13#10#13#10#13#10
+      'EBCRE,'#13#10'FF.USU_INCLUI, FF.DTA_INCLUI, FF.USU_ALTERA, FF.DTA_ALTE' +
+      'RA'#13#10#13#10'FROM  FL_CAIXA_FORNECEDORES FF'#13#10'      LEFT JOIN FL_CAIXA_H' +
+      'ISTORICOS FC ON FC.COD_HISTORICO=FF.COD_HISTORICO'#13#10'      LEFT JO' +
+      'IN linxlojas ll           ON ll.empresa=ff.cod_empresa'#13#10#13#10'WHERE ' +
+      'FF.COD_FORNECEDOR= :CodForn'#13#10'AND   ff.dta_caixa>= :Data'#13#10#13#10'ORDER' +
+      ' BY FF.DTA_CAIXA, FF.NUM_SEQ'#13#10#13#10#13#10#13#10
     MaxBlobSize = -1
     Params = <
       item
@@ -2901,6 +2902,22 @@ object DMBelShop: TDMBelShop
       DisplayLabel = 'Loja'
       FieldName = 'LOJA'
       Size = 6
+    end
+    object CDS_FluxoFornecedorUSU_INCLUI: TIntegerField
+      FieldName = 'USU_INCLUI'
+      Required = True
+    end
+    object CDS_FluxoFornecedorDTA_INCLUI: TSQLTimeStampField
+      FieldName = 'DTA_INCLUI'
+      Required = True
+    end
+    object CDS_FluxoFornecedorUSU_ALTERA: TIntegerField
+      FieldName = 'USU_ALTERA'
+      Required = True
+    end
+    object CDS_FluxoFornecedorDTA_ALTERA: TSQLTimeStampField
+      FieldName = 'DTA_ALTERA'
+      Required = True
     end
   end
   object DSP_FluxoFornecedor: TDataSetProvider
