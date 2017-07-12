@@ -36,16 +36,13 @@ type
     Gb_FluxFornFornec: TGroupBox;
     Dbg_FluFornFornec: TDBGrid;
     OdirPanApres: TPanel;
-    EdtFluFornCodFornAcertar: TEdit;
     Bt_FluFornFechar: TJvXPButton;
     Dbg_FluFornCaixa: TDBGrid;
     ApplicationEvents1: TApplicationEvents;
-    MEdt_DtaAtualizacao: TMaskEdit;
     PopM_Forn: TPopupMenu;
     PopM_FluFornSIM: TMenuItem;
     PopM_FluFornNAO: TMenuItem;
     Stb_FluForn: TdxStatusBar;
-    Bt_FluFornAcertaSaldos: TJvXPButton;
     PC_FluxFornParametros: TPageControl;
     Ts_FluxFornParamComprv: TTabSheet;
     Ts_FluxFornParamReducao: TTabSheet;
@@ -118,8 +115,13 @@ type
     Lab_Lanctos: TLabel;
     EdtDtOrigemDoc: TcxDateEdit;
     EdtDtCaixaDoc: TcxDateEdit;
+    Panel4: TPanel;
     Bt_LanctosSalvar: TJvXPButton;
     Bt_LanctosAbandonar: TJvXPButton;
+    EdtFluFornCodFornAcertar: TEdit;
+    MEdt_DtaAtualizacao: TMaskEdit;
+    Bt_FluFornAcertaSaldos: TJvXPButton;
+    Bt_FluFornImprimir: TJvXPButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -253,7 +255,8 @@ var
 implementation
 
 uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
-  UFrmSelectEmpProcessamento, DB, UPesquisa, UFrmSolicitacoes;
+  UFrmSelectEmpProcessamento, DB, UPesquisa, UFrmSolicitacoes,
+  UDMRelatorio;
 
 {$R *.dfm}
 
@@ -1618,6 +1621,7 @@ begin
     Bt_FluFornIncluir.Visible:=True;
     Bt_FluFornIncluir.Caption:='    Incluir Fornecedor';
 
+    Bt_FluFornImprimir.Visible:=False;
     Bt_FluFornAlterar.Visible:=False;
     Bt_FluFornSalvaMemoria.Visible:=False;
     Bt_FluFornFiltroComprador.Visible:=True;
@@ -1629,8 +1633,6 @@ begin
 
     EdtFluFornCodFornecedor.Enabled:=True;
     Bt_FluFornBuscaFornecedor.Enabled:=True;
-
-
 
     Dbg_FluFornFornec.SetFocus;
   End;
@@ -1645,6 +1647,7 @@ begin
     Bt_FluFornIncluir.Visible:=True;
     Bt_FluFornIncluir.Caption:='    Incluir Lançamento';
 
+    Bt_FluFornImprimir.Visible:=True;
     Bt_FluFornAlterar.Visible:=True;
     Bt_FluFornSalvaMemoria.Visible:=True;
     Bt_FluFornFiltroComprador.Visible:=True;
@@ -1667,6 +1670,7 @@ begin
      Gb_FluFornFornecedor.Visible:=True;
 
     Bt_FluFornGraficos.Visible:=False;
+    Bt_FluFornImprimir.Visible:=False;
     Bt_FluFornAlterar.Visible:=False;
     Bt_FluFornIncluir.Visible:=False;
     Bt_FluFornSalvaMemoria.Visible:=False;
@@ -1688,6 +1692,7 @@ begin
     Gb_FluFornFornecedor.Visible:=False;
 
     Bt_FluFornGraficos.Visible:=False;
+    Bt_FluFornImprimir.Visible:=False;
     Bt_FluFornAlterar.Visible:=False;
     Bt_FluFornIncluir.Visible:=False;
     Bt_FluFornSalvaMemoria.Visible:=False;
@@ -2589,7 +2594,7 @@ begin
     DMBelShop.CDS_Busca.Open;
 
     FrmSolicitacoes.Caption:='SELECIONAR COMPROVANTE';
-  End; // If Bt_FluFornFiltroComprador.Caption='Seleciona Comprovante' Then
+  End; // If Bt_FluFornFiltroComprador.Caption='Seleciona Histórico' Then
 
   FrmSolicitacoes.bgOK:=False;
   FrmSolicitacoes.ShowModal;
@@ -2625,7 +2630,7 @@ begin
       FiltraComprador(s,i);
     End; // If Bt_FluFornFiltroComprador.Caption='Seleciona Comprador' Then
 
-    If Bt_FluFornFiltroComprador.Caption='Seleciona Comprovante' Then
+    If Bt_FluFornFiltroComprador.Caption='Seleciona Histórico' Then
     Begin
       i:=0;
       ii:=0;
@@ -2662,7 +2667,7 @@ begin
         DMBelShop.CDS_FluxoFornecedor.Filter:=s;
         DMBelShop.CDS_FluxoFornecedor.Filtered:=True;
       End;
-    End; // If Bt_FluFornFiltroComprador.Caption='Seleciona Comprovante' Then
+    End; // If Bt_FluFornFiltroComprador.Caption='Seleciona Histórico' Then
   End; // If FrmSolicitacoes.bgOK Then
   Screen.Cursor:=crDefault;
 
@@ -3219,8 +3224,18 @@ end;
 
 procedure TFrmFluxoFornecedor.Bt_FluFornIncluirClick(Sender: TObject);
 Var
-  MySql: String;
+  MySql, sHist: String;
 begin
+  // Busca Historicos Utilizados ===============================================
+  DMBelShop.CDS_FluxoFornHistorico.Locate('COD_HISTORICO',900,[]);
+  sHist:=DMBelShop.CDS_FluxoFornHistoricoDES_HISTORICO.AsString;
+  DMBelShop.CDS_FluxoFornHistorico.Locate('COD_HISTORICO',955,[]);
+  sHist:=
+   sHist+cr+DMBelShop.CDS_FluxoFornHistoricoDES_HISTORICO.AsString;
+  DMBelShop.CDS_FluxoFornHistorico.First;
+
+
+  // Verifica TabSheet Atual ===================================================
   If (PC_Principal.ActivePage=Ts_FluxFornApres) And (Ts_FluxFornApres.CanFocus) Then
    Dbg_FluFornFornec.SetFocus;
 
@@ -3232,10 +3247,95 @@ begin
      Exit;
   End; // If (PC_Principal.ActivePage=Ts_FluxFornCaixa) And (Ts_FluxFornCaixa.CanFocus) Then
 
+  //============================================================================
+  // Relatório Lançamento Débito / Crédito =====================================
+  //============================================================================
+  If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornImprimir') Then
+  Begin
+    If (Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='') Or
+       ((DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>900)    And
+        (DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>955))   Then
+    Begin
+      msg('É Permitido Alterar Somente os Históricos:'+cr+cr+sHist,'A');
+      Dbg_FluFornCaixa.SetFocus;
+      Exit;
+    End;
+
+    OdirPanApres.Caption:='AGUARDE !! Montando Relatório..';
+    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmFluxoFornecedor;
+    OdirPanApres.BringToFront();
+    OdirPanApres.Visible:=True;
+    Refresh;
+
+    // Busca Docto --------------------------------------------------
+    MySql:=' SELECT'+
+           ' CASE cc.tip_debcre'+
+           '    When ''D'' Then ''CONTA CORRENTE DE FORNECEDOR: Documento de DÉBITO'''+
+           ' ELSE ''CONTA CORRENTE DE FORNECEDOR: Documento de CRÉDITO'''+
+           ' END Tipo,'+
+           ' cc.txt_obs,'+
+           ' cc.cod_empresa, lj.nome_emp,'+
+           ' cc.cod_fornecedor, cc.des_fornecedor,'+
+           ' cc.num_documento, cc.num_serie,'+
+           ' cc.dta_origem, cc.vlr_origem,'+
+           ' cc.dta_caixa, cc.vlr_caixa,'+
+           ' cc.cod_historico, hi.des_historico,'+
+           ' cc.dta_inclui, cc.dta_altera,'+
+
+           ' ''Usuário Inclusão: ''||ui.des_usuario||'' em ''||'+
+           ' Cast(lpad(extract(day   from CAST(cc.dta_inclui as Date)),2,''0'') as varchar(2))||''/''||'+
+           ' Cast(lpad(extract(month from CAST(cc.dta_inclui as Date)),2,''0'') as varchar(2))||''/''||'+
+           ' Cast(extract(Year from CAST(cc.dta_inclui as Date)) as varchar(4)) usu_incluiu,'+
+
+           ' ''Usuário Alteração: ''||ua.des_usuario||'' em ''||'+
+           ' Cast(lpad(extract(day   from CAST(cc.dta_altera as Date)),2,''0'') as varchar(2))||''/''||'+
+           ' Cast(lpad(extract(month from CAST(cc.dta_altera as Date)),2,''0'') as varchar(2))||''/''||'+
+           ' Cast(extract(Year from CAST(cc.dta_altera as Date)) as varchar(4)) Usu_Alterou,'+
+
+           QuotedStr(Des_Usuario)+' USU_EMISSAO'+
+
+           ' FROM  FL_CAIXA_FORNECEDORES cc'+
+           '     LEFT JOIN LINXLOJAS lj           on lj.empresa=cc.cod_empresa'+
+           '     LEFT JOIN FL_CAIXA_HISTORICOS hi on hi.cod_historico=cc.cod_historico'+
+           '     LEFT JOIN PS_USUARIOS ui         on ui.cod_usuario=cc.usu_inclui'+
+           '     LEFT JOIN PS_USUARIOS ua         on ua.cod_usuario=cc.usu_altera'+
+
+           ' WHERE cc.cod_fornecedor='+DMBelShop.CDS_FluxoFornecedorCOD_FORNECEDOR.AsString+
+           ' AND   cc.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',
+                                  DMBelShop.CDS_FluxoFornecedorDATA.AsString)))+
+           ' AND   cc.num_seq  ='+QuotedStr(DMBelShop.CDS_FluxoFornecedorNUM_SEQ.AsString);
+    DMBelShop.CDS_Busca1.Close;
+    DMBelShop.SDS_Busca1.CommandText:=MySql;
+    DMBelShop.CDS_Busca1.Open;
+
+    // Apresenta Relatório =======================================================
+    DMRelatorio.frReport1.LoadFromFile(sgPastaRelatorios+'ContaCorrenteLançamento.frf');
+
+    // Apropria DataSet ==========================================================
+    DMRelatorio.frDBDataSet1.DataSet:=DMBelShop.CDS_Busca1;
+
+    DMRelatorio.frReport1.PrepareReport;
+    DMRelatorio.frReport1.ShowReport;
+
+    // Retorna para o DBGrid
+    DMBelShop.CDS_Busca1.Close;
+
+    OdirPanApres.Visible:=False;
+    Exit;
+  End; // If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornImprimir') Then
+  // Relatório Lançamento Débito / Crédito =====================================
+  //============================================================================
+
   sgDtaDoc :='';
   sgNum_SeqCC:='';
 
+  //============================================================================
   // Novo Lançamento (Fornecedor Novo) =========================================
+  //============================================================================
   If (PC_Principal.ActivePage=Ts_FluxFornApres) Then
   Begin
     DMBelShop.CDS_FluxoFornecedor.Close;
@@ -3245,36 +3345,36 @@ begin
     EdtFluFornCodFornecedor.Clear;
     EdtFluFornFornecedor.Clear;
   End; // If (PC_Principal.ActivePage=Ts_FluxFornApres) Then
+  // Novo Lançamento (Fornecedor Novo) =========================================
+  //============================================================================
 
+  //============================================================================
   // Novo Lançamento (Fornecedor Existente) ====================================
+  //============================================================================
   If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornIncluir') Then
   Begin
-    If DMBelShop.CDS_FluxoFornecedores.IsEmpty Then
-     Exit;
-
     igTabSheet:=PC_Principal.TabIndex;
     sgDMLMovto:='I';
 
     EdtFluFornCodFornecedor.Enabled:=False;
     Bt_FluFornBuscaFornecedor.Enabled:=False;
   End; // If (PC_Principal.ActivePage=Ts_FluxFornApres) Then
+  // Novo Lançamento (Fornecedor Existente) ====================================
+  //============================================================================
 
+  //============================================================================
   // Altera Lançamento (Fornecedor Existente) ==================================
+  //============================================================================
   If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornAlterar') Then
   Begin
     If DMBelShop.CDS_FluxoFornecedores.IsEmpty Then
      Exit;
 
-    If Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='' Then
+    If (Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='') Or
+       ((DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>900)    And
+        (DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>955))   Then
     Begin
-      msg('Selecione o Caixa a Alterar'+cr+cr+'Somente os Históricos: 900 e 955','A');
-      Dbg_FluFornCaixa.SetFocus;
-      Exit;
-    End;
-
-    If (DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>900) And (DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>955) tHEN
-    Begin
-      msg('É Permitido Alterar Somente'+cr+cr+'os Históricos: 900 e 955','A');
+      msg('É Permitido Alterar Somente os Históricos:'+cr+cr+sHist,'A');
       Dbg_FluFornCaixa.SetFocus;
       Exit;
     End;
@@ -3301,9 +3401,12 @@ begin
     EdtFluFornCodFornecedor.Enabled:=False;
     Bt_FluFornBuscaFornecedor.Enabled:=False;
   End; // If (PC_Principal.ActivePage=Ts_FluxFornApres) Then
+  // Altera Lançamento (Fornecedor Existente) ==================================
+  //============================================================================
 
   Ts_FluxFornApres.TabVisible :=False;
   Ts_FluxFornCaixa.TabVisible :=False;
+  sHist:='';
 
   If sgDMLMovto='A' Then
    Begin
@@ -3323,7 +3426,7 @@ begin
      EdtSerieDoc.Text:='UNIC';
      DMBelShop.SDS_Busca.Close;
    End; // If sgDMLMovto='A' Then
-                                 
+
   Ts_FluxFornLanctos.TabVisible:=True;
 
   PC_PrincipalChange(Self);

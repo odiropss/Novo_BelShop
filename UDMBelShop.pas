@@ -1247,6 +1247,7 @@ var
 
   sgMensagemERRO: String;
 
+  sgPastaRelatorios,
   sPath_Local, // Somente a Pasta do Executável
   sgPastaExecutavelServer, // Pasta e Executável no Servidor (FrmBelShop)
   sgPastaBancoBelShop: String; // Pasta do Banco de Dados BelShop.FDB
@@ -3636,6 +3637,11 @@ begin
 
   If SQLC.Connected Then FrmBelShop.Mem_Odir.Lines.Add('CONNECTED=True') Else FrmBelShop.Mem_Odir.Lines.Add('CONNECTED=False');
   If bgConexaoLocal Then FrmBelShop.Mem_Odir.Lines.Add('CONEXÃO LOCAL=True') Else FrmBelShop.Mem_Odir.Lines.Add('CONEXÃO LOCAL=False');
+
+  // Pasta dos Relatórios ======================================================
+  {$IFDEF MSWINDOWS}
+    sgPastaRelatorios:=IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+'Relatorios\';
+  {$ENDIF}
 
   // ===========================================================================
   // Conexão IBDatabase BelShop ================================================

@@ -88,13 +88,50 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       OnChange = EdtFluFornCodFornecedorChange
       OnExit = EdtFluFornCodFornecedorExit
     end
+    object EdtFluFornCodFornAcertar: TEdit
+      Left = 624
+      Top = 20
+      Width = 75
+      Height = 19
+      TabStop = False
+      TabOrder = 3
+      Text = 'C'#243'd a Acertar'
+    end
+    object MEdt_DtaAtualizacao: TMaskEdit
+      Left = 702
+      Top = 20
+      Width = 71
+      Height = 19
+      TabStop = False
+      EditMask = '!99.99.2\000;1;_'
+      MaxLength = 10
+      TabOrder = 4
+      Text = '  .  .20  '
+    end
+    object Bt_FluFornAcertaSaldos: TJvXPButton
+      Left = 778
+      Top = 15
+      Width = 85
+      Height = 29
+      Caption = 'Acerta Saldo'#13#10'     (Odir)'
+      TabOrder = 5
+      TabStop = False
+      ShowFocusRect = True
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      OnClick = Bt_FluFornAcertaSaldosClick
+    end
   end
   object PC_Principal: TPageControl
     Left = 0
     Top = 56
     Width = 977
     Height = 479
-    ActivePage = Ts_FluxFornLanctos
+    ActivePage = Ts_FluxFornCaixa
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1353,54 +1390,66 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           TabOrder = 3
           Width = 95
         end
-        object Bt_LanctosSalvar: TJvXPButton
-          Tag = 1
-          Left = 9
+        object Panel4: TPanel
+          Left = 6
           Top = 306
-          Width = 103
-          Height = 35
-          Caption = 'Salvar'
+          Width = 693
+          Height = 36
+          Align = alBottom
+          BevelInner = bvRaised
+          BevelOuter = bvLowered
           TabOrder = 13
-          TabStop = False
-          ShowFocusRect = True
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          OnClick = Bt_LanctosSalvarClick
-        end
-        object Bt_LanctosAbandonar: TJvXPButton
-          Tag = 1
-          Left = 592
-          Top = 306
-          Width = 104
-          Height = 35
-          Caption = 'Abandonar'
-          TabOrder = 14
-          TabStop = False
-          Glyph.Data = {
-            07544269746D617066010000424D660100000000000076000000280000001400
-            0000140000000100040000000000F00000000000000000000000100000001000
-            0000000000000000800000800000008080008000000080008000808000008080
-            8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-            FF00888888888888888888880000888888888888888888980000889888888888
-            8888898800008899887777777777988800008899900000000009988800008889
-            90BFFFBFFF9988880000888899FCCCCCCF97888800008888999FBFFFB9978888
-            000088888999CCC9990788880000888880999FB99F0788880000888880FC9999
-            CF0788880000888880FF9999BF0788880000888880FC99990007888800008888
-            80B99F099F0788880000888880999F099998888800008888999FBF0F08998888
-            0000889999000000888998880000889998888888888889880000888888888888
-            888888980000888888888888888888880000}
-          ShowFocusRect = True
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          OnClick = Bt_LanctosAbandonarClick
+          object Bt_LanctosSalvar: TJvXPButton
+            Tag = 1
+            Left = 2
+            Top = 2
+            Width = 103
+            Height = 32
+            Caption = 'Salvar'
+            TabOrder = 0
+            TabStop = False
+            ShowFocusRect = True
+            Align = alLeft
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_LanctosSalvarClick
+          end
+          object Bt_LanctosAbandonar: TJvXPButton
+            Tag = 1
+            Left = 587
+            Top = 2
+            Width = 104
+            Height = 32
+            Caption = 'Abandonar'
+            TabOrder = 1
+            TabStop = False
+            Glyph.Data = {
+              07544269746D617066010000424D660100000000000076000000280000001400
+              0000140000000100040000000000F00000000000000000000000100000001000
+              0000000000000000800000800000008080008000000080008000808000008080
+              8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF00888888888888888888880000888888888888888888980000889888888888
+              8888898800008899887777777777988800008899900000000009988800008889
+              90BFFFBFFF9988880000888899FCCCCCCF97888800008888999FBFFFB9978888
+              000088888999CCC9990788880000888880999FB99F0788880000888880FC9999
+              CF0788880000888880FF9999BF0788880000888880FC99990007888800008888
+              80B99F099F0788880000888880999F099998888800008888999FBF0F08998888
+              0000889999000000888998880000889998888888888889880000888888888888
+              888888980000888888888888888888880000}
+            ShowFocusRect = True
+            Align = alRight
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_LanctosAbandonarClick
+          end
         end
       end
     end
@@ -1428,15 +1477,6 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Ctl3D = False
     ParentCtl3D = False
     TabOrder = 2
-    object EdtFluFornCodFornAcertar: TEdit
-      Left = 624
-      Top = 12
-      Width = 76
-      Height = 19
-      TabStop = False
-      TabOrder = 0
-      Text = 'C'#243'd a Acertar'
-    end
     object Bt_FluFornFechar: TJvXPButton
       Tag = 99
       Left = 873
@@ -1444,7 +1484,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       Width = 100
       Height = 37
       Caption = 'Fechar'
-      TabOrder = 3
+      TabOrder = 0
       TabStop = False
       ShowFocusRect = True
       Align = alRight
@@ -1456,42 +1496,14 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       ParentFont = False
       OnClick = Bt_FluFornFecharClick
     end
-    object MEdt_DtaAtualizacao: TMaskEdit
-      Left = 702
-      Top = 12
-      Width = 71
-      Height = 19
-      TabStop = False
-      EditMask = '!99.99.2\000;1;_'
-      MaxLength = 10
-      TabOrder = 1
-      Text = '  .  .20  '
-    end
-    object Bt_FluFornAcertaSaldos: TJvXPButton
-      Left = 778
-      Top = 7
-      Width = 85
-      Height = 29
-      Caption = 'Acerta Saldo'#13#10'     (Odir)'
-      TabOrder = 2
-      TabStop = False
-      ShowFocusRect = True
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      OnClick = Bt_FluFornAcertaSaldosClick
-    end
     object Panel3: TPanel
       Left = 2
       Top = 2
-      Width = 582
+      Width = 666
       Height = 37
       Align = alLeft
       BevelOuter = bvNone
-      TabOrder = 4
+      TabOrder = 1
       object Bt_FluFornFiltroComprador: TJvXPButton
         Tag = 92
         Left = 1
@@ -1511,12 +1523,12 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       end
       object Bt_FluFornSalvaMemoria: TJvXPButton
         Tag = 4
-        Left = 443
+        Left = 548
         Top = 1
         Width = 104
         Height = 35
         Caption = 'Salva em'#13#10' Mem'#243'ria'
-        TabOrder = 1
+        TabOrder = 4
         TabStop = False
         ShowFocusRect = True
         Spacing = 5
@@ -1570,7 +1582,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         Width = 100
         Height = 35
         Caption = 'Graficos'
-        TabOrder = 4
+        TabOrder = 1
         TabStop = False
         Glyph.Data = {
           07544269746D6170F6030000424DF60300000000000076000000280000001F00
@@ -1615,6 +1627,25 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         Font.Style = [fsBold]
         ParentFont = False
         OnClick = Bt_FluFornGraficosClick
+      end
+      object Bt_FluFornImprimir: TJvXPButton
+        Tag = 4
+        Left = 443
+        Top = 1
+        Width = 104
+        Height = 35
+        Caption = 'Imprimir'
+        TabOrder = 5
+        TabStop = False
+        ShowFocusRect = True
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Visible = False
+        OnClick = Bt_FluFornIncluirClick
       end
     end
   end
@@ -1666,8 +1697,8 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Top = 103
   end
   object PopM_Forn: TPopupMenu
-    Left = 791
-    Top = 40
+    Left = 815
+    Top = 48
     object PopM_FluFornSIM: TMenuItem
       Bitmap.Data = {
         B6030000424DB603000000000000360000002800000012000000100000000100
