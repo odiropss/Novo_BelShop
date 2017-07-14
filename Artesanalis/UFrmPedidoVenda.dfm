@@ -1,6 +1,6 @@
 object FrmPedidoVenda: TFrmPedidoVenda
-  Left = 254
-  Top = 60
+  Left = 235
+  Top = 110
   Width = 867
   Height = 604
   AutoSize = True

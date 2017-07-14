@@ -2185,12 +2185,14 @@ begin
   OdirPanApres.Visible:=True;
   Refresh;
 
+  DMBelShop.CDS_FluxoFornecedor.DisableControls;
   DMBelShop.CDS_FluxoFornecedor.Close;
   DMBelShop.SDS_FluxoFornecedor.Params[0].AsCurrency:=cValor;
   DMBelShop.SDS_FluxoFornecedor.Params[1].AsCurrency:=cValor;
   DMBelShop.SDS_FluxoFornecedor.Params[2].AsInteger:=EdtFluFornCodFornecedor.AsInteger;
   DMBelShop.SDS_FluxoFornecedor.Params[3].AsString:=sDtaLimite;
   DMBelShop.CDS_FluxoFornecedor.Open;
+  DMBelShop.CDS_FluxoFornecedor.EnableControls;
   OdirPanApres.Visible:=False;
 
   If DMBelShop.CDS_FluxoFornecedor.IsEmpty Then
@@ -2205,6 +2207,8 @@ begin
   End;
   PC_Principal.ActivePage:=Ts_FluxFornCaixa;
   PC_PrincipalChange(Self);
+
+  DMBelShop.CDS_FluxoFornecedor.Last;
 
   Dbg_FluFornCaixa.SetFocus;
 

@@ -1629,7 +1629,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         OnClick = Bt_FluFornGraficosClick
       end
       object Bt_FluFornImprimir: TJvXPButton
-        Tag = 4
+        Tag = 5
         Left = 443
         Top = 1
         Width = 104

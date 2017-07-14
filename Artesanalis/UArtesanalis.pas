@@ -68,6 +68,7 @@ type
     SubMenuComprrasOutrosInsumos: TMenuItem;
     MenuRELATORIOS: TMenuItem;
     Panel1: TPanel;
+    Image1: TImage;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -154,11 +155,11 @@ end;
 
 procedure TFrmArtesanalis.FormShow(Sender: TObject);
 begin
-  FrmArtesanalis.ClientHeight:=0;
-  FrmArtesanalis.Align:=alTop; // alNone;
-  FrmArtesanalis.Height:=64;
-  FrmArtesanalis.AutoSize:=True;
-  
+//  FrmArtesanalis.ClientHeight:=0;
+//  FrmArtesanalis.Align:=alTop; // alNone;
+//  FrmArtesanalis.Height:=64;
+//  FrmArtesanalis.AutoSize:=True;
+
   CorCaptionForm.Active:=False;
   CorCaptionForm.Active:=True;
 
@@ -292,7 +293,7 @@ begin
 
   DMArtesanalis.CDS_MateriaPrima.Open;
 
-  FrmMateriaPrimaCadastro.Show;
+  FrmMateriaPrimaCadastro.ShowModal;
 
 end;
 
@@ -302,14 +303,14 @@ begin
 
   DMArtesanalis.CDS_ProdutoMatPrima.Open;
 
-  FrmProdutoCadastro.Show;
+  FrmProdutoCadastro.ShowModal;
 end;
 
 procedure TFrmArtesanalis.SubMenuCadastroPessoasEntidadesClick(Sender: TObject);
 begin
   DMArtesanalis.MemoAdicionaNomeForm('Cadastro - PESSOAS');
 
-  FrmCadastroPessoa.Show;
+  FrmCadastroPessoa.ShowModal;
 
 end;
 
@@ -329,7 +330,7 @@ begin
   FrmMovimentos.CBx_TipoDocto.ItemIndex:=-1;
 
   FrmMovimentos.sgOrigem:='M'; // Materia-Prima
-  FrmMovimentos.Show;
+  FrmMovimentos.ShowModal;
 end;
 
 procedure TFrmArtesanalis.SubMenuVENDASPedidosVendaClick(Sender: TObject);
@@ -337,7 +338,7 @@ begin
   DMArtesanalis.MemoAdicionaNomeForm('PRODUTO - Pedido de Vendas');
 
   FrmPedidoVenda.sgOrigem:='P'; // Pedido de Venda
-  FrmPedidoVenda.Show;
+  FrmPedidoVenda.ShowModal;
 end;
 
 end.

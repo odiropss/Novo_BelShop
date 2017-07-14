@@ -1296,10 +1296,6 @@ type
     Bt_ConsultaNFeSalvarCSV: TJvXPButton;
     Pan_ConsultaNFe_1: TPanel;
     Bt_ConEmpresasUsuWindows: TJvXPButton;
-    MenuGerencia: TMenuItem;
-    SubMenuMenuGerenciaContasPagar: TMenuItem;
-    N39: TMenuItem;
-    SubMenuMenuGerenciaContasReceber: TMenuItem;
     MenuCentroDistr: TMenuItem;
     SubMenuCentroDistrReposicoesLojas: TMenuItem;
     MenuCentroDistrCentralTrocas: TMenuItem;
@@ -1366,12 +1362,18 @@ type
     Button4: TButton;
     N46: TMenuItem;
     N47: TMenuItem;
-    N50: TMenuItem;
     SubMenuComprasGeraOCLinx: TMenuItem;
     N29: TMenuItem;
     Label73: TLabel;
     N51: TMenuItem;
-    N52: TMenuItem;
+    N53: TMenuItem;
+    ReposiesLojasLINX1: TMenuItem;
+    Label74: TLabel;
+    Label75: TLabel;
+    EdtFiltroCodProdLinx: TCurrencyEdit;
+    Label183: TLabel;
+    N39: TMenuItem;
+    PrioridadesdeReposio1: TMenuItem;
 
     // Odir ====================================================================
 
@@ -2334,6 +2336,9 @@ type
     procedure Bt_AcertaPromocaoClick(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure SubMenuComprasGeraOCLinxClick(Sender: TObject);
+    procedure EdtFiltroCodProdLinxExit(Sender: TObject);
+    procedure ReposiesLojasLINX1Click(Sender: TObject);
+    procedure PrioridadesdeReposio1Click(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -22244,10 +22249,10 @@ begin
   //============================================================================
   // TbaSheet's Não Usados =====================================================
   //============================================================================
-  SubMenuFinanFechamentoDiarioLojas.Visible:=False;
   SubMenuFinanFechamentoDiarioLojas.Enabled:=False;
-  SubMenuFinanFechamentoCaixa.Visible:=False;
+  SubMenuFinanFechamentoDiarioLojas.Visible:=False;
   SubMenuFinanFechamentoCaixa.Enabled:=False;
+  SubMenuFinanFechamentoCaixa.Visible:=False;
   //============================================================================
 
   // Cor Form
@@ -24437,7 +24442,7 @@ begin
     // Busca Produtos ==========================================================
     MySql:='select p.Apresentacao Des_Produto, p.CodProduto, p.PrincipalFor'+
            ' from produto p'+
-           ' Where p.CodProduto='+VarToStr(EdtFiltroCodProduto.Value);
+           ' Where p.CodProduto='+QuotedStr(FormatFloat('000000',EdtFiltroCodProduto.AsInteger));
 
            If Painel_FiltroNaoCompra.Visible Then
            Begin
@@ -46289,6 +46294,64 @@ begin
   FrmOCLinx.ShowModal;
 
   FreeAndNil(FrmOCLinx);
+
+end;
+
+procedure TFrmBelShop.EdtFiltroCodProdLinxExit(Sender: TObject);
+Var
+  MySql: String;
+begin
+
+  If EdtFiltroCodProdLinx.Value<>0 Then
+  Begin
+    Screen.Cursor:=crAppStart;
+
+    // Busca Produto Linx Para Sidicom =========================================
+    MySql:=' SELECT pl.cod_auxiliar'+
+           ' FROM LINXPRODUTOS pl'+
+           ' WHERE pl.cod_produto='+IntToStr(EdtFiltroCodProdLinx.AsInteger);
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+
+    Screen.Cursor:=crDefault;
+    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Auxiliar').AsString)='' Then
+    Begin
+      msg('Produto (Linx) NÃO Encontrado !!!', 'A');
+      DMBelShop.CDS_BuscaRapida.Close;
+      EdtFiltroCodProdLinx.Clear;
+      EdtFiltroCodProdLinx.SetFocus;
+      Exit;
+    End;
+
+    EdtFiltroCodProduto.SetFocus;
+    EdtFiltroCodProduto.Text:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Auxiliar').AsString);
+
+    DMBelShop.CDS_BuscaRapida.Close;
+    EdtFiltroCodProdLinx.Clear;
+
+    EdtFiltroCodProdutoExit(Self);
+    EdtFiltroCodProdLinx.SetFocus;
+  End; // If EdtFiltroCodProdLinx.Value<>0 Then
+end;
+
+procedure TFrmBelShop.ReposiesLojasLINX1Click(Sender: TObject);
+begin
+  If AnsiUpperCase(Des_Usuario)<>'ODIR' Then
+  Begin
+    msg('Opção em Desenvolvimento !!','A');
+    Exit;
+  End;
+
+end;
+
+procedure TFrmBelShop.PrioridadesdeReposio1Click(Sender: TObject);
+begin
+  If AnsiUpperCase(Des_Usuario)<>'ODIR' Then
+  Begin
+    msg('Opção em Desenvolvimento !!','A');
+    Exit;
+  End;
 
 end;
 

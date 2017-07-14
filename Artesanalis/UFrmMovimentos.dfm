@@ -1,6 +1,6 @@
 object FrmMovimentos: TFrmMovimentos
-  Left = 250
-  Top = 67
+  Left = 246
+  Top = 113
   Width = 867
   Height = 604
   AutoSize = True

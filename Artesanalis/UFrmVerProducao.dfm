@@ -292,7 +292,6 @@ object FrmVerProducao: TFrmVerProducao
           FieldName = 'QTD_UNID_UTILIZADA_MP'
           Title.Alignment = taRightJustify
           Title.Caption = 'Qtd Utilizada'
-          Width = -1
           Visible = False
         end
         item

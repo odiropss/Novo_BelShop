@@ -213,8 +213,11 @@ Begin
          End; // If (iQtdMax>0) Then
 
          //=====================================================================
-         // CALCULA MULTIPLOS E PERCENTUAIS DE CORTES ==========================
+         // CALCULA CAIXAS DE EMPBARQUE E MULTIPLOS ============================
          //=====================================================================
+         bMultiplo   :=False;
+         iMultiplo   :=0;
+         iQtdMultiplo:=0;
          If bRepoe Then
          Begin
            //===================================================================
@@ -245,53 +248,64 @@ Begin
            DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
            DMTransferencias.CDS_BuscaRapida.Open;
 
-           bMultiplo:=(DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsInteger=0);
-
-           // Calcula Multiplo =================================================
-           If (bMultiplo) and (Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsString)<>'') Then
+           iMultiplo   :=0;
+           iQtdMultiplo:=0;
+           bMultiplo   :=False;
+           If Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)<>'' Then
            Begin
-             iMultiplo:=DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsInteger;
-             iQtdMultiplo:=iMultiplo;
+             If DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsInteger=0 Then
+              bMultiplo:=True;
 
-             While bMultiplo do
+             // Calcula Multiplo ===============================================
+             If bMultiplo Then
              Begin
-               If iQtdReposicao<iQtdMultiplo Then
+               iMultiplo:=DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsInteger;
+               iQtdMultiplo:=iMultiplo;
+
+               While bMultiplo do
                Begin
-                 iQtdReposicao:=iQtdMultiplo;
-                 Break;
-               End;
-               iQtdMultiplo:=iQtdMultiplo+iMultiplo;
-             End; // While bMultiplo do
+                 If iQtdReposicao<iQtdMultiplo Then
+                 Begin
+                   iQtdReposicao:=iQtdMultiplo;
+                   Break;
+                 End;
+                 iQtdMultiplo:=iQtdMultiplo+iMultiplo;
+               End; // While bMultiplo do
 
-             sObs:=Trim(sObs)+' - Utilizado Conforme Multiplo Qtd/Caixa: '+
-                   DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsString+
-                   ' Corte: '+DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsString+'%';
-           End; // If bMultiplo Then
+               sObs:=Trim(sObs)+' - Utilizado Conforme Multiplo Qtd/Caixa: '+
+                     DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsString+
+                     ' Corte: '+DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsString+'%';
+             End; // If bMultiplo Then
 
-           // Calcula Por Percentual de Corte ==================================
-           If (Not bMultiplo) and (Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsString)<>'') Then
-           Begin
-             cReposicao:=RoundTo(iQtdReposicao/DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsInteger,-2);
-             iQtdReposicao:=ParteInteiro(CurrToStr(cReposicao));
-             cReposicao:=(cReposicao-iQtdReposicao)*100;
+             // Calcula Por Percentual de Corte ================================
+             If Not bMultiplo Then
+             Begin
+               cReposicao:=RoundTo(iQtdReposicao / DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsInteger,-2);
+               iQtdReposicao:=ParteInteiro(CurrToStr(cReposicao));
+               cReposicao:=(cReposicao-iQtdReposicao)*100;
 
-             If cReposicao>=DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsCurrency Then
-              iQtdReposicao:=iQtdReposicao+1;
+               If cReposicao>=DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsCurrency Then
+                iQtdReposicao:=iQtdReposicao+1;
 
-             // Acerta Quantidade Final de Reposição ===========================
-             iQtdReposicao:=iQtdReposicao*
-                            DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsInteger;
+               // Acerta Quantidade Final de Reposição =========================
+               iQtdReposicao:=iQtdReposicao * DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsInteger;
 
-             bRepoe:=(iQtdReposicao>0);
+               bRepoe:=(iQtdReposicao>0);
 
-             sObs:=Trim(sObs)+' - Utilizado Conforme Corte Qtd/Caixa: '+
-                   DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsString+
-                   ' Corte: '+DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsString+'%';
-           End; // If Not bMultiplo Then
+               sObs:=Trim(sObs)+' - Utilizado Conforme Corte Qtd/Caixa: '+
+                     DMTransferencias.CDS_BuscaRapida.FieldByName('Qtd_Caixa').AsString+
+                     ' Corte: '+DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsString+'%';
+             End; // If Not bMultiplo Then
+           End; // If Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)<>'' Then
+           iMultiplo   :=0;
+           iQtdMultiplo:=0;
+           bMultiplo   :=False;
            DMTransferencias.CDS_BuscaRapida.Close;
- 
+
+           //===================================================================
            // Não Repõe Quantidade de Reposição < 3 para curvas para C, D, E ===
            // Definido Pela Logistica: Eduardo, Pedro, Carlos.
+           //===================================================================
            If ((Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='C') Or
                (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='D') Or
                (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='E')) AND
@@ -301,7 +315,13 @@ Begin
                                Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)+'.';
               bRepoe:=False;
            End; // If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='C') Or ...
+           // Não Repõe Quantidade de Reposição < 3 para curvas para C, D, E ===
+           // Definido Pela Logistica: Eduardo, Pedro, Carlos.
+           //===================================================================
 
+           //===================================================================
+           // Aplica Percentual de Corte da Curva ==============================
+           //===================================================================
            If bRepoe Then
            Begin
              If iQtdReposicao>=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger Then
@@ -328,15 +348,7 @@ Begin
                iQtdReposicao:=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger;
              End; // If iQtdReposicao>=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger Then
 
-             //===========================================================================================
-             // Mantem Quantidade Maxima de Reposição da Loja 18 em 12 Unidades ==========================
-             //===========================================================================================
-//             If (igCodLojaLinx=18) and (iQtdReposicao>12) Then
-//              iQtdReposicao:=12;
-             //===========================================================================================
-
              // Verifica Percentual de Corte da Curva -------------------
-             bRepoe:=True;
              If (DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsInteger>0) And (iQtdReposicao>0) Then
              Begin
                If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='A') And (igPer_CorteA>0)  Then
@@ -370,7 +382,13 @@ Begin
                End;
              End; // If (DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsInteger>0) And (iQtdReposicao>0) Then
            End; // If bRepoe Then
+           // Aplica Percentual de Corte da Curva ==============================
+           //===================================================================
+
          End; // If bRepoe Then
+         // CALCULA MULTIPLOS E PERCENTUAIS DE CORTES ==========================
+         //=====================================================================
+
          DMTransferencias.CDS_EstoqueLoja.Edit;
 
          // Se Repõe para Loja --------------------------------------

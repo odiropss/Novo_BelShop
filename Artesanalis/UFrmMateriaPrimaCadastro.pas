@@ -519,6 +519,9 @@ begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
 
+  // Não Permite Movimentar o Formulário =======================================
+  DeleteMenu(GetSystemMenu(Handle, False), SC_MOVE, MF_BYCOMMAND);
+
   // Show Hint em Forma de Balão
   CreateToolTips(Self.Handle);
   AddToolTip(Bt_MateriaPrimaSalvar.Handle, @ti, TipoDoIcone, 'Incluir/Alterar', 'MATÉRIA-PRIMA');

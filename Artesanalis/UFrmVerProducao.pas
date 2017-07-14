@@ -61,6 +61,9 @@ begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
 
+  // Não Permite Movimentar o Formulário =======================================
+  DeleteMenu(GetSystemMenu(Handle, False), SC_MOVE, MF_BYCOMMAND);
+
 end;
 
 procedure TFrmVerProducao.FormKeyPress(Sender: TObject; var Key: Char);
