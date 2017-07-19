@@ -203,7 +203,7 @@ uses
 Procedure TFrmWebServiceLinx.LeMetodoXMLRetorno;
 Var
   MySql: String;
-  sObs, sMensagem, sCampoDta, sConteudoCampo: String;
+  sObs, sMensagem, sCampoDta, sConteudoCampo, sDtaAtual: String;
 
   iii, ii, i: Integer;
 
@@ -213,6 +213,9 @@ Var
 
   tgCamposBD: TStringList;
 Begin
+
+  sDtaAtual:=DateToStr(DataHoraServidorFI(DMLinxWebService.SDS_DtaHoraServidor));
+  sDtaAtual:=f_Troca('/','',f_Troca('.','',f_Troca('-','',sDtaAtual)));
 
   // Verifica se Transação esta Ativa
   If DMLinxWebService.SQLC.InTransaction Then
@@ -438,12 +441,14 @@ Begin
                  (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes'))           Then
                Begin
                  sSqlUpInValores:=
-                  sSqlUpInValores+' '+QuotedStr(sgCodLoja)+', current_date, current_time)';
+                  sSqlUpInValores+' '+QuotedStr(sgCodLoja)+', '+QuotedStr(sDtaAtual)+', current_time)';
+                  // OdirApagar
+                  //sSqlUpInValores+' '+QuotedStr(sgCodLoja)+', current_date, current_time)';
                End
               Else
                Begin
                  sSqlUpInValores:=
-                  sSqlUpInValores+' current_date, current_time)';
+                  sSqlUpInValores+' '+QuotedStr(sDtaAtual)+', current_time)';
                End;
 
 //OdirAqui 7 - Inclui MATCHING
@@ -549,7 +554,7 @@ Begin
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (empresa, cnpj, data_fechamento, numero_ecf,'+
                                            'numeroserie, data_mov)';
-                                           
+
               // Executa Sql Update/Insert --------------------------
               MySql:=sSqlUpInCampos+sSqlUpInValores;
               MySql:=F_Troca(#$A#$A, ' ', MySql);
@@ -598,7 +603,7 @@ Begin
 
           MySql:=' UPDATE LINXPRODUTOSDETALHES d'+
                  ' SET d.quantidade=0.0000'+
-                 ' WHERE d.dta_atualizacao<>current_date'+
+                 ' WHERE d.dta_atualizacao<>'+QuotedStr(sDtaAtual)+
                  ' AND d.quantidade<>0.000'+
                  ' AND d.empresa='+sgCodLojaLinx;
           DMLinxWebService.SQLC.Execute(MySql, nil, nil);
@@ -613,8 +618,8 @@ Begin
                  ' LP.cod_produto COD_PRODUTO, LP.cod_barra COD_BARRA,'+
                  ' 0.0000 QUANTIDADE, 0.0000 PRECO_CUSTO, 0.0000 PRECO_VENDA, 0.0000 CUSTO_MEDIO,'+
                  ' NULL ID_CONFIG_TRIBUTARIA, NULL DESC_CONFIG_TRIBUTARIA,'+
-                 QuotedStr(sgCodLoja)+' COD_LOJA,'+ // CODIGO EMPRESA SIDICOM
-                 ' current_date DTA_ATUALIZACAO, current_time HRA_ATUALIZACAO'+
+                 QuotedStr(sgCodLoja)+' COD_LOJA, '+ // CODIGO EMPRESA SIDICOM
+                 QuotedStr(sDtaAtual)+' DTA_ATUALIZACAO, current_time HRA_ATUALIZACAO'+
 
                  ' FROM LINXPRODUTOS lp'+
                  ' WHERE NOT EXISTS (SELECT 1'+
@@ -624,6 +629,16 @@ Begin
           DMLinxWebService.SQLC.Execute(MySql, nil, nil);
           sOBS:='';
         End; // If sgMetodo='LinxProdutosDetalhes' Then
+
+        //======================================================================
+        // Exclui Codigos de Barras que Sobraram ===============================
+        //======================================================================
+        If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosCodBar') Then
+        Begin
+          MySql:=' DELETE FROM LINXPRODUTOSCODBAR cb'+
+                 ' WHERE cb.dta_atualizacao<>'+QuotedStr(sDtaAtual);
+          DMLinxWebService.SQLC.Execute(MySql, nil, nil);
+        End; // If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosCodBar') Then
 
         // Atualiza Transacao ============================================
         DMLinxWebService.SQLC.Commit(TD);

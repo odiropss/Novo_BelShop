@@ -1,6 +1,6 @@
 object FrmBancoExtratos: TFrmBancoExtratos
-  Left = 232
-  Top = 106
+  Left = 318
+  Top = 101
   Width = 1063
   Height = 622
   AutoSize = True
@@ -1126,7 +1126,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Top = 74
             Width = 1031
             Height = 395
-            ActivePage = Ts_ExtratoConsulta
+            ActivePage = Ts_ExtratoSantander
             Align = alClient
             TabOrder = 1
             OnChange = PC_ExtExtratosChange

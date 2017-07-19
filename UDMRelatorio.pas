@@ -99,8 +99,10 @@ Begin
          ' oc.cod_fornecedor, oc.des_fornecedor,'+
          ' oc.cod_item, oc.cod_barras, oc.cod_referencia_forn,'+
          ' oc.des_item, oc.uni_compra, oc.uni_venda,'+
-         ' oc.qtd_acomprar, oc.vlr_uni_compra, oc.per_desconto,'+
-         ' oc.vlr_tot_compra, oc.obs_oc, oc.cod_comprador, us.des_usuario,'+
+         ' SUM(oc.qtd_acomprar) qtd_acomprar,'+
+         ' oc.vlr_uni_compra, oc.per_desconto,'+
+         ' SUM(oc.vlr_tot_compra) vlr_tot_compra,'+
+         ' oc.obs_oc, oc.cod_comprador, us.des_usuario,'+
 
          ' COALESCE(pe.zonaendereco,''0'')||''.''||'+
          ' COALESCE(pe.corredor,''0'')||''.''||'+
@@ -116,6 +118,9 @@ Begin
          ' where oc.num_documento='+QuotedStr(sNumDocto)+
          ' and   oc.cod_empresa='+ QuotedStr(sCodLoja)+
          ' and   oc.num_oc_gerada='+ QuotedStr(sNumOCGerada)+
+
+         ' group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,23,25,26,27,28'+
+         
          ' order by Enderecamento, oc.des_item';
   DMBelShop.IBQ_OrdemCompra.Close;
   DMBelShop.IBQ_OrdemCompra.SQL.Clear;

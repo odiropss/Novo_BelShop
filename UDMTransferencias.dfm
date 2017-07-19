@@ -27,7 +27,7 @@ object DMTransferencias: TDMTransferencias
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'gds32.dll'
-    Left = 56
+    Left = 48
     Top = 16
   end
   object SDS_Busca: TSQLDataSet
@@ -223,27 +223,28 @@ object DMTransferencias: TDMTransferencias
       'SELECT'#13#10' CAST(GEN_ID(GEN_ODIR,1) AS INTEGER) Num_Seq,'#13#10' CURRENT_' +
       'DATE Dta_Movto,'#13#10' 1320 Num_Docto,'#13#10' '#39'01'#39' Cod_Loja,'#13#10' pr.codprodu' +
       'to Cod_produto,'#13#10' 8 Est_Minimo,'#13#10' 8 Est_Maximo,'#13#10' 3 qtd_estoque,' +
-      #13#10' SUM(COALESCE(dm.quant_ref,0)) Qtd_Vendas,'#13#10' '#39'C'#39' ind_curva,'#13#10' ' +
-      '60 dias_estocagem,'#13#10' 101 qtd_dias,'#13#10' ((SUM(COALESCE(dm.quant_ref' +
-      ',0)))/101) qtd_venda_dia,'#13#10' CAST(((((SUM(COALESCE(dm.quant_ref,0' +
-      ')))/101)) * 60) AS INTEGER) qtd_demanda,'#13#10#13#10' CASE'#13#10'    WHEN (CAS' +
-      'T(((((SUM(COALESCE(dm.quant_ref,0)))/101)) * 60) AS INTEGER))>=8' +
-      ' Then'#13#10'      (CAST((((((SUM(COALESCE(dm.quant_ref,0)))/101)) * 6' +
-      '0) - 3) AS INTEGER))'#13#10'    ELSE'#13#10'      8 - 3'#13#10' END qtd_reposicao,' +
-      #13#10#13#10' 0.00 qtd_transf,'#13#10' 0.00 qtd_a_transf,'#13#10' '#39'000000'#39' num_pedido' +
-      ','#13#10' '#39'CAL'#39' IND_TRANSF,'#13#10' 0 usu_altera,'#13#10' CURRENT_TIMESTAMP dta_al' +
-      'tera,'#13#10' 0 NUM_TR_GERADA,'#13#10' 0.00 QTD_TRANSF_OC,'#13#10' '#39' '#39' OBS_DOCTO,'#13 +
-      #10' pr.codgruposub'#13#10#13#10' FROM PRODUTO pr'#13#10'       LEFT JOIN MOVTOS_EM' +
-      'PRESAS dm  ON dm.ind_tipo='#39'DM'#39#13#10'                                ' +
-      '    AND dm.codproduto=pr.codproduto'#13#10'                           ' +
-      '         AND dm.dta_ref>='#39'14.02.2016'#39#13#10'                         ' +
-      '           AND dm.dta_ref<='#39'14.06.2016'#39#13#10'                       ' +
-      '             AND dm.codfilial='#39'01'#39#13#10#13#10'WHERE pr.codproduto='#39'00002' +
-      '0'#39#13#10#13#10'GROUP BY  5, 25'#13#10#13#10'HAVING (CASE'#13#10'           WHEN (CAST((((' +
-      '(SUM(COALESCE(dm.quant_ref,0)))/101)) * 60) AS INTEGER))>=8 Then' +
-      #13#10'             (CAST((((((SUM(COALESCE(dm.quant_ref,0)))/101)) *' +
-      ' 60) - 3) AS INTEGER))'#13#10'           ELSE'#13#10'             8 - 3'#13#10'   ' +
-      '     END)>0'
+      #13#10' SUM(COALESCE(dm.quant_ref,0.00)) Qtd_Vendas,'#13#10' '#39'C'#39' ind_curva,' +
+      #13#10' 60 dias_estocagem,'#13#10' 101 qtd_dias,'#13#10' ((SUM(COALESCE(dm.quant_' +
+      'ref,0.00)))/101) qtd_venda_dia,'#13#10' CAST(((((SUM(COALESCE(dm.quant' +
+      '_ref,0.00)))/101)) * 60) AS INTEGER) qtd_demanda,'#13#10#13#10' CAST(CASE'#13 +
+      #10'        WHEN (CAST(((((SUM(COALESCE(dm.quant_ref,0)))/101)) * 6' +
+      '0) AS INTEGER))>=8 Then'#13#10'          (CAST((((((SUM(COALESCE(dm.qu' +
+      'ant_ref,0)))/101)) * 60) - 3) AS INTEGER))'#13#10'        ELSE'#13#10'      ' +
+      '    8 - 3'#13#10'      END'#13#10' AS INTEGER) qtd_reposicao,'#13#10#13#10' 0.00 qtd_t' +
+      'ransf,'#13#10' 0.00 qtd_a_transf,'#13#10' '#39'000000'#39' num_pedido,'#13#10' '#39'CAL'#39' IND_T' +
+      'RANSF,'#13#10' 0 usu_altera,'#13#10' CURRENT_TIMESTAMP dta_altera,'#13#10' 0 NUM_T' +
+      'R_GERADA,'#13#10' 0.00 QTD_TRANSF_OC,'#13#10' '#39' '#39' OBS_DOCTO,'#13#10' pr.codgruposu' +
+      'b'#13#10#13#10' FROM PRODUTO pr'#13#10'       LEFT JOIN MOVTOS_EMPRESAS dm  ON d' +
+      'm.ind_tipo='#39'DM'#39#13#10'                                    AND dm.codp' +
+      'roduto=pr.codproduto'#13#10'                                    AND dm' +
+      '.dta_ref>='#39'14.02.2016'#39#13#10'                                    AND ' +
+      'dm.dta_ref<='#39'14.06.2016'#39#13#10'                                    AN' +
+      'D dm.codfilial='#39'01'#39#13#10#13#10'WHERE pr.codproduto='#39'000020'#39#13#10#13#10'GROUP BY ' +
+      ' 5, 25'#13#10#13#10'HAVING CAST((CASE'#13#10'                WHEN (CAST(((((SUM(' +
+      'COALESCE(dm.quant_ref,0)))/101)) * 60) AS INTEGER))>=8 Then'#13#10'   ' +
+      '               (CAST((((((SUM(COALESCE(dm.quant_ref,0)))/101)) *' +
+      ' 60) - 3) AS INTEGER))'#13#10'                ELSE'#13#10'                  ' +
+      '8 - 3'#13#10'             END)'#13#10'       AS INTEGER)>0'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -319,10 +320,8 @@ object DMTransferencias: TDMTransferencias
     object CDS_ProdutoDemandaQTD_DEMANDA: TIntegerField
       FieldName = 'QTD_DEMANDA'
     end
-    object CDS_ProdutoDemandaQTD_REPOSICAO: TFMTBCDField
+    object CDS_ProdutoDemandaQTD_REPOSICAO: TIntegerField
       FieldName = 'QTD_REPOSICAO'
-      Precision = 15
-      Size = 0
     end
     object CDS_ProdutoDemandaQTD_TRANSF: TFMTBCDField
       FieldName = 'QTD_TRANSF'

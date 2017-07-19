@@ -56,7 +56,16 @@ uses UDMAtualizaEstoques, UDMConexoes, DK_Procs1, DB;
 Procedure TFrmAtualizaEstoques.AtualizaEstoquesMovtosLinx(sCodLinx, sCodBelShop, sDtaInicioLinx: String);
 Var
   MySql: String;
+
+  i: Integer;
+
+  sDtaAtualiza,
+  sDML, sValues,
+  sCodProd, sQtdSaldo: String;
 Begin
+
+  sDtaAtualiza:=f_Troca('/','.',f_Troca('-','.',DateToStr(Date)));
+
   // Verifica se Transação esta Ativa
   If DMAtualizaEstoques.SQLC.InTransaction Then
    DMAtualizaEstoques.SQLC.Rollback(TD);
@@ -68,6 +77,119 @@ Begin
   Try // Try da Transação
     DateSeparator:='.';
     DecimalSeparator:='.';
+
+    //==========================================================================
+    // Atualiza Todos os Produtos na Tabela ESTOQUE ============================
+    //==========================================================================
+    sDML:=' UPDATE OR INSERT INTO ESTOQUE ('+
+          ' CODFILIAL, CODPRODUTO, SALDOATUAL, PEDIDOPENDENTE,'+
+          ' ZONAENDERECO, CORREDOR, PRATELEIRA, GAVETA,'+
+          ' CUSMEDVALOR, CUSTOMEDIO, LASTPRECOCOMPRA, LASTCUSTOMEDIO,'+
+          ' ESTOQUEIDEAL, ESTOQUEMAXIMO,'+
+          ' DATAALTERACADASTRO, DATAALTERAESTOQUE, DATAALTERAESTOQUE_PED,'+
+          ' PRINCIPALFOR, SALDO_FINAL_SIDICOM, DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
+          ' VALUES (';
+
+    MySql:=' SELECT '+
+           QuotedStr(sCodBelShop)+' codfilial,'+
+           ' CAST(LPAD(lp.cod_auxiliar,6,0) AS VARCHAR(6)) codproduto,'+
+           ' lpd.quantidade saldoatual, 0.0000 pedidopendente,'+
+           ' COALESCE(es.zonaendereco, 0) zonaendereco,'+
+           ' COALESCE(es.corredor, ''000'') corredor,'+
+           ' COALESCE(es.prateleira, ''000'') prateleira,'+
+           ' COALESCE(es.gaveta, ''0000'') gaveta,'+
+           ' lpd.custo_medio cusmedvalor, lpd.custo_medio customedio,'+
+           ' COALESCE((SELECT FIRST 1 m.valor_liquido'+
+           '           FROM LINXMOVIMENTO m'+
+           '           WHERE m.empresa = '+sCodLinx+
+           '           AND   m.operacao = ''E'''+
+           '           AND   ((m.tipo_transacao=''S'') OR (m.tipo_transacao=''E'') OR (m.tipo_transacao IS NULL))'+
+           '           AND   m.cancelado=''N'''+
+           '           AND   m.excluido=''N'''+
+           '           AND   m.cod_produto = lpd.cod_produto'+
+           '           ORDER BY m.data_lancamento DESC), 0.0000) lastprecocompra,'+
+           ' lpd.custo_medio lastcustomedio,'+
+           ' COALESCE(es.estoqueideal, 0.0000) estoqueideal,'+
+           ' COALESCE(es.estoquemaximo, 0.0000) estoquemaximo,'+
+           ' lp.dt_update dataalteracadastro,'+
+           ' lp.dt_update dataalteraestoque,'+
+           ' lp.dt_update dataalteraestoque_ped,'+
+           ' pr.principalfor principalfor, '+
+           ' COALESCE(es.saldo_final_sidicom, 0.00000)  saldo_final_sidicom,'+
+           QuotedStr(sgDataAtual)+' DTA_ATUALIZACAO, '+
+           ' current_time HRA_ATUALIZACAO'+
+
+           ' FROM LINXPRODUTOSDETALHES lpd'+
+           '          LEFT JOIN LINXPRODUTOS lp  ON lp.cod_produto = lpd.cod_produto'+
+           '          LEFT JOIN PRODUTO pr       ON pr.codproduto = CAST(LPAD(lp.cod_auxiliar,6,0) AS VARCHAR(6))'+
+           '          LEFT JOIN ESTOQUE es       ON es.codproduto = pr.codproduto'+
+           '                                    AND es.codfilial='+QuotedStr(sCodBelShop)+ //  --==>>> sidicom
+
+           ' WHERE lpd.empresa = '+sCodLinx+
+           ' AND   lp.cod_auxiliar IS NOT NULL'+
+           ' AND   Char_length(lp.cod_auxiliar)<=6'+
+
+           ' ORDER BY lp.cod_auxiliar, lpd.quantidade';
+    DMAtualizaEstoques.CDS_LojaLinx.Close;
+    DMAtualizaEstoques.SDS_LojaLinx.CommandText:=MySql;
+    DMAtualizaEstoques.CDS_LojaLinx.Open;
+
+    While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
+    Begin
+      If sCodProd=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('CodProduto').AsString Then
+       sQtdSaldo:=CurrToStr(StrToCurr(sQtdSaldo)+DMAtualizaEstoques.CDS_LojaLinx.FieldByName('SaldoAtual').AsCurrency)
+      Else
+       sQtdSaldo:=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('SaldoAtual').AsString;
+
+      sValues:='';
+      For i:=0 to DMAtualizaEstoques.CDS_LojaLinx.FieldCount-1 do
+      Begin
+        // ULTIMO CAMPO - HRA_ATUALIZACAO ============================
+        If Trim(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
+         Begin
+           sValues:=
+            sValues+QuotedStr(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].AsString)+')';
+         End // If Trim(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
+
+        // Saldo Saldo do Produto (SALDOATUAL) =======================
+        Else
+        If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='SALDOATUAL' Then
+        Begin
+          sValues:=
+           sValues+QuotedStr(sQtdSaldo)+', ';
+        End // If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
+
+        Else
+         Begin
+           // Grava Resto do Registro
+           If Trim(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].AsString)<>'' Then
+            sValues:=
+             sValues+QuotedStr(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].AsString)+', '
+           Else
+            sValues:=
+             sValues+'NULL, ';
+         End;
+      End; // For i:=0 to DMAtualizaEstoques.CDS_LojaLinx.FieldCount-1 do
+
+      // UPDATE OR INSERT INTO MCLI ==================================
+      MySql:=sDML+sValues+' MATCHING (CODFILIAL, CODPRODUTO)';
+      DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
+      sCodProd:=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('CodProduto').AsString;
+
+      DMAtualizaEstoques.CDS_LojaLinx.Next;
+    End; // While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
+    DMAtualizaEstoques.CDS_LojaLinx.Close;
+
+    // Zera Produtos que não Foram Utilizados ========================
+    MySql:=' UPDATE ESTOQUE es'+
+           ' SET es.saldoatual=0.0000'+
+           ' WHERE es.codfilial='+QuotedStr(sCodBelShop)+
+           ' AND   es.saldoatual<>0.0000'+
+           ' AND   es.dta_atualizacao<'+QuotedStr(sDtaAtualiza);
+    DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+    // Atualiza Todos os Produtos na Tabela ESTOQUE ============================
+    //==========================================================================
 
     // Limpar Arquivo Work =====================================================
     MySql:=' DELETE FROM W_LINX_MOVTOS';
@@ -393,9 +515,7 @@ var
   sDML, sValues,
   sCodProd, sQtdSaldo: String;
 
-  iCodLinx: Integer;
-
-  i: Integer;
+  i, iCodLinx: Integer;
 
   // Só Atualiza Estoques com Movtos Ent/Sai Linx
   bSoAtualMovtoLinx: Boolean;

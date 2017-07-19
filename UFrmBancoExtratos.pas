@@ -401,7 +401,7 @@ var
   // Cria Ponteiro de Transação
   TD: TTransactionDesc;
 
-  bgLocate: Boolean;
+  bgLocate, bgChange: Boolean;
 
   bgSairBancos: Boolean;
   IBQ_ConsultaLoja  : TIBQuery;
@@ -5835,8 +5835,9 @@ begin
   sgDtaServidor:=DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
   sgTpMDL:='';
 
-  Application.OnMessage := HabilitaScrollMouse;
+  bgChange:=True;
 
+  Application.OnMessage := HabilitaScrollMouse;
 end;
 
 procedure TFrmBancoExtratos.PC_PrincipalChange(Sender: TObject);
@@ -6633,8 +6634,9 @@ begin
            ' b.DES_AGENCIA, b.COD_BANCO'+
            ' FROM FIN_BANCOS b'+
            ' Where  b.NUM_AGENCIA='+QuotedStr(EdtExtNumAgencia.Text)+
-           ' and b.NUM_CONTA='+QuotedStr(EdtExtNumConta.Text)+
-           ' and b.Num_BANCO='+QuotedStr(EdtExtNumBanco.Text);
+           '  and replace(replace(replace(replace(b.NUM_CONTA, ''.'', ''''),''-'',''''),''/'',''''),'' '','''')='+
+           '      replace(replace(replace(replace('+QuotedStr(EdtExtNumConta.Text)+', ''.'', ''''),''-'',''''),''/'',''''),'' '','''')'+
+           ' and    b.NUM_BANCO='+QuotedStr(EdtExtNumBanco.Text);
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
@@ -6651,9 +6653,13 @@ begin
     End;
 
     EdtExtDesAgencia.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('Des_Agencia').AsString;
-    EdtExtDesBanco.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('Des_Banco').AsString;
-    EdtExtNumBanco.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('Num_Banco').AsString;
-    EdtExtCodBanco.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Banco').AsString;
+
+    bgChange:=False;
+    EdtExtNumConta.Text  :=DMBelShop.CDS_BuscaRapida.FieldByName('Num_Conta').AsString;
+
+    EdtExtDesBanco.Text  :=DMBelShop.CDS_BuscaRapida.FieldByName('Des_Banco').AsString;
+    EdtExtNumBanco.Text  :=DMBelShop.CDS_BuscaRapida.FieldByName('Num_Banco').AsString;
+    EdtExtCodBanco.Text  :=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Banco').AsString;
 
     EdtExtNumAgencia.SetFocus;
 
@@ -6670,8 +6676,10 @@ end;
 
 procedure TFrmBancoExtratos.EdtExtNumContaChange(Sender: TObject);
 begin
-  ExtratosLimpa(EdtExtNumConta);
+  If bgChange Then
+   ExtratosLimpa(EdtExtNumConta);
 
+  bgChange:=True;
 end;
 
 procedure TFrmBancoExtratos.EdtExtNumBancoChange(Sender: TObject);

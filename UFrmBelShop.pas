@@ -2552,7 +2552,8 @@ uses DK_Procs1, UPermissao, UDMBelShop,
      UDMCentralTrocas, UFrmCentralTrocas,
      UFrmEstoques, UEntrada, UDMSidicom,
      UFrmFaltasCDLojas, UFrmControleKits, UFrmControleEstoques,
-     UFrmFluxFornecedor, UFrmComissaoVendedor, UDMLinx, RTLConsts, UFrmOCLinx;
+     UFrmFluxFornecedor, UFrmComissaoVendedor, UDMLinx, RTLConsts, UFrmOCLinx,
+  UFrmPrioridadesReposicao;
 
 {$R *.dfm}
 {$R C:\Projetos\BelShop\Botoes\Botoes.res }
@@ -18298,7 +18299,7 @@ Begin
 
     EdtGeraOCTotalGeral.Value:=DMBelShop.CDS_AComprarOCsTOTALGERAL.AsVariant;
   End; // If EdtGeraOCBuscaDocto.Value<>0 Then
-  
+
 End; // Busca Totais das OCs >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Calcula Totais do Item da Ordem de Compra >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -20028,12 +20029,17 @@ End; // Busca Demanda e Numeros de Dias e Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Novo Calculo de Pedido de Compra das Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmBelShop.OCProcessaFilial: Boolean; // Novo Calculo
 Var
+  MySql: String;
+
   i: Integer;
   iQtdMediaDia, iQtdMediaMes: Integer; // Indices dos Campos para Calcular Depois
 
   s, ss, sDta_Ref, sCodForn,  sNomeForn: String;
   cQuant_Ref, cPreco, cPrecoUnit, cVlr_Total_Ref, cQtdTransito,
   cMediaMes: Currency;
+
+  sCodLojaLinx, sCodProdSidicom, sCodProdLinx, sSaldoLinx, sCodBarras: String;
+
 Begin
   Result:=False;
 
@@ -20072,6 +20078,88 @@ Begin
       cQtdTransito  :=DMBelShop.CDS_UltCompraTransito.FieldByName('Quant_Ref').AsCurrency;
     End; // If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'TR']),[]) Then
 
+    // Loja Linx ===============================================================
+    MySql:=' SELECT e.cod_linx'+
+           ' FROM EMP_CONEXOES e'+
+           ' where e.cod_filial='+QuotedStr(sCodFilial);
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+    sCodLojaLinx:=DMBelShop.CDS_BuscaRapida.FieldByName('COD_LINX').AsString;
+    DMBelShop.CDS_BuscaRapida.Close;
+
+    //========================================================================
+    // Dados Liunx ===========================================================
+    //========================================================================
+    sCodProdSidicom:=DMBelShop.CDS_Busca.FieldByName('COD_ITEM').AsString;
+    sCodProdLInx:='';
+    sSaldoLinx:='';
+    sCodBarras:='';
+
+    If sCodLojaLinx<>'0' Then
+    Begin
+      MySql:=' select p.codbarra'+
+             ' from PRODUTO p'+
+             ' where p.codproduto='+QuotedStr(sCodProdSidicom)+
+             ' union'+
+             ' select b.codbarra'+
+             ' from PRODUTOSBARRA b'+
+             ' where b.codproduto='+QuotedStr(sCodProdSidicom);
+      IBQ_MPMS.Close;
+      IBQ_MPMS.SQL.Clear;
+      IBQ_MPMS.SQL.Add(MySql);
+      IBQ_MPMS.Open;
+
+      While Not IBQ_MPMS.Eof do
+      Begin
+        If Trim(sCodBarras)='' Then
+         sCodBarras:=QuotedStr(Trim(IBQ_MPMS.FieldByName('CodBarra').AsString))
+        Else
+         sCodBarras:=sCodBarras+', '+QuotedStr(Trim(IBQ_MPMS.FieldByName('CodBarra').AsString));
+
+        IBQ_MPMS.Next;
+      End; // While Not IBQ_MPMS.Eof do
+      IBQ_MPMS.Close;
+    End; // If sCodLojaLinx<>'0' Then
+
+    If Trim(sCodBarras)<>'' Then
+    Begin
+      MySql:=' select pr.cod_produto'+
+             ' from LINXPRODUTOS pr'+
+             ' where ((Trim(pr.cod_barra) in ('+sCodBarras+')) or (trim(pr.cod_auxiliar)='+QuotedStr(sCodProdSidicom)+'))'+
+             ' UNION'+
+             ' select cb.cod_produto'+
+             ' from LINXPRODUTOSCODBAR cb'+
+             ' where Trim(cb.cod_barra) in ('+sCodBarras+')';
+      DMBelShop.CDS_BuscaRapida.Close;
+      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+      DMBelShop.CDS_BuscaRapida.Open;
+      sCodProdLinx:='';
+
+      If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)<>'' Then
+       sCodProdLinx:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString;
+
+      DMBelShop.CDS_BuscaRapida.Close;
+    End; // If Trim(sCodBarras)<>'' Then
+
+    If Trim(sCodProdLinx)<>'' Then
+    Begin
+      MySql:=' select CAST(pd.quantidade as Integer) quantidade'+
+             ' from LINXPRODUTOSDETALHES pd'+
+             ' where pd.cod_produto='+sCodProdLinx+
+             ' and pd.empresa='+sCodLojaLinx;
+      DMBelShop.CDS_BuscaRapida.Close;
+      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+      DMBelShop.CDS_BuscaRapida.Open;
+      sSaldoLinx:='';
+      If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Quantidade').AsString)<>'' Then
+       sSaldoLinx:=DMBelShop.CDS_BuscaRapida.FieldByName('Quantidade').AsString;
+
+      DMBelShop.CDS_BuscaRapida.Close;
+    End; // If Trim(sCodBarras)<>'' Then
+    // Dados Liunx ===========================================================
+    //========================================================================
+
     // Inica Processo ==========================================================
     If Not DMBelShop.IBT_BelShop.Active Then
      DMBelShop.IBT_BelShop.StartTransaction;
@@ -20082,6 +20170,7 @@ Begin
     DMBelShop.IBQ_OC_ComprarAdd.Insert;
     For i:=0 to DMBelShop.CDS_Busca.FieldCount-1 do
     Begin
+
       // Trata Campos =============================================
       If AnsiUpperCase(DMBelShop.CDS_Busca.Fields[i].FieldName)='NUM_SEQ' Then
        DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=iNumSeqDoc
@@ -20328,6 +20417,14 @@ Begin
       Else If AnsiUpperCase(DMBelShop.CDS_Busca.Fields[i].FieldName)='QTD_DIAS_ANO' Then
        DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=igNrDiasAno
 
+      Else If AnsiUpperCase(DMBelShop.CDS_Busca.Fields[i].FieldName)='QTD_TRANSF_ANO' Then // Saldo Linx
+       Begin
+         If Trim(sSaldoLinx)='' Then
+          DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=Unassigned
+         Else
+          DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSaldoLinx;
+       End
+
       Else
        DMBelShop.IBQ_OC_ComprarAdd.Fields[i].Assign(DMBelShop.CDS_Busca.Fields[i]);
 
@@ -20384,7 +20481,11 @@ End; // Novo Calculo de Pedido de Compra das Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Novo Calculo de Pedido de Compra da Matriz >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmBelShop.OCProcessaMatriz: Boolean; // Novo Calculo
 Var
-  s, ss, MySql: String;
+  MySql: String;
+
+  s, ss,
+  sCodLojaLinx, sCodProdSidicom, sCodProdLinx, sSaldoLinx, sCodBarras: String;
+
   b: Boolean;
   i: Integer;
 
@@ -20586,11 +20687,94 @@ Begin
     DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' Where oc.num_documento<1');
     DMBelShop.IBQ_OC_ComprarAdd.Open;
 
+    // Loja Linx ===============================================================
+    MySql:=' SELECT e.cod_linx'+
+           ' FROM EMP_CONEXOES e'+
+           ' where e.cod_filial=''99''';
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+    sCodLojaLinx:=DMBelShop.CDS_BuscaRapida.FieldByName('COD_LINX').AsString;
+    DMBelShop.CDS_BuscaRapida.Close;
+
     IBQ_Matriz.First;
     While not IBQ_Matriz.Eof do
     Begin
       Application.ProcessMessages;
       pgProgBar.Position:=IBQ_Matriz.RecNo;
+
+      sCodProdSidicom:=IBQ_Matriz.FieldByName('COD_ITEM').AsString;
+
+      //========================================================================
+      // Dados Liunx ===========================================================
+      //========================================================================
+      sCodProdLInx:='';
+      sSaldoLinx:='';
+      sCodBarras:='';
+
+      If sCodLojaLinx<>'0' Then
+      Begin
+        MySql:=' select p.codbarra'+
+               ' from PRODUTO p'+
+               ' where p.codproduto='+QuotedStr(sCodProdSidicom)+
+               ' union'+
+               ' select b.codbarra'+
+               ' from PRODUTOSBARRA b'+
+               ' where b.codproduto='+QuotedStr(sCodProdSidicom);
+        IBQ_MPMS.Close;
+        IBQ_MPMS.SQL.Clear;
+        IBQ_MPMS.SQL.Add(MySql);
+        IBQ_MPMS.Open;
+
+        While Not IBQ_MPMS.Eof do
+        Begin
+          If Trim(sCodBarras)='' Then
+           sCodBarras:=QuotedStr(Trim(IBQ_MPMS.FieldByName('CodBarra').AsString))
+          Else
+           sCodBarras:=sCodBarras+', '+QuotedStr(Trim(IBQ_MPMS.FieldByName('CodBarra').AsString));
+
+          IBQ_MPMS.Next;
+        End; // While Not IBQ_MPMS.Eof do
+        IBQ_MPMS.Close;
+      End; // If sCodLojaLinx<>'0' Then
+
+      If Trim(sCodBarras)<>'' Then
+      Begin
+        MySql:=' select pr.cod_produto'+
+               ' from LINXPRODUTOS pr'+
+               ' where ((Trim(pr.cod_barra) in ('+sCodBarras+')) or (trim(pr.cod_auxiliar)='+QuotedStr(sCodProdSidicom)+'))'+
+               ' UNION'+
+               ' select cb.cod_produto'+
+               ' from LINXPRODUTOSCODBAR cb'+
+               ' where Trim(cb.cod_barra) in ('+sCodBarras+')';
+        DMBelShop.CDS_BuscaRapida.Close;
+        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+        DMBelShop.CDS_BuscaRapida.Open;
+        sCodProdLinx:='';
+
+        If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)<>'' Then
+         sCodProdLinx:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString;
+
+        DMBelShop.CDS_BuscaRapida.Close;
+      End; // If Trim(sCodBarras)<>'' Then
+
+      If Trim(sCodProdLinx)<>'' Then
+      Begin
+        MySql:=' select CAST(pd.quantidade as Integer) quantidade'+
+               ' from LINXPRODUTOSDETALHES pd'+
+               ' where pd.cod_produto='+sCodProdLinx+
+               ' and pd.empresa='+sCodLojaLinx;
+        DMBelShop.CDS_BuscaRapida.Close;
+        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+        DMBelShop.CDS_BuscaRapida.Open;
+        sSaldoLinx:='';
+        If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Quantidade').AsString)<>'' Then
+         sSaldoLinx:=DMBelShop.CDS_BuscaRapida.FieldByName('Quantidade').AsString;
+
+        DMBelShop.CDS_BuscaRapida.Close;
+      End; // If Trim(sCodBarras)<>'' Then
+      // Dados Liunx ===========================================================
+      //========================================================================
 
       bgProcCurva:=True;
 
@@ -20743,6 +20927,7 @@ Begin
       For i:=0 to IBQ_Matriz.FieldCount-1 do
       Begin
         // Trata Campos =============================================
+
 
         If (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='NUM_SEQ') and (bgProcCurva) Then
          DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=iNumSeqDoc
@@ -20938,7 +21123,15 @@ Begin
         Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DIAS_ANO' Then
          DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=igNrDiasAno
 
-        Else
+        Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_TRANSF_ANO' Then // Saldo Linx
+         Begin
+           If Trim(sSaldoLinx)='' Then
+            DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=Unassigned
+           Else
+            DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSaldoLinx;
+         End
+
+        Else // Outros Campos
          DMBelShop.IBQ_OC_ComprarAdd.Fields[i].Assign(IBQ_Matriz.Fields[i]);
 
       End; // For i:=0 to IBQ_Matriz.FieldCount-1 do
@@ -24227,6 +24420,8 @@ begin
   // Busca Totais das OCs ======================================================
   TotaisOC(sNumDoc);
 
+  // Coloca Saldo Linx em QTD_DISPONIVEL =======================================
+
   // Encerramento ==============================================================
   hHrFim:=TimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
 
@@ -24914,11 +25109,10 @@ end;
 procedure TFrmBelShop.Dbg_GeraOCGridDrawColumnCell(Sender: TObject; const Rect: TRect;
           DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
-  If (Column.FieldName='QTD_SALDO') Or (Column.FieldName='IND_QTD_ACIMA')Then
+  If (Column.FieldName='QTD_SALDO') Or (Column.FieldName='IND_QTD_ACIMA') Then
   Begin
     If DMBelShop.IBQ_AComprarIND_QTD_ACIMA.AsCurrency>0 Then
      Dbg_GeraOCGrid.Canvas.Font.Color:=clRed;
-
   End; // If (Column.FieldName='QTD_SALDO') Or (Column.FieldName='IND_QTD_ACIMA')Then
 
   If (Column.FieldName='QTD_ACOMPRAR') Then
@@ -24970,6 +25164,13 @@ begin
     if DMBelShop.IBQ_AComprarIND_OC_GERADA.AsString='S' Then
       Dbg_GeraOCGrid.Canvas.Brush.Color:=clSkyBlue;
   End; // if not (gdSelected in State) Then
+
+  // Sem Saldo - Produtos Não Encontrado no Linx ----------------------
+  If (Column.FieldName='QTD_TRANSF_ANO') Then
+  Begin
+    If Trim(DMBelShop.IBQ_AComprarQTD_TRANSF_ANO.AsString)='' Then
+     Dbg_GeraOCGrid.Canvas.Brush.Color:=clRed;
+  End; // If (Column.FieldName='QTD_TRANSF_ANO') Then
 
   Dbg_GeraOCGrid.Canvas.FillRect(Rect);
   Dbg_GeraOCGrid.DefaultDrawDataCell(Rect,Column.Field,state);
@@ -25842,6 +26043,7 @@ begin
   TotaisOC(IntToStr(EdtGeraOCBuscaDocto.AsInteger));
 
   // Marca Empresas Não Geradas ================================================
+  DMBelShop.CDS_AComprarOCs.DisableControls;
   For i:=0 to Memo2.Lines.Count-1 do
   Begin
     If DMBelShop.CDS_AComprarOCs.Locate('COD_EMP_FIL', Trim(Memo2.Lines[i]),[]) Then
@@ -25851,8 +26053,11 @@ begin
       DMBelShop.CDS_AComprarOCs.Post;
     End;
   End; // For i:=0 to Memo2.Lines.Count-1 do
+  DMBelShop.CDS_AComprarOCs.EnableControls;
   DMBelShop.CDS_AComprarOCs.First;
 
+  DMBelShop.CDS_AComprarOCs.Locate('NUM_OC_GERADA', sNrOC,[]);
+  
   Screen.Cursor:=crDefault;
 end;
 
@@ -26219,9 +26424,6 @@ end;
 
 procedure TFrmBelShop.SubMenuComprasContaCorreteFornClick(Sender: TObject);
 begin
-//  msg('Módulo em Manutenção !!'+cr+cr+'Aguarde Conclusão !!','A');
-//  Exit;
-
   igTagPermissao:=(Sender as TMenuItem).Tag;
 
   BloqueioBotoes(FrmFluxoFornecedor, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
@@ -42400,7 +42602,7 @@ begin
 
   FrmBancoExtratos.Ts_BancosManut.TabVisible:=False;
   FrmBancoExtratos.Ts_VerificaExtrato.TabVisible:=False;
-  FrmBancoExtratos.Ts_ExtratosManut.TabVisible:=True; // OK
+  FrmBancoExtratos.Ts_ExtratosManut.TabVisible:=True;
   FrmBancoExtratos.Ts_ConciliacoesManut.TabVisible:=False;
   FrmBancoExtratos.Ts_ConciliacaoManut.TabVisible:=False;
   FrmBancoExtratos.Ts_ConcManutTotalPagtos.TabVisible:=False;
@@ -42417,6 +42619,15 @@ begin
   FrmBancoExtratos.Pan_Concilicao.Visible:=False;
 
   FrmBancoExtratos.sgCodUsuario:=Cod_Usuario;
+
+  FrmBancoExtratos.EdtExtNumAgencia.Clear;
+  FrmBancoExtratos.EdtExtDesAgencia.Clear;
+  FrmBancoExtratos.EdtExtNumConta.Clear;
+  FrmBancoExtratos.EdtExtCodBanco.Clear;
+  FrmBancoExtratos.EdtExtNumBanco.Clear;
+  FrmBancoExtratos.EdtExtDesBanco.Clear;
+  FrmBancoExtratos.EdtBanrisulPastaArquivo.Clear;
+  FrmBancoExtratos.EdtSantanderPastaArquivo.Clear;
 
   FrmBancoExtratos.ShowModal;
 end;
@@ -43686,7 +43897,7 @@ Var
   MySql: String;
   i: Integer;
   bOBS, bSiga: Boolean;
-  sDtaGeracao: String;
+  sDtaGeracao, sCodLoja: String;
   dDta: TDate;
 Begin
   If not (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCOrdensCompra) Then
@@ -43738,6 +43949,8 @@ Begin
     Dbg_GeraOCTotalGeral.SetFocus;
     Exit;
   End;
+
+  MessageBox(Handle, pChar('Romaneios Gerados da Mesma Loja'+cr+cr+'Ficaram Todos no Mesmo Documento !!'), 'ATENÇÃO !!', MB_ICONINFORMATION);
 
   If msg('Deseja Realmente GERAR'+cr+cr+'Romaneio para Separação no CD  ??','C')=2 Then
    Exit;
@@ -43851,7 +44064,7 @@ Begin
              MySql:=
               MySql+' WHERE dc.num_documento='+QuotedStr(IntToStr(EdtGeraOCBuscaDocto.AsInteger))+
                     ' And   Cast(dc.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date))))+
-                    ' AND   dc.cod_empresa='+ QuotedStr(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString)+
+                    ' AND   dc.cod_empresa='+QuotedStr(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString)+
                     ' AND   dc.cod_fornecedor='+QuotedStr(DMBelShop.CDS_AComprarOCsCOD_FORNECEDOR.AsString)+
                     ' AND   dc.Num_Seq='+DMBelShop.CDS_Busca.FieldBYName('Num_Seq').AsString;
              DMBelShop.SQLC.Execute(MySql,nil,nil);
@@ -43863,6 +44076,28 @@ Begin
              DMBelShop.CDS_Busca.Next;
            End; // While Not DMBelShop.CDS_Busca.Eof do
            DMBelShop.CDS_Busca.Close;
+
+           sCodLoja:=DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString;
+
+           // Atualiza Mesma Obs no Documento ==================================
+           MySql:=' SELECT oc.obs_oc'+
+                  ' FROM OC_COMPRAR oc'+
+                  ' WHERE oc.num_documento='+QuotedStr(IntToStr(EdtGeraOCBuscaDocto.AsInteger))+
+                  ' AND   oc.cod_empresa='+QuotedStr(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString)+
+                  ' AND   oc.num_oc_gerada='+QuotedStr(sNrDocto)+
+                  ' ORDER BY oc.dta_oc_gerada desc';
+           DMBelShop.CDS_BuscaRapida.Close;
+           DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+           DMBelShop.CDS_BuscaRapida.Open;
+
+           MySql:=' UPDATE OC_COMPRAR oc'+
+                  ' SET oc.obs_oc='+QuotedStr(DMBelShop.CDS_BuscaRapida.FieldBYName('Obs_OC').AsString)+
+                  ' WHERE oc.num_documento='+QuotedStr(IntToStr(EdtGeraOCBuscaDocto.AsInteger))+
+                  ' AND   oc.cod_empresa='+QuotedStr(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString)+
+                  ' AND   oc.num_oc_gerada='+QuotedStr(sNrDocto);
+           DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+           DMBelShop.CDS_BuscaRapida.Close;
 
            // Atualiza Transacao ===============================================
            DMBelShop.SQLC.Commit(TD);
@@ -43909,6 +44144,8 @@ Begin
   TotaisOC(IntToStr(EdtGeraOCBuscaDocto.AsInteger));
 
   DMBelShop.CDS_AComprarOCs.First;
+
+  DMBelShop.CDS_AComprarOCs.Locate('COD_EMP_FIL; NUM_OC_GERADA',VarArrayOf([sCodLoja, sNrDocto]),[]);
 
   Screen.Cursor:=crDefault;
 end;
@@ -46353,6 +46590,15 @@ begin
     Exit;
   End;
 
+  FrmPrioridadesReposicao:=TFrmPrioridadesReposicao.Create(Self);
+
+  igTagPermissao:=(Sender as TMenuItem).Tag;
+  BloqueioBotoes(FrmPrioridadesReposicao, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
+
+  FrmPrioridadesReposicao.ShowModal;
+
+  FreeAndNil(FrmPrioridadesReposicao);
+  
 end;
 
 End.

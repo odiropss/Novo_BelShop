@@ -187,6 +187,7 @@ Begin
 
          DMTransferencias.CDS_EstoqueLoja.Edit;
          DMTransferencias.CDS_EstoqueLojaIND_TRANSF.AsString:='NAO';
+         DMTransferencias.CDS_EstoqueLojaOBS_DOCTO.AsString:='- Sem Saldo no CD';
          DMTransferencias.CDS_EstoqueLoja.Post;
        End
       Else // If DMTransferencias.CDS_EstoqueCD.IsEmpty Then
@@ -202,12 +203,12 @@ Begin
            If iQtdMax<=iQtdEst Then
             Begin
               iQtdReposicao:=0;
-              sObs:=' - Sem Reposição Pelo Estoque Máximo Menor que Saldo';
+              sObs:=' - Sem Reposição Saldo de Estoque Maior que Estoque Máximo.';
               bRepoe:=False;
             End
            Else If (iQtdMax-iQtdEst)<iQtdReposicao Then
             Begin
-              sObs:=' - Corte Pela Reposição Maior que Diferença Entre Estoque Máximo Saldo';
+              sObs:=' - Corte Pela Reposição Maior que Diferença Entre Estoque Máximo e Saldo';
               iQtdReposicao:=(iQtdMax-iQtdEst);
             End;
          End; // If (iQtdMax>0) Then
@@ -346,6 +347,7 @@ Begin
                End; // If iQtdReposicao>DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger Then
 
                iQtdReposicao:=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger;
+               sObs:=Trim(sObs)+' - Reposição Pelo Saldo Restante no CD.';
              End; // If iQtdReposicao>=DMTransferencias.CDS_EstoqueCDQTD_SALDO.AsInteger Then
 
              // Verifica Percentual de Corte da Curva -------------------
@@ -389,6 +391,35 @@ Begin
          // CALCULA MULTIPLOS E PERCENTUAIS DE CORTES ==========================
          //=====================================================================
 
+         // Acerta Observação se Não Usada =====================================
+         If Trim(sObs)='' Then
+         Begin
+           // Reposição pela Quantidade de Dias de Estocagem
+           If (DMTransferencias.CDS_EstoqueLojaEST_MINIMO.AsInteger <> iQtdReposicao) And
+              (DMTransferencias.CDS_EstoqueLojaQTD_DEMANDA.AsInteger = iQtdReposicao) Then
+            sObs:='- Reposição pela Quantidade de Dias de Estocagem'
+
+           // Reposição pela Quantidade de Dias de Estocagem - Estoque
+           Else If (DMTransferencias.CDS_EstoqueLojaEST_MINIMO.AsInteger = iQtdReposicao) And
+                   ((DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsInteger + iQtdReposicao) = DMTransferencias.CDS_EstoqueLojaQTD_DEMANDA.AsInteger)Then
+            sObs:='- Reposição pela Quantidade de Dias de Estocagem Memos Quantidade de Estoque'
+
+           // Reposição pela Quantidade de Estoque Mínimo
+           Else If (DMTransferencias.CDS_EstoqueLojaEST_MINIMO.AsInteger  = iQtdReposicao) And
+                   (DMTransferencias.CDS_EstoqueLojaQTD_DEMANDA.AsInteger <> iQtdReposicao) Then
+            sObs:='Reposição pela Quantidade de Estoque Mínimo'
+
+           // Reposição pela Quantidade de Dias de Estocagem + Quantidade de Estoque (Negativa)
+           Else If (DMTransferencias.CDS_EstoqueLojaEST_MINIMO.AsInteger  <> iQtdReposicao) And
+                   (DMTransferencias.CDS_EstoqueLojaQTD_DEMANDA.AsInteger <> iQtdReposicao) And
+                   (DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency < 0.00) Then
+            sObs:='Reposição pela Quantidade de Dias de Estocagem + Quantidade de Estoque (Negativa)'
+           Else If ((DMTransferencias.CDS_EstoqueLojaEST_MINIMO.AsInteger - DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency) = iQtdReposicao) and
+                   (DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency = 0.00) Then
+            sObs:='Reposição pela Quantidade Necessária para Completar o Estoque Mínimo';
+         End; // If Trim(sObs)='' Then
+
+         // Grava Alterações de Reposição ======================================
          DMTransferencias.CDS_EstoqueLoja.Edit;
 
          // Se Repõe para Loja --------------------------------------
@@ -536,20 +567,20 @@ Begin
          sEstMinimo+' EST_MINIMO, '+
          sEstMaximo+' EST_MAXIMO, '+
          sSaldo+' QTD_ESTOQUE,'+
-         ' SUM(COALESCE(dm.quant_ref,0)) QTD_VENDAS, '+
+         ' SUM(COALESCE(dm.quant_ref,0.00)) QTD_VENDAS, '+
          QuotedStr(sCurva)+' IND_CURVA, '+
          sDiasEstocagem+' DIAS_ESTOCAGEM, '+
          IntToStr(igDiasUteis)+' QTD_DIAS,'+
-         ' ((SUM(COALESCE(dm.quant_ref,0)))/'+IntToStr(igDiasUteis)+') QTD_VENDA_DIA,'+
+         ' ((SUM(COALESCE(dm.quant_ref,0.00)))/'+IntToStr(igDiasUteis)+') QTD_VENDA_DIA,'+
 
-         ' CAST(((((SUM(COALESCE(dm.quant_ref,0)))/'+IntToStr(igDiasUteis)+')) * '+sDiasEstocagem+') AS INTEGER) QTD_DEMANDA,'+ // Quantidade em Dias de Estocagem
+         ' CAST(((((SUM(COALESCE(dm.quant_ref,0.00)))/'+IntToStr(igDiasUteis)+')) * '+sDiasEstocagem+') AS INTEGER) QTD_DEMANDA,'+ // Quantidade em Dias de Estocagem
 
-         ' CASE'+ // Quando Demanda Menor Que Estoque Minimo Vale Estoque Minimo
-         '   WHEN (CAST(((((SUM(COALESCE(dm.quant_ref,0)))/'+IntToStr(igDiasUteis)+')) * '+sDiasEstocagem+') AS INTEGER))>='+sEstMinimo+' Then'+
-         '      ((((((SUM(COALESCE(dm.quant_ref,0)))/'+IntToStr(igDiasUteis)+')) * '+sDiasEstocagem+') - '+sSaldo+'))'+
-         '   ELSE '+
-                sEstMinimo+' - '+sSaldo+
-         ' END QTD_REPOSICAO,'+ // Quantidade de Reposição
+         ' CAST(CASE'+ // Quando Demanda Menor Que Estoque Minimo Vale Estoque Minimo
+         '        WHEN (CAST(((((SUM(COALESCE(dm.quant_ref,0.00)))/'+IntToStr(igDiasUteis)+')) * '+sDiasEstocagem+') AS INTEGER))>='+sEstMinimo+' Then'+
+         '          ((((((SUM(COALESCE(dm.quant_ref,0.00)))/'+IntToStr(igDiasUteis)+')) * '+sDiasEstocagem+') - '+sSaldo+'))'+
+         '        ELSE '+
+                    sEstMinimo+' - '+sSaldo+
+         ' END AS INTEGER) QTD_REPOSICAO,'+ // Quantidade de Reposição
 
          ' 0.00 QTD_TRANSF,'+
          ' 0.00 QTD_A_TRANSF,'+
@@ -576,12 +607,12 @@ Begin
 
          ' GROUP BY 5,25'+
 
-         ' HAVING (CASE'+ // Quando Demanda Menor Que Estoque Minimo Vale Estoque Minimo
-         '           WHEN (CAST(((((SUM(COALESCE(dm.quant_ref,0)))/'+IntToStr(igDiasUteis)+')) * '+sDiasEstocagem+') AS INTEGER))>='+sEstMinimo+' Then'+
-         '             ((((((SUM(COALESCE(dm.quant_ref,0)))/'+IntToStr(igDiasUteis)+')) * '+sDiasEstocagem+') - '+sSaldo+'))'+
-         '           ELSE '+
-                       sEstMinimo+' - '+sSaldo+
-         '         END)>0';
+         ' HAVING CAST((CASE'+ // Quando Demanda Menor Que Estoque Minimo Vale Estoque Minimo
+         '               WHEN (CAST(((((SUM(COALESCE(dm.quant_ref,0.00)))/'+IntToStr(igDiasUteis)+')) * '+sDiasEstocagem+') AS INTEGER))>='+sEstMinimo+' Then'+
+         '                 ((((((SUM(COALESCE(dm.quant_ref,0.00)))/'+IntToStr(igDiasUteis)+')) * '+sDiasEstocagem+') - '+sSaldo+'))'+
+         '               ELSE '+
+                           sEstMinimo+' - '+sSaldo+
+         '            END) AS INTEGER)>0';
   DMTransferencias.CDS_ProdutoDemanda.Close;
   DMTransferencias.SDS_ProdutoDemanda.CommandText:=MySql;
   DMTransferencias.CDS_ProdutoDemanda.Open;
@@ -632,7 +663,7 @@ Begin
          ' CAST(COALESCE(c.est_maximo,0) AS INTEGER) est_maximo,'+
 
          ' CAST(COALESCE(t.vlr_aux,0) AS INTEGER) Dias_Estocagem,'+
-         ' CAST(COALESCE(e.saldoatual,0) AS INTEGER) saldoatual,'+
+         ' CAST(COALESCE(e.saldoatual,0.00) AS INTEGER) saldoatual,'+
          ' p.datainclusao, p.dataalteracao'+
 
          ' FROM PRODUTO p'+
@@ -1121,9 +1152,9 @@ Begin
 
   MySql:=' SELECT CURRENT_DATE DTA_MOVTO, e.codproduto cod_produto,'+
 
-         ' COALESCE(e.saldoatual,0) qtd_estoque,'+
+         ' COALESCE(e.saldoatual,0.00) qtd_estoque,'+
          ' 0.00 qtd_saidas,'+
-         ' COALESCE(e.saldoatual,0) qtd_saldo,'+
+         ' COALESCE(e.saldoatual,0.00) qtd_saldo,'+
 
          ' COALESCE(e.zonaendereco,''0'') end_zona,'+
          ' COALESCE(e.corredor,''000'') end_corredor,'+
@@ -1161,6 +1192,8 @@ Var
   MySql: String;
   sDta, sUsuarioWindows, sComputadorWindows: String;
 begin
+//{ OdirAQUI
+
   // Fechar Programa do Agendamento Anterior ===================================
 //  ApagaUltProcesso('PCurvasDemandas.exe');
   //============================================================================
@@ -1416,7 +1449,6 @@ begin
   //============================================================================
   SalvaProcessamento('10/999 - Busca Produtos nas Lojas com Necessidade de Compras - FIM - '+TimeToStr(Time));
   //============================================================================
-
   //============================================================================
   SalvaProcessamento('11/999 - Analisa e Atualiza Transferencias do Dia - INICIO - '+TimeToStr(Time));
   //============================================================================
@@ -1448,6 +1480,7 @@ begin
   //============================================================================
   SalvaProcessamento('12/999 - FIM - '+TimeToStr(Time));
   //============================================================================
+//OdirAQUI}
 
   Application.Terminate;
   Exit;

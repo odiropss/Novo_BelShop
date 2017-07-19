@@ -1,6 +1,6 @@
 object FrmFluxoFornecedor: TFrmFluxoFornecedor
-  Left = 238
-  Top = 114
+  Left = 303
+  Top = 104
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle

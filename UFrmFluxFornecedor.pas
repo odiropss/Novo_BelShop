@@ -1456,7 +1456,9 @@ begin
 
   igTabSheet:=0;
 
+  //============================================================================
   // Show Hint em Forma de Balão ===============================================
+  //============================================================================
   CreateToolTips(Self.Handle);
   AddToolTip(Bt_FluFornComprovante.Handle, @ti, TipoDoIcone, 'Selecione o Comprovante'+#13+'a Incluir', 'INCLUIR !!');
 
@@ -1465,6 +1467,7 @@ begin
 
   CreateToolTips(Self.Handle);
   AddToolTip(Bt_FluFornSalvaMemoria.Handle, @ti, TipoDoIcone, 'Salvar Resultado'+#13+'em Memória', 'CONTA CORRENTE !!');
+  // Show Hint em Forma de Balão ===============================================
   //============================================================================
 
   sgDMLMovto:='';

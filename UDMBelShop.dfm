@@ -1,8 +1,8 @@
 object DMBelShop: TDMBelShop
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 240
-  Top = 107
+  Left = 288
+  Top = 110
   Height = 614
   Width = 1115
   object SQLC: TSQLConnection
@@ -461,8 +461,8 @@ object DMBelShop: TDMBelShop
   end
   object DS_AComprar: TDataSource
     DataSet = IBQ_AComprar
-    Left = 1269
-    Top = 232
+    Left = 1301
+    Top = 172
   end
   object SDS_AComprarItens: TSQLDataSet
     CommandText = 
@@ -879,8 +879,8 @@ object DMBelShop: TDMBelShop
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Sugestao'
-    Left = 1260
-    Top = 428
+    Left = 1292
+    Top = 360
     object CDS_SugestaoNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Required = True
@@ -1423,13 +1423,13 @@ object DMBelShop: TDMBelShop
         Value = '01/01/2017'
       end>
     SQLConnection = SQLC
-    Left = 1179
-    Top = 428
+    Left = 1211
+    Top = 360
   end
   object DSP_Sugestao: TDataSetProvider
     DataSet = SDS_Sugestao
-    Left = 1221
-    Top = 444
+    Left = 1253
+    Top = 376
   end
   object IBDB_BelShop: TIBDatabase
     DatabaseName = 'localhost:C:\Projetos\BelShop\Dados\BelShop.FDB'
@@ -1441,15 +1441,15 @@ object DMBelShop: TDMBelShop
     IdleTimer = 0
     SQLDialect = 3
     TraceFlags = []
-    Left = 1189
-    Top = 24
+    Left = 1221
+    Top = 4
   end
   object IBT_BelShop: TIBTransaction
     Active = False
     DefaultDatabase = IBDB_BelShop
     AutoStopAction = saNone
-    Left = 1229
-    Top = 37
+    Left = 1261
+    Top = 17
   end
   object IBQ_AComprar: TIBQuery
     Database = IBDB_BelShop
@@ -1470,8 +1470,8 @@ object DMBelShop: TDMBelShop
       'ORDER BY oc.cod_empresa, oc.qtd_transf desc'
       '')
     UpdateObject = IBU_AComprar
-    Left = 1181
-    Top = 232
+    Left = 1213
+    Top = 172
     ParamData = <
       item
         DataType = ftInteger
@@ -2503,29 +2503,29 @@ object DMBelShop: TDMBelShop
       'where'
       '  NUM_SEQ = :NUM_SEQ'
       '  and NUM_DOCUMENTO = :NUM_DOCUMENTO')
-    Left = 1229
-    Top = 246
+    Left = 1261
+    Top = 186
   end
   object IBQ_Executa: TIBQuery
     Database = IBDB_BelShop
     Transaction = IBT_BelShop
     BufferChunks = 1000
     CachedUpdates = False
-    Left = 1189
-    Top = 155
+    Left = 1221
+    Top = 119
   end
   object IBQ_Busca: TIBQuery
     Database = IBDB_BelShop
     Transaction = IBT_BelShop
     BufferChunks = 1000
     CachedUpdates = False
-    Left = 1189
-    Top = 91
+    Left = 1221
+    Top = 63
   end
   object DS_OrdemCompra: TDataSource
     DataSet = IBQ_OrdemCompra
-    Left = 1229
-    Top = 523
+    Left = 1261
+    Top = 439
   end
   object IBQ_OrdemCompra: TIBQuery
     Database = IBDB_BelShop
@@ -2595,8 +2595,8 @@ object DMBelShop: TDMBelShop
       'AND   oc.num_oc_gerada=1000043'
       ''
       'ORDER BY Enderecamento,oc.des_item')
-    Left = 1181
-    Top = 512
+    Left = 1213
+    Top = 428
     object IBQ_OrdemCompraDES_EMPRESA: TIBStringField
       FieldName = 'DES_EMPRESA'
       Origin = 'OC_COMPRAR.DES_EMPRESA'
@@ -3105,8 +3105,8 @@ object DMBelShop: TDMBelShop
   end
   object DS_AComprarEdita: TDataSource
     DataSet = IBQ_AComprarEdita
-    Left = 1269
-    Top = 289
+    Left = 1301
+    Top = 229
   end
   object IBQ_AComprarEdita: TIBQuery
     Database = IBDB_BelShop
@@ -3121,8 +3121,8 @@ object DMBelShop: TDMBelShop
       'from oc_comprar o'
       'where o.num_seq<14')
     UpdateObject = IBU_AComprarEdita
-    Left = 1181
-    Top = 296
+    Left = 1213
+    Top = 236
     object IBQ_AComprarEditaNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Origin = 'OC_COMPRAR.NUM_SEQ'
@@ -4125,8 +4125,8 @@ object DMBelShop: TDMBelShop
       'where'
       '  NUM_SEQ = :NUM_SEQ'
       '  and NUM_DOCUMENTO = :NUM_DOCUMENTO')
-    Left = 1229
-    Top = 302
+    Left = 1261
+    Top = 242
   end
   object DSP_OCs: TDataSetProvider
     DataSet = SDS_OCs
@@ -6591,8 +6591,8 @@ object DMBelShop: TDMBelShop
       'From oc_comprar oc'
       'Where oc.num_documento<1')
     UpdateObject = IBUP_OC_ComprarAdd
-    Left = 1181
-    Top = 352
+    Left = 1213
+    Top = 292
     object IntegerField1: TIntegerField
       FieldName = 'NUM_SEQ'
       Origin = 'OC_COMPRAR.NUM_SEQ'
@@ -7661,8 +7661,8 @@ object DMBelShop: TDMBelShop
       'where'
       '  NUM_SEQ = :NUM_SEQ'
       '  and NUM_DOCUMENTO = :NUM_DOCUMENTO')
-    Left = 1229
-    Top = 366
+    Left = 1261
+    Top = 306
   end
   object SDS_DemandasNovo: TSQLDataSet
     GetMetadata = False
@@ -8423,8 +8423,8 @@ object DMBelShop: TDMBelShop
     Transaction = IBT_BelShop
     BufferChunks = 1000
     CachedUpdates = False
-    Left = 1253
-    Top = 107
+    Left = 1293
+    Top = 79
   end
   object SQLQuery1: TSQLQuery
     MaxBlobSize = -1
@@ -9131,5 +9131,125 @@ object DMBelShop: TDMBelShop
     DataSet = CDS_FluxoPercReducao
     Left = 1040
     Top = 324
+  end
+  object SDS_Prioridades: TSQLDataSet
+    CommandText = 'select *'#13#10'from es_rep_prioridades p'#13#10'order by p.des_prioridade'
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 923
+    Top = 404
+  end
+  object CDS_Prioridades: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_Prioridades'
+    Left = 1004
+    Top = 403
+    object CDS_PrioridadesCOD_PRIORIDADE: TIntegerField
+      FieldName = 'COD_PRIORIDADE'
+      Required = True
+    end
+    object CDS_PrioridadesDES_PRIORIDADE: TStringField
+      DisplayLabel = 'Descri'#231#227'o da Prioridade'
+      FieldName = 'DES_PRIORIDADE'
+      Size = 60
+    end
+    object CDS_PrioridadesDTA_INICIAL: TDateField
+      Alignment = taCenter
+      DisplayLabel = 'Dt Inicial'
+      FieldName = 'DTA_INICIAL'
+    end
+    object CDS_PrioridadesDTA_FINAL: TDateField
+      Alignment = taCenter
+      DisplayLabel = 'Dt Final'
+      FieldName = 'DTA_FINAL'
+    end
+    object CDS_PrioridadesIND_ATIVO: TStringField
+      FieldName = 'IND_ATIVO'
+      FixedChar = True
+      Size = 1
+    end
+    object CDS_PrioridadesUSU_INCLUI: TIntegerField
+      FieldName = 'USU_INCLUI'
+    end
+    object CDS_PrioridadesDTA_INCLUI: TSQLTimeStampField
+      FieldName = 'DTA_INCLUI'
+      Required = True
+    end
+    object CDS_PrioridadesUSU_ALTERA: TIntegerField
+      FieldName = 'USU_ALTERA'
+    end
+    object CDS_PrioridadesDTA_ALTERA: TSQLTimeStampField
+      FieldName = 'DTA_ALTERA'
+    end
+  end
+  object DSP_Prioridades: TDataSetProvider
+    DataSet = SDS_Prioridades
+    Options = [poRetainServerOrder]
+    Left = 964
+    Top = 420
+  end
+  object DS_Prioridades: TDataSource
+    DataSet = CDS_Prioridades
+    Left = 1040
+    Top = 420
+  end
+  object SQLDataSet1: TSQLDataSet
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 923
+    Top = 476
+  end
+  object ClientDataSet1: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_Prioridades'
+    Left = 1004
+    Top = 475
+    object IntegerField13: TIntegerField
+      FieldName = 'NUM_SEQ'
+    end
+    object StringField3: TStringField
+      DisplayLabel = 'C'#243'd Comp'
+      FieldName = 'COD_COMPRV'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
+    object StringField4: TStringField
+      DisplayLabel = 'Comprovante'
+      FieldName = 'NOMECOMPROVANTE'
+      FixedChar = True
+    end
+    object DateField6: TDateField
+      Alignment = taCenter
+      DisplayLabel = 'Dt In'#237'cio'
+      FieldName = 'DTA_INCIO'
+    end
+    object DateField7: TDateField
+      Alignment = taCenter
+      DisplayLabel = 'Dt Fim'
+      FieldName = 'DTA_FIM'
+    end
+    object FMTBCDField2: TFMTBCDField
+      DisplayLabel = '% Red'
+      FieldName = 'PER_REDUCAO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+  end
+  object DataSetProvider1: TDataSetProvider
+    DataSet = SQLDataSet1
+    Options = [poRetainServerOrder]
+    Left = 964
+    Top = 492
+  end
+  object DataSource1: TDataSource
+    DataSet = ClientDataSet1
+    Left = 1040
+    Top = 492
   end
 end

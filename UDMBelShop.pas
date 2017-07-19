@@ -1168,6 +1168,29 @@ type
     CDS_FluxoFornecedorDTA_INCLUI: TSQLTimeStampField;
     CDS_FluxoFornecedorUSU_ALTERA: TIntegerField;
     CDS_FluxoFornecedorDTA_ALTERA: TSQLTimeStampField;
+    SDS_Prioridades: TSQLDataSet;
+    CDS_Prioridades: TClientDataSet;
+    DSP_Prioridades: TDataSetProvider;
+    DS_Prioridades: TDataSource;
+    SQLDataSet1: TSQLDataSet;
+    ClientDataSet1: TClientDataSet;
+    IntegerField13: TIntegerField;
+    StringField3: TStringField;
+    StringField4: TStringField;
+    DateField6: TDateField;
+    DateField7: TDateField;
+    FMTBCDField2: TFMTBCDField;
+    DataSetProvider1: TDataSetProvider;
+    DataSource1: TDataSource;
+    CDS_PrioridadesCOD_PRIORIDADE: TIntegerField;
+    CDS_PrioridadesDES_PRIORIDADE: TStringField;
+    CDS_PrioridadesDTA_INICIAL: TDateField;
+    CDS_PrioridadesDTA_FINAL: TDateField;
+    CDS_PrioridadesUSU_INCLUI: TIntegerField;
+    CDS_PrioridadesDTA_INCLUI: TSQLTimeStampField;
+    CDS_PrioridadesUSU_ALTERA: TIntegerField;
+    CDS_PrioridadesDTA_ALTERA: TSQLTimeStampField;
+    CDS_PrioridadesIND_ATIVO: TStringField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -3781,7 +3804,7 @@ Var
   sNewIP: String;
   b, bTestaConexao: Boolean;
 begin
-// odir - Apresenta Erro ao sair do Programa
+  // odir - Apresenta Erro ao sair do Programa
    // Windows: Nome do Usuario e do Computador =================================
   UsuarioComputadorWindows(sgNomeUsuario, sgNomeComputador);
 

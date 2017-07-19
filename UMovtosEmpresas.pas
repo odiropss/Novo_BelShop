@@ -2009,7 +2009,9 @@ Var
   MySql: String;
 
   i: Integer;
-  s, sDtaUltAtualizacao, sDta: String;
+  s, sDtaUltAtualizacao,
+  sDta, sDtaLinx: String;
+
 
   // Usado no Estoque Final ////////////
   Dta: TDate;
@@ -2297,13 +2299,22 @@ begin
   Begin
     sCodEmpresa :=DMMovtosEmpresas.CDS_EmpProcessaCOD_FILIAL.AsString;
 
+    sDtaLinx:='';
     Try
       iCodLojaLinx:=DMMovtosEmpresas.CDS_EmpProcessaCOD_LINX.AsInteger;
+      MySql:=' SELECT e.Dta_Inicio_Linx'+
+             ' FROM EMP_CONEXOES e'+
+             ' where e.Cod_Linx='+IntToStr(iCodLojaLinx);
+      DMMovtosEmpresas.CDS_Busca.Close;
+      DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
+      DMMovtosEmpresas.CDS_Busca.Open;
+      sDtaLinx:=DMMovtosEmpresas.CDS_Busca.FieldByName('Dta_Inicio_Linx').AsString;
+      DMMovtosEmpresas.CDS_Busca.Close;
     Except
       iCodLojaLinx:=0;
     End;
-    
-//odiropss Comentar
+
+//odiropss Comentar              
 //iCodLojaLinx:=18;
 //if sCodEmpresa='01' Then
 //sCodEmpresa:='18'
@@ -3023,8 +3034,7 @@ begin
 
           // (DM) Busca Demandas
           sDtaUltAtualizacao:=DateTimeToStr(PrimeiroUltimoDia(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor)-60,'P'));
-          sDtaUltAtualizacao:=f_Troca('/','.',sDtaUltAtualizacao);
-          sDtaUltAtualizacao:=f_Troca('-','.',sDtaUltAtualizacao);
+          sDtaUltAtualizacao:=f_Troca('/','.',f_Troca('-','.',sDtaUltAtualizacao));
 
           If iCodLojaLinx=0 Then // SIDICOM
           Begin
@@ -3072,6 +3082,14 @@ begin
 
           If iCodLojaLinx<>0 Then // LINX
           Begin
+
+            If Trim(sDtaLinx)<>'' Then
+            Begin
+              If StrToDate(f_Troca('/','.',f_Troca('-','.',sDtaUltAtualizacao)))<StrToDate(f_Troca('/','.',f_Troca('-','.',sDtaLinx))) Then
+               sDtaUltAtualizacao:=sDtaLinx;
+            End; // If Trim(sDtaLinx)<>'' Then
+
+
             MySql:=' SELECT '+QuotedStr(sCodEmpresa)+' cod_filial, ''DM'' ind_tipo,'+
                    ' dem.codproduto,'+
                    ' ''01.''||SUBSTRING(dem.comp_anomes FROM 6 FOR 2)||''.''||SUBSTRING(dem.comp_anomes FROM 1 FOR 4) dta_ref,'+
@@ -3097,7 +3115,7 @@ begin
                    '       AND   lm.excluido = ''N'''+
                    '       AND   lp.cod_auxiliar IS NOT NULL'+
                    '       AND   lm.empresa ='+IntToStr(iCodLojaLinx)+
-                   '       AND   lm.data_lancamento >= '+QuotedStr(sDtaUltAtualizacao)+
+                   '       AND   lm.data_lancamento >= '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaUltAtualizacao)))+
                    '       GROUP BY 1, 2'+
 
                    '       UNION'+
@@ -3109,10 +3127,11 @@ begin
                    '       FROM MOVTOS_EMPRESAS_ANT m'+
                    '       WHERE m.ind_tipo = ''DM'''+
                    '       AND   m.codfilial = '+QuotedStr(sCodEmpresa)+
-                   '       AND   m.dta_ref >= '+QuotedStr(sDtaUltAtualizacao)+
+                   '       AND   m.dta_ref >= '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaUltAtualizacao)))+
                    '       GROUP BY 1, 2'+
                    '       ORDER BY 1, 2) DEM'+
-                   ' GROUP BY 1, 2, 3, 4';
+                   ' GROUP BY 1, 2, 3, 4'+
+                   ' ORDER BY 4';
             DMMovtosEmpresas.CDS_LojaLinx.Close;
             DMMovtosEmpresas.SDS_LojaLinx.CommandText:=MySql;
             DMMovtosEmpresas.CDS_LojaLinx.Open;
@@ -3189,6 +3208,13 @@ begin
 
               If iCodLojaLinx<>0 Then // LINX
               Begin
+                // Exclui Movto da Empresa --------------------------------
+                MySql:=' Delete From MOVTOS_EMPRESAS'+
+                       ' Where Ind_Tipo='+QuotedStr('DM')+
+                       ' And CodFilial='+QuotedStr(sCodEmpresa)+
+                       ' And DTA_REF>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaUltAtualizacao)));
+                DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
                 While Not DMMovtosEmpresas.CDS_LojaLinx.Eof do
                 Begin
                   MySql:=' UPDATE OR INSERT INTO MOVTOS_EMPRESAS'+

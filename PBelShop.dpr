@@ -47,7 +47,8 @@ uses
   UFrmComissaoVendedor in 'UFrmComissaoVendedor.pas' {FrmComissaoVendedor},
   UDMComissaoVendedor in 'UDMComissaoVendedor.pas' {DMComissaoVendedor: TDataModule},
   UDMLinx in 'UDMLinx.pas' {DMLinx: TDataModule},
-  UFrmOCLinx in 'UFrmOCLinx.pas' {FrmOCLinx};
+  UFrmOCLinx in 'UFrmOCLinx.pas' {FrmOCLinx},
+  UFrmPrioridadesReposicao in 'UFrmPrioridadesReposicao.pas' {FrmPrioridadesReposicao};
 
 {$R *.res}
 
@@ -80,6 +81,7 @@ begin
   Application.CreateForm(TFrmFluxoFornecedor, FrmFluxoFornecedor);
   Application.CreateForm(TDMComissaoVendedor, DMComissaoVendedor);
   Application.CreateForm(TDMLinx, DMLinx);
+  // Application.CreateForm(TFrmPrioridadesReposicao, FrmPrioridadesReposicao);
   // Application.CreateForm(TFrmOCLinx, FrmOCLinx);
   // Application.CreateForm(TFrmComissaoVendedor, FrmComissaoVendedor);
   // Application.CreateForm(TFrmControleEstoques, FrmControleEstoques);

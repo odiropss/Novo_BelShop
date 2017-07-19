@@ -1,6 +1,6 @@
 object FrmBelShop: TFrmBelShop
-  Left = 241
-  Top = 101
+  Left = 288
+  Top = 98
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = TS_Filtros
+    ActivePage = Ts_OrdemCompra
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -7182,7 +7182,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_OCBuscaProdutos
+        ActivePage = Ts_OCGeraOrdemCompra
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -8813,7 +8813,7 @@ object FrmBelShop: TFrmBelShop
             Top = 53
             Width = 793
             Height = 435
-            ActivePage = Ts_GeraOCGrid
+            ActivePage = Ts_GeraOCOrdensCompra
             Align = alClient
             MultiLine = True
             TabOrder = 3
@@ -8966,6 +8966,21 @@ object FrmBelShop: TFrmBelShop
                     ReadOnly = True
                     Title.Alignment = taRightJustify
                     Width = 60
+                    Visible = True
+                  end
+                  item
+                    Color = 8454143
+                    Expanded = False
+                    FieldName = 'QTD_TRANSF_ANO'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWindowText
+                    Font.Height = -11
+                    Font.Name = 'MS Sans Serif'
+                    Font.Style = [fsBold]
+                    ReadOnly = True
+                    Title.Alignment = taRightJustify
+                    Title.Caption = 'Saldo Linx'
+                    Width = 65
                     Visible = True
                   end
                   item
