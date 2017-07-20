@@ -432,7 +432,8 @@ var
   bgSabDom: Boolean;
 
   sgAgencia, sgContaCorrete: String;
-  
+  bgComNrConta: Boolean; // Se Extrato do Santander contém o Numero da Conta
+
 implementation
 
 uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
@@ -643,13 +644,19 @@ begin
 
     // Cria o loop para listar os registros no TStringGrid
     k:=1;
+    bgComNrConta:=True;
+    If (Trim(RangeMatrix[k, 1])<>TRIM('Nome:')) Then
+    Begin
+      bgComNrConta:=False;
+    End;
+
     repeat
       for r:=1 to y do
       Begin
 //        If (r=1) and (s<>'Data') and (RangeMatrix[K, R]<>'')Then
-         s:=RangeMatrix[k, 1];
+         s:=Trim(RangeMatrix[k, 1]);
 
-         If (k=2) And (r=2) Then // Linha=2
+         If (k=2) And (r=2) And (bgComNrConta) Then // Linha=2
          Begin
            sgAgencia:=Trim(RangeMatrix[k, 4]);
            sgContaCorrete:=Trim(f_Troca(' ','',RangeMatrix[k, 6]));
@@ -657,8 +664,10 @@ begin
 //
 //        If (s='Data') And (s>'') Then
 
-        If (StrToIntDef(copy(RangeMatrix[k, 1],1,1),999999)<>999999) and (Trim(RangeMatrix[k, 1])<>'') Then
-         AGrid.Cells[(r - 1),(k - 1)]:=RangeMatrix[K, R];
+        If (StrToIntDef(copy(RangeMatrix[k, 1],1,1),999999)<>999999) and (Trim(RangeMatrix[k, 1])<>'') and (Trim(RangeMatrix[K, R])<>'')Then
+        Begin
+          AGrid.Cells[(r - 1),(k - 1)]:=RangeMatrix[K, R]
+        End;
       End;
       Inc(k,1);
     until k > x;
@@ -675,6 +684,7 @@ begin
   end;
 
   FreeAndNil(XLApp);
+
 End; // MANUTENCAO DE EXTRATOS - Importa Extrato Santander Excel para StringGris >>>>
 
 // CONCILIAÇÕES - Elimina Movots do SIDICOM com Erro de Conciliação >>>>>>>>>>>>
@@ -5544,21 +5554,6 @@ Var
   s, sNum_Seq: String;
 //  bExisteSaldo, bInsere: Boolean;
 Begin
-  // Verifica se Extrato Já Existe =============================================
-  MySql:=' SELECT ex.Num_Seq'+
-         ' FROM  FIN_BANCOS_EXTRATOS ex'+
-         ' WHERE ex.num_seq=''999999'''+
-         ' And   ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
-         ' AND   ex.dta_extrato='+QuotedStr(sgDta);
-  DMBelShop.CDS_Busca.Close;
-  DMBelShop.SDS_Busca.CommandText:=MySql;
-  DMBelShop.CDS_Busca.Open;
-  sNum_Seq:=DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString;
-  DMBelShop.CDS_Busca.Close;
-
-  If Trim(sNum_Seq)<>'' Then
-   Exit;
-
   // Se Debito ou Credito ======================================================
   sTpDebCre:='C';
   If AnsiContainsStr(sgValor, '-') Then
@@ -7376,7 +7371,7 @@ end;
 procedure TFrmBancoExtratos.Bt_SantanderArquivoClick(Sender: TObject);
 Var
   OpenDialog: TOpenDialog;
-  i: Integer;
+  ii, i: Integer;
   b: Boolean;
   bApagaCol: Boolean;
 begin
@@ -7409,24 +7404,40 @@ begin
        ImportaExtratoSantander(Strg_SantanderImpExtrato,EdtSantanderPastaArquivo.Text);
 
        Strg_SantanderImpExtrato.Refresh;
-       If (Strg_SantanderImpExtrato.ColCount<>5) And (Strg_SantanderImpExtrato.ColCount<>7)  Then
-       Begin
-         msg('Erro no Leiaute do Arquivo !!'+cr+cr+'Favor Entrar em Contato com o Odir !!','A');
-         LimpaStringGrid(Strg_SantanderImpExtrato);
-         EdtSantanderPastaArquivo.Clear;
-         Lb_Obs.Caption:='Observações...';
-         Exit;
-       End;
 
-       If (sgAgencia='') or (sgContaCorrete='') or (EdtExtNumAgencia.Text<>sgAgencia) Or (EdtExtNumConta.Text<>sgContaCorrete) Then
+       If bgComNrConta Then
        Begin
-         msg('Arquivo NÃO Pertence a esta Conta Bancária !!'+cr+cr+
-             'Pertence a Agência: '+sgAgencia+' C/Corrente:'+sgContaCorrete,'A');
-         LimpaStringGrid(Strg_SantanderImpExtrato);
-         EdtSantanderPastaArquivo.Clear;
-         Lb_Obs.Caption:='Observações...';
-         Exit;
-       End;
+         If (Strg_SantanderImpExtrato.ColCount<>5) And (Strg_SantanderImpExtrato.ColCount<>7) Then
+         Begin
+           msg('Erro no Leiaute do Arquivo !!'+cr+cr+'Favor Entrar em Contato com o Odir !!','A');
+           LimpaStringGrid(Strg_SantanderImpExtrato);
+           EdtSantanderPastaArquivo.Clear;
+           Lb_Obs.Caption:='Observações...';
+           Exit;
+         End;
+
+         If (sgAgencia='') or (sgContaCorrete='') or (EdtExtNumAgencia.Text<>sgAgencia) Or (EdtExtNumConta.Text<>sgContaCorrete) Then
+         Begin
+           msg('Arquivo NÃO Pertence a esta Conta Bancária !!'+cr+cr+
+               'Pertence a Agência: '+sgAgencia+' C/Corrente:'+sgContaCorrete,'A');
+           LimpaStringGrid(Strg_SantanderImpExtrato);
+           EdtSantanderPastaArquivo.Clear;
+           Lb_Obs.Caption:='Observações...';
+           Exit;
+         End;
+       End; // If bgComNrConta Then
+
+       If Not bgComNrConta Then
+       Begin
+         If (Strg_SantanderImpExtrato.ColCount<>6) Then
+         Begin
+           msg('Erro no Leiaute do Arquivo !!'+cr+cr+'Favor Entrar em Contato com o Odir !!','A');
+           LimpaStringGrid(Strg_SantanderImpExtrato);
+           EdtSantanderPastaArquivo.Clear;
+           Lb_Obs.Caption:='Observações...';
+           Exit;
+         End;
+       End; // If bgComNrConta Then
 
        // Retira Linhas em Branco
        bApagaCol:=False;
@@ -7443,26 +7454,31 @@ begin
              bgSiga:=False;
              TAuxGrid(Strg_SantanderImpExtrato).DeleteRow(i);
              Break;
-          End;
+           End;
 
-          If Strg_SantanderImpExtrato.ColCount=7 Then
-          Begin
-            bApagaCol:=True;
-            Strg_SantanderImpExtrato.Cells[1,i]:=Trim(Strg_SantanderImpExtrato.Cells[2,i]); // Historico
-            Strg_SantanderImpExtrato.Cells[2,i]:=Trim(Strg_SantanderImpExtrato.Cells[3,i]); // Docto
-            Strg_SantanderImpExtrato.Cells[3,i]:=Trim(Strg_SantanderImpExtrato.Cells[4,i]); // Valor
-            Strg_SantanderImpExtrato.Cells[4,i]:=Trim(Strg_SantanderImpExtrato.Cells[5,i]); // Saldo
+           If bgComNrConta Then
+            ii:=7
+           Else
+            ii:=6;
 
-            If Trim(Strg_SantanderImpExtrato.Cells[2,i])='' Then
-             Strg_SantanderImpExtrato.Cells[2,i]:='0'; // Docto
+           If Strg_SantanderImpExtrato.ColCount=ii Then
+           Begin
+             bApagaCol:=True;
+             Strg_SantanderImpExtrato.Cells[1,i]:=Trim(Strg_SantanderImpExtrato.Cells[2,i]); // Historico
+             Strg_SantanderImpExtrato.Cells[2,i]:=Trim(Strg_SantanderImpExtrato.Cells[3,i]); // Docto
+             Strg_SantanderImpExtrato.Cells[3,i]:=Trim(Strg_SantanderImpExtrato.Cells[4,i]); // Valor
+             Strg_SantanderImpExtrato.Cells[4,i]:=Trim(Strg_SantanderImpExtrato.Cells[5,i]); // Saldo
 
-            If Trim(Strg_SantanderImpExtrato.Cells[3,i])='' Then
-             Strg_SantanderImpExtrato.Cells[3,i]:='0'; // Valor
+             If Trim(Strg_SantanderImpExtrato.Cells[2,i])='' Then
+              Strg_SantanderImpExtrato.Cells[2,i]:='0'; // Docto
 
-            If Trim(Strg_SantanderImpExtrato.Cells[4,i])='' Then
-             Strg_SantanderImpExtrato.Cells[4,i]:='0'; // Saldo
+             If Trim(Strg_SantanderImpExtrato.Cells[3,i])='' Then
+              Strg_SantanderImpExtrato.Cells[3,i]:='0'; // Valor
 
-          End;
+             // OdirApagar - 20/07/2017
+//             If Trim(Strg_SantanderImpExtrato.Cells[4,i])='' Then
+//              Strg_SantanderImpExtrato.Cells[4,i]:='0'; // Saldo
+           End;
          End; // For i:=1 to Strg_SantanderImpExtrato.RowCount-1 do
 
          If bgSiga Then
@@ -7471,7 +7487,8 @@ begin
 
        If bApagaCol Then
        Begin
-         TAuxGrid(Strg_SantanderImpExtrato).DeleteColumn(6);
+         If bgComNrConta Then
+          TAuxGrid(Strg_SantanderImpExtrato).DeleteColumn(6);
          TAuxGrid(Strg_SantanderImpExtrato).DeleteColumn(5);
        End;
 
@@ -7490,8 +7507,9 @@ end;
 procedure TFrmBancoExtratos.Bt_SantanderImpExtratoClick(Sender: TObject);
 Var
   i: Integer;
-  s: String;
+  s, sDtaApagar: String;
   MySql: String;
+  bOK: Boolean;
 begin
   Strg_SantanderImpExtrato.SetFocus;
 
@@ -7515,6 +7533,15 @@ begin
     Bt_SantanderArquivo.SetFocus;
     Exit;
   End;
+
+  If Not bgComNrConta Then
+  Begin
+    If msg('Você Tem Certeza que o Este Arquivo'+cr+'Pertence Relamente a Conta'+cr+'a cima Citada ??','C')=2 Then
+     Exit;
+  End; // If bgComNrConta Then
+
+  If msg('Deseja relamente Importar o Arquivo ??','C')=2 Then
+   Exit;
 
   sgDta:='';
   sgDesMovto:='';
@@ -7541,6 +7568,7 @@ begin
     Lb_Obs.Caption:='Aguarde !! Efetuando a Importação de Extrato...';
 
     // Cells[coluna,linha]
+    sDtaApagar:='';
     For i:=1 to Strg_SantanderImpExtrato.RowCount-1 do
     Begin
       pgProgBar.Position:=i;
@@ -7556,6 +7584,16 @@ begin
 
       If Trim(sgdta)<>'' Then
       Begin
+
+        // Apaga Extrato do dia ====================================================
+        If sDtaApagar<>sgDta Then
+        Begin
+          MySql:=' DELETE FROM FIN_BANCOS_EXTRATOS ex'+
+                 ' WHERE ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
+                 ' AND   ex.dta_extrato='+QuotedStr(sgDta);
+          DMBelShop.SQLC.Execute(MySql,nil,nil);
+        End; // If sDtaApagar<>sgDta Then
+
         // Salva Saldo do Dia Anterior se Não Houve Extrato Importado para Conta =
         If sgDesMovto='SALDO ANTERIOR' Then
         Begin
@@ -7583,7 +7621,7 @@ begin
 
         If sgDesMovto<>'SALDO ANTERIOR' Then
         Begin
-          If sgSaldo='0' Then
+          If Trim(sgSaldo)='' Then
           Begin
             // Não Processa Data de Hoje
             s:=f_Troca('/','.',sgDtaServidor);
@@ -7596,15 +7634,19 @@ begin
 
 //odirapagar - 25/01/2017
 //          If (sgDesMovto<>'SALDO ANTERIOR') and ((sgSaldo<>'0') Or (sgSaldo<>'')) Then
-          if i=Strg_SantanderImpExtrato.RowCount-1 Then
+//          if i=Strg_SantanderImpExtrato.RowCount-1 Then
+          // Grava Extrato ===================================================
+          If Trim(sgSaldo)<>'' Then
           Begin
             // Não Processa Data de Hoje
             s:=f_Troca('/','.',sgDtaServidor);
             s:=f_Troca('-','.',s);
 
-            // Grava Extrato ===================================================
-            If sgDta<>s Then
-            Begin
+//odirapagar - 25/01/2017
+//            If sgDta<>s Then
+//            Begin
+
+              // Salva o Ultimo Movto do Dia====================================
               ExtratosSalvar;
 
               // Salva Saldo do Dia
@@ -7612,10 +7654,13 @@ begin
               sgDesMovto:='SALDO NA DATA';
               sgDocto:='';
               ExtratosSalvar;
-            End;
+
+//odirapagar - 25/01/2017
+//            End;
           End; // if i=Strg_SantanderImpExtrato.RowCount-1 Then
         End; // If sgDesMovto<>'SALDO ANTERIOR' Then
 
+        sDtaApagar:=sgDta;
       End; // If Trim(sgdta)<>'' Then
     End; // For i:=1 to Strg_SantanderImpExtrato.RowCount-1 do
 

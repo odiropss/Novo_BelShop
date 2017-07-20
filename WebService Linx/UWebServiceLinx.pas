@@ -215,7 +215,7 @@ Var
 Begin
 
   sDtaAtual:=DateToStr(DataHoraServidorFI(DMLinxWebService.SDS_DtaHoraServidor));
-  sDtaAtual:=f_Troca('/','',f_Troca('.','',f_Troca('-','',sDtaAtual)));
+  sDtaAtual:=f_Troca('/','.',f_Troca('-','.',sDtaAtual));
 
   // Verifica se Transação esta Ativa
   If DMLinxWebService.SQLC.InTransaction Then

@@ -1,6 +1,6 @@
 object FrmBancoExtratos: TFrmBancoExtratos
-  Left = 318
-  Top = 101
+  Left = 241
+  Top = 115
   Width = 1063
   Height = 622
   AutoSize = True
@@ -4375,8 +4375,8 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Visible = False
   end
   object MainMenu1: TMainMenu
-    Left = 960
-    Top = 126
+    Left = 984
+    Top = 62
     object MenuConcilicao: TMenuItem
       Tag = 50
       Caption = 'Concilia'#231#227'o'
