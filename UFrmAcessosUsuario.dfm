@@ -599,6 +599,9 @@ object FrmAcessosUsuario: TFrmAcessosUsuario
           ReadOnly = True
           TabOrder = 0
           OnMouseMove = TreeSegurancaMouseMove
+          Items.Data = {
+            01000000270000000000000000000000FFFFFFFFFFFFFFFF0000000000000000
+            0E4D656E75205072696E636970616C}
           DataSource = DMBelShop.DS_Seguranca
           Active = False
         end
@@ -813,6 +816,23 @@ object FrmAcessosUsuario: TFrmAcessosUsuario
         Font.Style = [fsBold]
         ParentFont = False
         OnClick = JvXPButton1Click
+      end
+      object Memo1: TMemo
+        Left = 8
+        Top = 192
+        Width = 137
+        Height = 281
+        Lines.Strings = (
+          '  ODIR'
+          ''
+          'Se o Componente '
+          'TreeSeguranca Travar '#233' a '
+          'Falta, provavel do'
+          'HelpContext:'
+          ''
+          'HelpContext = 0 e Tab<>0')
+        TabOrder = 4
+        Visible = False
       end
     end
     object Ts_AcessoSidicom: TTabSheet

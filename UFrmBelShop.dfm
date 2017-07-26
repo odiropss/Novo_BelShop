@@ -1,6 +1,6 @@
 object FrmBelShop: TFrmBelShop
-  Left = 288
-  Top = 98
+  Left = 239
+  Top = 93
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -7182,7 +7182,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_OCGeraOrdemCompra
+        ActivePage = Ts_OCBuscaProdutos
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -8708,6 +8708,7 @@ object FrmBelShop: TFrmBelShop
                 OnEnter = Dbg_GeraOCProdutosEnter
                 OnExit = Dbg_GeraOCProdutosExit
                 OnKeyDown = Dbg_GeraOCProdutosKeyDown
+                OnKeyUp = Dbg_GeraOCProdutosKeyUp
                 CorComFoco = 15921894
                 SairComEnter = False
                 Columns = <
@@ -8779,6 +8780,7 @@ object FrmBelShop: TFrmBelShop
                 OnEnter = Dbg_GeraOCProdutosEnter
                 OnExit = Dbg_GeraOCProdutosExit
                 OnKeyDown = Dbg_GeraOCFiliaisKeyDown
+                OnKeyUp = Dbg_GeraOCProdutosKeyUp
                 CorComFoco = 15921894
                 SairComEnter = False
                 Columns = <
@@ -8813,7 +8815,7 @@ object FrmBelShop: TFrmBelShop
             Top = 53
             Width = 793
             Height = 435
-            ActivePage = Ts_GeraOCOrdensCompra
+            ActivePage = Ts_GeraOCGrid
             Align = alClient
             MultiLine = True
             TabOrder = 3
@@ -8851,6 +8853,7 @@ object FrmBelShop: TFrmBelShop
                 OnEnter = Dbg_GeraOCProdutosEnter
                 OnExit = Dbg_GeraOCProdutosExit
                 OnKeyDown = Dbg_GeraOCGridKeyDown
+                OnKeyUp = Dbg_GeraOCProdutosKeyUp
                 CorComFoco = 15921894
                 SairComEnter = False
                 Columns = <
@@ -10356,19 +10359,27 @@ object FrmBelShop: TFrmBelShop
                 PanelStyle.Color = 13303807
                 Fixed = False
                 Text = 'OP'#199#213'ES: No Grid Bot'#227'o Direito do Mouse'
-                Width = 60
+                Width = 280
+              end
+              item
+                PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                PanelStyle.Alignment = taCenter
+                Fixed = False
+                Text = '<F3> Localiza Produto LINX'
+                Width = 200
               end
               item
                 PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
                 PanelStyle.Alignment = taCenter
                 PanelStyle.Color = 13303807
                 Fixed = False
-                Text = '<F4> Localiza Produto'
-                Width = 30
+                Text = '<F4> Localiza Produto SIDICOM'
+                Width = 220
               end
               item
                 PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
                 PanelStyle.Alignment = taCenter
+                Fixed = False
                 Text = '<F5> Apresenta Datas: Inclus'#227'o/Altera'#231#227'o do Produto'
                 Width = 400
               end>
@@ -13418,7 +13429,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_CurvaABCEndMantencao
+        ActivePage = Ts_CurvaABCEnderecamentos
         Align = alClient
         TabOrder = 0
         OnChange = PC_CurvaABCEnderecamentosChange
@@ -29422,7 +29433,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = TS_FiltroProdutos
+        ActivePage = TS_FiltroFornecedor
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -32647,6 +32658,7 @@ object FrmBelShop: TFrmBelShop
           3F3F3F3F3F3F3F3F3F3F3F3F3C2A23363F003F3F3F3F3F3F3F3F3F3F3F3F3F3F
           3F3F373F3F00}
         Caption = 'Prioridades de Reposi'#231#227'o'
+        HelpContext = 1
         OnClick = PrioridadesdeReposio1Click
       end
     end

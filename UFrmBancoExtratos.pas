@@ -5678,7 +5678,6 @@ Begin
   LimpaStringGrid(Strg_SantanderImpExtrato);
   Bt_SantanderImpExtrato.Enabled:=False;
 
-
 End; // Manutenção de Extratos - Limpa Conteudo de Componentes >>>>>>>>>>>>>>>>>
 
 // Manutenção de Extratos - Verifica se Banco tem Leiaute >>>>>>>>>>>>>>>>>>>>>>
@@ -6816,11 +6815,21 @@ End;
 procedure TFrmBancoExtratos.Bt_BanrisulImpExtratoClick(Sender: TObject);
 Var
   ii, i: Integer;
-  s, sLinha: String;
+  s, sLinha,
+  sDtaApagar: String;
   bIniciou, bGrava: Boolean;
   MySql: String;
   iPosDocto: Integer;
   bSaldoConta, bInvestAut: Boolean; // Pega Saldo da Conta e Inventimento Automatico.
+
+  Procedure ExcluirExtrato(sCodBanco, sDtaExclui: String);
+  Begin
+    MySql:=' DELETE FROM FIN_BANCOS_EXTRATOS ex'+
+           ' WHERE ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
+           ' AND   ex.dta_extrato='+QuotedStr(sDtaExclui);
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+  End; //  Procedure ApagarExtrato(sCodBanco, sDtaExclui: String);
+
 begin
   EditorBanrisulImpExtrato.SetFocus;
 
@@ -6852,7 +6861,7 @@ begin
   sgDocto:='';
   sgValor:='';
   sgDta:='';
-  
+
   If DMBelShop.SQLC.InTransaction Then
    DMBelShop.SQLC.Rollback(TD);
 
@@ -6870,11 +6879,13 @@ begin
 
     pgProgBar.Properties.Max:=EditorBanrisulImpExtrato.Lines.Count;
 
+    sDtaApagar:='';
     bIniciou:=False;
     Lb_Obs.Caption:='Aguarde !! Efetuando a Importação de Extrato...';
     For i:=0 to EditorBanrisulImpExtrato.Lines.Count-1 do
     Begin
       pgProgBar.Position:=i;
+
       sLinha:=EditorBanrisulImpExtrato.Lines[i];
 
       FrmBancoExtratos.Refresh;
@@ -6930,6 +6941,12 @@ begin
           sgValor:=Trim(Copy(slinha,53,28));
           sgDesMovto:='SALDO NA DATA';
           sgDocto:='';
+
+          // Exclui Extrato Anterior se Houver =================================
+          If (sDtaApagar<>sgDta) And (Trim(sgDta)<>'')  Then
+           ExcluirExtrato(EdtExtCodBanco.Text, sgDta);
+          sDtaApagar:=sgDta;
+
           ExtratosSalvar;
         End;
         DMBelShop.CDS_Busca.Close;
@@ -6972,13 +6989,20 @@ begin
 
            // Grava Extrato ====================================================
            If sgDta<>s Then
-            ExtratosSalvar;
+           Begin
+             // Exclui Extrato Anterior se Houver =================================
+             If (sDtaApagar<>sgDta) And (Trim(sgDta)<>'')  Then
+              ExcluirExtrato(EdtExtCodBanco.Text, sgDta);
+             sDtaApagar:=sgDta;
+
+             ExtratosSalvar;
+           End; // If sgDta<>s Then
          End
-        Else
+        Else // If Trim(sgValor)<>'' Then
          Begin
            bGrava:=False;
-         End;
-      End;
+         End; /// If Trim(sgValor)<>'' Then
+      End; // If bIniciou Then
 
       // Verifica Posicao do Documento =========================================
       If AnsiContainsStr(AnsiUpperCase(sLinha), 'DOCUMENTO') Then
@@ -6999,6 +7023,7 @@ begin
         ii:=Pos('/', sLinha);
         sgAno:=Trim(Copy(slinha,ii+1,4));
       End;
+
     End; // For i:=0 to EditorBanrisul.Lines.Count-1 do
     FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
 
@@ -7006,6 +7031,7 @@ begin
     If DMBelShop.SQLC.InTransaction Then
     Begin
       DMBelShop.SQLC.Commit(TD);
+
       msg('Importação Efetuada Com SUCESSO !!','A');
       EditorBanrisulImpExtrato.Lines.Clear;
       EdtBanrisulPastaArquivo.Clear;
@@ -7034,6 +7060,7 @@ begin
     End; // on e : Exception do
   End; // Try
 
+//extratosSalvar
   Bt_BanrisulImpExtrato.Enabled:=False;
 end;
 
@@ -7613,7 +7640,9 @@ begin
             sgValor:=sgSaldo;
             sgDesMovto:='SALDO NA DATA';
             sgDocto:='';
+
             ExtratosSalvar;
+
             sgDesMovto:='SALDO ANTERIOR';
           End; // If Not DMBelShop.CDS_Busca.IsEmpty Then
           DMBelShop.CDS_Busca.Close;

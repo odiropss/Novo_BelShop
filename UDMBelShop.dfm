@@ -1,8 +1,8 @@
 object DMBelShop: TDMBelShop
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 288
-  Top = 110
+  Left = 239
+  Top = 108
   Height = 614
   Width = 1115
   object SQLC: TSQLConnection
@@ -27,6 +27,7 @@ object DMBelShop: TDMBelShop
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
+    Connected = True
     Left = 11
     Top = 11
   end
@@ -6262,9 +6263,10 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'USUARIO'
         ParamType = ptInput
+        Value = ''
       end>
     SQLConnection = SQLC
     Left = 467
@@ -6280,9 +6282,10 @@ object DMBelShop: TDMBelShop
     Aggregates = <>
     Params = <
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'USUARIO'
         ParamType = ptUnknown
+        Value = ''
       end>
     ProviderName = 'DSP_Seguranca'
     Left = 547
@@ -9133,9 +9136,23 @@ object DMBelShop: TDMBelShop
     Top = 324
   end
   object SDS_Prioridades: TSQLDataSet
-    CommandText = 'select *'#13#10'from es_rep_prioridades p'#13#10'order by p.des_prioridade'
+    CommandText = 
+      'SELECT *'#13#10'FROM es_rep_prioridades p'#13#10'WHERE p.ind_ativo IN (:SIM,' +
+      ' :NAO)'#13#10'ORDER BY p.des_prioridade'
     MaxBlobSize = -1
-    Params = <>
+    Params = <
+      item
+        DataType = ftString
+        Name = 'SIM'
+        ParamType = ptInput
+        Value = 'SIM'
+      end
+      item
+        DataType = ftString
+        Name = 'NAO'
+        ParamType = ptInput
+        Value = 'NAO'
+      end>
     SQLConnection = SQLC
     Left = 923
     Top = 404
@@ -9144,6 +9161,7 @@ object DMBelShop: TDMBelShop
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Prioridades'
+    AfterScroll = priodadesAfterScroll
     Left = 1004
     Top = 403
     object CDS_PrioridadesCOD_PRIORIDADE: TIntegerField
@@ -9195,60 +9213,68 @@ object DMBelShop: TDMBelShop
     Left = 1040
     Top = 420
   end
-  object SQLDataSet1: TSQLDataSet
+  object SDS_PrioridadeProd: TSQLDataSet
+    CommandText = 
+      'SELECT'#13#10'pr.cod_produto, pr.nome,'#13#10'pr.cod_fornecedor, fo.razao_cl' +
+      'iente, pp.codproduto'#13#10#13#10'FROM ES_REP_PRIORIDADES_PROD pp, linxpro' +
+      'dutos pr, linxclientesfornec fo'#13#10#13#10'WHERE pp.cod_produto=pr.cod_p' +
+      'roduto'#13#10'and   pr.cod_fornecedor=fo.cod_cliente'#13#10'AND   pr.desativ' +
+      'ado='#39'N'#39#13#10'AND   pp.cod_prioridade= :CodPrioridade'#13#10'ORDER BY 2'#13#10
     MaxBlobSize = -1
-    Params = <>
+    Params = <
+      item
+        DataType = ftString
+        Name = 'CodPrioridade'
+        ParamType = ptInput
+        Value = '1'
+      end>
     SQLConnection = SQLC
     Left = 923
     Top = 476
   end
-  object ClientDataSet1: TClientDataSet
+  object CDS_PrioridadeProd: TClientDataSet
+    Active = True
     Aggregates = <>
     Params = <>
-    ProviderName = 'DSP_Prioridades'
+    ProviderName = 'DSP_PrioridadeProd'
     Left = 1004
     Top = 475
-    object IntegerField13: TIntegerField
-      FieldName = 'NUM_SEQ'
-    end
-    object StringField3: TStringField
-      DisplayLabel = 'C'#243'd Comp'
-      FieldName = 'COD_COMPRV'
-      Required = True
-      FixedChar = True
-      Size = 3
-    end
-    object StringField4: TStringField
-      DisplayLabel = 'Comprovante'
-      FieldName = 'NOMECOMPROVANTE'
-      FixedChar = True
-    end
-    object DateField6: TDateField
-      Alignment = taCenter
-      DisplayLabel = 'Dt In'#237'cio'
-      FieldName = 'DTA_INCIO'
-    end
-    object DateField7: TDateField
-      Alignment = taCenter
-      DisplayLabel = 'Dt Fim'
-      FieldName = 'DTA_FIM'
-    end
-    object FMTBCDField2: TFMTBCDField
-      DisplayLabel = '% Red'
-      FieldName = 'PER_REDUCAO'
-      DisplayFormat = '0,.00'
+    object CDS_PrioridadeProdCOD_PRODUTO: TFMTBCDField
+      DisplayLabel = 'C'#243'd Linx'
+      FieldName = 'COD_PRODUTO'
+      DisplayFormat = ',0'
       Precision = 15
-      Size = 2
+      Size = 0
+    end
+    object CDS_PrioridadeProdNOME: TStringField
+      DisplayLabel = 'Nome do Produto'
+      FieldName = 'NOME'
+      Size = 250
+    end
+    object CDS_PrioridadeProdCOD_FORNECEDOR: TIntegerField
+      DisplayLabel = 'Cod Forn'
+      FieldName = 'COD_FORNECEDOR'
+    end
+    object CDS_PrioridadeProdRAZAO_CLIENTE: TStringField
+      DisplayLabel = 'Nome Fornecedor'
+      FieldName = 'RAZAO_CLIENTE'
+      Size = 60
+    end
+    object CDS_PrioridadeProdCODPRODUTO: TStringField
+      DisplayLabel = 'C'#243'd Sidicom'
+      FieldName = 'CODPRODUTO'
+      FixedChar = True
+      Size = 6
     end
   end
-  object DataSetProvider1: TDataSetProvider
-    DataSet = SQLDataSet1
+  object DSP_PrioridadeProd: TDataSetProvider
+    DataSet = SDS_PrioridadeProd
     Options = [poRetainServerOrder]
     Left = 964
     Top = 492
   end
-  object DataSource1: TDataSource
-    DataSet = ClientDataSet1
+  object DS_PrioridadeProd: TDataSource
+    DataSet = CDS_PrioridadeProd
     Left = 1040
     Top = 492
   end

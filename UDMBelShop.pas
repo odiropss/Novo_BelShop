@@ -1172,16 +1172,10 @@ type
     CDS_Prioridades: TClientDataSet;
     DSP_Prioridades: TDataSetProvider;
     DS_Prioridades: TDataSource;
-    SQLDataSet1: TSQLDataSet;
-    ClientDataSet1: TClientDataSet;
-    IntegerField13: TIntegerField;
-    StringField3: TStringField;
-    StringField4: TStringField;
-    DateField6: TDateField;
-    DateField7: TDateField;
-    FMTBCDField2: TFMTBCDField;
-    DataSetProvider1: TDataSetProvider;
-    DataSource1: TDataSource;
+    SDS_PrioridadeProd: TSQLDataSet;
+    CDS_PrioridadeProd: TClientDataSet;
+    DSP_PrioridadeProd: TDataSetProvider;
+    DS_PrioridadeProd: TDataSource;
     CDS_PrioridadesCOD_PRIORIDADE: TIntegerField;
     CDS_PrioridadesDES_PRIORIDADE: TStringField;
     CDS_PrioridadesDTA_INICIAL: TDateField;
@@ -1191,6 +1185,11 @@ type
     CDS_PrioridadesUSU_ALTERA: TIntegerField;
     CDS_PrioridadesDTA_ALTERA: TSQLTimeStampField;
     CDS_PrioridadesIND_ATIVO: TStringField;
+    CDS_PrioridadeProdCOD_PRODUTO: TFMTBCDField;
+    CDS_PrioridadeProdNOME: TStringField;
+    CDS_PrioridadeProdCOD_FORNECEDOR: TIntegerField;
+    CDS_PrioridadeProdRAZAO_CLIENTE: TStringField;
+    CDS_PrioridadeProdCODPRODUTO: TStringField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -1231,6 +1230,9 @@ type
                           // Montado com Alias < pr. >
                           //      USAR: MySql:=MySql+f_Troca('pr.','p.',**);
                           // ** = sgGrupos
+
+    Function  LINX_BuscaCodigoLINX(sCodProdutoSIDICOM: String): String;
+    Function  LINX_BuscaCodigoSIDICOM(sCodProdutoLINX: String): String;
     //==========================================================================
     // Odir ====================================================================
     //==========================================================================
@@ -1252,6 +1254,7 @@ type
     procedure IBQ_AComprarAfterOpen(DataSet: TDataSet);
     procedure CDS_FluxoFornecedoresAfterScroll(DataSet: TDataSet);
     procedure CDS_FluxoFornReducaoAfterScroll(DataSet: TDataSet);
+    procedure priodadesAfterScroll(DataSet: TDataSet);
 
   private
     { Private declarations }
@@ -1391,6 +1394,132 @@ uses DK_Procs1, UFrmBelShop, UDMConexoes,  UFrmSolicitacoes, UDMVirtual,
 // =============================================================================
 // Odir - INICIO ===============================================================
 // =============================================================================
+
+// Busca Codigo LINX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TDMBelShop.LINX_BuscaCodigoLINX(sCodProdutoSIDICOM: String): String;
+Var
+  MySql: String;
+  sCodBarras: String;
+Begin
+  Result    :='';
+  sCodBarras:='';
+
+  If Trim(sCodProdutoSIDICOM)<>'' Then
+  Begin
+    sCodProdutoSIDICOM:=FormatFloat('000000',StrToInt(sCodProdutoSIDICOM));
+
+    MySql:=' SELECT p.codbarra'+
+           ' FROM PRODUTO p'+
+           ' WHERE p.codproduto='+QuotedStr(sCodProdutoSIDICOM)+
+           ' UNION'+
+           ' SELECT b.codbarra'+
+           ' FROM PRODUTOSBARRA b'+
+           ' WHERE b.codproduto='+QuotedStr(sCodProdutoSIDICOM);
+    FrmBelShop.IBQ_MPMS.Close;
+    FrmBelShop.IBQ_MPMS.SQL.Clear;
+    FrmBelShop.IBQ_MPMS.SQL.Add(MySql);
+    FrmBelShop.IBQ_MPMS.Open;
+
+    While Not FrmBelShop.IBQ_MPMS.Eof do
+    Begin
+      If Trim(sCodBarras)='' Then
+       sCodBarras:=QuotedStr(Trim(FrmBelShop.IBQ_MPMS.FieldByName('CodBarra').AsString))
+      Else
+       sCodBarras:=sCodBarras+', '+QuotedStr(Trim(FrmBelShop.IBQ_MPMS.FieldByName('CodBarra').AsString));
+
+      FrmBelShop.IBQ_MPMS.Next;
+    End; // While Not IBQ_MPMS.Eof do
+    FrmBelShop.IBQ_MPMS.Close;
+
+    // Busca o Codigo do Produto no LINX =======================================
+    MySql:=' SELECT pr.cod_produto'+
+           ' FROM LINXPRODUTOS pr';
+
+           If Trim(sCodBarras)='' Then
+            MySql:=
+             MySql+' WHERE TRIM(pr.cod_auxiliar)='+QuotedStr(sCodProdutoSIDICOM)
+           Else
+            MySql:=
+             MySql+' WHERE ((TRIM(pr.cod_barra) IN ('+sCodBarras+'))'+
+                   '        OR'+
+                   '        (TRIM(pr.cod_auxiliar)='+QuotedStr(sCodProdutoSIDICOM)+'))'+
+                   ' UNION'+
+                   ' SELECT cb.cod_produto'+
+                   ' FROM LINXPRODUTOSCODBAR cb'+
+                   ' WHERE TRIM(cb.cod_barra) IN ('+sCodBarras+')';
+    CDS_BuscaRapida.Close;
+    SDS_BuscaRapida.CommandText:=MySql;
+    CDS_BuscaRapida.Open;
+
+    If Trim(CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)<>'' Then
+     Result:=CDS_BuscaRapida.FieldByName('Cod_Produto').AsString;
+
+    CDS_BuscaRapida.Close;
+  End; // If Trim(sCodProdutoSIDICOM)<>'' Then
+
+End; // Busca Codigo LINX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Busca Codigo SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TDMBelShop.LINX_BuscaCodigoSIDICOM(sCodProdutoLINX: String): String;
+Var
+  MySql: String;
+  sCodBarras: String;
+Begin
+  Result    :='';
+  sCodBarras:='';
+
+  If Trim(sCodProdutoLINX)<>'' Then
+  Begin
+    MySql:=' SELECT pr.cod_barra, pr.cod_auxiliar'+
+           ' FROM LINXPRODUTOS pr'+
+           ' WHERE pr.cod_produto='+sCodProdutoLINX+
+           ' UNION'+
+           ' SELECT cb.cod_barra, (SELECT pr.cod_auxiliar FROM LINXPRODUTOS pr WHERE pr.cod_produto='+sCodProdutoLINX+') cod_auxiliar'+
+           ' FROM LINXPRODUTOSCODBAR cb'+
+           ' WHERE cb.cod_produto='+sCodProdutoLINX;
+    CDS_BuscaRapida.Close;
+    SDS_BuscaRapida.CommandText:=MySql;
+    CDS_BuscaRapida.Open;
+
+    Result:=Trim(CDS_BuscaRapida.FieldByName('Cod_Auxiliar').AsString);
+
+    While Not CDS_BuscaRapida.Eof do
+    Begin
+      If Trim(sCodBarras)='' Then
+       sCodBarras:=QuotedStr(Trim(CDS_BuscaRapida.FieldByName('Cod_Barra').AsString))
+      Else
+       sCodBarras:=sCodBarras+', '+QuotedStr(Trim(CDS_BuscaRapida.FieldByName('Cod_Barra').AsString));
+
+      CDS_BuscaRapida.Next;
+    End; // While Not CDS_BuscaRapida.Eof do
+    CDS_BuscaRapida.Close;
+
+    // Busca o Codigo do Produto no LINX =======================================
+    MySql:=' SELECT p.codproduto'+
+           ' FROM PRODUTO p';
+
+           If Trim(sCodBarras)='' Then
+            MySql:=
+             MySql+' WHERE p.codproduto='+QuotedStr(Result)
+           Else
+            MySql:=
+             MySql+' WHERE ((p.codproduto='+QuotedStr(Result)+') OR (p.codbarra in ('+sCodBarras+')))'+
+                   ' UNION'+
+                   ' SELECT b.codbarra'+
+                   ' FROM PRODUTOSBARRA b'+
+                   ' WHERE ((b.codproduto='+QuotedStr(Result)+') OR (b.codbarra in ('+sCodBarras+')))';
+    FrmBelShop.IBQ_MPMS.Close;
+    FrmBelShop.IBQ_MPMS.SQL.Clear;
+    FrmBelShop.IBQ_MPMS.SQL.Add(MySql);
+    FrmBelShop.IBQ_MPMS.Open;
+
+    If Trim(FrmBelShop.IBQ_MPMS.FieldByName('CodProduto').AsString)<>'' Then
+     Result:=Trim(FrmBelShop.IBQ_MPMS.FieldByName('CodProduto').AsString);
+
+    FrmBelShop.IBQ_MPMS.Close;
+  End; // If Trim(sCodProdutoLINX)<>'' Then
+
+End; // Busca Codigo SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Monta Variavies de Filtros Padrões >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TDMBelShop.MontaFiltros(bGrupo: Boolean=True; bAplicacao: Boolean=True; bFamilia: Boolean=True; bGrupoST: Boolean=True);
@@ -4479,6 +4608,18 @@ begin
                                     CDS_FluxoFornReducaoCOD_FORNECEDOR.AsString;
     CDS_FluxoPercReducao.Open;
   End; // If Not CDS_FluxoFornReducao.IsEmpty Then
+
+end;
+
+procedure TDMBelShop.priodadesAfterScroll(DataSet: TDataSet);
+begin
+  CDS_PrioridadeProd.Close;
+  If CDS_Prioridades.IsEmpty Then
+   Exit;
+
+  SDS_PrioridadeProd.Params.ParamByName('CodPrioridade').AsInteger:=
+                                        CDS_PrioridadesCOD_PRIORIDADE.AsInteger;
+  CDS_PrioridadeProd.Open;
 
 end;
 

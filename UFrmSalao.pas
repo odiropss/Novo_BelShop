@@ -6080,7 +6080,7 @@ Begin
     Screen.Cursor:=crDefault;
     DMBelShop.CDS_Busca.Close;
     msg('Sem Profissional a Listar...','A');
-    EdtPagtoCodLoja.SetFocus;
+    Dbg_PagtoProfissionais.SetFocus;
     Exit;
   End;
   Lab_TotalProf.Caption:=IntToStr(DMBelShop.CDS_Busca.RecordCount);
@@ -13886,7 +13886,7 @@ begin
     // Busca Profissionais a Calcular ==========================================
     If Not ProfissionaisCalcular Then
     Begin
-      EdtPagtoCodLoja.SetFocus;
+      Dbg_PagtoProfissionais.SetFocus;
       Exit;
     End;
 

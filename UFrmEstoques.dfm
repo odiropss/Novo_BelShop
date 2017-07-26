@@ -1176,9 +1176,17 @@ object FrmEstoques: TFrmEstoques
             PanelStyle.Font.Style = [fsBold]
             PanelStyle.ParentFont = False
             BiDiMode = bdRightToLeft
+            Fixed = False
             ParentBiDiMode = False
             Text = 'LOJA: '
-            Width = 500
+            Width = 400
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            Fixed = False
+            Text = '<F3> Localiza Produto LINX'
+            Width = 210
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
@@ -1191,16 +1199,19 @@ object FrmEstoques: TFrmEstoques
             PanelStyle.Font.Style = [fsBold]
             PanelStyle.ParentFont = False
             BiDiMode = bdRightToLeft
+            Fixed = False
             ParentBiDiMode = False
-            Text = '<F4> Localiza Produto'
-            Width = 180
+            Text = '<F4> Localiza Produto SIDICOM'
+            Width = 250
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter
             BiDiMode = bdLeftToRight
+            Fixed = False
             ParentBiDiMode = False
             Text = 'OP'#199#213'ES: No Grid Bot'#227'o Direito do Mouse'
+            Width = 300
           end>
         PaintStyle = stpsOffice11
         Font.Charset = DEFAULT_CHARSET
@@ -1229,7 +1240,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 275
+          Left = 273
           Top = 11
           Width = 353
           Height = 13

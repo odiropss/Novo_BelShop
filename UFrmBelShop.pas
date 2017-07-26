@@ -2339,6 +2339,8 @@ type
     procedure EdtFiltroCodProdLinxExit(Sender: TObject);
     procedure ReposiesLojasLINX1Click(Sender: TObject);
     procedure PrioridadesdeReposio1Click(Sender: TObject);
+    procedure Dbg_GeraOCProdutosKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -24940,16 +24942,36 @@ begin
   If key=Vk_Return Then
    Ts_GeraOCFiliais.SetFocus;
 
-  // Localiza Produto ==========================================================
+  // Localiza Produto SIDICOM ==================================================
   If (Key=VK_F4) And (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) Then
   Begin
     s:='';
-    If InputQuery('Localizar Produto','',s) then
+    If InputQuery('Localizar Produto SIDICOM','',s) then
     Begin
       if Trim(s)<>'' then
       Begin
         Try
           StrToInt(s);
+          DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]);
+        Except
+          s:=AnsiUpperCase(s);
+          DMBelShop.CDS_AComprarItens.Locate('Des_Item',s,[loPartialKey]);
+        End;
+      End; // if Trim(s)<>'' then
+    End; // If InputQuery('Localizar Produto','',s) then
+  End; // If Key=VK_F4 Then
+
+  // Localiza Produto LINX =====================================================
+  If (Key=VK_F3) And (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) Then
+  Begin
+    s:='';
+    If InputQuery('Localizar Produto LINX','',s) then
+    Begin
+      if Trim(s)<>'' then
+      Begin
+        Try
+          StrToInt(s);
+          s:=DMBelShop.LINX_BuscaCodigoSIDICOM(s);
           DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]);
         Except
           s:=AnsiUpperCase(s);
@@ -24988,16 +25010,36 @@ begin
   If key=Vk_Return Then
    Ts_GeraOCGrid.SetFocus;
 
-  // Localiza Produto ==========================================================
+  // Localiza Produto SISICOM ==================================================
   If (Key=VK_F4) And (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) Then
   Begin
     s:='';
-    If InputQuery('Localizar Produto','',s) then
+    If InputQuery('Localizar Produto SIDICOM','',s) then
     Begin
       if Trim(s)<>'' then
       Begin
         Try
           StrToInt(s);
+          DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]);
+        Except
+          s:=AnsiUpperCase(s);
+          DMBelShop.CDS_AComprarItens.Locate('Des_Item',s,[loPartialKey]);
+        End;
+      End; // if Trim(s)<>'' then
+    End; // If InputQuery('Localizar Produto','',s) then
+  End; // If Key=VK_F4 Then
+
+  // Localiza Produto LINX =====================================================
+  If (Key=VK_F3) And (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) Then
+  Begin
+    s:='';
+    If InputQuery('Localizar Produto LINX','',s) then
+    Begin
+      if Trim(s)<>'' then
+      Begin
+        Try
+          StrToInt(s);
+          s:=DMBelShop.LINX_BuscaCodigoSIDICOM(s);
           DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]);
         Except
           s:=AnsiUpperCase(s);
@@ -25069,16 +25111,36 @@ begin
      DMBelShop.CDS_AComprarItens.Prior;
   End; // If (key=Key_Down) and (DMBelShop.IBQ_AComprar.RecordCount=1) Then
 
-  // Localiza Produto ==========================================================
+  // Localiza Produto SIDICOM ==================================================
   If (Key=VK_F4) And ((PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) And (Ts_GeraOCGrid.CanFocus)) Then
   Begin
     s:='';
-    If InputQuery('Localizar Produto','',s) then
+    If InputQuery('Localizar Produto SIDICOM','',s) then
     Begin
       if Trim(s)<>'' then
       Begin
         Try
           StrToInt(s);
+          DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]);
+        Except
+          s:=AnsiUpperCase(s);
+          DMBelShop.CDS_AComprarItens.Locate('Des_Item',s,[loPartialKey]);
+        End;
+      End; // if Trim(s)<>'' then
+    End; // If InputQuery('Localizar Produto','',s) then
+  End; // If Key=VK_F4 Then
+
+  // Localiza Produto LINX =====================================================
+  If (Key=VK_F3) And ((PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) And (Ts_GeraOCGrid.CanFocus)) Then
+  Begin
+    s:='';
+    If InputQuery('Localizar Produto LINX','',s) then
+    Begin
+      if Trim(s)<>'' then
+      Begin
+        Try
+          StrToInt(s);
+          s:=DMBelShop.LINX_BuscaCodigoSIDICOM(s);
           DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]);
         Except
           s:=AnsiUpperCase(s);
@@ -46536,35 +46598,26 @@ end;
 
 procedure TFrmBelShop.EdtFiltroCodProdLinxExit(Sender: TObject);
 Var
-  MySql: String;
+  s: String;
 begin
 
   If EdtFiltroCodProdLinx.Value<>0 Then
   Begin
     Screen.Cursor:=crAppStart;
 
-    // Busca Produto Linx Para Sidicom =========================================
-    MySql:=' SELECT pl.cod_auxiliar'+
-           ' FROM LINXPRODUTOS pl'+
-           ' WHERE pl.cod_produto='+IntToStr(EdtFiltroCodProdLinx.AsInteger);
-    DMBelShop.CDS_BuscaRapida.Close;
-    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-    DMBelShop.CDS_BuscaRapida.Open;
+    s:=DMBelShop.LINX_BuscaCodigoSIDICOM(IntToStr(EdtFiltroCodProdLinx.AsInteger));
 
-    Screen.Cursor:=crDefault;
-    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Auxiliar').AsString)='' Then
+    If Trim(s)='' Then
     Begin
       msg('Produto (Linx) NÃO Encontrado !!!', 'A');
-      DMBelShop.CDS_BuscaRapida.Close;
       EdtFiltroCodProdLinx.Clear;
       EdtFiltroCodProdLinx.SetFocus;
       Exit;
     End;
 
     EdtFiltroCodProduto.SetFocus;
-    EdtFiltroCodProduto.Text:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Auxiliar').AsString);
+    EdtFiltroCodProduto.Text:=Trim(s);
 
-    DMBelShop.CDS_BuscaRapida.Close;
     EdtFiltroCodProdLinx.Clear;
 
     EdtFiltroCodProdutoExit(Self);
@@ -46598,7 +46651,16 @@ begin
   FrmPrioridadesReposicao.ShowModal;
 
   FreeAndNil(FrmPrioridadesReposicao);
-  
+
+end;
+
+procedure TFrmBelShop.Dbg_GeraOCProdutosKeyUp(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  // BLOQUEAR TECLA Ctrl+Del ===================================================
+  if ((Shift=[ssCtrl]) and (key=vk_delete)) THEN
+   Abort;
+
 end;
 
 End.

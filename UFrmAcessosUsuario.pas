@@ -66,6 +66,7 @@ type
     Bt_SidicomPermissoesMarcar: TJvXPButton;
     Bt_SidicomPermissoesDesMarcar: TJvXPButton;
     JvXPButton1: TJvXPButton;
+    Memo1: TMemo;
     procedure Bt_BuscaUsuarioClick(Sender: TObject);
     procedure Bt_FecharClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);

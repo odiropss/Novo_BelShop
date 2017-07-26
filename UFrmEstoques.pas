@@ -154,8 +154,8 @@ var
 
 implementation
 
-uses DK_Procs1, UDMBelShop, UDMVirtual, UFrmBelShop, UFrmSelectEmpProcessamento,
-     UFrmSolicitacoes, SysConst;
+uses DK_Procs1, UDMVirtual, UFrmBelShop, UFrmSelectEmpProcessamento,
+     UFrmSolicitacoes, SysConst, UDMBelShop;
 
 {$R *.dfm}
 
@@ -1242,12 +1242,12 @@ end;
 procedure TFrmEstoques.Dbg_EstoquesKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 Var
-  sValor: String;
+  sValor, sCodProd: String;
   b: Boolean;
   iIndex: Integer;
 begin
 
-  // Localizar Produto =========================================================
+  // Localizar Produto Código SIDICOM ==========================================
   If Key=Vk_F4 Then
   Begin
     If Not DMVirtual.CDS_V_Estoques.IsEmpty Then
@@ -1257,7 +1257,7 @@ begin
       b:=True;
       While b do
       Begin
-        If InputQuery('Localizar Produto','',sValor) then
+        If InputQuery('Localizar Produto (Cod Sidicom)','',sValor) then
          Begin
            Try
              StrToInt(sValor);
@@ -1291,6 +1291,61 @@ begin
       End;
     End; // If Not DMVirtual.CDS_V_Estoques.IsEmpty Then
   End; // If Key=Vk_F4 Then
+
+  // Localizar Produto Código LINX =============================================
+  If Key=Vk_F3 Then
+  Begin
+    If Not DMVirtual.CDS_V_Estoques.IsEmpty Then
+    Begin
+      iIndex:=DMVirtual.CDS_V_Estoques.RecNo;
+      sValor:='';
+      b:=True;
+      While b do
+      Begin
+        If InputQuery('Localizar Produto (Cod Linx)','',sValor) then
+         Begin
+           Try
+             StrToInt(sValor);
+             sValor:=FormatFloat('000000',StrToInt(sValor));
+
+             // Busca Codigo Linx ------------------------
+             sCodProd:=DMBelShop.LINX_BuscaCodigoSIDICOM(sValor);
+
+             If Trim(sCodProd)<>'' Then
+             Begin
+               If Not DMVirtual.CDS_V_Estoques.Locate('COD_PRODUTO', sCodProd,[]) Then
+               Begin
+                If Not LocalizaRegistro(DMVirtual.CDS_V_Estoques, 'COD_PRODUTO', sCodProd) Then
+                 b:=False;
+               End; // If Not DMVirtual.CDS_V_Estoques.Locate('COD_PRODUTO', sValor,[]) Then
+             End; // If Trim(sCodProd)<>'' Then
+             Break;
+           Except
+             If Trim(sValor)<>'' Then
+             Begin
+               If Not DMVirtual.CDS_V_Estoques.Locate('DES_PRODUTO', sValor,[]) Then
+               Begin
+                 If Not LocalizaRegistro(DMVirtual.CDS_V_Estoques, 'DES_PRODUTO', sValor) Then
+                  b:=False;
+               End; // If Not DMVirtual.CDS_V_Estoques.Locate('DES_PRODUTO', sValor,[]) Then
+             End; // If Trim(sValor)<>'' Then
+             Break;
+           End;
+         End
+        Else // If InputQuery('Localizar Produto','',sValor) then
+         Begin
+           Break;
+         End; // If InputQuery('Localizar Produto','',sValor) then
+      End; // While b do
+
+      If Not b Then
+      Begin
+        DMVirtual.CDS_V_Estoques.RecNo:=iIndex;
+        msg('Produto Não Localizado !!','A');
+      End;
+    End; // If Not DMVirtual.CDS_V_Estoques.IsEmpty Then
+  End; // If Key=Vk_F5 Then
+
 end;
 
 procedure TFrmEstoques.Dbg_EstoquesTitleClick(Column: TColumn);
@@ -2597,8 +2652,6 @@ end;
 procedure TFrmEstoques.Bt_EstoquesFiltroCompradorClick(Sender: TObject);
 Var
   sFiltroComp, MySql: String;
-  ii, i: Integer;
-  bFiltra: Boolean;
 begin
 
   If DMVirtual.CDS_V_Estoques.IsEmpty Then

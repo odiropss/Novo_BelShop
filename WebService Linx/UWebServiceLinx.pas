@@ -1674,34 +1674,37 @@ Begin
       //========================================================================
       If sgMetodo='LinxVendedores' Then
       Begin
-        If dDtaUltAtual=0 Then
-         Begin
-           sgDtaInicio:='NULL';
-           sgDtaFim:='NULL';
-         End
-        Else
-         Begin
-           DecodeDate(dDtaUltAtual-4, wAno, wMes, wDia);
-           sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
-
-           DecodeDate(dDtaHoje, wAno, wMes, wDia);
-           sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
-
-           // Metodo por Parametro (Acerta Data Inicial)
-           If Trim(sgParametroMetodo)<>'' Then
-           Begin
-             If dDtaUltAtual=dDtaHoje Then
-             Begin
-               sgDtaInicio:=sgDtaFim
-             End;
-
-             If dDtaUltAtual<dDtaHoje Then
-             Begin
-               DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
-               sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
-             End;
-           End; // If Trim(sgParametroMetodo)<>'' Then
-         End; // If dDtaUltAtual=0 Then
+        // Buscar Todos
+        sgDtaInicio:='NULL';
+        sgDtaFim:='NULL';
+//        If dDtaUltAtual=0 Then
+//         Begin
+//           sgDtaInicio:='NULL';
+//           sgDtaFim:='NULL';
+//         End
+//        Else
+//         Begin
+//           DecodeDate(dDtaUltAtual-4, wAno, wMes, wDia);
+//           sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+//
+//           DecodeDate(dDtaHoje, wAno, wMes, wDia);
+//           sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+//
+//           // Metodo por Parametro (Acerta Data Inicial)
+//           If Trim(sgParametroMetodo)<>'' Then
+//           Begin
+//             If dDtaUltAtual=dDtaHoje Then
+//             Begin
+//               sgDtaInicio:=sgDtaFim
+//             End;
+//
+//             If dDtaUltAtual<dDtaHoje Then
+//             Begin
+//               DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+//               sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+//             End;
+//           End; // If Trim(sgParametroMetodo)<>'' Then
+//         End; // If dDtaUltAtual=0 Then
 
         MontaMetodoXMLPost();
       End; // If sgMetodo='LinxVendedores' Then
