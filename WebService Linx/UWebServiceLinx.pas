@@ -236,14 +236,15 @@ Begin
     For i:=0 to DOC.ChildNodes.Nodes['Microvix'].ChildNodes['ResponseResult'].ChildNodes['ResponseError'].ChildNodes.Count-1 do
     Begin
       If DOC.ChildNodes.Nodes['Microvix'].ChildNodes['ResponseResult'].ChildNodes['ResponseError'].ChildNodes[i].NodeName='Message' Then
-       sMensagem:=Trim(sMensagem+' '+
-                  DOC.ChildNodes.Nodes['Microvix'].ChildNodes['ResponseResult'].ChildNodes['ResponseError'].ChildNodes[i].NodeValue);
+      Begin
+        sMensagem:=Trim(sMensagem+' '+DOC.ChildNodes.Nodes['Microvix'].ChildNodes['ResponseResult'].ChildNodes['ResponseError'].ChildNodes[i].NodeValue);
+      End;
+    End; // For i:=0 to DOC.ChildNodes.Nodes['Microvix'].ChildNodes['ResponseResult'].ChildNodes['ResponseError'].ChildNodes.Count-1 do
 
-    End;
     SalvaProcessamento(sgMetodo+': '+sMensagem);
     SalvaProcessamento('=====================================');
     Exit;
-  End;
+  End; // If DOC.ChildNodes.Nodes['Microvix'].ChildNodes['ResponseResult'].ChildNodes['ResponseSuccess'].Text='False' Then
 
   // Le XML de Retorno e Atualiza Banco de Dados ===============================
   For i:=0 to DOC.ChildNodes.Nodes['Microvix'].ChildNodes.Count-1 do
@@ -656,10 +657,13 @@ Begin
           DecimalSeparator:=',';
 
           If Trim(sMensagem)<>'' Then
-           SalvaProcessamento(sgMetodo+'_'+sgCodLojaLinx+'(Último Erro): '+sMensagem);
+           SalvaProcessamento('Loja: '+sgCodLojaLinx+' - Metodo: '+sgMetodo+'(Último Erro): '+sMensagem);
 
-          sMensagem:='Erro DML: '+e.message;
-          SalvaProcessamento(sgMetodo+'_'+sgCodLojaLinx+'(Reg '+IntToStr(ii)+'): '+sMensagem);
+          SalvaProcessamento('Loja......: '+sgCodLojaLinx+cr+
+                             'Metodo....: '+sgMetodo+cr+
+                             'Registro..: '+IntToStr(ii)+cr+
+                             'Erro DML..: '+e.message+cr+
+                             'Script SQL: '+MySql);
 
           SalvaProcessamento('=====================================');
         End; // on e : Exception do

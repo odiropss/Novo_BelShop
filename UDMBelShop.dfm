@@ -27,7 +27,6 @@ object DMBelShop: TDMBelShop
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
-    Connected = True
     Left = 11
     Top = 11
   end
@@ -9161,7 +9160,7 @@ object DMBelShop: TDMBelShop
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Prioridades'
-    AfterScroll = priodadesAfterScroll
+    AfterScroll = CDS_PrioridadesAfterScroll
     Left = 1004
     Top = 403
     object CDS_PrioridadesCOD_PRIORIDADE: TIntegerField
@@ -9233,7 +9232,6 @@ object DMBelShop: TDMBelShop
     Top = 476
   end
   object CDS_PrioridadeProd: TClientDataSet
-    Active = True
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_PrioridadeProd'

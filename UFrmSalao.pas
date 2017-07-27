@@ -3976,8 +3976,7 @@ Begin
       FrmSolicitacoes.Ts_ApresentaGrid.Caption:='MOVIMENTOS DE DÉBITOS (RH) PLANO DE SAÚDE';
       FrmSolicitacoes.ShowModal;
 
-      FrmSolicitacoes.Free;
-      FrmSolicitacoes:=nil;
+      FreeAndNil(FrmSolicitacoes);
 
       DMSalao.CDS_ApresGrid.Close;
     End; // If Not gCDS_V1.IsEmpty Then

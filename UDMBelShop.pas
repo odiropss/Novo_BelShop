@@ -1254,7 +1254,7 @@ type
     procedure IBQ_AComprarAfterOpen(DataSet: TDataSet);
     procedure CDS_FluxoFornecedoresAfterScroll(DataSet: TDataSet);
     procedure CDS_FluxoFornReducaoAfterScroll(DataSet: TDataSet);
-    procedure priodadesAfterScroll(DataSet: TDataSet);
+    procedure CDS_PrioridadesAfterScroll(DataSet: TDataSet);
 
   private
     { Private declarations }
@@ -1408,11 +1408,13 @@ Begin
   Begin
     sCodProdutoSIDICOM:=FormatFloat('000000',StrToInt(sCodProdutoSIDICOM));
 
-    MySql:=' SELECT p.codbarra'+
+    MySql:=' SELECT Trim(p.codbarra) codbarra'+
            ' FROM PRODUTO p'+
            ' WHERE p.codproduto='+QuotedStr(sCodProdutoSIDICOM)+
+
            ' UNION'+
-           ' SELECT b.codbarra'+
+
+           ' SELECT Trim(b.codbarra) codbarra'+
            ' FROM PRODUTOSBARRA b'+
            ' WHERE b.codproduto='+QuotedStr(sCodProdutoSIDICOM);
     FrmBelShop.IBQ_MPMS.Close;
@@ -1443,7 +1445,9 @@ Begin
              MySql+' WHERE ((TRIM(pr.cod_barra) IN ('+sCodBarras+'))'+
                    '        OR'+
                    '        (TRIM(pr.cod_auxiliar)='+QuotedStr(sCodProdutoSIDICOM)+'))'+
+
                    ' UNION'+
+
                    ' SELECT cb.cod_produto'+
                    ' FROM LINXPRODUTOSCODBAR cb'+
                    ' WHERE TRIM(cb.cod_barra) IN ('+sCodBarras+')';
@@ -1470,11 +1474,16 @@ Begin
 
   If Trim(sCodProdutoLINX)<>'' Then
   Begin
-    MySql:=' SELECT pr.cod_barra, pr.cod_auxiliar'+
+    MySql:=' SELECT Trim(pr.cod_barra) cod_barra, Trim(pr.cod_auxiliar) cod_auxiliar'+
            ' FROM LINXPRODUTOS pr'+
            ' WHERE pr.cod_produto='+sCodProdutoLINX+
+
            ' UNION'+
-           ' SELECT cb.cod_barra, (SELECT pr.cod_auxiliar FROM LINXPRODUTOS pr WHERE pr.cod_produto='+sCodProdutoLINX+') cod_auxiliar'+
+
+           ' SELECT Trim(cb.cod_barra) cod_barra,'+
+           '        (SELECT Trim(pr.cod_auxiliar) cod_auxiliar'+
+           '         FROM LINXPRODUTOS pr'+
+           '         WHERE pr.cod_produto='+sCodProdutoLINX+') cod_auxiliar'+
            ' FROM LINXPRODUTOSCODBAR cb'+
            ' WHERE cb.cod_produto='+sCodProdutoLINX;
     CDS_BuscaRapida.Close;
@@ -1503,11 +1512,13 @@ Begin
              MySql+' WHERE p.codproduto='+QuotedStr(Result)
            Else
             MySql:=
-             MySql+' WHERE ((p.codproduto='+QuotedStr(Result)+') OR (p.codbarra in ('+sCodBarras+')))'+
+             MySql+' WHERE ((p.codproduto='+QuotedStr(Result)+') OR (Trim(p.codbarra) in ('+sCodBarras+')))'+
+
                    ' UNION'+
-                   ' SELECT b.codbarra'+
+
+                   ' SELECT b.codproduto'+
                    ' FROM PRODUTOSBARRA b'+
-                   ' WHERE ((b.codproduto='+QuotedStr(Result)+') OR (b.codbarra in ('+sCodBarras+')))';
+                   ' WHERE ((b.codproduto='+QuotedStr(Result)+') OR (Trim(b.codbarra) in ('+sCodBarras+')))';
     FrmBelShop.IBQ_MPMS.Close;
     FrmBelShop.IBQ_MPMS.SQL.Clear;
     FrmBelShop.IBQ_MPMS.SQL.Add(MySql);
@@ -4611,7 +4622,7 @@ begin
 
 end;
 
-procedure TDMBelShop.priodadesAfterScroll(DataSet: TDataSet);
+procedure TDMBelShop.CDS_PrioridadesAfterScroll(DataSet: TDataSet);
 begin
   CDS_PrioridadeProd.Close;
   If CDS_Prioridades.IsEmpty Then

@@ -271,24 +271,6 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
       end
     end
   end
-  object OdirPanApres: TPanel
-    Left = 819
-    Top = 27
-    Width = 89
-    Height = 33
-    BevelInner = bvLowered
-    BevelWidth = 2
-    Caption = 'OdirPanApres'
-    Color = clSilver
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
-    Font.Style = [fsBold]
-    ParentFont = False
-    TabOrder = 1
-    Visible = False
-  end
   object Pan_Prioridades: TPanel
     Left = 0
     Top = 0
@@ -296,7 +278,7 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
     Height = 528
     Align = alLeft
     BevelInner = bvLowered
-    TabOrder = 2
+    TabOrder = 1
     object Panel6: TPanel
       Left = 2
       Top = 2
@@ -572,7 +554,7 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
     Height = 528
     Align = alClient
     BevelInner = bvLowered
-    TabOrder = 3
+    TabOrder = 2
     object TPanel
       Left = 2
       Top = 2
@@ -615,7 +597,7 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
         ParentFont = False
       end
       object Label74: TLabel
-        Left = 91
+        Left = 118
         Top = 3
         Width = 45
         Height = 13
@@ -630,9 +612,9 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
       object Label6: TLabel
         Left = 20
         Top = 41
-        Width = 248
+        Width = 288
         Height = 13
-        Caption = 'Fornecedor (Inclui Produtos do Fornecedor)'
+        Caption = 'Fornecedor (Inclui Produtos (LINX) do Fornecedor)'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlue
         Font.Height = -11
@@ -669,7 +651,7 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
         OnExit = EdtCodProdLinxExit
       end
       object EdtCodProduto: TCurrencyEdit
-        Left = 91
+        Left = 118
         Top = 18
         Width = 66
         Height = 21
@@ -681,7 +663,7 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
       end
       object Bt_BuscaProdtudo: TJvXPButton
         Tag = 92
-        Left = 163
+        Left = 90
         Top = 13
         Width = 24
         Height = 26
@@ -696,9 +678,10 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
         ParentFont = False
         ParentShowHint = False
         ShowHint = False
+        OnClick = Bt_BuscaProdtudoClick
       end
       object EdtCodForn: TCurrencyEdit
-        Left = 19
+        Left = 18
         Top = 57
         Width = 66
         Height = 21
@@ -706,6 +689,7 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
         DecimalPlaces = 0
         DisplayFormat = '0'
         TabOrder = 3
+        OnExit = EdtCodFornExit
       end
       object Bt_BuscaForn: TJvXPButton
         Tag = 92
@@ -783,11 +767,6 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
         item
           Expanded = False
           FieldName = 'NOME'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
           Width = 350
           Visible = True
         end
@@ -842,6 +821,24 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
       Font.Style = [fsBold]
       Color = 13303807
     end
+  end
+  object OdirPanApres: TPanel
+    Left = 883
+    Top = 59
+    Width = 89
+    Height = 33
+    BevelInner = bvLowered
+    BevelWidth = 2
+    Caption = 'OdirPanApres'
+    Color = clSilver
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 3
+    Visible = False
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message

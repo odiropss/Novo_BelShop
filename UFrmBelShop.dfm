@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_OrdemCompra
+    ActivePage = TS_Filtros
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -29433,7 +29433,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = TS_FiltroFornecedor
+        ActivePage = TS_FiltroAplicacao
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
