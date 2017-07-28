@@ -3311,12 +3311,15 @@ begin
   // Fecha os dois Clients
   If bgChange Then
   Begin
-    If Trim((Sender as TJvDateEdit).Name)='DtaEdtNotasEntDev' Then
+    If (Sender is TJvDateEdit) Then
     Begin
-      DMCentralTrocas.CDS_NotasEntrada.Close;
-      DMCentralTrocas.CDS_Transf_Cd.Close;
-      EdtNotasEntDevNumSolicitacao.Clear;
-    End;
+      If Trim((Sender as TJvDateEdit).Name)='DtaEdtNotasEntDev' Then
+      Begin
+        DMCentralTrocas.CDS_NotasEntrada.Close;
+        DMCentralTrocas.CDS_Transf_Cd.Close;
+        EdtNotasEntDevNumSolicitacao.Clear;
+      End;
+    End; // If (Sender is TJvDateEdit) Then
   End;
   bgChange   :=True;
 end;
@@ -4033,8 +4036,11 @@ procedure TFrmCentralTrocas.EdtNotasEntDevCodProdutoKeyDown(
 begin
   If Key=VK_F9 Then
   Begin
-    If Trim((Sender as TEdit).Name)='EdtNotasEntDevCodProduto' Then
-     Bt_NotasEntDevBuscaProdutoClick(Self);
+    If (Sender is TEdit) Then
+    Begin
+      If Trim((Sender as TEdit).Name)='EdtNotasEntDevCodProduto' Then
+       Bt_NotasEntDevBuscaProdutoClick(Self);
+    End; // If (Sender is TEdit) Then
   End; // If Key=VK_F9 Then
 
 end;
@@ -4043,8 +4049,11 @@ procedure TFrmCentralTrocas.EdtNotasEntDevNumSolicitacaoKeyDown(Sender: TObject;
 begin
   If Key=VK_F9 Then
   Begin
-    If Trim((Sender as TEdit).Name)='EdtNotasEntDevNumSolicitacao' Then
-     Bt_NotasEntDevBuscaDoctoClick(Self);
+    If (Sender is TEdit) Then
+    Begin
+      If Trim((Sender as TEdit).Name)='EdtNotasEntDevNumSolicitacao' Then
+       Bt_NotasEntDevBuscaDoctoClick(Self);
+    End; // If (Sender is TEdit) Then
   End; // If Key=VK_F9 Then
 
 end;
@@ -4053,24 +4062,27 @@ procedure TFrmCentralTrocas.EdtNotasEntDevCodProdutoChange(Sender: TObject);
 begin
   // Usado em: EdtQtdCaixaCDCodProdChange
 
-  If Trim((Sender as TEdit).Name)='EdtNotasEntDevCodProduto' Then
+  If (Sender is TEdit) Then
   Begin
-    If Length(EdtNotasEntDevCodProduto.Text)=13 Then
+    If Trim((Sender as TEdit).Name)='EdtNotasEntDevCodProduto' Then
     Begin
-      EdtNotasEntDevQtdDevulocao.Value:=0;
-      EdtNotasEntDevQtdDevulocao.SetFocus;
+      If Length(EdtNotasEntDevCodProduto.Text)=13 Then
+      Begin
+        EdtNotasEntDevQtdDevulocao.Value:=0;
+        EdtNotasEntDevQtdDevulocao.SetFocus;
+      End;
     End;
-  End;
 
-  If Trim((Sender as TEdit).Name)='EdtQtdCaixaCDCodProd' Then
-  Begin
-    If (Length(EdtQtdCaixaCDCodProd.Text)<6) Or ((Length(EdtQtdCaixaCDCodProd.Text)>6) and (Length(EdtQtdCaixaCDCodProd.Text)<13)) Then
+    If Trim((Sender as TEdit).Name)='EdtQtdCaixaCDCodProd' Then
     Begin
-      EdtQtdCaixaCDQtdCxProd.Value:=0;
-      EdtQtdCaixaCDPercCxProd.Value:=0;
-      EdtQtdCaixaCDDesProd.Clear;
+      If (Length(EdtQtdCaixaCDCodProd.Text)<6) Or ((Length(EdtQtdCaixaCDCodProd.Text)>6) and (Length(EdtQtdCaixaCDCodProd.Text)<13)) Then
+      Begin
+        EdtQtdCaixaCDQtdCxProd.Value:=0;
+        EdtQtdCaixaCDPercCxProd.Value:=0;
+        EdtQtdCaixaCDDesProd.Clear;
+      End;
     End;
-  End;
+  End; // If (Sender is TEdit) Then
 end;
 
 procedure TFrmCentralTrocas.EdtNotasEntDevContaBarrasChange(Sender: TObject);
@@ -4376,19 +4388,22 @@ begin
     End;
   End; // if (Shift = [ssCtrl]) and (Key = 80) then
 
-  If Trim((Sender as TDBGrid).Name)='Dbg_ReposLojasItens' Then
+  If (Sender is TDBGrid) Then
   Begin
-    If Not DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty Then
+    If Trim((Sender as TDBGrid).Name)='Dbg_ReposLojasItens' Then
     Begin
-      If Key=VK_Return Then
+      If Not DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty Then
       Begin
-        DMCentralTrocas.CDS_ReposicaoTransf.Next;
-        Dbg_ReposLojasItens.SetFocus;
-        Dbg_ReposLojasItens.SelectedIndex:=3;
-      End;
-    End; // If Not DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty Then
-  End; // If Trim((Sender as TDBGrid).Name)='Dbg_ReposLojasItens' Then
-
+        If Key=VK_Return Then
+        Begin
+          DMCentralTrocas.CDS_ReposicaoTransf.Next;
+          Dbg_ReposLojasItens.SetFocus;
+          Dbg_ReposLojasItens.SelectedIndex:=3;
+        End;
+      End; // If Not DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty Then
+    End; // If Trim((Sender as TDBGrid).Name)='Dbg_ReposLojasItens' Then
+  End; // If (Sender is TDBGrid) Then
+  
   // Altera Quantidade de Reposição ============================================
   If Key=VK_F2 Then
   Begin
@@ -5098,10 +5113,13 @@ end;
 
 procedure TFrmCentralTrocas.Bt_ReposLojasAbreSIDICOMClick(Sender: TObject);
 begin
-  If Trim((Sender as TJvXPButton).Name)='Bt_ReposLojasAbreSIDICOM' Then
+  If (Sender is TJvXPButton) Then
   Begin
-    Dbg_ReposLojasDocs.SetFocus;
-  End;
+    If Trim((Sender as TJvXPButton).Name)='Bt_ReposLojasAbreSIDICOM' Then
+    Begin
+      Dbg_ReposLojasDocs.SetFocus;
+    End;
+  End; // If (Sender is TJvXPButton) Then
 
   WinExec(pchar('C:\sidicom.new\SIDICOM.EXE'),SW_SHOWNORMAL);
 

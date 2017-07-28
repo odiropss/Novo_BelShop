@@ -61,10 +61,16 @@ type
     Bt_BuscaForn: TJvXPButton;
     EdtDesFornecedor: TEdit;
     Dbg_Produto: TDBGrid;
-    Lab_Informacao: TLabel;
     Sb_GeraOC: TdxStatusBar;
     dxStatusBar1: TdxStatusBar;
     OdirPanApres: TPanel;
+    Label7: TLabel;
+    Bt_BuscaArquivoTXT: TJvXPButton;
+    Pan_Informacao: TPanel;
+    EdtArquivoTXT: TEdit;
+    Label8: TLabel;
+    Rb_CodLinx: TJvRadioButton;
+    Rb_CodSidicom: TJvRadioButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure ApplicationEvents1Message(var Msg: tagMSG;
@@ -89,6 +95,8 @@ type
     Procedure SalvarProduto(sCodLinx, sCodSidicom: String);
     Procedure InserirProdutosFornecedor(sCodForn: String);
 
+    Procedure ExcluirProdutos(sCodProd, sCodForn: String);
+
     // Odir ====================================================================
 
     procedure Dbg_ProdutoExit(Sender: TObject);
@@ -110,6 +118,11 @@ type
       Shift: TShiftState);
     procedure Bt_BuscaProdtudoClick(Sender: TObject);
     procedure EdtCodFornExit(Sender: TObject);
+    procedure Bt_BuscaFornClick(Sender: TObject);
+    procedure Bt_BuscaArquivoTXTClick(Sender: TObject);
+    procedure Rb_CodLinxClick(Sender: TObject);
+    procedure Rb_CodLinxKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -148,6 +161,85 @@ uses DK_Procs1, UDMBelShop, RTLConsts, UFrmBelShop, DB, UPesquisa,
 // ODIR INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// Exclui Produtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmPrioridadesReposicao.ExcluirProdutos(sCodProd, sCodForn: String);
+Var
+  MySql: String;
+Begin
+  If Trim(sCodProd)<>'' Then
+   OdirPanApres.Caption:='AGUARDE !! Excluindo Produto: '+DMBelShop.CDS_PrioridadeProdNOME.AsString;
+
+  If Trim(sCodForn)<>'' Then
+   OdirPanApres.Caption:='AGUARDE !! Excluindo Produtos do Fornecedor: '+DMBelShop.CDS_PrioridadeProdRAZAO_CLIENTE.AsString;
+
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmPrioridadesReposicao.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmPrioridadesReposicao.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmPrioridadesReposicao;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    MySql:=' DELETE FROM ES_REP_PRIORIDADES_PROD pp'+
+           ' WHERE pp.cod_prioridade='+DMBelShop.CDS_PrioridadesCOD_PRIORIDADE.AsString;
+
+           If Trim(sCodProd)<>'' Then
+            MySql:=
+             MySql+' AND   pp.cod_produto='+DMBelShop.CDS_PrioridadeProdCOD_PRODUTO.AsString;
+
+           If Trim(sCodForn)<>'' Then
+            MySql:=
+             MySql+' AND   EXISTS (SELECT 1'+
+                   '               FROM LINXPRODUTOS pr'+
+                   '               WHERE pr.cod_produto=pp.cod_produto'+
+                   '               AND   pr.cod_fornecedor='+DMBelShop.CDS_PrioridadeProdCOD_FORNECEDOR.AsString+')';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    OdirPanApres.Visible:=False;
+    Screen.Cursor:=crDefault;
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      OdirPanApres.Visible:=False;
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Exit;
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  DMBelShop.CDS_PrioridadesAfterScroll(DMBelShop.CDS_Prioridades);
+
+  msg('Produtos Excluídos com SUCESSO !!','A');
+
+End; // Exclui Produtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 // Insere Produtos de Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmPrioridadesReposicao.InserirProdutosFornecedor(sCodForn: String);
 Var
@@ -171,7 +263,7 @@ Begin
   // Cria Componente Memo ======================================================
   mMemo:=TMemo.Create(Self);
   mMemo.Visible:=False;
-  mMemo.Parent:=FrmBelShop;
+  mMemo.Parent:=FrmPrioridadesReposicao;
   mMemo.Width:=500;
   mMemo.Lines.Clear;
 
@@ -195,39 +287,46 @@ Begin
     sCodProd:=Trim(DMBelShop.LINX_BuscaCodigoSIDICOM(Trim(DMBelShop.CDS_SQLQ_Busca.FieldByName('Cod_produto').AsString)));
     If sCodProd='' Then
     Begin
-      mMemo.Lines.Add(sCodProd+' - '+Trim(DMBelShop.CDS_SQLQ_Busca.FieldByName('Nome').AsString));
+      mMemo.Lines.Add(DMBelShop.CDS_SQLQ_Busca.FieldByName('Cod_produto').AsString+' - '+Trim(DMBelShop.CDS_SQLQ_Busca.FieldByName('Nome').AsString));
     End;
 
     // Insere Produto ==========================================================
     If sCodProd<>'' Then
     Begin
-      SalvarProduto(Trim(DMBelShop.CDS_SQLQ_Busca.FieldByName('Cod_produto').AsString), sCodProd);
-      iCodLinx:=DMBelShop.CDS_SQLQ_Busca.FieldByName('Cod_produto').AsInteger;
+      If Not DMBelShop.CDS_PrioridadeProd.Locate('CODPRODUTO', StrToInt(sCodProd),[]) Then
+      Begin
+        iCodLinx:=DMBelShop.CDS_SQLQ_Busca.FieldByName('Cod_Produto').AsInteger;
+        SalvarProduto(IntToStr(iCodLinx), sCodProd);
+      End;
     End;
 
     pgProgBar.Position:=DMBelShop.CDS_SQLQ_Busca.RecNo;
 
     DMBelShop.CDS_SQLQ_Busca.Next;
   End;
-  FrmBelShop.MontaProgressBar(False, FrmBelShop);
+  FrmBelShop.MontaProgressBar(False, FrmPrioridadesReposicao);
   Screen.Cursor:=crDefault;
+  OdirPanApres.Visible:=False;
 
   // Apresenta Codigo Linx Não Encontrados =====================================
   If mMemo.Lines.Count>0 Then
   Begin
-
     FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+    FrmSolicitacoes.ClientWidth:=1000;
     FrmBelShop.AbreSolicitacoes(7);
 
     FrmSolicitacoes.Caption:='PRODUTOS COM REPOSIÇÃO PRIORITÁRIA';
     FrmSolicitacoes.Ts_MargemLucroFormulas.Caption:='RELAÇÃO DE PRODUTOS';
 
+    FrmSolicitacoes.EditorMargemLucro.Lines.Add('Produtos LINX SEM Produtos Correspondente no SIDICOM');
+    FrmSolicitacoes.EditorMargemLucro.Lines.Add('====================================================');
+    FrmSolicitacoes.EditorMargemLucro.Lines.Add('');
     For i:=0 to mMemo.Lines.Count-1 do
     Begin
        FrmSolicitacoes.EditorMargemLucro.Lines.Add(mMemo.Lines[i]);
     End; // For i:=0 to mMemo.Lines.Count-1 do
 
-    msg('Foram Encontrados Produtos Linx'+cr+'SEM Correspondente Produtos Sidicom !!'+' Tecle <OK>> Para Verificar ...','A');
+    msg('Foram Encontrados Produtos LINX'+cr+'SEM Correspondente Produtos SIDICOM !!'+' Tecle <OK>> Para Verificar ...','A');
 
     FrmSolicitacoes.ShowModal;
     FreeAndNil(FrmSolicitacoes);
@@ -238,7 +337,7 @@ Begin
 
   DMBelShop.CDS_PrioridadeProd.Locate('COD_PRODUTO', iCodLinx,[]);
 
-  msg('Produtos Inseridos !!','A');
+  msg('Produtos Inseridos com SUCESSO !!','A');
 
 End; // Insere Produtos de Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -247,16 +346,6 @@ Procedure TFrmPrioridadesReposicao.SalvarProduto(sCodLinx, sCodSidicom: String);
 Var
   MySql: String;
 Begin
-  OdirPanApres.Caption:='AGUARDE !! Salvando Produto...';
-  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmPrioridadesReposicao.Width-OdirPanApres.Width)/2));
-  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmPrioridadesReposicao.Height-OdirPanApres.Height)/2))-20;
-  OdirPanApres.Font.Style:=[fsBold];
-  OdirPanApres.Parent:=FrmPrioridadesReposicao;
-  OdirPanApres.BringToFront();
-  OdirPanApres.Visible:=True;
-  Refresh;
-
   // Verifica se Transação esta Ativa
   If DMBelShop.SQLC.InTransaction Then
    DMBelShop.SQLC.Rollback(TD);
@@ -270,7 +359,7 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
-    MySql:=' INSERT INTO ES_REP_PRIORIDADES_PROD'+
+    MySql:=' UPDATE OR INSERT INTO ES_REP_PRIORIDADES_PROD'+
            ' (COD_PRIORIDADE, COD_PRODUTO, CODPRODUTO,'+
            '  USU_INCLUI, DTA_INCLUI)'+
 
@@ -279,7 +368,9 @@ Begin
            sCodLinx+', '+ // COD_PRODUTO LINX
            QuotedStr(FormatFloat('000000',StrToInt(sCodSidicom)))+', '+ // CODPRODUTO SIDICOM
            Cod_Usuario+', '+ // USU_INCLUI
-           ' CURRENT_TIMESTAMP)'; // DTA_INCLUI
+           ' CURRENT_TIMESTAMP)'+ // DTA_INCLUI
+
+           ' MATCHING (COD_PRIORIDADE, COD_PRODUTO, CODPRODUTO)';
     DMBelShop.SQLC.Execute(MySql, nil, nil);
 
     // Atualiza Transacao ======================================================
@@ -287,11 +378,7 @@ Begin
 
     DateSeparator:='/';
     DecimalSeparator:=',';
-
-    OdirPanApres.Visible:=False;
-
     Screen.Cursor:=crDefault;
-
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -300,8 +387,6 @@ Begin
 
       DateSeparator:='/';
       DecimalSeparator:=',';
-
-      OdirPanApres.Visible:=False;
       Screen.Cursor:=crDefault;
 
       MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
@@ -543,6 +628,9 @@ begin
   // Show Hint em Forma de Balão ===============================================
   //============================================================================
   CreateToolTips(Self.Handle);
+  AddToolTip(Bt_BuscaArquivoTXT.Handle, @ti, TipoDoIcone, 'Busca Arquivo Texto', 'PRODUTOS !!');
+
+  CreateToolTips(Self.Handle);
   AddToolTip(Bt_BuscaForn.Handle, @ti, TipoDoIcone, 'Fornecedor (LINX)', 'SELECIONAR !!');
 
   CreateToolTips(Self.Handle);
@@ -744,6 +832,9 @@ procedure TFrmPrioridadesReposicao.Rb_PrioridadesAtivasClick(Sender: TObject);
 Var
   sSim, sNao: String;
 begin
+
+  LimpaComponentes;
+
   AcertaRb_Style(Rb_PrioridadesAtivas);
   AcertaRb_Style(Rb_PrioridadesInativas);
   AcertaRb_Style(Rb_PrioridadesAmbas);
@@ -782,12 +873,15 @@ end;
 
 procedure TFrmPrioridadesReposicao.Bt_PrioridadeDesfazerClick(Sender: TObject);
 begin
-  LimpaComponentes;
   Dbg_Prioridades.SetFocus;
+  LimpaComponentes;
 end;
 
 procedure TFrmPrioridadesReposicao.Dbg_PrioridadesDblClick(Sender: TObject);
 begin
+  If (Not Pan_Produtos.Enabled) Or (DMBelShop.CDS_Prioridades.IsEmpty) Then
+   Exit;
+
   EdtCodPrioridade.AsInteger:=DMBelShop.CDS_PrioridadesCOD_PRIORIDADE.AsInteger;
   EdtDesPrioridade.Text     :=DMBelShop.CDS_PrioridadesDES_PRIORIDADE.AsString;
   EdtDtaInicial.Date        :=DMBelShop.CDS_PrioridadesDTA_INICIAL.AsDateTime;
@@ -801,20 +895,56 @@ end;
 procedure TFrmPrioridadesReposicao.EdtDesPrioridadeChange(Sender: TObject);
 begin
   Pan_Produtos.Enabled:=True;
-  Lab_Informacao.Visible:=False;
+  Pan_Informacao.Visible:=False;
 
   If Trim(EdtDesPrioridade.Text)<>'' Then
   Begin
     Pan_Produtos.Enabled:=False;
-    Lab_Informacao.Visible:=True;
+    Pan_Informacao.Left:=16;
+    Pan_Informacao.Top:=42;
+    Pan_Informacao.Visible:=True;
   End;
 
 end;
 
 procedure TFrmPrioridadesReposicao.Bt_ExcluiFornecedorClick(Sender: TObject);
+Var
+  sCodProd, sCodForn,
+  sDescricao: String;
 begin
-  If Not Pan_Produtos.Enabled Then
+  {
+  Usado em:
+    Bt_ExcluiProdutoClick
+  }
+
+  If (Not Pan_Produtos.Enabled) Or (DMBelShop.CDS_PrioridadeProd.IsEmpty) Then
    Exit;
+
+  Dbg_Produto.SetFocus;
+
+  sCodProd:='';
+  sCodForn:='';
+
+  // Verifica Qual o Botao Acionou =============================================
+  If (Sender is TJvXPButton) Then
+  Begin
+    If (Sender as TJvXPButton).Name='Bt_ExcluiProduto' Then
+    Begin
+      sCodProd:=Trim(DMBelShop.CDS_PrioridadeProdCOD_PRODUTO.AsString);
+      sDescricao:='o Produto:'+cr+cr+Trim(DMBelShop.CDS_PrioridadeProdNOME.AsString);
+    End;
+
+    If (Sender as TJvXPButton).Name='Bt_ExcluiFornecedor' Then
+    Begin
+      sCodForn:=Trim(DMBelShop.CDS_PrioridadeProdCOD_FORNECEDOR.AsString);
+      sDescricao:='os Produtos'+cr+'do Fornecedor:'+cr+Trim(DMBelShop.CDS_PrioridadeProdRAZAO_CLIENTE.AsString);
+    End;
+  End; //   If (Sender is TDBGrid) Then
+
+  If msg('Deseja Realmente Excluir '+sDescricao+' ??','C')=2 Then
+   Exit;
+
+  ExcluirProdutos(sCodProd, sCodForn);
 end;
 
 procedure TFrmPrioridadesReposicao.EdtCodProdLinxExit(Sender: TObject);
@@ -1061,11 +1191,10 @@ procedure TFrmPrioridadesReposicao.Bt_BuscaProdtudoClick(Sender: TObject);
 Var
   MySql: String;
 begin
-
-  FrmPesquisa:=TFrmPesquisa.Create(Self);
-
   EdtCodProdLinx.Clear;
   EdtCodProdLinx.SetFocus;
+
+  FrmPesquisa:=TFrmPesquisa.Create(Self);
 
   // ========== EXECUTA QUERY PARA PESQUISA ====================================
   Screen.Cursor:=crAppStart;
@@ -1154,6 +1283,9 @@ begin
     End;
 
     EdtDesFornecedor.Text:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('razao_cliente').AsString);
+    DMBelShop.CDS_BuscaRapida.Close;
+
+    DMBelShop.CDS_PrioridadeProd.Locate('COD_FORNECEDOR',EdtCodForn.AsInteger,[]);
 
     Screen.Cursor:=crDefault;
     If msg('Deseja Relamente Inserir Todos os'+cr+cr+'Produtos do Fornecedor Selecionado ??','C')=1 Then
@@ -1163,6 +1295,322 @@ begin
     EdtCodForn.Clear;
     EdtCodForn.SetFocus;
   End;
+end;
+
+procedure TFrmPrioridadesReposicao.Bt_BuscaFornClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  Dbg_Produto.SetFocus;
+
+  FrmPesquisa:=TFrmPesquisa.Create(Self);
+
+  EdtCodForn.Clear;
+  EdtDesFornecedor.Clear;
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  MySql:=' SELECT fo.razao_cliente Fornecedor, fo.cod_cliente Codigo'+
+         ' FROM LINXCLIENTESFORNEC fo'+
+         ' WHERE fo.tipo_cliente IN (''F'', ''A'')'+
+         ' AND EXISTS (SELECT 1'+
+         '             FROM LINXPRODUTOS pr'+
+         '             WHERE pr.cod_fornecedor=fo.cod_cliente)'+
+         ' ORDER BY 1';
+  DMBelShop.CDS_Pesquisa.Close;
+  DMBelShop.CDS_Pesquisa.Filtered:=False;
+  DMBelShop.SDS_Pesquisa.CommandText:=MySql;
+  DMBelShop.CDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(DMBelShop.CDS_Pesquisa.FieldByName('Codigo').AsString)='' Then
+  Begin
+    DMBelShop.CDS_Pesquisa.Close;
+    msg('Sem Fornecedor a Listar !!','A');
+    EdtCodForn.SetFocus;
+    FreeAndNil(FrmPesquisa);
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisa.Campo_pesquisa:='Fornecedor';
+  FrmPesquisa.Campo_Codigo:='Codigo';
+  FrmPesquisa.Campo_Descricao:='Fornecedor';
+  // FrmPesquisa.EdtDescricao.Text:=FrmAcessos.EdtDescPessoa.Text;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisa.ShowModal;
+  DMBelShop.CDS_Pesquisa.Close;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+   Begin
+     EdtCodForn.AsInteger:=StrToInt(FrmPesquisa.EdtCodigo.Text);
+     FreeAndNil(FrmPesquisa);
+     EdtCodFornExit(Self);
+     Exit;
+   End
+  Else
+   Begin
+     EdtCodForn.Clear;
+     EdtDesFornecedor.Clear;
+     EdtCodForn.SetFocus;
+   End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+
+  FreeAndNil(FrmPesquisa);
+end;
+
+procedure TFrmPrioridadesReposicao.Bt_BuscaArquivoTXTClick(Sender: TObject);
+var
+  MySql: String;
+
+  OpenDialog: TOpenDialog;
+  mMemo: TMemo;
+
+  tsArquivo: TStringList;
+  i: Integer;
+  bSiga: Boolean;
+
+  sCodLinx, sCodSidicom: String;
+begin
+  Dbg_Produto.SetFocus;
+
+  EdtArquivoTXT.Clear;
+
+  If msg('O Arquivo Texto DEVE Conter'+cr+'UM Código de Produto Por Linha !!'+cr+cr+'O Arquivo Esta CORRETO ??','C')=2 Then
+   Exit;
+
+  // Consiste o Codigo a Usar ==================================================
+  If Rb_CodLinx.Checked    Then sgMensagem:='Usar Código(s) LINX !!'+cr+cr+'Esta CORRETO ?';
+  If Rb_CodSidicom.Checked Then sgMensagem:='Usar Código(s) SIDICOM !!'+cr+cr+'Esta CORRETO ?';
+  If msg(sgMensagem,'C')=2 Then
+  Begin
+    sgMensagem:='';
+    Exit;
+  End;
+
+  { Instancia a variável arquivo }
+  OpenDialog:=TOpenDialog.Create(OpenDialog);
+  tsArquivo :=TStringList.Create;
+
+  Try
+    { Carrega o conteúdo do arquivo texto para a   memória }
+    With OpenDialog do
+    Begin
+      Options := [ofPathMustExist, ofHideReadOnly, ofOverwritePrompt];
+      DefaultExt := 'TXT';
+      Filter := 'Arquivo Texto (*.txt)|*.TXT';
+      FilterIndex := 1;
+      Title := 'Busca Arquivos Texto';
+
+      If Execute then
+       Begin
+         EdtArquivoTXT.Text:=FileName;
+         tsArquivo.LoadFromFile(FileName);
+       End
+      Else
+      Begin
+        Free;
+        Exit;
+      End;
+      Free;
+    End; // With OpenDialog do
+
+    If msg('O Arquivo Texto Selecionado'+cr+cr+'Esta CORRETO ??','C')=2 Then
+    Begin
+      EdtArquivoTXT.Clear;
+      Exit;
+    End;
+
+    OdirPanApres.Caption:='AGUARDE !! Salvando Produto...';
+    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmPrioridadesReposicao.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmPrioridadesReposicao.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmPrioridadesReposicao;
+    OdirPanApres.BringToFront();
+    OdirPanApres.Visible:=True;
+    Refresh;
+    Screen.Cursor:=crAppStart;
+
+    // Cria Componente Memo ======================================================
+    mMemo:=TMemo.Create(Self);
+    mMemo.Visible:=False;
+    mMemo.Parent:=FrmPrioridadesReposicao;
+    mMemo.Width:=500;
+    mMemo.Lines.Clear;
+
+    FrmBelShop.MontaProgressBar(True, FrmPrioridadesReposicao);
+    pgProgBar.Properties.Max:=tsArquivo.Count;
+    pgProgBar.Position:=0;
+
+    { Realiza um loop em toda a lista }
+    For i := 0 to tsArquivo.Count - 1 do
+    Begin
+      Application.ProcessMessages;
+
+      // Arquivo Texto com Codigo LINX =========================================
+      If Rb_CodLinx.Checked Then
+      Begin
+        Try
+          sCodLinx:=Trim(tsArquivo[i]);
+          StrToInt(sCodLinx);
+          bSiga:=True;
+        Except
+          bSiga:=False;
+        End;
+
+        // Processa Codigo =====================================================
+        If bSiga Then
+        Begin
+          sCodSidicom:=DMBelShop.LINX_BuscaCodigoSIDICOM(sCodLinx);
+
+          If sCodSidicom='' Then
+          Begin
+            MySql:=' SELECT p.nome'+
+                   ' FROM LINXPRODUTOS p'+
+                   ' WHERE p.cod_produto='+sCodLinx;
+            DMBelShop.CDS_BuscaRapida.Close;
+            DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+            DMBelShop.CDS_BuscaRapida.Open;
+
+            If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Nome').AsString)='' Then
+             mMemo.Lines.Add(sCodLinx+' - Código LINX Não Encontrado')
+            Else
+             mMemo.Lines.Add(sCodLinx+' - '+Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Nome').AsString));
+
+            DMBelShop.CDS_BuscaRapida.Close;
+          End;
+
+          // Insere Produto ==========================================================
+          If sCodSidicom<>'' Then
+          Begin
+            If Not DMBelShop.CDS_PrioridadeProd.Locate('COD_PRODUTO', StrToInt(sCodLinx),[]) Then
+            Begin
+              SalvarProduto(sCodLinx, sCodSidicom);
+            End;
+          End;
+        End; // If bSiga Then
+      End; // If Rb_CodLinx.Checked Then
+
+      // Arquivo Texto com Codigo SIDICOM ======================================
+      If Rb_CodSidicom.Checked Then
+      Begin
+        Try
+          sCodSidicom:=FormatFloat('000000',StrToInt(Trim(tsArquivo[i])));
+          StrToInt(sCodSidicom);
+          bSiga:=True;
+        Except
+          bSiga:=False;
+        End;
+
+        // Processa Codigo =====================================================
+        If bSiga Then
+        Begin
+          sCodLinx:=DMBelShop.LINX_BuscaCodigoLINX(sCodSidicom);
+
+          If sCodLinx='' Then
+          Begin
+            MySql:=' SELECT p.Apresentacao Nome'+
+                   ' FROM PRODUTO p'+
+                   ' WHERE p.CodProduto='+QuotedStr(sCodSidicom);
+            DMBelShop.CDS_BuscaRapida.Close;
+            DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+            DMBelShop.CDS_BuscaRapida.Open;
+
+            If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Nome').AsString)='' Then
+             mMemo.Lines.Add(sCodSidicom+' - Código SIDICOM Não Encontrado')
+            Else
+             mMemo.Lines.Add(sCodSidicom+' - '+Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Nome').AsString));
+
+            DMBelShop.CDS_BuscaRapida.Close;
+          End;
+
+          // Insere Produto ==========================================================
+          If sCodLinx<>'' Then
+          Begin
+            If Not DMBelShop.CDS_PrioridadeProd.Locate('COD_PRODUTO', StrToInt(sCodLinx),[]) Then
+            Begin
+              SalvarProduto(sCodLinx, sCodSidicom);
+            End;
+          End;
+        End; // If bSiga Then
+      End; // If Rb_CodSidicom.Checked Then
+
+      pgProgBar.Position:=i+1;
+    End; // For i := 0 to tsArquivo.Count - 1 do
+    FrmBelShop.MontaProgressBar(False, FrmPrioridadesReposicao);
+
+  Finally // Try
+    { Libera a instancia da lista da memória }
+    FreeAndNil(tsArquivo);
+  End; // Try
+  Screen.Cursor:=crDefault;
+  OdirPanApres.Visible:=False;
+
+  // Apresenta Codigo SIDICOM/LINX Não Encontrados =============================
+  If mMemo.Lines.Count>0 Then
+  Begin
+    FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+    FrmSolicitacoes.ClientWidth:=1000;
+    FrmBelShop.AbreSolicitacoes(7);
+
+    FrmSolicitacoes.Caption:='PRODUTOS COM REPOSIÇÃO PRIORITÁRIA';
+    FrmSolicitacoes.Ts_MargemLucroFormulas.Caption:='RELAÇÃO DE PRODUTOS';
+
+    If Rb_CodLinx.Checked Then
+    Begin
+      FrmSolicitacoes.EditorMargemLucro.Lines.Add('Produtos LINX SEM Produtos Correspondente no SIDICOM');
+      sgMensagem:='Foram Encontrados Produtos LINX'+cr+'SEM Correspondente Produtos SIDICOM !!'+' Tecle <OK>> Para Verificar ...'
+    End;
+
+    If Rb_CodSidicom.Checked Then
+    Begin
+      FrmSolicitacoes.EditorMargemLucro.Lines.Add('Produtos SIDICOM SEM Produtos Correspondente no LINX');
+      sgMensagem:='Foram Encontrados Produtos SIDICOM'+cr+'SEM Correspondente Produtos LINX !!'+' Tecle <OK>> Para Verificar ...'
+    End;
+
+    FrmSolicitacoes.EditorMargemLucro.Lines.Add('====================================================');
+    FrmSolicitacoes.EditorMargemLucro.Lines.Add('');
+
+    For i:=0 to mMemo.Lines.Count-1 do
+    Begin
+       FrmSolicitacoes.EditorMargemLucro.Lines.Add(mMemo.Lines[i]);
+    End; // For i:=0 to mMemo.Lines.Count-1 do
+
+    msg(sgMensagem,'A');
+
+    FrmSolicitacoes.ShowModal;
+    FreeAndNil(FrmSolicitacoes);
+  End;
+
+  FreeAndNil(mMemo);
+  EdtArquivoTXT.Clear;
+
+  DMBelShop.CDS_PrioridadesAfterScroll(DMBelShop.CDS_Prioridades);
+
+  If sCodSidicom<>'' Then
+   DMBelShop.CDS_PrioridadeProd.Locate('CODPRODUTO', sCodSidicom,[])
+  Else If sCodLinx<>'' Then
+   DMBelShop.CDS_PrioridadeProd.Locate('COD_PRODUTO', sCodLinx,[]);
+
+  msg('Produtos Inseridos com SUCESSO !!','A');
+
+end;
+
+procedure TFrmPrioridadesReposicao.Rb_CodLinxClick(Sender: TObject);
+begin
+  AcertaRb_Style(Rb_CodLinx);
+  AcertaRb_Style(Rb_CodSidicom);
+end;
+
+procedure TFrmPrioridadesReposicao.Rb_CodLinxKeyUp(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  Rb_CodLinxClick(Self);
 end;
 
 end.

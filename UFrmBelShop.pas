@@ -24454,8 +24454,6 @@ begin
 
   EdtGeraOCBuscaDocto.Value:=StrToInt(sNumDoc);
   EdtGeraOCBuscaDoctoExit(Sender);
-
-//  Bt_GeraOCTransfCDClick(Self);
 end;
 
 procedure TFrmBelShop.EdtOCCodAplicacaoExit(Sender: TObject);
@@ -46637,12 +46635,6 @@ end;
 
 procedure TFrmBelShop.PrioridadesdeReposio1Click(Sender: TObject);
 begin
-  If AnsiUpperCase(Des_Usuario)<>'ODIR' Then
-  Begin
-    msg('Opção em Desenvolvimento !!','A');
-    Exit;
-  End;
-
   FrmPrioridadesReposicao:=TFrmPrioridadesReposicao.Create(Self);
 
   igTagPermissao:=(Sender as TMenuItem).Tag;

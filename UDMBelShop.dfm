@@ -9215,17 +9215,16 @@ object DMBelShop: TDMBelShop
   object SDS_PrioridadeProd: TSQLDataSet
     CommandText = 
       'SELECT'#13#10'pr.cod_produto, pr.nome,'#13#10'pr.cod_fornecedor, fo.razao_cl' +
-      'iente, pp.codproduto'#13#10#13#10'FROM ES_REP_PRIORIDADES_PROD pp, linxpro' +
-      'dutos pr, linxclientesfornec fo'#13#10#13#10'WHERE pp.cod_produto=pr.cod_p' +
+      'iente, pp.codproduto'#13#10#13#10'FROM ES_REP_PRIORIDADES_PROD pp, LINXPRO' +
+      'DUTOS pr, LINXCLIENTESFORNEC fo'#13#10#13#10'WHERE pp.cod_produto=pr.cod_p' +
       'roduto'#13#10'and   pr.cod_fornecedor=fo.cod_cliente'#13#10'AND   pr.desativ' +
       'ado='#39'N'#39#13#10'AND   pp.cod_prioridade= :CodPrioridade'#13#10'ORDER BY 2'#13#10
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'CodPrioridade'
         ParamType = ptInput
-        Value = '1'
       end>
     SQLConnection = SQLC
     Left = 923

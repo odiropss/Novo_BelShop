@@ -299,17 +299,17 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
       Left = 2
       Top = 18
       Width = 487
-      Height = 84
+      Height = 113
       Align = alTop
       BevelInner = bvLowered
       Color = 13092807
       TabOrder = 1
       object Label1: TLabel
-        Left = 24
-        Top = 4
-        Width = 58
+        Left = 32
+        Top = 12
+        Width = 137
         Height = 13
-        Caption = 'Descri'#231#227'o'
+        Caption = 'Descri'#231#227'o da Prioridade'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clBlue
         Font.Height = -11
@@ -318,8 +318,8 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
         ParentFont = False
       end
       object Label2: TLabel
-        Left = 11
-        Top = 41
+        Left = 19
+        Top = 57
         Width = 88
         Height = 13
         Caption = 'Vig'#234'ncia Inicial'
@@ -331,8 +331,8 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
         ParentFont = False
       end
       object Label3: TLabel
-        Left = 117
-        Top = 41
+        Left = 125
+        Top = 57
         Width = 81
         Height = 13
         Caption = 'Vig'#234'ncia Final'
@@ -344,8 +344,8 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
         ParentFont = False
       end
       object Label4: TLabel
-        Left = 223
-        Top = 41
+        Left = 231
+        Top = 57
         Width = 30
         Height = 13
         Caption = 'Ativo'
@@ -357,8 +357,8 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
         ParentFont = False
       end
       object EdtDesPrioridade: TEdit
-        Left = 24
-        Top = 19
+        Left = 32
+        Top = 27
         Width = 414
         Height = 19
         CharCase = ecUpperCase
@@ -369,22 +369,22 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
         OnChange = EdtDesPrioridadeChange
       end
       object EdtDtaInicial: TJvDateEdit
-        Left = 9
-        Top = 56
+        Left = 17
+        Top = 72
         Width = 96
         Height = 19
         TabOrder = 1
       end
       object EdtDtaFinal: TJvDateEdit
-        Left = 113
-        Top = 56
+        Left = 121
+        Top = 72
         Width = 96
         Height = 19
         TabOrder = 2
       end
       object CkB_Ativo: TJvCheckBox
-        Left = 221
-        Top = 56
+        Left = 229
+        Top = 72
         Width = 44
         Height = 17
         Caption = 'SIM'
@@ -408,8 +408,8 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
       end
       object Bt_PrioridadeSalvar: TJvXPButton
         Tag = 4
-        Left = 272
-        Top = 46
+        Left = 280
+        Top = 62
         Width = 87
         Height = 32
         Caption = 'Salvar'
@@ -426,8 +426,8 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
       end
       object Bt_PrioridadeDesfazer: TJvXPButton
         Tag = 90
-        Left = 361
-        Top = 46
+        Left = 369
+        Top = 62
         Width = 87
         Height = 32
         Caption = 'Desfazer'
@@ -444,8 +444,8 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
         OnClick = Bt_PrioridadeDesfazerClick
       end
       object EdtCodPrioridade: TCurrencyEdit
-        Left = 114
-        Top = 2
+        Left = 194
+        Top = 4
         Width = 34
         Height = 18
         AutoSize = False
@@ -457,9 +457,9 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
     end
     object Dbg_Prioridades: TDBGrid
       Left = 2
-      Top = 102
+      Top = 131
       Width = 487
-      Height = 404
+      Height = 375
       Align = alClient
       Color = 15004403
       Ctl3D = False
@@ -555,184 +555,11 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
     Align = alClient
     BevelInner = bvLowered
     TabOrder = 2
-    object TPanel
-      Left = 2
-      Top = 2
-      Width = 484
-      Height = 16
-      Align = alTop
-      Caption = 'Produtos'
-      Color = clBlue
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWhite
-      Font.Height = -13
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 0
-    end
-    object PanManutProduto: TPanel
-      Left = 2
-      Top = 18
-      Width = 484
-      Height = 84
-      Align = alTop
-      BevelInner = bvLowered
-      Color = 13092807
-      TabOrder = 1
-      DesignSize = (
-        484
-        84)
-      object Label75: TLabel
-        Left = 18
-        Top = 3
-        Width = 24
-        Height = 13
-        Caption = 'Linx'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlue
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object Label74: TLabel
-        Left = 118
-        Top = 3
-        Width = 45
-        Height = 13
-        Caption = 'Sidicom'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlue
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object Label6: TLabel
-        Left = 20
-        Top = 41
-        Width = 288
-        Height = 13
-        Caption = 'Fornecedor (Inclui Produtos (LINX) do Fornecedor)'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlue
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object Lab_Informacao: TLabel
-        Left = 216
-        Top = 18
-        Width = 412
-        Height = 16
-        Anchors = [akLeft]
-        Caption = 'Favor SALVAR ou DESFAZER da Prioridade Selecionada...'
-        Color = clWhite
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clRed
-        Font.Height = -13
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentColor = False
-        ParentFont = False
-        Visible = False
-      end
-      object EdtCodProdLinx: TCurrencyEdit
-        Left = 18
-        Top = 18
-        Width = 66
-        Height = 21
-        AutoSize = False
-        DecimalPlaces = 0
-        DisplayFormat = '0'
-        TabOrder = 0
-        OnExit = EdtCodProdLinxExit
-      end
-      object EdtCodProduto: TCurrencyEdit
-        Left = 118
-        Top = 18
-        Width = 66
-        Height = 21
-        AutoSize = False
-        DecimalPlaces = 0
-        DisplayFormat = '0'
-        TabOrder = 1
-        OnExit = EdtCodProdutoExit
-      end
-      object Bt_BuscaProdtudo: TJvXPButton
-        Tag = 92
-        Left = 90
-        Top = 13
-        Width = 24
-        Height = 26
-        TabOrder = 2
-        TabStop = False
-        ShowFocusRect = True
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        ParentShowHint = False
-        ShowHint = False
-        OnClick = Bt_BuscaProdtudoClick
-      end
-      object EdtCodForn: TCurrencyEdit
-        Left = 18
-        Top = 57
-        Width = 66
-        Height = 21
-        AutoSize = False
-        DecimalPlaces = 0
-        DisplayFormat = '0'
-        TabOrder = 3
-        OnExit = EdtCodFornExit
-      end
-      object Bt_BuscaForn: TJvXPButton
-        Tag = 92
-        Left = 90
-        Top = 54
-        Width = 24
-        Height = 26
-        TabOrder = 4
-        TabStop = False
-        ShowFocusRect = True
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        ParentShowHint = False
-        ShowHint = False
-      end
-      object EdtDesFornecedor: TEdit
-        Left = 118
-        Top = 57
-        Width = 357
-        Height = 19
-        TabStop = False
-        Anchors = [akLeft, akTop, akRight]
-        Color = 14737632
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        MaxLength = 60
-        ParentFont = False
-        ReadOnly = True
-        TabOrder = 5
-      end
-    end
     object Dbg_Produto: TDBGrid
       Left = 2
-      Top = 102
+      Top = 131
       Width = 484
-      Height = 404
+      Height = 375
       Align = alClient
       Color = 15004403
       Ctl3D = False
@@ -793,6 +620,294 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
           Visible = True
         end>
     end
+    object TPanel
+      Left = 2
+      Top = 2
+      Width = 484
+      Height = 16
+      Align = alTop
+      Caption = 'Produtos'
+      Color = clBlue
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+    end
+    object PanManutProduto: TPanel
+      Left = 2
+      Top = 18
+      Width = 484
+      Height = 113
+      Align = alTop
+      BevelInner = bvLowered
+      Color = 13092807
+      TabOrder = 1
+      DesignSize = (
+        484
+        113)
+      object Label75: TLabel
+        Left = 10
+        Top = 3
+        Width = 24
+        Height = 13
+        Caption = 'Linx'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label74: TLabel
+        Left = 102
+        Top = 3
+        Width = 45
+        Height = 13
+        Caption = 'Sidicom'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label6: TLabel
+        Left = 165
+        Top = 38
+        Width = 212
+        Height = 13
+        Caption = 'Inclui Produtos (LINX) do Fornecedor'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label7: TLabel
+        Left = 14
+        Top = 88
+        Width = 176
+        Height = 13
+        Caption = 'Importa Arquivo TXT C'#243'digo ->'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label8: TLabel
+        Left = 13
+        Top = 57
+        Width = 65
+        Height = 13
+        Caption = 'Fornecedor'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Bt_BuscaArquivoTXT: TJvXPButton
+        Tag = 92
+        Left = 318
+        Top = 81
+        Width = 24
+        Height = 26
+        TabOrder = 6
+        TabStop = False
+        ShowFocusRect = True
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = False
+        OnClick = Bt_BuscaArquivoTXTClick
+      end
+      object EdtCodProdLinx: TCurrencyEdit
+        Left = 10
+        Top = 18
+        Width = 54
+        Height = 21
+        AutoSize = False
+        DecimalPlaces = 0
+        DisplayFormat = '0'
+        TabOrder = 0
+        OnExit = EdtCodProdLinxExit
+      end
+      object EdtCodProduto: TCurrencyEdit
+        Left = 100
+        Top = 18
+        Width = 57
+        Height = 21
+        AutoSize = False
+        DecimalPlaces = 0
+        DisplayFormat = '0'
+        TabOrder = 1
+        OnExit = EdtCodProdutoExit
+      end
+      object Bt_BuscaProdtudo: TJvXPButton
+        Tag = 92
+        Left = 69
+        Top = 15
+        Width = 24
+        Height = 26
+        TabOrder = 2
+        TabStop = False
+        ShowFocusRect = True
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = False
+        OnClick = Bt_BuscaProdtudoClick
+      end
+      object EdtCodForn: TCurrencyEdit
+        Left = 84
+        Top = 53
+        Width = 47
+        Height = 21
+        AutoSize = False
+        DecimalPlaces = 0
+        DisplayFormat = '0'
+        TabOrder = 3
+        OnExit = EdtCodFornExit
+      end
+      object Bt_BuscaForn: TJvXPButton
+        Tag = 92
+        Left = 136
+        Top = 50
+        Width = 24
+        Height = 26
+        TabOrder = 4
+        TabStop = False
+        ShowFocusRect = True
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = False
+        OnClick = Bt_BuscaFornClick
+      end
+      object EdtDesFornecedor: TEdit
+        Left = 165
+        Top = 54
+        Width = 310
+        Height = 19
+        TabStop = False
+        Anchors = [akLeft, akTop, akRight]
+        Color = 14737632
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        MaxLength = 60
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 5
+      end
+      object Pan_Informacao: TPanel
+        Left = 162
+        Top = 2
+        Width = 465
+        Height = 35
+        Anchors = [akLeft, akTop, akRight]
+        BevelInner = bvRaised
+        BevelOuter = bvLowered
+        BevelWidth = 3
+        Caption = 'Favor SALVAR ou DESFAZER da Prioridade Selecionada...'
+        Color = clWhite
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clRed
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 7
+        Visible = False
+      end
+      object EdtArquivoTXT: TEdit
+        Left = 347
+        Top = 85
+        Width = 128
+        Height = 19
+        TabStop = False
+        Anchors = [akLeft, akTop, akRight]
+        Color = 14737632
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        MaxLength = 60
+        ParentFont = False
+        ReadOnly = True
+        TabOrder = 8
+      end
+      object Rb_CodLinx: TJvRadioButton
+        Left = 192
+        Top = 86
+        Width = 50
+        Height = 17
+        Alignment = taLeftJustify
+        Caption = 'LINX'
+        Checked = True
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 9
+        TabStop = True
+        OnClick = Rb_CodLinxClick
+        OnKeyUp = Rb_CodLinxKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+      object Rb_CodSidicom: TJvRadioButton
+        Left = 242
+        Top = 86
+        Width = 66
+        Height = 17
+        Alignment = taLeftJustify
+        Caption = 'SIDICOM'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 10
+        OnClick = Rb_CodLinxClick
+        OnKeyUp = Rb_CodLinxKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+    end
     object dxStatusBar1: TdxStatusBar
       Left = 2
       Top = 506
@@ -823,8 +938,8 @@ object FrmPrioridadesReposicao: TFrmPrioridadesReposicao
     end
   end
   object OdirPanApres: TPanel
-    Left = 883
-    Top = 59
+    Left = 843
+    Top = 155
     Width = 89
     Height = 33
     BevelInner = bvLowered
