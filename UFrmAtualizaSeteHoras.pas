@@ -24,6 +24,8 @@ type
 
     Procedure CentroCustos;
 
+    Procedure CodigoBarras;
+
     // ODIR ====================================================================
 
   private
@@ -66,6 +68,108 @@ uses DK_Procs1, UDMConexoes, uj_001, uj_002, UDMAtualizaSeteHoras;
 //==============================================================================
 // ODIR - INICIO ===============================================================
 //==============================================================================
+
+// Busca Codigo de Barras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAtualizaSeteHoras.CodigoBarras;
+Var
+   bSiga: Boolean;
+   i: Integer;
+   MySql: String;
+Begin
+  bSiga:=False;
+  sgCodEmp:='99';
+
+  // Conecta Loja =======================================================
+  If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+   Begin
+     // Cria Query da Empresa ------------------------------------
+     CriaQueryIB('IBDB_'+sgCodEmp,'IBT_'+sgCodEmp, IBQ_ConsultaFilial, True);
+     bSiga:=True;
+   End
+  Else
+   Begin
+     bSiga:=False;
+   End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
+
+  If bSiga Then
+  Begin
+    // Abre Query -----------------------------------------------
+    i:=0;
+    bSiga:=False;
+    While Not bSiga do
+    Begin
+      Try
+        MySql:=' SELECT CODBARRA, CODPRODUTO, UNIDADEPORCAIXA, ETIQUETAS_SN'+
+               ' FROM PRODUTOSBARRA';
+        IBQ_ConsultaFilial.Close;
+        IBQ_ConsultaFilial.SQL.Clear;
+        IBQ_ConsultaFilial.SQL.Add(MySql);
+        IBQ_ConsultaFilial.Open;
+
+        bSiga:=True;
+      Except
+        Inc(i);
+      End; // Try
+
+      If i>2 Then
+      Begin
+        Break;
+      End; // If i>10 Then
+    End; // While Not bSiga do
+
+    // Processamento ===========================================================
+    If bSiga Then // Query Executada
+    Begin
+      // Monta Transacao =======================================================
+      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+      TD.IsolationLevel:=xilREADCOMMITTED;
+      DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
+      Try
+        DateSeparator:='.';
+        DecimalSeparator:='.';
+
+        // Exclui Centro de Custos =============================================
+        MySql:=' DELETE FROM PRODUTOSBARRA';
+        DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+
+        While Not IBQ_ConsultaFilial.Eof do
+        Begin
+          // Insere Centro de Custos -------------------------------------------
+          MySql:=' INSERT INTO PRODUTOSBARRA'+
+                 ' (CODBARRA, CODPRODUTO, UNIDADEPORCAIXA, ETIQUETAS_SN)'+
+
+                 ' VALUES ('+
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODBARRA').AsString)+', '+
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODPRODUTO').AsString)+', '+
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('UNIDADEPORCAIXA').AsString)+', '+
+                 QuotedStr(IBQ_ConsultaFilial.FieldByName('ETIQUETAS_SN').AsString)+')';
+          DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
+
+          IBQ_ConsultaFilial.Next;
+        End; // While Not IBQ_ConsultaFilial.Eof do
+        IBQ_ConsultaFilial.Close;
+
+        // Fecha Transacao =================================================
+        DMAtualizaSeteHoras.SQLC.Commit(TD);
+
+        DateSeparator:='/';
+        DecimalSeparator:=',';
+        Screen.Cursor:=crDefault;
+
+      Except
+        on e : Exception do
+        Begin
+          DMAtualizaSeteHoras.SQLC.Rollback(TD);
+
+          DateSeparator:='/';
+          DecimalSeparator:=',';
+        End; // on e : Exception do
+      End; // Try
+    End; // If bSiga Then
+    ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'F')
+  End; // If bSiga Then
+
+end; // Atualiza Centro de Custos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Monta SQL's Para Busca SIDICOM / LINX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaSeteHoras.MontaSqlsSidicomLinx;
@@ -1286,6 +1390,14 @@ Var
   MySql: String;
   i: Integer;
 begin
+
+  //============================================================================
+  // Atualiza Codigos de Barras ================================================
+  //============================================================================
+//opss - 13/06/2017
+  CodigoBarras;
+  // Atualiza Codigos de Barras ================================================
+  //============================================================================
 
   //============================================================================
   // Atualiza Demanda 4 Meses ==================================================

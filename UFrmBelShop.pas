@@ -22664,7 +22664,9 @@ begin
   End; // For i:=0 to DMConexoes.ComponentCount-1 do
 
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   SelecionaTabSheet(TS_Usuario);
@@ -22700,24 +22702,27 @@ begin
   // Bt_FinanComprovantesFecharClick
   //==================================
 
-  If (Sender as TJvXPButton).Name='Bt_FinanComprovantesFechar' Then
+  If (Sender is TJvXPButton) Then
   Begin
-    EdtFinanComprovantesLocalizar.Clear;
-  End;
-
-  If (Sender as TJvXPButton).Name='Bt_OCFechar' Then
-  Begin
-    Painel_FiltroOC.Height:=167;
-  End;
-
-  If (Sender as TJvXPButton).Name='Bt_CurvaABCEndFechar' Then
-  Begin
-    If gCDS_V_Geral<>nil Then
+    If (Sender as TJvXPButton).Name='Bt_FinanComprovantesFechar' Then
     Begin
-      FreeAndNil(gCDS_V_Geral);
-      FreeAndNil(gDS);
+      EdtFinanComprovantesLocalizar.Clear;
     End;
-  End; // If (Sender as TJvXPButton).Name='Bt_CurvaABCEndFechar' Then
+
+    If (Sender as TJvXPButton).Name='Bt_OCFechar' Then
+    Begin
+      Painel_FiltroOC.Height:=167;
+    End;
+
+    If (Sender as TJvXPButton).Name='Bt_CurvaABCEndFechar' Then
+    Begin
+      If gCDS_V_Geral<>nil Then
+      Begin
+        FreeAndNil(gCDS_V_Geral);
+        FreeAndNil(gDS);
+      End;
+    End; // If (Sender as TJvXPButton).Name='Bt_CurvaABCEndFechar' Then
+  End; // If (Sender is TJvXPButton) Then
 
   EdtGeraOCBuscaDocto.AsInteger:=0;
   DtEdt_GeraOCDataDocto.Clear;
@@ -23244,22 +23249,25 @@ procedure TFrmBelShop.Bt_UsuManutSenhaSalvaClick(Sender: TObject);
 begin
 
   // Grava Nova Senha ==========================================================
-  If (Sender as TJvXPButton).Name='Bt_UsuManutSenhaSalva' Then
+  If (Sender is TJvXPButton) Then
   Begin
-    If Trim(EdtUsuManutSenhaNova.Text)='' Then
-     Begin
-       If msg('Gravar Usuário SEM Senha ??','C')=2 Then
+    If (Sender as TJvXPButton).Name='Bt_UsuManutSenhaSalva' Then
+    Begin
+      If Trim(EdtUsuManutSenhaNova.Text)='' Then
        Begin
-         EdtUsuManutSenhaAtual.SetFocus;
-         Exit;
-       end;
-       Dbe_UsuManutSenha.Clear;
-     End
-    Else
-     Begin
-       Dbe_UsuManutSenha.Text:=EncriptaSTR(trim(EdtUsuManutSenhaNova.Text),40,30,20);
-     End;
-  End; // If (Sender is TJvXPButton).Name='Bt_UsuManutSenhaFecha' Then
+         If msg('Gravar Usuário SEM Senha ??','C')=2 Then
+         Begin
+           EdtUsuManutSenhaAtual.SetFocus;
+           Exit;
+         end;
+         Dbe_UsuManutSenha.Clear;
+       End
+      Else
+       Begin
+         Dbe_UsuManutSenha.Text:=EncriptaSTR(trim(EdtUsuManutSenhaNova.Text),40,30,20);
+       End;
+    End; // If (Sender as TJvXPButton).Name='Bt_UsuManutSenhaFecha' Then
+  End; // If (Sender is TJvXPButton) Then
 
   Gb_UsuManutSenha.Visible:=False;
 
@@ -23283,7 +23291,9 @@ begin
   FrmAcessosUsuario.Ts_AcessoGerenciador.TabVisible:=True;
 
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // indica em qual formulario esta o menu principal
@@ -26484,7 +26494,8 @@ end;
 
 procedure TFrmBelShop.SubMenuComprasContaCorreteFornClick(Sender: TObject);
 begin
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
 
   BloqueioBotoes(FrmFluxoFornecedor, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
@@ -27360,7 +27371,9 @@ Var
   i: Integer;
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   OrderGrid:='';
@@ -27623,7 +27636,9 @@ Var
   i: Integer;
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin); 
 
   // Busca Empresas ============================================================
@@ -28267,7 +28282,9 @@ Var
   MySql: String;
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Apresenta TabSheeet =======================================================
@@ -28522,7 +28539,9 @@ Var
   i: Integer;
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Permissões de Visualização ================================================
@@ -31377,7 +31396,9 @@ end;
 procedure TFrmBelShop.SubMenuFinanPlanodeContasComprov200Click(Sender: TObject);
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin); 
 
   SelecionaTabSheet(Ts_FinanPlanoContasCompr200);
@@ -31649,7 +31670,9 @@ Var
   MySql: String;
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin); 
 
   // Busca Objetivos ===========================================================
@@ -33210,7 +33233,9 @@ end;
 procedure TFrmBelShop.SubMenuFinanControleFeriadosAno1Click(Sender: TObject);
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin); 
 
   SelecionaTabSheet(Ts_FinanFeriadosAno);
@@ -33641,7 +33666,9 @@ end;
 procedure TFrmBelShop.SubMenuComprasEstoqueFisicoFinanceiroClick(Sender: TObject);
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Inicializa Tabelas Virtuais para Filtros ==================================
@@ -36908,7 +36935,9 @@ end;
 procedure TFrmBelShop.SubMenuFinanAuditoriaManutencaoClick(Sender: TObject);
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin); 
 
   EdtFinanAuditoriaManutCodLoja.Clear;
@@ -36932,7 +36961,9 @@ end;
 procedure TFrmBelShop.SubMenuFinanAuditoriaAnaliseClick(Sender: TObject);
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin); 
 
   EdtFinanAuditoriaAnaliseCodLoja.Clear;
@@ -38208,7 +38239,9 @@ end;
 procedure TFrmBelShop.SubMenuComprasMovtoComprovFornecedorClick(Sender: TObject);
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Inicializa Tudo ===========================================================
@@ -38608,7 +38641,9 @@ end;
 procedure TFrmBelShop.SubMenuFinanFechamentoCaixaClick(Sender: TObject);
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin); 
 
   EdtFinanFechaCaixaCodLoja.Clear;
@@ -39130,7 +39165,9 @@ end;
 procedure TFrmBelShop.SubMenuFinanFechamentoDiarioLojasClick(Sender: TObject);
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin); 
 
   // Permissões de Visualização ================================================
@@ -40241,7 +40278,9 @@ end;
 procedure TFrmBelShop.SubMenuFinanMargemLucroClick(Sender: TObject);
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Inicializa Tabelas Virtuais para Filtros ==================================
@@ -42009,8 +42048,10 @@ end;
 procedure TFrmBelShop.SubMenuFinanAuditoriaCompVendasClick(Sender: TObject);
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
-  BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin); 
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+   
+  BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Inicializa Tabelas Virtuais para Filtros ==================================
   try
@@ -42723,7 +42764,9 @@ begin
   FrmSalao.Ts_Profissionais.TabVisible:=True;
   FrmSalao.Bt_CodViculados.Visible:=False;
 
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmSalao, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Permissões de Visualização ================================================
@@ -42818,7 +42861,9 @@ begin
   FrmSalao.Ts_ProfMetas.TabVisible:=True;
   FrmSalao.EdtMetasAno.AsInteger:=YearOf(Now);
 
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmSalao, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Posiciona Painel Rodape
@@ -42843,7 +42888,9 @@ begin
   TabSheetInvisivel(FrmSalao);
   FrmSalao.Ts_ProfPagtos.TabVisible:=True;
 
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmSalao, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Permissões de Visualização ================================================
@@ -42997,7 +43044,9 @@ begin
   DMBelShop.CDS_BuscaRapida.Close;
 
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmSolicitacoes, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   FrmSolicitacoes.Ts_ParamIRRF.TabVisible:=False;
@@ -43371,7 +43420,9 @@ end;
 procedure TFrmBelShop.SubMenuEmpresasConexoesClick(Sender: TObject);
 begin
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   Bt_ConEmpresasUsuWindows.Visible:=(AnsiUpperCase(Des_Login)='ODIR');
@@ -43397,7 +43448,9 @@ begin
   FrmSalao.Ts_ProfMovtosRH.TabVisible:=True;
   FrmSalao.PC_SalaoChange(Self);
 
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmSalao, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Permissões de Visualização ================================================
@@ -43413,7 +43466,9 @@ procedure TFrmBelShop.SubMenuControledeKitzClick(Sender: TObject);
 begin
   FrmControleKits:=TFrmControleKits.Create(Self);
 
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmControleKits, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   FrmControleKits.ShowModal;
@@ -44281,7 +44336,9 @@ begin
 
   TabSheetInvisivel(FrmConciliacaoCaixa);
 
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmConciliacaoCaixa, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   FrmConciliacaoCaixa.EdtConcFechaCaixaCodLoja.Clear;
@@ -44521,7 +44578,9 @@ begin
   FrmAcessosUsuario.Ts_AcessoSidicom.TabVisible:=True;
 
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBelShop, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   FrmAcessosUsuario.PC_Principal.TabIndex:=0;
@@ -44545,31 +44604,34 @@ end;
 procedure TFrmBelShop.Bt_CurvaABCEndSalvaProdClipboardClick(Sender: TObject);
 begin
 
-  If Trim((Sender as TJvXPButton).Name)='Bt_CurvaABCEndSalvaProdClipboard' Then
+  If (Sender is TJvXPButton) Then
   Begin
-    If Not DMVirtual.CDS_V_CurvaABCEndereco.IsEmpty Then
+    If Trim((Sender as TJvXPButton).Name)='Bt_CurvaABCEndSalvaProdClipboard' Then
     Begin
-      Dbg_CurvaABCEndCurvaABC.SetFocus;
-      Screen.Cursor:=crAppStart;
+      If Not DMVirtual.CDS_V_CurvaABCEndereco.IsEmpty Then
+      Begin
+        Dbg_CurvaABCEndCurvaABC.SetFocus;
+        Screen.Cursor:=crAppStart;
 
-      DBGridClipboard(Dbg_CurvaABCEndCurvaABC);
+        DBGridClipboard(Dbg_CurvaABCEndCurvaABC);
 
-      Screen.Cursor:=crDefault;
-    End;
-  End; // If Trim((Sender as TJvXPButton).Name)='Bt_CurvaABCEndSalvaProdClipboard' Then
+        Screen.Cursor:=crDefault;
+      End;
+    End; // If Trim((Sender as TJvXPButton).Name)='Bt_CurvaABCEndSalvaProdClipboard' Then
 
-  If Trim((Sender as TJvXPButton).Name)='Bt_CurvaABCEndSalvaFornClipboard' Then
-  Begin
-    If (gCDS_V_Geral<>nil) and (Not gCDS_V_Geral.IsEmpty) Then
+    If Trim((Sender as TJvXPButton).Name)='Bt_CurvaABCEndSalvaFornClipboard' Then
     Begin
-      Screen.Cursor:=crAppStart;
+      If (gCDS_V_Geral<>nil) and (Not gCDS_V_Geral.IsEmpty) Then
+      Begin
+        Screen.Cursor:=crAppStart;
 
-      Dbg_CurvaABCEndCurvaABCForn.SetFocus;
-      DBGridClipboard(Dbg_CurvaABCEndCurvaABCForn);
+        Dbg_CurvaABCEndCurvaABCForn.SetFocus;
+        DBGridClipboard(Dbg_CurvaABCEndCurvaABCForn);
 
-      Screen.Cursor:=crDefault;
-    End;
-  End; // If Trim((Sender as TJvXPButton).Name)='Bt_CurvaABCEndSalvaFornClipboard' Then
+        Screen.Cursor:=crDefault;
+      End;
+    End; // If Trim((Sender as TJvXPButton).Name)='Bt_CurvaABCEndSalvaFornClipboard' Then
+  End; // If (Sender is TJvXPButton) Then
 
 end;
 
@@ -44579,7 +44641,9 @@ Var
 begin
   FrmEstoques:=TFrmEstoques.Create(Self);
 
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmEstoques, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Posiciona TabSheet ========================================================
@@ -45379,8 +45443,11 @@ begin
   End;
 
   FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
+  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
 
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmCentralTrocas, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Apresenta TabSheet ========================================================
@@ -45390,6 +45457,7 @@ begin
   FrmCentralTrocas.ShowModal;
 
   FreeAndNil(FrmCentralTrocas);
+  FreeAndNil(DMCentralTrocas);
 
 end;
 
@@ -45403,8 +45471,11 @@ begin
   End;
 
   FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
+  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
 
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmCentralTrocas, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
 //  // Permissões de Visualização ================================================
@@ -45426,6 +45497,7 @@ begin
   FrmCentralTrocas.ShowModal;
 
   FreeAndNil(FrmCentralTrocas);
+  FreeAndNil(DMCentralTrocas);
 
 end;
 
@@ -46018,7 +46090,9 @@ begin
 //  TabSheetInvisivel(FrmControleEstoques);
 //  FrmControleEstoques.Ts_ContEstSolic.TabVisible:=True;
 
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmControleEstoques, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Permissões de Visualização ================================================
@@ -46037,10 +46111,13 @@ end;
 procedure TFrmBelShop.SubMenuCentroDistAnaliseReposicoesClick(Sender: TObject);
 begin
   FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
+  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
 
   FrmCentralTrocas.Bt_NotasEntDevFechar.Parent:=FrmCentralTrocas.Pan_AnaliseRepos;
 
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmCentralTrocas, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Apresenta TabSheet ========================================================
@@ -46050,6 +46127,7 @@ begin
   FrmCentralTrocas.ShowModal;
 
   FreeAndNil(FrmCentralTrocas);
+  FreeAndNil(DMCentralTrocas);
 
 end;
 
@@ -46182,10 +46260,13 @@ begin
  // Exit;
 
   FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
+  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
 
   FrmCentralTrocas.Bt_NotasEntDevFechar.Parent:=FrmCentralTrocas.Pan_QtdCaixaCD;
 
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmCentralTrocas, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Apresenta TabSheet ========================================================
@@ -46195,6 +46276,7 @@ begin
   FrmCentralTrocas.ShowModal;
 
   FreeAndNil(FrmCentralTrocas);
+  FreeAndNil(DMCentralTrocas);
 end;
 
 procedure TFrmBelShop.Dbe_ConEmpresasCodLojaLinxKeyPress(Sender: TObject;
@@ -46582,7 +46664,9 @@ procedure TFrmBelShop.SubMenuComprasGeraOCLinxClick(Sender: TObject);
 begin
   FrmOCLinx:=TFrmOCLinx.Create(Self);
 
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmOCLinx, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   // Permissões de Visualização ================================================
@@ -46637,7 +46721,9 @@ procedure TFrmBelShop.PrioridadesdeReposio1Click(Sender: TObject);
 begin
   FrmPrioridadesReposicao:=TFrmPrioridadesReposicao.Create(Self);
 
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmPrioridadesReposicao, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   FrmPrioridadesReposicao.ShowModal;

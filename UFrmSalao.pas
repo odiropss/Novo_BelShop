@@ -13220,14 +13220,16 @@ end;
 procedure TFrmSalao.Dbg_ValesProfEnter(Sender: TObject);
 begin
   // Usado em Outros DBGrids ===================================================
-  (Sender as TDBGrid).Color:=clMoneyGreen;
+  If (Sender is TDBGrid) Then
+   (Sender as TDBGrid).Color:=clMoneyGreen;
 
   Dbg_ProfissionaisEnter(Self);
 end;
 
 procedure TFrmSalao.Dbg_ValesProfExit(Sender: TObject);
 begin
-  (Sender as TDBGrid).Color:=$00E4F2F3;
+  If (Sender is TDBGrid) Then
+   (Sender as TDBGrid).Color:=$00E4F2F3;
 end;
 
 procedure TFrmSalao.EdtValesCodProfEnter(Sender: TObject);
@@ -13971,29 +13973,32 @@ begin
   Begin
     DMSalao.CDS_V_PagtoProf.Edit;
 
-    If (Sender as TJvXPButton).Name='Bt_PagtoMarcaTodos' Then
-     Begin
-       If Trim(DMSalao.CDS_V_PagtoProfDTA_INI_CALCULO.AsString)<>'' Then
-        Begin
-          If DMSalao.CDS_V_PagtoProfINI_ULT_CALCULO.AsString<>DMSalao.CDS_V_PagtoProfDTA_INI_CALCULO.AsString Then
+    If (Sender is TJvXPButton) Then
+    Begin
+      If (Sender as TJvXPButton).Name='Bt_PagtoMarcaTodos' Then
+       Begin
+         If Trim(DMSalao.CDS_V_PagtoProfDTA_INI_CALCULO.AsString)<>'' Then
           Begin
-            If ((sPerIni<>DMSalao.CDS_V_PagtoProfDTA_INI_CALCULO.AsString) Or
-                (sPerFim<>DMSalao.CDS_V_PagtoProfDTA_FIM_CALCULO.AsString)) And
-               (sPerIni<>'') Then
-             bPerDif:=True;
+            If DMSalao.CDS_V_PagtoProfINI_ULT_CALCULO.AsString<>DMSalao.CDS_V_PagtoProfDTA_INI_CALCULO.AsString Then
+            Begin
+              If ((sPerIni<>DMSalao.CDS_V_PagtoProfDTA_INI_CALCULO.AsString) Or
+                  (sPerFim<>DMSalao.CDS_V_PagtoProfDTA_FIM_CALCULO.AsString)) And
+                 (sPerIni<>'') Then
+               bPerDif:=True;
 
-            DMSalao.CDS_V_PagtoProfCALCULAR.AsString:='SIM';
-          End; // If DMSalao.CDS_V_PagtoProfINI_ULT_CALCULO.AsString<>DMSalao.CDS_V_PagtoProfDTA_INI_CALCULO.AsString Then
-        End
-       Else
-        Begin
-          DMSalao.CDS_V_PagtoProfCALCULAR.AsString:='NAO';
-        End;
-     End
-    Else
-     Begin
-       DMSalao.CDS_V_PagtoProfCALCULAR.AsString:='NAO';
-     End;
+              DMSalao.CDS_V_PagtoProfCALCULAR.AsString:='SIM';
+            End; // If DMSalao.CDS_V_PagtoProfINI_ULT_CALCULO.AsString<>DMSalao.CDS_V_PagtoProfDTA_INI_CALCULO.AsString Then
+          End
+         Else
+          Begin
+            DMSalao.CDS_V_PagtoProfCALCULAR.AsString:='NAO';
+          End;
+       End
+      Else
+       Begin
+         DMSalao.CDS_V_PagtoProfCALCULAR.AsString:='NAO';
+       End;
+    End; // If (Sender is TJvXPButton) Then
 
     DMSalao.CDS_V_PagtoProf.Post;
 
@@ -14787,67 +14792,69 @@ end;
 
 procedure TFrmSalao.Bt_PagtoVendasSalvaExcelClick(Sender: TObject);
 begin
-
-  If (Sender as TJvXPButton).Name='Bt_ProfPlanoSaudeSalvaExcel' Then
+  If (Sender is TJvXPButton) Then
   Begin
-    If DMSalao.CDS_PlanoSaudeApres.IsEmpty Then
-     Exit;
-
-    ExportDBGridExcel(True, Dbg_ProfPlanoSaudeImportados, FrmSalao);
-  End;
-
-  If (Sender as TJvXPButton).Name='Bt_ProfTecBizSalvaExcel' Then
-  Begin
-    If DMSalao.CDS_TecBizApres.IsEmpty Then
-     Exit;
-
-    ExportDBGridExcel(True, Dbg_ProfTecBizImportados, FrmSalao);
-  End;
-
-  If (Sender as TJvXPButton).Name='Bt_PagtoVendasSalvaExcel' Then
-  Begin
-    If DMSalao.CDS_V_PagtosVendas.IsEmpty Then
-     Exit;
-
-    ExportDBGridExcel(True, Dbg_PagtosVendas, FrmSalao);
-  End;
-
-  If (Sender as TJvXPButton).Name='Bt_PagtoDebCredSalvaExcel' Then
-  Begin
-    If DMSalao.CDS_V_PagtosDebCred.IsEmpty Then
-     Exit;
-
-    ExportDBGridExcel(True, Dbg_PagtosDebCred, FrmSalao);
-  End;
-
-  If (Sender as TJvXPButton).Name='Bt_ProfINSSTXSExcel' Then
-  Begin                            
-    // Contribuição INSS =======================================================
-    If sgINSS_PS='I' Then
+    If (Sender as TJvXPButton).Name='Bt_ProfPlanoSaudeSalvaExcel' Then
     Begin
-      If DMSalao.CDS_V_Inss.IsEmpty Then
+      If DMSalao.CDS_PlanoSaudeApres.IsEmpty Then
        Exit;
 
-      ExportDBGridExcel(True, Dbg_ProfINSS, FrmSalao);
-    End; // If sgINSS_PS='I' Then
+      ExportDBGridExcel(True, Dbg_ProfPlanoSaudeImportados, FrmSalao);
+    End;
 
-    // Taxa Sindicato ==========================================================
-    If sgINSS_PS='S' Then
+    If (Sender as TJvXPButton).Name='Bt_ProfTecBizSalvaExcel' Then
     Begin
-      If DMSalao.CDS_V_TaxaSindicato.IsEmpty Then
+      If DMSalao.CDS_TecBizApres.IsEmpty Then
        Exit;
 
-      ExportDBGridExcel(True, Dbg_ProfTaxaSindicato, FrmSalao);
-    End; // If sgINSS_PS='S' Then
-  End; // If (Sender as TJvXPButton).Name='Bt_ProfINSSTXSExcel' Then
+      ExportDBGridExcel(True, Dbg_ProfTecBizImportados, FrmSalao);
+    End;
 
-  If (Sender as TJvXPButton).Name='Bt_PagtoPlanSalvaExcel' Then
-  Begin
-    If DMSalao.CDS_PagtosPlan.IsEmpty Then
-     Exit;
+    If (Sender as TJvXPButton).Name='Bt_PagtoVendasSalvaExcel' Then
+    Begin
+      If DMSalao.CDS_V_PagtosVendas.IsEmpty Then
+       Exit;
 
-    ExportDBGridExcel(True, Dbg_PagtoPlanilha, FrmSalao);
-  End;
+      ExportDBGridExcel(True, Dbg_PagtosVendas, FrmSalao);
+    End;
+
+    If (Sender as TJvXPButton).Name='Bt_PagtoDebCredSalvaExcel' Then
+    Begin
+      If DMSalao.CDS_V_PagtosDebCred.IsEmpty Then
+       Exit;
+
+      ExportDBGridExcel(True, Dbg_PagtosDebCred, FrmSalao);
+    End;
+
+    If (Sender as TJvXPButton).Name='Bt_ProfINSSTXSExcel' Then
+    Begin
+      // Contribuição INSS =======================================================
+      If sgINSS_PS='I' Then
+      Begin
+        If DMSalao.CDS_V_Inss.IsEmpty Then
+         Exit;
+
+        ExportDBGridExcel(True, Dbg_ProfINSS, FrmSalao);
+      End; // If sgINSS_PS='I' Then
+
+      // Taxa Sindicato ==========================================================
+      If sgINSS_PS='S' Then
+      Begin
+        If DMSalao.CDS_V_TaxaSindicato.IsEmpty Then
+         Exit;
+
+        ExportDBGridExcel(True, Dbg_ProfTaxaSindicato, FrmSalao);
+      End; // If sgINSS_PS='S' Then
+    End; // If (Sender as TJvXPButton).Name='Bt_ProfINSSTXSExcel' Then
+
+    If (Sender as TJvXPButton).Name='Bt_PagtoPlanSalvaExcel' Then
+    Begin
+      If DMSalao.CDS_PagtosPlan.IsEmpty Then
+       Exit;
+
+      ExportDBGridExcel(True, Dbg_PagtoPlanilha, FrmSalao);
+    End;
+  End; // If (Sender is TJvXPButton) Then
 end;
 
 procedure TFrmSalao.Bt_PagtoVendasVoltarClick(Sender: TObject);
@@ -14877,66 +14884,69 @@ end;
 procedure TFrmSalao.Bt_PagtoVendasClipboardClick(Sender: TObject);
 begin
 
-  If (Sender as TJvXPButton).Name='Bt_ProfPlanoSaudeClipboard' Then
+  If (Sender is TJvXPButton) Then
   Begin
-    If DMSalao.CDS_PlanoSaudeApres.IsEmpty Then
-     Exit;
-
-    DBGridClipboard(Dbg_ProfPlanoSaudeImportados);
-  End;
-
-  If (Sender as TJvXPButton).Name='Bt_ProfTecBizClipboard' Then
-  Begin
-    If DMSalao.CDS_TecBizApres.IsEmpty Then
-     Exit;
-
-    DBGridClipboard(Dbg_ProfTecBizImportados);
-  End;
-
-  If (Sender as TJvXPButton).Name='Bt_PagtoVendasClipboard' Then
-  Begin
-    If DMSalao.CDS_V_PagtosVendas.IsEmpty Then
-     Exit;
-
-    DBGridClipboard(Dbg_PagtosVendas);
-  End;
-
-  If (Sender as TJvXPButton).Name='Bt_PagtoDebCredClipboard' Then
-  Begin
-    If DMSalao.CDS_V_PagtosDebCred.IsEmpty Then
-     Exit;
-
-    DBGridClipboard(Dbg_PagtosDebCred);
-  End;
-
-  If (Sender as TJvXPButton).Name='Bt_ProfINSSTXSClipboard' Then
-  Begin
-    // Contribuição INSS =======================================================
-    If sgINSS_PS='I' Then
+    If (Sender as TJvXPButton).Name='Bt_ProfPlanoSaudeClipboard' Then
     Begin
-      If DMSalao.CDS_V_Inss.IsEmpty Then
+      If DMSalao.CDS_PlanoSaudeApres.IsEmpty Then
        Exit;
 
-      DBGridClipboard(Dbg_ProfINSS);
-    End; // If sgINSS_PS='I' Then
+      DBGridClipboard(Dbg_ProfPlanoSaudeImportados);
+    End;
 
-    // Taxa Sindicato ==========================================================
-    If sgINSS_PS='S' Then
+    If (Sender as TJvXPButton).Name='Bt_ProfTecBizClipboard' Then
     Begin
-      If DMSalao.CDS_V_TaxaSindicato.IsEmpty Then
+      If DMSalao.CDS_TecBizApres.IsEmpty Then
        Exit;
 
-      DBGridClipboard(Dbg_ProfTaxaSindicato);
-    End; // If sgINSS_PS='S' Then
-  End; // If (Sender as TJvXPButton).Name='Bt_INSS_PSClipboard' Then
+      DBGridClipboard(Dbg_ProfTecBizImportados);
+    End;
 
-  If (Sender as TJvXPButton).Name='Bt_PagtoPlanClipboard' Then
-  Begin
-    If DMSalao.CDS_PagtosPlan.IsEmpty Then
-     Exit;
+    If (Sender as TJvXPButton).Name='Bt_PagtoVendasClipboard' Then
+    Begin
+      If DMSalao.CDS_V_PagtosVendas.IsEmpty Then
+       Exit;
 
-    DBGridClipboard(Dbg_PagtoPlanilha);
-  End;
+      DBGridClipboard(Dbg_PagtosVendas);
+    End;
+
+    If (Sender as TJvXPButton).Name='Bt_PagtoDebCredClipboard' Then
+    Begin
+      If DMSalao.CDS_V_PagtosDebCred.IsEmpty Then
+       Exit;
+
+      DBGridClipboard(Dbg_PagtosDebCred);
+    End;
+
+    If (Sender as TJvXPButton).Name='Bt_ProfINSSTXSClipboard' Then
+    Begin
+      // Contribuição INSS =======================================================
+      If sgINSS_PS='I' Then
+      Begin
+        If DMSalao.CDS_V_Inss.IsEmpty Then
+         Exit;
+
+        DBGridClipboard(Dbg_ProfINSS);
+      End; // If sgINSS_PS='I' Then
+
+      // Taxa Sindicato ==========================================================
+      If sgINSS_PS='S' Then
+      Begin
+        If DMSalao.CDS_V_TaxaSindicato.IsEmpty Then
+         Exit;
+
+        DBGridClipboard(Dbg_ProfTaxaSindicato);
+      End; // If sgINSS_PS='S' Then
+    End; // If (Sender as TJvXPButton).Name='Bt_INSS_PSClipboard' Then
+
+    If (Sender as TJvXPButton).Name='Bt_PagtoPlanClipboard' Then
+    Begin
+      If DMSalao.CDS_PagtosPlan.IsEmpty Then
+       Exit;
+
+      DBGridClipboard(Dbg_PagtoPlanilha);
+    End;
+  End; // If (Sender is TJvXPButton) Then
 end;
 
 procedure TFrmSalao.Rb_PagtoVendasSinteticoClick(Sender: TObject);
@@ -15352,27 +15362,30 @@ end;
 procedure TFrmSalao.EdtINSS_PSCodLojaChange(Sender: TObject);
 begin
   // Usado em Outros TCurrencyEdit
-  If Trim((Sender as TCurrencyEdit).Name)='EdtINSS_PSCodLoja' Then
-   EdtINSS_PSDesLoja.Clear;
-
-  If Trim((Sender as TCurrencyEdit).Name)='EdtBenefCodLoja' Then
-   EdtBenefDesLoja.Clear;
-
-  If Trim((Sender as TCurrencyEdit).Name)='EdtBenefManutCodLoja' Then
+  If (Sender is TCurrencyEdit) Then
   Begin
-    BeneficiosInicializaComponentes;
+    If Trim((Sender as TCurrencyEdit).Name)='EdtINSS_PSCodLoja' Then
+     EdtINSS_PSDesLoja.Clear;
 
-    EdtBenefManutDesLoja.Clear;
-    EdtBenefManutCodProf.Clear;
-    EdtBenefManutDesProf.Clear;
-  End;
+    If Trim((Sender as TCurrencyEdit).Name)='EdtBenefCodLoja' Then
+     EdtBenefDesLoja.Clear;
 
-  If Trim((Sender as TCurrencyEdit).Name)='EdtBenefManutCodProf' Then
-  Begin
-    BeneficiosInicializaComponentes;
+    If Trim((Sender as TCurrencyEdit).Name)='EdtBenefManutCodLoja' Then
+    Begin
+      BeneficiosInicializaComponentes;
 
-    EdtBenefManutDesProf.Clear;
-  End;
+      EdtBenefManutDesLoja.Clear;
+      EdtBenefManutCodProf.Clear;
+      EdtBenefManutDesProf.Clear;
+    End;
+
+    If Trim((Sender as TCurrencyEdit).Name)='EdtBenefManutCodProf' Then
+    Begin
+      BeneficiosInicializaComponentes;
+
+      EdtBenefManutDesProf.Clear;
+    End;
+  End; // If (Sender is TCurrencyEdit) Then
 
   FechaTudoSalao;
 
@@ -17220,12 +17233,15 @@ Var
 begin
   Dbg_PlanoSaude.SetFocus;
 
-  If Trim((Sender as TJvXPButton).Caption)='Novo' Then
-   sDML:='N'
-  Else If Trim((Sender as TJvXPButton).Caption)='Alterar' Then
-   sDML:='A'
-  Else
-   Exit;
+  If (Sender is TJvXPButton) Then
+  Begin
+    If Trim((Sender as TJvXPButton).Caption)='Novo' Then
+     sDML:='N'
+    Else If Trim((Sender as TJvXPButton).Caption)='Alterar' Then
+     sDML:='A'
+    Else
+     Exit;
+  End; // If (Sender is TJvXPButton) Then
 
   If (DMSalao.CDS_V_ManutPlSaude.IsEmpty) and (sDML='A') Then
    Exit;
@@ -20078,11 +20094,14 @@ begin
 
     IBQ_Loja.SQL.Clear;
 
-    If (Sender as TJvXPButton).Name='Bt_PagtoMovtosAnalitica' Then
-     IBQ_Loja.SQL.Add(MySqlA);
+    If (Sender is TJvXPButton) Then
+    Begin
+      If (Sender as TJvXPButton).Name='Bt_PagtoMovtosAnalitica' Then
+       IBQ_Loja.SQL.Add(MySqlA);
 
-    If (Sender as TJvXPButton).Name='Bt_PagtoMovtosSintetica' Then
-     IBQ_Loja.SQL.Add(MySqlS);
+      If (Sender as TJvXPButton).Name='Bt_PagtoMovtosSintetica' Then
+       IBQ_Loja.SQL.Add(MySqlS);
+    End; // If (Sender is TJvXPButton) Then
 
     IBQ_Loja.Params.ParamByName('Dta1').AsDate:=StrToDate(sgDtaI);
     IBQ_Loja.Params.ParamByName('Dta2').AsDate:=StrToDate(sgDtaF);

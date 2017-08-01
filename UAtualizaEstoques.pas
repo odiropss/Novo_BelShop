@@ -28,6 +28,7 @@ type
 
     Procedure AtualizaEstoquesMovtosLinx(sCodLinx, sCodBelShop, sDtaInicioLinx: String);
 
+    Procedure AcertaEstoqueLoja(sCodLoja, sCodLinx: String);
     // Odir ====================================================================
   private
     { Private declarations }
@@ -53,6 +54,100 @@ uses UDMAtualizaEstoques, UDMConexoes, DK_Procs1, DB;
 {$R *.dfm}
 
 // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Procedure TFrmAtualizaEstoques.AcertaEstoqueLoja(sCodLoja, sCodLinx: String);
+Var
+  MySql: String;
+Begin
+  // Verifica se Transação esta Ativa
+  If DMAtualizaEstoques.SQLC.InTransaction Then
+   DMAtualizaEstoques.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMAtualizaEstoques.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    // Insere Produtos do CD na Loja ===========================================
+    MySql:=' INSERT INTO ESTOQUE'+
+           ' SELECT'+
+           QuotedStr(sCodLoja)+' CODFILIAL,'+
+           ' e.CODPRODUTO,'+
+           ' 0.0000 SALDOATUAL,'+
+           ' 0.0000 PEDIDOPENDENTE,'+
+           ' 0 ZONAENDERECO,'+
+           ' ''000'' CORREDOR,'+
+           ' ''000'' PRATELEIRA,'+
+           ' ''0000'' GAVETA,'+
+           ' 0.00 CUSMEDVALOR,'+
+           ' 0.0000 CUSTOMEDIO,'+
+           ' 0.0000 LASTPRECOCOMPRA,'+
+           ' 0.0000 LASTCUSTOMEDIO,'+
+           ' 0.0000 ESTOQUEIDEAL,'+
+           ' 0.0000 ESTOQUEMAXIMO,'+
+           ' e.DATAALTERACADASTRO,'+
+           ' e.DATAALTERAESTOQUE,'+
+           ' e.DATAALTERAESTOQUE_PED,'+
+           ' e.PRINCIPALFOR,'+
+           ' 0.0000 SALDO_FINAL_SIDICOM,'+
+           ' e.DTA_ATUALIZACAO,'+
+           ' e.HRA_ATUALIZACAO'+
+
+           ' FROM ESTOQUE e'+
+
+           ' WHERE e.codfilial=''99'''+
+           ' AND NOT EXISTS (SELECT 1'+
+           '                 FROM ESTOQUE e9'+
+           '                 WHERE e9.codfilial='+QuotedStr(sCodLoja)+
+           '                 AND  e9.codproduto=e.codproduto)';
+    DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
+    // Exclui Produtos a mais no Cadastro em Relação ao CD =====================
+    MySql:=' DELETE FROM ESTOQUE e'+
+           ' WHERE e.codfilial='+QuotedStr(sCodLoja)+
+           ' AND NOT EXISTS (SELECT 1'+
+           '                 FROM ESTOQUE e9'+
+           '                 WHERE e9.codfilial=''99'''+
+           '                 AND   e9.codproduto=e.codproduto)';
+    DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMAtualizaEstoques.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMAtualizaEstoques.SQLC.Rollback(TD);
+
+      TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
+      TD.IsolationLevel:=xilREADCOMMITTED;
+      DMAtualizaEstoques.SQLC.StartTransaction(TD);
+
+      MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (COD_LOJA, COD_LINX, DTA_PROC, OBS)'+ // TIPO,
+             ' VALUES ('+
+             QuotedStr(sCodLoja)+', '+ // COD_LOJA
+             sCodLinx+', '+            // COD_LINX
+             ' CURRENT_TIMESTAMP,'+    // DTA_PROC
+//             QuotedStr('LsI')+', '+    // Linx Sem Inventário
+             QuotedStr(MySql)+')'+     // OBS
+             'MATCHING (COD_LOJA)';
+      DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
+      DMAtualizaEstoques.SQLC.Commit(TD); // AcertaEstoqueLoja
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+      Exit;
+    End; // on e : Exception do
+  End; // Try da Transação
+end;
+
 Procedure TFrmAtualizaEstoques.AtualizaEstoquesMovtosLinx(sCodLinx, sCodBelShop, sDtaInicioLinx: String);
 Var
   MySql: String;
@@ -312,7 +407,7 @@ Begin
     DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
     // Atualiza Transacao ======================================================
-    DMAtualizaEstoques.SQLC.Commit(TD);
+    DMAtualizaEstoques.SQLC.Commit(TD); // AtualizaEstoquesMovtosLinx
 
     DateSeparator:='/';
     DecimalSeparator:=',';
@@ -320,7 +415,7 @@ Begin
     on e : Exception do
     Begin
       // Abandona Transacao ====================================================
-      DMAtualizaEstoques.SQLC.Rollback(TD);
+      DMAtualizaEstoques.SQLC.Rollback(TD); // AtualizaEstoquesMovtosLinx
 
       TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
       TD.IsolationLevel:=xilREADCOMMITTED;
@@ -336,7 +431,7 @@ Begin
              'MATCHING (COD_LOJA)';
       DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
-      DMAtualizaEstoques.SQLC.Commit(TD);
+      DMAtualizaEstoques.SQLC.Commit(TD); // AtualizaEstoquesMovtosLinx
 
       DateSeparator:='/';
       DecimalSeparator:=',';
@@ -553,7 +648,7 @@ begin
 
     sCodEmpresa   :=DMAtualizaEstoques.CDS_EmpProcessaCOD_FILIAL.AsString;
 
-    // Odir Roda Uma Loja Linx
+// Odir Roda Uma Loja Linx
 //    iCodLinx      :=15;
 //    sDtaLinx      :='17/03/2017';
 //    sDtaInventLinx:='09/05/2017';
@@ -851,14 +946,14 @@ begin
                    'MATCHING (COD_LOJA)';
             DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
-            DMAtualizaEstoques.SQLC.Commit(TD);
+            DMAtualizaEstoques.SQLC.Commit(TD); // Linx Com Inventário
 
             DateSeparator:='/';
             DecimalSeparator:=',';
           Except
             on e : Exception do
             Begin
-              DMAtualizaEstoques.SQLC.Rollback(TD);
+              DMAtualizaEstoques.SQLC.Rollback(TD); // Linx Com Inventário
               DMAtualizaEstoques.IBQ_EstoqueLoja.Close;
 
               TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
@@ -875,7 +970,7 @@ begin
                      'MATCHING (COD_LOJA)';
               DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
-              DMAtualizaEstoques.SQLC.Commit(TD);
+              DMAtualizaEstoques.SQLC.Commit(TD); // Linx Com Inventário
 
               DateSeparator:='/';
               DecimalSeparator:=',';
@@ -896,7 +991,10 @@ begin
       End; // If bSiga Then // Entra no Processamento ==========================
     End; // If Not bSoAtualMovtoLinx Then
 
-//    Application.Terminate;
+    // Igual Todos os Produtos de Todas a Lojas com o CD =======================
+    If sCodEmpresa<>'99' Then
+     AcertaEstoqueLoja(sCodEmpresa, IntToStr(iCodLinx));
+
     DMAtualizaEstoques.CDS_EmpProcessa.Next;
   End; // While Not DMAtualizaEstoques.CDS_EmpProcessa.Eof do
   DMAtualizaEstoques.CDS_EmpProcessa.Close;

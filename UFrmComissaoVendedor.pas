@@ -1294,42 +1294,45 @@ begin
   //============================================================================
   // Tratamento Grid Dbg_Aplicacao =============================================
   //============================================================================
-  If (Sender as TDBGrid).Name='Dbg_Aplicacao' Then
+  If (Sender is TDBGrid) Then
   Begin
-    // Delete Aplicação ---------------------------------------------
-    If (Key=VK_Delete) And (Not DMComissaoVendedor.CDS_V_Aplicacao.IsEmpty) Then
+    If (Sender as TDBGrid).Name='Dbg_Aplicacao' Then
     Begin
-      If Trim(DMComissaoVendedor.CDS_V_AplicacaoCOD_APLICACAO.AsString)='0006' Then
+      // Delete Aplicação ---------------------------------------------
+      If (Key=VK_Delete) And (Not DMComissaoVendedor.CDS_V_Aplicacao.IsEmpty) Then
       Begin
-        msg('Impossível Excluir a Aplicação'+cr+cr+Trim(DMComissaoVendedor.CDS_V_AplicacaoDES_APLICACAO.AsString),'A');
-        Exit;
-      End;
+        If Trim(DMComissaoVendedor.CDS_V_AplicacaoCOD_APLICACAO.AsString)='0006' Then
+        Begin
+          msg('Impossível Excluir a Aplicação'+cr+cr+Trim(DMComissaoVendedor.CDS_V_AplicacaoDES_APLICACAO.AsString),'A');
+          Exit;
+        End;
 
-      If msg('Deseja Realmente EXCLUIR a'+cr+'Aplicação SELECIONADA ??','C')=2 Then
-       Exit;
+        If msg('Deseja Realmente EXCLUIR a'+cr+'Aplicação SELECIONADA ??','C')=2 Then
+         Exit;
 
-      DMComissaoVendedor.CDS_V_Aplicacao.Delete;
-    End; // If (Key=VK_Delete) And (Not DMComissaoVendedor.CDS_V_Aplicacao.IsEmpty) Then
+        DMComissaoVendedor.CDS_V_Aplicacao.Delete;
+      End; // If (Key=VK_Delete) And (Not DMComissaoVendedor.CDS_V_Aplicacao.IsEmpty) Then
 
-    Dbg_Aplicacao.SetFocus;
-  End; // If (Sender as TDBGrid).Name='Dbg_Aplicacao' Then
+      Dbg_Aplicacao.SetFocus;
+    End; // If (Sender as TDBGrid).Name='Dbg_Aplicacao' Then
 
-  //============================================================================
-  // Tratamento Grid Dbg_FamiliaPrecos =========================================
-  //============================================================================
-  If (Sender as TDBGrid).Name='Dbg_FamiliaPrecos' Then
-  Begin
-    // Delete Familia de Preço --------------------------------------
-    If (Key=VK_Delete) And (Not DMComissaoVendedor.CDS_V_FamiliaPrecos.IsEmpty) Then
+    //============================================================================
+    // Tratamento Grid Dbg_FamiliaPrecos =========================================
+    //============================================================================
+    If (Sender as TDBGrid).Name='Dbg_FamiliaPrecos' Then
     Begin
-      If msg('Deseja Realmente EXCLUIR o'+cr+'Agrupamento de Preço'+cr+'SELECIONADO ??','C')=2 Then
-       Exit;
+      // Delete Familia de Preço --------------------------------------
+      If (Key=VK_Delete) And (Not DMComissaoVendedor.CDS_V_FamiliaPrecos.IsEmpty) Then
+      Begin
+        If msg('Deseja Realmente EXCLUIR o'+cr+'Agrupamento de Preço'+cr+'SELECIONADO ??','C')=2 Then
+         Exit;
 
-      DMComissaoVendedor.CDS_V_FamiliaPrecos.Delete;
-    End; // If (Key=VK_Delete) And (Not DMComissaoVendedor.CDS_V_FamiliaPrecos.IsEmpty) Then
+        DMComissaoVendedor.CDS_V_FamiliaPrecos.Delete;
+      End; // If (Key=VK_Delete) And (Not DMComissaoVendedor.CDS_V_FamiliaPrecos.IsEmpty) Then
 
-    Dbg_FamiliaPrecos.SetFocus;
-  End; // If (Sender as TDBGrid).Name='Dbg_FamiliaPrecos' Then
+      Dbg_FamiliaPrecos.SetFocus;
+    End; // If (Sender as TDBGrid).Name='Dbg_FamiliaPrecos' Then
+  End; // If (Sender is TDBGrid) Then
 
 end;
 

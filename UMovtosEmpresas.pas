@@ -1615,6 +1615,10 @@ Begin
     End; // While Not DMMovtosEmpresas.IBQ_ProdutoMPMS.Eof do
     DMMovtosEmpresas.IBQ_ProdutoMPMS.Close;
 
+    MySql:=' DELETE FROM PRODUTO pr'+
+           ' WHERE pr.dta_atualizacao<>CURRENT_DATE';
+    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
     MySql:=' DELETE FROM movtos_empresas m'+
            ' Where m.Ind_Tipo=''OK'''+
            ' And m.NomeFornecedor=''Produtos''';

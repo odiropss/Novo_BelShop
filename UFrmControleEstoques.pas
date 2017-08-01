@@ -1099,19 +1099,22 @@ begin
   If DMVirtual.CDS_V_EstoqueLojas.IsEmpty Then
    Exit;
 
-  If Trim((Sender as TJvXPButton).Name)='Bt_ContEstProdutos' Then
+  If (Sender is TJvXPButton) Then
   Begin
-    PC_ContEstPrincipal.ActivePage:=Ts_ContEstProdutos;
-    PC_ContEstPrincipalChange(Self);
-    Exit;
-  End;
+    If Trim((Sender as TJvXPButton).Name)='Bt_ContEstProdutos' Then
+    Begin
+      PC_ContEstPrincipal.ActivePage:=Ts_ContEstProdutos;
+      PC_ContEstPrincipalChange(Self);
+      Exit;
+    End;
 
-  If Trim((Sender as TJvXPButton).Name)='Bt_ContEstFornecedores' Then
-  Begin
-    PC_ContEstPrincipal.ActivePage:=Ts_ContEstFornecedores;
-    PC_ContEstPrincipalChange(Self);
-    Exit;
-  End;
+    If Trim((Sender as TJvXPButton).Name)='Bt_ContEstFornecedores' Then
+    Begin
+      PC_ContEstPrincipal.ActivePage:=Ts_ContEstFornecedores;
+      PC_ContEstPrincipalChange(Self);
+      Exit;
+    End;
+  End; // If (Sender is TJvXPButton) Then
 end;
 
 end.

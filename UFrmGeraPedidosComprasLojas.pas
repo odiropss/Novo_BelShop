@@ -6581,21 +6581,24 @@ begin
   AcertaCkb_SN(Ckb_ParamLjCxEmbarque);
 
   Try
-    If Trim((Sender as TJvCheckBox).Name)='Ckb_ParamLjCxEmbarque' Then
+    If (Sender is TJvCheckBox) Then
     Begin
-      If Ckb_ParamLjCxEmbarque.Checked Then
-       Begin
-         EdtParamLjPerCxEmbarque.Enabled:=True;
-         EdtParamLjPerCxEmbarque.Value:=cgPerPadrao;
+      If Trim((Sender as TJvCheckBox).Name)='Ckb_ParamLjCxEmbarque' Then
+      Begin
+        If Ckb_ParamLjCxEmbarque.Checked Then
+         Begin
+           EdtParamLjPerCxEmbarque.Enabled:=True;
+           EdtParamLjPerCxEmbarque.Value:=cgPerPadrao;
 
-         EdtParamLjPerCxEmbarque.SetFocus;
-       End
-      Else // If Ckb_ParamLjCxEmbarque.Checked Then
-       Begin
-         EdtParamLjPerCxEmbarque.Enabled:=False;
-         EdtParamLjPerCxEmbarque.Value:=0;
-       End; // If Ckb_ParamLjCxEmbarque.Checked Then
-    End; // If Trim((Sender as TJvCheckBox).Name)='Ckb_ParamLjCxEmbarque' Then
+           EdtParamLjPerCxEmbarque.SetFocus;
+         End
+        Else // If Ckb_ParamLjCxEmbarque.Checked Then
+         Begin
+           EdtParamLjPerCxEmbarque.Enabled:=False;
+           EdtParamLjPerCxEmbarque.Value:=0;
+         End; // If Ckb_ParamLjCxEmbarque.Checked Then
+      End; // If Trim((Sender as TJvCheckBox).Name)='Ckb_ParamLjCxEmbarque' Then
+    End; // If (Sender is TJvCheckBox) Then
   Except
   End;
 end;
@@ -7572,12 +7575,15 @@ begin
   EdtParamLjCadaDia.Visible:=True;
   Lb_Dias.Visible:=True;
 
-  If Trim((Sender as TRadioButton).Name)='Rb_ParamLjTodosDias' Then
+  If (Sender is TRadioButton) Then
   Begin
-    EdtParamLjCadaDia.Enabled:=False;
-    EdtParamLjCadaDia.Visible:=False;
-    Lb_Dias.Visible:=False;
-  End;
+    If Trim((Sender as TRadioButton).Name)='Rb_ParamLjTodosDias' Then
+    Begin
+      EdtParamLjCadaDia.Enabled:=False;
+      EdtParamLjCadaDia.Visible:=False;
+      Lb_Dias.Visible:=False;
+    End;
+  End; // If (Sender is TRadioButton) Then
 
   AcertaRb_Style(Rb_ParamLjTodosDias);
   AcertaRb_Style(Rb_ParamLjACada);
@@ -7595,7 +7601,9 @@ begin
      (Not Ckb_ParamLjSemana_Sex.Checked) Then
   Begin
     msg('Ao Memos Um Dia Deverá estar Marcado !!','A');
-    (Sender as TCheckBox).Checked:=True;
+
+    If (Sender is TCheckBox) Then
+     (Sender as TCheckBox).Checked:=True;
   End;
   
   AcertaCkb_Style(Ckb_ParamLjSemana_Seg);
@@ -7628,7 +7636,9 @@ begin
      (Not Ckb_ParamLjMeses_Nov.Checked) And (Not Ckb_ParamLjMeses_Dez.Checked) Then
   Begin
     msg('Ao Memos Um Mês Deverá estar Marcado !!','A');
-    (Sender as TCheckBox).Checked:=True;
+
+    If (Sender is TCheckBox) Then
+     (Sender as TCheckBox).Checked:=True;
   End;
 
   AcertaCkb_Style(Ckb_ParamLjMeses_Jan);
@@ -7765,12 +7775,14 @@ begin
 
     DMBelShop.CDS_EmpBusca.Edit;
 
-    If (Sender as TJvXPButton).Name='Bt_ParamLjDiasFornMarcaTodos' Then
-     DMBelShop.CDS_EmpBusca.FieldByName('PROC').AsString:='SIM';
+    If (Sender is TJvXPButton) Then
+    Begin
+      If (Sender as TJvXPButton).Name='Bt_ParamLjDiasFornMarcaTodos' Then
+       DMBelShop.CDS_EmpBusca.FieldByName('PROC').AsString:='SIM';
 
-    If (Sender as TJvXPButton).Name='Bt_ParamLjDiasFornDesMarcaTodos' Then
-     DMBelShop.CDS_EmpBusca.FieldByName('PROC').AsString:='NAO';
-
+      If (Sender as TJvXPButton).Name='Bt_ParamLjDiasFornDesMarcaTodos' Then
+       DMBelShop.CDS_EmpBusca.FieldByName('PROC').AsString:='NAO';
+    End; // If (Sender is TJvXPButton) Then
     DMBelShop.CDS_EmpBusca.Post;
 
     DMBelShop.CDS_EmpBusca.Next;

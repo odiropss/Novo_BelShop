@@ -5177,7 +5177,8 @@ end;
 
 procedure TFrmSolicitacoes.EdtValesCodLojaEnter(Sender: TObject);
 begin
-  (Sender as TCurrencyEdit).Color:=clMoneyGreen
+  If (Sender is TCurrencyEdit) Then
+   (Sender as TCurrencyEdit).Color:=clMoneyGreen
 end;
 
 procedure TFrmSolicitacoes.PC_ParametrosChange(Sender: TObject);
@@ -7030,27 +7031,30 @@ procedure TFrmSolicitacoes.Bt_QualquerCoisaSalvarClick(Sender: TObject);
 begin
   // Usado por Outros Botoes ===================================================
 
-  If Trim((Sender as TJvXPButton).Name)='Bt_SalaoRelImprime' Then
+  If (Sender is TJvXPButton) Then
   Begin
-    If Trim(Pan_SalaoRelatorios.Caption)='' Then
+    If Trim((Sender as TJvXPButton).Name)='Bt_SalaoRelImprime' Then
     Begin
-      msg('Favor Selecionar o Relatório !!','A');
-      OutLook_SalaoRelatorios.SetFocus;
-      Exit;
-    End;
-
-    If EdtSalaoRelCodLoja.Value=0 Then
-    Begin
-      If msg('Deseja Relatório de Todas as Lojas ??','C')=2 Then
+      If Trim(Pan_SalaoRelatorios.Caption)='' Then
       Begin
-        EdtSalaoRelCodLoja.SetFocus;
+        msg('Favor Selecionar o Relatório !!','A');
+        OutLook_SalaoRelatorios.SetFocus;
         Exit;
       End;
-    End;
 
-    SalaoRelatorios;
-    Exit;
-  End; // If Trim((Sender as TJvXPButton).Name)='Bt_SalaoRelImprime' Then
+      If EdtSalaoRelCodLoja.Value=0 Then
+      Begin
+        If msg('Deseja Relatório de Todas as Lojas ??','C')=2 Then
+        Begin
+          EdtSalaoRelCodLoja.SetFocus;
+          Exit;
+        End;
+      End;
+
+      SalaoRelatorios;
+      Exit;
+    End; // If Trim((Sender as TJvXPButton).Name)='Bt_SalaoRelImprime' Then
+  End; // If (Sender is TJvXPButton) Then
 
   bgProcessar:=True;
   Close;
@@ -7060,11 +7064,14 @@ procedure TFrmSolicitacoes.Bt_QualquerCoisaVoltarClick(Sender: TObject);
 begin
   // Usado por Outros Botoes ===================================================
 
-  If Trim((Sender as TJvXPButton).Name)='Bt_ExcelVoltar' Then
+  If (Sender is TJvXPButton) Then
   Begin
-    ADOT_Dcto.Close;
-    ADOC_Excel.Connected:=False;
-  End; // If Trim((Sender as TJvXPButton).Name)='Bt_ExcelVoltar' Then
+    If Trim((Sender as TJvXPButton).Name)='Bt_ExcelVoltar' Then
+    Begin
+      ADOT_Dcto.Close;
+      ADOC_Excel.Connected:=False;
+    End; // If Trim((Sender as TJvXPButton).Name)='Bt_ExcelVoltar' Then
+  End; // If (Sender is TJvXPButton) Then
 
   bgProcessar:=False;
   Close;

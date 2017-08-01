@@ -731,7 +731,7 @@ begin
       Application.OnMessage := ApplicationEvents1Message;
       ApplicationEvents1.Activate;
     End;
-  End; //   If (Sender is TDBGrid) Then
+  End; // If (Sender is TDBGrid) Then
 
   Dbg_Prioridades.Color:=clMoneyGreen;
   Pan_PrioridadesInforma.Color:=clMoneyGreen;

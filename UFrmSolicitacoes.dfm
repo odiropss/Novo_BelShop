@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 432
-    ActivePage = Ts_MargemLucroFormulas
+    ActivePage = Ts_ReposLojasDigita
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -3019,7 +3019,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Top = 0
         Width = 625
         Height = 369
-        ActivePage = Ts_ParamLojaReposicoes
+        ActivePage = Ts_ParamCurvaABC
         Align = alClient
         MultiLine = True
         Style = tsButtons
@@ -9974,8 +9974,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
     end
   end
   object PainelApresExp: TPanel
-    Left = 537
-    Top = 28
+    Left = 369
+    Top = 292
     Width = 89
     Height = 33
     BevelInner = bvRaised

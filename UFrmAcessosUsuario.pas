@@ -1155,19 +1155,22 @@ begin
   iRecNo:=DMSidicom.CDS_UsuaSidicom.RecNo;
   
   Dbg_SidicomUsuarios.SetFocus;
-  If Trim((Sender as TJvXPButton).Name)='Bt_SidicomPermissoesDesMarcar' Then
+  If (Sender is TJvXPButton) Then
   Begin
-    sMarcar:='DM';
-    if msg('Deseja Realmente DESMARCAR'+cr+'Todos os Usuários ??','C')=2 Then
-     Exit;
-  End;
+    If Trim((Sender as TJvXPButton).Name)='Bt_SidicomPermissoesDesMarcar' Then
+    Begin
+      sMarcar:='DM';
+      if msg('Deseja Realmente DESMARCAR'+cr+'Todos os Usuários ??','C')=2 Then
+       Exit;
+    End;
 
-  If Trim((Sender as TJvXPButton).Name)='Bt_SidicomPermissoesMarcar' Then
-  Begin
-    sMarcar:='MA';
-    if msg('Deseja Relamente MARCAR'+cr+'Todos os Usuários ??','C')=2 Then
-     Exit;
-  End;
+    If Trim((Sender as TJvXPButton).Name)='Bt_SidicomPermissoesMarcar' Then
+    Begin
+      sMarcar:='MA';
+      if msg('Deseja Relamente MARCAR'+cr+'Todos os Usuários ??','C')=2 Then
+       Exit;
+    End;
+  End; // If (Sender is TJvXPButton) Then
 
   DMSidicom.CDS_UsuaSidicom.First;
   DMSidicom.CDS_UsuaSidicom.DisableControls;

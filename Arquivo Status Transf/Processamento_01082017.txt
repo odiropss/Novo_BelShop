@@ -1,0 +1,17 @@
+01/999 - Fornecedores que Não São Processados - 10:17:23
+02/999 - Busca Lojas do Dia - 10:17:23
+03/999 - Busca Percentuais de Cortes das Curvas - 10:17:24
+04/999 - Zera Sequencia para Novo Docto - 10:17:24
+05/999 - Cria Memo para Codigos de Lojas - 10:17:24
+06/999 - Calcula Dias Uteis no Período - 10:17:24
+07/999 - Conecta CD - 10:17:24
+08/999 - Busca Produtos com Saldo no CD - 10:17:25
+09/999 - Insere Produtos do CD - 10:17:32
+10/999 - Busca Produtos nas Lojas com Necessidade de Compras - INICIO - 10:17:32
+10.01/999 - Busca Produtos do CD - 10:17:32
+10.02/999 - Abre ClientDataSet para Inclusao de Produtos da Loja - 10:17:32
+10.03/999 - PROCESSAMENTO DAS LOJAS - INICIO - 10:17:32
+10.03.01/999 - Monta Curvas da Loja - 04 - 10:17:34
+10.03.02/999 - Busca Produtos das Curvas da Loja - 04 - 10:22:25
+10.03.03/999 - Conecta Loja - 04 - 10:22:27
+10.04/999 - PROCESSA PRODUTOS SELECIONADOS DA LOJA - 04 - INICIO - 10:22:38

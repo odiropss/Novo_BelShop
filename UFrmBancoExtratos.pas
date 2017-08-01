@@ -9337,7 +9337,9 @@ begin
   LiberaMenu(False);
 
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  if (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBancoExtratos, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   Pan_Opcoes.Visible:=True;
@@ -9901,7 +9903,9 @@ begin
   LiberaMenu(False);
 
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   BloqueioBotoes(FrmBancoExtratos, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
   DMConciliacao.FechaTudoConciliacao;
@@ -10100,7 +10104,9 @@ begin
   LiberaMenu(False);
 
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
   Bt_ConcConciliar.Tag:=1; // Libera para Controle de Botoes
   Bt_ConcConciliar.Caption:='Conciliar';
   BloqueioBotoes(FrmBancoExtratos, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
@@ -10141,7 +10147,9 @@ begin
   Lb_Obs.Caption:='Observações...';
 
   // Executa Permissões de Botões ==============================================
-  igTagPermissao:=(Sender as TMenuItem).Tag;
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+   
   Bt_ConcConciliar.Tag:=0; // Retira para Controle de Botoes
   BloqueioBotoes(FrmBancoExtratos, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 

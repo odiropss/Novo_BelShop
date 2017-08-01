@@ -2043,33 +2043,36 @@ end;
 
 procedure TFrmFluxoFornecedor.Bt_FluFornFecharClick(Sender: TObject);
 begin
-  If (Sender as TJvXPButton).Caption='Voltar' Then
+  If (Sender is TJvXPButton) Then
   Begin
-    Ts_FluxFornApres.TabVisible :=True;
-    Ts_FluxFornCaixa.TabVisible :=True;
-    Ts_FluxFornLanctos.TabVisible:=False;
-    Ts_FluxFornGraficos.TabVisible:=False;
+    If (Sender as TJvXPButton).Caption='Voltar' Then
+    Begin
+      Ts_FluxFornApres.TabVisible :=True;
+      Ts_FluxFornCaixa.TabVisible :=True;
+      Ts_FluxFornLanctos.TabVisible:=False;
+      Ts_FluxFornGraficos.TabVisible:=False;
 
-    PC_Principal.TabIndex:=igTabSheet;
-    PC_PrincipalChange(Self);
+      PC_Principal.TabIndex:=igTabSheet;
+      PC_PrincipalChange(Self);
 
-    igTabSheet:=0;
-    sgDMLMovto:='';
-    sgDtaDoc  :='';
+      igTabSheet:=0;
+      sgDMLMovto:='';
+      sgDtaDoc  :='';
 
-    LimpaLancamentos;
+      LimpaLancamentos;
 
-    Exit;
-  End;
+      Exit;
+    End;
 
-  If (Sender as TJvXPButton).Caption='Fechar' Then
-  Begin
-    DMBelShop.CDS_FluxoFornecedor.Close;
-    DMBelShop.CDS_FluxoFornHistorico.Close;
-    bgSairFF:=True;
-    Close;
-    Exit;
-  End;
+    If (Sender as TJvXPButton).Caption='Fechar' Then
+    Begin
+      DMBelShop.CDS_FluxoFornecedor.Close;
+      DMBelShop.CDS_FluxoFornHistorico.Close;
+      bgSairFF:=True;
+      Close;
+      Exit;
+    End;
+  End; // If (Sender is TJvXPButton) Then
 end;
 
 procedure TFrmFluxoFornecedor.EdtFluFornCodFornecedorChange(Sender: TObject);
@@ -2434,10 +2437,16 @@ begin
   End;
 
   DMBelShop.CDS_FluxoFornecedores.Edit;
-  If Trim((Sender as TMenuItem).Name)='PopM_FluFornSIM' Then
-   DMBelShop.CDS_FluxoFornecedoresLIMITE.AsString:='SIM';
-  If Trim((Sender as TMenuItem).Name)='PopM_FluFornNAO' Then
-   DMBelShop.CDS_FluxoFornecedoresLIMITE.AsString:='NAO';
+
+  If (Sender is TMenuItem) Then
+  Begin
+    If Trim((Sender as TMenuItem).Name)='PopM_FluFornSIM' Then
+     DMBelShop.CDS_FluxoFornecedoresLIMITE.AsString:='SIM';
+
+    If Trim((Sender as TMenuItem).Name)='PopM_FluFornNAO' Then
+     DMBelShop.CDS_FluxoFornecedoresLIMITE.AsString:='NAO';
+  End; // If (Sender is TMenuItem) Then
+
   DMBelShop.CDS_FluxoFornecedores.Post;
 end;
 
@@ -3257,83 +3266,86 @@ begin
   //============================================================================
   // Relatório Lançamento Débito / Crédito =====================================
   //============================================================================
-  If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornImprimir') Then
+  If (Sender is TJvXPButton) Then
   Begin
-    If (Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='') Or
-       ((DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>900)    And
-        (DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>955))   Then
+    If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornImprimir') Then
     Begin
-      msg('É Permitido Alterar Somente os Históricos:'+cr+cr+sHist,'A');
-      Dbg_FluFornCaixa.SetFocus;
+      If (Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='') Or
+         ((DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>900)    And
+          (DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>955))   Then
+      Begin
+        msg('É Permitido Alterar Somente os Históricos:'+cr+cr+sHist,'A');
+        Dbg_FluFornCaixa.SetFocus;
+        Exit;
+      End;
+
+      OdirPanApres.Caption:='AGUARDE !! Montando Relatório..';
+      OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+      OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Width-OdirPanApres.Width)/2));
+      OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Height-OdirPanApres.Height)/2))-20;
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmFluxoFornecedor;
+      OdirPanApres.BringToFront();
+      OdirPanApres.Visible:=True;
+      Refresh;
+
+      // Busca Docto --------------------------------------------------
+      MySql:=' SELECT'+
+             ' CASE cc.tip_debcre'+
+             '    When ''D'' Then ''CONTA CORRENTE DE FORNECEDOR: Documento de DÉBITO'''+
+             ' ELSE ''CONTA CORRENTE DE FORNECEDOR: Documento de CRÉDITO'''+
+             ' END Tipo,'+
+             ' cc.txt_obs,'+
+             ' cc.cod_empresa, lj.nome_emp,'+
+             ' cc.cod_fornecedor, cc.des_fornecedor,'+
+             ' cc.num_documento, cc.num_serie,'+
+             ' cc.dta_origem, cc.vlr_origem,'+
+             ' cc.dta_caixa, cc.vlr_caixa,'+
+             ' cc.cod_historico, hi.des_historico,'+
+             ' cc.dta_inclui, cc.dta_altera,'+
+
+             ' ''Usuário Inclusão: ''||ui.des_usuario||'' em ''||'+
+             ' Cast(lpad(extract(day   from CAST(cc.dta_inclui as Date)),2,''0'') as varchar(2))||''/''||'+
+             ' Cast(lpad(extract(month from CAST(cc.dta_inclui as Date)),2,''0'') as varchar(2))||''/''||'+
+             ' Cast(extract(Year from CAST(cc.dta_inclui as Date)) as varchar(4)) usu_incluiu,'+
+
+             ' ''Usuário Alteração: ''||ua.des_usuario||'' em ''||'+
+             ' Cast(lpad(extract(day   from CAST(cc.dta_altera as Date)),2,''0'') as varchar(2))||''/''||'+
+             ' Cast(lpad(extract(month from CAST(cc.dta_altera as Date)),2,''0'') as varchar(2))||''/''||'+
+             ' Cast(extract(Year from CAST(cc.dta_altera as Date)) as varchar(4)) Usu_Alterou,'+
+
+             QuotedStr(Des_Usuario)+' USU_EMISSAO'+
+
+             ' FROM  FL_CAIXA_FORNECEDORES cc'+
+             '     LEFT JOIN LINXLOJAS lj           on lj.empresa=cc.cod_empresa'+
+             '     LEFT JOIN FL_CAIXA_HISTORICOS hi on hi.cod_historico=cc.cod_historico'+
+             '     LEFT JOIN PS_USUARIOS ui         on ui.cod_usuario=cc.usu_inclui'+
+             '     LEFT JOIN PS_USUARIOS ua         on ua.cod_usuario=cc.usu_altera'+
+
+             ' WHERE cc.cod_fornecedor='+DMBelShop.CDS_FluxoFornecedorCOD_FORNECEDOR.AsString+
+             ' AND   cc.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',
+                                    DMBelShop.CDS_FluxoFornecedorDATA.AsString)))+
+             ' AND   cc.num_seq  ='+QuotedStr(DMBelShop.CDS_FluxoFornecedorNUM_SEQ.AsString);
+      DMBelShop.CDS_Busca1.Close;
+      DMBelShop.SDS_Busca1.CommandText:=MySql;
+      DMBelShop.CDS_Busca1.Open;
+
+      // Apresenta Relatório =======================================================
+      DMRelatorio.frReport1.LoadFromFile(sgPastaRelatorios+'ContaCorrenteLançamento.frf');
+
+      // Apropria DataSet ==========================================================
+      DMRelatorio.frDBDataSet1.DataSet:=DMBelShop.CDS_Busca1;
+
+      DMRelatorio.frReport1.PrepareReport;
+      DMRelatorio.frReport1.ShowReport;
+
+      // Retorna para o DBGrid
+      DMBelShop.CDS_Busca1.Close;
+
+      OdirPanApres.Visible:=False;
       Exit;
-    End;
-
-    OdirPanApres.Caption:='AGUARDE !! Montando Relatório..';
-    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Width-OdirPanApres.Width)/2));
-    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Height-OdirPanApres.Height)/2))-20;
-    OdirPanApres.Font.Style:=[fsBold];
-    OdirPanApres.Parent:=FrmFluxoFornecedor;
-    OdirPanApres.BringToFront();
-    OdirPanApres.Visible:=True;
-    Refresh;
-
-    // Busca Docto --------------------------------------------------
-    MySql:=' SELECT'+
-           ' CASE cc.tip_debcre'+
-           '    When ''D'' Then ''CONTA CORRENTE DE FORNECEDOR: Documento de DÉBITO'''+
-           ' ELSE ''CONTA CORRENTE DE FORNECEDOR: Documento de CRÉDITO'''+
-           ' END Tipo,'+
-           ' cc.txt_obs,'+
-           ' cc.cod_empresa, lj.nome_emp,'+
-           ' cc.cod_fornecedor, cc.des_fornecedor,'+
-           ' cc.num_documento, cc.num_serie,'+
-           ' cc.dta_origem, cc.vlr_origem,'+
-           ' cc.dta_caixa, cc.vlr_caixa,'+
-           ' cc.cod_historico, hi.des_historico,'+
-           ' cc.dta_inclui, cc.dta_altera,'+
-
-           ' ''Usuário Inclusão: ''||ui.des_usuario||'' em ''||'+
-           ' Cast(lpad(extract(day   from CAST(cc.dta_inclui as Date)),2,''0'') as varchar(2))||''/''||'+
-           ' Cast(lpad(extract(month from CAST(cc.dta_inclui as Date)),2,''0'') as varchar(2))||''/''||'+
-           ' Cast(extract(Year from CAST(cc.dta_inclui as Date)) as varchar(4)) usu_incluiu,'+
-
-           ' ''Usuário Alteração: ''||ua.des_usuario||'' em ''||'+
-           ' Cast(lpad(extract(day   from CAST(cc.dta_altera as Date)),2,''0'') as varchar(2))||''/''||'+
-           ' Cast(lpad(extract(month from CAST(cc.dta_altera as Date)),2,''0'') as varchar(2))||''/''||'+
-           ' Cast(extract(Year from CAST(cc.dta_altera as Date)) as varchar(4)) Usu_Alterou,'+
-
-           QuotedStr(Des_Usuario)+' USU_EMISSAO'+
-
-           ' FROM  FL_CAIXA_FORNECEDORES cc'+
-           '     LEFT JOIN LINXLOJAS lj           on lj.empresa=cc.cod_empresa'+
-           '     LEFT JOIN FL_CAIXA_HISTORICOS hi on hi.cod_historico=cc.cod_historico'+
-           '     LEFT JOIN PS_USUARIOS ui         on ui.cod_usuario=cc.usu_inclui'+
-           '     LEFT JOIN PS_USUARIOS ua         on ua.cod_usuario=cc.usu_altera'+
-
-           ' WHERE cc.cod_fornecedor='+DMBelShop.CDS_FluxoFornecedorCOD_FORNECEDOR.AsString+
-           ' AND   cc.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',
-                                  DMBelShop.CDS_FluxoFornecedorDATA.AsString)))+
-           ' AND   cc.num_seq  ='+QuotedStr(DMBelShop.CDS_FluxoFornecedorNUM_SEQ.AsString);
-    DMBelShop.CDS_Busca1.Close;
-    DMBelShop.SDS_Busca1.CommandText:=MySql;
-    DMBelShop.CDS_Busca1.Open;
-
-    // Apresenta Relatório =======================================================
-    DMRelatorio.frReport1.LoadFromFile(sgPastaRelatorios+'ContaCorrenteLançamento.frf');
-
-    // Apropria DataSet ==========================================================
-    DMRelatorio.frDBDataSet1.DataSet:=DMBelShop.CDS_Busca1;
-
-    DMRelatorio.frReport1.PrepareReport;
-    DMRelatorio.frReport1.ShowReport;
-
-    // Retorna para o DBGrid
-    DMBelShop.CDS_Busca1.Close;
-
-    OdirPanApres.Visible:=False;
-    Exit;
-  End; // If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornImprimir') Then
+    End; // If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornImprimir') Then
+  End; // If (Sender is TJvXPButton) Then
   // Relatório Lançamento Débito / Crédito =====================================
   //============================================================================
 
@@ -3358,56 +3370,62 @@ begin
   //============================================================================
   // Novo Lançamento (Fornecedor Existente) ====================================
   //============================================================================
-  If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornIncluir') Then
+  If (Sender is TJvXPButton) Then
   Begin
-    igTabSheet:=PC_Principal.TabIndex;
-    sgDMLMovto:='I';
+    If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornIncluir') Then
+    Begin
+      igTabSheet:=PC_Principal.TabIndex;
+      sgDMLMovto:='I';
 
-    EdtFluFornCodFornecedor.Enabled:=False;
-    Bt_FluFornBuscaFornecedor.Enabled:=False;
-  End; // If (PC_Principal.ActivePage=Ts_FluxFornApres) Then
+      EdtFluFornCodFornecedor.Enabled:=False;
+      Bt_FluFornBuscaFornecedor.Enabled:=False;
+    End; // If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornIncluir') Then
+  End; // If (Sender is TJvXPButton) Then
   // Novo Lançamento (Fornecedor Existente) ====================================
   //============================================================================
 
   //============================================================================
   // Altera Lançamento (Fornecedor Existente) ==================================
   //============================================================================
-  If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornAlterar') Then
+  If (Sender is TJvXPButton) Then
   Begin
-    If DMBelShop.CDS_FluxoFornecedores.IsEmpty Then
-     Exit;
-
-    If (Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='') Or
-       ((DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>900)    And
-        (DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>955))   Then
+    If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornAlterar') Then
     Begin
-      msg('É Permitido Alterar Somente os Históricos:'+cr+cr+sHist,'A');
-      Dbg_FluFornCaixa.SetFocus;
-      Exit;
-    End;
+      If DMBelShop.CDS_FluxoFornecedores.IsEmpty Then
+       Exit;
 
-    // Atualiza Componentes ====================================================
-    EdtNumDoc.Text     :=DMBelShop.CDS_FluxoFornecedorNUM_DOCUMENTO.AsString;
-    EdtSerieDoc.Text   :=DMBelShop.CDS_FluxoFornecedorNUM_SERIE.AsString;
-    EdtDtOrigemDoc.Date:=StrToDate(DateToStr(DMBelShop.CDS_FluxoFornecedorDTA_ORIGEM.AsDateTime));
-    EdtDtCaixaDoc.Date :=StrToDate(DateToStr(DMBelShop.CDS_FluxoFornecedorDATA.AsDateTime));
-    EdtValorDoc.Value  :=DMBelShop.CDS_FluxoFornecedorVLR_ORIGEM.AsCurrency;
-    EdtCodLojaDoc.Text :=DMBelShop.CDS_FluxoFornecedorCOD_EMPRESA.AsString;
-    EdtCodLojaDocExit(Self);
-    EdtCodHistDoc.Text :=DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString;
-    EdtCodHistDocExit(Self);
-    EdtObsDoc.Text     :=DMBelShop.CDS_FluxoFornecedorTXT_OBS.AsString;
+      If (Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='') Or
+         ((DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>900)    And
+          (DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>955))   Then
+      Begin
+        msg('É Permitido Alterar Somente os Históricos:'+cr+cr+sHist,'A');
+        Dbg_FluFornCaixa.SetFocus;
+        Exit;
+      End;
 
-    sgDtaDoc :=DateToStr(DMBelShop.CDS_FluxoFornecedorDATA.AsDateTime);
-    sgNum_SeqCC:=DMBelShop.CDS_FluxoFornecedorNUM_SEQ.AsString;
+      // Atualiza Componentes ====================================================
+      EdtNumDoc.Text     :=DMBelShop.CDS_FluxoFornecedorNUM_DOCUMENTO.AsString;
+      EdtSerieDoc.Text   :=DMBelShop.CDS_FluxoFornecedorNUM_SERIE.AsString;
+      EdtDtOrigemDoc.Date:=StrToDate(DateToStr(DMBelShop.CDS_FluxoFornecedorDTA_ORIGEM.AsDateTime));
+      EdtDtCaixaDoc.Date :=StrToDate(DateToStr(DMBelShop.CDS_FluxoFornecedorDATA.AsDateTime));
+      EdtValorDoc.Value  :=DMBelShop.CDS_FluxoFornecedorVLR_ORIGEM.AsCurrency;
+      EdtCodLojaDoc.Text :=DMBelShop.CDS_FluxoFornecedorCOD_EMPRESA.AsString;
+      EdtCodLojaDocExit(Self);
+      EdtCodHistDoc.Text :=DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString;
+      EdtCodHistDocExit(Self);
+      EdtObsDoc.Text     :=DMBelShop.CDS_FluxoFornecedorTXT_OBS.AsString;
 
-    // Apresenta Alteração =====================================================
-    igTabSheet:=PC_Principal.TabIndex;
-    sgDMLMovto:='A';
+      sgDtaDoc :=DateToStr(DMBelShop.CDS_FluxoFornecedorDATA.AsDateTime);
+      sgNum_SeqCC:=DMBelShop.CDS_FluxoFornecedorNUM_SEQ.AsString;
 
-    EdtFluFornCodFornecedor.Enabled:=False;
-    Bt_FluFornBuscaFornecedor.Enabled:=False;
-  End; // If (PC_Principal.ActivePage=Ts_FluxFornApres) Then
+      // Apresenta Alteração =====================================================
+      igTabSheet:=PC_Principal.TabIndex;
+      sgDMLMovto:='A';
+
+      EdtFluFornCodFornecedor.Enabled:=False;
+      Bt_FluFornBuscaFornecedor.Enabled:=False;
+    End; // If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornAlterar') Then
+  End; // If (Sender is TJvXPButton) Then
   // Altera Lançamento (Fornecedor Existente) ==================================
   //============================================================================
 

@@ -72,7 +72,7 @@ begin
   Application.CreateForm(TDMLojaUnica, DMLojaUnica);
   Application.CreateForm(TDMRelatorio, DMRelatorio);
   Application.CreateForm(TDMSidicom, DMSidicom);
-  Application.CreateForm(TDMCentralTrocas, DMCentralTrocas);
+  // Application.CreateForm(TDMCentralTrocas, DMCentralTrocas);
   Application.CreateForm(TFrmBancoExtratos, FrmBancoExtratos);
   Application.CreateForm(TFrmGeraPedidosComprasLojas, FrmGeraPedidosComprasLojas);
   Application.CreateForm(TFDK_Procs1, FDK_Procs1);
@@ -86,7 +86,6 @@ begin
   // Application.CreateForm(TFrmComissaoVendedor, FrmComissaoVendedor);
   // Application.CreateForm(TFrmControleEstoques, FrmControleEstoques);
   // Application.CreateForm(TFrmCentralTrocas, FrmCentralTrocas);
-  // Application.CreateForm(TDMCentralTrocas, DMCentralTrocas);
 
   // Application.CreateForm(TFrmControleKits, FrmControleKits);
   // Application.CreateForm(TFrmFaltasCDLojas, FrmFaltasCDLojas);

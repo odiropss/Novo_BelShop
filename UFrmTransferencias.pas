@@ -303,22 +303,23 @@ Begin
            bMultiplo   :=False;
            DMTransferencias.CDS_BuscaRapida.Close;
 
-           //===================================================================
-           // Não Repõe Quantidade de Reposição < 3 para curvas para C, D, E ===
-           // Definido Pela Logistica: Eduardo, Pedro, Carlos.
-           //===================================================================
-           If ((Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='C') Or
-               (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='D') Or
-               (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='E')) AND
-              (iQtdReposicao<3) Then
-           Begin
-              sObs:=Trim(sObs)+' - Não Repõe Quantidade Menor que 3 para Curva: '+
-                               Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)+'.';
-              bRepoe:=False;
-           End; // If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='C') Or ...
-           // Não Repõe Quantidade de Reposição < 3 para curvas para C, D, E ===
-           // Definido Pela Logistica: Eduardo, Pedro, Carlos.
-           //===================================================================
+           // OdirApagar - 01/08/2017
+//           //===================================================================
+//           // Não Repõe Quantidade de Reposição < 3 para curvas para C, D, E ===
+//           // Definido Pela Logistica: Eduardo, Pedro, Carlos.
+//           //===================================================================
+//           If ((Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='C') Or
+//               (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='D') Or
+//               (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='E')) AND
+//              (iQtdReposicao<3) Then
+//           Begin
+//              sObs:=Trim(sObs)+' - Não Repõe Quantidade Menor que 3 para Curva: '+
+//                               Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)+'.';
+//              bRepoe:=False;
+//           End; // If (Trim(DMTransferencias.CDS_EstoqueLojaIND_CURVA.AsString)='C') Or ...
+//           // Não Repõe Quantidade de Reposição < 3 para curvas para C, D, E ===
+//           // Definido Pela Logistica: Eduardo, Pedro, Carlos.
+//           //===================================================================
 
            //===================================================================
            // Aplica Percentual de Corte da Curva ==============================
@@ -663,7 +664,16 @@ Begin
          ' CAST(COALESCE(c.est_maximo,0) AS INTEGER) est_maximo,'+
 
          ' CAST(COALESCE(t.vlr_aux,0) AS INTEGER) Dias_Estocagem,'+
-         ' CAST(COALESCE(e.saldoatual,0.00) AS INTEGER) saldoatual,'+
+
+         // OdirApagar - 01/08/2017 - Saldo Negativo Fica 0.00
+         //' CAST(COALESCE(e.saldoatual,0.00) AS INTEGER) saldoatual,'+
+         ' CAST(CASE'+
+         '        WHEN COALESCE(e.saldoatual,0.00)<0 THEN'+
+         '          0.00'+
+         '        ELSE'+
+         '          COALESCE(e.saldoatual,0.00)'+
+         ' END  AS INTEGER) saldoatual,'+
+
          ' p.datainclusao, p.dataalteracao'+
 
          ' FROM PRODUTO p'+
