@@ -1939,9 +1939,10 @@ Var
 begin
   bProcessou:=False;
 
-  // Fechar Programa do Agendamento Anterior ===================================
-  ApagaUltProcesso('PAtualizaEstoques.exe');
-  //============================================================================
+// OdirApagar - 03/08/2017  
+//  // Fechar Programa do Agendamento Anterior ===================================
+//  ApagaUltProcesso('PAtualizaEstoques.exe');
+//  //============================================================================
 
   // Sem Intenet Encerra =======================================================
   if not InternetGetConnectedState(@Flags, 0) then

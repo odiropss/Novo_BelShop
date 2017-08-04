@@ -545,7 +545,7 @@ begin
   Else
    Begin
      PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-     msg('Para Fechar Tecle no Botão <Fechar>...','A');
+     msg('Para Sair Tecle no Botão <Fechar>...','A');
      Action := caNone;
    End;
 end;

@@ -1366,14 +1366,13 @@ type
     N29: TMenuItem;
     Label73: TLabel;
     N51: TMenuItem;
-    N53: TMenuItem;
-    ReposiesLojasLINX1: TMenuItem;
     Label74: TLabel;
     Label75: TLabel;
     EdtFiltroCodProdLinx: TCurrencyEdit;
     Label183: TLabel;
     N39: TMenuItem;
     PrioridadesdeReposio1: TMenuItem;
+    N50: TMenuItem;
 
     // Odir ====================================================================
 
@@ -2337,7 +2336,6 @@ type
     procedure Button4Click(Sender: TObject);
     procedure SubMenuComprasGeraOCLinxClick(Sender: TObject);
     procedure EdtFiltroCodProdLinxExit(Sender: TObject);
-    procedure ReposiesLojasLINX1Click(Sender: TObject);
     procedure PrioridadesdeReposio1Click(Sender: TObject);
     procedure Dbg_GeraOCProdutosKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -46705,16 +46703,6 @@ begin
     EdtFiltroCodProdutoExit(Self);
     EdtFiltroCodProdLinx.SetFocus;
   End; // If EdtFiltroCodProdLinx.Value<>0 Then
-end;
-
-procedure TFrmBelShop.ReposiesLojasLINX1Click(Sender: TObject);
-begin
-  If AnsiUpperCase(Des_Usuario)<>'ODIR' Then
-  Begin
-    msg('Opção em Desenvolvimento !!','A');
-    Exit;
-  End;
-
 end;
 
 procedure TFrmBelShop.PrioridadesdeReposio1Click(Sender: TObject);

@@ -1,6 +1,6 @@
 object FrmBelShop: TFrmBelShop
   Left = 239
-  Top = 93
+  Top = 103
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -32688,24 +32688,6 @@ object FrmBelShop: TFrmBelShop
       Tag = 16
       Caption = 'CENTRO DE DISTRIBUI'#199#195'O'
       Default = True
-      object ReposiesLojasLINX1: TMenuItem
-        Tag = 1605
-        Bitmap.Data = {
-          EE000000424DEE000000000000007600000028000000100000000F0000000100
-          04000000000078000000130B0000130B00001000000000000000000000000000
-          8000008000000080800080000000800080008080000080808000C0C0C0000000
-          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00888800000000
-          888888880FFFFFF0888888880F7FF8F0888888880FFF0000000088880F7F0FF0
-          FFF088880FFF0FF0F7F0888774C4C4C4FFF078878C4C4C4CF7F088F7F8880FFF
-          FFF0777FBB8874C4C4C48B7BF77777C4C4C487B7B7B8888888887B87F87B8888
-          8888B887B887888888888887888888888888}
-        Caption = 'Reposi'#231#245'es Lojas ( LINX )'
-        HelpContext = 1
-        OnClick = ReposiesLojasLINX1Click
-      end
-      object N53: TMenuItem
-        Caption = '-'
-      end
       object SubMenuCentroDistrReposicoesLojas: TMenuItem
         Tag = 1601
         Bitmap.Data = {
@@ -32737,9 +32719,12 @@ object FrmBelShop: TFrmBelShop
           00BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
           BFBFBFBFBF00BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
           BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00}
-        Caption = 'Reposi'#231#245'es Lojas (SIDICOM)'
+        Caption = 'Reposi'#231#245'es Lojas (SIDICOM / LINX)'
         HelpContext = 1
         OnClick = SubMenuCentroDistrReposicoesLojasClick
+      end
+      object N50: TMenuItem
+        Caption = '-'
       end
       object SubMenuCentroDistAnaliseReposicoes: TMenuItem
         Tag = 1604

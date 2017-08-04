@@ -148,6 +148,9 @@ type
     CDS_QtdCxCDProdutosQTD_CAIXA: TIntegerField;
     CDS_QtdCxCDProdutosPER_CORTE: TIntegerField;
     CDS_RelReposicaoREFERENCIA: TStringField;
+    CDS_ReposicaoTransfIND_PRIORIDADE: TSmallintField;
+    CDS_ReposicaoTransfIND_LEITORA: TStringField;
+    CDS_ReposicaoDocsTot_Itens: TAggregateField;
 //    IBQ_SID_PedidoODIR: TIBQuery;
 //    IBU_SID_PedidoODIR: TIBUpdateSQL;
 //    IBQ_SID_PedidoODIRCODPEDIDO: TIBStringField;

@@ -370,7 +370,7 @@ begin
    Begin
      PC_ContEstPrincipal.ActivePage:=Ts_ContEstSolic;
      PC_ContEstPrincipalChange(Self);
-     msg('Para Fechar Tecle no Botão <Fechar>...','A');
+     msg('Para Sair Tecle no Botão <Fechar>...','A');
      Action := caNone;
    End;
 

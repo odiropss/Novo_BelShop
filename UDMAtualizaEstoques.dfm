@@ -178,13 +178,15 @@ object DMAtualizaEstoques: TDMAtualizaEstoques
   end
   object SDS_EmpProcessa: TSQLDataSet
     CommandText = 
-      'Select '#13#10'c.cod_filial, c.cod_linx, c.endereco_ip,'#13#10'c.endereco_ip' +
-      '_externo,'#13#10'c.pasta_base_dados, c.des_base_dados, c.cod_emp, c.ra' +
-      'zao_social, c.tip_emp,'#13#10'c.ind_ativo, c.dta_inicio_linx, c.dta_in' +
-      'ventario_linx,'#13#10#39'IBDB_'#39'||c.cod_filial "DATABASE",'#13#10#39'IBT_'#39'||c.cod' +
-      '_filial  "TRANSACAO"'#13#10#13#10'From emp_conexoes  c'#13#10#13#10'Where ((c.ind_at' +
-      'ivo='#39'SIM'#39')'#13#10'       or'#13#10'       (c.cod_filial=99)'#13#10'       or'#13#10'    ' +
-      '   (c.cod_filial=50)'#13#10'      )'#13#10#13#10'order by c.cod_filial DESC'#13#10
+      'SELECT '#13#10'c.cod_filial, c.cod_linx,'#13#10'c.endereco_ip, c.endereco_ip' +
+      '_externo,'#13#10'c.pasta_base_dados, c.des_base_dados,'#13#10'c.cod_emp, c.r' +
+      'azao_social, c.tip_emp,'#13#10'c.ind_ativo, c.dta_inicio_linx, c.dta_i' +
+      'nventario_linx,'#13#10#39'IBDB_'#39'||c.cod_filial "DATABASE",'#13#10#39'IBT_'#39'||c.co' +
+      'd_filial  "TRANSACAO"'#13#10#13#10'FROM EMP_CONEXOES  c'#13#10#13#10'WHERE ((c.ind_a' +
+      'tivo='#39'SIM'#39')'#13#10'       OR'#13#10'       (c.cod_filial='#39'99'#39')'#13#10'       OR'#13#10' ' +
+      '      (c.cod_filial='#39'50'#39'))'#13#10#13#10'--AND c.cod_filial<>'#39'21'#39#13#10'--AND c.' +
+      'cod_filial<>'#39'50'#39#13#10'--AND c.cod_filial<>'#39'99'#39#13#10#13#10'ORDER BY c.cod_fil' +
+      'ial'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC

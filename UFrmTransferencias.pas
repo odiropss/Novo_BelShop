@@ -236,7 +236,7 @@ Begin
            sCodSubGrupo:=DMTransferencias.CDS_BuscaRapida.FieldByName('CodSubGrupo').AsString;
            DMTransferencias.CDS_BuscaRapida.Close;
 
-           MySql:=' SELECT cp.Cod_Produto, cp.cod_grupo,  cp.cod_subgrupo,'+
+           MySql:=' SELECT cp.Cod_Produto, cp.Cod_Grupo, cp.Cod_Subgrupo,'+
                   '        cp.Qtd_Caixa, cp.Per_Corte'+
                   ' FROM PROD_CAIXA_CD cp'+
                   ' WHERE ((cp.cod_produto='+QuotedStr(sCodProd)+')'+
@@ -252,7 +252,8 @@ Begin
            iMultiplo   :=0;
            iQtdMultiplo:=0;
            bMultiplo   :=False;
-           If Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)<>'' Then
+           If (Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)<>'') Or // QtD Caixa/Corte
+              (Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Grupo').AsString)<>'') Then // Multiplos
            Begin
              If DMTransferencias.CDS_BuscaRapida.FieldByName('Per_Corte').AsInteger=0 Then
               bMultiplo:=True;
@@ -664,15 +665,7 @@ Begin
          ' CAST(COALESCE(c.est_maximo,0) AS INTEGER) est_maximo,'+
 
          ' CAST(COALESCE(t.vlr_aux,0) AS INTEGER) Dias_Estocagem,'+
-
-         // OdirApagar - 01/08/2017 - Saldo Negativo Fica 0.00
-         //' CAST(COALESCE(e.saldoatual,0.00) AS INTEGER) saldoatual,'+
-         ' CAST(CASE'+
-         '        WHEN COALESCE(e.saldoatual,0.00)<0 THEN'+
-         '          0.00'+
-         '        ELSE'+
-         '          COALESCE(e.saldoatual,0.00)'+
-         ' END  AS INTEGER) saldoatual,'+
+         ' CAST(COALESCE(e.saldoatual,0.00) AS INTEGER) saldoatual,'+
 
          ' p.datainclusao, p.dataalteracao'+
 
@@ -710,6 +703,10 @@ Begin
          ' AND   p.codaplicacao<>''0017'''+ // Não Processa: 0017 = Provadores
          ' AND   p.principalfor Not in ('+sgFornNAO+')'+ // Tira Fornecedores que Não Entram no Processo de Reposição Automática
          ' AND   UPPER(p.apresentacao) NOT LIKE ''LUVA%'''+ // Tira todas as Luvas
+
+// odiraqui - Apagar - 02/08/2017
+//' and p.codgruposub  = ''0100003'''+
+//' and p.principalfor = ''000118'''+
 
          ' AND   c.cod_loja='+QuotedStr(sCodLoja);
 
@@ -917,89 +914,93 @@ Begin
         // Busca Transferencias =====================================
         cQtdMais:=0;
 
-          // Busca Tranferencias do CD Para a Loja ------------------
-          MySql:=' SELECT mc.numero, mp.codproduto, mp.quantatendida'+
-                 ' FROM MCLI mc, MCLIPRO mp'+
-                 ' WHERE mc.chavenf=mp.chavenf'+
-                 ' AND   mc.codcomprovante in (''009'',''020'')'+
-                 ' AND   mc.codfilial=''99'''+
-                 ' AND   mc.situacaonf=''L'''+
-                 ' AND   mc.datadocumento>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(IncDay(dgDtaHoje,-100)))))+
-                 ' AND   mc.codcliente='+QuotedStr(sCodEmp)+
-                 ' AND   mp.codproduto='+QuotedStr(sCodProduto);
-          IBQ_MPMS.Close;
-          IBQ_MPMS.SQL.Clear;
-          IBQ_MPMS.SQL.Add(MySql);
-          IBQ_MPMS.Open;
+        // Busca Tranferencias do CD Para a Loja ------------------
+        MySql:=' SELECT mc.numero, mp.codproduto, mp.quantatendida'+
+               ' FROM MCLI mc, MCLIPRO mp'+
+               ' WHERE mc.chavenf=mp.chavenf'+
+               ' AND   mc.codcomprovante in (''009'',''020'')'+
+               ' AND   mc.codfilial=''99'''+
+               ' AND   mc.situacaonf=''L'''+
+               ' AND   mc.datadocumento>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(IncDay(dgDtaHoje,-100)))))+
+               ' AND   mc.codcliente='+QuotedStr(sCodEmp)+
+               ' AND   mp.codproduto='+QuotedStr(sCodProduto);
+        IBQ_MPMS.Close;
+        IBQ_MPMS.SQL.Clear;
+        IBQ_MPMS.SQL.Add(MySql);
+        IBQ_MPMS.Open;
 
-          While Not IBQ_MPMS.Eof do
+        While Not IBQ_MPMS.Eof do
+        Begin
+          If bConetada Then // SIDICOM
           Begin
-            If bConetada Then // SIDICOM
+            MySql:=' SELECT mf.numero'+
+                   ' FROM MFOR mf'+
+                   ' WHERE mf.situacaonf=1'+
+                   ' AND   mf.codfornecedor=''000663'''+
+                   ' AND   mf.CodFilial='+QuotedStr(sCodLoja)+
+                   ' AND   mf.codcomprovante in (''010'',''016'')'+
+                   ' AND   mf.numero='+QuotedStr(IBQ_MPMS.FieldByName('numero').AsString);
+            IBQ_TR_Filial.Close;
+            IBQ_TR_Filial.SQL.Clear;
+            IBQ_TR_Filial.SQL.Add(MySql);
+
+            // Abre Query -----------------------------------------
+            ii:=0;
+            bSiga:=False;
+            While Not bSiga do
             Begin
-              MySql:=' SELECT mf.numero'+
-                     ' FROM MFOR mf'+
-                     ' WHERE mf.situacaonf=1'+
-                     ' AND   mf.codfornecedor=''000663'''+
-                     ' AND   mf.CodFilial='+QuotedStr(sCodLoja)+
-                     ' AND   mf.codcomprovante in (''010'',''016'')'+
-                     ' AND   mf.numero='+QuotedStr(IBQ_MPMS.FieldByName('numero').AsString);
-              IBQ_TR_Filial.Close;
-              IBQ_TR_Filial.SQL.Clear;
-              IBQ_TR_Filial.SQL.Add(MySql);
+              Try
+                IBQ_TR_Filial.Open;
+                bSiga:=True;
+              Except
+                Inc(ii);
+              End; // Try
 
-              // Abre Query -----------------------------------------
-              ii:=0;
-              bSiga:=False;
-              While Not bSiga do
+              If ii>2 Then
               Begin
-                Try
-                  IBQ_TR_Filial.Open;
-                  bSiga:=True;
-                Except
-                  Inc(ii);
-                End; // Try
+                IBQ_TR_Filial.Close;
+                Break;
+              End; // If i>2 Then
+            End; // While Not bSiga do
 
-                If ii>2 Then
-                Begin
-                  IBQ_TR_Filial.Close;
-                  Break;
-                End; // If i>2 Then
-              End; // While Not bSiga do
-
-              If (bSiga) and (Trim(IBQ_TR_Filial.FieldByName('Numero').AsString)='') Then
-              Begin
-                cQtdMais:=cQtdMais + IBQ_MPMS.FieldByName('QuantAtendida').AsCurrency;
-              End;
-              IBQ_TR_Filial.Close;
-            End; // If bConetada Then // SIDICOM
-
-            If igCodLojaLinx<>0 Then // LINX
+            If (bSiga) and (Trim(IBQ_TR_Filial.FieldByName('Numero').AsString)='') Then
             Begin
-              MySql:=' SELECT FIRST 1 m.documento numero'+
-                     ' FROM LINXMOVIMENTO m'+
-                     ' WHERE m.codigo_cliente=13'+ // BELSHOP | CD | RS
-                     ' AND   m.operacao=''E'''+
-                     ' AND   COALESCE(m.tipo_transacao,''E'')=''E'''+
-                     ' AND   m.cancelado=''N'''+
-                     ' AND   m.excluido=''N'''+
-                     ' and   m.empresa='+IntToStr(igCodLojaLinx)+
-                     ' and   m.documento='+IBQ_MPMS.FieldByName('Numero').AsString;
-              DMTransferencias.CDS_BuscaRapida.Close;
-              DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
-              DMTransferencias.CDS_BuscaRapida.Open;
-              If Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Numero').AsString)='' Then
-              Begin
-                cQtdMais:=cQtdMais + IBQ_MPMS.FieldByName('QuantAtendida').AsCurrency;
-              End;
-              DMTransferencias.CDS_BuscaRapida.Close;
-            End; // If igCodLojaLinx<>0 Then // LINX
+              cQtdMais:=cQtdMais + IBQ_MPMS.FieldByName('QuantAtendida').AsCurrency;
+            End;
+            IBQ_TR_Filial.Close;
+          End; // If bConetada Then // SIDICOM
 
-            IBQ_MPMS.Next;
-          End; // While Not IBQ_MPMS.Eof do
-          IBQ_MPMS.Close;
+          If igCodLojaLinx<>0 Then // LINX
+          Begin
+            MySql:=' SELECT FIRST 1 m.documento numero'+
+                   ' FROM LINXMOVIMENTO m'+
+                   ' WHERE m.codigo_cliente=13'+ // BELSHOP | CD | RS
+                   ' AND   m.operacao=''E'''+
+                   ' AND   COALESCE(m.tipo_transacao,''E'')=''E'''+
+                   ' AND   m.cancelado=''N'''+
+                   ' AND   m.excluido=''N'''+
+                   ' and   m.empresa='+IntToStr(igCodLojaLinx)+
+                   ' and   m.documento='+IBQ_MPMS.FieldByName('Numero').AsString;
+            DMTransferencias.CDS_BuscaRapida.Close;
+            DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+            DMTransferencias.CDS_BuscaRapida.Open;
+            If Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Numero').AsString)='' Then
+            Begin
+              cQtdMais:=cQtdMais + IBQ_MPMS.FieldByName('QuantAtendida').AsCurrency;
+            End;
+            DMTransferencias.CDS_BuscaRapida.Close;
+          End; // If igCodLojaLinx<>0 Then // LINX
+
+          IBQ_MPMS.Next;
+        End; // While Not IBQ_MPMS.Eof do
+        IBQ_MPMS.Close;
 
         // Atualiza o Saldo do Produto ------------------------------
         cQtdSaldo:=DMTransferencias.CDS_CurvasLojaSALDOATUAL.AsCurrency + cQtdMais;
+
+        // Se Saldo Negativo Alterar para 0.00 <Zero> ==========================
+        If cQtdSaldo<0 Then
+         cQtdSaldo:=0.00;
 
         // Busca Demanda/Quantidade de Reposição --------------------
         If BuscaProdutosDemanda(sCodLoja, sCodProduto, IntToStr(ParteInteiro(CurrToStr(cQtdSaldo)))) Then

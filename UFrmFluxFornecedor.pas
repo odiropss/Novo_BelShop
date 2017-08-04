@@ -1437,7 +1437,7 @@ begin
    End
   Else
    Begin
-     msg('Para Fechar Tecle no Botão <Fechar>...','A');
+     msg('Para Sair Tecle no Botão <Fechar>...','A');
      Action := caNone;
    End;
 

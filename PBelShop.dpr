@@ -48,7 +48,8 @@ uses
   UDMComissaoVendedor in 'UDMComissaoVendedor.pas' {DMComissaoVendedor: TDataModule},
   UDMLinx in 'UDMLinx.pas' {DMLinx: TDataModule},
   UFrmOCLinx in 'UFrmOCLinx.pas' {FrmOCLinx},
-  UFrmPrioridadesReposicao in 'UFrmPrioridadesReposicao.pas' {FrmPrioridadesReposicao};
+  UFrmPrioridadesReposicao in 'UFrmPrioridadesReposicao.pas' {FrmPrioridadesReposicao},
+  UFrmLeitoraCodBarras in 'UFrmLeitoraCodBarras.pas' {FrmLeitoraCodBarras};
 
 {$R *.res}
 
@@ -72,6 +73,7 @@ begin
   Application.CreateForm(TDMLojaUnica, DMLojaUnica);
   Application.CreateForm(TDMRelatorio, DMRelatorio);
   Application.CreateForm(TDMSidicom, DMSidicom);
+  // Application.CreateForm(TFrmLeitoraCodBarras, FrmLeitoraCodBarras);
   // Application.CreateForm(TDMCentralTrocas, DMCentralTrocas);
   Application.CreateForm(TFrmBancoExtratos, FrmBancoExtratos);
   Application.CreateForm(TFrmGeraPedidosComprasLojas, FrmGeraPedidosComprasLojas);

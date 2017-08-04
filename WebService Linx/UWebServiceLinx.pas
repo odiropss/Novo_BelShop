@@ -1749,6 +1749,9 @@ Begin
            End; // If Trim(sgParametroMetodo)<>'' Then
          End; // If dDtaUltAtual=0 Then
 
+        // Busca Todos os Produtos ==================================
+        sgDtaInicio:='NULL';
+        sgDtaFim:='NULL';
                          // Setor   Linha   Marca   Colecao
         MontaMetodoXMLPost('NULL', 'NULL', 'NULL', 'NULL');
       End; // If (sgMetodo='LinxProdutos') And (Not bUmaVez) Then
@@ -1789,7 +1792,7 @@ Begin
            End; // If Trim(sgParametroMetodo)<>'' Then
          End; // If dDtaUltAtual=0 Then
 
-        // Atualiza o Saldo de Todos os Produtos com Saldo > 0.0000
+        // Busca o Saldo de Todos os Produtos com Saldo > 0.0000 ====
         sgDtaInicio:='NULL';
         sgDtaFim:='NULL';
 

@@ -26,6 +26,8 @@ type
 
     Procedure CodigoBarras;
 
+    Procedure AcertaEstoqueLoja;
+
     // ODIR ====================================================================
 
   private
@@ -68,6 +70,120 @@ uses DK_Procs1, UDMConexoes, uj_001, uj_002, UDMAtualizaSeteHoras;
 //==============================================================================
 // ODIR - INICIO ===============================================================
 //==============================================================================
+
+// Iguala Todos os Produtos de Todas a Lojas com o CD >>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAtualizaSeteHoras.AcertaEstoqueLoja;
+Var
+  MySql: String;
+  sCodLoja: String;
+Begin
+  // Verifica se Transação esta Ativa
+  If DMAtualizaSeteHoras.SQLC.InTransaction Then
+   DMAtualizaSeteHoras.SQLC.Rollback(TD);
+
+  MySql:=' SELECT e.cod_filial'+
+         ' FROM EMP_CONEXOES e'+
+         ' WHERE e.ind_ativo=''SIM'''+
+         ' ORDER BY 1';
+  DMAtualizaSeteHoras.CDS_Lojas.Close;
+  DMAtualizaSeteHoras.SDS_Lojas.CommandText:=MySql;
+  DMAtualizaSeteHoras.CDS_Lojas.Open;
+
+  DMAtualizaSeteHoras.CDS_Lojas.DisableControls;
+  While Not DMAtualizaSeteHoras.CDS_Lojas.Eof do
+  Begin
+    // Monta Transacao =========================================================
+    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
+    Try // Try da Transação
+      DateSeparator:='.';
+      DecimalSeparator:='.';
+
+      sCodLoja:=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('Cod_Filial').AsString;
+
+      // Insere Produtos do CD na Loja =========================================
+      MySql:=' INSERT INTO ESTOQUE'+
+             ' SELECT'+
+             QuotedStr(sCodLoja)+' CODFILIAL,'+
+             ' e.CODPRODUTO,'+
+             ' 0.0000 SALDOATUAL,'+
+             ' 0.0000 PEDIDOPENDENTE,'+
+             ' 0 ZONAENDERECO,'+
+             ' ''000'' CORREDOR,'+
+             ' ''000'' PRATELEIRA,'+
+             ' ''0000'' GAVETA,'+
+             ' 0.00 CUSMEDVALOR,'+
+             ' 0.0000 CUSTOMEDIO,'+
+             ' 0.0000 LASTPRECOCOMPRA,'+
+             ' 0.0000 LASTCUSTOMEDIO,'+
+             ' 0.0000 ESTOQUEIDEAL,'+
+             ' 0.0000 ESTOQUEMAXIMO,'+
+             ' e.DATAALTERACADASTRO,'+
+             ' e.DATAALTERAESTOQUE,'+
+             ' e.DATAALTERAESTOQUE_PED,'+
+             ' e.PRINCIPALFOR,'+
+             ' 0.0000 SALDO_FINAL_SIDICOM,'+
+             ' e.DTA_ATUALIZACAO,'+
+             ' e.HRA_ATUALIZACAO'+
+
+             ' FROM ESTOQUE e'+
+
+             ' WHERE e.codfilial=''99'''+
+             ' AND NOT EXISTS (SELECT 1'+
+             '                 FROM ESTOQUE e9'+
+             '                 WHERE e9.codfilial='+QuotedStr(sCodLoja)+
+             '                 AND  e9.codproduto=e.codproduto)';
+      DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+
+      // Exclui Produtos a mais no Cadastro em Relação ao CD ===================
+      MySql:=' DELETE FROM ESTOQUE e'+
+             ' WHERE e.codfilial='+QuotedStr(sCodLoja)+
+             ' AND NOT EXISTS (SELECT 1'+
+             '                 FROM ESTOQUE e9'+
+             '                 WHERE e9.codfilial=''99'''+
+             '                 AND   e9.codproduto=e.codproduto)';
+      DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+
+      // Atualiza Transacao ======================================================
+      DMAtualizaSeteHoras.SQLC.Commit(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+    Except // Except da Transação
+      on e : Exception do
+      Begin
+        // Abandona Transacao ====================================================
+        DMAtualizaSeteHoras.SQLC.Rollback(TD);
+
+        TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
+        TD.IsolationLevel:=xilREADCOMMITTED;
+        DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
+
+        MySql:=' INSERT INTO ES_PROCESSADOS  (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
+               ' VALUES ('+
+               QuotedStr(sCodLoja)+', '+ // COD_LOJA
+               '0, '+                    // COD_LINX
+               ' CURRENT_TIMESTAMP,'+    // DTA_PROC
+               QuotedStr('ERR')+', '+    // Erro AcertaEstoqueLoja
+               QuotedStr(MySql)+')'+     // OBS
+               'MATCHING (COD_LOJA)';
+        DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+
+        DMAtualizaSeteHoras.SQLC.Commit(TD); // AcertaEstoqueLoja
+
+        DateSeparator:='/';
+        DecimalSeparator:=',';
+        Exit;
+      End; // on e : Exception do
+    End; // Try da Transação
+
+    DMAtualizaSeteHoras.CDS_Lojas.Next;
+  End; // While Not DMAtualizaSeteHoras.CDS_Lojas.Eof do
+  DMAtualizaSeteHoras.CDS_Lojas.EnableControls;
+  DMAtualizaSeteHoras.CDS_Lojas.Close;
+
+end; // Igual Todos os Produtos de Todas a Lojas com o CD >>>>>>>>>>>>>>>>>>>>>>
 
 // Busca Codigo de Barras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaSeteHoras.CodigoBarras;
@@ -1547,6 +1663,12 @@ begin
   //============================================================================
 //opss - 13/06/2017
   CentroCustos;
+
+  //============================================================================
+  // Igual Todos os Produtos de Todas a Lojas com o CD =========================
+  //============================================================================
+//opss - 13/06/2017
+  AcertaEstoqueLoja;
 
   // Encerra Programa ==========================================================
   Application.Terminate;

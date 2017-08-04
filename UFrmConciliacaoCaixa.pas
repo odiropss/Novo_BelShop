@@ -1577,7 +1577,7 @@ begin
     DMVirtual.CDS_V_Creditos.Close;
     PC_ConcFechaCaixa.TabIndex:=0;
     PC_ConcFechaCaixaChange(Self);
-    msg('Para Fechar Tecle no Botão <Fechar>...','A');
+    msg('Para Sair Tecle no Botão <Fechar>...','A');
     Action := caNone;
     Exit;
   End;

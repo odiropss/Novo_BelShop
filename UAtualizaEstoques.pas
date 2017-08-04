@@ -28,7 +28,6 @@ type
 
     Procedure AtualizaEstoquesMovtosLinx(sCodLinx, sCodBelShop, sDtaInicioLinx: String);
 
-    Procedure AcertaEstoqueLoja(sCodLoja, sCodLinx: String);
     // Odir ====================================================================
   private
     { Private declarations }
@@ -47,6 +46,8 @@ var
 
   TD : TTransactionDesc; // Ponteiro de Transação
 
+  tgMySqlErro: TStringList; // Arquivo de Erros
+
 implementation
 
 uses UDMAtualizaEstoques, UDMConexoes, DK_Procs1, DB;
@@ -54,99 +55,6 @@ uses UDMAtualizaEstoques, UDMConexoes, DK_Procs1, DB;
 {$R *.dfm}
 
 // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-Procedure TFrmAtualizaEstoques.AcertaEstoqueLoja(sCodLoja, sCodLinx: String);
-Var
-  MySql: String;
-Begin
-  // Verifica se Transação esta Ativa
-  If DMAtualizaEstoques.SQLC.InTransaction Then
-   DMAtualizaEstoques.SQLC.Rollback(TD);
-
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMAtualizaEstoques.SQLC.StartTransaction(TD);
-  Try // Try da Transação
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    // Insere Produtos do CD na Loja ===========================================
-    MySql:=' INSERT INTO ESTOQUE'+
-           ' SELECT'+
-           QuotedStr(sCodLoja)+' CODFILIAL,'+
-           ' e.CODPRODUTO,'+
-           ' 0.0000 SALDOATUAL,'+
-           ' 0.0000 PEDIDOPENDENTE,'+
-           ' 0 ZONAENDERECO,'+
-           ' ''000'' CORREDOR,'+
-           ' ''000'' PRATELEIRA,'+
-           ' ''0000'' GAVETA,'+
-           ' 0.00 CUSMEDVALOR,'+
-           ' 0.0000 CUSTOMEDIO,'+
-           ' 0.0000 LASTPRECOCOMPRA,'+
-           ' 0.0000 LASTCUSTOMEDIO,'+
-           ' 0.0000 ESTOQUEIDEAL,'+
-           ' 0.0000 ESTOQUEMAXIMO,'+
-           ' e.DATAALTERACADASTRO,'+
-           ' e.DATAALTERAESTOQUE,'+
-           ' e.DATAALTERAESTOQUE_PED,'+
-           ' e.PRINCIPALFOR,'+
-           ' 0.0000 SALDO_FINAL_SIDICOM,'+
-           ' e.DTA_ATUALIZACAO,'+
-           ' e.HRA_ATUALIZACAO'+
-
-           ' FROM ESTOQUE e'+
-
-           ' WHERE e.codfilial=''99'''+
-           ' AND NOT EXISTS (SELECT 1'+
-           '                 FROM ESTOQUE e9'+
-           '                 WHERE e9.codfilial='+QuotedStr(sCodLoja)+
-           '                 AND  e9.codproduto=e.codproduto)';
-    DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
-
-    // Exclui Produtos a mais no Cadastro em Relação ao CD =====================
-    MySql:=' DELETE FROM ESTOQUE e'+
-           ' WHERE e.codfilial='+QuotedStr(sCodLoja)+
-           ' AND NOT EXISTS (SELECT 1'+
-           '                 FROM ESTOQUE e9'+
-           '                 WHERE e9.codfilial=''99'''+
-           '                 AND   e9.codproduto=e.codproduto)';
-    DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
-
-    // Atualiza Transacao ======================================================
-    DMAtualizaEstoques.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-  Except // Except da Transação
-    on e : Exception do
-    Begin
-      // Abandona Transacao ====================================================
-      DMAtualizaEstoques.SQLC.Rollback(TD);
-
-      TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
-      TD.IsolationLevel:=xilREADCOMMITTED;
-      DMAtualizaEstoques.SQLC.StartTransaction(TD);
-
-      MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (COD_LOJA, COD_LINX, DTA_PROC, OBS)'+ // TIPO,
-             ' VALUES ('+
-             QuotedStr(sCodLoja)+', '+ // COD_LOJA
-             sCodLinx+', '+            // COD_LINX
-             ' CURRENT_TIMESTAMP,'+    // DTA_PROC
-//             QuotedStr('LsI')+', '+    // Linx Sem Inventário
-             QuotedStr(MySql)+')'+     // OBS
-             'MATCHING (COD_LOJA)';
-      DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
-
-      DMAtualizaEstoques.SQLC.Commit(TD); // AcertaEstoqueLoja
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-      Exit;
-    End; // on e : Exception do
-  End; // Try da Transação
-end;
 
 Procedure TFrmAtualizaEstoques.AtualizaEstoquesMovtosLinx(sCodLinx, sCodBelShop, sDtaInicioLinx: String);
 Var
@@ -227,7 +135,16 @@ Begin
            ' ORDER BY lp.cod_auxiliar, lpd.quantidade';
     DMAtualizaEstoques.CDS_LojaLinx.Close;
     DMAtualizaEstoques.SDS_LojaLinx.CommandText:=MySql;
-    DMAtualizaEstoques.CDS_LojaLinx.Open;
+
+    Try
+     DMAtualizaEstoques.CDS_LojaLinx.Open;
+    Except
+      tgMySqlErro.Add('1 - Loja BelShop: '+sCodBelShop);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('');
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'ODIR_ERRO.txt');
+    End;
 
     While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
     Begin
@@ -246,9 +163,9 @@ Begin
             sValues+QuotedStr(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].AsString)+')';
          End // If Trim(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
 
-        // Saldo Saldo do Produto (SALDOATUAL) =======================
+        // Saldo do Produto (SALDOATUAL) ============================
         Else
-        If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='SALDOATUAL' Then
+        If Trim(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].FieldName)='SALDOATUAL' Then
         Begin
           sValues:=
            sValues+QuotedStr(sQtdSaldo)+', ';
@@ -427,7 +344,7 @@ Begin
              sCodLinx+', '+
              ' CURRENT_TIMESTAMP,'+
              QuotedStr('LsI')+', '+ // Linx Sem Inventário
-             QuotedStr(MySql)+')'+
+             QuotedStr(e.message+' - '+MySql)+')'+
              'MATCHING (COD_LOJA)';
       DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
@@ -583,6 +500,8 @@ End;
 
 procedure TFrmAtualizaEstoques.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  FreeAndNil(tgMySqlErro);
+
   Application.Terminate;
   Exit;
 
@@ -590,6 +509,8 @@ end;
 
 procedure TFrmAtualizaEstoques.FormCreate(Sender: TObject);
 begin
+  tgMySqlErro:=TStringList.Create;
+
   Bt_AtualizarClick(Self);
 end;
 
@@ -625,6 +546,9 @@ begin
 //---------  -----------  ---------------  --------------------------------  --------------------------------------------
 //    COM	        COM	          COM	       iCodLinx<>0 e sDtaInventLinx<>''  Busca Estoques no LINX Direto
 // ========  ===========  ===============  ================================  ============================================
+
+  tgMySqlErro.Clear;
+  tgMySqlErro.SaveToFile(sgPath_Local+'ODIR_ERRO.txt');
 
   If Not DMAtualizaEstoques.CDS_EmpProcessa.Active Then
    DMAtualizaEstoques.CDS_EmpProcessa.Open;
@@ -741,6 +665,12 @@ begin
               bSiga:=True;
             Except
               Inc(i);
+
+              tgMySqlErro.Add('2 - Loja BelShop: '+sCodEmpresa);
+              tgMySqlErro.Add(MySql);
+              tgMySqlErro.Add('');
+              tgMySqlErro.Add('==================================');
+              tgMySqlErro.SaveToFile(sgPath_Local+'ODIR_ERRO.txt');
             End; // Try
 
             If i>2 Then
@@ -792,7 +722,16 @@ begin
                  ' ORDER BY lp.cod_auxiliar, lpd.quantidade';
           DMAtualizaEstoques.CDS_LojaLinx.Close;
           DMAtualizaEstoques.SDS_LojaLinx.CommandText:=MySql;
-          DMAtualizaEstoques.CDS_LojaLinx.Open;
+
+          Try
+            DMAtualizaEstoques.CDS_LojaLinx.Open;;
+          Except
+            tgMySqlErro.Add('3 - Loja Linx: '+IntToStr(iCodLinx));
+            tgMySqlErro.Add(MySql);
+            tgMySqlErro.Add('');
+            tgMySqlErro.Add('==================================');
+            tgMySqlErro.SaveToFile(sgPath_Local+'ODIR_ERRO.txt');
+          End;
 
           sTipo:='LcI'; // Linx Com Inventário
         End; // If (iCodLinx<>0) and (sDtaInventLinx<>'') Then
@@ -898,7 +837,7 @@ begin
 
                   // Saldo Saldo do Produto (SALDOATUAL) =======================
                   Else
-                  If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='SALDOATUAL' Then
+                  If Trim(DMAtualizaEstoques.CDS_LojaLinx.Fields[i].FieldName)='SALDOATUAL' Then
                   Begin
                     sValues:=
                      sValues+QuotedStr(sQtdSaldo)+', ';
@@ -966,7 +905,7 @@ begin
                      IntToStr(iCodLinx)+', '+
                      ' CURRENT_TIMESTAMP,'+
                      QuotedStr(sTipo)+', '+ // Linx Com Inventário
-                     QuotedStr(MySql)+')'+
+                     QuotedStr(e.message+' - '+MySql)+')'+
                      'MATCHING (COD_LOJA)';
               DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
@@ -990,10 +929,6 @@ begin
          ConexaoEmpIndividual('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, 'F');
       End; // If bSiga Then // Entra no Processamento ==========================
     End; // If Not bSoAtualMovtoLinx Then
-
-    // Igual Todos os Produtos de Todas a Lojas com o CD =======================
-    If sCodEmpresa<>'99' Then
-     AcertaEstoqueLoja(sCodEmpresa, IntToStr(iCodLinx));
 
     DMAtualizaEstoques.CDS_EmpProcessa.Next;
   End; // While Not DMAtualizaEstoques.CDS_EmpProcessa.Eof do

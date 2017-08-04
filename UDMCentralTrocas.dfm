@@ -515,10 +515,11 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object CDS_ReposicaoDocs: TClientDataSet
     Aggregates = <>
+    AggregatesActive = True
     Params = <>
     ProviderName = 'DSP_ReposicaoDocs'
     AfterScroll = CDS_ReposicaoDocsAfterScroll
-    Left = 507
+    Left = 499
     Top = 96
     object CDS_ReposicaoDocsCOD_LOJA: TStringField
       Alignment = taRightJustify
@@ -570,6 +571,11 @@ object DMCentralTrocas: TDMCentralTrocas
       DisplayFormat = '0,'
       Precision = 15
       Size = 2
+    end
+    object CDS_ReposicaoDocsTot_Itens: TAggregateField
+      FieldName = 'Tot_Itens'
+      Active = True
+      Expression = 'SUM(NUM_PRODUTOS)'
     end
   end
   object SDS_ReposicaoDocs: TSQLDataSet
@@ -670,6 +676,18 @@ object DMCentralTrocas: TDMCentralTrocas
       Precision = 15
       Size = 2
     end
+    object CDS_ReposicaoTransfIND_PRIORIDADE: TSmallintField
+      Alignment = taCenter
+      DisplayLabel = 'Prioridade'
+      FieldName = 'IND_PRIORIDADE'
+    end
+    object CDS_ReposicaoTransfIND_LEITORA: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'Leitora'
+      FieldName = 'IND_LEITORA'
+      FixedChar = True
+      Size = 3
+    end
   end
   object SDS_ReposicaoTransf: TSQLDataSet
     CommandText = 
@@ -677,46 +695,43 @@ object DMCentralTrocas: TDMCentralTrocas
       'o,'#13#10'lo.ind_curva ABC,'#13#10'lo.qtd_a_transf,'#13#10'lo.num_pedido,'#13#10'cd.end_' +
       'zona||'#39'.'#39'||cd.end_corredor||'#39'.'#39'||cd.end_prateleira||'#39'.'#39'||cd.end_' +
       'gaveta Endereco,'#13#10'lo.qtd_transf,'#13#10'lo.qtd_transf_oc,'#13#10#13#10'CAST(COAL' +
-      'ESCE((SELECT Trim(COALESCE(lp.PrecoCompra,0))'#13#10' FROM LISTAPRE lp' +
-      #13#10' WHERE lp.codlista='#39'0006'#39#13#10' AND   lp.codproduto=pr.codproduto)' +
-      ',0.00) as NUMERIC(12,2)) PrecoCompra'#13#10#13#10'FROM es_estoques_lojas l' +
-      'o, es_estoques_cd cd, produto pr'#13#10'WHERE lo.cod_produto=pr.codpro' +
-      'duto'#13#10'AND   lo.cod_produto=cd.cod_produto'#13#10'AND   lo.dta_movto=cd' +
-      '.dta_movto'#13#10'AND   lo.ind_transf='#39'SIM'#39#13#10#13#10'AND   lo.dta_movto= :sD' +
-      'ta'#13#10'AND   lo.num_docto= :Doc'#13#10'AND   lo.cod_loja= :CodLoja'#13#10'AND  ' +
-      ' lo.qtd_a_transf> :QtdInicio'#13#10'AND   lo.qtd_a_transf< :QtdFim'#13#10#13#10 +
-      'ORDER BY 7,3'
+      'ESCE((SELECT Trim(COALESCE(lp.PrecoCompra,0))'#13#10'                 ' +
+      '              FROM LISTAPRE lp'#13#10'                               W' +
+      'HERE lp.codlista='#39'0006'#39#13#10'                              AND   lp.' +
+      'codproduto=pr.codproduto),0.00)'#13#10'as NUMERIC(12,2)) PrecoCompra,'#13 +
+      #10'lo.ind_prioridade, lo.ind_leitora'#13#10#13#10'FROM ES_ESTOQUES_LOJAS lo,' +
+      ' ES_ESTOQUES_CD cd, PRODUTO pr'#13#10'WHERE lo.cod_produto=pr.codprodu' +
+      'to'#13#10'AND   lo.cod_produto=cd.cod_produto'#13#10'AND   lo.dta_movto=cd.d' +
+      'ta_movto'#13#10'AND   lo.ind_transf='#39'SIM'#39#13#10#13#10'AND   lo.dta_movto= :sDta' +
+      #13#10'AND   lo.num_docto= :Doc'#13#10'AND   lo.cod_loja= :CodLoja'#13#10'AND   l' +
+      'o.qtd_a_transf> :QtdInicio'#13#10'AND   lo.qtd_a_transf< :QtdFim'#13#10#13#10'OR' +
+      'DER BY 3'
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'sDta'
         ParamType = ptInput
-        Value = '29.12.2016'
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Doc'
         ParamType = ptInput
-        Value = '3168'
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'CodLoja'
         ParamType = ptInput
-        Value = '04'
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'QtdInicio'
         ParamType = ptInput
-        Value = '0'
       end
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'QtdFim'
         ParamType = ptInput
-        Value = '9999'
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 392
