@@ -1,6 +1,6 @@
 object FrmCentralTrocas: TFrmCentralTrocas
-  Left = 240
-  Top = 113
+  Left = 243
+  Top = 111
   Align = alClient
   AutoSize = True
   BorderIcons = [biSystemMenu]
@@ -1542,7 +1542,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           ParentColor = False
           ParentFont = False
           TabOrder = 4
-          object Rb_Bt_ReposLojasPrioridade0: TJvRadioButton
+          object Rb_ReposLojasPrioridade0: TJvRadioButton
             Left = 14
             Top = 18
             Width = 30
@@ -1558,8 +1558,8 @@ object FrmCentralTrocas: TFrmCentralTrocas
             ParentFont = False
             TabOrder = 0
             TabStop = True
-            OnClick = Rb_Bt_ReposLojasPrioridade0Click
-            OnKeyUp = Rb_Bt_ReposLojasPrioridade0KeyUp
+            OnClick = Rb_ReposLojasPrioridade0Click
+            OnKeyUp = Rb_ReposLojasPrioridade0KeyUp
             HotTrackFont.Charset = DEFAULT_CHARSET
             HotTrackFont.Color = clWindowText
             HotTrackFont.Height = -13
@@ -1567,7 +1567,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             HotTrackFont.Style = []
             LinkedControls = <>
           end
-          object Rb_Bt_ReposLojasPrioridade2: TJvRadioButton
+          object Rb_ReposLojasPrioridade2: TJvRadioButton
             Left = 96
             Top = 18
             Width = 28
@@ -1581,8 +1581,8 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Font.Style = []
             ParentFont = False
             TabOrder = 1
-            OnClick = Rb_Bt_ReposLojasPrioridade0Click
-            OnKeyUp = Rb_Bt_ReposLojasPrioridade0KeyUp
+            OnClick = Rb_ReposLojasPrioridade0Click
+            OnKeyUp = Rb_ReposLojasPrioridade0KeyUp
             HotTrackFont.Charset = DEFAULT_CHARSET
             HotTrackFont.Color = clWindowText
             HotTrackFont.Height = -13
@@ -1590,7 +1590,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             HotTrackFont.Style = []
             LinkedControls = <>
           end
-          object Rb_Bt_ReposLojasPrioridade1: TJvRadioButton
+          object Rb_ReposLojasPrioridade1: TJvRadioButton
             Left = 56
             Top = 18
             Width = 28
@@ -1604,8 +1604,8 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Font.Style = []
             ParentFont = False
             TabOrder = 2
-            OnClick = Rb_Bt_ReposLojasPrioridade0Click
-            OnKeyUp = Rb_Bt_ReposLojasPrioridade0KeyUp
+            OnClick = Rb_ReposLojasPrioridade0Click
+            OnKeyUp = Rb_ReposLojasPrioridade0KeyUp
             HotTrackFont.Charset = DEFAULT_CHARSET
             HotTrackFont.Color = clWindowText
             HotTrackFont.Height = -13
@@ -1613,7 +1613,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             HotTrackFont.Style = []
             LinkedControls = <>
           end
-          object Rb_Bt_ReposLojasPrioridade3: TJvRadioButton
+          object Rb_ReposLojasPrioridade3: TJvRadioButton
             Left = 136
             Top = 18
             Width = 28
@@ -1627,8 +1627,8 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Font.Style = []
             ParentFont = False
             TabOrder = 3
-            OnClick = Rb_Bt_ReposLojasPrioridade0Click
-            OnKeyUp = Rb_Bt_ReposLojasPrioridade0KeyUp
+            OnClick = Rb_ReposLojasPrioridade0Click
+            OnKeyUp = Rb_ReposLojasPrioridade0KeyUp
             HotTrackFont.Charset = DEFAULT_CHARSET
             HotTrackFont.Color = clWindowText
             HotTrackFont.Height = -13
@@ -1639,9 +1639,9 @@ object FrmCentralTrocas: TFrmCentralTrocas
         end
       end
       object Dbg_ReposLojasItens: TDBGridJul
-        Left = 371
+        Left = 423
         Top = 45
-        Width = 723
+        Width = 671
         Height = 443
         Align = alClient
         DataSource = DMCentralTrocas.DS_ReposicaoTransf
@@ -1764,7 +1764,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
       object Dbg_ReposLojasDocs: TDBGridJul
         Left = 0
         Top = 45
-        Width = 371
+        Width = 423
         Height = 443
         TabStop = False
         Align = alLeft
@@ -1804,7 +1804,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Color = 14680031
             Expanded = False
             FieldName = 'RAZAO_SOCIAL'
-            Width = 200
+            Width = 250
             Visible = True
           end
           item

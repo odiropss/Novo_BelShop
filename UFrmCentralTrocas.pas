@@ -129,10 +129,10 @@ type
     Pan_ReposLojasCorredor: TPanel;
     CkCbx_ReposLojasCorredor: TJvCheckedComboBox;
     Gb_Bt_ReposLojasPrioridade: TGroupBox;
-    Rb_Bt_ReposLojasPrioridade0: TJvRadioButton;
-    Rb_Bt_ReposLojasPrioridade2: TJvRadioButton;
-    Rb_Bt_ReposLojasPrioridade1: TJvRadioButton;
-    Rb_Bt_ReposLojasPrioridade3: TJvRadioButton;
+    Rb_ReposLojasPrioridade0: TJvRadioButton;
+    Rb_ReposLojasPrioridade2: TJvRadioButton;
+    Rb_ReposLojasPrioridade1: TJvRadioButton;
+    Rb_ReposLojasPrioridade3: TJvRadioButton;
     Panel3: TPanel;
     Label7: TLabel;
     Lab_ReposLojasCons: TLabel;
@@ -181,6 +181,7 @@ type
                                  //        (eG) Exclui Grupo/SubGrupo
 
     Procedure BuscaProdutoCodBarras;
+    Procedure AtualizaTotaisLojas;
 
     // Odir ====================================================================
 
@@ -255,8 +256,8 @@ type
       Shift: TShiftState);
     procedure Gb_ReposLojasOBSDblClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
-    procedure Rb_Bt_ReposLojasPrioridade0Click(Sender: TObject);
-    procedure Rb_Bt_ReposLojasPrioridade0KeyUp(Sender: TObject;
+    procedure Rb_ReposLojasPrioridade0Click(Sender: TObject);
+    procedure Rb_ReposLojasPrioridade0KeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
 
   private
@@ -286,6 +287,7 @@ var
   bgChange: Boolean; // Se Já Executou o Primeiro ENTER na Data;
 
   sgCorredores,
+  sgFilterAtual,
   sgCorredoresFilter,
   sgPrioridadeFilter,
 
@@ -296,7 +298,6 @@ var
   sgNomeProd: String;
 
   igCorredores: Integer;
-
 
   // Cria Ponteiro de transacão ================================================
   TD: TTransactionDesc;
@@ -318,6 +319,32 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
 //==============================================================================
 // Odir - INICIO ===============================================================
 //==============================================================================
+
+// Atualiza Totais Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmCentralTrocas.AtualizaTotaisLojas;
+Begin
+  sgCodEmp:=DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString;
+  DMCentralTrocas.CDS_ReposicaoDocs.DisableControls;
+  DMCentralTrocas.CDS_ReposicaoDocs.Close;
+  DMCentralTrocas.CDS_ReposicaoDocs.Open;
+  While Not DMCentralTrocas.CDS_ReposicaoDocs.Eof do
+  Begin
+    sCodFilial:=DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString;
+    DMCentralTrocas.CDS_ReposicaoDocs.Next;
+
+    If DMCentralTrocas.CDS_ReposicaoDocs.RecNo=DMCentralTrocas.CDS_ReposicaoDocs.RecordCount Then
+     Break;
+  End; // While Not DMCentralTrocas.CDS_ReposicaoDocs.Eof do
+  DMCentralTrocas.CDS_ReposicaoDocs.EnableControls;
+
+  DMCentralTrocas.CDS_ReposicaoDocs.Locate('COD_LOJA', sgCodEmp,[]);
+  sgCodEmp:='';
+
+  Dbg_ReposLojasDocs.Refresh;
+  Dbg_ReposLojasItens.Refresh;
+  Dbg_ReposLojasDocs.SetFocus;
+
+End; // Atualiza Totais Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Busca Produto e Atualiza Quantidade de Reposição >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmCentralTrocas.BuscaProdutoCodBarras;
@@ -370,17 +397,22 @@ Begin
   If Trim(sgCodProduto)='' Then
   Begin
     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-    MessageBox(Handle, pChar('Produto Não ENCOTRADO !!'+cr+cr+
-                             'Código de Barras: '+sgCodBarras), 'ATENÇÃO !!', MB_ICONINFORMATION);
+    msg('Produto Não ENCOTRADO !!'+cr+cr+'Código de Barras: '+sgCodBarras,'A');
+
     Exit;
   End; // If Trim(sgCodProduto)='' Then
 
   If Not DMCentralTrocas.CDS_ReposicaoTransf.Locate('COD_PRODUTO', sgCodProduto,[]) Then
   Begin
     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-    MessageBox(Handle, pChar('Produto Não ENCOTRADO no Documento !!'+cr+cr+
-                             sgCodProduto+' - '+sgNomeProd+cr+cr+
-                             'Código de Barras: '+sgCodBarras), 'ATENÇÃO !!', MB_ICONINFORMATION);
+    msg('Produto Não ENCOTRADO no Documento !!'+cr+sgCodProduto+' - '+sgNomeProd+cr+cr+'Código de Barras: '+sgCodBarras,'A');
+    Exit;
+  End; // If Not DMCentralTrocas.CDS_ReposicaoTransf.Locate('COD_PRODUTO', sgCodProduto,[]) Then
+
+  If DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsString<>'000000' Then
+  Begin
+    PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
+    msg('Produto Já Transferido !!','A');
     Exit;
   End; // If Not DMCentralTrocas.CDS_ReposicaoTransf.Locate('COD_PRODUTO', sgCodProduto,[]) Then
 
@@ -1069,7 +1101,6 @@ Begin
     DecimalSeparator:=',';
 
     OdirPanApres.Visible:=False;
-
     Screen.Cursor:=crDefault;
 
   Except
@@ -1082,10 +1113,9 @@ Begin
       DateSeparator:='/';
       DecimalSeparator:=',';
 
+      Screen.Cursor:=crDefault;
       OdirPanApres.Visible:=False;
       FrmBelShop.MontaProgressBar(False, FrmCentralTrocas);
-
-      Screen.Cursor:=crDefault;
 
       MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
     End; // on e : Exception do
@@ -2236,8 +2266,10 @@ Begin
       DecimalSeparator:=',';
 
       // Retira Numero do Pedido ------------------------------------
+      DMCentralTrocas.CDS_ReposicaoTransf.DisableControls;
       DMCentralTrocas.CDS_ReposicaoTransf.Close;
       DMCentralTrocas.CDS_ReposicaoTransf.Open;
+      DMCentralTrocas.CDS_ReposicaoTransf.EnableControls;
       DMCentralTrocas.CDS_ReposicaoTransf.First;
 
       // Rollback Transacao -----------------------------------------
@@ -2513,7 +2545,6 @@ Begin
     DecimalSeparator:=',';
 
     OdirPanApres.Visible:=False;
-
     Screen.Cursor:=crDefault;
 
   Except
@@ -2522,10 +2553,10 @@ Begin
       DateSeparator:='/';
       DecimalSeparator:=',';
 
-      OdirPanApres.Visible:=False;
-      FrmBelShop.MontaProgressBar(False, FrmCentralTrocas);
-
       Screen.Cursor:=crDefault;
+      OdirPanApres.Visible:=False;
+
+      FrmBelShop.MontaProgressBar(False, FrmCentralTrocas);
     End; // on e : Exception do
   End; // Try
 
@@ -2858,10 +2889,10 @@ Begin
 
   Except
     Screen.Cursor:=crDefault;
-
     OdirPanApres.Visible:=False;
-    Dbg_NotasEntDevProdutos.Refresh;
     OdirPanApres.Refresh;
+
+    Dbg_NotasEntDevProdutos.Refresh;
 
     pgProgBar.Position:=0;
     pgProgBar.Refresh;
@@ -3713,8 +3744,9 @@ begin
     DecimalSeparator:='.';
 
     OdirPanApres.Visible:=False;
-    Dbg_NotasEntDevProdutos.Refresh;
     OdirPanApres.Refresh;
+
+    Dbg_NotasEntDevProdutos.Refresh;
 
     // Analisa Transferencis para Devolução ====================================
     AnalisaNfTransfDevolucao;
@@ -3739,8 +3771,9 @@ begin
     DMBelShop.SQLC.Commit(TD);
 
     OdirPanApres.Visible:=False;
-    Dbg_NotasEntDevProdutos.Refresh;
     OdirPanApres.Refresh;
+
+    Dbg_NotasEntDevProdutos.Refresh;
 
     DateSeparator:='/';
     DecimalSeparator:=',';
@@ -3761,8 +3794,9 @@ begin
       FrmBelShop.MontaProgressBar(False, FrmCentralTrocas);
 
       OdirPanApres.Visible:=False;
-      Dbg_NotasEntDevProdutos.Refresh;
       OdirPanApres.Refresh;
+
+      Dbg_NotasEntDevProdutos.Refresh;
 
       DateSeparator:='/';
       DecimalSeparator:=',';
@@ -4716,8 +4750,10 @@ begin
       DateSeparator:='/';
       DecimalSeparator:=',';
 
+      DMCentralTrocas.CDS_ReposicaoTransf.DisableControls;
       DMCentralTrocas.CDS_ReposicaoTransf.Close;
       DMCentralTrocas.CDS_ReposicaoTransf.Open;
+      DMCentralTrocas.CDS_ReposicaoTransf.EnableControls;
       DMCentralTrocas.CDS_ReposicaoTransf.Locate('NUM_SEQ', iRecNo,[]);
 
       Screen.Cursor:=crDefault;
@@ -4758,6 +4794,18 @@ end;
 
 procedure TFrmCentralTrocas.Cbx_ReposLojasConsChange(Sender: TObject);
 begin
+  OdirPanApres.Caption:='AGUARDE !! Analisando por Quantidade de Reposição...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+
+  Screen.Cursor:=crAppStart;
+  Refresh;
+
   EdtReposLojasQtdInicio.Visible:=False;
   EdtReposLojasQtdFim.Visible:=False;
   Lab_ReposLojasCons.Visible:=False;
@@ -4774,16 +4822,43 @@ begin
     Lab_ReposLojasCons.Visible:=True;
   End;
 
+  // Reabre CDS_ReposicaoTransf ================================================
+  DMCentralTrocas.CDS_ReposicaoDocsAfterScroll(DMCentralTrocas.CDS_ReposicaoDocs);
+
+  // Atualiza Totais ===========================================================
+  AtualizaTotaisLojas;
+
   If Cbx_ReposLojasCons.ItemIndex<3 Then
    EdtReposLojasQtdInicio.SetFocus;
 
-  DMCentralTrocas.CDS_ReposicaoDocsAfterScroll(DMCentralTrocas.CDS_ReposicaoDocs);
+  Screen.Cursor:=crDefault;
+  OdirPanApres.Visible:=False;
 
 end;
 
 procedure TFrmCentralTrocas.EdtReposLojasQtdInicioChange(Sender: TObject);
 begin
+  OdirPanApres.Caption:='AGUARDE !! Analisando por Quantidade de Reposição...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+
+  Screen.Cursor:=crAppStart;
+  Refresh;
+
+  // Reabre CDS_ReposicaoTransf ================================================
   DMCentralTrocas.CDS_ReposicaoDocsAfterScroll(DMCentralTrocas.CDS_ReposicaoDocs);
+
+  // Atualiza Totais ===========================================================
+  AtualizaTotaisLojas;
+
+  Screen.Cursor:=crDefault;
+  OdirPanApres.Visible:=False;
+
 end;
 
 procedure TFrmCentralTrocas.Dbg_ReposLojasItensDrawColumnCell(
@@ -4932,19 +5007,19 @@ begin
           MySql:=
            MySql+' AND cd.end_zona||''.''||cd.end_corredor in ('+sgCorredores+')';
 
-         If Rb_Bt_ReposLojasPrioridade0.Checked Then
+         If Rb_ReposLojasPrioridade0.Checked Then
           MySql:=
            MySql+' AND lo.Ind_Prioridade=0';
 
-         If Rb_Bt_ReposLojasPrioridade1.Checked Then
+         If Rb_ReposLojasPrioridade1.Checked Then
           MySql:=
            MySql+' AND lo.Ind_Prioridade=1';
 
-         If Rb_Bt_ReposLojasPrioridade2.Checked Then
+         If Rb_ReposLojasPrioridade2.Checked Then
           MySql:=
            MySql+' AND lo.Ind_Prioridade=2';
 
-         If Rb_Bt_ReposLojasPrioridade3.Checked Then
+         If Rb_ReposLojasPrioridade3.Checked Then
           MySql:=
            MySql+' AND lo.Ind_Prioridade=3';
 
@@ -4991,19 +5066,19 @@ begin
             MySql:=
              MySql+' AND c.end_zona||''.''||c.end_corredor in ('+sgCorredores+')';
 
-           If Rb_Bt_ReposLojasPrioridade0.Checked Then
+           If Rb_ReposLojasPrioridade0.Checked Then
             MySql:=
              MySql+' AND l.Ind_Prioridade=0';
 
-           If Rb_Bt_ReposLojasPrioridade1.Checked Then
+           If Rb_ReposLojasPrioridade1.Checked Then
             MySql:=
              MySql+' AND l.Ind_Prioridade=1';
 
-           If Rb_Bt_ReposLojasPrioridade2.Checked Then
+           If Rb_ReposLojasPrioridade2.Checked Then
             MySql:=
              MySql+' AND l.Ind_Prioridade=2';
 
-           If Rb_Bt_ReposLojasPrioridade3.Checked Then
+           If Rb_ReposLojasPrioridade3.Checked Then
             MySql:=
              MySql+' AND l.Ind_Prioridade=3';
     DMBelShop.CDS_BuscaRapida.Close;
@@ -5373,7 +5448,6 @@ begin
     bgProcessar:=FrmLeitoraCodBarras.bgProcessar;
     sgCodBarras:=FrmLeitoraCodBarras.EdtCodBarras.Text;
 
-
     // Processa Reposição ======================================================
     If bgProcessar Then
     Begin
@@ -5734,10 +5808,21 @@ end;
 
 procedure TFrmCentralTrocas.DtaEdt_ReposLojasExit(Sender: TObject);
 begin
+  OdirPanApres.Caption:='AGUARDE !! Localizando Reposições...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
   Screen.Cursor:=crAppStart;
   DtaEdt_ReposLojas.Properties.ReadOnly:=False;
-  
+
   sgCorredores      :='';
+  sgFilterAtual     :='';
   sgCorredoresFilter:='';
   sgPrioridadeFilter:='';
   bgTodosCorredores :=True;
@@ -5754,14 +5839,16 @@ begin
 
   If Trim(DtaEdt_ReposLojas.Text)='' Then
   Begin
-    Bt_ReposLojasFechar.SetFocus;
+    OdirPanApres.Visible:=False;
     Screen.Cursor:=crDefault;
+    Bt_ReposLojasFechar.SetFocus;
     Exit;
   End;
 
   DtaEdt_ReposLojas.Date:=StrToDate(DtaEdt_ReposLojas.Text);
   If DtaEdt_ReposLojas.Date>StrToDate(DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor))) Then
   Begin
+    OdirPanApres.Visible:=False;
     Screen.Cursor:=crDefault;
     msg('Date Inválida !!','A');
     DtaEdt_ReposLojas.Date:=StrToDate(DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)));
@@ -5780,16 +5867,20 @@ begin
   // Localizando Transferencias Setor de Compras ===============================
   If Not ProcessaTranferenciasCompras Then
   Begin
+    OdirPanApres.Visible:=False;
     Screen.Cursor:=crDefault;
     Exit;
   End;
 
+  DMCentralTrocas.CDS_ReposicaoDocs.DisableControls;
   DMCentralTrocas.CDS_ReposicaoDocs.Close;
   DMCentralTrocas.SDS_ReposicaoDocs.Params.ParamByName('sDta').AsDate:=StrToDate(DateToStr(DtaEdt_ReposLojas.Date));
   DMCentralTrocas.CDS_ReposicaoDocs.Open;
+  DMCentralTrocas.CDS_ReposicaoDocs.EnableControls;
 
   If DMCentralTrocas.CDS_ReposicaoDocs.IsEmpty Then
   Begin
+    OdirPanApres.Visible:=False;
     Screen.Cursor:=crDefault;
     DMCentralTrocas.CDS_ReposicaoDocs.Close;
     DMCentralTrocas.CDS_ReposicaoTransf.Close;
@@ -5807,6 +5898,7 @@ begin
 
   If DMCentralTrocas.CDS_ReposicaoDocsTot_Itens.Value=0 Then
   Begin
+    OdirPanApres.Visible:=False;
     Screen.Cursor:=crDefault;
     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
     MessageBox(Handle, pChar('Erro de CONEXÃO Na Reposição de Estoques !!'+cr+cr+
@@ -5821,27 +5913,28 @@ begin
   DMCentralTrocas.CDS_ReposicaoTransf.First;
 
   // Busca Prioridades
-  Rb_Bt_ReposLojasPrioridade0.Checked:=True;
-  Rb_Bt_ReposLojasPrioridade0Click(Self);
+  Rb_ReposLojasPrioridade0.Checked:=True;
+  Rb_ReposLojasPrioridade0Click(Self);
 
   If DMCentralTrocas.CDS_ReposicaoDocsTot_Itens.Value=0 Then
   Begin
-    Rb_Bt_ReposLojasPrioridade1.Checked:=True;
+    Rb_ReposLojasPrioridade1.Checked:=True;
   End;
 
   If DMCentralTrocas.CDS_ReposicaoDocsTot_Itens.Value=0 Then
   Begin
-    Rb_Bt_ReposLojasPrioridade2.Checked:=True;
+    Rb_ReposLojasPrioridade2.Checked:=True;
   End;
 
   If DMCentralTrocas.CDS_ReposicaoDocsTot_Itens.Value=0 Then
   Begin
-    Rb_Bt_ReposLojasPrioridade3.Checked:=True;
+    Rb_ReposLojasPrioridade3.Checked:=True;
   End;
 
   // Se nâo Encontrou Nenhuma Prioridade =======================================
   If DMCentralTrocas.CDS_ReposicaoDocsTot_Itens.Value=0 Then
   Begin
+    OdirPanApres.Visible:=False;
     Screen.Cursor:=crDefault;
     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
     MessageBox(Handle, pChar('Erro de CONEXÃO Na Reposição de Estoques !!'+cr+cr+
@@ -5854,6 +5947,7 @@ begin
     Exit;
   End;
 
+  OdirPanApres.Visible:=False;
   Screen.Cursor:=crDefault;
 end;
 
@@ -6214,11 +6308,23 @@ begin
   If DMCentralTrocas.CDS_ReposicaoDocs.IsEmpty Then
    Exit;
 
+  OdirPanApres.Caption:='AGUARDE !! Analisando Endereçamentos...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+
+  Screen.Cursor:=crAppStart;
+  Refresh;
+
   igCorredores:=0;
   sgCorredores:='';
   sgCorredoresFilter:='';
   bgTodosCorredores:=True;
-  for i:=0 to CkCbx_ReposLojasCorredor.Items.Count-1 do
+  For i:=0 to CkCbx_ReposLojasCorredor.Items.Count-1 do
   Begin
     If CkCbx_ReposLojasCorredor.Checked[i] Then
      Begin
@@ -6261,7 +6367,16 @@ begin
     DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
   End; // If Trim(sgPrioridadeFilter)<>'' Then
 
-  DMCentralTrocas.CDS_ReposicaoDocsAfterScroll(DMCentralTrocas.CDS_ReposicaoDocs);
+  // Atualiza Totais ===========================================================
+  If DMCentralTrocas.CDS_ReposicaoTransf.Filter<>sgFilterAtual Then
+  Begin
+    sgFilterAtual:=DMCentralTrocas.CDS_ReposicaoTransf.Filter;
+    AtualizaTotaisLojas;
+  End;
+
+  Screen.Cursor:=crDefault;
+  OdirPanApres.Visible:=False;
+  Refresh;
 
 end;
 
@@ -6821,38 +6936,53 @@ begin
 
 end;
 
-procedure TFrmCentralTrocas.Rb_Bt_ReposLojasPrioridade0Click(Sender: TObject);
+procedure TFrmCentralTrocas.Rb_ReposLojasPrioridade0Click(Sender: TObject);
 Var
   s: String;
 begin
-  AcertaRb_Style(Rb_Bt_ReposLojasPrioridade0);
-  AcertaRb_Style(Rb_Bt_ReposLojasPrioridade1);
-  AcertaRb_Style(Rb_Bt_ReposLojasPrioridade2);
-  AcertaRb_Style(Rb_Bt_ReposLojasPrioridade3);
+  If DMCentralTrocas.CDS_ReposicaoDocs.IsEmpty Then
+   Exit;
+
+  OdirPanApres.Caption:='AGUARDE !! Analisando Prioridades...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+
+  Screen.Cursor:=crAppStart;
+  Refresh;
+
+  AcertaRb_Style(Rb_ReposLojasPrioridade0);
+  AcertaRb_Style(Rb_ReposLojasPrioridade1);
+  AcertaRb_Style(Rb_ReposLojasPrioridade2);
+  AcertaRb_Style(Rb_ReposLojasPrioridade3);
 
   sgPrioridadeFilter:='';
-  If Rb_Bt_ReposLojasPrioridade0.Checked Then
+  If Rb_ReposLojasPrioridade0.Checked Then
   Begin
     sgPrioridadeFilter:='IND_PRIORIDADE=0';
-    s:='0';
+    s:='0 <Zero>';
   End;
 
-  If Rb_Bt_ReposLojasPrioridade1.Checked Then
+  If Rb_ReposLojasPrioridade1.Checked Then
   Begin
     sgPrioridadeFilter:='IND_PRIORIDADE=1';
-    s:='1';
+    s:='1 <Um>';
   End;
 
-  If Rb_Bt_ReposLojasPrioridade2.Checked Then
+  If Rb_ReposLojasPrioridade2.Checked Then
   Begin
     sgPrioridadeFilter:='IND_PRIORIDADE=2';
-    s:='2';
+    s:='2 <Dois>';
   End;
 
-  If Rb_Bt_ReposLojasPrioridade3.Checked Then
+  If Rb_ReposLojasPrioridade3.Checked Then
   Begin
     sgPrioridadeFilter:='IND_PRIORIDADE=3';
-    s:='3';
+    s:='3 <Três>';
   End;
 
   // Busca Movtos ==============================================================
@@ -6876,20 +7006,42 @@ begin
     DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
   End; // If Trim(sgPrioridadeFilter)<>'' Then
 
-  DMCentralTrocas.CDS_ReposicaoDocsAfterScroll(DMCentralTrocas.CDS_ReposicaoDocs);
+  // Atualiza Totais ===========================================================
+  If DMCentralTrocas.CDS_ReposicaoTransf.Filter<>sgFilterAtual Then
+  Begin
+    sgFilterAtual:=DMCentralTrocas.CDS_ReposicaoTransf.Filter;
+    AtualizaTotaisLojas;
+  End;
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+  Refresh;
 
   If DMCentralTrocas.CDS_ReposicaoDocsTot_Itens.Value<>0 Then
-  Begin
-    msg('Você Irá Trtabalhar na Prioridade: '+s,'A');
-  End;
+   msg('VOCÊ irá Trabalhar com a'+cr+'Prioridade '+cr+cr+s,'A');
 end;
 
-procedure TFrmCentralTrocas.Rb_Bt_ReposLojasPrioridade0KeyUp(
+procedure TFrmCentralTrocas.Rb_ReposLojasPrioridade0KeyUp(
   Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  Rb_Bt_ReposLojasPrioridade0Click(Self);
+  Rb_ReposLojasPrioridade0Click(Self);
 end;
 
 end.
 
+////  If Not CDS_ReposicaoDocs.IsEmpty Then
+////  Begin
+////  igTentaConexao:=CDS_ReposicaoDocsNUM_DOCTO.AsInteger;
+////  CDS_ReposicaoDocs.First;
+////  CDS_ReposicaoDocs.DisableControls;
+////  While Not CDS_ReposicaoDocs.Eof do
+////  Begin
+//    CDS_ReposicaoDocs.Edit;
+//    CDS_ReposicaoDocsNUM_PRODUTOS.AsInteger:=CDS_ReposicaoTransf.RecordCount;
+//    CDS_ReposicaoDocs.Post;
+////  End;
+////  CDS_ReposicaoDocs.EnableControls;
+////  CDS_ReposicaoDocs.Locate('NUM_DOCTO', igTentaConexao,[]);
+////  End;
+//CDS_ReposicaoDocsAfterScroll
 

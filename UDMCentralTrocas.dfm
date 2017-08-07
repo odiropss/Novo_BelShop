@@ -1,7 +1,8 @@
 object DMCentralTrocas: TDMCentralTrocas
   OldCreateOrder = False
-  Left = 241
-  Top = 114
+  OnCreate = DataModuleCreate
+  Left = 243
+  Top = 112
   Height = 607
   Width = 1053
   object SDS_Transf_Cd: TSQLDataSet
