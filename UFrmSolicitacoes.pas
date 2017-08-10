@@ -67,6 +67,7 @@ TabIndex:
   21 = Digitação de Reposições de Lojas
   22 = Transfere Permissões Usuários SIDICOM
   23 = Salão - Relatórios
+  24 = Reposições Lojas - Acerta Divergências
 }
 unit UFrmSolicitacoes;
 
@@ -219,9 +220,9 @@ type
     Ckb_FinanObjetivosHabDesObjetivos: TJvCheckBox;
     Ckb_FinanObjetivosHabDesDiarios: TJvCheckBox;
     Ckb_FinanObjetivosHabDesRealizados: TJvCheckBox;
-    Panel2: TPanel;
-    Bt_FinanObjetivosHabDeVoltar: TJvXPButton;
-    Bt_FinanObjetivosHabDeOK: TJvXPButton;
+    Pan_Simples: TPanel;
+    Bt_SimplesVoltar: TJvXPButton;
+    Bt_SimplesOK: TJvXPButton;
     Panel8: TPanel;
     Bt_QtdCaixaCDVoltar: TJvXPButton;
     Pan_Cor1: TPanel;
@@ -483,7 +484,7 @@ type
     Ts_ReposLojasDigita: TTabSheet;
     Gb_ReposLojasProduto: TGroupBox;
     EdtReposLojasProduto: TEdit;
-    Panel5: TPanel;
+    Pan_ReposicaoLojas: TPanel;
     Bt_ReposLojasVoltar: TJvXPButton;
     Panel7: TPanel;
     Gb_ReposLojasSeq: TGroupBox;
@@ -600,6 +601,15 @@ type
     JvXPButton1: TJvXPButton;
     DtaEdtSolicExpDoctoDestino: TDateTimePicker;
     Panel14: TPanel;
+    Ts_ReposDivergencias: TTabSheet;
+    Pan_ReposDivergencias: TPanel;
+    Gb_ReposDivProdutoSel: TGroupBox;
+    Gb_ReposDivQtd: TGroupBox;
+    EdtReposDivQtd: TCurrencyEdit;
+    Bt_ReposDivAlterarQtd: TJvXPButton;
+    Mem_ReposDivProduto: TMemo;
+    Dbg_ReposDivProdutos: TDBGridJul;
+    Label13: TLabel;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -685,7 +695,7 @@ type
     procedure Ckb_SolicExpExcProdutoClick(Sender: TObject);
     procedure Ckb_SolicExpExcProdutoKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure Bt_FinanObjetivosHabDeVoltarClick(Sender: TObject);
+    procedure Bt_SimplesVoltarClick(Sender: TObject);
     procedure Ckb_FinanObjetivosHabDesObjetivosClick(Sender: TObject);
     procedure Ckb_FinanObjetivosHabDesDiariosClick(Sender: TObject);
     procedure Ckb_FinanObjetivosHabDesRealizadosClick(Sender: TObject);
@@ -701,7 +711,7 @@ type
       var Key: Word; Shift: TShiftState);
     procedure Ckb_FinanObjetivosHabDesObjetivosKeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
-    procedure Bt_FinanObjetivosHabDeOKClick(Sender: TObject);
+    procedure Bt_SimplesOKClick(Sender: TObject);
     procedure Bt_QtdCaixaCDVoltarClick(Sender: TObject);
     procedure Bt_AtualizaSIDICOMCurvaABCEnderecoOKClick(Sender: TObject);
     procedure Bt_GeraOCLegendaCoresVoltarClick(Sender: TObject);
@@ -877,12 +887,34 @@ type
     procedure Bt_ReposLojasPrecoClick(Sender: TObject);
     procedure JvXPButton1Click(Sender: TObject);
     procedure EdtSolicExpDoctoDestinoEnter(Sender: TObject);
+    procedure Dbg_ExcelImportarKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_IBGE2KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_ParamSalMininoKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_ConsistenciasKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_ValesParcelasKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_ProfSelecionaKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_ApresGridKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_SelecionarKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_ReposDivProdutosDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure Dbg_ReposDivProdutosKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Bt_ReposDivAlterarQtdClick(Sender: TObject);
+    procedure EdtReposDivQtdChange(Sender: TObject);
   private
     { Private declarations }
 
     // Não Permite Sair com Ctrl+F4
     procedure AppMessage(var Msg: TMSG; var HAndled: Boolean);
-
   public
     { Public declarations }
 
@@ -916,13 +948,13 @@ const
 var
   FrmSolicitacoes: TFrmSolicitacoes;
 
-  TD: TTransactionDesc;
-
   // Show Hint em Forma de Balão
   hTooltip: Cardinal;
   ti: TToolInfo;
   buffer : array[0..255] of char;
   ///////////////////////////////
+
+  TD: TTransactionDesc;
 
   GridNew: TDBGrid;
 
@@ -931,7 +963,11 @@ var
 
   sgDtaI, sgDtaF: String;
 
-  sgMensagem: String;
+  sgMensagem,
+  sgMessagemSimplesOK,    // Menssagem para o Bt_SimplesOK
+  sgMessagemSimplesVoltar // Menssagem para o Bt_SimplesVoltar
+  : String;
+
   sgNomeArq: String;
 
   sgTipoDML: String;
@@ -948,7 +984,7 @@ implementation
 uses DK_Procs1, UDMBelShop, UFrmBelShop, UDMSalao, UPesquisa, UFrmSalao,
      UDMVirtual, UDMLojaUnica, UDMCentralTrocas, UDMConexoes,
      UFrmSelectEmpProcessamento, IBCustomDataSet, UDMRelatorio,
-  UPesquisaIB;
+     UPesquisaIB;
 
 {$R *.dfm}
 
@@ -3696,6 +3732,9 @@ end;
 
 procedure TFrmSolicitacoes.FormShow(Sender: TObject);
 begin
+  // Coloca BitMaps em Componentes =============================================
+  BitMaps(FrmSolicitacoes);
+
   PC_PrincipalChange(Self);
 end;
 
@@ -3745,11 +3784,6 @@ procedure TFrmSolicitacoes.Ckb_SolicExpExcProdutoKeyDown(Sender: TObject; var Ke
 begin
   AcertaCkb_SN(Ckb_SolicExpExcProduto);
 
-end;
-
-procedure TFrmSolicitacoes.Bt_FinanObjetivosHabDeVoltarClick(Sender: TObject);
-begin
-  Close;
 end;
 
 procedure TFrmSolicitacoes.Ckb_FinanObjetivosHabDesObjetivosClick(Sender: TObject);
@@ -3832,10 +3866,29 @@ begin
   Ckb_FinanObjetivosHabDesObjetivosClick(Self);
 
 end;
-    
-procedure TFrmSolicitacoes.Bt_FinanObjetivosHabDeOKClick(Sender: TObject);
+
+procedure TFrmSolicitacoes.Bt_SimplesOKClick(Sender: TObject);
 begin
+  If Trim(sgMessagemSimplesOK)<>'' Then
+  Begin
+    If msg(sgMessagemSimplesOK,'C')=2 Then
+     Exit;
+  End; //  If Trim(sgMessagemSimplesOK)<>'' Then
+
   bgProcessar:=True;
+
+  Close;
+end;
+
+procedure TFrmSolicitacoes.Bt_SimplesVoltarClick(Sender: TObject);
+begin
+  If Trim(sgMessagemSimplesVoltar)<>'' Then
+  Begin
+    If msg(sgMessagemSimplesVoltar,'C')=2 Then
+     Exit;
+  End; //  If Trim(sgMessagemSimplesOK)<>'' Then
+
+  bgProcessar:=False;
 
   Close;
 end;
@@ -4497,6 +4550,10 @@ procedure TFrmSolicitacoes.Dbg_IBGE1KeyDown(Sender: TObject; var Key: Word; Shif
 Var
   sIBGE: String;
 begin
+  // Bloquei Ctrl + Delete =====================================================  
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
   If Key=VK_F4 Then
   Begin
     sIBGE:='';
@@ -5729,6 +5786,10 @@ Var
   s: String;
   i: Integer;
 begin
+  // Bloquei Ctrl + Delete =====================================================  
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
   If Key=VK_F4 Then
   Begin
     If Not DMLojaUnica.CDS_V_SolicitFornLojas.IsEmpty Then
@@ -8023,6 +8084,10 @@ begin
   If DMBelShop.CDS_Busca.IsEmpty Then
    Exit;
 
+  // Bloquei Ctrl + Delete =====================================================  
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
   If Key=VK_Delete Then
   Begin
     // Verifica se Transação esta Ativa
@@ -8242,6 +8307,10 @@ Var
   sManut, sLoja, sProc: String;
   dDta: TDateTime;
 begin
+  // Bloquei Ctrl + Delete =====================================================  
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
   // Altera Processamento do Fornecedor ========================================
   If key=Vk_F6 Then
   Begin
@@ -8507,6 +8576,122 @@ end;
 procedure TFrmSolicitacoes.EdtSolicExpDoctoDestinoEnter(Sender: TObject);
 begin
    Bt_SoliciExpExportar.Enabled:=False;
+end;
+
+procedure TFrmSolicitacoes.Dbg_ExcelImportarKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_IBGE2KeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================  
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ParamSalMininoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ConsistenciasKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ValesParcelasKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ProfSelecionaKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ApresGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_SelecionarKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ReposDivProdutosDrawColumnCell(
+  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+  State: TGridDrawState);
+begin
+  If (Column.FieldName='IND_CORRIGIDO') Then
+  Begin
+    if DMCentralTrocas.CDS_V_ReposDivergenciasIND_CORRIGIDO.AsString='SIM' Then
+    Begin
+      Dbg_ReposDivProdutos.Canvas.Font.Style:=[fsBold];
+      Dbg_ReposDivProdutos.Canvas.Font.Color:=clWhite; // -->> Cor da Fonte
+      Dbg_ReposDivProdutos.Canvas.Brush.Color:=clBlue; //  -->> Cor da Celula
+    End;
+  End; // If (Column.FieldName='IND_CORRIGIDO') Then
+
+  Dbg_ReposDivProdutos.Canvas.FillRect(Rect);
+  Dbg_ReposDivProdutos.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  // Alinhamento
+  DMCentralTrocas.CDS_V_ReposDivergenciasIND_CORRIGIDO.Alignment:=taCenter;
+  DMCentralTrocas.CDS_V_ReposDivergenciasQTD_A_TRANSF.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_V_ReposDivergenciasQTD_CHECKOUT.Alignment:=taRightJustify;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ReposDivProdutosKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  if (Shift = [ssCtrl]) and (Key = 46) then
+    Key := 0;
+
+end;
+
+procedure TFrmSolicitacoes.Bt_ReposDivAlterarQtdClick(Sender: TObject);
+begin
+  DMCentralTrocas.CDS_V_ReposDivergencias.Edit;
+  DMCentralTrocas.CDS_V_ReposDivergenciasQTD_A_TRANSF.AsInteger:=EdtReposDivQtd.AsInteger;
+  DMCentralTrocas.CDS_V_ReposDivergenciasQTD_CHECKOUT.AsInteger:=EdtReposDivQtd.AsInteger;
+  DMCentralTrocas.CDS_V_ReposDivergenciasIND_CORRIGIDO.AsString:='SIM';
+  DMCentralTrocas.CDS_V_ReposDivergencias.Post;
+  DMCentralTrocas.CDS_V_ReposDivergencias.Next;
+end;
+
+procedure TFrmSolicitacoes.EdtReposDivQtdChange(Sender: TObject);
+begin
+  Try
+    EdtReposDivQtd.SetFocus;
+  Except
+  End;
 end;
 
 end.

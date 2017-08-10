@@ -8,7 +8,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
   Caption = 'CENTRO DE DISTRIBUI'#199#195'O'
   ClientHeight = 578
   ClientWidth = 1102
-  Color = clWindow
+  Color = clSilver
   Ctl3D = False
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -1420,57 +1420,24 @@ object FrmCentralTrocas: TFrmCentralTrocas
         Left = 0
         Top = 0
         Width = 1094
-        Height = 45
+        Height = 48
         Align = alTop
         BevelInner = bvLowered
         BorderStyle = bsSingle
         TabOrder = 0
         OnClick = PanReposLojasClick
-        DesignSize = (
-          1092
-          43)
-        object Label15: TLabel
-          Left = 391
-          Top = 14
-          Width = 70
-          Height = 13
-          Caption = 'Corredor(es)'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object DtaEdt_ReposLojas: TcxDateEdit
-          Left = 8
-          Top = 7
-          ParentFont = False
-          Properties.OnChange = DtaEdt_ReposLojasPropertiesChange
-          Style.Color = clTeal
-          Style.Font.Charset = DEFAULT_CHARSET
-          Style.Font.Color = clWhite
-          Style.Font.Height = -16
-          Style.Font.Name = 'MS Sans Serif'
-          Style.Font.Style = [fsBold]
-          Style.IsFontAssigned = True
-          StyleFocused.BorderStyle = ebsOffice11
-          TabOrder = 0
-          OnEnter = DtaEdt_ReposLojasEnter
-          OnExit = DtaEdt_ReposLojasExit
-          Width = 115
-        end
         object Gb_ReposLojasItens: TGroupBox
           Left = 958
           Top = 2
           Width = 132
-          Height = 39
+          Height = 42
           Align = alRight
           Caption = ' N'#186' Itens no Pedido '
-          TabOrder = 1
+          TabOrder = 3
+          Visible = False
           object EdtReposLojasQtdItensPed: TCurrencyEdit
             Left = 38
-            Top = 15
+            Top = 16
             Width = 50
             Height = 21
             AutoSize = False
@@ -1483,38 +1450,30 @@ object FrmCentralTrocas: TFrmCentralTrocas
             OnExit = EdtReposLojasQtdItensPedExit
           end
         end
-        object Gb_ReposLojasOBS: TGroupBox
-          Left = 860
-          Top = 2
-          Width = 98
-          Height = 39
-          Align = alRight
-          Caption = ' Observa'#231#245'es '
-          TabOrder = 2
-          OnDblClick = Gb_ReposLojasOBSDblClick
-          object CkB_ReposLojasOBS: TCheckBox
-            Left = 24
-            Top = 16
-            Width = 54
-            Height = 17
-            Caption = 'SIM'
-            Checked = True
-            State = cbChecked
-            TabOrder = 0
-            OnClick = CkB_ReposLojasOBSClick
-          end
-        end
         object Pan_ReposLojasCorredor: TPanel
-          Left = 464
-          Top = 10
-          Width = 392
-          Height = 24
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 3
+          Left = 483
+          Top = 2
+          Width = 475
+          Height = 42
+          Align = alRight
+          TabOrder = 2
+          object Label15: TLabel
+            Left = 11
+            Top = 15
+            Width = 70
+            Height = 13
+            Caption = 'Corredor(es)'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+          end
           object CkCbx_ReposLojasCorredor: TJvCheckedComboBox
-            Left = 3
-            Top = 2
-            Width = 384
+            Left = 84
+            Top = 12
+            Width = 379
             Height = 19
             Items.Strings = (
               '99.999')
@@ -1528,10 +1487,11 @@ object FrmCentralTrocas: TFrmCentralTrocas
           end
         end
         object Gb_Bt_ReposLojasPrioridade: TGroupBox
-          Left = 136
+          Left = 134
           Top = 2
           Width = 179
-          Height = 39
+          Height = 42
+          Align = alLeft
           Caption = ' Prioridades '
           Color = clSilver
           Font.Charset = DEFAULT_CHARSET
@@ -1541,7 +1501,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Font.Style = [fsBold]
           ParentColor = False
           ParentFont = False
-          TabOrder = 4
+          TabOrder = 1
           object Rb_ReposLojasPrioridade0: TJvRadioButton
             Left = 14
             Top = 18
@@ -1637,12 +1597,41 @@ object FrmCentralTrocas: TFrmCentralTrocas
             LinkedControls = <>
           end
         end
+        object PnaDtaReposicao: TPanel
+          Left = 2
+          Top = 2
+          Width = 132
+          Height = 42
+          Align = alLeft
+          BevelInner = bvLowered
+          BevelOuter = bvLowered
+          Color = clSilver
+          TabOrder = 0
+          object DtaEdt_ReposLojas: TcxDateEdit
+            Left = 7
+            Top = 6
+            ParentFont = False
+            Properties.OnChange = DtaEdt_ReposLojasPropertiesChange
+            Style.Color = clTeal
+            Style.Font.Charset = DEFAULT_CHARSET
+            Style.Font.Color = clWhite
+            Style.Font.Height = -16
+            Style.Font.Name = 'MS Sans Serif'
+            Style.Font.Style = [fsBold]
+            Style.IsFontAssigned = True
+            StyleFocused.BorderStyle = ebsOffice11
+            TabOrder = 0
+            OnEnter = DtaEdt_ReposLojasEnter
+            OnExit = DtaEdt_ReposLojasExit
+            Width = 115
+          end
+        end
       end
       object Dbg_ReposLojasItens: TDBGridJul
         Left = 423
-        Top = 45
+        Top = 48
         Width = 671
-        Height = 443
+        Height = 440
         Align = alClient
         DataSource = DMCentralTrocas.DS_ReposicaoTransf
         FixedColor = clSilver
@@ -1763,9 +1752,9 @@ object FrmCentralTrocas: TFrmCentralTrocas
       end
       object Dbg_ReposLojasDocs: TDBGridJul
         Left = 0
-        Top = 45
+        Top = 48
         Width = 423
-        Height = 443
+        Height = 440
         TabStop = False
         Align = alLeft
         DataSource = DMCentralTrocas.DS_ReposicaoDocs
@@ -1948,12 +1937,9 @@ object FrmCentralTrocas: TFrmCentralTrocas
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 4
-        DesignSize = (
-          1092
-          40)
         object Bt_ReposLojasEmissaoDoc: TJvXPButton
           Tag = 5
-          Left = 250
+          Left = 2
           Top = 2
           Width = 114
           Height = 36
@@ -1973,7 +1959,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         end
         object Bt_ReposLojasAlterarQtd: TJvXPButton
           Tag = 2
-          Left = 364
+          Left = 132
           Top = 2
           Width = 110
           Height = 36
@@ -1993,7 +1979,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         end
         object Bt_ReposLojasGeraPedidoSIDICOM: TJvXPButton
           Tag = 1
-          Left = 602
+          Left = 376
           Top = 2
           Width = 108
           Height = 36
@@ -2061,6 +2047,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             8D6FE19A80E6B3A2E1C3BAD6CBC8C8CBC8C8CBC8C8CBC8C8CBC8C8CBC8C8CBC8
             C8CBC8C8CBC8C8000000}
           ShowFocusRect = True
+          Align = alLeft
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -2069,12 +2056,12 @@ object FrmCentralTrocas: TFrmCentralTrocas
           ParentFont = False
           OnClick = Bt_ReposLojasGeraPedidoSIDICOMClick
         end
-        object Bt_ReposLojasQtdLeitora: TJvXPButton
-          Left = 474
+        object Bt_ReposLojasCheckOut: TJvXPButton
+          Left = 242
           Top = 2
           Width = 118
           Height = 36
-          Caption = 'Qtd Altera'#13#10'C'#243'd Barras'
+          Caption = '  CheckOut'#13#10'Diverg'#234'ncias'
           TabOrder = 3
           TabStop = False
           Glyph.Data = {
@@ -2119,7 +2106,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             1A18EE0DB5BA4026B8B75333481D922B9706597F702A274E325CB257434DAD82
             8A28AA03FFD9}
           ShowFocusRect = True
-          Spacing = 10
+          Spacing = 0
           Align = alLeft
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -2127,11 +2114,11 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_ReposLojasQtdLeitoraClick
+          OnClick = Bt_ReposLojasCheckOutClick
         end
         object Bt_ReposLojasStatusUltimoProc: TJvXPButton
           Tag = 94
-          Left = 735
+          Left = 758
           Top = 2
           Width = 133
           Height = 36
@@ -2140,7 +2127,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           TabStop = False
           ShowFocusRect = True
           Spacing = 10
-          Anchors = [akTop, akRight]
+          Align = alRight
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -2151,9 +2138,9 @@ object FrmCentralTrocas: TFrmCentralTrocas
         end
         object Bt_ReposLojasFechar: TJvXPButton
           Tag = 99
-          Left = 985
+          Left = 996
           Top = 2
-          Width = 105
+          Width = 94
           Height = 36
           Caption = 'Fechar'
           TabOrder = 5
@@ -2171,16 +2158,16 @@ object FrmCentralTrocas: TFrmCentralTrocas
         end
         object Bt_ReposLojasPedidosGerados: TJvXPButton
           Tag = 92
-          Left = 868
+          Left = 891
           Top = 2
-          Width = 104
+          Width = 96
           Height = 36
           Caption = 'Doctos'#13#10'Gerados'
           TabOrder = 6
           TabStop = False
           ShowFocusRect = True
           Spacing = 10
-          Anchors = [akTop, akRight]
+          Align = alRight
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -2189,81 +2176,29 @@ object FrmCentralTrocas: TFrmCentralTrocas
           ParentFont = False
           OnClick = Bt_ReposLojasPedidosGeradosClick
         end
-        object Panel3: TPanel
-          Left = 2
+        object Panel4: TPanel
+          Left = 987
           Top = 2
-          Width = 248
+          Width = 9
+          Height = 36
+          Align = alRight
+          TabOrder = 7
+        end
+        object Panel3: TPanel
+          Left = 116
+          Top = 2
+          Width = 16
           Height = 36
           Align = alLeft
-          BevelOuter = bvNone
-          TabOrder = 7
-          object Label7: TLabel
-            Left = 8
-            Top = 12
-            Width = 35
-            Height = 13
-            Caption = 'Quant'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            ParentFont = False
-          end
-          object Lab_ReposLojasCons: TLabel
-            Left = 180
-            Top = 11
-            Width = 8
-            Height = 13
-            Caption = 'a'
-            Visible = False
-          end
-          object Cbx_ReposLojasCons: TComboBox
-            Left = 47
-            Top = 8
-            Width = 84
-            Height = 22
-            Style = csOwnerDrawFixed
-            Color = 15395562
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            ItemHeight = 16
-            ItemIndex = 3
-            ParentFont = False
-            TabOrder = 0
-            Text = 'TODAS'
-            OnChange = Cbx_ReposLojasConsChange
-            Items.Strings = (
-              'Maior que'
-              'Menor que'
-              'Intervalo de'
-              'TODAS')
-          end
-          object EdtReposLojasQtdInicio: TJvValidateEdit
-            Left = 134
-            Top = 9
-            Width = 41
-            Height = 19
-            CriticalPoints.MaxValueIncluded = False
-            CriticalPoints.MinValueIncluded = False
-            TabOrder = 1
-            Visible = False
-            OnChange = EdtReposLojasQtdInicioChange
-          end
-          object EdtReposLojasQtdFim: TJvValidateEdit
-            Left = 194
-            Top = 9
-            Width = 41
-            Height = 19
-            CriticalPoints.MaxValueIncluded = False
-            CriticalPoints.MinValueIncluded = False
-            TabOrder = 2
-            Visible = False
-            OnChange = EdtReposLojasQtdInicioChange
-          end
+          TabOrder = 8
+        end
+        object Panel5: TPanel
+          Left = 360
+          Top = 2
+          Width = 16
+          Height = 36
+          Align = alLeft
+          TabOrder = 9
         end
       end
     end
@@ -2344,6 +2279,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         Align = alTop
         BevelInner = bvLowered
         BorderStyle = bsSingle
+        Color = clSilver
         TabOrder = 0
         object Label106: TLabel
           Left = 19
@@ -2510,6 +2446,9 @@ object FrmCentralTrocas: TFrmCentralTrocas
       Tag = 9999
       Caption = 'Quantidades / Caixas de Sa'#237'das'
       ImageIndex = 3
+      DesignSize = (
+        1094
+        550)
       object Pan_QtdCaixaCD: TPanel
         Left = 0
         Top = 515
@@ -2543,10 +2482,11 @@ object FrmCentralTrocas: TFrmCentralTrocas
         end
       end
       object Gb_QtdCaixaCDProdutos: TGroupBox
-        Left = 0
+        Left = 56
         Top = 0
         Width = 482
         Height = 515
+        Anchors = [akTop, akBottom]
         Caption = ' Produtos '
         TabOrder = 1
         object Pan_QtdCaixaCDProdutos: TPanel
@@ -2555,6 +2495,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Width = 480
           Height = 81
           Align = alTop
+          Color = clSilver
           TabOrder = 0
           object Label8: TLabel
             Left = 9
@@ -2814,10 +2755,11 @@ object FrmCentralTrocas: TFrmCentralTrocas
         end
       end
       object Gb_QtdCaixaCDGrupos: TGroupBox
-        Left = 487
+        Left = 543
         Top = 0
         Width = 481
         Height = 515
+        Anchors = [akTop, akBottom]
         Caption = ' Grupos / SubGrupos '
         TabOrder = 2
         object Panel2: TPanel
@@ -2826,6 +2768,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Width = 479
           Height = 81
           Align = alTop
+          Color = clSilver
           TabOrder = 0
           object Label11: TLabel
             Left = 29

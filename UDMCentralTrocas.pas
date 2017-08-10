@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, FMTBcd, DB, DBClient, Provider, SqlExpr,
-  IBQuery, IBDatabase, IBCustomDataSet, IBUpdateSQL;
+  IBQuery, IBDatabase, IBCustomDataSet, IBUpdateSQL, JvValidateEdit;
 
 type
   TDMCentralTrocas = class(TDataModule)
@@ -151,6 +151,15 @@ type
     CDS_ReposicaoTransfIND_PRIORIDADE: TSmallintField;
     CDS_ReposicaoTransfIND_LEITORA: TStringField;
     CDS_ReposicaoDocsTot_Itens: TAggregateField;
+    CDS_ReposicaoTransfQTD_CHECKOUT: TFMTBCDField;
+    CDS_V_ReposDivergencias: TClientDataSet;
+    CDS_V_ReposDivergenciasCOD_PRODUTO: TStringField;
+    CDS_V_ReposDivergenciasNOME: TStringField;
+    CDS_V_ReposDivergenciasQTD_A_TRANSF: TFMTBCDField;
+    CDS_V_ReposDivergenciasQTD_CHECKOUT: TFMTBCDField;
+    CDS_V_ReposDivergenciasNUM_SEQ: TIntegerField;
+    DS_V_ReposDivergencias: TDataSource;
+    CDS_V_ReposDivergenciasIND_CORRIGIDO: TStringField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir
@@ -158,6 +167,7 @@ type
 
     Procedure CriaQueryIB(sDataBase, sTransaction: String; Var IBQ_Free: TIBQuery; bMatriz, bCriaIBQ: Boolean);
     procedure CDS_ReposicaoDocsAfterScroll(DataSet: TDataSet);
+    procedure CDS_V_ReposDivergenciasAfterScroll(DataSet: TDataSet);
     procedure DataModuleCreate(Sender: TObject);
         // sDataBase    = Database a Conectar
         // sTransaction = Transaction a Conectar
@@ -171,16 +181,15 @@ type
     { Private declarations }
   public
     { Public declarations }
+    bgAfterScroll: Boolean;
   end;
 
 var
   DMCentralTrocas: TDMCentralTrocas;
 
-  bgAfterScroll: Boolean;
-
 implementation
 
-uses UDMBelShop, UDMConexoes, UFrmCentralTrocas, JvValidateEdit;
+uses UDMBelShop, UDMConexoes, UFrmCentralTrocas, UFrmSolicitacoes;
 
 {$R *.dfm}
 
@@ -272,46 +281,32 @@ end;
 // =============================================================================
 
 procedure TDMCentralTrocas.CDS_ReposicaoDocsAfterScroll(DataSet: TDataSet);
-Var
-  iQtdI, iQtdF: Integer;
 begin
-  If FrmCentralTrocas.Cbx_ReposLojasCons.ItemIndex=0 Then // Maior que
-  Begin
-    iQtdI:=FrmCentralTrocas.EdtReposLojasQtdInicio.AsInteger;
-    iQtdF:=99999999;
-  End;
-
-  If FrmCentralTrocas.Cbx_ReposLojasCons.ItemIndex=1 Then // Menor que
-  Begin
-    iQtdI:=-1;
-    iQtdF:=FrmCentralTrocas.EdtReposLojasQtdInicio.AsInteger;
-  End;
-
-  If FrmCentralTrocas.Cbx_ReposLojasCons.ItemIndex=2 Then // Intervalo de
-  Begin
-    iQtdI:=FrmCentralTrocas.EdtReposLojasQtdInicio.AsInteger-1;
-    iQtdF:=FrmCentralTrocas.EdtReposLojasQtdFim.AsInteger+1;
-  End;
-
-  If FrmCentralTrocas.Cbx_ReposLojasCons.ItemIndex=3 Then // TODAS
-  Begin
-    iQtdI:=-1;
-    iQtdF:=99999999;
-  End;
 
   CDS_ReposicaoTransf.DisableControls;
   CDS_ReposicaoTransf.Close;
   SDS_ReposicaoTransf.Params.ParamByName('sDta').AsDate:=FrmCentralTrocas.DtaEdt_ReposLojas.Date;
   SDS_ReposicaoTransf.Params.ParamByName('Doc').AsInteger:=CDS_ReposicaoDocsNUM_DOCTO.AsInteger;
   SDS_ReposicaoTransf.Params.ParamByName('CodLoja').AsString:=CDS_ReposicaoDocsCOD_LOJA.AsString;
-  SDS_ReposicaoTransf.Params.ParamByName('QtdInicio').AsInteger:=iQtdI;
-  SDS_ReposicaoTransf.Params.ParamByName('QtdFim').AsInteger:=iQtdF;
   CDS_ReposicaoTransf.Open;
   CDS_ReposicaoTransf.EnableControls;
 
   CDS_ReposicaoDocs.Edit;
   CDS_ReposicaoDocsNUM_PRODUTOS.AsInteger:=CDS_ReposicaoTransf.RecordCount;
   CDS_ReposicaoDocs.Post;
+end;
+
+procedure TDMCentralTrocas.CDS_V_ReposDivergenciasAfterScroll(DataSet: TDataSet);
+begin
+  If CDS_V_ReposDivergencias.IsEmpty Then
+   Exit;
+
+  If bgAfterScroll Then
+  Begin
+    FrmSolicitacoes.EdtReposDivQtd.AsInteger:=CDS_V_ReposDivergenciasQTD_A_TRANSF.AsInteger;
+    FrmSolicitacoes.Mem_ReposDivProduto.Text:=CDS_V_ReposDivergenciasCOD_PRODUTO.AsString+cr+
+                                              CDS_V_ReposDivergenciasNOME.AsString;
+  End;
 end;
 
 procedure TDMCentralTrocas.DataModuleCreate(Sender: TObject);

@@ -689,6 +689,11 @@ object DMCentralTrocas: TDMCentralTrocas
       FixedChar = True
       Size = 3
     end
+    object CDS_ReposicaoTransfQTD_CHECKOUT: TFMTBCDField
+      FieldName = 'QTD_CHECKOUT'
+      Precision = 15
+      Size = 2
+    end
   end
   object SDS_ReposicaoTransf: TSQLDataSet
     CommandText = 
@@ -700,39 +705,31 @@ object DMCentralTrocas: TDMCentralTrocas
       '              FROM LISTAPRE lp'#13#10'                               W' +
       'HERE lp.codlista='#39'0006'#39#13#10'                              AND   lp.' +
       'codproduto=pr.codproduto),0.00)'#13#10'as NUMERIC(12,2)) PrecoCompra,'#13 +
-      #10'lo.ind_prioridade, lo.ind_leitora'#13#10#13#10'FROM ES_ESTOQUES_LOJAS lo,' +
-      ' ES_ESTOQUES_CD cd, PRODUTO pr'#13#10'WHERE lo.cod_produto=pr.codprodu' +
-      'to'#13#10'AND   lo.cod_produto=cd.cod_produto'#13#10'AND   lo.dta_movto=cd.d' +
-      'ta_movto'#13#10'AND   lo.ind_transf='#39'SIM'#39#13#10#13#10'AND   lo.dta_movto= :sDta' +
-      #13#10'AND   lo.num_docto= :Doc'#13#10'AND   lo.cod_loja= :CodLoja'#13#10'AND   l' +
-      'o.qtd_a_transf> :QtdInicio'#13#10'AND   lo.qtd_a_transf< :QtdFim'#13#10#13#10'OR' +
-      'DER BY 3'
+      #10'lo.ind_prioridade, lo.ind_leitora, lo.qtd_checkout'#13#10#13#10'FROM ES_E' +
+      'STOQUES_LOJAS lo, ES_ESTOQUES_CD cd, PRODUTO pr'#13#10'WHERE lo.cod_pr' +
+      'oduto=pr.codproduto'#13#10'AND   lo.cod_produto=cd.cod_produto'#13#10'AND   ' +
+      'lo.dta_movto=cd.dta_movto'#13#10'AND   lo.ind_transf='#39'SIM'#39#13#10#13#10'AND   lo' +
+      '.dta_movto= :sDta'#13#10'AND   lo.num_docto= :Doc'#13#10'AND   lo.cod_loja= ' +
+      ':CodLoja'#13#10#13#10'ORDER BY 3'
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'sDta'
         ParamType = ptInput
+        Value = '01.01.2017'
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Doc'
         ParamType = ptInput
+        Value = '1'
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'CodLoja'
         ParamType = ptInput
-      end
-      item
-        DataType = ftUnknown
-        Name = 'QtdInicio'
-        ParamType = ptInput
-      end
-      item
-        DataType = ftUnknown
-        Name = 'QtdFim'
-        ParamType = ptInput
+        Value = '1'
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 392
@@ -865,8 +862,8 @@ object DMCentralTrocas: TDMCentralTrocas
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_QtdCxCDProdutos'
-    Left = 512
-    Top = 352
+    Left = 496
+    Top = 416
     object CDS_QtdCxCDProdutosCODIGO: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'C'#243'd'
@@ -898,26 +895,26 @@ object DMCentralTrocas: TDMCentralTrocas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 400
-    Top = 352
+    Left = 384
+    Top = 416
   end
   object DSP_QtdCxCDProdutos: TDataSetProvider
     DataSet = SDS_QtdCxCDProdutos
     Options = [poRetainServerOrder]
-    Left = 456
-    Top = 368
+    Left = 440
+    Top = 432
   end
   object DS_QtdCxCDProdutos: TDataSource
     DataSet = CDS_QtdCxCDProdutos
-    Left = 573
-    Top = 368
+    Left = 557
+    Top = 432
   end
   object CDS_QtdCxCDGrupos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_QtdCxCDGrupos'
-    Left = 512
-    Top = 424
+    Left = 496
+    Top = 488
     object CDS_QtdCxCDGruposCODIGO: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'Cod'
@@ -950,18 +947,63 @@ object DMCentralTrocas: TDMCentralTrocas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 400
-    Top = 424
+    Left = 384
+    Top = 488
   end
   object DSP_QtdCxCDGrupos: TDataSetProvider
     DataSet = SDS_QtdCxCDGrupos
     Options = [poRetainServerOrder]
-    Left = 456
-    Top = 440
+    Left = 440
+    Top = 504
   end
   object DS_QtdCxCDGrupos: TDataSource
     DataSet = CDS_QtdCxCDGrupos
-    Left = 573
-    Top = 440
+    Left = 557
+    Top = 504
+  end
+  object CDS_V_ReposDivergencias: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    AfterScroll = CDS_V_ReposDivergenciasAfterScroll
+    Left = 440
+    Top = 304
+    object CDS_V_ReposDivergenciasCOD_PRODUTO: TStringField
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'COD_PRODUTO'
+      FixedChar = True
+      Size = 6
+    end
+    object CDS_V_ReposDivergenciasNOME: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      FieldName = 'NOME'
+      Size = 80
+    end
+    object CDS_V_ReposDivergenciasQTD_A_TRANSF: TFMTBCDField
+      DisplayLabel = 'Qtd a Transf'
+      FieldName = 'QTD_A_TRANSF'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_ReposDivergenciasQTD_CHECKOUT: TFMTBCDField
+      DisplayLabel = 'Qtd CheckOut'
+      FieldName = 'QTD_CHECKOUT'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_ReposDivergenciasIND_CORRIGIDO: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Corrigido'
+      FieldName = 'IND_CORRIGIDO'
+      Size = 3
+    end
+    object CDS_V_ReposDivergenciasNUM_SEQ: TIntegerField
+      FieldName = 'NUM_SEQ'
+      Visible = False
+    end
+  end
+  object DS_V_ReposDivergencias: TDataSource
+    DataSet = CDS_V_ReposDivergencias
+    Left = 488
+    Top = 320
   end
 end

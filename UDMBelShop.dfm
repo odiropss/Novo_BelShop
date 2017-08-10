@@ -1441,7 +1441,7 @@ object DMBelShop: TDMBelShop
     IdleTimer = 0
     SQLDialect = 3
     TraceFlags = []
-    Left = 1221
+    Left = 1213
     Top = 4
   end
   object IBT_BelShop: TIBTransaction
@@ -2743,8 +2743,8 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 76
-    Top = 6
+    Left = 116
+    Top = 22
   end
   object SDS_FluxoFornecedor: TSQLDataSet
     CommandText = 
@@ -6252,8 +6252,8 @@ object DMBelShop: TDMBelShop
     Top = 656
   end
   object DS_Geral: TDataSource
-    Left = 179
-    Top = 11
+    Left = 195
+    Top = 19
   end
   object SDS_Seguranca: TSQLDataSet
     CommandText = 
@@ -6323,13 +6323,13 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 131
-    Top = 27
+    Left = 155
+    Top = 3
   end
   object IBQ_Contar: TIBQuery
     BufferChunks = 1000
     CachedUpdates = False
-    Left = 227
+    Left = 250
     Top = 9
   end
   object SDS_ParametrosSis: TSQLDataSet
@@ -8417,8 +8417,8 @@ object DMBelShop: TDMBelShop
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 276
-    Top = 16
+    Left = 300
+    Top = 24
   end
   object IBQ_BuscaRapida: TIBQuery
     Database = IBDB_BelShop
@@ -8465,8 +8465,8 @@ object DMBelShop: TDMBelShop
       'WHERE c.COD_LOJA = :CodLoja'
       'AND c.cod_produto = :CodProd')
     SQLConnection = SQLC
-    Left = 364
-    Top = 19
+    Left = 372
+    Top = 11
     object SDS_BuscaCurvaIND_CURVA_QTD: TStringField
       FieldName = 'IND_CURVA_QTD'
       Size = 1

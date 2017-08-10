@@ -14,6 +14,9 @@ type
     Bt_Fechar: TJvXPButton;
     EdtCodBarras: TCurrencyEdit;
     CorCaptionForm: TJvGradientCaption;
+    EdtQtdEmbalagem: TCurrencyEdit;
+    Label1: TLabel;
+    Label2: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure Bt_FecharClick(Sender: TObject);
@@ -21,6 +24,9 @@ type
     procedure FormShow(Sender: TObject);
     procedure EdtCodBarrasChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure EdtQtdEmbalagemEnter(Sender: TObject);
+    procedure EdtQtdEmbalagemExit(Sender: TObject);
+    procedure EdtQtdEmbalagemKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public
@@ -92,6 +98,27 @@ procedure TFrmLeitoraCodBarras.FormClose(Sender: TObject; var Action: TCloseActi
 begin
   If EdtCodBarras.AsInteger=0 Then
    bgProcessar:=False;
+end;
+
+procedure TFrmLeitoraCodBarras.EdtQtdEmbalagemEnter(Sender: TObject);
+begin
+  EdtCodBarras.Value:=0;
+end;
+
+procedure TFrmLeitoraCodBarras.EdtQtdEmbalagemExit(Sender: TObject);
+begin
+  EdtCodBarras.SetFocus;
+
+end;
+
+procedure TFrmLeitoraCodBarras.EdtQtdEmbalagemKeyPress(Sender: TObject; var Key: Char);
+begin
+  If not (key in ['0'..'9']) Then
+  Begin
+    Key := #0;
+    Exit;
+  End;
+
 end;
 
 end.

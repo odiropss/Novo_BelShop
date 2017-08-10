@@ -25,8 +25,9 @@ type
 
     Procedure SalvaErros;
     Procedure SalvaProcessamento(s:String);
-    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     // ODIR ====================================================================
+
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 
   private
     { Private declarations }
@@ -1399,7 +1400,7 @@ begin
 
   igDiasUteis:=DiasUteisBelShop(dgDtaInicio, dgDtaFim, False, True);
   //============================================================================
-  SalvaProcessamento('06/999 - Calcula Dias Uteis no Período - '+TimeToStr(Time));
+  SalvaProcessamento('06/999 - Calcula Dias do Período - '+TimeToStr(Time));
   //============================================================================
 
   // Conecta CD ================================================================

@@ -1,8 +1,8 @@
 object FrmSolicitacoes: TFrmSolicitacoes
-  Left = 243
-  Top = 108
+  Left = 245
+  Top = 113
   Width = 649
-  Height = 470
+  Height = 482
   AutoSize = True
   BorderIcons = []
   Caption = 'Solicitacoes'
@@ -403,8 +403,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Left = 0
     Top = 0
     Width = 633
-    Height = 432
-    ActivePage = Ts_ReposLojasDigita
+    Height = 444
+    ActivePage = Ts_ReposDivergencias
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -594,7 +594,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel6: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -840,9 +840,9 @@ object FrmSolicitacoes: TFrmSolicitacoes
           HotTrackFont.Style = []
         end
       end
-      object Panel2: TPanel
+      object Pan_Simples: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -851,7 +851,25 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 1
-        object Bt_FinanObjetivosHabDeVoltar: TJvXPButton
+        object Label13: TLabel
+          Left = 107
+          Top = 11
+          Width = 411
+          Height = 13
+          Caption = 
+            'Painel Usado em Outros TabSheets (Somente Sai Processando ou Nao' +
+            ') '
+          Color = clRed
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 8454143
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+          Visible = False
+        end
+        object Bt_SimplesVoltar: TJvXPButton
           Left = 521
           Top = 2
           Width = 100
@@ -877,9 +895,9 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_FinanObjetivosHabDeVoltarClick
+          OnClick = Bt_SimplesVoltarClick
         end
-        object Bt_FinanObjetivosHabDeOK: TJvXPButton
+        object Bt_SimplesOK: TJvXPButton
           Left = 2
           Top = 2
           Width = 100
@@ -900,7 +918,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             0000777777777777C448770000007777777777777C4477000000777777777777
             77C777000000}
           Align = alLeft
-          OnClick = Bt_FinanObjetivosHabDeOKClick
+          OnClick = Bt_SimplesOKClick
         end
       end
     end
@@ -1016,7 +1034,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Pan_ProSoftImpArquivo: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -1289,7 +1307,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 112
         Width = 625
-        Height = 257
+        Height = 269
         Cursor = crIBeam
         GutterWidth = 0
         RightMarginColor = clSilver
@@ -1324,7 +1342,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 4
       object Panel8: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -1519,7 +1537,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel10: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -1829,7 +1847,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel22: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -2077,7 +2095,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel24: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -2188,7 +2206,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 369
+        Height = 381
         Cursor = crIBeam
         GutterWidth = 0
         RightMarginColor = clSilver
@@ -2217,7 +2235,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel25: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -2479,7 +2497,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel27: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -2561,7 +2579,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 315
+        Height = 327
         Align = alClient
         DataSource = DMSalao.DS_V_RetornoIBGE
         FixedColor = clTeal
@@ -2607,7 +2625,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Dbg_IBGE2: TDBGridJul
         Left = 0
-        Top = 350
+        Top = 362
         Width = 625
         Height = 54
         Align = alBottom
@@ -2628,6 +2646,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Height = -11
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
+        OnKeyDown = Dbg_IBGE2KeyDown
         CorComFoco = 15921894
         SairComEnter = False
         Columns = <
@@ -2654,7 +2673,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel28: TPanel
         Left = 0
-        Top = 315
+        Top = 327
         Width = 625
         Height = 35
         Align = alBottom
@@ -2940,7 +2959,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel30: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -3018,8 +3037,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 369
-        ActivePage = Ts_ParamCurvaABC
+        Height = 381
+        ActivePage = Ts_ParamLojaReposicoes
         Align = alClient
         MultiLine = True
         Style = tsButtons
@@ -3342,7 +3361,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             Left = 0
             Top = 80
             Width = 617
-            Height = 234
+            Height = 246
             Align = alClient
             Caption = ' Lojas Definidas '
             TabOrder = 1
@@ -3350,7 +3369,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
               Left = 2
               Top = 15
               Width = 613
-              Height = 197
+              Height = 209
               Align = alClient
               Color = 15004403
               DataSource = DMVirtual.DS_V_ParamLojaNeces
@@ -3492,7 +3511,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             end
             object dxStatusBar1: TdxStatusBar
               Left = 2
-              Top = 212
+              Top = 224
               Width = 613
               Height = 20
               Panels = <
@@ -3957,6 +3976,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
               TitleFont.Name = 'MS Sans Serif'
               TitleFont.Style = [fsBold]
               OnDrawColumnCell = Dbg_ParamSalMininoDrawColumnCell
+              OnKeyDown = Dbg_ParamSalMininoKeyDown
               SairComEnter = False
               EditDataSetCheck = False
               CampoCheckBox = 'PROC'
@@ -4262,12 +4282,12 @@ object FrmSolicitacoes: TFrmSolicitacoes
             Left = 0
             Top = 4
             Width = 617
-            Height = 310
+            Height = 322
             Align = alClient
             TabOrder = 0
             object Gb_ParamCurvaDiaUteis: TGroupBox
               Left = 1
-              Top = 255
+              Top = 267
               Width = 615
               Height = 54
               Align = alBottom
@@ -4434,7 +4454,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
               Left = 1
               Top = 1
               Width = 615
-              Height = 254
+              Height = 266
               Align = alClient
               Caption = ' CURVAS '
               TabOrder = 0
@@ -5185,7 +5205,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           ImageIndex = 9
           DesignSize = (
             617
-            314)
+            326)
           object Shape10: TShape
             Left = 0
             Top = 0
@@ -5311,7 +5331,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             Left = 0
             Top = 64
             Width = 617
-            Height = 250
+            Height = 262
             Align = alBottom
             Anchors = [akLeft, akTop, akRight, akBottom]
             Color = 15004403
@@ -5406,7 +5426,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Pan_ParamSis: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -5535,7 +5555,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 369
+        Height = 381
         Align = alClient
         Color = 15004403
         FixedColor = clSilver
@@ -5555,6 +5575,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_ConsistenciasDrawColumnCell
         OnDblClick = Dbg_ConsistenciasDblClick
+        OnKeyDown = Dbg_ConsistenciasKeyDown
         CorComFoco = 15004403
         SairComEnter = False
         EditDataSetCheck = False
@@ -5634,7 +5655,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel34: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -5703,7 +5724,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 14
       DesignSize = (
         625
-        404)
+        416)
       object Gb_ValesFiltroLoja: TGroupBox
         Left = 6
         Top = 0
@@ -6207,7 +6228,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel35: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -6349,7 +6370,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Gb_ValesParcelas: TGroupBox
         Left = 0
-        Top = 205
+        Top = 217
         Width = 625
         Height = 164
         Align = alBottom
@@ -6376,6 +6397,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           TitleFont.Name = 'Tahoma'
           TitleFont.Style = [fsBold]
           OnDblClick = Dbg_ValesParcelasDblClick
+          OnKeyDown = Dbg_ValesParcelasKeyDown
           SairComEnter = False
           Columns = <
             item
@@ -6748,7 +6770,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 349
+        Height = 361
         Hint = '<Duplo Click> Marca/DesMarca'
         Align = alClient
         Color = 15004403
@@ -6931,7 +6953,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel43: TPanel
         Left = 0
-        Top = 349
+        Top = 361
         Width = 625
         Height = 35
         Align = alBottom
@@ -7149,7 +7171,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Sb_SelectEmpProc2: TdxStatusBar
         Left = 0
-        Top = 384
+        Top = 396
         Width = 625
         Height = 20
         Panels = <
@@ -7176,7 +7198,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 6
       object Panel12: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -7362,7 +7384,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 57
         Width = 625
-        Height = 312
+        Height = 324
         Hint = '<Duplo Click> Marca/DesMarca'
         Align = alClient
         Color = 15004403
@@ -7386,6 +7408,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_ProfSelecionaDrawColumnCell
         OnDblClick = Dbg_ProfSelecionaDblClick
+        OnKeyDown = Dbg_ProfSelecionaKeyDown
         CorComFoco = 15004403
         SairComEnter = False
         EditDataSetCheck = False
@@ -7520,7 +7543,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 25
         Width = 625
-        Height = 344
+        Height = 356
         Align = alClient
         Color = 15004403
         DataSource = DMSalao.DS_ApresGrid
@@ -7542,6 +7565,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
         OnEnter = Dbg_ApresGridEnter
+        OnKeyDown = Dbg_ApresGridKeyDown
         CorComFoco = 15004403
         SairComEnter = False
         EditDataSetCheck = False
@@ -7591,7 +7615,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel3: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -7749,7 +7773,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 17
       DesignSize = (
         625
-        404)
+        416)
       object PC_FinanPlanFinanceiraSolicita: TPageControl
         Left = 84
         Top = 36
@@ -8412,7 +8436,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 369
+        Height = 381
         Align = alClient
         Color = 15004403
         DataSource = DMBelShop.DS_Busca
@@ -8435,6 +8459,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_SelecionarDrawColumnCell
         OnDblClick = Dbg_SelecionarDblClick
+        OnKeyDown = Dbg_SelecionarKeyDown
         CorComFoco = 15004403
         SairComEnter = False
         EditDataSetCheck = False
@@ -8484,7 +8509,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel4: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -8739,7 +8764,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 19
       object Pan_QualquerCoisa: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -9005,7 +9030,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 93
         Width = 625
-        Height = 276
+        Height = 288
         Align = alClient
         FixedColor = clTeal
         Font.Charset = DEFAULT_CHARSET
@@ -9020,10 +9045,11 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Height = -11
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
+        OnKeyDown = Dbg_ExcelImportarKeyDown
       end
       object Panel1: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -9120,9 +9146,9 @@ object FrmSolicitacoes: TFrmSolicitacoes
           TabOrder = 0
         end
       end
-      object Panel5: TPanel
+      object Pan_ReposicaoLojas: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -9427,7 +9453,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 404
+        Height = 416
         Align = alClient
         TabOrder = 0
         object GroupBox1: TGroupBox
@@ -9538,7 +9564,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Left = 1
           Top = 59
           Width = 623
-          Height = 344
+          Height = 356
           Align = alClient
           Caption = '  Usu'#225'rios a Atualizar '
           Color = clSilver
@@ -9552,7 +9578,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           TabOrder = 1
           DesignSize = (
             623
-            344)
+            356)
           object Label63: TLabel
             Left = 11
             Top = 31
@@ -9642,7 +9668,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
           object Sb_GeraOC: TdxStatusBar
             Left = 2
-            Top = 322
+            Top = 334
             Width = 619
             Height = 20
             Panels = <
@@ -9679,7 +9705,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 23
       object Pan_SalaoRelatorios: TPanel
         Left = 0
-        Top = 369
+        Top = 381
         Width = 625
         Height = 35
         Align = alBottom
@@ -9902,7 +9928,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 53
         Width = 166
-        Height = 316
+        Height = 328
         Align = alLeft
         BevelInner = bvRaised
         BevelOuter = bvLowered
@@ -9914,7 +9940,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Left = 2
           Top = 2
           Width = 158
-          Height = 308
+          Height = 320
           Align = alClient
           Pages = <
             item
@@ -9972,11 +9998,175 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Visible = False
       end
     end
+    object Ts_ReposDivergencias: TTabSheet
+      Caption = ' Diverg'#234'ncias Reposi'#231#245'es Lojas '
+      Highlighted = True
+      ImageIndex = 24
+      object Pan_ReposDivergencias: TPanel
+        Left = 0
+        Top = 0
+        Width = 625
+        Height = 66
+        Align = alTop
+        TabOrder = 0
+        object Gb_ReposDivProdutoSel: TGroupBox
+          Left = 1
+          Top = 1
+          Width = 413
+          Height = 64
+          Align = alLeft
+          Caption = ' Produto Selecionado '
+          Ctl3D = False
+          ParentCtl3D = False
+          TabOrder = 1
+          object Mem_ReposDivProduto: TMemo
+            Left = 1
+            Top = 14
+            Width = 411
+            Height = 49
+            Align = alClient
+            Color = 14286847
+            Ctl3D = False
+            Enabled = False
+            ParentCtl3D = False
+            TabOrder = 0
+          end
+        end
+        object Gb_ReposDivQtd: TGroupBox
+          Left = 414
+          Top = 1
+          Width = 210
+          Height = 64
+          Align = alClient
+          Caption = ' Quantidade '
+          TabOrder = 0
+          object EdtReposDivQtd: TCurrencyEdit
+            Left = 14
+            Top = 23
+            Width = 62
+            Height = 30
+            AutoSize = False
+            Color = 16777185
+            Ctl3D = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -21
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentCtl3D = False
+            ParentFont = False
+            TabOrder = 0
+            Value = 1.000000000000000000
+            OnChange = EdtReposDivQtdChange
+          end
+          object Bt_ReposDivAlterarQtd: TJvXPButton
+            Tag = 2
+            Left = 99
+            Top = 22
+            Width = 98
+            Height = 30
+            Caption = 'Altear'
+            TabOrder = 1
+            ShowFocusRect = True
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_ReposDivAlterarQtdClick
+          end
+        end
+      end
+      object Dbg_ReposDivProdutos: TDBGridJul
+        Left = 0
+        Top = 66
+        Width = 625
+        Height = 350
+        TabStop = False
+        Align = alClient
+        Ctl3D = False
+        DataSource = DMCentralTrocas.DS_V_ReposDivergencias
+        FixedColor = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
+        ParentCtl3D = False
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = False
+        TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = [fsBold]
+        OnDrawColumnCell = Dbg_ReposDivProdutosDrawColumnCell
+        OnKeyDown = Dbg_ReposDivProdutosKeyDown
+        CorComFoco = 16776176
+        SairComEnter = False
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'COD_PRODUTO'
+            Title.Alignment = taRightJustify
+            Width = 45
+            Visible = True
+          end
+          item
+            Color = 8454143
+            Expanded = False
+            FieldName = 'NOME'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Width = 340
+            Visible = True
+          end
+          item
+            Color = 16777185
+            Expanded = False
+            FieldName = 'QTD_A_TRANSF'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Title.Caption = 'A Transf'
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_CHECKOUT'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'CheckOut'
+            Width = 70
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'IND_CORRIGIDO'
+            Title.Alignment = taCenter
+            Width = 65
+            Visible = True
+          end>
+      end
+    end
   end
   object PainelApresExp: TPanel
-    Left = 369
-    Top = 292
-    Width = 89
+    Left = 56
+    Top = 248
+    Width = 99
     Height = 33
     BevelInner = bvRaised
     BevelOuter = bvLowered
@@ -9995,14 +10185,14 @@ object FrmSolicitacoes: TFrmSolicitacoes
   object CDS_: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 588
+    Left = 564
     Top = 280
   end
   object ADOC_Excel: TADOConnection
     LoginPrompt = False
     Mode = cmShareDenyNone
     Provider = 'Microsoft.Jet.OLEDB.4.0'
-    Left = 588
+    Left = 564
     Top = 224
   end
   object ADOT_Dcto: TADOTable
@@ -10010,12 +10200,12 @@ object FrmSolicitacoes: TFrmSolicitacoes
     CursorType = ctStatic
     LockType = ltReadOnly
     TableDirect = True
-    Left = 583
+    Left = 567
     Top = 168
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 593
-    Top = 90
+    Left = 481
+    Top = 154
   end
 end
