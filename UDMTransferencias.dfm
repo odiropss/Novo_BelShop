@@ -124,20 +124,20 @@ object DMTransferencias: TDMTransferencias
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 48
-    Top = 153
+    Left = 24
+    Top = 233
   end
   object DSP_BuscaRapida: TDataSetProvider
     DataSet = SDS_BuscaRapida
-    Left = 98
-    Top = 166
+    Left = 74
+    Top = 246
   end
   object CDS_BuscaRapida: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_BuscaRapida'
-    Left = 149
-    Top = 152
+    Left = 125
+    Top = 232
   end
   object SDS_CurvasLoja: TSQLDataSet
     CommandText = 
@@ -175,15 +175,15 @@ object DMTransferencias: TDMTransferencias
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 48
-    Top = 296
+    Left = 248
+    Top = 312
   end
   object CDS_CurvasLoja: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CurvasLoja'
-    Left = 149
-    Top = 296
+    Left = 349
+    Top = 312
     object CDS_CurvasLojaCOD_PRODUTO: TStringField
       FieldName = 'COD_PRODUTO'
       Required = True
@@ -215,8 +215,8 @@ object DMTransferencias: TDMTransferencias
   end
   object DSP_CurvasLoja: TDataSetProvider
     DataSet = SDS_CurvasLoja
-    Left = 98
-    Top = 312
+    Left = 298
+    Top = 328
   end
   object SDS_ProdutoDemanda: TSQLDataSet
     CommandText = 
@@ -248,15 +248,15 @@ object DMTransferencias: TDMTransferencias
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 48
-    Top = 352
+    Left = 248
+    Top = 368
   end
   object CDS_ProdutoDemanda: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ProdutoDemanda'
-    Left = 149
-    Top = 352
+    Left = 349
+    Top = 368
     object CDS_ProdutoDemandaNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Required = True
@@ -379,8 +379,8 @@ object DMTransferencias: TDMTransferencias
   end
   object DSP_ProdutoDemanda: TDataSetProvider
     DataSet = SDS_ProdutoDemanda
-    Left = 98
-    Top = 368
+    Left = 298
+    Top = 384
   end
   object SDS_EstoqueLoja: TSQLDataSet
     CommandText = 'select *'#13#10'from ES_ESTOQUES_LOJAS el'#13#10'where el.Cod_Produto<'#39#39
@@ -584,8 +584,8 @@ object DMTransferencias: TDMTransferencias
       ''
       '')
     SQLConnection = SQLC
-    Left = 48
-    Top = 240
+    Left = 248
+    Top = 256
     object SQLQuery1COD_PRODUTO: TStringField
       FieldName = 'COD_PRODUTO'
       Required = True
@@ -611,5 +611,24 @@ object DMTransferencias: TDMTransferencias
     object SQLQuery1DATAALTERACAO: TDateField
       FieldName = 'DATAALTERACAO'
     end
+  end
+  object SDS_Busca1: TSQLDataSet
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 48
+    Top = 153
+  end
+  object DSP_Busca1: TDataSetProvider
+    DataSet = SDS_Busca1
+    Left = 98
+    Top = 166
+  end
+  object CDS_Busca1: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_Busca1'
+    Left = 149
+    Top = 152
   end
 end

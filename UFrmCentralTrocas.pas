@@ -168,7 +168,8 @@ type
     Function  VerificaExistenciaItens: Boolean;
     Function  VerificaPrecosItens: Boolean;
 
-    Function  ProcessaTranferenciasCompras: Boolean; // Localizando Transferencias Setor de Compras (Dia Anterior)
+// OdirApagar - 11/08/2017 - Colocado em PFrmTransferencias
+    // Function  ProcessaTranferenciasCompras: Boolean; // Localizando Transferencias Setor de Compras (Dia Anterior)
 
     Procedure AtualizaPROD_CAIXA_CD(sTipo: String); // Atualiza PROD_CAIXA_CD
                                  // sTipo: (iP) Inclui Produto
@@ -875,454 +876,455 @@ Begin
   DMCentralTrocas.CDS_ReposicaoTransf.First;
 End; // Verifica a Existencia de Produtos Sem Preco de Custo a Transferir para Pedido do SIDICOM
 
-// Localizando Transferencias Setor de Compras (Dia Anterior) >>>>>>>>>>>>>>>>>>
-Function TFrmCentralTrocas.ProcessaTranferenciasCompras: Boolean;
-Var
-  MySql,
-  sDocTR,
-  sEnd_Zona, sEnd_Corredor, sEnd_Prateleira, sEnd_Gaveta: String;
-
-  mMemo: TMemo;
-  ii, i: Integer;
-Begin
-
-  Result:=True;
-
-  sgDtaLimTransf:=f_Troca('-','.',(f_Troca('/','.',DateToStr(DtaEdt_ReposLojas.Date))));
-
-  // Verifia se Existe Transferencia a Processar ===============================
-  MySql:=' SELECT oc.cod_empresa'+
-         ' FROM OC_COMPRAR oc'+
-         ' WHERE oc.num_oc_gerada>20160300'+
-         ' AND   oc.ind_transf_cd=''N'''+
-         ' AND   CAST(oc.dta_oc_gerada AS DATE)<'+QuotedStr(sgDtaLimTransf)+
-
-         ' UNION'+
-
-         ' SELECT l.cod_loja cod_empresa'+
-         ' FROM ES_ESTOQUES_LOJAS l'+
-         ' WHERE l.num_tr_gerada <> 0'+
-         ' AND   l.qtd_a_transf > 0'+
-         ' AND   l.ind_transf = ''SIM'''+
-         ' AND   l.num_pedido = ''000000'''+
-         ' AND   CAST(l.dta_movto AS DATE) < '+QuotedStr(sgDtaLimTransf)+
-
-         ' ORDER BY 1';
-  DMBelShop.CDS_Busca.Close;
-  DMBelShop.SDS_Busca.CommandText:=MySql;
-  DMBelShop.CDS_Busca.Open;
-
-  If Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Empresa').AsString)='' Then
-  Begin
-    DMBelShop.CDS_Busca.Close;
-    Exit;
-  End; // If Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Empresa').AsString)='' Then
-
-  // Verifica se Transação esta Ativa
-  If DMBelShop.SQLC.InTransaction Then
-   DMBelShop.SQLC.Rollback(TD);
-
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMBelShop.SQLC.StartTransaction(TD);
-  Try
-    Screen.Cursor:=crAppStart;
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    // Cria Componente Memo ======================================================
-    mMemo:=TMemo.Create(Self);
-    mMemo.Visible:=False;
-    mMemo.Parent:=FrmCentralTrocas;
-    mMemo.Width:=500;
-    mMemo.Lines.Clear;
-
-    While Not DMBelShop.CDS_Busca.Eof do
-    Begin
-      mMemo.Lines.Add(Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Empresa').AsString));
-
-      DMBelShop.CDS_Busca.Next;
-    End;
-    DMBelShop.CDS_Busca.Close;
-
-    For i:=0 to mMemo.Lines.Count-1 do
-    Begin
-      OdirPanApres.Caption:='AGUARDE !! Analisando Transferencias Setor de Compras. Loja: Bel_'+mMemo.Lines[i];
-      OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-      OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
-      OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
-      OdirPanApres.BringToFront();
-      OdirPanApres.Visible:=True;
-      Refresh;
-
-      // Verifica se Existe ES_ESTOQUES_LOJAS
-      MySql:=' SELECT  FIRST 1 lo.num_docto'+
-             ' FROM ES_ESTOQUES_LOJAS lo'+
-             ' WHERE lo.cod_loja='+QuotedStr(mMemo.Lines[i])+
-             ' AND   lo.dta_movto='+QuotedStr(sgDtaLimTransf);
-      DMBelShop.CDS_Busca.Close;
-      DMBelShop.SDS_Busca.CommandText:=MySql;
-      DMBelShop.CDS_Busca.Open;
-      sDocTR:=Trim(DMBelShop.CDS_Busca.FieldByName('Num_Docto').AsString);
-      DMBelShop.CDS_Busca.Close;
-
-      If sDocTR='' Then
-      Begin
-        // Busca Numero do Docto ===============================================
-        MySql:=' SELECT COALESCE(MAX(el.num_docto)+1 ,1) Nr_Docto'+
-               ' FROM ES_ESTOQUES_LOJAS el';
-        DMBelShop.CDS_BuscaRapida.Close;
-        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-        DMBelShop.CDS_BuscaRapida.Open;
-        sDocTR:=DMBelShop.CDS_BuscaRapida.FieldByName('Nr_Docto').AsString;
-        DMBelShop.CDS_BuscaRapida.Close;
-      End; // If sDocTR='' Then
-
-      // Atualiza Numerador para Num_Seq da Seleção ============================
-      MySql:=' SELECT COALESCE(MAX(lo.num_seq)+1 ,1) Num_Seq'+
-             ' FROM ES_ESTOQUES_LOJAS lo'+
-             ' WHERE lo.cod_loja='+QuotedStr(mMemo.Lines[i])+
-             ' AND   lo.dta_movto='+QuotedStr(sgDtaLimTransf);
-      DMBelShop.CDS_Busca.Close;
-      DMBelShop.SDS_Busca.CommandText:=MySql;
-      DMBelShop.CDS_Busca.Open;
-
-      MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH '+DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString;
-      DMBelShop.SQLC.Execute(MySql,nil,nil);
-      DMBelShop.CDS_Busca.Close;
-
-      // Busca Produtos de Transferencia =========================================
-      MySql:=' SELECT'+
-             ' o.NUM_SEQ, '+
-             ' GEN_ID(GEN_ODIR,1) NEW_NUM_SEQ, '+
-             QuotedStr(sgDtaLimTransf)+' DTA_MOVTO,'+
-             ' COALESCE(o.num_documento,0) Doc_Origem, '+
-             sDocTR+' NUM_DOCTO,'+
-             ' o.obs_oc,'+
-             ' o.cod_empresa COD_LOJA,'+
-             ' o.cod_item COD_PRODUTO,'+
-             ' o.qtd_saldo QTD_ESTOQUE,'+
-             ' (o.qtd_dem_mes1+o.qtd_dem_mes2+o.qtd_dem_mes3+o.qtd_dem_mes4+'+
-             '  o.qtd_dem_mes5+o.qtd_dem_mes6+o.qtd_dem_mes7+o.qtd_dem_mes8) QTD_VENDAS,'+
-             ' o.cla_curva_abc IND_CURVA,'+
-             ' o.dias_estocagem DIAS_ESTOCAGEM,'+
-             ' o.qtd_dias_ano QTD_DIAS,'+
-             ' o.qtd_demanda_dia QTD_VENDA_DIA,'+
-             ' o.qtd_demanda_dia QTD_DEMANDA,'+
-             ' o.qtd_sugerida QTD_REPOSICAO,'+
-             ' o.num_oc_gerada NUM_TR_GERADA,'+
-             ' o.qtd_transf QTD_TRANSF_OC,'+
-             ' 0 QTD_TRANSF,'+
-             ' o.qtd_acomprar QTD_A_TRANSF,'+
-             ' ''000000'' NUM_PEDIDO,'+
-             ' ''SIM'' IND_TRANSF, '+
-             QuotedStr(Cod_Usuario)+' USU_ALTERA,'+
-             ' current_timestamp DTA_ALTERA,'+
-             ' ''SIM'' Compras'+
-
-             ' FROM OC_COMPRAR o'+
-             ' WHERE o.num_oc_gerada>20160300'+
-             ' AND   o.ind_transf_cd=''N'''+
-             ' AND   Cast(o.dta_oc_gerada As Date)<'+QuotedStr(sgDtaLimTransf)+
-             ' AND   o.cod_empresa='+QuotedStr(mMemo.Lines[i]);
-
-      MySql:=
-       MySql+' UNION'+
-
-             ' SELECT'+
-             ' l.NUM_SEQ, '+
-             ' GEN_ID(GEN_ODIR,1) NEW_NUM_SEQ, '+
-             QuotedStr(sgDtaLimTransf)+' DTA_MOVTO,'+
-             ' l.num_docto Doc_Origem, '+
-             sDocTR+' NUM_DOCTO,'+
-             ' l.OBS_DOCTO,'+
-             ' l.COD_LOJA,'+
-             ' l.COD_PRODUTO,'+
-             ' l.QTD_ESTOQUE,'+
-             ' l.QTD_VENDAS,'+
-             ' l.IND_CURVA,'+
-             ' l.DIAS_ESTOCAGEM,'+
-             ' l.QTD_DIAS,'+
-             ' l.QTD_VENDA_DIA,'+
-             ' l.QTD_DEMANDA,'+
-             ' l.QTD_REPOSICAO,'+
-             ' l.NUM_TR_GERADA,'+
-             ' l.QTD_TRANSF_OC,'+
-             ' l.QTD_TRANSF,'+
-             ' l.QTD_A_TRANSF,'+
-             ' l.NUM_PEDIDO,'+
-             ' l.IND_TRANSF, '+
-             QuotedStr(Cod_Usuario)+' USU_ALTERA,'+
-             ' current_timestamp DTA_ALTERA,'+
-             ' ''NAO'' Compras'+
-
-             ' FROM ES_ESTOQUES_LOJAS l'+
-             ' WHERE l.num_tr_gerada<>0'+
-             ' AND   l.qtd_a_transf>0'+
-             ' AND   l.ind_transf=''SIM'''+
-             ' AND   l.num_pedido=''000000'''+
-             ' AND   Cast(l.dta_movto As Date)<'+QuotedStr(sgDtaLimTransf)+
-             ' AND   l.cod_loja='+QuotedStr(mMemo.Lines[i]);
-      DMBelShop.CDS_Busca.Close;
-      DMBelShop.SDS_Busca.CommandText:=MySql;
-      DMBelShop.CDS_Busca.Open;
-
-      // Retorna Generator para 0 ==============================================
-      MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH 0';
-      DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-      // Atualiza ES_ESTOQUE_LOJAS =============================================
-      FrmBelShop.MontaProgressBar(True, FrmCentralTrocas);
-      pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
-      pgProgBar.Position:=0;
-
-      DMBelShop.CDS_Busca.DisableControls;
-      While Not DMBelShop.CDS_Busca.Eof do
-      Begin
-        Application.ProcessMessages;
-
-        pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
-
-        sgCodProduto:=Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Produto').AsString);
-
-        //======================================================================
-        // Atualiza OC_COMPRAR =================================================
-        //======================================================================
-        If DMBelShop.CDS_Busca.FieldByName('Compras').AsString='SIM' Then
-        Begin
-          MySql:=' UPDATE OC_COMPRAR O'+
-                 ' SET o.ind_transf_cd='+QuotedStr('S')+
-                 ',    o.doc_transf_cd='+QuotedStr(sDocTR)+
-                 ' WHERE o.num_seq='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString)+
-                 ' AND   o.num_documento='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Doc_Origem').AsString)+
-                 ' AND   o.cod_empresa='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_loja').AsString)+
-                 ' AND   o.cod_item='+QuotedStr(sgCodProduto);
-          DMBelShop.SQLC.Execute(MySql,nil,nil);
-        End; // If DMBelShop.CDS_Busca.FieldByName('Doc_Origem').AsInteger<>0 Then
-
-        //======================================================================
-        // Atualiza ES_ESTOQUES_LOJAS =================================================
-        //======================================================================
-        If DMBelShop.CDS_Busca.FieldByName('Compras').AsString='NAO' Then
-        Begin
-          MySql:=' UPDATE ES_ESTOQUES_LOJAS l'+
-                 ' SET l.num_pedido=''999999'''+
-                 ' WHERE l.num_seq='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString)+
-                 ' AND   l.num_docto='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Doc_Origem').AsString)+
-                 ' AND   l.cod_loja='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_loja').AsString)+
-                 ' AND   l.num_tr_gerada='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('NUM_TR_GERADA').AsString)+
-                 ' AND   l.ind_transf=''SIM'''+
-                 ' AND   l.cod_produto='+QuotedStr(sgCodProduto);
-          DMBelShop.SQLC.Execute(MySql,nil,nil);
-        End; // If DMBelShop.CDS_Busca.FieldByName('Doc_Origem').AsInteger<>0 Then
-
-        //======================================================================
-        // Verifica se Existe ES_ESTOQUES_CD ===================================
-        //======================================================================
-        MySql:=' SELECT cd.cod_produto'+
-               ' FROM ES_ESTOQUES_CD cd'+
-               ' WHERE cd.dta_movto='+QuotedStr(sgDtaLimTransf)+
-               ' AND   cd.cod_produto='+QuotedStr(sgCodProduto);
-        DMBelShop.CDS_BuscaRapida.Close;
-        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-        DMBelShop.CDS_BuscaRapida.Open;
-
-        If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)='' Then
-         Begin
-           DMBelShop.CDS_BuscaRapida.Close;
-
-           // Busca Endereco
-           MySql:=' SELECT'+
-                  ' e.zonaendereco end_zona,'+
-                  ' e.corredor end_corredor,'+
-                  ' e.prateleira end_prateleira,'+
-                  ' e.gaveta end_gaveta'+
-                  ' FROM ESTOQUE e'+
-                  ' WHERE e.codproduto='+QuotedStr(sgCodProduto)+
-                  ' AND   e.codfilial=''99''';
-           IBQ_MPMS.Close;
-           IBQ_MPMS.SQL.Clear;
-           IBQ_MPMS.SQL.Add(MySql);
-           IBQ_MPMS.Open;
-
-           sEnd_Zona      :='0';
-           sEnd_Corredor  :='000';
-           sEnd_Prateleira:='000';
-           sEnd_Gaveta    :='0000';
-
-           If Trim(IBQ_MPMS.FieldByName('end_zona').AsString)<>'' Then
-           Begin
-             sEnd_Zona      :=Trim(IBQ_MPMS.FieldByName('end_zona').AsString);
-             sEnd_Corredor  :=Trim(IBQ_MPMS.FieldByName('end_corredor').AsString);
-             sEnd_Prateleira:=Trim(IBQ_MPMS.FieldByName('end_prateleira').AsString);
-             sEnd_Gaveta    :=Trim(IBQ_MPMS.FieldByName('end_gaveta').AsString);
-           End; // If Trim(IBQ_MPMS.FieldByName('end_zona').AsString)<>'' Then
-           IBQ_MPMS.Close;
-
-           // Insere ES_ESTOQUES_CD
-           MySql:=' INSERT INTO ES_ESTOQUES_CD ('+
-                  ' DTA_MOVTO, COD_PRODUTO, QTD_ESTOQUE, QTD_SAIDAS, QTD_SALDO,'+
-                  ' END_ZONA, END_CORREDOR, END_PRATELEIRA, END_GAVETA)'+
-                  ' VALUES ('+
-                  QuotedStr(sgDtaLimTransf)+', '+ // DTA_MOVTO
-                  QuotedStr(sgCodProduto)+', '+ // COD_PRODUTO
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Qtd_Estoque').AsString))+', '+ // QTD_ESTOQUE
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Qtd_Transf_OC').AsString))+', '+ // QTD_SAIDAS
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Qtd_Estoque').AsString))+', '+ // QTD_SALDO
-                  QuotedStr(sEnd_Zona)+', '+ // END_ZONA
-                  QuotedStr(sEnd_Corredor)+', '+ // END_CORREDOR
-                  QuotedStr(sEnd_Prateleira)+', '+ // END_PRATELEIRA
-                  QuotedStr(sEnd_Gaveta)+')'; // END_GAVETA
-         End
-        Else// If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)='' Then
-         Begin
-           MySql:=' UPDATE ES_ESTOQUES_CD cd'+
-                  ' SET   cd.Qtd_Saidas=cd.Qtd_Saidas+'+DMBelShop.CDS_Busca.FieldByName('Qtd_Transf_OC').AsString+
-                  ' WHERE cd.dta_movto='+QuotedStr(sgDtaLimTransf)+
-                  ' AND   cd.cod_produto='+QuotedStr(sgCodProduto);
-         End; // If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)='' Then
-        DMBelShop.SQLC.Execute(MySql,nil,nil);
-        DMBelShop.CDS_BuscaRapida.Close;
-
-        //======================================================================
-        // Atualiza ES_ESTOQUES_LOJAS ==========================================
-        //======================================================================
-        MySql:=' SELECT FIRST 1 lo.num_docto, lo.qtd_a_transf'+
-               ' FROM ES_ESTOQUES_LOJAS lo'+
-               ' WHERE lo.Num_Docto='+QuotedStr(sDocTR)+
-               ' AND   lo.Cod_Loja='+QuotedStr(mMemo.Lines[i])+
-               ' AND   lo.Cod_Produto='+QuotedStr(sgCodProduto)+
-               ' AND   lo.Ind_Transf='+QuotedStr('SIM');
-        DMBelShop.CDS_Busca1.Close;
-        DMBelShop.SDS_Busca1.CommandText:=MySql;
-        DMBelShop.CDS_Busca1.Open;
-
-        If Trim(DMBelShop.CDS_Busca1.FieldByName('Num_Docto').AsString)='' Then
-         Begin
-           MySql:=' INSERT INTO ES_ESTOQUES_LOJAS ('+
-                  ' NUM_SEQ, DTA_MOVTO, NUM_DOCTO, COD_LOJA, COD_PRODUTO,'+
-                  ' QTD_ESTOQUE, QTD_VENDAS, IND_CURVA, DIAS_ESTOCAGEM,'+
-                  ' QTD_DIAS, QTD_VENDA_DIA, QTD_DEMANDA, QTD_REPOSICAO,'+
-                  ' NUM_TR_GERADA, QTD_TRANSF_OC, QTD_TRANSF, QTD_A_TRANSF,'+
-                  ' NUM_PEDIDO, IND_TRANSF, USU_ALTERA, DTA_ALTERA, OBS_DOCTO)'+
-
-                  ' VALUES ('+
-                  QuotedStr(DMBelShop.CDS_Busca.FieldByName('New_Num_Seq').AsString)+', '+ // NUM_SEQ
-                  QuotedStr(sgDtaLimTransf)+', '+ // DTA_MOVTO
-                  QuotedStr(sDocTR)+', '+ // NUM_DOCTO
-                  QuotedStr(mMemo.Lines[i])+', '+ // COD_LOJA
-                  QuotedStr(sgCodProduto)+', '+ // COD_PRODUTO
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_ESTOQUE').AsString))+', '+ // QTD_ESTOQUE
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_VENDAS').AsString))+', '+ // QTD_VENDAS
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('IND_CURVA').AsString))+', '+ // IND_CURVA
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('DIAS_ESTOCAGEM').AsString))+', '+ // DIAS_ESTOCAGEM
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_DIAS').AsString))+', '+ // QTD_DIAS
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_VENDA_DIA').AsString))+', '+ // QTD_VENDA_DIA
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_DEMANDA').AsString))+', '+ // QTD_DEMANDA
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_REPOSICAO').AsString))+', '+ // QTD_REPOSICAO
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('NUM_TR_GERADA').AsString))+', '+ // NUM_TR_GERADA
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_TRANSF_OC').AsString))+', '+ // QTD_TRANSF_OC
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_TRANSF').AsString))+', '+ // QTD_TRANSF
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_A_TRANSF').AsString))+', '+ // QTD_A_TRANSF
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('NUM_PEDIDO').AsString))+', '+ // NUM_PEDIDO
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('IND_TRANSF').AsString))+', '+ // IND_TRANSF
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('USU_ALTERA').AsString))+', '+ // USU_ALTERA
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('DTA_ALTERA').AsString))+', '+ // DTA_ALTERA
-                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('OBS_OC').AsString))+')'; // OBS_DOCTO
-         End
-        Else
-         Begin
-           If DMBelShop.CDS_Busca.FieldByName('QTD_TRANSF_OC').AsCurrency>DMBelShop.CDS_Busca1.FieldByName('qtd_a_transf').AsCurrency Then
-           Begin
-           MySql:=' UPDATE  ES_ESTOQUES_LOJAS lo'+
-                  ' SET lo.qtd_transf_oc='+DMBelShop.CDS_Busca.FieldByName('QTD_TRANSF_OC').AsString+
-                  ',    lo.qtd_transf=0'+
-                  ',    lo.qtd_a_transf='+DMBelShop.CDS_Busca.FieldByName('QTD_TRANSF_OC').AsString+
-                  ',    lo.num_tr_gerada='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('NUM_TR_GERADA').AsString))+
-                  ',    lo.obs_docto=lo.obs_docto || ascii_char(13) || '+QuotedStr(DMBelShop.CDS_Busca.FieldByName('OBS_OC').AsString)+
-                  ' WHERE lo.Num_Docto='+QuotedStr(sDocTR)+
-                  ' AND   lo.Cod_Loja='+QuotedStr(mMemo.Lines[i])+
-                  ' AND   lo.Ind_Transf='+QuotedStr('SIM')+
-                  ' AND   lo.Cod_Produto='+QuotedStr(sgCodProduto);
-           End; // If DMBelShop.CDS_Busca.FieldByName('QTD_TRANSF_OC').AsCurrency>DMBelShop.CDS_Busca1.FieldByName('qtd_a_transf').AsCurrency Then
-         End; // If Trim(DMBelShop.CDS_Busca1.FieldByName('Num_Docto').AsString)='' Then
-        DMBelShop.CDS_Busca1.Close;
-        DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-        DMBelShop.CDS_Busca.Next;
-      End; // While Not DMBelShop.CDS_Busca.Eof do
-      DMBelShop.CDS_Busca.EnableControls;
-      DMBelShop.CDS_Busca.Close;
-      FrmBelShop.MontaProgressBar(False, FrmCentralTrocas);
-
-      // Acerta Num_Seq ========================================================
-      MySql:=' SELECT lo.num_seq, lo.cod_produto, TRIM(pr.apresentacao) nome_produto,'+
-             ' COALESCE(cd.end_zona,''0'')||''.''||COALESCE(cd.end_corredor,''000'')||''.''||'+
-             ' COALESCE(cd.end_prateleira,''000'')||''.''||COALESCE(cd.end_gaveta,''0000'') Enderecamento'+
-             ' FROM ES_ESTOQUES_LOJAS lo'+
-             '      LEFT JOIN PRODUTO        pr  ON pr.codproduto=lo.cod_produto'+
-             '      LEFT JOIN ES_ESTOQUES_CD cd  ON cd.dta_movto=lo.dta_movto'+
-             '                                  AND cd.cod_produto=lo.cod_produto'+
-             ' WHERE lo.dta_movto='+QuotedStr(sgDtaLimTransf)+
-             ' AND   lo.num_docto='+QuotedStr(sDocTR)+
-             ' AND   lo.cod_loja='+QuotedStr(mMemo.Lines[i])+
-             ' ORDER BY 4,3';
-      DMBelShop.CDS_Busca.Close;
-      DMBelShop.SDS_Busca.CommandText:=MySql;
-      DMBelShop.CDS_Busca.Open;
-
-      ii:=0;
-      While Not DMBelShop.CDS_Busca.Eof do
-      Begin
-        Inc(ii);
-
-        MySql:=' UPDATE ES_ESTOQUES_LOJAS lo'+
-               ' SET lo.num_seq='+IntToStr(ii)+
-               ' WHERE lo.dta_movto='+QuotedStr(sgDtaLimTransf)+
-               ' AND   lo.num_docto='+QuotedStr(sDocTR)+
-               ' AND   lo.cod_loja='+QuotedStr(mMemo.Lines[i])+
-               ' AND   lo.num_seq='+DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString+
-               ' AND   lo.cod_produto='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('cod_produto').AsString);
-        DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-        DMBelShop.CDS_Busca.Next;
-      End; // While Not DMBelShop.CDS_Busca.Eof do
-      DMBelShop.CDS_Busca.Close;
-
-    End; // For i:=0 to mMemo.Lines.Count-1 do
-    FrmBelShop.MontaProgressBar(False, FrmCentralTrocas);
-                                                                        
-    // Atualiza Transacao ======================================================
-    DMBelShop.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-
-    OdirPanApres.Visible:=False;
-    Screen.Cursor:=crDefault;
-
-  Except
-    on e : Exception do
-    Begin
-      // Abandona Transacao ====================================================
-      DMBelShop.SQLC.Rollback(TD);
-      Result:=False;
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-
-      Screen.Cursor:=crDefault;
-      OdirPanApres.Visible:=False;
-      FrmBelShop.MontaProgressBar(False, FrmCentralTrocas);
-
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-    End; // on e : Exception do
-  End; // Try
-
-  FreeAndNil(mMemo);
-
-End; // Localizando Transferencias Setor de Compras (Dia Anterior) >>>>>>>>>>>>>
+// OdirApagar - 11/08/2017 - Colocado em PFrmTransferencias
+//// Localizando Transferencias Setor de Compras (Dia Anterior) >>>>>>>>>>>>>>>>>>
+//Function TFrmCentralTrocas.ProcessaTranferenciasCompras: Boolean;
+//Var
+//  MySql,
+//  sDocTR,
+//  sEnd_Zona, sEnd_Corredor, sEnd_Prateleira, sEnd_Gaveta: String;
+//
+//  mMemo: TMemo;
+//  ii, i: Integer;
+//Begin
+//
+//  Result:=True;
+//
+//  sgDtaLimTransf:=f_Troca('-','.',(f_Troca('/','.',DateToStr(DtaEdt_ReposLojas.Date))));
+//
+//  // Verifia se Existe Transferencia a Processar ===============================
+//  MySql:=' SELECT oc.cod_empresa'+
+//         ' FROM OC_COMPRAR oc'+
+//         ' WHERE oc.num_oc_gerada>20160300'+
+//         ' AND   oc.ind_transf_cd=''N'''+
+//         ' AND   CAST(oc.dta_oc_gerada AS DATE)<'+QuotedStr(sgDtaLimTransf)+
+//
+//         ' UNION'+
+//
+//         ' SELECT l.cod_loja cod_empresa'+
+//         ' FROM ES_ESTOQUES_LOJAS l'+
+//         ' WHERE l.num_tr_gerada <> 0'+
+//         ' AND   l.qtd_a_transf > 0'+
+//         ' AND   l.ind_transf = ''SIM'''+
+//         ' AND   l.num_pedido = ''000000'''+
+//         ' AND   CAST(l.dta_movto AS DATE) < '+QuotedStr(sgDtaLimTransf)+
+//
+//         ' ORDER BY 1';
+//  DMBelShop.CDS_Busca.Close;
+//  DMBelShop.SDS_Busca.CommandText:=MySql;
+//  DMBelShop.CDS_Busca.Open;
+//
+//  If Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Empresa').AsString)='' Then
+//  Begin
+//    DMBelShop.CDS_Busca.Close;
+//    Exit;
+//  End; // If Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Empresa').AsString)='' Then
+//
+//  // Verifica se Transação esta Ativa
+//  If DMBelShop.SQLC.InTransaction Then
+//   DMBelShop.SQLC.Rollback(TD);
+//
+//  // Monta Transacao ===========================================================
+//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+//  TD.IsolationLevel:=xilREADCOMMITTED;
+//  DMBelShop.SQLC.StartTransaction(TD);
+//  Try
+//    Screen.Cursor:=crAppStart;
+//    DateSeparator:='.';
+//    DecimalSeparator:='.';
+//
+//    // Cria Componente Memo ======================================================
+//    mMemo:=TMemo.Create(Self);
+//    mMemo.Visible:=False;
+//    mMemo.Parent:=FrmCentralTrocas;
+//    mMemo.Width:=500;
+//    mMemo.Lines.Clear;
+//
+//    While Not DMBelShop.CDS_Busca.Eof do
+//    Begin
+//      mMemo.Lines.Add(Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Empresa').AsString));
+//
+//      DMBelShop.CDS_Busca.Next;
+//    End;
+//    DMBelShop.CDS_Busca.Close;
+//
+//    For i:=0 to mMemo.Lines.Count-1 do
+//    Begin
+//      OdirPanApres.Caption:='AGUARDE !! Analisando Transferencias Setor de Compras. Loja: Bel_'+mMemo.Lines[i];
+//      OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+//      OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+//      OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+//      OdirPanApres.BringToFront();
+//      OdirPanApres.Visible:=True;
+//      Refresh;
+//
+//      // Verifica se Existe ES_ESTOQUES_LOJAS
+//      MySql:=' SELECT  FIRST 1 lo.num_docto'+
+//             ' FROM ES_ESTOQUES_LOJAS lo'+
+//             ' WHERE lo.cod_loja='+QuotedStr(mMemo.Lines[i])+
+//             ' AND   lo.dta_movto='+QuotedStr(sgDtaLimTransf);
+//      DMBelShop.CDS_Busca.Close;
+//      DMBelShop.SDS_Busca.CommandText:=MySql;
+//      DMBelShop.CDS_Busca.Open;
+//      sDocTR:=Trim(DMBelShop.CDS_Busca.FieldByName('Num_Docto').AsString);
+//      DMBelShop.CDS_Busca.Close;
+//
+//      If sDocTR='' Then
+//      Begin
+//        // Busca Numero do Docto ===============================================
+//        MySql:=' SELECT COALESCE(MAX(el.num_docto)+1 ,1) Nr_Docto'+
+//               ' FROM ES_ESTOQUES_LOJAS el';
+//        DMBelShop.CDS_BuscaRapida.Close;
+//        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+//        DMBelShop.CDS_BuscaRapida.Open;
+//        sDocTR:=DMBelShop.CDS_BuscaRapida.FieldByName('Nr_Docto').AsString;
+//        DMBelShop.CDS_BuscaRapida.Close;
+//      End; // If sDocTR='' Then
+//
+//      // Atualiza Numerador para Num_Seq da Seleção ============================
+//      MySql:=' SELECT COALESCE(MAX(lo.num_seq)+1 ,1) Num_Seq'+
+//             ' FROM ES_ESTOQUES_LOJAS lo'+
+//             ' WHERE lo.cod_loja='+QuotedStr(mMemo.Lines[i])+
+//             ' AND   lo.dta_movto='+QuotedStr(sgDtaLimTransf);
+//      DMBelShop.CDS_Busca.Close;
+//      DMBelShop.SDS_Busca.CommandText:=MySql;
+//      DMBelShop.CDS_Busca.Open;
+//
+//      MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH '+DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString;
+//      DMBelShop.SQLC.Execute(MySql,nil,nil);
+//      DMBelShop.CDS_Busca.Close;
+//
+//      // Busca Produtos de Transferencia =========================================
+//      MySql:=' SELECT'+
+//             ' o.NUM_SEQ, '+
+//             ' GEN_ID(GEN_ODIR,1) NEW_NUM_SEQ, '+
+//             QuotedStr(sgDtaLimTransf)+' DTA_MOVTO,'+
+//             ' COALESCE(o.num_documento,0) Doc_Origem, '+
+//             sDocTR+' NUM_DOCTO,'+
+//             ' o.obs_oc,'+
+//             ' o.cod_empresa COD_LOJA,'+
+//             ' o.cod_item COD_PRODUTO,'+
+//             ' o.qtd_saldo QTD_ESTOQUE,'+
+//             ' (o.qtd_dem_mes1+o.qtd_dem_mes2+o.qtd_dem_mes3+o.qtd_dem_mes4+'+
+//             '  o.qtd_dem_mes5+o.qtd_dem_mes6+o.qtd_dem_mes7+o.qtd_dem_mes8) QTD_VENDAS,'+
+//             ' o.cla_curva_abc IND_CURVA,'+
+//             ' o.dias_estocagem DIAS_ESTOCAGEM,'+
+//             ' o.qtd_dias_ano QTD_DIAS,'+
+//             ' o.qtd_demanda_dia QTD_VENDA_DIA,'+
+//             ' o.qtd_demanda_dia QTD_DEMANDA,'+
+//             ' o.qtd_sugerida QTD_REPOSICAO,'+
+//             ' o.num_oc_gerada NUM_TR_GERADA,'+
+//             ' o.qtd_transf QTD_TRANSF_OC,'+
+//             ' 0 QTD_TRANSF,'+
+//             ' o.qtd_acomprar QTD_A_TRANSF,'+
+//             ' ''000000'' NUM_PEDIDO,'+
+//             ' ''SIM'' IND_TRANSF, '+
+//             QuotedStr(Cod_Usuario)+' USU_ALTERA,'+
+//             ' current_timestamp DTA_ALTERA,'+
+//             ' ''SIM'' Compras'+
+//
+//             ' FROM OC_COMPRAR o'+
+//             ' WHERE o.num_oc_gerada>20160300'+
+//             ' AND   o.ind_transf_cd=''N'''+
+//             ' AND   Cast(o.dta_oc_gerada As Date)<'+QuotedStr(sgDtaLimTransf)+
+//             ' AND   o.cod_empresa='+QuotedStr(mMemo.Lines[i]);
+//
+//      MySql:=
+//       MySql+' UNION'+
+//
+//             ' SELECT'+
+//             ' l.NUM_SEQ, '+
+//             ' GEN_ID(GEN_ODIR,1) NEW_NUM_SEQ, '+
+//             QuotedStr(sgDtaLimTransf)+' DTA_MOVTO,'+
+//             ' l.num_docto Doc_Origem, '+
+//             sDocTR+' NUM_DOCTO,'+
+//             ' l.OBS_DOCTO,'+
+//             ' l.COD_LOJA,'+
+//             ' l.COD_PRODUTO,'+
+//             ' l.QTD_ESTOQUE,'+
+//             ' l.QTD_VENDAS,'+
+//             ' l.IND_CURVA,'+
+//             ' l.DIAS_ESTOCAGEM,'+
+//             ' l.QTD_DIAS,'+
+//             ' l.QTD_VENDA_DIA,'+
+//             ' l.QTD_DEMANDA,'+
+//             ' l.QTD_REPOSICAO,'+
+//             ' l.NUM_TR_GERADA,'+
+//             ' l.QTD_TRANSF_OC,'+
+//             ' l.QTD_TRANSF,'+
+//             ' l.QTD_A_TRANSF,'+
+//             ' l.NUM_PEDIDO,'+
+//             ' l.IND_TRANSF, '+
+//             QuotedStr(Cod_Usuario)+' USU_ALTERA,'+
+//             ' current_timestamp DTA_ALTERA,'+
+//             ' ''NAO'' Compras'+
+//
+//             ' FROM ES_ESTOQUES_LOJAS l'+
+//             ' WHERE l.num_tr_gerada<>0'+
+//             ' AND   l.qtd_a_transf>0'+
+//             ' AND   l.ind_transf=''SIM'''+
+//             ' AND   l.num_pedido=''000000'''+
+//             ' AND   Cast(l.dta_movto As Date)<'+QuotedStr(sgDtaLimTransf)+
+//             ' AND   l.cod_loja='+QuotedStr(mMemo.Lines[i]);
+//      DMBelShop.CDS_Busca.Close;
+//      DMBelShop.SDS_Busca.CommandText:=MySql;
+//      DMBelShop.CDS_Busca.Open;
+//
+//      // Retorna Generator para 0 ==============================================
+//      MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH 0';
+//      DMBelShop.SQLC.Execute(MySql,nil,nil);
+//
+//      // Atualiza ES_ESTOQUE_LOJAS =============================================
+//      FrmBelShop.MontaProgressBar(True, FrmCentralTrocas);
+//      pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
+//      pgProgBar.Position:=0;
+//
+//      DMBelShop.CDS_Busca.DisableControls;
+//      While Not DMBelShop.CDS_Busca.Eof do
+//      Begin
+//        Application.ProcessMessages;
+//
+//        pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
+//
+//        sgCodProduto:=Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Produto').AsString);
+//
+//        //======================================================================
+//        // Atualiza OC_COMPRAR =================================================
+//        //======================================================================
+//        If DMBelShop.CDS_Busca.FieldByName('Compras').AsString='SIM' Then
+//        Begin
+//          MySql:=' UPDATE OC_COMPRAR O'+
+//                 ' SET o.ind_transf_cd='+QuotedStr('S')+
+//                 ',    o.doc_transf_cd='+QuotedStr(sDocTR)+
+//                 ' WHERE o.num_seq='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString)+
+//                 ' AND   o.num_documento='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Doc_Origem').AsString)+
+//                 ' AND   o.cod_empresa='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_loja').AsString)+
+//                 ' AND   o.cod_item='+QuotedStr(sgCodProduto);
+//          DMBelShop.SQLC.Execute(MySql,nil,nil);
+//        End; // If DMBelShop.CDS_Busca.FieldByName('Doc_Origem').AsInteger<>0 Then
+//
+//        //======================================================================
+//        // Atualiza ES_ESTOQUES_LOJAS =================================================
+//        //======================================================================
+//        If DMBelShop.CDS_Busca.FieldByName('Compras').AsString='NAO' Then
+//        Begin
+//          MySql:=' UPDATE ES_ESTOQUES_LOJAS l'+
+//                 ' SET l.num_pedido=''999999'''+
+//                 ' WHERE l.num_seq='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString)+
+//                 ' AND   l.num_docto='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Doc_Origem').AsString)+
+//                 ' AND   l.cod_loja='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_loja').AsString)+
+//                 ' AND   l.num_tr_gerada='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('NUM_TR_GERADA').AsString)+
+//                 ' AND   l.ind_transf=''SIM'''+
+//                 ' AND   l.cod_produto='+QuotedStr(sgCodProduto);
+//          DMBelShop.SQLC.Execute(MySql,nil,nil);
+//        End; // If DMBelShop.CDS_Busca.FieldByName('Doc_Origem').AsInteger<>0 Then
+//
+//        //======================================================================
+//        // Verifica se Existe ES_ESTOQUES_CD ===================================
+//        //======================================================================
+//        MySql:=' SELECT cd.cod_produto'+
+//               ' FROM ES_ESTOQUES_CD cd'+
+//               ' WHERE cd.dta_movto='+QuotedStr(sgDtaLimTransf)+
+//               ' AND   cd.cod_produto='+QuotedStr(sgCodProduto);
+//        DMBelShop.CDS_BuscaRapida.Close;
+//        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+//        DMBelShop.CDS_BuscaRapida.Open;
+//
+//        If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)='' Then
+//         Begin
+//           DMBelShop.CDS_BuscaRapida.Close;
+//
+//           // Busca Endereco
+//           MySql:=' SELECT'+
+//                  ' e.zonaendereco end_zona,'+
+//                  ' e.corredor end_corredor,'+
+//                  ' e.prateleira end_prateleira,'+
+//                  ' e.gaveta end_gaveta'+
+//                  ' FROM ESTOQUE e'+
+//                  ' WHERE e.codproduto='+QuotedStr(sgCodProduto)+
+//                  ' AND   e.codfilial=''99''';
+//           IBQ_MPMS.Close;
+//           IBQ_MPMS.SQL.Clear;
+//           IBQ_MPMS.SQL.Add(MySql);
+//           IBQ_MPMS.Open;
+//
+//           sEnd_Zona      :='0';
+//           sEnd_Corredor  :='000';
+//           sEnd_Prateleira:='000';
+//           sEnd_Gaveta    :='0000';
+//
+//           If Trim(IBQ_MPMS.FieldByName('end_zona').AsString)<>'' Then
+//           Begin
+//             sEnd_Zona      :=Trim(IBQ_MPMS.FieldByName('end_zona').AsString);
+//             sEnd_Corredor  :=Trim(IBQ_MPMS.FieldByName('end_corredor').AsString);
+//             sEnd_Prateleira:=Trim(IBQ_MPMS.FieldByName('end_prateleira').AsString);
+//             sEnd_Gaveta    :=Trim(IBQ_MPMS.FieldByName('end_gaveta').AsString);
+//           End; // If Trim(IBQ_MPMS.FieldByName('end_zona').AsString)<>'' Then
+//           IBQ_MPMS.Close;
+//
+//           // Insere ES_ESTOQUES_CD
+//           MySql:=' INSERT INTO ES_ESTOQUES_CD ('+
+//                  ' DTA_MOVTO, COD_PRODUTO, QTD_ESTOQUE, QTD_SAIDAS, QTD_SALDO,'+
+//                  ' END_ZONA, END_CORREDOR, END_PRATELEIRA, END_GAVETA)'+
+//                  ' VALUES ('+
+//                  QuotedStr(sgDtaLimTransf)+', '+ // DTA_MOVTO
+//                  QuotedStr(sgCodProduto)+', '+ // COD_PRODUTO
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Qtd_Estoque').AsString))+', '+ // QTD_ESTOQUE
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Qtd_Transf_OC').AsString))+', '+ // QTD_SAIDAS
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Qtd_Estoque').AsString))+', '+ // QTD_SALDO
+//                  QuotedStr(sEnd_Zona)+', '+ // END_ZONA
+//                  QuotedStr(sEnd_Corredor)+', '+ // END_CORREDOR
+//                  QuotedStr(sEnd_Prateleira)+', '+ // END_PRATELEIRA
+//                  QuotedStr(sEnd_Gaveta)+')'; // END_GAVETA
+//         End
+//        Else// If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)='' Then
+//         Begin
+//           MySql:=' UPDATE ES_ESTOQUES_CD cd'+
+//                  ' SET   cd.Qtd_Saidas=cd.Qtd_Saidas+'+DMBelShop.CDS_Busca.FieldByName('Qtd_Transf_OC').AsString+
+//                  ' WHERE cd.dta_movto='+QuotedStr(sgDtaLimTransf)+
+//                  ' AND   cd.cod_produto='+QuotedStr(sgCodProduto);
+//         End; // If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)='' Then
+//        DMBelShop.SQLC.Execute(MySql,nil,nil);
+//        DMBelShop.CDS_BuscaRapida.Close;
+//
+//        //======================================================================
+//        // Atualiza ES_ESTOQUES_LOJAS ==========================================
+//        //======================================================================
+//        MySql:=' SELECT FIRST 1 lo.num_docto, lo.qtd_a_transf'+
+//               ' FROM ES_ESTOQUES_LOJAS lo'+
+//               ' WHERE lo.Num_Docto='+QuotedStr(sDocTR)+
+//               ' AND   lo.Cod_Loja='+QuotedStr(mMemo.Lines[i])+
+//               ' AND   lo.Cod_Produto='+QuotedStr(sgCodProduto)+
+//               ' AND   lo.Ind_Transf='+QuotedStr('SIM');
+//        DMBelShop.CDS_Busca1.Close;
+//        DMBelShop.SDS_Busca1.CommandText:=MySql;
+//        DMBelShop.CDS_Busca1.Open;
+//
+//        If Trim(DMBelShop.CDS_Busca1.FieldByName('Num_Docto').AsString)='' Then
+//         Begin
+//           MySql:=' INSERT INTO ES_ESTOQUES_LOJAS ('+
+//                  ' NUM_SEQ, DTA_MOVTO, NUM_DOCTO, COD_LOJA, COD_PRODUTO,'+
+//                  ' QTD_ESTOQUE, QTD_VENDAS, IND_CURVA, DIAS_ESTOCAGEM,'+
+//                  ' QTD_DIAS, QTD_VENDA_DIA, QTD_DEMANDA, QTD_REPOSICAO,'+
+//                  ' NUM_TR_GERADA, QTD_TRANSF_OC, QTD_TRANSF, QTD_A_TRANSF,'+
+//                  ' NUM_PEDIDO, IND_TRANSF, USU_ALTERA, DTA_ALTERA, OBS_DOCTO)'+
+//
+//                  ' VALUES ('+
+//                  QuotedStr(DMBelShop.CDS_Busca.FieldByName('New_Num_Seq').AsString)+', '+ // NUM_SEQ
+//                  QuotedStr(sgDtaLimTransf)+', '+ // DTA_MOVTO
+//                  QuotedStr(sDocTR)+', '+ // NUM_DOCTO
+//                  QuotedStr(mMemo.Lines[i])+', '+ // COD_LOJA
+//                  QuotedStr(sgCodProduto)+', '+ // COD_PRODUTO
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_ESTOQUE').AsString))+', '+ // QTD_ESTOQUE
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_VENDAS').AsString))+', '+ // QTD_VENDAS
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('IND_CURVA').AsString))+', '+ // IND_CURVA
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('DIAS_ESTOCAGEM').AsString))+', '+ // DIAS_ESTOCAGEM
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_DIAS').AsString))+', '+ // QTD_DIAS
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_VENDA_DIA').AsString))+', '+ // QTD_VENDA_DIA
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_DEMANDA').AsString))+', '+ // QTD_DEMANDA
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_REPOSICAO').AsString))+', '+ // QTD_REPOSICAO
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('NUM_TR_GERADA').AsString))+', '+ // NUM_TR_GERADA
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_TRANSF_OC').AsString))+', '+ // QTD_TRANSF_OC
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_TRANSF').AsString))+', '+ // QTD_TRANSF
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('QTD_A_TRANSF').AsString))+', '+ // QTD_A_TRANSF
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('NUM_PEDIDO').AsString))+', '+ // NUM_PEDIDO
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('IND_TRANSF').AsString))+', '+ // IND_TRANSF
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('USU_ALTERA').AsString))+', '+ // USU_ALTERA
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('DTA_ALTERA').AsString))+', '+ // DTA_ALTERA
+//                  QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('OBS_OC').AsString))+')'; // OBS_DOCTO
+//         End
+//        Else
+//         Begin
+//           If DMBelShop.CDS_Busca.FieldByName('QTD_TRANSF_OC').AsCurrency>DMBelShop.CDS_Busca1.FieldByName('qtd_a_transf').AsCurrency Then
+//           Begin
+//           MySql:=' UPDATE  ES_ESTOQUES_LOJAS lo'+
+//                  ' SET lo.qtd_transf_oc='+DMBelShop.CDS_Busca.FieldByName('QTD_TRANSF_OC').AsString+
+//                  ',    lo.qtd_transf=0'+
+//                  ',    lo.qtd_a_transf='+DMBelShop.CDS_Busca.FieldByName('QTD_TRANSF_OC').AsString+
+//                  ',    lo.num_tr_gerada='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('NUM_TR_GERADA').AsString))+
+//                  ',    lo.obs_docto=lo.obs_docto || ascii_char(13) || '+QuotedStr(DMBelShop.CDS_Busca.FieldByName('OBS_OC').AsString)+
+//                  ' WHERE lo.Num_Docto='+QuotedStr(sDocTR)+
+//                  ' AND   lo.Cod_Loja='+QuotedStr(mMemo.Lines[i])+
+//                  ' AND   lo.Ind_Transf='+QuotedStr('SIM')+
+//                  ' AND   lo.Cod_Produto='+QuotedStr(sgCodProduto);
+//           End; // If DMBelShop.CDS_Busca.FieldByName('QTD_TRANSF_OC').AsCurrency>DMBelShop.CDS_Busca1.FieldByName('qtd_a_transf').AsCurrency Then
+//         End; // If Trim(DMBelShop.CDS_Busca1.FieldByName('Num_Docto').AsString)='' Then
+//        DMBelShop.CDS_Busca1.Close;
+//        DMBelShop.SQLC.Execute(MySql,nil,nil);
+//
+//        DMBelShop.CDS_Busca.Next;
+//      End; // While Not DMBelShop.CDS_Busca.Eof do
+//      DMBelShop.CDS_Busca.EnableControls;
+//      DMBelShop.CDS_Busca.Close;
+//      FrmBelShop.MontaProgressBar(False, FrmCentralTrocas);
+//
+//      // Acerta Num_Seq ========================================================
+//      MySql:=' SELECT lo.num_seq, lo.cod_produto, TRIM(pr.apresentacao) nome_produto,'+
+//             ' COALESCE(cd.end_zona,''0'')||''.''||COALESCE(cd.end_corredor,''000'')||''.''||'+
+//             ' COALESCE(cd.end_prateleira,''000'')||''.''||COALESCE(cd.end_gaveta,''0000'') Enderecamento'+
+//             ' FROM ES_ESTOQUES_LOJAS lo'+
+//             '      LEFT JOIN PRODUTO        pr  ON pr.codproduto=lo.cod_produto'+
+//             '      LEFT JOIN ES_ESTOQUES_CD cd  ON cd.dta_movto=lo.dta_movto'+
+//             '                                  AND cd.cod_produto=lo.cod_produto'+
+//             ' WHERE lo.dta_movto='+QuotedStr(sgDtaLimTransf)+
+//             ' AND   lo.num_docto='+QuotedStr(sDocTR)+
+//             ' AND   lo.cod_loja='+QuotedStr(mMemo.Lines[i])+
+//             ' ORDER BY 4,3';
+//      DMBelShop.CDS_Busca.Close;
+//      DMBelShop.SDS_Busca.CommandText:=MySql;
+//      DMBelShop.CDS_Busca.Open;
+//
+//      ii:=0;
+//      While Not DMBelShop.CDS_Busca.Eof do
+//      Begin
+//        Inc(ii);
+//
+//        MySql:=' UPDATE ES_ESTOQUES_LOJAS lo'+
+//               ' SET lo.num_seq='+IntToStr(ii)+
+//               ' WHERE lo.dta_movto='+QuotedStr(sgDtaLimTransf)+
+//               ' AND   lo.num_docto='+QuotedStr(sDocTR)+
+//               ' AND   lo.cod_loja='+QuotedStr(mMemo.Lines[i])+
+//               ' AND   lo.num_seq='+DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString+
+//               ' AND   lo.cod_produto='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('cod_produto').AsString);
+//        DMBelShop.SQLC.Execute(MySql,nil,nil);
+//
+//        DMBelShop.CDS_Busca.Next;
+//      End; // While Not DMBelShop.CDS_Busca.Eof do
+//      DMBelShop.CDS_Busca.Close;
+//
+//    End; // For i:=0 to mMemo.Lines.Count-1 do
+//    FrmBelShop.MontaProgressBar(False, FrmCentralTrocas);
+//                                                                        
+//    // Atualiza Transacao ======================================================
+//    DMBelShop.SQLC.Commit(TD);
+//
+//    DateSeparator:='/';
+//    DecimalSeparator:=',';
+//
+//    OdirPanApres.Visible:=False;
+//    Screen.Cursor:=crDefault;
+//
+//  Except
+//    on e : Exception do
+//    Begin
+//      // Abandona Transacao ====================================================
+//      DMBelShop.SQLC.Rollback(TD);
+//      Result:=False;
+//
+//      DateSeparator:='/';
+//      DecimalSeparator:=',';
+//
+//      Screen.Cursor:=crDefault;
+//      OdirPanApres.Visible:=False;
+//      FrmBelShop.MontaProgressBar(False, FrmCentralTrocas);
+//
+//      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+//    End; // on e : Exception do
+//  End; // Try
+//
+//  FreeAndNil(mMemo);
+//
+//End; // Localizando Transferencias Setor de Compras (Dia Anterior) >>>>>>>>>>>>>
 
 // Verifica se Existe de Itens >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmCentralTrocas.VerificaExistenciaItens: Boolean;
@@ -5859,13 +5861,14 @@ begin
     Bt_ReposLojasGeraPedidoSIDICOM.Enabled:=False;
   End; // If DtaEdt_ReposLojas.Date<DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor) Then
 
-  // Localizando Transferencias Setor de Compras ===============================
-  If Not ProcessaTranferenciasCompras Then
-  Begin
-    OdirPanApres.Visible:=False;
-    Screen.Cursor:=crDefault;
-    Exit;
-  End;
+// OdirApagar - 11/08/2017 - Colocado em PFrmTransferencias
+//  // Localizando Transferencias Setor de Compras ===============================
+//  If Not ProcessaTranferenciasCompras Then
+//  Begin
+//    OdirPanApres.Visible:=False;
+//    Screen.Cursor:=crDefault;
+//    Exit;
+//  End;
 
   DMCentralTrocas.CDS_ReposicaoDocs.DisableControls;
   DMCentralTrocas.CDS_ReposicaoDocs.Close;
@@ -6821,8 +6824,7 @@ end;
 
 procedure TFrmCentralTrocas.FormResize(Sender: TObject);
 begin
-  CkCbx_ReposLojasCorredor.Width:=Pan_ReposLojasCorredor.Width-88;
-
+ CkCbx_ReposLojasCorredor.Width:=Pan_ReposLojasCorredor.Width-88;
 end;
 
 procedure TFrmCentralTrocas.Rb_ReposLojasPrioridade0Click(Sender: TObject);

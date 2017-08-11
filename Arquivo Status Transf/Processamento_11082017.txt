@@ -1,0 +1,25 @@
+01/999 - Fornecedores que Não São Processados - 15:50:10
+02/999 - Busca Lojas do Dia - 15:50:11
+03/999 - Busca Percentuais de Cortes das Curvas - 15:50:11
+04/999 - Zera Sequencia para Novo Docto - 15:50:11
+05/999 - Cria Memo para Codigos de Lojas - 15:50:11
+06/999 - Calcula Dias do Período - 15:50:11
+07/999 - Conecta CD - 15:50:11
+08/999 - Busca Produtos com Saldo no CD - 15:50:12
+09/999 - Insere Produtos do CD - 15:50:19
+10/999 - Busca Produtos nas Lojas com Necessidade de Compras - INICIO - 15:50:19
+10.01/999 - Busca Produtos do CD - 15:50:20
+10.02/999 - Abre ClientDataSet para Inclusao de Produtos da Loja - 15:50:20
+10.03/999 - PROCESSAMENTO DAS LOJAS - INICIO - 15:50:20
+10.03.01/999 - Monta Curvas da Loja - 01 - 15:50:22
+10.03.02/999 - Busca Produtos das Curvas da Loja - 01 - 15:53:09
+10.03.03/999 - Conecta Loja - 01 - 15:53:09
+10.04/999 - PROCESSA PRODUTOS SELECIONADOS DA LOJA - 01 - INICIO - 15:53:09
+10.04/999 - PROCESSA PRODUTOS SELECIONADOS DA LOJA - 01 - FIM - 15:54:34
+10.03/999 - PROCESSAMENTO DAS LOJAS - FIM - 15:54:34
+10/999 - Busca Produtos nas Lojas com Necessidade de Compras - FIM - 15:54:34
+11/999 - Analisa e Atualiza Transferencias do Dia - INICIO - 15:54:34
+11/999 - Analisa e Atualiza Transferencias do Dia - FIM - 15:55:13
+12/999 - Busca Transferencias Anteiroes Setor de Compras - INICIO - 15:55:13
+12/999 - Busca Transferencias Anteiroes Setor de Compras - FIM - 16:25:50
+13/999 - FIM - 16:25:50

@@ -102,6 +102,9 @@ type
     CDS_ProdutoDemandaQTD_TRANSF_OC: TFMTBCDField;
     CDS_ProdutoDemandaOBS_DOCTO: TStringField;
     CDS_ProdutoDemandaCODGRUPOSUB: TStringField;
+    SDS_Busca1: TSQLDataSet;
+    DSP_Busca1: TDataSetProvider;
+    CDS_Busca1: TClientDataSet;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir ====================================================================
