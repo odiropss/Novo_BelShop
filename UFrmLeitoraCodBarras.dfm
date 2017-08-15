@@ -4,7 +4,7 @@ object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
   BorderIcons = []
   BorderStyle = bsSingle
   Caption = 'Checkout - Leitora de C'#243'digo de Barras (EAN13)'
-  ClientHeight = 80
+  ClientHeight = 174
   ClientWidth = 524
   Color = clSilver
   Ctl3D = False
@@ -26,7 +26,7 @@ object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
     Left = 0
     Top = 0
     Width = 524
-    Height = 80
+    Height = 174
     Align = alClient
     Color = clSilver
     TabOrder = 0
@@ -128,6 +128,94 @@ object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
       OnEnter = EdtQtdEmbalagemEnter
       OnExit = EdtQtdEmbalagemExit
       OnKeyPress = EdtQtdEmbalagemKeyPress
+    end
+    object Gb_CheckOut_Erro: TGroupBox
+      Left = 1
+      Top = 125
+      Width = 522
+      Height = 48
+      Align = alBottom
+      Caption = ' CheckOut Erros '
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 4
+      object PBar_CheckOut_Erro: TJvGradientProgressBar
+        Left = 1
+        Top = 14
+        Width = 520
+        Height = 33
+        BarColorFrom = 14671871
+        BarColorTo = clRed
+        Position = 80
+        Smooth = True
+        Align = alClient
+        ParentColor = True
+      end
+      object Lab_CheckOut_Erro: TLabel
+        Left = 125
+        Top = 1
+        Width = 53
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = ' 0 % '
+        Color = clRed
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+      end
+    end
+    object Gb_CheckOut_OK: TGroupBox
+      Left = 1
+      Top = 77
+      Width = 522
+      Height = 48
+      Align = alBottom
+      Caption = ' CheckOut OK '
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 5
+      object PBar_CheckOut_OK: TJvGradientProgressBar
+        Left = 1
+        Top = 14
+        Width = 520
+        Height = 33
+        BarColorFrom = 16755370
+        BarColorTo = 16744448
+        Position = 80
+        Smooth = True
+        Align = alClient
+        ParentColor = True
+      end
+      object Lab_CheckOut_OK: TLabel
+        Left = 125
+        Top = -1
+        Width = 53
+        Height = 13
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = ' 0 % '
+        Color = 16744448
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+      end
     end
   end
   object CorCaptionForm: TJvGradientCaption

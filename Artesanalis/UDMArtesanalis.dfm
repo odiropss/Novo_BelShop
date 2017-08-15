@@ -353,7 +353,7 @@ object DMArtesanalis: TDMArtesanalis
     AggregatesActive = True
     IndexFieldNames = 'NUM_SEQ'
     Params = <>
-    Left = 60
+    Left = 64
     Top = 360
     object CDS_V_DoctoItensNUM_SEQ_DOCTO: TIntegerField
       FieldName = 'NUM_SEQ_DOCTO'
@@ -366,7 +366,7 @@ object DMArtesanalis: TDMArtesanalis
       FieldName = 'COD_PRODUTO'
     end
     object CDS_V_DoctoItensDES_PRODUTO: TStringField
-      DisplayLabel = 'Descri'#231#227'o'
+      DisplayLabel = 'Descri'#231#227'o do Produto'
       FieldName = 'DES_PRODUTO'
       Size = 60
     end
@@ -378,20 +378,30 @@ object DMArtesanalis: TDMArtesanalis
       Size = 2
     end
     object CDS_V_DoctoItensVLR_UNITARIO: TFMTBCDField
-      DisplayLabel = 'Valor Unit'#225'rio'
+      DisplayLabel = '$ Unit'#225'rio'
       FieldName = 'VLR_UNITARIO'
       DisplayFormat = '0,.00'
       Precision = 18
       Size = 2
     end
+    object CDS_V_DoctoItensVLR_PRODUTO: TCurrencyField
+      DisplayLabel = '$ Produto'
+      FieldName = 'VLR_PRODUTO'
+      DisplayFormat = '0,.00'
+    end
+    object CDS_V_DoctoItensPER_DESCONTO: TCurrencyField
+      DisplayLabel = '% Desconto'
+      FieldName = 'PER_DESCONTO'
+      DisplayFormat = '0.00'
+    end
     object CDS_V_DoctoItensVLR_DESCONTO: TFMTBCDField
-      DisplayLabel = 'Valor Desconto'
+      DisplayLabel = '$ Desconto'
       FieldName = 'VLR_DESCONTO'
       DisplayFormat = '0,.00'
       Size = 2
     end
     object CDS_V_DoctoItensVLR_TOTAL: TFMTBCDField
-      DisplayLabel = 'Valor Total'
+      DisplayLabel = '$ Total  Produto'
       FieldName = 'VLR_TOTAL'
       DisplayFormat = '0,.00'
       Precision = 18

@@ -27,7 +27,7 @@ object DMBelShop: TDMBelShop
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
-    Left = 11
+    Left = 27
     Top = 11
   end
   object SDS_Busca: TSQLDataSet

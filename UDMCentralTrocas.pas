@@ -160,6 +160,7 @@ type
     CDS_V_ReposDivergenciasNUM_SEQ: TIntegerField;
     DS_V_ReposDivergencias: TDataSource;
     CDS_V_ReposDivergenciasIND_CORRIGIDO: TStringField;
+    CDS_ReposicaoTransfCODBARRA: TStringField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir
@@ -303,7 +304,7 @@ begin
 
   If bgAfterScroll Then
   Begin
-    FrmSolicitacoes.EdtReposDivQtd.AsInteger:=CDS_V_ReposDivergenciasQTD_A_TRANSF.AsInteger;
+    FrmSolicitacoes.EdtReposDivQtd.AsInteger:=CDS_V_ReposDivergenciasQTD_CHECKOUT.AsInteger;
     FrmSolicitacoes.Mem_ReposDivProduto.Text:=CDS_V_ReposDivergenciasCOD_PRODUTO.AsString+cr+
                                               CDS_V_ReposDivergenciasNOME.AsString;
   End;

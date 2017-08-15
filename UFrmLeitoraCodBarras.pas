@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, JvExControls, JvXPCore, JvXPButtons, StdCtrls, ExtCtrls, Mask,
-  ToolEdit, CurrEdit, MMSystem, JvGradientCaption;
+  ToolEdit, CurrEdit, MMSystem, JvGradientCaption, JvProgressBar;
 
 type
   TFrmLeitoraCodBarras = class(TForm)
@@ -17,6 +17,12 @@ type
     EdtQtdEmbalagem: TCurrencyEdit;
     Label1: TLabel;
     Label2: TLabel;
+    Gb_CheckOut_Erro: TGroupBox;
+    Gb_CheckOut_OK: TGroupBox;
+    PBar_CheckOut_OK: TJvGradientProgressBar;
+    PBar_CheckOut_Erro: TJvGradientProgressBar;
+    Lab_CheckOut_OK: TLabel;
+    Lab_CheckOut_Erro: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure Bt_FecharClick(Sender: TObject);

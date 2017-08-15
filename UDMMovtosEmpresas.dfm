@@ -56,8 +56,7 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
       'PASTA_BASE_DADOS, c.DES_BASE_DADOS, c.COD_EMP, c.RAZAO_SOCIAL, c' +
       '.TIP_EMP,'#13#10'c.IND_ATIVO,'#13#10#39'IBDB_'#39'||c.COD_FILIAL "DATABASE",'#13#10#39'IBT' +
       '_'#39'||c.COD_FILIAL  "TRANSACAO",'#13#10'c.COD_LINX'#13#10#13#10'From EMP_Conexoes ' +
-      'c'#13#10'Where (c.Ind_Ativo='#39'SIM'#39' or c.cod_filial=99)'#13#10'Order by c.Cod_' +
-      'Emp'#13#10#13#10
+      'c'#13#10'Where (c.Ind_Ativo='#39'SIM'#39' or c.cod_filial=99)'#13#10'Order by 1'#13#10#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -147,20 +146,20 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     Params = <>
     SQLConnection = SQLC
     Left = 511
-    Top = 51
+    Top = 75
   end
   object DSP_Produto: TDataSetProvider
     DataSet = SDS_Produto
     Options = [poRetainServerOrder]
     Left = 562
-    Top = 66
+    Top = 90
   end
   object CDS_Produto: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Produto'
     Left = 612
-    Top = 52
+    Top = 76
   end
   object IBQ_ProdutoMPMS: TIBQuery
     Database = DMConexoes.IBDB_MPMS
@@ -236,8 +235,8 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
       '     left join forneced fo  on fo.codfornecedor=pr.principalfor'
       '     left join listapre lp  on lp.codlista='#39'0006'#39
       '                           and lp.codproduto=pr.codproduto')
-    Left = 424
-    Top = 16
+    Left = 416
+    Top = 32
     object IBQ_ProdutoMPMSUPDATE_INSERT: TIBStringField
       FieldName = 'UPDATE_INSERT'
       Size = 1359

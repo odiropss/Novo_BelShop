@@ -342,7 +342,7 @@ Begin
            sEnd_Corredor  :='000';
            sEnd_Prateleira:='000';
            sEnd_Gaveta    :='0000';
-           sSaldoCD       :='0.00'
+           sSaldoCD       :='0.00';
            If Trim(IBQ_MPMS.FieldByName('end_zona').AsString)<>'' Then
            Begin
              sEnd_Zona      :=Trim(IBQ_MPMS.FieldByName('end_zona').AsString);
@@ -362,8 +362,7 @@ Begin
                   QuotedStr(sgCodProduto)+', '+ // COD_PRODUTO
                   sSaldoCD+', '+ // QTD_ESTOQUE
                   QuotedStr(Trim(DMTransferencias.CDS_Busca.FieldByName('Qtd_Transf_OC').AsString))+', '+ // QTD_SAIDAS
-                  '(QTD_ESTOQUE-QTD_SAIDAS), '+ // QTD_SALDO
-//                  QuotedStr(Trim(DMTransferencias.CDS_Busca.FieldByName('Qtd_Estoque').AsString))+', '+ // QTD_SALDO
+                  IntToStr(StrToInt(sSaldoCD)-DMTransferencias.CDS_Busca.FieldByName('Qtd_Transf_OC').AsInteger)+', '+ // QTD_SALDO
                   QuotedStr(sEnd_Zona)+', '+ // END_ZONA
                   QuotedStr(sEnd_Corredor)+', '+ // END_CORREDOR
                   QuotedStr(sEnd_Prateleira)+', '+ // END_PRATELEIRA
@@ -373,7 +372,7 @@ Begin
          Begin
            MySql:=' UPDATE ES_ESTOQUES_CD cd'+
                   ' SET   cd.Qtd_Saidas=cd.Qtd_Saidas+'+DMTransferencias.CDS_Busca.FieldByName('Qtd_Transf_OC').AsString+
-                  ' ,     cd.Qtd_Estoque=cd.Qtd_Estoque-'+DMTransferencias.CDS_Busca.FieldByName('Qtd_Transf_OC').AsString+
+                  ' ,     cd.Qtd_Saldo=cd.Qtd_Saldo-'+DMTransferencias.CDS_Busca.FieldByName('Qtd_Transf_OC').AsString+
                   ' WHERE cd.dta_movto = CURRENT_DATE'+
                   ' AND   cd.cod_produto='+QuotedStr(sgCodProduto);
          End; // If Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)='' Then

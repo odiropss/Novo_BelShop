@@ -98,6 +98,8 @@ type
     CDS__VerProducaoQTD_BAIXA_EST_MP: TFMTBCDField;
     CDS__VerProducaoVLR_UNITARIO_MP: TFMTBCDField;
     CDS__VerProducaoVLR_TOTAL_MP: TFMTBCDField;
+    CDS_V_DoctoItensPER_DESCONTO: TCurrencyField;
+    CDS_V_DoctoItensVLR_PRODUTO: TCurrencyField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

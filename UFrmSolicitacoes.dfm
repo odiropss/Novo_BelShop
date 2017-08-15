@@ -10025,6 +10025,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             Width = 411
             Height = 49
             Align = alClient
+            Alignment = taCenter
             Color = 14286847
             Ctl3D = False
             Enabled = False
@@ -10063,10 +10064,10 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
           object Bt_ReposDivAlterarQtd: TJvXPButton
             Tag = 2
-            Left = 99
+            Left = 91
             Top = 22
-            Width = 98
-            Height = 30
+            Width = 104
+            Height = 31
             Caption = 'Altear'
             TabOrder = 1
             ShowFocusRect = True
@@ -10127,7 +10128,15 @@ object FrmSolicitacoes: TFrmSolicitacoes
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
-            Width = 340
+            Width = 320
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_CHECKOUT'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'CheckOut'
+            Width = 65
             Visible = True
           end
           item
@@ -10141,15 +10150,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             Font.Style = [fsBold]
             Title.Alignment = taRightJustify
             Title.Caption = 'A Transf'
-            Width = 70
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'QTD_CHECKOUT'
-            Title.Alignment = taRightJustify
-            Title.Caption = 'CheckOut'
-            Width = 70
+            Width = 65
             Visible = True
           end
           item
@@ -10157,7 +10158,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
             Expanded = False
             FieldName = 'IND_CORRIGIDO'
             Title.Alignment = taCenter
-            Width = 65
+            Title.Caption = 'OK ?'
+            Width = 40
             Visible = True
           end>
       end

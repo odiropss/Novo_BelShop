@@ -69,6 +69,7 @@ type
     MenuRELATORIOS: TMenuItem;
     Panel1: TPanel;
     Image1: TImage;
+    SBt_Sair: TSpeedButton;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -86,6 +87,7 @@ type
     procedure SubMenuCadastroPessoasEntidadesClick(Sender: TObject);
     procedure SubMenuCOMPRASMateriasPrimasClick(Sender: TObject);
     procedure SubMenuVENDASPedidosVendaClick(Sender: TObject);
+    procedure SBt_SairClick(Sender: TObject);
 
     // Odir ====================================================================
 
@@ -339,6 +341,11 @@ begin
 
   FrmPedidoVenda.sgOrigem:='P'; // Pedido de Venda
   FrmPedidoVenda.ShowModal;
+end;
+
+procedure TFrmArtesanalis.SBt_SairClick(Sender: TObject);
+begin
+  MenuSAIRClick(Self);
 end;
 
 end.

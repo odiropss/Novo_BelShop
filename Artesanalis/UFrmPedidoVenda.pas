@@ -22,12 +22,9 @@ uses
 
 type
   TFrmPedidoVenda = class(TForm)
-    Gb_Principal: TGroupBox;
+    Gb_Produtos: TGroupBox;
+    OdirPanApres: TPanel;
     Pan_Docto: TPanel;
-    Gb_VlrTotal: TGroupBox;
-    EdtVlrTotal: TCurrencyEdit;
-    Gb_VlrDescontos: TGroupBox;
-    EdtVlrDescontos: TCurrencyEdit;
     Gb_NumDocto: TGroupBox;
     EdtNumDocto: TCurrencyEdit;
     Gb_DtaDocto: TGroupBox;
@@ -37,15 +34,6 @@ type
     EdtCodPessoa: TCurrencyEdit;
     Bt_BuscaPessoa: TJvXPButton;
     Bt_NovaPessoa: TJvXPButton;
-    EdtNumSeqDocto: TCurrencyEdit;
-    Dbe_VlrTotalCalculado: TDBEdit;
-    Gb_VlrTotalCalculado: TGroupBox;
-    EdtVlrTotalCalculado: TCurrencyEdit;
-    Pan_Solicitacoes: TPanel;
-    Bt_Fechar: TJvXPButton;
-    Bt_Salvar: TJvXPButton;
-    Bt_Abandonar: TJvXPButton;
-    Rb_Produtos: TRadioGroup;
     Pan_Produto: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -53,6 +41,7 @@ type
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
+    Label8: TLabel;
     EdtSeqProduto: TCurrencyEdit;
     EdtCodProduto: TCurrencyEdit;
     EdtDesProduto: TEdit;
@@ -64,13 +53,35 @@ type
     Bt_AbandonarProduto: TJvXPButton;
     EdtVlrDescProduto: TCurrencyEdit;
     Dbg_Produtos: TDBGrid;
-    OdirPanApres: TPanel;
-    StB_Movtos: TdxStatusBar;
+    Pan_Solicitacoes: TPanel;
+    Bt_Fechar: TJvXPButton;
+    Bt_Salvar: TJvXPButton;
+    Bt_Abandonar: TJvXPButton;
+    Bt_Excluir: TJvXPButton;
+    Panel1: TPanel;
     Gb_VlrProdutos: TGroupBox;
     EdtVlrProdutos: TCurrencyEdit;
+    Gb_VlrDescontos: TGroupBox;
+    EdtVlrDescontos: TCurrencyEdit;
+    Gb_VlrTotalPerdido: TGroupBox;
+    EdtVlrTotal: TCurrencyEdit;
+    Gb_PercDesconto: TGroupBox;
+    EdtPercDesconto: TCurrencyEdit;
+    StB_Movtos: TdxStatusBar;
+    Gb_PercDescConcedido: TGroupBox;
+    EdtPercDescConcedido: TCurrencyEdit;
+    Gb_VlrDescConcedido: TGroupBox;
+    EdtVlrDescConcedido: TCurrencyEdit;
+    Gb_VlrPagto: TGroupBox;
+    EdtVlrPagto: TCurrencyEdit;
+    Label7: TLabel;
+    EdtPercDescProduto: TCurrencyEdit;
+    EdtVlrProduto: TCurrencyEdit;
+    Label9: TLabel;
+    EdtNumSeqDocto: TCurrencyEdit;
+    Dbe_VlrTotalCalculado: TDBEdit;
     Dbe_VlrTotalDesconto: TDBEdit;
-    Label8: TLabel;
-    Bt_Excluir: TJvXPButton;
+    Dbe_VlrTotalProdutos: TDBEdit;
 
     // Odir ====================================================================
 
@@ -88,6 +99,8 @@ type
     Procedure PedidoIncluirExcluir(sDML: String);
                                    // sDML: (I)Inclusão
                                    //       (E)Exclusão
+
+    Procedure CalculaDescontos;
 
     Procedure CalculaRateiroDescontos;
 
@@ -128,6 +141,12 @@ type
     procedure Dbg_ProdutosExit(Sender: TObject);
     procedure Dbg_ProdutosKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure Dbe_VlrTotalProdutosChange(Sender: TObject);
+    procedure Dbe_VlrTotalDescontoChange(Sender: TObject);
+    procedure EdtPercDescConcedidoExit(Sender: TObject);
+    procedure EdtVlrDescConcedidoExit(Sender: TObject);
+    procedure EdtPercDescontoExit(Sender: TObject);
+    procedure EdtVlrTotalChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -171,6 +190,33 @@ uses UDMArtesanalis, UPesquisa, DK_Procs1, UFrmPessoaCadastro, DB, Math,
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - Inicio >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Calcula Descontos nos Produtos do Pedido >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmPedidoVenda.CalculaDescontos;
+Begin
+  If DMArtesanalis.CDS_V_DoctoItens.IsEmpty Then
+   Exit;
+
+  DMArtesanalis.CDS_V_DoctoItens.First;
+  DMArtesanalis.CDS_V_DoctoItens.DisableControls;
+  While Not DMArtesanalis.CDS_V_DoctoItens.Eof do
+  Begin
+    DMArtesanalis.CDS_V_DoctoItens.Edit;
+    DMArtesanalis.CDS_V_DoctoItensPER_DESCONTO.AsCurrency:=EdtPercDesconto.Value;
+    DMArtesanalis.CDS_V_DoctoItensVLR_DESCONTO.AsCurrency:=SimpleRoundTo(((
+                                                           DMArtesanalis.CDS_V_DoctoItensVLR_PRODUTO.AsCurrency*
+                                                           EdtPercDesconto.Value)/100),-2);
+    DMArtesanalis.CDS_V_DoctoItensVLR_TOTAL.AsCurrency:=DMArtesanalis.CDS_V_DoctoItensVLR_PRODUTO.AsCurrency-
+                                                        DMArtesanalis.CDS_V_DoctoItensVLR_DESCONTO.AsCurrency;
+    DMArtesanalis.CDS_V_DoctoItens.Post;
+
+    DMArtesanalis.CDS_V_DoctoItens.Next;
+  End; // While Not DMArtesanalis.CDS_V_DoctoItens.Eof do
+  DMArtesanalis.CDS_V_DoctoItens.First;
+  DMArtesanalis.CDS_V_DoctoItens.EnableControls;
+
+End; // Calcula Descontos nos Produtos do Pedido >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 
 // Calcula Rateio de Descontos nos Produtos do Pedido >>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmPedidoVenda.CalculaRateiroDescontos;
@@ -371,7 +417,9 @@ Begin
       sTipoDocto:='P';
       MySql:=' INSERT INTO DOCTOS'+
              ' (ORIGEM, NUM_SEQ_DOCTO, TIPO, NUM_DOCTO, NUM_SERIE, DTA_DOCTO, DTA_LANCAMENTO,'+
-             '  COD_PESSOA, DES_PESSOA, VLR_PRODUTOS, VLR_DESCONTO, VLR_TOTAL)'+
+             '  COD_PESSOA, DES_PESSOA, VLR_PRODUTOS, PER_DESCONTO, VLR_DESCONTO, VLR_TOTAL,'+
+             '  PER_CONCEDIDO, VLR_CONCEDIDO, VLR_PAGAMENTO)'+
+
              ' VALUES ('+
              QuotedStr(sgOrigem)+', '+ // ORIGEM - Pedido de Venda
              IntToStr(EdtNumSeqDocto.AsInteger)+', '+ // NUM_SEQ_DOCTO
@@ -383,8 +431,12 @@ Begin
              IntToStr(EdtCodPessoa.AsInteger)+', '+ // COD_PESSOA
              QuotedStr(EdtDesPessoa.Text)+', '+ // DES_PESSOA
              QuotedStr(f_Troca(',','.',VarToStr(EdtVlrProdutos.Value)))+', '+ // VLR_PRODUTOS
+             QuotedStr(f_Troca(',','.',VarToStr(EdtPercDesconto.Value)))+', '+ // PER_DESCONTO
              QuotedStr(f_Troca(',','.',VarToStr(EdtVlrDescontos.Value)))+', '+ // VLR_DESCONTO
-             QuotedStr(f_Troca(',','.',VarToStr(EdtVlrTotal.Value)))+')'; // VLR_TOTAL
+             QuotedStr(f_Troca(',','.',VarToStr(EdtVlrTotal.Value)))+', '+ // VLR_TOTAL
+             QuotedStr(f_Troca(',','.',VarToStr(EdtPercDescConcedido.Value)))+', '+ // PER_CONCEDIDO
+             QuotedStr(f_Troca(',','.',VarToStr(EdtVlrDescConcedido.Value)))+', '+ // VLR_CONCEDIDO
+             QuotedStr(f_Troca(',','.',VarToStr(EdtVlrPagto.Value)))+')'; // VLR_PAGAMENTO
       DMArtesanalis.SQLC.Execute(MySql,nil,nil);
 
       // Inclusão dos Produtos =================================================
@@ -394,7 +446,8 @@ Begin
       Begin
          MySql:=' INSERT INTO DOCTOS_ITENS'+
                 ' (NUM_SEQ_DOCTO, NUM_SEQ, COD_PRODUTO, DES_PRODUTO, QTD_MOVTO,'+
-                ' VLR_UNITARIO, VLR_DESCONTO, VLR_TOTAL)'+
+                ' VLR_UNITARIO, VLR_PRODUTO, PER_DESCONTO, VLR_DESCONTO, VLR_TOTAL)'+
+
                 ' VALUES ('+
                 EdtNumSeqDocto.Text+', '+ // NUM_SEQ_DOCTO
                 DMArtesanalis.CDS_V_DoctoItensNUM_SEQ.AsString+', '+ // NUM_SEQ
@@ -402,6 +455,8 @@ Begin
                 QuotedStr(DMArtesanalis.CDS_V_DoctoItensDES_PRODUTO.AsString)+', '+ // DES_PRODUTO
                 QuotedStr(DMArtesanalis.CDS_V_DoctoItensQTD_MOVTO.AsString)+', '+ // QTD_MOVTO
                 QuotedStr(DMArtesanalis.CDS_V_DoctoItensVLR_UNITARIO.AsString)+', '+ // VLR_UNITARIO
+                QuotedStr(DMArtesanalis.CDS_V_DoctoItensVLR_PRODUTO.AsString)+', '+ // VLR_PRODUTO
+                QuotedStr(DMArtesanalis.CDS_V_DoctoItensPER_DESCONTO.AsString)+', '+ // PER_DESCONTO
                 QuotedStr(DMArtesanalis.CDS_V_DoctoItensVLR_DESCONTO.AsString)+', '+ // VLR_DESCONTO
                 QuotedStr(DMArtesanalis.CDS_V_DoctoItensVLR_TOTAL.AsString)+')'; // VLR_TOTAL
         DMArtesanalis.SQLC.Execute(MySql,nil,nil);
@@ -638,6 +693,8 @@ Begin
   EdtDesProduto.Clear;
   EdtQtdProduto.Value:=0;
   EdtVlrUnitProduto.Value:=0;
+  EdtVlrProduto.Value:=0;
+  EdtPercDescProduto.Value:=0;
   EdtVlrDescProduto.Value:=0;
   EdtVlrTotalProduto.Value:=0;
 
@@ -995,10 +1052,17 @@ begin
   End;
 
   MySql:=' SELECT dc.num_seq_docto, dc.tipo, dc.num_docto, dc.num_serie, dc.dta_docto,'+
-         '        dc.cod_pessoa, dc.des_pessoa, dc.vlr_produtos, dc.vlr_total,'+
+         '        dc.cod_pessoa, dc.des_pessoa,'+
+
+         '        dc.vlr_produtos, dc.per_desconto, dc.vlr_total,'+
+         '        dc.per_concedido, dc.vlr_concedido, dc.vlr_pagamento,'+
+
          '        di.num_seq, di.cod_produto, di.des_produto,'+
-         '        di.qtd_movto, di.vlr_unitario, di.vlr_desconto, di.vlr_total'+
+         '        di.qtd_movto, di.vlr_unitario, di.vlr_produto, di.per_desconto per_desconto_item,'+
+         '        di.vlr_desconto, di.vlr_total Vlr_Total_Item'+
+
          ' FROM DOCTOS dc, DOCTOS_ITENS di'+
+
          ' WHERE dc.num_seq_docto=di.num_seq_docto'+
          ' AND   dc.origem='+QuotedStr(sgOrigem)+// ORIGEM - Pedido de Venda
          ' AND   dc.num_docto='+DMArtesanalis.CDS_Busca.FieldByName('num_docto').AsString+
@@ -1014,8 +1078,12 @@ begin
 
   EdtNumSeqDocto.AsInteger:=DMArtesanalis.CDS_Busca.FieldByName('num_seq_docto').AsInteger;
 
-  DtEdt_DtaDocto.Date  :=DMArtesanalis.CDS_Busca.FieldByName('dta_docto').AsDateTime;
-  EdtVlrTotal.Value    :=DMArtesanalis.CDS_Busca.FieldByName('vlr_total').AsCurrency;
+  DtEdt_DtaDocto.Date       :=DMArtesanalis.CDS_Busca.FieldByName('dta_docto').AsDateTime;
+  EdtVlrTotal.Value         :=DMArtesanalis.CDS_Busca.FieldByName('vlr_total').AsCurrency;
+  EdtPercDesconto.Value     :=DMArtesanalis.CDS_Busca.FieldByName('per_desconto').AsCurrency;
+  EdtPercDescConcedido.Value:=DMArtesanalis.CDS_Busca.FieldByName('per_concedido').AsCurrency;
+  EdtVlrDescConcedido.Value :=DMArtesanalis.CDS_Busca.FieldByName('vlr_concedido').AsCurrency;
+  EdtVlrPagto.Value         :=DMArtesanalis.CDS_Busca.FieldByName('vlr_pagamento').AsCurrency;
 
   // Incicializa Produtos ======================================================
   If DMArtesanalis.CDS_V_DoctoItens.Active Then
@@ -1034,8 +1102,10 @@ begin
     DMArtesanalis.CDS_V_DoctoItensDES_PRODUTO.AsString  :=DMArtesanalis.CDS_Busca.FieldByName('DES_PRODUTO').AsString;
     DMArtesanalis.CDS_V_DoctoItensQTD_MOVTO.AsString    :=DMArtesanalis.CDS_Busca.FieldByName('QTD_MOVTO').AsString;
     DMArtesanalis.CDS_V_DoctoItensVLR_UNITARIO.AsString :=DMArtesanalis.CDS_Busca.FieldByName('VLR_UNITARIO').AsString;
+    DMArtesanalis.CDS_V_DoctoItensVLR_PRODUTO.AsString  :=DMArtesanalis.CDS_Busca.FieldByName('VLR_PRODUTO').AsString;
+    DMArtesanalis.CDS_V_DoctoItensPER_DESCONTO.AsString :=DMArtesanalis.CDS_Busca.FieldByName('PER_DESCONTO_ITEM').AsString;
     DMArtesanalis.CDS_V_DoctoItensVLR_DESCONTO.AsString :=DMArtesanalis.CDS_Busca.FieldByName('VLR_DESCONTO').AsString;
-    DMArtesanalis.CDS_V_DoctoItensVLR_TOTAL.AsString    :=DMArtesanalis.CDS_Busca.FieldByName('VLR_TOTAL').AsString;
+    DMArtesanalis.CDS_V_DoctoItensVLR_TOTAL.AsString    :=DMArtesanalis.CDS_Busca.FieldByName('VLR_TOTAL_ITEM').AsString;
 
     DMArtesanalis.CDS_V_DoctoItens.Post;
 
@@ -1133,6 +1203,8 @@ end;
 procedure TFrmPedidoVenda.EdtQtdProdutoEnter(Sender: TObject);
 begin
 
+  EdtVlrProduto.Value:=(EdtQtdProduto.AsInteger*EdtVlrUnitProduto.Value);
+  EdtVlrDescProduto.Value:=RoundTo(((EdtVlrProduto.Value*EdtPercDescProduto.Value)/100),-2);
   EdtVlrTotalProduto.Value:=(EdtQtdProduto.AsInteger*EdtVlrUnitProduto.Value)-EdtVlrDescProduto.Value;
 
 end;
@@ -1244,6 +1316,8 @@ begin
   DMArtesanalis.CDS_V_DoctoItensDES_PRODUTO.AsString   :=EdtDesProduto.Text;
   DMArtesanalis.CDS_V_DoctoItensQTD_MOVTO.AsCurrency   :=EdtQtdProduto.Value;
   DMArtesanalis.CDS_V_DoctoItensVLR_UNITARIO.AsCurrency:=EdtVlrUnitProduto.Value;
+  DMArtesanalis.CDS_V_DoctoItensVLR_PRODUTO.AsCurrency :=EdtVlrProduto.Value;
+  DMArtesanalis.CDS_V_DoctoItensPER_DESCONTO.AsCurrency:=EdtPercDescProduto.Value;
   DMArtesanalis.CDS_V_DoctoItensVLR_DESCONTO.AsCurrency:=EdtVlrDescProduto.Value;
   DMArtesanalis.CDS_V_DoctoItensVLR_TOTAL.AsCurrency   :=EdtVlrTotalProduto.Value;
   DMArtesanalis.CDS_V_DoctoItens.Post;
@@ -1251,8 +1325,9 @@ begin
   LimpaProduto();
   Refresh;
 
-  // Rateio de Descontos nos Produtos ==========================================
-  CalculaRateiroDescontos;
+//opss
+//  // Rateio de Descontos nos Produtos ==========================================
+//  CalculaRateiroDescontos;
 
   // Posiciona no Produto ======================================================
   DMArtesanalis.CDS_V_DoctoItens.Locate('NUM_SEQ', iSeqProd,[]);
@@ -1397,23 +1472,17 @@ begin
     Exit;
   End;
 
-  If EdtVlrTotal.Value<>EdtVlrTotalCalculado.Value Then
-  Begin
-    msg('Valor Total do Pedido'+cr+cr+'Diferente do Valor Total Calculado !!','A');
-    EdtVlrTotal.SetFocus;
-    Exit;
-  End;
-
   // Inclui Novo Pedido ========================================================
   PedidoIncluirExcluir('I');
 end;
 
 procedure TFrmPedidoVenda.EdtVlrProdutosEnter(Sender: TObject);
 begin
-  EdtVlrTotal.Value:=EdtVlrProdutos.Value-EdtVlrDescontos.Value;
-
-   // Rateio de Descontos nos Produtos ==========================================
-  CalculaRateiroDescontos;
+//opss
+//  EdtVlrTotal.Value:=EdtVlrProdutos.Value-EdtVlrDescontos.Value;
+//
+//   // Rateio de Descontos nos Produtos ==========================================
+//  CalculaRateiroDescontos;
 end;
 
 procedure TFrmPedidoVenda.Bt_AbandonarClick(Sender: TObject);
@@ -1427,9 +1496,9 @@ end;
 procedure TFrmPedidoVenda.Dbe_VlrTotalCalculadoChange(Sender: TObject);
 begin
   Try
-    EdtVlrTotalCalculado.Value:=DMArtesanalis.CDS_V_DoctoItensVlr_TotalCalculado.Value;
+    EdtVlrTotal.Value:=DMArtesanalis.CDS_V_DoctoItensVlr_TotalCalculado.Value;
   Except
-    EdtVlrTotalCalculado.Value:=0.00;
+    EdtVlrTotal.Value:=0.00;
   End;
 
 end;
@@ -1460,6 +1529,8 @@ begin
   EdtDesProduto.Text      :=DMArtesanalis.CDS_V_DoctoItensDES_PRODUTO.AsString;
   EdtQtdProduto.Value     :=DMArtesanalis.CDS_V_DoctoItensQTD_MOVTO.AsCurrency;
   EdtVlrUnitProduto.Value :=DMArtesanalis.CDS_V_DoctoItensVLR_UNITARIO.AsCurrency;
+  EdtVlrProduto.Value     :=DMArtesanalis.CDS_V_DoctoItensVLR_PRODUTO.AsCurrency;
+  EdtPercDescProduto.Value:=DMArtesanalis.CDS_V_DoctoItensPER_DESCONTO.AsCurrency;
   EdtVlrDescProduto.Value :=DMArtesanalis.CDS_V_DoctoItensVLR_DESCONTO.AsCurrency;
   EdtVlrTotalProduto.Value:=DMArtesanalis.CDS_V_DoctoItensVLR_TOTAL.AsCurrency;
 
@@ -1556,6 +1627,49 @@ begin
     FreeAndNil(FrmVerProducao);
   End; // If Key=VK_F6 Then
 
+end;
+
+procedure TFrmPedidoVenda.Dbe_VlrTotalProdutosChange(Sender: TObject);
+begin
+  Try
+    EdtVlrProdutos.Value:=DMArtesanalis.CDS_V_DoctoItensVlr_TotalProdutos.Value;
+  Except
+    EdtVlrProdutos.Value:=0.00;
+  End;
+
+end;
+
+procedure TFrmPedidoVenda.Dbe_VlrTotalDescontoChange(Sender: TObject);
+begin
+  Try
+    EdtVlrDescontos.Value:=DMArtesanalis.CDS_V_DoctoItensVlr_TotalDesconto.Value;
+  Except
+    EdtVlrDescontos.Value:=0.00;
+  End;
+
+end;
+
+procedure TFrmPedidoVenda.EdtPercDescConcedidoExit(Sender: TObject);
+begin
+  EdtVlrDescConcedido.Value:=SimpleRoundTo(((EdtVlrProdutos.Value*EdtPercDescConcedido.Value)/100),-2);
+  EdtVlrPagto.Value:=EdtVlrProdutos.Value-EdtVlrDescConcedido.Value;
+end;
+
+procedure TFrmPedidoVenda.EdtVlrDescConcedidoExit(Sender: TObject);
+begin
+  EdtPercDescConcedido.Value:=SimpleRoundTo(((EdtVlrDescConcedido.Value*100)/EdtVlrProdutos.Value),-2);
+  EdtVlrPagto.Value:=EdtVlrProdutos.Value-EdtVlrDescConcedido.Value;
+
+end;
+
+procedure TFrmPedidoVenda.EdtPercDescontoExit(Sender: TObject);
+begin
+  CalculaDescontos;
+end;
+
+procedure TFrmPedidoVenda.EdtVlrTotalChange(Sender: TObject);
+begin
+  EdtPercDescConcedidoExit(Self);
 end;
 
 end.
