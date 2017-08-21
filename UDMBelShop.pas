@@ -4014,7 +4014,7 @@ begin
       FreeAndNil(sArquivo);
     End; // Try
 
-    sArquivo.Free;
+    FreeAndNil(sArquivo);
   End; // If sgCodLojaUnica<>'' Then
 
   // Verifica a Existencia do Arquivo "ConexaoExterna.ini" =====================

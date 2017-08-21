@@ -16,7 +16,6 @@ object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
-  OnClose = FormClose
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   OnShow = FormShow
@@ -127,7 +126,6 @@ object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
       Value = 1.000000000000000000
       OnEnter = EdtQtdEmbalagemEnter
       OnExit = EdtQtdEmbalagemExit
-      OnKeyPress = EdtQtdEmbalagemKeyPress
     end
     object Gb_CheckOut_Erro: TGroupBox
       Left = 1

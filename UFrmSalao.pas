@@ -1694,7 +1694,7 @@ Begin
   Begin
     If FrmSalao.Components[i] is TTabSheet Then
      If (FrmSalao.Components[i] as TTabSheet).Parent=PC Then
-     (FrmSalao.Components[i] as TTabSheet).TabVisible:=False;
+      (FrmSalao.Components[i] as TTabSheet).TabVisible:=False;
   End; // For i:=0 to FrmSalao.ComponentCount-1 do
 
   // Desabilita Botoes de Calculo ==============================================

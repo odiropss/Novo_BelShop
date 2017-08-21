@@ -10670,15 +10670,15 @@ end;
 
 procedure TFrmBancoExtratos.FormClose(Sender: TObject;var Action: TCloseAction);
 begin
-  if bgSairBancos Then
-   Begin
-     Action := caHide;
-   End
-  Else
-   Begin
-     msg('Para Fechar Tecle no Botão <Sair>...','A');
-     Action := caNone;
-   End;
+//  if bgSairBancos Then
+//   Begin
+//     Action := caHide;
+//   End
+//  Else
+//   Begin
+//     msg('Para Fechar Tecle no Botão <Sair>...','A');
+//     Action := caNone;
+//   End;
 
 {
 Valor       Significado

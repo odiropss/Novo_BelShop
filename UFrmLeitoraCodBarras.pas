@@ -29,10 +29,8 @@ type
     procedure Bt_ProcessarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure EdtCodBarrasChange(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure EdtQtdEmbalagemEnter(Sender: TObject);
     procedure EdtQtdEmbalagemExit(Sender: TObject);
-    procedure EdtQtdEmbalagemKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public
@@ -100,12 +98,6 @@ begin
 
 end;
 
-procedure TFrmLeitoraCodBarras.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-  If EdtCodBarras.AsInteger=0 Then
-   bgProcessar:=False;
-end;
-
 procedure TFrmLeitoraCodBarras.EdtQtdEmbalagemEnter(Sender: TObject);
 begin
   EdtCodBarras.Value:=0;
@@ -114,16 +106,6 @@ end;
 procedure TFrmLeitoraCodBarras.EdtQtdEmbalagemExit(Sender: TObject);
 begin
   EdtCodBarras.SetFocus;
-
-end;
-
-procedure TFrmLeitoraCodBarras.EdtQtdEmbalagemKeyPress(Sender: TObject; var Key: Char);
-begin
-  If not (key in ['0'..'9']) Then
-  Begin
-    Key := #0;
-    Exit;
-  End;
 
 end;
 

@@ -1,7 +1,7 @@
 unit UArtesanalis;
 {
 - Cor Form/Painel Principal:  $00FFE4CA
-- Cort Componete Desabilitado: clMoneyGreen
+- Cor Componete Desabilitado: clMoneyGreen
 
   // Não Permite Excluir Registro Pelo Grid ====================================
   =============>>>> Dbg_MateriaPrimaKeyDown(
@@ -60,12 +60,12 @@ type
     SubMenuCadastroDespesas: TMenuItem;
     N3: TMenuItem;
     MenuCOMPRAS: TMenuItem;
-    MenuVENDAS: TMenuItem;
-    SubMenuComprasLancamentoNotas: TMenuItem;
-    SubMenuVENDASPedidosVenda: TMenuItem;
-    SubMenuCOMPRASMateriasPrimas: TMenuItem;
+    MenuVendasPedidos: TMenuItem;
+    SubMenuEntradasSaidasLancamentoNotas: TMenuItem;
+    SubMenuVendasPedidosPedidosVenda: TMenuItem;
+    SubMenuEntradasSaidasMateriasPrimas: TMenuItem;
     N4: TMenuItem;
-    SubMenuComprrasOutrosInsumos: TMenuItem;
+    SubMenuEntradasSaidasOutrosInsumos: TMenuItem;
     MenuRELATORIOS: TMenuItem;
     Panel1: TPanel;
     Image1: TImage;
@@ -80,13 +80,13 @@ type
     procedure SubMenuResolucaoMudarClick(Sender: TObject);
     procedure SubMenuResolucaoRetornarClick(Sender: TObject);
     procedure SubMenuCadastroDespesasClick(Sender: TObject);
-    procedure SubMenuComprrasOutrosInsumosClick(Sender: TObject);
+    procedure SubMenuEntradasSaidasOutrosInsumosClick(Sender: TObject);
     procedure MenuRELATORIOSClick(Sender: TObject);
     procedure SubMenuCadastroMateriasPrimasClick(Sender: TObject);
     procedure SubMenuCadastroProdutosClick(Sender: TObject);
     procedure SubMenuCadastroPessoasEntidadesClick(Sender: TObject);
-    procedure SubMenuCOMPRASMateriasPrimasClick(Sender: TObject);
-    procedure SubMenuVENDASPedidosVendaClick(Sender: TObject);
+    procedure SubMenuEntradasSaidasMateriasPrimasClick(Sender: TObject);
+    procedure SubMenuVendasPedidosPedidosVendaClick(Sender: TObject);
     procedure SBt_SairClick(Sender: TObject);
 
     // Odir ====================================================================
@@ -114,7 +114,7 @@ implementation
 
 uses UDMArtesanalis, DK_Procs1, SysConst, UFrmMateriaPrimaCadastro,
      UFrmProdutoCadastro, UFrmMovimentos, UFrmPessoaCadastro,
-  UFrmPedidoVenda;
+  UFrmPedidoVenda, UFrmRelatorios;
 
 {$R *.dfm}
 
@@ -275,7 +275,7 @@ begin
 
 end;
 
-procedure TFrmArtesanalis.SubMenuComprrasOutrosInsumosClick(Sender: TObject);
+procedure TFrmArtesanalis.SubMenuEntradasSaidasOutrosInsumosClick(Sender: TObject);
 begin
   msg('Opção em Desenvolvimento !!','A');
   Exit;
@@ -284,8 +284,10 @@ end;
 
 procedure TFrmArtesanalis.MenuRELATORIOSClick(Sender: TObject);
 begin
-  msg('Opção em Desenvolvimento !!','A');
-  Exit;
+  FrmRelatorios:=TFrmRelatorios.Create(Self);
+  FrmRelatorios.ShowModal;
+
+  FreeAndNil(FrmRelatorios);
 
 end;
 
@@ -316,7 +318,7 @@ begin
 
 end;
 
-procedure TFrmArtesanalis.SubMenuCOMPRASMateriasPrimasClick(Sender: TObject);
+procedure TFrmArtesanalis.SubMenuEntradasSaidasMateriasPrimasClick(Sender: TObject);
 begin
   DMArtesanalis.MemoAdicionaNomeForm('MATÉRIA-PRIMA - Movimentações');
 
@@ -335,7 +337,7 @@ begin
   FrmMovimentos.ShowModal;
 end;
 
-procedure TFrmArtesanalis.SubMenuVENDASPedidosVendaClick(Sender: TObject);
+procedure TFrmArtesanalis.SubMenuVendasPedidosPedidosVendaClick(Sender: TObject);
 begin
   DMArtesanalis.MemoAdicionaNomeForm('PRODUTO - Pedido de Vendas');
 

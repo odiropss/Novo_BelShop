@@ -22512,36 +22512,36 @@ end;
 
 procedure TFrmBelShop.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  if bgSair Then
-   Begin
-     Screen.Cursor:=crAppStart;
-
-     // Painel de Processamento em Tempo de Execução ==============================
-     Try
-       OdirPanApres.Caption:='AGUARDE !! Desconectando Empresas...';
-       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
-       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
-       OdirPanApres.Visible:=True;
-       Refresh;
-     Except
-     End;
-
-     // Desconecta Bancos e Encerra Programa ===================================
-     DMBelShop.Desconecta;
-
-     OdirPanApres.Visible:=False;
-
-     Screen.Cursor:=crDefault;
-
-     Action := caFree;
-   End
-  Else
-   Begin
-     Action := caNone;
-     SubMenuEmpConexoesSairClick(Self);
-   End;
-
+//  if bgSair Then
+//   Begin
+//     Screen.Cursor:=crAppStart;
+//
+//     // Painel de Processamento em Tempo de Execução ==============================
+//     Try
+//       OdirPanApres.Caption:='AGUARDE !! Desconectando Empresas...';
+//       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+//       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
+//       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+//       OdirPanApres.Visible:=True;
+//       Refresh;
+//     Except
+//     End;
+//
+//     // Desconecta Bancos e Encerra Programa ===================================
+//     DMBelShop.Desconecta;
+//
+//     OdirPanApres.Visible:=False;
+//
+//     Screen.Cursor:=crDefault;
+//
+//     Action := caFree;
+//   End
+//  Else
+//   Begin
+//     Action := caNone;
+//     SubMenuEmpConexoesSairClick(Self);
+//   End;
+//
 end;
 
 procedure TFrmBelShop.MenuCalculadoraClick(Sender: TObject);
@@ -43410,9 +43410,32 @@ begin
    End
   Else
    Begin
-     bgSair:=True;
+//     bgSair:=True;
+//
+//     Screen.Cursor:=crAppStart;
+//
+//     // Painel de Processamento em Tempo de Execução ==============================
+//     Try
+//       OdirPanApres.Caption:='AGUARDE !! Desconectando Empresas...';
+//       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+//       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
+//       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+//       OdirPanApres.Visible:=True;
+//       Refresh;
+//     Except
+//     End;
+//
+//     // Desconecta Bancos e Encerra Programa ===================================
+//     DMBelShop.Desconecta;
+//
+//     OdirPanApres.Visible:=False;
+//
+//     Screen.Cursor:=crDefault;
+//
      Close;
    End;
+
+
 end;
 
 procedure TFrmBelShop.SubMenuEmpresasConexoesClick(Sender: TObject);

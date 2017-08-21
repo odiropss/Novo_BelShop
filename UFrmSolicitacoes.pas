@@ -3613,8 +3613,6 @@ begin
 end;
 
 procedure TFrmSolicitacoes.Bt_SoliciExpExportarClick(Sender: TObject);
-Var
-  MySql: String;
 begin
   EdtSolicExpDoctoDestino.SetFocus;
 
@@ -7860,7 +7858,6 @@ end;
 procedure TFrmSolicitacoes.Bt_AtualizaClick(Sender: TObject);
 Var
   MySql: String;
-  b: Boolean;
 begin
 
   Lbx_Usuarios.SetFocus;
@@ -8418,7 +8415,7 @@ procedure TFrmSolicitacoes.Bt_ReposLojasPrecoClick(Sender: TObject);
 Var
   IBQ_MPMS: TIBQuery;
   MySql: String;
-  i, iNumDoc, iNumReg: Integer;
+  iNumDoc, iNumReg: Integer;
 begin
   ConexaoEmpIndividual('IBDB_MPMS', 'IBT_MPMS', 'A');
 

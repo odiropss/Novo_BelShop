@@ -1983,8 +1983,8 @@ object FrmArtesanalis: TFrmArtesanalis
     end
   end
   object MainMenu1: TMainMenu
-    Left = 688
-    Top = 24
+    Left = 480
+    Top = 136
     object MenuCADASTROS: TMenuItem
       Caption = 'CADASTROS'
       object SubMenuCadastroMateriasPrimas: TMenuItem
@@ -2094,7 +2094,7 @@ object FrmArtesanalis: TFrmArtesanalis
     end
     object MenuCOMPRAS: TMenuItem
       Caption = 'ENTRADAS/SA'#205'DAS'
-      object SubMenuComprasLancamentoNotas: TMenuItem
+      object SubMenuEntradasSaidasLancamentoNotas: TMenuItem
         Bitmap.Data = {
           42030000424D42030000000000003600000028000000110000000F0000000100
           1800000000000C030000C30E0000C30E00000000000000000000BFBFBFBFBFBF
@@ -2124,7 +2124,7 @@ object FrmArtesanalis: TFrmArtesanalis
           BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
           BFBFBFBFBF00}
         Caption = 'Lan'#231'amento de Notas'
-        object SubMenuCOMPRASMateriasPrimas: TMenuItem
+        object SubMenuEntradasSaidasMateriasPrimas: TMenuItem
           Bitmap.Data = {
             26050000424D260500000000000036040000280000000F0000000F0000000100
             080000000000F0000000400B0000400B00000001000000000000000000000000
@@ -2169,12 +2169,12 @@ object FrmArtesanalis: TFrmArtesanalis
             07F9F90707070707070007070707070707F90707070707070700070707070707
             07070707070707070700}
           Caption = 'Mat'#233'rias-Primas'
-          OnClick = SubMenuCOMPRASMateriasPrimasClick
+          OnClick = SubMenuEntradasSaidasMateriasPrimasClick
         end
         object N4: TMenuItem
           Caption = '-'
         end
-        object SubMenuComprrasOutrosInsumos: TMenuItem
+        object SubMenuEntradasSaidasOutrosInsumos: TMenuItem
           Bitmap.Data = {
             26050000424D260500000000000036040000280000000F0000000F0000000100
             080000000000F0000000400B0000400B00000001000000000000000000000000
@@ -2219,13 +2219,13 @@ object FrmArtesanalis: TFrmArtesanalis
             07F9F90707070707070007070707070707F90707070707070700070707070707
             07070707070707070700}
           Caption = 'Outros Insumos'
-          OnClick = SubMenuComprrasOutrosInsumosClick
+          OnClick = SubMenuEntradasSaidasOutrosInsumosClick
         end
       end
     end
-    object MenuVENDAS: TMenuItem
+    object MenuVendasPedidos: TMenuItem
       Caption = 'VENDAS/PEDIDOS'
-      object SubMenuVENDASPedidosVenda: TMenuItem
+      object SubMenuVendasPedidosPedidosVenda: TMenuItem
         Bitmap.Data = {
           66030000424D660300000000000036000000280000000F000000110000000100
           18000000000030030000C30E0000C30E00000000000000000000BFBFBFBFBFBF
@@ -2256,7 +2256,7 @@ object FrmArtesanalis: TFrmArtesanalis
           BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
           BFBFBFBFBFBFBF000000}
         Caption = 'Pedidos de Venda'
-        OnClick = SubMenuVENDASPedidosVendaClick
+        OnClick = SubMenuVendasPedidosPedidosVendaClick
       end
     end
     object MenuRELATORIOS: TMenuItem
@@ -2336,11 +2336,11 @@ object FrmArtesanalis: TFrmArtesanalis
     Font.Style = [fsBold]
     StartColor = clBlue
     EndColor = 16770250
-    Left = 552
-    Top = 96
+    Left = 568
+    Top = 328
   end
   object Trad_Localizer: TcxLocalizer
-    Left = 416
-    Top = 88
+    Left = 400
+    Top = 328
   end
 end

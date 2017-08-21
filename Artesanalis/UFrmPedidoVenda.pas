@@ -840,7 +840,6 @@ begin
     Key:=#0;
     SelectNext(ActiveControl,True,True);
   End;
-
 end;
 
 procedure TFrmPedidoVenda.FormShow(Sender: TObject);
@@ -1325,7 +1324,7 @@ begin
   LimpaProduto();
   Refresh;
 
-//opss
+//opss Rateiro
 //  // Rateio de Descontos nos Produtos ==========================================
 //  CalculaRateiroDescontos;
 
@@ -1478,7 +1477,7 @@ end;
 
 procedure TFrmPedidoVenda.EdtVlrProdutosEnter(Sender: TObject);
 begin
-//opss
+//opss Rateiro
 //  EdtVlrTotal.Value:=EdtVlrProdutos.Value-EdtVlrDescontos.Value;
 //
 //   // Rateio de Descontos nos Produtos ==========================================
@@ -1651,14 +1650,20 @@ end;
 
 procedure TFrmPedidoVenda.EdtPercDescConcedidoExit(Sender: TObject);
 begin
-  EdtVlrDescConcedido.Value:=SimpleRoundTo(((EdtVlrProdutos.Value*EdtPercDescConcedido.Value)/100),-2);
-  EdtVlrPagto.Value:=EdtVlrProdutos.Value-EdtVlrDescConcedido.Value;
+  If EdtPercDescConcedido.Enabled Then
+  Begin
+    EdtVlrDescConcedido.Value:=SimpleRoundTo(((EdtVlrTotal.Value*EdtPercDescConcedido.Value)/100),-2);
+    EdtVlrPagto.Value:=EdtVlrTotal.Value-EdtVlrDescConcedido.Value;
+  End;
 end;
 
 procedure TFrmPedidoVenda.EdtVlrDescConcedidoExit(Sender: TObject);
 begin
-  EdtPercDescConcedido.Value:=SimpleRoundTo(((EdtVlrDescConcedido.Value*100)/EdtVlrProdutos.Value),-2);
-  EdtVlrPagto.Value:=EdtVlrProdutos.Value-EdtVlrDescConcedido.Value;
+  If EdtPercDescConcedido.Enabled Then
+  Begin
+    EdtPercDescConcedido.Value:=SimpleRoundTo(((EdtVlrDescConcedido.Value*100)/EdtVlrTotal.Value),-2);
+    EdtVlrPagto.Value:=EdtVlrTotal.Value-EdtVlrDescConcedido.Value;
+  End;
 
 end;
 

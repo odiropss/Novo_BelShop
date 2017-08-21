@@ -1,6 +1,6 @@
 object FrmSolicitacoes: TFrmSolicitacoes
-  Left = 245
-  Top = 113
+  Left = 323
+  Top = 134
   Width = 649
   Height = 482
   AutoSize = True
@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 444
-    ActivePage = Ts_ReposDivergencias
+    ActivePage = Ts_ExcelImportar
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

@@ -1,6 +1,6 @@
 object FrmSalao: TFrmSalao
-  Left = 251
-  Top = 108
+  Left = 233
+  Top = 111
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Sal'#227'o'
@@ -405,7 +405,7 @@ object FrmSalao: TFrmSalao
     Top = 0
     Width = 977
     Height = 580
-    ActivePage = Ts_ProfPagtos
+    ActivePage = Ts_ProfMovtosRH
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -8363,7 +8363,7 @@ object FrmSalao: TFrmSalao
         Top = 0
         Width = 969
         Height = 552
-        ActivePage = Ts_PagtoProfissionais
+        ActivePage = Ts_PagtoPlanilha
         Align = alClient
         TabOrder = 0
         OnChange = PC_PagtoPlanilhaChange
@@ -13755,7 +13755,6 @@ object FrmSalao: TFrmSalao
               ParentColor = True
               TopButtonIndex = 0
             end>
-          ActivePageIndex = 2
           OnButtonClick = OutLook_ProfMovtosRHButtonClick
           BorderStyle = bsNone
           Color = clSilver

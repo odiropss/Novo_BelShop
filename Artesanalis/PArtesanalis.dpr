@@ -13,7 +13,8 @@ uses
   UFrmMovimentos in 'UFrmMovimentos.pas' {FrmMovimentos},
   UFrmPedidoVenda in 'UFrmPedidoVenda.pas' {FrmPedidoVenda},
   UFrmPessoaCadastro in 'UFrmPessoaCadastro.pas' {FrmCadastroPessoa},
-  UFrmVerProducao in 'UFrmVerProducao.pas' {FrmVerProducao};
+  UFrmVerProducao in 'UFrmVerProducao.pas' {FrmVerProducao},
+  UFrmRelatorios in 'UFrmRelatorios.pas' {FrmRelatorios};
 
 {$R *.res}
 
@@ -30,6 +31,7 @@ begin
   Application.CreateForm(TFrmMovimentos, FrmMovimentos);
   Application.CreateForm(TFrmPedidoVenda, FrmPedidoVenda);
   Application.CreateForm(TFrmCadastroPessoa, FrmCadastroPessoa);
+  // Application.CreateForm(TFrmRelatorios, FrmRelatorios);
   // Application.CreateForm(TFrmVerProducao, FrmVerProducao);
   // Application.CreateForm(TFrmPesquisa, FrmPesquisa);
   Application.Run;

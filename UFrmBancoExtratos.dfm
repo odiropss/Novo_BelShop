@@ -1,6 +1,6 @@
 object FrmBancoExtratos: TFrmBancoExtratos
-  Left = 304
-  Top = 103
+  Left = 238
+  Top = 115
   Width = 1063
   Height = 622
   AutoSize = True

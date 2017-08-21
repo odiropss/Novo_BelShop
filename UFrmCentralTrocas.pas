@@ -138,7 +138,6 @@ type
     Panel5: TPanel;
     Panel6: TPanel;
     Bt_ReposLojasGeraArquivoLinx: TJvXPButton;
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -168,7 +167,7 @@ type
     // REPOSIÇÕES ==============================================================
     Function  GeraPedidoSidicomCD: Boolean; // Gera Pedido no SIDICOM CD
 
-    Function  VerificaExistenciaItens: Boolean;
+    Function  VerificaExistenciaItens(bComQtd: Boolean = False): Boolean;
     Function  VerificaPrecosItens: Boolean;
 
 // OdirApagar - 11/08/2017 - Colocado em PFrmTransferencias
@@ -185,6 +184,8 @@ type
     Procedure CheckOut_BuscaProdCodBarras_AtualizaQtd(sCodBarras: String; iQtdEmbalagem: Integer);
     Procedure DivergenciasReposicaoLojas;
     Procedure AcertaDivergenciasReposicaoLojas;
+
+    Procedure GeraReposicaoLINX(sPastaArqLinx: String);
 
     // Odir ====================================================================
 
@@ -259,6 +260,7 @@ type
     procedure Rb_ReposLojasPrioridade0KeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
     procedure Bt_ReposLojasGeraArquivoLinxClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
 
   private
     { Private declarations }
@@ -318,6 +320,125 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
 //==============================================================================
 // Odir - INICIO ===============================================================
 //==============================================================================
+
+// Processo Exportação de Transferencia para o Arqivo Texto >>>>>>>>>>>>>>>>>>>>
+Procedure TFrmCentralTrocas.GeraReposicaoLINX(sPastaArqLinx: String);
+Var
+  tsArquivo: TStringList;
+  sLinha: String;
+  i: Integer;
+
+  MySql: String;
+  sNumSeq, sNomeArqLinx: String;
+Begin
+
+  OdirPanApres.Caption:='AGUARDE !! Gerando Arquivo Texto_LINX Com Reposições...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    // Busca Sequencia para o Nome do Arquivo Texto ============================
+    MySql:=' SELECT GEN_ID(GEN_LINX_REPOSICAO_EXPORT,1) Codigo'+
+           ' FROM RDB$DATABASE';
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+    sNumSeq     :=DMBelShop.CDS_BuscaRapida.FieldByName('Codigo').AsString;
+    sNomeArqLinx:='Reposicao_Linx_Doc_'+sNumSeq+'.TXT';
+    DMBelShop.SDS_BuscaRapida.Close;
+
+    // Cria StringList Para Gerar Arquivo Texto ================================
+    tsArquivo:= TStringList.Create;
+
+    // Apresenta Processamento =================================================
+    FrmBelShop.MontaProgressBar(True, FrmCentralTrocas);
+    pgProgBar.Properties.Max:=DMCentralTrocas.CDS_ReposicaoTransf.RecordCount;
+    pgProgBar.Position:=0;
+
+    DMCentralTrocas.CDS_ReposicaoTransf.First;
+    DMCentralTrocas.CDS_ReposicaoTransf.DisableControls;
+    While Not DMCentralTrocas.CDS_ReposicaoTransf.Eof do
+    Begin
+      Application.ProcessMessages;
+
+      If (DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsCurrency>0) and
+         (DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsString='000000') Then
+      Begin
+        tsArquivo.Add(Trim(DMCentralTrocas.CDS_ReposicaoTransfCODBARRA.AsString)+';'+
+                           IntToStr(DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsInteger));
+
+        // Acerta Banco de Dados =============================================
+        MySql:=' UPDATE ES_ESTOQUES_LOJAS lo'+
+               ' SET lo.Num_Pedido='+QuotedStr(FormatFloat('000000',StrToInt(sNumSeq)))+
+               ',    lo.usu_altera='+QuotedStr(Cod_Usuario)+
+               ',    lo.dta_altera=current_timestamp'+
+
+               ' WHERE CAST(TRIM(COALESCE(lo.num_pedido,''0'')) AS INTEGER)=0'+
+               ' AND   lo.cod_loja='+QuotedStr(DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString)+
+               ' AND   lo.dta_movto='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtaEdt_ReposLojas.Date))))+
+               ' AND   lo.num_docto='+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
+               ' AND   lo.ind_prioridade='+DMCentralTrocas.CDS_ReposicaoTransfIND_PRIORIDADE.AsString+
+               ' AND   lo.num_seq='+DMCentralTrocas.CDS_ReposicaoTransfNUM_SEQ.AsString;
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+      End; // If (DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsCurrency>0) and (DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsCurrency='000000') Then
+      pgProgBar.Position:=DMCentralTrocas.CDS_ReposicaoTransf.RecNo;
+
+      DMCentralTrocas.CDS_ReposicaoTransf.Next;
+    End;
+    DMCentralTrocas.CDS_ReposicaoDocsAfterScroll(DMCentralTrocas.CDS_ReposicaoDocs);
+    DMCentralTrocas.CDS_ReposicaoTransf.EnableControls;
+    DMCentralTrocas.CDS_ReposicaoTransf.First;
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+    // Salva o Arquivo Texto
+    tsArquivo.SaveToFile(IncludeTrailingPathDelimiter(sPastaArqLinx)+sNomeArqLinx);
+
+    MessageBox(Handle, pChar('Arquivo LINX de Reposições Gerado Com SUCESSO !!!'+cr+cr+
+                             'Foi Criado na Pasta:'+cr+cr+IncludeTrailingPathDelimiter(sPastaArqLinx)+cr+cr+
+                             'Com o Nome de:'+cr+cr+sNomeArqLinx), 'ATENÇÃO !!', MB_ICONINFORMATION);
+
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  FrmBelShop.MontaProgressBar(False, FrmCentralTrocas);
+
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+
+  FreeAndNil(tsArquivo);
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+
+End; // Processo Exportação de Transferencia para o Arqivo Texto >>>>>>>>>>>>>>>
 
 // Atualiza Divergencias de ChecOut de Reposição de Lojas >>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmCentralTrocas.AcertaDivergenciasReposicaoLojas;
@@ -1330,21 +1451,27 @@ End; // Verifica a Existencia de Produtos Sem Preco de Custo a Transferir para P
 //End; // Localizando Transferencias Setor de Compras (Dia Anterior) >>>>>>>>>>>>>
 
 // Verifica se Existe de Itens >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Function TFrmCentralTrocas.VerificaExistenciaItens: Boolean;
+Function TFrmCentralTrocas.VerificaExistenciaItens(bComQtd: Boolean = False): Boolean;
 Var
   MySql: String;
 Begin
   Result:=True;
 
   // Verifica se Existem Itens =================================================
-  MySql:=' SELECT e.num_seq'+
+  MySql:=' SELECT first 1 e.cod_loja'+
          ' FROM ES_ESTOQUES_LOJAS e, ES_ESTOQUES_CD cd'+
          ' WHERE e.cod_produto=cd.cod_produto'+
+         ' AND   e.dta_movto=cd.dta_movto'+
          ' AND   e.dta_movto='+QuotedStr(f_Troca('-','.',(f_Troca('/','.',DateToStr(DtaEdt_ReposLojas.Date)))))+
          ' AND   e.num_pedido='+QuotedStr('000000')+
+         ' AND   e.ind_transf='+QuotedStr('SIM')+
          ' AND   e.num_docto='+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
          ' AND   e.cod_loja='+QuotedStr(DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString)+
          ' AND   e.ind_prioridade='+DMCentralTrocas.CDS_ReposicaoTransfIND_PRIORIDADE.AsString;
+
+         If bComQtd Then
+          MySql:=
+           MySql+' AND   e.qtd_a_transf>0';
 
          If (sgCorredores<>'') and (Not bgTodosCorredores) Then
           MySql:=
@@ -1353,7 +1480,7 @@ Begin
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
   DMBelShop.CDS_BuscaRapida.Open;
 
-  If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Num_Seq').AsString)='' Then
+  If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Loja').AsString)='' Then
   Begin
     Result:=False;
   End;
@@ -3170,18 +3297,6 @@ End; // Show Hint em Forma de Balão - Posiciona do Componente >>>>>>>>>>>>>>>>>>
 // Odir - FIM ==================================================================
 //==============================================================================
 
-procedure TFrmCentralTrocas.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-  if Not bgSair Then
-  Begin
-    PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-    msg('Para SAIR Tecle no Botão <Fechar>...','A');
-    Action := caNone;
-    Exit;
-  End;
-
-end;
-
 procedure TFrmCentralTrocas.FormCreate(Sender: TObject);
 Var
   MySql: String;
@@ -3820,7 +3935,6 @@ end;
 procedure TFrmCentralTrocas.Bt_NotasEntDevLocalizarClick(Sender: TObject);
 Var
   MySql: String;
-  b, bb: Boolean;
 begin
   Dbg_NotasEntDevProdutos.SetFocus;
 
@@ -5077,8 +5191,7 @@ end;
 
 procedure TFrmCentralTrocas.Bt_ReposLojasEmissaoDocClick(Sender: TObject);
 Var
-  s, MySql: String;
-  i: Integer;
+  MySql: String;
   dir_padrao, dir_relat: String;
 begin
   Dbg_ReposLojasDocs.SetFocus;
@@ -5093,7 +5206,7 @@ begin
   End; // If Not bgTodosCorredores Then
 
   // Verifica se Existem Itens =================================================
-  If Not VerificaExistenciaItens Then
+  If Not VerificaExistenciaItens() Then
   Begin
     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
     msg('Sem Produto a para Impressão !!'+cr+cr+'Todos já Transferidos !!','A');
@@ -5269,7 +5382,7 @@ begin
    Exit;
 
   // Verifica se Existem Itens =================================================
-  If Not VerificaExistenciaItens Then
+  If Not VerificaExistenciaItens() Then
   Begin
     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
     msg('Sem Produto a para Alteração !!'+cr+cr+'Todos já Transferidos !!','A');
@@ -5310,6 +5423,9 @@ Var
 begin
   Dbg_ReposLojasDocs.SetFocus;
 
+  msg('SIDICOM Desativado !!','A');
+  Exit;
+  
   If DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty Then
    Exit;
 
@@ -5359,7 +5475,7 @@ begin
   End;
 
   // Verifica se Existem Itens =================================================
-  If Not VerificaExistenciaItens Then
+  If Not VerificaExistenciaItens() Then
   Begin
     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
     msg('Sem Produto a Transferir !!','A');
@@ -5464,7 +5580,18 @@ begin
          ' AND   lo.num_docto='+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
          ' AND   lo.cod_loja='+QuotedStr(DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString)+
          ' AND   lo.dta_movto='+QuotedStr(f_Troca('-','.',f_Troca('/','.',DateToStr(DtaEdt_ReposLojas.Date))))+
-         ' GROUP BY 1,2'+
+         ' AND   lo.ind_prioridade='+DMCentralTrocas.CDS_ReposicaoTransfIND_PRIORIDADE.AsString;
+
+         If (sgCorredores<>'') and (Not bgTodosCorredores) Then
+          MySql:=
+           MySql+' AND EXISTS (SELECT 1'+
+                 '             FROM ES_ESTOQUES_CD cd'+
+                 '             WHERE cd.cod_produto=lo.cod_produto'+
+                 '             AND   cd.dta_movto=lo.dta_movto'+
+                 '             AND   cd.end_zona||''.''||cd.end_corredor in ('+sgCorredores+'))';
+
+  MySql:=
+   MySql+' GROUP BY 1,2'+
          ' ORDER BY 2';
   DMBelShop.CDS_Busca.Close;
   DMBelShop.SDS_Busca.CommandText:=MySql;
@@ -5504,7 +5631,7 @@ end;
 procedure TFrmCentralTrocas.Bt_ReposLojasCheckOutClick(Sender: TObject);
 Var
   MySql: String;
-  bSiga, b: Boolean;
+  b: Boolean;
 begin
   Dbg_ReposLojasDocs.SetFocus;
 
@@ -5512,7 +5639,7 @@ begin
    Exit;
 
   // Verifica se Existem Itens a Exportar ======================================
-  If Not VerificaExistenciaItens Then
+  If Not VerificaExistenciaItens() Then
   Begin
     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
     msg('Sem Produto para Alteração !!'+cr+cr+'Todos já Exportados !!','A');
@@ -5526,7 +5653,21 @@ begin
   If msg('O(s) CORREDOR(ES) Selecionado(s) Esta(ão) CORRETO(S) ??', 'C')=2 Then
    Exit;
 
-  // Crea Form da Leitora de Codigos de Barras =================================
+  // Retorna IND_LEITORA=FALSE Quando Entra a 1ª Vez ===========================
+  DMCentralTrocas.CDS_ReposicaoTransf.First;
+  DMCentralTrocas.CDS_ReposicaoTransf.DisableControls;
+  While Not DMCentralTrocas.CDS_ReposicaoTransf.Eof do
+  Begin
+    DMCentralTrocas.CDS_ReposicaoTransf.Edit;
+    DMCentralTrocas.CDS_ReposicaoTransfIND_LEITORA.AsString:='NAO';
+    DMCentralTrocas.CDS_ReposicaoTransf.Post;
+
+    DMCentralTrocas.CDS_ReposicaoTransf.Next;
+  End; // While Not DMCentralTrocas.CDS_ReposicaoTransf.Eof do
+  DMCentralTrocas.CDS_ReposicaoTransf.EnableControls;
+  DMCentralTrocas.CDS_ReposicaoTransf.First;
+
+  // Cria Form da Leitora de Codigos de Barras =================================
   FrmLeitoraCodBarras:=TFrmLeitoraCodBarras.Create(Self);
 
   b:=True;
@@ -5741,7 +5882,18 @@ begin
          ' AND   lo.num_docto='+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
          ' AND   lo.cod_loja='+QuotedStr(DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString)+
          ' AND   lo.dta_movto='+QuotedStr(f_Troca('-','.',f_Troca('/','.',DateToStr(DtaEdt_ReposLojas.Date))))+
-         ' GROUP BY 1,2'+
+         ' AND   lo.ind_prioridade='+DMCentralTrocas.CDS_ReposicaoTransfIND_PRIORIDADE.AsString;
+
+         If (sgCorredores<>'') and (Not bgTodosCorredores) Then
+          MySql:=
+           MySql+' AND EXISTS (SELECT 1'+
+                 '             FROM ES_ESTOQUES_CD cd'+
+                 '             WHERE cd.cod_produto=lo.cod_produto'+
+                 '             AND   cd.dta_movto=lo.dta_movto'+
+                 '             AND   cd.end_zona||''.''||cd.end_corredor in ('+sgCorredores+'))';
+
+  MySql:=
+   MySql+' GROUP BY 1,2'+
          ' ORDER BY 2';
   DMBelShop.CDS_Busca.Close;
   DMBelShop.SDS_Busca.CommandText:=MySql;
@@ -6971,206 +7123,111 @@ end;
 procedure TFrmCentralTrocas.Bt_ReposLojasGeraArquivoLinxClick(Sender: TObject);
 Var
   MySql: String;
+
+  sArquivo: TStringList;
+  sLinha: String;
+  i: Integer;
+
+  sPastaArqLinx: String;
 begin
-  If AnsiUpperCase(Des_Usuario)<>'ODIR' Then
+  If Date<>StrToDate('21/08/2017') Then
   Begin
     msg('Opção em Desenvolvimento !!','A');
     Exit;
   End;
-{
+
   Dbg_ReposLojasDocs.SetFocus;
 
   If DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty Then
-   Exit;
-
-  // Busca Campos SIDICOM.Pedido e SIDICOM.PedidoIt ============================
-  MySql:=' SELECT  Trim(cam.RDB$RELATION_NAME) Tabela,'+
-         ' CASE'+
-         '   WHEN Trim(cam.RDB$RELATION_NAME)=''PEDIDO'' THEN'+
-         '     COUNT(cam.RDB$FIELD_NAME)-113'+ // Total de CAMPOS no PEDIDO
-         '   ELSE'+
-         '     COUNT(cam.RDB$FIELD_NAME)-111'+ // Total de CAMPOS no ITENS DO PEDIDO
-         ' END Zerado'+
-         ' FROM RDB$RELATION_FIELDS cam'+
-         ' WHERE Trim(cam.RDB$RELATION_NAME) IN (''PEDIDO'', ''PEDIDOIT'')'+
-         ' GROUP BY 1';
-  IBQ_MPMS.Close;
-  IBQ_MPMS.SQL.Clear;
-  IBQ_MPMS.SQL.Add(MySql);
-  IBQ_MPMS.Open;
-
-  bgSiga:=True;
-  While Not IBQ_MPMS.Eof do
-  Begin
-    If IBQ_MPMS.FieldByName('Zerado').AsInteger<>0 Then
-    Begin
-      bgSiga:=False;
-
-      If IBQ_MPMS.FieldByName('Tabela').AsString='PEDIDO' Then
-       MySql:='do PEDIDO - SIDICOM'
-      Else
-       MySql:='dos ITENS DO PEDIDO - SIDICOM';
-
-      Break;
-    End; // If IBQ_MPMS.FieldByName('Zerado').AsInteger<>0 Then
-
-    IBQ_MPMS.Next;
-  End; // While Not IBQ_MPMS.Eof do
-  IBQ_MPMS.Close;
-
-  If Not bgSiga Then
   Begin
     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-    MessageBox(Handle, pChar('Erro de Estrutura '+MySql+' !!'+cr+cr+
-                             'Entrar em Contato com "ODIR" IMEDIATAMENTE !!!!!'+cr+
-                             'Celular: 9957-8234'+cr+
-                             'E-Mail : odir.opss@gmail.com'), 'ATENÇÃO !!', MB_ICONERROR);
+    msg('Sem Produto a Exporta para o LINX !!','A');
     Exit;
   End;
 
   // Verifica se Existem Itens =================================================
-  If Not VerificaExistenciaItens Then
+  If Not VerificaExistenciaItens(True) Then
   Begin
     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-    msg('Sem Produto a Transferir !!','A');
+    msg('Sem Produto a Exporta para o LINX !!','A');
     Exit;
   End;
 
-  // Verifica se Existem Itens Com Quantidade e Sem Preco a Exportar para o Pedido do SIDICOM =============
-  If VerificaPrecosItens Then
-  Begin
-    PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-    If Application.MessageBox(PChar('Existe(m) Produto(s) COM REPOSIÇÃO e SEM PREÇO de CUSCTO'+cr+
-                                    'Verifique e Solicite o Cadastramento no SIDICOM !!'+cr+cr+
-                                    'Se Desejar Continuar não Irão para o Pedido do SIDICOM !!'+cr+cr+
-                                    'DESEJA CONTINUAR ???'), 'ATENÇÃO !!', 292)=IdNo Then
-     Exit;
-  End;
+  sgMensagem:=DMCentralTrocas.CDS_ReposicaoDocsRAZAO_SOCIAL.AsString+cr+
+  'Deseja Realmente Exportar o Docto Nº '+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString;
+  If (sgCorredores<>'') and (Not bgTodosCorredores) Then
+   sgMensagem:=sgMensagem+cr+'Corredor(es): '+sgCorredores;
 
-  If msg('Deseja Realmente Criar Pedido no SIDICOM '+cr+cr+
-         'para o Docto Nº '+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
-         ' da Loja Bel_'+DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString+' ??', 'C')=2 Then
+  If msg(sgMensagem,'C')=2 Then
    Exit;
 
-  // Gera Pedido no SIDICOM CD =================================================
-  sgMensagem:='';
-  If Not GeraPedidoSidicomCD Then
+  // Verifica se Existe Arquivo INI com Pastas Possiveis na REDE ===============
+  OdirPanApres.Caption:='AGUARDE !! Localizando Pasta Destino para Gravação do Arquivo Texto_LINX Com Reposições...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  sPastaArqLinx:='';
+  If fileexists(IncludeTrailingPathDelimiter(sPath_Local)+'CD_PastaArquivoLinx.ini') then
   Begin
-    PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-    MessageBox(Handle, pChar('Erro na Geração do Pedido: '+sgMensagem+' !!'+cr+cr+
-                             'Entrar em Contato com "ODIR" IMEDIATAMENTE !!!!!'+cr+
-                             'Celular: 9957-8234'+cr+
-                             'E-Mail : odir.opss@gmail.com'), 'ATENÇÃO !!', MB_ICONERROR);
-    Exit;
+    sPastaArqLinx:='ok';
   End;
 
-  // Atualiza Numero do Pedido =================================================
-  If DMBelShop.SQLC.InTransaction Then
-   DMBelShop.SQLC.Rollback(TD);
-
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMBelShop.SQLC.StartTransaction(TD);
-  Try
-    Screen.Cursor:=crAppStart;
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    DMCentralTrocas.CDS_ReposicaoTransf.First;
-    DMCentralTrocas.CDS_ReposicaoTransf.DisableControls;
-    While Not DMCentralTrocas.CDS_ReposicaoTransf.Eof do
-    Begin
-      If DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsCurrency>0 Then
-      Begin
-        MySql:=' UPDATE ES_ESTOQUES_LOJAS e'+
-               ' SET e.num_pedido='+QuotedStr(FormatFloat('000000',StrToInt(DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsString)))+
-               ' WHERE e.dta_movto='+QuotedStr(f_Troca('-','.',(f_Troca('/','.',DateToStr(DtaEdt_ReposLojas.Date)))))+
-               ' AND   e.num_seq='+DMCentralTrocas.CDS_ReposicaoTransfNUM_SEQ.AsString+
-               ' AND   e.cod_produto='+QuotedStr(DMCentralTrocas.CDS_ReposicaoTransfCOD_PRODUTO.AsString)+
-               ' AND   e.num_docto='+QuotedStr(DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString)+
-               ' AND   e.cod_loja='+QuotedStr(DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString)+
-               ' AND   e.ind_prioridade='+DMCentralTrocas.CDS_ReposicaoTransfIND_PRIORIDADE.AsString;
-        DMBelShop.SQLC.Execute(MySql,nil,nil);
-      End; // If DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsCurrency>0 Then
-
-      DMCentralTrocas.CDS_ReposicaoTransf.Next;
-    End; // While Not DMCentralTrocas.CDS_ReposicaoTransf.Eof do
-    DMCentralTrocas.CDS_ReposicaoTransf.First;
-    DMCentralTrocas.CDS_ReposicaoTransf.EnableControls;
-
-    // Atualiza Transacao ======================================================
-    DMBelShop.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-
-    Screen.Cursor:=crDefault;
-
-  Except
-    on e : Exception do
-    Begin
-      // Abandona Transacao ====================================================
-      DMBelShop.SQLC.Rollback(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-
-      Screen.Cursor:=crDefault;
-
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-      Exit;
-    End; // on e : Exception do
-  End; // Try
-
-  msg('Pedidos Gerados no CD com SUCESSO !!'+cr+cr+
-      'Tecle <OK> para Verificar os Números'+cr+
-      ' dos Pedidos Criados no SIDICOM !!','A');
-
-  // Pedidos Gerados
-  MySql:=' SELECT lo.num_docto, lo.num_pedido, count(lo.cod_produto) Tot_Prod'+
-         ' FROM ES_ESTOQUES_LOJAS lo'+
-         ' WHERE lo.qtd_a_transf>0'+
-         ' AND   lo.num_docto='+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
-         ' AND   lo.cod_loja='+QuotedStr(DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString)+
-         ' AND   lo.dta_movto='+QuotedStr(f_Troca('-','.',f_Troca('/','.',DateToStr(DtaEdt_ReposLojas.Date))))+
-         ' GROUP BY 1,2'+
-         ' ORDER BY 2';
-  DMBelShop.CDS_Busca.Close;
-  DMBelShop.SDS_Busca.CommandText:=MySql;
-  DMBelShop.CDS_Busca.Open;
-
-  FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
-  AbreSolicitacoes(7);
-
-  FrmSolicitacoes.Caption:='Bel_'+DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString+' - '+DMCentralTrocas.CDS_ReposicaoDocsRAZAO_SOCIAL.AsString;
-  FrmSolicitacoes.Ts_MargemLucroFormulas.Caption:='REPOSIÇÃO DE MERCADORIAS';
-
-  FrmSolicitacoes.EditorMargemLucro.Lines.Clear;
-
-  FrmSolicitacoes.EditorMargemLucro.Lines.Add('Números dos Pedidos Criados no SIDICOM');
-  FrmSolicitacoes.EditorMargemLucro.Lines.Add('=====================================================================');
-  While Not DMBelShop.CDS_Busca.Eof do
+  // Verifica se é Possivel Acessar a Pasta Pela REDE ==========================
+  If Trim(sPastaArqLinx)='ok' Then
   Begin
-    If DMBelShop.CDS_Busca.FieldByName('Num_Pedido').AsString='000000' Then
-     FrmSolicitacoes.EditorMargemLucro.Lines.Add('- Nº Docto: '+DMBelShop.CDS_Busca.FieldByName('Num_Docto').AsString+
-                                                 ' - Pedido Nº: <<AINDA NÃO GERADO>>'+
-                                                 ' - Nº Produtos: '+DMBelShop.CDS_Busca.FieldByName('Tot_Prod').AsString)
-    Else
-     FrmSolicitacoes.EditorMargemLucro.Lines.Add('- Nº Docto: '+DMBelShop.CDS_Busca.FieldByName('Num_Docto').AsString+
-                                                 ' - Pedido Nº: '+DMBelShop.CDS_Busca.FieldByName('Num_Pedido').AsString+
-                                                 ' - Nº Produtos: '+DMBelShop.CDS_Busca.FieldByName('Tot_Prod').AsString);
+    sArquivo:= TStringList.Create;
+    Try
+      sArquivo.LoadFromFile(IncludeTrailingPathDelimiter(sPath_Local)+'CD_PastaArquivoLinx.ini');
 
-    DMBelShop.CDS_Busca.Next;;
-  End; // While Not DMBelShop.CDS_Busca.Eof do
-  DMBelShop.CDS_Busca.Close;
+      For i:=0 to sArquivo.Count-1 do
+      Begin
+       sPastaArqLinx:=IncludeTrailingPathDelimiter(Trim(sArquivo[i]));
 
-  FrmSolicitacoes.EditorMargemLucro.Lines.Add('=====================================================================');
-  FrmSolicitacoes.ShowModal;
-  FreeAndNil(FrmSolicitacoes);
-}
+       If not DirectoryExists(sPastaArqLinx) Then
+        sPastaArqLinx:=''
+      End; // For i:=0 to sArquivo.Count-1 do
+
+    Finally // Try
+      FreeAndNil(sArquivo);
+    End; // Try
+    FreeAndNil(sArquivo);
+  End; // If Trim(sPastaArqLinx)='' Then
+
+  OdirPanApres.Visible:=False;
+
+  // Se Não Encontrou Pasta na Rede ============================================
+  If Trim(sPastaArqLinx)='' Then
+  Begin
+    msg('Pasta <REDE (B:)> Não Encontrada !!'+cr+cr+'O Arquivo LINX Será Gerado LOCAL em'+cr+'< C:\Logistica\ArquivosLINX\ >','A');
+    sPastaArqLinx:='C:\Logistica\ArquivosLINX\';
+  End; // If Trim(sPastaArqLinx)='' Then
+
+  // Cria Pasta Local se Necessário ============================================
+  If not DirectoryExists(sPastaArqLinx) Then
+   ForceDirectories(sPastaArqLinx);
+
+  // Processo Exportação de Transferencia para o Arqivo Texto ==================
+  GeraReposicaoLINX(sPastaArqLinx);
+
+end;
+
+procedure TFrmCentralTrocas.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+//  if Not bgSair Then
+//  Begin
+//    PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
+//    msg('Para SAIR Tecle no Botão <Fechar>...','A');
+//    Action := caNone;
+//    Exit;
+//  End;
+
 end;
 
 end.
-
 

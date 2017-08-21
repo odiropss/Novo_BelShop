@@ -1,6 +1,6 @@
 object FrmPedidoVenda: TFrmPedidoVenda
-  Left = 241
-  Top = 114
+  Left = 219
+  Top = 113
   Width = 1020
   Height = 611
   AutoSize = True
@@ -1277,7 +1277,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     Left = 477
     Top = 255
     Width = 122
-    Height = 19
+    Height = 21
     DataField = 'Vlr_TotalCalculado'
     DataSource = DMArtesanalis.DS_V_DoctoItens
     TabOrder = 7
@@ -1288,7 +1288,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     Left = 477
     Top = 273
     Width = 122
-    Height = 19
+    Height = 21
     DataField = 'Vlr_TotalDesconto'
     DataSource = DMArtesanalis.DS_V_DoctoItens
     TabOrder = 8
@@ -1299,7 +1299,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     Left = 477
     Top = 289
     Width = 123
-    Height = 19
+    Height = 21
     DataField = 'Vlr_TotalProdutos'
     DataSource = DMArtesanalis.DS_V_DoctoItens
     Font.Charset = DEFAULT_CHARSET

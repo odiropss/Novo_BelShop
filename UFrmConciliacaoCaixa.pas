@@ -1572,21 +1572,21 @@ end;
 
 procedure TFrmConciliacaoCaixa.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  if Not bgSairCaixa Then
-  Begin
-    DMVirtual.CDS_V_Creditos.Close;
-    PC_ConcFechaCaixa.TabIndex:=0;
-    PC_ConcFechaCaixaChange(Self);
-    msg('Para Sair Tecle no Botão <Fechar>...','A');
-    Action := caNone;
-    Exit;
-  End;
-
-  FrmBelShop.FechaTudo;
-  DMConciliacao.FechaTudoConciliacao;
-
-  If DMBelShop.SQLC.InTransaction Then
-   DMBelShop.SQLC.Rollback(TD);
+//  if Not bgSairCaixa Then
+//  Begin
+//    DMVirtual.CDS_V_Creditos.Close;
+//    PC_ConcFechaCaixa.TabIndex:=0;
+//    PC_ConcFechaCaixaChange(Self);
+//    msg('Para Sair Tecle no Botão <Fechar>...','A');
+//    Action := caNone;
+//    Exit;
+//  End;
+//
+//  FrmBelShop.FechaTudo;
+//  DMConciliacao.FechaTudoConciliacao;
+//
+//  If DMBelShop.SQLC.InTransaction Then
+//   DMBelShop.SQLC.Rollback(TD);
 end;
 
 procedure TFrmConciliacaoCaixa.PC_PrincipalChange(Sender: TObject);
@@ -2110,15 +2110,20 @@ begin
 
 end;
 
-procedure TFrmConciliacaoCaixa.Bt_ConcFechaCaixaFecharClick(
-  Sender: TObject);
+procedure TFrmConciliacaoCaixa.Bt_ConcFechaCaixaFecharClick(Sender: TObject);
 begin
+
+  FrmBelShop.FechaTudo;
+  DMConciliacao.FechaTudoConciliacao;
+
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
   bgSairCaixa:=True;
   Close;
 end;
 
-procedure TFrmConciliacaoCaixa.Dbg_ConcFechaCaixaDoctosColEnter(
-  Sender: TObject);
+procedure TFrmConciliacaoCaixa.Dbg_ConcFechaCaixaDoctosColEnter(Sender: TObject);
 begin
   If Not DMConciliacao.CDS_ConcCaixa.IsEmpty Then
    Dbg_ConcFechaCaixaDoctos.SelectedIndex:=5;
