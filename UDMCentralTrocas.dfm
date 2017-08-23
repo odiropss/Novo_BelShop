@@ -521,7 +521,7 @@ object DMCentralTrocas: TDMCentralTrocas
     ProviderName = 'DSP_ReposicaoDocs'
     AfterScroll = CDS_ReposicaoDocsAfterScroll
     Left = 499
-    Top = 96
+    Top = 104
     object CDS_ReposicaoDocsCOD_LOJA: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'C'#243'd'
