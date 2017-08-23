@@ -147,6 +147,7 @@ type
     procedure EdtVlrDescConcedidoExit(Sender: TObject);
     procedure EdtPercDescontoExit(Sender: TObject);
     procedure EdtVlrTotalChange(Sender: TObject);
+    procedure EdtCodProdutoDblClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -180,10 +181,12 @@ var
 
   sgMensagem:String;
 
+  MyKey: Char;
+
 implementation
 
 uses UDMArtesanalis, UPesquisa, DK_Procs1, UFrmPessoaCadastro, DB, Math,
-  UFrmVerProducao;
+  UFrmVerProducao, UFrmProdutoCadastro;
 
 {$R *.dfm}
 
@@ -534,7 +537,7 @@ Begin
     If sDML='I' Then
     Begin
       msg('Pedido INCLUÍDO com SUCESSO !!','A');
-      EdtNumDoctoExit(Self);
+      Bt_AbandonarClick(Self);
       Exit;
     End;
 
@@ -573,9 +576,11 @@ End; // Inclusão/Exclusão do Pedido >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmPedidoVenda.ProdutoLocaliza;
 Var
   MySql: String;
+  bProdutoNovo: Boolean;
 begin
 
   FrmPesquisa:=TFrmPesquisa.Create(Self);
+  FrmPesquisa.Bt_PesquisaNovo.Visible:=True;
 
   // ========== EXECUTA QUERY PARA PESQUISA ====================================
   Screen.Cursor:=crAppStart;
@@ -614,10 +619,21 @@ begin
   If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
   Begin
     EdtCodProduto.AsInteger:=StrToInt(FrmPesquisa.EdtCodigo.Text);
-    EdtCodProdutoExit(Self);
+    EdtCodProduto.SetFocus;
+    EdtQtdProduto.SetFocus;
   End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
 
+  bProdutoNovo:=FrmPesquisa.bgIncluirNovo;
+
   FreeAndNil(FrmPesquisa);
+
+  If bProdutoNovo Then
+  Begin
+    DMArtesanalis.CDS_ProdutoMatPrima.Open;
+    FrmProdutoCadastro.ShowModal;
+  End;
+
+  bProdutoNovo:=False;
 End; // Localiza/Inclui Produto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Habilita Dados do Docto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -798,7 +814,7 @@ begin
 
   // Show Hint em Forma de Balão
   CreateToolTips(Self.Handle);
-  AddToolTip(EdtCodProduto.Handle, @ti, TipoDoIcone, 'Localizar/Incluir! Tecle <F9>', 'PRODUTO');
+  AddToolTip(EdtCodProduto.Handle, @ti, TipoDoIcone, 'Localizar/Incluir! Tecle <DuploClick ou F9>', 'PRODUTO');
 
   CreateToolTips(Self.Handle);
   AddToolTip(Bt_Salvar.Handle, @ti, TipoDoIcone, 'Incluir/Alterar', 'PEDIDO DE VENDA');
@@ -1172,13 +1188,14 @@ begin
   Begin
     Screen.Cursor:=crDefault;
     DMArtesanalis.CDS_BuscaRapida.Close;
-    msg('Produto Sem Produção'+cr+cr+'Favor Cadastrar a Produção !!','A');
-    EdtCodProduto.SetFocus;
-    Exit;
+    // msg('Produto Sem Produção'+cr+cr+'Favor Cadastrar a Produção !!','A');
+    If msg('Produto Sem Produção !!'+cr+cr+'Deseja Continuar ???','C')=2 Then
+    Begin
+      EdtCodProduto.SetFocus;
+      Exit;
+    End;
   End;
-
   DMArtesanalis.CDS_BuscaRapida.Close;
-
   Screen.Cursor:=crDefault;
 
   EdtQtdProduto.SetFocus;
@@ -1194,6 +1211,9 @@ begin
 
     // Busca Produtos -----------------------------------------------
     bgProdIncluir:=False;
+
+    EdtCodProduto.Clear;
+    EdtDesProduto.Clear;
     ProdutoLocaliza;
   End; // If Key=VK_F9 Then
 
@@ -1675,6 +1695,15 @@ end;
 procedure TFrmPedidoVenda.EdtVlrTotalChange(Sender: TObject);
 begin
   EdtPercDescConcedidoExit(Self);
+end;
+
+procedure TFrmPedidoVenda.EdtCodProdutoDblClick(Sender: TObject);
+Var
+  MyShiftState : TShiftState;
+  MyWord: Word;
+begin
+  MyWord:=VK_F9;
+  EdtCodProdutoKeyDown(Self, MyWord, MyShiftState);
 end;
 
 end.

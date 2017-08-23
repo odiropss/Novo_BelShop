@@ -284,6 +284,11 @@ end;
 
 procedure TFrmArtesanalis.MenuRELATORIOSClick(Sender: TObject);
 begin
+
+  msg('Opção em Desenvolvimento !!','A');
+  Exit;
+
+
   FrmRelatorios:=TFrmRelatorios.Create(Self);
   FrmRelatorios.ShowModal;
 

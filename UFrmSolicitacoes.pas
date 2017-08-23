@@ -8682,9 +8682,6 @@ begin
   DMCentralTrocas.CDS_V_ReposDivergencias.Post;
   DMCentralTrocas.CDS_V_ReposDivergencias.Next;
 
-  If DMCentralTrocas.CDS_V_ReposDivergencias.RecNo=DMCentralTrocas.CDS_V_ReposDivergencias.RecordCount Then
-   DMCentralTrocas.CDS_V_ReposDivergencias.First;
-
 end;
 
 procedure TFrmSolicitacoes.EdtReposDivQtdChange(Sender: TObject);

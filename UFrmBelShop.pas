@@ -43404,12 +43404,15 @@ begin
    Exit;
 
   bgSair:=False;
-  If msg('Deseja Realmente Sair do SISTEMA ???','C')=2 Then
+//  If msg('Deseja Realmente Sair do SISTEMA ???','C')=2 Then
+  If Application.MessageBox('Deseja Realmente Sair do SISTEMA ???', 'ATENÇÃO !!', 36) = IdNo Then
    Begin
      Exit;
    End
   Else
    Begin
+     Close;
+   End;
 //     bgSair:=True;
 //
 //     Screen.Cursor:=crAppStart;
@@ -43432,8 +43435,8 @@ begin
 //
 //     Screen.Cursor:=crDefault;
 //
-     Close;
-   End;
+//     Close;
+//   End;
 
 
 end;
@@ -45463,8 +45466,8 @@ begin
     Exit;
   End;
 
-  FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
-  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
+//  FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
+//  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
 
   If (Sender is TMenuItem) Then
    igTagPermissao:=(Sender as TMenuItem).Tag;
@@ -45477,8 +45480,8 @@ begin
 
   FrmCentralTrocas.ShowModal;
 
-  FreeAndNil(FrmCentralTrocas);
-  FreeAndNil(DMCentralTrocas);
+//  FreeAndNil(FrmCentralTrocas);
+//  FreeAndNil(DMCentralTrocas);
 
 end;
 

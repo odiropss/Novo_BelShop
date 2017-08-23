@@ -21,7 +21,7 @@ unit UWebServiceLinx;
    =========================================
    Irá conter as informações dos clientes/fornecedores cadastrados nas lojas.
 
--> Movimento: LinxMovimento
+-> Movimento: LinxMovimento (Inclui LinxMovtosAjustesEntradas, LinxMovtosAjustesSaidas)
    - Por Loja
    ========================
    Irá conter as informações referente as notas fiscais e tickets devenda.

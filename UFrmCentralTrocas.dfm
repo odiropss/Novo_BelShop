@@ -1489,7 +1489,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         object Gb_Bt_ReposLojasPrioridade: TGroupBox
           Left = 134
           Top = 2
-          Width = 179
+          Width = 259
           Height = 42
           Align = alLeft
           Caption = ' Prioridades '
@@ -1587,6 +1587,29 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Font.Style = []
             ParentFont = False
             TabOrder = 3
+            OnClick = Rb_ReposLojasPrioridade0Click
+            OnKeyUp = Rb_ReposLojasPrioridade0KeyUp
+            HotTrackFont.Charset = DEFAULT_CHARSET
+            HotTrackFont.Color = clWindowText
+            HotTrackFont.Height = -13
+            HotTrackFont.Name = 'MS Sans Serif'
+            HotTrackFont.Style = []
+            LinkedControls = <>
+          end
+          object Rb_ReposLojasPrioridadeTodas: TJvRadioButton
+            Left = 174
+            Top = 17
+            Width = 61
+            Height = 17
+            Alignment = taLeftJustify
+            Caption = 'Todas'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 4
             OnClick = Rb_ReposLojasPrioridade0Click
             OnKeyUp = Rb_ReposLojasPrioridade0KeyUp
             HotTrackFont.Charset = DEFAULT_CHARSET
@@ -2227,7 +2250,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Glyph.Data = {
             0B546478504E47496D61676589504E470D0A1A0A0000000D494844520000003F
             0000002D080200000096232418000000017352474200AECE1CE9000000046741
-            4D410000B18F0BFC6105000000097048597300000EBF00000EBF013805532400
+            4D410000B18F0BFC6105000000097048597300000EBD00000EBD0147FB90AD00
             000646494441546843ED96FB53135714C7FD1BFA83BF39059496904DC22BA145
             E5254A2DB1281D25C9061425604545A4A0525E6A0C0102E1A1286879292F5154
             44B4828888A3587C15A8B545F0818A22228268D5727BB237499747163A964E98

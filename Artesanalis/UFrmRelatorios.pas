@@ -232,25 +232,25 @@ end;
 
 procedure TFrmRelatorios.PC_RelatoriosChange(Sender: TObject);
 begin
-  CorSelecaoTabSheet(PC_ProfMovtosRH);
-
-  // Taxa Sindicato ==========================================================
-  If (PC_ProfMovtosRH.ActivePage=Ts_ProfTaxaSindicato) And (Ts_ProfTaxaSindicato.CanFocus) Then
-  Begin
-    Gb_INSS_PSLocaliza.Parent:=Ts_ProfTaxaSindicato;
-    sgINSS_PS:='S';
-
-    MySql:= ' SELECT p.mes_cobranca_sindicato Mes FROM parametros p';
-    DMBelShop.CDS_BuscaRapida.Close;
-    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-    DMBelShop.CDS_BuscaRapida.Open;
-    Cbx_INSS_PSMes.ItemIndex:=Cbx_INSS_PSMes.Items.IndexOf(DMBelShop.CDS_BuscaRapida.FieldByName('Mes').AsString);
-    Cbx_INSS_PSMesChange(Self);
-    DMBelShop.CDS_BuscaRapida.Close;
-
-    Cbx_INSS_PSMes.Enabled:=False;
-    Cbx_INSS_PSMes.Color:=$00E0E0E0;
-  End; // If (PC_ProfCobrancas.ActivePage=Ts_ProfTaxaSindicato) And (Ts_ProfTaxaSindicato.CanFocus) Then
+//  CorSelecaoTabSheet(PC_Relatorios);
+//
+//  // Taxa Sindicato ==========================================================
+//  If (PC_ProfMovtosRH.ActivePage=Ts_ProfTaxaSindicato) And (Ts_ProfTaxaSindicato.CanFocus) Then
+//  Begin
+//    Gb_INSS_PSLocaliza.Parent:=Ts_ProfTaxaSindicato;
+//    sgINSS_PS:='S';
+//
+//    MySql:= ' SELECT p.mes_cobranca_sindicato Mes FROM parametros p';
+//    DMBelShop.CDS_BuscaRapida.Close;
+//    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+//    DMBelShop.CDS_BuscaRapida.Open;
+//    Cbx_INSS_PSMes.ItemIndex:=Cbx_INSS_PSMes.Items.IndexOf(DMBelShop.CDS_BuscaRapida.FieldByName('Mes').AsString);
+//    Cbx_INSS_PSMesChange(Self);
+//    DMBelShop.CDS_BuscaRapida.Close;
+//
+//    Cbx_INSS_PSMes.Enabled:=False;
+//    Cbx_INSS_PSMes.Color:=$00E0E0E0;
+//  End; // If (PC_ProfCobrancas.ActivePage=Ts_ProfTaxaSindicato) And (Ts_ProfTaxaSindicato.CanFocus) Then
 
 end;
 

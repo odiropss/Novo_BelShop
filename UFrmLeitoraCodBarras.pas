@@ -5,14 +5,14 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, JvExControls, JvXPCore, JvXPButtons, StdCtrls, ExtCtrls, Mask,
-  ToolEdit, CurrEdit, MMSystem, JvGradientCaption, JvProgressBar;
+  ToolEdit, CurrEdit, MMSystem, JvGradientCaption, JvProgressBar,
+  JvExStdCtrls, JvEdit;
 
 type
   TFrmLeitoraCodBarras = class(TForm)
     Panel1: TPanel;
     Bt_Processar: TJvXPButton;
     Bt_Fechar: TJvXPButton;
-    EdtCodBarras: TCurrencyEdit;
     CorCaptionForm: TJvGradientCaption;
     EdtQtdEmbalagem: TCurrencyEdit;
     Label1: TLabel;
@@ -23,14 +23,17 @@ type
     PBar_CheckOut_Erro: TJvGradientProgressBar;
     Lab_CheckOut_OK: TLabel;
     Lab_CheckOut_Erro: TLabel;
+    EdtCodBarras: TJvEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure Bt_FecharClick(Sender: TObject);
-    procedure Bt_ProcessarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure EdtCodBarrasChange(Sender: TObject);
     procedure EdtQtdEmbalagemEnter(Sender: TObject);
     procedure EdtQtdEmbalagemExit(Sender: TObject);
+    procedure EdtCodBarrasChange(Sender: TObject);
+    procedure Bt_ProcessarClick(Sender: TObject);
+    procedure EdtCodBarrasKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -43,7 +46,7 @@ var
 
 implementation
 
-uses DK_Procs1;
+uses DK_Procs1, UFrmCentralTrocas;
 
 {$R *.dfm}
 
@@ -65,17 +68,10 @@ end;
 
 procedure TFrmLeitoraCodBarras.Bt_FecharClick(Sender: TObject);
 begin
+  Panel1.SetFocus;
+
   bgProcessar:=False;
   Close;
-end;
-
-procedure TFrmLeitoraCodBarras.Bt_ProcessarClick(Sender: TObject);
-begin
-  If EdtCodBarras.AsInteger<>0 Then
-  Begin
-    bgProcessar:=True;
-    Close;
-  End;
 end;
 
 procedure TFrmLeitoraCodBarras.FormShow(Sender: TObject);
@@ -91,6 +87,17 @@ begin
   
 end;
 
+procedure TFrmLeitoraCodBarras.EdtQtdEmbalagemEnter(Sender: TObject);
+begin
+  EdtCodBarras.Text:='0';
+end;
+
+procedure TFrmLeitoraCodBarras.EdtQtdEmbalagemExit(Sender: TObject);
+begin
+  EdtCodBarras.SetFocus;
+
+end;
+
 procedure TFrmLeitoraCodBarras.EdtCodBarrasChange(Sender: TObject);
 begin
   If Length(EdtCodBarras.Text)=13 Then
@@ -98,14 +105,30 @@ begin
 
 end;
 
-procedure TFrmLeitoraCodBarras.EdtQtdEmbalagemEnter(Sender: TObject);
+procedure TFrmLeitoraCodBarras.Bt_ProcessarClick(Sender: TObject);
 begin
-  EdtCodBarras.Value:=0;
+  Panel1.SetFocus;
+
+  If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
+  Begin
+    // Processa Reposição ======================================================
+    FrmCentralTrocas.CheckOut_BuscaProdCodBarras_AtualizaQtd(Trim(EdtCodBarras.Text),EdtQtdEmbalagem.AsInteger);
+
+    // Acerta Controle de Processamento ==========================================
+    FrmCentralTrocas.ReCalculaPosicaoLeitora;
+
+    // Reposiciona =============================================================
+    EdtQtdEmbalagem.AsInteger:=1;
+    EdtCodBarras.Text:='0';
+    EdtCodBarras.SetFocus;
+  End; // If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
+
 end;
 
-procedure TFrmLeitoraCodBarras.EdtQtdEmbalagemExit(Sender: TObject);
+procedure TFrmLeitoraCodBarras.EdtCodBarrasKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  EdtCodBarras.SetFocus;
+  If (key=Vk_Return) And (StrToInt64Def(EdtCodBarras.Text,0)<>0) Then
+   Bt_ProcessarClick(Self);
 
 end;
 

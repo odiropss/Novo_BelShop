@@ -3,7 +3,7 @@
 
 	LinxLojas - Retorna os dados de uma loja, conforme pesquisa: (chave, cnpjEmp)
 
-	LinxClientesFornec - Retorna os Clientes/Fornecedores cadastrados na loja e data pesquisada: (chave, cnpjEmp, data_inicial, data_fim, cod_cliente)
+	LinxClientesFornec - Retorna os Clientes/Fornecedores cadastrados na loja e data pesquisada: (chave, cnpjEmp, data_inicial, data_fim, cod_cliente, dt_update_inicial, dt_update_fim, doc_cliente)
 
 	LinxClientesFornecCamposAdicionais - Retorna os campos adicionais preenchidos dos Clientes/Fornecedores cadastrados no portal: (chave, cnpjEmp, data_inicial, data_fim, cod_cliente)
 
@@ -33,9 +33,9 @@
 
 	LinxLancContabil - Retorna informações dos Lançamentos Contábeis por conta e empresa: (chave, cnpjEmp, data_lanc_ini, data_lanc_fim, cod_cc, cod_conta, identificador)
 
-	LinxPedidosVenda - Retorna informações de pedidos de venda de acordo com a loja pesquisada (chave, cnpjEmp, data_inicial, data_fim, hora_inicial, hora_fim)
+	LinxPedidosVenda - Retorna informações de pedidos de venda de acordo com a loja pesquisada (chave, cnpjEmp, data_inicial, data_fim, hora_inicial, hora_fim, doc_cliente)
 
-	LinxPlanosPedidoVenda - Retorna os Planos de Pagamentos realizados nos pedidos de vendas (chave, cnpjEmp, cod_pedido, data_inicial, data_fim, hora_inicial, hora_fim)
+	LinxPlanosPedidoVenda - Retorna os Planos de Pagamentos realizados nos pedidos de vendas (chave, cnpjEmp, cod_pedido, data_inicial, data_fim, hora_inicial, hora_fim, dt_update_inicial, dt_update_fim)
 
 	LinxPedidosCompra - Retorna informações de pedidos de compra de acordo com a loja pesquisada (chave, cnpjEmp, data_inicial, data_fim)
 

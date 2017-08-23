@@ -542,6 +542,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       ParentCtl3D = False
       ParentFont = False
       TabOrder = 1
+      OnDblClick = EdtCodProdutoDblClick
       OnEnter = EdtCodProdutoEnter
       OnExit = EdtCodProdutoExit
       OnKeyDown = EdtCodProdutoKeyDown

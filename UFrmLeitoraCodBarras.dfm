@@ -43,7 +43,7 @@ object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
       ParentFont = False
     end
     object Label2: TLabel
-      Left = 120
+      Left = 119
       Top = 13
       Width = 98
       Height = 13
@@ -90,29 +90,12 @@ object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
       ParentFont = False
       OnClick = Bt_FecharClick
     end
-    object EdtCodBarras: TCurrencyEdit
-      Left = 119
-      Top = 31
-      Width = 199
-      Height = 30
-      AutoSize = False
-      Color = 8454143
-      DecimalPlaces = 0
-      DisplayFormat = '0'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -21
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 1
-      OnChange = EdtCodBarrasChange
-    end
     object EdtQtdEmbalagem: TCurrencyEdit
       Left = 15
       Top = 31
       Width = 91
       Height = 30
+      TabStop = False
       AutoSize = False
       DecimalPlaces = 0
       DisplayFormat = '0'
@@ -214,6 +197,25 @@ object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
         ParentColor = False
         ParentFont = False
       end
+    end
+    object EdtCodBarras: TJvEdit
+      Left = 117
+      Top = 31
+      Width = 200
+      Height = 30
+      Alignment = taRightJustify
+      Modified = False
+      Color = 8454143
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -21
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      Text = '0'
+      OnChange = EdtCodBarrasChange
+      OnKeyDown = EdtCodBarrasKeyDown
     end
   end
   object CorCaptionForm: TJvGradientCaption

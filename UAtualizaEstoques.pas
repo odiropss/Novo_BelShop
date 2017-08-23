@@ -28,6 +28,8 @@ type
 
     Procedure AtualizaEstoquesMovtosLinx(sCodLinx, sCodBelShop, sDtaInicioLinx: String);
 
+    Procedure SaldosTransfere_Linx_Sidicom;
+
     // Odir ====================================================================
   private
     { Private declarations }
@@ -55,6 +57,92 @@ uses UDMAtualizaEstoques, UDMConexoes, DK_Procs1, DB;
 {$R *.dfm}
 
 // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Procedure TFrmAtualizaEstoques.SaldosTransfere_Linx_Sidicom;
+Var
+  MySql: String;
+Begin
+  sgDataAtual:=DateTimeToStr(DataHoraServidorFI(DMAtualizaEstoques.SDS_DtaHoraServidor));
+
+  Try // Try da Transação
+    // Conecata SIDICOM ========================================================
+    ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A');
+    CriaQueryIB('IBDB_99', 'IBT_99', IBQ_Consulta, False, True);
+
+    // Verifica se Transação esta Ativa
+    If DMConexoes.IBT_99.Active Then
+     DMConexoes.IBT_99.Rollback;
+
+    // Monta Transacao  -------------------------------------
+    DMConexoes.IBT_99.StartTransaction;
+
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    // Busca Saldos Linx =======================================================
+    MySql:=' SELECT ''UPDATE ESTOQUE e''||'+
+           ' '' SET e.saldoatual  =''''''||es.saldoatual||''''''''||'+
+           ' '', e.dataalteraestoque='''+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDataAtual)))+'''''||'+
+           ' '' WHERE e.codfilial =''''''||es.codfilial||''''''''||'+
+           ' '' AND   e.codproduto=''''''||es.codproduto||'''''''' MDL'+
+           ' FROM ESTOQUE es'+
+           ' WHERE es.codfilial=''99''';
+    DMAtualizaEstoques.CDS_LojaLinx.Close;
+    DMAtualizaEstoques.SDS_LojaLinx.CommandText:=MySql;
+    DMAtualizaEstoques.CDS_LojaLinx.Open;
+
+    While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
+    Begin
+      IBQ_Consulta.Close;
+      IBQ_Consulta.SQL.Clear;
+      IBQ_Consulta.SQL.Add(DMAtualizaEstoques.CDS_LojaLinx.FieldByName('MDL').AsString);
+      IBQ_Consulta.ExecSQL;
+
+      If DMAtualizaEstoques.CDS_LojaLinx.RecNo mod 1000=0 Then
+      Begin
+        DMConexoes.IBT_99.Commit;
+
+        DMConexoes.IBT_99.StartTransaction;
+      End; // if DMAtualizaEstoques.CDS_LojaLinx.RecNo mod 1000=0 Then
+
+      DMAtualizaEstoques.CDS_LojaLinx.Next;
+    End; // While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
+
+    DMConexoes.IBT_99.Commit;
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+  Except
+    on e : Exception do
+    Begin
+      DMConexoes.IBT_99.Rollback;
+
+      // Monta Transacao ===========================================================
+      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+      TD.IsolationLevel:=xilREADCOMMITTED;
+      DMAtualizaEstoques.SQLC.StartTransaction(TD);
+
+      MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
+             ' VALUES ('+
+             QuotedStr('99')+', '+
+             '2, '+
+             ' CURRENT_TIMESTAMP,'+
+             QuotedStr('Err')+', '+ // Linx Com Inventário
+             QuotedStr(e.message+' - '+MySql)+')'+
+             'MATCHING (COD_LOJA)';
+      DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
+      DMAtualizaEstoques.SQLC.Commit(TD); // Linx Com Inventário
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+    End; // on e : Exception do
+  End; // Try
+
+  DMAtualizaEstoques.IBQ_EstoqueLoja.Close;
+  ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+End; // Procedure TFrmAtualizaEstoques.SaldoLinx_Sidicom >>>>>>>>>>>>>>>>>>>>>>>
 
 Procedure TFrmAtualizaEstoques.AtualizaEstoquesMovtosLinx(sCodLinx, sCodBelShop, sDtaInicioLinx: String);
 Var
@@ -536,7 +624,6 @@ var
   // Só Atualiza Estoques com Movtos Ent/Sai Linx
   bSoAtualMovtoLinx: Boolean;
 begin
-
 //=========  ===========  ===============  ================================  ============================================
 // Cod Linx	 Data Inicio  Data Inventario	 Variaveis Utilizadas              O Que Fazer
 // ========  ===========  ===============  ================================  ============================================
@@ -550,8 +637,28 @@ begin
   tgMySqlErro.Clear;
   tgMySqlErro.SaveToFile(sgPath_Local+'ODIR_ERRO.txt');
 
-  If Not DMAtualizaEstoques.CDS_EmpProcessa.Active Then
-   DMAtualizaEstoques.CDS_EmpProcessa.Open;
+  MySql:=' SELECT c.cod_filial, c.cod_linx,'+
+         '        c.endereco_ip, c.endereco_ip_externo,'+
+         '        c.pasta_base_dados, c.des_base_dados,'+
+         '        c.cod_emp, c.razao_social, c.tip_emp,'+
+         '        c.ind_ativo, c.dta_inicio_linx, c.dta_inventario_linx,'+
+         '        ''IBDB_''||c.cod_filial "DATABASE",'+
+         '        ''IBT_''||c.cod_filial  "TRANSACAO"'+
+
+         ' FROM EMP_CONEXOES c'+
+
+         ' WHERE ((c.ind_ativo=''SIM'')'+
+         '        OR'+
+         '        (c.cod_filial=''99'')'+
+         '        OR'+
+         '        (c.cod_filial=''50''))'+
+         ' ORDER BY c.cod_filial';
+  DMAtualizaEstoques.CDS_EmpProcessa.Close;
+  DMAtualizaEstoques.SDS_EmpProcessa.CommandText:=MySql;
+  DMAtualizaEstoques.CDS_EmpProcessa.Open;
+
+// If Not DMAtualizaEstoques.CDS_EmpProcessa.Active Then
+//  DMAtualizaEstoques.CDS_EmpProcessa.Open;
 
   // Inicia Processamento ======================================================
   DMAtualizaEstoques.CDS_EmpProcessa.First;
@@ -631,7 +738,7 @@ begin
         If iCodLinx=0 Then
         Begin
           // Cria Query da Empresa --------------------------------------
-          CriaQueryIB('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, IBQ_Consulta, False, True);
+//odirapagar          CriaQueryIB('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, IBQ_Consulta, False, True);
 
           If DMAtualizaEstoques.IBQ_EstoqueLoja.Active Then
            DMAtualizaEstoques.IBQ_EstoqueLoja.Close;
@@ -862,18 +969,18 @@ begin
                 DMAtualizaEstoques.CDS_LojaLinx.Next;
               End; // While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
               DMAtualizaEstoques.CDS_LojaLinx.Close;
-
-              // Zera Produtos que não Foram Utilizados ========================
-              MySql:=' UPDATE ESTOQUE es'+
-                     ' SET es.saldoatual=0.0000'+
-                     ' WHERE es.codfilial='+QuotedStr(sCodEmpresa)+
-                     ' AND   es.saldoatual<>0.0000'+
-                     ' AND   es.dta_atualizacao<'+QuotedStr(sgDataAtual);
-              DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
             End; // If (iCodLinx<>0) And (sDtaInventLinx<>'') Then
             // =================================================================
             // LINX COM INVENTARIO - LINX DIRETO ===============================
             // =================================================================
+
+            // Zera Saldo dos Produtos que não Foram Utilizados ================
+            MySql:=' UPDATE ESTOQUE es'+
+                   ' SET es.saldoatual=0.0000'+
+                   ' WHERE es.codfilial='+QuotedStr(sCodEmpresa)+
+                   ' AND   es.saldoatual<>0.0000'+
+                   ' AND   es.dta_atualizacao<'+QuotedStr(sgDataAtual);
+            DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
             MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
                    ' VALUES ('+
@@ -933,6 +1040,13 @@ begin
     DMAtualizaEstoques.CDS_EmpProcessa.Next;
   End; // While Not DMAtualizaEstoques.CDS_EmpProcessa.Eof do
   DMAtualizaEstoques.CDS_EmpProcessa.Close;
+
+  // ===========================================================================
+  // Atualiza Saldo LINX Para SIDICOM CD =======================================
+  // ===========================================================================
+  SaldosTransfere_Linx_Sidicom;
+  // Atualiza Saldo LINX Para SIDICOM CD =======================================
+  // ===========================================================================
 
 // =============================================================================
 // FIM DO PROCESSO =============================================================
