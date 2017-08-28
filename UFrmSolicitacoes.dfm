@@ -1,6 +1,6 @@
 object FrmSolicitacoes: TFrmSolicitacoes
-  Left = 323
-  Top = 134
+  Left = 311
+  Top = 206
   Width = 649
   Height = 482
   AutoSize = True
@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 444
-    ActivePage = Ts_ReposDivergencias
+    ActivePage = Ts_ProSoftImpArquivo
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -10115,8 +10115,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
           item
             Expanded = False
             FieldName = 'COD_PRODUTO'
-            Title.Alignment = taRightJustify
-            Width = 45
+            Title.Alignment = taCenter
+            Title.Caption = 'C'#243'd'
             Visible = True
           end
           item
@@ -10128,15 +10128,15 @@ object FrmSolicitacoes: TFrmSolicitacoes
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
-            Width = 320
+            Width = 310
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'QTD_CHECKOUT'
             Title.Alignment = taRightJustify
-            Title.Caption = 'CheckOut'
-            Width = 65
+            Title.Caption = 'Check'
+            Width = 55
             Visible = True
           end
           item
@@ -10149,8 +10149,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
             Title.Alignment = taRightJustify
-            Title.Caption = 'A Transf'
-            Width = 65
+            Title.Caption = 'Repor'
+            Width = 55
             Visible = True
           end
           item
@@ -10158,8 +10158,21 @@ object FrmSolicitacoes: TFrmSolicitacoes
             Expanded = False
             FieldName = 'IND_CORRIGIDO'
             Title.Alignment = taCenter
-            Title.Caption = 'OK ?'
-            Width = 40
+            Title.Caption = 'Ok?'
+            Width = 30
+            Visible = True
+          end
+          item
+            Color = 8454143
+            Expanded = False
+            FieldName = 'ENDERECAMENTO'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 96
             Visible = True
           end>
       end

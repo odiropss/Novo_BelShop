@@ -1368,8 +1368,10 @@ Begin
         If dDtaUltAtual=0 Then
          dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+4;;
 
-        DecodeDate(dDtaUltAtual-4, wAno, wMes, wDia);
+        DecodeDate(dDtaUltAtual-30, wAno, wMes, wDia);
         sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+//        sgDtaInicio:='2016-12-01';
 
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
         sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);

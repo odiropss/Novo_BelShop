@@ -772,11 +772,14 @@ begin
     StrToDate(EdtDtaFinal.Text);
     If EdtDtaFinal.Date<EdtDtaInicial.Date Then
     Begin
-      msg('Data da Vigência Final MENOR Que Inicial !!','A');
-      EdtDesPrioridade.SetFocus;
+      msg('Data da Vigência FINAL MENOR Que INICIAL !!','A');
+      EdtDtaInicial.SetFocus;
       Exit;
     End;
   Except
+    msg('Data da Vigência FINAL Inválida !!','A');
+    EdtDtaFinal.SetFocus;
+    Exit;
   End;
 
   If Not CkB_Ativo.Checked Then

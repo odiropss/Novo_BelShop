@@ -1063,7 +1063,7 @@ Begin
     While Not DMBelShop.SQLQ_Busca.Eof do
     Begin
       mmemo.Text:=DMBelShop.SQLQ_Busca.FieldByName('BLOB_LOCALIZACOES').AsString;
-
+                                             
       sgCodigo:='';
       For i:=0 to mMemo.Lines.Count-1 do
       Begin
@@ -6814,7 +6814,7 @@ begin
         If bRelSimples Then
         Begin
           insert(Trim(sNomeFuncionario)+';'+Trim(sCPF)+';'+Trim(sDataNascimento)+';'+Trim(sTipoFuncionario)+';',sLinhaNova,1);
-//
+
 //          insert(ZerosEsquerda(sCodigoEmpresa,2),sLinhaNova,1); // sCodigoEmpresa
 //          insert(BrancosDireita(sNomeEmpresa,40),sLinhaNova,3); // sNomeEmpresa
 //          insert(BrancosDireita(sNomeFilial,40),sLinhaNova,43); // sNomeFilial

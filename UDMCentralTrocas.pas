@@ -114,7 +114,6 @@ type
     CDS_RelReposicaoNUM_DOCTO: TIntegerField;
     CDS_RelReposicaoDTA_MOVTO: TDateField;
     CDS_RelReposicaoSEQ: TIntegerField;
-    CDS_RelReposicaoENDERECAMENTO: TStringField;
     CDS_RelReposicaoQTD_A_TRANSF: TFMTBCDField;
     CDS_RelReposicaoQTD_DISPONIVEL: TStringField;
     CDS_RelReposicaoCOD_PRODUTO: TStringField;
@@ -161,6 +160,9 @@ type
     DS_V_ReposDivergencias: TDataSource;
     CDS_V_ReposDivergenciasIND_CORRIGIDO: TStringField;
     CDS_ReposicaoTransfCODBARRA: TStringField;
+    CDS_V_ReposDivergenciasENDERECAMENTO: TStringField;
+    CDS_RelReposicaoENDERECAMENTO: TStringField;
+    CDS_RelReposicaoSALDO_CD: TFMTBCDField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir

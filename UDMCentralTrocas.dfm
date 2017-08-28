@@ -751,26 +751,30 @@ object DMCentralTrocas: TDMCentralTrocas
     Top = 176
   end
   object SDS_RelReposicao: TSQLDataSet
+    Active = True
     CommandText = 
-      'SELECT '#39'Bel_'#39'||lo.cod_loja||'#39' - '#39'||em.razao_social loja,'#13#10#13#10'SUBS' +
-      'TRING(em.num_cnpj FROM 1 FOR 2) || '#39'.'#39' ||SUBSTRING(em.num_cnpj F' +
-      'ROM 3 FOR 3) || '#39'.'#39' ||'#13#10'SUBSTRING(em.num_cnpj FROM 6 FOR 3) || '#39 +
-      '/'#39' ||SUBSTRING(em.num_cnpj FROM 9 FOR 4) || '#39'-'#39' ||'#13#10'SUBSTRING(em' +
-      '.num_cnpj FROM 13 FOR 2) CNPJ,'#13#10#13#10'lo.num_docto, lo.dta_movto, lo' +
-      '.num_seq Seq,'#13#10'cd.end_zona||'#39'.'#39'||cd.end_corredor||'#39'.'#39'||cd.end_pr' +
-      'ateleira||'#39'.'#39'||cd.end_gaveta Enderecamento,'#13#10'lo.qtd_a_transf,'#13#10#39 +
-      '_____'#39' qtd_disponivel,'#13#10'lo.cod_produto, TRIM(pr.codbarra) codbar' +
-      'ra, '#13#10'Trim(pr.referencia) referencia, '#13#10'TRIM(pr.apresentacao) De' +
-      's_produto, '#13#10#39'ODIR'#39' Usuario,'#13#10'lo.obs_docto'#13#10#13#10'FROM ES_ESTOQUES_L' +
-      'OJAS lo, ES_ESTOQUES_CD cd,'#13#10'     PRODUTO pr, EMP_CONEXOES em'#13#10#13 +
-      #10'WHERE lo.cod_produto=pr.codproduto'#13#10'AND   lo.cod_produto=cd.cod' +
-      '_produto'#13#10'AND   lo.dta_movto=cd.dta_movto'#13#10'AND   lo.cod_loja=em.' +
-      'cod_filial'#13#10'--------------------AND   lo.dta_movto=current_date'#13 +
-      #10'AND   lo.ind_transf='#39'SIM'#39#13#10#13#10'AND   lo.num_docto = 2970'#13#10'and    ' +
-      'lo.cod_loja='#39'08'#39#13#10#13#10'--------------------AND   lo.qtd_a_transf>In' +
-      'tToStr(iQtdI)+'#13#10'--------------------AND   lo.qtd_a_transf<IntToS' +
-      'tr(iQtdF)+'#13#10'AND   CAST(TRIM(COALESCE(lo.num_pedido,'#39'0'#39')) AS INTE' +
-      'GER)=0'#13#10#13#10'ORDER BY 6, 11'#13#10
+      'SELECT '#13#10'-------------------- '#39'Bel_'#39'||lo.cod_loja||'#39' - '#39'||em.raz' +
+      'ao_social loja,'#13#10'em.cod_cli_linx||'#39' - '#39'||em.razao_social loja,'#13#10 +
+      #13#10'SUBSTRING(em.num_cnpj FROM 1 FOR 2) || '#39'.'#39' ||SUBSTRING(em.num_' +
+      'cnpj FROM 3 FOR 3) || '#39'.'#39' ||'#13#10'SUBSTRING(em.num_cnpj FROM 6 FOR 3' +
+      ') || '#39'/'#39' ||SUBSTRING(em.num_cnpj FROM 9 FOR 4) || '#39'-'#39' ||'#13#10'SUBSTR' +
+      'ING(em.num_cnpj FROM 13 FOR 2) CNPJ,'#13#10#13#10'lo.num_docto, lo.dta_mov' +
+      'to, lo.num_seq Seq,'#13#10#13#10'-------------------- cd.end_zona||'#39'.'#39'||cd' +
+      '.end_corredor||'#39'.'#39'||cd.end_prateleira||'#39'.'#39'||cd.end_gaveta Endere' +
+      'camento,'#13#10'cd.end_prateleira||'#39'.'#39'||cd.end_gaveta Enderecamento,'#13#10 +
+      #13#10'lo.qtd_a_transf,'#13#10#39'_____'#39' qtd_disponivel,'#13#10'cd.qtd_estoque Sald' +
+      'o_CD,'#13#10'lo.cod_produto, '#13#10'TRIM(pr.codbarra) codbarra, '#13#10'Trim(pr.r' +
+      'eferencia) referencia, '#13#10'TRIM(pr.apresentacao) Des_produto, '#13#10#39'O' +
+      'DIR'#39' Usuario,'#13#10'lo.obs_docto'#13#10#13#10'FROM ES_ESTOQUES_LOJAS lo, ES_EST' +
+      'OQUES_CD cd,'#13#10'     PRODUTO pr, EMP_CONEXOES em'#13#10#13#10'WHERE lo.cod_p' +
+      'roduto=pr.codproduto'#13#10'AND   lo.cod_produto=cd.cod_produto'#13#10'AND  ' +
+      ' lo.dta_movto=cd.dta_movto'#13#10'AND   lo.cod_loja=em.cod_filial'#13#10'---' +
+      '----------------- AND   lo.dta_movto=current_date'#13#10'AND   lo.ind_' +
+      'transf='#39'SIM'#39#13#10#13#10'AND   lo.num_docto = 2970'#13#10'and    lo.cod_loja='#39'0' +
+      '8'#39#13#10#13#10'-------------------- AND   lo.qtd_a_transf>IntToStr(iQtdI)' +
+      '+'#13#10'-------------------- AND   lo.qtd_a_transf<IntToStr(iQtdF)+'#13#10 +
+      'AND   CAST(TRIM(COALESCE(lo.num_pedido,'#39'0'#39')) AS INTEGER)=0'#13#10#13#10'OR' +
+      'DER BY 6, 11'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
@@ -784,6 +788,7 @@ object DMCentralTrocas: TDMCentralTrocas
     Top = 248
   end
   object CDS_RelReposicao: TClientDataSet
+    Active = True
     Aggregates = <>
     AggregatesActive = True
     Params = <>
@@ -809,7 +814,7 @@ object DMCentralTrocas: TDMCentralTrocas
     end
     object CDS_RelReposicaoENDERECAMENTO: TStringField
       FieldName = 'ENDERECAMENTO'
-      Size = 24
+      Size = 8
     end
     object CDS_RelReposicaoQTD_A_TRANSF: TFMTBCDField
       FieldName = 'QTD_A_TRANSF'
@@ -821,6 +826,11 @@ object DMCentralTrocas: TDMCentralTrocas
       Required = True
       FixedChar = True
       Size = 5
+    end
+    object CDS_RelReposicaoSALDO_CD: TFMTBCDField
+      FieldName = 'SALDO_CD'
+      Precision = 15
+      Size = 2
     end
     object CDS_RelReposicaoCOD_PRODUTO: TStringField
       FieldName = 'COD_PRODUTO'
@@ -999,6 +1009,12 @@ object DMCentralTrocas: TDMCentralTrocas
       DisplayLabel = 'Corrigido'
       FieldName = 'IND_CORRIGIDO'
       Size = 3
+    end
+    object CDS_V_ReposDivergenciasENDERECAMENTO: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Endere'#231'amento'
+      FieldName = 'ENDERECAMENTO'
+      Size = 24
     end
     object CDS_V_ReposDivergenciasNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'

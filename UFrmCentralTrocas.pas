@@ -611,7 +611,9 @@ Begin
 
   MySql:=' SELECT lo.cod_produto, pr.apresentacao Nome,'+
          ' lo.qtd_a_transf, lo.qtd_checkout,'+
-         QuotedStr('NAO')+' ind_corrigido, lo.num_seq'+
+         QuotedStr('NAO')+' ind_corrigido,'+
+         ' cd.end_zona||''.''||cd.end_corredor||''.''||cd.end_prateleira||''.''||cd.end_gaveta Enderecamento,'+
+         ' lo.num_seq'+
 
          ' FROM ES_ESTOQUES_LOJAS lo, ES_ESTOQUES_CD cd, PRODUTO pr'+
 
@@ -5309,16 +5311,25 @@ begin
   Refresh;
 
   // Busca Docto ===============================================================
-  MySql:=' SELECT ''Bel_''||lo.cod_loja||'' - ''||em.razao_social loja,'+
+  MySql:=' SELECT '+
+
+         // OdirApagar - 24/08/2017
+         // ''Bel_''||lo.cod_loja||'' - ''||em.razao_social loja,'+
+         ' em.cod_cli_linx||'' - ''||em.razao_social loja,'+
 
          ' SUBSTRING(em.num_cnpj FROM 1 FOR 2) || ''.'' ||SUBSTRING(em.num_cnpj FROM 3 FOR 3) || ''.'' ||'+
          ' SUBSTRING(em.num_cnpj FROM 6 FOR 3) || ''/'' ||SUBSTRING(em.num_cnpj FROM 9 FOR 4) || ''-'' ||'+
          ' SUBSTRING(em.num_cnpj FROM 13 FOR 2) CNPJ,'+
 
          ' lo.num_docto, lo.dta_movto, lo.num_seq Seq,'+
-         ' cd.end_zona||''.''||cd.end_corredor||''.''||cd.end_prateleira||''.''||cd.end_gaveta Enderecamento,'+
+
+         // OdirApagar - 24/08/2017
+         // ' cd.end_zona||''.''||cd.end_corredor||''.''||cd.end_prateleira||''.''||cd.end_gaveta Enderecamento,'+
+         ' cd.end_prateleira||''.''||cd.end_gaveta Enderecamento,'+
+
          ' lo.qtd_a_transf,'+
          ' ''_____'' qtd_disponivel,'+
+         ' cd.qtd_estoque Saldo_CD,'+
          ' lo.cod_produto, TRIM(pr.codbarra) codbarra, Trim(pr.referencia) referencia, TRIM(pr.apresentacao) Des_produto, '+
          QuotedStr(Des_Usuario)+' Usuario,'+
          ' lo.obs_docto'+
@@ -5482,10 +5493,17 @@ begin
     Exit;
   End;
 
-  If msg('Deseja Realmente Alterar Quantidades'+cr+cr+
-         'do Docto Nº '+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
-         ' da Loja Bel_'+DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString+' ??', 'C')=2 Then
+  sgMensagem:=sgCorredores;
+  If Trim(sgMensagem)='' Then
+   sgMensagem:='Todos';
+  If Application.MessageBox(PChar('Deseja Realmente Alterar Quantidades De Reposição ??'+cr+cr+
+                                  'Docto Nº:  '+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+cr+
+                                  'Loja:  '+DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString+' - '+
+                                            DMCentralTrocas.CDS_ReposicaoDocsRAZAO_SOCIAL.AsString+cr+
+                                  'Prioridade(s):  '+sgTipoPrioridade+cr+
+                                  'Corredor(es):  '+sgMensagem), 'ATENÇÃO !!', 292)=IdNo Then
    Exit;
+  sgMensagem:='';
 
   // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
   FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
@@ -5739,12 +5757,17 @@ begin
     Exit;
   End;
 
-  If msg('Deseja Realmente Executar o CheckOut do Docto Nº '+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
-         ' da Loja'+cr+cr+DMCentralTrocas.CDS_ReposicaoDocsRAZAO_SOCIAL.AsString+' ??', 'C')=2 Then
+  sgMensagem:=sgCorredores;
+  If Trim(sgMensagem)='' Then
+   sgMensagem:='Todos';
+  If Application.MessageBox(PChar('Deseja Realmente Executar o CheckOut do'+cr+cr+
+                                  'Docto Nº:  '+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+cr+
+                                  'Loja:  '+DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString+' - '+
+                                            DMCentralTrocas.CDS_ReposicaoDocsRAZAO_SOCIAL.AsString+cr+
+                                  'Prioridade(s):  '+sgTipoPrioridade+cr+
+                                  'Corredor(es):  '+sgMensagem), 'ATENÇÃO !!', 292)=IdNo Then
    Exit;
-
-  If msg('O(s) CORREDOR(ES) Selecionado(s) Esta(ão) CORRETO(S) ??', 'C')=2 Then
-   Exit;
+  sgMensagem:='';
 
   // Retorna IND_LEITORA=FALSE Quando Entra a 1ª Vez ===========================
   DMCentralTrocas.CDS_ReposicaoTransf.First;
@@ -6606,7 +6629,7 @@ begin
 
   If (Not DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty) and (sgCorredoresFilter<>'') and (Not bgTodosCorredores) Then
   Begin
-    DMCentralTrocas.CDS_ReposicaoTransf.Filter:=sgCorredoresFilter;
+    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='('+sgCorredoresFilter+')';
 
     If Trim(sgPrioridadeFilter)<>'' Then
      DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND ('+sgPrioridadeFilter+')';
@@ -6616,7 +6639,7 @@ begin
 
   If (Trim(sgPrioridadeFilter)<>'') And (Not DMCentralTrocas.CDS_ReposicaoTransf.Filtered) Then
   Begin
-    DMCentralTrocas.CDS_ReposicaoTransf.Filter:=sgPrioridadeFilter;
+    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='('+sgPrioridadeFilter+')';
 
     DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
   End; // If Trim(sgPrioridadeFilter)<>'' Then
@@ -7107,13 +7130,25 @@ begin
     Exit;
   End;
 
-  sgMensagem:=DMCentralTrocas.CDS_ReposicaoDocsRAZAO_SOCIAL.AsString+cr+
-  'Deseja Realmente Exportar o Docto Nº '+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString;
-  If (sgCorredores<>'') and (Not bgTodosCorredores) Then
-   sgMensagem:=sgMensagem+cr+'Corredor(es): '+sgCorredores;
-
-  If msg(sgMensagem,'C')=2 Then
+  // OdirApagar - 25/08/2017
+//  sgMensagem:=DMCentralTrocas.CDS_ReposicaoDocsRAZAO_SOCIAL.AsString+cr+
+//  'Deseja Realmente Exportar o Docto Nº '+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString;
+//  If (sgCorredores<>'') and (Not bgTodosCorredores) Then
+//   sgMensagem:=sgMensagem+cr+'Corredor(es): '+sgCorredores;
+//
+//  If msg(sgMensagem,'C')=2 Then
+//   Exit;
+  sgMensagem:=sgCorredores;
+  If Trim(sgMensagem)='' Then
+   sgMensagem:='Todos';
+  If Application.MessageBox(PChar('Deseja Realmente Exportar para o LINX ??'+cr+cr+
+                                  'Docto Nº:  '+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+cr+
+                                  'Loja:  '+DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString+' - '+
+                                            DMCentralTrocas.CDS_ReposicaoDocsRAZAO_SOCIAL.AsString+cr+
+                                  'Prioridade(s):  '+sgTipoPrioridade+cr+
+                                  'Corredor(es):  '+sgMensagem), 'ATENÇÃO !!', 292)=IdNo Then
    Exit;
+  sgMensagem:='';
 
   // Verifica se Existe Arquivo INI com Pastas Possiveis na REDE ===============
   OdirPanApres.Caption:='AGUARDE !! Localizando Pasta Destino para Gravação do Arquivo Texto_LINX Com Reposições...';
@@ -7279,7 +7314,7 @@ begin
 
   If (Not DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty) and (sgCorredoresFilter<>'') and (Not bgTodosCorredores) Then
   Begin
-    DMCentralTrocas.CDS_ReposicaoTransf.Filter:=sgCorredoresFilter;
+    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='('+sgCorredoresFilter+')';
 
     If Trim(sgPrioridadeFilter)<>'' Then
      DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND ('+sgPrioridadeFilter+')';
@@ -7289,7 +7324,7 @@ begin
 
   If (Trim(sgPrioridadeFilter)<>'') And (Not DMCentralTrocas.CDS_ReposicaoTransf.Filtered) Then
   Begin
-    DMCentralTrocas.CDS_ReposicaoTransf.Filter:=sgPrioridadeFilter;
+    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='('+sgPrioridadeFilter+')';
 
     DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
   End; // If Trim(sgPrioridadeFilter)<>'' Then
