@@ -405,7 +405,7 @@ object FrmSalao: TFrmSalao
     Top = 0
     Width = 977
     Height = 580
-    ActivePage = Ts_ProfMovtosRH
+    ActivePage = Ts_ProfPagtos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -8363,7 +8363,7 @@ object FrmSalao: TFrmSalao
         Top = 0
         Width = 969
         Height = 552
-        ActivePage = Ts_PagtoPlanilha
+        ActivePage = Ts_PagtoDebCred
         Align = alClient
         TabOrder = 0
         OnChange = PC_PagtoPlanilhaChange
@@ -9294,6 +9294,7 @@ object FrmSalao: TFrmSalao
                 Expanded = False
                 FieldName = 'VLR_DESCONTO'
                 Title.Alignment = taRightJustify
+                Width = 64
                 Visible = True
               end
               item

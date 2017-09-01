@@ -1,5 +1,5 @@
 object FrmPedidoVenda: TFrmPedidoVenda
-  Left = 219
+  Left = 227
   Top = 113
   Width = 1020
   Height = 611

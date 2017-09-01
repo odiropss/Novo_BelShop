@@ -5,7 +5,7 @@ object FrmArtesanalis: TFrmArtesanalis
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = '  L'#237'xisse - F'#225'brica de Lixas e Artefatos de Madeira '
-  ClientHeight = 542
+  ClientHeight = 552
   ClientWidth = 951
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -1099,15 +1099,15 @@ object FrmArtesanalis: TFrmArtesanalis
     Left = 0
     Top = 0
     Width = 951
-    Height = 542
+    Height = 552
     Align = alClient
     TabOrder = 0
     DesignSize = (
       951
-      542)
+      552)
     object Image1: TImage
       Left = 219
-      Top = 184
+      Top = 189
       Width = 513
       Height = 138
       Anchors = []
@@ -1894,7 +1894,7 @@ object FrmArtesanalis: TFrmArtesanalis
     end
     object SBt_Sair: TSpeedButton
       Left = 794
-      Top = 501
+      Top = 511
       Width = 156
       Height = 41
       Anchors = [akRight, akBottom]

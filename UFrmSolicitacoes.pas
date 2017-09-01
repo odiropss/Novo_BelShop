@@ -6814,23 +6814,6 @@ begin
         If bRelSimples Then
         Begin
           insert(Trim(sNomeFuncionario)+';'+Trim(sCPF)+';'+Trim(sDataNascimento)+';'+Trim(sTipoFuncionario)+';',sLinhaNova,1);
-
-//          insert(ZerosEsquerda(sCodigoEmpresa,2),sLinhaNova,1); // sCodigoEmpresa
-//          insert(BrancosDireita(sNomeEmpresa,40),sLinhaNova,3); // sNomeEmpresa
-//          insert(BrancosDireita(sNomeFilial,40),sLinhaNova,43); // sNomeFilial
-//          insert(ZerosEsquerda(sCodigoFilial,3),sLinhaNova,83); // sCodigoFilial
-//          insert(ZerosEsquerda(sMatriculaFuncionario,10),sLinhaNova,86); // sMatriculaFuncionario
-//          insert(BrancosDireita(sDataAdmissao,10),sLinhaNova,136); // sDataAdmissao
-//          insert(BrancosDireita(sDataDemissao,10),sLinhaNova,146); // sDataDemissao
-//          insert(BrancosDireita(sSexo,1),sLinhaNova,156); // sSexo
-//          insert(ZerosEsquerda(sPIS,11),sLinhaNova,157); // sPIS
-//          insert(BrancosDireita(sEstadoCivil,15),sLinhaNova,214); // sEstadoCivil
-//          insert(BrancosDireita(sCargo,40),sLinhaNova,229); // sCargo
-//          insert(BrancosDireita('N',1),sLinhaNova,269); // Filhos
-//          insert('00/00/0000',sLinhaNova,270); // Data de Nascimento do Filho
-//          insert(' ',sLinhaNova,280); // Sexo do Filho
-//          insert(BrancosDireita(' ',10),sLinhaNova,281); // Código da Área
-//          insert(BrancosDireita(' ',50),sLinhaNova,291); // Descrição da Área
         End; // If Not bRelSimples Then
 
         If bGrava Then

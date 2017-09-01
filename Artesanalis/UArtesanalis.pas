@@ -113,8 +113,8 @@ var
 implementation
 
 uses UDMArtesanalis, DK_Procs1, SysConst, UFrmMateriaPrimaCadastro,
-     UFrmProdutoCadastro, UFrmMovimentos, UFrmPessoaCadastro,
-  UFrmPedidoVenda, UFrmRelatorios;
+     UFrmProdutoCadastro, UFrmMovimentos, UFrmPessoaCadastro, UFrmPedidoVenda,
+  UFrmRelatorios;
 
 {$R *.dfm}
 
@@ -284,10 +284,6 @@ end;
 
 procedure TFrmArtesanalis.MenuRELATORIOSClick(Sender: TObject);
 begin
-
-  msg('Opção em Desenvolvimento !!','A');
-  Exit;
-
 
   FrmRelatorios:=TFrmRelatorios.Create(Self);
   FrmRelatorios.ShowModal;

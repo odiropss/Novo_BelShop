@@ -1,8 +1,9 @@
 object FrmRelatorios: TFrmRelatorios
-  Left = 226
+  Left = 227
   Top = 111
   Width = 967
-  Height = 609
+  Height = 606
+  Align = alClient
   AutoSize = True
   BorderIcons = [biSystemMenu]
   Caption = ' RELAT'#211'RIOS '
@@ -13,6 +14,7 @@ object FrmRelatorios: TFrmRelatorios
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   KeyPreview = True
+  Menu = MainMenu1
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
@@ -22,10 +24,10 @@ object FrmRelatorios: TFrmRelatorios
   PixelsPerInch = 96
   TextHeight = 13
   object PC_Relatorios: TPageControl
-    Left = 160
+    Left = 0
     Top = 0
-    Width = 791
-    Height = 533
+    Width = 951
+    Height = 510
     ActivePage = Ts_PedidosVendas
     Align = alClient
     TabOrder = 0
@@ -34,15 +36,15 @@ object FrmRelatorios: TFrmRelatorios
       Tag = 9999
       Caption = ' Materia-Prima '
       Highlighted = True
-      object Label1: TLabel
-        Left = 96
-        Top = 152
-        Width = 564
-        Height = 96
-        Caption = 'Relat'#243'rios de Mat'#233'ria-Primas '#13#10'em Desenvolvimento'
+      object Label6: TLabel
+        Left = 157
+        Top = 56
+        Width = 469
+        Height = 24
+        Caption = 'Relat'#243'rios de Mat'#233'ria-Primas em Desenvolvimento'
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clRed
-        Font.Height = -40
+        Font.Color = clWindowText
+        Font.Height = -21
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
@@ -53,15 +55,15 @@ object FrmRelatorios: TFrmRelatorios
       Caption = ' Produtos '
       Highlighted = True
       ImageIndex = 1
-      object Label2: TLabel
-        Left = 136
-        Top = 152
-        Width = 437
-        Height = 96
-        Caption = 'Relat'#243'rios de Produtos'#13#10'em Desenvolvimento'
+      object Label1: TLabel
+        Left = 185
+        Top = 56
+        Width = 414
+        Height = 24
+        Caption = 'Relat'#243'rios de Produtos em Desenvolvimento'
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clRed
-        Font.Height = -40
+        Font.Color = clWindowText
+        Font.Height = -21
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
@@ -73,14 +75,14 @@ object FrmRelatorios: TFrmRelatorios
       Highlighted = True
       ImageIndex = 2
       object Label3: TLabel
-        Left = 72
-        Top = 152
-        Width = 651
-        Height = 96
-        Caption = 'Relat'#243'rios de Pessoas/Entidades '#13#10'em Desenvolvimento'
+        Left = 138
+        Top = 56
+        Width = 508
+        Height = 24
+        Caption = 'Relat'#243'rios de Pessoas/Entidades em Desenvolvimento'
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clRed
-        Font.Height = -40
+        Font.Color = clWindowText
+        Font.Height = -21
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
@@ -92,14 +94,14 @@ object FrmRelatorios: TFrmRelatorios
       Highlighted = True
       ImageIndex = 3
       object Label4: TLabel
-        Left = 128
-        Top = 152
-        Width = 474
-        Height = 96
-        Caption = 'Relat'#243'rios de Despesas '#13#10'em Desenvolvimento'
+        Left = 182
+        Top = 56
+        Width = 422
+        Height = 24
+        Caption = 'Relat'#243'rios de Despesas em Desenvolvimento'
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clRed
-        Font.Height = -40
+        Font.Color = clWindowText
+        Font.Height = -21
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
@@ -111,14 +113,14 @@ object FrmRelatorios: TFrmRelatorios
       Highlighted = True
       ImageIndex = 4
       object Label5: TLabel
-        Left = 40
-        Top = 152
-        Width = 682
-        Height = 96
-        Caption = 'Relat'#243'rios de Lan'#231'amento de Notas'#13#10'em Desenvolvimento'
+        Left = 126
+        Top = 56
+        Width = 534
+        Height = 24
+        Caption = 'Relat'#243'rios de Lan'#231'amento de Notas em Desenvolvimento'
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clRed
-        Font.Height = -40
+        Font.Color = clWindowText
+        Font.Height = -21
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
@@ -128,20 +130,20 @@ object FrmRelatorios: TFrmRelatorios
       Caption = ' Pedidos de Vendas'
       Highlighted = True
       ImageIndex = 5
-      object Panel1: TPanel
+      object Pan_PVPedidos: TPanel
         Left = 0
         Top = 0
-        Width = 783
+        Width = 943
         Height = 57
         Align = alTop
         ParentColor = True
         TabOrder = 0
-        object Gb_Pessoa: TGroupBox
+        object Gb_PVCliente: TGroupBox
           Left = 1
           Top = 1
-          Width = 538
+          Width = 514
           Height = 55
-          Align = alClient
+          Align = alLeft
           Caption = ' Cliente '
           Ctl3D = False
           Font.Charset = DEFAULT_CHARSET
@@ -152,12 +154,16 @@ object FrmRelatorios: TFrmRelatorios
           ParentCtl3D = False
           ParentFont = False
           TabOrder = 0
-          object EdtDesPessoa: TEdit
+          DesignSize = (
+            514
+            55)
+          object Edt_PVDesCliente: TEdit
             Left = 98
             Top = 22
-            Width = 434
+            Width = 405
             Height = 19
             TabStop = False
+            Anchors = [akLeft, akTop, akRight]
             CharCase = ecUpperCase
             Color = clMoneyGreen
             Font.Charset = DEFAULT_CHARSET
@@ -170,7 +176,7 @@ object FrmRelatorios: TFrmRelatorios
             ReadOnly = True
             TabOrder = 1
           end
-          object EdtCodPessoa: TCurrencyEdit
+          object Edt_PVCodCliente: TCurrencyEdit
             Left = 9
             Top = 22
             Width = 53
@@ -185,8 +191,11 @@ object FrmRelatorios: TFrmRelatorios
             Font.Style = []
             ParentFont = False
             TabOrder = 0
+            OnChange = Edt_PVCodClienteChange
+            OnExit = Edt_PVCodClienteExit
+            OnKeyDown = Edt_PVCodClienteKeyDown
           end
-          object Bt_BuscaPessoa: TJvXPButton
+          object Bt_PVBuscaCliente: TJvXPButton
             Tag = 92
             Left = 68
             Top = 19
@@ -254,14 +263,15 @@ object FrmRelatorios: TFrmRelatorios
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
             ParentFont = False
+            OnClick = Bt_PVBuscaClienteClick
           end
         end
-        object Gb_Periodo: TGroupBox
-          Left = 539
+        object Gb_PVPeriodo: TGroupBox
+          Left = 684
           Top = 1
-          Width = 243
+          Width = 256
           Height = 55
-          Align = alRight
+          Align = alLeft
           Caption = ' Per'#237'odo de Apropria'#231#227'o '
           Ctl3D = False
           Font.Charset = DEFAULT_CHARSET
@@ -271,18 +281,19 @@ object FrmRelatorios: TFrmRelatorios
           Font.Style = [fsBold]
           ParentCtl3D = False
           ParentFont = False
-          TabOrder = 1
+          TabOrder = 2
           object Label83: TLabel
-            Left = 117
+            Left = 124
             Top = 26
             Width = 8
             Height = 13
             Caption = 'a'
           end
-          object DtaEdtInicio: TcxDateEdit
-            Left = 9
+          object DtaEdt_PVInicio: TcxDateEdit
+            Left = 14
             Top = 20
             ParentFont = False
+            Properties.OnChange = Edt_PVCodClienteChange
             Style.Font.Charset = DEFAULT_CHARSET
             Style.Font.Color = clWindowText
             Style.Font.Height = -13
@@ -294,10 +305,11 @@ object FrmRelatorios: TFrmRelatorios
             TabOrder = 0
             Width = 106
           end
-          object DtaEdtFim: TcxDateEdit
-            Left = 129
+          object DtaEdt_PVFim: TcxDateEdit
+            Left = 136
             Top = 20
             ParentFont = False
+            Properties.OnChange = Edt_PVCodClienteChange
             Style.Font.Charset = DEFAULT_CHARSET
             Style.Font.Color = clWindowText
             Style.Font.Height = -13
@@ -310,20 +322,86 @@ object FrmRelatorios: TFrmRelatorios
             Width = 106
           end
         end
+        object GroupBox1: TGroupBox
+          Left = 515
+          Top = 1
+          Width = 169
+          Height = 55
+          Align = alLeft
+          Caption = ' Apresenta'#231#227'o '
+          Ctl3D = False
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentCtl3D = False
+          ParentFont = False
+          TabOrder = 1
+          object Rb_PVSintetico: TJvRadioButton
+            Left = 92
+            Top = 22
+            Width = 62
+            Height = 17
+            Alignment = taLeftJustify
+            Caption = 'Sint'#233'tico'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 0
+            OnClick = Rb_PVAnaliticoClick
+            OnKeyUp = Rb_PVAnaliticoKeyUp
+            HotTrackFont.Charset = DEFAULT_CHARSET
+            HotTrackFont.Color = clWindowText
+            HotTrackFont.Height = -11
+            HotTrackFont.Name = 'MS Sans Serif'
+            HotTrackFont.Style = []
+            LinkedControls = <>
+          end
+          object Rb_PVAnalitico: TJvRadioButton
+            Left = 16
+            Top = 22
+            Width = 73
+            Height = 17
+            Alignment = taLeftJustify
+            Caption = 'Anal'#237'tico'
+            Checked = True
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            TabOrder = 1
+            TabStop = True
+            OnClick = Rb_PVAnaliticoClick
+            OnKeyUp = Rb_PVAnaliticoKeyUp
+            HotTrackFont.Charset = DEFAULT_CHARSET
+            HotTrackFont.Color = clWindowText
+            HotTrackFont.Height = -11
+            HotTrackFont.Name = 'MS Sans Serif'
+            HotTrackFont.Style = []
+            LinkedControls = <>
+          end
+        end
       end
-      object Dbg_Pedidos: TDBGrid
+      object Dbg_PVPedidos: TDBGrid
         Left = 0
         Top = 57
-        Width = 783
-        Height = 448
+        Width = 943
+        Height = 425
         Align = alClient
+        DataSource = DMArtesanalis.DS_V_PVPedidos
         FixedColor = 15000804
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        Options = [dgTitles, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
         ParentFont = False
         TabOrder = 1
         TitleFont.Charset = DEFAULT_CHARSET
@@ -331,12 +409,105 @@ object FrmRelatorios: TFrmRelatorios
         TitleFont.Height = -11
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
+        OnColEnter = Dbg_PVPedidosColEnter
+        OnDrawColumnCell = Dbg_PVPedidosDrawColumnCell
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'COD_CLIENTE'
+            Title.Alignment = taRightJustify
+            Width = 60
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'CLIENTE'
+            Width = 240
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DTA_EMISSAO'
+            Title.Alignment = taCenter
+            Width = 65
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'NUM_PEDIDO'
+            Title.Alignment = taRightJustify
+            Width = 50
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_PRODUTO'
+            Title.Alignment = taRightJustify
+            Width = 65
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_UNITARIO'
+            Title.Alignment = taRightJustify
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_PRODUTOS'
+            Title.Alignment = taRightJustify
+            Width = 75
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'PER_DESCONTO'
+            Title.Alignment = taRightJustify
+            Width = 50
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_DESCONTO'
+            Title.Alignment = taRightJustify
+            Width = 75
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_TOTAL'
+            Title.Alignment = taRightJustify
+            Width = 85
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'PER_CONCEDIDO'
+            Title.Alignment = taRightJustify
+            Width = 50
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_CONCEDIDO'
+            Title.Alignment = taRightJustify
+            Width = 85
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_PAGAMENTO'
+            Title.Alignment = taRightJustify
+            Width = 85
+            Visible = True
+          end>
       end
     end
   end
   object Pan_Baixo: TPanel
     Left = 0
-    Top = 533
+    Top = 510
     Width = 951
     Height = 38
     Align = alBottom
@@ -349,24 +520,6 @@ object FrmRelatorios: TFrmRelatorios
     ParentColor = True
     ParentFont = False
     TabOrder = 1
-    object Pan_Opcoes: TPanel
-      Left = 2
-      Top = 2
-      Width = 157
-      Height = 34
-      Align = alLeft
-      BevelInner = bvLowered
-      BevelWidth = 2
-      Caption = 'Op'#231#245'es'
-      Color = clSilver
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 0
-    end
     object Bt_Retornar: TJvXPButton
       Tag = 90
       Left = 847
@@ -374,7 +527,7 @@ object FrmRelatorios: TFrmRelatorios
       Width = 102
       Height = 34
       Caption = 'Voltar'
-      TabOrder = 1
+      TabOrder = 2
       TabStop = False
       Glyph.Data = {
         07544269746D6170F6000000424DF60000000000000076000000280000001000
@@ -399,12 +552,12 @@ object FrmRelatorios: TFrmRelatorios
     end
     object Bt_Salvar: TJvXPButton
       Tag = 4
-      Left = 300
+      Left = 143
       Top = 2
       Width = 146
       Height = 34
       Caption = 'Salvar em Mem'#243'ria'
-      TabOrder = 2
+      TabOrder = 1
       Glyph.Data = {
         0A544A504547496D6167655B040000FFD8FFE000104A46494600010101006000
         600000FFDB004300020101020101020202020202020203050303030303060404
@@ -450,15 +603,16 @@ object FrmRelatorios: TFrmRelatorios
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
       ParentFont = False
+      OnClick = Bt_SalvarClick
     end
     object Bt_Buscar: TJvXPButton
       Tag = 4
-      Left = 159
+      Left = 2
       Top = 2
       Width = 141
       Height = 34
       Caption = 'Busca Informa'#231#227'o'
-      TabOrder = 3
+      TabOrder = 0
       Glyph.Data = {
         07544269746D617066010000424D660100000000000076000000280000001400
         0000140000000100040000000000F00000000000000000000000100000001000
@@ -481,198 +635,193 @@ object FrmRelatorios: TFrmRelatorios
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
       ParentFont = False
-    end
-    object Bt_Imprimir: TJvXPButton
-      Tag = 4
-      Left = 446
-      Top = 2
-      Width = 146
-      Height = 34
-      Caption = 'Imprimir '
-      TabOrder = 4
-      Glyph.Data = {
-        07544269746D617086050000424D860500000000000036000000280000001600
-        000014000000010018000000000050050000C40E0000C40E0000000000000000
-        0000BFBFBFBFBFBFBFBFBFBFBFBF000000000000000000000000000000000000
-        000000000000000000000000000000000000000000000000BFBFBFBFBFBFBFBF
-        BFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBF0000000000000000000000000000
-        00000000000000000000000000000000000000000000000000000000BFBFBFBF
-        BFBFBFBFBFBFBFBF0000BFBFBFBFBFBF000000000000BFBFBFBFBFBFBFBFBFBF
-        BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000BFBFBF
-        000000BFBFBFBFBFBFBFBFBF0000BFBFBF000000000000000000000000000000
-        0000000000000000000000000000000000000000000000000000000000000000
-        00000000BFBFBF000000000000BFBFBF0000BFBFBF0000000000000000000000
-        0000000000000000000000000000000000000000000000000000000000000000
-        0000000000000000BFBFBF000000000000BFBFBF0000BFBFBF000000BFBFBFBF
-        BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00FFFF00FFFF00FFFF00FFFF
-        BFBFBFBFBFBFBFBFBF000000000000000000000000BFBFBF0000BFBFBF000000
-        BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F7F7F7F7F
-        7F7F7F7FBFBFBFBFBFBFBFBFBF000000BFBFBF000000000000BFBFBF0000BFBF
-        BF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F
-        7F7F7F7F7F7F7F7FBFBFBFBFBFBFBFBFBF000000BFBFBF000000000000BFBFBF
-        0000BFBFBF000000000000000000000000000000000000000000000000000000
-        000000000000000000000000000000000000000000000000BFBFBFBFBFBFBFBF
-        BF0000000000BFBFBF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-        BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000BFBFBF000000BF
-        BFBFBFBFBF0000000000BFBFBFBFBFBF00000000000000000000000000000000
-        0000000000000000000000000000000000000000000000000000BFBFBF000000
-        BFBFBF0000000000000000000000BFBFBFBFBFBFBFBFBFBFBFBF000000FFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000
-        00BFBFBF000000BFBFBFBFBFBF0000000000BFBFBFBFBFBFBFBFBFBFBFBF0000
-        00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFF000000BFBFBF000000BFBFBFBFBFBF0000000000BFBFBFBFBFBFBFBFBFBF
-        BFBFBFBFBF000000FFFFFF000000000000000000000000000000000000000000
-        FFFFFFFFFFFF000000000000000000000000000000BFBFBF0000BFBFBFBFBFBF
-        BFBFBFBFBFBFBFBFBF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBF0000BFBF
-        BFBFBFBFBFBFBFBFBFBFBFBFBF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBF
-        0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000FFFFFFFFFFFF000000
-        000000000000000000000000000000000000FFFFFF000000BFBFBFBFBFBFBFBF
-        BFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000FFFFFFFFFF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BF
-        BFBFBFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000FF
-        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        000000BFBFBFBFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-        BFBFBF0000000000000000000000000000000000000000000000000000000000
-        00000000000000BFBFBFBFBFBFBFBFBF0000}
-      ShowFocusRect = True
-      Spacing = 10
-      Align = alLeft
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
+      OnClick = Bt_BuscarClick
     end
   end
-  object Pan_OutLook: TPanel
-    Left = 0
-    Top = 0
-    Width = 160
-    Height = 533
-    Align = alLeft
-    BevelInner = bvRaised
-    BevelOuter = bvLowered
-    BorderStyle = bsSingle
-    Color = 16776176
-    Ctl3D = False
-    ParentCtl3D = False
-    TabOrder = 2
-    object OutLook: TJvOutlookBar
-      Left = 2
-      Top = 2
-      Width = 154
-      Height = 159
-      Align = alTop
-      Pages = <
-        item
-          Buttons = <
-            item
-              Caption = '&Mat'#233'rias-Primas'
-              ImageIndex = 0
-              Tag = 0
-              AutoToggle = False
-              OnClick = OutLookPages0Buttons0Click
-            end
-            item
-              Caption = '&Produtos'
-              ImageIndex = 0
-              Tag = 0
-              AutoToggle = False
-              OnClick = OutLookPages0Buttons0Click
-            end
-            item
-              Caption = '&Pessoas/Entidades'
-              ImageIndex = 0
-              Tag = 0
-              AutoToggle = False
-              OnClick = OutLookPages0Buttons0Click
-            end
-            item
-              Caption = '&Despesas'
-              ImageIndex = 0
-              Tag = 0
-              AutoToggle = False
-              OnClick = OutLookPages0Buttons0Click
-            end>
-          ButtonSize = olbsLarge
-          Caption = '&CADASTROS'
-          Color = 16770250
-          DownFont.Charset = DEFAULT_CHARSET
-          DownFont.Color = clWindowText
-          DownFont.Height = -11
-          DownFont.Name = 'MS Sans Serif'
-          DownFont.Style = []
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = 4194368
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentColor = True
-          TopButtonIndex = 0
-        end
-        item
-          Buttons = <
-            item
-              Caption = '&Lan'#231'amento de Notas'
-              ImageIndex = 0
-              Tag = 0
-              AutoToggle = False
-              OnClick = OutLookPages0Buttons0Click
-            end>
-          ButtonSize = olbsLarge
-          Caption = '&ENTRADAS/SA'#205'DAS'
-          Color = 16770250
-          DownFont.Charset = DEFAULT_CHARSET
-          DownFont.Color = clWindowText
-          DownFont.Height = -11
-          DownFont.Name = 'MS Sans Serif'
-          DownFont.Style = []
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = 4194368
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentColor = True
-          TopButtonIndex = 0
-        end
-        item
-          Buttons = <
-            item
-              Caption = '&Pedidos de Vendas'
-              ImageIndex = 0
-              Tag = 0
-              AutoToggle = False
-              OnClick = OutLookPages0Buttons0Click
-            end>
-          ButtonSize = olbsLarge
-          Caption = '&VENDAS/PEDIDOS'
-          Color = 16770250
-          DownFont.Charset = DEFAULT_CHARSET
-          DownFont.Color = clWindowText
-          DownFont.Height = -11
-          DownFont.Name = 'MS Sans Serif'
-          DownFont.Style = []
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = 4194368
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentColor = True
-          TopButtonIndex = 0
-        end>
-      OnButtonClick = OutLookButtonClick
-      Color = 16770250
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clBlue
-      Font.Height = -11
-      Font.Name = 'Arial Black'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 0
-      OnClick = OutLookClick
+  object MainMenu1: TMainMenu
+    Left = 632
+    Top = 65520
+    object MenuCADASTROS: TMenuItem
+      Caption = 'CADASTROS'
+      object SubMenuCadastroMateriasPrimas: TMenuItem
+        Bitmap.Data = {
+          EE000000424DEE000000000000007600000028000000100000000F0000000100
+          04000000000078000000130B0000130B00001000000000000000000000000000
+          8000008000000080800080000000800080008080000080808000C0C0C0000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00888888888888
+          88888888888888888888888888800000000088088880FFFFFFF088008880F00F
+          00F000000880FFFFFFF000000080F00F00F000000880FFFFFFF088008884C4C4
+          C4C48808888CF4CF4CFC88888884C4C4C44C8888888888888888888888888888
+          888888888888888888888888888888888888}
+        Caption = 'Mat'#233'rias-Primas'
+        OnClick = SubMenuCadastroMateriasPrimasClick
+      end
+      object SubMenuCadastroProdutos: TMenuItem
+        Bitmap.Data = {
+          EE000000424DEE000000000000007600000028000000100000000F0000000100
+          04000000000078000000130B0000130B00001000000000000000000000000000
+          8000008000000080800080000000800080008080000080808000C0C0C0000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00888888800000
+          000088888880FFFFFFF088888880F00F00F088888880FFFFFFF088888880F00F
+          00F088888880FFFFFFF088888884444444448800008444444444880BB0888888
+          8888000BB000888888880BBBBBB0888888880BBBBBB088888888000BB0008888
+          8888880BB088888888888800008888888888}
+        Caption = 'Produtos'
+        OnClick = SubMenuCadastroMateriasPrimasClick
+      end
+      object N3: TMenuItem
+        Caption = '-'
+      end
+      object SubMenuCadastroPessoasEntidades: TMenuItem
+        Bitmap.Data = {
+          B6060000424DB6060000000000003600000028000000150000001A0000000100
+          18000000000080060000C40E0000C40E00000000000000000000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFF9C6300FF00000000000000000000000000000000000000
+          00000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFF
+          FF0000000000000000000000000000000000000000FF00009C63009C63009C63
+          00FF0000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FF0000000000
+          000000000000000000FF00009C6300FF0000FF0000FF0000FF0000FF0000FF00
+          00000000000000000000003131000000FFFFFFFFFFFFFFFFFF00000000000000
+          000000FF00009C6300FF0000FF0000FF0000000000000000000000FF00000000
+          00000000000000000000000000003131FFFFFFFFFFFFFFFFFF00000000FF0000
+          9C6300FF0000FF0000FF000000000000000063CEFF8484840000000000000000
+          0000000000000000000000000000848400639C000000FFFFFF00FFFFFF000000
+          FF0000FF0000000000000000C6C6C663CEFF94ADAD319CCE8484840000000000
+          840000840000840063FF000084000000000000000000FFFFFF00FFFFFF000000
+          00000000000063CEFFC6C6C663CEFF94ADAD319CCE8484840000000000840000
+          84319CCE8484840000840063FF000000FFFFFFFFFFFFFFFFFF00FFFFFFFFFFFF
+          000000000000C6C6C663CEFFC6C6C6319CCE848484319CCE000000848484319C
+          CE94ADAD319CCE848484000000FFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFF
+          FFFFFF000000000000C6C6C663CEFF94ADAD0000000000000000000000000000
+          00319CCE848484000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFF
+          FFFFFF000000000000319CCEC6C6C6319CCE848484319CCE84848463CEFF8484
+          84000000319CCE000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFF
+          000000000000000000000000319CCEC6C6C663CEFFC6C6C663CEFFC6C6C663CE
+          FF000000000000000000000000000000FFFFFFFFFFFFFFFFFF00FFFFFF000000
+          00000000000000000000000000000063CEFFC6C6C663CEFF94ADAD319CCE94AD
+          AD000000319CCE94ADAD319CCE94ADAD000000FFFFFFFFFFFF00FFFFFF000000
+          00000000000000000000000063CEFF94ADAD63CEFF94ADAD63CEFFC6C6C663CE
+          FF000000000000319CCE94ADAD63CEFF000000FFFFFFFFFFFF00000000000000
+          00000000000000000063CEFFC6C6C663CEFF94ADAD63CEFFEFEFEF63CEFFC6C6
+          C663CEFFC6C6C6000000319CCE94ADAD000000FFFFFFFFFFFF00000000000000
+          000000000000000000C6C6C663CEFFC6C6C663CEFFEFEFEF63CEFFEFEFEF63CE
+          FFC6C6C6000000319CCE94ADAD319CCE000000000000FFFFFF00000000000000
+          000000000000000000000000C6C6C6319CCE94ADAD63CEFFC6C6C600000094AD
+          AD63CEFF00000094ADAD63CEFFC6C6C6319CCE94ADAD00000000000000000000
+          000000000000000000000000000000000000319CCE94ADAD63CEFF0000000000
+          0000000000000063CEFFC6C6C6319CCE94ADAD000000FFFFFF00000000000000
+          000000000000000000000000000000000000000000319CCEC6C6C663CEFFC6C6
+          C600313100000094ADAD000000C6C6C6319CCE000000FFFFFF00000000000000
+          000000000000000000000000000000000000000000000000319CCEC6C6C663CE
+          FFC6C6C6000000319CCE000000000000000000003163FFFFFF00000000000000
+          000000000000000000000000000000000000000000000000000000319CCE94AD
+          AD63CEFF00000094ADAD319CCE94ADAD003131003163FFFFFF00FFFFFF000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000000000319CCE94ADAD63CEFF94ADAD000000FFFFFF00FFFFFF000000
+          0000000000000000000000000000000000000000000000000000000000000000
+          00000000003131000000319CCE94ADAD319CCE00000000000000FFFFFFFFFFFF
+          0000000000000000000000000000000000000000000000000000000000000031
+          3100313100000000000000000000000000000000000000000000FFFFFFFFFFFF
+          FFFFFFFFFFFF0000000000000000000000000000000031310031310031310000
+          0000000000000000000000000000000000000000000000000000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0031310031310000000000000000000000
+          00000000000000000000000000000000000000000000FFFFFF00FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000000000000000000000
+          00000000000000000000000000000000FFFFFFFFFFFFFFFFFF00}
+        Caption = 'Pessoas/Entidades'
+        OnClick = SubMenuCadastroMateriasPrimasClick
+      end
+      object N2: TMenuItem
+        Caption = '-'
+      end
+      object SubMenuCadastroDespesas: TMenuItem
+        Bitmap.Data = {
+          EE000000424DEE000000000000007600000028000000100000000F0000000100
+          04000000000078000000130B0000130B00001000000000000000000000000000
+          8000008000000080800080000000800080008080000080808000C0C0C0000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00888800000000
+          888888880FFFFFF0888888880F7FF8F0888888880FFF0000000088880F7F0FF0
+          FFF088880FFF0FF0F7F0888774C4C4C4FFF078878C4C4C4CF7F088F7F8880FFF
+          FFF0777FBB8874C4C4C48B7BF77777C4C4C487B7B7B8888888887B87F87B8888
+          8888B887B887888888888887888888888888}
+        Caption = 'Despesas'
+        OnClick = SubMenuCadastroMateriasPrimasClick
+      end
     end
+    object MenuCOMPRAS: TMenuItem
+      Caption = 'ENTRADAS/SA'#205'DAS'
+      object SubMenuEntradasSaidasLancamentoNotas: TMenuItem
+        Bitmap.Data = {
+          42030000424D42030000000000003600000028000000110000000F0000000100
+          1800000000000C030000C30E0000C30E00000000000000000000BFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F0000FFFFFFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBF00BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBF7F00007F00007F0000FFFFFFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BF00BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F0000
+          7F0000FFFFFFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00BFBFBF00000000000000
+          00000000000000007F00007F00007F0000FFFFFF7F00007F0000FFFFFFBFBFBF
+          BFBFBFBFBFBFBFBFBF00BFBFBF000000FFFFFFFFFFFFFFFFFF7F00007F00007F
+          0000FFFFFF000000BFBFBF7F00007F0000FFFFFFBFBFBFBFBFBFBFBFBF00BFBF
+          BF000000FFFFFF7F7F7F7F7F7F7F7F7F7F0000FFFFFFFFFFFF000000BFBFBFBF
+          BFBF7F0000FFFFFFBFBFBFBFBFBFBFBFBF00BFBFBF000000FFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBF7F0000FFFFFFBF
+          BFBFBFBFBF00BFBFBF000000FFFFFF7F7F7F7F7F7F7F7F7F7F7F7F7F7F7FFFFF
+          FF000000BFBFBFBFBFBFBFBFBFBFBFBF7F0000FFFFFFBFBFBF00BFBFBF000000
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBF7F0000FFFFFF00BFBFBF000000FFFFFF7F7F7F7F7F7FBFBFBF
+          BFBFBFBFBFBFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00
+          0000BFBFBF000000FFFFFFFFFFFFFFFFFFFFFFFF000000000000000000000000
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00BFBFBF000000FFFFFF7F
+          7F7F7F7F7FBFBFBF000000BFBFBF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBF00BFBFBF000000FFFFFFFFFFFFFFFFFFFFFFFF00000000
+          0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00BFBF
+          BF000000000000000000000000000000000000BFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00BFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBF00}
+        Caption = 'Lan'#231'amento de Notas'
+      end
+    end
+    object MenuVendasPedidos: TMenuItem
+      Caption = 'VENDAS/PEDIDOS'
+      object SubMenuVendasPedidosPedidosVenda: TMenuItem
+        Bitmap.Data = {
+          66030000424D660300000000000036000000280000000F000000110000000100
+          18000000000030030000C30E0000C30E00000000000000000000BFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBF000000BFBFBF00000000000000000000000000000000000000
+          0000000000000000000000000000000000000000BFBFBF000000BFBFBF000000
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FF000000BFBFBF000000BFBFBF000000FFFFFF000000000000FFFFFF00007FFF
+          FFFF000000000000000000FFFFFFFFFFFF000000BFBFBF000000BFBFBF000000
+          FFFFFFFFFFFFFFFFFF00007F00007F7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FF000000BFBFBF000000BFBFBF000000FFFFFFFFFFFF00007F00007F00007F00
+          007FFFFFFF000000000000FFFFFFFFFFFF000000BFBFBF000000BFBFBF000000
+          FFFFFF00007F00007F00007F7F7F7F00007F00007FFFFFFFFFFFFFFFFFFFFFFF
+          FF000000BFBFBF000000BFBFBF000000FFFFFFFFFFFF00007F7F7F7FFFFFFFFF
+          FFFF00007F7F7F7FFFFFFFFFFFFFFFFFFF000000BFBFBF000000BFBFBF000000
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00007F7F7F7FFFFFFFFFFF
+          FF000000BFBFBF000000BFBFBF000000FFFFFF00000000000000000000000000
+          0000FFFFFFFFFFFF00007FFFFFFFFFFFFF000000BFBFBF000000BFBFBF000000
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00007FFFFF
+          FF000000BFBFBF000000BFBFBF000000FFFFFF00000000000000000000000000
+          0000000000000000FFFFFFFFFFFFFFFFFF000000BFBFBF000000BFBFBF000000
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000000000000000
+          00000000BFBFBF000000BFBFBF000000FFFFFF00000000000000000000000000
+          0000FFFFFFFFFFFF000000FFFFFF000000BFBFBFBFBFBF000000BFBFBF000000
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000BFBF
+          BFBFBFBFBFBFBF000000BFBFBF00000000000000000000000000000000000000
+          0000000000000000000000BFBFBFBFBFBFBFBFBFBFBFBF000000BFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBF000000}
+        Caption = 'Pedidos de Venda'
+        OnClick = SubMenuCadastroMateriasPrimasClick
+      end
+    end
+  end
+  object ApplicationEvents1: TApplicationEvents
+    OnMessage = ApplicationEvents1Message
+    Left = 660
+    Top = 175
   end
 end

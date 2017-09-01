@@ -1,8 +1,8 @@
 object DMArtesanalis: TDMArtesanalis
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 242
-  Top = 116
+  Left = 228
+  Top = 111
   Height = 602
   Width = 1104
   object SQLC: TSQLConnection
@@ -208,21 +208,21 @@ object DMArtesanalis: TDMArtesanalis
       ''
       'ORDER BY 2')
     SQLConnection = SQLC
-    Left = 422
-    Top = 248
+    Left = 358
+    Top = 232
   end
   object DSP_ProdutoProducao: TDataSetProvider
     DataSet = SQLQ_ProdutoProducao
     Options = [poFetchBlobsOnDemand, poRetainServerOrder]
-    Left = 459
-    Top = 262
+    Left = 395
+    Top = 246
   end
   object CDS_ProdutoProducao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ProdutoProducao'
-    Left = 516
-    Top = 248
+    Left = 452
+    Top = 232
     object CDS_ProdutoProducaoCOD_MATERIAPRIMA: TIntegerField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_MATERIAPRIMA'
@@ -283,8 +283,8 @@ object DMArtesanalis: TDMArtesanalis
   end
   object DS_ProdutoProducao: TDataSource
     DataSet = CDS_ProdutoProducao
-    Left = 572
-    Top = 262
+    Left = 508
+    Top = 246
   end
   object SQLQ_ProdutoMatPrima: TSQLQuery
     MaxBlobSize = -1
@@ -294,21 +294,21 @@ object DMArtesanalis: TDMArtesanalis
       'From MATERIAPRIMA ma'
       'Order By ma.des_materiaprima')
     SQLConnection = SQLC
-    Left = 420
-    Top = 184
+    Left = 356
+    Top = 168
   end
   object DSP_ProdutoMatPrima: TDataSetProvider
     DataSet = SQLQ_ProdutoMatPrima
     Options = [poFetchBlobsOnDemand, poRetainServerOrder]
-    Left = 467
-    Top = 198
+    Left = 403
+    Top = 182
   end
   object CDS_ProdutoMatPrima: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ProdutoMatPrima'
-    Left = 508
-    Top = 184
+    Left = 444
+    Top = 168
     object CDS_ProdutoMatPrimaCOD_MATERIAPRIMA: TIntegerField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_MATERIAPRIMA'
@@ -345,8 +345,8 @@ object DMArtesanalis: TDMArtesanalis
   end
   object DS_ProdutoMatPrima: TDataSource
     DataSet = CDS_ProdutoMatPrima
-    Left = 564
-    Top = 198
+    Left = 500
+    Top = 182
   end
   object CDS_V_DoctoItens: TClientDataSet
     Aggregates = <>
@@ -566,21 +566,21 @@ object DMArtesanalis: TDMArtesanalis
       'And   pd.num_seq=:SeqItem'
       'order by 2')
     SQLConnection = SQLC
-    Left = 396
-    Top = 392
+    Left = 332
+    Top = 376
   end
   object DSP_VerProducao: TDataSetProvider
     DataSet = SQLQ_VerProducao
     Options = [poFetchBlobsOnDemand, poRetainServerOrder]
-    Left = 443
-    Top = 406
+    Left = 379
+    Top = 390
   end
   object CDS__VerProducao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_VerProducao'
-    Left = 484
-    Top = 392
+    Left = 420
+    Top = 376
     object CDS__VerProducaoCOD_MATERIAPRIMA: TIntegerField
       DisplayLabel = 'C'#243'd'
       FieldName = 'COD_MATERIAPRIMA'
@@ -653,7 +653,118 @@ object DMArtesanalis: TDMArtesanalis
   end
   object Ds_VerProducao: TDataSource
     DataSet = CDS__VerProducao
-    Left = 540
-    Top = 406
+    Left = 476
+    Top = 390
+  end
+  object CDS_V_PVPedidos: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 656
+    Top = 56
+    object CDS_V_PVPedidosCOD_CLIENTE: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'COD_CLIENTE'
+      Size = 10
+    end
+    object CDS_V_PVPedidosCLIENTE: TStringField
+      DisplayLabel = 'Cliente'
+      DisplayWidth = 32
+      FieldName = 'CLIENTE'
+      Size = 60
+    end
+    object CDS_V_PVPedidosDTA_EMISSAO: TDateField
+      Alignment = taCenter
+      DisplayLabel = 'Emiss'#227'o'
+      DisplayWidth = 15
+      FieldName = 'DTA_EMISSAO'
+    end
+    object CDS_V_PVPedidosNUM_PEDIDO: TIntegerField
+      DisplayLabel = 'Pedido'
+      DisplayWidth = 12
+      FieldName = 'NUM_PEDIDO'
+      DisplayFormat = '0.'
+    end
+    object CDS_V_PVPedidosQTD_PRODUTO: TIntegerField
+      DisplayLabel = 'Qtd Prod'
+      FieldName = 'QTD_PRODUTO'
+      DisplayFormat = '0,'
+    end
+    object CDS_V_PVPedidosVLR_UNITARIO: TFMTBCDField
+      DisplayLabel = '$ Unit'#225'rio'
+      DisplayWidth = 28
+      FieldName = 'VLR_UNITARIO'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
+    end
+    object CDS_V_PVPedidosVLR_PRODUTOS: TFMTBCDField
+      DisplayLabel = '$ Produtos'
+      DisplayWidth = 28
+      FieldName = 'VLR_PRODUTOS'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
+    end
+    object CDS_V_PVPedidosPER_DESCONTO: TBCDField
+      DisplayLabel = '% Desc'
+      DisplayWidth = 15
+      FieldName = 'PER_DESCONTO'
+      DisplayFormat = '0,.00'
+      Precision = 9
+      Size = 2
+    end
+    object CDS_V_PVPedidosVLR_DESCONTO: TFMTBCDField
+      DisplayLabel = '$ Desconto'
+      DisplayWidth = 28
+      FieldName = 'VLR_DESCONTO'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
+    end
+    object CDS_V_PVPedidosVLR_TOTAL: TFMTBCDField
+      DisplayLabel = 'Valor Total'
+      DisplayWidth = 28
+      FieldName = 'VLR_TOTAL'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
+    end
+    object CDS_V_PVPedidosPER_CONCEDIDO: TBCDField
+      DisplayLabel = '% Conc'
+      DisplayWidth = 15
+      FieldName = 'PER_CONCEDIDO'
+      DisplayFormat = '0,.00'
+      Precision = 9
+      Size = 2
+    end
+    object CDS_V_PVPedidosVLR_CONCEDIDO: TFMTBCDField
+      DisplayLabel = '$ Concedido'
+      DisplayWidth = 28
+      FieldName = 'VLR_CONCEDIDO'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
+    end
+    object CDS_V_PVPedidosVLR_PAGAMENTO: TFMTBCDField
+      DisplayLabel = '$ Pagamento'
+      DisplayWidth = 28
+      FieldName = 'VLR_PAGAMENTO'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
+    end
+    object CDS_V_PVPedidosSINTETICO: TStringField
+      FieldName = 'SINTETICO'
+      Size = 1
+    end
+    object CDS_V_PVPedidosORDEM: TIntegerField
+      FieldName = 'ORDEM'
+    end
+  end
+  object DS_V_PVPedidos: TDataSource
+    DataSet = CDS_V_PVPedidos
+    Left = 716
+    Top = 78
   end
 end

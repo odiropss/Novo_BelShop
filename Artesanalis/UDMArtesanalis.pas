@@ -100,6 +100,23 @@ type
     CDS__VerProducaoVLR_TOTAL_MP: TFMTBCDField;
     CDS_V_DoctoItensPER_DESCONTO: TCurrencyField;
     CDS_V_DoctoItensVLR_PRODUTO: TCurrencyField;
+    CDS_V_PVPedidos: TClientDataSet;
+    DS_V_PVPedidos: TDataSource;
+    CDS_V_PVPedidosCLIENTE: TStringField;
+    CDS_V_PVPedidosDTA_EMISSAO: TDateField;
+    CDS_V_PVPedidosNUM_PEDIDO: TIntegerField;
+    CDS_V_PVPedidosVLR_PRODUTOS: TFMTBCDField;
+    CDS_V_PVPedidosPER_DESCONTO: TBCDField;
+    CDS_V_PVPedidosVLR_DESCONTO: TFMTBCDField;
+    CDS_V_PVPedidosVLR_TOTAL: TFMTBCDField;
+    CDS_V_PVPedidosPER_CONCEDIDO: TBCDField;
+    CDS_V_PVPedidosVLR_CONCEDIDO: TFMTBCDField;
+    CDS_V_PVPedidosVLR_PAGAMENTO: TFMTBCDField;
+    CDS_V_PVPedidosSINTETICO: TStringField;
+    CDS_V_PVPedidosQTD_PRODUTO: TIntegerField;
+    CDS_V_PVPedidosVLR_UNITARIO: TFMTBCDField;
+    CDS_V_PVPedidosCOD_CLIENTE: TStringField;
+    CDS_V_PVPedidosORDEM: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -109,9 +126,10 @@ type
 
     Procedure MemoAdicionaNomeForm(sNome: String);
     Procedure MemoRetiraNomeForm(sNome: String);
-    procedure CDS_PessoasAfterOpen(DataSet: TDataSet);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    procedure CDS_PessoasAfterOpen(DataSet: TDataSet);
 
   private
     { Private declarations }
