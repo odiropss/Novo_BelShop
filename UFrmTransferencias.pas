@@ -820,12 +820,17 @@ Begin
 
                While bMultiplo do
                Begin
+
                  If iQtdReposicao<iQtdMultiplo Then
                  Begin
                    iQtdReposicao:=iQtdMultiplo;
                    Break;
                  End;
-                 iQtdMultiplo:=iQtdMultiplo+iMultiplo;
+
+                 If iQtdReposicao=iQtdMultiplo Then
+                  Break
+                 Else
+                  iQtdMultiplo:=iQtdMultiplo+iMultiplo;
                End; // While bMultiplo do
 
                sObs:=Trim(sObs)+' - Utilizado Conforme Multiplo Qtd/Caixa: '+

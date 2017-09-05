@@ -310,7 +310,11 @@ Begin
                ' End Tp_DebCre,'+
 
                ' mf.codfilial,'+
-               ' mf.observacao,'+
+
+               // OdirApagar - 04/09/02017
+               // ' mf.observacao,'+
+               ' NULL observacao,'+
+
                ' TRIM(mf.chavenf) chavenf,'+
                ' CAST(SUBSTRING(mf.numero FROM 1 FOR 12) AS VARCHAR(12)) numero,'+
                ' Trim(mf.serie) serie,'+
@@ -333,7 +337,57 @@ Begin
 
   //============================================================================
   // Monta Select de Busca de Debitos e Créditos (LINX) ========================
-  // DE – Devolução de Saída de Entrada de Fornecedor ---------------
+  //============================================================================
+
+  //----------------------------------------------------------------------------
+  // DEVOLUÇÕES – Devolução de Saída de Entrada de Fornecedor ------------------
+  //----------------------------------------------------------------------------
+  // OPERACAO	    TIPO_TRANSACAO	CFOP	DESC_CFOP
+  // DE	(Saída)				 Null       5411	Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária
+  // DE (Saída)				 Null       6411	Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária
+
+  // Não Existe Devolução de Entrada para Fornecedor
+  //------------------------------------------------
+  // DS (Entrada)			 Null       1202	Devolução de venda de mercadoria adquirida ou recebida de terceiros
+  // DS (Entrada)			 Null       1411	Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária
+  // DS (Entrada)			 Null       2411	Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária
+  //----------------------------
+  // COMPROVANTES
+  //----------------------------
+  // 011	DEVOLUÇÃO A FORNECEDOR - Débito
+  //----------------------------
+
+  //----------------------------------------------------------------------------
+  // CONSERTOS - Consertos de  Saída de Entrada de Fornecedor ------------------
+  //----------------------------------------------------------------------------
+  // OPERACAO	    TIPO_TRANSACAO	CFOP	DESC_CFOP
+  // N	(Entrada)		    E		      1915	Entrada de mercadoria ou bem recebido para conserto ou reparo
+  // N	(Entrada)		    E		      2915	Entrada de mercadoria ou bem recebido para conserto ou reparo
+  // N	(Saída)		      S		      5915	Remessa de mercadoria ou bem para conserto ou reparo
+  // N	(Saída)		      S		      6915	Remessa de mercadoria ou bem para conserto ou reparo
+  //----------------------------
+  // COMPROVANTES
+  //----------------------------
+  // 048	ENTRADA DE CONSERTO    - Crédito
+  // 042	REMESSSA PARA CONSERTO - Débito
+  //----------------------------
+
+  //----------------------------------------------------------------------------
+  // BONIFICAÇÕES - Bonificações de  Saída de Entrada de Fornecedor ------------
+  //----------------------------------------------------------------------------
+  // OPERACAO	TIPO_TRANSACAO	CFOP	DESC_CFOP
+  // E	(Entrada)     Null		1910	Entrada de bonificação, doação ou brinde
+  // E	(Entrada)			Null  	2910	Entrada de bonificação, doação ou brinde
+  // S	(Saída)				Null    5910	Remessa em bonificação, doação ou brinde
+  // S	(Saída)				Null    6910	Remessa em bonificação, doação ou brinde
+  //----------------------------
+  // COMPROVANTES
+  //----------------------------
+  // 027	REMESSA DE BONIFICAÇÃO - Débito
+  // 913	BONIF DE MERCADORIAS	 - Crédito
+  // 916	BONIF DE MERCADORIAS	 - Crédito
+
+
   MySqlLinx:=' SELECT'+
              ' fl.cod_cliente codfornecedor,'+
              ' fl.nome_cliente nomefornecedor,'+
@@ -342,7 +396,10 @@ Begin
              ' ''011'' codcomprovante,'+
              ' ''D'' tp_debcre,'+
              ' ml.empresa codfilial,'+
-             ' CAST(SUBSTRING(ml.obs FROM 1 FOR 200) AS VARCHAR(200)) observacao,'+
+             // OdirApagar - 04/09/02017
+             // ' CAST(SUBSTRING(ml.obs FROM 1 FOR 200) AS VARCHAR(200)) observacao,'+
+             ' NULL observacao,'+
+
              ' TRIM(ml.chave_nf) chavenf,'+
              ' CAST(SUBSTRING(ml.documento FROM 1 FOR 12) AS VARCHAR(12)) numero,'+
              ' CAST(TRIM(ml.serie) AS VARCHAR(4)) serie,'+
@@ -372,8 +429,15 @@ Begin
 
              ' UNION'+ // <<====
 
-             // E - Operações De Entrada de Mercadorias por Bonificações de Fornecedor
-             // S - Operações De Saida   de Mercadorias por Bonificações de Fornecedor
+             // E - Operações ee Entrada de Mercadorias por Bonificações de Fornecedor
+             //-----------------------------------------------------------------------
+             // 1910	- Entrada de bonificação, doação ou brinde
+             // 2910	- Entrada de bonificação, doação ou brinde
+
+             // S - Operações ee Saida   de Mercadorias por Bonificações de Fornecedor
+             //-----------------------------------------------------------------------
+             // 5910	- Remessa em bonificação, doação ou brinde
+             // 6910	- Remessa em bonificação, doação ou brinde
 
              ' SELECT'+
              ' fl.cod_cliente codfornecedor,'+
@@ -396,7 +460,11 @@ Begin
              ' END tp_debcre,'+
 
              ' ml.empresa codfilial,'+
-             ' CAST(SUBSTRING(ml.obs FROM 1 FOR 200) AS VARCHAR(200)) observacao,'+
+
+             // OdirApagar - 04/09/02017
+             // ' CAST(SUBSTRING(ml.obs FROM 1 FOR 200) AS VARCHAR(200)) observacao,'+
+             ' NULL observacao,'+
+
              ' TRIM(ml.chave_nf) chavenf,'+
              ' CAST(SUBSTRING(ml.documento FROM 1 FOR 12) AS VARCHAR(12)) numero,'+
              ' CAST(TRIM(ml.serie) AS VARCHAR(4)) serie,'+
