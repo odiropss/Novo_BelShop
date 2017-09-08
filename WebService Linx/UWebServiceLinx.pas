@@ -299,10 +299,23 @@ Begin
       DMLinxWebService.SDS_Busca.CommandText:=MySql;
       DMLinxWebService.CDS_Busca.Open;
 
+      // ------------------------------------------------------------
       // Monta Inicio Sql -------------------------------------------
-      If Trim(sgMetodoNomeTabela)<>'' Then
+      // ------------------------------------------------------------
+
+      // Se é Somente Insert Com Nome do Metodo Diferente do Nome da Tabela
+      If (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxSangriaSuprimentos')) And (Trim(sgMetodoNomeTabela)<>'') Then
+       sSqlUpInCampos:=' INSERT INTO '+sgMetodoNomeTabela+' ('+
+                       DMLinxWebService.CDS_Busca.FieldByName('Campo').AsString
+      // Se é Somente Insert Com Nome do Metodo Igaul ao Nome da Tabela
+      Else If (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxSangriaSuprimentos')) And (Trim(sgMetodoNomeTabela)='') Then
+       sSqlUpInCampos:=' INSERT INTO '+sgMetodo+' ('+
+                       DMLinxWebService.CDS_Busca.FieldByName('Campo').AsString
+      // Se Nome do Metodo Diferente do Nome da Tabela
+      Else If Trim(sgMetodoNomeTabela)<>'' Then
        sSqlUpInCampos:=' UPDATE OR INSERT INTO '+sgMetodoNomeTabela+' ('+
                        DMLinxWebService.CDS_Busca.FieldByName('Campo').AsString
+      // Normal: Se Nome do Metodo é Igaul ao Nome da Tabela
       Else
        sSqlUpInCampos:=' UPDATE OR INSERT INTO '+sgMetodo+' ('+
                        DMLinxWebService.CDS_Busca.FieldByName('Campo').AsString;
@@ -656,10 +669,8 @@ Begin
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (empresa, cnpj_emp, cod_pedido, plano)';
 
-              // LinxSangriaSuprimentos ------------------------------
-              If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxSangriaSuprimentos') Then
-               sSqlUpInValores:=
-                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, usuario, data)';
+              // SQL Com Isert Direto -----------------------------
+              // LinxSangriaSuprimentos
 
               // Executa Sql Update/Insert --------------------------
               MySql:=sSqlUpInCampos+sSqlUpInValores;

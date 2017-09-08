@@ -30,6 +30,8 @@ type
 
     Procedure SaldosTransfere_Linx_Sidicom;
 
+    Procedure AtualizaListaPrecosEcommerce;
+
     // Odir ====================================================================
   private
     { Private declarations }
@@ -58,6 +60,232 @@ uses UDMAtualizaEstoques, UDMConexoes, DK_Procs1, DB;
 
 // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// Atualiza Lista de Preços do E-Commerce no SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAtualizaEstoques.AtualizaListaPrecosEcommerce;
+Var
+  MySql: String;
+
+  sCodProdSidicom, sCodBarras, sPcCusto, sPcVenda, sMargem: String;
+
+  iCodProdLinx: Integer;
+  b: Boolean;
+Begin
+  sgDataAtual:=DateToStr(DataHoraServidorFI(DMAtualizaEstoques.SDS_DtaHoraServidor));
+  sgHoraAtual:=TimeToStr(DataHoraServidorFI(DMAtualizaEstoques.SDS_DtaHoraServidor));
+
+  Try // Try da Transação
+    // Conecata SIDICOM ========================================================
+    ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A');
+    CriaQueryIB('IBDB_99', 'IBT_99', IBQ_Consulta, False, True);
+
+    // Verifica se Transação esta Ativa
+    If DMConexoes.IBT_99.Active Then
+     DMConexoes.IBT_99.Rollback;
+
+    // Monta Transacao  -------------------------------------
+    DMConexoes.IBT_99.StartTransaction;
+
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    // Busca Preços Linx =======================================================
+    MySql:=' SELECT'+
+           ' pl.cod_produto, pl.cod_auxiliar,'+
+           ' COALESCE(dl.preco_custo,0.0000) preco_custo,'+
+           ' COALESCE(dl.preco_venda,0.0000) preco_venda,'+
+           ' CAST(CASE COALESCE(dl.preco_venda,0.000)'+
+           '   WHEN 0.0000 THEN'+
+           '     0.0000'+
+           '   ELSE'+
+           '     (((dl.preco_venda/dl.preco_custo)-1)*100)'+
+           ' END AS NUMERIC(12,4)) margem,'+
+
+           ' pl.cod_barra cod_barra_PR, dl.cod_barra cod_barra_DE, bl.cod_barra cod_barra_CB'+
+
+           ' FROM LINXPRODUTOS pl'+
+           '   LEFT JOIN LINXPRODUTOSDETALHES DL  ON dl.cod_produto=pl.cod_produto'+
+           '                                     AND dl.empresa=2'+
+           '   LEFT JOIN LINXPRODUTOSCODBAR bl    ON dl.cod_produto=bl.cod_produto'+
+
+           ' WHERE pl.desativado=''N'''+
+
+           ' ORDER BY 1, 4 desc';
+    DMAtualizaEstoques.CDS_LojaLinx.Close;
+    DMAtualizaEstoques.SDS_LojaLinx.CommandText:=MySql;
+    DMAtualizaEstoques.CDS_LojaLinx.Open;
+
+    sCodProdSidicom:='';
+    sCodBarras:='';
+    sPcCusto:='';
+    sPcVenda:='';
+    sMargem:='';
+    iCodProdLinx:=0;
+    While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
+    Begin
+
+      If DMAtualizaEstoques.CDS_LojaLinx.FieldByName('preco_venda').AsCurrency<>0 Then
+      Begin
+        // Inicializa Variaveis ================================================
+        iCodProdLinx   :=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_produto').AsInteger;
+        sCodProdSidicom:=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_auxiliar').AsString;
+        sPcCusto       :=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('preco_custo').AsString;
+        sPcVenda       :=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('preco_venda').AsString;
+        sMargem        :=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('margem').AsString;
+        sCodBarras:='';
+
+        If (DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_barra_PR').AsString)<>'' Then
+         sCodBarras:=
+          sCodBarras+' OR TRIM(CODBARRA) LIKE '+QuotedStr('%'+DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_barra_PR').AsString);
+
+        If (DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_barra_DE').AsString)<>'' Then
+         sCodBarras:=
+          sCodBarras+' OR TRIM(CODBARRA) LIKE '+QuotedStr('%'+DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_barra_DE').AsString);
+
+        If (DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_barra_CB').AsString)<>'' Then
+         sCodBarras:=
+          sCodBarras+' OR TRIM(CODBARRA) LIKE '+QuotedStr('%'+DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_barra_CB').AsString);
+
+        // Analisa se o Proximo é o Mesmo Coidog Linx ==========================
+        b:=True;
+        While b do
+        Begin
+          DMAtualizaEstoques.CDS_LojaLinx.Next;
+          If iCodProdLinx<>DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_produto').AsInteger Then
+           Begin
+             DMAtualizaEstoques.CDS_LojaLinx.Prior;
+             Break;
+           End
+          Else
+           Begin
+             If (DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_barra_PR').AsString)<>'' Then
+              sCodBarras:=
+               sCodBarras+' OR TRIM(CODBARRA) LIKE '+QuotedStr('%'+DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_barra_PR').AsString);
+
+             If (DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_barra_DE').AsString)<>'' Then
+              sCodBarras:=
+               sCodBarras+' OR TRIM(CODBARRA) LIKE '+QuotedStr('%'+DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_barra_DE').AsString);
+
+             If (DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_barra_CB').AsString)<>'' Then
+              sCodBarras:=
+               sCodBarras+' OR TRIM(CODBARRA) LIKE '+QuotedStr('%'+DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_barra_CB').AsString);
+           End; // If iCodProdLinx<>DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_produto').AsInteger Then
+        End; // While b do
+
+        // Busca CódigO do Produto no SIDICOM ==================================
+        sCodBarras:='('+Trim(Copy(sCodBarras, 4, Length(sCodBarras)));
+
+        MySql:=' SELECT P.CODPRODUTO'+
+               ' FROM PRODUTO P'+
+               ' WHERE '+sCodBarras;
+
+               If Trim(sCodProdSidicom)<>'' Then
+                MySql:=
+                 MySql+' OR CODPRODUTO='+QuotedStr(sCodProdSidicom);
+
+        MySql:=
+         MySql+')'+
+
+               ' UNION'+
+
+               ' SELECT B.CODPRODUTO'+
+               ' FROM PRODUTOSBARRA B'+
+               ' WHERE '+sCodBarras;
+
+               If Trim(sCodProdSidicom)<>'' Then
+                MySql:=
+                 MySql+' OR CODPRODUTO='+QuotedStr(sCodProdSidicom);
+        MySql:=
+         MySql+')';
+        IBQ_Consulta.Close;
+        IBQ_Consulta.SQL.Clear;
+        IBQ_Consulta.SQL.Add(MySql);
+        IBQ_Consulta.Open;
+        sCodProdSidicom:=IBQ_Consulta.FieldByName('CodProduto').AsString;
+        IBQ_Consulta.Close;
+
+        // Atualiza Lista de Preços (0010) E-Commecer no SIDICOM ===============
+        If Trim(sCodProdSidicom)<>'' Then
+        Begin
+          MySql:=' UPDATE OR INSERT INTO LISTAPRE'+
+                 ' (CODLISTA, CODPRODUTO, PRECOCOMPRA, MARGEM, PRECOVENDA,'+
+                 // OdirApagar - 08/09/2017
+                 // '  PRECOANTERIOR,
+                 ' DATAALTERACAO, HORAALTERACAO, DESCONTO,'+
+                 '  DESCONTOMAX, DESATIVADO, PRECODOLAR, ACRECIMOLISTA,'+
+                 '  CUSTOSLISTA)'+
+                 ' VALUES ('+
+                 QuotedStr('0010')+', '+ // CODLISTA
+                 QuotedStr(sCodProdSidicom)+', '+ // CODPRODUTO
+                 f_Troca(',','.',sPcCusto)+', '+ // PRECOCOMPRA
+                 f_Troca(',','.',sMargem)+', '+ // MARGEM
+                 f_Troca(',','.',sPcVenda)+', '+ // PRECOVENDA
+                 // OdirApagar - 08/09/2017
+                 // ' 0.0000,'+ // PRECOANTERIOR
+                 QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDataAtual)))+' ,'+ // DATAALTERACAO
+                 QuotedStr(sgHoraAtual)+' ,'+ // HORAALTERACAO
+                 ' 10,'+ // DESCONTO
+                 ' 10, '+ // DESCONTOMAX
+                 QuotedStr('0')+', '+ // DESATIVADO
+                 ' 0,'+ // PRECODOLAR
+                 ' 0,'+ // ACRECIMOLISTA
+                 ' 0)'+ // CUSTOSLISTA
+
+                 ' MATCHING (CODLISTA, CODPRODUTO)';
+          IBQ_Consulta.Close;
+          IBQ_Consulta.SQL.Clear;
+          IBQ_Consulta.SQL.Add(MySql);
+          IBQ_Consulta.ExecSQL;
+        End; // If Trim(sCodProdSidicom)<>'' Then
+
+      End; // If DMAtualizaEstoques.CDS_LojaLinx.FieldByName('preco_venda').AsCurrency<>0 Then
+
+      If DMAtualizaEstoques.CDS_LojaLinx.RecNo mod 1000=0 Then
+      Begin
+        DMConexoes.IBT_99.Commit;
+
+        DMConexoes.IBT_99.StartTransaction;
+      End; // if DMAtualizaEstoques.CDS_LojaLinx.RecNo mod 1000=0 Then
+
+      DMAtualizaEstoques.CDS_LojaLinx.Next;
+    End; // While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
+
+    DMConexoes.IBT_99.Commit;
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+  Except
+    on e : Exception do
+    Begin
+      DMConexoes.IBT_99.Rollback;
+
+      // Monta Transacao ===========================================================
+      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+      TD.IsolationLevel:=xilREADCOMMITTED;
+      DMAtualizaEstoques.SQLC.StartTransaction(TD);
+
+      MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
+             ' VALUES ('+
+             QuotedStr('99')+', '+
+             '2, '+
+             ' CURRENT_TIMESTAMP,'+
+             QuotedStr('LPr')+', '+ // Linx Com Inventário
+             QuotedStr('ListPreco'+e.message+' - '+MySql)+')'+
+             'MATCHING (COD_LOJA)';
+      DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
+      DMAtualizaEstoques.SQLC.Commit(TD); // Linx Com Inventário
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+    End; // on e : Exception do
+  End; // Try
+
+  DMAtualizaEstoques.IBQ_EstoqueLoja.Close;
+  ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+End; // Atualiza Lista de Preços do E-Commerce no SIDICOM >>>>>>>>>>>>>>>>>>>>>>
+
+// Transfere Saldo Linx para Sidicom CD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaEstoques.SaldosTransfere_Linx_Sidicom;
 Var
   MySql: String;
@@ -142,8 +370,9 @@ Begin
 
   DMAtualizaEstoques.IBQ_EstoqueLoja.Close;
   ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
-End; // Procedure TFrmAtualizaEstoques.SaldoLinx_Sidicom >>>>>>>>>>>>>>>>>>>>>>>
+End; // Transfere Saldo Linx para Sidicom CD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// Atualiza Tabela ESTOQUE no Banco de Dados BELSHOP.FDB de Todas as Lojas >>>>>
 Procedure TFrmAtualizaEstoques.AtualizaEstoquesMovtosLinx(sCodLinx, sCodBelShop, sDtaInicioLinx: String);
 Var
   MySql: String;
@@ -444,11 +673,10 @@ Begin
     End; // on e : Exception do
   End; // Try da Transação
 
-End; // Procedure AtualizaEstoquesMovtosLinx(sCodLinx, sCodBelShop, sDtaInicioLinx: String);
+End; // Atualiza Tabela ESTOQUE no Banco de Dados BELSHOP.FDB de Todas as Lojas >>>>>
 
-Procedure TFrmAtualizaEstoques.CriaQueryIB(sDataBase, sTransaction: String;
-                                           Var IBQ_Free: TIBQuery;
-                                           bMatriz, bCriaIBQ: Boolean);
+// Cria Componente IBQuery para Conexão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAtualizaEstoques.CriaQueryIB(sDataBase, sTransaction: String; Var IBQ_Free: TIBQuery; bMatriz, bCriaIBQ: Boolean);
 Var
   i: Integer;
   iOk: Integer;
@@ -496,8 +724,9 @@ Begin
     End;
   End;
 
-End;
+End; // Cria Componente IBQuery para Conexão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// Conecta Lojas SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmAtualizaEstoques.ConexaoEmpIndividual(sDataBase, sTransaction, sProcedimento: String): Boolean;
 Var
   i, ii: Integer;
@@ -584,7 +813,7 @@ Begin
      Break;
   End; // While Not b do
 
-End;
+End; // Conecta Lojas SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TFrmAtualizaEstoques.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -613,7 +842,6 @@ var
                  // LsI = Linx Sem Inventário
                  // LcI = Linx Com Inventário
 
-
   sCodEmpresa,
   sDtaLinx, sDtaInventLinx,
   sDML, sValues,
@@ -633,6 +861,7 @@ begin
 //---------  -----------  ---------------  --------------------------------  --------------------------------------------
 //    COM	        COM	          COM	       iCodLinx<>0 e sDtaInventLinx<>''  Busca Estoques no LINX Direto
 // ========  ===========  ===============  ================================  ============================================
+
 
   tgMySqlErro.Clear;
   tgMySqlErro.SaveToFile(sgPath_Local+'ODIR_ERRO.txt');
@@ -1046,6 +1275,13 @@ begin
   // ===========================================================================
   SaldosTransfere_Linx_Sidicom;
   // Atualiza Saldo LINX Para SIDICOM CD =======================================
+  // ===========================================================================
+
+  // ===========================================================================
+  // Atualiza Lista de Preços (0010) do E-Commece no SIDICOM CD ================
+  // ===========================================================================
+  AtualizaListaPrecosEcommerce;
+  // Atualiza Lista de Preços (0010) do E-Commece no SIDICOM CD ================
   // ===========================================================================
 
 // =============================================================================
