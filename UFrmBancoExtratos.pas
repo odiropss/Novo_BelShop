@@ -6824,12 +6824,21 @@ Var
 
   Procedure ExcluirExtrato(sCodBanco, sDtaExclui: String);
   Begin
+    // Exclui Conciliações Já Efetuadas no Dia =================================
+    MySql:=' DELETE FROM FIN_CONCILIACAO_PAGTOS pg'+
+           ' WHERE EXISTS (SELECT 1'+
+           '               FROM FIN_BANCOS_EXTRATOS ex'+
+           '               WHERE ex.chv_extrato=pg.chv_extrato'+
+           '               AND   ex.cod_banco='+QuotedStr(sCodBanco)+
+           '               AND   ex.dta_extrato='+QuotedStr(sDtaExclui)+')';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Exclui Extrato do Dia ===================================================
     MySql:=' DELETE FROM FIN_BANCOS_EXTRATOS ex'+
-           ' WHERE ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
+           ' WHERE ex.cod_banco='+QuotedStr(sCodBanco)+
            ' AND   ex.dta_extrato='+QuotedStr(sDtaExclui);
     DMBelShop.SQLC.Execute(MySql,nil,nil);
   End; //  Procedure ApagarExtrato(sCodBanco, sDtaExclui: String);
-
 begin
   EditorBanrisulImpExtrato.SetFocus;
 
@@ -6884,11 +6893,11 @@ begin
     Lb_Obs.Caption:='Aguarde !! Efetuando a Importação de Extrato...';
     For i:=0 to EditorBanrisulImpExtrato.Lines.Count-1 do
     Begin
+      Application.ProcessMessages;
+
       pgProgBar.Position:=i;
 
       sLinha:=EditorBanrisulImpExtrato.Lines[i];
-
-      FrmBancoExtratos.Refresh;
 
       // Verifica Agencia ======================================================
       If i=1 Then
@@ -6990,9 +6999,19 @@ begin
            // Grava Extrato ====================================================
            If sgDta<>s Then
            Begin
-             // Exclui Extrato Anterior se Houver =================================
              If (sDtaApagar<>sgDta) And (Trim(sgDta)<>'')  Then
+             Begin
+              // Salva Transação até o Dia Anterior ============================
+              DMBelShop.SQLC.Commit(TD);
+
+              // Reabre Transação ==============================================
+              TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+              TD.IsolationLevel:=xilREADCOMMITTED;
+              DMBelShop.SQLC.StartTransaction(TD);
+
+              // Exclui Extrato Anterior se Houver =============================
               ExcluirExtrato(EdtExtCodBanco.Text, sgDta);
+             End;
              sDtaApagar:=sgDta;
 
              ExtratosSalvar;
@@ -7031,6 +7050,8 @@ begin
     If DMBelShop.SQLC.InTransaction Then
     Begin
       DMBelShop.SQLC.Commit(TD);
+
+
 
       msg('Importação Efetuada Com SUCESSO !!','A');
       EditorBanrisulImpExtrato.Lines.Clear;
@@ -7598,9 +7619,9 @@ begin
     sDtaApagar:='';
     For i:=1 to Strg_SantanderImpExtrato.RowCount-1 do
     Begin
-      pgProgBar.Position:=i;
+      Application.ProcessMessages;
 
-      Refresh;
+      pgProgBar.Position:=i;
 
       sgDta:=f_Troca('/','.',Strg_SantanderImpExtrato.Cells[0,i]);
       sgDta:=f_Troca('-','.',sgDta);
@@ -7612,9 +7633,19 @@ begin
       If Trim(sgdta)<>'' Then
       Begin
 
-        // Apaga Extrato do dia ====================================================
+        // Apaga Extrato do dia ================================================
         If sDtaApagar<>sgDta Then
         Begin
+          // Exclui Conciliações Já Efetuadas no Dia ===========================
+          MySql:=' DELETE FROM FIN_CONCILIACAO_PAGTOS pg'+
+                 ' WHERE EXISTS (SELECT 1'+
+                 '               FROM FIN_BANCOS_EXTRATOS ex'+
+                 '               WHERE ex.chv_extrato=pg.chv_extrato'+
+                 '               AND   ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
+                 '               AND   ex.dta_extrato='+QuotedStr(sgDta)+')';
+          DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+          // Exclui Extrato do Dia =============================================
           MySql:=' DELETE FROM FIN_BANCOS_EXTRATOS ex'+
                  ' WHERE ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
                  ' AND   ex.dta_extrato='+QuotedStr(sgDta);

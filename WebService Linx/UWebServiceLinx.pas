@@ -731,13 +731,18 @@ Begin
           sOBS:='ERRO em Atualiza Tabela LinxProdutoDetalhes com Produto Sem Saldo';
 
           MySql:=' INSERT INTO LINXPRODUTOSDETALHES'+
+                 ' (PORTAL, EMPRESA, CNPJ_EMP, COD_PRODUTO, COD_BARRA, QUANTIDADE,'+
+                 '  PRECO_CUSTO, PRECO_VENDA, CUSTO_MEDIO, ID_CONFIG_TRIBUTARIA,'+
+                 '  DESC_CONFIG_TRIBUTARIA, DESPESAS1, COD_LOJA, DTA_ATUALIZACAO,'+
+                 ' HRA_ATUALIZACAO)'+
+
                  ' SELECT'+
                  ' lp.portal,'+
                  sgCodLojaLinx+' EMPRESA,'+ // CODIGO EMPRESA MICROVIX
                  QuotedStr(sgCNPJProc)+' CNPJ_EMP,'+ // CNPJ DA EMPRESA
                  ' LP.cod_produto COD_PRODUTO, LP.cod_barra COD_BARRA,'+
                  ' 0.0000 QUANTIDADE, 0.0000 PRECO_CUSTO, 0.0000 PRECO_VENDA, 0.0000 CUSTO_MEDIO,'+
-                 ' NULL ID_CONFIG_TRIBUTARIA, NULL DESC_CONFIG_TRIBUTARIA,'+
+                 ' NULL ID_CONFIG_TRIBUTARIA, NULL DESC_CONFIG_TRIBUTARIA, 0 DESPESAS1,'+
                  QuotedStr(sgCodLoja)+' COD_LOJA, '+ // CODIGO EMPRESA SIDICOM
                  QuotedStr(sDtaAtual)+' DTA_ATUALIZACAO, current_time HRA_ATUALIZACAO'+
 

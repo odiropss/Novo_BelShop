@@ -63,7 +63,7 @@ uses UDMAtualizaEstoques, UDMConexoes, DK_Procs1, DB;
 // Atualiza Lista de Preços do E-Commerce no SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaEstoques.AtualizaListaPrecosEcommerce;
 Var
-  MySql: String;
+  MySql, MySqlDescontos: String;
 
   sCodProdSidicom, sCodBarras, sPcCusto, sPcVenda, sMargem: String;
 
@@ -206,6 +206,26 @@ Begin
         // Atualiza Lista de Preços (0010) E-Commecer no SIDICOM ===============
         If Trim(sCodProdSidicom)<>'' Then
         Begin
+          // Busca Desconto e Desconto Maximo Original ---------------
+          MySqlDescontos:='';
+          MySql:=' SELECT'+
+                 ' ''UPDATE LISTAPRE''||'+
+                 ' '' SET DESCONTO = ''||lp.desconto||'+
+                 ' '' , DESCONTOMAX = ''||lp.descontomax||'+
+                 ' '' WHERE (CODLISTA = ''''0010'''')''||'+
+                 ' '' AND  (CODPRODUTO = ''''''||lp.codproduto||'''''')'' DML'+
+                 ' FROM LISTAPRE lp'+
+                 ' WHERE lp.codlista=''0010'''+
+                 ' AND lp.codproduto = '+QuotedStr(sCodProdSidicom);
+          IBQ_Consulta.Close;
+          IBQ_Consulta.SQL.Clear;
+          IBQ_Consulta.SQL.Add(MySql);
+          IBQ_Consulta.Open;
+          If Trim(IBQ_Consulta.FieldByName('DML').AsString)<>'' Then
+           MySqlDescontos:=IBQ_Consulta.FieldByName('DML').AsString;
+          IBQ_Consulta.Close;
+
+          // UPDATE OR INSERT INTO LISTAPRE -------------------------
           MySql:=' UPDATE OR INSERT INTO LISTAPRE'+
                  ' (CODLISTA, CODPRODUTO, PRECOCOMPRA, MARGEM, PRECOVENDA,'+
                  // OdirApagar - 08/09/2017
@@ -235,6 +255,16 @@ Begin
           IBQ_Consulta.SQL.Clear;
           IBQ_Consulta.SQL.Add(MySql);
           IBQ_Consulta.ExecSQL;
+
+          // Retorna Desocntos Originais do Produto na Lista --------
+          If Trim(MySqlDescontos)<>'' Then
+          Begin
+            IBQ_Consulta.Close;
+            IBQ_Consulta.SQL.Clear;
+            IBQ_Consulta.SQL.Add(MySqlDescontos);
+            IBQ_Consulta.ExecSQL;
+          End; // If Trim(MySqlDescontos)<>'' Then
+
         End; // If Trim(sCodProdSidicom)<>'' Then
 
       End; // If DMAtualizaEstoques.CDS_LojaLinx.FieldByName('preco_venda').AsCurrency<>0 Then
