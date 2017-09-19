@@ -3332,7 +3332,7 @@ Begin
     DMBelShop.SDS_Busca.CommandText:=MySql;
     DMBelShop.CDS_Busca.Open;
     sNumDoc:=DMBelShop.CDS_Busca.FieldByName('Codigo').AsString;
-    DMBelShop.SDS_Busca.Close;
+    DMBelShop.CDS_Busca.Close;
 
     // Zera Numerador para Num_Seq =============================================
     MySql:=' ALTER SEQUENCE GEN_NUMSEQ_LOJAS RESTART WITH 0';
@@ -7153,7 +7153,7 @@ begin
                   DMBelShop.SDS_Busca.CommandText:=MySql;
                   DMBelShop.CDS_Busca.Open;
                   sNumDoc:=DMBelShop.CDS_Busca.FieldByName('Codigo').AsString;
-                  DMBelShop.SDS_Busca.Close;
+                  DMBelShop.CDS_Busca.Close;
 
                   // Atualiza Numero dos Meses =================================
                   AtualizaNumeroDosMeses;
@@ -20511,7 +20511,7 @@ Begin
   DMBelShop.SDS_Busca.CommandText:=MySql;
   DMBelShop.CDS_Busca.Open;
   sNumDoc:=DMBelShop.CDS_Busca.FieldByName('Codigo').AsString;
-  DMBelShop.SDS_Busca.Close;
+  DMBelShop.CDS_Busca.Close;
 
   // Atualiza Numero dos Meses =================================================
   AtualizaNumeroDosMeses;
@@ -30553,7 +30553,7 @@ begin
     Begin
       msg('Usuario Não Encontrado !!','A');
       EdtFinanGrFinanUsuarioCod.SetFocus;
-      DMBelShop.SDS_Busca.Close;
+      DMBelShop.CDS_Busca.Close;
       Screen.Cursor:=crDefault;
       Exit;
     End;

@@ -4143,7 +4143,7 @@ begin
         DMBelShop.SDS_Busca.CommandText:=MySql;
         DMBelShop.CDS_Busca.Open;
         sgNumPed:=DMBelShop.CDS_Busca.FieldByName('Codigo').AsString;
-        DMBelShop.SDS_Busca.Close;
+        DMBelShop.CDS_Busca.Close;
       End; // If sgNumPed='0' Then
 
       sCodFilial   :=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;

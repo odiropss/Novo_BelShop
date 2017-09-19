@@ -1837,7 +1837,7 @@ begin
     End; // While b do
   End; // If Key=Vk_F2 Then
 
-  // Localizar Produto =========================================================
+  // Localizar Fornecedor ======================================================
   If Key=Vk_F4 Then
   Begin
     If Not DMBelShop.CDS_FluxoFornecedores.IsEmpty Then
@@ -3449,7 +3449,7 @@ begin
      DMBelShop.CDS_Busca.Open;
      EdtNumDoc.Text  :=DMBelShop.CDS_Busca.FieldByName('Docto').AsString;
      EdtSerieDoc.Text:='UNIC';
-     DMBelShop.SDS_Busca.Close;
+     DMBelShop.CDS_Busca.Close;
    End; // If sgDMLMovto='A' Then
 
   Ts_FluxFornLanctos.TabVisible:=True;

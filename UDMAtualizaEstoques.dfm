@@ -57,7 +57,7 @@ object DMAtualizaEstoques: TDMAtualizaEstoques
       '      LEFT JOIN PRODUTO p on e.codproduto=p.codproduto '
       'WHERE e.codfilial='#39'99'#39)
     Left = 80
-    Top = 224
+    Top = 288
     object IBQ_EstoqueLojaCODFILIAL: TIBStringField
       FieldName = 'CODFILIAL'
       Origin = 'ESTOQUE.CODFILIAL'
@@ -191,19 +191,19 @@ object DMAtualizaEstoques: TDMAtualizaEstoques
     Params = <>
     SQLConnection = SQLC
     Left = 55
-    Top = 99
+    Top = 163
   end
   object DSP_EmpProcessa: TDataSetProvider
     DataSet = SDS_EmpProcessa
     Left = 128
-    Top = 116
+    Top = 180
   end
   object CDS_EmpProcessa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_EmpProcessa'
     Left = 190
-    Top = 104
+    Top = 168
     object CDS_EmpProcessaCOD_FILIAL: TStringField
       FieldName = 'COD_FILIAL'
       Required = True
@@ -270,19 +270,39 @@ object DMAtualizaEstoques: TDMAtualizaEstoques
     Params = <>
     SQLConnection = SQLC
     Left = 239
-    Top = 225
+    Top = 289
   end
   object CDS_LojaLinx: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_LojaLinx'
     Left = 333
-    Top = 224
+    Top = 288
   end
   object DSP_LojaLinx: TDataSetProvider
     DataSet = SDS_LojaLinx
     Options = [poRetainServerOrder]
     Left = 284
-    Top = 238
+    Top = 302
+  end
+  object CDS_BuscaRapida: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_BuscaRapida'
+    Left = 157
+    Top = 96
+  end
+  object DSP_BuscaRapida: TDataSetProvider
+    DataSet = SQLQ_BuscaRapida
+    Options = [poRetainServerOrder]
+    Left = 108
+    Top = 110
+  end
+  object SQLQ_BuscaRapida: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 56
+    Top = 96
   end
 end

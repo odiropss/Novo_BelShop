@@ -109,6 +109,8 @@ Begin
 
            ' WHERE pl.desativado=''N'''+
 
+//           ' and   pl.cod_produto between 261 and 267'+
+
            ' ORDER BY 1, 4 desc';
     DMAtualizaEstoques.CDS_LojaLinx.Close;
     DMAtualizaEstoques.SDS_LojaLinx.CommandText:=MySql;
@@ -150,6 +152,9 @@ Begin
         While b do
         Begin
           DMAtualizaEstoques.CDS_LojaLinx.Next;
+          If DMAtualizaEstoques.CDS_LojaLinx.Eof Then
+           Break;
+
           If iCodProdLinx<>DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_produto').AsInteger Then
            Begin
              DMAtualizaEstoques.CDS_LojaLinx.Prior;
@@ -266,7 +271,6 @@ Begin
           End; // If Trim(MySqlDescontos)<>'' Then
 
         End; // If Trim(sCodProdSidicom)<>'' Then
-
       End; // If DMAtualizaEstoques.CDS_LojaLinx.FieldByName('preco_venda').AsCurrency<>0 Then
 
       If DMAtualizaEstoques.CDS_LojaLinx.RecNo mod 1000=0 Then
@@ -344,7 +348,8 @@ Begin
            ' '' WHERE e.codfilial =''''''||es.codfilial||''''''''||'+
            ' '' AND   e.codproduto=''''''||es.codproduto||'''''''' MDL'+
            ' FROM ESTOQUE es'+
-           ' WHERE es.codfilial=''99''';
+           ' WHERE es.codfilial=''99'''+
+           ' AND   es.codproduto is not null';
     DMAtualizaEstoques.CDS_LojaLinx.Close;
     DMAtualizaEstoques.SDS_LojaLinx.CommandText:=MySql;
     DMAtualizaEstoques.CDS_LojaLinx.Open;
@@ -386,7 +391,8 @@ Begin
              '2, '+
              ' CURRENT_TIMESTAMP,'+
              QuotedStr('Err')+', '+ // Linx Com Inventário
-             QuotedStr(e.message+' - '+MySql)+')'+
+             QuotedStr(e.message+' - SaldosTransfere_Linx_Sidicom'+
+             DMAtualizaEstoques.CDS_LojaLinx.FieldByName('MDL').AsString)+')'+
              'MATCHING (COD_LOJA)';
       DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
@@ -875,7 +881,9 @@ var
   sCodEmpresa,
   sDtaLinx, sDtaInventLinx,
   sDML, sValues,
-  sCodProd, sQtdSaldo: String;
+  sCodProd,
+  sPcUltCompra,
+  sQtdSaldo: String;
 
   i, iCodLinx: Integer;
 
@@ -905,6 +913,7 @@ begin
          '        ''IBT_''||c.cod_filial  "TRANSACAO"'+
 
          ' FROM EMP_CONEXOES c'+
+//         ' Where c.cod_filial=''99''';
 
          ' WHERE ((c.ind_ativo=''SIM'')'+
          '        OR'+
@@ -915,9 +924,6 @@ begin
   DMAtualizaEstoques.CDS_EmpProcessa.Close;
   DMAtualizaEstoques.SDS_EmpProcessa.CommandText:=MySql;
   DMAtualizaEstoques.CDS_EmpProcessa.Open;
-
-// If Not DMAtualizaEstoques.CDS_EmpProcessa.Active Then
-//  DMAtualizaEstoques.CDS_EmpProcessa.Open;
 
   // Inicia Processamento ======================================================
   DMAtualizaEstoques.CDS_EmpProcessa.First;
@@ -997,8 +1003,6 @@ begin
         If iCodLinx=0 Then
         Begin
           // Cria Query da Empresa --------------------------------------
-//odirapagar          CriaQueryIB('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, IBQ_Consulta, False, True);
-
           If DMAtualizaEstoques.IBQ_EstoqueLoja.Active Then
            DMAtualizaEstoques.IBQ_EstoqueLoja.Close;
 
@@ -1056,19 +1060,15 @@ begin
         Begin
           MySql:=' SELECT '+
                  QuotedStr(sCodEmpresa)+' codfilial,'+
-                 ' CAST(LPAD(lp.cod_auxiliar,6,0) AS VARCHAR(6)) codproduto,'+
+
+                 ' pr.codproduto codproduto,'+
+                 // OdirApagar - 13/09/2017
+                 // ' CAST(LPAD(lp.cod_auxiliar,6,0) AS VARCHAR(6)) codproduto,'+
+
                  ' lpd.quantidade saldoatual, 0.0000 pedidopendente,'+
                  ' 0 zonaendereco, ''000'' corredor, ''000'' prateleira, ''0000'' gaveta,'+
                  ' lpd.custo_medio cusmedvalor, lpd.custo_medio customedio,'+
-                 ' COALESCE((SELECT FIRST 1 m.valor_liquido'+
-                 '           FROM LINXMOVIMENTO m'+
-                 '           WHERE m.empresa = '+IntToStr(iCodLinx)+
-                 '           AND   m.operacao = ''E'''+
-                 '           AND   ((m.tipo_transacao=''S'') OR (m.tipo_transacao=''E'') OR (m.tipo_transacao IS NULL))'+
-                 '           AND   m.cancelado=''N'''+
-                 '           AND   m.excluido=''N'''+
-                 '           AND   m.cod_produto = lpd.cod_produto'+
-                 '           ORDER BY m.data_lancamento DESC), 0.0000) lastprecocompra,'+
+                 ' 0.0000 lastprecocompra,'+
                  ' lpd.custo_medio lastcustomedio,'+
                  ' 0 estoqueideal, 0 estoquemaximo,'+
                  ' lp.dt_update dataalteracadastro,'+
@@ -1080,10 +1080,9 @@ begin
 
                  ' FROM LINXPRODUTOSDETALHES lpd'+
                  '          LEFT JOIN LINXPRODUTOS lp ON lp.cod_produto = lpd.cod_produto'+
-                 '          LEFT JOIN PRODUTO pr ON pr.codproduto = CAST(LPAD(lp.cod_auxiliar,6,0) AS VARCHAR(6))'+
+                 '          LEFT JOIN PRODUTO pr ON pr.codproduto = CAST(LPAD(TRIM(lp.cod_auxiliar),6,0) AS VARCHAR(6))'+
                  ' WHERE lpd.empresa = '+IntToStr(iCodLinx)+
-                 ' AND   lp.cod_auxiliar IS NOT NULL'+
-                 ' AND   Char_length(lp.cod_auxiliar)<=6'+
+                 ' AND   CHAR_LENGTH(TRIM(lp.cod_auxiliar))<=6'+
 
                  ' ORDER BY lp.cod_auxiliar, lpd.quantidade';
           DMAtualizaEstoques.CDS_LojaLinx.Close;
@@ -1185,6 +1184,23 @@ begin
             // =================================================================
             If (iCodLinx<>0) And (sDtaInventLinx<>'') Then
             Begin
+              MySql:=' SELECT CAST(LPAD(TRIM(p.cod_auxiliar),6,0) AS VARCHAR(6)) CodProduto,'+
+                     '        m.data_lancamento,'+
+                     '        COALESCE(m.valor_liquido,0.0000) valor_liquido'+
+                     ' FROM LINXMOVIMENTO m, LINXPRODUTOS p'+
+                     ' WHERE m.cod_produto=p.cod_produto'+
+                     ' AND   m.operacao = ''E'''+
+                     ' AND   ((m.tipo_transacao=''E'') OR (m.tipo_transacao IS NULL))'+
+                     ' AND   m.cancelado=''N'''+
+                     ' AND   m.excluido=''N'''+
+                     ' AND   p.cod_auxiliar is not null'+
+                     ' AND   m.empresa='+IntToStr(iCodLinx)+
+                     ' ORDER BY 1, 2 DESC';
+              DMAtualizaEstoques.CDS_BuscaRapida.Close;
+              DMAtualizaEstoques.SQLQ_BuscaRapida.SQL.Clear;
+              DMAtualizaEstoques.SQLQ_BuscaRapida.SQL.Add(MySql);
+              DMAtualizaEstoques.CDS_BuscaRapida.Open;
+
               While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
               Begin
                 If sCodProd=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('CodProduto').AsString Then
@@ -1209,6 +1225,17 @@ begin
                      sValues+QuotedStr(sQtdSaldo)+', ';
                   End // If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
 
+                  // Busca Preço Ultima Compra =================================
+                  Else If (Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='LASTPRECOCOMPRA') Then
+                  Begin
+                    sPcUltCompra:='0.0000';
+                    If DMAtualizaEstoques.CDS_BuscaRapida.Locate('CODPRODUTO', DMAtualizaEstoques.CDS_LojaLinx.FieldByName('CodProduto').AsString,[]) Then
+                     sPcUltCompra:=Trim(DMAtualizaEstoques.CDS_BuscaRapida.FieldByName('valor_liquido').AsString);
+
+                    sValues:=
+                     sValues+QuotedStr(f_Troca(',','.',sPcUltCompra))+',';
+                  End // If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
+
                   Else
                    Begin
                      // Grava Resto do Registro
@@ -1227,6 +1254,7 @@ begin
 
                 DMAtualizaEstoques.CDS_LojaLinx.Next;
               End; // While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
+              DMAtualizaEstoques.CDS_BuscaRapida.Close;
               DMAtualizaEstoques.CDS_LojaLinx.Close;
             End; // If (iCodLinx<>0) And (sDtaInventLinx<>'') Then
             // =================================================================

@@ -29433,7 +29433,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = TS_FiltroAplicacao
+        ActivePage = TS_FiltroProdutos
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText

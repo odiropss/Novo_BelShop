@@ -52,6 +52,9 @@ type
     CDS_EmpProcessaDTA_INICIO_LINX: TDateField;
     CDS_EmpProcessaDTA_INVENTARIO_LINX: TDateField;
     IBQ_EstoqueLojaSALDO_FINAL_SIDICOM: TIBBCDField;
+    CDS_BuscaRapida: TClientDataSet;
+    DSP_BuscaRapida: TDataSetProvider;
+    SQLQ_BuscaRapida: TSQLQuery;
 
     // Odir
     Procedure ConectaBanco;

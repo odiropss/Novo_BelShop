@@ -5235,7 +5235,7 @@ begin
   DMBelShop.CDS_Busca.Open;
 
   sNumDoc:=DMBelShop.CDS_Busca.FieldByName('Codigo').AsString;
-  DMBelShop.SDS_Busca.Close;
+  DMBelShop.CDS_Busca.Close;
 
   // Atualiza Numero dos Meses =================================================
   AtualizaNumeroDosMeses;
