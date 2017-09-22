@@ -1168,6 +1168,7 @@ object FrmSolicTransf: TFrmSolicTransf
           DecimalPlaces = 0
           DisplayFormat = ',0'
           TabOrder = 4
+          OnExit = EdtQtdTransfExit
         end
         object Bt_Incluir: TJvXPButton
           Left = 498
@@ -1443,7 +1444,7 @@ object FrmSolicTransf: TFrmSolicTransf
             Visible = True
           end>
       end
-      object Stb_FluForn: TdxStatusBar
+      object Stb_ParamTransf: TdxStatusBar
         Left = 0
         Top = 490
         Width = 784
@@ -1463,7 +1464,19 @@ object FrmSolicTransf: TFrmSolicTransf
             Fixed = False
             ParentBiDiMode = False
             Text = '<F4> Localiza Produto'
-            Width = 180
+            Width = 40
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            Fixed = False
+            Text = 'N'#186' Maximo de Produtos/Dia: 0'
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            Fixed = False
+            Text = 'Quantidade Maxima Por Produto: 0'
           end>
         PaintStyle = stpsOffice11
         Font.Charset = DEFAULT_CHARSET

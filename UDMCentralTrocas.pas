@@ -163,6 +163,14 @@ type
     CDS_V_ReposDivergenciasENDERECAMENTO: TStringField;
     CDS_RelReposicaoENDERECAMENTO: TStringField;
     CDS_RelReposicaoSALDO_CD: TFMTBCDField;
+    CDS_ParamTransf: TClientDataSet;
+    SDS_ParamTransf: TSQLDataSet;
+    DSP_ParamTransf: TDataSetProvider;
+    DS_ParamTransf: TDataSource;
+    CDS_ParamTransfNUM_PROD_DIA: TStringField;
+    CDS_ParamTransfQTD_MAX_PROD: TStringField;
+    CDS_ParamTransfCOD_LOJA: TIntegerField;
+    CDS_ParamTransfRAZAO_SOCIAL: TStringField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir

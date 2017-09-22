@@ -2,7 +2,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
   Left = 311
   Top = 206
   Width = 649
-  Height = 482
+  Height = 490
   AutoSize = True
   BorderIcons = []
   Caption = 'Solicitacoes'
@@ -403,8 +403,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Left = 0
     Top = 0
     Width = 633
-    Height = 444
-    ActivePage = Ts_ProSoftImpArquivo
+    Height = 452
+    ActivePage = Ts_ParametrosGerenciador
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -594,7 +594,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel6: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -842,7 +842,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Pan_Simples: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -1034,7 +1034,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Pan_ProSoftImpArquivo: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -1307,7 +1307,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 112
         Width = 625
-        Height = 269
+        Height = 277
         Cursor = crIBeam
         GutterWidth = 0
         RightMarginColor = clSilver
@@ -1847,7 +1847,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel22: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -2095,7 +2095,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel24: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -2497,7 +2497,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel27: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -2959,7 +2959,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel30: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -3037,8 +3037,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 381
-        ActivePage = Ts_ParamLojaReposicoes
+        Height = 389
+        ActivePage = Ts_ParamTransferencias
         Align = alClient
         MultiLine = True
         Style = tsButtons
@@ -3361,7 +3361,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             Left = 0
             Top = 80
             Width = 617
-            Height = 246
+            Height = 254
             Align = alClient
             Caption = ' Lojas Definidas '
             TabOrder = 1
@@ -3369,7 +3369,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
               Left = 2
               Top = 15
               Width = 613
-              Height = 209
+              Height = 217
               Align = alClient
               Color = 15004403
               DataSource = DMVirtual.DS_V_ParamLojaNeces
@@ -3511,7 +3511,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             end
             object dxStatusBar1: TdxStatusBar
               Left = 2
-              Top = 224
+              Top = 232
               Width = 613
               Height = 20
               Panels = <
@@ -4282,12 +4282,12 @@ object FrmSolicitacoes: TFrmSolicitacoes
             Left = 0
             Top = 4
             Width = 617
-            Height = 322
+            Height = 330
             Align = alClient
             TabOrder = 0
             object Gb_ParamCurvaDiaUteis: TGroupBox
               Left = 1
-              Top = 267
+              Top = 275
               Width = 615
               Height = 54
               Align = alBottom
@@ -4454,7 +4454,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
               Left = 1
               Top = 1
               Width = 615
-              Height = 266
+              Height = 274
               Align = alClient
               Caption = ' CURVAS '
               TabOrder = 0
@@ -5205,7 +5205,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           ImageIndex = 9
           DesignSize = (
             617
-            326)
+            334)
           object Shape10: TShape
             Left = 0
             Top = 0
@@ -5331,7 +5331,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             Left = 0
             Top = 64
             Width = 617
-            Height = 262
+            Height = 270
             Align = alBottom
             Anchors = [akLeft, akTop, akRight, akBottom]
             Color = 15004403
@@ -5423,10 +5423,335 @@ object FrmSolicitacoes: TFrmSolicitacoes
               end>
           end
         end
+        object Ts_ParamTransferencias: TTabSheet
+          Caption = ' Transferencias '
+          ImageIndex = 10
+          object GroupBox3: TGroupBox
+            Left = 0
+            Top = 0
+            Width = 617
+            Height = 71
+            Align = alTop
+            Caption = ' Loja Linx '
+            Color = clSilver
+            ParentColor = False
+            TabOrder = 0
+            object Label84: TLabel
+              Left = 16
+              Top = 48
+              Width = 157
+              Height = 13
+              Caption = 'N'#250'mero M'#225'ximo de Produtos/Dia'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+            end
+            object Label86: TLabel
+              Left = 232
+              Top = 48
+              Width = 152
+              Height = 13
+              Caption = 'Quantidade M'#225'xima por Produto'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+            end
+            object EdtTransfCodLoja: TCurrencyEdit
+              Left = 16
+              Top = 18
+              Width = 36
+              Height = 21
+              AutoSize = False
+              DecimalPlaces = 0
+              DisplayFormat = '0'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 0
+              OnChange = EdtTransfCodLojaChange
+              OnExit = EdtTransfCodLojaExit
+            end
+            object Bt_TransfBuscaLoja: TJvXPButton
+              Left = 57
+              Top = 16
+              Width = 26
+              Height = 25
+              TabOrder = 1
+              TabStop = False
+              Glyph.Data = {
+                07544269746D61705E060000424D5E0600000000000036040000280000001600
+                000017000000010008000000000028020000C30E0000C30E0000000100000000
+                000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
+                FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
+                FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000010101010101010101010101010101010101010101010000010101010101
+                0101010101010101010101040404030100000101010101010101010101010101
+                0101040701070401000001010101010101010101010101010104070101070401
+                0000010101010101010101010101010104070101070704010000010101010101
+                0101010101010104070101070704010100000101010101010101010101010407
+                0101070704010101000001010101010101010101010407010107070401010101
+                0000010101010101010101010407010107070401010101010000010101010101
+                0101010404040307070401010101010100000101010101010404040404040407
+                0401010101010101000001010101040406010601010404040101010101010101
+                0000010101040106010601010101040101010101010101010000010101040601
+                0601060106010401010101010101010100000101040601060101010601060104
+                0101010101010101000001010401060106010601060101040101010101010101
+                0000010104060106010601060106010401010101010101010000010104010601
+                0601060106010104010101010101010100000101010401060101010601060401
+                0101010101010101000001010104060106010601060104010101010101010101
+                0000010101010404010101060404010101010101010101010000010101010101
+                0404040401010101010101010101010100000101010101010101010101010101
+                01010101010101010000}
+              ShowFocusRect = True
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+              ParentShowHint = False
+              ShowHint = False
+              OnClick = Bt_TransfBuscaLojaClick
+            end
+            object EdtTransfDescLoja: TEdit
+              Left = 87
+              Top = 18
+              Width = 515
+              Height = 21
+              TabStop = False
+              Color = 14737632
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+              ReadOnly = True
+              TabOrder = 2
+            end
+            object EdtTransfNumProd: TCurrencyEdit
+              Left = 176
+              Top = 44
+              Width = 44
+              Height = 21
+              AutoSize = False
+              DecimalPlaces = 0
+              DisplayFormat = ',0'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 3
+              OnChange = EdtParamLojaNecesCodLojaChange
+              OnExit = EdtParamLojaNecesCodLojaExit
+            end
+            object EdtTransfQtdProd: TCurrencyEdit
+              Left = 387
+              Top = 44
+              Width = 48
+              Height = 21
+              AutoSize = False
+              DecimalPlaces = 0
+              DisplayFormat = ',0'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 4
+              OnChange = EdtParamLojaNecesCodLojaChange
+              OnExit = EdtParamLojaNecesCodLojaExit
+            end
+            object Bt_TransfSalvar: TJvXPButton
+              Left = 452
+              Top = 45
+              Width = 151
+              Height = 23
+              Caption = 'Incluir/Alterar Loja'
+              TabOrder = 5
+              Glyph.Data = {
+                07544269746D617066010000424D660100000000000076000000280000001400
+                0000140000000100040000000000F00000000000000000000000100000001000
+                0000000000000000800000800000008080008000000080008000808000008080
+                8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+                FF00888888888888888888880000888888888888888888880000888877777777
+                888888880000880000000000788888880000880BFFFBFFF0777777880000880F
+                444444F0000000780000880FFBFFFBF0FBFFF0780000880F444444F04444F078
+                0000880BFFFBFFF0FFFBF0780000880F444444F04444F0780000880FFBFFFBF0
+                FBFFF0780000880F44F000004477F0780000880BFFF0FFF0FF0007780000880F
+                44F0FB00F70A07780000880FFBF0F0FF000A00080000880000000F470AAAAA08
+                0000888888880FFB000A00080000888888880000770A08880000888888888888
+                880008880000888888888888888888880000}
+              ShowFocusRect = True
+              Spacing = 6
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              OnClick = Bt_TransfSalvarClick
+            end
+          end
+          object Dbg_TransfLojas: TDBGridJul
+            Left = 0
+            Top = 71
+            Width = 617
+            Height = 263
+            Align = alClient
+            Color = 15004403
+            DataSource = DMCentralTrocas.DS_ParamTransf
+            FixedColor = clSilver
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clBlack
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
+            ParentFont = False
+            ParentShowHint = False
+            ReadOnly = True
+            ShowHint = False
+            TabOrder = 1
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clBlack
+            TitleFont.Height = -11
+            TitleFont.Name = 'MS Sans Serif'
+            TitleFont.Style = [fsBold]
+            OnDrawColumnCell = Dbg_ParamLojaNecesDrawColumnCell
+            OnKeyDown = Dbg_ParamLojaNecesKeyDown
+            CorComFoco = 15004403
+            SairComEnter = False
+            EditDataSetCheck = False
+            ValorCampoCheck = 'SIM'
+            ValorCampoUnCheck = 'NAO'
+            ImageChecked.Data = {
+              3E020000424D3E0200000000000036000000280000000D0000000D0000000100
+              180000000000080200000000000000000000000000000000000080511C80511C
+              80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
+              1C0080511CF1F3F3F3F5F5F6F7F7F8F9F9F9FAFAFBFCFCFDFDFDFEFEFEFFFFFF
+              FFFFFFFFFFFF80511C0080511CEFF1F1F1F3F3F3F5F5F6F7F7F8F9F9F9FAFAFB
+              FCFCFDFDFDFEFEFEFFFFFFFFFFFF80511C0080511CECEFEFEFF1F1F1F3F3F3F5
+              F521A121F8F9F9F9FAFAFBFCFCFDFDFDFEFEFEFFFFFF80511C0080511CE9ECEC
+              ECEFEFEFF1F121A12121A12121A121F8F9F9F9FAFAFBFCFCFDFDFDFEFEFE8051
+              1C0080511CE6EAEAE9ECEC21A12121A12121A12121A12121A121F8F9F9F9FAFA
+              FBFCFCFDFDFD80511C0080511CE3E7E7E6EAEA21A12121A121EFF1F121A12121
+              A12121A121F8F9F9F9FAFAFBFCFC80511C0080511CE1E5E5E3E7E721A121E9EC
+              ECECEFEFEFF1F121A12121A12121A121F8F9F9F9FAFA80511C0080511CDFE3E3
+              E1E5E5E3E7E7E6EAEAE9ECECECEFEFEFF1F121A12121A121F6F7F7F8F9F98051
+              1C0080511CDDE2E2DFE3E3E1E5E5E3E7E7E6EAEAE9ECECECEFEFEFF1F121A121
+              F3F5F5F6F7F780511C0080511CDDE2E2DDE2E2DFE3E3E1E5E5E3E7E7E6EAEAE9
+              ECECECEFEFEFF1F1F1F3F3F3F5F580511C0080511CDDE2E2DDE2E2DDE2E2DFE3
+              E3E1E5E5E3E7E7E6EAEAE9ECECECEFEFEFF1F1F1F3F380511C0080511C80511C
+              80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
+              1C00}
+            ImageUnChecked.Data = {
+              3E020000424D3E0200000000000036000000280000000D0000000D0000000100
+              180000000000080200000000000000000000000000000000000080511C80511C
+              80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
+              1C0080511CEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9FAFBFBFCFDFDFEFEFEFFFFFF
+              FFFFFFFFFFFF80511C0080511CECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9FA
+              FBFBFCFDFDFEFEFEFFFFFFFFFFFF80511C0080511CE9ECECECEFEFEFF1F1F1F3
+              F3F4F5F5F6F7F7F8F9F9FAFBFBFCFDFDFEFEFEFFFFFF80511C0080511CE5E8E8
+              E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9FAFBFBFCFDFDFEFEFE8051
+              1C0080511CE2E5E5E5E8E8E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9
+              FAFBFBFCFDFD80511C0080511CDEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F1F1
+              F3F3F4F5F5F6F7F7F8F9F9FAFBFB80511C0080511CDBE0E0DEE2E2E2E5E5E5E8
+              E8E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F980511C0080511CD9DEDE
+              DBE0E0DEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F78051
+              1C0080511CD7DCDCD9DEDEDBE0E0DEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F1
+              F1F3F3F4F5F580511C0080511CD7DCDCD7DCDCD9DEDEDBE0E0DEE2E2E2E5E5E5
+              E8E8E9ECECECEFEFEFF1F1F1F3F380511C0080511CD7DCDCD7DCDCD7DCDCD9DE
+              DEDBE0E0DEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F180511C0080511C80511C
+              80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
+              1C00}
+            Columns = <
+              item
+                Expanded = False
+                FieldName = 'RAZAO_SOCIAL'
+                Width = 350
+                Visible = True
+              end
+              item
+                Color = 14548991
+                Expanded = False
+                FieldName = 'NUM_PROD_DIA'
+                Font.Charset = ANSI_CHARSET
+                Font.Color = clBlack
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                Title.Alignment = taRightJustify
+                Width = 80
+                Visible = True
+              end
+              item
+                Color = 14548991
+                Expanded = False
+                FieldName = 'QTD_MAX_PROD'
+                Font.Charset = ANSI_CHARSET
+                Font.Color = clBlack
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                Title.Alignment = taRightJustify
+                Width = 90
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_LOJA'
+                Title.Alignment = taRightJustify
+                Width = 55
+                Visible = True
+              end>
+          end
+        end
       end
       object Pan_ParamSis: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -5724,7 +6049,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 14
       DesignSize = (
         625
-        416)
+        424)
       object Gb_ValesFiltroLoja: TGroupBox
         Left = 6
         Top = 0
@@ -6228,7 +6553,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel35: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -6370,7 +6695,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Gb_ValesParcelas: TGroupBox
         Left = 0
-        Top = 217
+        Top = 225
         Width = 625
         Height = 164
         Align = alBottom
@@ -6770,7 +7095,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 361
+        Height = 369
         Hint = '<Duplo Click> Marca/DesMarca'
         Align = alClient
         Color = 15004403
@@ -6953,7 +7278,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel43: TPanel
         Left = 0
-        Top = 361
+        Top = 369
         Width = 625
         Height = 35
         Align = alBottom
@@ -7171,7 +7496,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Sb_SelectEmpProc2: TdxStatusBar
         Left = 0
-        Top = 396
+        Top = 404
         Width = 625
         Height = 20
         Panels = <
@@ -7198,7 +7523,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 6
       object Panel12: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -7384,7 +7709,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 57
         Width = 625
-        Height = 324
+        Height = 332
         Hint = '<Duplo Click> Marca/DesMarca'
         Align = alClient
         Color = 15004403
@@ -7773,7 +8098,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 17
       DesignSize = (
         625
-        416)
+        424)
       object PC_FinanPlanFinanceiraSolicita: TPageControl
         Left = 84
         Top = 36
@@ -9148,7 +9473,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Pan_ReposicaoLojas: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -9453,7 +9778,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 416
+        Height = 424
         Align = alClient
         TabOrder = 0
         object GroupBox1: TGroupBox
@@ -9564,7 +9889,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Left = 1
           Top = 59
           Width = 623
-          Height = 356
+          Height = 364
           Align = alClient
           Caption = '  Usu'#225'rios a Atualizar '
           Color = clSilver
@@ -9578,7 +9903,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           TabOrder = 1
           DesignSize = (
             623
-            356)
+            364)
           object Label63: TLabel
             Left = 11
             Top = 31
@@ -9668,7 +9993,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
           object Sb_GeraOC: TdxStatusBar
             Left = 2
-            Top = 334
+            Top = 342
             Width = 619
             Height = 20
             Panels = <
@@ -9705,7 +10030,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 23
       object Pan_SalaoRelatorios: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -9928,7 +10253,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 53
         Width = 166
-        Height = 328
+        Height = 336
         Align = alLeft
         BevelInner = bvRaised
         BevelOuter = bvLowered
@@ -10085,7 +10410,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 66
         Width = 625
-        Height = 350
+        Height = 358
         TabStop = False
         Align = alClient
         Ctl3D = False
@@ -10179,8 +10504,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
     end
   end
   object PainelApresExp: TPanel
-    Left = 56
-    Top = 248
+    Left = 416
+    Top = 72
     Width = 99
     Height = 33
     BevelInner = bvRaised
@@ -10200,27 +10525,27 @@ object FrmSolicitacoes: TFrmSolicitacoes
   object CDS_: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 564
-    Top = 280
+    Left = 588
+    Top = 272
   end
   object ADOC_Excel: TADOConnection
     LoginPrompt = False
     Mode = cmShareDenyNone
     Provider = 'Microsoft.Jet.OLEDB.4.0'
-    Left = 564
-    Top = 224
+    Left = 580
+    Top = 208
   end
   object ADOT_Dcto: TADOTable
     Connection = ADOC_Excel
     CursorType = ctStatic
     LockType = ltReadOnly
     TableDirect = True
-    Left = 567
-    Top = 168
+    Left = 551
+    Top = 192
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 481
-    Top = 154
+    Left = 465
+    Top = 226
   end
 end

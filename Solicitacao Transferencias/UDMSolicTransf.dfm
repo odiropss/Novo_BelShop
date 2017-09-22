@@ -128,4 +128,10 @@ object DMSolicTransf: TDMSolicTransf
     Left = 52
     Top = 280
   end
+  object Timer1: TTimer
+    Interval = 1800000
+    OnTimer = Timer1Timer
+    Left = 360
+    Top = 64
+  end
 end

@@ -751,7 +751,6 @@ object DMCentralTrocas: TDMCentralTrocas
     Top = 176
   end
   object SDS_RelReposicao: TSQLDataSet
-    Active = True
     CommandText = 
       'SELECT '#13#10'-------------------- '#39'Bel_'#39'||lo.cod_loja||'#39' - '#39'||em.raz' +
       'ao_social loja,'#13#10'em.cod_cli_linx||'#39' - '#39'||em.razao_social loja,'#13#10 +
@@ -1025,5 +1024,57 @@ object DMCentralTrocas: TDMCentralTrocas
     DataSet = CDS_V_ReposDivergencias
     Left = 488
     Top = 320
+  end
+  object CDS_ParamTransf: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_ParamTransf'
+    Left = 848
+    Top = 128
+    object CDS_ParamTransfRAZAO_SOCIAL: TStringField
+      DisplayLabel = 'Descri'#231#227'o Loja'
+      FieldName = 'RAZAO_SOCIAL'
+      Size = 50
+    end
+    object CDS_ParamTransfNUM_PROD_DIA: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'N'#186' Prod/Dia'
+      FieldName = 'NUM_PROD_DIA'
+      Size = 50
+    end
+    object CDS_ParamTransfQTD_MAX_PROD: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Qtd Max/Prod'
+      FieldName = 'QTD_MAX_PROD'
+      Size = 50
+    end
+    object CDS_ParamTransfCOD_LOJA: TIntegerField
+      DisplayLabel = 'C'#243'd Loja'
+      FieldName = 'COD_LOJA'
+      Required = True
+    end
+  end
+  object SDS_ParamTransf: TSQLDataSet
+    CommandText = 
+      'SELECT'#13#10'lo.nome_emp razao_social,'#13#10'so.des_aux Num_Prod_Dia,'#13#10'so.' +
+      'des_aux1 Qtd_max_Prod,'#13#10'so.cod_aux Cod_Loja'#13#10#13#10'FROM TAB_AUXILIAR' +
+      ' so, linxlojas lo'#13#10#13#10'WHERE so.cod_aux=lo.empresa'#13#10'AND   so.tip_a' +
+      'ux=19'#13#10'ORDER BY lo.nome_emp'#13#10
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 736
+    Top = 128
+  end
+  object DSP_ParamTransf: TDataSetProvider
+    DataSet = SDS_ParamTransf
+    Options = [poRetainServerOrder]
+    Left = 792
+    Top = 144
+  end
+  object DS_ParamTransf: TDataSource
+    DataSet = CDS_ParamTransf
+    Left = 909
+    Top = 144
   end
 end

@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Forms, SysUtils, Classes, DBXpress, FMTBcd, SqlExpr, DB, DBClient,
-  Provider, StdCtrls, WinInet;
+  Provider, StdCtrls, WinInet, ExtCtrls;
 
 type
   TDMSolicTransf = class(TDataModule)
@@ -27,6 +27,7 @@ type
     CDS_SolicitacaoNOME: TStringField;
     CDS_SolicitacaoQTD_ESTOQUE: TFMTBCDField;
     CDS_SolicitacaoQTD_TRANSF: TFMTBCDField;
+    Timer1: TTimer;
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -36,6 +37,7 @@ type
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     procedure DataModuleCreate(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
 
   private
     { Private declarations }
@@ -53,7 +55,8 @@ var
   DMSolicTransf: TDMSolicTransf;
 
   sgPastaExecutavel, sgFBConect: String;
-
+  dgDtaHoje: TDateTime;
+  
 implementation
 
 uses DK_Procs1;
@@ -162,6 +165,8 @@ End; // Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TDMSolicTransf.DataModuleCreate(Sender: TObject);
 begin
+  // Date da Inicialização do Sistema ==========================================
+  dgDtaHoje:=Date;
 
   // Pasta Executavel ==========================================================
   sgPastaExecutavel:=IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName));
@@ -196,6 +201,15 @@ begin
 
   ConectaBanco;
 
+end;
+
+procedure TDMSolicTransf.Timer1Timer(Sender: TObject);
+begin
+  If dgDtaHoje<>Date Then
+  Begin
+    Application.Terminate;
+    Exit;
+  End;
 end;
 
 end.

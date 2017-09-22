@@ -38,7 +38,7 @@ type
     Bt_Excluir: TJvXPButton;
     Label2: TLabel;
     EdtQtdEstoque: TCurrencyEdit;
-    Stb_FluForn: TdxStatusBar;
+    Stb_ParamTransf: TdxStatusBar;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -55,14 +55,18 @@ type
     // Hint em Fortma de Balão
     Procedure CreateToolTips(hWnd: Cardinal); // Cria Show Hint em Forma de Balão
     Procedure FocoToControl(Sender: TControl);
+
+    Function  CriaLimitesLoja: Boolean;
+
+    // ODIR >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
     procedure Dbg_ProdutosKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure Bt_IncluirClick(Sender: TObject);
     procedure Bt_ExcluirClick(Sender: TObject);
     procedure Dbg_ProdutosKeyUp(Sender: TObject; var Key: Word;
-      Shift: TShiftState); // Posiciona no Componente
-
-    // ODIR >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      Shift: TShiftState);
+    procedure EdtQtdTransfExit(Sender: TObject); // Posiciona no Componente
 
   private
     { Private declarations }
@@ -84,10 +88,11 @@ var
 
   tsgArquivo: TStringList;
   sgLojaLinx, sgLojaSidicom, sgNomeLoja,
-
   sgNumSolicitacao,
   sgCodProdLinx, sgCodProdSidicom
   : String;
+
+  igNumMaxProd, igQtdMaxProd: Integer;
 
   // Show Hint em Forma de Balão
   hTooltip: Cardinal;
@@ -104,6 +109,67 @@ uses DK_Procs1, UDMSolicTransf, UPesquisa, DB;
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // ODIR - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Cria Limites da Loja em Tab_Auxiliar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TFrmSolicTransf.CriaLimitesLoja: Boolean;
+Var
+  MySql: String;
+Begin
+
+  Result:=True;
+
+  // Verifica se Transação esta Ativa
+  If DMSolicTransf.SQLC.InTransaction Then
+   DMSolicTransf.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMSolicTransf.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR'+
+           ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
+           ' VALUES ('+
+           ' 19, '+ // TIP_AUX
+           sgLojaLinx+', '+ // COD_AUX
+           '25, '+ // DES_AUX
+           '24, '+ // DES_AUX1
+           ' NULL, '+ // VLR_AUX
+           ' NULL)'+ // VLR_AUX1
+           ' MATCHING (TIP_AUX, COD_AUX)';
+    DMSolicTransf.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMSolicTransf.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    OdirPanApres.Visible:=False;
+
+    Screen.Cursor:=crDefault;
+
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      Result:=False;
+
+      DMSolicTransf.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+End; // Cria Limites da Loja em Tab_Auxiliar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Show Hint em Forma de Balão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 procedure TFrmSolicTransf.CreateToolTips(hWnd: Cardinal);
@@ -169,10 +235,13 @@ const
   TipoDoIcone = 1; // Show Hint em Forma de Balão
 
 Var
-  sErro, MySql: String;
+  MySql: String;
+  sErro: String;
+  b: Boolean;
 begin
   If not(fileexists(IncludeTrailingPathDelimiter(sgPastaExecutavel)+'Loja.ini')) then
   Begin
+  
     msg('Definição da Loja Não Encontrada !!'+cr+'Entrar em Contato com o ODIR'+cr+'Celcular:  999-578-234','A');
     Application.Terminate;
     Exit;
@@ -196,8 +265,8 @@ begin
 
     If sErro='' Then
     Begin
-      sgLojaLinx   :=Separa_String(tsgArquivo[0],1);
-      sgLojaSidicom:=Separa_String(tsgArquivo[0],2);
+      sgLojaSidicom:=Separa_String(tsgArquivo[0],1);
+      sgLojaLinx   :=Separa_String(tsgArquivo[0],2);
       sgNomeLoja   :=Separa_String(tsgArquivo[0],3);
 
       StrToInt(sgLojaLinx);
@@ -242,7 +311,52 @@ begin
   CreateToolTips(Self.Handle);
   AddToolTip(Bt_Excluir.Handle, @ti, TipoDoIcone, 'Exclui Produto Selecionado'+cr+'na Solicitação', 'EXCLUIR PRODUTO !!');
 
+  // Busca Numero/Quantidade Máxima dse Transferencia ==========================
+  b:=True;
+  While b do
+  Begin
+    MySql:=' SELECT t.des_aux Num_Prod, t.des_aux1 Qtd_Prod'+
+           ' FROM TAB_AUXILIAR t'+
+           ' WHERE t.tip_aux=19'+
+           ' AND   t.cod_aux='+sgLojaLinx;
+    DMSolicTransf.CDS_Busca.Close;
+    DMSolicTransf.SQLQ_Busca.Close;
+    DMSolicTransf.SQLQ_Busca.SQL.Clear;
+    DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
+    DMSolicTransf.CDS_Busca.Open;
+    If Trim(DMSolicTransf.CDS_Busca.FieldByName('Num_Prod').AsString)='' Then
+     Begin
+       // Cria Limites da Loja em Tab_Auxiliar
+       If Not CriaLimitesLoja Then
+       Begin
+         Application.Terminate;
+         Exit;
+       End;
+     End
+    Else
+     Begin
+       Break;
+     End; // If Trim(DMSolicTransf.CDS_Busca.FieldByName('Num_Prod').AsString)='' Then
+  End; // While b do
+  igNumMaxProd:=DMSolicTransf.CDS_Busca.FieldByName('Num_Prod').AsInteger;
+  igQtdMaxProd:=DMSolicTransf.CDS_Busca.FieldByName('Qtd_Prod').AsInteger;
+  DMSolicTransf.CDS_Busca.Close;
+  Stb_ParamTransf.Panels[2].Text:='Nº Maximo de Produtos/Dia: '+IntToStr(igNumMaxProd);
+  Stb_ParamTransf.Panels[3].Text:='Quantidade Maxima Por Produto: '+IntToStr(igQtdMaxProd);
+
   // Busca Solicitação do Dia ==================================================
+  MySql:=' SELECT tr.dta_solicitacao, tr.num_solicitacao,'+
+         '        tr.cod_prod_linx, TRIM(pr.nome) nome,'+
+         '        tr.qtd_estoque, tr.qtd_transf'+
+         ' FROM SOL_TRANSFERENCIA_CD tr, LINXPRODUTOS pr'+
+         ' WHERE tr.cod_prod_linx=pr.cod_produto'+
+         ' AND  tr.dta_solicitacao=CURRENT_DATE'+
+         ' AND  tr.cod_loja_linx='+sgLojaLinx+
+         ' ORDER BY pr.nome';
+  DMSolicTransf.CDS_Solicitacao.Close;
+  DMSolicTransf.SQLQ_Solicitacao.Close;
+  DMSolicTransf.SQLQ_Solicitacao.SQL.Clear;
+  DMSolicTransf.SQLQ_Solicitacao.SQL.Add(MySql);
   DMSolicTransf.CDS_Solicitacao.Open;
   sgNumSolicitacao:=DMSolicTransf.CDS_SolicitacaoNUM_SOLICITACAO.AsString;
 
@@ -277,8 +391,6 @@ begin
   CorCaptionForm.Active:=True;
 
   PC_PrincipalChange(Self);
-
-
 end;
 
 procedure TFrmSolicTransf.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
@@ -315,6 +427,17 @@ begin
 
   If EdtCodProdLinx.Value<>0 Then
   Begin
+    If DMSolicTransf.CDS_Solicitacao.RecNo>=igNumMaxProd Then
+    Begin
+      msg('Número Máximo de Produtos por'+cr+'Transferêcia Diária Esta Completo !!'+cr+IntToStr(igNumMaxProd)+' Produtos por Dia !!','A');
+      EdtDescProduto.Clear;
+      EdtCodProdLinx.Clear;
+      EdtQtdEstoque.Clear;
+      EdtQtdTransf.Clear;
+      EdtCodProdLinx.SetFocus;
+      Exit;
+    End; // If Not bMultiplo Then
+
     Screen.Cursor:=crAppStart;
 
     MySql:=' SELECT pr.Cod_Produto, pr.Nome, pr.Cod_Auxiliar, pr.DesAtivado'+
@@ -339,6 +462,8 @@ begin
       msg('Produto (Linx) NÃO Encontrado !!!', 'A');
       EdtDescProduto.Clear;
       EdtCodProdLinx.Clear;
+      EdtQtdEstoque.Clear;
+      EdtQtdTransf.Clear;
       EdtCodProdLinx.SetFocus;
       Exit;
     End;
@@ -348,6 +473,19 @@ begin
       msg('Produto (Linx) Desativado !!!', 'A');
       EdtDescProduto.Clear;
       EdtCodProdLinx.Clear;
+      EdtQtdEstoque.Clear;
+      EdtQtdTransf.Clear;
+      EdtCodProdLinx.SetFocus;
+      Exit;
+    End;
+
+    If Trim(sgCodProdSidicom)='' Then
+    Begin
+      msg('Produto Não Encontrado no CD !!!', 'A');
+      EdtDescProduto.Clear;
+      EdtCodProdLinx.Clear;
+      EdtQtdEstoque.Clear;
+      EdtQtdTransf.Clear;
       EdtCodProdLinx.SetFocus;
       Exit;
     End;
@@ -370,6 +508,8 @@ Begin
 
   EdtCodProdLinx.Clear;
   EdtDescProduto.Clear;
+  EdtQtdEstoque.Clear;
+  EdtQtdTransf.Clear;
 
   b:=True;
   While b do
@@ -471,6 +611,16 @@ procedure TFrmSolicTransf.Bt_IncluirClick(Sender: TObject);
 Var
   MySql: String;
 begin
+  If DMSolicTransf.CDS_Solicitacao.RecNo>=igNumMaxProd Then
+  Begin
+    msg('Número Máximo de Produtos por'+cr+'Transferêcia Diária Esta Completo !!'+cr+IntToStr(igNumMaxProd)+' Produtos por Dia !!','A');
+    EdtDescProduto.Clear;
+    EdtCodProdLinx.Clear;
+    EdtQtdEstoque.Clear;
+    EdtQtdTransf.Clear;
+    EdtCodProdLinx.SetFocus;
+    Exit;
+  End; // If Not bMultiplo Then
 
   // Consiste ==================================================================
   If EdtCodProdLinx.AsInteger=0 Then
@@ -525,9 +675,18 @@ begin
            sgNumSolicitacao+', '+ // NUM_SOLICITACAO
            sgLojaSidicom+', '+ // COD_LOJA_SIDI
            sgLojaLinx+', '+ // COD_LOJA_LINX
-           sgCodProdLinx+', '+ // COD_PROD_LINX
-           QuotedStr(sgCodProdSidicom)+', '+ // COD_PROD_SIDI
-           IntToStr(EdtQtdEstoque.AsInteger)+', '+ // QTD_ESTOQUE
+           sgCodProdLinx+', '; // COD_PROD_LINX
+
+           // COD_PROD_SIDI
+           If Trim(sgCodProdSidicom)<>'' Then
+            MySql:=
+             MySql+QuotedStr(sgCodProdSidicom)+', '
+           Else
+            MySql:=
+             MySql+'NULL , ';
+
+    MySql:=
+     MySql+IntToStr(EdtQtdEstoque.AsInteger)+', '+ // QTD_ESTOQUE
            IntToStr(EdtQtdTransf.AsInteger)+')'+ // QTD_TRANSF
            ' MATCHING (DTA_SOLICITACAO, NUM_SOLICITACAO, COD_LOJA_LINX, COD_PROD_LINX)';
     DMSolicTransf.SQLC.Execute(MySql,nil,nil);
@@ -695,6 +854,112 @@ begin
     End; // If Not DMSolicTransf.CDS_Solicitacao.IsEmpty Then
   End; // If Key=Vk_F4 Then
 
+end;
+
+procedure TFrmSolicTransf.EdtQtdTransfExit(Sender: TObject);
+Var
+  MySql: String;
+  sCodGrupo, sCodSubGrupo, sQtdCaixa: String;
+  iQtdMultiplo: Integer;
+  bMultiplo: Boolean;
+begin
+
+  If EdtQtdTransf.AsInteger=0 Then
+  Begin
+    msg('Quantidade de Transferência'+cr+'INVÁLIDA !!','A');
+    EdtCodProdLinx.SetFocus;
+    Exit;
+  End;
+
+  If EdtCodProdLinx.AsInteger=0 Then
+  Begin
+    msg('Favor Informar o Produto !!','A');
+    EdtCodProdLinx.SetFocus;
+    Exit;
+  End;
+
+  // Busca Produto Caixa Embarque ==============================================
+  MySql:=' SELECT Trim(pr.codgrupo) CodGrupo, Trim(pr.codsubgrupo) CodSubGrupo'+
+         ' FROM PRODUTO pr'+
+         ' WHERE pr.codproduto='+QuotedStr(sgCodProdSidicom);
+  DMSolicTransf.CDS_Busca.Close;
+  DMSolicTransf.SQLQ_Busca.Close;
+  DMSolicTransf.SQLQ_Busca.SQL.Clear;
+  DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
+  DMSolicTransf.CDS_Busca.Open;
+  sCodGrupo   :=DMSolicTransf.CDS_Busca.FieldByName('CodGrupo').AsString;
+  sCodSubGrupo:=DMSolicTransf.CDS_Busca.FieldByName('CodSubGrupo').AsString;
+  DMSolicTransf.CDS_Busca.Close;
+
+  MySql:=' SELECT cp.Cod_Produto, cp.Cod_Grupo, cp.Cod_Subgrupo,'+
+         '        cp.Qtd_Caixa, cp.Per_Corte'+
+         ' FROM PROD_CAIXA_CD cp'+
+         ' WHERE ((cp.cod_produto='+QuotedStr(sgCodProdSidicom)+')'+
+         '        OR'+
+         '        ((cp.cod_grupo='+QuotedStr(sCodGrupo)+') and (cp.cod_subgrupo is null))'+
+         '        OR'+
+         '        ((cp.cod_grupo='+QuotedStr(sCodGrupo)+') and (cp.cod_subgrupo='+QuotedStr(sCodSubGrupo)+')))'+
+         ' ORDER BY 1 desc, 4 desc';
+  DMSolicTransf.CDS_Busca.Close;
+  DMSolicTransf.SQLQ_Busca.Close;
+  DMSolicTransf.SQLQ_Busca.SQL.Clear;
+  DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
+  DMSolicTransf.CDS_Busca.Open;
+
+  sQtdCaixa:=DMSolicTransf.CDS_Busca.FieldByName('Qtd_Caixa').AsString;
+  DMSolicTransf.CDS_Busca.Close;
+
+  bMultiplo:=False;
+  If Trim(sQtdCaixa)<>'' Then
+  Begin
+    If StrToInt(sQtdCaixa)<>igQtdMaxProd Then
+    Begin
+      MessageBox(Application.Handle, Pchar('PRODUTO com CAIXA de Transferência'+cr+
+                                           'com '+sQtdCaixa+' Produtos por Caixa'), 'Aviso', MB_ICONEXCLAMATION);
+
+      If EdtQtdTransf.AsInteger<StrToInt(sQtdCaixa) Then
+       Begin
+         EdtQtdTransf.AsInteger:=StrToInt(sQtdCaixa)
+       End
+      Else If EdtQtdTransf.AsInteger>StrToInt(sQtdCaixa) Then // Calcula Multiplo
+       Begin
+         iQtdMultiplo:=StrToInt(sQtdCaixa);
+         bMultiplo:=True;
+         While bMultiplo do
+         Begin
+           If iQtdMultiplo>igQtdMaxProd Then
+           Begin
+             EdtQtdTransf.AsInteger:=iQtdMultiplo;
+             Break;
+           End;
+
+           If EdtQtdTransf.AsInteger<iQtdMultiplo Then
+           Begin
+             EdtQtdTransf.AsInteger:=iQtdMultiplo;
+             Break;
+           End;
+
+           If EdtQtdTransf.AsInteger=iQtdMultiplo Then
+            Begin
+              Break;
+            End
+           Else
+            Begin
+              iQtdMultiplo:=iQtdMultiplo+StrToInt(sQtdCaixa);
+            End;
+         End; // While bMultiplo do
+         bMultiplo:=True;
+       End; // If EdtQtdTransf.AsInteger<StrToInt(sQtdCaixa) Then
+    End; // If StrToInt(sQtdCaixa)<>igQtdMaxProd Then
+    Bt_Incluir.SetFocus;
+  End; // If Trim(sQtdCaixa)<>'' Then
+
+  If (Not bMultiplo) And (EdtQtdTransf.AsInteger>igQtdMaxProd) Then
+  Begin
+    msg('Quantidade de Transferência Inválida !!'+cr+'Superior ao Maximo de '+IntToStr(igQtdMaxProd)+' por Produto','A');
+    EdtQtdTransf.SetFocus;
+    Exit;
+  End; // If Not bMultiplo Then
 end;
 
 end.

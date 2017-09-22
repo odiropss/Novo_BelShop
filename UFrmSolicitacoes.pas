@@ -610,6 +610,17 @@ type
     Mem_ReposDivProduto: TMemo;
     Dbg_ReposDivProdutos: TDBGridJul;
     Label13: TLabel;
+    Ts_ParamTransferencias: TTabSheet;
+    GroupBox3: TGroupBox;
+    EdtTransfCodLoja: TCurrencyEdit;
+    Bt_TransfBuscaLoja: TJvXPButton;
+    EdtTransfDescLoja: TEdit;
+    Label84: TLabel;
+    Label86: TLabel;
+    EdtTransfNumProd: TCurrencyEdit;
+    EdtTransfQtdProd: TCurrencyEdit;
+    Dbg_TransfLojas: TDBGridJul;
+    Bt_TransfSalvar: TJvXPButton;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -910,6 +921,10 @@ type
       Shift: TShiftState);
     procedure Bt_ReposDivAlterarQtdClick(Sender: TObject);
     procedure EdtReposDivQtdChange(Sender: TObject);
+    procedure EdtTransfCodLojaChange(Sender: TObject);
+    procedure EdtTransfCodLojaExit(Sender: TObject);
+    procedure Bt_TransfBuscaLojaClick(Sender: TObject);
+    procedure Bt_TransfSalvarClick(Sender: TObject);
   private
     { Private declarations }
 
@@ -4183,6 +4198,9 @@ end;
 
 procedure TFrmSolicitacoes.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
+
+  DMCentralTrocas.CDS_ParamTransf.Close;
+
   // Retorna Permissão de Sair com Ctrl+F4
   Application.OnMessage := nil;
 
@@ -5240,6 +5258,8 @@ procedure TFrmSolicitacoes.PC_ParametrosChange(Sender: TObject);
 begin
   CorSelecaoTabSheet(PC_Parametros);
 
+  DMCentralTrocas.CDS_ParamTransf.Close;
+
   If (PC_Parametros.ActivePage=Ts_ParamLojaReposicoes) Then
    Bt_ParamSisReposFornec.Visible:=True
   Else
@@ -5270,6 +5290,13 @@ begin
   Begin
     EdtParamCurvaALimite.SetFocus;
   End;
+
+  If (PC_Parametros.ActivePage=Ts_ParamTransferencias) And (Ts_ParamTransferencias.CanFocus) Then
+  Begin
+    DMCentralTrocas.CDS_ParamTransf.Open;
+    EdtTransfCodLoja.SetFocus;
+  End;
+
 end;
 
 procedure TFrmSolicitacoes.Bt_ParamSalMinNovoClick(Sender: TObject);
@@ -8673,6 +8700,198 @@ begin
     EdtReposDivQtd.SetFocus;
   Except
   End;
+end;
+
+procedure TFrmSolicitacoes.EdtTransfCodLojaChange(Sender: TObject);
+begin
+  EdtTransfDescLoja.Clear;
+
+end;
+
+procedure TFrmSolicitacoes.EdtTransfCodLojaExit(Sender: TObject);
+Var
+  MySql: String;
+begin
+
+  EdtTransfDescLoja.Clear;
+
+  If EdtTransfCodLoja.Value<>0 Then
+  Begin
+    Screen.Cursor:=crAppStart;
+
+    // Busca Loja ==============================================================
+    MySql:=' SELECT lo.nome_emp Nome_Loja, lo.empresa Cod_Loja'+
+           ' FROM linxlojas lo'+
+           ' WHERE lo.empresa<>2'+
+           ' AND   lo.empresa='+IntToStr(EdtTransfCodLoja.AsInteger);
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+
+    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Nome_Loja').AsString)='' Then
+    Begin
+      msg('Loja NÃO Encontrada !!!', 'A');
+      Screen.Cursor:=crDefault;
+      EdtTransfCodLoja.Clear;
+      EdtTransfCodLoja.SetFocus;
+      DMBelShop.CDS_BuscaRapida.Close;
+      Exit;
+    End;
+    EdtTransfDescLoja.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('Nome_Loja').AsString;
+    DMBelShop.CDS_BuscaRapida.Close;
+
+    DMCentralTrocas.CDS_ParamTransf.Locate('Cod_Loja', EdtTransfCodLoja.AsInteger,[]);
+
+    Screen.Cursor:=crDefault;
+  End;
+end;
+
+procedure TFrmSolicitacoes.Bt_TransfBuscaLojaClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+
+  FrmPesquisa:=TFrmPesquisa.Create(Self);
+                          
+  EdtTransfCodLoja.Clear;
+  EdtTransfDescLoja.Clear;
+
+  EdtTransfCodLoja.SetFocus;
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  MySql:=' SELECT lo.nome_emp Nome_Loja, lo.empresa Cod_Loja'+
+         ' FROM linxlojas lo'+
+         ' WHERE lo.empresa<>2'+
+         ' ORDER BY lo.nome_emp';
+  DMBelShop.CDS_Pesquisa.Close;
+  DMBelShop.CDS_Pesquisa.Filtered:=False;
+  DMBelShop.SDS_Pesquisa.CommandText:=MySql;
+  DMBelShop.CDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(DMBelShop.CDS_Pesquisa.FieldByName('Nome_loja').AsString)='' Then
+  Begin
+    DMBelShop.CDS_Pesquisa.Close;
+    msg('Sem Loja a Listar !!','A');
+    EdtTransfCodLoja.SetFocus;
+    FreeAndNil(FrmPesquisa);
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisa.Campo_pesquisa:='Nome_Loja';
+  FrmPesquisa.Campo_Codigo:='Cod_Loja';
+  FrmPesquisa.Campo_Descricao:='Nome_Loja';
+  //FrmPesquisa.EdtDescricao.Text:=FrmAcessos.EdtDescPessoa.Text;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisa.ShowModal;
+  DMBelShop.CDS_Pesquisa.Close;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+   Begin
+     EdtTransfCodLoja.Text:=FrmPesquisa.EdtCodigo.Text;
+     EdtTransfDescLoja.Text:=FrmPesquisa.EdtDescricao.Text;
+     EdtTransfCodLojaExit(Self);
+   End
+  Else
+   Begin
+     EdtTransfCodLoja.Clear;
+     EdtTransfDescLoja.Clear;
+     EdtTransfCodLoja.SetFocus;
+   End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+
+  FreeAndNil(FrmPesquisa);
+end;
+
+procedure TFrmSolicitacoes.Bt_TransfSalvarClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+
+  Dbg_TransfLojas.SetFocus;
+
+  If EdtTransfCodLoja.AsInteger=0 Then
+  Begin
+    msg('Favor Informar a Loja !!','A');
+    EdtTransfCodLoja.SetFocus;
+    Exit;
+  End;
+
+  If EdtTransfNumProd.AsInteger=0 Then
+  Begin
+    msg('Favor Informar o Número'+cr+'Máximo de Produtos/Dia !!','A');
+    EdtTransfNumProd.SetFocus;
+    Exit;
+  End;
+
+  If EdtTransfQtdProd.AsInteger=0 Then
+  Begin
+    msg('Favor Informar a Quantidade'+cr+'Máxima por Produto !!','A');
+    EdtTransfNumProd.SetFocus;
+    Exit;
+  End;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    // Inclui Loja =============================================================
+    MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR'+
+           ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
+           ' VALUES ('+
+           ' 19, '+ // TIP_AUX
+           IntToStr(EdtTransfCodLoja.AsInteger)+', '+ // COD_AUX
+           IntToStr(EdtTransfNumProd.AsInteger)+', '+ // DES_AUX
+           IntToStr(EdtTransfQtdProd.AsInteger)+', '+ // DES_AUX1
+           ' NULL, '+ // VLR_AUX
+           ' NULL)'+ // VLR_AUX1
+           ' MATCHING (TIP_AUX, COD_AUX)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    DMCentralTrocas.CDS_ParamTransf.Close;
+    DMCentralTrocas.CDS_ParamTransf.Open;
+    DMCentralTrocas.CDS_ParamTransf.Locate('Cod_Loja', EdtTransfCodLoja.AsInteger,[]);
+
+    Screen.Cursor:=crDefault;
+  Except
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try
+
+  EdtTransfCodLoja.Value:=0;
+  EdtTransfDescLoja.Clear;
+  EdtTransfCodLoja.SetFocus;
+
 end;
 
 end.
