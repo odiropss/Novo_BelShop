@@ -1184,22 +1184,23 @@ begin
             // =================================================================
             If (iCodLinx<>0) And (sDtaInventLinx<>'') Then
             Begin
-              MySql:=' SELECT CAST(LPAD(TRIM(p.cod_auxiliar),6,0) AS VARCHAR(6)) CodProduto,'+
-                     '        m.data_lancamento,'+
-                     '        COALESCE(m.valor_liquido,0.0000) valor_liquido'+
-                     ' FROM LINXMOVIMENTO m, LINXPRODUTOS p'+
-                     ' WHERE m.cod_produto=p.cod_produto'+
-                     ' AND   m.operacao = ''E'''+
-                     ' AND   ((m.tipo_transacao=''E'') OR (m.tipo_transacao IS NULL))'+
-                     ' AND   m.cancelado=''N'''+
-                     ' AND   m.excluido=''N'''+
-                     ' AND   p.cod_auxiliar is not null'+
-                     ' AND   m.empresa='+IntToStr(iCodLinx)+
-                     ' ORDER BY 1, 2 DESC';
-              DMAtualizaEstoques.CDS_BuscaRapida.Close;
-              DMAtualizaEstoques.SQLQ_BuscaRapida.SQL.Clear;
-              DMAtualizaEstoques.SQLQ_BuscaRapida.SQL.Add(MySql);
-              DMAtualizaEstoques.CDS_BuscaRapida.Open;
+              // odiraqui - 26/09/2017
+//              MySql:=' SELECT CAST(LPAD(TRIM(p.cod_auxiliar),6,0) AS VARCHAR(6)) CodProduto,'+
+//                     '        m.data_lancamento,'+
+//                     '        COALESCE(m.valor_liquido,0.0000) valor_liquido'+
+//                     ' FROM LINXMOVIMENTO m, LINXPRODUTOS p'+
+//                     ' WHERE m.cod_produto=p.cod_produto'+
+//                     ' AND   m.operacao = ''E'''+
+//                     ' AND   ((m.tipo_transacao=''E'') OR (m.tipo_transacao IS NULL))'+
+//                     ' AND   m.cancelado=''N'''+
+//                     ' AND   m.excluido=''N'''+
+//                     ' AND   p.cod_auxiliar is not null'+
+//                     ' AND   m.empresa='+IntToStr(iCodLinx)+
+//                     ' ORDER BY 1, 2 DESC';
+//              DMAtualizaEstoques.CDS_BuscaRapida.Close;
+//              DMAtualizaEstoques.SQLQ_BuscaRapida.SQL.Clear;
+//              DMAtualizaEstoques.SQLQ_BuscaRapida.SQL.Add(MySql);
+//              DMAtualizaEstoques.CDS_BuscaRapida.Open;
 
               While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
               Begin
@@ -1225,16 +1226,17 @@ begin
                      sValues+QuotedStr(sQtdSaldo)+', ';
                   End // If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
 
-                  // Busca Preço Ultima Compra =================================
-                  Else If (Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='LASTPRECOCOMPRA') Then
-                  Begin
-                    sPcUltCompra:='0.0000';
-                    If DMAtualizaEstoques.CDS_BuscaRapida.Locate('CODPRODUTO', DMAtualizaEstoques.CDS_LojaLinx.FieldByName('CodProduto').AsString,[]) Then
-                     sPcUltCompra:=Trim(DMAtualizaEstoques.CDS_BuscaRapida.FieldByName('valor_liquido').AsString);
-
-                    sValues:=
-                     sValues+QuotedStr(f_Troca(',','.',sPcUltCompra))+',';
-                  End // If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
+                  //OdirAqui - 26/09/2017
+//                  // Busca Preço Ultima Compra =================================
+//                  Else If (Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='LASTPRECOCOMPRA') Then
+//                  Begin
+//                    sPcUltCompra:='0.0000';
+//                    If DMAtualizaEstoques.CDS_BuscaRapida.Locate('CODPRODUTO', DMAtualizaEstoques.CDS_LojaLinx.FieldByName('CodProduto').AsString,[]) Then
+//                     sPcUltCompra:=Trim(DMAtualizaEstoques.CDS_BuscaRapida.FieldByName('valor_liquido').AsString);
+//
+//                    sValues:=
+//                     sValues+QuotedStr(f_Troca(',','.',sPcUltCompra))+',';
+//                  End // If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
 
                   Else
                    Begin
@@ -1255,6 +1257,7 @@ begin
                 DMAtualizaEstoques.CDS_LojaLinx.Next;
               End; // While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
               DMAtualizaEstoques.CDS_BuscaRapida.Close;
+
               DMAtualizaEstoques.CDS_LojaLinx.Close;
             End; // If (iCodLinx<>0) And (sDtaInventLinx<>'') Then
             // =================================================================

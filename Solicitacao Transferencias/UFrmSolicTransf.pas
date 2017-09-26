@@ -39,6 +39,7 @@ type
     Label2: TLabel;
     EdtQtdEstoque: TCurrencyEdit;
     Stb_ParamTransf: TdxStatusBar;
+    Lab_Unidade: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -434,25 +435,33 @@ begin
       EdtCodProdLinx.Clear;
       EdtQtdEstoque.Clear;
       EdtQtdTransf.Clear;
+      Lab_Unidade.Caption:='';
+      
       EdtCodProdLinx.SetFocus;
       Exit;
     End; // If Not bMultiplo Then
 
     Screen.Cursor:=crAppStart;
 
-    MySql:=' SELECT pr.Cod_Produto, pr.Nome, pr.Cod_Auxiliar, pr.DesAtivado'+
+    MySql:=' SELECT pr.Cod_Produto, pr.Nome, pr.Cod_Auxiliar,'+
+           '        pr.DesAtivado, pr.Unidade'+
            ' FROM LINXPRODUTOS pr'+
            ' WHERE pr.cod_produto='+IntToStr(EdtCodProdLinx.AsInteger);
     DMSolicTransf.CDS_Busca.Close;
     DMSolicTransf.SQLQ_Busca.Close;
     DMSolicTransf.SQLQ_Busca.SQL.Clear;
     DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
+
+    If Not DMSolicTransf.SQLC.Connected Then
+     DMSolicTransf.SQLC.Connected:=True;
+
     DMSolicTransf.CDS_Busca.Open;
 
     EdtDescProduto.Text:=Trim(DMSolicTransf.CDS_Busca.FieldByName('Nome').AsString);
     sDesAtivado        :=Trim(DMSolicTransf.CDS_Busca.FieldByName('DesAtivado').AsString);
     sgCodProdLinx   :=DMSolicTransf.CDS_Busca.FieldByName('Cod_Produto').AsString;
     sgCodProdSidicom:=Trim(DMSolicTransf.CDS_Busca.FieldByName('Cod_Auxiliar').AsString);
+    Lab_Unidade.Caption:=Trim(DMSolicTransf.CDS_Busca.FieldByName('Unidade').AsString);
 
     DMSolicTransf.CDS_Busca.Close;
 
@@ -464,6 +473,8 @@ begin
       EdtCodProdLinx.Clear;
       EdtQtdEstoque.Clear;
       EdtQtdTransf.Clear;
+      Lab_Unidade.Caption:='';
+
       EdtCodProdLinx.SetFocus;
       Exit;
     End;
@@ -475,6 +486,8 @@ begin
       EdtCodProdLinx.Clear;
       EdtQtdEstoque.Clear;
       EdtQtdTransf.Clear;
+      Lab_Unidade.Caption:='';
+      
       EdtCodProdLinx.SetFocus;
       Exit;
     End;
@@ -486,6 +499,8 @@ begin
       EdtCodProdLinx.Clear;
       EdtQtdEstoque.Clear;
       EdtQtdTransf.Clear;
+      Lab_Unidade.Caption:='';
+      
       EdtCodProdLinx.SetFocus;
       Exit;
     End;
@@ -497,6 +512,7 @@ end;
 procedure TFrmSolicTransf.EdtCodProdLinxChange(Sender: TObject);
 begin
   EdtDescProduto.Clear;
+  Lab_Unidade.Caption:='';
 end;
 
 procedure TFrmSolicTransf.Bt_BuscaProdtudoClick(Sender: TObject);
@@ -510,6 +526,7 @@ Begin
   EdtDescProduto.Clear;
   EdtQtdEstoque.Clear;
   EdtQtdTransf.Clear;
+  Lab_Unidade.Caption:='';
 
   b:=True;
   While b do
@@ -618,6 +635,8 @@ begin
     EdtCodProdLinx.Clear;
     EdtQtdEstoque.Clear;
     EdtQtdTransf.Clear;
+    Lab_Unidade.Caption:='';
+    
     EdtCodProdLinx.SetFocus;
     Exit;
   End; // If Not bMultiplo Then
@@ -724,6 +743,7 @@ begin
   EdtDescProduto.Clear;
   EdtQtdEstoque.Clear;
   EdtQtdTransf.Clear;
+  Lab_Unidade.Caption:='';
 
   EdtCodProdLinx.SetFocus;
 end;
@@ -797,6 +817,8 @@ begin
       MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
     End; // on e : Exception do
   End; // Try da Transação
+
+  EdtCodProdLinx.SetFocus;
 end;
 
 procedure TFrmSolicTransf.Dbg_ProdutosKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -912,6 +934,7 @@ begin
   bMultiplo:=False;
   If Trim(sQtdCaixa)<>'' Then
   Begin
+    bMultiplo:=True;
     If StrToInt(sQtdCaixa)<>igQtdMaxProd Then
     Begin
       MessageBox(Application.Handle, Pchar('PRODUTO com CAIXA de Transferência'+cr+
@@ -924,7 +947,6 @@ begin
       Else If EdtQtdTransf.AsInteger>StrToInt(sQtdCaixa) Then // Calcula Multiplo
        Begin
          iQtdMultiplo:=StrToInt(sQtdCaixa);
-         bMultiplo:=True;
          While bMultiplo do
          Begin
            If iQtdMultiplo>igQtdMaxProd Then
@@ -948,7 +970,6 @@ begin
               iQtdMultiplo:=iQtdMultiplo+StrToInt(sQtdCaixa);
             End;
          End; // While bMultiplo do
-         bMultiplo:=True;
        End; // If EdtQtdTransf.AsInteger<StrToInt(sQtdCaixa) Then
     End; // If StrToInt(sQtdCaixa)<>igQtdMaxProd Then
     Bt_Incluir.SetFocus;
@@ -960,6 +981,8 @@ begin
     EdtQtdTransf.SetFocus;
     Exit;
   End; // If Not bMultiplo Then
+
+  Bt_Incluir.SetFocus;
 end;
 
 end.

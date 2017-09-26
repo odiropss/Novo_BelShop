@@ -1266,18 +1266,18 @@ end;
 procedure TFrmPedidoVenda.Bt_IncluiProdutoClick(Sender: TObject);
 Var
   iSeqProd: Integer;
-  cTotalProduto: Currency;
+//  cTotalProduto: Currency;
 begin
 
   Dbg_Produtos.SetFocus;
 
-  cTotalProduto:=(EdtQtdProduto.AsInteger*EdtVlrUnitProduto.Value)-EdtVlrDescProduto.Value;
-  If EdtVlrTotalProduto.Value<>(cTotalProduto) Then
-  Begin
-    msg('Valor Total do Produto Não esta Fechando !!'+cr+cr+'Valor Correto: '+cr+cr+FormatFloat('0,.00',cTotalProduto),'A');
-    EdtQtdProduto.SetFocus;
-    Exit;
-  End;
+//  cTotalProduto:=(EdtQtdProduto.AsInteger*EdtVlrUnitProduto.Value)-EdtVlrDescProduto.Value;
+//  If EdtVlrTotalProduto.Value<>(cTotalProduto) Then
+//  Begin
+//    msg('Valor Total do Produto Não esta Fechando !!'+cr+cr+'Valor Correto: '+cr+cr+FormatFloat('0,.00',cTotalProduto),'A');
+//    EdtQtdProduto.SetFocus;
+//    Exit;
+//  End;
 
   If EdtCodProduto.AsInteger=0 Then
   Begin

@@ -2665,11 +2665,11 @@ begin
         // ============================================================
         // Atualiza Dados da Tabela ESTOQUE ===========================
         // ============================================================
-//        If (EdtParamStr.Text<>'OPSS') And (EdtParamStr.Text<>'OPSS_N') Then
-//        Begin
-//          //odiropss - Retirar comentario
-//          AtualizaTabelaEstoque(sCodEmpresa);
-//        End;
+        If (EdtParamStr.Text<>'OPSS') And (EdtParamStr.Text<>'OPSS_N') And (sCodEmpresa='99')Then
+        Begin
+          //odiropss - Retirar comentario
+          AtualizaTabelaEstoque(sCodEmpresa);
+        End;
 
         dDtaProc:=DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor);
         // ============================================================

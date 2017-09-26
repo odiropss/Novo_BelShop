@@ -1067,6 +1067,13 @@ object FrmSolicTransf: TFrmSolicTransf
           Height = 13
           Caption = 'Estoque (F'#237'sico) Atual na Loja'
         end
+        object Lab_Unidade: TLabel
+          Left = 496
+          Top = 63
+          Width = 23
+          Height = 13
+          Caption = 'UNI'
+        end
         object EdtCodProdLinx: TCurrencyEdit
           Left = 11
           Top = 29
@@ -1171,11 +1178,11 @@ object FrmSolicTransf: TFrmSolicTransf
           OnExit = EdtQtdTransfExit
         end
         object Bt_Incluir: TJvXPButton
-          Left = 498
+          Left = 554
           Top = 57
-          Width = 133
+          Width = 102
           Height = 28
-          Caption = 'Incluir Produto'
+          Caption = 'Incluir'
           TabOrder = 5
           Glyph.Data = {
             07544269746D6170F2060000424DF20600000000000036040000280000001900
@@ -1235,6 +1242,7 @@ object FrmSolicTransf: TFrmSolicTransf
             B5B5B5000000B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B500
             0000B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5000000}
           ShowFocusRect = True
+          Spacing = 8
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -1246,11 +1254,11 @@ object FrmSolicTransf: TFrmSolicTransf
           OnClick = Bt_IncluirClick
         end
         object Bt_Excluir: TJvXPButton
-          Left = 638
+          Left = 662
           Top = 57
-          Width = 133
+          Width = 102
           Height = 28
-          Caption = 'Excluir Produto'
+          Caption = 'Excluir'
           TabOrder = 6
           Glyph.Data = {
             07544269746D6170B2050000424DB20500000000000036040000280000001200
@@ -1300,6 +1308,7 @@ object FrmSolicTransf: TFrmSolicTransf
             0000396969693939393939393939393939396939000039393939393939393939
             393939393939396900003939393939393939393939393939393939390000}
           ShowFocusRect = True
+          Spacing = 8
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
