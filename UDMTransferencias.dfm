@@ -4,7 +4,7 @@ object DMTransferencias: TDMTransferencias
   Left = 321
   Top = 117
   Height = 483
-  Width = 600
+  Width = 620
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
     DriverName = 'Interbase'
@@ -124,19 +124,19 @@ object DMTransferencias: TDMTransferencias
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 24
+    Left = 56
     Top = 233
   end
   object DSP_BuscaRapida: TDataSetProvider
     DataSet = SDS_BuscaRapida
-    Left = 74
+    Left = 106
     Top = 246
   end
   object CDS_BuscaRapida: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_BuscaRapida'
-    Left = 125
+    Left = 157
     Top = 232
   end
   object SDS_CurvasLoja: TSQLDataSet

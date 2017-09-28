@@ -56,7 +56,8 @@ var
 
   sgPastaExecutavel, sgFBConect: String;
   dgDtaHoje: TDateTime;
-  
+  sgNomeComputador, sgNomeUsuario: String; // Usuario e Windows
+
 implementation
 
 uses DK_Procs1;
@@ -114,9 +115,15 @@ begin
   While bConecta do
   Begin
     inc(i);
+
     If i=1 Then sgFBConect:='FBConect_InterNet.ini';
     If i=2 Then sgFBConect:='FBConect_IntraNet.ini';
     If i=3 Then sgFBConect:='FBConect_Local.ini';
+
+    If AnsiUpperCase(sgNomeUsuario)='ODIR' Then
+    Begin
+      If i=1 Then sgFBConect:='FBConect_Local.ini';
+    End;
 
     If i=4 Then
     Begin
@@ -195,6 +202,9 @@ begin
     Application.Terminate;
     Exit;
   End;
+
+  // Windows: Nome do Usuario e do Computador ==================================
+  UsuarioComputadorWindows(sgNomeUsuario, sgNomeComputador);
 
   // Conecta Banco BelShop.FDB =================================================
   SQLC.Connected:=False;

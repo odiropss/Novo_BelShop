@@ -67,7 +67,8 @@ type
     procedure Bt_ExcluirClick(Sender: TObject);
     procedure Dbg_ProdutosKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure EdtQtdTransfExit(Sender: TObject); // Posiciona no Componente
+    procedure EdtQtdTransfExit(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean); // Posiciona no Componente
 
   private
     { Private declarations }
@@ -234,7 +235,6 @@ End; // Show Hint em Forma de Balão - Posiciona do Componente >>>>>>>>>>>>>>>>>>
 procedure TFrmSolicTransf.FormCreate(Sender: TObject);
 const
   TipoDoIcone = 1; // Show Hint em Forma de Balão
-
 Var
   MySql: String;
   sErro: String;
@@ -242,7 +242,7 @@ Var
 begin
   If not(fileexists(IncludeTrailingPathDelimiter(sgPastaExecutavel)+'Loja.ini')) then
   Begin
-  
+
     msg('Definição da Loja Não Encontrada !!'+cr+'Entrar em Contato com o ODIR'+cr+'Celcular:  999-578-234','A');
     Application.Terminate;
     Exit;
@@ -295,7 +295,7 @@ begin
 
   // Não Permite Movimentar o Formulário =======================================
   DeleteMenu(GetSystemMenu(Handle, False), SC_MOVE, MF_BYCOMMAND);
-  
+
   // Show Hint em Forma de Balão ===============================================
   CreateToolTips(Self.Handle);
   AddToolTip(EdtCodProdLinx.Handle, @ti, TipoDoIcone, 'Informar Código Linx', 'CÓDIGO DO PRODUTO !!');
@@ -311,6 +311,10 @@ begin
 
   CreateToolTips(Self.Handle);
   AddToolTip(Bt_Excluir.Handle, @ti, TipoDoIcone, 'Exclui Produto Selecionado'+cr+'na Solicitação', 'EXCLUIR PRODUTO !!');
+
+  // Verifica Conexão ==========================================================
+  If Not DMSolicTransf.SQLC.Connected Then
+   DMSolicTransf.SQLC.Connected:=True;
 
   // Busca Numero/Quantidade Máxima dse Transferencia ==========================
   b:=True;
@@ -436,12 +440,16 @@ begin
       EdtQtdEstoque.Clear;
       EdtQtdTransf.Clear;
       Lab_Unidade.Caption:='';
-      
+
       EdtCodProdLinx.SetFocus;
       Exit;
     End; // If Not bMultiplo Then
 
     Screen.Cursor:=crAppStart;
+
+    // Verifica Conexão ========================================================
+    If Not DMSolicTransf.SQLC.Connected Then
+     DMSolicTransf.SQLC.Connected:=True;
 
     MySql:=' SELECT pr.Cod_Produto, pr.Nome, pr.Cod_Auxiliar,'+
            '        pr.DesAtivado, pr.Unidade'+
@@ -451,10 +459,6 @@ begin
     DMSolicTransf.SQLQ_Busca.Close;
     DMSolicTransf.SQLQ_Busca.SQL.Clear;
     DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
-
-    If Not DMSolicTransf.SQLC.Connected Then
-     DMSolicTransf.SQLC.Connected:=True;
-
     DMSolicTransf.CDS_Busca.Open;
 
     EdtDescProduto.Text:=Trim(DMSolicTransf.CDS_Busca.FieldByName('Nome').AsString);
@@ -487,7 +491,7 @@ begin
       EdtQtdEstoque.Clear;
       EdtQtdTransf.Clear;
       Lab_Unidade.Caption:='';
-      
+
       EdtCodProdLinx.SetFocus;
       Exit;
     End;
@@ -500,7 +504,7 @@ begin
       EdtQtdEstoque.Clear;
       EdtQtdTransf.Clear;
       Lab_Unidade.Caption:='';
-      
+
       EdtCodProdLinx.SetFocus;
       Exit;
     End;
@@ -562,6 +566,10 @@ Begin
   OdirPanApres.Visible:=True;
   Refresh;
 
+  // Verifica Conexão ==========================================================
+  If Not DMSolicTransf.SQLC.Connected Then
+   DMSolicTransf.SQLC.Connected:=True;
+
   MySql:=' SELECT TRIM(pr.nome) nome, pr.cod_produto'+
          ' FROM LINXPRODUTOS pr'+
          ' WHERE pr.desativado=''N'''+
@@ -613,7 +621,6 @@ begin
   If (PC_Principal.ActivePage=Ts_Produtos) And (Ts_Produtos.CanFocus) Then
    EdtCodProdLinx.SetFocus;
 
-
 end;
 
 procedure TFrmSolicTransf.Dbg_ProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -636,7 +643,7 @@ begin
     EdtQtdEstoque.Clear;
     EdtQtdTransf.Clear;
     Lab_Unidade.Caption:='';
-    
+
     EdtCodProdLinx.SetFocus;
     Exit;
   End; // If Not bMultiplo Then
@@ -673,6 +680,10 @@ begin
   OdirPanApres.Visible:=True;
   Refresh;
 
+  // Verifica Conexão ==========================================================
+  If Not DMSolicTransf.SQLC.Connected Then
+   DMSolicTransf.SQLC.Connected:=True;
+
   // Verifica se Transação esta Ativa
   If DMSolicTransf.SQLC.InTransaction Then
    DMSolicTransf.SQLC.Rollback(TD);
@@ -692,7 +703,7 @@ begin
            '  COD_PROD_LINX, COD_PROD_SIDI, QTD_ESTOQUE, QTD_TRANSF)'+
            ' VALUES (CURRENT_DATE,'+ // DTA_SOLICITACAO
            sgNumSolicitacao+', '+ // NUM_SOLICITACAO
-           sgLojaSidicom+', '+ // COD_LOJA_SIDI
+           QuotedStr(sgLojaSidicom)+', '+ // COD_LOJA_SIDI
            sgLojaLinx+', '+ // COD_LOJA_LINX
            sgCodProdLinx+', '; // COD_PROD_LINX
 
@@ -755,7 +766,7 @@ begin
 
   If DMSolicTransf.CDS_Solicitacao.IsEmpty Then
    Exit;
-   
+
   If msg('Excluir o Produto Selecionado ?'+cr+DMSolicTransf.CDS_SolicitacaoNOME.AsString,'C')=2 Then
    Exit;
 
@@ -768,6 +779,10 @@ begin
   OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
+
+  // Verifica Conexão ==========================================================
+  If Not DMSolicTransf.SQLC.Connected Then
+   DMSolicTransf.SQLC.Connected:=True;
 
   // Verifica se Transação esta Ativa
   If DMSolicTransf.SQLC.InTransaction Then
@@ -900,6 +915,10 @@ begin
     Exit;
   End;
 
+  // Verifica Conexão ==========================================================
+  If Not DMSolicTransf.SQLC.Connected Then
+   DMSolicTransf.SQLC.Connected:=True;
+
   // Busca Produto Caixa Embarque ==============================================
   MySql:=' SELECT Trim(pr.codgrupo) CodGrupo, Trim(pr.codsubgrupo) CodSubGrupo'+
          ' FROM PRODUTO pr'+
@@ -983,6 +1002,14 @@ begin
   End; // If Not bMultiplo Then
 
   Bt_Incluir.SetFocus;
+end;
+
+procedure TFrmSolicTransf.FormCloseQuery(Sender: TObject;  var CanClose: Boolean);
+begin
+  // Encerra Conexão ===========================================================
+  If DMSolicTransf.SQLC.Connected Then
+   DMSolicTransf.SQLC.Connected:=False;
+
 end;
 
 end.

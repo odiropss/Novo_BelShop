@@ -3945,7 +3945,7 @@ Var
   b, bTestaConexao: Boolean;
 begin
   // odir - Apresenta Erro ao sair do Programa
-   // Windows: Nome do Usuario e do Computador =================================
+  // Windows: Nome do Usuario e do Computador ==================================
   UsuarioComputadorWindows(sgNomeUsuario, sgNomeComputador);
 
   // Pasta Executavel ==========================================================

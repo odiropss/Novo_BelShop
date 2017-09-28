@@ -963,6 +963,7 @@ object FrmSolicTransf: TFrmSolicTransf
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   OnShow = FormShow
