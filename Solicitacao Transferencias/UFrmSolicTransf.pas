@@ -16,7 +16,8 @@ uses
   dxSkinOffice2010Blue, dxSkinOffice2010Silver, dxSkinPumpkin, dxSkinSeven,
   dxSkinSharp, dxSkinSilver, dxSkinSpringTime, dxSkinStardust,
   dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
-  dxSkinXmas2008Blue, dxSkinsdxStatusBarPainter, dxStatusBar;
+  dxSkinXmas2008Blue, dxSkinsdxStatusBarPainter, dxStatusBar, cxContainer,
+  cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, Shellapi;
 
 type
   TFrmSolicTransf = class(TForm)
@@ -26,12 +27,8 @@ type
     OdirPanApres: TPanel;
     PC_Principal: TPageControl;
     Ts_Produtos: TTabSheet;
-    Gb_Produto: TGroupBox;
-    Label75: TLabel;
+    Gb_Solicitacao: TGroupBox;
     Label1: TLabel;
-    EdtCodProdLinx: TCurrencyEdit;
-    Bt_BuscaProdtudo: TJvXPButton;
-    EdtDescProduto: TEdit;
     EdtQtdTransf: TCurrencyEdit;
     Dbg_Produtos: TDBGridJul;
     Bt_Incluir: TJvXPButton;
@@ -40,6 +37,21 @@ type
     EdtQtdEstoque: TCurrencyEdit;
     Stb_ParamTransf: TdxStatusBar;
     Lab_Unidade: TLabel;
+    Ts_Consultas: TTabSheet;
+    Gb_Verifica: TGroupBox;
+    Gb_Produto: TGroupBox;
+    EdtCodProdLinx: TCurrencyEdit;
+    Bt_BuscaProdtudo: TJvXPButton;
+    EdtDescProduto: TEdit;
+    DtEdt_DtaInicio: TcxDateEdit;
+    Label75: TLabel;
+    DtEdt_DtaFim: TcxDateEdit;
+    Label3: TLabel;
+    Bt_Verificar: TJvXPButton;
+    Dbg_VerificaProdutos: TDBGridJul;
+    Label4: TLabel;
+    dxStatusBar1: TdxStatusBar;
+    DBGridJul1: TDBGridJul;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -59,6 +71,11 @@ type
 
     Function  CriaLimitesLoja: Boolean;
 
+    Procedure LimpaEdts;
+
+    Function  ExcluiVersaoTabAuxiliar: Boolean;
+    Procedure NovaVersao;
+
     // ODIR >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     procedure Dbg_ProdutosKeyDown(Sender: TObject; var Key: Word;
@@ -68,7 +85,14 @@ type
     procedure Dbg_ProdutosKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure EdtQtdTransfExit(Sender: TObject);
-    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean); // Posiciona no Componente
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure Dbg_VerificaProdutosEnter(Sender: TObject);
+    procedure Bt_VerificarClick(Sender: TObject);
+    procedure Dbg_VerificaProdutosDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure Dbg_VerificaProdutosKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState); // Posiciona no Componente
 
   private
     { Private declarations }
@@ -89,11 +113,14 @@ var
   TD: TTransactionDesc;
 
   tsgArquivo: TStringList;
+
   sgLojaLinx, sgLojaSidicom, sgNomeLoja,
   sgNumSolicitacao,
   sgCodProdLinx, sgCodProdSidicom
   : String;
 
+  sgCodLojaVersaoOK: String;
+  
   igNumMaxProd, igQtdMaxProd: Integer;
 
   // Show Hint em Forma de Balão
@@ -111,6 +138,96 @@ uses DK_Procs1, UDMSolicTransf, UPesquisa, DB;
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // ODIR - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Atualiza Nova Versão do Sistema >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmSolicTransf.NovaVersao;
+Var
+  MySql: String;
+Begin
+  MySql:=' SELECT t.cod_aux'+
+         ' FROM TAB_AUXILIAR t'+
+         ' WHERE t.tip_aux=20'+
+         ' AND   t.cod_aux='+sgLojaLinx;
+  DMSolicTransf.CDS_BuscaRapida.Close;
+  DMSolicTransf.SQLQ_BuscaRapida.Close;
+  DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
+  DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql);
+  DMSolicTransf.CDS_BuscaRapida.Open;
+  If Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('Cod_Aux').AsString)<>'' Then
+  Begin
+    msg('Existe Nova Versão do Sistema !!'+cr+cr+'Tecle <OK> Para Atualizar...','A');
+    ShellExecute(Handle, 'open',Pchar(IncludeTrailingPathDelimiter(sgPastaExecutavel)+'Cliente.exe'), nil, nil, 1);
+    Application.Terminate;
+    Exit;
+  End;
+End; // Atualiza Nova Versão do Sistema >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Exclui Informação de Nova Versão do Sistema >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TFrmSolicTransf.ExcluiVersaoTabAuxiliar: Boolean;
+Var
+  MySql: String;
+Begin
+
+  Result:=True;
+
+  // Verifica se Transação esta Ativa
+  If DMSolicTransf.SQLC.InTransaction Then
+   DMSolicTransf.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMSolicTransf.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    MySql:=' DELETE FROM TAB_AUXILIAR t'+
+           ' WHERE t.tip_aux=20'+
+           ' AND   t.cod_aux='+sgLojaLinx;
+    DMSolicTransf.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMSolicTransf.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    OdirPanApres.Visible:=False;
+
+    Screen.Cursor:=crDefault;
+
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      Result:=False;
+
+      DMSolicTransf.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+End; // Exclui Informação de Nova Versão do Sistema >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Limpa Todos os Edts e Datas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmSolicTransf.LimpaEdts;
+Begin
+  EdtCodProdLinx.Clear;
+  EdtDescProduto.Clear;
+  EdtQtdEstoque.Clear;
+  EdtQtdTransf.Clear;
+  Lab_Unidade.Caption:='';
+
+  DtEdt_DtaInicio.Clear;
+  DtEdt_DtaFim.Clear;
+End; // Limpa Todos os Edts e Datas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Cria Limites da Loja em Tab_Auxiliar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmSolicTransf.CriaLimitesLoja: Boolean;
@@ -239,14 +356,20 @@ Var
   MySql: String;
   sErro: String;
   b: Boolean;
+  i: Integer;
 begin
+
   If not(fileexists(IncludeTrailingPathDelimiter(sgPastaExecutavel)+'Loja.ini')) then
   Begin
-
     msg('Definição da Loja Não Encontrada !!'+cr+'Entrar em Contato com o ODIR'+cr+'Celcular:  999-578-234','A');
     Application.Terminate;
     Exit;
   End;
+
+  // Verifica Parametro Enviado ================================================
+  sgCodLojaVersaoOK:='';
+  for i:=1 to ParamCount do
+   sgCodLojaVersaoOK:=ParamStr(i);
 
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
@@ -334,6 +457,7 @@ begin
        // Cria Limites da Loja em Tab_Auxiliar
        If Not CriaLimitesLoja Then
        Begin
+         msg('Erro ao Criar Limites da Loja !!','A');
          Application.Terminate;
          Exit;
        End;
@@ -395,7 +519,22 @@ begin
   CorCaptionForm.Active:=False;
   CorCaptionForm.Active:=True;
 
+  PC_Principal.TabIndex:=0;
   PC_PrincipalChange(Self);
+
+  // Se Versao já Atualizada - Parametros vem do Cliente de Transferencia do Aplicativo
+  If Trim(sgCodLojaVersaoOK)<>'' Then
+  Begin
+    If Not ExcluiVersaoTabAuxiliar Then
+    Begin
+      msg('Erro ao Verificar Versão do Sistema  !!','A');
+      Application.Terminate;
+      Exit;
+    End;
+  End; //If Trim(sgCodLojaVersaoOK<>'') Then
+
+  // Atualiza Novca Versão do Sistema ==========================================
+  NovaVersao;
 end;
 
 procedure TFrmSolicTransf.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
@@ -435,12 +574,7 @@ begin
     If DMSolicTransf.CDS_Solicitacao.RecNo>=igNumMaxProd Then
     Begin
       msg('Número Máximo de Produtos por'+cr+'Transferêcia Diária Esta Completo !!'+cr+IntToStr(igNumMaxProd)+' Produtos por Dia !!','A');
-      EdtDescProduto.Clear;
-      EdtCodProdLinx.Clear;
-      EdtQtdEstoque.Clear;
-      EdtQtdTransf.Clear;
-      Lab_Unidade.Caption:='';
-
+      LimpaEdts;
       EdtCodProdLinx.SetFocus;
       Exit;
     End; // If Not bMultiplo Then
@@ -463,8 +597,8 @@ begin
 
     EdtDescProduto.Text:=Trim(DMSolicTransf.CDS_Busca.FieldByName('Nome').AsString);
     sDesAtivado        :=Trim(DMSolicTransf.CDS_Busca.FieldByName('DesAtivado').AsString);
-    sgCodProdLinx   :=DMSolicTransf.CDS_Busca.FieldByName('Cod_Produto').AsString;
-    sgCodProdSidicom:=Trim(DMSolicTransf.CDS_Busca.FieldByName('Cod_Auxiliar').AsString);
+    sgCodProdLinx      :=DMSolicTransf.CDS_Busca.FieldByName('Cod_Produto').AsString;
+    sgCodProdSidicom   :=Trim(DMSolicTransf.CDS_Busca.FieldByName('Cod_Auxiliar').AsString);
     Lab_Unidade.Caption:=Trim(DMSolicTransf.CDS_Busca.FieldByName('Unidade').AsString);
 
     DMSolicTransf.CDS_Busca.Close;
@@ -473,12 +607,7 @@ begin
     If EdtDescProduto.Text='' Then
     Begin
       msg('Produto (Linx) NÃO Encontrado !!!', 'A');
-      EdtDescProduto.Clear;
-      EdtCodProdLinx.Clear;
-      EdtQtdEstoque.Clear;
-      EdtQtdTransf.Clear;
-      Lab_Unidade.Caption:='';
-
+      LimpaEdts;
       EdtCodProdLinx.SetFocus;
       Exit;
     End;
@@ -486,12 +615,7 @@ begin
     If sDesAtivado='S' Then
     Begin
       msg('Produto (Linx) Desativado !!!', 'A');
-      EdtDescProduto.Clear;
-      EdtCodProdLinx.Clear;
-      EdtQtdEstoque.Clear;
-      EdtQtdTransf.Clear;
-      Lab_Unidade.Caption:='';
-
+      LimpaEdts;
       EdtCodProdLinx.SetFocus;
       Exit;
     End;
@@ -499,17 +623,13 @@ begin
     If Trim(sgCodProdSidicom)='' Then
     Begin
       msg('Produto Não Encontrado no CD !!!', 'A');
-      EdtDescProduto.Clear;
-      EdtCodProdLinx.Clear;
-      EdtQtdEstoque.Clear;
-      EdtQtdTransf.Clear;
-      Lab_Unidade.Caption:='';
-
+      LimpaEdts;
       EdtCodProdLinx.SetFocus;
       Exit;
     End;
 
-    EdtQtdEstoque.SetFocus;
+    If EdtQtdEstoque.CanFocus   Then EdtQtdEstoque.SetFocus;
+    If DtEdt_DtaInicio.CanFocus Then DtEdt_DtaInicio.SetFocus;
   End; // If EdtFiltroCodProdLinx.Value<>0 Then
 end;
 
@@ -526,12 +646,7 @@ Var
   sNome: String;
 Begin
 
-  EdtCodProdLinx.Clear;
-  EdtDescProduto.Clear;
-  EdtQtdEstoque.Clear;
-  EdtQtdTransf.Clear;
-  Lab_Unidade.Caption:='';
-
+  LimpaEdts;
   b:=True;
   While b do
   Begin
@@ -618,14 +733,30 @@ procedure TFrmSolicTransf.PC_PrincipalChange(Sender: TObject);
 begin
   CorSelecaoTabSheet(PC_Principal);
 
-  If (PC_Principal.ActivePage=Ts_Produtos) And (Ts_Produtos.CanFocus) Then
-   EdtCodProdLinx.SetFocus;
+  LimpaEdts;
 
+  If (PC_Principal.ActivePage=Ts_Produtos) And (Ts_Produtos.CanFocus) Then
+  Begin
+    Gb_Produto.Parent:=Gb_Solicitacao;
+  End;
+
+  If (PC_Principal.ActivePage=Ts_Consultas) And (Ts_Consultas.CanFocus) Then
+  Begin
+    Gb_Produto.Parent:=Gb_Verifica;
+  End;
+
+  Gb_Produto.TabOrder:=0;
+  EdtCodProdLinx.SetFocus;
 end;
 
 procedure TFrmSolicTransf.Dbg_ProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   // Bloquei Ctrl + Delete =====================================================
+  // Usado em:
+  //=====================
+  // Dbg_Produtos
+  // Dbg_VerificaProdutos
+  //=====================
   If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
    Abort;
 
@@ -638,12 +769,7 @@ begin
   If DMSolicTransf.CDS_Solicitacao.RecNo>=igNumMaxProd Then
   Begin
     msg('Número Máximo de Produtos por'+cr+'Transferêcia Diária Esta Completo !!'+cr+IntToStr(igNumMaxProd)+' Produtos por Dia !!','A');
-    EdtDescProduto.Clear;
-    EdtCodProdLinx.Clear;
-    EdtQtdEstoque.Clear;
-    EdtQtdTransf.Clear;
-    Lab_Unidade.Caption:='';
-
+    LimpaEdts;
     EdtCodProdLinx.SetFocus;
     Exit;
   End; // If Not bMultiplo Then
@@ -750,12 +876,8 @@ begin
     End; // on e : Exception do
   End; // Try da Transação
 
-  EdtCodProdLinx.Clear;
-  EdtDescProduto.Clear;
-  EdtQtdEstoque.Clear;
-  EdtQtdTransf.Clear;
-  Lab_Unidade.Caption:='';
-
+  LimpaEdts;
+  
   EdtCodProdLinx.SetFocus;
 end;
 
@@ -844,51 +966,48 @@ begin
   If DMSolicTransf.CDS_Solicitacao.IsEmpty Then
    Exit;
 
-  sCodProd:= DMSolicTransf.CDS_SolicitacaoCOD_PROD_LINX.AsString;
-
   // Localizar Produto =========================================================
   If Key=Vk_F4 Then
   Begin
-    If Not DMSolicTransf.CDS_Solicitacao.IsEmpty Then
+    sCodProd:= DMSolicTransf.CDS_SolicitacaoCOD_PROD_LINX.AsString;
+    
+    sValor:='';
+    b:=True;
+    While b do
     Begin
-      sValor:='';
-      b:=True;
-      While b do
-      Begin
-        If InputQuery('Localizar Produto','',sValor) then
-         Begin
-           Try
-             StrToInt(sValor);
+      If InputQuery('Localizar Produto','',sValor) then
+       Begin
+         Try
+           StrToInt(sValor);
 
-             If Not DMSolicTransf.CDS_Solicitacao.Locate('COD_PROD_LINX', sValor,[]) Then
-             Begin
-              If Not LocalizaRegistro(DMSolicTransf.CDS_Solicitacao, 'COD_PROD_LINX', sValor) Then
-               b:=False;
-             End; // If Not DMSolicTransf.CDS_Solicitacao.Locate('COD_PROD_LINX', sValor,[]) Then
+           If Not DMSolicTransf.CDS_Solicitacao.Locate('COD_PROD_LINX', sValor,[]) Then
+           Begin
+            If Not LocalizaRegistro(DMSolicTransf.CDS_Solicitacao, 'COD_PROD_LINX', sValor) Then
+             b:=False;
+           End; // If Not DMSolicTransf.CDS_Solicitacao.Locate('COD_PROD_LINX', sValor,[]) Then
 
-             Break;
-           Except
-             If Not DMSolicTransf.CDS_Solicitacao.Locate('NOME', sValor,[]) Then
-             Begin
-               If Not LocalizaRegistro(DMSolicTransf.CDS_Solicitacao, 'NOME', sValor) Then
-                b:=False;
-             End; // If Not DMSolicTransf.CDS_Solicitacao.Locate('NOME', sValor,[]) Then
-
-             Break;
-           End;
-         End
-        Else // If InputQuery('Localizar Produto','',sValor) then
-         Begin
            Break;
-         End; // If InputQuery('Localizar Produto','',sValor) then
-      End; // While b do
+         Except
+           If Not DMSolicTransf.CDS_Solicitacao.Locate('NOME', sValor,[]) Then
+           Begin
+             If Not LocalizaRegistro(DMSolicTransf.CDS_Solicitacao, 'NOME', sValor) Then
+              b:=False;
+           End; // If Not DMSolicTransf.CDS_Solicitacao.Locate('NOME', sValor,[]) Then
 
-      If Not b Then
-      Begin
-        DMSolicTransf.CDS_Solicitacao.Locate('COD_PROD_LINX',sCodProd,[]);
-        msg('Produto Não Localizado !!','A');
-      End;
-    End; // If Not DMSolicTransf.CDS_Solicitacao.IsEmpty Then
+           Break;
+         End;
+       End
+      Else // If InputQuery('Localizar Produto','',sValor) then
+       Begin
+         Break;
+       End; // If InputQuery('Localizar Produto','',sValor) then
+    End; // While b do
+
+    If Not b Then
+    Begin
+      DMSolicTransf.CDS_Solicitacao.Locate('COD_PROD_LINX',sCodProd,[]);
+      msg('Produto Não Localizado !!','A');
+    End;
   End; // If Key=Vk_F4 Then
 
 end;
@@ -1010,6 +1129,221 @@ begin
   If DMSolicTransf.SQLC.Connected Then
    DMSolicTransf.SQLC.Connected:=False;
 
+end;
+
+procedure TFrmSolicTransf.Dbg_VerificaProdutosEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_VerificaProdutosEnter; // Nome do Evento do DBGRID
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicTransf.Bt_VerificarClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  Try
+    StrToDate(DtEdt_DtaInicio.Text);
+  Except
+    msg('Data Inicial Inválida !!','A');
+    DtEdt_DtaInicio.SetFocus;
+    Exit;
+  End;
+
+  Try
+    StrToDate(DtEdt_DtaFim.Text);
+  Except
+    msg('Data Final Inválida !!','A');
+    DtEdt_DtaFim.SetFocus;
+    Exit;
+  End;
+
+  If DtEdt_DtaFim.Date>=dgDtaHoje Then
+  Begin
+    msg('Data Final Deve Ser'+cr+cr+'MENOR que Hoje !!','A');
+    DtEdt_DtaFim.SetFocus;
+    Exit;
+  End;
+
+  If DtEdt_DtaFim.Date<DtEdt_DtaInicio.Date Then
+  Begin
+    msg('Período Inválido !!','A');
+    DtEdt_DtaInicio.SetFocus;
+    Exit;
+  End;
+
+  If (DtEdt_DtaFim.Date-DtEdt_DtaInicio.Date)>10 Then
+  Begin
+    msg('Período a Verificar deve Conter'+cr+cr+'no Máximo 10 (DEZ) Dias !!','A');
+    DtEdt_DtaInicio.SetFocus;
+    Exit;
+  End;
+
+  MySql:=' SELECT so.dta_solicitacao, pl.nome,'+
+
+         ' CASE'+
+         '   WHEN so.doc_gerado=0 THEN'+
+         '     ''NÃO'''+
+         '   ELSE'+
+         '     ''SIM'''+
+         ' END enviado_cd,'+
+
+         ' CASE'+
+         '   WHEN COALESCE(el.num_pedido,''000000'')<>''000000'' THEN'+
+         '     ''SIM'''+
+         '   ELSE'+
+         '     ''NÃO'''+
+         ' END transf_loja,'+
+
+         ' so.qtd_transf Qtd_Solicitada,'+
+         ' el.qtd_transf Qtd_De_Transf,'+
+
+         ' CASE'+
+         '   WHEN COALESCE(el.num_pedido,''000000'')<>''000000'' THEN'+
+         '     el.qtd_a_transf'+
+         '   ELSE'+
+         '     0'+
+         ' END qtd_a_transf,'+
+
+         ' so.cod_prod_sidi, so.cod_prod_linx,'+
+         ' so.dta_processamento, so.doc_gerado, el.obs_docto, so.num_solicitacao'+
+
+         ' FROM SOL_TRANSFERENCIA_CD so'+
+         '    LEFT JOIN LINXPRODUTOS      pl  ON pl.cod_produto=so.cod_prod_linx'+
+         '    LEFT JOIN ES_ESTOQUES_LOJAS el  ON el.dta_movto  =so.dta_processamento'+
+         '                                   AND el.num_docto  =so.doc_gerado'+
+         '                                   AND el.cod_produto=so.cod_prod_sidi'+
+         '                                   AND el.cod_loja   =so.cod_loja_sidi'+
+
+         ' WHERE so.dta_solicitacao BETWEEN '+
+         QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaInicio.Date))))+
+         ' AND '+
+         QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaFim.Date))))+
+         ' AND   so.cod_loja_linx='+sgLojaLinx;
+
+         If EdtCodProdLinx.AsInteger<>0 Then
+          MySql:=
+           MySql+' AND   so.cod_prod_linx='+IntToStr(EdtCodProdLinx.AsInteger);
+
+  MySql:=
+   MySql+' ORDER BY 2, 1';
+  DMSolicTransf.CDS_Verifica.Close;
+  DMSolicTransf.SQLQ_Verifica.Close;
+  DMSolicTransf.SQLQ_Verifica.SQL.Clear;
+  DMSolicTransf.SQLQ_Verifica.SQL.Add(MySql);
+  DMSolicTransf.CDS_Verifica.Open;
+
+  If Trim(DMSolicTransf.CDS_VerificaCOD_PROD_LINX.AsString)='' Then
+  Begin
+    msg('Sem Solicitação a'+cr+cr+'Lista no Período !!','A');
+    DMSolicTransf.CDS_Verifica.Close;
+    LimpaEdts;
+    EdtCodProdLinx.SetFocus;
+    Exit;
+  End;
+  Dbg_VerificaProdutos.SetFocus;
+end;
+
+procedure TFrmSolicTransf.Dbg_VerificaProdutosDrawColumnCell(
+  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+  State: TGridDrawState);
+begin
+  If (Column.FieldName='ENVIADO_CD') Then // Este comando altera cor da Celula
+  Begin
+    If DMSolicTransf.CDS_VerificaENVIADO_CD.AsString='SIM' Then
+    Begin
+      Dbg_VerificaProdutos.Canvas.Font.Style:=[fsBold];
+      Dbg_VerificaProdutos.Canvas.Font.Color:=clBlue; // Cor da Fonte
+    End;
+  End;
+
+  If (Column.FieldName='TRANSF_LOJA') Then // Este comando altera cor da Celula
+  Begin
+    If DMSolicTransf.CDS_VerificaTRANSF_LOJA.AsString='SIM' Then
+    Begin
+      Dbg_VerificaProdutos.Canvas.Font.Style:=[fsBold];
+      Dbg_VerificaProdutos.Canvas.Font.Color:=clBlue; // Cor da Fonte
+    End;
+  End;
+
+  If (Column.FieldName='QTD_A_TRANSF') Then // Este comando altera cor da Celula
+  Begin
+    If DMSolicTransf.CDS_VerificaQTD_A_TRANSF.AsCurrency<>0.00 Then
+    Begin
+      Dbg_VerificaProdutos.Canvas.Font.Style:=[fsBold];
+      Dbg_VerificaProdutos.Canvas.Font.Color:=clBlue; // Cor da Fonte
+    End;
+  End;
+  Dbg_VerificaProdutos.Canvas.FillRect(Rect);
+  Dbg_VerificaProdutos.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  // Alinhamento
+  DMSolicTransf.CDS_VerificaDTA_SOLICITACAO.Alignment:=taCenter;
+  DMSolicTransf.CDS_VerificaENVIADO_CD.Alignment:=taCenter;
+  DMSolicTransf.CDS_VerificaTRANSF_LOJA.Alignment:=taCenter;
+  DMSolicTransf.CDS_VerificaQTD_DE_TRANSF.Alignment:=taRightJustify;
+  DMSolicTransf.CDS_VerificaQTD_A_TRANSF.Alignment:=taRightJustify;
+  DMSolicTransf.CDS_VerificaCOD_PROD_LINX.Alignment:=taRightJustify;
+  DMSolicTransf.CDS_VerificaCOD_PROD_SIDI.Alignment:=taRightJustify;
+  DMSolicTransf.CDS_VerificaDTA_PROCESSAMENTO.Alignment:=taCenter;
+  DMSolicTransf.CDS_VerificaDOC_GERADO.Alignment:=taRightJustify;
+  DMSolicTransf.CDS_VerificaNUM_SOLICITACAO.Alignment:=taRightJustify;
+end;
+
+procedure TFrmSolicTransf.Dbg_VerificaProdutosKeyUp(Sender: TObject; Var Key: Word; Shift: TShiftState);
+Var
+  sValor, sCodProd: String;
+  b: Boolean;
+begin
+
+  If DMSolicTransf.CDS_Verifica.IsEmpty Then
+   Exit;
+
+  // Localizar Produto =========================================================
+  If Key=Vk_F4 Then
+  Begin
+    sCodProd:= DMSolicTransf.CDS_VerificaCOD_PROD_LINX.AsString;
+
+    sValor:='';
+    b:=True;
+    While b do
+    Begin
+      If InputQuery('Localizar Produto','',sValor) then
+       Begin
+         Try
+           StrToInt(sValor);
+
+           If Not DMSolicTransf.CDS_Verifica.Locate('COD_PROD_LINX', sValor,[]) Then
+           Begin
+            If Not LocalizaRegistro(DMSolicTransf.CDS_Verifica, 'COD_PROD_LINX', sValor) Then
+             b:=False;
+           End; // If Not DMSolicTransf.CDS_Verifica.Locate('COD_PROD_LINX', sValor,[]) Then
+
+           Break;
+         Except
+           If Not DMSolicTransf.CDS_Verifica.Locate('NOME', sValor,[]) Then
+           Begin
+             If Not LocalizaRegistro(DMSolicTransf.CDS_Verifica, 'NOME', sValor) Then
+              b:=False;
+           End; // If Not DMSolicTransf.CDS_Verifica.Locate('NOME', sValor,[]) Then
+
+           Break;
+         End;
+       End
+      Else // If InputQuery('Localizar Produto','',sValor) then
+       Begin
+         Break;
+       End; // If InputQuery('Localizar Produto','',sValor) then
+    End; // While b do
+
+    If Not b Then
+    Begin
+      DMSolicTransf.CDS_Verifica.Locate('COD_PROD_LINX',sCodProd,[]);
+      msg('Produto Não Localizado !!','A');
+    End;
+  End; // If Key=Vk_F4 Then
 end;
 
 end.

@@ -333,6 +333,7 @@ Begin
       // Atualiza Transferências com o Numero do Docto Gerado ==================
       MySql:=' UPDATE SOL_TRANSFERENCIA_CD so'+
              ' SET so.doc_gerado='+sgNrDocto+
+             ', so.dta_processamento=CURRENT_DATE'+ 
              ' WHERE so.doc_gerado=0'+
              ' AND   so.dta_solicitacao<CURRENT_DATE'+
              ' AND   so.cod_loja_sidi='+sgCodLoja;

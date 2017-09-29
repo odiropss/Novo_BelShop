@@ -28,6 +28,27 @@ type
     CDS_SolicitacaoQTD_ESTOQUE: TFMTBCDField;
     CDS_SolicitacaoQTD_TRANSF: TFMTBCDField;
     Timer1: TTimer;
+    SDS_DtaHoraServidor: TSQLDataSet;
+    DSP_Verifica: TDataSetProvider;
+    CDS_Verifica: TClientDataSet;
+    DS_Verifica: TDataSource;
+    SQLQ_Verifica: TSQLQuery;
+    CDS_VerificaNUM_SOLICITACAO: TIntegerField;
+    CDS_VerificaDTA_SOLICITACAO: TDateField;
+    CDS_VerificaCOD_PROD_SIDI: TStringField;
+    CDS_VerificaCOD_PROD_LINX: TIntegerField;
+    CDS_VerificaNOME: TStringField;
+    CDS_VerificaENVIADO_CD: TStringField;
+    CDS_VerificaTRANSF_LOJA: TStringField;
+    CDS_VerificaQTD_SOLICITADA: TFMTBCDField;
+    CDS_VerificaQTD_DE_TRANSF: TFMTBCDField;
+    CDS_VerificaQTD_A_TRANSF: TFMTBCDField;
+    CDS_VerificaOBS_DOCTO: TStringField;
+    CDS_VerificaDTA_PROCESSAMENTO: TDateField;
+    CDS_VerificaDOC_GERADO: TIntegerField;
+    SQLQ_BuscaRapida: TSQLQuery;
+    DSP_BuscaRapida: TDataSetProvider;
+    CDS_BuscaRapida: TClientDataSet;
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -54,9 +75,12 @@ Const
 var
   DMSolicTransf: TDMSolicTransf;
 
-  sgPastaExecutavel, sgFBConect: String;
-  dgDtaHoje: TDateTime;
+  sgDtaHoje,
+  sgPastaExecutavel, sgFBConect,
   sgNomeComputador, sgNomeUsuario: String; // Usuario e Windows
+
+  dgDtaHoje: TDateTime;
+
 
 implementation
 
@@ -93,7 +117,7 @@ Var
   i: Integer;
   bConecta: Boolean;
   Flags : Cardinal;
-  s, sErroLocal, sErroIntraNet, sErroInterNet: String;
+  sErroLocal, sErroIntraNet, sErroInterNet: String;
 begin
 
   if not InternetGetConnectedState(@Flags, 0) then
@@ -172,8 +196,6 @@ End; // Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TDMSolicTransf.DataModuleCreate(Sender: TObject);
 begin
-  // Date da Inicialização do Sistema ==========================================
-  dgDtaHoje:=Date;
 
   // Pasta Executavel ==========================================================
   sgPastaExecutavel:=IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName));
@@ -211,11 +233,19 @@ begin
 
   ConectaBanco;
 
+  // Date da Inicialização do Sistema ==========================================
+  sgDtaHoje:=DateToStr(DataHoraServidorFI(DMSolicTransf.SDS_DtaHoraServidor));
+  dgDtaHoje:=StrToDate(sgDtaHoje);
+
 end;
 
 procedure TDMSolicTransf.Timer1Timer(Sender: TObject);
+Var
+  sDtaAgora: String;
 begin
-  If dgDtaHoje<>Date Then
+  sDtaAgora:=DateToStr(DataHoraServidorFI(DMSolicTransf.SDS_DtaHoraServidor));
+
+ If dgDtaHoje<>StrToDate(sDtaAgora) Then
   Begin
     Application.Terminate;
     Exit;
