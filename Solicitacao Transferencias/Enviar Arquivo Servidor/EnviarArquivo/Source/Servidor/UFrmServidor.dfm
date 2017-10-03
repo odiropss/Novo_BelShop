@@ -1,8 +1,8 @@
 object FrmServidor: TFrmServidor
   Left = 445
   Top = 145
-  Width = 345
-  Height = 175
+  Width = 348
+  Height = 172
   Caption = 'Conex'#227'o Servidor BelShop'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -28,7 +28,7 @@ object FrmServidor: TFrmServidor
     ParentFont = False
   end
   object Label2: TLabel
-    Left = 80
+    Left = 79
     Top = 56
     Width = 172
     Height = 26
@@ -207,7 +207,7 @@ object FrmServidor: TFrmServidor
     ServerType = stNonBlocking
     OnAccept = ServerSocket1Accept
     OnClientError = ServerSocket1ClientError
-    Left = 24
-    Top = 8
+    Left = 16
+    Top = 88
   end
 end

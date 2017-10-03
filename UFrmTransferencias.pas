@@ -2054,6 +2054,15 @@ Var
   sDta, sUsuarioWindows, sComputadorWindows: String;
 begin
 
+  //============================================================================
+  // NÃO PROCESSA NO SÁBADO E DOMINGO ==========================================
+  //============================================================================
+  sDta:=DiaSemanaNome(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor));
+  If (AnsiUpperCase(sDta)='DOMINGO') Or (AnsiUpperCase(sDta)='SÁBADO') Then
+  Begin
+    Application.Terminate;
+    Exit;
+  End;
   // Fechar Programa do Agendamento Anterior ===================================
 //  ApagaUltProcesso('PCurvasDemandas.exe');
   //============================================================================
@@ -2065,7 +2074,6 @@ begin
 
   sDta:=DateToStr(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor));
   sDta:=f_Troca('/','',f_Troca('.','',f_Troca('-','',sDta)));
-
 
   //============================================================================
   // Monta Arquivo Texto de Status =============================================

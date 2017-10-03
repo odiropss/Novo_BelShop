@@ -143,7 +143,9 @@ uses DK_Procs1, UDMSolicTransf, UPesquisa, DB;
 Procedure TFrmSolicTransf.NovaVersao;
 Var
   MySql: String;
+  sCliente: String;
 Begin
+  // Verifica se é Para Atualizar ==============================================
   MySql:=' SELECT t.cod_aux'+
          ' FROM TAB_AUXILIAR t'+
          ' WHERE t.tip_aux=20'+
@@ -153,10 +155,30 @@ Begin
   DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
   DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql);
   DMSolicTransf.CDS_BuscaRapida.Open;
-  If Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('Cod_Aux').AsString)<>'' Then
+  sCliente:=Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('Cod_Aux').AsString);
+  DMSolicTransf.CDS_BuscaRapida.Close;
+
+  // Busca Nova Versão =========================================================
+  If sCliente<>'' Then
   Begin
+    // MONTA PARAMETRO: IP da Internet ; Porta ; Código Loja Linx ==============
+    MySql:=' SELECT t.des_aux IP, t.des_aux1 Porta'+
+           ' FROM TAB_AUXILIAR t'+
+           ' WHERE t.tip_aux=20'+
+           ' AND   t.cod_aux=0';
+    DMSolicTransf.CDS_BuscaRapida.Close;
+    DMSolicTransf.SQLQ_BuscaRapida.Close;
+    DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
+    DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql);
+    DMSolicTransf.CDS_BuscaRapida.Open;
+    sCliente:=IncludeTrailingPathDelimiter(sgPastaExecutavel)+'PCliente.exe '+
+              Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('IP').AsString)+';'+
+              Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('Porta').AsString)+';'+
+              sgLojaLinx+';';
+    DMSolicTransf.CDS_BuscaRapida.Close;
+
     msg('Existe Nova Versão do Sistema !!'+cr+cr+'Tecle <OK> Para Atualizar...','A');
-    ShellExecute(Handle, 'open',Pchar(IncludeTrailingPathDelimiter(sgPastaExecutavel)+'Cliente.exe'), nil, nil, 1);
+    ShellExecute(Handle, 'open',Pchar(sCliente), nil, nil, 1);
     Application.Terminate;
     Exit;
   End;
@@ -365,7 +387,7 @@ begin
     Application.Terminate;
     Exit;
   End;
-
+                       
   // Verifica Parametro Enviado ================================================
   sgCodLojaVersaoOK:='';
   for i:=1 to ParamCount do
@@ -379,19 +401,19 @@ begin
   tsgArquivo:=TStringList.Create;
   tsgArquivo.LoadFromFile(IncludeTrailingPathDelimiter(sgPastaExecutavel)+'Loja.ini');
 
-  sgLojaLinx   :='';
-  sgLojaSidicom:='';
-  sgNomeLoja   :='';
-  sErro        :='';
+  sgLojaLinx     :='';
+  sgLojaSidicom  :='';
+  sgNomeLoja     :='';
+  sErro          :='';
   Try
     If Trim(tsgArquivo[0])='' Then
      sErro:='SIM';
 
     If sErro='' Then
     Begin
-      sgLojaSidicom:=Separa_String(tsgArquivo[0],1);
-      sgLojaLinx   :=Separa_String(tsgArquivo[0],2);
-      sgNomeLoja   :=Separa_String(tsgArquivo[0],3);
+      sgLojaSidicom  :=Separa_String(tsgArquivo[0],1);
+      sgLojaLinx     :=Separa_String(tsgArquivo[0],2);
+      sgNomeLoja     :=Separa_String(tsgArquivo[0],3);
 
       StrToInt(sgLojaLinx);
       StrToInt(sgLojaSidicom);
@@ -439,7 +461,7 @@ begin
   If Not DMSolicTransf.SQLC.Connected Then
    DMSolicTransf.SQLC.Connected:=True;
 
-  // Busca Numero/Quantidade Máxima dse Transferencia ==========================
+  // Busca Numero/Quantidade Máxima de Transferencia ===========================
   b:=True;
   While b do
   Begin
