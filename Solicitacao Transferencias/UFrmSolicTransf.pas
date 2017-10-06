@@ -92,6 +92,8 @@ type
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
     procedure Dbg_VerificaProdutosKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure FormKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState); // Posiciona no Componente
 
   private
@@ -247,8 +249,8 @@ Begin
   EdtQtdTransf.Clear;
   Lab_Unidade.Caption:='';
 
-  DtEdt_DtaInicio.Clear;
-  DtEdt_DtaFim.Clear;
+//  DtEdt_DtaInicio.Clear;
+//  DtEdt_DtaFim.Clear;
 End; // Limpa Todos os Edts e Datas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Cria Limites da Loja em Tab_Auxiliar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -544,19 +546,20 @@ begin
   PC_Principal.TabIndex:=0;
   PC_PrincipalChange(Self);
 
-  // Se Versao já Atualizada - Parametros vem do Cliente de Transferencia do Aplicativo
-  If Trim(sgCodLojaVersaoOK)<>'' Then
-  Begin
-    If Not ExcluiVersaoTabAuxiliar Then
-    Begin
-      msg('Erro ao Verificar Versão do Sistema  !!','A');
-      Application.Terminate;
-      Exit;
-    End;
-  End; //If Trim(sgCodLojaVersaoOK<>'') Then
-
-  // Atualiza Novca Versão do Sistema ==========================================
-  NovaVersao;
+// odirApagar - 04/10/2017 - Versão com Servidor / Client ======================  
+//  // Se Versao já Atualizada - Parametros vem do Cliente de Transferencia do Aplicativo
+//  If Trim(sgCodLojaVersaoOK)<>'' Then
+//  Begin
+//    If Not ExcluiVersaoTabAuxiliar Then
+//    Begin
+//      msg('Erro ao Verificar Versão do Sistema  !!','A');
+//      Application.Terminate;
+//      Exit;
+//    End;
+//  End; //If Trim(sgCodLojaVersaoOK<>'') Then
+//
+//  // Atualiza Novca Versão do Sistema ==========================================
+//  NovaVersao;
 end;
 
 procedure TFrmSolicTransf.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
@@ -1366,6 +1369,18 @@ begin
       msg('Produto Não Localizado !!','A');
     End;
   End; // If Key=Vk_F4 Then
+end;
+
+procedure TFrmSolicTransf.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Versão do Sistema =========================================================
+  If Key=Vk_F3 Then
+  Begin
+    msg('Data da Última Alteração: '+Copy(DateTimeToStr(FileDateToDateTime(
+        FileAge(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+
+        ExtractFileName(Application.ExeName)))),1,19),'A');
+  End;
+
 end;
 
 end.

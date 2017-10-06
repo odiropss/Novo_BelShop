@@ -234,7 +234,7 @@ begin
   ConectaBanco;
 
   // Date da Inicialização do Sistema ==========================================
-  sgDtaHoje:=DateToStr(DataHoraServidorFI(DMSolicTransf.SDS_DtaHoraServidor));
+  sgDtaHoje:=DateToStr(DataHoraServidorFI(DMSolicTransf.SQLQ_BuscaRapida));
   dgDtaHoje:=StrToDate(sgDtaHoje);
 
 end;
@@ -243,9 +243,9 @@ procedure TDMSolicTransf.Timer1Timer(Sender: TObject);
 Var
   sDtaAgora: String;
 begin
-  sDtaAgora:=DateToStr(DataHoraServidorFI(DMSolicTransf.SDS_DtaHoraServidor));
+  sDtaAgora:=DateToStr(DataHoraServidorFI(DMSolicTransf.SQLQ_BuscaRapida));
 
- If dgDtaHoje<>StrToDate(sDtaAgora) Then
+  If dgDtaHoje<>StrToDate(sDtaAgora) Then
   Begin
     Application.Terminate;
     Exit;

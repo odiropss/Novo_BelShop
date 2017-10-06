@@ -643,9 +643,7 @@ Begin
               // LinxMovimento --------------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento') Then
                sSqlUpInValores:=
-                sSqlUpInValores+' MATCHING (empresa, transacao, documento, '+
-                                           'codigo_cliente, operacao, tipo_transacao, '+
-                                           'cod_produto, identificador)';
+                sSqlUpInValores+' MATCHING (empresa, transacao, documento)';
 
               // LinxFaturas ----------------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas') Then
@@ -1022,6 +1020,7 @@ Begin
     // LinxPlanosPedidoVenda ----------------------------------------
     // LinxClientesFornecCamposAdicionais ---------------------------
     //---------------------------------------------------------------
+
     sXML:='			<Parameter id="data_inicial">'+sgDtaInicio+'</Parameter>';
     Writeln(txtArq,sXML);
     sXML:='			<Parameter id="data_fim">'+sgDtaFim+'</Parameter>';
@@ -1380,14 +1379,15 @@ Begin
 
   // Processa Lojas ============================================================
   MySql:=' SELECT em.num_cnpj, em.cod_filial, em.cod_linx, em.dta_inicio_linx'+
-         ' FROM EMP_CONEXOES em';
+         ' FROM EMP_CONEXOES em'+
+         ' WHERE em.dta_inicio_linx IS NOT NULL';
 
          If sgParametroCodLoja<>'' Then
           MySql:=
-           MySql+' WHERE em.cod_linx='+sgParametroCodLoja
+           MySql+' AND em.cod_linx='+sgParametroCodLoja
          Else
           MySql:=
-           MySql+' WHERE em.cod_linx<>0'+
+           MySql+' AND em.cod_linx<>0'+
                  ' ORDER BY 3';
   DMLinxWebService.CDS_Lojas.Close;
   DMLinxWebService.SDS_Lojas.CommandText:=MySql;

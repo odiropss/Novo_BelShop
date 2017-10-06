@@ -966,6 +966,7 @@ object FrmSolicTransf: TFrmSolicTransf
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
+  OnKeyUp = FormKeyUp
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -1458,10 +1459,25 @@ object FrmSolicTransf: TFrmSolicTransf
         Panels = <
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-            PanelStyle.EllipsisType = dxetSmartPath
+            PanelStyle.Alignment = taCenter
             Fixed = False
-            Text = 'No Grid ===>>'
-            Width = 25
+            Text = '<F3> Verificar Vers'#227'o'
+            Width = 35
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taRightJustify
+            PanelStyle.Color = clBtnFace
+            PanelStyle.EllipsisType = dxetSmartPath
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clRed
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = [fsBold]
+            PanelStyle.ParentFont = False
+            Bevel = dxpbNone
+            Text = 'No Grid =>'
+            Width = 65
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
@@ -1471,19 +1487,19 @@ object FrmSolicTransf: TFrmSolicTransf
             Fixed = False
             ParentBiDiMode = False
             Text = '<F4> Localiza Produto'
-            Width = 40
+            Width = 35
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter
             Fixed = False
-            Text = 'N'#186' Maximo de Produtos/Dia: 0'
+            Text = 'N'#186' M'#225'ximo de Produtos/Dia: 0'
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter
             Fixed = False
-            Text = 'Quantidade Maxima Por Produto: 0'
+            Text = 'Quantidade M'#225'xima p/Produto: 0'
           end>
         PaintStyle = stpsOffice11
         Font.Charset = DEFAULT_CHARSET
@@ -1792,20 +1808,39 @@ object FrmSolicTransf: TFrmSolicTransf
         Panels = <
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-            Text = 'No Grid ==>>'
-            Width = 80
-          end
-          item
-            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter
-            Text = '<F4> Localiza Produto'
-            Width = 150
+            Fixed = False
+            Text = '<F3> Verificar Vers'#227'o'
+            Width = 40
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter
             Fixed = False
             Text = 'Per'#237'odo a Verificar deve Conter no M'#225'ximo 10 (DEZ) Dias'
+            Width = 100
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taRightJustify
+            PanelStyle.Color = clBtnFace
+            PanelStyle.EllipsisType = dxetSmartPath
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clRed
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = [fsBold]
+            PanelStyle.ParentFont = False
+            Bevel = dxpbNone
+            Text = 'No Grid =>'
+            Width = 65
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            Fixed = False
+            Text = '<F4> Localiza Produto'
+            Width = 40
           end>
         PaintStyle = stpsOffice11
         Font.Charset = DEFAULT_CHARSET
