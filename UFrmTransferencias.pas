@@ -12,10 +12,10 @@ type
     procedure FormCreate(Sender: TObject);
 
     // ODIR ====================================================================
-    Function  TransferenciasLojas: Boolean;
-
     Function  BuscaProdutosCD: Boolean;
     Function  InsereProdutosCD: Boolean;
+
+    Function  TransferenciasLojas: Boolean;
 
     Function  BuscaProdutosLojas: Boolean;
     Procedure MontaCurvas(sCodLoja: String);
@@ -74,7 +74,8 @@ var
 
   Flags : Cardinal; // Verifica Internet Ativo - Encerra Necessario
 
-//  hHrInicio, hHrFim: String;
+  bgTrabDomingo: Boolean;
+  //  hHrInicio, hHrFim: String;
 
 implementation
 
@@ -96,7 +97,7 @@ Var
 
   bAchouCD: Boolean;
 Begin
-  Result:=True;
+  Result:=False;
 
   // Busca Lojas para Processar ================================================
   MySql:=' SELECT DISTINCT CAST(LPAD(TRIM(so.cod_loja_sidi),2,''00'') AS VARCHAR(2)) Cod_SIDICOM'+
@@ -108,11 +109,11 @@ Begin
   DMTransferencias.CDS_Busca.Open;
   If DMTransferencias.CDS_Busca.Eof Then
   Begin
+    Result:=True;
     DMTransferencias.CDS_Busca.Close;
 
-    tgArqErros.Add('Sem Loja Para Transferências no Dia '+DateToStr(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor)));
-
-    Result:=True;
+    bgArqErros:=True;
+    tgArqErros.Add('Sem Transferências de Lojas no Dia '+DateToStr(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor)));
     Exit;
   End;
 
@@ -299,7 +300,6 @@ Begin
           DMTransferencias.SQLC.Execute(MySql,nil,nil);
         End; // If Not bAchouCD Then
 
-
         DMTransferencias.CDS_Busca1.Next;
       End; // While Not DMTransferencias.CDS_Busca1.Eof do
       DMTransferencias.CDS_Busca1.EnableControls;
@@ -333,12 +333,11 @@ Begin
       // Atualiza Transferências com o Numero do Docto Gerado ==================
       MySql:=' UPDATE SOL_TRANSFERENCIA_CD so'+
              ' SET so.doc_gerado='+sgNrDocto+
-             ', so.dta_processamento=CURRENT_DATE'+ 
+             ', so.dta_processamento=CURRENT_DATE'+
              ' WHERE so.doc_gerado=0'+
              ' AND   so.dta_solicitacao<CURRENT_DATE'+
              ' AND   so.cod_loja_sidi='+sgCodLoja;
       DMTransferencias.SQLC.Execute(MySql,nil,nil);
-
 
       // Atualiza Transacao ======================================================
       DMTransferencias.SQLC.Commit(TD);
@@ -348,6 +347,7 @@ Begin
 
       bgArqErros:=True;
       tgArqErros.Add('Sol.Transf. Loja Bel_'+sgCodLoja+' Processada com SUCESSO em '+DateTimeToStr(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor)));
+      Result:=True;
     Except // Except da Transação
       on e : Exception do
       Begin
@@ -366,7 +366,9 @@ Begin
   End; // While Not DMTransferencias.CDS_Busca.Eof do
   DMTransferencias.CDS_Busca.EnableControls;
   DMTransferencias.CDS_Busca.Close;
+
 End; // So Roda Transferencias Solicitadas pelas Lojas >>>>>>>>>>>>>>>>>>>>>>>>>
+
 // Atualiza Prioridade de Reposição >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmTransferencias.AtualizaPrioridades;
 Var
@@ -386,6 +388,7 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
+    // Atualiza Prioridade 3 Para 0 - ES_REP_PRIORIDADES =======================
     MySql:=' UPDATE ES_ESTOQUES_LOJAS el'+
            ' SET   el.ind_prioridade=0'+
            ' WHERE el.dta_movto=CURRENT_DATE'+
@@ -399,7 +402,7 @@ Begin
            '               AND   pp.codproduto=el.cod_produto)';
     DMTransferencias.SQLC.Execute(MySql,nil,nil);
 
-
+    // Atualiza Prioridade 3 Para 1 - OC_COMPRAS ===============================
     MySql:=' UPDATE ES_ESTOQUES_LOJAS el'+
            ' SET   el.ind_prioridade=1'+
            ' WHERE el.dta_movto=CURRENT_DATE'+
@@ -445,7 +448,7 @@ Var
   bProcessou: Boolean;
 Begin
 
-  Result:=True;
+  Result:=False;
 
   // Verifia se Existe Transferencia a Processar ===============================
   MySql:=' SELECT oc.cod_empresa'+
@@ -475,6 +478,7 @@ Begin
 
   If Trim(DMTransferencias.CDS_Busca.FieldByName('Cod_Empresa').AsString)='' Then
   Begin
+    Result:=True;
     DMTransferencias.CDS_Busca.Close;
     Exit;
   End; // If Trim(DMTransferencias.CDS_Busca.FieldByName('Cod_Empresa').AsString)='' Then
@@ -696,6 +700,7 @@ Begin
         If Trim(sQtdMenos)='' Then
          sQtdMenos:='0';
 
+        // SE PRODUTO EXISTIR NÃO ATUALIZA =====================================
         If Trim(DMTransferencias.CDS_Busca1.FieldByName('Num_Docto').AsString)='' Then
          Begin
            sQtdTrans:=Trim(DMTransferencias.CDS_Busca.FieldByName('QTD_A_TRANSF').AsString);
@@ -903,6 +908,7 @@ Begin
 
     DateSeparator:='/';
     DecimalSeparator:=',';
+    Result:=True;
   Except
     on e : Exception do
     Begin
@@ -966,7 +972,10 @@ Begin
   DMTransferencias.CDS_EstoqueLoja.Open;
 
   If DMTransferencias.CDS_EstoqueLoja.IsEmpty Then
-   Exit;
+  Begin
+    Result:=True;
+    Exit;
+  End;
 
   // Verifica se Transação esta Ativa
   If DMTransferencias.SQLC.InTransaction Then
@@ -1379,6 +1388,8 @@ Begin
       DMTransferencias.CDS_EstoqueLoja.CancelUpdates;
       DMTransferencias.SQLC.Rollback(TD);
 
+      Result:=False;
+      
       DateSeparator:='/';
       DecimalSeparator:=',';
 
@@ -1550,11 +1561,6 @@ Begin
          ' AND   p.codaplicacao<>''0017'''+ // Não Processa: 0017 = Provadores
          ' AND   p.principalfor Not in ('+sgFornNAO+')'+ // Tira Fornecedores que Não Entram no Processo de Reposição Automática
          ' AND   UPPER(p.apresentacao) NOT LIKE ''LUVA%'''+ // Tira todas as Luvas
-
-// odiraqui - Apagar - 02/08/2017
-//' and p.codgruposub  = ''0100003'''+
-//' and p.principalfor = ''000118'''+
-
          ' AND   c.cod_loja='+QuotedStr(sCodLoja);
 
          If bCurvaC Then
@@ -1644,13 +1650,14 @@ Var
   ii, i: Integer;
   MySql: String;
 
-  sCodProduto,
-  sCodLoja, sCodEmp: String;
+  sCodProdSidi, sCodProdLinx,
+  sCodLoja, sCodEmpLinx: String;
 
   cQtdSaldo, cQtdMais: Currency;
-  bConetada, bSiga: Boolean;
+
+  bConetada, bSiga, bNaoExiste: Boolean;
 Begin
-  Result:=False;
+  Result:=True;
 
   // Busca Produtos do CD ======================================================
   MySql:=' SELECT *'+
@@ -1680,20 +1687,53 @@ Begin
   //============================================================================
   For i:=0 to mgMemo.Lines.Count-1 do
   Begin
-    // Zera Sequencia para Novo Docto ==========================================
-    MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH 0';
-    DMTransferencias.SQLC.Execute(MySql,nil,nil);
+    sCodLoja:=Trim(mgMemo.Lines[i]);
 
-    // Busca Numero do Docto ===================================================
-    MySql:=' SELECT COALESCE(MAX(el.num_docto)+1 ,1) Nr_Docto'+
-           ' FROM ES_ESTOQUES_LOJAS el';
+    // Calcula Dias Úteis da Loja ==============================================
+    MySql:=' SELECT em.ind_domingo'+
+           ' FROM EMP_CONEXOES em'+
+           ' WHERE em.cod_filial='+QuotedStr(sCodLoja);
     DMTransferencias.CDS_BuscaRapida.Close;
     DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
     DMTransferencias.CDS_BuscaRapida.Open;
-    sgNrDocto:=DMTransferencias.CDS_BuscaRapida.FieldByName('Nr_Docto').AsString;
+    bgTrabDomingo:=(Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Ind_Domingo').AsString)='S');
+    DMTransferencias.CDS_BuscaRapida.Close;
+    igDiasUteis:=DiasUteisBelShop(dgDtaInicio, dgDtaFim, bgTrabDomingo, True);
+
+    // Busca Numero do Docto e Num_Seq =========================================
+    MySql:=' SELECT l.Num_Docto Nr_Docto, COALESCE(MAX(l.num_seq) ,1) NumSeq'+
+           ' FROM ES_ESTOQUES_LOJAS l'+
+           ' WHERE l.dta_movto=CURRENT_DATE'+
+           ' AND   l.cod_loja='+QuotedStr(sCodLoja)+
+           ' GROUP BY 1';
+    DMTransferencias.CDS_BuscaRapida.Close;
+    DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+    DMTransferencias.CDS_BuscaRapida.Open;
+
+    sgNrDocto:=Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Nr_Docto').AsString);
+
+    // Se Documento da Loja Existe =============================================
+    If Trim(sgNrDocto)<>'' Then
+    Begin
+      MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH '+DMTransferencias.CDS_BuscaRapida.FieldByName('NumSeq').AsString;
+      DMTransferencias.SQLC.Execute(MySql,nil,nil);
+    End;
     DMTransferencias.CDS_BuscaRapida.Close;
 
-    sCodLoja:=Trim(mgMemo.Lines[i]);
+    // Se Documento da Loja NÃO Existe =========================================
+    If Trim(sgNrDocto)='' Then
+    Begin
+      MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH 0';
+      DMTransferencias.SQLC.Execute(MySql,nil,nil);
+
+      MySql:=' SELECT COALESCE(MAX(el.num_docto)+1 ,1) Nr_Docto'+
+             ' FROM ES_ESTOQUES_LOJAS el';
+      DMTransferencias.CDS_BuscaRapida.Close;
+      DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+      DMTransferencias.CDS_BuscaRapida.Open;
+      sgNrDocto:=DMTransferencias.CDS_BuscaRapida.FieldByName('Nr_Docto').AsString;
+      DMTransferencias.CDS_BuscaRapida.Close;
+    End; // If Trim(sgNrDocto)<>'' Then
 
     // Busca Código da Loja Linx ===============================================
     MySql:=' SELECT COALESCE(e.cod_linx,0) cod_linx'+
@@ -1730,24 +1770,24 @@ Begin
           bConetada:=False;
         End;
       End;
+      //==========================================================================
+      SalvaProcessamento('10.03.03/999 - Conecta Loja - '+sCodLoja+' - '+TimeToStr(Time));
+      //==========================================================================
     End; // If igCodLojaLinx=0 Then // SIDICOM
-    //==========================================================================
-    SalvaProcessamento('10.03.03/999 - Conecta Loja - '+sCodLoja+' - '+TimeToStr(Time));
-    //==========================================================================
 
     // Monta Transacao ===================================================
     TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
     TD.IsolationLevel:=xilREADCOMMITTED;
     DMTransferencias.SQLC.StartTransaction(TD);
     Try
-      // Busca Codigo da Loja ---------------------------------------
-      MySql:=' SELECT CAST(LPAD(em.cod_emp,6,''0'') AS VARCHAR(6)) Codigo'+
+      // Busca Codigo da Emopresa ---------------------------------------
+      MySql:=' SELECT em.Cod_Cli_Linx'+
              ' FROM EMP_CONEXOES em'+
              ' WHERE em.cod_filial='+QuotedStr(sCodLoja);
       DMTransferencias.CDS_BuscaRapida.Close;
       DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
       DMTransferencias.CDS_BuscaRapida.Open;
-      sCodEmp:=DMTransferencias.CDS_BuscaRapida.FieldByName('Codigo').AsString;
+      sCodEmpLinx:=DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Cli_Linx').AsString;
       DMTransferencias.CDS_BuscaRapida.Close;
 
       //========================================================================
@@ -1756,146 +1796,157 @@ Begin
       // PROCESSA PRODUTOS SELECIONADOS DA LOJA ================================
       While Not DMTransferencias.CDS_CurvasLoja.Eof do
       Begin
-        sCodProduto:=DMTransferencias.CDS_CurvasLojaCOD_PRODUTO.AsString;
+        sCodProdSidi:=DMTransferencias.CDS_CurvasLojaCOD_PRODUTO.AsString;
 
-        If sCodProduto='033904' Then
-         sCodProduto:=sCodProduto;
+        // Verifica se Já Existe em ES_ESTOQUES_LOJAS ==========================
+        MySql:=' SELECT l.cod_produto'+
+               ' FROM ES_ESTOQUES_LOJAS l'+
+               ' WHERE l.dta_movto=CURRENT_DATE'+
+               ' AND   l.cod_loja='+QuotedStr(sCodLoja)+
+               ' AND   l.cod_produto='+QuotedStr(sCodProdSidi);
+        DMTransferencias.CDS_BuscaRapida.Close;
+        DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+        DMTransferencias.CDS_BuscaRapida.Open;
+        bNaoExiste:=(DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString<>'');
+        DMTransferencias.CDS_BuscaRapida.Close;
 
-        // Busca Transferencias =====================================
-        cQtdMais:=0;
-
-        // Busca Tranferencias do CD Para a Loja ------------------
-        MySql:=' SELECT mc.numero, mp.codproduto, mp.quantatendida'+
-               ' FROM MCLI mc, MCLIPRO mp'+
-               ' WHERE mc.chavenf=mp.chavenf'+
-               ' AND   mc.codcomprovante in (''009'',''020'')'+
-               ' AND   mc.codfilial=''99'''+
-               ' AND   mc.situacaonf=''L'''+
-               ' AND   mc.datadocumento>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(IncDay(dgDtaHoje,-100)))))+
-               ' AND   mc.codcliente='+QuotedStr(sCodEmp)+
-               ' AND   mp.codproduto='+QuotedStr(sCodProduto);
-        IBQ_MPMS.Close;
-        IBQ_MPMS.SQL.Clear;
-        IBQ_MPMS.SQL.Add(MySql);
-        IBQ_MPMS.Open;
-
-        While Not IBQ_MPMS.Eof do
+        If Not bNaoExiste Then
         Begin
-          If bConetada Then // SIDICOM
-          Begin
-            MySql:=' SELECT mf.numero'+
-                   ' FROM MFOR mf'+
-                   ' WHERE mf.situacaonf=1'+
-                   ' AND   mf.codfornecedor=''000663'''+
-                   ' AND   mf.CodFilial='+QuotedStr(sCodLoja)+
-                   ' AND   mf.codcomprovante in (''010'',''016'')'+
-                   ' AND   mf.numero='+QuotedStr(IBQ_MPMS.FieldByName('numero').AsString);
-            IBQ_TR_Filial.Close;
-            IBQ_TR_Filial.SQL.Clear;
-            IBQ_TR_Filial.SQL.Add(MySql);
+          // Busca Transferencias ===================================
+          cQtdMais:=0;
 
-            // Abre Query -----------------------------------------
-            ii:=0;
-            bSiga:=False;
-            While Not bSiga do
-            Begin
-              Try
-                IBQ_TR_Filial.Open;
-                bSiga:=True;
-              Except
-                Inc(ii);
-              End; // Try
+          // Busca Tranferencias/Vendas do CD Para a Loja ===========
+          // SIDICOM Coloquei no Fim ================================
+          MySql:=' SELECT m.documento, m.cod_produto, m.quantidade'+
+                 ' FROM LINXMOVIMENTO m'+
+                 '        LEFT JOIN LINXPRODUTOS p ON p.cod_produto=m.cod_produto'+
 
-              If ii>2 Then
-              Begin
-                IBQ_TR_Filial.Close;
-                Break;
-              End; // If i>2 Then
-            End; // While Not bSiga do
+                 ' WHERE m.cancelado=''N'''+
+                 ' AND   m.excluido=''N''';
 
-            If (bSiga) and (Trim(IBQ_TR_Filial.FieldByName('Numero').AsString)='') Then
-            Begin
-              cQtdMais:=cQtdMais + IBQ_MPMS.FieldByName('QuantAtendida').AsCurrency;
-            End;
-            IBQ_TR_Filial.Close;
-          End; // If bConetada Then // SIDICOM
+                 // TIPO_TRANSACAO ----------------------------------
+                 // 'T' = Transferencias
+                 // 'Null' = Saida de Venda ou Entrada de Compra
+                 if igCodLojaLinx=23 Then // Wenceslau - Venda
+                  Begin
+                    MySql:=
+                     MySql+' AND   m.tipo_transacao IS NULL';
+                  End
+                 Else
+                  Begin
+                    MySql:=
+                     MySql+' AND   m.tipo_transacao=''T''';
+                  End;
 
-          If igCodLojaLinx<>0 Then // LINX
+          // OPERACAO ----------------------------------------
+          // 'S' = Saida
+          // 'E' = Entrada
+          MySql:=
+           MySql+' AND   m.operacao=''S'''+
+                 ' AND   m.empresa = 2'+ // =============== Codigo da Loja Emitente ( BelShop CD )
+                 ' AND   m.codigo_cliente='+sCodEmpLinx+ // Codigo da Empresa Destinatário
+                 ' AND   m.data_documento>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(IncDay(dgDtaHoje,-100)))))+
+                 ' AND   LPAD(p.cod_auxiliar, 6, ''0'')='+QuotedStr(sCodProdSidi);
+                 // AND   m.documento=1479
+          DMTransferencias.CDS_Busca.Close;
+          DMTransferencias.SDS_Busca.CommandText:=MySql;
+          DMTransferencias.CDS_Busca.Open;
+
+          While Not DMTransferencias.CDS_Busca.Eof do
           Begin
             MySql:=' SELECT FIRST 1 m.documento numero'+
                    ' FROM LINXMOVIMENTO m'+
-                   ' WHERE m.codigo_cliente=13'+ // BELSHOP | CD | RS
-                   ' AND   m.operacao=''E'''+
-                   ' AND   COALESCE(m.tipo_transacao,''E'')=''E'''+
-                   ' AND   m.cancelado=''N'''+
-                   ' AND   m.excluido=''N'''+
-                   ' and   m.empresa='+IntToStr(igCodLojaLinx)+
-                   ' and   m.documento='+IBQ_MPMS.FieldByName('Numero').AsString;
+
+                   ' WHERE m.cancelado=''N'''+
+                   ' AND   m.excluido=''N''';
+
+                   // TIPO_TRANSACAO ----------------------------------
+                   // 'T' = Transferencias
+                   // 'Null' = Saida de Venda ou Entrada de Compra
+                   if igCodLojaLinx=23 Then // Wenceslau - Venda
+                    Begin
+                      MySql:=
+                       MySql+' AND   m.tipo_transacao IS NULL';
+                    End
+                   Else
+                    Begin
+                      MySql:=
+                       MySql+' AND   m.tipo_transacao=''T''';
+                    End;
+
+            // OPERACAO ----------------------------------------
+            // 'S' = Saida
+            // 'E' = Entrada
+            MySql:=
+             MySql+' AND   m.operacao=''E'''+
+                   ' AND   m.empresa = '+IntToStr(igCodLojaLinx)+ // Codigo da Loja Emitente
+                   ' AND   m.codigo_cliente=13'+ // ==============// Codigo da Empresa Destinatário ( BelShop CD )
+                   ' AND   m.documento='+DMTransferencias.CDS_Busca.FieldByName('documento').AsString;
             DMTransferencias.CDS_BuscaRapida.Close;
             DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
             DMTransferencias.CDS_BuscaRapida.Open;
             If Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Numero').AsString)='' Then
             Begin
-              cQtdMais:=cQtdMais + IBQ_MPMS.FieldByName('QuantAtendida').AsCurrency;
+              cQtdMais:=cQtdMais + DMTransferencias.CDS_Busca.FieldByName('Quantidade').AsCurrency;
             End;
             DMTransferencias.CDS_BuscaRapida.Close;
-          End; // If igCodLojaLinx<>0 Then // LINX
 
-          IBQ_MPMS.Next;
-        End; // While Not IBQ_MPMS.Eof do
-        IBQ_MPMS.Close;
+            DMTransferencias.CDS_Busca.Next;
+          End; // While Not IBQ_MPMS.Eof do
+          DMTransferencias.CDS_Busca.Close;
 
-        // Atualiza o Saldo do Produto ------------------------------
-        cQtdSaldo:=DMTransferencias.CDS_CurvasLojaSALDOATUAL.AsCurrency + cQtdMais;
+          // Atualiza o Saldo do Produto ------------------------------
+          cQtdSaldo:=DMTransferencias.CDS_CurvasLojaSALDOATUAL.AsCurrency + cQtdMais;
 
-        // Se Saldo Negativo Alterar para 0.00 <Zero> ==========================
-        If cQtdSaldo<0 Then
-         cQtdSaldo:=0.00;
+          // Se Saldo Negativo Alterar para 0.00 <Zero> ==========================
+          If cQtdSaldo<0 Then
+           cQtdSaldo:=0.00;
 
-        // Busca Demanda/Quantidade de Reposição --------------------
-        If BuscaProdutosDemanda(sCodLoja, sCodProduto, IntToStr(ParteInteiro(CurrToStr(cQtdSaldo)))) Then
-        Begin
+          // Busca Demanda/Quantidade de Reposição --------------------
+          If BuscaProdutosDemanda(sCodLoja, sCodProdSidi, IntToStr(ParteInteiro(CurrToStr(cQtdSaldo)))) Then
+          Begin
 
-          // Acerta Arredondamento para Maior Inteiro ---------------
-          DMTransferencias.CDS_ProdutoDemanda.Edit;
-          DMTransferencias.CDS_ProdutoDemandaQTD_REPOSICAO.AsInteger:=
-                 Ceil(DMTransferencias.CDS_ProdutoDemandaQTD_REPOSICAO.AsFloat);
-          DMTransferencias.CDS_ProdutoDemanda.Post;
+            // Acerta Arredondamento para Maior Inteiro ---------------
+            DMTransferencias.CDS_ProdutoDemanda.Edit;
+            DMTransferencias.CDS_ProdutoDemandaQTD_REPOSICAO.AsInteger:=
+                   Ceil(DMTransferencias.CDS_ProdutoDemandaQTD_REPOSICAO.AsFloat);
+            DMTransferencias.CDS_ProdutoDemanda.Post;
 
-          // Verifica se Tem Produto com Estoque no CD --------------
-          If (DMTransferencias.CDS_EstoqueCD.Locate('COD_PRODUTO',sCodProduto,[])) Then
-           Begin
-             DMTransferencias.CDS_EstoqueLoja.Insert;
-             For ii:=0 to DMTransferencias.CDS_ProdutoDemanda.FieldCount-1 do
+            // Verifica se Tem Produto com Estoque no CD --------------
+            If (DMTransferencias.CDS_EstoqueCD.Locate('COD_PRODUTO',sCodProdSidi,[])) Then
              Begin
-               If AnsiUpperCase(DMTransferencias.CDS_ProdutoDemanda.Fields[ii].DisplayLabel)<>'CODGRUPOSUB' Then
-                DMTransferencias.CDS_EstoqueLoja.Fields[ii].Assign(DMTransferencias.CDS_ProdutoDemanda.Fields[ii]);
-             End; // For ii:=0 to DMTransferencias.CDS_ProdutoDemanda.FieldCount-1 do
-             DMTransferencias.CDS_EstoqueLoja.Post;
+               DMTransferencias.CDS_EstoqueLoja.Insert;
+               For ii:=0 to DMTransferencias.CDS_ProdutoDemanda.FieldCount-1 do
+               Begin
+                 If AnsiUpperCase(DMTransferencias.CDS_ProdutoDemanda.Fields[ii].DisplayLabel)<>'CODGRUPOSUB' Then
+                  DMTransferencias.CDS_EstoqueLoja.Fields[ii].Assign(DMTransferencias.CDS_ProdutoDemanda.Fields[ii]);
+               End; // For ii:=0 to DMTransferencias.CDS_ProdutoDemanda.FieldCount-1 do
+               DMTransferencias.CDS_EstoqueLoja.Post;
 
-             // Atualiza Apply --------------------------------------
-             DMTransferencias.CDS_EstoqueLoja.ApplyUpdates(0);
-           End
-          Else // If (DMTransferencias.CDS_EstoqueCD.Locate('COD_PRODUTO',sCodProduto,[]))Then
-           Begin
-             DateSeparator:='.';
-             DecimalSeparator:='.';
+               // Atualiza Apply --------------------------------------
+               DMTransferencias.CDS_EstoqueLoja.ApplyUpdates(0);
+             End
+            Else // If (DMTransferencias.CDS_EstoqueCD.Locate('COD_PRODUTO',sCodProdSidi,[]))Then
+             Begin
+               DateSeparator:='.';
+               DecimalSeparator:='.';
 
-             // Apresentar para o Compras
-             MySql:=' INSERT INTO ES_ESTOQUES_SEM (COD_LOJA, DTA_MOVTO, COD_PRODUTO, QTD_ESTOQUE, IND_CURVA)'+
-                    ' VALUES ('+
-                    QuotedStr(DMTransferencias.CDS_ProdutoDemandaCOD_LOJA.AsString)+', '+
-                    QuotedStr(DMTransferencias.CDS_ProdutoDemandaDTA_MOVTO.AsString)+', '+
-                    QuotedStr(DMTransferencias.CDS_ProdutoDemandaCOD_PRODUTO.AsString)+', '+
-                    QuotedStr(DMTransferencias.CDS_ProdutoDemandaQTD_REPOSICAO.AsString)+', '+
-                    QuotedStr(DMTransferencias.CDS_ProdutoDemandaIND_CURVA.AsString)+')';
-             DMTransferencias.SQLC.Execute(MySql,nil,nil);
+               // Apresentar para o Compras
+               MySql:=' INSERT INTO ES_ESTOQUES_SEM (COD_LOJA, DTA_MOVTO, COD_PRODUTO, QTD_ESTOQUE, IND_CURVA)'+
+                      ' VALUES ('+
+                      QuotedStr(DMTransferencias.CDS_ProdutoDemandaCOD_LOJA.AsString)+', '+
+                      QuotedStr(DMTransferencias.CDS_ProdutoDemandaDTA_MOVTO.AsString)+', '+
+                      QuotedStr(DMTransferencias.CDS_ProdutoDemandaCOD_PRODUTO.AsString)+', '+
+                      QuotedStr(DMTransferencias.CDS_ProdutoDemandaQTD_REPOSICAO.AsString)+', '+
+                      QuotedStr(DMTransferencias.CDS_ProdutoDemandaIND_CURVA.AsString)+')';
+               DMTransferencias.SQLC.Execute(MySql,nil,nil);
 
-             DateSeparator:='/';
-             DecimalSeparator:=',';
-           End; // If (DMTransferencias.CDS_EstoqueCD.Locate('COD_PRODUTO',sCodProduto,[]))Then
-        End; // If BuscaProdutosDemanda(sCodLoja, sCodProduto, IntToStr(ParteInteiro(CurrToStr(cQtdSaldo)))) Then
-        DMTransferencias.CDS_ProdutoDemanda.Close;
+               DateSeparator:='/';
+               DecimalSeparator:=',';
+             End; // If (DMTransferencias.CDS_EstoqueCD.Locate('COD_PRODUTO',sCodProdSidi,[]))Then
+          End; // If BuscaProdutosDemanda(sCodLoja, sCodProdSidi, IntToStr(ParteInteiro(CurrToStr(cQtdSaldo)))) Then
+          DMTransferencias.CDS_ProdutoDemanda.Close;
+        End; // If Not bNaoExiste Then
 
         DMTransferencias.CDS_CurvasLoja.Next;
       End; // While Not DMTransferencias.CDS_CurvasLoja.Eof do
@@ -1909,11 +1960,11 @@ Begin
 
       bgArqErros:=True;
       tgArqErros.Add('Loja Bel_'+sCodLoja+' Processada com SUCESSO em '+DateTimeToStr(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor)));
-
-      Result:=True;
     Except
       on e : Exception do
       Begin
+        Result:=False;
+
         IBQ_TR_Filial.Close;
 
         bgArqErros:=True;
@@ -1933,7 +1984,6 @@ Begin
   //============================================================================
   SalvaProcessamento('10.03/999 - PROCESSAMENTO DAS LOJAS - FIM - '+TimeToStr(Time));
   //============================================================================
-
 End; // Busca Produtos das Lojas/Calcula Necessidade de Compras >>>>>>>>>>>>>>>>
 
 // Insere Produtos no CD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -2051,29 +2101,52 @@ End; // Busca Produtos no CD - Somente se Houver com Estoque > 0 >>>>>>>>>>>>>>>
 procedure TFrmTransferencias.FormCreate(Sender: TObject);
 Var
   MySql: String;
-  sDta, sUsuarioWindows, sComputadorWindows: String;
+  sDta, sNomeDia,
+  sUsuarioWindows, sComputadorWindows: String;
+
+  bFeriado: Boolean;
 begin
-
   //============================================================================
-  // NÃO PROCESSA NO SÁBADO E DOMINGO ==========================================
+  // Windows: Nome do Usuario, Computador e Data Hoje Sem Separadores ==========
   //============================================================================
-  sDta:=DiaSemanaNome(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor));
-  If (AnsiUpperCase(sDta)='DOMINGO') Or (AnsiUpperCase(sDta)='SÁBADO') Then
-  Begin
-    Application.Terminate;
-    Exit;
-  End;
-  // Fechar Programa do Agendamento Anterior ===================================
-//  ApagaUltProcesso('PCurvasDemandas.exe');
-  //============================================================================
-
-  // Windows: Nome do Usuario e do Computador ==================================
   UsuarioComputadorWindows(sUsuarioWindows, sComputadorWindows);
 
 //  hHrInicio:=TimeToStr(DataHoraServidorFI(DMTransferencias.SDS));
 
+  // Data Hoje Sem Separadores
   sDta:=DateToStr(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor));
   sDta:=f_Troca('/','',f_Troca('.','',f_Troca('-','',sDta)));
+  // Windows: Nome do Usuario, Computador e Data Hoje ==========================
+  //============================================================================
+
+  //============================================================================
+  // NÃO PROCESSA NO SÁBADO, DOMINGO E FERIADOS ================================
+  //============================================================================
+  MySql:=' SELECT f.Dta_Feriado'+
+         ' FROM FIN_FERIADOS_ANO f'+
+         ' WHERE f.dta_feriado ='+QuotedStr(f_Troca('/','.',f_Troca('-','.',
+                                  DateToStr(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor)))));
+  DMTransferencias.CDS_BuscaRapida.Close;
+  DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+  DMTransferencias.CDS_BuscaRapida.Open;
+  bFeriado:=(DMTransferencias.CDS_BuscaRapida.FieldByName('Dta_Feriado').AsString<>'');
+  DMTransferencias.CDS_BuscaRapida.Close;
+
+  sNomeDia:=AnsiUpperCase(DiaSemanaNome(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor)));
+  If (sNomeDia='DOMINGO') Or (sNomeDia='SÁBADO') Or (bFeriado) Then
+  Begin
+    Application.Terminate;
+    Exit;
+  End;
+  // NÃO PROCESSA NO SÁBADO, DOMINGO E FERIADOS ================================
+  //============================================================================
+
+  //============================================================================
+  // Fechar Programa do Agendamento Anterior ===================================
+  //============================================================================
+  // ApagaUltProcesso('PCurvasDemandas.exe');
+  // Fechar Programa do Agendamento Anterior ===================================
+  //============================================================================
 
   //============================================================================
   // Monta Arquivo Texto de Status =============================================
@@ -2097,11 +2170,15 @@ begin
 
   bgArqErros:=False;
   tgArqErros:=TStringList.Create;
+  // Monta Arquivo Texto de Status =============================================
+  //============================================================================
 
   //============================================================================
-  // Tranca Separação no CD ====================================================
+  // Tranca Separação no CD - Odir.txt =========================================
   //============================================================================
   CopyFile(PChar(sgPastaStatus+'@Odir.txt'), PChar(sgPastaStatus+'Odir.txt'), True);
+  // Tranca Separação no CD ====================================================
+  //============================================================================
 
   //============================================================================
   // Monta Arquivo Texto de Acompanhamento Processamento =======================
@@ -2121,40 +2198,43 @@ begin
   DeleteFile(sgArqProc);
 
   tgArqProc:=TStringList.Create;
+  // Monta Arquivo Texto de Acompanhamento Processamento =======================
+  //============================================================================
 
   //============================================================================
   // Conecta CD ================================================================
   //============================================================================
   If Not DMTransferencias.ConectaMPMS Then
   Begin
+    bgArqErros:=True;
     tgArqErros.Add('Erro ao Conectar CD');
-
-    bgArqErros:=True;
     SalvaErros;
 
     Application.Terminate;
     Exit;
   End;
-
-  //============================================================================
-   SalvaProcessamento('00/999 - Roda Transferencias Solicitadas Pelas Lojas - INICIO - '+TimeToStr(Time));
-  //============================================================================
-  // Roda Transferencias Solicitadas Pelas Lojas ===============================
-  If Not TransferenciasLojas Then
-  Begin
-    bgArqErros:=True;
-    SalvaErros;
-
-    Application.Terminate;
-    Exit;
-  End;
-  // So Roda Transferencias Solicitadas Pelas Lojas ============================
-  //============================================================================
-   SalvaProcessamento('00/999 - Roda Transferencias Solicitadas Pelas Lojas - FIM - '+TimeToStr(Time));
+  // Conecta CD ================================================================
   //============================================================================
 
+// OdirApagar - 11/10/2017
+//  //============================================================================
+//  SalvaProcessamento('00/999 - Roda Transferencias Solicitadas Pelas Lojas - INICIO - '+TimeToStr(Time));
+//  //============================================================================
+//  // Roda Transferencias Solicitadas Pelas Lojas ===============================
+//  //============================================================================
+//  If Not TransferenciasLojas Then
+//  Begin
+//    bgArqErros:=True;
+//    SalvaErros;
+//
+//    Application.Terminate;
+//    Exit;
+//  End;
+//  // Roda Transferencias Solicitadas Pelas Lojas ===============================
+//  //============================================================================
+//   SalvaProcessamento('00/999 - Roda Transferencias Solicitadas Pelas Lojas - FIM - '+TimeToStr(Time));
+//  //============================================================================
 
-{ OdirAQUI - INICIO
   //============================================================================
   // Fornecedores que Não São Processados ======================================
   //============================================================================
@@ -2181,14 +2261,21 @@ begin
    sgFornNAO:='''000300'', ''000500'', ''000883'', ''010000'', ''001072'''
   Else
    sgFornNAO:=sgFornNAO+', ''000300'', ''000500'', ''000883'', ''010000'', ''001072''';
+  // Fornecedores que Não São Processados ======================================
   //============================================================================
   SalvaProcessamento('01/999 - Fornecedores que Não São Processados - '+TimeToStr(Time));
   //============================================================================
 
+  //============================================================================
   // Numero do Dia da Semana ===================================================
+  //============================================================================
   igDiaSemana:=DayOfWeek(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor))+110;
+  // Numero do Dia da Semana ===================================================
+  //============================================================================
 
+  //============================================================================
   // Busca Lojas do Dia ========================================================
+  //============================================================================
   MySql:=' SELECT LPAD(t.cod_aux,2,''0'') Cod_Loja'+
          ' FROM TAB_AUXILIAR t'+
          ' WHERE t.tip_aux='+IntToStr(igDiaSemana)+
@@ -2205,21 +2292,24 @@ begin
 
   If DMTransferencias.CDS_Busca.Eof Then
   Begin
-    DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
-
-    tgArqErros.Add('Sem Loja Para Processamento no Dia '+DateToStr(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor)));
-
+//OdirApagar - 11/10/2017
+//    DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
     bgArqErros:=True;
-    SalvaErros;
+    tgArqErros.Add('Sem Loja Para Processamento Automático no Dia '+DateToStr(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor)));
 
-    Application.Terminate;
-    Exit;
+//OdirApagar - 11/10/2017
+//    SalvaErros;
+//    Application.Terminate;
+//    Exit;
   End;
+  // Busca Lojas do Dia ========================================================
   //============================================================================
   SalvaProcessamento('02/999 - Busca Lojas do Dia - '+TimeToStr(Time));
   //============================================================================
 
+  //============================================================================
   // Busca Percentuais de Cortes das Curvas ====================================
+  //============================================================================
   MySql:=' SELECT cc.Cod_Aux, COALESCE(cc.des_aux1,''0'') PerCorte'+
          ' FROM TAB_AUXILIAR cc'+
          ' WHERE cc.Tip_Aux=2'+
@@ -2252,18 +2342,24 @@ begin
     DMTransferencias.CDS_BuscaRapida.Next;
   End; // While not DMTransferencias.CDS_BuscaRapida.Eof do
   DMTransferencias.CDS_BuscaRapida.Close;
+  // Busca Percentuais de Cortes das Curvas ====================================
   //============================================================================
   SalvaProcessamento('03/999 - Busca Percentuais de Cortes das Curvas - '+TimeToStr(Time));
   //============================================================================
 
+  //============================================================================
   // Zera Sequencia para Novo Docto ============================================
+  //============================================================================
   MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH 0';
   DMTransferencias.SQLC.Execute(MySql,nil,nil);
+  // Zera Sequencia para Novo Docto ============================================
   //============================================================================
   SalvaProcessamento('04/999 - Zera Sequencia para Novo Docto - '+TimeToStr(Time));
   //============================================================================
 
+  //============================================================================
   // Cria Memo para Codigos de Lojas ===========================================
+  //============================================================================
   mgMemo:=TMemo.Create(Self);
   mgMemo.Visible:=False;
   mgMemo.Parent:=FrmTransferencias;
@@ -2277,54 +2373,63 @@ begin
     DMTransferencias.CDS_Busca.Next;
   End; // While Not DMTransferencias.CDS_Busca.Eof do
   DMTransferencias.CDS_BuscaRapida.Close;
+  // Cria Memo para Codigos de Lojas ===========================================
   //============================================================================
   SalvaProcessamento('05/999 - Cria Memo para Codigos de Lojas - '+TimeToStr(Time));
   //============================================================================
 
-  // Calcula Dias Uteis no Período =============================================
+  //============================================================================
+  // Monta Período Para Calculo ================================================
+  //============================================================================
   dgDtaHoje  :=DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor);
   dgDtaInicio:=IncMonth(dgDtaHoje,-4);
   dgDtaInicio:=StrToDate(DateToStr(dgDtaInicio));
   dgDtaFim   :=dgDtaHoje;
   dgDtaFim   :=StrToDate(DateToStr(dgDtaFim));
-
-  igDiasUteis:=DiasUteisBelShop(dgDtaInicio, dgDtaFim, False, True);
+  // Monta Período Para Calculo ================================================
   //============================================================================
   SalvaProcessamento('06/999 - Calcula Dias do Período - '+TimeToStr(Time));
   //============================================================================
 
+  //============================================================================
   // Conecta CD ================================================================
+  //============================================================================
   If Not DMTransferencias.ConectaMPMS Then
   Begin
+    bgArqErros:=True;
     tgArqErros.Add('Erro ao Conectar CD');
 
-    bgArqErros:=True;
     SalvaErros;
 
     Application.Terminate;
     Exit;
   End;
+  // Conecta CD ================================================================
   //============================================================================
   SalvaProcessamento('07/999 - Conecta CD - '+TimeToStr(Time));
   //============================================================================
-// OdirOPSS
+
+  //============================================================================
   // Busca Produtos com Saldo no CD ============================================
+  //============================================================================
   If Not BuscaProdutosCD Then
   Begin
-    tgArqErros.Add('Erro ao Localizar Estoques no CD');
-
     bgArqErros:=True;
+    tgArqErros.Add('Erro ao Localizar Estoques no CD');
     SalvaErros;
 
     Application.Terminate;
     Exit;
   End;
+  // Busca Produtos com Saldo no CD ============================================
   //============================================================================
   SalvaProcessamento('08/999 - Busca Produtos com Saldo no CD - '+TimeToStr(Time));
   //============================================================================
 
-// OdirOPSS
+  //============================================================================
   // Insere Produtos do CD =====================================================
+  // Deleta Tabelas do Dia: ES_ESTOQUES_CD / ES_ESTOQUES_LOJAS / ES_ESTOQUES_SEM
+  //============================================================================
   If Not InsereProdutosCD Then
   Begin
     bgArqErros:=True;
@@ -2333,15 +2438,34 @@ begin
     Application.Terminate;
     Exit;
   End;
+  // Insere Produtos do CD =====================================================
   //============================================================================
   SalvaProcessamento('09/999 - Insere Produtos do CD - '+TimeToStr(Time));
   //============================================================================
 
   //============================================================================
+  SalvaProcessamento('00/999 - Roda Transferencias Solicitadas Pelas Lojas - INICIO - '+TimeToStr(Time));
+  //============================================================================
+  // Roda Transferencias Solicitadas Pelas Lojas ===============================
+  //============================================================================
+  If Not TransferenciasLojas Then
+  Begin
+    bgArqErros:=True;
+    SalvaErros;
+
+    Application.Terminate;
+    Exit;
+  End;
+  // Roda Transferencias Solicitadas Pelas Lojas ===============================
+  //============================================================================
+   SalvaProcessamento('00/999 - Roda Transferencias Solicitadas Pelas Lojas - FIM - '+TimeToStr(Time));
+  //============================================================================
+
+  //============================================================================
   SalvaProcessamento('10/999 - Busca Produtos nas Lojas com Necessidade de Compras - INICIO - '+TimeToStr(Time));
   //============================================================================
-// OdirOPSS
   // Busca Produtos nas Lojas com Necessidade de Compras =======================
+  //============================================================================
   If Not BuscaProdutosLojas Then
   Begin
     bgArqErros:=True;
@@ -2350,6 +2474,7 @@ begin
     Application.Terminate;
     Exit;
   End;
+  // Busca Produtos nas Lojas com Necessidade de Compras =======================
   //============================================================================
   SalvaProcessamento('10/999 - Busca Produtos nas Lojas com Necessidade de Compras - FIM - '+TimeToStr(Time));
   //============================================================================
@@ -2358,6 +2483,7 @@ begin
   SalvaProcessamento('11/999 - Analisa e Atualiza Transferencias do Dia - INICIO - '+TimeToStr(Time));
   //============================================================================
   // Analisa e Atualiza Transferencias do Dia ==================================
+  //============================================================================
   If Not AnalisaAtualizaTransferencias Then
   Begin
     bgArqErros:=True;
@@ -2366,15 +2492,17 @@ begin
     Application.Terminate;
     Exit;
   End;
+  // Analisa e Atualiza Transferencias do Dia ==================================
   //============================================================================
   SalvaProcessamento('11/999 - Analisa e Atualiza Transferencias do Dia - FIM - '+TimeToStr(Time));
   //============================================================================
-OdirAQUI - FIM}
+
 
   //============================================================================
    SalvaProcessamento('12/999 - Busca Transferencias Anteiroes Setor de Compras - INICIO - '+TimeToStr(Time));
   //============================================================================
   // Busca Transferencias Anteiroes Setor de Compras ===========================
+  //============================================================================
   If Not ProcessaTransferenciasCompras Then
   Begin
     bgArqErros:=True;
@@ -2383,15 +2511,21 @@ OdirAQUI - FIM}
     Application.Terminate;
     Exit;
   End;
+  // Busca Transferencias Anteiroes Setor de Compras ===========================
   //============================================================================
   SalvaProcessamento('12/999 - Busca Transferencias Anteiroes Setor de Compras - FIM - '+TimeToStr(Time));
   //============================================================================
 
-{OdirAQUI - INICIO
   //============================================================================
   SalvaProcessamento('13/999 - Atualiza Prioridades - INICIO - '+TimeToStr(Time));
   //============================================================================
-  // Busca Transferencias Anteiroes Setor de Compras ===========================
+  // Atualiza Prioridades ======================================================
+  // Prioridades:
+  //   Repete até Enviar
+  // 0       SIM        = Produtos de Campanhas, Folhetos, etc.
+  // 1       SIM        = Produtos Solicitados pelo Setor de Compras
+  // 2       NÃO        = Produtos Solicitados Direto da Loja
+  // 3       NÃO        = Produtos Calculados no Automático
   If Not AtualizaPrioridades Then
   Begin
     bgArqErros:=True;
@@ -2403,7 +2537,6 @@ OdirAQUI - FIM}
   //============================================================================
   SalvaProcessamento('13/999 - Atualiza Prioridades - FIM - '+TimeToStr(Time));
   //============================================================================
-OdirAQUI - FIM}
 
   // Encerra Programa ==========================================================
   If tgArqErros.Count>0 Then
@@ -2428,3 +2561,128 @@ end;
 
 end.
 
+{
+          // Busca Tranferencias do CD Para a Loja ==================
+          // SIDICOM Coloque no Fim =================================
+          MySql:=' SELECT mc.numero, mp.codproduto, mp.quantatendida'+
+                 ' FROM MCLI mc, MCLIPRO mp'+
+                 ' WHERE mc.chavenf=mp.chavenf'+
+                 ' AND   mc.codcomprovante in (''009'',''020'')'+
+                 ' AND   mc.codfilial=''99'''+
+                 ' AND   mc.situacaonf=''L'''+
+                 ' AND   mc.datadocumento>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(IncDay(dgDtaHoje,-100)))))+
+                 ' AND   mc.codcliente='+QuotedStr(sCodEmp)+
+                 ' AND   mp.codproduto='+QuotedStr(sCodProduto);
+          IBQ_MPMS.Close;
+          IBQ_MPMS.SQL.Clear;
+          IBQ_MPMS.SQL.Add(MySql);
+          IBQ_MPMS.Open;
+
+          While Not IBQ_MPMS.Eof do
+          Begin
+            If bConetada Then // SIDICOM
+            Begin
+              MySql:=' SELECT mf.numero'+
+                     ' FROM MFOR mf'+
+                     ' WHERE mf.situacaonf=1'+
+                     ' AND   mf.codfornecedor=''000663'''+
+                     ' AND   mf.CodFilial='+QuotedStr(sCodLoja)+
+                     ' AND   mf.codcomprovante in (''010'',''016'')'+
+                     ' AND   mf.numero='+QuotedStr(IBQ_MPMS.FieldByName('numero').AsString);
+              IBQ_TR_Filial.Close;
+              IBQ_TR_Filial.SQL.Clear;
+              IBQ_TR_Filial.SQL.Add(MySql);
+
+              // Abre Query -----------------------------------------
+              ii:=0;
+              bSiga:=False;
+              While Not bSiga do
+              Begin
+                Try
+                  IBQ_TR_Filial.Open;
+                  bSiga:=True;
+                Except
+                  Inc(ii);
+                End; // Try
+
+                If ii>2 Then
+                Begin
+                  IBQ_TR_Filial.Close;
+                  Break;
+                End; // If i>2 Then
+              End; // While Not bSiga do
+
+              If (bSiga) and (Trim(IBQ_TR_Filial.FieldByName('Numero').AsString)='') Then
+              Begin
+                cQtdMais:=cQtdMais + IBQ_MPMS.FieldByName('QuantAtendida').AsCurrency;
+              End;
+              IBQ_TR_Filial.Close;
+            End; // If bConetada Then // SIDICOM
+
+            If igCodLojaLinx<>0 Then // LINX
+            Begin
+              MySql:=' SELECT FIRST 1 m.documento numero'+
+                     ' FROM LINXMOVIMENTO m'+
+                     ' WHERE m.codigo_cliente=13'+ // BELSHOP | CD | RS
+                     ' AND   m.operacao=''E'''+
+                     ' AND   COALESCE(m.tipo_transacao,''E'')=''E'''+
+                     ' AND   m.cancelado=''N'''+
+                     ' AND   m.excluido=''N'''+
+                     ' and   m.empresa='+IntToStr(igCodLojaLinx)+
+                     ' and   m.documento='+IBQ_MPMS.FieldByName('Numero').AsString;
+              DMTransferencias.CDS_BuscaRapida.Close;
+              DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+              DMTransferencias.CDS_BuscaRapida.Open;
+              If Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Numero').AsString)='' Then
+              Begin
+                cQtdMais:=cQtdMais + IBQ_MPMS.FieldByName('QuantAtendida').AsCurrency;
+              End;
+              DMTransferencias.CDS_BuscaRapida.Close;
+            End; // If igCodLojaLinx<>0 Then // LINX
+
+            IBQ_MPMS.Next;
+          End; // While Not IBQ_MPMS.Eof do
+          IBQ_MPMS.Close;
+
+          While Not DMTransferencias.CDS_Busca.Eof do
+          Begin
+            If bConetada Then // SIDICOM
+            Begin
+              MySql:=' SELECT mf.numero'+
+                     ' FROM MFOR mf'+
+                     ' WHERE mf.situacaonf=1'+
+                     ' AND   mf.codfornecedor=''000663'''+
+                     ' AND   mf.CodFilial='+QuotedStr(sCodLoja)+
+                     ' AND   mf.codcomprovante in (''010'',''016'')'+
+                     ' AND   mf.numero='+QuotedStr(IBQ_MPMS.FieldByName('numero').AsString);
+              IBQ_TR_Filial.Close;
+              IBQ_TR_Filial.SQL.Clear;
+              IBQ_TR_Filial.SQL.Add(MySql);
+
+              // Abre Query -----------------------------------------
+              ii:=0;
+              bSiga:=False;
+              While Not bSiga do
+              Begin
+                Try
+                  IBQ_TR_Filial.Open;
+                  bSiga:=True;
+                Except
+                  Inc(ii);
+                End; // Try
+
+                If ii>2 Then
+                Begin
+                  IBQ_TR_Filial.Close;
+                  Break;
+                End; // If i>2 Then
+              End; // While Not bSiga do
+
+              If (bSiga) and (Trim(IBQ_TR_Filial.FieldByName('Numero').AsString)='') Then
+              Begin
+                cQtdMais:=cQtdMais + IBQ_MPMS.FieldByName('QuantAtendida').AsCurrency;
+              End;
+              IBQ_TR_Filial.Close;
+            End; // If bConetada Then // SIDICOM
+
+}

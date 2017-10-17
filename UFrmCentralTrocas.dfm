@@ -1493,9 +1493,9 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Height = 42
           Align = alLeft
           Caption = ' Prioridades '
-          Color = clSilver
+          Color = 14737632
           Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlue
+          Font.Color = clBlack
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
