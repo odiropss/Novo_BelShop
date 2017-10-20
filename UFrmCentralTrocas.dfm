@@ -1,6 +1,6 @@
 object FrmCentralTrocas: TFrmCentralTrocas
-  Left = 243
-  Top = 113
+  Left = 240
+  Top = 112
   Align = alClient
   AutoSize = True
   BorderIcons = [biSystemMenu]
@@ -1678,6 +1678,20 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Font.Style = [fsBold]
             Title.Alignment = taRightJustify
             Title.Caption = 'Qtd Rep'
+            Width = 60
+            Visible = True
+          end
+          item
+            Color = 15724527
+            Expanded = False
+            FieldName = 'QTD_CHECKOUT'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Qtd Ckout'
             Width = 60
             Visible = True
           end

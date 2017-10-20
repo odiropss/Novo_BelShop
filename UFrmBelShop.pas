@@ -1412,6 +1412,7 @@ type
     // Torna TabSheets Visible = False
     // Colocar TabSheet.Tag=9999
     Procedure TabSheetInvisivel(Form: TForm);
+    Procedure TabSheetVisivel(Form: TForm; sNomeTabSh: String);
     ////////////////////////////////////////////////////////////////////////////
 
     // DIVERSOS ////////////////////////////////////////////////////////////////
@@ -3458,6 +3459,25 @@ begin
      Msg.wParam := VK_DOWN;
   end;
 end; // DIVERSOS - Habilita o Scroll do Mouse no DBGrid >>>>>>>>>>>>>>>>>>>>>>>>
+
+// CONTROLE DE TABSHEET - Torna TabSheets Visivel no Form >>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmBelShop.TabSheetVisivel(Form: TForm; sNomeTabSh: String);
+Var
+  i: Integer;
+Begin
+  // Torna TabSheets Visivel ===================================================
+  For i:=0 to Form.ComponentCount-1 do
+  Begin
+    If Form.Components[i] is TTabSheet Then
+    Begin
+      If (Form.Components[i] as TTabSheet).Name=sNomeTabSh Then
+      Begin
+        (Form.Components[i] as TTabSheet).TabVisible:=True;
+        Exit;
+      End;
+    End;
+  End;
+End; // CONTROLE DE TABSHEET - Torna TabSheets Visivel no Form >>>>>>>>>>>>>>>>>
 
 // CONTROLE DE TABSHEET - Torna TabSheets Nao Visivel >>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBelShop.TabSheetInvisivel(Form: TForm);
@@ -43046,9 +43066,32 @@ begin
 
   BloqueioBotoes(FrmSolicitacoes, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
-  FrmSolicitacoes.Ts_ParamIRRF.TabVisible:=False;
-  FrmSolicitacoes.Ts_ParamINSS.TabVisible:=False;
-  FrmSolicitacoes.Ts_ParamConsisNFeOC.TabVisible:=False;
+//  FrmSolicitacoes.Ts_ParamIRRF.TabVisible:=False;
+//  FrmSolicitacoes.Ts_ParamINSS.TabVisible:=False;
+//  FrmSolicitacoes.Ts_ParamConsisNFeOC.TabVisible:=False;
+
+  //============================================================================
+  // Libera Somente Parametro de Lojas para Reposição ==========================
+  //============================================================================
+  MySql:=' SELECT v.des_componente'+
+         ' FROM PS_VISUAL_OBJETOS v'+
+         ' WHERE v.des_modulo='+QuotedStr('FrmSolicitacoes')+
+         ' AND   v.cod_usuario='+Cod_Usuario;
+  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+  DMBelShop.CDS_BuscaRapida.Open;
+  While Not DMBelShop.CDS_BuscaRapida.Eof do
+  Begin
+    If DMBelShop.CDS_BuscaRapida.RecNo=1 Then
+     TabSheetInvisivel(FrmSolicitacoes);
+
+    TabSheetVisivel(FrmSolicitacoes, DMBelShop.CDS_BuscaRapida.FieldByName('des_componente').AsString);
+
+    DMBelShop.CDS_BuscaRapida.Next;
+  End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
+  DMBelShop.CDS_BuscaRapida.Close;
+  // Libera Somente Parametro de Lojas para Reposição ==========================
+  //============================================================================
 
   // Apresenta Parametros (Direto em Reposições Automáticas) ===================
   FrmSolicitacoes.Cbx_ParamLojaNecesChange(Self);

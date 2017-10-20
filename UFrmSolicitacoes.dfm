@@ -3038,13 +3038,14 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Top = 0
         Width = 625
         Height = 389
-        ActivePage = Ts_ParamTransferencias
+        ActivePage = Ts_ParamLojaReposicoes
         Align = alClient
         MultiLine = True
         Style = tsButtons
         TabOrder = 0
         OnChange = PC_ParametrosChange
         object Ts_ParamLojaReposicoes: TTabSheet
+          Tag = 9999
           Caption = 'Reposi'#231#245'es Autom'#225'ticas'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlue
@@ -3535,6 +3536,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
         end
         object Ts_ParamComissaoProf: TTabSheet
+          Tag = 9999
           Caption = 'Comiss'#227'o de Profissionais'
           object Shape1: TShape
             Left = 0
@@ -3632,6 +3634,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
         end
         object Ts_ParamConsisNFeOC: TTabSheet
+          Tag = 9999
           Caption = 'Consist'#234'ncias Nfe/OC'
           ImageIndex = 1
           object Shape2: TShape
@@ -3735,6 +3738,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
         end
         object Ts_ParamConcBancaria: TTabSheet
+          Tag = 9999
           Caption = 'Concilia'#231#227'o Banc'#225'ria'
           ImageIndex = 2
           object Shape3: TShape
@@ -3791,6 +3795,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
         end
         object Ts_ParamSalarioMinimo: TTabSheet
+          Tag = 9999
           Caption = 'Sal'#225'rio M'#237'nimo'
           ImageIndex = 3
           object Shape4: TShape
@@ -4077,6 +4082,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
         end
         object Ts_ParamINSS: TTabSheet
+          Tag = 9999
           Caption = 'INSS'
           ImageIndex = 4
           object Shape5: TShape
@@ -4089,6 +4095,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
         end
         object Ts_ParamIRRF: TTabSheet
+          Tag = 9999
           Caption = 'IRRF'
           ImageIndex = 5
           object Shape6: TShape
@@ -4101,6 +4108,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
         end
         object Ts_ParamTaxaSindicato: TTabSheet
+          Tag = 9999
           Caption = 'Sindicato'
           ImageIndex = 6
           object Shape7: TShape
@@ -4268,6 +4276,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
         end
         object Ts_ParamCurvaABC: TTabSheet
+          Tag = 9999
           Caption = 'Curva ABC'
           ImageIndex = 7
           object Shape8: TShape
@@ -5201,6 +5210,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
         end
         object Ts_ParamLojaReposFornec: TTabSheet
+          Tag = 9999
           Caption = 'Fornecedores'
           ImageIndex = 9
           DesignSize = (
@@ -5424,6 +5434,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
         end
         object Ts_ParamTransferencias: TTabSheet
+          Tag = 9999
           Caption = ' Transferencias '
           ImageIndex = 10
           object GroupBox3: TGroupBox

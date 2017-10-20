@@ -5243,9 +5243,10 @@ procedure TFrmCentralTrocas.Dbg_ReposLojasItensDrawColumnCell(
   Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
   State: TGridDrawState);
 begin
+
   if not (gdSelected in State) Then
   Begin
-    if DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsInteger<>0 Then
+    if DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsString<>'000000' Then
      Begin
        Dbg_ReposLojasItens.Canvas.Brush.Color:=clSkyBlue;
      End
@@ -5269,12 +5270,28 @@ begin
       Dbg_ReposLojasItens.Canvas.Brush.Color:=clBlue; //  -->> Cor da Celula
     End;
 
+    If (Column.FieldName='QTD_CHECKOUT') And (DMCentralTrocas.CDS_ReposicaoTransfIND_LEITORA.AsString='SIM') Then
+    Begin
+      If (DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsCurrency<>DMCentralTrocas.CDS_ReposicaoTransfQTD_CHECKOUT.AsCurrency) Then
+      Begin
+        Dbg_ReposLojasItens.Canvas.Font.Color:=clWhite; // -->> Cor da Fonte
+        Dbg_ReposLojasItens.Canvas.Brush.Color:=clRed; //  -->> Cor da Celula
+      End;
+
+      If (DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsCurrency=DMCentralTrocas.CDS_ReposicaoTransfQTD_CHECKOUT.AsCurrency) Then
+      Begin
+        Dbg_ReposLojasItens.Canvas.Brush.Color:=$00FFFF80; //  -->> Cor da Celula
+      End;
+    End;
+
     Dbg_ReposLojasItens.Canvas.FillRect(Rect);
     Dbg_ReposLojasItens.DefaultDrawDataCell(Rect,Column.Field,state);
 
     // Alinhamento
     DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.Alignment:=taRightJustify;
     DMCentralTrocas.CDS_ReposicaoTransfABC.Alignment:=taCenter;
+    DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.Alignment:=taRightJustify;
+    DMCentralTrocas.CDS_ReposicaoTransfQTD_CHECKOUT.Alignment:=taRightJustify;
     DMCentralTrocas.CDS_ReposicaoTransfIND_LEITORA.Alignment:=taCenter;
     DMCentralTrocas.CDS_ReposicaoTransfIND_PRIORIDADE.Alignment:=taCenter;
   End; // if not (gdSelected in State) Then
@@ -5788,6 +5805,7 @@ begin
   Begin
     DMCentralTrocas.CDS_ReposicaoTransf.Edit;
     DMCentralTrocas.CDS_ReposicaoTransfIND_LEITORA.AsString:='NAO';
+    DMCentralTrocas.CDS_ReposicaoTransfQTD_CHECKOUT.AsInteger:=0;
     DMCentralTrocas.CDS_ReposicaoTransf.Post;
 
     DMCentralTrocas.CDS_ReposicaoTransf.Next;
@@ -5802,8 +5820,10 @@ begin
   ReCalculaPosicaoLeitora;
 
   // Inicia Processo de CheckOut ===============================================
+  Dbg_ReposLojasItens.Options:=[dgTitles,dgIndicator,dgRowLines,dgTabs,dgAlwaysShowSelection];
   FrmLeitoraCodBarras.EdtCodBarras.Text:='0';
   FrmLeitoraCodBarras.ShowModal;
+  Dbg_ReposLojasItens.Options:=[dgTitles,dgIndicator,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
 
   // Encerra ===================================================================
   FreeAndNil(FrmLeitoraCodBarras);

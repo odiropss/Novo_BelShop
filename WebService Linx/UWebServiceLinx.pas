@@ -66,16 +66,21 @@ unit UWebServiceLinx;
    ==========================
   - Ira conter as informações dos Vendedores cadastrados na loja
 
+-> Produtos: LinxProdutos
+   - 1 Vez
+   ======================
+   Ira conter com informações de produtos
+
+-> Produtos: LinxProdutosCamposAdicionais
+   - 1 Vez
+   ======================
+   Retorna os campos adicionais preenchidos dos Produtos cadastrados no portal
+
 -> Produtos Detalhes: LinxProdutosDetalhes
    - Por Loja
    =======================================
    Irá conter as informações de produtos por empresa, comosaldo, preços,
    custos e configuração tributária
-
--> Produtos: LinxProdutos
-   - 1 Vez
-   ======================
-   Ira conter com informações de produtos
 
 -> Produtos Cod Bar: LinxProdutosCodBar
    - 1 Vez
@@ -160,7 +165,8 @@ var
   sgCodLoja,    // Código da Loja/Empresa em Processamento (Codigo da Loja no SIDICOM)
   sgCodLojaLinx, // Código da Loja/Empresa em Processamento (Codigo da Loja no Microvix)
   sgDtaInicioLinx,  // Data que a Loija Inicio com o Sistema Linx
-  sgCodProduto,  // Codigo do Produto para Busca Individual
+  sgCodProduto,  // Parametro: Codigo do Produto para Busca Individual
+  sgReferenciaProd,  // Parametro: Codigo de Referencia do Produto para Busca Individual
   sgMensagem,
   sgDta, sgCnpjPortal,
   sgPastaExecutavel, sgPastaBelShop, sgPastaRetornos, sgPastaMetodos:
@@ -474,12 +480,32 @@ Begin
                  Begin
                    // Guarda Valor Campo Data
                    sCampoDta:='';
-                   If (Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),5,1)='-') And
-                      (Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),8,1)='-') Then
+                   // Campo Data Invertida
+                   If ((Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),5,1)='-') And
+                       (Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),8,1)='-')) Or
+                      ((Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),5,1)='/') And
+                       (Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),8,1)='/')) Then
                    Begin
                      sCampoDta:=Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),9,2)+'.'+
                                 Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),6,2)+'.'+
                                 Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),1,4);
+
+                     Try
+                       StrToDate(sCampoDta);
+                     Except
+                       sCampoDta:='';
+                     End
+                   End; // If (Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),5,1)='-') And ....
+
+                   // Campo Data Normal
+                   If ((Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),3,1)='-') And
+                       (Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),6,1)='-')) Or
+                      ((Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),3,1)='/') And
+                       (Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),6,1)='/')) Then
+                   Begin
+                     sCampoDta:=Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),1,2)+'.'+
+                                Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),4,2)+'.'+
+                                Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),7,4);
 
                      Try
                        StrToDate(sCampoDta);
@@ -661,6 +687,11 @@ Begin
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxClientesFornecCamposAdicionais') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (cod_cliente, campo)';
+
+              // LinxProdutosCamposAdicionais -----------------------
+              If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosCamposAdicionais') Then
+               sSqlUpInValores:=
+                sSqlUpInValores+' MATCHING (cod_produto, campo)';
 
               // LinxPlanosPedidoVenda ------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPlanosPedidoVenda') Then
@@ -1107,8 +1138,9 @@ Begin
 
   // ===========================================================================
   // LinxProdutosDetalhes ======================================================
+  // LinxProdutosCamposAdicionais ==============================================
   // ===========================================================================
-  If sgMetodo='LinxProdutosDetalhes' Then
+  If (sgMetodo='LinxProdutosDetalhes') Or (sgMetodo='LinxProdutosCamposAdicionais') Then
   Begin
     sXML:='			<Parameter id="data_mov_ini">'+sgDtaInicio+'</Parameter>';
     Writeln(txtArq,sXML);
@@ -1123,7 +1155,16 @@ Begin
       sXML:='			<Parameter id="cod_produto">'+sgCodProduto+'</Parameter>';
       Writeln(txtArq,sXML);
     End; // If Trim(sgCodProduto)<>'' Then
-  End; // If sgMetodo='LinxProdutosDetalhes' Then
+
+    //===============================================
+    // PARAMETRO OPCIONAL: Referencia (sgReferenciaProd)
+    //===============================================
+    If Trim(sgReferenciaProd)<>'' Then
+    Begin
+      sXML:='			<Parameter id="referencia">'+sgReferenciaProd+'</Parameter>';
+      Writeln(txtArq,sXML);
+    End; // If Trim(sgReferenciaProd)<>'' Then
+  End; // If (sgMetodo='LinxProdutosDetalhes') Or (sgMetodo='LinxProdutosCamposAdicionais') Then
   // ===========================================================================
 
   // ===========================================================================
@@ -1409,6 +1450,7 @@ Begin
     For iFor:=0 to tgMetodos.Count-1 do
     Begin
       sgCodProduto:='';
+      sgReferenciaProd:='';
 
       If Trim(tgMetodos[iFor])='' Then
        Break;
@@ -1918,6 +1960,33 @@ Begin
                          // Setor   Linha   Marca   Colecao
         MontaMetodoXMLPost('NULL', 'NULL', 'NULL', 'NULL');
       End; // If (sgMetodo='LinxProdutos') And (Not bUmaVez) Then
+      //========================================================================
+
+      //========================================================================
+      // LinxProdutosCamposAdicionais ==========================================
+      //========================================================================
+      If (sgMetodo='LinxProdutosCamposAdicionais') And (Not bUmaVez) Then
+      Begin
+        sgDtaInicio:='NULL';
+        sgDtaFim:='NULL';
+
+        // Metodo por Parametro (Acerta Data Inicial)
+        If Trim(sgParametroMetodo)<>'' Then
+        Begin
+          If dDtaUltAtual=dDtaHoje Then
+          Begin
+            sgDtaInicio:=sgDtaFim
+          End;
+
+          If dDtaUltAtual<dDtaHoje Then
+          Begin
+            DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+          End;
+        End; // If Trim(sgParametroMetodo)<>'' Then
+
+        MontaMetodoXMLPost();
+      End; // If (sgMetodo='LinxProdutosCamposAdicionais') And (Not bUmaVez) Then
       //========================================================================
 
       //========================================================================

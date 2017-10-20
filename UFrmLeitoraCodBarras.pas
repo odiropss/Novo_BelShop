@@ -84,7 +84,7 @@ begin
   CorCaptionForm.Active:=True;
 
   EdtCodBarras.SetFocus;
-  
+
 end;
 
 procedure TFrmLeitoraCodBarras.EdtQtdEmbalagemEnter(Sender: TObject);
