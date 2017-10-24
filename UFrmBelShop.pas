@@ -238,7 +238,7 @@ type
     N3: TMenuItem;
     SubMenuFinanBanExtConc: TMenuItem;
     SubMenuFinanBancos: TMenuItem;
-    SubMenuFinanConciliar: TMenuItem;
+    SubMenuFinanConciliaPagtos: TMenuItem;
     SubMenuFinanExtratos: TMenuItem;
     MenuSalao: TMenuItem;
     SubMenuSalaoCadastros: TMenuItem;
@@ -1373,6 +1373,10 @@ type
     N39: TMenuItem;
     PrioridadesdeReposio1: TMenuItem;
     N50: TMenuItem;
+    N52: TMenuItem;
+    N53: TMenuItem;
+    SubMenuFinanConciliaDepositos: TMenuItem;
+    N54: TMenuItem;
 
     // Odir ====================================================================
 
@@ -2197,7 +2201,7 @@ type
     procedure Bt_AudCompVendSalvaCSVClick(Sender: TObject);
     procedure Bt_FinanConciliacaoFecharClick(Sender: TObject);
     procedure SubMenuFinanBancosClick(Sender: TObject);
-    procedure SubMenuFinanConciliarClick(Sender: TObject);
+    procedure SubMenuFinanConciliaPagtosClick(Sender: TObject);
     procedure SubMenuFinanExtratosClick(Sender: TObject);
     procedure SubMenuFaltasReposicoesCDLojasClick(Sender: TObject);
     procedure SubMenuSalaoProfissionaisClick(Sender: TObject);
@@ -2340,6 +2344,7 @@ type
     procedure PrioridadesdeReposio1Click(Sender: TObject);
     procedure Dbg_GeraOCProdutosKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure SubMenuFinanConciliaDepositosClick(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -2570,6 +2575,8 @@ Var
 Begin
   // sTipo= (D)Dias
   //        (M)Meses
+
+  Result:=True;
 
   MySql:=' SELECT';
 
@@ -17868,17 +17875,27 @@ Begin
          ' from OC_COMPRAR oc'+
 
          ' Where oc.num_documento='+QuotedStr(siNumDocto)+
-         ' And   oc.cod_empresa='+QuotedStr(siCodEmp)+
-         ' And   oc.qtd_transf=0';
+         ' And   oc.cod_empresa='+QuotedStr(siCodEmp);
+
+         If (Bt_GeraOCImpEditOC.Caption='Editar OC') Then
+          MySql:=
+           MySql+' And   oc.qtd_transf=0';
+
+         If (Bt_GeraOCImpEditOC.Caption='Editar TR') Then
+          MySql:=
+           MySql+' And   oc.qtd_transf>0';
 
          If sCodForn<>'' Then
           MySql:=MySql+' And oc.cod_fornecedor='+QuotedStr(sCodForn);
 
-         If sSituacaoQtd='C' Then
-          MySql:=MySql+' And oc.qtd_acomprar<>0';
+         If (Bt_GeraOCImpEditOC.Caption='Editar OC') Then
+         Begin
+           If sSituacaoQtd='C' Then
+            MySql:=MySql+' And oc.qtd_acomprar<>0';
 
-         If sSituacaoQtd='S' Then
-          MySql:=MySql+' And oc.qtd_acomprar=0';
+           If sSituacaoQtd='S' Then
+            MySql:=MySql+' And oc.qtd_acomprar=0';
+         End; // If (Bt_GeraOCImpEditOC.Caption='Editar OC') Then
 
          If siNumOC<>'' Then
           MySql:=MySql+' And oc.num_oc_gerada='+QuotedStr(siNumOC)
@@ -26144,7 +26161,7 @@ begin
 
   If Trim(sNrOC)<>'' Then
    DMBelShop.CDS_AComprarOCs.Locate('NUM_OC_GERADA', sNrOC,[]);
-  
+
   Screen.Cursor:=crDefault;
 end;
 
@@ -26160,7 +26177,7 @@ begin
    Exit;
 
   // Edit OC ===================================================================
-  If Bt_GeraOCImpEditOC.Caption='Editar OC' Then
+  If (Bt_GeraOCImpEditOC.Caption='Editar OC') Or (Bt_GeraOCImpEditOC.Caption='Editar TR') Then
   Begin
     Screen.Cursor:=crAppStart;
 
@@ -26177,9 +26194,36 @@ begin
            ' AND   oc.num_documento='+QuotedStr(IntToStr(EdtGeraOCBuscaDocto.AsInteger))+
            ' AND   Cast(oc.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date))))+
            ' AND   oc.cod_empresa='+QuotedStr(sgCodEmp)+
-           ' AND   oc.cod_fornecedor='+QuotedStr(DMBelShop.CDS_AComprarOCsCOD_FORNECEDOR.AsString)+
-           ' AND   oc.qtd_transf=0'+
-           ' ORDER BY oc.cla_curva_abc, oc.Des_Item';
+           ' AND   oc.cod_fornecedor='+QuotedStr(DMBelShop.CDS_AComprarOCsCOD_FORNECEDOR.AsString);
+
+           If (Bt_GeraOCImpEditOC.Caption='Editar OC') Then
+           Begin
+             MySql:=
+              MySql+' AND   oc.qtd_transf=0';
+
+             Rb_GeraOCEditaComQtd.Visible:=True;
+             Rb_GeraOCEditaSemQtd.Visible:=True;
+             Rb_GeraOCEditaTodosItens.Visible:=True;
+             dxStatusBar1.Visible:=True;
+
+             Dbg_GeraOCEditaGrid.Columns[2].ReadOnly:=False;
+           End;
+
+           If (Bt_GeraOCImpEditOC.Caption='Editar TR') Then
+           Begin
+             MySql:=
+              MySql+' AND   oc.qtd_transf>0';
+
+             Rb_GeraOCEditaComQtd.Visible:=False;
+             Rb_GeraOCEditaSemQtd.Visible:=False;
+             Rb_GeraOCEditaTodosItens.Visible:=False;
+             dxStatusBar1.Visible:=False;
+
+             Dbg_GeraOCEditaGrid.Columns[2].ReadOnly:=True;
+           End;
+
+    MySql:=
+     MySql+' ORDER BY oc.cla_curva_abc, oc.Des_Item';
     DMBelShop.IBQ_AComprarEdita.Close;
     DMBelShop.IBQ_AComprarEdita.SQL.Clear;
     DMBelShop.IBQ_AComprarEdita.SQL.Add(MySql);
@@ -27248,7 +27292,7 @@ begin
   End;
 
   // Altera Preco Unitário =====================================================
-  If key=Vk_F2 Then
+  If (key=Vk_F2) and (dxStatusBar1.Visible) Then
    AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'P', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
 
   // Localiza Produto ==========================================================
@@ -27271,19 +27315,18 @@ begin
   End; // If Key=VK_F4 Then
 
   // Altera Desconto Individual ================================================
-  If key=Vk_F3 Then
+  If (key=Vk_F3) and (dxStatusBar1.Visible) Then
    AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'DI', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
 
   // Altera Desconto no Mix ====================================================
-  If key=Vk_F5 Then
+  If (key=Vk_F5) and (dxStatusBar1.Visible) Then
    AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'DM', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
 
   // Transito ==================================================================
-  If Key=VK_F6 Then
+  If (Key=VK_F6) and (dxStatusBar1.Visible) Then
   Begin
     VerTransito(DMBelShop.IBQ_AComprarEdita, DMBelShop.DS_AComprarEdita, False);
   End; // Transito - If Key=VK_F3 Then
-
 end;
 
 procedure TFrmBelShop.PC_GeraOCEditaApresentacaoChange(Sender: TObject);
@@ -27330,6 +27373,10 @@ Var
   sTotal_Valor, sTotal_Itens, sTotal_Qtd: String;
   s: String;
 begin
+
+  If Not Rb_GeraOCEditaTodosItens.Visible Then
+   Exit;
+
   AcertaRb_Style(Rb_GeraOCEditaTodosItens);
   AcertaRb_Style(Rb_GeraOCEditaComQtd);
   AcertaRb_Style(Rb_GeraOCEditaSemQtd);
@@ -42654,20 +42701,11 @@ procedure TFrmBelShop.SubMenuFinanBancosClick(Sender: TObject);
 begin
   FrmBancoExtratos.Caption:='Bancos';
 
-  FrmBancoExtratos.Ts_BancosManut.TabVisible:=True;  // OK
-  FrmBancoExtratos.Ts_VerificaExtrato.TabVisible:=False;
-  FrmBancoExtratos.Ts_ExtratosManut.TabVisible:=False;
-  FrmBancoExtratos.Ts_ConciliacoesManut.TabVisible:=False;
-  FrmBancoExtratos.Ts_ConciliacaoManut.TabVisible:=False;
-  FrmBancoExtratos.Ts_ConcManutTotalPagtos.TabVisible:=False;
-  FrmBancoExtratos.Ts_HistConcAuto.TabVisible:=False;
+  // Acerta Apresentação das TabSheets =========================================
+  FrmBancoExtratos.DesabilitaTabSheet(FrmBancoExtratos.Ts_BancosManut);
 
-  // Desabilida Menu de Conciliação
-  FrmBancoExtratos.MenuConcilicao.Visible:=False;
-  FrmBancoExtratos.MenuManutConcilicao.Visible:=False;
-  FrmBancoExtratos.MenuParametros.Visible:=False;
-  FrmBancoExtratos.MenuTipoConcilciao.Visible:=False;
-  FrmBancoExtratos.MenuHistoricosBancarios.Visible:=False;
+  // Desabilida Menu de Conciliação ============================================
+  FrmBancoExtratos.LiberaMenu(False);
 
   FrmBancoExtratos.Pan_Opcoes.Visible:=True;
   FrmBancoExtratos.Pan_Concilicao.Visible:=False;
@@ -42678,24 +42716,23 @@ begin
 
 end;
 
-procedure TFrmBelShop.SubMenuFinanConciliarClick(Sender: TObject);
+procedure TFrmBelShop.SubMenuFinanConciliaPagtosClick(Sender: TObject);
 begin
-  FrmBancoExtratos.Caption:='Bancos/Conciliações';
+  FrmBancoExtratos.Caption:='Conciliações de Pagamentos';
 
-  FrmBancoExtratos.Ts_BancosManut.TabVisible:=False;
-  FrmBancoExtratos.Ts_VerificaExtrato.TabVisible:=False;
-  FrmBancoExtratos.Ts_ExtratosManut.TabVisible:=False;
-  FrmBancoExtratos.Ts_ConciliacoesManut.TabVisible:=False;
-  FrmBancoExtratos.Ts_ConciliacaoManut.TabVisible:=False;
-  FrmBancoExtratos.Ts_ConcManutTotalPagtos.TabVisible:=False;
-  FrmBancoExtratos.Ts_HistConcAuto.TabVisible:=False;
+  // Acerta Apresentação das TabSheets =========================================
+  FrmBancoExtratos.DesabilitaTabSheet(nil);
 
-  // Habilida Menu de Conciliação
+  // Desabilida Menu de Conciliação ============================================
+  FrmBancoExtratos.LiberaMenu(True);
+
+  // Habilida Menu de Conciliação ==============================================
   FrmBancoExtratos.MenuConcilicao.Visible:=True;
   FrmBancoExtratos.MenuManutConcilicao.Visible:=True;
   FrmBancoExtratos.MenuParametros.Visible:=True;
   FrmBancoExtratos.MenuTipoConcilciao.Visible:=True;
 
+  FrmBancoExtratos.Pan_Opcoes.Parent:=FrmBancoExtratos.PC_Principal;
   FrmBancoExtratos.Pan_Opcoes.Visible:=True;
   FrmBancoExtratos.Pan_Concilicao.Visible:=False;
 
@@ -42718,20 +42755,11 @@ procedure TFrmBelShop.SubMenuFinanExtratosClick(Sender: TObject);
 begin
   FrmBancoExtratos.Caption:='Extratos Bancários';
 
-  FrmBancoExtratos.Ts_BancosManut.TabVisible:=False;
-  FrmBancoExtratos.Ts_VerificaExtrato.TabVisible:=False;
-  FrmBancoExtratos.Ts_ExtratosManut.TabVisible:=True;
-  FrmBancoExtratos.Ts_ConciliacoesManut.TabVisible:=False;
-  FrmBancoExtratos.Ts_ConciliacaoManut.TabVisible:=False;
-  FrmBancoExtratos.Ts_ConcManutTotalPagtos.TabVisible:=False;
-  FrmBancoExtratos.Ts_HistConcAuto.TabVisible:=False;
+  // Acerta Apresentação das TabSheets =========================================
+  FrmBancoExtratos.DesabilitaTabSheet(FrmBancoExtratos.Ts_ExtratosManut);
 
-  // Desabilida Menu de Conciliação
-  FrmBancoExtratos.MenuConcilicao.Visible:=False;
-  FrmBancoExtratos.MenuManutConcilicao.Visible:=False;
-  FrmBancoExtratos.MenuParametros.Visible:=False;
-  FrmBancoExtratos.MenuTipoConcilciao.Visible:=False;
-  FrmBancoExtratos.MenuHistoricosBancarios.Visible:=False;
+  // Desabilida Menu de Conciliação ============================================
+  FrmBancoExtratos.LiberaMenu(False);
 
   FrmBancoExtratos.Pan_Opcoes.Visible:=True;
   FrmBancoExtratos.Pan_Concilicao.Visible:=False;
@@ -44585,20 +44613,11 @@ procedure TFrmBelShop.SubMenuFinanVerificaExtratosClick(Sender: TObject);
 begin
   FrmBancoExtratos.Caption:='Verificar Extratos Bancários';
 
-  FrmBancoExtratos.Ts_BancosManut.TabVisible:=False;
-  FrmBancoExtratos.Ts_VerificaExtrato.TabVisible:=True; // ok
-  FrmBancoExtratos.Ts_ExtratosManut.TabVisible:=False;
-  FrmBancoExtratos.Ts_ConciliacoesManut.TabVisible:=False;
-  FrmBancoExtratos.Ts_ConciliacaoManut.TabVisible:=False;
-  FrmBancoExtratos.Ts_ConcManutTotalPagtos.TabVisible:=False;
-  FrmBancoExtratos.Ts_HistConcAuto.TabVisible:=False;
+  // Acerta Apresentação das TabSheets =========================================
+  FrmBancoExtratos.DesabilitaTabSheet(FrmBancoExtratos.Ts_VerificaExtrato);
 
-  // Desabilida Menu de Conciliação
-  FrmBancoExtratos.MenuConcilicao.Visible:=False;
-  FrmBancoExtratos.MenuManutConcilicao.Visible:=False;
-  FrmBancoExtratos.MenuParametros.Visible:=False;
-  FrmBancoExtratos.MenuTipoConcilciao.Visible:=False;
-  FrmBancoExtratos.MenuHistoricosBancarios.Visible:=False;
+  // Desabilida Menu de Conciliação ============================================
+  FrmBancoExtratos.LiberaMenu(False);;
 
   FrmBancoExtratos.Pan_Opcoes.Visible:=True;
   FrmBancoExtratos.Pan_Concilicao.Visible:=False;
@@ -45867,8 +45886,14 @@ begin
   Refresh;
 
   // Busca OC -----------------------------------------------------
-  MySql:=' SELECT oc.des_empresa, oc.num_oc_gerada,'+
-         ' Case co.compl_endereco'+
+  If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização OC' Then
+   MySql:=' SELECT oc.des_empresa, oc.num_oc_gerada,';
+
+  If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização TR' Then
+   MySql:=' SELECT ''TR-''||oc.des_empresa des_empresa, oc.num_oc_gerada,';
+
+  MySql:=
+   MySql+' Case co.compl_endereco'+
          '   when '''' Then'+
          '      co.des_endereco ||'', ''|| co.num_endereco'+
          '   Else'+
@@ -45911,16 +45936,27 @@ begin
          ' where oc.num_documento='+VarToStr(EdtGeraOCEditaDocto.Value)+
          ' And   oc.cod_empresa='+QuotedStr(DMBelShop.IBQ_AComprarEditaCOD_EMPRESA.AsString)+
          ' And   oc.ind_oc_gerada='+QuotedStr('N')+
-         ' And   oc.cod_fornecedor='+QuotedStr(DMBelShop.IBQ_AComprarEditaCOD_FORNECEDOR.AsString)+
-         ' And   oc.qtd_transf=0';
+         ' And   oc.cod_fornecedor='+QuotedStr(DMBelShop.IBQ_AComprarEditaCOD_FORNECEDOR.AsString);
 
-         If Rb_GeraOCEditaComQtd.Checked Then
-          MySql:=
-           MySql+' And oc.qtd_acomprar<>0';
+         If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização OC' Then
+         Begin
+           MySql:=
+            MySql+' And   oc.qtd_transf=0';
 
-         If Rb_GeraOCEditaSemQtd.Checked Then
-          MySql:=
-           MySql+' And oc.qtd_acomprar=0';
+          If Rb_GeraOCEditaComQtd.Checked Then
+           MySql:=
+            MySql+' And oc.qtd_acomprar<>0';
+
+          If Rb_GeraOCEditaSemQtd.Checked Then
+           MySql:=
+            MySql+' And oc.qtd_acomprar=0';
+         End; // If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização OC' Then
+
+         If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização TR' Then
+         Begin
+           MySql:=
+            MySql+' And   oc.qtd_transf>0';
+         End; // If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização TR' Then
 
          MySql:=
           MySql+' AND   EXISTS (SELECT 1'+
@@ -46795,6 +46831,31 @@ begin
   if ((Shift=[ssCtrl]) and (key=vk_delete)) THEN
    Abort;
 
+end;
+
+procedure TFrmBelShop.SubMenuFinanConciliaDepositosClick(Sender: TObject);
+begin
+  FrmBancoExtratos.Caption:='Depósitos Bancários';
+
+  // Acerta Apresentação das TabSheets =========================================
+  FrmBancoExtratos.DesabilitaTabSheet(nil);
+
+  // Desabilida Menu de Conciliação ============================================
+  FrmBancoExtratos.VisivelMenusConciliacoes(False);
+
+  FrmBancoExtratos.Pan_Opcoes.Visible:=False;
+  FrmBancoExtratos.Pan_Concilicao.Visible:=False;
+
+  FrmBancoExtratos.PC_ConcConciliar.TabIndex:=0;
+
+  FrmBancoExtratos.Pan_ConcLoja.Visible:=False;
+  FrmBancoExtratos.sgCodUsuario:=Cod_Usuario;
+
+  // Executa Permissões de Menu ================================================
+  BloqueioMenu(FrmBancoExtratos, DMBelShop.CDS_Seguranca, DMBelShop.SDS_Busca, Des_Login, bgInd_Admin);
+
+  FrmBancoExtratos.Ts_ConciliacoesManutDepositos.TabVisible:=True;
+  FrmBancoExtratos.ShowModal;
 end;
 
 End.

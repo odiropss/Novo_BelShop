@@ -1,11 +1,12 @@
 object FrmBancoExtratos: TFrmBancoExtratos
   Left = 238
   Top = 115
-  Width = 1063
-  Height = 622
   AutoSize = True
   BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
   Caption = 'Banco / Extratos'
+  ClientHeight = 564
+  ClientWidth = 1047
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -406,8 +407,8 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Left = 0
     Top = 0
     Width = 1047
-    Height = 525
-    ActivePage = Ts_ConciliacoesManut
+    Height = 564
+    ActivePage = Ts_ConcManutTotalPagtos
     Align = alClient
     TabOrder = 0
     OnChange = PC_PrincipalChange
@@ -763,14 +764,14 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 1027
                 43)
               object Label195: TLabel
-                Left = 13
+                Left = 5
                 Top = 15
-                Width = 25
+                Width = 96
                 Height = 13
-                Caption = 'Loja'
+                Caption = 'C'#243'digo SIDICOM'
               end
               object EdtCodLoja: TCurrencyEdit
-                Left = 41
+                Left = 105
                 Top = 11
                 Width = 36
                 Height = 21
@@ -788,7 +789,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 OnExit = EdtCodLojaExit
               end
               object Bt_BuscaLoja: TJvXPButton
-                Left = 82
+                Left = 146
                 Top = 9
                 Width = 26
                 Height = 25
@@ -857,9 +858,9 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 OnClick = Bt_BuscaLojaClick
               end
               object EdtDesLoja: TEdit
-                Left = 113
+                Left = 176
                 Top = 12
-                Width = 809
+                Width = 746
                 Height = 21
                 TabStop = False
                 Anchors = [akLeft, akTop, akRight]
@@ -893,6 +894,268 @@ object FrmBancoExtratos: TFrmBancoExtratos
           end
         end
       end
+      object Pan_Opcoes: TPanel
+        Left = 0
+        Top = 497
+        Width = 1039
+        Height = 39
+        Align = alBottom
+        BevelInner = bvLowered
+        BorderStyle = bsSingle
+        Ctl3D = False
+        ParentCtl3D = False
+        TabOrder = 1
+        object Lb_Obs: TLabel
+          Left = 8
+          Top = 11
+          Width = 72
+          Height = 13
+          Caption = 'Observa'#231#245'es...'
+        end
+        object Bt_Sair: TJvXPButton
+          Left = 936
+          Top = 2
+          Width = 99
+          Height = 33
+          Caption = 'Sair'
+          TabOrder = 0
+          TabStop = False
+          ShowFocusRect = True
+          Spacing = 10
+          Align = alRight
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_SairClick
+        end
+        object Pan_Concilicao: TPanel
+          Left = 304
+          Top = 2
+          Width = 632
+          Height = 33
+          Align = alRight
+          BevelOuter = bvNone
+          TabOrder = 1
+          object Pan_ConcSeleciona: TPanel
+            Left = 242
+            Top = 0
+            Width = 284
+            Height = 33
+            Align = alRight
+            TabOrder = 2
+            object Rb_ConcAmbos: TRadioButton
+              Left = 216
+              Top = 8
+              Width = 64
+              Height = 17
+              Caption = 'Ambos'
+              Checked = True
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              TabOrder = 0
+              TabStop = True
+              OnClick = Rb_ConcConciliadosClick
+              OnKeyUp = Rb_ConcConciliadosKeyUp
+            end
+            object Rb_ConcConciliados: TRadioButton
+              Left = 8
+              Top = 8
+              Width = 91
+              Height = 17
+              Caption = 'Conciliados'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 1
+              OnClick = Rb_ConcConciliadosClick
+              OnKeyUp = Rb_ConcConciliadosKeyUp
+            end
+            object Rb_ConcNaoConciliados: TRadioButton
+              Left = 99
+              Top = 8
+              Width = 118
+              Height = 17
+              Caption = 'N'#227'o Conciliados'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ParentFont = False
+              TabOrder = 2
+              OnClick = Rb_ConcConciliadosClick
+              OnKeyUp = Rb_ConcConciliadosKeyUp
+            end
+          end
+          object Bt_CMDesmarcar: TJvXPButton
+            Tag = 1
+            Left = 526
+            Top = 0
+            Width = 106
+            Height = 33
+            Caption = 'Desmarcar Tudo'
+            TabOrder = 3
+            TabStop = False
+            Glyph.Data = {
+              07544269746D61705E050000424D5E0500000000000036000000280000001400
+              000016000000010018000000000028050000C40E0000C40E0000000000000000
+              0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF808080C8D0D4C8D0D4
+              C8D0D4C8D0D4C8D0D4C8D0D4C8D0D4C8D0D4C8D0D4C8D0D4C8D0D4FFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF808080404040FFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC8D0D4FFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF808080404040FFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC8D0D4FFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFF808080404040FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFC8D0D4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFF808080404040FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFC8D0D4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFF808080404040FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFC8D0D4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF80
+              8080404040FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              C8D0D4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8080804040
+              40FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC8D0D4FF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF808080404040FFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC8D0D4FFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF808080404040FFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC8D0D4FFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8080804040404040404040404040404040
+              40404040404040404040404040404040C8D0D4FFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFF808080808080808080808080808080808080808080
+              808080808080808080808080808080FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFF}
+            ShowFocusRect = True
+            Spacing = 10
+            Align = alRight
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_CMDesmarcarClick
+          end
+          object Bt_CMConciliar: TJvXPButton
+            Tag = 1
+            Left = 137
+            Top = 0
+            Width = 105
+            Height = 33
+            Caption = 'Conciliar'
+            TabOrder = 1
+            TabStop = False
+            Glyph.Data = {
+              07544269746D617042010000424D420100000000000076000000280000001100
+              0000110000000100040000000000CC0000000000000000000000100000001000
+              0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+              C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF007777777777777777700000007777777770000000000000007777747770FF
+              FFFF000000007777744770F8888F000000007444444470FFFFFF000000007777
+              744770F8888F000000007777747770FFFFFF000000007777777770F8888F0000
+              00007770000070FFFFFF000000007770FFF07000000000000000700000F07777
+              77777000000070FFF0F0777777777000000070F8F000777777777000000070F8
+              F007777777777000000070FF0077777777777000000070000777777777777000
+              0000777777777777777770000000}
+            ShowFocusRect = True
+            Spacing = 10
+            Align = alRight
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_CMConciliarClick
+          end
+          object Bt_CMApresFiltro: TJvXPButton
+            Tag = 1
+            Left = 4
+            Top = 0
+            Width = 133
+            Height = 33
+            Caption = 'Apresenta Filtro'
+            TabOrder = 0
+            TabStop = False
+            Glyph.Data = {
+              07544269746D6170AA040000424DAA0400000000000036000000280000001400
+              000013000000010018000000000074040000C30E0000C30E0000000000000000
+              0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00000000000000000000
+              0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000
+              000000000000000000000000BFBFBF000000BFBFBFBFBFBFBFBFBFBFBFBF7F7F
+              7F000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F
+              00007F0000000000000000BFBFBFFFFFFFFFFFFF000000000000000000000000
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F00007F00
+              00000000BFBFBFFFFFFFFFFFFF000000BFBFBF00000000000000000000000000
+              0000000000000000000000BFBFBFBFBFBF7F00007F00007F00007F0000000000
+              BFBFBFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFF000000BFBFBFBFBFBFFF0000FF0000FF0000FF00000000007F7F7F7F
+              7F7F7F7F7F7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              000000BFBFBFBFBFBF7F00007F00007F00007F0000BFBFBFBFBFBFBFBFBF7F7F
+              7FFFFFFF7F00007F00007F00007F00007F00007F0000FFFFFFFFFFFF000000BF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F
+              00007F00007F00007F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F0000FFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFF7F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F00007F00007F0000
+              7F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBF7F7F7FFFFFFF7F00007F00007F00007F0000FFFFFFFFFFFFFFFF
+              FFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+              BFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F
+              7FFFFFFF7F00007F00007F00007F00007F0000FFFFFFFFFFFFFFFFFF000000BF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F7F7F7F7F7F7F
+              7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7FBFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF}
+            ShowFocusRect = True
+            Spacing = 10
+            Align = alRight
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            Style.Theme = OfficeXP
+            OnClick = Bt_CMApresFiltroClick
+          end
+        end
+      end
     end
     object Ts_ExtratosManut: TTabSheet
       Caption = 'Manuten'#231#227'o de Extratos'
@@ -902,7 +1165,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
         Left = 0
         Top = 0
         Width = 1039
-        Height = 497
+        Height = 536
         ActivePage = Ts_ImportaExtrato
         Align = alClient
         TabOrder = 0
@@ -1125,7 +1388,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Left = 0
             Top = 74
             Width = 1031
-            Height = 395
+            Height = 434
             ActivePage = Ts_ExtratoBanrisul
             Align = alClient
             TabOrder = 1
@@ -1287,7 +1550,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 Left = 0
                 Top = 56
                 Width = 1023
-                Height = 311
+                Height = 350
                 Cursor = crIBeam
                 GutterWidth = 0
                 RightMarginColor = clSilver
@@ -1473,7 +1736,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 Left = 0
                 Top = 56
                 Width = 1023
-                Height = 311
+                Height = 350
                 Align = alClient
                 Color = 14548991
                 RowCount = 1
@@ -1491,7 +1754,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 Left = 0
                 Top = 0
                 Width = 339
-                Height = 367
+                Height = 406
                 Align = alLeft
                 Caption = ' Filtros '
                 Font.Charset = DEFAULT_CHARSET
@@ -1658,7 +1921,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
                   Left = 2
                   Top = 103
                   Width = 335
-                  Height = 262
+                  Height = 301
                   Align = alBottom
                   Anchors = [akLeft, akTop, akRight, akBottom]
                   Font.Charset = DEFAULT_CHARSET
@@ -1691,7 +1954,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 Left = 340
                 Top = 0
                 Width = 683
-                Height = 367
+                Height = 406
                 Align = alRight
                 Caption = ' Extrato '
                 Font.Charset = DEFAULT_CHARSET
@@ -1866,15 +2129,15 @@ object FrmBancoExtratos: TFrmBancoExtratos
         end
       end
     end
-    object Ts_ConciliacoesManut: TTabSheet
-      Caption = ' Concilia'#231#245'es '
+    object Ts_ConciliacaoManutPagtos: TTabSheet
+      Caption = ' Concilia'#231#245'es Pagamentos '
       Highlighted = True
       ImageIndex = 1
       object PC_Conciliacoes: TPageControl
         Left = 0
         Top = 0
         Width = 1039
-        Height = 497
+        Height = 536
         Align = alClient
         TabOrder = 0
         OnChange = PC_ConciliacoesChange
@@ -1884,7 +2147,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
         Left = 0
         Top = 0
         Width = 1039
-        Height = 497
+        Height = 536
         ActivePage = Ts_ConcConciliar
         Align = alClient
         TabOrder = 1
@@ -2124,12 +2387,12 @@ object FrmBancoExtratos: TFrmBancoExtratos
               object Label14: TLabel
                 Left = 13
                 Top = 15
-                Width = 25
+                Width = 89
                 Height = 13
-                Caption = 'Loja'
+                Caption = 'Loja (SIDICOM)'
               end
               object EdtConcCodLoja: TCurrencyEdit
-                Left = 41
+                Left = 105
                 Top = 11
                 Width = 36
                 Height = 21
@@ -2147,7 +2410,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 OnExit = EdtConcCodLojaExit
               end
               object Bt_ConcBuscaLoja: TJvXPButton
-                Left = 82
+                Left = 145
                 Top = 9
                 Width = 26
                 Height = 25
@@ -2216,9 +2479,9 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 OnClick = Bt_ConcBuscaLojaClick
               end
               object EdtConcDesLoja: TEdit
-                Left = 113
+                Left = 176
                 Top = 11
-                Width = 560
+                Width = 500
                 Height = 21
                 TabStop = False
                 Color = 12171775
@@ -2332,7 +2595,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Left = 0
             Top = 86
             Width = 1031
-            Height = 383
+            Height = 422
             Align = alClient
             Caption = ' Lojas '
             Font.Charset = DEFAULT_CHARSET
@@ -2346,7 +2609,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
               Left = 2
               Top = 15
               Width = 1027
-              Height = 366
+              Height = 405
               Align = alClient
               Color = 15004403
               DataSource = DMConciliacao.DS_LojasBancos
@@ -2378,7 +2641,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Left = 0
             Top = 0
             Width = 1031
-            Height = 469
+            Height = 508
             Align = alClient
             Caption = ' Extratos Banc'#225'rios '
             Font.Charset = DEFAULT_CHARSET
@@ -2392,7 +2655,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
               Left = 2
               Top = 15
               Width = 1027
-              Height = 433
+              Height = 472
               Align = alClient
               Color = 15004403
               DataSource = DMConciliacao.DS_ConcExtratos
@@ -2492,7 +2755,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             end
             object StatusBar4: TStatusBar
               Left = 2
-              Top = 448
+              Top = 487
               Width = 1027
               Height = 19
               Panels = <
@@ -2506,7 +2769,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
         end
       end
     end
-    object Ts_ConciliacaoManut: TTabSheet
+    object Ts_ConciliacoesManutPagtos: TTabSheet
       Caption = 'Manuten'#231'ao de Concilia'#231#245'es'
       Highlighted = True
       ImageIndex = 3
@@ -2514,7 +2777,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
         Left = 0
         Top = 0
         Width = 1039
-        Height = 497
+        Height = 536
         Align = alClient
         TabOrder = 0
         object Splitter2: TSplitter
@@ -2531,7 +2794,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
           Left = 1
           Top = 226
           Width = 1037
-          Height = 250
+          Height = 289
           Align = alClient
           Caption = ' Movimentos de Pagamentos '
           Font.Charset = DEFAULT_CHARSET
@@ -2545,7 +2808,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Left = 2
             Top = 15
             Width = 1033
-            Height = 233
+            Height = 272
             Align = alClient
             Color = 15004403
             DataSource = DMConciliacao.DS_CMPagtos
@@ -3215,7 +3478,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
         end
         object dxStatusBar3: TdxStatusBar
           Left = 1
-          Top = 476
+          Top = 515
           Width = 1037
           Height = 20
           Panels = <
@@ -3293,7 +3556,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
       ImageIndex = 4
       object Panel1: TPanel
         Left = 0
-        Top = 467
+        Top = 506
         Width = 1039
         Height = 30
         Align = alBottom
@@ -3403,7 +3666,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
         Left = 0
         Top = 0
         Width = 1039
-        Height = 467
+        Height = 506
         TabStop = False
         Align = alClient
         Color = 15004403
@@ -3494,7 +3757,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
       ImageIndex = 5
       object Panel3: TPanel
         Left = 0
-        Top = 458
+        Top = 497
         Width = 1039
         Height = 39
         Align = alBottom
@@ -3660,7 +3923,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
         Left = 0
         Top = 0
         Width = 1039
-        Height = 439
+        Height = 478
         TabStop = False
         Align = alClient
         Color = 15004403
@@ -3748,7 +4011,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
       end
       object StatusBar3: TStatusBar
         Left = 0
-        Top = 439
+        Top = 478
         Width = 1039
         Height = 19
         Color = clSilver
@@ -3769,7 +4032,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
         Left = 552
         Top = 0
         Width = 487
-        Height = 497
+        Height = 536
         Align = alRight
         Caption = ' Datas sem Extratos Banc'#225'rios '
         Font.Charset = DEFAULT_CHARSET
@@ -3783,7 +4046,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
           Left = 2
           Top = 15
           Width = 483
-          Height = 480
+          Height = 519
           Align = alClient
           Color = 14024703
           ReadOnly = True
@@ -3836,7 +4099,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
         Left = 0
         Top = 0
         Width = 552
-        Height = 497
+        Height = 536
         Align = alClient
         Caption = '  Selecione o Banco/Agencia/ContaCorrente '
         Font.Charset = DEFAULT_CHARSET
@@ -3979,7 +4242,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
           Left = 2
           Top = 64
           Width = 548
-          Height = 431
+          Height = 470
           Align = alClient
           Color = 15004403
           DataSource = DMBelShop.DS_Busca
@@ -4093,272 +4356,15 @@ object FrmBancoExtratos: TFrmBancoExtratos
         end
       end
     end
-  end
-  object Pan_Opcoes: TPanel
-    Left = 0
-    Top = 525
-    Width = 1047
-    Height = 39
-    Align = alBottom
-    BevelInner = bvLowered
-    BorderStyle = bsSingle
-    Ctl3D = False
-    ParentCtl3D = False
-    TabOrder = 1
-    object Lb_Obs: TLabel
-      Left = 8
-      Top = 11
-      Width = 72
-      Height = 13
-      Caption = 'Observa'#231#245'es...'
-    end
-    object Bt_Sair: TJvXPButton
-      Left = 944
-      Top = 2
-      Width = 99
-      Height = 33
-      Caption = 'Sair'
-      TabOrder = 0
-      TabStop = False
-      ShowFocusRect = True
-      Spacing = 10
-      Align = alRight
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      OnClick = Bt_SairClick
-    end
-    object Pan_Concilicao: TPanel
-      Left = 312
-      Top = 2
-      Width = 632
-      Height = 33
-      Align = alRight
-      BevelOuter = bvNone
-      TabOrder = 1
-      object Pan_ConcSeleciona: TPanel
-        Left = 242
-        Top = 0
-        Width = 284
-        Height = 33
-        Align = alRight
-        TabOrder = 2
-        object Rb_ConcAmbos: TRadioButton
-          Left = 216
-          Top = 8
-          Width = 64
-          Height = 17
-          Caption = 'Ambos'
-          Checked = True
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          TabOrder = 0
-          TabStop = True
-          OnClick = Rb_ConcConciliadosClick
-          OnKeyUp = Rb_ConcConciliadosKeyUp
-        end
-        object Rb_ConcConciliados: TRadioButton
-          Left = 8
-          Top = 8
-          Width = 91
-          Height = 17
-          Caption = 'Conciliados'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 1
-          OnClick = Rb_ConcConciliadosClick
-          OnKeyUp = Rb_ConcConciliadosKeyUp
-        end
-        object Rb_ConcNaoConciliados: TRadioButton
-          Left = 99
-          Top = 8
-          Width = 118
-          Height = 17
-          Caption = 'N'#227'o Conciliados'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 2
-          OnClick = Rb_ConcConciliadosClick
-          OnKeyUp = Rb_ConcConciliadosKeyUp
-        end
-      end
-      object Bt_CMDesmarcar: TJvXPButton
-        Tag = 1
-        Left = 526
-        Top = 0
-        Width = 106
-        Height = 33
-        Caption = 'Desmarcar Tudo'
-        TabOrder = 3
-        TabStop = False
-        Glyph.Data = {
-          07544269746D61705E050000424D5E0500000000000036000000280000001400
-          000016000000010018000000000028050000C40E0000C40E0000000000000000
-          0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF808080C8D0D4C8D0D4
-          C8D0D4C8D0D4C8D0D4C8D0D4C8D0D4C8D0D4C8D0D4C8D0D4C8D0D4FFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF808080404040FFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC8D0D4FFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF808080404040FFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC8D0D4FFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFF808080404040FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFC8D0D4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFF808080404040FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFC8D0D4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFF808080404040FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFC8D0D4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF80
-          8080404040FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          C8D0D4FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8080804040
-          40FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC8D0D4FF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF808080404040FFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC8D0D4FFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF808080404040FFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC8D0D4FFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8080804040404040404040404040404040
-          40404040404040404040404040404040C8D0D4FFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFF808080808080808080808080808080808080808080
-          808080808080808080808080808080FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFF}
-        ShowFocusRect = True
-        Spacing = 10
-        Align = alRight
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        OnClick = Bt_CMDesmarcarClick
-      end
-      object Bt_CMConciliar: TJvXPButton
-        Tag = 1
-        Left = 137
-        Top = 0
-        Width = 105
-        Height = 33
-        Caption = 'Conciliar'
-        TabOrder = 1
-        TabStop = False
-        Glyph.Data = {
-          07544269746D617042010000424D420100000000000076000000280000001100
-          0000110000000100040000000000CC0000000000000000000000100000001000
-          0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
-          C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-          FF007777777777777777700000007777777770000000000000007777747770FF
-          FFFF000000007777744770F8888F000000007444444470FFFFFF000000007777
-          744770F8888F000000007777747770FFFFFF000000007777777770F8888F0000
-          00007770000070FFFFFF000000007770FFF07000000000000000700000F07777
-          77777000000070FFF0F0777777777000000070F8F000777777777000000070F8
-          F007777777777000000070FF0077777777777000000070000777777777777000
-          0000777777777777777770000000}
-        ShowFocusRect = True
-        Spacing = 10
-        Align = alRight
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        OnClick = Bt_CMConciliarClick
-      end
-      object Bt_CMApresFiltro: TJvXPButton
-        Tag = 1
-        Left = 4
-        Top = 0
-        Width = 133
-        Height = 33
-        Caption = 'Apresenta Filtro'
-        TabOrder = 0
-        TabStop = False
-        Glyph.Data = {
-          07544269746D6170AA040000424DAA0400000000000036000000280000001400
-          000013000000010018000000000074040000C30E0000C30E0000000000000000
-          0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00000000000000000000
-          0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000
-          000000000000000000000000BFBFBF000000BFBFBFBFBFBFBFBFBFBFBFBF7F7F
-          7F000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F
-          00007F0000000000000000BFBFBFFFFFFFFFFFFF000000000000000000000000
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F00007F00
-          00000000BFBFBFFFFFFFFFFFFF000000BFBFBF00000000000000000000000000
-          0000000000000000000000BFBFBFBFBFBF7F00007F00007F00007F0000000000
-          BFBFBFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFF000000BFBFBFBFBFBFFF0000FF0000FF0000FF00000000007F7F7F7F
-          7F7F7F7F7F7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          000000BFBFBFBFBFBF7F00007F00007F00007F0000BFBFBFBFBFBFBFBFBF7F7F
-          7FFFFFFF7F00007F00007F00007F00007F00007F0000FFFFFFFFFFFF000000BF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F
-          00007F00007F00007F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F0000FFFFFFFFFF
-          FFFFFFFFFFFFFFFFFFFF7F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F00007F00007F0000
-          7F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          FFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBF7F7F7FFFFFFF7F00007F00007F00007F0000FFFFFFFFFFFFFFFF
-          FFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-          000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F
-          7FFFFFFF7F00007F00007F00007F00007F0000FFFFFFFFFFFFFFFFFF000000BF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
-          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F7F7F7F7F7F7F
-          7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7FBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF}
-        ShowFocusRect = True
-        Spacing = 10
-        Align = alRight
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        Style.Theme = OfficeXP
-        OnClick = Bt_CMApresFiltroClick
-      end
+    object Ts_ConciliacoesManutDepositos: TTabSheet
+      Caption = 'Concilia'#231#245'es'
+      Highlighted = True
+      ImageIndex = 7
     end
   end
   object OdirPanApres: TPanel
-    Left = 936
-    Top = 332
+    Left = 952
+    Top = 260
     Width = 89
     Height = 33
     BevelInner = bvLowered
@@ -4371,15 +4377,16 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 2
+    TabOrder = 1
     Visible = False
   end
   object MainMenu1: TMainMenu
-    Left = 984
-    Top = 62
+    Left = 400
+    Top = 174
     object MenuConcilicao: TMenuItem
       Tag = 50
       Caption = 'Concilia'#231#227'o'
+      Visible = False
       object SubMenuConciliar: TMenuItem
         Tag = 5001
         Caption = 'Conciliar'
@@ -4392,7 +4399,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
       Caption = 'Manuten'#231#227'o de Concilia'#231#227'o'
       object SubMenuManutencao: TMenuItem
         Tag = 5101
-        Caption = 'Manuten'#231#227'o'
+        Caption = 'Manuten'#231#227'o Pagamentos'
         HelpContext = 1
         OnClick = SubMenuManutencaoClick
       end

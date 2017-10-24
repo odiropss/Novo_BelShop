@@ -574,8 +574,10 @@ object DMCentralTrocas: TDMCentralTrocas
       Size = 2
     end
     object CDS_ReposicaoDocsTot_Itens: TAggregateField
+      Alignment = taRightJustify
       FieldName = 'Tot_Itens'
       Active = True
+      DisplayFormat = '0,'
       Expression = 'SUM(NUM_PRODUTOS)'
     end
   end
@@ -708,16 +710,19 @@ object DMCentralTrocas: TDMCentralTrocas
       'o,'#13#10'lo.ind_curva ABC,'#13#10'lo.qtd_a_transf,'#13#10'lo.num_pedido,'#13#10'cd.end_' +
       'zona||'#39'.'#39'||cd.end_corredor||'#39'.'#39'||cd.end_prateleira||'#39'.'#39'||cd.end_' +
       'gaveta Endereco,'#13#10'lo.qtd_transf,'#13#10'lo.qtd_transf_oc,'#13#10#13#10'CAST(COAL' +
-      'ESCE((SELECT Trim(COALESCE(lp.PrecoCompra,0))'#13#10'                 ' +
-      '              FROM LISTAPRE lp'#13#10'                               W' +
-      'HERE lp.codlista='#39'0006'#39#13#10'                              AND   lp.' +
-      'codproduto=pr.codproduto),0.00)'#13#10'as NUMERIC(12,2)) PrecoCompra,'#13 +
-      #10'lo.ind_prioridade, lo.ind_leitora, lo.qtd_checkout,'#13#10'Trim(pr.co' +
-      'dbarra) codbarra'#13#10#13#10'FROM ES_ESTOQUES_LOJAS lo, ES_ESTOQUES_CD cd' +
-      ', PRODUTO pr'#13#10'WHERE lo.cod_produto=pr.codproduto'#13#10'AND   lo.cod_p' +
-      'roduto=cd.cod_produto'#13#10'AND   lo.dta_movto=cd.dta_movto'#13#10'AND   lo' +
-      '.ind_transf='#39'SIM'#39#13#10#13#10'AND   lo.dta_movto= :sDta'#13#10'AND   lo.num_doc' +
-      'to= :Doc'#13#10'AND   lo.cod_loja= :CodLoja'#13#10#13#10'ORDER BY 3'
+      'ESCE((SELECT'#13#10'               CASE'#13#10'                  WHEN COALES' +
+      'CE(TRIM(lp.PrecoCompra),1.00)<=0.00 THEN'#13#10'                     1' +
+      '.00'#13#10'                  ELSE'#13#10'                     COALESCE(TRIM(' +
+      'lp.PrecoCompra),1.00)'#13#10'               END'#13#10'               FROM L' +
+      'ISTAPRE lp'#13#10'               WHERE lp.codlista='#39'0006'#39#13#10'           ' +
+      '    AND   lp.codproduto=pr.codproduto),1.00)'#13#10'as NUMERIC(12,2)) ' +
+      'PrecoCompra,'#13#10#13#10'lo.ind_prioridade, lo.ind_leitora, lo.qtd_checko' +
+      'ut,'#13#10'Trim(pr.codbarra) codbarra'#13#10#13#10'FROM ES_ESTOQUES_LOJAS lo, ES' +
+      '_ESTOQUES_CD cd, PRODUTO pr'#13#10'WHERE lo.cod_produto=pr.codproduto'#13 +
+      #10'AND   lo.cod_produto=cd.cod_produto'#13#10'AND   lo.dta_movto=cd.dta_' +
+      'movto'#13#10'AND   lo.ind_transf='#39'SIM'#39#13#10#13#10'AND   lo.dta_movto= :sDta'#13#10'A' +
+      'ND   lo.num_docto= :Doc'#13#10'AND   lo.cod_loja= :CodLoja'#13#10#13#10'ORDER BY' +
+      ' 3'
     MaxBlobSize = -1
     Params = <
       item

@@ -138,6 +138,8 @@ type
     Ckb_ReposLojasPrioridade1: TJvXPCheckbox;
     Ckb_ReposLojasPrioridade2: TJvXPCheckbox;
     Ckb_ReposLojasPrioridade3: TJvXPCheckbox;
+    GroupBox1: TGroupBox;
+    DBEdit1: TDBEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -183,11 +185,13 @@ type
 
     Procedure CheckOut_BuscaProdCodBarras_AtualizaQtd(sCodBarras: String; iQtdEmbalagem: Integer);
     Procedure ReCalculaPosicaoLeitora;
-    
+
     Procedure DivergenciasReposicaoLojas;
     Procedure AcertaDivergenciasReposicaoLojas;
 
     Procedure GeraReposicaoLINX(sPastaArqLinx: String);
+
+    Procedure RomaneioFornecedor;
 
     // Odir ====================================================================
 
@@ -326,6 +330,136 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
 //==============================================================================
 // Odir - INICIO ===============================================================
 //==============================================================================
+
+// Imprime Romaeiros por Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmCentralTrocas.RomaneioFornecedor;
+Var
+  MySql: String;
+  dir_padrao, dir_relat: String;
+Begin
+  // Busca Docto ===============================================================
+  MySql:=' SELECT distinct pr.principalfor, pr.nomefornecedor'+
+
+         ' FROM ES_ESTOQUES_LOJAS lo, ES_ESTOQUES_CD cd,'+
+         '      PRODUTO pr'+
+
+         ' WHERE lo.cod_produto=pr.codproduto'+
+         ' AND   lo.cod_produto=cd.cod_produto'+
+         ' AND   lo.dta_movto=cd.dta_movto'+
+         ' AND   CAST(TRIM(COALESCE(lo.num_pedido,''0'')) AS INTEGER)=0'+
+         ' AND   lo.dta_movto='+QuotedStr(f_Troca('-','.',(f_Troca('/','.',DateToStr(DtaEdt_ReposLojas.Date)))))+
+         ' AND   lo.ind_transf='+QuotedStr('SIM')+
+         ' AND   lo.num_docto='+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
+         ' AND   lo.cod_loja='+QuotedStr(DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString);
+
+         If sgTipoPrioridade<>'Todas as Prioridades' Then
+          MySql:=
+           MySql+' AND lo.ind_prioridade in ('+sgTipoPrioridade+')';
+
+         If (sgCorredores<>'') and (Not bgTodosCorredores) Then
+          MySql:=
+           MySql+' AND cd.end_zona||''.''||cd.end_corredor in ('+sgCorredores+')';
+
+  MySql:=
+   MySql+' ORDER BY 2';
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:=MySql;
+  DMBelShop.CDS_Busca.Open;
+
+  DMBelShop.CDS_Busca.DisableControls;
+  While Not DMBelShop.CDS_Busca.Eof do
+  Begin
+    Screen.Cursor:=crAppStart;
+
+    OdirPanApres.Caption:='AGUARDE !! Montando Relatório...';
+    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2));
+    OdirPanApres.Visible:=True;
+    Refresh;
+
+    // Busca Docto =============================================================
+    MySql:=' SELECT '+
+           ' em.cod_cli_linx||'' - ''||em.razao_social||'+
+           QuotedStr(' =>'+DMBelShop.CDS_Busca.FieldByName('nomefornecedor').AsString)+' loja,'+
+           ' SUBSTRING(em.num_cnpj FROM 1 FOR 2) || ''.'' ||SUBSTRING(em.num_cnpj FROM 3 FOR 3) || ''.'' ||'+
+           ' SUBSTRING(em.num_cnpj FROM 6 FOR 3) || ''/'' ||SUBSTRING(em.num_cnpj FROM 9 FOR 4) || ''-'' ||'+
+           ' SUBSTRING(em.num_cnpj FROM 13 FOR 2) CNPJ,'+
+           ' lo.num_docto, lo.dta_movto, lo.num_seq Seq,'+
+           ' cd.end_prateleira||''.''||cd.end_gaveta Enderecamento,'+
+           ' lo.qtd_a_transf,'+
+           ' ''_____'' qtd_disponivel,'+
+           ' cd.qtd_estoque Saldo_CD,'+
+           ' lo.cod_produto, TRIM(pr.codbarra) codbarra, Trim(pr.referencia) referencia, TRIM(pr.apresentacao) Des_produto, '+
+           QuotedStr(Des_Usuario)+' Usuario,'+
+           ' lo.obs_docto'+
+
+           ' FROM ES_ESTOQUES_LOJAS lo, ES_ESTOQUES_CD cd,'+
+           '      PRODUTO pr, EMP_CONEXOES em'+
+
+           ' WHERE lo.cod_produto=pr.codproduto'+
+           ' AND   lo.cod_produto=cd.cod_produto'+
+           ' AND   lo.dta_movto=cd.dta_movto'+
+           ' AND   lo.cod_loja=em.cod_filial'+
+
+           ' AND   CAST(TRIM(COALESCE(lo.num_pedido,''0'')) AS INTEGER)=0'+
+
+           ' AND   lo.dta_movto='+QuotedStr(f_Troca('-','.',(f_Troca('/','.',DateToStr(DtaEdt_ReposLojas.Date)))))+
+           ' AND   lo.ind_transf='+QuotedStr('SIM')+
+           ' AND   lo.num_docto='+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
+           ' AND   lo.cod_loja='+QuotedStr(DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString)+
+           ' AND   pr.principalfor='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('principalfor').AsString);
+
+           If sgTipoPrioridade<>'Todas as Prioridades' Then
+            MySql:=
+             MySql+' AND lo.ind_prioridade in ('+sgTipoPrioridade+')';
+
+           If (sgCorredores<>'') and (Not bgTodosCorredores) Then
+            MySql:=
+             MySql+' AND cd.end_zona||''.''||cd.end_corredor in ('+sgCorredores+')';
+
+    MySql:=
+     MySql+' ORDER BY 6, 11';
+    DMCentralTrocas.SDS_RelReposicao.Close;
+    DMCentralTrocas.CDS_RelReposicao.Close;
+    DMCentralTrocas.SDS_RelReposicao.CommandText:=MySql;
+    DMCentralTrocas.CDS_RelReposicao.Open;
+
+    OdirPanApres.Visible:=False;
+    Screen.Cursor:=crDefault;
+
+    // Apresenta Relatório =====================================================
+    {$IFDEF MSWINDOWS}
+      dir_padrao      := ExtractFilePath(Application.ExeName);
+      dir_relat       := dir_padrao +'Relatorios\';
+    {$ENDIF}
+
+    DMRelatorio.frReport1.LoadFromFile(Dir_Relat+'RomaneioReposicoes_SObs.frf');
+
+    // Apropria DataSet ========================================================
+    DMRelatorio.frDBDataSet1.DataSet:=DMCentralTrocas.CDS_RelReposicao;
+
+    // Informa Corredores ======================================================
+    If (bgTodosCorredores) or (igCorredores=0) Then
+     DMRelatorio.frReport1.Dictionary.Variables.Variable['Corredor']:=#39+'TODOS'+#39
+    Else
+     DMRelatorio.frReport1.Dictionary.Variables.Variable['Corredor']:=#39+Trim(f_troca('''','',sgCorredores))+#39;
+
+    // Informa Prioridades =======================================================
+    DMRelatorio.frReport1.Dictionary.Variables.Variable['Prioridades']:=#39+sgTipoPrioridade+#39;
+
+    DMRelatorio.frReport1.PrepareReport;
+    DMRelatorio.frReport1.ShowReport;
+
+    // Retorna para o DBGrid
+    DMCentralTrocas.CDS_RelReposicao.Close;
+
+    DMBelShop.CDS_Busca.Next;
+  End; // While Not DMBelShop.CDS_Busca.Eof do
+  DMBelShop.CDS_Busca.EnableControls;
+  DMBelShop.CDS_Busca.Close;
+
+End; // // Imprime Romaeiros por Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // ReCalcula Posição dos ProgressBar da Leitura de Codigo de Barras >>>>>>>>>>>>
 Procedure TFrmCentralTrocas.ReCalculaPosicaoLeitora;
@@ -5329,6 +5463,14 @@ begin
     msg('Sem Produto a para Impressão !!'+cr+cr+'Todos já Transferidos !!','A');
     Exit;
   End;
+
+  // Lojas Por Fornecedor ======================================================
+  If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
+     (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='89') Then
+  Begin
+    RomaneioFornecedor;
+    Exit;
+  End; // If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
 
   Screen.Cursor:=crAppStart;
 

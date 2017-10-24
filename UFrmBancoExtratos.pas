@@ -32,9 +32,7 @@ type
   TFrmBancoExtratos = class(TForm)
     PC_Principal: TPageControl;
     Ts_BancosManut: TTabSheet;
-    Ts_ConciliacoesManut: TTabSheet;
-    Pan_Opcoes: TPanel;
-    Bt_Sair: TJvXPButton;
+    Ts_ConciliacaoManutPagtos: TTabSheet;
     PC_Bancos: TPageControl;
     Ts_Bancos: TTabSheet;
     Gb_Bancos: TGroupBox;
@@ -135,7 +133,7 @@ type
     Ts_ConcConciliando: TTabSheet;
     Gb_ConcExtratosConciliados: TGroupBox;
     Dbg_ConcExtratoBancos: TDBGrid;
-    Ts_ConciliacaoManut: TTabSheet;
+    Ts_ConciliacoesManutPagtos: TTabSheet;
     MainMenu1: TMainMenu;
     MenuConcilicao: TMenuItem;
     MenuManutConcilicao: TMenuItem;
@@ -165,11 +163,6 @@ type
     Label17: TLabel;
     EdtHistConcAutoLocaliza: TEdit;
     StatusBar3: TStatusBar;
-    Pan_Concilicao: TPanel;
-    Pan_ConcSeleciona: TPanel;
-    Rb_ConcAmbos: TRadioButton;
-    Rb_ConcConciliados: TRadioButton;
-    Rb_ConcNaoConciliados: TRadioButton;
     SubMenuConciliar: TMenuItem;
     SubMenuManutencao: TMenuItem;
     PopupMenu: TPopupMenu;
@@ -185,7 +178,6 @@ type
     EdtConcManutPagtoVlr: TCurrencyEdit;
     EdtConcManutExtPagDif: TCurrencyEdit;
     ApplicationEvents1: TApplicationEvents;
-    Bt_CMDesmarcar: TJvXPButton;
     Ts_VerificaExtrato: TTabSheet;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
@@ -199,13 +191,22 @@ type
     Bt_VerifExtratoVerificar: TJvXPButton;
     Mem_VerifContas: TMemo;
     Bt_VerifExtratoDtSemMovto: TJvXPButton;
-    Lb_Obs: TLabel;
-    Bt_CMConciliar: TJvXPButton;
-    Bt_CMApresFiltro: TJvXPButton;
     Pan_HistConcAutoDuplica: TPanel;
     JvXPButton1: TJvXPButton;
     Edit1: TEdit;
     dxStatusBar3: TdxStatusBar;
+    Ts_ConciliacoesManutDepositos: TTabSheet;
+    Pan_Opcoes: TPanel;
+    Lb_Obs: TLabel;
+    Bt_Sair: TJvXPButton;
+    Pan_Concilicao: TPanel;
+    Pan_ConcSeleciona: TPanel;
+    Rb_ConcAmbos: TRadioButton;
+    Rb_ConcConciliados: TRadioButton;
+    Rb_ConcNaoConciliados: TRadioButton;
+    Bt_CMDesmarcar: TJvXPButton;
+    Bt_CMConciliar: TJvXPButton;
+    Bt_CMApresFiltro: TJvXPButton;
     procedure FormCreate(Sender: TObject);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SairClick(Sender: TObject);
@@ -217,6 +218,8 @@ type
     // DIVERSOS ////////////////////////////////////////////////////////////////
     Procedure LiberaMenu(b: Boolean);
     Procedure HabilitaBotoes(b: Boolean);
+    Procedure DesabilitaTabSheet(TS: TTabSheet); // TS = TabSheet a Liberar
+    Procedure VisivelMenusConciliacoes(b: Boolean);
 
     // Desbilita o Scroll do Mouse no DbGrid
     Procedure DesabilitaScrollMouse(var Msg: TMsg; var Handled: Boolean);
@@ -384,6 +387,7 @@ type
     procedure Bt_VerifExtratoDtSemMovtoClick(Sender: TObject);
     procedure DtEdt_VerifExtratoDtaInicioPropertiesChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure JvXPButton2Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -447,6 +451,45 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
 // Odir - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// Menus Visivel >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmBancoExtratos.VisivelMenusConciliacoes(b: Boolean);
+Var
+  i, ii: Integer;
+Begin
+  For i:=0 to MainMenu1.Items.Count-1 do
+  Begin
+    For ii:=0 to MainMenu1.Items[i].Count-1 do
+    Begin
+      MainMenu1.Items[i].Items[ii].Visible:=b;
+    End; // For ii:=0 to MainMenu1.Items[i].Count-1 do
+    MainMenu1.Items[i].Visible:=b;
+  End; // For i:=0 to MainMenu1.Items.Count-1 do
+
+//  MenuConcilicao.Visible         :=False;
+//  MenuManutConcilicao.Visible    :=False;
+//  MenuParametros.Visible         :=False;
+//  MenuTipoConcilciao.Visible     :=False;
+//  MenuHistoricosBancarios.Visible:=False;
+
+End; // Menus Visivel >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Desabilita TabSheets - Habilita Somente a TS: TTabSheet >>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmBancoExtratos.DesabilitaTabSheet(TS: TTabSheet);
+Begin
+  // TS = TabSheet a Liberar
+  Ts_BancosManut.TabVisible               :=False;
+  Ts_VerificaExtrato.TabVisible           :=False;
+  Ts_ExtratosManut.TabVisible             :=False;
+  Ts_ConciliacaoManutPagtos.TabVisible    :=False;
+  Ts_ConciliacoesManutPagtos.TabVisible   :=False;
+  Ts_ConciliacoesManutDepositos.TabVisible:=False;
+  Ts_ConcManutTotalPagtos.TabVisible      :=False;
+  Ts_HistConcAuto.TabVisible              :=False;
+
+  If TS<>nil Then
+   TS.TabVisible:=True;  // OK
+End; // Desabilita TabSheets - Habilita Somente a TS: TTabSheet >>>>>>>>>>>>>>>>
+
 // Habilita Botoes >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBancoExtratos.HabilitaBotoes(b: Boolean);
 Begin
@@ -469,6 +512,7 @@ Begin
    Bt_Sair.Caption:='Sair'
   Else
    Bt_Sair.Caption:='Voltar';
+
 End; // Libera Opções de Menu >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // MANUTENCAO DE EXTRATOS - Cria Dias Sem Extrato >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -5841,16 +5885,31 @@ begin
   CorSelecaoTabSheet(PC_Principal);
 
   If (PC_Principal.ActivePage=Ts_BancosManut) And (Dbg_Bancos.Visible) Then
-   Dbg_Bancos.SetFocus;
+  Begin
+    Pan_Opcoes.Parent:=Ts_BancosManut;
+
+    LiberaMenu(True);
+    VisivelMenusConciliacoes(False);
+
+    Dbg_Bancos.SetFocus;
+  End; // If (PC_Principal.ActivePage=Ts_BancosManut) And (Dbg_Bancos.Visible) Then
 
   If (PC_Principal.ActivePage=Ts_ExtratosManut) and (EdtExtNumAgencia.Visible) Then
   Begin
+    Pan_Opcoes.Parent:=Ts_ExtratosManut;
+
+    LiberaMenu(True);
+    VisivelMenusConciliacoes(False);
+    Bt_Sair.Caption:='Sair';
+
     EdtExtNumAgencia.SetFocus;
     PC_ExtExtratos.Visible:=False;
   End; // If PC_Principal.ActivePage=Ts_ExtratosManut Then
 
-  If PC_Principal.ActivePage=Ts_ConciliacoesManut Then
+  If PC_Principal.ActivePage=Ts_ConciliacaoManutPagtos Then
   Begin
+    Pan_Opcoes.Parent:=Ts_ConciliacaoManutPagtos;
+
     PC_ConcConciliar.ActivePage:=Ts_ConcConciliar;
 
     If Pan_ConcBanco.Visible Then
@@ -5858,15 +5917,17 @@ begin
     If Pan_ConcLoja.Visible Then
      EdtConcCodLoja.SetFocus;
 
-  End; // If PC_Principal.ActivePage=Ts_ConciliacoesManut Then
+  End; // If PC_Principal.ActivePage=Ts_ConciliacaoManutPagtos Then
 
-  If PC_Principal.ActivePage=Ts_ConciliacaoManut Then
+  If PC_Principal.ActivePage=Ts_ConciliacoesManutPagtos Then
   Begin
+    Pan_Opcoes.Parent:=Ts_ConciliacoesManutPagtos;
+
     If Pan_ConcBanco.Visible Then
      EdtConcNumAgencia.SetFocus;
     If Pan_ConcLoja.Visible Then
      EdtConcCodLoja.SetFocus;
-  End; // If PC_Principal.ActivePage=Ts_ConciliacoesManut Then
+  End; // If PC_Principal.ActivePage=Ts_ConciliacoesManutPagtos Then
 
   If (PC_Principal.ActivePage=Ts_HistConcAuto) And (Dbg_HistConcAuto.CanFocus) Then
   Begin
@@ -5875,6 +5936,8 @@ begin
 
   If (PC_Principal.ActivePage=Ts_VerificaExtrato) And (Dbg_VerifExtratosContas.CanFocus) Then
   Begin
+    Pan_Opcoes.Parent:=Ts_VerificaExtrato;
+    
     MySql:=' SELECT ''NAO'' PROC, b.cod_banco, b.num_banco, b.des_banco,'+
            ' b.num_agencia, b.des_agencia, b.num_conta'+
            ' FROM FIN_BANCOS b'+
@@ -5884,8 +5947,23 @@ begin
     DMBelShop.CDS_Busca.Open;
 
     Mem_VerifContas.Lines.Clear;
+    Bt_Sair.Caption:='Sair';
     DtEdt_VerifExtratoDtaInicio.SetFocus;
   End; // If PC_Principal.ActivePage=Ts_HistConcAuto Then
+
+  If (PC_Principal.ActivePage=Ts_ConciliacoesManutDepositos) And (Ts_ConciliacoesManutDepositos.CanFocus) Then
+  Begin
+    LiberaMenu(True);
+    VisivelMenusConciliacoes(False);
+
+    Ts_BancosManut.TabVisible:=False;
+    Ts_ExtratosManut.TabVisible:=False;
+    Ts_ConciliacaoManutPagtos.TabVisible:=False;
+    Ts_ConciliacoesManutPagtos.TabVisible:=False;
+    Ts_ConcManutTotalPagtos.TabVisible:=False;
+    Ts_HistConcAuto.TabVisible:=False;
+  End; // If (PC_Principal.ActivePage=Ts_ConciliacoesManutDepositos) And (Ts_ConciliacoesManutDepositos.CanFocus) Then
+
 end;
 
 procedure TFrmBancoExtratos.Bt_SairClick(Sender: TObject);
@@ -5905,11 +5983,12 @@ begin
 
     Ts_BancosManut.TabVisible:=False;
     Ts_ExtratosManut.TabVisible:=False;
-    Ts_ConciliacaoManut.TabVisible:=False;
+    Ts_ConciliacaoManutPagtos.TabVisible:=False;
+    Ts_ConciliacoesManutPagtos.TabVisible:=False;
     Ts_ConcManutTotalPagtos.TabVisible:=False;
     Ts_HistConcAuto.TabVisible:=False;
-    Ts_ConciliacoesManut.TabVisible:=False;
 
+    Pan_Opcoes.Parent:=PC_Principal;
     Pan_Opcoes.Visible:=True;
     Pan_Concilicao.Visible:=False;
   End;
@@ -6558,7 +6637,6 @@ begin
   Begin
     DMConciliacao.CDS_Bancos.Open;
     DMConciliacao.CDS_LojasBanco.Open;
-    Dbg_Bancos.SetFocus;
   End; // If Ts_Bancos.TabVisible Then
 
   If PC_Principal.ActivePage=Ts_BancosManut Then
@@ -6574,22 +6652,28 @@ begin
     PC_PrincipalChange(Self);
   End; // If PC_Principal.ActivePage=Ts_ExtratosManut Then
 
-  If PC_Principal.ActivePage=Ts_ConciliacoesManut Then
+  If PC_Principal.ActivePage=Ts_ConciliacaoManutPagtos Then
   Begin
     PC_ConcConciliar.ActivePage:=Ts_ConcConciliar;
     EdtConcNumAgencia.SetFocus;
-  End; // If PC_Principal.ActivePage=Ts_ConciliacoesManut Then
+  End; // If PC_Principal.ActivePage=Ts_ConciliacaoManutPagtos Then
 
   If PC_Principal.ActivePage=Ts_VerificaExtrato Then
   Begin
     PC_PrincipalChange(Self);
-  End; // If PC_Principal.ActivePage=Ts_ConciliacoesManut Then
+  End; // If PC_Principal.ActivePage=Ts_VerificaExtrato Then
+
+  If PC_Principal.ActivePage=Ts_ConciliacoesManutDepositos Then
+  Begin
+    PC_PrincipalChange(Self);
+  End; // If PC_Principal.ActivePage=Ts_ConciliacoesManutDepositos Then
 
   DtEdt_PeriodoDtaInicio.Text:=DateToStr(Now);
   DtEdt_PeriodoDtaFim.Text:=DateToStr(Now);
 
   DtEdt_ConcDtaInicio.Text:=DateToStr(Now-1);
   DtEdt_ConcDtaFim.Text:=DateToStr(Now-1);
+
 end;
 
 procedure TFrmBancoExtratos.PC_ExtratosChange(Sender: TObject);
@@ -7924,7 +8008,7 @@ begin
 
     DMBelShop.CDS_BuscaRapida.Close;
 
-    If Pan_ConcSolicitacoes.Parent=Ts_ConciliacaoManut Then
+    If Pan_ConcSolicitacoes.Parent=Ts_ConciliacoesManutPagtos Then
     Begin
       // Busca Lojas ============================================================
       sgCodLojas:='';
@@ -7957,7 +8041,7 @@ begin
       End;
 
       DMBelShop.CDS_BuscaRapida.Close;
-    End; // If Pan_ConcSolicitacoes.Parent=Ts_ConciliacaoManut Then
+    End; // If Pan_ConcSolicitacoes.Parent=Ts_ConciliacoesManutPagtos Then
 
     DtEdt_ConcDtaInicio.SetFocus;
 
@@ -8140,7 +8224,7 @@ begin
       Dbg_ConcBancosLojas.Columns[5].Visible:=False;
     End; // If Pan_ConcSolicitacoes.Parent=Ts_ConcConciliar Then
 
-    If Pan_ConcSolicitacoes.Parent=Ts_ConciliacaoManut Then
+    If Pan_ConcSolicitacoes.Parent=Ts_ConciliacoesManutPagtos Then
     Begin
       // Busca Bancos
       sgCodLojas:=sgCodLoja;
@@ -8176,7 +8260,7 @@ begin
       End;
 
       DMBelShop.CDS_BuscaRapida.Close;
-    End; // If Pan_ConcSolicitacoes.Parent=Ts_ConciliacaoManut Then
+    End; // If Pan_ConcSolicitacoes.Parent=Ts_ConciliacoesManutPagtos Then
 
     DtEdt_ConcDtaInicio.SetFocus;
 
@@ -8336,7 +8420,7 @@ begin
   End; // If Pan_ConcSolicitacoes.Parent=Ts_ConcConciliar Then
 
   // Apresenta para Concilidar =================================================
-  If Pan_ConcSolicitacoes.Parent=Ts_ConciliacaoManut Then
+  If Pan_ConcSolicitacoes.Parent=Ts_ConciliacoesManutPagtos Then
   Begin
     EdtConcManutExtratoQtd.Value:=0;
     EdtConcManutExtratoVlr.Value:=0;
@@ -8481,8 +8565,7 @@ begin
 
     // Busca Extratos e Movimentos de Pagamentos ===============================
     BuscaExtratosMovtos;
-
-  End; // If Pan_ConcSolicitacoes.Parent=Ts_ConcConciliar Then
+  End; // If Pan_ConcSolicitacoes.Parent=Ts_ConciliacoesManutPagtos Then
 
   Screen.Cursor:=crDefault;
 end;
@@ -9087,7 +9170,7 @@ begin
   If ((DMConciliacao.CDS_CMExtratos.IsEmpty) or (Not DMConciliacao.CDS_CMExtratos.Active)) And
      ((DMConciliacao.CDS_CMPagtos.IsEmpty)   or (Not DMConciliacao.CDS_CMPagtos.Active))  Then
   Begin
-    If Ts_ConciliacaoManut.TabVisible Then
+    If Ts_ConciliacoesManutPagtos.TabVisible Then
      DtEdt_ConcDtaInicio.SetFocus;
     Exit;
   End;
@@ -9419,7 +9502,7 @@ procedure TFrmBancoExtratos.Rb_ConcConciliadosClick(Sender: TObject);
 begin
   If (not DMConciliacao.CDS_CMExtratos.Active) Or (not DMConciliacao.CDS_CMPagtos.Active) Then
   Begin
-    If (Ts_ConciliacaoManut.TabVisible) and (Pan_ConcSolicitacoes.Visible) Then
+    If (Ts_ConciliacoesManutPagtos.TabVisible) and (Pan_ConcSolicitacoes.Visible) Then
      DtEdt_ConcDtaInicio.SetFocus;
 
     Exit;
@@ -9771,7 +9854,7 @@ begin
 
   Ts_ConcManutTotalPagtos.TabVisible:=False;
   Pan_Opcoes.Visible:=True;
-  Ts_ConciliacaoManut.TabVisible:=True;
+  Ts_ConciliacoesManutPagtos.TabVisible:=True;
 
   HabilitaMenus(FrmBancoExtratos, True);
 
@@ -9873,7 +9956,7 @@ begin
       DMConciliacao.SDS_CMTotalPagtos.CommandText:=MySql;
       DMConciliacao.CDS_CMTotalPagtos.Open;
 
-      Ts_ConciliacaoManut.TabVisible:=False;
+      Ts_ConciliacoesManutPagtos.TabVisible:=False;
       Ts_ConcManutTotalPagtos.TabVisible:=True;
       PC_PrincipalChange(Self);
 
@@ -9882,7 +9965,7 @@ begin
   end; // If (Key=Vk_F11) And (DMConciliacao.CDS_CMPagtos.Active) Then
 
   // Apresenta Legenda de Cores ================================================
-  If (Key=Vk_F1) And (PC_Principal.ActivePage=Ts_ConciliacaoManut) And
+  If (Key=Vk_F1) And (PC_Principal.ActivePage=Ts_ConciliacoesManutPagtos) And
      ((DMConciliacao.CDS_CMPagtos.Active) Or (DMConciliacao.CDS_CMExtratos.Active)) Then
   Begin                                       
     // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
@@ -9913,7 +9996,7 @@ begin
     FrmSolicitacoes.Pan_Cor5.Font.Color:=clWindowText;
     FrmSolicitacoes.Pan_Cor5.Font.Style:=[fsBold];
     FrmSolicitacoes.Pan_Cor5.Color  :=$00FF75BA;
-    FrmSolicitacoes.Pan_Cor5.Caption:='Conciliado Pelo Usuário - Manual (Sem Extrato)';
+    FrmSolicitacoes.Pan_Cor5.Caption:='Conciliado Pelo Usuário - Manual (Somente Extrato)';
 
     FrmSolicitacoes.Pan_Cor6.Font.Color:=clWindowText;
     FrmSolicitacoes.Pan_Cor6.Font.Style:=[fsBold];
@@ -9921,6 +10004,7 @@ begin
     FrmSolicitacoes.Pan_Cor6.Caption:='Conciliado Pelo Usuário - Manual (Com Dinheiro)';
 
     FrmSolicitacoes.Pan_Cor7.Visible:=False;
+    FrmSolicitacoes.Pan_Cor8 .Visible:=False;
 
     bgProcessar:=False;
     FrmSolicitacoes.ShowModal;
@@ -9943,8 +10027,8 @@ begin
 
   Pan_Opcoes.Visible:=False;
 
-  Ts_ConciliacoesManut.TabVisible:=False;
-  Ts_ConciliacaoManut.TabVisible:=False;
+  Ts_ConciliacoesManutPagtos.TabVisible:=False;
+  Ts_ConciliacaoManutPagtos.TabVisible:=False;
   Ts_HistConcAuto.TabVisible:=True;
   PC_PrincipalChange(Self);
 
@@ -10153,8 +10237,8 @@ begin
   Pan_Concilicao.Visible:=False;
 
   Ts_HistConcAuto.TabVisible:=False;
-  Ts_ConciliacaoManut.TabVisible:=False;
-  Ts_ConciliacoesManut.TabVisible:=True;
+  Ts_ConciliacoesManutPagtos.TabVisible:=False;
+  Ts_ConciliacaoManutPagtos.TabVisible:=True;
   PC_ConcConciliar.ActivePage:=Ts_ConcConciliar;
   PC_PrincipalChange(Self);
   PC_ConcConciliarChange(Self);
@@ -10191,7 +10275,7 @@ begin
   Bt_CMApresFiltro.Visible:=False;
 
   // Posiciona Pan_ConcSolicitacoes no Form =====================================
-  Pan_ConcSolicitacoes.Parent:=Ts_ConciliacaoManut;
+  Pan_ConcSolicitacoes.Parent:=Ts_ConciliacoesManutPagtos;
   Pan_ConcSolicitacoes.Visible:=True;
   Bt_CMApresFiltro.Caption:='Retira Filtro';
   Bt_ConcConciliar.Caption:='Busca';
@@ -10200,8 +10284,8 @@ begin
   Pan_Concilicao.Visible:=True;
 
   Ts_HistConcAuto.TabVisible:=False;
-  Ts_ConciliacoesManut.TabVisible:=False;
-  Ts_ConciliacaoManut.TabVisible:=True;
+  Ts_ConciliacaoManutPagtos.TabVisible:=False;
+  Ts_ConciliacoesManutPagtos.TabVisible:=True;
   PC_PrincipalChange(Self);
 
   Rb_ConcTodos.Checked:=True;
@@ -10326,12 +10410,12 @@ end;
 procedure TFrmBancoExtratos.Bt_CMApresFiltroClick(Sender: TObject);
 begin
   // Apresenta Filtros =========================================================
-  If Not Ts_ConciliacaoManut.TabVisible Then
+  If Not Ts_ConciliacoesManutPagtos.TabVisible Then
    Exit;
    
   If Bt_CMApresFiltro.Caption='Apresenta Filtro' Then
   Begin
-    Pan_ConcSolicitacoes.Parent:=Ts_ConciliacaoManut;
+    Pan_ConcSolicitacoes.Parent:=Ts_ConciliacoesManutPagtos;
     Pan_ConcSolicitacoes.Visible:=True;
     Bt_ConcConciliar.Caption:='Busca';
     Bt_CMApresFiltro.Caption:='Retira Filtro';
@@ -10719,6 +10803,11 @@ caFree      O formulário está fechada e toda a memória alocada para a forma é li
 caMinimize  A forma é minimizado, em vez de fechado.  Esta é a ação padrão para formulários filho MDI.
  }
 
+end;
+
+procedure TFrmBancoExtratos.JvXPButton2Click(Sender: TObject);
+begin
+  Bt_SairClick(Self);
 end;
 
 end.

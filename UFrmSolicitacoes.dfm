@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 452
-    ActivePage = Ts_ParametrosGerenciador
+    ActivePage = Ts_GeraOCLegendaCores
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1537,7 +1537,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel10: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -1575,7 +1575,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           OnClick = Bt_GeraOCLegendaCoresVoltarClick
         end
       end
-      object Panel14: TPanel
+      object Pan_Cor8: TPanel
         Left = 72
         Top = 283
         Width = 485
@@ -10556,7 +10556,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 465
-    Top = 226
+    Left = 593
+    Top = 98
   end
 end

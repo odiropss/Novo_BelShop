@@ -31,6 +31,7 @@ type
     Procedure SaldosTransfere_Linx_Sidicom;
 
     Procedure AtualizaListaPrecosEcommerce;
+    // Procedure AtualizaLista0006_BELSHOP(sLista, sDesconto: String);
 
     // Odir ====================================================================
   private
@@ -60,10 +61,37 @@ uses UDMAtualizaEstoques, UDMConexoes, DK_Procs1, DB;
 
 // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// Atualiza Lista de Preços 0006 em BELSHOP.FDB >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//Procedure TFrmAtualizaEstoques.AtualizaLista0006_BELSHOP(sLista, sDesconto: String);
+//Begin
+//  // Verifica se Transação esta Ativa
+//  If DMAtualizaEstoques.SQLC.InTransaction Then
+//   DMAtualizaEstoques.SQLC.Rollback(TD);
+//
+//  // Monta Transacao ===========================================================
+//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+//  TD.IsolationLevel:=xilREADCOMMITTED;
+//  DMAtualizaEstoques.SQLC.StartTransaction(TD);
+//  Try // Try da Transação
+//
+//    DMAtualizaEstoques.SQLC.Execute(sLista,nil,nil);
+//
+//    If Trim(sDesconto)<>'' Then
+//     DMAtualizaEstoques.SQLC.Execute(sDesconto,nil,nil);
+//
+//    // Atualiza Transacao ======================================================
+//    DMAtualizaEstoques.SQLC.Commit(TD);
+//
+//  Except // Except da Transação
+//    // Abandona Transacao ====================================================
+//    DMAtualizaEstoques.SQLC.Rollback(TD);
+//  End; // Try da Transação
+//End; // Atualiza Lista de Preços 0006 em BELSHOP.FDB >>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 // Atualiza Lista de Preços do E-Commerce no SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaEstoques.AtualizaListaPrecosEcommerce;
 Var
-  MySql, MySqlDescontos: String;
+  MySql, MySqlDescLP10, MySqlDescLP6: String;
 
   sCodProdSidicom, sCodBarras, sPcCusto, sPcVenda, sMargem: String;
 
@@ -108,8 +136,6 @@ Begin
            '   LEFT JOIN LINXPRODUTOSCODBAR bl    ON dl.cod_produto=bl.cod_produto'+
 
            ' WHERE pl.desativado=''N'''+
-
-//           ' and   pl.cod_produto between 261 and 267'+
 
            ' ORDER BY 1, 4 desc';
     DMAtualizaEstoques.CDS_LojaLinx.Close;
@@ -211,8 +237,8 @@ Begin
         // Atualiza Lista de Preços (0010) E-Commecer no SIDICOM ===============
         If Trim(sCodProdSidicom)<>'' Then
         Begin
-          // Busca Desconto e Desconto Maximo Original ---------------
-          MySqlDescontos:='';
+          // E-Commerce: Busca Desconto e Desconto Maximo Original -------------
+          MySqlDescLP10:='';
           MySql:=' SELECT'+
                  ' ''UPDATE LISTAPRE''||'+
                  ' '' SET DESCONTO = ''||lp.desconto||'+
@@ -227,17 +253,36 @@ Begin
           IBQ_Consulta.SQL.Add(MySql);
           IBQ_Consulta.Open;
           If Trim(IBQ_Consulta.FieldByName('DML').AsString)<>'' Then
-           MySqlDescontos:=IBQ_Consulta.FieldByName('DML').AsString;
+           MySqlDescLP10:=IBQ_Consulta.FieldByName('DML').AsString;
           IBQ_Consulta.Close;
 
-          // UPDATE OR INSERT INTO LISTAPRE -------------------------
+          // Lista: 0006: Busca Desconto e Desconto Maximo Original ------------
+          MySqlDescLP6:='';
+          MySql:=' SELECT'+
+                 ' ''UPDATE LISTAPRE''||'+
+                 ' '' SET DESCONTO = ''||lp.desconto||'+
+                 ' '' , DESCONTOMAX = ''||lp.descontomax||'+
+                 ' '' WHERE (CODLISTA = ''''0006'''')''||'+
+                 ' '' AND  (CODPRODUTO = ''''''||lp.codproduto||'''''')'' DML'+
+                 ' FROM LISTAPRE lp'+
+                 ' WHERE lp.codlista=''0006'''+
+                 ' AND lp.codproduto = '+QuotedStr(sCodProdSidicom);
+          IBQ_Consulta.Close;
+          IBQ_Consulta.SQL.Clear;
+          IBQ_Consulta.SQL.Add(MySql);
+          IBQ_Consulta.Open;
+          If Trim(IBQ_Consulta.FieldByName('DML').AsString)<>'' Then
+           MySqlDescLP6:=IBQ_Consulta.FieldByName('DML').AsString;
+          IBQ_Consulta.Close;
+
+          // UPDATE OR INSERT INTO LISTAPRE E-COMMERCE -------------------------
           MySql:=' UPDATE OR INSERT INTO LISTAPRE'+
                  ' (CODLISTA, CODPRODUTO, PRECOCOMPRA, MARGEM, PRECOVENDA,'+
                  // OdirApagar - 08/09/2017
                  // '  PRECOANTERIOR,
                  ' DATAALTERACAO, HORAALTERACAO, DESCONTO,'+
-                 '  DESCONTOMAX, DESATIVADO, PRECODOLAR, ACRECIMOLISTA,'+
-                 '  CUSTOSLISTA)'+
+                 ' DESCONTOMAX, DESATIVADO, PRECODOLAR, ACRECIMOLISTA,'+
+                 ' CUSTOSLISTA)'+
                  ' VALUES ('+
                  QuotedStr('0010')+', '+ // CODLISTA
                  QuotedStr(sCodProdSidicom)+', '+ // CODPRODUTO
@@ -248,12 +293,43 @@ Begin
                  // ' 0.0000,'+ // PRECOANTERIOR
                  QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDataAtual)))+' ,'+ // DATAALTERACAO
                  QuotedStr(sgHoraAtual)+' ,'+ // HORAALTERACAO
-                 ' 10,'+ // DESCONTO
-                 ' 10, '+ // DESCONTOMAX
+                 ' 10.00,'+ // DESCONTO
+                 ' 10.00, '+ // DESCONTOMAX
                  QuotedStr('0')+', '+ // DESATIVADO
-                 ' 0,'+ // PRECODOLAR
-                 ' 0,'+ // ACRECIMOLISTA
-                 ' 0)'+ // CUSTOSLISTA
+                 ' 0.00,'+ // PRECODOLAR
+                 ' 0.00,'+ // ACRECIMOLISTA
+                 ' 0.00)'+ // CUSTOSLISTA
+
+                 ' MATCHING (CODLISTA, CODPRODUTO)';
+          IBQ_Consulta.Close;
+          IBQ_Consulta.SQL.Clear;
+          IBQ_Consulta.SQL.Add(MySql);
+          IBQ_Consulta.ExecSQL;
+
+          // UPDATE OR INSERT INTO LISTAPRE LISTA-0006 -------------------------
+          MySql:=' UPDATE OR INSERT INTO LISTAPRE'+
+                 ' (CODLISTA, CODPRODUTO, PRECOCOMPRA, MARGEM, PRECOVENDA,'+
+                 // OdirApagar - 08/09/2017
+                 // '  PRECOANTERIOR,
+                 ' DATAALTERACAO, HORAALTERACAO, DESCONTO,'+
+                 ' DESCONTOMAX, DESATIVADO, PRECODOLAR, ACRECIMOLISTA,'+
+                 ' CUSTOSLISTA)'+
+                 ' VALUES ('+
+                 QuotedStr('0006')+', '+ // CODLISTA
+                 QuotedStr(sCodProdSidicom)+', '+ // CODPRODUTO
+                 f_Troca(',','.',sPcCusto)+', '+ // PRECOCOMPRA
+                 f_Troca(',','.',sMargem)+', '+ // MARGEM
+                 f_Troca(',','.',sPcVenda)+', '+ // PRECOVENDA
+                 // OdirApagar - 08/09/2017
+                 // ' 0.0000,'+ // PRECOANTERIOR
+                 QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDataAtual)))+' ,'+ // DATAALTERACAO
+                 QuotedStr(sgHoraAtual)+' ,'+ // HORAALTERACAO
+                 ' 0.00,'+ // DESCONTO
+                 ' 15.00, '+ // DESCONTOMAX
+                 QuotedStr('0')+', '+ // DESATIVADO
+                 ' 0.00,'+ // PRECODOLAR
+                 ' 0.00,'+ // ACRECIMOLISTA
+                 ' 0.00)'+ // CUSTOSLISTA
 
                  ' MATCHING (CODLISTA, CODPRODUTO)';
           IBQ_Consulta.Close;
@@ -262,14 +338,24 @@ Begin
           IBQ_Consulta.ExecSQL;
 
           // Retorna Desocntos Originais do Produto na Lista --------
-          If Trim(MySqlDescontos)<>'' Then
+          If Trim(MySqlDescLP10)<>'' Then
           Begin
             IBQ_Consulta.Close;
             IBQ_Consulta.SQL.Clear;
-            IBQ_Consulta.SQL.Add(MySqlDescontos);
+            IBQ_Consulta.SQL.Add(MySqlDescLP10);
             IBQ_Consulta.ExecSQL;
-          End; // If Trim(MySqlDescontos)<>'' Then
+          End; // If Trim(MySqlDescLP10)<>'' Then
 
+          If Trim(MySqlDescLP6)<>'' Then
+          Begin
+            IBQ_Consulta.Close;
+            IBQ_Consulta.SQL.Clear;
+            IBQ_Consulta.SQL.Add(MySqlDescLP6);
+            IBQ_Consulta.ExecSQL;
+          End; // If Trim(MySqlDescLP6)<>'' Then
+
+          // Atualiza Lista:0006 no BELSHOP.FDB ==================================
+          // AtualizaLista0006_BELSHOP(MySql, MySqlDescLP6);
         End; // If Trim(sCodProdSidicom)<>'' Then
       End; // If DMAtualizaEstoques.CDS_LojaLinx.FieldByName('preco_venda').AsCurrency<>0 Then
 
@@ -900,7 +986,6 @@ begin
 //    COM	        COM	          COM	       iCodLinx<>0 e sDtaInventLinx<>''  Busca Estoques no LINX Direto
 // ========  ===========  ===============  ================================  ============================================
 
-
   tgMySqlErro.Clear;
   tgMySqlErro.SaveToFile(sgPath_Local+'ODIR_ERRO.txt');
 
@@ -1184,24 +1269,6 @@ begin
             // =================================================================
             If (iCodLinx<>0) And (sDtaInventLinx<>'') Then
             Begin
-              // odiraqui - 26/09/2017
-//              MySql:=' SELECT CAST(LPAD(TRIM(p.cod_auxiliar),6,0) AS VARCHAR(6)) CodProduto,'+
-//                     '        m.data_lancamento,'+
-//                     '        COALESCE(m.valor_liquido,0.0000) valor_liquido'+
-//                     ' FROM LINXMOVIMENTO m, LINXPRODUTOS p'+
-//                     ' WHERE m.cod_produto=p.cod_produto'+
-//                     ' AND   m.operacao = ''E'''+
-//                     ' AND   ((m.tipo_transacao=''E'') OR (m.tipo_transacao IS NULL))'+
-//                     ' AND   m.cancelado=''N'''+
-//                     ' AND   m.excluido=''N'''+
-//                     ' AND   p.cod_auxiliar is not null'+
-//                     ' AND   m.empresa='+IntToStr(iCodLinx)+
-//                     ' ORDER BY 1, 2 DESC';
-//              DMAtualizaEstoques.CDS_BuscaRapida.Close;
-//              DMAtualizaEstoques.SQLQ_BuscaRapida.SQL.Clear;
-//              DMAtualizaEstoques.SQLQ_BuscaRapida.SQL.Add(MySql);
-//              DMAtualizaEstoques.CDS_BuscaRapida.Open;
-
               While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
               Begin
                 If sCodProd=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('CodProduto').AsString Then
@@ -1225,19 +1292,6 @@ begin
                     sValues:=
                      sValues+QuotedStr(sQtdSaldo)+', ';
                   End // If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
-
-                  //OdirAqui - 26/09/2017
-//                  // Busca Preço Ultima Compra =================================
-//                  Else If (Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='LASTPRECOCOMPRA') Then
-//                  Begin
-//                    sPcUltCompra:='0.0000';
-//                    If DMAtualizaEstoques.CDS_BuscaRapida.Locate('CODPRODUTO', DMAtualizaEstoques.CDS_LojaLinx.FieldByName('CodProduto').AsString,[]) Then
-//                     sPcUltCompra:=Trim(DMAtualizaEstoques.CDS_BuscaRapida.FieldByName('valor_liquido').AsString);
-//
-//                    sValues:=
-//                     sValues+QuotedStr(f_Troca(',','.',sPcUltCompra))+',';
-//                  End // If Trim(DMAtualizaEstoques.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
-
                   Else
                    Begin
                      // Grava Resto do Registro
@@ -1256,7 +1310,6 @@ begin
 
                 DMAtualizaEstoques.CDS_LojaLinx.Next;
               End; // While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
-              DMAtualizaEstoques.CDS_BuscaRapida.Close;
 
               DMAtualizaEstoques.CDS_LojaLinx.Close;
             End; // If (iCodLinx<>0) And (sDtaInventLinx<>'') Then

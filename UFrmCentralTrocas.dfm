@@ -1596,6 +1596,24 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Width = 115
           end
         end
+        object GroupBox1: TGroupBox
+          Left = 346
+          Top = 2
+          Width = 88
+          Height = 42
+          Align = alLeft
+          Caption = ' Produtos '
+          TabOrder = 4
+          object DBEdit1: TDBEdit
+            Left = 12
+            Top = 16
+            Width = 64
+            Height = 19
+            DataField = 'Tot_Itens'
+            DataSource = DMCentralTrocas.DS_ReposicaoDocs
+            TabOrder = 0
+          end
+        end
       end
       object Dbg_ReposLojasItens: TDBGridJul
         Left = 423

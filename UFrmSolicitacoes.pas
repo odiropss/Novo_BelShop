@@ -600,7 +600,7 @@ type
     Dbg_CodigosViculados: TDBGrid;
     JvXPButton1: TJvXPButton;
     DtaEdtSolicExpDoctoDestino: TDateTimePicker;
-    Panel14: TPanel;
+    Pan_Cor8: TPanel;
     Ts_ReposDivergencias: TTabSheet;
     Pan_ReposDivergencias: TPanel;
     Gb_ReposDivProdutoSel: TGroupBox;

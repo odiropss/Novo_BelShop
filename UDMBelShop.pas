@@ -4081,6 +4081,7 @@ end;
 procedure TDMBelShop.CDS_AComprarOCsAfterScroll(DataSet: TDataSet);
 begin
   FrmBelShop.Bt_GeraOCImpEditOC.Visible:=False;
+
   If Not CDS_AComprarOCs.IsEmpty Then
   Begin
     If Trim(CDS_AComprarOCsIND_OC_GERADA.AsString)='S' Then
@@ -4112,12 +4113,18 @@ begin
          FrmBelShop.Bt_GeraOCImpEditOC.Visible:=True;
          FrmBelShop.Bt_GeraOCImpEditOC.Glyph:=FrmBelShop.Bt_GeraOCGraficoEdit.Glyph;
          FrmBelShop.Bt_GeraOCImpEditOC.Caption:='Editar OC';
+         FrmBelShop.Bt_GeraOCPreVisualizaOC.Caption:=' Pré-Visualização OC';
        End;
 
        If CDS_AComprarOCsTIPO.AsString='TR' Then
        Begin
          FrmBelShop.Lab_ItensOC.Caption:='Itens TRs';
          FrmBelShop.Lab_Qtds_OC.Caption:='Qtds TRs';
+
+         FrmBelShop.Bt_GeraOCImpEditOC.Visible:=True;
+         FrmBelShop.Bt_GeraOCImpEditOC.Glyph:=FrmBelShop.Bt_GeraOCGraficoEdit.Glyph;
+         FrmBelShop.Bt_GeraOCImpEditOC.Caption:='Editar TR';
+         FrmBelShop.Bt_GeraOCPreVisualizaOC.Caption:=' Pré-Visualização TR';
        End; // If CDS_AComprarOCsTIPO.AsString='TR' Then
 
      End; // If Trim(CDS_AComprarOCsIND_OC_GERADA.AsString)='S' Then
