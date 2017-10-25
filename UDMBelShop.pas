@@ -4190,6 +4190,11 @@ begin
   IBQ_AComprar.Open;
   CDS_AComprarOCs.Open;
 
+  If igRecNoOCs<>0 Then
+  Begin
+    CDS_AComprarOCs.RecNo:=igRecNoOCs;
+  End;
+
   If Trim(sCodItemDel)<>'' Then
    Begin
     if not IBQ_AComprar.Locate('COD_ITEM;COD_EMPRESA',VarArrayOf([sCodItemDel,sCodLojaDel]),[]) Then
@@ -4367,7 +4372,6 @@ begin
       FrmBelShop.Dbg_GeraOCGrid.SelectedIndex:=3;
     End;
   End;
-
 end;
 
 procedure TDMBelShop.IBQ_AComprarEditaAfterPost(DataSet: TDataSet);
@@ -4445,6 +4449,11 @@ begin
 
         IBQ_AComprarEditaQTD_ACOMPRAR.AsCurrency:=igTotInteiro*IBQ_AComprarEditaUNI_COMPRA.AsCurrency;
       End; // If Ckb_GeraOCCalculoCxEmbarque.Checked Then
+
+      If FrmBelShop.Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização TR' Then
+      Begin
+        IBQ_AComprarEditaQTD_TRANSF.AsCurrency:=IBQ_AComprarEditaQTD_ACOMPRAR.AsCurrency;
+      End;
 
      IBQ_AComprarEditaOBS_OC.AsString:=QuotedStr('Calculado em: '+DateTimeToStr(
                               DataHoraServidorFI(SDS_DtaHoraServidor))+' por '+Des_Usuario);

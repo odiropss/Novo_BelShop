@@ -7182,7 +7182,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_OCGeraEditaOrdemCompra
+        ActivePage = Ts_OCGeraOrdemCompra
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -11390,7 +11390,7 @@ object FrmBelShop: TFrmBelShop
                     Visible = True
                   end>
               end
-              object dxStatusBar1: TdxStatusBar
+              object StB_GeraOCEdit: TdxStatusBar
                 Left = 0
                 Top = 356
                 Width = 955

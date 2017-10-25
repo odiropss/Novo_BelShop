@@ -954,7 +954,7 @@ type
     Ts_GeraOCEditaGrid: TTabSheet;
     Splitter1: TSplitter;
     Dbg_GeraOCEditaGrid: TDBGridJul;
-    dxStatusBar1: TdxStatusBar;
+    StB_GeraOCEdit: TdxStatusBar;
     Dbg_GeraOCEditaProdutos: TDBGrid;
     Panel43: TPanel;
     Label62: TLabel;
@@ -2531,6 +2531,8 @@ var
   bFinanPlanFinanceiraUsarMesAno: Boolean;
   sCbx_FinanPlanFinanceiraMes1, sEdtFinanPlanFinanceiraAno1, sCbx_FinanPlanFinanceiraMes2, sEdtFinanPlanFinanceiraAno2: String;
   dDtEdt_FinanPlanFinanceiraPeriodoDtaInicio, dDtEdt_FinanPlanFinanceiraPeriodoDtaFim: TDate;
+
+  igRecNoOCs: Integer;
 
   // Lojas Linx =========================
   sgParametroLinx,
@@ -18334,6 +18336,11 @@ Begin
     DMBelShop.SDS_AComprarOCs.CommandText:=MySql;
     DMBelShop.CDS_AComprarOCs.Open;
 
+    If igRecNoOCs<>0 Then
+    Begin
+      DMBelShop.CDS_AComprarOCs.RecNo:=igRecNoOCs;
+    End;
+
     EdtGeraOCTotalGeral.Value:=DMBelShop.CDS_AComprarOCsTOTALGERAL.AsVariant;
   End; // If EdtGeraOCBuscaDocto.Value<>0 Then
 
@@ -26171,6 +26178,8 @@ Var
   sTotal_Valor, sTotal_Itens, sTotal_Qtd: String;
   s: String;
 begin
+  igRecNoOCs:=DMBelShop.CDS_AComprarOCs.RecNo;
+
   Dbg_GeraOCTotalGeral.SetFocus;
 
   If DMBelShop.CDS_AComprarOCs.IsEmpty Then
@@ -26204,9 +26213,9 @@ begin
              Rb_GeraOCEditaComQtd.Visible:=True;
              Rb_GeraOCEditaSemQtd.Visible:=True;
              Rb_GeraOCEditaTodosItens.Visible:=True;
-             dxStatusBar1.Visible:=True;
+             StB_GeraOCEdit.Visible:=True;
 
-             Dbg_GeraOCEditaGrid.Columns[2].ReadOnly:=False;
+             Dbg_GeraOCEditaGrid.Columns[2].Title.Caption:='A Comprar';
            End;
 
            If (Bt_GeraOCImpEditOC.Caption='Editar TR') Then
@@ -26217,9 +26226,9 @@ begin
              Rb_GeraOCEditaComQtd.Visible:=False;
              Rb_GeraOCEditaSemQtd.Visible:=False;
              Rb_GeraOCEditaTodosItens.Visible:=False;
-             dxStatusBar1.Visible:=False;
 
-             Dbg_GeraOCEditaGrid.Columns[2].ReadOnly:=True;
+             StB_GeraOCEdit.Visible:=False;
+             Dbg_GeraOCEditaGrid.Columns[2].Title.Caption:='A Transf';
            End;
 
     MySql:=
@@ -27288,12 +27297,9 @@ begin
     DMBelShop.IBQ_AComprarEdita.Next;
     Dbg_GeraOCEditaGrid.SetFocus;
     Dbg_GeraOCEditaGrid.SelectedIndex:=2;
+
     Exit;
   End;
-
-  // Altera Preco Unitário =====================================================
-  If (key=Vk_F2) and (dxStatusBar1.Visible) Then
-   AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'P', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
 
   // Localiza Produto ==========================================================
   If Key=VK_F4 Then
@@ -27314,19 +27320,26 @@ begin
     End; // If InputQuery('Localizar Produto','',s) then
   End; // If Key=VK_F4 Then
 
-  // Altera Desconto Individual ================================================
-  If (key=Vk_F3) and (dxStatusBar1.Visible) Then
-   AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'DI', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
-
-  // Altera Desconto no Mix ====================================================
-  If (key=Vk_F5) and (dxStatusBar1.Visible) Then
-   AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'DM', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
-
-  // Transito ==================================================================
-  If (Key=VK_F6) and (dxStatusBar1.Visible) Then
+  If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização OC' Then
   Begin
-    VerTransito(DMBelShop.IBQ_AComprarEdita, DMBelShop.DS_AComprarEdita, False);
-  End; // Transito - If Key=VK_F3 Then
+    // Altera Preco Unitário =====================================================
+    If (key=Vk_F2) and (StB_GeraOCEdit.Visible) Then
+     AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'P', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
+
+    // Altera Desconto Individual ================================================
+    If (key=Vk_F3) and (StB_GeraOCEdit.Visible) Then
+     AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'DI', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
+
+    // Altera Desconto no Mix ====================================================
+    If (key=Vk_F5) and (StB_GeraOCEdit.Visible) Then
+     AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'DM', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
+
+    // Transito ==================================================================
+    If (Key=VK_F6) and (StB_GeraOCEdit.Visible) Then
+    Begin
+      VerTransito(DMBelShop.IBQ_AComprarEdita, DMBelShop.DS_AComprarEdita, False);
+    End; // Transito - If Key=VK_F3 Then
+  End; // If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização OC' Then
 end;
 
 procedure TFrmBelShop.PC_GeraOCEditaApresentacaoChange(Sender: TObject);
@@ -27343,6 +27356,7 @@ end;
 
 procedure TFrmBelShop.Bt_GeraOCEditaVoltarClick(Sender: TObject);
 begin
+
   DMBelShop.IBQ_AComprarEdita.Close;
 
   EdtGeraOCEditaDocto.Clear;
@@ -27365,6 +27379,14 @@ begin
 
   If PC_GeraOCApresentacao.ActivePage=Ts_GeraOCOrdensCompra Then
    Dbg_GeraOCTotalGeral.SetFocus;
+
+  If igRecNoOCs<>0 Then
+  Begin
+    DMBelShop.CDS_AComprarOCs.RecNo:=igRecNoOCs;
+  End;
+
+  igRecNoOCs:=0;
+
 end;
 
 procedure TFrmBelShop.Rb_GeraOCEditaTodosItensClick(Sender: TObject);

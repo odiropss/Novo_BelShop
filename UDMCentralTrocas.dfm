@@ -703,6 +703,11 @@ object DMCentralTrocas: TDMCentralTrocas
       FixedChar = True
       Size = 19
     end
+    object CDS_ReposicaoTransfPRINCIPALFOR: TStringField
+      FieldName = 'PRINCIPALFOR'
+      FixedChar = True
+      Size = 6
+    end
   end
   object SDS_ReposicaoTransf: TSQLDataSet
     CommandText = 
@@ -717,28 +722,31 @@ object DMCentralTrocas: TDMCentralTrocas
       'ISTAPRE lp'#13#10'               WHERE lp.codlista='#39'0006'#39#13#10'           ' +
       '    AND   lp.codproduto=pr.codproduto),1.00)'#13#10'as NUMERIC(12,2)) ' +
       'PrecoCompra,'#13#10#13#10'lo.ind_prioridade, lo.ind_leitora, lo.qtd_checko' +
-      'ut,'#13#10'Trim(pr.codbarra) codbarra'#13#10#13#10'FROM ES_ESTOQUES_LOJAS lo, ES' +
-      '_ESTOQUES_CD cd, PRODUTO pr'#13#10'WHERE lo.cod_produto=pr.codproduto'#13 +
-      #10'AND   lo.cod_produto=cd.cod_produto'#13#10'AND   lo.dta_movto=cd.dta_' +
-      'movto'#13#10'AND   lo.ind_transf='#39'SIM'#39#13#10#13#10'AND   lo.dta_movto= :sDta'#13#10'A' +
-      'ND   lo.num_docto= :Doc'#13#10'AND   lo.cod_loja= :CodLoja'#13#10#13#10'ORDER BY' +
-      ' 3'
+      'ut,'#13#10'Trim(pr.codbarra) codbarra,'#13#10'pr.principalfor'#13#10#13#10'FROM ES_EST' +
+      'OQUES_LOJAS lo, ES_ESTOQUES_CD cd, PRODUTO pr'#13#10'WHERE lo.cod_prod' +
+      'uto=pr.codproduto'#13#10'AND   lo.cod_produto=cd.cod_produto'#13#10'AND   lo' +
+      '.dta_movto=cd.dta_movto'#13#10'AND   lo.ind_transf='#39'SIM'#39#13#10#13#10'AND   lo.d' +
+      'ta_movto= :sDta'#13#10'AND   lo.num_docto= :Doc'#13#10'AND   lo.cod_loja= :C' +
+      'odLoja'#13#10#13#10'ORDER BY 3'
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'sDta'
         ParamType = ptInput
+        Value = '24.10.217'
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Doc'
         ParamType = ptInput
+        Value = '7704'
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'CodLoja'
         ParamType = ptInput
+        Value = '1'
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 392

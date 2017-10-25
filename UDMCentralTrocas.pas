@@ -171,6 +171,7 @@ type
     CDS_ParamTransfQTD_MAX_PROD: TStringField;
     CDS_ParamTransfCOD_LOJA: TIntegerField;
     CDS_ParamTransfRAZAO_SOCIAL: TStringField;
+    CDS_ReposicaoTransfPRINCIPALFOR: TStringField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir
