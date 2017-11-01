@@ -27,6 +27,7 @@ object DMArtesanalis: TDMArtesanalis
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
+    Connected = True
     Left = 44
     Top = 16
   end
@@ -208,21 +209,21 @@ object DMArtesanalis: TDMArtesanalis
       ''
       'ORDER BY 2')
     SQLConnection = SQLC
-    Left = 358
-    Top = 232
+    Left = 326
+    Top = 176
   end
   object DSP_ProdutoProducao: TDataSetProvider
     DataSet = SQLQ_ProdutoProducao
     Options = [poFetchBlobsOnDemand, poRetainServerOrder]
-    Left = 395
-    Top = 246
+    Left = 363
+    Top = 190
   end
   object CDS_ProdutoProducao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ProdutoProducao'
-    Left = 452
-    Top = 232
+    Left = 420
+    Top = 176
     object CDS_ProdutoProducaoCOD_MATERIAPRIMA: TIntegerField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_MATERIAPRIMA'
@@ -283,8 +284,8 @@ object DMArtesanalis: TDMArtesanalis
   end
   object DS_ProdutoProducao: TDataSource
     DataSet = CDS_ProdutoProducao
-    Left = 508
-    Top = 246
+    Left = 476
+    Top = 190
   end
   object SQLQ_ProdutoMatPrima: TSQLQuery
     MaxBlobSize = -1
@@ -294,21 +295,21 @@ object DMArtesanalis: TDMArtesanalis
       'From MATERIAPRIMA ma'
       'Order By ma.des_materiaprima')
     SQLConnection = SQLC
-    Left = 356
-    Top = 168
+    Left = 324
+    Top = 112
   end
   object DSP_ProdutoMatPrima: TDataSetProvider
     DataSet = SQLQ_ProdutoMatPrima
     Options = [poFetchBlobsOnDemand, poRetainServerOrder]
-    Left = 403
-    Top = 182
+    Left = 371
+    Top = 126
   end
   object CDS_ProdutoMatPrima: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ProdutoMatPrima'
-    Left = 444
-    Top = 168
+    Left = 412
+    Top = 112
     object CDS_ProdutoMatPrimaCOD_MATERIAPRIMA: TIntegerField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_MATERIAPRIMA'
@@ -345,8 +346,8 @@ object DMArtesanalis: TDMArtesanalis
   end
   object DS_ProdutoMatPrima: TDataSource
     DataSet = CDS_ProdutoMatPrima
-    Left = 500
-    Top = 182
+    Left = 468
+    Top = 126
   end
   object CDS_V_DoctoItens: TClientDataSet
     Aggregates = <>
@@ -566,21 +567,21 @@ object DMArtesanalis: TDMArtesanalis
       'And   pd.num_seq=:SeqItem'
       'order by 2')
     SQLConnection = SQLC
-    Left = 332
-    Top = 376
+    Left = 324
+    Top = 272
   end
   object DSP_VerProducao: TDataSetProvider
     DataSet = SQLQ_VerProducao
     Options = [poFetchBlobsOnDemand, poRetainServerOrder]
-    Left = 379
-    Top = 390
+    Left = 371
+    Top = 286
   end
   object CDS__VerProducao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_VerProducao'
-    Left = 420
-    Top = 376
+    Left = 412
+    Top = 272
     object CDS__VerProducaoCOD_MATERIAPRIMA: TIntegerField
       DisplayLabel = 'C'#243'd'
       FieldName = 'COD_MATERIAPRIMA'
@@ -653,14 +654,14 @@ object DMArtesanalis: TDMArtesanalis
   end
   object Ds_VerProducao: TDataSource
     DataSet = CDS__VerProducao
-    Left = 476
-    Top = 390
+    Left = 468
+    Top = 286
   end
   object CDS_V_PVPedidos: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 656
-    Top = 56
+    Left = 304
+    Top = 336
     object CDS_V_PVPedidosCOD_CLIENTE: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'C'#243'digo'
@@ -764,7 +765,104 @@ object DMArtesanalis: TDMArtesanalis
   end
   object DS_V_PVPedidos: TDataSource
     DataSet = CDS_V_PVPedidos
-    Left = 716
-    Top = 78
+    Left = 364
+    Top = 358
+  end
+  object SQLQ_FluxoFinanceiro: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQL.Strings = (
+      'SELECT'
+      'ff.num_seq,'
+      'ff.cod_historico, pl.des_historico,'
+      'ff.cod_fornecedor, fo.des_pessoa,'
+      'ff.num_docto, ff.dta_emissao,'
+      
+        'ff.vlr_original, ff.num_prestacao, ff.num_prazo, ff.dta_vencimen' +
+        'to, ff.vlr_prestacao'
+      ''
+      'FROM FLUXO_FINANCEIRO ff, PESSOAS fo, PLANO_CONTAS pl'
+      ''
+      'WHERE ff.cod_fornecedor=fo.cod_pessoa'
+      'AND   ff.cod_historico=pl.cod_historico'
+      'AND   ff.cod_fornecedor=1')
+    SQLConnection = SQLC
+    Left = 580
+    Top = 32
+  end
+  object DSP_FluxoFinanceiro: TDataSetProvider
+    DataSet = SQLQ_FluxoFinanceiro
+    Options = [poFetchBlobsOnDemand, poRetainServerOrder]
+    Left = 636
+    Top = 46
+  end
+  object CDS_FluxoFinanceiro: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_FluxoFinanceiro'
+    Left = 684
+    Top = 32
+    object CDS_FluxoFinanceiroNUM_SEQ: TIntegerField
+      FieldName = 'NUM_SEQ'
+      Required = True
+    end
+    object CDS_FluxoFinanceiroCOD_HISTORICO: TIntegerField
+      DisplayLabel = 'C'#243'd Hist'
+      FieldName = 'COD_HISTORICO'
+    end
+    object CDS_FluxoFinanceiroDES_HISTORICO: TStringField
+      DisplayLabel = 'Hist'#243'rico'
+      FieldName = 'DES_HISTORICO'
+      Size = 50
+    end
+    object CDS_FluxoFinanceiroCOD_FORNECEDOR: TIntegerField
+      DisplayLabel = 'C'#243'd Forn'
+      FieldName = 'COD_FORNECEDOR'
+    end
+    object CDS_FluxoFinanceiroDES_PESSOA: TStringField
+      DisplayLabel = 'Fornecedor'
+      FieldName = 'DES_PESSOA'
+      Size = 60
+    end
+    object CDS_FluxoFinanceiroNUM_DOCTO: TIntegerField
+      DisplayLabel = 'N'#186' Docto'
+      FieldName = 'NUM_DOCTO'
+    end
+    object CDS_FluxoFinanceiroDTA_EMISSAO: TDateField
+      Alignment = taCenter
+      DisplayLabel = 'Emiss'#227'o'
+      FieldName = 'DTA_EMISSAO'
+    end
+    object CDS_FluxoFinanceiroVLR_ORIGINAL: TFMTBCDField
+      DisplayLabel = 'Vlr Original'
+      FieldName = 'VLR_ORIGINAL'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
+    end
+    object CDS_FluxoFinanceiroNUM_PRESTACAO: TIntegerField
+      FieldName = 'NUM_PRESTACAO'
+    end
+    object CDS_FluxoFinanceiroNUM_PRAZO: TIntegerField
+      DisplayLabel = 'Dias/Prazo'
+      FieldName = 'NUM_PRAZO'
+    end
+    object CDS_FluxoFinanceiroDTA_VENCIMENTO: TDateField
+      Alignment = taCenter
+      DisplayLabel = 'Vencimento'
+      FieldName = 'DTA_VENCIMENTO'
+    end
+    object CDS_FluxoFinanceiroVLR_PRESTACAO: TFMTBCDField
+      DisplayLabel = 'Valor Docto'
+      FieldName = 'VLR_PRESTACAO'
+      DisplayFormat = '0,.00'
+      Precision = 18
+      Size = 2
+    end
+  end
+  object DS_FluxoFinanceiro: TDataSource
+    DataSet = CDS_FluxoFinanceiro
+    Left = 740
+    Top = 46
   end
 end

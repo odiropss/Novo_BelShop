@@ -1385,8 +1385,8 @@ var
 implementation
 
 uses DK_Procs1, UFrmBelShop, UDMConexoes,  UFrmSolicitacoes, UDMVirtual,
-  UFrmGeraPedidosComprasLojas, UWindowsFirewall, UEntrada,
-  UDMBancosConciliacao, UFrmOCLinx;
+     UFrmGeraPedidosComprasLojas, UWindowsFirewall, UEntrada,
+     UDMBancosConciliacao, UFrmOCLinx;
      // DBGrids, Variants, RTLConsts,
 
 {$R *.dfm}
@@ -3658,8 +3658,10 @@ Begin
           // Lojas Linx
           //==============================================================================
            If AnsiUpperCase(CDS_ConectaEmpresa.FieldByName('Pasta_Base_Dados').AsString)='SEM' Then
+           Begin
              s:=IncludeTrailingPathDelimiter(DMVirtual.CDS_V_EmpConexoesPASTA_BASE_DADOS.AsString)+
-                                           DMVirtual.CDS_V_EmpConexoesDES_BASE_DADOS.AsString;
+                                             DMVirtual.CDS_V_EmpConexoesDES_BASE_DADOS.AsString;
+           End;
 
           //  \\201.86.212.10\C:\SIDICOM.NEW\BANCO.FDB
 

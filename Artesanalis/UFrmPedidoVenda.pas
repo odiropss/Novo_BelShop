@@ -23,7 +23,6 @@ uses
 type
   TFrmPedidoVenda = class(TForm)
     Gb_Produtos: TGroupBox;
-    OdirPanApres: TPanel;
     Pan_Docto: TPanel;
     Gb_NumDocto: TGroupBox;
     EdtNumDocto: TCurrencyEdit;
@@ -82,6 +81,7 @@ type
     Dbe_VlrTotalCalculado: TDBEdit;
     Dbe_VlrTotalDesconto: TDBEdit;
     Dbe_VlrTotalProdutos: TDBEdit;
+    OdirPanApres: TPanel;
 
     // Odir ====================================================================
 
@@ -771,6 +771,7 @@ Begin
 
   SetCursorPos(NewPos.x,NewPos.y)
 End; // Show Hint em Forma de Balão - Posiciona do Componente >>>>>>>>>>>>>>>>>>
+
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - Fim >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

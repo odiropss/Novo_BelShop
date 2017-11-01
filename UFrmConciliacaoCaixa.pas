@@ -784,7 +784,9 @@ Begin
   sDta:=f_Troca('-', '.',sDta);
 
   // Busca Cadastro de Créditos ================================================
-  If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
+  // OdirApagar - 26/10/2017
+  // If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
+  If Not bgSemBancoDados Then
    Begin
      MySql:=' SELECT f.codforma,'+
             ' CASE'+
@@ -796,7 +798,7 @@ Begin
             ' FROM FORMAPGTO f'+
             ' order by 2';
     End
-  Else // If StrToInt(sCodFilial)<18 Then // Só tem no LINX
+  Else // If bgSemBancoDados Then // Só tem no LINX
    Begin
      MySql:=' SELECT 0 codforma, ''DINHEIRO'' nomeforma'+
             ' FROM RDB$DATABASE'+
@@ -815,7 +817,7 @@ Begin
             ' UNION'+
             ' SELECT 5 codforma, ''DEVOLUÇÃO'' nomeforma'+
             ' FROM RDB$DATABASE';
-   End; // If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
+   End; // If Not bgSemBancoDados Then // Busca no Sidicom
   FrmBelShop.IBQ_ConsultaFilial.Close;
   FrmBelShop.IBQ_ConsultaFilial.SQL.Clear;
   FrmBelShop.IBQ_ConsultaFilial.SQL.Add(MySql);
@@ -964,18 +966,19 @@ Begin
   sDta:=f_Troca('/', '.',DtEdtConcFechaCaixaData.Text);
   sDta:=f_Troca('-', '.',sDta);
 
-  If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
+  // OdirApagar - 26/10/2017
+  // If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
+  If Not bgSemBancoDados Then // Busca no Sidicom
    Begin
      MySql:=' SELECT cx.codcaixa, cx.nomecaixa'+
             ' FROM CAIXA cx'+
             ' ORDER BY 1';
    End
-  Else // If StrToInt(sCodFilial)<18 Then // Só tem no LINX
+  Else // If bgSemBancoDados Then // Só tem no LINX
    Begin
      MySql:=' Select ''999'' codcaixa, ''CAIXA SALÃO'' nomecaixa'+
             ' FROM RDB$DATABASE';
-   End; // If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
-
+   End; // If Not bgSemBancoDados Then // Busca no Sidicom
   FrmBelShop.IBQ_ConsultaFilial.Close;
   FrmBelShop.IBQ_ConsultaFilial.SQL.Clear;
   FrmBelShop.IBQ_ConsultaFilial.SQL.Add(MySql);
@@ -1090,7 +1093,9 @@ Begin
   sDta:=f_Troca('/', '.',DtEdtConcFechaCaixaData.Text);
   sDta:=f_Troca('-', '.',sDta);
 
-  If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
+  // OdirApagar - 26/10/2017
+  // If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
+  If Not bgSemBancoDados Then // Busca no Sidicom
    Begin
      MySql:=' Select sum(Coalesce(m.totnota,0.00)) Tot_Debitos'+
             ' From MCLI m, COMPRV c'+
@@ -1107,11 +1112,11 @@ Begin
      MySql:=
       MySql+' And m.datacomprovante='+QuotedStr(sDta);
    End
-  Else // If StrToInt(sCodFilial)<18 Then // Só tem no LINX
+  Else // If Not bgSemBancoDados Then // Só tem no LINX
    Begin
      MySql:=' Select 0.00 Tot_Debitos'+
             ' FROM RDB$DATABASE';
-   End; // If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
+   End; // If Not bgSemBancoDados Then // Busca no Sidicom
   FrmBelShop.IBQ_ConsultaFilial.Close;
   FrmBelShop.IBQ_ConsultaFilial.SQL.Clear;
   FrmBelShop.IBQ_ConsultaFilial.SQL.Add(MySql);
@@ -1247,7 +1252,9 @@ Begin
   sDta:=f_Troca('/', '.',DtEdtConcFechaCaixaData.Text);
   sDta:=f_Troca('-', '.',sDta);
 
-  If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
+  // OdirApagar - 26/10/2017
+  // If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
+  If Not bgSemBancoDados Then // Busca no Sidicom
    Begin
      MySql:=' SELECT'+
             ' mv.codcaixa Cod_Operador, cx.nomecaixa Des_Operador,'+
@@ -1286,7 +1293,7 @@ Begin
       MySql+' GROUP BY 1,2,3,4'+
             ' ORDER BY 1,3';
    End
-  Else // If StrToInt(sCodFilial)<18 Then // Só tem no LINX
+  Else // If Not bgSemBancoDados Then // Só tem no LINX
    Begin
      MySql:=' SELECT ''999'' Cod_Operador, ''CAIXA SALÃO'' Des_Operador,'+
             ' 0 CodForma, ''DINHEIRO'' NomeForma, 0.00 Vlr_Total'+
@@ -1311,7 +1318,7 @@ Begin
             ' SELECT ''999'' Cod_Operador, ''CAIXA SALÃO'' Des_Operador,'+
             ' 5 CodForma, ''DEVOLUÇÃO'' NomeForma, 0.00 Vlr_Total'+
             ' FROM RDB$DATABASE';
-   End; // If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
+   End; // If Not bgSemBancoDados Then // Busca no Sidicom
   FrmBelShop.IBQ_ConsultaFilial.Close;
   FrmBelShop.IBQ_ConsultaFilial.SQL.Clear;
   FrmBelShop.IBQ_ConsultaFilial.SQL.Add(MySql);
@@ -1626,15 +1633,14 @@ procedure TFrmConciliacaoCaixa.EdtConcFechaCaixaCodLojaExit(Sender: TObject);
 Var
   MySql: String;
 begin
-
   EdtConcFechaCaixaDesLoja.Clear;
-         
+
   If EdtConcFechaCaixaCodLoja.Value<>0 Then
   Begin
     Screen.Cursor:=crAppStart;
 
     // Busca Lojas =============================================================
-    MySql:=' Select COD_FILIAL, RAZAO_SOCIAL'+
+    MySql:=' Select COD_FILIAL, RAZAO_SOCIAL, Pasta_Base_Dados'+
            ' From EMP_CONEXOES'+
            ' Where (IND_ATIVO='+QuotedStr('SIM')+' Or COD_FILIAL='+QuotedStr('98')+')'+
            ' And COD_FILIAL='+QuotedStr(FormatFloat('00',EdtConcFechaCaixaCodLoja.AsInteger));
@@ -1651,6 +1657,10 @@ begin
       DMBelShop.CDS_BuscaRapida.Close;
       Exit;
     End;
+
+    bgSemBancoDados:=False; // No SIDICOM
+    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Pasta_Base_Dados').AsString)='SEM' Then
+     bgSemBancoDados:=True; // Somente no Linx
 
     EdtConcFechaCaixaDesLoja.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('Razao_Social').AsString;
     DtEdtConcFechaCaixaData.SetFocus;

@@ -2407,7 +2407,8 @@ var
   sgEmpresaNao: String;  // Usar (...) - Não Apresenta Empresas Separadas por <,>  - '('02', '09')'
   bgSelectSoLinx: Boolean; // Só Apresenta Lojas Linx
 
-  bgOnActivate, // Se Ja Executou o Evento do Form OnActivate  
+  bgSemBancoDados, // Somente no Linx
+  bgOnActivate, // Se Ja Executou o Evento do Form OnActivate
   bgConexaoLocal, // Se Conexão com o Servidor do Banco MPMS é Local - Verifica a Existencia do Arquivo "ConexaoExterna.ini"
   bgAuditoria, bgCor, bgSiga,
   bgProcessar: Boolean;

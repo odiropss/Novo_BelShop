@@ -181,9 +181,12 @@ var
   tgMetodos: TStringList; // Contem osd Metodos a Processar
                           // Vem do Arquivo:  C:\Projetos\BelShop\Fontes\WebService Linx\Linx_WebService.Ini
 
-  sgParametroMetodo,  // Parametro: Metodo a Processar
-  sgParametroCodLoja, // Paraemtro: Loja a Processar
-  sgParametroMetodos, sgParametroRetornos, // Parametro: Pastas de Geração de Metodos e Retornos
+  sgParametroMetodo,   // Parametro: Metodo a Processar
+  sgParametroCodLoja,  // Paraemtro: Loja a Processar
+  sgParametroDtaInicio,// Paraemtro: Data do Inico do Periodo
+  sgParametroDtaFim,   // Paraemtro: Data do Fim do Periodo
+  sgParametroMetodos,  // Parametro: Pastas de Geração de Metodos
+  sgParametroRetornos, // Parametro: Pastas de Geração de Retornos
 
   sgCampoUpdate,
   sgMetodo,    // Metodo em Processamento
@@ -872,7 +875,25 @@ Var
   txtArq:TextFile;
   sArq:String;
   sXML:String;
+
+  wDia, wMes, wAno: Word;
 Begin
+
+  // ===========================================================================
+  // Se Recebe do Parametros Período Acerta Datas ==============================
+  // ===========================================================================
+  If Trim(sgParametroDtaInicio)<>'' Then
+  Begin
+    DecodeDate(StrToDate(sgParametroDtaInicio), wAno, wMes, wDia);
+    sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+  End;
+
+  If Trim(sgParametroDtaFim)<>'' Then
+  Begin
+    DecodeDate(StrToDate(sgParametroDtaFim), wAno, wMes, wDia);
+    sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+  End;
+
   // ===========================================================================
   // Gera Arquivo ==============================================================
   // ===========================================================================
@@ -1257,17 +1278,42 @@ Begin
   sgParametroCodLoja  :=''; // Loja a Processar
   sgParametroMetodos  :=''; // Pasta Metodo  - \\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\
   sgParametroRetornos :=''; // Pasta Retorno - \\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\
+  sgParametroDtaInicio:=''; // Paraemtro: Data do Inico do Periodo
+  sgParametroDtaFim   :=''; // Paraemtro: Data do Fim do Periodo
 
   // Le Parametros Enviado =====================================================
   sgParametroMetodo:=ParamStr(1);
 
+  //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
   // OdirOPSS - Utiliza Parametro ==============================================
-  // Estrutura (Paramentros Separedos por Espaço ' ';
-  // NomeMetodo Codigo_Loja_Linx Pasta_Metodos Pasta_Retornos
-  // >>>>>>>>>>>>>> EXEMPLO PELO PARAMETRO <<<<<<<<<<<
-  // \\192.168.0.252\Projetos\BelShop\WebService Linx\PWebServiceLinx.exe LinxMovimento 15 "\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\" "\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\"
-  // >>>>>>>>>>>>>> EXEMPLO PELO ODIR (Separados por (;) <<<<<<<<<<<
-  // sgParametroMetodo:='\\192.168.0.252\Projetos\BelShop\WebService Linx\PWebServiceLinx.exe LinxMovimento;15;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;';
+  //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//  Estrutura dos Paramentros
+//  =========================
+//  NomeMetodo
+//  Codigo_Loja_Linx
+//  Pasta_Metodos
+//  Pasta_Retornos
+//  Data_Início
+//  Data_Fim
+//
+//  Data_Início e Data_Fim => Podem ser Nulos
+//
+//  >>>>>>>>>>>>>> EXEMPLO PELO ODIR
+//  >>>>>>>>>>>>>> Paramento Separados por PontoVirgula (;)
+//  NomeMetodo;Codigo_Loja_Linx;Pasta_Metodos;Pasta_Retornos;Data_Início;Data_Fim
+
+//  \\192.168.0.252\Projetos\BelShop\WebService Linx\PWebServiceLinx.exe LinxMovimento;15;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;;;';
+//==>>  sgParametroMetodo:='LinxSangriaSuprimentos;15;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;25/09/2017;26/10/2017;';
+//  sgParametroMetodo:='LinxSangriaSuprimentos;15;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;';
+//
+//  >>>>>>>>>>>>>> EXEMPLO PELO PARAMETRO
+//  >>>>>>>>>>>>>> Parameto Separados por Espaço em Branco ( ) e Aspas (") para String com espaço em Branco
+//  NomeMetodo Codigo_Loja_Linx "Pasta Metodos" "Pasta Retornos" Data_Início Data_Fim
+//
+//  \\192.168.0.252\Projetos\BelShop\WebService Linx\PWebServiceLinx.exe LinxMovimento 15 "\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\" "\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\"
+
+  // OdirOPSS - Utiliza Parametro ==============================================
+  //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
   // Pasta Executável PWebServiceLinx Não Rede
   sgPastaExecutavel:=IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName));
@@ -1278,20 +1324,31 @@ Begin
     // Executa pelo Parametro ==================================================
     If Trim(ParamStr(1))<>'' Then
     Begin
-      sgParametroMetodo  :=Trim(ParamStr(1));
-      sgParametroCodLoja :=Trim(ParamStr(2));
-      sgParametroMetodos :=Trim(ParamStr(3));
-      sgParametroRetornos:=Trim(ParamStr(4));
+      sgParametroMetodo   :=Trim(ParamStr(1));
+      sgParametroCodLoja  :=Trim(ParamStr(2));
+      sgParametroMetodos  :=Trim(ParamStr(3));
+      sgParametroRetornos :=Trim(ParamStr(4));
+      sgParametroDtaInicio:=Trim(ParamStr(5));
+      sgParametroDtaFim   :=Trim(ParamStr(6));
     End;
 
     // Executa pelo Odir =======================================================
     If Trim(ParamStr(1))='' Then
     Begin
-      sgParametroCodLoja :=Separa_String(Trim(sgParametroMetodo),2);
-      sgParametroMetodos :=Separa_String(Trim(sgParametroMetodo),3);
-      sgParametroRetornos:=Separa_String(Trim(sgParametroMetodo),4);
+      sgParametroCodLoja  :=Separa_String(Trim(sgParametroMetodo),2);
+      sgParametroMetodos  :=Separa_String(Trim(sgParametroMetodo),3);
+      sgParametroRetornos :=Separa_String(Trim(sgParametroMetodo),4);
+      sgParametroDtaInicio:=Separa_String(Trim(sgParametroMetodo),5);
+      sgParametroDtaFim   :=Separa_String(Trim(sgParametroMetodo),6);
+
       sgParametroMetodo  :=Separa_String(Trim(sgParametroMetodo),1); // Ultimo Devido a substituição do
                                                                      // Conteudo da Variavel sgParametroMetodo
+    End;
+
+    If sgParametroDtaInicio='Limite Superado' Then
+    Begin
+      sgParametroDtaInicio :=''; // Paraemtro: Data do Inico do Periodo
+      sgParametroDtaFim   :=''; // Paraemtro: Data do Fim do Periodo
     End;
 
     sgPastaExecutavel:=Copy(sgParametroMetodos,1,Pos('Metodos\', sgParametroMetodos)-1);
@@ -1303,6 +1360,8 @@ Begin
 //  ShowMessage('Loja: '+sgParametroCodLoja);
 //  ShowMessage('Pasta Metodos: '+sgParametroMetodos);
 //  ShowMessage('Pasta Retornos: '+sgParametroRetornos);
+//  ShowMessage('Data Inicio: '+sgParametroDtaInicio);
+//  ShowMessage('Data Fim: '+sgParametroDtaFim);
 //  ShowMessage('Pasta Exec: '+sgPastaExecutavel);
 
   // Cria Arquivo de Metodos a Processar =======================================
@@ -1381,7 +1440,8 @@ Begin
   If Trim(sgParametroMetodo)<>'' Then
   Begin
     hHrInicio:=TimeToStr(DataHoraServidorFI(DMLinxWebService.SDS_DtaHoraServidor));
-    If (StrToTime(hHrInicio)>StrToTime('16:00:00')) and (StrToTime(hHrInicio)<StrToTime('18:00:00')) Then
+    // If (StrToTime(hHrInicio)>StrToTime('16:00:00')) and (StrToTime(hHrInicio)<StrToTime('18:00:00')) Then
+    If (StrToTime(hHrInicio)>StrToTime('18:00:00')) Then
     Begin
       Application.Terminate;
       Exit;

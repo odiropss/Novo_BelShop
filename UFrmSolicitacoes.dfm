@@ -404,7 +404,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 452
-    ActivePage = Ts_GeraOCLegendaCores
+    ActivePage = Ts_Vales
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

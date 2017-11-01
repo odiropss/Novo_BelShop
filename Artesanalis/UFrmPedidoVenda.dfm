@@ -1,6 +1,6 @@
 object FrmPedidoVenda: TFrmPedidoVenda
-  Left = 227
-  Top = 113
+  Left = 239
+  Top = 81
   Width = 1020
   Height = 611
   AutoSize = True
@@ -39,24 +39,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
     ParentCtl3D = False
     ParentFont = False
     TabOrder = 2
-    object OdirPanApres: TPanel
-      Left = 568
-      Top = 458
-      Width = 89
-      Height = 33
-      BevelInner = bvLowered
-      BevelWidth = 2
-      Caption = 'OdirPanApres'
-      Color = clSilver
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 0
-      Visible = False
-    end
     object Dbg_Produtos: TDBGrid
       Left = 1
       Top = 14
@@ -72,7 +54,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       Font.Style = [fsBold]
       Options = [dgTitles, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
       ParentFont = False
-      TabOrder = 1
+      TabOrder = 0
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
@@ -1312,5 +1294,23 @@ object FrmPedidoVenda: TFrmPedidoVenda
     TabOrder = 9
     Visible = False
     OnChange = Dbe_VlrTotalProdutosChange
+  end
+  object OdirPanApres: TPanel
+    Left = 56
+    Top = 2
+    Width = 89
+    Height = 33
+    BevelInner = bvLowered
+    BevelWidth = 2
+    Caption = 'OdirPanApres'
+    Color = clSilver
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 10
+    Visible = False
   end
 end

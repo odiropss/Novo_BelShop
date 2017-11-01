@@ -3,6 +3,10 @@ unit UArtesanalis;
 - Cor Form/Painel Principal:  $00FFE4CA
 - Cor Componete Desabilitado: clMoneyGreen
 
+//==============================================================================
+// ======== ALTERAÇÕES NOS DBGrid's = INICIO ====================================
+//==============================================================================
+
   // Não Permite Excluir Registro Pelo Grid ====================================
   =============>>>> Dbg_MateriaPrimaKeyDown(
   if (Shift = [ssCtrl]) and (Key = 46) then
@@ -17,6 +21,9 @@ procedure TFrmMateriaPrimaCadastro.Dbg_MateriaPrimaExit(Sender: TObject);
 begin
   (Sender as TDBGrid).Color:=clWindow;
 end;
+//==============================================================================
+// ======== ALTERAÇÕES NOS DBGrid's = FIM ======================================
+//==============================================================================
 }
 
 interface
@@ -70,6 +77,8 @@ type
     Panel1: TPanel;
     Image1: TImage;
     SBt_Sair: TSpeedButton;
+    FINANCEIRO1: TMenuItem;
+    ContasaPagar1: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -88,6 +97,7 @@ type
     procedure SubMenuEntradasSaidasMateriasPrimasClick(Sender: TObject);
     procedure SubMenuVendasPedidosPedidosVendaClick(Sender: TObject);
     procedure SBt_SairClick(Sender: TObject);
+    procedure ContasaPagar1Click(Sender: TObject);
 
     // Odir ====================================================================
 
@@ -114,7 +124,7 @@ implementation
 
 uses UDMArtesanalis, DK_Procs1, SysConst, UFrmMateriaPrimaCadastro,
      UFrmProdutoCadastro, UFrmMovimentos, UFrmPessoaCadastro, UFrmPedidoVenda,
-  UFrmRelatorios;
+  UFrmRelatorios, UFrmContasPagar;
 
 {$R *.dfm}
 
@@ -349,6 +359,18 @@ end;
 procedure TFrmArtesanalis.SBt_SairClick(Sender: TObject);
 begin
   MenuSAIRClick(Self);
+end;
+
+procedure TFrmArtesanalis.ContasaPagar1Click(Sender: TObject);
+begin
+  DMArtesanalis.MemoAdicionaNomeForm('FINANCEIRO - Contas a Pagar');
+
+  FrmContasPagar:=TFrmContasPagar.Create(Self);
+  FrmContasPagar.Caption:='FINANCEIRO - Contas a Pagar';
+  FrmContasPagar.ShowModal;
+
+  FreeAndNil(FrmContasPagar);
+
 end;
 
 end.

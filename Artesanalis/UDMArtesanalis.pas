@@ -117,6 +117,22 @@ type
     CDS_V_PVPedidosVLR_UNITARIO: TFMTBCDField;
     CDS_V_PVPedidosCOD_CLIENTE: TStringField;
     CDS_V_PVPedidosORDEM: TIntegerField;
+    SQLQ_FluxoFinanceiro: TSQLQuery;
+    DSP_FluxoFinanceiro: TDataSetProvider;
+    CDS_FluxoFinanceiro: TClientDataSet;
+    DS_FluxoFinanceiro: TDataSource;
+    CDS_FluxoFinanceiroNUM_SEQ: TIntegerField;
+    CDS_FluxoFinanceiroCOD_HISTORICO: TIntegerField;
+    CDS_FluxoFinanceiroDES_HISTORICO: TStringField;
+    CDS_FluxoFinanceiroCOD_FORNECEDOR: TIntegerField;
+    CDS_FluxoFinanceiroDES_PESSOA: TStringField;
+    CDS_FluxoFinanceiroNUM_DOCTO: TIntegerField;
+    CDS_FluxoFinanceiroDTA_EMISSAO: TDateField;
+    CDS_FluxoFinanceiroVLR_ORIGINAL: TFMTBCDField;
+    CDS_FluxoFinanceiroNUM_PRAZO: TIntegerField;
+    CDS_FluxoFinanceiroDTA_VENCIMENTO: TDateField;
+    CDS_FluxoFinanceiroVLR_PRESTACAO: TFMTBCDField;
+    CDS_FluxoFinanceiroNUM_PRESTACAO: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
