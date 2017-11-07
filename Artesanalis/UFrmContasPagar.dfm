@@ -31,6 +31,19 @@ object FrmContasPagar: TFrmContasPagar
     BevelOuter = bvNone
     Color = 16770250
     TabOrder = 1
+    object Label4: TLabel
+      Left = 351
+      Top = 11
+      Width = 221
+      Height = 13
+      Caption = 'No Grid <Duplo Click> Para Selecionar'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
     object Bt_Fechar: TJvXPButton
       Tag = 99
       Left = 893
@@ -114,7 +127,8 @@ object FrmContasPagar: TFrmContasPagar
       Top = 1
       Width = 105
       Height = 32
-      Caption = 'Salvar'
+      Caption = 'Incluir'
+      Enabled = False
       TabOrder = 0
       Glyph.Data = {
         07544269746D617066010000424D660100000000000076000000280000001400
@@ -176,6 +190,7 @@ object FrmContasPagar: TFrmContasPagar
       Width = 105
       Height = 32
       Caption = 'Excluir'
+      Enabled = False
       TabOrder = 3
       Glyph.Data = {
         07544269746D617042010000424D420100000000000076000000280000001100
@@ -198,6 +213,7 @@ object FrmContasPagar: TFrmContasPagar
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
       ParentFont = False
+      OnClick = Bt_ExcluirClick
     end
   end
   object Dbg_Lanctos: TDBGrid
@@ -205,6 +221,8 @@ object FrmContasPagar: TFrmContasPagar
     Top = 176
     Width = 993
     Height = 362
+    Hint = 'No Grid <Duplo Click> Para Selecionar'
+    TabStop = False
     Align = alClient
     DataSource = DMArtesanalis.DS_FluxoFinanceiro
     FixedColor = 15000804
@@ -215,17 +233,22 @@ object FrmContasPagar: TFrmContasPagar
     Font.Style = []
     Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
     ParentFont = False
-    TabOrder = 0
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 2
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11
     TitleFont.Name = 'MS Sans Serif'
     TitleFont.Style = [fsBold]
+    OnDblClick = Dbg_LanctosDblClick
     OnEnter = Dbg_LanctosEnter
     OnExit = Dbg_LanctosExit
     OnKeyDown = Dbg_LanctosKeyDown
+    OnTitleClick = Dbg_LanctosTitleClick
     Columns = <
       item
+        Color = 15724527
         Expanded = False
         FieldName = 'DES_HISTORICO'
         Width = 200
@@ -242,10 +265,11 @@ object FrmContasPagar: TFrmContasPagar
       item
         Expanded = False
         FieldName = 'DES_PESSOA'
-        Width = 230
+        Width = 220
         Visible = True
       end
       item
+        Color = 15724527
         Expanded = False
         FieldName = 'NUM_DOCTO'
         Title.Alignment = taRightJustify
@@ -260,6 +284,7 @@ object FrmContasPagar: TFrmContasPagar
         Visible = True
       end
       item
+        Color = 15724527
         Expanded = False
         FieldName = 'DTA_VENCIMENTO'
         Title.Alignment = taCenter
@@ -270,42 +295,43 @@ object FrmContasPagar: TFrmContasPagar
         Expanded = False
         FieldName = 'VLR_ORIGINAL'
         Title.Alignment = taRightJustify
-        Title.Caption = 'Valor Original'
         Width = 82
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'NUM_PRESTACOES'
+        Title.Alignment = taRightJustify
+        Title.Caption = 'Tot Parc'
+        Width = 58
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'NUM_PRESTACAO'
         Title.Alignment = taRightJustify
-        Title.Caption = 'N'#186' Prest'
+        Title.Caption = 'Parc N'#186
         Width = 54
         Visible = True
       end
       item
-        Expanded = False
-        FieldName = 'NUM_PRAZO'
-        Title.Alignment = taRightJustify
-        Title.Caption = 'Prazo'
-        Width = 40
-        Visible = True
-      end
-      item
+        Color = 15724527
         Expanded = False
         FieldName = 'VLR_PRESTACAO'
         Title.Alignment = taRightJustify
+        Title.Caption = 'Vlr Parcela'
         Width = 80
         Visible = True
       end>
   end
-  object Panel1: TPanel
+  object Pan_Docto: TPanel
     Left = 0
     Top = 0
     Width = 993
     Height = 176
     Align = alTop
     ParentColor = True
-    TabOrder = 2
+    TabOrder = 0
     object Gb_Pessoa: TGroupBox
       Left = 210
       Top = 8
@@ -355,6 +381,7 @@ object FrmContasPagar: TFrmContasPagar
         ParentFont = False
         TabOrder = 0
         OnChange = EdtCodPessoaChange
+        OnEnter = EdtCodPessoaEnter
         OnExit = EdtCodPessoaExit
       end
       object Bt_BuscaPessoa: TJvXPButton
@@ -484,6 +511,8 @@ object FrmContasPagar: TFrmContasPagar
         Font.Style = []
         ParentFont = False
         TabOrder = 0
+        OnChange = EdtNumDoctoChange
+        OnExit = EdtNumDoctoChange
       end
     end
     object Gb_DtaDocto: TGroupBox
@@ -521,7 +550,7 @@ object FrmContasPagar: TFrmContasPagar
       Top = 112
       Width = 128
       Height = 51
-      Caption = ' 1'#186' Vencimento '
+      Caption = ' Data Vencimento '
       Ctl3D = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -546,10 +575,10 @@ object FrmContasPagar: TFrmContasPagar
         Width = 106
       end
     end
-    object Gb_Parcelas: TGroupBox
-      Left = 629
+    object Gb_ParcelasCalcular: TGroupBox
+      Left = 709
       Top = 112
-      Width = 204
+      Width = 197
       Height = 51
       Caption = ' Parcelas '
       Ctl3D = False
@@ -560,7 +589,7 @@ object FrmContasPagar: TFrmContasPagar
       Font.Style = [fsBold]
       ParentCtl3D = False
       ParentFont = False
-      TabOrder = 6
+      TabOrder = 8
       object Label25: TLabel
         Left = 12
         Top = 24
@@ -575,7 +604,7 @@ object FrmContasPagar: TFrmContasPagar
         ParentFont = False
       end
       object Label41: TLabel
-        Left = 133
+        Left = 129
         Top = 22
         Width = 6
         Height = 16
@@ -588,8 +617,8 @@ object FrmContasPagar: TFrmContasPagar
         ParentFont = False
       end
       object Label42: TLabel
-        Left = 170
-        Top = 23
+        Left = 164
+        Top = 24
         Width = 21
         Height = 13
         Caption = 'Dias'
@@ -601,7 +630,7 @@ object FrmContasPagar: TFrmContasPagar
         ParentFont = False
       end
       object EdtNumParcelas: TCurrencyEdit
-        Left = 106
+        Left = 103
         Top = 21
         Width = 23
         Height = 19
@@ -612,8 +641,8 @@ object FrmContasPagar: TFrmContasPagar
         TabOrder = 0
       end
       object EdtPrazoDias: TCurrencyEdit
-        Left = 143
-        Top = 20
+        Left = 138
+        Top = 21
         Width = 23
         Height = 19
         AutoSize = False
@@ -803,6 +832,118 @@ object FrmContasPagar: TFrmContasPagar
         ParentFont = False
       end
     end
+    object Gb_Parcelas: TGroupBox
+      Left = 709
+      Top = 112
+      Width = 222
+      Height = 51
+      Caption = ' Parcelas '
+      Ctl3D = False
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentCtl3D = False
+      ParentFont = False
+      TabOrder = 7
+      object Label1: TLabel
+        Left = 12
+        Top = 24
+        Width = 66
+        Height = 13
+        Caption = 'N'#186' da Parcela'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+      end
+      object Label2: TLabel
+        Left = 107
+        Top = 22
+        Width = 6
+        Height = 16
+        Caption = '/'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label3: TLabel
+        Left = 141
+        Top = 23
+        Width = 71
+        Height = 13
+        Caption = 'N'#186' de Parcelas'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+      end
+      object EdtNrParcela: TCurrencyEdit
+        Left = 81
+        Top = 21
+        Width = 23
+        Height = 19
+        AutoSize = False
+        DecimalPlaces = 0
+        DisplayFormat = '0'
+        MaxLength = 2
+        TabOrder = 0
+      end
+      object EdtNrParcelas: TCurrencyEdit
+        Left = 114
+        Top = 21
+        Width = 23
+        Height = 19
+        AutoSize = False
+        DecimalPlaces = 0
+        DisplayFormat = '0'
+        MaxLength = 2
+        TabOrder = 1
+      end
+    end
+    object Ckb_CalculoParcelas: TJvXPCheckbox
+      Left = 630
+      Top = 120
+      Width = 77
+      Height = 39
+      Caption = 'Calcular'#13#10'Parcelas'
+      TabOrder = 6
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      OnClick = Ckb_CalculoParcelasClick
+      OnKeyUp = Ckb_CalculoParcelasKeyUp
+    end
+    object EdtNumSeq: TCurrencyEdit
+      Left = 132
+      Top = 44
+      Width = 53
+      Height = 19
+      AutoSize = False
+      DecimalPlaces = 0
+      DisplayFormat = '0'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 9
+      Visible = False
+      OnChange = EdtCodPessoaChange
+      OnExit = EdtCodHistoricoExit
+    end
   end
   object OdirPanApres: TPanel
     Left = 56
@@ -821,5 +962,10 @@ object FrmContasPagar: TFrmContasPagar
     ParentFont = False
     TabOrder = 3
     Visible = False
+  end
+  object ApplicationEvents1: TApplicationEvents
+    OnMessage = ApplicationEvents1Message
+    Left = 844
+    Top = 31
   end
 end

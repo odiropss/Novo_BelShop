@@ -17,7 +17,8 @@ uses
   dxSkinsDefaultPainters, dxSkinValentine, dxSkinXmas2008Blue, cxTextEdit,
   cxMaskEdit, cxDropDownEdit, cxCalendar, Mask, ToolEdit, CurrEdit,
   Commctrl, // SHOW HINT EM FORMA DE BALÃO
-  StdCtrls, cxCurrencyEdit, Grids, DBGrids, DBXpress, Math;
+  StdCtrls, cxCurrencyEdit, Grids, DBGrids, DBXpress, Math, JvXPCheckCtrls,
+  AppEvnts;
 
 type
   TFrmContasPagar = class(TForm)
@@ -27,7 +28,7 @@ type
     Bt_Abandonar: TJvXPButton;
     Bt_Excluir: TJvXPButton;
     Dbg_Lanctos: TDBGrid;
-    Panel1: TPanel;
+    Pan_Docto: TPanel;
     Gb_Pessoa: TGroupBox;
     EdtDesPessoa: TEdit;
     EdtCodPessoa: TCurrencyEdit;
@@ -39,7 +40,7 @@ type
     DtEdt_DtaDocto: TcxDateEdit;
     Gb_DtaVencto: TGroupBox;
     DtEdt_DtaVencto: TcxDateEdit;
-    Gb_Parcelas: TGroupBox;
+    Gb_ParcelasCalcular: TGroupBox;
     Label25: TLabel;
     Label41: TLabel;
     Label42: TLabel;
@@ -53,6 +54,16 @@ type
     Bt_BuscaHistorico: TJvXPButton;
     Bt_NovoHistorico: TJvXPButton;
     OdirPanApres: TPanel;
+    Gb_Parcelas: TGroupBox;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    EdtNrParcela: TCurrencyEdit;
+    EdtNrParcelas: TCurrencyEdit;
+    Ckb_CalculoParcelas: TJvXPCheckbox;
+    Label4: TLabel;
+    ApplicationEvents1: TApplicationEvents;
+    EdtNumSeq: TCurrencyEdit;
     procedure Bt_FecharClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
 
@@ -66,8 +77,11 @@ type
     Procedure LimpaDocto(bCodigos: Boolean  = True);
 
     Procedure FluxoFinanceiroBusca;
+
     Function  ConsisteLancamento: Boolean;
     Function  InsereLancamento: Boolean;
+
+    Procedure ApresentaDocto;
 
     // Odir ====================================================================
 
@@ -84,6 +98,16 @@ type
     procedure Bt_NovaPessoaClick(Sender: TObject);
     procedure EdtCodHistoricoExit(Sender: TObject);
     procedure Bt_AbandonarClick(Sender: TObject);
+    procedure Ckb_CalculoParcelasClick(Sender: TObject);
+    procedure Ckb_CalculoParcelasKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure ApplicationEvents1Message(var Msg: tagMSG;
+      var Handled: Boolean);
+    procedure Dbg_LanctosDblClick(Sender: TObject);
+    procedure Bt_ExcluirClick(Sender: TObject);
+    procedure EdtNumDoctoChange(Sender: TObject);
+    procedure Dbg_LanctosTitleClick(Column: TColumn);
+    procedure EdtCodPessoaEnter(Sender: TObject);
 
   private
     { Private declarations }
@@ -106,6 +130,7 @@ var
   buffer : array[0..255] of char;
   ///////////////////////////////
 
+  bgExecEvento, // Se Executa Eventos onChange e OnExit;
   bgSairCP: Boolean;
 
   igNumSeq: Integer; // Num_Seq Gravado
@@ -123,6 +148,39 @@ uses DK_Procs1, UDMArtesanalis, UPesquisa, UFrmPessoaCadastro, DB;
 // Odir - Inicio >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// Apresenta Documento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmContasPagar.ApresentaDocto;
+Begin
+  // Se Executa Eventos onChange e OnExit
+  bgExecEvento:=False;
+
+  Ckb_CalculoParcelas.Enabled:=False;
+  EdtNrParcela.Enabled:=False;
+  EdtNrParcelas.Enabled:=False;
+
+  EdtNumSeq.AsInteger      :=DMArtesanalis.CDS_FluxoFinanceiroNUM_SEQ.AsInteger;
+  EdtCodPessoa.AsInteger   :=DMArtesanalis.CDS_FluxoFinanceiroCOD_FORNECEDOR.AsInteger;
+  EdtCodHistorico.AsInteger:=DMArtesanalis.CDS_FluxoFinanceiroCOD_HISTORICO.AsInteger;
+  EdtNumDocto.AsInteger    :=DMArtesanalis.CDS_FluxoFinanceiroNUM_DOCTO.AsInteger;
+  DtEdt_DtaDocto.Date      :=DMArtesanalis.CDS_FluxoFinanceiroDTA_EMISSAO.AsDateTime;
+  DtEdt_DtaVencto.Date     :=DMArtesanalis.CDS_FluxoFinanceiroDTA_VENCIMENTO.AsDateTime;
+  EdtVlrDocto.Value        :=DMArtesanalis.CDS_FluxoFinanceiroVLR_PRESTACAO.AsCurrency;
+
+  EdtNumParcelas.AsInteger :=DMArtesanalis.CDS_FluxoFinanceiroNUM_PRESTACOES.AsInteger;
+  EdtPrazoDias.AsInteger   :=DMArtesanalis.CDS_FluxoFinanceiroNUM_PRAZO.AsInteger;
+
+  EdtNrParcela.AsInteger   :=DMArtesanalis.CDS_FluxoFinanceiroNUM_PRESTACAO.AsInteger;
+  EdtNrParcelas.AsInteger  :=DMArtesanalis.CDS_FluxoFinanceiroNUM_PRESTACOES.AsInteger;
+
+  EdtCodPessoaExit(Self);
+  EdtCodHistoricoExit(Self);
+
+  // Se Executa Eventos onChange e OnExit
+  bgExecEvento:=True;
+
+  EdtCodPessoa.SetFocus;
+End; // Apresenta Documento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 // Insere Lancamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmContasPagar.InsereLancamento: Boolean;
 Var
@@ -136,7 +194,7 @@ Begin
   Result:=False;
 
   // Insere Lancamento =========================================================
-  OdirPanApres.Caption:='AGUARDE !! Incluindo Lançamento...';
+  OdirPanApres.Caption:='AGUARDE !! Incluindo Documento...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmContasPagar.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmContasPagar.Height-OdirPanApres.Height)/2))-20;
@@ -159,11 +217,22 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
-    // Calucla valor(es) da(s) Parcela(s) ========================================
-    iQtdParc:=EdtNumParcelas.AsInteger;
-    cVlrParc:=RoundTo(EdtVlrDocto.Value/iQtdParc,-2);
-    cVlrDif:=cVlrParc*iQtdParc;
-    cVlrDif:=EdtVlrDocto.Value-cVlrDif;
+    // Calucla valor(es) da(s) Parcela(s) ======================================
+    If Ckb_CalculoParcelas.Checked Then
+    Begin
+      iQtdParc:=EdtNumParcelas.AsInteger;
+      cVlrParc:=RoundTo(EdtVlrDocto.Value/iQtdParc,-2);
+      cVlrDif:=cVlrParc*iQtdParc;
+      cVlrDif:=EdtVlrDocto.Value-cVlrDif;
+    End; // If Ckb_CalculoParcelas.Checked Then
+
+    If Not Ckb_CalculoParcelas.Checked Then
+    Begin
+      iQtdParc:=1;
+      cVlrParc:=RoundTo(EdtVlrDocto.Value/iQtdParc,-2);
+      cVlrDif:=cVlrParc*iQtdParc;
+      cVlrDif:=EdtVlrDocto.Value-cVlrDif;
+    End; // If Ckb_CalculoParcelas.Checked Then
 
     For i:=1 to iQtdParc do
     Begin
@@ -194,29 +263,61 @@ Begin
       dDtaVenc:=dDta;
 
       // Acerta Vencimentos de Sábado ou Domingo ===============================
-      sNomeDia:=AnsiUpperCase(DiaSemanaNome(dDtaVenc));
-      If sNomeDia='SÁBADO' Then
-       dDtaVenc:=dDtaVenc+2;
+      If Ckb_CalculoParcelas.Checked Then
+      Begin
+        sNomeDia:=AnsiUpperCase(DiaSemanaNome(dDtaVenc));
+        If sNomeDia='SÁBADO' Then
+         dDtaVenc:=dDtaVenc+2;
 
-      If sNomeDia='DOMINGO' Then
-       dDtaVenc:=dDtaVenc+1;
+        If sNomeDia='DOMINGO' Then
+         dDtaVenc:=dDtaVenc+1;
+      End; // If Ckb_CalculoParcelas.Checked Then
 
-      MySql:=' INSERT INTO FLUXO_FINANCEIRO'+
-             ' (COD_FORNECEDOR, COD_HISTORICO, NUM_DOCTO, DTA_EMISSAO,'+
+      MySql:=' UPDATE OR INSERT INTO FLUXO_FINANCEIRO'+
+             ' (NUM_SEQ, COD_FORNECEDOR, COD_HISTORICO, NUM_DOCTO, DTA_EMISSAO,'+
              '  VLR_ORIGINAL, NUM_PRESTACOES, NUM_PRAZO, DTA_PRIM_VENC,'+
              '  NUM_PRESTACAO, DTA_VENCIMENTO, VLR_PRESTACAO)'+
 
-             ' VALUES ('+
-             EdtCodPessoa.Text+', '+ // COD_FORNECEDOR
+             ' VALUES (';
+
+             // NUM_SEQ
+             If EdtNumSeq.AsInteger<>0 Then
+              MySql:=
+               MySql+EdtNumSeq.Text+', '
+             Else
+              MySql:=
+               MySql+' NULL, ';
+
+      MySql:=
+       MySql+EdtCodPessoa.Text+', '+ // COD_FORNECEDOR
              EdtCodHistorico.Text+', '+ // COD_HISTORICO
              EdtNumDocto.Text+', '+ // NUM_DOCTO
              QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaDocto.Date))))+', '+ // DTA_EMISSAO
-             QuotedStr(f_Troca(',','.',EdtVlrDocto.Text))+', '+ // VLR_ORIGINAL
-             EdtNumParcelas.Text+', '+ // NUM_PRESTACOES
-             EdtPrazoDias.Text+', '+ // NUM_PRAZO
-             QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaVencto.Date))))+', '+ // DTA_PRIM_VENC
-             IntToStr(i)+', '+ // NUM_PRESTACAO
-             QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(dDtaVenc))))+', '; // DTA_VENCIMENTO
+             QuotedStr(f_Troca(',','.',EdtVlrDocto.Text))+', '; // VLR_ORIGINAL
+
+             // NUM_PRESTACOES, NUM_PRAZO
+             If Ckb_CalculoParcelas.Checked Then
+              MySql:=
+               MySql+EdtNumParcelas.Text+', '+EdtPrazoDias.Text+', ';
+
+             If Not Ckb_CalculoParcelas.Checked Then
+              MySql:=
+               MySql+EdtNrParcelas.Text+', 0, ';
+
+      MySql:=
+       MySql+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaVencto.Date))))+', '; // DTA_PRIM_VENC
+
+             // NUM_PRESTACAO
+             If Ckb_CalculoParcelas.Checked Then
+              MySql:=
+               MySql+IntToStr(i)+', ';
+
+             If Not Ckb_CalculoParcelas.Checked Then
+              MySql:=
+               MySql+EdtNrParcela.Text+', ';
+
+      MySql:=
+       MySql+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(dDtaVenc))))+', '; // DTA_VENCIMENTO
 
              // VLR_PRESTACAO
              If i=1 Then
@@ -229,19 +330,26 @@ Begin
                 MySql:=
                  MySql+QuotedStr(f_Troca(',','.',CurrToStr(cVlrParc)))+')';
               End; // If i=1 Then
+
+      MySql:=
+       MySql+' MATCHING (NUM_SEQ)';
       DMArtesanalis.SQLC.Execute(MySql,Nil,Nil);
 
       // Busca Num_Seq do Primeiro Registro --------------------------
       If i=1 Then
       Begin
-        MySql:='SELECT GEN_ID(GEN_FLUXO_FINANCEIRO_ID,0) Num_Seq'+
-               ' FROM RDB$DATABASE';
-        DMArtesanalis.CDS_BuscaRapida.Close;
-        DMArtesanalis.SQLQ_BuscaRapida.SQL.Clear;
-        DMArtesanalis.SQLQ_BuscaRapida.SQL.Add(MySql);
-        DMArtesanalis.CDS_BuscaRapida.Open;
-        igNumSeq:=DMArtesanalis.CDS_BuscaRapida.FieldByName('Num_Seq').AsInteger;
-        DMArtesanalis.CDS_BuscaRapida.Close;
+        igNumSeq:=EdtNumSeq.AsInteger;
+        If EdtNumSeq.AsInteger=0 Then
+        Begin
+          MySql:=' SELECT GEN_ID(GEN_FLUXO_FINANCEIRO_ID,0) Num_Seq'+
+                 ' FROM RDB$DATABASE';
+          DMArtesanalis.CDS_BuscaRapida.Close;
+          DMArtesanalis.SQLQ_BuscaRapida.SQL.Clear;
+          DMArtesanalis.SQLQ_BuscaRapida.SQL.Add(MySql);
+          DMArtesanalis.CDS_BuscaRapida.Open;
+          igNumSeq:=DMArtesanalis.CDS_BuscaRapida.FieldByName('Num_Seq').AsInteger;
+          DMArtesanalis.CDS_BuscaRapida.Close;
+        End; // If EdtNumSeq.AsInteger=0 Then
       End; // If i=1 Then
     End; // For i:=1 to iQtdParc do
 
@@ -274,10 +382,22 @@ Begin
 
 End; // Insere Lancamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Consiste Lançamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Consiste Documento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmContasPagar.ConsisteLancamento: Boolean;
+Var
+  MySql: String;
 Begin
   Result:=False;
+
+  // Fornecedor ================================================================
+  If EdtCodPessoa.AsInteger=0 Then
+  Begin
+    If msg('Documento SEM Fornecedor !!'+cr+cr+'Esta CORRETO ??','C')=2 Then
+    Begin
+      EdtCodPessoa.SetFocus;
+      Exit;
+    End;
+  End;
 
   // Histórico =================================================================
   If EdtCodHistorico.AsInteger=0 Then
@@ -328,26 +448,74 @@ Begin
     Exit;
   End;
 
-  If EdtNumParcelas.Value=0 Then
+  // Calcula Parcelas ==========================================================
+  If Ckb_CalculoParcelas.Checked Then
   Begin
-    msg('Favor Informar o'+cr+cr+'Número de Parcelas !!','A');
-    EdtNumParcelas.SetFocus;
-    Exit;
-  End;
+    If EdtNumParcelas.Value=0 Then
+    Begin
+      msg('Favor Informar o'+cr+cr+'Número de Parcelas !!','A');
+      EdtNumParcelas.SetFocus;
+      Exit;
+    End;
+  End; // If Ckb_CalculoParcelas.Checked Then
+
+  // NÃO Calcula Parcelas ======================================================
+  If Not Ckb_CalculoParcelas.Checked Then
+  Begin
+    If EdtNrParcela.Value=0 Then
+    Begin
+      msg('Favor Informar o'+cr+cr+'Número da Parcela !!','A');
+      EdtNrParcela.SetFocus;
+      Exit;
+    End;
+
+    If EdtNrParcelas.Value=0 Then
+    Begin
+      msg('Favor Informar o'+cr+cr+'Número de Parcela !!','A');
+      EdtNrParcelas.SetFocus;
+      Exit;
+    End;
+  End; // If Ckb_CalculoParcelas.Checked Then
+
+  // Não Permite Inserir Docto Existente =======================================
+  If Bt_Salvar.Caption='Incluir' Then
+  Begin
+    MySql:=' SELECT f.num_seq'+
+           ' FROM FLUXO_FINANCEIRO f'+
+           ' WHERE f.cod_fornecedor='+EdtCodPessoa.Text+
+           ' AND   f.cod_historico='+EdtCodHistorico.Text+
+           ' AND   f.num_docto='+EdtNumDocto.Text;
+    DMArtesanalis.CDS_BuscaRapida.Close;
+    DMArtesanalis.SQLQ_BuscaRapida.SQL.Clear;
+    DMArtesanalis.SQLQ_BuscaRapida.SQL.Add(MySql);
+    DMArtesanalis.CDS_BuscaRapida.Open;
+    MySql:=Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('Num_Seq').AsString);
+    DMArtesanalis.CDS_BuscaRapida.Close;
+
+    If MySql<>'' Then
+    Begin
+      msg('Impossivel Incluir Documento'+cr+cr+'Já Existente !!','A');
+      EdtNumDocto.SetFocus;
+      Exit;
+    End;
+  End; // If Bt_Salvar.Caption='Incluir' Then
 
   Result:=True;
 
-End; // Consiste Lançamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+End; // Consiste Documento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Apresenta Movtos de Fluxo Financeiro >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmContasPagar.FluxoFinanceiroBusca;
 Var
   MySql: String;
 Begin
+  If Not Dbg_Lanctos.Enabled Then
+   Exit;
+
   MySql:=' SELECT ff.num_seq, ff.cod_historico, pl.des_historico,'+
          ' ff.cod_fornecedor, fo.des_pessoa,'+
          ' ff.num_docto, ff.dta_emissao,'+
-         ' ff.vlr_original, ff.num_prestacao, ff.num_prazo,'+
+         ' ff.vlr_original, ff.num_prestacao, ff.num_prestacoes, ff.num_prazo,'+
          ' ff.dta_vencimento, ff.vlr_prestacao'+
 
          ' FROM FLUXO_FINANCEIRO ff, PESSOAS fo, PLANO_CONTAS pl'+
@@ -370,6 +538,18 @@ Begin
   DMArtesanalis.SQLQ_FluxoFinanceiro.SQL.Add(MySql);
   DMArtesanalis.CDS_FluxoFinanceiro.Open;
 
+  Bt_Salvar.Enabled:=False;
+  Bt_Excluir.Enabled:=False;
+  If Not DMArtesanalis.CDS_FluxoFinanceiro.IsEmpty Then
+  Begin
+    Bt_Salvar.Enabled:=True;
+
+    If Bt_Salvar.Caption<>'Alterar' Then
+     Bt_Excluir.Enabled:=True;
+  End;
+
+  EdtNumDoctoChange(Self);
+
 End; // Apresenta Movtos de Fluxo Financeiro >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Limpa Campos do Docto na Tela >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -380,35 +560,60 @@ Begin
 
   For i:=0 to FrmContasPagar.ComponentCount-1 do
   Begin
-    // TEdit
+    // TEdit ===================================================================
     If FrmContasPagar.Components[i] is TEdit Then
     Begin
      If bCodigos Then
-      (FrmContasPagar.Components[i] as TEdit).Clear
-     Else If ((FrmContasPagar.Components[i] as TEdit).Name<>'EdtDesPessoa') And
+      Begin // Incializa tudo
+        (FrmContasPagar.Components[i] as TEdit).Clear;
+      End
+     Else If ((FrmContasPagar.Components[i] as TEdit).Name<>'EdtDesPessoa') And // Mantem as Descrições dos Códigos
              ((FrmContasPagar.Components[i] as TEdit).Name<>'EdtDesHistorico') Then
       (FrmContasPagar.Components[i] as TEdit).Clear;
-
-
     End; // If FrmContasPagar.Components[i] is TEdit Then
 
-    // TCurrencyEdit
+    // TCurrencyEdit ===========================================================
     If FrmContasPagar.Components[i] is TCurrencyEdit Then
     Begin
-
-     If bCodigos Then
-      (FrmContasPagar.Components[i] as TCurrencyEdit).Value:=0
-     Else If ((FrmContasPagar.Components[i] as TCurrencyEdit).Name<>'EdtCodPessoa') And
-             ((FrmContasPagar.Components[i] as TCurrencyEdit).Name<>'EdtCodHistorico') Then
-      (FrmContasPagar.Components[i] as TCurrencyEdit).Value:=0;
-
+      If bCodigos Then // Incializa tudo
+      Begin
+        (FrmContasPagar.Components[i] as TCurrencyEdit).Value:=0;
+//        DMArtesanalis.CDS_FluxoFinanceiro.Close;
+      End
+      Else If ((FrmContasPagar.Components[i] as TCurrencyEdit).Name='EdtNrParcela') Or
+              ((FrmContasPagar.Components[i] as TCurrencyEdit).Name='EdtNrParcelas') Then
+      Begin
+        (FrmContasPagar.Components[i] as TCurrencyEdit).Value:=0;
+        (FrmContasPagar.Components[i] as TCurrencyEdit).Enabled:=True;
+      End
+      Else If ((FrmContasPagar.Components[i] as TCurrencyEdit).Name<>'EdtCodPessoa') And
+              ((FrmContasPagar.Components[i] as TCurrencyEdit).Name<>'EdtCodHistorico') Then
+      Begin
+       (FrmContasPagar.Components[i] as TCurrencyEdit).Value:=0;
+      End
     End; // If FrmContasPagar.Components[i] is TCurrencyEdit Then
 
-    // TcxDateEdit
+    // TcxDateEdit =============================================================
     If FrmContasPagar.Components[i] is TcxDateEdit Then
      (FrmContasPagar.Components[i] as TcxDateEdit).Clear;
 
+    // TJvXPCheckbox ===========================================================
+    If FrmContasPagar.Components[i] is TJvXPCheckbox Then
+    Begin
+      (FrmContasPagar.Components[i] as TJvXPCheckbox).Checked:=False;
+      (FrmContasPagar.Components[i] as TJvXPCheckbox).Enabled:=True;
+
+      If (FrmContasPagar.Components[i] as TJvXPCheckbox).Name='Ckb_CalculoParcelas' Then
+       Ckb_CalculoParcelasClick(Self);
+    End;
   End; // For i:=0 to FrmContasPagar.ComponentCount-1 do
+
+  Gb_Parcelas.Visible:=True;
+  Gb_ParcelasCalcular.Visible:=False;
+  Dbg_Lanctos.Enabled:=True;
+
+  Bt_Salvar.Caption:='Incluir';
+
 End; // Limpa Campos do Docto na Tela >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Show Hint em Forma de Balão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -489,6 +694,9 @@ begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
 
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  Application.OnMessage := ApplicationEvents1Message;
+
   // Não Permite Movimentar o Formulário =======================================
   DeleteMenu(GetSystemMenu(Handle, False), SC_MOVE, MF_BYCOMMAND);
 
@@ -516,6 +724,9 @@ begin
 
   CreateToolTips(Self.Handle);
   AddToolTip(Bt_NovoHistorico.Handle, @ti, TipoDoIcone, 'Incluir', 'HISTÓRICO');
+
+  // Se Executa Eventos onChange e OnExit
+  bgExecEvento:=True;
 end;
 
 procedure TFrmContasPagar.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -584,18 +795,10 @@ Var
 begin
 
   EdtDesPessoa.Clear;
-  DMArtesanalis.CDS_FluxoFinanceiro.Close;
 
-  // Fornecedor ================================================================
-  If EdtCodPessoa.AsInteger=0 Then
-  Begin
-    If msg('Lançamento SEM Fornecedor !!'+cr+cr+'Esta CORRETO ??','C')=2 Then
-    Begin
-      EdtCodPessoa.SetFocus;
-      Exit;
-    End;
-  End;
-  
+  If Dbg_Lanctos.Enabled Then
+   DMArtesanalis.CDS_FluxoFinanceiro.Close;
+
   If EdtCodPessoa.asInteger<>0 Then
   Begin
     Screen.Cursor:=crAppStart;
@@ -624,10 +827,13 @@ begin
   End; // If EdtCodPessoa.asInteger<>0 Then
 
   // Busca Fluxo Financeiro ====================================================
-  FluxoFinanceiroBusca;
+  If Dbg_Lanctos.Enabled Then
+   FluxoFinanceiroBusca;
+
+  Bt_Excluir.Enabled:=True;
+
 
   Screen.Cursor:=crDefault;
-  EdtCodHistorico.SetFocus;
 end;
 
 procedure TFrmContasPagar.Bt_BuscaPessoaClick(Sender: TObject);
@@ -686,25 +892,36 @@ end;
 
 procedure TFrmContasPagar.EdtCodPessoaChange(Sender: TObject);
 begin
-  If (Sender is TCurrencyEdit) Then
+  If bgExecEvento Then
   Begin
-    If (Sender as TCurrencyEdit).Name='EdtCodPessoa' Then
-    Begin
-      EdtDesPessoa.Clear;
-    End;
+    Bt_Salvar.Enabled:=False;
+    Bt_Excluir.Enabled:=False;
 
-    If (Sender as TCurrencyEdit).Name='EdtCodHistorico' Then
-    Begin
-      EdtDesHistorico.Clear;
-    End;
-  End; // If (Sender is TComboBoxJul) Then
+    DMArtesanalis.CDS_FluxoFinanceiro.Close;
 
-  DMArtesanalis.CDS_FluxoFinanceiro.Close;
+    If (Sender is TCurrencyEdit) Then
+    Begin
+      If (Sender as TCurrencyEdit).Name='EdtCodPessoa' Then
+      Begin
+        EdtDesPessoa.Clear;
+      End;
+
+      If (Sender as TCurrencyEdit).Name='EdtCodHistorico' Then
+      Begin
+        EdtDesHistorico.Clear;
+      End;
+    End; // If (Sender is TComboBoxJul) Then
+  End; // If bgExecEvento Then
 end;
 
 procedure TFrmContasPagar.Dbg_LanctosEnter(Sender: TObject);
 begin
   (Sender as TDBGrid).Color:=clMoneyGreen;
+
+//  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+//  ApplicationEvents1.OnActivate:=Dbg_LanctosEnter; // Nome do Evento do DBGRID
+//  Application.OnMessage := ApplicationEvents1Message;
+//  ApplicationEvents1.Activate;
 
 end;
 
@@ -745,7 +962,9 @@ Var
 begin
 
   EdtDesHistorico.Clear;
-  DMArtesanalis.CDS_FluxoFinanceiro.Close;
+
+  If Dbg_Lanctos.Enabled Then
+   DMArtesanalis.CDS_FluxoFinanceiro.Close;
 
   If EdtCodHistorico.asInteger<>0 Then
   Begin
@@ -774,17 +993,209 @@ begin
   End; // If EdtCodHistorico.asInteger<>0 Then
 
   // Busca Fluxo Financeiro ====================================================
-  FluxoFinanceiroBusca;
+  If Dbg_Lanctos.Enabled Then
+   FluxoFinanceiroBusca;
 
   Screen.Cursor:=crDefault;
-  EdtNumDocto.SetFocus;
+//  EdtNumDocto.SetFocus;
 end;
 
 procedure TFrmContasPagar.Bt_AbandonarClick(Sender: TObject);
 begin
-  LimpaDocto();
+  LimpaDocto(False);
 
   EdtCodPessoa.SetFocus;
+end;
+
+procedure TFrmContasPagar.Ckb_CalculoParcelasClick(Sender: TObject);
+begin
+  AcertaCkb_Style(Ckb_CalculoParcelas);
+
+  Gb_Parcelas.Visible:=False;
+  Gb_ParcelasCalcular.Visible:=False;
+
+  If Ckb_CalculoParcelas.Checked Then
+   Begin
+     Gb_ParcelasCalcular.Visible:=True;
+     Gb_DtaVencto.Caption:=' 1º Vencimento ';
+   End
+  Else
+   Begin
+     Gb_Parcelas.Visible:=True;
+     Gb_DtaVencto.Caption:=' Data Vencimento ';
+   End; // If Ckb_CalculoParcelas.Checked Then
+
+end;
+
+procedure TFrmContasPagar.Ckb_CalculoParcelasKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  Ckb_CalculoParcelasClick(Self);
+end;
+
+procedure TFrmContasPagar.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
+var
+  Sentido: SmallInt;
+begin
+  If Msg.message = WM_MOUSEWHEEL then
+  Begin
+    Msg.message := WM_KEYDOWN;
+    Msg.lParam := 0;
+    Sentido := HiWord(Msg.wParam);
+    if Sentido > 0 then
+     Msg.wParam := VK_UP
+    else
+     Msg.wParam := VK_DOWN;
+  End; // if Msg.message = WM_MOUSEWHEEL then
+end;
+
+procedure TFrmContasPagar.Dbg_LanctosDblClick(Sender: TObject);
+begin
+  If DMArtesanalis.CDS_FluxoFinanceiro.IsEmpty Then
+   Exit;
+
+  // Apresenta Documento =======================================================
+  ApresentaDocto;
+
+  Dbg_Lanctos.Enabled:=False;
+  Bt_Excluir.Enabled:=False;
+
+  Bt_Salvar.Caption:='Alterar';
+  EdtCodPessoa.SetFocus;
+
+end;
+
+procedure TFrmContasPagar.Bt_ExcluirClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  If DMArtesanalis.CDS_FluxoFinanceiro.IsEmpty Then
+   Exit;
+
+  // Apresenta Documento =======================================================
+  ApresentaDocto;
+
+  if msg('Deseja Realmente Excluir o'+cr+cr+'Documento Selecionsdo ??','C')=2 Then
+  Begin
+    LimpaDocto(False);
+    EdtCodPessoa.SetFocus;
+    Exit;
+  End;
+
+  // Exclui Docto ==============================================================
+  // Insere Lancamento =========================================================
+  OdirPanApres.Caption:='AGUARDE !! Excluindo Documento...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmContasPagar.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmContasPagar.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmContasPagar;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMArtesanalis.SQLC.InTransaction Then
+   DMArtesanalis.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMArtesanalis.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    MySql:=' DELETE FROM FLUXO_FINANCEIRO f'+
+           ' WHERE f.num_seq='+EdtNumSeq.Text;
+    DMArtesanalis.SQLC.Execute(MySql,Nil,Nil);
+
+    // Atualiza Transacao ======================================================
+    DMArtesanalis.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    OdirPanApres.Visible:=False;
+    Screen.Cursor:=crDefault;
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMArtesanalis.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      OdirPanApres.Visible:=False;
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Exit;
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  msg('Documento Excluido com SUCESSO !!','A');
+  FluxoFinanceiroBusca;
+  EdtCodPessoa.SetFocus;
+
+end;
+
+procedure TFrmContasPagar.EdtNumDoctoChange(Sender: TObject);
+begin
+  If DMArtesanalis.CDS_FluxoFinanceiro.IsEmpty Then
+   Exit;
+
+  If EdtNumSeq.AsInteger=0 Then
+   DMArtesanalis.CDS_FluxoFinanceiro.Locate('NUM_DOCTO', EdtNumDocto.AsInteger,[])
+  Else
+   DMArtesanalis.CDS_FluxoFinanceiro.Locate('NUM_SEQ', EdtNumSeq.AsInteger,[]);
+end;
+
+procedure TFrmContasPagar.Dbg_LanctosTitleClick(Column: TColumn);
+Var
+  s, sPesquisa: String;
+  b: Boolean;
+  i: Integer;
+begin
+  If Not DMArtesanalis.CDS_FluxoFinanceiro.IsEmpty Then
+  Begin
+    i:=DMArtesanalis.CDS_FluxoFinanceiro.RecNo;
+    sPesquisa:='';
+    b:=True;
+    While b do
+    Begin
+      s:=DMArtesanalis.CDS_FluxoFinanceiro.FieldByName(Column.FieldName).DisplayLabel;
+      If InputQuery('Localizar: '+s,'',sPesquisa) then
+       Begin
+         Try
+           If Not DMArtesanalis.CDS_FluxoFinanceiro.Locate(Column.FieldName, sPesquisa,[]) Then
+           Begin
+             If Not LocalizaRegistro(DMArtesanalis.CDS_FluxoFinanceiro, Column.FieldName, sPesquisa) Then
+             Begin
+               DMArtesanalis.CDS_FluxoFinanceiro.RecNo:=i;
+               msg('Não Localizado !!','A');
+               Exit;
+             End;
+           End; // If Not DMArtesanalis.CDS_FluxoFinanceiro.Locate(Column.FieldName, sPesquisa,[]) Then
+           Break;
+
+         Except
+           msg('Informação Inválida !!','A');
+           Break;
+         End;
+       End
+      Else // If InputQuery('Localizar: '+s,'',sPesquisa) then
+       Begin
+         Break;
+       End; // If InputQuery('Localizar: '+s,'',sPesquisa) then
+    End; // While b do
+  End; // If Not DMArtesanalis.CDS_FluxoFinanceiro.IsEmpty Then
+end;
+
+procedure TFrmContasPagar.EdtCodPessoaEnter(Sender: TObject);
+begin
+  Bt_Excluir.Enabled:=False;
 end;
 
 end.

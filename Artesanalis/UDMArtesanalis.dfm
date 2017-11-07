@@ -777,9 +777,9 @@ object DMArtesanalis: TDMArtesanalis
       'ff.cod_historico, pl.des_historico,'
       'ff.cod_fornecedor, fo.des_pessoa,'
       'ff.num_docto, ff.dta_emissao,'
-      
-        'ff.vlr_original, ff.num_prestacao, ff.num_prazo, ff.dta_vencimen' +
-        'to, ff.vlr_prestacao'
+      'ff.vlr_original, '
+      'ff.num_prestacao, ff.num_prestacoes, ff.num_prazo,'
+      'ff.dta_vencimento, ff.vlr_prestacao'
       ''
       'FROM FLUXO_FINANCEIRO ff, PESSOAS fo, PLANO_CONTAS pl'
       ''
@@ -840,11 +840,15 @@ object DMArtesanalis: TDMArtesanalis
       Precision = 18
       Size = 2
     end
+    object CDS_FluxoFinanceiroNUM_PRESTACOES: TIntegerField
+      DisplayLabel = 'Presta'#231#245'es'
+      FieldName = 'NUM_PRESTACOES'
+    end
     object CDS_FluxoFinanceiroNUM_PRESTACAO: TIntegerField
+      DisplayLabel = 'N'#186' Prest'
       FieldName = 'NUM_PRESTACAO'
     end
     object CDS_FluxoFinanceiroNUM_PRAZO: TIntegerField
-      DisplayLabel = 'Dias/Prazo'
       FieldName = 'NUM_PRAZO'
     end
     object CDS_FluxoFinanceiroDTA_VENCIMENTO: TDateField

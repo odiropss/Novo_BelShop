@@ -129,10 +129,11 @@ type
     CDS_FluxoFinanceiroNUM_DOCTO: TIntegerField;
     CDS_FluxoFinanceiroDTA_EMISSAO: TDateField;
     CDS_FluxoFinanceiroVLR_ORIGINAL: TFMTBCDField;
-    CDS_FluxoFinanceiroNUM_PRAZO: TIntegerField;
     CDS_FluxoFinanceiroDTA_VENCIMENTO: TDateField;
     CDS_FluxoFinanceiroVLR_PRESTACAO: TFMTBCDField;
     CDS_FluxoFinanceiroNUM_PRESTACAO: TIntegerField;
+    CDS_FluxoFinanceiroNUM_PRESTACOES: TIntegerField;
+    CDS_FluxoFinanceiroNUM_PRAZO: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
