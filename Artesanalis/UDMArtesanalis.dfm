@@ -27,7 +27,6 @@ object DMArtesanalis: TDMArtesanalis
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
-    Connected = True
     Left = 44
     Top = 16
   end

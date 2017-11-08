@@ -108,6 +108,7 @@ type
     procedure EdtNumDoctoChange(Sender: TObject);
     procedure Dbg_LanctosTitleClick(Column: TColumn);
     procedure EdtCodPessoaEnter(Sender: TObject);
+    procedure Bt_BuscaHistoricoClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -256,22 +257,22 @@ Begin
           End
          Else
           Begin
-            dDta:=dDta+EdtPrazoDias.Value;
+            dDta:=dDta+EdtPrazoDias.AsInteger;
           End;
        End; // If i=1 Then // Primeiro Registro
-
-      dDtaVenc:=dDta;
 
       // Acerta Vencimentos de Sábado ou Domingo ===============================
       If Ckb_CalculoParcelas.Checked Then
       Begin
-        sNomeDia:=AnsiUpperCase(DiaSemanaNome(dDtaVenc));
+        sNomeDia:=AnsiUpperCase(DiaSemanaNome(dDta));
         If sNomeDia='SÁBADO' Then
-         dDtaVenc:=dDtaVenc+2;
+         dDta:=dDta+2;
 
         If sNomeDia='DOMINGO' Then
-         dDtaVenc:=dDtaVenc+1;
+         dDta:=dDta+1;
       End; // If Ckb_CalculoParcelas.Checked Then
+
+      dDtaVenc:=dDta;
 
       MySql:=' UPDATE OR INSERT INTO FLUXO_FINANCEIRO'+
              ' (NUM_SEQ, COD_FORNECEDOR, COD_HISTORICO, NUM_DOCTO, DTA_EMISSAO,'+
@@ -283,26 +284,26 @@ Begin
              // NUM_SEQ
              If EdtNumSeq.AsInteger<>0 Then
               MySql:=
-               MySql+EdtNumSeq.Text+', '
+               MySql+IntToStr(EdtNumSeq.AsInteger)+', '
              Else
               MySql:=
                MySql+' NULL, ';
 
       MySql:=
-       MySql+EdtCodPessoa.Text+', '+ // COD_FORNECEDOR
-             EdtCodHistorico.Text+', '+ // COD_HISTORICO
-             EdtNumDocto.Text+', '+ // NUM_DOCTO
+       MySql+IntToStr(EdtCodPessoa.AsInteger)+', '+ // COD_FORNECEDOR
+             IntToStr(EdtCodHistorico.AsInteger)+', '+ // COD_HISTORICO
+             IntToStr(EdtNumDocto.AsInteger)+', '+ // NUM_DOCTO
              QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaDocto.Date))))+', '+ // DTA_EMISSAO
-             QuotedStr(f_Troca(',','.',EdtVlrDocto.Text))+', '; // VLR_ORIGINAL
+             QuotedStr(f_Troca(',','.',CurrToStr(EdtVlrDocto.Value)))+', '; // VLR_ORIGINAL
 
              // NUM_PRESTACOES, NUM_PRAZO
              If Ckb_CalculoParcelas.Checked Then
               MySql:=
-               MySql+EdtNumParcelas.Text+', '+EdtPrazoDias.Text+', ';
+               MySql+IntToStr(EdtNumParcelas.AsInteger)+', '+IntToStr(EdtPrazoDias.AsInteger)+', ';
 
              If Not Ckb_CalculoParcelas.Checked Then
               MySql:=
-               MySql+EdtNrParcelas.Text+', 0, ';
+               MySql+IntToStr(EdtNrParcelas.AsInteger)+', 0, ';
 
       MySql:=
        MySql+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaVencto.Date))))+', '; // DTA_PRIM_VENC
@@ -314,7 +315,7 @@ Begin
 
              If Not Ckb_CalculoParcelas.Checked Then
               MySql:=
-               MySql+EdtNrParcela.Text+', ';
+               MySql+IntToStr(EdtNrParcela.AsInteger)+', ';
 
       MySql:=
        MySql+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(dDtaVenc))))+', '; // DTA_VENCIMENTO
@@ -451,10 +452,17 @@ Begin
   // Calcula Parcelas ==========================================================
   If Ckb_CalculoParcelas.Checked Then
   Begin
-    If EdtNumParcelas.Value=0 Then
+    If EdtNumParcelas.AsInteger=0 Then
     Begin
       msg('Favor Informar o'+cr+cr+'Número de Parcelas !!','A');
       EdtNumParcelas.SetFocus;
+      Exit;
+    End;
+
+    If EdtPrazoDias.AsInteger=0 Then
+    Begin
+      msg('Favor Informar o Prazo de Dias'+cr+'Para Calculo da(s) Parcela(s) !!','A');
+      EdtPrazoDias.SetFocus;
       Exit;
     End;
   End; // If Ckb_CalculoParcelas.Checked Then
@@ -462,17 +470,24 @@ Begin
   // NÃO Calcula Parcelas ======================================================
   If Not Ckb_CalculoParcelas.Checked Then
   Begin
-    If EdtNrParcela.Value=0 Then
+    If EdtNrParcela.AsInteger=0 Then
     Begin
       msg('Favor Informar o'+cr+cr+'Número da Parcela !!','A');
       EdtNrParcela.SetFocus;
       Exit;
     End;
 
-    If EdtNrParcelas.Value=0 Then
+    If EdtNrParcelas.AsInteger=0 Then
     Begin
       msg('Favor Informar o'+cr+cr+'Número de Parcela !!','A');
       EdtNrParcelas.SetFocus;
+      Exit;
+    End;
+
+    If EdtNrParcela.AsInteger>EdtNrParcelas.AsInteger Then
+    Begin
+      msg('Número da Parcela MAIOR'+cr+'Que Número de Parcelas!!','A');
+      EdtNrParcela.SetFocus;
       Exit;
     End;
   End; // If Ckb_CalculoParcelas.Checked Then
@@ -480,25 +495,50 @@ Begin
   // Não Permite Inserir Docto Existente =======================================
   If Bt_Salvar.Caption='Incluir' Then
   Begin
-    MySql:=' SELECT f.num_seq'+
+    MySql:=' SELECT f.num_prestacoes, f.num_prestacao, f.num_seq'+
            ' FROM FLUXO_FINANCEIRO f'+
-           ' WHERE f.cod_fornecedor='+EdtCodPessoa.Text+
-           ' AND   f.cod_historico='+EdtCodHistorico.Text+
-           ' AND   f.num_docto='+EdtNumDocto.Text;
+           ' WHERE f.cod_fornecedor='+IntToStr(EdtCodPessoa.AsInteger)+
+           ' AND   f.cod_historico='+IntToStr(EdtCodHistorico.AsInteger)+
+           ' AND   f.num_docto='+IntToStr(EdtNumDocto.AsInteger);
     DMArtesanalis.CDS_BuscaRapida.Close;
     DMArtesanalis.SQLQ_BuscaRapida.SQL.Clear;
     DMArtesanalis.SQLQ_BuscaRapida.SQL.Add(MySql);
     DMArtesanalis.CDS_BuscaRapida.Open;
-    MySql:=Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('Num_Seq').AsString);
-    DMArtesanalis.CDS_BuscaRapida.Close;
 
-    If MySql<>'' Then
+    // Examina Docto
+    If Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('Num_Seq').AsString)<>'' Then
     Begin
-      msg('Impossivel Incluir Documento'+cr+cr+'Já Existente !!','A');
-      EdtNumDocto.SetFocus;
-      Exit;
-    End;
+      // Calculo de Parcelas
+      If Ckb_CalculoParcelas.Checked Then
+      Begin
+        msg('Impossível Calcular de Parcelas'+cr+'para Documento Existente !!','A');
+        DMArtesanalis.CDS_BuscaRapida.Close;
+        EdtNumDocto.SetFocus;
+        Exit;
+      End;
+
+      // SEM Calculo de Parcelas
+      If Not Ckb_CalculoParcelas.Checked Then
+      Begin
+        If DMArtesanalis.CDS_BuscaRapida.FieldByName('num_prestacoes').AsInteger<>EdtNrParcelas.AsInteger Then
+        Begin
+          msg('Impossivel Incluir Documento !!'+cr+cr+'Número de Parcelas Diferente'+cr+'do Docto Já Existente !!','A');
+          DMArtesanalis.CDS_BuscaRapida.Close;
+          EdtNrParcelas.SetFocus;
+          Exit;
+        end;
+
+        If DMArtesanalis.CDS_BuscaRapida.FieldByName('num_prestacao').AsInteger=EdtNrParcela.AsInteger Then
+        Begin
+          msg('Impossivel Incluir !!'+cr+cr+'Este Docto Já Contém'+cr+'Este Número da Parcela !!','A');
+          DMArtesanalis.CDS_BuscaRapida.Close;
+          EdtNrParcela.SetFocus;
+          Exit;
+        end;
+      End; // Not If Ckb_CalculoParcelas.Checked Then
+    End; // If Trim(DMArtesanalis.CDS_BuscaRapida.FieldByName('Num_Seq').AsString)<>'' Then
   End; // If Bt_Salvar.Caption='Incluir' Then
+  DMArtesanalis.CDS_BuscaRapida.Close;
 
   Result:=True;
 
@@ -513,23 +553,26 @@ Begin
    Exit;
 
   MySql:=' SELECT ff.num_seq, ff.cod_historico, pl.des_historico,'+
-         ' ff.cod_fornecedor, fo.des_pessoa,'+
+         ' ff.cod_fornecedor,'+
+         ' CASE'+
+         '     WHEN ff.cod_fornecedor=0 THEN'+
+         '       ''SEM FORNECEDOR INFORMADO'''+
+         '     ELSE'+
+         '       fo.des_pessoa'+
+         ' END des_pessoa,'+
          ' ff.num_docto, ff.dta_emissao,'+
          ' ff.vlr_original, ff.num_prestacao, ff.num_prestacoes, ff.num_prazo,'+
          ' ff.dta_vencimento, ff.vlr_prestacao'+
 
-         ' FROM FLUXO_FINANCEIRO ff, PESSOAS fo, PLANO_CONTAS pl'+
+         ' FROM FLUXO_FINANCEIRO ff'+
+         '      LEFT JOIN PESSOAS fo      on fo.cod_pessoa=ff.cod_fornecedor'+
+         '      LEFT JOIN PLANO_CONTAS pl on pl.cod_historico=ff.cod_historico'+
 
-         ' WHERE ff.cod_fornecedor=fo.cod_pessoa'+
-         ' AND   ff.cod_historico=pl.cod_historico';
-
-         If EdtCodPessoa.AsInteger<>0 Then
-          MySql:=
-           MySql+' AND   ff.cod_fornecedor='+EdtCodPessoa.Text;
+         ' WHERE ff.cod_fornecedor='+IntToStr(EdtCodPessoa.AsInteger);
 
          If EdtCodHistorico.AsInteger<>0 Then
           MySql:=
-           MySql+' AND   ff.cod_historico='+EdtCodHistorico.Text;
+           MySql+' AND   ff.cod_historico='+IntToStr(EdtCodHistorico.AsInteger);
 
   MySql:=
    MySql+' ORDER BY pl.des_historico, fo.des_pessoa, ff.num_docto, ff.dta_vencimento';
@@ -538,18 +581,8 @@ Begin
   DMArtesanalis.SQLQ_FluxoFinanceiro.SQL.Add(MySql);
   DMArtesanalis.CDS_FluxoFinanceiro.Open;
 
-  Bt_Salvar.Enabled:=False;
-  Bt_Excluir.Enabled:=False;
-  If Not DMArtesanalis.CDS_FluxoFinanceiro.IsEmpty Then
-  Begin
-    Bt_Salvar.Enabled:=True;
-
-    If Bt_Salvar.Caption<>'Alterar' Then
-     Bt_Excluir.Enabled:=True;
-  End;
-
+  Bt_Salvar.Enabled:=True;
   EdtNumDoctoChange(Self);
-
 End; // Apresenta Movtos de Fluxo Financeiro >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Limpa Campos do Docto na Tela >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -611,6 +644,7 @@ Begin
   Gb_Parcelas.Visible:=True;
   Gb_ParcelasCalcular.Visible:=False;
   Dbg_Lanctos.Enabled:=True;
+  Bt_Excluir.Enabled:=False;
 
   Bt_Salvar.Caption:='Incluir';
 
@@ -766,8 +800,8 @@ end;
 
 procedure TFrmContasPagar.Bt_SalvarClick(Sender: TObject);
 begin
-  If EdtPrazoDias.AsInteger=0 Then
-   EdtPrazoDias.AsInteger:=1;
+//  If EdtPrazoDias.AsInteger=0 Then
+//   EdtPrazoDias.AsInteger:=1;
 
   If Not ConsisteLancamento Then
    Exit;
@@ -827,11 +861,7 @@ begin
   End; // If EdtCodPessoa.asInteger<>0 Then
 
   // Busca Fluxo Financeiro ====================================================
-  If Dbg_Lanctos.Enabled Then
-   FluxoFinanceiroBusca;
-
-  Bt_Excluir.Enabled:=True;
-
+  FluxoFinanceiroBusca;
 
   Screen.Cursor:=crDefault;
 end;
@@ -895,7 +925,6 @@ begin
   If bgExecEvento Then
   Begin
     Bt_Salvar.Enabled:=False;
-    Bt_Excluir.Enabled:=False;
 
     DMArtesanalis.CDS_FluxoFinanceiro.Close;
 
@@ -972,7 +1001,7 @@ begin
 
     EdtDesHistorico.Clear;
 
-    MySql:=' SELECT pl.des_historico, pl.cod_historico, pl.cod_centrocustos'+
+    MySql:=' SELECT pl.des_historico, pl.cod_historico'+
            ' FROM PLANO_CONTAS pl'+
            ' WHERE pl.cod_historico='+IntToStr(EdtCodHistorico.AsInteger);
     DMArtesanalis.CDS_BuscaRapida.Close;
@@ -993,15 +1022,14 @@ begin
   End; // If EdtCodHistorico.asInteger<>0 Then
 
   // Busca Fluxo Financeiro ====================================================
-  If Dbg_Lanctos.Enabled Then
-   FluxoFinanceiroBusca;
+  FluxoFinanceiroBusca;
 
   Screen.Cursor:=crDefault;
-//  EdtNumDocto.SetFocus;
 end;
 
 procedure TFrmContasPagar.Bt_AbandonarClick(Sender: TObject);
 begin
+  // Limpa Tela ================================================================
   LimpaDocto(False);
 
   EdtCodPessoa.SetFocus;
@@ -1053,11 +1081,12 @@ begin
   If DMArtesanalis.CDS_FluxoFinanceiro.IsEmpty Then
    Exit;
 
+  Dbg_Lanctos.Enabled:=False;
+  Bt_Excluir.Enabled:=True;
+
   // Apresenta Documento =======================================================
   ApresentaDocto;
 
-  Dbg_Lanctos.Enabled:=False;
-  Bt_Excluir.Enabled:=False;
 
   Bt_Salvar.Caption:='Alterar';
   EdtCodPessoa.SetFocus;
@@ -1068,18 +1097,16 @@ procedure TFrmContasPagar.Bt_ExcluirClick(Sender: TObject);
 Var
   MySql: String;
 begin
-  If DMArtesanalis.CDS_FluxoFinanceiro.IsEmpty Then
-   Exit;
 
-  // Apresenta Documento =======================================================
-  ApresentaDocto;
-
-  if msg('Deseja Realmente Excluir o'+cr+cr+'Documento Selecionsdo ??','C')=2 Then
+  if msg('Deseja Realmente Excluir o'+cr+'Documento Número: '+IntToStr(EdtNumDocto.AsInteger)+cr+
+         'Parcela: '+IntToStr(EdtNrParcela.AsInteger)+'/'+IntToStr(EdtNumParcelas.AsInteger)+' no Valor de R$ '+FormatFloat(',0.00',EdtVlrDocto.Value)+cr+
+         'Data Emissão: '+DateToStr(DtEdt_DtaDocto.Date)+cr+' Data Vencimento: '+DateToStr(DtEdt_DtaVencto.Date)+' ??','C')=2 Then
   Begin
-    LimpaDocto(False);
     EdtCodPessoa.SetFocus;
     Exit;
   End;
+
+  Bt_Excluir.Enabled:=False;
 
   // Exclui Docto ==============================================================
   // Insere Lancamento =========================================================
@@ -1107,7 +1134,7 @@ begin
     DecimalSeparator:='.';
 
     MySql:=' DELETE FROM FLUXO_FINANCEIRO f'+
-           ' WHERE f.num_seq='+EdtNumSeq.Text;
+           ' WHERE f.num_seq='+IntToStr(EdtNumSeq.AsInteger);
     DMArtesanalis.SQLC.Execute(MySql,Nil,Nil);
 
     // Atualiza Transacao ======================================================
@@ -1136,9 +1163,15 @@ begin
   End; // Try da Transação
 
   msg('Documento Excluido com SUCESSO !!','A');
-  FluxoFinanceiroBusca;
-  EdtCodPessoa.SetFocus;
 
+  // Limpa Tela ================================================================
+  LimpaDocto(False);
+
+  // Busca Fluxo Financeiro ====================================================
+  Dbg_Lanctos.Enabled:=True;
+  FluxoFinanceiroBusca;
+
+  EdtCodPessoa.SetFocus;
 end;
 
 procedure TFrmContasPagar.EdtNumDoctoChange(Sender: TObject);
@@ -1195,7 +1228,62 @@ end;
 
 procedure TFrmContasPagar.EdtCodPessoaEnter(Sender: TObject);
 begin
-  Bt_Excluir.Enabled:=False;
+//  Bt_Excluir.Enabled:=False;
+end;
+
+procedure TFrmContasPagar.Bt_BuscaHistoricoClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+
+  EdtCodHistorico.Clear;
+  EdtDesHistorico.Clear;
+  Dbg_Lanctos.SetFocus;
+
+  FrmPesquisa:=TFrmPesquisa.Create(Self);
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  MySql:=' SELECT pl.des_historico, pl.cod_historico'+
+         ' FROM PLANO_CONTAS pl'+
+         ' ORDER BY pl.des_historico';
+  DMArtesanalis.CDS_Pesquisa.Close;
+  DMArtesanalis.CDS_Pesquisa.Filtered:=False;
+  DMArtesanalis.SDS_Pesquisa.CommandText:=MySql;
+  DMArtesanalis.CDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(DMArtesanalis.CDS_Pesquisa.FieldByName('cod_historico').AsString)='' Then
+  Begin
+    DMArtesanalis.CDS_Pesquisa.Close;
+    msg('Sem Histórico a Listar !!','A');
+    EdtCodHistorico.SetFocus;
+    FreeAndNil(FrmPesquisa);
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisa.Campo_pesquisa:='Des_Historico';
+  FrmPesquisa.Campo_Codigo:='Cod_Historico';
+  FrmPesquisa.Campo_Descricao:='Des_Historico';
+  //FrmPesquisa.EdtDescricao.Text:=FrmAcessos.EdtDescPessoa.Text;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisa.ShowModal;
+  DMArtesanalis.CDS_Pesquisa.Close;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+  Begin
+    EdtCodHistorico.AsInteger:=StrToInt(FrmPesquisa.EdtCodigo.Text);
+    EdtCodHistoricoExit(Self);
+    EdtNumDocto.SetFocus;
+  End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+
+  FreeAndNil(FrmPesquisa);
 end;
 
 end.

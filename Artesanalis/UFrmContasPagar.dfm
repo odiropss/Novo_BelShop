@@ -804,6 +804,7 @@ object FrmContasPagar: TFrmContasPagar
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
+        OnClick = Bt_BuscaHistoricoClick
       end
       object Bt_NovoHistorico: TJvXPButton
         Tag = 92
