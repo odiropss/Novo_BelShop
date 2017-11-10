@@ -131,7 +131,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Top = 56
     Width = 977
     Height = 479
-    ActivePage = Ts_FluxFornApres
+    ActivePage = Ts_FluxFornCaixa
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

@@ -2482,7 +2482,6 @@ var
   // Sql´s para IBQuery //////////////
   MySqlDML, MySqlSelect, MySqlOrderBy, MySqlOrderGrup: String;
   MySqlClausula1, MySqlClausula2, MySqlClausula3, MySqlClausula4: String;
-  sParametros: String;
   ///////////////////////////////////////////
 
   iNrRegistros:Integer;
@@ -46857,8 +46856,82 @@ begin
 end;
 
 procedure TFrmBelShop.SubMenuFinanConciliaDepositosClick(Sender: TObject);
+Var
+  MySql: String;
+  sParametros: String;
 begin
-  FrmBancoExtratos.Caption:='Depósitos Bancários';
+
+  msg('Opção em Desenvolvimento !!','A');
+  Exit;
+
+  bgSiga:=True;
+  FrmPeriodoApropriacao:=TFrmPeriodoApropriacao.Create(Self);
+  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Text:=
+                      DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Text   :=
+                      DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+
+  FrmPeriodoApropriacao.ShowModal;
+  sgDtaI:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date);
+  sgDtaF:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date);
+  FreeAndNil(FrmPeriodoApropriacao);
+
+  // Verifica se Prossegue Processamento =======================================
+  If Not bgSiga Then
+   Exit;
+
+  //============================================================================
+  // Busca Movtos de Sangria e Suprimento de Caixa no Linx (Cloud) =============
+  //============================================================================
+  If msg('Atualiza Dados da Linx (Nuvem)'+cr+cr+'do Período de '+sgDtaI+' a '+sgDtaF+cr+'??','C')=1 Then
+  Begin
+    OdirPanApres.Caption:='AGUARDE !! Atualizando Sangrias de Caixa LINX - CLOUD';
+    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmBelShop;
+    OdirPanApres.BringToFront();
+    OdirPanApres.Visible:=True;
+    Refresh;
+
+    // Busca Lojas Linx ==========================================================
+    MySql:=' SELECT em.cod_linx'+
+           ' FROM EMP_CONEXOES em'+
+           ' WHERE em.cod_linx<>0'+
+           ' ORDER BY 1';
+    DMBelShop.CDS_Busca.Close;
+    DMBelShop.SDS_Busca.CommandText:=MySql;
+    DMBelShop.CDS_Busca.Open;
+
+    DMBelShop.CDS_Busca.DisableControls;
+    While Not DMBelShop.CDS_Busca.Eof do
+    Begin
+      OdirPanApres.Caption:='AGUARDE !! Atualizando Sangrias de Caixa (LINX - CLOUD) Loja: '+DMBelShop.CDS_Busca.FieldByName('Cod_Linx').AsString;
+      Application.ProcessMessages;
+
+      sParametros:=sgPastaWebService+'PWebServiceLinx.exe LinxSangriaSuprimentos'; // Excutavel e Metodo a Processar
+      sParametros:=sParametros+' '+DMBelShop.CDS_Busca.FieldByName('Cod_Linx').AsString; // Codigo da Loja a Processar
+      sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Metodos')+'"'; // Pasta dos Metodos
+      sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Retornos')+'"'; // Pasta dos Retornos
+      sParametros:=sParametros+' "'+sgDtaI+'"'; // Data Inicial
+      sParametros:=sParametros+' "'+sgDtaF+'"'; // Data Final
+
+      // Envia Parametro e Aguarda Termino do Processo =============================
+      CreateProcessSimple(sParametros);
+
+      DMBelShop.CDS_Busca.Next;
+    End; // While Not DMBelShop.CDS_Busca.Eof do
+    DMBelShop.CDS_Busca.EnableControls;
+    DMBelShop.CDS_Busca.Close;
+    OdirPanApres.Visible:=False;
+  End; // If msg('Atualiza Dados da Linx (Nuvem)'+cr+cr+'do Período de '+sgdti+' a '+sgDtaF+cr+'??','C')=1 Then
+  // Busca Movtos de Sangria e Suprimento de Caixa no Linx (Cloud) =============
+  //============================================================================
+
+  // Acerta Data para Separador <.> Ponto ======================================
+  sgDtaI:=f_Troca('/','.',f_Troca('-','.',sgDtaI));
+  sgDtaF:=f_Troca('/','.',f_Troca('-','.',sgDtaF));
 
   // Acerta Apresentação das TabSheets =========================================
   FrmBancoExtratos.DesabilitaTabSheet(nil);
@@ -46877,8 +46950,12 @@ begin
   // Executa Permissões de Menu ================================================
   BloqueioMenu(FrmBancoExtratos, DMBelShop.CDS_Seguranca, DMBelShop.SDS_Busca, Des_Login, bgInd_Admin);
 
+  FrmBancoExtratos.Caption:='Depósitos Bancários';
   FrmBancoExtratos.Ts_ConciliacoesManutDepositos.TabVisible:=True;
   FrmBancoExtratos.ShowModal;
+
+
+
 end;
 
 End.

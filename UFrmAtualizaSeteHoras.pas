@@ -417,6 +417,7 @@ Begin
              ' AND   ml.cancelado = ''N'''+
              ' AND   ml.excluido = ''N'''+
              ' AND   TRIM(ml.id_cfop) IN (''5411'', ''6411'')'+
+             ' AND   fl.cod_cliente is not null'+
 
              ' AND   ml.empresa = :CodEmpLINX'+
              ' AND   CAST(ml.data_lancamento AS DATE) >= :DtaInicioLinx';
@@ -489,6 +490,7 @@ Begin
              '        ((TRIM(ml.id_cfop) IN (''5910'', ''6910''))'+
              '          AND (ml.operacao = ''S''))'+ // Operação de Saida de Mercadorias Bonificadas
              '      )'+
+             ' AND   fl.cod_cliente is not null'+
 
              ' AND   CAST(ml.data_lancamento AS DATE) >= :DtaInicioLinx'+
              ' AND   ml.empresa = :CodEmpLinx';
@@ -1030,6 +1032,23 @@ Begin
     on e : Exception do
     Begin
       DMAtualizaSeteHoras.SQLC.Rollback(TD);
+
+      // Monta Transacao ===========================================================
+      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+      TD.IsolationLevel:=xilREADCOMMITTED;
+      DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
+
+      MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
+             ' VALUES ('+
+             QuotedStr('80')+', '+
+             '2, '+
+             ' CURRENT_TIMESTAMP,'+
+             QuotedStr('LPr')+', '+ // Linx Com Inventário
+             QuotedStr('ListPreco'+e.message+' - '+MySql)+')'+
+             'MATCHING (COD_LOJA)';
+      DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+
+      DMAtualizaSeteHoras.SQLC.Commit(TD); // Linx Com Inventário
 
       DateSeparator:='/';
       DecimalSeparator:=',';
@@ -1662,7 +1681,10 @@ begin
   // Busca Lojas ===============================================================
   MySql:=' SELECT e.cod_filial, e.cod_linx, e.dta_inicio_linx'+
          ' FROM EMP_CONEXOES e'+
+         //opss somente uma loja
+         // ' WHERE e.cod_linx=2'+
          ' WHERE ((e.ind_ativo = ''SIM'') OR (e.cod_filial = ''99''))'+
+
          ' ORDER BY 1';// desc';
   DMAtualizaSeteHoras.CDS_Lojas.Close;
   DMAtualizaSeteHoras.SDS_Lojas.CommandText:=MySql;

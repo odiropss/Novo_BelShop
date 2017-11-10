@@ -405,20 +405,26 @@ Begin
       sParametro:=sParametro+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Metodos')+'"'; // Pasta dos Metodos
       sParametro:=sParametro+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Retornos')+'"'; // Pasta dos Retornos
 
-      // OdirAqui - Parametro Enviado
-      // ShowMessage(sParametro);
+      //========================================================================
+      // OdirAqui - Parametro Enviado ==========================================
+      // Aguarda Termino do Processo ===========================================
+      //========================================================================
       CreateProcessSimple(sParametro);
+      // OdirAqui - Parametro Enviado ==========================================
+      // Aguarda Termino do Processo ===========================================
+      //========================================================================
 
       //========================================================================
       // Atualiza Movimentos Linx - FIM ========================================
       //========================================================================
+
       If (StrToDate(sDtaComecoLinx)<=StrToDate(sgDtaFim)) Then
       Begin
         If (StrToDate(sDtaComecoLinx)<=StrToDate(sgDtaInicio)) Then
          Begin
            sDtaIncioLinx:=sgDtaInicio;
            bSoLinx:=True;
-         End                           
+         End
         Else
          Begin
            sDtaIncioLinx:=sDtaComecoLinx;

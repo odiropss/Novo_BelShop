@@ -25,7 +25,8 @@ type
 
     Function  AnalisaAtualizaTransferencias: Boolean;
 
-    Function  ProcessaTransferenciasCompras: Boolean; // Busca Transferencias Anteiroes Setor de Compras
+    Function  ProcessaTransferenciasCompras: Boolean; // Busca Transferencias de Dias Anteiroes e Novas do Setor de Compras
+
 
     Function  AtualizaPrioridades: Boolean;
 
@@ -432,7 +433,7 @@ Begin
 
 End; // Atualiza Prioridade de Reposição >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Busca Transferencias Anteiroes Setor de Compras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Busca Transferencias de Dias Anteiroes e Novas do Setor de Compras >>>>>>>>>>
 Function TFrmTransferencias.ProcessaTransferenciasCompras: Boolean;
 Var
   MySql: String;
@@ -462,14 +463,21 @@ Begin
          ' SELECT l.cod_loja cod_empresa'+
          ' FROM ES_ESTOQUES_LOJAS l'+
 
-         ' WHERE ((l.qtd_transf_oc=0  AND   l.ind_prioridade=0)'+
-         '        OR'+
-         '       (l.num_tr_gerada<>0))'+
+         ' WHERE ('+
+         '        (l.num_tr_gerada=0 AND l.ind_prioridade=0 AND l.dta_movto >  ''27.09.2017'')'+ // Último DIA do Calculo Automático
+         '         OR'+
+         '        (l.num_tr_gerada=0 AND l.ind_prioridade=2 AND l.dta_movto >= ''06.11.2017'')'+  // Primeiro Dia Que Busca Loja Não Atendida
+         '         OR'+
+         '        (l.num_tr_gerada<>0 AND l.dta_movto >  ''27.09.2017'')'+ // Último DIA do Calculo Automático
+         '        )'+
+
          ' AND   l.qtd_a_transf > 0'+
          ' AND   l.ind_transf = ''SIM'''+
          ' AND   l.num_pedido = ''000000'''+
          ' AND   l.dta_movto < CURRENT_DATE'+
-         ' AND   l.dta_movto > ''27.09.2017'''+ // Último DIA do Calculo Automático
+
+         // OdirApagar - 09/11/2017
+         // ' AND   l.dta_movto > ''27.09.2017'''+ // Último DIA do Calculo Automático
 
          ' ORDER BY 1';
   DMTransferencias.CDS_Busca.Close;
@@ -615,14 +623,27 @@ Begin
 
              ' FROM ES_ESTOQUES_LOJAS l'+
 
-             ' WHERE ((l.num_tr_gerada=0  AND   l.ind_prioridade=0)'+
-             '        OR'+
-             '        (l.num_tr_gerada<>0))'+
+             ' WHERE ('+
+             '        (l.num_tr_gerada=0 AND l.ind_prioridade=0 AND l.dta_movto >  ''27.09.2017'')'+ // Último DIA do Calculo Automático
+             '         OR'+
+             '        (l.num_tr_gerada=0 AND l.ind_prioridade=2 AND l.dta_movto >= ''06.11.2017'')'+  // Primeiro Dia Que Busca Loja Não Atendida
+             '         OR'+
+             '        (l.num_tr_gerada<>0 AND l.dta_movto >  ''27.09.2017'')'+ // Último DIA do Calculo Automático
+             '        )'+
+
+             // OdirApagar - 09/11/2017
+             // ' WHERE ((l.num_tr_gerada=0  AND   l.ind_prioridade=0)'+
+             // '        OR'+
+             // '        (l.num_tr_gerada<>0))'+
+
              ' AND   l.qtd_a_transf>0'+
              ' AND   l.ind_transf=''SIM'''+
              ' AND   l.num_pedido=''000000'''+
              ' AND   l.dta_movto < CURRENT_DATE'+
-             ' AND   l.dta_movto > ''27.09.2017'''+ // Último DIA do Calculo Automático
+
+             // OdirApagar - 09/11/2017
+             // ' AND   l.dta_movto > ''27.09.2017'''+ // Último DIA do Calculo Automático
+
              ' AND   l.cod_loja='+QuotedStr(mMemo.Lines[i]);
       DMTransferencias.CDS_Busca.Close;
       DMTransferencias.SDS_Busca.CommandText:=MySql;
@@ -685,7 +706,7 @@ Begin
         //======================================================================
         // Atualiza ES_ESTOQUES_LOJAS ==========================================
         //======================================================================
-        MySql:=' SELECT FIRST 1 lo.num_docto, lo.qtd_a_transf'+
+        MySql:=' SELECT FIRST 1 lo.num_docto, lo.qtd_a_transf, lo.ind_prioridade'+
                ' FROM ES_ESTOQUES_LOJAS lo'+
                ' WHERE lo.Num_Docto='+QuotedStr(sDocTR)+
                ' AND   lo.Cod_Loja='+QuotedStr(mMemo.Lines[i])+
@@ -2501,7 +2522,7 @@ begin
   //============================================================================
    SalvaProcessamento('12/999 - Busca Transferencias Anteiroes Setor de Compras - INICIO - '+TimeToStr(Time));
   //============================================================================
-  // Busca Transferencias Anteiroes Setor de Compras ===========================
+  // Busca Transferencias de Dias Anteiroes e Novas do Setor de Compras ========
   //============================================================================
   If Not ProcessaTransferenciasCompras Then
   Begin
@@ -2511,7 +2532,7 @@ begin
     Application.Terminate;
     Exit;
   End;
-  // Busca Transferencias Anteiroes Setor de Compras ===========================
+  // Busca Transferencias de Dias Anteiroes e Novas do Setor de Compras ========
   //============================================================================
   SalvaProcessamento('12/999 - Busca Transferencias Anteiroes Setor de Compras - FIM - '+TimeToStr(Time));
   //============================================================================

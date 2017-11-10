@@ -240,7 +240,8 @@ var
   OrderGrid   // Ordenar Grid
   : String;
 
-  bgPodeUsar,      // Se Usuario Pode Usar Eventos
+  bgSoObs,     // Alterar Somente Observação no Lancamento
+  bgPodeUsar, // Se Usuario Pode Usar Eventos
   bgAtualizaDireto
   : Boolean;
 
@@ -1638,7 +1639,7 @@ begin
     Bt_FluFornBuscaFornecedor.Enabled:=True;
 
     Dbg_FluFornFornec.SetFocus;
-  End;
+  End; // Ts_FluxFornApres
 
   // Ts_FluxFornCaixa
   If (PC_Principal.ActivePage=Ts_FluxFornCaixa) And (Ts_FluxFornCaixa.CanFocus) Then
@@ -1664,7 +1665,7 @@ begin
     Bt_FluFornBuscaFornecedor.Enabled:=True;
 
     Dbg_FluFornCaixa.SetFocus;
-  End;
+  End; // Ts_FluxFornCaixa
 
   // Ts_FluxFornLanctos
   If (PC_Principal.ActivePage=Ts_FluxFornLanctos) And (Ts_FluxFornLanctos.CanFocus) Then
@@ -1684,10 +1685,17 @@ begin
     Bt_FluFornFechar.Glyph:=Nil;
 
     If (sgDMLMovto='I') Or (sgDMLMovto='A') Then
-     EdtDtOrigemDoc.SetFocus
+     Begin
+       If Not bgSoObs Then
+        EdtDtOrigemDoc.SetFocus
+       Else
+        EdtObsDoc.SetFocus
+     End
     Else
-     EdtFluFornCodFornecedor.SetFocus;
-  End;
+     Begin
+       EdtFluFornCodFornecedor.SetFocus;
+     End;
+  End; // Ts_FluxFornLanctos
 
   // Ts_FluxFornGraficos
   If (PC_Principal.ActivePage=Ts_FluxFornGraficos) And (Ts_FluxFornGraficos.CanFocus) Then
@@ -1706,7 +1714,7 @@ begin
     Bt_FluFornFechar.Glyph:=Nil;
 
     Edit2.SetFocus;
-  End;
+  End; // Ts_FluxFornGraficos
 
   // Coloca BitMaps em Componentes =============================================
   BitMaps(FrmFluxoFornecedor);
@@ -3242,6 +3250,14 @@ procedure TFrmFluxoFornecedor.Bt_FluFornIncluirClick(Sender: TObject);
 Var
   MySql, sHist: String;
 begin
+  EdtDtOrigemDoc.Enabled:=True;
+  EdtDtCaixaDoc.Enabled:=True;
+  EdtValorDoc.Enabled:=True;
+  EdtCodLojaDoc.Enabled:=True;
+  EdtCodHistDoc.Enabled:=True;
+
+  bgSoObs:=False;
+
   // Busca Historicos Utilizados ===============================================
   DMBelShop.CDS_FluxoFornHistorico.Locate('COD_HISTORICO',900,[]);
   sHist:=DMBelShop.CDS_FluxoFornHistoricoDES_HISTORICO.AsString;
@@ -3274,7 +3290,7 @@ begin
          ((DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>900)    And
           (DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>955))   Then
       Begin
-        msg('É Permitido Alterar Somente os Históricos:'+cr+cr+sHist,'A');
+        msg('Impressão Somente dos Históricos:'+cr+cr+sHist,'A');
         Dbg_FluFornCaixa.SetFocus;
         Exit;
       End;
@@ -3391,16 +3407,20 @@ begin
   Begin
     If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornAlterar') Then
     Begin
-      If DMBelShop.CDS_FluxoFornecedores.IsEmpty Then
+      If (DMBelShop.CDS_FluxoFornecedores.IsEmpty) Or (Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='') Then
        Exit;
 
-      If (Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='') Or
-         ((DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>900)    And
-          (DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>955))   Then
+      If (DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>900) And
+         (DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsInteger<>955) Then
       Begin
-        msg('É Permitido Alterar Somente os Históricos:'+cr+cr+sHist,'A');
-        Dbg_FluFornCaixa.SetFocus;
-        Exit;
+        msg('É Permitido Alterar Somente a Observação'+cr+'dos Históricos Diferentes de:'+cr+cr+sHist,'A');
+        bgSoObs:=True;
+
+        EdtDtOrigemDoc.Enabled:=False;
+        EdtDtCaixaDoc.Enabled:=False;
+        EdtValorDoc.Enabled:=False;
+        EdtCodLojaDoc.Enabled:=False;
+        EdtCodHistDoc.Enabled:=False;
       End;
 
       // Atualiza Componentes ====================================================
@@ -3409,12 +3429,20 @@ begin
       EdtDtOrigemDoc.Date:=StrToDate(DateToStr(DMBelShop.CDS_FluxoFornecedorDTA_ORIGEM.AsDateTime));
       EdtDtCaixaDoc.Date :=StrToDate(DateToStr(DMBelShop.CDS_FluxoFornecedorDATA.AsDateTime));
       EdtValorDoc.Value  :=DMBelShop.CDS_FluxoFornecedorVLR_ORIGEM.AsCurrency;
-      EdtCodLojaDoc.Text :=DMBelShop.CDS_FluxoFornecedorCOD_EMPRESA.AsString;
-      EdtCodLojaDocExit(Self);
-      EdtCodHistDoc.Text :=DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString;
-      EdtCodHistDocExit(Self);
-      EdtObsDoc.Text     :=DMBelShop.CDS_FluxoFornecedorTXT_OBS.AsString;
 
+      EdtCodLojaDoc.Text :=DMBelShop.CDS_FluxoFornecedorCOD_EMPRESA.AsString;
+      If bgSoObs Then
+       EdtLojaDoc.Text   :=DMBelShop.CDS_FluxoFornecedorRAZAO_SOCIAL.AsString
+      Else
+       EdtCodLojaDocExit(Self);
+
+      EdtCodHistDoc.Text :=DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString;
+      If bgSoObs Then
+       EdtHistDoc.Text   :=DMBelShop.CDS_FluxoFornecedorDES_HISTORICO.AsString
+      Else
+       EdtCodHistDocExit(Self);
+
+      EdtObsDoc.Text     :=DMBelShop.CDS_FluxoFornecedorTXT_OBS.AsString;
       sgDtaDoc :=DateToStr(DMBelShop.CDS_FluxoFornecedorDATA.AsDateTime);
       sgNum_SeqCC:=DMBelShop.CDS_FluxoFornecedorNUM_SEQ.AsString;
 
@@ -3707,7 +3735,70 @@ end;
 procedure TFrmFluxoFornecedor.Bt_LanctosSalvarClick(Sender: TObject);
 Var
   sCodForn, sNrDoc, sDtaDoc: String;
+  MySql: String;
 begin
+  // Altera Somentea a Observação
+  If bgSoObs Then
+  Begin
+    // Monta Transacao ===========================================================
+    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMBelShop.SQLC.StartTransaction(TD);
+    Try // Try da Transação
+      Screen.Cursor:=crAppStart;
+      DateSeparator:='.';
+      DecimalSeparator:='.';
+
+      MySql:=' Update FL_CAIXA_FORNECEDORES f'+
+             ' Set f.txt_obs='+QuotedStr(EdtObsDoc.Text)+
+             ' WHERE f.cod_fornecedor='+IntToStr(DMBelShop.CDS_FluxoFornecedorCOD_FORNECEDOR.AsInteger)+
+             ' AND   f.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DMBelShop.CDS_FluxoFornecedorDATA.AsDateTime))))+
+             ' AND   f.num_seq='+IntToStr(DMBelShop.CDS_FluxoFornecedorNUM_SEQ.AsInteger);
+      DMBelShop.SQLC.Execute(MySql, nil, nil);
+
+      DMBelShop.CDS_FluxoFornecedor.Edit;
+      DMBelShop.CDS_FluxoFornecedorTXT_OBS.AsString:=EdtObsDoc.Text;
+      DMBelShop.CDS_FluxoFornecedor.Post;
+      // Atualiza Transacao ======================================================
+      DMBelShop.SQLC.Commit(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      Screen.Cursor:=crDefault;
+
+    Except // Except da Transação
+      on e : Exception do
+      Begin
+        // Abandona Transacao ====================================================
+        DMBelShop.SQLC.Rollback(TD);
+
+        DateSeparator:='/';
+        DecimalSeparator:=',';
+        Screen.Cursor:=crDefault;
+
+        MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+        Exit;
+      End; // on e : Exception do
+    End; // Try da Transação
+
+    LimpaLancamentos;
+    EdtDtOrigemDoc.Enabled:=True;
+    EdtDtCaixaDoc.Enabled:=True;
+    EdtValorDoc.Enabled:=True;
+    EdtCodLojaDoc.Enabled:=True;
+    EdtCodHistDoc.Enabled:=True;
+
+    Ts_FluxFornApres.TabVisible :=True;
+    Ts_FluxFornCaixa.TabVisible :=True;
+    Ts_FluxFornLanctos.TabVisible:=False;
+    Ts_FluxFornGraficos.TabVisible:=False;
+    PC_Principal.TabIndex:=1;
+    PC_PrincipalChange(Self);
+    
+    Exit;
+  End; // If bgSoObs Then
+
   EdtDtOrigemDoc.SetFocus;
 
   sCodForn:=IntToStr(EdtFluFornCodFornecedor.AsInteger);
@@ -3766,7 +3857,7 @@ end;
 
 procedure TFrmFluxoFornecedor.Bt_LanctosAbandonarClick(Sender: TObject);
 begin
-  EdtDtOrigemDoc.SetFocus;
+  EdtObsDoc.SetFocus;
 
   LimpaLancamentos;
 

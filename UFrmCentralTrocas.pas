@@ -3578,16 +3578,16 @@ begin
   AddToolTip(DtaEdt_ReposLojas.Handle,  @ti, TipoDoIcone, 'TECLE <Enter>...', 'CENTRAL DE TROCAS');
 
   CreateToolTips(Self.Handle);
-  AddToolTip(Ckb_ReposLojasPrioridade0.Handle,  @ti, TipoDoIcone, 'Produtos de Campanhas, Folhetos, etc !!'+cr+'Se Repete...', 'PRIORIDADE 0');
+  AddToolTip(Ckb_ReposLojasPrioridade0.Handle,  @ti, TipoDoIcone, 'Produtos de Campanhas, Folhetos, etc !!'+cr+'Se Repetem...', 'PRIORIDADE 0');
 
   CreateToolTips(Self.Handle);
-  AddToolTip(Ckb_ReposLojasPrioridade1.Handle,  @ti, TipoDoIcone, 'Produtos Solicitados pelo Setor de Compras !!'+cr+'Se Repete...', 'PRIORIDADE 1');
+  AddToolTip(Ckb_ReposLojasPrioridade1.Handle,  @ti, TipoDoIcone, 'Produtos Solicitados pelo Setor de Compras !!'+cr+'Se Repetem...', 'PRIORIDADE 1');
 
   CreateToolTips(Self.Handle);
-  AddToolTip(Ckb_ReposLojasPrioridade2.Handle,  @ti, TipoDoIcone, 'Produtos Solicitados Direto da Loja !!'+cr+'Não Se Repete...', 'PRIORIDADE 2');
+  AddToolTip(Ckb_ReposLojasPrioridade2.Handle,  @ti, TipoDoIcone, 'Produtos Solicitados Direto da Loja !!'+cr+'Se Repetem...', 'PRIORIDADE 2');
 
   CreateToolTips(Self.Handle);
-  AddToolTip(Ckb_ReposLojasPrioridade3.Handle,  @ti, TipoDoIcone, 'Produtos Que Não se Encaixam'+cr+'em Outras Prioridades !!'+cr+'Não Se Repete...', 'PRIORIDADE 3');
+  AddToolTip(Ckb_ReposLojasPrioridade3.Handle,  @ti, TipoDoIcone, 'Produtos Que Não se Encaixam'+cr+'em Outras Prioridades !!'+cr+'Não Se Repetem...', 'PRIORIDADE 3');
 
   CreateToolTips(Self.Handle);
   AddToolTip(Bt_ReposLojasBuscaForn.Handle,  @ti, TipoDoIcone, 'Seleciona Fornecedor da Loja !!', 'REPOSIÇÕES');

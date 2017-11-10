@@ -71,7 +71,7 @@ procedure TFrmPeriodoApropriacao.FormCreate(Sender: TObject);
 begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
-  
+
 //  // Não Permite Movimentar o Formulário =======================================
 //  DeleteMenu(GetSystemMenu(Handle, False), SC_MOVE, MF_BYCOMMAND);
 
@@ -137,15 +137,13 @@ begin
   Close;
 end;
 
-procedure TFrmPeriodoApropriacao.Bt_PeriodoAproprVoltarClick(
-  Sender: TObject);
+procedure TFrmPeriodoApropriacao.Bt_PeriodoAproprVoltarClick(Sender: TObject);
 begin
   bgSiga:=False;
   Close;
 end;
 
-procedure TFrmPeriodoApropriacao.FormKeyPress(Sender: TObject;
-  var Key: Char);
+procedure TFrmPeriodoApropriacao.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   If Key = #13 Then
   Begin
@@ -155,8 +153,7 @@ begin
 
 end;
 
-procedure TFrmPeriodoApropriacao.FormKeyUp(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFrmPeriodoApropriacao.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Key=44   Then
    Clipboard.AsText:='';
@@ -187,8 +184,7 @@ begin
   AcertaRb_Style(Rb_PerAproprSelecionado);
 end;
 
-procedure TFrmPeriodoApropriacao.Rb_PerAproprTodosKeyUp(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmPeriodoApropriacao.Rb_PerAproprTodosKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Rb_PerAproprTodosClick(Self);
 end;

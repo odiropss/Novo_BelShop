@@ -181,6 +181,7 @@ var
   tgMetodos: TStringList; // Contem osd Metodos a Processar
                           // Vem do Arquivo:  C:\Projetos\BelShop\Fontes\WebService Linx\Linx_WebService.Ini
 
+  // Variaveis de Recebimento de Parametros Externos ===========================
   sgParametroMetodo,   // Parametro: Metodo a Processar
   sgParametroCodLoja,  // Paraemtro: Loja a Processar
   sgParametroDtaInicio,// Paraemtro: Data do Inico do Periodo
@@ -1312,6 +1313,16 @@ Begin
 //
 //  \\192.168.0.252\Projetos\BelShop\WebService Linx\PWebServiceLinx.exe LinxMovimento 15 "\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\" "\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\"
 
+{
+PARAMETRO EXTERNO:
+=================
+NomeMetodo; LinxSangriaSuprimentos;
+Codigo_Loja_Linx; 15;
+Pasta_Metodos; \\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;
+Pasta_Retornos; \\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;
+Data_Início;25/09/2017;
+Data_Fim 26/10/2017;
+}
   // OdirOPSS - Utiliza Parametro ==============================================
   //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -2483,7 +2494,5 @@ ATENÇÃO
    - LinxVendedores
     - Não Consta na Relação do Escopo do WebService no Inicio do Documento de
       ESPECIFICAÇÃO Web Service Linx Microvix Padrão
-
-
 }
 

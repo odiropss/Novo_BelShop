@@ -1273,8 +1273,9 @@ var
 
   sgMensagemERRO: String;
 
-  sgPastaRelatorios,
-  sPath_Local, // Somente a Pasta do Executável
+  sgPastaWebService, // Pasta WebService
+  sgPastaRelatorios, // Pasta de Relatórios
+  sPath_Local,       // Somente a Pasta do Executável
   sgPastaExecutavelServer, // Pasta e Executável no Servidor (FrmBelShop)
   sgPastaBancoBelShop: String; // Pasta do Banco de Dados BelShop.FDB
 
@@ -3850,6 +3851,14 @@ begin
   End; //While not Eof(Arq) do
   CloseFile(Arq);
 
+  // Pasta Executavel WebService ===============================================
+  sgPastaWebService:=sgPastaExecutavelServer;
+  if DirectoryExists(IncludeTrailingPathDelimiter(sgPastaWebService)+'WebService Linx\') then
+   sgPastaWebService:=IncludeTrailingPathDelimiter(sgPastaWebService)+'WebService Linx\'
+  Else
+   sgPastaWebService:=IncludeTrailingPathDelimiter(sgPastaWebService)+'Fontes\WebService Linx\';
+
+  // Conecta IBDataBase BelShop ================================================
   IBDB_BelShop.DatabaseName:=sBancoIB;
   DMConexoes.IBDB_BelShop.DatabaseName:=sBancoIB;
   i:=0;

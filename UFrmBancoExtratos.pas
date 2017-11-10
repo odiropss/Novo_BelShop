@@ -207,6 +207,32 @@ type
     Bt_CMDesmarcar: TJvXPButton;
     Bt_CMConciliar: TJvXPButton;
     Bt_CMApresFiltro: TJvXPButton;
+    Pan_ManutConcDep: TPanel;
+    Splitter3: TSplitter;
+    Gb_ConcManutDepositos: TGroupBox;
+    Dbg_ConcManutDepositos: TDBGridJul;
+    Gb_ConcManutExtratoDep: TGroupBox;
+    Dbg_ConcManutExtratoDep: TDBGridJul;
+    Pan_ManutConcTotaisDep: TPanel;
+    Label23: TLabel;
+    Label24: TLabel;
+    Label25: TLabel;
+    EdtConcManutExtratoVlrDep: TCurrencyEdit;
+    EdtConcManutExtratoQtdDep: TCurrencyEdit;
+    EdtConcManutDepQtd: TCurrencyEdit;
+    EdtConcManutDepVlr: TCurrencyEdit;
+    EdtConcManutExtDepDif: TCurrencyEdit;
+    dxStatusBar1: TdxStatusBar;
+    Pan_OpcoesDep: TPanel;
+    Lb_ObsDep: TLabel;
+    Bt_SairDep: TJvXPButton;
+    Pan_ConcilicaoDep: TPanel;
+    Pan_ConcSelecionaDep: TPanel;
+    Rb_ConcAmbosDep: TRadioButton;
+    Rb_ConcConciliadosDep: TRadioButton;
+    Rb_ConcNaoConciliadosDep: TRadioButton;
+    Bt_CMDesmarcarDep: TJvXPButton;
+    Bt_CMConciliarDep: TJvXPButton;
     procedure FormCreate(Sender: TObject);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SairClick(Sender: TObject);
@@ -5876,6 +5902,9 @@ begin
   bgChange:=True;
 
   Application.OnMessage := HabilitaScrollMouse;
+
+  MenuConcilicao.Visible:=False;
+
 end;
 
 procedure TFrmBancoExtratos.PC_PrincipalChange(Sender: TObject);
@@ -10785,6 +10814,7 @@ end;
 
 procedure TFrmBancoExtratos.FormClose(Sender: TObject;var Action: TCloseAction);
 begin
+// OdirApagar - 09/11/2017
 //  if bgSairBancos Then
 //   Begin
 //     Action := caHide;
@@ -10811,5 +10841,4 @@ begin
 end;
 
 end.
-
 
