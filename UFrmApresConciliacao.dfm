@@ -421,7 +421,7 @@ object FrmApresConciliacao: TFrmApresConciliacao
       ParentFont = False
     end
     object Label1: TLabel
-      Left = 668
+      Left = 669
       Top = 11
       Width = 118
       Height = 13
@@ -510,8 +510,8 @@ object FrmApresConciliacao: TFrmApresConciliacao
       OnClick = Bt_SairClick
     end
     object Dbe_ConcManutTotal: TDBEdit
-      Left = 792
-      Top = 8
+      Left = 790
+      Top = 7
       Width = 141
       Height = 19
       TabStop = False
@@ -544,7 +544,7 @@ object FrmApresConciliacao: TFrmApresConciliacao
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
-    object Dbg_ConcManutPagto: TDBGridJul
+    object Dbg_ConcManutExtrato: TDBGridJul
       Left = 2
       Top = 15
       Width = 1043
@@ -723,7 +723,7 @@ object FrmApresConciliacao: TFrmApresConciliacao
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 2
-    object Dbg_ConcManutExtrato: TDBGridJul
+    object Dbg_ConcManutPagto: TDBGridJul
       Left = 2
       Top = 15
       Width = 1043
@@ -802,12 +802,14 @@ object FrmApresConciliacao: TFrmApresConciliacao
         item
           Expanded = False
           FieldName = 'RAZAO_SOCIAL'
+          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'NUM_DOCTO'
           Title.Alignment = taRightJustify
+          Width = 64
           Visible = True
         end
         item
@@ -832,12 +834,14 @@ object FrmApresConciliacao: TFrmApresConciliacao
           Expanded = False
           FieldName = 'VLR_DESCONTO'
           Title.Alignment = taRightJustify
+          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'VLR_ACRESCIMO'
           Title.Alignment = taRightJustify
+          Width = 64
           Visible = True
         end
         item
@@ -845,6 +849,7 @@ object FrmApresConciliacao: TFrmApresConciliacao
           Expanded = False
           FieldName = 'VLR_PAGTO'
           Title.Alignment = taRightJustify
+          Width = 64
           Visible = True
         end
         item
@@ -852,46 +857,54 @@ object FrmApresConciliacao: TFrmApresConciliacao
           Expanded = False
           FieldName = 'PARCIAL'
           Title.Alignment = taCenter
+          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'COMPROV'
           Title.Alignment = taRightJustify
+          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'COMPROVANTE'
+          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'FORN'
           Title.Alignment = taRightJustify
+          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'FORNECEDOR'
+          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'NUM_SERIE'
           Title.Alignment = taRightJustify
+          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'NUM_PREST'
           Title.Alignment = taRightJustify
+          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'CHV_PAGTO'
           Title.Alignment = taRightJustify
+          Width = 64
           Visible = True
         end
         item
@@ -903,6 +916,7 @@ object FrmApresConciliacao: TFrmApresConciliacao
         item
           Expanded = False
           FieldName = 'DES_USUARIO'
+          Width = 64
           Visible = True
         end
         item

@@ -1,9 +1,9 @@
 object DMConciliacao: TDMConciliacao
   OldCreateOrder = False
-  Left = 290
-  Top = 129
-  Height = 599
-  Width = 1076
+  Left = 251
+  Top = 97
+  Height = 643
+  Width = 1140
   object SDS_Bancos: TSQLDataSet
     CommandText = 
       'select *'#13#10'from fin_bancos fb'#13#10'Order by fb.des_banco, fb.num_banc' +
@@ -11,21 +11,21 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 40
-    Top = 8
+    Left = 45
+    Top = 30
   end
   object DSP_Bancos: TDataSetProvider
     DataSet = SDS_Bancos
     Options = [poRetainServerOrder]
-    Left = 80
-    Top = 32
+    Left = 85
+    Top = 54
   end
   object CDS_Bancos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Bancos'
-    Left = 120
-    Top = 16
+    Left = 125
+    Top = 38
     object CDS_BancosCOD_BANCO: TIntegerField
       FieldName = 'COD_BANCO'
       Required = True
@@ -78,8 +78,8 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_Bancos: TDataSource
     DataSet = CDS_Bancos
-    Left = 160
-    Top = 32
+    Left = 165
+    Top = 54
   end
   object SDS_LojasBanco: TSQLDataSet
     CommandText = 
@@ -95,14 +95,14 @@ object DMConciliacao: TDMConciliacao
         Value = '1'
       end>
     SQLConnection = DMBelShop.SQLC
-    Left = 40
-    Top = 88
+    Left = 45
+    Top = 110
   end
   object DSP_LojasBanco: TDataSetProvider
     DataSet = SDS_LojasBanco
     Options = [poRetainServerOrder]
-    Left = 80
-    Top = 112
+    Left = 85
+    Top = 134
   end
   object CDS_LojasBanco: TClientDataSet
     Aggregates = <>
@@ -113,8 +113,8 @@ object DMConciliacao: TDMConciliacao
     Params = <>
     ProviderName = 'DSP_LojasBanco'
     AfterScroll = CDS_LojasBancoAfterScroll
-    Left = 120
-    Top = 96
+    Left = 125
+    Top = 118
     object CDS_LojasBancoCOD_BANCO: TIntegerField
       FieldName = 'COD_BANCO'
     end
@@ -132,20 +132,20 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_LojasBanco: TDataSource
     DataSet = CDS_LojasBanco
-    Left = 160
-    Top = 112
+    Left = 165
+    Top = 134
   end
   object DS_Extrato: TDataSource
     DataSet = CDS_Extrato
-    Left = 160
-    Top = 168
+    Left = 165
+    Top = 190
   end
   object CDS_Extrato: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Extrato'
-    Left = 120
-    Top = 160
+    Left = 125
+    Top = 182
     object CDS_ExtratoNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Visible = False
@@ -212,26 +212,26 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 40
-    Top = 160
+    Left = 45
+    Top = 182
   end
   object DSP_Extrato: TDataSetProvider
     DataSet = SDS_Extrato
     Options = [poRetainServerOrder]
-    Left = 80
-    Top = 184
+    Left = 85
+    Top = 206
   end
   object DS_LojasBancos: TDataSource
     DataSet = CDS_LojasBancos
-    Left = 160
-    Top = 256
+    Left = 165
+    Top = 278
   end
   object CDS_LojasBancos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_LojasBancos'
-    Left = 120
-    Top = 240
+    Left = 125
+    Top = 262
   end
   object SDS_LojasBancos: TSQLDataSet
     CommandText = 
@@ -241,26 +241,26 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 40
-    Top = 240
+    Left = 45
+    Top = 262
   end
   object DSP_LojasBancos: TDataSetProvider
     DataSet = SDS_LojasBancos
     Options = [poRetainServerOrder]
-    Left = 80
-    Top = 264
+    Left = 85
+    Top = 286
   end
   object DS_ConcExtratos: TDataSource
     DataSet = CDS_ConcExtratos
-    Left = 422
-    Top = 31
+    Left = 702
+    Top = 55
   end
   object CDS_ConcExtratos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ConcExtratos'
-    Left = 368
-    Top = 13
+    Left = 648
+    Top = 37
     object CDS_ConcExtratosNUM_BANCO: TIntegerField
       DisplayLabel = 'N'#186' Bco'
       FieldName = 'NUM_BANCO'
@@ -357,14 +357,14 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 272
-    Top = 16
+    Left = 552
+    Top = 40
   end
   object DSP_ConcExtratos: TDataSetProvider
     DataSet = SDS_ConcExtratos
     Options = [poRetainServerOrder]
-    Left = 320
-    Top = 32
+    Left = 600
+    Top = 56
   end
   object SDS_CMExtratos: TSQLDataSet
     CommandText = 
@@ -386,21 +386,21 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 272
-    Top = 138
+    Left = 552
+    Top = 162
   end
   object DSP_CMExtratos: TDataSetProvider
     DataSet = SDS_CMExtratos
     Options = [poRetainServerOrder]
-    Left = 320
-    Top = 154
+    Left = 600
+    Top = 178
   end
   object CDS_CMExtratos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CMExtratos'
-    Left = 368
-    Top = 135
+    Left = 648
+    Top = 159
     object CDS_CMExtratosConciliado: TStringField
       FieldName = 'Conciliado?'
       ReadOnly = True
@@ -505,15 +505,15 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_CMPagtos: TDataSource
     DataSet = CDS_CMPagtos
-    Left = 422
-    Top = 234
+    Left = 702
+    Top = 244
   end
   object CDS_CMPagtos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CMPagtos'
-    Left = 368
-    Top = 213
+    Left = 648
+    Top = 223
     object CDS_CMPagtosCOD_LOJA: TStringField
       FieldName = 'COD_LOJA'
       ReadOnly = True
@@ -707,19 +707,19 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 272
-    Top = 216
+    Left = 552
+    Top = 226
   end
   object DSP_CMPagtos: TDataSetProvider
     DataSet = SDS_CMPagtos
     Options = [poRetainServerOrder]
-    Left = 320
-    Top = 232
+    Left = 600
+    Top = 242
   end
   object DS_CMExtratos: TDataSource
     DataSet = CDS_CMExtratos
-    Left = 422
-    Top = 154
+    Left = 702
+    Top = 178
   end
   object SDS_TpConciliacao: TSQLDataSet
     CommandText = 
@@ -728,21 +728,21 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 544
-    Top = 24
+    Left = 248
+    Top = 8
   end
   object DSP_TpConciliacao: TDataSetProvider
     DataSet = SDS_TpConciliacao
     Options = [poRetainServerOrder]
-    Left = 608
-    Top = 40
+    Left = 312
+    Top = 24
   end
   object CDS_TpConciliacao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_TpConciliacao'
-    Left = 672
-    Top = 24
+    Left = 376
+    Top = 8
     object CDS_TpConciliacaoTIP_AUX: TIntegerField
       FieldName = 'TIP_AUX'
       Required = True
@@ -761,8 +761,8 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_TpConciliacao: TDataSource
     DataSet = CDS_TpConciliacao
-    Left = 736
-    Top = 39
+    Left = 440
+    Top = 23
   end
   object SDS_CMApresPagtos: TSQLDataSet
     CommandText = 
@@ -800,14 +800,14 @@ object DMConciliacao: TDMConciliacao
         Value = '1'
       end>
     SQLConnection = DMBelShop.SQLC
-    Left = 272
-    Top = 290
+    Left = 552
+    Top = 322
   end
   object DSP_CMApresPagtos: TDataSetProvider
     DataSet = SDS_CMApresPagtos
     Options = [poRetainServerOrder]
-    Left = 320
-    Top = 306
+    Left = 600
+    Top = 338
   end
   object CDS_CMApresPagtos: TClientDataSet
     Aggregates = <>
@@ -815,8 +815,8 @@ object DMConciliacao: TDMConciliacao
     Params = <>
     ProviderName = 'DSP_CMApresPagtos'
     AfterScroll = CDS_CMApresPagtosAfterScroll
-    Left = 368
-    Top = 287
+    Left = 648
+    Top = 319
     object CDS_CMApresPagtosCOD_LOJA: TStringField
       Alignment = taCenter
       DisplayLabel = 'Loja'
@@ -946,8 +946,8 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_CMApresExtrato: TDataSource
     DataSet = CDS_CMApresExtratos
-    Left = 422
-    Top = 385
+    Left = 702
+    Top = 409
   end
   object SDS_CMApresExtratos: TSQLDataSet
     CommandText = 
@@ -982,19 +982,19 @@ object DMConciliacao: TDMConciliacao
         Value = '1'
       end>
     SQLConnection = DMBelShop.SQLC
-    Left = 272
-    Top = 368
+    Left = 552
+    Top = 392
   end
   object DSP_CMApresExtratos: TDataSetProvider
     DataSet = SDS_CMApresExtratos
     Options = [poRetainServerOrder]
-    Left = 320
-    Top = 384
+    Left = 600
+    Top = 408
   end
   object DS_CMApresPagtos: TDataSource
     DataSet = CDS_CMApresPagtos
-    Left = 422
-    Top = 306
+    Left = 702
+    Top = 338
   end
   object SDS_CMTotalPagtos: TSQLDataSet
     CommandText = 
@@ -1007,21 +1007,21 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 272
-    Top = 440
+    Left = 552
+    Top = 480
   end
   object DSP_CMTotalPagtos: TDataSetProvider
     DataSet = SDS_CMTotalPagtos
     Options = [poRetainServerOrder]
-    Left = 320
-    Top = 456
+    Left = 600
+    Top = 496
   end
   object CDS_CMTotalPagtos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CMTotalPagtos'
-    Left = 368
-    Top = 437
+    Left = 648
+    Top = 477
     object CDS_CMTotalPagtosCOD_LOJA: TStringField
       Alignment = taCenter
       DisplayLabel = 'Loja'
@@ -1070,8 +1070,8 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_CMTotalPagtos: TDataSource
     DataSet = CDS_CMTotalPagtos
-    Left = 422
-    Top = 456
+    Left = 702
+    Top = 496
   end
   object SDS_HistAuto: TSQLDataSet
     CommandText = 
@@ -1084,21 +1084,21 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 40
-    Top = 368
+    Left = 45
+    Top = 390
   end
   object DSP_HistAuto: TDataSetProvider
     DataSet = SDS_HistAuto
     Options = [poRetainServerOrder]
-    Left = 80
-    Top = 384
+    Left = 85
+    Top = 406
   end
   object CDS_HistAuto: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_HistAuto'
-    Left = 120
-    Top = 368
+    Left = 125
+    Top = 390
     object CDS_HistAutoCOD_HISTORICO: TIntegerField
       DisplayLabel = 'Hist'
       FieldName = 'COD_HISTORICO'
@@ -1143,13 +1143,13 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_HistAuto: TDataSource
     DataSet = CDS_HistAuto
-    Left = 160
-    Top = 383
+    Left = 165
+    Top = 405
   end
   object DS_ConcCaixa: TDataSource
     DataSet = CDS_ConcCaixa
-    Left = 727
-    Top = 116
+    Left = 431
+    Top = 100
   end
   object SDS_ConcCaixaTotais: TSQLDataSet
     CommandText = 
@@ -1164,26 +1164,26 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 560
-    Top = 192
+    Left = 264
+    Top = 176
   end
   object DS_ConcCaixaTotais: TDataSource
     DataSet = CDS_ConcCaixaTotais
-    Left = 751
-    Top = 196
+    Left = 455
+    Top = 180
   end
   object DSP_ConcCaixaTotais: TDataSetProvider
     DataSet = SDS_ConcCaixaTotais
     Options = [poRetainServerOrder]
-    Left = 617
-    Top = 204
+    Left = 321
+    Top = 188
   end
   object CDS_ConcCaixaTotais: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ConcCaixaTotais'
-    Left = 689
-    Top = 184
+    Left = 393
+    Top = 168
     object CDS_ConcCaixaTotaisCOD_CREDITO: TIntegerField
       DisplayLabel = 'Cod'
       FieldName = 'COD_CREDITO'
@@ -1235,8 +1235,8 @@ object DMConciliacao: TDMConciliacao
     Aggregates = <>
     Params = <>
     ProviderName = 'DSp_ConcCaixa'
-    Left = 672
-    Top = 136
+    Left = 376
+    Top = 120
     object CDS_ConcCaixaNUM_SEQREG: TIntegerField
       FieldName = 'NUM_SEQREG'
     end
@@ -1322,14 +1322,14 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 560
-    Top = 132
+    Left = 264
+    Top = 116
   end
   object DSP_ConcCaixa: TDataSetProvider
     DataSet = SDS_ConcCaixa
     Options = [poRetainServerOrder]
-    Left = 617
-    Top = 116
+    Left = 321
+    Top = 100
   end
   object CDS_CMApresExtratos: TClientDataSet
     Aggregates = <>
@@ -1337,8 +1337,8 @@ object DMConciliacao: TDMConciliacao
     Params = <>
     ProviderName = 'DSP_CMApresExtratos'
     AfterScroll = CDS_CMApresExtratosAfterScroll
-    Left = 368
-    Top = 365
+    Left = 648
+    Top = 389
     object CDS_CMApresExtratosNUM_BANCO: TIntegerField
       DisplayLabel = 'Banco'
       FieldName = 'NUM_BANCO'
@@ -1416,6 +1416,617 @@ object DMConciliacao: TDMConciliacao
       Size = 4
     end
     object CDS_CMApresExtratosVLR_TOTAL: TAggregateField
+      FieldName = 'VLR_TOTAL'
+      Active = True
+      DisplayFormat = '0,.00'
+      Expression = 'SUM(VLR_DOCTO)'
+    end
+  end
+  object SDS_CMExtratosDep: TSQLDataSet
+    CommandText = 
+      'SELECT'#13#10'DISTINCT'#13#10'CASE'#13#10'  WHEN p.chv_extrato IS NULL THEN'#13#10'     ' +
+      #39'NAO'#39#13#10'  ELSE'#13#10'     '#39'SIM'#39#13#10'END "Conciliado?",'#13#10'p.ind_quem QUEM,'#13 +
+      #10'CASE'#13#10'   WHEN p.ind_quem is not null THEN'#13#10'      '#39'SIM'#39#13#10'   ELSE' +
+      #13#10'      '#39'NAO'#39#13#10'END "Conciliar?",'#13#10'b.num_banco, b.des_banco, b.nu' +
+      'm_agencia, b.num_conta,'#13#10'e.dta_extrato, e.num_docto, e.vlr_docto' +
+      ', '#13#10'e.cod_tpmovto, m.des_tpmovto,'#13#10'm.ind_tipo, e.chv_extrato, p.' +
+      'cod_usuario,'#13#10'p.tip_conciliacao, e.cod_banco'#13#10#13#10'FROM fin_bancos_' +
+      'extratos e'#13#10'          LEFT JOIN fin_bancos_tp_movtos m    ON m.c' +
+      'od_tpmovto=e.cod_tpmovto'#13#10'                                      ' +
+      '       AND m.cod_banco=e.cod_banco'#13#10'          LEFT JOIN fin_conc' +
+      'iliacao_depositos p  ON p.chv_extrato=e.chv_extrato'#13#10'          L' +
+      'EFT JOIN fin_bancos b              ON b.cod_banco=e.cod_banco'#13#10#13 +
+      #10'WHERE m.ind_tipo='#39'C'#39#13#10'AND   e.dta_extrato Between '#39'10.01.2017'#39' ' +
+      'And '#39'10.01.2017'#39#13#10'AND   e.Num_Seq<>999999'#13#10'AND   UPPER(m.des_tpm' +
+      'ovto) like '#39'DEPOS%'#39#13#10#13#10'ORDER BY e.dta_extrato, b.Des_Banco, b.nu' +
+      'm_banco, b.num_agencia, b.num_conta, e.num_seq'
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 824
+    Top = 162
+  end
+  object DSP_CMExtratosDep: TDataSetProvider
+    DataSet = SDS_CMExtratosDep
+    Options = [poRetainServerOrder]
+    Left = 872
+    Top = 178
+  end
+  object CDS_CMExtratosDep: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_CMExtratosDep'
+    Left = 920
+    Top = 159
+    object CDS_CMExtratosDepConciliado: TStringField
+      FieldName = 'Conciliado?'
+      ReadOnly = True
+      FixedChar = True
+      Size = 3
+    end
+    object CDS_CMExtratosDepQUEM: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'Quem'
+      FieldName = 'QUEM'
+      ReadOnly = True
+      Size = 3
+    end
+    object CDS_CMExtratosDepConciliar: TStringField
+      Alignment = taCenter
+      FieldName = 'Conciliar?'
+      ReadOnly = True
+      FixedChar = True
+      Size = 3
+    end
+    object CDS_CMExtratosDepNUM_BANCO: TIntegerField
+      DisplayLabel = 'N'#186' Banco'
+      FieldName = 'NUM_BANCO'
+      ReadOnly = True
+    end
+    object CDS_CMExtratosDepDES_BANCO: TStringField
+      DisplayLabel = 'Banco'
+      FieldName = 'DES_BANCO'
+      ReadOnly = True
+      Size = 50
+    end
+    object CDS_CMExtratosDepNUM_AGENCIA: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Ag'#234'ncia'
+      FieldName = 'NUM_AGENCIA'
+      ReadOnly = True
+      Size = 10
+    end
+    object CDS_CMExtratosDepNUM_CONTA: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'N'#186' Conta'
+      FieldName = 'NUM_CONTA'
+      ReadOnly = True
+      Size = 60
+    end
+    object CDS_CMExtratosDepDTA_EXTRATO: TDateField
+      Alignment = taCenter
+      DisplayLabel = 'Dia'
+      FieldName = 'DTA_EXTRATO'
+      ReadOnly = True
+    end
+    object CDS_CMExtratosDepNUM_DOCTO: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Docto'
+      FieldName = 'NUM_DOCTO'
+      ReadOnly = True
+      Size = 10
+    end
+    object CDS_CMExtratosDepVLR_DOCTO: TFMTBCDField
+      DisplayLabel = 'Valor'
+      FieldName = 'VLR_DOCTO'
+      ReadOnly = True
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_CMExtratosDepCOD_TPMOVTO: TIntegerField
+      FieldName = 'COD_TPMOVTO'
+      ReadOnly = True
+    end
+    object CDS_CMExtratosDepDES_TPMOVTO: TStringField
+      DisplayLabel = 'Hist'#243'rico'
+      FieldName = 'DES_TPMOVTO'
+      ReadOnly = True
+      Size = 60
+    end
+    object CDS_CMExtratosDepIND_TIPO: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'D/C'
+      FieldName = 'IND_TIPO'
+      ReadOnly = True
+      Size = 2
+    end
+    object CDS_CMExtratosDepCHV_EXTRATO: TStringField
+      FieldName = 'CHV_EXTRATO'
+      ReadOnly = True
+      Size = 30
+    end
+    object CDS_CMExtratosDepCOD_USUARIO: TIntegerField
+      FieldName = 'COD_USUARIO'
+      ReadOnly = True
+    end
+    object CDS_CMExtratosDepTIP_CONCILIACAO: TStringField
+      DisplayLabel = 'Tipo Concilia'#231#227'o'
+      FieldName = 'TIP_CONCILIACAO'
+      ReadOnly = True
+      Size = 4
+    end
+    object CDS_CMExtratosDepCOD_BANCO: TIntegerField
+      FieldName = 'COD_BANCO'
+    end
+  end
+  object DS_CMDepositos: TDataSource
+    DataSet = CDS_CMDepositos
+    Left = 974
+    Top = 244
+  end
+  object CDS_CMDepositos: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_CMDepositos'
+    Left = 920
+    Top = 223
+    object CDS_CMDepositosConciliado: TStringField
+      FieldName = 'Conciliado?'
+      ReadOnly = True
+      FixedChar = True
+      Size = 3
+    end
+    object CDS_CMDepositosQUEM: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'Quem'
+      FieldName = 'QUEM'
+      ReadOnly = True
+      Size = 3
+    end
+    object CDS_CMDepositosConciliar: TStringField
+      Alignment = taCenter
+      FieldName = 'Conciliar?'
+      ReadOnly = True
+      FixedChar = True
+      Size = 3
+    end
+    object CDS_CMDepositosCOD_LOJA: TStringField
+      DisplayLabel = 'Cod Loja'
+      FieldName = 'COD_LOJA'
+      ReadOnly = True
+      Size = 6
+    end
+    object CDS_CMDepositosRAZAO_SOCIAL: TStringField
+      FieldName = 'RAZAO_SOCIAL'
+      ReadOnly = True
+      Size = 60
+    end
+    object CDS_CMDepositosUSU_LOJA: TIntegerField
+      DisplayLabel = 'Usu_Loja'
+      FieldName = 'USU_LOJA'
+    end
+    object CDS_CMDepositosOBS_TEXTO: TStringField
+      FieldName = 'OBS_TEXTO'
+      ReadOnly = True
+      Size = 80
+    end
+    object CDS_CMDepositosDTA_DOCTO: TDateField
+      FieldName = 'DTA_DOCTO'
+      ReadOnly = True
+    end
+    object CDS_CMDepositosNUM_DOCTO: TIntegerField
+      FieldName = 'NUM_DOCTO'
+    end
+    object CDS_CMDepositosVLR_DOCTO: TFMTBCDField
+      FieldName = 'VLR_DOCTO'
+      ReadOnly = True
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_CMDepositosDTA_VENC: TDateField
+      FieldName = 'DTA_VENC'
+      ReadOnly = True
+    end
+    object CDS_CMDepositosVLR_DESCONTO: TFMTBCDField
+      FieldName = 'VLR_DESCONTO'
+      ReadOnly = True
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_CMDepositosVLR_ACRESCIMO: TFMTBCDField
+      FieldName = 'VLR_ACRESCIMO'
+      ReadOnly = True
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_CMDepositosCOD_BANCO: TStringField
+      FieldName = 'COD_BANCO'
+      ReadOnly = True
+      Size = 3
+    end
+    object CDS_CMDepositosDES_BANCO: TStringField
+      FieldName = 'DES_BANCO'
+      ReadOnly = True
+      Size = 30
+    end
+    object CDS_CMDepositosNUM_COMPL: TIntegerField
+      FieldName = 'NUM_COMPL'
+      ReadOnly = True
+    end
+    object CDS_CMDepositosNUM_SEQ: TIntegerField
+      FieldName = 'NUM_SEQ'
+      ReadOnly = True
+    end
+    object CDS_CMDepositosTIP_CONCILIACAO: TStringField
+      DisplayLabel = 'Tipo Concilia'#231#227'o'
+      FieldName = 'TIP_CONCILIACAO'
+      ReadOnly = True
+      Size = 4
+    end
+    object CDS_CMDepositosCOD_USUARIO: TIntegerField
+      FieldName = 'COD_USUARIO'
+    end
+    object CDS_CMDepositosTXT_OBS: TStringField
+      DisplayLabel = 'Observa'#231#227'o'
+      FieldName = 'TXT_OBS'
+      Size = 100
+    end
+  end
+  object SDS_CMDepositos: TSQLDataSet
+    CommandText = 
+      'SELECT'#13#10'm.ind_conciliacao "Conciliado?",'#13#10'p.ind_quem QUEM,'#13#10'CASE' +
+      #13#10'  WHEN p.ind_quem is not null THEN'#13#10'    '#39'SIM'#39#13#10'  ELSE'#13#10'   '#39'NAO' +
+      #39#13#10'END "Conciliar?",'#13#10#39'Bel_'#39'||m.cod_linx cod_loja,'#13#10'e.razao_soci' +
+      'al,'#13#10'm.num_docto USU_Loja,'#13#10'm.obs_texto,'#13#10'm.dta_docto, m.num_doc' +
+      'to, m.vlr_docto,'#13#10'm.dta_venc,'#13#10'm.vlr_desconto, m.vlr_acrescimo,'#13 +
+      #10'm.cod_banco, m.des_banco,'#13#10'm.num_seq, m.num_compl,'#13#10'p.tip_conci' +
+      'liacao,'#13#10'p.cod_usuario, '#13#10'p.txt_obs'#13#10#13#10'FROM fin_conciliacao_mov_' +
+      'dep m'#13#10'   LEFT JOIN fin_conciliacao_depositos p  ON p.num_seq=m.' +
+      'num_seq'#13#10'                                         AND p.num_comp' +
+      'l=m.num_compl'#13#10'   LEFT JOIN emp_conexoes e               ON e.co' +
+      'd_filial=m.cod_loja'#13#10#13#10#13#10'WHERE m.dta_venc = '#39'15.11.2017'#39#13#10#13#10'ORDE' +
+      'R BY m.cod_loja, m.dta_docto'
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 824
+    Top = 226
+  end
+  object DSP_CMDepositos: TDataSetProvider
+    DataSet = SDS_CMDepositos
+    Options = [poRetainServerOrder]
+    Left = 872
+    Top = 242
+  end
+  object DS_CMExtratosDep: TDataSource
+    DataSet = CDS_CMExtratosDep
+    Left = 974
+    Top = 178
+  end
+  object SDS_CMApresDepositos: TSQLDataSet
+    CommandText = 
+      'SELECT'#13#10#39'Bel_'#39'||m.cod_loja Cod_loja,'#13#10'rpad(e.nome_emp, 60, '#39#39') r' +
+      'azao_social,'#13#10'/*'#13#10'CASE'#13#10'  WHEN h.cod_tpmovto IS NOT NULL THEN'#13#10' ' +
+      '    '#39'*'#39'||h.cod_tpmovto'#13#10'  ELSE'#13#10'     m.cod_comprovante'#13#10'END Comp' +
+      'rov,'#13#10'*/'#13#10#39'000'#39' Comprov,'#13#10'/*'#13#10'CASE'#13#10'  WHEN h.cod_tpmovto IS NOT ' +
+      'NULL THEN'#13#10'    '#39'*'#39'||h.des_tpmovto'#13#10'  ELSE'#13#10'    c.nomecomprovante' +
+      #13#10'END Comprovante,'#13#10'*/'#13#10'rpad('#39#39', 20, '#39#39')  Comprovante,'#13#10#13#10'/*'#13#10'CA' +
+      'SE'#13#10'  WHEN b.cod_banco IS NOT NULL THEN'#13#10'    '#39'*'#39'||b.cod_banco'#13#10' ' +
+      ' ELSE'#13#10'    m.cod_fornecedor'#13#10'END Forn,'#13#10'*/'#13#10'rpad('#39#39', 6, '#39#39')  For' +
+      'n,'#13#10'/*'#13#10'CASE'#13#10'  WHEN b.cod_banco IS NOT NULL THEN'#13#10'    '#39'*'#39'||b.de' +
+      's_banco'#13#10'  ELSE'#13#10'   f.nomefornecedor'#13#10'END "Fornecedor",'#13#10'*/'#13#10'rpa' +
+      'd('#39#39', 40, '#39#39')   "Fornecedor",'#13#10#13#10'Cast(lpad(m.num_docto, 6, '#39#39') a' +
+      's varchar(6)) num_docto,'#13#10#13#10'm.dta_docto dta_pagto,'#13#10'm.vlr_docto,' +
+      ' m.vlr_desconto, m.vlr_acrescimo, m.vlr_docto vlr_pagto, '#39'NAO'#39' P' +
+      'arcial,'#13#10'm.dta_venc,'#13#10#39'0000'#39' num_serie, '#39'01'#39' Num_Prest,'#13#10'rpad('#39#39 +
+      ', 23, '#39#39') chv_pagto, p.cod_usuario, u.des_usuario,'#13#10'p.tip_concil' +
+      'iacao, m.num_seq, m.num_compl'#13#10#13#10'FROM fin_conciliacao_mov_dep m'#13 +
+      #10'   Left Join fin_conciliacao_depositos p  on m.num_seq=p.num_se' +
+      'q'#13#10'                                         And m.num_compl=p.nu' +
+      'm_compl'#13#10'   left Join linxlojas e                  on m.cod_linx' +
+      '=e.empresa'#13#10'   Left Join ps_usuarios u                on p.cod_u' +
+      'suario=u.cod_usuario'#13#10#13#10'Where m.ind_conciliacao='#39'SIM'#39#13#10'And   p.c' +
+      'hv_extrato= :CHV_EXTRATO'#13#10#13#10'Order by m.dta_docto, e.nome_emp'#13#10#13#10
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftString
+        Name = 'CHV_EXTRATO'
+        ParamType = ptInput
+        Value = '12'
+      end>
+    SQLConnection = DMBelShop.SQLC
+    Left = 824
+    Top = 322
+  end
+  object DSP_CMApresDepositos: TDataSetProvider
+    DataSet = SDS_CMApresDepositos
+    Options = [poRetainServerOrder]
+    Left = 872
+    Top = 338
+  end
+  object CDS_CMApresDepositos: TClientDataSet
+    Aggregates = <>
+    AggregatesActive = True
+    Params = <>
+    ProviderName = 'DSP_CMApresDepositos'
+    AfterScroll = CDS_CMApresDepositosAfterScroll
+    Left = 920
+    Top = 319
+    object CDS_CMApresDepositosCOD_LOJA: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'Loja'
+      FieldName = 'COD_LOJA'
+      Required = True
+      Size = 6
+    end
+    object CDS_CMApresDepositosRAZAO_SOCIAL: TStringField
+      DisplayLabel = 'Raz'#227'o Social'
+      FieldName = 'RAZAO_SOCIAL'
+      Size = 60
+    end
+    object CDS_CMApresDepositosCOMPROV: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Compr'
+      FieldName = 'COMPROV'
+      Required = True
+      Size = 3
+    end
+    object CDS_CMApresDepositosCOMPROVANTE: TStringField
+      DisplayLabel = 'Comprovante'
+      FieldName = 'COMPROVANTE'
+      FixedChar = True
+    end
+    object CDS_CMApresDepositosFORN: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Forn'
+      FieldName = 'FORN'
+      Size = 6
+    end
+    object CDS_CMApresDepositosFORNECEDOR: TStringField
+      DisplayLabel = 'Fornecedor'
+      FieldName = 'FORNECEDOR'
+      Size = 40
+    end
+    object CDS_CMApresDepositosNUM_DOCTO: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Docto'
+      FieldName = 'NUM_DOCTO'
+      Size = 6
+    end
+    object CDS_CMApresDepositosDTA_PAGTO: TDateField
+      Alignment = taCenter
+      DisplayLabel = 'Dta Pagto'
+      FieldName = 'DTA_PAGTO'
+    end
+    object CDS_CMApresDepositosVLR_DOCTO: TFMTBCDField
+      DisplayLabel = 'Vlr Docto'
+      FieldName = 'VLR_DOCTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_CMApresDepositosVLR_DESCONTO: TFMTBCDField
+      DisplayLabel = 'Vlr Desc'
+      FieldName = 'VLR_DESCONTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_CMApresDepositosVLR_ACRESCIMO: TFMTBCDField
+      DisplayLabel = 'Vlr Acresc'
+      FieldName = 'VLR_ACRESCIMO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_CMApresDepositosVLR_PAGTO: TFMTBCDField
+      DisplayLabel = 'Vlr Pago'
+      FieldName = 'VLR_PAGTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_CMApresDepositosPARCIAL: TStringField
+      DisplayLabel = 'Parcial ?'
+      FieldName = 'PARCIAL'
+      FixedChar = True
+      Size = 1
+    end
+    object CDS_CMApresDepositosDTA_VENC: TDateField
+      Alignment = taCenter
+      DisplayLabel = 'Dta_Venc'
+      FieldName = 'DTA_VENC'
+    end
+    object CDS_CMApresDepositosNUM_SERIE: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'S'#233'rie'
+      FieldName = 'NUM_SERIE'
+      Size = 4
+    end
+    object CDS_CMApresDepositosNUM_PREST: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Nr Prest'
+      FieldName = 'NUM_PREST'
+      FixedChar = True
+      Size = 2
+    end
+    object CDS_CMApresDepositosCHV_PAGTO: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Chv Pagto'
+      FieldName = 'CHV_PAGTO'
+      Required = True
+      Size = 23
+    end
+    object CDS_CMApresDepositosCOD_USUARIO: TIntegerField
+      DisplayLabel = 'Usua'
+      FieldName = 'COD_USUARIO'
+    end
+    object CDS_CMApresDepositosDES_USUARIO: TStringField
+      DisplayLabel = 'Usu'#225'rio'
+      FieldName = 'DES_USUARIO'
+      Size = 50
+    end
+    object CDS_CMApresDepositosTIP_CONCILIACAO: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'Tipo Concilia'#231#227'o'
+      FieldName = 'TIP_CONCILIACAO'
+      Size = 4
+    end
+    object CDS_CMApresDepositosNUM_SEQ: TIntegerField
+      FieldName = 'NUM_SEQ'
+      Required = True
+    end
+    object CDS_CMApresDepositosNUM_COMPL: TIntegerField
+      FieldName = 'NUM_COMPL'
+      Required = True
+    end
+    object CDS_CMApresDepositosVLR_TOTAL: TAggregateField
+      FieldName = 'VLR_TOTAL'
+      Active = True
+      DisplayFormat = '0,.00'
+      Expression = 'SUM(VLR_DOCTO)'
+    end
+  end
+  object DS_CMApresExtratoDep: TDataSource
+    DataSet = CDS_CMApresExtratosDep
+    Left = 974
+    Top = 409
+  end
+  object SDS_CMApresExtratosDep: TSQLDataSet
+    CommandText = 
+      'SELECT'#13#10'b.num_banco, b.des_banco, b.num_agencia, b.num_conta,'#13#10'e' +
+      '.dta_extrato,'#13#10'e.cod_tpmovto, t.des_tpmovto,'#13#10'e.num_docto, e.vlr' +
+      '_docto,'#13#10't.ind_tipo,'#13#10'e.chv_extrato, p.cod_usuario, u.des_usuari' +
+      'o,'#13#10'p.tip_conciliacao'#13#10#13#10'FROM fin_bancos_extratos e'#13#10'          L' +
+      'EFT JOIN fin_bancos_tp_movtos t       ON t.cod_tpmovto=e.cod_tpm' +
+      'ovto'#13#10'                                                AND t.cod_' +
+      'banco=e.cod_banco'#13#10'          LEFT JOIN fin_conciliacao_depositos' +
+      ' p  ON p.chv_extrato=e.chv_extrato'#13#10'          LEFT JOIN fin_banc' +
+      'os b                 ON b.cod_banco=e.cod_banco'#13#10'          LEFT ' +
+      'JOIN ps_usuarios u                ON p.cod_usuario=u.cod_usuario' +
+      #13#10#13#10'WHERE  exists (select 1'#13#10'               from fin_conciliacao' +
+      '_mov_dep m'#13#10'               Where m.num_seq= :NUM_SEQ'#13#10'          ' +
+      '     And   m.num_compl= :NUM_COMPL'#13#10'               And   m.num_s' +
+      'eq=p.num_seq'#13#10'               And   m.num_compl=p.num_compl)'#13#10#13#10'O' +
+      'RDER BY b.Des_Banco, b.num_banco, b.num_agencia, b.num_conta, e.' +
+      'dta_extrato, e.num_seq'#13#10
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'NUM_SEQ'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'NUM_COMPL'
+        ParamType = ptInput
+      end>
+    SQLConnection = DMBelShop.SQLC
+    Left = 824
+    Top = 392
+  end
+  object DSP_CMApresExtratosDep: TDataSetProvider
+    DataSet = SDS_CMApresExtratosDep
+    Options = [poRetainServerOrder]
+    Left = 872
+    Top = 408
+  end
+  object DS_CMApresDepositos: TDataSource
+    DataSet = CDS_CMApresDepositos
+    Left = 974
+    Top = 338
+  end
+  object CDS_CMApresExtratosDep: TClientDataSet
+    Aggregates = <>
+    AggregatesActive = True
+    Params = <>
+    ProviderName = 'DSP_CMApresExtratosDep'
+    AfterScroll = CDS_CMApresExtratosDepAfterScroll
+    Left = 920
+    Top = 389
+    object CDS_CMApresExtratosDepNUM_BANCO: TIntegerField
+      DisplayLabel = 'Banco'
+      FieldName = 'NUM_BANCO'
+    end
+    object CDS_CMApresExtratosDepDES_BANCO: TStringField
+      DisplayLabel = 'Nome Banco'
+      FieldName = 'DES_BANCO'
+      Size = 50
+    end
+    object CDS_CMApresExtratosDepNUM_AGENCIA: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Ag'#234'ncia'
+      FieldName = 'NUM_AGENCIA'
+      Size = 10
+    end
+    object CDS_CMApresExtratosDepNUM_CONTA: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Nr Conta'
+      FieldName = 'NUM_CONTA'
+      Size = 60
+    end
+    object CDS_CMApresExtratosDepDTA_EXTRATO: TDateField
+      Alignment = taCenter
+      DisplayLabel = 'Dta Extrato'
+      FieldName = 'DTA_EXTRATO'
+    end
+    object CDS_CMApresExtratosDepCOD_TPMOVTO: TIntegerField
+      DisplayLabel = 'Hist'
+      FieldName = 'COD_TPMOVTO'
+    end
+    object CDS_CMApresExtratosDepDES_TPMOVTO: TStringField
+      DisplayLabel = 'Hist'#243'rico'
+      FieldName = 'DES_TPMOVTO'
+      Size = 60
+    end
+    object CDS_CMApresExtratosDepNUM_DOCTO: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Docto'
+      FieldName = 'NUM_DOCTO'
+      Size = 10
+    end
+    object CDS_CMApresExtratosDepVLR_DOCTO: TFMTBCDField
+      DisplayLabel = 'Vlr Docto'
+      FieldName = 'VLR_DOCTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_CMApresExtratosDepIND_TIPO: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'D/C'
+      FieldName = 'IND_TIPO'
+      Size = 2
+    end
+    object CDS_CMApresExtratosDepCHV_EXTRATO: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Chv_Extrato'
+      FieldName = 'CHV_EXTRATO'
+      Required = True
+      Size = 30
+    end
+    object CDS_CMApresExtratosDepCOD_USUARIO: TIntegerField
+      DisplayLabel = 'Usua'
+      FieldName = 'COD_USUARIO'
+    end
+    object CDS_CMApresExtratosDepDES_USUARIO: TStringField
+      DisplayLabel = 'Usu'#225'rio'
+      FieldName = 'DES_USUARIO'
+      Size = 50
+    end
+    object CDS_CMApresExtratosDepTIP_CONCILIACAO: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'Tipo Concilia'#231#227'o'
+      FieldName = 'TIP_CONCILIACAO'
+      Size = 4
+    end
+    object CDS_CMApresExtratosDepVLR_TOTAL: TAggregateField
       FieldName = 'VLR_TOTAL'
       Active = True
       DisplayFormat = '0,.00'

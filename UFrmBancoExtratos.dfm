@@ -1,6 +1,6 @@
 object FrmBancoExtratos: TFrmBancoExtratos
-  Left = 238
-  Top = 106
+  Left = 235
+  Top = 107
   AutoSize = True
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
@@ -2829,7 +2829,6 @@ object FrmBancoExtratos: TFrmBancoExtratos
             OnDrawColumnCell = Dbg_ConcManutPagtoDrawColumnCell
             OnDblClick = Dbg_ConcManutPagtoDblClick
             OnEnter = Dbg_ConcManutPagtoEnter
-            OnExit = Dbg_ConcManutExtratoExit
             OnKeyDown = Dbg_ConcManutPagtoKeyDown
             OnTitleClick = Dbg_ConcManutPagtoTitleClick
             CorComFoco = 15004403
@@ -3169,7 +3168,6 @@ object FrmBancoExtratos: TFrmBancoExtratos
             OnDrawColumnCell = Dbg_ConcManutExtratoDrawColumnCell
             OnDblClick = Dbg_ConcManutExtratoDblClick
             OnEnter = Dbg_ConcManutExtratoEnter
-            OnExit = Dbg_ConcManutExtratoExit
             OnKeyDown = Dbg_ConcManutExtratoKeyDown
             OnTitleClick = Dbg_ConcManutExtratoTitleClick
             CorComFoco = 15004403
@@ -3407,6 +3405,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
               Font.Style = [fsBold]
               ParentFont = False
               TabOrder = 1
+              OnChange = EdtConcManutExtratoVlrChange
             end
             object EdtConcManutExtratoQtd: TCurrencyEdit
               Left = 219
@@ -3457,6 +3456,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
               Font.Style = [fsBold]
               ParentFont = False
               TabOrder = 3
+              OnChange = EdtConcManutPagtoVlrChange
             end
             object EdtConcManutExtPagDif: TCurrencyEdit
               Left = 910
@@ -3874,7 +3874,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
           Height = 35
           Align = alRight
           TabOrder = 2
-          object JvXPButton1: TJvXPButton
+          object Bt_HistConcAutoRepLoja: TJvXPButton
             Left = 1
             Top = 1
             Width = 148
@@ -4398,14 +4398,14 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Height = 233
             Align = alClient
             Color = 15004403
-            DataSource = DMConciliacao.DS_CMPagtos
+            DataSource = DMConciliacao.DS_CMDepositos
             FixedColor = clSilver
             Font.Charset = ANSI_CHARSET
             Font.Color = clBlack
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
             Font.Style = []
-            Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
+            Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
             ParentFont = False
             TabOrder = 0
             TitleFont.Charset = DEFAULT_CHARSET
@@ -4413,12 +4413,11 @@ object FrmBancoExtratos: TFrmBancoExtratos
             TitleFont.Height = -11
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
-            OnDrawColumnCell = Dbg_ConcManutPagtoDrawColumnCell
-            OnDblClick = Dbg_ConcManutPagtoDblClick
-            OnEnter = Dbg_ConcManutPagtoEnter
-            OnExit = Dbg_ConcManutExtratoExit
-            OnKeyDown = Dbg_ConcManutPagtoKeyDown
-            OnTitleClick = Dbg_ConcManutPagtoTitleClick
+            OnDrawColumnCell = Dbg_ConcManutDepositosDrawColumnCell
+            OnDblClick = Dbg_ConcManutDepositosDblClick
+            OnEnter = Dbg_ConcManutDepositosEnter
+            OnKeyDown = Dbg_ConcManutDepositosKeyDown
+            OnTitleClick = Dbg_ConcManutDepositosTitleClick
             CorComFoco = 15004403
             SairComEnter = False
             EditDataSetCheck = False
@@ -4492,59 +4491,31 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 Expanded = False
                 FieldName = 'COD_LOJA'
                 Title.Caption = 'Loja'
-                Width = 70
-                Visible = True
+                Width = -1
+                Visible = False
               end
               item
-                Alignment = taCenter
                 Expanded = False
-                FieldName = 'DTA_DOCTO'
-                Title.Alignment = taCenter
-                Title.Caption = 'Dta Docto'
-                Width = 73
-                Visible = True
-              end
-              item
-                Alignment = taCenter
-                Expanded = False
-                FieldName = 'DTA_VENC'
-                Title.Alignment = taCenter
-                Title.Caption = 'Dta Venc'
-                Width = 73
+                FieldName = 'RAZAO_SOCIAL'
+                Title.Caption = 'Raz'#227'o Social da Loja'
+                Width = 250
                 Visible = True
               end
               item
                 Alignment = taCenter
                 Color = 13434879
                 Expanded = False
-                FieldName = 'DTA_PAGTO'
+                FieldName = 'DTA_DOCTO'
                 Title.Alignment = taCenter
-                Title.Caption = 'Dta Pagto'
-                Width = 74
+                Title.Caption = 'Dta Docto'
+                Width = 70
                 Visible = True
               end
               item
-                Expanded = False
-                FieldName = 'NOMEFORNECEDOR'
-                Title.Caption = 'Fornecedor'
-                Width = 200
-                Visible = True
-              end
-              item
-                Alignment = taRightJustify
                 Expanded = False
                 FieldName = 'NUM_DOCTO'
                 Title.Alignment = taRightJustify
-                Title.Caption = 'Docto'
-                Width = 55
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'VLR_PAGTO'
-                Title.Alignment = taRightJustify
-                Title.Caption = 'Vlr Pagto'
-                Width = 90
+                Title.Caption = 'N'#186' Docto'
                 Visible = True
               end
               item
@@ -4557,95 +4528,21 @@ object FrmBancoExtratos: TFrmBancoExtratos
               end
               item
                 Expanded = False
-                FieldName = 'VLR_DESCONTO'
-                Title.Alignment = taRightJustify
-                Title.Caption = 'Vlr Desc'
-                Width = 70
+                FieldName = 'TXT_OBS'
+                Width = 250
                 Visible = True
               end
               item
                 Expanded = False
-                FieldName = 'VLR_ACRESCIMO'
-                Title.Alignment = taRightJustify
-                Title.Caption = 'Vlr Acresc'
-                Width = 70
+                FieldName = 'USU_LOJA'
+                Width = 60
                 Visible = True
               end
               item
                 Expanded = False
-                FieldName = 'NOMECOMPROVANTE'
-                Title.Caption = 'Comprovante'
-                Width = 285
-                Visible = True
-              end
-              item
-                Alignment = taRightJustify
-                Expanded = False
-                FieldName = 'TIP_CONCILIACAO'
-                Title.Alignment = taRightJustify
-                Title.Caption = 'Tp Concilia'#231#227'o'
-                Width = 90
-                Visible = True
-              end
-              item
-                Alignment = taRightJustify
-                Expanded = False
-                FieldName = 'COD_COMPROVANTE'
-                Title.Alignment = taRightJustify
-                Title.Caption = 'Comprov'
-                Width = 55
-                Visible = True
-              end
-              item
-                Alignment = taRightJustify
-                Expanded = False
-                FieldName = 'COD_FORNECEDOR'
-                Title.Alignment = taRightJustify
-                Title.Caption = 'Forn'
-                Width = 41
-                Visible = True
-              end
-              item
-                Alignment = taCenter
-                Expanded = False
-                FieldName = 'IND_PAGTO_PARCIAL'
-                Title.Alignment = taCenter
-                Title.Caption = 'Parcial?'
-                Width = 51
-                Visible = True
-              end
-              item
-                Alignment = taRightJustify
-                Expanded = False
-                FieldName = 'NUM_PRESTACAO'
-                Title.Alignment = taRightJustify
-                Title.Caption = 'Nr Prest'
-                Width = 51
-                Visible = True
-              end
-              item
-                Alignment = taRightJustify
-                Expanded = False
-                FieldName = 'NUM_SERIE'
-                Title.Alignment = taRightJustify
-                Title.Caption = 'S'#233'rie'
-                Width = 35
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'RAZAO_SOCIAL'
-                Title.Caption = 'Raz'#227'o Social da Loja'
-                Width = 300
-                Visible = True
-              end
-              item
-                Alignment = taCenter
-                Expanded = False
-                FieldName = 'DTA_COMPR'
-                Title.Alignment = taCenter
-                Title.Caption = 'Dta Comprov'
-                Width = 78
+                FieldName = 'OBS_TEXTO'
+                Title.Caption = 'Texto Loja'
+                Width = 200
                 Visible = True
               end
               item
@@ -4653,67 +4550,40 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 Expanded = False
                 FieldName = 'COD_BANCO'
                 Title.Alignment = taRightJustify
+                Title.Caption = 'Cod Banco'
+                Width = -1
                 Visible = False
               end
               item
-                Alignment = taRightJustify
                 Expanded = False
                 FieldName = 'DES_BANCO'
-                Title.Alignment = taRightJustify
+                Title.Caption = 'Descri'#231#227'o do Banco'
                 Visible = False
-              end
-              item
-                Alignment = taRightJustify
-                Expanded = False
-                FieldName = 'COD_COBRANCA'
-                Title.Alignment = taRightJustify
-                Visible = False
-              end
-              item
-                Expanded = False
-                FieldName = 'OBS_TEXTO'
-                Title.Caption = 'Observa'#231#245'es'
-                Width = 450
-                Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'NUM_SEQ'
-                Title.Alignment = taRightJustify
+                Title.Caption = 'Num_Seq'
                 Visible = False
               end
               item
                 Expanded = False
                 FieldName = 'NUM_COMPL'
-                Title.Alignment = taRightJustify
+                Title.Caption = 'Num_Compl'
                 Visible = False
               end
               item
-                Alignment = taRightJustify
                 Expanded = False
-                FieldName = 'CHV_PAGTO'
-                Title.Alignment = taRightJustify
-                Title.Caption = 'Chv Pagto'
-                Width = 150
+                FieldName = 'TIP_CONCILIACAO'
+                Width = 100
                 Visible = True
               end
               item
-                Alignment = taRightJustify
                 Expanded = False
-                FieldName = 'CHV_NOTA'
+                FieldName = 'COD_USUARIO'
                 Title.Alignment = taRightJustify
-                Title.Caption = 'Chv Nota'
-                Width = 150
-                Visible = True
-              end
-              item
-                Alignment = taRightJustify
-                Expanded = False
-                FieldName = 'CHV_RECIBO'
-                Title.Alignment = taRightJustify
-                Title.Caption = 'Chv Recibo'
-                Width = 150
-                Visible = True
+                Title.Caption = 'Cod Usuario'
+                Visible = False
               end>
           end
         end
@@ -4738,14 +4608,14 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Height = 177
             Align = alClient
             Color = 15004403
-            DataSource = DMConciliacao.DS_CMExtratos
+            DataSource = DMConciliacao.DS_CMExtratosDep
             FixedColor = clSilver
             Font.Charset = ANSI_CHARSET
             Font.Color = clBlack
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
             Font.Style = []
-            Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
+            Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
             ParentFont = False
             TabOrder = 0
             TitleFont.Charset = DEFAULT_CHARSET
@@ -4753,12 +4623,11 @@ object FrmBancoExtratos: TFrmBancoExtratos
             TitleFont.Height = -11
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
-            OnDrawColumnCell = Dbg_ConcManutExtratoDrawColumnCell
-            OnDblClick = Dbg_ConcManutExtratoDblClick
-            OnEnter = Dbg_ConcManutExtratoEnter
-            OnExit = Dbg_ConcManutExtratoExit
-            OnKeyDown = Dbg_ConcManutExtratoKeyDown
-            OnTitleClick = Dbg_ConcManutExtratoTitleClick
+            OnDrawColumnCell = Dbg_ConcManutExtratoDepDrawColumnCell
+            OnDblClick = Dbg_ConcManutExtratoDepDblClick
+            OnEnter = Dbg_ConcManutExtratoDepEnter
+            OnKeyDown = Dbg_ConcManutExtratoDepKeyDown
+            OnTitleClick = Dbg_ConcManutExtratoDepTitleClick
             CorComFoco = 15004403
             SairComEnter = False
             EditDataSetCheck = False
@@ -4836,21 +4705,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
               item
                 Expanded = False
                 FieldName = 'DES_BANCO'
-                Width = 70
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'NUM_AGENCIA'
-                Title.Alignment = taRightJustify
-                Width = 70
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'NUM_CONTA'
-                Title.Alignment = taRightJustify
-                Width = 75
+                Width = 250
                 Visible = True
               end
               item
@@ -4864,6 +4719,36 @@ object FrmBancoExtratos: TFrmBancoExtratos
               end
               item
                 Expanded = False
+                FieldName = 'NUM_DOCTO'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'N'#186' Docto'
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_DOCTO'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Valor Docto'
+                Width = 90
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'NUM_AGENCIA'
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Alignment = taLeftJustify
+                Expanded = False
+                FieldName = 'NUM_CONTA'
+                Title.Caption = 'N'#250'mero Conta'
+                Width = 250
+                Visible = True
+              end
+              item
+                Expanded = False
                 FieldName = 'COD_TPMOVTO'
                 Visible = False
               end
@@ -4871,21 +4756,6 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 Expanded = False
                 FieldName = 'DES_TPMOVTO'
                 Width = 285
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'NUM_DOCTO'
-                Title.Alignment = taRightJustify
-                Width = 55
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'VLR_DOCTO'
-                Title.Alignment = taRightJustify
-                Title.Caption = 'Valor Lan'#231'to'
-                Width = 90
                 Visible = True
               end
               item
@@ -4911,7 +4781,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 FieldName = 'TIP_CONCILIACAO'
                 Title.Alignment = taRightJustify
                 Title.Caption = 'Tp Concilia'#231#227'o'
-                Width = 90
+                Width = 100
                 Visible = True
               end
               item
@@ -4993,7 +4863,8 @@ object FrmBancoExtratos: TFrmBancoExtratos
               Font.Name = 'MS Sans Serif'
               Font.Style = [fsBold]
               ParentFont = False
-              TabOrder = 0
+              TabOrder = 1
+              OnChange = EdtConcManutExtratoVlrDepChange
             end
             object EdtConcManutExtratoQtdDep: TCurrencyEdit
               Left = 219
@@ -5010,7 +4881,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
               Font.Name = 'MS Sans Serif'
               Font.Style = [fsBold]
               ParentFont = False
-              TabOrder = 1
+              TabOrder = 0
             end
             object EdtConcManutDepQtd: TCurrencyEdit
               Left = 642
@@ -5044,6 +4915,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
               Font.Style = [fsBold]
               ParentFont = False
               TabOrder = 3
+              OnChange = EdtConcManutDepVlrChange
             end
             object EdtConcManutExtDepDif: TCurrencyEdit
               Left = 910
@@ -5115,7 +4987,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
               PanelStyle.ParentFont = False
               Bevel = dxpbNone
               Fixed = False
-              Text = 'Para Localizar Tecle no T'#237'tulo'
+              Text = 'Para Localizar Tecle no T'#237'tulo da Coluna'
               Width = 56
             end>
           PaintStyle = stpsOffice11
@@ -5193,8 +5065,8 @@ object FrmBancoExtratos: TFrmBancoExtratos
               ParentFont = False
               TabOrder = 2
               TabStop = True
-              OnClick = Rb_ConcConciliadosClick
-              OnKeyUp = Rb_ConcConciliadosKeyUp
+              OnClick = Rb_ConcConciliadosDepClick
+              OnKeyUp = Rb_ConcConciliadosDepKeyUp
             end
             object Rb_ConcConciliadosDep: TRadioButton
               Left = 8
@@ -5209,8 +5081,8 @@ object FrmBancoExtratos: TFrmBancoExtratos
               Font.Style = []
               ParentFont = False
               TabOrder = 0
-              OnClick = Rb_ConcConciliadosClick
-              OnKeyUp = Rb_ConcConciliadosKeyUp
+              OnClick = Rb_ConcConciliadosDepClick
+              OnKeyUp = Rb_ConcConciliadosDepKeyUp
             end
             object Rb_ConcNaoConciliadosDep: TRadioButton
               Left = 99
@@ -5225,8 +5097,8 @@ object FrmBancoExtratos: TFrmBancoExtratos
               Font.Style = []
               ParentFont = False
               TabOrder = 1
-              OnClick = Rb_ConcConciliadosClick
-              OnKeyUp = Rb_ConcConciliadosKeyUp
+              OnClick = Rb_ConcConciliadosDepClick
+              OnKeyUp = Rb_ConcConciliadosDepKeyUp
             end
           end
           object Bt_CMDesmarcarDep: TJvXPButton
@@ -5292,7 +5164,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
             ParentFont = False
-            OnClick = Bt_CMDesmarcarClick
+            OnClick = Bt_CMDesmarcarDepClick
           end
           object Bt_CMConciliarDep: TJvXPButton
             Tag = 1
@@ -5324,15 +5196,75 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
             ParentFont = False
-            OnClick = Bt_CMConciliarClick
+            OnClick = Bt_CMConciliarDepClick
+          end
+          object Bt_CMPeriodoDep: TJvXPButton
+            Tag = 1
+            Left = 4
+            Top = 0
+            Width = 133
+            Height = 33
+            Caption = 'Solicita Per'#237'odo'
+            TabOrder = 3
+            TabStop = False
+            Glyph.Data = {
+              07544269746D6170AA040000424DAA0400000000000036000000280000001400
+              000013000000010018000000000074040000C30E0000C30E0000000000000000
+              0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00000000000000000000
+              0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000
+              000000000000000000000000BFBFBF000000BFBFBFBFBFBFBFBFBFBFBFBF7F7F
+              7F000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F
+              00007F0000000000000000BFBFBFFFFFFFFFFFFF000000000000000000000000
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F00007F00
+              00000000BFBFBFFFFFFFFFFFFF000000BFBFBF00000000000000000000000000
+              0000000000000000000000BFBFBFBFBFBF7F00007F00007F00007F0000000000
+              BFBFBFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFF000000BFBFBFBFBFBFFF0000FF0000FF0000FF00000000007F7F7F7F
+              7F7F7F7F7F7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              000000BFBFBFBFBFBF7F00007F00007F00007F0000BFBFBFBFBFBFBFBFBF7F7F
+              7FFFFFFF7F00007F00007F00007F00007F00007F0000FFFFFFFFFFFF000000BF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F
+              00007F00007F00007F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F0000FFFFFFFFFF
+              FFFFFFFFFFFFFFFFFFFF7F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F00007F00007F0000
+              7F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              FFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBF7F7F7FFFFFFF7F00007F00007F00007F0000FFFFFFFFFFFFFFFF
+              FFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+              BFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+              000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F
+              7FFFFFFF7F00007F00007F00007F00007F0000FFFFFFFFFFFFFFFFFF000000BF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
+              FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F7F7F7F7F7F7F
+              7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7FBFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+              BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF}
+            ShowFocusRect = True
+            Spacing = 5
+            Align = alRight
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            Style.Theme = OfficeXP
+            OnClick = Bt_CMPeriodoDepClick
           end
         end
       end
     end
   end
   object OdirPanApres: TPanel
-    Left = 952
-    Top = 260
+    Left = 928
+    Top = 68
     Width = 89
     Height = 33
     BevelInner = bvLowered

@@ -3,8 +3,7 @@ unit UDMBancosConciliacao;
 interface
 
 uses
-  SysUtils, Classes, FMTBcd, DB, DBClient, Provider, SqlExpr;
-//  Último: SqlExpr;
+  SysUtils, Classes, FMTBcd, DB, DBClient, Provider, SqlExpr, Variants;
 
 type
   TDMConciliacao = class(TDataModule)
@@ -228,6 +227,97 @@ type
     CDS_CMApresPagtosVLR_TOTAL: TAggregateField;
     CDS_CMApresExtratosVLR_TOTAL: TAggregateField;
     CDS_ConcCaixaTotaisOBS: TStringField;
+    SDS_CMExtratosDep: TSQLDataSet;
+    DSP_CMExtratosDep: TDataSetProvider;
+    CDS_CMExtratosDep: TClientDataSet;
+    CDS_CMExtratosDepConciliado: TStringField;
+    CDS_CMExtratosDepQUEM: TStringField;
+    CDS_CMExtratosDepConciliar: TStringField;
+    CDS_CMExtratosDepNUM_BANCO: TIntegerField;
+    CDS_CMExtratosDepDES_BANCO: TStringField;
+    CDS_CMExtratosDepNUM_AGENCIA: TStringField;
+    CDS_CMExtratosDepNUM_CONTA: TStringField;
+    CDS_CMExtratosDepDTA_EXTRATO: TDateField;
+    CDS_CMExtratosDepCOD_TPMOVTO: TIntegerField;
+    CDS_CMExtratosDepDES_TPMOVTO: TStringField;
+    CDS_CMExtratosDepNUM_DOCTO: TStringField;
+    CDS_CMExtratosDepVLR_DOCTO: TFMTBCDField;
+    CDS_CMExtratosDepIND_TIPO: TStringField;
+    CDS_CMExtratosDepCHV_EXTRATO: TStringField;
+    CDS_CMExtratosDepCOD_USUARIO: TIntegerField;
+    CDS_CMExtratosDepTIP_CONCILIACAO: TStringField;
+    CDS_CMExtratosDepCOD_BANCO: TIntegerField;
+    DS_CMDepositos: TDataSource;
+    CDS_CMDepositos: TClientDataSet;
+    CDS_CMDepositosCOD_LOJA: TStringField;
+    CDS_CMDepositosConciliado: TStringField;
+    CDS_CMDepositosQUEM: TStringField;
+    CDS_CMDepositosConciliar: TStringField;
+    CDS_CMDepositosDTA_VENC: TDateField;
+    CDS_CMDepositosVLR_DOCTO: TFMTBCDField;
+    CDS_CMDepositosVLR_DESCONTO: TFMTBCDField;
+    CDS_CMDepositosVLR_ACRESCIMO: TFMTBCDField;
+    CDS_CMDepositosRAZAO_SOCIAL: TStringField;
+    CDS_CMDepositosDTA_DOCTO: TDateField;
+    CDS_CMDepositosCOD_BANCO: TStringField;
+    CDS_CMDepositosDES_BANCO: TStringField;
+    CDS_CMDepositosOBS_TEXTO: TStringField;
+    CDS_CMDepositosNUM_SEQ: TIntegerField;
+    CDS_CMDepositosNUM_COMPL: TIntegerField;
+    CDS_CMDepositosTIP_CONCILIACAO: TStringField;
+    SDS_CMDepositos: TSQLDataSet;
+    DSP_CMDepositos: TDataSetProvider;
+    DS_CMExtratosDep: TDataSource;
+    SDS_CMApresDepositos: TSQLDataSet;
+    DSP_CMApresDepositos: TDataSetProvider;
+    CDS_CMApresDepositos: TClientDataSet;
+    CDS_CMApresDepositosCOD_LOJA: TStringField;
+    CDS_CMApresDepositosRAZAO_SOCIAL: TStringField;
+    CDS_CMApresDepositosCOMPROV: TStringField;
+    CDS_CMApresDepositosCOMPROVANTE: TStringField;
+    CDS_CMApresDepositosFORN: TStringField;
+    CDS_CMApresDepositosFORNECEDOR: TStringField;
+    CDS_CMApresDepositosNUM_DOCTO: TStringField;
+    CDS_CMApresDepositosDTA_PAGTO: TDateField;
+    CDS_CMApresDepositosVLR_DOCTO: TFMTBCDField;
+    CDS_CMApresDepositosVLR_DESCONTO: TFMTBCDField;
+    CDS_CMApresDepositosVLR_ACRESCIMO: TFMTBCDField;
+    CDS_CMApresDepositosVLR_PAGTO: TFMTBCDField;
+    CDS_CMApresDepositosPARCIAL: TStringField;
+    CDS_CMApresDepositosDTA_VENC: TDateField;
+    CDS_CMApresDepositosNUM_SERIE: TStringField;
+    CDS_CMApresDepositosNUM_PREST: TStringField;
+    CDS_CMApresDepositosCHV_PAGTO: TStringField;
+    CDS_CMApresDepositosCOD_USUARIO: TIntegerField;
+    CDS_CMApresDepositosDES_USUARIO: TStringField;
+    CDS_CMApresDepositosTIP_CONCILIACAO: TStringField;
+    CDS_CMApresDepositosVLR_TOTAL: TAggregateField;
+    DS_CMApresExtratoDep: TDataSource;
+    SDS_CMApresExtratosDep: TSQLDataSet;
+    DSP_CMApresExtratosDep: TDataSetProvider;
+    DS_CMApresDepositos: TDataSource;
+    CDS_CMApresExtratosDep: TClientDataSet;
+    CDS_CMApresExtratosDepNUM_BANCO: TIntegerField;
+    CDS_CMApresExtratosDepDES_BANCO: TStringField;
+    CDS_CMApresExtratosDepNUM_AGENCIA: TStringField;
+    CDS_CMApresExtratosDepNUM_CONTA: TStringField;
+    CDS_CMApresExtratosDepDTA_EXTRATO: TDateField;
+    CDS_CMApresExtratosDepCOD_TPMOVTO: TIntegerField;
+    CDS_CMApresExtratosDepDES_TPMOVTO: TStringField;
+    CDS_CMApresExtratosDepNUM_DOCTO: TStringField;
+    CDS_CMApresExtratosDepVLR_DOCTO: TFMTBCDField;
+    CDS_CMApresExtratosDepIND_TIPO: TStringField;
+    CDS_CMApresExtratosDepCHV_EXTRATO: TStringField;
+    CDS_CMApresExtratosDepCOD_USUARIO: TIntegerField;
+    CDS_CMApresExtratosDepDES_USUARIO: TStringField;
+    CDS_CMApresExtratosDepTIP_CONCILIACAO: TStringField;
+    CDS_CMApresExtratosDepVLR_TOTAL: TAggregateField;
+    CDS_CMDepositosCOD_USUARIO: TIntegerField;
+    CDS_CMDepositosUSU_LOJA: TIntegerField;
+    CDS_CMDepositosNUM_DOCTO: TIntegerField;
+    CDS_CMDepositosTXT_OBS: TStringField;
+    CDS_CMApresDepositosNUM_SEQ: TIntegerField;
+    CDS_CMApresDepositosNUM_COMPL: TIntegerField;
     procedure CDS_LojasBancoAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresExtratosAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresPagtosAfterScroll(DataSet: TDataSet);
@@ -236,6 +326,8 @@ type
 
     // DIVERSOS ////////////////////////////////////////////////////////////////
     Procedure FechaTudoConciliacao;
+    procedure CDS_CMApresDepositosAfterScroll(DataSet: TDataSet);
+    procedure CDS_CMApresExtratosDepAfterScroll(DataSet: TDataSet);
 
     // ODIR ====================================================================
 
@@ -243,6 +335,7 @@ type
     { Private declarations }
   public
     { Public declarations }
+    sgDta1, sgDta2: String;
   end;
 
 var
@@ -331,6 +424,34 @@ begin
                                            FrmBancoExtratos.DtEdt_ConcDtaFim.Text;
     End;
   End;
+end;
+
+procedure TDMConciliacao.CDS_CMApresDepositosAfterScroll(DataSet: TDataSet);
+begin
+  If (Not CDS_CMApresDepositos.IsEmpty) and (Not CDS_CMDepositos.IsEmpty)Then
+  Begin
+    FrmApresConciliacao.Lab_OBS.Caption:='Observações ...';
+
+    If Not CDS_CMDepositos.Locate('NUM_SEQ; NUM_COMPL',VarArrayOf([CDS_CMApresDepositosNUM_SEQ.AsString,CDS_CMApresDepositosNUM_COMPL.AsString]),[]) Then
+    Begin
+      FrmApresConciliacao.Lab_OBS.Caption:='Movto Fora do Período Selecionado: '+sgDta1+' a '+sgDta2;
+    End;
+  End;
+
+end;
+
+procedure TDMConciliacao.CDS_CMApresExtratosDepAfterScroll(DataSet: TDataSet);
+begin
+  If (Not CDS_CMApresExtratosDep.IsEmpty) and (Not CDS_CMExtratosDep.IsEmpty) Then
+  Begin
+    FrmApresConciliacao.Lab_OBS.Caption:='Observações ...';
+
+    If Not CDS_CMExtratosDep.Locate('CHV_EXTRATO',CDS_CMApresExtratosDepCHV_EXTRATO.AsString,[]) Then
+    Begin
+      FrmApresConciliacao.Lab_OBS.Caption:='Movto Fora do Período Selecionado: '+sgDta1+' a '+sgDta2;
+    End;
+  End;
+
 end;
 
 end.

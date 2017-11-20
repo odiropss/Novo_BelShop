@@ -14,8 +14,8 @@ type
     Bt_Sair: TJvXPButton;
     Gb_ConcManutExtrato: TGroupBox;
     Gb_ConcManutPagtos: TGroupBox;
-    Dbg_ConcManutExtrato: TDBGridJul;
     Dbg_ConcManutPagto: TDBGridJul;
+    Dbg_ConcManutExtrato: TDBGridJul;
     Lab_OBS: TLabel;
     Dbe_ConcManutTotal: TDBEdit;
     Label1: TLabel;
@@ -50,6 +50,10 @@ procedure TFrmApresConciliacao.FormClose(Sender: TObject;
 begin
   DMConciliacao.CDS_CMApresExtratos.Close;
   DMConciliacao.CDS_CMApresPagtos.Close;
+
+  DMConciliacao.CDS_CMApresExtratosDep.Close;
+  DMConciliacao.CDS_CMApresDepositos.Close;
+
 end;
 
 procedure TFrmApresConciliacao.FormKeyDown(Sender: TObject; var Key: Word;

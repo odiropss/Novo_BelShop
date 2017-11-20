@@ -20,13 +20,6 @@ uses
   JvXPCore, JvXPButtons, ExtCtrls, DBGrids, Classes, SysUtils, Comobj, Variants,
   StrUtils, Messages, Dialogs,
   IBQuery, DBXpress, DBClient, dxSkinsdxStatusBarPainter, dxStatusBar;
-  //  Último: DBClient;
-
-  { RETIRADOS - 15/09/2015
-   cxProgressBar,  SqlExpr,
-  }
-
-
 
 type
   TFrmBancoExtratos = class(TForm)
@@ -192,7 +185,7 @@ type
     Mem_VerifContas: TMemo;
     Bt_VerifExtratoDtSemMovto: TJvXPButton;
     Pan_HistConcAutoDuplica: TPanel;
-    JvXPButton1: TJvXPButton;
+    Bt_HistConcAutoRepLoja: TJvXPButton;
     Edit1: TEdit;
     dxStatusBar3: TdxStatusBar;
     Ts_ConciliacoesManutDepositos: TTabSheet;
@@ -233,6 +226,7 @@ type
     Rb_ConcNaoConciliadosDep: TRadioButton;
     Bt_CMDesmarcarDep: TJvXPButton;
     Bt_CMConciliarDep: TJvXPButton;
+    Bt_CMPeriodoDep: TJvXPButton;
     procedure FormCreate(Sender: TObject);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SairClick(Sender: TObject);
@@ -268,7 +262,7 @@ type
     Procedure CriaDiasSemExtrato;
     ////////////////////////////////////////////////////////////////////////////
 
-    // CONCILIAÇÕES ////////////////////////////////////////////////////////////
+    // CONCILIAÇÕES PAGTOS /////////////////////////////////////////////////////
     Procedure TotaisMarcadosNaoConciliados;
 
     Procedure ConciliacaoLimpa(Sender: TControl; bLimpaTudo: Boolean=False);
@@ -282,7 +276,8 @@ type
     Procedure ConcConcilia;
     Procedure ConcConciliarHistAutomaticos;
 
-    Procedure BuscaExtratosMovtos;
+    Procedure BuscaMovtosExtratosPagtos;
+
     Procedure LiberaClientGravar(bLibera: Boolean);
 
     Function  PodeConciliar(iExtrato, iPagto: Integer): Boolean;
@@ -290,12 +285,31 @@ type
 
     Function  ProcessaTipoConciliacao(sCodConc, sDesConc: String): Boolean;
     Function  ProcessaConciciacao(sTipo: String): Boolean;
-                                  // sTipo= (Pag) Processa Pagamento
-                                  // sTipo= (Ext) Processa Extrato
-                                  // sTipo= (Din) Processa por Dinheiro
+                               // sTipo= (Pag) Processa Pagamento
+                               // sTipo= (Ext) Processa Extrato
+                               // sTipo= (Din) Processa Como Dinheiro
+                               // sTipo= (SEx) Processa Somente Extrato
 
     Procedure EliminarConciliacaoError;
 
+    ////////////////////////////////////////////////////////////////////////////
+
+    // CONCILIAÇÕES DEPOSITOS //////////////////////////////////////////////////
+    Procedure HabilitaBotoesDep(b: Boolean);
+    Function AtualizaMovtosDepositos: Boolean;
+
+    Function PodeConciliarDepositos(iExtrato, iPagto: Integer): Boolean;
+
+    Procedure LiberaClientGravarDep(bLibera: Boolean);
+    Procedure TotaisMarcadosNaoConciliadosDep;
+
+    Procedure BuscaMovtosExtratosDepositos;
+
+    Function  ProcessaConciciacaoDep(sTipo: String): Boolean;
+                               // sTipo= (Pag) Processa Deposito (Mantido Abreviatura <Pag>)
+                               // sTipo= (Ext) Processa Extrato
+                               // sTipo= (Din) Processa Como Dinheiro
+                               // sTipo= (SEx) Processa Somente Extrato (NÃO ESTA LIBERADO)
     ////////////////////////////////////////////////////////////////////////////
 
     // Odir
@@ -363,7 +377,6 @@ type
     procedure Bt_CMConciliarClick(Sender: TObject);
     procedure MenuTipoConcilciaoClick(Sender: TObject);
     procedure Dbg_ConcManutExtratoEnter(Sender: TObject);
-    procedure Dbg_ConcManutExtratoExit(Sender: TObject);
     procedure Rb_ConcConciliadosClick(Sender: TObject);
     procedure Rb_ConcConciliadosKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -413,7 +426,32 @@ type
     procedure Bt_VerifExtratoDtSemMovtoClick(Sender: TObject);
     procedure DtEdt_VerifExtratoDtaInicioPropertiesChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure JvXPButton2Click(Sender: TObject);
+    procedure Bt_CMPeriodoDepClick(Sender: TObject);
+    procedure Dbg_ConcManutExtratoDepDblClick(Sender: TObject);
+    procedure Rb_ConcConciliadosDepClick(Sender: TObject);
+    procedure Dbg_ConcManutExtratoDepDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure Dbg_ConcManutExtratoDepEnter(Sender: TObject);
+    procedure Dbg_ConcManutExtratoDepKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_ConcManutExtratoDepTitleClick(Column: TColumn);
+    procedure Dbg_ConcManutDepositosDblClick(Sender: TObject);
+    procedure Dbg_ConcManutDepositosDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure Dbg_ConcManutDepositosEnter(Sender: TObject);
+    procedure Dbg_ConcManutDepositosKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_ConcManutDepositosTitleClick(Column: TColumn);
+    procedure Bt_CMConciliarDepClick(Sender: TObject);
+    procedure Rb_ConcConciliadosDepKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Bt_CMDesmarcarDepClick(Sender: TObject);
+    procedure EdtConcManutExtratoVlrDepChange(Sender: TObject);
+    procedure EdtConcManutDepVlrChange(Sender: TObject);
+    procedure EdtConcManutExtratoVlrChange(Sender: TObject);
+    procedure EdtConcManutPagtoVlrChange(Sender: TObject);
 
   private
     { Private declarations }
@@ -469,13 +507,811 @@ implementation
 uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
      UPesquisaIB, UDMBancosConciliacao, UPesquisa,
      UFrmBelShop, UFrmTiposConciliacao, Contnrs, UFrmApresConciliacao,
-  UFrmSolicitacoes, UFrmPeriodoApropriacao, DB;
+     UFrmSolicitacoes, UFrmPeriodoApropriacao, DB, ComConst;
 
 {$R *.dfm}
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// CONCILIAÇÕES DEPOSITOS - Processa Conciliação Extrato/Deposito >>>>>>>>>>>>>>
+Function TFrmBancoExtratos.ProcessaConciciacaoDep(sTipo: String): Boolean;
+Var
+  MySql: String;
+  sChvExtrato, sNumSeq, sNumCompl: String;
+  s, sObs: String;
+  i: Integer;
+  b: Boolean;
+Begin
+// sTipo= (Pag) Processa Deposito (Mantido Abreviatura <Pag>)
+// sTipo= (Ext) Processa Extrato
+// sTipo= (Din) Processa Como Dinheiro
+// sTipo= (SEx) Processa Somente Extrato (NÃO ESTA LIBERADO)
+
+  Result:=False;
+
+  sNumCompl  :=DMConciliacao.CDS_CMDepositosNUM_COMPL.AsString;
+  sNumSeq    :=DMConciliacao.CDS_CMDepositosNUM_SEQ.AsString;
+  sChvExtrato:=DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString;
+
+  //============================================================================
+  // Solicita Observação =======================================================
+  //============================================================================
+  sObs:='';
+  If (sTipo='Din') Or (sTipo='Pag') Or (sTipo='Ext') Then
+  Begin
+    b:=True;
+    While b do
+    Begin
+      InputQueryOdir('CONCILIAÇÃO DEPÓSITOS', 'Informe a Observação',sObs);
+      b:=False;
+
+      If Length(sObs)>100 Then
+      Begin
+        msg('O Número Maximo de Caracteres é de 100'+cr+cr+'Observação Atual: '+IntToStr(Length(sObs))+' Caracteres !!','A');
+        b:=True;
+      End;
+    End;
+  End; // If (sTipo='Din') Or (sTipo='Pag') Then
+  // Solicita Observação =======================================================
+  //============================================================================
+
+  //============================================================================
+  // Concilia Por Deposito =====================================================
+  //============================================================================
+  If sTipo='Pag' Then
+  Begin
+    DMConciliacao.CDS_CMDepositos.First;
+    DMConciliacao.CDS_CMDepositos.DisableControls;
+    While Not DMConciliacao.CDS_CMDepositos.Eof do
+    Begin
+      Refresh;
+
+      If (DMConciliacao.CDS_CMDepositosConciliar.AsString='SIM') And
+         (DMConciliacao.CDS_CMDepositosConciliado.AsString='NAO') And
+         (Trim(DMConciliacao.CDS_CMDepositosQUEM.AsString)='') Then
+      Begin
+        sNumCompl  :=DMConciliacao.CDS_CMDepositosNUM_COMPL.AsString;
+        sNumSeq    :=DMConciliacao.CDS_CMDepositosNUM_SEQ.AsString;
+        Break;
+      End;
+
+      DMConciliacao.CDS_CMDepositos.Next;
+    End; // While Not DMConciliacao.CDS_CMDepositos.Eof do
+    DMConciliacao.CDS_CMDepositos.EnableControls;
+
+    // Libera Para Gravação ====================================================
+    LiberaClientGravarDep(True);
+
+    DMConciliacao.CDS_CMDepositos.Edit;
+    DMConciliacao.CDS_CMDepositosCOD_USUARIO.AsString:=sgCodUsuario;
+    DMConciliacao.CDS_CMDepositosConciliado.AsString:='SIM';
+    DMConciliacao.CDS_CMDepositosQUEM.AsString:='USU';
+    DMConciliacao.CDS_CMDepositosTXT_OBS.AsString:=sObs;
+    DMConciliacao.CDS_CMDepositos.Post;
+
+    // Retira a Liberaçao Para Gravação ========================================
+    LiberaClientGravarDep(False);
+
+    MySql:=' Update FIN_CONCILIACAO_MOV_DEP m'+
+           ' Set   m.IND_CONCILIACAO='+QuotedStr('SIM')+
+           ' Where m.Num_Seq='+DMConciliacao.CDS_CMDepositosNUM_SEQ.AsString+
+           ' And   m.Num_Compl='+DMConciliacao.CDS_CMDepositosNUM_COMPL.AsString;
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    DMConciliacao.CDS_CMExtratosDep.First;
+    DMConciliacao.CDS_CMExtratosDep.DisableControls;
+    HabilitaBotoesDep(False);
+    While Not DMConciliacao.CDS_CMExtratosDep.Eof do
+    Begin
+      Refresh;
+
+      If (DMConciliacao.CDS_CMExtratosDepConciliar.AsString='SIM') And
+         (DMConciliacao.CDS_CMExtratosDepConciliado.AsString='NAO') And
+         (Trim(DMConciliacao.CDS_CMExtratosDepQUEM.AsString)='') Then
+      Begin
+        sChvExtrato:=DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString;
+
+        // Libera Para Gravação ====================================================
+        LiberaClientGravarDep(True);
+
+        DMConciliacao.CDS_CMExtratosDep.Edit;
+        DMConciliacao.CDS_CMExtratosDepCOD_USUARIO.AsString:=sgCodUsuario;
+        DMConciliacao.CDS_CMExtratosDepConciliado.AsString:='SIM';
+        DMConciliacao.CDS_CMExtratosDepQUEM.AsString:='USU';
+        DMConciliacao.CDS_CMExtratosDep.Post;
+
+        // Retira a Liberaçao Para Gravação ========================================
+        LiberaClientGravarDep(False);
+
+        MySql:=' Insert Into FIN_CONCILIACAO_DEPOSITOS'+
+               ' (CHV_EXTRATO, NUM_SEQ, NUM_COMPL, IND_QUEM,'+
+               '  COD_USUARIO, TXT_OBS)'+
+               ' Values('+
+               QuotedStr(DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString)+', '+
+               QuotedStr(DMConciliacao.CDS_CMDepositosNUM_SEQ.AsString)+', '+
+               QuotedStr(DMConciliacao.CDS_CMDepositosNUM_COMPL.AsString)+', '+
+               QuotedStr('USU')+', '+
+               QuotedStr(sgCodUsuario)+', '+
+               QuotedStr(sObs)+')';
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
+      End; // If (DMConciliacao.CDS_CMExtratosDepConciliar.AsString='SIM') And
+
+      DMConciliacao.CDS_CMExtratosDep.Next;
+    End; // While Not DMConciliacao.CDS_CMExtratosDep.Eof do
+    DMConciliacao.CDS_CMExtratosDep.EnableControls;
+    HabilitaBotoesDep(True);
+
+    Result:=True;
+  End; // If sTipo='Pag' Then
+  //============================================================================
+
+  //============================================================================
+  // Concilia Por Extrato ======================================================
+  //============================================================================
+  If sTipo='Ext' Then
+  Begin
+    DMConciliacao.CDS_CMExtratosDep.First;
+    DMConciliacao.CDS_CMExtratosDep.DisableControls;
+    While Not DMConciliacao.CDS_CMExtratosDep.Eof do
+    Begin
+      If (DMConciliacao.CDS_CMExtratosDepConciliar.AsString='SIM') And
+         (DMConciliacao.CDS_CMExtratosDepConciliado.AsString='NAO') And
+         (Trim(DMConciliacao.CDS_CMExtratosDepQUEM.AsString)='') Then
+      Begin
+        sChvExtrato:=DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString;
+        Break;
+      End;
+
+      DMConciliacao.CDS_CMExtratosDep.Next;
+    End; // While Not DMConciliacao.CDS_CMExtratosDep.Eof do
+    DMConciliacao.CDS_CMExtratosDep.EnableControls;
+
+    // Libera Para Gravação ====================================================
+    LiberaClientGravarDep(True);
+
+    DMConciliacao.CDS_CMExtratosDep.Edit;
+    DMConciliacao.CDS_CMExtratosDepCOD_USUARIO.AsString:=sgCodUsuario;
+    DMConciliacao.CDS_CMExtratosDepConciliado.AsString:='SIM';
+    DMConciliacao.CDS_CMExtratosDepQUEM.AsString:='USU';
+    DMConciliacao.CDS_CMExtratosDep.Post;
+    Refresh;
+
+    // Retira a Liberaçao Para Gravação ========================================
+    LiberaClientGravarDep(False);
+
+    HabilitaBotoesDep(False);
+
+    DMConciliacao.CDS_CMDepositos.First;
+    DMConciliacao.CDS_CMDepositos.DisableControls;
+    While Not DMConciliacao.CDS_CMDepositos.Eof do
+    Begin
+      If (DMConciliacao.CDS_CMDepositosConciliar.AsString='SIM') And
+         (DMConciliacao.CDS_CMDepositosConciliado.AsString='NAO') And
+         (Trim(DMConciliacao.CDS_CMDepositosQUEM.AsString)='') Then
+      Begin
+        sNumCompl  :=DMConciliacao.CDS_CMDepositosNUM_COMPL.AsString;
+        sNumSeq    :=DMConciliacao.CDS_CMDepositosNUM_SEQ.AsString;
+
+        MySql:=' Update FIN_CONCILIACAO_MOV_DEP m'+
+               ' Set   m.IND_CONCILIACAO='+QuotedStr('SIM')+
+               ' Where m.Num_Seq='+DMConciliacao.CDS_CMDepositosNUM_SEQ.AsString+
+               ' And   m.Num_Compl='+DMConciliacao.CDS_CMDepositosNUM_COMPL.AsString;
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+        // Libera Para Gravação ====================================================
+        LiberaClientGravarDep(True);
+
+        DMConciliacao.CDS_CMDepositos.Edit;
+        DMConciliacao.CDS_CMDepositosCOD_USUARIO.AsString:=sgCodUsuario;
+        DMConciliacao.CDS_CMDepositosConciliado.AsString:='SIM';
+        DMConciliacao.CDS_CMDepositosQUEM.AsString:='USU';
+        DMConciliacao.CDS_CMDepositosTXT_OBS.AsString:=sObs;
+        DMConciliacao.CDS_CMDepositos.Post;
+        Refresh;
+
+        // Retira a Liberaçao Para Gravação ========================================
+        LiberaClientGravarDep(False);
+
+        MySql:=' Insert Into FIN_CONCILIACAO_DEPOSITOS'+
+               ' (CHV_EXTRATO, NUM_SEQ, NUM_COMPL, IND_QUEM,'+
+               '  COD_USUARIO, TXT_OBS)'+
+               ' Values('+
+               QuotedStr(DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString)+', '+
+               QuotedStr(DMConciliacao.CDS_CMDepositosNUM_SEQ.AsString)+', '+
+               QuotedStr(DMConciliacao.CDS_CMDepositosNUM_COMPL.AsString)+', '+
+               QuotedStr('USU')+', '+
+               QuotedStr(sgCodUsuario)+', '+
+               QuotedStr(sObs)+')';
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
+      End; // If (DMConciliacao.CDS_CMDepositosConciliar.AsString='SIM') And
+
+      DMConciliacao.CDS_CMDepositos.Next;
+    End; // While Not DMConciliacao.CDS_CMDepositos.Eof do
+    DMConciliacao.CDS_CMDepositos.EnableControls;
+    HabilitaBotoesDep(True);
+
+    Result:=True;
+  End; // If sTipo='Ext' Then
+  //============================================================================
+
+  //============================================================================
+  // Concilia Por Dinheiro =====================================================
+  //============================================================================
+  If sTipo='Din' Then
+  Begin
+    HabilitaBotoesDep(False);
+
+    s:=DateTimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+    DMConciliacao.CDS_CMDepositos.First;
+    DMConciliacao.CDS_CMDepositos.DisableControls;
+    While Not DMConciliacao.CDS_CMDepositos.Eof do
+    Begin
+
+      If (DMConciliacao.CDS_CMDepositosConciliar.AsString='SIM') And
+         (DMConciliacao.CDS_CMDepositosConciliado.AsString='NAO') And
+         (Trim(DMConciliacao.CDS_CMDepositosQUEM.AsString)='') Then
+      Begin
+        // Libera Para Gravação ================================================
+        LiberaClientGravarDep(True);
+
+        DMConciliacao.CDS_CMDepositos.Edit;
+        DMConciliacao.CDS_CMDepositosCOD_USUARIO.AsString:=sgCodUsuario;
+        DMConciliacao.CDS_CMDepositosConciliado.AsString:='SIM';
+        DMConciliacao.CDS_CMDepositosQUEM.AsString:='USU';
+        DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString:='DINH';
+        DMConciliacao.CDS_CMDepositosTXT_OBS.AsString:=sObs;
+        DMConciliacao.CDS_CMDepositos.Post;
+
+        // Retira a Liberaçao Para Gravação ========================================
+        LiberaClientGravarDep(False);
+
+        MySql:=' Update FIN_CONCILIACAO_MOV_DEP m'+
+               ' Set   m.IND_CONCILIACAO='+QuotedStr('SIM')+
+               ' Where m.Num_Seq='+DMConciliacao.CDS_CMDepositosNUM_SEQ.AsString+
+               ' And   m.Num_Compl='+DMConciliacao.CDS_CMDepositosNUM_COMPL.AsString;
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+        MySql:=' Insert Into FIN_CONCILIACAO_DEPOSITOS'+
+               ' (CHV_EXTRATO, NUM_SEQ, NUM_COMPL, IND_QUEM, TIP_CONCILIACAO,'+
+               '  COD_USUARIO, TXT_OBS)'+
+               ' Values('+
+               QuotedStr('DINH'+s)+', '+
+               QuotedStr(DMConciliacao.CDS_CMDepositosNUM_SEQ.AsString)+', '+
+               QuotedStr(DMConciliacao.CDS_CMDepositosNUM_COMPL.AsString)+', '+
+               QuotedStr('USU')+', '+
+               QuotedStr('DINH')+', '+
+               QuotedStr(sgCodUsuario)+', '+
+               QuotedStr(sObs)+')';
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
+      End;
+
+      DMConciliacao.CDS_CMDepositos.Next;
+    End; // While Not DMConciliacao.CDS_CMPagtos.Eof do
+    DMConciliacao.CDS_CMDepositos.EnableControls;
+    HabilitaBotoesDep(True);
+
+    Result:=True;
+  End; // If sTipo='Din' Then
+  //============================================================================
+
+  //============================================================================
+  // (NÃO ESTA LIBERADO - Tem que Revisar TUDO)
+  // Concilia Somente Extrato ==================================================
+  //============================================================================
+//  If sTipo='SEx' Then
+//  Begin
+//    HabilitaBotoesDep(False);
+//
+//    DMConciliacao.CDS_CMExtratosDep.DisableControls;
+//    DMConciliacao.CDS_CMExtratosDep.First;
+//    While Not DMConciliacao.CDS_CMExtratosDep.Eof do
+//    Begin
+//      If (DMConciliacao.CDS_CMExtratosDepConciliar.AsString='SIM') And
+//         (DMConciliacao.CDS_CMExtratosDepConciliado.AsString='NAO') And
+//         (Trim(DMConciliacao.CDS_CMExtratosDepQUEM.AsString)='') Then
+//      Begin
+//        sChvExtrato:=DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString;
+//
+//        // Libera Para Gravação ====================================================
+//        LiberaClientGravarDep(True);
+//
+//        DMConciliacao.CDS_CMExtratosDep.Edit;
+//        DMConciliacao.CDS_CMExtratosDepCOD_USUARIO.AsString:=sgCodUsuario;
+//        DMConciliacao.CDS_CMExtratosDepConciliado.AsString:='SIM';
+//        DMConciliacao.CDS_CMExtratosDepQUEM.AsString:='USU';
+//        DMConciliacao.CDS_CMExtratosDepTIP_CONCILIACAO.AsString:='SExt';
+//        DMConciliacao.CDS_CMExtratosDep.Post;
+//        Refresh;
+//
+//        // Retira a Liberaçao Para Gravação ========================================
+//        LiberaClientGravarDep(False);
+//
+//        // Verifica a Alteração do Complemento da Sequencia do Registro ==
+//        MySql:=' SELECT GEN_ID(GEN_CONCILIACAO_MOV_DEP,0) Num_Seq'+
+//               ' FROM RDB$DATABASE';
+//        DMBelShop.CDS_BuscaRapida.Close;
+//        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+//        DMBelShop.CDS_BuscaRapida.Open;
+//        i:=DMBelShop.CDS_BuscaRapida.FieldByName('Num_Seq').AsInteger;
+//        DMBelShop.CDS_BuscaRapida.Close;
+//
+//        If i=999999 Then
+//        Begin
+//          // Acrescenta 1 no Complemento - GEN_COMPL_CONCILIACAO_MOVTOS
+//          MySql:=' SELECT GEN_ID(GEN_COMPL_CONCILIACAO_MOV_DEP,1) Num_Seq'+
+//                 ' FROM RDB$DATABASE';
+//          DMBelShop.CDS_BuscaRapida.Close;
+//          DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+//          DMBelShop.CDS_BuscaRapida.Open;
+//          DMBelShop.CDS_BuscaRapida.Close;
+//
+//          // Inicializa Num_Seq - GEN_CONCILIACAO_MOVTOS
+//          MySql:=' ALTER SEQUENCE GEN_CONCILIACAO_MOV_DEP RESTART WITH 0';
+//          DMBelShop.SQLC.Execute(MySql,nil,nil);
+//        End;
+//
+//        // Busca Num_Seq e Num_Compl ===========================================
+//        MySql:=' SELECT GEN_ID(GEN_CONCILIACAO_MOV_DEP,1) Num_Seq'+
+//               ' FROM RDB$DATABASE';
+//        DMBelShop.CDS_Pesquisa.Close;
+//        DMBelShop.SDS_Pesquisa.CommandText:=MySql;
+//        DMBelShop.CDS_Pesquisa.Open;
+//        sNumSeq:=DMBelShop.CDS_Pesquisa.FieldByName('Num_Seq').AsString;
+//        DMBelShop.CDS_Pesquisa.Close;
+//
+//        MySql:=' SELECT GEN_ID(GEN_COMPL_CONCILIACAO_MOV_DEP,0) Num_Compl'+
+//               ' FROM RDB$DATABASE';
+//        DMBelShop.CDS_Pesquisa.Close;
+//        DMBelShop.SDS_Pesquisa.CommandText:=MySql;
+//        DMBelShop.CDS_Pesquisa.Open;
+//        sNumCompl:=DMBelShop.CDS_Pesquisa.FieldByName('Num_Compl').AsString;
+//        DMBelShop.CDS_Pesquisa.Close;
+//
+//        // Monta Chv_Pagto =====================================================
+//        // CHV_PAGTO = Cod_Loja + Cod_Forn + Cod_Comprov + Num_Serie + Num_Docto + Num_Prest
+//        sChvPagto:=sgCodLojaExt+
+//                   DMConciliacao.CDS_CMExtratosNUM_BANCO.AsString+
+//                   DMConciliacao.CDS_CMExtratosCOD_TPMOVTO.AsString+
+//                   DMConciliacao.CDS_CMExtratosNUM_DOCTO.AsString+'01';
+//
+//        // Insere Movto ========================================================
+//        DateSeparator:='.';
+//        DecimalSeparator:='.';
+//
+//        MySql:=' Insert Into FIN_CONCILIACAO_MOV_DEP ('+
+//               ' NUM_SEQ, NUM_COMPL,'+
+//               ' CHV_PAGTO, CHV_NOTA, CHV_RECIBO, COD_LOJA,'+
+//               ' COD_COMPROVANTE, NUM_DOCTO, NUM_SERIE, NUM_PRESTACAO,'+
+//               ' DTA_DOCTO, DTA_PAGTO, DTA_VENC, DTA_COMPR, COD_BANCO,'+
+//               ' DES_BANCO, COD_COBRANCA, COD_FORNECEDOR, VLR_DOCTO,'+
+//               ' VLR_DESCONTO, VLR_ACRESCIMO, VLR_PAGTO, IND_PAGTO_PARCIAL,'+
+//               ' OBS_TEXTO, IND_CONCILIACAO, COD_HISTO_AUTO, COD_BANCO_AUTO)'+
+//
+//               ' Values('+
+//               QuotedStr(sNumSeq)+', '+ // NUM_SEQ
+//               QuotedStr(sNumCompl)+', '+ // NUM_COMPL
+//               QuotedStr(sChvPagto)+', '+ // CHV_PAGTO
+//               QuotedStr('0')+', '+ // CHV_NOTA
+//               QuotedStr('0')+', '+ // CHV_RECIBO
+//               QuotedStr(sgCodLojaExt)+', '+ // COD_LOJA
+//               'Null , '+ // COD_COMPROVANTE
+//               QuotedStr(DMConciliacao.CDS_CMExtratosNUM_DOCTO.AsString)+', '+ // NUM_DOCTO
+//               'Null , '+ // NUM_SERIE
+//               QuotedStr('01')+', '+ // NUM_PRESTACAO
+////               QuotedStr(f_Troca('/','.',f_Troca('-','.',DMConciliacao.CDS_CMExtratosDTA_EXTRATO.AsString)))+', '+ // DTA_DOCTO
+////               QuotedStr(f_Troca('/','.',f_Troca('-','.',DMConciliacao.CDS_CMExtratosDTA_EXTRATO.AsString)))+', '+ // DTA_PAGTO
+////               QuotedStr(f_Troca('/','.',f_Troca('-','.',DMConciliacao.CDS_CMExtratosDTA_EXTRATO.AsString)))+', '+ // DTA_VENC
+////               QuotedStr(f_Troca('/','.',f_Troca('-','.',DMConciliacao.CDS_CMExtratosDTA_EXTRATO.AsString)))+', '+ // DTA_COMPR
+//               QuotedStr(DMConciliacao.CDS_CMExtratosDTA_EXTRATO.AsString)+', '+ // DTA_DOCTO
+//               QuotedStr(DMConciliacao.CDS_CMExtratosDTA_EXTRATO.AsString)+', '+ // DTA_PAGTO
+//               QuotedStr(DMConciliacao.CDS_CMExtratosDTA_EXTRATO.AsString)+', '+ // DTA_VENC
+//               QuotedStr(DMConciliacao.CDS_CMExtratosDTA_EXTRATO.AsString)+', '+ // DTA_COMPR
+//               'Null , '+ // COD_BANCO
+//               'Null , '+ // DES_BANCO
+//               'Null , '+ // COD_COBRANCA
+//               'Null , '+ // COD_FORNECEDOR
+//               QuotedStr(DMConciliacao.CDS_CMExtratosVLR_DOCTO.AsString)+', '+ // VLR_DOCTO
+//               QuotedStr('0')+', '+ // VLR_DESCONTO
+//               QuotedStr('0')+', '+ // VLR_ACRESCIMO
+//               QuotedStr(DMConciliacao.CDS_CMExtratosVLR_DOCTO.AsString)+', '+ // VLR_PAGTO
+//               'Null , '+ // IND_PAGTO_PARCIAL
+//               'Null , '+ // OBS_TEXTO
+//               QuotedStr('SIM')+', '+ // IND_CONCILIACAO
+//               QuotedStr(DMConciliacao.CDS_CMExtratosCOD_TPMOVTO.AsString)+', '+ // COD_HISTO_AUTO
+//               QuotedStr(DMConciliacao.CDS_CMExtratosCOD_BANCO.AsString)+')'; // COD_BANCO_AUTO
+//        DMBelShop.SQLC.Execute(MySql,nil,nil);
+//
+//        // Insere Conciliação Automática do Extrato ============================
+//        MySql:=' Insert into FIN_CONCILIACAO_PAGTOS'+
+//               ' (CHV_EXTRATO, NUM_SEQ, NUM_COMPL, IND_QUEM,'+
+//               ' COD_USUARIO, TIP_AUX, COD_AUX, TIP_CONCILIACAO)'+
+//               ' Values ('+
+//               QuotedStr(DMConciliacao.CDS_CMExtratosCHV_EXTRATO.AsString)+', '+ // CHV_EXTRATO
+//               QuotedStr(sNumSeq)+', '+ // NUM_SEQ
+//               QuotedStr(sNumCompl)+', '+ // NUM_COMPL
+//               QuotedStr('USU')+', '+ // IND_QUEM
+//               QuotedStr(sgCodUsuario)+', '+ // COD_USUARIO
+//               QuotedStr('3')+', '+ // TIP_AUX
+//               QuotedStr('0')+', '+ // COD_AUX
+//               QuotedStr('SExt')+')'; // TIP_CONCILIACAO
+//        DMBelShop.SQLC.Execute(MySql, nil, nil);
+//
+//        DateSeparator:='/';
+//        DecimalSeparator:=',';
+//      End; // If (DMConciliacao.CDS_CMExtratosConciliar.AsString='SIM') And ....
+//
+//      DMConciliacao.CDS_CMExtratos.Next;
+//    End; // While Not DMConciliacao.CDS_CMExtratos.Eof do
+//    DMConciliacao.CDS_CMExtratos.EnableControls;
+//    HabilitaBotoes(True);
+//
+//    Result:=True;
+//  End; // If sTipo='SEx' Then
+//  //============================================================================
+
+  DMConciliacao.CDS_CMDepositos.DisableControls;
+  DMConciliacao.CDS_CMExtratosDep.DisableControls;
+
+  DMConciliacao.CDS_CMDepositos.Close;
+  DMConciliacao.CDS_CMExtratosDep.Close;
+  DMConciliacao.CDS_CMExtratosDep.Open;
+  DMConciliacao.CDS_CMDepositos.Open;
+  DMConciliacao.CDS_CMDepositos.EnableControls;
+  DMConciliacao.CDS_CMExtratosDep.EnableControls;
+
+  bgLocate:=False;
+  DMConciliacao.CDS_CMDepositos.Locate('NUM_SEQ;NUM_COMPL',VarArrayOf([sNumSeq,sNumCompl]),[]);
+  DMConciliacao.CDS_CMExtratosDep.Locate('CHV_EXTRATO', sChvExtrato,[]);
+End; // CONCILIAÇÕES DEPOSITOS - Processa Conciliação Extrato/Deposito >>>>>>>>>
+
+// CONCILIAÇÕES DEPOSITOS - Busca Extratos e Depositos para Conciliação >>>>>>>>
+Procedure TFrmBancoExtratos.BuscaMovtosExtratosDepositos;
+Var
+  MySql: String;
+Begin
+  Rb_ConcAmbosDep.Checked:=True;
+  Rb_ConcConciliadosDepClick(Self);
+
+  DMConciliacao.CDS_CMExtratosDep.Close;
+  DMConciliacao.CDS_CMDepositos.Close;
+
+  // Busca Extrato do Período ==================================================
+  MySql:=' SELECT DISTINCT'+
+         ' CASE'+
+         '   WHEN p.chv_extrato IS NULL THEN'+
+         '     ''NAO'''+
+         '   ELSE'+
+         '     ''SIM'''+
+         ' END "Conciliado?",'+
+
+         ' p.ind_quem QUEM,'+
+
+         ' CASE'+
+         '    WHEN p.ind_quem is not null THEN'+
+         '      ''SIM'''+
+         '    ELSE'+
+         '     ''NAO'''+
+         ' END "Conciliar?",'+
+
+         ' b.num_banco, b.des_banco, b.num_agencia, b.num_conta,'+
+         ' e.dta_extrato, e.num_docto, e.vlr_docto,'+
+         ' e.cod_tpmovto, m.des_tpmovto,'+
+         ' m.ind_tipo, e.chv_extrato, p.cod_usuario,'+
+         ' p.tip_conciliacao, e.cod_banco'+
+
+         ' FROM FIN_BANCOS_EXTRATOS e'+
+         '           LEFT JOIN FIN_BANCOS_TP_MOVTOS m       ON m.cod_tpmovto=e.cod_tpmovto'+
+         '                                                 AND m.cod_banco=e.cod_banco'+
+         '           LEFT JOIN FIN_CONCILIACAO_DEPOSITOS p  ON p.chv_extrato=e.chv_extrato'+
+         '           LEFT JOIN FIN_BANCOS b                 ON b.cod_banco=e.cod_banco'+
+
+         ' WHERE m.ind_tipo=''C'''+
+         ' AND   e.dta_extrato BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
+         ' AND   e.Num_Seq<>999999'+
+         ' AND   UPPER(m.des_tpmovto) LIKE ''DEPOS%'''+
+
+         ' ORDER BY e.dta_extrato, b.des_Banco, b.num_banco, b.num_agencia, b.num_conta, e.num_seq';
+  DMConciliacao.CDS_CMExtratosDep.Close;
+  DMConciliacao.SDS_CMExtratosDep.CommandText:=MySql;
+  DMConciliacao.CDS_CMExtratosDep.Open;
+
+  If Trim(DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString)='' Then
+  Begin
+    msg('Sem Extrato no Período Solicitado !!','A');
+    DMConciliacao.CDS_CMExtratosDep.Close;
+    Exit;
+  End;
+
+  // Busca Depositos do Período ================================================
+  MySql:=' SELECT DISTINCT'+
+         ' m.ind_conciliacao "Conciliado?",'+
+         ' p.ind_quem QUEM,'+
+
+         ' CASE'+
+         '   WHEN p.ind_quem is not null THEN'+
+         '     ''SIM'''+
+         '   ELSE'+
+         '    ''NAO'''+
+         ' END "Conciliar?",'+
+
+         ' ''Bel_''||m.cod_linx cod_loja,'+
+         ' e.razao_social,'+
+         ' m.num_docto Usu_Loja,'+
+         ' m.obs_texto,'+
+         ' m.dta_docto, m.num_docto, m.vlr_docto, m.dta_venc,'+
+         ' m.vlr_desconto, m.vlr_acrescimo,'+
+         ' m.cod_banco, m.des_banco,'+
+         ' m.num_seq, m.num_compl,'+
+         ' p.tip_conciliacao, p.cod_usuario, p.txt_obs'+
+
+         ' FROM FIN_CONCILIACAO_MOV_DEP m'+
+         '    LEFT JOIN FIN_CONCILIACAO_DEPOSITOS p  ON p.num_seq=m.num_seq'+
+         '                                          AND p.num_compl=m.num_compl'+
+         '    LEFT JOIN EMP_CONEXOES e               ON e.cod_filial=m.cod_loja'+
+
+         ' WHERE m.dta_docto BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
+
+         ' ORDER BY m.dta_docto, e.razao_social, m.num_docto, m.num_seq';
+  DMConciliacao.CDS_CMDepositos.Close;
+  DMConciliacao.SDS_CMDepositos.CommandText:=MySql;
+  DMConciliacao.CDS_CMDepositos.Open;
+
+  If Trim(DMConciliacao.CDS_CMDepositosCOD_LOJA.AsString)='' Then
+  Begin
+    msg('Sem Depositos no Período Solicitado !!','A');
+    DMConciliacao.CDS_CMDepositos.Close;
+    DMConciliacao.CDS_CMExtratosDep.Close;
+    Exit;
+  End;
+
+  Lb_ObsDep.Caption:='Tecle <Duplo Click> Para Marcar Conciliação';
+
+  Rb_ConcConciliadosDepClick(Self);
+  Dbg_ConcManutExtratoDep.SetFocus;
+
+End; // CONCILIAÇÕES DEPOSITOS - Busca Extratos e Depositos para Conciliação >>>
+
+// CONCILIAÇÕES DEPOSITOS - Apresenta Totais Marcados e Não Conciliados >>>>>>>>
+Procedure TFrmBancoExtratos.TotaisMarcadosNaoConciliadosDep;
+Var
+  CDS: TClientDataSet;
+Begin
+
+  EdtConcManutExtratoQtdDep.Value:=0;
+  EdtConcManutExtratoVlrDep.Value:=0;
+
+  EdtConcManutDepQtd.Value:=0;
+  EdtConcManutDepVlr.Value:=0;
+
+  EdtConcManutExtDepDif.Value:=0;
+  EdtConcManutExtDepDif.Font.Color:=clWindowText;
+
+  CDS:=TClientDataSet.Create(Self);
+  CDS.FieldDefs:=DMConciliacao.CDS_CMExtratosDep.FieldDefs;
+  CDS.Data:=DMConciliacao.CDS_CMExtratosDep.Data;
+  CDS.First;
+  While Not CDS.Eof do
+  Begin
+    If (cds.FieldByName('Conciliado?').AsString='NAO') And (cds.FieldByName('Conciliar?').AsString='SIM') Then
+    Begin
+      EdtConcManutExtratoQtdDep.Value:=EdtConcManutExtratoQtdDep.Value+1;
+      EdtConcManutExtratoVlrDep.Value:=EdtConcManutExtratoVlrDep.Value+cds.FieldByName('VLR_DOCTO').AsCurrency;
+    End;
+
+    CDS.Next;
+  End;
+
+  If CDS<>nil Then
+  Begin
+    FreeAndNil(CDS);
+  End;
+
+  CDS:=TClientDataSet.Create(Self);
+  CDS.FieldDefs:=DMConciliacao.CDS_CMDepositos.FieldDefs;
+  CDS.Data:=DMConciliacao.CDS_CMDepositos.Data;
+  CDS.First;
+  While Not CDS.Eof do
+  Begin
+    If (cds.FieldByName('Conciliado?').AsString='NAO') And (cds.FieldByName('Conciliar?').AsString='SIM') Then
+    Begin
+      EdtConcManutDepQtd.Value:=EdtConcManutDepQtd.Value+1;
+      EdtConcManutDepVlr.Value:=EdtConcManutDepVlr.Value+cds.FieldByName('VLR_DOCTO').AsCurrency;
+    End;
+
+    CDS.Next;
+  End;
+
+  If CDS<>nil Then
+  Begin
+    FreeAndNil(CDS);
+  End;
+
+  EdtConcManutExtDepDif.Value:=EdtConcManutExtratoVlrDep.Value-EdtConcManutDepVlr.Value;
+
+  If EdtConcManutExtDepDif.Value<0 Then
+   EdtConcManutExtDepDif.Font.Color:=clRed;
+
+End; // CONCILIAÇÕES DEPOSITOS - Apresenta Totais Marcados e Não Conciliados >>>
+
+// CONCILIAÇÕES DEPOSITOS - Libera CDS_CMExtratos / CDS_CMPagtos para Gravação >>>>>>>>>>>
+Procedure TFrmBancoExtratos.LiberaClientGravarDep(bLibera: Boolean);
+Begin
+  // CDS_CMExtratos ============================================================
+  DMConciliacao.CDS_CMExtratosDepCOD_USUARIO.ReadOnly:=Not bLibera;
+  DMConciliacao.CDS_CMExtratosDepConciliado.ReadOnly:=Not bLibera;;
+  DMConciliacao.CDS_CMExtratosDepConciliar.ReadOnly:=Not bLibera;;
+  DMConciliacao.CDS_CMExtratosDepTIP_CONCILIACAO.ReadOnly:=Not bLibera;
+  DMConciliacao.CDS_CMExtratosDepQUEM.ReadOnly:=Not bLibera;
+
+  // CDS_CMPagtos ==============================================================
+  DMConciliacao.CDS_CMDepositos.ReadOnly:=Not bLibera;
+  DMConciliacao.CDS_CMDepositosConciliado.ReadOnly:=Not bLibera;
+  DMConciliacao.CDS_CMDepositosConciliar.ReadOnly:=Not bLibera;
+  DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.ReadOnly:=Not bLibera;
+  DMConciliacao.CDS_CMDepositosQUEM.ReadOnly:=Not bLibera;
+
+End; // CONCILIAÇÕES DEPOSITOS - Libera CDS_CMExtratos / CDS_CMPagtos para Gravação >>>>>>
+
+// CONCILIAÇÕES DEPOSITOS - Habilita Botoes >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmBancoExtratos.HabilitaBotoesDep(b: Boolean);
+Begin
+  Bt_CMPeriodoDep.Enabled:=b;
+  Bt_CMConciliarDep.Enabled:=b;
+  Pan_ConcSelecionaDep.Enabled:=b;
+  Bt_SairDep.Enabled:=b;
+End; // CONCILIAÇÕES DEPOSITOS - Habilita Botoes >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// CONCILIAÇÕES DEPOSITOS - Verifica se Pode Conciliar >>>>>>>>>>>>>>>>>>>>>>>>>
+Function  TFrmBancoExtratos.PodeConciliarDepositos(iExtrato, iPagto: Integer): Boolean;
+Var
+  CDS: TClientDataSet;
+Begin
+  Result:=True;
+
+  // Extrato ===================================================================
+  igTotMarcaExt:=0;
+  CDS:=TClientDataSet.Create(Self);
+  CDS.FieldDefs:=DMConciliacao.CDS_CMExtratosDep.FieldDefs;
+  CDS.Data:=DMConciliacao.CDS_CMExtratosDep.Data;
+  CDS.First;
+  While Not CDS.Eof do
+  Begin
+    If (cds.FieldByName('Conciliado?').AsString='NAO') And (cds.FieldByName('Conciliar?').AsString='SIM') Then
+    Begin
+      Inc(igTotMarcaExt);
+    End;
+
+    CDS.Next;
+  End;
+  igTotMarcaExt:=igTotMarcaExt+iExtrato;
+
+  If CDS<>nil Then
+  Begin
+    FreeAndNil(CDS);
+  End;
+
+  // Pagamentos ================================================================
+  igTotMarcaPag:=0;
+  CDS:=TClientDataSet.Create(Self);
+  CDS.FieldDefs:=DMConciliacao.CDS_CMDepositos.FieldDefs;
+  CDS.Data:=DMConciliacao.CDS_CMDepositos.Data;
+  CDS.First;
+  While Not CDS.Eof do
+  Begin
+    If (cds.FieldByName('Conciliado?').AsString='NAO') And (cds.FieldByName('Conciliar?').AsString='SIM') Then
+    Begin
+      Inc(igTotMarcaPag);
+    End;
+
+    CDS.Next;
+  End;
+  igTotMarcaPag:=igTotMarcaPag+iPagto;
+
+  If igTotMarcaPag<0 Then igTotMarcaPag:=0;
+  If igTotMarcaExt<0 Then igTotMarcaExt:=0;
+
+  If (igTotMarcaPag>1) and (igTotMarcaExt>1) Then
+   Result:=False;
+End; // CONCILIAÇÕES DEPOSITOS - Verifica se Pode Conciliar >>>>>>>>>>>>>>>>>>>>
+
+// CONCILIAÇÕES DEPOSITOS - Atualiza Movtos Depositos >>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TFrmBancoExtratos.AtualizaMovtosDepositos: Boolean;
+Var
+  MySql: String;
+Begin
+  Result:=True;
+
+  OdirPanApres.Caption:='AGUARDE !! Atualizando Movimentos/Consiliações...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBancoExtratos;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    // Exclui Movimento de Sangria para Substituição ===========================
+    MySql:=' DELETE FROM FIN_CONCILIACAO_MOV_DEP M'+
+           ' WHERE m.cod_pessoa=0'+
+           ' AND   m.dta_docto BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
+                                         QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)));
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Exclui Conciliações Existentes ==========================================
+    MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS D'+
+           ' WHERE NOT EXISTS (SELECT 1'+
+           '                   FROM FIN_CONCILIACAO_MOV_DEP M'+
+           '                   WHERE m.cod_pessoa=0'+
+           '                   AND   m.num_seq=d.num_seq'+
+           '                   AND   m.num_compl=d.num_compl)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Insere Novos Movtos de Sangris ==========================================
+    MySql:=' INSERT INTO FIN_CONCILIACAO_MOV_DEP'+
+           ' SELECT'+
+           ' GEN_ID(GEN_CONCILIACAO_MOV_DEP,1) NUM_SEQ,'+
+           ' 0 NUM_COMPL,'+
+           ' s.cod_loja COD_LOJA,'+
+           ' s.empresa COD_LINX,'+
+           ' s.usuario NUM_DOCTO,'+
+           ' s.data DTA_DOCTO,'+
+           ' s.data DTA_VENC,'+
+           ' NULL COD_BANCO,'+
+           ' NULL DES_BANCO,'+
+           ' 0 COD_PESSOA,'+ // 0 - Indica Lançamento de Sangria
+           ' ABS(s.valor) VLR_ORIGINAL,'+
+           ' 0.00 VLR_DESCONTO,'+
+           ' 0.00 VLR_ACRESCIMO,'+
+           ' ABS(s.valor) VLR_DOCTO,'+
+           ' SUBSTRING(s.obs FROM 1 FOR 80) OBS_TEXTO,'+
+           ' ''NAO'' IND_CONCILIACAO,'+
+           ' 0 COD_HISTO_AUTO,'+
+           ' 0 COD_BANCO_AUTO'+
+
+           ' FROM LINXSANGRIASUPRIMENTOS s'+
+           ' WHERE s.valor<0'+
+           ' AND   s.data BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
+                                    QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)));
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+      Result:=False;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+
+  OdirPanApres.Visible:=False;
+
+  Screen.Cursor:=crDefault;
+
+End; // CONCILIAÇÕES DEPOSITOS - Atualiza Movtos Depositos >>>>>>>>>>>>>>>>>>>>>
 
 // Menus Visivel >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBancoExtratos.VisivelMenusConciliacoes(b: Boolean);
@@ -516,14 +1352,14 @@ Begin
    TS.TabVisible:=True;  // OK
 End; // Desabilita TabSheets - Habilita Somente a TS: TTabSheet >>>>>>>>>>>>>>>>
 
-// Habilita Botoes >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Habilita Botoes Conciliação Pagtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBancoExtratos.HabilitaBotoes(b: Boolean);
 Begin
   Bt_CMApresFiltro.Enabled:=b;
   Bt_CMConciliar.Enabled:=b;
   Pan_ConcSeleciona.Enabled:=b;
   Bt_Sair.Enabled:=b;
-End; // Habilita Botoes >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+End; // Habilita Botoes Conciliação Pagtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Libera Opções de Menu >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBancoExtratos.LiberaMenu(b: Boolean);
@@ -1091,7 +1927,7 @@ Begin
   //============================================================================
 
   //============================================================================
-  // Concilia Por Dineiro ======================================================
+  // Concilia Por Dinheiro =====================================================
   //============================================================================
   If sTipo='Din' Then
   Begin
@@ -1149,7 +1985,7 @@ Begin
   //============================================================================
 
   //============================================================================
-  // Concilia Por Dineiro ======================================================
+  // Concilia Somente Extrato ==================================================
   //============================================================================
   If sTipo='SEx' Then
   Begin
@@ -1584,15 +2420,15 @@ Begin
    Result:=False;
 End; // CONCILIAÇÕES - Verifica se Pode Conciliar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// CONCILIAÇÕES - Busca Extratos e Movtos para Manutenção >>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmBancoExtratos.BuscaExtratosMovtos;
+// CONCILIAÇÕES - Busca Extratos e Pagtos para Conciliação >>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmBancoExtratos.BuscaMovtosExtratosPagtos;
 Var
   MySql: String;
 Begin
   Rb_ConcAmbos.Checked:=True;
   Rb_ConcConciliadosClick(Self);
 
-  // Busca Extratos do Dia =====================================================
+  // Busca Extrato do Período ==================================================
   MySql:=' SELECT DISTINCT'+
          ' CASE'+
          '   WHEN p.chv_extrato IS NULL THEN'+
@@ -1632,13 +2468,13 @@ Begin
 
   If Trim(DMConciliacao.CDS_CMExtratosCHV_EXTRATO.AsString)='' Then
   Begin
-    msg('Sem Extrato no Dia Solicitado !!','A');
+    msg('Sem Extrato no Período Solicitado !!','A');
     DMConciliacao.CDS_CMExtratos.Close;
     DtEdt_ConcDtaInicio.SetFocus;
     Exit;
   End;
 
-  // Busca Pagamantos do Dia ===================================================
+  // Busca Pagamantos do Período ===============================================
   MySql:=' SELECT DISTINCT'+
          ' ''Bel_''||m.cod_loja cod_loja,'+
          ' m.ind_conciliacao "Conciliado?", p.ind_quem QUEM,'+
@@ -1707,7 +2543,7 @@ Begin
 
   If Trim(DMConciliacao.CDS_CMPagtosCOD_LOJA.AsString)='' Then
   Begin
-    msg('Sem Pagametos no Dia Solicitado !!','A');
+    msg('Sem Pagametos no Período Solicitado !!','A');
     DMConciliacao.CDS_CMPagtos.Close;
     DMConciliacao.CDS_CMExtratos.Close;
     DtEdt_ConcDtaInicio.SetFocus;
@@ -1724,9 +2560,9 @@ Begin
   Rb_ConcConciliadosClick(Self);
   Dbg_ConcManutExtrato.SetFocus;
 
-End; // CONCILIAÇÕES - Busca Extratos e Movtos para Manutenção >>>>>>>>>>>>>>>>>
+End; // CONCILIAÇÕES - Busca Extratos e Pagtos para Conciliação >>>>>>>>>>>>>>>>
 
-// Conciliação - Efetua a Conciliação de Históricos Automáticos >>>>>>>>>>>>>>>>
+// CONCILIAÇÕES - Efetua a Conciliação de Históricos Automáticos >>>>>>>>>>>>>>>
 Procedure TFrmBancoExtratos.ConcConciliarHistAutomaticos;
 Var
   MySql: String;
@@ -1886,9 +2722,9 @@ Begin
   DMConciliacao.CDS_ConcExtratos.Filtered:=False;
   DMConciliacao.CDS_ConcExtratos.First;
   Refresh;
-  //==========================================================================
+  //============================================================================
 
-End; // // Conciliação - Efetua a Conciliação de Históricos Automáticos >>>>>>>>
+End; // CONCILIAÇÕES - Efetua a Conciliação de Históricos Automáticos >>>>>>>>>>
 
 // Conciliação - Efetua a Conciliação >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBancoExtratos.ConcConcilia;
@@ -7697,11 +8533,11 @@ begin
 
   If Not bgComNrConta Then
   Begin
-    If msg('Você Tem Certeza que o Este Arquivo'+cr+'Pertence Relamente a Conta'+cr+'a cima Citada ??','C')=2 Then
+    If msg('Você Tem Certeza que o Este Arquivo'+cr+'Pertence Realmente a Conta'+cr+'a cima Citada ??','C')=2 Then
      Exit;
   End; // If bgComNrConta Then
 
-  If msg('Deseja relamente Importar o Arquivo ??','C')=2 Then
+  If msg('Deseja Realmente Importar o Arquivo ??','C')=2 Then
    Exit;
 
   sgDta:='';
@@ -8593,7 +9429,7 @@ begin
     igTotMarcaPag:=0;
 
     // Busca Extratos e Movimentos de Pagamentos ===============================
-    BuscaExtratosMovtos;
+    BuscaMovtosExtratosPagtos;
   End; // If Pan_ConcSolicitacoes.Parent=Ts_ConciliacoesManutPagtos Then
 
   Screen.Cursor:=crDefault;
@@ -8751,7 +9587,7 @@ begin
      End
     Else
      Begin
-      // Se Conciliado Pelo Sistema por Histórioco Automático
+      // Se Conciliado Pelo Sistema por Histórico Automático
        bExcPagto:=False;
        MySql:=' SELECT p.Num_Seq, p.Num_Compl'+
               ' From FIN_CONCILIACAO_PAGTOS p'+
@@ -9187,14 +10023,15 @@ Var
   bConcDinheiro, bConcExtrato: Boolean;
   b: Boolean;
 begin
+
   bgLocate:=True;
 
   bConcDinheiro:=False;
   bConcExtrato:=False;
 
   sChvExtrato:=DMConciliacao.CDS_CMExtratosCHV_EXTRATO.AsString;
-  sNumSeq:=DMConciliacao.CDS_CMPagtosNUM_SEQ.AsString;
-  sNumCompl:=DMConciliacao.CDS_CMPagtosNUM_COMPL.AsString;
+  sNumSeq    :=DMConciliacao.CDS_CMPagtosNUM_SEQ.AsString;
+  sNumCompl  :=DMConciliacao.CDS_CMPagtosNUM_COMPL.AsString;
 
   If ((DMConciliacao.CDS_CMExtratos.IsEmpty) or (Not DMConciliacao.CDS_CMExtratos.Active)) And
      ((DMConciliacao.CDS_CMPagtos.IsEmpty)   or (Not DMConciliacao.CDS_CMPagtos.Active))  Then
@@ -9320,6 +10157,7 @@ begin
     End;
     DMConciliacao.CDS_CMPagtos.First;
     DMConciliacao.CDS_CMPagtos.EnableControls;
+
     If Trim(sNumSeq)<>'' Then
      DMConciliacao.CDS_CMPagtos.Locate('Num_Seq;Num_Compl', VarArrayOf([sNumSeq,sNumCompl]),[]);
 
@@ -9373,8 +10211,8 @@ begin
          DMBelShop.SQLC.Rollback(TD);
          Lb_Obs.Caption:='Tecle <Duplo Click> Para Marcar Conciliação';
          Exit;
-       End; // If Not ProcessaConciciacao('Din') Then
-     End // If bConcDinheiro Then
+       End; // If Not ProcessaConciciacao('SEx') Then
+     End // If bConcExtrato Then
 
     // Concializa Por Pagto ----------------------------------------------------
     Else If igTotMarcaPag=1 Then
@@ -9513,17 +10351,9 @@ end;
 
 procedure TFrmBancoExtratos.Dbg_ConcManutExtratoEnter(Sender: TObject);
 begin
-//	Application.OnMessage:=DesabilitaScrollMouse;
-
   ApplicationEvents1.OnActivate:=Dbg_ConcManutExtratoEnter;
   Application.OnMessage := ApplicationEvents1Message;
   ApplicationEvents1.Activate;
-
-end;
-
-procedure TFrmBancoExtratos.Dbg_ConcManutExtratoExit(Sender: TObject);
-begin
-//  Application.OnMessage:=HabilitaScrollMouse;
 
 end;
 
@@ -9614,9 +10444,8 @@ begin
 end;
 
 procedure TFrmBancoExtratos.Dbg_ConcManutPagtoDrawColumnCell(
-  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
-  State: TGridDrawState);
-begin                                                                        
+  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
   if not (gdSelected in State) Then
   Begin
     if DMConciliacao.CDS_CMPagtosQUEM.AsString='SIS' then
@@ -9656,12 +10485,11 @@ begin
     DMConciliacao.CDS_CMPagtosCHV_NOTA.Alignment:=taRightJustify;
     DMConciliacao.CDS_CMPagtosCHV_RECIBO.Alignment:=taRightJustify;
     DMConciliacao.CDS_CMPagtosNUM_SERIE.Alignment:=taRightJustify;
-  End;
-                              
+  End; // if not (gdSelected in State) Then
+
 end;
 
-procedure TFrmBancoExtratos.Dbg_ConcManutExtratoKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmBancoExtratos.Dbg_ConcManutExtratoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 Var
   b: Boolean;
   sValor: String;
@@ -9742,8 +10570,7 @@ begin
   end; // If Key=Vk_F6 Then
 end;
 
-procedure TFrmBancoExtratos.Dbg_ConcManutPagtoKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmBancoExtratos.Dbg_ConcManutPagtoKeyDown(Sender: TObject; Var Key: Word; Shift: TShiftState);
 Var
   b: Boolean;
   sValor: String;
@@ -9994,8 +10821,14 @@ begin
   end; // If (Key=Vk_F11) And (DMConciliacao.CDS_CMPagtos.Active) Then
 
   // Apresenta Legenda de Cores ================================================
-  If (Key=Vk_F1) And (PC_Principal.ActivePage=Ts_ConciliacoesManutPagtos) And
-     ((DMConciliacao.CDS_CMPagtos.Active) Or (DMConciliacao.CDS_CMExtratos.Active)) Then
+  If (Key=Vk_F1)
+     And
+     (((PC_Principal.ActivePage=Ts_ConciliacoesManutPagtos) And
+       ((DMConciliacao.CDS_CMPagtos.Active) Or (DMConciliacao.CDS_CMExtratos.Active)))
+      Or
+      ((PC_Principal.ActivePage=Ts_ConciliacoesManutDepositos) And
+       ((DMConciliacao.CDS_CMDepositos.Active) Or (DMConciliacao.CDS_CMExtratosDep.Active))))
+     Then
   Begin                                       
     // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
     FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
@@ -10383,8 +11216,7 @@ begin
   DMConciliacao.CDS_ConcExtratos.Filtered:=False;
 end;
 
-procedure TFrmBancoExtratos.Dbg_ConcManutExtratoTitleClick(
-  Column: TColumn);
+procedure TFrmBancoExtratos.Dbg_ConcManutExtratoTitleClick(Column: TColumn);
 Var
   s, sPesquisa: String;
   b: Boolean;
@@ -10414,7 +11246,7 @@ begin
              End;
            End; // If Not DMConciliacao.CDS_CMExtratos.Locate(Column.FieldName, sPesquisa,[]) Then
            Break;
-           
+
          Except
            msg('Informação Inválida !!','A');
            Break;
@@ -10428,12 +11260,10 @@ begin
   End; // If Not DMConciliacao.CDS_CMExtratos.IsEmpty Then
 end;
 
-procedure TFrmBancoExtratos.FormKeyUp(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFrmBancoExtratos.FormKeyUp(Sender: TObject; var Key: Word;Shift: TShiftState);
 begin
   if Key=44   Then
    Clipboard.AsText:='';
-
 end;
 
 procedure TFrmBancoExtratos.Bt_CMApresFiltroClick(Sender: TObject);
@@ -10514,7 +11344,7 @@ begin
     End;
 
     DMConciliacao.CDS_CMPagtos.Next;
-  End; // While not DMConciliacao.CDS_CMExtratos.Eof do
+  End; // While not DMConciliacao.CDS_CMPagtos.Eof do
 
   // Retira a Liberaçao Para Gravação ==========================================
   LiberaClientGravar(False);
@@ -10554,8 +11384,6 @@ end;
 
 procedure TFrmBancoExtratos.Dbg_ConcManutPagtoEnter(Sender: TObject);
 begin
-//	Application.OnMessage:=DesabilitaScrollMouse;
-
   ApplicationEvents1.OnActivate:=Dbg_ConcManutPagtoEnter;
   Application.OnMessage := ApplicationEvents1Message;
   ApplicationEvents1.Activate;
@@ -10835,9 +11663,1361 @@ caMinimize  A forma é minimizado, em vez de fechado.  Esta é a ação padrão para 
 
 end;
 
-procedure TFrmBancoExtratos.JvXPButton2Click(Sender: TObject);
+procedure TFrmBancoExtratos.Bt_CMPeriodoDepClick(Sender: TObject);
+Var
+  MySql: String;
+  sParametros: String;
+  bAtualiza: Boolean; // Se Atualizou Dados Linx - Retira Conciliações.
 begin
-  Bt_SairClick(Self);
+  Dbg_ConcManutExtratoDep.SetFocus;
+
+  bgSiga:=True;
+  FrmPeriodoApropriacao:=TFrmPeriodoApropriacao.Create(Self);
+  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Text:=
+                      DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Text   :=
+                      DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+
+  FrmPeriodoApropriacao.ShowModal;
+  sgDtaI:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date);
+  sgDtaF:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date);
+  FreeAndNil(FrmPeriodoApropriacao);
+
+  // Verifica se Prossegue Processamento =======================================
+  If Not bgSiga Then
+   Exit;
+
+  DMConciliacao.CDS_CMExtratosDep.Close;
+  DMConciliacao.CDS_CMDepositos.Close;
+
+  //============================================================================
+  // Busca Movtos de Sangria e Suprimento de Caixa no Linx (Cloud) =============
+  //============================================================================
+  bAtualiza:=False;
+  if Application.MessageBox(PChar('ATENÇÃO !!!'+cr+'Esta Atualização irá RETIRAR Conciliações JÁ REALIZADAS'+cr+'neste Período !!'+cr+cr+
+                                  'ATUALIZAR Dados do Linx (Nuvem) no Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF), 'ATENÇÃO !!', 292)=IdYes Then
+  Begin
+    OdirPanApres.Caption:='AGUARDE !! Atualizando Sangrias de Caixa LINX - CLOUD';
+    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmBancoExtratos;
+    OdirPanApres.BringToFront();
+    OdirPanApres.Visible:=True;
+    Refresh;
+
+    bAtualiza:=True;
+
+    // Busca Lojas Linx ==========================================================
+    MySql:=' SELECT em.cod_linx'+
+           ' FROM EMP_CONEXOES em'+
+           ' WHERE em.cod_linx<>0'+
+           ' ORDER BY 1';
+    DMBelShop.CDS_Busca.Close;
+    DMBelShop.SDS_Busca.CommandText:=MySql;
+    DMBelShop.CDS_Busca.Open;
+
+    DMBelShop.CDS_Busca.DisableControls;
+    While Not DMBelShop.CDS_Busca.Eof do
+    Begin
+      OdirPanApres.Caption:='AGUARDE !! Atualizando Sangrias de Caixa (LINX - CLOUD) Loja: '+DMBelShop.CDS_Busca.FieldByName('Cod_Linx').AsString;
+      Application.ProcessMessages;
+
+      sParametros:=sgPastaWebService+'PWebServiceLinx.exe LinxSangriaSuprimentos'; // Excutavel e Metodo a Processar
+      sParametros:=sParametros+' '+DMBelShop.CDS_Busca.FieldByName('Cod_Linx').AsString; // Codigo da Loja a Processar
+      sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Metodos')+'"'; // Pasta dos Metodos
+      sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Retornos')+'"'; // Pasta dos Retornos
+      sParametros:=sParametros+' "'+sgDtaI+'"'; // Data Inicial
+      sParametros:=sParametros+' "'+sgDtaF+'"'; // Data Final
+
+      // Envia Parametro e Aguarda Termino do Processo =============================
+      CreateProcessSimple(sParametros);
+
+      DMBelShop.CDS_Busca.Next;
+    End; // While Not DMBelShop.CDS_Busca.Eof do
+    DMBelShop.CDS_Busca.EnableControls;
+    DMBelShop.CDS_Busca.Close;
+    OdirPanApres.Visible:=False;
+  End; // If msg('Atualiza Dados da Linx (Nuvem)'+cr+cr+'do Período de '+sgdti+' a '+sgDtaF+cr+'??','C')=1 Then
+  // Busca Movtos de Sangria e Suprimento de Caixa no Linx (Cloud) =============
+  //============================================================================
+
+  // Retira Conciliações Já Existentes =========================================
+  // Insere Novos Depositos ====================================================
+  If bAtualiza Then
+  Begin
+    If Not AtualizaMovtosDepositos Then
+     Exit;
+  End; // If bAtualiza Then
+
+  // Acerta Data para Separador <.> Ponto ======================================
+  sgDtaI:=f_Troca('/','.',f_Troca('-','.',sgDtaI));
+  sgDtaF:=f_Troca('/','.',f_Troca('-','.',sgDtaF));
+
+  // Limpa Totalizadores =======================================================
+  EdtConcManutExtratoQtdDep.Value:=0;
+  EdtConcManutExtratoVlrDep.Value:=0;
+  EdtConcManutDepQtd.Value:=0;
+  EdtConcManutDepVlr.Value:=0;
+  EdtConcManutExtDepDif.Value:=0;
+
+  igTotMarcaExt:=0;
+  igTotMarcaPag:=0;
+
+  // Busca Extratos e Movimentos de Depositos ==================================
+  BuscaMovtosExtratosDepositos;
+
+end;
+
+procedure TFrmBancoExtratos.Dbg_ConcManutExtratoDepDblClick(Sender: TObject);
+Var
+  bExcPagto, bConcRetira: Boolean;
+  iRecNo, i: Integer;
+  MySql: String;
+  sNumSeq, sNumCompl, sChvExtrato: String;
+begin
+
+  If (DMConciliacao.CDS_CMExtratosDep.IsEmpty) or (Not DMConciliacao.CDS_CMExtratosDep.Active) Then
+   Exit;
+
+  // Não Altera Sem Permissão ao Usuários ======================================
+  If Not Bt_CMConciliar.Visible Then
+   Exit;
+
+  iRecNo:=0;
+  bConcRetira:=False;
+  bExcPagto:=False;
+
+  sNumCompl  :=DMConciliacao.CDS_CMDepositosNUM_COMPL.AsString;
+  sNumSeq    :=DMConciliacao.CDS_CMDepositosNUM_SEQ.AsString;
+  sChvExtrato:=DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString;
+
+  // Verifica se já esta Conciliado ============================================
+  // Conciliado Pelo Sistema
+  If DMConciliacao.CDS_CMExtratosDepQUEM.AsString='SIS' Then
+  Begin
+    If msg('Conciliado Pelo Sistema !!'+cr+cr+'Deseja Retira a Conciliação ?','C')=2 Then
+     Begin
+       Exit;
+     End
+    Else
+     Begin
+       {
+       // Se Conciliado Pelo Sistema por Histórioco Automático
+       bExcPagto:=False;
+       MySql:=' SELECT p.Num_Seq, p.Num_Compl'+
+              ' From FIN_CONCILIACAO_DEPOSITOS p'+
+              ' WHERE p.chv_extrato='+QuotedStr(DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString);
+       DMBelShop.CDS_BuscaRapida.Close;
+       DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+       DMBelShop.CDS_BuscaRapida.Open;
+       sNumSeq    :=DMBelShop.CDS_BuscaRapida.FieldByName('Num_Seq').AsString;
+       sNumCompl  :=DMBelShop.CDS_BuscaRapida.FieldByName('Num_Compl').AsString;
+       DMBelShop.CDS_BuscaRapida.Close;
+
+       If DMConciliacao.CDS_CMDepositos.Locate('Num_Seq;Num_Compl',VarArrayOf([sNumSeq, sNumCompl]),[]) Then
+       Begin
+         If Copy(DMConciliacao.CDS_CMDepositosCOD_FORNECEDOR.AsString,1,1)='*' Then
+         Begin
+           If msg('Conciliação Histórico Automático !!'+cr+'O Movto Pagamento Será Excluído !!'+cr+cr+'Deseja Retira a Conciliação ?','C')=2 Then
+           Begin
+             Exit;
+           End;
+           iRecNo:=DMConciliacao.CDS_CMDepositos.RecNo;
+           bExcPagto:=True;
+         End; // If Copy(DMConciliacao.CDS_CMDepositosCOD_FORNECEDOR.AsString)='*' Then
+       End; // If DMConciliacao.CDS_CMDepositos.Locate('Num_Seq;Num_Compl',VarArrayOf([sNumSeq, sNumCompl]),[]) Then
+       }
+       bConcRetira:=True;
+     End;
+  End; // If DMConciliacao.CDS_CMExtratosDepQUEM.AsString='SIS' Then
+
+  If DMConciliacao.CDS_CMExtratosDepQUEM.AsString='USU' Then
+  Begin
+    if msg('Conciliado Pelo Usuário !!'+cr+cr+'Deseja Retira a Conciliação ?','C')=2 Then
+     Begin
+       Exit;
+     End
+    Else
+     Begin
+       bConcRetira:=True;
+       {
+       If DMConciliacao.CDS_CMExtratosDepTIP_CONCILIACAO.AsString='SExt' Then
+        bExcPagto:=True;
+       }
+     End;
+  End; // If DMConciliacao.CDS_CMExtratosDepQUEM.AsString='SIS' Then
+
+  // Verifica se Pode Conciliar ================================================
+  i:=1;
+  If DMConciliacao.CDS_CMExtratosDepConciliar.AsString='SIM' Then
+   i:=-1;
+
+  If Not PodeConciliarDepositos(i,0) Then
+  Begin
+    igTotMarcaExt:=igTotMarcaExt-1;
+
+    ShowMessage('Impossível Conciliar !!'+cr+cr+'A Conciliação deve ser:'+cr+cr+
+                '1(UM) Marcado para 1(UM) ou DIVERSOS Marcados !!');
+    Exit;
+  End;
+
+  // Retira Conciliação ========================================================
+  If bConcRetira Then
+  Begin
+    // Verificva se Transação esta Ativa
+    If DMBelShop.SQLC.InTransaction Then
+     DMBelShop.SQLC.Rollback(TD);
+
+    // Monta Transacao ===========================================================
+    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMBelShop.SQLC.StartTransaction(TD);
+    Try
+      Screen.Cursor:=crAppStart;
+      DateSeparator:='.';
+      DecimalSeparator:='.';
+
+      MySql:=' SELECT p.Chv_Extrato, p.Num_Seq, p.Num_Compl'+
+             ' From FIN_CONCILIACAO_DEPOSITOS p'+
+             ' WHERE p.chv_extrato='+QuotedStr(DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString);
+      DMBelShop.CDS_Busca.Close;
+      DMBelShop.SDS_Busca.CommandText:=MySql;
+      DMBelShop.CDS_Busca.Open;
+
+      While Not DMBelShop.CDS_Busca.Eof do
+      Begin
+        If Trim(DMConciliacao.CDS_CMExtratosDepTIP_CONCILIACAO.AsString)='' Then
+         Begin
+           MySql:=' SELECT p.Chv_Extrato, p.Num_Seq, p.Num_Compl'+
+                  ' From FIN_CONCILIACAO_DEPOSITOS p'+
+                  ' WHERE p.num_seq='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Num_Seq').AsString)+
+                  ' AND   p.num_compl='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Num_Compl').AsString);
+           DMBelShop.CDS_BuscaRapida.Close;
+           DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+           DMBelShop.CDS_BuscaRapida.Open;
+         End
+        Else
+         Begin
+           MySql:=' SELECT p.Chv_Extrato, p.Num_Seq, p.Num_Compl'+
+                  ' From FIN_CONCILIACAO_DEPOSITOS p'+
+                  ' WHERE p.chv_extrato='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Chv_Extrato').AsString);
+           DMBelShop.CDS_BuscaRapida.Close;
+           DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+           DMBelShop.CDS_BuscaRapida.Open;
+         End; // If Trim(DMConciliacao.CDS_CMExtratosDepTIP_CONCILIACAO.AsString)='' Then
+
+        While Not DMBelShop.CDS_BuscaRapida.Eof do
+        Begin
+          If Not bExcPagto Then
+           Begin
+             // Atualiza Movto Pagto
+             MySql:=' UPDATE FIN_CONCILIACAO_MOV_DEP m'+
+                    ' SET m.ind_conciliacao='+QuotedStr('NAO')+
+                    ' WHERE m.num_seq='+DMBelShop.CDS_BuscaRapida.FieldByName('NUM_SEQ').AsString+
+                    ' AND m.num_compl='+DMBelShop.CDS_BuscaRapida.FieldByName('NUM_COMPL').AsString;
+             DMBelShop.SQLC.Execute(MySql,nil,nil);
+           End
+          Else
+           Begin
+             // Exclui Movto Pagto Histórico Automático
+             MySql:=' DELETE FROM FIN_CONCILIACAO_MOV_DEP m'+
+                    ' WHERE m.num_seq='+DMBelShop.CDS_BuscaRapida.FieldByName('NUM_SEQ').AsString+
+                    ' AND   m.num_compl='+DMBelShop.CDS_BuscaRapida.FieldByName('NUM_COMPL').AsString;
+             DMBelShop.SQLC.Execute(MySql,nil,nil);
+           End; // If Not bExcPagto Then
+
+          MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS p'+
+                 ' WHERE p.num_seq='+DMBelShop.CDS_BuscaRapida.FieldByName('NUM_SEQ').AsString+
+                 ' AND   p.num_compl='+DMBelShop.CDS_BuscaRapida.FieldByName('NUM_COMPL').AsString+
+                 ' AND   p.Chv_Extrato='+QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('Chv_Extrato').AsString);
+          DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+          sNumCompl  :=DMBelShop.CDS_BuscaRapida.FieldByName('NUM_COMPL').AsString;
+          sNumSeq    :=DMBelShop.CDS_BuscaRapida.FieldByName('NUM_SEQ').AsString;
+          sChvExtrato:=DMBelShop.CDS_BuscaRapida.FieldByName('Chv_Extrato').AsString;
+
+          DMBelShop.CDS_BuscaRapida.Next;
+        End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
+        DMBelShop.CDS_BuscaRapida.Close;
+
+        DMBelShop.CDS_Busca.Next;
+      End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
+      DMBelShop.CDS_Busca.Close;
+
+      // Atualiza Transacao =======================================
+      DMBelShop.SQLC.Commit(TD);
+
+      DMConciliacao.CDS_CMDepositos.Close;
+      DMConciliacao.CDS_CMDepositos.Open;
+
+      DMConciliacao.CDS_CMExtratosDep.Close;
+      DMConciliacao.CDS_CMExtratosDep.Open;
+
+      If iRecNo=0 Then
+       DMConciliacao.CDS_CMDepositos.Locate('NUM_SEQ;NUM_COMPL',VarArrayOf([sNumSeq,sNumCompl]),[])
+      Else
+       DMConciliacao.CDS_CMDepositos.RecNo:=iRecNo;
+
+      DMConciliacao.CDS_CMExtratosDep.Locate('CHV_EXTRATO', sChvExtrato,[]);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+      Screen.Cursor:=crDefault;
+      Exit;
+    Except
+      on e : Exception do
+      Begin
+        HabilitaBotoesDep(True);
+
+        // Abandona Transacao =====================================
+        DMBelShop.SQLC.Rollback(TD);
+
+        DateSeparator:='/';
+        DecimalSeparator:=',';
+        Screen.Cursor:=crDefault;
+
+        MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+        exit;
+      End; // on e : Exception do
+    End; // Try
+  End; // If bConcRetira Then
+
+  // Libera Para Gravação ======================================================
+  LiberaClientGravarDep(True);
+
+  // Marca/DesMarca Conciliação ================================================
+  DMConciliacao.CDS_CMExtratosDep.Edit;
+  If DMConciliacao.CDS_CMExtratosDepConciliar.AsString='SIM' Then
+   Begin
+    DMConciliacao.CDS_CMExtratosDepConciliar.AsString:='NAO';
+    If bConcRetira Then
+    Begin
+      DMConciliacao.CDS_CMExtratosDepCOD_USUARIO.AsString:=EmptyStr;
+      DMConciliacao.CDS_CMExtratosDepConciliado.AsString:='NAO';
+      DMConciliacao.CDS_CMExtratosDepQUEM.AsString:=EmptyStr;
+      DMConciliacao.CDS_CMExtratosDepTIP_CONCILIACAO.AsString:=EmptyStr;
+      DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString:=EmptyStr;
+    End;
+   End
+  Else // If DMConciliacao.CDS_CMExtratosDepConciliar.AsString='SIM' Then
+   Begin
+     DMConciliacao.CDS_CMExtratosDepConciliar.AsString:='SIM';
+   End; // If DMConciliacao.CDS_CMExtratosDepConciliar.AsString='SIM' Then
+  DMConciliacao.CDS_CMExtratosDep.Post;
+
+  // Retira a Liberaçao Para Gravação ==========================================
+  LiberaClientGravarDep(False);
+
+  TotaisMarcadosNaoConciliadosDep;
+
+end;
+
+procedure TFrmBancoExtratos.Rb_ConcConciliadosDepClick(Sender: TObject);
+begin
+
+  If (not DMConciliacao.CDS_CMExtratosDep.Active) Or (not DMConciliacao.CDS_CMDepositos.Active) Then
+  Begin
+    Exit;
+  End;
+
+  Dbg_ConcManutExtratoDep.SetFocus;
+
+  AcertaRb_Style(Rb_ConcConciliadosDep);
+  AcertaRb_Style(Rb_ConcNaoConciliadosDep);
+  AcertaRb_Style(Rb_ConcAmbosDep);
+
+  If Rb_ConcConciliadosDep.Checked Then
+  Begin
+    DMConciliacao.CDS_CMExtratosDep.Filtered:=False;
+    DMConciliacao.CDS_CMExtratosDep.Filter:='QUEM is Not null';
+    DMConciliacao.CDS_CMExtratosDep.Filtered:=True;
+
+    DMConciliacao.CDS_CMDepositos.Filtered:=False;
+    DMConciliacao.CDS_CMDepositos.Filter:='QUEM is Not null';
+    DMConciliacao.CDS_CMDepositos.Filtered:=True;
+  End;
+
+  If Rb_ConcNaoConciliadosDep.Checked Then
+  Begin
+    DMConciliacao.CDS_CMExtratosDep.Filtered:=False;
+    DMConciliacao.CDS_CMExtratosDep.Filter:='QUEM is null';
+    DMConciliacao.CDS_CMExtratosDep.Filtered:=True;
+
+    DMConciliacao.CDS_CMDepositos.Filtered:=False;
+    DMConciliacao.CDS_CMDepositos.Filter:='QUEM is null';
+    DMConciliacao.CDS_CMDepositos.Filtered:=True;
+  End;
+
+  If Rb_ConcAmbosDep.Checked Then
+  Begin
+    DMConciliacao.CDS_CMExtratosDep.Filtered:=False;
+    DMConciliacao.CDS_CMExtratosDep.Filter:='';
+
+    DMConciliacao.CDS_CMDepositos.Filtered:=False;
+    DMConciliacao.CDS_CMDepositos.Filter:='';
+  End;
+
+  TotaisMarcadosNaoConciliadosDep;
+end;
+
+procedure TFrmBancoExtratos.Dbg_ConcManutExtratoDepDrawColumnCell(
+  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if not (gdSelected in State) Then
+  Begin
+    if DMConciliacao.CDS_CMExtratosDepQUEM.AsString='SIS' then
+     Dbg_ConcManutExtratoDep.Canvas.Brush.Color:=clLime;
+
+    if DMConciliacao.CDS_CMExtratosDepQUEM.AsString='USU' then
+     Dbg_ConcManutExtratoDep.Canvas.Brush.Color:=$00BBBBFF;
+
+    if (DMConciliacao.CDS_CMExtratosDepQUEM.AsString='USU') And (DMConciliacao.CDS_CMExtratosTIP_CONCILIACAO.AsString='SExt') then
+    Begin
+      Dbg_ConcManutExtratoDep.Canvas.Brush.Color:=$00FF75BA;
+      Dbg_ConcManutExtratoDep.Canvas.Font.Color:=clWhite; // Cor da Fonte
+    End;
+
+    if (Trim(DMConciliacao.CDS_CMExtratosDepQUEM.AsString)='') And (DMConciliacao.CDS_CMExtratosDepConciliar.AsString='SIM') then
+     Dbg_ConcManutExtratoDep.Canvas.Brush.Color:=clYellow;
+
+    Dbg_ConcManutExtratoDep.Canvas.FillRect(Rect);
+    Dbg_ConcManutExtratoDep.DefaultDrawDataCell(Rect,Column.Field,state);
+
+    DMConciliacao.CDS_CMExtratosDepQUEM.Alignment:=taCenter;
+    DMConciliacao.CDS_CMExtratosDepConciliado.Alignment:=taCenter;
+  End; // if not (gdSelected in State) Then
+
+end;
+
+procedure TFrmBancoExtratos.Dbg_ConcManutExtratoDepEnter(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=Dbg_ConcManutExtratoDepEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmBancoExtratos.Dbg_ConcManutExtratoDepKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+Var
+  b: Boolean;
+  sValor: String;
+begin                                   
+   // Busca Valor ===============================================================
+  If Key=Vk_F4 Then
+  Begin
+    If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
+    Begin
+      sValor:='';
+      b:=True;
+      While b do
+      Begin
+        If InputQuery('Valor a Localizar','',sValor) then
+         Begin
+           Try
+             StrToCurr(sValor);
+             If Not DMConciliacao.CDS_CMExtratosDep.Locate('VLR_DOCTO',sValor,[]) Then
+             Begin
+               msg('Valor Não Localizado !!','A');
+               Exit;
+             End;
+             Break;
+           Except
+             msg('Valor Inválido !!','A');
+             Break;
+           End;
+         End
+        Else // If InputQuery('Valor a Localizar','',sValor) then
+         Begin
+           Break;
+         End; // If InputQuery('Valor a Localizar','',sValor) then
+      End; // While b do
+    End; // If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
+  End; // If Key=Vk_F4 Then
+
+  // Apresenta Conciliação =====================================================
+  If Key=Vk_F6 Then
+  Begin
+    If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
+    Begin
+      If DMConciliacao.CDS_CMExtratosDepConciliado.AsString='SIM' Then
+       Begin
+         OdirPanApres.Caption:='AGUARDE !! Localizando Conciliação...';
+         OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+         OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
+         OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
+         OdirPanApres.Visible:=True;
+         Refresh;
+
+         FrmApresConciliacao:=TFrmApresConciliacao.Create(Self);
+
+         DMConciliacao.CDS_CMApresDepositos.Close;
+         DMConciliacao.SDS_CMApresDepositos.Params.ParamByName('CHV_EXTRATO').AsString:=
+                                  DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString;
+         DMConciliacao.CDS_CMApresDepositos.Open;
+
+         OdirPanApres.Visible:=False;
+         If DMConciliacao.CDS_CMApresDepositos.IsEmpty Then
+         Begin
+           DMConciliacao.CDS_CMApresDepositos.Close;
+           Exit;
+         End; // DMConciliacao.CDS_CMApresDepositos.Close;
+
+         DMConciliacao.sgDta1:=sgDtaI;
+         DMConciliacao.sgDta2:=sgDtaF;
+         FrmApresConciliacao.Gb_ConcManutExtrato.Visible:=False;
+         FrmApresConciliacao.Gb_ConcManutPagtos.Align:=alClient;
+         FrmApresConciliacao.Dbg_ConcManutPagto.DataSource:=DMConciliacao.DS_CMApresDepositos;
+         FrmApresConciliacao.Dbe_ConcManutTotal.DataSource:=DMConciliacao.DS_CMApresDepositos;
+
+         FrmApresConciliacao.ShowModal;
+
+         FreeAndNil(FrmApresConciliacao);
+       End
+      Else // If DMConciliacao.CDS_CMExtratosDepConciliado.AsString='SIM' Then
+       Begin
+         msg('Extrato Não Conciliado !!','A')
+       End;  // If DMConciliacao.CDS_CMExtratosDepConciliado.AsString='SIM' Then
+    End; // If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
+  End; // If Key=Vk_F6 Then
+end;
+
+procedure TFrmBancoExtratos.Dbg_ConcManutExtratoDepTitleClick(Column: TColumn);
+Var
+  s, sPesquisa: String;
+  b: Boolean;
+  i: Integer;
+begin
+
+  If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
+  Begin
+    i:=DMConciliacao.CDS_CMExtratosDep.RecNo;
+    sPesquisa:='';
+    b:=True;
+    While b do
+    Begin
+      s:=DMConciliacao.CDS_CMExtratosDep.FieldByName(Column.FieldName).DisplayLabel;
+      If InputQuery('Localizar: '+s,'',sPesquisa) then
+       Begin
+         Try
+           If Column.FieldName='NUM_DOCTO' Then
+            sPesquisa:=FormatFloat('000000',StrToInt(sPesquisa));
+
+           If Not DMConciliacao.CDS_CMExtratosDep.Locate(Column.FieldName, sPesquisa,[]) Then
+           Begin
+             If Not LocalizaRegistro(DMConciliacao.CDS_CMExtratosDep, Column.FieldName, sPesquisa) Then
+             Begin
+               DMConciliacao.CDS_CMExtratosDep.RecNo:=i;
+               msg('Não Localizado !!','A');
+               Exit;
+             End;
+           End; // If Not DMConciliacao.CDS_CMExtratosDep.Locate(Column.FieldName, sPesquisa,[]) Then
+           Break;
+         Except
+           msg('Informação Inválida !!','A');
+           Break;
+         End;
+       End
+      Else // If InputQuery('Localizar: '+s,'',sPesquisa) then
+       Begin
+         Break;
+       End; // If InputQuery('Localizar: '+s,'',sPesquisa) then
+    End; // While b do
+  End; // If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
+end;
+
+procedure TFrmBancoExtratos.Dbg_ConcManutDepositosDblClick(Sender: TObject);
+Var
+  bExcPagto, bConcRetira: Boolean;
+  iRecNo, i: Integer;
+  MySql: String;
+  sNumSeq, sNumCompl, sChvExtrato: String;
+begin
+
+  If (DMConciliacao.CDS_CMDepositos.IsEmpty) or (Not DMConciliacao.CDS_CMDepositos.Active) Then
+   Exit;
+                        
+  // Não Altera Sem Permissão ao Usuários ======================================
+  If Not Bt_CMConciliarDep.Visible Then
+   Exit;
+
+  iRecNo:=0;
+  bConcRetira:=False;
+  bExcPagto:=False;
+               
+  sNumCompl  :=DMConciliacao.CDS_CMDepositosNUM_COMPL.AsString;
+  sNumSeq    :=DMConciliacao.CDS_CMDepositosNUM_SEQ.AsString;
+  sChvExtrato:=DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString;
+
+  // Verifica se já esta Conciliado ============================================
+  If DMConciliacao.CDS_CMDepositosQUEM.AsString='SIS' Then
+  Begin
+     If msg('Conciliado Pelo Sistema !!'+cr+cr+'Deseja Retira a Conciliação ?','C')=2 Then
+     Begin
+       Exit;
+     End
+    Else
+     Begin
+       {
+       If Copy(DMConciliacao.CDS_CMDepositosCOD_FORNECEDOR.AsString,1,1)='*' Then
+       Begin
+         If msg('Conciliação Histórico Automático !!'+cr+'O Movto Pagamento Será Excluído !!'+cr+cr+'Deseja Retira a Conciliação ?','C')=2 Then
+         Begin
+           Exit;
+         End;
+         iRecNo:=DMConciliacao.CDS_CMDepositos.RecNo;
+         bExcPagto:=True;
+       End; // If Copy(DMConciliacao.CDS_CMDepositosCOD_FORNECEDOR.AsString)='*' Then
+       }
+       bConcRetira:=True;
+     End;
+  End; // If DMConciliacao.CDS_CMDepositosQUEM.AsString='SIS' Then
+
+  // Verifica se já esta Conciliado Somente por Extrato ========================
+  {
+  If (DMConciliacao.CDS_CMDepositosQUEM.AsString='USU') And (DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString='SExt') Then
+  Begin
+    If msg('Conciliação Somente por Extrato !!'+cr+'O Movto Pagamento Será Excluído !!'+cr+cr+'Deseja Retira a Conciliação ?','C')=2 Then
+    Begin
+      Exit;
+    End;
+    iRecNo:=DMConciliacao.CDS_CMDepositos.RecNo;
+    bExcPagto:=True;
+
+    bConcRetira:=True;
+  End; // If DMConciliacao.CDS_CMDepositosQUEM.AsString='SEx' Then
+  }
+
+  If (DMConciliacao.CDS_CMDepositosQUEM.AsString='USU') And (DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString<>'SExt') Then
+  Begin
+     If msg('Conciliado Pelo Usuário !!'+cr+cr+'Deseja Retira a Conciliação ?','C')=2 Then
+     Begin
+       Exit;
+     End
+    Else
+     Begin
+       bConcRetira:=True;
+     End;
+  End; // If DMConciliacao.CDS_CMDepositosQUEM.AsString='USU' Then
+
+  // Verifica se Pode Conciliar ================================================
+  i:=1;
+  If DMConciliacao.CDS_CMDepositosConciliar.AsString='SIM' Then
+   i:=-1;
+
+  If Not PodeConciliarDepositos(0,i) Then
+  Begin
+    igTotMarcaPag:=igTotMarcaPag-1;
+
+    ShowMessage('Impossível Conciliar !!'+cr+cr+'A Conciliação deve ser:'+cr+cr+
+                '1(UM) Marcado para 1(UM) ou DIVERSOS Marcados !!');
+    Exit;
+  End;
+
+  // Retira Conciliação ========================================================
+  If bConcRetira Then
+  Begin
+    // Verificva se Transação esta Ativa
+    If DMBelShop.SQLC.InTransaction Then
+     DMBelShop.SQLC.Rollback(TD);
+
+    // Monta Transacao ===========================================================
+    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMBelShop.SQLC.StartTransaction(TD);
+    Try
+      Screen.Cursor:=crAppStart;
+      DateSeparator:='.';
+      DecimalSeparator:='.';
+
+      MySql:=' SELECT p.Chv_Extrato'+
+             ' From FIN_CONCILIACAO_DEPOSITOS p'+
+             ' WHERE p.num_seq='+DMConciliacao.CDS_CMDepositosNUM_SEQ.AsString+
+             ' AND   p.num_compl='+DMConciliacao.CDS_CMDepositosNUM_COMPL.AsString;
+      DMBelShop.CDS_Busca.Close;
+      DMBelShop.SDS_Busca.CommandText:=MySql;
+      DMBelShop.CDS_Busca.Open;
+
+      While Not DMBelShop.CDS_Busca.Eof do
+      Begin
+        MySql:=' SELECT p.Chv_Extrato, p.Num_Seq, p.Num_Compl'+
+               ' From FIN_CONCILIACAO_DEPOSITOS p'+
+               ' WHERE p.Chv_Extrato='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Chv_Extrato').AsString);
+        DMBelShop.CDS_BuscaRapida.Close;
+        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+        DMBelShop.CDS_BuscaRapida.Open;
+
+        While Not DMBelShop.CDS_BuscaRapida.Eof do
+        Begin
+          If Not bExcPagto Then
+           Begin
+             // Atualiza Movto Pagto
+             MySql:=' UPDATE FIN_CONCILIACAO_MOV_DEP m'+
+                    ' SET m.ind_conciliacao='+QuotedStr('NAO')+
+                    ' WHERE m.num_seq='+QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('Num_Seq').AsString)+
+                    ' AND   m.num_compl='+QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('Num_Compl').AsString);
+             DMBelShop.SQLC.Execute(MySql,nil,nil);
+           End
+          Else
+           Begin
+             // Exclui Movto Pagto Histórico Automático
+             MySql:=' DELETE FROM FIN_CONCILIACAO_MOV_DEP m'+
+                    ' WHERE m.num_seq='+DMBelShop.CDS_BuscaRapida.FieldByName('NUM_SEQ').AsString+
+                    ' AND   m.num_compl='+DMBelShop.CDS_BuscaRapida.FieldByName('NUM_COMPL').AsString;
+             DMBelShop.SQLC.Execute(MySql,nil,nil);
+           End; // If Not bExcPagto Then
+
+          MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS p'+
+                 ' WHERE p.num_seq='+DMBelShop.CDS_BuscaRapida.FieldByName('NUM_SEQ').AsString+
+                 ' AND   p.num_compl='+DMBelShop.CDS_BuscaRapida.FieldByName('NUM_COMPL').AsString+
+                 ' AND   p.Chv_Extrato='+QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('Chv_Extrato').AsString);
+          DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+          sNumCompl  :=DMBelShop.CDS_BuscaRapida.FieldByName('NUM_COMPL').AsString;
+          sNumSeq    :=DMBelShop.CDS_BuscaRapida.FieldByName('NUM_SEQ').AsString;
+          sChvExtrato:=DMBelShop.CDS_BuscaRapida.FieldByName('Chv_Extrato').AsString;
+
+          DMBelShop.CDS_BuscaRapida.Next;
+        End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
+        DMBelShop.CDS_BuscaRapida.Close;
+
+        DMBelShop.CDS_Busca.Next;
+      End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
+      DMBelShop.CDS_Busca.Close;
+
+      // Atualiza Transacao =======================================
+      DMBelShop.SQLC.Commit(TD);
+
+      DMConciliacao.CDS_CMDepositos.Close;
+      DMConciliacao.CDS_CMDepositos.Open;
+
+      DMConciliacao.CDS_CMExtratosDep.Close;
+      DMConciliacao.CDS_CMExtratosDep.Open;
+
+      If (iRecNo=0) Or (DMConciliacao.CDS_CMDepositos.RecordCount<iRecNo) Then
+       DMConciliacao.CDS_CMDepositos.Locate('NUM_SEQ;NUM_COMPL',VarArrayOf([sNumSeq,sNumCompl]),[])
+      Else
+       DMConciliacao.CDS_CMDepositos.RecNo:=iRecNo;
+
+      DMConciliacao.CDS_CMExtratosDep.Locate('CHV_EXTRATO', sChvExtrato,[]);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+      Screen.Cursor:=crDefault;
+      Exit;
+    Except
+      on e : Exception do
+      Begin
+        HabilitaBotoesDep(True);
+
+        // Abandona Transacao =====================================
+        DMBelShop.SQLC.Rollback(TD);
+
+        DateSeparator:='/';
+        DecimalSeparator:=',';
+        Screen.Cursor:=crDefault;
+
+        MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+        exit;
+      End; // on e : Exception do
+    End; // Try
+  End; // If bConcRetira Then
+
+  // Libera Para Gravação ======================================================
+  LiberaClientGravarDep(True);
+
+  // Marca/DesMarca Conciliação ================================================
+  DMConciliacao.CDS_CMDepositos.Edit;
+  If DMConciliacao.CDS_CMDepositosConciliar.AsString='SIM' Then
+   Begin
+    DMConciliacao.CDS_CMDepositosConciliar.AsString:='NAO';
+    If bConcRetira Then
+    Begin
+      DMConciliacao.CDS_CMDepositosConciliado.AsString:='NAO';
+      DMConciliacao.CDS_CMDepositosQUEM.AsString:='';
+      DMConciliacao.CDS_CMDepositosCOD_USUARIO.AsString:='';
+      DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString:='';
+    End;
+   End
+  Else // If DMConciliacao.CDS_CMDepositosConciliar.AsString='SIM' Then
+   Begin
+     DMConciliacao.CDS_CMDepositosConciliar.AsString:='SIM';
+   End; // If DMConciliacao.CDS_CMDepositosConciliar.AsString='SIM' Then
+  DMConciliacao.CDS_CMDepositos.Post;
+
+  // Retira a Liberaçao Para Gravação ==========================================
+  LiberaClientGravarDep(False);
+
+  TotaisMarcadosNaoConciliadosDep;
+End;
+
+procedure TFrmBancoExtratos.Dbg_ConcManutDepositosDrawColumnCell(
+  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if not (gdSelected in State) Then
+  Begin                 
+    if DMConciliacao.CDS_CMDepositosQUEM.AsString='SIS' then
+     Dbg_ConcManutDepositos.Canvas.Brush.Color:=clLime;
+
+    if DMConciliacao.CDS_CMDepositosQUEM.AsString='USU' then
+     Dbg_ConcManutDepositos.Canvas.Brush.Color:=$00BBBBFF;
+
+    if (DMConciliacao.CDS_CMDepositosQUEM.AsString='USU') And (DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString='DINH') then
+     Dbg_ConcManutDepositos.Canvas.Brush.Color:=clAqua;
+
+    if (DMConciliacao.CDS_CMDepositosQUEM.AsString='USU') And (DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString='SExt') then
+    Begin
+      Dbg_ConcManutDepositos.Canvas.Brush.Color:=$00FF75BA;
+      Dbg_ConcManutDepositos.Canvas.Font.Color:=clWhite; // Cor da Fonte
+    End;
+
+    if (Trim(DMConciliacao.CDS_CMDepositosQUEM.AsString)='') And (DMConciliacao.CDS_CMDepositosConciliar.AsString='SIM') then
+     Dbg_ConcManutDepositos.Canvas.Brush.Color:=clYellow;
+
+    Dbg_ConcManutDepositos.Canvas.FillRect(Rect);
+    Dbg_ConcManutDepositos.DefaultDrawDataCell(Rect,Column.Field,state);
+
+    DMConciliacao.CDS_CMDepositosConciliado.Alignment:=taCenter;
+    DMConciliacao.CDS_CMDepositosQUEM.Alignment:=taCenter;
+    DMConciliacao.CDS_CMDepositosConciliar.Alignment:=taCenter;
+    DMConciliacao.CDS_CMDepositosDTA_DOCTO.Alignment:=taCenter;
+    DMConciliacao.CDS_CMDepositosNUM_DOCTO.Alignment:=taRightJustify;
+    DMConciliacao.CDS_CMDepositosVLR_DOCTO.Alignment:=taRightJustify;
+    DMConciliacao.CDS_CMDepositosUSU_LOJA.Alignment:=taRightJustify;
+  End; // if not (gdSelected in State) Then
+end;
+
+procedure TFrmBancoExtratos.Dbg_ConcManutDepositosEnter(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=Dbg_ConcManutDepositosEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmBancoExtratos.Dbg_ConcManutDepositosKeyDown(Sender: TObject; Var Key: Word; Shift: TShiftState);
+Var
+  b: Boolean;
+  sValor: String;
+begin
+  // Busca Valor ===============================================================
+  If Key=Vk_F4 Then
+  Begin
+    If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
+    Begin
+      sValor:='';
+      b:=True;
+      While b do
+      Begin
+        If InputQuery('Valor a Localizar','',sValor) then
+         Begin
+           Try
+             StrToCurr(sValor);
+             If Not DMConciliacao.CDS_CMDepositos.Locate('VLR_DOCTO',sValor,[]) Then
+             Begin
+               msg('Valor Não Localizado !!','A');
+               Exit;
+             End;
+             Break;
+           Except
+             msg('Valor Inválido !!','A');
+             Break;
+           End;
+         End
+        Else // If InputQuery('Valor a Localizar','',sValor) then
+         Begin
+           Break;
+         End; // If InputQuery('Valor a Localizar','',sValor) then
+      End; // While b do
+    End; // If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
+  End; // If Key=Vk_F4 Then
+
+  // Apresenta Conciliação =====================================================
+  If Key=Vk_F6 Then
+  Begin
+    If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
+    Begin
+      If DMConciliacao.CDS_CMDepositosConciliado.AsString='SIM' Then
+       Begin
+
+         If DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString='DINH' Then
+         Begin
+           msg('Depósito Conciliado como DINHEIRO !!','A');
+           Exit;
+         End;
+
+         OdirPanApres.Caption:='AGUARDE !! Localizando Conciliação...';
+         OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+         OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
+         OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
+         OdirPanApres.Visible:=True;
+         Refresh;
+
+         FrmApresConciliacao:=TFrmApresConciliacao.Create(Self);
+
+         DMConciliacao.CDS_CMApresExtratosDep.Close;
+         DMConciliacao.SDS_CMApresExtratosDep.Params.ParamByName('NUM_SEQ').AsString:=
+                                     DMConciliacao.CDS_CMDepositosNUM_SEQ.AsString;
+         DMConciliacao.SDS_CMApresExtratosDep.Params.ParamByName('NUM_COMPL').AsString:=
+                                   DMConciliacao.CDS_CMDepositosNUM_COMPL.AsString;
+         DMConciliacao.CDS_CMApresExtratosDep.Open;
+
+         OdirPanApres.Visible:=False;
+         If DMConciliacao.CDS_CMApresExtratosDep.IsEmpty Then
+         Begin
+           DMConciliacao.CDS_CMApresExtratosDep.Close;
+           Exit;
+         End; // If DMConciliacao.CDS_CMApresExtratosDep.IsEmpty Then
+
+         FrmApresConciliacao.Gb_ConcManutPagtos.Visible:=False;
+         FrmApresConciliacao.Gb_ConcManutExtrato.Align:=alClient;
+         FrmApresConciliacao.Dbg_ConcManutExtrato.DataSource:=DMConciliacao.DS_CMApresExtratoDep;
+         FrmApresConciliacao.Dbe_ConcManutTotal.DataSource:=DMConciliacao.DS_CMApresExtratoDep;
+
+         FrmApresConciliacao.ShowModal;
+
+         FreeAndNil(FrmApresConciliacao);
+       End
+      Else // If DMConciliacao.CDS_CMDepositosConciliado.AsString='SIM' Then
+       Begin
+         msg('Pagamento Não Conciliado !!','A')
+       End;  // If DMConciliacao.CDS_CMDepositosConciliado.AsString='SIM' Then
+    End; // If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
+  End; // If Key=Vk_F6 Then
+end;
+
+procedure TFrmBancoExtratos.Dbg_ConcManutDepositosTitleClick(Column: TColumn);
+Var
+  s, sPesquisa: String;
+  b: Boolean;
+  i: Integer;
+begin
+  If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
+  Begin
+    i:=DMConciliacao.CDS_CMDepositos.RecNo;
+    sPesquisa:='';
+    b:=True;
+    While b do
+    Begin
+      s:=DMConciliacao.CDS_CMDepositos.FieldByName(Column.FieldName).DisplayLabel;
+      If InputQuery('Localizar: '+s,'',sPesquisa) then
+       Begin
+         Try
+           If Not DMConciliacao.CDS_CMDepositos.Locate(Column.FieldName, sPesquisa,[]) Then
+           Begin
+             If Not LocalizaRegistro(DMConciliacao.CDS_CMDepositos, Column.FieldName, sPesquisa) Then
+             Begin
+               DMConciliacao.CDS_CMDepositos.RecNo:=i;
+               msg('Não Localizado !!','A');
+               Exit;
+             End;
+           End; // If Not DMConciliacao.CDS_CMDepositos.Locate(Column.FieldName, sPesquisa,[]) Then
+           Break;
+         Except
+           msg('Informação Inválida !!','A');
+           Break;
+         End;
+       End
+      Else // If InputQuery('Localizar: '+s,'',sPesquisa) then
+       Begin
+         Break;
+       End; // If InputQuery('Localizar: '+s,'',sPesquisa) then
+    End; // While b do
+  End; // If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
+end;
+
+procedure TFrmBancoExtratos.Bt_CMConciliarDepClick(Sender: TObject);
+Var
+  sCodTpConc, sDesTpConc: String;
+  sChvExtrato, sNumSeq, sNumCompl: String;
+  bConcDinheiro, bConcExtrato: Boolean;
+  b: Boolean;
+begin
+  bgLocate:=True;
+
+  bConcDinheiro:=False;
+  bConcExtrato:=False;
+
+  sChvExtrato:=DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString;
+  sNumSeq    :=DMConciliacao.CDS_CMDepositosNUM_SEQ.AsString;
+  sNumCompl  :=DMConciliacao.CDS_CMDepositosNUM_COMPL.AsString;
+
+  If ((DMConciliacao.CDS_CMExtratosDep.IsEmpty) or (Not DMConciliacao.CDS_CMExtratosDep.Active)) And
+     ((DMConciliacao.CDS_CMDepositos.IsEmpty)   or (Not DMConciliacao.CDS_CMDepositos.Active))  Then
+  Begin
+    Exit;
+  End;
+
+  If (igTotMarcaExt=0) And (igTotMarcaPag=0) Then
+  Begin
+    msg('Sem Registro Selecionado !!','A');
+    Dbg_ConcManutExtratoDep.SetFocus;
+    Exit;
+  End;
+
+  // Conciliação Como Dinheiro =================================================
+  If (igTotMarcaPag<>0) And (igTotMarcaExt=0) Then
+  Begin
+    If msg('Consolidar como DINHEIRO ??','C')=1 Then
+     Begin
+       bConcDinheiro:=True;
+     End
+    Else
+     Begin
+       Exit;
+     End; // If msg('Consolidar como DINHEIRO ??','C')=1 Then
+  End; // If (igTotMarcaPag<>0) Or (igTotMarcaExt=0) Then
+
+  {
+  // Conciliação Somente Extrato ===============================================
+  If (igTotMarcaPag=0) And (igTotMarcaExt<>0) Then
+  Begin
+    If msg('Consolidar Somente o Extrato  ??','C')=1 Then
+     Begin
+       b:=True;
+       While b do
+       Begin
+         sgCodLojaExt:=InputBoxInteiro('Loja Responsável pelo(s) Extrato(s)', 'Informe o Código da Loja',sgCodLojaExt);
+         If Trim(sgCodLojaExt)='' Then
+          Exit;
+
+         Try
+           StrToCurr(sgCodLojaExt);
+           MySqlSelect:=' SELECT e.cod_filial'+
+                        ' FROM EMP_CONEXOES e'+
+                        ' WHERE e.cod_filial='+QuotedStr(FormatFloat('00',StrToInt(sgCodLojaExt)));
+           DMBelShop.CDS_BuscaRapida.Close;
+           DMBelShop.SDS_BuscaRapida.CommandText:=MySqlSelect;
+           DMBelShop.CDS_BuscaRapida.Open;
+           sgCodLojaExt:=DMBelShop.CDS_BuscaRapida.FieldByName('cod_filial').AsString;
+           DMBelShop.CDS_BuscaRapida.Close;
+
+           If sgCodLojaExt='' Then
+            msg('Código da Loja é Inválido !!','A')
+           Else
+            Break;
+         Except
+         End;
+       End; // While b do
+       bConcExtrato:=True;
+     End
+    Else // If msg('Consolidar Somente o Extrato  ??','C')=1 Then
+     Begin
+       Exit;
+     End; // If msg('Consolidar Somente o Extrato  ??','C')=1 Then
+  End; // If (igTotMarcaPag=0) And (igTotMarcaExt<>0) Then
+  }
+
+  If ((igTotMarcaPag=0) Or (igTotMarcaExt=0)) And (Not bConcDinheiro) And (Not bConcExtrato)Then
+  Begin
+    ShowMessage('Impossível Conciliar !!'+cr+cr+'A Conciliação deve ser:'+cr+cr+
+                '1(UM) Marcado para 1(UM) ou DIVERSOS Marcados !!');
+    Exit;
+  End;
+
+  Lb_ObsDep.Caption:='Efetuando Conciliação...';
+
+  Rb_ConcAmbosDep.Checked:=True;
+  Rb_ConcConciliadosDepClick(Self);
+
+  // Verificva se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try
+    Screen.Cursor:=crAppStart;
+
+    sCodTpConc:='';
+    sDesTpConc:='';
+
+    // OdirApagar - 20/11/2017
+    // Busca Valores da Conciliação ============================================
+    //DMConciliacao.CDS_CMExtratosDep.DisableControls;
+//    cgVlrConciarExt:=0;
+//    DMConciliacao.CDS_CMExtratosDep.First;
+//    While Not DMConciliacao.CDS_CMExtratosDep.Eof do
+//    Begin
+//      If (DMConciliacao.CDS_CMExtratosDepConciliado.AsString='NAO') and (DMConciliacao.CDS_CMExtratosDepConciliar.AsString='SIM') Then
+//      Begin
+//        cgVlrConciarExt:=cgVlrConciarExt+DMConciliacao.CDS_CMExtratosDepVLR_DOCTO.AsCurrency;
+//      End;
+//
+//      DMConciliacao.CDS_CMExtratosDep.Next;
+//    End;
+//    DMConciliacao.CDS_CMExtratosDep.First;
+//    DMConciliacao.CDS_CMExtratosDep.EnableControls;
+//    DMConciliacao.CDS_CMExtratosDep.Locate('Chv_Extrato', sChvExtrato,[]);
+//
+//    // Pagamentos ================================================================
+//    DMConciliacao.CDS_CMDepositos.DisableControls;
+//    cgVlrConciarPag:=0;
+//    DMConciliacao.CDS_CMDepositos.First;
+//    While Not DMConciliacao.CDS_CMDepositos.Eof do
+//    Begin
+//      If (DMConciliacao.CDS_CMDepositosConciliado.AsString='NAO') and (DMConciliacao.CDS_CMDepositosConciliar.AsString='SIM') Then
+//      Begin
+//        cgVlrConciarPag:=cgVlrConciarPag+DMConciliacao.CDS_CMDepositosVLR_DOCTO.AsCurrency;
+//      End;
+//
+//      DMConciliacao.CDS_CMDepositos.Next;
+//    End;
+//    DMConciliacao.CDS_CMDepositos.First;
+//    DMConciliacao.CDS_CMDepositos.EnableControls;
+//
+//    If Trim(sNumSeq)<>'' Then
+//     DMConciliacao.CDS_CMDepositos.Locate('Num_Seq;Num_Compl', VarArrayOf([sNumSeq,sNumCompl]),[]);
+
+    // Concializa Como Dinheiro ------------------------------------------------
+    If bConcDinheiro Then
+    Begin
+      If Not ProcessaConciciacaoDep('Din') Then
+      Begin
+        DMBelShop.SQLC.Rollback(TD);
+        Lb_Obs.Caption:='Tecle <Duplo Click> Para Marcar Conciliação';
+        Exit;
+      End; // If Not ProcessaConciciacaoDep('Din') Then
+
+      EdtConcManutExtratoQtdDep.Value:=0;
+      EdtConcManutExtratoVlrDep.Value:=0;
+      EdtConcManutDepQtd.Value:=0;
+      EdtConcManutDepVlr.Value:=0;
+      EdtConcManutExtDepDif.Value:=0;
+      EdtConcManutExtDepDif.Font.Color:=clWindowText;
+    End; // If bConcDinheiro Then
+
+    If Trim(sNumSeq)<>'' Then
+     DMConciliacao.CDS_CMDepositos.Locate('Num_Seq;Num_Compl', VarArrayOf([sNumSeq,sNumCompl]),[]);
+     
+    // Busca Valores da Conciliação ============================================
+    cgVlrConciarExt:=EdtConcManutExtratoVlrDep.Value;
+    cgVlrConciarPag:=EdtConcManutDepVlr.Value;
+
+    // Concializa Somente Extrato (NÃO ESTA LIBERADO) --------------------------
+    If (bConcExtrato) and (Not bConcDinheiro) Then
+     Begin
+       If Not ProcessaConciciacaoDep('SEx') Then
+       Begin
+         DMBelShop.SQLC.Rollback(TD);
+         Lb_Obs.Caption:='Tecle <Duplo Click> Para Marcar Conciliação';
+         Exit;
+       End; // If Not ProcessaConciciacaoDep('SEx') Then
+     End // If bConcExtrato Then
+
+    // Concializa Por Deposito -------------------------------------------------
+    ELSE If (igTotMarcaPag=1) and (Not bConcDinheiro)  Then
+     Begin
+       If cgVlrConciarExt<>cgVlrConciarPag Then
+       Begin
+         If msg('Valores a Conciliar Diferentes:'+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag)+cr+cr+'Deseja Conciliar ??','C')=2 Then
+         Begin
+           If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
+            DMConciliacao.CDS_CMDepositos.Locate('NUM_SEQ;NUM_COMPL', VarArrayOf([sNumSeq,sNumCompl]),[]);
+
+           If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
+            DMConciliacao.CDS_CMExtratosDep.Locate('CHV_EXTRATO', sChvExtrato,[]);
+
+           Screen.Cursor:=crDefault;
+           Dbg_ConcManutExtratoDep.SetFocus;
+           Exit;
+         End;
+       End; // If cgVlrConciarExt<>cgVlrConciarPag Then
+
+       If Not ProcessaConciciacaoDep('Pag') Then
+       Begin
+         DMBelShop.SQLC.Rollback(TD);
+         Lb_ObsDep.Caption:='Tecle <Duplo Click> Para Marcar Conciliação';
+         Exit;
+       End;
+     End // If (igTotMarcaPag=1) and (Not bConcDinheiro)  Then
+
+    // Concializa Por Extrato --------------------------------------------------
+    ELSE If (igTotMarcaExt=1) and (Not bConcDinheiro)  Then
+     Begin
+       If cgVlrConciarExt<>cgVlrConciarPag Then
+       Begin
+         If msg('Valores a Conciliar Diferentes:'+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag)+cr+cr+'Deseja Conciliar ??','C')=2 Then
+         Begin
+           If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
+            DMConciliacao.CDS_CMDepositos.Locate('NUM_SEQ;NUM_COMPL', VarArrayOf([sNumSeq,sNumCompl]),[]);
+
+           If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
+            DMConciliacao.CDS_CMExtratosDep.Locate('CHV_EXTRATO', sChvExtrato,[]);
+
+           Screen.Cursor:=crDefault;
+           Dbg_ConcManutExtratoDep.SetFocus;
+           Exit;
+         End;
+       End; // If cgVlrConciarExt<>cgVlrConciarPag Then
+
+       If Not ProcessaConciciacaoDep('Ext')Then
+       Begin
+         DMBelShop.SQLC.Rollback(TD);
+         Lb_ObsDep.Caption:='Tecle <Duplo Click> Para Marcar Conciliação';
+         Exit;
+       End;
+     End; // If (igTotMarcaExt=1) and (Not bConcDinheiro)  Then
+    // =========================================================================
+
+    igTotMarcaExt:=0;
+    igTotMarcaPag:=0;
+
+    EdtConcManutExtratoQtdDep.Value:=0;
+    EdtConcManutExtratoVlrDep.Value:=0;
+    EdtConcManutDepQtd.Value:=0;
+    EdtConcManutDepVlr.Value:=0;
+    EdtConcManutExtDepDif.Value:=0;
+
+    // Atualiza Transacao =======================================
+    DMBelShop.SQLC.Commit(TD);
+
+    Screen.Cursor:=crDefault;
+    Lb_ObsDep.Caption:='Tecle <Duplo Click> Para Marcar Conciliação';
+
+  Except
+    on e : Exception do
+    Begin
+      HabilitaBotoesDep(True);
+
+      // Abandona Transacao =====================================
+      DMBelShop.SQLC.Rollback(TD);
+      Lb_ObsDep.Caption:='Tecle <Duplo Click> Para Marcar Conciliação';
+
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      exit;
+    End; // on e : Exception do
+  End; // Try
+
+  If bgLocate Then
+  Begin
+    If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
+     DMConciliacao.CDS_CMDepositos.Locate('NUM_SEQ;NUM_COMPL', VarArrayOf([sNumSeq,sNumCompl]),[]);
+
+    If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
+     DMConciliacao.CDS_CMExtratosDep.Locate('CHV_EXTRATO', sChvExtrato,[]);
+  End; // If bgLocate Then
+
+end;
+
+procedure TFrmBancoExtratos.Rb_ConcConciliadosDepKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  Rb_ConcConciliadosDepClick(Self);
+end;
+
+procedure TFrmBancoExtratos.Bt_CMDesmarcarDepClick(Sender: TObject);
+Var
+  ii, i: Integer;
+begin
+
+  If DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
+   Exit;
+
+  If DMConciliacao.CDS_CMDepositos.IsEmpty Then
+   Exit;
+
+  Screen.Cursor:=crAppStart;
+
+  // Libera Para Gravação ====================================================
+  LiberaClientGravarDep(True);
+
+  DMConciliacao.CDS_CMExtratosDep.DisableControls;
+  DMConciliacao.CDS_CMDepositos.DisableControls;
+
+  i:=1;
+  DMConciliacao.CDS_CMExtratosDep.First;
+  While not DMConciliacao.CDS_CMExtratosDep.Eof do
+  Begin
+    If (DMConciliacao.CDS_CMExtratosDepConciliar.AsString='SIM') And
+       (DMConciliacao.CDS_CMExtratosDepConciliado.AsString='NAO') And
+       (Trim(DMConciliacao.CDS_CMExtratosDepQUEM.AsString)='') Then
+    Begin
+      If i=1 Then
+       i:=DMConciliacao.CDS_CMExtratosDep.RecNo;
+
+      DMConciliacao.CDS_CMExtratosDep.Edit;
+      DMConciliacao.CDS_CMExtratosDepConciliar.AsString:='NAO';
+      DMConciliacao.CDS_CMExtratosDep.Post;
+    End;
+
+    DMConciliacao.CDS_CMExtratosDep.Next;
+  End; // While not DMConciliacao.CDS_CMExtratosDep.Eof do
+
+  ii:=1;
+  DMConciliacao.CDS_CMDepositos.First;
+  While not DMConciliacao.CDS_CMDepositos.Eof do
+  Begin
+    If (DMConciliacao.CDS_CMDepositosConciliar.AsString='SIM') And
+       (DMConciliacao.CDS_CMDepositosConciliado.AsString='NAO') And
+       (Trim(DMConciliacao.CDS_CMDepositosQUEM.AsString)='') Then
+    Begin
+      If ii=1 Then
+       ii:=DMConciliacao.CDS_CMDepositos.RecNo;
+
+      DMConciliacao.CDS_CMDepositos.Edit;
+      DMConciliacao.CDS_CMDepositosConciliar.AsString:='NAO';
+      DMConciliacao.CDS_CMDepositos.Post;
+    End;
+
+    DMConciliacao.CDS_CMDepositos.Next;
+  End; // While not DMConciliacao.CDS_CMDepositos.Eof do
+
+  // Retira a Liberaçao Para Gravação ==========================================
+  LiberaClientGravarDep(False);
+
+  igTotMarcaExt:=0;
+  igTotMarcaPag:=0;
+
+  TotaisMarcadosNaoConciliadosDep;
+
+  DMConciliacao.CDS_CMExtratosDep.EnableControls;
+  DMConciliacao.CDS_CMDepositos.EnableControls;
+
+  Screen.Cursor:=crDefault;
+
+  DMConciliacao.CDS_CMDepositos.RecNo:=ii;
+  DMConciliacao.CDS_CMExtratosDep.RecNo:=i;
+
+end;
+
+procedure TFrmBancoExtratos.EdtConcManutExtratoVlrDepChange(Sender: TObject);
+begin
+  If EdtConcManutExtratoVlrDep.Value<>0 Then
+  Begin
+    DMConciliacao.CDS_CMDepositos.Locate('VLR_DOCTO', EdtConcManutExtratoVlrDep.Value,[]);
+  End; // If EdtConcManutExtratoVlrDep.Value<>0 Then
+
+end;
+
+procedure TFrmBancoExtratos.EdtConcManutDepVlrChange(Sender: TObject);
+begin
+  If EdtConcManutDepVlr.Value<>0 Then
+  Begin
+    DMConciliacao.CDS_CMExtratosDep.Locate('VLR_DOCTO', EdtConcManutDepVlr.Value,[]);
+  End; // If EdtConcManutExtratoVlrDep.Value<>0 Then
+
+end;
+
+procedure TFrmBancoExtratos.EdtConcManutExtratoVlrChange(Sender: TObject);
+begin
+  If EdtConcManutExtratoVlr.Value<>0 Then
+  Begin
+    DMConciliacao.CDS_CMPagtos.Locate('VLR_DOCTO', EdtConcManutExtratoVlr.Value,[]);
+  End; // If EdtConcManutExtratoVlr.Value<>0 Then
+end;
+
+procedure TFrmBancoExtratos.EdtConcManutPagtoVlrChange(Sender: TObject);
+begin
+  If EdtConcManutPagtoVlr.Value<>0 Then
+  Begin
+    DMConciliacao.CDS_CMExtratos.Locate('VLR_DOCTO', EdtConcManutPagtoVlr.Value,[]);
+  End; // If EdtConcManutPagtoVlr.Value<>0 Then
+
 end;
 
 end.

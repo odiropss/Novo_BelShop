@@ -1902,6 +1902,8 @@ begin
 //  If (PC_Principal.ActivePage=Ts_FluxFornCaixa) And (Ts_FluxFornCaixa.CanFocus) Then
 //   Dbg_FluFornCaixa.SetFocus;
 
+  EdtFluFornCodFornecedor.SetFocus;
+  
   If Not bgAtualizaDireto Then
   Begin
     If msg('ATENÇÃO !!'+cr+cr+'Deseja Realmente Acertar Saldos ??','C')=2 Then

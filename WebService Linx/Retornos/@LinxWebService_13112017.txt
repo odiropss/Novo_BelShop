@@ -1,0 +1,45 @@
+=====================================
+Loja Linx: 1 Metodo: LinxFaturas Resposta Negativa !!
+LinxFaturas: Ocorreu um erro inesperado. Subquery returned more than 1 value. This is not permitted when the subquery follows =, !=, <, <= , >, >= or when the subquery is used as an expression.. Stack:   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at System.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at System.Data.SqlClient.SqlDataReader.Read()
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.findRows(DbDataReader dr)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 2 Metodo: LinxFaturas Resposta Negativa !!
+LinxFaturas: Ocorreu um erro inesperado. Subquery returned more than 1 value. This is not permitted when the subquery follows =, !=, <, <= , >, >= or when the subquery is used as an expression.. Stack:   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at System.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at System.Data.SqlClient.SqlDataReader.Read()
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.findRows(DbDataReader dr)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 3 Metodo: LinxFaturas Resposta Negativa !!
+LinxFaturas: Ocorreu um erro inesperado. Subquery returned more than 1 value. This is not permitted when the subquery follows =, !=, <, <= , >, >= or when the subquery is used as an expression.. Stack:   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at System.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at System.Data.SqlClient.SqlDataReader.Read()
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.findRows(DbDataReader dr)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
