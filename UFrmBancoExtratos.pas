@@ -1037,7 +1037,7 @@ Begin
          ' END "Conciliar?",'+
 
          ' ''Bel_''||m.cod_linx cod_loja,'+
-         ' e.razao_social,'+
+         ' e.nome_emp razao_social,'+
          ' m.num_docto Usu_Loja,'+
          ' m.obs_texto,'+
          ' m.dta_docto, m.num_docto, m.vlr_docto, m.dta_venc,'+
@@ -1049,15 +1049,15 @@ Begin
          ' FROM FIN_CONCILIACAO_MOV_DEP m'+
          '    LEFT JOIN FIN_CONCILIACAO_DEPOSITOS p  ON p.num_seq=m.num_seq'+
          '                                          AND p.num_compl=m.num_compl'+
-         '    LEFT JOIN EMP_CONEXOES e               ON e.cod_filial=m.cod_loja'+
+         '    LEFT JOIN LINXLOJAS e                  ON e.empresa=m.cod_linx'+
 
          ' WHERE m.dta_docto BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
 
-         ' ORDER BY m.dta_docto, e.razao_social, m.num_docto, m.num_seq';
+         ' ORDER BY m.dta_docto, e.nome_emp, m.num_docto, m.num_seq';
   DMConciliacao.CDS_CMDepositos.Close;
   DMConciliacao.SDS_CMDepositos.CommandText:=MySql;
   DMConciliacao.CDS_CMDepositos.Open;
-
+                                                                            
   If Trim(DMConciliacao.CDS_CMDepositosCOD_LOJA.AsString)='' Then
   Begin
     msg('Sem Depositos no Período Solicitado !!','A');
@@ -1248,18 +1248,35 @@ Begin
 
     // Exclui Movimento de Sangria para Substituição ===========================
     MySql:=' DELETE FROM FIN_CONCILIACAO_MOV_DEP M'+
-           ' WHERE m.cod_pessoa=0'+
-           ' AND   m.dta_docto BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
+           ' WHERE m.dta_docto BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
                                          QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)));
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
-    // Exclui Conciliações Existentes ==========================================
+    // Exclui Conciliações Existentes Depositos ================================
     MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS D'+
            ' WHERE NOT EXISTS (SELECT 1'+
            '                   FROM FIN_CONCILIACAO_MOV_DEP M'+
-           '                   WHERE m.cod_pessoa=0'+
-           '                   AND   m.num_seq=d.num_seq'+
+           '                   WHERE m.num_seq=d.num_seq'+
            '                   AND   m.num_compl=d.num_compl)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Exclui Conciliações Existentes de Extratos ==============================
+    MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS D'+
+           ' WHERE  EXISTS (SELECT 1'+
+           '                FROM FIN_BANCOS_EXTRATOS ex'+
+           '                WHERE ex.chv_extrato=d.chv_extrato'+
+           '                AND   ex.dta_extrato BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
+                                                           QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+')';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Coloca para Não Conciliado Retirado de FIN_CONCILIACAO_DEPOSITOS ========
+    MySql:=' UPDATE FIN_CONCILIACAO_MOV_DEP m'+
+           ' SET m.ind_conciliacao=''NAO'''+
+           ' WHERE m.ind_conciliacao=''SIM'''+
+           ' AND   NOT EXISTS (SELECT 1'+
+           '                   FROM FIN_CONCILIACAO_DEPOSITOS D'+
+           '                   WHERE d.num_seq=m.num_seq'+
+           '                   AND   d.num_compl=m.num_compl)';
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
     // Insere Novos Movtos de Sangris ==========================================
@@ -12929,7 +12946,7 @@ begin
   DMConciliacao.CDS_CMExtratosDep.DisableControls;
   DMConciliacao.CDS_CMDepositos.DisableControls;
 
-  i:=1;
+  i:=0;
   DMConciliacao.CDS_CMExtratosDep.First;
   While not DMConciliacao.CDS_CMExtratosDep.Eof do
   Begin
@@ -12937,7 +12954,7 @@ begin
        (DMConciliacao.CDS_CMExtratosDepConciliado.AsString='NAO') And
        (Trim(DMConciliacao.CDS_CMExtratosDepQUEM.AsString)='') Then
     Begin
-      If i=1 Then
+      If i=0 Then
        i:=DMConciliacao.CDS_CMExtratosDep.RecNo;
 
       DMConciliacao.CDS_CMExtratosDep.Edit;
@@ -12948,7 +12965,7 @@ begin
     DMConciliacao.CDS_CMExtratosDep.Next;
   End; // While not DMConciliacao.CDS_CMExtratosDep.Eof do
 
-  ii:=1;
+  ii:=0;
   DMConciliacao.CDS_CMDepositos.First;
   While not DMConciliacao.CDS_CMDepositos.Eof do
   Begin
@@ -12956,7 +12973,7 @@ begin
        (DMConciliacao.CDS_CMDepositosConciliado.AsString='NAO') And
        (Trim(DMConciliacao.CDS_CMDepositosQUEM.AsString)='') Then
     Begin
-      If ii=1 Then
+      If ii=0 Then
        ii:=DMConciliacao.CDS_CMDepositos.RecNo;
 
       DMConciliacao.CDS_CMDepositos.Edit;
@@ -12980,8 +12997,8 @@ begin
 
   Screen.Cursor:=crDefault;
 
-  DMConciliacao.CDS_CMDepositos.RecNo:=ii;
-  DMConciliacao.CDS_CMExtratosDep.RecNo:=i;
+  If ii<>0 Then DMConciliacao.CDS_CMDepositos.RecNo:=ii;
+  If  i<>0 Then DMConciliacao.CDS_CMExtratosDep.RecNo:=i;
 
 end;
 

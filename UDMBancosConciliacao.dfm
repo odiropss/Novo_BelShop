@@ -1599,8 +1599,7 @@ object DMConciliacao: TDMConciliacao
     end
     object CDS_CMDepositosRAZAO_SOCIAL: TStringField
       FieldName = 'RAZAO_SOCIAL'
-      ReadOnly = True
-      Size = 60
+      Size = 50
     end
     object CDS_CMDepositosUSU_LOJA: TIntegerField
       DisplayLabel = 'Usu_Loja'
@@ -1680,16 +1679,16 @@ object DMConciliacao: TDMConciliacao
     CommandText = 
       'SELECT'#13#10'm.ind_conciliacao "Conciliado?",'#13#10'p.ind_quem QUEM,'#13#10'CASE' +
       #13#10'  WHEN p.ind_quem is not null THEN'#13#10'    '#39'SIM'#39#13#10'  ELSE'#13#10'   '#39'NAO' +
-      #39#13#10'END "Conciliar?",'#13#10#39'Bel_'#39'||m.cod_linx cod_loja,'#13#10'e.razao_soci' +
-      'al,'#13#10'm.num_docto USU_Loja,'#13#10'm.obs_texto,'#13#10'm.dta_docto, m.num_doc' +
-      'to, m.vlr_docto,'#13#10'm.dta_venc,'#13#10'm.vlr_desconto, m.vlr_acrescimo,'#13 +
-      #10'm.cod_banco, m.des_banco,'#13#10'm.num_seq, m.num_compl,'#13#10'p.tip_conci' +
-      'liacao,'#13#10'p.cod_usuario, '#13#10'p.txt_obs'#13#10#13#10'FROM fin_conciliacao_mov_' +
-      'dep m'#13#10'   LEFT JOIN fin_conciliacao_depositos p  ON p.num_seq=m.' +
-      'num_seq'#13#10'                                         AND p.num_comp' +
-      'l=m.num_compl'#13#10'   LEFT JOIN emp_conexoes e               ON e.co' +
-      'd_filial=m.cod_loja'#13#10#13#10#13#10'WHERE m.dta_venc = '#39'15.11.2017'#39#13#10#13#10'ORDE' +
-      'R BY m.cod_loja, m.dta_docto'
+      #39#13#10'END "Conciliar?",'#13#10#39'Bel_'#39'||m.cod_linx cod_loja,'#13#10'e.nome_emp r' +
+      'azao_social,'#13#10'm.num_docto USU_Loja,'#13#10'm.obs_texto,'#13#10'm.dta_docto, ' +
+      'm.num_docto, m.vlr_docto,'#13#10'm.dta_venc,'#13#10'm.vlr_desconto, m.vlr_ac' +
+      'rescimo,'#13#10'm.cod_banco, m.des_banco,'#13#10'm.num_seq, m.num_compl,'#13#10'p.' +
+      'tip_conciliacao,'#13#10'p.cod_usuario, '#13#10'p.txt_obs'#13#10#13#10'FROM fin_concili' +
+      'acao_mov_dep m'#13#10'   LEFT JOIN fin_conciliacao_depositos p  ON p.n' +
+      'um_seq=m.num_seq'#13#10'                                         AND p' +
+      '.num_compl=m.num_compl'#13#10'   LEFT JOIN LINXLOJAS e                ' +
+      '  ON e.empresa=m.cod_linx'#13#10#13#10#13#10'WHERE m.dta_venc = '#39'15.11.2017'#39#13#10 +
+      #13#10'ORDER BY m.cod_loja, m.dta_docto'
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC

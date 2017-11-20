@@ -257,7 +257,6 @@ type
     CDS_CMDepositosVLR_DOCTO: TFMTBCDField;
     CDS_CMDepositosVLR_DESCONTO: TFMTBCDField;
     CDS_CMDepositosVLR_ACRESCIMO: TFMTBCDField;
-    CDS_CMDepositosRAZAO_SOCIAL: TStringField;
     CDS_CMDepositosDTA_DOCTO: TDateField;
     CDS_CMDepositosCOD_BANCO: TStringField;
     CDS_CMDepositosDES_BANCO: TStringField;
@@ -318,6 +317,7 @@ type
     CDS_CMDepositosTXT_OBS: TStringField;
     CDS_CMApresDepositosNUM_SEQ: TIntegerField;
     CDS_CMApresDepositosNUM_COMPL: TIntegerField;
+    CDS_CMDepositosRAZAO_SOCIAL: TStringField;
     procedure CDS_LojasBancoAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresExtratosAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresPagtosAfterScroll(DataSet: TDataSet);

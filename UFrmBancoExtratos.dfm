@@ -4491,7 +4491,6 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 Expanded = False
                 FieldName = 'COD_LOJA'
                 Title.Caption = 'Loja'
-                Width = -1
                 Visible = False
               end
               item
@@ -4551,7 +4550,6 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 FieldName = 'COD_BANCO'
                 Title.Alignment = taRightJustify
                 Title.Caption = 'Cod Banco'
-                Width = -1
                 Visible = False
               end
               item
