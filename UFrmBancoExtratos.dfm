@@ -1,6 +1,6 @@
 object FrmBancoExtratos: TFrmBancoExtratos
   Left = 235
-  Top = 107
+  Top = 106
   AutoSize = True
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
@@ -408,7 +408,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Top = 0
     Width = 1047
     Height = 564
-    ActivePage = Ts_ConciliacoesManutDepositos
+    ActivePage = Ts_ExtratosManut
     Align = alClient
     TabOrder = 0
     OnChange = PC_PrincipalChange
@@ -1389,7 +1389,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Top = 74
             Width = 1031
             Height = 434
-            ActivePage = Ts_ExtratoBanrisul
+            ActivePage = Ts_ExtratoSantander
             Align = alClient
             TabOrder = 1
             OnChange = PC_ExtExtratosChange

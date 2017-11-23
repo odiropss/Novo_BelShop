@@ -17222,6 +17222,7 @@ Begin
 
   // Seleciona Empresa =========================================================
   sgOutrasEmpresa:='(50,99)';
+  sgEmpresaNao:='(''18'',''19'',''20'',''21'',''22'',''89'',''96'',''97'',''98'')';
   FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
   FrmSelectEmpProcessamento.bUsarMatriz:=False;
 
@@ -30081,8 +30082,6 @@ begin
   FreeAndNil(FrmSolicitacoes);
 
   Dbg_FinanPlanFinanceira.SetFocus;
-
-
 end;
 
 procedure TFrmBelShop.Bt_FinanDemonsResultBuscaGrFinanceiroClick(Sender: TObject);
@@ -46857,9 +46856,6 @@ end;
 
 procedure TFrmBelShop.SubMenuFinanConciliaDepositosClick(Sender: TObject);
 begin
-
-//  msg('Opção em Desenvolvimento !!','A');
-//  Exit;
 
   // Acerta Apresentação das TabSheets =========================================
   FrmBancoExtratos.DesabilitaTabSheet(nil);

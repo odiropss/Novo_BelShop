@@ -1,7 +1,7 @@
 object DMConciliacao: TDMConciliacao
   OldCreateOrder = False
-  Left = 251
-  Top = 97
+  Left = 226
+  Top = 85
   Height = 643
   Width = 1140
   object SDS_Bancos: TSQLDataSet

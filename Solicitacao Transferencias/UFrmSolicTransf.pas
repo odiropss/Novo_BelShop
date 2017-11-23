@@ -1216,7 +1216,7 @@ begin
          ' END enviado_cd,'+
 
          ' CASE'+
-         '   WHEN COALESCE(el.num_pedido,''000000'')<>''000000'' THEN'+
+         '   WHEN (COALESCE(el.num_pedido,''000000'')<>''000000'') AND (CAST(COALESCE(el.num_pedido,''0'') AS INTEGER)<999990) THEN'+
          '     ''SIM'''+
          '   ELSE'+
          '     ''NÃO'''+
@@ -1226,7 +1226,7 @@ begin
          ' el.qtd_transf Qtd_De_Transf,'+
 
          ' CASE'+
-         '   WHEN COALESCE(el.num_pedido,''000000'')<>''000000'' THEN'+
+         '   WHEN (COALESCE(el.num_pedido,''000000'')<>''000000'') AND (CAST(COALESCE(el.num_pedido,''0'') AS INTEGER)<999990) THEN'+
          '     el.qtd_a_transf'+
          '   ELSE'+
          '     0'+
@@ -1242,10 +1242,8 @@ begin
          '                                   AND el.cod_produto=so.cod_prod_sidi'+
          '                                   AND el.cod_loja   =so.cod_loja_sidi'+
 
-         ' WHERE so.dta_solicitacao BETWEEN '+
-         QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaInicio.Date))))+
-         ' AND '+
-         QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaFim.Date))))+
+         ' WHERE so.dta_solicitacao BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaInicio.Date))))+' AND '+
+                                              QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaFim.Date))))+
          ' AND   so.cod_loja_linx='+sgLojaLinx;
 
          If EdtCodProdLinx.AsInteger<>0 Then

@@ -253,7 +253,10 @@ type
     ////////////////////////////////////////////////////////////////////////////
 
     // Manutenção de Extratos //////////////////////////////////////////////////
-    function  ImportaExtratoSantander(AGrid: TStringGrid; AXLSFile: string): Boolean;
+    function  ImportaExtratoSantander(AGrid: TStringGrid; sPasta: String; slArquivos: TStringList): Boolean;
+                                   // AGrid: StringGrid de Extratos
+                                   // sPasta: Pasta Onde esta os Arquivos Excel
+                                   // slArquivos: StringList com Nome doArquivos Excel
 
     Function  ExtratosLeiauteBanco(sDesBanco: String): Boolean;
     Procedure ExtratosLimpa(Sender: TControl);
@@ -491,6 +494,9 @@ var
   sgDesMovto, sgDocto, sgValor, sgSaldo,
   sgDta, sgTpMovtos: String;
 
+  // Extrato Santander
+  slgArquivos: TStringList; // Arquivo(s) Excel a Processar
+
   // Conciliacao
   igTotMarcaExt, igTotMarcaPag: Integer;
 
@@ -499,7 +505,7 @@ var
   sgTipoSelecao, sgColunaLocalizar: String;
   bgSabDom: Boolean;
 
-  sgAgencia, sgContaCorrete: String;
+  sgAgencia, sgContaCorrente: String;
   bgComNrConta: Boolean; // Se Extrato do Santander contém o Numero da Conta
 
 implementation
@@ -507,7 +513,7 @@ implementation
 uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
      UPesquisaIB, UDMBancosConciliacao, UPesquisa,
      UFrmBelShop, UFrmTiposConciliacao, Contnrs, UFrmApresConciliacao,
-     UFrmSolicitacoes, UFrmPeriodoApropriacao, DB, ComConst;
+     UFrmSolicitacoes, UFrmPeriodoApropriacao, DB, ComConst, SysConst;
 
 {$R *.dfm}
 
@@ -521,7 +527,6 @@ Var
   MySql: String;
   sChvExtrato, sNumSeq, sNumCompl: String;
   s, sObs: String;
-  i: Integer;
   b: Boolean;
 Begin
 // sTipo= (Pag) Processa Deposito (Mantido Abreviatura <Pag>)
@@ -1524,90 +1529,158 @@ Begin
 End; // MANUTENCAO DE EXTRATOS - Cria Dias Sem Extrato >>>>>>>>>>>>>>>>>>>>>>>>>
 
 // MANUTENCAO DE EXTRATOS - Importa Extrato Santander Excel para StringGris >>>>
-function TFrmBancoExtratos.ImportaExtratoSantander(AGrid: TStringGrid; AXLSFile: string): Boolean;
+function TFrmBancoExtratos.ImportaExtratoSantander(AGrid: TStringGrid; sPasta: String; slArquivos: TStringList): Boolean;
 const
-	xlCellTypeLastCell = $0000000B;
+  xlCellTypeLastCell = $0000000B;
 var
-	XLApp, Sheet: OLEVariant;
-	RangeMatrix: Variant;
-	x, y, k, r: Integer;
-  s: String;
-begin
+  XLApp, Sheet: OLEVariant;
+  RangeMatrix: Variant;
 
+  k2, // Numero de Linhas Acumuladas das Planilhas
+  x, y, k, r: Integer;
+
+  i: Integer;
+  s: String;
+  bContaOK: Boolean;
+begin
   // Colocar no Uses: Comobj;
 
+  // AGrid: StringGrid de Extratos
+  // sPasta: Pasta Onde esta os Arquivos Excel
+  // slArquivos: StringList com Nome doArquivos Excel
+
   sgAgencia:='';
-  sgContaCorrete:='';
+  sgContaCorrente:='';
 
   Result:=False;
+  bContaOK:=True;
 
-  // Cria Excel- OLE Object
+  //============================================================================
+  // Cria Excel- OLE Object ====================================================
+  //============================================================================
   XLApp:=CreateOleObject('Excel.Application');
   try
     // Esconde Excel
     XLApp.Visible:=False;
 
-    // Abre o Workbook
-    XLApp.Workbooks.Open(AXLSFile);
-    Sheet:=XLApp.Workbooks[ExtractFileName(AXLSFile)].WorkSheets[1];
-    Sheet.Cells.SpecialCells(xlCellTypeLastCell, EmptyParam).Activate;
-
-    // Pegar o número da última linha
-    x:=XLApp.ActiveCell.Row;
-
-    // Pegar o número da última coluna
-    y:=XLApp.ActiveCell.Column;
-
-    // Seta Stringgrid linha e coluna
-    AGrid.RowCount:=x;
-    AGrid.ColCount:=y;
-
-    // Associaca a variant WorkSheet com a variant do Delphi
-    RangeMatrix:=XLApp.Range['A1', XLApp.Cells.Item[X, Y]].Value;
-
-    // Cria o loop para listar os registros no TStringGrid
-    k:=1;
-    bgComNrConta:=True;
-    If (Trim(RangeMatrix[k, 1])<>TRIM('Nome:')) Then
+    //==========================================================================
+    // Processa Arquivos Selecionados
+    //==========================================================================
+    For i:=0 to slgArquivos.Count-1 do
     Begin
-      bgComNrConta:=False;
-    End;
+      OdirPanApres.Caption:='AGUARDE !! Inicializando Arquivo Excel:'+slArquivos[i];
+      Refresh;
 
-    repeat
-      for r:=1 to y do
+      // Abre o Workbook
+      XLApp.Workbooks.Open(sPasta+slgArquivos[i]);
+      Sheet:=XLApp.Workbooks[slgArquivos[i]].WorkSheets[1];
+      Sheet.Cells.SpecialCells(xlCellTypeLastCell, EmptyParam).Activate;
+
+      // Inicializa Numero de Linhas do Docto ==================================
+      If i=0 Then
       Begin
-//        If (r=1) and (s<>'Data') and (RangeMatrix[K, R]<>'')Then
-         s:=Trim(RangeMatrix[k, 1]);
+        K2:=0;
+      End; // If i=0 Then
 
-         If (k=2) And (r=2) And (bgComNrConta) Then // Linha=2
-         Begin
-           sgAgencia:=Trim(RangeMatrix[k, 4]);
-           sgContaCorrete:=Trim(f_Troca(' ','',RangeMatrix[k, 6]));
-         End;
-//
-//        If (s='Data') And (s>'') Then
+      // Pegar o número da última linha/coluna
+      x :=XLApp.ActiveCell.Row;
+      y:=XLApp.ActiveCell.Column;
 
-        If (StrToIntDef(copy(RangeMatrix[k, 1],1,1),999999)<>999999) and (Trim(RangeMatrix[k, 1])<>'') and (Trim(RangeMatrix[K, R])<>'')Then
-        Begin
-          AGrid.Cells[(r - 1),(k - 1)]:=RangeMatrix[K, R]
-        End;
+      // Seta Stringrid linha e coluna
+      AGrid.RowCount:=x;
+      AGrid.ColCount:=y;
+
+      // Seta Stringrid Nº Linha mais a Nº de Linhas dos Doctos Anteriores =====
+      If k2<>0 Then
+       AGrid.RowCount:=AGrid.RowCount + k2;
+
+      // Associaca a variant WorkSheet com a variant do Delphi
+      k:=1;
+      RangeMatrix:=XLApp.Range['A1', XLApp.Cells.Item[X, Y]].Value;
+
+      // Analisa se Primeiro Arquivo Começa com Histório Igual 'SALDO ANTERIOR'
+      If (i=0) and (AnsiUpperCase(Trim(RangeMatrix[4, 3]))<>'SALDO ANTERIOR') Then
+      Begin
+        sgMensagemERRO:='Erro no Primeiro Arquivo !!'+cr+slgArquivos[i]+cr+
+                        'Deve Começar com o Histórico'+cr+'SALDO ANTERIOR';
+        XLApp.Quit;
+        XLAPP:=Unassigned;
+        Sheet:=Unassigned;
+        FreeAndNil(XLApp);
+        Exit;
       End;
+
+      // Verifica se Outros Arquivos Começa com Histório Igual 'SALDO ANTERIOR'
+      If (i<>0) and (AnsiUpperCase(Trim(RangeMatrix[4, 3]))='SALDO ANTERIOR') Then
+      Begin
+        sgMensagemERRO:='Erro no '+IntToStr(i+1)+'º Arquivo !!'+cr+slgArquivos[i]+cr+
+                        'Não Pode Começar com o Histórico'+cr+'SALDO ANTERIOR';
+        XLApp.Quit;
+        XLAPP:=Unassigned;
+        Sheet:=Unassigned;
+        FreeAndNil(XLApp);
+        Exit;
+      End;
+
+      // Analisa Agencia e Conta ===============================================
+      sgAgencia     :=Trim(RangeMatrix[k, 2]);
+      sgContaCorrente:=Trim(f_Troca(' ','',RangeMatrix[k, 4]));
+      bgComNrConta:=False;
+      If ((EdtExtNumAgencia.Text<>sgAgencia) Or (Tira_Mascara(EdtExtNumConta.Text)<>sgContaCorrente)) Then
+      Begin
+        bContaOK:=False;
+        sgMensagemERRO:='Arquivo: '+slArquivos[i]+' NÃO Pertence a Conta Selecionada !!'+cr+cr+
+                        'Pertence a'+cr+'Agência: '+sgAgencia+' C/Corrente:'+sgContaCorrente;
+        XLApp.Quit;
+        XLAPP:=Unassigned;
+        Sheet:=Unassigned;
+        FreeAndNil(XLApp);
+        Exit;
+      End;
+
+      //========================================================================
+      // Cria o loop para listar os registros no TStringGrid
+      //========================================================================
+      repeat
+        for r:=1 to y do
+        Begin
+          s:=Trim(RangeMatrix[k, 1]);
+
+          If (StrToIntDef(copy(RangeMatrix[k, 1],1,1),999999)<>999999) and (Trim(RangeMatrix[k, 1])<>'') and (Trim(RangeMatrix[K, R])<>'')Then
+          Begin
+            AGrid.Cells[(r-1),(k-1)+k2]:=RangeMatrix[K, R]
+          End;
+        End;
       Inc(k,1);
-    until k > x;
-    RangeMatrix:=Unassigned;
+      until k > x;
+      // Cria o loop para listar os registros no TStringGrid
+      //========================================================================
+
+      //========================================================================
+      // Inicializa Matrix - Acumula Nº Linha da Docto =========================
+      //========================================================================
+      RangeMatrix:=Unassigned;
+      k2:=k2+k;
+      // Inicializa Matrix - Acumula Nº Linha da Docto
+      //========================================================================
+    End; // For i:=0 to slgArquivos.Count-1 do
+    // Processa Arquivos Selecionados
+    //==========================================================================
   finally
-    // Fecha o Excel
-    if not VarIsEmpty(XLApp) then
+    if not VarIsEmpty(XLApp) then // Fecha o Excel
     begin
       XLApp.Quit;
       XLAPP:=Unassigned;
       Sheet:=Unassigned;
-      Result:=True;
-    end;
-  end;
+
+      If bContaOK Then
+       Result:=True;
+    end; // if not VarIsEmpty(XLApp) then
+  end; // Try
+  // Cria Excel- OLE Object ====================================================
+  //============================================================================
 
   FreeAndNil(XLApp);
-
 End; // MANUTENCAO DE EXTRATOS - Importa Extrato Santander Excel para StringGris >>>>
 
 // CONCILIAÇÕES - Elimina Movots do SIDICOM com Erro de Conciliação >>>>>>>>>>>>
@@ -7763,6 +7836,7 @@ begin
        If FileDateToDateTime(FileAgeCreate(EdtBanrisulPastaArquivo.Text))<StrToDate(sgDtaServidor) Then
        Begin
          MessageBox(Handle, pChar('DATA da Criação do Arquivo é'+cr+'Inferior ao dia de Hoje !!'+cr+cr+'Favor Gerar o Arquivo Novamente...'), 'Erro', MB_ICONERROR);
+         FreeAndNil(OpenDialog);
          Exit;
        End;
 
@@ -7786,7 +7860,7 @@ Var
   bIniciou, bGrava: Boolean;
   MySql: String;
   iPosDocto: Integer;
-  bSaldoConta, bInvestAut: Boolean; // Pega Saldo da Conta e Inventimento Automatico.
+//odirapagar -  bSaldoConta, bInvestAut: Boolean; // Pega Saldo da Conta e Inventimento Automatico.
 
   Procedure ExcluirExtrato(sCodBanco, sDtaExclui: String);
   Begin
@@ -7797,6 +7871,33 @@ Var
            '               WHERE ex.chv_extrato=pg.chv_extrato'+
            '               AND   ex.cod_banco='+QuotedStr(sCodBanco)+
            '               AND   ex.dta_extrato='+QuotedStr(sDtaExclui)+')';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    MySql:=' UPDATE FIN_CONCILIACAO_MOVTOS m'+
+           ' Set m.ind_conciliacao=''NAO'''+
+           ' WHERE m.ind_conciliacao=''SIM'''+
+           ' AND   NOT EXISTS (SELECT 1'+
+           '                   FROM FIN_CONCILIACAO_PAGTOS p'+
+           '                   WHERE p.num_seq=m.num_seq'+
+           '                   AND   p.num_compl=m.num_compl)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Exclui Conciliações de Depósitos do Dia ===========================
+    MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS dp'+
+           ' WHERE EXISTS (SELECT 1'+
+           '               FROM FIN_BANCOS_EXTRATOS ex'+
+           '               WHERE ex.chv_extrato=dp.chv_extrato'+
+           '               AND   ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
+           '               AND   ex.dta_extrato='+QuotedStr(sgDta)+')';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    MySql:=' UPDATE FIN_CONCILIACAO_MOV_DEP m'+
+           ' Set m.ind_conciliacao=''NAO'''+
+           ' WHERE m.ind_conciliacao=''SIM'''+
+           ' AND   NOT EXISTS (SELECT 1'+
+           '                   FROM FIN_CONCILIACAO_DEPOSITOS D'+
+           '                   WHERE d.num_seq=m.num_seq'+
+           '                   AND   d.num_compl=m.num_compl)';
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
     // Exclui Extrato do Dia ===================================================
@@ -8387,85 +8488,158 @@ Var
   OpenDialog: TOpenDialog;
   ii, i: Integer;
   b: Boolean;
-  bApagaCol: Boolean;
-begin
 
-  // Limpa StringGrid
+  // Acertar Saldo na Quebra da Planilha
+  iLin: Integer; // Linha Anterior se Saldo <> ''
+  sData: String; // Data da Linha Anterior
+begin
+  EdtSantanderPastaArquivo.Clear;
+  Strg_SantanderImpExtrato.SetFocus;
+
+  // Cria StringList de Arquivos
+  slgArquivos:=TStringList.Create;
+
+  // Limpa StringGrid Santander
   LimpaStringGrid(Strg_SantanderImpExtrato);
 
   Bt_SantanderImpExtrato.Enabled:=False;
 
+  // ORIGINAL COLOCADO NO FIM DO FORM ==========================================
   OpenDialog := TOpenDialog.Create(Self);
   With OpenDialog do
   Begin
-    Options := [ofPathMustExist, ofHideReadOnly, ofOverwritePrompt];
+    Options := [ofAllowMultiSelect, ofPathMustExist, ofHideReadOnly, ofOverwritePrompt];
     DefaultExt := 'xls;xlsx';
     Filter := 'Arquivo Excel (*.xls;*.xlsx)|*.xls;*.xlsx';
     FilterIndex := 1;
-    Title := 'Busca Arquivos Excel';
+    Title := 'Busca Arquivos Excel - SANTANDER';
 
+    //==========================================================================
+    // Seleciona Arquivo(s) (Excel) de Extratos ================================
+    //==========================================================================
     If Execute then
      Begin
-       EdtSantanderPastaArquivo.Text:=OpenDialog.FileName;
-
-       If FileDateToDateTime(FileAgeCreate(EdtSantanderPastaArquivo.Text))<StrToDate(sgDtaServidor) Then
+       //=======================================================================
+       // Pega Arquivo(s) Selecionado(s)- Verificar se OK ======================
+       //=======================================================================
+       slgArquivos.Clear;
+       For i:=0 to Files.Count-1 do
        Begin
-         MessageBox(Handle, pChar('DATA da Criação do Arquivo é'+cr+'Inferior ao dia de Hoje !!'+cr+cr+'Favor Gerar o Arquivo Novamente...'), 'Erro', MB_ICONERROR);
-         Exit;
-       End;
+         slgArquivos.Add(ExtractFileName(Files[i]));
+       End; // For i:=0 to OpenDialog.Files.Count-1 do
 
-       // Apresenta Arquivo Excel
-       ImportaExtratoSantander(Strg_SantanderImpExtrato,EdtSantanderPastaArquivo.Text);
+       If slgArquivos.Count>1 Then
+       Begin
+         if Application.MessageBox(PChar('Os Arquivos Selecinados Estão CORRETOS ??'+cr+cr+
+                                         'ATENÇÃO PARA A ORDER ALFABÉTICA DOS MESMOS !!'+cr+cr+slgArquivos.Text), 'ATENÇÃO !!', 292)=IdNo Then
+         Begin
+           OdirPanApres.Visible:=False;
+           LimpaStringGrid(Strg_SantanderImpExtrato);
+           EdtSantanderPastaArquivo.Clear;
+           Lb_Obs.Caption:='Observações...';
+           FreeAndNil(OpenDialog);
+           FreeAndNil(slgArquivos);
+           Exit;
+         End;
+       End; // If slgArquivos.Count>1 Then
+       // Pega Arquivo(s) Selecionado(s)- Verificar se OK ======================
+       //=======================================================================
+
+       //=======================================================================
+       // Apropria Endereço de Arquivo =========================================
+       //=======================================================================
+       If slgArquivos.Count=1 Then
+        EdtSantanderPastaArquivo.Text:=FileName
+       Else
+        EdtSantanderPastaArquivo.Text:=IncludeTrailingPathDelimiter(ExtractFilePath(FileName));
+       // Apropria Endereço de Arquivo =========================================
+       //=======================================================================
+
+       //=======================================================================
+       // Verifica Data da Criação do(s) Arquivo(s) ============================
+       //=======================================================================
+       For i:=0 to slgArquivos.Count-1 do
+       Begin
+         If FileDateToDateTime(FileAgeCreate(IncludeTrailingPathDelimiter(ExtractFilePath(FileName))+slgArquivos[i]))<StrToDate(sgDtaServidor) Then
+         Begin
+           OdirPanApres.Visible:=False;
+           MessageBox(Handle, pChar('DATA da Criação do Arquivo '+cr+cr+slgArquivos[i]+cr+cr+' é Inferior ao dia de Hoje !!'+cr+cr+'FAVOR GERAR O ARQUIVO NOVAMENTE !!'), 'ATENÇÃO !!', MB_ICONERROR);
+           FreeAndNil(OpenDialog);
+           FreeAndNil(slgArquivos);
+           Exit;
+         End;
+       End; // For i:=0 to slgArquivos.Count-1 do
+       // Verifica Data da Criação do(s) Arquivo(s) ============================
+       //=======================================================================
+
+       OdirPanApres.Caption:='AGUARDE !! Inicializando Arquivos Excel de Extratos...';
+       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
+       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
+       OdirPanApres.Font.Style:=[fsBold];
+       OdirPanApres.Parent:=FrmBancoExtratos;
+       OdirPanApres.BringToFront();
+       OdirPanApres.Visible:=True;
+       Refresh;
+
+       //=======================================================================
+       // Apresenta Arquivos de Extrato Excel ==================================
+       //=======================================================================
+       // Pasta Onde se Encontra os do Arquivo a Processar
+       // Estou Aproveitando Variavel Global sgAplicacoes
+       sgAplicacoes:=IncludeTrailingPathDelimiter(ExtractFilePath(FileName));
+
+       // Apresenta os Arquivos ================================================
+       If Not ImportaExtratoSantander(Strg_SantanderImpExtrato, sgAplicacoes, slgArquivos) Then
+       Begin
+         OdirPanApres.Visible:=False;
+         LimpaStringGrid(Strg_SantanderImpExtrato);
+         EdtSantanderPastaArquivo.Clear;
+         Lb_Obs.Caption:='Observações...';
+         FreeAndNil(OpenDialog);
+         FreeAndNil(slgArquivos);
+
+         msg(sgMensagemERRO,'A');
+         sgMensagemERRO:='';
+         Exit;
+       End; // If Not ImportaExtratoSantander(Strg_SantanderImpExtrato, sgAplicacoes, slgArquivos) Then
+
+       OdirPanApres.Caption:='AGUARDE !! Inicializando Arquivos Excel de Extratos...';
+       Refresh;
 
        Strg_SantanderImpExtrato.Refresh;
 
-       If bgComNrConta Then
+       // Verifica Leiaute do Arquivo ==========================================
+       If Strg_SantanderImpExtrato.ColCount<>6 Then
        Begin
-         If (Strg_SantanderImpExtrato.ColCount<>5) And (Strg_SantanderImpExtrato.ColCount<>7) Then
-         Begin
-           msg('Erro no Leiaute do Arquivo !!'+cr+cr+'Favor Entrar em Contato com o Odir !!','A');
-           LimpaStringGrid(Strg_SantanderImpExtrato);
-           EdtSantanderPastaArquivo.Clear;
-           Lb_Obs.Caption:='Observações...';
-           Exit;
-         End;
+         OdirPanApres.Visible:=False;
+         msg('Erro no Leiaute do Arquivo: '+EdtSantanderPastaArquivo.Text+cr+
+             'Número de Colunas Previstas é 6 Atual Igual a '+IntToStr(Strg_SantanderImpExtrato.ColCount)+cr+cr+
+             'Favor Entrar em Contato com o Odir !!','A');
+         LimpaStringGrid(Strg_SantanderImpExtrato);
+         EdtSantanderPastaArquivo.Clear;
+         Lb_Obs.Caption:='Observações...';
+         FreeAndNil(OpenDialog);
+         FreeAndNil(slgArquivos);
+         Exit;
+       End; // If Strg_SantanderImpExtrato.ColCount<>6 Then
 
-         If (sgAgencia='') or (sgContaCorrete='') or (EdtExtNumAgencia.Text<>sgAgencia) Or (EdtExtNumConta.Text<>sgContaCorrete) Then
-         Begin
-           msg('Arquivo NÃO Pertence a esta Conta Bancária !!'+cr+cr+
-               'Pertence a Agência: '+sgAgencia+' C/Corrente:'+sgContaCorrete,'A');
-           LimpaStringGrid(Strg_SantanderImpExtrato);
-           EdtSantanderPastaArquivo.Clear;
-           Lb_Obs.Caption:='Observações...';
-           Exit;
-         End;
-       End; // If bgComNrConta Then
-
-       If Not bgComNrConta Then
-       Begin
-         If (Strg_SantanderImpExtrato.ColCount<>6) Then
-         Begin
-           msg('Erro no Leiaute do Arquivo !!'+cr+cr+'Favor Entrar em Contato com o Odir !!','A');
-           LimpaStringGrid(Strg_SantanderImpExtrato);
-           EdtSantanderPastaArquivo.Clear;
-           Lb_Obs.Caption:='Observações...';
-           Exit;
-         End;
-       End; // If bgComNrConta Then
-
-       // Retira Linhas em Branco
-       bApagaCol:=False;
+       // Retira Linhas em Branco =============================================
        b:=True;
+       i:=0;
        While b do
        Begin
-         bgSiga:=True;
+         bgSiga:=False;
 
          // Cells[coluna,linha]
+         sData:='';
          For i:=1 to Strg_SantanderImpExtrato.RowCount-1 do
          Begin
+           Application.ProcessMessages;
+
            If Trim(Strg_SantanderImpExtrato.Cells[0,i])='' Then
            Begin
-             bgSiga:=False;
+             bgSiga:=True;
              TAuxGrid(Strg_SantanderImpExtrato).DeleteRow(i);
              Break;
            End;
@@ -8477,44 +8651,58 @@ begin
 
            If Strg_SantanderImpExtrato.ColCount=ii Then
            Begin
-             bApagaCol:=True;
-             Strg_SantanderImpExtrato.Cells[1,i]:=Trim(Strg_SantanderImpExtrato.Cells[2,i]); // Historico
-             Strg_SantanderImpExtrato.Cells[2,i]:=Trim(Strg_SantanderImpExtrato.Cells[3,i]); // Docto
-             Strg_SantanderImpExtrato.Cells[3,i]:=Trim(Strg_SantanderImpExtrato.Cells[4,i]); // Valor
-             Strg_SantanderImpExtrato.Cells[4,i]:=Trim(Strg_SantanderImpExtrato.Cells[5,i]); // Saldo
+             // Transporta Coluna se Não For Igual =============================
+             If Strg_SantanderImpExtrato.Cells[5,i]<>'OK' Then
+             Begin
+               Strg_SantanderImpExtrato.Cells[1,i]:=Trim(Strg_SantanderImpExtrato.Cells[2,i]); // Historico
+               Strg_SantanderImpExtrato.Cells[2,i]:=Trim(Strg_SantanderImpExtrato.Cells[3,i]); // Docto
+               Strg_SantanderImpExtrato.Cells[3,i]:=Trim(Strg_SantanderImpExtrato.Cells[4,i]); // Valor
+               Strg_SantanderImpExtrato.Cells[4,i]:=Trim(Strg_SantanderImpExtrato.Cells[5,i]); // Saldo
+               Strg_SantanderImpExtrato.Cells[5,i]:='OK';
+             End;
 
              If Trim(Strg_SantanderImpExtrato.Cells[2,i])='' Then
               Strg_SantanderImpExtrato.Cells[2,i]:='0'; // Docto
 
              If Trim(Strg_SantanderImpExtrato.Cells[3,i])='' Then
               Strg_SantanderImpExtrato.Cells[3,i]:='0'; // Valor
+           End; // If Strg_SantanderImpExtrato.ColCount=ii Then
 
-             // OdirApagar - 20/07/2017
-//             If Trim(Strg_SantanderImpExtrato.Cells[4,i])='' Then
-//              Strg_SantanderImpExtrato.Cells[4,i]:='0'; // Saldo
+           // Verificar se Proxima linha é de Data Diferente, se Mesma
+           // Tira o Saldo da Linha Atual
+           If (Trim(Strg_SantanderImpExtrato.Cells[4,i])<>'') And (Trim(AnsiUpperCase(Strg_SantanderImpExtrato.Cells[1,i]))<>'SALDO ANTERIOR') Then
+           Begin
+             If Trim(Strg_SantanderImpExtrato.Cells[0,i])=Trim(Strg_SantanderImpExtrato.Cells[0,i+1]) Then
+              Strg_SantanderImpExtrato.Cells[4,i]:=EmptyStr;
            End;
          End; // For i:=1 to Strg_SantanderImpExtrato.RowCount-1 do
 
-         If bgSiga Then
+         If Not bgSiga Then
           b:=False;
        End; // While b do
 
-       If bApagaCol Then
-       Begin
-         If bgComNrConta Then
-          TAuxGrid(Strg_SantanderImpExtrato).DeleteColumn(6);
+       //=======================================================================
+       // Exclui Ultima Coluna =================================================
+       //=======================================================================
          TAuxGrid(Strg_SantanderImpExtrato).DeleteColumn(5);
-       End;
+       // Exclui Ultima Coluna =================================================
+       //=======================================================================
 
        Bt_SantanderImpExtrato.Enabled:=True;
      End
     Else // If Execute then
      Begin
-       Free;
+       OdirPanApres.Visible:=False;
+       FreeAndNil(OpenDialog);
+       FreeAndNil(slgArquivos);
        Exit;
      End; // If Execute then
+    // Seleciona Arquivo(s) (Excel) de Extratos ================================
+    //==========================================================================
 
+    OdirPanApres.Visible:=False;
     Free;
+    FreeAndNil(slgArquivos);
   End; // With OpenDialog do
 end;
 
@@ -8602,13 +8790,40 @@ begin
         // Apaga Extrato do dia ================================================
         If sDtaApagar<>sgDta Then
         Begin
-          // Exclui Conciliações Já Efetuadas no Dia ===========================
+          // Exclui Conciliações de Pagatos do Dia =============================
           MySql:=' DELETE FROM FIN_CONCILIACAO_PAGTOS pg'+
                  ' WHERE EXISTS (SELECT 1'+
                  '               FROM FIN_BANCOS_EXTRATOS ex'+
                  '               WHERE ex.chv_extrato=pg.chv_extrato'+
                  '               AND   ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
                  '               AND   ex.dta_extrato='+QuotedStr(sgDta)+')';
+          DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+          MySql:=' UPDATE FIN_CONCILIACAO_MOVTOS m'+
+                 ' Set m.ind_conciliacao=''NAO'''+
+                 ' WHERE m.ind_conciliacao=''SIM'''+
+                 ' AND   NOT EXISTS (SELECT 1'+
+                 '                   FROM FIN_CONCILIACAO_PAGTOS p'+
+                 '                   WHERE p.num_seq=m.num_seq'+
+                 '                   AND   p.num_compl=m.num_compl)';
+          DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+          // Exclui Conciliações de Depósitos do Dia ===========================
+          MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS dp'+
+                 ' WHERE EXISTS (SELECT 1'+
+                 '               FROM FIN_BANCOS_EXTRATOS ex'+
+                 '               WHERE ex.chv_extrato=dp.chv_extrato'+
+                 '               AND   ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
+                 '               AND   ex.dta_extrato='+QuotedStr(sgDta)+')';
+          DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+          MySql:=' UPDATE FIN_CONCILIACAO_MOV_DEP m'+
+                 ' Set m.ind_conciliacao=''NAO'''+
+                 ' WHERE m.ind_conciliacao=''SIM'''+
+                 ' AND   NOT EXISTS (SELECT 1'+
+                 '                   FROM FIN_CONCILIACAO_DEPOSITOS D'+
+                 '                   WHERE d.num_seq=m.num_seq'+
+                 '                   AND   d.num_compl=m.num_compl)';
           DMBelShop.SQLC.Execute(MySql,nil,nil);
 
           // Exclui Extrato do Dia =============================================
@@ -8661,6 +8876,7 @@ begin
 //odirapagar - 25/01/2017
 //          If (sgDesMovto<>'SALDO ANTERIOR') and ((sgSaldo<>'0') Or (sgSaldo<>'')) Then
 //          if i=Strg_SantanderImpExtrato.RowCount-1 Then
+
           // Grava Extrato ===================================================
           If Trim(sgSaldo)<>'' Then
           Begin
@@ -8672,14 +8888,14 @@ begin
 //            If sgDta<>s Then
 //            Begin
 
-              // Salva o Ultimo Movto do Dia====================================
-              ExtratosSalvar;
+            // Salva o Ultimo Movto do Dia====================================
+            ExtratosSalvar;
 
-              // Salva Saldo do Dia
-              sgValor:=sgSaldo;
-              sgDesMovto:='SALDO NA DATA';
-              sgDocto:='';
-              ExtratosSalvar;
+            // Salva Saldo do Dia
+            sgValor:=sgSaldo;
+            sgDesMovto:='SALDO NA DATA';
+            sgDocto:='';
+            ExtratosSalvar;
 
 //odirapagar - 25/01/2017
 //            End;
@@ -11279,8 +11495,8 @@ end;
 
 procedure TFrmBancoExtratos.FormKeyUp(Sender: TObject; var Key: Word;Shift: TShiftState);
 begin
-  if Key=44   Then
-   Clipboard.AsText:='';
+//  if Key=44   Then
+//   Clipboard.AsText:='';
 end;
 
 procedure TFrmBancoExtratos.Bt_CMApresFiltroClick(Sender: TObject);
@@ -13038,4 +13254,163 @@ begin
 end;
 
 end.
+{
+
+Var
+  OpenDialog: TOpenDialog;
+  ii, i: Integer;
+  b: Boolean;
+  bApagaCol: Boolean;
+begin
+  Strg_SantanderImpExtrato.SetFocus;
+
+  // Limpa StringGrid
+  LimpaStringGrid(Strg_SantanderImpExtrato);
+
+  Bt_SantanderImpExtrato.Enabled:=False;
+
+  OpenDialog := TOpenDialog.Create(Self);
+  With OpenDialog do
+  Begin
+    Options := [ofPathMustExist, ofHideReadOnly, ofOverwritePrompt];
+    DefaultExt := 'xls;xlsx';
+    Filter := 'Arquivo Excel (*.xls;*.xlsx)|*.xls;*.xlsx';
+    FilterIndex := 1;
+    Title := 'Busca Arquivos Excel';
+
+    If Execute then
+     Begin
+       EdtSantanderPastaArquivo.Text:=OpenDialog.FileName;
+
+       If FileDateToDateTime(FileAgeCreate(EdtSantanderPastaArquivo.Text))<StrToDate(sgDtaServidor) Then
+       Begin
+         MessageBox(Handle, pChar('DATA da Criação do Arquivo é'+cr+'Inferior ao dia de Hoje !!'+cr+cr+'Favor Gerar o Arquivo Novamente...'), 'Erro', MB_ICONERROR);
+         Exit;
+       End;
+
+       // Apresenta Arquivo Excel
+       ImportaExtratoSantander(Strg_SantanderImpExtrato,EdtSantanderPastaArquivo.Text);
+
+       Strg_SantanderImpExtrato.Refresh;
+
+       If bgComNrConta Then
+       Begin
+         If (Strg_SantanderImpExtrato.ColCount<>5) And (Strg_SantanderImpExtrato.ColCount<>7) Then
+         Begin
+           msg('Erro no Leiaute do Arquivo !!'+cr+cr+'Favor Entrar em Contato com o Odir !!','A');
+           LimpaStringGrid(Strg_SantanderImpExtrato);
+           EdtSantanderPastaArquivo.Clear;
+           Lb_Obs.Caption:='Observações...';
+           Exit;
+         End;
+
+         If (sgAgencia='') or (sgContaCorrente='') or (EdtExtNumAgencia.Text<>sgAgencia) Or (EdtExtNumConta.Text<>sgContaCorrente) Then
+         Begin
+           msg('Arquivo NÃO Pertence a esta Conta Bancária !!'+cr+cr+
+               'Pertence a Agência: '+sgAgencia+' C/Corrente:'+sgContaCorrente,'A');
+           LimpaStringGrid(Strg_SantanderImpExtrato);
+           EdtSantanderPastaArquivo.Clear;
+           Lb_Obs.Caption:='Observações...';
+           Exit;
+         End;
+       End; // If bgComNrConta Then
+
+       If Not bgComNrConta Then
+       Begin
+         If (Strg_SantanderImpExtrato.ColCount<>6) Then
+         Begin
+           msg('Erro no Leiaute do Arquivo !!'+cr+cr+'Favor Entrar em Contato com o Odir !!','A');
+           LimpaStringGrid(Strg_SantanderImpExtrato);
+           EdtSantanderPastaArquivo.Clear;
+           Lb_Obs.Caption:='Observações...';
+           Exit;
+         End;
+       End; // If bgComNrConta Then
+
+       // Retira Linhas em Branco
+       bApagaCol:=False;
+       b:=True;
+       While b do
+       Begin
+         bgSiga:=True;
+
+         // Cells[coluna,linha]
+         For i:=1 to Strg_SantanderImpExtrato.RowCount-1 do
+         Begin
+           If Trim(Strg_SantanderImpExtrato.Cells[0,i])='' Then
+           Begin
+             bgSiga:=False;
+             TAuxGrid(Strg_SantanderImpExtrato).DeleteRow(i);
+             Break;
+           End;
+
+           If bgComNrConta Then
+            ii:=7
+           Else
+            ii:=6;
+
+           If Strg_SantanderImpExtrato.ColCount=ii Then
+           Begin
+             bApagaCol:=True;
+             Strg_SantanderImpExtrato.Cells[1,i]:=Trim(Strg_SantanderImpExtrato.Cells[2,i]); // Historico
+             Strg_SantanderImpExtrato.Cells[2,i]:=Trim(Strg_SantanderImpExtrato.Cells[3,i]); // Docto
+             Strg_SantanderImpExtrato.Cells[3,i]:=Trim(Strg_SantanderImpExtrato.Cells[4,i]); // Valor
+             Strg_SantanderImpExtrato.Cells[4,i]:=Trim(Strg_SantanderImpExtrato.Cells[5,i]); // Saldo
+
+             If Trim(Strg_SantanderImpExtrato.Cells[2,i])='' Then
+              Strg_SantanderImpExtrato.Cells[2,i]:='0'; // Docto
+
+             If Trim(Strg_SantanderImpExtrato.Cells[3,i])='' Then
+              Strg_SantanderImpExtrato.Cells[3,i]:='0'; // Valor
+
+             // OdirApagar - 20/07/2017
+//             If Trim(Strg_SantanderImpExtrato.Cells[4,i])='' Then
+//              Strg_SantanderImpExtrato.Cells[4,i]:='0'; // Saldo
+           End;
+         End; // For i:=1 to Strg_SantanderImpExtrato.RowCount-1 do
+
+         If bgSiga Then
+          b:=False;
+       End; // While b do
+
+       If bApagaCol Then
+       Begin
+         If bgComNrConta Then
+          TAuxGrid(Strg_SantanderImpExtrato).DeleteColumn(6);
+         TAuxGrid(Strg_SantanderImpExtrato).DeleteColumn(5);
+       End;
+
+       Bt_SantanderImpExtrato.Enabled:=True;
+     End
+    Else // If Execute then
+     Begin
+       Free;
+       Exit;
+     End; // If Execute then
+
+    Free;
+  End; // With OpenDialog do
+
+}
+
+       i:=10;
+       sgAgencia:=Strg_SantanderImpExtrato.Cells[0,i];
+       sgAgencia:=Strg_SantanderImpExtrato.Cells[1,i];
+       sgAgencia:=Strg_SantanderImpExtrato.Cells[2,i];
+
+       i:=Strg_SantanderImpExtrato.RowCount;
+       b:=True;
+       While b do
+       Begin
+         sgAgencia:=Strg_SantanderImpExtrato.Cells[0,i];
+         sgAgencia:=Strg_SantanderImpExtrato.Cells[1,i];
+         sgAgencia:=Strg_SantanderImpExtrato.Cells[2,i];
+
+         If Trim(sgAgencia)<>'' Then
+          b:=False;
+
+         i:=i-1;
+       End;
+
+        EXIT;
 
