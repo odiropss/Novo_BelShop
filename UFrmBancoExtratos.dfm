@@ -408,7 +408,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Top = 0
     Width = 1047
     Height = 564
-    ActivePage = Ts_ExtratosManut
+    ActivePage = Ts_ConciliacoesManutDepositos
     Align = alClient
     TabOrder = 0
     OnChange = PC_PrincipalChange
@@ -1966,7 +1966,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 TabOrder = 1
                 object Panel2: TPanel
                   Left = 2
-                  Top = 335
+                  Top = 374
                   Width = 679
                   Height = 30
                   Align = alBottom
@@ -2047,7 +2047,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
                   Left = 2
                   Top = 15
                   Width = 679
-                  Height = 320
+                  Height = 359
                   Cursor = crArrow
                   TabStop = False
                   Align = alClient

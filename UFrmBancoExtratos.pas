@@ -1700,6 +1700,13 @@ Begin
   Try
     Screen.Cursor:=crAppStart;
 
+    MySql:=' DELETE FROM FIN_CONCILIACAO_PAGTOS p'+
+           ' WHERE p.tip_conciliacao<>''DINH'''+
+           ' AND   NOT EXISTS (SELECT 1'+
+           '                   FROM FIN_BANCOS_EXTRATOS e'+
+           '                   WHERE e.chv_extrato=p.chv_extrato)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
     MySql:=' UPDATE FIN_CONCILIACAO_MOVTOS m'+
            ' SET m.IND_CONCILIACAO=''NAO'''+
            ' WHERE m.IND_CONCILIACAO=''SIM'''+
@@ -1707,6 +1714,22 @@ Begin
            '                 FROM  FIN_CONCILIACAO_PAGTOS p'+
            '                 WHERE p.num_seq=m.num_seq'+
            '                 AND p.num_compl=m.num_compl)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS d'+
+           ' WHERE d.tip_conciliacao<>''DINH'''+
+           ' AND   NOT EXISTS (SELECT 1'+
+           '                   FROM FIN_BANCOS_EXTRATOS e'+
+           '                   WHERE e.chv_extrato=d.chv_extrato)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    MySql:=' UPDATE FROM FIN_CONCILIACAO_MOV_DEP m'+
+           ' SET m.ind_conciliacao=''NAO'''+
+           ' WHERE m.ind_conciliacao=''SIM'''+
+           ' AND NOT EXISTS (SELECT 1'+
+           '                 FROM  FIN_CONCILIACAO_DEPOSITOS d'+
+           '                 WHERE d.num_seq=m.num_seq'+
+           '                 AND   d.num_compl=m.num_compl)';
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
     // Atualiza Transacao ======================================================
@@ -7864,41 +7887,46 @@ Var
 
   Procedure ExcluirExtrato(sCodBanco, sDtaExclui: String);
   Begin
-    // Exclui Conciliações Já Efetuadas no Dia =================================
-    MySql:=' DELETE FROM FIN_CONCILIACAO_PAGTOS pg'+
-           ' WHERE EXISTS (SELECT 1'+
-           '               FROM FIN_BANCOS_EXTRATOS ex'+
-           '               WHERE ex.chv_extrato=pg.chv_extrato'+
-           '               AND   ex.cod_banco='+QuotedStr(sCodBanco)+
-           '               AND   ex.dta_extrato='+QuotedStr(sDtaExclui)+')';
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-    MySql:=' UPDATE FIN_CONCILIACAO_MOVTOS m'+
-           ' Set m.ind_conciliacao=''NAO'''+
-           ' WHERE m.ind_conciliacao=''SIM'''+
-           ' AND   NOT EXISTS (SELECT 1'+
-           '                   FROM FIN_CONCILIACAO_PAGTOS p'+
-           '                   WHERE p.num_seq=m.num_seq'+
-           '                   AND   p.num_compl=m.num_compl)';
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-    // Exclui Conciliações de Depósitos do Dia ===========================
-    MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS dp'+
-           ' WHERE EXISTS (SELECT 1'+
-           '               FROM FIN_BANCOS_EXTRATOS ex'+
-           '               WHERE ex.chv_extrato=dp.chv_extrato'+
-           '               AND   ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
-           '               AND   ex.dta_extrato='+QuotedStr(sgDta)+')';
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-    MySql:=' UPDATE FIN_CONCILIACAO_MOV_DEP m'+
-           ' Set m.ind_conciliacao=''NAO'''+
-           ' WHERE m.ind_conciliacao=''SIM'''+
-           ' AND   NOT EXISTS (SELECT 1'+
-           '                   FROM FIN_CONCILIACAO_DEPOSITOS D'+
-           '                   WHERE d.num_seq=m.num_seq'+
-           '                   AND   d.num_compl=m.num_compl)';
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
+    // =========================================================================
+    // OdirApagar - Não Retira Conciliações Já Feitas - 24/11/2017 =============
+    // =========================================================================
+//    // Exclui Conciliações Já Efetuadas no Dia =================================
+//    MySql:=' DELETE FROM FIN_CONCILIACAO_PAGTOS pg'+
+//           ' WHERE EXISTS (SELECT 1'+
+//           '               FROM FIN_BANCOS_EXTRATOS ex'+
+//           '               WHERE ex.chv_extrato=pg.chv_extrato'+
+//           '               AND   ex.cod_banco='+QuotedStr(sCodBanco)+
+//           '               AND   ex.dta_extrato='+QuotedStr(sDtaExclui)+')';
+//    DMBelShop.SQLC.Execute(MySql,nil,nil);
+//
+//    MySql:=' UPDATE FIN_CONCILIACAO_MOVTOS m'+
+//           ' Set m.ind_conciliacao=''NAO'''+
+//           ' WHERE m.ind_conciliacao=''SIM'''+
+//           ' AND   NOT EXISTS (SELECT 1'+
+//           '                   FROM FIN_CONCILIACAO_PAGTOS p'+
+//           '                   WHERE p.num_seq=m.num_seq'+
+//           '                   AND   p.num_compl=m.num_compl)';
+//    DMBelShop.SQLC.Execute(MySql,nil,nil);
+//
+//    // Exclui Conciliações de Depósitos do Dia ===========================
+//    MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS dp'+
+//           ' WHERE EXISTS (SELECT 1'+
+//           '               FROM FIN_BANCOS_EXTRATOS ex'+
+//           '               WHERE ex.chv_extrato=dp.chv_extrato'+
+//           '               AND   ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
+//           '               AND   ex.dta_extrato='+QuotedStr(sgDta)+')';
+//    DMBelShop.SQLC.Execute(MySql,nil,nil);
+//
+//    MySql:=' UPDATE FIN_CONCILIACAO_MOV_DEP m'+
+//           ' Set m.ind_conciliacao=''NAO'''+
+//           ' WHERE m.ind_conciliacao=''SIM'''+
+//           ' AND   NOT EXISTS (SELECT 1'+
+//           '                   FROM FIN_CONCILIACAO_DEPOSITOS D'+
+//           '                   WHERE d.num_seq=m.num_seq'+
+//           '                   AND   d.num_compl=m.num_compl)';
+//    DMBelShop.SQLC.Execute(MySql,nil,nil);
+    // OdirApagar - Não Retira Conciliações Já Feitas - 24/11/2017 =============
+    // =========================================================================
 
     // Exclui Extrato do Dia ===================================================
     MySql:=' DELETE FROM FIN_BANCOS_EXTRATOS ex'+
@@ -8790,41 +8818,46 @@ begin
         // Apaga Extrato do dia ================================================
         If sDtaApagar<>sgDta Then
         Begin
-          // Exclui Conciliações de Pagatos do Dia =============================
-          MySql:=' DELETE FROM FIN_CONCILIACAO_PAGTOS pg'+
-                 ' WHERE EXISTS (SELECT 1'+
-                 '               FROM FIN_BANCOS_EXTRATOS ex'+
-                 '               WHERE ex.chv_extrato=pg.chv_extrato'+
-                 '               AND   ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
-                 '               AND   ex.dta_extrato='+QuotedStr(sgDta)+')';
-          DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-          MySql:=' UPDATE FIN_CONCILIACAO_MOVTOS m'+
-                 ' Set m.ind_conciliacao=''NAO'''+
-                 ' WHERE m.ind_conciliacao=''SIM'''+
-                 ' AND   NOT EXISTS (SELECT 1'+
-                 '                   FROM FIN_CONCILIACAO_PAGTOS p'+
-                 '                   WHERE p.num_seq=m.num_seq'+
-                 '                   AND   p.num_compl=m.num_compl)';
-          DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-          // Exclui Conciliações de Depósitos do Dia ===========================
-          MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS dp'+
-                 ' WHERE EXISTS (SELECT 1'+
-                 '               FROM FIN_BANCOS_EXTRATOS ex'+
-                 '               WHERE ex.chv_extrato=dp.chv_extrato'+
-                 '               AND   ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
-                 '               AND   ex.dta_extrato='+QuotedStr(sgDta)+')';
-          DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-          MySql:=' UPDATE FIN_CONCILIACAO_MOV_DEP m'+
-                 ' Set m.ind_conciliacao=''NAO'''+
-                 ' WHERE m.ind_conciliacao=''SIM'''+
-                 ' AND   NOT EXISTS (SELECT 1'+
-                 '                   FROM FIN_CONCILIACAO_DEPOSITOS D'+
-                 '                   WHERE d.num_seq=m.num_seq'+
-                 '                   AND   d.num_compl=m.num_compl)';
-          DMBelShop.SQLC.Execute(MySql,nil,nil);
+          // ===================================================================
+          // OdirApagar - Não Retira Conciliações Já Feitas - 24/11/2017 =======
+          // ===================================================================
+//          // Exclui Conciliações de Pagatos do Dia =============================
+//          MySql:=' DELETE FROM FIN_CONCILIACAO_PAGTOS pg'+
+//                 ' WHERE EXISTS (SELECT 1'+
+//                 '               FROM FIN_BANCOS_EXTRATOS ex'+
+//                 '               WHERE ex.chv_extrato=pg.chv_extrato'+
+//                 '               AND   ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
+//                 '               AND   ex.dta_extrato='+QuotedStr(sgDta)+')';
+//          DMBelShop.SQLC.Execute(MySql,nil,nil);
+//
+//          MySql:=' UPDATE FIN_CONCILIACAO_MOVTOS m'+
+//                 ' Set m.ind_conciliacao=''NAO'''+
+//                 ' WHERE m.ind_conciliacao=''SIM'''+
+//                 ' AND   NOT EXISTS (SELECT 1'+
+//                 '                   FROM FIN_CONCILIACAO_PAGTOS p'+
+//                 '                   WHERE p.num_seq=m.num_seq'+
+//                 '                   AND   p.num_compl=m.num_compl)';
+//          DMBelShop.SQLC.Execute(MySql,nil,nil);
+//
+//          // Exclui Conciliações de Depósitos do Dia ===========================
+//          MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS dp'+
+//                 ' WHERE EXISTS (SELECT 1'+
+//                 '               FROM FIN_BANCOS_EXTRATOS ex'+
+//                 '               WHERE ex.chv_extrato=dp.chv_extrato'+
+//                 '               AND   ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
+//                 '               AND   ex.dta_extrato='+QuotedStr(sgDta)+')';
+//          DMBelShop.SQLC.Execute(MySql,nil,nil);
+//
+//          MySql:=' UPDATE FIN_CONCILIACAO_MOV_DEP m'+
+//                 ' Set m.ind_conciliacao=''NAO'''+
+//                 ' WHERE m.ind_conciliacao=''SIM'''+
+//                 ' AND   NOT EXISTS (SELECT 1'+
+//                 '                   FROM FIN_CONCILIACAO_DEPOSITOS D'+
+//                 '                   WHERE d.num_seq=m.num_seq'+
+//                 '                   AND   d.num_compl=m.num_compl)';
+//          DMBelShop.SQLC.Execute(MySql,nil,nil);
+          // OdirApagar - Não Retira Conciliações Já Feitas - 24/11/2017 =======
+          // ===================================================================
 
           // Exclui Extrato do Dia =============================================
           MySql:=' DELETE FROM FIN_BANCOS_EXTRATOS ex'+
@@ -9528,7 +9561,7 @@ begin
 
     EdtConcManutExtPagDif.Value:=0;
 
-    // Elimina Movots do SIDICOM Marcados como Conciliados Mas SEM Conciliação -
+    // Elimina Movots Marcados como Conciliados Mas SEM Conciliação ============
     EliminarConciliacaoError;
 
     // Verifica Pendencias -----------------------------------------------------
@@ -12000,6 +12033,9 @@ begin
 
   // Busca Extratos e Movimentos de Depositos ==================================
   BuscaMovtosExtratosDepositos;
+
+  // Elimina Movots Marcados como Conciliados Mas SEM Conciliação ==============
+  EliminarConciliacaoError;
 
 end;
 

@@ -3823,6 +3823,20 @@ begin
   EdtFluFornCodFornAcertar.Text:=sCodForn;
   MEdt_DtaAtualizacao.Text:=f_Troca('/','.',f_Troca('-','.',sgDtaDoc));
 
+    LimpaLancamentos;
+    EdtDtOrigemDoc.Enabled:=True;
+    EdtDtCaixaDoc.Enabled:=True;
+    EdtValorDoc.Enabled:=True;
+    EdtCodLojaDoc.Enabled:=True;
+    EdtCodHistDoc.Enabled:=True;
+
+    Ts_FluxFornApres.TabVisible :=True;
+    Ts_FluxFornCaixa.TabVisible :=True;
+    Ts_FluxFornLanctos.TabVisible:=False;
+    Ts_FluxFornGraficos.TabVisible:=False;
+    PC_Principal.TabIndex:=1;
+    PC_PrincipalChange(Self);
+
                                      //=========================================
   bgAtualizaDireto:=True;            //
   Bt_FluFornAcertaSaldosClick(Self); //<<<==== Atualiza Saldos do Fornecedor
