@@ -1,6 +1,6 @@
 object FrmSolicTransf: TFrmSolicTransf
-  Left = 252
-  Top = 113
+  Left = 250
+  Top = 150
   Width = 808
   Height = 606
   AutoSize = True
@@ -1010,7 +1010,7 @@ object FrmSolicTransf: TFrmSolicTransf
     Top = 0
     Width = 792
     Height = 538
-    ActivePage = Ts_Consultas
+    ActivePage = Ts_Produtos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1461,8 +1461,8 @@ object FrmSolicTransf: TFrmSolicTransf
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter
             Fixed = False
-            Text = '<F3> Verificar Vers'#227'o'
-            Width = 35
+            Text = '<F3> Vers'#227'o'
+            Width = 20
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
@@ -1487,13 +1487,14 @@ object FrmSolicTransf: TFrmSolicTransf
             Fixed = False
             ParentBiDiMode = False
             Text = '<F4> Localiza Produto'
-            Width = 35
+            Width = 30
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter
             Fixed = False
             Text = 'N'#186' M'#225'ximo de Produtos/Dia: 0'
+            Width = 50
           end
           item
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'

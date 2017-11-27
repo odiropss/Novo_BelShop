@@ -28,7 +28,7 @@ type
     Ts_Despesas: TTabSheet;
     Ts_LancamentoNotas: TTabSheet;
     Pan_Baixo: TPanel;
-    Bt_Retornar: TJvXPButton;
+    Bt_Sair: TJvXPButton;
     Ts_PedidosVendas: TTabSheet;
     Label3: TLabel;
     Label4: TLabel;
@@ -42,7 +42,7 @@ type
     Label83: TLabel;
     DtaEdt_PVInicio: TcxDateEdit;
     DtaEdt_PVFim: TcxDateEdit;
-    Bt_Salvar: TJvXPButton;
+    Bt_SalvarMemoria: TJvXPButton;
     Bt_Buscar: TJvXPButton;
     Label6: TLabel;
     Label1: TLabel;
@@ -54,19 +54,22 @@ type
     SubMenuCadastroPessoasEntidades: TMenuItem;
     N2: TMenuItem;
     SubMenuCadastroDespesas: TMenuItem;
-    MenuCOMPRAS: TMenuItem;
+    MenuENTRADASSAIDAS: TMenuItem;
     SubMenuEntradasSaidasLancamentoNotas: TMenuItem;
-    MenuVendasPedidos: TMenuItem;
+    MenuVENDASPEDIDOS: TMenuItem;
     SubMenuVendasPedidosPedidosVenda: TMenuItem;
     GroupBox1: TGroupBox;
     Rb_PVSintetico: TJvRadioButton;
     Rb_PVAnalitico: TJvRadioButton;
     Dbg_PVPedidos: TDBGrid;
     ApplicationEvents1: TApplicationEvents;
+    Ts_ContasPagar: TTabSheet;
+    MenuFINANCEIRO: TMenuItem;
+    SubMenuFinanceiroContasPagar: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure Bt_RetornarClick(Sender: TObject);
+    procedure Bt_SairClick(Sender: TObject);
 
     // ODIR >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -86,7 +89,7 @@ type
     procedure Bt_PVBuscaClienteClick(Sender: TObject);
     procedure Bt_BuscarClick(Sender: TObject);
     procedure Rb_PVAnaliticoClick(Sender: TObject);
-    procedure Bt_SalvarClick(Sender: TObject);
+    procedure Bt_SalvarMemoriaClick(Sender: TObject);
     procedure Dbg_PVPedidosDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
@@ -95,6 +98,7 @@ type
     procedure ApplicationEvents1Message(var Msg: tagMSG;
       var Handled: Boolean);
     procedure Dbg_PVPedidosColEnter(Sender: TObject);
+    procedure SubMenuEntradasSaidasLancamentoNotasClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -402,6 +406,9 @@ Begin
     End; // If FrmRelatorios.Components[i] is TTabSheet Then
   End; // For i:=0 to FrmRelatorios.ComponentCount-1 do
 
+  Bt_Buscar.Visible:=False;
+  Bt_SalvarMemoria.Visible:=False;
+
 //OdirAPapgar
 //  // Desabilita Botoes de Calculo ==============================================
 //  Bt_ProfINSSTXSCalcular.Visible:=False;
@@ -456,7 +463,7 @@ begin
 
 end;
 
-procedure TFrmRelatorios.Bt_RetornarClick(Sender: TObject);
+procedure TFrmRelatorios.Bt_SairClick(Sender: TObject);
 begin
   Close;
 end;
@@ -524,6 +531,18 @@ begin
     Begin
       PC_Relatorios.ActivePage:=Ts_PedidosVendas;
       Ts_PedidosVendas.TabVisible:=True;
+
+      Bt_Buscar.Visible:=True;
+      Bt_SalvarMemoria.Visible:=True;
+    End;
+
+    If (Sender as TMenuItem).Name='SubMenuFinanceiroContasPagar' Then
+    Begin
+      PC_Relatorios.ActivePage:=Ts_ContasPagar;
+      Ts_ContasPagar.TabVisible:=True;
+
+      Bt_Buscar.Visible:=True;
+      Bt_SalvarMemoria.Visible:=True;
     End;
   End; // If (Sender is TMenuItem) Then
 
@@ -646,37 +665,39 @@ end;
 
 procedure TFrmRelatorios.Bt_BuscarClick(Sender: TObject);
 begin
-  // Consiste Datas ============================================================
-  Try
-    StrToDate(DtaEdt_PVInicio.Text)
-  Except
-    msg('Data do Início do Período é Inválida !!','A');
-    DtaEdt_PVInicio.SetFocus;
-    Exit;
-  End;
-
-  Try
-    StrToDate(DtaEdt_PVFim.Text)
-  Except
-    msg('Data do Fim do Período é Inválida !!','A');
-    DtaEdt_PVFim.SetFocus;
-    Exit;
-  End;
-
-  If DtaEdt_PVInicio.Date>DtaEdt_PVFim.Date Then
+  If (PC_Relatorios.ActivePage=Ts_PedidosVendas) And (Ts_PedidosVendas.CanFocus) Then
   Begin
-    msg('Período Inválido !!','A');
-    DtaEdt_PVInicio.SetFocus;
-    Exit;
-  End;
+    // Consiste Datas ============================================================
+    Try
+      StrToDate(DtaEdt_PVInicio.Text)
+    Except
+      msg('Data do Início do Período é Inválida !!','A');
+      DtaEdt_PVInicio.SetFocus;
+      Exit;
+    End;
 
-  Dbg_PVPedidos.SetFocus;
+    Try
+      StrToDate(DtaEdt_PVFim.Text)
+    Except
+      msg('Data do Fim do Período é Inválida !!','A');
+      DtaEdt_PVFim.SetFocus;
+      Exit;
+    End;
 
-  // Busca Movtos de Pedidos do Período ========================================
-  Screen.Cursor:=crAppStart;
-  ApresentaPedidos;
-  Screen.Cursor:=crDefault;
+    If DtaEdt_PVInicio.Date>DtaEdt_PVFim.Date Then
+    Begin
+      msg('Período Inválido !!','A');
+      DtaEdt_PVInicio.SetFocus;
+      Exit;
+    End;
 
+    Dbg_PVPedidos.SetFocus;
+
+    // Busca Movtos de Pedidos do Período ========================================
+    Screen.Cursor:=crAppStart;
+    ApresentaPedidos;
+    Screen.Cursor:=crDefault;
+  End; // If (PC_Relatorios.ActivePage=Ts_PedidosVendas) And (Ts_PedidosVendas.CanFocus) Then
 end;
 
 procedure TFrmRelatorios.Rb_PVAnaliticoClick(Sender: TObject);
@@ -708,18 +729,20 @@ begin
 
 end;
 
-procedure TFrmRelatorios.Bt_SalvarClick(Sender: TObject);
+procedure TFrmRelatorios.Bt_SalvarMemoriaClick(Sender: TObject);
 begin
-  If Not DMArtesanalis.CDS_V_PVPedidos.IsEmpty Then
+  If (PC_Relatorios.ActivePage=Ts_PedidosVendas) And (Ts_PedidosVendas.CanFocus) Then
   Begin
-    Dbg_PVPedidos.SetFocus;
-    Screen.Cursor:=crAppStart;
+    If Not DMArtesanalis.CDS_V_PVPedidos.IsEmpty Then
+    Begin
+      Dbg_PVPedidos.SetFocus;
+      Screen.Cursor:=crAppStart;
 
-    DBGridClipboard(Dbg_PVPedidos);
+      DBGridClipboard(Dbg_PVPedidos);
 
-    Screen.Cursor:=crDefault;
-  End;
-
+      Screen.Cursor:=crDefault;
+    End;
+  End; // If (PC_Relatorios.ActivePage=Ts_PedidosVendas) And (Ts_PedidosVendas.CanFocus) Then
 end;
 
 procedure TFrmRelatorios.Dbg_PVPedidosDrawColumnCell(Sender: TObject;
@@ -789,6 +812,13 @@ begin
   ApplicationEvents1.OnActivate:=Dbg_PVPedidosColEnter; // Nome do Evento do DBGRID
   Application.OnMessage := ApplicationEvents1Message;
   ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmRelatorios.SubMenuEntradasSaidasLancamentoNotasClick(Sender: TObject);
+begin
+  // Desabilita Todas as TabSheets e Botoes ====================================
+  DesabilitaTodasTabSheets(PC_Relatorios);
 
 end;
 

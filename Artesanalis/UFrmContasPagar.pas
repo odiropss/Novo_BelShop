@@ -773,7 +773,7 @@ begin
   End;
 
   // Permite Sair do Sistema ===================================================
-  DMArtesanalis.MemoRetiraNomeForm('FINANCEIRO - Contas a Pagar');
+  DMArtesanalis.MemoRetiraNomeForm('FINANCEIRO - Contas a Pagar - Lançamentos');
 
 end;
 
@@ -912,10 +912,16 @@ begin
 
   // ============= RETORNO =====================================================
   If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
-  Begin
-    EdtCodPessoa.AsInteger:=StrToInt(FrmPesquisa.EdtCodigo.Text);
-    EdtCodPessoaExit(Self);
-  End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+   Begin
+     EdtCodPessoa.AsInteger:=StrToInt(FrmPesquisa.EdtCodigo.Text);
+     EdtCodPessoaExit(Self);
+
+     EdtCodHistorico.SetFocus;
+   End
+  Else
+   Begin
+     EdtCodPessoa.SetFocus;
+   End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
 
   FreeAndNil(FrmPesquisa);
 end;
@@ -1179,9 +1185,9 @@ begin
   If DMArtesanalis.CDS_FluxoFinanceiro.IsEmpty Then
    Exit;
 
-  If EdtNumSeq.AsInteger=0 Then
+  If (EdtNumSeq.AsInteger=0) and (EdtNumDocto.AsInteger<>0) Then
    DMArtesanalis.CDS_FluxoFinanceiro.Locate('NUM_DOCTO', EdtNumDocto.AsInteger,[])
-  Else
+  Else If (EdtNumSeq.AsInteger<>0) Then
    DMArtesanalis.CDS_FluxoFinanceiro.Locate('NUM_SEQ', EdtNumSeq.AsInteger,[]);
 end;
 
@@ -1277,11 +1283,15 @@ begin
 
   // ============= RETORNO =====================================================
   If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
-  Begin
-    EdtCodHistorico.AsInteger:=StrToInt(FrmPesquisa.EdtCodigo.Text);
-    EdtCodHistoricoExit(Self);
-    EdtNumDocto.SetFocus;
-  End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+   Begin
+     EdtCodHistorico.AsInteger:=StrToInt(FrmPesquisa.EdtCodigo.Text);
+     EdtCodHistoricoExit(Self);
+     EdtNumDocto.SetFocus;
+   End
+  Else
+   Begin
+     EdtCodHistorico.SetFocus;
+   End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
 
   FreeAndNil(FrmPesquisa);
 end;

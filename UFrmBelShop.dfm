@@ -35443,6 +35443,7 @@ object FrmBelShop: TFrmBelShop
             07F9F90707070707070007070707070707F90707070707070700070707070707
             07070707070707070700}
           Caption = 'Concilia'#231#227'o Dep'#243'sitos'
+          HelpContext = 1
           OnClick = SubMenuFinanConciliaDepositosClick
         end
         object N53: TMenuItem

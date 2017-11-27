@@ -167,7 +167,8 @@ var
 
   mgMemoForms: TMemo; // Guarda Forms Abertos
 
-  bgSair: Boolean;
+  bgSair,
+  bgTsCreate: Boolean; // Se Desabilita Todas as TabSheets no DataModuleCreate  
 
 implementation
 

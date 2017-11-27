@@ -13895,7 +13895,7 @@ Begin
                ' SUM(tot.TOT_NOTA) TOT_NOTA,'+
                ' SUM(tot.TOT_FRETE) TOT_FRETE,'+
                ' SUM(tot.TOT_DESPESAS) TOT_DESPESAS'+
-               '  FROM'+
+               '  FROM'+                                 
                ' (';
 
         If (StrToInt(sgCodEmp)<18) or (StrToInt(sgCodEmp)>45)  Then

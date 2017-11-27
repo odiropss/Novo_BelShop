@@ -1106,7 +1106,7 @@ object FrmArtesanalis: TFrmArtesanalis
       951
       552)
     object Image1: TImage
-      Left = 219
+      Left = 235
       Top = 189
       Width = 513
       Height = 138
@@ -2092,9 +2092,9 @@ object FrmArtesanalis: TFrmArtesanalis
         OnClick = SubMenuCadastroDespesasClick
       end
     end
-    object FINANCEIRO1: TMenuItem
+    object MenuFINANCEIRO: TMenuItem
       Caption = 'FINANCEIRO'
-      object ContasaPagar1: TMenuItem
+      object MenuFinanceiroComtasPagar: TMenuItem
         Bitmap.Data = {
           B6C90100424DB6C901000000000036000000280000009F000000F40000000100
           18000000000080C9010000000000000000000000000000000000FFFFFFFFFFFF
@@ -5759,7 +5759,7 @@ object FrmArtesanalis: TFrmArtesanalis
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000}
         Caption = 'Contas a Pagar'
-        OnClick = ContasaPagar1Click
+        OnClick = MenuFinanceiroComtasPagarClick
       end
     end
     object MenuCOMPRAS: TMenuItem

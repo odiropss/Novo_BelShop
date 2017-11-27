@@ -1,6 +1,6 @@
 object FrmContasPagar: TFrmContasPagar
-  Left = 286
-  Top = 51
+  Left = 237
+  Top = 116
   Width = 1009
   Height = 610
   BorderIcons = [biSystemMenu]
@@ -30,7 +30,7 @@ object FrmContasPagar: TFrmContasPagar
     BevelInner = bvLowered
     BevelOuter = bvNone
     Color = 16770250
-    TabOrder = 1
+    TabOrder = 2
     object Label4: TLabel
       Left = 351
       Top = 11
@@ -235,7 +235,7 @@ object FrmContasPagar: TFrmContasPagar
     ParentFont = False
     ParentShowHint = False
     ShowHint = True
-    TabOrder = 2
+    TabOrder = 1
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11

@@ -494,8 +494,8 @@ begin
   igNumMaxProd:=DMSolicTransf.CDS_Busca.FieldByName('Num_Prod').AsInteger;
   igQtdMaxProd:=DMSolicTransf.CDS_Busca.FieldByName('Qtd_Prod').AsInteger;
   DMSolicTransf.CDS_Busca.Close;
-  Stb_ParamTransf.Panels[2].Text:='Nº Maximo de Produtos/Dia: '+IntToStr(igNumMaxProd);
-  Stb_ParamTransf.Panels[3].Text:='Quantidade Maxima Por Produto: '+IntToStr(igQtdMaxProd);
+  Stb_ParamTransf.Panels[3].Text:='Nº Maximo de Produtos/Dia: '+IntToStr(igNumMaxProd);
+  Stb_ParamTransf.Panels[4].Text:='Quantidade Maxima Por Produto: '+IntToStr(igQtdMaxProd);
 
   // Busca Solicitação do Dia ==================================================
   MySql:=' SELECT tr.dta_solicitacao, tr.num_solicitacao,'+

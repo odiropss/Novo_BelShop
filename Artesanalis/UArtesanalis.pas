@@ -77,8 +77,8 @@ type
     Panel1: TPanel;
     Image1: TImage;
     SBt_Sair: TSpeedButton;
-    FINANCEIRO1: TMenuItem;
-    ContasaPagar1: TMenuItem;
+    MenuFINANCEIRO: TMenuItem;
+    MenuFinanceiroComtasPagar: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -97,7 +97,7 @@ type
     procedure SubMenuEntradasSaidasMateriasPrimasClick(Sender: TObject);
     procedure SubMenuVendasPedidosPedidosVendaClick(Sender: TObject);
     procedure SBt_SairClick(Sender: TObject);
-    procedure ContasaPagar1Click(Sender: TObject);
+    procedure MenuFinanceiroComtasPagarClick(Sender: TObject);
 
     // Odir ====================================================================
 
@@ -361,12 +361,13 @@ begin
   MenuSAIRClick(Self);
 end;
 
-procedure TFrmArtesanalis.ContasaPagar1Click(Sender: TObject);
+procedure TFrmArtesanalis.MenuFinanceiroComtasPagarClick(Sender: TObject);
 begin
-  DMArtesanalis.MemoAdicionaNomeForm('FINANCEIRO - Contas a Pagar');
+
+  DMArtesanalis.MemoAdicionaNomeForm('FINANCEIRO - Contas a Pagar - Lançamentos');
 
   FrmContasPagar:=TFrmContasPagar.Create(Self);
-  FrmContasPagar.Caption:='FINANCEIRO - Contas a Pagar';
+  FrmContasPagar.Caption:='FINANCEIRO - Contas a Pagar - Lançamentos';
   FrmContasPagar.ShowModal;
 
   FreeAndNil(FrmContasPagar);
@@ -374,4 +375,6 @@ begin
 end;
 
 end.
+
+
 
