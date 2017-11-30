@@ -19,7 +19,7 @@ uses
   cxCalendar, JvEditorCommon, JvEditor, ToolEdit, CurrEdit, JvExControls,
   JvXPCore, JvXPButtons, ExtCtrls, DBGrids, Classes, SysUtils, Comobj, Variants,
   StrUtils, Messages, Dialogs,
-  IBQuery, DBXpress, DBClient, dxSkinsdxStatusBarPainter, dxStatusBar;
+  IBQuery, DBXpress, DBClient, dxSkinsdxStatusBarPainter, dxStatusBar, MMSystem;
 
 type
   TFrmBancoExtratos = class(TForm)
@@ -299,14 +299,14 @@ type
 
     // CONCILIAÇÕES DEPOSITOS //////////////////////////////////////////////////
     Procedure HabilitaBotoesDep(b: Boolean);
-    Function AtualizaMovtosDepositos: Boolean;
+    Function  AtualizaMovtosDepositos: Boolean;
 
-    Function PodeConciliarDepositos(iExtrato, iPagto: Integer): Boolean;
+    Function  PodeConciliarDepositos(iExtrato, iPagto: Integer): Boolean;
 
     Procedure LiberaClientGravarDep(bLibera: Boolean);
     Procedure TotaisMarcadosNaoConciliadosDep;
 
-    Procedure BuscaMovtosExtratosDepositos;
+    Function  BuscaMovtosExtratosDepositos: Boolean;
 
     Function  ProcessaConciciacaoDep(sTipo: String): Boolean;
                                // sTipo= (Pag) Processa Deposito (Mantido Abreviatura <Pag>)
@@ -972,10 +972,22 @@ Begin
 End; // CONCILIAÇÕES DEPOSITOS - Processa Conciliação Extrato/Deposito >>>>>>>>>
 
 // CONCILIAÇÕES DEPOSITOS - Busca Extratos e Depositos para Conciliação >>>>>>>>
-Procedure TFrmBancoExtratos.BuscaMovtosExtratosDepositos;
+Function  TFrmBancoExtratos.BuscaMovtosExtratosDepositos: Boolean;
 Var
   MySql: String;
 Begin
+  Result:=False;
+
+  OdirPanApres.Caption:='AGUARDE !! Localizando Extratos/Depósitos no Período de '+sgDtaI+' a '+sgDtaF;
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBancoExtratos;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
   Rb_ConcAmbosDep.Checked:=True;
   Rb_ConcConciliadosDepClick(Self);
 
@@ -1017,13 +1029,14 @@ Begin
          ' AND   e.Num_Seq<>999999'+
          ' AND   UPPER(m.des_tpmovto) LIKE ''DEPOS%'''+
 
-         ' ORDER BY e.dta_extrato, b.des_Banco, b.num_banco, b.num_agencia, b.num_conta, e.num_seq';
+         ' ORDER BY e.dta_extrato, b.des_Banco, b.num_banco, b.num_agencia, b.num_conta, e.vlr_docto, e.num_seq';
   DMConciliacao.CDS_CMExtratosDep.Close;
   DMConciliacao.SDS_CMExtratosDep.CommandText:=MySql;
   DMConciliacao.CDS_CMExtratosDep.Open;
 
   If Trim(DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString)='' Then
   Begin
+    OdirPanApres.Visible:=False;
     msg('Sem Extrato no Período Solicitado !!','A');
     DMConciliacao.CDS_CMExtratosDep.Close;
     Exit;
@@ -1058,13 +1071,14 @@ Begin
 
          ' WHERE m.dta_docto BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
 
-         ' ORDER BY m.dta_docto, e.nome_emp, m.num_docto, m.num_seq';
+         ' ORDER BY m.dta_docto, e.nome_emp, m.num_docto, m.vlr_docto, m.num_seq';
   DMConciliacao.CDS_CMDepositos.Close;
   DMConciliacao.SDS_CMDepositos.CommandText:=MySql;
   DMConciliacao.CDS_CMDepositos.Open;
-                                                                            
+
   If Trim(DMConciliacao.CDS_CMDepositosCOD_LOJA.AsString)='' Then
   Begin
+    OdirPanApres.Visible:=False;
     msg('Sem Depositos no Período Solicitado !!','A');
     DMConciliacao.CDS_CMDepositos.Close;
     DMConciliacao.CDS_CMExtratosDep.Close;
@@ -1075,6 +1089,9 @@ Begin
 
   Rb_ConcConciliadosDepClick(Self);
   Dbg_ConcManutExtratoDep.SetFocus;
+
+  OdirPanApres.Visible:=False;
+  Result:=True;
 
 End; // CONCILIAÇÕES DEPOSITOS - Busca Extratos e Depositos para Conciliação >>>
 
@@ -1225,10 +1242,12 @@ End; // CONCILIAÇÕES DEPOSITOS - Verifica se Pode Conciliar >>>>>>>>>>>>>>>>>>>>
 Function TFrmBancoExtratos.AtualizaMovtosDepositos: Boolean;
 Var
   MySql: String;
+  sNrSeq, sNrCompl: String;
 Begin
   Result:=True;
 
-  OdirPanApres.Caption:='AGUARDE !! Atualizando Movimentos/Consiliações...';
+  OdirPanApres.Caption:='AGUARDE !! Atualizando Depósitos/Conciliações no Período de '+sgDtaI+' a '+sgDtaF;
+
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
@@ -1251,30 +1270,112 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
-    // Exclui Movimento de Sangria para Substituição ===========================
-    MySql:=' DELETE FROM FIN_CONCILIACAO_MOV_DEP M'+
-           ' WHERE m.dta_docto BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
-                                         QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)));
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
+    //==========================================================================
+    // Retira Movimento de Sangria Cancelados ==================================
+    //==========================================================================
+    MySql:=' SELECT s.empresa, s.data, s.usuario, ABS(s.valor) valor,'+
+           '        SUBSTRING(s.obs FROM 1 FOR 80) obs'+
+           ' FROM LINXSANGRIASUPRIMENTOS S'+
+           ' WHERE s.valor<0'+
+           ' AND   s.cancelado=''S'''+
+           ' AND   s.data BETWEEN '+
+           QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
+           QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
+           ' ORDER BY s.empresa, s.data, s.usuario, ABS(s.valor)';
+    DMBelShop.CDS_Busca.Close;
+    DMBelShop.SDS_Busca.CommandText:=MySql;
+    DMBelShop.CDS_Busca.Open;
 
-    // Exclui Conciliações Existentes Depositos ================================
+    sNrSeq:='0';
+    DMBelShop.CDS_Busca.DisableControls;
+    While Not DMBelShop.CDS_Busca.Eof do
+    Begin
+      // Busca Movto Deposito/Sangria ==========================================
+      MySql:=' SELECT md.num_seq, md.num_compl'+
+             ' FROM FIN_CONCILIACAO_MOV_DEP md'+
+             ' WHERE md.cod_linx='+DMBelShop.CDS_Busca.FieldByName('Empresa').AsString+
+             ' AND   md.dta_docto='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DMBelShop.CDS_Busca.FieldByName('Data').AsString)))+
+             ' AND   md.num_docto='+DMBelShop.CDS_Busca.FieldByName('Usuario').AsString+
+             ' AND   md.vlr_docto='+QuotedStr(f_Troca(',','.',DMBelShop.CDS_Busca.FieldByName('Valor').AsString))+
+             ' AND   Trim(md.obs_texto)='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Obs').AsString))+
+             ' AND   md.num_seq<>'+sNrSeq+
+             ' ORDER BY md.num_seq';
+      DMBelShop.CDS_Busca1.Close;
+      DMBelShop.SDS_Busca1.CommandText:=MySql;
+      DMBelShop.CDS_Busca1.Open;
+
+      If Not DMBelShop.CDS_Busca1.IsEmpty Then
+      Begin
+        sNrSeq:=DMBelShop.CDS_Busca1.FieldByName('Num_Seq').AsString;
+
+        // Exclui FIN_CONCILIACAO_MOV_DEP ======================================
+        MySql:=' DELETE FROM FIN_CONCILIACAO_MOV_DEP md'+
+               ' WHERE md.num_seq='+sNrSeq+
+               ' AND   md.num_compl='+DMBelShop.CDS_Busca1.FieldByName('Num_Compl').AsString;
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+        // Busca Chave do Extrato se Conciliado ================================
+        MySql:=' SELECT d.chv_extrato'+
+               ' FROM FIN_CONCILIACAO_DEPOSITOS d'+
+               ' WHERE d.num_seq='+sNrSeq+
+               ' AND   d.num_compl='+DMBelShop.CDS_Busca1.FieldByName('Num_Compl').AsString+
+               ' ORDER BY d.chv_extrato';
+        DMBelShop.CDS_BuscaRapida.Close;
+        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+        DMBelShop.CDS_BuscaRapida.Open;
+
+        DMBelShop.CDS_BuscaRapida.DisableControls;
+        While Not DMBelShop.CDS_BuscaRapida.Eof do
+        Begin
+          // Exclui Todos as Conciliações Realizadas ===========================
+          MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS d'+
+                 ' WHERE d.chv_extrato='+QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('chv_extrato').AsString);
+          DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+          DMBelShop.CDS_BuscaRapida.Next;
+        End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
+        DMBelShop.CDS_BuscaRapida.EnableControls;
+        DMBelShop.CDS_BuscaRapida.Close;
+
+      End; // If Not DMBelShop.CDS_Busca1.IsEmpty Then
+      DMBelShop.CDS_Busca1.Close;
+
+      DMBelShop.CDS_Busca.Next;
+    End; // While Not DMBelShop.CDS_Busca.Eof do
+    DMBelShop.CDS_Busca.EnableControls;
+    DMBelShop.CDS_Busca.Close;
+    // Retira Movimento de Sangria Cancelados ==================================
+    //==========================================================================
+
+    //==========================================================================
+    // Exclui Conciliações Existentes Sem Depositos ============================
+    //==========================================================================
     MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS D'+
            ' WHERE NOT EXISTS (SELECT 1'+
            '                   FROM FIN_CONCILIACAO_MOV_DEP M'+
            '                   WHERE m.num_seq=d.num_seq'+
            '                   AND   m.num_compl=d.num_compl)';
     DMBelShop.SQLC.Execute(MySql,nil,nil);
+    // Exclui Conciliações Existentes Sem Depositos ============================
+    //==========================================================================
 
-    // Exclui Conciliações Existentes de Extratos ==============================
+    //==========================================================================
+    // Exclui Conciliações Existentes Sem Extratos =============================
+    //==========================================================================
     MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS D'+
-           ' WHERE  EXISTS (SELECT 1'+
-           '                FROM FIN_BANCOS_EXTRATOS ex'+
-           '                WHERE ex.chv_extrato=d.chv_extrato'+
-           '                AND   ex.dta_extrato BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
-                                                           QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+')';
+           ' WHERE NOT EXISTS (SELECT 1'+
+           '                   FROM FIN_BANCOS_EXTRATOS ex'+
+           '                   WHERE ex.chv_extrato=d.chv_extrato'+
+           '                   AND   ex.dta_extrato BETWEEN '+
+           QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
+           QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+')';
     DMBelShop.SQLC.Execute(MySql,nil,nil);
+    // Exclui Conciliações Existentes Sem Extratos =============================
+    //==========================================================================
 
+    //==========================================================================
     // Coloca para Não Conciliado Retirado de FIN_CONCILIACAO_DEPOSITOS ========
+    //==========================================================================
     MySql:=' UPDATE FIN_CONCILIACAO_MOV_DEP m'+
            ' SET m.ind_conciliacao=''NAO'''+
            ' WHERE m.ind_conciliacao=''SIM'''+
@@ -1283,34 +1384,117 @@ Begin
            '                   WHERE d.num_seq=m.num_seq'+
            '                   AND   d.num_compl=m.num_compl)';
     DMBelShop.SQLC.Execute(MySql,nil,nil);
+    // Coloca para Não Conciliado Retirado de FIN_CONCILIACAO_DEPOSITOS ========
+    //==========================================================================
 
-    // Insere Novos Movtos de Sangris ==========================================
-    MySql:=' INSERT INTO FIN_CONCILIACAO_MOV_DEP'+
-           ' SELECT'+
-           ' GEN_ID(GEN_CONCILIACAO_MOV_DEP,1) NUM_SEQ,'+
-           ' 0 NUM_COMPL,'+
-           ' s.cod_loja COD_LOJA,'+
-           ' s.empresa COD_LINX,'+
-           ' s.usuario NUM_DOCTO,'+
-           ' s.data DTA_DOCTO,'+
-           ' s.data DTA_VENC,'+
-           ' NULL COD_BANCO,'+
-           ' NULL DES_BANCO,'+
-           ' 0 COD_PESSOA,'+ // 0 - Indica Lançamento de Sangria
-           ' ABS(s.valor) VLR_ORIGINAL,'+
-           ' 0.00 VLR_DESCONTO,'+
-           ' 0.00 VLR_ACRESCIMO,'+
-           ' ABS(s.valor) VLR_DOCTO,'+
-           ' SUBSTRING(s.obs FROM 1 FOR 80) OBS_TEXTO,'+
-           ' ''NAO'' IND_CONCILIACAO,'+
-           ' 0 COD_HISTO_AUTO,'+
-           ' 0 COD_BANCO_AUTO'+
+    //==========================================================================
+    // Insere Novos Movtos de Deposito/Sangria =================================
+    //==========================================================================
+    // Busca Deposito/Sangria do Periodo =======================================
+    MySql:=' SELECT s.cod_loja COD_LOJA, s.empresa COD_LINX,'+
+           ' s.usuario NUM_DOCTO, s.data DTA_DOCTO, ABS(s.valor) VLR_DOCTO,'+
+           ' SUBSTRING(s.obs FROM 1 FOR 80) OBS_TEXTO'+
 
            ' FROM LINXSANGRIASUPRIMENTOS s'+
+
            ' WHERE s.valor<0'+
-           ' AND   s.data BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
-                                    QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)));
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
+           ' AND   s.cancelado=''N'''+
+           ' AND   s.data BETWEEN '+
+           QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
+           QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
+           ' ORDER BY s.empresa, s.data , s.usuario, ABS(s.valor)';
+    DMBelShop.CDS_Busca.Close;
+    DMBelShop.SDS_Busca.CommandText:=MySql;
+    DMBelShop.CDS_Busca.Open;
+
+    FrmBelShop.MontaProgressBar(True, FrmBancoExtratos);
+    pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
+    pgProgBar.Position:=0;
+
+    sNrSeq:='0';
+    DMBelShop.CDS_Busca.DisableControls;
+    While Not DMBelShop.CDS_Busca.Eof do
+    Begin
+      Application.ProcessMessages;
+
+      // Verifica Existencia do Movto Deposito/Sangria =========================
+      MySql:=' SELECT md.num_seq, md.num_compl'+
+             ' FROM FIN_CONCILIACAO_MOV_DEP md'+
+             ' WHERE md.cod_linx='+DMBelShop.CDS_Busca.FieldByName('Cod_Linx').AsString+
+             ' AND   md.num_docto='+DMBelShop.CDS_Busca.FieldByName('Num_Docto').AsString+
+             ' AND   md.dta_docto='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DMBelShop.CDS_Busca.FieldByName('Dta_Docto').AsString)))+
+             ' AND   md.vlr_docto='+QuotedStr(f_Troca(',','.',DMBelShop.CDS_Busca.FieldByName('Vlr_Docto').AsString))+
+             ' AND   Trim(md.obs_texto)='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Obs_Texto').AsString))+
+             ' AND   md.num_seq<>'+sNrSeq;
+      DMBelShop.CDS_Busca1.Close;
+      DMBelShop.SDS_Busca1.CommandText:=MySql;
+      DMBelShop.CDS_Busca1.Open;
+
+      //  Se Encontra Guarda Num_Seq ===========================================
+      If Not DMBelShop.CDS_Busca1.IsEmpty Then
+       sNrSeq:=DMBelShop.CDS_Busca1.FieldByName('Num_Seq').AsString;
+
+      // Se NÃO Encontra - Insere e Guarda Num_Seq =============================
+      If DMBelShop.CDS_Busca1.IsEmpty Then
+      Begin
+        // Busca Novo Num_Seq e Num_Compl =====================================
+        MySql:=' SELECT GEN_ID(GEN_COMPL_CONCILIACAO_MOV_DEP,0) ID'+
+               ' FROM RDB$DATABASE';
+        DMBelShop.CDS_BuscaRapida.Close;
+        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+        DMBelShop.CDS_BuscaRapida.Open;
+        sNrCompl:=DMBelShop.CDS_BuscaRapida.FieldByName('ID').AsString;
+        DMBelShop.CDS_BuscaRapida.Close;
+
+        MySql:=' SELECT GEN_ID(GEN_CONCILIACAO_MOV_DEP,1) ID'+
+               ' FROM RDB$DATABASE';
+        DMBelShop.CDS_BuscaRapida.Close;
+        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+        DMBelShop.CDS_BuscaRapida.Open;
+        sNrSeq:=DMBelShop.CDS_BuscaRapida.FieldByName('ID').AsString;
+        DMBelShop.CDS_BuscaRapida.Close;
+
+        // Insere FIN_CONCILIACAO_MOV_DEP ======================================
+        MySql:=' INSERT INTO FIN_CONCILIACAO_MOV_DEP'+
+               ' (NUM_SEQ, NUM_COMPL, COD_LOJA, COD_LINX, NUM_DOCTO, DTA_DOCTO,'+
+               '  DTA_VENC, COD_BANCO, DES_BANCO, COD_PESSOA, VLR_ORIGINAL,'+
+               '  VLR_DESCONTO, VLR_ACRESCIMO, VLR_DOCTO, OBS_TEXTO,'+
+               '  IND_CONCILIACAO, COD_HISTO_AUTO, COD_BANCO_AUTO)'+
+
+               ' VALUES ('+
+               sNrSeq+', '+ // NUM_SEQ
+               sNrCompl+', '+ // NUM_COMPL
+               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString)+', '+ // COD_LOJA
+               DMBelShop.CDS_Busca.FieldByName('Cod_Linx').AsString+', '+ // COD_LINX
+               DMBelShop.CDS_Busca.FieldByName('Num_Docto').AsString+', '+ // NUM_DOCTO
+               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Dta_Docto').AsString)+', '+ // DTA_DOCTO
+               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Dta_Docto').AsString)+', '+ // DTA_VENC
+               ' NULL, '+ // COD_BANCO
+               ' NULL, '+ // DES_BANCO
+               ' 0, '+ // COD_PESSOA 0 - Indica Lançamento de Sangria
+               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Vlr_Docto').AsString)+', '+ // VLR_ORIGINAL
+               ' 0.00, '+ // VLR_DESCONTO
+               ' 0.00, '+ // VLR_ACRESCIMO
+               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Vlr_Docto').AsString)+', '+ // VLR_DOCTO
+               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Obs_Texto').AsString)+', '+ // OBS_TEXTO
+               ' ''NAO'', '+ // IND_CONCILIACAO
+               ' 0, '+ // COD_HISTO_AUTO
+               ' 0)'; // COD_BANCO_AUTO
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+      End; // If DMBelShop.CDS_Busca1.IsEmpty Then
+      DMBelShop.CDS_Busca1.Close;
+
+      pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
+
+      DMBelShop.CDS_Busca.Next;
+    End; // While Not DMBelShop.CDS_Busca.Eof do
+    DMBelShop.CDS_Busca.EnableControls;
+    DMBelShop.CDS_Busca.Close;
+    FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
+
+    // Insere Novos Movtos de Deposito/Sangria =================================
+    //==========================================================================
 
     // Atualiza Transacao ======================================================
     DMBelShop.SQLC.Commit(TD);
@@ -1321,6 +1505,8 @@ Begin
       // Abandona Transacao ====================================================
       DMBelShop.SQLC.Rollback(TD);
       Result:=False;
+
+      FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
 
       MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
     End; // on e : Exception do
@@ -1516,11 +1702,12 @@ Begin
       // Abandona Transacao ====================================================
       DMBelShop.SQLC.Rollback(TD);
 
+      OdirPanApres.Visible:=False;
       DateSeparator:='/';
       DecimalSeparator:=',';
       Screen.Cursor:=crDefault;
 
-      MessageBox(Handle, pChar('Erro ao Gerar Dias sem Extrato !!'+#13+e.message), 'ATENÇÃO', MB_ICONERROR);
+      MessageBox(Handle, pChar('Erro ao Gerar Dias Sem Extrato !!'+#13+e.message), 'ATENÇÃO', MB_ICONERROR);
 
       Exit;
     End; // on e : Exception do
@@ -10428,13 +10615,13 @@ begin
      DMConciliacao.CDS_CMPagtos.Locate('Num_Seq;Num_Compl', VarArrayOf([sNumSeq,sNumCompl]),[]);
 
     // =========================================================================
-    // Concializa Por Tipo de Conciliação ou Por Pagto ou Extrato ==============
+    // Concilia Por Tipo de Conciliação ou Por Pagto ou Extrato ================
     // =========================================================================
 
     // OdirApagar - Talvez (Tipo de Conciliação) - OdirDuvida
 //    If ((igTotMarcaExt>0) And (igTotMarcaPag=0)) Or ((igTotMarcaExt=0) And (igTotMarcaPag>0)) Then
 //    Begin
-//    // Concializa Por Tipo de Conciliação --------------------------------------
+//    // Concilia Por Tipo de Conciliação ----------------------------------------
 //    If ((igTotMarcaExt>0) And (igTotMarcaPag=0)) Or ((igTotMarcaExt=0) And (igTotMarcaPag>0)) Then
 //     Begin
 //       If Not BuscaTpConcicliacao(sCodTpConc, sDesTpConc) Then
@@ -10455,10 +10642,10 @@ begin
 //         End;
 //       End; // If (Trim(sCodTpConc<>'') and (Trim(sDesTpConc<>'') Then
 //     End // If ((igTotMarcaExt>0) And (igTotMarcaPag=0)) Or ((igTotMarcaExt=0) And (igTotMarcaPag>0)) Then
-//    // Concializa Por Pagto ----------------------------------------------------
+//    // Concilia Por Pagto ------------------------------------------------------
 //    Else if igTotMarcaPag=1 Then
 
-    // Concializa Como Dinheiro ------------------------------------------------
+    // Concilia Como Dinheiro --------------------------------------------------
     If bConcDinheiro Then
      Begin
        If Not ProcessaConciciacao('Din') Then
@@ -10469,7 +10656,7 @@ begin
        End; // If Not ProcessaConciciacao('Din') Then
      End; // If bConcDinheiro Then
 
-    // Concializa Somente Extrato ----------------------------------------------
+    // Concilia Somente Extrato ------------------------------------------------
     If bConcExtrato Then
      Begin
        If Not ProcessaConciciacao('SEx') Then
@@ -10480,7 +10667,7 @@ begin
        End; // If Not ProcessaConciciacao('SEx') Then
      End // If bConcExtrato Then
 
-    // Concializa Por Pagto ----------------------------------------------------
+    // Concilia Por Pagto ------------------------------------------------------
     Else If igTotMarcaPag=1 Then
      Begin
        If cgVlrConciarExt<>cgVlrConciarPag Then
@@ -10507,7 +10694,7 @@ begin
        End;
      End // If igTotMarcaExt=1 Then
 
-    // Concializa Por Extrato --------------------------------------------------
+    // Concilia Por Extrato ----------------------------------------------------
     Else If igTotMarcaExt=1 Then
      Begin
        If cgVlrConciarExt<>cgVlrConciarPag Then
@@ -11854,7 +12041,7 @@ begin
 
   Dbg_VerifExtratosContas.SetFocus;
 
-  If msg('Deseja Realmente CRIAR Dias'+cr+'SEM EXTRATOS para o Período de:'+cr+DtEdt_VerifExtratoDtaInicio.Text+' a '+DtEdt_VerifExtratoDtaFim.Text+' ??','C')=2 Then
+  If msg('Deseja Realmente CRIAR Dias'+cr+'SEM EXTRATOS para o Período de '+cr+DtEdt_VerifExtratoDtaInicio.Text+' a '+DtEdt_VerifExtratoDtaFim.Text+' ??','C')=2 Then
    Exit;
 
   Try
@@ -11933,7 +12120,6 @@ procedure TFrmBancoExtratos.Bt_CMPeriodoDepClick(Sender: TObject);
 Var
   MySql: String;
   sParametros: String;
-  bAtualiza: Boolean; // Se Atualizou Dados Linx - Retira Conciliações.
 begin
   Dbg_ConcManutExtratoDep.SetFocus;
 
@@ -11959,9 +12145,10 @@ begin
   //============================================================================
   // Busca Movtos de Sangria e Suprimento de Caixa no Linx (Cloud) =============
   //============================================================================
-  bAtualiza:=False;
-  if Application.MessageBox(PChar('ATENÇÃO !!!'+cr+'Esta Atualização irá RETIRAR Conciliações JÁ REALIZADAS'+cr+'neste Período !!'+cr+cr+
-                                  'ATUALIZAR Dados do Linx (Nuvem) no Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF), 'ATENÇÃO !!', 292)=IdYes Then
+//  PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
+//  PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
+  PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+  if msg('ATUALIZAR Dados do Linx (Nuvem) no'+cr+'Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
   Begin
     OdirPanApres.Caption:='AGUARDE !! Atualizando Sangrias de Caixa LINX - CLOUD';
     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
@@ -11973,16 +12160,19 @@ begin
     OdirPanApres.Visible:=True;
     Refresh;
 
-    bAtualiza:=True;
-
     // Busca Lojas Linx ==========================================================
     MySql:=' SELECT em.cod_linx'+
            ' FROM EMP_CONEXOES em'+
            ' WHERE em.cod_linx<>0'+
+           ' AND   em.ind_ativo=''SIM'''+
            ' ORDER BY 1';
     DMBelShop.CDS_Busca.Close;
     DMBelShop.SDS_Busca.CommandText:=MySql;
     DMBelShop.CDS_Busca.Open;
+
+    FrmBelShop.MontaProgressBar(True, FrmBancoExtratos);
+    pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
+    pgProgBar.Position:=0;
 
     DMBelShop.CDS_Busca.DisableControls;
     While Not DMBelShop.CDS_Busca.Eof do
@@ -12000,22 +12190,20 @@ begin
       // Envia Parametro e Aguarda Termino do Processo =============================
       CreateProcessSimple(sParametros);
 
+      pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
+
       DMBelShop.CDS_Busca.Next;
     End; // While Not DMBelShop.CDS_Busca.Eof do
     DMBelShop.CDS_Busca.EnableControls;
     DMBelShop.CDS_Busca.Close;
-    OdirPanApres.Visible:=False;
-  End; // If msg('Atualiza Dados da Linx (Nuvem)'+cr+cr+'do Período de '+sgdti+' a '+sgDtaF+cr+'??','C')=1 Then
+    FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
+  End; // if msg('ATUALIZAR Dados do Linx (Nuvem) no Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
   // Busca Movtos de Sangria e Suprimento de Caixa no Linx (Cloud) =============
   //============================================================================
 
-  // Retira Conciliações Já Existentes =========================================
   // Insere Novos Depositos ====================================================
-  If bAtualiza Then
-  Begin
-    If Not AtualizaMovtosDepositos Then
-     Exit;
-  End; // If bAtualiza Then
+  If Not AtualizaMovtosDepositos Then
+   Exit;
 
   // Acerta Data para Separador <.> Ponto ======================================
   sgDtaI:=f_Troca('/','.',f_Troca('-','.',sgDtaI));
@@ -12032,7 +12220,8 @@ begin
   igTotMarcaPag:=0;
 
   // Busca Extratos e Movimentos de Depositos ==================================
-  BuscaMovtosExtratosDepositos;
+  If Not BuscaMovtosExtratosDepositos Then
+   Exit;
 
   // Elimina Movots Marcados como Conciliados Mas SEM Conciliação ==============
   EliminarConciliacaoError;
@@ -12901,7 +13090,6 @@ Var
   sCodTpConc, sDesTpConc: String;
   sChvExtrato, sNumSeq, sNumCompl: String;
   bConcDinheiro, bConcExtrato: Boolean;
-  b: Boolean;
 begin
   bgLocate:=True;
 
@@ -13041,7 +13229,7 @@ begin
 //    If Trim(sNumSeq)<>'' Then
 //     DMConciliacao.CDS_CMDepositos.Locate('Num_Seq;Num_Compl', VarArrayOf([sNumSeq,sNumCompl]),[]);
 
-    // Concializa Como Dinheiro ------------------------------------------------
+    // Concilia Como Dinheiro --------------------------------------------------
     If bConcDinheiro Then
     Begin
       If Not ProcessaConciciacaoDep('Din') Then
@@ -13061,12 +13249,12 @@ begin
 
     If Trim(sNumSeq)<>'' Then
      DMConciliacao.CDS_CMDepositos.Locate('Num_Seq;Num_Compl', VarArrayOf([sNumSeq,sNumCompl]),[]);
-     
+
     // Busca Valores da Conciliação ============================================
     cgVlrConciarExt:=EdtConcManutExtratoVlrDep.Value;
     cgVlrConciarPag:=EdtConcManutDepVlr.Value;
 
-    // Concializa Somente Extrato (NÃO ESTA LIBERADO) --------------------------
+    // Concilia Somente Extrato (NÃO ESTA LIBERADO) ----------------------------
     If (bConcExtrato) and (Not bConcDinheiro) Then
      Begin
        If Not ProcessaConciciacaoDep('SEx') Then
@@ -13077,23 +13265,25 @@ begin
        End; // If Not ProcessaConciciacaoDep('SEx') Then
      End // If bConcExtrato Then
 
-    // Concializa Por Deposito -------------------------------------------------
+    // Concilia Por Deposito ---------------------------------------------------
     ELSE If (igTotMarcaPag=1) and (Not bConcDinheiro)  Then
      Begin
        If cgVlrConciarExt<>cgVlrConciarPag Then
        Begin
-         If msg('Valores a Conciliar Diferentes:'+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag)+cr+cr+'Deseja Conciliar ??','C')=2 Then
-         Begin
-           If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
-            DMConciliacao.CDS_CMDepositos.Locate('NUM_SEQ;NUM_COMPL', VarArrayOf([sNumSeq,sNumCompl]),[]);
+         // OdirApagar - 30/11/2017
+         // If msg('Valores a Conciliar Diferentes:'+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag)+cr+cr+'Deseja Conciliar ??','C')=2 Then
+         //Begin
+         msg('IMPOSSÍVEL Conciliar !!'+cr+'Valores Diferentes:'+cr+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag),'A');
 
-           If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
-            DMConciliacao.CDS_CMExtratosDep.Locate('CHV_EXTRATO', sChvExtrato,[]);
+         If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
+          DMConciliacao.CDS_CMDepositos.Locate('NUM_SEQ;NUM_COMPL', VarArrayOf([sNumSeq,sNumCompl]),[]);
 
-           Screen.Cursor:=crDefault;
-           Dbg_ConcManutExtratoDep.SetFocus;
-           Exit;
-         End;
+         If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
+          DMConciliacao.CDS_CMExtratosDep.Locate('CHV_EXTRATO', sChvExtrato,[]);
+
+         Screen.Cursor:=crDefault;
+         Dbg_ConcManutExtratoDep.SetFocus;
+         Exit;
        End; // If cgVlrConciarExt<>cgVlrConciarPag Then
 
        If Not ProcessaConciciacaoDep('Pag') Then
@@ -13104,23 +13294,25 @@ begin
        End;
      End // If (igTotMarcaPag=1) and (Not bConcDinheiro)  Then
 
-    // Concializa Por Extrato --------------------------------------------------
+    // Concila Por Extrato -----------------------------------------------------
     ELSE If (igTotMarcaExt=1) and (Not bConcDinheiro)  Then
      Begin
        If cgVlrConciarExt<>cgVlrConciarPag Then
        Begin
-         If msg('Valores a Conciliar Diferentes:'+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag)+cr+cr+'Deseja Conciliar ??','C')=2 Then
-         Begin
-           If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
-            DMConciliacao.CDS_CMDepositos.Locate('NUM_SEQ;NUM_COMPL', VarArrayOf([sNumSeq,sNumCompl]),[]);
+         // OdirApagar - 30/11/2017
+         // If msg('Valores a Conciliar Diferentes:'+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag)+cr+cr+'Deseja Conciliar ??','C')=2 Then
+         // Begin
+         msg('IMPOSSÍVEL Conciliar !!'+cr+'Valores Diferentes:'+cr+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag),'A');
 
-           If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
-            DMConciliacao.CDS_CMExtratosDep.Locate('CHV_EXTRATO', sChvExtrato,[]);
+         If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
+          DMConciliacao.CDS_CMDepositos.Locate('NUM_SEQ;NUM_COMPL', VarArrayOf([sNumSeq,sNumCompl]),[]);
 
-           Screen.Cursor:=crDefault;
-           Dbg_ConcManutExtratoDep.SetFocus;
-           Exit;
-         End;
+         If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
+          DMConciliacao.CDS_CMExtratosDep.Locate('CHV_EXTRATO', sChvExtrato,[]);
+
+         Screen.Cursor:=crDefault;
+         Dbg_ConcManutExtratoDep.SetFocus;
+         Exit;
        End; // If cgVlrConciarExt<>cgVlrConciarPag Then
 
        If Not ProcessaConciciacaoDep('Ext')Then
@@ -13183,6 +13375,7 @@ procedure TFrmBancoExtratos.Bt_CMDesmarcarDepClick(Sender: TObject);
 Var
   ii, i: Integer;
 begin
+  Dbg_ConcManutExtratoDep.SetFocus;
 
   If DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
    Exit;
@@ -13252,6 +13445,7 @@ begin
   If ii<>0 Then DMConciliacao.CDS_CMDepositos.RecNo:=ii;
   If  i<>0 Then DMConciliacao.CDS_CMExtratosDep.RecNo:=i;
 
+  Dbg_ConcManutExtratoDep.SetFocus;
 end;
 
 procedure TFrmBancoExtratos.EdtConcManutExtratoVlrDepChange(Sender: TObject);
