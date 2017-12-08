@@ -39,6 +39,7 @@ object DMTransferencias: TDMTransferencias
   end
   object DSP_Busca: TDataSetProvider
     DataSet = SDS_Busca
+    Options = [poRetainServerOrder]
     Left = 98
     Top = 94
   end
@@ -117,6 +118,7 @@ object DMTransferencias: TDMTransferencias
   end
   object DSP_EstoqueCD: TDataSetProvider
     DataSet = SDS_EstoqueCD
+    Options = [poRetainServerOrder]
     Left = 432
     Top = 96
   end
@@ -129,6 +131,7 @@ object DMTransferencias: TDMTransferencias
   end
   object DSP_BuscaRapida: TDataSetProvider
     DataSet = SDS_BuscaRapida
+    Options = [poRetainServerOrder]
     Left = 106
     Top = 246
   end
@@ -215,6 +218,7 @@ object DMTransferencias: TDMTransferencias
   end
   object DSP_CurvasLoja: TDataSetProvider
     DataSet = SDS_CurvasLoja
+    Options = [poRetainServerOrder]
     Left = 298
     Top = 328
   end
@@ -379,6 +383,7 @@ object DMTransferencias: TDMTransferencias
   end
   object DSP_ProdutoDemanda: TDataSetProvider
     DataSet = SDS_ProdutoDemanda
+    Options = [poRetainServerOrder]
     Left = 298
     Top = 384
   end
@@ -500,6 +505,7 @@ object DMTransferencias: TDMTransferencias
   end
   object DSP_EstoqueLoja: TDataSetProvider
     DataSet = SDS_EstoqueLoja
+    Options = [poRetainServerOrder]
     Left = 432
     Top = 152
   end
@@ -621,6 +627,7 @@ object DMTransferencias: TDMTransferencias
   end
   object DSP_Busca1: TDataSetProvider
     DataSet = SDS_Busca1
+    Options = [poRetainServerOrder]
     Left = 98
     Top = 166
   end

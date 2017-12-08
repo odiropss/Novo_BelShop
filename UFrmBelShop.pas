@@ -1,4 +1,6 @@
 unit UFrmBelShop;
+// AjustaDadosLojas
+
   // DtEdt_GeraOCDataDocto.
   // EdtGeraOCBuscaDocto.
 
@@ -23590,7 +23592,7 @@ begin
 
     If Bt_ConEmpresasDML.Caption='Incluir' Then
      Begin
-       MySql:='Insert into EMP_CONEXOES ('+
+       MySql:=' Insert into EMP_CONEXOES ('+
               ' COD_FILIAL, ENDERECO_IP, ENDERECO_IP_EXTERNO, PASTA_BASE_DADOS,'+
               ' DES_BASE_DADOS, COD_EMP, RAZAO_SOCIAL, TIP_EMP, DES_BAIRRO,'+
               ' DES_CIDADE, COD_UF, COD_CEP, NUM_CNPJ, INSCR_ESTADUAL,'+

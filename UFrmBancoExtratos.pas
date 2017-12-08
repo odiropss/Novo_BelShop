@@ -10504,20 +10504,20 @@ begin
   // Conciliação Como Dinheiro =================================================
   If (igTotMarcaPag<>0) And (igTotMarcaExt=0) Then
   Begin
-    If msg('Consolidar como DINHEIRO ??','C')=1 Then
+    If msg('Conciliar como DINHEIRO ??','C')=1 Then
      Begin
        bConcDinheiro:=True;
      End
     Else
      Begin
        Exit;
-     End; // If msg('Consolidar como DINHEIRO ??','C')=1 Then
+     End; // If msg('Conciliar como DINHEIRO ??','C')=1 Then
   End; // If (igTotMarcaPag<>0) Or (igTotMarcaExt=0) Then
 
   // Conciliação Somente Extrato ===============================================
   If (igTotMarcaPag=0) And (igTotMarcaExt<>0) Then
   Begin
-    If msg('Consolidar Somente o Extrato  ??','C')=1 Then
+    If msg('Conciliar Somente o Extrato  ??','C')=1 Then
      Begin
        b:=True;
        While b do
@@ -10546,10 +10546,10 @@ begin
        End; // While b do
        bConcExtrato:=True;
      End
-    Else // If msg('Consolidar Somente o Extrato  ??','C')=1 Then
+    Else // If msg('Conciliar Somente o Extrato  ??','C')=1 Then
      Begin
        Exit;
-     End; // If msg('Consolidar Somente o Extrato  ??','C')=1 Then
+     End; // If msg('Conciliar Somente o Extrato  ??','C')=1 Then
   End; // If (igTotMarcaPag=0) And (igTotMarcaExt<>0) Then
 
   If ((igTotMarcaPag=0) Or (igTotMarcaExt=0)) And (Not bConcDinheiro) And (Not bConcExtrato)Then
@@ -12120,6 +12120,7 @@ procedure TFrmBancoExtratos.Bt_CMPeriodoDepClick(Sender: TObject);
 Var
   MySql: String;
   sParametros: String;
+  bAtualizaLinx: Boolean;
 begin
   Dbg_ConcManutExtratoDep.SetFocus;
 
@@ -12148,7 +12149,12 @@ begin
 //  PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
 //  PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
   PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+
+  bAtualizaLinx:=False;
   if msg('ATUALIZAR Dados do Linx (Nuvem) no'+cr+'Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
+   bAtualizaLinx:=True;
+
+  If bAtualizaLinx Then
   Begin
     OdirPanApres.Caption:='AGUARDE !! Atualizando Sangrias de Caixa LINX - CLOUD';
     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
@@ -12197,13 +12203,16 @@ begin
     DMBelShop.CDS_Busca.EnableControls;
     DMBelShop.CDS_Busca.Close;
     FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
-  End; // if msg('ATUALIZAR Dados do Linx (Nuvem) no Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
+  End; // If bAtualizaLinx Then
   // Busca Movtos de Sangria e Suprimento de Caixa no Linx (Cloud) =============
   //============================================================================
 
-  // Insere Novos Depositos ====================================================
-  If Not AtualizaMovtosDepositos Then
-   Exit;
+  // Insere Novos Depositos se Buscou Dados no Linx ============================
+  If bAtualizaLinx Then
+  Begin
+    If Not AtualizaMovtosDepositos Then
+     Exit;
+  End; // If bAtualizaLinx Then
 
   // Acerta Data para Separador <.> Ponto ======================================
   sgDtaI:=f_Troca('/','.',f_Troca('-','.',sgDtaI));
@@ -13089,7 +13098,7 @@ procedure TFrmBancoExtratos.Bt_CMConciliarDepClick(Sender: TObject);
 Var
   sCodTpConc, sDesTpConc: String;
   sChvExtrato, sNumSeq, sNumCompl: String;
-  bConcDinheiro, bConcExtrato: Boolean;
+  bConcilia, bConcDinheiro, bConcExtrato: Boolean;
 begin
   bgLocate:=True;
 
@@ -13116,21 +13125,21 @@ begin
   // Conciliação Como Dinheiro =================================================
   If (igTotMarcaPag<>0) And (igTotMarcaExt=0) Then
   Begin
-    If msg('Consolidar como DINHEIRO ??','C')=1 Then
+    If msg('Conciliar como DINHEIRO ??','C')=1 Then
      Begin
        bConcDinheiro:=True;
      End
     Else
      Begin
        Exit;
-     End; // If msg('Consolidar como DINHEIRO ??','C')=1 Then
+     End; // If msg('Conciliar como DINHEIRO ??','C')=1 Then
   End; // If (igTotMarcaPag<>0) Or (igTotMarcaExt=0) Then
 
   {
   // Conciliação Somente Extrato ===============================================
   If (igTotMarcaPag=0) And (igTotMarcaExt<>0) Then
   Begin
-    If msg('Consolidar Somente o Extrato  ??','C')=1 Then
+    If msg('Conciliar Somente o Extrato  ??','C')=1 Then
      Begin
        b:=True;
        While b do
@@ -13159,10 +13168,10 @@ begin
        End; // While b do
        bConcExtrato:=True;
      End
-    Else // If msg('Consolidar Somente o Extrato  ??','C')=1 Then
+    Else // If msg('Conciliar Somente o Extrato  ??','C')=1 Then
      Begin
        Exit;
-     End; // If msg('Consolidar Somente o Extrato  ??','C')=1 Then
+     End; // If msg('Conciliar Somente o Extrato  ??','C')=1 Then
   End; // If (igTotMarcaPag=0) And (igTotMarcaExt<>0) Then
   }
 
@@ -13268,12 +13277,27 @@ begin
     // Concilia Por Deposito ---------------------------------------------------
     ELSE If (igTotMarcaPag=1) and (Not bConcDinheiro)  Then
      Begin
-       If cgVlrConciarExt<>cgVlrConciarPag Then
+       bConcilia:=True;
+       // Valor do Extrato Mairo que Deposito (Não Concilia) ===================
+       If cgVlrConciarExt>cgVlrConciarPag Then
+       Begin
+         msg('IMPOSSÍVEL Conciliar !!'+cr+'Valores Diferentes:'+cr+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag),'A');
+         bConcilia:=False;
+       End; // If cgVlrConciarExt>cgVlrConciarPag Then
+
+       // Valor do Extrato Menor que Deposito (Pergunta Se Concilia) ===========
+       If cgVlrConciarExt<cgVlrConciarPag Then
+       Begin
+         If msg('Valores a Conciliar Diferentes:'+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag)+cr+cr+'Deseja Conciliar ??','C')=2 Then
+          bConcilia:=False;
+       End;
+
+       If Not bConcilia Then
        Begin
          // OdirApagar - 30/11/2017
          // If msg('Valores a Conciliar Diferentes:'+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag)+cr+cr+'Deseja Conciliar ??','C')=2 Then
          //Begin
-         msg('IMPOSSÍVEL Conciliar !!'+cr+'Valores Diferentes:'+cr+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag),'A');
+         // msg('IMPOSSÍVEL Conciliar !!'+cr+'Valores Diferentes:'+cr+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag),'A');
 
          If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
           DMConciliacao.CDS_CMDepositos.Locate('NUM_SEQ;NUM_COMPL', VarArrayOf([sNumSeq,sNumCompl]),[]);
@@ -13297,12 +13321,27 @@ begin
     // Concila Por Extrato -----------------------------------------------------
     ELSE If (igTotMarcaExt=1) and (Not bConcDinheiro)  Then
      Begin
-       If cgVlrConciarExt<>cgVlrConciarPag Then
+       bConcilia:=True;
+       // Valor do Extrato Mairo que Deposito (Não Concilia) ===================
+       If cgVlrConciarExt>cgVlrConciarPag Then
+       Begin
+         msg('IMPOSSÍVEL Conciliar !!'+cr+'Valores Diferentes:'+cr+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag),'A');
+         bConcilia:=False;
+       End; // If cgVlrConciarExt>cgVlrConciarPag Then
+
+       // Valor do Extrato Menor que Deposito (Pergunta Se Concilia) ===========
+       If cgVlrConciarExt<cgVlrConciarPag Then
+       Begin
+         If msg('Valores a Conciliar Diferentes:'+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag)+cr+cr+'Deseja Conciliar ??','C')=2 Then
+          bConcilia:=False;
+       End;
+
+       If Not bConcilia Then
        Begin
          // OdirApagar - 30/11/2017
          // If msg('Valores a Conciliar Diferentes:'+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag)+cr+cr+'Deseja Conciliar ??','C')=2 Then
          // Begin
-         msg('IMPOSSÍVEL Conciliar !!'+cr+'Valores Diferentes:'+cr+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag),'A');
+//         msg('IMPOSSÍVEL Conciliar !!'+cr+'Valores Diferentes:'+cr+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag),'A');
 
          If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
           DMConciliacao.CDS_CMDepositos.Locate('NUM_SEQ;NUM_COMPL', VarArrayOf([sNumSeq,sNumCompl]),[]);

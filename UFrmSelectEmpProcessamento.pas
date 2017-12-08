@@ -355,14 +355,16 @@ begin
                   ' e.USU_ALTERA, e.DTA_ALTERA, e.COD_LISTAPRE,'+
                   ' e.DTA_INICIO_LINX, e.DTA_INVENTARIO_LINX'+
 
-                  ' From EMP_CONEXOES e';
+                  ' From EMP_CONEXOES e'+
+
+                  ' Where COALESCE(e.cod_emp, 0)>0';
 
                   If Trim(sgOutrasEmpresa)='' Then
                    MySql:=
-                    MySql+' Where e.Ind_Ativo=''SIM'''
+                    MySql+' And e.Ind_Ativo=''SIM'''
                   Else
                    MySql:=
-                    MySql+' Where (e.Ind_Ativo=''SIM'' Or e.Cod_Filial in '+sgOutrasEmpresa+')';
+                    MySql+' And (e.Ind_Ativo=''SIM'' Or e.Cod_Filial in '+sgOutrasEmpresa+')';
 
                   If Trim(sgEmpresaNao)<>'' Then
                    MySql:=

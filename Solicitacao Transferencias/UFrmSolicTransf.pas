@@ -1,3 +1,7 @@
+{
+Pasta para Instalação em: C:\SolicitacaoTransferencias\
+}
+
 unit UFrmSolicTransf;
 
 interface

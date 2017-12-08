@@ -208,6 +208,7 @@ type
     procedure Bt_LanctosSalvarClick(Sender: TObject);
     procedure Bt_LanctosAbandonarClick(Sender: TObject);
     procedure EdtDtOrigemDoc1DropDown(Sender: TObject);
+    procedure Dbg_FluFornCaixaTitleClick(Column: TColumn);
 
   private
     { Private declarations }
@@ -3885,6 +3886,47 @@ end;
 procedure TFrmFluxoFornecedor.EdtDtOrigemDoc1DropDown(Sender: TObject);
 begin
   SelectNext(ActiveControl,True,True);
+end;
+
+procedure TFrmFluxoFornecedor.Dbg_FluFornCaixaTitleClick(Column: TColumn);
+Var
+  s, sPesquisa: String;
+  b: Boolean;
+  i: Integer;
+begin
+
+  If Not DMBelShop.CDS_FluxoFornecedor.IsEmpty Then
+  Begin
+    i:=DMBelShop.CDS_FluxoFornecedor.RecNo;
+    sPesquisa:='';
+    b:=True;
+    While b do
+    Begin
+      s:=DMBelShop.CDS_FluxoFornecedor.FieldByName(Column.FieldName).DisplayLabel;
+      If InputQuery('Localizar: '+s,'',sPesquisa) then
+       Begin
+         Try
+           If Not DMBelShop.CDS_FluxoFornecedor.Locate(Column.FieldName, sPesquisa,[]) Then
+           Begin
+             If Not LocalizaRegistro(DMBelShop.CDS_FluxoFornecedor, Column.FieldName, sPesquisa) Then
+             Begin
+               DMBelShop.CDS_FluxoFornecedor.RecNo:=i;
+               msg('Não Localizado !!','A');
+               Exit;
+             End;
+           End; // If Not DMBelShop.CDS_FluxoFornecedor.Locate(Column.FieldName, sPesquisa,[]) Then
+           Break;
+         Except
+           msg('Informação Inválida !!','A');
+           Break;
+         End;
+       End
+      Else // If InputQuery('Localizar: '+s,'',sPesquisa) then
+       Begin
+         Break;
+       End; // If InputQuery('Localizar: '+s,'',sPesquisa) then
+    End; // While b do
+  End; // If Not DMBelShop.CDS_FluxoFornecedor.IsEmpty Then
 end;
 
 end.

@@ -5506,12 +5506,12 @@ begin
   End;
 
   // Lojas Por Fornecedor ======================================================
-  If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
-     (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='89') Then
-  Begin
-    RomaneioFornecedor;
-    Exit;
-  End; // If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
+//  If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
+//     (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='89') Then
+//  Begin
+//    RomaneioFornecedor;
+//    Exit;
+//  End; // If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
 
   Screen.Cursor:=crAppStart;
 

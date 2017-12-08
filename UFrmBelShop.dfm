@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_FinanComprPlanFinan
+    ActivePage = Ts_OrdemCompra
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -7182,7 +7182,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_OCGeraOrdemCompra
+        ActivePage = Ts_OCBuscaProdutos
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange

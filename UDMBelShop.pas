@@ -2907,7 +2907,7 @@ Begin
 
     MySql:=' Select ec.cod_emp'+
            ' From EMP_CONEXOES ec'+
-           ' WHERE ec.Cod_Emp<>''0'''+
+           ' WHERE COALESCE(ec.cod_emp,0)>100'+
            ' Order by ec.cod_emp';
     CDS_Busca.Close;
     SDS_Busca.CommandText:=MySql;
@@ -2949,8 +2949,7 @@ Begin
              ' ce.Compl_Endereco='+
              QuotedStr(Trim(FrmBelShop.IBQ_MPMS.FieldByName('LogCompl').AsString))+
 
-             ' Where ce.Cod_Emp='+
-             CDS_Busca.FieldByName('Cod_Emp').AsString;
+             ' Where ce.Cod_Emp='+CDS_Busca.FieldByName('Cod_Emp').AsString;
       SQLC.Execute(MySql,nil,nil);
 
       CDS_Busca.Next;
