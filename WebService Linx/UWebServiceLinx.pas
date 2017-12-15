@@ -1148,13 +1148,15 @@ Begin
     sXML:='			<Parameter id="dt_update_fim">'+sgDtaFim+'</Parameter>';
     Writeln(txtArq,sXML);
 
-    //====================================
-    // PARAMETRO OPCIONAL E NÃO UTILIZADOS
-    //====================================
-    //       Metodo         Parametro
-    //--------------------  --------------
-    // LinxProdutos         Cod_Produto
-    //====================================
+    //===============================================
+    // PARAMETRO OPCIONAL: Cod_Produto (sgCodProduto)
+    //===============================================
+    If Trim(sgCodProduto)<>'' Then
+    Begin
+      sXML:='			<Parameter id="cod_produto">'+sgCodProduto+'</Parameter>';
+      Writeln(txtArq,sXML);
+    End; // If Trim(sgCodProduto)<>'' Then
+
   End; // If sgMetodo='LinxProdutos' Then
   // ===========================================================================
 
@@ -1637,7 +1639,7 @@ Data_Fim 26/10/2017;
       If (sgMetodo='LinxClientesFornec') And (Not bUmaVez) Then
       Begin
         If dDtaUltAtual=0 Then
-         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+4;;
+         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+4;
 
         DecodeDate(dDtaUltAtual-30, wAno, wMes, wDia);
         sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
@@ -1660,6 +1662,8 @@ Data_Fim 26/10/2017;
           End;
         End; // If Trim(sgParametroMetodo)<>'' Then
 
+//        sgDtaInicio:='2016-12-01';
+//        sgDtaFim:='2017-12-11';
         MontaMetodoXMLPost();
       End; // If (sgMetodo='LinxClientesFornec') And (Not bUmaVez) Then Then
       //========================================================================
@@ -1727,6 +1731,15 @@ Data_Fim 26/10/2017;
               sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
             End;
           End; // If Trim(sgParametroMetodo)<>'' Then
+
+          // Odir Acerta Período Anterior ao Inicio da Loja
+//          dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime-60;
+//          DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+//          sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+//
+//          dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime-1;
+//          DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+//          sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
           MontaMetodoXMLPost('NULL', 'NULL'); // operacao, tipo_transacao
         End; // If (sMetodoEspecifico='') Then
@@ -1995,6 +2008,9 @@ Data_Fim 26/10/2017;
       //========================================================================
       If (sgMetodo='LinxProdutos') And (Not bUmaVez) Then
       Begin
+        sgCodProduto:='';
+        sgReferenciaProd:='';
+
         If dDtaUltAtual=0 Then
          Begin
            sgDtaInicio:='NULL';
@@ -2028,6 +2044,7 @@ Data_Fim 26/10/2017;
         // Busca Todos os Produtos ==================================
         sgDtaInicio:='NULL';
         sgDtaFim:='NULL';
+
                          // Setor   Linha   Marca   Colecao
         MontaMetodoXMLPost('NULL', 'NULL', 'NULL', 'NULL');
       End; // If (sgMetodo='LinxProdutos') And (Not bUmaVez) Then

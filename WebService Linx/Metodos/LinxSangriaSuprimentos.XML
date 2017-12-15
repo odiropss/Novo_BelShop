@@ -7,8 +7,8 @@
 		<Parameters>
 			<Parameter id="chave">d52511f4-3541-4a65-9adc-665513ea3207</Parameter>
 			<Parameter id="cnpjEmp">05110757000151</Parameter>
-			<Parameter id="data_inicial">2017-12-01</Parameter>
-			<Parameter id="data_fim">2017-12-05</Parameter>
+			<Parameter id="data_inicial">2017-12-10</Parameter>
+			<Parameter id="data_fim">2017-12-13</Parameter>
 		</Parameters>
 	</Command>
 </LinxMicrovix>

@@ -343,14 +343,14 @@ Begin
   // DEVOLUÇÕES – Devolução de Saída de Entrada de Fornecedor ------------------
   //----------------------------------------------------------------------------
   // OPERACAO	    TIPO_TRANSACAO	CFOP	DESC_CFOP
-  // DE	(Saída)				 Null       5411	Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária
-  // DE (Saída)				 Null       6411	Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária
+  // DE	(Saída)         Null            5411	Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária
+  // DE (Saída)         Null            6411	Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária
 
   // Não Existe Devolução de Entrada para Fornecedor
   //------------------------------------------------
-  // DS (Entrada)			 Null       1202	Devolução de venda de mercadoria adquirida ou recebida de terceiros
-  // DS (Entrada)			 Null       1411	Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária
-  // DS (Entrada)			 Null       2411	Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária
+  // DS (Entrada)	Null            1202	Devolução de venda de mercadoria adquirida ou recebida de terceiros
+  // DS (Entrada)	Null            1411	Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária
+  // DS (Entrada)	Null            2411	Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária
   //----------------------------
   // COMPROVANTES
   //----------------------------
@@ -361,10 +361,10 @@ Begin
   // CONSERTOS - Consertos de  Saída de Entrada de Fornecedor ------------------
   //----------------------------------------------------------------------------
   // OPERACAO	    TIPO_TRANSACAO	CFOP	DESC_CFOP
-  // N	(Entrada)		    E		      1915	Entrada de mercadoria ou bem recebido para conserto ou reparo
-  // N	(Entrada)		    E		      2915	Entrada de mercadoria ou bem recebido para conserto ou reparo
-  // N	(Saída)		      S		      5915	Remessa de mercadoria ou bem para conserto ou reparo
-  // N	(Saída)		      S		      6915	Remessa de mercadoria ou bem para conserto ou reparo
+  // N	(Entrada)	      E		1915	Entrada de mercadoria ou bem recebido para conserto ou reparo
+  // N	(Entrada)	      E		2915	Entrada de mercadoria ou bem recebido para conserto ou reparo
+  // N	(Saída)		      S		5915	Remessa de mercadoria ou bem para conserto ou reparo
+  // N	(Saída)		      S		6915	Remessa de mercadoria ou bem para conserto ou reparo
   //----------------------------
   // COMPROVANTES
   //----------------------------
@@ -376,17 +376,16 @@ Begin
   // BONIFICAÇÕES - Bonificações de  Saída de Entrada de Fornecedor ------------
   //----------------------------------------------------------------------------
   // OPERACAO	TIPO_TRANSACAO	CFOP	DESC_CFOP
-  // E	(Entrada)     Null		1910	Entrada de bonificação, doação ou brinde
-  // E	(Entrada)			Null  	2910	Entrada de bonificação, doação ou brinde
-  // S	(Saída)				Null    5910	Remessa em bonificação, doação ou brinde
-  // S	(Saída)				Null    6910	Remessa em bonificação, doação ou brinde
+  // E	(Entrada)       Null	1910	Entrada de bonificação, doação ou brinde
+  // E	(Entrada)       Null  	2910	Entrada de bonificação, doação ou brinde
+  // S	(Saída)		Null    5910	Remessa em bonificação, doação ou brinde
+  // S	(Saída)		Null    6910	Remessa em bonificação, doação ou brinde
   //----------------------------
   // COMPROVANTES
   //----------------------------
   // 027	REMESSA DE BONIFICAÇÃO - Débito
   // 913	BONIF DE MERCADORIAS	 - Crédito
   // 916	BONIF DE MERCADORIAS	 - Crédito
-
 
   MySqlLinx:=' SELECT'+
              ' fl.cod_cliente codfornecedor,'+
@@ -538,7 +537,7 @@ Begin
     Begin
       Try
         MySql:=' SELECT S.CODCENTROCUSTO, S.CODCUSTO, C.NOMECUSTO,'+
-               '         S.CODSUBCUSTO, S.NOMESUBCUSTO'+
+               '        S.CODSUBCUSTO, S.NOMESUBCUSTO'+
                ' FROM CUSTO C, CUSTOSUB S'+
                ' WHERE C.CODCUSTO = S.CODCUSTO';
         IBQ_ConsultaFilial.Close;
@@ -824,6 +823,8 @@ Begin
 
   // Acerta Data do Movto em Relação a Data de Início da Loja ==================
   sDtaMovtoLinx:=sgDtaIniLINX;
+  
+//opss
   If StrToDate(f_Troca('.','/',f_Troca('-','/',sDtaMovtoLinx)))<StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio))) Then
    sDtaMovtoLinx:=sgDtaInicio;
 

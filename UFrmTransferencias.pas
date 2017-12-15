@@ -1,5 +1,12 @@
 unit UFrmTransferencias;
-
+{
+ Prioridades:
+   Repete até Enviar
+ 0       SIM        = Produtos de Campanhas, Folhetos, etc. (Calculados no Automático, Solicitados pelo Setor de Compras, Solicitados Direto da Loja)
+ 1       SIM        = Produtos Solicitados pelo Setor de Compras
+ 2       SIM        = Produtos Solicitados Direto da Loja
+ 3       NÃO        = Produtos Calculados no Automático
+}
 interface
 
 uses
@@ -742,7 +749,7 @@ Begin
         If Trim(sQtdMenos)='' Then
          sQtdMenos:='0';
 
-        // SE PRODUTO EXISTIR NÃO ATUALIZA =====================================
+        // SE PRODUTO NÃO EXISTIR INSERE =======================================
         If Trim(DMTransferencias.CDS_Busca1.FieldByName('Num_Docto').AsString)='' Then
          Begin
            sQtdTrans:=Trim(DMTransferencias.CDS_Busca.FieldByName('QTD_A_TRANSF').AsString);
@@ -757,7 +764,7 @@ Begin
                   ' QTD_DIAS, QTD_VENDA_DIA, QTD_DEMANDA, QTD_REPOSICAO,'+
                   ' NUM_TR_GERADA, QTD_TRANSF_OC, QTD_TRANSF, QTD_A_TRANSF,'+
                   ' NUM_PEDIDO, IND_TRANSF, USU_ALTERA, DTA_ALTERA, OBS_DOCTO, IND_PRIORIDADE)'+
-                                  
+
                   ' VALUES ('+
                   QuotedStr(DMTransferencias.CDS_Busca.FieldByName('New_Num_Seq').AsString)+', '+ // NUM_SEQ
                   ' CURRENT_DATE, '+ // DTA_MOVTO
@@ -790,7 +797,50 @@ Begin
            // OdirApagar - 08/12/2017
 //           sQtdTrans:=DMTransferencias.CDS_Busca1.FieldByName('Qtd_A_Transf').AsString;
 //           If DMTransferencias.CDS_Busca.FieldByName('Qtd_A_Transf').AsCurrency>DMTransferencias.CDS_Busca1.FieldByName('Qtd_A_Transf').AsCurrency Then
-           sQtdTrans:=DMTransferencias.CDS_Busca.FieldByName('Qtd_A_Transf').AsString;
+           //===================================================================
+           // Controle de Prioridades
+           //===================================================================
+           // Prioridade 0 <ZERO> CAMAPNHAS  - Substitui Qualquer Outra
+           // Prioridade 1 <UM>   COMPRAS    - Substitui Somente a Prioridade 3 <TRES>
+           // Prioridade 2 <DOIS> LOJAS      - Substitui as Prioridade 2 e 3 <DOIS e TRES>
+           // Prioridade 3 <TRES> AUTOMATICO - Não Substitui. Prioridade Mais BAIXA
+           // Controle de Prioridades
+           //===================================================================
+
+           // CDS_Busca1 = Prioridade Existente
+           // CDS_Busca  = Nova Prioridade
+           bProcessou:=False;
+
+           // Duas Prioridades Iguais
+           If DMTransferencias.CDS_Busca1.FieldByName('Ind_Prioridade').AsInteger=DMTransferencias.CDS_Busca.FieldByName('Ind_Prioridade').AsInteger Then
+            Begin
+              sQtdTrans:=DMTransferencias.CDS_Busca1.FieldByName('Qtd_A_Transf').AsString;
+              If DMTransferencias.CDS_Busca.FieldByName('Qtd_A_Transf').AsCurrency>DMTransferencias.CDS_Busca1.FieldByName('Qtd_A_Transf').AsCurrency Then
+               sQtdTrans:=DMTransferencias.CDS_Busca.FieldByName('Qtd_A_Transf').AsString;
+
+              bProcessou:=True;
+            End
+           ELSE // Prioridade 0 - Substitui Todas
+            If DMTransferencias.CDS_Busca.FieldByName('Ind_Prioridade').AsInteger=0 Then
+            Begin
+              sQtdTrans:=DMTransferencias.CDS_Busca.FieldByName('Qtd_A_Transf').AsString;
+              bProcessou:=True;
+            End
+           ELSE // Prioridade 1 - Substitui Prioridade 3
+            If (DMTransferencias.CDS_Busca.FieldByName('Ind_Prioridade').AsInteger=1) and
+               (DMTransferencias.CDS_Busca1.FieldByName('Ind_Prioridade').AsInteger=3) Then
+            Begin
+              sQtdTrans:=DMTransferencias.CDS_Busca.FieldByName('Qtd_A_Transf').AsString;
+              bProcessou:=True;
+            End
+           ELSE // Prioridade 2 - Substitui Prioridades 1 e 3
+            If (DMTransferencias.CDS_Busca.FieldByName('Ind_Prioridade').AsInteger=2) and
+               ((DMTransferencias.CDS_Busca1.FieldByName('Ind_Prioridade').AsInteger=1) Or
+                (DMTransferencias.CDS_Busca1.FieldByName('Ind_Prioridade').AsInteger=3)) Then
+            Begin
+              sQtdTrans:=DMTransferencias.CDS_Busca.FieldByName('Qtd_A_Transf').AsString;
+              bProcessou:=True;
+            End;
 
            sQtdTrans:=f_Troca(',','.',sQtdTrans);
 
@@ -1314,16 +1364,16 @@ Begin
            // Reposição pela Quantidade de Estoque Mínimo
            Else If (DMTransferencias.CDS_EstoqueLojaEST_MINIMO.AsInteger  = iQtdReposicao) And
                    (DMTransferencias.CDS_EstoqueLojaQTD_DEMANDA.AsInteger <> iQtdReposicao) Then
-            sObs:='Reposição pela Quantidade de Estoque Mínimo'
+            sObs:='- Reposição pela Quantidade de Estoque Mínimo'
 
            // Reposição pela Quantidade de Dias de Estocagem + Quantidade de Estoque (Negativa)
            Else If (DMTransferencias.CDS_EstoqueLojaEST_MINIMO.AsInteger  <> iQtdReposicao) And
                    (DMTransferencias.CDS_EstoqueLojaQTD_DEMANDA.AsInteger <> iQtdReposicao) And
                    (DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency < 0.00) Then
-            sObs:='Reposição pela Quantidade de Dias de Estocagem + Quantidade de Estoque (Negativa)'
+            sObs:='- Reposição pela Quantidade de Dias de Estocagem + Quantidade de Estoque (Negativa)'
            Else If ((DMTransferencias.CDS_EstoqueLojaEST_MINIMO.AsInteger - DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency) = iQtdReposicao) and
                    (DMTransferencias.CDS_EstoqueLojaQTD_ESTOQUE.AsCurrency = 0.00) Then
-            sObs:='Reposição pela Quantidade Necessária para Completar o Estoque Mínimo';
+            sObs:='- Reposição pela Quantidade Necessária para Completar o Estoque Mínimo';
          End; // If Trim(sObs)='' Then
 
          // Grava Alterações de Reposição ======================================
@@ -1554,13 +1604,13 @@ Begin
 
          If bCurvaC Then
           MySql:=
-           MySql+'    WHEN ((p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva=''E'')) OR'+
+           MySql+'    WHEN ((p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva in (''D'',''E''))) OR'+
                  '         ((p.principalfor='+QuotedStr('000356')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''%YELLOW%'')) OR'+
                  '         ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')) OR'+
                  '         ((p.principalfor='+QuotedStr('000677')+') AND (c.ind_curva in (''D'',''E''))) THEN'
          Else
           MySql:=
-           MySql+'    WHEN (p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva=''E'') THEN';
+           MySql+'    WHEN (p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva in (''D'',''E'')) THEN';
 
   MySql:=
    MySql+'     ''C'''+
@@ -1584,13 +1634,13 @@ Begin
 
          If bCurvaC Then
           MySql:=
-           MySql+'                               WHEN ((p.datainclusao>'+QuotedStr(sDta)+') AND (c.ind_curva=''E'')) OR'+
+           MySql+'                               WHEN ((p.datainclusao>'+QuotedStr(sDta)+') AND (c.ind_curva in (''D'',''E''))) OR'+
                  '                                    ((p.principalfor='+QuotedStr('000356')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''%YELLOW%'')) OR'+
                  '                                    ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')) OR'+
                  '                                    ((p.principalfor='+QuotedStr('000677')+') AND (c.ind_curva in (''D'',''E''))) THEN 3'
          Else
           MySql:=
-           MySql+'                               WHEN (p.datainclusao>'+QuotedStr(sDta)+') AND (c.ind_curva=''E'') THEN 3';
+           MySql+'                               WHEN (p.datainclusao>'+QuotedStr(sDta)+') AND (c.ind_curva in (''D'',''E'')) THEN 3';
 
   MySql:=
    MySql+'                                       WHEN c.ind_curva=''A'' THEN 1'+
@@ -1614,7 +1664,7 @@ Begin
 
          If bCurvaC Then
           MySql:=
-           MySql+' AND   ((c.ind_curva in ('+sgCurvas+')) OR (p.datainclusao>='+QuotedStr(sDta)+' AND c.ind_curva=''E'')'+
+           MySql+' AND   ((c.ind_curva in ('+sgCurvas+')) OR (p.datainclusao>='+QuotedStr(sDta)+')'+ // ' AND c.ind_curva=''E'')'+
                  '         OR'+
                  '        ((p.principalfor='+QuotedStr('000356')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''%YELLOW%''))'+
                  '         OR'+
@@ -1623,14 +1673,18 @@ Begin
                  '        ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')))'
          Else
           MySql:=
-           MySql+' AND     ((c.ind_curva in ('+sgCurvas+')) OR (p.datainclusao>='+QuotedStr(sDta)+' AND c.ind_curva=''E''))'+
+           MySql+' AND     ((c.ind_curva in ('+sgCurvas+')) OR (p.datainclusao>='+QuotedStr(sDta)+'))'+ // ' AND c.ind_curva=''E''))'+
                  ' AND NOT (((p.principalfor='+QuotedStr('000356')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''%YELLOW%''))'+
                  '           OR'+
                  '          ((p.principalfor='+QuotedStr('000677')+') AND (c.ind_curva in (''D'',''E'')))'+
                  '           OR'+
                  '          ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')))';
   MySql:=
-   MySql+' ORDER BY p.codproduto';
+   MySql+' AND EXISTS (SELECT 1'+
+         '             FROM LINXPRODUTOS pl'+
+         '             WHERE pl.cod_auxiliar=p.codproduto)'+
+
+         ' ORDER BY p.codproduto';
   DMTransferencias.CDS_CurvasLoja.Close;
   DMTransferencias.SDS_CurvasLoja.CommandText:=MySql;
   DMTransferencias.CDS_CurvasLoja.Open;
@@ -2161,6 +2215,7 @@ Var
 
   bFeriado: Boolean;
 begin
+
   //============================================================================
   // Windows: Nome do Usuario, Computador e Data Hoje Sem Separadores ==========
   //============================================================================
