@@ -188,8 +188,8 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'PER_PARTICIPACAO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 45
-            Visible = True
+            Width = -1
+            Visible = False
           end
           item
             Expanded = False
@@ -213,8 +213,8 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'PER_MARGEM'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 60
-            Visible = True
+            Width = -1
+            Visible = False
           end
           item
             Color = 14024703
@@ -245,8 +245,8 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'VLR_VENDAS_ANO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 80
-            Visible = True
+            Width = -1
+            Visible = False
           end
           item
             Expanded = False
@@ -254,8 +254,8 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             Title.Alignment = taRightJustify
             Title.Caption = '$ Vd 4M'
-            Width = 80
-            Visible = True
+            Width = -1
+            Visible = False
           end
           item
             Color = 15395562
@@ -263,8 +263,8 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'QTD_VENDAS_ANO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 80
-            Visible = True
+            Width = -1
+            Visible = False
           end
           item
             Expanded = False
@@ -272,8 +272,8 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             Title.Alignment = taRightJustify
             Title.Caption = 'Qt Vd 4M'
-            Width = 80
-            Visible = True
+            Width = -1
+            Visible = False
           end
           item
             Color = 13434828
@@ -281,8 +281,8 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'QTD_TRANSITO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = 55
-            Visible = True
+            Width = -1
+            Visible = False
           end
           item
             Color = 15400917
@@ -291,8 +291,8 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             Title.Alignment = taRightJustify
             Title.Caption = 'Disp'
-            Width = 70
-            Visible = True
+            Width = -1
+            Visible = False
           end
           item
             Color = 15269887
@@ -301,8 +301,8 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             Title.Alignment = taRightJustify
             Title.Caption = 'Qt EstQ AA'
-            Width = 82
-            Visible = True
+            Width = -1
+            Visible = False
           end
           item
             Expanded = False
@@ -310,8 +310,8 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             Title.Alignment = taRightJustify
             Title.Caption = 'Qt EstQ 4M'
-            Width = 82
-            Visible = True
+            Width = -1
+            Visible = False
           end
           item
             Color = 15395541
@@ -320,8 +320,8 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             Title.Alignment = taRightJustify
             Title.Caption = 'Disp P'#231' Vd'
-            Width = 80
-            Visible = True
+            Width = -1
+            Visible = False
           end
           item
             Alignment = taCenter
@@ -370,8 +370,8 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'IND_SITUACAO'
             ReadOnly = True
             Title.Alignment = taCenter
-            Width = 100
-            Visible = True
+            Width = -1
+            Visible = False
           end
           item
             Expanded = False
@@ -689,6 +689,7 @@ object FrmEstoques: TFrmEstoques
           ParentColor = False
           ParentFont = False
           TabOrder = 5
+          Visible = False
           object Cbx_EstoquesSituacaoProd: TComboBox
             Left = 9
             Top = 18
@@ -767,17 +768,16 @@ object FrmEstoques: TFrmEstoques
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
+          Visible = False
           OnClick = Bt_EstoquesDemonstrativoClick
         end
         object Bt_EstoquesFiltroComprador: TJvXPButton
-          Tag = 92
           Left = 643
           Top = 2
           Width = 160
           Height = 51
           Caption = 'Seleciona Comprador'
           TabOrder = 7
-          ShowFocusRect = True
           Align = alRight
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -788,270 +788,9 @@ object FrmEstoques: TFrmEstoques
           OnClick = Bt_EstoquesFiltroCompradorClick
         end
       end
-      object Panel66: TPanel
-        Left = 0
-        Top = 494
-        Width = 969
-        Height = 47
-        Align = alBottom
-        BevelInner = bvLowered
-        BorderStyle = bsSingle
-        Ctl3D = False
-        ParentCtl3D = False
-        TabOrder = 1
-        object Bt_EstoquesFechar: TJvXPButton
-          Left = 878
-          Top = 2
-          Width = 87
-          Height = 41
-          Caption = 'Fechar'
-          TabOrder = 0
-          TabStop = False
-          Glyph.Data = {
-            07544269746D61700E060000424D0E0600000000000036000000280000001600
-            0000160000000100180000000000D8050000C30E0000C30E0000000000000000
-            0000FFFFFFF2F2F2F2F2F2D3D3D3E8E8E8F5F5F5DBDBDBDDDDDDECECECEEEEEE
-            D3D3D3EBEBEBF7F7F723230F4F4F00B2B2A8E9E9E9D6D6D6EBEBEBFAFAFAFFFF
-            FFFFFFFF0000FFFFFFF0F0F0D8D8D8EDEDEDEAEAEADFDFDFDCDCDCF4F4F4E6E6
-            E6D7D7D7F2F2F2E7E7E7DDDDDD4C4C0CFFFF006868119B9B9BF4F4F4E7E7E7DB
-            DBDBE6E6E6FFFFFF0000D3D3D3E4E4E4EFEFEFE4E4E4D8D8D8EDEDEDF3F3F3D3
-            D3D3E7E7E7F1F1F1DFDFDFDBDBDBECECEC4D4D0DFFFF008D8D00515105878781
-            DFDFDFEDEDEDECECECD3D3D30000E6E6E6EDEDEDE1E1E1DBDBDBF5F5F5E3E3E3
-            DCDCDCEAEAEAEAEAEAE0E0E0DBDBDBF6F6F6E3E3E34D4D0DFFFF008F8F007F7F
-            0056560DA1A1A1E2E2E2DBDBDBF3F3F300004B4B4B5050504E4E4E4848484F4F
-            4F5050504A4A4A4C4C4C444444F0F0F0F3F3F3D3D3D3E7E7E74E4E0EFFFF008F
-            8F007F7F007D7D004C4C0D3232324848484E4E4E0000BFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBF4A4A4ADFDFDFDFDFDFE9E9E9EBEBEB4D4D0D
-            FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000BFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFB0B0B0BFBFBF4040403F3F3F3737373737373F3F
-            3F434303FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000BFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF3D3D3D8F8F8F3E3E3E7F7F7F7F7F7F7F
-            7F7F7F7F7F474707FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF
-            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF3C3C304D4D141515137F7F7F
-            7F7F7F7F7F7F7F7F7F474707FFFF008D8D007777007D7D00474700636363BFBF
-            BFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF4646309A9A004545
-            046161617F7F7F7F7F7F7F7F7F474707FFFF005F5F0817171767670047470063
-            6363BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF474727ED
-            ED0092920045450E6363637F7F7F7F7F7F474707FFFF004747276B6B6B676700
-            474700636363BFBFBFBFBFBF0000AEAEAE57574531310A272700272700272700
-            424200FFFF00F9F9009898004242006363637F7F7F474707FFFF007E7E002727
-            006E6E00474700636363BFBFBFBFBFBF00008989898C8C13CFCF01CFCF00CFCF
-            00CFCF00D5D500FFFF00FFFF00EDED0098980045450E616161474707FFFF008F
-            8F007F7F007F7F00474700636363BFBFBFBFBFBF0000898989A1A113FEFE2CFF
-            FFAFFFFFAFFFFFAFFFFFAFFFFFAFFFFFDBFFFF6DE3E3004B4B095B5B5B474707
-            FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000A7A7A76F6F48
-            79790C7A7A0A7A7A0A7A7A0A8A8A09FFFF3EFFFF70E4E4005F5F005858587F7F
-            7F474707FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000BFBF
-            BFB1B1B1A9A9A9A9A9A9A9A9A9A9A9A94C4C2CFFFF0DE6E6075959085858537F
-            7F7F7F7F7F474707FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF
-            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF505030E3E3005F5F03575757
-            7F7F7F7F7F7F7F7F7F474707FFFF008F8F007F7F007F7F00474700636363BFBF
-            BFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF4242356E6E252121
-            1B7F7F7F7F7F7F7F7F7F7F7F7F5E5E52999906D5D5008787007F7F0047470063
-            6363BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF70707088
-            88884444447F7F7F7F7F7F7F7F7F7F7F7F7F7F7F565656999906DBDB00898900
-            474700636363BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBF4444447F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F5E5E529B9B
-            03D7D7004C4C00767676BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBF41414156565656565656565656565656565656565656
-            56562E2E2E88880765650C888888BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBF969696898989898989898989898989898989
-            898989898989898989898989898989B1B1B1BFBFBFBFBFBF0000}
-          ShowFocusRect = True
-          Align = alRight
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          OnClick = Bt_EstoquesFecharClick
-        end
-        object Bt_EstoquesFiltros: TJvXPButton
-          Tag = 92
-          Left = 2
-          Top = 2
-          Width = 99
-          Height = 41
-          Caption = 'Filtros'
-          TabOrder = 1
-          TabStop = False
-          Glyph.Data = {
-            07544269746D61705E060000424D5E0600000000000036040000280000001600
-            000017000000010008000000000028020000C30E0000C30E0000000100000000
-            000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
-            FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
-            FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000000000000000000000000000000000000000000000000000000000000000
-            0000010101010101010101010101010101010101010101010000010101010101
-            0101010101010101010101040404030100000101010101010101010101010101
-            0101040701070401000001010101010101010101010101010104070101070401
-            0000010101010101010101010101010104070101070704010000010101010101
-            0101010101010104070101070704010100000101010101010101010101010407
-            0101070704010101000001010101010101010101010407010107070401010101
-            0000010101010101010101010407010107070401010101010000010101010101
-            0101010404040307070401010101010100000101010101010404040404040407
-            0401010101010101000001010101040406010601010404040101010101010101
-            0000010101040106010601010101040101010101010101010000010101040601
-            0601060106010401010101010101010100000101040601060101010601060104
-            0101010101010101000001010401060106010601060101040101010101010101
-            0000010104060106010601060106010401010101010101010000010104010601
-            0601060106010104010101010101010100000101010401060101010601060401
-            0101010101010101000001010104060106010601060104010101010101010101
-            0000010101010404010101060404010101010101010101010000010101010101
-            0404040401010101010101010101010100000101010101010101010101010101
-            01010101010101010000}
-          ShowFocusRect = True
-          Spacing = 10
-          Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          OnClick = Bt_EstoquesFiltrosClick
-        end
-        object Pan_EstoquesProdNovo: TPanel
-          Left = 787
-          Top = 2
-          Width = 91
-          Height = 41
-          Align = alRight
-          BevelInner = bvLowered
-          BevelWidth = 2
-          Caption = 'Produto Novo'
-          Color = clLime
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          TabOrder = 2
-          Visible = False
-        end
-        object Dbg_EstoquesPrev: TDBGrid
-          Left = 101
-          Top = 2
-          Width = 686
-          Height = 41
-          Align = alClient
-          DataSource = DMBelShop.DS_EstoquePrevisao
-          FixedColor = clSilver
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 3
-          TitleFont.Charset = DEFAULT_CHARSET
-          TitleFont.Color = clBlack
-          TitleFont.Height = -11
-          TitleFont.Name = 'MS Sans Serif'
-          TitleFont.Style = [fsBold]
-          Columns = <
-            item
-              Expanded = False
-              FieldName = 'NUM_DIAS_ESTOCAGEM'
-              Title.Alignment = taRightJustify
-              Width = 70
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'QTD_VENDA_DIA'
-              Title.Alignment = taRightJustify
-              Width = 70
-              Visible = True
-            end
-            item
-              Color = 15395562
-              Expanded = False
-              FieldName = 'QTD_ESTOQUE'
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              Title.Alignment = taRightJustify
-              Width = 70
-              Visible = True
-            end
-            item
-              Color = 15395562
-              Expanded = False
-              FieldName = 'EST_PC_CUSTO'
-              Title.Alignment = taRightJustify
-              Width = 70
-              Visible = True
-            end
-            item
-              Color = 15395562
-              Expanded = False
-              FieldName = 'EST_PC_VENDA'
-              Title.Alignment = taRightJustify
-              Width = 70
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'DM_PREVISTA'
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              Title.Alignment = taRightJustify
-              Width = 70
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'DM_PREV_PC_CUSTO'
-              Title.Alignment = taRightJustify
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'DM_PREV_PC_VENDA'
-              Title.Alignment = taRightJustify
-              Visible = True
-            end>
-        end
-      end
       object Dbg_EstoquesDemFinan: TDBGrid
         Left = 37
-        Top = 319
+        Top = 391
         Width = 875
         Height = 143
         DataSource = DMVirtual.DS_V_EstoquesFinan
@@ -1220,6 +959,299 @@ object FrmEstoques: TFrmEstoques
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
       end
+      object Panel66: TPanel
+        Left = 0
+        Top = 494
+        Width = 969
+        Height = 47
+        Align = alBottom
+        BevelInner = bvLowered
+        BorderStyle = bsSingle
+        Ctl3D = False
+        ParentCtl3D = False
+        TabOrder = 1
+        object Bt_EstoquesFechar: TJvXPButton
+          Left = 864
+          Top = 2
+          Width = 101
+          Height = 41
+          Caption = 'Fechar'
+          TabOrder = 0
+          TabStop = False
+          Glyph.Data = {
+            07544269746D61700E060000424D0E0600000000000036000000280000001600
+            0000160000000100180000000000D8050000C30E0000C30E0000000000000000
+            0000FFFFFFF2F2F2F2F2F2D3D3D3E8E8E8F5F5F5DBDBDBDDDDDDECECECEEEEEE
+            D3D3D3EBEBEBF7F7F723230F4F4F00B2B2A8E9E9E9D6D6D6EBEBEBFAFAFAFFFF
+            FFFFFFFF0000FFFFFFF0F0F0D8D8D8EDEDEDEAEAEADFDFDFDCDCDCF4F4F4E6E6
+            E6D7D7D7F2F2F2E7E7E7DDDDDD4C4C0CFFFF006868119B9B9BF4F4F4E7E7E7DB
+            DBDBE6E6E6FFFFFF0000D3D3D3E4E4E4EFEFEFE4E4E4D8D8D8EDEDEDF3F3F3D3
+            D3D3E7E7E7F1F1F1DFDFDFDBDBDBECECEC4D4D0DFFFF008D8D00515105878781
+            DFDFDFEDEDEDECECECD3D3D30000E6E6E6EDEDEDE1E1E1DBDBDBF5F5F5E3E3E3
+            DCDCDCEAEAEAEAEAEAE0E0E0DBDBDBF6F6F6E3E3E34D4D0DFFFF008F8F007F7F
+            0056560DA1A1A1E2E2E2DBDBDBF3F3F300004B4B4B5050504E4E4E4848484F4F
+            4F5050504A4A4A4C4C4C444444F0F0F0F3F3F3D3D3D3E7E7E74E4E0EFFFF008F
+            8F007F7F007D7D004C4C0D3232324848484E4E4E0000BFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBF4A4A4ADFDFDFDFDFDFE9E9E9EBEBEB4D4D0D
+            FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000BFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFB0B0B0BFBFBF4040403F3F3F3737373737373F3F
+            3F434303FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000BFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF3D3D3D8F8F8F3E3E3E7F7F7F7F7F7F7F
+            7F7F7F7F7F474707FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF
+            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF3C3C304D4D141515137F7F7F
+            7F7F7F7F7F7F7F7F7F474707FFFF008D8D007777007D7D00474700636363BFBF
+            BFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF4646309A9A004545
+            046161617F7F7F7F7F7F7F7F7F474707FFFF005F5F0817171767670047470063
+            6363BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF474727ED
+            ED0092920045450E6363637F7F7F7F7F7F474707FFFF004747276B6B6B676700
+            474700636363BFBFBFBFBFBF0000AEAEAE57574531310A272700272700272700
+            424200FFFF00F9F9009898004242006363637F7F7F474707FFFF007E7E002727
+            006E6E00474700636363BFBFBFBFBFBF00008989898C8C13CFCF01CFCF00CFCF
+            00CFCF00D5D500FFFF00FFFF00EDED0098980045450E616161474707FFFF008F
+            8F007F7F007F7F00474700636363BFBFBFBFBFBF0000898989A1A113FEFE2CFF
+            FFAFFFFFAFFFFFAFFFFFAFFFFFAFFFFFDBFFFF6DE3E3004B4B095B5B5B474707
+            FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000A7A7A76F6F48
+            79790C7A7A0A7A7A0A7A7A0A8A8A09FFFF3EFFFF70E4E4005F5F005858587F7F
+            7F474707FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000BFBF
+            BFB1B1B1A9A9A9A9A9A9A9A9A9A9A9A94C4C2CFFFF0DE6E6075959085858537F
+            7F7F7F7F7F474707FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF
+            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF505030E3E3005F5F03575757
+            7F7F7F7F7F7F7F7F7F474707FFFF008F8F007F7F007F7F00474700636363BFBF
+            BFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF4242356E6E252121
+            1B7F7F7F7F7F7F7F7F7F7F7F7F5E5E52999906D5D5008787007F7F0047470063
+            6363BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF70707088
+            88884444447F7F7F7F7F7F7F7F7F7F7F7F7F7F7F565656999906DBDB00898900
+            474700636363BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBF4444447F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F5E5E529B9B
+            03D7D7004C4C00767676BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBF41414156565656565656565656565656565656565656
+            56562E2E2E88880765650C888888BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBF969696898989898989898989898989898989
+            898989898989898989898989898989B1B1B1BFBFBFBFBFBF0000}
+          ShowFocusRect = True
+          Align = alRight
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_EstoquesFecharClick
+        end
+        object Bt_EstoquesFiltros: TJvXPButton
+          Tag = 92
+          Left = 2
+          Top = 2
+          Width = 99
+          Height = 41
+          Caption = 'Filtros'
+          TabOrder = 1
+          TabStop = False
+          Glyph.Data = {
+            07544269746D61705E060000424D5E0600000000000036040000280000001600
+            000017000000010008000000000028020000C30E0000C30E0000000100000000
+            000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
+            FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
+            FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000010101010101010101010101010101010101010101010000010101010101
+            0101010101010101010101040404030100000101010101010101010101010101
+            0101040701070401000001010101010101010101010101010104070101070401
+            0000010101010101010101010101010104070101070704010000010101010101
+            0101010101010104070101070704010100000101010101010101010101010407
+            0101070704010101000001010101010101010101010407010107070401010101
+            0000010101010101010101010407010107070401010101010000010101010101
+            0101010404040307070401010101010100000101010101010404040404040407
+            0401010101010101000001010101040406010601010404040101010101010101
+            0000010101040106010601010101040101010101010101010000010101040601
+            0601060106010401010101010101010100000101040601060101010601060104
+            0101010101010101000001010401060106010601060101040101010101010101
+            0000010104060106010601060106010401010101010101010000010104010601
+            0601060106010104010101010101010100000101010401060101010601060401
+            0101010101010101000001010104060106010601060104010101010101010101
+            0000010101010404010101060404010101010101010101010000010101010101
+            0404040401010101010101010101010100000101010101010101010101010101
+            01010101010101010000}
+          ShowFocusRect = True
+          Spacing = 10
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_EstoquesFiltrosClick
+        end
+        object Pan_EstoquesProdNovo: TPanel
+          Left = 773
+          Top = 2
+          Width = 91
+          Height = 41
+          Align = alRight
+          BevelInner = bvLowered
+          BevelWidth = 2
+          Caption = 'Produto Novo'
+          Color = clLime
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 2
+          Visible = False
+        end
+        object Bt_EstoquesSaldos: TJvXPButton
+          Tag = 92
+          Left = 205
+          Top = 2
+          Width = 212
+          Height = 41
+          Caption = 'Atualizar Saldo de Estoque'
+          TabOrder = 3
+          TabStop = False
+          Glyph.Data = {
+            07544269746D617066010000424D660100000000000076000000280000001400
+            0000140000000100040000000000F00000000000000000000000100000001000
+            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00333333333333333333330000300000000000003333330000307888888888
+            80333333000030F77777777780333333000030F99777777780333333000030FF
+            FFFFFFFF70333333000030000000000000333333000033333333333333333333
+            0000333003333333333333330000333003333333333333330000333003333330
+            000000030000333003303330FFFFFF030000333008300330F4444F0300003338
+            00000030FFFFFF030000333380000030F4444F030000333333300330FFFFFF03
+            0000333333303330F44F00030000333333333330FFFF00330000333333333330
+            000003330000333333333333333333330000}
+          ShowFocusRect = True
+          Spacing = 10
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_EstoquesSaldosClick
+        end
+      end
+      object Dbg_EstoquesPrev: TDBGrid
+        Left = 125
+        Top = 346
+        Width = 672
+        Height = 41
+        DataSource = DMBelShop.DS_EstoquePrevisao
+        FixedColor = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 5
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clBlack
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = [fsBold]
+        Visible = False
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'NUM_DIAS_ESTOCAGEM'
+            Title.Alignment = taRightJustify
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_VENDA_DIA'
+            Title.Alignment = taRightJustify
+            Width = 70
+            Visible = True
+          end
+          item
+            Color = 15395562
+            Expanded = False
+            FieldName = 'QTD_ESTOQUE'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 70
+            Visible = True
+          end
+          item
+            Color = 15395562
+            Expanded = False
+            FieldName = 'EST_PC_CUSTO'
+            Title.Alignment = taRightJustify
+            Width = 70
+            Visible = True
+          end
+          item
+            Color = 15395562
+            Expanded = False
+            FieldName = 'EST_PC_VENDA'
+            Title.Alignment = taRightJustify
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DM_PREVISTA'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DM_PREV_PC_CUSTO'
+            Title.Alignment = taRightJustify
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DM_PREV_PC_VENDA'
+            Title.Alignment = taRightJustify
+            Visible = True
+          end>
+      end
     end
     object Ts_EstoquesFiltros: TTabSheet
       Caption = ' Filtros '
@@ -1240,7 +1272,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 273
+          Left = 270
           Top = 11
           Width = 353
           Height = 13

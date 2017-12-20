@@ -32554,7 +32554,7 @@ object FrmBelShop: TFrmBelShop
           BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF0000000000FF00
           00FF00000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
           BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000000000BFBFBF00}
-        Caption = 'Estoques: M'#237'nimo/M'#225'ximo/Demadas'
+        Caption = 'Estoques: M'#237'nimo/M'#225'ximo/Vendas'
         HelpContext = 1
         OnClick = SubMenuComprasEstoquesMinimoDemadasClick
       end

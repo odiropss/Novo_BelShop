@@ -71,8 +71,9 @@ type
     Label1: TLabel;
     Bt_Odir: TJvTransparentButton;
     Bt_EstoquesDemonstrativo: TJvXPButton;
-    Dbg_EstoquesPrev: TDBGrid;
     Bt_EstoquesFiltroComprador: TJvXPButton;
+    Dbg_EstoquesPrev: TDBGrid;
+    Bt_EstoquesSaldos: TJvXPButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -89,7 +90,11 @@ type
 
     Procedure HabilitaComponentes(bLib: Boolean);
 
-    Procedure Recalculo_V_Estoques_Aggregates;
+    // Odir Retirou - 19/12/2017 - Parametros Somente para Atualização de Estoque Mínimo
+    // Procedure Recalculo_V_Estoques_Aggregates;
+
+    Procedure AtualizaEstoques;
+
     // Odir ====================================================================
 
     procedure Dbg_EstoquesEnter(Sender: TObject);
@@ -121,6 +126,7 @@ type
     procedure PopM_EstoquesReplicarEstMinLojasClick(Sender: TObject);
     procedure Bt_OdirClick(Sender: TObject);
     procedure Bt_EstoquesFiltroCompradorClick(Sender: TObject);
+    procedure Bt_EstoquesSaldosClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -163,85 +169,151 @@ uses DK_Procs1, UDMVirtual, UFrmBelShop, UFrmSelectEmpProcessamento,
 // Odir - INICIO ===============================================================
 //==============================================================================
 
-// Recalcula Campos Aggregates em CDS_V_Estoques >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmEstoques.Recalculo_V_Estoques_Aggregates;
+// Atualiza Estoque dos Produtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmEstoques.AtualizaEstoques;
+Var
+  MySql: String;
 Begin
-  // DEMANDAS FECHA
-  DMVirtual.CDS_V_EstoquesDM_CURVA_A.Active:=False;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_B.Active:=False;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_C.Active:=False;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_D.Active:=False;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_E.Active:=False;
 
-  DMVirtual.CDS_V_EstoquesDM_CURVA_A_PC.Active:=False;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_B_PC.Active:=False;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_C_PC.Active:=False;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_D_PC.Active:=False;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_E_PC.Active:=False;
+  OdirPanApres.Caption:='AGUARDE !! Localizando Saldo dos Produtos...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmEstoques.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmEstoques.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmEstoques;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
 
-  DMVirtual.CDS_V_EstoquesDM_CURVA_A_PV.Active:=False;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_B_PV.Active:=False;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_C_PV.Active:=False;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_D_PV.Active:=False;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_E_PV.Active:=False;
+  Screen.Cursor:=crAppStart;
 
-  // ESTOQUES FECHA
-  DMVirtual.CDS_V_EstoquesEST_CURVA_A.Active:=False;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_B.Active:=False;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_C.Active:=False;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_D.Active:=False;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_E.Active:=False;
+  MySql:=' SELECT p.cod_auxiliar Cod_SIDICOM, d.Quantidade'+
+         ' FROM LINXPRODUTOS p, LINXPRODUTOSDETALHES d'+
+         ' WHERE p.cod_produto=d.cod_produto'+
+         ' AND   p.cod_auxiliar is not null'+
+         ' AND   d.quantidade>0'+
+         ' AND   p.desativado=''N'''+
+         ' AND   p.id_linha<>33'+
+         ' AND   p.id_colecao<>294'+
+         ' AND   d.cod_loja='+QuotedStr(sgCodEmp)+
+         ' ORDER BY 1';
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:=MySql;
+  DMBelShop.CDS_Busca.Open;
 
-  DMVirtual.CDS_V_EstoquesEST_CURVA_A_PC.Active:=False;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_B_PC.Active:=False;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_C_PC.Active:=False;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_D_PC.Active:=False;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_E_PC.Active:=False;
+  FrmBelShop.MontaProgressBar(True, FrmEstoques);
+  pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
+  pgProgBar.Position:=0;
 
-  DMVirtual.CDS_V_EstoquesEST_CURVA_A_PV.Active:=False;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_B_PV.Active:=False;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_C_PV.Active:=False;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_D_PV.Active:=False;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_E_PV.Active:=False;
+  OdirPanApres.Caption:='AGUARDE !! Atualizando Saldo dos Produtos...';
 
-  // DEMANDAS REABRE
-  DMVirtual.CDS_V_EstoquesDM_CURVA_A.Active:=True;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_B.Active:=True;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_C.Active:=True;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_D.Active:=True;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_E.Active:=True;
+  DMBelShop.CDS_Busca.DisableControls;
+  DMVirtual.CDS_V_Estoques.DisableControls;
+  While Not DMBelShop.CDS_Busca.Eof do
+  Begin
+    Application.ProcessMessages;
 
-  DMVirtual.CDS_V_EstoquesDM_CURVA_A_PC.Active:=True;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_B_PC.Active:=True;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_C_PC.Active:=True;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_D_PC.Active:=True;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_E_PC.Active:=True;
+    If DMVirtual.CDS_V_Estoques.Locate('COD_PRODUTO',Trim(DMBelShop.CDS_Busca.FieldByName('Cod_SIDICOM').AsString),[]) Then
+    Begin
+      DMVirtual.CDS_V_Estoques.Edit;
+      DMVirtual.CDS_V_EstoquesQTD_ESTOQUE.AsInteger:=DMBelShop.CDS_Busca.FieldByName('Quantidade').AsInteger;
+      DMVirtual.CDS_V_Estoques.Post;
+    End;
 
-  DMVirtual.CDS_V_EstoquesDM_CURVA_A_PV.Active:=True;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_B_PV.Active:=True;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_C_PV.Active:=True;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_D_PV.Active:=True;
-  DMVirtual.CDS_V_EstoquesDM_CURVA_E_PV.Active:=True;
+    pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
 
-  // ESTOQUE REABRE
-  DMVirtual.CDS_V_EstoquesEST_CURVA_A.Active:=True;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_B.Active:=True;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_C.Active:=True;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_D.Active:=True;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_E.Active:=True;
+    DMBelShop.CDS_Busca.Next;
+  End; // While Not DMBelShop.CDS_Busca.Eof do
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.CDS_Busca.EnableControls;
+  DMVirtual.CDS_V_Estoques.EnableControls;
 
-  DMVirtual.CDS_V_EstoquesEST_CURVA_A_PC.Active:=True;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_B_PC.Active:=True;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_C_PC.Active:=True;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_D_PC.Active:=True;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_E_PC.Active:=True;
+  FrmBelShop.MontaProgressBar(False, FrmEstoques);
 
-  DMVirtual.CDS_V_EstoquesEST_CURVA_A_PV.Active:=True;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_B_PV.Active:=True;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_C_PV.Active:=True;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_D_PV.Active:=True;
-  DMVirtual.CDS_V_EstoquesEST_CURVA_E_PV.Active:=True;
-End; // Recalcula Campos Aggregates em CDS_V_Estoques >>>>>>>>>>>>>>>>>>>>>>>>>>
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+End; // Atualiza Estoque dos Produtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Odir Retirou - 19/12/2017 - Parametros Somente para Atualização de Estoque Mínimo
+// Recalcula Campos Aggregates em CDS_V_Estoques >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//Procedure TFrmEstoques.Recalculo_V_Estoques_Aggregates;
+//Begin
+//  // DEMANDAS FECHA
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_A.Active:=False;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_B.Active:=False;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_C.Active:=False;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_D.Active:=False;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_E.Active:=False;
+//
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_A_PC.Active:=False;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_B_PC.Active:=False;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_C_PC.Active:=False;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_D_PC.Active:=False;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_E_PC.Active:=False;
+//
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_A_PV.Active:=False;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_B_PV.Active:=False;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_C_PV.Active:=False;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_D_PV.Active:=False;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_E_PV.Active:=False;
+//
+//  // ESTOQUES FECHA
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_A.Active:=False;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_B.Active:=False;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_C.Active:=False;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_D.Active:=False;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_E.Active:=False;
+//
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_A_PC.Active:=False;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_B_PC.Active:=False;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_C_PC.Active:=False;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_D_PC.Active:=False;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_E_PC.Active:=False;
+//
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_A_PV.Active:=False;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_B_PV.Active:=False;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_C_PV.Active:=False;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_D_PV.Active:=False;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_E_PV.Active:=False;
+//
+//  // DEMANDAS REABRE
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_A.Active:=True;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_B.Active:=True;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_C.Active:=True;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_D.Active:=True;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_E.Active:=True;
+//
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_A_PC.Active:=True;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_B_PC.Active:=True;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_C_PC.Active:=True;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_D_PC.Active:=True;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_E_PC.Active:=True;
+//
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_A_PV.Active:=True;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_B_PV.Active:=True;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_C_PV.Active:=True;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_D_PV.Active:=True;
+//  DMVirtual.CDS_V_EstoquesDM_CURVA_E_PV.Active:=True;
+//
+//  // ESTOQUE REABRE
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_A.Active:=True;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_B.Active:=True;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_C.Active:=True;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_D.Active:=True;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_E.Active:=True;
+//
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_A_PC.Active:=True;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_B_PC.Active:=True;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_C_PC.Active:=True;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_D_PC.Active:=True;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_E_PC.Active:=True;
+//
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_A_PV.Active:=True;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_B_PV.Active:=True;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_C_PV.Active:=True;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_D_PV.Active:=True;
+//  DMVirtual.CDS_V_EstoquesEST_CURVA_E_PV.Active:=True;
+//End; // Recalcula Campos Aggregates em CDS_V_Estoques >>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Habilita/ Desbilita Componentes /////////////////////////////////////////////
 Procedure TFrmEstoques.HabilitaComponentes(bLib: Boolean);
@@ -300,6 +372,7 @@ begin
 
     SendMessage(hToolTip, TTM_SETTITLE, IconType, Integer(@buffer));
   end;
+
 end; // Show Hint em Forma de Balao - Usado no FormCreate >>>>>>>>>>>>>>>>>>>>>>
 
 // Show Hint em Forma de Balao - Posiciona do Componente >>>>>>>>>>>>>>>>>>>>>>
@@ -551,7 +624,7 @@ begin
 end;
 
 procedure TFrmEstoques.FormCreate(Sender: TObject);
-const  
+const
   TipoDoIcone = 1; // Show Hint em Forma de Balao
 begin
   // Coloca Icone no Form ======================================================
@@ -596,10 +669,6 @@ end;
 
 procedure TFrmEstoques.Bt_EstoquesFecharClick(Sender: TObject);
 begin
-
-// OdirApagar - OdirDuvida
-//  DMBelShop.CDS_CurvaFinanceira.EnableControls;
-//  DMBelShop.CDS_CurvaFinanceira.Close;
 
   // Fecha Demonstrativo =======================================================
   If Bt_EstoquesDemonstrativo.Caption='Fechar Demonstrativo' Then
@@ -691,269 +760,269 @@ begin
   bEnterTab:=True;
 end;
 
+// Odir Retirou - 19/12/2017 - Parametros Somente para Atualização de Estoque Mínimo
 procedure TFrmEstoques.Bt_EstoquesDemonstrativoClick(Sender: TObject);
-Var
-  MySql: String;
-
-  sDM,  sDM_PC,  sDM_PV,
-  sEST, sEST_PC, sEST_PV: String;
-
-  itDM, itEST: Integer;
-
-  ctDM_PC,  ctDM_PV,
-  ctEST_PC, ctEST_PV: Currency;
+//Var
+//  MySql: String;
+//
+//  sDM,  sDM_PC,  sDM_PV,
+//  sEST, sEST_PC, sEST_PV: String;
+//
+//  itDM, itEST: Integer;
+//
+//  ctDM_PC,  ctDM_PV,
+//  ctEST_PC, ctEST_PV: Currency;
 begin
-
-  Screen.Cursor:=crAppStart;
-
-  If Bt_EstoquesDemonstrativo.Caption='Abrir Demonstrativo' Then
-   Begin
-     Dbg_Estoques.SetFocus;
-
-     If DMVirtual.CDS_V_Estoques.IsEmpty Then
-     Begin
-       Screen.Cursor:=crDefault;
-       Exit;
-     End;
-
-     HabilitaComponentes(False);
-
-     Bt_EstoquesDemonstrativo.Caption:='Fechar Demonstrativo';
-
-     // Monta Select de Totais Curva A =========================================
-     sEST   :=DMVirtual.CDS_V_EstoquesEST_CURVA_A.AsString;
-     sEST_PC:=DMVirtual.CDS_V_EstoquesEST_CURVA_A_PC.AsString;
-     sEST_PV:=DMVirtual.CDS_V_EstoquesEST_CURVA_A_PV.AsString;
-     sDM    :=DMVirtual.CDS_V_EstoquesDM_CURVA_A.AsString;
-     sDM_PC :=DMVirtual.CDS_V_EstoquesDM_CURVA_A_PC.AsString;
-     sDM_PV :=DMVirtual.CDS_V_EstoquesDM_CURVA_A_PV.AsString;
-
-     itEST   :=StrToInt(sEST);
-     ctEST_PC:=StrToCurr(sEST_PC);
-     ctEST_PV:=StrToCurr(sEST_PV);
-     itDM    :=StrToInt(sDM);
-     ctDM_PC :=StrToCurr(sDM_PC);
-     ctDM_PV :=StrToCurr(sDM_PV);
-
-     MySql:=' SELECT'+
-            ' ''A'' CLASSE,'+
-            sDM+' DM,'+
-            f_Troca(',','.',sDM_PC)+' DM_PC,'+
-            f_Troca(',','.',sDM_PV)+' DM_PV,'+
-            sEST+' EST,'+
-            f_Troca(',','.',sEST_PC)+' EST_PC,'+
-            f_Troca(',','.',sEST_PV)+' EST_PV,'+
-            IntToStr(StrToInt(sEST)-StrToInt(sDM))+' DIF_EST_DM,'+
-            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PC)-StrToCurr(sDM_PC)))+' DIF_EST_DM_PC,'+
-            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PV)-StrToCurr(sDM_PV)))+' DIF_EST_DM_PV'+
-            ' FROM RDB$DATABASE';
-
-     // Monta Select de Totais Curva B =========================================
-     sEST   :=DMVirtual.CDS_V_EstoquesEST_CURVA_B.AsString;
-     sEST_PC:=DMVirtual.CDS_V_EstoquesEST_CURVA_B_PC.AsString;
-     sEST_PV:=DMVirtual.CDS_V_EstoquesEST_CURVA_B_PV.AsString;
-     sDM    :=DMVirtual.CDS_V_EstoquesDM_CURVA_B.AsString;
-     sDM_PC :=DMVirtual.CDS_V_EstoquesDM_CURVA_B_PC.AsString;
-     sDM_PV :=DMVirtual.CDS_V_EstoquesDM_CURVA_B_PV.AsString;
-
-     itEST   :=itEST + StrToInt(sEST);
-     ctEST_PC:=ctEST_PC + StrToCurr(sEST_PC);
-     ctEST_PV:=ctEST_PV + StrToCurr(sEST_PV);
-     itDM    :=itDM + StrToInt(sDM);
-     ctDM_PC :=ctDM_PC + StrToCurr(sDM_PC);
-     ctDM_PV :=ctDM_PV + StrToCurr(sDM_PV);
-
-     MySql:=
-      MySql+' UNION '+
-            ' SELECT'+
-            ' ''B'' CLASSE,'+
-            sDM+' DM,'+
-            f_Troca(',','.',sDM_PC)+' DM_PC,'+
-            f_Troca(',','.',sDM_PV)+' DM_PV,'+
-            sEST+' EST,'+
-            f_Troca(',','.',sEST_PC)+' EST_PC,'+
-            f_Troca(',','.',sEST_PV)+' EST_PV,'+
-            IntToStr(StrToInt(sEST)-StrToInt(sDM))+' DIF_EST_DM,'+
-            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PC)-StrToCurr(sDM_PC)))+' DIF_EST_DM_PC,'+
-            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PV)-StrToCurr(sDM_PV)))+' DIF_EST_DM_PV'+
-            ' FROM RDB$DATABASE';
-
-     // Monta Select de Totais Curva C =========================================
-     sEST   :=DMVirtual.CDS_V_EstoquesEST_CURVA_C.AsString;
-     sEST_PC:=DMVirtual.CDS_V_EstoquesEST_CURVA_C_PC.AsString;
-     sEST_PV:=DMVirtual.CDS_V_EstoquesEST_CURVA_C_PV.AsString;
-     sDM    :=DMVirtual.CDS_V_EstoquesDM_CURVA_C.AsString;
-     sDM_PC :=DMVirtual.CDS_V_EstoquesDM_CURVA_C_PC.AsString;
-     sDM_PV :=DMVirtual.CDS_V_EstoquesDM_CURVA_C_PV.AsString;
-
-     itEST   :=itEST + StrToInt(sEST);
-     ctEST_PC:=ctEST_PC + StrToCurr(sEST_PC);
-     ctEST_PV:=ctEST_PV + StrToCurr(sEST_PV);
-     itDM    :=itDM + StrToInt(sDM);
-     ctDM_PC :=ctDM_PC + StrToCurr(sDM_PC);
-     ctDM_PV :=ctDM_PV + StrToCurr(sDM_PV);
-
-     MySql:=
-      MySql+' UNION '+
-            ' SELECT'+
-            ' ''C'' CLASSE,'+
-            sDM+' DM,'+
-            f_Troca(',','.',sDM_PC)+' DM_PC,'+
-            f_Troca(',','.',sDM_PV)+' DM_PV,'+
-            sEST+' EST,'+
-            f_Troca(',','.',sEST_PC)+' EST_PC,'+
-            f_Troca(',','.',sEST_PV)+' EST_PV,'+
-            IntToStr(StrToInt(sEST)-StrToInt(sDM))+' DIF_EST_DM,'+
-            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PC)-StrToCurr(sDM_PC)))+' DIF_EST_DM_PC,'+
-            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PV)-StrToCurr(sDM_PV)))+' DIF_EST_DM_PV'+
-            ' FROM RDB$DATABASE';
-
-     // Monta Select de Totais Curva D =========================================
-     sEST   :=DMVirtual.CDS_V_EstoquesEST_CURVA_D.AsString;
-     sEST_PC:=DMVirtual.CDS_V_EstoquesEST_CURVA_D_PC.AsString;
-     sEST_PV:=DMVirtual.CDS_V_EstoquesEST_CURVA_D_PV.AsString;
-     sDM    :=DMVirtual.CDS_V_EstoquesDM_CURVA_D.AsString;
-     sDM_PC :=DMVirtual.CDS_V_EstoquesDM_CURVA_D_PC.AsString;
-     sDM_PV :=DMVirtual.CDS_V_EstoquesDM_CURVA_D_PV.AsString;
-
-     itEST   :=itEST + StrToInt(sEST);
-     ctEST_PC:=ctEST_PC + StrToCurr(sEST_PC);
-     ctEST_PV:=ctEST_PV + StrToCurr(sEST_PV);
-     itDM    :=itDM + StrToInt(sDM);
-     ctDM_PC :=ctDM_PC + StrToCurr(sDM_PC);
-     ctDM_PV :=ctDM_PV + StrToCurr(sDM_PV);
-
-     MySql:=
-      MySql+' UNION '+
-            ' SELECT'+
-            ' ''D'' CLASSE,'+
-            sDM+' DM,'+
-            f_Troca(',','.',sDM_PC)+' DM_PC,'+
-            f_Troca(',','.',sDM_PV)+' DM_PV,'+
-            sEST+' EST,'+
-            f_Troca(',','.',sEST_PC)+' EST_PC,'+
-            f_Troca(',','.',sEST_PV)+' EST_PV,'+
-            IntToStr(StrToInt(sEST)-StrToInt(sDM))+' DIF_EST_DM,'+
-            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PC)-StrToCurr(sDM_PC)))+' DIF_EST_DM_PC,'+
-            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PV)-StrToCurr(sDM_PV)))+' DIF_EST_DM_PV'+
-            ' FROM RDB$DATABASE';
-
-     // Monta Select de Totais Curva E =========================================
-     sEST   :=DMVirtual.CDS_V_EstoquesEST_CURVA_E.AsString;
-     sEST_PC:=DMVirtual.CDS_V_EstoquesEST_CURVA_E_PC.AsString;
-     sEST_PV:=DMVirtual.CDS_V_EstoquesEST_CURVA_E_PV.AsString;
-     sDM    :=DMVirtual.CDS_V_EstoquesDM_CURVA_E.AsString;
-     sDM_PC :=DMVirtual.CDS_V_EstoquesDM_CURVA_E_PC.AsString;
-     sDM_PV :=DMVirtual.CDS_V_EstoquesDM_CURVA_E_PV.AsString;
-
-     itEST   :=itEST + StrToInt(sEST);
-     ctEST_PC:=ctEST_PC + StrToCurr(sEST_PC);
-     ctEST_PV:=ctEST_PV + StrToCurr(sEST_PV);
-     itDM    :=itDM + StrToInt(sDM);
-     ctDM_PC :=ctDM_PC + StrToCurr(sDM_PC);
-     ctDM_PV :=ctDM_PV + StrToCurr(sDM_PV);
-
-     MySql:=
-      MySql+' UNION '+
-            ' SELECT'+
-            ' ''E'' CLASSE,'+
-            sDM+' DM,'+
-            f_Troca(',','.',sDM_PC)+' DM_PC,'+
-            f_Troca(',','.',sDM_PV)+' DM_PV,'+
-            sEST+' EST,'+
-            f_Troca(',','.',sEST_PC)+' EST_PC,'+
-            f_Troca(',','.',sEST_PV)+' EST_PV,'+
-            IntToStr(StrToInt(sEST)-StrToInt(sDM))+' DIF_EST_DM,'+
-            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PC)-StrToCurr(sDM_PC)))+' DIF_EST_DM_PC,'+
-            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PV)-StrToCurr(sDM_PV)))+' DIF_EST_DM_PV'+
-            ' FROM RDB$DATABASE';
-
-     // Monta Select de Totais Curvas ==========================================
-     MySql:=
-      MySql+' UNION '+
-            ' SELECT'+
-            ' ''TOTAIS'' CLASSE,'+
-            IntToStr(itDM)+' DM,'+
-            f_Troca(',','.',CurrToStr(ctDM_PC))+' DM_PC,'+
-            f_Troca(',','.',CurrToStr(ctDM_PV))+' DM_PV,'+
-            IntToStr(itEST)+' EST,'+
-            f_Troca(',','.',CurrToStr(ctEST_PC))+' EST_PC,'+
-            f_Troca(',','.',CurrToStr(ctEST_PV))+' EST_PV,'+
-            IntToStr(itEST-itDM)+' DIF_EST_DM,'+
-            f_Troca(',','.',CurrToStr(ctEST_PC-ctDM_PC))+' DIF_EST_DM_PC,'+
-            f_Troca(',','.',CurrToStr(ctEST_PV-ctDM_PV))+' DIF_EST_DM_PV'+
-            ' FROM RDB$DATABASE';
-     DMBelShop.CDS_Busca.Close;
-     DMBelShop.SDS_Busca.CommandText:=MySql;
-     DMBelShop.CDS_Busca.Open;
-
-     // Atualiza Client Estoque Fisico/Financeiro ==============================
-     If DMVirtual.CDS_V_EstoquesFinan.Active Then
-      DMVirtual.CDS_V_EstoquesFinan.Close;
-
-     DMVirtual.CDS_V_EstoquesFinan.CreateDataSet;
-     DMVirtual.CDS_V_EstoquesFinan.EmptyDataSet;
-     DMVirtual.CDS_V_EstoquesFinan.Data:=DMBelShop.CDS_Busca.Data;
-     DMBelShop.CDS_Busca.Close;
-
-     // Libera para Salvar em Memória ==========================================
-     Bt_EstoquesFiltroComprador.Caption:='Salvar em Memória';
-
-     // Abre Apresentação Fisico / Financeiro ==================================
-     FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
-     FrmSolicitacoes.Bt_QualquerCoisaSalvar.Visible:=False;
-     FrmSolicitacoes.Bt_QualquerCoisaVoltar.Visible:=False;
-
-     FrmSolicitacoes.Pan_QualquerCoisa.Caption:='';
-     If Trim(sgCompradores)<>'' Then
-      FrmSolicitacoes.Pan_QualquerCoisa.Caption:='COMPRADOR(ES): '+sgCompradores
-     Else
-      FrmSolicitacoes.Pan_QualquerCoisa.Caption:='TOODS OS COMPRADORES';
-
-     // Ajusta Tamanho do Form =================================================
-     FrmSolicitacoes.AutoSize    :=False;
-     FrmSolicitacoes.ClientHeight:=260; // nr1.AsInteger;// 250;
-     FrmSolicitacoes.ClientWidth :=875; // nr2.AsInteger;// 860;
-     FrmSolicitacoes.AutoSize    :=True;
-     FrmSolicitacoes.BorderStyle :=bsSingle;
-
-     Dbg_EstoquesDemFinan.Parent:=FrmSolicitacoes.Ts_QualquerCoisa;
-     Dbg_EstoquesDemFinan.Top:=30;
-     Dbg_EstoquesDemFinan.Left:=2;
-     Dbg_EstoquesDemFinan.Visible:=True;
-     FrmBelShop.AbreSolicitacoes(19);
-
-     FrmSolicitacoes.Caption:='DEMONSTRATIVO DE ESTOQUES';
-     FrmSolicitacoes.Ts_QualquerCoisa.Caption:='Físico/Financeiro';
-
-     FrmSolicitacoes.Parent:=nil;
-     FrmSolicitacoes.Parent:=FrmEstoques;
-     FrmSolicitacoes.Show;
-     Dbg_EstoquesDemFinan.SetFocus;
-   End
-  Else
-   Begin
-     HabilitaComponentes(True);
-     Dbg_Estoques.SetFocus;
-
-     // Retornar para Compradores ==============================================
-     Bt_EstoquesFiltroComprador.Caption:='Seleciona Comprador';
-
-     Bt_EstoquesDemonstrativo.Caption:='Abrir Demonstrativo';
-
-     FrmSolicitacoes.Pan_QualquerCoisa.Caption:='';
-     FrmSolicitacoes.Close;
-
-     Dbg_EstoquesDemFinan.Visible:=False;
-     Dbg_EstoquesDemFinan.Parent:=Ts_Estoques;
-
-     FreeAndNil(FrmSolicitacoes);
-
-     Dbg_Estoques.SetFocus;
-   End;
-
-  Screen.Cursor:=crDefault;
-
+//
+//  Screen.Cursor:=crAppStart;
+//
+//  If Bt_EstoquesDemonstrativo.Caption='Abrir Demonstrativo' Then
+//   Begin
+//     Dbg_Estoques.SetFocus;
+//
+//     If DMVirtual.CDS_V_Estoques.IsEmpty Then
+//     Begin
+//       Screen.Cursor:=crDefault;
+//       Exit;
+//     End;
+//
+//     HabilitaComponentes(False);
+//
+//     Bt_EstoquesDemonstrativo.Caption:='Fechar Demonstrativo';
+//
+//     // Monta Select de Totais Curva A =========================================
+//     sEST   :=DMVirtual.CDS_V_EstoquesEST_CURVA_A.AsString;
+//     sEST_PC:=DMVirtual.CDS_V_EstoquesEST_CURVA_A_PC.AsString;
+//     sEST_PV:=DMVirtual.CDS_V_EstoquesEST_CURVA_A_PV.AsString;
+//     sDM    :=DMVirtual.CDS_V_EstoquesDM_CURVA_A.AsString;
+//     sDM_PC :=DMVirtual.CDS_V_EstoquesDM_CURVA_A_PC.AsString;
+//     sDM_PV :=DMVirtual.CDS_V_EstoquesDM_CURVA_A_PV.AsString;
+//
+//     itEST   :=StrToInt(sEST);
+//     ctEST_PC:=StrToCurr(sEST_PC);
+//     ctEST_PV:=StrToCurr(sEST_PV);
+//     itDM    :=StrToInt(sDM);
+//     ctDM_PC :=StrToCurr(sDM_PC);
+//     ctDM_PV :=StrToCurr(sDM_PV);
+//
+//     MySql:=' SELECT'+
+//            ' ''A'' CLASSE,'+
+//            sDM+' DM,'+
+//            f_Troca(',','.',sDM_PC)+' DM_PC,'+
+//            f_Troca(',','.',sDM_PV)+' DM_PV,'+
+//            sEST+' EST,'+
+//            f_Troca(',','.',sEST_PC)+' EST_PC,'+
+//            f_Troca(',','.',sEST_PV)+' EST_PV,'+
+//            IntToStr(StrToInt(sEST)-StrToInt(sDM))+' DIF_EST_DM,'+
+//            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PC)-StrToCurr(sDM_PC)))+' DIF_EST_DM_PC,'+
+//            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PV)-StrToCurr(sDM_PV)))+' DIF_EST_DM_PV'+
+//            ' FROM RDB$DATABASE';
+//
+//     // Monta Select de Totais Curva B =========================================
+//     sEST   :=DMVirtual.CDS_V_EstoquesEST_CURVA_B.AsString;
+//     sEST_PC:=DMVirtual.CDS_V_EstoquesEST_CURVA_B_PC.AsString;
+//     sEST_PV:=DMVirtual.CDS_V_EstoquesEST_CURVA_B_PV.AsString;
+//     sDM    :=DMVirtual.CDS_V_EstoquesDM_CURVA_B.AsString;
+//     sDM_PC :=DMVirtual.CDS_V_EstoquesDM_CURVA_B_PC.AsString;
+//     sDM_PV :=DMVirtual.CDS_V_EstoquesDM_CURVA_B_PV.AsString;
+//
+//     itEST   :=itEST + StrToInt(sEST);
+//     ctEST_PC:=ctEST_PC + StrToCurr(sEST_PC);
+//     ctEST_PV:=ctEST_PV + StrToCurr(sEST_PV);
+//     itDM    :=itDM + StrToInt(sDM);
+//     ctDM_PC :=ctDM_PC + StrToCurr(sDM_PC);
+//     ctDM_PV :=ctDM_PV + StrToCurr(sDM_PV);
+//
+//     MySql:=
+//      MySql+' UNION '+
+//            ' SELECT'+
+//            ' ''B'' CLASSE,'+
+//            sDM+' DM,'+
+//            f_Troca(',','.',sDM_PC)+' DM_PC,'+
+//            f_Troca(',','.',sDM_PV)+' DM_PV,'+
+//            sEST+' EST,'+
+//            f_Troca(',','.',sEST_PC)+' EST_PC,'+
+//            f_Troca(',','.',sEST_PV)+' EST_PV,'+
+//            IntToStr(StrToInt(sEST)-StrToInt(sDM))+' DIF_EST_DM,'+
+//            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PC)-StrToCurr(sDM_PC)))+' DIF_EST_DM_PC,'+
+//            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PV)-StrToCurr(sDM_PV)))+' DIF_EST_DM_PV'+
+//            ' FROM RDB$DATABASE';
+//
+//     // Monta Select de Totais Curva C =========================================
+//     sEST   :=DMVirtual.CDS_V_EstoquesEST_CURVA_C.AsString;
+//     sEST_PC:=DMVirtual.CDS_V_EstoquesEST_CURVA_C_PC.AsString;
+//     sEST_PV:=DMVirtual.CDS_V_EstoquesEST_CURVA_C_PV.AsString;
+//     sDM    :=DMVirtual.CDS_V_EstoquesDM_CURVA_C.AsString;
+//     sDM_PC :=DMVirtual.CDS_V_EstoquesDM_CURVA_C_PC.AsString;
+//     sDM_PV :=DMVirtual.CDS_V_EstoquesDM_CURVA_C_PV.AsString;
+//
+//     itEST   :=itEST + StrToInt(sEST);
+//     ctEST_PC:=ctEST_PC + StrToCurr(sEST_PC);
+//     ctEST_PV:=ctEST_PV + StrToCurr(sEST_PV);
+//     itDM    :=itDM + StrToInt(sDM);
+//     ctDM_PC :=ctDM_PC + StrToCurr(sDM_PC);
+//     ctDM_PV :=ctDM_PV + StrToCurr(sDM_PV);
+//
+//     MySql:=
+//      MySql+' UNION '+
+//            ' SELECT'+
+//            ' ''C'' CLASSE,'+
+//            sDM+' DM,'+
+//            f_Troca(',','.',sDM_PC)+' DM_PC,'+
+//            f_Troca(',','.',sDM_PV)+' DM_PV,'+
+//            sEST+' EST,'+
+//            f_Troca(',','.',sEST_PC)+' EST_PC,'+
+//            f_Troca(',','.',sEST_PV)+' EST_PV,'+
+//            IntToStr(StrToInt(sEST)-StrToInt(sDM))+' DIF_EST_DM,'+
+//            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PC)-StrToCurr(sDM_PC)))+' DIF_EST_DM_PC,'+
+//            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PV)-StrToCurr(sDM_PV)))+' DIF_EST_DM_PV'+
+//            ' FROM RDB$DATABASE';
+//
+//     // Monta Select de Totais Curva D =========================================
+//     sEST   :=DMVirtual.CDS_V_EstoquesEST_CURVA_D.AsString;
+//     sEST_PC:=DMVirtual.CDS_V_EstoquesEST_CURVA_D_PC.AsString;
+//     sEST_PV:=DMVirtual.CDS_V_EstoquesEST_CURVA_D_PV.AsString;
+//     sDM    :=DMVirtual.CDS_V_EstoquesDM_CURVA_D.AsString;
+//     sDM_PC :=DMVirtual.CDS_V_EstoquesDM_CURVA_D_PC.AsString;
+//     sDM_PV :=DMVirtual.CDS_V_EstoquesDM_CURVA_D_PV.AsString;
+//
+//     itEST   :=itEST + StrToInt(sEST);
+//     ctEST_PC:=ctEST_PC + StrToCurr(sEST_PC);
+//     ctEST_PV:=ctEST_PV + StrToCurr(sEST_PV);
+//     itDM    :=itDM + StrToInt(sDM);
+//     ctDM_PC :=ctDM_PC + StrToCurr(sDM_PC);
+//     ctDM_PV :=ctDM_PV + StrToCurr(sDM_PV);
+//
+//     MySql:=
+//      MySql+' UNION '+
+//            ' SELECT'+
+//            ' ''D'' CLASSE,'+
+//            sDM+' DM,'+
+//            f_Troca(',','.',sDM_PC)+' DM_PC,'+
+//            f_Troca(',','.',sDM_PV)+' DM_PV,'+
+//            sEST+' EST,'+
+//            f_Troca(',','.',sEST_PC)+' EST_PC,'+
+//            f_Troca(',','.',sEST_PV)+' EST_PV,'+
+//            IntToStr(StrToInt(sEST)-StrToInt(sDM))+' DIF_EST_DM,'+
+//            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PC)-StrToCurr(sDM_PC)))+' DIF_EST_DM_PC,'+
+//            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PV)-StrToCurr(sDM_PV)))+' DIF_EST_DM_PV'+
+//            ' FROM RDB$DATABASE';
+//
+//     // Monta Select de Totais Curva E =========================================
+//     sEST   :=DMVirtual.CDS_V_EstoquesEST_CURVA_E.AsString;
+//     sEST_PC:=DMVirtual.CDS_V_EstoquesEST_CURVA_E_PC.AsString;
+//     sEST_PV:=DMVirtual.CDS_V_EstoquesEST_CURVA_E_PV.AsString;
+//     sDM    :=DMVirtual.CDS_V_EstoquesDM_CURVA_E.AsString;
+//     sDM_PC :=DMVirtual.CDS_V_EstoquesDM_CURVA_E_PC.AsString;
+//     sDM_PV :=DMVirtual.CDS_V_EstoquesDM_CURVA_E_PV.AsString;
+//
+//     itEST   :=itEST + StrToInt(sEST);
+//     ctEST_PC:=ctEST_PC + StrToCurr(sEST_PC);
+//     ctEST_PV:=ctEST_PV + StrToCurr(sEST_PV);
+//     itDM    :=itDM + StrToInt(sDM);
+//     ctDM_PC :=ctDM_PC + StrToCurr(sDM_PC);
+//     ctDM_PV :=ctDM_PV + StrToCurr(sDM_PV);
+//
+//     MySql:=
+//      MySql+' UNION '+
+//            ' SELECT'+
+//            ' ''E'' CLASSE,'+
+//            sDM+' DM,'+
+//            f_Troca(',','.',sDM_PC)+' DM_PC,'+
+//            f_Troca(',','.',sDM_PV)+' DM_PV,'+
+//            sEST+' EST,'+
+//            f_Troca(',','.',sEST_PC)+' EST_PC,'+
+//            f_Troca(',','.',sEST_PV)+' EST_PV,'+
+//            IntToStr(StrToInt(sEST)-StrToInt(sDM))+' DIF_EST_DM,'+
+//            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PC)-StrToCurr(sDM_PC)))+' DIF_EST_DM_PC,'+
+//            f_Troca(',','.',CurrToStr(StrToCurr(sEST_PV)-StrToCurr(sDM_PV)))+' DIF_EST_DM_PV'+
+//            ' FROM RDB$DATABASE';
+//
+//     // Monta Select de Totais Curvas ==========================================
+//     MySql:=
+//      MySql+' UNION '+
+//            ' SELECT'+
+//            ' ''TOTAIS'' CLASSE,'+
+//            IntToStr(itDM)+' DM,'+
+//            f_Troca(',','.',CurrToStr(ctDM_PC))+' DM_PC,'+
+//            f_Troca(',','.',CurrToStr(ctDM_PV))+' DM_PV,'+
+//            IntToStr(itEST)+' EST,'+
+//            f_Troca(',','.',CurrToStr(ctEST_PC))+' EST_PC,'+
+//            f_Troca(',','.',CurrToStr(ctEST_PV))+' EST_PV,'+
+//            IntToStr(itEST-itDM)+' DIF_EST_DM,'+
+//            f_Troca(',','.',CurrToStr(ctEST_PC-ctDM_PC))+' DIF_EST_DM_PC,'+
+//            f_Troca(',','.',CurrToStr(ctEST_PV-ctDM_PV))+' DIF_EST_DM_PV'+
+//            ' FROM RDB$DATABASE';
+//     DMBelShop.CDS_Busca.Close;
+//     DMBelShop.SDS_Busca.CommandText:=MySql;
+//     DMBelShop.CDS_Busca.Open;
+//
+//     // Atualiza Client Estoque Fisico/Financeiro ==============================
+//     If DMVirtual.CDS_V_EstoquesFinan.Active Then
+//      DMVirtual.CDS_V_EstoquesFinan.Close;
+//
+//     DMVirtual.CDS_V_EstoquesFinan.CreateDataSet;
+//     DMVirtual.CDS_V_EstoquesFinan.EmptyDataSet;
+//     DMVirtual.CDS_V_EstoquesFinan.Data:=DMBelShop.CDS_Busca.Data;
+//     DMBelShop.CDS_Busca.Close;
+//
+//     // Libera para Salvar em Memória ==========================================
+//     Bt_EstoquesFiltroComprador.Caption:='Salvar em Memória';
+//
+//     // Abre Apresentação Fisico / Financeiro ==================================
+//     FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+//     FrmSolicitacoes.Bt_QualquerCoisaSalvar.Visible:=False;
+//     FrmSolicitacoes.Bt_QualquerCoisaVoltar.Visible:=False;
+//
+//     FrmSolicitacoes.Pan_QualquerCoisa.Caption:='';
+//     If Trim(sgCompradores)<>'' Then
+//      FrmSolicitacoes.Pan_QualquerCoisa.Caption:='COMPRADOR(ES): '+sgCompradores
+//     Else
+//      FrmSolicitacoes.Pan_QualquerCoisa.Caption:='TOODS OS COMPRADORES';
+//
+//     // Ajusta Tamanho do Form =================================================
+//     FrmSolicitacoes.AutoSize    :=False;
+//     FrmSolicitacoes.ClientHeight:=260; // nr1.AsInteger;// 250;
+//     FrmSolicitacoes.ClientWidth :=875; // nr2.AsInteger;// 860;
+//     FrmSolicitacoes.AutoSize    :=True;
+//     FrmSolicitacoes.BorderStyle :=bsSingle;
+//
+//     Dbg_EstoquesDemFinan.Parent:=FrmSolicitacoes.Ts_QualquerCoisa;
+//     Dbg_EstoquesDemFinan.Top:=30;
+//     Dbg_EstoquesDemFinan.Left:=2;
+//     Dbg_EstoquesDemFinan.Visible:=True;
+//     FrmBelShop.AbreSolicitacoes(19);
+//
+//     FrmSolicitacoes.Caption:='DEMONSTRATIVO DE ESTOQUES';
+//     FrmSolicitacoes.Ts_QualquerCoisa.Caption:='Físico/Financeiro';
+//
+//     FrmSolicitacoes.Parent:=nil;
+//     FrmSolicitacoes.Parent:=FrmEstoques;
+//     FrmSolicitacoes.Show;
+//     Dbg_EstoquesDemFinan.SetFocus;
+//   End
+//  Else
+//   Begin
+//     HabilitaComponentes(True);
+//     Dbg_Estoques.SetFocus;
+//
+//     // Retornar para Compradores ==============================================
+//     Bt_EstoquesFiltroComprador.Caption:='Seleciona Comprador';
+//
+//     Bt_EstoquesDemonstrativo.Caption:='Abrir Demonstrativo';
+//
+//     FrmSolicitacoes.Pan_QualquerCoisa.Caption:='';
+//     FrmSolicitacoes.Close;
+//
+//     Dbg_EstoquesDemFinan.Visible:=False;
+//     Dbg_EstoquesDemFinan.Parent:=Ts_Estoques;
+//
+//     FreeAndNil(FrmSolicitacoes);
+//
+//     Dbg_Estoques.SetFocus;
+//   End;
+//
+//  Screen.Cursor:=crDefault;
 end;
 
 procedure TFrmEstoques.Dbg_EstoquesKeyPress(Sender: TObject;
@@ -994,6 +1063,7 @@ begin
      (THackDBGrid(Dbg_Estoques).SelectedIndex = 1) Or
      (THackDBGrid(Dbg_Estoques).SelectedIndex = 2) then
   begin
+    THackDBGrid(Dbg_Estoques).FixedCols:=4;
     THackDBGrid(Dbg_Estoques).LeftCol:=4;
     THackDBGrid(Dbg_Estoques).SelectedIndex:=3;
     Dbg_Estoques.Refresh;
@@ -1079,7 +1149,9 @@ begin
   DMVirtual.CDS_V_Estoques.Close;
   DMBelShop.CDS_EstoquePrevisao.Close;
 
-  Recalculo_V_Estoques_Aggregates;
+  // Odir Retirou - 19/12/2017 - Parametros Somente para Atualização de Estoque Mínimo
+  // Recalculo_V_Estoques_Aggregates;
+  
   DMVirtual.CDS_V_Estoques.Open;
   DMBelShop.CDS_EstoquePrevisao.Open;
 
@@ -1091,7 +1163,10 @@ begin
 
     DMVirtual.CDS_V_Estoques.Filter:='';
     DMVirtual.CDS_V_Estoques.Filtered:=False;
-    Recalculo_V_Estoques_Aggregates;
+
+    // Odir Retirou - 19/12/2017 - Parametros Somente para Atualização de Estoque Mínimo
+    // Recalculo_V_Estoques_Aggregates;
+    
     DMVirtual.CDS_V_Estoques.Open;
     DMBelShop.CDS_EstoquePrevisao.Open;
   End;
@@ -1235,8 +1310,6 @@ begin
   THackDBGrid(Dbg_Estoques).LeftCol:=4;
   THackDBGrid(Dbg_Estoques).SelectedIndex:=3;
   Dbg_Estoques.Refresh;
-
-
 end;
 
 procedure TFrmEstoques.Dbg_EstoquesKeyUp(Sender: TObject; var Key: Word;
@@ -1532,8 +1605,16 @@ Begin
     If DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
     Begin
       sgCodEmp:=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
-      Stb_Estoques.Panels[0].Text:='LOJA: Bel_'+DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString+' - '+
-                                                DMBelShop.CDS_EmpProcessaRAZAO_SOCIAL.AsString;
+      igCodLojaLinx:=DMBelShop.CDS_EmpProcessaCOD_LINX.AsInteger;
+
+      MySql:=' SELECT l.nome_emp'+
+             ' FROM LINXLOJAS l'+
+             ' WHERE l.empresa='+IntToStr(igCodLojaLinx);
+      DMBelShop.CDS_BuscaRapida.close;
+      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+      DMBelShop.CDS_BuscaRapida.Open;
+
+      Stb_Estoques.Panels[0].Text:='LOJA: Bel_'+IntToStr(igCodLojaLinx)+' - '+DMBelShop.CDS_BuscaRapida.FieldByName('Nome_Emp').AsString;
       Break;
     End; // If DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
 
@@ -1546,10 +1627,12 @@ Begin
     Exit;
   End; // If sgCodEmp='' Then
 
-  OdirPanApres.Caption:='AGUARDE !! Localizando Produtos/Estoques/Demandas da Loja Bel_'+sgCodEmp;
+  OdirPanApres.Caption:='AGUARDE !! Processando '+Stb_Estoques.Panels[0].Text;
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmEstoques.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmEstoques.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmEstoques;
   OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
@@ -1613,34 +1696,52 @@ Begin
   DMBelShop.CDS_Busca1.Close;
 
   // Busca Movtos ==============================================================
+  // ANtigo Esta no Fim do FormEstoques
   MySql:=' SELECT'+
          ' GEN_ID('+sGenProd+',1) SEQ,'+
          ' pr.codproduto COD_PRODUTO,'+
          ' TRIM(pr.apresentacao) DES_PRODUTO,'+
          ' TRIM(fc.ind_curva) IND_CURVA,'+
 
+         {
          ' CAST(COALESCE(e4.vlr_venda_m1,0.00) AS NUMERIC(12,2)) VLR_VD_M1,'+
          ' CAST(COALESCE(e4.vlr_venda_m2,0.00) AS NUMERIC(12,2)) VLR_VD_M2,'+
          ' CAST(COALESCE(e4.vlr_venda_m3,0.00) AS NUMERIC(12,2)) VLR_VD_M3,'+
          ' CAST(COALESCE(e4.vlr_venda_m4,0.00) AS NUMERIC(12,2)) VLR_VD_M4,'+
          ' CAST(COALESCE(e4.vlr_venda_m5,0.00) AS NUMERIC(12,2)) VLR_VD_M5,'+ //* Mes Corrente */
+         }
+         ' 0.00 VLR_VD_M1,'+
+         ' 0.00 VLR_VD_M2,'+
+         ' 0.00 VLR_VD_M3,'+
+         ' 0.00 VLR_VD_M4,'+
+         ' 0.00 VLR_VD_M5,'+ //* Mes Corrente */
 
+         {
          ' COALESCE(CAST((COALESCE(e4.vlr_venda_m1,0.00)+'+
          '                COALESCE(e4.vlr_venda_m2,0.00)+'+
          '                COALESCE(e4.vlr_venda_m3,0.00)+'+
          '                COALESCE(e4.vlr_venda_m4,0.00))'+
          '          AS NUMERIC(12,2))'+
          ' ,0.00) VLR_VENDAS_4M,'+
+         }
+         ' 0.00 VLR_VENDAS_4M,'+
 
-         // ' CAST(COALESCE(e4.vlr_venda,0.00) AS NUMERIC(12,2)) VLR_VENDAS_4M,'+ //* Inclui Mes Corrente */
+         {
+         ' CAST(COALESCE(fc.vlr_demandas,0.00) AS NUMERIC(12,2)) VLR_VENDAS_ANO,'+ //* Antigo VLR_DEMANDAS */
+         }
+         ' 0.00 VLR_VENDAS_ANO,'+ //* Antigo VLR_DEMANDAS */
 
+         {
          ' COALESCE(CAST(((COALESCE(e4.vlr_venda_m1,0.00)+'+
          '                 COALESCE(e4.vlr_venda_m2,0.00)+'+
          '                 COALESCE(e4.vlr_venda_m3,0.00)+'+
          '                 COALESCE(e4.vlr_venda_m4,0.00))/4)'+
          '          AS NUMERIC(12,2))'+
          ' ,0.00) VLR_MEDIA_MES,'+
+         }
+         ' 0.00 VLR_MEDIA_MES,'+
 
+         {
          ' COALESCE(CAST(((COALESCE(e4.vlr_venda_m1,0.00)+'+
          '                 COALESCE(e4.vlr_venda_m2,0.00)+'+
          '                 COALESCE(e4.vlr_venda_m3,0.00)+'+
@@ -1648,6 +1749,9 @@ Begin
          '                 COALESCE(e4.vlr_venda_m5,0.00))/'+sDiasUteis+')'+
          '          AS NUMERIC(12,2))'+
          ' ,0.00) VLR_MEDIA_DIA,'+
+         }
+         ' 0.00 VLR_MEDIA_DIA,'+
+
 
          ' CAST(COALESCE(e4.qtd_venda_m1,0) AS INTEGER) QTD_VD_M1,'+
          ' CAST(COALESCE(e4.qtd_venda_m2,0) AS INTEGER) QTD_VD_M2,'+
@@ -1655,12 +1759,16 @@ Begin
          ' CAST(COALESCE(e4.qtd_venda_m4,0) AS INTEGER) QTD_VD_M4,'+
          ' CAST(COALESCE(e4.qtd_venda_m5,0) AS INTEGER) QTD_VD_M5,'+
 
+         {
          ' COALESCE(CAST((COALESCE(e4.qtd_venda_m1,0)+'+
          '                COALESCE(e4.qtd_venda_m2,0)+'+
          '                COALESCE(e4.qtd_venda_m3,0)+'+
          '                COALESCE(e4.qtd_venda_m4,0))'+
          '           AS INTEGER)'+
          ' , 0) QTD_VENDAS_4M,'+
+         }
+         ' 0 QTD_VENDAS_4M,'+
+
 
          ' COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.0000)+'+
          '                 COALESCE(e4.qtd_venda_m2,0.0000)+'+
@@ -1669,6 +1777,7 @@ Begin
          '          AS NUMERIC(12,4))'+
          ' , 0) QTD_MEDIA_MES,'+
 
+         {
          ' COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.0000)+'+
          '                 COALESCE(e4.qtd_venda_m2,0.0000)+'+
          '                 COALESCE(e4.qtd_venda_m3,0.0000)+'+
@@ -1676,44 +1785,74 @@ Begin
          '                 COALESCE(e4.qtd_venda_m5,0.0000))/'+sDiasUteis+')'+
          '         AS NUMERIC(12,4))'+
          ' , 0) QTD_MEDIA_DIA,'+
+         }
+         ' 0.0000 QTD_MEDIA_DIA,'+
 
+         {
          ' CAST(CASE'+
          '       WHEN ((COALESCE(e4.qtd_venda,0)<=0) OR (COALESCE(e4.qtd_venda_dia,0)<=0)) THEN'+
          '         0'+
          '       ELSE'+
          '        (e4.qtd_venda_dia)*fc.num_dias_estocagem'+
          ' END AS INTEGER) QTD_ESTCAGEM_4M,'+ // Estocagem 4 meses
+         }
+         ' 0 QTD_ESTCAGEM_4M,'+ // Estocagem 4 meses
 
-         ' CAST(COALESCE(fc.vlr_demandas,0.00) AS NUMERIC(12,2)) VLR_VENDAS_ANO,'+ //* Antigo VLR_DEMANDAS */
+         {
          ' CAST(COALESCE(fc.qtd_demandas,0) AS INTEGER) QTD_VENDAS_ANO,'+
+         }
+         ' 0 QTD_VENDAS_ANO,'+
 
+         {
          ' CAST(CASE'+
          '       WHEN ((COALESCE(fc.qtd_demandas,0)<=0) OR (COALESCE(fc.num_dias_uteis,0)=0)) THEN'+
          '         0'+
          '       ELSE'+
          '        (fc.qtd_demandas/fc.num_dias_uteis)*fc.num_dias_estocagem'+
          ' END AS INTEGER) QTD_ESTOCAGEM_ANO,'+ // Antigo QTD_DEMANDA
+         }
+         ' 0 QTD_ESTOCAGEM_ANO,'+ // Antigo QTD_DEMANDA
 
          ' COALESCE(fc.per_participacao,0.0000) PER_PARTICIPACAO,';
 
   MySqlSelect:=
+         {
          ' CAST(COALESCE(es.saldoatual,0) as INTEGER) QTD_ESTOQUE,'+
+         }
+         ' 0 QTD_ESTOQUE,'+ //
+
+         {
          ' CAST(COALESCE(fc.qtd_transito,0) as INTEGER) QTD_TRANSITO,'+
          ' CAST(COALESCE(es.saldoatual,0)+COALESCE(fc.qtd_transito,0) AS INTEGER) QTD_DISPONIVEL,'+
+         }
+         ' 0 QTD_TRANSITO,'+
+         ' 0 QTD_DISPONIVEL,'+
+
 
          ' CAST(COALESCE(fc.est_minimo,0) AS INTEGER) EST_IDEAL,'+
          ' CAST(COALESCE(fc.est_maximo,0) AS INTEGER) EST_MAXIMO,'+
 
          ' CAST(COALESCE(pr.precovenda,0.0000) AS NUMERIC(15,4)) PC_VENDA,'+
+
+         {
          ' CAST((COALESCE(es.saldoatual,0)+COALESCE(fc.qtd_transito,0)) * COALESCE(pr.precovenda,0.0000) AS NUMERIC(12,2)) VLR_DISP_PC_VENDA,'+
          ' CAST(COALESCE(es.saldoatual,0) * COALESCE(pr.precovenda,0.0000) AS NUMERIC(12,2)) VLR_EST_PC_VENDA,'+
+         }
+         ' 0.00 VLR_DISP_PC_VENDA,'+
+         ' 0.00 VLR_EST_PC_VENDA,'+
 
          ' CAST(COALESCE(pr.precocompra,0.0000) AS NUMERIC(15,4)) PC_CUSTO,'+
+         {
          ' CAST((COALESCE(es.saldoatual,0)+COALESCE(fc.qtd_transito,0)) * COALESCE(pr.precocompra,0.0000) AS NUMERIC(12,2)) VLR_DISP_PC_CUSTO,'+
          ' CAST(COALESCE(es.saldoatual,0) * COALESCE(pr.precocompra,0.0000) AS NUMERIC(12,2)) VLR_EST_PC_CUSTO,'+
+         }
+         ' 0.0000 VLR_DISP_PC_CUSTO,'+
+         ' 0.0000 VLR_EST_PC_CUSTO,'+
 
-         // ' CAST((((COALESCE(pr.precovenda,0.00)/COALESCE(pr.precocompra,0.00))*100)-100) AS NUMERIC(12,4)) PER_MARGEM,'+
+         {
          '  CAST(COALESCE(pr.margem,0.0000) AS NUMERIC(12,4)) PER_MARGEM,'+
+         }
+         ' 0.0000 PER_MARGEM,'+
 
          ' pr.datainclusao DTA_INCLUSAO,'+
          ' TRIM(pr.codgrupo)     CODGRUPO,'+
@@ -1722,6 +1861,7 @@ Begin
          ' TRIM(pr.nomesubgrupo) NOMESUBGRUPO,'+
          ' TRIM(pr.codgruposub)  CODGRUPOSUB,'+
 
+         {
          ' CAST(LPAD('+
          '   CASE'+
          '      WHEN pr.situacaopro=0 THEN ''Ativo'''+
@@ -1732,6 +1872,8 @@ Begin
          '      ELSE ''Sem Informação'''+
          '   END'+
          '  ,20, '' '') AS VARCHAR(20)) IND_SITUACAO,'+
+         }
+         ' ''Ativo'' IND_SITUACAO,'+
 
          ' TRIM(pr.principalfor) COD_FORNECEDOR,'+
          ' TRIM(pr.nomefornecedor) DES_FORNECEDOR,'+
@@ -1747,6 +1889,7 @@ Begin
          ' 0 NUM_LINHA,'+
 
          // SOMA EST CURVAS - INICIO
+         {
          ' ROUND(CAST(CASE'+
          '               When fc.ind_curva=''A'' Then'+
          '                  COALESCE(es.saldoatual,0)'+
@@ -1781,9 +1924,16 @@ Begin
          '               Else'+
          '                 0'+
          ' END AS INTEGER),0) EST_CurvaE,'+
+         }
+         ' 0 EST_CurvaA,'+
+         ' 0 EST_CurvaB,'+
+         ' 0 EST_CurvaC,'+
+         ' 0 EST_CurvaD,'+
+         ' 0 EST_CurvaE,'+
          // SOMA EST CURVAS - FIM
 
          // SOMA EST CURVAS * PC - INICIO
+         {
          ' ROUND(CAST(CASE'+
          '               When fc.ind_curva=''A'' Then'+
          '                 COALESCE(es.saldoatual,0) * COALESCE(pr.precocompra,0.0000)'+
@@ -1818,9 +1968,16 @@ Begin
          '               Else'+
          '                 0'+
          ' End AS NUMERIC(12,2)),2) EST_CurvaE_PC,'+
+         }
+         ' 0.00 EST_CurvaA_PC,'+
+         ' 0.00 EST_CurvaB_PC,'+
+         ' 0.00 EST_CurvaC_PC,'+
+         ' 0.00 EST_CurvaD_PC,'+
+         ' 0.00 EST_CurvaE_PC,'+
          // SOMA EST CURVAS * PC - FIM
 
          // SOMA EST CURVAS * PV - INICIO
+         {
          ' ROUND(CAST(CASE'+
          '               When fc.ind_curva=''A'' Then'+
          '                 COALESCE(es.saldoatual,0) * COALESCE(pr.precovenda,0.0000)'+
@@ -1855,9 +2012,16 @@ Begin
          '               Else'+
          '                 0'+
          ' End AS NUMERIC(12,2)),2) EST_CurvaE_PV,'+
+         }
+         ' 0.00 EST_CurvaA_PV,'+
+         ' 0.00 EST_CurvaB_PV,'+
+         ' 0.00 EST_CurvaC_PV,'+
+         ' 0.00 EST_CurvaD_PV,'+
+         ' 0.00 EST_CurvaE_PV,'+
          // SOMA EST CURVAS * PV - FIM
 
          // SOMA DM CURVAS - INICIO
+         {
          ' ROUND(CASE'+
          '          When fc.ind_curva=''A'' THEN'+
          '            COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.0000)+'+
@@ -1922,181 +2086,196 @@ Begin
          '          Else'+
          '            0'+
          ' END,0) DM_CurvaE,';
+         }
+         ' 0 DM_CurvaA,'+
+         ' 0 DM_CurvaB,'+
+         ' 0 DM_CurvaC,'+
+         ' 0 DM_CurvaD,'+
+         ' 0 DM_CurvaE,';
          // SOMA DM CURVAS - INICIO
 
-                  // SOMA DM CURVAS * PC - INICIO
-  MySqlClausula1:=' ROUND(CASE'+
-                  '          When fc.ind_curva=''A'' THEN'+
-                  '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
-                  '                            AS NUMERIC(12,2))'+
-                  '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precocompra,0.00)'+
-                  '          Else'+
-                  '            0'+
-                  ' END,2) DM_CurvaA_PC,'+
+         // SOMA DM CURVAS * PC - INICIO
+  MySqlClausula1:=
+         {
+         ' ROUND(CASE'+
+         '          When fc.ind_curva=''A'' THEN'+
+         '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
+         '                            AS NUMERIC(12,2))'+
+         '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precocompra,0.00)'+
+         '          Else'+
+         '            0'+
+         ' END,2) DM_CurvaA_PC,'+
 
-                  ' ROUND(CASE'+
-                  '          When fc.ind_curva=''B'' THEN'+
-                  '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
-                  '                            AS NUMERIC(12,2))'+
-                  '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precocompra,0.00)'+
-                  '          Else'+
-                  '            0'+
-                  ' END,2) DM_CurvaB_PC,'+
+         ' ROUND(CASE'+
+         '          When fc.ind_curva=''B'' THEN'+
+         '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
+         '                            AS NUMERIC(12,2))'+
+         '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precocompra,0.00)'+
+         '          Else'+
+         '            0'+
+         ' END,2) DM_CurvaB_PC,'+
 
-                  ' ROUND(CASE'+
-                  '          When fc.ind_curva=''C'' THEN'+
-                  '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
-                  '                            AS NUMERIC(12,2))'+
-                  '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precocompra,0.00)'+
-                  '          Else'+
-                  '            0'+
-                  ' END,2) DM_CurvaC_PC,'+
+         ' ROUND(CASE'+
+         '          When fc.ind_curva=''C'' THEN'+
+         '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
+         '                            AS NUMERIC(12,2))'+
+         '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precocompra,0.00)'+
+         '          Else'+
+         '            0'+
+         ' END,2) DM_CurvaC_PC,'+
 
-                  ' ROUND(CASE'+
-                  '          When fc.ind_curva=''D'' THEN'+
-                  '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
-                  '                            AS NUMERIC(12,2))'+
-                  '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precocompra,0.00)'+
-                  '          Else'+
-                  '            0'+
-                  ' END,2) DM_CurvaD_PC,'+
+         ' ROUND(CASE'+
+         '          When fc.ind_curva=''D'' THEN'+
+         '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
+         '                            AS NUMERIC(12,2))'+
+         '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precocompra,0.00)'+
+         '          Else'+
+         '            0'+
+         ' END,2) DM_CurvaD_PC,'+
 
-                  ' ROUND(CASE'+
-                  '          When fc.ind_curva=''E'' THEN'+
-                  '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
-                  '                            AS NUMERIC(12,2))'+
-                  '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precocompra,0.00)'+
-                  '          Else'+
-                  '            0'+
-                  ' END,2) DM_CurvaE_PC,'+
-                  // SOMA DM CURVAS * PC - FIM
+         ' ROUND(CASE'+
+         '          When fc.ind_curva=''E'' THEN'+
+         '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
+         '                            AS NUMERIC(12,2))'+
+         '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precocompra,0.00)'+
+         '          Else'+
+         '            0'+
+         ' END,2) DM_CurvaE_PC,'+
+         }
+         ' 0 DM_CurvaA_PC,'+
+         ' 0 DM_CurvaB_PC,'+
+         ' 0 DM_CurvaC_PC,'+
+         ' 0 DM_CurvaD_PC,'+
+         ' 0 DM_CurvaE_PC,'+
+         // SOMA DM CURVAS * PC - FIM
 
-                  // SOMA DM CURVAS * PV - INICIO
-                  ' ROUND(CASE'+
-                  '          When fc.ind_curva=''A'' THEN'+
-                  '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
-                  '                            AS NUMERIC(12,2))'+
-                  '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precovenda,0.00)'+
-                  '          Else'+
-                  '            0'+
-                  ' END,2) DM_CurvaA_PV,'+
+         // SOMA DM CURVAS * PV - INICIO
+         {
+         ' ROUND(CASE'+
+         '          When fc.ind_curva=''A'' THEN'+
+         '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
+         '                            AS NUMERIC(12,2))'+
+         '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precovenda,0.00)'+
+         '          Else'+
+         '            0'+
+         ' END,2) DM_CurvaA_PV,'+
 
-                  ' ROUND(CASE'+
-                  '          When fc.ind_curva=''B'' THEN'+
-                  '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
-                  '                            AS NUMERIC(12,2))'+
-                  '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precovenda,0.00)'+
-                  '          Else'+
-                  '            0'+
-                  ' END,2) DM_CurvaB_PV,'+
+         ' ROUND(CASE'+
+         '          When fc.ind_curva=''B'' THEN'+
+         '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
+         '                            AS NUMERIC(12,2))'+
+         '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precovenda,0.00)'+
+         '          Else'+
+         '            0'+
+         ' END,2) DM_CurvaB_PV,'+
 
-                  ' ROUND(CASE'+
-                  '          When fc.ind_curva=''C'' THEN'+
-                  '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
-                  '                            AS NUMERIC(12,2))'+
-                  '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precovenda,0.00)'+
-                  '          Else'+
-                  '            0'+
-                  ' END,2) DM_CurvaC_PV,'+
+         ' ROUND(CASE'+
+         '          When fc.ind_curva=''C'' THEN'+
+         '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
+         '                            AS NUMERIC(12,2))'+
+         '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precovenda,0.00)'+
+         '          Else'+
+         '            0'+
+         ' END,2) DM_CurvaC_PV,'+
 
-                  ' ROUND(CASE'+
-                  '          When fc.ind_curva=''D'' THEN'+
-                  '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
-                  '                            AS NUMERIC(12,2))'+
-                  '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precovenda,0.00)'+
-                  '          Else'+
-                  '            0'+
-                  ' END,2) DM_CurvaD_PV,'+
+         ' ROUND(CASE'+
+         '          When fc.ind_curva=''D'' THEN'+
+         '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
+         '                            AS NUMERIC(12,2))'+
+         '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precovenda,0.00)'+
+         '          Else'+
+         '            0'+
+         ' END,2) DM_CurvaD_PV,'+
 
-                  ' ROUND(CASE'+
-                  '          When fc.ind_curva=''E'' THEN'+
-                  '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
-                  '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
-                  '                            AS NUMERIC(12,2))'+
-                  '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precovenda,0.00)'+
-                  '          Else'+
-                  '            0'+
-                  ' END,2) DM_CurvaE_PV';
-                  // SOMA DM CURVAS * PV - FIM
-
-  MySqlClausula2:=' FROM ES_FINAN_CURVA_ABC fc'+
-                  '     LEFT JOIN PRODUTO pr             ON pr.codproduto=fc.cod_produto'+
-                  '     LEFT JOIN ESTOQUE es             ON es.codfilial =fc.cod_loja'+  // QuotedStr(sgCodEmp)+
-                  '                                     AND es.codproduto=fc.cod_produto'+
-                  '     LEFT JOIN ES_DEMANDAS_4MESES e4  ON e4.codfilial =fc.cod_loja'+
-                  '                                     AND e4.codproduto=fc.cod_produto'+
-                  '     LEFT JOIN FORNECEDOR fo          ON fo.codfornecedor=pr.principalfor'+
-                  '     LEFT JOIN CENTROCUSTO cp         ON cp.codcentrocusto=fo.codcentrocusto'+
-                  '                                     AND cp.nomecusto=''COMPRAS'''+
-
-                  ' WHERE fc.cod_loja='+QuotedStr(sgCodEmp);
-
-                  // Situacao dos Produtos -----------------------------
-                  If Cbx_EstoquesSituacaoProd.ItemIndex=0 Then
-                   MySqlClausula2:=
-                    MySqlClausula2+' AND Coalesce(pr.situacaopro,0)=0';
-
-                  If Cbx_EstoquesSituacaoProd.ItemIndex=1 Then
-                   MySqlClausula2:=
-                    MySqlClausula2+' AND Coalesce(pr.situacaopro,3)=3';
-
-                  If Cbx_EstoquesSituacaoProd.ItemIndex=2 Then
-                   MySqlClausula2:=
-                    MySqlClausula2+' AND Coalesce(pr.situacaopro,0) in (0,3)';
+         ' ROUND(CASE'+
+         '          When fc.ind_curva=''E'' THEN'+
+         '            Round((COALESCE(CAST(((COALESCE(e4.qtd_venda_m1,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m2,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m3,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m4,0.00)+'+
+         '                                   COALESCE(e4.qtd_venda_m5,0.00))/'+sDiasUteis+')'+
+         '                            AS NUMERIC(12,2))'+
+         '                   , 0) *  fc.num_dias_estocagem),0) * COALESCE(pr.precovenda,0.00)'+
+         '          Else'+
+         '            0'+
+         ' END,2) DM_CurvaE_PV';
+         }
+         ' 0.00 DM_CurvaA_PV,'+
+         ' 0.00 DM_CurvaB_PV,'+
+         ' 0.00 DM_CurvaC_PV,'+
+         ' 0.00 DM_CurvaD_PV,'+
+         ' 0.00 DM_CurvaE_PV';
+         // SOMA DM CURVAS * PV - FIM
 
   MySqlClausula2:=
-   MySqlClausula2+' AND   NOT ((pr.principalfor IN (''010000'', ''000300'', ''000500'', ''001072'', ''000883''))'+
-                  '            OR'+
-                  '            (pr.codaplicacao =''0016''))'+ // Brindes
+         ' FROM ES_FINAN_CURVA_ABC fc'+
+         '     LEFT JOIN PRODUTO pr             ON pr.codproduto=fc.cod_produto'+
+         '     LEFT JOIN ES_DEMANDAS_4MESES e4  ON e4.codfilial =fc.cod_loja'+
+         '                                     AND e4.codproduto=fc.cod_produto'+
+         '     LEFT JOIN FORNECEDOR fo          ON fo.codfornecedor=pr.principalfor'+
+         '     LEFT JOIN CENTROCUSTO cp         ON cp.codcentrocusto=fo.codcentrocusto'+
+         '                                     AND cp.nomecusto=''COMPRAS'''+
 
-                  ' ORDER BY fc.ind_curva, fc.per_participacao desc, fc.vlr_demandas desc';
-  DMBelShop.CDS_SQLQ_Busca.close;
-  DMBelShop.SQLQ_Busca.SQL.Clear;
-  DMBelShop.SQLQ_Busca.SQL.Add(MySql+MySqlSelect+MySqlClausula1+MySqlClausula2);
-  DMBelShop.CDS_SQLQ_Busca.Open;
+         ' WHERE fc.cod_loja='+QuotedStr(sgCodEmp)+
+         ' AND EXISTS (SELECT 1'+
+         '             FROM LINXPRODUTOS pl'+
+         '             WHERE pl.cod_auxiliar=pr.codproduto'+
+         '             AND   pl.desativado=''N'''+
+         '             AND   pl.id_linha<>33'+
+         '             AND   pl.id_colecao<>294)'+
 
-  // Apresenta Produtos ========================================================
-  DMVirtual.CDS_V_Estoques.Data:=DMBelShop.CDS_SQLQ_Busca.Data;
-  DMBelShop.CDS_SQLQ_Busca.close;
+         ' ORDER BY fc.ind_curva, fc.per_participacao desc';
+  DMVirtual.CDS_V_Estoques.Close;
+  DMVirtual.CDS_V_Estoques.Filtered:=False;
+  DMVirtual.CDS_V_Estoques.Filter:='';
+  DMVirtual.SQLQ_Busca.SQL.Clear;
+  DMVirtual.SQLQ_Busca.SQL.Add(MySql+MySqlSelect+MySqlClausula1+MySqlClausula2);
+  DMVirtual.CDS_V_Estoques.Open;
+
+//  DMBelShop.CDS_SQLQ_Busca.close;
+//  DMBelShop.SQLQ_Busca.SQL.Clear;
+//  DMBelShop.SQLQ_Busca.SQL.Add(MySql+MySqlSelect+MySqlClausula1+MySqlClausula2);
+//  DMBelShop.CDS_SQLQ_Busca.Open;
+//
+//  // Apresenta Produtos ========================================================
+//  DMVirtual.CDS_V_Estoques.Data:=DMBelShop.CDS_SQLQ_Busca.Data;
+//  DMBelShop.CDS_SQLQ_Busca.close;
 
   // Drop Sequence's ===========================================================
   MySql:=' DROP SEQUENCE '+sGenProd;
@@ -2152,14 +2331,13 @@ Begin
   THackDBGrid(Dbg_Estoques).SelectedIndex:=9;
   Dbg_Estoques.SetFocus;
 
-  // Apresenta Estoques e Demanda Prevista =====================================
-  DMVirtual.CDS_V_EstoquesAfterScroll(DMVirtual.CDS_V_Estoques);
+// OdirApagar - 19/12/2017 - Não Apresenta Mais - Dbg_EstoquesPrev
+//  // Apresenta Estoques e Demanda Prevista =====================================
+//  DMVirtual.CDS_V_EstoquesAfterScroll(DMVirtual.CDS_V_Estoques);
 
   // APRESENTA O RESULTA DO TEMPO FINAL
   hHrFim:=TimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
   msg('TEMPO: '+TimeToStr(StrToTime(hHrFim)-StrToTime(hHrInicio)),'A');
-
-
 end;
 
 procedure TFrmEstoques.PopM_EstoquesParametrosClick(Sender: TObject);
@@ -2749,7 +2927,9 @@ begin
 
     DMVirtual.CDS_V_Estoques.Filtered:=True;
 
-    Recalculo_V_Estoques_Aggregates;
+    // Odir Retirou - 19/12/2017 - Parametros Somente para Atualização de Estoque Mínimo
+    // Recalculo_V_Estoques_Aggregates;
+
     DMVirtual.CDS_V_Estoques.Open;
     DMBelShop.CDS_EstoquePrevisao.Open;
     DMVirtual.CDS_V_Estoques.EnableControls;
@@ -2762,7 +2942,10 @@ begin
 
       DMVirtual.CDS_V_Estoques.Filter:='';
       DMVirtual.CDS_V_Estoques.Filtered:=False;
-      Recalculo_V_Estoques_Aggregates;
+
+      // Odir Retirou - 19/12/2017 - Parametros Somente para Atualização de Estoque Mínimo
+      // Recalculo_V_Estoques_Aggregates;
+      
       DMVirtual.CDS_V_Estoques.Open;
       DMBelShop.CDS_EstoquePrevisao.Open;
     End;
@@ -2779,7 +2962,42 @@ begin
 
   OdirPanApres.Visible:=False;
   Screen.Cursor:=crDefault;
+end;
 
+procedure TFrmEstoques.Bt_EstoquesSaldosClick(Sender: TObject);
+Var
+  hHrInicio, hHrFim: String;
+begin
+  Dbg_Estoques.SetFocus;
+
+  If DMVirtual.CDS_V_Estoques.IsEmpty Then
+   Exit;
+
+  if msg('Atualização de Saldo de Estoque'+cr+'Tempo Previsto: 1 a 4 Minutos'+cr+cr+'Deseja Continuar ???','C')=2 Then
+   Exit;
+
+  hHrInicio:='';
+  hHrFim:='';
+  hHrInicio:=TimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+
+  // Atualiza Estoque dos Produtos =============================================
+  AtualizaEstoques;
+
+  // APRESENTA O RESULTA DO TEMPO FINAL
+  hHrFim:=TimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+  msg('TEMPO: '+TimeToStr(StrToTime(hHrFim)-StrToTime(hHrInicio)),'A');
+
+  hHrInicio:='';
+  hHrFim:='';
+
+  THackDBGrid(Dbg_Estoques).FixedCols:=4;
+  THackDBGrid(Dbg_Estoques).SelectedIndex:=9;
+
+  DMVirtual.CDS_V_Estoques.First;
+
+  Application.ProcessMessages;
+  Dbg_Estoques.SetFocus;
 end;
 
 end.
+

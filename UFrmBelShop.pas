@@ -2511,6 +2511,7 @@ var
 
   sgCodEmp, sgDesLoja: String; // Usado, Também, para Editar Pedido de Ordem de Compra
 
+
   sgMesAnoPlanFinanceira: String;
 
   sgCodLojas, sgDtaInicio, sgDtaFim, sgPeriodo, sgPeriodo1: String;

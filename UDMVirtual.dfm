@@ -1127,7 +1127,7 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_ObjetivosDias: TDataSource
     DataSet = CDS_V_ObjetivosDias
-    Left = 664
+    Left = 712
     Top = 17
   end
   object CDS_V_ObjetivosDias: TClientDataSet
@@ -1136,7 +1136,7 @@ object DMVirtual: TDMVirtual
     Filtered = True
     IndexFieldNames = 'INDICE'
     Params = <>
-    Left = 608
+    Left = 656
     Top = 9
     object CDS_V_ObjetivosDiasCod_Objetivo: TIntegerField
       FieldName = 'Cod_Objetivo'
@@ -1330,7 +1330,7 @@ object DMVirtual: TDMVirtual
     IndexFieldNames = 'DES_PRODUTO'
     Params = <>
     AfterScroll = CDS_V_EstFisFinanEmpAfterScroll
-    Left = 616
+    Left = 664
     Top = 346
     object CDS_V_EstFisFinanEmpCOD_PRODUTO: TStringField
       Alignment = taRightJustify
@@ -1384,7 +1384,7 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_EstFisFinanEmp: TDataSource
     DataSet = CDS_V_EstFisFinanEmp
-    Left = 659
+    Left = 707
     Top = 359
   end
   object DS_V_EmpConexoes: TDataSource
@@ -1396,7 +1396,7 @@ object DMVirtual: TDMVirtual
     Aggregates = <>
     IndexFieldNames = 'INDICE'
     Params = <>
-    Left = 616
+    Left = 664
     Top = 410
     object CDS_V_EstFisFinanLojasCOD_PRODUTO: TStringField
       Alignment = taRightJustify
@@ -1450,12 +1450,12 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_EstFisFinanLojas: TDataSource
     DataSet = CDS_V_EstFisFinanLojas
-    Left = 661
+    Left = 709
     Top = 426
   end
   object DS_V_ObjetivosMeses: TDataSource
     DataSet = CDS_V_ObjetivosMeses
-    Left = 664
+    Left = 712
     Top = 81
   end
   object CDS_V_ObjetivosMeses: TClientDataSet
@@ -1464,7 +1464,7 @@ object DMVirtual: TDMVirtual
     Filtered = True
     IndexFieldNames = 'INDICE'
     Params = <>
-    Left = 608
+    Left = 656
     Top = 65
     object CDS_V_ObjetivosMesesCod_Objetivo: TIntegerField
       FieldName = 'Cod_Objetivo'
@@ -1568,14 +1568,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_ObjetivosMovtos: TDataSource
     DataSet = CDS_V_ObjetivosMovtos
-    Left = 664
+    Left = 712
     Top = 137
   end
   object CDS_V_ObjetivosMovtos: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'COD_FILIAL;COD_OBJETIVO;ORDEM;'
     Params = <>
-    Left = 608
+    Left = 656
     Top = 129
     object CDS_V_ObjetivosMovtosORDEM: TIntegerField
       FieldName = 'ORDEM'
@@ -1649,14 +1649,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_ObjetivosAuditorias: TDataSource
     DataSet = CDS_V_ObjetivosAuditorias
-    Left = 664
+    Left = 712
     Top = 192
   end
   object CDS_V_ObjetivosAuditorias: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'ORDEM'
     Params = <>
-    Left = 608
+    Left = 656
     Top = 184
     object CDS_V_ObjetivosAuditoriasORDEM: TIntegerField
       FieldName = 'ORDEM'
@@ -1786,14 +1786,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_GiroEstoque: TDataSource
     DataSet = CDS_V_GiroEstoque
-    Left = 664
+    Left = 712
     Top = 481
   end
   object CDS_V_GiroEstoque: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'ORDEM'
     Params = <>
-    Left = 608
+    Left = 656
     Top = 473
     object CDS_V_GiroEstoqueCOD_LOJA: TStringField
       Alignment = taCenter
@@ -1879,13 +1879,13 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_Mix_Prod: TDataSource
     DataSet = CDS_V_Mix_Prod
-    Left = 664
+    Left = 712
     Top = 298
   end
   object CDS_V_Mix_Prod: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 608
+    Left = 656
     Top = 290
     object CDS_V_Mix_ProdCOD_LOJA: TStringField
       Alignment = taCenter
@@ -3549,11 +3549,12 @@ object DMVirtual: TDMVirtual
     Aggregates = <>
     AggregatesActive = True
     Params = <>
+    ProviderName = 'DSP_SQLQ_Busca'
     AfterEdit = CDS_V_EstoquesAfterEdit
     AfterPost = CDS_V_EstoquesAfterPost
     AfterScroll = CDS_V_EstoquesAfterScroll
     OnCalcFields = CDS_V_EstoquesCalcFields
-    Left = 413
+    Left = 469
     Top = 96
     object CDS_V_EstoquesSEQ: TFMTBCDField
       DisplayLabel = 'Seq'
@@ -3658,11 +3659,6 @@ object DMVirtual: TDMVirtual
       FieldName = 'QTD_VD_M5'
       DisplayFormat = '0,'
     end
-    object CDS_V_EstoquesQTD_VENDAS_ANO: TIntegerField
-      DisplayLabel = 'Qt Vd AA'
-      FieldName = 'QTD_VENDAS_ANO'
-      DisplayFormat = '0,'
-    end
     object CDS_V_EstoquesQTD_VENDAS_4M: TIntegerField
       DisplayLabel = 'Qt Vd 4 M'
       FieldName = 'QTD_VENDAS_4M'
@@ -3671,7 +3667,7 @@ object DMVirtual: TDMVirtual
     object CDS_V_EstoquesQTD_MEDIA_MES: TFMTBCDField
       DisplayLabel = 'Qt '#215' Vd M'
       FieldName = 'QTD_MEDIA_MES'
-      DisplayFormat = '0,'
+      DisplayFormat = '0,.0000'
       Precision = 15
       Size = 4
     end
@@ -3685,6 +3681,11 @@ object DMVirtual: TDMVirtual
     object CDS_V_EstoquesQTD_ESTCAGEM_4M: TIntegerField
       DisplayLabel = 'Qt EstG 4 M'
       FieldName = 'QTD_ESTCAGEM_4M'
+      DisplayFormat = '0,'
+    end
+    object CDS_V_EstoquesQTD_VENDAS_ANO: TIntegerField
+      DisplayLabel = 'Qt Vd AA'
+      FieldName = 'QTD_VENDAS_ANO'
       DisplayFormat = '0,'
     end
     object CDS_V_EstoquesQTD_ESTOCAGEM_ANO: TIntegerField
@@ -3808,8 +3809,10 @@ object DMVirtual: TDMVirtual
     end
     object CDS_V_EstoquesIND_SITUACAO: TStringField
       DisplayLabel = 'Sit Prod'
+      DisplayWidth = 5
       FieldName = 'IND_SITUACAO'
       Required = True
+      Size = 5
     end
     object CDS_V_EstoquesCOD_FORNECEDOR: TStringField
       Alignment = taRightJustify
@@ -3878,390 +3881,11 @@ object DMVirtual: TDMVirtual
       FieldName = 'NUM_LINHA'
       Calculated = True
     end
-    object CDS_V_EstoquesEST_CURVAA: TIntegerField
-      FieldName = 'EST_CURVAA'
-    end
-    object CDS_V_EstoquesEST_CURVAB: TIntegerField
-      FieldName = 'EST_CURVAB'
-    end
-    object CDS_V_EstoquesEST_CURVAC: TIntegerField
-      FieldName = 'EST_CURVAC'
-    end
-    object CDS_V_EstoquesEST_CURVAD: TIntegerField
-      FieldName = 'EST_CURVAD'
-    end
-    object CDS_V_EstoquesEST_CURVAE: TIntegerField
-      FieldName = 'EST_CURVAE'
-    end
-    object CDS_V_EstoquesEST_CURVAA_PC: TFMTBCDField
-      FieldName = 'EST_CURVAA_PC'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesEST_CURVAB_PC: TFMTBCDField
-      FieldName = 'EST_CURVAB_PC'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesEST_CURVAC_PC: TFMTBCDField
-      FieldName = 'EST_CURVAC_PC'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesEST_CURVAD_PC: TFMTBCDField
-      FieldName = 'EST_CURVAD_PC'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesEST_CURVAE_PC: TFMTBCDField
-      FieldName = 'EST_CURVAE_PC'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesEST_CURVAA_PV: TFMTBCDField
-      FieldName = 'EST_CURVAA_PV'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesEST_CURVAB_PV: TFMTBCDField
-      FieldName = 'EST_CURVAB_PV'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesEST_CURVAC_PV: TFMTBCDField
-      FieldName = 'EST_CURVAC_PV'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesEST_CURVAD_PV: TFMTBCDField
-      FieldName = 'EST_CURVAD_PV'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesEST_CURVAE_PV: TFMTBCDField
-      FieldName = 'EST_CURVAE_PV'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesDM_CURVAA: TFMTBCDField
-      DisplayLabel = 'Dm Cl "A"'
-      FieldName = 'DM_CURVAA'
-      DisplayFormat = '0.'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesDM_CURVAB: TFMTBCDField
-      DisplayLabel = 'Dm Cl "B"'
-      FieldName = 'DM_CURVAB'
-      DisplayFormat = '0.'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesDM_CURVAC: TFMTBCDField
-      DisplayLabel = 'Dm Cl "C"'
-      FieldName = 'DM_CURVAC'
-      DisplayFormat = '0.'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesDM_CURVAD: TFMTBCDField
-      DisplayLabel = 'Dm Cl "D"'
-      FieldName = 'DM_CURVAD'
-      DisplayFormat = '0.'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesDM_CURVAE: TFMTBCDField
-      DisplayLabel = 'Dm Cl "E"'
-      FieldName = 'DM_CURVAE'
-      DisplayFormat = '0.'
-      Precision = 15
-      Size = 2
-    end
-    object CDS_V_EstoquesDM_CURVAA_PC: TFMTBCDField
-      FieldName = 'DM_CURVAA_PC'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 6
-    end
-    object CDS_V_EstoquesDM_CURVAB_PC: TFMTBCDField
-      DisplayLabel = 'DM_CURVAA_PC'
-      FieldName = 'DM_CURVAB_PC'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 6
-    end
-    object CDS_V_EstoquesDM_CURVAC_PC: TFMTBCDField
-      DisplayLabel = 'DM_CURVAA_PC'
-      FieldName = 'DM_CURVAC_PC'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 6
-    end
-    object CDS_V_EstoquesDM_CURVAD_PC: TFMTBCDField
-      DisplayLabel = 'DM_CURVAA_PC'
-      FieldName = 'DM_CURVAD_PC'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 6
-    end
-    object CDS_V_EstoquesDM_CURVAE_PC: TFMTBCDField
-      DisplayLabel = 'DM_CURVAA_PC'
-      FieldName = 'DM_CURVAE_PC'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 6
-    end
-    object CDS_V_EstoquesDM_CURVAA_PV: TFMTBCDField
-      DisplayLabel = 'DM_CURVAA_PC'
-      FieldName = 'DM_CURVAA_PV'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 6
-    end
-    object CDS_V_EstoquesDM_CURVAB_PV: TFMTBCDField
-      DisplayLabel = 'DM_CURVAA_PC'
-      FieldName = 'DM_CURVAB_PV'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 6
-    end
-    object CDS_V_EstoquesDM_CURVAC_PV: TFMTBCDField
-      DisplayLabel = 'DM_CURVAA_PC'
-      FieldName = 'DM_CURVAC_PV'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 6
-    end
-    object CDS_V_EstoquesDM_CURVAD_PV: TFMTBCDField
-      DisplayLabel = 'DM_CURVAA_PC'
-      FieldName = 'DM_CURVAD_PV'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 6
-    end
-    object CDS_V_EstoquesDM_CURVAE_PV: TFMTBCDField
-      DisplayLabel = 'DM_CURVAA_PC'
-      FieldName = 'DM_CURVAE_PV'
-      DisplayFormat = '0,.00'
-      Precision = 15
-      Size = 6
-    end
-    object CDS_V_EstoquesEST_CURVA_B: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'EST_CURVA_B'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(EST_CURVAB)'
-    end
-    object CDS_V_EstoquesEST_CURVA_A: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'EST_CURVA_A'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(EST_CURVAA)'
-    end
-    object CDS_V_EstoquesEST_CURVA_C: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'EST_CURVA_C'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(EST_CURVAC)'
-    end
-    object CDS_V_EstoquesEST_CURVA_D: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'EST_CURVA_D'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(EST_CURVAD)'
-    end
-    object CDS_V_EstoquesEST_CURVA_E: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'EST_CURVA_E'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(EST_CURVAE)'
-    end
-    object CDS_V_EstoquesEST_CURVA_A_PC: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'EST_CURVA_A_PC'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(EST_CURVAA_PC)'
-    end
-    object CDS_V_EstoquesEST_CURVA_B_PC: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'EST_CURVA_B_PC'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(EST_CURVAB_PC)'
-    end
-    object CDS_V_EstoquesEST_CURVA_C_PC: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'EST_CURVA_C_PC'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(EST_CURVAC_PC)'
-    end
-    object CDS_V_EstoquesEST_CURVA_D_PC: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'EST_CURVA_D_PC'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(EST_CURVAD_PC)'
-    end
-    object CDS_V_EstoquesEST_CURVA_E_PC: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'EST_CURVA_E_PC'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(EST_CURVAE_PC)'
-    end
-    object CDS_V_EstoquesDM_CURVA_E_PV: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'DM_CURVA_E_PV'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(DM_CURVAE_PV)'
-    end
-    object CDS_V_EstoquesDM_CURVA_D_PV: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'DM_CURVA_D_PV'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(DM_CURVAD_PV)'
-    end
-    object CDS_V_EstoquesDM_CURVA_C_PV: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'DM_CURVA_C_PV'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(DM_CURVAC_PV)'
-    end
-    object CDS_V_EstoquesDM_CURVA_B_PV: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'DM_CURVA_B_PV'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(DM_CURVAB_PV)'
-    end
-    object CDS_V_EstoquesDM_CURVA_A_PV: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'DM_CURVA_A_PV'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(DM_CURVAA_PV)'
-    end
-    object CDS_V_EstoquesDM_CURVA_E_PC: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'DM_CURVA_E_PC'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(DM_CURVAE_PC)'
-    end
-    object CDS_V_EstoquesDM_CURVA_D_PC: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'DM_CURVA_D_PC'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(DM_CURVAD_PC)'
-    end
-    object CDS_V_EstoquesDM_CURVA_C_PC: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'DM_CURVA_C_PC'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(DM_CURVAC_PC)'
-    end
-    object CDS_V_EstoquesDM_CURVA_B_PC: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'DM_CURVA_B_PC'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(DM_CURVAB_PC)'
-    end
-    object CDS_V_EstoquesDM_CURVA_E: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'DM_CURVA_E'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(DM_CURVAE)'
-    end
-    object CDS_V_EstoquesDM_CURVA_D: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'DM_CURVA_D'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(DM_CURVAD)'
-    end
-    object CDS_V_EstoquesDM_CURVA_C: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'DM_CURVA_C'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(DM_CURVAC)'
-    end
-    object CDS_V_EstoquesDM_CURVA_A: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'DM_CURVA_A'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(DM_CURVAA)'
-    end
-    object CDS_V_EstoquesDM_CURVA_B: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'DM_CURVA_B'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(DM_CURVAB)'
-    end
-    object CDS_V_EstoquesDM_CURVA_A_PC: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'DM_CURVA_A_PC'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(DM_CURVAA_PC)'
-    end
-    object CDS_V_EstoquesEST_CURVA_E_PV: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'EST_CURVA_E_PV'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(EST_CURVAE_PV)'
-    end
-    object CDS_V_EstoquesEST_CURVA_D_PV: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'EST_CURVA_D_PV'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(EST_CURVAD_PV)'
-    end
-    object CDS_V_EstoquesEST_CURVA_C_PV: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'EST_CURVA_C_PV'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(EST_CURVAC_PV)'
-    end
-    object CDS_V_EstoquesEST_CURVA_B_PV: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'EST_CURVA_B_PV'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(EST_CURVAB_PV)'
-    end
-    object CDS_V_EstoquesEST_CURVA_A_PV: TAggregateField
-      Alignment = taRightJustify
-      FieldName = 'EST_CURVA_A_PV'
-      Active = True
-      DisplayFormat = '0,'
-      Expression = 'SUM(EST_CURVAA_PV)'
-    end
   end
   object DS_V_Estoques: TDataSource
     DataSet = CDS_V_Estoques
-    Left = 464
-    Top = 120
+    Left = 520
+    Top = 112
   end
   object CDS_V_ParamLojaNeces: TClientDataSet
     Aggregates = <>
@@ -4639,7 +4263,7 @@ object DMVirtual: TDMVirtual
     Params = <>
     ProviderName = 'DSP_EstoquesFinan'
     Left = 409
-    Top = 172
+    Top = 188
     object CDS_V_EstoquesFinanCLASSE: TStringField
       DisplayLabel = 'Cl'
       FieldName = 'CLASSE'
@@ -4716,8 +4340,8 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_EstoquesFinan: TDataSource
     DataSet = CDS_V_EstoquesFinan
-    Left = 461
-    Top = 192
+    Left = 469
+    Top = 208
   end
   object DS_V_NFeProdutos: TDataSource
     DataSet = CDS_V_NFeProdutos
@@ -4848,5 +4472,731 @@ object DMVirtual: TDMVirtual
     DataSet = CDS_V_Creditos
     Left = 1036
     Top = 443
+  end
+  object SQLQ_Busca: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 380
+    Top = 96
+  end
+  object DSP_SQLQ_Busca: TDataSetProvider
+    DataSet = SQLQ_Busca
+    Options = [poRetainServerOrder]
+    Left = 428
+    Top = 118
+  end
+  object CDS_Copia_V_Estoque: TClientDataSet
+    Aggregates = <>
+    AggregatesActive = True
+    Params = <>
+    AfterEdit = CDS_V_EstoquesAfterEdit
+    AfterPost = CDS_V_EstoquesAfterPost
+    AfterScroll = CDS_V_EstoquesAfterScroll
+    OnCalcFields = CDS_V_EstoquesCalcFields
+    Left = 533
+    Top = 160
+    object FMTBCDField1: TFMTBCDField
+      DisplayLabel = 'Seq'
+      FieldName = 'SEQ'
+      Required = True
+      DisplayFormat = '0,'
+      Precision = 15
+      Size = 0
+    end
+    object StringField1: TStringField
+      DisplayLabel = 'C'#243'd'
+      FieldName = 'COD_PRODUTO'
+      FixedChar = True
+      Size = 6
+    end
+    object StringField2: TStringField
+      DisplayLabel = 'Desc Prod'
+      FieldName = 'DES_PRODUTO'
+      Size = 80
+    end
+    object StringField3: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'CL'
+      FieldName = 'IND_CURVA'
+      Size = 1
+    end
+    object FMTBCDField2: TFMTBCDField
+      FieldName = 'VLR_VD_M1'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField3: TFMTBCDField
+      FieldName = 'VLR_VD_M2'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField4: TFMTBCDField
+      FieldName = 'VLR_VD_M3'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField5: TFMTBCDField
+      FieldName = 'VLR_VD_M4'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField6: TFMTBCDField
+      FieldName = 'VLR_VD_M5'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField7: TFMTBCDField
+      DisplayLabel = '$ Vd AA'
+      FieldName = 'VLR_VENDAS_ANO'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField8: TFMTBCDField
+      DisplayLabel = '$ Vd 4 M'
+      FieldName = 'VLR_VENDAS_4M'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField9: TFMTBCDField
+      DisplayLabel = '$ '#215' Vd M'
+      FieldName = 'VLR_MEDIA_MES'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField10: TFMTBCDField
+      DisplayLabel = '$ '#215' Vd Dia'
+      FieldName = 'VLR_MEDIA_DIA'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object IntegerField1: TIntegerField
+      FieldName = 'QTD_VD_M1'
+      DisplayFormat = '0,'
+    end
+    object IntegerField2: TIntegerField
+      FieldName = 'QTD_VD_M2'
+      DisplayFormat = '0,'
+    end
+    object IntegerField3: TIntegerField
+      FieldName = 'QTD_VD_M3'
+      DisplayFormat = '0,'
+    end
+    object IntegerField4: TIntegerField
+      FieldName = 'QTD_VD_M4'
+      DisplayFormat = '0,'
+    end
+    object IntegerField5: TIntegerField
+      FieldName = 'QTD_VD_M5'
+      DisplayFormat = '0,'
+    end
+    object IntegerField6: TIntegerField
+      DisplayLabel = 'Qt Vd AA'
+      FieldName = 'QTD_VENDAS_ANO'
+      DisplayFormat = '0,'
+    end
+    object IntegerField7: TIntegerField
+      DisplayLabel = 'Qt Vd 4 M'
+      FieldName = 'QTD_VENDAS_4M'
+      DisplayFormat = '0,'
+    end
+    object FMTBCDField11: TFMTBCDField
+      DisplayLabel = 'Qt '#215' Vd M'
+      FieldName = 'QTD_MEDIA_MES'
+      DisplayFormat = '0,'
+      Precision = 15
+      Size = 4
+    end
+    object FMTBCDField12: TFMTBCDField
+      DisplayLabel = 'Qt '#215' Vd Dia'
+      FieldName = 'QTD_MEDIA_DIA'
+      DisplayFormat = '0,.0000'
+      Precision = 15
+      Size = 4
+    end
+    object IntegerField8: TIntegerField
+      DisplayLabel = 'Qt EstG 4 M'
+      FieldName = 'QTD_ESTCAGEM_4M'
+      DisplayFormat = '0,'
+    end
+    object IntegerField9: TIntegerField
+      DisplayLabel = 'Qt EstG AA'
+      FieldName = 'QTD_ESTOCAGEM_ANO'
+      DisplayFormat = '0,'
+    end
+    object FMTBCDField13: TFMTBCDField
+      DisplayLabel = '% Part'
+      FieldName = 'PER_PARTICIPACAO'
+      DisplayFormat = '0.,0000'
+      Precision = 15
+      Size = 4
+    end
+    object IntegerField10: TIntegerField
+      DisplayLabel = 'Qt Est'
+      FieldName = 'QTD_ESTOQUE'
+      DisplayFormat = '0,'
+    end
+    object IntegerField11: TIntegerField
+      DisplayLabel = 'Qt Trans'
+      FieldName = 'QTD_TRANSITO'
+      DisplayFormat = '0,'
+    end
+    object IntegerField12: TIntegerField
+      DisplayLabel = 'Qt Disp'
+      FieldName = 'QTD_DISPONIVEL'
+      DisplayFormat = '0,'
+    end
+    object IntegerField13: TIntegerField
+      DisplayLabel = 'Est M'#237'n'
+      FieldName = 'EST_IDEAL'
+      DisplayFormat = '0,'
+    end
+    object IntegerField14: TIntegerField
+      DisplayLabel = 'Est M'#225'x'
+      FieldName = 'EST_MAXIMO'
+      DisplayFormat = '0,'
+    end
+    object FMTBCDField14: TFMTBCDField
+      DisplayLabel = 'P'#231' Vd'
+      FieldName = 'PC_VENDA'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 4
+    end
+    object FMTBCDField15: TFMTBCDField
+      DisplayLabel = '$ Qt Disp P'#231' Vd'
+      FieldName = 'VLR_DISP_PC_VENDA'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField16: TFMTBCDField
+      DisplayLabel = '$ Qt Est P'#231' Vd'
+      FieldName = 'VLR_EST_PC_VENDA'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField17: TFMTBCDField
+      DisplayLabel = 'P'#231' Ct'
+      FieldName = 'PC_CUSTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField18: TFMTBCDField
+      DisplayLabel = '$ Qt Disp P'#231' Ct'
+      FieldName = 'VLR_DISP_PC_CUSTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField19: TFMTBCDField
+      DisplayLabel = '$ Qt Est P'#231' Ct'
+      FieldName = 'VLR_EST_PC_CUSTO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField20: TFMTBCDField
+      DisplayLabel = '% Mg Lc'
+      FieldName = 'PER_MARGEM'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 4
+    end
+    object DateField1: TDateField
+      DisplayLabel = 'Dt Incl'
+      FieldName = 'DTA_INCLUSAO'
+    end
+    object StringField4: TStringField
+      DisplayLabel = 'C'#243'd Gr'
+      FieldName = 'CODGRUPO'
+      FixedChar = True
+      Size = 3
+    end
+    object StringField5: TStringField
+      DisplayLabel = 'Desc Gr'
+      FieldName = 'NOMEGRUPO'
+      FixedChar = True
+      Size = 30
+    end
+    object StringField6: TStringField
+      DisplayLabel = 'C'#243'd Sub-Gr'
+      FieldName = 'CODSUBGRUPO'
+      FixedChar = True
+      Size = 4
+    end
+    object StringField7: TStringField
+      DisplayLabel = 'Desc Sub-Gr'
+      FieldName = 'NOMESUBGRUPO'
+      FixedChar = True
+      Size = 30
+    end
+    object StringField8: TStringField
+      DisplayLabel = 'C'#243'd Gr Sub'
+      FieldName = 'CODGRUPOSUB'
+      FixedChar = True
+      Size = 7
+    end
+    object StringField9: TStringField
+      DisplayLabel = 'Sit Prod'
+      FieldName = 'IND_SITUACAO'
+      Required = True
+    end
+    object StringField10: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'C'#243'd Forn'
+      FieldName = 'COD_FORNECEDOR'
+      FixedChar = True
+      Size = 6
+    end
+    object StringField11: TStringField
+      DisplayLabel = 'Desc Forn'
+      FieldName = 'DES_FORNECEDOR'
+      Size = 40
+    end
+    object StringField12: TStringField
+      FieldName = 'COD_COMPRADOR'
+      FixedChar = True
+      Size = 7
+    end
+    object StringField13: TStringField
+      DisplayLabel = 'Desc Comprador'
+      FieldName = 'DES_COMPRADOR'
+      FixedChar = True
+      Size = 30
+    end
+    object FMTBCDField21: TFMTBCDField
+      DisplayLabel = 'Vendas Acumuladas'
+      FieldName = 'VLR_VENDAS_ACUM'
+      Required = True
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField22: TFMTBCDField
+      FieldName = 'ORDENAR'
+      Required = True
+      Precision = 15
+      Size = 0
+    end
+    object StringField14: TStringField
+      FieldName = 'ALTERACAO'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
+    object FMTBCDField23: TFMTBCDField
+      DisplayLabel = 'Vendas Acumuladas OK'
+      FieldName = 'VLR_VENDAS_ACUM_OK'
+      Required = True
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object IntegerField15: TIntegerField
+      DisplayLabel = 'N'#186' Dias Uteis Ano'
+      FieldName = 'NUM_DIASUTEIS'
+      DisplayFormat = '0,'
+    end
+    object IntegerField16: TIntegerField
+      DisplayLabel = 'N'#186' Dias Uteis 4Meses'
+      FieldName = 'DIAS_UTEIS_4M'
+      DisplayFormat = '0,'
+    end
+    object IntegerField17: TIntegerField
+      DisplayLabel = 'Seq'
+      FieldKind = fkCalculated
+      FieldName = 'NUM_LINHA'
+      Calculated = True
+    end
+    object IntegerField18: TIntegerField
+      FieldName = 'EST_CURVAA'
+    end
+    object IntegerField19: TIntegerField
+      FieldName = 'EST_CURVAB'
+    end
+    object IntegerField20: TIntegerField
+      FieldName = 'EST_CURVAC'
+    end
+    object IntegerField21: TIntegerField
+      FieldName = 'EST_CURVAD'
+    end
+    object IntegerField22: TIntegerField
+      FieldName = 'EST_CURVAE'
+    end
+    object FMTBCDField24: TFMTBCDField
+      FieldName = 'EST_CURVAA_PC'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField25: TFMTBCDField
+      FieldName = 'EST_CURVAB_PC'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField26: TFMTBCDField
+      FieldName = 'EST_CURVAC_PC'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField27: TFMTBCDField
+      FieldName = 'EST_CURVAD_PC'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField28: TFMTBCDField
+      FieldName = 'EST_CURVAE_PC'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField29: TFMTBCDField
+      FieldName = 'EST_CURVAA_PV'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField30: TFMTBCDField
+      FieldName = 'EST_CURVAB_PV'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField31: TFMTBCDField
+      FieldName = 'EST_CURVAC_PV'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField32: TFMTBCDField
+      FieldName = 'EST_CURVAD_PV'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField33: TFMTBCDField
+      FieldName = 'EST_CURVAE_PV'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField34: TFMTBCDField
+      DisplayLabel = 'Dm Cl "A"'
+      FieldName = 'DM_CURVAA'
+      DisplayFormat = '0.'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField35: TFMTBCDField
+      DisplayLabel = 'Dm Cl "B"'
+      FieldName = 'DM_CURVAB'
+      DisplayFormat = '0.'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField36: TFMTBCDField
+      DisplayLabel = 'Dm Cl "C"'
+      FieldName = 'DM_CURVAC'
+      DisplayFormat = '0.'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField37: TFMTBCDField
+      DisplayLabel = 'Dm Cl "D"'
+      FieldName = 'DM_CURVAD'
+      DisplayFormat = '0.'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField38: TFMTBCDField
+      DisplayLabel = 'Dm Cl "E"'
+      FieldName = 'DM_CURVAE'
+      DisplayFormat = '0.'
+      Precision = 15
+      Size = 2
+    end
+    object FMTBCDField39: TFMTBCDField
+      FieldName = 'DM_CURVAA_PC'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 6
+    end
+    object FMTBCDField40: TFMTBCDField
+      DisplayLabel = 'DM_CURVAA_PC'
+      FieldName = 'DM_CURVAB_PC'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 6
+    end
+    object FMTBCDField41: TFMTBCDField
+      DisplayLabel = 'DM_CURVAA_PC'
+      FieldName = 'DM_CURVAC_PC'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 6
+    end
+    object FMTBCDField42: TFMTBCDField
+      DisplayLabel = 'DM_CURVAA_PC'
+      FieldName = 'DM_CURVAD_PC'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 6
+    end
+    object FMTBCDField43: TFMTBCDField
+      DisplayLabel = 'DM_CURVAA_PC'
+      FieldName = 'DM_CURVAE_PC'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 6
+    end
+    object FMTBCDField44: TFMTBCDField
+      DisplayLabel = 'DM_CURVAA_PC'
+      FieldName = 'DM_CURVAA_PV'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 6
+    end
+    object FMTBCDField45: TFMTBCDField
+      DisplayLabel = 'DM_CURVAA_PC'
+      FieldName = 'DM_CURVAB_PV'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 6
+    end
+    object FMTBCDField46: TFMTBCDField
+      DisplayLabel = 'DM_CURVAA_PC'
+      FieldName = 'DM_CURVAC_PV'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 6
+    end
+    object FMTBCDField47: TFMTBCDField
+      DisplayLabel = 'DM_CURVAA_PC'
+      FieldName = 'DM_CURVAD_PV'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 6
+    end
+    object FMTBCDField48: TFMTBCDField
+      DisplayLabel = 'DM_CURVAA_PC'
+      FieldName = 'DM_CURVAE_PV'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 6
+    end
+    object AggregateField1: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'EST_CURVA_B'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(EST_CURVAB)'
+    end
+    object AggregateField2: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'EST_CURVA_A'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(EST_CURVAA)'
+    end
+    object AggregateField3: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'EST_CURVA_C'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(EST_CURVAC)'
+    end
+    object AggregateField4: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'EST_CURVA_D'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(EST_CURVAD)'
+    end
+    object AggregateField5: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'EST_CURVA_E'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(EST_CURVAE)'
+    end
+    object AggregateField6: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'EST_CURVA_A_PC'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(EST_CURVAA_PC)'
+    end
+    object AggregateField7: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'EST_CURVA_B_PC'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(EST_CURVAB_PC)'
+    end
+    object AggregateField8: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'EST_CURVA_C_PC'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(EST_CURVAC_PC)'
+    end
+    object AggregateField9: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'EST_CURVA_D_PC'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(EST_CURVAD_PC)'
+    end
+    object AggregateField10: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'EST_CURVA_E_PC'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(EST_CURVAE_PC)'
+    end
+    object AggregateField11: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'DM_CURVA_E_PV'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(DM_CURVAE_PV)'
+    end
+    object AggregateField12: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'DM_CURVA_D_PV'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(DM_CURVAD_PV)'
+    end
+    object AggregateField13: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'DM_CURVA_C_PV'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(DM_CURVAC_PV)'
+    end
+    object AggregateField14: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'DM_CURVA_B_PV'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(DM_CURVAB_PV)'
+    end
+    object AggregateField15: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'DM_CURVA_A_PV'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(DM_CURVAA_PV)'
+    end
+    object AggregateField16: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'DM_CURVA_E_PC'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(DM_CURVAE_PC)'
+    end
+    object AggregateField17: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'DM_CURVA_D_PC'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(DM_CURVAD_PC)'
+    end
+    object AggregateField18: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'DM_CURVA_C_PC'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(DM_CURVAC_PC)'
+    end
+    object AggregateField19: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'DM_CURVA_B_PC'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(DM_CURVAB_PC)'
+    end
+    object AggregateField20: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'DM_CURVA_E'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(DM_CURVAE)'
+    end
+    object AggregateField21: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'DM_CURVA_D'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(DM_CURVAD)'
+    end
+    object AggregateField22: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'DM_CURVA_C'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(DM_CURVAC)'
+    end
+    object AggregateField23: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'DM_CURVA_A'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(DM_CURVAA)'
+    end
+    object AggregateField24: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'DM_CURVA_B'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(DM_CURVAB)'
+    end
+    object AggregateField25: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'DM_CURVA_A_PC'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(DM_CURVAA_PC)'
+    end
+    object AggregateField26: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'EST_CURVA_E_PV'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(EST_CURVAE_PV)'
+    end
+    object AggregateField27: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'EST_CURVA_D_PV'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(EST_CURVAD_PV)'
+    end
+    object AggregateField28: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'EST_CURVA_C_PV'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(EST_CURVAC_PV)'
+    end
+    object AggregateField29: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'EST_CURVA_B_PV'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(EST_CURVAB_PV)'
+    end
+    object AggregateField30: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'EST_CURVA_A_PV'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(EST_CURVAA_PV)'
+    end
   end
 end
