@@ -182,6 +182,9 @@ var
                           // Vem do Arquivo:  C:\Projetos\BelShop\Fontes\WebService Linx\Linx_WebService.Ini
 
   // Variaveis de Recebimento de Parametros Externos ===========================
+  bgParametroDtaEmissao: Boolean; // Parametro: Se Pesquisa é Pela Data de Emissão Docto
+                                  // Usado em LinxFaturas
+
   sgParametroMetodo,   // Parametro: Metodo a Processar
   sgParametroCodLoja,  // Paraemtro: Loja a Processar
   sgParametroDtaInicio,// Paraemtro: Data do Inico do Periodo
@@ -233,7 +236,7 @@ Var
   MySql, MySqlDelete: String;
 
   sObs, sMensagem, sCampoDta, sConteudoCampo,
-  sDtaAtual,
+  sDtaAtual, sHraAtual,
   sDtaIniDelete, sDtaFimDelete: String;
 
   iii, ii, i: Integer;
@@ -245,8 +248,10 @@ Var
   tgCamposBD: TStringList;
 Begin
 
+  // Guarda Data e Hora do Dia =================================================
   sDtaAtual:=DateToStr(DataHoraServidorFI(DMLinxWebService.SDS_DtaHoraServidor));
   sDtaAtual:=f_Troca('/','.',f_Troca('-','.',sDtaAtual));
+  sHraAtual:=TimeToStr(DataHoraServidorFI(DMLinxWebService.SDS_DtaHoraServidor));
 
   sDtaIniDelete:='';
   If sgDtaInicio<>'NULL' Then
@@ -577,12 +582,12 @@ Begin
                  (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxSangriaSuprimentos'))         Then
                Begin
                  sSqlUpInValores:=
-                  sSqlUpInValores+' '+QuotedStr(sgCodLoja)+', '+QuotedStr(sDtaAtual)+', current_time)';
+                  sSqlUpInValores+' '+QuotedStr(sgCodLoja)+', '+QuotedStr(sDtaAtual)+', '+QuotedStr(sHraAtual)+')';
                End
               Else
                Begin
                  sSqlUpInValores:=
-                  sSqlUpInValores+' '+QuotedStr(sDtaAtual)+', current_time)';
+                  sSqlUpInValores+' '+QuotedStr(sDtaAtual)+', '+QuotedStr(sHraAtual)+')';
                End;
 
 //OdirAqui 7 - Inclui MATCHING
@@ -757,6 +762,7 @@ Begin
           MySql:=' UPDATE LINXPRODUTOSDETALHES d'+
                  ' SET d.quantidade=0.0000'+
                  ' WHERE d.dta_atualizacao<>'+QuotedStr(sDtaAtual)+
+                 ' AND d.hra_atualizacao<>'+QuotedStr(sHraAtual)+
                  ' AND d.quantidade<>0.000'+
                  ' AND d.empresa='+sgCodLojaLinx;
           DMLinxWebService.SQLC.Execute(MySql, nil, nil);
@@ -777,7 +783,8 @@ Begin
                  ' 0.0000 QUANTIDADE, 0.0000 PRECO_CUSTO, 0.0000 PRECO_VENDA, 0.0000 CUSTO_MEDIO,'+
                  ' NULL ID_CONFIG_TRIBUTARIA, NULL DESC_CONFIG_TRIBUTARIA, 0 DESPESAS1,'+
                  QuotedStr(sgCodLoja)+' COD_LOJA, '+ // CODIGO EMPRESA SIDICOM
-                 QuotedStr(sDtaAtual)+' DTA_ATUALIZACAO, current_time HRA_ATUALIZACAO'+
+                 QuotedStr(sDtaAtual)+' DTA_ATUALIZACAO, '+
+                 QuotedStr(sHraAtual)+' HRA_ATUALIZACAO'+
 
                  ' FROM LINXPRODUTOS lp'+
                  ' WHERE NOT EXISTS (SELECT 1'+
@@ -1196,14 +1203,31 @@ Begin
   // ===========================================================================
   If (sgMetodo='LinxFaturas') Then
   Begin
-    sXML:='			<Parameter id="data_inicial">'+sgDtaInicio+'</Parameter>';
-    Writeln(txtArq,sXML);
-    sXML:='			<Parameter id="data_fim">'+sgDtaFim+'</Parameter>';
-    Writeln(txtArq,sXML);
-    sXML:='			<Parameter id="data_inicial_pag">'+'NULL'+'</Parameter>';
-    Writeln(txtArq,sXML);
-    sXML:='			<Parameter id="data_fim_pag">'+'NULL'+'</Parameter>';
-    Writeln(txtArq,sXML);
+    // SEM PARAMETRO Busca Pela Data de Emissão ================================
+    If bgParametroDtaEmissao Then
+    Begin
+      sXML:='			<Parameter id="data_inicial">'+sgDtaInicio+'</Parameter>';
+      Writeln(txtArq,sXML);
+      sXML:='			<Parameter id="data_fim">'+sgDtaFim+'</Parameter>';
+      Writeln(txtArq,sXML);
+      sXML:='			<Parameter id="data_inicial_pag">'+'NULL'+'</Parameter>';
+      Writeln(txtArq,sXML);
+      sXML:='			<Parameter id="data_fim_pag">'+'NULL'+'</Parameter>';
+      Writeln(txtArq,sXML);
+    End; // If Trim(sgParametroDtaInicio)='' Then
+
+    // COM PARAMETRO Busca Pela Data de Pagamento ==============================
+    If Not bgParametroDtaEmissao Then
+    Begin
+      sXML:='			<Parameter id="data_inicial">'+'NULL'+'</Parameter>';
+      Writeln(txtArq,sXML);
+      sXML:='			<Parameter id="data_fim">'+'NULL'+'</Parameter>';
+      Writeln(txtArq,sXML);
+      sXML:='			<Parameter id="data_inicial_pag">'+sgDtaInicio+'</Parameter>';
+      Writeln(txtArq,sXML);
+      sXML:='			<Parameter id="data_fim_pag">'+sgDtaFim+'</Parameter>';
+      Writeln(txtArq,sXML);
+    End; // If Trim(sgParametroDtaInicio)='' Then
 
     //====================================
     // PARAMETRO OPCIONAL E NÃO UTILIZADOS
@@ -1281,27 +1305,26 @@ Begin
   sgParametroCodLoja  :=''; // Loja a Processar
   sgParametroMetodos  :=''; // Pasta Metodo  - \\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\
   sgParametroRetornos :=''; // Pasta Retorno - \\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\
-  sgParametroDtaInicio:=''; // Paraemtro: Data do Inico do Periodo
-  sgParametroDtaFim   :=''; // Paraemtro: Data do Fim do Periodo
+  sgParametroDtaInicio:=''; // Data do Inico do Periodo
+  sgParametroDtaFim   :=''; // Data do Fim do Periodo
 
-  // Le Parametros Enviado =====================================================
-  sgParametroMetodo:=ParamStr(1);
-
-  //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-  // OdirOPSS - Utiliza Parametro ==============================================
-  //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// OdirOPSS - Utiliza Parametro ================================================
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //  Estrutura dos Paramentros
 //  =========================
 //  NomeMetodo
 //  Codigo_Loja_Linx
 //  Pasta_Metodos
 //  Pasta_Retornos
-//  Data_Início
-//  Data_Fim
-//
-//  Data_Início e Data_Fim => Podem ser Nulos
-//
-//  >>>>>>>>>>>>>> EXEMPLO PELO ODIR
+//  Data_Início => Pode ser Nulo
+//  Data_Fim    => Pode ser Nulo
+//  Campo Data para Pesquisa => SIM ou Branco => Se Utilização de Data de Emissão Para Pesquisa
+//                           => NAO ===========> Se Utilização de Data de Pagamento Para Pesquisa
+//                              - Utilizado em:
+//                                      - LinxFaturas
+
+//  >>>>>>>>>>>>>> EXEMPLO PELO ODIR >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //  >>>>>>>>>>>>>> Paramento Separados por PontoVirgula (;)
 //  NomeMetodo;Codigo_Loja_Linx;Pasta_Metodos;Pasta_Retornos;Data_Início;Data_Fim
 
@@ -1309,7 +1332,7 @@ Begin
 //==>>  sgParametroMetodo:='LinxSangriaSuprimentos;15;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;25/09/2017;26/10/2017;';
 //  sgParametroMetodo:='LinxSangriaSuprimentos;15;\\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;\\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;';
 //
-//  >>>>>>>>>>>>>> EXEMPLO PELO PARAMETRO
+//  >>>>>>>>>>>>>> EXEMPLO PELO PARAMETRO  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //  >>>>>>>>>>>>>> Parameto Separados por Espaço em Branco ( ) e Aspas (") para String com espaço em Branco
 //  NomeMetodo Codigo_Loja_Linx "Pasta Metodos" "Pasta Retornos" Data_Início Data_Fim
 //
@@ -1324,9 +1347,40 @@ Pasta_Metodos; \\192.168.0.252\Projetos\BelShop\WebService Linx\Metodos\;
 Pasta_Retornos; \\192.168.0.252\Projetos\BelShop\WebService Linx\Retornos\;
 Data_Início;25/09/2017;
 Data_Fim 26/10/2017;
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>> EXECUÇÃO - Parameto Separados por Espaço em Branco ( ) e Aspas (") para String com espaço em Branco
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+While CDS_Lojas.Eof do
+Begin
+  sgDtaI:='01/12/2017';
+  sgDtaF:='10/12/2017';
+
+  sParametros:=sgPastaWebService+'PWebServiceLinx.exe LinxSangriaSuprimentos'; // Excutavel e Metodo a Processar
+  sParametros:=sParametros+' '+CDS_Lojas.FieldByName('Cod_Linx').AsString; // Codigo da Loja a Processar
+  sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Metodos')+'"'; // Pasta dos Metodos
+  sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Retornos')+'"'; // Pasta dos Retornos
+  sParametros:=sParametros+' "'+sgDtaI+'"'; // Data Inicial
+  sParametros:=sParametros+' "'+sgDtaF+'"'; // Data Final
+  sParametros:=sParametros+' "NAO"'; // Data de Pesquisa
+
+  // Envia Parametro e Aguarda Termino do Processo =============================
+  CreateProcessSimple(sParametros);
+
+  CDS_Lojas.Next;
+End;
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>> EXECUÇÃO
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
-  // OdirOPSS - Utiliza Parametro ==============================================
-  //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// OdirOPSS - Utiliza Parametro ================================================
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+  // Le Parametros Enviado =====================================================
+  bgParametroDtaEmissao:=True;
+//opss
+  sgParametroMetodo:=ParamStr(1);
+//  sgParametroMetodo:='LinxFaturas;2;C:\Projetos\BelShop\Fontes\WebService Linx\Metodos\;C:\Projetos\BelShop\Fontes\WebService Linx\Retornos\;25/07/2017;25/07/2017;';
 
   // Pasta Executável PWebServiceLinx Não Rede
   sgPastaExecutavel:=IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName));
@@ -1343,8 +1397,18 @@ Data_Fim 26/10/2017;
       sgParametroRetornos :=Trim(ParamStr(4));
       sgParametroDtaInicio:=Trim(ParamStr(5));
       sgParametroDtaFim   :=Trim(ParamStr(6));
-    End;
 
+      // Se Utiliza a Data de Emissão para Pesquisa
+      If AnsiUpperCase(sgParametroMetodo)='LINXFATURAS' Then
+      Begin
+        If Trim(ParamStr(7))='' Then
+         bgParametroDtaEmissao:=True
+        Else
+         bgParametroDtaEmissao:=Trim(ParamStr(7))='SIM';
+      End;
+    End; // If Trim(ParamStr(1))<>'' Then
+
+//opss
     // Executa pelo Odir =======================================================
     If Trim(ParamStr(1))='' Then
     Begin
@@ -1356,13 +1420,23 @@ Data_Fim 26/10/2017;
 
       sgParametroMetodo  :=Separa_String(Trim(sgParametroMetodo),1); // Ultimo Devido a substituição do
                                                                      // Conteudo da Variavel sgParametroMetodo
-    End;
+
+      // Se Utiliza a Data de Emissão para Pesquisa
+      If AnsiUpperCase(sgParametroMetodo)='LINXFATURAS' Then
+      Begin
+        If Trim(ParamStr(7))='' Then
+         bgParametroDtaEmissao:=True
+        Else
+         bgParametroDtaEmissao:=Trim(ParamStr(7))='SIM';
+      End;
+//opss
+    End; // If Trim(ParamStr(1))='' Then
 
     If sgParametroDtaInicio='Limite Superado' Then
     Begin
       sgParametroDtaInicio :=''; // Paraemtro: Data do Inico do Periodo
       sgParametroDtaFim   :=''; // Paraemtro: Data do Fim do Periodo
-    End;
+    End; // If sgParametroDtaInicio='Limite Superado' Then
 
     sgPastaExecutavel:=Copy(sgParametroMetodos,1,Pos('Metodos\', sgParametroMetodos)-1);
   End; // If Trim(sgParametroMetodo)<>'' Then
@@ -1382,7 +1456,6 @@ Data_Fim 26/10/2017;
 
   // Ler Arquivo Ini de Pastas =================================================
   AssignFile(Arq,sgPastaExecutavel+'Linx_WebService.Ini');
-
   Reset(Arq);
   i:=0;
   While not Eof(Arq) do
@@ -2135,7 +2208,7 @@ Data_Fim 26/10/2017;
       If sgMetodo='LinxFaturas' Then
       Begin
         // OBS: Só poderá ser fornecido um período de listagem (Emissão ou Pagamento),
-        //      o outro deverá ficar como NULL. Mas deverá pelo menos ter um Período informado.</D>
+        //      o outro deverá ficar como NULL. Mas deverá pelo menos ter um Período informado.
 
         If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
          dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;

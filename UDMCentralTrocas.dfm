@@ -884,109 +884,6 @@ object DMCentralTrocas: TDMCentralTrocas
     Left = 790
     Top = 48
   end
-  object CDS_QtdCxCDProdutos: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    ProviderName = 'DSP_QtdCxCDProdutos'
-    Left = 496
-    Top = 416
-    object CDS_QtdCxCDProdutosCODIGO: TStringField
-      Alignment = taRightJustify
-      DisplayLabel = 'C'#243'd'
-      FieldName = 'CODIGO'
-      FixedChar = True
-      Size = 6
-    end
-    object CDS_QtdCxCDProdutosDESCRICAO: TStringField
-      DisplayLabel = 'Descri'#231#227'o'
-      FieldName = 'DESCRICAO'
-      Size = 80
-    end
-    object CDS_QtdCxCDProdutosQTD_CAIXA: TIntegerField
-      DisplayLabel = 'Qt Caixa'
-      FieldName = 'QTD_CAIXA'
-      DisplayFormat = '0,'
-    end
-    object CDS_QtdCxCDProdutosPER_CORTE: TIntegerField
-      DisplayLabel = '% Corte Cx'
-      FieldName = 'PER_CORTE'
-      DisplayFormat = '0, %'
-    end
-  end
-  object SDS_QtdCxCDProdutos: TSQLDataSet
-    CommandText = 
-      'select'#13#10'c.cod_produto Codigo,'#13#10'Trim(p.apresentacao) Descricao,'#13#10 +
-      'c.qtd_caixa,'#13#10'c.per_corte'#13#10#13#10'from prod_caixa_cd c, produto p'#13#10'wh' +
-      'ere p.codproduto=c.cod_produto'#13#10'order by 2'
-    MaxBlobSize = -1
-    Params = <>
-    SQLConnection = DMBelShop.SQLC
-    Left = 384
-    Top = 416
-  end
-  object DSP_QtdCxCDProdutos: TDataSetProvider
-    DataSet = SDS_QtdCxCDProdutos
-    Options = [poRetainServerOrder]
-    Left = 440
-    Top = 432
-  end
-  object DS_QtdCxCDProdutos: TDataSource
-    DataSet = CDS_QtdCxCDProdutos
-    Left = 557
-    Top = 432
-  end
-  object CDS_QtdCxCDGrupos: TClientDataSet
-    Aggregates = <>
-    Params = <>
-    ProviderName = 'DSP_QtdCxCDGrupos'
-    Left = 496
-    Top = 488
-    object CDS_QtdCxCDGruposCODIGO: TStringField
-      Alignment = taRightJustify
-      DisplayLabel = 'Cod'
-      FieldName = 'CODIGO'
-      Size = 7
-    end
-    object CDS_QtdCxCDGruposDESCRICAO: TStringField
-      DisplayLabel = 'Descri'#231#227'o'
-      FieldName = 'DESCRICAO'
-      Size = 63
-    end
-    object CDS_QtdCxCDGruposQTD_CAIXA: TIntegerField
-      DisplayLabel = 'Qt Caixa'
-      FieldName = 'QTD_CAIXA'
-      DisplayFormat = '0,'
-    end
-    object CDS_QtdCxCDGruposPER_CORTE: TIntegerField
-      DisplayLabel = '% Corte Cx'
-      FieldName = 'PER_CORTE'
-      DisplayFormat = '0, %'
-    end
-  end
-  object SDS_QtdCxCDGrupos: TSQLDataSet
-    CommandText = 
-      'select'#13#10'c.cod_grupo||coalesce(c.cod_subgrupo,'#39#39') Codigo,'#13#10'Case'#13#10 +
-      '  when coalesce(Trim(c.des_subgrupo),'#39#39')='#39#39' Then'#13#10'    Trim(c.des' +
-      '_grupo)'#13#10'  Else'#13#10'    Trim(c.des_grupo)||'#39' - '#39'||coalesce(Trim(c.d' +
-      'es_subgrupo),'#39#39')'#13#10'end Descricao,'#13#10'c.qtd_caixa,'#13#10'c.per_corte'#13#10#13#10'f' +
-      'rom prod_caixa_cd c'#13#10'Where c.cod_produto is null'#13#10'order by 2'#13#10
-    MaxBlobSize = -1
-    Params = <>
-    SQLConnection = DMBelShop.SQLC
-    Left = 384
-    Top = 488
-  end
-  object DSP_QtdCxCDGrupos: TDataSetProvider
-    DataSet = SDS_QtdCxCDGrupos
-    Options = [poRetainServerOrder]
-    Left = 440
-    Top = 504
-  end
-  object DS_QtdCxCDGrupos: TDataSource
-    DataSet = CDS_QtdCxCDGrupos
-    Left = 557
-    Top = 504
-  end
   object CDS_V_ReposDivergencias: TClientDataSet
     Aggregates = <>
     Params = <>
@@ -1089,5 +986,106 @@ object DMCentralTrocas: TDMCentralTrocas
     DataSet = CDS_ParamTransf
     Left = 909
     Top = 144
+  end
+  object DS_QtdCxCDProdutos: TDataSource
+    DataSet = CDS_QtdCxCDProdutos
+    Left = 560
+    Top = 432
+  end
+  object CDS_QtdCxCDProdutos: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_QtdCxCDProdutos'
+    Left = 512
+    Top = 424
+    object CDS_QtdCxCDProdutosCODIGO: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'C'#243'd'
+      FieldName = 'CODIGO'
+      FixedChar = True
+      Size = 6
+    end
+    object CDS_QtdCxCDProdutosDESCRICAO: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      FieldName = 'DESCRICAO'
+      Size = 80
+    end
+    object CDS_QtdCxCDProdutosQTD_CAIXA: TIntegerField
+      DisplayLabel = 'Qt Caixa'
+      FieldName = 'QTD_CAIXA'
+      DisplayFormat = '0,'
+    end
+    object CDS_QtdCxCDProdutosPER_CORTE: TIntegerField
+      DisplayLabel = '% Corte Cx'
+      FieldName = 'PER_CORTE'
+      DisplayFormat = '0, %'
+    end
+  end
+  object DSP_QtdCxCDProdutos: TDataSetProvider
+    DataSet = SDS_QtdCxCDProdutos
+    Left = 472
+    Top = 438
+  end
+  object SDS_QtdCxCDProdutos: TSQLDataSet
+    CommandText = 
+      'select'#13#10'c.cod_produto Codigo,'#13#10'Trim(p.apresentacao) Descricao,'#13#10 +
+      'c.qtd_caixa,'#13#10'c.per_corte'#13#10#13#10'from prod_caixa_cd c, produto p'#13#10'wh' +
+      'ere p.codproduto=c.cod_produto'#13#10'order by 2'#13#10#13#10
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 416
+    Top = 424
+  end
+  object DS_QtdCxCDGrupos: TDataSource
+    DataSet = CDS_QtdCxCDGrupos
+    Left = 560
+    Top = 496
+  end
+  object CDS_QtdCxCDGrupos: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_QtdCxCDGrupos'
+    Left = 512
+    Top = 488
+    object CDS_QtdCxCDGruposCODIGO: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Cod'
+      FieldName = 'CODIGO'
+      Size = 7
+    end
+    object CDS_QtdCxCDGruposDESCRICAO: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      FieldName = 'DESCRICAO'
+      Size = 63
+    end
+    object CDS_QtdCxCDGruposQTD_CAIXA: TIntegerField
+      DisplayLabel = 'Qt Caixa'
+      FieldName = 'QTD_CAIXA'
+      DisplayFormat = '0,'
+    end
+    object CDS_QtdCxCDGruposPER_CORTE: TIntegerField
+      DisplayLabel = '% Corte Cx'
+      FieldName = 'PER_CORTE'
+      DisplayFormat = '0, %'
+    end
+  end
+  object DSP_QtdCxCDGrupos: TDataSetProvider
+    DataSet = SDS_QtdCxCDGrupos
+    Left = 472
+    Top = 502
+  end
+  object SDS_QtdCxCDGrupos: TSQLDataSet
+    CommandText = 
+      'select'#13#10'c.cod_grupo||coalesce(c.cod_subgrupo,'#39#39') Codigo,'#13#10'Case'#13#10 +
+      '  when coalesce(Trim(c.des_subgrupo),'#39#39')='#39#39' Then'#13#10'    Trim(c.des' +
+      '_grupo)'#13#10'  Else'#13#10'    Trim(c.des_grupo)||'#39' - '#39'||coalesce(Trim(c.d' +
+      'es_subgrupo),'#39#39')'#13#10'end Descricao,'#13#10'c.qtd_caixa,'#13#10'c.per_corte'#13#10#13#10'f' +
+      'rom prod_caixa_cd c'#13#10'Where c.cod_produto is null'#13#10'order by 2'
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 416
+    Top = 488
   end
 end

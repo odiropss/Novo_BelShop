@@ -1940,9 +1940,9 @@ Var
 begin
 
 //OdirApagar
-iCodLojaLinx:=2;
-          AtualizaTabelaEstoque('99');
-  bProcessou:=False;
+//iCodLojaLinx:=2;
+//          AtualizaTabelaEstoque('99');
+//  bProcessou:=False;
 
 // OdirApagar - 03/08/2017
 //  // Fechar Programa do Agendamento Anterior ===================================
@@ -1968,7 +1968,7 @@ iCodLojaLinx:=2;
 // EdtParamStr.Text:='OPSS_N'; // Não Libera Direto
 
 //==========================
-// Se Parametro = OPSS
+// Se Parametro = ODIR
 //==========================
   // PROCESSA TUDO
 //==========================
@@ -2036,6 +2036,11 @@ begin
 //==============================================================================
 //                         PROCESSAMENTO MANUAL
 //==============================================================================
+//==========================
+// Se Parametro = ODIR
+//==========================
+  // PROCESSA TUDO
+//==========================
 // Se Parametro = OPSS
 //==========================
   // NÃO ATUALIZA ESTOQUES (AtualizaTabelaEstoque(Cod_Empresa))
@@ -2629,6 +2634,11 @@ begin
       bProcEstoque:=False;
     End; // If iCodLojaLinx<>0 Then // LINX
 
+    //opss - 28/12/2017
+//      bProcDemanda:=True;
+//      bProcUltCompra:=False;
+//      bProcEstFinal:=False;
+
     If bSiga Then // Se já faz mais de 5 horas a Ultima Atualização da Empresa
     Begin
       If iCodLojaLinx=0 Then // SIDICOM
@@ -3099,19 +3109,24 @@ begin
                sDtaUltAtualizacao:=sDtaLinx;
             End; // If Trim(sDtaLinx)<>'' Then
 
-
             MySql:=' SELECT '+QuotedStr(sCodEmpresa)+' cod_filial, ''DM'' ind_tipo,'+
                    ' dem.codproduto,'+
                    ' ''01.''||SUBSTRING(dem.comp_anomes FROM 6 FOR 2)||''.''||SUBSTRING(dem.comp_anomes FROM 1 FOR 4) dta_ref,'+
                    ' SUM(dem.demanda) quant_ref,'+
-                   ' SUM(dem.vlr_total) preco,'+
+                   ' CAST(SUM(dem.vlr_total) AS NUMERIC(12,4)) preco,'+
                    ' CURRENT_TIMESTAMP dta_atualizacao'+
 
                    ' FROM (SELECT lp.cod_auxiliar codproduto,'+
                    '              CAST(EXTRACT(YEAR FROM lm.data_documento) AS VARCHAR(4))||''/''||'+
                    '              CAST(LPAD(EXTRACT(MONTH FROM lm.data_documento), 2, ''0'') AS VARCHAR(2)) comp_anomes,'+
                    '              SUM(DECODE(lm.operacao, ''S'', lm.quantidade, -lm.quantidade)) demanda,'+
-                   '              SUM(DECODE(lm.operacao, ''S'', lm.valor_total, -lm.valor_total)) vlr_total'+
+// OdirApagar - 27/12/2017
+//                   '              SUM(DECODE(lm.operacao, ''S'', lm.valor_total, -lm.valor_total)) vlr_total'+
+                   '              ROUND(SUM(DECODE(lm.operacao,''S'','+
+                   '                               (COALESCE(lm.quantidade, 0.0000) * COALESCE(lm.preco_unitario, 0.0000)),'+
+                   '                        ''DS'',-(COALESCE(lm.quantidade, 0.0000) * COALESCE(lm.preco_unitario, 0.0000)))'+
+                   '                    ),2) Vlr_Total'+
+
                    '       FROM LINXMOVIMENTO lm, LINXPRODUTOS lp'+
                    '       WHERE lm.cod_produto = lp.cod_produto'+
 
@@ -3128,18 +3143,21 @@ begin
                    '       AND   lm.data_lancamento >= '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaUltAtualizacao)))+
                    '       GROUP BY 1, 2'+
 
-                   '       UNION'+
+// OdirApagar - 27/12/2017
+//                   '       UNION'+
+//
+//                   '       SELECT m.codproduto,'+
+//                   '              CAST(EXTRACT(YEAR FROM m.dta_ref) AS VARCHAR(4))||''/''||CAST(LPAD(EXTRACT(MONTH FROM m.dta_ref), 2, ''0'') AS VARCHAR(2)) comp_anomes,'+
+//                   '              SUM(m.quant_ref) demanda,'+
+//                   '              SUM(m.preco) vlr_total'+
+//                   '       FROM MOVTOS_EMPRESAS_ANT m'+
+//                   '       WHERE m.ind_tipo = ''DM'''+
+//                   '       AND   m.codfilial = '+QuotedStr(sCodEmpresa)+
+//                   '       AND   m.dta_ref >= '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaUltAtualizacao)))+
+//                   '       GROUP BY 1, 2'+
 
-                   '       SELECT m.codproduto,'+
-                   '              CAST(EXTRACT(YEAR FROM m.dta_ref) AS VARCHAR(4))||''/''||CAST(LPAD(EXTRACT(MONTH FROM m.dta_ref), 2, ''0'') AS VARCHAR(2)) comp_anomes,'+
-                   '              SUM(m.quant_ref) demanda,'+
-                   '              SUM(m.preco) vlr_total'+
-                   '       FROM MOVTOS_EMPRESAS_ANT m'+
-                   '       WHERE m.ind_tipo = ''DM'''+
-                   '       AND   m.codfilial = '+QuotedStr(sCodEmpresa)+
-                   '       AND   m.dta_ref >= '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaUltAtualizacao)))+
-                   '       GROUP BY 1, 2'+
                    '       ORDER BY 1, 2) DEM'+
+
                    ' GROUP BY 1, 2, 3, 4'+
                    ' ORDER BY 4';
             DMMovtosEmpresas.CDS_LojaLinx.Close;

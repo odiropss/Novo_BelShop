@@ -164,7 +164,7 @@ begin
   // Verifica se Somante Matriz ================================================
   If (bUsarMatriz) and (iNrEmpProc=1) and (Not Ckb_SelectEmpProcECommerce.Checked) Then
   Begin
-    If msg('Deseja Calcular Somente'+cr+cr+'para a Empresa MPMS ??','C')=2 Then
+    If msg('Deseja Calcular Somente'+cr+cr+'para a BelShop CD ??','C')=2 Then
     Begin
       Dbg_SelectEmpProc.SetFocus;
       Exit;

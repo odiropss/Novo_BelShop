@@ -1605,6 +1605,7 @@ Begin
          If bCurvaC Then
           MySql:=
            MySql+'    WHEN ((p.datainclusao>='+QuotedStr(sDta)+') AND (c.ind_curva in (''D'',''E''))) OR'+
+                 // Manuela
                  '         ((p.principalfor='+QuotedStr('000356')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''%YELLOW%'')) OR'+
                  '         ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')) OR'+
                  '         ((p.principalfor='+QuotedStr('000677')+') AND (c.ind_curva in (''D'',''E''))) THEN'
@@ -1635,6 +1636,7 @@ Begin
          If bCurvaC Then
           MySql:=
            MySql+'                               WHEN ((p.datainclusao>'+QuotedStr(sDta)+') AND (c.ind_curva in (''D'',''E''))) OR'+
+                 // Manuela
                  '                                    ((p.principalfor='+QuotedStr('000356')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''%YELLOW%'')) OR'+
                  '                                    ((p.principalfor='+QuotedStr('001188')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''NG %'')) OR'+
                  '                                    ((p.principalfor='+QuotedStr('000677')+') AND (c.ind_curva in (''D'',''E''))) THEN 3'
@@ -1651,21 +1653,22 @@ Begin
          '                                     END=t.cod_aux'+
          '                                 AND t.tip_aux=2'+
 
-         ' WHERE p.situacaopro in (0,3)'+
+         // OdirApagar - 21/12/2017 - Retira Agora Direto no Linx em (Exists (select 1...))
+         // ' WHERE p.situacaopro in (0,3)'+
+         // ' AND   CAST(COALESCE(c.est_minimo,0) AS INTEGER)>0'+
+         // ' AND   p.codaplicacao<>''0015'''+ // Não Processa: 0015 = E-Commerce
+         // ' AND   p.codaplicacao<>''0016'''+ // Não Processa: 0016 = Brindes
+         // ' AND   p.codaplicacao<>''0017'''+ // Não Processa: 0017 = Provadores
+         // ' AND   p.principalfor Not in ('+sgFornNAO+')'+ // Tira Fornecedores que Não Entram no Processo de Reposição Automática
+         // ' AND   UPPER(p.apresentacao) NOT LIKE ''LUVA%'''+ // Tira todas as Luvas
 
-         ' AND   CAST(COALESCE(c.est_minimo,0) AS INTEGER)>0'+
-
-         ' AND   p.codaplicacao<>''0015'''+ // Não Processa: 0015 = E-Commerce
-         ' AND   p.codaplicacao<>''0016'''+ // Não Processa: 0016 = Brindes
-         ' AND   p.codaplicacao<>''0017'''+ // Não Processa: 0017 = Provadores
-         ' AND   p.principalfor Not in ('+sgFornNAO+')'+ // Tira Fornecedores que Não Entram no Processo de Reposição Automática
-         ' AND   UPPER(p.apresentacao) NOT LIKE ''LUVA%'''+ // Tira todas as Luvas
+         ' WHERE CAST(COALESCE(c.est_minimo,0) AS INTEGER)>0'+
          ' AND   c.cod_loja='+QuotedStr(sCodLoja);
 
          If bCurvaC Then
           MySql:=
            MySql+' AND   ((c.ind_curva in ('+sgCurvas+')) OR (p.datainclusao>='+QuotedStr(sDta)+')'+ // ' AND c.ind_curva=''E'')'+
-                 '         OR'+
+                 '         OR'+ // Manuela
                  '        ((p.principalfor='+QuotedStr('000356')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''%YELLOW%''))'+
                  '         OR'+
                  '        ((p.principalfor='+QuotedStr('000677')+') AND (c.ind_curva in (''D'',''E'')))'+
@@ -1674,6 +1677,7 @@ Begin
          Else
           MySql:=
            MySql+' AND     ((c.ind_curva in ('+sgCurvas+')) OR (p.datainclusao>='+QuotedStr(sDta)+'))'+ // ' AND c.ind_curva=''E''))'+
+                 // Manuela
                  ' AND NOT (((p.principalfor='+QuotedStr('000356')+') AND (c.ind_curva in (''D'',''E'')) AND (p.apresentacao like ''%YELLOW%''))'+
                  '           OR'+
                  '          ((p.principalfor='+QuotedStr('000677')+') AND (c.ind_curva in (''D'',''E'')))'+
@@ -1682,7 +1686,10 @@ Begin
   MySql:=
    MySql+' AND EXISTS (SELECT 1'+
          '             FROM LINXPRODUTOS pl'+
-         '             WHERE pl.cod_auxiliar=p.codproduto)'+
+         '             WHERE pl.cod_auxiliar=p.codproduto'+
+         '             AND   pl.desativado=''N'''+
+         '             AND   pl.id_linha<>33'+     // Brindes
+         '             AND   pl.id_colecao<>294)'+ // Brindes
 
          ' ORDER BY p.codproduto';
   DMTransferencias.CDS_CurvasLoja.Close;
@@ -2312,7 +2319,7 @@ begin
   //============================================================================
 
   //============================================================================
-  // Conecta CD ================================================================
+  // Testa Conexão CD ==========================================================
   //============================================================================
   If Not DMTransferencias.ConectaMPMS Then
   Begin
@@ -2323,7 +2330,7 @@ begin
     Application.Terminate;
     Exit;
   End;
-  // Conecta CD ================================================================
+  // Testa Conexão CD ==========================================================
   //============================================================================
 
   //============================================================================
@@ -2496,6 +2503,7 @@ begin
   //============================================================================
   // Busca Produtos com Saldo no CD ============================================
   //============================================================================
+  //opssI
   If Not BuscaProdutosCD Then
   Begin
     bgArqErros:=True;
@@ -2505,6 +2513,7 @@ begin
     Application.Terminate;
     Exit;
   End;
+  //opssF
   // Busca Produtos com Saldo no CD ============================================
   //============================================================================
   SalvaProcessamento('08/999 - Busca Produtos com Saldo no CD - '+TimeToStr(Time));
@@ -2514,6 +2523,7 @@ begin
   // Insere Produtos do CD =====================================================
   // Deleta Tabelas do Dia: ES_ESTOQUES_CD / ES_ESTOQUES_LOJAS / ES_ESTOQUES_SEM
   //============================================================================
+  //opssI
   If Not InsereProdutosCD Then
   Begin
     bgArqErros:=True;
@@ -2522,6 +2532,7 @@ begin
     Application.Terminate;
     Exit;
   End;
+  //opssF
   // Insere Produtos do CD =====================================================
   //============================================================================
   SalvaProcessamento('09/999 - Insere Produtos do CD - '+TimeToStr(Time));
@@ -2532,6 +2543,7 @@ begin
   //============================================================================
   // Roda Transferencias Solicitadas Pelas Lojas ===============================
   //============================================================================
+  //opssI
   If Not TransferenciasLojas Then
   Begin
     bgArqErros:=True;
@@ -2540,6 +2552,7 @@ begin
     Application.Terminate;
     Exit;
   End;
+  //opssF
   // Roda Transferencias Solicitadas Pelas Lojas ===============================
   //============================================================================
    SalvaProcessamento('00/999 - Roda Transferencias Solicitadas Pelas Lojas - FIM - '+TimeToStr(Time));
@@ -2550,6 +2563,7 @@ begin
   //============================================================================
   // Busca Produtos nas Lojas com Necessidade de Compras =======================
   //============================================================================
+  //opssI
   If Not BuscaProdutosLojas Then
   Begin
     bgArqErros:=True;
@@ -2558,6 +2572,7 @@ begin
     Application.Terminate;
     Exit;
   End;
+  //opssF
   // Busca Produtos nas Lojas com Necessidade de Compras =======================
   //============================================================================
   SalvaProcessamento('10/999 - Busca Produtos nas Lojas com Necessidade de Compras - FIM - '+TimeToStr(Time));
@@ -2568,6 +2583,7 @@ begin
   //============================================================================
   // Analisa e Atualiza Transferencias do Dia ==================================
   //============================================================================
+  //opssI
   If Not AnalisaAtualizaTransferencias Then
   Begin
     bgArqErros:=True;
@@ -2576,17 +2592,18 @@ begin
     Application.Terminate;
     Exit;
   End;
+  //opssF
   // Analisa e Atualiza Transferencias do Dia ==================================
   //============================================================================
   SalvaProcessamento('11/999 - Analisa e Atualiza Transferencias do Dia - FIM - '+TimeToStr(Time));
   //============================================================================
-
 
   //============================================================================
    SalvaProcessamento('12/999 - Busca Transferencias de Dias Anteiroes e Novas do Setor de Compras - INICIO - '+TimeToStr(Time));
   //============================================================================
   // Busca Transferencias de Dias Anteiroes e Novas do Setor de Compras ========
   //============================================================================
+  //opssI
   If Not ProcessaTransferenciasCompras Then
   Begin
     bgArqErros:=True;
@@ -2595,6 +2612,7 @@ begin
     Application.Terminate;
     Exit;
   End;
+  //opssF
   // Busca Transferencias de Dias Anteiroes e Novas do Setor de Compras ========
   //============================================================================
   SalvaProcessamento('12/999 - Busca Transferencias de Dias Anteiroes e Novas do Setor de Compras - FIM - '+TimeToStr(Time));
@@ -2610,6 +2628,7 @@ begin
   // 1       SIM        = Produtos Solicitados pelo Setor de Compras
   // 2       SIM        = Produtos Solicitados Direto da Loja
   // 3       NÃO        = Produtos Calculados no Automático
+  //opssI
   If Not AtualizaPrioridades Then
   Begin
     bgArqErros:=True;
@@ -2618,6 +2637,7 @@ begin
     Application.Terminate;
     Exit;
   End;
+  //opssF
   //============================================================================
   SalvaProcessamento('13/999 - Atualiza Prioridades - FIM - '+TimeToStr(Time));
   //============================================================================
@@ -2640,7 +2660,6 @@ begin
 
   Application.Terminate;
   Exit;
-
 end;
 
 end.

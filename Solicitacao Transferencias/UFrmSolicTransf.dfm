@@ -1,9 +1,8 @@
 object FrmSolicTransf: TFrmSolicTransf
-  Left = 250
-  Top = 150
-  Width = 808
+  Left = 238
+  Top = 119
+  Width = 907
   Height = 606
-  AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'BelShop - Solicita'#231#227'o de Transfer'#234'ncia do CD para Loja'
   Color = clBtnFace
@@ -973,7 +972,7 @@ object FrmSolicTransf: TFrmSolicTransf
   object Pan_Loja: TPanel
     Left = 0
     Top = 538
-    Width = 792
+    Width = 891
     Height = 30
     Align = alBottom
     BevelInner = bvLowered
@@ -1008,7 +1007,7 @@ object FrmSolicTransf: TFrmSolicTransf
   object PC_Principal: TPageControl
     Left = 0
     Top = 0
-    Width = 792
+    Width = 891
     Height = 538
     ActivePage = Ts_Produtos
     Align = alClient
@@ -1032,7 +1031,7 @@ object FrmSolicTransf: TFrmSolicTransf
       object Gb_Solicitacao: TGroupBox
         Left = 0
         Top = 0
-        Width = 784
+        Width = 883
         Height = 91
         Align = alTop
         Font.Charset = DEFAULT_CHARSET
@@ -1229,11 +1228,25 @@ object FrmSolicTransf: TFrmSolicTransf
         object Gb_Produto: TGroupBox
           Left = 2
           Top = 15
-          Width = 780
+          Width = 879
           Height = 43
           Align = alTop
           Caption = ' C'#243'digo Linx '
           TabOrder = 0
+          object Label5: TLabel
+            Left = 770
+            Top = 0
+            Width = 94
+            Height = 13
+            Caption = ' Estoque no CD '
+          end
+          object Lab_UnidadeCD: TLabel
+            Left = 841
+            Top = 19
+            Width = 23
+            Height = 13
+            Caption = 'UNI'
+          end
           object EdtCodProdLinx: TCurrencyEdit
             Left = 11
             Top = 16
@@ -1326,12 +1339,26 @@ object FrmSolicTransf: TFrmSolicTransf
             ReadOnly = True
             TabOrder = 2
           end
+          object EdtQtdEstoqueCD: TCurrencyEdit
+            Left = 775
+            Top = 16
+            Width = 63
+            Height = 21
+            TabStop = False
+            AutoSize = False
+            Color = 15395562
+            DecimalPlaces = 0
+            DisplayFormat = ',0'
+            ReadOnly = True
+            TabOrder = 3
+            OnExit = EdtQtdTransfExit
+          end
         end
       end
       object Dbg_Produtos: TDBGridJul
         Left = 0
         Top = 91
-        Width = 784
+        Width = 883
         Height = 399
         Align = alClient
         Color = 15004403
@@ -1406,35 +1433,35 @@ object FrmSolicTransf: TFrmSolicTransf
             Expanded = False
             FieldName = 'DTA_SOLICITACAO'
             Title.Alignment = taCenter
-            Width = 60
+            Width = 66
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'NUM_SOLICITACAO'
             Title.Alignment = taRightJustify
-            Width = 90
+            Width = 96
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'COD_PROD_LINX'
             Title.Alignment = taRightJustify
-            Width = 50
+            Width = 54
             Visible = True
           end
           item
             Color = 13041663
             Expanded = False
             FieldName = 'NOME'
-            Width = 400
+            Width = 450
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'QTD_ESTOQUE'
             Title.Alignment = taRightJustify
-            Width = 60
+            Width = 80
             Visible = True
           end
           item
@@ -1447,14 +1474,14 @@ object FrmSolicTransf: TFrmSolicTransf
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
             Title.Alignment = taRightJustify
-            Width = 85
+            Width = 100
             Visible = True
           end>
       end
       object Stb_ParamTransf: TdxStatusBar
         Left = 0
         Top = 490
-        Width = 784
+        Width = 883
         Height = 20
         Panels = <
           item
@@ -1516,7 +1543,7 @@ object FrmSolicTransf: TFrmSolicTransf
       object Gb_Verifica: TGroupBox
         Left = 0
         Top = 0
-        Width = 784
+        Width = 883
         Height = 93
         Align = alTop
         Font.Charset = DEFAULT_CHARSET
@@ -1527,7 +1554,7 @@ object FrmSolicTransf: TFrmSolicTransf
         ParentFont = False
         TabOrder = 0
         object Label75: TLabel
-          Left = 262
+          Left = 438
           Top = 67
           Width = 8
           Height = 13
@@ -1540,15 +1567,15 @@ object FrmSolicTransf: TFrmSolicTransf
           ParentFont = False
         end
         object Label3: TLabel
-          Left = 16
+          Left = 192
           Top = 66
           Width = 133
           Height = 13
           Caption = 'Verificar no Per'#237'odo de'
         end
         object Label4: TLabel
-          Left = 16
-          Top = 16
+          Left = 158
+          Top = 8
           Width = 565
           Height = 24
           Caption = 'Solicita'#231#227'o do Produto Utilizado do Painel  <Gb_Solicitacao>'
@@ -1563,7 +1590,7 @@ object FrmSolicTransf: TFrmSolicTransf
           Visible = False
         end
         object DtEdt_DtaInicio: TcxDateEdit
-          Left = 153
+          Left = 329
           Top = 61
           ParentFont = False
           Properties.ReadOnly = False
@@ -1581,7 +1608,7 @@ object FrmSolicTransf: TFrmSolicTransf
           Width = 102
         end
         object DtEdt_DtaFim: TcxDateEdit
-          Left = 279
+          Left = 455
           Top = 61
           ParentFont = False
           Properties.ReadOnly = False
@@ -1598,7 +1625,7 @@ object FrmSolicTransf: TFrmSolicTransf
           Width = 102
         end
         object Bt_Verificar: TJvXPButton
-          Left = 395
+          Left = 571
           Top = 60
           Width = 102
           Height = 28
@@ -1633,7 +1660,7 @@ object FrmSolicTransf: TFrmSolicTransf
       object Dbg_VerificaProdutos: TDBGridJul
         Left = 0
         Top = 93
-        Width = 784
+        Width = 883
         Height = 357
         Align = alClient
         Color = 15004403
@@ -1804,7 +1831,7 @@ object FrmSolicTransf: TFrmSolicTransf
       object dxStatusBar1: TdxStatusBar
         Left = 0
         Top = 490
-        Width = 784
+        Width = 883
         Height = 20
         Panels = <
           item
@@ -1853,7 +1880,7 @@ object FrmSolicTransf: TFrmSolicTransf
       object DBGridJul1: TDBGridJul
         Left = 0
         Top = 450
-        Width = 784
+        Width = 883
         Height = 40
         Align = alBottom
         Color = 15004403

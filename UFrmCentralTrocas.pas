@@ -1162,6 +1162,8 @@ Begin
       DMCentralTrocas.CDS_QtdCxCDGrupos.Open;
       DMCentralTrocas.CDS_QtdCxCDGrupos.Locate('CODIGO',sgCodGrupo+sgCodSubGrupo,[]);
     End;
+    Application.ProcessMessages;
+
   Except
     on e : Exception do
     Begin
@@ -1196,6 +1198,8 @@ Begin
   EdtQtdCaixaCDQtdCxGrupo.Clear;
   EdtQtdCaixaCDPercCxGrupo.Clear;
   EdtQtdCaixaCDDesGrupo.Clear;
+  Application.ProcessMessages;
+
 End; // Atualiza PROD_CAIXA_CD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Verifica a Existencia de Produtos Sem Preco de Custo a Transferir para Pedido do SIDICOM
@@ -6280,6 +6284,7 @@ begin
 
     EdtQtdCaixaCDCodProd.SetFocus;
     Screen.Cursor:=crDefault;
+    Application.ProcessMessages;
   End; // If (PC_Principal.ActivePage=Ts_QtdCaixaCD) And (Ts_QtdCaixaCD.CanFocus) Then
 
 end;

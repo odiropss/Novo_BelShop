@@ -188,7 +188,6 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'PER_PARTICIPACAO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = -1
             Visible = False
           end
           item
@@ -213,7 +212,6 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'PER_MARGEM'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = -1
             Visible = False
           end
           item
@@ -245,7 +243,6 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'VLR_VENDAS_ANO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = -1
             Visible = False
           end
           item
@@ -254,7 +251,6 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             Title.Alignment = taRightJustify
             Title.Caption = '$ Vd 4M'
-            Width = -1
             Visible = False
           end
           item
@@ -263,7 +259,6 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'QTD_VENDAS_ANO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = -1
             Visible = False
           end
           item
@@ -272,7 +267,6 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             Title.Alignment = taRightJustify
             Title.Caption = 'Qt Vd 4M'
-            Width = -1
             Visible = False
           end
           item
@@ -281,7 +275,6 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'QTD_TRANSITO'
             ReadOnly = True
             Title.Alignment = taRightJustify
-            Width = -1
             Visible = False
           end
           item
@@ -291,7 +284,6 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             Title.Alignment = taRightJustify
             Title.Caption = 'Disp'
-            Width = -1
             Visible = False
           end
           item
@@ -301,7 +293,6 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             Title.Alignment = taRightJustify
             Title.Caption = 'Qt EstQ AA'
-            Width = -1
             Visible = False
           end
           item
@@ -310,7 +301,6 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             Title.Alignment = taRightJustify
             Title.Caption = 'Qt EstQ 4M'
-            Width = -1
             Visible = False
           end
           item
@@ -320,7 +310,6 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             Title.Alignment = taRightJustify
             Title.Caption = 'Disp P'#231' Vd'
-            Width = -1
             Visible = False
           end
           item
@@ -370,7 +359,6 @@ object FrmEstoques: TFrmEstoques
             FieldName = 'IND_SITUACAO'
             ReadOnly = True
             Title.Alignment = taCenter
-            Width = -1
             Visible = False
           end
           item
@@ -414,12 +402,12 @@ object FrmEstoques: TFrmEstoques
           969
           55)
         object Bt_Odir: TJvTransparentButton
-          Left = 557
-          Top = 8
-          Width = 83
-          Height = 19
+          Left = 824
+          Top = 16
+          Width = 133
+          Height = 29
           Anchors = [akTop, akRight]
-          Caption = 'ODIR-Duplos'
+          Caption = 'ODIR-Excluir Duplos'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -437,12 +425,12 @@ object FrmEstoques: TFrmEstoques
         object Gb_EstoquesLimiteCurvaA: TGroupBox
           Left = 5
           Top = 4
-          Width = 78
+          Width = 104
           Height = 48
           Caption = ' Curva  A '
           Color = clSilver
           Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWhite
+          Font.Color = clBlue
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
@@ -481,16 +469,30 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             TabOrder = 0
           end
+          object CkB_EstoquesCurvaA: TJvXPCheckbox
+            Left = 79
+            Top = 20
+            Width = 17
+            Height = 17
+            Cursor = crHandPoint
+            AllowGrayed = True
+            TabOrder = 1
+            BoundLines = [blLeft, blTop, blRight, blBottom]
+            Checked = True
+            State = cbChecked
+            Style.Theme = OfficeXP
+            OnClick = CkB_EstoquesCurvaAClick
+          end
         end
         object Gb_EstoquesLimiteCurvaB: TGroupBox
-          Left = 84
+          Left = 110
           Top = 4
-          Width = 78
+          Width = 104
           Height = 48
           Caption = ' Curva  B '
           Color = clSilver
           Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWhite
+          Font.Color = clBlue
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
@@ -529,16 +531,30 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             TabOrder = 0
           end
+          object CkB_EstoquesCurvaB: TJvXPCheckbox
+            Left = 79
+            Top = 20
+            Width = 17
+            Height = 17
+            Cursor = crHandPoint
+            AllowGrayed = True
+            TabOrder = 1
+            BoundLines = [blLeft, blTop, blRight, blBottom]
+            Checked = True
+            State = cbChecked
+            Style.Theme = OfficeXP
+            OnClick = CkB_EstoquesCurvaAClick
+          end
         end
         object Gb_EstoquesLimiteCurvaC: TGroupBox
-          Left = 163
+          Left = 215
           Top = 4
-          Width = 78
+          Width = 104
           Height = 48
           Caption = 'Curva  C '
           Color = clSilver
           Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWhite
+          Font.Color = clBlue
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
@@ -577,16 +593,30 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             TabOrder = 0
           end
+          object CkB_EstoquesCurvaC: TJvXPCheckbox
+            Left = 79
+            Top = 20
+            Width = 17
+            Height = 17
+            Cursor = crHandPoint
+            AllowGrayed = True
+            TabOrder = 1
+            BoundLines = [blLeft, blTop, blRight, blBottom]
+            Checked = True
+            State = cbChecked
+            Style.Theme = OfficeXP
+            OnClick = CkB_EstoquesCurvaAClick
+          end
         end
         object Gb_EstoquesLimiteCurvaD: TGroupBox
-          Left = 242
+          Left = 320
           Top = 4
-          Width = 78
+          Width = 104
           Height = 48
           Caption = 'Curva  D '
           Color = clSilver
           Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWhite
+          Font.Color = clBlue
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
@@ -625,16 +655,30 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             TabOrder = 0
           end
+          object CkB_EstoquesCurvaD: TJvXPCheckbox
+            Left = 79
+            Top = 20
+            Width = 17
+            Height = 17
+            Cursor = crHandPoint
+            AllowGrayed = True
+            TabOrder = 1
+            BoundLines = [blLeft, blTop, blRight, blBottom]
+            Checked = True
+            State = cbChecked
+            Style.Theme = OfficeXP
+            OnClick = CkB_EstoquesCurvaAClick
+          end
         end
         object Gb_EstoquesLimiteCurvaE: TGroupBox
-          Left = 321
+          Left = 425
           Top = 4
-          Width = 78
+          Width = 104
           Height = 48
           Caption = ' Curva E '
           Color = clSilver
           Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWhite
+          Font.Color = clBlue
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
@@ -673,119 +717,20 @@ object FrmEstoques: TFrmEstoques
             ReadOnly = True
             TabOrder = 0
           end
-        end
-        object Gb_EstoquesSituacaoProd: TGroupBox
-          Left = 400
-          Top = 4
-          Width = 154
-          Height = 48
-          Caption = ' Situa'#231#227'o Produto '
-          Color = 14342874
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentColor = False
-          ParentFont = False
-          TabOrder = 5
-          Visible = False
-          object Cbx_EstoquesSituacaoProd: TComboBox
-            Left = 9
-            Top = 18
-            Width = 134
-            Height = 22
-            Style = csOwnerDrawFixed
-            Color = 14737632
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clBlue
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            ItemHeight = 16
-            ItemIndex = 0
-            ParentFont = False
-            TabOrder = 0
-            Text = 'Ativo'
-            Items.Strings = (
-              'Ativo'
-              'N'#227'o Compra'
-              'Ativo/N'#227'o Compra')
+          object CkB_EstoquesCurvaE: TJvXPCheckbox
+            Left = 79
+            Top = 20
+            Width = 17
+            Height = 17
+            Cursor = crHandPoint
+            AllowGrayed = True
+            TabOrder = 1
+            BoundLines = [blLeft, blTop, blRight, blBottom]
+            Checked = True
+            State = cbChecked
+            Style.Theme = OfficeXP
+            OnClick = CkB_EstoquesCurvaAClick
           end
-        end
-        object Bt_EstoquesDemonstrativo: TJvXPButton
-          Left = 803
-          Top = 2
-          Width = 164
-          Height = 51
-          Caption = 'Abrir Demonstrativo'
-          TabOrder = 6
-          TabStop = False
-          Glyph.Data = {
-            07544269746D6170AA040000424DAA0400000000000036000000280000001400
-            000013000000010018000000000074040000C30E0000C30E0000000000000000
-            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00000000000000000000
-            0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000
-            000000000000000000000000BFBFBF000000BFBFBFBFBFBFBFBFBFBFBFBF7F7F
-            7F000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F
-            00007F0000000000000000BFBFBFFFFFFFFFFFFF000000000000000000000000
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F00007F00
-            00000000BFBFBFFFFFFFFFFFFF000000BFBFBF00000000000000000000000000
-            0000000000000000000000BFBFBFBFBFBF7F00007F00007F00007F0000000000
-            BFBFBFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFF000000BFBFBFBFBFBFFF0000FF0000FF0000FF00000000007F7F7F7F
-            7F7F7F7F7F7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            000000BFBFBFBFBFBF7F00007F00007F00007F0000BFBFBFBFBFBFBFBFBF7F7F
-            7FFFFFFF7F00007F00007F00007F00007F00007F0000FFFFFFFFFFFF000000BF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F
-            00007F00007F00007F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F0000FFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFF7F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F00007F00007F0000
-            7F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBF7F7F7FFFFFFF7F00007F00007F00007F0000FFFFFFFFFFFFFFFF
-            FFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F
-            7FFFFFFF7F00007F00007F00007F00007F0000FFFFFFFFFFFFFFFFFF000000BF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F7F7F7F7F7F7F
-            7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7FBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF}
-          ShowFocusRect = True
-          Align = alRight
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          Visible = False
-          OnClick = Bt_EstoquesDemonstrativoClick
-        end
-        object Bt_EstoquesFiltroComprador: TJvXPButton
-          Left = 643
-          Top = 2
-          Width = 160
-          Height = 51
-          Caption = 'Seleciona Comprador'
-          TabOrder = 7
-          Align = alRight
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          OnClick = Bt_EstoquesFiltroCompradorClick
         end
       end
       object Dbg_EstoquesDemFinan: TDBGrid
@@ -1132,7 +1077,7 @@ object FrmEstoques: TFrmEstoques
         end
         object Bt_EstoquesSaldos: TJvXPButton
           Tag = 92
-          Left = 205
+          Left = 461
           Top = 2
           Width = 212
           Height = 41
@@ -1161,6 +1106,84 @@ object FrmEstoques: TFrmEstoques
           Font.Style = [fsBold]
           ParentFont = False
           OnClick = Bt_EstoquesSaldosClick
+        end
+        object Bt_EstoquesFiltroComprador: TJvXPButton
+          Left = 118
+          Top = 2
+          Width = 164
+          Height = 41
+          Caption = 'Seleciona Comprador'
+          TabOrder = 4
+          Glyph.Data = {
+            07544269746D61705E060000424D5E0600000000000036040000280000001600
+            000017000000010008000000000028020000C30E0000C30E0000000100000000
+            000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
+            FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
+            FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000010101010101010101010101010101010101010101010000010101010101
+            0101010101010101010101040404030100000101010101010101010101010101
+            0101040701070401000001010101010101010101010101010104070101070401
+            0000010101010101010101010101010104070101070704010000010101010101
+            0101010101010104070101070704010100000101010101010101010101010407
+            0101070704010101000001010101010101010101010407010107070401010101
+            0000010101010101010101010407010107070401010101010000010101010101
+            0101010404040307070401010101010100000101010101010404040404040407
+            0401010101010101000001010101040406010601010404040101010101010101
+            0000010101040106010601010101040101010101010101010000010101040601
+            0601060106010401010101010101010100000101040601060101010601060104
+            0101010101010101000001010401060106010601060101040101010101010101
+            0000010104060106010601060106010401010101010101010000010104010601
+            0601060106010104010101010101010100000101010401060101010601060401
+            0101010101010101000001010104060106010601060104010101010101010101
+            0000010101010404010101060404010101010101010101010000010101010101
+            0404040401010101010101010101010100000101010101010101010101010101
+            01010101010101010000}
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_EstoquesFiltroCompradorClick
+        end
+        object Panel1: TPanel
+          Left = 101
+          Top = 2
+          Width = 17
+          Height = 41
+          Align = alLeft
+          BevelOuter = bvNone
+          TabOrder = 5
         end
       end
       object Dbg_EstoquesPrev: TDBGrid
@@ -1252,6 +1275,102 @@ object FrmEstoques: TFrmEstoques
             Visible = True
           end>
       end
+      object Gb_EstoquesSituacaoProd: TGroupBox
+        Left = 287
+        Top = 300
+        Width = 154
+        Height = 41
+        Caption = '(N'#227'o Usado) Situa'#231#227'o Produto  '
+        Color = 14342874
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 6
+        Visible = False
+        object Cbx_EstoquesSituacaoProd: TComboBox
+          Left = 9
+          Top = 18
+          Width = 134
+          Height = 22
+          Style = csOwnerDrawFixed
+          Color = 14737632
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlue
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ItemHeight = 16
+          ItemIndex = 0
+          ParentFont = False
+          TabOrder = 0
+          Text = 'Ativo'
+          Items.Strings = (
+            'Ativo'
+            'N'#227'o Compra'
+            'Ativo/N'#227'o Compra')
+        end
+      end
+      object Bt_EstoquesDemonstrativo: TJvXPButton
+        Left = 441
+        Top = 300
+        Width = 164
+        Height = 41
+        Caption = 'Abrir Demonstrativo (N'#227'o Usado)'
+        TabOrder = 7
+        TabStop = False
+        Glyph.Data = {
+          07544269746D6170AA040000424DAA0400000000000036000000280000001400
+          000013000000010018000000000074040000C30E0000C30E0000000000000000
+          0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00000000000000000000
+          0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000
+          000000000000000000000000BFBFBF000000BFBFBFBFBFBFBFBFBFBFBFBF7F7F
+          7F000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F
+          00007F0000000000000000BFBFBFFFFFFFFFFFFF000000000000000000000000
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F00007F00
+          00000000BFBFBFFFFFFFFFFFFF000000BFBFBF00000000000000000000000000
+          0000000000000000000000BFBFBFBFBFBF7F00007F00007F00007F0000000000
+          BFBFBFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFF000000BFBFBFBFBFBFFF0000FF0000FF0000FF00000000007F7F7F7F
+          7F7F7F7F7F7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          000000BFBFBFBFBFBF7F00007F00007F00007F0000BFBFBFBFBFBFBFBFBF7F7F
+          7FFFFFFF7F00007F00007F00007F00007F00007F0000FFFFFFFFFFFF000000BF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F
+          00007F00007F00007F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F0000FFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFF7F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F00007F00007F0000
+          7F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBF7F7F7FFFFFFF7F00007F00007F00007F0000FFFFFFFFFFFFFFFF
+          FFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F
+          7FFFFFFF7F00007F00007F00007F00007F0000FFFFFFFFFFFFFFFFFF000000BF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F7F7F7F7F7F7F
+          7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7FBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF}
+        ShowFocusRect = True
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        Visible = False
+        OnClick = Bt_EstoquesDemonstrativoClick
+      end
     end
     object Ts_EstoquesFiltros: TTabSheet
       Caption = ' Filtros '
@@ -1272,7 +1391,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 270
+          Left = 267
           Top = 11
           Width = 353
           Height = 13

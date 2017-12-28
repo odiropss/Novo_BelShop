@@ -56,6 +56,9 @@ type
     Label4: TLabel;
     dxStatusBar1: TdxStatusBar;
     DBGridJul1: TDBGridJul;
+    Label5: TLabel;
+    EdtQtdEstoqueCD: TCurrencyEdit;
+    Lab_UnidadeCD: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -249,8 +252,10 @@ Procedure TFrmSolicTransf.LimpaEdts;
 Begin
   EdtCodProdLinx.Clear;
   EdtDescProduto.Clear;
+  EdtQtdEstoqueCD.Clear;
   EdtQtdEstoque.Clear;
   EdtQtdTransf.Clear;
+  Lab_UnidadeCD.Caption:='';
   Lab_Unidade.Caption:='';
 
 //  DtEdt_DtaInicio.Clear;
@@ -615,20 +620,25 @@ begin
      DMSolicTransf.SQLC.Connected:=True;
 
     MySql:=' SELECT pr.Cod_Produto, pr.Nome, pr.Cod_Auxiliar,'+
-           '        pr.DesAtivado, pr.Unidade'+
-           ' FROM LINXPRODUTOS pr'+
-           ' WHERE pr.cod_produto='+IntToStr(EdtCodProdLinx.AsInteger);
+           '        pr.DesAtivado, pr.Unidade,'+
+           '        COALESCE(pd.Quantidade,0) Quantidade'+
+           ' FROM LINXPRODUTOS pr, LINXPRODUTOSDETALHES pd'+
+           ' WHERE pr.cod_produto=pd.cod_produto'+
+           ' AND   pd.empresa=2'+
+           ' AND   pr.cod_produto='+IntToStr(EdtCodProdLinx.AsInteger);
     DMSolicTransf.CDS_Busca.Close;
     DMSolicTransf.SQLQ_Busca.Close;
     DMSolicTransf.SQLQ_Busca.SQL.Clear;
     DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
     DMSolicTransf.CDS_Busca.Open;
 
-    EdtDescProduto.Text:=Trim(DMSolicTransf.CDS_Busca.FieldByName('Nome').AsString);
-    sDesAtivado        :=Trim(DMSolicTransf.CDS_Busca.FieldByName('DesAtivado').AsString);
-    sgCodProdLinx      :=DMSolicTransf.CDS_Busca.FieldByName('Cod_Produto').AsString;
-    sgCodProdSidicom   :=Trim(DMSolicTransf.CDS_Busca.FieldByName('Cod_Auxiliar').AsString);
-    Lab_Unidade.Caption:=Trim(DMSolicTransf.CDS_Busca.FieldByName('Unidade').AsString);
+    EdtDescProduto.Text      :=Trim(DMSolicTransf.CDS_Busca.FieldByName('Nome').AsString);
+    EdtQtdEstoqueCD.AsInteger:=DMSolicTransf.CDS_Busca.FieldByName('Quantidade').AsInteger;
+    sDesAtivado              :=Trim(DMSolicTransf.CDS_Busca.FieldByName('DesAtivado').AsString);
+    sgCodProdLinx            :=DMSolicTransf.CDS_Busca.FieldByName('Cod_Produto').AsString;
+    sgCodProdSidicom         :=Trim(DMSolicTransf.CDS_Busca.FieldByName('Cod_Auxiliar').AsString);
+    Lab_Unidade.Caption      :=Trim(DMSolicTransf.CDS_Busca.FieldByName('Unidade').AsString);
+    Lab_UnidadeCD.Caption    :=Trim(DMSolicTransf.CDS_Busca.FieldByName('Unidade').AsString);
 
     DMSolicTransf.CDS_Busca.Close;
 
@@ -666,6 +676,7 @@ procedure TFrmSolicTransf.EdtCodProdLinxChange(Sender: TObject);
 begin
   EdtDescProduto.Clear;
   Lab_Unidade.Caption:='';
+  Lab_UnidadeCD.Caption:='';
 end;
 
 procedure TFrmSolicTransf.Bt_BuscaProdtudoClick(Sender: TObject);

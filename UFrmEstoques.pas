@@ -23,7 +23,8 @@ uses
   IBQuery, JvCheckBox, FMTBcd, Provider, DBClient, SqlExpr, Math,
   DBXpress, Commctrl, dxSkinsdxStatusBarPainter, dxStatusBar, Menus,
   JvExComCtrls, JvAnimate, JvButton, JvTransparentButton, DBCtrls, cxDBEdit,
-  DateUtils;
+  DateUtils,
+  JvXPCheckCtrls;
 
 type
   TFrmEstoques = class(TForm)
@@ -46,8 +47,6 @@ type
     Gb_EstoquesLimiteCurvaE: TGroupBox;
     Label189: TLabel;
     EdtEstoquesLimiteCurvaE: TCurrencyEdit;
-    Gb_EstoquesSituacaoProd: TGroupBox;
-    Cbx_EstoquesSituacaoProd: TComboBox;
     Panel66: TPanel;
     Bt_EstoquesFechar: TJvXPButton;
     Dbg_Estoques: TDBGrid;
@@ -69,11 +68,19 @@ type
     N1: TMenuItem;
     PopM_EstoquesReplicarEstMinLojas: TMenuItem;
     Label1: TLabel;
-    Bt_Odir: TJvTransparentButton;
-    Bt_EstoquesDemonstrativo: TJvXPButton;
-    Bt_EstoquesFiltroComprador: TJvXPButton;
     Dbg_EstoquesPrev: TDBGrid;
     Bt_EstoquesSaldos: TJvXPButton;
+    CkB_EstoquesCurvaA: TJvXPCheckbox;
+    CkB_EstoquesCurvaB: TJvXPCheckbox;
+    CkB_EstoquesCurvaC: TJvXPCheckbox;
+    CkB_EstoquesCurvaD: TJvXPCheckbox;
+    CkB_EstoquesCurvaE: TJvXPCheckbox;
+    Bt_Odir: TJvTransparentButton;
+    Gb_EstoquesSituacaoProd: TGroupBox;
+    Cbx_EstoquesSituacaoProd: TComboBox;
+    Bt_EstoquesDemonstrativo: TJvXPButton;
+    Bt_EstoquesFiltroComprador: TJvXPButton;
+    Panel1: TPanel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -94,6 +101,7 @@ type
     // Procedure Recalculo_V_Estoques_Aggregates;
 
     Procedure AtualizaEstoques;
+    Procedure SetaCurvas;
 
     // Odir ====================================================================
 
@@ -127,6 +135,7 @@ type
     procedure Bt_OdirClick(Sender: TObject);
     procedure Bt_EstoquesFiltroCompradorClick(Sender: TObject);
     procedure Bt_EstoquesSaldosClick(Sender: TObject);
+    procedure CkB_EstoquesCurvaAClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -152,7 +161,10 @@ var
   bgSairEstoques: Boolean;
 
   bgIndexCriado: Boolean;
-  sgFiltros: String;
+
+  sgFiltros,
+  sgFiltroComp, // Compradores
+  sgFiltroCurvas: String;
 
   // Guarda Valores Digitados no Parametros da Curva ABC
   igDiasEstA, igDiasEstB, igDiasEstC, igDiasEstD, igDiasEstE,
@@ -161,13 +173,30 @@ var
 implementation
 
 uses DK_Procs1, UDMVirtual, UFrmBelShop, UFrmSelectEmpProcessamento,
-     UFrmSolicitacoes, SysConst, UDMBelShop;
+     UFrmSolicitacoes, SysConst, UDMBelShop,
+  VarUtils;
 
 {$R *.dfm}
 
 //==============================================================================
 // Odir - INICIO ===============================================================
 //==============================================================================
+
+// Acerta Seleção das Curvas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmEstoques.SetaCurvas;
+Begin
+  Gb_EstoquesLimiteCurvaA.Font.Color:=clBlue;
+  Gb_EstoquesLimiteCurvaB.Font.Color:=clBlue;
+  Gb_EstoquesLimiteCurvaC.Font.Color:=clBlue;
+  Gb_EstoquesLimiteCurvaD.Font.Color:=clBlue;
+  Gb_EstoquesLimiteCurvaE.Font.Color:=clBlue;
+
+  CkB_EstoquesCurvaA.Checked:=True;
+  CkB_EstoquesCurvaB.Checked:=True;
+  CkB_EstoquesCurvaC.Checked:=True;
+  CkB_EstoquesCurvaD.Checked:=True;
+  CkB_EstoquesCurvaE.Checked:=True;
+End; // Acerta Seleção das Curvas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Atualiza Estoque dos Produtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmEstoques.AtualizaEstoques;
@@ -193,8 +222,8 @@ Begin
          ' AND   p.cod_auxiliar is not null'+
          ' AND   d.quantidade>0'+
          ' AND   p.desativado=''N'''+
-         ' AND   p.id_linha<>33'+
-         ' AND   p.id_colecao<>294'+
+         ' AND   p.id_linha<>33'+    // Brindes
+         ' AND   p.id_colecao<>294'+ // Brindes
          ' AND   d.cod_loja='+QuotedStr(sgCodEmp)+
          ' ORDER BY 1';
   DMBelShop.CDS_Busca.Close;
@@ -1146,29 +1175,33 @@ begin
   End; // If Not bOriginal Then
 
   // Recalcula Campos Aggregates ===============================================
-  DMVirtual.CDS_V_Estoques.Close;
-  DMBelShop.CDS_EstoquePrevisao.Close;
+  // Odir Retirou - 19/12/2017 - Parametros Somente para Atualização de Estoque Mínimo
+  // DMVirtual.CDS_V_Estoques.Close;
+  // DMBelShop.CDS_EstoquePrevisao.Close;
 
   // Odir Retirou - 19/12/2017 - Parametros Somente para Atualização de Estoque Mínimo
   // Recalculo_V_Estoques_Aggregates;
-  
-  DMVirtual.CDS_V_Estoques.Open;
-  DMBelShop.CDS_EstoquePrevisao.Open;
+  //
+  // DMVirtual.CDS_V_Estoques.Open;
+  // DMBelShop.CDS_EstoquePrevisao.Open;
+
+  // Acerta Seleção das Curvas =================================================
+  SetaCurvas;
 
   If DMVirtual.CDS_V_Estoques.IsEmpty Then
   Begin
     msg('Sem Produto a Listar !!'+cr+cr+'Filtro Será Retirado !!','A');
-    DMVirtual.CDS_V_Estoques.Close;
-    DMBelShop.CDS_EstoquePrevisao.Close;
+    // Odir Retirou - 19/12/2017 - Parametros Somente para Atualização de Estoque Mínimo
+    // DMVirtual.CDS_V_Estoques.Close;
+    // DMBelShop.CDS_EstoquePrevisao.Close;
 
     DMVirtual.CDS_V_Estoques.Filter:='';
     DMVirtual.CDS_V_Estoques.Filtered:=False;
 
     // Odir Retirou - 19/12/2017 - Parametros Somente para Atualização de Estoque Mínimo
     // Recalculo_V_Estoques_Aggregates;
-    
-    DMVirtual.CDS_V_Estoques.Open;
-    DMBelShop.CDS_EstoquePrevisao.Open;
+    // DMVirtual.CDS_V_Estoques.Open;
+    // DMBelShop.CDS_EstoquePrevisao.Open;
   End;
 
   Ts_EstoquesFiltros.TabVisible:=False;
@@ -1575,6 +1608,9 @@ Begin
   FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
   FrmSelectEmpProcessamento.bUsarMatriz:=False;
 
+  FrmSelectEmpProcessamento.Bt_SelectEmpProcMarcaTodos.Visible:=False;
+  FrmSelectEmpProcessamento.Bt_SelectEmpProcDesMarcaTodos.Visible:=False;
+
   FrmSelectEmpProcessamento.ShowModal;
 
   igNrEmpProc:=FrmSelectEmpProcessamento.iNrEmpProc;
@@ -1877,7 +1913,7 @@ Begin
 
          ' TRIM(pr.principalfor) COD_FORNECEDOR,'+
          ' TRIM(pr.nomefornecedor) DES_FORNECEDOR,'+
-         ' TRIM(fo.codcentrocusto) COD_COMPRADOR,'+
+         ' TRIM(COALESCE(fo.codcentrocusto,0)) COD_COMPRADOR,'+
          ' TRIM(cp.nomesubcusto) DES_COMPRADOR,'+
 
          ' 0.00 VLR_VENDAS_ACUM,'+ // Não Usado
@@ -2257,8 +2293,8 @@ Begin
          '             FROM LINXPRODUTOS pl'+
          '             WHERE pl.cod_auxiliar=pr.codproduto'+
          '             AND   pl.desativado=''N'''+
-         '             AND   pl.id_linha<>33'+
-         '             AND   pl.id_colecao<>294)'+
+         '             AND   pl.id_linha<>33'+     // Brindes
+         '             AND   pl.id_colecao<>294)'+ // Brindes
 
          ' ORDER BY fc.ind_curva, fc.per_participacao desc';
   DMVirtual.CDS_V_Estoques.Close;
@@ -2777,59 +2813,60 @@ procedure TFrmEstoques.Bt_OdirClick(Sender: TObject);
 Var
   mMemo: TMemo;
 begin
-  Dbg_Estoques.SetFocus;
 
-  If msg('CONTINUAR ??','C')=2 Then
-   Exit;
-
-  If AnsiUpperCase(Des_Login)<>'ODIR' Then
-   EXIT;
-
-  // Cria Componente Memo ======================================================
-  mMemo:=TMemo.Create(Self);
-  mMemo.Visible:=True;
-  mMemo.Parent:=FrmEstoques;
-  mMemo.Height:=410;
-  mMemo.Left:=32;
-  mMemo.Width:=920;
-  mMemo.Top:=96;
-  mMemo.Anchors:=[akLeft,akTop,akRight,akBottom];
-  mMemo.Lines.Clear;
-
-  ShowMessage('0');
-
-  DMBelShop.CDS_Busca.Close;
-  DMBelShop.SDS_Busca.CommandText:='SELECT * FROM ES_FINAN_CURVA_ABC e ORDER BY e.cod_loja, e.cod_produto';
-  DMBelShop.CDS_Busca.Open;
-
-  Bt_Odir.Caption:=IntToStr(DMBelShop.CDS_Busca.RecordCount);
-
-  sgCodigo:='';
-  sgDescricao:='';
-  While Not DMBelShop.CDS_Busca.Eof do
-  Begin
-    Application.ProcessMessages;
-
-    sgDescricao:=DMBelShop.CDS_Busca.FieldByName('cod_loja').AsString+' - '+
-                 DMBelShop.CDS_Busca.FieldByName('cod_produto').AsString;
-
-    If sgCodigo=sgDescricao Then
-     mMemo.Lines.Add(sgCodigo);
-
-    sgCodigo:=DMBelShop.CDS_Busca.FieldByName('cod_loja').AsString+' - '+
-              DMBelShop.CDS_Busca.FieldByName('cod_produto').AsString;
-
-    Bt_Odir.Caption:=IntToStr(DMBelShop.CDS_Busca.RecordCount)+' - '+IntToStr(DMBelShop.CDS_Busca.RecNo);
-    DMBelShop.CDS_Busca.Next;
-  end;
-  DMBelShop.CDS_Busca.Close;
-  FreeAndNil(mMemo);
+//  Dbg_Estoques.SetFocus;
+//
+//  If msg('CONTINUAR ??','C')=2 Then
+//   Exit;
+//
+//  If AnsiUpperCase(Des_Login)<>'ODIR' Then
+//   EXIT;
+//
+//  // Cria Componente Memo ======================================================
+//  mMemo:=TMemo.Create(Self);
+//  mMemo.Visible:=True;
+//  mMemo.Parent:=FrmEstoques;
+//  mMemo.Height:=410;
+//  mMemo.Left:=32;
+//  mMemo.Width:=920;
+//  mMemo.Top:=96;
+//  mMemo.Anchors:=[akLeft,akTop,akRight,akBottom];
+//  mMemo.Lines.Clear;
+//
+//  ShowMessage('0');
+//
+//  DMBelShop.CDS_Busca.Close;
+//  DMBelShop.SDS_Busca.CommandText:='SELECT * FROM ES_FINAN_CURVA_ABC e ORDER BY e.cod_loja, e.cod_produto';
+//  DMBelShop.CDS_Busca.Open;
+//
+//  Bt_Odir.Caption:=IntToStr(DMBelShop.CDS_Busca.RecordCount);
+//
+//  sgCodigo:='';
+//  sgDescricao:='';
+//  While Not DMBelShop.CDS_Busca.Eof do
+//  Begin
+//    Application.ProcessMessages;
+//
+//    sgDescricao:=DMBelShop.CDS_Busca.FieldByName('cod_loja').AsString+' - '+
+//                 DMBelShop.CDS_Busca.FieldByName('cod_produto').AsString;
+//
+//    If sgCodigo=sgDescricao Then
+//     mMemo.Lines.Add(sgCodigo);
+//
+//    sgCodigo:=DMBelShop.CDS_Busca.FieldByName('cod_loja').AsString+' - '+
+//              DMBelShop.CDS_Busca.FieldByName('cod_produto').AsString;
+//
+//    Bt_Odir.Caption:=IntToStr(DMBelShop.CDS_Busca.RecordCount)+' - '+IntToStr(DMBelShop.CDS_Busca.RecNo);
+//    DMBelShop.CDS_Busca.Next;
+//  end;
+//  DMBelShop.CDS_Busca.Close;
+//  FreeAndNil(mMemo);
 
 end;
 
 procedure TFrmEstoques.Bt_EstoquesFiltroCompradorClick(Sender: TObject);
 Var
-  sFiltroComp, MySql: String;
+  MySql: String;
 begin
 
   If DMVirtual.CDS_V_Estoques.IsEmpty Then
@@ -2887,20 +2924,23 @@ begin
 
   If bgProcessar Then
   Begin
-    sFiltroComp:='';
+    // Acerta Seleção das Curvas ===============================================
+    SetaCurvas;
+
+    sgFiltroComp:='';
     DMBelShop.CDS_Busca.First;
     While Not DMBelShop.CDS_Busca.Eof do
     Begin
       If DMBelShop.CDS_Busca.FieldByName('PROC').AsString='SIM' Then
       Begin
-        If Trim(sFiltroComp)='' Then
+        If Trim(sgFiltroComp)='' Then
         Begin
-          sFiltroComp:='COD_COMPRADOR='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Codigo').AsString));
+          sgFiltroComp:='COD_COMPRADOR='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Codigo').AsString));
           sgCompradores:=Trim(DMBelShop.CDS_Busca.FieldByName('Comprador').AsString);
         End
         Else
         Begin
-          sFiltroComp:=sFiltroComp+' OR COD_COMPRADOR='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Codigo').AsString));
+          sgFiltroComp:=sgFiltroComp+' OR COD_COMPRADOR='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Codigo').AsString));
           sgCompradores:=sgCompradores+' / '+Trim(DMBelShop.CDS_Busca.FieldByName('Comprador').AsString);
         End;
       End;
@@ -2910,44 +2950,50 @@ begin
     DMBelShop.CDS_Busca.Close;
 
     DMVirtual.CDS_V_Estoques.DisableControls;
-    DMVirtual.CDS_V_Estoques.Close;
-    DMBelShop.CDS_EstoquePrevisao.Close;
+
+//    DMVirtual.CDS_V_Estoques.Close;
+//    DMBelShop.CDS_EstoquePrevisao.Close;
 
     DMVirtual.CDS_V_Estoques.Filtered:=False;
     DMVirtual.CDS_V_Estoques.Filter:='';
 
-    If (Trim(sgFiltros)<>'') And (Trim(sFiltroComp)<>'') Then
-     DMVirtual.CDS_V_Estoques.Filter:=sgFiltros+' AND ('+sFiltroComp+')'
-
-    Else If (Trim(sgFiltros)='') And (Trim(sFiltroComp)<>'') Then
-     DMVirtual.CDS_V_Estoques.Filter:=sFiltroComp
-
-    Else
-     DMVirtual.CDS_V_Estoques.Filter:=sgFiltros;
-
+    If (Trim(sgFiltros)<>'') And (Trim(sgFiltroComp)<>'') Then
+     Begin
+       DMVirtual.CDS_V_Estoques.Filter:=sgFiltros+' AND ('+sgFiltroComp+')';
+     End
+    ELSE
+     If (Trim(sgFiltros)='') And (Trim(sgFiltroComp)<>'') Then
+     Begin
+       DMVirtual.CDS_V_Estoques.Filter:=sgFiltroComp;
+     End
+    ELSE
+     If (Trim(sgFiltros)<>'') Then
+     Begin
+       DMVirtual.CDS_V_Estoques.Filter:=sgFiltros;
+     End;
     DMVirtual.CDS_V_Estoques.Filtered:=True;
 
     // Odir Retirou - 19/12/2017 - Parametros Somente para Atualização de Estoque Mínimo
     // Recalculo_V_Estoques_Aggregates;
-
-    DMVirtual.CDS_V_Estoques.Open;
-    DMBelShop.CDS_EstoquePrevisao.Open;
+    // DMVirtual.CDS_V_Estoques.Open;
+    // DMBelShop.CDS_EstoquePrevisao.Open;
     DMVirtual.CDS_V_Estoques.EnableControls;
 
     If DMVirtual.CDS_V_Estoques.IsEmpty Then
     Begin
       msg('Sem Produto a Listar !!'+cr+cr+'Filtro Será Retirado !!','A');
-      DMVirtual.CDS_V_Estoques.Close;
-      DMBelShop.CDS_EstoquePrevisao.Close;
+
+      // Odir Retirou - 19/12/2017 - Parametros Somente para Atualização de Estoque Mínimo
+      // DMVirtual.CDS_V_Estoques.Close;
+      // DMBelShop.CDS_EstoquePrevisao.Close;
 
       DMVirtual.CDS_V_Estoques.Filter:='';
       DMVirtual.CDS_V_Estoques.Filtered:=False;
 
       // Odir Retirou - 19/12/2017 - Parametros Somente para Atualização de Estoque Mínimo
       // Recalculo_V_Estoques_Aggregates;
-      
-      DMVirtual.CDS_V_Estoques.Open;
-      DMBelShop.CDS_EstoquePrevisao.Open;
+      // DMVirtual.CDS_V_Estoques.Open;
+      // DMBelShop.CDS_EstoquePrevisao.Open;
     End;
   End; // If FrmSolicitacoes.bgOK Then
 
@@ -2997,6 +3043,156 @@ begin
 
   Application.ProcessMessages;
   Dbg_Estoques.SetFocus;
+end;
+
+procedure TFrmEstoques.CkB_EstoquesCurvaAClick(Sender: TObject);
+Var
+  sA, sB, sC, sD, sE: String;
+begin
+
+  sgFiltroCurvas:='';
+  If DMVirtual.CDS_V_Estoques.IsEmpty Then
+  Begin
+    SetaCurvas;
+    Exit;
+  End;
+
+  // Monta Filtro de Cusvas ====================================================
+  Screen.Cursor:=crArrow;
+  If (Sender is TJvXPCheckbox) Then
+  Begin
+    If CkB_EstoquesCurvaA.State=cbGrayed Then CkB_EstoquesCurvaA.State:=cbUnchecked;
+    If CkB_EstoquesCurvaB.State=cbGrayed Then CkB_EstoquesCurvaB.State:=cbUnchecked;
+    If CkB_EstoquesCurvaC.State=cbGrayed Then CkB_EstoquesCurvaC.State:=cbUnchecked;
+    If CkB_EstoquesCurvaD.State=cbGrayed Then CkB_EstoquesCurvaD.State:=cbUnchecked;
+    If CkB_EstoquesCurvaE.State=cbGrayed Then CkB_EstoquesCurvaE.State:=cbUnchecked;
+
+    // Monta Select das Curvas =================================================
+    Gb_EstoquesLimiteCurvaA.Font.Color:=clBlue;
+    Gb_EstoquesLimiteCurvaB.Font.Color:=clBlue;
+    Gb_EstoquesLimiteCurvaC.Font.Color:=clBlue;
+    Gb_EstoquesLimiteCurvaD.Font.Color:=clBlue;
+    Gb_EstoquesLimiteCurvaE.Font.Color:=clBlue;
+
+    If CkB_EstoquesCurvaA.Checked Then sA:=' IND_CURVA=''A''' Else Gb_EstoquesLimiteCurvaA.Font.Color:=clRed;
+    If CkB_EstoquesCurvaB.Checked Then sB:=' IND_CURVA=''B''' Else Gb_EstoquesLimiteCurvaB.Font.Color:=clRed;
+    If CkB_EstoquesCurvaC.Checked Then sC:=' IND_CURVA=''C''' Else Gb_EstoquesLimiteCurvaC.Font.Color:=clRed;
+    If CkB_EstoquesCurvaD.Checked Then sD:=' IND_CURVA=''D''' Else Gb_EstoquesLimiteCurvaD.Font.Color:=clRed;
+    If CkB_EstoquesCurvaE.Checked Then sE:=' IND_CURVA=''E''' Else Gb_EstoquesLimiteCurvaE.Font.Color:=clRed;
+
+    // Curva A ------------------------------------------------------
+    If sA<>'' Then
+    Begin
+      sgFiltroCurvas:=sA;
+    End; // If sA<>'' Then
+
+    // Curva B ------------------------------------------------------
+    If sB<>'' Then
+    Begin
+     If Trim(sgFiltroCurvas)='' Then
+      sgFiltroCurvas:=sB
+     Else
+      sgFiltroCurvas:=sgFiltroCurvas+' OR '+sB;
+    End; // If sB<>'' Then
+
+    // Curva C ------------------------------------------------------
+    If sC<>'' Then
+    Begin
+     If Trim(sgFiltroCurvas)='' Then
+      sgFiltroCurvas:=sC
+     Else
+      sgFiltroCurvas:=sgFiltroCurvas+' OR '+sC;
+    End; // If sC<>'' Then
+
+    // Curva D ------------------------------------------------------
+    If sD<>'' Then
+    Begin
+     If Trim(sgFiltroCurvas)='' Then
+      sgFiltroCurvas:=sD
+     Else
+      sgFiltroCurvas:=sgFiltroCurvas+' OR '+sD;
+    End; // If sD<>'' Then
+
+    // Curva E ------------------------------------------------------
+    If sE<>'' Then
+    Begin
+     If Trim(sgFiltroCurvas)='' Then
+      sgFiltroCurvas:=sE
+     Else
+      sgFiltroCurvas:=sgFiltroCurvas+' OR '+sE;
+    End; // If sE<>'' Then
+
+    // Acerta Seleção das Curvas ===============================================
+    If ((Not CkB_EstoquesCurvaA.Checked) And (Not CkB_EstoquesCurvaB.Checked) And (Not CkB_EstoquesCurvaC.Checked) And
+        (Not CkB_EstoquesCurvaD.Checked) And (Not CkB_EstoquesCurvaE.Checked)) OR
+       ((CkB_EstoquesCurvaA.Checked) And (CkB_EstoquesCurvaB.Checked) And (CkB_EstoquesCurvaC.Checked) And
+        (CkB_EstoquesCurvaD.Checked) And (CkB_EstoquesCurvaE.Checked)) Then
+    Begin
+      SetaCurvas;
+      sgFiltroCurvas:='';
+    End;
+
+    // Executa Filtros =========================================================
+    DMVirtual.CDS_V_Estoques.DisableControls;
+    DMVirtual.CDS_V_Estoques.Filtered:=False;
+    DMVirtual.CDS_V_Estoques.Filter:='';
+
+    // Filtros: Filtros, Compradores e Curvas
+    If (Trim(sgFiltros)<>'') And (Trim(sgFiltroComp)<>'') And (Trim(sgFiltroCurvas)<>'')  Then
+     Begin
+       DMVirtual.CDS_V_Estoques.Filter:=sgFiltros+' AND ('+sgFiltroComp+')'+' AND ('+sgFiltroCurvas+')';
+     End
+    ELSE // Filtros: Curvas
+     If (Trim(sgFiltros)='') And (Trim(sgFiltroComp)='') And (Trim(sgFiltroCurvas)<>'')  Then
+     Begin
+       DMVirtual.CDS_V_Estoques.Filter:=sgFiltroCurvas;
+     End
+    ELSE // Filtros: Compradores e Curvas
+     If (Trim(sgFiltros)='') And (Trim(sgFiltroComp)<>'') And (Trim(sgFiltroCurvas)<>'')  Then
+     Begin
+       DMVirtual.CDS_V_Estoques.Filter:='('+sgFiltroComp+')'+' AND ('+sgFiltroCurvas+')';
+     End
+    ELSE // Filtros: Compradores
+     If (Trim(sgFiltros)='') And (Trim(sgFiltroComp)<>'') And (Trim(sgFiltroCurvas)='')  Then
+     Begin
+       DMVirtual.CDS_V_Estoques.Filter:='('+sgFiltroComp+')';
+     End
+    ELSE // Filtros: Filtros
+     If (Trim(sgFiltros)<>'') And (Trim(sgFiltroComp)='') And (Trim(sgFiltroCurvas)='')  Then
+     Begin
+       DMVirtual.CDS_V_Estoques.Filter:='('+sgFiltros+')';
+     End
+    ELSE // Filtros: Filtros e Curvas
+     If (Trim(sgFiltros)<>'') And (Trim(sgFiltroComp)='') And (Trim(sgFiltroCurvas)<>'')  Then
+     Begin
+       DMVirtual.CDS_V_Estoques.Filter:='('+sgFiltros+')'+' AND ('+sgFiltroCurvas+')';
+     End
+    ELSE // Filtros: Filtros e Compradores
+     If (Trim(sgFiltros)<>'') And (Trim(sgFiltroComp)<>'') And (Trim(sgFiltroCurvas)='')  Then
+     Begin
+       DMVirtual.CDS_V_Estoques.Filter:='('+sgFiltros+')'+' AND ('+sgFiltroComp+')';
+     End;
+
+    DMVirtual.CDS_V_Estoques.Filtered:=True;
+
+    // Se Não Entrado Nada das Curvas Selecionadas Retorna Todas as Curvas
+    If DMVirtual.CDS_V_Estoques.IsEmpty Then
+    Begin
+      SetaCurvas;
+      DMVirtual.CDS_V_Estoques.Filtered:=False;
+      DMVirtual.CDS_V_Estoques.EnableControls;
+      CkB_EstoquesCurvaAClick(CkB_EstoquesCurvaA);
+      Exit;
+    End;
+    DMVirtual.CDS_V_Estoques.EnableControls;
+
+    THackDBGrid(Dbg_Estoques).FixedCols:=4;
+    Dbg_EstoquesColEnter(Self);
+    Dbg_Estoques.Refresh;
+    Refresh;
+    Dbg_Estoques.SetFocus;
+    Screen.Cursor:=crDefault;
+  End; // If (Sender is TJvXPCheckbox) Then
 end;
 
 end.

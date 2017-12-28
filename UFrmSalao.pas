@@ -16025,11 +16025,11 @@ end;
 
 procedure TFrmSalao.Ts_PagtoVendasShow(Sender: TObject);
 begin
-  Bt_PagtoGeraPlanilha.Visible:=False;
+//  Bt_PagtoGeraPlanilha.Visible:=False;
   If Not Ts_PagtoPlanilha.TabVisible Then
   Begin
     Pan_ProfBranco.Parent:=Pan_ComissaoBottom;
-    Bt_PagtoGeraPlanilha.Visible:=True;
+//    Bt_PagtoGeraPlanilha.Visible:=True;
     Bt_PagtoGeraPlanilha.Parent:=Pan_ComissaoBottom;
     Bt_PagtoDebCredImprime.Caption:='Planilha Conferência';
     Bt_PagtoDebCredImprime.Parent:=Pan_ComissaoBottom;
@@ -16038,11 +16038,11 @@ end;
 
 procedure TFrmSalao.Ts_PagtoDebCredShow(Sender: TObject);
 begin
-  Bt_PagtoGeraPlanilha.Visible:=False;
+//  Bt_PagtoGeraPlanilha.Visible:=False;
   If Not Ts_PagtoPlanilha.TabVisible Then
   Begin
     Pan_ProfBranco.Parent:=Pan_DebCredBottom;
-    Bt_PagtoGeraPlanilha.Visible:=True;
+//    Bt_PagtoGeraPlanilha.Visible:=True;
     Bt_PagtoGeraPlanilha.Parent:=Pan_DebCredBottom;
     Bt_PagtoDebCredImprime.Caption:='Planilha Conferência';
     Bt_PagtoDebCredImprime.Parent:=Pan_DebCredBottom;

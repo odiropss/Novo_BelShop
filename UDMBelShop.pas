@@ -3472,7 +3472,7 @@ Begin
 
   If (Result) Then
   Begin
-    FrmEntrada.OdirPanApres.Caption:='AGUARDE !! Testando Conexão MPMS - '+IntToStr(igTentaConexao);
+    FrmEntrada.OdirPanApres.Caption:='AGUARDE !! Testando Conexão BelShop CD - '+IntToStr(igTentaConexao);
     FrmEntrada.Refresh;
     If (Not FrmBelShop.ConectaMPMS(True))  Then
      Result:=False;

@@ -26814,14 +26814,14 @@ begin
   bSiga:=True;
   If (PC_ConsultaMovtoCompr.Visible) and (PC_ConsultaMovtoCompr.CanFocus) Then
   Begin
-    MySql:=' SELECT f.nomefornecedor, f.codfornecedor'+
+    MySql:=' SELECT REPLACE (F.nomefornecedor , '''''''', ''"'') nomefornecedor, f.codfornecedor'+
            ' FROM FORNECED f';
     bSiga:=False;
   End;
 
   If bSiga Then
   Begin
-    MySql:=' select distinct f.nomefornecedor, f.codfornecedor'+
+    MySql:=' select distinct REPLACE (F.nomefornecedor , '''''''', ''"'') nomefornecedor, f.codfornecedor'+
            ' from produto p, forneced f'+
            ' where p.principalfor=f.codfornecedor';
 
@@ -28647,7 +28647,7 @@ begin
   If Not ConectaMPMS Then
   Begin
     If sgCodLojaUnica='' Then
-     msg('Impossível Continuar...'+cr+'Banco de Dados MPMS (Administração)'+cr+cr+'Não CONECTADO !!','A')
+     msg('Impossível Continuar...'+cr+'Banco de Dados BelShop_CD (Administração)'+cr+cr+'Não CONECTADO !!','A')
     Else
      msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
     Application.Terminate;
@@ -34663,7 +34663,7 @@ begin
 //// OdirApagar AtualizaEnderecamentos - 09/06/2017
 ////  AtualizaEnderecamentos(bSIDICOM);
 //
-//  msg('SIDICOM Não Atualizado...'+cr+cr+'Faltam Definiçoes Sobre MPMS !!','A');
+//  msg('SIDICOM Não Atualizado...'+cr+cr+'Faltam Definiçoes Sobre BelShop_CD !!','A');
 end;
 
 procedure TFrmBelShop.Dbg_FinanObjetivosManutEmpresasKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -45579,8 +45579,8 @@ begin
     Exit;
   End;
 
-  FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
-  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
+//  FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
+//  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
 
   If (Sender is TMenuItem) Then
    igTagPermissao:=(Sender as TMenuItem).Tag;
@@ -46236,8 +46236,8 @@ end;
 
 procedure TFrmBelShop.SubMenuCentroDistAnaliseReposicoesClick(Sender: TObject);
 begin
-  FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
-  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
+//  FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
+//  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
 
   FrmCentralTrocas.Bt_NotasEntDevFechar.Parent:=FrmCentralTrocas.Pan_AnaliseRepos;
 
@@ -46385,8 +46385,8 @@ begin
 //  msg('Opção em Desenvolvimento !!','A');
  // Exit;
 
-  FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
-  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
+//  FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
+//  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
 
   FrmCentralTrocas.Bt_NotasEntDevFechar.Parent:=FrmCentralTrocas.Pan_QtdCaixaCD;
 

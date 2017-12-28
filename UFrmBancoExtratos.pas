@@ -227,6 +227,7 @@ type
     Bt_CMDesmarcarDep: TJvXPButton;
     Bt_CMConciliarDep: TJvXPButton;
     Bt_CMPeriodoDep: TJvXPButton;
+    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SairClick(Sender: TObject);
@@ -460,6 +461,7 @@ type
     procedure EdtConcManutDepVlrChange(Sender: TObject);
     procedure EdtConcManutExtratoVlrChange(Sender: TObject);
     procedure EdtConcManutPagtoVlrChange(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -6811,7 +6813,7 @@ Begin
      End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
      DMBelShop.CDS_BuscaRapida.Close;
 
-     // Busca Todos os Bacos ----------------------------------------
+     // Busca Todos os Bancos ---------------------------------------
      MySql:=' SELECT b.cod_banco'+
             ' FROM fin_bancos b'+
             ' ORDER BY b.cod_banco';
@@ -13723,164 +13725,22 @@ begin
 
 end;
 
-end.
-{
-
-Var
-  OpenDialog: TOpenDialog;
-  ii, i: Integer;
-  b: Boolean;
-  bApagaCol: Boolean;
+procedure TFrmBancoExtratos.Button1Click(Sender: TObject);
 begin
-  Strg_SantanderImpExtrato.SetFocus;
 
-  // Limpa StringGrid
-  LimpaStringGrid(Strg_SantanderImpExtrato);
+sgDtaI:='01/12/2017';
+sgDtaF:='05/12/2017';
+      sgParametroLinx:=sgPastaWebService+'PWebServiceLinx.exe LinxFaturas'; // Excutavel e Metodo a Processar
+      sgParametroLinx:=sgParametroLinx+' 2'; // Codigo da Loja a Processar
+      sgParametroLinx:=sgParametroLinx+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Metodos')+'"'; // Pasta dos Metodos
+      sgParametroLinx:=sgParametroLinx+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Retornos')+'"'; // Pasta dos Retornos
+      sgParametroLinx:=sgParametroLinx+' "'+sgDtaI+'"'; // Data Inicial
+      sgParametroLinx:=sgParametroLinx+' "'+sgDtaF+'"'; // Data Final
 
-  Bt_SantanderImpExtrato.Enabled:=False;
+      // Envia Parametro e Aguarda Termino do Processo =============================
+      CreateProcessSimple(sgParametroLinx);
+sgParametroLinx:='';
+end;
 
-  OpenDialog := TOpenDialog.Create(Self);
-  With OpenDialog do
-  Begin
-    Options := [ofPathMustExist, ofHideReadOnly, ofOverwritePrompt];
-    DefaultExt := 'xls;xlsx';
-    Filter := 'Arquivo Excel (*.xls;*.xlsx)|*.xls;*.xlsx';
-    FilterIndex := 1;
-    Title := 'Busca Arquivos Excel';
-
-    If Execute then
-     Begin
-       EdtSantanderPastaArquivo.Text:=OpenDialog.FileName;
-
-       If FileDateToDateTime(FileAgeCreate(EdtSantanderPastaArquivo.Text))<StrToDate(sgDtaServidor) Then
-       Begin
-         MessageBox(Handle, pChar('DATA da Criação do Arquivo é'+cr+'Inferior ao dia de Hoje !!'+cr+cr+'Favor Gerar o Arquivo Novamente...'), 'Erro', MB_ICONERROR);
-         Exit;
-       End;
-
-       // Apresenta Arquivo Excel
-       ImportaExtratoSantander(Strg_SantanderImpExtrato,EdtSantanderPastaArquivo.Text);
-
-       Strg_SantanderImpExtrato.Refresh;
-
-       If bgComNrConta Then
-       Begin
-         If (Strg_SantanderImpExtrato.ColCount<>5) And (Strg_SantanderImpExtrato.ColCount<>7) Then
-         Begin
-           msg('Erro no Leiaute do Arquivo !!'+cr+cr+'Favor Entrar em Contato com o Odir !!','A');
-           LimpaStringGrid(Strg_SantanderImpExtrato);
-           EdtSantanderPastaArquivo.Clear;
-           Lb_Obs.Caption:='Observações...';
-           Exit;
-         End;
-
-         If (sgAgencia='') or (sgContaCorrente='') or (EdtExtNumAgencia.Text<>sgAgencia) Or (EdtExtNumConta.Text<>sgContaCorrente) Then
-         Begin
-           msg('Arquivo NÃO Pertence a esta Conta Bancária !!'+cr+cr+
-               'Pertence a Agência: '+sgAgencia+' C/Corrente:'+sgContaCorrente,'A');
-           LimpaStringGrid(Strg_SantanderImpExtrato);
-           EdtSantanderPastaArquivo.Clear;
-           Lb_Obs.Caption:='Observações...';
-           Exit;
-         End;
-       End; // If bgComNrConta Then
-
-       If Not bgComNrConta Then
-       Begin
-         If (Strg_SantanderImpExtrato.ColCount<>6) Then
-         Begin
-           msg('Erro no Leiaute do Arquivo !!'+cr+cr+'Favor Entrar em Contato com o Odir !!','A');
-           LimpaStringGrid(Strg_SantanderImpExtrato);
-           EdtSantanderPastaArquivo.Clear;
-           Lb_Obs.Caption:='Observações...';
-           Exit;
-         End;
-       End; // If bgComNrConta Then
-
-       // Retira Linhas em Branco
-       bApagaCol:=False;
-       b:=True;
-       While b do
-       Begin
-         bgSiga:=True;
-
-         // Cells[coluna,linha]
-         For i:=1 to Strg_SantanderImpExtrato.RowCount-1 do
-         Begin
-           If Trim(Strg_SantanderImpExtrato.Cells[0,i])='' Then
-           Begin
-             bgSiga:=False;
-             TAuxGrid(Strg_SantanderImpExtrato).DeleteRow(i);
-             Break;
-           End;
-
-           If bgComNrConta Then
-            ii:=7
-           Else
-            ii:=6;
-
-           If Strg_SantanderImpExtrato.ColCount=ii Then
-           Begin
-             bApagaCol:=True;
-             Strg_SantanderImpExtrato.Cells[1,i]:=Trim(Strg_SantanderImpExtrato.Cells[2,i]); // Historico
-             Strg_SantanderImpExtrato.Cells[2,i]:=Trim(Strg_SantanderImpExtrato.Cells[3,i]); // Docto
-             Strg_SantanderImpExtrato.Cells[3,i]:=Trim(Strg_SantanderImpExtrato.Cells[4,i]); // Valor
-             Strg_SantanderImpExtrato.Cells[4,i]:=Trim(Strg_SantanderImpExtrato.Cells[5,i]); // Saldo
-
-             If Trim(Strg_SantanderImpExtrato.Cells[2,i])='' Then
-              Strg_SantanderImpExtrato.Cells[2,i]:='0'; // Docto
-
-             If Trim(Strg_SantanderImpExtrato.Cells[3,i])='' Then
-              Strg_SantanderImpExtrato.Cells[3,i]:='0'; // Valor
-
-             // OdirApagar - 20/07/2017
-//             If Trim(Strg_SantanderImpExtrato.Cells[4,i])='' Then
-//              Strg_SantanderImpExtrato.Cells[4,i]:='0'; // Saldo
-           End;
-         End; // For i:=1 to Strg_SantanderImpExtrato.RowCount-1 do
-
-         If bgSiga Then
-          b:=False;
-       End; // While b do
-
-       If bApagaCol Then
-       Begin
-         If bgComNrConta Then
-          TAuxGrid(Strg_SantanderImpExtrato).DeleteColumn(6);
-         TAuxGrid(Strg_SantanderImpExtrato).DeleteColumn(5);
-       End;
-
-       Bt_SantanderImpExtrato.Enabled:=True;
-     End
-    Else // If Execute then
-     Begin
-       Free;
-       Exit;
-     End; // If Execute then
-
-    Free;
-  End; // With OpenDialog do
-
-}
-
-       i:=10;
-       sgAgencia:=Strg_SantanderImpExtrato.Cells[0,i];
-       sgAgencia:=Strg_SantanderImpExtrato.Cells[1,i];
-       sgAgencia:=Strg_SantanderImpExtrato.Cells[2,i];
-
-       i:=Strg_SantanderImpExtrato.RowCount;
-       b:=True;
-       While b do
-       Begin
-         sgAgencia:=Strg_SantanderImpExtrato.Cells[0,i];
-         sgAgencia:=Strg_SantanderImpExtrato.Cells[1,i];
-         sgAgencia:=Strg_SantanderImpExtrato.Cells[2,i];
-
-         If Trim(sgAgencia)<>'' Then
-          b:=False;
-
-         i:=i-1;
-       End;
-
-        EXIT;
+end.
 

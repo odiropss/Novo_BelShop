@@ -408,7 +408,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Top = 0
     Width = 1047
     Height = 564
-    ActivePage = Ts_ConciliacoesManutDepositos
+    ActivePage = Ts_ConciliacaoManutPagtos
     Align = alClient
     TabOrder = 0
     OnChange = PC_PrincipalChange
@@ -2629,6 +2629,16 @@ object FrmBancoExtratos: TFrmBancoExtratos
               TitleFont.Style = [fsBold]
               OnEnter = Dbg_ConcBancosLojasEnter
               OnExit = Dbg_ConcBancosLojasExit
+            end
+            object Button1: TButton
+              Left = 760
+              Top = 48
+              Width = 75
+              Height = 25
+              Caption = 'Button1'
+              TabOrder = 1
+              Visible = False
+              OnClick = Button1Click
             end
           end
         end
@@ -5261,8 +5271,8 @@ object FrmBancoExtratos: TFrmBancoExtratos
     end
   end
   object OdirPanApres: TPanel
-    Left = 928
-    Top = 68
+    Left = 920
+    Top = 20
     Width = 89
     Height = 33
     BevelInner = bvLowered

@@ -251,12 +251,12 @@ begin
     End;
 
     // Conecta MPMS ============================================================
-    PainelApresLogin.Caption:='AGUARDE !! Conectando Empresa MPMS ...';
+    PainelApresLogin.Caption:='AGUARDE !! Conectando CD - BelShop_CD ...';
     Refresh;
     If Not FrmBelShop.ConectaMPMS Then
     Begin
       If sgCodLojaUnica='' Then
-       msg('Impossível Continuar...'+cr+'Banco de Dados MPMS (Administração)'+cr+cr+'Não CONECTADO !!','A')
+       msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A')
       Else
        msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
       Application.Terminate;
@@ -318,12 +318,12 @@ begin
     End;
 
     // Conecta MPMS ============================================================
-    PainelApresLogin.Caption:='AGUARDE !! Conectando Empresa MPMS ...';
+    PainelApresLogin.Caption:='AGUARDE !! Conectando BelShop CD ...';
     Refresh;
     If Not FrmBelShop.ConectaMPMS Then
     Begin
       If sgCodLojaUnica='' Then
-       msg('Impossível Continuar...'+cr+'Banco de Dados MPMS (Administração)'+cr+cr+'Não CONECTADO !!','A')
+       msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD (Administração)'+cr+cr+'Não CONECTADO !!','A')
       Else
        msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
       Application.Terminate;
@@ -385,12 +385,12 @@ begin
     End;
 
     // Conecta MPMS ============================================================
-    PainelApresLogin.Caption:='AGUARDE !! Conectando Empresa MPMS ...';
+    PainelApresLogin.Caption:='AGUARDE !! Conectando BelShop CD ...';
     Refresh;
     If Not FrmBelShop.ConectaMPMS Then
     Begin
       If sgCodLojaUnica='' Then
-       msg('Impossível Continuar...'+cr+'Banco de Dados MPMS (Administração)'+cr+cr+'Não CONECTADO !!','A')
+       msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A')
       Else
        msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
       Application.Terminate;
@@ -443,7 +443,7 @@ begin
     If Not FrmBelShop.ConectaMatriz Then
     Begin
       If sgCodLojaUnica='' Then
-       msg('Impossível Continuar...'+cr+'Banco de Dados MPMS (Administração)'+cr+cr+'Não CONECTADO !!','A')
+       msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A')
       Else
        msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
       Application.Terminate;
@@ -451,12 +451,12 @@ begin
     End;
 
     // Conecta MPMS ============================================================
-    PainelApresLogin.Caption:='AGUARDE !! Conectando Empresa MPMS ...';
+    PainelApresLogin.Caption:='AGUARDE !! Conectando BelShop CD...';
     Refresh;
     If Not FrmBelShop.ConectaMPMS Then
     Begin
       If sgCodLojaUnica='' Then
-       msg('Impossível Continuar...'+cr+'Banco de Dados MPMS (Administração)'+cr+cr+'Não CONECTADO !!','A')
+       msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A')
       Else
        msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
       Application.Terminate;
@@ -589,7 +589,7 @@ begin
   // Conecta MPMS ============================================================
   // Apresenta o Processamento =================================================
   If sgCodLojaUnica='' Then
-   PainelApresLogin.Caption:='AGUARDE !! Conectando MPMS ...'
+   PainelApresLogin.Caption:='AGUARDE !! Conectando BelShop CD...'
   Else
    PainelApresLogin.Caption:='AGUARDE !! Conectando SIDICOM ...';
 
@@ -597,7 +597,7 @@ begin
   If Not FrmBelShop.ConectaMPMS Then
   Begin
     If sgCodLojaUnica='' Then
-     msg('Impossível Continuar...'+cr+'Banco de Dados MPMS (Adiminitração)'+cr+cr+'Não CONECTADO !!','A')
+     msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A')
     Else
      msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
     Application.Terminate;

@@ -15,6 +15,8 @@ type
 
     // ODIR ====================================================================
 
+    Procedure Linx_Produtos_Lojas;
+
     Procedure Demanda4Meses;
 
     Procedure MontaSqlsSidicomLinx;
@@ -70,6 +72,13 @@ uses DK_Procs1, UDMConexoes, uj_001, uj_002, UDMAtualizaSeteHoras;
 //==============================================================================
 // ODIR - INICIO ===============================================================
 //==============================================================================
+
+
+// Atualiza Produtos Trabalhados Pelas Lojs >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAtualizaSeteHoras.Linx_Produtos_Lojas;
+
+Begin
+End; // Atualiza Produtos Trabalhados Pelas Lojs >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Iguala Todos os Produtos de Todas a Lojas com o CD >>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaSeteHoras.AcertaEstoqueLoja;

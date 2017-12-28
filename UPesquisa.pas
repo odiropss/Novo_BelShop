@@ -246,8 +246,7 @@ begin
   
 end;
 
-procedure TFrmPesquisa.Dbg_PesquisaKeyUp(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFrmPesquisa.Dbg_PesquisaKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   If key=Key_Enter Then
    Bt_PesquisaOKClick(Sender);
@@ -258,8 +257,7 @@ begin
   Bt_PesquisaOKClick(Sender);
 end;
 
-procedure TFrmPesquisa.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFrmPesquisa.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   If Key=VK_Escape Then
   Begin
@@ -323,8 +321,7 @@ begin
 //
 end;
 
-procedure TFrmPesquisa.FormKeyUp(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFrmPesquisa.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Key=44   Then
    Clipboard.AsText:='';
