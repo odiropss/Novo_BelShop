@@ -1379,6 +1379,7 @@ type
     N53: TMenuItem;
     SubMenuFinanConciliaDepositos: TMenuItem;
     N54: TMenuItem;
+    SubMenuComprasNivelAtendimentoLojas: TMenuItem;
 
     // Odir ====================================================================
 
@@ -2347,6 +2348,7 @@ type
     procedure Dbg_GeraOCProdutosKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure SubMenuFinanConciliaDepositosClick(Sender: TObject);
+    procedure SubMenuComprasNivelAtendimentoLojasClick(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -22476,7 +22478,6 @@ Begin
   Refresh;
 
 end; // Abre Determinada TabSheet >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // ODIR FIM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -44755,6 +44756,10 @@ begin
 
   BloqueioBotoes(FrmEstoques, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
+  TabSheetInvisivel(FrmEstoques);
+  FrmEstoques.Ts_Estoques.TabVisible:=True;
+  FrmEstoques.Ts_EstoquesFiltros.TabVisible:=True;
+
   // Posiciona TabSheet ========================================================
   FrmEstoques.Cbx_EstoquesSituacaoProd.ItemIndex:=0;
   FrmEstoques.PC_EstoquesPrincipal.TabIndex:=0;
@@ -46880,6 +46885,31 @@ begin
   FrmBancoExtratos.Caption:='Depósitos Bancários';
   FrmBancoExtratos.Ts_ConciliacoesManutDepositos.TabVisible:=True;
   FrmBancoExtratos.ShowModal;
+
+end;
+
+procedure TFrmBelShop.SubMenuComprasNivelAtendimentoLojasClick(Sender: TObject);
+begin
+  FrmEstoques:=TFrmEstoques.Create(Self);
+  FrmEstoques.CorCaptionForm.FormCaption:=' DEMONSTRATIVO DE LOJAS';
+
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
+  BloqueioBotoes(FrmEstoques, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
+
+  TabSheetInvisivel(FrmEstoques);
+  FrmEstoques.Ts_NivelAtendimento.TabVisible:=True;
+
+  // Posiciona TabSheet ========================================================
+  FrmEstoques.PC_EstoquesPrincipal.TabIndex:=0;
+
+//  // Permissões de Visualização ================================================
+//  PermissaoVisual(FrmSalao.Ts_Profissionais);
+
+  FrmEstoques.ShowModal;
+
+  FreeAndNil(FrmEstoques);
 
 end;
 

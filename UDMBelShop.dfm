@@ -9275,4 +9275,129 @@ object DMBelShop: TDMBelShop
     Left = 1040
     Top = 492
   end
+  object SDS_NivelAtendCurvas: TSQLDataSet
+    CommandText = 
+      'select'#13#10'l.cod_loja_linx,'#13#10'j.nome_emp,'#13#10'l.ind_curva, --------'#13#10'Ca' +
+      'st(('#13#10' -- Perc_Nao_Faltas'#13#10'(100 - ((SUM(case when l.qtd_estoque<' +
+      '1 Then 1 Else 0 End))*(100.000 / count(L.cod_loja_linx)))) *'#13#10'('#13 +
+      #10'(CAST(case'#13#10'  When l.ind_curva='#39'A'#39' Then'#13#10'    (select p.des_aux ' +
+      'from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=1)'#13#10'  When l' +
+      '.ind_curva='#39'B'#39' Then'#13#10'    (select p.des_aux from tab_auxiliar p w' +
+      'here p.tip_aux=2 and p.cod_aux=2)'#13#10'  When l.ind_curva='#39'C'#39' Then'#13#10 +
+      '    (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and ' +
+      'p.cod_aux=3)'#13#10'  When l.ind_curva='#39'D'#39' Then'#13#10'    (select p.des_aux' +
+      ' from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=4)'#13#10'  When ' +
+      'l.ind_curva='#39'E'#39' Then'#13#10'    (select p.des_aux from tab_auxiliar p ' +
+      'where p.tip_aux=2 and p.cod_aux=5)'#13#10'  else'#13#10'    1'#13#10'End AS intege' +
+      'r)) / 100.000'#13#10')'#13#10') as Numeric(12,6)) Nivel_Atendimento --------' +
+      '--'#13#10#13#10'from linx_produtos_lojas l, linxlojas J'#13#10'where L.cod_loja_' +
+      'linx=J.empresa'#13#10'AND   l.dta_processa between '#39'26.12.2017'#39' and '#39'2' +
+      '8.12.2017'#39#13#10'and  l.cod_loja_linx in (1,2,3,4)'#13#10'group by 1,2,3'#13#10#13 +
+      #10'UNION'#13#10#13#10'select 0, '#39'# PERIODO DE 28/12/2017 A 28/12/2017 #'#39', '#39#39 +
+      ', '#39#39#13#10'from RDB$DATABASE'#13#10#13#10'UNION'#13#10#13#10'select 0, '#39'##'#39', '#39#39', '#39#39#13#10'from' +
+      ' RDB$DATABASE'#13#10#13#10'UNION'#13#10'select 0, lo.nome_emp, '#39#39', '#39#39#13#10'from linx' +
+      'lojas lo'#13#10'where lo.empresa in (1,2,3,4)'#13#10#13#10'order by 2,1,3'#13#10
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 937
+    Top = 559
+  end
+  object DS_NivelAtendCurvas: TDataSource
+    DataSet = CDS_NivelAtendCurvas
+    Left = 1064
+    Top = 576
+  end
+  object DSP_NivelAtendCurvas: TDataSetProvider
+    DataSet = SDS_NivelAtendCurvas
+    Options = [poRetainServerOrder]
+    Left = 980
+    Top = 576
+  end
+  object CDS_NivelAtendCurvas: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_NivelAtendCurvas'
+    Left = 1020
+    Top = 564
+    object CDS_NivelAtendCurvasCOD_LOJA_LINX: TIntegerField
+      DisplayLabel = 'C'#243'd'
+      FieldName = 'COD_LOJA_LINX'
+    end
+    object CDS_NivelAtendCurvasNOME_EMP: TStringField
+      DisplayLabel = 'Nome da Loja'
+      FieldName = 'NOME_EMP'
+      Size = 50
+    end
+    object CDS_NivelAtendCurvasIND_CURVA: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'Curva'
+      FieldName = 'IND_CURVA'
+      FixedChar = True
+      Size = 1
+    end
+    object CDS_NivelAtendCurvasNIVEL_ATENDIMENTO: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = '% Atendimento'
+      FieldName = 'NIVEL_ATENDIMENTO'
+      Size = 21
+    end
+  end
+  object SDS_NivelAtendLojas: TSQLDataSet
+    CommandText = 
+      'select total.nome_emp, '#13#10'Cast(sum(Total.Nivel_Atendimento) as Nu' +
+      'meric(12,6)) Nivel_Atendimento'#13#10#13#10'from (select'#13#10'l.cod_loja_linx,' +
+      #13#10'j.nome_emp,'#13#10'l.ind_curva, --------'#13#10'('#13#10' -- Perc_Nao_Faltas'#13#10'(1' +
+      '00 - ((SUM(case when l.qtd_estoque<1 Then 1 Else 0 End))*(100.00' +
+      '0 / count(L.cod_loja_linx)))) *'#13#10'('#13#10'(CAST(case'#13#10'  When l.ind_cur' +
+      'va='#39'A'#39' Then'#13#10'    (select p.des_aux from tab_auxiliar p where p.t' +
+      'ip_aux=2 and p.cod_aux=1)'#13#10'  When l.ind_curva='#39'B'#39' Then'#13#10'    (sel' +
+      'ect p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_au' +
+      'x=2)'#13#10'  When l.ind_curva='#39'C'#39' Then'#13#10'    (select p.des_aux from ta' +
+      'b_auxiliar p where p.tip_aux=2 and p.cod_aux=3)'#13#10'  When l.ind_cu' +
+      'rva='#39'D'#39' Then'#13#10'    (select p.des_aux from tab_auxiliar p where p.' +
+      'tip_aux=2 and p.cod_aux=4)'#13#10'  When l.ind_curva='#39'E'#39' Then'#13#10'    (se' +
+      'lect p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_a' +
+      'ux=5)'#13#10'  else'#13#10'    1'#13#10'End AS integer)) / 100.000'#13#10')'#13#10') Nivel_Ate' +
+      'ndimento ----------'#13#10#13#10'from linx_produtos_lojas l, linxlojas J'#13#10 +
+      'where L.cod_loja_linx=J.empresa'#13#10'AND   l.dta_processa between '#39'2' +
+      '6.12.2017'#39' and '#39'28.12.2017'#39#13#10'and  l.cod_loja_linx in (1,2,3,4)'#13#10 +
+      'group by 1,2,3'#13#10#13#10'order by 2,1,3) Total'#13#10#13#10'group by 1'#13#10#13#10'order b' +
+      'y 2 desc'
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 937
+    Top = 623
+  end
+  object DS_NivelAtendLojas: TDataSource
+    DataSet = CDS_NivelAtendLojas
+    Left = 1064
+    Top = 640
+  end
+  object DSP_NivelAtendLojas: TDataSetProvider
+    DataSet = SDS_NivelAtendLojas
+    Options = [poRetainServerOrder]
+    Left = 980
+    Top = 640
+  end
+  object CDS_NivelAtendLojas: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_NivelAtendLojas'
+    Left = 1020
+    Top = 628
+    object CDS_NivelAtendLojasNOME_EMP: TStringField
+      DisplayLabel = 'Nome da Loja'
+      FieldName = 'NOME_EMP'
+      Size = 50
+    end
+    object CDS_NivelAtendLojasNIVEL_ATENDIMENTO: TFMTBCDField
+      DisplayLabel = '% Atendimento'
+      FieldName = 'NIVEL_ATENDIMENTO'
+      DisplayFormat = '0,.000000'
+      Precision = 15
+      Size = 6
+    end
+  end
 end

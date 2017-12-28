@@ -39,7 +39,7 @@ object DMLinx: TDMLinx
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_OCProdLinx'
-    Left = 124
+    Left = 132
     Top = 108
   end
   object SQLQ_OCProdLinx: TSQLQuery

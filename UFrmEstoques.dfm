@@ -28,11 +28,12 @@ object FrmEstoques: TFrmEstoques
     Top = 0
     Width = 977
     Height = 569
-    ActivePage = Ts_Estoques
+    ActivePage = Ts_NivelAtendimento
     Align = alClient
     TabOrder = 0
     OnChange = PC_EstoquesPrincipalChange
     object Ts_Estoques: TTabSheet
+      Tag = 9999
       Caption = ' Estoques '
       Highlighted = True
       object Dbg_Estoques: TDBGrid
@@ -1373,6 +1374,7 @@ object FrmEstoques: TFrmEstoques
       end
     end
     object Ts_EstoquesFiltros: TTabSheet
+      Tag = 9999
       Caption = ' Filtros '
       Highlighted = True
       ImageIndex = 1
@@ -1391,7 +1393,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 267
+          Left = 266
           Top = 11
           Width = 353
           Height = 13
@@ -1474,6 +1476,319 @@ object FrmEstoques: TFrmEstoques
           Font.Style = [fsBold]
           ParentFont = False
           OnClick = Bt_FiltrosOKClick
+        end
+      end
+    end
+    object Ts_NivelAtendimento: TTabSheet
+      Tag = 9999
+      Caption = ' N'#237'vel de Atendimento de Lojas '
+      Highlighted = True
+      ImageIndex = 2
+      DesignSize = (
+        969
+        541)
+      object Panel2: TPanel
+        Left = 0
+        Top = 506
+        Width = 969
+        Height = 35
+        Align = alBottom
+        BevelInner = bvLowered
+        BorderStyle = bsSingle
+        Ctl3D = False
+        ParentCtl3D = False
+        TabOrder = 0
+        object Bt_NivelAtendFechar: TJvXPButton
+          Left = 864
+          Top = 2
+          Width = 101
+          Height = 29
+          Caption = 'Fechar'
+          TabOrder = 0
+          TabStop = False
+          Glyph.Data = {
+            07544269746D61700E060000424D0E0600000000000036000000280000001600
+            0000160000000100180000000000D8050000C30E0000C30E0000000000000000
+            0000FFFFFFF2F2F2F2F2F2D3D3D3E8E8E8F5F5F5DBDBDBDDDDDDECECECEEEEEE
+            D3D3D3EBEBEBF7F7F723230F4F4F00B2B2A8E9E9E9D6D6D6EBEBEBFAFAFAFFFF
+            FFFFFFFF0000FFFFFFF0F0F0D8D8D8EDEDEDEAEAEADFDFDFDCDCDCF4F4F4E6E6
+            E6D7D7D7F2F2F2E7E7E7DDDDDD4C4C0CFFFF006868119B9B9BF4F4F4E7E7E7DB
+            DBDBE6E6E6FFFFFF0000D3D3D3E4E4E4EFEFEFE4E4E4D8D8D8EDEDEDF3F3F3D3
+            D3D3E7E7E7F1F1F1DFDFDFDBDBDBECECEC4D4D0DFFFF008D8D00515105878781
+            DFDFDFEDEDEDECECECD3D3D30000E6E6E6EDEDEDE1E1E1DBDBDBF5F5F5E3E3E3
+            DCDCDCEAEAEAEAEAEAE0E0E0DBDBDBF6F6F6E3E3E34D4D0DFFFF008F8F007F7F
+            0056560DA1A1A1E2E2E2DBDBDBF3F3F300004B4B4B5050504E4E4E4848484F4F
+            4F5050504A4A4A4C4C4C444444F0F0F0F3F3F3D3D3D3E7E7E74E4E0EFFFF008F
+            8F007F7F007D7D004C4C0D3232324848484E4E4E0000BFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBF4A4A4ADFDFDFDFDFDFE9E9E9EBEBEB4D4D0D
+            FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000BFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFB0B0B0BFBFBF4040403F3F3F3737373737373F3F
+            3F434303FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000BFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF3D3D3D8F8F8F3E3E3E7F7F7F7F7F7F7F
+            7F7F7F7F7F474707FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF
+            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF3C3C304D4D141515137F7F7F
+            7F7F7F7F7F7F7F7F7F474707FFFF008D8D007777007D7D00474700636363BFBF
+            BFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF4646309A9A004545
+            046161617F7F7F7F7F7F7F7F7F474707FFFF005F5F0817171767670047470063
+            6363BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF474727ED
+            ED0092920045450E6363637F7F7F7F7F7F474707FFFF004747276B6B6B676700
+            474700636363BFBFBFBFBFBF0000AEAEAE57574531310A272700272700272700
+            424200FFFF00F9F9009898004242006363637F7F7F474707FFFF007E7E002727
+            006E6E00474700636363BFBFBFBFBFBF00008989898C8C13CFCF01CFCF00CFCF
+            00CFCF00D5D500FFFF00FFFF00EDED0098980045450E616161474707FFFF008F
+            8F007F7F007F7F00474700636363BFBFBFBFBFBF0000898989A1A113FEFE2CFF
+            FFAFFFFFAFFFFFAFFFFFAFFFFFAFFFFFDBFFFF6DE3E3004B4B095B5B5B474707
+            FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000A7A7A76F6F48
+            79790C7A7A0A7A7A0A7A7A0A8A8A09FFFF3EFFFF70E4E4005F5F005858587F7F
+            7F474707FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF0000BFBF
+            BFB1B1B1A9A9A9A9A9A9A9A9A9A9A9A94C4C2CFFFF0DE6E6075959085858537F
+            7F7F7F7F7F474707FFFF008F8F007F7F007F7F00474700636363BFBFBFBFBFBF
+            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF505030E3E3005F5F03575757
+            7F7F7F7F7F7F7F7F7F474707FFFF008F8F007F7F007F7F00474700636363BFBF
+            BFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF4242356E6E252121
+            1B7F7F7F7F7F7F7F7F7F7F7F7F5E5E52999906D5D5008787007F7F0047470063
+            6363BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF70707088
+            88884444447F7F7F7F7F7F7F7F7F7F7F7F7F7F7F565656999906DBDB00898900
+            474700636363BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBF4444447F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F5E5E529B9B
+            03D7D7004C4C00767676BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBF41414156565656565656565656565656565656565656
+            56562E2E2E88880765650C888888BFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBF969696898989898989898989898989898989
+            898989898989898989898989898989B1B1B1BFBFBFBFBFBF0000}
+          ShowFocusRect = True
+          Align = alRight
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_EstoquesFecharClick
+        end
+        object Bt_NivelAtendBusca: TJvXPButton
+          Tag = 4
+          Left = 2
+          Top = 2
+          Width = 145
+          Height = 29
+          Caption = 'Calcula N'#237'veis'
+          TabOrder = 1
+          Glyph.Data = {
+            07544269746D617066010000424D660100000000000076000000280000001400
+            0000140000000100040000000000F00000000000000000000000100000001000
+            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00333333333333333333330000300000000000003333330000307888888888
+            80333333000030F77777777780333333000030F99777777780333333000030FF
+            FFFFFFFF70333333000030000000000000333333000033333333333333333333
+            0000333003333333333333330000333003333333333333330000333003333330
+            000000030000333003303330FFFFFF030000333008300330F4444F0300003338
+            00000030FFFFFF030000333380000030F4444F030000333333300330FFFFFF03
+            0000333333303330F44F00030000333333333330FFFF00330000333333333330
+            000003330000333333333333333333330000}
+          ShowFocusRect = True
+          Spacing = 10
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_NivelAtendBuscaClick
+        end
+      end
+      object Gb_NivelAtendCurva: TGroupBox
+        Left = 0
+        Top = 0
+        Width = 473
+        Height = 506
+        Anchors = [akTop, akBottom]
+        Caption = ' Nivel de Atendimento Por Curvas '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 1
+        object Panel3: TPanel
+          Left = 1
+          Top = 464
+          Width = 471
+          Height = 41
+          Align = alBottom
+          BevelInner = bvLowered
+          TabOrder = 0
+          object Bt_NivelAtendSalvaClipboardCurvas: TJvXPButton
+            Tag = 4
+            Left = 293
+            Top = 2
+            Width = 176
+            Height = 37
+            Caption = 'Salvar em Mem'#243'ria'
+            TabOrder = 0
+            Glyph.Data = {
+              07544269746D617066010000424D660100000000000076000000280000001400
+              0000140000000100040000000000F00000000000000000000000100000001000
+              0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+              C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF00333333333333333333330000333333000000000000030000333333078888
+              8888880300003333330F77777777780300003333330F99777777780300003333
+              330FFFFFFFFFF703000033333300000000000003000033333333333333333333
+              0000333333333333330033330000333333333333300003330000300000000333
+              00000033000030FFFFFF033333003333000030F4444F033333003333000030FF
+              FFFF033338003333000030F4444F030000083333000030FFFFFF030000833333
+              000030F44F00033333333333000030FFFF003333333333330000300000033333
+              333333330000333333333333333333330000}
+            ShowFocusRect = True
+            Align = alRight
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_NivelAtendSalvaClipboardCurvasClick
+          end
+        end
+        object Dbg_NivelAtendCurva: TDBGrid
+          Left = 1
+          Top = 14
+          Width = 471
+          Height = 450
+          Align = alClient
+          DataSource = DMBelShop.DS_NivelAtendCurvas
+          FixedColor = clSilver
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
+          ParentFont = False
+          TabOrder = 1
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clBlack
+          TitleFont.Height = -11
+          TitleFont.Name = 'MS Sans Serif'
+          TitleFont.Style = [fsBold]
+          OnDrawColumnCell = Dbg_NivelAtendCurvaDrawColumnCell
+          OnKeyDown = Dbg_NivelAtendCurvaKeyDown
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'NOME_EMP'
+              Width = 270
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'IND_CURVA'
+              Title.Alignment = taCenter
+              Width = 50
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'NIVEL_ATENDIMENTO'
+              Title.Alignment = taRightJustify
+              Width = 96
+              Visible = True
+            end>
+        end
+      end
+      object Gb_NivelAtendLojas: TGroupBox
+        Left = 476
+        Top = 0
+        Width = 473
+        Height = 506
+        Anchors = [akTop, akBottom]
+        Caption = ' Nivel de Atendimento das Lojas '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 2
+        object Panel4: TPanel
+          Left = 1
+          Top = 464
+          Width = 471
+          Height = 41
+          Align = alBottom
+          BevelInner = bvLowered
+          TabOrder = 0
+          object Bt_NivelAtendSalvaClipboardLojas: TJvXPButton
+            Tag = 4
+            Left = 293
+            Top = 2
+            Width = 176
+            Height = 37
+            Caption = 'Salvar em Mem'#243'ria'
+            TabOrder = 0
+            Glyph.Data = {
+              07544269746D617066010000424D660100000000000076000000280000001400
+              0000140000000100040000000000F00000000000000000000000100000001000
+              0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+              C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF00333333333333333333330000333333000000000000030000333333078888
+              8888880300003333330F77777777780300003333330F99777777780300003333
+              330FFFFFFFFFF703000033333300000000000003000033333333333333333333
+              0000333333333333330033330000333333333333300003330000300000000333
+              00000033000030FFFFFF033333003333000030F4444F033333003333000030FF
+              FFFF033338003333000030F4444F030000083333000030FFFFFF030000833333
+              000030F44F00033333333333000030FFFF003333333333330000300000033333
+              333333330000333333333333333333330000}
+            ShowFocusRect = True
+            Align = alRight
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_NivelAtendSalvaClipboardCurvasClick
+          end
+        end
+        object Dbg_NivelAtendLojas: TDBGrid
+          Left = 1
+          Top = 14
+          Width = 471
+          Height = 450
+          Align = alClient
+          DataSource = DMBelShop.DS_NivelAtendLojas
+          FixedColor = clSilver
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
+          ParentFont = False
+          TabOrder = 1
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clBlack
+          TitleFont.Height = -11
+          TitleFont.Name = 'MS Sans Serif'
+          TitleFont.Style = [fsBold]
+          OnKeyDown = Dbg_NivelAtendCurvaKeyDown
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'NOME_EMP'
+              Width = 300
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'NIVEL_ATENDIMENTO'
+              Title.Alignment = taRightJustify
+              Width = 120
+              Visible = True
+            end>
         end
       end
     end

@@ -1190,6 +1190,20 @@ type
     CDS_PrioridadeProdCOD_FORNECEDOR: TIntegerField;
     CDS_PrioridadeProdRAZAO_CLIENTE: TStringField;
     CDS_PrioridadeProdCODPRODUTO: TStringField;
+    SDS_NivelAtendCurvas: TSQLDataSet;
+    DS_NivelAtendCurvas: TDataSource;
+    DSP_NivelAtendCurvas: TDataSetProvider;
+    CDS_NivelAtendCurvas: TClientDataSet;
+    CDS_NivelAtendCurvasCOD_LOJA_LINX: TIntegerField;
+    CDS_NivelAtendCurvasNOME_EMP: TStringField;
+    CDS_NivelAtendCurvasIND_CURVA: TStringField;
+    CDS_NivelAtendCurvasNIVEL_ATENDIMENTO: TStringField;
+    SDS_NivelAtendLojas: TSQLDataSet;
+    DS_NivelAtendLojas: TDataSource;
+    DSP_NivelAtendLojas: TDataSetProvider;
+    CDS_NivelAtendLojas: TClientDataSet;
+    CDS_NivelAtendLojasNOME_EMP: TStringField;
+    CDS_NivelAtendLojasNIVEL_ATENDIMENTO: TFMTBCDField;
 
     //==========================================================================
     // Odir ====================================================================

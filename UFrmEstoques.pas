@@ -81,6 +81,18 @@ type
     Bt_EstoquesDemonstrativo: TJvXPButton;
     Bt_EstoquesFiltroComprador: TJvXPButton;
     Panel1: TPanel;
+    Ts_NivelAtendimento: TTabSheet;
+    Panel2: TPanel;
+    Bt_NivelAtendFechar: TJvXPButton;
+    Gb_NivelAtendCurva: TGroupBox;
+    Gb_NivelAtendLojas: TGroupBox;
+    Panel3: TPanel;
+    Bt_NivelAtendSalvaClipboardCurvas: TJvXPButton;
+    Panel4: TPanel;
+    Bt_NivelAtendSalvaClipboardLojas: TJvXPButton;
+    Dbg_NivelAtendCurva: TDBGrid;
+    Dbg_NivelAtendLojas: TDBGrid;
+    Bt_NivelAtendBusca: TJvXPButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -102,6 +114,8 @@ type
 
     Procedure AtualizaEstoques;
     Procedure SetaCurvas;
+
+    Procedure NivelAtendimentoCalcula;
 
     // Odir ====================================================================
 
@@ -136,6 +150,13 @@ type
     procedure Bt_EstoquesFiltroCompradorClick(Sender: TObject);
     procedure Bt_EstoquesSaldosClick(Sender: TObject);
     procedure CkB_EstoquesCurvaAClick(Sender: TObject);
+    procedure Bt_NivelAtendSalvaClipboardCurvasClick(Sender: TObject);
+    procedure Bt_NivelAtendBuscaClick(Sender: TObject);
+    procedure Dbg_NivelAtendCurvaDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure Dbg_NivelAtendCurvaKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
 
   private
     { Private declarations }
@@ -174,13 +195,128 @@ implementation
 
 uses DK_Procs1, UDMVirtual, UFrmBelShop, UFrmSelectEmpProcessamento,
      UFrmSolicitacoes, SysConst, UDMBelShop,
-  VarUtils;
+  VarUtils,
+  UFrmPeriodoApropriacao;
 
 {$R *.dfm}
 
 //==============================================================================
 // Odir - INICIO ===============================================================
 //==============================================================================
+
+// Calcula Nivel de Atendimento da Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmEstoques.NivelAtendimentoCalcula;
+Var
+  MySql: String;
+Begin
+  OdirPanApres.Caption:='AGUARDE !! Calculando Níveis de Atendimentos...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmEstoques.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmEstoques.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmEstoques;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  Screen.Cursor:=crAppStart;
+
+  // Nivel de Atendimento por Lojas ============================================
+  MySql:=' select total.nome_emp, Cast(sum(Total.Nivel_Atendimento) as Numeric(12,6)) Nivel_Atendimento'+
+
+         ' from (select l.cod_loja_linx, j.nome_emp, l.ind_curva,'+
+         '       CAST(((100 - ((SUM(case when l.qtd_estoque<1 Then 1 Else 0 End))*(100.000 / count(L.cod_loja_linx)))) *'+
+         '       ((CAST(Case'+
+         '                When l.ind_curva=''A'' Then'+
+         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=1)'+
+         '                When l.ind_curva=''B'' Then'+
+         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=2)'+
+         '                When l.ind_curva=''C'' Then'+
+         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=3)'+
+         '                When l.ind_curva=''D'' Then'+
+         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=4)'+
+         '                When l.ind_curva=''E'' Then'+
+         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=5)'+
+         '                Else'+
+         '                   1'+
+         '             End AS integer)) / 100.000)'+
+         '       ) as Numeric(12,6)) Nivel_Atendimento'+
+
+         '       From LINX_PRODUTOS_LOJAS l, LINXLOJAS j'+
+         '       Where l.cod_loja_linx=j.empresa'+
+         '       And   l.dta_processa between '+QuotedStr(sgDtaI)+' and '+QuotedStr(sgDtaF)+
+         '       And   l.cod_loja_linx in '+sgCodLojas+
+
+         '       Group By 1,2,3'+
+         '       Order By 2,1,3) Total'+
+
+         ' Group By 1'+
+         ' Order By 2 desc';
+  DMBelShop.CDS_NivelAtendLojas.Close;
+  DMBelShop.SDS_NivelAtendLojas.CommandText:=MySql;
+  DMBelShop.CDS_NivelAtendLojas.Open;
+
+  If Trim(DMBelShop.CDS_NivelAtendLojasNOME_EMP.AsString)='' Then
+  Begin
+    msg('Sem Loja a Listar no Período'+cr+cr+'de '+sgDtaI+' a '+sgDtaF+' !!','A');
+    DMBelShop.CDS_NivelAtendLojas.Close;
+    OdirPanApres.Visible:=False;
+    Screen.Cursor:=crDefault;
+    Exit;
+  End;
+
+  // Nivel de Atendimento por Curva nas Lojas ==================================
+  MySql:=' select l.cod_loja_linx, j.nome_emp, l.ind_curva,'+
+         ' Cast(('+
+         ' (100 - ((SUM(case when l.qtd_estoque<1 Then 1 Else 0 End))*(100.000 / count(L.cod_loja_linx)))) *'+
+         ' ((CAST(Case'+
+         '          When l.ind_curva=''A'' Then'+
+         '             (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=1)'+
+         '          When l.ind_curva=''B'' Then'+
+         '             (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=2)'+
+         '          When l.ind_curva=''C'' Then'+
+         '             (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=3)'+
+         '          When l.ind_curva=''D'' Then'+
+         '             (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=4)'+
+         '          When l.ind_curva=''E'' Then'+
+         '             (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=5)'+
+         '          Else'+
+         '             1'+
+         '       End AS integer)) / 100.000)'+
+         ' ) as Numeric(12,6)) Nivel_Atendimento'+
+
+         ' From LINX_PRODUTOS_LOJAS l, LINXLOJAS j'+
+         ' Where l.cod_loja_linx=j.empresa'+
+         ' And   l.dta_processa between '+QuotedStr(sgDtaI)+' and '+QuotedStr(sgDtaF)+
+         ' And   l.cod_loja_linx in '+sgCodLojas+
+
+         ' Group By 1,2,3'+
+
+         ' UNION'+
+
+         ' Select 0, ''# PERIODO DE 28/12/2017 A 28/12/2017 #'', '''', '''''+
+         ' From RDB$DATABASE'+
+
+         ' UNION'+
+
+         ' Select 0, ''##'', '''', '''''+
+         ' From RDB$DATABASE'+
+
+         ' UNION'+
+
+         ' Select 0, lo.nome_emp, ''Curva'', ''% Atendimento'''+
+         ' From LINXLOJAS lo'+
+         ' Where lo.empresa in '+sgCodLojas+
+
+         ' Order By 2,1,3';
+  DMBelShop.CDS_NivelAtendCurvas.Close;
+  DMBelShop.SDS_NivelAtendCurvas.CommandText:=MySql;
+  DMBelShop.CDS_NivelAtendCurvas.Open;
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+
+end; // Calcula Nivel de Atendimento da Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Acerta Seleção das Curvas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmEstoques.SetaCurvas;
@@ -698,17 +834,27 @@ end;
 
 procedure TFrmEstoques.Bt_EstoquesFecharClick(Sender: TObject);
 begin
+  If (Sender is TJvXPButton) Then
+  Begin
+    If Trim((Sender as TJvXPButton).Name)='Bt_EstoquesFechar' Then
+    Begin
+      If Bt_EstoquesDemonstrativo.Caption='Fechar Demonstrativo' Then
+       Bt_EstoquesDemonstrativoClick(Self);
 
-  // Fecha Demonstrativo =======================================================
-  If Bt_EstoquesDemonstrativo.Caption='Fechar Demonstrativo' Then
-   Bt_EstoquesDemonstrativoClick(Self);
+      FrmBelShop.PC_Filtros.Parent:=FrmBelShop.Ts_Filtros;
+      DMVirtual.CDS_V_Estoques.Close;
+    End; // If Trim((Sender as TJvXPButton).Name)='Bt_EstoquesFechar' Then
+
+    If Trim((Sender as TJvXPButton).Name)='Bt_NivelAtendFechar' Then
+    Begin
+      DMBelShop.CDS_NivelAtendCurvas.Close;
+      DMBelShop.CDS_NivelAtendLojas.Close;
+    End; // If Trim((Sender as TJvXPButton).Name)='Bt_EstoquesFechar' Then
+  End; // If (Sender is TJvXPButton) Then
 
   bgSairEstoques:=True;
 
-  FrmBelShop.PC_Filtros.Parent:=FrmBelShop.Ts_Filtros;
-
   Close;
-
 end;
 
 procedure TFrmEstoques.PC_EstoquesPrincipalChange(Sender: TObject);
@@ -1054,8 +1200,7 @@ begin
 //  Screen.Cursor:=crDefault;
 end;
 
-procedure TFrmEstoques.Dbg_EstoquesKeyPress(Sender: TObject;
-  var Key: Char);
+procedure TFrmEstoques.Dbg_EstoquesKeyPress(Sender: TObject;var Key: Char);
 begin
   If Key=#13 Then
   Begin
@@ -1352,6 +1497,9 @@ Var
   b: Boolean;
   iIndex: Integer;
 begin
+  // BLOQUEAR TECLA Ctrl+Del ===================================================
+  if ((Shift=[ssCtrl]) and (key=vk_delete)) THEN
+   Abort;
 
   // Localizar Produto Código SIDICOM ==========================================
   If Key=Vk_F4 Then
@@ -1593,12 +1741,18 @@ Begin
     DMVirtual.CDS_V_Estoques.Close;
     DMBelShop.CDS_EstoquePrevisao.Close;
   End;
+  Stb_Estoques.Panels[0].Text:='LOJA:';
 
-  DMVirtual.CDS_V_Estoques.CreateDataSet;
+// OdirApagar - 28/12/2017
+//  DMVirtual.CDS_V_Estoques.CreateDataSet;
+//  DMVirtual.CDS_V_Estoques.IndexName:='';
+//  DMVirtual.CDS_V_Estoques.Filtered:=False;
+//  DMVirtual.CDS_V_Estoques.Filter:='';
+//  DMVirtual.CDS_V_Estoques.EmptyDataSet;
+
   DMVirtual.CDS_V_Estoques.IndexName:='';
   DMVirtual.CDS_V_Estoques.Filtered:=False;
   DMVirtual.CDS_V_Estoques.Filter:='';
-  DMVirtual.CDS_V_Estoques.EmptyDataSet;
 
   Dbg_Estoques.Columns[9].ReadOnly:=True;
   Dbg_Estoques.Columns[10].ReadOnly:=True;
@@ -2687,14 +2841,14 @@ begin
      Exit;
   End;
 
-  If Application.MessageBox('Deseja REALMENTE Replicar'+cr+cr+'TODOS OS ESTOQUE MínimoS'+cr+cr+'do FILTRO Selecionado para'+cr+cr+'Outra(s) Loja(s) ??', 'ATENÇÃO !!', 292) = Idno Then
+  If Application.MessageBox('Deseja REALMENTE Replicar'+cr+cr+'TODOS OS ESTOQUE Mínimos'+cr+cr+'do FILTRO Selecionado para'+cr+cr+'Outra(s) Loja(s) ??', 'ATENÇÃO !!', 292) = Idno Then
    Exit;
 
-  sgOutrasEmpresa:='(99)';
+  sgOutrasEmpresa:='(''99'')';
   sgEmpresaNao:='('+sgCodEmp+')';
   FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
   FrmSelectEmpProcessamento.bUsarMatriz:=False;
-  FrmSelectEmpProcessamento.Gb_SelectEmpProc.Caption:='SELECIONE AS LOJAS A REPLICAR OS ESTOQUES MínimoS';
+  FrmSelectEmpProcessamento.Gb_SelectEmpProc.Caption:='SELECIONE AS LOJAS A REPLICAR OS ESTOQUES Mínimos';
 
   FrmSelectEmpProcessamento.ShowModal;
 
@@ -2725,7 +2879,7 @@ begin
     DMBelShop.CDS_EmpProcessa.Next;
   End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
 
-  If Application.MessageBox(pChar('Deseja REALMENTE Replicar'+cr+cr+'TODOS OS ESTOQUE MínimoS'+cr+cr+'do FILTRO Selecionado para'+cr+cr+'a(s) Loja(s):'+cr+cr+sgCodLojas+cr+cr+' ?????????'), 'ATENÇÃO !!', 292) = Idno Then
+  If Application.MessageBox(pChar('Deseja REALMENTE Replicar'+cr+cr+'TODOS OS ESTOQUE Mínimos'+cr+cr+'do FILTRO Selecionado para'+cr+cr+'a(s) Loja(s):'+cr+cr+sgCodLojas+cr+cr+' ?????????'), 'ATENÇÃO !!', 292) = Idno Then
    Exit;
 
   OdirPanApres.Caption:='AGUARDE !! Replicando Estoques Mínimo...';
@@ -3193,6 +3347,130 @@ begin
     Dbg_Estoques.SetFocus;
     Screen.Cursor:=crDefault;
   End; // If (Sender is TJvXPCheckbox) Then
+end;
+
+procedure TFrmEstoques.Bt_NivelAtendSalvaClipboardCurvasClick(Sender: TObject);
+begin
+  If (Sender is TJvXPButton) Then
+  Begin
+    If Trim((Sender as TJvXPButton).Name)='Bt_NivelAtendSalvaClipboardCurvas' Then
+    Begin
+      If DMBelShop.CDS_NivelAtendCurvas.IsEmpty Then
+       Exit;
+
+      DBGridClipboard(Dbg_NivelAtendCurva);
+    End; // If Trim((Sender as TJvXPButton).Name)='Bt_NivelAtendSalvaClipboardCurvas' Then
+
+    If Trim((Sender as TJvXPButton).Name)='Bt_NivelAtendSalvaClipboardLojas' Then
+    Begin
+      If DMBelShop.CDS_NivelAtendLojas.IsEmpty Then
+       Exit;
+
+      DBGridClipboard(Dbg_NivelAtendLojas);
+    End; // If Trim((Sender as TJvXPButton).Name)='Bt_NivelAtendSalvaClipboardCurvas' Then
+  End; // If (Sender is TJvXPButton) Then
+end;
+
+procedure TFrmEstoques.Bt_NivelAtendBuscaClick(Sender: TObject);
+begin
+  Dbg_NivelAtendCurva.SetFocus;
+
+  bgSiga:=False;
+  FrmPeriodoApropriacao:=TFrmPeriodoApropriacao.Create(Self);
+  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Text:=
+                      DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Text   :=
+                      DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+  FrmPeriodoApropriacao.ShowModal;
+
+  sgDtaI:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date);
+  sgDtaF:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date);
+  FreeAndNil(FrmPeriodoApropriacao);
+
+  // Verifica se Prossegue Processamento =======================================
+  If Not bgSiga Then
+   Exit;
+
+  sgDtaI:=f_Troca('/','.',f_Troca('-','.',sgDtaI));
+  sgDtaF:=f_Troca('/','.',f_Troca('-','.',sgDtaF));
+
+  // Apresentas Loja Para Seleção ==============================================
+  sgEmpresaNao:='(''89'',''96'',''97'',''98'', ''99'')';
+  FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
+  FrmSelectEmpProcessamento.bUsarMatriz:=False;
+  FrmSelectEmpProcessamento.Gb_SelectEmpProc.Caption:='SELECIONE AS LOJAS A PROCESSAR';
+
+  FrmSelectEmpProcessamento.ShowModal;
+
+  igNrEmpProc:=FrmSelectEmpProcessamento.iNrEmpProc;
+
+  FreeAndNil(FrmSelectEmpProcessamento);
+
+  If igNrEmpProc<1 Then
+  Begin
+    msg('Sem Loja Selecionada !!','A');
+    Dbg_NivelAtendCurva.SetFocus;
+    Exit;
+  End; // If igNrEmpProc<1 Then
+
+  DMBelShop.CDS_NivelAtendCurvas.Close;
+  DMBelShop.CDS_NivelAtendLojas.Close;
+
+  // Verifica se Existe Empresa a Processar ====================================
+  sgCodLojas:='';
+  DMBelShop.CDS_EmpProcessa.First;
+  While Not DMBelShop.CDS_EmpProcessa.Eof do
+  Begin
+    If DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
+    Begin
+      If sgCodLojas='' Then
+       sgCodLojas:=QuotedStr(DMBelShop.CDS_EmpProcessaCOD_LINX.AsString)
+      Else
+       sgCodLojas:=sgCodLojas+', '+QuotedStr(DMBelShop.CDS_EmpProcessaCOD_LINX.AsString);
+    End; // If DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
+
+    DMBelShop.CDS_EmpProcessa.Next;
+  End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
+
+  sgCodLojas:='('+sgCodLojas+')';
+
+  // Calcula Nivel de Atendimentodas Lojas Selecionadas ========================
+  NivelAtendimentoCalcula;
+
+end;
+
+procedure TFrmEstoques.Dbg_NivelAtendCurvaDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if not (gdSelected in State) Then // Este comando altera cor da Linha
+  Begin
+    If (DMBelShop.CDS_NivelAtendCurvasCOD_LOJA_LINX.AsString='0') And
+       (DMBelShop.CDS_NivelAtendCurvasIND_CURVA.AsString='Curva') Then
+    Begin
+      Dbg_NivelAtendCurva.Canvas.Brush.Color:=clSkyBlue;
+      Dbg_NivelAtendCurva.Canvas.Font.Style:=[fsBold];
+    End;
+  End; // if not (gdSelected in State) Then
+
+  Dbg_NivelAtendCurva.Canvas.FillRect(Rect);
+  Dbg_NivelAtendCurva.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  // Alinhamento
+  DMBelShop.CDS_NivelAtendCurvasCOD_LOJA_LINX.Alignment:=taRightJustify;
+  DMBelShop.CDS_NivelAtendCurvasIND_CURVA.Alignment:=taCenter;
+  DMBelShop.CDS_NivelAtendCurvasNIVEL_ATENDIMENTO.Alignment:=taRightJustify;
+
+end;
+
+procedure TFrmEstoques.Dbg_NivelAtendCurvaKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  // BLOQUEAR TECLA Ctrl+Del ===================================================
+  // Usado em:
+  // Dbg_NivelAtendLojasKeyDown
+  if ((Shift=[ssCtrl]) and (key=vk_delete)) THEN
+   Abort;
+
 end;
 
 end.
