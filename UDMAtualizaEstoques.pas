@@ -55,17 +55,15 @@ type
     CDS_BuscaRapida: TClientDataSet;
     DSP_BuscaRapida: TDataSetProvider;
     SQLQ_BuscaRapida: TSQLQuery;
+    procedure DataModuleCreate(Sender: TObject);
 
-    // Odir
+    // Odir ====================================================================
     Procedure ConectaBanco;
     Procedure MontaConexaoEmpresas;
 
     // Tipo de Conexão
     Procedure BuscaTipoConexao;
-    procedure DataModuleCreate(Sender: TObject);
-
-    // Odir
-
+    // Odir ====================================================================
 
   private
     { Private declarations }
@@ -91,6 +89,7 @@ implementation
 uses UDMConexoes, UAtualizaEstoques, DK_Procs1, uj_002, uj_001;
 
 {$R *.dfm}
+// Odir ========================================================================
 
 // Tipo de Conexão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TDMAtualizaEstoques.BuscaTipoConexao;
@@ -121,7 +120,7 @@ Begin
     FreeAndNil(tsArquivo);
   End; // Try
   tsArquivo.Free;
-End;
+End; // Tipo de Conexão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Monta Empresas a Conectar >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TDMAtualizaEstoques.MontaConexaoEmpresas;
@@ -235,28 +234,26 @@ begin
   Reset(Arq);
   While not Eof(Arq) do
   Begin
-   Readln(Arq,s);
+    Readln(Arq,s);
 
-   sBancoIB:='';
-   i:=pos('Database=localhost/3050:', Trim(s));
-   If i<>0 Then
-    sBancoIB:=copy(Trim(s),i+24,length(Trim(s)));
+    sBancoIB:='';
+    i:=pos('Database=localhost/3050:', Trim(s));
+    If i<>0 Then
+     sBancoIB:=copy(Trim(s),i+24,length(Trim(s)));
 
-   If (i=0) and (sBancoIB='') Then
-   Begin
-     i:=pos('Database=', Trim(s));
-     If i<>0 Then
-      sBancoIB:=copy(Trim(s),i+9,length(Trim(s)));
-   End;
+    If (i=0) and (sBancoIB='') Then
+    Begin
+      i:=pos('Database=', Trim(s));
+      If i<>0 Then
+       sBancoIB:=copy(Trim(s),i+9,length(Trim(s)));
+    End;
 
-   If sBancoIB<>'' Then
-    Break;
-
-  End;
+    If sBancoIB<>'' Then
+     Break;
+  End; // While not Eof(Arq) do
   CloseFile(Arq);
 
 End; // Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
 
 procedure TDMAtualizaEstoques.DataModuleCreate(Sender: TObject);
 Var

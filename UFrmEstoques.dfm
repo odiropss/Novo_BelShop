@@ -1393,7 +1393,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 266
+          Left = 264
           Top = 11
           Width = 353
           Height = 13
@@ -1666,7 +1666,7 @@ object FrmEstoques: TFrmEstoques
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
+          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
           ParentFont = False
           TabOrder = 1
           TitleFont.Charset = DEFAULT_CHARSET
@@ -1674,6 +1674,7 @@ object FrmEstoques: TFrmEstoques
           TitleFont.Height = -11
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = [fsBold]
+          OnCellClick = Dbg_NivelAtendCurvaCellClick
           OnDrawColumnCell = Dbg_NivelAtendCurvaDrawColumnCell
           OnKeyDown = Dbg_NivelAtendCurvaKeyDown
           Columns = <
@@ -1766,7 +1767,7 @@ object FrmEstoques: TFrmEstoques
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
+          Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
           ParentFont = False
           TabOrder = 1
           TitleFont.Charset = DEFAULT_CHARSET
@@ -1774,6 +1775,7 @@ object FrmEstoques: TFrmEstoques
           TitleFont.Height = -11
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = [fsBold]
+          OnCellClick = Dbg_NivelAtendLojasCellClick
           OnKeyDown = Dbg_NivelAtendCurvaKeyDown
           Columns = <
             item

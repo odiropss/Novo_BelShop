@@ -157,6 +157,8 @@ type
       State: TGridDrawState);
     procedure Dbg_NivelAtendCurvaKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure Dbg_NivelAtendCurvaCellClick(Column: TColumn);
+    procedure Dbg_NivelAtendLojasCellClick(Column: TColumn);
 
   private
     { Private declarations }
@@ -3395,7 +3397,8 @@ begin
   sgDtaF:=f_Troca('/','.',f_Troca('-','.',sgDtaF));
 
   // Apresentas Loja Para Seleção ==============================================
-  sgEmpresaNao:='(''89'',''96'',''97'',''98'', ''99'')';
+  sgEmpresaNao:='(''89'',''96'',''97'',''98'')';
+  sgOutrasEmpresa:='(''99'')';
   FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
   FrmSelectEmpProcessamento.bUsarMatriz:=False;
   FrmSelectEmpProcessamento.Gb_SelectEmpProc.Caption:='SELECIONE AS LOJAS A PROCESSAR';
@@ -3447,7 +3450,7 @@ begin
     If (DMBelShop.CDS_NivelAtendCurvasCOD_LOJA_LINX.AsString='0') And
        (DMBelShop.CDS_NivelAtendCurvasIND_CURVA.AsString='Curva') Then
     Begin
-      Dbg_NivelAtendCurva.Canvas.Brush.Color:=clSkyBlue;
+      Dbg_NivelAtendCurva.Canvas.Brush.Color:=clYellow;
       Dbg_NivelAtendCurva.Canvas.Font.Style:=[fsBold];
     End;
   End; // if not (gdSelected in State) Then
@@ -3470,6 +3473,26 @@ begin
   // Dbg_NivelAtendLojasKeyDown
   if ((Shift=[ssCtrl]) and (key=vk_delete)) THEN
    Abort;
+
+end;
+
+procedure TFrmEstoques.Dbg_NivelAtendCurvaCellClick(Column: TColumn);
+begin
+  If (DMBelShop.CDS_NivelAtendCurvas.Active) And (Not DMBelShop.CDS_NivelAtendCurvas.IsEmpty) And
+     (DMBelShop.CDS_NivelAtendLojas.Active)  And (Not DMBelShop.CDS_NivelAtendLojas.IsEmpty)  Then
+  Begin
+    DMBelShop.CDS_NivelAtendLojas.Locate('NOME_EMP', DMBelShop.CDS_NivelAtendCurvasNOME_EMP.AsString,[]);
+  End; //   If (CDS_NivelAtendCurvas.Active) And (Not CDS_NivelAtendCurvas.IsEmpty) And ...
+
+end;
+
+procedure TFrmEstoques.Dbg_NivelAtendLojasCellClick(Column: TColumn);
+begin
+  If (DMBelShop.CDS_NivelAtendCurvas.Active) And (Not DMBelShop.CDS_NivelAtendCurvas.IsEmpty) And
+     (DMBelShop.CDS_NivelAtendLojas.Active)  And (Not DMBelShop.CDS_NivelAtendLojas.IsEmpty)  Then
+  Begin
+    DMBelShop.CDS_NivelAtendCurvas.Locate('NOME_EMP', DMBelShop.CDS_NivelAtendLojasNOME_EMP.AsString,[]);
+  End; //   If (CDS_NivelAtendCurvas.Active) And (Not CDS_NivelAtendCurvas.IsEmpty) And ...
 
 end;
 
