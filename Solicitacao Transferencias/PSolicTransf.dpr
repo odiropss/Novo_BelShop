@@ -13,7 +13,7 @@ uses
 
 begin
   Application.Initialize;
-  Application.Title := 'BelShop - Solicitações de Tranferências';
+  Application.Title := 'BelShop - Solicitações de Transferências';
   Application.CreateForm(TDMSolicTransf, DMSolicTransf);
   Application.CreateForm(TFrmSolicTransf, FrmSolicTransf);
   Application.CreateForm(TFDK_Procs1, FDK_Procs1);

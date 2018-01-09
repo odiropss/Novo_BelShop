@@ -502,12 +502,12 @@ Begin
          ' SELECT l.cod_loja cod_empresa'+
          ' FROM ES_ESTOQUES_LOJAS l'+
 
-         ' WHERE ('+
-         '        (l.num_tr_gerada=0 AND l.ind_prioridade=0 AND l.dta_movto >  ''27.09.2017'')'+ // Último DIA do Calculo Automático
-         '         OR'+
-         '        (l.num_tr_gerada=0 AND l.ind_prioridade=2 AND l.dta_movto >= ''06.11.2017'')'+  // Primeiro Dia Que Busca Loja Não Atendida
-         '         OR'+
-         '        (l.num_tr_gerada<>0 AND l.dta_movto >  ''27.09.2017'')'+ // Último DIA do Calculo Automático
+         ' WHERE ('+ // Último DIA do Calculo Automático (Somente Prioridade igual a Zero)
+         '        (l.num_tr_gerada=0 AND l.ind_prioridade=0 AND l.dta_movto >  ''27.09.2017'')'+
+         '         OR'+ // Primeiro Dia Que Busca Loja Não Atendida
+         '        (l.num_tr_gerada=0 AND l.ind_prioridade=2 AND l.dta_movto >= ''06.11.2017'')'+
+         '         OR'+ // Último DIA do Calculo Automático (Solicitações do Compras)
+         '        (l.num_tr_gerada<>0 AND l.dta_movto >  ''27.09.2017'')'+
          '        )'+
 
          ' AND   l.qtd_a_transf > 0'+
@@ -598,6 +598,7 @@ Begin
              ' CURRENT_DATE DTA_MOVTO,'+
              ' COALESCE(o.num_documento,0) Doc_Origem, '+
              sDocTR+' NUM_DOCTO,'+
+             ' 0 Doc_Loja,'+ // Docto Original de Solicitação da Loja
              ' o.obs_oc,'+
              ' o.cod_empresa COD_LOJA,'+
              ' o.cod_item COD_PRODUTO,'+
@@ -636,6 +637,15 @@ Begin
              ' CURRENT_DATE DTA_MOVTO,'+
              ' l.num_docto Doc_Origem, '+
              sDocTR+' NUM_DOCTO,'+
+
+             ' CASE'+
+             '    WHEN (POSITION(''Nº'',l.OBS_DOCTO)<>0) AND (POSITION(''Qtd:'',l.OBS_DOCTO)<>0) THEN'+
+             '      TRIM(SUBSTRING(l.OBS_DOCTO FROM (POSITION(''Nº'',l.OBS_DOCTO)+2) FOR'+
+             '                    ((POSITION(''Qtd:'',l.OBS_DOCTO))-(POSITION(''Nº'',l.OBS_DOCTO)+2))))'+
+             '    ELSE'+
+             '      0'+
+             ' END Doc_Loja,'+
+
              ' l.OBS_DOCTO,'+
              ' l.COD_LOJA,'+
              ' l.COD_PRODUTO,'+
@@ -660,12 +670,12 @@ Begin
 
              ' FROM ES_ESTOQUES_LOJAS l'+
 
-             ' WHERE ('+
-             '        (l.num_tr_gerada=0 AND l.ind_prioridade=0 AND l.dta_movto >  ''27.09.2017'')'+ // Último DIA do Calculo Automático
-             '         OR'+
-             '        (l.num_tr_gerada=0 AND l.ind_prioridade=2 AND l.dta_movto >= ''06.11.2017'')'+  // Primeiro Dia Que Busca Loja Não Atendida
-             '         OR'+
-             '        (l.num_tr_gerada<>0 AND l.dta_movto >  ''27.09.2017'')'+ // Último DIA do Calculo Automático
+             ' WHERE ('+ // Último DIA do Calculo Automático (Somente Prioridade igual a Zero)
+             '        (l.num_tr_gerada=0 AND l.ind_prioridade=0 AND l.dta_movto >  ''27.09.2017'')'+
+             '         OR'+ // Primeiro Dia Que Busca Loja Não Atendida
+             '        (l.num_tr_gerada=0 AND l.ind_prioridade=2 AND l.dta_movto >= ''06.11.2017'')'+
+             '         OR'+ // Último DIA do Calculo Automático (Solicitações do Compras)
+             '        (l.num_tr_gerada<>0 AND l.dta_movto >  ''27.09.2017'')'+
              '        )'+
              ' AND   l.qtd_a_transf>0'+
              ' AND   l.ind_transf=''SIM'''+
@@ -687,6 +697,9 @@ Begin
       Begin
         sgCodProduto:=Trim(DMTransferencias.CDS_Busca.FieldByName('Cod_Produto').AsString);
 
+        If sgCodProduto='034006' Then
+         sgCodProduto:=Trim(DMTransferencias.CDS_Busca.FieldByName('Cod_Produto').AsString);
+
         //======================================================================
         // Atualiza OC_COMPRAR =================================================
         //======================================================================
@@ -701,12 +714,15 @@ Begin
                  ' AND   o.cod_item='+QuotedStr(sgCodProduto);
           DMTransferencias.SQLC.Execute(MySql,nil,nil);
         End; // If DMTransferencias.CDS_Busca.FieldByName('Doc_Origem').AsInteger<>0 Then
+        // Atualiza OC_COMPRAR =================================================
+        //======================================================================
 
         //======================================================================
-        // Atualiza ES_ESTOQUES_LOJAS =================================================
+        // Atualiza ES_ESTOQUES_LOJAS ==========================================
         //======================================================================
         If DMTransferencias.CDS_Busca.FieldByName('Compras').AsString='NAO' Then
         Begin
+          // Atualiza ES_ESTOQUES_LOJAS ANTERIOR ===============================
           MySql:=' UPDATE ES_ESTOQUES_LOJAS l';
 
                  If DMTransferencias.CDS_Busca.FieldByName('QTD_TRANSF_OC').AsCurrency<>0.00 Then
@@ -729,10 +745,25 @@ Begin
            MySql+' AND   l.ind_transf=''SIM'''+
                  ' AND   l.cod_produto='+QuotedStr(sgCodProduto);
           DMTransferencias.SQLC.Execute(MySql,nil,nil);
+
+          // Acerta NUmero do Docto em SOL_TRANSFERENCIA_CD ====================
+          If DMTransferencias.CDS_Busca.FieldByName('Doc_Loja').AsInteger<>0 Then
+          Begin
+            MySql:=' UPDATE SOL_TRANSFERENCIA_CD so'+
+                   ' SET so.doc_gerado='+DMTransferencias.CDS_Busca.FieldByName('NUM_DOCTO').AsString+
+                   ' WHERE so.num_solicitacao='+DMTransferencias.CDS_Busca.FieldByName('DOC_LOJA').AsString+
+                   ' AND so.cod_loja_sidi='+QuotedStr(DMTransferencias.CDS_Busca.FieldByName('COD_LOJA').AsString)+
+                   ' AND so.cod_prod_sidi='+QuotedStr(DMTransferencias.CDS_Busca.FieldByName('COD_PRODUTO').AsString);
+            DMTransferencias.SQLC.Execute(MySql,nil,nil);
+          End; // If DMTransferencias.CDS_Busca.FieldByName('Doc_Loja').AsInteger<>0 Then
+
+
         End; // If DMTransferencias.CDS_Busca.FieldByName('Doc_Origem').AsInteger<>0 Then
+        // Atualiza ES_ESTOQUES_LOJAS ==========================================
+        //======================================================================
 
         //======================================================================
-        // Atualiza ES_ESTOQUES_LOJAS ==========================================
+        // Atualiza ES_ESTOQUES_LOJAS ATUAL ====================================
         //======================================================================
         MySql:=' SELECT FIRST 1 lo.num_docto, lo.qtd_a_transf, lo.ind_prioridade'+
                ' FROM ES_ESTOQUES_LOJAS lo'+

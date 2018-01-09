@@ -1393,7 +1393,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 264
+          Left = 262
           Top = 11
           Width = 353
           Height = 13
@@ -1776,6 +1776,7 @@ object FrmEstoques: TFrmEstoques
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = [fsBold]
           OnCellClick = Dbg_NivelAtendLojasCellClick
+          OnDrawColumnCell = Dbg_NivelAtendLojasDrawColumnCell
           OnKeyDown = Dbg_NivelAtendCurvaKeyDown
           Columns = <
             item

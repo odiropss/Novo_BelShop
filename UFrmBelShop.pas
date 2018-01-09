@@ -35,7 +35,8 @@ uses
   JvValidateEdit, ToolEdit, JvCheckBox, cxTextEdit, cxMaskEdit,
   cxDropDownEdit, cxCalendar, DBGridJul, JvRadioButton, CurrEdit, Grids,
   DBGrids, Mask, JvExControls, JvXPCore, JvXPButtons, Buttons,
-  JvBehaviorLabel, dxGDIPlusClasses, JvGradient, cxProgressBar, Clipbrd;
+  JvBehaviorLabel, dxGDIPlusClasses, JvGradient, cxProgressBar, Clipbrd,
+  RelVisual;
   // Ultimo: Clipbrd
 
 type
@@ -43,10 +44,6 @@ type
     MainMenu1: TMainMenu;
     MenuUsuarios: TMenuItem;
     SubMenuProtUsuariosUsuarios: TMenuItem;
-    SubMenuProtUsuariosAlteraoBancodeDadosDML: TMenuItem;
-    N9: TMenuItem;
-    SubMenuProtUsuariosBackupRestaure: TMenuItem;
-    N10: TMenuItem;
     MenuFinanceiro: TMenuItem;
     MenuCalculadora: TMenuItem;
     MenuVersao: TMenuItem;
@@ -1323,7 +1320,7 @@ type
     Ckb_EstFisFinanGiroEstoqueEmp: TJvCheckBox;
     MenuEstoques: TMenuItem;
     MenuEstoquesSimuladorEstoques: TMenuItem;
-    SubMenuCentroDistAnaliseReposicoes: TMenuItem;
+    SubMenuCentroDistAnaliseAnalReposicoes: TMenuItem;
     Ckbx_ConsultaNFeApresParcela: TCheckBox;
     Label1: TLabel;
     EdtFinanObjetivosMeses: TCurrencyEdit;
@@ -1380,6 +1377,8 @@ type
     SubMenuFinanConciliaDepositos: TMenuItem;
     N54: TMenuItem;
     SubMenuComprasNivelAtendimentoLojas: TMenuItem;
+    SubMenuCentroDistAnaliseAnalReposicoesEndereco: TMenuItem;
+    SubMenuCentroDistAnaliseAnalReposicoesRelatReposicao: TMenuItem;
 
     // Odir ====================================================================
 
@@ -1750,8 +1749,6 @@ type
     procedure Ckb_ConsultaOCSelectEmpresasClick(Sender: TObject);
     procedure EdtConsultaOCNumOCChange(Sender: TObject);
     procedure Clbx_ConsultaOCEmpresasClick(Sender: TObject);
-    procedure SubMenuProtUsuariosAlteraoBancodeDadosDMLClick(Sender: TObject);
-    procedure SubMenuProtUsuariosBackupRestaureClick(Sender: TObject);
     procedure SubMenuComprasCurvaABCClick(Sender: TObject);
     procedure Bt_PlanFinanFecharClick(Sender: TObject);
     procedure SubMenuFinanComprPlanFinanceiraClick(Sender: TObject);
@@ -2315,7 +2312,6 @@ type
     procedure Ckb_EstFisFinanGiroEstoqueEmpKeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
     procedure MenuEstoquesSimuladorEstoquesClick(Sender: TObject);
-    procedure SubMenuCentroDistAnaliseReposicoesClick(Sender: TObject);
     procedure Ckbx_ConsultaNFeApresParcelaClick(Sender: TObject);
     procedure Ckbx_ConsultaNFeApresParcelaKeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
@@ -2349,6 +2345,10 @@ type
       Shift: TShiftState);
     procedure SubMenuFinanConciliaDepositosClick(Sender: TObject);
     procedure SubMenuComprasNivelAtendimentoLojasClick(Sender: TObject);
+    procedure SubMenuCentroDistAnaliseAnalReposicoesEnderecoClick(
+      Sender: TObject);
+    procedure SubMenuCentroDistAnaliseAnalReposicoesRelatReposicaoClick(
+      Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -28257,117 +28257,6 @@ begin
 
 end;
 
-procedure TFrmBelShop.SubMenuProtUsuariosAlteraoBancodeDadosDMLClick(Sender: TObject);
-var
-  slAtualiza : TStringList;
-  i : integer;
-  OpenDialog: TOpenDialog;
-  MySql: String;
-begin
-  If msg('Deseja Realmente Efetuar Alteração'+cr+cr+'no Banco de Dados ???','C')=2 Then
-   Exit;
-
-  OpenDialog:=TOpenDialog.Create(OpenDialog);
-
-  With OpenDialog do
-  Begin
-    Options := [ofPathMustExist, ofHideReadOnly, ofOverwritePrompt];
-    DefaultExt := 'SQL';
-    Filter := 'Arquivos SQL (*.SQL)|*.SQL';
-    FilterIndex := 1;
-    Title := 'Busca Arquivos de Atualização de Banco de Dados (SQL)';
-
-    If (Execute) and (FileExists(FileName)) Then
-     Begin
-       slAtualiza := TStringList.Create;
-       slAtualiza.LoadFromFile(OpenDialog.FileName);
-       i := 0;
-       If slAtualiza.Strings[i] <> '[INICIO]' Then
-        Begin
-          msg('O Arquivo Inválido !!','A');
-          FreeAndNil(slAtualiza);
-        End
-       Else // if slAtualiza.Strings[i] <> '[INICIO]' then
-        Begin
-          Try
-            Screen.Cursor:=crAppStart;
-            LB_DML.Visible:=True;
-
-            TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
-            TD.IsolationLevel:=xilREADCOMMITTED;
-            DMBelShop.SQLC.StartTransaction(TD);
-
-            MySql:='';
-            While i < slAtualiza.Count do
-            Begin
-              If slAtualiza.Strings[i] = '[INICIO]' Then
-              Begin
-                i := i + 1;
-                With DMBelShop.SQLC do
-                Begin
-                  while slAtualiza.Strings[i] <> '[FIM]' do
-                  Begin
-                    Refresh;
-
-                    MySql:=MySql+' '+slAtualiza.Strings[i];
-                    i := i + 1;
-                  End;
-                  LB_DML.Caption := MySql;
-                  Application.ProcessMessages;
-
-                  Execute(MySql, nil, nil);
-                  MySql:='';
-                End; // With DMBelShop.SQLC do
-              End; // if slAtualiza.Strings[i] = '[INICIO]' then
-
-              If slAtualiza.Strings[i] = '[COMMIT]' Then
-              Begin
-                DMBelShop.SQLC.Commit(TD);
-                DMBelShop.SQLC.StartTransaction(TD);
-              End;
-              i := i + 1;
-            End;
-            DMBelShop.SQLC.Commit(TD);
-
-            RenameFile(OpenDialog.FileName,OpenDialog.FileName+'OK');
-
-            Screen.Cursor:=crDefault;
-
-            LB_DML.Visible:=False;
-
-            msg('Atualização Efetuada com SUCESSO !!', 'A');
-          Except
-            on e : Exception do
-            Begin
-              Screen.Cursor:=crDefault;
-              DMBelShop.SQLC.Rollback(TD);
-
-              MessageBox(Handle, pChar('Mensagem de erro na Atualização:'+#13+e.message), 'Erro', MB_ICONERROR);
-
-              LB_DML.Visible:=False;
-              FreeAndNil(slAtualiza);
-              exit;
-            End;
-
-          End;
-          FreeAndNil(slAtualiza);
-        End;
-     End
-    Else // if (Execute) and (FileExists(FileName)) then
-     Begin
-       Free;
-       Exit;
-     End;
-    Free;
-  End; // with OpenDialog do
-
-end;
-
-procedure TFrmBelShop.SubMenuProtUsuariosBackupRestaureClick(Sender: TObject);
-begin
-  msg('Opção em Analise !!', 'A');
-end;
-
 procedure TFrmBelShop.SubMenuComprasCurvaABCClick(Sender: TObject);
 Var                   
   MySql: String;
@@ -46239,29 +46128,6 @@ begin
 
 end;
 
-procedure TFrmBelShop.SubMenuCentroDistAnaliseReposicoesClick(Sender: TObject);
-begin
-//  FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
-//  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
-
-  FrmCentralTrocas.Bt_NotasEntDevFechar.Parent:=FrmCentralTrocas.Pan_AnaliseRepos;
-
-  If (Sender is TMenuItem) Then
-   igTagPermissao:=(Sender as TMenuItem).Tag;
-
-  BloqueioBotoes(FrmCentralTrocas, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
-
-  // Apresenta TabSheet ========================================================
-  TabSheetInvisivel(FrmCentralTrocas);
-  FrmCentralTrocas.Ts_AnaliseReposicoes.TabVisible:=True;
-
-  FrmCentralTrocas.ShowModal;
-
-  FreeAndNil(FrmCentralTrocas);
-  FreeAndNil(DMCentralTrocas);
-
-end;
-
 procedure TFrmBelShop.Ckbx_ConsultaNFeApresParcelaClick(Sender: TObject);
 begin
   AcertaCkb_Style(Ckbx_ConsultaNFeApresParcela);
@@ -46910,6 +46776,279 @@ begin
   FrmEstoques.ShowModal;
 
   FreeAndNil(FrmEstoques);
+
+end;
+
+procedure TFrmBelShop.SubMenuCentroDistAnaliseAnalReposicoesEnderecoClick(Sender: TObject);
+begin
+  FrmCentralTrocas.Bt_NotasEntDevFechar.Parent:=FrmCentralTrocas.Pan_AnaliseRepos;
+
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
+  BloqueioBotoes(FrmCentralTrocas, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
+
+  // Apresenta TabSheet ========================================================
+  TabSheetInvisivel(FrmCentralTrocas);
+  FrmCentralTrocas.Ts_AnaliseReposicoes.TabVisible:=True;
+
+  FrmCentralTrocas.ShowModal;
+
+  FreeAndNil(FrmCentralTrocas);
+  FreeAndNil(DMCentralTrocas);
+
+end;
+
+procedure TFrmBelShop.SubMenuCentroDistAnaliseAnalReposicoesRelatReposicaoClick(Sender: TObject);
+Var
+  MySql: String;
+  dDta: TDate;
+
+  wDia, wMes, wAno: Word;
+
+  sDiaOntem,
+  sNomeMesAtual, sAnoAtual,
+  sPrimDiaAtual, sUltDiaAual : String;
+
+  sNomeMesAnterior,  sAnoAnterior,
+  sPrimDiaAnterior, sUltDiaAnterior : String;
+
+Begin
+
+  // Dia de Hoje ===============================================================
+  dDta:=DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor);
+  dDta:=strtodate('31/12/2017');
+
+  sUltDiaAual:=f_Troca('/','.',f_Troca('-','.',DateToStr(dDta)));
+
+  DecodeDate(dDta, wAno, wMes, wDia);
+  sNomeMesAtual:=AnsiUpperCase(LongMonthNames[wMes]);
+  sAnoAtual:=IntToStr(wAno);
+  sPrimDiaAtual:='01.'+IntToStr(wMes)+'.'+IntToStr(wAno);
+
+  // Dia Anterior a Hoje com Separação =========================================
+  MySql:=' select Cast(max(mv.data_lancamento) as Date) DiaOntem'+
+         ' from linxmovimento mv'+
+         ' Where ((mv.operacao=''S'' and  mv.tipo_transacao=''T'')'+ // Transferencia para Lojas Filiais
+         '       or'+
+         '        (mv.operacao=''S'' and  mv.tipo_transacao is null and mv.codigo_cliente=347))'+ // Venda Weceslau Esbocar
+         ' and   mv.empresa=2'+
+         ' and   mv.data_lancamento <'+QuotedStr(sUltDiaAual); // Alterar Periodo Mes Atual ==========================================
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:=MySql;
+  DMBelShop.CDS_Busca.Open;
+  sDiaOntem:=DMBelShop.CDS_Busca.FieldByName('DiaOntem').AsString;
+  DMBelShop.CDS_Busca.Close;
+
+
+  // Mes Anterior ==============================================================
+  dDta:=PrimUltDia(dDta,'P');
+  dDta:=dDta-1;
+  DecodeDate(dDta, wAno, wMes, wDia);
+  sNomeMesAnterior:=AnsiUpperCase(LongMonthNames[wMes]);
+  sAnoAnterior:=IntToStr(wAno);
+  sPrimDiaAnterior:='01.'+IntToStr(wMes)+'.'+IntToStr(wAno);
+  sUltDiaAnterior:=IntToStr(wDia)+'.'+IntToStr(wMes)+'.'+IntToStr(wAno);
+
+  // Totais Geral Mes Anterior -----------------------------------------'+
+  MySql:=' select'+
+         ' ''Total '' OBS,'+
+         ' ''Mes de '+Copy(sNomeMesAnterior,1,3)+'/''||Cast(extract(Year from mv.data_lancamento) as varchar(4)) Loja,'+ //Alterar Nome/Ano Mes Anterior
+         ' count(mv.empresa) qtd_Linhas,'+
+         ' Cast(sum(mv.quantidade) as Integer) qtd_Unidades,'+
+         ' Cast(sum(mv.valor_total) as Numeric(12,2)) vlr_total,'+
+         ' ''00'' Grupo'+
+
+         ' from linxmovimento mv'+
+         '   Left Join emp_conexoes em ON em.cod_cli_linx=mv.codigo_cliente'+
+         ' Where ((mv.operacao=''S'' and  mv.tipo_transacao=''T'')'+ // Transferencia para Lojas Filiais
+         '       or'+
+         '        (mv.operacao=''S'' and  mv.tipo_transacao is null and mv.codigo_cliente=347))'+ // Venda Weceslau Esbocar
+         ' and   mv.empresa=2'+
+         ' and mv.data_lancamento between '+QuotedStr(sPrimDiaAnterior)+' and '+QuotedStr(sUltDiaAnterior)+ // Alterar Periodo Mes Anterior ===========
+
+         ' group by 1,2'+
+
+         // Totais Mes Atual --------------------------------------------
+         ' UNION'+
+
+         ' select'+
+         ' ''Total '','+
+         ' ''Mes de '+Copy(sNomeMesAtual,1,3)+'/''||Cast(extract(Year from mv.data_lancamento) as varchar(4)) Loja,'+ // Alterar Nome/Ano Mes Atual ========================================
+         ' count(mv.empresa) qtd_Linhas,'+
+         ' Cast(sum(mv.quantidade) as Integer) qtd_Unidades,'+
+         ' Cast(sum(mv.valor_total) as Numeric(12,2)) vlr_total,'+
+         ' ''01'' Grupo'+
+
+         ' from linxmovimento mv'+
+         '   Left Join emp_conexoes em ON em.cod_cli_linx=mv.codigo_cliente'+
+
+         ' Where ((mv.operacao=''S'' and  mv.tipo_transacao=''T'')'+ // Transferencia para Lojas Filiais
+         '       or'+
+         '        (mv.operacao=''S'' and  mv.tipo_transacao is null and mv.codigo_cliente=347))'+ // Venda Weceslau Esbocar
+         ' and   mv.empresa=2'+
+         ' and mv.data_lancamento between '+QuotedStr(sPrimDiaAtual)+' and '+QuotedStr(sUltDiaAual)+ // Alterar Periodo Mes Atual ============
+
+         ' group by 1,2'+
+
+         // Totais Dia de Ontem --------------------------------------------
+         ' UNION'+
+
+         ' select'+
+         ' ''Total '','+
+         ' ''Dia '+sDiaOntem+''' Loja,'+ // Alterar Dia Anterior COM SEPARAÇÃO ==========================================
+         ' count(mv.empresa) qtd_Linhas,'+
+         ' Cast(sum(mv.quantidade) as Integer) qtd_Unidades,'+
+         ' Cast(sum(mv.valor_total) as Numeric(12,2)) vlr_total,'+
+         ' ''02'' Grupo'+
+
+         ' from linxmovimento mv'+
+         '   Left Join emp_conexoes em ON em.cod_cli_linx=mv.codigo_cliente'+
+
+         ' Where ((mv.operacao=''S'' and  mv.tipo_transacao=''T'')'+ // Transferencia para Lojas Filiais
+         '       or'+
+         '        (mv.operacao=''S'' and  mv.tipo_transacao is null and mv.codigo_cliente=347))'+ // Venda Weceslau Esbocar
+         ' and   mv.empresa=2'+
+         ' and mv.data_lancamento='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDiaOntem)))+ // Alterar Dia Anterior COM SEPARAÇÃO==========================================
+
+         ' group by 1,2'+
+
+         // LINHA EM BRANCO nos Totais -----------------------------------------
+
+         ' UNION'+
+
+         ' select'+
+         ' NULL,'+
+         ' NULL,'+
+         ' NULL,'+
+         ' NULL,'+
+         ' NULL,'+
+         ' ''021'''+
+         ' from RDB$DATABASE';
+
+         // LINHA TITULO Mes Anterior -----------------------------------------
+  MySqlClausula1:=
+         ' UNION'+
+
+         ' select'+
+         ' NULL,'+
+         ' ''SEPARAÇÃO MÊS DE '+sNomeMesAnterior+'/'+sAnoAnterior+''','+ // Alterar Nome/Ano Mes Anterior ==========================================
+         ' NULL,'+
+         ' NULL,'+
+         ' NULL,'+
+         ' ''03'''+
+         ' from RDB$DATABASE'+
+
+         // Totais Lojas Mes Anterior -----------------------------------------
+         ' UNION'+
+
+         ' select'+
+         ' ''Total '+Copy(sNomeMesAnterior,1,3)+'/''||Cast(extract(Year from mv.data_lancamento) as varchar(4)),'+ // Alterar Abreviatura Mes Anterior ==========================================
+         ' em.razao_social Loja,'+
+         ' count(mv.empresa) qtd_Linhas,'+
+         ' Cast(sum(mv.quantidade) as Integer) qtd_Unidades,'+
+         ' Cast(sum(mv.valor_total) as Numeric(12,2)) vlr_total,'+
+         ' ''031'' Grupo'+
+
+         ' from linxmovimento mv'+
+         '   Left Join emp_conexoes em ON em.cod_cli_linx=mv.codigo_cliente'+
+
+         ' Where ((mv.operacao=''S'' and  mv.tipo_transacao=''T'')'+ // Transferencia para Lojas Filiais
+         '       or'+
+         '        (mv.operacao=''S'' and  mv.tipo_transacao is null and mv.codigo_cliente=347))'+ // Venda Weceslau Esbocar
+         ' and   mv.empresa=2'+
+         ' and mv.data_lancamento between '+QuotedStr(sPrimDiaAnterior)+' and '+QuotedStr(sUltDiaAnterior)+ // Alterar Periodo do Mes Anterior =========================================
+
+         ' group by 1,2'+
+
+         // LINHA EM BRANCO Totais Lojas Mes Anterior -----------------------------------------
+         ' UNION'+
+
+         ' select'+
+         ' NULL,'+
+         ' NULL,'+
+         ' NULL,'+
+         ' NULL,'+
+         ' NULL,'+
+         ' ''032'''+
+         ' from RDB$DATABASE';
+
+         //LINHA TITULO Mes Atual -----------------------------------------
+  MySqlClausula2:=
+         ' UNION'+
+
+         ' select'+
+         ' NULL,'+
+         ' ''SEPARAÇÃO MÊS DE '+sNomeMesAtual+'/'+sAnoAtual+''','+ // Alterar Nome/Ano Mes Autal ==========================================
+         ' NULL,'+
+         ' NULL,'+
+         ' NULL,'+
+         ' ''04'''+
+         ' from RDB$DATABASE'+
+
+         // Totais Lojas Mes Atual --------------------------------------------
+         ' UNION'+
+
+         ' select'+
+         ' ''Total '+Copy(sNomeMesAtual,1,3)+'/''||Cast(extract(Year from mv.data_lancamento) as varchar(4)),'+ // Alterar Abreviatura Mes Atual ========================================
+         ' em.razao_social Loja,'+
+         ' count(mv.empresa) qtd_Linhas,'+
+         ' Cast(sum(mv.quantidade) as Integer) qtd_Unidades,'+
+         ' Cast(sum(mv.valor_total) as Numeric(12,2)) vlr_total,'+
+         ' ''041'' Grupo'+
+
+         ' from linxmovimento mv'+
+         '   Left Join emp_conexoes em ON em.cod_cli_linx=mv.codigo_cliente'+
+
+         ' Where ((mv.operacao=''S'' and  mv.tipo_transacao=''T'')'+ //Transferencia para Lojas Filiais
+         '        or'+
+         '        (mv.operacao=''S'' and  mv.tipo_transacao is null and mv.codigo_cliente=347))'+ // Venda Weceslau Esbocar
+         ' and   mv.empresa=2'+
+         ' and mv.data_lancamento between '+QuotedStr(sPrimDiaAtual)+' and '+QuotedStr(sUltDiaAual)+ // Alterar Periodo Mes Atual ==========================================
+
+         ' group by 1,2'+
+
+         // LINHA EM BRANCO Totais Mes Atual --------------------------------------------
+         ' UNION'+
+
+         ' select'+
+         ' NULL,'+
+         ' NULL,'+
+         ' NULL,'+
+         ' NULL,'+
+         ' NULL,'+
+         ' ''042'''+
+         ' from RDB$DATABASE'+
+
+         ' order by 6,2,1';
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:=MySql+MySqlClausula1+MySqlClausula2;
+  DMBelShop.CDS_Busca.Open;
+
+  With DMRelatorio.RelVisual do
+  Begin
+    ClientDataSet:=DMBelShop.CDS_Busca;
+    Destino:=toVisualiza;
+    Orientacao:=toRetrato;
+    RodapeGrupo:=True;
+    TextoRodape:='';
+    TextoRodapeGrupo:='';
+
+    ImprimirTarjaCinza:=False;
+    ImprimirVisto:=False;
+    Cabecalho1Esquerda:='';
+    Cabecalho1Esquerda:='LOJAS BELSHOP';
+
+    Cabecalho2Esquerda:='TODAS AS LOJAS';
+    Cabecalho3Centro:='RELATÓRIO DE E-MAILs';
+
+    DefinicaoCampos.Clear;
+    DefinicaoCampos.Add('D0;90;E;;LOJA;LOJA');
+    DefinicaoCampos.Add('D0;15;D;;QTD_LINHAS;QTD_LINHAS');
+    DefinicaoCampos.Add('D0;15;D;;QTD_UNIDADES;QTD_UNIDADES');
+    DefinicaoCampos.Add('D0;20;D;#,##0.00;VLR_TOTAL;VLR_TOTAL');
+    Execute;
+  End; // With DMRelatorio.RelVisual do
 
 end;
 

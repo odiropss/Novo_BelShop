@@ -1,5 +1,5 @@
 object FrmCentralTrocas: TFrmCentralTrocas
-  Left = 240
+  Left = 241
   Top = 112
   Align = alClient
   AutoSize = True
@@ -408,7 +408,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
     Top = 0
     Width = 1102
     Height = 578
-    ActivePage = Ts_QtdCaixaCD
+    ActivePage = Ts_AnaliseReposicoes
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

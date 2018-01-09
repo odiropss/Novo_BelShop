@@ -59,6 +59,7 @@ type
     Label5: TLabel;
     EdtQtdEstoqueCD: TCurrencyEdit;
     Lab_UnidadeCD: TLabel;
+    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -101,7 +102,8 @@ type
     procedure Dbg_VerificaProdutosKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormKeyUp(Sender: TObject; var Key: Word;
-      Shift: TShiftState); // Posiciona no Componente
+      Shift: TShiftState);
+    procedure Button1Click(Sender: TObject); // Posiciona no Componente
 
   private
     { Private declarations }
@@ -1394,6 +1396,102 @@ begin
         ExtractFileName(Application.ExeName)))),1,19),'A');
   End;
 
+end;
+
+procedure TFrmSolicTransf.Button1Click(Sender: TObject);
+Var
+  MySql: String;
+begin
+{
+  MySql:=' select distinct  DOC_NA_SEPARACAO, NUM_DOCTO_ATUAL, NUM_SOLICITACAO,'+
+         ' DOC_GERADO_SOLICITACAO, DTA_SOLICITACAO, COD_LOJA_SIDI, COD_LOJA_LINX,'+
+         ' COD_PROD_LINX, COD_PROD_SIDI'+
+         ' FROM APAGAR';
+  DMSolicTransf.CDS_Busca.Close;
+  DMSolicTransf.SQLQ_Busca.Close;
+  DMSolicTransf.SQLQ_Busca.SQL.Clear;
+  DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
+  DMSolicTransf.CDS_Busca.Open;
+
+  OdirPanApres.Caption:='AGUARDE !! Alterado Data CC';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSolicTransf.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmSolicTransf.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmSolicTransf;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMSolicTransf.SQLC.InTransaction Then
+   DMSolicTransf.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMSolicTransf.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    EdtQtdEstoque.AsInteger:=DMSolicTransf.CDS_Busca.RecordCount;
+
+    DMSolicTransf.CDS_Busca.DisableControls;
+    While Not DMSolicTransf.CDS_Busca.Eof do
+    Begin
+      Application.ProcessMessages;
+
+      MySql:=' update sol_transferencia_cd t'+
+             ' set t.doc_gerado='+DMSolicTransf.CDS_Busca.FieldByName('num_docto_atual').AsString+
+             ', t.dta_processamento=current_date'+
+             ' where t.num_solicitacao='+DMSolicTransf.CDS_Busca.FieldByName('NUM_SOLICITACAO').AsString+
+             ' and t.doc_gerado='+DMSolicTransf.CDS_Busca.FieldByName('DOC_GERADO_SOLICITACAO').AsString+
+             ' and t.dta_solicitacao='+QuotedStr(DMSolicTransf.CDS_Busca.FieldByName('DTA_SOLICITACAO').AsString)+
+             ' and t.cod_loja_sidi='+QuotedStr(DMSolicTransf.CDS_Busca.FieldByName('cod_loja_sidi').AsString)+
+             ' and t.cod_loja_linx='+DMSolicTransf.CDS_Busca.FieldByName('cod_loja_linx').AsString+
+             ' and t.cod_prod_linx='+DMSolicTransf.CDS_Busca.FieldByName('cod_prod_linx').AsString+
+             ' and t.cod_prod_sidi='+QuotedStr(DMSolicTransf.CDS_Busca.FieldByName('cod_prod_sidi').AsString);
+      DMSolicTransf.SQLC.Execute(MySql,nil,nil);
+
+      EdtQtdTransf.AsInteger:=DMSolicTransf.CDS_Busca.RecNo;
+
+      DMSolicTransf.CDS_Busca.Next;
+    End;
+    DMSolicTransf.CDS_Busca.EnableControls;
+    DMSolicTransf.CDS_Busca.Close;
+
+    // Atualiza Transacao ======================================================
+    DMSolicTransf.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    OdirPanApres.Visible:=False;
+
+    Screen.Cursor:=crDefault;
+
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMSolicTransf.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      OdirPanApres.Visible:=False;
+
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Exit;
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  DMSolicTransf.CDS_Busca.Close
+}
 end;
 
 end.

@@ -985,6 +985,22 @@ object FrmSolicTransf: TFrmSolicTransf
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
+    object Button1: TButton
+      Left = 704
+      Top = 4
+      Width = 145
+      Height = 25
+      Caption = 'Acerta Doc_Gerado'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 0
+      Visible = False
+      OnClick = Button1Click
+    end
   end
   object OdirPanApres: TPanel
     Left = 583

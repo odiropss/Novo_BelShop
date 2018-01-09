@@ -1204,6 +1204,7 @@ type
     CDS_NivelAtendLojas: TClientDataSet;
     CDS_NivelAtendLojasNOME_EMP: TStringField;
     CDS_NivelAtendLojasNIVEL_ATENDIMENTO: TFMTBCDField;
+    CDS_NivelAtendLojasORDEM: TIntegerField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -4675,19 +4676,17 @@ begin
 end;
 
 end.
+
 {
-==================================>>> SDS_FluxoFornecedores
+SDS_FluxoFornecedores
+======================
 -- Todos os Fornecedores
 SELECT
 3 Ordem,
-t.des_aux,
+
+CAST(TRIM(t.des_aux) AS VARCHAR(10)) DES_AUX,
 c.cod_fornecedor,
-TRIM(CASE
-      WHEN COALESCE(f.nomefornecedor, '0') = '0' THEN 
-          c.des_fornecedor
-      ELSE 
-           f.nomefornecedor
-END) nomefornecedor,
+TRIM(c.des_fornecedor) nomefornecedor,
 
 CAST(MIN(c.dta_caixa) AS DATE) dta_inicial,
 CAST(MAX(c.dta_caixa) AS DATE) dta_final,
@@ -4696,9 +4695,9 @@ SUM(DECODE(c.tip_debcre, 'D', -c.vlr_caixa, c.vlr_caixa)) vlr_saldo,
 
 CAST(CASE
        WHEN COALESCE(t.des_aux, '0') = '0' THEN
-         NULL--MIN(c.dta_caixa)
+         NULL
        ELSE
-         t.des_aux
+         CAST(TRIM(t.des_aux) AS VARCHAR(10))
      END
 AS DATE) dta_cc,
 
@@ -4708,17 +4707,20 @@ CASE
   ELSE
     'SIM'
 END LIMITE,
+
+CAST(TRIM(t.des_aux1) AS VARCHAR(10)) Dta_Hist900,
 cc.nomesubcusto Comprador
 
 
 FROM FL_CAIXA_FORNECEDORES  c
-     LEFT JOIN FORNECEDOR   f    ON f.codfornecedor = c.cod_fornecedor
+     LEFT JOIN FORNECEDOR   f    ON f.codfornecedor = c.codfornecedor
      LEFT JOIN TAB_AUXILIAR t  ON t.tip_aux = 14
                               AND t.cod_aux = c.cod_fornecedor
      LEFT JOIN CENTROCUSTO  cc ON cc.codcentrocusto=f.codcentrocusto
 
 WHERE c.cod_historico <> 0 AND
       c.cod_historico <> 999999
+
 and (coalesce(f.codcentrocusto,0)=:Compr1
     or
      coalesce(f.codcentrocusto,0)=:Compr2
@@ -4738,7 +4740,8 @@ and (coalesce(f.codcentrocusto,0)=:Compr1
      coalesce(f.codcentrocusto,0)=:Compr9
     or
      coalesce(f.codcentrocusto,0)=:Compr10)
-GROUP BY 2, 3, 4, 10
+
+GROUP BY 2, 3, 4, 8, 9, 10, 11
 
 UNION
 
@@ -4756,14 +4759,16 @@ SUM(tc.vlr_caixa) vlr_saldo,
 
 NULL dta_cc,
 NULL LIMITE,
+NULL Dta_Hist900,
 NULL Comprador
 
 FROM FL_CAIXA_FORNECEDORES tc
-     LEFT JOIN FORNECEDOR   tf    ON tf.codfornecedor = tc.cod_fornecedor
+     LEFT JOIN FORNECEDOR   tf    ON tf.codfornecedor = tc.codfornecedor
 
 WHERE tc.cod_historico <> 0 AND
       tc.cod_historico <> 999999
 AND   tc.tip_debcre='C'
+
 and (coalesce(tf.codcentrocusto,0)=:Compr1
     or
      coalesce(tf.codcentrocusto,0)=:Compr2
@@ -4800,13 +4805,15 @@ SUM(tc.vlr_caixa) vlr_saldo,
 
 NULL dta_cc,
 NULL LIMITE,
+NULL Dta_Hist900,
 NULL Comprador
 
 FROM FL_CAIXA_FORNECEDORES tc
-     LEFT JOIN FORNECEDOR   tf    ON tf.codfornecedor = tc.cod_fornecedor
+     LEFT JOIN FORNECEDOR   tf    ON tf.codfornecedor = tc.codfornecedor
 WHERE tc.cod_historico <> 0 AND
       tc.cod_historico <> 999999
 AND   tc.tip_debcre='D'
+
 and (coalesce(tf.codcentrocusto,0)=:Compr1
     or
      coalesce(tf.codcentrocusto,0)=:Compr2
@@ -4842,12 +4849,14 @@ SUM(DECODE(ct.tip_debcre, 'D', -ct.vlr_caixa, ct.vlr_caixa)) vlr_saldo,
 
 NULL dta_cc,
 NULL LIMITE,
+NULL Dta_Hist900,
 NULL Comprador
 
 FROM FL_CAIXA_FORNECEDORES ct
-     LEFT JOIN FORNECEDOR   ft    ON ft.codfornecedor = ct.cod_fornecedor
+     LEFT JOIN FORNECEDOR   ft    ON ft.codfornecedor = ct.codfornecedor
 WHERE ct.cod_historico <> 0 AND
       ct.cod_historico <> 999999
+
 and (coalesce(ft.codcentrocusto,0)=:Compr1
     or
      coalesce(ft.codcentrocusto,0)=:Compr2
@@ -4869,84 +4878,4 @@ and (coalesce(ft.codcentrocusto,0)=:Compr1
      coalesce(ft.codcentrocusto,0)=:Compr10)
 
 ORDER BY 4
-
-========================>>> SDS_FluxoFornecedor
-SELECT
-/*
-CASE FF.NUM_SEQ
-   WHEN 0 THEN   FF.DTA_CAIXA
-END DATA,
-*/
-FF.DTA_CAIXA DATA,
-
-'Bel_'||FF.COD_EMPRESA LOJA,
-
-CASE
-  WHEN (FF.COD_HISTORICO=0) OR (FF.COD_HISTORICO=999999) THEN
-   NULL
-  ELSE
-    FF.COD_HISTORICO
-END COD_HISTORICO,
-
-FC.DES_HISTORICO,
-FF.NUM_DOCUMENTO, FF.NUM_SERIE,
-FF.DTA_ORIGEM, FF.VLR_ORIGEM, FF.PER_REDUCAO,
-
-CASE
-   WHEN FF.TIP_DEBCRE='C' THEN
-     FF.VLR_CAIXA
-   WHEN (FF.NUM_SEQ=0) or (FF.NUM_SEQ=999999) Then
-     null
-   ELSE
-     0.00
-END VLR_CREDITO,
-
-CASE
-   WHEN FF.TIP_DEBCRE='D' THEN
-      FF.VLR_CAIXA
-    WHEN (FF.NUM_SEQ=0) or (FF.NUM_SEQ=999999) Then
-      null
-   ELSE
-      0.00
-END VLR_DEBITO,
-/*
-CASE FF.NUM_SEQ
-   WHEN 0 THEN
-      FF.VLR_SALDO
-   WHEN 999999 THEN
-     FF.VLR_SALDO
-END VLR_SALDO,
-*/
-CASE FF.NUM_SEQ
-   WHEN 0 THEN
-      FF.VLR_SALDO- :Valor1
-   WHEN 999999 THEN
-     FF.VLR_SALDO- :Valor2
-END VLR_SALDO,
-
-FF.TXT_OBS,
-
-FF.COD_EMPRESA, EMP.RAZAO_SOCIAL,
-
-FF.COD_FORNECEDOR, FF.DES_FORNECEDOR,
-FF.NUM_SEQ, FF.NUM_CHAVENF,
-FF.TIP_DEBCRE
-
-FROM  FL_CAIXA_FORNECEDORES FF
-      LEFT JOIN FL_CAIXA_HISTORICOS FC ON FC.COD_HISTORICO=FF.COD_HISTORICO
-      LEFT JOIN EMP_CONEXOES EMP ON EMP.COD_FILIAL=FF.COD_EMPRESA
-
-WHERE FF.COD_FORNECEDOR= :CodForn
-AND   ff.dta_caixa>= :Data
-
-ORDER BY FF.DTA_CAIXA, FF.NUM_SEQ
-
-
-========================>>> SDS_FluxoFornReducao
-SELECT DISTINCT FR.cod_fornecedor, FF.nomefornecedor
-FROM fl_caixa_perc_reducao FR, fornecedor FF
-WHERE FR.cod_fornecedor=FF.codfornecedor
-ORDER BY 2
-
 }
-

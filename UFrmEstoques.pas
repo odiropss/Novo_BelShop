@@ -1,7 +1,5 @@
 unit UFrmEstoques;
 
-// LojaBel_17
-
 interface
 
 uses
@@ -159,6 +157,9 @@ type
       Shift: TShiftState);
     procedure Dbg_NivelAtendCurvaCellClick(Column: TColumn);
     procedure Dbg_NivelAtendLojasCellClick(Column: TColumn);
+    procedure Dbg_NivelAtendLojasDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
 
   private
     { Private declarations }
@@ -209,7 +210,10 @@ uses DK_Procs1, UDMVirtual, UFrmBelShop, UFrmSelectEmpProcessamento,
 // Calcula Nivel de Atendimento da Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmEstoques.NivelAtendimentoCalcula;
 Var
-  MySql: String;
+  MySql, MySqlMedia: String;
+  cPercTotal: Currency;
+  b: Boolean;
+  i: Integer;
 Begin
   OdirPanApres.Caption:='AGUARDE !! Calculando Níveis de Atendimentos...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
@@ -224,48 +228,88 @@ Begin
   Screen.Cursor:=crAppStart;
 
   // Nivel de Atendimento por Lojas ============================================
-  MySql:=' select total.nome_emp, Cast(sum(Total.Nivel_Atendimento) as Numeric(12,6)) Nivel_Atendimento'+
-
-         ' from (select l.cod_loja_linx, j.nome_emp, l.ind_curva,'+
-         '       CAST(((100 - ((SUM(case when l.qtd_estoque<1 Then 1 Else 0 End))*(100.000 / count(L.cod_loja_linx)))) *'+
-         '       ((CAST(Case'+
-         '                When l.ind_curva=''A'' Then'+
-         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=1)'+
-         '                When l.ind_curva=''B'' Then'+
-         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=2)'+
-         '                When l.ind_curva=''C'' Then'+
-         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=3)'+
-         '                When l.ind_curva=''D'' Then'+
-         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=4)'+
-         '                When l.ind_curva=''E'' Then'+
-         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=5)'+
-         '                Else'+
-         '                   1'+
-         '             End AS integer)) / 100.000)'+
-         '       ) as Numeric(12,6)) Nivel_Atendimento'+
-
-         '       From LINX_PRODUTOS_LOJAS l, LINXLOJAS j'+
-         '       Where l.cod_loja_linx=j.empresa'+
-         '       And   l.dta_processa between '+QuotedStr(sgDtaI)+' and '+QuotedStr(sgDtaF)+
-         '       And   l.cod_loja_linx in '+sgCodLojas+
-
-         '       Group By 1,2,3'+
-         '       Order By 2,1,3) Total'+
-
-         ' Group By 1'+
-         ' Order By 2 desc';
-  DMBelShop.CDS_NivelAtendLojas.Close;
-  DMBelShop.SDS_NivelAtendLojas.CommandText:=MySql;
-  DMBelShop.CDS_NivelAtendLojas.Open;
-
-  If Trim(DMBelShop.CDS_NivelAtendLojasNOME_EMP.AsString)='' Then
+  MySqlMedia:='';
+  b:=True;
+  While b do
   Begin
-    msg('Sem Loja a Listar no Período'+cr+cr+'de '+sgDtaI+' a '+sgDtaF+' !!','A');
+    MySql:=' select total.nome_emp, Cast(sum(Total.Nivel_Atendimento) as Numeric(12,6)) Nivel_Atendimento, 0 Ordem'+
+
+           ' from (select l.cod_loja_linx, j.nome_emp, l.ind_curva,'+
+           '       CAST(((100 - ((SUM(case when l.qtd_estoque<1 Then 1 Else 0 End))*(100.000 / count(L.cod_loja_linx)))) *'+
+           '       ((CAST(Case'+
+           '                When l.ind_curva=''A'' Then'+
+           '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=1)'+
+           '                When l.ind_curva=''B'' Then'+
+           '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=2)'+
+           '                When l.ind_curva=''C'' Then'+
+           '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=3)'+
+           '                When l.ind_curva=''D'' Then'+
+           '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=4)'+
+           '                When l.ind_curva=''E'' Then'+
+           '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=5)'+
+           '                Else'+
+           '                   1'+
+           '             End AS integer)) / 100.000)'+
+           '       ) as Numeric(12,6)) Nivel_Atendimento'+
+
+           '       From LINX_PRODUTOS_LOJAS l, LINXLOJAS j'+
+           '       Where l.cod_loja_linx=j.empresa'+
+           '       And   l.dta_processa between '+QuotedStr(sgDtaI)+' and '+QuotedStr(sgDtaF)+
+           '       And   l.cod_loja_linx in '+sgCodLojas+
+
+           '       Group By 1,2,3'+
+           '       Order By 2,1,3) Total'+
+
+           ' Group By 1';
+
+           If MySqlMedia<>'' Then
+           Begin
+             MySql:=
+              MySql+' UNION '+MySqlMedia;
+           End; // If MySqlMedia<>'' Then
+
+    MySql:=
+     MySql+' Order By 3, 2 desc';
     DMBelShop.CDS_NivelAtendLojas.Close;
-    OdirPanApres.Visible:=False;
-    Screen.Cursor:=crDefault;
-    Exit;
-  End;
+    DMBelShop.SDS_NivelAtendLojas.CommandText:=MySql;
+    DMBelShop.CDS_NivelAtendLojas.Open;
+    DMBelShop.CDS_NivelAtendLojas.First;
+
+    If Trim(DMBelShop.CDS_NivelAtendLojasNOME_EMP.AsString)='' Then
+    Begin
+      msg('Sem Loja a Listar no Período'+cr+cr+'de '+sgDtaI+' a '+sgDtaF+' !!','A');
+      DMBelShop.CDS_NivelAtendLojas.Close;
+      OdirPanApres.Visible:=False;
+      Screen.Cursor:=crDefault;
+      Break;
+      Exit;
+    End;
+
+    If MySqlMedia='' Then
+     Begin
+       // Calcula Media da Empresa ----------------------------------
+       cPercTotal:=0.000000;
+       i:=0;
+       DMBelShop.CDS_NivelAtendLojas.DisableControls;
+       While Not DMBelShop.CDS_NivelAtendLojas.Eof do
+       Begin
+         cPercTotal:=cPercTotal+DMBelShop.CDS_NivelAtendLojasNIVEL_ATENDIMENTO.AsCurrency;
+         Inc(i);
+
+         DMBelShop.CDS_NivelAtendLojas.Next;
+       End; // While Not DMBelShop.CDS_NivelAtendLojas.Eof do
+       DMBelShop.CDS_NivelAtendLojas.EnableControls;
+
+       cPercTotal:=RoundTo((cPercTotal/i),-6);
+
+       MySqlMedia:=' SELECT ''MÉDIA DA EMPRESA'', '+f_Troca(',','.',CurrToStr(cPercTotal))+', 1'+
+                   ' FROM RDB$DATABASE';
+     End
+    Else
+     Begin
+       Break;
+     End
+  End; // While b do
 
   // Nivel de Atendimento por Curva nas Lojas ==================================
   MySql:=' select l.cod_loja_linx, j.nome_emp, l.ind_curva,'+
@@ -314,6 +358,7 @@ Begin
   DMBelShop.CDS_NivelAtendCurvas.Close;
   DMBelShop.SDS_NivelAtendCurvas.CommandText:=MySql;
   DMBelShop.CDS_NivelAtendCurvas.Open;
+  DMBelShop.CDS_NivelAtendCurvas.First;
 
   OdirPanApres.Visible:=False;
   Screen.Cursor:=crDefault;
@@ -3493,6 +3538,26 @@ begin
   Begin
     DMBelShop.CDS_NivelAtendCurvas.Locate('NOME_EMP', DMBelShop.CDS_NivelAtendLojasNOME_EMP.AsString,[]);
   End; //   If (CDS_NivelAtendCurvas.Active) And (Not CDS_NivelAtendCurvas.IsEmpty) And ...
+
+end;
+
+procedure TFrmEstoques.Dbg_NivelAtendLojasDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if not (gdSelected in State) Then // Este comando altera cor da Linha
+  Begin
+    If (DMBelShop.CDS_NivelAtendLojasNOME_EMP.AsString='MÉDIA DA EMPRESA') Then
+    Begin
+      Dbg_NivelAtendLojas.Canvas.Brush.Color:=clYellow;
+      Dbg_NivelAtendLojas.Canvas.Font.Style:=[fsBold];
+    End;
+  End; // if not (gdSelected in State) Then
+
+  Dbg_NivelAtendLojas.Canvas.FillRect(Rect);
+  Dbg_NivelAtendLojas.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  // Alinhamento
+  DMBelShop.CDS_NivelAtendLojasNIVEL_ATENDIMENTO.Alignment:=taRightJustify;
 
 end;
 

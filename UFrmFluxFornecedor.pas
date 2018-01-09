@@ -460,29 +460,21 @@ Begin
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
-//    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Data').AsString)<>'' Then
-//     Begin
-//       MySql:=' DELETE FROM TAB_AUXILIAR t'+
-//              ' WHERE t.tip_aux=14'+
-//              ' AND   t.cod_aux='+IntToStr(EdtFluFornCodFornecedor.AsInteger);
-//     End
-//    Else
-//     Begin
-       MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR'+
-              ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
-              ' VALUES ('+
-              ' 14, '+ // TIP_AUX
-              IntToStr(EdtFluFornCodFornecedor.AsInteger)+', '+ // COD_AUX - Código do Fornecedor
-              ' (SELECT Trim(t.des_aux)'+
-              '  FROM TAB_AUXILIAR t'+
-              '  WHERE t.tip_aux=14'+
-              '  AND t.cod_aux='+IntToStr(EdtFluFornCodFornecedor.AsInteger)+')'+', '+ // DES_AUX - Data Conta Corrente
-              QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Data').AsString))))+', '+ // DES_AUX1 - Data da 1ª Negociação
-              ' NULL, '+ // VLR_AUX
-              ' NULL)'+ // VLR_AUX1
 
-              ' MATCHING (TIP_AUX, COD_AUX)';
-//     End; // If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Data').AsString)<>'' Then
+    MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR'+
+           ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
+           ' VALUES ('+
+           ' 14, '+ // TIP_AUX
+           IntToStr(EdtFluFornCodFornecedor.AsInteger)+', '+ // COD_AUX - Código do Fornecedor
+           ' (SELECT Trim(t.des_aux)'+
+           '  FROM TAB_AUXILIAR t'+
+           '  WHERE t.tip_aux=14'+
+           '  AND t.cod_aux='+IntToStr(EdtFluFornCodFornecedor.AsInteger)+')'+', '+ // DES_AUX - Data Conta Corrente
+           QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Data').AsString))))+', '+ // DES_AUX1 - Data da 1ª Negociação
+           ' NULL, '+ // VLR_AUX
+           ' NULL)'+ // VLR_AUX1
+
+           ' MATCHING (TIP_AUX, COD_AUX)';
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SQLC.Execute(MySql, nil, nil);
 
@@ -843,7 +835,7 @@ Begin
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
 
-    DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr1').AsString:= '99999999';
+    DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr1').AsString :='99999999';
     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr2').AsString :='99999999';
     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr3').AsString :='99999999';
     DMBelShop.SDS_FluxoFornecedores.Params.ParamByName('Compr4').AsString :='99999999';
@@ -1806,12 +1798,19 @@ begin
                   ' values (14,'+ // TIP_AUX
                   DMBelShop.CDS_FluxoFornecedoresCOD_FORNECEDOR.AsString+', '+ // COD_AUX
                   QuotedStr(sgDtaInicio)+', '+ // DES_AUX
-                  ' NULL, NULL, NULL)'+ // DES_AUX1, VLR_AUX, VLR_AUX1
+
+                  ' (SELECT Trim(t.des_aux1)'+
+                  '  FROM TAB_AUXILIAR t'+
+                  '  WHERE t.tip_aux=14'+
+                  '  AND   t.cod_aux='+DMBelShop.CDS_FluxoFornecedoresCOD_FORNECEDOR.AsString+')'+', '+ // DES_AUX1 - Data do Primeiro Lançamento do Histórico 900 - CONTA CORRENTE
+
+                  ' NULL, NULL)'+ // VLR_AUX, VLR_AUX1
                   ' matching (TIP_AUX, COD_AUX)';
          End
         Else
          Begin
-           MySql:=' DELETE FROM TAB_AUXILIAR'+
+           MySql:=' UPDATE TAB_AUXILIAR t'+
+                  ' SET DES_AUX=NULL'+ // TIP_AUX
                   ' WHERE TIP_AUX=14'+
                   ' AND   COD_AUX='+DMBelShop.CDS_FluxoFornecedoresCOD_FORNECEDOR.AsString;
          End; // If Trim(sgDtaInicio)<>'99.99.9999' Then
@@ -2152,44 +2151,61 @@ begin
   End;
 
   // Busca Valor da Data Limite de Conta Corrente ==============================
-  cValor:=0;
+  cValor:=0.00;
   sDtaLimite:='01.01.1900';
   If DMBelShop.CDS_FluxoFornecedoresLIMITE.AsString='SIM' Then
    sDtaLimite:=DMBelShop.CDS_FluxoFornecedoresDTA_CC.AsString;
 
   sDtaLimite:=f_Troca('/','.',f_Troca('-','.',sDtaLimite));
 
+  // Acerta Data Limite ========================================================
   If sDtaLimite<>'01.01.1900' Then
-  Begin
-    MySql:=' SELECT MIN(ff.dta_caixa) dta_caixa'+
-           ' FROM FL_CAIXA_FORNECEDORES ff'+
-           ' WHERE ff.cod_historico=0'+
-           ' AND   ff.cod_fornecedor='+IntToStr(EdtFluFornCodFornecedor.AsInteger)+
-           ' AND   ff.dta_caixa>='+QuotedStr(sDtaLimite);
-    DMBelShop.CDS_BuscaRapida.Close;
-    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-    DMBelShop.CDS_BuscaRapida.Open;
+   Begin
+     MySql:=' SELECT MIN(ff.dta_caixa) dta_caixa'+
+            ' FROM FL_CAIXA_FORNECEDORES ff'+
+            ' WHERE ff.cod_historico=0'+
+            ' AND   ff.cod_fornecedor='+IntToStr(EdtFluFornCodFornecedor.AsInteger)+
+            ' AND   ff.dta_caixa>='+QuotedStr(sDtaLimite);
+     DMBelShop.CDS_BuscaRapida.Close;
+     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+     DMBelShop.CDS_BuscaRapida.Open;
 
-    If Not DMBelShop.CDS_BuscaRapida.IsEmpty Then
-     sDtaLimite:=DMBelShop.CDS_BuscaRapida.FieldByName('Dta_Caixa').AsString;
-    DMBelShop.CDS_BuscaRapida.Close;
+     If Not DMBelShop.CDS_BuscaRapida.IsEmpty Then
+      sDtaLimite:=DMBelShop.CDS_BuscaRapida.FieldByName('Dta_Caixa').AsString;
+     DMBelShop.CDS_BuscaRapida.Close;
 
-    sDtaLimite:=f_Troca('/','.',f_Troca('-','.',sDtaLimite));
+     sDtaLimite:=f_Troca('/','.',f_Troca('-','.',sDtaLimite));
 
-    // Busca Valor do Saldo Inicial ---------------------------------
-    MySql:=' SELECT ff.vlr_saldo'+
-           ' FROM fl_caixa_fornecedores ff'+
-           ' WHERE ff.cod_historico = 0'+
-           ' AND   ff.cod_fornecedor='+IntToStr(EdtFluFornCodFornecedor.AsInteger)+
-           ' AND   ff.dta_caixa='+QuotedStr(sDtaLimite);
-    DMBelShop.CDS_BuscaRapida.Close;
-    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-    DMBelShop.CDS_BuscaRapida.Open;
+     // Busca Valor do Saldo Inicial ---------------------------------
+     MySql:=' SELECT ff.vlr_saldo'+
+            ' FROM fl_caixa_fornecedores ff'+
+            ' WHERE ff.cod_historico = 0'+
+            ' AND   ff.cod_fornecedor='+IntToStr(EdtFluFornCodFornecedor.AsInteger)+
+            ' AND   ff.dta_caixa='+QuotedStr(sDtaLimite);
+     DMBelShop.CDS_BuscaRapida.Close;
+     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+     DMBelShop.CDS_BuscaRapida.Open;
 
-    If Not DMBelShop.CDS_BuscaRapida.IsEmpty Then
-     cValor:=DMBelShop.CDS_BuscaRapida.FieldByName('Vlr_Saldo').AsCurrency;
-    DMBelShop.CDS_BuscaRapida.Close;
-  End;
+     If Not DMBelShop.CDS_BuscaRapida.IsEmpty Then
+      cValor:=DMBelShop.CDS_BuscaRapida.FieldByName('Vlr_Saldo').AsCurrency;
+     DMBelShop.CDS_BuscaRapida.Close;
+   End
+  Else
+   Begin
+     MySql:=' SELECT MIN(ff.dta_caixa) dta_caixa'+
+            ' FROM FL_CAIXA_FORNECEDORES ff'+
+            ' WHERE ff.cod_historico=0'+
+            ' AND   ff.cod_fornecedor='+IntToStr(EdtFluFornCodFornecedor.AsInteger)+
+            ' AND   ff.dta_caixa>='+QuotedStr(sDtaLimite);
+     DMBelShop.CDS_BuscaRapida.Close;
+     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+     DMBelShop.CDS_BuscaRapida.Open;
+
+     If Not DMBelShop.CDS_BuscaRapida.IsEmpty Then
+      sDtaLimite:=DMBelShop.CDS_BuscaRapida.FieldByName('Dta_Caixa').AsString;
+     DMBelShop.CDS_BuscaRapida.Close;
+   End; // If sDtaLimite<>'01.01.1900' Then
+  sDtaLimite:=f_Troca('/','.',f_Troca('-','.',sDtaLimite));
 
   // Busca Conta Corrente ======================================================
   OdirPanApres.Caption:='AGUARDE !! Localizando Conta Corrente...';
@@ -2208,6 +2224,11 @@ begin
   DMBelShop.SDS_FluxoFornecedor.Params[1].AsCurrency:=cValor;
   DMBelShop.SDS_FluxoFornecedor.Params[2].AsInteger:=EdtFluFornCodFornecedor.AsInteger;
   DMBelShop.SDS_FluxoFornecedor.Params[3].AsString:=sDtaLimite;
+
+  DMBelShop.SDS_FluxoFornecedor.Params[4].AsCurrency:=cValor;
+  DMBelShop.SDS_FluxoFornecedor.Params[5].AsCurrency:=cValor;
+  DMBelShop.SDS_FluxoFornecedor.Params[6].AsInteger:=EdtFluFornCodFornecedor.AsInteger;
+  DMBelShop.SDS_FluxoFornecedor.Params[7].AsString:=sDtaLimite;
   DMBelShop.CDS_FluxoFornecedor.Open;
   DMBelShop.CDS_FluxoFornecedor.EnableControls;
   OdirPanApres.Visible:=False;
