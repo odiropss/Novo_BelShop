@@ -30828,6 +30828,42 @@ object FrmBelShop: TFrmBelShop
     TabOrder = 5
     Visible = False
   end
+  object Edit1: TEdit
+    Left = 232
+    Top = 200
+    Width = 121
+    Height = 19
+    TabOrder = 6
+    Text = '80'
+    Visible = False
+  end
+  object Edit2: TEdit
+    Left = 232
+    Top = 220
+    Width = 121
+    Height = 19
+    TabOrder = 7
+    Text = '20'
+    Visible = False
+  end
+  object Edit3: TEdit
+    Left = 232
+    Top = 241
+    Width = 121
+    Height = 19
+    TabOrder = 8
+    Text = '20'
+    Visible = False
+  end
+  object Edit4: TEdit
+    Left = 232
+    Top = 262
+    Width = 121
+    Height = 19
+    TabOrder = 9
+    Text = '30'
+    Visible = False
+  end
   object MainMenu1: TMainMenu
     OwnerDraw = True
     Left = 600
@@ -32748,6 +32784,7 @@ object FrmBelShop: TFrmBelShop
         Caption = 'Analise de Reposi'#231#245'es Lojas'
         HelpContext = 3
         object SubMenuCentroDistAnaliseAnalReposicoesRelatReposicao: TMenuItem
+          Tag = 160401
           Bitmap.Data = {
             26050000424D260500000000000036040000280000000F0000000F0000000100
             080000000000F0000000400B0000400B00000001000000000000000000000000
@@ -32792,9 +32829,11 @@ object FrmBelShop: TFrmBelShop
             07F9F90707070707070007070707070707F90707070707070700070707070707
             07070707070707070700}
           Caption = 'Relat'#243'rio de Reposi'#231#245'es'
+          HelpContext = 1
           OnClick = SubMenuCentroDistAnaliseAnalReposicoesRelatReposicaoClick
         end
         object SubMenuCentroDistAnaliseAnalReposicoesEndereco: TMenuItem
+          Tag = 160402
           Bitmap.Data = {
             26050000424D260500000000000036040000280000000F0000000F0000000100
             080000000000F0000000400B0000400B00000001000000000000000000000000
@@ -32839,6 +32878,7 @@ object FrmBelShop: TFrmBelShop
             07F9F90707070707070007070707070707F90707070707070700070707070707
             07070707070707070700}
           Caption = 'Endere'#231'amento'
+          HelpContext = 1
           OnClick = SubMenuCentroDistAnaliseAnalReposicoesEnderecoClick
         end
       end

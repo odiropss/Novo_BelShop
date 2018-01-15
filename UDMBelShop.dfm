@@ -9312,26 +9312,34 @@ object DMBelShop: TDMBelShop
   end
   object SDS_NivelAtendCurvas: TSQLDataSet
     CommandText = 
-      'select'#13#10'l.cod_loja_linx,'#13#10'j.nome_emp,'#13#10'l.ind_curva, --------'#13#10'Ca' +
-      'st(('#13#10' -- Perc_Nao_Faltas'#13#10'(100 - ((SUM(case when l.qtd_estoque<' +
-      '1 Then 1 Else 0 End))*(100.000 / count(L.cod_loja_linx)))) *'#13#10'('#13 +
-      #10'(CAST(case'#13#10'  When l.ind_curva='#39'A'#39' Then'#13#10'    (select p.des_aux ' +
-      'from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=1)'#13#10'  When l' +
-      '.ind_curva='#39'B'#39' Then'#13#10'    (select p.des_aux from tab_auxiliar p w' +
-      'here p.tip_aux=2 and p.cod_aux=2)'#13#10'  When l.ind_curva='#39'C'#39' Then'#13#10 +
-      '    (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and ' +
-      'p.cod_aux=3)'#13#10'  When l.ind_curva='#39'D'#39' Then'#13#10'    (select p.des_aux' +
-      ' from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=4)'#13#10'  When ' +
-      'l.ind_curva='#39'E'#39' Then'#13#10'    (select p.des_aux from tab_auxiliar p ' +
-      'where p.tip_aux=2 and p.cod_aux=5)'#13#10'  else'#13#10'    1'#13#10'End AS intege' +
-      'r)) / 100.000'#13#10')'#13#10') as Numeric(12,6)) Nivel_Atendimento --------' +
-      '--'#13#10#13#10'from linx_produtos_lojas l, linxlojas J'#13#10'where L.cod_loja_' +
-      'linx=J.empresa'#13#10'AND   l.dta_processa between '#39'26.12.2017'#39' and '#39'2' +
-      '8.12.2017'#39#13#10'and  l.cod_loja_linx in (1,2,3,4)'#13#10'group by 1,2,3'#13#10#13 +
-      #10'UNION'#13#10#13#10'select 0, '#39'# PERIODO DE 28/12/2017 A 28/12/2017 #'#39', '#39#39 +
-      ', '#39#39#13#10'from RDB$DATABASE'#13#10#13#10'UNION'#13#10#13#10'select 0, '#39'##'#39', '#39#39', '#39#39#13#10'from' +
-      ' RDB$DATABASE'#13#10#13#10'UNION'#13#10'select 0, lo.nome_emp, '#39#39', '#39#39#13#10'from linx' +
-      'lojas lo'#13#10'where lo.empresa in (1,2,3,4)'#13#10#13#10'order by 2,1,3'#13#10
+      'select l.cod_loja_linx, j.nome_emp, l.ind_curva,'#13#10'Cast(('#13#10'(100 -' +
+      ' ((SUM(case when l.qtd_estoque<1 Then 1 Else 0 End))*(100.000 / ' +
+      'count(L.cod_loja_linx)))) *'#13#10'((CAST(Case'#13#10'         When l.ind_cu' +
+      'rva='#39'A'#39' Then'#13#10'            (select p.des_aux from tab_auxiliar p ' +
+      'where p.tip_aux=2 and p.cod_aux=1)'#13#10'         When l.ind_curva='#39'B' +
+      #39' Then'#13#10'            (select p.des_aux from tab_auxiliar p where ' +
+      'p.tip_aux=2 and p.cod_aux=2)'#13#10'         When l.ind_curva='#39'C'#39' Then' +
+      #13#10'            (select p.des_aux from tab_auxiliar p where p.tip_' +
+      'aux=2 and p.cod_aux=3)'#13#10'         When l.ind_curva='#39'D'#39' Then'#13#10'    ' +
+      '        (select p.des_aux from tab_auxiliar p where p.tip_aux=2 ' +
+      'and p.cod_aux=4)'#13#10'         When l.ind_curva='#39'E'#39' Then'#13#10'          ' +
+      '  (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.' +
+      'cod_aux=5)'#13#10'         Else'#13#10'            1'#13#10'      End AS integer))' +
+      ' / 100.000)'#13#10') as Numeric(12,6)) Nivel_Atendimento'#13#10#13#10'From LINX_' +
+      'PRODUTOS_LOJAS l, LINXLOJAS j'#13#10'Where l.cod_loja_linx=j.empresa'#13#10 +
+      'And   l.dta_processa between '#39'01.01.2018'#39' and '#39'10.01.2018'#39#13#10#13#10'An' +
+      'd   Not exists (Select 1'#13#10'                  From LINXPRODUTOS pr' +
+      #13#10'                  Where pr.cod_produto=l.cod_produto'#13#10'        ' +
+      '          And (((pr.desativado='#39'S'#39'))'#13#10'                       or'#13 +
+      #10'                      ((pr.desativado='#39'N'#39') and (pr.id_colecao=1' +
+      '97))))'#13#10#13#10' Group By 1,2,3'#13#10#13#10'-- Titulo com Per'#237'odo Solicitado --' +
+      '-------------------------'#13#10'UNION'#13#10#13#10'Select 0, '#39'# PERIODO DE 01.0' +
+      '1.2018 a 10.01.2018 #'#39', NUll, NULL'#13#10'From RDB$DATABASE'#13#10#13#10'-- Linh' +
+      'a em Branco -----------------------------------------'#13#10'UNION'#13#10#13#10 +
+      'Select 0, '#39'##'#39', NULL, NULL'#13#10'From RDB$DATABASE'#13#10#13#10'UNION'#13#10#13#10'-- Tit' +
+      'ulo das Colunas das Lojas ----------------------------'#13#10'Select 0' +
+      ', lo.nome_emp, '#39'Curva'#39', NULL'#13#10'From LINXLOJAS lo'#13#10#13#10'Order By 2,1,' +
+      '3'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -9371,11 +9379,11 @@ object DMBelShop: TDMBelShop
       FixedChar = True
       Size = 1
     end
-    object CDS_NivelAtendCurvasNIVEL_ATENDIMENTO: TStringField
-      Alignment = taRightJustify
+    object CDS_NivelAtendCurvasNIVEL_ATENDIMENTO: TFMTBCDField
       DisplayLabel = '% Atendimento'
       FieldName = 'NIVEL_ATENDIMENTO'
-      Size = 21
+      Precision = 15
+      Size = 6
     end
   end
   object SDS_NivelAtendLojas: TSQLDataSet

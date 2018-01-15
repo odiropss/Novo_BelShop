@@ -1379,6 +1379,10 @@ type
     SubMenuComprasNivelAtendimentoLojas: TMenuItem;
     SubMenuCentroDistAnaliseAnalReposicoesEndereco: TMenuItem;
     SubMenuCentroDistAnaliseAnalReposicoesRelatReposicao: TMenuItem;
+    Edit1: TEdit;
+    Edit2: TEdit;
+    Edit3: TEdit;
+    Edit4: TEdit;
 
     // Odir ====================================================================
 
@@ -2736,6 +2740,9 @@ Begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -3993,6 +4000,9 @@ Begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -7074,6 +7084,9 @@ begin
       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmBelShop;
+      OdirPanApres.BringToFront();
       OdirPanApres.Visible:=True;
       Refresh;
 
@@ -8478,6 +8491,9 @@ Begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -8872,6 +8888,9 @@ Begin
       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmBelShop;
+      OdirPanApres.BringToFront();
       OdirPanApres.Visible:=True;
       Refresh;
 
@@ -9962,6 +9981,9 @@ Begin
       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmBelShop;
+      OdirPanApres.BringToFront();
       OdirPanApres.Visible:=True;
       Refresh;
 
@@ -12283,6 +12305,9 @@ Begin
       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmBelShop;
+      OdirPanApres.BringToFront();
       OdirPanApres.Visible:=True;
       Refresh;
 
@@ -14237,6 +14262,9 @@ Begin
       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmBelShop;
+      OdirPanApres.BringToFront();
       OdirPanApres.Visible:=True;
       Refresh;
 
@@ -14408,6 +14436,9 @@ Begin
       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmBelShop;
+      OdirPanApres.BringToFront();
       OdirPanApres.Visible:=True;
       Refresh;
 
@@ -14867,6 +14898,9 @@ Begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -15860,6 +15894,9 @@ Begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -16378,6 +16415,9 @@ Begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -17261,6 +17301,9 @@ Begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -17608,6 +17651,9 @@ Begin
       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmBelShop;
+      OdirPanApres.BringToFront();
       OdirPanApres.Visible:=True;
       Refresh;
 
@@ -18992,6 +19038,9 @@ Begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -19302,6 +19351,9 @@ Begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -20575,6 +20627,9 @@ Begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -22571,6 +22626,9 @@ begin
 //       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
 //       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
 //       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+//       OdirPanApres.Font.Style:=[fsBold];
+//       OdirPanApres.Parent:=FrmBelShop;
+//       OdirPanApres.BringToFront();
 //       OdirPanApres.Visible:=True;
 //       Refresh;
 //     Except
@@ -24276,6 +24334,8 @@ begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
   OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
@@ -24854,6 +24914,9 @@ begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -25731,6 +25794,9 @@ begin
       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmBelShop;
+      OdirPanApres.BringToFront();
       OdirPanApres.Visible:=True;
       Refresh;
 
@@ -26305,6 +26371,9 @@ begin
     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
     OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
     OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmBelShop;
+    OdirPanApres.BringToFront();
     OdirPanApres.Visible:=True;
     Refresh;
 
@@ -28550,6 +28619,9 @@ begin
     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
     OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
     OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmBelShop;
+    OdirPanApres.BringToFront();
     OdirPanApres.Visible:=True;
     Refresh;
     
@@ -31514,6 +31586,9 @@ begin
     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
     OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
     OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmBelShop;
+    OdirPanApres.BringToFront();
     OdirPanApres.Visible:=True;
     Refresh;
 
@@ -32541,6 +32616,9 @@ Begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -32653,6 +32731,9 @@ Begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -33096,6 +33177,9 @@ begin
       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmBelShop;
+      OdirPanApres.BringToFront();
       OdirPanApres.Visible:=True;
       Refresh;
 
@@ -34112,6 +34196,9 @@ begin
       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmBelShop;
+      OdirPanApres.BringToFront();
       OdirPanApres.Visible:=True;
       Refresh;
 
@@ -35355,6 +35442,9 @@ begin
       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmBelShop;
+      OdirPanApres.BringToFront();
       OdirPanApres.Visible:=True;
       Refresh;
 
@@ -37768,6 +37858,9 @@ begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -40492,6 +40585,9 @@ begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -42241,6 +42337,9 @@ begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -42254,6 +42353,9 @@ begin
     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
     OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
     OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmBelShop;
+    OdirPanApres.BringToFront();
     OdirPanApres.Visible:=True;
     Refresh;
 
@@ -42295,6 +42397,9 @@ begin
           OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
           OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
           OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+          OdirPanApres.Font.Style:=[fsBold];
+          OdirPanApres.Parent:=FrmBelShop;
+          OdirPanApres.BringToFront();
           OdirPanApres.Visible:=True;
           Refresh;
 
@@ -42343,6 +42448,9 @@ begin
             OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
             OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
             OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+            OdirPanApres.Font.Style:=[fsBold];
+            OdirPanApres.Parent:=FrmBelShop;
+            OdirPanApres.BringToFront();
             OdirPanApres.Visible:=True;
             Refresh;
 
@@ -43407,6 +43515,9 @@ begin
 //       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
 //       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
 //       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+//       OdirPanApres.Font.Style:=[fsBold];
+//       OdirPanApres.Parent:=FrmBelShop;
+//       OdirPanApres.BringToFront();
 //       OdirPanApres.Visible:=True;
 //       Refresh;
 //     Except
@@ -43774,6 +43885,9 @@ begin
     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
     OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
     OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmBelShop;
+    OdirPanApres.BringToFront();
     OdirPanApres.Visible:=True;
     Refresh;
 
@@ -43791,6 +43905,9 @@ begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Screen.Cursor:=crAppStart;
   Refresh;
@@ -43841,6 +43958,9 @@ begin
       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmBelShop;
+      OdirPanApres.BringToFront();
       OdirPanApres.Visible:=True;
       Refresh;
 
@@ -44952,6 +45072,9 @@ begin
     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
     OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
     OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmBelShop;
+    OdirPanApres.BringToFront();
     OdirPanApres.Visible:=True;
     Refresh;
 
@@ -45073,6 +45196,9 @@ begin
     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
     OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
     OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmBelShop;
+    OdirPanApres.BringToFront();
     OdirPanApres.Visible:=True;
     Refresh;
 
@@ -45130,6 +45256,9 @@ begin
     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
     OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
     OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmBelShop;
+    OdirPanApres.BringToFront();
     OdirPanApres.Visible:=True;
     Refresh;
 
@@ -45591,6 +45720,7 @@ begin
       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
       OdirPanApres.Font.Style:=[fsBold];
       OdirPanApres.Parent:=FrmBelShop;
+      OdirPanApres.BringToFront();
       OdirPanApres.Visible:=True;
       Application.ProcessMessages;
 
@@ -45658,6 +45788,9 @@ begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -45800,6 +45933,9 @@ begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -45977,6 +46113,8 @@ begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
   OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
@@ -46814,11 +46952,20 @@ Var
   sPrimDiaAnterior, sUltDiaAnterior : String;
 
 Begin
+  OdirPanApres.Caption:='AGUARDE !! Montando Relatório de Reposição - Logistica...'+sNumDoc;
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+
+  Screen.Cursor:=crAppStart;
+  Refresh;
 
   // Dia de Hoje ===============================================================
   dDta:=DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor);
-  dDta:=strtodate('31/12/2017');
-
   sUltDiaAual:=f_Troca('/','.',f_Troca('-','.',DateToStr(dDta)));
 
   DecodeDate(dDta, wAno, wMes, wDia);
@@ -46826,7 +46973,7 @@ Begin
   sAnoAtual:=IntToStr(wAno);
   sPrimDiaAtual:='01.'+IntToStr(wMes)+'.'+IntToStr(wAno);
 
-  // Dia Anterior a Hoje com Separação =========================================
+  // Dia Anterior a Hoje com Reposições =========================================
   MySql:=' select Cast(max(mv.data_lancamento) as Date) DiaOntem'+
          ' from linxmovimento mv'+
          ' Where ((mv.operacao=''S'' and  mv.tipo_transacao=''T'')'+ // Transferencia para Lojas Filiais
@@ -46853,9 +47000,9 @@ Begin
   // Totais Geral Mes Anterior -----------------------------------------'+
   MySql:=' select'+
          ' ''Total '' OBS,'+
-         ' ''Mes de '+Copy(sNomeMesAnterior,1,3)+'/''||Cast(extract(Year from mv.data_lancamento) as varchar(4)) Loja,'+ //Alterar Nome/Ano Mes Anterior
-         ' count(mv.empresa) qtd_Linhas,'+
-         ' Cast(sum(mv.quantidade) as Integer) qtd_Unidades,'+
+         ' ''Mes de '+sNomeMesAnterior+'/''||Cast(extract(Year from mv.data_lancamento) as varchar(4)) Loja,'+ //Alterar Nome/Ano Mes Anterior
+         ' Cast(count(mv.empresa) as Numeric(12,2)) qtd_Linhas,'+
+         ' Cast(sum(mv.quantidade) as Numeric(12,2)) qtd_Unidades,'+
          ' Cast(sum(mv.valor_total) as Numeric(12,2)) vlr_total,'+
          ' ''00'' Grupo'+
 
@@ -46874,9 +47021,9 @@ Begin
 
          ' select'+
          ' ''Total '','+
-         ' ''Mes de '+Copy(sNomeMesAtual,1,3)+'/''||Cast(extract(Year from mv.data_lancamento) as varchar(4)) Loja,'+ // Alterar Nome/Ano Mes Atual ========================================
-         ' count(mv.empresa) qtd_Linhas,'+
-         ' Cast(sum(mv.quantidade) as Integer) qtd_Unidades,'+
+         ' ''Mes de '+sNomeMesAtual+'/''||Cast(extract(Year from mv.data_lancamento) as varchar(4)) Loja,'+ // Alterar Nome/Ano Mes Atual ========================================
+         ' Cast(count(mv.empresa) as Numeric(12,2)) qtd_Linhas,'+
+         ' Cast(sum(mv.quantidade) as Numeric(12,2)) qtd_Unidades,'+
          ' Cast(sum(mv.valor_total) as Numeric(12,2)) vlr_total,'+
          ' ''01'' Grupo'+
 
@@ -46896,9 +47043,9 @@ Begin
 
          ' select'+
          ' ''Total '','+
-         ' ''Dia '+sDiaOntem+''' Loja,'+ // Alterar Dia Anterior COM SEPARAÇÃO ==========================================
-         ' count(mv.empresa) qtd_Linhas,'+
-         ' Cast(sum(mv.quantidade) as Integer) qtd_Unidades,'+
+         ' ''Dia '+sDiaOntem+''' Loja,'+ // Alterar Dia Anterior COM REPOSIÇÃO ==========================================
+         ' Cast(count(mv.empresa) as Numeric(12,2)) qtd_Linhas,'+
+         ' Cast(sum(mv.quantidade) as Numeric(12,2)) qtd_Unidades,'+
          ' Cast(sum(mv.valor_total) as Numeric(12,2)) vlr_total,'+
          ' ''02'' Grupo'+
 
@@ -46909,7 +47056,7 @@ Begin
          '       or'+
          '        (mv.operacao=''S'' and  mv.tipo_transacao is null and mv.codigo_cliente=347))'+ // Venda Weceslau Esbocar
          ' and   mv.empresa=2'+
-         ' and mv.data_lancamento='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDiaOntem)))+ // Alterar Dia Anterior COM SEPARAÇÃO==========================================
+         ' and mv.data_lancamento='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDiaOntem)))+ // Alterar Dia Anterior COM REPOSIÇÃO ==========================================
 
          ' group by 1,2'+
 
@@ -46932,7 +47079,7 @@ Begin
 
          ' select'+
          ' NULL,'+
-         ' ''SEPARAÇÃO MÊS DE '+sNomeMesAnterior+'/'+sAnoAnterior+''','+ // Alterar Nome/Ano Mes Anterior ==========================================
+         ' ''REPOSIÇÕES MÊS DE '+sNomeMesAnterior+'/'+sAnoAnterior+''','+ // Alterar Nome/Ano Mes Anterior ==========================================
          ' NULL,'+
          ' NULL,'+
          ' NULL,'+
@@ -46943,10 +47090,10 @@ Begin
          ' UNION'+
 
          ' select'+
-         ' ''Total '+Copy(sNomeMesAnterior,1,3)+'/''||Cast(extract(Year from mv.data_lancamento) as varchar(4)),'+ // Alterar Abreviatura Mes Anterior ==========================================
+         ' ''Total '+sNomeMesAnterior+'/''||Cast(extract(Year from mv.data_lancamento) as varchar(4)),'+ // Alterar Abreviatura Mes Anterior ==========================================
          ' em.razao_social Loja,'+
-         ' count(mv.empresa) qtd_Linhas,'+
-         ' Cast(sum(mv.quantidade) as Integer) qtd_Unidades,'+
+         ' Cast(count(mv.empresa) as Numeric(12,2)) qtd_Linhas,'+
+         ' Cast(sum(mv.quantidade) as Numeric(12,2)) qtd_Unidades,'+
          ' Cast(sum(mv.valor_total) as Numeric(12,2)) vlr_total,'+
          ' ''031'' Grupo'+
 
@@ -46979,7 +47126,7 @@ Begin
 
          ' select'+
          ' NULL,'+
-         ' ''SEPARAÇÃO MÊS DE '+sNomeMesAtual+'/'+sAnoAtual+''','+ // Alterar Nome/Ano Mes Autal ==========================================
+         ' ''REPOSIÇÕES MÊS DE '+sNomeMesAtual+'/'+sAnoAtual+''','+ // Alterar Nome/Ano Mes Autal ==========================================
          ' NULL,'+
          ' NULL,'+
          ' NULL,'+
@@ -46990,10 +47137,10 @@ Begin
          ' UNION'+
 
          ' select'+
-         ' ''Total '+Copy(sNomeMesAtual,1,3)+'/''||Cast(extract(Year from mv.data_lancamento) as varchar(4)),'+ // Alterar Abreviatura Mes Atual ========================================
+         ' ''Total '+sNomeMesAtual+'/''||Cast(extract(Year from mv.data_lancamento) as varchar(4)),'+ // Alterar Abreviatura Mes Atual ========================================
          ' em.razao_social Loja,'+
-         ' count(mv.empresa) qtd_Linhas,'+
-         ' Cast(sum(mv.quantidade) as Integer) qtd_Unidades,'+
+         ' Cast(count(mv.empresa) as Numeric(12,2)) qtd_Linhas,'+
+         ' Cast(sum(mv.quantidade) as Numeric(12,2)) qtd_Unidades,'+
          ' Cast(sum(mv.valor_total) as Numeric(12,2)) vlr_total,'+
          ' ''041'' Grupo'+
 
@@ -47025,6 +47172,9 @@ Begin
   DMBelShop.SDS_Busca.CommandText:=MySql+MySqlClausula1+MySqlClausula2;
   DMBelShop.CDS_Busca.Open;
 
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+
   With DMRelatorio.RelVisual do
   Begin
     ClientDataSet:=DMBelShop.CDS_Busca;
@@ -47033,20 +47183,32 @@ Begin
     RodapeGrupo:=True;
     TextoRodape:='';
     TextoRodapeGrupo:='';
+    Zoom:=150;
 
     ImprimirTarjaCinza:=False;
     ImprimirVisto:=False;
-    Cabecalho1Esquerda:='';
-    Cabecalho1Esquerda:='LOJAS BELSHOP';
 
-    Cabecalho2Esquerda:='TODAS AS LOJAS';
-    Cabecalho3Centro:='RELATÓRIO DE E-MAILs';
+    Cabecalho1Esquerda:='BelShop - Centro de Distribuição';
+    Cabecalho1Direita:='#Data';
+    Cabecalho1Centro:='RELATÓRIO DE REPOSIÇÕES';
+
+    Cabecalho2Esquerda:=EmptyStr;
+    Cabecalho2Direita:=EmptyStr;
+    Cabecalho2Centro:=EmptyStr;
+
+    Cabecalho3Esquerda:=EmptyStr;
+    Cabecalho3Direita:=EmptyStr;
+    Cabecalho3Centro:=EmptyStr;
 
     DefinicaoCampos.Clear;
-    DefinicaoCampos.Add('D0;90;E;;LOJA;LOJA');
-    DefinicaoCampos.Add('D0;15;D;;QTD_LINHAS;QTD_LINHAS');
-    DefinicaoCampos.Add('D0;15;D;;QTD_UNIDADES;QTD_UNIDADES');
-    DefinicaoCampos.Add('D0;20;D;#,##0.00;VLR_TOTAL;VLR_TOTAL');
+    DefinicaoCampos.Add('D0;80;E;;LOJA;LOJA');
+    DefinicaoCampos.Add('D0;20;D;#,##0;QTD_LINHAS;QTD LINHAS');
+    DefinicaoCampos.Add('D0;20;D;#,##0;QTD_UNIDADES;QTD UNIDADES');
+    DefinicaoCampos.Add('D0;30;D;#,##0.00;VLR_TOTAL;VLR TOTAL');
+//    DefinicaoCampos.Add('D0;'+Edit1.Text+';E;;LOJA;LOJA');
+//    DefinicaoCampos.Add('D0;'+Edit2.Text+';D;#,##0;QTD_LINHAS;QTD LINHAS');
+//    DefinicaoCampos.Add('D0;'+Edit3.Text+';D;#,##0;QTD_UNIDADES;QTD UNIDADES');
+//    DefinicaoCampos.Add('D0;'+Edit4.Text+';D;#,##0.00;VLR_TOTAL;VLR TOTAL');
     Execute;
   End; // With DMRelatorio.RelVisual do
 

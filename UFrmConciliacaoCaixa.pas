@@ -1659,7 +1659,7 @@ begin
     End;
 
     bgSemBancoDados:=False; // No SIDICOM
-    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Pasta_Base_Dados').AsString)='SEM' Then
+    If (Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Pasta_Base_Dados').AsString)='SEM') Then
      bgSemBancoDados:=True; // Somente no Linx
 
     EdtConcFechaCaixaDesLoja.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('Razao_Social').AsString;
@@ -1766,14 +1766,12 @@ Var
   MySql: String;
   bFechado: Boolean;
 begin
-
   If EdtConcFechaCaixaCodLoja.AsInteger=0 Then
   Begin
     msg('Loja Inválida !!','A');
     EdtConcFechaCaixaCodLoja.SetFocus;
     Exit;
   End;
-
 
   PC_ConcFechaCaixa.TabIndex:=0;
   PC_ConcFechaCaixaChange(Self);
@@ -1798,6 +1796,21 @@ begin
     DtEdtConcFechaCaixaData.SetFocus;
     Exit;
   End;
+
+  // Datas que Começaram a GeoBeauty
+  // 02 ANDRADAS: 27/12,
+  // 05 SALGADO:28/12,
+  // 06 OTAVIO:18/12
+  // 08 WENCESLAU:18/12,
+  // 15 MOSTARDEIRO:20/12
+  // 16 URUGUAI:26/12/2017
+  If ((EdtConcFechaCaixaCodLoja.AsInteger=2)  and (DtEdtConcFechaCaixaData.Date>=StrToDate('27/12/2017'))) Or
+     ((EdtConcFechaCaixaCodLoja.AsInteger=5)  and (DtEdtConcFechaCaixaData.Date>=StrToDate('28/12/2017'))) Or
+     ((EdtConcFechaCaixaCodLoja.AsInteger=6)  and (DtEdtConcFechaCaixaData.Date>=StrToDate('18/12/2017'))) Or
+     ((EdtConcFechaCaixaCodLoja.AsInteger=8)  and (DtEdtConcFechaCaixaData.Date>=StrToDate('18/12/2017'))) Or
+     ((EdtConcFechaCaixaCodLoja.AsInteger=15) and (DtEdtConcFechaCaixaData.Date>=StrToDate('20/12/2017'))) Or
+     ((EdtConcFechaCaixaCodLoja.AsInteger=16) and (DtEdtConcFechaCaixaData.Date>=StrToDate('26/12/2017'))) Then
+    bgSemBancoDados:=True; // Somente no Linx
 
   // Busca Doctos da Loja ======================================================
   sDta:=f_Troca('/','.',DtEdtConcFechaCaixaData.Text);

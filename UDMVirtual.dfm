@@ -1713,7 +1713,7 @@ object DMVirtual: TDMVirtual
     Aggregates = <>
     IndexFieldNames = 'ORDEM'
     Params = <>
-    Left = 400
+    Left = 408
     Top = 265
     object CDS_V_NFeCOD_LOJA: TStringField
       Alignment = taRightJustify

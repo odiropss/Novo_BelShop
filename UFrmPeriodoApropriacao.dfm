@@ -430,7 +430,7 @@ object FrmPeriodoApropriacao: TFrmPeriodoApropriacao
       ParentFont = False
     end
     object Label75: TLabel
-      Left = 202
+      Left = 203
       Top = 87
       Width = 8
       Height = 13
@@ -575,10 +575,10 @@ object FrmPeriodoApropriacao: TFrmPeriodoApropriacao
       StyleFocused.BorderColor = clMoneyGreen
       StyleFocused.Color = clSilver
       TabOrder = 1
-      Width = 102
+      Width = 99
     end
     object DtEdt_PeriodoAproprDtaFim: TcxDateEdit
-      Left = 214
+      Left = 218
       Top = 81
       ParentFont = False
       Properties.ReadOnly = False
@@ -592,7 +592,7 @@ object FrmPeriodoApropriacao: TFrmPeriodoApropriacao
       StyleFocused.BorderColor = clMoneyGreen
       StyleFocused.Color = clSilver
       TabOrder = 2
-      Width = 102
+      Width = 99
     end
     object EdtNumero: TJvSpinEdit
       Left = 69

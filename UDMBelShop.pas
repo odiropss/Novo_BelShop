@@ -1197,7 +1197,6 @@ type
     CDS_NivelAtendCurvasCOD_LOJA_LINX: TIntegerField;
     CDS_NivelAtendCurvasNOME_EMP: TStringField;
     CDS_NivelAtendCurvasIND_CURVA: TStringField;
-    CDS_NivelAtendCurvasNIVEL_ATENDIMENTO: TStringField;
     SDS_NivelAtendLojas: TSQLDataSet;
     DS_NivelAtendLojas: TDataSource;
     DSP_NivelAtendLojas: TDataSetProvider;
@@ -1205,6 +1204,7 @@ type
     CDS_NivelAtendLojasNOME_EMP: TStringField;
     CDS_NivelAtendLojasNIVEL_ATENDIMENTO: TFMTBCDField;
     CDS_NivelAtendLojasORDEM: TIntegerField;
+    CDS_NivelAtendCurvasNIVEL_ATENDIMENTO: TFMTBCDField;
 
     //==========================================================================
     // Odir ====================================================================
