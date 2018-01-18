@@ -2353,6 +2353,44 @@ type
       Sender: TObject);
     procedure SubMenuCentroDistAnaliseAnalReposicoesRelatReposicaoClick(
       Sender: TObject);
+    procedure Dbg_UsuariosKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_GeraOCTotalGeralKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_ConsultaOCOrdensCompraKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_ConsultaNFeProdLojasKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_ConsultaNFeProdutosKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_CurvaABCEndCurvaABCKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_CurvaABCEndCurvaABCFornKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_CurvaABCEndEnderecamentoKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_FinanGrFinanceiroKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_FinanGrFinanUsuarioKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_FinanDemonsResultadoKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_FinanObjetivosManutKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_FinanObjetivosResultadosAuditoriaKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_FinanFechaCaixaDoctosKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_FinanFechaCaixaTotalKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_FinanFechaDiarioMovtosKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_FinanMLResultadoKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_FinanMLResFinalKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Dbg_EstFisFinanGiroEstoqueKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -24194,6 +24232,10 @@ end;
 
 procedure TFrmBelShop.Dbg_FiltroFornecedoresKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   if (Key=VK_Delete) And (Trim(sgCodLojaUnica)='') Then
   Begin
     If Not DMVirtual.CDS_V_Fornecedores.IsEmpty Then
@@ -24225,6 +24267,10 @@ end;
 
 procedure TFrmBelShop.Dbg_FiltroGruposProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   if Key=VK_Delete Then
   Begin
     If Not DMVirtual.CDS_V_GruposProdutos.IsEmpty Then
@@ -24247,6 +24293,10 @@ end;
 
 procedure TFrmBelShop.Dbg_FiltroSubGruposProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   if Key=VK_Delete Then
    If Not DMVirtual.CDS_V_SubGruposProdutos.IsEmpty Then
     DMVirtual.CDS_V_SubGruposProdutos.Delete;
@@ -24628,6 +24678,10 @@ end;
 
 procedure TFrmBelShop.Dbg_OCAplicacaoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   if Key=VK_Delete Then
    If Not DMVirtual.CDS_V_Aplicacao.IsEmpty Then
     DMVirtual.CDS_V_Aplicacao.Delete;
@@ -24690,6 +24744,10 @@ end;
 
 procedure TFrmBelShop.Dbg_OCFamiliaPrecosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   if Key=VK_Delete Then
    If Not DMVirtual.CDS_V_FamiliaPrecos.IsEmpty Then
     DMVirtual.CDS_V_FamiliaPrecos.Delete;
@@ -24735,6 +24793,10 @@ end;
 
 procedure TFrmBelShop.Dbg_FiltroGrupoSTKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   if Key=VK_Delete Then
    If Not DMVirtual.CDS_V_GrupoST.IsEmpty Then
     DMVirtual.CDS_V_GrupoST.Delete;
@@ -24824,6 +24886,10 @@ end;
 
 procedure TFrmBelShop.Dbg_FiltroProdutoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   If Key=VK_Delete Then
   Begin
     If Not DMVirtual.CDS_V_Produtos.IsEmpty Then
@@ -25054,6 +25120,10 @@ procedure TFrmBelShop.Dbg_GeraOCProdutosKeyDown(Sender: TObject; var Key: Word; 
 Var
   MySql, s: String;
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   If DMBelShop.CDS_AComprarItens.IsEmpty Then
    Exit;
 
@@ -25122,6 +25192,10 @@ procedure TFrmBelShop.Dbg_GeraOCFiliaisKeyDown(Sender: TObject; var Key: Word; S
 Var
   MySql, s: String;
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   If DMBelShop.CDS_AComprarItens.IsEmpty Then
    Exit;
 
@@ -25189,6 +25263,10 @@ procedure TFrmBelShop.Dbg_GeraOCGridKeyDown(Sender: TObject; var Key: Word; Shif
 Var
   MySql, s: String;
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   If DMBelShop.CDS_AComprarItens.IsEmpty Then
    Exit;
 
@@ -27366,6 +27444,10 @@ procedure TFrmBelShop.Dbg_GeraOCEditaGridKeyDown(Sender: TObject; var Key: Word;
 Var
   s: String;
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   If key=Vk_Return Then
   Begin
     DMBelShop.IBQ_AComprarEdita.Next;
@@ -29636,6 +29718,9 @@ procedure TFrmBelShop.Dbg_FinanPlanFinanceiraKeyDown(Sender: TObject;var Key: Wo
 Var
   s: String;  
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
 
   // Acerta Posicição na Celula ================================================
   if (Key = VK_Left) and (THackDBGrid(Dbg_FinanPlanFinanceira).SelectedIndex = 3) then
@@ -29876,6 +29961,10 @@ end;
 
 procedure TFrmBelShop.Dbg_FinanComprovantesKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   if (Key = VK_Left) and (THackDBGrid(Dbg_FinanComprovantes).SelectedIndex = 2) then // Index da 1ª Coluna Não Fixada Sem Contar Indicador
   Begin
     Key := VK_Clear;
@@ -31429,6 +31518,10 @@ end;
 
 procedure TFrmBelShop.Dbg_FinanDemonsResultPlanDemonsKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   // Acerta Posicição na Celula ================================================
   if (Key = VK_Left) and (THackDBGrid(Dbg_FinanDemonsResultPlanDemons).SelectedIndex = 2) then
   Begin
@@ -31492,6 +31585,10 @@ end;
 
 procedure TFrmBelShop.Dbg_FinanPlanoContasCompr200KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   // Acerta Posicição na Celula ================================================
   if (Key = VK_Left) and (THackDBGrid(Dbg_FinanPlanoContasCompr200).SelectedIndex=1) then
   Begin
@@ -33123,6 +33220,10 @@ end;
 
 procedure TFrmBelShop.Dbg_FinanObjetivosResultadosDiasKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   // Acerta Posicição na Celula ================================================
   if (Key = VK_Left) and (THackDBGrid(Dbg_FinanObjetivosResultadosDias).SelectedIndex=4) then
   Begin
@@ -34548,6 +34649,10 @@ end;
 
 procedure TFrmBelShop.Dbg_EstFisFinanEmpresaKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   // Acerta Posicição na Celula ================================================
   if (Key = VK_Left) and (THackDBGrid(Dbg_EstFisFinanEmpresa).SelectedIndex = 2) then
   Begin
@@ -34558,6 +34663,10 @@ end;
 
 procedure TFrmBelShop.Dbg_EstFisFinanLojasKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   // Acerta Posicição na Celula ================================================
   if (Key = VK_Left) and (THackDBGrid(Dbg_EstFisFinanLojas).SelectedIndex = 2) then
   Begin
@@ -34648,6 +34757,10 @@ Var
   sCodObjetivo: String;  
   s, ss: String;
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   If (Key=VK_F6) and (Not Dbg_FinanObjetivosManut.Enabled) Then
   Begin
     sCodObjetivo:=DMBelShop.CDS_ObjetivosCOD_OBJETIVO.AsString;
@@ -35394,6 +35507,10 @@ end;
 
 procedure TFrmBelShop.Dbg_FinanObjetivosResultadosMesesKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   // Acerta Posicição na Celula ================================================
   if (Key = VK_Left) and (THackDBGrid(Dbg_FinanObjetivosResultadosMeses).SelectedIndex=4) then
   Begin
@@ -38088,7 +38205,7 @@ begin
     DMVirtual.CDS_V_GiroEstoque.Next;
   End;// While Not DMVirtual.CDS_V_GiroEstoque.Eof do
 
-  Screen.Cursor:=crDefault;    
+  Screen.Cursor:=crDefault;
   OdirPanApres.Visible:=False;
   DMVirtual.CDS_V_GiroEstoque.First;
 
@@ -38099,31 +38216,31 @@ end;
 procedure TFrmBelShop.Dbg_EstFisFinanGiroEstoqueDrawColumnCell(Sender: TObject; const Rect: TRect;
           DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
-    if not (gdSelected in State) Then
+  if not (gdSelected in State) Then
+  Begin
+    If iNrConexoes>1 Then
     Begin
-      If iNrConexoes>1 Then
+      if (DMVirtual.CDS_V_GiroEstoqueCOD_PRODUTO.AsString<>'') Then
       Begin
-        if (DMVirtual.CDS_V_GiroEstoqueCOD_PRODUTO.AsString<>'') Then
-        Begin
-          Dbg_EstFisFinanGiroEstoque.Canvas.Brush.Color:=$00BBFFFF;
-        End;
+        Dbg_EstFisFinanGiroEstoque.Canvas.Brush.Color:=$00BBFFFF;
+      End;
 
-        if (DMVirtual.CDS_V_GiroEstoqueCOD_LOJA.AsString='Empresa') Then
-        Begin
-          Dbg_EstFisFinanGiroEstoque.Canvas.Font.Style:=[fsBold];
-          Dbg_EstFisFinanGiroEstoque.Canvas.Brush.Color:=clSkyBlue;
-        End;
-      End; // If iNrConexoes>1 Then
-
-      if (DMVirtual.CDS_V_GiroEstoqueDes_PRODUTO.AsString='Total Gereal') Then
+      if (DMVirtual.CDS_V_GiroEstoqueCOD_LOJA.AsString='Empresa') Then
       Begin
         Dbg_EstFisFinanGiroEstoque.Canvas.Font.Style:=[fsBold];
         Dbg_EstFisFinanGiroEstoque.Canvas.Brush.Color:=clSkyBlue;
       End;
+    End; // If iNrConexoes>1 Then
 
-      Dbg_EstFisFinanGiroEstoque.Canvas.FillRect(Rect);
-      Dbg_EstFisFinanGiroEstoque.DefaultDrawDataCell(Rect,Column.Field,state);
-    End; // if not (gdSelected in State) Then
+    if (DMVirtual.CDS_V_GiroEstoqueDes_PRODUTO.AsString='Total Gereal') Then
+    Begin
+      Dbg_EstFisFinanGiroEstoque.Canvas.Font.Style:=[fsBold];
+      Dbg_EstFisFinanGiroEstoque.Canvas.Brush.Color:=clSkyBlue;
+    End;
+
+    Dbg_EstFisFinanGiroEstoque.Canvas.FillRect(Rect);
+    Dbg_EstFisFinanGiroEstoque.DefaultDrawDataCell(Rect,Column.Field,state);
+  End; // if not (gdSelected in State) Then
 
 end;                               
 
@@ -38246,6 +38363,10 @@ procedure TFrmBelShop.Dbg_CurvaABCMixProdKeyDown(Sender: TObject; var Key: Word;
 Var
   MySql, sCampo, sCurva: String;
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   sCampo:='';
 
   // Mix Curva A ===============================================================
@@ -38673,6 +38794,10 @@ end;
 
 procedure TFrmBelShop.Dbg_FiltroComprovKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   If Key=VK_Delete Then
   Begin
    If Not DMVirtual.CDS_V_Comprovantes.IsEmpty Then
@@ -40824,6 +40949,9 @@ procedure TFrmBelShop.Dbg_FinanMargemLucroKeyDown(Sender: TObject; var Key: Word
 Var
   s: String;
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
 
   if (Key = VK_Left) and (THackDBGrid(Dbg_FinanMargemLucro).SelectedIndex=3) Then // Index da 1ª Coluna Não Fixada Sem Contar Indicador
   Begin
@@ -40985,6 +41113,10 @@ procedure TFrmBelShop.Dbg_FinanMargemLucroBonifKeyDown(Sender: TObject; var Key:
 Var
   s: String;
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   if (Key = VK_Left) and (THackDBGrid(Dbg_FinanMargemLucroBonif).SelectedIndex=3) Then // Index da 1ª Coluna Não Fixada Sem Contar Indicador
   Begin
     Key := VK_Clear;
@@ -41375,6 +41507,10 @@ procedure TFrmBelShop.Dbg_FinanMLFornKeyDown(Sender: TObject; var Key: Word; Shi
 Var
   s: String;
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   if (Key = VK_Left) and (THackDBGrid(Dbg_FinanMLForn).SelectedIndex=2) Then // Index da 1ª Coluna Não Fixada Sem Contar Indicador
   Begin
     Key := VK_Clear;
@@ -41983,6 +42119,9 @@ procedure TFrmBelShop.Dbg_FinanMargemLucroScrollKeyDown(Sender: TObject; var Key
 Var
   s: String;
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
 
   if (Key = VK_Left) and (THackDBGrid(Dbg_FinanMargemLucroScroll).SelectedIndex=3) Then // Index da 1ª Coluna Não Fixada Sem Contar Indicador
   Begin
@@ -44584,6 +44723,10 @@ procedure TFrmBelShop.Dbg_ConsultaNFeNotasLojasKeyDown(Sender: TObject; var Key:
 Var
   s: String;
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   // Localiza Documento ========================================================
   If (Key=VK_F4) and (SBar_ConsultaNFeNotasLojas.Visible) Then
   Begin
@@ -46888,7 +47031,10 @@ begin
 
   FrmBancoExtratos.Caption:='Depósitos Bancários';
   FrmBancoExtratos.Ts_ConciliacoesManutDepositos.TabVisible:=True;
+
+  FrmBancoExtratos.Align:=alClient;
   FrmBancoExtratos.ShowModal;
+  FrmBancoExtratos.Align:=alNone;
 
 end;
 
@@ -47212,6 +47358,165 @@ Begin
     Execute;
   End; // With DMRelatorio.RelVisual do
 
+end;
+
+procedure TFrmBelShop.Dbg_UsuariosKeyDown(Sender: TObject; var Key: Word;Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+end;
+
+procedure TFrmBelShop.Dbg_GeraOCTotalGeralKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+
+end;
+
+procedure TFrmBelShop.Dbg_ConsultaOCOrdensCompraKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+
+end;
+
+procedure TFrmBelShop.Dbg_ConsultaNFeProdLojasKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+
+end;
+
+procedure TFrmBelShop.Dbg_ConsultaNFeProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+
+end;
+
+procedure TFrmBelShop.Dbg_CurvaABCEndCurvaABCKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+
+end;
+
+procedure TFrmBelShop.Dbg_CurvaABCEndCurvaABCFornKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+
+end;
+
+procedure TFrmBelShop.Dbg_CurvaABCEndEnderecamentoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+
+end;
+
+procedure TFrmBelShop.Dbg_FinanGrFinanceiroKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+end;
+
+procedure TFrmBelShop.Dbg_FinanGrFinanUsuarioKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+end;
+
+procedure TFrmBelShop.Dbg_FinanDemonsResultadoKeyDown(Sender: TObject;var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+end;
+
+procedure TFrmBelShop.Dbg_FinanObjetivosManutKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+end;
+
+procedure TFrmBelShop.Dbg_FinanObjetivosResultadosAuditoriaKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+end;
+
+procedure TFrmBelShop.Dbg_FinanFechaCaixaDoctosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+end;
+
+procedure TFrmBelShop.Dbg_FinanFechaCaixaTotalKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+end;
+
+procedure TFrmBelShop.Dbg_FinanFechaDiarioMovtosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+end;
+
+procedure TFrmBelShop.Dbg_FinanMLResultadoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+end;
+
+procedure TFrmBelShop.Dbg_FinanMLResFinalKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+end;
+
+procedure TFrmBelShop.Dbg_EstFisFinanGiroEstoqueKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
 end;
 
 End.

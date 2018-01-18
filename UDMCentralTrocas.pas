@@ -172,6 +172,7 @@ type
     CDS_QtdCxCDGruposDESCRICAO: TStringField;
     CDS_QtdCxCDGruposQTD_CAIXA: TIntegerField;
     CDS_QtdCxCDGruposPER_CORTE: TIntegerField;
+    CDS_V_ReposDivergenciasCODBARRA: TStringField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir

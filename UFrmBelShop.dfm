@@ -4,7 +4,7 @@ object FrmBelShop: TFrmBelShop
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'Gerenciador BelShop'
+  Caption = 'eof'
   ClientHeight = 564
   ClientWidth = 979
   Color = clSilver
@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_OrdemCompra
+    ActivePage = Ts_FinanObjetivos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -6715,6 +6715,7 @@ object FrmBelShop: TFrmBelShop
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
         OnDblClick = Dbg_UsuariosDblClick
+        OnKeyDown = Dbg_UsuariosKeyDown
         Columns = <
           item
             Expanded = False
@@ -7182,7 +7183,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_OCGeraOrdemCompra
+        ActivePage = Ts_OCBuscaProdutos
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -10138,6 +10139,7 @@ object FrmBelShop: TFrmBelShop
                 TitleFont.Style = [fsBold]
                 OnDrawColumnCell = Dbg_GeraOCTotalGeralDrawColumnCell
                 OnDblClick = Dbg_GeraOCTotalGeralDblClick
+                OnKeyDown = Dbg_GeraOCTotalGeralKeyDown
                 CorComFoco = 15004403
                 SairComEnter = False
                 EditDataSetCheck = False
@@ -11818,6 +11820,7 @@ object FrmBelShop: TFrmBelShop
           TitleFont.Height = -11
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = [fsBold]
+          OnKeyDown = Dbg_ConsultaOCOrdensCompraKeyDown
           CorComFoco = 15004403
           SairComEnter = False
           EditDataSetCheck = False
@@ -12781,7 +12784,7 @@ object FrmBelShop: TFrmBelShop
         Top = 61
         Width = 971
         Height = 431
-        ActivePage = TS_ConsultaNFeFiltros
+        ActivePage = Ts_ConsultaNFeMovtoCompr
         Align = alClient
         TabOrder = 1
         OnChange = PC_ConsultaMovtoComprChange
@@ -13339,6 +13342,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_ConsultaNFeProdutosDrawColumnCell
+            OnKeyDown = Dbg_ConsultaNFeProdutosKeyDown
             Columns = <
               item
                 Expanded = False
@@ -13407,6 +13411,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Height = -11
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
+            OnKeyDown = Dbg_ConsultaNFeProdLojasKeyDown
             Columns = <
               item
                 Alignment = taCenter
@@ -13435,7 +13440,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_CurvaABCEnderecamentos
+        ActivePage = Ts_CurvaABCEndMantencao
         Align = alClient
         TabOrder = 0
         OnChange = PC_CurvaABCEnderecamentosChange
@@ -13588,7 +13593,7 @@ object FrmBelShop: TFrmBelShop
                 Left = 0
                 Top = 0
                 Width = 955
-                Height = 382
+                Height = 390
                 Align = alClient
                 Color = 15004403
                 Ctl3D = False
@@ -13675,7 +13680,7 @@ object FrmBelShop: TFrmBelShop
               end
               object Panel118: TPanel
                 Left = 0
-                Top = 382
+                Top = 390
                 Width = 955
                 Height = 35
                 Align = alBottom
@@ -14121,6 +14126,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_CurvaABCEndCurvaABCDrawColumnCell
+            OnKeyDown = Dbg_CurvaABCEndCurvaABCKeyDown
             Columns = <
               item
                 Expanded = False
@@ -14344,6 +14350,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Height = -11
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
+            OnKeyDown = Dbg_CurvaABCEndCurvaABCFornKeyDown
             Columns = <
               item
                 Color = 14024703
@@ -15023,6 +15030,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Height = -11
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
+            OnKeyDown = Dbg_CurvaABCEndEnderecamentoKeyDown
             CorComFoco = 15004403
             SairComEnter = False
             EditDataSetCheck = False
@@ -15894,6 +15902,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_EstFisFinanGiroEstoqueDrawColumnCell
+            OnKeyDown = Dbg_EstFisFinanGiroEstoqueKeyDown
             Columns = <
               item
                 Expanded = False
@@ -16102,7 +16111,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_FinanComprPlanFinanPlanilhaFinanceira
+        ActivePage = Ts_FinanComprPlanFinanRelacao
         Align = alClient
         TabOrder = 0
         OnChange = PC_FinanComprPlanFinanChange
@@ -16958,6 +16967,7 @@ object FrmBelShop: TFrmBelShop
             OnDblClick = Dbg_FinanGrFinanceiroDblClick
             OnEnter = Dbg_FinanGrFinanceiroEnter
             OnExit = Dbg_FinanGrFinanceiroExit
+            OnKeyDown = Dbg_FinanGrFinanceiroKeyDown
             OnTitleClick = Dbg_FinanGrFinanceiroTitleClick
             Columns = <
               item
@@ -17179,7 +17189,7 @@ object FrmBelShop: TFrmBelShop
               object Label77: TLabel
                 Left = 2
                 Top = 2
-                Width = 232
+                Width = 412
                 Height = 13
                 Align = alTop
                 Alignment = taCenter
@@ -17385,6 +17395,7 @@ object FrmBelShop: TFrmBelShop
                 TitleFont.Height = -11
                 TitleFont.Name = 'MS Sans Serif'
                 TitleFont.Style = [fsBold]
+                OnKeyDown = Dbg_FinanGrFinanUsuarioKeyDown
                 Columns = <
                   item
                     Expanded = False
@@ -18155,6 +18166,7 @@ object FrmBelShop: TFrmBelShop
                 OnDblClick = Dbg_FinanDemonsResultadoDblClick
                 OnEnter = Dbg_FinanDemonsResultadoEnter
                 OnExit = Dbg_FinanDemonsResultadoExit
+                OnKeyDown = Dbg_FinanDemonsResultadoKeyDown
                 OnTitleClick = Dbg_FinanGrFinanceiroTitleClick
                 Columns = <
                   item
@@ -18878,7 +18890,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_FinanObjetivosManut
+        ActivePage = Ts_FinanObjetivosResultadosMeses
         Align = alClient
         TabOrder = 0
         OnChange = PC_FinanObjetivosChange
@@ -18920,6 +18932,7 @@ object FrmBelShop: TFrmBelShop
               OnDblClick = Dbg_FinanObjetivosManutDblClick
               OnEnter = Dbg_FinanObjetivosManutEnter
               OnExit = Dbg_FinanObjetivosManutExit
+              OnKeyDown = Dbg_FinanObjetivosManutKeyDown
               OnTitleClick = Dbg_FinanObjetivosManutTitleClick
               CorComFoco = 15004403
               SairComEnter = False
@@ -21364,6 +21377,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_FinanObjetivosResultadosAuditoriaDrawColumnCell
+            OnKeyDown = Dbg_FinanObjetivosResultadosAuditoriaKeyDown
             Columns = <
               item
                 Expanded = False
@@ -25572,6 +25586,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_FinanFechaCaixaDoctosDrawColumnCell
             OnDblClick = Dbg_FinanFechaCaixaDoctosDblClick
+            OnKeyDown = Dbg_FinanFechaCaixaDoctosKeyDown
             Columns = <
               item
                 Expanded = False
@@ -25674,6 +25689,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_FinanFechaCaixaTotalDrawColumnCell
+            OnKeyDown = Dbg_FinanFechaCaixaTotalKeyDown
             Columns = <
               item
                 Expanded = False
@@ -26487,6 +26503,7 @@ object FrmBelShop: TFrmBelShop
               TitleFont.Height = -11
               TitleFont.Name = 'MS Sans Serif'
               TitleFont.Style = [fsBold]
+              OnKeyDown = Dbg_FinanFechaDiarioMovtosKeyDown
               Columns = <
                 item
                   Expanded = False
@@ -28293,6 +28310,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_FinanMLResultadoDrawColumnCell
             OnDblClick = Dbg_FinanMLResultadoDblClick
+            OnKeyDown = Dbg_FinanMLResultadoKeyDown
             Columns = <
               item
                 Alignment = taCenter
@@ -28421,6 +28439,7 @@ object FrmBelShop: TFrmBelShop
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_FinanMLResFinalDrawColumnCell
+            OnKeyDown = Dbg_FinanMLResFinalKeyDown
             Columns = <
               item
                 Alignment = taCenter
@@ -37085,7 +37104,7 @@ object FrmBelShop: TFrmBelShop
         ParentFont = False
       end>
     DefaultFont = False
-    FormCaption = 'Gerenciador BelShop'
+    FormCaption = 'eof'
     FontInactiveColor = 16777170
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clCaptionText

@@ -925,6 +925,11 @@ object DMCentralTrocas: TDMCentralTrocas
       FieldName = 'ENDERECAMENTO'
       Size = 24
     end
+    object CDS_V_ReposDivergenciasCODBARRA: TStringField
+      DisplayLabel = 'C'#243'digo Barras'
+      FieldName = 'CODBARRA'
+      Size = 19
+    end
     object CDS_V_ReposDivergenciasNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Visible = False

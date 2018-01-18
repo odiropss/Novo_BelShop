@@ -1,9 +1,8 @@
 object FrmSolicitacoes: TFrmSolicitacoes
-  Left = 425
-  Top = 40
+  Left = 235
+  Top = 118
   Width = 649
   Height = 490
-  AutoSize = True
   BorderIcons = []
   Caption = 'Solicitacoes'
   Color = clBtnFace
@@ -404,7 +403,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 452
-    ActivePage = Ts_GeraOCLegendaCores
+    ActivePage = Ts_ReposDivergencias
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1342,7 +1341,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 4
       object Panel8: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -10510,13 +10509,18 @@ object FrmSolicitacoes: TFrmSolicitacoes
             Title.Alignment = taRightJustify
             Width = 96
             Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'CODBARRA'
+            Visible = True
           end>
       end
     end
   end
   object PainelApresExp: TPanel
-    Left = 416
-    Top = 72
+    Left = 512
+    Top = 16
     Width = 99
     Height = 33
     BevelInner = bvRaised

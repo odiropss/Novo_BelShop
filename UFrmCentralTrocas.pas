@@ -319,9 +319,6 @@ var
 
   OrderGrid: String;    // Ordenar Grid
 
-
-//  Procedure CheckOut_BuscaProdCodBarras_AtualizaQtd(sCodBarras: String; iQtdEmbalagem: Integer); Forward;
-
 implementation
 
 uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
@@ -760,6 +757,7 @@ Begin
          ' lo.qtd_a_transf, lo.qtd_checkout,'+
          QuotedStr('NAO')+' ind_corrigido,'+
          ' cd.end_zona||''.''||cd.end_corredor||''.''||cd.end_prateleira||''.''||cd.end_gaveta Enderecamento,'+
+         ' Trim(pr.codbarra) codbarra,'+
          ' lo.num_seq'+
 
          ' FROM ES_ESTOQUES_LOJAS lo, ES_ESTOQUES_CD cd, PRODUTO pr'+
@@ -828,6 +826,8 @@ Begin
   // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
   FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
   AbreSolicitacoes(24);
+
+  FrmSolicitacoes.Width:=768; // Padrao: Width=649 - ClientHeight=452 - ClientWidth=633
 
   FrmSolicitacoes.Caption:=' Reposições Lojas ';
   FrmSolicitacoes.Ts_ReposDivergencias.Caption:=' Divergências ';
@@ -5340,6 +5340,9 @@ begin
 
       MySql:=' UPDATE ES_ESTOQUES_LOJAS l'+
              ' SET l.qtd_a_transf=0'+
+             ',    l.usu_altera='+QuotedStr(Cod_Usuario)+
+             ',    l.dta_altera=current_timestamp'+
+
              ' WHERE l.Num_Pedido='+QuotedStr('000000')+
              ' AND   l.Dta_Movto='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DtaEdt_ReposLojas.Text)))+
              ' AND   l.Num_Docto='+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
@@ -6960,7 +6963,7 @@ procedure TFrmCentralTrocas.Dbg_ReposLojasDocsDblClick(Sender: TObject);
 Var
   s: String;
 begin
-  s:='ODIR PEDRO WESLEY GEVERTON CRISTIANO';
+  s:='ODIR PEDRO MARCIO HERALDO WESLEY GEVERTON CHRISTIAN CRISTIANO';
 
   If Pos(AnsiUpperCase(Des_Login), s)<>0 Then
   Begin
