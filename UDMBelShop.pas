@@ -2,6 +2,11 @@
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Todos os Controles estão em: C:\Projetos\BelShop\Outras Pastas\Documentos\@Coisas BelShop.doc
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Apagar:
+ DMBelShop.DS_FechaDiarioMov
+ DMBelShop.DS_FechaDiarioTot
+
 }
 
 unit UDMBelShop;

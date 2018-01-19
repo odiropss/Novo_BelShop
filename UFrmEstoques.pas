@@ -221,6 +221,7 @@ Begin
   OdirPanApres.Parent:=FrmEstoques;
   OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
+  OdirPanApres.Refresh;
   Refresh;
 
   Screen.Cursor:=crAppStart;
@@ -280,6 +281,7 @@ Begin
   DMBelShop.CDS_BuscaRapida.Close;
 
   OdirPanApres.Caption:='AGUARDE !! Fase 2/3 - Calculando Níveis de Atendimentos...';
+  OdirPanApres.Refresh;
   Refresh;
 
   // Nivel de Atendimento por Lojas ============================================
@@ -335,6 +337,7 @@ Begin
   DMBelShop.CDS_NivelAtendLojas.First;
 
   OdirPanApres.Caption:='AGUARDE !! Fase 3/3 - Calculando Níveis de Atendimentos...';
+  OdirPanApres.Refresh;
   Refresh;
 
   // Nivel de Atendimento por Curva nas Lojas ==================================

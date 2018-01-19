@@ -240,7 +240,7 @@ type
     procedure PC_BancosChange(Sender: TObject);
     procedure Bt_DML_1Click(Sender: TObject);
 
-    // Odir
+    // Odir INICIO /////////////////////////////////////////////////////////////
 
     // DIVERSOS ////////////////////////////////////////////////////////////////
     Procedure LiberaMenu(b: Boolean);
@@ -332,7 +332,14 @@ type
     // sTipo= (Div) Processa Diversos Extratos com Diversos Depósitos -> (FIN_CONCILIACAO_DEPOSITOS.tip_conciliacao = NULL)
     ////////////////////////////////////////////////////////////////////////////
 
-    // Odir
+    // CONCILIAÇÕES PAGTOS/ DEPOSITOS //////////////////////////////////////////
+    Procedure LocalizaValoresConciliar(iTipo: Integer);
+                                    // iTipo=1 EdtConcManutExtratoVlrDep Busca em DMConciliacao.DS_CMDepositos
+                                    // iTipo=2 EdtConcManutDepVlr        Busca em DMConciliacao.DS_CMExtratosDep
+                                    // iTipo=3 EdtConcManutExtratoVlr    Busca em DMConciliacao.DS_CMPagtos
+                                    // iTipo=4 EdtConcManutPagtoVlr      Busca em DMConciliacao.DS_CMExtratos
+
+    // Odir FIM ////////////////////////////////////////////////////////////////
 
     Procedure ConcPopMenuClick(Sender: TObject);
     Procedure ConcPopMenuClickSIM(Sender: TObject);
@@ -559,6 +566,89 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// CONCILIAÇÕES PAGTOS/DEPOSITOS - Busca Movto Com Valores Acumulados >>>>>>>>>>
+Procedure TFrmBancoExtratos.LocalizaValoresConciliar(iTipo: Integer);
+Begin
+  // iTipo=1 EdtConcManutExtratoVlrDep Busca em DMConciliacao.DS_CMDepositos
+  // iTipo=2 EdtConcManutDepVlr        Busca em DMConciliacao.DS_CMExtratosDep
+  // iTipo=3 EdtConcManutExtratoVlr    Busca em DMConciliacao.DS_CMPagtos
+  // iTipo=4 EdtConcManutPagtoVlr      Busca em DMConciliacao.DS_CMExtratos
+
+  // iTipo=1 EdtConcManutExtratoVlrDep Busca em DMConciliacao.DS_CMDepositos
+  If iTipo=1 Then
+  Begin
+    If EdtConcManutExtratoVlrDep.Value<>0 Then
+    Begin
+      If DMConciliacao.CDS_CMDepositos.Locate('Conciliado?; Conciliar?; VLR_DOCTO', VarArrayOf(['NAO', 'NAO', EdtConcManutExtratoVlrDep.Value]),[]) Then
+      Begin
+        Dbg_ConcManutDepositos.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
+
+        PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+        msg('Movto com Valor Localizado !!','A');
+
+        Dbg_ConcManutDepositos.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
+        THackDBGrid(Dbg_ConcManutDepositos).SelectedIndex:=7;
+      End;
+    End; // If EdtConcManutExtratoVlrDep.Value<>0 Then
+  End; // If iTipo=1 Then
+
+  // iTipo=2 EdtConcManutDepVlr        Busca em DMConciliacao.DS_CMExtratosDep
+  If iTipo=2 Then
+  Begin
+    If EdtConcManutDepVlr.Value<>0 Then
+    Begin
+      If DMConciliacao.CDS_CMExtratosDep.Locate('Conciliado?; Conciliar?; VLR_DOCTO', VarArrayOf(['NAO', 'NAO', EdtConcManutDepVlr.Value]),[]) Then
+      Begin
+        Dbg_ConcManutExtratoDep.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
+
+        PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+        msg('Extrato com Valor Localizado !!','A');
+
+        Dbg_ConcManutExtratoDep.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
+        THackDBGrid(Dbg_ConcManutExtratoDep).SelectedIndex:=7;
+      End;
+    End; // If EdtConcManutExtratoVlrDep.Value<>0 Then
+  End; // If iTipo=2 Then
+
+  // iTipo=3 EdtConcManutExtratoVlr    Busca em DMConciliacao.DS_CMPagtos
+  If iTipo=3 Then
+  Begin
+    If EdtConcManutExtratoVlr.Value<>0 Then
+    Begin
+      If DMConciliacao.CDS_CMPagtos.Locate('Conciliado?; Conciliar?; VLR_DOCTO', VarArrayOf(['NAO', 'NAO', EdtConcManutExtratoVlr.Value]),[]) Then
+      Begin
+        Dbg_ConcManutPagto.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
+
+        PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+        msg('Movto com Valor Localizado !!','A');
+
+        Dbg_ConcManutPagto.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
+        THackDBGrid(Dbg_ConcManutPagto).SelectedIndex:=7;
+      End;
+    End; // If EdtConcManutExtratoVlr.Value<>0 Then
+  End; // If iTipo=3 Then
+
+  // iTipo=4 EdtConcManutPagtoVlr      Busca em DMConciliacao.DS_CMExtratos
+  If iTipo=4 Then
+  Begin
+    If EdtConcManutPagtoVlr.Value<>0 Then
+    Begin
+      If DMConciliacao.CDS_CMExtratos.Locate('Conciliado?; Conciliar?; VLR_DOCTO', VarArrayOf(['NAO', 'NAO', EdtConcManutPagtoVlr.Value]),[]) Then
+
+      Begin
+        Dbg_ConcManutExtrato.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
+
+        PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+        msg('Extrato com Valor Localizado !!','A');
+
+        Dbg_ConcManutExtrato.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
+        THackDBGrid(Dbg_ConcManutExtrato).SelectedIndex:=7;
+      End;
+    End; // If EdtConcManutPagtoVlr.Value<>0 Then
+  End; // If iTipo=4 Then
+
+End; // CONCILIAÇÕES PAGTOS/DEPOSITOS - Busca Movto Com Valores Acumulados >>>>>
 
 // CONCILIAÇÕES DEPOSITOS - Processa Conciliação Extrato/Deposito >>>>>>>>>>>>>>
 Function TFrmBancoExtratos.ProcessaConciciacaoDep(sTipo: String): Boolean;
@@ -1338,7 +1428,10 @@ End; // CONCILIAÇÕES DEPOSITOS - Busca Extratos e Depositos para Conciliação >>>
 Procedure TFrmBancoExtratos.TotaisMarcadosNaoConciliadosDep;
 Var
   CDS: TClientDataSet;
+  bVlrEncontrado: Boolean;
 Begin
+
+  bVlrEncontrado:=False;
 
   EdtConcManutExtratoQtdDep.Value:=0;
   EdtConcManutExtratoVlrDep.Value:=0;
@@ -1359,6 +1452,8 @@ Begin
     Begin
       EdtConcManutExtratoQtdDep.Value:=EdtConcManutExtratoQtdDep.Value+1;
       EdtConcManutExtratoVlrDep.Value:=EdtConcManutExtratoVlrDep.Value+cds.FieldByName('VLR_DOCTO').AsCurrency;
+      LocalizaValoresConciliar(1);
+      bVlrEncontrado:=True;
     End;
 
     CDS.Next;
@@ -1379,6 +1474,9 @@ Begin
     Begin
       EdtConcManutDepQtd.Value:=EdtConcManutDepQtd.Value+1;
       EdtConcManutDepVlr.Value:=EdtConcManutDepVlr.Value+cds.FieldByName('VLR_DOCTO').AsCurrency;
+
+      If Not bVlrEncontrado Then
+       LocalizaValoresConciliar(2);
     End;
 
     CDS.Next;
@@ -2295,7 +2393,9 @@ End; // CONCILIAÇÕES - Elimina Movots do SIDICOM com Erro de Conciliação >>>>>>>
 Procedure TFrmBancoExtratos.TotaisMarcadosNaoConciliados;
 Var
   CDS: TClientDataSet;
+  bVlrEncontrado: Boolean;
 Begin
+  bVlrEncontrado:=False;
 
   EdtConcManutExtratoQtd.Value:=0;
   EdtConcManutExtratoVlr.Value:=0;
@@ -2316,6 +2416,7 @@ Begin
     Begin
       EdtConcManutExtratoQtd.Value:=EdtConcManutExtratoQtd.Value+1;
       EdtConcManutExtratoVlr.Value:=EdtConcManutExtratoVlr.Value+cds.FieldByName('VLR_DOCTO').AsCurrency;
+      LocalizaValoresConciliar(3);
     End;
 
     CDS.Next;
@@ -2336,6 +2437,8 @@ Begin
     Begin
       EdtConcManutPagtoQtd.Value:=EdtConcManutPagtoQtd.Value+1;
       EdtConcManutPagtoVlr.Value:=EdtConcManutPagtoVlr.Value+cds.FieldByName('VLR_PAGTO').AsCurrency;
+      If Not bVlrEncontrado Then
+       LocalizaValoresConciliar(4);
     End;
 
     CDS.Next;
@@ -14057,72 +14160,76 @@ end;
 
 procedure TFrmBancoExtratos.EdtConcManutExtratoVlrDepChange(Sender: TObject);
 begin
-  If EdtConcManutExtratoVlrDep.Value<>0 Then
-  Begin
-    If DMConciliacao.CDS_CMDepositos.Locate('VLR_DOCTO', EdtConcManutExtratoVlrDep.Value,[]) Then
-    Begin
-//      Dbg_ConcManutDepositos.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
-//
-//      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
-//      msg('Movto com Valor Localizado !!','A');
-//
-//      Dbg_ConcManutDepositos.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
-      THackDBGrid(Dbg_ConcManutDepositos).SelectedIndex:=7;
-    End;
-  End; // If EdtConcManutExtratoVlrDep.Value<>0 Then
+// Odirapagar - 18/01/2018 Trocado Pela Procedure LocalizaValoresConciliar(iTipo: Integer);
+//  If EdtConcManutExtratoVlrDep.Value<>0 Then
+//  Begin
+//    If DMConciliacao.CDS_CMDepositos.Locate('VLR_DOCTO', EdtConcManutExtratoVlrDep.Value,[]) Then
+//    Begin
+////      Dbg_ConcManutDepositos.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
+////
+////      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+////      msg('Movto com Valor Localizado !!','A');
+////
+////      Dbg_ConcManutDepositos.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
+//      THackDBGrid(Dbg_ConcManutDepositos).SelectedIndex:=7;
+//    End;
+//  End; // If EdtConcManutExtratoVlrDep.Value<>0 Then
 
 end;
 
 procedure TFrmBancoExtratos.EdtConcManutDepVlrChange(Sender: TObject);
 begin
-  If EdtConcManutDepVlr.Value<>0 Then
-  Begin
-    If DMConciliacao.CDS_CMExtratosDep.Locate('VLR_DOCTO', EdtConcManutDepVlr.Value,[]) Then
-    Begin
-//      Dbg_ConcManutExtratoDep.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
-//
-//      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
-//      msg('Extrato com Valor Localizado !!','A');
-//
-//      Dbg_ConcManutExtratoDep.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
-      THackDBGrid(Dbg_ConcManutExtratoDep).SelectedIndex:=7;
-    End;
-  End; // If EdtConcManutExtratoVlrDep.Value<>0 Then
+// Odirapagar - 18/01/2018 Trocado Pela Procedure LocalizaValoresConciliar(iTipo: Integer);
+//  If EdtConcManutDepVlr.Value<>0 Then
+//  Begin
+//    If DMConciliacao.CDS_CMExtratosDep.Locate('VLR_DOCTO', EdtConcManutDepVlr.Value,[]) Then
+//    Begin
+////      Dbg_ConcManutExtratoDep.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
+////
+////      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+////      msg('Extrato com Valor Localizado !!','A');
+////
+////      Dbg_ConcManutExtratoDep.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
+//      THackDBGrid(Dbg_ConcManutExtratoDep).SelectedIndex:=7;
+//    End;
+//  End; // If EdtConcManutExtratoVlrDep.Value<>0 Then
 
 end;
 
 procedure TFrmBancoExtratos.EdtConcManutExtratoVlrChange(Sender: TObject);
 begin
-  If EdtConcManutExtratoVlr.Value<>0 Then
-  Begin
-    If DMConciliacao.CDS_CMPagtos.Locate('VLR_DOCTO', EdtConcManutExtratoVlr.Value,[]) Then
-    Begin
-//      Dbg_ConcManutPagto.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
-//
-//      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
-//      msg('Movto com Valor Localizado !!','A');
-//
-//      Dbg_ConcManutPagto.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
-      THackDBGrid(Dbg_ConcManutPagto).SelectedIndex:=7;
-    End;
-  End; // If EdtConcManutExtratoVlr.Value<>0 Then
+// Odirapagar - 18/01/2018 Trocado Pela Procedure LocalizaValoresConciliar(iTipo: Integer);
+//  If EdtConcManutExtratoVlr.Value<>0 Then
+//  Begin
+//    If DMConciliacao.CDS_CMPagtos.Locate('VLR_DOCTO', EdtConcManutExtratoVlr.Value,[]) Then
+//    Begin
+////      Dbg_ConcManutPagto.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
+////
+////      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+////      msg('Movto com Valor Localizado !!','A');
+////
+////      Dbg_ConcManutPagto.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
+//      THackDBGrid(Dbg_ConcManutPagto).SelectedIndex:=7;
+//    End;
+//  End; // If EdtConcManutExtratoVlr.Value<>0 Then
 end;
 
 procedure TFrmBancoExtratos.EdtConcManutPagtoVlrChange(Sender: TObject);
 begin
-  If EdtConcManutPagtoVlr.Value<>0 Then
-  Begin
-    If DMConciliacao.CDS_CMExtratos.Locate('VLR_DOCTO', EdtConcManutPagtoVlr.Value,[]) Then
-    Begin
-//      Dbg_ConcManutExtrato.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
-//
-//      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
-//      msg('Extrato com Valor Localizado !!','A');
-//
-//      Dbg_ConcManutExtrato.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
-      THackDBGrid(Dbg_ConcManutExtrato).SelectedIndex:=7;
-    End;
-  End; // If EdtConcManutPagtoVlr.Value<>0 Then
+// Odirapagar - 18/01/2018 Trocado Pela Procedure LocalizaValoresConciliar(iTipo: Integer);
+//  If EdtConcManutPagtoVlr.Value<>0 Then
+//  Begin
+//    If DMConciliacao.CDS_CMExtratos.Locate('VLR_DOCTO', EdtConcManutPagtoVlr.Value,[]) Then
+//    Begin
+////      Dbg_ConcManutExtrato.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
+////
+////      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+////      msg('Extrato com Valor Localizado !!','A');
+////
+////      Dbg_ConcManutExtrato.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
+//      THackDBGrid(Dbg_ConcManutExtrato).SelectedIndex:=7;
+//    End;
+//  End; // If EdtConcManutPagtoVlr.Value<>0 Then
 
 end;
 
