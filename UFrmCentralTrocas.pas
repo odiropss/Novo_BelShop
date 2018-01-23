@@ -5500,7 +5500,7 @@ begin
 
   If (igCorredores<>CkCbx_ReposLojasCorredor.Items.Count) and (igCorredores>1) Then
   Begin
-    msg(' Relatório deve Conter: '+cr+'TODOS os Corredores ou Somente UM !!','A');
+    msg('Relatório deve Conter: '+cr+'TODOS os Corredores ou Somente UM !!','A');
     Exit;
   End; // If Not bgTodosCorredores Then
 
@@ -5515,11 +5515,19 @@ begin
   // Lojas Por Fornecedor ======================================================
 //  If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
 //     (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='89') Then
+//     (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='24') Then
 //  Begin
 //    RomaneioFornecedor;
 //    Exit;
 //  End; // If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
-
+  If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='24') Then
+  Begin
+    If msg('Deseja Impressão de Relatório'+cr+'por Fornecedor ??','C')=1 Then
+    Begin
+      RomaneioFornecedor;
+      Exit;
+    End;
+  End; // If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
   Screen.Cursor:=crAppStart;
 
   OdirPanApres.Caption:='AGUARDE !! Montando Relatório...';

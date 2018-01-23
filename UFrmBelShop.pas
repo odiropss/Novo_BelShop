@@ -46200,7 +46200,9 @@ Begin
     ClientDataSet:=DMBelShop.CDS_Busca;
     Destino:=toVisualiza;
     Orientacao:=toRetrato;
+
     RodapeGrupo:=True;
+
     TextoRodape:='';
     TextoRodapeGrupo:='';
     Zoom:=150;

@@ -15,7 +15,9 @@ uses
   UFrmPessoaCadastro in 'UFrmPessoaCadastro.pas' {FrmCadastroPessoa},
   UFrmVerProducao in 'UFrmVerProducao.pas' {FrmVerProducao},
   UFrmRelatorios in 'UFrmRelatorios.pas' {FrmRelatorios},
-  UFrmContasPagar in 'UFrmContasPagar.pas' {FrmContasPagar};
+  UFrmContasPagar in 'UFrmContasPagar.pas' {FrmContasPagar},
+  UFrmSolicitacoes in 'UFrmSolicitacoes.pas' {FrmSolicitacoes},
+  UDMRelatorios in 'UDMRelatorios.pas' {DMRelatorios: TDataModule};
 
 {$R *.res}
 
@@ -32,6 +34,8 @@ begin
   Application.CreateForm(TFrmMovimentos, FrmMovimentos);
   Application.CreateForm(TFrmPedidoVenda, FrmPedidoVenda);
   Application.CreateForm(TFrmCadastroPessoa, FrmCadastroPessoa);
+  Application.CreateForm(TDMRelatorios, DMRelatorios);
+  // Application.CreateForm(TFrmSolicitacoes, FrmSolicitacoes);
   // Application.CreateForm(TFrmContasPagar, FrmContasPagar);
   // Application.CreateForm(TFrmRelatorios, FrmRelatorios);
   // Application.CreateForm(TFrmVerProducao, FrmVerProducao);

@@ -575,75 +575,75 @@ object DMArtesanalis: TDMArtesanalis
     Left = 371
     Top = 286
   end
-  object CDS__VerProducao: TClientDataSet
+  object CDS_VerProducao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_VerProducao'
     Left = 412
     Top = 272
-    object CDS__VerProducaoCOD_MATERIAPRIMA: TIntegerField
+    object CDS_VerProducaoCOD_MATERIAPRIMA: TIntegerField
       DisplayLabel = 'C'#243'd'
       FieldName = 'COD_MATERIAPRIMA'
       Required = True
     end
-    object CDS__VerProducaoDES_MATERIAPRIMA: TStringField
+    object CDS_VerProducaoDES_MATERIAPRIMA: TStringField
       DisplayLabel = 'Descri'#231#227'o'
       FieldName = 'DES_MATERIAPRIMA'
       Size = 60
     end
-    object CDS__VerProducaoDES_UNIDADE: TStringField
+    object CDS_VerProducaoDES_UNIDADE: TStringField
       DisplayLabel = 'Unid'
       FieldName = 'DES_UNIDADE'
       Size = 15
     end
-    object CDS__VerProducaoPRECO_CUSTO: TFMTBCDField
+    object CDS_VerProducaoPRECO_CUSTO: TFMTBCDField
       DisplayLabel = '$ Custo'
       FieldName = 'PRECO_CUSTO'
       DisplayFormat = '0,.00'
       Precision = 18
       Size = 2
     end
-    object CDS__VerProducaoSALDO_ATUAL: TFMTBCDField
+    object CDS_VerProducaoSALDO_ATUAL: TFMTBCDField
       DisplayLabel = 'Saldo Atual'
       FieldName = 'SALDO_ATUAL'
       DisplayFormat = '0,.0000'
       Precision = 18
       Size = 4
     end
-    object CDS__VerProducaoQTD_UTILIZACAO_MP: TIntegerField
+    object CDS_VerProducaoQTD_UTILIZACAO_MP: TIntegerField
       DisplayLabel = 'Qtd Total Utiliza'#231#227'o'
       FieldName = 'QTD_UTILIZACAO_MP'
       DisplayFormat = ',0'
     end
-    object CDS__VerProducaoPER_UTILIZADO_MP: TFMTBCDField
+    object CDS_VerProducaoPER_UTILIZADO_MP: TFMTBCDField
       DisplayLabel = '% Total Utilizado'
       FieldName = 'PER_UTILIZADO_MP'
       DisplayFormat = '0,.00000'
       Precision = 18
       Size = 5
     end
-    object CDS__VerProducaoQTD_UNID_UTILIZADA_MP: TFMTBCDField
+    object CDS_VerProducaoQTD_UNID_UTILIZADA_MP: TFMTBCDField
       DisplayLabel = 'Qtd Unid Utilizada'
       FieldName = 'QTD_UNID_UTILIZADA_MP'
       DisplayFormat = '0,.00000'
       Precision = 18
       Size = 5
     end
-    object CDS__VerProducaoQTD_BAIXA_EST_MP: TFMTBCDField
+    object CDS_VerProducaoQTD_BAIXA_EST_MP: TFMTBCDField
       DisplayLabel = 'Qtd Baixa Saldo'
       FieldName = 'QTD_BAIXA_EST_MP'
       DisplayFormat = '0,.00000'
       Precision = 18
       Size = 5
     end
-    object CDS__VerProducaoVLR_UNITARIO_MP: TFMTBCDField
+    object CDS_VerProducaoVLR_UNITARIO_MP: TFMTBCDField
       DisplayLabel = '$ Unit'#225'rio'
       FieldName = 'VLR_UNITARIO_MP'
       DisplayFormat = '0,.0000'
       Precision = 18
       Size = 4
     end
-    object CDS__VerProducaoVLR_TOTAL_MP: TFMTBCDField
+    object CDS_VerProducaoVLR_TOTAL_MP: TFMTBCDField
       DisplayLabel = '$ Total'
       FieldName = 'VLR_TOTAL_MP'
       DisplayFormat = '0,.0000'
@@ -652,7 +652,7 @@ object DMArtesanalis: TDMArtesanalis
     end
   end
   object Ds_VerProducao: TDataSource
-    DataSet = CDS__VerProducao
+    DataSet = CDS_VerProducao
     Left = 468
     Top = 286
   end
@@ -778,7 +778,9 @@ object DMArtesanalis: TDMArtesanalis
       'ff.num_docto, ff.dta_emissao,'
       'ff.vlr_original, '
       'ff.num_prestacao, ff.num_prestacoes, ff.num_prazo,'
-      'ff.dta_vencimento, ff.vlr_prestacao'
+      'ff.dta_vencimento, ff.vlr_prestacao,'
+      'vlr_pagamento, ff.dta_pagamento'
+      ''
       ''
       'FROM FLUXO_FINANCEIRO ff, PESSOAS fo, PLANO_CONTAS pl'
       ''
@@ -862,10 +864,31 @@ object DMArtesanalis: TDMArtesanalis
       Precision = 18
       Size = 2
     end
+    object CDS_FluxoFinanceiroVLR_PAGAMENTO: TFMTBCDField
+      DisplayLabel = 'Valor Pagamento'
+      FieldName = 'VLR_PAGAMENTO'
+      DisplayFormat = '0.,00'
+      Precision = 18
+      Size = 1
+    end
+    object CDS_FluxoFinanceiroDTA_PAGAMENTO: TDateField
+      DisplayLabel = 'Data Pagamento'
+      FieldName = 'DTA_PAGAMENTO'
+    end
   end
   object DS_FluxoFinanceiro: TDataSource
     DataSet = CDS_FluxoFinanceiro
     Left = 740
     Top = 46
+  end
+  object SDS_DtaHoraServidor: TSQLDataSet
+    CommandText = 
+      'select current_timestamp, current_date, current_time'#13#10'from rdb$d' +
+      'atabase'
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 132
+    Top = 22
   end
 end

@@ -85,19 +85,19 @@ type
     CDS_ProdutoProducaoQTD_UTILIZACAO: TIntegerField;
     SQLQ_VerProducao: TSQLQuery;
     DSP_VerProducao: TDataSetProvider;
-    CDS__VerProducao: TClientDataSet;
+    CDS_VerProducao: TClientDataSet;
     Ds_VerProducao: TDataSource;
-    CDS__VerProducaoCOD_MATERIAPRIMA: TIntegerField;
-    CDS__VerProducaoDES_MATERIAPRIMA: TStringField;
-    CDS__VerProducaoDES_UNIDADE: TStringField;
-    CDS__VerProducaoPRECO_CUSTO: TFMTBCDField;
-    CDS__VerProducaoSALDO_ATUAL: TFMTBCDField;
-    CDS__VerProducaoQTD_UTILIZACAO_MP: TIntegerField;
-    CDS__VerProducaoPER_UTILIZADO_MP: TFMTBCDField;
-    CDS__VerProducaoQTD_UNID_UTILIZADA_MP: TFMTBCDField;
-    CDS__VerProducaoQTD_BAIXA_EST_MP: TFMTBCDField;
-    CDS__VerProducaoVLR_UNITARIO_MP: TFMTBCDField;
-    CDS__VerProducaoVLR_TOTAL_MP: TFMTBCDField;
+    CDS_VerProducaoCOD_MATERIAPRIMA: TIntegerField;
+    CDS_VerProducaoDES_MATERIAPRIMA: TStringField;
+    CDS_VerProducaoDES_UNIDADE: TStringField;
+    CDS_VerProducaoPRECO_CUSTO: TFMTBCDField;
+    CDS_VerProducaoSALDO_ATUAL: TFMTBCDField;
+    CDS_VerProducaoQTD_UTILIZACAO_MP: TIntegerField;
+    CDS_VerProducaoPER_UTILIZADO_MP: TFMTBCDField;
+    CDS_VerProducaoQTD_UNID_UTILIZADA_MP: TFMTBCDField;
+    CDS_VerProducaoQTD_BAIXA_EST_MP: TFMTBCDField;
+    CDS_VerProducaoVLR_UNITARIO_MP: TFMTBCDField;
+    CDS_VerProducaoVLR_TOTAL_MP: TFMTBCDField;
     CDS_V_DoctoItensPER_DESCONTO: TCurrencyField;
     CDS_V_DoctoItensVLR_PRODUTO: TCurrencyField;
     CDS_V_PVPedidos: TClientDataSet;
@@ -134,6 +134,9 @@ type
     CDS_FluxoFinanceiroNUM_PRESTACAO: TIntegerField;
     CDS_FluxoFinanceiroNUM_PRESTACOES: TIntegerField;
     CDS_FluxoFinanceiroNUM_PRAZO: TIntegerField;
+    CDS_FluxoFinanceiroVLR_PAGAMENTO: TFMTBCDField;
+    CDS_FluxoFinanceiroDTA_PAGAMENTO: TDateField;
+    SDS_DtaHoraServidor: TSQLDataSet;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -172,7 +175,7 @@ var
 
 implementation
 
-uses  DK_Procs1;
+uses  DK_Procs1, UFrmSolicitacoes;
 
 {$R *.dfm}
 

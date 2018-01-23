@@ -4,7 +4,7 @@ object FrmBelShop: TFrmBelShop
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'eof'
+  Caption = 'BelShop'
   ClientHeight = 564
   ClientWidth = 979
   Color = clSilver
@@ -34010,7 +34010,7 @@ object FrmBelShop: TFrmBelShop
         ParentFont = False
       end>
     DefaultFont = False
-    FormCaption = 'eof'
+    FormCaption = 'BelShop'
     FontInactiveColor = 16777170
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clCaptionText

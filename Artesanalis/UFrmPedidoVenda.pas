@@ -1634,15 +1634,15 @@ begin
     FrmVerProducao.EdtQtdProduto.Value    :=DMArtesanalis.CDS_V_DoctoItensQTD_MOVTO.AsCurrency;
 
     // Busca produção do Produto Selecionado ===================================
-    DMArtesanalis.CDS__VerProducao.Close;
+    DMArtesanalis.CDS_VerProducao.Close;
     DMArtesanalis.SQLQ_VerProducao.Params.ParamByName('SeqDoc').AsInteger :=EdtNumSeqDocto.AsInteger;
     DMArtesanalis.SQLQ_VerProducao.Params.ParamByName('CodProd').AsInteger:=DMArtesanalis.CDS_V_DoctoItensCOD_PRODUTO.AsInteger;
     DMArtesanalis.SQLQ_VerProducao.Params.ParamByName('SeqItem').AsInteger:=DMArtesanalis.CDS_V_DoctoItensNUM_SEQ.AsInteger;
-    DMArtesanalis.CDS__VerProducao.Open;
+    DMArtesanalis.CDS_VerProducao.Open;
 
     FrmVerProducao.ShowModal;
 
-    DMArtesanalis.CDS__VerProducao.Close;
+    DMArtesanalis.CDS_VerProducao.Close;
 
     FreeAndNil(FrmVerProducao);
   End; // If Key=VK_F6 Then
