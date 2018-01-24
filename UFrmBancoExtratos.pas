@@ -1421,7 +1421,6 @@ Begin
 
   OdirPanApres.Visible:=False;
   Result:=True;
-
 End; // CONCILIAÇÕES DEPOSITOS - Busca Extratos e Depositos para Conciliação >>>
 
 // CONCILIAÇÕES DEPOSITOS - Apresenta Totais Marcados e Não Conciliados >>>>>>>>
@@ -1584,7 +1583,9 @@ Var
   sDta,
   sNrSeq, sNrCompl: String;
 
-  bInserir: Boolean;
+  iRegNaoCanc: Integer; // Numero de registros Não Cancelados
+
+  bInserir, bExcluir: Boolean;
 Begin
   Result:=True;
 
@@ -1655,35 +1656,58 @@ Begin
       Begin
         sNrSeq:=DMBelShop.CDS_Busca1.FieldByName('Num_Seq').AsString;
 
-        // Exclui FIN_CONCILIACAO_MOV_DEP ======================================
-        MySql:=' DELETE FROM FIN_CONCILIACAO_MOV_DEP md'+
-               ' WHERE md.num_seq='+sNrSeq+
-               ' AND   md.num_compl='+DMBelShop.CDS_Busca1.FieldByName('Num_Compl').AsString;
-        DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-        // Busca Chave do Extrato se Conciliado ================================
-        MySql:=' SELECT d.chv_extrato'+
-               ' FROM FIN_CONCILIACAO_DEPOSITOS d'+
-               ' WHERE d.num_seq='+sNrSeq+
-               ' AND   d.num_compl='+DMBelShop.CDS_Busca1.FieldByName('Num_Compl').AsString+
-               ' ORDER BY d.chv_extrato';
+        // Verifica se Existe Lancamento de Sangria Igual e Não Cancelado ======
+        iRegNaoCanc:=0;
+        MySql:=' SELECT COUNT(s.empresa) Reg_Nao_Canc'+
+               ' FROM LINXSANGRIASUPRIMENTOS s'+
+               ' WHERE s.cancelado=''N'''+
+               ' AND   s.empresa='+DMBelShop.CDS_Busca.FieldByName('Empresa').AsString+
+               ' AND   s.data='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DMBelShop.CDS_Busca.FieldByName('Data').AsString)))+
+               ' AND   s.usuario='+DMBelShop.CDS_Busca.FieldByName('Usuario').AsString+
+               ' AND   ABS(s.valor)='+QuotedStr(f_Troca(',','.',DMBelShop.CDS_Busca.FieldByName('Valor').AsString))+
+               ' AND   s.cod_historico='+DMBelShop.CDS_Busca.FieldByName('Cod_Historico').AsString+
+               ' AND   Upper(SUBSTRING(TRIM(s.obs) FROM 1 FOR 80))='+QuotedStr(AnsiUpperCase(Trim(DMBelShop.CDS_Busca.FieldByName('Obs').AsString)));
         DMBelShop.CDS_BuscaRapida.Close;
         DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
         DMBelShop.CDS_BuscaRapida.Open;
-
-        DMBelShop.CDS_BuscaRapida.DisableControls;
-        While Not DMBelShop.CDS_BuscaRapida.Eof do
-        Begin
-          // Exclui Todos as Conciliações Realizadas ===========================
-          MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS d'+
-                 ' WHERE d.chv_extrato='+QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('chv_extrato').AsString);
-          DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-          DMBelShop.CDS_BuscaRapida.Next;
-        End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
-        DMBelShop.CDS_BuscaRapida.EnableControls;
+        iRegNaoCanc:=DMBelShop.CDS_BuscaRapida.FieldByName('Reg_Nao_Canc').AsInteger;
         DMBelShop.CDS_BuscaRapida.Close;
 
+        bExcluir:=False;
+        If DMBelShop.CDS_Busca1.RecordCount<>iRegNaoCanc Then
+         bExcluir:=True;
+
+        If bExcluir Then // Exclui Movimento Devido a Cacelamentos
+        Begin
+          // Exclui FIN_CONCILIACAO_MOV_DEP ====================================
+          MySql:=' DELETE FROM FIN_CONCILIACAO_MOV_DEP md'+
+                 ' WHERE md.num_seq='+sNrSeq+
+                 ' AND   md.num_compl='+DMBelShop.CDS_Busca1.FieldByName('Num_Compl').AsString;
+          DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+          // Busca Chave do Extrato se Conciliado ==============================
+          MySql:=' SELECT d.chv_extrato'+
+                 ' FROM FIN_CONCILIACAO_DEPOSITOS d'+
+                 ' WHERE d.num_seq='+sNrSeq+
+                 ' AND   d.num_compl='+DMBelShop.CDS_Busca1.FieldByName('Num_Compl').AsString+
+                 ' ORDER BY d.chv_extrato';
+          DMBelShop.CDS_BuscaRapida.Close;
+          DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+          DMBelShop.CDS_BuscaRapida.Open;
+
+          DMBelShop.CDS_BuscaRapida.DisableControls;
+          While Not DMBelShop.CDS_BuscaRapida.Eof do
+          Begin
+            // Exclui Todos as Conciliações Realizadas =========================
+            MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS d'+
+                   ' WHERE d.chv_extrato='+QuotedStr(DMBelShop.CDS_BuscaRapida.FieldByName('chv_extrato').AsString);
+            DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+            DMBelShop.CDS_BuscaRapida.Next;
+          End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
+          DMBelShop.CDS_BuscaRapida.EnableControls;
+          DMBelShop.CDS_BuscaRapida.Close;
+        End; // If bExcluir Then // Exclui Movimento Devido a Cacelamentos
       End; // If Not DMBelShop.CDS_Busca1.IsEmpty Then
       DMBelShop.CDS_Busca1.Close;
 
@@ -1714,10 +1738,7 @@ Begin
            ' AND   COALESCE(d.tip_conciliacao,'''')<>''DESP'''+
            ' AND   NOT EXISTS (SELECT 1'+
            '                   FROM FIN_BANCOS_EXTRATOS ex'+
-           '                   WHERE ex.chv_extrato=d.chv_extrato'+
-           '                   AND   ex.dta_extrato BETWEEN '+
-           QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
-           QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+')';
+           '                   WHERE ex.chv_extrato=d.chv_extrato)';
     DMBelShop.SQLC.Execute(MySql,nil,nil);
     // Exclui Conciliações Existentes Sem Extratos =============================
     //==========================================================================
@@ -1916,7 +1937,7 @@ Begin
                ' AND   SUBSTRING(TRIM(s.obs) FROM 1 FOR 80)='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Obs_Texto').AsString);
         DMBelShop.SQLC.Execute(MySql,nil,nil);
       End; // If bInseri Then
-                                 
+
       pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
 
       DMBelShop.CDS_Busca.Next;
@@ -4129,7 +4150,7 @@ CONCILIAÇÕES:
 
     MySql:=' SELECT b.num_conta, m.cod_loja, m.cod_fornecedor,'+
            ' SUM(m.vlr_pagto) vlr_pagto'+
-           
+
            ' FROM FIN_CONCILIACAO_MOVTOS m'+
            '        LEFT jOIN FIN_BANCOS_LOJAS bl on bl.cod_loja=m.cod_loja'+
            '        LEFT JOIN FIN_BANCOS b        on b.cod_banco=bl.cod_banco'+
@@ -6860,7 +6881,7 @@ Begin
           dDta:=StrToDate('23.11.2015');
           If (Pos(Trim(sgCodEmp), '02 03 05 08')=0) or (DtEdt_ConcDtaInicio.Date>dDta) Then
           Begin
-            Mysql:=' DELETE FROM FIN_CONCILIACAO_MOVTOS m'+
+            MySql:=' DELETE FROM FIN_CONCILIACAO_MOVTOS m'+
                    ' WHERE m.ind_conciliacao='+QuotedStr('NAO')+
                    ' AND m.cod_loja='+QuotedStr(sgCodEmp)+
                    ' AND m.dta_docto between '+QuotedStr(sgDtaInicio)+' And '+QuotedStr(sgDtaFim)+
@@ -9558,14 +9579,8 @@ begin
             s:=f_Troca('-','.',s);
 
             // Grava Extrato ===================================================
-//odirapagar - 11/12/2017
-//            If sgDta<>s Then
              ExtratosSalvar;
           End; // If sgSaldo='0' Then
-
-//odirapagar - 25/01/2017
-//          If (sgDesMovto<>'SALDO ANTERIOR') and ((sgSaldo<>'0') Or (sgSaldo<>'')) Then
-//          if i=Strg_SantanderImpExtrato.RowCount-1 Then
 
           // Grava Extrato ===================================================
           If Trim(sgSaldo)<>'' Then
@@ -9573,10 +9588,6 @@ begin
             // Não Processa Data de Hoje
             s:=f_Troca('/','.',sgDtaServidor);
             s:=f_Troca('-','.',s);
-
-//odirapagar - 25/01/2017
-//            If sgDta<>s Then
-//            Begin
 
             // Salva o Ultimo Movto do Dia====================================
             ExtratosSalvar;
@@ -9587,8 +9598,6 @@ begin
             sgDocto:='';
             ExtratosSalvar;
 
-//odirapagar - 25/01/2017
-//            End;
           End; // if i=Strg_SantanderImpExtrato.RowCount-1 Then
         End; // If sgDesMovto<>'SALDO ANTERIOR' Then
 
@@ -11466,6 +11475,8 @@ begin
          Refresh;
 
          FrmApresConciliacao:=TFrmApresConciliacao.Create(Self);
+         FrmApresConciliacao.Dbg_ConcManutPagto.DataSource:=DMConciliacao.DS_CMApresPagtos;
+         FrmApresConciliacao.Dbe_ConcManutTotal.DataSource:=DMConciliacao.DS_CMApresPagtos;
 
          DMConciliacao.CDS_CMApresPagtos.Close;
          DMConciliacao.SDS_CMApresPagtos.Params.ParamByName('CHV_EXTRATO').AsString:=
@@ -11475,6 +11486,7 @@ begin
          OdirPanApres.Visible:=False;
          If DMConciliacao.CDS_CMApresPagtos.IsEmpty Then
          Begin
+           FreeAndNil(FrmApresConciliacao);
            DMConciliacao.CDS_CMApresPagtos.Close;
            Exit;
          End; // DMConciliacao.CDS_CMApresPagtos.Close;
@@ -11482,7 +11494,6 @@ begin
          FrmApresConciliacao.Gb_ConcManutExtrato.Visible:=False;
          FrmApresConciliacao.Gb_ConcManutPagtos.Align:=alClient;
 
-         FrmApresConciliacao.Dbe_ConcManutTotal.DataSource:=DMConciliacao.DS_CMApresPagtos;
          FrmApresConciliacao.ShowModal;
 
          FreeAndNil(FrmApresConciliacao);
@@ -11558,6 +11569,9 @@ begin
          Refresh;
 
          FrmApresConciliacao:=TFrmApresConciliacao.Create(Self);
+         FrmApresConciliacao.Dbg_ConcManutExtrato.DataSource:=DMConciliacao.DS_CMApresExtrato;
+         FrmApresConciliacao.Dbe_ConcManutTotal.DataSource:=DMConciliacao.DS_CMApresExtrato;
+
          DMConciliacao.CDS_CMApresExtratos.Close;
          DMConciliacao.SDS_CMApresExtratos.Params.ParamByName('NUM_SEQ').AsString:=
                                      DMConciliacao.CDS_CMPagtosNUM_SEQ.AsString;
@@ -11568,6 +11582,7 @@ begin
          OdirPanApres.Visible:=False;
          If DMConciliacao.CDS_CMApresExtratos.IsEmpty Then
          Begin
+           FreeAndNil(FrmApresConciliacao);
            DMConciliacao.CDS_CMApresExtratos.Close;
            Exit;
          End; // If DMConciliacao.CDS_CMApresExtratos.IsEmpty Then
@@ -11575,7 +11590,6 @@ begin
          FrmApresConciliacao.Gb_ConcManutPagtos.Visible:=False;
          FrmApresConciliacao.Gb_ConcManutExtrato.Align:=alClient;
 
-         FrmApresConciliacao.Dbe_ConcManutTotal.DataSource:=DMConciliacao.DS_CMApresExtrato;
          FrmApresConciliacao.ShowModal;
 
          FreeAndNil(FrmApresConciliacao);
@@ -13035,7 +13049,6 @@ begin
   LiberaClientGravarDep(False);
 
   TotaisMarcadosNaoConciliadosDep;
-
 end;
 
 procedure TFrmBancoExtratos.Rb_ConcConciliadosDepClick(Sender: TObject);
@@ -13182,15 +13195,21 @@ begin
 
          FrmApresConciliacao:=TFrmApresConciliacao.Create(Self);
 
+         FrmApresConciliacao.Dbg_ConcManutPagto.DataSource:=DMConciliacao.DS_CMApresDepositos;
+         FrmApresConciliacao.Dbe_ConcManutTotal.DataSource:=DMConciliacao.DS_CMApresDepositos;
+
          DMConciliacao.CDS_CMApresDepositos.Close;
          DMConciliacao.SDS_CMApresDepositos.Params.ParamByName('CHV_EXTRATO').AsString:=
                                   DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString;
+         ShowMessage('1');
          DMConciliacao.CDS_CMApresDepositos.Open;
+         ShowMessage('2');
 
          OdirPanApres.Visible:=False;
          If DMConciliacao.CDS_CMApresDepositos.IsEmpty Then
          Begin
            DMConciliacao.CDS_CMApresDepositos.Close;
+           FreeAndNil(FrmApresConciliacao);
            Exit;
          End; // DMConciliacao.CDS_CMApresDepositos.Close;
 
@@ -13198,8 +13217,6 @@ begin
          DMConciliacao.sgDta2:=sgDtaF;
          FrmApresConciliacao.Gb_ConcManutExtrato.Visible:=False;
          FrmApresConciliacao.Gb_ConcManutPagtos.Align:=alClient;
-         FrmApresConciliacao.Dbg_ConcManutPagto.DataSource:=DMConciliacao.DS_CMApresDepositos;
-         FrmApresConciliacao.Dbe_ConcManutTotal.DataSource:=DMConciliacao.DS_CMApresDepositos;
 
          FrmApresConciliacao.ShowModal;
 
@@ -13622,6 +13639,8 @@ begin
          Refresh;
 
          FrmApresConciliacao:=TFrmApresConciliacao.Create(Self);
+         FrmApresConciliacao.Dbg_ConcManutExtrato.DataSource:=DMConciliacao.DS_CMApresExtratoDep;
+         FrmApresConciliacao.Dbe_ConcManutTotal.DataSource:=DMConciliacao.DS_CMApresExtratoDep;
 
          DMConciliacao.CDS_CMApresExtratosDep.Close;
          DMConciliacao.SDS_CMApresExtratosDep.Params.ParamByName('NUM_SEQ').AsString:=
@@ -13633,14 +13652,13 @@ begin
          OdirPanApres.Visible:=False;
          If DMConciliacao.CDS_CMApresExtratosDep.IsEmpty Then
          Begin
+           FreeAndNil(FrmApresConciliacao);
            DMConciliacao.CDS_CMApresExtratosDep.Close;
            Exit;
          End; // If DMConciliacao.CDS_CMApresExtratosDep.IsEmpty Then
 
          FrmApresConciliacao.Gb_ConcManutPagtos.Visible:=False;
          FrmApresConciliacao.Gb_ConcManutExtrato.Align:=alClient;
-         FrmApresConciliacao.Dbg_ConcManutExtrato.DataSource:=DMConciliacao.DS_CMApresExtratoDep;
-         FrmApresConciliacao.Dbe_ConcManutTotal.DataSource:=DMConciliacao.DS_CMApresExtratoDep;
 
          FrmApresConciliacao.ShowModal;
 

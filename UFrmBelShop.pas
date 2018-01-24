@@ -2604,8 +2604,8 @@ Begin
          '        or'+
          '        (mv.operacao=''DS'') and (mv.tipo_transacao is null)'+ // Entradas Devoluções
          '       )'+
-         ' AND   mv.cancelado = ''N'''+
-         ' AND   mv.excluido = ''N'''+
+         ' AND   mv.cancelado=''N'''+
+         ' AND   mv.excluido =''N'''+
 //odirapagar - 22/05/2017
 //         ' AND   mv.soma_relatorio = ''S'''+
          ' AND   mv.data_lancamento BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaIncioLinx)))+' AND '+
@@ -18901,8 +18901,6 @@ Begin
   // Processamento  -------------------------------------------
   If bSiga Then
   Begin
-//odiropss
-//sgMensagemERRO:='DMBelShop.CDS_Join.';
     // Busca Curvas Selecionadas e Estoque Minino Produtos
     MySql:=' SELECT c.cod_loja, c.cod_produto, c.ind_curva,'+
            ' p.datainclusao, c.est_minimo,'+
@@ -18967,8 +18965,6 @@ Begin
     DMBelShop.CDS_Join.Open;
 
     // Monta Demandas ==========================================================
-//odiropss
-//sgMensagemERRO:='DemandaNovo';
     MontaDemandasNovo(sCodFilial);
 
     Try
@@ -18985,8 +18981,6 @@ Begin
       bgOC_COMPRAR_Docs:=True;
       pgProgBar.Position:=0;
 
-//odiropss
-//sgMensagemERRO:='DMBelShop.IBQ_OC_ComprarAdd.Open;';
       DMBelShop.IBQ_OC_ComprarAdd.Close;
       DMBelShop.IBQ_OC_ComprarAdd.SQL.Clear;
       DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(' Select *');
@@ -19028,9 +19022,6 @@ Begin
            End
           Else // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_ConsultaFilial.FieldByName('CodProduto').AsString),[]) Then
            Begin
-//odiropss
-//sgMensagemERRO:='StrToDate(sgDtaInicio)) Or';
-
              If (StrToDate(IBQ_ConsultaFilial.FieldByName('DATAINCLUSAO').AsString)>=StrToDate(sgDtaInicio)) Or
                 (StrToDate(IBQ_ConsultaFilial.FieldByName('DATAALTERACAO').AsString)>=StrToDate(sgDtaInicio)) Then
               Begin
@@ -19093,8 +19084,6 @@ Begin
             bgDemandaNovo:=False;
 
             // Processa Filial ------------------------------------
-//odiropss
-//sgMensagemERRO:='OCProcessaFilial';
             If Not OCProcessaFilial Then
              Break;
 
@@ -19676,8 +19665,6 @@ Begin
      Begin
        cPrecoUnit    :=DMBelShop.CDS_UltCompraTransito.FieldByName('Preco').AsCurrency;
      End; // If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'UC']),[]) Then
-//odiropss
-//sgMensagem:=sgMensagem+sDta_Ref;
     // Transito ---------------------------------------------------
     cQtdTransito:=0;
     If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'TR']),[]) Then
@@ -46000,6 +45987,8 @@ Begin
          '       or'+
          '        (mv.operacao=''S'' and  mv.tipo_transacao is null and mv.codigo_cliente=347))'+ // Venda Weceslau Esbocar
          ' and   mv.empresa=2'+
+         ' and   mv.cancelado=''N'''+
+         ' and   mv.excluido =''N'''+
          ' and   mv.data_lancamento <'+QuotedStr(sUltDiaAual); // Alterar Periodo Mes Atual ==========================================
   DMBelShop.CDS_Busca.Close;
   DMBelShop.SDS_Busca.CommandText:=MySql;
@@ -46032,7 +46021,9 @@ Begin
          '       or'+
          '        (mv.operacao=''S'' and  mv.tipo_transacao is null and mv.codigo_cliente=347))'+ // Venda Weceslau Esbocar
          ' and   mv.empresa=2'+
-         ' and mv.data_lancamento between '+QuotedStr(sPrimDiaAnterior)+' and '+QuotedStr(sUltDiaAnterior)+ // Alterar Periodo Mes Anterior ===========
+         ' and   mv.cancelado=''N'''+
+         ' and   mv.excluido =''N'''+
+         ' and   mv.data_lancamento between '+QuotedStr(sPrimDiaAnterior)+' and '+QuotedStr(sUltDiaAnterior)+ // Alterar Periodo Mes Anterior ===========
 
          ' group by 1,2'+
 
@@ -46054,7 +46045,9 @@ Begin
          '       or'+
          '        (mv.operacao=''S'' and  mv.tipo_transacao is null and mv.codigo_cliente=347))'+ // Venda Weceslau Esbocar
          ' and   mv.empresa=2'+
-         ' and mv.data_lancamento between '+QuotedStr(sPrimDiaAtual)+' and '+QuotedStr(sUltDiaAual)+ // Alterar Periodo Mes Atual ============
+         ' and   mv.cancelado=''N'''+
+         ' and   mv.excluido =''N'''+
+         ' and   mv.data_lancamento between '+QuotedStr(sPrimDiaAtual)+' and '+QuotedStr(sUltDiaAual)+ // Alterar Periodo Mes Atual ============
 
          ' group by 1,2'+
 
@@ -46076,7 +46069,9 @@ Begin
          '       or'+
          '        (mv.operacao=''S'' and  mv.tipo_transacao is null and mv.codigo_cliente=347))'+ // Venda Weceslau Esbocar
          ' and   mv.empresa=2'+
-         ' and mv.data_lancamento='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDiaOntem)))+ // Alterar Dia Anterior COM REPOSIÇÃO ==========================================
+         ' and   mv.cancelado=''N'''+
+         ' and   mv.excluido =''N'''+
+         ' and   mv.data_lancamento='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDiaOntem)))+ // Alterar Dia Anterior COM REPOSIÇÃO ==========================================
 
          ' group by 1,2'+
 
@@ -46124,7 +46119,9 @@ Begin
          '       or'+
          '        (mv.operacao=''S'' and  mv.tipo_transacao is null and mv.codigo_cliente=347))'+ // Venda Weceslau Esbocar
          ' and   mv.empresa=2'+
-         ' and mv.data_lancamento between '+QuotedStr(sPrimDiaAnterior)+' and '+QuotedStr(sUltDiaAnterior)+ // Alterar Periodo do Mes Anterior =========================================
+         ' and   mv.cancelado=''N'''+
+         ' and   mv.excluido =''N'''+
+         ' and   mv.data_lancamento between '+QuotedStr(sPrimDiaAnterior)+' and '+QuotedStr(sUltDiaAnterior)+ // Alterar Periodo do Mes Anterior =========================================
 
          ' group by 1,2'+
 
@@ -46171,7 +46168,9 @@ Begin
          '        or'+
          '        (mv.operacao=''S'' and  mv.tipo_transacao is null and mv.codigo_cliente=347))'+ // Venda Weceslau Esbocar
          ' and   mv.empresa=2'+
-         ' and mv.data_lancamento between '+QuotedStr(sPrimDiaAtual)+' and '+QuotedStr(sUltDiaAual)+ // Alterar Periodo Mes Atual ==========================================
+         ' and   mv.cancelado=''N'''+
+         ' and   mv.excluido =''N'''+
+         ' and   mv.data_lancamento between '+QuotedStr(sPrimDiaAtual)+' and '+QuotedStr(sUltDiaAual)+ // Alterar Periodo Mes Atual ==========================================
 
          ' group by 1,2'+
 

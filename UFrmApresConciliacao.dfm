@@ -802,14 +802,12 @@ object FrmApresConciliacao: TFrmApresConciliacao
         item
           Expanded = False
           FieldName = 'RAZAO_SOCIAL'
-          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'NUM_DOCTO'
           Title.Alignment = taRightJustify
-          Width = 64
           Visible = True
         end
         item
@@ -834,14 +832,12 @@ object FrmApresConciliacao: TFrmApresConciliacao
           Expanded = False
           FieldName = 'VLR_DESCONTO'
           Title.Alignment = taRightJustify
-          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'VLR_ACRESCIMO'
           Title.Alignment = taRightJustify
-          Width = 64
           Visible = True
         end
         item
@@ -849,7 +845,6 @@ object FrmApresConciliacao: TFrmApresConciliacao
           Expanded = False
           FieldName = 'VLR_PAGTO'
           Title.Alignment = taRightJustify
-          Width = 64
           Visible = True
         end
         item
@@ -857,54 +852,46 @@ object FrmApresConciliacao: TFrmApresConciliacao
           Expanded = False
           FieldName = 'PARCIAL'
           Title.Alignment = taCenter
-          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'COMPROV'
           Title.Alignment = taRightJustify
-          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'COMPROVANTE'
-          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'FORN'
           Title.Alignment = taRightJustify
-          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'FORNECEDOR'
-          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'NUM_SERIE'
           Title.Alignment = taRightJustify
-          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'NUM_PREST'
           Title.Alignment = taRightJustify
-          Width = 64
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'CHV_PAGTO'
           Title.Alignment = taRightJustify
-          Width = 64
           Visible = True
         end
         item
@@ -916,7 +903,6 @@ object FrmApresConciliacao: TFrmApresConciliacao
         item
           Expanded = False
           FieldName = 'DES_USUARIO'
-          Width = 64
           Visible = True
         end
         item
