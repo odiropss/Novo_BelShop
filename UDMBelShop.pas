@@ -3877,6 +3877,10 @@ begin
   Else
    sgPastaWebService:=IncludeTrailingPathDelimiter(sgPastaWebService)+'Fontes\WebService Linx\';
 
+  if Not DirectoryExists(sgPastaWebService) then
+   sgPastaWebService:='\\192.168.0.252\Projetos\BelShop\WebService Linx\';
+
+
   // Conecta IBDataBase BelShop ================================================
   IBDB_BelShop.DatabaseName:=sBancoIB;
   DMConexoes.IBDB_BelShop.DatabaseName:=sBancoIB;

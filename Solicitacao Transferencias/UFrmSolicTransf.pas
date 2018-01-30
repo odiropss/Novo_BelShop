@@ -669,6 +669,14 @@ begin
       Exit;
     End;
 
+    If EdtQtdEstoqueCD.AsInteger<1 Then
+    Begin
+      msg('Produto SEM ESTOQUE no CD !!!', 'A');
+      LimpaEdts;
+      EdtCodProdLinx.SetFocus;
+      Exit;
+    End;
+
     If EdtQtdEstoque.CanFocus   Then EdtQtdEstoque.SetFocus;
     If DtEdt_DtaInicio.CanFocus Then DtEdt_DtaInicio.SetFocus;
   End; // If EdtFiltroCodProdLinx.Value<>0 Then

@@ -5,7 +5,7 @@ interface
 uses
   Windows, Forms, Grids, DBGrids, DBGridJul, StdCtrls, Graphics,
   JvExControls, JvXPCore, JvXPButtons, Controls, Classes, ExtCtrls, Mask,
-  DBCtrls;
+  DBCtrls, MASKUTILS;
 //  Último: ExtCtrls;
 
 type
@@ -24,6 +24,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
   public
@@ -35,7 +36,7 @@ var
 
 implementation
 
-uses UDMBancosConciliacao;
+uses UDMBancosConciliacao, SysUtils;
 
 {$R *.dfm}
 
@@ -67,6 +68,12 @@ procedure TFrmApresConciliacao.FormCreate(Sender: TObject);
 begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
+
+end;
+
+procedure TFrmApresConciliacao.FormShow(Sender: TObject);
+begin
+  Dbe_ConcManutTotal.Text:=FormatFloat(',0.00',StrToCurr(Dbe_ConcManutTotal.Text));
 
 end;
 

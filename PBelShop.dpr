@@ -85,11 +85,11 @@ begin
   Application.CreateForm(TFrmFluxoFornecedor, FrmFluxoFornecedor);
   Application.CreateForm(TDMComissaoVendedor, DMComissaoVendedor);
   Application.CreateForm(TDMLinx, DMLinx);
+  Application.CreateForm(TFrmCentralTrocas, FrmCentralTrocas);
   // Application.CreateForm(TFrmPrioridadesReposicao, FrmPrioridadesReposicao);
   // Application.CreateForm(TFrmOCLinx, FrmOCLinx);
   // Application.CreateForm(TFrmComissaoVendedor, FrmComissaoVendedor);
   // Application.CreateForm(TFrmControleEstoques, FrmControleEstoques);
-  Application.CreateForm(TFrmCentralTrocas, FrmCentralTrocas);
 
   // Application.CreateForm(TFrmControleKits, FrmControleKits);
   // Application.CreateForm(TFrmFaltasCDLojas, FrmFaltasCDLojas);

@@ -2,8 +2,9 @@ object DMBelShop: TDMBelShop
   OldCreateOrder = False
   OnCreate = DataModuleCreate
   Left = 239
-  Top = 113
-  Height = 614
+  Top = 116
+  Height = 611
+  HorizontalOffset = 282
   Width = 1115
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
@@ -27,7 +28,7 @@ object DMBelShop: TDMBelShop
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
-    Left = 27
+    Left = 35
     Top = 11
   end
   object SDS_Busca: TSQLDataSet

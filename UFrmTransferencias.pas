@@ -2534,7 +2534,7 @@ begin
   //============================================================================
   // Busca Produtos com Saldo no CD ============================================
   //============================================================================
-  //opssI
+//OdirAqui 1.Inicio
   If Not BuscaProdutosCD Then
   Begin
     bgArqErros:=True;
@@ -2544,7 +2544,7 @@ begin
     Application.Terminate;
     Exit;
   End;
-  //opssF
+//OdirAqui 1.Fim
   // Busca Produtos com Saldo no CD ============================================
   //============================================================================
   SalvaProcessamento('08/999 - Busca Produtos com Saldo no CD - '+TimeToStr(Time));
@@ -2554,7 +2554,7 @@ begin
   // Insere Produtos do CD =====================================================
   // Deleta Tabelas do Dia: ES_ESTOQUES_CD / ES_ESTOQUES_LOJAS / ES_ESTOQUES_SEM
   //============================================================================
-  //opssI
+//OdirAqui 2.Inicio
   If Not InsereProdutosCD Then
   Begin
     bgArqErros:=True;
@@ -2563,7 +2563,7 @@ begin
     Application.Terminate;
     Exit;
   End;
-  //opssF
+//OdirAqui 2.Fim
   // Insere Produtos do CD =====================================================
   //============================================================================
   SalvaProcessamento('09/999 - Insere Produtos do CD - '+TimeToStr(Time));
@@ -2574,7 +2574,7 @@ begin
   //============================================================================
   // Roda Transferencias Solicitadas Pelas Lojas ===============================
   //============================================================================
-  //opssI
+//OdirAqui 3.Inicio
   If Not TransferenciasLojas Then
   Begin
     bgArqErros:=True;
@@ -2583,7 +2583,7 @@ begin
     Application.Terminate;
     Exit;
   End;
-  //opssF
+//OdirAqui 3.Fim
   // Roda Transferencias Solicitadas Pelas Lojas ===============================
   //============================================================================
    SalvaProcessamento('00/999 - Roda Transferencias Solicitadas Pelas Lojas - FIM - '+TimeToStr(Time));
@@ -2594,7 +2594,7 @@ begin
   //============================================================================
   // Busca Produtos nas Lojas com Necessidade de Compras =======================
   //============================================================================
-  //opssI
+//OdirAqui 4.Inicio
   If Not BuscaProdutosLojas Then
   Begin
     bgArqErros:=True;
@@ -2603,7 +2603,7 @@ begin
     Application.Terminate;
     Exit;
   End;
-  //opssF
+//OdirAqui 4.Fim
   // Busca Produtos nas Lojas com Necessidade de Compras =======================
   //============================================================================
   SalvaProcessamento('10/999 - Busca Produtos nas Lojas com Necessidade de Compras - FIM - '+TimeToStr(Time));
@@ -2614,7 +2614,7 @@ begin
   //============================================================================
   // Analisa e Atualiza Transferencias do Dia ==================================
   //============================================================================
-  //opssI
+//OdirAqui 5.Inicio
   If Not AnalisaAtualizaTransferencias Then
   Begin
     bgArqErros:=True;
@@ -2623,7 +2623,7 @@ begin
     Application.Terminate;
     Exit;
   End;
-  //opssF
+//OdirAqui 5.Fim
   // Analisa e Atualiza Transferencias do Dia ==================================
   //============================================================================
   SalvaProcessamento('11/999 - Analisa e Atualiza Transferencias do Dia - FIM - '+TimeToStr(Time));
@@ -2634,7 +2634,7 @@ begin
   //============================================================================
   // Busca Transferencias de Dias Anteiroes e Novas do Setor de Compras ========
   //============================================================================
-  //opssI
+//OdirAqui 6.Inicio
   If Not ProcessaTransferenciasCompras Then
   Begin
     bgArqErros:=True;
@@ -2643,7 +2643,7 @@ begin
     Application.Terminate;
     Exit;
   End;
-  //opssF
+//OdirAqui 6.Fim
   // Busca Transferencias de Dias Anteiroes e Novas do Setor de Compras ========
   //============================================================================
   SalvaProcessamento('12/999 - Busca Transferencias de Dias Anteiroes e Novas do Setor de Compras - FIM - '+TimeToStr(Time));
@@ -2659,7 +2659,7 @@ begin
   // 1       SIM        = Produtos Solicitados pelo Setor de Compras
   // 2       SIM        = Produtos Solicitados Direto da Loja
   // 3       NÃO        = Produtos Calculados no Automático
-  //opssI
+//OdirAqui 7.Inicio
   If Not AtualizaPrioridades Then
   Begin
     bgArqErros:=True;
@@ -2668,7 +2668,7 @@ begin
     Application.Terminate;
     Exit;
   End;
-  //opssF
+//OdirAqui 7.Fim
   //============================================================================
   SalvaProcessamento('13/999 - Atualiza Prioridades - FIM - '+TimeToStr(Time));
   //============================================================================

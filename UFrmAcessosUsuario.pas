@@ -1196,7 +1196,7 @@ begin
   FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
   FrmBelShop.AbreSolicitacoes(22);
   FrmSolicitacoes.Caption:='Permissões de Usuários';
-  FrmSolicitacoes.Ts_Odir.Caption:='Transfere Permissões de Usuários';
+  FrmSolicitacoes.Ts_SidicomUsuario.Caption:='Transfere Permissões de Usuários';
 
   FrmSolicitacoes.ShowModal;
   FreeAndNil(FrmSolicitacoes);

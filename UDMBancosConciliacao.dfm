@@ -940,7 +940,7 @@ object DMConciliacao: TDMConciliacao
     object CDS_CMApresPagtosVLR_TOTAL: TAggregateField
       FieldName = 'VLR_TOTAL'
       Active = True
-      DisplayFormat = '0,.00'
+      DisplayFormat = '#,0.00 '
       Expression = 'SUM(VLR_DOCTO)'
     end
   end
@@ -1418,7 +1418,7 @@ object DMConciliacao: TDMConciliacao
     object CDS_CMApresExtratosVLR_TOTAL: TAggregateField
       FieldName = 'VLR_TOTAL'
       Active = True
-      DisplayFormat = '0,.00'
+      DisplayFormat = '#,0.00 '
       Expression = 'SUM(VLR_DOCTO)'
     end
   end
@@ -1713,35 +1713,36 @@ object DMConciliacao: TDMConciliacao
   end
   object SDS_CMApresDepositos: TSQLDataSet
     CommandText = 
-      'SELECT'#13#10#39'Bel_'#39'||m.cod_loja Cod_loja,'#13#10'rpad(e.nome_emp, 60, '#39#39') r' +
-      'azao_social,'#13#10'/*'#13#10'CASE'#13#10'  WHEN h.cod_tpmovto IS NOT NULL THEN'#13#10' ' +
-      '    '#39'*'#39'||h.cod_tpmovto'#13#10'  ELSE'#13#10'     m.cod_comprovante'#13#10'END Comp' +
-      'rov,'#13#10'*/'#13#10#39'000'#39' Comprov,'#13#10'/*'#13#10'CASE'#13#10'  WHEN h.cod_tpmovto IS NOT ' +
-      'NULL THEN'#13#10'    '#39'*'#39'||h.des_tpmovto'#13#10'  ELSE'#13#10'    c.nomecomprovante' +
-      #13#10'END Comprovante,'#13#10'*/'#13#10'rpad('#39#39', 20, '#39#39')  Comprovante,'#13#10#13#10'/*'#13#10'CA' +
-      'SE'#13#10'  WHEN b.cod_banco IS NOT NULL THEN'#13#10'    '#39'*'#39'||b.cod_banco'#13#10' ' +
-      ' ELSE'#13#10'    m.cod_fornecedor'#13#10'END Forn,'#13#10'*/'#13#10'rpad('#39#39', 6, '#39#39')  For' +
-      'n,'#13#10'/*'#13#10'CASE'#13#10'  WHEN b.cod_banco IS NOT NULL THEN'#13#10'    '#39'*'#39'||b.de' +
-      's_banco'#13#10'  ELSE'#13#10'   f.nomefornecedor'#13#10'END "Fornecedor",'#13#10'*/'#13#10'rpa' +
-      'd('#39#39', 40, '#39#39')   "Fornecedor",'#13#10#13#10'Cast(lpad(m.num_docto, 6, '#39#39') a' +
-      's varchar(6)) num_docto,'#13#10#13#10'm.dta_docto dta_pagto,'#13#10'm.vlr_docto,' +
-      ' m.vlr_desconto, m.vlr_acrescimo, m.vlr_docto vlr_pagto, '#39'NAO'#39' P' +
-      'arcial,'#13#10'm.dta_venc,'#13#10#39'0000'#39' num_serie, '#39'01'#39' Num_Prest,'#13#10'rpad('#39#39 +
-      ', 23, '#39#39') chv_pagto, p.cod_usuario, u.des_usuario,'#13#10'p.tip_concil' +
-      'iacao, m.num_seq, m.num_compl'#13#10#13#10'FROM fin_conciliacao_mov_dep m'#13 +
-      #10'   Left Join fin_conciliacao_depositos p  on m.num_seq=p.num_se' +
-      'q'#13#10'                                         And m.num_compl=p.nu' +
-      'm_compl'#13#10'   left Join linxlojas e                  on m.cod_linx' +
-      '=e.empresa'#13#10'   Left Join ps_usuarios u                on p.cod_u' +
-      'suario=u.cod_usuario'#13#10#13#10'Where m.ind_conciliacao='#39'SIM'#39#13#10'And   p.c' +
-      'hv_extrato= :CHV_EXTRATO'#13#10#13#10'Order by m.dta_docto, e.nome_emp'#13#10#13#10
+      'SELECT'#13#10#39'Bel_'#39'||m.cod_loja Cod_loja,'#13#10'cast(rpad(e.nome_emp, 60, ' +
+      #39#39') as varchar(60)) razao_social,'#13#10'/*'#13#10'CASE'#13#10'  WHEN h.cod_tpmovt' +
+      'o IS NOT NULL THEN'#13#10'     '#39'*'#39'||h.cod_tpmovto'#13#10'  ELSE'#13#10'     m.cod_' +
+      'comprovante'#13#10'END Comprov,'#13#10'*/'#13#10#39'000'#39' Comprov,'#13#10'/*'#13#10'CASE'#13#10'  WHEN ' +
+      'h.cod_tpmovto IS NOT NULL THEN'#13#10'    '#39'*'#39'||h.des_tpmovto'#13#10'  ELSE'#13#10 +
+      '    c.nomecomprovante'#13#10'END Comprovante,'#13#10'*/'#13#10#13#10'cast(rpad('#39#39', 20,' +
+      ' '#39#39') as varchar(20)) Comprovante,'#13#10'/*'#13#10'CASE'#13#10'  WHEN b.cod_banco ' +
+      'IS NOT NULL THEN'#13#10'    '#39'*'#39'||b.cod_banco'#13#10'  ELSE'#13#10'    m.cod_fornec' +
+      'edor'#13#10'END Forn,'#13#10'*/'#13#10'cast(rpad('#39#39', 6, '#39#39') as varchar(6))  Forn,'#13 +
+      #10'/*'#13#10'CASE'#13#10'  WHEN b.cod_banco IS NOT NULL THEN'#13#10'    '#39'*'#39'||b.des_b' +
+      'anco'#13#10'  ELSE'#13#10'   f.nomefornecedor'#13#10'END "Fornecedor",'#13#10'*/'#13#10'cast(r' +
+      'pad('#39#39', 40, '#39#39') as varchar(40)) "Fornecedor",'#13#10'Cast(lpad(m.num_d' +
+      'octo, 6, '#39#39') as varchar(6)) num_docto,'#13#10#13#10'm.dta_docto dta_pagto,' +
+      #13#10'm.vlr_docto, m.vlr_desconto, m.vlr_acrescimo, m.vlr_docto vlr_' +
+      'pagto, '#39'NAO'#39' Parcial,'#13#10'm.dta_venc,'#13#10#39'0000'#39' num_serie, '#39'01'#39' Num_P' +
+      'rest,'#13#10#13#10'cast(rpad('#39#39', 23, '#39#39') as varchar(23)) chv_pagto,'#13#10#13#10'p.c' +
+      'od_usuario, u.des_usuario,'#13#10'p.tip_conciliacao, m.num_seq, m.num_' +
+      'compl'#13#10#13#10'FROM fin_conciliacao_mov_dep m'#13#10'   Left Join fin_concil' +
+      'iacao_depositos p  on m.num_seq=p.num_seq'#13#10'                     ' +
+      '                    And m.num_compl=p.num_compl'#13#10'   left Join li' +
+      'nxlojas e                  on m.cod_linx=e.empresa'#13#10'   Left Join' +
+      ' ps_usuarios u                on p.cod_usuario=u.cod_usuario'#13#10#13#10 +
+      'Where m.ind_conciliacao='#39'SIM'#39#13#10'And   p.chv_extrato= :CHV_EXTRATO' +
+      #13#10#13#10'Order by m.dta_docto, e.nome_emp'#13#10#13#10
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'CHV_EXTRATO'
         ParamType = ptInput
-        Value = '12'
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 824
@@ -1892,7 +1893,7 @@ object DMConciliacao: TDMConciliacao
     object CDS_CMApresDepositosVLR_TOTAL: TAggregateField
       FieldName = 'VLR_TOTAL'
       Active = True
-      DisplayFormat = '0,.00'
+      DisplayFormat = '#,0.00 '
       Expression = 'SUM(VLR_DOCTO)'
     end
   end
@@ -2033,7 +2034,7 @@ object DMConciliacao: TDMConciliacao
     object CDS_CMApresExtratosDepVLR_TOTAL: TAggregateField
       FieldName = 'VLR_TOTAL'
       Active = True
-      DisplayFormat = '0,.00'
+      DisplayFormat = '#,0.00'
       Expression = 'SUM(VLR_DOCTO)'
     end
   end

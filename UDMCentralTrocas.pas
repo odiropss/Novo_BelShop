@@ -173,6 +173,22 @@ type
     CDS_QtdCxCDGruposQTD_CAIXA: TIntegerField;
     CDS_QtdCxCDGruposPER_CORTE: TIntegerField;
     CDS_V_ReposDivergenciasCODBARRA: TStringField;
+    CDS_AnalRepDiaria: TClientDataSet;
+    SDS_AnalRepDiaria: TSQLDataSet;
+    DSP_AnalRepDiaria: TDataSetProvider;
+    DS_AnalRepDiaria: TDataSource;
+    CDS_AnalRepDiariaORDEM: TIntegerField;
+    CDS_AnalRepDiariaCODIGO_CLIENTE: TIntegerField;
+    CDS_AnalRepDiariaRAZAO_SOCIAL: TStringField;
+    CDS_AnalRepDiariaDOCS_L: TFMTBCDField;
+    CDS_AnalRepDiariaDOCS_G: TFMTBCDField;
+    CDS_AnalRepDiariaDOCS_DIF: TFMTBCDField;
+    CDS_AnalRepDiariaLINHAS_L: TFMTBCDField;
+    CDS_AnalRepDiariaLINHAS_G: TFMTBCDField;
+    CDS_AnalRepDiariaLINHAS_DIF: TFMTBCDField;
+    CDS_AnalRepDiariaQTDS_L: TFMTBCDField;
+    CDS_AnalRepDiariaQTDS_G: TFMTBCDField;
+    CDS_AnalRepDiariaQTDS_DIF: TFMTBCDField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir

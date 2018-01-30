@@ -373,7 +373,6 @@ object DMConexoes: TDMConexoes
     IdleTimer = 0
     SQLDialect = 3
     TraceFlags = []
-    AllowStreamedConnected = False
     Left = 448
     Top = 198
   end

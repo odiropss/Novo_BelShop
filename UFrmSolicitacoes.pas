@@ -64,10 +64,11 @@ TabIndex:
   18 = Apresenta Qualquer Coisa para Selecionar (USAR DMBelShop.CDS_Busca) - Ts_Selecionar
   19 = Usar com Qualquer Coisa - Ts_QualquerCoisa
   20 = Excel Importa Arquivo - Ts_ExcelImportar
-  21 = Digitação de Reposições de Lojas
-  22 = Transfere Permissões Usuários SIDICOM
-  23 = Salão - Relatórios
-  24 = Reposições Lojas - Acerta Divergências
+  21 = Digitação de Reposições de Lojas - Ts_ReposLojasDigita
+  22 = Transfere Permissões Usuários SIDICOM  - _SidicomUsuario
+  23 = Salão - Relatórios - Ts_SalaoRelatorios
+  24 = Divergências Reposições Lojas  - Acerta Divergências - Ts_ReposDivergencias
+  25 = Analise Reposicao Diária - Ts_AnaliseReposicaoDiaria
 }
 unit UFrmSolicitacoes;
 
@@ -492,7 +493,7 @@ type
     Gb_ReposLojasQtdReposicao: TGroupBox;
     EdtReposLojasQtdReposicao: TCurrencyEdit;
     Bt_ReposLojasAlterar: TJvXPButton;
-    Ts_Odir: TTabSheet;
+    Ts_SidicomUsuario: TTabSheet;
     Panel9: TPanel;
     GroupBox1: TGroupBox;
     Label62: TLabel;
@@ -621,6 +622,11 @@ type
     EdtTransfQtdProd: TCurrencyEdit;
     Dbg_TransfLojas: TDBGridJul;
     Bt_TransfSalvar: TJvXPButton;
+    Ts_AnaliseReposicaoDiaria: TTabSheet;
+    Panel2: TPanel;
+    JvXPButton2: TJvXPButton;
+    Bt_AnaliseRepDiariaSalvaClipboard: TJvXPButton;
+    Dbg_AnaliseRepDiaria: TDBGridJul;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -925,6 +931,10 @@ type
     procedure EdtTransfCodLojaExit(Sender: TObject);
     procedure Bt_TransfBuscaLojaClick(Sender: TObject);
     procedure Bt_TransfSalvarClick(Sender: TObject);
+    procedure Bt_AnaliseRepDiariaSalvaClipboardClick(Sender: TObject);
+    procedure Dbg_AnaliseRepDiariaDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
   private
     { Private declarations }
 
@@ -3520,7 +3530,7 @@ procedure TFrmSolicitacoes.PC_PrincipalChange(Sender: TObject);
 begin
   CorSelecaoTabSheet(PC_Principal);
 
-  If (PC_Principal.ActivePage=Ts_Odir) And (Ts_Odir.CanFocus) Then
+  If (PC_Principal.ActivePage=Ts_SidicomUsuario) And (Ts_SidicomUsuario.CanFocus) Then
    EdtUsuarioModelo.SetFocus;
 
   If (PC_Principal.ActivePage=Ts_SolicitacoesExporta) And (Ts_SolicitacoesExporta.CanFocus) Then
@@ -3602,6 +3612,11 @@ begin
        EdtReposLojasQtdReposicao.SetFocus;
      End;
   End;
+
+  If (PC_Principal.ActivePage=Ts_AnaliseReposicaoDiaria) And (Ts_AnaliseReposicaoDiaria.CanFocus) Then
+  Begin
+    Dbg_AnaliseRepDiaria.SetFocus;
+  End;
 end;
 
 procedure TFrmSolicitacoes.Bt_SolicExpVoltarClick(Sender: TObject);
@@ -3615,7 +3630,7 @@ begin
 
   If Ckb_SolicExpSoProduto.Checked Then
    Begin
-     EdtSolicExpTpExportacao.Text:=DMBelShop.IBQ_AComprarCOD_ITEM.AsString+' - '+ 
+     EdtSolicExpTpExportacao.Text:=DMBelShop.IBQ_AComprarCOD_ITEM.AsString+' - '+
                                    DMBelShop.IBQ_AComprarDES_ITEM.AsString;
      EdtSolicExpTpExportacao.Color:=$00FF8000;
    End
@@ -6460,6 +6475,8 @@ begin
 
              sgNomeArq:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Filial').AsString+'_'+
                         DMBelShop.CDS_BuscaRapida.FieldByName('Razao_Social').AsString;
+             sgNomeArq:=f_Troca('|','',sgNomeArq);
+             sgNomeArq:=f_Troca('  ',' ',sgNomeArq);
 
              DMBelShop.CDS_BuscaRapida.Close;
 
@@ -6489,7 +6506,11 @@ begin
 
   If Trim(sgNomeArq)='' Then
   Begin
-    msg('Favor Informar a Pasta e o Arquivo'+cr+'de ORIGEM a Importar!!','A');
+    If Trim(EdtProSoftImpPastaArquivo.Text)<>'' Then
+     msg('Arquivo de ORIGEM Informado'+cr+cr+'é Inválido !!','A')
+    Else
+     msg('Favor Informar a Pasta e o Arquivo'+cr+cr+'de ORIGEM a Importar!!','A');
+
     Bt_ProSoftImpArquivo.SetFocus;
     Exit;
   End;
@@ -8892,6 +8913,37 @@ begin
   EdtTransfDescLoja.Clear;
   EdtTransfCodLoja.SetFocus;
 
+end;
+
+procedure TFrmSolicitacoes.Bt_AnaliseRepDiariaSalvaClipboardClick(Sender: TObject);
+begin
+  Dbg_AnaliseRepDiaria.SetFocus;
+
+  If DMCentralTrocas.CDS_AnalRepDiaria.IsEmpty Then
+   Exit;
+
+  DBGridClipboard(Dbg_AnaliseRepDiaria);
+end;
+
+procedure TFrmSolicitacoes.Dbg_AnaliseRepDiariaDrawColumnCell(Sender: TObject;
+          const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if not (gdSelected in State) Then // Este comando altera cor da Linha
+  Begin
+    If DMBelShop.CDS_BuscaRapida.FieldByName('Ordem').AsInteger in [0,2,5] Then
+    Begin
+      Dbg_AnaliseRepDiaria.Canvas.Font.Style:=[fsBold]; // Estilo da Fonte
+      Dbg_AnaliseRepDiaria.Canvas.Brush.Color:=clSkyBlue;
+    End;
+  End; // if not (gdSelected in State) Then
+
+  Dbg_AnaliseRepDiaria.Canvas.FillRect(Rect);
+  Dbg_AnaliseRepDiaria.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  // Alinhamento
+  DMBelShop.CDS_BuscaRapida.FieldByName('Documento').Alignment:=taRightJustify;
+  DMBelShop.CDS_BuscaRapida.FieldByName('Total_Linhas').Alignment:=taRightJustify;
+  DMBelShop.CDS_BuscaRapida.FieldByName('Total_Qtds').Alignment:=taRightJustify;
 end;
 
 end.

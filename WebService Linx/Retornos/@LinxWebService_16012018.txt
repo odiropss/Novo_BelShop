@@ -1,6 +1,0 @@
-=====================================
-Loja Linx: 24 Metodo: LinxSangriaSuprimentos Resposta Negativa !!
-LinxSangriaSuprimentos: Ocorreu um erro inesperado. Linx.Microvix.WebApi.Custom.PortalNotFoundException: Não foi encontrado nenhum portal com o cnpj informado.
-   at Linx.Microvix.WebApi.Custom.ChaveAndCnpjAndOrIdPortalSourceSelector.GetSourceSettings(RequestCommand command)
-   at Linx.Microvix.WebApi.Business.IntegrationBusiness.ExecuteIntegration(String requestXml, Stream Stream)
-=====================================

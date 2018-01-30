@@ -1336,6 +1336,8 @@ type
     Edit2: TEdit;
     Edit3: TEdit;
     Edit4: TEdit;
+    N9: TMenuItem;
+    SubMenuCentroDistAnaliseAnalReposicoesRespDiaria: TMenuItem;
 
     // Odir ====================================================================
 
@@ -2309,6 +2311,8 @@ type
       Shift: TShiftState);
     procedure Dbg_EstFisFinanGiroEstoqueKeyDown(Sender: TObject;
       var Key: Word; Shift: TShiftState);
+    procedure SubMenuCentroDistAnaliseAnalReposicoesRespDiariaClick(
+      Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -44632,8 +44636,9 @@ begin
   FrmCentralTrocas.CorCaptionForm.FormCaption:='CENTRAL DE TROCAS';
   FrmCentralTrocas.ShowModal;
 
-  FreeAndNil(FrmCentralTrocas);
-  FreeAndNil(DMCentralTrocas);
+//Odirapagar - 26/01/2018
+//  FreeAndNil(FrmCentralTrocas);
+//  FreeAndNil(DMCentralTrocas);
 
 end;
 
@@ -45414,8 +45419,9 @@ begin
 
   FrmCentralTrocas.ShowModal;
 
-  FreeAndNil(FrmCentralTrocas);
-  FreeAndNil(DMCentralTrocas);
+//odirapagar - 26/01/2018
+//  FreeAndNil(FrmCentralTrocas);
+//  FreeAndNil(DMCentralTrocas);
 end;
 
 procedure TFrmBelShop.Dbe_ConEmpresasCodLojaLinxKeyPress(Sender: TObject;
@@ -45935,12 +45941,13 @@ begin
 
   // Apresenta TabSheet ========================================================
   TabSheetInvisivel(FrmCentralTrocas);
-  FrmCentralTrocas.Ts_AnaliseReposicoes.TabVisible:=True;
+  FrmCentralTrocas.Ts_AnaliseReposicoesEndereco.TabVisible:=True;
 
   FrmCentralTrocas.ShowModal;
 
-  FreeAndNil(FrmCentralTrocas);
-  FreeAndNil(DMCentralTrocas);
+//odirapagar - 26/01/2018
+//  FreeAndNil(FrmCentralTrocas);
+//  FreeAndNil(DMCentralTrocas);
 
 end;
 
@@ -46384,6 +46391,21 @@ begin
   // Bloquei Ctrl + Delete =====================================================
   If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
    Abort;
+end;
+
+procedure TFrmBelShop.SubMenuCentroDistAnaliseAnalReposicoesRespDiariaClick(Sender: TObject);
+begin
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
+  BloqueioBotoes(FrmCentralTrocas, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
+
+  // Apresenta TabSheet ========================================================
+  TabSheetInvisivel(FrmCentralTrocas);
+  FrmCentralTrocas.Ts_AnaliseReposicoesDiaria.TabVisible:=True;
+
+  FrmCentralTrocas.ShowModal;
+
 end;
 
 End.

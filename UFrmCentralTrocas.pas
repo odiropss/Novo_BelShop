@@ -79,7 +79,7 @@ type
     Bt_ReposLojasCheckOut: TJvXPButton;
     Bt_ReposLojasFechar: TJvXPButton;
     Bt_ReposLojasPedidosGerados: TJvXPButton;
-    Ts_AnaliseReposicoes: TTabSheet;
+    Ts_AnaliseReposicoesEndereco: TTabSheet;
     Pan_AnaliseRepos: TPanel;
     Bt_AnaliseReposClipboard: TJvXPButton;
     Pan_AnaliseReposSolic: TPanel;
@@ -142,6 +142,13 @@ type
     Bt_ReposLojasLimpaForn: TJvXPButton;
     EdtReposLojasCodForn: TEdit;
     Bt_ReposLojasGeraPedidoSIDICOM: TJvXPButton;
+    Ts_AnaliseReposicoesDiaria: TTabSheet;
+    Panel3: TPanel;
+    Bt_AnaliseRepDiariaDia: TJvXPButton;
+    Bt_AnaliseRepDiariaSalvaClipboard: TJvXPButton;
+    Bt_AnaliseRepDiariaFechar: TJvXPButton;
+    Dbg_AnaliseRepDiaria: TDBGridJul;
+    Bt_AnaliseRepDiariaDoctos: TJvXPButton;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -195,6 +202,7 @@ type
 
     Procedure RomaneioFornecedor;
 
+    Procedure NuvemMovimentoLinx(sDtaInicial, sDtaFinal: String);
     // Odir ====================================================================
 
     procedure Bt_NotasEntDevBuscaDoctoClick(Sender: TObject);
@@ -271,6 +279,15 @@ type
       var Key: Word; Shift: TShiftState);
     procedure Bt_ReposLojasLimpaFornClick(Sender: TObject);
     procedure Bt_ReposLojasBuscaFornClick(Sender: TObject);
+    procedure Bt_AnaliseRepDiariaDiaClick(Sender: TObject);
+    procedure Bt_AnaliseRepDiariaSalvaClipboardClick(Sender: TObject);
+    procedure Bt_AnaliseRepDiariaFecharClick(Sender: TObject);
+    procedure Dbg_NotasEntDevProdutosKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_AnaliseRepDiariaDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure Bt_AnaliseRepDiariaDoctosClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -304,6 +321,7 @@ var
   sgPrioridadeFilter,
   sgTipoPrioridade,
 
+  sgDia,
   sgCodProduto, sgCodProdLinx,
   sgCodGrupo, sgDesGrupo,
   sgCodSubGrupo, sgDesSubGrupo,
@@ -319,6 +337,8 @@ var
 
   OrderGrid: String;    // Ordenar Grid
 
+
+
 implementation
 
 uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
@@ -331,6 +351,35 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
 //==============================================================================
 // Odir - INICIO ===============================================================
 //==============================================================================
+
+// Atualiza Movimento Nuvem Linx >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmCentralTrocas.NuvemMovimentoLinx(sDtaInicial, sDtaFinal: String);
+Var
+  MySql: String;
+  sParametros: String;
+Begin
+  OdirPanApres.Caption:='AGUARDE !! Atualizando Movimento (LINX - CLOUD) Dia '+sDtaInicial+' Loja: Belshop | Centro de Distribuição | RS';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  sParametros:=sgPastaWebService+'PWebServiceLinx.exe LinxMovimento'; // Excutavel e Metodo a Processar
+  sParametros:=sParametros+' 2'; // Codigo da Loja a Processar: Belshop | Centro de Distribuição | RS
+  sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Metodos')+'"'; // Pasta dos Metodos
+  sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Retornos')+'"'; // Pasta dos Retornos
+  sParametros:=sParametros+' "'+sDtaInicial+'"'; // Data Inicial
+  sParametros:=sParametros+' "'+sDtaFinal+'"'; // Data Final
+
+  // Envia Parametro e Aguarda Termino do Processo =============================
+  CreateProcessSimple(sParametros);
+
+  OdirPanApres.Visible:=False;
+end; // Atualiza Movimento Nuvem Linx >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Imprime Romaeiros por Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmCentralTrocas.RomaneioFornecedor;
@@ -380,6 +429,9 @@ Begin
     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
     OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
     OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2));
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmCentralTrocas;
+    OdirPanApres.BringToFront();
     OdirPanApres.Visible:=True;
     Refresh;
 
@@ -1300,6 +1352,8 @@ End; // Verifica a Existencia de Produtos Sem Preco de Custo a Transferir para P
 //      OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
 //      OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
 //      OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+//      OdirPanApres.Font.Style:=[fsBold];
+//      OdirPanApres.Parent:=FrmCentralTrocas;
 //      OdirPanApres.BringToFront();
 //      OdirPanApres.Visible:=True;
 //      Refresh;
@@ -2018,6 +2072,9 @@ Begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -2940,6 +2997,9 @@ Begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   OdirPanApres.Refresh;
 
@@ -3143,6 +3203,9 @@ Begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   OdirPanApres.Refresh;
 
@@ -3169,6 +3232,9 @@ Begin
       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmCentralTrocas;
+      OdirPanApres.BringToFront();
       OdirPanApres.Visible:=True;
       OdirPanApres.Refresh;
 
@@ -3324,6 +3390,9 @@ Begin
       OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
       OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
       OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+      OdirPanApres.Font.Style:=[fsBold];
+      OdirPanApres.Parent:=FrmCentralTrocas;
+      OdirPanApres.BringToFront();
       OdirPanApres.Visible:=True;
       OdirPanApres.Refresh;
 
@@ -4529,6 +4598,9 @@ begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   OdirPanApres.Refresh;
 
@@ -5534,6 +5606,9 @@ begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -6279,7 +6354,7 @@ begin
     DtaEdt_ReposLojas.Properties.ReadOnly:=True;
   End;
 
-  If (PC_Principal.ActivePage=Ts_AnaliseReposicoes) And (Ts_AnaliseReposicoes.CanFocus) Then
+  If (PC_Principal.ActivePage=Ts_AnaliseReposicoesEndereco) And (Ts_AnaliseReposicoesEndereco.CanFocus) Then
   Begin
     Cbx_AnaliseReposMes.ItemIndex:=MonthOf(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor))-1;
     EdtAnaliseReposAno.Text:=IntToStr(YearOf(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)));
@@ -6298,6 +6373,10 @@ begin
     Application.ProcessMessages;
   End; // If (PC_Principal.ActivePage=Ts_QtdCaixaCD) And (Ts_QtdCaixaCD.CanFocus) Then
 
+  If (PC_Principal.ActivePage=Ts_AnaliseReposicoesDiaria) And (Ts_AnaliseReposicoesDiaria.CanFocus) Then
+  Begin
+    Dbg_AnaliseRepDiaria.SetFocus;
+  End; // If (PC_Principal.ActivePage=Ts_AnaliseReposicoesDiaria) And (Ts_AnaliseReposicoesDiaria.CanFocus) Then
 end;
 
 procedure TFrmCentralTrocas.PanReposLojasClick(Sender: TObject);
@@ -6555,6 +6634,9 @@ begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
   Screen.Cursor:=crAppStart;
@@ -6715,6 +6797,9 @@ begin
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
 
@@ -7358,6 +7443,10 @@ end;
 
 procedure TFrmCentralTrocas.Dbg_QtdsCaixaCDProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   If DMCentralTrocas.CDS_QtdCxCDProdutos.IsEmpty Then
    Exit;
 
@@ -7373,6 +7462,10 @@ end;
 
 procedure TFrmCentralTrocas.Dbg_QtdsCaixaCDGruposKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
   If DMCentralTrocas.CDS_QtdCxCDGrupos.IsEmpty Then
    Exit;
 
@@ -7721,6 +7814,449 @@ Begin
   FreeAndNil(FrmPesquisa);
 
   CkCbx_ReposLojasCorredorChange(Self);
+end;
+
+procedure TFrmCentralTrocas.Bt_AnaliseRepDiariaDiaClick(Sender: TObject);
+Var
+  MySql: String;
+  b: Boolean;
+begin
+  Dbg_AnaliseRepDiaria.SetFocus;
+
+  DMCentralTrocas.CDS_AnalRepDiaria.Close;
+
+  b:=True;
+  bgProcessar:=False;
+  sgDia:='';
+  While b do
+  Begin
+    sgDia:=InputBoxData('Analise de Reposição', 'Informe o Dia', sgDia);
+    If Trim(sgDia)='' Then
+     Break;
+
+    Try
+      StrToDate(sgDia);
+      bgProcessar:=True;
+      Break;
+    Except
+      msg('Dia Inválido !!','A');
+    End;
+  End; // While b do
+
+  If bgProcessar Then
+  Begin
+    PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+    If msg('Deseja Atualizar Linx (Nuvem)'+cr+cr+'para o dia '+f_Troca('.','/',sgDia)+' ??','C')=1 Then
+    Begin
+      PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
+      if msg('Deseja Realmente ATUALIZAR'+cr+cr+'Dados do Linx (Nuvem) ??', 'C')=1 Then
+       NuvemMovimentoLinx(f_Troca('.','/',sgDia),f_Troca('.','/',sgDia));
+    End; // If msg('Deseja Atualiza Linx (Nuvem)'+cr+cr+'para o dia '+f_Troca('.','/',sgDia)+' ??','C')=1 Then
+
+    OdirPanApres.Caption:='AGUARDE !! Localizando Documentos do Dia '+sgDia+' !!';
+    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmCentralTrocas;
+    OdirPanApres.BringToFront();
+    OdirPanApres.Visible:=True;
+
+    Screen.Cursor:=crAppStart;
+    Refresh;
+
+    sgDia:=f_Troca('/','.',f_Troca('-','.',sgDia));
+
+
+    // Apresenta Dia para Analise ==============================================
+           //=================== TITULO DO RELATÓRIO
+    MySql:=' SELECT'+
+           ' 0 ORDEM,'+
+           ' NULL CODIGO_CLIENTE,'+
+           ' ''ANALISE DE REPOSICAO DO DIA ''||'+QuotedStr(f_Troca('.','/',sgDia))+' RAZAO_SOCIAL,'+
+           ' NULL DOCS_L,'+
+           ' NULL DOCS_G,'+
+           ' NULL DOCS_DIF,'+
+           ' NULL LINHAS_L,'+
+           ' NULL LINHAS_G,'+
+           ' NULL LINHAS_DIF,'+
+           ' NULL QTDS_L,'+
+           ' NULL QTDS_G,'+
+           ' NULL QTDS_DIF'+
+
+           ' FROM RDB$DATABASE'+
+
+           //=================== LINHA EM BRANCO
+           ' UNION'+
+
+           ' SELECT'+
+           ' 1 ORDEM,'+
+           ' NULL CODIGO_CLIENTE,'+
+           ' NULL RAZAO_SOCIAL,'+
+           ' NULL DOCS_L,'+
+           ' NULL DOCS_G,'+
+           ' NULL DOCS_DIF,'+
+           ' NULL LINHAS_L,'+
+           ' NULL LINHAS_G,'+
+           ' NULL LINHAS_DIF,'+
+           ' NULL QTDS_L,'+
+           ' NULL QTDS_G,'+
+           ' NULL QTDS_DIF'+
+
+           ' FROM RDB$DATABASE'+
+
+           //=================== TOTAIS POR LOJA
+           ' UNION'+
+
+           ' SELECT'+
+           ' 2 ORDEM,'+
+           ' linx.codigo_cliente,'+
+           ' linx.razao_social,'+
+           ' Linx.DOCS_L,'+
+           ' Geren.DOCS_G,'+
+           ' (Linx.docs_l-Geren.docs_g) DOCS_DIF,'+
+           ' linx.LINHAS_L,'+
+           ' geren.LINHAS_G,'+
+           ' (linx.linhas_l-geren.linhas_g) LINHAS_DIF,'+
+           ' Linx.QTDS_L,'+
+           ' Geren.QTDS_G,'+
+           ' (Linx.qtds_l-Geren.qtds_g) QTDS_DIF'+
+
+           ' FROM'+
+           ' (SELECT e.cod_cli_linx codigo_cliente, e.razao_social,'+
+           '         COUNT(Distinct mv.documento) DOCS_L,'+
+           '         COUNT(mv.empresa) LINHAS_L,'+
+           '         CAST(SUM(COALESCE(mv.quantidade,0)) AS INTEGER) QTDS_L'+
+           '  FROM EMP_CONEXOES e'+
+           '      LEFT JOIN LINXMOVIMENTO mv  ON mv.codigo_cliente=e.cod_cli_linx'+
+           '                                 AND ((mv.operacao=''S'' AND  mv.tipo_transacao=''T'')'+
+           '                                       OR'+
+           '                                      (mv.operacao=''S'' AND  mv.tipo_transacao IS NULL AND mv.codigo_cliente=347))'+ //Belcenter | Wenceslau Escobar | RS
+           '                                 AND   mv.empresa=2'+
+           '                                 AND   mv.cancelado=''N'''+
+           '                                 AND   mv.excluido =''N'''+
+           '                                 AND   CAST(mv.data_lancamento AS dATE)='+QuotedStr(sgDia)+
+           '  WHERE e.cod_cli_linx<>0'+
+           '  GROUP BY 1,2) Linx,'+
+
+           ' (SELECT e.cod_cli_linx codigo_cliente, e.razao_social,'+
+           '         COUNT(DISTINCT l.num_pedido) DOCS_G,'+
+           '         COUNT(l.num_seq) linhas_G,'+
+           '         CAST(SUM(COALESCE(l.qtd_a_transf,0)) AS INTEGER) QTDS_G'+
+           '  FROM EMP_CONEXOES e'+
+           '      LEFT JOIN ES_ESTOQUES_LOJAS l  ON l.cod_loja=e.cod_filial'+
+           '                                    AND   l.dta_movto='+QuotedStr(sgDia)+
+           '                                    AND   l.ind_transf=''SIM'''+
+           '                                    AND   l.num_pedido BETWEEN 1 AND 900000'+
+           '  WHERE e.cod_cli_linx<>0'+
+           '  GROUP BY 1,2) Geren'+
+
+           ' WHERE linx.codigo_cliente=Geren.codigo_cliente'+
+           ' AND   (linx.LINHAS_L>0'+
+           '        OR'+
+           '       geren.linhas_G>0'+
+           '        OR'+
+           '       Linx.QTDS_L>0'+
+           '        OR'+
+           '       Geren.QTDS_G>0)';
+
+           //=================== TOTAIS GERAL
+    MySqlSelect:=
+           ' UNION'+
+
+           ' SELECT 3 ORDEM, NULL codigo_cliente, ''TOTAL GERAL'' razao_social,'+
+           '        SUM(Linx.DOCS_L) DOCS_L,'+
+           '        SUM(Geren.Docs_G) DOCS_G,'+
+           '        SUM((Linx.DOCS_L-Geren.docs_g)) DOCS_DIF,'+
+           '        SUM(linx.LINHAS_L) LINHAS_L,'+
+           '        SUM(geren.linhas_G) LINHAS_G,'+
+           '        SUM((linx.linhas_l-geren.linhas_g)) LINHAS_DIF,'+
+           '        SUM(Linx.QTDS_L) QTDS_L,'+
+           '        SUM(Geren.QTDS_G) QTDS_G,'+
+           '        SUM((Linx.QTDS_L-Geren.QTDS_G)) QTDS_DIF'+
+
+           ' FROM'+
+           ' (SELECT e.cod_cli_linx codigo_cliente, e.razao_social,'+
+           '         COUNT(DISTINCT mv.documento) DOCS_L,'+
+           '         COUNT(mv.empresa) LINHAS_L,'+
+           '         Cast(SUM(COALESCE(mv.quantidade,0)) AS INTEGER) QTDS_L'+
+           '  FROM EMP_CONEXOES e'+
+           '        LEFT JOIN LINXMOVIMENTO mv  ON mv.codigo_cliente=e.cod_cli_linx'+
+           '                                   AND   ((mv.operacao=''S'' AND  mv.tipo_transacao=''T'')'+
+           '                                          OR'+
+           '                                          (mv.operacao=''S'' AND  mv.tipo_transacao IS NULL AND mv.codigo_cliente=347))'+ //Belcenter | Wenceslau Escobar | RS
+           '                                   AND   mv.empresa=2'+
+           '                                   AND   mv.cancelado=''N'''+
+           '                                   AND   mv.excluido =''N'''+
+           '                                   AND   CAST(mv.data_lancamento AS DATE)='+QuotedStr(sgDia)+
+           '  WHERE e.cod_cli_linx<>0'+
+           '  GROUP BY 1,2) Linx,'+
+
+           ' (SELECT e.cod_cli_linx codigo_cliente, e.razao_social,'+
+           '         COUNT(DISTINCT l.num_pedido) DOCS_G,'+
+           '         COUNT(l.num_seq) linhas_G,'+
+           '         CAST(SUM(COALESCE(l.qtd_a_transf,0)) AS INTEGER) QTDS_G'+
+           '  FROM EMP_CONEXOES e'+
+           '     LEFT JOIN ES_ESTOQUES_LOJAS l  ON l.cod_loja=e.cod_filial'+
+           '                                   AND l.dta_movto='+QuotedStr(sgDia)+
+           '                                   AND l.ind_transf=''SIM'''+
+           '                                   AND l.num_pedido BETWEEN 1 AND 900000'+
+           '  WHERE e.cod_cli_linx<>0'+
+           '  GROUP BY 1,2) Geren'+
+
+           //=================== FINAL
+
+           ' WHERE linx.codigo_cliente=Geren.codigo_cliente'+
+           ' AND   (linx.LINHAS_L>0'+
+           '        OR'+
+           '        geren.linhas_G>0'+
+           '        OR'+
+           '        Linx.QTDS_L>0'+
+           '        OR'+
+           '        Geren.QTDS_G>0)'+
+
+           ' ORDER BY 1,3';
+    DMCentralTrocas.CDS_AnalRepDiaria.Close;
+    DMCentralTrocas.SDS_AnalRepDiaria.CommandText:=MySql+MySqlSelect;
+    DMCentralTrocas.CDS_AnalRepDiaria.Open;
+
+    OdirPanApres.Visible:=False;
+
+    Screen.Cursor:=crDefault;
+  End; // If bgProcessar Then
+
+end;
+
+procedure TFrmCentralTrocas.Bt_AnaliseRepDiariaSalvaClipboardClick(Sender: TObject);
+begin
+  Dbg_AnaliseRepDiaria.SetFocus;
+
+  If DMCentralTrocas.CDS_AnalRepDiaria.IsEmpty Then
+   Exit;
+
+  DBGridClipboard(Dbg_AnaliseRepDiaria);
+end;
+
+procedure TFrmCentralTrocas.Bt_AnaliseRepDiariaFecharClick(Sender: TObject);
+begin
+  DMCentralTrocas.FechaTudoCentralTrocas;
+
+  bgSair:=True;
+
+  Close;
+
+end;
+
+procedure TFrmCentralTrocas.Dbg_NotasEntDevProdutosKeyDown(Sender: TObject;var Key: Word; Shift: TShiftState);
+begin
+  {
+   Usado em:
+   Dbg_NotasEntDevNFE
+   Dbg_AnaliseReposCorredores
+   Dbg_AnaliseReposicoes
+   Dbg_AnaliseRepDiaria
+  }
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+end;
+
+procedure TFrmCentralTrocas.Dbg_AnaliseRepDiariaDrawColumnCell(Sender: TObject;
+          const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If (Column.FieldName='DOCS_DIF') Then
+  Begin
+    If DMCentralTrocas.CDS_AnalRepDiariaDOCS_DIF.AsInteger<>0 Then
+    Begin
+      Dbg_AnaliseRepDiaria.Canvas.Font.Color:=clRed; // Cor da Fonte
+      Dbg_AnaliseRepDiaria.Canvas.Font.Style:=[fsBold]; // Estilo da Fonte
+      //Dbg_AnaliseRepDiaria.Canvas.Brush.Color:=$00DDDDFF;  // Cor da Celula
+    End;
+  End; // If (Column.FieldName='DOCS_DIF') Then
+
+
+  If (Column.FieldName='LINHAS_DIF') Then
+  Begin
+    If DMCentralTrocas.CDS_AnalRepDiariaLINHAS_DIF.AsInteger<>0 Then
+    Begin
+      Dbg_AnaliseRepDiaria.Canvas.Font.Color:=clRed; // Cor da Fonte
+      Dbg_AnaliseRepDiaria.Canvas.Font.Style:=[fsBold]; // Estilo da Fonte
+      //Dbg_AnaliseRepDiaria.Canvas.Brush.Color:=$00DDDDFF;  // Cor da Celula
+    End;
+  End; // If (Column.FieldName='LINHAS_DIF') Then
+
+  If (Column.FieldName='QTDS_DIF') Then
+  Begin
+    If DMCentralTrocas.CDS_AnalRepDiariaQTDS_DIF.AsInteger<>0 Then
+    Begin
+      //Dbg_AnaliseRepDiaria.Canvas.Font.Color:=clWhite; // Cor da Fonte
+      Dbg_AnaliseRepDiaria.Canvas.Font.Color:=clRed; // Cor da Fonte
+      Dbg_AnaliseRepDiaria.Canvas.Font.Style:=[fsBold]; // Estilo da Fonte
+      //Dbg_AnaliseRepDiaria.Canvas.Brush.Color:=$00DDDDFF;  // Cor da Celula
+    End;
+  End; // If (Column.FieldName='QTDS_DIF') Then
+
+  if not (gdSelected in State) Then // Este comando altera cor da Linha
+  Begin
+    If DMCentralTrocas.CDS_AnalRepDiariaORDEM.AsInteger in [0,3] Then
+    Begin
+      Dbg_AnaliseRepDiaria.Canvas.Font.Style:=[fsBold]; // Estilo da Fonte
+      Dbg_AnaliseRepDiaria.Canvas.Brush.Color:=clSkyBlue;
+    End;
+  End; // if not (gdSelected in State) Then
+
+  Dbg_AnaliseRepDiaria.Canvas.FillRect(Rect);
+  Dbg_AnaliseRepDiaria.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  // Alinhamento
+  DMCentralTrocas.CDS_AnalRepDiariaDOCS_DIF.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_AnalRepDiariaDOCS_G.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_AnalRepDiariaDOCS_L.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_AnalRepDiariaLINHAS_DIF.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_AnalRepDiariaLINHAS_G.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_AnalRepDiariaLINHAS_L.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_AnalRepDiariaQTDS_DIF.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_AnalRepDiariaQTDS_G.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_AnalRepDiariaQTDS_L.Alignment:=taRightJustify;
+
+end;
+
+procedure TFrmCentralTrocas.Bt_AnaliseRepDiariaDoctosClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  Dbg_AnaliseRepDiaria.SetFocus;
+
+  If DMCentralTrocas.CDS_AnalRepDiaria.IsEmpty Then
+   Exit;
+
+  If Trim(DMCentralTrocas.CDS_AnalRepDiariaCODIGO_CLIENTE.AsString)='' Then
+  Begin
+    msg('Favor Selecionar a Loja !!','A');
+    Exit;
+  End; // If Trim(DMCentralTrocas.CDS_AnalRepDiariaCODIGO_CLIENTE.AsString)='' Then
+
+  // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
+  FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+  AbreSolicitacoes(25);
+
+  FrmSolicitacoes.Caption:='RESOSIÇÕES LOJAS';
+
+  OdirPanApres.Caption:='AGUARDE !! Localizando Documentos LINX / GERENCIADOR do Dia '+sgDia+' !!';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+         //-============= TITULO
+  MySql:=' Select '+
+         ' 0 ORDEM,'+
+         QuotedStr(DMCentralTrocas.CDS_AnalRepDiariaRAZAO_SOCIAL.AsString)+'||'' - ''||'+QuotedStr(f_Troca('.','/',sgDia))+' DOCUMENTO,'+
+         ' NULL TOTAL_LINHAS,'+
+         ' NULL TOTAL_QTDS'+
+         ' FROM RDB$DATABASE'+
+
+         //============= LINHA EM BRANCO
+         ' UNION'+
+
+         ' SELECT'+
+         ' 1 ORDEM,'+
+         ' NULL DOCUMENTO,'+
+         ' NULL TOTAL_LINHAS,'+
+         ' NULL TOTAL_QTDS'+
+         ' FROM RDB$DATABASE'+
+
+         //============= TITULO LINX
+         ' UNION'+
+
+         ' SELECT'+
+         ' 2 ORDEM,'+
+         ' ''DOCUMENTOS LINX'' DOCUMENTO,'+
+         ' NULL TOTAL_LINHAS,'+
+         ' NULL TOTAL_QTDS'+
+         ' FROM RDB$DATABASE'+
+
+         //============= DOCUMENTOS LINX'+
+         ' UNION'+
+
+         ' SELECT'+
+         ' 3 ORDEM,'+
+         ' mv.documento,'+
+         ' COUNT(mv.empresa) Total_Linhas,'+
+         ' CAST(sum(mv.quantidade) as Integer) Total_qtds'+
+
+         ' FROM LINXMOVIMENTO mv, EMP_CONEXOES e'+
+
+         ' WHERE mv.codigo_cliente=e.cod_cli_linx'+
+         ' AND   ((mv.operacao=''S'' AND  mv.tipo_transacao=''T'')'+
+         '         OR'+
+         '        (mv.operacao=''S'' AND  mv.tipo_transacao IS NULL AND mv.codigo_cliente=347))'+ // Belcenter | Wenceslau Escobar | RS
+         ' AND   mv.empresa=2'+
+         ' AND   mv.cancelado=''N'''+
+         ' AND   mv.excluido=''N'''+
+         ' AND   CAST(mv.data_lancamento AS DATE)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDia)))+
+         ' AND   mv.codigo_cliente='+DMCentralTrocas.CDS_AnalRepDiariaCODIGO_CLIENTE.AsString+
+
+         ' GROUP BY 1,2'+
+
+         //============= LINHA EM BRANCO
+         ' UNION'+
+
+         ' SELECT'+
+         ' 4 ORDEM,'+
+         ' NULL DOCUMENTO,'+
+         ' NULL TOTAL_LINHAS,'+
+         ' NULL TOTAL_QTDS'+
+         ' FROM RDB$DATABASE'+
+
+         //============= TITULO GERENCIADOR
+         ' UNION'+
+
+         ' SELECT'+
+         ' 5 ORDEM,'+
+         ' ''DOCUMENTOS GERENCIADOR'' DOCUMENTO,'+
+         ' NULL TOTAL_LINHAS,'+
+         ' NULL TOTAL_QTDS'+
+         ' FROM RDB$DATABASE'+
+
+         //============= DOCUMENTOS GERENCIADOR'+
+         ' UNION'+
+
+         ' SELECT'+
+         ' 6 ORDEM,'+
+         ' l.num_pedido DOCUMENTO,'+
+         ' COUNT(l.num_seq) Total_Linhas,'+
+         ' CAST(SUM(COALESCE(l.qtd_a_transf,0)) AS INTEGER) total_qtds'+
+
+         ' FROM ES_ESTOQUES_LOJAS l, EMP_CONEXOES e'+
+
+         ' WHERE l.cod_loja=e.cod_filial'+
+         ' AND   l.dta_movto='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDia)))+
+         ' AND   l.ind_transf=''SIM'''+
+         ' AND   l.num_pedido BETWEEN 1 AND 900000'+
+         ' AND   e.cod_cli_linx='+DMCentralTrocas.CDS_AnalRepDiariaCODIGO_CLIENTE.AsString+
+
+         ' GROUP BY 1,2'+
+
+         ' ORDER BY 1,2';
+  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+  DMBelShop.CDS_BuscaRapida.Open;
+
+  OdirPanApres.Visible:=False;
+
+  bgProcessar:=False;
+  FrmSolicitacoes.Dbg_AnaliseRepDiaria.DataSource:=DMBelShop.DS_BuscaRapida;
+  FrmSolicitacoes.ShowModal;
+
+  FrmSolicitacoes.Dbg_AnaliseRepDiaria.DataSource:=Nil;
+  FreeAndNil(FrmSolicitacoes);
+
 end;
 
 end.

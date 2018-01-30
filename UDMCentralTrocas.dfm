@@ -800,7 +800,6 @@ object DMCentralTrocas: TDMCentralTrocas
     Top = 248
   end
   object CDS_RelReposicao: TClientDataSet
-    Active = True
     Aggregates = <>
     AggregatesActive = True
     Params = <>
@@ -888,7 +887,7 @@ object DMCentralTrocas: TDMCentralTrocas
     Aggregates = <>
     Params = <>
     AfterScroll = CDS_V_ReposDivergenciasAfterScroll
-    Left = 440
+    Left = 512
     Top = 304
     object CDS_V_ReposDivergenciasCOD_PRODUTO: TStringField
       DisplayLabel = 'C'#243'digo'
@@ -937,7 +936,7 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DS_V_ReposDivergencias: TDataSource
     DataSet = CDS_V_ReposDivergencias
-    Left = 488
+    Left = 560
     Top = 320
   end
   object CDS_ParamTransf: TClientDataSet
@@ -1092,5 +1091,168 @@ object DMCentralTrocas: TDMCentralTrocas
     SQLConnection = DMBelShop.SQLC
     Left = 416
     Top = 488
+  end
+  object CDS_AnalRepDiaria: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_AnalRepDiaria'
+    Left = 848
+    Top = 256
+    object CDS_AnalRepDiariaORDEM: TIntegerField
+      FieldName = 'ORDEM'
+      Required = True
+    end
+    object CDS_AnalRepDiariaCODIGO_CLIENTE: TIntegerField
+      FieldName = 'CODIGO_CLIENTE'
+    end
+    object CDS_AnalRepDiariaRAZAO_SOCIAL: TStringField
+      FieldName = 'RAZAO_SOCIAL'
+      Size = 60
+    end
+    object CDS_AnalRepDiariaDOCS_L: TFMTBCDField
+      FieldName = 'DOCS_L'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_AnalRepDiariaDOCS_G: TFMTBCDField
+      FieldName = 'DOCS_G'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_AnalRepDiariaDOCS_DIF: TFMTBCDField
+      FieldName = 'DOCS_DIF'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_AnalRepDiariaLINHAS_L: TFMTBCDField
+      FieldName = 'LINHAS_L'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_AnalRepDiariaLINHAS_G: TFMTBCDField
+      FieldName = 'LINHAS_G'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_AnalRepDiariaLINHAS_DIF: TFMTBCDField
+      FieldName = 'LINHAS_DIF'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_AnalRepDiariaQTDS_L: TFMTBCDField
+      FieldName = 'QTDS_L'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_AnalRepDiariaQTDS_G: TFMTBCDField
+      FieldName = 'QTDS_G'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_AnalRepDiariaQTDS_DIF: TFMTBCDField
+      FieldName = 'QTDS_DIF'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 0
+    end
+  end
+  object SDS_AnalRepDiaria: TSQLDataSet
+    CommandText = 
+      '--=================== TITULO ===================================' +
+      '================'#13#10'SELECT'#13#10'0 ORDEM,'#13#10'NULL CODIGO_CLIENTE,'#13#10#39'ANALI' +
+      'SE DE REPOSICAO DO DIA 25/01/2018'#39' RAZAO_SOCIAL,  --<<==========' +
+      '= ALTERAR'#13#10'NULL DOCS_L,'#13#10'NULL DOCS_G,'#13#10'NULL DOCS_DIF,'#13#10'NULL LINH' +
+      'AS_L,'#13#10'NULL LINHAS_G,'#13#10'NULL LINHAS_DIF,'#13#10'NULL QTDS_L,'#13#10'NULL QTDS' +
+      '_G,'#13#10'NULL QTDS_DIF'#13#10'FROM RDB$DATABASE'#13#10#13#10'--=================== L' +
+      'INHA EM BRANCO =========================================='#13#10'UNION' +
+      #13#10#13#10'SELECT'#13#10'1 ORDEM,'#13#10'NULL CODIGO_CLIENTE,'#13#10'NULL RAZAO_SOCIAL,'#13#10 +
+      'NULL DOCS_L,'#13#10'NULL DOCS_G,'#13#10'NULL DOCS_DIF,'#13#10'NULL LINHAS_L,'#13#10'NULL' +
+      ' LINHAS_G,'#13#10'NULL LINHAS_DIF,'#13#10'NULL QTDS_L,'#13#10'NULL QTDS_G,'#13#10'NULL Q' +
+      'TDS_DIF'#13#10'FROM RDB$DATABASE'#13#10#13#10'--=================== TOTAIS POR L' +
+      'OJA =========================================='#13#10#13#10'UNION'#13#10#13#10'SELEC' +
+      'T'#13#10'2 ORDEM,'#13#10'linx.codigo_cliente,'#13#10'linx.razao_social,'#13#10'Linx.DOCS' +
+      '_L,'#13#10'Geren.DOCS_G,'#13#10'(Linx.docs_l-Geren.docs_g) DOCS_DIF,'#13#10'linx.L' +
+      'INHAS_L,'#13#10'geren.LINHAS_G,'#13#10'(linx.linhas_l-geren.linhas_g) LINHAS' +
+      '_DIF,'#13#10'Linx.QTDS_L,'#13#10'Geren.QTDS_G,'#13#10'(Linx.qtds_l-Geren.qtds_g) Q' +
+      'TDS_DIF'#13#10#13#10'FROM'#13#10'(SELECT'#13#10' e.cod_cli_linx codigo_cliente, e.raza' +
+      'o_social,'#13#10' COUNT(Distinct mv.documento) DOCS_L,'#13#10' COUNT(mv.empr' +
+      'esa) LINHAS_L,'#13#10' Cast(SUM(COALESCE(mv.quantidade,0)) as Integer)' +
+      ' QTDS_L'#13#10#13#10' FROM emp_conexoes e'#13#10'      Left Join linxmovimento m' +
+      'v  on mv.codigo_cliente=e.cod_cli_linx'#13#10'                        ' +
+      '         AND   ((mv.operacao='#39'S'#39' and  mv.tipo_transacao='#39'T'#39')'#13#10'  ' +
+      '                                      OR'#13#10'                      ' +
+      '                  (mv.operacao='#39'S'#39' and  mv.tipo_transacao IS NUL' +
+      'L AND mv.codigo_cliente=347)) -- Belcenter | Wenceslau Escobar |' +
+      ' RS'#13#10'                                 AND   mv.empresa=2'#13#10'      ' +
+      '                           AND   mv.cancelado='#39'N'#39#13#10'             ' +
+      '                    AND   mv.excluido='#39'N'#39#13#10'                     ' +
+      '            AND   Cast(mv.data_lancamento as Date)='#39'05.01.2018'#39#13 +
+      #10' where e.cod_cli_linx<>0'#13#10#13#10' GROUP BY 1,2) Linx,'#13#10' '#13#10'(select'#13#10' ' +
+      'e.cod_cli_linx codigo_cliente, e.razao_social,'#13#10' COUNT(Distinct ' +
+      'l.num_pedido) DOCS_G,'#13#10' COUNT(l.num_seq) linhas_G,'#13#10' CAST(SUM(CO' +
+      'ALESCE(l.qtd_a_transf,0))  as Integer) QTDS_G'#13#10' '#13#10' from emp_cone' +
+      'xoes e'#13#10'     Left Join es_estoques_lojas l on l.cod_loja=e.cod_f' +
+      'ilial'#13#10' and   l.dta_movto='#39'05.01.2018'#39#13#10' and   l.ind_transf='#39'SIM' +
+      #39#13#10' and   l.num_pedido between 1 and 900000'#13#10#13#10' where e.cod_cli_' +
+      'linx<>0'#13#10' group by 1,2) Geren'#13#10#13#10'where linx.codigo_cliente=Geren' +
+      '.codigo_cliente'#13#10'and   (linx.LINHAS_L>0'#13#10'       OR'#13#10'      geren.' +
+      'linhas_G>0'#13#10'       OR'#13#10'      Linx.QTDS_L>0'#13#10'       OR'#13#10'      Ger' +
+      'en.QTDS_G>0)'#13#10#13#10'--=================== TOTAIS GERAL =============' +
+      '================================'#13#10'UNION'#13#10#13#10'SELECT'#13#10'3 ORDEM,'#13#10'NUL' +
+      'L codigo_cliente,'#13#10#39'TOTAL GERAL'#39' razao_social,'#13#10'SUM(Linx.DOCS_L)' +
+      ' DOCS_L,'#13#10'SUM(Geren.Docs_G) DOCS_G,'#13#10'SUM((Linx.DOCS_L-Geren.docs' +
+      '_g)) DOCS_DIF,'#13#10'SUM(linx.LINHAS_L) LINHAS_L,'#13#10'SUM(geren.linhas_G' +
+      ') LINHAS_G,'#13#10'SUM((linx.linhas_l-geren.linhas_g)) LINHAS_DIF,'#13#10'SU' +
+      'M(Linx.QTDS_L) QTDS_L,'#13#10'SUM(Geren.QTDS_G) QTDS_G,'#13#10'SUM((Linx.QTD' +
+      'S_L-Geren.QTDS_G)) QTDS_DIF'#13#10#13#10'FROM'#13#10'(SELECT'#13#10' e.cod_cli_linx co' +
+      'digo_cliente, e.razao_social,'#13#10' COUNT(Distinct mv.documento) DOC' +
+      'S_L,'#13#10' COUNT(mv.empresa) LINHAS_L,'#13#10' Cast(SUM(COALESCE(mv.quanti' +
+      'dade,0)) as Integer) QTDS_L'#13#10#13#10' FROM emp_conexoes e'#13#10'      Left ' +
+      'Join linxmovimento mv  on mv.codigo_cliente=e.cod_cli_linx'#13#10'    ' +
+      '                             AND   ((mv.operacao='#39'S'#39' and  mv.tip' +
+      'o_transacao='#39'T'#39')'#13#10'                                        OR'#13#10'  ' +
+      '                                      (mv.operacao='#39'S'#39' and  mv.t' +
+      'ipo_transacao IS NULL AND mv.codigo_cliente=347)) -- Belcenter |' +
+      ' Wenceslau Escobar | RS'#13#10'                                 AND   ' +
+      'mv.empresa=2'#13#10'                                 AND   mv.cancelad' +
+      'o='#39'N'#39#13#10'                                 AND   mv.excluido='#39'N'#39#13#10' ' +
+      '                                AND   Cast(mv.data_lancamento as' +
+      ' Date)='#39'05.01.2018'#39#13#10' where e.cod_cli_linx<>0'#13#10#13#10' GROUP BY 1,2) ' +
+      'Linx,'#13#10' '#13#10'(select'#13#10' e.cod_cli_linx codigo_cliente, e.razao_socia' +
+      'l,'#13#10' COUNT(Distinct l.num_pedido) DOCS_G,'#13#10' COUNT(l.num_seq) lin' +
+      'has_G,'#13#10' CAST(SUM(COALESCE(l.qtd_a_transf,0))  as Integer) QTDS_' +
+      'G'#13#10' '#13#10' from emp_conexoes e'#13#10'     Left Join es_estoques_lojas l o' +
+      'n l.cod_loja=e.cod_filial'#13#10' and   l.dta_movto='#39'05.01.2018'#39#13#10' and' +
+      '   l.ind_transf='#39'SIM'#39#13#10' and   l.num_pedido between 1 and 900000'#13 +
+      #10#13#10' where e.cod_cli_linx<>0'#13#10' group by 1,2) Geren'#13#10#13#10'where linx.' +
+      'codigo_cliente=Geren.codigo_cliente'#13#10'and   (linx.LINHAS_L>0'#13#10'   ' +
+      '    OR'#13#10'      geren.linhas_G>0'#13#10'       OR'#13#10'      Linx.QTDS_L>0'#13#10 +
+      '       OR'#13#10'      Geren.QTDS_G>0)'#13#10#13#10'--==========================' +
+      '===================================================='#13#10'order by 1' +
+      ',3'#13#10
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 736
+    Top = 256
+  end
+  object DSP_AnalRepDiaria: TDataSetProvider
+    DataSet = SDS_AnalRepDiaria
+    Options = [poRetainServerOrder]
+    Left = 792
+    Top = 272
+  end
+  object DS_AnalRepDiaria: TDataSource
+    DataSet = CDS_AnalRepDiaria
+    Left = 909
+    Top = 272
   end
 end

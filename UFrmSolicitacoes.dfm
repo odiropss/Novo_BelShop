@@ -403,7 +403,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 452
-    ActivePage = Ts_ReposDivergencias
+    ActivePage = Ts_AnaliseReposicaoDiaria
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -2205,7 +2205,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 381
+        Height = 389
         Cursor = crIBeam
         GutterWidth = 0
         RightMarginColor = clSilver
@@ -2234,7 +2234,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel25: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -2578,7 +2578,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 327
+        Height = 335
         Align = alClient
         DataSource = DMSalao.DS_V_RetornoIBGE
         FixedColor = clTeal
@@ -2624,7 +2624,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Dbg_IBGE2: TDBGridJul
         Left = 0
-        Top = 362
+        Top = 370
         Width = 625
         Height = 54
         Align = alBottom
@@ -2672,7 +2672,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel28: TPanel
         Left = 0
-        Top = 327
+        Top = 335
         Width = 625
         Height = 35
         Align = alBottom
@@ -5890,7 +5890,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 381
+        Height = 389
         Align = alClient
         Color = 15004403
         FixedColor = clSilver
@@ -5990,7 +5990,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel34: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -7878,7 +7878,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 25
         Width = 625
-        Height = 356
+        Height = 364
         Align = alClient
         Color = 15004403
         DataSource = DMSalao.DS_ApresGrid
@@ -7950,7 +7950,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel3: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -8771,7 +8771,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 381
+        Height = 389
         Align = alClient
         Color = 15004403
         DataSource = DMBelShop.DS_Busca
@@ -8844,7 +8844,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel4: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -9099,7 +9099,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 19
       object Pan_QualquerCoisa: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -9365,7 +9365,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 93
         Width = 625
-        Height = 288
+        Height = 296
         Align = alClient
         FixedColor = clTeal
         Font.Charset = DEFAULT_CHARSET
@@ -9384,7 +9384,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel1: TPanel
         Left = 0
-        Top = 381
+        Top = 389
         Width = 625
         Height = 35
         Align = alBottom
@@ -9780,8 +9780,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
         OnClick = Bt_ReposLojasPrecoClick
       end
     end
-    object Ts_Odir: TTabSheet
-      Caption = 'Ts_Odir'
+    object Ts_SidicomUsuario: TTabSheet
+      Caption = 'Sidicom Usuario'
       Highlighted = True
       ImageIndex = 22
       object Panel9: TPanel
@@ -10275,7 +10275,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Left = 2
           Top = 2
           Width = 158
-          Height = 320
+          Height = 328
           Align = alClient
           Pages = <
             item
@@ -10513,14 +10513,146 @@ object FrmSolicitacoes: TFrmSolicitacoes
           item
             Expanded = False
             FieldName = 'CODBARRA'
+            Width = 64
+            Visible = True
+          end>
+      end
+    end
+    object Ts_AnaliseReposicaoDiaria: TTabSheet
+      Caption = 'Analise Reposicao Di'#225'ria'
+      Highlighted = True
+      ImageIndex = 25
+      DesignSize = (
+        625
+        424)
+      object Panel2: TPanel
+        Left = 0
+        Top = 389
+        Width = 625
+        Height = 35
+        Align = alBottom
+        BevelInner = bvLowered
+        BorderStyle = bsSingle
+        Ctl3D = False
+        ParentCtl3D = False
+        TabOrder = 0
+        object JvXPButton2: TJvXPButton
+          Left = 521
+          Top = 2
+          Width = 100
+          Height = 29
+          Caption = 'Voltar'
+          TabOrder = 0
+          TabStop = False
+          Glyph.Data = {
+            07544269746D6170F6000000424DF60000000000000076000000280000001000
+            0000100000000100040000000000800000000000000000000000100000001000
+            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF0077777700000087777777770AAAAA00877777770AAAAAA2077777770AAAAA
+            2A20777777000000A22077777777777700207777777777777700777707777777
+            77007770077777770020770A00000000A22070AAAAAAAAAA2A200AAAAAAAAAAA
+            A20770AAAAAAAAAA0077770A0000000087777770077777777777777707777777
+            7777}
+          ShowFocusRect = True
+          Align = alRight
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_QualquerCoisaVoltarClick
+        end
+        object Bt_AnaliseRepDiariaSalvaClipboard: TJvXPButton
+          Tag = 4
+          Left = 2
+          Top = 2
+          Width = 167
+          Height = 29
+          Caption = 'Salvar em Mem'#243'ria'
+          TabOrder = 1
+          Glyph.Data = {
+            07544269746D617066010000424D660100000000000076000000280000001400
+            0000140000000100040000000000F00000000000000000000000100000001000
+            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00333333333333333333330000333333000000000000030000333333078888
+            8888880300003333330F77777777780300003333330F99777777780300003333
+            330FFFFFFFFFF703000033333300000000000003000033333333333333333333
+            0000333333333333330033330000333333333333300003330000300000000333
+            00000033000030FFFFFF033333003333000030F4444F033333003333000030FF
+            FFFF033338003333000030F4444F030000083333000030FFFFFF030000833333
+            000030F44F00033333333333000030FFFF003333333333330000300000033333
+            333333330000333333333333333333330000}
+          ShowFocusRect = True
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_AnaliseRepDiariaSalvaClipboardClick
+        end
+      end
+      object Dbg_AnaliseRepDiaria: TDBGridJul
+        Left = 72
+        Top = 0
+        Width = 472
+        Height = 389
+        TabStop = False
+        Anchors = [akTop, akBottom]
+        Ctl3D = False
+        FixedColor = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
+        ParentCtl3D = False
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = False
+        TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = [fsBold]
+        OnDrawColumnCell = Dbg_AnaliseRepDiariaDrawColumnCell
+        CorComFoco = 16776176
+        SairComEnter = False
+        Columns = <
+          item
+            Alignment = taRightJustify
+            Expanded = False
+            FieldName = 'DOCUMENTO'
+            Title.Alignment = taRightJustify
+            Width = 220
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'TOTAL_LINHAS'
+            Title.Alignment = taRightJustify
+            Width = 100
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'TOTAL_QTDS'
+            Title.Alignment = taRightJustify
+            Width = 100
             Visible = True
           end>
       end
     end
   end
   object PainelApresExp: TPanel
-    Left = 512
-    Top = 16
+    Left = 432
+    Top = 192
     Width = 99
     Height = 33
     BevelInner = bvRaised
@@ -10555,12 +10687,12 @@ object FrmSolicitacoes: TFrmSolicitacoes
     CursorType = ctStatic
     LockType = ltReadOnly
     TableDirect = True
-    Left = 551
-    Top = 192
+    Left = 575
+    Top = 152
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 593
-    Top = 98
+    Left = 585
+    Top = 74
   end
 end

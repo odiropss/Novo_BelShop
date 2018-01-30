@@ -394,6 +394,7 @@ object FrmApresConciliacao: TFrmApresConciliacao
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Panel124: TPanel

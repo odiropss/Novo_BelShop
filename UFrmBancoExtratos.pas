@@ -1298,6 +1298,7 @@ Begin
   OdirPanApres.Parent:=FrmBancoExtratos;
   OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
+  OdirPanApres.Refresh;
   Refresh;
 
   Rb_ConcAmbosDep.Checked:=True;
@@ -2348,6 +2349,17 @@ Var
   MySql: String;
 Begin
 
+  OdirPanApres.Caption:='AGUARDE !! Analisando Conciliações...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBancoExtratos;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  OdirPanApres.Refresh;
+  Refresh;
+
   // Verifica se Transação esta Ativa
   If DMBelShop.SQLC.InTransaction Then
    DMBelShop.SQLC.Rollback(TD);
@@ -2407,6 +2419,8 @@ Begin
       Screen.Cursor:=crDefault;
     End; // on e : Exception do
   End; // Try
+
+  OdirPanApres.Visible:=False;
 
 End; // CONCILIAÇÕES - Elimina Movots do SIDICOM com Erro de Conciliação >>>>>>>
 
@@ -13201,9 +13215,7 @@ begin
          DMConciliacao.CDS_CMApresDepositos.Close;
          DMConciliacao.SDS_CMApresDepositos.Params.ParamByName('CHV_EXTRATO').AsString:=
                                   DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.AsString;
-         ShowMessage('1');
          DMConciliacao.CDS_CMApresDepositos.Open;
-         ShowMessage('2');
 
          OdirPanApres.Visible:=False;
          If DMConciliacao.CDS_CMApresDepositos.IsEmpty Then
