@@ -8229,7 +8229,7 @@ begin
 
          ' SELECT'+
          ' 6 ORDEM,'+
-         ' l.num_pedido DOCUMENTO,'+
+         ' CAST(CAST(l.num_pedido AS INTEGER) AS VARCHAR(6)) DOCUMENTO,'+
          ' COUNT(l.num_seq) Total_Linhas,'+
          ' CAST(SUM(COALESCE(l.qtd_a_transf,0)) AS INTEGER) total_qtds'+
 

@@ -21,6 +21,7 @@ procedure TFrmMateriaPrimaCadastro.Dbg_MateriaPrimaExit(Sender: TObject);
 begin
   (Sender as TDBGrid).Color:=clWindow;
 end;
+
 //==============================================================================
 // ======== ALTERAÇÕES NOS DBGrid's = FIM ======================================
 //==============================================================================
@@ -325,6 +326,7 @@ procedure TFrmArtesanalis.SubMenuCadastroPessoasEntidadesClick(Sender: TObject);
 begin
   DMArtesanalis.MemoAdicionaNomeForm('Cadastro - PESSOAS');
 
+  FrmCadastroPessoa.sgTipoPessoa:='';
   FrmCadastroPessoa.ShowModal;
 
 end;

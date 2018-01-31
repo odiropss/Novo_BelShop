@@ -252,14 +252,14 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_ConcExtratos: TDataSource
     DataSet = CDS_ConcExtratos
-    Left = 702
+    Left = 646
     Top = 55
   end
   object CDS_ConcExtratos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ConcExtratos'
-    Left = 648
+    Left = 592
     Top = 37
     object CDS_ConcExtratosNUM_BANCO: TIntegerField
       DisplayLabel = 'N'#186' Bco'
@@ -357,13 +357,13 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 552
+    Left = 496
     Top = 40
   end
   object DSP_ConcExtratos: TDataSetProvider
     DataSet = SDS_ConcExtratos
     Options = [poRetainServerOrder]
-    Left = 600
+    Left = 544
     Top = 56
   end
   object SDS_CMExtratos: TSQLDataSet
@@ -386,20 +386,20 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 552
+    Left = 496
     Top = 162
   end
   object DSP_CMExtratos: TDataSetProvider
     DataSet = SDS_CMExtratos
     Options = [poRetainServerOrder]
-    Left = 600
+    Left = 544
     Top = 178
   end
   object CDS_CMExtratos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CMExtratos'
-    Left = 648
+    Left = 592
     Top = 159
     object CDS_CMExtratosConciliado: TStringField
       FieldName = 'Conciliado?'
@@ -505,14 +505,14 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_CMPagtos: TDataSource
     DataSet = CDS_CMPagtos
-    Left = 702
+    Left = 646
     Top = 244
   end
   object CDS_CMPagtos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CMPagtos'
-    Left = 648
+    Left = 592
     Top = 223
     object CDS_CMPagtosCOD_LOJA: TStringField
       FieldName = 'COD_LOJA'
@@ -707,18 +707,18 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 552
+    Left = 496
     Top = 226
   end
   object DSP_CMPagtos: TDataSetProvider
     DataSet = SDS_CMPagtos
     Options = [poRetainServerOrder]
-    Left = 600
+    Left = 544
     Top = 242
   end
   object DS_CMExtratos: TDataSource
     DataSet = CDS_CMExtratos
-    Left = 702
+    Left = 646
     Top = 178
   end
   object SDS_TpConciliacao: TSQLDataSet
@@ -728,20 +728,20 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 248
+    Left = 260
     Top = 8
   end
   object DSP_TpConciliacao: TDataSetProvider
     DataSet = SDS_TpConciliacao
     Options = [poRetainServerOrder]
-    Left = 312
+    Left = 301
     Top = 24
   end
   object CDS_TpConciliacao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_TpConciliacao'
-    Left = 376
+    Left = 344
     Top = 8
     object CDS_TpConciliacaoTIP_AUX: TIntegerField
       FieldName = 'TIP_AUX'
@@ -761,8 +761,8 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_TpConciliacao: TDataSource
     DataSet = CDS_TpConciliacao
-    Left = 440
-    Top = 23
+    Left = 392
+    Top = 24
   end
   object SDS_CMApresPagtos: TSQLDataSet
     CommandText = 
@@ -800,13 +800,13 @@ object DMConciliacao: TDMConciliacao
         Value = '1'
       end>
     SQLConnection = DMBelShop.SQLC
-    Left = 552
+    Left = 496
     Top = 322
   end
   object DSP_CMApresPagtos: TDataSetProvider
     DataSet = SDS_CMApresPagtos
     Options = [poRetainServerOrder]
-    Left = 600
+    Left = 544
     Top = 338
   end
   object CDS_CMApresPagtos: TClientDataSet
@@ -815,7 +815,7 @@ object DMConciliacao: TDMConciliacao
     Params = <>
     ProviderName = 'DSP_CMApresPagtos'
     AfterScroll = CDS_CMApresPagtosAfterScroll
-    Left = 648
+    Left = 592
     Top = 319
     object CDS_CMApresPagtosCOD_LOJA: TStringField
       Alignment = taCenter
@@ -946,7 +946,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_CMApresExtrato: TDataSource
     DataSet = CDS_CMApresExtratos
-    Left = 702
+    Left = 646
     Top = 409
   end
   object SDS_CMApresExtratos: TSQLDataSet
@@ -982,18 +982,18 @@ object DMConciliacao: TDMConciliacao
         Value = '1'
       end>
     SQLConnection = DMBelShop.SQLC
-    Left = 552
+    Left = 496
     Top = 392
   end
   object DSP_CMApresExtratos: TDataSetProvider
     DataSet = SDS_CMApresExtratos
     Options = [poRetainServerOrder]
-    Left = 600
+    Left = 544
     Top = 408
   end
   object DS_CMApresPagtos: TDataSource
     DataSet = CDS_CMApresPagtos
-    Left = 702
+    Left = 646
     Top = 338
   end
   object SDS_CMTotalPagtos: TSQLDataSet
@@ -1007,20 +1007,20 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 552
+    Left = 496
     Top = 480
   end
   object DSP_CMTotalPagtos: TDataSetProvider
     DataSet = SDS_CMTotalPagtos
     Options = [poRetainServerOrder]
-    Left = 600
+    Left = 544
     Top = 496
   end
   object CDS_CMTotalPagtos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CMTotalPagtos'
-    Left = 648
+    Left = 592
     Top = 477
     object CDS_CMTotalPagtosCOD_LOJA: TStringField
       Alignment = taCenter
@@ -1070,7 +1070,7 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_CMTotalPagtos: TDataSource
     DataSet = CDS_CMTotalPagtos
-    Left = 702
+    Left = 646
     Top = 496
   end
   object SDS_HistAuto: TSQLDataSet
@@ -1148,8 +1148,8 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_ConcCaixa: TDataSource
     DataSet = CDS_ConcCaixa
-    Left = 431
-    Top = 100
+    Left = 392
+    Top = 104
   end
   object SDS_ConcCaixaTotais: TSQLDataSet
     CommandText = 
@@ -1164,25 +1164,25 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 264
+    Left = 260
     Top = 176
   end
   object DS_ConcCaixaTotais: TDataSource
     DataSet = CDS_ConcCaixaTotais
-    Left = 455
-    Top = 180
+    Left = 392
+    Top = 184
   end
   object DSP_ConcCaixaTotais: TDataSetProvider
     DataSet = SDS_ConcCaixaTotais
     Options = [poRetainServerOrder]
-    Left = 321
+    Left = 301
     Top = 188
   end
   object CDS_ConcCaixaTotais: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ConcCaixaTotais'
-    Left = 393
+    Left = 344
     Top = 168
     object CDS_ConcCaixaTotaisCOD_CREDITO: TIntegerField
       DisplayLabel = 'Cod'
@@ -1235,7 +1235,7 @@ object DMConciliacao: TDMConciliacao
     Aggregates = <>
     Params = <>
     ProviderName = 'DSp_ConcCaixa'
-    Left = 376
+    Left = 344
     Top = 120
     object CDS_ConcCaixaNUM_SEQREG: TIntegerField
       FieldName = 'NUM_SEQREG'
@@ -1322,13 +1322,13 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 264
+    Left = 260
     Top = 116
   end
   object DSP_ConcCaixa: TDataSetProvider
     DataSet = SDS_ConcCaixa
     Options = [poRetainServerOrder]
-    Left = 321
+    Left = 301
     Top = 100
   end
   object CDS_CMApresExtratos: TClientDataSet
@@ -1337,7 +1337,7 @@ object DMConciliacao: TDMConciliacao
     Params = <>
     ProviderName = 'DSP_CMApresExtratos'
     AfterScroll = CDS_CMApresExtratosAfterScroll
-    Left = 648
+    Left = 592
     Top = 389
     object CDS_CMApresExtratosNUM_BANCO: TIntegerField
       DisplayLabel = 'Banco'
@@ -1443,21 +1443,21 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 824
-    Top = 162
+    Left = 792
+    Top = 130
   end
   object DSP_CMExtratosDep: TDataSetProvider
     DataSet = SDS_CMExtratosDep
     Options = [poRetainServerOrder]
-    Left = 872
-    Top = 178
+    Left = 840
+    Top = 146
   end
   object CDS_CMExtratosDep: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CMExtratosDep'
-    Left = 920
-    Top = 159
+    Left = 888
+    Top = 127
     object CDS_CMExtratosDepConciliado: TStringField
       FieldName = 'Conciliado?'
       ReadOnly = True
@@ -1562,15 +1562,15 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_CMDepositos: TDataSource
     DataSet = CDS_CMDepositos
-    Left = 974
-    Top = 244
+    Left = 942
+    Top = 212
   end
   object CDS_CMDepositos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CMDepositos'
-    Left = 920
-    Top = 223
+    Left = 888
+    Top = 191
     object CDS_CMDepositosConciliado: TStringField
       FieldName = 'Conciliado?'
       ReadOnly = True
@@ -1697,19 +1697,19 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 824
-    Top = 226
+    Left = 792
+    Top = 194
   end
   object DSP_CMDepositos: TDataSetProvider
     DataSet = SDS_CMDepositos
     Options = [poRetainServerOrder]
-    Left = 872
-    Top = 242
+    Left = 840
+    Top = 210
   end
   object DS_CMExtratosDep: TDataSource
     DataSet = CDS_CMExtratosDep
-    Left = 974
-    Top = 178
+    Left = 942
+    Top = 146
   end
   object SDS_CMApresDepositos: TSQLDataSet
     CommandText = 
@@ -1745,14 +1745,14 @@ object DMConciliacao: TDMConciliacao
         ParamType = ptInput
       end>
     SQLConnection = DMBelShop.SQLC
-    Left = 824
-    Top = 322
+    Left = 792
+    Top = 290
   end
   object DSP_CMApresDepositos: TDataSetProvider
     DataSet = SDS_CMApresDepositos
     Options = [poRetainServerOrder]
-    Left = 872
-    Top = 338
+    Left = 840
+    Top = 306
   end
   object CDS_CMApresDepositos: TClientDataSet
     Aggregates = <>
@@ -1760,8 +1760,8 @@ object DMConciliacao: TDMConciliacao
     Params = <>
     ProviderName = 'DSP_CMApresDepositos'
     AfterScroll = CDS_CMApresDepositosAfterScroll
-    Left = 920
-    Top = 319
+    Left = 888
+    Top = 287
     object CDS_CMApresDepositosCOD_LOJA: TStringField
       Alignment = taCenter
       DisplayLabel = 'Loja'
@@ -1899,8 +1899,8 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_CMApresExtratoDep: TDataSource
     DataSet = CDS_CMApresExtratosDep
-    Left = 974
-    Top = 409
+    Left = 942
+    Top = 377
   end
   object SDS_CMApresExtratosDep: TSQLDataSet
     CommandText = 
@@ -1933,19 +1933,19 @@ object DMConciliacao: TDMConciliacao
         ParamType = ptInput
       end>
     SQLConnection = DMBelShop.SQLC
-    Left = 824
-    Top = 392
+    Left = 792
+    Top = 360
   end
   object DSP_CMApresExtratosDep: TDataSetProvider
     DataSet = SDS_CMApresExtratosDep
     Options = [poRetainServerOrder]
-    Left = 872
-    Top = 408
+    Left = 840
+    Top = 376
   end
   object DS_CMApresDepositos: TDataSource
     DataSet = CDS_CMApresDepositos
-    Left = 974
-    Top = 338
+    Left = 942
+    Top = 306
   end
   object CDS_CMApresExtratosDep: TClientDataSet
     Aggregates = <>
@@ -1953,8 +1953,8 @@ object DMConciliacao: TDMConciliacao
     Params = <>
     ProviderName = 'DSP_CMApresExtratosDep'
     AfterScroll = CDS_CMApresExtratosDepAfterScroll
-    Left = 920
-    Top = 389
+    Left = 888
+    Top = 357
     object CDS_CMApresExtratosDepNUM_BANCO: TIntegerField
       DisplayLabel = 'Banco'
       FieldName = 'NUM_BANCO'
@@ -2130,21 +2130,21 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 277
+    Left = 260
     Top = 494
   end
   object DSP_CMDepositosAnalise: TDataSetProvider
     DataSet = SDS_CMDepositosAnalise
     Options = [poRetainServerOrder]
-    Left = 317
+    Left = 301
     Top = 510
   end
   object CDS_CMDepositosAnalise: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CMDepositosAnalise'
-    Left = 357
-    Top = 494
+    Left = 344
+    Top = 496
     object CDS_CMDepositosAnaliseNOME_EMP: TStringField
       FieldName = 'NOME_EMP'
       Size = 50
@@ -2189,7 +2189,61 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_CMDepositosAnalise: TDataSource
     DataSet = CDS_CMDepositosAnalise
-    Left = 397
-    Top = 509
+    Left = 392
+    Top = 512
+  end
+  object SDS_CMDepHistoricos: TSQLDataSet
+    CommandText = 
+      'SELECT'#13#10'TIP_AUX,'#13#10'COD_AUX CODIGO,'#13#10'DES_AUX DESCRICAO,'#13#10'DES_AUX1 ' +
+      'GRUPO,'#13#10'VLR_AUX,'#13#10'VLR_AUX1'#13#10#13#10'FROM TAB_AUXILIAR H'#13#10#13#10'WHERE H.tip' +
+      '_aux=21'#13#10#13#10'ORDER BY 3'#13#10#13#10
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 792
+    Top = 472
+  end
+  object CDS_CMDepHistoricos: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_CMDepHistoricos'
+    Left = 896
+    Top = 472
+    object CDS_CMDepHistoricosTIP_AUX: TIntegerField
+      FieldName = 'TIP_AUX'
+      Required = True
+    end
+    object CDS_CMDepHistoricosCODIGO: TIntegerField
+      FieldName = 'CODIGO'
+      Required = True
+    end
+    object CDS_CMDepHistoricosDESCRICAO: TStringField
+      FieldName = 'DESCRICAO'
+      Size = 50
+    end
+    object CDS_CMDepHistoricosGRUPO: TStringField
+      FieldName = 'GRUPO'
+      Size = 50
+    end
+    object CDS_CMDepHistoricosVLR_AUX: TFMTBCDField
+      FieldName = 'VLR_AUX'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_CMDepHistoricosVLR_AUX1: TFMTBCDField
+      FieldName = 'VLR_AUX1'
+      Precision = 15
+      Size = 2
+    end
+  end
+  object DSP_CMDepHistoricos: TDataSetProvider
+    DataSet = SDS_CMDepHistoricos
+    Left = 848
+    Top = 480
+  end
+  object DS_CMDepHistoricos: TDataSource
+    DataSet = CDS_CMDepHistoricos
+    Left = 944
+    Top = 480
   end
 end

@@ -1,6 +1,6 @@
 object FrmSolicitacoes: TFrmSolicitacoes
-  Left = 235
-  Top = 118
+  Left = 256
+  Top = 120
   Width = 649
   Height = 490
   BorderIcons = []
@@ -403,7 +403,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 452
-    ActivePage = Ts_AnaliseReposicaoDiaria
+    ActivePage = Ts_ConcDepHistoricos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1339,6 +1339,9 @@ object FrmSolicitacoes: TFrmSolicitacoes
       Caption = 'Loja: CANOAS'
       Highlighted = True
       ImageIndex = 4
+      DesignSize = (
+        625
+        424)
       object Panel8: TPanel
         Left = 0
         Top = 389
@@ -1406,7 +1409,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 159
         Top = 1
         Width = 304
-        Height = 364
+        Height = 385
+        Anchors = [akTop, akBottom]
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -10536,7 +10540,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 0
-        object JvXPButton2: TJvXPButton
+        object Bt_AnaliseRepDiariaVoltar: TJvXPButton
           Left = 521
           Top = 2
           Width = 100
@@ -10622,6 +10626,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_AnaliseRepDiariaDrawColumnCell
+        OnKeyDown = Dbg_ReposDivProdutosKeyDown
         CorComFoco = 16776176
         SairComEnter = False
         Columns = <
@@ -10649,10 +10654,259 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end>
       end
     end
+    object Ts_ConcDepHistoricos: TTabSheet
+      Caption = ' Cadastro de Historicos '
+      Highlighted = True
+      ImageIndex = 26
+      object Panel5: TPanel
+        Left = 0
+        Top = 389
+        Width = 625
+        Height = 35
+        Align = alBottom
+        BevelInner = bvLowered
+        BorderStyle = bsSingle
+        Ctl3D = False
+        ParentCtl3D = False
+        TabOrder = 0
+        object Bt_ConcDepHistoricosVoltar: TJvXPButton
+          Left = 521
+          Top = 2
+          Width = 100
+          Height = 29
+          Caption = 'Voltar'
+          TabOrder = 0
+          TabStop = False
+          Glyph.Data = {
+            07544269746D6170F6000000424DF60000000000000076000000280000001000
+            0000100000000100040000000000800000000000000000000000100000001000
+            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF0077777700000087777777770AAAAA00877777770AAAAAA2077777770AAAAA
+            2A20777777000000A22077777777777700207777777777777700777707777777
+            77007770077777770020770A00000000A22070AAAAAAAAAA2A200AAAAAAAAAAA
+            A20770AAAAAAAAAA0077770A0000000087777770077777777777777707777777
+            7777}
+          ShowFocusRect = True
+          Align = alRight
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_ConcDepHistoricosVoltarClick
+        end
+        object Bt_ConcDepHistoricosSalvar: TJvXPButton
+          Tag = 4
+          Left = 2
+          Top = 2
+          Width = 167
+          Height = 29
+          Caption = 'Salvar em Mem'#243'ria'
+          TabOrder = 1
+          Glyph.Data = {
+            07544269746D617066010000424D660100000000000076000000280000001400
+            0000140000000100040000000000F00000000000000000000000100000001000
+            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00333333333333333333330000333333000000000000030000333333078888
+            8888880300003333330F77777777780300003333330F99777777780300003333
+            330FFFFFFFFFF703000033333300000000000003000033333333333333333333
+            0000333333333333330033330000333333333333300003330000300000000333
+            00000033000030FFFFFF033333003333000030F4444F033333003333000030FF
+            FFFF033338003333000030F4444F030000083333000030FFFFFF030000833333
+            000030F44F00033333333333000030FFFF003333333333330000300000033333
+            333333330000333333333333333333330000}
+          ShowFocusRect = True
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_ConcDepHistoricosSalvarClick
+        end
+      end
+      object Dbg_ConcDepHistoricos: TDBGrid
+        Left = 0
+        Top = 0
+        Width = 476
+        Height = 389
+        Align = alLeft
+        DataSource = DMConciliacao.DS_CMDepHistoricos
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
+        ParentFont = False
+        TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = [fsBold]
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'CODIGO'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'C'#243'd'
+            Width = 40
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DESCRICAO'
+            Title.Caption = 'Descri'#231#227'o do Hist'#243'rico'
+            Width = 300
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'GRUPO'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Caption = 'Grupo'
+            Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'TIP_AUX'
+            Visible = False
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_AUX'
+            Visible = False
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_AUX1'
+            Visible = False
+          end>
+      end
+      object Gb_ConcDepHistoricosGrupos: TGroupBox
+        Left = 476
+        Top = 0
+        Width = 149
+        Height = 389
+        Align = alClient
+        Caption = ' Selecione o Grupo '
+        TabOrder = 2
+        object Label87: TLabel
+          Left = 16
+          Top = 144
+          Width = 117
+          Height = 39
+          Alignment = taCenter
+          Caption = 'Selecione Primeiro o'#13#10'Hist'#243'rico a Alterar '#13#10'o Grupo'
+        end
+        object Rb_ConcDepHistoricosCX_MTZ: TJvRadioButton
+          Left = 36
+          Top = 32
+          Width = 64
+          Height = 17
+          Alignment = taLeftJustify
+          Caption = 'CX_MTZ'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+          OnClick = Rb_ConcDepHistoricosCX_MTZClick
+          OnKeyUp = Rb_ConcDepHistoricosCX_MTZKeyUp
+          HotTrackFont.Charset = DEFAULT_CHARSET
+          HotTrackFont.Color = clWindowText
+          HotTrackFont.Height = -11
+          HotTrackFont.Name = 'MS Sans Serif'
+          HotTrackFont.Style = []
+          LinkedControls = <>
+        end
+        object Rb_ConcDepHistoricosDEPOSITO: TJvRadioButton
+          Left = 36
+          Top = 56
+          Width = 76
+          Height = 17
+          Alignment = taLeftJustify
+          Caption = 'DEPOSITO'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 1
+          OnClick = Rb_ConcDepHistoricosCX_MTZClick
+          OnKeyUp = Rb_ConcDepHistoricosCX_MTZKeyUp
+          HotTrackFont.Charset = DEFAULT_CHARSET
+          HotTrackFont.Color = clWindowText
+          HotTrackFont.Height = -11
+          HotTrackFont.Name = 'MS Sans Serif'
+          HotTrackFont.Style = []
+          LinkedControls = <>
+        end
+        object Rb_ConcDepHistoricosOUTROS: TJvRadioButton
+          Left = 36
+          Top = 106
+          Width = 67
+          Height = 17
+          Alignment = taLeftJustify
+          Caption = 'OUTROS'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 2
+          OnClick = Rb_ConcDepHistoricosCX_MTZClick
+          OnKeyUp = Rb_ConcDepHistoricosCX_MTZKeyUp
+          HotTrackFont.Charset = DEFAULT_CHARSET
+          HotTrackFont.Color = clWindowText
+          HotTrackFont.Height = -11
+          HotTrackFont.Name = 'MS Sans Serif'
+          HotTrackFont.Style = []
+          LinkedControls = <>
+        end
+        object Rb_ConcDepHistoricosDESPESA: TJvRadioButton
+          Left = 36
+          Top = 81
+          Width = 71
+          Height = 17
+          Alignment = taLeftJustify
+          Caption = 'DESPESA'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 3
+          OnClick = Rb_ConcDepHistoricosCX_MTZClick
+          OnKeyUp = Rb_ConcDepHistoricosCX_MTZKeyUp
+          HotTrackFont.Charset = DEFAULT_CHARSET
+          HotTrackFont.Color = clWindowText
+          HotTrackFont.Height = -11
+          HotTrackFont.Name = 'MS Sans Serif'
+          HotTrackFont.Style = []
+          LinkedControls = <>
+        end
+      end
+    end
   end
   object PainelApresExp: TPanel
-    Left = 432
-    Top = 192
+    Left = 208
+    Top = 56
     Width = 99
     Height = 33
     BevelInner = bvRaised
@@ -10672,27 +10926,27 @@ object FrmSolicitacoes: TFrmSolicitacoes
   object CDS_: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 588
-    Top = 272
+    Left = 452
+    Top = 392
   end
   object ADOC_Excel: TADOConnection
     LoginPrompt = False
     Mode = cmShareDenyNone
     Provider = 'Microsoft.Jet.OLEDB.4.0'
-    Left = 580
-    Top = 208
+    Left = 404
+    Top = 384
   end
   object ADOT_Dcto: TADOTable
     Connection = ADOC_Excel
     CursorType = ctStatic
     LockType = ltReadOnly
     TableDirect = True
-    Left = 575
-    Top = 152
+    Left = 327
+    Top = 384
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 585
-    Top = 74
+    Left = 249
+    Top = 378
   end
 end

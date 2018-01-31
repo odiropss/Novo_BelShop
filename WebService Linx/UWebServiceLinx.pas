@@ -750,6 +750,8 @@ Begin
           DMLinxWebService.CDS_Busca.Close;
           sObs:='';
         End; // If sgMetodo='LinxProdutos' Then
+        // Acerta LinxProduto.COD_AUXILIAR para 6 Caracteres (SIDICOM) =========
+        //======================================================================
 
         //======================================================================
         // Atualiza Tabela LinxProdutoDetalhes com Produto Sem Saldo ===========
@@ -794,6 +796,8 @@ Begin
           DMLinxWebService.SQLC.Execute(MySql, nil, nil);
           sOBS:='';
         End; // If sgMetodo='LinxProdutosDetalhes' Then
+        // Atualiza Tabela LinxProdutoDetalhes com Produto Sem Saldo ===========
+        //======================================================================
 
         //======================================================================
         // Exclui Codigos de Barras que Sobraram ===============================
@@ -804,6 +808,19 @@ Begin
                  ' WHERE cb.dta_atualizacao<>'+QuotedStr(sDtaAtual);
           DMLinxWebService.SQLC.Execute(MySql, nil, nil);
         End; // If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosCodBar') Then
+        // Exclui Codigos de Barras que Sobraram ===============================
+        //======================================================================
+
+        //======================================================================
+        // Coloca Código <Zero> 0 para Código de Histórico NULL na SANGRIA =====
+        //======================================================================
+        If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxSangriaSuprimentos') Then
+        Begin
+          MySql:=' UPDATE LINXSANGRIASUPRIMENTOS s'+
+                 ' SET s.cod_historico=0'+
+                 ' WHERE s.cod_historico IS NULL';
+          DMLinxWebService.SQLC.Execute(MySql, nil, nil);
+        End; // If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxSangriaSuprimentos') Then
 
         // Atualiza Transacao ============================================
         DMLinxWebService.SQLC.Commit(TD);

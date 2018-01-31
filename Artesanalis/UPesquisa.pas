@@ -258,7 +258,7 @@ end;
 
 procedure TFrmPesquisa.Bt_PesquisaOKClick(Sender: TObject);
 begin
-  EdtCodigo.Text:=DMArtesanalis.CDS_Pesquisa.FieldByName(Campo_Codigo).AsString;
+  EdtCodigo.Text   :=DMArtesanalis.CDS_Pesquisa.FieldByName(Campo_Codigo).AsString;
   EdtDescricao.Text:=DMArtesanalis.CDS_Pesquisa.FieldByName(Campo_Descricao).AsString;
 
   If Campo_Retorno1<>'' Then

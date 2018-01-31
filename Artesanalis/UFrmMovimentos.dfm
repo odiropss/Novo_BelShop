@@ -1005,7 +1005,6 @@ object FrmMovimentos: TFrmMovimentos
         item
           Expanded = False
           FieldName = 'DES_PRODUTO'
-          Title.Caption = 'Descri'#231#227'o do Produto'
           Width = 298
           Visible = True
         end
@@ -1020,7 +1019,6 @@ object FrmMovimentos: TFrmMovimentos
           Expanded = False
           FieldName = 'VLR_UNITARIO'
           Title.Alignment = taRightJustify
-          Title.Caption = '$ Unit'#225'rio'
           Width = 90
           Visible = True
         end
@@ -1028,7 +1026,6 @@ object FrmMovimentos: TFrmMovimentos
           Expanded = False
           FieldName = 'VLR_DESCONTO'
           Title.Alignment = taRightJustify
-          Title.Caption = '$ Desconto'
           Width = 90
           Visible = True
         end

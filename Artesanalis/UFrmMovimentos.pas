@@ -1023,7 +1023,7 @@ begin
   Dbg_Produtos.SetFocus;
 
   FrmCadastroPessoa.bgTransportar:=True;
-
+  FrmCadastroPessoa.sgTipoPessoa:='';
   FrmCadastroPessoa.ShowModal;
 
   If FrmCadastroPessoa.bgTransportar Then

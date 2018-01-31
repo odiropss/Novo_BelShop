@@ -24,14 +24,14 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 700
     Height = 464
-    ActivePage = Ts_Pagamento
+    ActivePage = Ts_CP_CadastroHistoticos
     Align = alClient
     TabOrder = 0
     OnChange = PC_PrincipalChange
-    object Ts_Pagamento: TTabSheet
+    object Ts_CP_Pagamento: TTabSheet
       Caption = ' Pagamento '
       Highlighted = True
-      object Panel1: TPanel
+      object Pan_Principal: TPanel
         Left = 0
         Top = 399
         Width = 692
@@ -229,5 +229,171 @@ object FrmSolicitacoes: TFrmSolicitacoes
         end
       end
     end
+    object Ts_CP_CadastroHistoticos: TTabSheet
+      Caption = ' Cadastro de Histoticos '
+      Highlighted = True
+      ImageIndex = 1
+      object GroupBox1: TGroupBox
+        Left = 104
+        Top = 112
+        Width = 507
+        Height = 55
+        Caption = ' Descri'#231#227'o do Hist'#243'rico '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        object EdtDesHistorico: TEdit
+          Left = 13
+          Top = 20
+          Width = 481
+          Height = 21
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+        end
+      end
+      object GroupBox2: TGroupBox
+        Left = 104
+        Top = 176
+        Width = 507
+        Height = 55
+        Caption = ' Centro de Custo '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 1
+        object EdtDesCentroCusto: TEdit
+          Left = 13
+          Top = 20
+          Width = 451
+          Height = 21
+          CharCase = ecUpperCase
+          Color = clMoneyGreen
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 0
+        end
+        object Bt_BuscaCentrosCusto: TJvXPButton
+          Tag = 92
+          Left = 472
+          Top = 16
+          Width = 24
+          Height = 26
+          TabOrder = 1
+          TabStop = False
+          Glyph.Data = {
+            07544269746D61705E060000424D5E0600000000000036040000280000001600
+            000017000000010008000000000028020000C30E0000C30E0000000100000000
+            000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
+            FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
+            FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000010101010101010101010101010101010101010101010000010101010101
+            0101010101010101010101040404030100000101010101010101010101010101
+            0101040701070401000001010101010101010101010101010104070101070401
+            0000010101010101010101010101010104070101070704010000010101010101
+            0101010101010104070101070704010100000101010101010101010101010407
+            0101070704010101000001010101010101010101010407010107070401010101
+            0000010101010101010101010407010107070401010101010000010101010101
+            0101010404040307070401010101010100000101010101010404040404040407
+            0401010101010101000001010101040406010601010404040101010101010101
+            0000010101040106010601010101040101010101010101010000010101040601
+            0601060106010401010101010101010100000101040601060101010601060104
+            0101010101010101000001010401060106010601060101040101010101010101
+            0000010104060106010601060106010401010101010101010000010104010601
+            0601060106010104010101010101010100000101010401060101010601060401
+            0101010101010101000001010104060106010601060104010101010101010101
+            0000010101010404010101060404010101010101010101010000010101010101
+            0404040401010101010101010101010100000101010101010101010101010101
+            01010101010101010000}
+          ShowFocusRect = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_BuscaCentrosCustoClick
+        end
+      end
+      object EdtCodCentroCusto: TEdit
+        Left = 48
+        Top = 195
+        Width = 47
+        Height = 21
+        TabOrder = 2
+        Visible = False
+      end
+      object EdtCodHistorico: TEdit
+        Left = 48
+        Top = 132
+        Width = 47
+        Height = 21
+        TabOrder = 3
+        Visible = False
+      end
+    end
+  end
+  object OdirPanApres: TPanel
+    Left = 603
+    Top = 2
+    Width = 89
+    Height = 33
+    BevelInner = bvLowered
+    BevelWidth = 2
+    Caption = 'OdirPanApres'
+    Color = clSilver
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
+    Visible = False
   end
 end

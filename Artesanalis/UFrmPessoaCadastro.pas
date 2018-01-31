@@ -82,8 +82,11 @@ type
     { Private declarations }
   public
     { Public declarations }
-    bgTransportar: Boolean;
-    sgCodPesTransportar: String;
+
+    // Uzado ára Pesquisas Externas=============================================
+    bgTransportar: Boolean; // Se Transporta para Outro Form
+    sgTipoPessoa,           // Tipo da Pessoa de Pesquisa ((F) Fornecedor (C) Cliente (A) Ambos)
+    sgCodPesTransportar: String; // Codigo a Transporta para Outro Form
   end;
 
 const
@@ -224,9 +227,11 @@ Begin
 
     If Not bgTransportar Then
     Begin
+      // Inclui Altera Pessoa
       If sTipo='IA' Then
        msg('Cadastro Efetuado com SUCESSO !!','A');
 
+      // Exclui Pessoa
       If sTipo='EX' Then
        msg('Exclusão Efetuada com SUCESSO !!','A');
     End;
@@ -335,8 +340,14 @@ begin
          '   Else ''AMBOS'''+
          ' END Tipo,'+
          ' p.cod_pessoa Codigo'+
-         ' FROM PESSOAS p'+
-         ' ORDER BY p.des_pessoa';
+         ' FROM PESSOAS p';
+
+         If Trim(sgTipoPessoa)<>'' Then
+          MySql:=
+           MySql+' WHERE p.Tipo in (''A'', '+QuotedStr(sgTipoPessoa)+')';
+
+  MySql:=
+   MySql+' ORDER BY p.des_pessoa';
   DMArtesanalis.CDS_Pesquisa.Close;
   DMArtesanalis.CDS_Pesquisa.Filtered:=False;
   DMArtesanalis.SDS_Pesquisa.CommandText:=MySql;
@@ -384,8 +395,17 @@ begin
     If Length(Dbe_CnpjCpf.Text)=11 Then
      DMArtesanalis.CDS_PessoasNUM_CNPJCPF.EditMask:='999.999.999.-99;0;_';
 
-    Bt_Excluir.Enabled:=True; 
+    Dbe_Tipo.Enabled:=True;
+    Dbe_Tipo.Color:=clWindow;
     Dbe_Tipo.SetFocus;
+    If Trim(sgTipoPessoa)<>'' Then
+    Begin
+      Dbe_Tipo.Enabled:=False;
+      Dbe_Tipo.Color:=clMoneyGreen;
+      Dbe_Nome.SetFocus;
+    End;
+
+    Bt_Excluir.Enabled:=True;
   End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
 
   FreeAndNil(FrmPesquisa);
@@ -491,7 +511,16 @@ begin
   Pan_Dados.Enabled:=True;
   Bt_Excluir.Enabled:=False;
 
+  Dbe_Tipo.Enabled:=True;
+  Dbe_Tipo.Color:=clWindow;
   Dbe_Tipo.SetFocus;
+  If Trim(sgTipoPessoa)<>'' Then
+  Begin
+    Dbe_Tipo.Text:=sgTipoPessoa;
+    Dbe_Tipo.Enabled:=False;
+    Dbe_Tipo.Color:=clMoneyGreen;
+    Dbe_Nome.SetFocus;
+  End;
 
 end;
 

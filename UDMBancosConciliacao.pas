@@ -331,6 +331,16 @@ type
     CDS_CMDepositosAnaliseTOTAL: TFMTBCDField;
     CDS_CMDepositosAnaliseOBSERVACOES: TStringField;
     CDS_CMDepositosAnaliseORDEM: TIntegerField;
+    SDS_CMDepHistoricos: TSQLDataSet;
+    CDS_CMDepHistoricos: TClientDataSet;
+    DSP_CMDepHistoricos: TDataSetProvider;
+    DS_CMDepHistoricos: TDataSource;
+    CDS_CMDepHistoricosTIP_AUX: TIntegerField;
+    CDS_CMDepHistoricosCODIGO: TIntegerField;
+    CDS_CMDepHistoricosDESCRICAO: TStringField;
+    CDS_CMDepHistoricosGRUPO: TStringField;
+    CDS_CMDepHistoricosVLR_AUX: TFMTBCDField;
+    CDS_CMDepHistoricosVLR_AUX1: TFMTBCDField;
     procedure CDS_LojasBancoAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresExtratosAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresPagtosAfterScroll(DataSet: TDataSet);
@@ -341,6 +351,10 @@ type
     Procedure FechaTudoConciliacao;
     procedure CDS_CMApresDepositosAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresExtratosDepAfterScroll(DataSet: TDataSet);
+    procedure CDS_CMDepHistoricosGRUPOGetText(Sender: TField;
+      var Text: String; DisplayText: Boolean);
+    procedure CDS_CMDepHistoricosGRUPOSetText(Sender: TField;
+      const Text: String);
 
     // ODIR ====================================================================
 
@@ -465,6 +479,16 @@ begin
     End;
   End;
 
+end;
+
+procedure TDMConciliacao.CDS_CMDepHistoricosGRUPOGetText(Sender: TField; var Text: String; DisplayText: Boolean);
+begin
+//  DMConciliacao.CDS_CMDepHistoricos.Edit;
+end;
+
+procedure TDMConciliacao.CDS_CMDepHistoricosGRUPOSetText(Sender: TField; const Text: String);
+begin
+//  DMConciliacao.CDS_CMDepHistoricos.Post;
 end;
 
 end.

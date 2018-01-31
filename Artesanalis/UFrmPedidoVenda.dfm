@@ -1,7 +1,7 @@
 object FrmPedidoVenda: TFrmPedidoVenda
   Left = 239
   Top = 81
-  Width = 1020
+  Width = 1036
   Height = 611
   AutoSize = True
   BorderIcons = [biSystemMenu]
@@ -24,7 +24,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
   object Gb_Produtos: TGroupBox
     Left = 0
     Top = 106
-    Width = 1004
+    Width = 1020
     Height = 368
     Align = alClient
     Caption = ' Produtos '
@@ -42,7 +42,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     object Dbg_Produtos: TDBGrid
       Left = 1
       Top = 14
-      Width = 1002
+      Width = 1018
       Height = 353
       Align = alClient
       DataSource = DMArtesanalis.DS_V_DoctoItens
@@ -134,7 +134,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
   object Pan_Docto: TPanel
     Left = 0
     Top = 0
-    Width = 1004
+    Width = 1020
     Height = 64
     Align = alTop
     BevelInner = bvLowered
@@ -364,7 +364,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
   object Pan_Produto: TPanel
     Left = 0
     Top = 64
-    Width = 1004
+    Width = 1020
     Height = 42
     Align = alTop
     BevelInner = bvLowered
@@ -744,7 +744,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
   object Pan_Solicitacoes: TPanel
     Left = 0
     Top = 543
-    Width = 1004
+    Width = 1020
     Height = 30
     Align = alBottom
     BevelInner = bvLowered
@@ -753,7 +753,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     TabOrder = 4
     object Bt_Fechar: TJvXPButton
       Tag = 99
-      Left = 904
+      Left = 920
       Top = 1
       Width = 99
       Height = 28
@@ -924,7 +924,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
   object Panel1: TPanel
     Left = 0
     Top = 494
-    Width = 1004
+    Width = 1020
     Height = 49
     Align = alBottom
     Color = 16770250
@@ -1192,7 +1192,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
   object StB_Movtos: TdxStatusBar
     Left = 0
     Top = 474
-    Width = 1004
+    Width = 1020
     Height = 20
     Panels = <
       item
@@ -1239,7 +1239,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     Font.Style = [fsBold]
   end
   object EdtNumSeqDocto: TCurrencyEdit
-    Left = 478
+    Left = 494
     Top = 237
     Width = 40
     Height = 19
@@ -1257,7 +1257,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     Visible = False
   end
   object Dbe_VlrTotalCalculado: TDBEdit
-    Left = 477
+    Left = 493
     Top = 255
     Width = 122
     Height = 21
@@ -1268,7 +1268,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     OnChange = Dbe_VlrTotalCalculadoChange
   end
   object Dbe_VlrTotalDesconto: TDBEdit
-    Left = 477
+    Left = 493
     Top = 273
     Width = 122
     Height = 21
@@ -1279,7 +1279,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     OnChange = Dbe_VlrTotalDescontoChange
   end
   object Dbe_VlrTotalProdutos: TDBEdit
-    Left = 477
+    Left = 493
     Top = 289
     Width = 123
     Height = 21
@@ -1296,7 +1296,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
     OnChange = Dbe_VlrTotalProdutosChange
   end
   object OdirPanApres: TPanel
-    Left = 56
+    Left = 16
     Top = 2
     Width = 89
     Height = 33

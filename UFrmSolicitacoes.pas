@@ -95,7 +95,7 @@ uses
   ToolEdit, CurrEdit, DBXpress, Commctrl, ComCtrls, Math, StrUtils, DateUtils,
   Clipbrd, jpeg, cxSpinEdit, JvRadioButton, ADODB, Menus, IBQuery,
   JvOutlookBar, RelVisual, AppEvnts, MMSystem;
-//  Último: MMSystem 
+//  Último: MMSystem
 
 type
   TFrmSolicitacoes = class(TForm)
@@ -624,9 +624,20 @@ type
     Bt_TransfSalvar: TJvXPButton;
     Ts_AnaliseReposicaoDiaria: TTabSheet;
     Panel2: TPanel;
-    JvXPButton2: TJvXPButton;
+    Bt_AnaliseRepDiariaVoltar: TJvXPButton;
     Bt_AnaliseRepDiariaSalvaClipboard: TJvXPButton;
     Dbg_AnaliseRepDiaria: TDBGridJul;
+    Ts_ConcDepHistoricos: TTabSheet;
+    Panel5: TPanel;
+    Bt_ConcDepHistoricosVoltar: TJvXPButton;
+    Bt_ConcDepHistoricosSalvar: TJvXPButton;
+    Dbg_ConcDepHistoricos: TDBGrid;
+    Gb_ConcDepHistoricosGrupos: TGroupBox;
+    Rb_ConcDepHistoricosCX_MTZ: TJvRadioButton;
+    Rb_ConcDepHistoricosDEPOSITO: TJvRadioButton;
+    Rb_ConcDepHistoricosOUTROS: TJvRadioButton;
+    Rb_ConcDepHistoricosDESPESA: TJvRadioButton;
+    Label87: TLabel;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -935,6 +946,11 @@ type
     procedure Dbg_AnaliseRepDiariaDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
+    procedure Bt_ConcDepHistoricosSalvarClick(Sender: TObject);
+    procedure Bt_ConcDepHistoricosVoltarClick(Sender: TObject);
+    procedure Rb_ConcDepHistoricosCX_MTZClick(Sender: TObject);
+    procedure Rb_ConcDepHistoricosCX_MTZKeyUp(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
 
@@ -964,6 +980,9 @@ type
     // (C) Conciliação do Caixa Dias
   end;
 
+type
+   THackDBGrid = class(TDBGrid);
+  
 const
   // Show Hint em Forma de Balão
   TTS_BALLOON = $40;
@@ -1009,7 +1028,7 @@ implementation
 uses DK_Procs1, UDMBelShop, UFrmBelShop, UDMSalao, UPesquisa, UFrmSalao,
      UDMVirtual, UDMLojaUnica, UDMCentralTrocas, UDMConexoes,
      UFrmSelectEmpProcessamento, IBCustomDataSet, UDMRelatorio,
-     UPesquisaIB;
+     UPesquisaIB, UDMBancosConciliacao;
 
 {$R *.dfm}
 
@@ -7152,7 +7171,11 @@ end;
 
 procedure TFrmSolicitacoes.Bt_QualquerCoisaVoltarClick(Sender: TObject);
 begin
-  // Usado por Outros Botoes ===================================================
+  {
+   Usado por Outros Botoes:
+
+   Bt_AnaliseRepDiariaVoltar
+  }
 
   If (Sender is TJvXPButton) Then
   Begin
@@ -8695,9 +8718,15 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.Dbg_ReposDivProdutosKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
+procedure TFrmSolicitacoes.Dbg_ReposDivProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
+
+  {
+   - Usado em outros DBGrids
+        - Dbg_ConcDepHistoricos
+        - Dbg_AnaliseRepDiaria
+
+  }
   // Bloquei Ctrl + Delete =====================================================
   if (Shift = [ssCtrl]) and (Key = 46) then
     Key := 0;
@@ -8771,7 +8800,6 @@ procedure TFrmSolicitacoes.Bt_TransfBuscaLojaClick(Sender: TObject);
 Var
   MySql: String;
 begin
-
   FrmPesquisa:=TFrmPesquisa.Create(Self);
                           
   EdtTransfCodLoja.Clear;
@@ -8944,6 +8972,103 @@ begin
   DMBelShop.CDS_BuscaRapida.FieldByName('Documento').Alignment:=taRightJustify;
   DMBelShop.CDS_BuscaRapida.FieldByName('Total_Linhas').Alignment:=taRightJustify;
   DMBelShop.CDS_BuscaRapida.FieldByName('Total_Qtds').Alignment:=taRightJustify;
+end;
+
+procedure TFrmSolicitacoes.Bt_ConcDepHistoricosSalvarClick(Sender: TObject);
+begin
+  Dbg_ConcDepHistoricos.SetFocus;
+
+  If DMConciliacao.CDS_CMDepHistoricos.IsEmpty Then
+   Exit;
+
+  DBGridClipboard(Dbg_ConcDepHistoricos);
+
+end;
+
+procedure TFrmSolicitacoes.Bt_ConcDepHistoricosVoltarClick(Sender: TObject);
+Begin
+  bgProcessar:=False;
+  Close;
+end;
+
+procedure TFrmSolicitacoes.Rb_ConcDepHistoricosCX_MTZClick(Sender: TObject);
+Var
+  MySql: String;
+  sGrupo: String;
+begin
+  OdirPanApres.Caption:='AGUARDE !! Salvando Cadastro de Históricos...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmSolicitacoes;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  OdirPanApres.Refresh;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    If Rb_ConcDepHistoricosCX_MTZ.Checked   Then sGrupo:=Rb_ConcDepHistoricosCX_MTZ.Caption;
+    If Rb_ConcDepHistoricosDEPOSITO.Checked Then sGrupo:=Rb_ConcDepHistoricosDEPOSITO.Caption;
+    If Rb_ConcDepHistoricosDESPESA.Checked  Then sGrupo:=Rb_ConcDepHistoricosDESPESA.Caption;
+    If Rb_ConcDepHistoricosOUTROS.Checked   Then sGrupo:=Rb_ConcDepHistoricosOUTROS.Caption;
+
+    MySql:=' UPDATE TAB_AUXILIAR t'+
+           ' SET t.des_aux1='+QuotedStr(sGrupo)+
+           ' WHERE t.tip_aux=21'+
+           ' AND t.cod_aux='+DMConciliacao.CDS_CMDepHistoricosCODIGO.AsString;
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    DMConciliacao.CDS_CMDepHistoricos.Edit;
+    DMConciliacao.CDS_CMDepHistoricosGRUPO.AsString:=sGrupo;
+    DMConciliacao.CDS_CMDepHistoricos.Post;
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    Screen.Cursor:=crDefault;
+
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+
+  Rb_ConcDepHistoricosCX_MTZ.Checked  :=False;
+  Rb_ConcDepHistoricosDEPOSITO.Checked:=False;
+  Rb_ConcDepHistoricosDESPESA.Checked :=False;
+  Rb_ConcDepHistoricosOUTROS.Checked  :=False;
+
+  Dbg_ConcDepHistoricos.SetFocus;
+end;
+
+procedure TFrmSolicitacoes.Rb_ConcDepHistoricosCX_MTZKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  Rb_ConcDepHistoricosCX_MTZClick(Self);
 end;
 
 end.

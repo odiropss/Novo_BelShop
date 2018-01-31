@@ -234,6 +234,7 @@ type
     Bt_DepAnaliseDia: TJvXPButton;
     Bt_DepAnaliseSalvaClipboard: TJvXPButton;
     Bt_CMObsNaoConcDep: TJvXPButton;
+    Bt_DepAnaliseCadHistoricos: TJvXPButton;
     procedure FormCreate(Sender: TObject);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SairClick(Sender: TObject);
@@ -500,6 +501,7 @@ type
       var Key: Word; Shift: TShiftState);
     procedure Dbg_DepAnaliseKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure Bt_DepAnaliseCadHistoricosClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -14296,7 +14298,7 @@ Var
   sObsNaoConc: String;
 begin
   Dbg_ConcManutDepositos.SetFocus;
-  
+
   If DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
    Exit;
 
@@ -14458,6 +14460,7 @@ procedure TFrmBancoExtratos.Bt_DepAnaliseDiaClick(Sender: TObject);
 Var
   MySql: String;
   b: Boolean;
+  sNomeLoja, sDiasDepositos, sCaseDepositos: String;
 begin
   Dbg_DepAnalise.SetFocus;
 
@@ -14504,10 +14507,67 @@ begin
     End; // If DMBelShop.CDS_BuscaRapida.Eof Then
     DMBelShop.CDS_BuscaRapida.Close;
 
+    // Busca Data de Depósitos =================================================
+    MySql:=' SELECT DISTINCT lj.nome_emp, be.dta_extrato'+
+           ' FROM FIN_BANCOS_EXTRATOS be, FIN_CONCILIACAO_DEPOSITOS cd,'+
+           '      FIN_CONCILIACAO_MOV_DEP cm, LINXLOJAS lj'+
+           ' WHERE cd.chv_extrato=be.chv_extrato'+
+           ' AND   cd.num_seq=cm.num_seq'+
+           ' AND   cd.num_compl=cm.num_compl'+
+           ' AND   cm.cod_linx=lj.empresa'+
+           ' AND   cm.dta_docto='+QuotedStr(sgDia)+
+           ' ORDER BY 1,2';
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+
+    sNomeLoja:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('nome_emp').AsString);
+    sDiasDepositos:='';
+    sCaseDepositos:='';
+    While not DMBelShop.CDS_BuscaRapida.Eof do
+    Begin
+
+      If sNomeLoja=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('nome_emp').AsString) Then
+      Begin
+        If Trim(sDiasDepositos)='' Then
+         sDiasDepositos:=DMBelShop.CDS_BuscaRapida.FieldByName('dta_extrato').AsString
+        Else
+         sDiasDepositos:=sDiasDepositos+', '+DMBelShop.CDS_BuscaRapida.FieldByName('dta_extrato').AsString;
+      End;
+
+      If sNomeLoja<>Trim(DMBelShop.CDS_BuscaRapida.FieldByName('nome_emp').AsString) Then
+      Begin
+        If Trim(sCaseDepositos)='' Then
+         sCaseDepositos:='When TRIM(lj.nome_emp)='+QuotedStr(sNomeLoja)+' Then ''Depósitos em: '+sDiasDepositos+''''
+        Else
+         sCaseDepositos:=sCaseDepositos+cr+'When TRIM(lj.nome_emp)='+QuotedStr(sNomeLoja)+' Then ''Depósitos em: '+sDiasDepositos+'''';
+
+        sDiasDepositos:=DMBelShop.CDS_BuscaRapida.FieldByName('dta_extrato').AsString;
+      End;
+
+      sNomeLoja:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('nome_emp').AsString);
+
+      DMBelShop.CDS_BuscaRapida.Next;
+    End; // While not DMBelShop.CDS_BuscaRapida.Eof do
+    DMBelShop.CDS_BuscaRapida.Close;
+
+    // Grava a Ultima Loja =====================================================
+    If Trim(sDiasDepositos)<>'' Then
+    Begin
+      If Trim(sCaseDepositos)='' Then
+       sCaseDepositos:='When TRIM(lj.nome_emp)='+QuotedStr(sNomeLoja)+' Then ''Depósitos em: '+sDiasDepositos+''''
+      Else
+       sCaseDepositos:=sCaseDepositos+cr+'When TRIM(lj.nome_emp)='+QuotedStr(sNomeLoja)+' Then ''Depósitos em: '+sDiasDepositos+'''';
+    End; // If Trim(sDiasDepositos)<>'' Then
+
+    If Trim(sCaseDepositos)<>'' Then
+     sCaseDepositos:=' CASE '+cr+sCaseDepositos+cr+'End, ';
+
+
     // Apresenta Dia para Analise ==============================================
     // ----------- TITULO DO RELATÓRIO
     MySql:=' SELECT'+
-           ' ''RESULTADO CONCILIAÇÃO CAIXA DO DIA 02/01/2018'' NOME_EMP,'+
+           ' ''RESULTADO CONCILIAÇÃO CAIXA DO DIA ''||'+QuotedStr(f_Troca('.','/',sgDia))+' NOME_EMP,'+
            ' NULL CX_MTZ,'+
            ' NULL DEPOSITO,'+
            ' NULL DESPESA,'+
@@ -14567,7 +14627,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) IN (197, 198) THEN'+
+           '     WHEN gr.des_aux1=''CX_MTZ'' THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -14576,7 +14636,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) IN (170, 173) THEN'+
+           '     WHEN gr.des_aux1=''DEPOSITO'' THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -14585,7 +14645,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) IN (10, 16, 29, 30, 33, 106, 181, 183) THEN'+
+           '     WHEN gr.des_aux1=''DESPESA'' THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '      0.00'+
@@ -14594,19 +14654,29 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) NOT IN (10, 16, 29, 30, 33, 106, 181, 183, 170, 173, 197, 198) THEN'+
+           '     WHEN gr.des_aux1 Not in (''CX_MTZ'', ''DEPOSITO'', ''DESPESA'') THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
            '  END)'+
            ' ,0.00) OUTROS,'+
 
-           ' SUM(COALESCE(md.vlr_docto,0.00)) TOTAL,'+
-           ' NULL,'+
-           ' 4 ORDEM'+
+           ' SUM(COALESCE(md.vlr_docto,0.00)) TOTAL,';
 
-           ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj'+
+           If Trim(sCaseDepositos)<>'' Then
+            MySql:=
+             MySql+sCaseDepositos
+           Else
+            MySql:=
+             MySql+' NULL,';
+
+    MySql:=
+     MySql+' 4 ORDEM'+
+
+           ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj, TAB_AUXILIAR gr'+
            ' WHERE md.cod_linx=lj.empresa'+
+           ' AND   md.cod_historico=gr.cod_aux'+
+           ' AND   gr.tip_aux=21'+
            ' AND   md.ind_conciliacao=''SIM'''+
            ' AND   md.dta_docto='+QuotedStr(sgDia)+
 
@@ -14619,7 +14689,7 @@ begin
            ' ''TOTAL DE VALORES CONSILIADOS'','+
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) IN (197, 198) THEN'+
+           '     WHEN gr.des_aux1=''CX_MTZ'' THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -14628,7 +14698,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) IN (170, 173) THEN'+
+           '     WHEN gr.des_aux1=''DEPOSITO'' THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -14637,16 +14707,16 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) IN (10, 16, 29, 30, 33, 106, 181, 183) THEN'+
+           '     WHEN gr.des_aux1=''DESPESA'' THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
            ' END)'+
            ' , 0.00) DESPESA,'+
 
-           ' COALESCE(SUM('+
+           ' COALESCE(SUM('+ 
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) NOT IN (10, 16, 29, 30, 33, 106, 181, 183, 170, 173, 197, 198) THEN'+
+           '     WHEN gr.des_aux1 Not in (''CX_MTZ'', ''DEPOSITO'', ''DESPESA'') THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -14655,9 +14725,11 @@ begin
            ' SUM(COALESCE(md.vlr_docto,0.00)) TOTAL,'+
            ' NULL,'+
            ' 5 ORDEM'+
-
-           ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj'+
+                                                
+           ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj, TAB_AUXILIAR gr'+
            ' WHERE md.cod_linx=lj.empresa'+
+           ' AND   md.cod_historico=gr.cod_aux'+
+           ' AND   gr.tip_aux=21'+
            ' AND   md.ind_conciliacao=''SIM'''+
            ' AND   md.dta_docto='+QuotedStr(sgDia)+
 
@@ -14709,7 +14781,7 @@ begin
            ' lj.nome_emp,'+
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) IN (197, 198) THEN'+
+           '     WHEN gr.des_aux1=''CX_MTZ'' THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -14718,7 +14790,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) IN (170, 173) THEN'+
+           '     WHEN gr.des_aux1=''DEPOSITO'' THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -14727,7 +14799,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) IN (10, 16, 29, 30, 33, 106, 181, 183) THEN'+
+           '     WHEN gr.des_aux1=''DESPESA'' THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -14736,7 +14808,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) NOT IN (10, 16, 29, 30, 33, 106, 181, 183, 170, 173, 197, 198) THEN'+
+           '     WHEN gr.des_aux1 Not in (''CX_MTZ'', ''DEPOSITO'', ''DESPESA'') THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -14747,8 +14819,10 @@ begin
            ' TRIM(COALESCE(md.obs_nao_conc,'''')) obs_nao_conc,'+
            ' 9 ORDEM'+
 
-           ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj'+
+           ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj, TAB_AUXILIAR gr'+
            ' WHERE md.cod_linx=lj.empresa'+
+           ' AND   md.cod_historico=gr.cod_aux'+
+           ' AND   gr.tip_aux=21'+
            ' AND   md.ind_conciliacao=''NAO'''+
            ' AND   md.dta_docto='+QuotedStr(sgDia)+
 
@@ -14762,7 +14836,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) IN (197, 198) THEN'+
+           '     WHEN gr.des_aux1=''CX_MTZ'' THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -14771,7 +14845,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) IN (170, 173) THEN'+
+           '     WHEN gr.des_aux1=''DEPOSITO'' THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -14780,7 +14854,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) IN (10, 16, 29, 30, 33, 106, 181, 183) THEN'+
+           '     WHEN gr.des_aux1=''DESPESA'' THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -14789,7 +14863,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN COALESCE(md.cod_historico,0) NOT IN (10, 16, 29, 30, 33, 106, 181, 183, 170, 173, 197, 198) THEN'+
+           '     WHEN gr.des_aux1 Not in (''CX_MTZ'', ''DEPOSITO'', ''DESPESA'') THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -14800,8 +14874,10 @@ begin
            ' NULL,'+
            ' 10 ORDEM'+
 
-           ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj'+
+           ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj, TAB_AUXILIAR gr'+
            ' WHERE md.cod_linx=lj.empresa'+
+           ' AND   md.cod_historico=gr.cod_aux'+
+           ' AND   gr.tip_aux=21'+
            ' AND   md.ind_conciliacao=''NAO'''+
            ' AND   md.dta_docto='+QuotedStr(sgDia)+
 
@@ -14893,6 +14969,122 @@ begin
   // Bloquei Ctrl + Delete =====================================================
   If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
    Abort;
+
+end;
+
+procedure TFrmBancoExtratos.Bt_DepAnaliseCadHistoricosClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  Dbg_DepAnalise.SetFocus;
+
+  OdirPanApres.Caption:='AGUARDE !! Analisando Cadastro de Históricos...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBancoExtratos;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  OdirPanApres.Refresh;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    MySql:=' SELECT DISTINCT s.cod_historico, COALESCE(s.desc_historico, ''SEM HISTÓRICO'') desc_historico'+
+           ' FROM LINXSANGRIASUPRIMENTOS s'+
+           ' ORDER BY s.data';
+    DMBelShop.CDS_Busca.Close;
+    DMBelShop.SDS_Busca.CommandText:=MySql;
+    DMBelShop.CDS_Busca.Open;
+
+    FrmBelShop.MontaProgressBar(True, FrmBancoExtratos);
+    pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
+    pgProgBar.Position:=0;
+
+    DMBelShop.CDS_Busca.DisableControls;
+    While not DMBelShop.CDS_Busca.Eof do
+    Begin
+      Application.ProcessMessages;
+
+      MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR (tip_aux, cod_aux, des_aux)'+
+             ' VALUES ('+
+             ' 21, '+ // TIP_AUX
+             DMBelShop.CDS_Busca.FieldByName('Cod_Historico').AsString+', '+ // COD_AUX
+             QuotedStr(DMBelShop.CDS_Busca.FieldByName('Desc_Historico').AsString)+')'+ // DES_AUX
+             ' MATCHING (tip_aux, cod_aux)';
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+      pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
+
+      DMBelShop.CDS_Busca.Next;
+    End; // While not DMBelShop.CDS_Busca.Eof do
+    DMBelShop.CDS_Busca.EnableControls;
+    DMBelShop.CDS_Busca.Close;
+
+    FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    Screen.Cursor:=crDefault;
+
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      OdirPanApres.Visible:=False;
+      FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
+
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Exit;
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  // Busca Históricos ==========================================================
+  DMConciliacao.CDS_CMDepHistoricos.Close;
+  DMConciliacao.CDS_CMDepHistoricos.Open;
+
+  If Trim(DMConciliacao.CDS_CMDepHistoricosCODIGO.AsString)='' Then
+  Begin
+    OdirPanApres.Visible:=False;
+    msg('Sem Histórico a Listar !!','A');
+    DMConciliacao.CDS_CMDepHistoricos.Close;
+    Exit;
+  End;
+
+  // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
+  OdirPanApres.Visible:=False;
+  FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+  FrmBelShop.AbreSolicitacoes(26);
+
+  bgProcessar:=False;
+  FrmSolicitacoes.Caption:='CONCILIAÇÃO DE DEPÓSITOS';
+  FrmSolicitacoes.ShowModal;
+
+  DMConciliacao.CDS_CMDepHistoricos.Close;
+  FreeAndNil(FrmSolicitacoes);
 
 end;
 

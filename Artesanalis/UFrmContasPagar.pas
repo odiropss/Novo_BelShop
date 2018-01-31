@@ -101,13 +101,13 @@ type
     a10: TEdit;
     procedure Bt_FecharClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    
     // Odir ====================================================================
 
     // Hint em Fortma de Balão
     Procedure CreateToolTips(hWnd: Cardinal); // Cria Show Hint em Forma de Balão
     Procedure FocoToControl(Sender: TControl);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
 
     Procedure LimpaDocto(bCodigos: Boolean  = True);
 
@@ -158,6 +158,7 @@ type
     procedure Rb_PesqDtaVenctoClick(Sender: TObject);
     procedure Rb_PesqDtaVenctoKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure Bt_NovoHistoricoClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -226,7 +227,7 @@ Begin
   Bt_BuscaPessoa.Enabled   :=Not b;
   Bt_BuscaHistorico.Enabled:=not b;
   Bt_NovaPessoa.Enabled    :=not b;
-  // Bt_NovoHistorico.Enabled :=Not b;
+  Bt_NovoHistorico.Enabled :=Not b;
 
 End; // Habilita/Desabilita Componentes >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -1144,7 +1145,7 @@ end;
 
 procedure TFrmContasPagar.Dbg_LanctosEnter(Sender: TObject);
 begin
-  (Sender as TDBGrid).Color:=clMoneyGreen;
+//  (Sender as TDBGrid).Color:=clMoneyGreen;
 
 //  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
 //  ApplicationEvents1.OnActivate:=Dbg_LanctosEnter; // Nome do Evento do DBGRID
@@ -1173,6 +1174,7 @@ begin
   Dbg_Lanctos.SetFocus;
 
   FrmCadastroPessoa.bgTransportar:=True;
+  FrmCadastroPessoa.sgTipoPessoa:='F';
 
   FrmCadastroPessoa.ShowModal;
 
@@ -1289,7 +1291,7 @@ begin
    Exit;
 
   Pan_Lanctos.Enabled:=False;
-  Dbg_Lanctos.Color:=$00FF8000;
+  Dbg_Lanctos.Color:=$00E6FFE6;
 
   Bt_Excluir.Enabled:=True;
   Bt_Pagto.Enabled:=True;
@@ -1814,4 +1816,33 @@ begin
   Rb_PesqDtaVenctoClick(Self);
 end;
 
+procedure TFrmContasPagar.Bt_NovoHistoricoClick(Sender: TObject);
+begin
+  FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+  FrmSolicitacoes.AbreSolicitacoes(1);
+
+  FrmSolicitacoes.Pan_Principal.Parent:=FrmSolicitacoes.Ts_CP_CadastroHistoticos;
+  FrmSolicitacoes.EdtCodCentroCusto.Clear;
+  FrmSolicitacoes.EdtCodHistorico.Clear;
+  FrmSolicitacoes.Caption:='FINANCEIRO - Contas a Pagar';
+  
+  FrmSolicitacoes.ShowModal;
+
+  If FrmSolicitacoes.bgProcessado Then
+   Begin
+     EdtCodHistorico.AsInteger:=StrToInt(FrmSolicitacoes.EdtCodHistorico.Text);
+     EdtCodHistoricoExit(Self);
+     EdtNumDocto.SetFocus;
+   End
+  Else
+   Begin
+     EdtCodHistorico.SetFocus;
+   End; // If FrmSolicitacoes.bgProcessado Then
+
+  FreeAndNil(FrmSolicitacoes);
+
+end;
+
 end.
+
+

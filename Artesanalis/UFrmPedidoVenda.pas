@@ -1000,7 +1000,7 @@ begin
   Dbg_Produtos.SetFocus;
 
   FrmCadastroPessoa.bgTransportar:=True;
-
+  FrmCadastroPessoa.sgTipoPessoa:='C';
   FrmCadastroPessoa.ShowModal;
 
   If FrmCadastroPessoa.bgTransportar Then

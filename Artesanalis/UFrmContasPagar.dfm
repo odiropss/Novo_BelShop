@@ -763,7 +763,6 @@ object FrmContasPagar: TFrmContasPagar
         Top = 16
         Width = 24
         Height = 26
-        Enabled = False
         TabOrder = 3
         TabStop = False
         Glyph.Data = {
@@ -782,6 +781,7 @@ object FrmContasPagar: TFrmContasPagar
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
+        OnClick = Bt_NovoHistoricoClick
       end
     end
     object Gb_Parcelas: TGroupBox
