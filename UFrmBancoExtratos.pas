@@ -19,7 +19,8 @@ uses
   cxCalendar, JvEditorCommon, JvEditor, ToolEdit, CurrEdit, JvExControls,
   JvXPCore, JvXPButtons, ExtCtrls, DBGrids, Classes, SysUtils, Comobj, Variants,
   StrUtils, Messages, Dialogs,
-  IBQuery, DBXpress, DBClient, dxSkinsdxStatusBarPainter, dxStatusBar, MMSystem;
+  IBQuery, DBXpress, DBClient, dxSkinsdxStatusBarPainter, dxStatusBar, MMSystem,
+  JvSwitch;
 
 type
   TFrmBancoExtratos = class(TForm)
@@ -235,6 +236,7 @@ type
     Bt_DepAnaliseSalvaClipboard: TJvXPButton;
     Bt_CMObsNaoConcDep: TJvXPButton;
     Bt_DepAnaliseCadHistoricos: TJvXPButton;
+    Sb_DepAnaliseDia: TdxStatusBar;
     procedure FormCreate(Sender: TObject);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SairClick(Sender: TObject);
@@ -339,6 +341,10 @@ type
                                     // iTipo=2 EdtConcManutDepVlr        Busca em DMConciliacao.DS_CMExtratosDep
                                     // iTipo=3 EdtConcManutExtratoVlr    Busca em DMConciliacao.DS_CMPagtos
                                     // iTipo=4 EdtConcManutPagtoVlr      Busca em DMConciliacao.DS_CMExtratos
+
+    Function DiaFechadoRenato(sCodLjLinx, sDia: String): Boolean;
+
+    Procedure ConcDepositosFechamentoDia;
 
     // Odir FIM ////////////////////////////////////////////////////////////////
 
@@ -553,7 +559,9 @@ var
   bgSabDom: Boolean;
 
   sgAgencia, sgContaCorrente: String;
-  bgComNrConta: Boolean; // Se Extrato do Santander contém o Numero da Conta
+
+  bgComNrConta, // Se Extrato do Santander contém o Numero da Conta
+  bgFechamento: Boolean; // Se Usuário Pode Efetuar o Fechamento do Dia na Conciliaão de Depósitos
 
 implementation
 
@@ -561,13 +569,103 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
      UPesquisaIB, UDMBancosConciliacao, UPesquisa,
      UFrmBelShop, UFrmTiposConciliacao, Contnrs, UFrmApresConciliacao,
      UFrmSolicitacoes, UFrmPeriodoApropriacao, DB, ComConst, SysConst,
-  UFrmConfirmacao;
+  UFrmConfirmacao, DateUtils;
 
 {$R *.dfm}
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// CONCILIAÇÕES PAGTOS/DEPOSITOS - Fechamento do Dia no Banco de Dados >>>>>>>>>
+Procedure TFrmBancoExtratos.ConcDepositosFechamentoDia;
+Var
+  MySql: String;
+Begin
+  OdirPanApres.Caption:='AGUARDE !! Tratando Fechamento do Dia '+f_Troca('.','/',sgDia)+' da Loja '+DMConciliacao.CDS_CMDepositosAnaliseNOME_EMP.AsString;
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBancoExtratos;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  OdirPanApres.Refresh;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    If DMConciliacao.CDS_CMDepositosAnaliseFECHA.AsString='SIM' Then
+     Begin
+       MySql:=' DELETE FROM TAB_AUXILIAR t'+
+              ' WHERE t.tip_aux=22'+
+              ' AND   t.cod_aux='+DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString+
+              ' AND   TRIM(t.des_aux)='+QuotedStr(f_Troca('.','/',sgDia));
+     End
+    Else
+     Begin
+       MySql:=' INSERT INTO TAB_AUXILIAR'+
+              ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
+              ' VALUES ('+
+              ' 22,'+ // TIP_AUX
+              DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString+', '+ // COD_AUX
+              QuotedStr(f_Troca('.','/',sgDia))+', '+ // DES_AUX
+              ' NULL,'+ // DES_AUX1
+              ' NULL,'+ // VLR_AUX
+              ' NULL)'; // VLR_AUX1
+     End; // If DMConciliacao.CDS_CMDepositosAnaliseFECHA.AsString='SIM' Then
+    DMBelShop.SQLC.Execute(MySql, nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+End; // CONCILIAÇÕES PAGTOS/DEPOSITOS - Fechamento do Dia no Banco de Dados >>>>
+
+// CONCILIAÇÕES PAGTOS/DEPOSITOS - Verifica se Dia Já Fechado pelo Renato >>>>>>
+Function TFrmBancoExtratos.DiaFechadoRenato(sCodLjLinx, sDia: String): Boolean;
+Var
+  MySql: String;
+Begin
+  Result:=True; // Encontrou Fechamento do Dia da Loja
+
+  MySql:=' SELECT re.cod_aux'+
+         ' FROM TAB_AUXILIAR re'+
+         ' WHERE re.tip_aux=22'+
+         ' AND re.cod_aux='+sCodLjLinx+
+         ' AND TRIM(re.des_aux)='+QuotedStr(f_Troca('.','/',f_Troca('-','/',sDia)));
+  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+  DMBelShop.CDS_BuscaRapida.Open;
+
+  If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Aux').AsString)='' Then
+   Result:=False; // Não Encontrou Fechamento do Dia da Loja
+
+  DMBelShop.CDS_BuscaRapida.Close;
+End; // CONCILIAÇÕES PAGTOS/DEPOSITOS - Verifica se Dia Já Fechado pelo Renato >
 
 // CONCILIAÇÕES PAGTOS/DEPOSITOS - Busca Movto Com Valores Acumulados >>>>>>>>>>
 Procedure TFrmBancoExtratos.LocalizaValoresConciliar(iTipo: Integer);
@@ -1628,9 +1726,17 @@ Begin
            ' FROM LINXSANGRIASUPRIMENTOS S'+
            ' WHERE s.valor<0.0000'+
            ' AND   s.cancelado=''S'''+
-           ' AND   s.data BETWEEN '+
-           QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
-           QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
+           ' AND   s.data BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
+                                    QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
+           // Retira Dias Já Fechado Pelo renato
+           ' AND   NOT EXISTS (SELECT 1'+
+           '                   FROM TAB_AUXILIAR fh'+
+           '                   WHERE fh.cod_aux=s.empresa'+
+           '                   AND   fh.tip_aux=22'+
+           '                   AND   Trim(fh.des_aux)=Cast(lpad(extract(day from s.data),2,''0'') as varchar(2))||''/''||'+
+           '                                          Cast(lpad(extract(month from s.data),2,''0'') as varchar(2))||''/''||'+
+           '                                          Cast(extract(Year from s.data) as varchar(4)))'+
+
            ' ORDER BY s.empresa, s.data, s.usuario, ABS(s.valor)';
     DMBelShop.CDS_Busca.Close;
     DMBelShop.SDS_Busca.CommandText:=MySql;
@@ -1657,6 +1763,7 @@ Begin
 
       If Not DMBelShop.CDS_Busca1.IsEmpty Then
       Begin
+
         sNrSeq:=DMBelShop.CDS_Busca1.FieldByName('Num_Seq').AsString;
 
         // Verifica se Existe Lancamento de Sangria Igual e Não Cancelado ======
@@ -1780,6 +1887,15 @@ Begin
            ' AND   s.cancelado=''N'''+
            ' AND   s.data BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
                                     QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
+           // Retira Dias Já Fechado Pelo renato
+           ' AND   NOT EXISTS (SELECT 1'+
+           '                   FROM TAB_AUXILIAR fh'+
+           '                   WHERE fh.cod_aux=s.empresa'+
+           '                   AND   fh.tip_aux=22'+
+           '                   AND   Trim(fh.des_aux)=Cast(lpad(extract(day from s.data),2,''0'') as varchar(2))||''/''||'+
+           '                                          Cast(lpad(extract(month from s.data),2,''0'') as varchar(2))||''/''||'+
+           '                                          Cast(extract(Year from s.data) as varchar(4)))'+
+
            ' GROUP BY 1,2,3,4,5,6'+
            ' ORDER BY 2,3,4,5,6,7';
     DMBelShop.CDS_Busca.Close;
@@ -7627,6 +7743,19 @@ begin
     Ts_HistConcAuto.TabVisible:=False;
   End; // If (PC_Principal.ActivePage=Ts_ConciliacoesManutDepositos) And (Ts_ConciliacoesManutDepositos.CanFocus) Then
 
+  If (PC_Principal.ActivePage=Ts_ConciliacoesManutDepAnalise) And (Ts_ConciliacoesManutDepAnalise.CanFocus) Then
+  Begin
+    Sb_DepAnaliseDia.Visible:=False;
+    bgFechamento:=False;
+    If (bgInd_Admin) And ((AnsiUpperCase(Des_Usuario)='RENATO') Or (AnsiUpperCase(Des_Usuario)='ODIR')) Then
+    Begin
+      Sb_DepAnaliseDia.Visible:=True;
+      bgFechamento:=True;
+    End;
+
+    Dbg_DepAnalise.SetFocus;
+  End; // If (PC_Principal.ActivePage=Ts_ConciliacoesManutDepositos) And (Ts_ConciliacoesManutDepositos.CanFocus) Then
+
 end;
 
 procedure TFrmBancoExtratos.Bt_SairClick(Sender: TObject);
@@ -13295,7 +13424,7 @@ Var
   MySql: String;
 
   sObsNaoConc,
-  sNumSeq, sNumCompl, sChvExtrato: String;
+  s, sNumSeq, sNumCompl, sChvExtrato: String;
 begin
 
   If (DMConciliacao.CDS_CMDepositos.IsEmpty) or (Not DMConciliacao.CDS_CMDepositos.Active) Then
@@ -13304,6 +13433,19 @@ begin
   // Não Altera Sem Permissão ao Usuários ======================================
   If Not Bt_CMConciliarDep.Visible Then
    Exit;
+
+  // Verifica se Dia Já Fechado Pelo Renato ====================================
+  s:=Trim(DMConciliacao.CDS_CMDepositosCOD_LOJA.AsString);
+  s:=Copy(s,5, Length(s));
+  If DiaFechadoRenato(s, Trim(DMConciliacao.CDS_CMDepositosDTA_DOCTO.AsString)) Then
+  Begin
+    PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+    msg('Impossível Conciliar !!'+cr+'Dia '+Trim(DMConciliacao.CDS_CMDepositosDTA_DOCTO.AsString)+' da '+cr+
+        'Loja: '+Trim(DMConciliacao.CDS_CMDepositosRAZAO_SOCIAL.AsString)+cr+cr+
+        'Já Conciliado e Fechado !!','A');
+    Dbg_ConcManutDepositos.SetFocus;
+    Exit;
+  End;
 
   iRecNo:=0;
   bConcRetira:=False;
@@ -14282,6 +14424,7 @@ procedure TFrmBancoExtratos.Bt_CMRelatorioDepClick(Sender: TObject);
 begin
   Dbg_ConcManutDepositos.SetFocus;
 
+  // Libera TabSheet de Analise ================================================
   Ts_ConciliacoesManutDepAnalise.TabVisible:=True;
   Ts_ConciliacoesManutDepositos.TabVisible:=False;
   PC_PrincipalChange(Self);
@@ -14294,7 +14437,7 @@ Var
   MySql: String;
   b: Boolean;
 
-  sNumSeq, sNumCompl, sChvExtrato,
+  s, sNumSeq, sNumCompl, sChvExtrato,
   sObsNaoConc: String;
 begin
   Dbg_ConcManutDepositos.SetFocus;
@@ -14305,6 +14448,20 @@ begin
   If DMConciliacao.CDS_CMDepositos.IsEmpty Then
    Exit;
 
+  // Verifica se Dia Já Fechado Pelo Renato ====================================
+  s:=Trim(DMConciliacao.CDS_CMDepositosCOD_LOJA.AsString);
+  s:=Copy(s,5, Length(s));
+  If DiaFechadoRenato(s, Trim(DMConciliacao.CDS_CMDepositosDTA_DOCTO.AsString)) Then
+  Begin
+    PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+    msg('Impossível Conciliar !!'+cr+'Dia '+Trim(DMConciliacao.CDS_CMDepositosDTA_DOCTO.AsString)+' da '+cr+
+        'Loja: '+Trim(DMConciliacao.CDS_CMDepositosRAZAO_SOCIAL.AsString)+cr+cr+
+        'Já Conciliado e Fechado !!','A');
+    Dbg_ConcManutDepositos.SetFocus;
+    Exit;
+  End;
+
+  // Verifica Continuidade =====================================================
   Dbg_ConcManutDepositos.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
   If msg(DMConciliacao.CDS_CMDepositosRAZAO_SOCIAL.AsString+cr+
          'Dia '+DMConciliacao.CDS_CMDepositosDTA_DOCTO.AsString+cr+cr+
@@ -14462,10 +14619,11 @@ Var
   b: Boolean;
   sNomeLoja, sDiasDepositos, sCaseDepositos: String;
 begin
+
   Dbg_DepAnalise.SetFocus;
 
   DMConciliacao.CDS_CMDepositosAnalise.Close;
-
+  
   b:=True;
   bgProcessar:=False;
   sgDia:='';
@@ -14561,7 +14719,7 @@ begin
     End; // If Trim(sDiasDepositos)<>'' Then
 
     If Trim(sCaseDepositos)<>'' Then
-     sCaseDepositos:=' CASE '+cr+sCaseDepositos+cr+'End, ';
+     sCaseDepositos:=' CASE '+cr+sCaseDepositos+cr+'End';
 
 
     // Apresenta Dia para Analise ==============================================
@@ -14574,6 +14732,8 @@ begin
            ' NULL OUTROS,'+
            ' NULL TOTAL,'+
            ' NULL OBSERVACOES,'+
+           ' NULL COD_LOJA,'+
+           ' NULL FECHA,'+
            ' 0 ORDEM'+
            ' FROM RDB$DATABASE'+
 
@@ -14588,14 +14748,18 @@ begin
            ' NULL,'+
            ' NULL,'+
            ' NULL,'+
+           ' NULL,'+
+           ' NULL,'+
            ' 1 ORDEM'+
            ' FROM RDB$DATABASE'+
 
-    // ----------- TITULO DA PRIMEIRA APRESENTAÇÃO
+    // ----------- TITULO DA APRESENTAÇÃO DOS VALORES CONCILIADOS
            ' UNION'+
 
            ' SELECT'+
            ' ''VALORES CONCILIADOS'','+
+           ' NULL,'+
+           ' NULL,'+
            ' NULL,'+
            ' NULL,'+
            ' NULL,'+
@@ -14609,6 +14773,8 @@ begin
            ' UNION'+
 
            ' SELECT'+
+           ' NULL,'+
+           ' NULL,'+
            ' NULL,'+
            ' NULL,'+
            ' NULL,'+
@@ -14663,24 +14829,38 @@ begin
 
            ' SUM(COALESCE(md.vlr_docto,0.00)) TOTAL,';
 
+           // OBSERVACOES - USAR CASE DE DATAS DE DEPÓSITOS (sCaseDepositos)
            If Trim(sCaseDepositos)<>'' Then
             MySql:=
-             MySql+sCaseDepositos
+             MySql+sCaseDepositos+' OBSERVACOES,'
            Else
             MySql:=
-             MySql+' NULL,';
+             MySql+' NULL OBSERVACOES,';
 
     MySql:=
-     MySql+' 4 ORDEM'+
+     MySql+' MD.cod_linx COD_LOJA,'+
 
-           ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj, TAB_AUXILIAR gr'+
-           ' WHERE md.cod_linx=lj.empresa'+
-           ' AND   md.cod_historico=gr.cod_aux'+
-           ' AND   gr.tip_aux=21'+
-           ' AND   md.ind_conciliacao=''SIM'''+
+           ' CASE'+
+           '   WHEN TRIM(COALESCE(fh.tip_aux,''''))<>'''' THEN'+
+           '    ''SIM'''+
+           '   ELSE'+
+           '    ''NAO'''+
+           ' END FECHA,'+
+
+           ' 4 ORDEM'+
+
+           ' FROM FIN_CONCILIACAO_MOV_DEP md'+
+           '         LEFT JOIN LINXLOJAS lj     ON lj.empresa=md.cod_linx'+
+           '         LEFT JOIN TAB_AUXILIAR gr  ON gr.cod_aux=md.cod_historico'+
+           '                                   AND gr.tip_aux=21'+
+           '         LEFT JOIN TAB_AUXILIAR fh  ON fh.cod_aux=md.cod_linx'+
+           '                                   AND fh.tip_aux=22'+
+           '                                   AND Trim(fh.des_aux)='+QuotedStr(f_Troca('.','/',f_Troca('-','/',sgDia)))+
+
+           ' WHERE md.ind_conciliacao=''SIM'''+
            ' AND   md.dta_docto='+QuotedStr(sgDia)+
 
-           ' GROUP BY 1'+
+           ' GROUP BY 1,8,9'+
 
     // ----------- APRESENTA TOTAL DE VALORES CONCILIADOS
            ' UNION'+
@@ -14714,7 +14894,7 @@ begin
            ' END)'+
            ' , 0.00) DESPESA,'+
 
-           ' COALESCE(SUM('+ 
+           ' COALESCE(SUM('+
            '  CASE'+
            '     WHEN gr.des_aux1 Not in (''CX_MTZ'', ''DEPOSITO'', ''DESPESA'') THEN'+
            '       md.vlr_docto'+
@@ -14723,9 +14903,11 @@ begin
            ' END),0.00) OUTROS,'+
 
            ' SUM(COALESCE(md.vlr_docto,0.00)) TOTAL,'+
-           ' NULL,'+
+           ' NULL OBSERVACOES,'+
+           ' NULL COD_LOJA,'+
+           ' NULL FECHA,'+
            ' 5 ORDEM'+
-                                                
+
            ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj, TAB_AUXILIAR gr'+
            ' WHERE md.cod_linx=lj.empresa'+
            ' AND   md.cod_historico=gr.cod_aux'+
@@ -14744,14 +14926,18 @@ begin
            ' NULL,'+
            ' NULL,'+
            ' NULL,'+
+           ' NULL,'+
+           ' NULL,'+
            ' 6 ORDEM'+
            ' FROM RDB$DATABASE'+
 
-    //----------- TITULO DA SEGUNDA APRESENTAÇÃO
+    //----------- TITULO DA APRESENTAÇÃO DOS VALORES NÃO CONCILIADOS
            ' UNION'+
 
            ' SELECT'+
            ' ''VALORES NÃO CONCILIADOS'','+
+           ' NULL,'+
+           ' NULL,'+
            ' NULL,'+
            ' NULL,'+
            ' NULL,'+
@@ -14764,6 +14950,8 @@ begin
     //----------- LINHA EM BRANCO
            ' UNION'+
            ' SELECT'+
+           ' NULL,'+
+           ' NULL,'+
            ' NULL,'+
            ' NULL,'+
            ' NULL,'+
@@ -14816,17 +15004,31 @@ begin
            ' ,0.00) OUTROS,'+
 
            ' SUM(COALESCE(md.vlr_docto,0.00)) TOTAL,'+
-           ' TRIM(COALESCE(md.obs_nao_conc,'''')) obs_nao_conc,'+
+           ' TRIM(COALESCE(md.obs_nao_conc,'''')) OBS_NAO_CONC,'+
+
+           ' md.cod_linx COD_LOJA,'+
+
+           ' CASE'+
+           '   WHEN TRIM(COALESCE(fh.tip_aux,''''))<>'''' THEN'+
+           '     ''SIM'''+
+           '   ELSE'+
+           '     ''NAO'''+
+           ' END FECHA,'+
+
            ' 9 ORDEM'+
 
-           ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj, TAB_AUXILIAR gr'+
-           ' WHERE md.cod_linx=lj.empresa'+
-           ' AND   md.cod_historico=gr.cod_aux'+
-           ' AND   gr.tip_aux=21'+
-           ' AND   md.ind_conciliacao=''NAO'''+
+           ' FROM FIN_CONCILIACAO_MOV_DEP md'+
+           '         LEFT JOIN LINXLOJAS lj     ON lj.empresa=md.cod_linx'+
+           '         LEFT JOIN TAB_AUXILIAR gr  ON gr.cod_aux=md.cod_historico'+
+           '                                   AND gr.tip_aux=21'+
+           '         LEFT JOIN TAB_AUXILIAR fh  ON fh.cod_aux=md.cod_linx'+
+           '                                   AND fh.tip_aux=22'+
+           '                                   AND TRIM(fh.des_aux)='+QuotedStr(f_Troca('.','/',f_Troca('-','/',sgDia)))+
+
+           ' WHERE md.ind_conciliacao=''NAO'''+
            ' AND   md.dta_docto='+QuotedStr(sgDia)+
 
-           ' GROUP BY 1,7,8'+
+           ' GROUP BY 1,7,8,9'+
 
     //----------- APRESENTA TOTAL DOS VALORES NÃO CONCILIADOS
            ' UNION'+
@@ -14871,7 +15073,9 @@ begin
            ' ,0.00) OUTROS,'+
 
            ' SUM(COALESCE(md.vlr_docto,0.00)) TOTAL,'+
-           ' NULL,'+
+           ' NULL OBSERVACOES,'+
+           ' NULL COD_LOJA,'+
+           ' NULL FECHA,'+
            ' 10 ORDEM'+
 
            ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj, TAB_AUXILIAR gr'+
@@ -14882,19 +15086,28 @@ begin
            ' AND   md.dta_docto='+QuotedStr(sgDia)+
 
     //------------ORDER BY - FIM
-           ' ORDER BY 8,1';
+           ' ORDER BY 10,1';
     DMConciliacao.CDS_CMDepositosAnalise.Close;
     DMConciliacao.SDS_CMDepositosAnalise.CommandText:=MySql;
     DMConciliacao.CDS_CMDepositosAnalise.Open;
   End; // If bgProcessar Then
-
-  sgDia:='';
 end;
 
 procedure TFrmBancoExtratos.Dbg_DepAnaliseDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
 
+  // Altera Cor da Celular/Font ================================================
+  If (Column.FieldName='FECHA') Or (Column.FieldName='NOME_EMP') Then // Este comando altera cor da Celula/Font
+  Begin
+    If DMConciliacao.CDS_CMDepositosAnaliseFECHA.AsString='SIM' Then
+    Begin
+      Dbg_DepAnalise.Canvas.Font.Color:=clWindowText; // Cor da Fonte
+      Dbg_DepAnalise.Canvas.Brush.Color:=$0080FF80; // Cor da Celula
+    End;
+  End;
+
+  // Altera Cor da Linhas ======================================================
   if not (gdSelected in State) Then
   Begin
     Dbg_DepAnalise.Canvas.Font.Color:=clWindowText;
@@ -14904,15 +15117,15 @@ begin
       Dbg_DepAnalise.Canvas.Brush.Color:=clYellow;
       Dbg_DepAnalise.Canvas.Font.Style:=[fsBold,fsUnderline];
     End; // If DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger in ['0', '2', '5', '7', '10']) Then
-
-    Dbg_DepAnalise.Canvas.FillRect(Rect);
-    Dbg_DepAnalise.DefaultDrawDataCell(Rect,Column.Field,state);
-
-    DMConciliacao.CDS_CMDepositosAnaliseCX_MTZ.Alignment:=taRightJustify;
-    DMConciliacao.CDS_CMDepositosAnaliseDEPOSITO.Alignment:=taRightJustify;
-    DMConciliacao.CDS_CMDepositosAnaliseDESPESA.Alignment:=taRightJustify;
-    DMConciliacao.CDS_CMDepositosAnaliseOUTROS.Alignment:=taRightJustify;
   End; // if not (gdSelected in State) Then
+
+  Dbg_DepAnalise.Canvas.FillRect(Rect);
+  Dbg_DepAnalise.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  DMConciliacao.CDS_CMDepositosAnaliseCX_MTZ.Alignment:=taRightJustify;
+  DMConciliacao.CDS_CMDepositosAnaliseDEPOSITO.Alignment:=taRightJustify;
+  DMConciliacao.CDS_CMDepositosAnaliseDESPESA.Alignment:=taRightJustify;
+  DMConciliacao.CDS_CMDepositosAnaliseOUTROS.Alignment:=taRightJustify;
 
 end;
 
@@ -14965,10 +15178,96 @@ begin
 end;
 
 procedure TFrmBancoExtratos.Dbg_DepAnaliseKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+Var
+  sNomeLoja: String;
+  iRecNo: Integer;
 begin
   // Bloquei Ctrl + Delete =====================================================
   If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
    Abort;
+
+  Dbg_DepAnalise.SetFocus;
+
+  If DMConciliacao.CDS_CMDepositosAnalise.IsEmpty Then
+   Exit;
+
+  // Faz o fechamento do Dia ===================================================
+  If (Key=Vk_F6) And (bgFechamento) Then
+  Begin
+    iRecNo:=DMConciliacao.CDS_CMDepositosAnalise.RecNo;
+
+    // Verifica se Esta na Loja Corretamente ===================================
+    If (DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>4) And
+       (DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>9) Then
+    Begin
+      msg('Favor Selecionar uma Loja !!','A');
+      Dbg_DepAnalise.SetFocus;
+      Exit;
+    End; // If DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>4 And (DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>9) Then
+
+    // Verifica se Loja Esta Como Não Conciliada ===============================
+    If (DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger=9) And
+       (Trim(DMConciliacao.CDS_CMDepositosAnaliseOBSERVACOES.AsString)='') Then
+    Begin
+      msg('Loja Não Conciliada !!','A');
+      Dbg_DepAnalise.SetFocus;
+      Exit;
+    End; // If (DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger=9) And (Trim(DMConciliacao.CDS_CMDepositosAnaliseOBSERVACOES.AsString)='') Then
+
+    // Verifica se a Loja Esta Repetida como Não Conciliada ====================
+    sNomeLoja:=DMConciliacao.CDS_CMDepositosAnaliseNOME_EMP.AsString;
+    If DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>9 Then
+    Begin
+      If DMConciliacao.CDS_CMDepositosAnalise.Locate('NOME_EMP; ORDEM; OBSERVACOES',VarArrayOf([sNomeLoja, 9, '']),[]) Then
+      Begin
+        msg('Loja Não Conciliada !!','A');
+        DMConciliacao.CDS_CMDepositosAnalise.RecNo:=iRecNo;
+        Dbg_DepAnalise.SetFocus;
+        Exit;
+      End; // If DMConciliacao.CDS_CMDepositosAnalise.Locate('NOME_EMP; ORDEM; OBSERVACOES',VarArrayOf([sNomeLoja, 9, '']),[]) Then
+    End; // If DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>9 Then
+
+    DMConciliacao.CDS_CMDepositosAnalise.RecNo:=iRecNo;
+
+    // Efetua Fechamento ou Abertura do Dia da Loja no Banco de Dados ==========
+    ConcDepositosFechamentoDia;
+
+    // Efetua Fechamento ou Abertura do Dia da Loja no ClientDataSet ===========
+    DMConciliacao.CDS_CMDepositosAnalise.Edit;
+    If DMConciliacao.CDS_CMDepositosAnaliseFECHA.AsString='SIM' Then
+     DMConciliacao.CDS_CMDepositosAnaliseFECHA.AsString:='NAO'
+    Else
+     DMConciliacao.CDS_CMDepositosAnaliseFECHA.AsString:='SIM';
+    DMConciliacao.CDS_CMDepositosAnalise.Post;
+
+    If DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>9 Then
+     Begin
+       // Fecha Dia Sem Conciliação ============================================
+       If DMConciliacao.CDS_CMDepositosAnalise.Locate('NOME_EMP; ORDEM',VarArrayOf([sNomeLoja, 9]),[]) Then
+       Begin
+         DMConciliacao.CDS_CMDepositosAnalise.Edit;
+         If DMConciliacao.CDS_CMDepositosAnaliseFECHA.AsString='SIM' Then
+          DMConciliacao.CDS_CMDepositosAnaliseFECHA.AsString:='NAO'
+         Else
+          DMConciliacao.CDS_CMDepositosAnaliseFECHA.AsString:='SIM';
+         DMConciliacao.CDS_CMDepositosAnalise.Post;
+       End; // If DMConciliacao.CDS_CMDepositosAnalise.Locate('NOME_EMP; ORDEM',VarArrayOf([sNomeLoja, 9]),[]) Then
+     End
+    Else  // If DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>9 Then
+     Begin
+       // Fecha Dia Conciliado =================================================
+       If DMConciliacao.CDS_CMDepositosAnalise.Locate('NOME_EMP; ORDEM',VarArrayOf([sNomeLoja, 4]),[]) Then
+       Begin
+         DMConciliacao.CDS_CMDepositosAnalise.Edit;
+         If DMConciliacao.CDS_CMDepositosAnaliseFECHA.AsString='SIM' Then
+          DMConciliacao.CDS_CMDepositosAnaliseFECHA.AsString:='NAO'
+         Else
+          DMConciliacao.CDS_CMDepositosAnaliseFECHA.AsString:='SIM';
+         DMConciliacao.CDS_CMDepositosAnalise.Post;
+       End; // If DMConciliacao.CDS_CMDepositosAnalise.Locate('NOME_EMP; ORDEM',VarArrayOf([sNomeLoja, 4]),[]) Then
+     End; // If DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>9 Then
+    DMConciliacao.CDS_CMDepositosAnalise.RecNo:=iRecNo;
+  End; // If (Key=Vk_F6) And (bgFechamento) Then
 
 end;
 
@@ -15081,10 +15380,14 @@ begin
 
   bgProcessar:=False;
   FrmSolicitacoes.Caption:='CONCILIAÇÃO DE DEPÓSITOS';
+  FrmSolicitacoes.AutoSize:=True;
   FrmSolicitacoes.ShowModal;
 
   DMConciliacao.CDS_CMDepHistoricos.Close;
   FreeAndNil(FrmSolicitacoes);
+
+  Dbg_DepAnalise.Refresh;
+  Dbg_DepAnalise.SetFocus;
 
 end;
 

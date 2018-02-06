@@ -1443,21 +1443,21 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 792
-    Top = 130
+    Left = 800
+    Top = 42
   end
   object DSP_CMExtratosDep: TDataSetProvider
     DataSet = SDS_CMExtratosDep
     Options = [poRetainServerOrder]
-    Left = 840
-    Top = 146
+    Left = 848
+    Top = 58
   end
   object CDS_CMExtratosDep: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CMExtratosDep'
-    Left = 888
-    Top = 127
+    Left = 896
+    Top = 39
     object CDS_CMExtratosDepConciliado: TStringField
       FieldName = 'Conciliado?'
       ReadOnly = True
@@ -1562,15 +1562,15 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_CMDepositos: TDataSource
     DataSet = CDS_CMDepositos
-    Left = 942
-    Top = 212
+    Left = 950
+    Top = 124
   end
   object CDS_CMDepositos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CMDepositos'
-    Left = 888
-    Top = 191
+    Left = 896
+    Top = 103
     object CDS_CMDepositosConciliado: TStringField
       FieldName = 'Conciliado?'
       ReadOnly = True
@@ -1697,19 +1697,19 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 792
-    Top = 194
+    Left = 800
+    Top = 106
   end
   object DSP_CMDepositos: TDataSetProvider
     DataSet = SDS_CMDepositos
     Options = [poRetainServerOrder]
-    Left = 840
-    Top = 210
+    Left = 848
+    Top = 122
   end
   object DS_CMExtratosDep: TDataSource
     DataSet = CDS_CMExtratosDep
-    Left = 942
-    Top = 146
+    Left = 950
+    Top = 58
   end
   object SDS_CMApresDepositos: TSQLDataSet
     CommandText = 
@@ -1745,14 +1745,14 @@ object DMConciliacao: TDMConciliacao
         ParamType = ptInput
       end>
     SQLConnection = DMBelShop.SQLC
-    Left = 792
-    Top = 290
+    Left = 800
+    Top = 202
   end
   object DSP_CMApresDepositos: TDataSetProvider
     DataSet = SDS_CMApresDepositos
     Options = [poRetainServerOrder]
-    Left = 840
-    Top = 306
+    Left = 848
+    Top = 218
   end
   object CDS_CMApresDepositos: TClientDataSet
     Aggregates = <>
@@ -1760,8 +1760,8 @@ object DMConciliacao: TDMConciliacao
     Params = <>
     ProviderName = 'DSP_CMApresDepositos'
     AfterScroll = CDS_CMApresDepositosAfterScroll
-    Left = 888
-    Top = 287
+    Left = 896
+    Top = 199
     object CDS_CMApresDepositosCOD_LOJA: TStringField
       Alignment = taCenter
       DisplayLabel = 'Loja'
@@ -1899,8 +1899,8 @@ object DMConciliacao: TDMConciliacao
   end
   object DS_CMApresExtratoDep: TDataSource
     DataSet = CDS_CMApresExtratosDep
-    Left = 942
-    Top = 377
+    Left = 950
+    Top = 289
   end
   object SDS_CMApresExtratosDep: TSQLDataSet
     CommandText = 
@@ -1933,19 +1933,19 @@ object DMConciliacao: TDMConciliacao
         ParamType = ptInput
       end>
     SQLConnection = DMBelShop.SQLC
-    Left = 792
-    Top = 360
+    Left = 800
+    Top = 272
   end
   object DSP_CMApresExtratosDep: TDataSetProvider
     DataSet = SDS_CMApresExtratosDep
     Options = [poRetainServerOrder]
-    Left = 840
-    Top = 376
+    Left = 848
+    Top = 288
   end
   object DS_CMApresDepositos: TDataSource
     DataSet = CDS_CMApresDepositos
-    Left = 942
-    Top = 306
+    Left = 950
+    Top = 218
   end
   object CDS_CMApresExtratosDep: TClientDataSet
     Aggregates = <>
@@ -1953,8 +1953,8 @@ object DMConciliacao: TDMConciliacao
     Params = <>
     ProviderName = 'DSP_CMApresExtratosDep'
     AfterScroll = CDS_CMApresExtratosDepAfterScroll
-    Left = 888
-    Top = 357
+    Left = 896
+    Top = 269
     object CDS_CMApresExtratosDepNUM_BANCO: TIntegerField
       DisplayLabel = 'Banco'
       FieldName = 'NUM_BANCO'
@@ -2040,111 +2040,127 @@ object DMConciliacao: TDMConciliacao
   end
   object SDS_CMDepositosAnalise: TSQLDataSet
     CommandText = 
-      '----------- TITULO DO RELAT'#211'RIO --------------------------------' +
-      '----------------'#13#10'SELECT'#13#10#39'RESULTADO CONCILIA'#199#195'O CAIXA DO DIA 02' +
-      '/01/2018'#39' NOME_EMP,'#13#10'NULL CX_MTZ,'#13#10'NULL DEPOSITO,'#13#10'NULL DESPESA,' +
-      #13#10'NULL OUTROS,'#13#10'NULL TOTAL,'#13#10'NULL OBSERVACOES,'#13#10'0 ORDEM'#13#10'FROM RD' +
-      'B$DATABASE'#13#10#13#10'----------- LINHA EM BRANCO ----------------------' +
-      '------------------------------'#13#10'UNION'#13#10#13#10'SELECT'#13#10'NULL,'#13#10'NULL,'#13#10'N' +
-      'ULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'1 ORDEM'#13#10'FROM RDB$DATABASE'#13#10#13#10 +
-      '----------- TITULO DA PRIMEIRA APRESENTA'#199#195'O --------------------' +
-      '----------------'#13#10'UNION'#13#10#13#10'SELECT'#13#10#39'----->> VALORES CONCILIADOS ' +
-      '<<-----'#39','#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'2 ORDEM'#13#10'FR' +
-      'OM RDB$DATABASE'#13#10#13#10'----------- LINHA EM BRANCO -----------------' +
-      '-----------------------------------'#13#10'UNION'#13#10#13#10'SELECT'#13#10'NULL,'#13#10'NUL' +
-      'L,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'3 ORDEM'#13#10'FROM RDB$DATABAS' +
-      'E'#13#10#13#10'----------- APRESENTA VALORES CONCILIADOS -----------------' +
-      '---------------------'#13#10'UNION'#13#10#13#10'SELECT'#13#10'lj.nome_emp,'#13#10#13#10'COALESCE' +
-      '(SUM('#13#10' CASE'#13#10'    WHEN COALESCE(md.cod_historico,0) IN (197, 198' +
-      ') THEN'#13#10'     md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10' END), 0.00) CX' +
-      '_MTZ,'#13#10#13#10' COALESCE(SUM('#13#10' CASE'#13#10'    WHEN COALESCE(md.cod_histori' +
-      'co,0) IN (170, 173) THEN'#13#10'     md.vlr_docto'#13#10'    ELSE'#13#10'      0.0' +
-      '0'#13#10' END), 0.00) DEPOSITO,'#13#10#13#10' COALESCE(SUM('#13#10' CASE'#13#10'    WHEN COA' +
-      'LESCE(md.cod_historico,0) IN (10, 16, 29, 30, 33, 106, 181, 183)' +
-      ' THEN'#13#10'     md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10' END), 0.00) DES' +
-      'PESA,'#13#10#13#10' COALESCE(SUM('#13#10' CASE'#13#10'    WHEN COALESCE(md.cod_histori' +
-      'co,0) NOT IN (10, 16, 29, 30, 33, 106, 181, 183, 170, 173, 197, ' +
-      '198) THEN'#13#10'     md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10' END),0.00) ' +
-      'OUTROS,'#13#10#13#10' SUM(COALESCE(md.vlr_docto,0.00)) TOTAL,'#13#10' NULL,'#13#10' 4 ' +
-      'Ordem'#13#10#13#10' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj'#13#10' WHERE ' +
-      'md.cod_linx=lj.empresa'#13#10' AND   md.ind_conciliacao='#39'SIM'#39#13#10' AND   ' +
-      'md.dta_docto='#39'02.01.2018'#39#13#10#13#10' GROUP BY 1'#13#10'----------- APRESENTA ' +
-      'TOTAL DE VALORES CONCILIADOS -----------------------------'#13#10'UNIO' +
-      'N'#13#10#13#10' SELECT'#13#10' '#39'----->> TOTAL DE VALORES CONSILIADOS'#39','#13#10#13#10' COALE' +
-      'SCE(SUM('#13#10' CASE'#13#10'    WHEN COALESCE(md.cod_historico,0) IN (197, ' +
-      '198) THEN'#13#10'     md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10' END), 0.00)' +
-      ' CX_MTZ,'#13#10#13#10' COALESCE(SUM('#13#10' CASE'#13#10'    WHEN COALESCE(md.cod_hist' +
-      'orico,0) IN (170, 173) THEN'#13#10'     md.vlr_docto'#13#10'    ELSE'#13#10'      ' +
-      '0.00'#13#10' END), 0.00) DEPOSITO,'#13#10#13#10' COALESCE(SUM('#13#10' CASE'#13#10'    WHEN ' +
-      'COALESCE(md.cod_historico,0) IN (10, 16, 29, 30, 33, 106, 181, 1' +
-      '83) THEN'#13#10'     md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10' END), 0.00) ' +
-      'DESPESA,'#13#10#13#10' COALESCE(SUM('#13#10' CASE'#13#10'    WHEN COALESCE(md.cod_hist' +
-      'orico,0) NOT IN (10, 16, 29, 30, 33, 106, 181, 183, 170, 173, 19' +
-      '7, 198) THEN'#13#10'     md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10' END),0.0' +
-      '0) OUTROS,'#13#10#13#10' SUM(COALESCE(md.vlr_docto,0.00)) TOTAL,'#13#10' NULL,'#13#10 +
-      ' 5 Ordem'#13#10#13#10' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj'#13#10' WHE' +
-      'RE md.cod_linx=lj.empresa'#13#10' AND   md.ind_conciliacao='#39'SIM'#39#13#10' AND' +
-      '   md.dta_docto='#39'02.01.2018'#39#13#10#13#10'----------- LINHA EM BRANCO ----' +
-      '------------------------------------------------'#13#10'UNION'#13#10#13#10'SELEC' +
-      'T'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'6 ORDEM'#13#10'FRO' +
-      'M RDB$DATABASE'#13#10#13#10'----------- TITULO DA SEGUNDA APRESENTA'#199#195'O ---' +
-      '----------------------------------'#13#10'UNION'#13#10#13#10'SELECT'#13#10#39'----->> VA' +
-      'LORES N'#195'O CONCILIADOS <<-----'#39','#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NUL' +
-      'L,'#13#10'NULL,'#13#10'7 ORDEM'#13#10'FROM RDB$DATABASE'#13#10#13#10'----------- LINHA EM BR' +
-      'ANCO ----------------------------------------------------'#13#10'UNION' +
-      #13#10#13#10'SELECT'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'8 O' +
-      'RDEM'#13#10'FROM RDB$DATABASE'#13#10#13#10'----------- APRESENTA VALORES N'#195'O CON' +
-      'CILIADOS ----------------------------------'#13#10'UNION'#13#10#13#10' SELECT'#13#10' ' +
-      'lj.nome_emp,'#13#10#13#10' COALESCE(SUM('#13#10' CASE'#13#10'    WHEN COALESCE(md.cod_' +
-      'historico,0) IN (197, 198) THEN'#13#10'     md.vlr_docto'#13#10'    ELSE'#13#10'  ' +
-      '    0.00'#13#10' END), 0.00) CX_MTZ,'#13#10#13#10' COALESCE(SUM('#13#10' CASE'#13#10'    WHE' +
-      'N COALESCE(md.cod_historico,0) IN (170, 173) THEN'#13#10'     md.vlr_d' +
-      'octo'#13#10'    ELSE'#13#10'      0.00'#13#10' END), 0.00) DEPOSITO,'#13#10#13#10' COALESCE(' +
-      'SUM('#13#10' CASE'#13#10'    WHEN COALESCE(md.cod_historico,0) IN (10, 16, 2' +
-      '9, 30, 33, 106, 181, 183) THEN'#13#10'     md.vlr_docto'#13#10'    ELSE'#13#10'   ' +
-      '   0.00'#13#10' END), 0.00) DESPESA,'#13#10#13#10' COALESCE(SUM('#13#10' CASE'#13#10'    WHE' +
-      'N COALESCE(md.cod_historico,0) NOT IN (10, 16, 29, 30, 33, 106, ' +
-      '181, 183, 170, 173, 197, 198) THEN'#13#10'     md.vlr_docto'#13#10'    ELSE'#13 +
-      #10'      0.00'#13#10' END),0.00) OUTROS,'#13#10' SUM(COALESCE(md.vlr_docto,0.0' +
-      '0)) TOTAL,'#13#10' TRIM(COALESCE(md.obs_nao_conc,'#39#39')) obs_nao_conc,'#13#10' ' +
-      '9 Ordem'#13#10#13#10' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj'#13#10' WHER' +
-      'E md.cod_linx=lj.empresa'#13#10' AND   md.ind_conciliacao='#39'NAO'#39#13#10' AND ' +
-      '  md.dta_docto='#39'02.01.2018'#39#13#10#13#10' GROUP BY 1,7,8'#13#10#13#10'----------- AP' +
-      'RESENTA TOTAL DOS VALORES N'#195'O CONCILIADOS ----------------------' +
-      '--'#13#10'UNION'#13#10#13#10' SELECT'#13#10'  '#39'----->> TOTAL DE VALORES N'#195'O CONSILIADO' +
-      'S'#39','#13#10#13#10' COALESCE(SUM('#13#10' CASE'#13#10'    WHEN COALESCE(md.cod_historico' +
-      ',0) IN (197, 198) THEN'#13#10'     md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13 +
-      #10' END), 0.00) CX_MTZ,'#13#10#13#10' COALESCE(SUM('#13#10' CASE'#13#10'    WHEN COALESC' +
-      'E(md.cod_historico,0) IN (170, 173) THEN'#13#10'     md.vlr_docto'#13#10'   ' +
-      ' ELSE'#13#10'      0.00'#13#10' END), 0.00) DEPOSITO,'#13#10#13#10' COALESCE(SUM('#13#10' CA' +
-      'SE'#13#10'    WHEN COALESCE(md.cod_historico,0) IN (10, 16, 29, 30, 33' +
-      ', 106, 181, 183) THEN'#13#10'     md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10 +
-      ' END), 0.00) DESPESA,'#13#10#13#10' COALESCE(SUM('#13#10' CASE'#13#10'    WHEN COALESC' +
-      'E(md.cod_historico,0) NOT IN (10, 16, 29, 30, 33, 106, 181, 183,' +
-      ' 170, 173, 197, 198) THEN'#13#10'     md.vlr_docto'#13#10'    ELSE'#13#10'      0.' +
-      '00'#13#10' END),0.00) OUTROS,'#13#10' SUM(COALESCE(md.vlr_docto,0.00)) TOTAL' +
-      ','#13#10' NULL,'#13#10' 10 Ordem'#13#10#13#10' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLO' +
-      'JAS lj'#13#10' WHERE md.cod_linx=lj.empresa'#13#10' AND   md.ind_conciliacao' +
-      '='#39'NAO'#39#13#10' AND   md.dta_docto='#39'02.01.2018'#39#13#10#13#10'--------------------' +
-      '-----------------------------------'#13#10' Order by 8,1'
+      '----------- TITULO DO RELAT'#211'RIO'#13#10'SELECT'#13#10'--'#39'RESULTADO CONCILIA'#199#195 +
+      'O CAIXA DO DIA '#39'||+QuotedStr(f_Troca('#39'.'#39','#39'/'#39',sgDia))+'#39' NOME_EMP,' +
+      #39'+'#13#10#39'RESULTADO CONCILIA'#199#195'O CAIXA DO DIA '#39'||'#39'01.01.2018'#39' NOME_EMP' +
+      ','#13#10'NULL CX_MTZ,'#13#10'NULL DEPOSITO,'#13#10'NULL DESPESA,'#13#10'NULL OUTROS,'#13#10'NU' +
+      'LL TOTAL,'#13#10'NULL OBSERVACOES,'#13#10'NULL COD_LOJA,  -------------odir'#13 +
+      #10'NULL FECHA,     -------------odir'#13#10'0 ORDEM'#13#10'FROM RDB$DATABASE'#13#10 +
+      #13#10'     ----------- LINHA EM BRANCO'#13#10'UNION'#13#10#13#10'SELECT'#13#10'NULL,'#13#10'NULL' +
+      ','#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL, -------------odir'#13#10'N' +
+      'ULL, -------------odir'#13#10'1 ORDEM'#13#10'FROM RDB$DATABASE'#13#10#13#10'     -----' +
+      '------ TITULO DA PRIMEIRA APRESENTA'#199#195'O'#13#10'UNION'#13#10#13#10'SELECT'#13#10#39'VALORE' +
+      'S CONCILIADOS'#39','#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,' +
+      ' -------------odir'#13#10'NULL, -------------odir'#13#10'2 ORDEM'#13#10'FROM RDB$D' +
+      'ATABASE'#13#10#13#10'     ----------- LINHA EM BRANCO'#13#10'UNION'#13#10#13#10'SELECT'#13#10'NU' +
+      'LL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL, -----------' +
+      '--odir'#13#10'NULL, -------------odir'#13#10'3 ORDEM'#13#10'FROM RDB$DATABASE'#13#10#13#10' ' +
+      '    ----------- APRESENTA VALORES CONCILIADOS'#13#10'UNION'#13#10#13#10'SELECT'#13#10 +
+      'lj.nome_emp,'#13#10#13#10'COALESCE(SUM('#13#10' CASE'#13#10'    WHEN gr.des_aux1='#39'CX_M' +
+      'TZ'#39' THEN'#13#10'      md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10' END)'#13#10', 0.0' +
+      '0) CX_MTZ,'#13#10#13#10'COALESCE(SUM('#13#10' CASE'#13#10'    WHEN gr.des_aux1='#39'DEPOSI' +
+      'TO'#39' THEN'#13#10'      md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10' END)'#13#10', 0.0' +
+      '0) DEPOSITO,'#13#10#13#10'COALESCE(SUM('#13#10' CASE'#13#10'    WHEN gr.des_aux1='#39'DESP' +
+      'ESA'#39' THEN'#13#10'      md.vlr_docto'#13#10'    ELSE'#13#10'     0.00'#13#10' END)'#13#10', 0.0' +
+      '0) DESPESA,'#13#10#13#10'COALESCE(SUM('#13#10' CASE'#13#10'    WHEN gr.des_aux1 Not in' +
+      ' ('#39'CX_MTZ'#39', '#39'DEPOSITO'#39', '#39'DESPESA'#39') THEN'#13#10'      md.vlr_docto'#13#10'   ' +
+      ' ELSE'#13#10'      0.00'#13#10' END)'#13#10',0.00) OUTROS,'#13#10#13#10'SUM(COALESCE(md.vlr_' +
+      'docto,0.00)) TOTAL,'#13#10#13#10'NULL OBSERVACOES,   -------------odir'#13#10'--' +
+      ' USAR CASE DE DATAS DE DEP'#211'SITOS (sCaseDepositos)'#13#10#13#10'MD.cod_linx' +
+      ' COD_LOJA,  -------------odir'#13#10#13#10'CASE'#13#10'  WHEN TRIM(COALESCE(fh.t' +
+      'ip_aux,'#39#39'))<>'#39#39' Then'#13#10'    '#39'SIM'#39#13#10'  ELSE'#13#10'    '#39'NAO'#39#13#10'END FECHA, -' +
+      '------------odir'#13#10#13#10'4 ORDEM'#13#10#13#10'FROM FIN_CONCILIACAO_MOV_DEP md  ' +
+      ' -------------odir'#13#10'        LEFT JOIN LINXLOJAS lj     on lj.emp' +
+      'resa=md.cod_linx'#13#10'        LEFT JOIN TAB_AUXILIAR gr  on gr.cod_a' +
+      'ux=md.cod_historico'#13#10'                                  AND gr.ti' +
+      'p_aux=21'#13#10'        LEFT JOIN TAB_AUXILIAR fh  on fh.cod_aux=md.co' +
+      'd_linx'#13#10'                                  AND fh.tip_aux=22'#13#10'   ' +
+      '                               AND Trim(fh.des_aux)='#39'03/01/2018'#39 +
+      #13#10#13#10'WHERE md.ind_conciliacao='#39'SIM'#39' -------------odir'#13#10'AND   md.d' +
+      'ta_docto='#39'03.01.2018'#39#13#10#13#10'GROUP BY 1,8,9 -------------------ODIR'#13 +
+      #10#13#10'     ----------- APRESENTA TOTAL DE VALORES CONCILIADOS'#13#10'UNIO' +
+      'N'#13#10#13#10'SELECT'#13#10#39'TOTAL DE VALORES CONSILIADOS'#39','#13#10'COALESCE(SUM('#13#10' CA' +
+      'SE'#13#10'    WHEN gr.des_aux1='#39'CX_MTZ'#39' THEN'#13#10'      md.vlr_docto'#13#10'    ' +
+      'ELSE'#13#10'      0.00'#13#10'END)'#13#10', 0.00) CX_MTZ,'#13#10#13#10'COALESCE(SUM('#13#10' CASE'#13 +
+      #10'    WHEN gr.des_aux1='#39'DEPOSITO'#39' THEN'#13#10'      md.vlr_docto'#13#10'    E' +
+      'LSE'#13#10'      0.00'#13#10'END)'#13#10', 0.00) DEPOSITO,'#13#10#13#10'COALESCE(SUM('#13#10' CASE' +
+      #13#10'    WHEN gr.des_aux1='#39'DESPESA'#39' THEN'#13#10'      md.vlr_docto'#13#10'    E' +
+      'LSE'#13#10'      0.00'#13#10'END)'#13#10', 0.00) DESPESA,'#13#10#13#10'COALESCE(SUM('#13#10' CASE'#13 +
+      #10'    WHEN gr.des_aux1 Not in ('#39'CX_MTZ'#39', '#39'DEPOSITO'#39', '#39'DESPESA'#39') T' +
+      'HEN'#13#10'      md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10'END),0.00) OUTROS' +
+      ','#13#10#13#10'SUM(COALESCE(md.vlr_docto,0.00)) TOTAL,'#13#10'NULL OBSERVACOES, ' +
+      '-------------odir'#13#10'NULL COD_LOJA,  -------------odir'#13#10'NULL FECHA' +
+      ',     -------------odir'#13#10'5 ORDEM'#13#10#13#10'FROM FIN_CONCILIACAO_MOV_DEP' +
+      ' md, LINXLOJAS lj, TAB_AUXILIAR gr'#13#10'WHERE md.cod_linx=lj.empresa' +
+      #13#10'AND   md.cod_historico=gr.cod_aux'#13#10'AND   gr.tip_aux=21'#13#10'AND   ' +
+      'md.ind_conciliacao='#39'SIM'#39#13#10'AND   md.dta_docto='#39'03.01.2018'#39#13#10#13#10'   ' +
+      ' ----------- LINHA EM BRANCO'#13#10'UNION'#13#10#13#10'SELECT'#13#10'NULL,'#13#10'NULL,'#13#10'NUL' +
+      'L,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL, -------------odir'#13#10'NULL, -' +
+      '------------odir'#13#10'6 ORDEM'#13#10'FROM RDB$DATABASE'#13#10#13#10'    ----------- ' +
+      'TITULO DA SEGUNDA APRESENTA'#199#195'O'#13#10'UNION'#13#10#13#10'SELECT'#13#10#39'VALORES N'#195'O CO' +
+      'NCILIADOS'#39','#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL, ---' +
+      '----------odir'#13#10'NULL, -------------odir'#13#10'7 ORDEM'#13#10'FROM RDB$DATAB' +
+      'ASE'#13#10#13#10'    ----------- LINHA EM BRANCO'#13#10'UNION'#13#10#13#10'SELECT'#13#10'NULL,'#13#10 +
+      'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL,'#13#10'NULL, -------------odi' +
+      'r'#13#10'NULL, -------------odir'#13#10'8 ORDEM'#13#10'FROM RDB$DATABASE'#13#10#13#10'    --' +
+      '--------- APRESENTA VALORES N'#195'O CONCILIADOS'#13#10'UNION'#13#10#13#10'SELECT'#13#10'lj' +
+      '.nome_emp,'#13#10'COALESCE(SUM('#13#10' CASE'#13#10'    WHEN gr.des_aux1='#39'CX_MTZ'#39' ' +
+      'THEN'#13#10'      md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10' END)'#13#10', 0.00) C' +
+      'X_MTZ,'#13#10#13#10'COALESCE(SUM('#13#10' CASE'#13#10'    WHEN gr.des_aux1='#39'DEPOSITO'#39' ' +
+      'THEN'#13#10'      md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10' END)'#13#10', 0.00) D' +
+      'EPOSITO,'#13#10#13#10'COALESCE(SUM('#13#10' CASE'#13#10'    WHEN gr.des_aux1='#39'DESPESA'#39 +
+      ' THEN'#13#10'      md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10' END)'#13#10', 0.00) ' +
+      'DESPESA,'#13#10#13#10'COALESCE(SUM('#13#10' CASE'#13#10'    WHEN gr.des_aux1 Not in ('#39 +
+      'CX_MTZ'#39', '#39'DEPOSITO'#39', '#39'DESPESA'#39') THEN'#13#10'      md.vlr_docto'#13#10'    EL' +
+      'SE'#13#10'      0.00'#13#10' END)'#13#10',0.00) OUTROS,'#13#10#13#10'SUM(COALESCE(md.vlr_doc' +
+      'to,0.00)) TOTAL,'#13#10'TRIM(COALESCE(md.obs_nao_conc,'#39#39')) OBS_NAO_CON' +
+      'C,  -------------odir'#13#10#13#10'md.cod_linx COD_LOJA, -------------odir' +
+      #13#10#13#10'CASE'#13#10'  WHEN TRIM(COALESCE(fh.tip_aux,'#39#39'))<>'#39#39' Then'#13#10'    '#39'SI' +
+      'M'#39#13#10'  ELSE'#13#10'    '#39'NAO'#39#13#10'END FECHA, -------------odir'#13#10#13#10'9 ORDEM'#13#10 +
+      #13#10'FROM FIN_CONCILIACAO_MOV_DEP md   -------------odir'#13#10'        L' +
+      'EFT JOIN LINXLOJAS lj     on lj.empresa=md.cod_linx'#13#10'        LEF' +
+      'T JOIN TAB_AUXILIAR gr  on gr.cod_aux=md.cod_historico'#13#10'        ' +
+      '                          AND gr.tip_aux=21'#13#10'        LEFT JOIN T' +
+      'AB_AUXILIAR fh  on fh.cod_aux=md.cod_linx'#13#10'                     ' +
+      '             AND fh.tip_aux=22'#13#10'                                ' +
+      '  AND Trim(fh.des_aux)='#39'03/01/2018'#39#13#10#13#10#13#10'WHERE md.ind_conciliaca' +
+      'o='#39'NAO'#39#13#10'AND   md.dta_docto='#39'03.01.2018'#39#13#10#13#10'GROUP BY 1,7,8,9 ---' +
+      '----------odir'#13#10#13#10'    ----------- APRESENTA TOTAL DOS VALORES N'#195 +
+      'O CONCILIADOS'#13#10'UNION'#13#10#13#10'SELECT'#13#10#39'TOTAL DE VALORES N'#195'O CONSILIADO' +
+      'S'#39','#13#10#13#10'COALESCE(SUM('#13#10' CASE'#13#10'    WHEN gr.des_aux1='#39'CX_MTZ'#39' THEN'#13 +
+      #10'      md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10' END)'#13#10', 0.00) CX_MTZ' +
+      ','#13#10#13#10'COALESCE(SUM('#13#10' CASE'#13#10'    WHEN gr.des_aux1='#39'DEPOSITO'#39' THEN'#13 +
+      #10'      md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10' END)'#13#10', 0.00) DEPOSI' +
+      'TO,'#13#10#13#10'COALESCE(SUM('#13#10' CASE'#13#10'    WHEN gr.des_aux1='#39'DESPESA'#39' THEN' +
+      #13#10'      md.vlr_docto'#13#10'    ELSE'#13#10'      0.00'#13#10' END)'#13#10', 0.00) DESPE' +
+      'SA,'#13#10#13#10'COALESCE(SUM('#13#10' CASE'#13#10'    WHEN gr.des_aux1 Not in ('#39'CX_MT' +
+      'Z'#39', '#39'DEPOSITO'#39', '#39'DESPESA'#39') THEN'#13#10'      md.vlr_docto'#13#10'    ELSE'#13#10' ' +
+      '     0.00'#13#10' END)'#13#10',0.00) OUTROS,'#13#10#13#10'SUM(COALESCE(md.vlr_docto,0.' +
+      '00)) TOTAL,'#13#10'NULL OBSERVACOES, -------------odir'#13#10'NULL COD_LOJA,' +
+      '  -------------odir'#13#10'NULL FECHA,     -------------odir'#13#10'10 ORDEM' +
+      #13#10#13#10'FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj, TAB_AUXILIAR ' +
+      'gr'#13#10'WHERE md.cod_linx=lj.empresa'#13#10'AND   md.cod_historico=gr.cod_' +
+      'aux'#13#10'AND   gr.tip_aux=21'#13#10'AND   md.ind_conciliacao='#39'NAO'#39#13#10'AND   ' +
+      'md.dta_docto='#39'03.01.2018'#39#13#10#13#10'    ------------ORDER BY - FIM'#13#10'ORD' +
+      'ER BY 10,1 -------------odir'#13#10#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 260
-    Top = 494
+    Left = 804
+    Top = 478
   end
   object DSP_CMDepositosAnalise: TDataSetProvider
     DataSet = SDS_CMDepositosAnalise
     Options = [poRetainServerOrder]
-    Left = 301
-    Top = 510
+    Left = 845
+    Top = 494
   end
   object CDS_CMDepositosAnalise: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CMDepositosAnalise'
-    Left = 344
-    Top = 496
+    Left = 888
+    Top = 480
     object CDS_CMDepositosAnaliseNOME_EMP: TStringField
       FieldName = 'NOME_EMP'
       Size = 50
@@ -2186,11 +2202,21 @@ object DMConciliacao: TDMConciliacao
       FieldName = 'ORDEM'
       Required = True
     end
+    object CDS_CMDepositosAnaliseCOD_LOJA: TIntegerField
+      FieldName = 'COD_LOJA'
+    end
+    object CDS_CMDepositosAnaliseFECHA: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'Fechado'
+      FieldName = 'FECHA'
+      FixedChar = True
+      Size = 3
+    end
   end
   object DS_CMDepositosAnalise: TDataSource
     DataSet = CDS_CMDepositosAnalise
-    Left = 392
-    Top = 512
+    Left = 936
+    Top = 496
   end
   object SDS_CMDepHistoricos: TSQLDataSet
     CommandText = 
@@ -2200,15 +2226,15 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 792
-    Top = 472
+    Left = 800
+    Top = 384
   end
   object CDS_CMDepHistoricos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CMDepHistoricos'
-    Left = 896
-    Top = 472
+    Left = 904
+    Top = 384
     object CDS_CMDepHistoricosTIP_AUX: TIntegerField
       FieldName = 'TIP_AUX'
       Required = True
@@ -2238,12 +2264,12 @@ object DMConciliacao: TDMConciliacao
   end
   object DSP_CMDepHistoricos: TDataSetProvider
     DataSet = SDS_CMDepHistoricos
-    Left = 848
-    Top = 480
+    Left = 856
+    Top = 392
   end
   object DS_CMDepHistoricos: TDataSource
     DataSet = CDS_CMDepHistoricos
-    Left = 944
-    Top = 480
+    Left = 952
+    Top = 392
   end
 end

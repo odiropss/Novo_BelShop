@@ -341,6 +341,8 @@ type
     CDS_CMDepHistoricosGRUPO: TStringField;
     CDS_CMDepHistoricosVLR_AUX: TFMTBCDField;
     CDS_CMDepHistoricosVLR_AUX1: TFMTBCDField;
+    CDS_CMDepositosAnaliseCOD_LOJA: TIntegerField;
+    CDS_CMDepositosAnaliseFECHA: TStringField;
     procedure CDS_LojasBancoAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresExtratosAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresPagtosAfterScroll(DataSet: TDataSet);

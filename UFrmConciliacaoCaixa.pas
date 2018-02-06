@@ -1451,27 +1451,37 @@ Begin
   sCodFilial:=FormatFloat('00',StrToInt(sCodLoja));
 
   // Conecta Empresa individual ================================================
-  If ConexaoEmpIndividual('IBDB_'+sCodFilial, 'IBT_'+sCodFilial, 'A') Then
-   Begin
-     bgSiga:=True;
-   End
-  Else // If ConexaoEmpIndividual('IBDB_'+sCodFilial, 'IBT_'+sCodFilial, 'A') Then
-   Begin
-     Refresh;
-     bgSiga:=False;
-   End; // If ConexaoEmpIndividual('IBDB_'+sCodFilial, 'IBT_'+sCodFilial, 'A') Then
-
-  If not bgSiga Then
+  bgSiga:=True;
+  If Not bgSemBancoDados Then
   Begin
-    msg('ERRO na Conexão da Loja: Bel_'+sCodFilial,'A');
-    Exit;
-  End;
+    If ConexaoEmpIndividual('IBDB_'+sCodFilial, 'IBT_'+sCodFilial, 'A') Then
+     Begin
+       bgSiga:=True;
+     End
+    Else // If ConexaoEmpIndividual('IBDB_'+sCodFilial, 'IBT_'+sCodFilial, 'A') Then
+     Begin
+       Refresh;
+       bgSiga:=False;
+     End; // If ConexaoEmpIndividual('IBDB_'+sCodFilial, 'IBT_'+sCodFilial, 'A') Then
+
+    If not bgSiga Then
+    Begin
+      msg('ERRO na Conexão da Loja: Bel_'+sCodFilial,'A');
+      Exit;
+    End;
+  End; // If Not bgSemBancoDados Then
+
+  If bgSemBancoDados Then
+   ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A');
 
   // Inicia Processamento ======================================================
   If bgSiga Then // Empresa Conectada
   Begin
     // Cria Query da Empresa ----------------------------------------
-    FrmBelShop.CriaQueryIB('IBDB_'+sCodFilial,'IBT_'+sCodFilial,FrmBelShop.IBQ_ConsultaFilial, True, True);
+    If Not bgSemBancoDados Then
+     FrmBelShop.CriaQueryIB('IBDB_'+sCodFilial,'IBT_'+sCodFilial,FrmBelShop.IBQ_ConsultaFilial, True, True)
+    Else
+     FrmBelShop.CriaQueryIB('IBDB_99','IBT_99',FrmBelShop.IBQ_ConsultaFilial, True, True);
 
     // Conciliação de Caixa Dia - Busca Total de Déditos -------------
     OdirPanApres.Caption:='AGUARDE !! Parte 1/4 - Busca Total de Déditos da Loja: '+sCodFilial+' - '+sDesLoja;
@@ -1534,7 +1544,10 @@ Begin
   End; //If bSiga Then // Empresa Conectada
 
   // Fecha Conexão =========================================================
-  ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'F');
+  If Not bgSemBancoDados Then
+   ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'F')
+  Else
+   ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
 
   OdirPanApres.Visible:=False;
   Screen.Cursor:=crDefault;
@@ -1658,8 +1671,13 @@ begin
       Exit;
     End;
 
+// Todas as Lojas no GeoBeaty 05/02/2018 =======================================
+//    bgSemBancoDados:=False; // No SIDICOM
+//    If (Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Pasta_Base_Dados').AsString)='SEM') Then
+//     bgSemBancoDados:=True; // Somente no GeoBeauty
+    // TODAS AS LOJAS SÃO GEOBEAUTY A PARTIR DE 02/01/2018 =======================
     bgSemBancoDados:=False; // No SIDICOM
-    If (Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Pasta_Base_Dados').AsString)='SEM') Then
+    If DtEdtConcFechaCaixaData.Date>=StrToDate('02/01/2018') Then
      bgSemBancoDados:=True; // Somente no Linx
 
     EdtConcFechaCaixaDesLoja.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('Razao_Social').AsString;
@@ -1797,20 +1815,27 @@ begin
     Exit;
   End;
 
+  //////////////////////////////////////////////////////////////////////////////
   // Datas que Começaram a GeoBeauty
-  // 02 ANDRADAS: 27/12,
-  // 05 SALGADO:28/12,
-  // 06 OTAVIO:18/12
-  // 08 WENCESLAU:18/12,
+  // 02 ANDRADAS   : 27/12,
+  // 05 SALGADO    : 28/12,
+  // 06 OTAVIO     : 18/12
+  // 08 WENCESLAU  : 18/12,
   // 15 MOSTARDEIRO:20/12
-  // 16 URUGUAI:26/12/2017
-  If ((EdtConcFechaCaixaCodLoja.AsInteger=2)  and (DtEdtConcFechaCaixaData.Date>=StrToDate('27/12/2017'))) Or
-     ((EdtConcFechaCaixaCodLoja.AsInteger=5)  and (DtEdtConcFechaCaixaData.Date>=StrToDate('28/12/2017'))) Or
-     ((EdtConcFechaCaixaCodLoja.AsInteger=6)  and (DtEdtConcFechaCaixaData.Date>=StrToDate('18/12/2017'))) Or
-     ((EdtConcFechaCaixaCodLoja.AsInteger=8)  and (DtEdtConcFechaCaixaData.Date>=StrToDate('18/12/2017'))) Or
-     ((EdtConcFechaCaixaCodLoja.AsInteger=15) and (DtEdtConcFechaCaixaData.Date>=StrToDate('20/12/2017'))) Or
-     ((EdtConcFechaCaixaCodLoja.AsInteger=16) and (DtEdtConcFechaCaixaData.Date>=StrToDate('26/12/2017'))) Then
-    bgSemBancoDados:=True; // Somente no Linx
+  // 16 URUGUAI    :26/12/2017
+  // 03 ASSIS BRAIL,
+  // 14 LUCIANA DE ABREU
+//  If ((EdtConcFechaCaixaCodLoja.AsInteger=2)  and (DtEdtConcFechaCaixaData.Date>=StrToDate('27/12/2017'))) Or
+//     ((EdtConcFechaCaixaCodLoja.AsInteger=5)  and (DtEdtConcFechaCaixaData.Date>=StrToDate('28/12/2017'))) Or
+//     ((EdtConcFechaCaixaCodLoja.AsInteger=6)  and (DtEdtConcFechaCaixaData.Date>=StrToDate('18/12/2017'))) Or
+//     ((EdtConcFechaCaixaCodLoja.AsInteger=8)  and (DtEdtConcFechaCaixaData.Date>=StrToDate('18/12/2017'))) Or
+//     ((EdtConcFechaCaixaCodLoja.AsInteger=15) and (DtEdtConcFechaCaixaData.Date>=StrToDate('20/12/2017'))) Or
+//     ((EdtConcFechaCaixaCodLoja.AsInteger=16) and (DtEdtConcFechaCaixaData.Date>=StrToDate('26/12/2017'))) Then
+
+  // TODAS AS LOJAS SÃO GEOBEAUTY A PARTIR DE 02/01/2018 =======================
+  If DtEdtConcFechaCaixaData.Date>=StrToDate('02/01/2018') Then
+   bgSemBancoDados:=True; // Somente no Linx/GeoBeauty
+  //////////////////////////////////////////////////////////////////////////////
 
   // Busca Doctos da Loja ======================================================
   sDta:=f_Troca('/','.',DtEdtConcFechaCaixaData.Text);
@@ -1849,7 +1874,7 @@ begin
   // Busca Dados da Loja =======================================================
   If Not bFechado Then
   Begin
-    If msg('Deseja Buscar Movimento do'+cr+cr+'CAIXA no SIDICOM ???','C')=1 Then
+    If msg('Deseja Buscar Movimento do'+cr+cr+'CAIXA no SIDICOM/GEOBEAUTY ???','C')=1 Then
     Begin
       If Not FechaConcCaixaBuscaMovtoCaixaDia(EdtConcFechaCaixaCodLoja.Text, EdtConcFechaCaixaDesLoja.Text) Then
       Begin

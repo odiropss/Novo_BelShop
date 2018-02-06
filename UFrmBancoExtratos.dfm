@@ -407,7 +407,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Top = 0
     Width = 1047
     Height = 564
-    ActivePage = Ts_ConciliacoesManutDepAnalise
+    ActivePage = Ts_ConciliacoesManutDepositos
     Align = alClient
     TabOrder = 0
     OnChange = PC_PrincipalChange
@@ -5572,7 +5572,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
         Left = 0
         Top = 0
         Width = 1039
-        Height = 497
+        Height = 471
         TabStop = False
         Align = alClient
         Ctl3D = False
@@ -5650,15 +5650,48 @@ object FrmBancoExtratos: TFrmBancoExtratos
           end
           item
             Expanded = False
+            FieldName = 'FECHA'
+            Title.Alignment = taCenter
+            Width = 55
+            Visible = True
+          end
+          item
+            Expanded = False
             FieldName = 'ORDEM'
             Visible = False
+          end
+          item
+            Expanded = False
+            FieldName = 'COD_LOJA'
+            Visible = False
           end>
+      end
+      object Sb_DepAnaliseDia: TdxStatusBar
+        Left = 0
+        Top = 471
+        Width = 1039
+        Height = 26
+        Panels = <
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            Fixed = False
+            Text = '<F6> Fechamento/Abertura do Dia'
+            Width = 400
+          end>
+        PaintStyle = stpsOffice11
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        Color = 13303807
       end
     end
   end
   object OdirPanApres: TPanel
     Left = 904
-    Top = 60
+    Top = 188
     Width = 89
     Height = 33
     BevelInner = bvLowered

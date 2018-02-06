@@ -45893,6 +45893,9 @@ begin
   FrmBancoExtratos.Pan_ConcLoja.Visible:=False;
   FrmBancoExtratos.sgCodUsuario:=Cod_Usuario;
 
+  // Permissões de Visualização ================================================
+  PermissaoVisual(Ts_FinanComprPlanFinan);
+
   // Executa Permissões de Menu ================================================
   BloqueioMenu(FrmBancoExtratos, DMBelShop.CDS_Seguranca, DMBelShop.SDS_Busca, Des_Login, bgInd_Admin);
 
