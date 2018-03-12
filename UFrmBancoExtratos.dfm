@@ -407,7 +407,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Top = 0
     Width = 1047
     Height = 564
-    ActivePage = Ts_ConciliacoesManutDepositos
+    ActivePage = Ts_ConciliacoesManutDepAnalise
     Align = alClient
     TabOrder = 0
     OnChange = PC_PrincipalChange
@@ -1373,6 +1373,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
               ParentFont = False
               TabOrder = 1
               OnChange = EdtExtNumContaChange
+              OnExit = EdtExtNumContaExit
             end
             object EdtExtCodBanco: TEdit
               Left = 4
@@ -1388,7 +1389,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Top = 74
             Width = 1031
             Height = 434
-            ActivePage = Ts_ExtratoBanrisul
+            ActivePage = Ts_ExtratoConsulta
             Align = alClient
             TabOrder = 1
             OnChange = PC_ExtExtratosChange
@@ -4409,7 +4410,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
             Font.Style = []
-            Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
+            Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
             ParentFont = False
             TabOrder = 0
             TitleFont.Charset = DEFAULT_CHARSET
@@ -4585,6 +4586,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
               item
                 Expanded = False
                 FieldName = 'TIP_CONCILIACAO'
+                Title.Caption = 'Tp Concilia'#231#227'o'
                 Width = 100
                 Visible = True
               end
@@ -4624,7 +4626,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
             Font.Style = []
-            Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
+            Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
             ParentFont = False
             TabOrder = 0
             TitleFont.Charset = DEFAULT_CHARSET
@@ -4791,8 +4793,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 FieldName = 'TIP_CONCILIACAO'
                 Title.Alignment = taRightJustify
                 Title.Caption = 'Tp Concilia'#231#227'o'
-                Width = 100
-                Visible = True
+                Visible = False
               end
               item
                 Alignment = taRightJustify
@@ -4800,8 +4801,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 FieldName = 'CHV_EXTRATO'
                 Title.Alignment = taRightJustify
                 Title.Caption = 'Chv_Extrato'
-                Width = 150
-                Visible = True
+                Visible = False
               end>
           end
           object Pan_ManutConcTotaisDep: TPanel
@@ -5604,6 +5604,42 @@ object FrmBancoExtratos: TFrmBancoExtratos
           end
           item
             Expanded = False
+            FieldName = 'LOJA_DINHEIRO'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'SALAO_DINHEIRO'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 74
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DIA_DINHEIRO'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
             FieldName = 'CX_MTZ'
             Title.Alignment = taRightJustify
             Width = 70
@@ -5613,21 +5649,26 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Expanded = False
             FieldName = 'DEPOSITO'
             Title.Alignment = taRightJustify
-            Width = 74
+            Width = 70
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'DESPESA'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
             Title.Alignment = taRightJustify
-            Width = 74
+            Width = 70
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'OUTROS'
             Title.Alignment = taRightJustify
-            Width = 74
+            Width = 70
             Visible = True
           end
           item
@@ -5639,7 +5680,19 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
             Title.Alignment = taRightJustify
-            Width = 90
+            Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QUEBRA_CX'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 70
             Visible = True
           end
           item

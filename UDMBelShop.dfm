@@ -1,8 +1,8 @@
 object DMBelShop: TDMBelShop
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 239
-  Top = 116
+  Left = 234
+  Top = 113
   Height = 611
   Width = 1115
   object SQLC: TSQLConnection
@@ -9382,6 +9382,7 @@ object DMBelShop: TDMBelShop
     object CDS_NivelAtendCurvasNIVEL_ATENDIMENTO: TFMTBCDField
       DisplayLabel = '% Atendimento'
       FieldName = 'NIVEL_ATENDIMENTO'
+      DisplayFormat = '0.00'
       Precision = 15
       Size = 6
     end
@@ -9438,7 +9439,7 @@ object DMBelShop: TDMBelShop
     object CDS_NivelAtendLojasNIVEL_ATENDIMENTO: TFMTBCDField
       DisplayLabel = '% Atendimento'
       FieldName = 'NIVEL_ATENDIMENTO'
-      DisplayFormat = '0,.000000'
+      DisplayFormat = '0,.00'
       Precision = 15
       Size = 6
     end

@@ -263,7 +263,6 @@ type
     CDS_CMDepositosOBS_TEXTO: TStringField;
     CDS_CMDepositosNUM_SEQ: TIntegerField;
     CDS_CMDepositosNUM_COMPL: TIntegerField;
-    CDS_CMDepositosTIP_CONCILIACAO: TStringField;
     SDS_CMDepositos: TSQLDataSet;
     DSP_CMDepositos: TDataSetProvider;
     DS_CMExtratosDep: TDataSource;
@@ -343,6 +342,11 @@ type
     CDS_CMDepHistoricosVLR_AUX1: TFMTBCDField;
     CDS_CMDepositosAnaliseCOD_LOJA: TIntegerField;
     CDS_CMDepositosAnaliseFECHA: TStringField;
+    CDS_CMDepositosTIP_CONCILIACAO: TStringField;
+    CDS_CMDepositosAnaliseLOJA_DINHEIRO: TFMTBCDField;
+    CDS_CMDepositosAnaliseSALAO_DINHEIRO: TFMTBCDField;
+    CDS_CMDepositosAnaliseDIA_DINHEIRO: TFMTBCDField;
+    CDS_CMDepositosAnaliseQUEBRA_CX: TFMTBCDField;
     procedure CDS_LojasBancoAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresExtratosAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresPagtosAfterScroll(DataSet: TDataSet);

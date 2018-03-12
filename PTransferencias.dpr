@@ -25,7 +25,6 @@ begin
   Else
    Begin
      // Não Apresenta o Form
-     // odiraqui
      Application.ShowMainForm:=False;
 
      Application.Initialize;

@@ -987,7 +987,7 @@ object FrmSolicTransf: TFrmSolicTransf
     TabOrder = 0
     object Button1: TButton
       Left = 704
-      Top = 4
+      Top = 2
       Width = 145
       Height = 25
       Caption = 'Acerta Doc_Gerado'

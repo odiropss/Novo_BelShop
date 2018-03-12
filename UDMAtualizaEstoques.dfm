@@ -1,8 +1,8 @@
 object DMAtualizaEstoques: TDMAtualizaEstoques
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 336
-  Top = 89
+  Left = 238
+  Top = 110
   Height = 604
   Width = 631
   object SQLC: TSQLConnection

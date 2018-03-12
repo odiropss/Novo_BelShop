@@ -228,7 +228,7 @@ Begin
 
   // Percentual Média Total do Nivel de Atendimento das Lojas ==================
   MySql:=' Select'+
-         ' ROUND((Cast(sum(Total.Nivel_Atendimento) as Numeric(12,6))/count(distinct Total.cod_loja_linx)),6) Media_Total'+
+         ' ROUND((Cast(sum(Total.Nivel_Atendimento) as Numeric(12,2))/count(distinct Total.cod_loja_linx)),2) Media_Total'+
 
          ' from (select l.cod_loja_linx, l.ind_curva,'+
          '       CAST(((100 - ((SUM(case when l.qtd_estoque<1 Then 1 Else 0 End))*(100.000 / count(L.cod_loja_linx)))) *'+
@@ -246,7 +246,7 @@ Begin
          '                Else'+
          '                   1'+
          '             End AS integer)) / 100.000)'+
-         '       ) as Numeric(12,6)) Nivel_Atendimento'+
+         '       ) as Numeric(12,2)) Nivel_Atendimento'+
 
          '       From LINX_PRODUTOS_LOJAS l, LINXLOJAS j'+
          '       Where l.cod_loja_linx=j.empresa'+
@@ -285,7 +285,7 @@ Begin
   Refresh;
 
   // Nivel de Atendimento por Lojas ============================================
-  MySql:=' select total.nome_emp, Cast(sum(Total.Nivel_Atendimento) as Numeric(12,6)) Nivel_Atendimento, 0 Ordem'+
+  MySql:=' select total.nome_emp, Cast(sum(Total.Nivel_Atendimento) as Numeric(12,2)) Nivel_Atendimento, 0 Ordem'+
 
          ' from (select l.cod_loja_linx, j.nome_emp, l.ind_curva,'+
          '       CAST(((100 - ((SUM(case when l.qtd_estoque<1 Then 1 Else 0 End))*(100.000 / count(L.cod_loja_linx)))) *'+
@@ -303,7 +303,7 @@ Begin
          '                Else'+
          '                   1'+
          '             End AS integer)) / 100.000)'+
-         '       ) as Numeric(12,6)) Nivel_Atendimento'+
+         '       ) as Numeric(12,2)) Nivel_Atendimento'+
 
          '       From LINX_PRODUTOS_LOJAS l, LINXLOJAS j'+
          '       Where l.cod_loja_linx=j.empresa'+
@@ -358,7 +358,7 @@ Begin
          '          Else'+
          '             1'+
          '       End AS integer)) / 100.000)'+
-         ' ) as Numeric(12,6)) Nivel_Atendimento'+
+         ' ) as Numeric(12,2)) Nivel_Atendimento'+
 
          ' From LINX_PRODUTOS_LOJAS l, LINXLOJAS j'+
          ' Where l.cod_loja_linx=j.empresa'+
@@ -410,7 +410,7 @@ Begin
 
   OdirPanApres.Visible:=False;
   Screen.Cursor:=crDefault;
-
+                                                                  
 end; // Calcula Nivel de Atendimento da Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Acerta Seleção das Curvas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
