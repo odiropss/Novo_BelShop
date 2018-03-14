@@ -51,7 +51,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
     end
     object Label74: TLabel
       Left = 282
-      Top = 98
+      Top = 106
       Width = 64
       Height = 13
       Caption = 'Per'#237'odo de'
@@ -64,7 +64,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
     end
     object Label75: TLabel
       Left = 458
-      Top = 99
+      Top = 107
       Width = 8
       Height = 13
       Caption = 'a'
@@ -105,7 +105,13 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       Left = 281
       Top = 65
       Width = 407
-      Height = 21
+      Height = 28
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
       TabOrder = 2
     end
     object EdtDesLoja: TEdit
@@ -126,7 +132,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
     end
     object DtEdt_DtaInicio: TcxDateEdit
       Left = 352
-      Top = 92
+      Top = 100
       ParentFont = False
       Properties.ReadOnly = False
       Style.Color = clWindow
@@ -144,7 +150,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
     end
     object DtEdt_DtaFim: TcxDateEdit
       Left = 474
-      Top = 92
+      Top = 100
       ParentFont = False
       Properties.ReadOnly = False
       Style.Font.Charset = DEFAULT_CHARSET

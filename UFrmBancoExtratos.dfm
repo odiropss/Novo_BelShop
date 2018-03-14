@@ -5655,11 +5655,6 @@ object FrmBancoExtratos: TFrmBancoExtratos
           item
             Expanded = False
             FieldName = 'DESPESA'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
             Title.Alignment = taRightJustify
             Width = 70
             Visible = True

@@ -6,14 +6,13 @@
 		<Name>LinxProdutos</Name>
 		<Parameters>
 			<Parameter id="chave">d52511f4-3541-4a65-9adc-665513ea3207</Parameter>
-			<Parameter id="cnpjEmp">03772229000132</Parameter>
+			<Parameter id="cnpjEmp">03772229000213</Parameter>
 			<Parameter id="id_setor">NULL</Parameter>
 			<Parameter id="id_linha">NULL</Parameter>
 			<Parameter id="id_marca">NULL</Parameter>
 			<Parameter id="id_colecao">NULL</Parameter>
 			<Parameter id="dt_update_inicio">NULL</Parameter>
 			<Parameter id="dt_update_fim">NULL</Parameter>
-			<Parameter id="cod_produto">9397</Parameter>
 		</Parameters>
 	</Command>
 </LinxMicrovix>

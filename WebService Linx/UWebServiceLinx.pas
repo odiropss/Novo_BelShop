@@ -903,7 +903,8 @@ Var
 
   wDia, wMes, wAno: Word;
 Begin
-ShowMessage('Odir 7 Post '+sgMetodo);
+// ShowMessage('Odir 7 Post '+sgMetodo);
+
   // ===========================================================================
   // Se Recebe do Parametros Período Acerta Datas ==============================
   // ===========================================================================
@@ -1461,7 +1462,7 @@ End;
 
   //odirOPSS
 //  ShowMessage('Metodo: '+sgParametroMetodo);
-//  ShowMessage('demonstracao '+sgParametroMetodo);
+//  ShowMessage('Demonstracao '+sgParametroMetodo);
 //  ShowMessage('Loja: '+sgParametroCodLoja);
 //  ShowMessage('Pasta Metodos: '+sgParametroMetodos);
 //  ShowMessage('Pasta Retornos: '+sgParametroRetornos);
@@ -1578,7 +1579,7 @@ End;
   // ===========================================================================
   If Trim(sgParametroMetodo)='' Then
   Begin
-    ShowMessage('Odir 1 '+sgMetodo);
+//    ShowMessage('Odir 1 '+sgMetodo);
     sgMetodo:='LinxMetodos';
     sgArqXMLRet:='Retorno_'+sgMetodo+'.XML';
     MontaMetodoXMLPost();
@@ -1601,13 +1602,14 @@ End;
   DMLinxWebService.CDS_Lojas.Close;
   DMLinxWebService.SDS_Lojas.CommandText:=MySql;
   DMLinxWebService.CDS_Lojas.Open;
-    ShowMessage('Odir 2 - SQL Lojas');
+//    ShowMessage('Odir 2 - SQL Lojas');
 
   bUmaVez:=False;
   sgAtiva:='';
   While Not DMLinxWebService.CDS_Lojas.Eof do
   Begin
-    ShowMessage('Odir 3 - While Not DMLinxWebService.CDS_Lojas');
+//    ShowMessage('Odir 3 - While Not DMLinxWebService.CDS_Lojas');
+
     // Apropria Variaveis=======================================================
     sgCNPJProc      :=Trim(DMLinxWebService.CDS_LojasNUM_CNPJ.AsString);
     sgCodLoja       :=Trim(DMLinxWebService.CDS_LojasCOD_FILIAL.AsString);
@@ -1619,7 +1621,7 @@ End;
     //==========================================================================
     For iFor:=0 to tgMetodos.Count-1 do
     Begin
-         ShowMessage('Odir 4 - For iFor:=0 to tgMetodos.Count-1 do');
+//         ShowMessage('Odir 4 - For iFor:=0 to tgMetodos.Count-1 do');
 
       sgCodProduto:='';
       sgReferenciaProd:='';
@@ -1636,7 +1638,7 @@ End;
         sgMetodo:=sgParametroMetodo;
       End; // If Trim(sgParametroMetodo)<>'' Then
 
-          ShowMessage('Odir 5 - Metodo em Execução: '+sgMetodo);
+//          ShowMessage('Odir 5 - Metodo em Execução: '+sgMetodo);
 
       sMetodoEspecifico:='';
       If (sgMetodo='LinxMovtosAjustesEntradas') Or (sgMetodo='LinxMovtosAjustesSaidas') Then
@@ -1728,10 +1730,10 @@ End;
       //========================================================================
       // LinxLojas =============================================================
       //========================================================================
-      ShowMessage('Odir 6 - Vai Executa '+sgMetodo);
+//      ShowMessage('Odir 6 - Vai Executa '+sgMetodo);
       If sgMetodo='LinxLojas' Then
       Begin
-      ShowMessage('Odir 61 - Executa lojas '+sgMetodo);
+//      ShowMessage('Odir 61 - Executa lojas '+sgMetodo);
         MontaMetodoXMLPost();
       End; // If sgMetodo='LinxLojas' Then
       //========================================================================
@@ -1765,8 +1767,9 @@ End;
           End;
         End; // If Trim(sgParametroMetodo)<>'' Then
 
-//        sgDtaInicio:='2016-12-01';
-//        sgDtaFim:='2017-12-11';
+        // sgDtaInicio:='2016-12-01';
+        // sgDtaFim:='2017-12-11';
+
         MontaMetodoXMLPost();
       End; // If (sgMetodo='LinxClientesFornec') And (Not bUmaVez) Then Then
       //========================================================================
@@ -1836,13 +1839,13 @@ End;
           End; // If Trim(sgParametroMetodo)<>'' Then
 
           // Odir Acerta Período Anterior ao Inicio da Loja
-//          dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime-60;
-//          DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
-//          sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
-//
-//          dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime-1;
-//          DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
-//          sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+          // dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime-60;
+          // DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+          // sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+          // dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime-1;
+          // DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+          // sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
           MontaMetodoXMLPost('NULL', 'NULL'); // operacao, tipo_transacao
         End; // If (sMetodoEspecifico='') Then
@@ -1895,7 +1898,7 @@ End;
         If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
          dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
 
-        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
+        DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia);
         sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
         DecodeDate(dDtaHoje, wAno, wMes, wDia);
@@ -2158,23 +2161,9 @@ End;
       //========================================================================
       If (sgMetodo='LinxProdutosCamposAdicionais') And (Not bUmaVez) Then
       Begin
+        // Busca Todos os Produtos ==================================
         sgDtaInicio:='NULL';
         sgDtaFim:='NULL';
-
-        // Metodo por Parametro (Acerta Data Inicial)
-        If Trim(sgParametroMetodo)<>'' Then
-        Begin
-          If dDtaUltAtual=dDtaHoje Then
-          Begin
-            sgDtaInicio:=sgDtaFim
-          End;
-
-          If dDtaUltAtual<dDtaHoje Then
-          Begin
-            DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
-            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
-          End;
-        End; // If Trim(sgParametroMetodo)<>'' Then
 
         MontaMetodoXMLPost();
       End; // If (sgMetodo='LinxProdutosCamposAdicionais') And (Not bUmaVez) Then
@@ -2480,7 +2469,7 @@ End;
       Begin
         bSiga:=True;
         // Envio do Http.post ==================================================
-        ShowMessage('Odir 8 Envia '+sgMetodo);
+//        ShowMessage('Odir 8 Envia '+sgMetodo);
         If Not EnviaMetodoXMLPost Then
         Begin
           bSiga:=False;
@@ -2489,7 +2478,7 @@ End;
         // Ler XML de Retorno e Salva no Banco de Dados ========================
         If bSiga Then
         Begin
-        ShowMessage('Odir 9 LE '+sgMetodo);
+//        ShowMessage('Odir 9 LE '+sgMetodo);
           LeMetodoXMLRetorno;
         End; // If bSiga Then
       End; // If bgMontouPost Then
@@ -2498,7 +2487,7 @@ End;
       // Quando Somente Um Metodo Conforme Parametro Envia =====================
       If Trim(sgParametroMetodo)<>'' Then
       Begin
-        ShowMessage('Odir 10 Encerra se sgParametroMetodo '+sgParametroMetodo);
+//        ShowMessage('Odir 10 Encerra se sgParametroMetodo '+sgParametroMetodo);
         Break;
       End; // If Trim(sgParametroMetodo)<>'' Then
     End; // For iFor:=0 to tgMetodos.Count-1 do

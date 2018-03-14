@@ -129,8 +129,13 @@ begin
   pgProgBar.Properties.Max:=DMBuscaMetodo.CDS_Busca.RecordCount;
   pgProgBar.Position:=0;
 
-  sgDtaI:=DateToStr(DtEdt_DtaInicio.Date);
-  sgDtaF:=DateToStr(DtEdt_DtaFim.Date);
+  sgDtaI:='';
+  sgDtaF:='';
+  If Trim(DtEdt_DtaInicio.Text)<>'' Then
+  Begin
+    sgDtaI:=DateToStr(DtEdt_DtaInicio.Date);
+    sgDtaF:=DateToStr(DtEdt_DtaFim.Date);
+  End;
 
   Try
     While Not DMBuscaMetodo.CDS_Busca.Eof do

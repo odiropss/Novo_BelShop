@@ -603,13 +603,34 @@ Begin
 
   MySql:=' SELECT'+
          ' Dinh.empresa,'+
-         ' CAST(SUM(DECODE(Dinh.operacao,''S'',(COALESCE(Dinh.total_dinheiro, 0.00)),'+
+
+         ' cast(SUM('+
+         '          decode(Dinh.operacao,''S'',(COALESCE(Dinh.total_dinheiro, 0.00)),'+
          '                               ''DS'',-(COALESCE(Dinh.total_dinheiro, 0.00)))'+
-         '     ) AS NUMERIC(12,2)) Total_Dinheiro'+
+         '          )'+
+         '          +'+
+         '         (SUM(COALESCE(Dinh.Vale_Dev, 0.00)))'+
+         '          -'+
+         '         (SUM(COALESCE(Dinh.Vale_Ven, 0.00)))'+
+         ' as numeric(12,2)) Total_Dinheiro'+
+
+//OdirApagar - 14/03/2018
+//         ' CAST(SUM(DECODE(Dinh.operacao,''S'',(COALESCE(Dinh.total_dinheiro, 0.00)),'+
+//         '                               ''DS'',-(COALESCE(Dinh.total_dinheiro, 0.00)))'+
+//         '     ) AS NUMERIC(12,2)) Total_Dinheiro'+
 
          ' FROM'+
-         ' (SELECT DISTINCT mv.empresa, mv.documento, mv.chave_nf, mv.operacao, mv.     total_dinheiro'+
+         ' (SELECT DISTINCT'+
+         '         mv.empresa, mv.documento, mv.chave_nf, mv.operacao,'+
+         '         mv.total_dinheiro, md.valor_vale Vale_Dev, mt.valor_vale Vale_Ven'+
          '  FROM linxmovimento mv'+
+         '       left join linxmovimentotrocas md  on md.doc_origem=mv.documento'+
+         '                                        and md.serie_origem=mv.serie'+
+         '                                        and md.empresa=mv.empresa'+
+         '                                        and md.doc_venda=0'+
+         '       left join linxmovimentotrocas mt  on mt.doc_venda=mv.documento'+
+         '                                        and mt.serie_venda=mv.serie'+
+
          '  WHERE ('+
          '         (mv.operacao=''S'')  AND (mv.tipo_transacao=''V'')'+ // Saídas Vendas
          '          or'+
