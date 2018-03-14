@@ -109,13 +109,15 @@ begin
 
   // Busca Lojas Linx ==========================================================
   MySql:=' SELECT em.cod_linx, em.Razao_Social'+
-         ' FROM EMP_CONEXOES em'+
-         ' WHERE em.cod_linx<>0'+
-         ' AND   em.ind_ativo=''SIM''';
+         ' FROM EMP_CONEXOES em';
 
          If Trim(EdtDesLoja.Text)<>'' Then
           MySql:=
-           MySql+' AND em.cod_linx='+EdtCodLoja.Text;
+           MySql+' WHERE em.cod_linx='+EdtCodLoja.Text
+         Else
+          MySql:=
+           MySql+' WHERE em.cod_linx<>0'+
+                 ' AND   em.ind_ativo=''SIM''';
 
   MySql:=
    MySql+' ORDER BY 1';
@@ -130,25 +132,32 @@ begin
   sgDtaI:=DateToStr(DtEdt_DtaInicio.Date);
   sgDtaF:=DateToStr(DtEdt_DtaFim.Date);
 
-  While Not DMBuscaMetodo.CDS_Busca.Eof do
-  Begin
-    OdirPanApres.Caption:='AGUARDE !! Atualizando Metodo: '+EdtMetodo.Text+' (LINX - CLOUD) Loja: '+DMBuscaMetodo.CDS_Busca.FieldByName('Cod_Linx').AsString;
-    Application.ProcessMessages;
+  Try
+    While Not DMBuscaMetodo.CDS_Busca.Eof do
+    Begin
+      OdirPanApres.Caption:='AGUARDE !! Atualizando Metodo: '+EdtMetodo.Text+' (LINX - CLOUD) Loja: '+DMBuscaMetodo.CDS_Busca.FieldByName('Cod_Linx').AsString;
+      Application.ProcessMessages;
 
-    sParametros:=sgPastaWebService+'PWebServiceLinx.exe '+EdtMetodo.Text; // Excutavel e Metodo a Processar
-    sParametros:=sParametros+' '+DMBuscaMetodo.CDS_Busca.FieldByName('Cod_Linx').AsString; // Codigo da Loja a Processar
-    sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Metodos')+'"'; // Pasta dos Metodos
-    sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Retornos')+'"'; // Pasta dos Retornos
-    sParametros:=sParametros+' "'+sgDtaI+'"'; // Data Inicial
-    sParametros:=sParametros+' "'+sgDtaF+'"'; // Data Final
+      sParametros:=sgPastaWebService+'PWebServiceLinx.exe '+EdtMetodo.Text; // Excutavel e Metodo a Processar
+      sParametros:=sParametros+' '+DMBuscaMetodo.CDS_Busca.FieldByName('Cod_Linx').AsString; // Codigo da Loja a Processar
+      sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Metodos')+'"'; // Pasta dos Metodos
+      sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Retornos')+'"'; // Pasta dos Retornos
+      sParametros:=sParametros+' "'+sgDtaI+'"'; // Data Inicial
+      sParametros:=sParametros+' "'+sgDtaF+'"'; // Data Final
 
-    // Envia Parametro e Aguarda Termino do Processo =============================
-    CreateProcessSimple(sParametros);
+      // Envia Parametro e Aguarda Termino do Processo =============================
+      CreateProcessSimple(sParametros);
 
-    pgProgBar.Position:=DMBuscaMetodo.CDS_Busca.RecNo;
+      pgProgBar.Position:=DMBuscaMetodo.CDS_Busca.RecNo;
 
-    DMBuscaMetodo.CDS_Busca.Next;
-  End; // While Not DMBuscaMetodo.CDS_Busca.Eof do
+      DMBuscaMetodo.CDS_Busca.Next;
+    End; // While Not DMBuscaMetodo.CDS_Busca.Eof do
+  Except
+    on e : Exception do
+    Begin
+      MessageBox(Handle, pChar(e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End;
   DMBuscaMetodo.CDS_Busca.Close;
   MontaProgressBar(False, FrmBuscaMetodo);
   OdirPanApres.Visible:=False;

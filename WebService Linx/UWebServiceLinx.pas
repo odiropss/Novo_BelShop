@@ -903,7 +903,7 @@ Var
 
   wDia, wMes, wAno: Word;
 Begin
-
+ShowMessage('Odir 7 Post '+sgMetodo);
   // ===========================================================================
   // Se Recebe do Parametros Período Acerta Datas ==============================
   // ===========================================================================
@@ -1398,6 +1398,7 @@ End;
 //opss
   sgParametroMetodo:=ParamStr(1);
 //  sgParametroMetodo:='LinxFaturas;2;C:\Projetos\BelShop\Fontes\WebService Linx\Metodos\;C:\Projetos\BelShop\Fontes\WebService Linx\Retornos\;25/07/2017;25/07/2017;';
+//  sgParametroMetodo:='LINXLOJAS;2;C:\Projetos\BelShop\Fontes\WebService Linx\Metodos\;C:\Projetos\BelShop\Fontes\WebService Linx\Retornos\;01/03/2018;14/03/2018;';
 
   // Pasta Executável PWebServiceLinx Não Rede
   sgPastaExecutavel:=IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName));
@@ -1446,8 +1447,8 @@ End;
         Else
          bgParametroDtaEmissao:=Trim(ParamStr(7))='SIM';
       End;
-//opss
     End; // If Trim(ParamStr(1))='' Then
+//opss
 
     If sgParametroDtaInicio='Limite Superado' Then
     Begin
@@ -1575,10 +1576,14 @@ End;
   // ===========================================================================
   // Busca Definição de Todos os Metodos =======================================
   // ===========================================================================
-  sgMetodo:='LinxMetodos';
-  sgArqXMLRet:='Retorno_'+sgMetodo+'.XML';
-  MontaMetodoXMLPost();
-  EnviaMetodoXMLPost;
+  If Trim(sgParametroMetodo)='' Then
+  Begin
+    ShowMessage('Odir 1 '+sgMetodo);
+    sgMetodo:='LinxMetodos';
+    sgArqXMLRet:='Retorno_'+sgMetodo+'.XML';
+    MontaMetodoXMLPost();
+    EnviaMetodoXMLPost;
+  End;
   // ===========================================================================
 
   // Processa Lojas ============================================================
@@ -1596,11 +1601,13 @@ End;
   DMLinxWebService.CDS_Lojas.Close;
   DMLinxWebService.SDS_Lojas.CommandText:=MySql;
   DMLinxWebService.CDS_Lojas.Open;
+    ShowMessage('Odir 2 - SQL Lojas');
 
   bUmaVez:=False;
   sgAtiva:='';
   While Not DMLinxWebService.CDS_Lojas.Eof do
   Begin
+    ShowMessage('Odir 3 - While Not DMLinxWebService.CDS_Lojas');
     // Apropria Variaveis=======================================================
     sgCNPJProc      :=Trim(DMLinxWebService.CDS_LojasNUM_CNPJ.AsString);
     sgCodLoja       :=Trim(DMLinxWebService.CDS_LojasCOD_FILIAL.AsString);
@@ -1612,6 +1619,8 @@ End;
     //==========================================================================
     For iFor:=0 to tgMetodos.Count-1 do
     Begin
+         ShowMessage('Odir 4 - For iFor:=0 to tgMetodos.Count-1 do');
+
       sgCodProduto:='';
       sgReferenciaProd:='';
 
@@ -1626,6 +1635,8 @@ End;
       Begin
         sgMetodo:=sgParametroMetodo;
       End; // If Trim(sgParametroMetodo)<>'' Then
+
+          ShowMessage('Odir 5 - Metodo em Execução: '+sgMetodo);
 
       sMetodoEspecifico:='';
       If (sgMetodo='LinxMovtosAjustesEntradas') Or (sgMetodo='LinxMovtosAjustesSaidas') Then
@@ -1717,8 +1728,10 @@ End;
       //========================================================================
       // LinxLojas =============================================================
       //========================================================================
+      ShowMessage('Odir 6 - Vai Executa '+sgMetodo);
       If sgMetodo='LinxLojas' Then
       Begin
+      ShowMessage('Odir 61 - Executa lojas '+sgMetodo);
         MontaMetodoXMLPost();
       End; // If sgMetodo='LinxLojas' Then
       //========================================================================
@@ -2467,6 +2480,7 @@ End;
       Begin
         bSiga:=True;
         // Envio do Http.post ==================================================
+        ShowMessage('Odir 8 Envia '+sgMetodo);
         If Not EnviaMetodoXMLPost Then
         Begin
           bSiga:=False;
@@ -2475,6 +2489,7 @@ End;
         // Ler XML de Retorno e Salva no Banco de Dados ========================
         If bSiga Then
         Begin
+        ShowMessage('Odir 9 LE '+sgMetodo);
           LeMetodoXMLRetorno;
         End; // If bSiga Then
       End; // If bgMontouPost Then
@@ -2483,6 +2498,7 @@ End;
       // Quando Somente Um Metodo Conforme Parametro Envia =====================
       If Trim(sgParametroMetodo)<>'' Then
       Begin
+        ShowMessage('Odir 10 Encerra se sgParametroMetodo '+sgParametroMetodo);
         Break;
       End; // If Trim(sgParametroMetodo)<>'' Then
     End; // For iFor:=0 to tgMetodos.Count-1 do

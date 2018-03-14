@@ -5588,20 +5588,16 @@ begin
 //  If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
 //     (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='89') Then
 //     (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='24') Then
+//  If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='24') Then
 //  Begin
-//    RomaneioFornecedor;
-//    Exit;
+//    If msg('Deseja Impressão de Relatório'+cr+'por Fornecedor ??','C')=1 Then
+//    Begin
+//      RomaneioFornecedor;
+//      Exit;
+//    End;
 //  End; // If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
-  If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='24') Then
-  Begin
-    If msg('Deseja Impressão de Relatório'+cr+'por Fornecedor ??','C')=1 Then
-    Begin
-      RomaneioFornecedor;
-      Exit;
-    End;
-  End; // If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
-  Screen.Cursor:=crAppStart;
 
+  Screen.Cursor:=crAppStart;
   OdirPanApres.Caption:='AGUARDE !! Montando Relatório...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));

@@ -1474,7 +1474,7 @@ Begin
                   '          LEFT JOIN linxprodutosdetalhes es   on es.cod_produto=pr.cod_produto'+
                   '                                             and es.empresa = fi.empresa'+
                   '          LEFT JOIN linxclientesfornec fo     on fo.cod_cliente=pr.cod_fornecedor'+
-                  '                                             AND fo.tipo_cliente in (''F'', ''A'')'+
+//                  '                                             AND fo.tipo_cliente in (''F'', ''A'')'+
                   '          LEFT JOIN (select ml.cod_produto, ml.empresa,'+  // Ultima Compra
                   '                     cast(ml.data_documento as Date) DTA_ULT_COMPRA,'+
                   '                     ml.codigo_cliente COD_FOR_ULT_COMPRA,'+
@@ -1484,7 +1484,7 @@ Begin
                   '                     Cast(ml.valor_total as Numeric(12,2)) VLR_TOT_ULT_COMPRA'+
                   '                     FROM LINXMOVIMENTO ml, LINXCLIENTESFORNEC cl'+
                   '                     WHERE ml.codigo_cliente=cl.cod_cliente'+
-                  '                     AND   cl.tipo_cliente in (''F'', ''A'')'+
+//                  '                     AND   cl.tipo_cliente in (''F'', ''A'')'+
                   '                     AND   ml.operacao=''E'''+
                   '                     AND   ((ml.tipo_transacao=''E'') OR (ml.tipo_transacao IS NULL))'+
                   '                     AND   ml.cancelado=''N'''+
@@ -3855,8 +3855,8 @@ begin
            ' fo.fone_cliente fone1, NULL fonefax, fo.email_cliente email, NULL contato'+
 
            ' FROM LINXCLIENTESFORNEC fo'+
-           ' WHERE fo.tipo_cliente IN (''F'', ''A'')'+
-           ' AND   fo.cod_cliente='+DMBelShop.CDS_AComprarOCsCOD_FORNECEDOR.AsString;
+//           ' WHERE fo.tipo_cliente IN (''F'', ''A'')'+
+           ' WHERE   fo.cod_cliente='+DMBelShop.CDS_AComprarOCsCOD_FORNECEDOR.AsString;
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
@@ -4222,8 +4222,8 @@ begin
     // Busca Fornecedores ======================================================
     MySql:=' SELECT fo.nome_cliente nomefornecedor, fo.cod_cliente codfornecedor'+
            ' FROM LINXCLIENTESFORNEC fo'+
-           ' WHERE fo.tipo_cliente IN (''F'', ''A'')'+
-           ' AND   EXISTS(SELECT 1'+
+//           ' WHERE fo.tipo_cliente IN (''F'', ''A'')'+
+           ' WHERE EXISTS(SELECT 1'+
            '              FROM LINXPRODUTOS pr'+
            '              WHERE pr.cod_fornecedor = fo.cod_cliente'+
            '              AND   pr.desativado = ''N''';
@@ -4293,8 +4293,8 @@ begin
   // Busca Fornecedores ======================================================
   MySql:=' SELECT fo.nome_cliente nomefornecedor, fo.cod_cliente codfornecedor'+
          ' FROM LINXCLIENTESFORNEC fo'+
-         ' WHERE fo.tipo_cliente IN (''F'', ''A'')'+
-         ' AND   EXISTS(SELECT 1'+
+//         ' WHERE fo.tipo_cliente IN (''F'', ''A'')'+
+         ' WHERE EXISTS(SELECT 1'+
          '              FROM LINXPRODUTOS pr'+
          '              WHERE pr.cod_fornecedor = fo.cod_cliente'+
          '              AND   pr.desativado = ''N''';

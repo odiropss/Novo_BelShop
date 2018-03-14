@@ -7183,7 +7183,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_OCGeraOrdemCompra
+        ActivePage = Ts_OCBuscaProdutos
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
