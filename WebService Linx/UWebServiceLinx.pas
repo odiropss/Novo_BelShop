@@ -1919,6 +1919,9 @@ End;
           End;
         End; // If Trim(sgParametroMetodo)<>'' Then
 
+//        sgDtaInicio:='2017-10-01';
+//        sgDtaFim:='2018-03-14';
+
         MontaMetodoXMLPost();
       End; // If sgMetodo='LinxMovimentoTrocas' Then
       //========================================================================

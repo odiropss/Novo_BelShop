@@ -1255,4 +1255,112 @@ object DMCentralTrocas: TDMCentralTrocas
     Left = 909
     Top = 272
   end
+  object CDS_NFeAvarias: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_NFeAvarias'
+    Left = 848
+    Top = 344
+    object CDS_NFeAvariasCOD_PRODUTO: TFMTBCDField
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'COD_PRODUTO'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_NFeAvariasNOME_PRODUTO: TStringField
+      DisplayLabel = 'Produto'
+      FieldName = 'NOME_PRODUTO'
+      Size = 250
+    end
+    object CDS_NFeAvariasQUANTIDADE: TFMTBCDField
+      DisplayLabel = 'Quant'
+      FieldName = 'QUANTIDADE'
+      DisplayFormat = '0,'
+      Precision = 15
+      Size = 4
+    end
+    object CDS_NFeAvariasCOD_FORNECEDOR: TIntegerField
+      DisplayLabel = 'C'#243'd Forn'
+      FieldName = 'COD_FORNECEDOR'
+    end
+    object CDS_NFeAvariasNOME_FORNECEDOR: TStringField
+      DisplayLabel = 'Fornecedor'
+      FieldName = 'NOME_FORNECEDOR'
+      Size = 60
+    end
+    object CDS_NFeAvariasENDERECAMENTO: TStringField
+      DisplayLabel = 'Endere'#231'amento'
+      FieldName = 'ENDERECAMENTO'
+      Size = 50
+    end
+  end
+  object SDS_NFeAvarias: TSQLDataSet
+    CommandText = 
+      'SELECT'#13#10'm.cod_produto, p.nome Nome_produto,'#13#10'm.quantidade,'#13#10'p.co' +
+      'd_fornecedor, f.nome_cliente Nome_Fornecedor,'#13#10'e.des_aux Enderec' +
+      'amento'#13#10#13#10'FROM linxmovimento m'#13#10'  LEFT JOIN linxprodutos p      ' +
+      '  ON m.cod_produto=p.cod_produto'#13#10'  LEFT JOIN linxclientesfornec' +
+      ' f  ON p.cod_fornecedor=f.cod_cliente'#13#10'  LEFT JOIN tab_auxiliar ' +
+      'e        ON e.tip_aux=23'#13#10'                                 AND e' +
+      '.cod_aux=p.cod_fornecedor'#13#10#13#10'WHERE m.documento=5146'#13#10'AND   m.ser' +
+      'ie=2'#13#10'AND   m.data_documento='#39'01.02.2018'#39#13#10'AND   m.empresa=8'#13#10#13#10
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 736
+    Top = 344
+  end
+  object DSP_NFeAvarias: TDataSetProvider
+    DataSet = SDS_NFeAvarias
+    Options = [poRetainServerOrder]
+    Left = 792
+    Top = 360
+  end
+  object DS_NFeAvarias: TDataSource
+    DataSet = CDS_NFeAvarias
+    Left = 909
+    Top = 360
+  end
+  object CDS_NFeAvariasForneEnd: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_NFeAvariasForneEnd'
+    Left = 848
+    Top = 416
+    object CDS_NFeAvariasForneEndCODIGO: TIntegerField
+      FieldName = 'CODIGO'
+    end
+    object CDS_NFeAvariasForneEndNOME_FORN: TStringField
+      DisplayLabel = 'Fornecedor'
+      FieldName = 'NOME_FORN'
+      Size = 60
+    end
+    object CDS_NFeAvariasForneEndENDERECO: TStringField
+      DisplayLabel = 'Endere'#231'amento'
+      FieldName = 'ENDERECO'
+      Size = 50
+    end
+  end
+  object SDS_NFeAvariasForneEnd: TSQLDataSet
+    CommandText = 
+      'SELECT f.cod_cliente CODIGO, f.nome_cliente NOME_FORN, t.des_aux' +
+      ' ENDERECO'#13#10#13#10'FROM TAB_AUXILIAR t, LINXCLIENTESFORNEC f'#13#10#13#10'WHERE ' +
+      't.cod_aux=f.cod_cliente'#13#10'AND   t.tip_aux=23'#13#10#13#10'ORDER BY 2'#13#10
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 736
+    Top = 416
+  end
+  object DSP_NFeAvariasForneEnd: TDataSetProvider
+    DataSet = SDS_NFeAvariasForneEnd
+    Options = [poRetainServerOrder]
+    Left = 792
+    Top = 432
+  end
+  object DS_NFeAvariasForneEnd: TDataSource
+    DataSet = CDS_NFeAvariasForneEnd
+    Left = 909
+    Top = 432
+  end
 end

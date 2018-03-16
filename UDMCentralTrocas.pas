@@ -189,6 +189,23 @@ type
     CDS_AnalRepDiariaQTDS_L: TFMTBCDField;
     CDS_AnalRepDiariaQTDS_G: TFMTBCDField;
     CDS_AnalRepDiariaQTDS_DIF: TFMTBCDField;
+    CDS_NFeAvarias: TClientDataSet;
+    SDS_NFeAvarias: TSQLDataSet;
+    DSP_NFeAvarias: TDataSetProvider;
+    DS_NFeAvarias: TDataSource;
+    CDS_NFeAvariasCOD_PRODUTO: TFMTBCDField;
+    CDS_NFeAvariasNOME_PRODUTO: TStringField;
+    CDS_NFeAvariasQUANTIDADE: TFMTBCDField;
+    CDS_NFeAvariasCOD_FORNECEDOR: TIntegerField;
+    CDS_NFeAvariasNOME_FORNECEDOR: TStringField;
+    CDS_NFeAvariasENDERECAMENTO: TStringField;
+    CDS_NFeAvariasForneEnd: TClientDataSet;
+    SDS_NFeAvariasForneEnd: TSQLDataSet;
+    DSP_NFeAvariasForneEnd: TDataSetProvider;
+    DS_NFeAvariasForneEnd: TDataSource;
+    CDS_NFeAvariasForneEndCODIGO: TIntegerField;
+    CDS_NFeAvariasForneEndNOME_FORN: TStringField;
+    CDS_NFeAvariasForneEndENDERECO: TStringField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir

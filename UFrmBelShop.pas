@@ -1338,6 +1338,9 @@ type
     Edit4: TEdit;
     N9: TMenuItem;
     SubMenuCentroDistAnaliseAnalReposicoesRespDiaria: TMenuItem;
+    N10: TMenuItem;
+    N55: TMenuItem;
+    SubMenuCentralTrocasNotasAvarias: TMenuItem;
 
     // Odir ====================================================================
 
@@ -2313,6 +2316,7 @@ type
       var Key: Word; Shift: TShiftState);
     procedure SubMenuCentroDistAnaliseAnalReposicoesRespDiariaClick(
       Sender: TObject);
+    procedure SubMenuCentralTrocasNotasAvariasClick(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -46408,6 +46412,24 @@ begin
   FrmCentralTrocas.Ts_AnaliseReposicoesDiaria.TabVisible:=True;
 
   FrmCentralTrocas.ShowModal;
+
+end;
+
+procedure TFrmBelShop.SubMenuCentralTrocasNotasAvariasClick(Sender: TObject);
+begin
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
+  BloqueioBotoes(FrmCentralTrocas, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
+
+  // Apresenta TabSheet ========================================================
+  TabSheetInvisivel(FrmCentralTrocas);
+  FrmCentralTrocas.Bt_AnaliseRepDiariaFechar.Parent:=FrmCentralTrocas.Pan_AvariasEndercamentos;
+  FrmCentralTrocas.Ts_AvariasEndercamentos.TabVisible:=True;
+
+  FrmCentralTrocas.ShowModal;
+
+  FrmCentralTrocas.Bt_AnaliseRepDiariaFechar.Parent:=FrmCentralTrocas.Pan_AnaliseRepDiaria;
 
 end;
 

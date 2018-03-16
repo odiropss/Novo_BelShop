@@ -1,6 +1,6 @@
 object FrmCentralTrocas: TFrmCentralTrocas
   Left = 240
-  Top = 116
+  Top = 110
   Align = alClient
   AutoSize = True
   BorderIcons = [biSystemMenu]
@@ -408,7 +408,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
     Top = 0
     Width = 1102
     Height = 578
-    ActivePage = Ts_ReposLojas
+    ActivePage = Ts_AvariasEndercamentos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -3351,7 +3351,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
       Tag = 9999
       Caption = 'Analise Reposi'#231#245'es Di'#225'ria'
       ImageIndex = 4
-      object Panel3: TPanel
+      object Pan_AnaliseRepDiaria: TPanel
         Left = 0
         Top = 513
         Width = 1094
@@ -3724,10 +3724,567 @@ object FrmCentralTrocas: TFrmCentralTrocas
           end>
       end
     end
+    object Ts_AvariasEndercamentos: TTabSheet
+      Tag = 9999
+      Caption = 'NF-e Avarias - Ender'#231'amentos'
+      ImageIndex = 5
+      object Pan_AvariasEndercamentos: TPanel
+        Left = 0
+        Top = 507
+        Width = 1094
+        Height = 43
+        Align = alBottom
+        BevelInner = bvLowered
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+        DesignSize = (
+          1094
+          43)
+        object Bt_AvariasEndImprimir: TJvXPButton
+          Tag = 1
+          Left = 312
+          Top = 2
+          Width = 199
+          Height = 39
+          Caption = 'Imprimir Endere'#231'amentos'
+          TabOrder = 0
+          TabStop = False
+          Glyph.Data = {
+            07544269746D6170BE060000424DBE0600000000000036040000280000001600
+            00001B0000000100080000000000880200000000000000000000000100000000
+            000000000000000080000080000000808000800000008000800080800000C0C0
+            C000C0DCC000F0CAA6000020400000206000002080000020A0000020C0000020
+            E00000400000004020000040400000406000004080000040A0000040C0000040
+            E00000600000006020000060400000606000006080000060A0000060C0000060
+            E00000800000008020000080400000806000008080000080A0000080C0000080
+            E00000A0000000A0200000A0400000A0600000A0800000A0A00000A0C00000A0
+            E00000C0000000C0200000C0400000C0600000C0800000C0A00000C0C00000C0
+            E00000E0000000E0200000E0400000E0600000E0800000E0A00000E0C00000E0
+            E00040000000400020004000400040006000400080004000A0004000C0004000
+            E00040200000402020004020400040206000402080004020A0004020C0004020
+            E00040400000404020004040400040406000404080004040A0004040C0004040
+            E00040600000406020004060400040606000406080004060A0004060C0004060
+            E00040800000408020004080400040806000408080004080A0004080C0004080
+            E00040A0000040A0200040A0400040A0600040A0800040A0A00040A0C00040A0
+            E00040C0000040C0200040C0400040C0600040C0800040C0A00040C0C00040C0
+            E00040E0000040E0200040E0400040E0600040E0800040E0A00040E0C00040E0
+            E00080000000800020008000400080006000800080008000A0008000C0008000
+            E00080200000802020008020400080206000802080008020A0008020C0008020
+            E00080400000804020008040400080406000804080008040A0008040C0008040
+            E00080600000806020008060400080606000806080008060A0008060C0008060
+            E00080800000808020008080400080806000808080008080A0008080C0008080
+            E00080A0000080A0200080A0400080A0600080A0800080A0A00080A0C00080A0
+            E00080C0000080C0200080C0400080C0600080C0800080C0A00080C0C00080C0
+            E00080E0000080E0200080E0400080E0600080E0800080E0A00080E0C00080E0
+            E000C0000000C0002000C0004000C0006000C0008000C000A000C000C000C000
+            E000C0200000C0202000C0204000C0206000C0208000C020A000C020C000C020
+            E000C0400000C0402000C0404000C0406000C0408000C040A000C040C000C040
+            E000C0600000C0602000C0604000C0606000C0608000C060A000C060C000C060
+            E000C0800000C0802000C0804000C0806000C0808000C080A000C080C000C080
+            E000C0A00000C0A02000C0A04000C0A06000C0A08000C0A0A000C0A0C000C0A0
+            E000C0C00000C0C02000C0C04000C0C06000C0C08000C0C0A000F0FBFF00A4A0
+            A000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFF
+            EDEC9B9B9B9B9B9B9B9BFFFFFFFFFFFF0000FFFFFFFFFFFFEDFFFFFFFFFFFFFF
+            FF9BFFFFFFFFFFFF0000FFFFFFFFFFFFEDFFA4A4A4A4A4A4FF9BFFFFFFFFFFFF
+            0000FFFFFFFFFFFFEDFFF6FFE3ECE3E2FF9BFFFFFFFFFFFF0000FFFFFFFFFFFF
+            EDFFE3FFE3E3E209FF9BFFFFFFFFFFFF0000FFFFA49B9B52EDFF090909090909
+            FF9B529B9B9BADFF0000FFA4F7F7A452EDFF090909090909FFA352A4F7A49BFF
+            0000FFF7F7F7F752F7F6090909A7A709F6A352A4F7F79BFF0000FFA4A4A4A4A4
+            A4A4A4A4A4A4A4A4A4A4A4A4A4A49BFF0000FFA4070707F7F7F7F7F7F7F7F7F7
+            F7F7A40707079BFF0000FFA4070707F7F7F7F7F7F7F7F7F7F7F7A40707079BFF
+            0000FFF7F6F6F60808080808080808080808F7F6F6F69BFF0000FFF7F607F607
+            07070707070707070707A4F607089BFF0000FFF7F6F6F6070707070707070707
+            0707A4F608089BFF0000FFF7FFF6F60707070707070707070707A4F607089BFF
+            0000FFF7FFFFFF0808080808080808080808A4F607F69BFF0000FFF7FFFFFF08
+            08080808080808080808A4F6F6F69BFF0000FFB7F7F7F7F7F7F7F7A4A4A4A4A4
+            A4A4A4F7A5A4B6FF0000FFFFFFFFFF9BEDFFFFFFFFFFFFFFFF9BA4FFFFFFFFFF
+            0000FFFFFFFFFF5BEDFFFFFFFFFFFFFFFF9BA5FFFFFFFFFF0000FFFFFFFFFF9B
+            EDFFFFFFFFFFFFFFFF9BFFFFFFFFFFFF0000FFFFFFFFFFFFEDFFFFFFFFFFFFFF
+            FF9BFFFFFFFFFFFF0000FFFFFFFFFFFFEDFFFFFFFFFFFFFFFF9BFFFFFFFFFFFF
+            0000FFFFFFFFFFFFEDFFFFFFFFFFFFFFFFA3FFFFFFFFFFFF0000FFFFFFFFFFFF
+            EDEDEDEDEDEDEDEDECECFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFF0000}
+          ShowFocusRect = True
+          Spacing = 10
+          Anchors = [akTop]
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Style.Theme = OfficeXP
+        end
+        object Bt_AvariasEndEscanear: TJvXPButton
+          Left = 2
+          Top = 2
+          Width = 182
+          Height = 39
+          Caption = 'Escanear Fornecedor'
+          TabOrder = 1
+          TabStop = False
+          Glyph.Data = {
+            0A544A504547496D616765D7040000FFD8FFE000104A46494600010101006000
+            600000FFDB004300020101020101020202020202020203050303030303060404
+            0305070607070706070708090B0908080A0807070A0D0A0A0B0C0C0C0C07090E
+            0F0D0C0E0B0C0C0CFFDB004301020202030303060303060C0807080C0C0C0C0C
+            0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C
+            0C0C0C0C0C0C0C0C0C0C0C0C0CFFC00011080020001C03012200021101031101
+            FFC4001F0000010501010101010100000000000000000102030405060708090A
+            0BFFC400B5100002010303020403050504040000017D01020300041105122131
+            410613516107227114328191A1082342B1C11552D1F02433627282090A161718
+            191A25262728292A3435363738393A434445464748494A535455565758595A63
+            6465666768696A737475767778797A838485868788898A92939495969798999A
+            A2A3A4A5A6A7A8A9AAB2B3B4B5B6B7B8B9BAC2C3C4C5C6C7C8C9CAD2D3D4D5D6
+            D7D8D9DAE1E2E3E4E5E6E7E8E9EAF1F2F3F4F5F6F7F8F9FAFFC4001F01000301
+            01010101010101010000000000000102030405060708090A0BFFC400B5110002
+            0102040403040705040400010277000102031104052131061241510761711322
+            328108144291A1B1C109233352F0156272D10A162434E125F11718191A262728
+            292A35363738393A434445464748494A535455565758595A636465666768696A
+            737475767778797A82838485868788898A92939495969798999AA2A3A4A5A6A7
+            A8A9AAB2B3B4B5B6B7B8B9BAC2C3C4C5C6C7C8C9CAD2D3D4D5D6D7D8D9DAE2E3
+            E4E5E6E7E8E9EAF2F3F4F5F6F7F8F9FAFFDA000C03010002110311003F00FDFA
+            98B085B6AEE6C1C2E76E4FD7B57F1D7E33FDAD3E2FFC45F8C737C5C6F891E3CD
+            2FE2D5C3CD15EEA4F35D4325AC804B0C9E4CB063EC91AAB4B1EC84AC614EC118
+            8C027FA62FF82D07FC141A0FF82787EC4FAF7892C758B4D2FC69AC2FD83C3DBE
+            15B896272CA26BA589B2A4C31B7C86406237125B472712807F9BCFF8261FECCD
+            E34FF829CFED4BE2ED2341D522B7D7E3D2E4D70C9ADEA1733593C7E7C76EB148
+            E52691A4DF710AA331CED1212D955AE7C562E8E1A93AF88972C56EFF0002A319
+            49F2C773EC1FD833FE0EC2F8ABFB394DA7F86BE3D787CF8FBC3282DED6DB5757
+            10EAF0C4A6D6177FB502D15E6C863B894F9AA249A7946EB88D3EEFEFDFECD1FB
+            49F83BF6BDF821A17C44F006AADAD784FC4692BD8DDB5ACD6AD27952BC32031C
+            AA8EBB648DD79500EDC8CA904FF3F9A6FF00C1067E336BFF00186F7C0FE30F83
+            2D702EAE96CEDFC41657A83478C4B25CF97A934A091243B2CA5764702E512581
+            648925B882393F7FFF0065BFD9ABC2FF00B1F7C02F0D7C37F06C3790F873C2F6
+            EF05AFDAE7F3A7919E479A591DB006E796491CAA2AA2EEDA8A8815474B56213B
+            9FCEF7FC1CE3FB4F6BFF00B6EFFC14EACBE08F83DAEB5CD3BC042DF45B6B1D2D
+            5AF24BBD4E62A668E389537FDA0CCE9018D1996430DBE4064C8FD38FF82137FC
+            108B4BFF008275F83ECBE2178F0CF75F18F5AB010CB676DA849FD9DE1AB673E6
+            1B3DB1B08EEA7661134B2C81D049044210A23F365F99FF006B0FF837F3E3C7C7
+            8FDAB34EFDA0ED2FB49D0FC7BE36F1141A9DFE9DA0DE456D75E04CCFFE8EED72
+            1A18EE0DB5BA4026B8B75333481D922B9706597F702A274E325CB257434DAD82
+            8A28AA03FFD9}
+          ShowFocusRect = True
+          Spacing = 10
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_ReposLojasCheckOutClick
+        end
+      end
+      object Gb_AvariasEndFornecedores: TGroupBox
+        Left = 648
+        Top = 0
+        Width = 446
+        Height = 507
+        Align = alRight
+        Caption = ' Endere'#231'amento Fornecedores '
+        Color = clBtnFace
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 1
+        object Dbg_AvariasEndFornecedores: TDBGrid
+          Left = 1
+          Top = 14
+          Width = 444
+          Height = 492
+          Align = alClient
+          DataSource = DMCentralTrocas.DS_NFeAvariasForneEnd
+          FixedColor = clTeal
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+          ParentFont = False
+          TabOrder = 0
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWhite
+          TitleFont.Height = -11
+          TitleFont.Name = 'MS Sans Serif'
+          TitleFont.Style = [fsBold]
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'CODIGO'
+              Visible = False
+            end
+            item
+              Expanded = False
+              FieldName = 'NOME_FORN'
+              Width = 300
+              Visible = True
+            end
+            item
+              Alignment = taCenter
+              Expanded = False
+              FieldName = 'ENDERECO'
+              Title.Alignment = taCenter
+              Width = 100
+              Visible = True
+            end>
+        end
+      end
+      object Gb_AvariasEndNFeAvarias: TGroupBox
+        Left = 0
+        Top = 0
+        Width = 648
+        Height = 507
+        Align = alClient
+        Caption = ' Nota Fiscal de Entrada de Avarias '
+        Color = clBtnFace
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 2
+        object Dbg_AvariasEndNota: TDBGrid
+          Left = 1
+          Top = 95
+          Width = 646
+          Height = 391
+          Align = alClient
+          DataSource = DMCentralTrocas.DS_NFeAvarias
+          FixedColor = clTeal
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+          ParentFont = False
+          TabOrder = 0
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWhite
+          TitleFont.Height = -11
+          TitleFont.Name = 'MS Sans Serif'
+          TitleFont.Style = [fsBold]
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'COD_PRODUTO'
+              Title.Alignment = taRightJustify
+              Width = 50
+              Visible = True
+            end
+            item
+              Color = 15987699
+              Expanded = False
+              FieldName = 'NOME_PRODUTO'
+              Width = 350
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'QUANTIDADE'
+              Title.Alignment = taRightJustify
+              Width = 50
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'COD_FORNECEDOR'
+              Title.Caption = 'C'#243'd'
+              Visible = False
+            end
+            item
+              Color = 15987699
+              Expanded = False
+              FieldName = 'NOME_FORNECEDOR'
+              Width = 300
+              Visible = True
+            end
+            item
+              Alignment = taCenter
+              Expanded = False
+              FieldName = 'ENDERECAMENTO'
+              Title.Alignment = taCenter
+              Width = 100
+              Visible = True
+            end>
+        end
+        object Pan_AvariasEndApres: TPanel
+          Left = 1
+          Top = 14
+          Width = 646
+          Height = 81
+          Align = alTop
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 1
+          DesignSize = (
+            646
+            81)
+          object Pan_AvariasEndSolic: TPanel
+            Left = 24
+            Top = 3
+            Width = 594
+            Height = 74
+            Anchors = [akTop]
+            BevelOuter = bvNone
+            TabOrder = 0
+            object Label158: TLabel
+              Left = 16
+              Top = 14
+              Width = 52
+              Height = 13
+              Caption = 'Loja Linx'
+            end
+            object Label15: TLabel
+              Left = 251
+              Top = 46
+              Width = 78
+              Height = 13
+              Caption = 'Data Emiss'#227'o'
+            end
+            object Label16: TLabel
+              Left = 150
+              Top = 46
+              Width = 30
+              Height = 13
+              Caption = 'S'#233'rie'
+            end
+            object Label7: TLabel
+              Left = -15
+              Top = 46
+              Width = 84
+              Height = 13
+              Caption = 'N'#186' NF-e Sa'#237'da'
+            end
+            object EdtAvariasEndCodLoja: TCurrencyEdit
+              Left = 73
+              Top = 11
+              Width = 36
+              Height = 21
+              AutoSize = False
+              DecimalPlaces = 0
+              DisplayFormat = '0'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              TabOrder = 0
+              OnChange = EdtAvariasEndCodLojaChange
+              OnExit = EdtAvariasEndCodLojaExit
+            end
+            object Bt_AvariasEndBuscaLoja: TJvXPButton
+              Left = 114
+              Top = 9
+              Width = 26
+              Height = 25
+              TabOrder = 1
+              TabStop = False
+              Glyph.Data = {
+                07544269746D61705E060000424D5E0600000000000036040000280000001600
+                000017000000010008000000000028020000C30E0000C30E0000000100000000
+                000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
+                FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
+                FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000000000000000000000000000000000000000000000000000000000000000
+                0000010101010101010101010101010101010101010101010000010101010101
+                0101010101010101010101040404030100000101010101010101010101010101
+                0101040701070401000001010101010101010101010101010104070101070401
+                0000010101010101010101010101010104070101070704010000010101010101
+                0101010101010104070101070704010100000101010101010101010101010407
+                0101070704010101000001010101010101010101010407010107070401010101
+                0000010101010101010101010407010107070401010101010000010101010101
+                0101010404040307070401010101010100000101010101010404040404040407
+                0401010101010101000001010101040406010601010404040101010101010101
+                0000010101040106010601010101040101010101010101010000010101040601
+                0601060106010401010101010101010100000101040601060101010601060104
+                0101010101010101000001010401060106010601060101040101010101010101
+                0000010104060106010601060106010401010101010101010000010104010601
+                0601060106010104010101010101010100000101010401060101010601060401
+                0101010101010101000001010104060106010601060104010101010101010101
+                0000010101010404010101060404010101010101010101010000010101010101
+                0404040401010101010101010101010100000101010101010101010101010101
+                01010101010101010000}
+              ShowFocusRect = True
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              OnClick = Bt_AvariasEndBuscaLojaClick
+            end
+            object EdtAvariasEndDesLoja: TEdit
+              Left = 145
+              Top = 12
+              Width = 437
+              Height = 19
+              TabStop = False
+              Color = 12171775
+              ReadOnly = True
+              TabOrder = 2
+            end
+            object DtEdtAvariasEndEmissao: TcxDateEdit
+              Left = 335
+              Top = 40
+              ParentFont = False
+              Properties.ReadOnly = False
+              Properties.OnChange = EdtAvariasEndCodLojaChange
+              Style.Font.Charset = DEFAULT_CHARSET
+              Style.Font.Color = clWindowText
+              Style.Font.Height = -13
+              Style.Font.Name = 'MS Sans Serif'
+              Style.Font.Style = [fsBold]
+              Style.IsFontAssigned = True
+              StyleDisabled.ButtonStyle = btsDefault
+              StyleFocused.Color = clSilver
+              TabOrder = 5
+              Width = 94
+            end
+            object EdtAvariasEndSerie: TEdit
+              Left = 184
+              Top = 44
+              Width = 56
+              Height = 19
+              TabOrder = 4
+              OnChange = EdtAvariasEndCodLojaChange
+            end
+            object EdtAvariasEndNota: TCurrencyEdit
+              Left = 73
+              Top = 43
+              Width = 67
+              Height = 21
+              AutoSize = False
+              DecimalPlaces = 0
+              DisplayFormat = '0'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              TabOrder = 3
+              OnChange = EdtAvariasEndCodLojaChange
+            end
+            object Bt_AvariasEndBuscaNFe: TJvXPButton
+              Left = 452
+              Top = 37
+              Width = 128
+              Height = 29
+              Caption = 'Busca Nota'
+              TabOrder = 6
+              Glyph.Data = {
+                07544269746D617066010000424D660100000000000076000000280000001400
+                0000140000000100040000000000F00000000000000000000000100000001000
+                0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+                C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+                FF00333333333333333333330000300000000000003333330000307888888888
+                80333333000030F77777777780333333000030F99777777780333333000030FF
+                FFFFFFFF70333333000030000000000000333333000033333333333333333333
+                0000333003333333333333330000333003333333333333330000333003333330
+                000000030000333003303330FFFFFF030000333008300330F4444F0300003338
+                00000030FFFFFF030000333380000030F4444F030000333333300330FFFFFF03
+                0000333333303330F44F00030000333333333330FFFF00330000333333333330
+                000003330000333333333333333333330000}
+              ShowFocusRect = True
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              OnClick = Bt_AvariasEndBuscaNFeClick
+            end
+          end
+        end
+        object dxStatusBar2: TdxStatusBar
+          Left = 1
+          Top = 486
+          Width = 646
+          Height = 20
+          Panels = <
+            item
+              PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+              PanelStyle.Alignment = taRightJustify
+              PanelStyle.Color = clRed
+              PanelStyle.EllipsisType = dxetSmartPath
+              Text = 'Tipo de NF-e Sa'#237'da:'
+              Width = 122
+            end
+            item
+              PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+              PanelStyle.Alignment = taCenter
+              Fixed = False
+              Text = 'BELCENTER: Devolu'#231#227'o e Venda para CD'
+              Width = 50
+            end
+            item
+              PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+              PanelStyle.Alignment = taCenter
+              Fixed = False
+              Text = 'OUTRAS LOJAS: Transfer'#234'ncias para CD'
+            end>
+          PaintStyle = stpsOffice11
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          Color = 13303807
+        end
+      end
+    end
   end
   object OdirPanApres: TPanel
-    Left = 896
-    Top = 116
+    Left = 912
+    Top = 4
     Width = 89
     Height = 33
     BevelInner = bvLowered
@@ -3764,12 +4321,12 @@ object FrmCentralTrocas: TFrmCentralTrocas
     Font.Style = [fsBold]
     StartColor = 15522303
     EndColor = 8388863
-    Left = 912
-    Top = 352
+    Left = 1032
+    Top = 152
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 812
-    Top = 351
+    Left = 932
+    Top = 151
   end
 end
