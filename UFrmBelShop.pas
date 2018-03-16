@@ -46427,6 +46427,12 @@ begin
   FrmCentralTrocas.Bt_AnaliseRepDiariaFechar.Parent:=FrmCentralTrocas.Pan_AvariasEndercamentos;
   FrmCentralTrocas.Ts_AvariasEndercamentos.TabVisible:=True;
 
+  FrmCentralTrocas.EdtAvariasEndCodLoja.Clear;
+  FrmCentralTrocas.EdtAvariasEndDesLoja.Clear;
+  FrmCentralTrocas.EdtAvariasEndNota.Clear;
+  FrmCentralTrocas.EdtAvariasEndSerie.Clear;
+  FrmCentralTrocas.DtEdtAvariasEndEmissao.Clear;
+
   FrmCentralTrocas.ShowModal;
 
   FrmCentralTrocas.Bt_AnaliseRepDiariaFechar.Parent:=FrmCentralTrocas.Pan_AnaliseRepDiaria;

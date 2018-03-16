@@ -227,7 +227,7 @@ type
     Procedure NuvemMovimentoLinx(sDtaInicial, sDtaFinal: String);
 
     // AVARIAS - ENDEREÇAMENTOS ================================================
-    Procedure NFeAvariasAtaulizaEnderecos;
+    Function NFeAvariasAtualizaEnderecos(sCodForn: String): String;
 
     // Odir ====================================================================
 
@@ -318,6 +318,8 @@ type
     procedure EdtAvariasEndCodLojaChange(Sender: TObject);
     procedure EdtAvariasEndCodLojaExit(Sender: TObject);
     procedure Bt_AvariasEndBuscaLojaClick(Sender: TObject);
+    procedure Bt_AvariasEndImprimirClick(Sender: TObject);
+    procedure Bt_AvariasEndEscanearClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -383,19 +385,21 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
 //==============================================================================
 
 // AVARIAS - ENDEREÇAMENTOS - Atualiza Endereços dos Fornecedores >>>>>>>>>>>>>>
-Procedure TFrmCentralTrocas.NFeAvariasAtaulizaEnderecos;
+Function TFrmCentralTrocas.NFeAvariasAtualizaEnderecos(sCodForn: String): String;
 Var
   iSeq: Integer;
   MySql: String;
 Begin
+  Result:='';
+
   MySql:=' SELECT COALESCE(MAX(CAST(t.des_aux AS INTEGER)),1) Seq'+
          ' FROM TAB_AUXILIAR t'+
          ' WHERE t.tip_aux=23';
-  DMBelShop.CDS_BuscaRapida.Close;
-  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-  DMBelShop.CDS_BuscaRapida.Open;
-  iSeq:=DMBelShop.CDS_BuscaRapida.FieldByName('Seq').AsInteger;
-  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.CDS_Busca1.Close;
+  DMBelShop.SDS_Busca1.CommandText:=MySql;
+  DMBelShop.CDS_Busca1.Open;
+  iSeq:=DMBelShop.CDS_Busca1.FieldByName('Seq').AsInteger;
+  DMBelShop.CDS_Busca1.Close;
 
   // Verifica se Transação esta Ativa
   If DMBelShop.SQLC.InTransaction Then
@@ -406,27 +410,23 @@ Begin
   TD.IsolationLevel:=xilREADCOMMITTED;
   DMBelShop.SQLC.StartTransaction(TD);
   Try // Try da Transação
-    While Not DMBelShop.CDS_Busca.Eof do
-    Begin
-      Inc(iSeq);
+    Inc(iSeq);
 
-      MySql:=' INSERT INTO TAB_AUXILIAR'+
-             ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
-             ' VALUES ('+ //23, 545, '1', NULL, NULL, NULL);
-             ' 23,'+ // TIP_AUX
-             DMBelShop.CDS_Busca.FieldByName('Cod_Fornecedor').AsString+', '+ // COD_AUX
-             IntToStr(iSeq)+', '+ // DES_AUX
-             ' NULL, '+ // DES_AUX1
-             ' NULL, '+ // VLR_AUX
-             ' NULL)';  // VLR_AUX1
-      DMBelShop.SQLC.Execute(MySql, nil,nil);
-
-      DMBelShop.CDS_Busca.Next;
-    End; // While Not DMBelShop.CDS_Busca.Eof do
+    MySql:=' INSERT INTO TAB_AUXILIAR'+
+           ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
+           ' VALUES ('+ //23, 545, '1', NULL, NULL, NULL);
+           ' 23,'+ // TIP_AUX
+           sCodForn+', '+ // COD_AUX
+           IntToStr(iSeq)+', '+ // DES_AUX
+           ' NULL, '+ // DES_AUX1
+           ' NULL, '+ // VLR_AUX
+           ' NULL)';  // VLR_AUX1
+    DMBelShop.SQLC.Execute(MySql, nil,nil);
 
     // Atualiza Transacao ======================================================
     DMBelShop.SQLC.Commit(TD);
 
+    Result:=IntToStr(iSeq);
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -3815,6 +3815,10 @@ begin
 
   PC_PrincipalChange(Self);
 
+  bgSair     :=False;
+  bgEnterTab :=True;
+
+  // Acerta TabSheets ==========================================================
   DtaEdt_ReposLojas.Clear;
   If Ts_ReposLojas.TabVisible Then
   Begin
@@ -6191,6 +6195,8 @@ begin
 
   // Cria Form da Leitora de Codigos de Barras =================================
   FrmLeitoraCodBarras:=TFrmLeitoraCodBarras.Create(Self);
+  FrmBelShop.TabSheetInvisivel(FrmLeitoraCodBarras);
+  FrmLeitoraCodBarras.Ts_LeitoraCheckOut.TabVisible:=True;
 
   // Acerta Controle de Processamento ==========================================
   ReCalculaPosicaoLeitora;
@@ -8410,7 +8416,7 @@ begin
 
   Screen.Cursor:=crAppStart;
 
-  // BUsca Fornecedores se Endereçamento =======================================
+  // Busca Fornecedores se Endereçamento =======================================
   MySql:=' SELECT Distinct p.cod_fornecedor, f.nome_cliente Nome_Fornecedor'+
 
          ' FROM LINXMOVIMENTO m'+
@@ -8455,10 +8461,12 @@ begin
 
   OdirPanApres.Visible:=False;
   Screen.Cursor:=crDefault;
-  If Not DMBelShop.CDS_Busca.Eof Then
+  While Not DMBelShop.CDS_Busca.Eof do
   Begin
-    NFeAvariasAtaulizaEnderecos;
-  End;
+    NFeAvariasAtualizaEnderecos(DMBelShop.CDS_Busca.FieldByName('Cod_Fornecedor').AsString);
+
+    DMBelShop.CDS_Busca.Next;
+  End; // While Not DMBelShop.CDS_Busca.Eof do
   DMBelShop.CDS_Busca.Close;
 
   OdirPanApres.Visible:=True;
@@ -8480,7 +8488,7 @@ begin
          ' AND   m.data_documento='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdtAvariasEndEmissao.Date))))+
          ' AND   m.documento='+EdtAvariasEndNota.Text;
 
-         // Controle da Série do DOcumento
+         // Controle da Série do Documento
          If Trim(EdtAvariasEndSerie.Text)<>'' Then
           MySql:=
            MySql+' AND   m.serie='+EdtAvariasEndSerie.Text
@@ -8501,6 +8509,8 @@ begin
              MySql+' AND   m.operacao=''S'''+
                    ' AND   m.tipo_transacao=''T''';
           End;
+  MySql:=
+   MySql+' ORDER BY 5, 2';
   DMCentralTrocas.CDS_NFeAvarias.Close;
   DMCentralTrocas.SDS_NFeAvarias.CommandText:=MySql;
   DMCentralTrocas.CDS_NFeAvarias.Open;
@@ -8622,6 +8632,115 @@ begin
    End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
 
   FreeAndNil(FrmPesquisa);
+end;
+
+procedure TFrmCentralTrocas.Bt_AvariasEndImprimirClick(Sender: TObject);
+Var
+  MySql: String;
+  dir_padrao, dir_relat: String;
+begin
+  Dbg_AvariasEndNota.SetFocus;
+
+  If DMCentralTrocas.CDS_NFeAvarias.IsEmpty Then
+   Exit;
+
+  Screen.Cursor:=crAppStart;
+  OdirPanApres.Caption:='AGUARDE !! Montando Romaneio...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2));
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Busca Nota Fiscal =========================================================
+  MySql:=' SELECT m.empresa, L.nome_emp,'+
+         '        m.documento, m.serie, Cast(m.data_documento as Date) Dta_Emissao,'+
+         '        p.cod_fornecedor, f.nome_cliente Nome_Fornecedor,'+
+         '        e.des_aux Enderecamento,'+
+         '        m.cod_produto, p.nome Nome_produto,'+
+         '        m.quantidade'+
+
+         ' FROM LINXMOVIMENTO m'+
+         '     LEFT JOIN LINXLOJAS l           ON l.empresa=m.empresa'+
+         '     LEFT JOIN LINXPRODUTOS p        ON p.cod_produto=m.cod_produto'+
+         '     LEFT JOIN LINXCLIENTESFORNEC f  ON f.cod_cliente=p.cod_fornecedor'+
+         '     LEFT JOIN TAB_AUXILIAR e        ON e.tip_aux=23'+
+         '                                    AND e.cod_aux=p.cod_fornecedor'+
+
+         ' WHERE m.codigo_cliente=13'+
+         ' AND   m.empresa='+EdtAvariasEndCodLoja.Text+
+         ' AND   m.data_documento='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdtAvariasEndEmissao.Date))))+
+         ' AND   m.documento='+EdtAvariasEndNota.Text;
+
+         // Controle da Série do Documento
+         If Trim(EdtAvariasEndSerie.Text)<>'' Then
+          MySql:=
+           MySql+' AND   m.serie='+EdtAvariasEndSerie.Text
+         Else
+          MySql:=
+           MySql+' AND   m.serie IS NULL';
+
+         // Loja BelCenter - 23 - Saidas: Devolução e Venda
+         If EdtAvariasEndCodLoja.AsInteger=23 Then
+          Begin
+            MySql:=
+             MySql+' AND   m.operacao in (''S'', ''DS'')'+
+                   ' AND   m.tipo_transacao is NULL'
+          End
+         Else // Outras Lojas - Somente Transferencias
+          Begin
+            MySql:=
+             MySql+' AND   m.operacao=''S'''+
+                   ' AND   m.tipo_transacao=''T''';
+          End;
+  MySql:=
+   MySql+' ORDER BY 5, 2';
+  DMCentralTrocas.CDS_RelRomaneio.Close;
+  DMCentralTrocas.SDS_RelRomaneio.CommandText:=MySql;
+  DMCentralTrocas.CDS_RelRomaneio.Open;
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+
+  If DMCentralTrocas.CDS_RelRomaneio.IsEmpty Then
+  Begin
+    DMCentralTrocas.CDS_RelRomaneio.Close;
+    msg('Nota Não Encontrada !!','A');
+    Exit;
+  End;
+
+  // Apresenta Relatório =======================================================
+  {$IFDEF MSWINDOWS}
+    dir_padrao      := ExtractFilePath(Application.ExeName);
+    dir_relat       := dir_padrao +'Relatorios\';
+  {$ENDIF}
+
+  DMRelatorio.frReport1.LoadFromFile(Dir_Relat+'AvariasRomaneiroEndereco.frf');
+
+  // Apropria DataSet ==========================================================
+  DMRelatorio.frDBDataSet1.DataSet:=DMCentralTrocas.CDS_RelRomaneio;
+
+  DMRelatorio.frReport1.PrepareReport;
+  DMRelatorio.frReport1.ShowReport;
+
+  // Retorna para o DBGrid
+  DMCentralTrocas.CDS_RelRomaneio.Close;
+end;
+
+procedure TFrmCentralTrocas.Bt_AvariasEndEscanearClick(Sender: TObject);
+begin
+  Dbg_AvariasEndNota.SetFocus;
+
+  FrmLeitoraCodBarras:=TFrmLeitoraCodBarras.Create(Self);
+  FrmBelShop.TabSheetInvisivel(FrmLeitoraCodBarras);
+  FrmLeitoraCodBarras.Ts_LeitoraSimples.TabVisible:=True;
+
+  FrmLeitoraCodBarras.ShowModal;
+
+  FreeAndNil(FrmLeitoraCodBarras);
 end;
 
 end.

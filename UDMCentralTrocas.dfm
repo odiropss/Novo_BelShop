@@ -256,8 +256,8 @@ object DMCentralTrocas: TDMCentralTrocas
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_NotasEntr'
-    Left = 163
-    Top = 304
+    Left = 171
+    Top = 224
     object CDS_NotasEntrNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
     end
@@ -321,21 +321,21 @@ object DMCentralTrocas: TDMCentralTrocas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 48
-    Top = 304
+    Left = 56
+    Top = 224
   end
   object DSP_NotasEntr: TDataSetProvider
     DataSet = SDS_NotasEntr
     Options = [poRetainServerOrder]
-    Left = 104
-    Top = 320
+    Left = 112
+    Top = 240
   end
   object CDS_RomaneioDev: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_RomaneioDev'
-    Left = 171
-    Top = 384
+    Left = 179
+    Top = 288
     object CDS_RomaneioDevDES_LOJA: TStringField
       FieldName = 'DES_LOJA'
       Size = 69
@@ -488,19 +488,19 @@ object DMCentralTrocas: TDMCentralTrocas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 48
-    Top = 384
+    Left = 56
+    Top = 288
   end
   object DSP_RomaneioDev: TDataSetProvider
     DataSet = SDS_RomaneioDev
     Options = [poRetainServerOrder]
-    Left = 104
-    Top = 400
+    Left = 112
+    Top = 304
   end
   object DS_RomaneioDev: TDataSource
     DataSet = CDS_RomaneioDev
-    Left = 240
-    Top = 400
+    Left = 248
+    Top = 304
   end
   object CDS_V_Geral: TClientDataSet
     Aggregates = <>
@@ -800,6 +800,7 @@ object DMCentralTrocas: TDMCentralTrocas
     Top = 248
   end
   object CDS_RelReposicao: TClientDataSet
+    Active = True
     Aggregates = <>
     AggregatesActive = True
     Params = <>
@@ -874,14 +875,14 @@ object DMCentralTrocas: TDMCentralTrocas
   object DS_AnaliseReposicao: TDataSource
     DataSet = CDS_V_AnaliseReposicao
     Left = 864
-    Top = 40
+    Top = 8
   end
   object CDS_V_AnaliseReposicao: TClientDataSet
     Aggregates = <>
     Params = <>
     AfterScroll = CDS_Transf_CdAfterScroll
     Left = 790
-    Top = 48
+    Top = 16
   end
   object CDS_V_ReposDivergencias: TClientDataSet
     Aggregates = <>
@@ -944,7 +945,7 @@ object DMCentralTrocas: TDMCentralTrocas
     Params = <>
     ProviderName = 'DSP_ParamTransf'
     Left = 848
-    Top = 128
+    Top = 96
     object CDS_ParamTransfRAZAO_SOCIAL: TStringField
       DisplayLabel = 'Descri'#231#227'o Loja'
       FieldName = 'RAZAO_SOCIAL'
@@ -978,18 +979,18 @@ object DMCentralTrocas: TDMCentralTrocas
     Params = <>
     SQLConnection = DMBelShop.SQLC
     Left = 736
-    Top = 128
+    Top = 96
   end
   object DSP_ParamTransf: TDataSetProvider
     DataSet = SDS_ParamTransf
     Options = [poRetainServerOrder]
     Left = 792
-    Top = 144
+    Top = 112
   end
   object DS_ParamTransf: TDataSource
     DataSet = CDS_ParamTransf
     Left = 909
-    Top = 144
+    Top = 112
   end
   object DS_QtdCxCDProdutos: TDataSource
     DataSet = CDS_QtdCxCDProdutos
@@ -1097,7 +1098,7 @@ object DMCentralTrocas: TDMCentralTrocas
     Params = <>
     ProviderName = 'DSP_AnalRepDiaria'
     Left = 848
-    Top = 256
+    Top = 184
     object CDS_AnalRepDiariaORDEM: TIntegerField
       FieldName = 'ORDEM'
       Required = True
@@ -1242,25 +1243,26 @@ object DMCentralTrocas: TDMCentralTrocas
     Params = <>
     SQLConnection = DMBelShop.SQLC
     Left = 736
-    Top = 256
+    Top = 184
   end
   object DSP_AnalRepDiaria: TDataSetProvider
     DataSet = SDS_AnalRepDiaria
     Options = [poRetainServerOrder]
     Left = 792
-    Top = 272
+    Top = 200
   end
   object DS_AnalRepDiaria: TDataSource
     DataSet = CDS_AnalRepDiaria
     Left = 909
-    Top = 272
+    Top = 200
   end
   object CDS_NFeAvarias: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_NFeAvarias'
+    AfterScroll = CDS_NFeAvariasAfterScroll
     Left = 848
-    Top = 344
+    Top = 296
     object CDS_NFeAvariasCOD_PRODUTO: TFMTBCDField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_PRODUTO'
@@ -1308,25 +1310,25 @@ object DMCentralTrocas: TDMCentralTrocas
     Params = <>
     SQLConnection = DMBelShop.SQLC
     Left = 736
-    Top = 344
+    Top = 296
   end
   object DSP_NFeAvarias: TDataSetProvider
     DataSet = SDS_NFeAvarias
     Options = [poRetainServerOrder]
     Left = 792
-    Top = 360
+    Top = 312
   end
   object DS_NFeAvarias: TDataSource
     DataSet = CDS_NFeAvarias
     Left = 909
-    Top = 360
+    Top = 312
   end
   object CDS_NFeAvariasForneEnd: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_NFeAvariasForneEnd'
     Left = 848
-    Top = 416
+    Top = 360
     object CDS_NFeAvariasForneEndCODIGO: TIntegerField
       FieldName = 'CODIGO'
     end
@@ -1350,17 +1352,43 @@ object DMCentralTrocas: TDMCentralTrocas
     Params = <>
     SQLConnection = DMBelShop.SQLC
     Left = 736
-    Top = 416
+    Top = 360
   end
   object DSP_NFeAvariasForneEnd: TDataSetProvider
     DataSet = SDS_NFeAvariasForneEnd
     Options = [poRetainServerOrder]
     Left = 792
-    Top = 432
+    Top = 376
   end
   object DS_NFeAvariasForneEnd: TDataSource
     DataSet = CDS_NFeAvariasForneEnd
     Left = 909
-    Top = 432
+    Top = 376
+  end
+  object CDS_RelRomaneio: TClientDataSet
+    Aggregates = <>
+    AggregatesActive = True
+    Params = <>
+    ProviderName = 'DSP_RelRomaneio'
+    Left = 163
+    Top = 481
+  end
+  object SDS_RelRomaneio: TSQLDataSet
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 64
+    Top = 481
+  end
+  object DSP_RelRomaneio: TDataSetProvider
+    DataSet = SDS_RelRomaneio
+    Options = [poRetainServerOrder]
+    Left = 112
+    Top = 496
+  end
+  object DS_RelRomaneio: TDataSource
+    DataSet = CDS_RelRomaneio
+    Left = 208
+    Top = 496
   end
 end

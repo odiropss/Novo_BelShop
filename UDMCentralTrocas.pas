@@ -206,6 +206,10 @@ type
     CDS_NFeAvariasForneEndCODIGO: TIntegerField;
     CDS_NFeAvariasForneEndNOME_FORN: TStringField;
     CDS_NFeAvariasForneEndENDERECO: TStringField;
+    CDS_RelRomaneio: TClientDataSet;
+    SDS_RelRomaneio: TSQLDataSet;
+    DSP_RelRomaneio: TDataSetProvider;
+    DS_RelRomaneio: TDataSource;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir
@@ -215,6 +219,7 @@ type
     procedure CDS_ReposicaoDocsAfterScroll(DataSet: TDataSet);
     procedure CDS_V_ReposDivergenciasAfterScroll(DataSet: TDataSet);
     procedure DataModuleCreate(Sender: TObject);
+    procedure CDS_NFeAvariasAfterScroll(DataSet: TDataSet);
         // sDataBase    = Database a Conectar
         // sTransaction = Transaction a Conectar
         // IBQ_Free     = Nome do TIBQuery a Destruir e Reconstruir
@@ -358,6 +363,14 @@ end;
 procedure TDMCentralTrocas.DataModuleCreate(Sender: TObject);
 begin
   bgAfterScroll:=True;
+end;
+
+procedure TDMCentralTrocas.CDS_NFeAvariasAfterScroll(DataSet: TDataSet);
+begin
+  If CDS_NFeAvariasForneEnd.Active Then
+  Begin
+    CDS_NFeAvariasForneEnd.Locate('CODIGO', CDS_NFeAvariasCOD_FORNECEDOR.AsInteger,[]);
+  End; // If CDS_NFeAvarias.Active Then
 end;
 
 end.

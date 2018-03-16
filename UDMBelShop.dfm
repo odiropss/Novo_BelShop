@@ -27,7 +27,7 @@ object DMBelShop: TDMBelShop
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
-    Left = 35
+    Left = 43
     Top = 11
   end
   object SDS_Busca: TSQLDataSet
@@ -8544,7 +8544,7 @@ object DMBelShop: TDMBelShop
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FaltasCDLojas'
-    Left = 551
+    Left = 269
     Top = 516
   end
   object DSP_FaltasCDLojas: TDataSetProvider

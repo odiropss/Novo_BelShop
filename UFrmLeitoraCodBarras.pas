@@ -6,24 +6,43 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, JvExControls, JvXPCore, JvXPButtons, StdCtrls, ExtCtrls, Mask,
   ToolEdit, CurrEdit, MMSystem, JvGradientCaption, JvProgressBar,
-  JvExStdCtrls, JvEdit;
+  JvExStdCtrls, JvEdit, ComCtrls;
 
 type
   TFrmLeitoraCodBarras = class(TForm)
-    Panel1: TPanel;
-    Bt_Processar: TJvXPButton;
-    Bt_Fechar: TJvXPButton;
     CorCaptionForm: TJvGradientCaption;
-    EdtQtdEmbalagem: TCurrencyEdit;
+    PC_Principal: TPageControl;
+    Ts_LeitoraCheckOut: TTabSheet;
+    Ts_LeitoraSimples: TTabSheet;
+    Panel1: TPanel;
     Label1: TLabel;
     Label2: TLabel;
+    Bt_Processar: TJvXPButton;
+    Bt_Fechar: TJvXPButton;
+    EdtQtdEmbalagem: TCurrencyEdit;
     Gb_CheckOut_Erro: TGroupBox;
+    PBar_CheckOut_Erro: TJvGradientProgressBar;
+    Lab_CheckOut_Erro: TLabel;
     Gb_CheckOut_OK: TGroupBox;
     PBar_CheckOut_OK: TJvGradientProgressBar;
-    PBar_CheckOut_Erro: TJvGradientProgressBar;
     Lab_CheckOut_OK: TLabel;
-    Lab_CheckOut_Erro: TLabel;
     EdtCodBarras: TJvEdit;
+    Panel2: TPanel;
+    Label3: TLabel;
+    EdtCodBarrasSimples: TJvEdit;
+    Bt_CodBarrasSimples: TJvXPButton;
+    Bt_CodBarrasSimplesRetornar: TJvXPButton;
+    Panel3: TPanel;
+    EdtCBSProduto: TEdit;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    EdtCBSForn: TEdit;
+    EdtCBSEndereco: TEdit;
+    Label7: TLabel;
+    MemCBSObs: TMemo;
+    Label8: TLabel;
+    EdtCBSCodBarras: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure Bt_FecharClick(Sender: TObject);
@@ -34,6 +53,19 @@ type
     procedure Bt_ProcessarClick(Sender: TObject);
     procedure EdtCodBarrasKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure EdtCodBarrasSimplesChange(Sender: TObject);
+    procedure EdtCodBarrasSimplesKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Bt_CodBarrasSimplesClick(Sender: TObject);
+
+    // ODIR - INICO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    Function BuscaProdutoLinx(sCodBarras: String): Boolean;
+
+    // ODIR - FIM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    procedure Bt_CodBarrasSimplesRetornarClick(Sender: TObject);
+
   private
     { Private declarations }
   public
@@ -46,14 +78,51 @@ var
 
 implementation
 
-uses DK_Procs1, UFrmCentralTrocas;
+uses DK_Procs1, UFrmCentralTrocas, UDMBelShop, UDMCentralTrocas, DBClient,
+  DB;
 
 {$R *.dfm}
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// ODIR - INICO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Busca Produto pelo Codigo de Barras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TFrmLeitoraCodBarras.BuscaProdutoLinx(sCodBarras: String): Boolean;
+Var
+  MySql: String;
+Begin
+  Result:=False;
+
+  // Busca Produto Linx ========================================================
+  MySql:=' SELECT pr.cod_produto'+
+         ' FROM LINXPRODUTOS pr'+
+         ' WHERE pr.cod_barra='+sCodBarras+
+
+         'UNION'+
+
+         ' SELECT cb.cod_produto'+
+         ' FROM LINXPRODUTOSCODBAR cb'+
+         ' WHERE cb.cod_barra='+sCodBarras;
+  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+  DMBelShop.CDS_BuscaRapida.Open;
+  sgCodProdLinx:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString);
+  DMBelShop.CDS_BuscaRapida.Close;
+
+  If Trim(sgCodProdLinx)<>'' Then
+   Result:=True;
+
+End; // Busca Produto pelo Codigo de Barras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// ODIR - FIM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TFrmLeitoraCodBarras.FormCreate(Sender: TObject);
 begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
+
 end;
 
 procedure TFrmLeitoraCodBarras.FormKeyPress(Sender: TObject; var Key: Char);
@@ -83,8 +152,15 @@ begin
   CorCaptionForm.Active:=False;
   CorCaptionForm.Active:=True;
 
-  EdtCodBarras.SetFocus;
+  If Ts_LeitoraCheckOut.CanFocus Then
+  Begin
+    EdtCodBarras.SetFocus;
+  End;
 
+  If Ts_LeitoraSimples.CanFocus Then
+  Begin
+    EdtCodBarrasSimples.SetFocus;
+  End;
 end;
 
 procedure TFrmLeitoraCodBarras.EdtQtdEmbalagemEnter(Sender: TObject);
@@ -130,6 +206,113 @@ begin
   If (key=Vk_Return) And (StrToInt64Def(EdtCodBarras.Text,0)<>0) Then
    Bt_ProcessarClick(Self);
 
+end;
+
+procedure TFrmLeitoraCodBarras.EdtCodBarrasSimplesChange(Sender: TObject);
+begin
+  If Length(EdtCodBarrasSimples.Text)=13 Then
+   Bt_CodBarrasSimplesClick(Self);
+
+end;
+
+procedure TFrmLeitoraCodBarras.EdtCodBarrasSimplesKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  If (key=Vk_Return) And (StrToInt64Def(EdtCodBarrasSimples.Text,0)<>0) Then
+   Bt_CodBarrasSimplesClick(Self);
+
+end;
+
+procedure TFrmLeitoraCodBarras.Bt_CodBarrasSimplesClick(Sender: TObject);
+Var
+  bExisteNF: Boolean;
+  MySql: String;
+  sEndereco: String;
+begin
+  If StrToInt64Def(EdtCodBarrasSimples.Text,0)<>0 Then
+  Begin
+    Screen.Cursor:=crAppStart;
+
+    EdtCBSProduto.Clear;
+    EdtCBSForn.Clear;
+    EdtCBSCodBarras.Clear;
+    EdtCBSEndereco.Clear;
+
+    MemCBSObs.Lines.Clear;
+    MemCBSObs.Color:=clWindow;
+    MemCBSObs.Font.Color:=clWindowText;
+
+
+    // Busca Produtos ==========================================================
+    If Not BuscaProdutoLinx(EdtCodBarrasSimples.Text) Then
+    Begin
+      Screen.Cursor:=crDefault;
+
+      PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
+      msg('Não Foi Encontrado Produto com'+cr+cr+'este Código de Barras !!','A');
+      EdtCodBarrasSimples.SetFocus;
+      Exit;
+    End;
+
+    // Verifia se Este na Nota Fiscal de Avaria ================================
+    bExisteNF:=False;
+    If Not DMCentralTrocas.CDS_NFeAvarias.IsEmpty Then
+     bExisteNF:=DMCentralTrocas.CDS_NFeAvarias.Locate('COD_PRODUTO', sgCodProdLinx,[]);
+
+    // Apresenta Produto que não esta na Nota Fiscal ===========================
+    If Not bExisteNF Then
+    Begin
+      MySql:=' SELECT p.cod_produto, p.nome, p.cod_fornecedor, f.nome_cliente, t.des_aux'+
+             ' FROM LINXPRODUTOS p'+
+             '      LEFT JOIN linxclientesfornec f  ON f.cod_cliente=p.cod_fornecedor'+
+             '      LEFT JOIN TAB_AUXILIAR t        ON t.tip_aux=23'+
+             '                                     AND t.cod_aux=p.cod_fornecedor'+
+             ' WHERE p.cod_produto='+sgCodProdLinx;
+      DMBelShop.CDS_BuscaRapida.Close;
+      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+      DMBelShop.CDS_BuscaRapida.Open;
+      sEndereco:=DMBelShop.CDS_BuscaRapida.FieldByName('Des_Aux').AsString;
+
+      If Trim(sEndereco)='' Then
+       sEndereco:=FrmCentralTrocas.NFeAvariasAtualizaEnderecos(DMBelShop.CDS_BuscaRapida.FieldByName('cod_fornecedor').AsString);
+
+      EdtCBSProduto.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString+' - '+
+                          DMBelShop.CDS_BuscaRapida.FieldByName('Nome').AsString;
+      EdtCBSForn.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('cod_fornecedor').AsString+' - '+
+                       DMBelShop.CDS_BuscaRapida.FieldByName('Nome_Cliente').AsString;
+      EdtCBSCodBarras.Text:=EdtCodBarrasSimples.Text;
+      EdtCBSEndereco.Text:=sEndereco;
+
+      MemCBSObs.Color:=clRed;
+      MemCBSObs.Font.Color:=clWhite;
+      MemCBSObs.Lines.Add('Produto NÃO ENCONTRADO na Nota Fiscal !!');
+
+      DMBelShop.CDS_BuscaRapida.Close;
+      EdtCodBarrasSimples.Clear;
+
+      Screen.Cursor:=crDefault;
+      Exit;
+    End; // If Not bExisteNF Then
+
+    // Apresenta Produto da Nota Fiscal ========================================
+    EdtCBSProduto.Text:=DMCentralTrocas.CDS_NFeAvariasCOD_PRODUTO.AsString+' - '+
+                        DMCentralTrocas.CDS_NFeAvariasNOME_PRODUTO.AsString;
+    EdtCBSForn.Text:=DMCentralTrocas.CDS_NFeAvariasCOD_FORNECEDOR.AsString+' - '+
+                     DMCentralTrocas.CDS_NFeAvariasNOME_FORNECEDOR.AsString;
+    EdtCBSCodBarras.Text:=EdtCodBarrasSimples.Text;
+    EdtCBSEndereco.Text:=DMCentralTrocas.CDS_NFeAvariasENDERECAMENTO.AsString;
+
+    MemCBSObs.Color:=$0080FF80;
+    MemCBSObs.Font.Color:=clWindowText;
+    MemCBSObs.Lines.Add('Produto ENCONTRADO na Nota Fiscal !!');
+
+    Screen.Cursor:=crDefault;
+    EdtCodBarrasSimples.Clear;
+  End; // If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
+end;
+
+procedure TFrmLeitoraCodBarras.Bt_CodBarrasSimplesRetornarClick(Sender: TObject);
+begin
+  Close;
 end;
 
 end.
