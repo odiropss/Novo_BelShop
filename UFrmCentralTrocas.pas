@@ -129,8 +129,6 @@ type
     Ckb_ReposLojasPrioridade1: TJvXPCheckbox;
     Ckb_ReposLojasPrioridade2: TJvXPCheckbox;
     Ckb_ReposLojasPrioridade3: TJvXPCheckbox;
-    GroupBox1: TGroupBox;
-    DBEdit1: TDBEdit;
     Gb_ReposLojasCorredor: TGroupBox;
     CkCbx_ReposLojasCorredor: TJvCheckedComboBox;
     Gb_ReposLojasItens: TGroupBox;
@@ -141,7 +139,6 @@ type
     Bt_ReposLojasBuscaForn: TJvXPButton;
     Bt_ReposLojasLimpaForn: TJvXPButton;
     EdtReposLojasCodForn: TEdit;
-    Bt_ReposLojasGeraPedidoSIDICOM: TJvXPButton;
     Ts_AnaliseReposicoesDiaria: TTabSheet;
     Pan_AnaliseRepDiaria: TPanel;
     Bt_AnaliseRepDiariaDia: TJvXPButton;
@@ -171,6 +168,15 @@ type
     Bt_AvariasEndBuscaNFe: TJvXPButton;
     Bt_AvariasEndEscanear: TJvXPButton;
     dxStatusBar2: TdxStatusBar;
+    GroupBox1: TGroupBox;
+    DBEdit1: TDBEdit;
+    GroupBox2: TGroupBox;
+    DBEdit2: TDBEdit;
+    GroupBox3: TGroupBox;
+    Bt_ReposLojasGeraPedidoSIDICOM: TJvXPButton;
+    EdtReposLojasCalTotQtds: TCurrencyEdit;
+    GroupBox4: TGroupBox;
+    EdtReposLojasTotQtdsSeparar: TCurrencyEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -221,6 +227,8 @@ type
     Procedure AcertaDivergenciasReposicaoLojas;
 
     Procedure GeraReposicaoLINX(sPastaArqLinx: String);
+
+    Procedure TotalQtdsReposicao;
 
     Procedure RomaneioFornecedor;
 
@@ -320,6 +328,9 @@ type
     procedure Bt_AvariasEndBuscaLojaClick(Sender: TObject);
     procedure Bt_AvariasEndImprimirClick(Sender: TObject);
     procedure Bt_AvariasEndEscanearClick(Sender: TObject);
+    procedure Dbg_AvariasEndNotaDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
 
   private
     { Private declarations }
@@ -376,13 +387,58 @@ implementation
 uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
      UDMCentralTrocas, UPesquisaIB, UPesquisa,
      UFrmSelectEmpProcessamento, UFrmSolicitacoes, UDMRelatorio,
-     UFrmLeitoraCodBarras;
+     UFrmLeitoraCodBarras, SysConst;
 
 {$R *.dfm}
 
 //==============================================================================
 // Odir - INICIO ===============================================================
 //==============================================================================
+
+// REPOSIÇÕES - Total de Quantidades de Reposição >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmCentralTrocas.TotalQtdsReposicao;
+Var
+  MySql: String;
+Begin
+  MySql:=' SELECT COALESCE(SUM(l.qtd_a_transf),0) Tot_Qtds,'+
+         ' COALESCE(SUM(DECODE(l.num_pedido,''000000'',l.qtd_a_transf)),0) Tot_Qtds_Sep'+
+
+         ' FROM ES_ESTOQUES_LOJAS l, ES_ESTOQUES_CD c';
+
+         If Trim(EdtReposLojasCodForn.Text)<>'' Then
+          MySql:=
+           MySql+', PRODUTO p';
+
+  MySql:=
+   MySql+' WHERE l.dta_movto=c.dta_movto'+
+         ' AND   l.cod_produto=c.cod_produto';
+
+         If Trim(EdtReposLojasCodForn.Text)<>'' Then
+          MySql:=
+           MySql+' AND   l.cod_produto=p.codproduto';
+
+  MySql:=
+   MySql+' AND   l.dta_movto='+QuotedStr(f_Troca('-','.',(f_Troca('/','.',DateToStr(DtaEdt_ReposLojas.Date)))))+
+         ' AND   l.ind_transf='+QuotedStr('SIM');
+
+         If (Trim(sgTipoPrioridade)<>'') And (sgTipoPrioridade<>'Todas as Prioridades') Then
+          MySql:=
+           MySql+' AND   l.ind_prioridade IN ('+sgTipoPrioridade+')';
+
+         If Trim(sgCorredores)<>'' Then
+          MySql:=
+           MySql+' AND   c.end_zona||''.''||c.end_corredor IN ('+sgCorredores+')';
+
+         If Trim(EdtReposLojasCodForn.Text)<>'' Then
+          MySql:=
+           MySql+' AND   p.principalfor='+QuotedStr(Trim(EdtReposLojasCodForn.Text));
+  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+  DMBelShop.CDS_BuscaRapida.Open;
+  EdtReposLojasCalTotQtds.AsInteger:=DMBelShop.CDS_BuscaRapida.FieldByName('Tot_Qtds').AsInteger;
+  EdtReposLojasTotQtdsSeparar.AsInteger:=DMBelShop.CDS_BuscaRapida.FieldByName('Tot_Qtds_Sep').AsInteger;
+  DMBelShop.CDS_BuscaRapida.Close;
+End; // REPOSIÇÕES - Total de Quantidades de Reposição >>>>>>>>>>>>>>>>>>>>>>>>>
 
 // AVARIAS - ENDEREÇAMENTOS - Atualiza Endereços dos Fornecedores >>>>>>>>>>>>>>
 Function TFrmCentralTrocas.NFeAvariasAtualizaEnderecos(sCodForn: String): String;
@@ -2985,6 +3041,9 @@ Begin
       DMCentralTrocas.CDS_ReposicaoTransf.EnableControls;
       DMCentralTrocas.CDS_ReposicaoTransf.First;
 
+      // Busca Total de Qtds de Reposição ==========================================
+      TotalQtdsReposicao;
+
       // Rollback Transacao -----------------------------------------
       b:=False;
       While Not b do
@@ -3692,6 +3751,8 @@ const
   TipoDoIcone = 1; // Show Hint em Forma de Balão
 begin
 
+  Bt_ReposLojasGeraPedidoSIDICOM.Visible:=False;
+  
   bgSair     :=False;
   bgEnterTab :=True;
 
@@ -5549,6 +5610,9 @@ begin
       DMCentralTrocas.CDS_ReposicaoTransf.EnableControls;
       DMCentralTrocas.CDS_ReposicaoTransf.Locate('NUM_SEQ', iRecNo,[]);
 
+      // Busca Total de Qtds de Reposição ==========================================
+      TotalQtdsReposicao;
+
       Screen.Cursor:=crDefault;
 
     Except
@@ -6148,6 +6212,8 @@ begin
 end;
 
 procedure TFrmCentralTrocas.Bt_ReposLojasCheckOutClick(Sender: TObject);
+Var
+  MySql:String;
 begin
   Dbg_ReposLojasDocs.SetFocus;
 
@@ -6176,27 +6242,62 @@ begin
                                   'Prioridade(s):  '+sgTipoPrioridade+cr+
                                   'Corredor(es):  '+sgMensagem), 'ATENÇÃO !!', 292)=IdNo Then
    Exit;
+
   sgMensagem:='';
-
-  // Retorna IND_LEITORA=FALSE Quando Entra a 1ª Vez ===========================
-  DMCentralTrocas.CDS_ReposicaoTransf.First;
-  DMCentralTrocas.CDS_ReposicaoTransf.DisableControls;
-  While Not DMCentralTrocas.CDS_ReposicaoTransf.Eof do
+  If msg('Deseja ZERAR TODAS as'+cr+cr+'Quantidade Já Checadas ??','C')=1 Then
   Begin
-    DMCentralTrocas.CDS_ReposicaoTransf.Edit;
-    DMCentralTrocas.CDS_ReposicaoTransfIND_LEITORA.AsString:='NAO';
-    DMCentralTrocas.CDS_ReposicaoTransfQTD_CHECKOUT.AsInteger:=0;
-    DMCentralTrocas.CDS_ReposicaoTransf.Post;
+    // Retorna IND_LEITORA=FALSE Quando Entra a 1ª Vez ===========================
+    If DMBelShop.SQLC.InTransaction Then
+     DMBelShop.SQLC.Rollback(TD);
 
-    DMCentralTrocas.CDS_ReposicaoTransf.Next;
-  End; // While Not DMCentralTrocas.CDS_ReposicaoTransf.Eof do
-  DMCentralTrocas.CDS_ReposicaoTransf.EnableControls;
-  DMCentralTrocas.CDS_ReposicaoTransf.First;
+    // Monta Transacao ===========================================================
+    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMBelShop.SQLC.StartTransaction(TD);
+    Try
+      DMCentralTrocas.CDS_ReposicaoTransf.First;
+      DMCentralTrocas.CDS_ReposicaoTransf.DisableControls;
+      While Not DMCentralTrocas.CDS_ReposicaoTransf.Eof do
+      Begin
+        If DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsString='000000' Then
+        Begin
+          DMCentralTrocas.CDS_ReposicaoTransf.Edit;
+          DMCentralTrocas.CDS_ReposicaoTransfIND_LEITORA.AsString:='NAO';
+          DMCentralTrocas.CDS_ReposicaoTransfQTD_CHECKOUT.AsInteger:=0;
+          DMCentralTrocas.CDS_ReposicaoTransf.Post;
+
+          MySql:=' UPDATE ES_ESTOQUES_LOJAS l'+
+                 ' SET L.ind_leitora=''NAO'''+
+                 ', L.qtd_checkout=0'+
+                 ' WHERE l.num_seq='+DMCentralTrocas.CDS_ReposicaoTransfNUM_SEQ.AsString+
+                 ' AND   l.dta_movto='+QuotedStr(f_Troca('-','.',(f_Troca('/','.',DateToStr(DtaEdt_ReposLojas.Date)))))+
+                 ' AND   l.num_docto='+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
+                 ' AND   l.cod_loja='+QuotedStr(DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString)+
+                 ' AND   l.cod_produto='+QuotedStr(DMCentralTrocas.CDS_ReposicaoTransfCOD_PRODUTO.AsString)+
+                 ' AND   l.ind_prioridade='+DMCentralTrocas.CDS_ReposicaoTransfIND_PRIORIDADE.AsString;
+          DMBelShop.SQLC.Execute(MySql,nil,nil);
+        End; // If DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsString<>'000000' Then
+
+        DMCentralTrocas.CDS_ReposicaoTransf.Next;
+      End; // While Not DMCentralTrocas.CDS_ReposicaoTransf.Eof do
+      DMCentralTrocas.CDS_ReposicaoTransf.EnableControls;
+      DMCentralTrocas.CDS_ReposicaoTransf.First;
+
+      // Atualiza Transacao ======================================================
+      DMBelShop.SQLC.Commit(TD);
+
+    Except
+      on e : Exception do
+      Begin
+        // Abandona Transacao ====================================================
+        DMBelShop.SQLC.Rollback(TD);
+        MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      End; // on e : Exception do
+    End; // Try
+  End; // If msg('DESEJA ZERAR TODAS as Quantidade Já Checadas ??','C')=1 Then
 
   // Cria Form da Leitora de Codigos de Barras =================================
   FrmLeitoraCodBarras:=TFrmLeitoraCodBarras.Create(Self);
-  FrmBelShop.TabSheetInvisivel(FrmLeitoraCodBarras);
-  FrmLeitoraCodBarras.Ts_LeitoraCheckOut.TabVisible:=True;
 
   // Acerta Controle de Processamento ==========================================
   ReCalculaPosicaoLeitora;
@@ -6204,6 +6305,9 @@ begin
   // Inicia Processo de CheckOut ===============================================
   Dbg_ReposLojasItens.Options:=[dgTitles,dgIndicator,dgRowLines,dgTabs,dgAlwaysShowSelection];
   FrmLeitoraCodBarras.EdtCodBarras.Text:='0';
+  FrmLeitoraCodBarras.bgCheckOutSimples:=False;  // Separação
+  FrmLeitoraCodBarras.Ts_OBS_Avarias.TabVisible:=False;
+
   FrmLeitoraCodBarras.ShowModal;
   Dbg_ReposLojasItens.Options:=[dgTitles,dgIndicator,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
 
@@ -6506,6 +6610,9 @@ begin
   Screen.Cursor:=crAppStart;
   DtaEdt_ReposLojas.Properties.ReadOnly:=False;
 
+  EdtReposLojasCalTotQtds.AsInteger:=0;
+  EdtReposLojasTotQtdsSeparar.AsInteger:=0;
+
   // Limpa Filtro de Corredores ================================================
   igCorredores      :=0;
   sgCorredores      :='';
@@ -6527,6 +6634,9 @@ begin
   DMCentralTrocas.CDS_ReposicaoTransf.Close;
   DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=False;
   DMCentralTrocas.CDS_ReposicaoTransf.Filter:='';
+
+  // Busca Total de Qtds de Reposição ==========================================
+  TotalQtdsReposicao;
 
   If Trim(DtaEdt_ReposLojas.Text)='' Then
   Begin
@@ -7026,7 +7136,7 @@ end;
 procedure TFrmCentralTrocas.CkCbx_ReposLojasCorredorChange(Sender: TObject);
 Var
   i: Integer;
-  s: String;
+  sForn, sCorr: String;
 begin
   If DMCentralTrocas.CDS_ReposicaoDocs.IsEmpty Then
    Exit;
@@ -7103,6 +7213,9 @@ begin
     DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
   End; // If Trim(EdtReposLojasCodForn.Text)<>'' Then
 
+  // Busca Total de Qtds de Reposição ==========================================
+  TotalQtdsReposicao;
+
   // Atualiza Totais ===========================================================
   If DMCentralTrocas.CDS_ReposicaoTransf.Filter<>sgFilterAtual Then
   Begin
@@ -7114,12 +7227,25 @@ begin
   OdirPanApres.Visible:=False;
   Refresh;
 
-  s:='TODOS os Fornecedores !!';
+//odirapagar - 20/03/2018
+  sForn:='';
+  sCorr:='TODOS os Corredores';
   If Trim(EdtReposLojasCodForn.Text)<>'' Then
-   s:='o Fornecedor'+cr+cr+EdtReposLojasDesForn.Text;
+   sForn:='do Fornecedor'+cr+EdtReposLojasDesForn.Text;
 
-  msg('VOCÊ está Trabalhando com '+s,'A');
+  If Trim(sgCorredores)<>'' Then
+   sCorr:='o(s) Corredor(es) '+f_troca('''','',sgCorredores);
 
+  sgMensagem:=sCorr;
+  If Trim(sForn)<>'' Then
+   sgMensagem:=sgMensagem+cr+sForn;
+
+  If Trim(sgTipoPrioridade)<>'' Then
+   sgMensagem:=sgMensagem+cr+'Prioridades: '+sgTipoPrioridade;
+
+  msg('VOCÊ está Trabalhando com '+cr+sgMensagem,'A');
+
+  sgMensagem:='';
   Dbg_ReposLojasDocs.SetFocus;
 end;
 
@@ -7825,6 +7951,9 @@ begin
     DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
   End; // If Trim(EdtReposLojasCodForn.Text)<>'' Then
 
+  // Busca Total de Qtds de Reposição ==========================================
+  TotalQtdsReposicao;
+
   // Atualiza Totais ===========================================================
   If DMCentralTrocas.CDS_ReposicaoTransf.Filter<>sgFilterAtual Then
   Begin
@@ -8473,7 +8602,7 @@ begin
   Screen.Cursor:=crArrow;
 
   // Busca Nota Fiscal =========================================================
-  MySql:=' SELECT m.cod_produto, p.nome Nome_produto, m.quantidade,'+
+  MySql:=' SELECT m.cod_produto, p.nome Nome_produto, m.quantidade, 0 CheckOut,'+
          '        p.cod_fornecedor, f.nome_cliente Nome_Fornecedor,'+
          '        e.des_aux Enderecamento'+
 
@@ -8735,12 +8864,45 @@ begin
   Dbg_AvariasEndNota.SetFocus;
 
   FrmLeitoraCodBarras:=TFrmLeitoraCodBarras.Create(Self);
-  FrmBelShop.TabSheetInvisivel(FrmLeitoraCodBarras);
-  FrmLeitoraCodBarras.Ts_LeitoraSimples.TabVisible:=True;
+
+  FrmLeitoraCodBarras.bgCheckOutSimples:=True; // Avarias
+  FrmLeitoraCodBarras.Bt_Fechar.Visible:=False;
+  FrmLeitoraCodBarras.Ts_OBS_Reposicao.TabVisible:=False;
 
   FrmLeitoraCodBarras.ShowModal;
 
   FreeAndNil(FrmLeitoraCodBarras);
+end;
+
+procedure TFrmCentralTrocas.Dbg_AvariasEndNotaDrawColumnCell(Sender: TObject;
+          const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If (Column.FieldName='CHECKOUT') Then // Este comando altera cor da Celula
+  Begin
+    If DMCentralTrocas.CDS_NFeAvariasCHECKOUT.AsInteger<>DMCentralTrocas.CDS_NFeAvariasQUANTIDADE.AsInteger Then
+    Begin
+      Dbg_AvariasEndNota.Canvas.Font.Color:=clWhite; // Cor da Fonte
+      Dbg_AvariasEndNota.Canvas.Brush.Color:=clRed; // Cor da Celula
+    End;
+
+    If DMCentralTrocas.CDS_NFeAvariasCHECKOUT.AsInteger=DMCentralTrocas.CDS_NFeAvariasQUANTIDADE.AsInteger Then
+    Begin
+      Dbg_AvariasEndNota.Canvas.Font.Color:=clWindowText; // Cor da Fonte
+      Dbg_AvariasEndNota.Canvas.Brush.Color:=clSkyBlue; // Cor da Celula
+    End;
+  End;
+
+  // Funciona Somente com Isto
+  Dbg_AvariasEndNota.Canvas.FillRect(Rect);
+  Dbg_AvariasEndNota.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  // Alinhamento
+  DMCentralTrocas.CDS_NFeAvariasCOD_PRODUTO.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_NFeAvariasQUANTIDADE.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_NFeAvariasCHECKOUT.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_NFeAvariasCOD_FORNECEDOR.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_NFeAvariasENDERECAMENTO.Alignment:=taCenter;
+
 end;
 
 end.

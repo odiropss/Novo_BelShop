@@ -60,11 +60,11 @@ uses ServerWebServiceGeoBeauty;
 {$R *.dfm}
 
 procedure TfrmWebServiceGeoBeauty.JvXPButton1Click(Sender: TObject);
-begin
+begin                                       
 
 
  Memo1.Lines.Add('consulta Usuario: '+cr+
-                 (HTTPRIO1 as gestoriPortType).consultaUsuario('webservice@lojasbelshop.com.br', '0239ce2e8a824b84a418ab8076a03d98b25c6c97'));
+                 (HTTPRIO1 as gestoriPortType).consultaUsuario('webservice@lojasbelshop.com.br', '9d177b4bd4dabdb759eadd088b3f65f4b4d28788'));
  Memo1.Lines.Add('==================================================================== ');
  ShowMessage('consulta Usuario: OK'+cr+
              'consulta Faturamento:'+cr+
@@ -72,7 +72,7 @@ begin
              'consultaFaturamentoPorTipoPgto: ');
 
  Memo1.Lines.Add('consulta Faturamento: '+cr+
-                (HTTPRIO1 as gestoriPortType).consultaFaturamento('webservice@lojasbelshop.com.br', '0239ce2e8a824b84a418ab8076a03d98b25c6c97',
+                (HTTPRIO1 as gestoriPortType).consultaFaturamento('webservice@lojasbelshop.com.br', '9d177b4bd4dabdb759eadd088b3f65f4b4d28788',
                 '20180314', '20180314'));
  Memo1.Lines.Add('==================================================================== ');
  ShowMessage('consulta Usuario: OK'+cr+
@@ -81,7 +81,7 @@ begin
              'consultaFaturamentoPorTipoPgto: ');
 
  Memo1.Lines.Add('consulta Fechamento: '+cr+
-                (HTTPRIO1 as gestoriPortType).consultaFechamento('webservice@lojasbelshop.com.br', '0239ce2e8a824b84a418ab8076a03d98b25c6c97',
+                (HTTPRIO1 as gestoriPortType).consultaFechamento('webservice@lojasbelshop.com.br', '9d177b4bd4dabdb759eadd088b3f65f4b4d28788',
                 '20180220', '20180225'));
  Memo1.Lines.Add('==================================================================== ');
  ShowMessage('consulta Usuario: OK'+cr+
@@ -90,7 +90,7 @@ begin
              'consultaFaturamentoPorTipoPgto: ');
 
  Memo1.Lines.Add('consultaFaturamentoPorTipoPgto: '+cr+
-                (HTTPRIO1 as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br', '0239ce2e8a824b84a418ab8076a03d98b25c6c97',
+                (HTTPRIO1 as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br', '9d177b4bd4dabdb759eadd088b3f65f4b4d28788',
                 '20180314', '20180314'));
  Memo1.Lines.Add('==================================================================== ');
  ShowMessage('consulta Usuario: OK'+cr+

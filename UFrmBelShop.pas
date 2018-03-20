@@ -44585,7 +44585,7 @@ begin
     Close;
     Exit;
   End;
-
+//OdirApagar
 //  FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
 //  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
 
@@ -44600,6 +44600,7 @@ begin
 
   FrmCentralTrocas.ShowModal;
 
+//OdirApagar
 //  FreeAndNil(FrmCentralTrocas);
 //  FreeAndNil(DMCentralTrocas);
 

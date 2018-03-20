@@ -519,6 +519,7 @@ object DMCentralTrocas: TDMCentralTrocas
     AggregatesActive = True
     Params = <>
     ProviderName = 'DSP_ReposicaoDocs'
+    AfterOpen = CDS_ReposicaoDocsAfterOpen
     AfterScroll = CDS_ReposicaoDocsAfterScroll
     Left = 499
     Top = 104
@@ -580,6 +581,13 @@ object DMCentralTrocas: TDMCentralTrocas
       DisplayFormat = '0,'
       Expression = 'SUM(NUM_PRODUTOS)'
     end
+    object CDS_ReposicaoDocsTot_Qtds: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'Tot_Qtds'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(QTD_ATRANSF)'
+    end
   end
   object SDS_ReposicaoDocs: TSQLDataSet
     CommandText = 
@@ -616,9 +624,11 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object CDS_ReposicaoTransf: TClientDataSet
     Aggregates = <>
+    AggregatesActive = True
     IndexFieldNames = 'ENDERECO; DES_PRODUTO'
     Params = <>
     ProviderName = 'DSP_ReposicaoTransf'
+    AfterOpen = CDS_ReposicaoTransfAfterOpen
     Left = 507
     Top = 160
     object CDS_ReposicaoTransfNUM_SEQ: TSmallintField
@@ -707,6 +717,13 @@ object DMCentralTrocas: TDMCentralTrocas
       FieldName = 'PRINCIPALFOR'
       FixedChar = True
       Size = 6
+    end
+    object CDS_ReposicaoTransfTot_Qtds: TAggregateField
+      Alignment = taRightJustify
+      FieldName = 'Tot_Qtds'
+      Active = True
+      DisplayFormat = '0,'
+      Expression = 'SUM(QTD_A_TRANSF)'
     end
   end
   object SDS_ReposicaoTransf: TSQLDataSet
@@ -800,9 +817,7 @@ object DMCentralTrocas: TDMCentralTrocas
     Top = 248
   end
   object CDS_RelReposicao: TClientDataSet
-    Active = True
     Aggregates = <>
-    AggregatesActive = True
     Params = <>
     ProviderName = 'DSP_RelReposicao'
     Left = 507
@@ -1281,6 +1296,12 @@ object DMCentralTrocas: TDMCentralTrocas
       Precision = 15
       Size = 4
     end
+    object CDS_NFeAvariasCHECKOUT: TIntegerField
+      DisplayLabel = 'CheckOut'
+      FieldName = 'CHECKOUT'
+      Required = True
+      DisplayFormat = '0,'
+    end
     object CDS_NFeAvariasCOD_FORNECEDOR: TIntegerField
       DisplayLabel = 'C'#243'd Forn'
       FieldName = 'COD_FORNECEDOR'
@@ -1298,14 +1319,15 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object SDS_NFeAvarias: TSQLDataSet
     CommandText = 
-      'SELECT'#13#10'm.cod_produto, p.nome Nome_produto,'#13#10'm.quantidade,'#13#10'p.co' +
-      'd_fornecedor, f.nome_cliente Nome_Fornecedor,'#13#10'e.des_aux Enderec' +
-      'amento'#13#10#13#10'FROM linxmovimento m'#13#10'  LEFT JOIN linxprodutos p      ' +
-      '  ON m.cod_produto=p.cod_produto'#13#10'  LEFT JOIN linxclientesfornec' +
-      ' f  ON p.cod_fornecedor=f.cod_cliente'#13#10'  LEFT JOIN tab_auxiliar ' +
-      'e        ON e.tip_aux=23'#13#10'                                 AND e' +
-      '.cod_aux=p.cod_fornecedor'#13#10#13#10'WHERE m.documento=5146'#13#10'AND   m.ser' +
-      'ie=2'#13#10'AND   m.data_documento='#39'01.02.2018'#39#13#10'AND   m.empresa=8'#13#10#13#10
+      'SELECT'#13#10'm.cod_produto, p.nome Nome_produto,'#13#10'm.quantidade, 0 Che' +
+      'ckOut,'#13#10'p.cod_fornecedor, f.nome_cliente Nome_Fornecedor,'#13#10'e.des' +
+      '_aux Enderecamento'#13#10#13#10'FROM linxmovimento m'#13#10'  LEFT JOIN linxprod' +
+      'utos p        ON m.cod_produto=p.cod_produto'#13#10'  LEFT JOIN linxcl' +
+      'ientesfornec f  ON p.cod_fornecedor=f.cod_cliente'#13#10'  LEFT JOIN t' +
+      'ab_auxiliar e        ON e.tip_aux=23'#13#10'                          ' +
+      '       AND e.cod_aux=p.cod_fornecedor'#13#10#13#10'WHERE m.documento=5146'#13 +
+      #10'AND   m.serie=2'#13#10'AND   m.data_documento='#39'01.02.2018'#39#13#10'AND   m.e' +
+      'mpresa=8'#13#10#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
@@ -1367,7 +1389,6 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object CDS_RelRomaneio: TClientDataSet
     Aggregates = <>
-    AggregatesActive = True
     Params = <>
     ProviderName = 'DSP_RelRomaneio'
     Left = 163

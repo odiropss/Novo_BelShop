@@ -4,6 +4,8 @@ object DMBelShop: TDMBelShop
   Left = 234
   Top = 113
   Height = 611
+  HorizontalOffset = 282
+  VerticalOffset = 149
   Width = 1115
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'

@@ -210,6 +210,9 @@ type
     SDS_RelRomaneio: TSQLDataSet;
     DSP_RelRomaneio: TDataSetProvider;
     DS_RelRomaneio: TDataSource;
+    CDS_NFeAvariasCHECKOUT: TIntegerField;
+    CDS_ReposicaoTransfTot_Qtds: TAggregateField;
+    CDS_ReposicaoDocsTot_Qtds: TAggregateField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir
@@ -220,6 +223,8 @@ type
     procedure CDS_V_ReposDivergenciasAfterScroll(DataSet: TDataSet);
     procedure DataModuleCreate(Sender: TObject);
     procedure CDS_NFeAvariasAfterScroll(DataSet: TDataSet);
+    procedure CDS_ReposicaoDocsAfterOpen(DataSet: TDataSet);
+    procedure CDS_ReposicaoTransfAfterOpen(DataSet: TDataSet);
         // sDataBase    = Database a Conectar
         // sTransaction = Transaction a Conectar
         // IBQ_Free     = Nome do TIBQuery a Destruir e Reconstruir
@@ -240,7 +245,8 @@ var
 
 implementation
 
-uses UDMBelShop, UDMConexoes, UFrmCentralTrocas, UFrmSolicitacoes;
+uses UDMBelShop, UDMConexoes, UFrmCentralTrocas, UFrmSolicitacoes,
+  CurrEdit;
 
 {$R *.dfm}
 
@@ -371,6 +377,19 @@ begin
   Begin
     CDS_NFeAvariasForneEnd.Locate('CODIGO', CDS_NFeAvariasCOD_FORNECEDOR.AsInteger,[]);
   End; // If CDS_NFeAvarias.Active Then
+end;
+
+procedure TDMCentralTrocas.CDS_ReposicaoDocsAfterOpen(DataSet: TDataSet);
+begin
+  // Busca Total de Qtds de Reposição ==========================================
+//  FrmCentralTrocas.TotalQtdsReposicao;
+end;
+
+procedure TDMCentralTrocas.CDS_ReposicaoTransfAfterOpen(DataSet: TDataSet);
+begin
+  // Busca Total de Qtds de Reposição ==========================================
+//  FrmCentralTrocas.TotalQtdsReposicao;
+
 end;
 
 end.
