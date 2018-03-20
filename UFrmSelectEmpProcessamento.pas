@@ -309,8 +309,8 @@ begin
   Ckb_SelectEmpProcECommerce.Checked:=False;
 
 
-         If bgSelectSoLinx Then
-          Dbg_SelectEmpProc.Columns[1].Visible:=False;
+  If bgSelectSoLinx Then
+   Dbg_SelectEmpProc.Columns[1].Visible:=False;
 
   // Busca Dados das Lojs SIDICOM ==============================================
   If Not bgSelectSoLinx Then
@@ -414,8 +414,10 @@ begin
            ' e.DTA_INICIO_LINX,'+
            ' e.DTA_INVENTARIO_LINX'+
 
-           ' From LINXLOJAS l'+
-           '      Left Join EMP_CONEXOES e on e.cod_linx=l.empresa'+
+           ' From LINXLOJAS l, EMP_CONEXOES e'+
+           ' Where l.empresa=e.cod_linx'+
+           ' and   ((e.ind_ativo=''SIM'') Or (e.cod_linx=2))'+
+
            ' Order by l.nome_emp';
   End; // If bgSelectSoLinx Then
   DMBelShop.CDS_EmpProcessa.Close;
