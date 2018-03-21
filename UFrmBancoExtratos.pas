@@ -342,11 +342,13 @@ type
                                     // iTipo=3 EdtConcManutExtratoVlr    Busca em DMConciliacao.DS_CMPagtos
                                     // iTipo=4 EdtConcManutPagtoVlr      Busca em DMConciliacao.DS_CMExtratos
 
-    Function DiaFechadoRenato(sCodLjLinx, sDia: String): Boolean;
+    Function  DiaFechadoRenato(sCodLjLinx, sDia: String): Boolean;
 
     Procedure ConcDepositosFechamentoDia;
 
     Procedure ConcDepositoFaturamentoDinheiro(sDia: String);
+
+    Function  ConcDepositoWebServiceGeoBeautyPagtos: Boolean;
 
     // Odir FIM ////////////////////////////////////////////////////////////////
 
@@ -580,6 +582,48 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
 // Odir - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// CONCILIAÇÕES PAGTOS/DEPOSITOS - Web Service GoeBeauty (Pagtos) >>>>>>>>>>>>>>
+Function TFrmBancoExtratos.ConcDepositoWebServiceGeoBeautyPagtos: Boolean;
+Var
+  tsArquivo: TStringList;
+  wDia, wMes, wAno: Word;
+
+  sChaveAcessoGeo, sParametro: String;
+Begin
+  // Web Service Linx ==========================================================
+  OdirPanApres.Caption:='AGUARDE !! Atualizando Pagtos de Salão GeoBeauty - CLOUD';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBancoExtratos;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  Screen.Cursor:=crAppStart;
+
+  // Gera Chave de Acesso GeoBeauty ============================================
+  tsArquivo:=TStringList.Create;
+
+  Try
+    tsArquivo.Add('102030'); // Codigo do Usuario
+    tsArquivo.Add('302cllddf4301tu10sxvjh13070ueruih897634982'); // Chave da Empresa
+    tsArquivo.Add(DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)));
+
+    tsArquivo.SaveToFile(sPath_Local+'Odir.TXT');
+  Finally // Try
+    { Libera a instancia da lista da memória }
+    FreeAndNil(tsArquivo);
+  End; // Try
+
+  // Cria Chave de Acesso do Dia ===============================================
+  sParametro:=sPath_Local+'PCriptografiaGeoBeauty.exe '+sPath_Local+'Odir.TXT';
+//  sParametro:='C:\Projetos\Delphi XE2\Criptografia GeoBeauty\Win32\Debug\PCriptografiaGeoBeauty.exe" "C:\Projetos\Delphi XE2\Criptografia GeoBeauty\Odir.TXT';
+  CreateProcessSimple(sParametro);
+
+End; // CONCILIAÇÕES PAGTOS/DEPOSITOS - Web Service GoeBeauty (Pagtos) >>>>>>>>>
+
 // CONCILIAÇÕES PAGTOS/DEPOSITOS - Atualiza Faturamento em Dinheiro no Dia >>>>>
 Procedure TFrmBancoExtratos.ConcDepositoFaturamentoDinheiro(sDia: String);
 Var
@@ -641,7 +685,6 @@ Begin
          '  AND  mv.total_dinheiro<>0.00'+
          '  AND  mv.data_lancamento='+QuotedStr(sDia)+')  Dinh'+
          ' GROUP BY 1';
-//odirapagar         '  AND  mv.Empresa='+DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString+')  Dinh';
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
   DMBelShop.CDS_BuscaRapida.Open;
@@ -1609,7 +1652,7 @@ Begin
          '    WHEN p.ind_quem is not null THEN'+
          '      ''SIM'''+
          '    ELSE'+
-         '     ''NAO'''+
+         '     ''NAO'''+                                    
          ' END "Conciliar?",'+
 
          ' b.num_banco, b.des_banco, b.num_agencia, b.num_conta,'+
@@ -13035,19 +13078,20 @@ begin
   sgDtaF:=ss;
 
   //============================================================================
-  // Busca Movtos de Sangria e Suprimento de Caixa no Linx (Cloud) =============
+  // Busca Movtos Web Services: Sangria/Suprimento Linx e Pagtos GeoBeauty =====
   //============================================================================
   PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
   bAtualizaLinx:=False;
-  if msg('ATUALIZAR Dados do Linx (Nuvem) no'+cr+'Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
+  if msg('ATUALIZAR Dados do Linx/GeoBeauty (Nuvem) no'+cr+'Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
   Begin
     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-    if msg('Deseja Realmente ATUALIZAR'+cr+cr+'Dados do Linx (Nuvem) ??', 'C')=1 Then
+    if msg('Deseja Realmente ATUALIZAR'+cr+cr+'Dados do Linx/GeoBeauty (Nuvem) ??', 'C')=1 Then
      bAtualizaLinx:=True;
   End; // if msg('ATUALIZAR Dados do Linx (Nuvem) no'+cr+'Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
 
   If bAtualizaLinx Then
   Begin
+    // Web Service Linx ========================================================
     OdirPanApres.Caption:='AGUARDE !! Atualizando Sangrias de Caixa LINX - CLOUD';
     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
     OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
@@ -13058,7 +13102,7 @@ begin
     OdirPanApres.Visible:=True;
     Refresh;
 
-    // Busca Lojas Linx ==========================================================
+    // Busca Lojas Linx ========================================================
     MySql:=' SELECT em.cod_linx'+
            ' FROM EMP_CONEXOES em'+
            ' WHERE em.cod_linx<>0'+
@@ -13072,6 +13116,7 @@ begin
     pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
     pgProgBar.Position:=0;
 
+    // WebService Linx =========================================================
     DMBelShop.CDS_Busca.DisableControls;
     While Not DMBelShop.CDS_Busca.Eof do
     Begin
@@ -13085,7 +13130,7 @@ begin
       sParametros:=sParametros+' "'+sgDtaI+'"'; // Data Inicial
       sParametros:=sParametros+' "'+sgDtaF+'"'; // Data Final
 
-      // Envia Parametro e Aguarda Termino do Processo =============================
+      // Envia Parametro e Aguarda Termino do Processo =========================
       CreateProcessSimple(sParametros);
 
       pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
@@ -13095,8 +13140,14 @@ begin
     DMBelShop.CDS_Busca.EnableControls;
     DMBelShop.CDS_Busca.Close;
     FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
+
+    OdirPanApres.Visible:=False;
+
+    // Web Service GoeBeauty (Pagtos) ==========================================
+    WebServiceGeoBeautyPagtos;
+
   End; // If bAtualizaLinx Then
-  // Busca Movtos de Sangria e Suprimento de Caixa no Linx (Cloud) =============
+  // Busca Movtos Web Services: Sangria/Suprimento Linx e Pagtos GeoBeauty =====
   //============================================================================
 
   // Insere Novos Depositos se Buscou Dados no Linx ============================

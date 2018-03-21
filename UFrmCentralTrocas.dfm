@@ -408,7 +408,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
     Top = 0
     Width = 1102
     Height = 578
-    ActivePage = Ts_ReposLojas
+    ActivePage = Ts_AvariasEndercamentos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -3977,6 +3977,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           TitleFont.Height = -11
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = [fsBold]
+          OnEnter = Dbg_AvariasEndFornecedoresEnter
           Columns = <
             item
               Expanded = False
@@ -4037,6 +4038,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = [fsBold]
           OnDrawColumnCell = Dbg_AvariasEndNotaDrawColumnCell
+          OnEnter = Dbg_AvariasEndNotaEnter
           Columns = <
             item
               Expanded = False

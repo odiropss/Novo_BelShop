@@ -331,6 +331,8 @@ type
     procedure Dbg_AvariasEndNotaDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
+    procedure Dbg_AvariasEndNotaEnter(Sender: TObject);
+    procedure Dbg_AvariasEndFornecedoresEnter(Sender: TObject);
 
   private
     { Private declarations }
@@ -5123,8 +5125,8 @@ procedure TFrmCentralTrocas.ApplicationEvents1Message(var Msg: tagMSG; var Handl
 var
   Sentido: SmallInt;
 begin
-  // primeiramente verificamos se é o evento a ser tratado...
-  If Msg.message = WM_MOUSEWHEEL then
+  //(ERRO) ACERTA ROLAGEM DO MOUSE (SCROLL)
+  If Msg.message = WM_MOUSEWHEEL then // primeiramente verificamos se é o evento a ser tratado...
   Begin
     Msg.message := WM_KEYDOWN;
     Msg.lParam := 0;
@@ -8639,7 +8641,7 @@ begin
                    ' AND   m.tipo_transacao=''T''';
           End;
   MySql:=
-   MySql+' ORDER BY 5, 2';
+   MySql+' ORDER BY 2';
   DMCentralTrocas.CDS_NFeAvarias.Close;
   DMCentralTrocas.SDS_NFeAvarias.CommandText:=MySql;
   DMCentralTrocas.CDS_NFeAvarias.Open;
@@ -8902,6 +8904,22 @@ begin
   DMCentralTrocas.CDS_NFeAvariasCHECKOUT.Alignment:=taRightJustify;
   DMCentralTrocas.CDS_NFeAvariasCOD_FORNECEDOR.Alignment:=taRightJustify;
   DMCentralTrocas.CDS_NFeAvariasENDERECAMENTO.Alignment:=taCenter;
+
+end;
+
+procedure TFrmCentralTrocas.Dbg_AvariasEndNotaEnter(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=Dbg_AvariasEndNotaEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmCentralTrocas.Dbg_AvariasEndFornecedoresEnter(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=Dbg_AvariasEndFornecedoresEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
 
 end;
 
