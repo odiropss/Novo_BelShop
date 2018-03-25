@@ -20,6 +20,7 @@ uses
   JvXPCore, JvXPButtons, ExtCtrls, DBGrids, Classes, SysUtils, Comobj, Variants,
   StrUtils, Messages, Dialogs,
   IBQuery, DBXpress, DBClient, dxSkinsdxStatusBarPainter, dxStatusBar, MMSystem,
+  SOAPHTTPClient, // WebService
   JvSwitch;
 
 type
@@ -313,7 +314,8 @@ type
 
     // CONCILIAÇÕES DEPOSITOS //////////////////////////////////////////////////
     Procedure HabilitaBotoesDep(b: Boolean);
-    Function  AtualizaMovtosDepositos: Boolean;
+    Function  AtualizaMovtosDepositosLinx: Boolean;
+    Function  AtualizaMovtosDepositosGeoBeauty: Boolean;
 
     Function  PodeConciliarDepositos(iExtrato, iPagto: Integer): Boolean;
 
@@ -574,7 +576,7 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
      UPesquisaIB, UDMBancosConciliacao, UPesquisa,
      UFrmBelShop, UFrmTiposConciliacao, Contnrs, UFrmApresConciliacao,
      UFrmSolicitacoes, UFrmPeriodoApropriacao, DB, ComConst, SysConst,
-  UFrmConfirmacao, DateUtils;
+     UFrmConfirmacao, DateUtils, GeoBeautyServerWebService;
 
 {$R *.dfm}
 
@@ -585,10 +587,25 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
 // CONCILIAÇÕES PAGTOS/DEPOSITOS - Web Service GoeBeauty (Pagtos) >>>>>>>>>>>>>>
 Function TFrmBancoExtratos.ConcDepositoWebServiceGeoBeautyPagtos: Boolean;
 Var
+  MySql: String;
+
   tsArquivo: TStringList;
   wDia, wMes, wAno: Word;
 
-  sChaveAcessoGeo, sParametro: String;
+  sDtaIncio,sDtaFim: String;
+
+  sChaveAcessoGeo,
+  sParametro,
+  sRetornoPagtos, // Recebe Retorno da WebService GeoBeauty
+  sRegistro: String;      // Recebe Registro Unico
+
+  SoapHTTPRIO: THTTPRIO;
+
+  mMemo: TMemo; // Monta retorno com Separadores com Dois_Pontos (:)
+  ii, i: Integer;
+  b, bb: Boolean;
+
+  sLojaLinx, sLojaSidicom, sNrDocto: String;
 Begin
   // Web Service Linx ==========================================================
   OdirPanApres.Caption:='AGUARDE !! Atualizando Pagtos de Salão GeoBeauty - CLOUD';
@@ -603,7 +620,9 @@ Begin
 
   Screen.Cursor:=crAppStart;
 
+  //============================================================================
   // Gera Chave de Acesso GeoBeauty ============================================
+  //============================================================================
   tsArquivo:=TStringList.Create;
 
   Try
@@ -619,8 +638,237 @@ Begin
 
   // Cria Chave de Acesso do Dia ===============================================
   sParametro:=sPath_Local+'PCriptografiaGeoBeauty.exe '+sPath_Local+'Odir.TXT';
-//  sParametro:='C:\Projetos\Delphi XE2\Criptografia GeoBeauty\Win32\Debug\PCriptografiaGeoBeauty.exe" "C:\Projetos\Delphi XE2\Criptografia GeoBeauty\Odir.TXT';
+
   CreateProcessSimple(sParametro);
+  // Gera Chave de Acesso GeoBeauty ============================================
+  //============================================================================
+
+  //============================================================================
+  // Busca Chave de Acesso Criada ==============================================
+  //============================================================================
+  tsArquivo:=TStringList.Create;
+
+  Try
+    tsArquivo.LoadFromFile(sPath_Local+'CriptografiaGeoBeautyRet.TXT');
+
+    sChaveAcessoGeo:=tsArquivo[0];
+  Finally // Try
+    { Libera a instancia da lista da memória }
+    FreeAndNil(tsArquivo);
+  End; // Try
+  // Busca Chave de Acesso Criada ==============================================
+  //============================================================================
+
+  //============================================================================
+  // Acerta Datas do Período ===================================================
+  //============================================================================
+  // Data do Inicio do Período
+  DecodeDate(StrToDate(sgDtaI), wAno, wMes, wDia);
+  sDtaIncio:=IntToStr(wAno);
+  If wMes<10 Then
+   sDtaIncio:=sDtaIncio+'0'+IntToStr(wMes)
+  Else
+   sDtaIncio:=sDtaIncio+IntToStr(wMes);
+
+  If wDia<10 Then
+   sDtaIncio:=sDtaIncio+'0'+IntToStr(wDia)
+  Else
+   sDtaIncio:=sDtaIncio+IntToStr(wDia);
+
+  // Data do Fim do Período
+  DecodeDate(StrToDate(sgDtaF), wAno, wMes, wDia);
+  sDtaFim:=IntToStr(wAno);
+  If wMes<10 Then
+   sDtaFim:=sDtaFim+'0'+IntToStr(wMes)
+  Else
+   sDtaFim:=sDtaFim+IntToStr(wMes);
+
+  If wDia<10 Then
+   sDtaFim:=sDtaFim+'0'+IntToStr(wDia)
+  Else
+   sDtaFim:=sDtaFim+IntToStr(wDia);
+  // Acerta Datas do Período ===================================================
+  //============================================================================
+
+
+  //============================================================================
+  // Consome Pagamentos da GeoBeauty Web Service ===============================
+  //============================================================================
+  SoapHTTPRIO:=THTTPRIO.Create(Self);
+  SoapHTTPRIO.WSDLLocation:='http://aplicativo.geobeauty.com.br/aplicativo/webservices/ws-salao/server.php?wsdl';
+  SoapHTTPRIO.Port:='gestoriPort';
+  SoapHTTPRIO.Service:='gestori';
+
+  Try
+    sRetornoPagtos:=(SoapHTTPRIO as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br',sChaveAcessoGeo, sDtaIncio, sDtaFim);
+  Except
+    on e : Exception do
+    Begin
+      OdirPanApres.Visible:=False;
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('WebServices GeoBeauty Erro:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Exit;
+    End; // on e : Exception do
+  End;
+
+  // Monta o Arquivo para Com Separadores Dois_Pontos (:) ======================
+  mMemo:=TMemo.Create(Self);
+  mMemo.Visible:=False;
+  mMemo.Parent:=FrmBelShop;
+  mMemo.Width:=1000;
+  mMemo.Lines.Clear;
+
+  // Retira os 1 Primeiro Caracter =============================================
+  delete(sRetornoPagtos,1,1);
+
+  // Retira os 2 Últimos Caracteres ============================================
+  delete(sRetornoPagtos,length(sRetornoPagtos)-1,2);
+
+  // Coloca Virgula no Ultimo Caracter =========================================
+  sRetornoPagtos:=sRetornoPagtos+',"';
+
+  // Ajusta Retorno para 1 Registro por Linha Separados por Dois_Pontos (:) ====
+  b:=True;
+  While b do
+  Begin
+    i:=pos('},"', sRetornoPagtos);
+
+    If i<>0 Then
+    Begin
+      // Pega Registro da Loja Somente UM Dia ==================================
+      sRegistro:=copy(sRetornoPagtos,1,i+2);
+
+      // Retina CNPJ e Data do Inicio do Registro ==============================
+      bb:=True;
+      While bb do
+      Begin
+        ii:=pos('":{"', sRegistro);
+
+        If ii=0 Then
+         Break;
+
+        Delete(sRegistro,1,ii+2);
+      end; // While bb do
+
+      // Substitui no Registro =================================================
+      // Aspas: "
+      // Chave Aberta: {
+      // Chave Fechada: }
+      // Substituir: Virgula (,) por DoisPontos (:)
+      sRegistro:=f_Troca('"','',f_Troca('{','',f_Troca('}','',f_Troca(',',':',sRegistro))));
+
+      // Substituir Ponto (.) por Virgula (,) Nos Valores no Registro ==========
+      sRegistro:=f_Troca('.',',',sRegistro);
+
+      // Acerta Separador de Data no Registro ==================================
+      sRegistro:=f_Troca('\/','/',sRegistro);
+
+      // Adiciona o Registro no Memo ===========================================
+      mMemo.Lines.Add(sRegistro);
+
+      // Exclui Registro do Arquivo de Retorno =================================
+      Delete(sRetornoPagtos,1,i+2);
+    End; // If i<>0 Then
+
+    If Trim(sRetornoPagtos)='' Then
+     Break;
+  End; // While b do
+  // Consome Pagamentos da GeoBeauty Web Service ===============================
+  //============================================================================
+
+  //============================================================================
+  // Insere Pagamentos GeoBeauty no Banco de Dados ==============================
+  //============================================================================
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    FrmBelShop.MontaProgressBar(True, FrmBancoExtratos);
+    pgProgBar.Properties.Max:=mMemo.Lines.Count;
+    pgProgBar.Position:=0;
+
+    For i:=0 to mMemo.Lines.Count-1 do
+    Begin
+      Application.ProcessMessages;
+
+      // Busca Codigo da Loja Linx/Sidicom =====================================
+      MySql:=' SELECT l.empresa, l.cod_loja'+
+             ' FROM LINXLOJAS l'+
+             ' WHERE l.cnpj_emp='+QuotedStr(Trim(Separa_String(mMemo.Lines[i],10,':')));
+      DMBelShop.CDS_BuscaRapida.Close;
+      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+      DMBelShop.CDS_BuscaRapida.Open;
+      sLojaLinx   :=DMBelShop.CDS_BuscaRapida.FieldByName('Empresa').AsString;
+      sLojaSidicom:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Loja').AsString;
+      DMBelShop.CDS_BuscaRapida.Close;
+
+      // Monta Numero do Documento =============================================
+      DecodeDate(StrToDate(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(mMemo.Lines[i],14,':'))))), wAno, wMes, wDia);
+      sNrDocto:=IntToStr(wDia);
+
+      If wMes<10 Then
+       sNrDocto:=sNrDocto+'0'+IntToStr(wMes)
+      Else
+       sNrDocto:=sNrDocto+IntToStr(wMes);
+
+      sNrDocto:=sNrDocto+Copy(IntToStr(wAno),length(IntToStr(wAno))-1,2);
+
+      // Insert/UpDate do Registro =============================================
+      MySql:=' UPDATE OR INSERT INTO GEOBEAUTY_PAGTOS'+
+             ' (EMPRESA, CNPJ_LOJA, NOME_LOJA, NUM_DOCTO, DTA_PAGTO, VLR_CHEQUE,'+
+             '  VLR_CARTAO, VLR_DINHEIRO, VLR_TOTAL, COD_LOJA,'+
+             '  DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
+             ' VALUES ('+
+             sLojaLinx+', '+ // EMPRESA
+             QuotedStr(Trim(Separa_String(mMemo.Lines[i],10,':')))+', '+ // CNPJ_LOJA
+             QuotedStr(Trim(Separa_String(mMemo.Lines[i],12,':')))+', '+ // NOME_LOJA
+             QuotedStr(sNrDocto)+', '+ // NUM_DOCTO
+             QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(mMemo.Lines[i],14,':')))))+', '+ // DTA_PAGTO
+             QuotedStr(f_Troca(',','.',Trim(Separa_String(mMemo.Lines[i], 2,':'))))+', '+ // VLR_CHEQUE
+             QuotedStr(f_Troca(',','.',Trim(Separa_String(mMemo.Lines[i], 4,':'))))+', '+ // VLR_CARTAO
+             QuotedStr(f_Troca(',','.',Trim(Separa_String(mMemo.Lines[i], 6,':'))))+', '+ // VLR_DINHEIRO
+             QuotedStr(f_Troca(',','.',Trim(Separa_String(mMemo.Lines[i], 8,':'))))+', '+ // VLR_TOTAL
+             QuotedStr(sLojaSidicom)+', '+ // COD_LOJA SIDICOM
+             ' CURRENT_DATE, '+ // DTA_ATUALIZACAO
+             ' CURRENT_TIME)'+  // HRA_ATUALIZACAO
+             ' MATCHING (EMPRESA, NUM_DOCTO, DTA_PAGTO)';
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+      pgProgBar.Position:=i+1;
+    End; // For i:=0 to mMemo.Lines.Count-1 do
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      MessageBox(Handle, pChar('WebServices GeoBeauty Erro:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
+
+
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+
+  FreeAndNil(mMemo);
 
 End; // CONCILIAÇÕES PAGTOS/DEPOSITOS - Web Service GoeBeauty (Pagtos) >>>>>>>>>
 
@@ -1914,8 +2162,8 @@ Begin
 //   Result:=False;
 End; // CONCILIAÇÕES DEPOSITOS - Verifica se Pode Conciliar >>>>>>>>>>>>>>>>>>>>
 
-// CONCILIAÇÕES DEPOSITOS - Atualiza Movtos Depositos >>>>>>>>>>>>>>>>>>>>>>>>>>
-Function TFrmBancoExtratos.AtualizaMovtosDepositos: Boolean;
+// CONCILIAÇÕES DEPOSITOS - Atualiza Movtos Depositos GeoBeauty >>>>>>>>>>>>>>>>
+Function TFrmBancoExtratos.AtualizaMovtosDepositosGeoBeauty: Boolean;
 Var
   MySql: String;
 
@@ -1928,7 +2176,186 @@ Var
 Begin
   Result:=True;
 
-  OdirPanApres.Caption:='AGUARDE !! Atualizando Depósitos/Conciliações no Período de '+sgDtaI+' a '+sgDtaF;
+  OdirPanApres.Caption:='AGUARDE !! Atualizando Depósitos/Conciliações (GeoBeauty) no Período de '+sgDtaI+' a '+sgDtaF;
+
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBancoExtratos;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    //==========================================================================
+    // Insere Novos Movtos Pagamentos ==========================================
+    //==========================================================================
+    // Busca Pagtos para Analise no Periodo Solicitado =========================
+    MySql:=' SELECT'+
+           ' p.cod_loja COD_LOJA,'+
+           ' p.empresa COD_LINX,'+
+           ' p.num_docto NUM_DOCTO,'+
+           ' p.dta_pagto DTA_DOCTO,'+
+           ' 999999 COD_HISTORICO,'+
+           ' ''SALÃO'' OBS_TEXTO,'+
+           ' p.vlr_dinheiro VLR_DOCTO'+
+
+           ' FROM GEOBEAUTY_PAGTOS p'+
+
+           ' WHERE p.dta_pagto BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
+                                         QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
+           // Retira Dias Já Fechado Pelo Renato
+           ' AND   NOT EXISTS (SELECT 1'+
+           '                   FROM TAB_AUXILIAR fh'+
+           '                   WHERE fh.cod_aux=p.empresa'+
+           '                   AND   fh.tip_aux=22'+
+           '                   AND   Trim(fh.des_aux)=Cast(lpad(extract(day from p.dta_pagto),2,''0'') as varchar(2))||''/''||'+
+           '                                          Cast(lpad(extract(month from p.dta_pagto),2,''0'') as varchar(2))||''/''||'+
+           '                                          Cast(extract(Year from p.dta_pagto) as varchar(4)))'+
+
+           ' ORDER BY 2,3,4';
+    DMBelShop.CDS_Busca.Close;
+    DMBelShop.SDS_Busca.CommandText:=MySql;
+    DMBelShop.CDS_Busca.Open;
+
+    FrmBelShop.MontaProgressBar(True, FrmBancoExtratos);
+    pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
+    pgProgBar.Position:=0;
+
+    DMBelShop.CDS_Busca.DisableControls;
+    While Not DMBelShop.CDS_Busca.Eof do
+    Begin
+      Application.ProcessMessages;
+
+      sDta:=f_Troca('/','.',f_Troca('-','.',DMBelShop.CDS_Busca.FieldByName('Dta_Docto').AsString));
+
+      // Verifica Existencia do Movto Pagamentos ===============================
+      MySql:=' SELECT md.cod_loja'+
+
+             ' FROM FIN_CONCILIACAO_MOV_DEP md'+
+
+             ' WHERE md.cod_loja='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString)+
+             ' AND   md.cod_linx='+DMBelShop.CDS_Busca.FieldByName('Cod_Linx').AsString+
+             ' AND   md.num_docto='+DMBelShop.CDS_Busca.FieldByName('Num_Docto').AsString+
+             ' AND   md.cod_historico='+DMBelShop.CDS_Busca.FieldByName('Cod_Historico').AsString+
+             ' AND   md.dta_docto='+QuotedStr(sDta)+
+             ' AND   TRIM(md.obs_texto)='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Obs_Texto').AsString)+
+      DMBelShop.CDS_Busca1.Close;
+      DMBelShop.SDS_Busca1.CommandText:=MySql;
+      DMBelShop.CDS_Busca1.Open;
+
+      // Se Nao Existe ou For Diferentes os Totais Ientão Insere ===============
+      bInserir:=True;
+      If Not DMBelShop.CDS_Busca1.IsEmpty Then
+      Begin
+        bInserir:=False;
+      End; // If Not DMBelShop.CDS_Busca1.IsEmpty Then
+      DMBelShop.CDS_Busca1.Close;
+
+      // Se Insere Depositos Novos =============================================
+      If bInserir Then
+      Begin
+        // Insere Novos Movimentos de Depósitos ================================
+        MySql:=' INSERT INTO FIN_CONCILIACAO_MOV_DEP'+
+               ' SELECT '+
+               ' GEN_ID(GEN_CONCILIACAO_MOV_DEP,1) NUM_SEQ, '+
+               ' GEN_ID(GEN_COMPL_CONCILIACAO_MOV_DEP,0) NUM_COMPL,'+
+               ' s.cod_loja COD_LOJA,'+
+               ' s.empresa COD_LINX,'+
+               ' s.usuario NUM_DOCTO,'+
+               ' s.data DTA_DOCTO,'+
+               ' s.data DTA_VENC,'+
+               ' NULL COD_BANCO,'+
+               ' NULL DES_BANCO,'+
+               ' 0 COD_PESSOA,'+ // 0 - Indica Lançamento de Sangria
+               ' CAST(ABS(s.valor) AS NUMERIC(12,2)) VLR_ORIGINAL,'+
+               ' 0.00 VLR_DESCONTO,'+
+               ' 0.00 VLR_ACRESCIMO,'+
+               ' CAST(ABS(s.valor) AS NUMERIC(12,2)) VLR_DOCTO,'+
+               ' SUBSTRING(TRIM(s.obs) FROM 1 FOR 80) OBS_TEXTO,'+
+               ' ''NAO'' IND_CONCILIACAO,'+
+               ' 0 COD_HISTO_AUTO,'+
+               ' 0 COD_BANCO_AUTO,'+
+               ' COALESCE(s.cod_historico,0) COD_HISTORICO,'+
+               ' s.desc_historico,'+
+               ' NULL OBS_NAO_CONC'+
+
+               ' FROM LINXSANGRIASUPRIMENTOS s'+
+
+               ' WHERE s.valor<0.0000'+
+               ' AND   s.cancelado=''N'''+
+               ' AND   s.cod_loja='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString)+
+               ' AND   s.empresa='+DMBelShop.CDS_Busca.FieldByName('Cod_Linx').AsString+
+               ' AND   s.usuario='+DMBelShop.CDS_Busca.FieldByName('Num_Docto').AsString+
+               ' AND   COALESCE(s.cod_historico,0)='+DMBelShop.CDS_Busca.FieldByName('Cod_Historico').AsString+
+               ' AND   s.data='+QuotedStr(sDta)+
+               ' AND   SUBSTRING(TRIM(s.obs) FROM 1 FOR 80)='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Obs_Texto').AsString);
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
+      End; // If bInseri Then
+
+      pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
+
+      DMBelShop.CDS_Busca.Next;
+    End; // While Not DMBelShop.CDS_Busca.Eof do
+    DMBelShop.CDS_Busca.EnableControls;
+    DMBelShop.CDS_Busca.Close;
+    FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
+    // Insere Novos Movtos de Deposito/Sangria =================================
+    //==========================================================================
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+      Result:=False;
+
+      FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+
+  OdirPanApres.Visible:=False;
+
+  Screen.Cursor:=crDefault;
+End; // CONCILIAÇÕES DEPOSITOS - Atualiza Movtos Depositos GeoBeauty >>>>>>>>>>>
+
+
+// CONCILIAÇÕES DEPOSITOS - Atualiza Movtos Depositos Linx >>>>>>>>>>>>>>>>>>>>>
+Function TFrmBancoExtratos.AtualizaMovtosDepositosLinx: Boolean;
+Var
+  MySql: String;
+
+  sDta,
+  sNrSeq, sNrCompl: String;
+
+  iRegNaoCanc: Integer; // Numero de registros Não Cancelados
+
+  bInserir, bExcluir: Boolean;
+Begin
+  Result:=True;
+
+  OdirPanApres.Caption:='AGUARDE !! Atualizando Depósitos/Conciliações (Linx) no Período de '+sgDtaI+' a '+sgDtaF;
 
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
@@ -1966,7 +2393,7 @@ Begin
            ' AND   s.cancelado=''S'''+
            ' AND   s.data BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
                                     QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
-           // Retira Dias Já Fechado Pelo renato
+           // Retira Dias Já Fechado Pelo Renato
            ' AND   NOT EXISTS (SELECT 1'+
            '                   FROM TAB_AUXILIAR fh'+
            '                   WHERE fh.cod_aux=s.empresa'+
@@ -2125,7 +2552,7 @@ Begin
            ' AND   s.cancelado=''N'''+
            ' AND   s.data BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
                                     QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
-           // Retira Dias Já Fechado Pelo renato
+           // Retira Dias Já Fechado Pelo Renato
            ' AND   NOT EXISTS (SELECT 1'+
            '                   FROM TAB_AUXILIAR fh'+
            '                   WHERE fh.cod_aux=s.empresa'+
@@ -2157,7 +2584,8 @@ Begin
              ' md.cod_linx,'+
              ' md.num_docto,'+
              ' md.dta_docto,'+
-             ' TRIM(md.obs_texto) obs_texto, SUM(md.vlr_docto) Vlr_Docto,'+
+             ' TRIM(md.obs_texto) obs_texto,'+
+             ' SUM(md.vlr_docto) Vlr_Docto,'+
              ' COUNT(md.cod_linx) TotReg'+
 
              ' FROM FIN_CONCILIACAO_MOV_DEP md'+
@@ -2328,7 +2756,7 @@ Begin
 
   Screen.Cursor:=crDefault;
 
-End; // CONCILIAÇÕES DEPOSITOS - Atualiza Movtos Depositos >>>>>>>>>>>>>>>>>>>>>
+End; // CONCILIAÇÕES DEPOSITOS - Atualiza Movtos Depositos Linx >>>>>>>>>>>>>>>>
 
 // Menus Visivel >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBancoExtratos.VisivelMenusConciliacoes(b: Boolean);
@@ -13028,7 +13456,7 @@ procedure TFrmBancoExtratos.Bt_CMPeriodoDepClick(Sender: TObject);
 Var
   MySql: String;
   sParametros: String;
-  bAtualizaLinx: Boolean;
+  bAtualizaLinx, bAtualizaGeo: Boolean;
   s, ss: String;
 begin
   Dbg_ConcManutExtratoDep.SetFocus;
@@ -13069,26 +13497,37 @@ begin
   sgDtaI:=f_Troca('/','.',f_Troca('-','.',sgDtaI));
   sgDtaF:=f_Troca('/','.',f_Troca('-','.',sgDtaF));
 
+//opss - 23/03/2018
   // Busca Extratos e Movimentos de Depositos ==================================
-  If Not BuscaMovtosExtratosDepositos(True) Then
-   Exit;
+//  If Not BuscaMovtosExtratosDepositos(True) Then
+//   Exit;
 
   // Retorna da Formato Normal =================================================
   sgDtaI:=s;
   sgDtaF:=ss;
 
   //============================================================================
-  // Busca Movtos Web Services: Sangria/Suprimento Linx e Pagtos GeoBeauty =====
+  // Movtos Web Services: Sangria/Suprimento Linx e Pagtos GeoBeauty ===========
   //============================================================================
   PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
   bAtualizaLinx:=False;
-  if msg('ATUALIZAR Dados do Linx/GeoBeauty (Nuvem) no'+cr+'Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
+  bAtualizaGeo :=False;
+  if msg('ATUALIZAR Dados do Linx/GeoBeauty'+cr+'(Nuvem) no Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
   Begin
     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-    if msg('Deseja Realmente ATUALIZAR'+cr+cr+'Dados do Linx/GeoBeauty (Nuvem) ??', 'C')=1 Then
+    if msg('Deseja Realmente ATUALIZAR Dados'+cr+'Linx (Nuvem) ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
      bAtualizaLinx:=True;
-  End; // if msg('ATUALIZAR Dados do Linx (Nuvem) no'+cr+'Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
 
+    PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
+    if msg('Deseja Realmente ATUALIZAR Dados'+cr+'GeoBeauty (Nuvem) ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
+     bAtualizaGeo:=True;
+  End; // if msg('ATUALIZAR Dados do Linx (Nuvem) no'+cr+'Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
+  // Movtos Web Services: Sangria/Suprimento Linx e Pagtos GeoBeauty ===========
+  //============================================================================
+
+  //============================================================================
+  // Busca Movtos Web Services: Sangria/Suprimento Linx ========================
+  //============================================================================
   If bAtualizaLinx Then
   Begin
     // Web Service Linx ========================================================
@@ -13142,18 +13581,32 @@ begin
     FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
 
     OdirPanApres.Visible:=False;
-
-    // Web Service GoeBeauty (Pagtos) ==========================================
-    WebServiceGeoBeautyPagtos;
-
   End; // If bAtualizaLinx Then
-  // Busca Movtos Web Services: Sangria/Suprimento Linx e Pagtos GeoBeauty =====
+  // Busca Movtos Web Services: Sangria/Suprimento Linx ========================
   //============================================================================
+
+  //============================================================================
+  // Busca Movtos Web Services: Pagamento BeoBeauty ============================
+  //============================================================================
+  If bAtualizaGeo Then
+  Begin
+    // Web Service GoeBeauty (Pagtos) ==========================================
+    If Not ConcDepositoWebServiceGeoBeautyPagtos Then
+     bAtualizaGeo:=False;
+  End; // If bAtualizaGeo Then
+  // Busca Movtos Web Services: Pagamento BeoBeauty ============================
+  //============================================================================
+
+  // Insere Novos Pagtos se Buscou Dados no GeoBeauty ==========================
+  If bAtualizaGeo Then
+  Begin
+    AtualizaMovtosDepositosGeoBeauty;
+  End; // If bAtualizaLinx Then
 
   // Insere Novos Depositos se Buscou Dados no Linx ============================
   If bAtualizaLinx Then
   Begin
-    If Not AtualizaMovtosDepositos Then
+    If Not AtualizaMovtosDepositosLinx Then
      Exit;
   End; // If bAtualizaLinx Then
 

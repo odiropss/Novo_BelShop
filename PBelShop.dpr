@@ -50,7 +50,8 @@ uses
   UFrmOCLinx in 'UFrmOCLinx.pas' {FrmOCLinx},
   UFrmPrioridadesReposicao in 'UFrmPrioridadesReposicao.pas' {FrmPrioridadesReposicao},
   UFrmLeitoraCodBarras in 'UFrmLeitoraCodBarras.pas' {FrmLeitoraCodBarras},
-  UFrmConfirmacao in 'UFrmConfirmacao.pas' {FrmConfirmacao};
+  UFrmConfirmacao in 'UFrmConfirmacao.pas' {FrmConfirmacao},
+  GeoBeautyServerWebService in 'GeoBeautyServerWebService.pas';
 
 {$R *.res}
 

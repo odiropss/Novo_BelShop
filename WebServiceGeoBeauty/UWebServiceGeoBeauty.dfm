@@ -3,7 +3,7 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
   Top = 123
   Width = 990
   Height = 589
-  ActiveControl = DtEdtInicio
+  ActiveControl = Bt_Apresenta
   Caption = 'Web Service GeoBeauty'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -24,7 +24,7 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
     Top = 0
     Width = 974
     Height = 551
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -286,7 +286,7 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
       end
     end
   end
-  object HTTPRIO1: THTTPRIO
+  object HTTPRIO111: THTTPRIO
     WSDLLocation = 
       'http://aplicativo.geobeauty.com.br/aplicativo/webservices/ws-sal' +
       'ao/server.php?wsdl'
@@ -337,5 +337,18 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
     DataSet = CDS_GeoBeauty
     Left = 756
     Top = 128
+  end
+  object HTTPRIO1: THTTPRIO
+    WSDLLocation = 
+      'http://aplicativo.geobeauty.com.br/aplicativo/webservices/ws-sal' +
+      'ao/server.php?wsdl'
+    Service = 'gestori'
+    Port = 'gestoriPort'
+    HTTPWebNode.Agent = 'Borland SOAP 1.2'
+    HTTPWebNode.UseUTF8InHeader = False
+    HTTPWebNode.InvokeOptions = [soIgnoreInvalidCerts, soAutoCheckAccessPointViaUDDI]
+    Converter.Options = [soSendMultiRefObj, soTryAllSchema, soRootRefNodesToBody, soCacheMimeResponse, soUTF8EncodeXML]
+    Left = 372
+    Top = 256
   end
 end

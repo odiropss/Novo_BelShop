@@ -21,7 +21,7 @@ uses
 
 type
   TfrmWebServiceGeoBeauty = class(TForm)
-    HTTPRIO1: THTTPRIO;
+    HTTPRIO111: THTTPRIO;
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
@@ -49,6 +49,7 @@ type
     CDS_GeoBeautyVALOR_DINHEIRO: TCurrencyField;
     CDS_GeoBeautyVALOR_TOTAL: TCurrencyField;
     Bt_DepAnaliseSalvaClipboard: TJvXPButton;
+    HTTPRIO1: THTTPRIO;
     procedure Bt_BuscaClick(Sender: TObject);
     procedure Bt_MontarEstruturaClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -217,9 +218,9 @@ begin
 //                                                                        '5229f6953aa4f904fa0187402dfe8a0309a874f7',
 //                                                                        sDtaIncio, sDtaFim);
 
- Memo1.Lines.Clear;
- Memo1.Lines.Add('consultaFaturamentoPorTipoPgto: '+cr+
-                (HTTPRIO1 as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br',
+  Memo1.Lines.Clear;
+  Memo1.Lines.Add('consultaFaturamentoPorTipoPgto: '+cr+
+                  (HTTPRIO1 as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br',
                                                                              sChaveAcessoGeo, sDtaIncio, sDtaFim));
 
   sgLinha:=(HTTPRIO1 as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br',
@@ -296,6 +297,8 @@ begin
       sLinha:=f_Troca('\/','/',sLinha);
 
       Memo2.Lines.Add(sLinha);
+
+      // Exclui Registro do Retorno
       Delete(sgLinha,1,i+2);
     End; // If i<>0 Then
 

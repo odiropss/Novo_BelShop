@@ -4,10 +4,10 @@
 // WSDL     : http://aplicativo.geobeauty.com.br/aplicativo/webservices/ws-salao/server.php?wsdl
 // Encoding : ISO-8859-1
 // Version  : 1.0
-// (09/02/2018 15:33:53 - 1.33.2.5)
+// (23/03/2018 09:28:02 - 1.33.2.5)
 // ************************************************************************ //
 
-unit ServerWebServiceGeoBeauty;
+unit GeoBeautyServerWebService;
 
 interface
 
@@ -49,7 +49,7 @@ function GetgestoriPortType(UseWSDL: Boolean=System.False; Addr: string=''; HTTP
 implementation
 
 function GetgestoriPortType(UseWSDL: Boolean; Addr: string; HTTPRIO: THTTPRIO): gestoriPortType;
-const        
+const
   defWSDL = 'http://aplicativo.geobeauty.com.br/aplicativo/webservices/ws-salao/server.php?wsdl';
   defURL  = 'http://aplicativo.geobeauty.com.br/aplicativo/webservices/ws-salao/server.php';
   defSvc  = 'gestori';

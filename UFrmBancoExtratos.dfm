@@ -1,6 +1,6 @@
 object FrmBancoExtratos: TFrmBancoExtratos
-  Left = 241
-  Top = 105
+  Left = 242
+  Top = 106
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Banco / Extratos'
