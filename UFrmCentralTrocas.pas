@@ -33,39 +33,15 @@ type
     Ts_NotasEntDev: TTabSheet;
     Panel1: TPanel;
     Bt_NotasEntDevFechar: TJvXPButton;
-    Pan_NotasEntDev: TGroupBox;
     Dbg_NotasEntDevProdutos: TDBGridJul;
-    Bt_NotasEntDevBuscaProduto: TJvXPButton;
-    EdtNotasEntDevDesProduto: TEdit;
-    Label1: TLabel;
-    EdtNotasEntDevQtdDevulocao: TJvValidateEdit;
-    Bt_NotasEntDevIncluir: TJvXPButton;
-    Gb_NotasEntDevDocto: TGroupBox;
-    Label3: TLabel;
-    Label4: TLabel;
-    EdtNotasEntDevNumSolicitacao: TJvValidateEdit;
-    DtaEdtNotasEntDev: TJvDateEdit;
-    Bt_NotasEntDevLocalizar: TJvXPButton;
     Splitter1: TSplitter;
-    EdtNotasEntDevCodProduto: TEdit;
-    Bt_NotasEntDevBuscaDocto: TJvXPButton;
     OdirPanApres: TPanel;
-    Label2: TLabel;
-    Cbx_NotasEntDevCondicao: TComboBox;
     Pan_NotasEntDevCondicaoImpressao: TPanel;
     Label5: TLabel;
     Rb_NotasEntDevDocAtual: TJvRadioButton;
     Rb_NotasEntDevDocsDia: TJvRadioButton;
-    Bt_NotasEntDevExcluiDocto: TJvXPButton;
-    Shape1: TShape;
-    Bt_NotasEntDevExcluiItem: TJvXPButton;
     Dbg_NotasEntDevNFE: TDBGridJul;
-    Label6: TLabel;
-    EdtNotasEntDevContaBarras: TEdit;
     ApplicationEvents1: TApplicationEvents;
-    Lab_NotasEntDevTotProd: TLabel;
-    Dbe_NotasEntDevTotProd: TDBEdit;
-    Dbe_NotasEntDevTotQtd: TDBEdit;
     Bt_NotasEntDevColetor: TJvXPButton;
     Bt_NotasEntDevImprimir: TJvXPButton;
     Ts_ReposLojas: TTabSheet;
@@ -177,6 +153,32 @@ type
     EdtReposLojasCalTotQtds: TCurrencyEdit;
     GroupBox4: TGroupBox;
     EdtReposLojasTotQtdsSeparar: TCurrencyEdit;
+    Panel3: TPanel;
+    Pan_NotasEntDev: TGroupBox;
+    Label1: TLabel;
+    Label6: TLabel;
+    Bt_NotasEntDevBuscaProduto: TJvXPButton;
+    EdtNotasEntDevDesProduto: TEdit;
+    EdtNotasEntDevQtdDevulocao: TJvValidateEdit;
+    Bt_NotasEntDevIncluir: TJvXPButton;
+    Gb_NotasEntDevDocto: TGroupBox;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label2: TLabel;
+    Shape1: TShape;
+    EdtNotasEntDevNumSolicitacao: TJvValidateEdit;
+    DtaEdtNotasEntDev: TJvDateEdit;
+    Bt_NotasEntDevLocalizar: TJvXPButton;
+    Bt_NotasEntDevBuscaDocto: TJvXPButton;
+    Cbx_NotasEntDevCondicao: TComboBox;
+    Bt_NotasEntDevExcluiDocto: TJvXPButton;
+    Bt_NotasEntDevExcluiItem: TJvXPButton;
+    EdtNotasEntDevCodProduto: TEdit;
+    EdtNotasEntDevContaBarras: TEdit;
+    Dbe_NotasEntDevTotProd: TDBEdit;
+    Dbe_NotasEntDevTotQtd: TDBEdit;
+    Label17: TLabel;
+    Label18: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -8604,9 +8606,10 @@ begin
   Screen.Cursor:=crArrow;
 
   // Busca Nota Fiscal =========================================================
-  MySql:=' SELECT m.cod_produto, p.nome Nome_produto, m.quantidade, 0 CheckOut,'+
+  MySql:=' SELECT m.cod_produto, p.nome Nome_produto,'+
          '        p.cod_fornecedor, f.nome_cliente Nome_Fornecedor,'+
-         '        e.des_aux Enderecamento'+
+         '        e.des_aux Enderecamento,'+
+         '        SUM(m.quantidade) quantidade, 0 CheckOut'+
 
          ' FROM LINXMOVIMENTO m'+
          '   LEFT JOIN LINXPRODUTOS p        ON p.cod_produto=m.cod_produto'+
@@ -8641,7 +8644,8 @@ begin
                    ' AND   m.tipo_transacao=''T''';
           End;
   MySql:=
-   MySql+' ORDER BY 2';
+   MySql+' GROUP BY 1,2,3,4,5'+
+         ' ORDER BY 2';
   DMCentralTrocas.CDS_NFeAvarias.Close;
   DMCentralTrocas.SDS_NFeAvarias.CommandText:=MySql;
   DMCentralTrocas.CDS_NFeAvarias.Open;

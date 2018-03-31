@@ -1847,6 +1847,10 @@ End;
           // DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
           // sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
+//OpssAqui
+//           sgDtaInicio:='2017-08-01';
+//           sgDtaFim   :='2017-08-31';
+
           MontaMetodoXMLPost('NULL', 'NULL'); // operacao, tipo_transacao
         End; // If (sMetodoEspecifico='') Then
 

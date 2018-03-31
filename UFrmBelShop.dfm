@@ -29812,7 +29812,7 @@ object FrmBelShop: TFrmBelShop
   end
   object Edit1: TEdit
     Left = 232
-    Top = 200
+    Top = 224
     Width = 121
     Height = 19
     TabOrder = 6
@@ -29821,7 +29821,7 @@ object FrmBelShop: TFrmBelShop
   end
   object Edit2: TEdit
     Left = 232
-    Top = 220
+    Top = 244
     Width = 121
     Height = 19
     TabOrder = 7
@@ -29830,7 +29830,7 @@ object FrmBelShop: TFrmBelShop
   end
   object Edit3: TEdit
     Left = 232
-    Top = 241
+    Top = 265
     Width = 121
     Height = 19
     TabOrder = 8
@@ -29839,7 +29839,7 @@ object FrmBelShop: TFrmBelShop
   end
   object Edit4: TEdit
     Left = 232
-    Top = 262
+    Top = 286
     Width = 121
     Height = 19
     TabOrder = 9

@@ -1,6 +1,6 @@
 object FrmRelatorios: TFrmRelatorios
-  Left = 339
-  Top = 60
+  Left = 231
+  Top = 123
   Width = 967
   Height = 606
   Align = alClient

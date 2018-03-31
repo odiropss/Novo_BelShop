@@ -1289,19 +1289,6 @@ object DMCentralTrocas: TDMCentralTrocas
       FieldName = 'NOME_PRODUTO'
       Size = 250
     end
-    object CDS_NFeAvariasQUANTIDADE: TFMTBCDField
-      DisplayLabel = 'Quant'
-      FieldName = 'QUANTIDADE'
-      DisplayFormat = '0,'
-      Precision = 15
-      Size = 4
-    end
-    object CDS_NFeAvariasCHECKOUT: TIntegerField
-      DisplayLabel = 'CheckOut'
-      FieldName = 'CHECKOUT'
-      Required = True
-      DisplayFormat = '0,'
-    end
     object CDS_NFeAvariasCOD_FORNECEDOR: TIntegerField
       DisplayLabel = 'C'#243'd Forn'
       FieldName = 'COD_FORNECEDOR'
@@ -1315,6 +1302,19 @@ object DMCentralTrocas: TDMCentralTrocas
       DisplayLabel = 'Endere'#231'amento'
       FieldName = 'ENDERECAMENTO'
       Size = 50
+    end
+    object CDS_NFeAvariasCHECKOUT: TIntegerField
+      DisplayLabel = 'CheckOut'
+      FieldName = 'CHECKOUT'
+      Required = True
+      DisplayFormat = '0,'
+    end
+    object CDS_NFeAvariasQUANTIDADE: TFMTBCDField
+      DisplayLabel = 'Quant'
+      FieldName = 'QUANTIDADE'
+      DisplayFormat = '0,'
+      Precision = 15
+      Size = 4
     end
   end
   object SDS_NFeAvarias: TSQLDataSet

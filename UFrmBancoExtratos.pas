@@ -690,7 +690,6 @@ Begin
   // Acerta Datas do Período ===================================================
   //============================================================================
 
-
   //============================================================================
   // Consome Pagamentos da GeoBeauty Web Service ===============================
   //============================================================================
@@ -719,7 +718,7 @@ Begin
   mMemo.Width:=1000;
   mMemo.Lines.Clear;
 
-  // Retira os 1 Primeiro Caracter =============================================
+  // Retira o 1 Primeiro Caracter ==============================================
   delete(sRetornoPagtos,1,1);
 
   // Retira os 2 Últimos Caracteres ============================================
@@ -826,8 +825,9 @@ Begin
       // Insert/UpDate do Registro =============================================
       MySql:=' UPDATE OR INSERT INTO GEOBEAUTY_PAGTOS'+
              ' (EMPRESA, CNPJ_LOJA, NOME_LOJA, NUM_DOCTO, DTA_PAGTO, VLR_CHEQUE,'+
-             '  VLR_CARTAO, VLR_DINHEIRO, VLR_TOTAL, COD_LOJA,'+
-             '  DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
+             '  VLR_CARTAO, VLR_DINHEIRO, VLR_TOTAL, OBS_TEXTO,'+
+             '  COD_LOJA, DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
+
              ' VALUES ('+
              sLojaLinx+', '+ // EMPRESA
              QuotedStr(Trim(Separa_String(mMemo.Lines[i],10,':')))+', '+ // CNPJ_LOJA
@@ -838,6 +838,7 @@ Begin
              QuotedStr(f_Troca(',','.',Trim(Separa_String(mMemo.Lines[i], 4,':'))))+', '+ // VLR_CARTAO
              QuotedStr(f_Troca(',','.',Trim(Separa_String(mMemo.Lines[i], 6,':'))))+', '+ // VLR_DINHEIRO
              QuotedStr(f_Troca(',','.',Trim(Separa_String(mMemo.Lines[i], 8,':'))))+', '+ // VLR_TOTAL
+             QuotedStr('SALÃO')+', '+ // OBS_TEXTO
              QuotedStr(sLojaSidicom)+', '+ // COD_LOJA SIDICOM
              ' CURRENT_DATE, '+ // DTA_ATUALIZACAO
              ' CURRENT_TIME)'+  // HRA_ATUALIZACAO
@@ -861,7 +862,6 @@ Begin
 
   FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
 
-
   DateSeparator:='/';
   DecimalSeparator:=',';
 
@@ -869,7 +869,6 @@ Begin
   Screen.Cursor:=crDefault;
 
   FreeAndNil(mMemo);
-
 End; // CONCILIAÇÕES PAGTOS/DEPOSITOS - Web Service GoeBeauty (Pagtos) >>>>>>>>>
 
 // CONCILIAÇÕES PAGTOS/DEPOSITOS - Atualiza Faturamento em Dinheiro no Dia >>>>>
@@ -2210,7 +2209,7 @@ Begin
            ' p.num_docto NUM_DOCTO,'+
            ' p.dta_pagto DTA_DOCTO,'+
            ' 999999 COD_HISTORICO,'+
-           ' ''SALÃO'' OBS_TEXTO,'+
+           ' p.OBS_TEXTO,'+
            ' p.vlr_dinheiro VLR_DOCTO'+
 
            ' FROM GEOBEAUTY_PAGTOS p'+
@@ -2252,7 +2251,7 @@ Begin
              ' AND   md.num_docto='+DMBelShop.CDS_Busca.FieldByName('Num_Docto').AsString+
              ' AND   md.cod_historico='+DMBelShop.CDS_Busca.FieldByName('Cod_Historico').AsString+
              ' AND   md.dta_docto='+QuotedStr(sDta)+
-             ' AND   TRIM(md.obs_texto)='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Obs_Texto').AsString)+
+             ' AND   TRIM(md.obs_texto)='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Obs_Texto').AsString);
       DMBelShop.CDS_Busca1.Close;
       DMBelShop.SDS_Busca1.CommandText:=MySql;
       DMBelShop.CDS_Busca1.Open;
@@ -2280,7 +2279,7 @@ Begin
                ' s.data DTA_VENC,'+
                ' NULL COD_BANCO,'+
                ' NULL DES_BANCO,'+
-               ' 0 COD_PESSOA,'+ // 0 - Indica Lançamento de Sangria
+               ' 0 COD_PESSOA,'+ // 0 - Indica Lançamento de Sangria/GeoBeauty
                ' CAST(ABS(s.valor) AS NUMERIC(12,2)) VLR_ORIGINAL,'+
                ' 0.00 VLR_DESCONTO,'+
                ' 0.00 VLR_ACRESCIMO,'+
@@ -13497,10 +13496,9 @@ begin
   sgDtaI:=f_Troca('/','.',f_Troca('-','.',sgDtaI));
   sgDtaF:=f_Troca('/','.',f_Troca('-','.',sgDtaF));
 
-//opss - 23/03/2018
   // Busca Extratos e Movimentos de Depositos ==================================
-//  If Not BuscaMovtosExtratosDepositos(True) Then
-//   Exit;
+  If Not BuscaMovtosExtratosDepositos(True) Then
+   Exit;
 
   // Retorna da Formato Normal =================================================
   sgDtaI:=s;
@@ -13512,18 +13510,21 @@ begin
   PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
   bAtualizaLinx:=False;
   bAtualizaGeo :=False;
-  if msg('ATUALIZAR Dados do Linx/GeoBeauty'+cr+'(Nuvem) no Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
+  if msg('ATUALIZAR Dados (Nuvem)'+cr+'LINX / GEOBEAUTY'+cr+' ??'+cr+'Período de '+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
   Begin
     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-    if msg('Deseja Realmente ATUALIZAR Dados'+cr+'Linx (Nuvem) ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
+    if msg('Deseja ATUALIZAR Dados (Nuvem)'+cr+'LINX'+cr+' ??'+cr+'Período de '+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
      bAtualizaLinx:=True;
 
     PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-    if msg('Deseja Realmente ATUALIZAR Dados'+cr+'GeoBeauty (Nuvem) ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
+    if msg('Deseja ATUALIZAR Dados (Nuvem)'+cr+'GEOBEAUTY'+cr+' ??'+cr+'Período de '+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
      bAtualizaGeo:=True;
   End; // if msg('ATUALIZAR Dados do Linx (Nuvem) no'+cr+'Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
   // Movtos Web Services: Sangria/Suprimento Linx e Pagtos GeoBeauty ===========
   //============================================================================
+
+  If Des_Usuario<>'ODIR' Then
+   bAtualizaGeo:=False;
 
   //============================================================================
   // Busca Movtos Web Services: Sangria/Suprimento Linx ========================
@@ -13586,7 +13587,7 @@ begin
   //============================================================================
 
   //============================================================================
-  // Busca Movtos Web Services: Pagamento BeoBeauty ============================
+  // Busca Movtos Web Services: Pagamento GeoBeauty ============================
   //============================================================================
   If bAtualizaGeo Then
   Begin
@@ -13594,7 +13595,7 @@ begin
     If Not ConcDepositoWebServiceGeoBeautyPagtos Then
      bAtualizaGeo:=False;
   End; // If bAtualizaGeo Then
-  // Busca Movtos Web Services: Pagamento BeoBeauty ============================
+  // Busca Movtos Web Services: Pagamento GeoBeauty ============================
   //============================================================================
 
   // Insere Novos Pagtos se Buscou Dados no GeoBeauty ==========================

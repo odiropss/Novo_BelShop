@@ -1681,19 +1681,26 @@ begin
 
          If (Rb_Pagas.Checked) and (Rb_PesqDtaPagto.Checked) Then
           MySql:=
-           MySql+' ff.dta_vencimento'
+           MySql+' ff.dta_pagamento'
          Else
           MySql:=
-           MySql+' ff.dta_pagamento';
+           MySql+' ff.dta_vencimento';
 
   MySql:=
    MySql+' FROM FLUXO_FINANCEIRO ff, PESSOAS ps, PLANO_CONTAS hi'+
 
          ' WHERE ff.cod_fornecedor=ps.cod_pessoa'+
-         ' AND   ff.cod_historico=hi.cod_historico'+
-         ' AND   ff.dta_vencimento BETWEEN '+
-         QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaInicio.Date))))+
-         ' AND '+
+         ' AND   ff.cod_historico=hi.cod_historico';
+
+         If (Rb_Pagas.Checked) and (Rb_PesqDtaPagto.Checked) Then
+          MySql:=
+           MySql+' AND   ff.dta_pagamento BETWEEN '
+         Else
+          MySql:=
+           MySql+' AND   ff.dta_vencimento BETWEEN ';
+
+  MySql:=
+   MySql+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaInicio.Date))))+' AND '+
          QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaFim.Date))));
 
          If Rb_Pagas.Checked Then
@@ -1760,9 +1767,9 @@ begin
     DefinicaoCampos.Add('D1;17;D;#,##0.00;VLR_PAGAMENTO;Vlr Pago');
 
     If (Rb_Pagas.Checked) and (Rb_PesqDtaPagto.Checked) Then
-     DefinicaoCampos.Add('D0;18;D;;DTA_VENCIMENTO;Data Vencto')
+     DefinicaoCampos.Add('D0;18;D;;DTA_PAGAMENTO;Data Pagto')
     Else
-     DefinicaoCampos.Add('D0;18;D;;DTA_PAGAMENTO;Data Pagto');
+     DefinicaoCampos.Add('D0;18;D;;DTA_VENCIMENTO;Data Vencto');
 
 //    DefinicaoCampos.Add('D0;'+v1.Text+';'+a1.Text+';;NOME;Nome');
 //    DefinicaoCampos.Add('D0;'+v2.Text+';'+a2.Text+';;DTA_EMISSAO;Emissão');

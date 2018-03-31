@@ -170,27 +170,36 @@ Var
   bExisteNF: Boolean;
   MySql: String;
   sEndereco: String;
+  i: Integer;
 begin
+  //============================================================================
+  // Leitora de Codigo de Barras Separação de Transferencias ===================
+  //============================================================================
   If Not bgCheckOutSimples Then
   Begin
     Panel1.SetFocus;
 
     If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
     Begin
-      // Processa Reposição ======================================================
+      // Processa Reposição ====================================================
       FrmCentralTrocas.CheckOut_BuscaProdCodBarras_AtualizaQtd(Trim(EdtCodBarras.Text),EdtQtdEmbalagem.AsInteger);
 
-      // Acerta Controle de Processamento ==========================================
+      // Acerta Controle de Processamento ======================================
       FrmCentralTrocas.ReCalculaPosicaoLeitora;
 
-      // Reposiciona =============================================================
+      // Reposiciona ===========================================================
       EdtQtdEmbalagem.AsInteger:=1;
       EdtCodBarras.Text:='0';
       EdtQtdEmbalagem.SetFocus;
       SelectNext(ActiveControl,True,True);
     End; // If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
   End; // If Not bgCheckOutSimples Then
+  // Leitora de Codigo de Barras Separação de Transferencias ===================
+  //============================================================================
 
+  //============================================================================
+  // Leitora de Codigo de Barras SIMPLE ========================================
+  //============================================================================
   If bgCheckOutSimples Then
   Begin
     If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
@@ -286,6 +295,8 @@ begin
       End; // If bExisteNF Then
     End; // If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
   End; // If bgCheckOutSimples Then
+  // Leitora de Codigo de Barras SIMPLE ========================================
+  //============================================================================
 end;
 
 procedure TFrmLeitoraCodBarras.EdtCodBarrasKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
