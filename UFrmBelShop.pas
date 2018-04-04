@@ -20806,6 +20806,7 @@ Begin
       msg('Erro na Geração dos Produtos !!'+cr+cr+'Filial: '+sCodMatriz +' !!','A');
       MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
     End; // On e : Exception do
+
   End; // Try // IBQ_OC_ComprarAdd
 End; // Novo Calculode Pedido de Compra da Matriz >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -45883,7 +45884,6 @@ end;
 
 procedure TFrmBelShop.SubMenuFinanConciliaDepositosClick(Sender: TObject);
 begin
-
   // Acerta Apresentação das TabSheets =========================================
   FrmBancoExtratos.DesabilitaTabSheet(nil);
 
@@ -46418,6 +46418,7 @@ end;
 
 procedure TFrmBelShop.SubMenuCentralTrocasNotasAvariasClick(Sender: TObject);
 begin
+
   If (Sender is TMenuItem) Then
    igTagPermissao:=(Sender as TMenuItem).Tag;
 

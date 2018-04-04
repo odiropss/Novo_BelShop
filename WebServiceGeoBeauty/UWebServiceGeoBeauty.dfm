@@ -3,7 +3,7 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
   Top = 123
   Width = 990
   Height = 589
-  ActiveControl = Bt_Apresenta
+  ActiveControl = Bt_MontarEstrutura
   Caption = 'Web Service GeoBeauty'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -24,7 +24,7 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
     Top = 0
     Width = 974
     Height = 551
-    ActivePage = TabSheet3
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -124,7 +124,7 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
         Align = alTop
         TabOrder = 0
         object Bt_MontarEstrutura: TJvXPButton
-          Left = 8
+          Left = 16
           Top = 4
           Width = 129
           Height = 36

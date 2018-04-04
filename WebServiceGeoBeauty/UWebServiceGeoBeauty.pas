@@ -96,7 +96,7 @@ CriptografiaGeoBeautyRetorno.TXT
 var
   frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty;
 
-  sgLinha: String;
+  sgLinha: WideString;
 
   sgPastaExecutavel: String;       // Somente a Pasta do Executável
 
@@ -218,20 +218,30 @@ begin
 //                                                                        '5229f6953aa4f904fa0187402dfe8a0309a874f7',
 //                                                                        sDtaIncio, sDtaFim);
 
-  Memo1.Lines.Clear;
-  Memo1.Lines.Add('consultaFaturamentoPorTipoPgto: '+cr+
-                  (HTTPRIO1 as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br',
-                                                                             sChaveAcessoGeo, sDtaIncio, sDtaFim));
 
-  sgLinha:=(HTTPRIO1 as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br',
-                                                                             sChaveAcessoGeo, sDtaIncio, sDtaFim);
+//  Memo1.Lines.Clear;
+//  Memo1.Lines.Add('consultaFaturamentoPorTipoPgto: '+cr+
+//                  (HTTPRIO1 as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br',
+//                                                                             sChaveAcessoGeo, sDtaIncio, sDtaFim));
+//
+//  sgLinha:=(HTTPRIO1 as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br',
+//                                                                             sChaveAcessoGeo, sDtaIncio, sDtaFim);
+
+// consultaFechamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+  Memo1.Lines.Clear;
+  Memo1.Lines.Add('consultaFechamento: '+cr+
+                  (HTTPRIO1 as gestoriPortType).consultaFechamento('webservice@lojasbelshop.com.br',sChaveAcessoGeo, sDtaIncio, sDtaFim));
+
+
+  sgLinha:=(HTTPRIO1 as gestoriPortType).consultaFechamento('webservice@lojasbelshop.com.br',sChaveAcessoGeo, sDtaIncio, sDtaFim);
 
   Screen.Cursor:=crDefault;
 
-  PageControl1.TabIndex:=1;
-  CorSelecaoTabSheet(PageControl1);
-
-  Bt_MontarEstruturaClick(Self);
+//opss
+//  PageControl1.TabIndex:=1;
+//  CorSelecaoTabSheet(PageControl1);
+//
+//  Bt_MontarEstruturaClick(Self);
 
 end;
 
@@ -239,7 +249,7 @@ procedure TfrmWebServiceGeoBeauty.Bt_MontarEstruturaClick(Sender: TObject);
 Var
   ii, i: Integer;
   b, bb: Boolean;
-  sLinha: String;
+  sLinha:  WideString;
 begin
   Screen.Cursor:=crAppStart;
 
@@ -258,7 +268,10 @@ begin
 //  Memo2.Lines.Add('100 ult: '+copy(sgLinha,length(sgLinha)-100,101));
 
   // Coloca Virgula no Ultimo Caracter
-  sgLinha:=sgLinha+',"';
+  If Copy(sgLinha, Length(sgLinha),1)<>'}' Then
+   sgLinha:=sgLinha+'},"'
+  Else
+   sgLinha:=sgLinha+',"';
 //  Memo2.Lines.Add('Virgula ult: '+copy(sgLinha,length(sgLinha)-100,101));
 
   b:=True;
@@ -271,7 +284,7 @@ begin
       // Pega Linha da Loja Somente UM Dia
       sLinha:=copy(sgLinha,1,i+2);
 
-      // Retina CNPJ e Data do Inicio da Linha
+      // Retina Parte Inicial do registro - ("8679":) ou CNPJ e Data do Inicio da Linha
       bb:=True;
       While bb do
       Begin
@@ -284,10 +297,10 @@ begin
       end; // While bb do
 
       // Substitui
-      // Aspas "
+              // Aspas "
       // Chave Aberta {
       // Chave Fechada }
-      // Substituir Virgula (,) por DoisPontos (:)
+              // Substituir Virgula (,) por DoisPontos (:)
       sLinha:=f_Troca('"','',f_Troca('{','',f_Troca('}','',f_Troca(',',':',sLinha))));
 
       // Substituir Ponto (.) por Virgula (,) Nos Valores
@@ -308,10 +321,11 @@ begin
   End; // While b do
   Screen.Cursor:=crDefault;
 
-  PageControl1.TabIndex:=2;
-  CorSelecaoTabSheet(PageControl1);
-
-  Bt_ApresentaClick(Self);
+//opss
+//  PageControl1.TabIndex:=2;
+//  CorSelecaoTabSheet(PageControl1);
+//
+//  Bt_ApresentaClick(Self);
 
 end;
 

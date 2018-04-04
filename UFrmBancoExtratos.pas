@@ -607,6 +607,8 @@ Var
 
   sLojaLinx, sLojaSidicom, sNrDocto: String;
 Begin
+  Result:=False;
+
   // Web Service Linx ==========================================================
   OdirPanApres.Caption:='AGUARDE !! Atualizando Pagtos de Salão GeoBeauty - CLOUD';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
@@ -796,6 +798,16 @@ Begin
     pgProgBar.Properties.Max:=mMemo.Lines.Count;
     pgProgBar.Position:=0;
 
+    // Exclui Movimentos dos Salões no Período para Substituição ===============
+    If mMemo.Lines.Count>0 Then
+    Begin
+      MySql:=' DELETE FROM GEOBEAUTY_PAGTOS g'+
+             ' WHERE g.dta_pagto BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+
+                                           ' AND '+
+                                           QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)));
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+    End; // If mMemo.Lines.Count>0 Then
+
     For i:=0 to mMemo.Lines.Count-1 do
     Begin
       Application.ProcessMessages;
@@ -825,7 +837,8 @@ Begin
       // Insert/UpDate do Registro =============================================
       MySql:=' UPDATE OR INSERT INTO GEOBEAUTY_PAGTOS'+
              ' (EMPRESA, CNPJ_LOJA, NOME_LOJA, NUM_DOCTO, DTA_PAGTO, VLR_CHEQUE,'+
-             '  VLR_CARTAO, VLR_DINHEIRO, VLR_TOTAL, OBS_TEXTO,'+
+             '  VLR_CARTAO, VLR_DINHEIRO, VLR_TOTAL,'+
+             '  COD_HISTORICO, DES_HISTORICO, OBS_TEXTO,'+
              '  COD_LOJA, DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
 
              ' VALUES ('+
@@ -838,7 +851,9 @@ Begin
              QuotedStr(f_Troca(',','.',Trim(Separa_String(mMemo.Lines[i], 4,':'))))+', '+ // VLR_CARTAO
              QuotedStr(f_Troca(',','.',Trim(Separa_String(mMemo.Lines[i], 6,':'))))+', '+ // VLR_DINHEIRO
              QuotedStr(f_Troca(',','.',Trim(Separa_String(mMemo.Lines[i], 8,':'))))+', '+ // VLR_TOTAL
-             QuotedStr('SALÃO')+', '+ // OBS_TEXTO
+             ' 999999999, '+ // COD_HISTORICO
+             QuotedStr('SALÃO')+', '+ // DES_HISTORICO
+             QuotedStr('GEO Beauty')+', '+ // OBS_TEXTO
              QuotedStr(sLojaSidicom)+', '+ // COD_LOJA SIDICOM
              ' CURRENT_DATE, '+ // DTA_ATUALIZACAO
              ' CURRENT_TIME)'+  // HRA_ATUALIZACAO
@@ -850,6 +865,7 @@ Begin
 
     // Atualiza Transacao ======================================================
     DMBelShop.SQLC.Commit(TD);
+    Result:=True;
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -1083,7 +1099,7 @@ Begin
      Begin
        MySql:=' DELETE FROM TAB_AUXILIAR t'+
               ' WHERE t.tip_aux=22'+
-              ' AND   t.cod_aux='+DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString+
+              ' AND   t.des_aux1='+DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString+
               ' AND   TRIM(t.des_aux)='+QuotedStr(f_Troca('.','/',sgDia));
      End
     Else
@@ -1092,9 +1108,9 @@ Begin
               ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
               ' VALUES ('+
               ' 22,'+ // TIP_AUX
-              DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString+', '+ // COD_AUX
+              ' (SELECT COALESCE(MAX(t.cod_aux)+1 ,1) FROM tab_auxiliar t WHERE t.tip_aux=22), '+ // COD_AUX
               QuotedStr(f_Troca('.','/',sgDia))+', '+ // DES_AUX
-              ' NULL,'+ // DES_AUX1
+              DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString+', '+ // DES_AUX1
               ' NULL,'+ // VLR_AUX
               ' NULL)'; // VLR_AUX1
      End; // If DMConciliacao.CDS_CMDepositosAnaliseFECHA.AsString='SIM' Then
@@ -1128,7 +1144,7 @@ Begin
   MySql:=' SELECT re.cod_aux'+
          ' FROM TAB_AUXILIAR re'+
          ' WHERE re.tip_aux=22'+
-         ' AND re.cod_aux='+sCodLjLinx+
+         ' AND re.des_aux1='+sCodLjLinx+
          ' AND TRIM(re.des_aux)='+QuotedStr(f_Troca('.','/',f_Troca('-','/',sDia)));
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -1153,16 +1169,19 @@ Begin
   Begin
     If EdtConcManutExtratoVlrDep.Value<>0 Then
     Begin
-      If DMConciliacao.CDS_CMDepositos.Locate('Conciliado?; Conciliar?; VLR_DOCTO', VarArrayOf(['NAO', 'NAO', EdtConcManutExtratoVlrDep.Value]),[]) Then
+      If Not (DMConciliacao.CDS_CMDepositos.Locate('Conciliado?; Conciliar?; VLR_DOCTO', VarArrayOf(['NAO', 'SIM', EdtConcManutExtratoVlrDep.Value]),[])) Then
       Begin
-        Dbg_ConcManutDepositos.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
+        If DMConciliacao.CDS_CMDepositos.Locate('Conciliado?; Conciliar?; VLR_DOCTO', VarArrayOf(['NAO', 'NAO', EdtConcManutExtratoVlrDep.Value]),[]) Then
+        Begin
+          Dbg_ConcManutDepositos.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
 
-        PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
-        msg('Movto com Valor Localizado !!','A');
+          PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+          msg('Movto com Valor Localizado !!','A');
 
-        Dbg_ConcManutDepositos.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
-        THackDBGrid(Dbg_ConcManutDepositos).SelectedIndex:=7;
-      End;
+          Dbg_ConcManutDepositos.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
+          THackDBGrid(Dbg_ConcManutDepositos).SelectedIndex:=7;
+        End;
+      End; // If Not DMConciliacao.CDS_CMDepositos.Locate('Conciliado?; Conciliar?; VLR_DOCTO', VarArrayOf(['NAO', 'SIM', EdtConcManutExtratoVlrDep.Value]),[]) Then
     End; // If EdtConcManutExtratoVlrDep.Value<>0 Then
   End; // If iTipo=1 Then
 
@@ -1171,16 +1190,19 @@ Begin
   Begin
     If EdtConcManutDepVlr.Value<>0 Then
     Begin
-      If DMConciliacao.CDS_CMExtratosDep.Locate('Conciliado?; Conciliar?; VLR_DOCTO', VarArrayOf(['NAO', 'NAO', EdtConcManutDepVlr.Value]),[]) Then
+      If Not (DMConciliacao.CDS_CMExtratosDep.Locate('Conciliado?; Conciliar?; VLR_DOCTO', VarArrayOf(['NAO', 'SIM', EdtConcManutDepVlr.Value]),[])) Then
       Begin
-        Dbg_ConcManutExtratoDep.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
+        If DMConciliacao.CDS_CMExtratosDep.Locate('Conciliado?; Conciliar?; VLR_DOCTO', VarArrayOf(['NAO', 'NAO', EdtConcManutDepVlr.Value]),[]) Then
+        Begin
+          Dbg_ConcManutExtratoDep.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
 
-        PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
-        msg('Extrato com Valor Localizado !!','A');
+          PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+          msg('Extrato com Valor Localizado !!','A');
 
-        Dbg_ConcManutExtratoDep.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
-        THackDBGrid(Dbg_ConcManutExtratoDep).SelectedIndex:=7;
-      End;
+          Dbg_ConcManutExtratoDep.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
+          THackDBGrid(Dbg_ConcManutExtratoDep).SelectedIndex:=7;
+        End;
+      End; // If Not (DMConciliacao.CDS_CMExtratosDep.Locate('Conciliado?; Conciliar?; VLR_DOCTO', VarArrayOf(['NAO', 'SIM', EdtConcManutDepVlr.Value]),[])) Then
     End; // If EdtConcManutExtratoVlrDep.Value<>0 Then
   End; // If iTipo=2 Then
 
@@ -2173,9 +2195,9 @@ Var
 
   bInserir, bExcluir: Boolean;
 Begin
-  Result:=True;
+  Result:=False;
 
-  OdirPanApres.Caption:='AGUARDE !! Atualizando Depósitos/Conciliações (GeoBeauty) no Período de '+sgDtaI+' a '+sgDtaF;
+  OdirPanApres.Caption:='AGUARDE !! Atualizando Depósitos/Conciliações (SALÃO) no Período de '+sgDtaI+' a '+sgDtaF;
 
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
@@ -2200,130 +2222,117 @@ Begin
     DecimalSeparator:='.';
 
     //==========================================================================
-    // Insere Novos Movtos Pagamentos ==========================================
+    // Exclui Lançamento do Salão a Serem Substituidos =========================
     //==========================================================================
-    // Busca Pagtos para Analise no Periodo Solicitado =========================
-    MySql:=' SELECT'+
-           ' p.cod_loja COD_LOJA,'+
-           ' p.empresa COD_LINX,'+
-           ' p.num_docto NUM_DOCTO,'+
-           ' p.dta_pagto DTA_DOCTO,'+
-           ' 999999 COD_HISTORICO,'+
-           ' p.OBS_TEXTO,'+
-           ' p.vlr_dinheiro VLR_DOCTO'+
+    MySql:=' DELETE FROM FIN_CONCILIACAO_MOV_DEP md'+
+           ' WHERE md.cod_historico=999999999'+ // Historico Salão
+           ' AND MD.dta_docto BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
+                                        QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
+           ' AND NOT EXISTS (SELECT 1'+
+           '                 FROM TAB_AUXILIAR fh'+
+           '                 WHERE fh.des_aux1=md.cod_linx'+
+           '                 AND   fh.tip_aux=22'+
+           '                 AND   Trim(fh.des_aux)=CAST(LPAD(EXTRACT(DAY FROM md.dta_docto),2,''0'')   AS VARCHAR(2))||''/''||'+
+           '                                        CAST(LPAD(EXTRACT(MONTH FROM md.dta_docto),2,''0'') AS VARCHAR(2))||''/''||'+
+           '                                        CAST(EXTRACT(YEAR FROM md.dta_docto) AS VARCHAR(4)))';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+    // Exclui Lançamento do Salão a Serem Substituidos =========================
+    //==========================================================================
 
-           ' FROM GEOBEAUTY_PAGTOS p'+
+    //==========================================================================
+    // Insere Novos Movtos Pagamentos em Dinheiro no Salão =====================
+    //==========================================================================
+    MySql:=' INSERT INTO FIN_CONCILIACAO_MOV_DEP'+
+           ' SELECT GEN_ID(GEN_CONCILIACAO_MOV_DEP,1) NUM_SEQ,'+
+           ' GEN_ID(GEN_COMPL_CONCILIACAO_MOV_DEP,0) NUM_COMPL,'+
+           ' g.cod_loja COD_LOJA,'+
+           ' g.empresa COD_LINX,'+
+           ' g.num_docto NUM_DOCTO,'+
+           ' g.dta_pagto DTA_DOCTO,'+
+           ' g.dta_pagto DTA_VENC,'+
+           ' NULL COD_BANCO,'+
+           ' NULL DES_BANCO,'+
+           ' 0 COD_PESSOA,'+ // 0 - Indica Lançamento de Sangria/GeoBeauty/Salao
+           ' g.vlr_dinheiro VLR_ORIGINAL,'+
+           ' 0.00 VLR_DESCONTO,'+
+           ' 0.00 VLR_ACRESCIMO,'+
+           ' g.vlr_dinheiro  VLR_DOCTO,'+
+           ' g.obs_texto OBS_TEXTO,'+
+           ' ''NAO'' IND_CONCILIACAO,'+
+           ' 0 COD_HISTO_AUTO,'+
+           ' 0 COD_BANCO_AUTO,'+
+           ' g.cod_historico,'+
+           ' g.des_historico desc_historico,'+
+           ' NULL OBS_NAO_CONC'+
 
-           ' WHERE p.dta_pagto BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
+           ' FROM GEOBEAUTY_PAGTOS g'+
+
+           ' WHERE g.dta_pagto BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+
+                                         ' AND '+
                                          QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
-           // Retira Dias Já Fechado Pelo Renato
-           ' AND   NOT EXISTS (SELECT 1'+
-           '                   FROM TAB_AUXILIAR fh'+
-           '                   WHERE fh.cod_aux=p.empresa'+
-           '                   AND   fh.tip_aux=22'+
-           '                   AND   Trim(fh.des_aux)=Cast(lpad(extract(day from p.dta_pagto),2,''0'') as varchar(2))||''/''||'+
-           '                                          Cast(lpad(extract(month from p.dta_pagto),2,''0'') as varchar(2))||''/''||'+
-           '                                          Cast(extract(Year from p.dta_pagto) as varchar(4)))'+
+           ' AND NOT EXISTS (SELECT 1'+
+           '                 FROM TAB_AUXILIAR fh'+
+           '                 WHERE fh.cod_aux=g.empresa'+
+           '                 AND   fh.tip_aux=22'+
+           '                 AND   Trim(fh.des_aux)=Cast(lpad(extract(day from g.dta_pagto),2,''0'')   as varchar(2))||''/''||'+
+           '                                        Cast(lpad(extract(month from g.dta_pagto),2,''0'') as varchar(2))||''/''||'+
+           '                                        Cast(extract(Year from g.dta_pagto) as varchar(4)))'+
+           ' ORDER BY 3,4,5';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
 
-           ' ORDER BY 2,3,4';
-    DMBelShop.CDS_Busca.Close;
-    DMBelShop.SDS_Busca.CommandText:=MySql;
-    DMBelShop.CDS_Busca.Open;
-
-    FrmBelShop.MontaProgressBar(True, FrmBancoExtratos);
-    pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
-    pgProgBar.Position:=0;
-
-    DMBelShop.CDS_Busca.DisableControls;
-    While Not DMBelShop.CDS_Busca.Eof do
-    Begin
-      Application.ProcessMessages;
-
-      sDta:=f_Troca('/','.',f_Troca('-','.',DMBelShop.CDS_Busca.FieldByName('Dta_Docto').AsString));
-
-      // Verifica Existencia do Movto Pagamentos ===============================
-      MySql:=' SELECT md.cod_loja'+
-
-             ' FROM FIN_CONCILIACAO_MOV_DEP md'+
-
-             ' WHERE md.cod_loja='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString)+
-             ' AND   md.cod_linx='+DMBelShop.CDS_Busca.FieldByName('Cod_Linx').AsString+
-             ' AND   md.num_docto='+DMBelShop.CDS_Busca.FieldByName('Num_Docto').AsString+
-             ' AND   md.cod_historico='+DMBelShop.CDS_Busca.FieldByName('Cod_Historico').AsString+
-             ' AND   md.dta_docto='+QuotedStr(sDta)+
-             ' AND   TRIM(md.obs_texto)='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Obs_Texto').AsString);
-      DMBelShop.CDS_Busca1.Close;
-      DMBelShop.SDS_Busca1.CommandText:=MySql;
-      DMBelShop.CDS_Busca1.Open;
-
-      // Se Nao Existe ou For Diferentes os Totais Ientão Insere ===============
-      bInserir:=True;
-      If Not DMBelShop.CDS_Busca1.IsEmpty Then
-      Begin
-        bInserir:=False;
-      End; // If Not DMBelShop.CDS_Busca1.IsEmpty Then
-      DMBelShop.CDS_Busca1.Close;
-
-      // Se Insere Depositos Novos =============================================
-      If bInserir Then
-      Begin
-        // Insere Novos Movimentos de Depósitos ================================
-        MySql:=' INSERT INTO FIN_CONCILIACAO_MOV_DEP'+
-               ' SELECT '+
-               ' GEN_ID(GEN_CONCILIACAO_MOV_DEP,1) NUM_SEQ, '+
-               ' GEN_ID(GEN_COMPL_CONCILIACAO_MOV_DEP,0) NUM_COMPL,'+
-               ' s.cod_loja COD_LOJA,'+
-               ' s.empresa COD_LINX,'+
-               ' s.usuario NUM_DOCTO,'+
-               ' s.data DTA_DOCTO,'+
-               ' s.data DTA_VENC,'+
-               ' NULL COD_BANCO,'+
-               ' NULL DES_BANCO,'+
-               ' 0 COD_PESSOA,'+ // 0 - Indica Lançamento de Sangria/GeoBeauty
-               ' CAST(ABS(s.valor) AS NUMERIC(12,2)) VLR_ORIGINAL,'+
-               ' 0.00 VLR_DESCONTO,'+
-               ' 0.00 VLR_ACRESCIMO,'+
-               ' CAST(ABS(s.valor) AS NUMERIC(12,2)) VLR_DOCTO,'+
-               ' SUBSTRING(TRIM(s.obs) FROM 1 FOR 80) OBS_TEXTO,'+
-               ' ''NAO'' IND_CONCILIACAO,'+
-               ' 0 COD_HISTO_AUTO,'+
-               ' 0 COD_BANCO_AUTO,'+
-               ' COALESCE(s.cod_historico,0) COD_HISTORICO,'+
-               ' s.desc_historico,'+
-               ' NULL OBS_NAO_CONC'+
-
-               ' FROM LINXSANGRIASUPRIMENTOS s'+
-
-               ' WHERE s.valor<0.0000'+
-               ' AND   s.cancelado=''N'''+
-               ' AND   s.cod_loja='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString)+
-               ' AND   s.empresa='+DMBelShop.CDS_Busca.FieldByName('Cod_Linx').AsString+
-               ' AND   s.usuario='+DMBelShop.CDS_Busca.FieldByName('Num_Docto').AsString+
-               ' AND   COALESCE(s.cod_historico,0)='+DMBelShop.CDS_Busca.FieldByName('Cod_Historico').AsString+
-               ' AND   s.data='+QuotedStr(sDta)+
-               ' AND   SUBSTRING(TRIM(s.obs) FROM 1 FOR 80)='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Obs_Texto').AsString);
-        DMBelShop.SQLC.Execute(MySql,nil,nil);
-      End; // If bInseri Then
-
-      pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
-
-      DMBelShop.CDS_Busca.Next;
-    End; // While Not DMBelShop.CDS_Busca.Eof do
-    DMBelShop.CDS_Busca.EnableControls;
-    DMBelShop.CDS_Busca.Close;
-    FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
-    // Insere Novos Movtos de Deposito/Sangria =================================
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    // AJUSTA TABELAS DE CONCILIAÇÃO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     //==========================================================================
+    // Exclui Conciliações Existentes Sem Depositos ============================
+    //==========================================================================
+    MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS d'+
+           ' WHERE NOT EXISTS (SELECT 1'+
+           '                   FROM FIN_CONCILIACAO_MOV_DEP M'+
+           '                   WHERE m.num_seq=d.num_seq'+
+           '                   AND   m.num_compl=d.num_compl)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+    // Exclui Conciliações Existentes Sem Depositos ============================
+    //==========================================================================
+
+    //==========================================================================
+    // Exclui Conciliações Existentes Sem Extratos =============================
+    //==========================================================================
+    MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS d'+
+           ' WHERE COALESCE(d.tip_conciliacao,'''')<>''DINH'''+
+           ' AND   COALESCE(d.tip_conciliacao,'''')<>''DESP'''+
+           ' AND   NOT EXISTS (SELECT 1'+
+           '                   FROM FIN_BANCOS_EXTRATOS ex'+
+           '                   WHERE ex.chv_extrato=d.chv_extrato)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+    // Exclui Conciliações Existentes Sem Extratos =============================
+    //==========================================================================
+
+    //==========================================================================
+    // Coloca para Não Conciliado Retirado de FIN_CONCILIACAO_DEPOSITOS ========
+    //==========================================================================
+    MySql:=' UPDATE FIN_CONCILIACAO_MOV_DEP m'+
+           ' SET m.ind_conciliacao=''NAO'''+
+           ' WHERE m.ind_conciliacao=''SIM'''+
+           ' AND   NOT EXISTS (SELECT 1'+
+           '                   FROM FIN_CONCILIACAO_DEPOSITOS D'+
+           '                   WHERE d.num_seq=m.num_seq'+
+           '                   AND   d.num_compl=m.num_compl)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+    // Coloca para Não Conciliado Retirado de FIN_CONCILIACAO_DEPOSITOS ========
+    //==========================================================================
+    // AJUSTA TABELAS DE CONCILIAÇÃO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     // Atualiza Transacao ======================================================
     DMBelShop.SQLC.Commit(TD);
 
+    Result:=True;
   Except // Except da Transação
     on e : Exception do
     Begin
       // Abandona Transacao ====================================================
       DMBelShop.SQLC.Rollback(TD);
-      Result:=False;
 
       FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
 
@@ -2333,12 +2342,9 @@ Begin
 
   DateSeparator:='/';
   DecimalSeparator:=',';
-
   OdirPanApres.Visible:=False;
-
   Screen.Cursor:=crDefault;
 End; // CONCILIAÇÕES DEPOSITOS - Atualiza Movtos Depositos GeoBeauty >>>>>>>>>>>
-
 
 // CONCILIAÇÕES DEPOSITOS - Atualiza Movtos Depositos Linx >>>>>>>>>>>>>>>>>>>>>
 Function TFrmBancoExtratos.AtualizaMovtosDepositosLinx: Boolean;
@@ -2387,7 +2393,7 @@ Begin
            '        ABS(s.valor) VALOR,'+
            '        COALESCE(s.cod_historico,0) COD_HISTORICO,'+
            '        SUBSTRING(TRIM(s.obs) FROM 1 FOR 80) OBS'+
-           ' FROM LINXSANGRIASUPRIMENTOS S'+
+           ' FROM LINXSANGRIASUPRIMENTOS s'+
            ' WHERE s.valor<0.0000'+
            ' AND   s.cancelado=''S'''+
            ' AND   s.data BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
@@ -2395,8 +2401,8 @@ Begin
            // Retira Dias Já Fechado Pelo Renato
            ' AND   NOT EXISTS (SELECT 1'+
            '                   FROM TAB_AUXILIAR fh'+
-           '                   WHERE fh.cod_aux=s.empresa'+
-           '                   AND   fh.tip_aux=22'+
+           '                   WHERE fh.tip_aux=22'+
+           '                   AND   fh.des_aux1=s.empresa'+
            '                   AND   Trim(fh.des_aux)=Cast(lpad(extract(day from s.data),2,''0'') as varchar(2))||''/''||'+
            '                                          Cast(lpad(extract(month from s.data),2,''0'') as varchar(2))||''/''||'+
            '                                          Cast(extract(Year from s.data) as varchar(4)))'+
@@ -2492,6 +2498,9 @@ Begin
     // Retira Movimento de Sangria Cancelados ==================================
     //==========================================================================
 
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    // AJUSTA TABELAS DE CONCILIAÇÃO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     //==========================================================================
     // Exclui Conciliações Existentes Sem Depositos ============================
     //==========================================================================
@@ -2530,6 +2539,8 @@ Begin
     DMBelShop.SQLC.Execute(MySql,nil,nil);
     // Coloca para Não Conciliado Retirado de FIN_CONCILIACAO_DEPOSITOS ========
     //==========================================================================
+    // AJUSTA TABELAS DE CONCILIAÇÃO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     //==========================================================================
     // Insere Novos Movtos de Deposito/Sangria =================================
@@ -2554,8 +2565,8 @@ Begin
            // Retira Dias Já Fechado Pelo Renato
            ' AND   NOT EXISTS (SELECT 1'+
            '                   FROM TAB_AUXILIAR fh'+
-           '                   WHERE fh.cod_aux=s.empresa'+
-           '                   AND   fh.tip_aux=22'+
+           '                   WHERE fh.tip_aux=22'+
+           '                   AND   fh.des_aux1=s.empresa'+
            '                   AND   Trim(fh.des_aux)=Cast(lpad(extract(day from s.data),2,''0'') as varchar(2))||''/''||'+
            '                                          Cast(lpad(extract(month from s.data),2,''0'') as varchar(2))||''/''||'+
            '                                          Cast(extract(Year from s.data) as varchar(4)))'+
@@ -13523,8 +13534,9 @@ begin
   // Movtos Web Services: Sangria/Suprimento Linx e Pagtos GeoBeauty ===========
   //============================================================================
 
-  If Des_Usuario<>'ODIR' Then
-   bAtualizaGeo:=False;
+//odirapagar - 02/04/2018
+//  If Des_Usuario<>'ODIR' Then
+//   bAtualizaGeo:=False;
 
   //============================================================================
   // Busca Movtos Web Services: Sangria/Suprimento Linx ========================
@@ -13598,18 +13610,26 @@ begin
   // Busca Movtos Web Services: Pagamento GeoBeauty ============================
   //============================================================================
 
+  //============================================================================
   // Insere Novos Pagtos se Buscou Dados no GeoBeauty ==========================
+  //============================================================================
   If bAtualizaGeo Then
   Begin
     AtualizaMovtosDepositosGeoBeauty;
   End; // If bAtualizaLinx Then
+  // Insere Novos Pagtos se Buscou Dados no GeoBeauty ==========================
+  //============================================================================
 
+  //============================================================================
   // Insere Novos Depositos se Buscou Dados no Linx ============================
+  //============================================================================
   If bAtualizaLinx Then
   Begin
     If Not AtualizaMovtosDepositosLinx Then
      Exit;
   End; // If bAtualizaLinx Then
+  // Insere Novos Depositos se Buscou Dados no Linx ============================
+  //============================================================================
 
   // Acerta Data para Separador <.> Ponto ======================================
   sgDtaI:=f_Troca('/','.',f_Troca('-','.',sgDtaI));
@@ -13978,11 +13998,11 @@ begin
     Dbg_ConcManutExtratoDep.Canvas.FillRect(Rect);
     Dbg_ConcManutExtratoDep.DefaultDrawDataCell(Rect,Column.Field,state);
 
-    DMConciliacao.CDS_CMExtratosDepQUEM.Alignment:=taCenter;
-    DMConciliacao.CDS_CMExtratosDepConciliado.Alignment:=taCenter;
-    DMConciliacao.CDS_CMExtratosDepNUM_CONTA.Alignment:=taRightJustify;
-    DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.Alignment:=taLeftJustify;
   End; // if not (gdSelected in State) Then
+  DMConciliacao.CDS_CMExtratosDepQUEM.Alignment:=taCenter;
+  DMConciliacao.CDS_CMExtratosDepConciliado.Alignment:=taCenter;
+  DMConciliacao.CDS_CMExtratosDepNUM_CONTA.Alignment:=taLeftJustify;
+  DMConciliacao.CDS_CMExtratosDepCHV_EXTRATO.Alignment:=taLeftJustify;
 
 end;
 
@@ -15537,14 +15557,13 @@ begin
 
            ' SELECT'+
            ' lj.nome_emp,'+
-
            ' 0.00 LOJA_DINHEIRO,'+
            ' 0.00 SALAO_DINHEIRO,'+
            ' 0.00 DIA_DINHEIRO,'+
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN gr.des_aux1=''CX_MTZ'' THEN'+
+           '     WHEN (TRIM(COALESCE(dp.tip_conciliacao,''''))=''DINH'') THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -15553,7 +15572,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN gr.des_aux1=''DEPOSITO'' THEN'+
+           '     WHEN (TRIM(COALESCE(dp.tip_conciliacao,''''))='''') THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -15562,7 +15581,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN gr.des_aux1=''DESPESA'' THEN'+
+           '     WHEN (TRIM(COALESCE(dp.tip_conciliacao,''''))=''DESP'') THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '      0.00'+
@@ -15571,7 +15590,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN gr.des_aux1 Not in (''CX_MTZ'', ''DEPOSITO'', ''DESPESA'') THEN'+
+           '     WHEN TRIM(COALESCE(dp.tip_conciliacao,'''')) Not in ('''', ''DESP'', ''DINH'') THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -15590,7 +15609,7 @@ begin
              MySql+' NULL OBSERVACOES,';
 
     MySql:=
-     MySql+' MD.cod_linx COD_LOJA,'+
+     MySql+' md.cod_linx COD_LOJA,'+
 
            ' CASE'+
            '   WHEN TRIM(COALESCE(fh.tip_aux,''''))<>'''' THEN'+
@@ -15602,10 +15621,10 @@ begin
            ' 4 ORDEM'+
 
            ' FROM FIN_CONCILIACAO_MOV_DEP md'+
-           '         LEFT JOIN LINXLOJAS lj     ON lj.empresa=md.cod_linx'+
-           '         LEFT JOIN TAB_AUXILIAR gr  ON gr.cod_aux=md.cod_historico'+
-           '                                   AND gr.tip_aux=21'+
-           '         LEFT JOIN TAB_AUXILIAR fh  ON fh.cod_aux=md.cod_linx'+
+           '         LEFT JOIN LINXLOJAS lj                  ON lj.empresa=md.cod_linx'+
+           '         LEFT JOIN FIN_CONCILIACAO_DEPOSITOS dp  ON dp.num_seq=md.num_seq'+
+           '                                                AND dp.num_compl=md.num_compl'+
+           '         LEFT JOIN TAB_AUXILIAR fh  ON fh.des_aux1=md.cod_linx'+
            '                                   AND fh.tip_aux=22'+
            '                                   AND Trim(fh.des_aux)='+QuotedStr(f_Troca('.','/',f_Troca('-','/',sgDia)))+
 
@@ -15626,7 +15645,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN gr.des_aux1=''CX_MTZ'' THEN'+
+           '     WHEN (TRIM(COALESCE(dp.tip_conciliacao,''''))=''DINH'') THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -15635,7 +15654,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN gr.des_aux1=''DEPOSITO'' THEN'+
+           '     WHEN (TRIM(COALESCE(dp.tip_conciliacao,''''))='''') THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -15644,7 +15663,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN gr.des_aux1=''DESPESA'' THEN'+
+           '     WHEN (TRIM(COALESCE(dp.tip_conciliacao,''''))=''DESP'') THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -15653,7 +15672,7 @@ begin
 
            ' COALESCE(SUM('+
            '  CASE'+
-           '     WHEN gr.des_aux1 Not in (''CX_MTZ'', ''DEPOSITO'', ''DESPESA'') THEN'+
+           '     WHEN TRIM(COALESCE(dp.tip_conciliacao,'''')) Not in ('''', ''DESP'', ''DINH'') THEN'+
            '       md.vlr_docto'+
            '     ELSE'+
            '       0.00'+
@@ -15662,16 +15681,15 @@ begin
            ' SUM(COALESCE(md.vlr_docto,0.00)) TOTAL,'+
 
            ' 0.00 QUEBRA_CX,'+
-
            ' NULL OBSERVACOES,'+
            ' NULL COD_LOJA,'+
            ' NULL FECHA,'+
            ' 5 ORDEM'+
 
-           ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj, TAB_AUXILIAR gr'+
+           ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj, FIN_CONCILIACAO_DEPOSITOS dp'+
            ' WHERE md.cod_linx=lj.empresa'+
-           ' AND   md.cod_historico=gr.cod_aux'+
-           ' AND   gr.tip_aux=21'+
+           ' AND   md.num_seq=dp.num_seq'+
+           ' AND   md.num_compl=dp.num_compl'+
            ' AND   md.ind_conciliacao=''SIM'''+
            ' AND   md.dta_docto='+QuotedStr(sgDia)+
 
@@ -15801,7 +15819,7 @@ begin
            '         LEFT JOIN LINXLOJAS lj     ON lj.empresa=md.cod_linx'+
            '         LEFT JOIN TAB_AUXILIAR gr  ON gr.cod_aux=md.cod_historico'+
            '                                   AND gr.tip_aux=21'+
-           '         LEFT JOIN TAB_AUXILIAR fh  ON fh.cod_aux=md.cod_linx'+
+           '         LEFT JOIN TAB_AUXILIAR fh  ON fh.des_aux1=md.cod_linx'+
            '                                   AND fh.tip_aux=22'+
            '                                   AND TRIM(fh.des_aux)='+QuotedStr(f_Troca('.','/',f_Troca('-','/',sgDia)))+
 

@@ -214,6 +214,79 @@ procedure TFrmLogin.EdtLoginKeyDown(Sender: TObject; var Key: Word; Shift: TShif
 Var
   MySql: String;
 begin
+{
+  if (Shift = [ssCtrl, ssAlt])   and (Key=VK_F9) then PEDRO - Logistica
+  if (Shift = [ssAlt, ssShift])  and (Key=VK_F12) then ZILANDRA - COMPRAS
+  if (Shift = [ssCtrl, ssShift]) and (Key=VK_F5)   then MANUELA
+  if (Shift = [ssCtrl, ssShift]) and (Key=VK_F11)  then RENATO
+  if (Shift = [ssCtrl, ssShift]) and (Key=VK_F9)   then ODIR
+}
+  //============================================================================
+  // PEDRO - LOGISTICA =========================================================
+  //============================================================================
+  if (Shift = [ssCtrl, ssAlt])   and (Key=VK_F9) then
+  Begin
+    bgSiga:=True;
+
+    If Not bgSiga Then
+    Begin
+      Des_Login:=Login;
+      sgTpConexao:='';
+      DMBelShop.MontaConexaoEmpresas;
+    End; // If Not bgSiga Then
+
+    // Apresenta o Processamento ===============================================
+    PainelApresLogin.Caption:='AGUARDE !! Conectando Empresa Matriz ...';
+    PainelApresLogin.Width:=Length(PainelApresLogin.Caption)*10;
+    PainelApresLogin.Left:=ParteInteiro(FloatToStr((FrmLogin.Width-PainelApresLogin.Width)/2));
+    PainelApresLogin.Top:=ParteInteiro(FloatToStr((FrmLogin.Height-PainelApresLogin.Height)/2));
+    PainelApresLogin.Font.Style:=[fsBold];
+    PainelApresLogin.Parent:=FrmLogin;
+    PainelApresLogin.Visible:=True;
+    Refresh;
+
+    // Conecta Matriz ==========================================================
+    If Not FrmBelShop.ConectaMatriz Then
+    Begin
+      If sgCodLojaUnica='' Then
+       msg('Impossível Continuar...'+cr+'Banco de Dados MATRIZ'+cr+cr+'Não CONECTADO !!','A')
+      Else
+       msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
+      Application.Terminate;
+      Exit;
+    End;
+
+    // Conecta MPMS ============================================================
+    PainelApresLogin.Caption:='AGUARDE !! Conectando CD - BelShop_CD ...';
+    Refresh;
+    If Not FrmBelShop.ConectaMPMS Then
+    Begin
+      If sgCodLojaUnica='' Then
+       msg('Impossível Continuar...'+cr+'Banco de Dados BelShop CD'+cr+cr+'Não CONECTADO !!','A')
+      Else
+       msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
+      Application.Terminate;
+      Exit;
+    End;
+
+    // Busca Usuario ===========================================================
+    MySql:=' SELECT p.COD_USUARIO, p.DES_USUARIO, p.DES_SENHA, p.DES_LOGIN,'+
+           ' p.IND_ADMIN, p.IND_ATIVO'+
+           ' FROM PS_USUARIOS p'+
+           ' WHERE p.COD_USUARIO = 213';
+    DMBelShop.IBQ_Busca.Close;
+    DMBelShop.IBQ_Busca.SQL.Clear;
+    DMBelShop.IBQ_Busca.SQL.Add(MySql);
+    DMBelShop.IBQ_Busca.Open;
+
+    Login:=DMBelShop.IBQ_Busca.FieldByName('Des_Login').AsString;
+
+    PainelApresLogin.Visible:=False;
+
+    Close;
+  End; // if (Shift = [ssAlt, ssShift]) and (Key=VK_F12) then
+  // PEDRO - LOGISTICA =========================================================
+  //============================================================================
 
   //============================================================================
   // ZILANDRA - COMPRAS ========================================================

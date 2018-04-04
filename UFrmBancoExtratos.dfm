@@ -4755,6 +4755,11 @@ object FrmBancoExtratos: TFrmBancoExtratos
                 Alignment = taLeftJustify
                 Expanded = False
                 FieldName = 'NUM_CONTA'
+                Font.Charset = ANSI_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = []
                 Title.Caption = 'N'#250'mero Conta'
                 Width = 250
                 Visible = True

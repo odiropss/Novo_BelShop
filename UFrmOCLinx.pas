@@ -667,7 +667,10 @@ Begin
          igNrDiasAno:=DiasUteisBelShop(DMBelShop.CDS_DemandasNovo.FieldByName('dta_ref').AsDateTime, StrToDate(sgDtaFimAno)-1, False, True);
        End; // If Trim(DMVirtual.CDS_V_EstoquesDTA_INCLUSAO.AsString)='' Then
 
-      cgDemAnoDia:=cgDemAno/igNrDiasAno;
+       cgDemAnoDia:=cgDemAno;
+       If igNrDiasAno<>0 Then
+        cgDemAnoDia:=cgDemAno/igNrDiasAno;
+
     End; // If Trim(DMBelShop.CDS_DemandasNovo.FieldByName('Demanda').AsString)='ANO' Then
 
     DMBelShop.CDS_DemandasNovo.Next;
@@ -693,7 +696,6 @@ Begin
   // Busca de Demandas Novo - Limpa Filtra ===================================
   DMBelShop.CDS_DemandasNovo.Filtered:=False;
   DMBelShop.CDS_DemandasNovo.Filter:='';
-
 End; // ORDEM DE COMPRA - Busca Demanda e Numeros de Dias e Meses >>>>>>>>>>>>>>
 
 // ORDEM DE COMPRA - Monta Demandas para Novo Calculo do Compras >>>>>>>>>>>>>>>
@@ -1224,7 +1226,6 @@ Begin
       For i:=0 to DMLinx.CDS_OCProdLinx.FieldCount-1 do
       Begin
         // Trata Campos =============================================
-
         If AnsiUpperCase(DMLinx.CDS_OCProdLinx.Fields[i].FieldName)='NUM_SEQ' Then
          DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=igNumSeqPed
 
@@ -1351,6 +1352,7 @@ Begin
       Else
        DMBelShop.IBQ_OC_ComprarAdd.Fields[iQtdMediaDia].AsCurrency:=0;
 
+
       DMBelShop.IBQ_OC_ComprarAdd.Post;
 
       DMLinx.CDS_OCProdLinx.Next;
@@ -1379,7 +1381,6 @@ Begin
       DMBelShop.IBQ_OC_ComprarAdd.Close;
       DMLinx.CDS_OCProdLinx.Close;
 
-//odirapagar      msg('Erro na Geração dos Produtos !!'+cr+cr+'Filial: '+sCodMatriz +' !!','A');
       MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
     End; // On e : Exception do
   End; // Try // IBQ_OC_ComprarAdd
