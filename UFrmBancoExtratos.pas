@@ -592,12 +592,13 @@ Var
   tsArquivo: TStringList;
   wDia, wMes, wAno: Word;
 
-  sDtaIncio,sDtaFim: String;
+  sDtaIncio, sDtaFim: String;
 
   sChaveAcessoGeo,
-  sParametro,
-  sRetornoPagtos, // Recebe Retorno da WebService GeoBeauty
-  sRegistro: String;      // Recebe Registro Unico
+  sParametro: String;
+
+  sRetornoPagtos,        // Recebe Retorno da WebService GeoBeauty
+  sRegistro: WideString; // Recebe Registro Unico
 
   SoapHTTPRIO: THTTPRIO;
 
@@ -677,8 +678,9 @@ Begin
   Else
    sDtaIncio:=sDtaIncio+IntToStr(wDia);
 
-  // Data do Fim do Período
+  // Data do Fim do Período ====================================================
   DecodeDate(StrToDate(sgDtaF), wAno, wMes, wDia);
+
   sDtaFim:=IntToStr(wAno);
   If wMes<10 Then
    sDtaFim:=sDtaFim+'0'+IntToStr(wMes)
@@ -2222,20 +2224,39 @@ Begin
     DecimalSeparator:='.';
 
     //==========================================================================
-    // Exclui Lançamento do Salão a Serem Substituidos =========================
+    // Exclui Lançamento do Salão Que foram Alterados ==========================
     //==========================================================================
-    MySql:=' DELETE FROM FIN_CONCILIACAO_MOV_DEP md'+
-           ' WHERE md.cod_historico=999999999'+ // Historico Salão
-           ' AND MD.dta_docto BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
-                                        QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
+    MySql:=' DELETE FROM FIN_CONCILIACAO_MOV_DEP f'+
+           ' WHERE f.dta_docto BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
+                                         QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
+           ' AND   f.cod_historico=999999999'+
+
            ' AND NOT EXISTS (SELECT 1'+
            '                 FROM TAB_AUXILIAR fh'+
-           '                 WHERE fh.des_aux1=md.cod_linx'+
-           '                 AND   fh.tip_aux=22'+
-           '                 AND   Trim(fh.des_aux)=CAST(LPAD(EXTRACT(DAY FROM md.dta_docto),2,''0'')   AS VARCHAR(2))||''/''||'+
-           '                                        CAST(LPAD(EXTRACT(MONTH FROM md.dta_docto),2,''0'') AS VARCHAR(2))||''/''||'+
-           '                                        CAST(EXTRACT(YEAR FROM md.dta_docto) AS VARCHAR(4)))';
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
+           '                 WHERE fh.tip_aux=22'+
+           '                 AND   fh.des_aux1=f.cod_linx'+
+           '                 AND   Trim(fh.des_aux)=CAST(LPAD(EXTRACT(DAY FROM f.dta_docto),2,''0'')   AS VARCHAR(2))||''/''||'+
+           '                                        CAST(LPAD(EXTRACT(MONTH FROM f.dta_docto),2,''0'') AS VARCHAR(2))||''/''||'+
+           '                                        CAST(EXTRACT(YEAR FROM f.dta_docto) AS VARCHAR(4)))'+
+
+           ' AND NOT EXISTS (SELECT 1'+
+           '                FROM GEOBEAUTY_PAGTOS g'+
+           '                WHERE g.dta_pagto=f.dta_docto'+
+           '                AND   g.cod_loja=f.cod_loja'+
+           '                AND   g.empresa=f.cod_linx'+
+           '                AND   g.num_docto=f.num_docto'+
+           '                AND   g.dta_pagto=f.dta_docto'+
+           '                and   g.vlr_dinheiro=f.vlr_original'+
+           '                and   g.obs_texto=f.obs_texto'+
+           '                AND   g.cod_historico=f.cod_historico'+
+           '                AND   NOT EXISTS (SELECT 1'+
+           '                                  FROM TAB_AUXILIAR fh'+
+           '                                  WHERE fh.tip_aux=22'+
+           '                                  AND   fh.des_aux1=g.empresa'+
+           '                                  AND   Trim(fh.des_aux)=CAST(LPAD(EXTRACT(DAY FROM f.dta_docto),2,''0'')   AS VARCHAR(2))||''/''||'+
+           '                                                         CAST(LPAD(EXTRACT(MONTH FROM f.dta_docto),2,''0'') AS VARCHAR(2))||''/''||'+
+           '                                                         CAST(EXTRACT(YEAR FROM f.dta_docto) AS VARCHAR(4))))';
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
     // Exclui Lançamento do Salão a Serem Substituidos =========================
     //==========================================================================
 
@@ -2272,11 +2293,30 @@ Begin
                                          QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
            ' AND NOT EXISTS (SELECT 1'+
            '                 FROM TAB_AUXILIAR fh'+
-           '                 WHERE fh.cod_aux=g.empresa'+
-           '                 AND   fh.tip_aux=22'+
+           '                 WHERE fh.tip_aux=22'+
+           '                 AND   fh.des_aux1=g.empresa'+
            '                 AND   Trim(fh.des_aux)=Cast(lpad(extract(day from g.dta_pagto),2,''0'')   as varchar(2))||''/''||'+
            '                                        Cast(lpad(extract(month from g.dta_pagto),2,''0'') as varchar(2))||''/''||'+
            '                                        Cast(extract(Year from g.dta_pagto) as varchar(4)))'+
+
+           ' AND NOT EXISTS (SELECT 1'+
+           '                 FROM FIN_CONCILIACAO_MOV_DEP f'+
+           '                 WHERE f.dta_docto=g.dta_pagto'+
+           '                 AND   f.cod_loja=g.cod_loja'+
+           '                 AND   f.cod_linx=g.empresa'+
+           '                 AND   f.num_docto=g.num_docto'+
+           '                 AND   f.dta_docto=g.dta_pagto'+
+           '                 and   f.vlr_original=g.vlr_dinheiro'+
+           '                 and   f.obs_texto=g.obs_texto'+
+           '                 AND   f.cod_historico=g.cod_historico'+
+           '                 AND   NOT EXISTS (SELECT 1'+
+           '                                   FROM TAB_AUXILIAR fh'+
+           '                                   WHERE fh.tip_aux=22'+
+           '                                   AND   fh.des_aux1=f.cod_linx'+
+           '                                   AND   TRIM(fh.des_aux)=CAST(LPAD(EXTRACT(DAY FROM f.dta_docto),2,''0'')   AS VARCHAR(2))||''/''||'+
+           '                                                          CAST(LPAD(EXTRACT(MONTH FROM f.dta_docto),2,''0'') AS VARCHAR(2))||''/''||'+
+           '                                                          CAST(EXTRACT(YEAR FROM f.dta_docto) AS VARCHAR(4))))'+
+
            ' ORDER BY 3,4,5';
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
@@ -13468,17 +13508,37 @@ Var
   sParametros: String;
   bAtualizaLinx, bAtualizaGeo: Boolean;
   s, ss: String;
+  b: Boolean;
 begin
   Dbg_ConcManutExtratoDep.SetFocus;
 
   bgSiga:=True;
   FrmPeriodoApropriacao:=TFrmPeriodoApropriacao.Create(Self);
   FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Text:=
-                      DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+                      DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)-1);
   FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Text   :=
-                      DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+                      DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)-1);
 
-  FrmPeriodoApropriacao.ShowModal;
+  b:=True;
+  While b do
+  Begin
+    FrmPeriodoApropriacao.ShowModal;
+
+    // Verifica se Prossegue Processamento
+    If Not bgSiga Then
+    Begin
+      FreeAndNil(FrmPeriodoApropriacao);
+      Exit;
+    End;
+
+    b:=False;
+    If FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date>=StrToDate(DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor))) Then
+    Begin
+      b:=True;
+      msg('Data Final do Período Não Poder'+cr+cr+'Ser Igual ou Maior que Hoje !!','A');
+    End; // If FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date>=StrToDate(DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)) Then
+  End; // While b do
+
   sgDtaI:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date);
   sgDtaF:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date);
   s :=sgDtaI;
@@ -13495,10 +13555,6 @@ begin
 
   igTotMarcaExt:=0;
   igTotMarcaPag:=0;
-
-  // Verifica se Prossegue Processamento =======================================
-  If Not bgSiga Then
-   Exit;
 
   DMConciliacao.CDS_CMExtratosDep.Close;
   DMConciliacao.CDS_CMDepositos.Close;
@@ -15624,8 +15680,8 @@ begin
            '         LEFT JOIN LINXLOJAS lj                  ON lj.empresa=md.cod_linx'+
            '         LEFT JOIN FIN_CONCILIACAO_DEPOSITOS dp  ON dp.num_seq=md.num_seq'+
            '                                                AND dp.num_compl=md.num_compl'+
-           '         LEFT JOIN TAB_AUXILIAR fh  ON fh.des_aux1=md.cod_linx'+
-           '                                   AND fh.tip_aux=22'+
+           '         LEFT JOIN TAB_AUXILIAR fh  ON fh.tip_aux=22'+
+           '                                   AND fh.des_aux1=md.cod_linx'+
            '                                   AND Trim(fh.des_aux)='+QuotedStr(f_Troca('.','/',f_Troca('-','/',sgDia)))+
 
            ' WHERE md.ind_conciliacao=''SIM'''+
@@ -15819,8 +15875,8 @@ begin
            '         LEFT JOIN LINXLOJAS lj     ON lj.empresa=md.cod_linx'+
            '         LEFT JOIN TAB_AUXILIAR gr  ON gr.cod_aux=md.cod_historico'+
            '                                   AND gr.tip_aux=21'+
-           '         LEFT JOIN TAB_AUXILIAR fh  ON fh.des_aux1=md.cod_linx'+
-           '                                   AND fh.tip_aux=22'+
+           '         LEFT JOIN TAB_AUXILIAR fh  ON fh.tip_aux=22'+
+           '                                   AND fh.des_aux1=md.cod_linx'+
            '                                   AND TRIM(fh.des_aux)='+QuotedStr(f_Troca('.','/',f_Troca('-','/',sgDia)))+
 
            ' WHERE md.ind_conciliacao=''NAO'''+

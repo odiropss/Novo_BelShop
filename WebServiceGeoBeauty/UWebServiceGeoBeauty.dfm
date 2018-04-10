@@ -1,9 +1,8 @@
 object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
   Left = 240
   Top = 123
-  Width = 990
+  Width = 1070
   Height = 589
-  ActiveControl = Bt_MontarEstrutura
   Caption = 'Web Service GeoBeauty'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -22,28 +21,32 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 974
+    Width = 1054
     Height = 551
-    ActivePage = TabSheet2
+    ActivePage = TabSheet3
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Web Service'
       Highlighted = True
+      DesignSize = (
+        1046
+        523)
       object Panel1: TPanel
         Left = 0
         Top = 0
-        Width = 966
+        Width = 1046
         Height = 55
         Align = alTop
         TabOrder = 0
         object Bt_Busca: TJvXPButton
-          Left = 504
-          Top = 9
+          Left = 242
+          Top = 1
           Width = 129
-          Height = 36
+          Height = 53
           Caption = 'Busca Web Service'
           TabOrder = 1
+          Align = alLeft
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -53,24 +56,25 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
           OnClick = Bt_BuscaClick
         end
         object Gb_CurvaABCEndPeriodo: TGroupBox
-          Left = 239
+          Left = 1
           Top = 1
           Width = 241
-          Height = 48
+          Height = 53
+          Align = alLeft
           Caption = ' Per'#237'odo '
           Color = 14342874
           ParentColor = False
           TabOrder = 0
           object Label85: TLabel
-            Left = 117
-            Top = 23
+            Left = 116
+            Top = 24
             Width = 6
             Height = 13
             Caption = 'a'
           end
           object DtEdtInicio: TcxDateEdit
-            Left = 9
-            Top = 17
+            Left = 7
+            Top = 18
             ParentFont = False
             Style.Font.Charset = DEFAULT_CHARSET
             Style.Font.Color = clWindowText
@@ -85,8 +89,8 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
             Width = 106
           end
           object DtEdtFim: TcxDateEdit
-            Left = 127
-            Top = 17
+            Left = 125
+            Top = 18
             ParentFont = False
             Style.Font.Charset = DEFAULT_CHARSET
             Style.Font.Color = clWindowText
@@ -105,9 +109,9 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
       object Memo1: TMemo
         Left = 0
         Top = 55
-        Width = 966
+        Width = 5000
         Height = 468
-        Align = alClient
+        Anchors = [akLeft, akTop, akRight, akBottom]
         Lines.Strings = (
           'Memo1')
         TabOrder = 1
@@ -116,20 +120,24 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
     object TabSheet2: TTabSheet
       Caption = 'Monta Dados'
       ImageIndex = 1
+      DesignSize = (
+        1046
+        523)
       object Panel2: TPanel
         Left = 0
         Top = 0
-        Width = 966
+        Width = 1046
         Height = 44
         Align = alTop
         TabOrder = 0
         object Bt_MontarEstrutura: TJvXPButton
-          Left = 16
-          Top = 4
+          Left = 1
+          Top = 1
           Width = 129
-          Height = 36
+          Height = 42
           Caption = 'Montar Estrutura'
           TabOrder = 0
+          Align = alLeft
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -142,9 +150,9 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
       object Memo2: TMemo
         Left = 0
         Top = 44
-        Width = 966
+        Width = 5000
         Height = 479
-        Align = alClient
+        Anchors = [akLeft, akTop, akRight, akBottom]
         Lines.Strings = (
           'Memo2')
         TabOrder = 1
@@ -156,20 +164,18 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
       object Panel3: TPanel
         Left = 0
         Top = 0
-        Width = 966
+        Width = 1046
         Height = 44
         Align = alTop
         TabOrder = 0
-        DesignSize = (
-          966
-          44)
         object Bt_Apresenta: TJvXPButton
-          Left = 8
-          Top = 4
+          Left = 1
+          Top = 1
           Width = 129
-          Height = 36
+          Height = 42
           Caption = 'Apresenta'
           TabOrder = 0
+          Align = alLeft
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -180,10 +186,10 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
         end
         object Bt_DepAnaliseSalvaClipboard: TJvXPButton
           Tag = 4
-          Left = 479
-          Top = 2
+          Left = 130
+          Top = 1
           Width = 167
-          Height = 35
+          Height = 42
           Caption = 'Salvar em Mem'#243'ria'
           TabOrder = 1
           Glyph.Data = {
@@ -200,7 +206,7 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
             000030F44F00033333333333000030FFFF003333333333330000300000033333
             333333330000333333333333333333330000}
           ShowFocusRect = True
-          Anchors = [akLeft, akTop, akBottom]
+          Align = alLeft
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -213,10 +219,10 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
       object Dbg_ApresentaDados: TDBGrid
         Left = 0
         Top = 44
-        Width = 966
+        Width = 1046
         Height = 479
         Align = alClient
-        DataSource = DS_GeoBeauty
+        DataSource = DS_GeoBeautyPagtos
         FixedColor = clTeal
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -230,112 +236,46 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
         TitleFont.Height = -11
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
-        Columns = <
-          item
-            Alignment = taCenter
-            Expanded = False
-            FieldName = 'DATA'
-            Title.Alignment = taCenter
-            Width = 80
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'CNPJ_LOJA'
-            Width = 100
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'NOME_LOJA'
-            Width = 300
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'VALOR_CHEQUE'
-            Title.Alignment = taRightJustify
-            Title.Caption = 'CHEQUE'
-            Width = 100
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'VALOR_CARTAO'
-            Title.Alignment = taRightJustify
-            Title.Caption = 'CARTAO'
-            Width = 100
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'VALOR_DINHEIRO'
-            Title.Alignment = taRightJustify
-            Title.Caption = 'DINHEIRO'
-            Width = 100
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'VALOR_TOTAL'
-            Title.Alignment = taRightJustify
-            Title.Caption = 'TOTAL'
-            Width = 100
-            Visible = True
-          end>
       end
     end
   end
-  object HTTPRIO111: THTTPRIO
-    WSDLLocation = 
-      'http://aplicativo.geobeauty.com.br/aplicativo/webservices/ws-sal' +
-      'ao/server.php?wsdl'
-    Service = 'gestori'
-    Port = 'gestoriPort'
-    HTTPWebNode.Agent = 'Borland SOAP 1.2'
-    HTTPWebNode.UseUTF8InHeader = False
-    HTTPWebNode.InvokeOptions = [soIgnoreInvalidCerts, soAutoCheckAccessPointViaUDDI]
-    Converter.Options = [soSendMultiRefObj, soTryAllSchema, soRootRefNodesToBody, soCacheMimeResponse, soUTF8EncodeXML]
-    Left = 528
-    Top = 144
-  end
-  object CDS_GeoBeauty: TClientDataSet
+  object CDS_GeoBeautyPagtos: TClientDataSet
     Aggregates = <>
     Params = <>
     Left = 684
     Top = 120
-    object CDS_GeoBeautyDATA: TDateField
+    object CDS_GeoBeautyPagtosDATA: TDateField
       FieldName = 'DATA'
     end
-    object CDS_GeoBeautyCNPJ_LOJA: TStringField
+    object CDS_GeoBeautyPagtosCNPJ_LOJA: TStringField
       FieldName = 'CNPJ_LOJA'
       Size = 14
     end
-    object CDS_GeoBeautyNOME_LOJA: TStringField
+    object CDS_GeoBeautyPagtosNOME_LOJA: TStringField
       FieldName = 'NOME_LOJA'
       Size = 60
     end
-    object CDS_GeoBeautyVALOR_CHEQUE: TCurrencyField
+    object CDS_GeoBeautyPagtosVALOR_CHEQUE: TCurrencyField
       FieldName = 'VALOR_CHEQUE'
       DisplayFormat = '0,.00'
       currency = False
     end
-    object CDS_GeoBeautyVALOR_CARTAO: TCurrencyField
+    object CDS_GeoBeautyPagtosVALOR_CARTAO: TCurrencyField
       FieldName = 'VALOR_CARTAO'
       DisplayFormat = '0,.00'
     end
-    object CDS_GeoBeautyVALOR_DINHEIRO: TCurrencyField
+    object CDS_GeoBeautyPagtosVALOR_DINHEIRO: TCurrencyField
       FieldName = 'VALOR_DINHEIRO'
       DisplayFormat = '0,.00'
     end
-    object CDS_GeoBeautyVALOR_TOTAL: TCurrencyField
+    object CDS_GeoBeautyPagtosVALOR_TOTAL: TCurrencyField
       FieldName = 'VALOR_TOTAL'
       DisplayFormat = '0,.00'
     end
   end
-  object DS_GeoBeauty: TDataSource
-    DataSet = CDS_GeoBeauty
-    Left = 756
+  object DS_GeoBeautyPagtos: TDataSource
+    DataSet = CDS_GeoBeautyPagtos
+    Left = 772
     Top = 128
   end
   object HTTPRIO1: THTTPRIO
@@ -350,5 +290,79 @@ object frmWebServiceGeoBeauty: TfrmWebServiceGeoBeauty
     Converter.Options = [soSendMultiRefObj, soTryAllSchema, soRootRefNodesToBody, soCacheMimeResponse, soUTF8EncodeXML]
     Left = 372
     Top = 256
+  end
+  object DS_GeoBeautyFechamento: TDataSource
+    DataSet = CDS_GeoBeautyFechamento
+    Left = 796
+    Top = 208
+  end
+  object CDS_GeoBeautyFechamento: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 684
+    Top = 200
+    object CDS_GeoBeautyFechamentoEMPRESA: TIntegerField
+      FieldName = 'EMPRESA'
+    end
+    object CDS_GeoBeautyFechamentoCNPJ_LOJA: TStringField
+      FieldName = 'CNPJ_LOJA'
+      Size = 14
+    end
+    object CDS_GeoBeautyFechamentoNOME_LOJA: TStringField
+      FieldName = 'NOME_LOJA'
+      Size = 60
+    end
+    object CDS_GeoBeautyFechamentoNOME_CAIXA: TStringField
+      FieldName = 'NOME_CAIXA'
+      Size = 50
+    end
+    object CDS_GeoBeautyFechamentoNOME_USUARIO: TStringField
+      FieldName = 'NOME_USUARIO'
+      Size = 50
+    end
+    object CDS_GeoBeautyFechamentoDATA_ABERTURA: TSQLTimeStampField
+      FieldName = 'DATA_ABERTURA'
+    end
+    object CDS_GeoBeautyFechamentoDATA_FECHAMENTO: TSQLTimeStampField
+      FieldName = 'DATA_FECHAMENTO'
+    end
+    object CDS_GeoBeautyFechamentoVALOR_CHEQUE_ATUAL: TCurrencyField
+      FieldName = 'VALOR_CHEQUE_ATUAL'
+      DisplayFormat = '0,.00'
+      currency = False
+    end
+    object CDS_GeoBeautyFechamentoVALOR_CARTAO_ATUAL: TCurrencyField
+      FieldName = 'VALOR_CARTAO_ATUAL'
+      DisplayFormat = '0,.00'
+    end
+    object CDS_GeoBeautyFechamentoVALOR_DINHEIRO_ATUAL: TCurrencyField
+      FieldName = 'VALOR_DINHEIRO_ATUAL'
+      DisplayFormat = '0,.00'
+    end
+    object CDS_GeoBeautyFechamentoVALOR_CHEQUE_PREVISTO: TCurrencyField
+      FieldName = 'VALOR_CHEQUE_PREVISTO'
+      DisplayFormat = '0,.00'
+      currency = False
+    end
+    object CDS_GeoBeautyFechamentoVALOR_CARTAO_PREVISTO: TCurrencyField
+      FieldName = 'VALOR_CARTAO_PREVISTO'
+      DisplayFormat = '0,.00'
+    end
+    object CDS_GeoBeautyFechamentoVALOR_DINHEIRO_PREVISTO: TCurrencyField
+      FieldName = 'VALOR_DINHEIRO_PREVISTO'
+      DisplayFormat = '0,.00'
+    end
+    object CDS_GeoBeautyFechamentoVALORTOTAL: TCurrencyField
+      FieldName = 'VALORTOTAL'
+      DisplayFormat = '0,.00'
+    end
+    object CDS_GeoBeautyFechamentoVALOR_TOTAL_PREVISTO: TCurrencyField
+      FieldName = 'VALOR_TOTAL_PREVISTO'
+      DisplayFormat = '0,.00'
+    end
+    object CDS_GeoBeautyFechamentoCOD_LOJA: TStringField
+      FieldName = 'COD_LOJA'
+      Size = 2
+    end
   end
 end

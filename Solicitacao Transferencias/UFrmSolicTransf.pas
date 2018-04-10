@@ -1070,6 +1070,12 @@ Var
   bMultiplo: Boolean;
 begin
 
+  If (EdtCodProdLinx.AsInteger=0) and (EdtQtdTransf.AsInteger=0) Then
+  Begin
+    EdtCodProdLinx.SetFocus;
+    Exit;
+  End;
+
   If EdtQtdTransf.AsInteger=0 Then
   Begin
     msg('Quantidade de Transferência'+cr+'INVÁLIDA !!','A');

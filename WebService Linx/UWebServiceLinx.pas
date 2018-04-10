@@ -149,6 +149,8 @@ type
     Function  EnviaMetodoXMLPost: Boolean;
 
     Procedure LeMetodoXMLRetorno;
+
+    Procedure AcertaSaldoCD_Deposito9;
     // Odir ====================================================================
 
     procedure FormCreate(Sender: TObject);
@@ -229,6 +231,97 @@ uses
 //==============================================================================
 // Odir - Inicio ===============================================================
 //==============================================================================
+
+// Acerta Estoque no CD - Depósito 9 - Depósito 09 | Devolução >>>>>>>>>>>>>>>>>
+Procedure TFrmWebServiceLinx.AcertaSaldoCD_Deposito9;
+Var
+  MySql: String;
+  iSaldoAtual: Integer;
+Begin
+  // Busca Saldo do Depósito 09 | Devolução ====================================
+  MySql:=' SELECT m.cod_produto,'+
+         ' CAST(SUM(COALESCE(decode(m.operacao,''E'',m.quantidade,''DS'',m.quantidade),0))'+
+         '      -'+ // Menos
+         '      SUM(COALESCE(decode(m.operacao,''S'',m.quantidade,''DE'',m.quantidade,0),0))'+
+         ' AS INTEGER) Qtd_Deposito'+
+
+         ' FROM LINXMOVIMENTO m'+
+         ' WHERE m.deposito IS NOT NULL'+
+         ' AND m.excluido=''N'''+
+         ' AND m.cancelado=''N'''+
+         ' AND m.empresa=2'+
+         ' AND TRIM(SUBSTRING(TRIM(m.deposito) FROM 1 FOR 2)) = ''9'''+
+         ' GROUP BY 1'+
+         ' HAVING CAST(SUM(COALESCE(DECODE(m.operacao,''E'',m.quantidade,''DS'',m.quantidade),0))'+
+         '             -'+
+         '             SUM(COALESCE(DECODE(m.operacao,''S'',m.quantidade,''DE'',m.quantidade,0),0))'+
+         '        AS INTEGER) <> 0';
+  DMLinxWebService.CDS_Busca.Close;
+  DMLinxWebService.SDS_Busca.CommandText:=MySql;
+  DMLinxWebService.CDS_Busca.Open;
+
+  // Verifica se Transação esta Ativa
+  If DMLinxWebService.SQLC.InTransaction Then
+   DMLinxWebService.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMLinxWebService.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    DMLinxWebService.CDS_Busca.DisableControls;
+    While not DMLinxWebService.CDS_Busca.Eof do
+    Begin
+      // Busca Saldo atual do produto
+      MySql:=' SELECT CAST(COALESCE(d.quantidade,0) AS INTEGER) SaldoAtual'+
+             ' FROM LINXPRODUTOSDETALHES d'+
+             ' WHERE d.empresa=2'+
+             ' AND   d.cod_produto='+DMLinxWebService.CDS_Busca.FieldByName('Cod_Produto').AsString;
+      DMLinxWebService.CDS_BuscaRapida.Close;
+      DMLinxWebService.SDS_BuscaRapida.CommandText:=MySql;
+      DMLinxWebService.CDS_BuscaRapida.Open;
+
+      iSaldoAtual:=DMLinxWebService.CDS_BuscaRapida.FieldByName('SaldoAtual').AsInteger;
+      If iSaldoAtual >= DMLinxWebService.CDS_Busca.FieldByName('Qtd_Deposito').AsInteger Then
+       iSaldoAtual:=DMLinxWebService.CDS_Busca.FieldByName('Qtd_Deposito').AsInteger;
+
+      DMLinxWebService.CDS_BuscaRapida.Close;
+
+      // Atualiza Saldo no CD ==================================================
+      MySql:=' UPDATE LINXPRODUTOSDETALHES d'+
+             ' SET d.quantidade=d.quantidade-'+IntToStr(iSaldoAtual)+
+             ' WHERE d.empresa=2'+
+             ' AND   d.cod_produto='+DMLinxWebService.CDS_Busca.FieldByName('Cod_Produto').AsString;
+      DMLinxWebService.SQLC.Execute(MySql,nil,nil);
+
+      DMLinxWebService.CDS_Busca.Next;
+    End; // While not DMLinxWebService.CDS_Busca.Eof do
+    DMLinxWebService.CDS_Busca.EnableControls;
+    DMLinxWebService.CDS_Busca.Close;
+
+    // Atualiza Transacao ======================================================
+    DMLinxWebService.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMLinxWebService.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      DMLinxWebService.CDS_Busca.EnableControls;
+      DMLinxWebService.CDS_Busca.Close;
+    End; // on e : Exception do
+  End; // Try da Transação
+
+End; // Acerta Estoque no CD - Depósito 9 - Depósito 09 | Devolução >>>>>>>>>>>>
 
 // Le Retorno e Salva no Banco de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmWebServiceLinx.LeMetodoXMLRetorno;
@@ -1308,8 +1401,9 @@ Var
 
   MySql: String;
 
-  bUmaVez,
-  bSiga: Boolean;
+  bUmaVez, bSiga: Boolean;
+
+  bAtualMovtoCD, bAtualProdDetCD: Boolean; // Se Atualizou LinxMovimento e LinxProdutosDetalhes para o CD
 
   sMetodoEspecifico: String;
 
@@ -1318,6 +1412,7 @@ Var
 
   hHrInicio: String; // Não permite rodar com Parametro entre as 16 e 18 Horas - Existe um processo rodando
 Begin
+
   // Parametro: Somente o Metodo Enviado =======================================
   sgParametroMetodo   :=''; // Metodo a Processar
   sgParametroCodLoja  :=''; // Loja a Processar
@@ -1604,6 +1699,9 @@ End;
   DMLinxWebService.CDS_Lojas.Open;
 //    ShowMessage('Odir 2 - SQL Lojas');
 
+  bAtualMovtoCD  :=False; // Se Atualizou LinxMovimento CD
+  bAtualProdDetCD:=False; // Se Atualizou LinxProdutosDetalhes Cd
+
   bUmaVez:=False;
   sgAtiva:='';
   While Not DMLinxWebService.CDS_Lojas.Eof do
@@ -1622,7 +1720,6 @@ End;
     For iFor:=0 to tgMetodos.Count-1 do
     Begin
 //         ShowMessage('Odir 4 - For iFor:=0 to tgMetodos.Count-1 do');
-
       sgCodProduto:='';
       sgReferenciaProd:='';
 
@@ -1647,7 +1744,24 @@ End;
         sgMetodo:='LinxMovimento'
       End; // If (sgMetodo='LinxMovtosAjustesEntradas') Or (sgMetodo='LinxMovtosAjustesSaidas') Then
 
+      //========================================================================
+      // Monta Nome do Arquivo de Retorno ======================================
+      //========================================================================
       sgArqXMLRet:='Retorno_'+sgMetodo+'.XML';
+      //========================================================================
+
+      //========================================================================
+      // VERIFICA SE É PARA ATUALIZAR SALD NO CD - 9 - Depósito 09 | Devolução =
+      //========================================================================
+      // Verifica Processamento LinxMovimento CD
+      If (sgCodLojaLinx='2') And (sgMetodo='LinxMovimento') Then
+       bAtualMovtoCD:=True;
+
+      // Verifica Processamento LinxProdutosDetalhes CD
+      If (sgCodLojaLinx='2') And (sgMetodo='LinxProdutosDetalhes') Then
+       bAtualProdDetCD:=True;
+      // VERIFICA SE É PARA ATUALIZAR SALD NO CD - 9 - Depósito 09 | Devolução =
+      //========================================================================
 
       // Nome da Tabela for Diferente da Nome do Metodo ========================
       sgMetodoNomeTabela:='';
@@ -2507,6 +2621,17 @@ End;
     DMLinxWebService.CDS_Lojas.Next;
   End; // While Not DMLinxWebService.CDS_Lojas.Eof do
   DMLinxWebService.CDS_Lojas.Close;
+
+  //============================================================================
+  // Acerta Estoque no CD - Depósito 9 - Depósito 09 | Devolução ===============
+  //============================================================================
+  If (bAtualMovtoCD) and (bAtualProdDetCD) Then
+  Begin
+    // Acerta Estoque no CD - Depósito 9 - Depósito 09 | Devolução =============
+    AcertaSaldoCD_Deposito9;
+  End;
+  // Acerta Estoque no CD - Depósito 9 - Depósito 09 | Devolução ===============
+  //============================================================================
 
   Application.Terminate;
   Exit;

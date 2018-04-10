@@ -45883,7 +45883,38 @@ begin
 end;
 
 procedure TFrmBelShop.SubMenuFinanConciliaDepositosClick(Sender: TObject);
+Var
+  MySql: String;
+  i: Integer;
 begin
+  //============================================================================
+  // Verifica a Alteração do Complemento da Sequencia do Registro ==============
+  //============================================================================
+  MySql:=' SELECT GEN_ID(GEN_CONCILIACAO_MOV_DEP,0) Num_Seq'+
+         ' FROM RDB$DATABASE';
+  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+  DMBelShop.CDS_BuscaRapida.Open;
+  i:=DMBelShop.CDS_BuscaRapida.FieldByName('Num_Seq').AsInteger;
+  DMBelShop.CDS_BuscaRapida.Close;
+
+  If i=999999 Then
+  Begin
+    // Acrescenta 1 no Complemento - GEN_COMPL_CONCILIACAO_MOV_DEP
+    MySql:=' SELECT GEN_ID(GEN_COMPL_CONCILIACAO_MOV_DEP,1) Num_Seq'+
+           ' FROM RDB$DATABASE';
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+    DMBelShop.CDS_BuscaRapida.Close;
+
+    // Inicializa Num_Seq - GEN_CONCILIACAO_MOV_DEP
+    MySql:=' ALTER SEQUENCE GEN_CONCILIACAO_MOV_DEP RESTART WITH 0';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+  End;
+  // Verifica a Alteração do Complemento da Sequencia do Registro ==============
+  //============================================================================
+
   // Acerta Apresentação das TabSheets =========================================
   FrmBancoExtratos.DesabilitaTabSheet(nil);
 

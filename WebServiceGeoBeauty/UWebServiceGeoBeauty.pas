@@ -21,7 +21,6 @@ uses
 
 type
   TfrmWebServiceGeoBeauty = class(TForm)
-    HTTPRIO111: THTTPRIO;
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
@@ -35,21 +34,39 @@ type
     Label85: TLabel;
     DtEdtInicio: TcxDateEdit;
     DtEdtFim: TcxDateEdit;
-    CDS_GeoBeauty: TClientDataSet;
-    DS_GeoBeauty: TDataSource;
-    CDS_GeoBeautyDATA: TDateField;
-    CDS_GeoBeautyCNPJ_LOJA: TStringField;
-    CDS_GeoBeautyNOME_LOJA: TStringField;
+    CDS_GeoBeautyPagtos: TClientDataSet;
+    DS_GeoBeautyPagtos: TDataSource;
+    CDS_GeoBeautyPagtosDATA: TDateField;
+    CDS_GeoBeautyPagtosCNPJ_LOJA: TStringField;
+    CDS_GeoBeautyPagtosNOME_LOJA: TStringField;
     TabSheet3: TTabSheet;
     Panel3: TPanel;
     Bt_Apresenta: TJvXPButton;
     Dbg_ApresentaDados: TDBGrid;
-    CDS_GeoBeautyVALOR_CHEQUE: TCurrencyField;
-    CDS_GeoBeautyVALOR_CARTAO: TCurrencyField;
-    CDS_GeoBeautyVALOR_DINHEIRO: TCurrencyField;
-    CDS_GeoBeautyVALOR_TOTAL: TCurrencyField;
+    CDS_GeoBeautyPagtosVALOR_CHEQUE: TCurrencyField;
+    CDS_GeoBeautyPagtosVALOR_CARTAO: TCurrencyField;
+    CDS_GeoBeautyPagtosVALOR_DINHEIRO: TCurrencyField;
+    CDS_GeoBeautyPagtosVALOR_TOTAL: TCurrencyField;
     Bt_DepAnaliseSalvaClipboard: TJvXPButton;
     HTTPRIO1: THTTPRIO;
+    DS_GeoBeautyFechamento: TDataSource;
+    CDS_GeoBeautyFechamento: TClientDataSet;
+    CDS_GeoBeautyFechamentoCNPJ_LOJA: TStringField;
+    CDS_GeoBeautyFechamentoNOME_LOJA: TStringField;
+    CDS_GeoBeautyFechamentoVALOR_CHEQUE_ATUAL: TCurrencyField;
+    CDS_GeoBeautyFechamentoVALOR_CARTAO_ATUAL: TCurrencyField;
+    CDS_GeoBeautyFechamentoVALOR_DINHEIRO_ATUAL: TCurrencyField;
+    CDS_GeoBeautyFechamentoVALORTOTAL: TCurrencyField;
+    CDS_GeoBeautyFechamentoNOME_CAIXA: TStringField;
+    CDS_GeoBeautyFechamentoNOME_USUARIO: TStringField;
+    CDS_GeoBeautyFechamentoDATA_ABERTURA: TSQLTimeStampField;
+    CDS_GeoBeautyFechamentoDATA_FECHAMENTO: TSQLTimeStampField;
+    CDS_GeoBeautyFechamentoVALOR_CHEQUE_PREVISTO: TCurrencyField;
+    CDS_GeoBeautyFechamentoVALOR_CARTAO_PREVISTO: TCurrencyField;
+    CDS_GeoBeautyFechamentoVALOR_DINHEIRO_PREVISTO: TCurrencyField;
+    CDS_GeoBeautyFechamentoVALOR_TOTAL_PREVISTO: TCurrencyField;
+    CDS_GeoBeautyFechamentoEMPRESA: TIntegerField;
+    CDS_GeoBeautyFechamentoCOD_LOJA: TStringField;
     procedure Bt_BuscaClick(Sender: TObject);
     procedure Bt_MontarEstruturaClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -98,6 +115,7 @@ var
 
   sgLinha: WideString;
 
+  sgFuncao, // Nome da Funçã que Esta Sendo Usada
   sgPastaExecutavel: String;       // Somente a Pasta do Executável
 
 implementation
@@ -175,6 +193,9 @@ begin
   Else
    sDtaFim:=sDtaFim+IntToStr(wDia);
 
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// FUNÇÕES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 {
  Memo1.Lines.Add('consulta Usuario: '+cr+
                  (HTTPRIO1 as gestoriPortType).consultaUsuario('webservice@lojasbelshop.com.br', '9d177b4bd4dabdb759eadd088b3f65f4b4d28788'));
@@ -213,27 +234,43 @@ begin
 //             'consulta Fechamento: OK'+cr+
 //             'consultaFaturamentoPorTipoPgto: OK');
 
-
 //  sgLinha:=(HTTPRIO1 as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br',
 //                                                                        '5229f6953aa4f904fa0187402dfe8a0309a874f7',
 //                                                                        sDtaIncio, sDtaFim);
+// FUNÇÕES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
+
+
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// consultaFaturamentoPorTipoPgto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//
+//  sgFuncao:='consultaFaturamentoPorTipoPgto';
+//
 //  Memo1.Lines.Clear;
 //  Memo1.Lines.Add('consultaFaturamentoPorTipoPgto: '+cr+
-//                  (HTTPRIO1 as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br',
-//                                                                             sChaveAcessoGeo, sDtaIncio, sDtaFim));
+//                  (HTTPRIO1 as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br', sChaveAcessoGeo, sDtaIncio, sDtaFim));
 //
-//  sgLinha:=(HTTPRIO1 as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br',
-//                                                                             sChaveAcessoGeo, sDtaIncio, sDtaFim);
+//  sgLinha:=(HTTPRIO1 as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br', sChaveAcessoGeo, sDtaIncio, sDtaFim);
+//
+// consultaFaturamentoPorTipoPgto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// consultaFechamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// consultaFechamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+  sgFuncao:='consultaFechamento';
+
   Memo1.Lines.Clear;
   Memo1.Lines.Add('consultaFechamento: '+cr+
                   (HTTPRIO1 as gestoriPortType).consultaFechamento('webservice@lojasbelshop.com.br',sChaveAcessoGeo, sDtaIncio, sDtaFim));
 
-
   sgLinha:=(HTTPRIO1 as gestoriPortType).consultaFechamento('webservice@lojasbelshop.com.br',sChaveAcessoGeo, sDtaIncio, sDtaFim);
+
+// consultaFechamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
   Screen.Cursor:=crDefault;
 
@@ -274,6 +311,8 @@ begin
    sgLinha:=sgLinha+',"';
 //  Memo2.Lines.Add('Virgula ult: '+copy(sgLinha,length(sgLinha)-100,101));
 
+  // Retira todos os Til # Linha
+  sLinha:=f_Troca('#','',sLinha);
   b:=True;
   While b do
   Begin
@@ -296,15 +335,36 @@ begin
         Delete(sLinha,1,ii+2);
       end; // While bb do
 
-      // Substitui
-              // Aspas "
-      // Chave Aberta {
-      // Chave Fechada }
-              // Substituir Virgula (,) por DoisPontos (:)
-      sLinha:=f_Troca('"','',f_Troca('{','',f_Troca('}','',f_Troca(',',':',sLinha))));
+      // sgFuncao: consultaFechamento ==========================================
+      If sgFuncao='consultaFechamento' Then
+      Begin
+        // Substitui
+        // Aspas Dois_Pontos Aspas ":" por #
+        sLinha:=f_Troca('":"','#',sLinha);
 
-      // Substituir Ponto (.) por Virgula (,) Nos Valores
-      sLinha:=f_Troca('.',',',sLinha);
+        // Aspas Vírgula Aspas "," #
+        sLinha:=f_Troca('","','#',sLinha);
+
+        // Aspas " por NULL
+        sLinha:=f_Troca('"','',sLinha);
+
+        // Chave Aberta Vírgula }, por #
+        sLinha:=f_Troca('},','#',sLinha);
+      End;
+
+      // sgFuncao: consultaFaturamentoPorTipoPgto ==============================
+      If sgFuncao='consultaFaturamentoPorTipoPgto' Then
+      Begin
+        // Substitui
+        // Aspas " por NULL
+        // Chave Aberta { por NULL
+        // Chave Fechada } por NULL
+        // Substituir Virgula (,) por DoisPontos (:)
+        sLinha:=f_Troca('"','',f_Troca('{','',f_Troca('}','',f_Troca(',',':',sLinha))));
+      End; // If sgFuncao='consultaFaturamentoPorTipoPgto'
+
+//      // Substituir Ponto (.) por Virgula (,) Nos Valores
+//      sLinha:=f_Troca('.',',',sLinha);
 
       // Acerta Separador de Data
       sLinha:=f_Troca('\/','/',sLinha);
@@ -342,29 +402,198 @@ end;
 procedure TfrmWebServiceGeoBeauty.Bt_ApresentaClick(Sender: TObject);
 Var
   i: Integer;
+  sLinha, sNomeLoja, sEmpresa, sCNPJ, sCod_Loja: String; // Dados para Fechamento
 begin
   Screen.Cursor:=crAppStart;
 
-  If CDS_GeoBeauty.Active Then
-   CDS_GeoBeauty.Close;
-
-  CDS_GeoBeauty.CreateDataSet;
-  CDS_GeoBeauty.IndexFieldNames:='';
-  CDS_GeoBeauty.Open;
-
   DecimalSeparator:=',';
+
+  // sgFuncao: consultaFaturamentoPorTipoPgto ==============================
+  If sgFuncao='consultaFaturamentoPorTipoPgto' Then
+  Begin
+    Dbg_ApresentaDados.DataSource:=DS_GeoBeautyPagtos;
+
+    If CDS_GeoBeautyPagtos.Active Then
+     CDS_GeoBeautyPagtos.Close;
+
+    CDS_GeoBeautyPagtos.CreateDataSet;
+    CDS_GeoBeautyPagtos.IndexFieldNames:='';
+    CDS_GeoBeautyPagtos.Open;
+  End; // If sgFuncao='consultaFaturamentoPorTipoPgto' Then
+
+  // sgFuncao: consultaFechamento ==========================================
+  If sgFuncao='consultaFechamento' Then
+  Begin
+    Dbg_ApresentaDados.DataSource:=DS_GeoBeautyFechamento;
+
+    If CDS_GeoBeautyFechamento.Active Then
+     CDS_GeoBeautyFechamento.Close;
+
+    CDS_GeoBeautyFechamento.CreateDataSet;
+    CDS_GeoBeautyFechamento.IndexFieldNames:='';
+    CDS_GeoBeautyFechamento.Open;
+  End; // If sgFuncao='consultaFechamento' Then
 
   For i:=0 to Memo2.Lines.Count-1 do
   Begin
-    CDS_GeoBeauty.Append;
-    CDS_GeoBeautyDATA.AsString          :=Separa_String(Memo2.Lines[i],14,':');
-    CDS_GeoBeautyCNPJ_LOJA.AsString     :=Separa_String(Memo2.Lines[i],10,':');
-    CDS_GeoBeautyNOME_LOJA.AsString     :=Separa_String(Memo2.Lines[i],12,':');
-    CDS_GeoBeautyVALOR_CHEQUE.AsCurrency   :=StrToCurr(ZerosCentavos(Separa_String(Memo2.Lines[i], 2,':'),2));
-    CDS_GeoBeautyVALOR_CARTAO.AsCurrency  :=StrToCurr(ZerosCentavos(Separa_String(Memo2.Lines[i], 4,':'),2));
-    CDS_GeoBeautyVALOR_DINHEIRO.AsCurrency:=StrToCurr(ZerosCentavos(Separa_String(Memo2.Lines[i], 6,':'),2));
-    CDS_GeoBeautyVALOR_TOTAL.AsCurrency   :=StrToCurr(ZerosCentavos(Separa_String(Memo2.Lines[i], 8,':'),2));
-    CDS_GeoBeauty.Post;
+    // sgFuncao: consultaFaturamentoPorTipoPgto ==============================
+    If sgFuncao='consultaFaturamentoPorTipoPgto' Then
+    Begin
+      CDS_GeoBeautyPagtos.Append;
+      CDS_GeoBeautyPagtosDATA.AsString            :=Trim(Separa_String(Memo2.Lines[i],14,':'));
+      CDS_GeoBeautyPagtosCNPJ_LOJA.AsString       :=Trim(Separa_String(Memo2.Lines[i],10,':'));
+      CDS_GeoBeautyPagtosNOME_LOJA.AsString       :=Trim(Separa_String(Memo2.Lines[i],12,':'));
+      CDS_GeoBeautyPagtosVALOR_CHEQUE.AsCurrency  :=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i], 2,':'))),2));
+      CDS_GeoBeautyPagtosVALOR_CARTAO.AsCurrency  :=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i], 4,':'))),2));
+      CDS_GeoBeautyPagtosVALOR_DINHEIRO.AsCurrency:=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i], 6,':'))),2));
+      CDS_GeoBeautyPagtosVALOR_TOTAL.AsCurrency   :=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i], 8,':'))),2));
+      CDS_GeoBeautyPagtos.Post;
+    End; // If sgFuncao='consultaFaturamentoPorTipoPgto' Then
+
+   // sgFuncao: consultaFechamento ==========================================
+   If sgFuncao='consultaFechamento' Then
+   Begin
+      // Atualiza variaveis de Fechamento
+      sNomeLoja:=AnsiUpperCase(Trim(Separa_String(Memo2.Lines[i],10,'#')));
+
+      If sNomeLoja='BEL ANDRADAS' Then
+      Begin
+        sEmpresa :='1';
+        sCod_Loja:='02';
+        sCNPJ    :='3772229000132';
+      End;
+
+      If sNomeLoja='BEL ASSIS BRASIL' Then
+      Begin
+        sEmpresa :='14';
+        sCod_Loja:='03';
+        sCNPJ    :='3772229001457';
+      End;
+
+      If sNomeLoja='BEL AZENHA' Then
+      Begin
+        sEmpresa :='21';
+        sCod_Loja:='21';
+        sCNPJ    :='3772229002186';
+      End;
+
+      If sNomeLoja='BEL DOM FELICIANO' Then
+      Begin
+        sEmpresa :='8';
+        sCod_Loja:='01';
+        sCNPJ    :='3772229000809';
+      End;
+
+      If sNomeLoja='BEL FIORAVANTE' Then
+      Begin
+        sEmpresa :='3';
+        sCod_Loja:='11';
+        sCNPJ    :='3772229000302';
+      End;
+
+      If sNomeLoja='BEL LUCIANA DE ABREU' Then
+      Begin
+        sEmpresa :='16';
+        sCod_Loja:='14';
+        sCNPJ    :='3772229001619';
+      End;
+
+      If sNomeLoja='BEL OSVALDO' Then
+      Begin
+        sEmpresa :='9';
+        sCod_Loja:='09';
+        sCNPJ    :='3772229000990';
+      End;
+
+      If sNomeLoja='BEL OTAVIO ROCHA' Then
+      Begin
+        sEmpresa :='13';
+        sCod_Loja:='06';
+        sCNPJ    :='3772229001376';
+      End;
+
+      If sNomeLoja='BEL PARKSHOPPING CANOAS' Then
+      Begin
+        sEmpresa :='22';
+        sCod_Loja:='22';
+        sCNPJ    :='3772229002267';
+      End;
+
+      If sNomeLoja='BEL PRAIA DE BELAS' Then
+      Begin
+        sEmpresa :='19';
+        sCod_Loja:='19';
+        sCNPJ    :='3772229001961';
+      End;
+
+      If sNomeLoja='BEL PROTASIO' Then
+      Begin
+        sEmpresa :='17';
+        sCod_Loja:='17';
+        sCNPJ    :='3772229001708';
+      End;
+
+      If sNomeLoja='BEL SALGADO FILHO' Then
+      Begin
+        sEmpresa :='11';
+        sCod_Loja:='05';
+        sCNPJ    :='3772229001104';
+      End;
+
+      If sNomeLoja='BEL TIRADENTES' Then
+      Begin
+        sEmpresa :='20';
+        sCod_Loja:='20';
+        sCNPJ    :='3772229002003';
+      End;
+
+      If sNomeLoja='BEL TOTAL' Then
+      Begin
+        sEmpresa :='18';
+        sCod_Loja:='18';
+        sCNPJ    :='3772229001880';
+      End;
+
+      If sNomeLoja='BEL URUGUAI' Then
+      Begin
+        sEmpresa :='6';
+        sCod_Loja:='16';
+        sCNPJ    :='3772229000647';
+      End;
+
+      If sNomeLoja='BELCENTER' Then
+      Begin
+        sEmpresa :='23';
+        sCod_Loja:='8';
+        sCNPJ    :='5110757000151';
+      End;
+
+      If sNomeLoja='BEL IGUATEMI' Then
+      Begin
+        sEmpresa :='24';
+        sCod_Loja:='24';
+        sCNPJ    :='3772229002348';
+      End;
+
+      CDS_GeoBeautyFechamento.Append;
+      CDS_GeoBeautyFechamentoEMPRESA.AsString                  :=sEmpresa;
+      CDS_GeoBeautyFechamentoCNPJ_LOJA.AsString                :=sCNPJ;
+      CDS_GeoBeautyFechamentoNOME_LOJA.AsString                :=Trim(Separa_String(Memo2.Lines[i],10,'#'));
+      CDS_GeoBeautyFechamentoNOME_CAIXA.AsString               :=Trim(Separa_String(Memo2.Lines[i], 2,'#'));
+      CDS_GeoBeautyFechamentoNOME_USUARIO.AsString             :=Trim(Separa_String(Memo2.Lines[i], 4,'#'));
+      CDS_GeoBeautyFechamentoDATA_ABERTURA.AsString            :=Trim(Separa_String(Memo2.Lines[i], 6,'#'));
+      CDS_GeoBeautyFechamentoDATA_FECHAMENTO.AsString          :=Trim(Separa_String(Memo2.Lines[i], 8,'#'));
+      CDS_GeoBeautyFechamentoVALOR_CHEQUE_ATUAL.AsCurrency     :=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i],12,'#'))),2));
+      CDS_GeoBeautyFechamentoVALOR_CARTAO_ATUAL.AsCurrency     :=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i],14,'#'))),2));
+      CDS_GeoBeautyFechamentoVALOR_DINHEIRO_ATUAL.AsCurrency   :=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i],16,'#'))),2));
+      CDS_GeoBeautyFechamentoVALOR_CHEQUE_PREVISTO.AsCurrency  :=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i],18,'#'))),2));
+      CDS_GeoBeautyFechamentoVALOR_CARTAO_PREVISTO.AsCurrency  :=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i],20,'#'))),2));
+      CDS_GeoBeautyFechamentoVALOR_DINHEIRO_PREVISTO.AsCurrency:=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i],22,'#'))),2));
+      CDS_GeoBeautyFechamentoVALORTOTAL.AsCurrency             :=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i],24,'#'))),2));
+      CDS_GeoBeautyFechamentoVALOR_TOTAL_PREVISTO.AsCurrency   :=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i],26,'#'))),2));
+      CDS_GeoBeautyFechamentoCOD_LOJA.AsString                 :=sCod_Loja;
+      CDS_GeoBeautyFechamento.Post;
+   End; // If sgFuncao='consultaFechamento' Then
   End; // For i:=0 to mMemo.Lines.Count-1 do
 
   Screen.Cursor:=crDefault;
@@ -380,7 +609,7 @@ procedure TfrmWebServiceGeoBeauty.Bt_DepAnaliseSalvaClipboardClick(Sender: TObje
 begin
   Dbg_ApresentaDados.SetFocus;
 
-  If (Not CDS_GeoBeauty.Active) Or (CDS_GeoBeauty.IsEmpty) Then
+  If (Not CDS_GeoBeautyPagtos.Active) Or (CDS_GeoBeautyPagtos.IsEmpty) Then
    Exit;
 
   DBGridClipboard(Dbg_ApresentaDados);
