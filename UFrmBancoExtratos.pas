@@ -21,7 +21,7 @@ uses
   StrUtils, Messages, Dialogs,
   IBQuery, DBXpress, DBClient, dxSkinsdxStatusBarPainter, dxStatusBar, MMSystem,
   SOAPHTTPClient, // WebService
-  JvSwitch;
+  JvSwitch, InvokeRegistry, Rio;
 
 type
   TFrmBancoExtratos = class(TForm)
@@ -238,6 +238,7 @@ type
     Bt_CMObsNaoConcDep: TJvXPButton;
     Bt_DepAnaliseCadHistoricos: TJvXPButton;
     Sb_DepAnaliseDia: TdxStatusBar;
+    SoapHTTPRIO: THTTPRIO;
     procedure FormCreate(Sender: TObject);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SairClick(Sender: TObject);
@@ -349,8 +350,10 @@ type
     Procedure ConcDepositosFechamentoDia;
 
     Procedure ConcDepositoFaturamentoDinheiro(sDia: String);
-
+              
+    // Web Services GeoBeauty
     Function  ConcDepositoWebServiceGeoBeautyPagtos: Boolean;
+    Procedure ConcDepositoWebServiceGeoBeautyFechamentos;
 
     // Odir FIM ////////////////////////////////////////////////////////////////
 
@@ -531,6 +534,7 @@ var
 
   // Cria Ponteiro de Transação
   TD: TTransactionDesc;
+  TDEx: TTransactionDesc;
 
   bgLocate, bgChange: Boolean;
 
@@ -570,6 +574,9 @@ var
   bgComNrConta, // Se Extrato do Santander contém o Numero da Conta
   bgFechamento: Boolean; // Se Usuário Pode Efetuar o Fechamento do Dia na Conciliaão de Depósitos
 
+  // WebServices GeoBeauty
+  sgDtaGeoInicio, sgDtaGeoFim, sgChaveAcessoGeo: String;
+
 implementation
 
 uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
@@ -584,6 +591,342 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
 // Odir - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// CONCILIAÇÕES PAGTOS/DEPOSITOS - Web Service GoeBeauty (Fechamentos) >>>>>>>>>
+Procedure TFrmBancoExtratos.ConcDepositoWebServiceGeoBeautyFechamentos;
+Var
+  MySql: String;
+  ii, i: Integer;
+
+  sNomeLoja, sEmpresa, sCNPJ, sCod_Loja: String; // Dados para Fechamento
+
+  sRetornoFecha,        // Recebe Retorno da WebService GeoBeauty
+  sRegistro: WideString; // Recebe Registro Unico
+
+  mMemo: TMemo; // Monta retorno com Separadores com Dois_Pontos (:)
+
+  b, bb: Boolean;
+Begin
+
+  // Web Service GeoBeauty Pagamentos ==========================================
+  OdirPanApres.Caption:='AGUARDE !! Atualizando Fechamentos Salão GeoBeauty - CLOUD';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBancoExtratos;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+  Screen.Cursor:=crAppStart;
+
+  //============================================================================
+  // Consome Fechamentos da GeoBeauty Web Service ==============================
+  //============================================================================
+  SoapHTTPRIO.WSDLLocation:='http://aplicativo.geobeauty.com.br/aplicativo/webservices/ws-salao/server.php?wsdl';
+  SoapHTTPRIO.Port:='gestoriPort';
+  SoapHTTPRIO.Service:='gestori';
+  Try
+    sRetornoFecha:=(SoapHTTPRIO as gestoriPortType).consultaFechamento('webservice@lojasbelshop.com.br',sgChaveAcessoGeo, sgDtaGeoInicio, sgDtaGeoFim);
+  Except
+    on e : Exception do
+    Begin
+      MessageBox(Handle, pChar('Erro: WebServices GeoBeauty Fechamentos'+#13+e.message), 'Erro', MB_ICONERROR);
+      Exit;
+    End; // on e : Exception do
+  End;
+
+  If Trim(sRetornoFecha)='' Then
+  Begin
+    OdirPanApres.Visible:=False;
+    Screen.Cursor:=crDefault;
+    Exit;
+  End;
+
+  // Monta o Arquivo para Com Separadores Dois_Pontos (:) ======================
+  mMemo:=TMemo.Create(Self);
+  mMemo.Visible:=False;
+  mMemo.Parent:=FrmBancoExtratos;
+  mMemo.Font.Size:=1;
+  mMemo.Width:=5000;
+  mMemo.Lines.Clear;
+
+  // Retira o 1 Primeiro Caracter ==============================================
+  delete(sRetornoFecha,1,1);
+
+  // Retira os 2 Últimos Caracteres ============================================
+  delete(sRetornoFecha,length(sRetornoFecha)-1,2);
+
+  // Coloca <Chave, Virgula, Aspas> no Ultimo Caracter =========================
+  sRetornoFecha:=sRetornoFecha+'},"';
+
+  // Retira todos os restegui <#> da Retorno ===================================
+  sRetornoFecha:=f_Troca('#','',sRetornoFecha);
+
+  // Ajusta Retorno para 1 Registro por Linha Separados por restegui <#> =======
+  b:=True;
+  While b do
+  Begin
+    i:=pos('},"', sRetornoFecha);
+
+    If i<>0 Then
+    Begin
+      // Pega Registro da Loja Somente UM Dia ==================================
+      sRegistro:=copy(sRetornoFecha,1,i+2);
+
+      // Retira Parte Inicial do registro - ("8679":) ou CNPJ e Data do Inicio da Linha ====
+      bb:=True;
+      While bb do
+      Begin
+        ii:=pos('":{"', sRegistro);
+
+        If ii=0 Then
+         Break;
+
+        Delete(sRegistro,1,ii+2);
+      end; // While bb do
+
+      // Substitui no Registro =================================================
+      // Aspas Dois_Pontos Aspas ":" por restegui #
+      sRegistro:=f_Troca('":"','#',sRegistro);
+
+      // Aspas Vírgula Aspas "," restegui #
+      sRegistro:=f_Troca('","','#',sRegistro);
+
+      // Aspas " por NULL
+      sRegistro:=f_Troca('"','',sRegistro);
+
+      // Chave Aberta Vírgula }, por restegui #
+      sRegistro:=f_Troca('},','#',sRegistro);
+
+      // Acerta Separador de Data no Registro ==================================
+      sRegistro:=f_Troca('\/','/',sRegistro);
+
+      // Adiciona o Registro no Memo ===========================================
+      mMemo.Lines.Add(sRegistro);
+
+      // Exclui Registro do Arquivo de Retorno =================================
+      Delete(sRetornoFecha,1,i+2);
+    End; // If i<>0 Then
+
+    If Trim(sRetornoFecha)='' Then
+     Break;
+  End; // While b do
+  // Consome Fechamentos da GeoBeauty Web Service ==============================
+  //============================================================================
+
+  //============================================================================
+  // Insere Fechamentos GeoBeauty no Banco de Dados ============================
+  //============================================================================
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    FrmBelShop.MontaProgressBar(True, FrmBancoExtratos);
+    pgProgBar.Properties.Max:=mMemo.Lines.Count;
+    pgProgBar.Position:=0;
+
+    // Exclui Movimentos dos Salões no Período para Substituição ===============
+    If mMemo.Lines.Count>0 Then
+    Begin
+      MySql:=' DELETE FROM GEOBEAUTY_FECHAMENTOS f'+
+             ' WHERE f.data_fechamento BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+
+                                                 ' AND '+
+                                                 QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)));
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+    End; // If mMemo.Lines.Count>0 Then
+
+    For i:=0 to mMemo.Lines.Count-1 do
+    Begin
+      Application.ProcessMessages;
+
+      // Atualiza variaveis de Fechamento
+      sNomeLoja:=AnsiUpperCase(Trim(Separa_String(mMemo.Lines[i],10,'#')));
+
+      // Busca Codigo da Loja Linx/Sidicom =====================================
+      If sNomeLoja='BEL ANDRADAS' Then
+      Begin
+        sEmpresa :='1';
+        sCod_Loja:='02';
+        sCNPJ    :='03772229000132';
+      End;
+
+      If sNomeLoja='BEL ASSIS BRASIL' Then
+      Begin
+        sEmpresa :='14';
+        sCod_Loja:='03';
+        sCNPJ    :='03772229001457';
+      End;
+
+      If sNomeLoja='BEL AZENHA' Then
+      Begin
+        sEmpresa :='21';
+        sCod_Loja:='21';
+        sCNPJ    :='03772229002186';
+      End;
+
+      If sNomeLoja='BEL DOM FELICIANO' Then
+      Begin
+        sEmpresa :='8';
+        sCod_Loja:='01';
+        sCNPJ    :='03772229000809';
+      End;
+
+      If sNomeLoja='BEL FIORAVANTE' Then
+      Begin
+        sEmpresa :='3';
+        sCod_Loja:='11';
+        sCNPJ    :='03772229000302';
+      End;
+
+      If sNomeLoja='BEL LUCIANA DE ABREU' Then
+      Begin
+        sEmpresa :='16';
+        sCod_Loja:='14';
+        sCNPJ    :='03772229001619';
+      End;
+
+      If sNomeLoja='BEL OSVALDO' Then
+      Begin
+        sEmpresa :='9';
+        sCod_Loja:='09';
+        sCNPJ    :='03772229000990';
+      End;
+
+      If sNomeLoja='BEL OTAVIO ROCHA' Then
+      Begin
+        sEmpresa :='13';
+        sCod_Loja:='06';
+        sCNPJ    :='03772229001376';
+      End;
+
+      If sNomeLoja='BEL PARKSHOPPING CANOAS' Then
+      Begin
+        sEmpresa :='22';
+        sCod_Loja:='22';
+        sCNPJ    :='03772229002267';
+      End;
+
+      If sNomeLoja='BEL PRAIA DE BELAS' Then
+      Begin
+        sEmpresa :='19';
+        sCod_Loja:='19';
+        sCNPJ    :='03772229001961';
+      End;
+
+      If sNomeLoja='BEL PROTASIO' Then
+      Begin
+        sEmpresa :='17';
+        sCod_Loja:='17';
+        sCNPJ    :='03772229001708';
+      End;
+
+      If sNomeLoja='BEL SALGADO FILHO' Then
+      Begin
+        sEmpresa :='11';
+        sCod_Loja:='05';
+        sCNPJ    :='03772229001104';
+      End;
+
+      If sNomeLoja='BEL TIRADENTES' Then
+      Begin
+        sEmpresa :='20';
+        sCod_Loja:='20';
+        sCNPJ    :='03772229002003';
+      End;
+
+      If sNomeLoja='BEL TOTAL' Then
+      Begin
+        sEmpresa :='18';
+        sCod_Loja:='18';
+        sCNPJ    :='03772229001880';
+      End;
+
+      If sNomeLoja='BEL URUGUAI' Then
+      Begin
+        sEmpresa :='6';
+        sCod_Loja:='16';
+        sCNPJ    :='03772229000647';
+      End;
+
+      If sNomeLoja='BELCENTER' Then
+      Begin
+        sEmpresa :='23';
+        sCod_Loja:='8';
+        sCNPJ    :='05110757000151';
+      End;
+
+      If sNomeLoja='BEL IGUATEMI' Then
+      Begin
+        sEmpresa :='24';
+        sCod_Loja:='24';
+        sCNPJ    :='03772229002348';
+      End;
+
+      // Insert/UpDate do Registro =============================================
+      MySql:=' UPDATE OR INSERT INTO GEOBEAUTY_FECHAMENTOS ('+
+             ' EMPRESA, CNPJ_LOJA, NOME_LOJA, NOME_CAIXA, NOME_USUARIO,'+
+             ' DATA_ABERTURA, HORA_ABERTURA, DATA_FECHAMENTO, HORA_FECHAMENTO,'+
+             ' VLR_CHEQUE_ATUAL, VLR_CARTAO_ATUAL, VLR_DINHEIRO_ATUAL, VLR_TOTAL_ATUAL,'+
+             ' VLR_CHEQUE_PREVISTO, VLR_CARTAO_PREVISTO, VLR_DINHEIRO_PREVISTO, VLR_TOTAL_PREVISTO,'+
+             ' COD_LOJA, DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
+
+             ' VALUES ('+
+             sEmpresa+', '+ // EMPRESA
+             QuotedStr(sCNPJ)+', '+ // CNPJ_LOJA
+             QuotedStr(sNomeLoja)+', '+ // NOME_LOJA
+             QuotedStr(Trim(Separa_String(mMemo.Lines[i], 2,'#')))+', '+ // NOME_CAIXA
+             QuotedStr(Trim(Separa_String(mMemo.Lines[i], 4,'#')))+', '+ // NOME_USUARIO
+             QuotedStr(f_Troca('/','.',f_Troca('-','.',Copy(Trim(Separa_String(mMemo.Lines[i], 6,'#')),1,10))))+', '+ // DATA_ABERTURA
+             QuotedStr(Copy(Trim(Separa_String(mMemo.Lines[i], 6,'#')),12,8))+', '+ // HORA_ABERTURA
+             QuotedStr(f_Troca('/','.',f_Troca('-','.',Copy(Trim(Separa_String(mMemo.Lines[i], 8,'#')),1,10))))+', '+ // DATA_FECHAMENTO
+             QuotedStr(Copy(Trim(Separa_String(mMemo.Lines[i], 8,'#')),12,8))+', '+ // HORA_FECHAMENTO
+             QuotedStr(Trim(Separa_String(mMemo.Lines[i], 12,'#')))+', '+ // VLR_CHEQUE_ATUAL
+             QuotedStr(Trim(Separa_String(mMemo.Lines[i], 14,'#')))+', '+ // VLR_CARTAO_ATUAL
+             QuotedStr(Trim(Separa_String(mMemo.Lines[i], 16,'#')))+', '+ // VLR_DINHEIRO_ATUAL
+             QuotedStr(Trim(Separa_String(mMemo.Lines[i], 24,'#')))+', '+ // VLR_TOTAL_ATUAL
+             QuotedStr(Trim(Separa_String(mMemo.Lines[i], 18,'#')))+', '+ // VLR_CHEQUE_PREVISTO
+             QuotedStr(Trim(Separa_String(mMemo.Lines[i], 20,'#')))+', '+ // VLR_CARTAO_PREVISTO
+             QuotedStr(Trim(Separa_String(mMemo.Lines[i], 22,'#')))+', '+ // VLR_DINHEIRO_PREVISTO
+             QuotedStr(Trim(Separa_String(mMemo.Lines[i], 26,'#')))+', '+ // VLR_TOTAL_PREVISTO
+             QuotedStr(sCod_Loja)+', '+ // COD_LOJA
+             ' CURRENT_DATE, '+ // DTA_ATUALIZACAO
+             ' CURRENT_TIME)'+  // HRA_ATUALIZACAO
+
+             ' MATCHING (EMPRESA, NOME_CAIXA, NOME_USUARIO, DATA_ABERTURA, HORA_ABERTURA)';
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+      pgProgBar.Position:=i+1;
+    End; // For i:=0 to mMemo.Lines.Count-1 do
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      MessageBox(Handle, pChar('WebServices GeoBeauty Fechamentos Erro:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+
+  FreeAndNil(mMemo);
+End; // CONCILIAÇÕES PAGTOS/DEPOSITOS - Web Service GoeBeauty (Fechamentos) >>>>>>>>>
+
 // CONCILIAÇÕES PAGTOS/DEPOSITOS - Web Service GoeBeauty (Pagtos) >>>>>>>>>>>>>>
 Function TFrmBancoExtratos.ConcDepositoWebServiceGeoBeautyPagtos: Boolean;
 Var
@@ -592,15 +935,10 @@ Var
   tsArquivo: TStringList;
   wDia, wMes, wAno: Word;
 
-  sDtaIncio, sDtaFim: String;
-
-  sChaveAcessoGeo,
   sParametro: String;
 
   sRetornoPagtos,        // Recebe Retorno da WebService GeoBeauty
   sRegistro: WideString; // Recebe Registro Unico
-
-  SoapHTTPRIO: THTTPRIO;
 
   mMemo: TMemo; // Monta retorno com Separadores com Dois_Pontos (:)
   ii, i: Integer;
@@ -610,8 +948,8 @@ Var
 Begin
   Result:=False;
 
-  // Web Service Linx ==========================================================
-  OdirPanApres.Caption:='AGUARDE !! Atualizando Pagtos de Salão GeoBeauty - CLOUD';
+  // Web Service GeoBeauty Pagamentos ==========================================
+  OdirPanApres.Caption:='AGUARDE !! Atualizando Pagamentos Salão GeoBeauty - CLOUD';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
@@ -654,7 +992,7 @@ Begin
   Try
     tsArquivo.LoadFromFile(sPath_Local+'CriptografiaGeoBeautyRet.TXT');
 
-    sChaveAcessoGeo:=tsArquivo[0];
+    sgChaveAcessoGeo:=tsArquivo[0];
   Finally // Try
     { Libera a instancia da lista da memória }
     FreeAndNil(tsArquivo);
@@ -665,60 +1003,66 @@ Begin
   //============================================================================
   // Acerta Datas do Período ===================================================
   //============================================================================
-  // Data do Inicio do Período
+  // Data do Inicio do Período =================================================
   DecodeDate(StrToDate(sgDtaI), wAno, wMes, wDia);
-  sDtaIncio:=IntToStr(wAno);
+  sgDtaGeoInicio:=IntToStr(wAno);
   If wMes<10 Then
-   sDtaIncio:=sDtaIncio+'0'+IntToStr(wMes)
+   sgDtaGeoInicio:=sgDtaGeoInicio+'0'+IntToStr(wMes)
   Else
-   sDtaIncio:=sDtaIncio+IntToStr(wMes);
+   sgDtaGeoInicio:=sgDtaGeoInicio+IntToStr(wMes);
 
   If wDia<10 Then
-   sDtaIncio:=sDtaIncio+'0'+IntToStr(wDia)
+   sgDtaGeoInicio:=sgDtaGeoInicio+'0'+IntToStr(wDia)
   Else
-   sDtaIncio:=sDtaIncio+IntToStr(wDia);
+   sgDtaGeoInicio:=sgDtaGeoInicio+IntToStr(wDia);
 
   // Data do Fim do Período ====================================================
   DecodeDate(StrToDate(sgDtaF), wAno, wMes, wDia);
 
-  sDtaFim:=IntToStr(wAno);
+  sgDtaGeoFim:=IntToStr(wAno);
   If wMes<10 Then
-   sDtaFim:=sDtaFim+'0'+IntToStr(wMes)
+   sgDtaGeoFim:=sgDtaGeoFim+'0'+IntToStr(wMes)
   Else
-   sDtaFim:=sDtaFim+IntToStr(wMes);
+   sgDtaGeoFim:=sgDtaGeoFim+IntToStr(wMes);
 
   If wDia<10 Then
-   sDtaFim:=sDtaFim+'0'+IntToStr(wDia)
+   sgDtaGeoFim:=sgDtaGeoFim+'0'+IntToStr(wDia)
   Else
-   sDtaFim:=sDtaFim+IntToStr(wDia);
+   sgDtaGeoFim:=sgDtaGeoFim+IntToStr(wDia);
   // Acerta Datas do Período ===================================================
   //============================================================================
 
   //============================================================================
   // Consome Pagamentos da GeoBeauty Web Service ===============================
   //============================================================================
-  SoapHTTPRIO:=THTTPRIO.Create(Self);
   SoapHTTPRIO.WSDLLocation:='http://aplicativo.geobeauty.com.br/aplicativo/webservices/ws-salao/server.php?wsdl';
   SoapHTTPRIO.Port:='gestoriPort';
   SoapHTTPRIO.Service:='gestori';
-
   Try
-    sRetornoPagtos:=(SoapHTTPRIO as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br',sChaveAcessoGeo, sDtaIncio, sDtaFim);
+    sRetornoPagtos:=(SoapHTTPRIO as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br',sgChaveAcessoGeo, sgDtaGeoInicio, sgDtaGeoFim);
   Except
     on e : Exception do
     Begin
       OdirPanApres.Visible:=False;
       Screen.Cursor:=crDefault;
 
-      MessageBox(Handle, pChar('WebServices GeoBeauty Erro:'+#13+e.message), 'Erro', MB_ICONERROR);
+      MessageBox(Handle, pChar('Erro WebServices GeoBeauty Pagamentos:'+#13+e.message), 'Erro', MB_ICONERROR);
       Exit;
     End; // on e : Exception do
+  End;
+
+  If Trim(sRetornoPagtos)='' Then
+  Begin
+    OdirPanApres.Visible:=False;
+    Screen.Cursor:=crDefault;
+    Exit;
   End;
 
   // Monta o Arquivo para Com Separadores Dois_Pontos (:) ======================
   mMemo:=TMemo.Create(Self);
   mMemo.Visible:=False;
-  mMemo.Parent:=FrmBelShop;
+  mMemo.Parent:=FrmBancoExtratos;
+  mMemo.Font.Size:=1;
   mMemo.Width:=1000;
   mMemo.Lines.Clear;
 
@@ -728,10 +1072,10 @@ Begin
   // Retira os 2 Últimos Caracteres ============================================
   delete(sRetornoPagtos,length(sRetornoPagtos)-1,2);
 
-  // Coloca Virgula no Ultimo Caracter =========================================
+  // Coloca <Virgula, Aspas> no Ultimo Caracter ================================
   sRetornoPagtos:=sRetornoPagtos+',"';
 
-  // Ajusta Retorno para 1 Registro por Linha Separados por Dois_Pontos (:) ====
+  // Ajusta Retorno para 1 Registro por Linha Separados por Dois_Pontos <:> ====
   b:=True;
   While b do
   Begin
@@ -761,9 +1105,6 @@ Begin
       // Substituir: Virgula (,) por DoisPontos (:)
       sRegistro:=f_Troca('"','',f_Troca('{','',f_Troca('}','',f_Troca(',',':',sRegistro))));
 
-      // Substituir Ponto (.) por Virgula (,) Nos Valores no Registro ==========
-      sRegistro:=f_Troca('.',',',sRegistro);
-
       // Acerta Separador de Data no Registro ==================================
       sRegistro:=f_Troca('\/','/',sRegistro);
 
@@ -777,6 +1118,14 @@ Begin
     If Trim(sRetornoPagtos)='' Then
      Break;
   End; // While b do
+
+  If mMemo.Lines.Count<1 Then
+  Begin
+    FreeAndNil(mMemo);
+    OdirPanApres.Visible:=False;
+    Screen.Cursor:=crDefault;
+    Exit;
+  End;
   // Consome Pagamentos da GeoBeauty Web Service ===============================
   //============================================================================
 
@@ -785,14 +1134,13 @@ Begin
   //============================================================================
   // Verifica se Transação esta Ativa
   If DMBelShop.SQLC.InTransaction Then
-   DMBelShop.SQLC.Rollback(TD);
+   DMBelShop.SQLC.Rollback(TDEx);
 
   // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMBelShop.SQLC.StartTransaction(TD);
+  TDEx.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TDEx.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TDEx);
   Try // Try da Transação
-    Screen.Cursor:=crAppStart;
     DateSeparator:='.';
     DecimalSeparator:='.';
 
@@ -866,27 +1214,26 @@ Begin
     End; // For i:=0 to mMemo.Lines.Count-1 do
 
     // Atualiza Transacao ======================================================
-    DMBelShop.SQLC.Commit(TD);
+    DMBelShop.SQLC.Commit(TDEx);
+
     Result:=True;
   Except // Except da Transação
     on e : Exception do
     Begin
       // Abandona Transacao ====================================================
-      DMBelShop.SQLC.Rollback(TD);
+      DMBelShop.SQLC.Rollback(TDEx);
 
-      MessageBox(Handle, pChar('WebServices GeoBeauty Erro:'+#13+e.message), 'Erro', MB_ICONERROR);
+      MessageBox(Handle, pChar('WebServices GeoBeauty Pagtos Erro:'+#13+e.message), 'Erro', MB_ICONERROR);
     End; // on e : Exception do
   End; // Try da Transação
 
+  FreeAndNil(mMemo);
   FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
-
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
   DateSeparator:='/';
   DecimalSeparator:=',';
 
-  OdirPanApres.Visible:=False;
-  Screen.Cursor:=crDefault;
-
-  FreeAndNil(mMemo);
 End; // CONCILIAÇÕES PAGTOS/DEPOSITOS - Web Service GoeBeauty (Pagtos) >>>>>>>>>
 
 // CONCILIAÇÕES PAGTOS/DEPOSITOS - Atualiza Faturamento em Dinheiro no Dia >>>>>
@@ -13590,10 +13937,6 @@ begin
   // Movtos Web Services: Sangria/Suprimento Linx e Pagtos GeoBeauty ===========
   //============================================================================
 
-//odirapagar - 02/04/2018
-//  If Des_Usuario<>'ODIR' Then
-//   bAtualizaGeo:=False;
-
   //============================================================================
   // Busca Movtos Web Services: Sangria/Suprimento Linx ========================
   //============================================================================
@@ -13662,6 +14005,9 @@ begin
     // Web Service GoeBeauty (Pagtos) ==========================================
     If Not ConcDepositoWebServiceGeoBeautyPagtos Then
      bAtualizaGeo:=False;
+
+    // Web Service GoeBeauty (Fechamentos) =====================================
+     ConcDepositoWebServiceGeoBeautyFechamentos
   End; // If bAtualizaGeo Then
   // Busca Movtos Web Services: Pagamento GeoBeauty ============================
   //============================================================================
@@ -13669,10 +14015,10 @@ begin
   //============================================================================
   // Insere Novos Pagtos se Buscou Dados no GeoBeauty ==========================
   //============================================================================
-  If bAtualizaGeo Then
-  Begin
+//  If bAtualizaGeo Then
+//  Begin
     AtualizaMovtosDepositosGeoBeauty;
-  End; // If bAtualizaLinx Then
+//  End; // If bAtualizaLinx Then
   // Insere Novos Pagtos se Buscou Dados no GeoBeauty ==========================
   //============================================================================
 

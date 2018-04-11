@@ -243,6 +243,18 @@ begin
 
 
 
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// consultaFaturamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//  sgFuncao:='consultaFaturamento';
+//
+//  Memo1.Lines.Clear;
+//  Memo1.Lines.Add('consultaFaturamento: '+cr+
+//                  (HTTPRIO1 as gestoriPortType).consultaFaturamento('webservice@lojasbelshop.com.br',sChaveAcessoGeo, sDtaIncio, sDtaFim));
+//
+//  sgLinha:=(HTTPRIO1 as gestoriPortType).consultaFaturamento('webservice@lojasbelshop.com.br',sChaveAcessoGeo, sDtaIncio, sDtaFim);
+//
+// consultaFechamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // consultaFaturamentoPorTipoPgto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -306,13 +318,15 @@ begin
 
   // Coloca Virgula no Ultimo Caracter
   If Copy(sgLinha, Length(sgLinha),1)<>'}' Then
-   sgLinha:=sgLinha+'},"'
+   sgLinha:=sgLinha+'},"' // Fechamentos
   Else
-   sgLinha:=sgLinha+',"';
+   sgLinha:=sgLinha+',"'; // Pagamento
 //  Memo2.Lines.Add('Virgula ult: '+copy(sgLinha,length(sgLinha)-100,101));
 
-  // Retira todos os Til # Linha
-  sLinha:=f_Troca('#','',sLinha);
+  // Retira todos os # Linha
+  If sgFuncao='consultaFechamento' Then
+   sLinha:=f_Troca('#','',sLinha);
+
   b:=True;
   While b do
   Begin
@@ -323,7 +337,7 @@ begin
       // Pega Linha da Loja Somente UM Dia
       sLinha:=copy(sgLinha,1,i+2);
 
-      // Retina Parte Inicial do registro - ("8679":) ou CNPJ e Data do Inicio da Linha
+      // Retira Parte Inicial do registro - ("8679":) ou CNPJ e Data do Inicio da Linha
       bb:=True;
       While bb do
       Begin
@@ -363,6 +377,7 @@ begin
         sLinha:=f_Troca('"','',f_Troca('{','',f_Troca('}','',f_Troca(',',':',sLinha))));
       End; // If sgFuncao='consultaFaturamentoPorTipoPgto'
 
+// Não Usar Alteado no Insert - 10/04/2018
 //      // Substituir Ponto (.) por Virgula (,) Nos Valores
 //      sLinha:=f_Troca('.',',',sLinha);
 
@@ -586,6 +601,7 @@ begin
       CDS_GeoBeautyFechamentoVALOR_CHEQUE_ATUAL.AsCurrency     :=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i],12,'#'))),2));
       CDS_GeoBeautyFechamentoVALOR_CARTAO_ATUAL.AsCurrency     :=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i],14,'#'))),2));
       CDS_GeoBeautyFechamentoVALOR_DINHEIRO_ATUAL.AsCurrency   :=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i],16,'#'))),2));
+
       CDS_GeoBeautyFechamentoVALOR_CHEQUE_PREVISTO.AsCurrency  :=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i],18,'#'))),2));
       CDS_GeoBeautyFechamentoVALOR_CARTAO_PREVISTO.AsCurrency  :=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i],20,'#'))),2));
       CDS_GeoBeautyFechamentoVALOR_DINHEIRO_PREVISTO.AsCurrency:=StrToCurr(ZerosCentavos(Trim(f_Troca('.',',',Separa_String(Memo2.Lines[i],22,'#'))),2));

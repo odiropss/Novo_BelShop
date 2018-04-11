@@ -5857,4 +5857,17 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Left = 948
     Top = 447
   end
+  object SoapHTTPRIO: THTTPRIO
+    WSDLLocation = 
+      'http://aplicativo.geobeauty.com.br/aplicativo/webservices/ws-sal' +
+      'ao/server.php?wsdl'
+    Service = 'gestori'
+    Port = 'gestoriPort'
+    HTTPWebNode.Agent = 'Borland SOAP 1.2'
+    HTTPWebNode.UseUTF8InHeader = False
+    HTTPWebNode.InvokeOptions = [soIgnoreInvalidCerts, soAutoCheckAccessPointViaUDDI]
+    Converter.Options = [soSendMultiRefObj, soTryAllSchema, soRootRefNodesToBody, soCacheMimeResponse, soUTF8EncodeXML]
+    Left = 652
+    Top = 408
+  end
 end
