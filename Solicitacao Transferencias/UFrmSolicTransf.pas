@@ -59,7 +59,7 @@ type
     Label5: TLabel;
     EdtQtdEstoqueCD: TCurrencyEdit;
     Lab_UnidadeCD: TLabel;
-    Button1: TButton;
+    Bt_AcertaDoc_Gerado_Odir: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -81,8 +81,9 @@ type
 
     Procedure LimpaEdts;
 
-    Function  ExcluiVersaoTabAuxiliar: Boolean;
-    Procedure NovaVersao;
+//OdirApagar - 16/04/2018
+//    Function  ExcluiVersaoTabAuxiliar: Boolean;
+    Function  NovaVersao: Boolean;
 
     // ODIR >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -103,7 +104,7 @@ type
       Shift: TShiftState);
     procedure FormKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure Button1Click(Sender: TObject); // Posiciona no Componente
+    procedure Bt_AcertaDoc_Gerado_OdirClick(Sender: TObject); // Posiciona no Componente
 
   private
     { Private declarations }
@@ -130,7 +131,7 @@ var
   sgCodProdLinx, sgCodProdSidicom
   : String;
 
-  sgCodLojaVersaoOK: String;
+//  sgCodLojaVersaoOK: String;
   
   igNumMaxProd, igQtdMaxProd: Integer;
 
@@ -151,103 +152,114 @@ uses DK_Procs1, UDMSolicTransf, UPesquisa, DB;
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Atualiza Nova Versão do Sistema >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmSolicTransf.NovaVersao;
+Function TFrmSolicTransf.NovaVersao:Boolean;
 Var
   MySql: String;
+
+  sDtaAplicativo, sDtaVersao,
   sCliente: String;
 Begin
+  Result:=True;
+
+  sDtaAplicativo:=Copy(DateTimeToStr(FileDateToDateTime(
+                       FileAge(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+
+                       ExtractFileName(Application.ExeName)))),1,16);
+
   // Verifica se é Para Atualizar ==============================================
-  MySql:=' SELECT t.cod_aux'+
+  MySql:=' SELECT *'+
          ' FROM TAB_AUXILIAR t'+
-         ' WHERE t.tip_aux=20'+
-         ' AND   t.cod_aux='+sgLojaLinx;
+         ' WHERE t.tip_aux=20';
   DMSolicTransf.CDS_BuscaRapida.Close;
   DMSolicTransf.SQLQ_BuscaRapida.Close;
   DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
   DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql);
   DMSolicTransf.CDS_BuscaRapida.Open;
-  sCliente:=Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('Cod_Aux').AsString);
+  sDtaVersao:=Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('Des_Aux').AsString);
   DMSolicTransf.CDS_BuscaRapida.Close;
 
-  // Busca Nova Versão =========================================================
-  If sCliente<>'' Then
-  Begin
-    // MONTA PARAMETRO: IP da Internet ; Porta ; Código Loja Linx ==============
-    MySql:=' SELECT t.des_aux IP, t.des_aux1 Porta'+
-           ' FROM TAB_AUXILIAR t'+
-           ' WHERE t.tip_aux=20'+
-           ' AND   t.cod_aux=0';
-    DMSolicTransf.CDS_BuscaRapida.Close;
-    DMSolicTransf.SQLQ_BuscaRapida.Close;
-    DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
-    DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql);
-    DMSolicTransf.CDS_BuscaRapida.Open;
-    sCliente:=IncludeTrailingPathDelimiter(sgPastaExecutavel)+'PCliente.exe '+
-              Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('IP').AsString)+';'+
-              Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('Porta').AsString)+';'+
-              sgLojaLinx+';';
-    DMSolicTransf.CDS_BuscaRapida.Close;
+  // Analisa Nova Versão =======================================================
+  If sDtaAplicativo<>sDtaVersao Then
+   Result:=False;
 
-    msg('Existe Nova Versão do Sistema !!'+cr+cr+'Tecle <OK> Para Atualizar...','A');
-    ShellExecute(Handle, 'open',Pchar(sCliente), nil, nil, 1);
-    Application.Terminate;
-    Exit;
-  End;
+//  // Busca Nova Versão =======================================================
+//  If sDtaAplicativo<>sDtaVersao Then
+//  Begin
+//    // MONTA PARAMETRO: IP da Internet ; Porta ; Código Loja Linx ============
+//    MySql:=' SELECT t.des_aux1 IP, CAST(t.vlr_aux AS INTEGER) Porta'+
+//           ' FROM TAB_AUXILIAR t'+
+//           ' WHERE t.tip_aux=20';
+//    DMSolicTransf.CDS_BuscaRapida.Close;
+//    DMSolicTransf.SQLQ_BuscaRapida.Close;
+//    DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
+//    DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql);
+//    DMSolicTransf.CDS_BuscaRapida.Open;
+//    sCliente:=IncludeTrailingPathDelimiter(sgPastaExecutavel)+'PCliente.exe '+
+//              Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('IP').AsString)+';'+
+//              Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('Porta').AsString)+';'+
+//              sgLojaLinx+';';
+//    DMSolicTransf.CDS_BuscaRapida.Close;
+//
+//    msg('Existe Nova Versão do Sistema !!'+cr+cr+'Tecle <OK> Para Atualizar...','A');
+//    ShellExecute(Handle, 'open',Pchar(sCliente), nil, nil, 1);
+//    Application.Terminate;
+//    Exit;
+//  End; // If sDtaAplicativo<>sDtaVersao Then
 End; // Atualiza Nova Versão do Sistema >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+//OdirApagar - 16/04/2018
 // Exclui Informação de Nova Versão do Sistema >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Function TFrmSolicTransf.ExcluiVersaoTabAuxiliar: Boolean;
-Var
-  MySql: String;
-Begin
-
-  Result:=True;
-
-  // Verifica se Transação esta Ativa
-  If DMSolicTransf.SQLC.InTransaction Then
-   DMSolicTransf.SQLC.Rollback(TD);
-
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMSolicTransf.SQLC.StartTransaction(TD);
-  Try // Try da Transação
-    Screen.Cursor:=crAppStart;
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    MySql:=' DELETE FROM TAB_AUXILIAR t'+
-           ' WHERE t.tip_aux=20'+
-           ' AND   t.cod_aux='+sgLojaLinx;
-    DMSolicTransf.SQLC.Execute(MySql,nil,nil);
-
-    // Atualiza Transacao ======================================================
-    DMSolicTransf.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-
-    OdirPanApres.Visible:=False;
-
-    Screen.Cursor:=crDefault;
-
-  Except // Except da Transação
-    on e : Exception do
-    Begin
-      // Abandona Transacao ====================================================
-      Result:=False;
-
-      DMSolicTransf.SQLC.Rollback(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-
-      Screen.Cursor:=crDefault;
-
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-    End; // on e : Exception do
-  End; // Try da Transação
-End; // Exclui Informação de Nova Versão do Sistema >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//Function TFrmSolicTransf.ExcluiVersaoTabAuxiliar: Boolean;
+//Var
+//  MySql: String;
+//Begin
+//FFF
+//  Result:=True;
+//
+//  // Verifica se Transação esta Ativa
+//  If DMSolicTransf.SQLC.InTransaction Then
+//   DMSolicTransf.SQLC.Rollback(TD);
+//
+//  // Monta Transacao ===========================================================
+//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+//  TD.IsolationLevel:=xilREADCOMMITTED;
+//  DMSolicTransf.SQLC.StartTransaction(TD);
+//  Try // Try da Transação
+//    Screen.Cursor:=crAppStart;
+//    DateSeparator:='.';
+//    DecimalSeparator:='.';
+//
+//    MySql:=' DELETE FROM TAB_AUXILIAR t'+
+//           ' WHERE t.tip_aux=20'+
+//           ' AND   t.cod_aux='+sgLojaLinx;
+//    DMSolicTransf.SQLC.Execute(MySql,nil,nil);
+//
+//    // Atualiza Transacao ======================================================
+//    DMSolicTransf.SQLC.Commit(TD);
+//
+//    DateSeparator:='/';
+//    DecimalSeparator:=',';
+//
+//    OdirPanApres.Visible:=False;
+//
+//    Screen.Cursor:=crDefault;
+//
+//  Except // Except da Transação
+//    on e : Exception do
+//    Begin
+//      // Abandona Transacao ====================================================
+//      Result:=False;
+//
+//      DMSolicTransf.SQLC.Rollback(TD);
+//
+//      DateSeparator:='/';
+//      DecimalSeparator:=',';
+//
+//      Screen.Cursor:=crDefault;
+//
+//      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+//    End; // on e : Exception do
+//  End; // Try da Transação
+//End; // Exclui Informação de Nova Versão do Sistema >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Limpa Todos os Edts e Datas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmSolicTransf.LimpaEdts;
@@ -400,11 +412,11 @@ begin
     Application.Terminate;
     Exit;
   End;
-                       
+
   // Verifica Parametro Enviado ================================================
-  sgCodLojaVersaoOK:='';
-  for i:=1 to ParamCount do
-   sgCodLojaVersaoOK:=ParamStr(i);
+//  sgCodLojaVersaoOK:='';
+//  for i:=1 to ParamCount do
+//   sgCodLojaVersaoOK:=ParamStr(i);
 
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
@@ -557,7 +569,7 @@ begin
   PC_Principal.TabIndex:=0;
   PC_PrincipalChange(Self);
 
-// odirApagar - 04/10/2017 - Versão com Servidor / Client ======================  
+// odirApagar - 04/10/2017 - Versão com Servidor / Client ======================
 //  // Se Versao já Atualizada - Parametros vem do Cliente de Transferencia do Aplicativo
 //  If Trim(sgCodLojaVersaoOK)<>'' Then
 //  Begin
@@ -570,7 +582,13 @@ begin
 //  End; //If Trim(sgCodLojaVersaoOK<>'') Then
 //
 //  // Atualiza Novca Versão do Sistema ==========================================
-//  NovaVersao;
+
+  If Not NovaVersao Then
+  Begin
+    msg('== SOLICITAÇÃO DE TRANSFERÊNCIA =='+cr+cr+
+        'Versão do Sistema esta Incorreta!!'+cr+cr+
+        'Solicite Atualização para ALINE/ODIR...','A');
+  End; // If not NovaVersao Then
 end;
 
 procedure TFrmSolicTransf.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
@@ -621,6 +639,8 @@ begin
     If Not DMSolicTransf.SQLC.Connected Then
      DMSolicTransf.SQLC.Connected:=True;
 
+
+    // Buaca Saldo do Produto no CD ============================================
     MySql:=' SELECT pr.Cod_Produto, pr.Nome, pr.Cod_Auxiliar,'+
            '        pr.DesAtivado, pr.Unidade,'+
            '        COALESCE(pd.Quantidade,0) Quantidade'+
@@ -643,6 +663,45 @@ begin
     Lab_UnidadeCD.Caption    :=Trim(DMSolicTransf.CDS_Busca.FieldByName('Unidade').AsString);
 
     DMSolicTransf.CDS_Busca.Close;
+
+    // Acerta Quantidade para Separação ========================================
+    If EdtQtdEstoqueCD.AsInteger>0 Then
+    Begin
+      // Busca Solicitações em Aberto ==========================================
+      MySql:=' SELECT Prod_Solic.Cod_produto, SUM(Prod_Solic.Qtd_Solic) Qtd_Solic'+
+             ' FROM (SELECT p.cod_produto, SUM(l.Qtd_a_transf) Qtd_Solic'+
+             '       FROM ES_ESTOQUES_LOJAS l, LINXPRODUTOS p'+
+             '       WHERE l.cod_produto=p.cod_auxiliar'+
+             '       AND   l.ind_transf=''SIM'''+
+             '       AND   l.num_pedido=''000000'''+
+             '       AND   l.qtd_a_transf>0.00'+
+             '       AND   l.qtd_checkout=0.00'+
+             '       AND   l.dta_movto=current_date'+
+             '       AND   p.cod_produto='+IntToStr(EdtCodProdLinx.AsInteger)+
+             '       GROUP BY 1'+
+
+             '       UNION'+ //////////////////// UNION
+
+             '       SELECT c.cod_prod_linx, SUM(c.Qtd_Transf) Qtd_Solic'+
+             '       FROM SOL_TRANSFERENCIA_CD c'+
+             '       WHERE c.doc_gerado=0'+
+             '       AND   c.cod_prod_linx='+IntToStr(EdtCodProdLinx.AsInteger)+
+             '       GROUP BY 1) Prod_Solic'+
+             ' GROUP BY 1';
+      DMSolicTransf.CDS_Busca.Close;
+      DMSolicTransf.SQLQ_Busca.Close;
+      DMSolicTransf.SQLQ_Busca.SQL.Clear;
+      DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
+      DMSolicTransf.CDS_Busca.Open;
+
+      // Acerta Quantidade para Separação ======================================
+      EdtQtdEstoqueCD.AsInteger:=EdtQtdEstoqueCD.AsInteger - DMSolicTransf.CDS_Busca.FieldByName('Qtd_Solic').AsInteger;
+
+      If EdtQtdEstoqueCD.AsInteger<0 Then
+       EdtQtdEstoqueCD.AsInteger:=0;
+
+      DMSolicTransf.CDS_Busca.Close;
+    End; // If EdtQtdEstoqueCD.AsInteger>0 Then
 
     Screen.Cursor:=crDefault;
     If EdtDescProduto.Text='' Then
@@ -1405,14 +1464,14 @@ begin
   // Versão do Sistema =========================================================
   If Key=Vk_F3 Then
   Begin
-    msg('Data da Última Alteração: '+Copy(DateTimeToStr(FileDateToDateTime(
+    msg('Data da Última Alteração: '+cr+cr+Copy(DateTimeToStr(FileDateToDateTime(
         FileAge(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+
         ExtractFileName(Application.ExeName)))),1,19),'A');
   End;
 
 end;
 
-procedure TFrmSolicTransf.Button1Click(Sender: TObject);
+procedure TFrmSolicTransf.Bt_AcertaDoc_Gerado_OdirClick(Sender: TObject);
 Var
   MySql: String;
 begin

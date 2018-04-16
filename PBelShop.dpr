@@ -51,7 +51,8 @@ uses
   UFrmPrioridadesReposicao in 'UFrmPrioridadesReposicao.pas' {FrmPrioridadesReposicao},
   UFrmLeitoraCodBarras in 'UFrmLeitoraCodBarras.pas' {FrmLeitoraCodBarras},
   UFrmConfirmacao in 'UFrmConfirmacao.pas' {FrmConfirmacao},
-  GeoBeautyServerWebService in 'GeoBeautyServerWebService.pas';
+  GeoBeautyServerWebService in 'GeoBeautyServerWebService.pas',
+  UFrmWebServicesImporta in 'UFrmWebServicesImporta.pas' {FrmWebServicesImporta};
 
 {$R *.res}
 
@@ -75,6 +76,7 @@ begin
   Application.CreateForm(TDMLojaUnica, DMLojaUnica);
   Application.CreateForm(TDMRelatorio, DMRelatorio);
   Application.CreateForm(TDMSidicom, DMSidicom);
+  // Application.CreateForm(TFrmWebServicesImporta, FrmWebServicesImporta);
   // Application.CreateForm(TFrmConfirmacao, FrmConfirmacao);
   // Application.CreateForm(TFrmLeitoraCodBarras, FrmLeitoraCodBarras);
   Application.CreateForm(TDMCentralTrocas, DMCentralTrocas);

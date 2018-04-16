@@ -328,7 +328,6 @@ type
     CDS_CMDepositosAnaliseDESPESA: TFMTBCDField;
     CDS_CMDepositosAnaliseOUTROS: TFMTBCDField;
     CDS_CMDepositosAnaliseTOTAL: TFMTBCDField;
-    CDS_CMDepositosAnaliseOBSERVACOES: TStringField;
     CDS_CMDepositosAnaliseORDEM: TIntegerField;
     SDS_CMDepHistoricos: TSQLDataSet;
     CDS_CMDepHistoricos: TClientDataSet;
@@ -347,6 +346,9 @@ type
     CDS_CMDepositosAnaliseSALAO_DINHEIRO: TFMTBCDField;
     CDS_CMDepositosAnaliseDIA_DINHEIRO: TFMTBCDField;
     CDS_CMDepositosAnaliseQUEBRA_CX: TFMTBCDField;
+    CDS_CMDepositosAnaliseDIF_DEPOSITO: TFMTBCDField;
+    CDS_CMDepositosAnaliseOBS_FINANCEIRO: TStringField;
+    CDS_CMDepositosAnaliseOBSERVACOES: TStringField;
     procedure CDS_LojasBancoAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresExtratosAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresPagtosAfterScroll(DataSet: TDataSet);

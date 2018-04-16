@@ -985,7 +985,7 @@ object FrmSolicTransf: TFrmSolicTransf
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
-    object Button1: TButton
+    object Bt_AcertaDoc_Gerado_Odir: TButton
       Left = 704
       Top = 2
       Width = 145
@@ -999,7 +999,7 @@ object FrmSolicTransf: TFrmSolicTransf
       ParentFont = False
       TabOrder = 0
       Visible = False
-      OnClick = Button1Click
+      OnClick = Bt_AcertaDoc_Gerado_OdirClick
     end
   end
   object OdirPanApres: TPanel

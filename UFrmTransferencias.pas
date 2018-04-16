@@ -505,7 +505,7 @@ Begin
          ' WHERE ('+ // Último DIA do Calculo Automático (Somente Prioridade igual a Zero)
          '        (l.num_tr_gerada=0 AND l.ind_prioridade=0 AND l.dta_movto >  ''27.09.2017'')'+
          '         OR'+ // Primeiro Dia Que Busca Loja Não Atendida
-         '        (l.num_tr_gerada=0 AND l.ind_prioridade=2 AND l.dta_movto >= ''06.11.2017'')'+
+         '        (l.num_tr_gerada=0 AND l.ind_prioridade=2 AND l.dta_movto > ''05.11.2017'')'+
          '         OR'+ // Último DIA do Calculo Automático (Solicitações do Compras)
          '        (l.num_tr_gerada<>0 AND l.dta_movto >  ''27.09.2017'')'+
          '        )'+

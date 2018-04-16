@@ -1,6 +1,6 @@
 object FrmSolicitacoes: TFrmSolicitacoes
-  Left = 256
-  Top = 120
+  Left = 244
+  Top = 115
   Width = 649
   Height = 490
   BorderIcons = []
@@ -403,7 +403,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 452
-    ActivePage = Ts_ConcDepHistoricos
+    ActivePage = Ts_ReposDivergencias
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -10517,7 +10517,6 @@ object FrmSolicitacoes: TFrmSolicitacoes
           item
             Expanded = False
             FieldName = 'CODBARRA'
-            Width = 64
             Visible = True
           end>
       end
@@ -10905,8 +10904,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
     end
   end
   object PainelApresExp: TPanel
-    Left = 208
-    Top = 56
+    Left = 504
+    Top = 112
     Width = 99
     Height = 33
     BevelInner = bvRaised

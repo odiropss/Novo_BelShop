@@ -407,7 +407,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Top = 0
     Width = 1047
     Height = 564
-    ActivePage = Ts_ConciliacoesManutDepositos
+    ActivePage = Ts_ConciliacoesManutDepAnalise
     Align = alClient
     TabOrder = 0
     OnChange = PC_PrincipalChange
@@ -4389,7 +4389,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
           Width = 1037
           Height = 234
           Align = alClient
-          Caption = ' Movimentos de Dep'#243'sitos'
+          Caption = ' Movimentos de Dep'#243'sitos '
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -5490,9 +5490,9 @@ object FrmBancoExtratos: TFrmBancoExtratos
         end
         object Bt_DepAnaliseSalvaClipboard: TJvXPButton
           Tag = 4
-          Left = 223
+          Left = 457
           Top = 2
-          Width = 167
+          Width = 159
           Height = 35
           Caption = 'Salvar em Mem'#243'ria'
           TabOrder = 2
@@ -5521,7 +5521,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
         end
         object Bt_DepAnaliseCadHistoricos: TJvXPButton
           Tag = 4
-          Left = 631
+          Left = 695
           Top = 2
           Width = 167
           Height = 35
@@ -5572,6 +5572,85 @@ object FrmBancoExtratos: TFrmBancoExtratos
           ParentFont = False
           OnClick = Bt_DepAnaliseCadHistoricosClick
         end
+        object Bt_DepAnaliseObsFinan: TJvXPButton
+          Tag = 1
+          Left = 239
+          Top = 2
+          Width = 153
+          Height = 35
+          Caption = 'Obs Financeira Loja Conciliada'
+          TabOrder = 4
+          TabStop = False
+          Glyph.Data = {
+            07544269746D617016070000424D160700000000000036000000280000001A00
+            0000160000000100180000000000E0060000C30E0000C30E0000000000000000
+            0000BFBFBF7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F
+            7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F
+            7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F0000BFBFBF7F7F7F7F7F7F7F7F7F7F7F
+            7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F
+            7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            000000000000000000000000007F7F7F0000000000FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF000000007F7F7F
+            0000000000FFFF00FFFF007F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F
+            7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F
+            7F7F7F7FFFFF00FFFF000000007F7F7F0000000000FFFF000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000FFFF000000007F7F7F
+            0000000000FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF000000007F7F7F0000000000FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF000000007F7F7FFFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF000000007F7F7F
+            0000000000FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF000000000000007F7F7F7F7F7FFFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF000000007F7F7F0000000000FFFF00FFFF007F7F7F7F7F
+            7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7FFFFF00FFFF00000000FF000000000000
+            00007F7F7FFFFF00FFFF00FFFF007F7F7F7F7F7FFFFF00FFFF000000007F7F7F
+            0000000000FFFF00000000000000000000000000000000000000000000000000
+            000000FFFF00FFFF00000000FF00007F7F000000007F7F7FFFFF000000000000
+            00000000FFFF00FFFF000000007F7F7F0000000000FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00000000FFFFFFFF
+            00007F7F000000007F7F7FFFFF00FFFF00FFFF00FFFF00FFFF000000007F7F7F
+            0000000000FFFF00000000000000000000000000FFFF00FFFF00FFFF00000000
+            000000000000FFFF00FFFF00000000FFFFFFFF00007F7F000000007F7F7FFFFF
+            00FFFF00FFFF00FFFF000000007F7F7F0000000000FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF0000
+            0000FFFFFFFF00007F7F000000007F7F7FFFFF00FFFF00FFFF000000007F7F7F
+            0000000000000000000000000000000000000000000000000000000000000000
+            000000000000000000000000000000000000000000FFFFFFFF00007F7F000000
+            007F7F7F000000000000000000BFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBF000000FFFFFFFF00007F7F000000007F7F7FBFBFBFBFBFBFBFBFBF
+            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000FFFFFFFF00
+            007F7F000000007F7F7FBFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBF000000FFFFFFFF00007F7F000000007F7F7FBFBFBF
+            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF0000
+            00FFFFFFFF00007F7F00000000BFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000FFFFFFFF00007F7F00000000
+            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBF000000FFFFFF000000BFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000BFBFBFBFBFBF
+            0000}
+          ShowFocusRect = True
+          Spacing = 15
+          Anchors = [akLeft, akTop, akBottom]
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_DepAnaliseObsFinanClick
+        end
       end
       object Dbg_DepAnalise: TDBGrid
         Left = 0
@@ -5582,19 +5661,19 @@ object FrmBancoExtratos: TFrmBancoExtratos
         Align = alClient
         Ctl3D = False
         DataSource = DMConciliacao.DS_CMDepositosAnalise
-        FixedColor = clSilver
+        FixedColor = 14671839
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Font.Style = []
-        Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         ParentCtl3D = False
         ParentFont = False
         ReadOnly = True
         TabOrder = 1
         TitleFont.Charset = DEFAULT_CHARSET
-        TitleFont.Color = clBlack
+        TitleFont.Color = clWindowText
         TitleFont.Height = -11
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
@@ -5604,7 +5683,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
           item
             Expanded = False
             FieldName = 'NOME_EMP'
-            Width = 350
+            Width = 288
             Visible = True
           end
           item
@@ -5685,6 +5764,18 @@ object FrmBancoExtratos: TFrmBancoExtratos
           end
           item
             Expanded = False
+            FieldName = 'DIF_DEPOSITO'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 78
+            Visible = True
+          end
+          item
+            Expanded = False
             FieldName = 'QUEBRA_CX'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
@@ -5692,13 +5783,20 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
             Title.Alignment = taRightJustify
-            Width = 70
+            Width = 74
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'OBSERVACOES'
-            Width = 450
+            Title.Caption = 'Dep'#243'sitos/OBS N'#227'o Conciliados'
+            Width = 200
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'OBS_FINANCEIRO'
+            Width = 200
             Visible = True
           end
           item
@@ -5743,8 +5841,8 @@ object FrmBancoExtratos: TFrmBancoExtratos
     end
   end
   object OdirPanApres: TPanel
-    Left = 904
-    Top = 188
+    Left = 896
+    Top = 68
     Width = 89
     Height = 33
     BevelInner = bvLowered
