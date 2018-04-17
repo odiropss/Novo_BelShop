@@ -1,8 +1,9 @@
 object FrmContasPagar: TFrmContasPagar
-  Left = 234
-  Top = 114
+  Left = 238
+  Top = 112
   Width = 1111
   Height = 610
+  Align = alClient
   AutoSize = True
   BorderIcons = [biSystemMenu]
   Caption = 'CONTAS A PAGAR'
@@ -282,397 +283,523 @@ object FrmContasPagar: TFrmContasPagar
     Align = alTop
     ParentColor = True
     TabOrder = 0
-    object Gb_Pessoa: TGroupBox
-      Left = 50
-      Top = 8
-      Width = 575
-      Height = 51
-      Caption = ' Fornecedor '
-      Ctl3D = False
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentCtl3D = False
-      ParentFont = False
+    DesignSize = (
+      1095
+      170)
+    object Panel1: TPanel
+      Left = 1
+      Top = 1
+      Width = 712
+      Height = 168
+      Anchors = [akTop, akBottom]
+      ParentColor = True
       TabOrder = 0
-      object EdtDesPessoa: TEdit
-        Left = 101
-        Top = 20
-        Width = 431
-        Height = 19
-        TabStop = False
-        CharCase = ecUpperCase
-        Color = clMoneyGreen
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        MaxLength = 50
-        ParentFont = False
-        ReadOnly = True
-        TabOrder = 1
-      end
-      object EdtCodPessoa: TCurrencyEdit
-        Left = 12
-        Top = 20
-        Width = 53
-        Height = 19
-        AutoSize = False
-        DecimalPlaces = 0
-        DisplayFormat = '0'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
-        OnChange = EdtCodPessoaChange
-        OnEnter = EdtCodPessoaEnter
-        OnExit = EdtCodPessoaExit
-      end
-      object Bt_BuscaPessoa: TJvXPButton
-        Tag = 92
-        Left = 71
-        Top = 16
-        Width = 24
-        Height = 26
-        TabOrder = 2
-        TabStop = False
-        Glyph.Data = {
-          07544269746D61705E060000424D5E0600000000000036040000280000001600
-          000017000000010008000000000028020000C30E0000C30E0000000100000000
-          000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
-          FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
-          FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000010101010101010101010101010101010101010101010000010101010101
-          0101010101010101010101040404030100000101010101010101010101010101
-          0101040701070401000001010101010101010101010101010104070101070401
-          0000010101010101010101010101010104070101070704010000010101010101
-          0101010101010104070101070704010100000101010101010101010101010407
-          0101070704010101000001010101010101010101010407010107070401010101
-          0000010101010101010101010407010107070401010101010000010101010101
-          0101010404040307070401010101010100000101010101010404040404040407
-          0401010101010101000001010101040406010601010404040101010101010101
-          0000010101040106010601010101040101010101010101010000010101040601
-          0601060106010401010101010101010100000101040601060101010601060104
-          0101010101010101000001010401060106010601060101040101010101010101
-          0000010104060106010601060106010401010101010101010000010104010601
-          0601060106010104010101010101010100000101010401060101010601060401
-          0101010101010101000001010104060106010601060104010101010101010101
-          0000010101010404010101060404010101010101010101010000010101010101
-          0404040401010101010101010101010100000101010101010101010101010101
-          01010101010101010000}
-        ShowFocusRect = True
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        OnClick = Bt_BuscaPessoaClick
-      end
-      object Bt_NovaPessoa: TJvXPButton
-        Tag = 92
-        Left = 539
-        Top = 16
-        Width = 24
-        Height = 26
-        TabOrder = 3
-        TabStop = False
-        Glyph.Data = {
-          07544269746D6170EE000000424DEE0000000000000076000000280000001000
-          00000F000000010004000000000078000000130B0000130B0000100000000000
-          0000000000000000800000800000008080008000000080008000808000008080
-          8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-          FF00888888800000000088888880FFFFFFF088888880F00F00F088888880FFFF
-          FFF088888880F00F00F088888880FFFFFFF08888888444444444880000844444
-          4444880BB08888888888000BB000888888880BBBBBB0888888880BBBBBB08888
-          8888000BB00088888888880BB088888888888800008888888888}
-        ShowFocusRect = True
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        OnClick = Bt_NovaPessoaClick
-      end
-    end
-    object Gb_NumDocto: TGroupBox
-      Left = 50
-      Top = 113
-      Width = 86
-      Height = 51
-      Caption = ' N'#186' Docto '
-      Ctl3D = False
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentCtl3D = False
-      ParentFont = False
-      TabOrder = 2
-      object EdtNumDocto: TCurrencyEdit
-        Left = 12
-        Top = 23
-        Width = 61
-        Height = 19
-        AutoSize = False
-        DecimalPlaces = 0
-        DisplayFormat = '0,'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
-        OnChange = EdtNumDoctoChange
-        OnExit = EdtNumDoctoChange
-      end
-    end
-    object Gb_DtaDocto: TGroupBox
-      Left = 137
-      Top = 113
-      Width = 128
-      Height = 51
-      Caption = ' Data Documerto '
-      Ctl3D = False
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentCtl3D = False
-      ParentFont = False
-      TabOrder = 3
-      object DtEdt_DtaDocto: TcxDateEdit
-        Left = 12
-        Top = 20
-        ParentFont = False
-        Style.Font.Charset = DEFAULT_CHARSET
-        Style.Font.Color = clWindowText
-        Style.Font.Height = -13
-        Style.Font.Name = 'MS Sans Serif'
-        Style.Font.Style = [fsBold]
-        Style.IsFontAssigned = True
-        StyleFocused.BorderStyle = ebsOffice11
-        TabOrder = 0
-        Width = 106
-      end
-    end
-    object Gb_DtaVencto: TGroupBox
-      Left = 266
-      Top = 113
-      Width = 128
-      Height = 51
-      Caption = ' Data Vencimento '
-      Ctl3D = False
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentCtl3D = False
-      ParentFont = False
-      TabOrder = 4
-      object DtEdt_DtaVencto: TcxDateEdit
-        Left = 12
-        Top = 20
-        ParentFont = False
-        Style.Font.Charset = DEFAULT_CHARSET
-        Style.Font.Color = clWindowText
-        Style.Font.Height = -13
-        Style.Font.Name = 'MS Sans Serif'
-        Style.Font.Style = [fsBold]
-        Style.IsFontAssigned = True
-        StyleFocused.BorderStyle = ebsOffice11
-        TabOrder = 0
-        OnExit = DtEdt_DtaVenctoExit
-        Width = 106
-      end
-    end
-    object Gb_ParcelasCalcular: TGroupBox
-      Left = 599
-      Top = 113
-      Width = 197
-      Height = 51
-      Caption = ' Parcelas '
-      Ctl3D = False
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentCtl3D = False
-      ParentFont = False
-      TabOrder = 8
-      object Label25: TLabel
-        Left = 12
-        Top = 24
-        Width = 88
-        Height = 13
-        Caption = 'N'#186' Parcelas/Prazo'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        ParentFont = False
-      end
-      object Label41: TLabel
-        Left = 129
-        Top = 22
-        Width = 6
-        Height = 16
-        Caption = '/'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object Label42: TLabel
-        Left = 164
-        Top = 24
-        Width = 21
-        Height = 13
-        Caption = 'Dias'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        ParentFont = False
-      end
-      object EdtNumParcelas: TCurrencyEdit
-        Left = 103
-        Top = 21
-        Width = 23
-        Height = 19
-        AutoSize = False
-        DecimalPlaces = 0
-        DisplayFormat = '0'
-        MaxLength = 2
-        TabOrder = 0
-      end
-      object EdtPrazoDias: TCurrencyEdit
-        Left = 138
-        Top = 21
-        Width = 23
-        Height = 19
-        AutoSize = False
-        DecimalPlaces = 0
-        DisplayFormat = '0'
-        MaxLength = 2
-        TabOrder = 1
-      end
-    end
-    object Gb_VlrDocto: TGroupBox
-      Left = 395
-      Top = 113
-      Width = 123
-      Height = 51
-      Caption = ' Valor '
-      Ctl3D = False
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentCtl3D = False
-      ParentFont = False
-      TabOrder = 5
-      object EdtVlrDocto: TCurrencyEdit
-        Left = 12
-        Top = 23
-        Width = 98
-        Height = 19
-        AutoSize = False
+      object Gb_ParcelasCalcular: TGroupBox
+        Left = 479
+        Top = 113
+        Width = 197
+        Height = 51
+        Caption = ' Parcelas '
         Ctl3D = False
-        DisplayFormat = ',0.00'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
-        Font.Style = []
+        Font.Style = [fsBold]
+        ParentCtl3D = False
+        ParentFont = False
+        TabOrder = 8
+        object Label25: TLabel
+          Left = 12
+          Top = 24
+          Width = 88
+          Height = 13
+          Caption = 'N'#186' Parcelas/Prazo'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+        end
+        object Label41: TLabel
+          Left = 129
+          Top = 22
+          Width = 6
+          Height = 16
+          Caption = '/'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label42: TLabel
+          Left = 164
+          Top = 24
+          Width = 21
+          Height = 13
+          Caption = 'Dias'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+        end
+        object EdtNumParcelas: TCurrencyEdit
+          Left = 103
+          Top = 21
+          Width = 23
+          Height = 19
+          AutoSize = False
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          MaxLength = 2
+          TabOrder = 0
+        end
+        object EdtPrazoDias: TCurrencyEdit
+          Left = 138
+          Top = 21
+          Width = 23
+          Height = 19
+          AutoSize = False
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          MaxLength = 2
+          TabOrder = 1
+        end
+      end
+      object Gb_VlrDocto: TGroupBox
+        Left = 355
+        Top = 113
+        Width = 123
+        Height = 51
+        Caption = ' Valor '
+        Ctl3D = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentCtl3D = False
+        ParentFont = False
+        TabOrder = 5
+        object EdtVlrDocto: TCurrencyEdit
+          Left = 12
+          Top = 23
+          Width = 98
+          Height = 19
+          AutoSize = False
+          Ctl3D = False
+          DisplayFormat = ',0.00'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentCtl3D = False
+          ParentFont = False
+          TabOrder = 0
+        end
+      end
+      object Gb_DtaVencto: TGroupBox
+        Left = 226
+        Top = 113
+        Width = 128
+        Height = 51
+        Caption = ' Data Vencimento '
+        Ctl3D = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentCtl3D = False
+        ParentFont = False
+        TabOrder = 4
+        object DtEdt_DtaVencto: TcxDateEdit
+          Left = 12
+          Top = 20
+          ParentFont = False
+          Style.Font.Charset = DEFAULT_CHARSET
+          Style.Font.Color = clWindowText
+          Style.Font.Height = -13
+          Style.Font.Name = 'MS Sans Serif'
+          Style.Font.Style = [fsBold]
+          Style.IsFontAssigned = True
+          StyleFocused.BorderStyle = ebsOffice11
+          TabOrder = 0
+          OnExit = DtEdt_DtaVenctoExit
+          Width = 106
+        end
+      end
+      object Gb_DtaDocto: TGroupBox
+        Left = 97
+        Top = 113
+        Width = 128
+        Height = 51
+        Caption = ' Data Documerto '
+        Ctl3D = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentCtl3D = False
+        ParentFont = False
+        TabOrder = 3
+        object DtEdt_DtaDocto: TcxDateEdit
+          Left = 12
+          Top = 20
+          ParentFont = False
+          Style.Font.Charset = DEFAULT_CHARSET
+          Style.Font.Color = clWindowText
+          Style.Font.Height = -13
+          Style.Font.Name = 'MS Sans Serif'
+          Style.Font.Style = [fsBold]
+          Style.IsFontAssigned = True
+          StyleFocused.BorderStyle = ebsOffice11
+          TabOrder = 0
+          Width = 106
+        end
+      end
+      object Gb_NumDocto: TGroupBox
+        Left = 10
+        Top = 113
+        Width = 86
+        Height = 51
+        Caption = ' N'#186' Docto '
+        Ctl3D = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentCtl3D = False
+        ParentFont = False
+        TabOrder = 2
+        object EdtNumDocto: TCurrencyEdit
+          Left = 12
+          Top = 23
+          Width = 61
+          Height = 19
+          AutoSize = False
+          DecimalPlaces = 0
+          DisplayFormat = '0,'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+          OnChange = EdtNumDoctoChange
+          OnExit = EdtNumDoctoChange
+        end
+      end
+      object Gb_Historico: TGroupBox
+        Left = 67
+        Top = 57
+        Width = 575
+        Height = 51
+        Caption = ' Hist'#243'rico '
+        Ctl3D = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentCtl3D = False
+        ParentFont = False
+        TabOrder = 1
+        object EdtDesHistorico: TEdit
+          Left = 101
+          Top = 20
+          Width = 429
+          Height = 19
+          TabStop = False
+          CharCase = ecUpperCase
+          Color = clMoneyGreen
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          MaxLength = 50
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 1
+        end
+        object EdtCodHistorico: TCurrencyEdit
+          Left = 12
+          Top = 20
+          Width = 53
+          Height = 19
+          AutoSize = False
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+          OnChange = EdtCodPessoaChange
+          OnExit = EdtCodHistoricoExit
+        end
+        object Bt_BuscaHistorico: TJvXPButton
+          Tag = 92
+          Left = 71
+          Top = 16
+          Width = 24
+          Height = 26
+          TabOrder = 2
+          TabStop = False
+          Glyph.Data = {
+            07544269746D61705E060000424D5E0600000000000036040000280000001600
+            000017000000010008000000000028020000C30E0000C30E0000000100000000
+            000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
+            FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
+            FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000010101010101010101010101010101010101010101010000010101010101
+            0101010101010101010101040404030100000101010101010101010101010101
+            0101040701070401000001010101010101010101010101010104070101070401
+            0000010101010101010101010101010104070101070704010000010101010101
+            0101010101010104070101070704010100000101010101010101010101010407
+            0101070704010101000001010101010101010101010407010107070401010101
+            0000010101010101010101010407010107070401010101010000010101010101
+            0101010404040307070401010101010100000101010101010404040404040407
+            0401010101010101000001010101040406010601010404040101010101010101
+            0000010101040106010601010101040101010101010101010000010101040601
+            0601060106010401010101010101010100000101040601060101010601060104
+            0101010101010101000001010401060106010601060101040101010101010101
+            0000010104060106010601060106010401010101010101010000010104010601
+            0601060106010104010101010101010100000101010401060101010601060401
+            0101010101010101000001010104060106010601060104010101010101010101
+            0000010101010404010101060404010101010101010101010000010101010101
+            0404040401010101010101010101010100000101010101010101010101010101
+            01010101010101010000}
+          ShowFocusRect = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_BuscaHistoricoClick
+        end
+        object Bt_NovoHistorico: TJvXPButton
+          Tag = 92
+          Left = 539
+          Top = 16
+          Width = 24
+          Height = 26
+          TabOrder = 3
+          TabStop = False
+          Glyph.Data = {
+            07544269746D6170EE000000424DEE0000000000000076000000280000001000
+            00000F000000010004000000000078000000130B0000130B0000100000000000
+            0000000000000000800000800000008080008000000080008000808000008080
+            8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00888888800000000088888880FFFFFFF088888880F00F00F088888880FFFF
+            FFF088888880F00F00F088888880FFFFFFF08888888444444444880000844444
+            4444880BB08888888888000BB000888888880BBBBBB0888888880BBBBBB08888
+            8888000BB00088888888880BB088888888888800008888888888}
+          ShowFocusRect = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_NovoHistoricoClick
+        end
+      end
+      object Gb_Pessoa: TGroupBox
+        Left = 67
+        Top = 4
+        Width = 575
+        Height = 51
+        Caption = ' Fornecedor '
+        Ctl3D = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
         ParentCtl3D = False
         ParentFont = False
         TabOrder = 0
+        object EdtDesPessoa: TEdit
+          Left = 101
+          Top = 20
+          Width = 431
+          Height = 19
+          TabStop = False
+          CharCase = ecUpperCase
+          Color = clMoneyGreen
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          MaxLength = 50
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 1
+        end
+        object EdtCodPessoa: TCurrencyEdit
+          Left = 12
+          Top = 20
+          Width = 53
+          Height = 19
+          AutoSize = False
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 0
+          OnChange = EdtCodPessoaChange
+          OnEnter = EdtCodPessoaEnter
+          OnExit = EdtCodPessoaExit
+        end
+        object Bt_BuscaPessoa: TJvXPButton
+          Tag = 92
+          Left = 71
+          Top = 16
+          Width = 24
+          Height = 26
+          TabOrder = 2
+          TabStop = False
+          Glyph.Data = {
+            07544269746D61705E060000424D5E0600000000000036040000280000001600
+            000017000000010008000000000028020000C30E0000C30E0000000100000000
+            000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
+            FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
+            FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000010101010101010101010101010101010101010101010000010101010101
+            0101010101010101010101040404030100000101010101010101010101010101
+            0101040701070401000001010101010101010101010101010104070101070401
+            0000010101010101010101010101010104070101070704010000010101010101
+            0101010101010104070101070704010100000101010101010101010101010407
+            0101070704010101000001010101010101010101010407010107070401010101
+            0000010101010101010101010407010107070401010101010000010101010101
+            0101010404040307070401010101010100000101010101010404040404040407
+            0401010101010101000001010101040406010601010404040101010101010101
+            0000010101040106010601010101040101010101010101010000010101040601
+            0601060106010401010101010101010100000101040601060101010601060104
+            0101010101010101000001010401060106010601060101040101010101010101
+            0000010104060106010601060106010401010101010101010000010104010601
+            0601060106010104010101010101010100000101010401060101010601060401
+            0101010101010101000001010104060106010601060104010101010101010101
+            0000010101010404010101060404010101010101010101010000010101010101
+            0404040401010101010101010101010100000101010101010101010101010101
+            01010101010101010000}
+          ShowFocusRect = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_BuscaPessoaClick
+        end
+        object Bt_NovaPessoa: TJvXPButton
+          Tag = 92
+          Left = 539
+          Top = 16
+          Width = 24
+          Height = 26
+          TabOrder = 3
+          TabStop = False
+          Glyph.Data = {
+            07544269746D6170EE000000424DEE0000000000000076000000280000001000
+            00000F000000010004000000000078000000130B0000130B0000100000000000
+            0000000000000000800000800000008080008000000080008000808000008080
+            8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00888888800000000088888880FFFFFFF088888880F00F00F088888880FFFF
+            FFF088888880F00F00F088888880FFFFFFF08888888444444444880000844444
+            4444880BB08888888888000BB000888888880BBBBBB0888888880BBBBBB08888
+            8888000BB00088888888880BB088888888888800008888888888}
+          ShowFocusRect = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_NovaPessoaClick
+        end
       end
-    end
-    object Gb_Historico: TGroupBox
-      Left = 50
-      Top = 61
-      Width = 575
-      Height = 51
-      Caption = ' Hist'#243'rico '
-      Ctl3D = False
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentCtl3D = False
-      ParentFont = False
-      TabOrder = 1
-      object EdtDesHistorico: TEdit
-        Left = 101
+      object EdtNumSeq: TCurrencyEdit
+        Left = 28
         Top = 20
-        Width = 429
-        Height = 19
-        TabStop = False
-        CharCase = ecUpperCase
-        Color = clMoneyGreen
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        MaxLength = 50
-        ParentFont = False
-        ReadOnly = True
-        TabOrder = 1
-      end
-      object EdtCodHistorico: TCurrencyEdit
-        Left = 12
-        Top = 20
-        Width = 53
+        Width = 29
         Height = 19
         AutoSize = False
         DecimalPlaces = 0
@@ -683,224 +810,111 @@ object FrmContasPagar: TFrmContasPagar
         Font.Name = 'MS Sans Serif'
         Font.Style = []
         ParentFont = False
-        TabOrder = 0
+        TabOrder = 9
+        Visible = False
         OnChange = EdtCodPessoaChange
         OnExit = EdtCodHistoricoExit
       end
-      object Bt_BuscaHistorico: TJvXPButton
-        Tag = 92
-        Left = 71
-        Top = 16
-        Width = 24
-        Height = 26
-        TabOrder = 2
-        TabStop = False
-        Glyph.Data = {
-          07544269746D61705E060000424D5E0600000000000036040000280000001600
-          000017000000010008000000000028020000C30E0000C30E0000000100000000
-          000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
-          FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
-          FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000000000000000000000000000000000000000000000000000000000000000
-          0000010101010101010101010101010101010101010101010000010101010101
-          0101010101010101010101040404030100000101010101010101010101010101
-          0101040701070401000001010101010101010101010101010104070101070401
-          0000010101010101010101010101010104070101070704010000010101010101
-          0101010101010104070101070704010100000101010101010101010101010407
-          0101070704010101000001010101010101010101010407010107070401010101
-          0000010101010101010101010407010107070401010101010000010101010101
-          0101010404040307070401010101010100000101010101010404040404040407
-          0401010101010101000001010101040406010601010404040101010101010101
-          0000010101040106010601010101040101010101010101010000010101040601
-          0601060106010401010101010101010100000101040601060101010601060104
-          0101010101010101000001010401060106010601060101040101010101010101
-          0000010104060106010601060106010401010101010101010000010104010601
-          0601060106010104010101010101010100000101010401060101010601060401
-          0101010101010101000001010104060106010601060104010101010101010101
-          0000010101010404010101060404010101010101010101010000010101010101
-          0404040401010101010101010101010100000101010101010101010101010101
-          01010101010101010000}
-        ShowFocusRect = True
+      object Gb_Parcelas: TGroupBox
+        Left = 479
+        Top = 113
+        Width = 222
+        Height = 51
+        Caption = ' Parcelas '
+        Ctl3D = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentCtl3D = False
+        ParentFont = False
+        TabOrder = 7
+        object Label1: TLabel
+          Left = 12
+          Top = 24
+          Width = 66
+          Height = 13
+          Caption = 'N'#186' da Parcela'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+        end
+        object Label2: TLabel
+          Left = 107
+          Top = 22
+          Width = 6
+          Height = 16
+          Caption = '/'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label3: TLabel
+          Left = 141
+          Top = 23
+          Width = 71
+          Height = 13
+          Caption = 'N'#186' de Parcelas'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+        end
+        object EdtNrParcela: TCurrencyEdit
+          Left = 81
+          Top = 21
+          Width = 23
+          Height = 19
+          AutoSize = False
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          MaxLength = 2
+          TabOrder = 0
+        end
+        object EdtNrParcelas: TCurrencyEdit
+          Left = 114
+          Top = 21
+          Width = 23
+          Height = 19
+          AutoSize = False
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          MaxLength = 2
+          TabOrder = 1
+        end
+      end
+      object Ckb_CalculoParcelas: TJvXPCheckbox
+        Left = 554
+        Top = 112
+        Width = 123
+        Height = 15
+        Caption = 'Calcular Parcelas'
+        TabOrder = 6
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        OnClick = Bt_BuscaHistoricoClick
+        OnClick = Ckb_CalculoParcelasClick
+        OnKeyUp = Ckb_CalculoParcelasKeyUp
       end
-      object Bt_NovoHistorico: TJvXPButton
-        Tag = 92
-        Left = 539
-        Top = 16
-        Width = 24
-        Height = 26
-        TabOrder = 3
-        TabStop = False
-        Glyph.Data = {
-          07544269746D6170EE000000424DEE0000000000000076000000280000001000
-          00000F000000010004000000000078000000130B0000130B0000100000000000
-          0000000000000000800000800000008080008000000080008000808000008080
-          8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-          FF00888888800000000088888880FFFFFFF088888880F00F00F088888880FFFF
-          FFF088888880F00F00F088888880FFFFFFF08888888444444444880000844444
-          4444880BB08888888888000BB000888888880BBBBBB0888888880BBBBBB08888
-          8888000BB00088888888880BB088888888888800008888888888}
-        ShowFocusRect = True
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        OnClick = Bt_NovoHistoricoClick
-      end
-    end
-    object Gb_Parcelas: TGroupBox
-      Left = 599
-      Top = 113
-      Width = 222
-      Height = 51
-      Caption = ' Parcelas '
-      Ctl3D = False
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentCtl3D = False
-      ParentFont = False
-      TabOrder = 7
-      object Label1: TLabel
-        Left = 12
-        Top = 24
-        Width = 66
-        Height = 13
-        Caption = 'N'#186' da Parcela'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        ParentFont = False
-      end
-      object Label2: TLabel
-        Left = 107
-        Top = 22
-        Width = 6
-        Height = 16
-        Caption = '/'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object Label3: TLabel
-        Left = 141
-        Top = 23
-        Width = 71
-        Height = 13
-        Caption = 'N'#186' de Parcelas'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        ParentFont = False
-      end
-      object EdtNrParcela: TCurrencyEdit
-        Left = 81
-        Top = 21
-        Width = 23
-        Height = 19
-        AutoSize = False
-        DecimalPlaces = 0
-        DisplayFormat = '0'
-        MaxLength = 2
-        TabOrder = 0
-      end
-      object EdtNrParcelas: TCurrencyEdit
-        Left = 114
-        Top = 21
-        Width = 23
-        Height = 19
-        AutoSize = False
-        DecimalPlaces = 0
-        DisplayFormat = '0'
-        MaxLength = 2
-        TabOrder = 1
-      end
-    end
-    object Ckb_CalculoParcelas: TJvXPCheckbox
-      Left = 520
-      Top = 121
-      Width = 77
-      Height = 39
-      Caption = 'Calcular'#13#10'Parcelas'
-      TabOrder = 6
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      OnClick = Ckb_CalculoParcelasClick
-      OnKeyUp = Ckb_CalculoParcelasKeyUp
-    end
-    object EdtNumSeq: TCurrencyEdit
-      Left = 660
-      Top = 36
-      Width = 53
-      Height = 19
-      AutoSize = False
-      DecimalPlaces = 0
-      DisplayFormat = '0'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      TabOrder = 9
-      Visible = False
-      OnChange = EdtCodPessoaChange
-      OnExit = EdtCodHistoricoExit
     end
     object Gb_Relatorio: TGroupBox
-      Left = 851
+      Left = 639
       Top = 1
-      Width = 243
+      Width = 455
       Height = 168
+      Align = alRight
       Caption = ' Relat'#243'rio '
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clBlue
@@ -908,66 +922,12 @@ object FrmContasPagar: TFrmContasPagar
       Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 10
-      object Label5: TLabel
-        Left = 11
-        Top = 16
-        Width = 46
-        Height = 13
-        Caption = 'Per'#237'odo'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object Label6: TLabel
-        Left = 117
-        Top = 35
-        Width = 8
-        Height = 13
-        Caption = 'a'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object DtEdt_DtaInicio: TcxDateEdit
-        Left = 8
-        Top = 30
-        ParentFont = False
-        Style.Font.Charset = DEFAULT_CHARSET
-        Style.Font.Color = clWindowText
-        Style.Font.Height = -13
-        Style.Font.Name = 'MS Sans Serif'
-        Style.Font.Style = [fsBold]
-        Style.IsFontAssigned = True
-        StyleFocused.BorderStyle = ebsOffice11
-        TabOrder = 0
-        Width = 106
-      end
-      object DtEdt_DtaFim: TcxDateEdit
-        Left = 128
-        Top = 30
-        ParentFont = False
-        Style.Font.Charset = DEFAULT_CHARSET
-        Style.Font.Color = clWindowText
-        Style.Font.Height = -13
-        Style.Font.Name = 'MS Sans Serif'
-        Style.Font.Style = [fsBold]
-        Style.IsFontAssigned = True
-        StyleFocused.BorderStyle = ebsOffice11
-        TabOrder = 1
-        Width = 106
-      end
-      object Gb_Periodo: TGroupBox
-        Left = 5
-        Top = 58
-        Width = 233
-        Height = 70
+      TabOrder = 1
+      object Gb_TipoConta: TGroupBox
+        Left = 10
+        Top = 21
+        Width = 241
+        Height = 78
         Caption = ' Tipo de Conta '
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -975,10 +935,10 @@ object FrmContasPagar: TFrmContasPagar
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 2
+        TabOrder = 0
         object Rb_APagar: TJvRadioButton
           Left = 12
-          Top = 22
+          Top = 30
           Width = 67
           Height = 17
           Alignment = taLeftJustify
@@ -997,7 +957,7 @@ object FrmContasPagar: TFrmContasPagar
         end
         object Rb_Pagas: TJvRadioButton
           Left = 12
-          Top = 47
+          Top = 55
           Width = 51
           Height = 17
           Alignment = taLeftJustify
@@ -1019,10 +979,11 @@ object FrmContasPagar: TFrmContasPagar
           LinkedControls = <>
         end
         object Pan_TipoPesquisa: TPanel
-          Left = 101
-          Top = 6
-          Width = 131
-          Height = 61
+          Left = 113
+          Top = 14
+          Width = 127
+          Height = 63
+          Align = alRight
           BevelOuter = bvNone
           Color = 16770250
           TabOrder = 2
@@ -1030,7 +991,7 @@ object FrmContasPagar: TFrmContasPagar
           object Label7: TLabel
             Left = 0
             Top = 0
-            Width = 131
+            Width = 127
             Height = 13
             Align = alTop
             Alignment = taCenter
@@ -1059,7 +1020,7 @@ object FrmContasPagar: TFrmContasPagar
           end
           object Rb_PesqDtaPagto: TJvRadioButton
             Left = 6
-            Top = 41
+            Top = 43
             Width = 101
             Height = 17
             Alignment = taLeftJustify
@@ -1084,8 +1045,8 @@ object FrmContasPagar: TFrmContasPagar
       end
       object Bt_Imprimir: TJvXPButton
         Tag = 99
-        Left = 64
-        Top = 131
+        Left = 288
+        Top = 115
         Width = 115
         Height = 32
         Caption = 'Imprimir'
@@ -1156,11 +1117,120 @@ object FrmContasPagar: TFrmContasPagar
         ParentFont = False
         OnClick = Bt_ImprimirClick
       end
+      object Gb_Periodo: TGroupBox
+        Left = 10
+        Top = 104
+        Width = 241
+        Height = 53
+        Caption = ' Per'#237'odo de '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 1
+        object Label6: TLabel
+          Left = 117
+          Top = 23
+          Width = 8
+          Height = 13
+          Caption = 'a'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object DtEdt_DtaFim: TcxDateEdit
+          Left = 128
+          Top = 18
+          ParentFont = False
+          Style.Font.Charset = DEFAULT_CHARSET
+          Style.Font.Color = clWindowText
+          Style.Font.Height = -13
+          Style.Font.Name = 'MS Sans Serif'
+          Style.Font.Style = [fsBold]
+          Style.IsFontAssigned = True
+          StyleFocused.BorderStyle = ebsOffice11
+          TabOrder = 1
+          Width = 106
+        end
+        object DtEdt_DtaInicio: TcxDateEdit
+          Left = 8
+          Top = 18
+          ParentFont = False
+          Style.Font.Charset = DEFAULT_CHARSET
+          Style.Font.Color = clWindowText
+          Style.Font.Height = -13
+          Style.Font.Name = 'MS Sans Serif'
+          Style.Font.Style = [fsBold]
+          Style.IsFontAssigned = True
+          StyleFocused.BorderStyle = ebsOffice11
+          TabOrder = 0
+          Width = 106
+        end
+      end
+      object Pan_Desembolso: TPanel
+        Left = 256
+        Top = 24
+        Width = 193
+        Height = 74
+        ParentColor = True
+        TabOrder = 2
+        object Lab_Desembolso: TLabel
+          Left = 1
+          Top = 1
+          Width = 191
+          Height = 16
+          Align = alTop
+          Alignment = taCenter
+          Caption = 'Empresa de Desembolso'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Ckb_Desembolso: TRxCheckListBox
+          Left = 1
+          Top = 17
+          Width = 191
+          Height = 56
+          TabStop = False
+          CheckKind = ckCheckMarks
+          Align = alClient
+          BorderStyle = bsNone
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ItemHeight = 16
+          ParentColor = True
+          ParentFont = False
+          Style = lbOwnerDrawFixed
+          TabOrder = 0
+          InternalVersion = 202
+          Strings = (
+            'SELECIONE PARA IMPRESS'#195'O '
+            1
+            False
+            'LIXISSE'
+            0
+            True
+            'BELSHOP'
+            0
+            True)
+        end
+      end
     end
   end
   object OdirPanApres: TPanel
     Left = 696
-    Top = 2
+    Top = 258
     Width = 89
     Height = 33
     BevelInner = bvLowered
@@ -1308,6 +1378,12 @@ object FrmContasPagar: TFrmContasPagar
           Title.Caption = 'Data Pagto'
           Width = 74
           Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'DESEMBOLSO'
+          Width = 110
+          Visible = True
         end>
     end
     object v1: TJvValidateEdit
@@ -1317,7 +1393,7 @@ object FrmContasPagar: TFrmContasPagar
       Height = 19
       CriticalPoints.MaxValueIncluded = False
       CriticalPoints.MinValueIncluded = False
-      EditText = '30'
+      EditText = '53'
       TabOrder = 1
       Visible = False
     end
@@ -1366,7 +1442,7 @@ object FrmContasPagar: TFrmContasPagar
       Height = 19
       CriticalPoints.MaxValueIncluded = False
       CriticalPoints.MinValueIncluded = False
-      EditText = '40'
+      EditText = '50'
       TabOrder = 6
       Visible = False
     end
@@ -1377,7 +1453,7 @@ object FrmContasPagar: TFrmContasPagar
       Height = 19
       CriticalPoints.MaxValueIncluded = False
       CriticalPoints.MinValueIncluded = False
-      EditText = '14'
+      EditText = '10'
       TabOrder = 7
       Visible = False
     end
@@ -1387,7 +1463,7 @@ object FrmContasPagar: TFrmContasPagar
       Width = 52
       Height = 19
       TabOrder = 8
-      Text = 'E'
+      Text = 'D'
       Visible = False
     end
     object a8: TEdit
@@ -1396,7 +1472,7 @@ object FrmContasPagar: TFrmContasPagar
       Width = 52
       Height = 19
       TabOrder = 9
-      Text = 'E'
+      Text = 'D'
       Visible = False
     end
     object v8: TJvValidateEdit
@@ -1406,7 +1482,7 @@ object FrmContasPagar: TFrmContasPagar
       Height = 19
       CriticalPoints.MaxValueIncluded = False
       CriticalPoints.MinValueIncluded = False
-      EditText = '22'
+      EditText = '16'
       TabOrder = 10
       Visible = False
     end
@@ -1417,7 +1493,7 @@ object FrmContasPagar: TFrmContasPagar
       Height = 19
       CriticalPoints.MaxValueIncluded = False
       CriticalPoints.MinValueIncluded = False
-      EditText = '15'
+      EditText = '9'
       TabOrder = 11
       Visible = False
     end
@@ -1427,7 +1503,7 @@ object FrmContasPagar: TFrmContasPagar
       Width = 52
       Height = 19
       TabOrder = 12
-      Text = 'E'
+      Text = 'C'
       Visible = False
     end
     object v5: TJvValidateEdit
@@ -1437,7 +1513,7 @@ object FrmContasPagar: TFrmContasPagar
       Height = 19
       CriticalPoints.MaxValueIncluded = False
       CriticalPoints.MinValueIncluded = False
-      EditText = '17'
+      EditText = '18'
       TabOrder = 13
       Visible = False
     end
@@ -1447,7 +1523,7 @@ object FrmContasPagar: TFrmContasPagar
       Width = 52
       Height = 19
       TabOrder = 14
-      Text = 'E'
+      Text = 'D'
       Visible = False
     end
     object v6: TJvValidateEdit
@@ -1457,7 +1533,7 @@ object FrmContasPagar: TFrmContasPagar
       Height = 19
       CriticalPoints.MaxValueIncluded = False
       CriticalPoints.MinValueIncluded = False
-      EditText = '14'
+      EditText = '10'
       TabOrder = 15
       Visible = False
     end
@@ -1467,26 +1543,46 @@ object FrmContasPagar: TFrmContasPagar
       Width = 52
       Height = 19
       TabOrder = 16
-      Text = 'E'
+      Text = 'C'
       Visible = False
     end
     object v9: TJvValidateEdit
       Left = 200
-      Top = 251
+      Top = 248
       Width = 73
       Height = 19
       CriticalPoints.MaxValueIncluded = False
       CriticalPoints.MinValueIncluded = False
-      EditText = '22'
+      EditText = '16'
       TabOrder = 17
       Visible = False
     end
     object a9: TEdit
       Left = 288
-      Top = 251
+      Top = 248
       Width = 52
       Height = 19
       TabOrder = 18
+      Text = 'D'
+      Visible = False
+    end
+    object v11: TJvValidateEdit
+      Left = 200
+      Top = 296
+      Width = 73
+      Height = 19
+      CriticalPoints.MaxValueIncluded = False
+      CriticalPoints.MinValueIncluded = False
+      EditText = '20'
+      TabOrder = 19
+      Visible = False
+    end
+    object a11: TEdit
+      Left = 288
+      Top = 296
+      Width = 52
+      Height = 19
+      TabOrder = 20
       Text = 'E'
       Visible = False
     end
@@ -1498,7 +1594,7 @@ object FrmContasPagar: TFrmContasPagar
     Height = 19
     CriticalPoints.MaxValueIncluded = False
     CriticalPoints.MinValueIncluded = False
-    EditText = '15'
+    EditText = '18'
     TabOrder = 4
     Visible = False
   end
@@ -1508,12 +1604,12 @@ object FrmContasPagar: TFrmContasPagar
     Width = 52
     Height = 19
     TabOrder = 5
-    Text = 'E'
+    Text = 'D'
     Visible = False
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 788
-    Top = 47
+    Left = 524
+    Top = 311
   end
 end

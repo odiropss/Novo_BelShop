@@ -93,6 +93,9 @@ type
     EdtCodCentroCusto: TEdit;
     OdirPanApres: TPanel;
     EdtCodHistorico: TEdit;
+    Gb_Desembolso: TGroupBox;
+    Rb_DesembolsoLixissse: TRadioButton;
+    Rb_DesembolsoBelshop: TRadioButton;
     procedure Bt_OKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Bt_RetornarClick(Sender: TObject);
@@ -110,6 +113,9 @@ type
     procedure Bt_BuscaCentrosCustoClick(Sender: TObject);
 
     Function  CP_InsereHistorico: Boolean;
+    procedure Rb_DesembolsoLixissseClick(Sender: TObject);
+    procedure Rb_DesembolsoLixissseKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
 
     // Odir ====================================================================
 
@@ -464,6 +470,17 @@ begin
    End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
 
   FreeAndNil(FrmPesquisa);
+end;
+
+procedure TFrmSolicitacoes.Rb_DesembolsoLixissseClick(Sender: TObject);
+begin
+  AcertaRb_Style(Rb_DesembolsoBelshop);
+  AcertaRb_Style(Rb_DesembolsoLixissse);
+end;
+
+procedure TFrmSolicitacoes.Rb_DesembolsoLixissseKeyUp(Sender: TObject;var Key: Word; Shift: TShiftState);
+begin
+  Rb_DesembolsoLixissseClick(Self);
 end;
 
 end.

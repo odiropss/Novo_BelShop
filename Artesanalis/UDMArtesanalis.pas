@@ -137,6 +137,7 @@ type
     CDS_FluxoFinanceiroVLR_PAGAMENTO: TFMTBCDField;
     CDS_FluxoFinanceiroDTA_PAGAMENTO: TDateField;
     SDS_DtaHoraServidor: TSQLDataSet;
+    CDS_FluxoFinanceiroDESEMBOLSO: TStringField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

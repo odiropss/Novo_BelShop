@@ -34,7 +34,7 @@ object DMRelatorios: TDMRelatorios
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
-    Font.Name = 'Courier New'
+    Font.Name = 'Arial'
     Font.Style = []
     Left = 188
     Top = 40

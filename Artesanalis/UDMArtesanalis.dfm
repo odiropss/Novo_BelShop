@@ -779,7 +779,16 @@ object DMArtesanalis: TDMArtesanalis
       'ff.vlr_original, '
       'ff.num_prestacao, ff.num_prestacoes, ff.num_prazo,'
       'ff.dta_vencimento, ff.vlr_prestacao,'
-      'vlr_pagamento, ff.dta_pagamento'
+      'vlr_pagamento, ff.dta_pagamento,'
+      ''
+      'CASE'
+      '    WHEN ff.ind_desembolso='#39'A'#39' THEN'
+      '      '#39'AMBAS'#39
+      '    WHEN ff.ind_desembolso='#39'B'#39' THEN'
+      '      '#39'BELSHOP'#39
+      '    WHEN ff.ind_desembolso='#39'L'#39' THEN'
+      '      '#39'LIXISSE'#39
+      'END Desembolso'
       ''
       ''
       'FROM FLUXO_FINANCEIRO ff, PESSOAS fo, PLANO_CONTAS pl'
@@ -874,6 +883,12 @@ object DMArtesanalis: TDMArtesanalis
     object CDS_FluxoFinanceiroDTA_PAGAMENTO: TDateField
       DisplayLabel = 'Data Pagamento'
       FieldName = 'DTA_PAGAMENTO'
+    end
+    object CDS_FluxoFinanceiroDESEMBOLSO: TStringField
+      DisplayLabel = 'Emp Desembolso'
+      FieldName = 'DESEMBOLSO'
+      FixedChar = True
+      Size = 7
     end
   end
   object DS_FluxoFinanceiro: TDataSource

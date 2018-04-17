@@ -24,7 +24,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 700
     Height = 464
-    ActivePage = Ts_CP_CadastroHistoticos
+    ActivePage = Ts_CP_Pagamento
     Align = alClient
     TabOrder = 0
     OnChange = PC_PrincipalChange
@@ -167,7 +167,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Gb_DtaPagto: TGroupBox
         Left = 42
-        Top = 40
+        Top = 10
         Width = 128
         Height = 51
         Caption = ' Data Pagamento '
@@ -197,7 +197,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Gb_VlrPagto: TGroupBox
         Left = 179
-        Top = 40
+        Top = 10
         Width = 123
         Height = 51
         Caption = ' Valor Pagamento '
@@ -226,6 +226,48 @@ object FrmSolicitacoes: TFrmSolicitacoes
           ParentCtl3D = False
           ParentFont = False
           TabOrder = 0
+        end
+      end
+      object Gb_Desembolso: TGroupBox
+        Left = 77
+        Top = 67
+        Width = 197
+        Height = 56
+        Caption = ' Empresa a Desembolsar Pagto '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 3
+        object Rb_DesembolsoLixissse: TRadioButton
+          Left = 16
+          Top = 24
+          Width = 69
+          Height = 17
+          Caption = 'L'#237'xisse'
+          Checked = True
+          TabOrder = 0
+          TabStop = True
+          OnClick = Rb_DesembolsoLixissseClick
+          OnKeyUp = Rb_DesembolsoLixissseKeyUp
+        end
+        object Rb_DesembolsoBelshop: TRadioButton
+          Left = 112
+          Top = 24
+          Width = 69
+          Height = 17
+          Caption = 'BelShop'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 1
+          OnClick = Rb_DesembolsoLixissseClick
+          OnKeyUp = Rb_DesembolsoLixissseKeyUp
         end
       end
     end
