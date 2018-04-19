@@ -602,7 +602,7 @@ begin
   // Busca Fornecedor Novo ===================================================
   MySql:=' SELECT fo.cod_cliente, fo.razao_cliente'+
          ' FROM LINXCLIENTESFORNEC fo'+
-         ' WHERE fo.tipo_cliente in (''F'',''A'')'+
+         ' WHERE fo.tipo_cliente IN (''F'',''A'',''J'')'+
          ' AND NOT ('+
          '         (UPPER(fo.razao_cliente) LIKE ''%NAO USAR%'')'+
          '         OR'+
@@ -2359,7 +2359,7 @@ begin
   If sgDMLMovto='N' Then
    MySql:=' SELECT fo.razao_cliente nomefornecedor, fo.cod_cliente codfornecedor'+
           ' FROM LINXCLIENTESFORNEC fo'+
-          ' WHERE fo.tipo_cliente in (''F'',''A'')'+
+          ' WHERE fo.tipo_cliente IN (''F'',''A'',''J'')'+
           ' AND NOT ('+
           '         (UPPER(fo.razao_cliente) LIKE ''%NAO USAR%'')'+
           '         OR'+

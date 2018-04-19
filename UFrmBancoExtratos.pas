@@ -238,7 +238,7 @@ type
     Bt_CMObsNaoConcDep: TJvXPButton;
     Bt_DepAnaliseCadHistoricos: TJvXPButton;
     Sb_DepAnaliseDia: TdxStatusBar;
-    SoapHTTPRIO: THTTPRIO;
+    SoapGeoBeauty: THTTPRIO;
     Bt_DepAnaliseObsFinan: TJvXPButton;
     procedure FormCreate(Sender: TObject);
     procedure PC_PrincipalChange(Sender: TObject);
@@ -586,7 +586,7 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
      UFrmBelShop, UFrmTiposConciliacao, Contnrs, UFrmApresConciliacao,
      UFrmSolicitacoes, UFrmPeriodoApropriacao, DB, ComConst, SysConst,
      UFrmConfirmacao, DateUtils, GeoBeautyServerWebService,
-  UFrmWebServicesImporta;
+     UFrmWebServicesImporta;
 
 {$R *.dfm}
 
@@ -625,14 +625,17 @@ Begin
   //============================================================================
   // Consome Fechamentos da GeoBeauty Web Service ==============================
   //============================================================================
-  SoapHTTPRIO.WSDLLocation:='http://aplicativo.geobeauty.com.br/aplicativo/webservices/ws-salao/server.php?wsdl';
-  SoapHTTPRIO.Port:='gestoriPort';
-  SoapHTTPRIO.Service:='gestori';
+//  SoapHTTPRIO.WSDLLocation:='http://aplicativo.geobeauty.com.br/aplicativo/webservices/ws-salao/server.php?wsdl';
+//  SoapHTTPRIO.Port:='gestoriPort';
+//  SoapHTTPRIO.Service:='gestori';
   Try
-    sRetornoFecha:=(SoapHTTPRIO as gestoriPortType).consultaFechamento('webservice@lojasbelshop.com.br',sgChaveAcessoGeo, sgDtaGeoInicio, sgDtaGeoFim);
+    sRetornoFecha:=(SoapGeoBeauty as gestoriPortType).consultaFechamento('webservice@lojasbelshop.com.br',sgChaveAcessoGeo, sgDtaGeoInicio, sgDtaGeoFim);
   Except
     on e : Exception do
     Begin
+      OdirPanApres.Visible:=False;
+      Screen.Cursor:=crDefault;
+
       MessageBox(Handle, pChar('Erro: WebServices GeoBeauty Fechamentos'+#13+e.message), 'Erro', MB_ICONERROR);
       Exit;
     End; // on e : Exception do
@@ -1038,18 +1041,18 @@ Begin
   //============================================================================
   // Consome Pagamentos da GeoBeauty Web Service ===============================
   //============================================================================
-  SoapHTTPRIO.WSDLLocation:='http://aplicativo.geobeauty.com.br/aplicativo/webservices/ws-salao/server.php?wsdl';
-  SoapHTTPRIO.Port:='gestoriPort';
-  SoapHTTPRIO.Service:='gestori';
+//  SoapHTTPRIO.WSDLLocation:='http://aplicativo.geobeauty.com.br/aplicativo/webservices/ws-salao/server.php?wsdl';
+//  SoapHTTPRIO.Port:='gestoriPort';
+//  SoapHTTPRIO.Service:='gestori';
   Try
-    sRetornoPagtos:=(SoapHTTPRIO as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br',sgChaveAcessoGeo, sgDtaGeoInicio, sgDtaGeoFim);
+    sRetornoPagtos:=(SoapGeoBeauty as gestoriPortType).consultaFaturamentoPorTipoPgto('webservice@lojasbelshop.com.br',sgChaveAcessoGeo, sgDtaGeoInicio, sgDtaGeoFim);
   Except
     on e : Exception do
     Begin
       OdirPanApres.Visible:=False;
       Screen.Cursor:=crDefault;
 
-      MessageBox(Handle, pChar('Erro WebServices GeoBeauty Pagamentos:'+#13+e.message), 'Erro', MB_ICONERROR);
+      MessageBox(Handle, pChar('Erro: WebServices GeoBeauty Pagamentos:'+#13+e.message), 'Erro', MB_ICONERROR);
       Exit;
     End; // on e : Exception do
   End;
@@ -13896,33 +13899,34 @@ begin
   sgDtaF:=ss;
 
   //============================================================================
-  // Movtos Web Services: Sangria/Suprimento Linx e Pagtos GeoBeauty ===========
+  // Web Services: Verifica se Consome:
+  //               Sangria/Suprimento Linx e/ou Pagtos GeoBeauty
   //============================================================================
   PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
   bAtualizaLinx:=False;
   bAtualizaGeo :=False;
 
   FrmWebServicesImporta:=TFrmWebServicesImporta.Create(Self);
+  FrmWebServicesImporta.DtEdt_DtaInicio.Date:=StrToDate(sgDtaI);
+  FrmWebServicesImporta.DtEdt_DtaFim.Date   :=StrToDate(sgDtaF);
+
   FrmWebServicesImporta.ShowModal;
 
   If FrmWebServicesImporta.Ckb_ImportaLinx.Checked Then
    bAtualizaLinx:=True;
+
   If FrmWebServicesImporta.Ckb_ImportaGeoBeauty.Checked Then
    bAtualizaGeo:=True;
 
+  bgProcessar:=FrmWebServicesImporta.bgProcWebServices;
   FreeAndNil(FrmWebServicesImporta);
 
-//  if msg('ATUALIZAR Dados (Nuvem)'+cr+'LINX / GEOBEAUTY'+cr+' ??'+cr+'Período de '+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
-//  Begin
-//    PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-//    if msg('Deseja ATUALIZAR Dados (Nuvem)'+cr+'LINX'+cr+' ??'+cr+'Período de '+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
-//     bAtualizaLinx:=True;
-//
-//    PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-//    if msg('Deseja ATUALIZAR Dados (Nuvem)'+cr+'GEOBEAUTY'+cr+' ??'+cr+'Período de '+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
-//     bAtualizaGeo:=True;
-//  End; // if msg('ATUALIZAR Dados do Linx (Nuvem) no'+cr+'Período Abaixo ??'+cr+cr+sgDtaI+' a '+sgDtaF, 'C')=1 Then
-  // Movtos Web Services: Sangria/Suprimento Linx e Pagtos GeoBeauty ===========
+  // Retorna se Solicitado =====================================================
+  If Not bgProcessar Then
+   Exit;
+
+  // Web Services: Verifica se Consome:
+  //               Sangria/Suprimento Linx e/ou Pagtos GeoBeauty
   //============================================================================
 
   //============================================================================

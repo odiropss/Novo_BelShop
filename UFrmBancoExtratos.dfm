@@ -407,7 +407,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Top = 0
     Width = 1047
     Height = 564
-    ActivePage = Ts_ConciliacoesManutDepAnalise
+    ActivePage = Ts_ConciliacoesManutDepositos
     Align = alClient
     TabOrder = 0
     OnChange = PC_PrincipalChange
@@ -5955,7 +5955,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Left = 948
     Top = 447
   end
-  object SoapHTTPRIO: THTTPRIO
+  object SoapGeoBeauty: THTTPRIO
     WSDLLocation = 
       'http://aplicativo.geobeauty.com.br/aplicativo/webservices/ws-sal' +
       'ao/server.php?wsdl'

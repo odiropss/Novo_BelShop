@@ -1325,7 +1325,9 @@ Begin
       Writeln(txtArq,sXML);
       sXML:='			<Parameter id="data_fim_pag">'+'NULL'+'</Parameter>';
       Writeln(txtArq,sXML);
-    End; // If Trim(sgParametroDtaInicio)='' Then
+      sXML:='			<Parameter id="identificador">'+'NULL'+'</Parameter>';
+      Writeln(txtArq,sXML);
+    End; // If bgParametroDtaEmissao Then
 
     // COM PARAMETRO Busca Pela Data de Pagamento ==============================
     If Not bgParametroDtaEmissao Then
@@ -1338,15 +1340,9 @@ Begin
       Writeln(txtArq,sXML);
       sXML:='			<Parameter id="data_fim_pag">'+sgDtaFim+'</Parameter>';
       Writeln(txtArq,sXML);
+      sXML:='			<Parameter id="identificador">'+'NULL'+'</Parameter>';
+      Writeln(txtArq,sXML);
     End; // If Trim(sgParametroDtaInicio)='' Then
-
-    //====================================
-    // PARAMETRO OPCIONAL E NÃO UTILIZADOS
-    //====================================
-    //       Metodo         Parametro
-    //--------------------  --------------
-    // LinxFaturas          Identificador
-    //====================================
   End; // If (sgMetodo='LinxFaturas') Then
   // ===========================================================================
 

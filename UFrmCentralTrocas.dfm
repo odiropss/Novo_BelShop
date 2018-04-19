@@ -408,7 +408,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
     Top = 0
     Width = 1102
     Height = 578
-    ActivePage = Ts_NotasEntDev
+    ActivePage = Ts_AvariasEndercamentos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

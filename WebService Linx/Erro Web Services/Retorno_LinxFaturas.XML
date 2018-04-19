@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?><Microvix><ResponseData /><ResponseResult><ResponseSuccess>False</ResponseSuccess><ResponseError><Message>Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados.</Message><Message>Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)</Message></ResponseError></ResponseResult></Microvix>
