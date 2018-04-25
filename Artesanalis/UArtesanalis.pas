@@ -370,7 +370,9 @@ begin
 
   FrmContasPagar:=TFrmContasPagar.Create(Self);
   FrmContasPagar.Caption:='FINANCEIRO - Contas a Pagar - Lançamentos';
+  FrmContasPagar.Refresh;
   FrmContasPagar.ShowModal;
+
 
   FreeAndNil(FrmContasPagar);
 

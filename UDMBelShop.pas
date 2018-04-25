@@ -1115,7 +1115,6 @@ type
     CDS_FluxoFornecedoresORDEM: TIntegerField;
     CDS_FluxoFornecedoresLIMITE: TStringField;
     CDS_FluxoFornecedorVLR_SALDO: TFloatField;
-    CDS_FluxoFornecedoresCOMPRADOR: TStringField;
     SDS_EstoquePrevisao: TSQLDataSet;
     DSP_EstoquePrevisao: TDataSetProvider;
     CDS_EstoquePrevisao: TClientDataSet;
@@ -1210,10 +1209,30 @@ type
     CDS_NivelAtendLojasNIVEL_ATENDIMENTO: TFMTBCDField;
     CDS_NivelAtendLojasORDEM: TIntegerField;
     CDS_NivelAtendCurvasNIVEL_ATENDIMENTO: TFMTBCDField;
+    DS_FluxoFornVinculados: TDataSource;
+    CDS_FluxoFornVinculados: TClientDataSet;
+    DS_FluxoFornVinculo: TDataSource;
+    CDS_FluxoFornVinculo: TClientDataSet;
+    SDS_FluxoFornVinculo: TSQLDataSet;
+    DSP_FluxoFornVinculo: TDataSetProvider;
+    SDS_FluxoFornVinculados: TSQLDataSet;
+    DSP_FluxoFornVinculados: TDataSetProvider;
+    CDS_FluxoFornVinculoCOD_FORNECEDOR: TIntegerField;
+    CDS_FluxoFornVinculoDES_FORNECEDOR: TStringField;
+    CDS_FluxoFornVinculadosCOD_VINCULADO: TIntegerField;
+    CDS_FluxoFornVinculadosDES_VINCULADO: TStringField;
+    CDS_FluxoFornVinculoIND_SITUACAO: TStringField;
+    CDS_FluxoFornVinculadosIND_SITUACAO: TStringField;
+    CDS_FluxoFornecedoresCOMPRADOR: TStringField;
+    CDS_FluxoFornecedorCOD_VINCULADO: TIntegerField;
+    CDS_FluxoFornecedorDES_VINCULADO: TStringField;
 
     //==========================================================================
     // Odir ====================================================================
     //==========================================================================
+
+    // CONTA CORRENTE FORNECEDORES =============================================
+    Procedure BuscaFornVinculo(iFornVinculado: Integer);
 
     // CHAMDAS INTERNAS ========================================================
     Procedure ConectaBanco;
@@ -1275,11 +1294,16 @@ type
     procedure CDS_FluxoFornecedoresAfterScroll(DataSet: TDataSet);
     procedure CDS_FluxoFornReducaoAfterScroll(DataSet: TDataSet);
     procedure CDS_PrioridadesAfterScroll(DataSet: TDataSet);
+    procedure CDS_FluxoFornVinculoAfterScroll(DataSet: TDataSet);
+    procedure CDS_FluxoFornecedoresAfterOpen(DataSet: TDataSet);
 
   private
     { Private declarations }
   public
     { Public declarations }
+
+    bgFluxoFornAfterScroll: Boolean; // Se Executa bgFluxoFornAfterScroll
+    igFornVinculo: Integer;
   end;
 
 Const
@@ -1415,6 +1439,26 @@ uses DK_Procs1, UFrmBelShop, UDMConexoes,  UFrmSolicitacoes, UDMVirtual,
 // =============================================================================
 // Odir - INICIO ===============================================================
 // =============================================================================
+
+// CONTA CORRENTE FORNECEDORES - Busca Fornecedor de Vinculo >>>>>>>>>>>>>>>>>>>
+Procedure TDMBelShop.BuscaFornVinculo(iFornVinculado: Integer);
+Var
+  MySql: String;
+Begin
+  igFornVinculo:=0;
+  MySql:=' SELECT first 1 f.cod_fornecedor'+
+         ' FROM FL_CAIXA_FORNECEDORES f'+
+         ' WHERE f.cod_vinculado='+IntToStr(iFornVinculado);
+  CDS_BuscaRapida.Close;
+  SDS_BuscaRapida.CommandText:=MySql;
+  CDS_BuscaRapida.Open;
+
+  If Trim(CDS_BuscaRapida.FieldByname('Cod_Fornecedor').AsString)<>'' Then
+   igFornVinculo:=CDS_BuscaRapida.FieldByname('Cod_Fornecedor').AsInteger;
+
+  CDS_BuscaRapida.Close;
+
+End; // CONTA CORRENTE FORNECEDORES - Busca Fornecedores Vinculados >>>>>>>>>>>>
 
 // Busca Codigo LINX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TDMBelShop.LINX_BuscaCodigoLINX(sCodProdutoSIDICOM: String): String;
@@ -3991,6 +4035,9 @@ begin
   Except
   End;
 
+  // Executa CDS_FluxoFornecedoresAfterScroll ==================================
+  bgFluxoFornAfterScroll:=True;
+
   // Nome do Servidor, Tipo de Conexão e Codigo da Loja Se Unica ===============
   sgCodLojaUnica:='';
   BuscaServidorLojaUnica;
@@ -4653,10 +4700,13 @@ end;
 
 procedure TDMBelShop.CDS_FluxoFornecedoresAfterScroll(DataSet: TDataSet);
 begin
-  If (DMBelShop.CDS_FluxoFornecedores.RecNo<4) and (DMBelShop.CDS_FluxoFornecedores.RecNo>1) Then
+  If bgFluxoFornAfterScroll Then
   Begin
-    DMBelShop.CDS_FluxoFornecedores.RecNo:=4;
-  End;
+    If (DMBelShop.CDS_FluxoFornecedores.RecNo<4) and (DMBelShop.CDS_FluxoFornecedores.RecNo>1) Then
+    Begin
+      DMBelShop.CDS_FluxoFornecedores.RecNo:=4;
+    End;
+  End; // If bgFluxoFornAfterScroll Then
 
 end;
 
@@ -4684,207 +4734,24 @@ begin
 
 end;
 
+procedure TDMBelShop.CDS_FluxoFornVinculoAfterScroll(DataSet: TDataSet);
+begin
+  If Not CDS_FluxoFornVinculo.IsEmpty Then
+  Begin
+    CDS_FluxoFornVinculados.Close;
+    SDS_FluxoFornVinculados.Params.ParamByName('CodForn').AsInteger:=CDS_FluxoFornVinculoCOD_FORNECEDOR.AsInteger;
+    CDS_FluxoFornVinculados.Open;
+  End; // If Not CDS_FluxoFornVinculo.IsEmpty Then
+end;
+
+procedure TDMBelShop.CDS_FluxoFornecedoresAfterOpen(DataSet: TDataSet);
+begin
+  bgFluxoFornAfterScroll:=False;
+
+  FrmBelShop.FluxoFornecedorTotais;
+
+  bgFluxoFornAfterScroll:=True;
+end;
+
 end.
 
-{
-SDS_FluxoFornecedores
-======================
--- Todos os Fornecedores
-SELECT
-3 Ordem,
-
-CAST(TRIM(t.des_aux) AS VARCHAR(10)) DES_AUX,
-c.cod_fornecedor,
-TRIM(c.des_fornecedor) nomefornecedor,
-
-CAST(MIN(c.dta_caixa) AS DATE) dta_inicial,
-CAST(MAX(c.dta_caixa) AS DATE) dta_final,
-
-SUM(DECODE(c.tip_debcre, 'D', -c.vlr_caixa, c.vlr_caixa)) vlr_saldo,
-
-CAST(CASE
-       WHEN COALESCE(t.des_aux, '0') = '0' THEN
-         NULL
-       ELSE
-         CAST(TRIM(t.des_aux) AS VARCHAR(10))
-     END
-AS DATE) dta_cc,
-
-CASE
-  WHEN COALESCE(t.des_aux, '0') = '0' THEN
-    'NAO'
-  ELSE
-    'SIM'
-END LIMITE,
-
-CAST(TRIM(t.des_aux1) AS VARCHAR(10)) Dta_Hist900,
-cc.nomesubcusto Comprador
-
-
-FROM FL_CAIXA_FORNECEDORES  c
-     LEFT JOIN FORNECEDOR   f    ON f.codfornecedor = c.codfornecedor
-     LEFT JOIN TAB_AUXILIAR t  ON t.tip_aux = 14
-                              AND t.cod_aux = c.cod_fornecedor
-     LEFT JOIN CENTROCUSTO  cc ON cc.codcentrocusto=f.codcentrocusto
-
-WHERE c.cod_historico <> 0 AND
-      c.cod_historico <> 999999
-
-and (coalesce(f.codcentrocusto,0)=:Compr1
-    or
-     coalesce(f.codcentrocusto,0)=:Compr2
-    Or
-     coalesce(f.codcentrocusto,0)=:Compr3
-    or
-     coalesce(f.codcentrocusto,0)=:Compr4
-    or
-     coalesce(f.codcentrocusto,0)=:Compr5
-    or
-     coalesce(f.codcentrocusto,0)=:Compr6
-    or
-     coalesce(f.codcentrocusto,0)=:Compr7
-    or
-     coalesce(f.codcentrocusto,0)=:Compr8
-    or
-     coalesce(f.codcentrocusto,0)=:Compr9
-    or
-     coalesce(f.codcentrocusto,0)=:Compr10)
-
-GROUP BY 2, 3, 4, 8, 9, 10, 11
-
-UNION
-
--- Total Créditos dos Fornecedores
-SELECT
-0 Ordem,
-null des_aux,
-null cod_fornecedor,
-' TOTAL CRÉDITOS DOS FORNECEDORES' nomefornecedor,
-
-CAST(MIN(tc.dta_caixa) AS DATE) dta_inicial,
-CAST(MAX(tc.dta_caixa) AS DATE) dta_final,
-
-SUM(tc.vlr_caixa) vlr_saldo,
-
-NULL dta_cc,
-NULL LIMITE,
-NULL Dta_Hist900,
-NULL Comprador
-
-FROM FL_CAIXA_FORNECEDORES tc
-     LEFT JOIN FORNECEDOR   tf    ON tf.codfornecedor = tc.codfornecedor
-
-WHERE tc.cod_historico <> 0 AND
-      tc.cod_historico <> 999999
-AND   tc.tip_debcre='C'
-
-and (coalesce(tf.codcentrocusto,0)=:Compr1
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr2
-    Or
-     coalesce(tf.codcentrocusto,0)=:Compr3
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr4
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr5
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr6
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr7
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr8
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr9
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr10)
-
-UNION
-
--- Total Débitos dos Fornecedores
-SELECT
-1 Ordem,
-null des_aux,
-null cod_fornecedor,
-' TOTAL DÉBITOS DOS FORNECEDORES' nomefornecedor,
-
-CAST(MIN(tc.dta_caixa) AS DATE) dta_inicial,
-CAST(MAX(tc.dta_caixa) AS DATE) dta_final,
-
-SUM(tc.vlr_caixa) vlr_saldo,
-
-NULL dta_cc,
-NULL LIMITE,
-NULL Dta_Hist900,
-NULL Comprador
-
-FROM FL_CAIXA_FORNECEDORES tc
-     LEFT JOIN FORNECEDOR   tf    ON tf.codfornecedor = tc.codfornecedor
-WHERE tc.cod_historico <> 0 AND
-      tc.cod_historico <> 999999
-AND   tc.tip_debcre='D'
-
-and (coalesce(tf.codcentrocusto,0)=:Compr1
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr2
-    Or
-     coalesce(tf.codcentrocusto,0)=:Compr3
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr4
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr5
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr6
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr7
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr8
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr9
-    or
-     coalesce(tf.codcentrocusto,0)=:Compr10)
-
-UNION
-
--- Total Geral dos Fornecedores
-SELECT
-2 Ordem,
-null des_aux,
-null cod_fornecedor,
-' TOTAL GERAL: FORNECEDORES' nomefornecedor,
-
-CAST(MIN(ct.dta_caixa) AS DATE) dta_inicial, CAST(MAX(ct.dta_caixa) AS DATE) dta_final,
-
-SUM(DECODE(ct.tip_debcre, 'D', -ct.vlr_caixa, ct.vlr_caixa)) vlr_saldo,
-
-NULL dta_cc,
-NULL LIMITE,
-NULL Dta_Hist900,
-NULL Comprador
-
-FROM FL_CAIXA_FORNECEDORES ct
-     LEFT JOIN FORNECEDOR   ft    ON ft.codfornecedor = ct.codfornecedor
-WHERE ct.cod_historico <> 0 AND
-      ct.cod_historico <> 999999
-
-and (coalesce(ft.codcentrocusto,0)=:Compr1
-    or
-     coalesce(ft.codcentrocusto,0)=:Compr2
-    Or
-     coalesce(ft.codcentrocusto,0)=:Compr3
-    or
-     coalesce(ft.codcentrocusto,0)=:Compr4
-    or
-     coalesce(ft.codcentrocusto,0)=:Compr5
-    or
-     coalesce(ft.codcentrocusto,0)=:Compr6
-    or
-     coalesce(ft.codcentrocusto,0)=:Compr7
-    or
-     coalesce(ft.codcentrocusto,0)=:Compr8
-    or
-     coalesce(ft.codcentrocusto,0)=:Compr9
-    or
-     coalesce(ft.codcentrocusto,0)=:Compr10)
-
-ORDER BY 4
-}

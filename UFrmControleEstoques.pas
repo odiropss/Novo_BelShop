@@ -144,7 +144,7 @@ Begin
          ' Coalesce(t.vlr_aux,0) Qtd_Dias,'+
          ' Coalesce(t.vlr_aux1,0) Qtd_Min'+
          ' FROM TAB_AUXILIAR t'+
-         ' WHERE t.tip_aux=2'+
+         ' WHERE t.tip_aux=2'+ // Curva ABC
          ' ORDER BY t.cod_aux';
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -550,39 +550,39 @@ begin
 
     // Salva Valores da Curva ABC ============================================
     MySql:=' DELETE From TAB_AUXILIAR'+
-           ' WHERE tip_aux=2';
+           ' WHERE tip_aux=2'; // Curva ABC
     DMBelShop.SQLC.Execute(MySql, nil, nil);
 
     MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1)'+
-           ' VALUES (2, 1, '+
+           ' VALUES (2, 1, '+ // Curva ABC
            QuotedStr(IntToStr(EdtParamCurvaALimite.AsInteger))+', '+
            QuotedStr(IntToStr(EdtParamCurvaADiasEst.AsInteger))+', '+
            QuotedStr(IntToStr(EdtParamCurvaAEstMinino.AsInteger))+')';
     DMBelShop.SQLC.Execute(MySql, nil, nil);
 
     MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1)'+
-           ' Values (2, 2, '+
+           ' Values (2, 2, '+ // Curva ABC
            QuotedStr(IntToStr(EdtParamCurvaBLimite.AsInteger))+', '+
            QuotedStr(IntToStr(EdtParamCurvaBDiasEst.AsInteger))+', '+
            QuotedStr(IntToStr(EdtParamCurvaBEstMinino.AsInteger))+')';
     DMBelShop.SQLC.Execute(MySql, nil, nil);
 
     MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1)'+
-           ' Values (2, 3, '+
+           ' Values (2, 3, '+ // Curva ABC
            QuotedStr(IntToStr(EdtParamCurvaCLimite.AsInteger))+', '+
            QuotedStr(IntToStr(EdtParamCurvaCDiasEst.AsInteger))+', '+
            QuotedStr(IntToStr(EdtParamCurvaCEstMinino.AsInteger))+')';
     DMBelShop.SQLC.Execute(MySql, nil, nil);
 
     MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1)'+
-           ' Values (2, 4, '+
+           ' Values (2, 4, '+ // Curva ABC
            QuotedStr(IntToStr(EdtParamCurvaDLimite.AsInteger))+', '+
            QuotedStr(IntToStr(EdtParamCurvaDDiasEst.AsInteger))+', '+
            QuotedStr(IntToStr(EdtParamCurvaDEstMinino.AsInteger))+')';
     DMBelShop.SQLC.Execute(MySql, nil, nil);
 
     MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1)'+
-           ' Values (2, 5, '+
+           ' Values (2, 5, '+ // Curva ABC
            QuotedStr(IntToStr(EdtParamCurvaELimite.AsInteger))+', '+
            QuotedStr(IntToStr(EdtParamCurvaEDiasEst.AsInteger))+', '+
            QuotedStr(IntToStr(EdtParamCurvaEEstMinino.AsInteger))+')';

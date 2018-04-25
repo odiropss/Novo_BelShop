@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_OrdemCompra
+    ActivePage = Ts_FinanAuditoria
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -18890,7 +18890,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_FinanObjetivosManut
+        ActivePage = Ts_FinanObjetivosResultadosDias
         Align = alClient
         TabOrder = 0
         OnChange = PC_FinanObjetivosChange
@@ -29810,42 +29810,6 @@ object FrmBelShop: TFrmBelShop
     TabOrder = 5
     Visible = False
   end
-  object Edit1: TEdit
-    Left = 232
-    Top = 224
-    Width = 121
-    Height = 19
-    TabOrder = 6
-    Text = '80'
-    Visible = False
-  end
-  object Edit2: TEdit
-    Left = 232
-    Top = 244
-    Width = 121
-    Height = 19
-    TabOrder = 7
-    Text = '20'
-    Visible = False
-  end
-  object Edit3: TEdit
-    Left = 232
-    Top = 265
-    Width = 121
-    Height = 19
-    TabOrder = 8
-    Text = '20'
-    Visible = False
-  end
-  object Edit4: TEdit
-    Left = 232
-    Top = 286
-    Width = 121
-    Height = 19
-    TabOrder = 9
-    Text = '30'
-    Visible = False
-  end
   object MainMenu1: TMainMenu
     OwnerDraw = True
     Left = 600
@@ -34283,8 +34247,8 @@ object FrmBelShop: TFrmBelShop
   end
   object PopM_GeraOC: TPopupMenu
     OwnerDraw = True
-    Left = 510
-    Top = 197
+    Left = 518
+    Top = 181
     object PopM_GeraOCVoltar1: TMenuItem
       Bitmap.Data = {
         F6000000424DF600000000000000760000002800000010000000100000000100

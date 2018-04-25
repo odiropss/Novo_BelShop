@@ -10517,6 +10517,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           item
             Expanded = False
             FieldName = 'CODBARRA'
+            Width = 64
             Visible = True
           end>
       end

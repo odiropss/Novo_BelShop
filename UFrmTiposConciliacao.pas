@@ -83,7 +83,7 @@ begin
 
     MySql:=' SELECT Coalesce(max(t.COD_AUX)+1 ,1) Codigo'+
            ' FROM TAB_AUXILIAR t'+
-           ' WHERE t.TIP_AUX=3';
+           ' WHERE t.TIP_AUX=3'; // Tipos de Concliação ====>> (NÃO ESTA SENDO USADO)
     DMBelShop.CDS_Busca.Close;
     DMBelShop.SDS_Busca.CommandText:=MySql;
     DMBelShop.CDS_Busca.Open;
@@ -125,7 +125,7 @@ begin
       Begin
         MySql:=' Insert into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX)'+
                ' Values('+
-               QuotedStr('3')+', '+
+               QuotedStr('3')+', '+ // Tipos de Concliação ====>> (NÃO ESTA SENDO USADO)
                QuotedStr(EdtCodigo.Text)+', '+
                QuotedStr(EdtDesc.Text)+')';
         DMBelShop.SQLC.Execute(MySql,nil,nil);
@@ -135,7 +135,7 @@ begin
       Begin
         MySql:=' Update TAB_AUXILIAR'+
                ' Set DES_AUX='+QuotedStr(EdtDesc.Text)+
-               ' Where TIP_AUX=3'+
+               ' Where TIP_AUX=3'+ // Tipos de Concliação ====>> (NÃO ESTA SENDO USADO)
                ' And COD_AUX='+QuotedStr(EdtCodigo.Text);
         DMBelShop.SQLC.Execute(MySql,nil,nil);
       End; // If Bt_Novo.Caption='Inserir' Then
@@ -238,7 +238,7 @@ begin
     DecimalSeparator:='.';
 
     MySql:=' Delete From TAB_AUXILIAR'+
-           ' Where TIP_AUX=3'+
+           ' Where TIP_AUX=3'+ // Tipos de Concliação ====>> (NÃO ESTA SENDO USADO)
            ' And COD_AUX='+QuotedStr(DMConciliacao.CDS_TpConciliacaoCOD_AUX.AsString);
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 

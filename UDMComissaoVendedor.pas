@@ -168,7 +168,7 @@ begin
     MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR'+
            ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
            ' VALUES ('+
-           QuotedStr('16')+', '+ // TIP_AUX
+           QuotedStr('16')+', '+ // TIP_AUX - Comissão Vendedores (Familias Preço Utilizadas)
            IntToStr(StrToInt(Trim(CDS_V_FamiliaPrecosCOD_FAMILIA.AsString)))+', '+ // COD_AUX
            QuotedStr(CDS_V_FamiliaPrecosCOD_FAMILIA.AsString)+', '+ // DES_AUX
            ' NULL, '+ // DES_AUX1
@@ -218,7 +218,7 @@ begin
     MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR'+
            ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
            ' VALUES ('+
-           QuotedStr('15')+', '+ // TIP_AUX
+           QuotedStr('15')+', '+ // TIP_AUX - Comissão Vendedores (Aplicações Utilizadas)
            IntToStr(StrToInt(Trim(CDS_V_AplicacaoCOD_APLICACAO.AsString)))+', '+ // COD_AUX
            QuotedStr(CDS_V_AplicacaoCOD_APLICACAO.AsString)+', '+ // DES_AUX
            ' NULL, '+ // DES_AUX1
@@ -257,7 +257,7 @@ begin
   DMBelShop.SQLC.StartTransaction(TD);
   Try
     MySql:=' DELETE FROM TAB_AUXILIAR ap'+
-           ' WHERE ap.tip_aux=16'+
+           ' WHERE ap.tip_aux=16'+ // Comissão Vendedores (Familias Preço Utilizadas)
            ' AND ap.des_aux='+QuotedStr(DMComissaoVendedor.CDS_V_FamiliaPrecosCOD_FAMILIA.AsString);
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
@@ -288,7 +288,7 @@ begin
   DMBelShop.SQLC.StartTransaction(TD);
   Try
     MySql:=' DELETE FROM TAB_AUXILIAR ap'+
-           ' WHERE ap.tip_aux=15'+
+           ' WHERE ap.tip_aux=15'+ // Comissão Vendedores (Aplicações Utilizadas)
            ' AND ap.des_aux='+QuotedStr(DMComissaoVendedor.CDS_V_AplicacaoCOD_APLICACAO.AsString);
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 

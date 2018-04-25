@@ -351,8 +351,9 @@ type
     Procedure ConcDepositosFechamentoDia;
 
     Procedure ConcDepositoFaturamentoDinheiro(sDia: String);
-              
+
     // Web Services GeoBeauty
+    Procedure GeoBeautyWebServicesVariaveis; //   Ajusta Variaveis para Web Sevices GoeBeauty
     Function  ConcDepositoWebServiceGeoBeautyPagtos: Boolean;
     Procedure ConcDepositoWebServiceGeoBeautyFechamentos;
 
@@ -593,6 +594,85 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CONCILIAÇÕES PAGTOS/DEPOSITOS - Variaveis para Web Sevices GoeBeauty >>>>>>>>
+Procedure TFrmBancoExtratos.GeoBeautyWebServicesVariaveis;
+Var
+  tsArquivo: TStringList;
+  wDia, wMes, wAno: Word;
+
+  sParametro: String;
+Begin
+  //============================================================================
+  // Gera Chave de Acesso GeoBeauty ============================================
+  //============================================================================
+  tsArquivo:=TStringList.Create;
+
+  Try
+    tsArquivo.Add('102030'); // Codigo do Usuario
+    tsArquivo.Add('302cllddf4301tu10sxvjh13070ueruih897634982'); // Chave da Empresa
+    tsArquivo.Add(DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)));
+
+    tsArquivo.SaveToFile(sPath_Local+'Odir.TXT');
+  Finally // Try
+    { Libera a instancia da lista da memória }
+    FreeAndNil(tsArquivo);
+  End; // Try
+
+  // Cria Chave de Acesso do Dia ===============================================
+  sParametro:=sPath_Local+'PCriptografiaGeoBeauty.exe '+sPath_Local+'Odir.TXT';
+
+  CreateProcessSimple(sParametro);
+  // Gera Chave de Acesso GeoBeauty ============================================
+  //============================================================================
+
+  //============================================================================
+  // Busca Chave de Acesso Criada ==============================================
+  //============================================================================
+  tsArquivo:=TStringList.Create;
+
+  Try
+    tsArquivo.LoadFromFile(sPath_Local+'CriptografiaGeoBeautyRet.TXT');
+
+    sgChaveAcessoGeo:=tsArquivo[0];
+  Finally // Try
+    { Libera a instancia da lista da memória }
+    FreeAndNil(tsArquivo);
+  End; // Try
+  // Busca Chave de Acesso Criada ==============================================
+  //============================================================================
+
+  //============================================================================
+  // Acerta Datas do Período ===================================================
+  //============================================================================
+  // Data do Inicio do Período =================================================
+  DecodeDate(StrToDate(sgDtaI), wAno, wMes, wDia);
+  sgDtaGeoInicio:=IntToStr(wAno);
+  If wMes<10 Then
+   sgDtaGeoInicio:=sgDtaGeoInicio+'0'+IntToStr(wMes)
+  Else
+   sgDtaGeoInicio:=sgDtaGeoInicio+IntToStr(wMes);
+
+  If wDia<10 Then
+   sgDtaGeoInicio:=sgDtaGeoInicio+'0'+IntToStr(wDia)
+  Else
+   sgDtaGeoInicio:=sgDtaGeoInicio+IntToStr(wDia);
+
+  // Data do Fim do Período ====================================================
+  DecodeDate(StrToDate(sgDtaF), wAno, wMes, wDia);
+
+  sgDtaGeoFim:=IntToStr(wAno);
+  If wMes<10 Then
+   sgDtaGeoFim:=sgDtaGeoFim+'0'+IntToStr(wMes)
+  Else
+   sgDtaGeoFim:=sgDtaGeoFim+IntToStr(wMes);
+
+  If wDia<10 Then
+   sgDtaGeoFim:=sgDtaGeoFim+'0'+IntToStr(wDia)
+  Else
+   sgDtaGeoFim:=sgDtaGeoFim+IntToStr(wDia);
+  // Acerta Datas do Período ===================================================
+  //============================================================================
+End; // CONCILIAÇÕES PAGTOS/DEPOSITOS - Variaveis para Web Sevices GoeBeauty >>>
 
 // CONCILIAÇÕES PAGTOS/DEPOSITOS - Web Service GoeBeauty (Fechamentos) >>>>>>>>>
 Procedure TFrmBancoExtratos.ConcDepositoWebServiceGeoBeautyFechamentos;
@@ -717,7 +797,30 @@ Begin
     If Trim(sRetornoFecha)='' Then
      Break;
   End; // While b do
+
+  If mMemo.Lines.Count<1 Then
+  Begin
+    FreeAndNil(mMemo);
+    OdirPanApres.Visible:=False;
+    Screen.Cursor:=crDefault;
+    msg('Web Services GeoBeauty'+cr+cr+'Arquivo de Fechamentos'+cr+'Sem Movimento !!','A');
+    Exit;
+  End;
   // Consome Fechamentos da GeoBeauty Web Service ==============================
+  //============================================================================
+
+  //============================================================================
+  // Verifica Estrutura do Arquivo de Fechamentos - Deve Conter 26 Campos ======
+  //============================================================================
+  If Separa_String(mMemo.Lines[0],27,'#')<>'Limite Superado' Then
+  Begin
+    FreeAndNil(mMemo);
+    OdirPanApres.Visible:=False;
+    Screen.Cursor:=crDefault;
+    msg('Web Services GeoBeauty'+cr+'Erro Na Estrutuda no Arquivo de Fechamentos !!'+cr+cr+'Entrar em Contato com Odir Imediatamente !!','A');
+    Exit;
+  End;
+  // Verifica Estrutura do Arquivo de Fechamentos - Deve Conter 14 Campos =====================
   //============================================================================
 
   //============================================================================
@@ -938,10 +1041,7 @@ Function TFrmBancoExtratos.ConcDepositoWebServiceGeoBeautyPagtos: Boolean;
 Var
   MySql: String;
 
-  tsArquivo: TStringList;
   wDia, wMes, wAno: Word;
-
-  sParametro: String;
 
   sRetornoPagtos,        // Recebe Retorno da WebService GeoBeauty
   sRegistro: WideString; // Recebe Registro Unico
@@ -967,76 +1067,78 @@ Begin
 
   Screen.Cursor:=crAppStart;
 
-  //============================================================================
-  // Gera Chave de Acesso GeoBeauty ============================================
-  //============================================================================
-  tsArquivo:=TStringList.Create;
-
-  Try
-    tsArquivo.Add('102030'); // Codigo do Usuario
-    tsArquivo.Add('302cllddf4301tu10sxvjh13070ueruih897634982'); // Chave da Empresa
-    tsArquivo.Add(DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)));
-
-    tsArquivo.SaveToFile(sPath_Local+'Odir.TXT');
-  Finally // Try
-    { Libera a instancia da lista da memória }
-    FreeAndNil(tsArquivo);
-  End; // Try
-
-  // Cria Chave de Acesso do Dia ===============================================
-  sParametro:=sPath_Local+'PCriptografiaGeoBeauty.exe '+sPath_Local+'Odir.TXT';
-
-  CreateProcessSimple(sParametro);
-  // Gera Chave de Acesso GeoBeauty ============================================
-  //============================================================================
-
-  //============================================================================
-  // Busca Chave de Acesso Criada ==============================================
-  //============================================================================
-  tsArquivo:=TStringList.Create;
-
-  Try
-    tsArquivo.LoadFromFile(sPath_Local+'CriptografiaGeoBeautyRet.TXT');
-
-    sgChaveAcessoGeo:=tsArquivo[0];
-  Finally // Try
-    { Libera a instancia da lista da memória }
-    FreeAndNil(tsArquivo);
-  End; // Try
-  // Busca Chave de Acesso Criada ==============================================
-  //============================================================================
-
-  //============================================================================
-  // Acerta Datas do Período ===================================================
-  //============================================================================
-  // Data do Inicio do Período =================================================
-  DecodeDate(StrToDate(sgDtaI), wAno, wMes, wDia);
-  sgDtaGeoInicio:=IntToStr(wAno);
-  If wMes<10 Then
-   sgDtaGeoInicio:=sgDtaGeoInicio+'0'+IntToStr(wMes)
-  Else
-   sgDtaGeoInicio:=sgDtaGeoInicio+IntToStr(wMes);
-
-  If wDia<10 Then
-   sgDtaGeoInicio:=sgDtaGeoInicio+'0'+IntToStr(wDia)
-  Else
-   sgDtaGeoInicio:=sgDtaGeoInicio+IntToStr(wDia);
-
-  // Data do Fim do Período ====================================================
-  DecodeDate(StrToDate(sgDtaF), wAno, wMes, wDia);
-
-  sgDtaGeoFim:=IntToStr(wAno);
-  If wMes<10 Then
-   sgDtaGeoFim:=sgDtaGeoFim+'0'+IntToStr(wMes)
-  Else
-   sgDtaGeoFim:=sgDtaGeoFim+IntToStr(wMes);
-
-  If wDia<10 Then
-   sgDtaGeoFim:=sgDtaGeoFim+'0'+IntToStr(wDia)
-  Else
-   sgDtaGeoFim:=sgDtaGeoFim+IntToStr(wDia);
-  // Acerta Datas do Período ===================================================
-  //============================================================================
+// OdirApagar - 23/047/2018 - Gerado Procedure GeoBeautyVariaveis
+//  //============================================================================
+//  // Gera Chave de Acesso GeoBeauty ============================================
+//  //============================================================================
+//  tsArquivo:=TStringList.Create;
+//
+//  Try
+//    tsArquivo.Add('102030'); // Codigo do Usuario
+//    tsArquivo.Add('302cllddf4301tu10sxvjh13070ueruih897634982'); // Chave da Empresa
+//    tsArquivo.Add(DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)));
+//
+//    tsArquivo.SaveToFile(sPath_Local+'Odir.TXT');
+//  Finally // Try
+//    { Libera a instancia da lista da memória }
+//    FreeAndNil(tsArquivo);
+//  End; // Try
+//
+//  // Cria Chave de Acesso do Dia ===============================================
+//  sParametro:=sPath_Local+'PCriptografiaGeoBeauty.exe '+sPath_Local+'Odir.TXT';
+//
+//  CreateProcessSimple(sParametro);
+//  // Gera Chave de Acesso GeoBeauty ============================================
+//  //============================================================================
+//
+//  //============================================================================
+//  // Busca Chave de Acesso Criada ==============================================
+//  //============================================================================
+//  tsArquivo:=TStringList.Create;
+//
+//  Try
+//    tsArquivo.LoadFromFile(sPath_Local+'CriptografiaGeoBeautyRet.TXT');
+//
+//    sgChaveAcessoGeo:=tsArquivo[0];
+//  Finally // Try
+//    { Libera a instancia da lista da memória }
+//    FreeAndNil(tsArquivo);
+//  End; // Try
+//  // Busca Chave de Acesso Criada ==============================================
+//  //============================================================================
+//
+//  //============================================================================
+//  // Acerta Datas do Período ===================================================
+//  //============================================================================
+//  // Data do Inicio do Período =================================================
+//  DecodeDate(StrToDate(sgDtaI), wAno, wMes, wDia);
+//  sgDtaGeoInicio:=IntToStr(wAno);
+//  If wMes<10 Then
+//   sgDtaGeoInicio:=sgDtaGeoInicio+'0'+IntToStr(wMes)
+//  Else
+//   sgDtaGeoInicio:=sgDtaGeoInicio+IntToStr(wMes);
+//
+//  If wDia<10 Then
+//   sgDtaGeoInicio:=sgDtaGeoInicio+'0'+IntToStr(wDia)
+//  Else
+//   sgDtaGeoInicio:=sgDtaGeoInicio+IntToStr(wDia);
+//
+//  // Data do Fim do Período ====================================================
+//  DecodeDate(StrToDate(sgDtaF), wAno, wMes, wDia);
+//
+//  sgDtaGeoFim:=IntToStr(wAno);
+//  If wMes<10 Then
+//   sgDtaGeoFim:=sgDtaGeoFim+'0'+IntToStr(wMes)
+//  Else
+//   sgDtaGeoFim:=sgDtaGeoFim+IntToStr(wMes);
+//
+//  If wDia<10 Then
+//   sgDtaGeoFim:=sgDtaGeoFim+'0'+IntToStr(wDia)
+//  Else
+//   sgDtaGeoFim:=sgDtaGeoFim+IntToStr(wDia);
+//  // Acerta Datas do Período ===================================================
+//  //============================================================================
+// OdirApagar - 23/047/2018 - Gerado Procedure GeoBeautyVariaveis
 
   //============================================================================
   // Consome Pagamentos da GeoBeauty Web Service ===============================
@@ -1130,10 +1232,23 @@ Begin
     FreeAndNil(mMemo);
     OdirPanApres.Visible:=False;
     Screen.Cursor:=crDefault;
+    msg('Web Services GeoBeauty'+cr+cr+'Arquivo de Pagamentos'+cr+'Sem Movimento !!','A');
     Exit;
   End;
   // Consome Pagamentos da GeoBeauty Web Service ===============================
   //============================================================================
+
+  //============================================================================
+  // Verifica Estrutura do Arquivo de Pagamentos - Deve Conter 14 Campos =======
+  //============================================================================
+  If Separa_String(mMemo.Lines[0],15,':')<>'Limite Superado' Then
+  Begin
+    FreeAndNil(mMemo);
+    OdirPanApres.Visible:=False;
+    Screen.Cursor:=crDefault;
+    msg('Web Services GeoBeauty'+cr+'Erro Na Estrutuda no Arquivo de Pagamentos !!'+cr+cr+'Entrar em Contato com Odir Imediatamente !!','A');
+    Exit;
+  End;
 
   //============================================================================
   // Insere Pagamentos GeoBeauty no Banco de Dados ==============================
@@ -1421,7 +1536,7 @@ Begin
     If DMConciliacao.CDS_CMDepositosAnaliseFECHA.AsString='SIM' Then
      Begin
        MySql:=' DELETE FROM TAB_AUXILIAR t'+
-              ' WHERE t.tip_aux=22'+
+              ' WHERE t.tip_aux=22'+ // CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
               ' AND   t.des_aux1='+DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString+
               ' AND   TRIM(t.des_aux)='+QuotedStr(f_Troca('.','/',sgDia));
      End
@@ -1430,7 +1545,7 @@ Begin
        MySql:=' INSERT INTO TAB_AUXILIAR'+
               ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
               ' VALUES ('+
-              ' 22,'+ // TIP_AUX
+              ' 22,'+ // TIP_AUX - CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
               ' (SELECT COALESCE(MAX(t.cod_aux)+1 ,1) FROM tab_auxiliar t WHERE t.tip_aux=22), '+ // COD_AUX
               QuotedStr(f_Troca('.','/',sgDia))+', '+ // DES_AUX
               DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString+', '+ // DES_AUX1
@@ -1466,7 +1581,7 @@ Begin
 
   MySql:=' SELECT re.cod_aux'+
          ' FROM TAB_AUXILIAR re'+
-         ' WHERE re.tip_aux=22'+
+         ' WHERE re.tip_aux=22'+ // CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
          ' AND re.des_aux1='+sCodLjLinx+
          ' AND TRIM(re.des_aux)='+QuotedStr(f_Troca('.','/',f_Troca('-','/',sDia)));
   DMBelShop.CDS_BuscaRapida.Close;
@@ -2556,7 +2671,7 @@ Begin
 
            ' AND NOT EXISTS (SELECT 1'+
            '                 FROM TAB_AUXILIAR fh'+
-           '                 WHERE fh.tip_aux=22'+
+           '                 WHERE fh.tip_aux=22'+ // CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
            '                 AND   fh.des_aux1=f.cod_linx'+
            '                 AND   Trim(fh.des_aux)=CAST(LPAD(EXTRACT(DAY FROM f.dta_docto),2,''0'')   AS VARCHAR(2))||''/''||'+
            '                                        CAST(LPAD(EXTRACT(MONTH FROM f.dta_docto),2,''0'') AS VARCHAR(2))||''/''||'+
@@ -2574,12 +2689,12 @@ Begin
            '                AND   g.cod_historico=f.cod_historico'+
            '                AND   NOT EXISTS (SELECT 1'+
            '                                  FROM TAB_AUXILIAR fh'+
-           '                                  WHERE fh.tip_aux=22'+
+           '                                  WHERE fh.tip_aux=22'+ // CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
            '                                  AND   fh.des_aux1=g.empresa'+
            '                                  AND   Trim(fh.des_aux)=CAST(LPAD(EXTRACT(DAY FROM f.dta_docto),2,''0'')   AS VARCHAR(2))||''/''||'+
            '                                                         CAST(LPAD(EXTRACT(MONTH FROM f.dta_docto),2,''0'') AS VARCHAR(2))||''/''||'+
            '                                                         CAST(EXTRACT(YEAR FROM f.dta_docto) AS VARCHAR(4))))';
-        DMBelShop.SQLC.Execute(MySql,nil,nil);
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
     // Exclui Lançamento do Salão a Serem Substituidos =========================
     //==========================================================================
 
@@ -2616,7 +2731,7 @@ Begin
                                          QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
            ' AND NOT EXISTS (SELECT 1'+
            '                 FROM TAB_AUXILIAR fh'+
-           '                 WHERE fh.tip_aux=22'+
+           '                 WHERE fh.tip_aux=22'+ // CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
            '                 AND   fh.des_aux1=g.empresa'+
            '                 AND   Trim(fh.des_aux)=Cast(lpad(extract(day from g.dta_pagto),2,''0'')   as varchar(2))||''/''||'+
            '                                        Cast(lpad(extract(month from g.dta_pagto),2,''0'') as varchar(2))||''/''||'+
@@ -2634,7 +2749,7 @@ Begin
            '                 AND   f.cod_historico=g.cod_historico'+
            '                 AND   NOT EXISTS (SELECT 1'+
            '                                   FROM TAB_AUXILIAR fh'+
-           '                                   WHERE fh.tip_aux=22'+
+           '                                   WHERE fh.tip_aux=22'+ // CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
            '                                   AND   fh.des_aux1=f.cod_linx'+
            '                                   AND   TRIM(fh.des_aux)=CAST(LPAD(EXTRACT(DAY FROM f.dta_docto),2,''0'')   AS VARCHAR(2))||''/''||'+
            '                                                          CAST(LPAD(EXTRACT(MONTH FROM f.dta_docto),2,''0'') AS VARCHAR(2))||''/''||'+
@@ -2764,7 +2879,7 @@ Begin
            // Retira Dias Já Fechado Pelo Renato
            ' AND   NOT EXISTS (SELECT 1'+
            '                   FROM TAB_AUXILIAR fh'+
-           '                   WHERE fh.tip_aux=22'+
+           '                   WHERE fh.tip_aux=22'+ // CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
            '                   AND   fh.des_aux1=s.empresa'+
            '                   AND   Trim(fh.des_aux)=Cast(lpad(extract(day from s.data),2,''0'') as varchar(2))||''/''||'+
            '                                          Cast(lpad(extract(month from s.data),2,''0'') as varchar(2))||''/''||'+
@@ -2928,7 +3043,7 @@ Begin
            // Retira Dias Já Fechado Pelo Renato
            ' AND   NOT EXISTS (SELECT 1'+
            '                   FROM TAB_AUXILIAR fh'+
-           '                   WHERE fh.tip_aux=22'+
+           '                   WHERE fh.tip_aux=22'+ // CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
            '                   AND   fh.des_aux1=s.empresa'+
            '                   AND   Trim(fh.des_aux)=Cast(lpad(extract(day from s.data),2,''0'') as varchar(2))||''/''||'+
            '                                          Cast(lpad(extract(month from s.data),2,''0'') as varchar(2))||''/''||'+
@@ -4279,7 +4394,7 @@ begin
   // Busca Bancos =============================================================
   MySql:=' SELECT t.des_aux, t.cod_aux'+
          ' FROM tab_auxiliar t'+
-         ' WHERE t.tip_aux=3'+
+         ' WHERE t.tip_aux=3'+ // Tipos de Concliação ====>> (NÃO ESTA SENDO USADO)
          ' AND t.cod_aux>0'+
          ' ORDER BY 1';
   DMBelShop.CDS_Pesquisa.Close;
@@ -13990,6 +14105,13 @@ begin
   //============================================================================
 
   //============================================================================
+  // Atualiza Variáveis Web Services GeoBeauty =================================
+  //============================================================================
+  GeoBeautyWebServicesVariaveis;
+  // Atualiza Variáveis Web Services GeoBeauty =================================
+  //============================================================================
+
+  //============================================================================
   // Busca Movtos Web Services: Pagamento GeoBeauty ============================
   //============================================================================
   If bAtualizaGeo Then
@@ -13997,9 +14119,6 @@ begin
     // Web Service GoeBeauty (Pagtos) ==========================================
     If Not ConcDepositoWebServiceGeoBeautyPagtos Then
      bAtualizaGeo:=False;
-
-    // Web Service GoeBeauty (Fechamentos) =====================================
-     ConcDepositoWebServiceGeoBeautyFechamentos
   End; // If bAtualizaGeo Then
   // Busca Movtos Web Services: Pagamento GeoBeauty ============================
   //============================================================================
@@ -14012,6 +14131,13 @@ begin
     AtualizaMovtosDepositosGeoBeauty;
   End; // If bAtualizaLinx Then
   // Insere Novos Pagtos se Buscou Dados no GeoBeauty ==========================
+  //============================================================================
+
+  //============================================================================
+  // Busca Movtos Web Services: Insere Fechamentos GeoBeauty ===================
+  //============================================================================
+  ConcDepositoWebServiceGeoBeautyFechamentos;
+  // Busca Movtos Web Services: Fechamentos GeoBeauty ==========================
   //============================================================================
 
   //============================================================================
@@ -15869,7 +15995,7 @@ begin
     // Apresenta Dia para Analise ==============================================
     // ----------- TITULO DO RELATÓRIO
     MySql:=' SELECT'+
-           ' ''RESULTADO CONCILIAÇÃO CAIXA DO DIA ''||'+QuotedStr(f_Troca('.','/',sgDia))+' NOME_EMP,'+
+           ' ''CONCILIAÇÃO CAIXA DO DIA ''||'+QuotedStr(f_Troca('.','/',sgDia))+' NOME_EMP,'+
            ' NULL LOJA_DINHEIRO,'+
            ' NULL SALAO_DINHEIRO,'+
            ' NULL DIA_DINHEIRO,'+
@@ -16025,12 +16151,13 @@ begin
 
            ' FROM FIN_CONCILIACAO_MOV_DEP md'+
            '         LEFT JOIN LINXLOJAS lj                  ON lj.empresa=md.cod_linx'+
-           '         LEFT JOIN FIN_CONCILIACAO_DEPOSITOS dp  ON dp.num_seq=md.num_seq'+
-           '                                                AND dp.num_compl=md.num_compl'+
-           '         LEFT JOIN TAB_AUXILIAR fh  ON fh.tip_aux=22'+
+           '         LEFT JOIN (SELECT DISTINCT d.num_seq, d.num_compl, d.tip_conciliacao'+
+           '                    FROM FIN_CONCILIACAO_DEPOSITOS d) dp  ON dp.num_seq=md.num_seq'+
+           '                                                         AND dp.num_compl=md.num_compl'+
+           '         LEFT JOIN TAB_AUXILIAR fh  ON fh.tip_aux=22'+ // CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
            '                                   AND fh.des_aux1=md.cod_linx'+
            '                                   AND Trim(fh.des_aux)='+QuotedStr(f_Troca('.','/',f_Troca('-','/',sgDia)))+
-           '         LEFT JOIN TAB_AUXILIAR fo  ON fo.tip_aux=24'+
+           '         LEFT JOIN TAB_AUXILIAR fo  ON fo.tip_aux=24'+ // CONCILIAÇÃO DE DEPÓSITOS - OBSERVAÇÃO FINAL PARA LOJAS CONCILIADAS
            '                                   AND fo.cod_aux=md.cod_linx||'+QuotedStr(Copy(sgDia,1,2))+'||'+
                                                                              QuotedStr(Copy(sgDia,4,2))+'||'+
                                                                              QuotedStr(Copy(sgDia,9,2))+
@@ -16094,7 +16221,10 @@ begin
            ' NULL FECHA,'+
            ' 5 ORDEM'+
 
-           ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj, FIN_CONCILIACAO_DEPOSITOS dp'+
+           ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj,'+
+           '                   (SELECT DISTINCT d.num_seq, d.num_compl, d.tip_conciliacao'+
+           '                    FROM FIN_CONCILIACAO_DEPOSITOS d) dp'+
+
            ' WHERE md.cod_linx=lj.empresa'+
            ' AND   md.num_seq=dp.num_seq'+
            ' AND   md.num_compl=dp.num_compl'+
@@ -16233,8 +16363,8 @@ begin
            ' FROM FIN_CONCILIACAO_MOV_DEP md'+
            '         LEFT JOIN LINXLOJAS lj     ON lj.empresa=md.cod_linx'+
            '         LEFT JOIN TAB_AUXILIAR gr  ON gr.cod_aux=md.cod_historico'+
-           '                                   AND gr.tip_aux=21'+
-           '         LEFT JOIN TAB_AUXILIAR fh  ON fh.tip_aux=22'+
+           '                                   AND gr.tip_aux=21'+ // CADASTRO DE HISTÓRICOS SANGRIA LINX (LINXSANGRIASUPRIMENTOS)
+           '         LEFT JOIN TAB_AUXILIAR fh  ON fh.tip_aux=22'+ // CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
            '                                   AND fh.des_aux1=md.cod_linx'+
            '                                   AND TRIM(fh.des_aux)='+QuotedStr(f_Troca('.','/',f_Troca('-','/',sgDia)))+
 
@@ -16302,7 +16432,7 @@ begin
            ' FROM FIN_CONCILIACAO_MOV_DEP md, LINXLOJAS lj, TAB_AUXILIAR gr'+
            ' WHERE md.cod_linx=lj.empresa'+
            ' AND   md.cod_historico=gr.cod_aux'+
-           ' AND   gr.tip_aux=21'+
+           ' AND   gr.tip_aux=21'+ // CADASTRO DE HISTÓRICOS SANGRIA LINX (LINXSANGRIASUPRIMENTOS)
            ' AND   md.ind_conciliacao=''NAO'''+
            ' AND   md.dta_docto='+QuotedStr(sgDia)+
 
@@ -16604,7 +16734,7 @@ begin
 
       MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR (tip_aux, cod_aux, des_aux)'+
              ' VALUES ('+
-             ' 21, '+ // TIP_AUX
+             ' 21, '+ // TIP_AUX - CADASTRO DE HISTÓRICOS SANGRIA LINX (LINXSANGRIASUPRIMENTOS)
              DMBelShop.CDS_Busca.FieldByName('Cod_Historico').AsString+', '+ // COD_AUX
              QuotedStr(DMBelShop.CDS_Busca.FieldByName('Desc_Historico').AsString)+')'+ // DES_AUX
              ' MATCHING (tip_aux, cod_aux)';
@@ -16773,7 +16903,7 @@ begin
         If DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger=4 Then
         Begin
           MySql:=' DELETE FROM TAB_AUXILIAR fo'+
-                 ' WHERE fo.tip_aux=24'+
+                 ' WHERE fo.tip_aux=24'+ // CONCILIAÇÃO DE DEPÓSITOS - OBSERVAÇÃO FINAL PARA LOJAS CONCILIADAS
                  ' AND fo.cod_aux='+DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString+'||'+QuotedStr(Copy(sgDia,1,2))+'||'+
                                                                                                QuotedStr(Copy(sgDia,4,2))+'||'+
                                                                                                QuotedStr(Copy(sgDia,9,2));
@@ -16799,7 +16929,7 @@ begin
           MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR ('+
                  ' TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
                  ' VALUES ('+
-                 ' 24, '+ // TIP_AUX
+                 ' 24, '+ // TIP_AUX - CONCILIAÇÃO DE DEPÓSITOS - OBSERVAÇÃO FINAL PARA LOJAS CONCILIADAS
                  DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString+'||'+QuotedStr(Copy(sgDia,1,2))+'||'+
                                                                             QuotedStr(Copy(sgDia,4,2))+'||'+
                                                                             QuotedStr(Copy(sgDia,9,2))+', '+ // COD_AUX

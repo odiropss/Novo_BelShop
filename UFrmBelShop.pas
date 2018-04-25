@@ -1332,10 +1332,6 @@ type
     SubMenuComprasNivelAtendimentoLojas: TMenuItem;
     SubMenuCentroDistAnaliseAnalReposicoesEndereco: TMenuItem;
     SubMenuCentroDistAnaliseAnalReposicoesRelatReposicao: TMenuItem;
-    Edit1: TEdit;
-    Edit2: TEdit;
-    Edit3: TEdit;
-    Edit4: TEdit;
     N9: TMenuItem;
     SubMenuCentroDistAnaliseAnalReposicoesRespDiaria: TMenuItem;
     N10: TMenuItem;
@@ -2347,6 +2343,8 @@ type
     OldX,OldY:Longint;
     CrossHairColor:TColor;
     CrossHairStyle:TPenStyle;
+
+    Procedure FluxoFornecedorTotais; // Calcula Toais do Conta Corrente dos Fornecedores
   end;
 
 type
@@ -2524,17 +2522,15 @@ implementation
 
 uses DK_Procs1, UPermissao, UDMBelShop,
      UPesquisa, UDMConexoes, UPesquisaIB, UDMVirtual, UDMRelatorio,
-     UFrmAuditoria, UFrmSelectEmpProcessamento,
-     UFrmOCObservacao, UVerTransito, UFrmPlanFinanApresComrprovantes,
-     UFrmPeriodoApropriacao, UFrmObjetivosFormula, UFrmFinanObjetivosMovtos,
-     UFrmSolicitacoes, UFrmGrafico, UFrmAcessosUsuario, UFrmBancoExtratos,
-     UFrmSalao, UFrmGeraPedidosComprasLojas,
-     UDMLojaUnica, UFrmConciliacaoCaixa,
-     UDMCentralTrocas, UFrmCentralTrocas,
-     UFrmEstoques, UEntrada, UDMSidicom,
+     UFrmAuditoria, UFrmSelectEmpProcessamento, UFrmOCObservacao, UVerTransito,
+     UFrmPlanFinanApresComrprovantes, UFrmPeriodoApropriacao,
+     UFrmObjetivosFormula, UFrmFinanObjetivosMovtos, UFrmSolicitacoes,
+     UFrmGrafico, UFrmAcessosUsuario, UFrmBancoExtratos, UFrmSalao,
+     UFrmGeraPedidosComprasLojas, UDMLojaUnica, UFrmConciliacaoCaixa,
+     UDMCentralTrocas, UFrmCentralTrocas, UFrmEstoques, UEntrada, UDMSidicom,
      UFrmFaltasCDLojas, UFrmControleKits, UFrmControleEstoques,
      UFrmFluxFornecedor, UFrmComissaoVendedor, UDMLinx, RTLConsts, UFrmOCLinx,
-  UFrmPrioridadesReposicao;
+     UFrmPrioridadesReposicao;
 
 {$R *.dfm}
 {$R C:\Projetos\BelShop\Botoes\Botoes.res }
@@ -2542,6 +2538,72 @@ uses DK_Procs1, UPermissao, UDMBelShop,
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // ODIR INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+// FLUXO FORNECEDORES  - Calcula Totais de Crédito / Débitos >>>>>>>>>>>>>>>>>>>
+Procedure TFrmBelShop.FluxoFornecedorTotais;
+Var
+  i: Integer;
+  cVlrCre, cVlrDeb: Currency;
+Begin
+  If DMBelShop.CDS_FluxoFornecedores.IsEmpty Then
+   Exit;
+
+  OdirPanApres.Caption:='AGUARDE !! Calculando Totais...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmFluxoFornecedor;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  i:=DMBelShop.CDS_FluxoFornecedoresCOD_FORNECEDOR.AsInteger;
+
+  cVlrCre:=0.00;
+  cVlrDeb:=0.00;
+
+  DMBelShop.CDS_FluxoFornecedores.First;
+  DMBelShop.CDS_FluxoFornecedores.DisableControls;
+  While Not DMBelShop.CDS_FluxoFornecedores.Eof do
+  Begin
+
+    If DMBelShop.CDS_FluxoFornecedoresORDEM.AsInteger=3 Then
+    Begin
+       If DMBelShop.CDS_FluxoFornecedoresVLR_SALDO.AsCurrency<0 Then
+        cVlrDeb:=cVlrDeb+Abs(DMBelShop.CDS_FluxoFornecedoresVLR_SALDO.AsCurrency)
+       Else
+        cVlrCre:=cVlrCre+Abs(DMBelShop.CDS_FluxoFornecedoresVLR_SALDO.AsCurrency);
+    End; // If DMBelShop.CDS_FluxoFornecedoresORDEM.AsInteger=3 Then
+
+    DMBelShop.CDS_FluxoFornecedores.Next;
+  End; // While Not DMBelShop.CDS_FluxoFornecedores.Eof do
+
+  // Atualiza os Totais Débitos ================================================
+  DMBelShop.CDS_FluxoFornecedores.Locate('ORDEM', 0,[]);
+  DMBelShop.CDS_FluxoFornecedores.Edit;
+  DMBelShop.CDS_FluxoFornecedoresVLR_SALDO.AsCurrency:=cVlrDeb;
+  DMBelShop.CDS_FluxoFornecedores.Post;
+
+  // Atualiza os Totais Crétidos ===============================================
+  DMBelShop.CDS_FluxoFornecedores.Locate('ORDEM', 1,[]);
+  DMBelShop.CDS_FluxoFornecedores.Edit;
+  DMBelShop.CDS_FluxoFornecedoresVLR_SALDO.AsCurrency:=cVlrCre;
+  DMBelShop.CDS_FluxoFornecedores.Post;
+
+  // Atualiza os Totais Débitos - Créditos =====================================
+  DMBelShop.CDS_FluxoFornecedores.Locate('ORDEM', 2,[]);
+  DMBelShop.CDS_FluxoFornecedores.Edit;
+  DMBelShop.CDS_FluxoFornecedoresVLR_SALDO.AsCurrency:=cVlrCre - cVlrDeb;
+  DMBelShop.CDS_FluxoFornecedores.Post;
+
+  // Posicional Onde Estava ====================================================
+  DMBelShop.CDS_FluxoFornecedores.Locate('Cod_Fornecedor', i,[]);
+
+  DMBelShop.CDS_FluxoFornecedores.EnableControls;
+  OdirPanApres.Visible:=False;
+End; // FLUXO FORNECEDORES  - Calcula Totais de Crédito / Débitos >>>>>>>>>>>>>>
 
 // OBJETIVOS - METAS - LINX - MICRIVIX - Busca Vendas >>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmBelShop.BuscaMovtosVendasLINX(mMemo: TMemo; sTipo: String): Boolean;
@@ -15794,7 +15856,7 @@ Begin
          s:=Trim(s);
          MySql:='Select t.Cod_Aux, t.Des_Aux'+
                 ' From TAB_AUXILIAR t'+
-                ' where t.tip_aux=1'+
+                ' where t.tip_aux=1'+ // Demonstrativo de Resultados: Cadastro de Visoes
                 ' And t.Des_Aux='+QuotedStr(AnsiUpperCase(s));
          DMBelShop.CDS_BuscaRapida.Close;
          DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -15822,13 +15884,14 @@ Begin
              // Busca Código da Visão ============================================
              MySql:='Select Coalesce(max(t.cod_aux)+1 ,1) Cod_Visao'+
                     ' From TAB_AUXILIAR t'+
-                    ' where t.tip_aux=1';
+                    ' where t.tip_aux=1'; // Demonstrativo de Resultados: Cadastro de Visoes
              DMBelShop.CDS_BuscaRapida.Close;
              DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
              DMBelShop.CDS_BuscaRapida.Open;
              sCodVisao:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Visao').AsString;
              DMBelShop.CDS_BuscaRapida.Close;
 
+             // Demonstrativo de Resultados: Cadastro de Visoes
              MySql:=' Insert Into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX)'+
                     ' Values (1, '+QuotedStr(sCodVisao)+', '+QuotedStr(AnsiUpperCase(s))+')';
              DMBelShop.SQLC.Execute(MySql, nil, nil);
@@ -18632,7 +18695,7 @@ Begin
 
 // Retira Conforme Solicitação da ANNA - 12/05/2017
 //             ' WHERE c.est_minimo>0'+
-             ' WHERE   t.tip_aux=2'+
+             ' WHERE t.tip_aux=2'+ // Curva ABC
              ' AND   c.cod_loja='+QuotedStr(sCodFilial);
 
              // Produtos Não Compra -------------------------------------
@@ -18932,7 +18995,7 @@ Begin
 
 // Retira Conforme Solicitação da ANNA - 12/05/2017
 //           ' WHERE c.est_minimo>0'+
-           ' WHERE t.tip_aux=2'+
+           ' WHERE t.tip_aux=2'+ // Curva ABC
            ' AND   c.cod_loja='+QuotedStr(sCodFilial);
 
            // Produtos Não Compra -------------------------------------
@@ -21191,7 +21254,7 @@ Begin
             '                                       WHEN c.ind_curva=''E'' THEN 5'+
             '                                    END=t.cod_aux'+
 
-            ' WHERE t.tip_aux=2'+
+            ' WHERE t.tip_aux=2'+ // Curva ABC
 // Retira Conforme Solicitação da ANNA - 12/05/2017
 //            ' AND   c.est_minimo>0'+
             ' AND   c.cod_loja='+QuotedStr(sCodMatriz);
@@ -27901,7 +27964,7 @@ begin
   // Busca Valores da Curva ABC ================================================
   MySql:=' select t.des_aux, t.cod_aux'+
          ' from tab_auxiliar t'+
-         ' where t.tip_aux=2'+
+         ' where t.tip_aux=2'+ // Curva ABC
          ' order by t.des_aux';
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -29711,7 +29774,7 @@ begin
     // Busca Visão do Demonstrativo de Resultados ==============================
     MySql:=' select t.des_aux Des_Visao, t.cod_aux cod_Visao'+
            ' from tab_auxiliar t'+
-           ' where t.tip_aux=1'+
+           ' where t.tip_aux=1'+ // Demonstrativo de Resultados: Cadastro de Visoes
            ' and t.cod_aux='+VarToStr(EdtFinanDemonsResultCodVisao.Value);
     DMBelShop.CDS_Busca.Close;
     DMBelShop.SDS_Busca.CommandText:=MySql;
@@ -29769,7 +29832,7 @@ begin
 
   MySql:=' Select t.des_aux Des_Visao, t.cod_aux cod_Visao'+
          ' From tab_auxiliar t'+
-         ' where t.tip_aux=1'+
+         ' where t.tip_aux=1'+ // Demonstrativo de Resultados: Cadastro de Visoes
          ' order by t.des_aux';
   DMBelShop.CDS_Pesquisa.Close;
   DMBelShop.CDS_Pesquisa.Filtered:=False;
@@ -30468,7 +30531,7 @@ begin
 
     // Busca Visão do Demonstrativo de Resultados ==============================
     MySql:='Delete from tab_auxiliar t'+
-           ' where t.tip_aux=1'+
+           ' where t.tip_aux=1'+ // Demonstrativo de Resultados: Cadastro de Visoes
            ' and t.cod_aux='+IntToStr(EdtFinanDemonsResultCodVisao.AsInteger);
     DMBelShop.SQLC.Execute(MySql, nil, nil);
 
@@ -41883,7 +41946,7 @@ begin
            ' WHERE h.tip_habserv = ''H'''+
            ' AND NOT EXISTS(SELECT 1'+
            '                FROM tab_auxiliar c'+
-           '                WHERE c.tip_aux = 18'+
+           '                WHERE c.tip_aux = 18'+ // SALÂO: Percentuais de Comissão Padrões
            '                AND   c.cod_aux = h.cod_habserv)';
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
@@ -42062,7 +42125,7 @@ begin
          ' Coalesce(t.vlr_aux1,0) Qtd_Min,'+
          ' Coalesce(t.des_aux1,0) Per_Corte'+
          ' FROM TAB_AUXILIAR t'+
-         ' WHERE t.tip_aux=2'+
+         ' WHERE t.tip_aux=2'+ // Curva ABC
          ' ORDER BY t.cod_aux';
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -42283,10 +42346,10 @@ begin
 
       // Salva Valores da Curva ABC ============================================
       MySql:=' DELETE From TAB_AUXILIAR'+
-             ' WHERE tip_aux=2';
+             ' WHERE tip_aux=2'; // Curva ABC
       DMBelShop.SQLC.Execute(MySql, nil, nil);
 
-      // Curva A ----------------------------------------------------
+      // Curva A (Tip_Aux: Curva ABC)-------------------------------------------
       MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1, DES_AUX1)'+
              ' VALUES (2, 1, '+
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaALimite.AsInteger))+', '+
@@ -42295,7 +42358,7 @@ begin
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaACorte.AsInteger))+')';
       DMBelShop.SQLC.Execute(MySql, nil, nil);
 
-      // Curva B ----------------------------------------------------
+      // Curva B (Tip_aux: Curva ABC) ------------------------------------------
       MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1, DES_AUX1)'+
              ' Values (2, 2, '+
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaBLimite.AsInteger))+', '+
@@ -42304,7 +42367,7 @@ begin
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaBCorte.AsInteger))+')';
       DMBelShop.SQLC.Execute(MySql, nil, nil);
 
-      // Curva C ----------------------------------------------------
+      // Curva C (Tip_aux: Curva ABC) ------------------------------------------
       MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1, DES_AUX1)'+
              ' Values (2, 3, '+
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaCLimite.AsInteger))+', '+
@@ -42313,7 +42376,7 @@ begin
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaCCorte.AsInteger))+')';
       DMBelShop.SQLC.Execute(MySql, nil, nil);
 
-      // Curva D ----------------------------------------------------
+      // Curva D (Tip_aux: Curva ABC) ------------------------------------------
       MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1, DES_AUX1)'+
              ' Values (2, 4, '+
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaDLimite.AsInteger))+', '+
@@ -42322,7 +42385,7 @@ begin
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaDCorte.AsInteger))+')';
       DMBelShop.SQLC.Execute(MySql, nil, nil);
 
-      // Curva E ----------------------------------------------------
+      // Curva E (Tip_aux: Curva ABC) ------------------------------------------
       MySql:=' INSERT into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1, DES_AUX1)'+
              ' Values (2, 5, '+
              QuotedStr(IntToStr(FrmSolicitacoes.EdtParamCurvaELimite.AsInteger))+', '+
@@ -43789,7 +43852,7 @@ begin
   // Busca Valores da Curva ABC ================================================
   MySql:=' select t.des_aux, t.cod_aux'+
          ' from tab_auxiliar t'+
-         ' where t.tip_aux=2'+
+         ' where t.tip_aux=2'+ // Curva ABC
          ' order by t.des_aux';
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -44686,7 +44749,7 @@ begin
   // Busca Tabelas a Atualizar nas Lojas =======================================
   MySql:=' SELECT TRIM(t.des_aux) Tabela'+
          ' FROM TAB_AUXILIAR t'+
-         ' WHERE t.tip_aux=12'+
+         ' WHERE t.tip_aux=12'+ // Tabelas a Transferir do CD para Lojas
          ' ORDER BY 1';
   DMBelShop.CDS_Busca.Close;
   DMBelShop.SDS_Busca.CommandText:=MySql;
@@ -46272,10 +46335,6 @@ Begin
     DefinicaoCampos.Add('D0;20;D;#,##0;QTD_LINHAS;QTD LINHAS');
     DefinicaoCampos.Add('D0;20;D;#,##0;QTD_UNIDADES;QTD UNIDADES');
     DefinicaoCampos.Add('D0;30;D;#,##0.00;VLR_TOTAL;VLR TOTAL');
-//    DefinicaoCampos.Add('D0;'+Edit1.Text+';E;;LOJA;LOJA');
-//    DefinicaoCampos.Add('D0;'+Edit2.Text+';D;#,##0;QTD_LINHAS;QTD LINHAS');
-//    DefinicaoCampos.Add('D0;'+Edit3.Text+';D;#,##0;QTD_UNIDADES;QTD UNIDADES');
-//    DefinicaoCampos.Add('D0;'+Edit4.Text+';D;#,##0.00;VLR_TOTAL;VLR TOTAL');
     Execute;
   End; // With DMRelatorio.RelVisual do
 

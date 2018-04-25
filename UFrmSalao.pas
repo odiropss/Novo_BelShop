@@ -1284,7 +1284,7 @@ Begin
          '        CAST(SUBSTRING(c.des_aux FROM 22 FOR 6) AS NUMERIC(3,2)) viamao'+
          ' FROM TAB_AUXILIAR c, SAL_HAB_SERV h'+
          ' WHERE c.cod_aux = h.cod_habserv'+
-         ' AND   c.tip_aux = 18'+
+         ' AND   c.tip_aux = 18'+ // SALÂO: Percentuais de Comissão Padrões
          ' AND   h.tip_habserv = ''H'''+
          ' ORDER BY 2';
   DMBelShop.CDS_BuscaRapida.Close;
@@ -2012,7 +2012,7 @@ Begin
   MySqlDML:=' SELECT p.cod_aux Codigo, p.des_aux Descricao,'+
             ' p.vlr_aux Vlr_Titular, p.vlr_aux1 Vlr_Dependente'+
             ' FROM  tab_auxiliar p'+
-            ' WHERE p.tip_aux=4'+
+            ' WHERE p.tip_aux=4'+ // Plano de Saúde
             ' AND   p.cod_aux<>0';
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySqlDML;
@@ -2076,7 +2076,7 @@ Begin
     // ARREDONDAMENTO ==========================================================
     MySql:=' SELECT max(t.cod_aux) Planilha'+
            ' FROM TAB_AUXILIAR t'+
-           ' WHERE t.tip_aux=7'+
+           ' WHERE t.tip_aux=7'+ // Planilhas de Pagamento a Profissionais de Salão
            ' AND   t.des_aux1 is null'+
            ' AND   SUBSTRING(t.des_aux FROM CHAR_LENGTH(t.des_aux)-1 FOR 2)='+QuotedStr(sCodLoja)+
            ' and   t.cod_aux<'+sNrPlan;
@@ -2249,7 +2249,7 @@ Begin
                                            
     // TAB_AUXILIAR ============================================================
     MySql:=' DELETE FROM TAB_AUXILIAR ta'+
-           ' WHERE ta.tip_aux=7'+
+           ' WHERE ta.tip_aux=7'+ // Planilhas de Pagamento a Profissionais de Salão
            ' AND   ta.cod_aux='+sNrPlan+
            ' AND   ta.des_aux='+QuotedStr(sDesAux);
     DMBelShop.SQLC.Execute(MySql,nil,nil);
@@ -2827,7 +2827,7 @@ Begin
     // Grava Tabela de Calculo de Taxa de Sindicato ============================
     MySql:=' SELECT t.tip_aux'+
            ' FROM  tab_auxiliar t'+
-           ' WHERE t.tip_aux=9'+
+           ' WHERE t.tip_aux=9'+ // Tabela de Calculo de Taxa de Sindicato
            ' AND   t.des_aux='+QuotedStr(f_Troca('.','/',sDta))+
            ' AND   t.des_aux1='+QuotedStr(sCodFilial);
     DMBelShop.CDS_Busca.Close;
@@ -2840,7 +2840,7 @@ Begin
     Begin
       MySql:=' Insert Into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1)'+
              ' Values ('+
-             QuotedStr('9')+','+
+             QuotedStr('9')+','+ // Tabela de Calculo de Taxa de Sindicato
              ' (SELECT COALESCE(MAX(t.Cod_Aux)+1 ,1) FROM TAB_AUXILIAR t WHERE t.tip_aux=9),'+
              QuotedStr(f_Troca('.','/',sDta))+', '+
              QuotedStr(sCodFilial)+')';
@@ -2849,7 +2849,7 @@ Begin
 
     // Exclui Tabela de Calculo de Taxa de Sindicato ===========================
     MySql:=' DELETE FROM tab_auxiliar t'+
-           ' WHERE t.tip_aux=9'+
+           ' WHERE t.tip_aux=9'+ // Tabela de Calculo de Taxa de Sindicato
            ' AND NOT EXISTS (SELECT 1'+
            ' FROM ps_vales_pessoas i'+
            ' WHERE i.tp_pessoa=1'+
@@ -2996,7 +2996,7 @@ Begin
     // Grava Tabela de Calculo de Contribuição INSS =================
     MySql:=' SELECT t.tip_aux'+
            ' FROM  tab_auxiliar t'+
-           ' WHERE t.tip_aux=5'+
+           ' WHERE t.tip_aux=5'+ // Tabela de Calculo de Contribuição INSS
            ' AND   t.des_aux='+QuotedStr(f_Troca('.','/',sDta))+
            ' AND   t.des_aux1='+QuotedStr(sCodFilial);
     DMBelShop.CDS_Busca.Close;
@@ -3009,7 +3009,7 @@ Begin
     Begin
       MySql:=' Insert Into TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1)'+
              ' Values ('+
-             QuotedStr('5')+','+
+             QuotedStr('5')+','+ // Tabela de Calculo de Contribuição INSS
              ' (SELECT COALESCE(MAX(t.Cod_Aux)+1 ,1) FROM TAB_AUXILIAR t WHERE t.tip_aux=5),'+
              QuotedStr(f_Troca('.','/',sDta))+', '+
              QuotedStr(sCodFilial)+')';
@@ -3018,7 +3018,7 @@ Begin
 
     // Exclui Tabela de Calculo de Contribuição INSS =================
     MySql:=' DELETE FROM tab_auxiliar t'+
-           ' WHERE t.tip_aux=5'+
+           ' WHERE t.tip_aux=5'+ // Tabela de Calculo de Contribuição INSS
            ' AND NOT EXISTS (SELECT 1'+
            ' FROM ps_vales_pessoas i'+
            ' WHERE i.tp_pessoa=1'+
@@ -4140,7 +4140,7 @@ Begin
 
                 MySql:=' SELECT t.tip_aux'+
                        ' FROM TAB_AUXILIAR t'+
-                       ' WHERE t.tip_aux=10'+
+                       ' WHERE t.tip_aux=10'+ // Códigos TecBiz (Atual e Anteriores) - Usar para Cobrança de Arquivo TecBiz
                        ' AND   t.cod_aux='+sMatriculaTecBiz;  // Código TecBiz
                 DMBelShop.CDS_Pesquisa.Close;
                 DMBelShop.SDS_Pesquisa.CommandText:=MySql;
@@ -4149,7 +4149,7 @@ Begin
                 If Trim(DMBelShop.CDS_Pesquisa.FieldByName('Tip_Aux').AsString)='' Then
                  Begin
                    MySql:=' INSERT INTO TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1)'+
-                          ' Values (10,'+ // Tip_Aux
+                          ' Values (10,'+ // Tip_Aux - Códigos TecBiz (Atual e Anteriores) - Usar para Cobrança de Arquivo TecBiz
                           sMatriculaTecBiz+', '+ // Código TecBiz
                           QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString))+', '+ // Cod_Loja
                           QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Profissional').AsString))+ // Código Profissional
@@ -4160,7 +4160,7 @@ Begin
                    MySql:=' UPDATE TAB_AUXILIAR t'+
                           ' SET t.DES_AUX='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString))+ // Cod_Loja
                           ', t.DES_AUX1='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Profissional').AsString))+ // Código Profissional
-                          ' WHERE t.tip_aux=10'+
+                          ' WHERE t.tip_aux=10'+ // Códigos TecBiz (Atual e Anteriores) - Usar para Cobrança de Arquivo TecBiz
                           ' AND   t.cod_aux='+sMatriculaTecBiz;  // Código TecBiz
                  End; // If Trim(DMBelShop.CDS_Pesquisa.FieldByName('Tip_Aux').AsString)='' Then
                 DMBelShop.SQLC.Execute(MySql,nil,nil);
@@ -4258,7 +4258,7 @@ Begin
          '                 FROM SAL_PROFISSIONAIS pf, tab_auxiliar ta'+
          '                 WHERE pf.cod_loja=ta.des_aux'+
          '                 AND   pf.cod_profissional=ta.des_aux1'+
-         '                 AND   ta.tip_aux=10'+
+         '                 AND   ta.tip_aux=10'+ // Códigos TecBiz (Atual e Anteriores) - Usar para Cobrança de Arquivo TecBiz
          '                 AND   pf.tip_pessoa='+QuotedStr('P')+
          '                 AND   pf.ind_Ativo='+QuotedStr('SIM')+
          '                 AND   tb.cod_tecbiz=LPAD(ta.cod_aux,5,0))'+
@@ -4446,7 +4446,7 @@ Begin
                   ' WHERE pf.cod_loja=ta.des_aux'+
                   ' AND   pf.cod_profissional=ta.des_aux1'+
                   ' AND   tb.cod_tecbiz=lpad(ta.cod_aux,5,0)'+
-                  ' AND   ta.tip_aux=10'+
+                  ' AND   ta.tip_aux=10'+ // Códigos TecBiz (Atual e Anteriores) - Usar para Cobrança de Arquivo TecBiz
                   ' AND   tb.ind_pago='+QuotedStr('NAO')+
                   ' AND   pf.tip_pessoa='+QuotedStr('P')+
                   ' AND   pf.ind_Ativo='+QuotedStr('SIM')+
@@ -6885,7 +6885,7 @@ Begin
 
                ' WHERE p.cod_loja=t.des_aux'+
                ' AND   p.cod_profissional=t.des_aux1'+
-               ' AND   t.tip_aux=10'+
+               ' AND   t.tip_aux=10'+ // Códigos TecBiz (Atual e Anteriores) - Usar para Cobrança de Arquivo TecBiz
                ' AND   t.cod_aux='+DMSalao.CDS_ProfissionaisNUM_MATRICULA_TECBIZ.AsString+
                ' AND   NOT (p.cod_profissional='+QuotedStr(DMSalao.CDS_ProfissionaisCOD_PROFISSIONAL.AsString)+
                '            AND p.cod_loja='+QuotedStr(DMSalao.CDS_ProfissionaisCOD_LOJA.AsString)+')';
@@ -7418,7 +7418,7 @@ Begin
   EdtCadProfDesPlanoSaude.Clear;
   MySql:=' SELECT p.des_aux'+
          ' FROM tab_auxiliar p'+
-         ' WHERE p.tip_aux=4'+
+         ' WHERE p.tip_aux=4'+ // Plano de Saúde
          ' AND   p.cod_aux='+DMSalao.CDS_ProfissionaisCOD_PLANO_SAUDE.AsString;
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -8191,7 +8191,7 @@ begin
 
     // Exclui Codigo TecBiz -----------------------------------------
     MySql:=' DELETE FROM tab_auxiliar t'+
-           ' WHERE t.tip_aux=10'+
+           ' WHERE t.tip_aux=10'+ // Códigos TecBiz (Atual e Anteriores) - Usar para Cobrança de Arquivo TecBiz
            ' AND t.cod_aux='+QuotedStr(DMSalao.CDS_ProfissionaisNUM_MATRICULA_TECBIZ.AsString)+
            ' AND t.des_aux='+QuotedStr(FormatFloat('00',EdtCodLoja.AsInteger))+
            ' AND t.des_aux1='+QuotedStr(DMSalao.CDS_ProfissionaisCOD_PROFISSIONAL.AsString);
@@ -8199,7 +8199,7 @@ begin
 
     // Exclui Numero de Dependentes ----------------------------------
     MySql:=' DELETE FROM tab_auxiliar t'+
-           ' WHERE t.tip_aux=6'+
+           ' WHERE t.tip_aux=6'+ // Numero de Dependencia no Plano de Saude
            ' AND t.cod_aux='+QuotedStr(DMSalao.CDS_ProfissionaisCOD_PROFISSIONAL.AsString)+
            ' AND t.des_aux='+QuotedStr(FormatFloat('00',EdtCodLoja.AsInteger));
     DMBelShop.SQLC.Execute(MySql, Nil, Nil);
@@ -9329,7 +9329,7 @@ begin
     // Atualiza Tab_Auxiliar - Codigos TecBiz ==================================
     s:='TAB_AUXILIAR 10 TECBIZ - DELETE';
     MySqlDML:=' DELETE FROM TAB_AUXILIAR t'+
-              ' WHERE t.tip_aux=10'+
+              ' WHERE t.tip_aux=10'+ // Códigos TecBiz (Atual e Anteriores) - Usar para Cobrança de Arquivo TecBiz
               ' AND   t.des_aux='+QuotedStr(DMSalao.CDS_ProfissionaisCOD_LOJA.AsString)+ // Cod_Loja
               ' AND   t.des_aux1='+QuotedStr(DMSalao.CDS_ProfissionaisCOD_PROFISSIONAL.AsString); // Cod_Profissional
     DMBelShop.SQLC.Execute(MySqlDML,nil,nil);
@@ -9338,7 +9338,7 @@ begin
     Begin
       s:='TAB_AUXILIAR 10 TECBIZ - INSERT';
       MySqlDML:=' INSERT INTO TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1)'+
-                ' Values (10,'+ // Tip_Aux
+                ' Values (10,'+ // Tip_Aux - Códigos TecBiz (Atual e Anteriores) - Usar para Cobrança de Arquivo TecBiz
                 QuotedStr(DMSalao.CDS_ProfissionaisNUM_MATRICULA_TECBIZ.AsString)+', '+ // Código TecBiz
                 QuotedStr(DMSalao.CDS_ProfissionaisCOD_LOJA.AsString)+', '+ // Cod_Loja
                 QuotedStr(DMSalao.CDS_ProfissionaisCOD_PROFISSIONAL.AsString)+ // Código Profissional
@@ -9421,7 +9421,7 @@ begin
     // Numero de Dependentes ===================================================
     s:='TAB_AUXILIAR 6 - DELETE';
     MySql:=' Delete FROM TAB_AUXILIAR dp'+
-           ' WHERE dp.tip_aux=6'+
+           ' WHERE dp.tip_aux=6'+ // Numero de Dependencia no Plano de Saude
            ' AND   dp.cod_aux='+DMSalao.CDS_ProfissionaisCOD_PROFISSIONAL.AsString+
            ' And   dp.des_aux='+QuotedStr(DMSalao.CDS_ProfissionaisCOD_LOJA.AsString);
        sgMensagem:='MySql';
@@ -9433,7 +9433,7 @@ begin
     s:='TAB_AUXILIAR 6 - insert';
       MySql:=' INSERT INTO TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX)'+
              ' Values ('+
-             QuotedStr('6')+', '+
+             QuotedStr('6')+', '+ // Numero de Dependencia no Plano de Saude
              DMSalao.CDS_ProfissionaisCOD_PROFISSIONAL.AsString+', '+
              QuotedStr(DMSalao.CDS_ProfissionaisCOD_LOJA.AsString)+', '+
              QuotedStr(IntToStr(DMSalao.CDS_V_Dependentes.RecordCount))+')';
@@ -10683,7 +10683,7 @@ begin
     // Busca Plano de Saude ====================================================
     MySql:=' SELECT ps.des_aux, ps.cod_aux, ps.vlr_aux Vlr_Titular, ps.vlr_aux1 Vlr_Dependente'+
            ' FROM TAB_AUXILIAR ps'+
-           ' WHERE ps.tip_aux=4'+
+           ' WHERE ps.tip_aux=4'+ // Plano de Saúde
            ' AND ps.cod_aux='+DMSalao.CDS_ProfissionaisCOD_PLANO_SAUDE.AsString;
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -10746,7 +10746,7 @@ begin
   MySql:=' SELECT ps.des_aux Plano_Saude, ps.cod_aux Codigo,'+
          ' ps.vlr_aux Vlr_Titular, ps.vlr_aux1 Vlr_Dependente'+
          ' FROM tab_auxiliar ps'+
-         ' WHERE ps.tip_aux=4'+
+         ' WHERE ps.tip_aux=4'+ // Plano de Saúde
          ' AND   ps.cod_aux<>0'+
          ' ORDER BY ps.des_aux';
   DMBelShop.CDS_Pesquisa.Close;
@@ -10849,7 +10849,7 @@ begin
     // Verifica se Existe Plano de Saude ==================================
     MySql:=' SELECT ps.des_aux'+
            ' FROM tab_auxiliar ps'+
-           ' WHERE ps.tip_aux=4'+
+           ' WHERE ps.tip_aux=4'+ // Plano de Saúde
            ' AND ps.des_aux='+QuotedStr(Trim(FrmSolicitacoes.EdtDesc2.Text));
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -10883,7 +10883,7 @@ begin
 
     MySqlDML:=' INSERT INTO TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, VLR_AUX, VLR_AUX1)'+
               ' VALUES ('+
-              QuotedStr('4')+', '+
+              QuotedStr('4')+', '+ // Plano de Saúde
               ' (SELECT COALESCE(MAX(p.cod_aux)+1 ,1) Cod FROM tab_auxiliar p WHERE p.tip_aux=4), '+
               QuotedStr(Trim(FrmSolicitacoes.EdtDesc2.Text))+', '+
               QuotedStr(F_Troca(',','.',ZerosCentavos(FrmSolicitacoes.EdtDesc9.Text,2)))+', '+
@@ -10899,7 +10899,7 @@ begin
     Begin
       MySql:=' SELECT ps.des_aux, ps.cod_aux, ps.vlr_aux Vlr_Titular, ps.vlr_aux1 Vlr_Dependente'+
              ' FROM tab_auxiliar ps'+
-             ' WHERE ps.tip_aux=4'+
+             ' WHERE ps.tip_aux=4'+ // Plano de Saúde
              ' AND ps.des_aux='+QuotedStr(Trim(FrmSolicitacoes.EdtDesc2.Text));
        DMBelShop.CDS_BuscaRapida.Close;
        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -10955,7 +10955,7 @@ begin
 
   MySql:=' SELECT ps.vlr_aux1 Vlr_Dependente'+
          ' FROM tab_auxiliar ps'+
-         ' WHERE ps.tip_aux=4'+
+         ' WHERE ps.tip_aux=4'+ // Plano de Saúde
          ' AND ps.cod_aux='+DMSalao.CDS_ProfissionaisCOD_PLANO_SAUDE.AsString;
    DMBelShop.CDS_BuscaRapida.Close;
    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -15519,8 +15519,8 @@ begin
   // ========== EXECUTA QUERY PARA PESQUISA ====================================
   Screen.Cursor:=crAppStart;
 
-  If sgINSS_PS='I' Then sTp:='5';
-  If sgINSS_PS='S' Then sTp:='9';
+  If sgINSS_PS='I' Then sTp:='5'; // Tabela de Calculo de Contribuição INSS
+  If sgINSS_PS='S' Then sTp:='9'; // Tabela de Calculo de Taxa de Sindicato
 
   MySql:=' SELECT t.des_aux Dta_Pagto, t.cod_aux Planilha'+
          ' FROM TAB_AUXILIAR t'+
@@ -16488,7 +16488,7 @@ begin
     // Guarda Numero da Planilha ===============================================
     MySqlDML:=' INSERT INTO TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX)'+
               ' Values ('+
-              QuotedStr('7')+','+
+              QuotedStr('7')+','+ // Planilhas de Pagamento a Profissionais de Salão
               QuotedStr(sNumPlan)+','+
               QuotedStr(f_Troca('.','/',sgPeriodoIni)+' a '+f_Troca('.','/',sgPeriodoFim)+' - '+
                         FormatFloat('00',EdtPagtoCodLoja.AsInteger))+')';
@@ -16678,7 +16678,7 @@ begin
   // Planilhas de Pagamento a Profissionais de Salão
   MySql:=' SELECT t.des_aux'+
          ' FROM  TAB_AUXILIAR t'+
-         ' WHERE t.tip_aux=7'+
+         ' WHERE t.tip_aux=7'+ // Planilhas de Pagamento a Profissionais de Salão
          ' AND   t.des_aux1 is null'+
          ' AND   t.cod_aux='+VarToStr(EdtPagtoCodPlan.Value)+
          ' AND   SUBSTRING(t.des_aux FROM CHAR_LENGTH(t.des_aux)-1 FOR 2)='+QuotedStr(FormatFloat('00',StrToInt(EdtPagtoCodLoja.text)));
@@ -16846,7 +16846,7 @@ begin
   DMBelShop.CDS_Pesquisa.Close;
   MySql:=' SELECT t.cod_aux Planilha, SUBSTRING(t.des_aux FROM 1 FOR 23) Periodo'+
          ' FROM TAB_AUXILIAR t'+
-         ' WHERE t.tip_aux=7'+
+         ' WHERE t.tip_aux=7'+ // Planilhas de Pagamento a Profissionais de Salão
          ' AND   t.des_aux1 is null'+
          ' AND   SUBSTRING(t.des_aux FROM CHAR_LENGTH(t.des_aux)-1 FOR 2)='+QuotedStr(FormatFloat('00',StrToInt(EdtPagtoCodLoja.text)))+
          ' Order by t.cod_aux Desc';
@@ -17360,7 +17360,7 @@ begin
       Begin
         MySqlDML:=' INSERT INTO TAB_AUXILIAR (tip_aux, cod_aux, des_aux, vlr_aux, vlr_aux1)'+
                   ' VALUES ('+
-                  QuotedStr('4')+', '+
+                  QuotedStr('4')+', '+ // Plano de Saúde
                   QuotedStr(Trim(FrmSolicitacoes.EdtDesc1.Text))+', '+
                   QuotedStr(Trim(FrmSolicitacoes.EdtDesc2.Text))+', '+
                   QuotedStr(F_Troca(',','.',ZerosCentavos(FrmSolicitacoes.EdtDesc9.Text,2)))+', '+
@@ -17374,7 +17374,7 @@ begin
                   ' SET des_aux ='+QuotedStr(Trim(FrmSolicitacoes.EdtDesc2.Text))+
                   ',    vlr_aux ='+QuotedStr(F_Troca(',','.',ZerosCentavos(FrmSolicitacoes.EdtDesc9.Text,2)))+
                   ',    vlr_aux1='+QuotedStr(F_Troca(',','.',ZerosCentavos(FrmSolicitacoes.EdtDesc10.Text,2)))+
-                  ' WHERE tip_aux=4'+
+                  ' WHERE tip_aux=4'+ // Plano de Saúde
                   ' AND cod_aux='+QuotedStr(Trim(FrmSolicitacoes.EdtDesc1.Text));
       End;
       DMBelShop.SQLC.Execute(MySqlDML,nil,nil);
@@ -17488,7 +17488,7 @@ begin
     DecimalSeparator:='.';
 
     MySql:=' DELETE FROM TAB_AUXILIAR t'+
-           ' WHERE t.tip_aux=4'+
+           ' WHERE t.tip_aux=4'+ // Plano de Saúde
            ' AND t.cod_aux='+DMSalao.CDS_V_ManutPlSaudeCod_Plano.AsString;
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
@@ -18654,12 +18654,12 @@ begin
          ' Trim(t.des_aux) des_aux'+
 
          ' FROM TAB_AUXILIAR t'+
-         ' WHERE t.tip_aux=7'+
+         ' WHERE t.tip_aux=7'+ // Planilhas de Pagamento a Profissionais de Salão
          ' AND   t.des_aux1 IS NULL'+
          ' AND   SUBSTRING(t.des_aux FROM CHAR_LENGTH(t.des_aux)-1 FOR 2)='+QuotedStr(sCodLoja)+
          ' AND   t.cod_aux= (SELECT MAX(t1.cod_aux) cod_aux'+
          '                   FROM TAB_AUXILIAR t1'+
-         '                   WHERE t1.tip_aux=7'+
+         '                   WHERE t1.tip_aux=7'+ // Planilhas de Pagamento a Profissionais de Salão
          '                   AND   t1.des_aux1 IS NULL'+
          '                   AND   SUBSTRING(t1.des_aux FROM CHAR_LENGTH(t1.des_aux)-1 FOR 2)='+QuotedStr(sCodLoja)+')';
   DMBelShop.CDS_BuscaRapida.Close;
@@ -19886,7 +19886,7 @@ begin
 
       MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR'+
              ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
-             ' VALUES (18, '+
+             ' VALUES (18, '+ // SALÂO: Percentuais de Comissão Padrões
                        DMSalao.CDS_V_ComissoesLojasCOD_HABSERV.AsString+', '+
                        QuotedStr(s)+', '+
                        'NULL, NULL, NULL)'+

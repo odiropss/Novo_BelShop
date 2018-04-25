@@ -454,7 +454,7 @@ Begin
 
   MySql:=' SELECT COALESCE(MAX(CAST(t.des_aux AS INTEGER)),1) Seq'+
          ' FROM TAB_AUXILIAR t'+
-         ' WHERE t.tip_aux=23';
+         ' WHERE t.tip_aux=23'; // AVARIAS - ENDEREÇAMENTO DE FORNECEDORE
   DMBelShop.CDS_Busca1.Close;
   DMBelShop.SDS_Busca1.CommandText:=MySql;
   DMBelShop.CDS_Busca1.Open;
@@ -475,7 +475,7 @@ Begin
     MySql:=' INSERT INTO TAB_AUXILIAR'+
            ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
            ' VALUES ('+ //23, 545, '1', NULL, NULL, NULL);
-           ' 23,'+ // TIP_AUX
+           ' 23,'+ // TIP_AUX - AVARIAS - ENDEREÇAMENTO DE FORNECEDORE
            sCodForn+', '+ // COD_AUX
            IntToStr(iSeq)+', '+ // DES_AUX
            ' NULL, '+ // DES_AUX1
@@ -6419,7 +6419,7 @@ begin
 
     MySql:=' UPDATE TAB_AUXILIAR ni'+
            ' SET ni.cod_aux='+VarToStr(EdtReposLojasQtdItensPed.AsInteger)+
-           ' WHERE ni.tip_aux=11';
+           ' WHERE ni.tip_aux=11'; // Número Máximo de Itens no Pedido SIDICOM
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
     // Atualiza Transacao ======================================================
@@ -6534,7 +6534,7 @@ begin
     // Busca o Numero Máximo de Itens no Pedido SIDICOM ==========================
     MySql:=' SELECT ni.cod_aux Nr_Reg'+
            ' FROM TAB_AUXILIAR ni'+
-           ' WHERE ni.tip_aux=11';
+           ' WHERE ni.tip_aux=11'; // Número Máximo de Itens no Pedido SIDICOM
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
@@ -8586,7 +8586,7 @@ begin
   MySql:=
    MySql+' AND   NOT EXISTS (SELECT 1'+
          '                   FROM TAB_AUXILIAR e'+
-         '                   WHERE e.tip_aux=23'+
+         '                   WHERE e.tip_aux=23'+ // AVARIAS - ENDEREÇAMENTO DE FORNECEDOR
          '                   AND e.cod_aux=p.cod_fornecedor)';
   DMBelShop.CDS_Busca.Close;
   DMBelShop.SDS_Busca.CommandText:=MySql;
@@ -8614,7 +8614,7 @@ begin
          ' FROM LINXMOVIMENTO m'+
          '   LEFT JOIN LINXPRODUTOS p        ON p.cod_produto=m.cod_produto'+
          '   LEFT JOIN LINXCLIENTESFORNEC f  ON f.cod_cliente=p.cod_fornecedor'+
-         '   LEFT JOIN TAB_AUXILIAR e        ON e.tip_aux=23'+
+         '   LEFT JOIN TAB_AUXILIAR e        ON e.tip_aux=23'+ // AVARIAS - ENDEREÇAMENTO DE FORNECEDOR
          '                                  AND e.cod_aux=p.cod_fornecedor'+
 
          ' WHERE m.codigo_cliente=13'+
@@ -8802,7 +8802,7 @@ begin
          '     LEFT JOIN LINXLOJAS l           ON l.empresa=m.empresa'+
          '     LEFT JOIN LINXPRODUTOS p        ON p.cod_produto=m.cod_produto'+
          '     LEFT JOIN LINXCLIENTESFORNEC f  ON f.cod_cliente=p.cod_fornecedor'+
-         '     LEFT JOIN TAB_AUXILIAR e        ON e.tip_aux=23'+
+         '     LEFT JOIN TAB_AUXILIAR e        ON e.tip_aux=23'+ // AVARIAS - ENDEREÇAMENTO DE FORNECEDOR
          '                                    AND e.cod_aux=p.cod_fornecedor'+
 
          ' WHERE m.codigo_cliente=13'+

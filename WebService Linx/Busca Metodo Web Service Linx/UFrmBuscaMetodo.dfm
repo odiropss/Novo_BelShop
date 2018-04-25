@@ -113,6 +113,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 2
+      Text = 'LINXMOVIMENTO'
     end
     object EdtDesLoja: TEdit
       Left = 328

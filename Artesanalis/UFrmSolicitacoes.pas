@@ -71,7 +71,8 @@ uses
   dxSkinXmas2008Blue, JvExControls, JvXPCore, JvXPButtons, ExtCtrls,
   StdCtrls, Mask, ToolEdit, CurrEdit, cxTextEdit, cxMaskEdit,
   Commctrl, // SHOW HINT EM FORMA DE BALÃO
-  cxDropDownEdit, cxCalendar, ComCtrls, DBXpress;
+  cxDropDownEdit, cxCalendar, ComCtrls, DBXpress, RXCtrls, JvExStdCtrls,
+  JvRadioButton, RelVisual, JvEdit, JvValidateEdit;
 
 type
   TFrmSolicitacoes = class(TForm)
@@ -96,6 +97,43 @@ type
     Gb_Desembolso: TGroupBox;
     Rb_DesembolsoLixissse: TRadioButton;
     Rb_DesembolsoBelshop: TRadioButton;
+    Ts_CP_Relatorio: TTabSheet;
+    Gb_Relatorio: TGroupBox;
+    Gb_TipoConta: TGroupBox;
+    Rb_APagar: TJvRadioButton;
+    Rb_Pagas: TJvRadioButton;
+    Pan_TipoPesquisa: TPanel;
+    Label7: TLabel;
+    Rb_PesqDtaVencto: TJvRadioButton;
+    Rb_PesqDtaPagto: TJvRadioButton;
+    Bt_Imprimir: TJvXPButton;
+    Gb_Periodo: TGroupBox;
+    Label6: TLabel;
+    DtEdt_DtaFim: TcxDateEdit;
+    DtEdt_DtaInicio: TcxDateEdit;
+    Pan_Desembolso: TPanel;
+    Lab_Desembolso: TLabel;
+    Ckb_Desembolso: TRxCheckListBox;
+    v1: TJvValidateEdit;
+    v2: TJvValidateEdit;
+    a3: TEdit;
+    a2: TEdit;
+    a1: TEdit;
+    v3: TJvValidateEdit;
+    v4: TJvValidateEdit;
+    a4: TEdit;
+    a5: TEdit;
+    v5: TJvValidateEdit;
+    v6: TJvValidateEdit;
+    a6: TEdit;
+    a7: TEdit;
+    v7: TJvValidateEdit;
+    v8: TJvValidateEdit;
+    a8: TEdit;
+    a9: TEdit;
+    v9: TJvValidateEdit;
+    a11: TEdit;
+    v11: TJvValidateEdit;
     procedure Bt_OKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Bt_RetornarClick(Sender: TObject);
@@ -115,6 +153,16 @@ type
     Function  CP_InsereHistorico: Boolean;
     procedure Rb_DesembolsoLixissseClick(Sender: TObject);
     procedure Rb_DesembolsoLixissseKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Rb_APagarClick(Sender: TObject);
+    procedure Rb_APagarKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Rb_PesqDtaVenctoClick(Sender: TObject);
+    procedure Rb_PesqDtaVenctoKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Bt_ImprimirClick(Sender: TObject);
+    procedure Ckb_DesembolsoClick(Sender: TObject);
+    procedure Ckb_DesembolsoKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
 
     // Odir ====================================================================
@@ -146,7 +194,7 @@ var
 
 implementation
 
-uses DK_Procs1, UPesquisa, UDMArtesanalis, DB;
+uses DK_Procs1, UPesquisa, UDMArtesanalis, DB, UDMRelatorios;
 
 {$R *.dfm}
 
@@ -371,6 +419,7 @@ begin
   {
   Usado em:
   Ts_CP_CadastroHistoticos
+  Ts_CP_Relatorio
   }
 
   Close;
@@ -481,6 +530,338 @@ end;
 procedure TFrmSolicitacoes.Rb_DesembolsoLixissseKeyUp(Sender: TObject;var Key: Word; Shift: TShiftState);
 begin
   Rb_DesembolsoLixissseClick(Self);
+end;
+
+procedure TFrmSolicitacoes.Rb_APagarClick(Sender: TObject);
+Var
+  i: Integer;
+begin
+  AcertaRb_Style(Rb_APagar);
+  AcertaRb_Style(Rb_Pagas);
+
+                                          Pan_TipoPesquisa.Visible:=False;
+  If Rb_APagar.Checked Then
+  Begin
+    For i:=0 to Ckb_Desembolso.Items.Count-1 do
+     Ckb_Desembolso.Checked[i]:=False;
+  End;
+
+  If Rb_Pagas.Checked Then
+  Begin
+    Rb_PesqDtaVencto.Checked:=True;
+    Pan_TipoPesquisa.Visible:=True;
+  End;
+end;
+
+procedure TFrmSolicitacoes.Rb_APagarKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  Rb_APagarClick(Self);
+
+end;
+
+procedure TFrmSolicitacoes.Rb_PesqDtaVenctoClick(Sender: TObject);
+begin
+  AcertaRb_Style(Rb_PesqDtaPagto);
+  AcertaRb_Style(Rb_PesqDtaVencto);
+
+end;
+
+procedure TFrmSolicitacoes.Rb_PesqDtaVenctoKeyUp(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  Rb_PesqDtaVenctoClick(Self);
+
+end;
+
+procedure TFrmSolicitacoes.Bt_ImprimirClick(Sender: TObject);
+Var
+  i: Integer;
+
+  sDesembolso,
+  MySql: String;
+begin
+  // Data Inicio do Periodo=====================================================
+  Try
+    StrToDate(DtEdt_DtaInicio.Text);
+  Except
+    msg('Data do Início do Período'+cr+cr+'é Inválida !!','A');
+    DtEdt_DtaInicio.SetFocus;
+    Exit;
+  End;
+
+  // Data Fim do Periodo========================================================
+  try
+    StrToDate(DtEdt_DtaFim.Text);
+  Except
+    msg('Data do Fim do Período'+cr+cr+'é Inválida !!','A');
+    DtEdt_DtaFim.SetFocus;
+    Exit;
+  End;
+
+  If DtEdt_DtaInicio.Date>DtEdt_DtaFim.Date Then
+  Begin
+    msg('Data de Final MENOR'+cr+cr+'Que Data Inicial do Período !!','A');
+    DtEdt_DtaInicio.SetFocus;
+    Exit;
+  End;
+
+  OdirPanApres.Caption:='AGUARDE !! Preparando Relatório de Contas a Pagar...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmSolicitacoes;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Tipo de Empresa de Desembolso =============================================
+  sDesembolso:='';
+  for i:=0 to Ckb_Desembolso.Items.Count - 1 do
+  Begin
+   if Ckb_Desembolso.Checked[i] Then
+   Begin
+     // Lixisse ===============================
+     If i=1 Then
+     Begin
+       If sDesembolso<>'' Then
+        sDesembolso:=sDesembolso+', '+QuotedStr('L');
+
+       If sDesembolso='' Then
+        sDesembolso:=QuotedStr('L');
+     End; // If i=1 Then
+
+     // BeShop ===============================
+     If i=2 Then
+     Begin
+       If sDesembolso<>'' Then
+        sDesembolso:=sDesembolso+', '+QuotedStr('B');
+
+       If sDesembolso='' Then
+        sDesembolso:=QuotedStr('B');
+     End; // If i=1 Then
+   End; // if Ckb_Desembolso.Checked[i] Then
+  End; // for i:=0 to Ckb_Desembolso.Count - 1 do
+
+  // Busca Doctos ==============================================================
+  MySql:=' SELECT ff.dta_pagamento, ff.dta_vencimento,';
+
+
+  MySql:=
+   MySql+' ps.des_pessoa nome,'+
+         ' ff.dta_emissao,'+
+         ' ff.num_docto,'+
+         ' hi.des_historico,'+
+         ' ff.vlr_original,'+
+         ' ff.num_prestacoes,'+
+         ' ff.num_prestacao,'+
+         ' ff.vlr_prestacao,'+
+         ' ff.vlr_pagamento,';
+
+         If (Rb_Pagas.Checked) and (Rb_PesqDtaPagto.Checked) Then
+          MySql:=
+           MySql+' ff.dta_pagamento,'
+         Else
+          MySql:=
+           MySql+' ff.dta_vencimento,';
+
+  MySql:=
+   MySql+' CASE'+
+         '     WHEN ff.ind_desembolso=''A'' THEN'+
+         '       ''Ambas'''+
+         '     WHEN ff.ind_desembolso=''B'' THEN'+
+         '       ''BelShop'''+
+         '     WHEN ff.ind_desembolso=''L'' THEN'+
+         '       ''Lixisse'''+
+         ' END Desembolso,'+
+         ' ff.obs_texto'+
+
+         ' FROM FLUXO_FINANCEIRO ff, PESSOAS ps, PLANO_CONTAS hi'+
+
+         ' WHERE ff.cod_fornecedor=ps.cod_pessoa'+
+         ' AND   ff.cod_historico=hi.cod_historico';
+
+         If (Rb_Pagas.Checked) and (Rb_PesqDtaPagto.Checked) Then
+          MySql:=
+           MySql+' AND   ff.dta_pagamento BETWEEN '
+         Else
+          MySql:=
+           MySql+' AND   ff.dta_vencimento BETWEEN ';
+
+  MySql:=
+   MySql+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaInicio.Date))))+' AND '+
+         QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaFim.Date))));
+
+         If Rb_Pagas.Checked Then
+          MySql:=
+           MySql+' AND   ff.vlr_pagamento>0.00';
+
+         If Rb_APagar.Checked Then
+          MySql:=
+           MySql+' AND   ff.vlr_pagamento=0.00';
+
+         If sDesembolso<>'' Then
+          MySql:=
+           MySql+' AND   ff.ind_desembolso in ('+sDesembolso+')';
+
+           If (Rb_Pagas.Checked) and (Rb_PesqDtaPagto.Checked) Then
+            MySql:=
+             MySql+' ORDER BY 1,4'
+           Else
+            MySql:=
+             MySql+' ORDER BY 2,4';
+  DMArtesanalis.CDS_Busca.Close;
+  DMArtesanalis.SQLQ_Busca.Close;
+  DMArtesanalis.SQLQ_Busca.SQL.Clear;
+  DMArtesanalis.SQLQ_Busca.SQL.Add(MySql);
+  DMArtesanalis.CDS_Busca.Open;
+
+  If Trim(DMArtesanalis.CDS_Busca.FieldByName('dta_emissao').AsString)='' Then
+  Begin
+    OdirPanApres.Visible:=False;
+    DMArtesanalis.CDS_Busca.Close;
+    msg('Sem Doctos a Listar no período Solicitado !!','A');
+    Exit;
+  End;
+
+  With DMRelatorios.RelVisual do
+  Begin
+    ClientDataSet:=DMArtesanalis.CDS_Busca;
+    Destino:=toVisualiza;
+    Orientacao:=toPaisagem;
+
+    Fonte.Assign(DMRelatorios.FontDialog.Font);
+
+    RodapeGrupo:=True;
+
+    TextoRodape:='';
+    TextoRodapeGrupo:='';
+    Zoom:=160;
+
+    ImprimirTarjaCinza:=False;
+    ImprimirVisto:=False;
+
+    Cabecalho1Esquerda:='LÍXISSE';
+    If Rb_APagar.Checked Then Cabecalho1Centro:='CONTAS A PAGAR';
+    If Rb_Pagas.Checked Then  Cabecalho1Centro:='CONTAS PAGAS';
+    Cabecalho1Direita:='#Data';
+
+    Cabecalho2Esquerda:='Período de '+DateToStr(DtEdt_DtaInicio.Date)+' a '+DateToStr(DtEdt_DtaFim.Date);
+    Cabecalho2Centro:=EmptyStr;
+    Cabecalho2Direita:=EmptyStr;
+
+    Cabecalho3Esquerda:=EmptyStr;
+    Cabecalho3Centro:=EmptyStr;
+    Cabecalho3Direita:=EmptyStr;
+
+    // Monta Relatório =========================================================
+    DefinicaoCampos.Clear;
+
+    //==========================================================================
+    // Somente Contas A Pagar ==================================================
+    //==========================================================================
+    If (Rb_APagar.Checked) Then
+    Begin
+      DefinicaoCampos.Add('D0;62;E;;NOME;Nome'); // v1 a1
+      DefinicaoCampos.Add('D0;18;E;;DTA_EMISSAO;Emissão'); // v2 a2
+      DefinicaoCampos.Add('D0;12;D;;NUM_DOCTO;Docto');   // v3 a3
+      DefinicaoCampos.Add('D0;62;E;;DES_HISTORICO;Histórico');   // v4 a4
+      DefinicaoCampos.Add('D0;18;D;#,##0.00;VLR_ORIGINAL;Vlr Docto');  // v5 a5
+      DefinicaoCampos.Add('D0;14;C;#,##0;NUM_PRESTACOES;TotPres'); // v6 a6
+      DefinicaoCampos.Add('D0;12;C;#,##0;NUM_PRESTACAO;NrPres'); // v7 a7
+      DefinicaoCampos.Add('D1;18;D;#,##0.00;VLR_PRESTACAO;Vlr A Pagar'); // v8 a8
+      DefinicaoCampos.Add('D0;20;E;;Desembolso;Desembolso'); // v11 a11
+      DefinicaoCampos.Add('D0;106;E;;obs_texto;Observações');
+    End; // If (Rb_APagar.Checked) Then
+    // Somente Contas A Pagar ==================================================
+    //==========================================================================
+
+    //==========================================================================
+    // Somente Contas Pagas ====================================================
+    //==========================================================================
+    If Rb_Pagas.Checked Then
+    Begin
+      DefinicaoCampos.Add('D0;50;E;;NOME;Nome'); // v1 a1
+      DefinicaoCampos.Add('D0;18;E;;DTA_EMISSAO;Emissão'); // v2 a2
+      DefinicaoCampos.Add('D0;10;D;;NUM_DOCTO;Docto');   // v3 a3
+      DefinicaoCampos.Add('D0;50;E;;DES_HISTORICO;Histórico');   // v4 a4
+      DefinicaoCampos.Add('D0;18;D;#,##0.00;VLR_ORIGINAL;Vlr Docto');  // v5 a5
+      DefinicaoCampos.Add('D0;9;C;#,##0;NUM_PRESTACOES;TotPres'); // v6 a6
+      DefinicaoCampos.Add('D0;8;C;#,##0;NUM_PRESTACAO;NrPres'); // v7 a7
+      DefinicaoCampos.Add('D1;16;D;#,##0.00;VLR_PRESTACAO;Vlr A Pagar'); // v8 a8
+      DefinicaoCampos.Add('D1;16;D;#,##0.00;VLR_PAGAMENTO;Vlr Pago'); // v9 a9
+
+      // Data de Pagamento =====================================================
+      If Rb_PesqDtaPagto.Checked Then
+       DefinicaoCampos.Add('D0;18;D;;DTA_VENCIMENTO;Data Vencto');  // v10 a10
+
+      // Data de Vencimento ====================================================
+      If Rb_PesqDtaVencto.Checked Then
+       DefinicaoCampos.Add('D0;18;D;;DTA_PAGAMENTO;Data Pagto');  // v10 a10
+
+      DefinicaoCampos.Add('D0;20;E;;Desembolso;Desembolso'); // v11 a11
+      DefinicaoCampos.Add('D0;106;E;;obs_texto;Observações');
+    End; // If Rb_Pagas.Checked Then
+    // Somente Contas Pagas ====================================================
+    //==========================================================================
+
+{
+    DefinicaoCampos.Add('D0;'+v1.Text+';'+a1.Text+';;NOME;Nome'); // v1 a1
+    DefinicaoCampos.Add('D0;'+v2.Text+';'+a2.Text+';;DTA_EMISSAO;Emissão'); // v2 a2
+    DefinicaoCampos.Add('D0;'+v3.Text+';'+a3.Text+';;NUM_DOCTO;Docto');  // v3 a3
+    DefinicaoCampos.Add('D0;'+v4.Text+';'+a4.Text+';;DES_HISTORICO;Histórico'); // v4 a4
+    DefinicaoCampos.Add('D1;'+v5.Text+';'+a5.Text+';#,##0.00;VLR_ORIGINAL;Vlr Docto'); // v5 a5
+    DefinicaoCampos.Add('D0;'+v6.Text+';'+a6.Text+';#,##0;NUM_PRESTACOES;TotPres'); // v6 a6
+    DefinicaoCampos.Add('D0;'+v7.Text+';'+a7.Text+';#,##0;NUM_PRESTACAO;NrPres'); // v7 a7
+    DefinicaoCampos.Add('D1;'+v8.Text+';'+a8.Text+';#,##0.00;VLR_PRESTACAO;Vlr A Pagar'); // v8 a8
+
+    // Somente Quando Pago =====================================================
+    If (Rb_Pagas.Checked) Then
+    DefinicaoCampos.Add('D1;'+v9.Text+';'+a9.Text+';#,##0.00;VLR_PAGAMENTO;Vlr Pago'); // v9 a9
+
+    // Somente Quando Pago e por Data de Pagamento =============================
+    If (Rb_Pagas.Checked) and (Rb_PesqDtaPagto.Checked) Then
+     DefinicaoCampos.Add('D0;'+v10.Text+';'+a10.Text+';;DTA_PAGAMENTO;Data Pagto');  // v10 a10
+    Else
+     DefinicaoCampos.Add('D0;'+v10.Text+';'+a10.Text+';;DTA_VENCIMENTO;Data Vencto');  // v10 a10
+
+    DefinicaoCampos.Add('D0;'+v11.Text+';'+a11.Text+';;Desembolso;Desembolso'); // v11 a11
+}
+
+
+
+
+    // Quebra de Grupos ========================================================
+    If (Rb_Pagas.Checked) and (Rb_PesqDtaPagto.Checked) Then // Quando Pago
+     Begin
+       DefinicaoCampos.Add('G1;100;E;;DTA_PAGAMENTO;Data Pagamento');
+     End
+    Else // Quando Não Pago
+     Begin
+      DefinicaoCampos.Add('G1;100;E;;DTA_VENCIMENTO;Data Vencimento');
+     End;
+
+    OdirPanApres.Visible:=False;
+    Execute;
+    DMArtesanalis.CDS_Busca.Close;
+  End; // With DMRelatorio.RelVisual do
+end;
+
+procedure TFrmSolicitacoes.Ckb_DesembolsoClick(Sender: TObject);
+Var
+  i: Integer;
+begin
+  If Rb_APagar.Checked Then
+  Begin
+    For i:=0 to Ckb_Desembolso.Items.Count-1 do
+     Ckb_Desembolso.Checked[i]:=False;
+  End;
+
+end;
+
+procedure TFrmSolicitacoes.Ckb_DesembolsoKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  Ckb_DesembolsoClick(Self);
 end;
 
 end.

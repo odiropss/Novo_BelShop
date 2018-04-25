@@ -8,7 +8,7 @@ object DMVirtual: TDMVirtual
     Aggregates = <>
     IndexFieldNames = 'COD_EMP'
     Params = <>
-    Left = 72
+    Left = 65
     Top = 8
     object CDS_V_EmpConexoesCONECTAR: TStringField
       FieldName = 'CONECTAR'
@@ -116,14 +116,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_GruposProdutos: TDataSource
     DataSet = CDS_V_GruposProdutos
-    Left = 276
+    Left = 269
     Top = 130
   end
   object CDS_V_SubGruposProdutos: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'Des_SubGrupo'
     Params = <>
-    Left = 224
+    Left = 217
     Top = 179
     object CDS_V_SubGruposProdutosCod_SubGrupo: TStringField
       Alignment = taRightJustify
@@ -147,14 +147,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_SubGruposProdutos: TDataSource
     DataSet = CDS_V_SubGruposProdutos
-    Left = 276
+    Left = 269
     Top = 195
   end
   object CDS_V_Fornecedores: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'Des_Fornecedor'
     Params = <>
-    Left = 224
+    Left = 217
     Top = 58
     object CDS_V_FornecedoresDes_Fornecedor: TStringField
       FieldName = 'Des_Fornecedor'
@@ -168,14 +168,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_Fornecedores: TDataSource
     DataSet = CDS_V_Fornecedores
-    Left = 276
+    Left = 269
     Top = 74
   end
   object CDS_V_Aplicacao: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'Des_Aplicacao'
     Params = <>
-    Left = 224
+    Left = 217
     Top = 243
     object CDS_V_AplicacaoDes_Aplicacao: TStringField
       FieldName = 'Des_Aplicacao'
@@ -189,14 +189,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_Aplicacao: TDataSource
     DataSet = CDS_V_Aplicacao
-    Left = 276
+    Left = 269
     Top = 259
   end
   object CDS_V_FamiliaPrecos: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'Des_FamiliaPreco'
     Params = <>
-    Left = 224
+    Left = 217
     Top = 300
     object CDS_V_FamiliaPrecosDes_FamiliaPreco: TStringField
       FieldName = 'Des_FamiliaPreco'
@@ -210,14 +210,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_FamiliaPrecos: TDataSource
     DataSet = CDS_V_FamiliaPrecos
-    Left = 276
+    Left = 269
     Top = 316
   end
   object CDS_V_GrupoST: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'Des_GrupoST'
     Params = <>
-    Left = 224
+    Left = 217
     Top = 364
     object CDS_V_GrupoSTDes_GrupoST: TStringField
       FieldName = 'Des_GrupoST'
@@ -231,14 +231,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_GrupoST: TDataSource
     DataSet = CDS_V_GrupoST
-    Left = 276
+    Left = 269
     Top = 380
   end
   object CDS_GruposST: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'Des_GrupoST'
     Params = <>
-    Left = 224
+    Left = 217
     Top = 428
     object CDS_GruposSTDes_GrupoST: TStringField
       FieldName = 'Des_GrupoST'
@@ -250,14 +250,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_GruposST: TDataSource
     DataSet = CDS_GruposST
-    Left = 276
+    Left = 269
     Top = 444
   end
   object CDS_V_Produtos: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'Cod_Produto'
     Params = <>
-    Left = 224
+    Left = 217
     Top = 7
     object CDS_V_ProdutosCod_Produto: TStringField
       FieldName = 'Cod_Produto'
@@ -274,7 +274,7 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_Produtos: TDataSource
     DataSet = CDS_V_Produtos
-    Left = 276
+    Left = 269
     Top = 23
   end
   object CDS_V_GruposProdutos: TClientDataSet
@@ -282,7 +282,7 @@ object DMVirtual: TDMVirtual
     IndexFieldNames = 'Des_Grupo'
     Params = <>
     AfterScroll = CDS_V_GruposProdutosAfterScroll
-    Left = 224
+    Left = 217
     Top = 117
     object CDS_V_GruposProdutosDes_Grupo: TStringField
       FieldName = 'Des_Grupo'
@@ -298,7 +298,7 @@ object DMVirtual: TDMVirtual
     Aggregates = <>
     IndexFieldNames = 'INDICE'
     Params = <>
-    Left = 72
+    Left = 65
     Top = 96
     object CDS_V_PlanFinanceiraTipo: TStringField
       FieldName = 'Tipo'
@@ -554,13 +554,13 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_PlanFinanceira: TDataSource
     DataSet = CDS_V_PlanFinanceira
-    Left = 108
+    Left = 101
     Top = 112
   end
   object CDS_V_ApresComprovantes: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 72
+    Left = 65
     Top = 176
     object CDS_V_ApresComprovantesDATACOMPROVANTE: TDateField
       Alignment = taCenter
@@ -600,14 +600,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_ApresComprovantes: TDataSource
     DataSet = CDS_V_ApresComprovantes
-    Left = 108
+    Left = 101
     Top = 192
   end
   object CDS_V_PlanDemonsResultados: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'INDICE'
     Params = <>
-    Left = 72
+    Left = 65
     Top = 248
     object CDS_V_PlanDemonsResultadosCod_Demonstrativo: TStringField
       Alignment = taRightJustify
@@ -798,13 +798,13 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_PlanDemonsResultados: TDataSource
     DataSet = CDS_V_PlanDemonsResultados
-    Left = 108
+    Left = 101
     Top = 264
   end
   object CDS_V_CurvaABCEndereco: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 405
+    Left = 382
     Top = 8
     object CDS_V_CurvaABCEnderecoSEQ: TIntegerField
       DisplayLabel = 'Seq'
@@ -939,14 +939,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_CurvaABCEndereco: TDataSource
     DataSet = CDS_V_CurvaABCEndereco
-    Left = 456
+    Left = 433
     Top = 24
   end
   object CDS_V_PlanoContasCompr200: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'Des_PlanoContas'
     Params = <>
-    Left = 72
+    Left = 65
     Top = 320
     object CDS_V_PlanoContasCompr200Des_PlanoContas: TStringField
       DisplayLabel = 'Plano de Contas'
@@ -1122,13 +1122,13 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_PlanoContasCompr200: TDataSource
     DataSet = CDS_V_PlanoContasCompr200
-    Left = 108
+    Left = 101
     Top = 336
   end
   object DS_V_ObjetivosDias: TDataSource
     DataSet = CDS_V_ObjetivosDias
-    Left = 712
-    Top = 17
+    Left = 632
+    Top = 25
   end
   object CDS_V_ObjetivosDias: TClientDataSet
     Aggregates = <>
@@ -1136,8 +1136,8 @@ object DMVirtual: TDMVirtual
     Filtered = True
     IndexFieldNames = 'INDICE'
     Params = <>
-    Left = 656
-    Top = 9
+    Left = 576
+    Top = 17
     object CDS_V_ObjetivosDiasCod_Objetivo: TIntegerField
       FieldName = 'Cod_Objetivo'
     end
@@ -1330,8 +1330,8 @@ object DMVirtual: TDMVirtual
     IndexFieldNames = 'DES_PRODUTO'
     Params = <>
     AfterScroll = CDS_V_EstFisFinanEmpAfterScroll
-    Left = 664
-    Top = 346
+    Left = 584
+    Top = 354
     object CDS_V_EstFisFinanEmpCOD_PRODUTO: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'Cod Prod'
@@ -1384,20 +1384,20 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_EstFisFinanEmp: TDataSource
     DataSet = CDS_V_EstFisFinanEmp
-    Left = 707
-    Top = 359
+    Left = 627
+    Top = 367
   end
   object DS_V_EmpConexoes: TDataSource
     DataSet = CDS_V_EmpConexoes
-    Left = 108
+    Left = 101
     Top = 24
   end
   object CDS_V_EstFisFinanLojas: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'INDICE'
     Params = <>
-    Left = 664
-    Top = 410
+    Left = 584
+    Top = 418
     object CDS_V_EstFisFinanLojasCOD_PRODUTO: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'Cod Prod'
@@ -1450,13 +1450,13 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_EstFisFinanLojas: TDataSource
     DataSet = CDS_V_EstFisFinanLojas
-    Left = 709
-    Top = 426
+    Left = 629
+    Top = 434
   end
   object DS_V_ObjetivosMeses: TDataSource
     DataSet = CDS_V_ObjetivosMeses
-    Left = 712
-    Top = 81
+    Left = 632
+    Top = 89
   end
   object CDS_V_ObjetivosMeses: TClientDataSet
     Aggregates = <>
@@ -1464,8 +1464,8 @@ object DMVirtual: TDMVirtual
     Filtered = True
     IndexFieldNames = 'INDICE'
     Params = <>
-    Left = 656
-    Top = 65
+    Left = 576
+    Top = 73
     object CDS_V_ObjetivosMesesCod_Objetivo: TIntegerField
       FieldName = 'Cod_Objetivo'
       Visible = False
@@ -1568,15 +1568,15 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_ObjetivosMovtos: TDataSource
     DataSet = CDS_V_ObjetivosMovtos
-    Left = 712
-    Top = 137
+    Left = 632
+    Top = 145
   end
   object CDS_V_ObjetivosMovtos: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'COD_FILIAL;COD_OBJETIVO;ORDEM;'
     Params = <>
-    Left = 656
-    Top = 129
+    Left = 576
+    Top = 137
     object CDS_V_ObjetivosMovtosORDEM: TIntegerField
       FieldName = 'ORDEM'
     end
@@ -1649,15 +1649,15 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_ObjetivosAuditorias: TDataSource
     DataSet = CDS_V_ObjetivosAuditorias
-    Left = 712
-    Top = 192
+    Left = 632
+    Top = 200
   end
   object CDS_V_ObjetivosAuditorias: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'ORDEM'
     Params = <>
-    Left = 656
-    Top = 184
+    Left = 576
+    Top = 192
     object CDS_V_ObjetivosAuditoriasORDEM: TIntegerField
       FieldName = 'ORDEM'
       Visible = False
@@ -1706,14 +1706,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_NFe: TDataSource
     DataSet = CDS_V_NFe
-    Left = 456
+    Left = 433
     Top = 273
   end
   object CDS_V_NFe: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'ORDEM'
     Params = <>
-    Left = 408
+    Left = 385
     Top = 265
     object CDS_V_NFeCOD_LOJA: TStringField
       Alignment = taRightJustify
@@ -1786,15 +1786,15 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_GiroEstoque: TDataSource
     DataSet = CDS_V_GiroEstoque
-    Left = 712
-    Top = 481
+    Left = 632
+    Top = 489
   end
   object CDS_V_GiroEstoque: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'ORDEM'
     Params = <>
-    Left = 656
-    Top = 473
+    Left = 576
+    Top = 481
     object CDS_V_GiroEstoqueCOD_LOJA: TStringField
       Alignment = taCenter
       DisplayLabel = 'Loja'
@@ -1879,14 +1879,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_Mix_Prod: TDataSource
     DataSet = CDS_V_Mix_Prod
-    Left = 712
-    Top = 298
+    Left = 632
+    Top = 306
   end
   object CDS_V_Mix_Prod: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 656
-    Top = 290
+    Left = 576
+    Top = 298
     object CDS_V_Mix_ProdCOD_LOJA: TStringField
       Alignment = taCenter
       DisplayLabel = 'Cod Loja'
@@ -1934,7 +1934,7 @@ object DMVirtual: TDMVirtual
     Aggregates = <>
     IndexFieldNames = 'DES_COMPROV'
     Params = <>
-    Left = 224
+    Left = 217
     Top = 484
     object CDS_V_ComprovantesCOD_COMPROV: TIntegerField
       DisplayLabel = 'C'#243'digo'
@@ -1953,15 +1953,15 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_Comprovantes: TDataSource
     DataSet = CDS_V_Comprovantes
-    Left = 276
+    Left = 269
     Top = 500
   end
   object CDS_V_MargLucroBonif: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'CODFILIAL;APRESENTACAO'
     Params = <>
-    Left = 808
-    Top = 80
+    Left = 728
+    Top = 88
     object CDS_V_MargLucroBonifCODFILIAL: TStringField
       Alignment = taCenter
       DisplayLabel = 'Loja'
@@ -2064,15 +2064,15 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_MargLucroBonif: TDataSource
     DataSet = CDS_V_MargLucroBonif
-    Left = 875
-    Top = 93
+    Left = 795
+    Top = 101
   end
   object CDS_V_MargLucroBonifRes: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'SINALESTOQUE;DESCOMPROVANTE'
     Params = <>
-    Left = 808
-    Top = 138
+    Left = 728
+    Top = 146
     object CDS_V_MargLucroBonifResLOJA: TStringField
       FieldName = 'LOJA'
       FixedChar = True
@@ -2152,19 +2152,19 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_MargLucroBonifRes: TDataSource
     DataSet = CDS_V_MargLucroBonifRes
-    Left = 880
-    Top = 150
+    Left = 800
+    Top = 158
   end
   object DS_V_MargLucroFinal: TDataSource
     DataSet = CDS_V_MargLucroFinal
-    Left = 880
-    Top = 210
+    Left = 800
+    Top = 218
   end
   object CDS_V_MargLucroFinal: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 808
-    Top = 194
+    Left = 728
+    Top = 202
     object CDS_V_MargLucroFinalLoja: TStringField
       FieldName = 'Loja'
       Size = 2
@@ -2193,8 +2193,8 @@ object DMVirtual: TDMVirtual
     Aggregates = <>
     AggregatesActive = True
     Params = <>
-    Left = 809
-    Top = 24
+    Left = 729
+    Top = 32
     object CDS_V_MargemLucroCODFILIAL: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'Loja'
@@ -2414,15 +2414,15 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_MargemLucro: TDataSource
     DataSet = CDS_V_MargemLucro
-    Left = 871
-    Top = 36
+    Left = 791
+    Top = 44
   end
   object CDS_V_MargemLucroForn: TClientDataSet
     Aggregates = <>
     Params = <>
     AfterScroll = CDS_V_MargemLucroFornAfterScroll
-    Left = 809
-    Top = 264
+    Left = 729
+    Top = 272
     object CDS_V_MargemLucroFornCODFORNECEDOR: TStringField
       DisplayLabel = 'C'#243'd Forn'
       FieldName = 'CODFORNECEDOR'
@@ -2538,15 +2538,15 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_MargemLucroForn: TDataSource
     DataSet = CDS_V_MargemLucroForn
-    Left = 879
-    Top = 276
+    Left = 799
+    Top = 284
   end
   object CDS_V_MargemLucroScroll: TClientDataSet
     Aggregates = <>
     AggregatesActive = True
     Params = <>
-    Left = 809
-    Top = 328
+    Left = 729
+    Top = 336
     object CDS_V_MargemLucroScrollCODFILIAL: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'Loja'
@@ -2706,14 +2706,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_MargemLucroScroll: TDataSource
     DataSet = CDS_V_MargemLucroScroll
-    Left = 880
-    Top = 352
+    Left = 800
+    Top = 360
   end
   object CDS_V_AudCompVend: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 816
-    Top = 416
+    Left = 736
+    Top = 424
     object CDS_V_AudCompVendCOD_LOJA: TStringField
       DisplayLabel = 'Loja'
       FieldName = 'COD_LOJA'
@@ -3287,19 +3287,19 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_AudCompVend: TDataSource
     DataSet = CDS_V_AudCompVend
-    Left = 888
-    Top = 432
+    Left = 808
+    Top = 440
   end
   object DS_V_ParamSalMinimo: TDataSource
     DataSet = CDS_V_ParamSalMinimo
-    Left = 120
+    Left = 113
     Top = 440
   end
   object CDS_V_ParamSalMinimo: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DataSetProvider1'
-    Left = 64
+    Left = 57
     Top = 432
     object CDS_V_ParamSalMinimoNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
@@ -3363,7 +3363,7 @@ object DMVirtual: TDMVirtual
     Aggregates = <>
     IndexFieldNames = 'Cod_Kit;Num_Seq'
     Params = <>
-    Left = 976
+    Left = 920
     Top = 24
     object CDS_V_KitsTipo: TStringField
       FieldName = 'Tipo'
@@ -3427,7 +3427,7 @@ object DMVirtual: TDMVirtual
     Aggregates = <>
     IndexFieldNames = 'Num_Seq'
     Params = <>
-    Left = 976
+    Left = 920
     Top = 80
     object CDS_V_KitsNotasTipo: TStringField
       FieldName = 'Tipo'
@@ -3505,19 +3505,19 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_Kits: TDataSource
     DataSet = CDS_V_Kits
-    Left = 1048
+    Left = 992
     Top = 32
   end
   object DS_V_KitsNotas: TDataSource
     DataSet = CDS_V_KitsNotas
-    Left = 1040
+    Left = 984
     Top = 96
   end
   object CDS_V_SaldoTransf: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 992
-    Top = 168
+    Left = 944
+    Top = 144
     object CDS_V_SaldoTransfCOD_LOJA: TStringField
       FieldName = 'COD_LOJA'
       Size = 2
@@ -3542,8 +3542,8 @@ object DMVirtual: TDMVirtual
   end
   object DataSource1: TDataSource
     DataSet = CDS_V_SaldoTransf
-    Left = 1008
-    Top = 232
+    Left = 1016
+    Top = 168
   end
   object CDS_V_Estoques: TClientDataSet
     Aggregates = <>
@@ -3554,7 +3554,7 @@ object DMVirtual: TDMVirtual
     AfterPost = CDS_V_EstoquesAfterPost
     AfterScroll = CDS_V_EstoquesAfterScroll
     OnCalcFields = CDS_V_EstoquesCalcFields
-    Left = 469
+    Left = 446
     Top = 96
     object CDS_V_EstoquesSEQ: TFMTBCDField
       DisplayLabel = 'Seq'
@@ -3884,13 +3884,13 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_Estoques: TDataSource
     DataSet = CDS_V_Estoques
-    Left = 520
+    Left = 497
     Top = 112
   end
   object CDS_V_ParamLojaNeces: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 64
+    Left = 57
     Top = 488
     object CDS_V_ParamLojaNecesCOD_LOJA: TStringField
       Alignment = taCenter
@@ -3940,7 +3940,7 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_ParamLojaNeces: TDataSource
     DataSet = CDS_V_ParamLojaNeces
-    Left = 136
+    Left = 129
     Top = 504
   end
   object IBQ_EstoqueLoja: TIBQuery
@@ -3964,7 +3964,7 @@ object DMVirtual: TDMVirtual
       'FROM ESTOQUE e'
       '      LEFT JOIN PRODUTO p on e.codproduto=p.codproduto '
       'WHERE e.codfilial='#39'99'#39)
-    Left = 432
+    Left = 409
     Top = 456
     object IBQ_EstoqueLojaCODFILIAL: TIBStringField
       FieldName = 'CODFILIAL'
@@ -4181,7 +4181,7 @@ object DMVirtual: TDMVirtual
       'WHERE c.rdb$field_source = f.rdb$field_name'
       'AND   TRIM(c.RDB$RELATION_NAME) = UPPER(:Tabela)'
       'ORDER BY c.RDB$FIELD_POSITION')
-    Left = 432
+    Left = 409
     Top = 512
     ParamData = <
       item
@@ -4197,14 +4197,14 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_EstoqueLojas: TDataSource
     DataSet = CDS_V_EstoqueLojas
-    Left = 894
-    Top = 499
+    Left = 814
+    Top = 507
   end
   object CDS_V_EstoqueLojas: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 816
-    Top = 488
+    Left = 736
+    Top = 496
     object CDS_V_EstoqueLojasCOD_LOJA: TStringField
       Alignment = taCenter
       DisplayLabel = 'Loja'
@@ -4262,7 +4262,7 @@ object DMVirtual: TDMVirtual
     IndexFieldNames = 'CLASSE'
     Params = <>
     ProviderName = 'DSP_EstoquesFinan'
-    Left = 409
+    Left = 386
     Top = 188
     object CDS_V_EstoquesFinanCLASSE: TStringField
       DisplayLabel = 'Cl'
@@ -4340,19 +4340,19 @@ object DMVirtual: TDMVirtual
   end
   object DS_V_EstoquesFinan: TDataSource
     DataSet = CDS_V_EstoquesFinan
-    Left = 469
+    Left = 446
     Top = 208
   end
   object DS_V_NFeProdutos: TDataSource
     DataSet = CDS_V_NFeProdutos
-    Left = 456
+    Left = 433
     Top = 327
   end
   object CDS_V_NFeProdutos: TClientDataSet
     Aggregates = <>
     Params = <>
     AfterScroll = CDS_V_NFeProdutosAfterScroll
-    Left = 408
+    Left = 385
     Top = 319
     object CDS_V_NFeProdutosCOD_LOJA: TStringField
       Alignment = taCenter
@@ -4400,7 +4400,7 @@ object DMVirtual: TDMVirtual
   object DSP_SelectLoja: TDataSetProvider
     DataSet = SDS_SelectLoja
     Options = [poRetainServerOrder]
-    Left = 418
+    Left = 395
     Top = 394
   end
   object CDS_SelectLoja: TClientDataSet
@@ -4423,7 +4423,7 @@ object DMVirtual: TDMVirtual
     ProviderName = 'DSP_SelectLoja'
     StoreDefs = True
     AfterScroll = CDS_SelectLojaAfterScroll
-    Left = 455
+    Left = 432
     Top = 378
     object CDS_SelectLojaCOD_LOJA: TStringField
       DisplayLabel = 'C'#243'd Loja'
@@ -4439,7 +4439,7 @@ object DMVirtual: TDMVirtual
   end
   object DS_SelectLoja: TDataSource
     DataSet = CDS_SelectLoja
-    Left = 493
+    Left = 470
     Top = 395
   end
   object SDS_SelectLoja: TSQLDataSet
@@ -4449,14 +4449,14 @@ object DMVirtual: TDMVirtual
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 384
+    Left = 361
     Top = 384
   end
   object CDS_V_Creditos: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'Des_Credito'
     Params = <>
-    Left = 984
+    Left = 928
     Top = 427
     object CDS_V_CreditosDes_Credito: TStringField
       FieldName = 'Des_Credito'
@@ -4470,20 +4470,20 @@ object DMVirtual: TDMVirtual
   end
   object Ds_V_Creditos: TDataSource
     DataSet = CDS_V_Creditos
-    Left = 1036
+    Left = 980
     Top = 443
   end
   object SQLQ_Busca: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 380
+    Left = 357
     Top = 96
   end
   object DSP_SQLQ_Busca: TDataSetProvider
     DataSet = SQLQ_Busca
     Options = [poRetainServerOrder]
-    Left = 428
+    Left = 405
     Top = 118
   end
 end

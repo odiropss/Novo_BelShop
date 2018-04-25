@@ -7321,7 +7321,7 @@ begin
     // Inclui Loja Necessidade =================================================
     MySqlDML:=' SELECT t.cod_aux'+
               ' FROM TAB_AUXILIAR t'+
-              ' WHERE t.tip_aux='+IntToStr(igDiaSemana)+
+              ' WHERE t.tip_aux='+IntToStr(igDiaSemana)+ // Dias das Semana e Lojas para Processamento de Transf/Venda CD
               ' AND t.cod_aux='+VarToStr(EdtParamLojaNecesCodLoja.Value);
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySqlDML;
@@ -7335,7 +7335,7 @@ begin
      Begin
        MySqlDML:=' INSERT INTO TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
                  ' VALUES ('+
-                 IntToStr(igDiaSemana)+', '+ // TIP_AUX
+                 IntToStr(igDiaSemana)+', '+ // TIP_AUX - Dias das Semana e Lojas para Processamento de Transf/Venda CD
                  VarToStr(EdtParamLojaNecesCodLoja.Value)+', '+ // COD_AUX
                  QuotedStr(sCurvas)+', '+ // DES_AUX
                  QuotedStr('SIM')+', '+ // DES_AUX1
@@ -7348,7 +7348,7 @@ begin
                  ' SET t.DES_AUX='+QuotedStr(sCurvas)+
                  ', VLR_AUX='+QuotedStr(sManut+'.02')+
                  ', VLR_AUX1='+QuotedStr(Cod_Usuario)+
-                 ' WHERE t.tip_aux='+IntToStr(igDiaSemana)+
+                 ' WHERE t.tip_aux='+IntToStr(igDiaSemana)+ // Dias das Semana e Lojas para Processamento de Transf/Venda CD
                  ' AND   t.cod_aux='+VarToStr(EdtParamLojaNecesCodLoja.Value);
      End; // If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Aux').AsString)='' Then
     DMBelShop.SQLC.Execute(MySqlDML,nil,nil);
@@ -7526,7 +7526,7 @@ begin
 
            ' FROM TAB_AUXILIAR t, EMP_CONEXOES e'+
            ' WHERE t.cod_aux=e.cod_filial'+
-           ' AND t.tip_aux='+IntToStr(igDiaSemana)+
+           ' AND t.tip_aux='+IntToStr(igDiaSemana)+ // Dias das Semana e Lojas para Processamento de Transf/Venda CD
            ' ORDER BY 1';
     DMBelShop.CDS_Busca.Close;
     DMBelShop.SDS_Busca.CommandText:=MySql;
@@ -7657,7 +7657,7 @@ begin
 
     // Inclui Loja Necessidade =================================================
     MySqlDML:=' DELETE FROM TAB_AUXILIAR t'+
-              ' WHERE t.tip_aux='+IntToStr(igDiaSemana)+
+              ' WHERE t.tip_aux='+IntToStr(igDiaSemana)+ // Dias das Semana e Lojas para Processamento de Transf/Venda CD
               ' AND t.cod_aux='+DMVirtual.CDS_V_ParamLojaNecesCOD_LOJA.AsString;
     DMBelShop.SQLC.Execute(MySqlDML,nil,nil);
 
@@ -8115,7 +8115,7 @@ begin
   MySql:=' SELECT f.codfornecedor, f.nomefornecedor'+
          ' FROM TAB_AUXILIAR t, FORNECEDOR f'+
          ' WHERE t.cod_aux=f.codfornecedor'+
-         ' AND t.tip_aux=13'+
+         ' AND t.tip_aux=13'+ // Fornecedores que NÃO Entram no Calculo de Reposições Automáticas
          ' ORDER BY f.nomefornecedor';
   DMBelShop.CDS_Busca.Close;
   DMBelShop.SDS_Busca.CommandText:=MySql;
@@ -8155,7 +8155,7 @@ begin
       DecimalSeparator:='.';
 
       MySql:=' DELETE FROM TAB_AUXILIAR t'+
-             ' WHERE t.tip_aux=13'+
+             ' WHERE t.tip_aux=13'+ // Fornecedores que NÃO Entram no Calculo de Reposições Automáticas
              ' AND   LPAD(t.cod_aux, 6, ''0'')='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('codfornecedor').AsString);
       DMBelShop.SQLC.Execute(MySql,nil,nil);
 
@@ -8248,7 +8248,7 @@ begin
 
       // Insere Fornecedor
       MySql:=' UPDATE or INSERT INTO TAB_AUXILIAR'+
-             ' (tip_aux, cod_aux, des_aux, des_aux1, vlr_aux, vlr_aux1)'+
+             ' (tip_aux, cod_aux, des_aux, des_aux1, vlr_aux, vlr_aux1)'+ // Fornecedores que NÃO Entram no Calculo de Reposições Automáticas
              ' values (13, '+QuotedStr(DMBelShop.SQLQ_Busca.FieldByName('codfornecedor').AsString)+', null, null, null, null)';
       DMBelShop.SQLC.Execute(MySql,nil,nil);
 
@@ -8392,7 +8392,7 @@ begin
                 ' SET t.DES_AUX1='+QuotedStr(sProc)+
                 ', VLR_AUX='+QuotedStr(sManut+'.03')+
                 ', VLR_AUX1='+QuotedStr(Cod_Usuario)+
-                ' WHERE t.tip_aux='+IntToStr(igDiaSemana)+
+                ' WHERE t.tip_aux='+IntToStr(igDiaSemana)+ // Dias das Semana e Lojas para Processamento de Transf/Venda CD
                 ' AND   t.cod_aux='+QuotedStr(DMVirtual.CDS_V_ParamLojaNecesCOD_LOJA.AsString);
       DMBelShop.SQLC.Execute(MySqlDML,nil,nil);
 
@@ -8903,7 +8903,7 @@ begin
     MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR'+
            ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
            ' VALUES ('+
-           ' 19, '+ // TIP_AUX
+           ' 19, '+ // TIP_AUX - TRANSFERÊNCIAS LOJAS: Número de Produtos e Quantidade Máximo por Dia
            IntToStr(EdtTransfCodLoja.AsInteger)+', '+ // COD_AUX
            IntToStr(EdtTransfNumProd.AsInteger)+', '+ // DES_AUX
            IntToStr(EdtTransfQtdProd.AsInteger)+', '+ // DES_AUX1
@@ -9027,7 +9027,7 @@ begin
 
     MySql:=' UPDATE TAB_AUXILIAR t'+
            ' SET t.des_aux1='+QuotedStr(sGrupo)+
-           ' WHERE t.tip_aux=21'+
+           ' WHERE t.tip_aux=21'+ // CADASTRO DE HISTÓRICOS SANGRIA LINX (LINXSANGRIASUPRIMENTOS)
            ' AND t.cod_aux='+DMConciliacao.CDS_CMDepHistoricosCODIGO.AsString;
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 

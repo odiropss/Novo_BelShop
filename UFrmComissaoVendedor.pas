@@ -169,7 +169,7 @@ Begin
   sgAplicacoes:='';
   MySql:=' SELECT ap.des_aux'+
          ' FROM TAB_AUXILIAR ap'+
-         ' WHERE ap.tip_aux = 15';
+         ' WHERE ap.tip_aux=15'; // Comissão Vendedores (Aplicações Utilizadas)
   DMBelShop.CDS_Busca.Close;
   DMBelShop.SDS_Busca.CommandText:=MySql;
   DMBelShop.CDS_Busca.Open;
@@ -371,7 +371,7 @@ Begin
          '                 Trim(pr.codaplicacao)  COD_APLICACAO'+
          ' FROM PRODUTO pr, TAB_AUXILIAR ap'+
          ' WHERE Trim(pr.codaplicacao)=Trim(ap.Des_Aux)'+
-         ' AND   ap.tip_aux=15'+
+         ' AND   ap.tip_aux=15'+ // Comissão Vendedores (Aplicações Utilizadas)
          ' ORDER BY 2';
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -392,7 +392,7 @@ Begin
          '        fa.vlr_aux vlr_conversao'+
          ' FROM PRODUTO pr, TAB_AUXILIAR fa'+
          ' WHERE Trim(pr.codfamiliapreco)=Trim(fa.Des_Aux)'+
-         ' AND   fa.tip_aux=16'+
+         ' AND   fa.tip_aux=16'+ // Comissão Vendedores (Familias Preço Utilizadas)
          ' ORDER BY 2';
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -439,7 +439,7 @@ Begin
 
            ' FROM PRODUTO pr'+
            '       LEFT JOIN  TAB_AUXILIAR fp  ON Trim(fp.des_aux)=Trim(pr.codfamiliapreco)'+
-           '                                  AND fp.tip_aux=16'+
+           '                                  AND fp.tip_aux=16'+ // Comissão Vendedores (Familias Preço Utilizadas)
 
            ' WHERE pr.codaplicacao=''0006'''+
            ' AND NOT EXISTS (SELECT 1'+
@@ -1696,7 +1696,7 @@ begin
   // Analisa Data de Inicio do Periodo
   MySql:=' SELECT Max(d.cod_aux) docto'+
          ' FROM TAB_AUXILIAR d'+
-         ' WHERE d.tip_aux=17';
+         ' WHERE d.tip_aux=17'; // Comissão Vendedores (DOCTOS GERADOS)
   DMBelShop.CDS_Busca.Close;
   DMBelShop.SDS_Busca.CommandText:=MySql;
   DMBelShop.CDS_Busca.Open;
@@ -1705,7 +1705,7 @@ begin
   Begin
     MySql:=' SELECT d.des_aux, d.des_aux1'+
            ' FROM TAB_AUXILIAR d'+
-           ' WHERE d.tip_aux = 17'+
+           ' WHERE d.tip_aux=17'+ // Comissão Vendedores (DOCTOS GERADOS)
            ' AND  d.cod_aux='+DMBelShop.CDS_Busca.FieldByName('Docto').AsString;
     DMBelShop.CDS_Busca.Close;
     DMBelShop.SDS_Busca.CommandText:=MySql;
@@ -1752,7 +1752,7 @@ begin
   DMBelShop.CDS_Pesquisa.Close;
   MySql:=' SELECT d.cod_aux DOCTO, d.des_aux || '' a '' || d.des_aux1 PERIODO'+
          ' FROM TAB_AUXILIAR d'+
-         ' WHERE d.tip_aux=17'+
+         ' WHERE d.tip_aux=17'+ // Comissão Vendedores (DOCTOS GERADOS)
          ' ORDER BY 1';
   DMBelShop.CDS_Pesquisa.Filtered:=False;
   DMBelShop.SDS_Pesquisa.CommandText:=MySql;
@@ -1809,7 +1809,7 @@ begin
     // Busca Lojas =============================================================
     MySql:=' SELECT d.cod_aux DOCTO, d.des_aux, d.des_aux1'+
            ' FROM TAB_AUXILIAR d'+
-           ' WHERE d.tip_aux=17'+
+           ' WHERE d.tip_aux=17'+ // Comissão Vendedores (DOCTOS GERADOS)
            ' AND d.Cod_Aux='+VarToStr(EdtCodDocComissao.Value);
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -1904,7 +1904,7 @@ begin
   // Numero do Proximo Docto ===================================================
   MySql:=' SELECT COALESCE(MAX(d.cod_aux) + 1, 1) NrDoc'+
          ' FROM TAB_AUXILIAR d'+
-         ' WHERE d.tip_aux = 17';
+         ' WHERE d.tip_aux=17'; // Comissão Vendedores (DOCTOS GERADOS)
   DMBelShop.CDS_Busca.Close;
   DMBelShop.SDS_Busca.CommandText:=MySql;
   DMBelShop.CDS_Busca.Open;
@@ -1938,7 +1938,7 @@ begin
     // Grava  Numero e Periodo do Docto ========================================
     MySql:=' INSERT INTO TAB_AUXILIAR (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1)'+
            ' VALUES ('+
-           QuotedStr('17')+', '+    // TIP_AUX
+           QuotedStr('17')+', '+    // TIP_AUX - Comissão Vendedores (DOCTOS GERADOS)
            QuotedStr(sNumDoc)+', '+ // COD_AUX  = Número do Documento Gerado
            QuotedStr(f_Troca('.','/',f_Troca('-','/',sgDtaInicio)))+', '+ // DES_AUX  = Data do Inicio do Período
            QuotedStr(f_Troca('.','/',f_Troca('-','/',sgDtaFim)))+')';    // DES_AUX1 = Data do Fim do Período

@@ -237,7 +237,7 @@ begin
         MySql:=' SELECT p.cod_produto, p.nome, p.cod_fornecedor, f.nome_cliente, t.des_aux'+
                ' FROM LINXPRODUTOS p'+
                '      LEFT JOIN linxclientesfornec f  ON f.cod_cliente=p.cod_fornecedor'+
-               '      LEFT JOIN TAB_AUXILIAR t        ON t.tip_aux=23'+
+               '      LEFT JOIN         TAB_AUXILIAR t        ON t.tip_aux=23'+ // AVARIAS - ENDEREÇAMENTO DE FORNECEDOR
                '                                     AND t.cod_aux=p.cod_fornecedor'+
                ' WHERE p.cod_produto='+sgCodProdLinx;
         DMBelShop.CDS_BuscaRapida.Close;

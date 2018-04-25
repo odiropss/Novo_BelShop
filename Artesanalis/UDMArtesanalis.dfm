@@ -788,7 +788,8 @@ object DMArtesanalis: TDMArtesanalis
       '      '#39'BELSHOP'#39
       '    WHEN ff.ind_desembolso='#39'L'#39' THEN'
       '      '#39'LIXISSE'#39
-      'END Desembolso'
+      'END Desembolso,'
+      'ff.obs_texto'
       ''
       ''
       'FROM FLUXO_FINANCEIRO ff, PESSOAS fo, PLANO_CONTAS pl'
@@ -889,6 +890,12 @@ object DMArtesanalis: TDMArtesanalis
       FieldName = 'DESEMBOLSO'
       FixedChar = True
       Size = 7
+    end
+    object CDS_FluxoFinanceiroOBS_TEXTO: TStringField
+      DisplayLabel = 'Observa'#231#245'es'
+      FieldName = 'OBS_TEXTO'
+      ReadOnly = True
+      Size = 150
     end
   end
   object DS_FluxoFinanceiro: TDataSource

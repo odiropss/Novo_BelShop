@@ -234,15 +234,15 @@ Begin
          '       CAST(((100 - ((SUM(case when l.qtd_estoque<1 Then 1 Else 0 End))*(100.000 / count(L.cod_loja_linx)))) *'+
          '       ((CAST(Case'+
          '                When l.ind_curva=''A'' Then'+
-         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=1)'+
+         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=1)'+ // Curva ABC
          '                When l.ind_curva=''B'' Then'+
-         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=2)'+
+         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=2)'+ // Curva ABC
          '                When l.ind_curva=''C'' Then'+
-         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=3)'+
+         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=3)'+ // Curva ABC
          '                When l.ind_curva=''D'' Then'+
-         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=4)'+
+         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=4)'+ // Curva ABC
          '                When l.ind_curva=''E'' Then'+
-         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=5)'+
+         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=5)'+ // Curva ABC
          '                Else'+
          '                   1'+
          '             End AS integer)) / 100.000)'+
@@ -291,15 +291,15 @@ Begin
          '       CAST(((100 - ((SUM(case when l.qtd_estoque<1 Then 1 Else 0 End))*(100.000 / count(L.cod_loja_linx)))) *'+
          '       ((CAST(Case'+
          '                When l.ind_curva=''A'' Then'+
-         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=1)'+
+         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=1)'+ // Curva ABC
          '                When l.ind_curva=''B'' Then'+
-         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=2)'+
+         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=2)'+ // Curva ABC
          '                When l.ind_curva=''C'' Then'+
-         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=3)'+
+         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=3)'+ // Curva ABC
          '                When l.ind_curva=''D'' Then'+
-         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=4)'+
+         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=4)'+ // Curva ABC
          '                When l.ind_curva=''E'' Then'+
-         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=5)'+
+         '                   (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=5)'+ // Curva ABC
          '                Else'+
          '                   1'+
          '             End AS integer)) / 100.000)'+
@@ -346,15 +346,15 @@ Begin
          ' (100 - ((SUM(case when l.qtd_estoque<1 Then 1 Else 0 End))*(100.000 / count(L.cod_loja_linx)))) *'+
          ' ((CAST(Case'+
          '          When l.ind_curva=''A'' Then'+
-         '             (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=1)'+
+         '             (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=1)'+ // Curva ABC
          '          When l.ind_curva=''B'' Then'+
-         '             (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=2)'+
+         '             (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=2)'+ // Curva ABC
          '          When l.ind_curva=''C'' Then'+
-         '             (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=3)'+
+         '             (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=3)'+ // Curva ABC
          '          When l.ind_curva=''D'' Then'+
-         '             (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=4)'+
+         '             (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=4)'+ // Curva ABC
          '          When l.ind_curva=''E'' Then'+
-         '             (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=5)'+
+         '             (select p.des_aux from tab_auxiliar p where p.tip_aux=2 and p.cod_aux=5)'+ // Curva ABC
          '          Else'+
          '             1'+
          '       End AS integer)) / 100.000)'+
@@ -2660,7 +2660,7 @@ begin
          ' Coalesce(t.vlr_aux,0) Qtd_Dias,'+
          ' Coalesce(t.vlr_aux1,0) Qtd_Min'+
          ' FROM TAB_AUXILIAR t'+
-         ' WHERE t.tip_aux=2'+
+         ' WHERE t.tip_aux=2'+ // Curva ABC
          ' ORDER BY t.cod_aux';
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;

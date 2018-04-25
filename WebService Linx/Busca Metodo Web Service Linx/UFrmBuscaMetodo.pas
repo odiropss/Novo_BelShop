@@ -38,8 +38,9 @@ type
 
     // Odir
     Procedure MontaProgressBar(bCria: Boolean; Form: TForm);
-    procedure FormKeyPress(Sender: TObject; var Key: Char);
     // Odir
+
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public

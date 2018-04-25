@@ -368,7 +368,7 @@ Begin
 
   //----------------------------------------------------------------------------
   // CONSERTOS - Consertos de  Saída de Entrada de Fornecedor ------------------
-  //----------------------------------------------------------------------------
+          //----------------------------------------------------------------------------
   // OPERACAO	    TIPO_TRANSACAO	CFOP	DESC_CFOP
   // N	(Entrada)	      E		1915	Entrada de mercadoria ou bem recebido para conserto ou reparo
   // N	(Entrada)	      E		2915	Entrada de mercadoria ou bem recebido para conserto ou reparo
@@ -395,7 +395,12 @@ Begin
   // 027	REMESSA DE BONIFICAÇÃO - Débito
   // 913	BONIF DE MERCADORIAS	 - Crédito
   // 916	BONIF DE MERCADORIAS	 - Crédito
+  //----------------------------------------------------------------------------
 
+
+  // Saida - DEVOLUÇÕES – Devolução de Saída de Entrada de Fornecedor ------------------
+  // 5411 - Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária
+  // 6411 - Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária
   MySqlLinx:=' SELECT'+
              ' fl.cod_cliente codfornecedor,'+
              ' fl.nome_cliente nomefornecedor,'+
@@ -832,14 +837,14 @@ Begin
 
   // Acerta Data do Movto em Relação a Data de Início da Loja ==================
   sDtaMovtoLinx:=sgDtaIniLINX;
-  
+
 //opss
   If StrToDate(f_Troca('.','/',f_Troca('-','/',sDtaMovtoLinx)))<StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio))) Then
    sDtaMovtoLinx:=sgDtaInicio;
 
   sDtaMovtoLinx:=f_Troca('/','.',f_Troca('-','.',sDtaMovtoLinx));
 
-  // Acerta Data de Processamento das Conta  Correntes =========================
+  // Acerta Data de Processamento das Conta Correntes ==========================
   If StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaProcCC)))>StrToDate(f_Troca('.','/',f_Troca('-','/',sDtaMovtoLinx))) Then
    sgDtaProcCC:=sDtaMovtoLinx;
 
@@ -1764,7 +1769,8 @@ begin
   // Atualiza Centro de Custos =================================================
   //============================================================================
 //opss
-  CentroCustos;
+// OdirApagar 23/04/2018 - Comprador (Sidicom) Será subatituído pelo Linx
+//  CentroCustos;
 
   //============================================================================
   // Igual Todos os Produtos de Todas a Lojas com o CD =========================

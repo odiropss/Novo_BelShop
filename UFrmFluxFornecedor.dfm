@@ -1,6 +1,6 @@
 object FrmFluxoFornecedor: TFrmFluxoFornecedor
-  Left = 303
-  Top = 104
+  Left = 247
+  Top = 112
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -131,7 +131,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Top = 56
     Width = 977
     Height = 479
-    ActivePage = Ts_FluxFornLanctos
+    ActivePage = Ts_FluxFornApres
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -185,7 +185,6 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
           ParentCtl3D = False
           ParentFont = False
-          PopupMenu = PopM_Forn
           ReadOnly = True
           TabOrder = 0
           TitleFont.Charset = DEFAULT_CHARSET
@@ -303,6 +302,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
               PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
               PanelStyle.Alignment = taCenter
               Text = '<Bot'#227'o Direto> Usar Data CC ?'
+              Visible = False
               Width = 200
             end
             item
@@ -340,167 +340,8 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Height = 416
           ActivePage = Ts_FluxFornManutReducao
           Align = alRight
-          TabOrder = 2
+          TabOrder = 1
           OnChange = PC_FluxFornParametrosChange
-          object Ts_FluxFornParamComprv: TTabSheet
-            Caption = ' Hist'#243'ricos '
-            Highlighted = True
-            object Pan_FluFornComprov: TPanel
-              Left = 0
-              Top = 0
-              Width = 390
-              Height = 46
-              Align = alTop
-              Enabled = False
-              TabOrder = 0
-              DesignSize = (
-                390
-                46)
-              object Bt_FluFornComprovante: TJvXPButton
-                Tag = 1
-                Left = 10
-                Top = 15
-                Width = 23
-                Height = 25
-                TabOrder = 0
-                TabStop = False
-                ShowFocusRect = True
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-                OnClick = Bt_FluFornComprovanteClick
-              end
-              object EdtFluFornComprovante: TEdit
-                Left = 36
-                Top = 18
-                Width = 350
-                Height = 19
-                TabStop = False
-                Anchors = [akLeft, akTop, akRight]
-                Color = 12171775
-                ReadOnly = True
-                TabOrder = 1
-              end
-              object Rb_FluFornDebito: TJvRadioButton
-                Left = 101
-                Top = 1
-                Width = 52
-                Height = 17
-                Alignment = taLeftJustify
-                Caption = 'D'#233'bito'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clBlack
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = []
-                ParentFont = False
-                TabOrder = 2
-                OnClick = Rb_FluFornDebitoClick
-                OnKeyUp = Rb_FluFornDebitoKeyUp
-                HotTrackFont.Charset = DEFAULT_CHARSET
-                HotTrackFont.Color = clWindowText
-                HotTrackFont.Height = -11
-                HotTrackFont.Name = 'MS Sans Serif'
-                HotTrackFont.Style = []
-                LinkedControls = <>
-              end
-              object Rb_FluFornCredito: TJvRadioButton
-                Left = 36
-                Top = 1
-                Width = 62
-                Height = 17
-                Alignment = taLeftJustify
-                Caption = 'Cr'#233'dito'
-                Checked = True
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clBlack
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-                TabOrder = 3
-                TabStop = True
-                OnClick = Rb_FluFornDebitoClick
-                OnKeyUp = Rb_FluFornDebitoKeyUp
-                HotTrackFont.Charset = DEFAULT_CHARSET
-                HotTrackFont.Color = clWindowText
-                HotTrackFont.Height = -11
-                HotTrackFont.Name = 'MS Sans Serif'
-                HotTrackFont.Style = []
-                LinkedControls = <>
-              end
-            end
-            object Dbg_FluFornComprov: TDBGrid
-              Left = 0
-              Top = 46
-              Width = 390
-              Height = 322
-              Hint = 'Tecle <Dekete> Para Excluir'
-              Align = alClient
-              Color = 15004403
-              Ctl3D = False
-              DataSource = DMBelShop.DS_FluxoFornHistorico
-              FixedColor = clTeal
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = []
-              Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-              ParentCtl3D = False
-              ParentFont = False
-              ParentShowHint = False
-              ReadOnly = True
-              ShowHint = True
-              TabOrder = 1
-              TitleFont.Charset = DEFAULT_CHARSET
-              TitleFont.Color = clWhite
-              TitleFont.Height = -11
-              TitleFont.Name = 'MS Sans Serif'
-              TitleFont.Style = [fsBold]
-              OnDrawColumnCell = Dbg_FluFornComprovDrawColumnCell
-              OnEnter = Dbg_FluFornComprovEnter
-              OnKeyDown = Dbg_FluFornComprovKeyDown
-              Columns = <
-                item
-                  Expanded = False
-                  FieldName = 'DES_HISTORICO'
-                  Width = 300
-                  Visible = True
-                end
-                item
-                  Expanded = False
-                  FieldName = 'DEB_CRE'
-                  Title.Alignment = taCenter
-                  Width = 55
-                  Visible = True
-                end>
-            end
-            object Stb_FluFornComprv: TdxStatusBar
-              Left = 0
-              Top = 368
-              Width = 390
-              Height = 20
-              Panels = <
-                item
-                  PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-                  PanelStyle.Alignment = taCenter
-                  BiDiMode = bdLeftToRight
-                  ParentBiDiMode = False
-                  Text = '<Delete> Exclui Comprovante'
-                  Width = 300
-                end>
-              PaintStyle = stpsOffice11
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-            end
-          end
           object Ts_FluxFornParamReducao: TTabSheet
             Caption = ' % Redu'#231#227'o '
             ImageIndex = 1
@@ -690,7 +531,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             end
           end
           object Ts_FluxFornManutReducao: TTabSheet
-            Caption = ' Manuten'#231#227'o '
+            Caption = ' Manuten'#231#227'o  % Redu'#231#227'o  '
             ImageIndex = 2
             OnExit = Ts_FluxFornManutReducaoExit
             DesignSize = (
@@ -948,6 +789,166 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
               end
             end
           end
+          object Ts_FluxFornParamComprv: TTabSheet
+            Caption = ' Hist'#243'ricos '
+            Highlighted = True
+            object Pan_FluFornComprov: TPanel
+              Left = 0
+              Top = 0
+              Width = 390
+              Height = 46
+              Align = alTop
+              Enabled = False
+              TabOrder = 0
+              Visible = False
+              DesignSize = (
+                390
+                46)
+              object Bt_FluFornComprovante: TJvXPButton
+                Tag = 1
+                Left = 10
+                Top = 15
+                Width = 23
+                Height = 25
+                TabOrder = 0
+                TabStop = False
+                ShowFocusRect = True
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+                OnClick = Bt_FluFornComprovanteClick
+              end
+              object EdtFluFornComprovante: TEdit
+                Left = 36
+                Top = 18
+                Width = 350
+                Height = 19
+                TabStop = False
+                Anchors = [akLeft, akTop, akRight]
+                Color = 12171775
+                ReadOnly = True
+                TabOrder = 1
+              end
+              object Rb_FluFornDebito: TJvRadioButton
+                Left = 101
+                Top = 1
+                Width = 52
+                Height = 17
+                Alignment = taLeftJustify
+                Caption = 'D'#233'bito'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clBlack
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = []
+                ParentFont = False
+                TabOrder = 2
+                OnClick = Rb_FluFornDebitoClick
+                OnKeyUp = Rb_FluFornDebitoKeyUp
+                HotTrackFont.Charset = DEFAULT_CHARSET
+                HotTrackFont.Color = clWindowText
+                HotTrackFont.Height = -11
+                HotTrackFont.Name = 'MS Sans Serif'
+                HotTrackFont.Style = []
+                LinkedControls = <>
+              end
+              object Rb_FluFornCredito: TJvRadioButton
+                Left = 36
+                Top = 1
+                Width = 62
+                Height = 17
+                Alignment = taLeftJustify
+                Caption = 'Cr'#233'dito'
+                Checked = True
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clBlack
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+                TabOrder = 3
+                TabStop = True
+                OnClick = Rb_FluFornDebitoClick
+                OnKeyUp = Rb_FluFornDebitoKeyUp
+                HotTrackFont.Charset = DEFAULT_CHARSET
+                HotTrackFont.Color = clWindowText
+                HotTrackFont.Height = -11
+                HotTrackFont.Name = 'MS Sans Serif'
+                HotTrackFont.Style = []
+                LinkedControls = <>
+              end
+            end
+            object Dbg_FluFornComprov: TDBGrid
+              Left = 0
+              Top = 46
+              Width = 390
+              Height = 322
+              Hint = 'Tecle <Dekete> Para Excluir'
+              Align = alClient
+              Color = 15004403
+              Ctl3D = False
+              DataSource = DMBelShop.DS_FluxoFornHistorico
+              FixedColor = clTeal
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+              ParentCtl3D = False
+              ParentFont = False
+              ParentShowHint = False
+              ReadOnly = True
+              ShowHint = True
+              TabOrder = 1
+              TitleFont.Charset = DEFAULT_CHARSET
+              TitleFont.Color = clWhite
+              TitleFont.Height = -11
+              TitleFont.Name = 'MS Sans Serif'
+              TitleFont.Style = [fsBold]
+              OnDrawColumnCell = Dbg_FluFornComprovDrawColumnCell
+              OnEnter = Dbg_FluFornComprovEnter
+              OnKeyDown = Dbg_FluFornComprovKeyDown
+              Columns = <
+                item
+                  Expanded = False
+                  FieldName = 'DES_HISTORICO'
+                  Width = 300
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'DEB_CRE'
+                  Title.Alignment = taCenter
+                  Width = 55
+                  Visible = True
+                end>
+            end
+            object Stb_FluFornComprv: TdxStatusBar
+              Left = 0
+              Top = 368
+              Width = 390
+              Height = 20
+              Panels = <
+                item
+                  PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                  PanelStyle.Alignment = taCenter
+                  BiDiMode = bdLeftToRight
+                  ParentBiDiMode = False
+                  Text = '<Delete> Exclui Comprovante'
+                  Width = 300
+                end>
+              PaintStyle = stpsOffice11
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+            end
+          end
         end
       end
     end
@@ -1099,6 +1100,22 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           item
             Expanded = False
             FieldName = 'TXT_OBS'
+            Width = 400
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'COD_VINCULADO'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'C'#243'd Forn Vinc'
+            Width = 85
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DES_VINCULADO'
+            Title.Caption = 'Fornecedor Vinculado'
+            Width = 300
             Visible = True
           end
           item
@@ -1452,18 +1469,408 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             OnClick = Bt_LanctosAbandonarClick
           end
         end
+        object Gb_FornVinculado: TGroupBox
+          Left = 240
+          Top = 30
+          Width = 425
+          Height = 49
+          Caption = ' Fornecedor Vinculado '
+          TabOrder = 14
+          object Cbx_FornVinculado: TComboBox
+            Left = 13
+            Top = 18
+            Width = 401
+            Height = 22
+            Style = csOwnerDrawFixed
+            ItemHeight = 16
+            TabOrder = 0
+          end
+        end
       end
     end
-    object Ts_FluxFornGraficos: TTabSheet
-      Caption = ' Graficos '
+    object Ts_FluxFornVinculos: TTabSheet
+      Caption = ' Vinculos de Fornecedores '
       ImageIndex = 3
-      object Edit2: TEdit
-        Left = 568
-        Top = 304
-        Width = 121
-        Height = 19
+      DesignSize = (
+        969
+        451)
+      object Panel5: TPanel
+        Left = 10
+        Top = 5
+        Width = 951
+        Height = 446
+        Anchors = [akTop, akBottom]
         TabOrder = 0
-        Text = 'Edit2'
+        object Gb_FornVinculados: TGroupBox
+          Left = 477
+          Top = 1
+          Width = 473
+          Height = 444
+          Align = alRight
+          Caption = ' Fornecedores Vinculados'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlue
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+          object dxStatusBar3: TdxStatusBar
+            Left = 1
+            Top = 423
+            Width = 471
+            Height = 20
+            Panels = <
+              item
+                PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                PanelStyle.Alignment = taCenter
+                PanelStyle.Color = clSilver
+                BiDiMode = bdRightToLeft
+                ParentBiDiMode = False
+                Text = '<Delete> Retira V'#237'nculo Fornecedor Selecionado'
+              end>
+            PaintStyle = stpsOffice11
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+          end
+          object Panel7: TPanel
+            Left = 1
+            Top = 14
+            Width = 471
+            Height = 47
+            Align = alTop
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentColor = True
+            ParentFont = False
+            TabOrder = 1
+            DesignSize = (
+              471
+              47)
+            object Label13: TLabel
+              Left = 8
+              Top = 1
+              Width = 61
+              Height = 13
+              Caption = 'Selecionar'
+            end
+            object EdtFornVinculadoCodForn: TCurrencyEdit
+              Left = 6
+              Top = 17
+              Width = 48
+              Height = 21
+              AutoSize = False
+              DecimalPlaces = 0
+              DisplayFormat = '0'
+              TabOrder = 0
+              OnExit = EdtFornVinculadoCodFornExit
+            end
+            object Bt_FluxoVinculadoBuscaForn: TJvXPButton
+              Tag = 92
+              Left = 58
+              Top = 15
+              Width = 24
+              Height = 26
+              TabOrder = 1
+              TabStop = False
+              ShowFocusRect = True
+              Anchors = [akTop, akRight]
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+            end
+            object Bt_FluxoVinculadoIncluir: TJvXPButton
+              Left = 390
+              Top = 1
+              Width = 80
+              Height = 45
+              Caption = 'Incluir'
+              TabOrder = 2
+              Glyph.Data = {
+                07544269746D6170EE000000424DEE0000000000000076000000280000001000
+                00000F000000010004000000000078000000130B0000130B0000100000000000
+                0000000000000000800000800000008080008000000080008000808000008080
+                8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+                FF00888888800000000088888880FFFFFFF088888880F00F00F088888880FFFF
+                FFF088888880F00F00F088888880FFFFFFF08888888444444444880000844444
+                4444880BB08888888888000BB000888888880BBBBBB0888888880BBBBBB08888
+                8888000BB00088888888880BB088888888888800008888888888}
+              ShowFocusRect = True
+              Align = alRight
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              OnClick = Bt_FluxFornManutReducaoVoltarClick
+            end
+            object EdtFornVinculadoDesForn: TEdit
+              Left = 86
+              Top = 18
+              Width = 299
+              Height = 19
+              TabStop = False
+              Anchors = [akLeft, akTop, akRight]
+              Color = 12171775
+              ReadOnly = True
+              TabOrder = 3
+            end
+          end
+          object Dbg_FornVinculados: TDBGrid
+            Left = 1
+            Top = 61
+            Width = 471
+            Height = 362
+            Align = alClient
+            Ctl3D = False
+            DataSource = DMBelShop.DS_FluxoFornVinculados
+            FixedColor = clTeal
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+            ParentCtl3D = False
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 2
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWhite
+            TitleFont.Height = -11
+            TitleFont.Name = 'MS Sans Serif'
+            TitleFont.Style = [fsBold]
+            OnDrawColumnCell = Dbg_FornVinculadosDrawColumnCell
+            OnEnter = Dbg_FornVinculoEnter
+            OnExit = Dbg_FornVinculoExit
+            OnKeyDown = Dbg_FornVinculoKeyDown
+            Columns = <
+              item
+                Expanded = False
+                FieldName = 'COD_VINCULADO'
+                Title.Alignment = taRightJustify
+                Width = 50
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_VINCULADO'
+                Width = 400
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'IND_SITUACAO'
+                Visible = True
+              end>
+          end
+        end
+        object Gb_FornVinculo: TGroupBox
+          Left = 1
+          Top = 1
+          Width = 473
+          Height = 444
+          Align = alLeft
+          Caption = ' Fornecedores de V'#237'nculo '
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlue
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 1
+          object Panel6: TPanel
+            Left = 1
+            Top = 14
+            Width = 471
+            Height = 47
+            Align = alTop
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentColor = True
+            ParentFont = False
+            TabOrder = 0
+            DesignSize = (
+              471
+              47)
+            object Label12: TLabel
+              Left = 6
+              Top = 19
+              Width = 61
+              Height = 13
+              Caption = 'Selecionar'
+            end
+            object EdtFornVinculoCodForn: TCurrencyEdit
+              Left = 70
+              Top = 15
+              Width = 48
+              Height = 21
+              AutoSize = False
+              DecimalPlaces = 0
+              DisplayFormat = '0'
+              TabOrder = 0
+              OnExit = EdtFornVinculoCodFornExit
+            end
+            object Bt_FluxoVinculoBuscaForn: TJvXPButton
+              Tag = 92
+              Left = 123
+              Top = 13
+              Width = 24
+              Height = 26
+              TabOrder = 1
+              TabStop = False
+              ShowFocusRect = True
+              Anchors = [akTop, akRight]
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              OnClick = Bt_FluxoVinculoBuscaFornClick
+            end
+            object Bt_FluxoVinculoExcluir: TJvXPButton
+              Left = 248
+              Top = 1
+              Width = 222
+              Height = 45
+              Caption = '   Retira Viculos do '#13#10'Fornecedor Selecionado'
+              TabOrder = 2
+              Glyph.Data = {
+                07544269746D6170B2050000424DB20500000000000036040000280000001200
+                00001300000001000800000000007C010000C30E0000C30E0000000100000000
+                0000000000007B000000BD000000FF0000007B7B000000FF0000FFFF00000031
+                5A0008427300084A730000007B007B007B00084A7B0008527B0021527B00007B
+                7B007B7B7B00004A840008528400105284002963840008528C00085A8C00185A
+                8C0018638C0029638C0008529400185A9400296B9400316B9400297394003173
+                9400085A9C0018639C0018739C0029739C0031739C0031849C00005AA5002173
+                A5003973A500297BA500186BAD00106BB500317BB5002984B5004A8CB500086B
+                BD000073BD001073BD001873BD00217BBD004284BD00318CBD004A8CBD005294
+                BD005A9CBD00BDBDBD001073C600007BC600217BC600428CC6004A8CC6005A9C
+                C6000084CE000884CE00398CCE005A9CCE00639CCE001884D6002184D600088C
+                D600108CD6004294D600399CD6004A9CD600529CD6005A9CD6005AA5D60063AD
+                D6001884DE002184DE00188CDE001094DE001894DE003194DE00299CDE004AA5
+                DE005AA5DE004AB5DE00189CE700219CE700429CE7005AA5E7005AADE70063AD
+                E7006BB5E70021A5EF0029A5EF0031A5EF0063B5EF006BBDEF0029ADF70031AD
+                F7006BBDF7000000FF00FF00FF0031B5FF0039B5FF0042B5FF0039BDFF0042BD
+                FF0042C6FF004AC6FF006BC6FF004ACEFF0052CEFF0052D6FF005ADEFF0063E7
+                FF0000FFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+                FF00393939393939393939393939393939393969000039693939393939393939
+                3939393939396939000039696939391010101010101010101069393900003969
+                6969000000000000000000006969393900003939696900787979797879797969
+                6939393900003939396969790303030303037969103939390000393939696969
+                7978797979786969103939390000393939396969690303036969690010393939
+                0000393939390069696979786969790010393939000039393939007903696969
+                6903790010393939000039393939007979696969697879001039393900003939
+                3939007903696969690000001039393900003939393900786969790069697900
+                1039393900003939393900696969790069696969393939390000393939696969
+                7978790079003969693939390000396969696900000000000039393969693939
+                0000396969693939393939393939393939396939000039393939393939393939
+                393939393939396900003939393939393939393939393939393939390000}
+              ShowFocusRect = True
+              Align = alRight
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              OnClick = Bt_FluxoVinculoExcluirClick
+            end
+          end
+          object Dbg_FornVinculo: TDBGrid
+            Left = 1
+            Top = 61
+            Width = 471
+            Height = 382
+            Align = alClient
+            Ctl3D = False
+            DataSource = DMBelShop.DS_FluxoFornVinculo
+            FixedColor = clTeal
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+            ParentCtl3D = False
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 1
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWhite
+            TitleFont.Height = -11
+            TitleFont.Name = 'MS Sans Serif'
+            TitleFont.Style = [fsBold]
+            OnDrawColumnCell = Dbg_FornVinculoDrawColumnCell
+            OnEnter = Dbg_FornVinculoEnter
+            OnExit = Dbg_FornVinculoExit
+            OnKeyDown = Dbg_FornVinculoKeyDown
+            Columns = <
+              item
+                Expanded = False
+                FieldName = 'COD_FORNECEDOR'
+                Title.Alignment = taRightJustify
+                Width = 50
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'DES_FORNECEDOR'
+                Width = 400
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'IND_SITUACAO'
+                Visible = True
+              end>
+          end
+          object Panel8: TPanel
+            Left = 144
+            Top = 168
+            Width = 185
+            Height = 41
+            Caption = 'Panel8'
+            Color = 8684799
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWhite
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            TabOrder = 2
+          end
+        end
       end
     end
   end
@@ -1500,7 +1907,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     object Panel3: TPanel
       Left = 2
       Top = 2
-      Width = 666
+      Width = 676
       Height = 37
       Align = alLeft
       BevelOuter = bvNone
@@ -1524,7 +1931,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       end
       object Bt_FluFornSalvaMemoria: TJvXPButton
         Tag = 4
-        Left = 548
+        Left = 566
         Top = 1
         Width = 104
         Height = 35
@@ -1543,7 +1950,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       end
       object Bt_FluFornIncluir: TJvXPButton
         Tag = 1
-        Left = 213
+        Left = 231
         Top = 1
         Width = 114
         Height = 35
@@ -1561,7 +1968,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       end
       object Bt_FluFornAlterar: TJvXPButton
         Tag = 2
-        Left = 328
+        Left = 346
         Top = 1
         Width = 114
         Height = 35
@@ -1577,48 +1984,27 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         ParentFont = False
         OnClick = Bt_FluFornIncluirClick
       end
-      object Bt_FluFornGraficos: TJvXPButton
+      object Bt_FluFornVinculos: TJvXPButton
         Left = 112
         Top = 1
-        Width = 100
+        Width = 118
         Height = 35
-        Caption = 'Graficos'
+        Caption = ' Vinculos de Fornecedores'
         TabOrder = 1
         TabStop = False
         Glyph.Data = {
-          07544269746D6170F6030000424DF60300000000000076000000280000001F00
-          00001C0000000100080000000000800300000000000000000000100000000000
+          07544269746D617066010000424D660100000000000076000000280000001400
+          0000140000000100040000000000F00000000000000000000000100000001000
           0000000000000000800000800000008080008000000080008000808000008080
           8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-          FF00080800080800080800080800080800080800080800080800080800080800
-          0805080808080808080808080808080808080808080808080808080808080808
-          0805070000000000000000000000000000000000000000000000000000000000
-          0705000F080F080F080F080F080F080F080F080F080F080F080F080F080F080F
-          000500080F080F080F080F080F080F080F080F080F080F080F080F080F080F08
-          0005000808000000000008080000000000080800000000000808000000000008
-          0005000800000E0E06000808000E0E06000808000E0E06000808000E0E060008
-          000500080B000E0E06000808000E0E06000808000E0E06000808000E0E060008
-          000500080B0B000E06000808000E0E06000808000E0E06000808000E0E060008
-          00050008080B0B0006000800000E0E06000808000E0E06000808000E0E060008
-          0005000808000B0B0000000B000E0E06000808000E0E06000808000E0E060008
-          0005000808000E0B0B000B0B0B000E06000808000E0E06000808000E0E060008
-          0005000808000E0E0B0B0B080B0B0006000808000E0E06000808000E0E060008
-          0005000808000E0E060B0808000B0B00000808000E0E06000800000E0E060008
-          0005000808000E0E06000808000E0B0B000808000E0E0600000B000E0E060008
-          0005000808000E0E06000808000E0E0B0B0008000E0E06000B0B0B000E060008
-          0005000808000E0E06000808000E0E060B0B00000E0E000B0B080B0B00060008
-          0005000808000E0E06000808000E0E06000B0B000E000B0B0808000B0B000008
-          0005000808000E0E06000808000E0E0600080B0B000B0B000808000F0B0B0008
-          0005000808000E0E06000808000E0E060008080B0B0B060008080800000B0B00
-          0005000808000E0E06000808000F0F0E000808000B0E06000808080808080B0B
-          0005000808000E0E0600080808000000080808000E0E0600080808080808080B
-          0005000808000E0E0600080808080808080808000E0E06000808080808080808
-          0005000808000E0E0600080808080808080808000F0F0E000808080808080808
-          0005000F08000F0F0E00080F080F080F080F080F0000000F080F080F080F080F
-          000500080F08000000080F080F080F080F080F080F080F080F080F080F080F08
-          0005000F080F080F080F080F080F080F080F080F080F080F080F080F080F080F
-          0005070000000000000000000000000000000000000000000000000000000000
-          0705}
+          FF00888888888888888888880000888888888888888888880000888888888888
+          8888888800008888888888887777777800008888888888800000007800008888
+          88888840FBFBF078000088888888848000000088000088888888488888888888
+          000088777774888877777778000080000007777000000078000080FFFF044440
+          FBFBF07800008000000878800000008800008888888487888888888800008888
+          88884878777777780000888888888480000000780000888888888840FBFBF078
+          0000888888888880000000880000888888888888888888880000888888888888
+          888888880000888888888888888888880000}
         ShowFocusRect = True
         Spacing = 6
         Font.Charset = DEFAULT_CHARSET
@@ -1627,11 +2013,11 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        OnClick = Bt_FluFornGraficosClick
+        OnClick = Bt_FluFornVinculosClick
       end
       object Bt_FluFornImprimir: TJvXPButton
         Tag = 5
-        Left = 443
+        Left = 461
         Top = 1
         Width = 104
         Height = 35
@@ -1689,17 +2075,17 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Font.Style = [fsBold]
     StartColor = 15522303
     EndColor = 8388863
-    Left = 856
-    Top = 88
+    Left = 848
+    Top = 168
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 924
-    Top = 103
+    Left = 908
+    Top = 159
   end
-  object PopM_Forn: TPopupMenu
-    Left = 815
-    Top = 48
+  object PopM_Forn_DtaCCDesaticado: TPopupMenu
+    Left = 759
+    Top = 248
     object PopM_FluFornSIM: TMenuItem
       Bitmap.Data = {
         B6030000424DB603000000000000360000002800000012000000100000000100

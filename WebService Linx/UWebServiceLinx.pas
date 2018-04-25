@@ -1,5 +1,6 @@
 unit UWebServiceLinx;
 {
+odirTeste
 -> Métodos: LinxMetodos
    - 1 Vez
    ====================
@@ -996,7 +997,8 @@ Var
 
   wDia, wMes, wAno: Word;
 Begin
-// ShowMessage('Odir 7 Post '+sgMetodo);
+  // odirOPSS - odirteste
+  // ShowMessage('Odir 7 Post '+sgMetodo);
 
   // ===========================================================================
   // Se Recebe do Parametros Período Acerta Datas ==============================
@@ -1012,6 +1014,8 @@ Begin
     DecodeDate(StrToDate(sgParametroDtaFim), wAno, wMes, wDia);
     sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
   End;
+  // odirOPSS - odirteste
+  // ShowMessage('Datas '+sgDtaInicio+' - '+sgDtaFim);
 
   // ===========================================================================
   // Gera Arquivo ==============================================================
@@ -1488,7 +1492,9 @@ End;
   // Le Parametros Enviado =====================================================
   bgParametroDtaEmissao:=True;
 //opss
+
   sgParametroMetodo:=ParamStr(1);
+
 //  sgParametroMetodo:='LinxFaturas;2;C:\Projetos\BelShop\Fontes\WebService Linx\Metodos\;C:\Projetos\BelShop\Fontes\WebService Linx\Retornos\;25/07/2017;25/07/2017;';
 //  sgParametroMetodo:='LINXLOJAS;2;C:\Projetos\BelShop\Fontes\WebService Linx\Metodos\;C:\Projetos\BelShop\Fontes\WebService Linx\Retornos\;01/03/2018;14/03/2018;';
 
@@ -1551,7 +1557,7 @@ End;
     sgPastaExecutavel:=Copy(sgParametroMetodos,1,Pos('Metodos\', sgParametroMetodos)-1);
   End; // If Trim(sgParametroMetodo)<>'' Then
 
-  //odirOPSS
+  //odirOPSS - odirteste
 //  ShowMessage('Metodo: '+sgParametroMetodo);
 //  ShowMessage('Demonstracao '+sgParametroMetodo);
 //  ShowMessage('Loja: '+sgParametroCodLoja);
@@ -1715,7 +1721,6 @@ End;
     //==========================================================================
     For iFor:=0 to tgMetodos.Count-1 do
     Begin
-//         ShowMessage('Odir 4 - For iFor:=0 to tgMetodos.Count-1 do');
       sgCodProduto:='';
       sgReferenciaProd:='';
 
@@ -1731,7 +1736,8 @@ End;
         sgMetodo:=sgParametroMetodo;
       End; // If Trim(sgParametroMetodo)<>'' Then
 
-//          ShowMessage('Odir 5 - Metodo em Execução: '+sgMetodo);
+  // odirOPSS - odirteste
+  // ShowMessage('Odir 5 - Metodo em Execução: '+sgMetodo);
 
       sMetodoEspecifico:='';
       If (sgMetodo='LinxMovtosAjustesEntradas') Or (sgMetodo='LinxMovtosAjustesSaidas') Then
@@ -1922,6 +1928,8 @@ End;
       //========================================================================
       If (sgMetodo='LinxMovimento') Then
       Begin
+  // odirOPSS - odirteste
+  // ShowMessage('sMetodoEspecifico '+sMetodoEspecifico);
         If (sMetodoEspecifico='') Then
         Begin
           If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
