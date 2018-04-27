@@ -1,6 +1,6 @@
 object FrmFluxoFornecedor: TFrmFluxoFornecedor
-  Left = 247
-  Top = 112
+  Left = 237
+  Top = 106
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -1495,19 +1495,19 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         969
         451)
       object Panel5: TPanel
-        Left = 10
+        Left = 1
         Top = 5
-        Width = 951
+        Width = 967
         Height = 446
         Anchors = [akTop, akBottom]
         TabOrder = 0
         object Gb_FornVinculados: TGroupBox
-          Left = 477
+          Left = 484
           Top = 1
-          Width = 473
+          Width = 482
           Height = 444
           Align = alRight
-          Caption = ' Fornecedores Vinculados'
+          Caption = ' Fornecedores Vinculados '
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlue
           Font.Height = -11
@@ -1515,123 +1515,13 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Font.Style = [fsBold]
           ParentFont = False
           TabOrder = 0
-          object dxStatusBar3: TdxStatusBar
-            Left = 1
-            Top = 423
-            Width = 471
-            Height = 20
-            Panels = <
-              item
-                PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-                PanelStyle.Alignment = taCenter
-                PanelStyle.Color = clSilver
-                BiDiMode = bdRightToLeft
-                ParentBiDiMode = False
-                Text = '<Delete> Retira V'#237'nculo Fornecedor Selecionado'
-              end>
-            PaintStyle = stpsOffice11
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-          end
-          object Panel7: TPanel
-            Left = 1
-            Top = 14
-            Width = 471
-            Height = 47
-            Align = alTop
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            ParentColor = True
-            ParentFont = False
-            TabOrder = 1
-            DesignSize = (
-              471
-              47)
-            object Label13: TLabel
-              Left = 8
-              Top = 1
-              Width = 61
-              Height = 13
-              Caption = 'Selecionar'
-            end
-            object EdtFornVinculadoCodForn: TCurrencyEdit
-              Left = 6
-              Top = 17
-              Width = 48
-              Height = 21
-              AutoSize = False
-              DecimalPlaces = 0
-              DisplayFormat = '0'
-              TabOrder = 0
-              OnExit = EdtFornVinculadoCodFornExit
-            end
-            object Bt_FluxoVinculadoBuscaForn: TJvXPButton
-              Tag = 92
-              Left = 58
-              Top = 15
-              Width = 24
-              Height = 26
-              TabOrder = 1
-              TabStop = False
-              ShowFocusRect = True
-              Anchors = [akTop, akRight]
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-            end
-            object Bt_FluxoVinculadoIncluir: TJvXPButton
-              Left = 390
-              Top = 1
-              Width = 80
-              Height = 45
-              Caption = 'Incluir'
-              TabOrder = 2
-              Glyph.Data = {
-                07544269746D6170EE000000424DEE0000000000000076000000280000001000
-                00000F000000010004000000000078000000130B0000130B0000100000000000
-                0000000000000000800000800000008080008000000080008000808000008080
-                8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-                FF00888888800000000088888880FFFFFFF088888880F00F00F088888880FFFF
-                FFF088888880F00F00F088888880FFFFFFF08888888444444444880000844444
-                4444880BB08888888888000BB000888888880BBBBBB0888888880BBBBBB08888
-                8888000BB00088888888880BB088888888888800008888888888}
-              ShowFocusRect = True
-              Align = alRight
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-              OnClick = Bt_FluxFornManutReducaoVoltarClick
-            end
-            object EdtFornVinculadoDesForn: TEdit
-              Left = 86
-              Top = 18
-              Width = 299
-              Height = 19
-              TabStop = False
-              Anchors = [akLeft, akTop, akRight]
-              Color = 12171775
-              ReadOnly = True
-              TabOrder = 3
-            end
-          end
           object Dbg_FornVinculados: TDBGrid
             Left = 1
             Top = 61
-            Width = 471
-            Height = 362
+            Width = 480
+            Height = 382
             Align = alClient
+            Color = 16053492
             Ctl3D = False
             DataSource = DMBelShop.DS_FluxoFornVinculados
             FixedColor = clTeal
@@ -1644,7 +1534,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             ParentCtl3D = False
             ParentFont = False
             ReadOnly = True
-            TabOrder = 2
+            TabOrder = 1
             TitleFont.Charset = DEFAULT_CHARSET
             TitleFont.Color = clWhite
             TitleFont.Height = -11
@@ -1665,20 +1555,164 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
               item
                 Expanded = False
                 FieldName = 'DES_VINCULADO'
-                Width = 400
+                Width = 390
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'IND_SITUACAO'
                 Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'IND_SIT_ORIGEM'
+                Visible = True
               end>
+          end
+          object Panel7: TPanel
+            Left = 1
+            Top = 14
+            Width = 480
+            Height = 47
+            Align = alTop
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentColor = True
+            ParentFont = False
+            TabOrder = 0
+            DesignSize = (
+              480
+              47)
+            object Label13: TLabel
+              Left = 44
+              Top = 18
+              Width = 61
+              Height = 13
+              Caption = 'Selecionar'
+            end
+            object Bt_FluxoVinculadoExcluir: TJvXPButton
+              Left = 225
+              Top = 3
+              Width = 203
+              Height = 39
+              Caption = '      Retirar Vinculo'#13#10'Fornecedor Selecionado'
+              TabOrder = 1
+              Glyph.Data = {
+                07544269746D617036080000424D360800000000000036040000280000002000
+                000020000000010008000000000000040000C30E0000C30E0000000100000000
+                000000000000400000006000000080000000A0000000C0000000E0000000FF00
+                000000800000408000006080000080800000A0800000C0800000E0800000FF80
+                000000C0000040C0000060C0000080C00000A0C00000C0C00000E0C00000FFC0
+                000000FF000040FF000060FF000080FF0000A0FF0000C0FF0000E0FF0000FFFF
+                000000004000400040006000400080004000A0004000C0004000E0004000FF00
+                400000804000408040006080400080804000A0804000C0804000E0804000FF80
+                400000C0400040C0400060C0400080C04000A0C04000C0C04000E0C04000FFC0
+                400000FF400040FF400060FF400080FF4000A0FF4000C0FF4000E0FF4000FFFF
+                400000006000400060006000600080006000A0006000C0006000E0006000FF00
+                600000806000408060006080600080806000A0806000C0806000E0806000FF80
+                600000C0600040C0600060C0600080C06000A0C06000C0C06000E0C06000FFC0
+                600000FF600040FF600060FF600080FF6000A0FF6000C0FF6000E0FF6000FFFF
+                600000008000400080006000800080008000A0008000C0008000E0008000FF00
+                800000808000408080006080800080808000A0808000C0808000E0808000FF80
+                800000C0800040C0800060C0800080C08000A0C08000C0C08000E0C08000FFC0
+                800000FF800040FF800060FF800080FF8000A0FF8000C0FF8000E0FF8000FFFF
+                80000000A0004000A0006000A0008000A000A000A000C000A000E000A000FF00
+                A0000080A0004080A0006080A0008080A000A080A000C080A000E080A000FF80
+                A00000C0A00040C0A00060C0A00080C0A000A0C0A000C0C0A000E0C0A000FFC0
+                A00000FFA00040FFA00060FFA00080FFA000A0FFA000C0FFA000E0FFA000FFFF
+                A0000000C0004000C0006000C0008000C000A000C000C000C000E000C000FF00
+                C0000080C0004080C0006080C0008080C000A080C000C080C000E080C000FF80
+                C00000C0C00040C0C00060C0C00080C0C000A0C0C000C0C0C000E0C0C000FFC0
+                C00000FFC00040FFC00060FFC00080FFC000A0FFC000C0FFC000E0FFC000FFFF
+                C0000000E0004000E0006000E0008000E000A000E000C000E000E000E000FF00
+                E0000080E0004080E0006080E0008080E000A080E000C080E000E080E000FF80
+                E00000C0E00040C0E00060C0E00080C0E000A0C0E000C0C0E000E0C0E000FFC0
+                E00000FFE00040FFE00060FFE00080FFE000A0FFE000C0FFE000E0FFE000FFFF
+                E0000000FF004000FF006000FF008000FF00A000FF00C000FF00E000FF00FF00
+                FF000080FF004080FF006080FF008080FF00A080FF00C080FF00E080FF00FF80
+                FF0000C0FF0040C0FF0060C0FF0080C0FF00A0C0FF00C0C0FF00E0C0FF00FFC0
+                FF0000FFFF0040FFFF0060FFFF0080FFFF00A0FFFF00C0FFFF00E0FFFF00FFFF
+                FF00B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5949494949494949494949494B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B50000000000000000000000949494B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B500808080808080808080008400949494B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B50080808080808080808000840094949494B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5008080808080808080800000848400949494B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5008080808080808080800084848400B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B50080808080808080808000000000848400B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B50080808080808080808000F8F80084848400B5B5B5B5
+                B5B5B5B5B5B5B5B5B50080808080808080808000F8F8F80000000000B5B5B5B5
+                B5B5B5B5B5B5B5B5B500000000000000000000000707F800B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B500F8F8F8F8F8F8F8F8F8F8F8F800B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B500F807070707070707070707F800B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B500F8F8F8F8F8F8F8F8F8F8F8F800B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B500F8070707F80000000000000000B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B500F8F8F800B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5000000B5B51F04040494B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B51F04040494B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B51F1F1F04040494949494B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B504040404040404040494B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B50404040404040494B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5040404040494B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B504040494B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B504B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5}
+              ShowFocusRect = True
+              Spacing = 10
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              OnClick = Bt_FluxoVinculadoExcluirClick
+            end
+            object EdtFornVinculadoCodForn: TCurrencyEdit
+              Left = 110
+              Top = 15
+              Width = 55
+              Height = 21
+              AutoSize = False
+              DecimalPlaces = 0
+              DisplayFormat = '0'
+              TabOrder = 0
+              OnExit = EdtFornVinculadoCodFornExit
+            end
+            object Bt_FluxoVinculadoBuscaForn: TJvXPButton
+              Tag = 92
+              Left = 171
+              Top = 12
+              Width = 24
+              Height = 26
+              TabOrder = 2
+              TabStop = False
+              ShowFocusRect = True
+              Anchors = [akTop, akRight]
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              OnClick = Bt_FluxoVinculadoBuscaFornClick
+            end
           end
         end
         object Gb_FornVinculo: TGroupBox
           Left = 1
           Top = 1
-          Width = 473
+          Width = 482
           Height = 444
           Align = alLeft
           Caption = ' Fornecedores de V'#237'nculo '
@@ -1692,7 +1726,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           object Panel6: TPanel
             Left = 1
             Top = 14
-            Width = 471
+            Width = 480
             Height = 47
             Align = alTop
             Font.Charset = DEFAULT_CHARSET
@@ -1704,19 +1738,104 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             ParentFont = False
             TabOrder = 0
             DesignSize = (
-              471
+              480
               47)
             object Label12: TLabel
-              Left = 6
-              Top = 19
+              Left = 44
+              Top = 18
               Width = 61
               Height = 13
               Caption = 'Selecionar'
             end
+            object Bt_FluxoVinculoExcluir: TJvXPButton
+              Left = 225
+              Top = 3
+              Width = 203
+              Height = 39
+              Caption = '      Retirar Vinculo'#13#10'Fornecedor Selecionado'
+              TabOrder = 1
+              Glyph.Data = {
+                07544269746D617036080000424D360800000000000036040000280000002000
+                000020000000010008000000000000040000C30E0000C30E0000000100000000
+                000000000000400000006000000080000000A0000000C0000000E0000000FF00
+                000000800000408000006080000080800000A0800000C0800000E0800000FF80
+                000000C0000040C0000060C0000080C00000A0C00000C0C00000E0C00000FFC0
+                000000FF000040FF000060FF000080FF0000A0FF0000C0FF0000E0FF0000FFFF
+                000000004000400040006000400080004000A0004000C0004000E0004000FF00
+                400000804000408040006080400080804000A0804000C0804000E0804000FF80
+                400000C0400040C0400060C0400080C04000A0C04000C0C04000E0C04000FFC0
+                400000FF400040FF400060FF400080FF4000A0FF4000C0FF4000E0FF4000FFFF
+                400000006000400060006000600080006000A0006000C0006000E0006000FF00
+                600000806000408060006080600080806000A0806000C0806000E0806000FF80
+                600000C0600040C0600060C0600080C06000A0C06000C0C06000E0C06000FFC0
+                600000FF600040FF600060FF600080FF6000A0FF6000C0FF6000E0FF6000FFFF
+                600000008000400080006000800080008000A0008000C0008000E0008000FF00
+                800000808000408080006080800080808000A0808000C0808000E0808000FF80
+                800000C0800040C0800060C0800080C08000A0C08000C0C08000E0C08000FFC0
+                800000FF800040FF800060FF800080FF8000A0FF8000C0FF8000E0FF8000FFFF
+                80000000A0004000A0006000A0008000A000A000A000C000A000E000A000FF00
+                A0000080A0004080A0006080A0008080A000A080A000C080A000E080A000FF80
+                A00000C0A00040C0A00060C0A00080C0A000A0C0A000C0C0A000E0C0A000FFC0
+                A00000FFA00040FFA00060FFA00080FFA000A0FFA000C0FFA000E0FFA000FFFF
+                A0000000C0004000C0006000C0008000C000A000C000C000C000E000C000FF00
+                C0000080C0004080C0006080C0008080C000A080C000C080C000E080C000FF80
+                C00000C0C00040C0C00060C0C00080C0C000A0C0C000C0C0C000E0C0C000FFC0
+                C00000FFC00040FFC00060FFC00080FFC000A0FFC000C0FFC000E0FFC000FFFF
+                C0000000E0004000E0006000E0008000E000A000E000C000E000E000E000FF00
+                E0000080E0004080E0006080E0008080E000A080E000C080E000E080E000FF80
+                E00000C0E00040C0E00060C0E00080C0E000A0C0E000C0C0E000E0C0E000FFC0
+                E00000FFE00040FFE00060FFE00080FFE000A0FFE000C0FFE000E0FFE000FFFF
+                E0000000FF004000FF006000FF008000FF00A000FF00C000FF00E000FF00FF00
+                FF000080FF004080FF006080FF008080FF00A080FF00C080FF00E080FF00FF80
+                FF0000C0FF0040C0FF0060C0FF0080C0FF00A0C0FF00C0C0FF00E0C0FF00FFC0
+                FF0000FFFF0040FFFF0060FFFF0080FFFF00A0FFFF00C0FFFF00E0FFFF00FFFF
+                FF00B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5949494949494949494949494B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B50000000000000000000000949494B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B500808080808080808080008400949494B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B50080808080808080808000840094949494B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5008080808080808080800000848400949494B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5008080808080808080800084848400B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B50080808080808080808000000000848400B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B50080808080808080808000F8F80084848400B5B5B5B5
+                B5B5B5B5B5B5B5B5B50080808080808080808000F8F8F80000000000B5B5B5B5
+                B5B5B5B5B5B5B5B5B500000000000000000000000707F800B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B500F8F8F8F8F8F8F8F8F8F8F8F800B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B500F807070707070707070707F800B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B500F8F8F8F8F8F8F8F8F8F8F8F800B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B500F8070707F80000000000000000B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B500F8F8F800B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5000000B5B51F04040494B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B51F04040494B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B51F1F1F04040494949494B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B504040404040404040494B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B50404040404040494B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5040404040494B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B504040494B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B504B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5B5
+                B5B5}
+              ShowFocusRect = True
+              Spacing = 10
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              ParentFont = False
+              OnClick = Bt_FluxoVinculoExcluirClick
+            end
             object EdtFornVinculoCodForn: TCurrencyEdit
-              Left = 70
+              Left = 110
               Top = 15
-              Width = 48
+              Width = 55
               Height = 21
               AutoSize = False
               DecimalPlaces = 0
@@ -1726,11 +1845,11 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             end
             object Bt_FluxoVinculoBuscaForn: TJvXPButton
               Tag = 92
-              Left = 123
-              Top = 13
+              Left = 171
+              Top = 12
               Width = 24
               Height = 26
-              TabOrder = 1
+              TabOrder = 2
               TabStop = False
               ShowFocusRect = True
               Anchors = [akTop, akRight]
@@ -1742,77 +1861,14 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
               ParentFont = False
               OnClick = Bt_FluxoVinculoBuscaFornClick
             end
-            object Bt_FluxoVinculoExcluir: TJvXPButton
-              Left = 248
-              Top = 1
-              Width = 222
-              Height = 45
-              Caption = '   Retira Viculos do '#13#10'Fornecedor Selecionado'
-              TabOrder = 2
-              Glyph.Data = {
-                07544269746D6170B2050000424DB20500000000000036040000280000001200
-                00001300000001000800000000007C010000C30E0000C30E0000000100000000
-                0000000000007B000000BD000000FF0000007B7B000000FF0000FFFF00000031
-                5A0008427300084A730000007B007B007B00084A7B0008527B0021527B00007B
-                7B007B7B7B00004A840008528400105284002963840008528C00085A8C00185A
-                8C0018638C0029638C0008529400185A9400296B9400316B9400297394003173
-                9400085A9C0018639C0018739C0029739C0031739C0031849C00005AA5002173
-                A5003973A500297BA500186BAD00106BB500317BB5002984B5004A8CB500086B
-                BD000073BD001073BD001873BD00217BBD004284BD00318CBD004A8CBD005294
-                BD005A9CBD00BDBDBD001073C600007BC600217BC600428CC6004A8CC6005A9C
-                C6000084CE000884CE00398CCE005A9CCE00639CCE001884D6002184D600088C
-                D600108CD6004294D600399CD6004A9CD600529CD6005A9CD6005AA5D60063AD
-                D6001884DE002184DE00188CDE001094DE001894DE003194DE00299CDE004AA5
-                DE005AA5DE004AB5DE00189CE700219CE700429CE7005AA5E7005AADE70063AD
-                E7006BB5E70021A5EF0029A5EF0031A5EF0063B5EF006BBDEF0029ADF70031AD
-                F7006BBDF7000000FF00FF00FF0031B5FF0039B5FF0042B5FF0039BDFF0042BD
-                FF0042C6FF004AC6FF006BC6FF004ACEFF0052CEFF0052D6FF005ADEFF0063E7
-                FF0000FFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
-                FF00393939393939393939393939393939393969000039693939393939393939
-                3939393939396939000039696939391010101010101010101069393900003969
-                6969000000000000000000006969393900003939696900787979797879797969
-                6939393900003939396969790303030303037969103939390000393939696969
-                7978797979786969103939390000393939396969690303036969690010393939
-                0000393939390069696979786969790010393939000039393939007903696969
-                6903790010393939000039393939007979696969697879001039393900003939
-                3939007903696969690000001039393900003939393900786969790069697900
-                1039393900003939393900696969790069696969393939390000393939696969
-                7978790079003969693939390000396969696900000000000039393969693939
-                0000396969693939393939393939393939396939000039393939393939393939
-                393939393939396900003939393939393939393939393939393939390000}
-              ShowFocusRect = True
-              Align = alRight
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-              OnClick = Bt_FluxoVinculoExcluirClick
-            end
           end
           object Dbg_FornVinculo: TDBGrid
             Left = 1
             Top = 61
-            Width = 471
+            Width = 480
             Height = 382
             Align = alClient
+            Color = 16053492
             Ctl3D = False
             DataSource = DMBelShop.DS_FluxoFornVinculo
             FixedColor = clTeal
@@ -1846,29 +1902,19 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
               item
                 Expanded = False
                 FieldName = 'DES_FORNECEDOR'
-                Width = 400
+                Width = 390
                 Visible = True
               end
               item
                 Expanded = False
                 FieldName = 'IND_SITUACAO'
                 Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'IND_SIT_ORIGEM'
+                Visible = True
               end>
-          end
-          object Panel8: TPanel
-            Left = 144
-            Top = 168
-            Width = 185
-            Height = 41
-            Caption = 'Panel8'
-            Color = 8684799
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWhite
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            ParentFont = False
-            TabOrder = 2
           end
         end
       end
@@ -1907,7 +1953,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     object Panel3: TPanel
       Left = 2
       Top = 2
-      Width = 676
+      Width = 683
       Height = 37
       Align = alLeft
       BevelOuter = bvNone
@@ -1933,7 +1979,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         Tag = 4
         Left = 566
         Top = 1
-        Width = 104
+        Width = 110
         Height = 35
         Caption = 'Salva em'#13#10' Mem'#243'ria'
         TabOrder = 4

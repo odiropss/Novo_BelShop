@@ -1226,6 +1226,9 @@ type
     CDS_FluxoFornecedoresCOMPRADOR: TStringField;
     CDS_FluxoFornecedorCOD_VINCULADO: TIntegerField;
     CDS_FluxoFornecedorDES_VINCULADO: TStringField;
+    CDS_FluxoFornVinculadosCOD_FORNECEDOR: TIntegerField;
+    CDS_FluxoFornVinculadosIND_SIT_ORIGEM: TStringField;
+    CDS_FluxoFornVinculoIND_SIT_ORIGEM: TStringField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -1296,6 +1299,8 @@ type
     procedure CDS_PrioridadesAfterScroll(DataSet: TDataSet);
     procedure CDS_FluxoFornVinculoAfterScroll(DataSet: TDataSet);
     procedure CDS_FluxoFornecedoresAfterOpen(DataSet: TDataSet);
+    procedure CDS_FluxoFornVinculoAfterPost(DataSet: TDataSet);
+    procedure CDS_FluxoFornVinculadosAfterPost(DataSet: TDataSet);
 
   private
     { Private declarations }
@@ -1431,7 +1436,7 @@ implementation
 
 uses DK_Procs1, UFrmBelShop, UDMConexoes,  UFrmSolicitacoes, UDMVirtual,
      UFrmGeraPedidosComprasLojas, UWindowsFirewall, UEntrada,
-     UDMBancosConciliacao, UFrmOCLinx;
+     UDMBancosConciliacao, UFrmOCLinx, UFrmFluxFornecedor;
      // DBGrids, Variants, RTLConsts,
 
 {$R *.dfm}
@@ -4737,11 +4742,25 @@ end;
 procedure TDMBelShop.CDS_FluxoFornVinculoAfterScroll(DataSet: TDataSet);
 begin
   If Not CDS_FluxoFornVinculo.IsEmpty Then
-  Begin
-    CDS_FluxoFornVinculados.Close;
-    SDS_FluxoFornVinculados.Params.ParamByName('CodForn').AsInteger:=CDS_FluxoFornVinculoCOD_FORNECEDOR.AsInteger;
-    CDS_FluxoFornVinculados.Open;
+  Begin                                    
+    // Execurta Filtros ========================================================
+    CDS_FluxoFornVinculados.Filtered:=False;
+    CDS_FluxoFornVinculados.Filter:='COD_FORNECEDOR=9999999';
+
+    If Trim(CDS_FluxoFornVinculoCOD_FORNECEDOR.AsString)<>'' Then
+     CDS_FluxoFornVinculados.Filter:='COD_FORNECEDOR='+CDS_FluxoFornVinculoCOD_FORNECEDOR.AsString;
+
+    If Not CDS_FluxoFornVinculados.Active Then
+     CDS_FluxoFornVinculados.Open;
+
+    CDS_FluxoFornVinculados.Filtered:=True;
+
+    // Se Fornecedor de Vinculo Excluido Não Libera Digitação de Vinculados ====
+    FrmFluxoFornecedor.EdtFornVinculadoCodForn.Enabled   :=(CDS_FluxoFornVinculoIND_SITUACAO.AsString<>'E');
+    FrmFluxoFornecedor.Bt_FluxoVinculadoBuscaForn.Enabled:=(CDS_FluxoFornVinculoIND_SITUACAO.AsString<>'E');
+    FrmFluxoFornecedor.Bt_FluxoVinculadoExcluir.Enabled  :=(CDS_FluxoFornVinculoIND_SITUACAO.AsString<>'E');
   End; // If Not CDS_FluxoFornVinculo.IsEmpty Then
+
 end;
 
 procedure TDMBelShop.CDS_FluxoFornecedoresAfterOpen(DataSet: TDataSet);
@@ -4751,6 +4770,17 @@ begin
   FrmBelShop.FluxoFornecedorTotais;
 
   bgFluxoFornAfterScroll:=True;
+end;
+
+procedure TDMBelShop.CDS_FluxoFornVinculoAfterPost(DataSet: TDataSet);
+begin
+  CDS_FluxoFornVinculoAfterScroll(CDS_FluxoFornVinculo);
+  FrmFluxoFornecedor.bgAltVinculos:=True;
+end;
+
+procedure TDMBelShop.CDS_FluxoFornVinculadosAfterPost(DataSet: TDataSet);
+begin
+  FrmFluxoFornecedor.bgAltVinculos:=True;
 end;
 
 end.

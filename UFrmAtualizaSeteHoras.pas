@@ -1374,8 +1374,11 @@ Procedure TFrmAtualizaSeteHoras.CalculaFluxoCaixaFornecedores(sDt: String=''; sC
 Var
   MySql:String;
   cVlrSaldo: Currency;
-  iUltmio: Integer;
+  iUltimo: Integer;
   sCodigo: String;
+
+  sNumSeqIF: String; // Cria Saldo Inicial Final
+  b: Boolean;
 Begin
   // Monta Transacao ===========================================================
   TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
@@ -1385,6 +1388,49 @@ Begin
   Try
     DateSeparator:='.';
     DecimalSeparator:='.';
+
+    // Cria Registros de Saldo INICIAL e FINAL =================================
+    b:=True;
+    iUltimo:=0;
+    While b do
+    Begin
+      Inc(iUltimo);
+
+
+      If iUltimo=1 Then
+       sNumSeqIF:='0'
+      Else
+       sNumSeqIF:='999999';
+
+      MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES'+
+             ' SELECT DISTINCT'+
+             ' f.cod_fornecedor, f.DES_FORNECEDOR,'+
+             ' NULL COD_VINCULADO, NULL DES_VINCULADO,'+
+             ' NULL VLR_ORIGEM, NULL DTA_ORIGEM, f.dta_caixa,'+
+             sNumSeqIF+' NUM_SEQ,'+
+             ' NULL NUM_CHAVENF, NULL COD_EMPRESA,'+
+             sNumSeqIF+' COD_HISTORICO,'+
+             ' NULL TXT_OBS, NULL NUM_DOCUMENTO, NULL NUM_SERIE,'+
+             ' 0.00 PER_REDUCAO, NULL TIP_DEBCRE, NULL VLR_CAIXA,'+
+             ' 0.00 VLR_SALDO, f.CODFORNECEDOR, NULL COD_LOJA_LINX,'+
+             ' NULL COD_LOJA_SIDICOM, 0 USU_INCLUI, CURRENT_TIMESTAMP DTA_INCLUI,'+
+             ' 0 USU_ALTERA, CURRENT_TIMESTAMP DTA_ALTERA'+
+
+             ' FROM FL_CAIXA_FORNECEDORES f'+
+
+             ' WHERE f.cod_fornecedor='+sCodForn+
+             ' AND f.num_seq BETWEEN 1 AND 999998'+
+             ' AND NOT EXISTS (SELECT 1'+
+             '                 FROM FL_CAIXA_FORNECEDORES ff'+
+             '                 WHERE ff.cod_fornecedor=f.cod_fornecedor'+
+             '                 AND   ff.num_seq='+sNumSeqIF+
+             '                 AND   ff.dta_caixa=f.dta_caixa)';
+      DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+
+      If iUltimo=2 Then
+       Break;
+    End; // While b do
+    iUltimo:=0;
 
     // Busca Fornecedores ========================================================
     MySql:=' SELECT distinct c.COD_FORNECEDOR, c.DTA_CAIXA'+
@@ -1428,7 +1474,7 @@ Begin
       DMAtualizaSeteHoras.CDS_Pesquisa.Open;
 
       DMAtualizaSeteHoras.CDS_Pesquisa.Last;
-      iUltmio:=DMAtualizaSeteHoras.CDS_Pesquisa.RecNo;
+      iUltimo:=DMAtualizaSeteHoras.CDS_Pesquisa.RecNo;
       DMAtualizaSeteHoras.CDS_Pesquisa.First;
 
       While Not DMAtualizaSeteHoras.CDS_Pesquisa.Eof do
@@ -1530,10 +1576,10 @@ Begin
                  ' And   NUM_SEQ='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Num_Seq').AsString)+
                  ' And   COD_FORNECEDOR='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('COD_FORNECEDOR').AsString);
           DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
-        End; // If (DMAtualizaSeteHoras.CDS_Pesquisa.RecNo<>iUltmio) and (DMAtualizaSeteHoras.CDS_Pesquisa.RecNo<>1)Then
+        End; // If (DMAtualizaSeteHoras.CDS_Pesquisa.RecNo<>iUltimo) and (DMAtualizaSeteHoras.CDS_Pesquisa.RecNo<>1)Then
 
         // Verifica Registro de Saldo Final ====================================
-        If DMAtualizaSeteHoras.CDS_Pesquisa.RecNo=iUltmio Then
+        If DMAtualizaSeteHoras.CDS_Pesquisa.RecNo=iUltimo Then
         Begin
           If DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger<>999999 Then
            Begin
@@ -1570,7 +1616,7 @@ Begin
                     ' AND COD_FORNECEDOR='+QuotedStr(DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('COD_FORNECEDOR').AsString);
              DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
            End; // If DMAtualizaSeteHoras.CDS_Pesquisa.FieldByName('Num_Seq').AsInteger<>999999 Then
-        End; // If DMAtualizaSeteHoras.CDS_Pesquisa.RecNo=iUltmio Then
+        End; // If DMAtualizaSeteHoras.CDS_Pesquisa.RecNo=iUltimo Then
 
         DMAtualizaSeteHoras.CDS_Pesquisa.Next;
       End; // While Not DMAtualizaSeteHoras.CDS_Pesquisa.Eof do
@@ -1613,7 +1659,7 @@ begin
   // Atualiza Codigos de Barras ================================================
   //============================================================================
 //opss
-  CodigoBarras;
+  CodigoBarras; 
   // Atualiza Codigos de Barras ================================================
   //============================================================================
 

@@ -2932,7 +2932,7 @@ Begin
         DMBelShop.CDS_BuscaRapida.Close;
 
         bExcluir:=False;
-        If DMBelShop.CDS_Busca1.RecordCount<>iRegNaoCanc Then
+        If (DMBelShop.CDS_Busca1.RecordCount<>iRegNaoCanc) Or ((DMBelShop.CDS_Busca1.RecordCount=1) And (iRegNaoCanc=1))Then
          bExcluir:=True;
 
         If bExcluir Then // Exclui Movimento Devido a Cacelamentos

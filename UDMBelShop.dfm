@@ -2833,14 +2833,14 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 933
-    Top = 157
+    Top = 143
   end
   object CDS_FluxoFornecedor: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FluxoFornecedor'
     Left = 1014
-    Top = 156
+    Top = 142
     object CDS_FluxoFornecedorDATA: TDateField
       FieldName = 'DATA'
     end
@@ -2967,12 +2967,12 @@ object DMBelShop: TDMBelShop
     DataSet = SDS_FluxoFornecedor
     Options = [poRetainServerOrder]
     Left = 974
-    Top = 165
+    Top = 151
   end
   object DS_FluxoFornecedor: TDataSource
     DataSet = CDS_FluxoFornecedor
     Left = 1050
-    Top = 165
+    Top = 151
   end
   object SDS_While: TSQLDataSet
     MaxBlobSize = -1
@@ -8625,7 +8625,7 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 933
-    Top = 93
+    Top = 79
   end
   object CDS_FluxoFornecedores: TClientDataSet
     Aggregates = <>
@@ -8635,7 +8635,7 @@ object DMBelShop: TDMBelShop
     AfterOpen = CDS_FluxoFornecedoresAfterOpen
     AfterScroll = CDS_FluxoFornecedoresAfterScroll
     Left = 1022
-    Top = 92
+    Top = 78
     object CDS_FluxoFornecedoresORDEM: TIntegerField
       FieldName = 'ORDEM'
     end
@@ -8698,12 +8698,12 @@ object DMBelShop: TDMBelShop
     DataSet = SDS_FluxoFornecedores
     Options = [poRetainServerOrder]
     Left = 974
-    Top = 109
+    Top = 95
   end
   object DS_FluxoFornecedores: TDataSource
     DataSet = CDS_FluxoFornecedores
     Left = 1050
-    Top = 109
+    Top = 95
   end
   object SDS_FluxoFornHistorico: TSQLDataSet
     CommandText = 
@@ -8716,14 +8716,14 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 933
-    Top = 211
+    Top = 197
   end
   object CDS_FluxoFornHistorico: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FluxoFornHistorico'
     Left = 1014
-    Top = 210
+    Top = 196
     object CDS_FluxoFornHistoricoDES_HISTORICO: TStringField
       DisplayLabel = 'Descri'#231#227'o'
       FieldName = 'DES_HISTORICO'
@@ -8746,12 +8746,12 @@ object DMBelShop: TDMBelShop
     DataSet = SDS_FluxoFornHistorico
     Options = [poRetainServerOrder]
     Left = 974
-    Top = 222
+    Top = 208
   end
   object DS_FluxoFornHistorico: TDataSource
     DataSet = CDS_FluxoFornHistorico
     Left = 1050
-    Top = 222
+    Top = 208
   end
   object SDS_EstoquePrevisao: TSQLDataSet
     CommandText = 
@@ -8852,7 +8852,7 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 933
-    Top = 269
+    Top = 255
   end
   object CDS_FluxoFornReducao: TClientDataSet
     Aggregates = <>
@@ -8860,7 +8860,7 @@ object DMBelShop: TDMBelShop
     ProviderName = 'DSP_FluxoFornReducao'
     AfterScroll = CDS_FluxoFornReducaoAfterScroll
     Left = 1014
-    Top = 268
+    Top = 254
     object CDS_FluxoFornReducaoCOD_FORNECEDOR: TIntegerField
       DisplayLabel = 'C'#243'd Forn'
       FieldName = 'COD_FORNECEDOR'
@@ -8875,12 +8875,12 @@ object DMBelShop: TDMBelShop
     DataSet = SDS_FluxoFornReducao
     Options = [poRetainServerOrder]
     Left = 974
-    Top = 285
+    Top = 271
   end
   object DS_FluxoFornReducao: TDataSource
     DataSet = CDS_FluxoFornReducao
     Left = 1050
-    Top = 285
+    Top = 271
   end
   object SDS_FluxoPercReducao: TSQLDataSet
     CommandText = 
@@ -8898,14 +8898,14 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 933
-    Top = 332
+    Top = 318
   end
   object CDS_FluxoPercReducao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FluxoPercReducao'
     Left = 1014
-    Top = 331
+    Top = 317
     object CDS_FluxoPercReducaoNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
     end
@@ -8943,12 +8943,12 @@ object DMBelShop: TDMBelShop
     DataSet = SDS_FluxoPercReducao
     Options = [poRetainServerOrder]
     Left = 974
-    Top = 348
+    Top = 334
   end
   object DS_FluxoPercReducao: TDataSource
     DataSet = CDS_FluxoPercReducao
     Left = 1050
-    Top = 348
+    Top = 334
   end
   object SDS_Prioridades: TSQLDataSet
     CommandText = 
@@ -9233,15 +9233,16 @@ object DMBelShop: TDMBelShop
   object DS_FluxoFornVinculados: TDataSource
     DataSet = CDS_FluxoFornVinculados
     Left = 1056
-    Top = 482
+    Top = 468
   end
   object CDS_FluxoFornVinculados: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'DES_VINCULADO'
     Params = <>
     ProviderName = 'DSP_FluxoFornVinculados'
+    AfterPost = CDS_FluxoFornVinculadosAfterPost
     Left = 1006
-    Top = 464
+    Top = 450
     object CDS_FluxoFornVinculadosCOD_VINCULADO: TIntegerField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_VINCULADO'
@@ -9253,24 +9254,32 @@ object DMBelShop: TDMBelShop
     end
     object CDS_FluxoFornVinculadosIND_SITUACAO: TStringField
       FieldName = 'IND_SITUACAO'
-      Required = True
       FixedChar = True
       Size = 1
+    end
+    object CDS_FluxoFornVinculadosIND_SIT_ORIGEM: TStringField
+      FieldName = 'IND_SIT_ORIGEM'
+      FixedChar = True
+      Size = 1
+    end
+    object CDS_FluxoFornVinculadosCOD_FORNECEDOR: TIntegerField
+      FieldName = 'COD_FORNECEDOR'
     end
   end
   object DS_FluxoFornVinculo: TDataSource
     DataSet = CDS_FluxoFornVinculo
     Left = 1042
-    Top = 418
+    Top = 404
   end
   object CDS_FluxoFornVinculo: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'DES_FORNECEDOR'
     Params = <>
     ProviderName = 'DSP_FluxoFornVinculo'
+    AfterPost = CDS_FluxoFornVinculoAfterPost
     AfterScroll = CDS_FluxoFornVinculoAfterScroll
     Left = 1006
-    Top = 406
+    Top = 392
     object CDS_FluxoFornVinculoCOD_FORNECEDOR: TIntegerField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_FORNECEDOR'
@@ -9282,7 +9291,11 @@ object DMBelShop: TDMBelShop
     end
     object CDS_FluxoFornVinculoIND_SITUACAO: TStringField
       FieldName = 'IND_SITUACAO'
-      Required = True
+      FixedChar = True
+      Size = 1
+    end
+    object CDS_FluxoFornVinculoIND_SIT_ORIGEM: TStringField
+      FieldName = 'IND_SIT_ORIGEM'
       FixedChar = True
       Size = 1
     end
@@ -9290,42 +9303,36 @@ object DMBelShop: TDMBelShop
   object SDS_FluxoFornVinculo: TSQLDataSet
     CommandText = 
       'SELECT  DISTINCT  c.cod_fornecedor, c.des_fornecedor, '#13#10#39'N'#39' Ind_' +
-      'Situacao'#13#10'FROM FL_CAIXA_FORNECEDORES c'#13#10#13#10'WHERE  c.cod_fornecedo' +
-      'r<>c.cod_vinculado'#13#10#13#10'order by 2'
+      'Situacao, '#39'N'#39' Ind_Sit_Origem'#13#10#13#10'FROM FL_CAIXA_FORNECEDORES c'#13#10#13#10 +
+      'WHERE  c.cod_fornecedor<>c.cod_vinculado'#13#10#13#10'order by 2'
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 933
-    Top = 404
+    Top = 390
   end
   object DSP_FluxoFornVinculo: TDataSetProvider
     DataSet = SDS_FluxoFornVinculo
     Options = [poRetainServerOrder]
     Left = 974
-    Top = 420
+    Top = 406
   end
   object SDS_FluxoFornVinculados: TSQLDataSet
     CommandText = 
       'SELECT  DISTINCT  c.cod_vinculado, c.des_vinculado, '#13#10#39'N'#39' Ind_Si' +
-      'tuacao'#13#10#13#10'FROM FL_CAIXA_FORNECEDORES c'#13#10#13#10'WHERE  c.cod_fornecedo' +
-      'r<>c.cod_vinculado'#13#10#13#10'AND    c.cod_fornecedor= :CodForn'#13#10#13#10'order' +
-      ' by 2'
+      'tuacao, '#39'N'#39' Ind_Sit_Origem, c.cod_fornecedor'#13#10#13#10'FROM FL_CAIXA_FO' +
+      'RNECEDORES c'#13#10#13#10'WHERE  c.cod_fornecedor<>c.cod_vinculado'#13#10#13#10'orde' +
+      'r by 2'#13#10
     MaxBlobSize = -1
-    Params = <
-      item
-        DataType = ftString
-        Name = 'CodForn'
-        ParamType = ptInput
-        Value = '1'
-      end>
+    Params = <>
     SQLConnection = SQLC
     Left = 933
-    Top = 468
+    Top = 454
   end
   object DSP_FluxoFornVinculados: TDataSetProvider
     DataSet = SDS_FluxoFornVinculados
     Options = [poRetainServerOrder]
     Left = 966
-    Top = 490
+    Top = 476
   end
 end
