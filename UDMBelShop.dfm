@@ -13,7 +13,7 @@ object DMBelShop: TDMBelShop
     LoginPrompt = False
     Params.Strings = (
       'DriverName=Interbase'
-      'Database=C:\Projetos\BelShop\Dados\BELSHOP.FDB'
+      'Database=\\LocalHost\c:\Projetos\BelShop\Dados\BELSHOP.FDB'
       'RoleName=RoleName'
       'User_Name=sysdba'
       'Password=masterkey'

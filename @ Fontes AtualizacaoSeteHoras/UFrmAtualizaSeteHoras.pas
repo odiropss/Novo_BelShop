@@ -23,7 +23,6 @@ type
 
    // OdirApagar - 02/05/2018 -- SIDICOM Desativado
    // Procedure BuscaMovtosDebCreSIDICOM;
-   // Procedure BuscaMovtosDebCreLINX_OLD;
     Procedure BuscaMovtosDebCreLINX;
     Procedure CalculaFluxoCaixaFornecedores(sDt: String=''; sCodForn: String ='');
 
@@ -282,6 +281,8 @@ Begin
 
         DateSeparator:='/';
         DecimalSeparator:=',';
+        Screen.Cursor:=crDefault;
+
       Except
         on e : Exception do
         Begin
@@ -302,257 +303,237 @@ Procedure TFrmAtualizaSeteHoras.MontaSqlsSidicomLinx;
 Var
   MySql: String;
 Begin
-  // OdirApagar - 02/05/2018 -- SIDICOM Desativado
   //============================================================================
   // Monta Select de Busca de Débitos e Créditos (SIDICOM) =====================
-//  MySqlSelect:=' SELECT'+
-//               ' mf.codfornecedor,'+
-//               ' f.nomefornecedor,'+
-//               ' REPLACE(REPLACE(REPLACE(TRIM(f.numerocgcmf), ''/'', ''''),''.'',''''),''-'','''') Doc_Forn,'+
-//               ' mf.datacomprovante,'+
-//               ' mf.dataentrada,'+
-//               ' mf.codcomprovante,'+
-//
-//               ' CASE'+
-//               '   WHEN mf.codcomprovante IN ('+sgCompCre+') Then'+
-//               '    ''C'''+
-//               '   WHEN mf.codcomprovante IN ('+sgCompDeb+') Then'+
-//               '    ''D'''+
-//               ' End Tp_DebCre,'+
-//
-//               ' mf.codfilial,'+
-//
-//               // OdirApagar - 04/09/02017
-//               // ' mf.observacao,'+
-//               ' NULL observacao,'+
-//
-//               ' TRIM(mf.chavenf) chavenf,'+
-//               ' CAST(SUBSTRING(mf.numero FROM 1 FOR 12) AS VARCHAR(12)) numero,'+
-//               ' Trim(mf.serie) serie,'+
-//               ' ABS(COALESCE(mf.totnota,0.00)) Vlr_Total'+
-//
-//               ' FROM MFOR mf, FORNECED f'+
-//               ' WHERE  mf.codfornecedor=f.codfornecedor'+
-//               ' AND    mf.codfilial=:CodLoja'+
-//               ' AND    mf.codcomprovante in ('+sgCompCre+', '+sgCompDeb+')'+
-//               ' AND    mf.dataentrada>='+QuotedStr(sgDtaInicio);
-//
-//               If Trim(sgCodForn)<>'' Then
-//                MySqlSelect:=
-//                 MySqlSelect+' AND mf.codfornecedor = :CodForn';
-//
-//  MySqlSelect:=
-//   MySqlSelect+' ORDER BY mf.codfornecedor, mf.dataentrada';
-//  // Monta Select de Busca de Debitos e Créditos (SIDICOM) =====================
-//  //============================================================================
+  MySqlSelect:=' SELECT'+
+               ' mf.codfornecedor,'+
+               ' f.nomefornecedor,'+
+               ' REPLACE(REPLACE(REPLACE(TRIM(f.numerocgcmf), ''/'', ''''),''.'',''''),''-'','''') Doc_Forn,'+
+               ' mf.datacomprovante,'+
+               ' mf.dataentrada,'+
+               ' mf.codcomprovante,'+
 
-// OdirApagar - 04/05/2018
-//  //============================================================================
-//  // Monta Select de Busca de Debitos e Créditos (LINX) ========================
-//  //============================================================================
-//  MySqlLinx:=' SELECT'+
-//             ' fl.cod_cliente codfornecedor,'+
-//             ' fl.nome_cliente nomefornecedor,'+
-//             ' CAST(ml.data_documento AS DATE) datacomprovante,'+
-//             ' CAST(ml.data_lancamento AS DATE) dataentrada,'+
-//             ' ''011'' codcomprovante,'+
-//             ' ''D'' tp_debcre,'+
-//             ' ml.empresa codfilial,'+
-//             // OdirApagar - 04/09/02017
-//             // ' CAST(SUBSTRING(ml.obs FROM 1 FOR 200) AS VARCHAR(200)) observacao,'+
-//             ' NULL observacao,'+
-//
-//             ' TRIM(ml.chave_nf) chavenf,'+
-//             ' CAST(SUBSTRING(ml.documento FROM 1 FOR 12) AS VARCHAR(12)) numero,'+
-//             ' CAST(TRIM(ml.serie) AS VARCHAR(4)) serie,'+
-//             ' CAST((ROUND((SUM(ml.valor_total)), 2)) AS NUMERIC(18,2)) vlr_total,'+
-////OdirApagar - 02/05/2018             ' fs.codfornecedor Cod_Forn_Sidicom'+
-//             ' fl.doc_cliente,'+
-//
-//             ' (SELECT max(fs.codfornecedor) codfornecedor'+
-//             '  FROM FORNECEDOR fs'+
-//             '  WHERE REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
-//             '        REPLACE(REPLACE(REPLACE(TRIM(fl.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''')'+
-//             ' ) Cod_Forn_Sidicom'+
-//
-//             ' FROM LINXMOVIMENTO ml'+
-//             '      LEFT JOIN LINXCLIENTESFORNEC fl  ON fl.cod_cliente = ml.codigo_cliente'+
-//             '                                      AND fl.tipo_cliente IN (''A'', ''F'')'+
-//
-////OdirApagar - 02/05/2018
-////             '      LEFT JOIN FORNECEDOR fs ON REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
-////             '                                 REPLACE(REPLACE(REPLACE(TRIM(fl.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''')'+
-//
-//             ' WHERE ml.operacao = ''DE'''+ // Saida de Devolução de Entrada
-//             ' AND   ml.tipo_transacao IS NULL'+
-//             ' AND   ml.cancelado = ''N'''+
-//             ' AND   ml.excluido = ''N'''+
-//             ' AND   TRIM(ml.id_cfop) IN (''5411'', ''6411'')'+
-//             ' AND   fl.cod_cliente is not null'+
-//
-//             ' AND   ml.empresa = :CodEmpLINX'+
-//             ' AND   CAST(ml.data_lancamento AS DATE) >= :DtaInicioLinx';
-//
-//             If Trim(sgCodForn)<>'' Then
-//              MySqlLinx:=
-//                MySqlLinx+' AND   ml.codigo_cliente = :CodForn';
-//  MySqlLinx:=
-//   MySqlLinx+' GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14'+
-//
-//             ' UNION'+ // <<====
-//
-//             // E - Operações ee Entrada de Mercadorias por Bonificações de Fornecedor
-//             //-----------------------------------------------------------------------
-//             // 1910	- Entrada de bonificação, doação ou brinde
-//             // 2910	- Entrada de bonificação, doação ou brinde
-//
-//             // S - Operações ee Saida   de Mercadorias por Bonificações de Fornecedor
-//             //-----------------------------------------------------------------------
-//             // 5910	- Remessa em bonificação, doação ou brinde
-//             // 6910	- Remessa em bonificação, doação ou brinde
-//
-//             ' SELECT'+
-//             ' fl.cod_cliente codfornecedor,'+
-//             ' fl.nome_cliente nomefornecedor,'+
-//             ' CAST(ml.data_documento AS DATE) datacomprovante,'+
-//             ' CAST(ml.data_lancamento AS DATE) dataentrada,'+
-//
-//             ' CASE'+
-//             '   WHEN (TRIM(ml.id_cfop) = ''1910'') OR (TRIM(ml.id_cfop) = ''2910'') THEN'+
-//             '     ''913'''+
-//             '   WHEN (TRIM(ml.id_cfop) = ''5910'') OR (TRIM(ml.id_cfop) = ''6910'') THEN'+
-//             '     ''027'''+
-//             ' END codcomprovante,'+
-//
-//             ' CASE'+
-//             '   WHEN (TRIM(ml.id_cfop) = ''1910'') OR (TRIM(ml.id_cfop) = ''2910'') THEN'+
-//             '     ''C'''+
-//             '   WHEN (TRIM(ml.id_cfop) = ''5910'') OR (TRIM(ml.id_cfop) = ''6910'') THEN'+
-//             '     ''D'''+
-//             ' END tp_debcre,'+
-//
-//             ' ml.empresa codfilial,'+
-//
-//             // OdirApagar - 04/09/02017
-//             // ' CAST(SUBSTRING(ml.obs FROM 1 FOR 200) AS VARCHAR(200)) observacao,'+
-//             ' NULL observacao,'+
-//
-//             ' TRIM(ml.chave_nf) chavenf,'+
-//             ' CAST(SUBSTRING(ml.documento FROM 1 FOR 12) AS VARCHAR(12)) numero,'+
-//             ' CAST(TRIM(ml.serie) AS VARCHAR(4)) serie,'+
-//             ' CAST((ROUND((SUM(ml.valor_total)), 2)) AS NUMERIC(18,2)) vlr_total,'+
-//// OdirApagar - 02/05/2018             ' fs.codfornecedor Cod_Forn_Sidicom'+
-//             ' fl.doc_cliente,'+
-//
-//             ' (SELECT max(fs.codfornecedor) codfornecedor'+
-//             '  FROM FORNECEDOR fs'+
-//             '  WHERE REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
-//             '        REPLACE(REPLACE(REPLACE(TRIM(fl.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''')'+
-//             ' ) Cod_Forn_Sidicom'+
-//
-//             ' FROM LINXMOVIMENTO ml'+
-//             '      LEFT JOIN linxclientesfornec fl  ON fl.cod_cliente = ml.codigo_cliente'+
-//             '                                      AND fl.tipo_cliente IN (''A'', ''F'')'+
-//// OdirApagar - 02/05/2018
-////             '      LEFT JOIN fornecedor fs ON REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
-////             '                                 REPLACE(REPLACE(REPLACE(TRIM(fl.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''')'+
-//
-//             ' WHERE ml.cancelado = ''N'''+
-//             ' AND   ml.excluido = ''N'''+
-//             ' AND   COALESCE(ml.tipo_transacao, '''') <> ''J'''+ // NÃO Pode Ajustes de Estoques
-//
-//             ' AND   ('+
-//             '        ((TRIM(ml.id_cfop) IN (''1910'', ''2910''))'+
-//             '          AND'+
-//             '         (ml.operacao = ''E''))'+ // Operação de Entrada de Mercadorias Bonificadas
-//             '       OR'+
-//             '        ((TRIM(ml.id_cfop) IN (''5910'', ''6910''))'+
-//             '          AND (ml.operacao = ''S''))'+ // Operação de Saida de Mercadorias Bonificadas
-//             '      )'+
-//             ' AND   fl.cod_cliente is not null'+
-//
-//             ' AND   CAST(ml.data_lancamento AS DATE) >= :DtaInicioLinx'+
-//             ' AND   ml.empresa = :CodEmpLinx';
-//
-//             If Trim(sgCodForn)<>'' Then
-//              MySqlLinx:=
-//                MySqlLinx+' AND   ml.codigo_cliente = :CodForn';
-//
-//  MySqlLinx:=
-//   MySqlLinx+' GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14'+
-//             ' ORDER BY 1, 4';
+               ' CASE'+
+               '   WHEN mf.codcomprovante IN ('+sgCompCre+') Then'+
+               '    ''C'''+
+               '   WHEN mf.codcomprovante IN ('+sgCompDeb+') Then'+
+               '    ''D'''+
+               ' End Tp_DebCre,'+
 
+               ' mf.codfilial,'+
+
+               // OdirApagar - 04/09/02017
+               // ' mf.observacao,'+
+               ' NULL observacao,'+
+
+               ' TRIM(mf.chavenf) chavenf,'+
+               ' CAST(SUBSTRING(mf.numero FROM 1 FOR 12) AS VARCHAR(12)) numero,'+
+               ' Trim(mf.serie) serie,'+
+               ' ABS(COALESCE(mf.totnota,0.00)) Vlr_Total'+
+
+               ' FROM MFOR mf, FORNECED f'+
+               ' WHERE  mf.codfornecedor=f.codfornecedor'+
+               ' AND    mf.codfilial=:CodLoja'+
+               ' AND    mf.codcomprovante in ('+sgCompCre+', '+sgCompDeb+')'+
+               ' AND    mf.dataentrada>='+QuotedStr(sgDtaInicio);
+
+               If Trim(sgCodForn)<>'' Then
+                MySqlSelect:=
+                 MySqlSelect+' AND mf.codfornecedor = :CodForn';
+
+  MySqlSelect:=
+   MySqlSelect+' ORDER BY mf.codfornecedor, mf.dataentrada';
+  // Monta Select de Busca de Debitos e Créditos (SIDICOM) =====================
+  //============================================================================
 
   //============================================================================
   // Monta Select de Busca de Debitos e Créditos (LINX) ========================
   //============================================================================
+
+  //----------------------------------------------------------------------------
+  // DEVOLUÇÕES – Devolução de Saída de Entrada de Fornecedor ------------------
+  //----------------------------------------------------------------------------
+  // OPERACAO	    TIPO_TRANSACAO	CFOP	DESC_CFOP
+  // DE	(Saída)         Null            5411	Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária
+  // DE (Saída)         Null            6411	Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária
+
+  // Não Existe Devolução de Entrada para Fornecedor
+  //------------------------------------------------
+  // DS (Entrada)	Null            1202	Devolução de venda de mercadoria adquirida ou recebida de terceiros
+  // DS (Entrada)	Null            1411	Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária
+  // DS (Entrada)	Null            2411	Devolução de venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária
+  //----------------------------
+  // COMPROVANTES
+  //----------------------------
+  // 011	DEVOLUÇÃO A FORNECEDOR - Débito
+  //----------------------------
+
+  //----------------------------------------------------------------------------
+  // CONSERTOS - Consertos de  Saída de Entrada de Fornecedor ------------------
+          //----------------------------------------------------------------------------
+  // OPERACAO	    TIPO_TRANSACAO	CFOP	DESC_CFOP
+  // N	(Entrada)	      E		1915	Entrada de mercadoria ou bem recebido para conserto ou reparo
+  // N	(Entrada)	      E		2915	Entrada de mercadoria ou bem recebido para conserto ou reparo
+  // N	(Saída)		      S		5915	Remessa de mercadoria ou bem para conserto ou reparo
+  // N	(Saída)		      S		6915	Remessa de mercadoria ou bem para conserto ou reparo
+  //----------------------------
+  // COMPROVANTES
+  //----------------------------
+  // 048	ENTRADA DE CONSERTO    - Crédito
+  // 042	REMESSSA PARA CONSERTO - Débito
+  //----------------------------
+
+  //----------------------------------------------------------------------------
+  // BONIFICAÇÕES - Bonificações de  Saída de Entrada de Fornecedor ------------
+  //----------------------------------------------------------------------------
+  // OPERACAO	TIPO_TRANSACAO	CFOP	DESC_CFOP
+  // E	(Entrada)       Null	1910	Entrada de bonificação, doação ou brinde
+  // E	(Entrada)       Null  	2910	Entrada de bonificação, doação ou brinde
+  // S	(Saída)		Null    5910	Remessa em bonificação, doação ou brinde
+  // S	(Saída)		Null    6910	Remessa em bonificação, doação ou brinde
+  //----------------------------
+  // COMPROVANTES
+  //----------------------------
+  // 027	REMESSA DE BONIFICAÇÃO - Débito
+  // 913	BONIF DE MERCADORIAS	 - Crédito
+  // 916	BONIF DE MERCADORIAS	 - Crédito
+  //----------------------------------------------------------------------------
+
+
+  // Saida - DEVOLUÇÕES – Devolução de Saída de Entrada de Fornecedor ------------------
+  // 5411 - Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária
+  // 6411 - Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária
   MySqlLinx:=' SELECT'+
-             ' fo.cod_fornecedor COD_FORNECEDOR,'+ // 1'+
-             ' fo.des_fornecedor DES_FORNECEDOR,'+ // 2'+
-             ' fo.cod_vinculado COD_VINCULADO,'+ // 3'+
-             ' fo.des_vinculado DES_VINCULADO,'+ // 4'+
-             ' CAST((ROUND((SUM(mf.valor_total)), 2)) AS NUMERIC(18,2)) VLR_ORIGEM,'+ // 5'+
-             ' CAST(mf.data_documento AS DATE) DTA_ORIGEM,'+ // 6'+
-             ' CAST(mf.data_lancamento AS DATE) DTA_CAIXA,'+ // 7'+
-             ' mf.data_lancamento,'+ // 8'+
-             ' 0  NUM_SEQ,'+ // 9'+
-             ' TRIM(mf.chave_nf) NUM_CHAVENF,'+ // 10'+
-             ' mf.empresa COD_EMPRESA,'+ // 11'+
-             ' hi.cod_historico COD_HISTORICO,'+ // 12'+
-             ' NULL TXT_OBS,'+ // 13'+
-             ' CAST(SUBSTRING(mf.documento FROM 1 FOR 12) AS VARCHAR(12)) NUM_DOCUMENTO,'+ // 14'+
-             ' CAST(TRIM(mf.serie) AS VARCHAR(4)) NUM_SERIE,'+ // 15'+
+             ' fl.cod_cliente codfornecedor,'+
+             ' fl.nome_cliente nomefornecedor,'+
+             ' CAST(ml.data_documento AS DATE) datacomprovante,'+
+             ' CAST(ml.data_lancamento AS DATE) dataentrada,'+
+             ' ''011'' codcomprovante,'+
+             ' ''D'' tp_debcre,'+
+             ' ml.empresa codfilial,'+
+             // OdirApagar - 04/09/02017
+             // ' CAST(SUBSTRING(ml.obs FROM 1 FOR 200) AS VARCHAR(200)) observacao,'+
+             ' NULL observacao,'+
 
-             // Percentual de Redução -------------------------------
-             ' COALESCE((SELECT r.per_reducao'+
-             '           FROM FL_CAIXA_PERC_REDUCAO r'+
-             '           WHERE r.cod_fornecedor = fo.cod_vinculado'+
-             '           AND   r.cod_comprovante = hi.cod_historico'+
-             '           AND   r.dta_incio<=CAST(mf.data_lancamento AS DATE)'+
-             '           AND   COALESCE(r.dta_fim, CAST(''31.12.3000'' AS DATE))>=CAST(mf.data_lancamento AS DATE))'+
-             ' ,0.00) PER_REDUCAO,'+ // 16'+
+             ' TRIM(ml.chave_nf) chavenf,'+
+             ' CAST(SUBSTRING(ml.documento FROM 1 FOR 12) AS VARCHAR(12)) numero,'+
+             ' CAST(TRIM(ml.serie) AS VARCHAR(4)) serie,'+
+             ' CAST((ROUND((SUM(ml.valor_total)), 2)) AS NUMERIC(18,2)) vlr_total,'+
+//OdirApagar - 02/05/2018             ' fs.codfornecedor Cod_Forn_Sidicom'+
+             ' fl.doc_cliente,'+
 
-             ' hi.ind_debcre TIP_DEBCRE,'+ // 17'+
-             ' CAST((ROUND((SUM(mf.valor_total)), 2)) AS NUMERIC(18,2)) VLR_CAIXA,'+ // 18'+
-             ' 0.00 VLR_SALDO,'+ // 19'+
+             ' (SELECT max(fs.codfornecedor) codfornecedor'+
+             '  FROM FORNECEDOR fs'+
+             '  WHERE REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
+             '        REPLACE(REPLACE(REPLACE(TRIM(fl.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''')'+
+             ' ) Cod_Forn_Sidicom'+
 
-             // Fornecedor Sidicom ----------------------------------
-             ' fr.doc_cliente,'+ // 20'+
-             ' COALESCE((SELECT max(fs.codfornecedor) codfornecedor'+
-             '           FROM FORNECEDOR fs'+
-             '           WHERE REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
-             '                 REPLACE(REPLACE(REPLACE(TRIM(fr.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', ''''))'+
-             ' , ''000000'') CODFORNECEDOR,'+ // 21'+
+             ' FROM LINXMOVIMENTO ml'+
+             '      LEFT JOIN LINXCLIENTESFORNEC fl  ON fl.cod_cliente = ml.codigo_cliente'+
+             '                                      AND fl.tipo_cliente IN (''A'', ''F'')'+
 
-             ' mf.empresa COD_LOJA_LINX,'+ // 22'+
-             ' mf.cod_loja COD_LOJA_SIDICOM'+ // 23'+
+//OdirApagar - 02/05/2018
+//             '      LEFT JOIN FORNECEDOR fs ON REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
+//             '                                 REPLACE(REPLACE(REPLACE(TRIM(fl.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''')'+
 
-             ' FROM LINXMOVIMENTO mf, TAB_AUXILIAR cf,'+
-             '      FL_CAIXA_HISTORICOS hi, LINXCLIENTESFORNEC fr,'+
-             '      (SELECT DISTINCT ff.cod_fornecedor, ff.des_fornecedor,'+
-             '                       ff.cod_vinculado, ff.des_vinculado'+
-             '       FROM FL_CAIXA_FORNECEDORES ff) fo'+
+             ' WHERE ml.operacao = ''DE'''+ // Saida de Devolução de Entrada
+             ' AND   ml.tipo_transacao IS NULL'+
+             ' AND   ml.cancelado = ''N'''+
+             ' AND   ml.excluido = ''N'''+
+             ' AND   TRIM(ml.id_cfop) IN (''5411'', ''6411'')'+
+             ' AND   fl.cod_cliente is not null'+
 
-             ' WHERE CAST(TRIM(COALESCE(mf.id_cfop,''0'')) AS INTEGER)=cf.cod_aux'+
-             ' AND   mf.codigo_cliente=fo.cod_vinculado'+
-             ' AND   CAST(cf.des_aux as INTEGER)=hi.cod_historico'+
-             ' AND   mf.codigo_cliente=fr.cod_cliente'+
-             ' AND   cf.tip_aux=25'+ // CONTA CORRENTE FORNECEDORES - CFops Utilizados
-             ' AND   mf.cancelado= ''N'''+
-             ' AND   mf.excluido = ''N'''+
-             ' AND   COALESCE(mf.tipo_transacao, '''') <> ''J'''+ // NÃO Pode Ajustes de Estoques
+             ' AND   ml.empresa = :CodEmpLINX'+
+             ' AND   CAST(ml.data_lancamento AS DATE) >= :DtaInicioLinx';
 
-             ' AND   mf.empresa = :CodEmpLinx'+ // Codigo da Empresa Linx
-             ' AND   CAST(mf.data_lancamento AS DATE) >= :DtaInicioLinx'; // Data Inicio do Limite
-
-
-             // Se Parametro sgCodForn ------------------------------
              If Trim(sgCodForn)<>'' Then
-              MySqlLinx:=
-               MySqlLinx+' AND   mf.codigo_cliente = :CodForn';
+              MySql:=
+                MySql+' AND   ml.codigo_cliente = :CodForn';
+  MySqlLinx:=
+   MySqlLinx+' GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14'+
+
+             ' UNION'+ // <<====
+
+             // E - Operações ee Entrada de Mercadorias por Bonificações de Fornecedor
+             //-----------------------------------------------------------------------
+             // 1910	- Entrada de bonificação, doação ou brinde
+             // 2910	- Entrada de bonificação, doação ou brinde
+
+             // S - Operações ee Saida   de Mercadorias por Bonificações de Fornecedor
+             //-----------------------------------------------------------------------
+             // 5910	- Remessa em bonificação, doação ou brinde
+             // 6910	- Remessa em bonificação, doação ou brinde
+
+             ' SELECT'+
+             ' fl.cod_cliente codfornecedor,'+
+             ' fl.nome_cliente nomefornecedor,'+
+             ' CAST(ml.data_documento AS DATE) datacomprovante,'+
+             ' CAST(ml.data_lancamento AS DATE) dataentrada,'+
+
+             ' CASE'+
+             '   WHEN (TRIM(ml.id_cfop) = ''1910'') OR (TRIM(ml.id_cfop) = ''2910'') THEN'+
+             '     ''913'''+
+             '   WHEN (TRIM(ml.id_cfop) = ''5910'') OR (TRIM(ml.id_cfop) = ''6910'') THEN'+
+             '     ''027'''+
+             ' END codcomprovante,'+
+
+             ' CASE'+
+             '   WHEN (TRIM(ml.id_cfop) = ''1910'') OR (TRIM(ml.id_cfop) = ''2910'') THEN'+
+             '     ''C'''+
+             '   WHEN (TRIM(ml.id_cfop) = ''5910'') OR (TRIM(ml.id_cfop) = ''6910'') THEN'+
+             '     ''D'''+
+             ' END tp_debcre,'+
+
+             ' ml.empresa codfilial,'+
+
+             // OdirApagar - 04/09/02017
+             // ' CAST(SUBSTRING(ml.obs FROM 1 FOR 200) AS VARCHAR(200)) observacao,'+
+             ' NULL observacao,'+
+
+             ' TRIM(ml.chave_nf) chavenf,'+
+             ' CAST(SUBSTRING(ml.documento FROM 1 FOR 12) AS VARCHAR(12)) numero,'+
+             ' CAST(TRIM(ml.serie) AS VARCHAR(4)) serie,'+
+             ' CAST((ROUND((SUM(ml.valor_total)), 2)) AS NUMERIC(18,2)) vlr_total,'+
+// OdirApagar - 02/05/2018             ' fs.codfornecedor Cod_Forn_Sidicom'+
+             ' fl.doc_cliente,'+
+
+             ' (SELECT max(fs.codfornecedor) codfornecedor'+
+             '  FROM FORNECEDOR fs'+
+             '  WHERE REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
+             '        REPLACE(REPLACE(REPLACE(TRIM(fl.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''')'+
+             ' ) Cod_Forn_Sidicom'+
+
+             ' FROM LINXMOVIMENTO ml'+
+             '      LEFT JOIN linxclientesfornec fl  ON fl.cod_cliente = ml.codigo_cliente'+
+             '                                      AND fl.tipo_cliente IN (''A'', ''F'')'+
+// OdirApagar - 02/05/2018
+//             '      LEFT JOIN fornecedor fs ON REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
+//             '                                 REPLACE(REPLACE(REPLACE(TRIM(fl.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''')'+
+
+             ' WHERE ml.cancelado = ''N'''+
+             ' AND   ml.excluido = ''N'''+
+             ' AND   COALESCE(ml.tipo_transacao, '''') <> ''J'''+ // NÃO Pode Ajustes de Estoques
+
+             ' AND   ('+
+             '        ((TRIM(ml.id_cfop) IN (''1910'', ''2910''))'+
+             '          AND'+
+             '         (ml.operacao = ''E''))'+ // Operação de Entrada de Mercadorias Bonificadas
+             '       OR'+
+             '        ((TRIM(ml.id_cfop) IN (''5910'', ''6910''))'+
+             '          AND (ml.operacao = ''S''))'+ // Operação de Saida de Mercadorias Bonificadas
+             '      )'+
+             ' AND   fl.cod_cliente is not null'+
+
+             ' AND   CAST(ml.data_lancamento AS DATE) >= :DtaInicioLinx'+
+             ' AND   ml.empresa = :CodEmpLinx';
+
+             If Trim(sgCodForn)<>'' Then
+              MySql:=
+                MySql+' AND   ml.codigo_cliente = :CodForn';
 
   MySqlLinx:=
-   MySqlLinx+' GROUP BY 1,2,3,4, 6,7,8,10,11,12,14,15,16,17,20,21,22,23';
+   MySqlLinx+' GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14'+
+             ' ORDER BY 1, 4';
   // Monta Select de Busca de Debitos e Créditos (LINX) ========================
   //============================================================================
 
@@ -646,6 +627,8 @@ Begin
 
         DateSeparator:='/';
         DecimalSeparator:=',';
+        Screen.Cursor:=crDefault;
+
       Except
         on e : Exception do
         Begin
@@ -860,7 +843,8 @@ Begin
 
 End; // Calcula Demanda de 4 Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Busca Movtos de Debito/Credito de Fornecedores LINX - NOVO >>>>>>>>>>>>>>>>>>
+//000000000000000000000000000000000000000000000000000000000000000000000000000000
+// Busca Movtos de Debito/Credito de Fornecedores LINX >>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaSeteHoras.BuscaMovtosDebCreLINX;
 Var
    i: Integer;
@@ -874,15 +858,30 @@ Begin
   // Acerta Data do Movto em Relação a Data de Início da Loja ==================
   sDtaMovtoLinx:=sgDtaIniLINX;
 
-//opss === ATENÇÃO === Comentar para Buscar todo o Movto Linx Depois retornar
-//  If StrToDate(f_Troca('.','/',f_Troca('-','/',sDtaMovtoLinx)))<StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio))) Then
-//   sDtaMovtoLinx:=sgDtaInicio;
+//opss
+  If StrToDate(f_Troca('.','/',f_Troca('-','/',sDtaMovtoLinx)))<StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio))) Then
+   sDtaMovtoLinx:=sgDtaInicio;
 
   sDtaMovtoLinx:=f_Troca('/','.',f_Troca('-','.',sDtaMovtoLinx));
 
   // Acerta Data de Processamento das Conta Correntes ==========================
   If StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaProcCC)))>StrToDate(f_Troca('.','/',f_Troca('-','/',sDtaMovtoLinx))) Then
    sgDtaProcCC:=sDtaMovtoLinx;
+
+  // Busca Movtos Debitos / Creditos ===========================================
+  DMAtualizaSeteHoras.CDS_MovtoLinx.Close;
+  DMAtualizaSeteHoras.SDS_MovtoLinx.CommandText:=MySqlLinx;
+  DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('CodEmpLINX').AsString:=sgCodEmpLINX;
+  DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('DtaInicioLinx').AsString:=sDtaMovtoLinx;
+  If Trim(sgCodForn)<>'' Then
+   DMAtualizaSeteHoras.CDS_MovtoLinx.Params.ParamByName('CodForn').AsString:=sgCodForn;
+  DMAtualizaSeteHoras.CDS_MovtoLinx.Open;
+
+  If Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('codfornecedor').AsString)='' Then
+  Begin
+    DMAtualizaSeteHoras.CDS_MovtoLinx.Close;
+    Exit;
+  End;
 
   // Monta Transacao =======================================================
   TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
@@ -899,38 +898,19 @@ Begin
            ' WHERE f.cod_vinculado IS NULL';
     DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
 
-    // Busca Movtos Debitos / Creditos ===========================================
-    DMAtualizaSeteHoras.CDS_MovtoLinx.Close;
-    DMAtualizaSeteHoras.SDS_MovtoLinx.CommandText:=MySqlLinx;
-    DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('CodEmpLINX').AsString:=sgCodEmpLINX;
-    DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('DtaInicioLinx').AsString:=sDtaMovtoLinx;
-    If Trim(sgCodForn)<>'' Then
-     DMAtualizaSeteHoras.CDS_MovtoLinx.Params.ParamByName('CodForn').AsString:=sgCodForn;
-    DMAtualizaSeteHoras.CDS_MovtoLinx.Open;
-
-    If Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('Cod_Fornecedor').AsString)='' Then
-    Begin
-      // Fecha Transacao =================================================
-      DMAtualizaSeteHoras.SQLC.Commit(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-
-      DMAtualizaSeteHoras.CDS_MovtoLinx.Close;
-      DMAtualizaSeteHoras.SQLC.Rollback(TD);
-      Exit;
-    End;
-
-    // Guarda Codigo do Fornecedor =============================================
+    // Guarda Codigo do Fornecedor =========================================
+    // Exclui Lançamentos para Substituição e Inclução =========================
+//OdirApagar - 02/05/2018 -- cod_vinculado
+//    MySql:=' SELECT DISTINCT f.cod_fornecedor'+
     MySql:=' SELECT DISTINCT f.cod_fornecedor, f.cod_vinculado'+
            ' FROM FL_CAIXA_FORNECEDORES f'+
-           ' WHERE f.cod_empresa='+sgCodEmpLINX+
-           ' AND   f.dta_caixa>='+QuotedStr(sDtaMovtoLinx)+
-           ' AND   EXISTS (SELECT 1'+
-           '               FROM TAB_AUXILIAR cf, fl_caixa_historicos hi'+
-           '               WHERE cf.tip_aux=25'+ // CONTA CORRENTE FORNECEDORES - CFops Utilizados
-           '               AND   CAST(cf.des_aux AS INTEGER)=hi.cod_historico'+
-           '               AND   hi.cod_historico=f.cod_historico)';
+           ' WHERE f.cod_empresa='+QuotedStr(sgCodEmpLINX)+
+           ' AND   f.dta_caixa>='+QuotedStr(sDtaMovtoLinx);
+
+//OdirApagar - 02/05/2018 -- cod_vinculado
+//           If Trim(sgCodForn)<>'' Then
+//            MySql:=
+//             MySql+' AND f.cod_fornecedor in ('+QuotedStr(sgCodForn)+')';
 
            If Trim(sgCodForn)<>'' Then
             MySql:=
@@ -962,14 +942,14 @@ Begin
 
       // Exclui Lançamentos para Substituição e Inclução ------
       MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES f'+
-             ' WHERE f.cod_empresa='+sgCodEmpLINX+
+//OdirApagar - 02/05/2018 -- cod_vinculado
+//             ' WHERE f.cod_fornecedor = '+QuotedStr(sCodFornLINX)+
+             ' WHERE f.cod_vinculado = '+QuotedStr(sCodFornVinc)+
              ' AND   f.dta_caixa>='+QuotedStr(sDtaMovtoLinx)+
-             ' AND   f.cod_vinculado='+sCodFornVinc+
-             ' AND   EXISTS (SELECT 1'+
-             '               FROM TAB_AUXILIAR cf, fl_caixa_historicos hi'+
-             '               WHERE cf.tip_aux=25'+ // CONTA CORRENTE FORNECEDORES - CFops Utilizados
-             '               AND   CAST(cf.des_aux AS INTEGER)=hi.cod_historico'+
-             '               AND   hi.cod_historico=f.cod_historico)';
+             ' AND ((f.cod_historico=0 or f.cod_historico=999999)'+
+             '      OR'+
+             '      (f.cod_empresa='+QuotedStr(sgCodEmpLINX)+'))'+
+             ' AND  f.cod_historico not in (900,955)';
       DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
 
       DMAtualizaSeteHoras.CDS_Busca.Next;
@@ -983,101 +963,141 @@ Begin
     sNomeFornVinc:='';
     While Not DMAtualizaSeteHoras.CDS_MovtoLinx.Eof do
     Begin
-      sgDtaFim     :=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DTA_CAIXA').AsString;
-      sCodFornLINX :=Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('COD_FORNECEDOR').AsString);
-      sNomeFornLINX:=Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('DES_FORNECEDOR').AsString);
+      sgDtaFim     :=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('dataentrada').AsString;
+      sCodFornVinc :=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('codfornecedor').AsString;
+      sNomeFornVinc:=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('nomefornecedor').AsString;
 
-      sCodFornVinc :=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('COD_VINCULADO').AsString;
-      sNomeFornVinc:=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DES_VINCULADO').AsString;
-      If Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('COD_VINCULADO').AsString)='' Then
-      Begin
-        sCodFornVinc :=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('COD_FORNECEDOR').AsString;
-        sNomeFornVinc:=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DES_FORNECEDOR').AsString;
-      End;
-
-      //========================================================================
-      // Insere Conta Corrente =================================================
-      //========================================================================
-      // Busca Num_Seq do Dia do Fornecedor -----------------------
-      MySql:=' SELECT cf.num_seq'+
-             ' FROM FL_CAIXA_FORNECEDORES cf'+
-             ' WHERE cf.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFim)))+
-             ' AND   cf.cod_fornecedor='+QuotedStr(sCodFornLINX)+
-             ' AND   cf.num_seq>0'+
-             ' AND   cf.num_seq<999999'+
-             ' ORDER BY cf.Num_Seq';
+      // Busca Fornecedor de Vinculo -------------------------------
+      sCodFornLINX :=sCodFornVinc;
+      sNomeFornLINX:=sNomeFornVinc;
+      MySql:=' SELECT f.cod_fornecedor, f.des_fornecedor'+
+             ' FROM FL_CAIXA_FORNECEDORES f'+
+             ' WHERE f.cod_vinculado='+sCodFornVinc;
       DMAtualizaSeteHoras.CDS_Busca.Close;
       DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
       DMAtualizaSeteHoras.CDS_Busca.Open;
-      i:=1;
-      sNumSeq:=IntToStr(DMAtualizaSeteHoras.CDS_Busca.RecordCount+1);
-      While not DMAtualizaSeteHoras.CDS_Busca.Eof do
-      Begin
-        If DMAtualizaSeteHoras.CDS_Busca.RecNo<>DMAtualizaSeteHoras.CDS_Busca.FieldByName('Num_Seq').AsInteger Then
-        Begin
-          sNumSeq:=IntToStr(DMAtualizaSeteHoras.CDS_Busca.RecNo);
-          Break;
-        End;
 
-        DMAtualizaSeteHoras.CDS_Busca.Next;
-      End; // While not DMAtualizaSeteHoras.CDS_Busca.Eof do
+      If Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('Cod_Fornecedor').AsString)<>'' Then
+      Begin
+        sCodFornLINX :=Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('Cod_Fornecedor').AsString);
+        sNomeFornLINX:=Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('Des_Fornecedor').AsString);
+      End;
       DMAtualizaSeteHoras.CDS_Busca.Close;
 
-      // Percentual de Redução --------------------------------------
-      sPercRed:=f_Troca(',','.',DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('PER_REDUCAO').AsString);
+      // Verifica se Tem Historico de Negociação (900, 955) ---
+//OdirApagar - 02/05/2018 -- cod_vinculado
+//;      MySql:=' SELECT FIRST 1 f.cod_fornecedor'+
+      MySql:=' SELECT FIRST 1 f.cod_vinculado cod_fornecedor'+
+             ' FROM FL_CAIXA_FORNECEDORES f'+
+             ' WHERE f.cod_historico  in (900,955)'+
+//OdirApagar - 02/05/2018 -- cod_vinculado
+//             ' AND   f.cod_fornecedor='+sCodFornLINX;
+             ' AND   f.cod_vinculado='+sCodFornVinc;
+      DMAtualizaSeteHoras.CDS_Busca.Close;
+      DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
+      DMAtualizaSeteHoras.CDS_Busca.Open;
+      bgAchoFornCC:=True;
+      If Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('cod_fornecedor').AsString)='' Then
+       bgAchoFornCC:=False;
+      DMAtualizaSeteHoras.CDS_Busca.Close;
 
-      // Insere Caixa ---------------------------------------------
-      MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES ('+
-             ' COD_FORNECEDOR, DES_FORNECEDOR,'+
-             ' COD_VINCULADO, DES_VINCULADO,'+
-             ' VLR_ORIGEM, DTA_ORIGEM, DTA_CAIXA, NUM_SEQ,'+
-             ' NUM_CHAVENF, COD_EMPRESA, COD_HISTORICO, TXT_OBS,'+
-             ' NUM_DOCUMENTO, NUM_SERIE, PER_REDUCAO, TIP_DEBCRE, VLR_CAIXA, VLR_SALDO,'+
-             ' CODFORNECEDOR, COD_LOJA_LINX, COD_LOJA_SIDICOM)'+
-             ' VALUES ('+
-             sCodFornLINX+', '+ // COD_FORNECEDOR (LINX) - Fornecedor de Vinculo
-             QuotedStr(sNomeFornLINX)+', '+ // DES_FORNECEDOR (LINX) - Fornecedor de Vinculo
-             sCodFornVinc+', '+ // COD_VINCULADO (LINX) - Fornecedor de Vinculado
-             QuotedStr(sNomeFornVinc)+', '+ // DES_VINCULADO (LINX) - Fornecedor de Vinculado
-             DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_ORIGEM').AsString+', '+ // VLR_ORIGEM
-             QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DTA_ORIGEM').AsString)+', '+ // DTA_ORIGEM
-             QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DTA_CAIXA').AsString)+', '+ // DTA_CAIXA
-             sNumSeq+', '+ // NUM_SEQ
-             QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('NUM_CHAVENF').AsString)+', '+ // NUM_CHAVENF
-             QuotedStr(sgCodEmpLINX)+', '+ // COD_EMPRESA
-             QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('COD_HISTORICO,').AsString)+', '+ // COD_HISTORICO,
-             QuotedStr(AnsiUpperCase(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('TXT_OBS').AsString))+', '+ // TXT_OBS
-             QuotedStr(Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('NUM_DOCUMENTO').AsString))+', '+ // NUM_DOCUMENTO
-             QuotedStr(Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('NUM_SERIE').AsString))+', '+ // NUM_SERIE
-             sPercRed+', '+ // PER_REDUCAO,
-             QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('TIP_DEBCRE').AsString)+', '+ // TIP_DEBCRE
-
-             'CAST(('+DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_CAIXA').AsString+
-                    '-(('+sPercRed+' * '+DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_CAIXA').AsString+
-                    ') / 100)) AS NUMERIC(12,2)),'+ // VLR_CAIXA
-
-             DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_SALDO').AsString+', '+ // VLR_SALDO
-             QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('CODFORNECEDOR').AsString)+', '+ // CODFORNECEDOR VARCHAR(6)
-             QuotedStr(sgCodEmpLINX)+', '+ // COD_LOJA_LINX INTEGER
-             QuotedStr(sgCodEmp)+')'; // COD_LOJA_SIDICOM VARCHAR(2)
-      DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
-
-      // Guarda Fornecedor a Processar Conta Correte --------------
-      bgProcessar:=True;
-      For i:=0 to Mem_Odir.Lines.Count-1 do
+      //========================================================================
+      If bgAchoFornCC Then
       Begin
-         If Mem_Odir.Lines[i]=sCodFornLINX Then
-         Begin
-           bgProcessar:=False;
-           Break;
-         End;
-      End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
+        // Busca Num_Seq do Dia do Fornecedor -----------------------
+        MySql:=' SELECT cf.num_seq'+
+               ' FROM FL_CAIXA_FORNECEDORES cf'+
+               ' WHERE cf.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFim)))+
+//OdirApagar - 02/05/2018 -- cod_vinculado
+//               ' AND   cf.cod_fornecedor='+QuotedStr(sCodFornLINX)+
+               ' AND   cf.cod_vinculado='+QuotedStr(sCodFornVinc)+
+               ' AND   cf.num_seq>0'+
+               ' AND   cf.num_seq<999999'+
+               ' ORDER BY cf.Num_Seq';
+        DMAtualizaSeteHoras.CDS_Busca.Close;
+        DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
+        DMAtualizaSeteHoras.CDS_Busca.Open;
+        i:=1;
+        sNumSeq:=IntToStr(DMAtualizaSeteHoras.CDS_Busca.RecordCount+1);
+        While not DMAtualizaSeteHoras.CDS_Busca.Eof do
+        Begin
+          If DMAtualizaSeteHoras.CDS_Busca.RecNo<>DMAtualizaSeteHoras.CDS_Busca.FieldByName('Num_Seq').AsInteger Then
+          Begin
+            sNumSeq:=IntToStr(DMAtualizaSeteHoras.CDS_Busca.RecNo);
+            Break;
+          End;
 
-      If bgProcessar Then
-      Begin
-        Mem_Odir.Lines.Add(sCodFornLINX);
-      End;
-      // Insere Conta Corrente =================================================
+          DMAtualizaSeteHoras.CDS_Busca.Next;
+        End; // While not DMAtualizaSeteHoras.CDS_Busca.Eof do
+        DMAtualizaSeteHoras.CDS_Busca.Close;
+
+        // Busca Percentual de Redução ------------------------------
+        MySql:=' SELECT r.per_reducao'+
+               ' FROM FL_CAIXA_PERC_REDUCAO r'+
+//OdirApagar - 02/05/2018 -- cod_vinculado
+//               ' WHERE r.cod_fornecedor ='+sCodFornLINX+
+               ' WHERE r.cod_fornecedor ='+sCodFornVinc+
+               ' AND   r.cod_comprovante='+QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('CODCOMPROVANTE').AsString)+
+               ' AND   CAST('+QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DATAENTRADA').AsString)+' AS DATE)'+
+               '                 BETWEEN r.dta_incio AND COALESCE(r.dta_fim, CAST(''31.12.3000'' AS DATE))';
+        DMAtualizaSeteHoras.CDS_Busca.Close;
+        DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
+        DMAtualizaSeteHoras.CDS_Busca.Open;
+        sPercRed:='0.00';
+        If Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('per_reducao').AsString)<>'' Then
+         sPercRed:=f_Troca(',','.',DMAtualizaSeteHoras.CDS_Busca.FieldByName('per_reducao').AsString);
+        DMAtualizaSeteHoras.CDS_Busca.Close;
+
+        // Insere Caixa ---------------------------------------------
+        MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES ('+
+               ' COD_FORNECEDOR, DES_FORNECEDOR,'+
+               ' COD_VINCULADO, DES_VINCULADO,'+
+               ' VLR_ORIGEM, DTA_ORIGEM, DTA_CAIXA, NUM_SEQ,'+
+               ' NUM_CHAVENF, COD_EMPRESA, COD_HISTORICO, TXT_OBS,'+
+               ' NUM_DOCUMENTO, NUM_SERIE, PER_REDUCAO, TIP_DEBCRE, VLR_CAIXA, VLR_SALDO,'+
+               ' CODFORNECEDOR, COD_LOJA_LINX, COD_LOJA_SIDICOM)'+
+               ' VALUES ('+
+               sCodFornLINX+', '+ // COD_FORNECEDOR (LINX) - Fornecedor de Vinculo
+               QuotedStr(sNomeFornLINX)+', '+ // DES_FORNECEDOR (LINX) - Fornecedor de Vinculo
+               sCodFornVinc+', '+ // COD_VINCULADO (LINX)
+               QuotedStr(sNomeFornVinc)+', '+ // DES_VINCULADO (LINX)
+               DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_TOTAL').AsString+', '+ // VLR_ORIGEM
+               QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DATACOMPROVANTE').AsString)+', '+ // DTA_ORIGEM
+               QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DATAENTRADA').AsString)+', '+ // DTA_CAIXA
+               sNumSeq+', '+ // NUM_SEQ
+               QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('CHAVENF').AsString)+', '+ // NUM_CHAVENF
+               QuotedStr(sgCodEmpLINX)+', '+ // COD_EMPRESA
+               QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('CODCOMPROVANTE').AsString)+', '+ // COD_HISTORICO,
+               QuotedStr(AnsiUpperCase(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('OBSERVACAO').AsString))+', '+ // TXT_OBS
+               QuotedStr(Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('NUMERO').AsString))+', '+ // NUM_DOCUMENTO
+               QuotedStr(Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('SERIE').AsString))+', '+ // NUM_SERIE
+               sPercRed+', '+ // PER_REDUCAO,
+               QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('TP_DEBCRE').AsString)+', '+ // TIP_DEBCRE
+               'CAST(('+DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_TOTAL').AsString+
+                      '-(('+sPercRed+' * '+DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_TOTAL').AsString+
+                      ') / 100)) AS NUMERIC(12,2)),'+ // VLR_CAIXA
+               ' 0.00,'+ // VLR_SALDO
+               QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('Cod_Forn_Sidicom').AsString)+', '+ // CODFORNECEDOR VARCHAR(6)
+               QuotedStr(sgCodEmpLINX)+', '+ // COD_LOJA_LINX INTEGER
+               QuotedStr(sgCodEmp)+')'; // COD_LOJA_SIDICOM VARCHAR(2)
+        DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
+
+        // Guarda Fornecedor a Processar Conta Correte --------------
+        bgProcessar:=True;
+        For i:=0 to Mem_Odir.Lines.Count-1 do
+        Begin
+           If Mem_Odir.Lines[i]=sCodFornLINX Then
+           Begin
+             bgProcessar:=False;
+             Break;
+           End;
+        End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
+
+        If bgProcessar Then
+        Begin
+          Mem_Odir.Lines.Add(sCodFornLINX);
+        End;
+      End; // If bgAchoFornCC Then
       //========================================================================
 
       DMAtualizaSeteHoras.CDS_MovtoLinx.Next;
@@ -1089,6 +1109,7 @@ Begin
 
     DateSeparator:='/';
     DecimalSeparator:=',';
+    Screen.Cursor:=crDefault;
 
   Except
     on e : Exception do
@@ -1117,303 +1138,7 @@ Begin
     End; // on e : Exception do
   End; // Try
 
-End; // Busca Movtos de Debito/Credito de Fornecedores LINX - NOVO >>>>>>>>>>>>>
-
-// OdirApagar Substituido
-//// Busca Movtos de Debito/Credito de Fornecedores LINX >>>>>>>>>>>>>>>>>>>>>>>>>
-//Procedure TFrmAtualizaSeteHoras.BuscaMovtosDebCreLINX_OLD;
-//Var
-//   i: Integer;
-//   MySql: String;
-//   sCodFornLINX, sNomeFornLINX, // Fornecedor Linx de Vinculo
-//   sCodFornVinc, sNomeFornVinc, // Fornecedor Linx Vinculado
-//   sNumSeq, sPercRed,
-//   sDtaMovtoLinx: String;
-//Begin
-//
-//  // Acerta Data do Movto em Relação a Data de Início da Loja ==================
-//  sDtaMovtoLinx:=sgDtaIniLINX;
-//
-////opss === ATENÇÃO === Comentar para Buscar todo o Movto Linx Depois retornar
-////  If StrToDate(f_Troca('.','/',f_Troca('-','/',sDtaMovtoLinx)))<StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio))) Then
-////   sDtaMovtoLinx:=sgDtaInicio;
-//
-//  sDtaMovtoLinx:=f_Troca('/','.',f_Troca('-','.',sDtaMovtoLinx));
-//
-//  // Acerta Data de Processamento das Conta Correntes ==========================
-//  If StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaProcCC)))>StrToDate(f_Troca('.','/',f_Troca('-','/',sDtaMovtoLinx))) Then
-//   sgDtaProcCC:=sDtaMovtoLinx;
-//
-//  // Busca Movtos Debitos / Creditos ===========================================
-//  DMAtualizaSeteHoras.CDS_MovtoLinx.Close;
-//  DMAtualizaSeteHoras.SDS_MovtoLinx.CommandText:=MySqlLinx;
-//  DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('CodEmpLINX').AsString:=sgCodEmpLINX;
-//  DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('DtaInicioLinx').AsString:=sDtaMovtoLinx;
-//  If Trim(sgCodForn)<>'' Then
-//   DMAtualizaSeteHoras.CDS_MovtoLinx.Params.ParamByName('CodForn').AsString:=sgCodForn;
-//  DMAtualizaSeteHoras.CDS_MovtoLinx.Open;
-//
-//  If Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('codfornecedor').AsString)='' Then
-//  Begin
-//    DMAtualizaSeteHoras.CDS_MovtoLinx.Close;
-//    Exit;
-//  End;
-//
-//  // Monta Transacao =======================================================
-//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-//  TD.IsolationLevel:=xilREADCOMMITTED;
-//  DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
-//  Try
-//    DateSeparator:='.';
-//    DecimalSeparator:='.';
-//
-//    // Acerta Códigos Vinculados = NULL ========================================
-//    MySql:=' UPDATE FL_CAIXA_FORNECEDORES f'+
-//           ' SET f.cod_vinculado=f.cod_fornecedor'+
-//           ' ,   f.des_vinculado=f.des_fornecedor'+
-//           ' WHERE f.cod_vinculado IS NULL';
-//    DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
-//
-//    // Guarda Codigo do Fornecedor =========================================
-//    // Exclui Lançamentos para Substituição e Inclusão =========================
-////OdirApagar - 02/05/2018 -- cod_vinculado
-////    MySql:=' SELECT DISTINCT f.cod_fornecedor'+
-//    MySql:=' SELECT DISTINCT f.cod_fornecedor, f.cod_vinculado'+
-//           ' FROM FL_CAIXA_FORNECEDORES f'+
-//           ' WHERE f.cod_empresa='+QuotedStr(sgCodEmpLINX)+
-//           ' AND   f.dta_caixa>='+QuotedStr(sDtaMovtoLinx);
-//
-////OdirApagar - 02/05/2018 -- cod_vinculado
-////           If Trim(sgCodForn)<>'' Then
-////            MySql:=
-////             MySql+' AND f.cod_fornecedor in ('+QuotedStr(sgCodForn)+')';
-//
-//           If Trim(sgCodForn)<>'' Then
-//            MySql:=
-//             MySql+' AND f.cod_vinculado in ('+QuotedStr(sgCodForn)+')';
-//    DMAtualizaSeteHoras.CDS_Busca.Close;
-//    DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
-//    DMAtualizaSeteHoras.CDS_Busca.Open;
-//
-//    While Not DMAtualizaSeteHoras.CDS_Busca.Eof do
-//    Begin
-//      sCodFornLINX:=DMAtualizaSeteHoras.CDS_Busca.FieldByName('cod_fornecedor').AsString;
-//      sCodFornVinc:=DMAtualizaSeteHoras.CDS_Busca.FieldByName('cod_vinculado').AsString;
-//
-//      // Guarda Fornecedor a Processar Conta Correte ------------
-//      bgProcessar:=True;
-//      For i:=0 to Mem_Odir.Lines.Count-1 do
-//      Begin
-//         If Mem_Odir.Lines[i]=sCodFornLINX Then
-//         Begin
-//           bgProcessar:=False;
-//           Break;
-//         End;
-//      End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
-//
-//      If bgProcessar Then
-//      Begin
-//        Mem_Odir.Lines.Add(sCodFornLINX);
-//      End;
-//
-//      // Exclui Lançamentos para Substituição e Inclução ------
-//      MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES f'+
-////OdirApagar - 02/05/2018 -- cod_vinculado
-////             ' WHERE f.cod_fornecedor = '+QuotedStr(sCodFornLINX)+
-//             ' WHERE f.cod_vinculado = '+QuotedStr(sCodFornVinc)+
-//             ' AND   f.dta_caixa>='+QuotedStr(sDtaMovtoLinx)+
-//             ' AND ((f.cod_historico=0 or f.cod_historico=999999)'+
-//             '      OR'+
-//             '      (f.cod_empresa='+QuotedStr(sgCodEmpLINX)+'))'+
-//             ' AND  f.cod_historico not in (900,955)';
-//      DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
-//
-//      DMAtualizaSeteHoras.CDS_Busca.Next;
-//    End; // While Not DMAtualizaSeteHoras.CDS_Busca.Eof do
-//    DMAtualizaSeteHoras.CDS_Busca.Close;
-//
-//    sgDtaFim     :='';
-//    sCodFornLINX :='';
-//    sNomeFornLINX:='';
-//    sCodFornVinc :='';
-//    sNomeFornVinc:='';
-//    While Not DMAtualizaSeteHoras.CDS_MovtoLinx.Eof do
-//    Begin
-//      sgDtaFim     :=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('dataentrada').AsString;
-//      sCodFornVinc :=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('codfornecedor').AsString;
-//      sNomeFornVinc:=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('nomefornecedor').AsString;
-//
-//      // Busca Fornecedor de Vinculo -------------------------------
-//      sCodFornLINX :=sCodFornVinc;
-//      sNomeFornLINX:=sNomeFornVinc;
-//      MySql:=' SELECT f.cod_fornecedor, f.des_fornecedor'+
-//             ' FROM FL_CAIXA_FORNECEDORES f'+
-//             ' WHERE f.cod_vinculado='+sCodFornVinc;
-//      DMAtualizaSeteHoras.CDS_Busca.Close;
-//      DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
-//      DMAtualizaSeteHoras.CDS_Busca.Open;
-//
-//      If Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('Cod_Fornecedor').AsString)<>'' Then
-//      Begin
-//        sCodFornLINX :=Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('Cod_Fornecedor').AsString);
-//        sNomeFornLINX:=Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('Des_Fornecedor').AsString);
-//      End;
-//      DMAtualizaSeteHoras.CDS_Busca.Close;
-//
-//      // Verifica se Tem Historico de Negociação (900, 955) ---
-////OdirApagar - 02/05/2018 -- cod_vinculado
-////;      MySql:=' SELECT FIRST 1 f.cod_fornecedor'+
-//      MySql:=' SELECT FIRST 1 f.cod_vinculado cod_fornecedor'+
-//             ' FROM FL_CAIXA_FORNECEDORES f'+
-//             ' WHERE f.cod_historico  in (900,955)'+
-////OdirApagar - 02/05/2018 -- cod_vinculado
-////             ' AND   f.cod_fornecedor='+sCodFornLINX;
-//             ' AND   f.cod_vinculado='+sCodFornVinc;
-//      DMAtualizaSeteHoras.CDS_Busca.Close;
-//      DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
-//      DMAtualizaSeteHoras.CDS_Busca.Open;
-//      bgAchoFornCC:=True;
-//      If Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('cod_fornecedor').AsString)='' Then
-//       bgAchoFornCC:=False;
-//      DMAtualizaSeteHoras.CDS_Busca.Close;
-//
-//      //========================================================================
-//      If bgAchoFornCC Then
-//      Begin
-//        // Busca Num_Seq do Dia do Fornecedor -----------------------
-//        MySql:=' SELECT cf.num_seq'+
-//               ' FROM FL_CAIXA_FORNECEDORES cf'+
-//               ' WHERE cf.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFim)))+
-////OdirApagar - 02/05/2018 -- cod_vinculado
-////               ' AND   cf.cod_fornecedor='+QuotedStr(sCodFornLINX)+
-//               ' AND   cf.cod_vinculado='+QuotedStr(sCodFornVinc)+
-//               ' AND   cf.num_seq>0'+
-//               ' AND   cf.num_seq<999999'+
-//               ' ORDER BY cf.Num_Seq';
-//        DMAtualizaSeteHoras.CDS_Busca.Close;
-//        DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
-//        DMAtualizaSeteHoras.CDS_Busca.Open;
-//        i:=1;
-//        sNumSeq:=IntToStr(DMAtualizaSeteHoras.CDS_Busca.RecordCount+1);
-//        While not DMAtualizaSeteHoras.CDS_Busca.Eof do
-//        Begin
-//          If DMAtualizaSeteHoras.CDS_Busca.RecNo<>DMAtualizaSeteHoras.CDS_Busca.FieldByName('Num_Seq').AsInteger Then
-//          Begin
-//            sNumSeq:=IntToStr(DMAtualizaSeteHoras.CDS_Busca.RecNo);
-//            Break;
-//          End;
-//
-//          DMAtualizaSeteHoras.CDS_Busca.Next;
-//        End; // While not DMAtualizaSeteHoras.CDS_Busca.Eof do
-//        DMAtualizaSeteHoras.CDS_Busca.Close;
-//
-//        // Busca Percentual de Redução ------------------------------
-//        MySql:=' SELECT r.per_reducao'+
-//               ' FROM FL_CAIXA_PERC_REDUCAO r'+
-////OdirApagar - 02/05/2018 -- cod_vinculado
-////               ' WHERE r.cod_fornecedor ='+sCodFornLINX+
-//               ' WHERE r.cod_fornecedor ='+sCodFornVinc+
-//               ' AND   r.cod_comprovante='+QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('CODCOMPROVANTE').AsString)+
-//               ' AND   CAST('+QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DATAENTRADA').AsString)+' AS DATE)'+
-//               '                 BETWEEN r.dta_incio AND COALESCE(r.dta_fim, CAST(''31.12.3000'' AS DATE))';
-//        DMAtualizaSeteHoras.CDS_Busca.Close;
-//        DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
-//        DMAtualizaSeteHoras.CDS_Busca.Open;
-//        sPercRed:='0.00';
-//        If Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('per_reducao').AsString)<>'' Then
-//         sPercRed:=f_Troca(',','.',DMAtualizaSeteHoras.CDS_Busca.FieldByName('per_reducao').AsString);
-//        DMAtualizaSeteHoras.CDS_Busca.Close;
-//
-//        // Insere Caixa ---------------------------------------------
-//        MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES ('+
-//               ' COD_FORNECEDOR, DES_FORNECEDOR,'+
-//               ' COD_VINCULADO, DES_VINCULADO,'+
-//               ' VLR_ORIGEM, DTA_ORIGEM, DTA_CAIXA, NUM_SEQ,'+
-//               ' NUM_CHAVENF, COD_EMPRESA, COD_HISTORICO, TXT_OBS,'+
-//               ' NUM_DOCUMENTO, NUM_SERIE, PER_REDUCAO, TIP_DEBCRE, VLR_CAIXA, VLR_SALDO,'+
-//               ' CODFORNECEDOR, COD_LOJA_LINX, COD_LOJA_SIDICOM)'+
-//               ' VALUES ('+
-//               sCodFornLINX+', '+ // COD_FORNECEDOR (LINX) - Fornecedor de Vinculo
-//               QuotedStr(sNomeFornLINX)+', '+ // DES_FORNECEDOR (LINX) - Fornecedor de Vinculo
-//               sCodFornVinc+', '+ // COD_VINCULADO (LINX)
-//               QuotedStr(sNomeFornVinc)+', '+ // DES_VINCULADO (LINX)
-//               DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_TOTAL').AsString+', '+ // VLR_ORIGEM
-//               QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DATACOMPROVANTE').AsString)+', '+ // DTA_ORIGEM
-//               QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DATAENTRADA').AsString)+', '+ // DTA_CAIXA
-//               sNumSeq+', '+ // NUM_SEQ
-//               QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('CHAVENF').AsString)+', '+ // NUM_CHAVENF
-//               QuotedStr(sgCodEmpLINX)+', '+ // COD_EMPRESA
-//               QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('CODCOMPROVANTE').AsString)+', '+ // COD_HISTORICO,
-//               QuotedStr(AnsiUpperCase(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('OBSERVACAO').AsString))+', '+ // TXT_OBS
-//               QuotedStr(Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('NUMERO').AsString))+', '+ // NUM_DOCUMENTO
-//               QuotedStr(Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('SERIE').AsString))+', '+ // NUM_SERIE
-//               sPercRed+', '+ // PER_REDUCAO,
-//               QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('TP_DEBCRE').AsString)+', '+ // TIP_DEBCRE
-//               'CAST(('+DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_TOTAL').AsString+
-//                      '-(('+sPercRed+' * '+DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_TOTAL').AsString+
-//                      ') / 100)) AS NUMERIC(12,2)),'+ // VLR_CAIXA
-//               ' 0.00,'+ // VLR_SALDO
-//               QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('Cod_Forn_Sidicom').AsString)+', '+ // CODFORNECEDOR VARCHAR(6)
-//               QuotedStr(sgCodEmpLINX)+', '+ // COD_LOJA_LINX INTEGER
-//               QuotedStr(sgCodEmp)+')'; // COD_LOJA_SIDICOM VARCHAR(2)
-//        DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
-//
-//        // Guarda Fornecedor a Processar Conta Correte --------------
-//        bgProcessar:=True;
-//        For i:=0 to Mem_Odir.Lines.Count-1 do
-//        Begin
-//           If Mem_Odir.Lines[i]=sCodFornLINX Then
-//           Begin
-//             bgProcessar:=False;
-//             Break;
-//           End;
-//        End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
-//
-//        If bgProcessar Then
-//        Begin
-//          Mem_Odir.Lines.Add(sCodFornLINX);
-//        End;
-//      End; // If bgAchoFornCC Then
-//      //========================================================================
-//
-//      DMAtualizaSeteHoras.CDS_MovtoLinx.Next;
-//    End; // While Not DMAtualizaSeteHoras.CDS_MovtoLinx.Eof do
-//    DMAtualizaSeteHoras.CDS_MovtoLinx.Close;
-//
-//    // Fecha Transacao =================================================
-//    DMAtualizaSeteHoras.SQLC.Commit(TD);
-//
-//    DateSeparator:='/';
-//    DecimalSeparator:=',';
-//
-//  Except
-//    on e : Exception do
-//    Begin
-//      DMAtualizaSeteHoras.SQLC.Rollback(TD);
-//
-//      // Monta Transacao ===========================================================
-//      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-//      TD.IsolationLevel:=xilREADCOMMITTED;
-//      DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
-//
-//      MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
-//             ' VALUES ('+
-//             QuotedStr('80')+', '+
-//             '2, '+
-//             ' CURRENT_TIMESTAMP,'+
-//             QuotedStr('CCr')+', '+ // Linx Com Inventário
-//             QuotedStr('Conta Corrente: '+e.message+' - '+MySql)+')'+
-//             'MATCHING (COD_LOJA)';
-//      DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
-//
-//      DMAtualizaSeteHoras.SQLC.Commit(TD); // Linx Com Inventário
-//
-//      DateSeparator:='/';
-//      DecimalSeparator:=',';
-//    End; // on e : Exception do
-//  End; // Try
-//
-//end; // Busca Movtos de Debito/Credito de Fornecedores LINX >>>>>>>>>>>>>>>>>>>>
+end; // Busca Movtos de Debito/Credito de Fornecedores LINX >>>>>>>>>>>>>>>>>>>>
 
 //OdirApagar - 02/05/2018 -- SIDICOM Desativado
 //000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -1731,6 +1456,7 @@ End; // Busca Movtos de Debito/Credito de Fornecedores LINX - NOVO >>>>>>>>>>>>>
 //
 //        DateSeparator:='/';
 //        DecimalSeparator:=',';
+//        Screen.Cursor:=crDefault;
 //
 //      Except
 //        on e : Exception do
@@ -1767,22 +1493,13 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
-    // Exclui Saldos Iniciais e Finais Sem Movimento ===========================
-    MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES cf'+
-           ' WHERE cf.num_seq in (0, 999999)'+
-           ' AND NOT EXISTS (SELECT 1'+
-           '                 FROM fl_caixa_fornecedores f'+
-           '                 WHERE f.num_seq NOT IN (0, 999999)'+
-           '                 AND   f.dta_caixa=cf.dta_caixa'+
-           '                 AND   f.cod_fornecedor=cf.cod_fornecedor)';
-    DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
-
     // Cria Registros de Saldo INICIAL e FINAL =================================
     b:=True;
     iUltimo:=0;
     While b do
     Begin
       Inc(iUltimo);
+
 
       If iUltimo=1 Then
        sNumSeqIF:='0'
@@ -2083,41 +1800,40 @@ begin
   sgDtaInicio:=DateToStr(IncMonth(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor),-4));
   sgDtaInicio:=f_Troca('/','.',f_Troca('-','.',sgDtaInicio));
 
-//OdirApagar - 04/05/2018
-//  // Busca Comprovantes ========================================================
-//  MySql:=' SELECT LPAD(h.cod_historico, 3, ''0'') cod_comprv, h.ind_debcre'+
-//         ' FROM FL_CAIXA_HISTORICOS h'+
-//         ' WHERE h.cod_historico <> 0'+
-//         ' AND   h.cod_historico <> 999999'+
-//         ' AND   h.cod_historico <> 900'+
-//         ' AND   h.cod_historico <> 955';
-//  DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
-//  DMAtualizaSeteHoras.SDS_BuscaRapida.CommandText:=MySql;
-//  DMAtualizaSeteHoras.CDS_BuscaRapida.Open;
-//
-//  sgCompCre:='';
-//  sgCompDeb:='';
-//  While Not DMAtualizaSeteHoras.CDS_BuscaRapida.Eof do
-//  Begin
-//    If DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('ind_debcre').AsString='D' Then
-//    Begin
-//      If Trim(sgCompDeb)='' Then
-//       sgCompDeb:=QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString)
-//      Else
-//       sgCompDeb:=sgCompDeb+', '+QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString);
-//    End;
-//
-//    If DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('ind_debcre').AsString='C' Then
-//    Begin
-//      If Trim(sgCompCre)='' Then
-//       sgCompCre:=QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString)
-//      Else
-//       sgCompCre:=sgCompCre+', '+QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString);
-//    End;
-//
-//    DMAtualizaSeteHoras.CDS_BuscaRapida.Next;
-//  End; // While Not DMAtualizaSeteHoras.CDS_BuscaRapida.Eof do
-//  DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
+  // Busca Comprovantes ========================================================
+  MySql:=' SELECT LPAD(h.cod_historico, 3, ''0'') cod_comprv, h.ind_debcre'+
+         ' FROM FL_CAIXA_HISTORICOS h'+
+         ' WHERE h.cod_historico <> 0'+
+         ' AND   h.cod_historico <> 999999'+
+         ' AND   h.cod_historico <> 900'+
+         ' AND   h.cod_historico <> 955';
+  DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
+  DMAtualizaSeteHoras.SDS_BuscaRapida.CommandText:=MySql;
+  DMAtualizaSeteHoras.CDS_BuscaRapida.Open;
+
+  sgCompCre:='';
+  sgCompDeb:='';
+  While Not DMAtualizaSeteHoras.CDS_BuscaRapida.Eof do
+  Begin
+    If DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('ind_debcre').AsString='D' Then
+    Begin
+      If Trim(sgCompDeb)='' Then
+       sgCompDeb:=QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString)
+      Else
+       sgCompDeb:=sgCompDeb+', '+QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString);
+    End;
+
+    If DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('ind_debcre').AsString='C' Then
+    Begin
+      If Trim(sgCompCre)='' Then
+       sgCompCre:=QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString)
+      Else
+       sgCompCre:=sgCompCre+', '+QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString);
+    End;
+
+    DMAtualizaSeteHoras.CDS_BuscaRapida.Next;
+  End; // While Not DMAtualizaSeteHoras.CDS_BuscaRapida.Eof do
+  DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
 
   // Monta SQL's Para Busca SIDICOM / LINX =====================================
   MontaSqlsSidicomLinx;
@@ -2132,7 +1848,7 @@ begin
          // ' WHERE e.cod_linx=2'+
          ' WHERE ((e.ind_ativo = ''SIM'') OR (e.cod_filial = ''99''))'+
 
-         ' ORDER BY 1';
+         ' ORDER BY 1';// desc';
   DMAtualizaSeteHoras.CDS_Lojas.Close;
   DMAtualizaSeteHoras.SDS_Lojas.CommandText:=MySql;
   DMAtualizaSeteHoras.CDS_Lojas.Open;
@@ -2193,9 +1909,7 @@ begin
   // Calcula Fluxo de Caixa do Fornecedore =====================================
   For i:=0 to Mem_Odir.Lines.Count-1 do
   Begin
-    // OdirApagar é Sem Data de Inicio do Calculo
-    // CalculaFluxoCaixaFornecedores(sgDtaProcCC,Mem_Odir.Lines[i])
-    CalculaFluxoCaixaFornecedores('', Mem_Odir.Lines[i])
+    CalculaFluxoCaixaFornecedores(sgDtaProcCC,Mem_Odir.Lines[i])
   End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
   // ATUALIZA CONTA CORRENTE FORNECEDORES ======================================
   //============================================================================

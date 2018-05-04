@@ -13,7 +13,7 @@ object DMAtualizaSeteHoras: TDMAtualizaSeteHoras
     LoginPrompt = False
     Params.Strings = (
       'DriverName=Interbase'
-      'Database=C:\Projetos\BelShop\Dados\BELSHOP.FDB'
+      'Database=\\localhost\C:\Projetos\BelShop\Dados\BelShop.FDB'
       'RoleName=RoleName'
       'User_Name=sysdba'
       'Password=masterkey'

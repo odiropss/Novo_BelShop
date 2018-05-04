@@ -26239,14 +26239,16 @@ begin
 end;
 
 procedure TFrmBelShop.SubMenuComprasContaCorreteFornClick(Sender: TObject);
+Var
+  MySql: String;
 begin
   If (Sender is TMenuItem) Then
    igTagPermissao:=(Sender as TMenuItem).Tag;
 
   BloqueioBotoes(FrmFluxoFornecedor, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
-  // Permissões de Visualização ================================================
-//  PermissaoVisual(FrmFluxoFornecedor.Ts_????);
+  // Permissões de Visualização de Componente ==================================
+  FrmFluxoFornecedor.Bt_FluFornVinculos.Visible:=PermissaoComponente(Cod_Usuario, 'FrmFluxFornecedor', 'Bt_FluFornVinculos', DMBelShop.SDS_DtaHoraServidor);
 
   FrmFluxoFornecedor.EdtFluFornCodFornecedor.Clear;
   FrmFluxoFornecedor.EdtFluFornFornecedor.Clear;

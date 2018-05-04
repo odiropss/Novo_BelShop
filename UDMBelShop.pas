@@ -3857,9 +3857,9 @@ begin
         Except
           on e : Exception do
           Begin
-            MessageBox(Application.Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+            MessageBox(Application.Handle, pChar('Erro no Banco de Dados'+#13+e.message), 'Erro', MB_ICONERROR);
             Application.Terminate;
-            exit;
+            Exit;
           End; // on e : Exception do
         End;
       End;
@@ -3964,6 +3964,12 @@ begin
                               DataHoraServidorFI(SDS_DtaHoraServidor));
       b:=True;
     Except
+      on e : Exception do
+      Begin
+        MessageBox(Application.Handle, pChar('Erro Consulta no Banco de Dados'+#13+e.message), 'Erro', MB_ICONERROR);
+        Application.Terminate;
+        Exit;
+      End; // on e : Exception do
     End;
   End; // While Not b do
 

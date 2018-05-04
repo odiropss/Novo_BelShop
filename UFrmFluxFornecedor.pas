@@ -383,8 +383,15 @@ Begin
           // Retira os Vinculos
           MySql:=' UPDATE FL_CAIXA_FORNECEDORES f'+
                  ' SET f.cod_fornecedor=f.cod_vinculado,'+
-                 '     f.des_fornecedor=f.des_vinculado'+
-                 ' WHERE  f.cod_vinculado='+Trim(DMBelShop.CDS_FluxoFornVinculadosCOD_VINCULADO.AsString);
+                 '     f.des_fornecedor=f.des_vinculado,'+
+                 '     f.num_seq=(SELECT COALESCE(MAX(ff.num_seq)+1,1)'+
+                 '                FROM FL_CAIXA_FORNECEDORES ff'+
+                 '                WHERE ff.num_seq NOT IN (0, 999999)'+
+                 '                AND   ff.cod_fornecedor=f.cod_vinculado'+
+                 '                AND   ff.dta_caixa=f.dta_caixa)'+
+
+                 ' WHERE f.num_seq not in (0, 999999)'+
+                 ' AND   f.cod_vinculado='+Trim(DMBelShop.CDS_FluxoFornVinculadosCOD_VINCULADO.AsString);
           DMBelShop.SQLC.Execute(MySql,nil,nil);
 
           // Guardar Codigo Para Calculo do Conta Corrente
@@ -406,9 +413,16 @@ Begin
           Begin
             // Retira os Vinculos
             MySql:=' UPDATE FL_CAIXA_FORNECEDORES f'+
-                   ' SET f.cod_fornecedor=f.cod_vinculado,'+
-                   '     f.des_fornecedor=f.des_vinculado'+
-                   ' WHERE  f.cod_vinculado='+Trim(DMBelShop.CDS_FluxoFornVinculadosCOD_VINCULADO.AsString);
+                   ' SET f.cod_fornecedor=f.cod_vinculado,'+ // --> Fornecedor Vinculado a Tira Vinculo
+                   '     f.des_fornecedor=f.des_vinculado,'+
+                   '     f.num_seq=(SELECT COALESCE(MAX(ff.num_seq)+1,1)'+
+                   '                FROM FL_CAIXA_FORNECEDORES ff'+
+                   '                WHERE ff.num_seq NOT IN (0, 999999)'+
+                   '                AND   ff.cod_fornecedor=f.cod_vinculado'+ // --> Fornecedor Vinculado a Tira Vinculo
+                   '                AND   ff.dta_caixa=f.dta_caixa)'+
+
+                   ' WHERE f.num_seq not in (0, 999999)'+
+                   ' AND   f.cod_vinculado='+Trim(DMBelShop.CDS_FluxoFornVinculadosCOD_VINCULADO.AsString); // --> Fornecedor Vinculado a Tira Vinculo
             DMBelShop.SQLC.Execute(MySql,nil,nil);
 
             // Guardar Codigo Para Calculo do Conta Corrente
@@ -461,9 +475,15 @@ Begin
           Begin
             // Retira os Vinculos
             MySql:=' UPDATE FL_CAIXA_FORNECEDORES f'+
-                   ' SET f.cod_fornecedor='+DMBelShop.CDS_FluxoFornVinculoCOD_FORNECEDOR.AsString+','+
-                   '     f.des_fornecedor='+QuotedStr(DMBelShop.CDS_FluxoFornVinculoDES_FORNECEDOR.AsString)+
-                   ' WHERE  f.cod_vinculado='+Trim(DMBelShop.CDS_FluxoFornVinculadosCOD_VINCULADO.AsString);
+                   ' SET f.cod_fornecedor='+DMBelShop.CDS_FluxoFornVinculoCOD_FORNECEDOR.AsString+','+ // --> Novo Fornecedor de Vinculo
+                   '     f.des_fornecedor='+QuotedStr(DMBelShop.CDS_FluxoFornVinculoDES_FORNECEDOR.AsString)+','+
+                   '     f.num_seq=(SELECT COALESCE(MAX(ff.num_seq)+1,1)'+
+                   '                FROM FL_CAIXA_FORNECEDORES ff'+
+                   '                WHERE ff.num_seq not in (0, 999999)'+
+                   '                AND   ff.cod_fornecedor='+DMBelShop.CDS_FluxoFornVinculoCOD_FORNECEDOR.AsString+ // --> Novo Fornecedor de Vinculo
+                   '                AND   ff.dta_caixa=f.dta_caixa)'+
+                   ' WHERE f.num_seq not in (0, 999999)'+
+                   ' AND   f.cod_vinculado='+Trim(DMBelShop.CDS_FluxoFornVinculadosCOD_VINCULADO.AsString); // --> Fornecedor a Vincular
             DMBelShop.SQLC.Execute(MySql,nil,nil);
 
             // Exclui registros de Saldo Inicial e Final
@@ -972,6 +992,21 @@ Begin
     EdtObsDoc.SetFocus;
     Exit;
   End;
+
+  If Gb_FornVinculado.Visible Then
+  Begin
+    sgMensagem:=Cbx_FornVinculado.Text;
+    If Trim(sgMensagem)='' Then
+     sgMensagem:=EdtFluFornFornecedor.Text;
+
+    If msg('O Fornecedor '+cr+sgMensagem+cr+cr+'Vinculado a Este Lançamento !!'+cr+'ESTA CORRETO ??','C')=2 Then
+    Begin
+      sgMensagem:='';
+      Cbx_FornVinculado.SetFocus;
+      Exit;
+    End;
+    sgMensagem:='';
+  End; // If Gb_FornVinculado.Visible Then
 
   Result:=True;
 End; // Consiste Lançamentos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1545,7 +1580,7 @@ Begin
     End; // While b do
     iUltimo:=0;
 
-//    // Exclui Saldos IiNICIAIS e FINAIS se Movto ===============================
+//    // Exclui Saldos INICIAIS e FINAIS se Movto ===============================
 //    MySql:=' DELETE  FROM FL_CAIXA_FORNECEDORES f'+
 //           ' WHERE f.cod_fornecedor=
 // AND f.num_seq in (0,999999)
@@ -1582,6 +1617,7 @@ Begin
 
     sCodigo:=DMBelShop.CDS_While.FieldByName('Cod_Fornecedor').AsString;
     cVlrSaldo:=0;
+    DMBelShop.CDS_While.DisableControls;
     While Not DMBelShop.CDS_While.Eof do
     Begin
       Application.ProcessMessages;
@@ -1618,6 +1654,7 @@ Begin
       DMBelShop.SDS_Pesquisa.CommandText:=MySql;
       DMBelShop.CDS_Pesquisa.Open;
 
+      DMBelShop.CDS_Pesquisa.DisableControls;
       DMBelShop.CDS_Pesquisa.Last;
       iUltimo:=DMBelShop.CDS_Pesquisa.RecNo;
       DMBelShop.CDS_Pesquisa.First;
@@ -1764,6 +1801,7 @@ Begin
 
         DMBelShop.CDS_Pesquisa.Next;
       End; // While Not DMBelShop.CDS_Pesquisa.Eof do
+      DMBelShop.CDS_Pesquisa.EnableControls;
 
       sCodigo:=DMBelShop.CDS_While.FieldByName('Cod_Fornecedor').AsString;
 
@@ -1771,6 +1809,7 @@ Begin
     End; // While Not DMBelShop.CDS_While.Eof do
     DMBelShop.CDS_While.Close;
     DMBelShop.CDS_Pesquisa.Close;
+    DMBelShop.CDS_While.EnableControls;
     FrmBelShop.MontaProgressBar(False, FrmFluxoFornecedor);
 
     // Exclui Caixas Sem Movtos do Ultimo Fornecedor ===========================
@@ -2014,7 +2053,7 @@ begin
     If Not Gb_FluFornFornecedor.Visible Then
      Gb_FluFornFornecedor.Visible:=True;
 
-    Bt_FluFornVinculos.Visible:=True;
+    Bt_FluFornVinculos.Visible:=PermissaoComponente(Cod_Usuario, 'FrmFluxFornecedor', 'Bt_FluFornVinculos', DMBelShop.SDS_DtaHoraServidor);
     Bt_FluFornIncluir.Visible:=True;
     Bt_FluFornIncluir.Caption:='    Incluir Fornecedor';
 
@@ -2267,7 +2306,6 @@ begin
          Begin
            Try
              StrToInt(sValor);
-
              If Not DMBelShop.CDS_FluxoFornecedores.Locate('COD_FORNECEDOR', sValor,[]) Then
              Begin
               If Not LocalizaRegistro(DMBelShop.CDS_FluxoFornecedores, 'COD_FORNECEDOR', sValor) Then
@@ -2292,7 +2330,9 @@ begin
       If Not b Then
       Begin
         DMBelShop.CDS_FluxoFornecedores.Locate('COD_FORNECEDOR',sForn,[]);
-        msg('Fornecedor Não Localizado !!','A');
+        msg('Fornecedor'+cr+sValor+cr+'Não Localizado na Lista !!'+cr+'Poder Estar Vinculado !!'+cr+'Tente Pesquisar pelo Nome...','A');
+        Bt_FluFornBuscaFornecedorClick(Self);
+        Exit;
       End;
     End; // If Not DMBelShop.CDS_FluxoFornecedores.IsEmpty Then
   End; // If Key=Vk_F4 Then
@@ -2547,7 +2587,8 @@ begin
 
   // Busca Fornecedores ========================================================
   MySql:=' SELECT DISTINCT c.des_fornecedor nomefornecedor,'+
-         '                 c.cod_fornecedor codfornecedor'+
+         '                 c.cod_fornecedor codfornecedor,'+
+         '                 c.des_vinculado  nomevinculado'+
          ' FROM FL_CAIXA_FORNECEDORES c'+
          ' WHERE (c.cod_fornecedor='+IntToStr(EdtFluFornCodFornecedor.AsInteger)+
          '        Or'+
@@ -2566,6 +2607,7 @@ begin
     Exit;
   End;
 
+  EdtFluFornFornecedor.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('NomeVinculado').AsString;
   If EdtFluFornCodFornecedor.AsInteger<>DMBelShop.CDS_BuscaRapida.FieldByName('CodFornecedor').AsInteger Then
   Begin
     msg('Fornecedor Vinculado ao Fornecedor'+cr+DMBelShop.CDS_BuscaRapida.FieldByName('NomeFornecedor').AsString,'A');
@@ -2575,16 +2617,15 @@ begin
 
   DMBelShop.CDS_BuscaRapida.Close;
 
-//OdirApagar - 25/04/2018 -- cod_vinculado
-//  // Verifica se Fornecedor esta na Lista ======================================
-//  If not DMBelShop.CDS_FluxoFornecedores.Locate('COD_FORNECEDOR', EdtFluFornCodFornecedor.AsInteger,[]) Then
-//  Begin
-//    msg('Fornecedor NÃO Encontrado !!!', 'A');
-//    Screen.Cursor:=crDefault;
-//    EdtFluFornCodFornecedor.Clear;
-//    EdtFluFornCodFornecedor.SetFocus;
-//    Exit;
-//  End;
+  // Verifica se Fornecedor esta na Lista ======================================
+  If not DMBelShop.CDS_FluxoFornecedores.Locate('COD_FORNECEDOR', EdtFluFornCodFornecedor.AsInteger,[]) Then
+  Begin
+    msg('Fornecedor NÃO Encontrado !!!', 'A');
+    Screen.Cursor:=crDefault;
+    EdtFluFornCodFornecedor.Clear;
+    EdtFluFornCodFornecedor.SetFocus;
+    Exit;
+  End;
 
   // Busca Valor da Data Limite de Conta Corrente ==============================
   cValor:=0.00;
@@ -2797,6 +2838,8 @@ procedure TFrmFluxoFornecedor.Bt_FluFornBuscaFornecedorClick(Sender: TObject);
 Var
   MySql: String;
 begin
+  Dbg_FluFornFornec.SetFocus;
+  
   EdtFluFornCodFornecedor.Clear;
   EdtFluFornFornecedor.Clear;
 
@@ -4050,12 +4093,7 @@ end;
 
 procedure TFrmFluxoFornecedor.Bt_FluFornVinculosClick(Sender: TObject);
 begin
-
-  If AnsiUpperCase(Des_Login)<>'ODIR' Then
-  Begin
-    msg('Opção em Desenvolvimento !!','A');
-    Exit;
-  End;
+  Dbg_FluFornFornec.SetFocus;
 
   DMBelShop.CDS_FluxoFornVinculo.Close;
   DMBelShop.CDS_FluxoFornVinculo.Open;
@@ -4377,7 +4415,9 @@ begin
 
   // Atualiza Saldos do Fornecedor =============================================
   EdtFluFornCodFornAcertar.Text:=sCodForn;
-  MEdt_DtaAtualizacao.Text:=f_Troca('/','.',f_Troca('-','.',sgDtaDoc));
+//OdirApagar - 03/05/2018
+  //MEdt_DtaAtualizacao.Text:=f_Troca('/','.',f_Troca('-','.',sgDtaDoc));
+  MEdt_DtaAtualizacao.Text:='  .  .20  ';
 
   LimpaLancamentos;
   Gb_FornVinculado.Enabled:=True;
