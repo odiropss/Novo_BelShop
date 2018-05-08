@@ -46509,12 +46509,47 @@ begin
 end;
 
 procedure TFrmBelShop.SubMenuCentralTrocasNotasAvariasClick(Sender: TObject);
+Var
+  Mysql: String;
 begin
 
   If (Sender is TMenuItem) Then
    igTagPermissao:=(Sender as TMenuItem).Tag;
 
   BloqueioBotoes(FrmCentralTrocas, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
+
+  //============================================================================
+  // Bloqueio de Permissão por Objeto ==========================================
+  // Somente para:
+  // 0 - Odir
+  // 1 - Renato
+  // 253 - Eduardo
+  // 213 - Pedro
+  //============================================================================
+  FrmCentralTrocas.StB_AvariasEndFornecedores.Visible:=True;
+  FrmCentralTrocas.Pan_AvariasEndFornTrocaEnd.Visible:=True;
+  If (AnsiUpperCase(Des_Usuario)<>'ODIR') And (AnsiUpperCase(Des_Usuario)<>'RENATO') Then
+  Begin
+    FrmCentralTrocas.StB_AvariasEndFornecedores.Visible:=False;
+    FrmCentralTrocas.Pan_AvariasEndFornTrocaEnd.Visible:=False;
+
+    MySql:=' SELECT v.des_componente'+
+           ' FROM PS_VISUAL_OBJETOS v'+
+           ' WHERE v.des_modulo='+QuotedStr('FrmCentralTrocas')+
+           ' AND   v.des_componente='+QuotedStr('StB_AvariasEndFornecedores')+
+           ' AND   v.cod_usuario='+Cod_Usuario;
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+
+    If Trim(DMBelShop.CDS_BuscaRapida.FieldBYName('Des_Componente').AsString)<>'' Then
+    Begin
+      FrmCentralTrocas.StB_AvariasEndFornecedores.Visible:=True;
+      FrmCentralTrocas.Pan_AvariasEndFornTrocaEnd.Visible:=True;
+    End;
+
+    DMBelShop.CDS_BuscaRapida.Close;
+  End; // If (AnsiUpperCase(Des_Usuario)<>'ODIR') And (AnsiUpperCase(Des_Usuario)<>'RENATO') Then
 
   // Apresenta TabSheet ========================================================
   TabSheetInvisivel(FrmCentralTrocas);

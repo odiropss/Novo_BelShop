@@ -607,8 +607,7 @@ Begin
            ' SET f.cod_vinculado=f.cod_fornecedor'+
            ' , f.des_vinculado=f.des_fornecedor'+
            ' WHERE f.cod_vinculado IS NULL'+
-           ' AND f.num_seq<>0'+
-           ' AND f.num_seq<>999999';
+           ' AND   f.num_seq NOT IN (0,999999)';
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
     // Atualiza Transacao ======================================================
@@ -1537,58 +1536,15 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
-    // Cria Registros de Saldo INICIAL e FINAL =================================
-    b:=True;
-    iUltimo:=0;
-    While b do
-    Begin
-      Inc(iUltimo);
-
-
-      If iUltimo=1 Then
-       sNumSeqIF:='0'
-      Else
-       sNumSeqIF:='999999';
-
-      MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES'+
-             ' SELECT DISTINCT'+
-             ' f.cod_fornecedor, f.DES_FORNECEDOR,'+
-             ' NULL COD_VINCULADO, NULL DES_VINCULADO,'+
-             ' NULL VLR_ORIGEM, NULL DTA_ORIGEM, f.dta_caixa,'+
-             sNumSeqIF+' NUM_SEQ,'+
-             ' NULL NUM_CHAVENF, NULL COD_EMPRESA,'+
-             sNumSeqIF+' COD_HISTORICO,'+
-             ' NULL TXT_OBS, NULL NUM_DOCUMENTO, NULL NUM_SERIE,'+
-             ' 0.00 PER_REDUCAO, NULL TIP_DEBCRE, NULL VLR_CAIXA,'+
-             ' 0.00 VLR_SALDO, f.CODFORNECEDOR, NULL COD_LOJA_LINX,'+
-             ' NULL COD_LOJA_SIDICOM, 0 USU_INCLUI, CURRENT_TIMESTAMP DTA_INCLUI,'+
-             ' 0 USU_ALTERA, CURRENT_TIMESTAMP DTA_ALTERA'+
-
-             ' FROM FL_CAIXA_FORNECEDORES f'+
-
-             ' WHERE f.cod_fornecedor='+sCodForn+
-             ' AND f.num_seq BETWEEN 1 AND 999998'+
-             ' AND NOT EXISTS (SELECT 1'+
-             '                 FROM FL_CAIXA_FORNECEDORES ff'+
-             '                 WHERE ff.cod_fornecedor=f.cod_fornecedor'+
-             '                 AND   ff.num_seq='+sNumSeqIF+
-             '                 AND   ff.dta_caixa=f.dta_caixa)';
-      DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-      If iUltimo=2 Then
-       Break;
-    End; // While b do
-    iUltimo:=0;
-
-//    // Exclui Saldos INICIAIS e FINAIS se Movto ===============================
-//    MySql:=' DELETE  FROM FL_CAIXA_FORNECEDORES f'+
-//           ' WHERE f.cod_fornecedor=
-// AND f.num_seq in (0,999999)
-// AND NOT EXISTS (SELECT 1
-//                 FROM FL_CAIXA_FORNECEDORES ff
-//                 WHERE ff.cod_fornecedor=f.cod_fornecedor
-//                 AND   ff.num_seq  BETWEEN 1 AND 999998
-//                 AND   ff.dta_caixa=f.dta_caixa)
+    // Exclui Saldos Iniciais e Finais Sem Movimento ===========================
+    MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES cf'+
+           ' WHERE cf.num_seq in (0, 999999)'+
+           ' AND NOT EXISTS (SELECT 1'+
+           '                 FROM fl_caixa_fornecedores f'+
+           '                 WHERE f.num_seq NOT IN (0, 999999)'+
+           '                 AND   f.dta_caixa=cf.dta_caixa'+
+           '                 AND   f.cod_fornecedor=cf.cod_fornecedor)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
 
     // Busca Fornecedores ======================================================
     MySql:=' SELECT distinct c.COD_FORNECEDOR, c.DTA_CAIXA'+
@@ -1607,7 +1563,7 @@ Begin
              MySql+' WHERE c.COD_FORNECEDOR='+sCodForn;
 
     MySql:=
-     MySql+' ORDER BY c.COD_FORNECEDOR';
+     MySql+' ORDER BY c.COD_FORNECEDOR, c.DTA_CAIXA';
     DMBelShop.CDS_While.Close;
     DMBelShop.SDS_While.CommandText:=MySql;
     DMBelShop.CDS_While.Open;
@@ -1617,6 +1573,8 @@ Begin
 
     sCodigo:=DMBelShop.CDS_While.FieldByName('Cod_Fornecedor').AsString;
     cVlrSaldo:=0;
+    iUltimo:=0;
+
     DMBelShop.CDS_While.DisableControls;
     While Not DMBelShop.CDS_While.Eof do
     Begin
@@ -1891,8 +1849,8 @@ begin
   CreateToolTips(Self.Handle);
   AddToolTip(Bt_FluFornBuscaFornecedor.Handle, @ti, TipoDoIcone, 'Selecionar o'+#13+'Fornecedor', 'SELECIONAR !!');
 
-  CreateToolTips(Self.Handle);
-  AddToolTip(Bt_FluFornSalvaMemoria.Handle, @ti, TipoDoIcone, 'Salvar Resultado'+#13+'em Memória', 'CONTA CORRENTE !!');
+//  CreateToolTips(Self.Handle);
+//  AddToolTip(Bt_FluFornSalvaMemoria.Handle, @ti, TipoDoIcone, 'Salvar Resultado'+#13+'em Memória', 'CONTA CORRENTE !!');
   // Show Hint em Forma de Balão ===============================================
   //============================================================================
 
@@ -4415,9 +4373,7 @@ begin
 
   // Atualiza Saldos do Fornecedor =============================================
   EdtFluFornCodFornAcertar.Text:=sCodForn;
-//OdirApagar - 03/05/2018
-  //MEdt_DtaAtualizacao.Text:=f_Troca('/','.',f_Troca('-','.',sgDtaDoc));
-  MEdt_DtaAtualizacao.Text:='  .  .20  ';
+  MEdt_DtaAtualizacao.Text:=f_Troca('/','.',f_Troca('-','.',sgDtaDoc));
 
   LimpaLancamentos;
   Gb_FornVinculado.Enabled:=True;

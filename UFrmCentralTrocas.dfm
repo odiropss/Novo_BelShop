@@ -2733,6 +2733,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         TitleFont.Height = -11
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
+        OnEnter = Dbg_AnaliseReposicoesEnter
         OnKeyDown = Dbg_NotasEntDevProdutosKeyDown
         OnTitleClick = Dbg_AnaliseReposicoesTitleClick
       end
@@ -2758,6 +2759,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
         OnDrawDataCell = Dbg_AnaliseReposCorredoresDrawDataCell
+        OnEnter = Dbg_AnaliseReposCorredoresEnter
         OnKeyDown = Dbg_NotasEntDevProdutosKeyDown
         Columns = <
           item
@@ -3043,6 +3045,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           TitleFont.Height = -11
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = [fsBold]
+          OnEnter = Dbg_QtdsCaixaCDProdutosEnter
           OnKeyDown = Dbg_QtdsCaixaCDProdutosKeyDown
           SairComEnter = False
           Columns = <
@@ -3382,6 +3385,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           TitleFont.Height = -11
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = [fsBold]
+          OnEnter = Dbg_QtdsCaixaCDGruposEnter
           OnKeyDown = Dbg_QtdsCaixaCDGruposKeyDown
           SairComEnter = False
           Columns = <
@@ -3692,6 +3696,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_AnaliseRepDiariaDrawColumnCell
+        OnEnter = Dbg_AnaliseRepDiariaEnter
         OnKeyDown = Dbg_NotasEntDevProdutosKeyDown
         CorComFoco = clWindow
         SairComEnter = False
@@ -3975,7 +3980,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Left = 1
           Top = 14
           Width = 444
-          Height = 492
+          Height = 442
           Align = alClient
           DataSource = DMCentralTrocas.DS_NFeAvariasForneEnd
           FixedColor = clTeal
@@ -3984,7 +3989,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+          Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
           ParentFont = False
           TabOrder = 0
           TitleFont.Charset = DEFAULT_CHARSET
@@ -3992,7 +3997,9 @@ object FrmCentralTrocas: TFrmCentralTrocas
           TitleFont.Height = -11
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = [fsBold]
+          OnDrawColumnCell = Dbg_AvariasEndFornecedoresDrawColumnCell
           OnEnter = Dbg_AvariasEndFornecedoresEnter
+          OnKeyUp = Dbg_AvariasEndFornecedoresKeyUp
           Columns = <
             item
               Expanded = False
@@ -4012,7 +4019,85 @@ object FrmCentralTrocas: TFrmCentralTrocas
               Title.Alignment = taCenter
               Width = 100
               Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'TROCAR'
+              Title.Alignment = taCenter
+              Width = -1
+              Visible = False
             end>
+        end
+        object StB_AvariasEndFornecedores: TdxStatusBar
+          Left = 1
+          Top = 486
+          Width = 444
+          Height = 20
+          Panels = <
+            item
+              PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+              PanelStyle.Alignment = taCenter
+              PanelStyle.Color = clRed
+              PanelStyle.EllipsisType = dxetSmartPath
+              Fixed = False
+              Text = '<F4> Localiza Fornecedor'
+              Width = 40
+            end
+            item
+              PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+              PanelStyle.Alignment = taCenter
+              Fixed = False
+              Text = '<F6> Seleciona Para Troca Endere'#231'o'
+              Width = 50
+            end>
+          PaintStyle = stpsOffice11
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          Color = 13303807
+        end
+        object Pan_AvariasEndFornTrocaEnd: TPanel
+          Left = 1
+          Top = 456
+          Width = 444
+          Height = 30
+          Align = alBottom
+          TabOrder = 2
+          DesignSize = (
+            444
+            30)
+          object Bt_AvariasEndFornTrocaEnd: TJvXPButton
+            Left = 126
+            Top = 1
+            Width = 189
+            Height = 29
+            Caption = 'Troca Endere'#231'amento'
+            TabOrder = 0
+            Glyph.Data = {
+              07544269746D617066010000424D660100000000000076000000280000001400
+              0000140000000100040000000000F00000000000000000000000100000001000
+              0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+              C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF00333333333333333333330000300000000000003333330000307888888888
+              80333333000030F77777777780333333000030F99777777780333333000030FF
+              FFFFFFFF70333333000030000000000000333333000033333333333333333333
+              0000333003333333333333330000333003333333333333330000333003333330
+              000000030000333003303330FFFFFF030000333008300330F4444F0300003338
+              00000030FFFFFF030000333380000030F4444F030000333333300330FFFFFF03
+              0000333333303330F44F00030000333333333330FFFF00330000333333333330
+              000003330000333333333333333333330000}
+            ShowFocusRect = True
+            Anchors = [akTop, akBottom]
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_AvariasEndFornTrocaEndClick
+          end
         end
       end
       object Gb_AvariasEndNFeAvarias: TGroupBox

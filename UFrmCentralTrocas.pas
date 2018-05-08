@@ -179,6 +179,9 @@ type
     Dbe_NotasEntDevTotQtd: TDBEdit;
     Label17: TLabel;
     Label18: TLabel;
+    StB_AvariasEndFornecedores: TdxStatusBar;
+    Pan_AvariasEndFornTrocaEnd: TPanel;
+    Bt_AvariasEndFornTrocaEnd: TJvXPButton;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -335,6 +338,17 @@ type
       State: TGridDrawState);
     procedure Dbg_AvariasEndNotaEnter(Sender: TObject);
     procedure Dbg_AvariasEndFornecedoresEnter(Sender: TObject);
+    procedure Dbg_AvariasEndFornecedoresKeyUp(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_AnaliseRepDiariaEnter(Sender: TObject);
+    procedure Dbg_QtdsCaixaCDGruposEnter(Sender: TObject);
+    procedure Dbg_QtdsCaixaCDProdutosEnter(Sender: TObject);
+    procedure Dbg_AnaliseReposicoesEnter(Sender: TObject);
+    procedure Dbg_AnaliseReposCorredoresEnter(Sender: TObject);
+    procedure Bt_AvariasEndFornTrocaEndClick(Sender: TObject);
+    procedure Dbg_AvariasEndFornecedoresDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
 
   private
     { Private declarations }
@@ -447,19 +461,39 @@ End; // REPOSIÇÕES - Total de Quantidades de Reposição >>>>>>>>>>>>>>>>>>>>>>>>>
 // AVARIAS - ENDEREÇAMENTOS - Atualiza Endereços dos Fornecedores >>>>>>>>>>>>>>
 Function TFrmCentralTrocas.NFeAvariasAtualizaEnderecos(sCodForn: String): String;
 Var
-  iSeq: Integer;
+  iEndereco: Integer;
   MySql: String;
 Begin
   Result:='';
 
-  MySql:=' SELECT COALESCE(MAX(CAST(t.des_aux AS INTEGER)),1) Seq'+
+  // Busca Endereçamento para o Fornecedor -----------------------
+  MySql:=' SELECT CAST(t.des_aux AS INTEGER) Endereco'+
          ' FROM TAB_AUXILIAR t'+
-         ' WHERE t.tip_aux=23'; // AVARIAS - ENDEREÇAMENTO DE FORNECEDORE
+         ' WHERE t.tip_aux=23'+ // AVARIAS - ENDEREÇAMENTO DE FORNECEDORE
+         ' ORDER BY CAST(t.des_aux AS INTEGER)';
   DMBelShop.CDS_Busca1.Close;
   DMBelShop.SDS_Busca1.CommandText:=MySql;
   DMBelShop.CDS_Busca1.Open;
-  iSeq:=DMBelShop.CDS_Busca1.FieldByName('Seq').AsInteger;
+
+  If Trim(DMBelShop.CDS_Busca1.FieldByName('Endereco').AsString)='' Then
+   iEndereco:=1
+  Else
+   iEndereco:=DMBelShop.CDS_Busca1.RecordCount+1;
+   
+  DMBelShop.CDS_Busca1.First;
+  DMBelShop.CDS_Busca1.DisableControls;
+  While not DMBelShop.CDS_Busca1.Eof do
+  Begin
+    If DMBelShop.CDS_Busca1.RecNo<>DMBelShop.CDS_Busca1.FieldByName('Endereco').AsInteger Then
+    Begin
+      iEndereco:=DMBelShop.CDS_Busca1.RecNo;
+      Break;
+    End;
+
+    DMBelShop.CDS_Busca1.Next;
+  End; // While not DMBelShop.CDS_Busca1.Eof do
   DMBelShop.CDS_Busca1.Close;
+  DMBelShop.CDS_Busca1.EnableControls;
 
   // Verifica se Transação esta Ativa
   If DMBelShop.SQLC.InTransaction Then
@@ -470,14 +504,15 @@ Begin
   TD.IsolationLevel:=xilREADCOMMITTED;
   DMBelShop.SQLC.StartTransaction(TD);
   Try // Try da Transação
-    Inc(iSeq);
+    // OdirApagar
+    //Inc(iEndereco);
 
     MySql:=' INSERT INTO TAB_AUXILIAR'+
            ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
            ' VALUES ('+ //23, 545, '1', NULL, NULL, NULL);
            ' 23,'+ // TIP_AUX - AVARIAS - ENDEREÇAMENTO DE FORNECEDORE
            sCodForn+', '+ // COD_AUX
-           IntToStr(iSeq)+', '+ // DES_AUX
+           QuotedStr(IntToStr(iEndereco))+', '+ // DES_AUX
            ' NULL, '+ // DES_AUX1
            ' NULL, '+ // VLR_AUX
            ' NULL)';  // VLR_AUX1
@@ -486,7 +521,7 @@ Begin
     // Atualiza Transacao ======================================================
     DMBelShop.SQLC.Commit(TD);
 
-    Result:=IntToStr(iSeq);
+    Result:=IntToStr(iEndereco);
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -8924,6 +8959,359 @@ begin
   ApplicationEvents1.OnActivate:=Dbg_AvariasEndFornecedoresEnter;
   Application.OnMessage := ApplicationEvents1Message;
   ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmCentralTrocas.Dbg_AvariasEndFornecedoresKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+Var
+  sForn, sValor,
+  sTroca: String;
+
+  b: Boolean;
+  i: Integer;
+begin
+  If StB_AvariasEndFornecedores.Visible Then
+  Begin
+    sForn:= DMCentralTrocas.CDS_NFeAvariasForneEndCODIGO.AsString;
+
+    // Localizar Fornecedor ====================================================
+    If Key=Vk_F4 Then
+    Begin
+      If Not DMCentralTrocas.CDS_NFeAvariasForneEnd.IsEmpty Then
+      Begin
+        sValor:='';
+        b:=True;
+        While b do
+        Begin
+          If InputQuery('Localizar Fornecedor/Endereçamento','',sValor) then
+           Begin
+             Try
+               StrToInt(sValor);
+               sTroca:='Endereçamento'; // Localiza por Endereçamento
+               If Not DMCentralTrocas.CDS_NFeAvariasForneEnd.Locate('ENDERECO', sValor,[]) Then
+               Begin
+                 If Not LocalizaRegistro(DMCentralTrocas.CDS_NFeAvariasForneEnd, 'NOME_FORN', sValor) Then
+                  b:=False;
+               End; // If Not DMCentralTrocas.CDS_NFeAvariasForneEnd.Locate('CODIGO', sValor,[]) Then
+               Break;
+             Except
+               sTroca:='Fornecedor'; // Localiza por Fornecedor
+               If Not DMCentralTrocas.CDS_NFeAvariasForneEnd.Locate('NOME_FORN', sValor,[]) Then
+               Begin
+                 If Not LocalizaRegistro(DMCentralTrocas.CDS_NFeAvariasForneEnd, 'NOME_FORN', sValor) Then
+                  b:=False;
+               End; // If Not DMCentralTrocas.CDS_NFeAvariasForneEnd.Locate('NOME_FORN', sValor,[]) Then
+               Break;
+             End;
+           End
+          Else // If InputQuery('Localizar Fornecedor','',sValor) then
+           Begin
+             Break;
+           End; // If InputQuery('Localizar Fornecedor','',sValor) then
+        End; // While b do
+
+        If Not b Then
+        Begin
+          DMCentralTrocas.CDS_NFeAvariasForneEnd.Locate('CODIGO',sForn,[]);
+          msg(sTroca+cr+sValor+cr+'Não Localizado na Lista !!','A');
+          Dbg_AvariasEndFornecedores.SetFocus;
+          Exit;
+        End;
+      End; // If Not DMCentralTrocas.CDS_NFeAvariasForneEnd.IsEmpty Then
+    End; // If Key=Vk_F4 Then
+
+    // Marca Para Mudança de Endereçamento (Somente Dois Marcados) =============
+    If Key=Vk_F6 Then
+    Begin
+      // Verifica o que Marcar ou Desmarcar ====================================
+      If DMCentralTrocas.CDS_NFeAvariasForneEndTROCAR.AsString='N' Then // N = Nao Troca Endereço
+      Begin
+        // Verifica de pode (Somente Dois Marcados)
+        DMCentralTrocas.CDS_NFeAvariasForneEnd.DisableControls;
+        DMCentralTrocas.CDS_NFeAvariasForneEnd.First;
+        i:=0;
+        While Not DMCentralTrocas.CDS_NFeAvariasForneEnd.Eof do
+        Begin
+          If DMCentralTrocas.CDS_NFeAvariasForneEndTROCAR.AsString='E' Then // E = Troca Endereço
+           Inc(i);
+
+          DMCentralTrocas.CDS_NFeAvariasForneEnd.Next;
+        End; // While Not DMCentralTrocas.CDS_NFeAvariasForneEnd.Eof do
+        DMCentralTrocas.CDS_NFeAvariasForneEnd.EnableControls;
+        DMCentralTrocas.CDS_NFeAvariasForneEnd.Locate('CODIGO',sForn,[]);
+
+        If i=2 Then
+        Begin
+          msg('Já Extem Dois Fornecedores Marcados'+cr+cr+'Para troca de Endereçamentos !!','A');
+          DMCentralTrocas.CDS_NFeAvariasForneEnd.First;
+          Exit;
+        End; // If i=2 Then
+
+        sTroca:='E'; // E = Troca Endereço
+        sgMensagem:='Fornecedor Selecionado para Troca'+cr+'de Endereçamento ESTA CORRETO ??';
+      End;
+
+      If DMCentralTrocas.CDS_NFeAvariasForneEndTROCAR.AsString='E' Then // E = Troca Endereço
+      Begin
+        sTroca:='N'; // N = Nao Troca Endereço
+        sgMensagem:='Deseja Retirar o Indicativo de'+cr+'Troca de Endereçamento do Fornecedor';
+      End;
+
+      If msg(sgMensagem+cr+cr+DMCentralTrocas.CDS_NFeAvariasForneEndNOME_FORN.AsString,'C')=2 Then
+       Exit;
+
+      sgMensagem:='';
+
+      // Acerta Indicativo de Troca do Fornecedor ==============================
+      DMCentralTrocas.CDS_NFeAvariasForneEnd.Edit;
+      DMCentralTrocas.CDS_NFeAvariasForneEndTROCAR.AsString:=sTroca;
+      DMCentralTrocas.CDS_NFeAvariasForneEnd.Post;
+
+      DMCentralTrocas.CDS_NFeAvariasForneEnd.Locate('CODIGO',sForn,[]);
+    End; // If Key=Vk_F6 Then
+  End; // If StB_AvariasEndFornecedores.Visible Then
+
+  Dbg_AvariasEndFornecedores.SetFocus;
+
+end;
+
+procedure TFrmCentralTrocas.Dbg_AnaliseRepDiariaEnter(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=Dbg_AnaliseRepDiariaEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmCentralTrocas.Dbg_QtdsCaixaCDGruposEnter(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=Dbg_QtdsCaixaCDGruposEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmCentralTrocas.Dbg_QtdsCaixaCDProdutosEnter(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=Dbg_QtdsCaixaCDProdutosEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmCentralTrocas.Dbg_AnaliseReposicoesEnter(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=Dbg_AnaliseReposicoesEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmCentralTrocas.Dbg_AnaliseReposCorredoresEnter(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=Dbg_AnaliseReposCorredoresEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmCentralTrocas.Bt_AvariasEndFornTrocaEndClick(Sender: TObject);
+Var
+  MySql,
+  sForn1, sEnd1,
+  sForn2, sEnd2: String;
+
+  iCodigo, iEndereco,
+  iCod1, iCod2 : Integer;
+
+  i: Integer;
+begin
+  Dbg_AvariasEndFornecedores.SetFocus;
+
+  iCodigo:=DMCentralTrocas.CDS_NFeAvariasForneEndCODIGO.AsInteger;
+
+  // Verifica de pode (Somente Dois Marcados)
+  iCod1 :=0;
+  sForn1:='';
+  sEnd1 :='';
+
+  iCod2 :=0;
+  sForn2:='';
+  sEnd2 :='';
+  DMCentralTrocas.CDS_NFeAvariasForneEnd.DisableControls;
+  DMCentralTrocas.CDS_NFeAvariasForneEnd.First;
+  i:=0;
+  While Not DMCentralTrocas.CDS_NFeAvariasForneEnd.Eof do
+  Begin
+    If DMCentralTrocas.CDS_NFeAvariasForneEndTROCAR.AsString='E' Then
+    Begin
+      Inc(i);
+
+      If i=1 Then
+      Begin
+        iCod1  :=DMCentralTrocas.CDS_NFeAvariasForneEndCODIGO.AsInteger;
+        sForn1 :=DMCentralTrocas.CDS_NFeAvariasForneEndNOME_FORN.AsString;
+        sEnd1  :=DMCentralTrocas.CDS_NFeAvariasForneEndENDERECO.AsString;
+      End;
+
+      If i=2 Then
+      Begin
+        iCod2 :=DMCentralTrocas.CDS_NFeAvariasForneEndCODIGO.AsInteger;
+        sForn2:=DMCentralTrocas.CDS_NFeAvariasForneEndNOME_FORN.AsString;
+        sEnd2 :=DMCentralTrocas.CDS_NFeAvariasForneEndENDERECO.AsString;
+        Break;
+      End;
+    End; // If DMCentralTrocas.CDS_NFeAvariasForneEndTROCAR.AsString='E' Then
+
+    DMCentralTrocas.CDS_NFeAvariasForneEnd.Next;
+  End; // While Not DMCentralTrocas.CDS_NFeAvariasForneEnd.Eof do
+  DMCentralTrocas.CDS_NFeAvariasForneEnd.EnableControls;
+  DMCentralTrocas.CDS_NFeAvariasForneEnd.Locate('CODIGO',iCodigo,[]);
+
+  If i=0 Then
+  Begin
+    msg('Fornecedores para Troca de'+cr+cr+'Endereçamento não Encontrados !!','A');
+    DMCentralTrocas.CDS_NFeAvariasForneEnd.Locate('CODIGO',iCodigo,[]);
+    Exit;
+  End; // If i=0 Then
+
+  If i=1 Then
+  Begin
+    if Application.MessageBox(pChar('Somente um Fornecedor foi Encontrado'+cr+'para Troca de Endereçamento !!'+cr+cr+
+                                    'DESEJA CRIAR um NOVO ENDEREÇAMENTO para'+cr+'o fornecedor abaixo ??'+cr+cr+
+                                    sForn1+cr+'Endereçamento: '+sEnd1), 'ATENÇÃO !!', 292)=IdNo Then
+    Begin
+      DMCentralTrocas.CDS_NFeAvariasForneEnd.First;
+      Exit;
+    End;
+  End; // If i=1 Then
+
+  If i=2 Then
+  Begin
+    if Application.MessageBox(pChar('DESEJA REALMENTE TROCAR OS'+cr+'ENDEREÇAMENTOS DOS fornecedores abaixo ??'+cr+cr+
+                                    sForn1+cr+'Endereçamento: '+sEnd1+cr+cr+
+                                    sForn2+cr+'Endereçamento: '+sEnd2), 'ATENÇÃO !!', 292)=IdNo Then
+    Begin
+      DMCentralTrocas.CDS_NFeAvariasForneEnd.Locate('CODIGO',iCodigo,[]);
+      Exit;
+    End;
+  End; // If i=2 Then
+
+  // Troca endereçamentos ======================================================
+  OdirPanApres.Caption:='AGUARDE !! Efetuando a troaca de Endereçamento ...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    // Se UM Fornecedor Cria Endereço ==========================================
+    If i=1 Then
+    Begin
+      MySql:=' SELECT COALESCE(MAX(CAST(t.des_aux AS INTEGER)+1),1) Endereco'+
+             ' FROM TAB_AUXILIAR t'+
+             ' WHERE t.tip_aux=23'; // AVARIAS - ENDEREÇAMENTO DE FORNECEDORE
+      DMBelShop.CDS_Busca1.Close;
+      DMBelShop.SDS_Busca1.CommandText:=MySql;
+      DMBelShop.CDS_Busca1.Open;
+      iEndereco:=DMBelShop.CDS_Busca1.FieldByName('Endereco').AsInteger;
+      DMBelShop.CDS_Busca1.Close;
+
+      MySql:=' UPDATE TAB_AUXILIAR T'+
+             ' SET t.des_aux='+QuotedStr(IntToStr(iEndereco))+
+             ' WHERE t.tip_aux=23'+ // AVARIAS - ENDEREÇAMENTO DE FORNECEDOR
+             ' AND   t.cod_aux='+IntToStr(iCod1);
+      DMBelShop.SQLC.Execute(MySql, nil,nil);
+    End; // If i=1 Then
+
+    // Se DOIS Fornecedores troca de Endereço ==================================
+    If i=2 Then
+    Begin
+      MySql:=' UPDATE TAB_AUXILIAR T'+
+             ' SET t.des_aux='+QuotedStr(Trim(sEnd2))+
+             ' WHERE t.tip_aux=23'+ // AVARIAS - ENDEREÇAMENTO DE FORNECEDOR
+             ' AND   t.cod_aux='+IntToStr(iCod1);
+      DMBelShop.SQLC.Execute(MySql, nil,nil);
+
+      MySql:=' UPDATE TAB_AUXILIAR T'+
+             ' SET t.des_aux='+QuotedStr(Trim(sEnd1))+
+             ' WHERE t.tip_aux=23'+ // AVARIAS - ENDEREÇAMENTO DE FORNECEDOR
+             ' AND   t.cod_aux='+IntToStr(iCod2);
+      DMBelShop.SQLC.Execute(MySql, nil,nil);
+    End; // If i=2 Then
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    OdirPanApres.Visible:=False;
+
+    Screen.Cursor:=crDefault;
+
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      OdirPanApres.Visible:=False;
+
+      Screen.Cursor:=crDefault;
+
+      DMCentralTrocas.CDS_NFeAvariasForneEnd.Locate('CODIGO',iCodigo,[]);
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Exit;
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  DMCentralTrocas.CDS_NFeAvariasForneEnd.DisableControls;
+  DMCentralTrocas.CDS_NFeAvariasForneEnd.Close;
+  DMCentralTrocas.CDS_NFeAvariasForneEnd.Open;
+  DMCentralTrocas.CDS_NFeAvariasForneEnd.EnableControls;
+  DMCentralTrocas.CDS_NFeAvariasForneEnd.Locate('CODIGO',iCod1,[]);
+
+end;
+
+procedure TFrmCentralTrocas.Dbg_AvariasEndFornecedoresDrawColumnCell(
+  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+  State: TGridDrawState);
+begin
+  if not (gdSelected in State) Then // Este comando altera cor da Linha
+  Begin
+    If DMCentralTrocas.CDS_NFeAvariasForneEndTROCAR.AsString='E' Then // E = Troca Endereço
+    Begin
+      Dbg_AvariasEndFornecedores.Canvas.Brush.Color:=clYellow;
+
+      Dbg_AvariasEndFornecedores.Canvas.FillRect(Rect);
+      Dbg_AvariasEndFornecedores.DefaultDrawDataCell(Rect,Column.Field,state);
+
+    End;
+  End; // if not (gdSelected in State) Then
+
+  // Alinhamento
+  DMCentralTrocas.CDS_NFeAvariasForneEndENDERECO.Alignment:=taCenter;
 
 end;
 

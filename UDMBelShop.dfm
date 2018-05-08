@@ -2854,9 +2854,11 @@ object DMBelShop: TDMBelShop
       Size = 50
     end
     object CDS_FluxoFornecedorCOD_VINCULADO: TIntegerField
+      DisplayLabel = 'C'#243'd Forn Vinc'
       FieldName = 'COD_VINCULADO'
     end
     object CDS_FluxoFornecedorDES_VINCULADO: TStringField
+      DisplayLabel = 'Fornecedor Vinculado'
       FieldName = 'DES_VINCULADO'
       Size = 60
     end

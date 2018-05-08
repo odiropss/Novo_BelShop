@@ -62,6 +62,7 @@ var
   sgCodForn,
   sgCodEmpLINX, sgCodEmp, sgDesLoja: String;
 
+  bgExcSemMovto, // Executa uma Unica Vez
   bgProcessar,
   bgAchoFornCC: Boolean; // Se Encontrou Fornecedor com Negociação (Hist: 900, 955)
 
@@ -875,8 +876,8 @@ Begin
   sDtaMovtoLinx:=sgDtaIniLINX;
 
 //opss === ATENÇÃO === Comentar para Buscar todo o Movto Linx Depois retornar
-//  If StrToDate(f_Troca('.','/',f_Troca('-','/',sDtaMovtoLinx)))<StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio))) Then
-//   sDtaMovtoLinx:=sgDtaInicio;
+  If StrToDate(f_Troca('.','/',f_Troca('-','/',sDtaMovtoLinx)))<StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio))) Then
+   sDtaMovtoLinx:=sgDtaInicio;
 
   sDtaMovtoLinx:=f_Troca('/','.',f_Troca('-','.',sDtaMovtoLinx));
 
@@ -896,7 +897,8 @@ Begin
     MySql:=' UPDATE FL_CAIXA_FORNECEDORES f'+
            ' SET f.cod_vinculado=f.cod_fornecedor'+
            ' ,   f.des_vinculado=f.des_fornecedor'+
-           ' WHERE f.cod_vinculado IS NULL';
+           ' WHERE f.cod_vinculado IS NULL'+
+           ' AND   f.num_seq NOT IN (0,999999)';
     DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
 
     // Busca Movtos Debitos / Creditos ===========================================
@@ -948,7 +950,7 @@ Begin
       bgProcessar:=True;
       For i:=0 to Mem_Odir.Lines.Count-1 do
       Begin
-         If Mem_Odir.Lines[i]=sCodFornLINX Then
+         If Mem_Odir.Lines[i]=sCodFornLINX+'-'+sDtaMovtoLinx Then
          Begin
            bgProcessar:=False;
            Break;
@@ -957,7 +959,7 @@ Begin
 
       If bgProcessar Then
       Begin
-        Mem_Odir.Lines.Add(sCodFornLINX);
+        Mem_Odir.Lines.Add(sCodFornLINX+'-'+sDtaMovtoLinx);
       End;
 
       // Exclui Lançamentos para Substituição e Inclução ------
@@ -984,8 +986,8 @@ Begin
     While Not DMAtualizaSeteHoras.CDS_MovtoLinx.Eof do
     Begin
       sgDtaFim     :=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DTA_CAIXA').AsString;
-      sCodFornLINX :=Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('COD_FORNECEDOR').AsString);
-      sNomeFornLINX:=Trim(DMAtualizaSeteHoras.CDS_Busca.FieldByName('DES_FORNECEDOR').AsString);
+      sCodFornLINX :=Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('COD_FORNECEDOR').AsString);
+      sNomeFornLINX:=Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DES_FORNECEDOR').AsString);
 
       sCodFornVinc :=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('COD_VINCULADO').AsString;
       sNomeFornVinc:=DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DES_VINCULADO').AsString;
@@ -1003,14 +1005,15 @@ Begin
              ' FROM FL_CAIXA_FORNECEDORES cf'+
              ' WHERE cf.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFim)))+
              ' AND   cf.cod_fornecedor='+QuotedStr(sCodFornLINX)+
-             ' AND   cf.num_seq>0'+
-             ' AND   cf.num_seq<999999'+
+             ' AND   cf.num_seq NOT IN (0,999999)'+
              ' ORDER BY cf.Num_Seq';
       DMAtualizaSeteHoras.CDS_Busca.Close;
       DMAtualizaSeteHoras.SDS_Busca.CommandText:=MySql;
       DMAtualizaSeteHoras.CDS_Busca.Open;
-      i:=1;
+
       sNumSeq:=IntToStr(DMAtualizaSeteHoras.CDS_Busca.RecordCount+1);
+      DMAtualizaSeteHoras.CDS_Busca.First;
+      DMAtualizaSeteHoras.CDS_Busca.DisableControls;
       While not DMAtualizaSeteHoras.CDS_Busca.Eof do
       Begin
         If DMAtualizaSeteHoras.CDS_Busca.RecNo<>DMAtualizaSeteHoras.CDS_Busca.FieldByName('Num_Seq').AsInteger Then
@@ -1022,9 +1025,10 @@ Begin
         DMAtualizaSeteHoras.CDS_Busca.Next;
       End; // While not DMAtualizaSeteHoras.CDS_Busca.Eof do
       DMAtualizaSeteHoras.CDS_Busca.Close;
+      DMAtualizaSeteHoras.CDS_Busca.EnableControls;
 
       // Percentual de Redução --------------------------------------
-      sPercRed:=f_Troca(',','.',DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('PER_REDUCAO').AsString);
+      sPercRed:=f_Troca(',','.',ZerosCentavos(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('PER_REDUCAO').AsString,2));
 
       // Insere Caixa ---------------------------------------------
       MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES ('+
@@ -1044,8 +1048,8 @@ Begin
              QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DTA_CAIXA').AsString)+', '+ // DTA_CAIXA
              sNumSeq+', '+ // NUM_SEQ
              QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('NUM_CHAVENF').AsString)+', '+ // NUM_CHAVENF
-             QuotedStr(sgCodEmpLINX)+', '+ // COD_EMPRESA
-             QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('COD_HISTORICO,').AsString)+', '+ // COD_HISTORICO,
+             sgCodEmpLINX+', '+ // COD_EMPRESA
+             DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('COD_HISTORICO').AsString+', '+ // COD_HISTORICO,
              QuotedStr(AnsiUpperCase(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('TXT_OBS').AsString))+', '+ // TXT_OBS
              QuotedStr(Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('NUM_DOCUMENTO').AsString))+', '+ // NUM_DOCUMENTO
              QuotedStr(Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('NUM_SERIE').AsString))+', '+ // NUM_SERIE
@@ -1054,11 +1058,11 @@ Begin
 
              'CAST(('+DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_CAIXA').AsString+
                     '-(('+sPercRed+' * '+DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_CAIXA').AsString+
-                    ') / 100)) AS NUMERIC(12,2)),'+ // VLR_CAIXA
+                    ') / 100)) AS NUMERIC(12,2)), '+ // VLR_CAIXA
 
-             DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_SALDO').AsString+', '+ // VLR_SALDO
+             f_Troca(',','.',ZerosCentavos(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_SALDO').AsString,2))+', '+ // VLR_SALDO
              QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('CODFORNECEDOR').AsString)+', '+ // CODFORNECEDOR VARCHAR(6)
-             QuotedStr(sgCodEmpLINX)+', '+ // COD_LOJA_LINX INTEGER
+             sgCodEmpLINX+', '+ // COD_LOJA_LINX INTEGER
              QuotedStr(sgCodEmp)+')'; // COD_LOJA_SIDICOM VARCHAR(2)
       DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
 
@@ -1066,7 +1070,7 @@ Begin
       bgProcessar:=True;
       For i:=0 to Mem_Odir.Lines.Count-1 do
       Begin
-         If Mem_Odir.Lines[i]=sCodFornLINX Then
+         If Mem_Odir.Lines[i]=sCodFornLINX+'-'+sDtaMovtoLinx Then
          Begin
            bgProcessar:=False;
            Break;
@@ -1075,11 +1079,11 @@ Begin
 
       If bgProcessar Then
       Begin
-        Mem_Odir.Lines.Add(sCodFornLINX);
+        Mem_Odir.Lines.Add(sCodFornLINX+'-'+sDtaMovtoLinx);
       End;
       // Insere Conta Corrente =================================================
       //========================================================================
-
+                                              
       DMAtualizaSeteHoras.CDS_MovtoLinx.Next;
     End; // While Not DMAtualizaSeteHoras.CDS_MovtoLinx.Eof do
     DMAtualizaSeteHoras.CDS_MovtoLinx.Close;
@@ -1103,7 +1107,7 @@ Begin
       MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
              ' VALUES ('+
              QuotedStr('80')+', '+
-             '2, '+
+             sgCodEmpLINX+', '+
              ' CURRENT_TIMESTAMP,'+
              QuotedStr('CCr')+', '+ // Linx Com Inventário
              QuotedStr('Conta Corrente: '+e.message+' - '+MySql)+')'+
@@ -1768,57 +1772,19 @@ Begin
     DecimalSeparator:='.';
 
     // Exclui Saldos Iniciais e Finais Sem Movimento ===========================
-    MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES cf'+
-           ' WHERE cf.num_seq in (0, 999999)'+
-           ' AND NOT EXISTS (SELECT 1'+
-           '                 FROM fl_caixa_fornecedores f'+
-           '                 WHERE f.num_seq NOT IN (0, 999999)'+
-           '                 AND   f.dta_caixa=cf.dta_caixa'+
-           '                 AND   f.cod_fornecedor=cf.cod_fornecedor)';
-    DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
-
-    // Cria Registros de Saldo INICIAL e FINAL =================================
-    b:=True;
-    iUltimo:=0;
-    While b do
+    If bgExcSemMovto Then
     Begin
-      Inc(iUltimo);
-
-      If iUltimo=1 Then
-       sNumSeqIF:='0'
-      Else
-       sNumSeqIF:='999999';
-
-      MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES'+
-             ' SELECT DISTINCT'+
-             ' f.cod_fornecedor, f.DES_FORNECEDOR,'+
-             ' NULL COD_VINCULADO, NULL DES_VINCULADO,'+
-             ' NULL VLR_ORIGEM, NULL DTA_ORIGEM, f.dta_caixa,'+
-             sNumSeqIF+' NUM_SEQ,'+
-             ' NULL NUM_CHAVENF, NULL COD_EMPRESA,'+
-             sNumSeqIF+' COD_HISTORICO,'+
-             ' NULL TXT_OBS, NULL NUM_DOCUMENTO, NULL NUM_SERIE,'+
-             ' 0.00 PER_REDUCAO, NULL TIP_DEBCRE, NULL VLR_CAIXA,'+
-             ' 0.00 VLR_SALDO, f.CODFORNECEDOR, NULL COD_LOJA_LINX,'+
-             ' NULL COD_LOJA_SIDICOM, 0 USU_INCLUI, CURRENT_TIMESTAMP DTA_INCLUI,'+
-             ' 0 USU_ALTERA, CURRENT_TIMESTAMP DTA_ALTERA'+
-
-             ' FROM FL_CAIXA_FORNECEDORES f'+
-
-             ' WHERE f.cod_fornecedor='+sCodForn+
-             ' AND f.num_seq BETWEEN 1 AND 999998'+
+      MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES cf'+
+             ' WHERE cf.num_seq in (0, 999999)'+
              ' AND NOT EXISTS (SELECT 1'+
-             '                 FROM FL_CAIXA_FORNECEDORES ff'+
-             '                 WHERE ff.cod_fornecedor=f.cod_fornecedor'+
-             '                 AND   ff.num_seq='+sNumSeqIF+
-             '                 AND   ff.dta_caixa=f.dta_caixa)';
+             '                 FROM fl_caixa_fornecedores f'+
+             '                 WHERE f.num_seq NOT IN (0, 999999)'+
+             '                 AND   f.dta_caixa=cf.dta_caixa'+
+             '                 AND   f.cod_fornecedor=cf.cod_fornecedor)';
       DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
-
-      If iUltimo=2 Then
-       Break;
-    End; // While b do
-    iUltimo:=0;
-
+      
+      bgExcSemMovto:=False;
+    End; // If bgExcSemMovto Then
     // Busca Fornecedores ========================================================
     MySql:=' SELECT distinct c.COD_FORNECEDOR, c.DTA_CAIXA'+
            ' FROM FL_CAIXA_FORNECEDORES c';
@@ -1836,12 +1802,13 @@ Begin
              MySql+' WHERE c.COD_FORNECEDOR='+sCodForn;
 
     MySql:=
-     MySql+' ORDER BY c.COD_FORNECEDOR';
+     MySql+' ORDER BY c.COD_FORNECEDOR, c.DTA_CAIXA';
     DMAtualizaSeteHoras.CDS_While.Close;
     DMAtualizaSeteHoras.SDS_While.CommandText:=MySql;
     DMAtualizaSeteHoras.CDS_While.Open;
 
     sCodigo:='0';
+    iUltimo:=0;
     While Not DMAtualizaSeteHoras.CDS_While.Eof do
     Begin
       If sCodigo<>DMAtualizaSeteHoras.CDS_While.FieldByName('Cod_Fornecedor').AsString Then
@@ -2039,20 +2006,24 @@ Var
   Flags : Cardinal;
 
   MySql: String;
-  i: Integer;
+
+  sCodFornCalcCC, sDtaCalcCC: String;
+  ii, i: Integer;
 begin
 
   //============================================================================
   // Atualiza Codigos de Barras ================================================
   //============================================================================
-//opss  CodigoBarras;
+//opss
+  CodigoBarras;
   // Atualiza Codigos de Barras ================================================
   //============================================================================
 
   //============================================================================
   // Atualiza Demanda 4 Meses ==================================================
   //============================================================================
-//opss  Demanda4Meses;
+//opss
+  Demanda4Meses;
   // Atualiza Demanda 4 Meses ==================================================
   //============================================================================
 
@@ -2122,9 +2093,6 @@ begin
   // Monta SQL's Para Busca SIDICOM / LINX =====================================
   MontaSqlsSidicomLinx;
 
-  // Limpa Codigos de Fornecedores =============================================
-  Mem_Odir.Lines.Clear;
-
   // Busca Lojas ===============================================================
   MySql:=' SELECT e.cod_filial, e.cod_linx, e.dta_inicio_linx'+
          ' FROM EMP_CONEXOES e'+
@@ -2137,6 +2105,7 @@ begin
   DMAtualizaSeteHoras.SDS_Lojas.CommandText:=MySql;
   DMAtualizaSeteHoras.CDS_Lojas.Open;
 
+  bgExcSemMovto:=True;
   DMAtualizaSeteHoras.CDS_Lojas.First;
   While Not DMAtualizaSeteHoras.CDS_Lojas.Eof do
   Begin
@@ -2180,23 +2149,40 @@ begin
 //      BuscaMovtosDebCreSIDICOM;
 //    End; // If sgCodEmpLINX='0' Then
 
+    // Limpa Codigos de Fornecedores ===========================================
+    Mem_Odir.Lines.Clear;
+
     // Busca Débitos/Crétidos no LINX ==========================================
     If sgCodEmpLINX<>'0' Then
     Begin
       BuscaMovtosDebCreLINX;
     End;
 
+    // Calcula Fluxo de Caixa do Fornecedore =====================================
+    For i:=0 to Mem_Odir.Lines.Count-1 do
+    Begin
+      ii:=pos('-',Mem_Odir.Lines[i]);
+
+      sCodFornCalcCC:=Trim(Copy(Mem_Odir.Lines[i],1,ii-1));
+      sDtaCalcCC:=Trim(Copy(Mem_Odir.Lines[i],ii+1, Length(Mem_Odir.Lines[i])));
+
+
+      CalculaFluxoCaixaFornecedores(sDtaCalcCC, sCodFornCalcCC);
+    End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
+    Mem_Odir.Lines.Clear;
+
     DMAtualizaSeteHoras.CDS_Lojas.Next;
   End; // While Not DMAtualizaSeteHoras.CDS_Busca.Eof do
   DMAtualizaSeteHoras.CDS_Lojas.Close;
 
-  // Calcula Fluxo de Caixa do Fornecedore =====================================
-  For i:=0 to Mem_Odir.Lines.Count-1 do
-  Begin
-    // OdirApagar é Sem Data de Inicio do Calculo
-    // CalculaFluxoCaixaFornecedores(sgDtaProcCC,Mem_Odir.Lines[i])
-    CalculaFluxoCaixaFornecedores('', Mem_Odir.Lines[i])
-  End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
+  // OdirApagar - Caluclado por Fornecedor
+//  // Calcula Fluxo de Caixa do Fornecedore =====================================
+//  For i:=0 to Mem_Odir.Lines.Count-1 do
+//  Begin
+//    // OdirApagar é Sem Data de Inicio do Calculo
+//    // CalculaFluxoCaixaFornecedores(sgDtaProcCC,Mem_Odir.Lines[i])
+//    CalculaFluxoCaixaFornecedores('', Mem_Odir.Lines[i])
+//  End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
   // ATUALIZA CONTA CORRENTE FORNECEDORES ======================================
   //============================================================================
 
@@ -2210,7 +2196,8 @@ begin
   //============================================================================
   // Igual Todos os Produtos de Todas a Lojas com o CD =========================
   //============================================================================
-//opss  AcertaEstoqueLoja;
+//opss
+  AcertaEstoqueLoja;
 
   // Encerra Programa ==========================================================
   Application.Terminate;

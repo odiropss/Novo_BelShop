@@ -1347,6 +1347,7 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object CDS_NFeAvariasForneEnd: TClientDataSet
     Aggregates = <>
+    IndexFieldNames = 'TROCAR;NOME_FORN'
     Params = <>
     ProviderName = 'DSP_NFeAvariasForneEnd'
     Left = 848
@@ -1364,12 +1365,22 @@ object DMCentralTrocas: TDMCentralTrocas
       FieldName = 'ENDERECO'
       Size = 50
     end
+    object CDS_NFeAvariasForneEndTROCAR: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'Trocar Endere'#231'o'
+      FieldName = 'TROCAR'
+      Required = True
+      Visible = False
+      FixedChar = True
+      Size = 1
+    end
   end
   object SDS_NFeAvariasForneEnd: TSQLDataSet
     CommandText = 
-      'SELECT f.cod_cliente CODIGO, f.nome_cliente NOME_FORN, t.des_aux' +
-      ' ENDERECO'#13#10#13#10'FROM TAB_AUXILIAR t, LINXCLIENTESFORNEC f'#13#10#13#10'WHERE ' +
-      't.cod_aux=f.cod_cliente'#13#10'AND   t.tip_aux=23'#13#10#13#10'ORDER BY 2'#13#10
+      'SELECT '#39'N'#39' Trocar, f.cod_cliente CODIGO, f.nome_cliente NOME_FOR' +
+      'N, t.des_aux ENDERECO'#13#10#13#10'FROM TAB_AUXILIAR t, LINXCLIENTESFORNEC' +
+      ' f'#13#10#13#10'WHERE t.cod_aux=f.cod_cliente'#13#10'AND   t.tip_aux=23'#13#10#13#10'ORDER' +
+      ' BY 1,3'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC

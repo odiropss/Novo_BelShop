@@ -213,6 +213,7 @@ type
     CDS_NFeAvariasCHECKOUT: TIntegerField;
     CDS_ReposicaoTransfTot_Qtds: TAggregateField;
     CDS_ReposicaoDocsTot_Qtds: TAggregateField;
+    CDS_NFeAvariasForneEndTROCAR: TStringField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir

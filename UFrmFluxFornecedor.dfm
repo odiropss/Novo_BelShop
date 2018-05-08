@@ -184,7 +184,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Top = 56
     Width = 977
     Height = 479
-    ActivePage = Ts_FluxFornLanctos
+    ActivePage = Ts_FluxFornVinculos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -391,7 +391,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Top = 14
           Width = 398
           Height = 416
-          ActivePage = Ts_FluxFornManutReducao
+          ActivePage = Ts_FluxFornParamComprv
           Align = alRight
           TabOrder = 1
           OnChange = PC_FluxFornParametrosChange
@@ -1160,14 +1160,12 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             Expanded = False
             FieldName = 'COD_VINCULADO'
             Title.Alignment = taRightJustify
-            Title.Caption = 'C'#243'd Forn Vinc'
             Width = 85
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'DES_VINCULADO'
-            Title.Caption = 'Fornecedor Vinculado'
             Width = 300
             Visible = True
           end
