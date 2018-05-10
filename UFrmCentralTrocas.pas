@@ -182,6 +182,15 @@ type
     StB_AvariasEndFornecedores: TdxStatusBar;
     Pan_AvariasEndFornTrocaEnd: TPanel;
     Bt_AvariasEndFornTrocaEnd: TJvXPButton;
+    Ts_NFePerdas: TTabSheet;
+    Gb_NFePerdas: TGroupBox;
+    Dbg_NFePerdas: TDBGrid;
+    Pan_NFePerdas: TPanel;
+    Bt_NFePerdasScanear: TJvXPButton;
+    Bt_NFePerdasArqTXT: TJvXPButton;
+    Bt_NFePerdasSalvaMemoria: TJvXPButton;
+    JvXPButton1: TJvXPButton;
+    SaveDialog: TSaveDialog;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -349,6 +358,10 @@ type
     procedure Dbg_AvariasEndFornecedoresDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
+    procedure Dbg_NFePerdasEnter(Sender: TObject);
+    procedure Bt_NFePerdasArqTXTClick(Sender: TObject);
+    procedure JvXPButton1Click(Sender: TObject);
+    procedure Bt_NFePerdasScanearClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -539,7 +552,6 @@ End; // AVARIAS - ENDEREÇAMENTOS - Atualiza Endereços dos Fornecedores >>>>>>>>>
 // Atualiza Movimento Nuvem Linx >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmCentralTrocas.NuvemMovimentoLinx(sDtaInicial, sDtaFinal: String);
 Var
-  MySql: String;
   sParametros: String;
 Begin
   OdirPanApres.Caption:='AGUARDE !! Atualizando Movimento (LINX - CLOUD) Dia '+sDtaInicial+' Loja: Belshop | Centro de Distribuição | RS';
@@ -3762,7 +3774,7 @@ begin
     if (IconType > 3) or (IconType < 0) then 
       IconType := 0; 
 
-    SendMessage(hTooltip, TTM_SETTITLE, IconType, Integer(@buffer)); 
+    SendMessage(hTooltip, TTM_SETTITLE, IconType, Integer(@buffer));
   end; 
 end; // Show Hint em Forma de Balão - Usado no FormCreate >>>>>>>>>>>>>>>>>>>>>>
 
@@ -8296,12 +8308,35 @@ end;
 
 procedure TFrmCentralTrocas.Bt_AnaliseRepDiariaSalvaClipboardClick(Sender: TObject);
 begin
-  Dbg_AnaliseRepDiaria.SetFocus;
+  {
+  Usado em:
+  Bt_NFePerdasSalvaMemoria
+  }
+  If (Sender is TJvXPButton) Then
+  Begin
 
-  If DMCentralTrocas.CDS_AnalRepDiaria.IsEmpty Then
-   Exit;
+    If Trim((Sender as TJvXPButton).Name)='Bt_AnaliseRepDiariaSalvaClipboard' Then
+    Begin
+      Dbg_AnaliseRepDiaria.SetFocus;
 
-  DBGridClipboard(Dbg_AnaliseRepDiaria);
+      If DMCentralTrocas.CDS_AnalRepDiaria.IsEmpty Then
+       Exit;
+
+      DBGridClipboard(Dbg_AnaliseRepDiaria);
+    End; // If Trim((Sender as TJvXPButton).Name)='Bt_AnaliseRepDiariaSalvaClipboard' Then
+
+    If Trim((Sender as TJvXPButton).Name)='Bt_NFePerdasSalvaMemoria' Then
+    Begin
+      Dbg_NFePerdas.SetFocus;
+
+      If DMCentralTrocas.CDS_V_NfePerdas.IsEmpty Then
+       Exit;
+
+      DBGridClipboard(Dbg_NFePerdas);
+    End; // If Trim((Sender as TJvXPButton).Name)='Bt_NFePerdasSalvaMemoria' Then
+
+  End; // If (Sender is TJvXPButton) Then
+
 end;
 
 procedure TFrmCentralTrocas.Bt_AnaliseRepDiariaFecharClick(Sender: TObject);
@@ -8309,6 +8344,7 @@ begin
  {
   USADO EM:
   Ts_AvariasEndercamentos.Pan_AvariasEndercamentos
+  Ts_NFePerdas.Pan_NFePerdas
  }
 
   DMCentralTrocas.FechaTudoCentralTrocas;
@@ -9312,6 +9348,156 @@ begin
 
   // Alinhamento
   DMCentralTrocas.CDS_NFeAvariasForneEndENDERECO.Alignment:=taCenter;
+
+end;
+
+procedure TFrmCentralTrocas.Dbg_NFePerdasEnter(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=Dbg_AvariasEndNotaEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+
+end;
+
+procedure TFrmCentralTrocas.JvXPButton1Click(Sender: TObject);
+begin
+  If DMCentralTrocas.CDS_V_NfePerdas.IsEmpty Then
+   Exit;
+
+  If msg('Deseja Realmente Excluir'+cr+cr+'o Produto Selecionado ??','C')=2 Then
+   Exit;
+
+  DMCentralTrocas.CDS_V_NfePerdas.Delete;
+end;
+
+procedure TFrmCentralTrocas.Bt_NFePerdasScanearClick(Sender: TObject);
+Var
+  bCriaClient: Boolean;
+begin
+  Dbg_NFePerdas.SetFocus;
+
+  bCriaClient:=False;
+  If (Not DMCentralTrocas.CDS_V_NfePerdas.Active) Or (DMCentralTrocas.CDS_V_NfePerdas.IsEmpty)  Then
+  Begin
+    bCriaClient:=True;
+  End;
+
+  If Not bCriaClient Then
+  Begin
+    If msg('Deseja Criar NOVO Documento ??','C')=1 Then
+    Begin
+      If msg('O Documento Atual Será Apagado !!'+cr+cr+'Deseja REALMENTE'+cr+'Criar NOVO Documento ??','C')=1 Then
+       bCriaClient:=True;
+    End;
+  End;
+
+  If bCriaClient Then
+  Begin
+    If DMCentralTrocas.CDS_V_NfePerdas.Active Then
+     DMCentralTrocas.CDS_V_NfePerdas.Close;
+
+    DMCentralTrocas.CDS_V_NfePerdas.CreateDataSet;
+    DMCentralTrocas.CDS_V_NfePerdas.IndexFieldNames:='';
+    DMCentralTrocas.CDS_V_NfePerdas.Open;
+  End;
+
+  FrmLeitoraCodBarras:=TFrmLeitoraCodBarras.Create(Self);
+
+  FrmLeitoraCodBarras.bgCheckOutSimples:=True; // Avarias
+  FrmLeitoraCodBarras.bgCheckOutPerdas:=True; // Perdas
+  FrmLeitoraCodBarras.Bt_Fechar.Visible:=False;
+  FrmLeitoraCodBarras.Ts_OBS_Reposicao.TabVisible:=False;
+
+  FrmLeitoraCodBarras.ShowModal;
+
+  FreeAndNil(FrmLeitoraCodBarras);
+
+end;
+
+procedure TFrmCentralTrocas.Bt_NFePerdasArqTXTClick(Sender: TObject);
+Var
+  tsArquivo: TStringList;
+  sPastaArqLinx: String;
+begin
+  Dbg_NFePerdas.SetFocus;
+
+  If DMCentralTrocas.CDS_V_NfePerdas.IsEmpty Then
+   Exit;
+
+  With SaveDialog do
+  Begin
+    Options := [ofPathMustExist, ofHideReadOnly, ofOverwritePrompt];
+    DefaultExt := 'TXT';
+    Filter := 'Arquivo Texto LINX (*.txt)|*.TXT';
+    FilterIndex := 1;
+    Title := 'Salvar Arquivo Texto LINX';
+    If Execute then
+     Begin
+       sPastaArqLinx:=FileName;
+     End
+    Else
+     Begin
+       Exit;
+     End;
+  End; // with SaveDialog do
+
+  If msg('A Pasta e Arquivo Destino'+cr+cr+'Estão CORRETOS  ??','C')=2 Then
+   Exit;
+
+
+  OdirPanApres.Caption:='AGUARDE !! Gerando Arquivo Texto_LINX...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  Screen.Cursor:=crArrow;
+
+  //============================================================================
+  // Processo Exportação de Transferencia para o Arqivo Texto ==================
+  //============================================================================
+  // Cria StringList Para Gerar Arquivo Texto ================================
+  tsArquivo:= TStringList.Create;
+
+  // Apresenta Processamento =================================================
+  FrmBelShop.MontaProgressBar(True, FrmCentralTrocas);
+  pgProgBar.Properties.Max:=DMCentralTrocas.CDS_V_NfePerdas.RecordCount;
+  pgProgBar.Position:=0;
+
+  DMCentralTrocas.CDS_V_NfePerdas.First;
+  DMCentralTrocas.CDS_V_NfePerdas.DisableControls;
+  While Not DMCentralTrocas.CDS_V_NfePerdas.Eof do
+  Begin
+    Application.ProcessMessages;
+
+    tsArquivo.Add(Trim(DMCentralTrocas.CDS_V_NfePerdasCOD_BARRA.AsString)+';'+
+                 IntToStr(DMCentralTrocas.CDS_V_NfePerdasQUANTIDADE.AsInteger));
+
+    pgProgBar.Position:=DMCentralTrocas.CDS_V_NfePerdas.RecNo;
+
+    DMCentralTrocas.CDS_V_NfePerdas.Next;
+  End;
+  DMCentralTrocas.CDS_V_NfePerdas.EnableControls;
+  DMCentralTrocas.CDS_V_NfePerdas.First;
+
+  // Salva o Arquivo Texto
+  tsArquivo.SaveToFile(sPastaArqLinx);
+
+  FrmBelShop.MontaProgressBar(False, FrmCentralTrocas);
+
+  FreeAndNil(tsArquivo);
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+  // Processo Exportação de Transferencia para o Arqivo Texto ==================
+  //============================================================================
+
+  msg('Arquivo Texto LINX gerado com SUCESSO !','A');
 
 end;
 

@@ -1306,7 +1306,6 @@ object DMCentralTrocas: TDMCentralTrocas
     object CDS_NFeAvariasCHECKOUT: TIntegerField
       DisplayLabel = 'CheckOut'
       FieldName = 'CHECKOUT'
-      Required = True
       DisplayFormat = '0,'
     end
     object CDS_NFeAvariasQUANTIDADE: TFMTBCDField
@@ -1422,5 +1421,47 @@ object DMCentralTrocas: TDMCentralTrocas
     DataSet = CDS_RelRomaneio
     Left = 208
     Top = 496
+  end
+  object CDS_V_NfePerdas: TClientDataSet
+    Aggregates = <>
+    IndexFieldNames = 'NOME'
+    Params = <>
+    Left = 816
+    Top = 432
+    object CDS_V_NfePerdasCOD_BARRA: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'C'#243'digo Barras'
+      FieldName = 'COD_BARRA'
+    end
+    object CDS_V_NfePerdasCOD_PRODUTO: TFMTBCDField
+      DisplayLabel = 'C'#243'd Produto'
+      FieldName = 'COD_PRODUTO'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_V_NfePerdasNOME: TStringField
+      DisplayLabel = 'Produto'
+      FieldName = 'NOME'
+      Size = 250
+    end
+    object CDS_V_NfePerdasQUANTIDADE: TIntegerField
+      DisplayLabel = 'Quantidade'
+      FieldName = 'QUANTIDADE'
+      Required = True
+    end
+    object CDS_V_NfePerdasCOD_FORNECEDOR: TIntegerField
+      DisplayLabel = 'C'#243'd Forn'
+      FieldName = 'COD_FORNECEDOR'
+    end
+    object CDS_V_NfePerdasNOME_CLIENTE: TStringField
+      DisplayLabel = 'Fornecedor'
+      FieldName = 'NOME_CLIENTE'
+      Size = 60
+    end
+  end
+  object DS_V_NfePerdas: TDataSource
+    DataSet = CDS_V_NfePerdas
+    Left = 880
+    Top = 448
   end
 end

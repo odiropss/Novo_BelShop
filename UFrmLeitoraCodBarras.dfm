@@ -56,9 +56,9 @@ object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
       ParentFont = False
     end
     object Bt_Processar: TJvXPButton
-      Left = 334
+      Left = 336
       Top = 31
-      Width = 35
+      Width = 33
       Height = 30
       Caption = 'OK'
       TabOrder = 2
@@ -134,7 +134,7 @@ object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
       Top = 73
       Width = 539
       Height = 165
-      ActivePage = Ts_OBS_Reposicao
+      ActivePage = Ts_OBS_Avarias
       Align = alBottom
       TabOrder = 4
       TabStop = False

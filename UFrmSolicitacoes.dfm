@@ -403,7 +403,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 452
-    ActivePage = Ts_ReposDivergencias
+    ActivePage = Ts_ConcDepHistoricos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -10517,7 +10517,6 @@ object FrmSolicitacoes: TFrmSolicitacoes
           item
             Expanded = False
             FieldName = 'CODBARRA'
-            Width = 64
             Visible = True
           end>
       end

@@ -214,6 +214,14 @@ type
     CDS_ReposicaoTransfTot_Qtds: TAggregateField;
     CDS_ReposicaoDocsTot_Qtds: TAggregateField;
     CDS_NFeAvariasForneEndTROCAR: TStringField;
+    CDS_V_NfePerdas: TClientDataSet;
+    DS_V_NfePerdas: TDataSource;
+    CDS_V_NfePerdasCOD_BARRA: TStringField;
+    CDS_V_NfePerdasCOD_PRODUTO: TFMTBCDField;
+    CDS_V_NfePerdasNOME: TStringField;
+    CDS_V_NfePerdasQUANTIDADE: TIntegerField;
+    CDS_V_NfePerdasCOD_FORNECEDOR: TIntegerField;
+    CDS_V_NfePerdasNOME_CLIENTE: TStringField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir

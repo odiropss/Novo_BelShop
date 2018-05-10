@@ -1337,6 +1337,7 @@ type
     N10: TMenuItem;
     N55: TMenuItem;
     SubMenuCentralTrocasNotasAvarias: TMenuItem;
+    NFePerdasProdutos1: TMenuItem;
 
     // Odir ====================================================================
 
@@ -2313,6 +2314,7 @@ type
     procedure SubMenuCentroDistAnaliseAnalReposicoesRespDiariaClick(
       Sender: TObject);
     procedure SubMenuCentralTrocasNotasAvariasClick(Sender: TObject);
+    procedure NFePerdasProdutos1Click(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -44674,6 +44676,10 @@ end;
 
 procedure TFrmBelShop.SubMenuCentralTrocasNotasEntradaDevolucaoClick(Sender: TObject);
 begin
+
+  msg('Opção Desativada !!','A');
+  Exit;
+
   If Not ConectaMPMS Then
   Begin
     msg('Impossível Continuar...'+cr+'Banco de Dados SIDICOM'+cr+cr+'Não CONECTADO !!','A');
@@ -44681,8 +44687,6 @@ begin
     Exit;
   End;
 
-//  FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
-//  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
 
   If (Sender is TMenuItem) Then
    igTagPermissao:=(Sender as TMenuItem).Tag;
@@ -44706,10 +44710,6 @@ begin
 
   FrmCentralTrocas.CorCaptionForm.FormCaption:='CENTRAL DE TROCAS';
   FrmCentralTrocas.ShowModal;
-
-//Odirapagar - 26/01/2018
-//  FreeAndNil(FrmCentralTrocas);
-//  FreeAndNil(DMCentralTrocas);
 
 end;
 
@@ -46566,6 +46566,25 @@ begin
 
   FrmCentralTrocas.Bt_AnaliseRepDiariaFechar.Parent:=FrmCentralTrocas.Pan_AnaliseRepDiaria;
 
+end;
+
+procedure TFrmBelShop.NFePerdasProdutos1Click(Sender: TObject);
+begin
+
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
+  BloqueioBotoes(FrmCentralTrocas, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
+
+  // Apresenta TabSheet ========================================================
+  TabSheetInvisivel(FrmCentralTrocas);
+  FrmCentralTrocas.Bt_AnaliseRepDiariaFechar.Parent:=FrmCentralTrocas.Pan_NFePerdas;
+  FrmCentralTrocas.Ts_NFePerdas.TabVisible:=True;
+
+
+  FrmCentralTrocas.ShowModal;
+
+  FrmCentralTrocas.Bt_AnaliseRepDiariaFechar.Parent:=FrmCentralTrocas.Pan_AnaliseRepDiaria;
 end;
 
 End.

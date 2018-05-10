@@ -62,7 +62,9 @@ type
     { Private declarations }
   public
     { Public declarations }
-    bgProcessar, bgCheckOutSimples: Boolean;
+    bgProcessar,
+    bgCheckOutPerdas,
+    bgCheckOutSimples: Boolean;
 
   end;
 
@@ -115,6 +117,10 @@ procedure TFrmLeitoraCodBarras.FormCreate(Sender: TObject);
 begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
+
+  bgProcessar      :=False;
+  bgCheckOutPerdas :=False;
+  bgCheckOutSimples:=False;
 
 end;
 
@@ -170,7 +176,6 @@ Var
   bExisteNF: Boolean;
   MySql: String;
   sEndereco: String;
-  i: Integer;
 begin
   //============================================================================
   // Leitora de Codigo de Barras Separação de Transferencias ===================
@@ -180,19 +185,28 @@ begin
     Panel1.SetFocus;
 
     If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
-    Begin
-      // Processa Reposição ====================================================
-      FrmCentralTrocas.CheckOut_BuscaProdCodBarras_AtualizaQtd(Trim(EdtCodBarras.Text),EdtQtdEmbalagem.AsInteger);
+     Begin
+       // Processa Reposição ===================================================
+       FrmCentralTrocas.CheckOut_BuscaProdCodBarras_AtualizaQtd(Trim(EdtCodBarras.Text),EdtQtdEmbalagem.AsInteger);
 
-      // Acerta Controle de Processamento ======================================
-      FrmCentralTrocas.ReCalculaPosicaoLeitora;
+       // Acerta Controle de Processamento =====================================
+       FrmCentralTrocas.ReCalculaPosicaoLeitora;
 
-      // Reposiciona ===========================================================
-      EdtQtdEmbalagem.AsInteger:=1;
-      EdtCodBarras.Text:='0';
-      EdtQtdEmbalagem.SetFocus;
-      SelectNext(ActiveControl,True,True);
-    End; // If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
+       // Reposiciona ==========================================================
+       EdtQtdEmbalagem.AsInteger:=1;
+       EdtCodBarras.Text:='0';
+       EdtQtdEmbalagem.SetFocus;
+       SelectNext(ActiveControl,True,True);
+     End
+    Else
+     Begin
+       msg('Código de Barras Inválido !!','A');
+       Screen.Cursor:=crDefault;
+       EdtQtdEmbalagem.AsInteger:=1;
+       EdtCodBarras.Text:='0';
+       EdtQtdEmbalagem.SetFocus;
+       SelectNext(ActiveControl,True,True);
+     End; // If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
   End; // If Not bgCheckOutSimples Then
   // Leitora de Codigo de Barras Separação de Transferencias ===================
   //============================================================================
@@ -203,97 +217,177 @@ begin
   If bgCheckOutSimples Then
   Begin
     If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
-    Begin
-      Screen.Cursor:=crAppStart;
+     Begin
+       Screen.Cursor:=crAppStart;
 
-      EdtCBSProduto.Clear;
-      EdtCBSForn.Clear;
-      EdtCBSCodBarras.Clear;
-      EdtCBSEndereco.Clear;
+       EdtCBSProduto.Clear;
+       EdtCBSForn.Clear;
+       EdtCBSCodBarras.Clear;
+       EdtCBSEndereco.Clear;
 
-      MemCBSObs.Lines.Clear;
-      MemCBSObs.Color:=clWindow;
-      MemCBSObs.Font.Color:=clWindowText;
+       MemCBSObs.Lines.Clear;
+       MemCBSObs.Color:=clWindow;
+       MemCBSObs.Font.Color:=clWindowText;
 
-      // Busca Produtos ==========================================================
-      If Not BuscaProdutoLinx(EdtCodBarras.Text) Then
-      Begin
-        Screen.Cursor:=crDefault;
+       // Busca Produtos =======================================================
+       If Not BuscaProdutoLinx(EdtCodBarras.Text) Then
+       Begin
+         Screen.Cursor:=crDefault;
 
-        PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-        msg('Não Foi Encontrado Produto com'+cr+cr+'este Código de Barras !!','A');
-        EdtCodBarras.SetFocus;
-        Exit;
-      End;
+         PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
+         msg('Não Foi Encontrado Produto com'+cr+cr+'este Código de Barras !!','A');
+         EdtCodBarras.SetFocus;
+         Exit;
+       End;
 
-      // Verifia se Este na Nota Fiscal de Avaria ================================
-      bExisteNF:=False;
-      If Not DMCentralTrocas.CDS_NFeAvarias.IsEmpty Then
-       bExisteNF:=DMCentralTrocas.CDS_NFeAvarias.Locate('COD_PRODUTO', sgCodProdLinx,[]);
+       //=======================================================================
+       // Verifia se Este na Nota Fiscal de Avaria =============================
+       //=======================================================================
+       If Not bgCheckOutPerdas Then
+       Begin
+         bExisteNF:=False;
+         If Not DMCentralTrocas.CDS_NFeAvarias.IsEmpty Then
+          bExisteNF:=DMCentralTrocas.CDS_NFeAvarias.Locate('COD_PRODUTO', sgCodProdLinx,[]);
 
-      // Apresenta Produto que não esta na Nota Fiscal ===========================
-      If Not bExisteNF Then
-      Begin
-        MySql:=' SELECT p.cod_produto, p.nome, p.cod_fornecedor, f.nome_cliente, t.des_aux'+
-               ' FROM LINXPRODUTOS p'+
-               '      LEFT JOIN linxclientesfornec f  ON f.cod_cliente=p.cod_fornecedor'+
-               '      LEFT JOIN         TAB_AUXILIAR t        ON t.tip_aux=23'+ // AVARIAS - ENDEREÇAMENTO DE FORNECEDOR
-               '                                     AND t.cod_aux=p.cod_fornecedor'+
-               ' WHERE p.cod_produto='+sgCodProdLinx;
-        DMBelShop.CDS_BuscaRapida.Close;
-        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-        DMBelShop.CDS_BuscaRapida.Open;
-        sEndereco:=DMBelShop.CDS_BuscaRapida.FieldByName('Des_Aux').AsString;
+         // Apresenta Produto que não esta na Nota Fiscal ======================
+         If Not bExisteNF Then
+         Begin
+           MySql:=' SELECT p.cod_produto, p.nome, p.cod_fornecedor, f.nome_cliente, t.des_aux'+
+                  ' FROM LINXPRODUTOS p'+
+                  '      LEFT JOIN linxclientesfornec f  ON f.cod_cliente=p.cod_fornecedor'+
+                  '      LEFT JOIN         TAB_AUXILIAR t        ON t.tip_aux=23'+ // AVARIAS - ENDEREÇAMENTO DE FORNECEDOR
+                  '                                     AND t.cod_aux=p.cod_fornecedor'+
+                  ' WHERE p.cod_produto='+sgCodProdLinx;
+           DMBelShop.CDS_BuscaRapida.Close;
+           DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+           DMBelShop.CDS_BuscaRapida.Open;
+           sEndereco:=DMBelShop.CDS_BuscaRapida.FieldByName('Des_Aux').AsString;
 
-        If Trim(sEndereco)='' Then
-         sEndereco:=FrmCentralTrocas.NFeAvariasAtualizaEnderecos(DMBelShop.CDS_BuscaRapida.FieldByName('cod_fornecedor').AsString);
+           If Trim(sEndereco)='' Then
+            sEndereco:=FrmCentralTrocas.NFeAvariasAtualizaEnderecos(
+              DMBelShop.CDS_BuscaRapida.FieldByName('cod_fornecedor').AsString);
 
-        EdtCBSProduto.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString+' - '+
-                            DMBelShop.CDS_BuscaRapida.FieldByName('Nome').AsString;
-        EdtCBSForn.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('cod_fornecedor').AsString+' - '+
-                         DMBelShop.CDS_BuscaRapida.FieldByName('Nome_Cliente').AsString;
-        EdtCBSCodBarras.Text:=EdtCodBarras.Text;
-        EdtCBSEndereco.Text:=sEndereco;
+           EdtCBSProduto.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString+' - '+
+                               DMBelShop.CDS_BuscaRapida.FieldByName('Nome').AsString;
+           EdtCBSForn.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('cod_fornecedor').AsString+' - '+
+                            DMBelShop.CDS_BuscaRapida.FieldByName('Nome_Cliente').AsString;
+           EdtCBSCodBarras.Text:=EdtCodBarras.Text;
+           EdtCBSEndereco.Text:=sEndereco;
 
-        MemCBSObs.Color:=clRed;
-        MemCBSObs.Font.Color:=clWhite;
-        MemCBSObs.Lines.Add('Produto NÃO ENCONTRADO na Nota Fiscal !!');
+           MemCBSObs.Color:=clRed;
+           MemCBSObs.Font.Color:=clWhite;
+           MemCBSObs.Lines.Add('Produto NÃO ENCONTRADO na Nota Fiscal !!');
 
-        DMBelShop.CDS_BuscaRapida.Close;
+           DMBelShop.CDS_BuscaRapida.Close;
 
-        Screen.Cursor:=crDefault;
-        EdtQtdEmbalagem.AsInteger:=1;
-        EdtCodBarras.Text:='0';
-        EdtQtdEmbalagem.SetFocus;
-        SelectNext(ActiveControl,True,True);
-      End; // If Not bExisteNF Then
+           Screen.Cursor:=crDefault;
+           EdtQtdEmbalagem.AsInteger:=1;
+           EdtCodBarras.Text:='0';
+           EdtQtdEmbalagem.SetFocus;
+           SelectNext(ActiveControl,True,True);
+         End; // If Not bExisteNF Then
 
-      // Apresenta Produto da Nota Fiscal ========================================
-      If bExisteNF Then
-      Begin
-        // Acerta Quantidade de CheckOut =========================================
-        DMCentralTrocas.CDS_NFeAvarias.Edit;
-        DMCentralTrocas.CDS_NFeAvariasCHECKOUT.AsInteger:=DMCentralTrocas.CDS_NFeAvariasCHECKOUT.AsInteger+EdtQtdEmbalagem.AsInteger;
-        DMCentralTrocas.CDS_NFeAvarias.Post;
+         // Apresenta Produto da Nota Fiscal ===================================
+         If bExisteNF Then
+         Begin
+           // Acerta Quantidade de CheckOut ====================================
+           DMCentralTrocas.CDS_NFeAvarias.Edit;
+           DMCentralTrocas.CDS_NFeAvariasCHECKOUT.AsInteger:=
+                               DMCentralTrocas.CDS_NFeAvariasCHECKOUT.AsInteger+
+                                                      EdtQtdEmbalagem.AsInteger;
+           DMCentralTrocas.CDS_NFeAvarias.Post;
 
-        EdtCBSProduto.Text:=DMCentralTrocas.CDS_NFeAvariasCOD_PRODUTO.AsString+' - '+
+           EdtCBSProduto.Text:=DMCentralTrocas.CDS_NFeAvariasCOD_PRODUTO.AsString+' - '+
                             DMCentralTrocas.CDS_NFeAvariasNOME_PRODUTO.AsString;
-        EdtCBSForn.Text:=DMCentralTrocas.CDS_NFeAvariasCOD_FORNECEDOR.AsString+' - '+
+           EdtCBSForn.Text:=DMCentralTrocas.CDS_NFeAvariasCOD_FORNECEDOR.AsString+' - '+
                          DMCentralTrocas.CDS_NFeAvariasNOME_FORNECEDOR.AsString;
-        EdtCBSCodBarras.Text:=EdtCodBarras.Text;
-        EdtCBSEndereco.Text:=DMCentralTrocas.CDS_NFeAvariasENDERECAMENTO.AsString;
+           EdtCBSCodBarras.Text:=EdtCodBarras.Text;
+           EdtCBSEndereco.Text:=DMCentralTrocas.CDS_NFeAvariasENDERECAMENTO.AsString;
 
-        MemCBSObs.Color:=$0080FF80;
-        MemCBSObs.Font.Color:=clWindowText;
-        MemCBSObs.Lines.Add('Produto ENCONTRADO na Nota Fiscal !!');
+           MemCBSObs.Color:=$0080FF80;
+           MemCBSObs.Font.Color:=clWindowText;
+           MemCBSObs.Lines.Add('Produto ENCONTRADO na Nota Fiscal !!');
 
-        Screen.Cursor:=crDefault;
-        EdtQtdEmbalagem.AsInteger:=1;
-        EdtCodBarras.Text:='0';
-        EdtQtdEmbalagem.SetFocus;
-        SelectNext(ActiveControl,True,True);
-      End; // If bExisteNF Then
-    End; // If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
+           Screen.Cursor:=crDefault;
+           EdtQtdEmbalagem.AsInteger:=1;
+           EdtCodBarras.Text:='0';
+           EdtQtdEmbalagem.SetFocus;
+           SelectNext(ActiveControl,True,True);
+         End; // If bExisteNF Then
+       End; // If Not bgCheckOutPerdas Then
+       // Verifia se Este na Nota Fiscal de Avaria =============================
+       //=======================================================================
+
+       //=======================================================================
+       // Inclui Produto no Documento de Perdas ================================
+       //=======================================================================
+       If bgCheckOutPerdas Then
+       Begin
+         // Busca Produto ======================================================
+         MySql:=' SELECT p.cod_barra, p.cod_produto, p.nome, 0 Quantidade,'+
+                ' p.cod_fornecedor, f.nome_cliente'+
+                ' FROM LINXPRODUTOS p, LINXCLIENTESFORNEC f'+
+                ' WHERE p.cod_fornecedor=f.cod_cliente'+
+                ' AND   p.cod_produto='+sgCodProdLinx;
+         DMBelShop.CDS_BuscaRapida.Close;
+         DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+         DMBelShop.CDS_BuscaRapida.Open;
+
+         // Verifica se Existe =================================================
+         If Not DMCentralTrocas.CDS_V_NfePerdas.Locate('COD_PRODUTO',sgCodProdLinx,[]) Then
+          Begin
+            DMCentralTrocas.CDS_V_NfePerdas.Insert;
+            DMCentralTrocas.CDS_V_NfePerdasCOD_BARRA.AsString:=
+                    DMBelShop.CDS_BuscaRapida.FieldByName('cod_barra').AsString;
+            DMCentralTrocas.CDS_V_NfePerdasCOD_PRODUTO.AsInteger:=
+                 DMBelShop.CDS_BuscaRapida.FieldByName('cod_produto').AsInteger;
+            DMCentralTrocas.CDS_V_NfePerdasNOME.AsString:=
+                         DMBelShop.CDS_BuscaRapida.FieldByName('nome').AsString;
+            DMCentralTrocas.CDS_V_NfePerdasQUANTIDADE.AsInteger:=
+                                                      EdtQtdEmbalagem.AsInteger;
+                 DMBelShop.CDS_BuscaRapida.FieldByName('cod_produto').AsInteger;
+            DMCentralTrocas.CDS_V_NfePerdasCOD_FORNECEDOR.AsInteger:=
+              DMBelShop.CDS_BuscaRapida.FieldByName('cod_fornecedor').AsInteger;
+            DMCentralTrocas.CDS_V_NfePerdasNOME_CLIENTE.AsString:=
+                 DMBelShop.CDS_BuscaRapida.FieldByName('nome_cliente').AsString;
+            DMCentralTrocas.CDS_V_NfePerdas.Post;
+          End
+         Else
+          Begin
+            DMCentralTrocas.CDS_V_NfePerdas.Edit;
+            DMCentralTrocas.CDS_V_NfePerdasQUANTIDADE.AsInteger:=
+                           DMCentralTrocas.CDS_V_NfePerdasQUANTIDADE.AsInteger +
+                                                      EdtQtdEmbalagem.AsInteger;
+            DMCentralTrocas.CDS_V_NfePerdas.Post;
+          End;
+         DMCentralTrocas.CDS_V_NfePerdas.Locate('COD_BARRA',sgCodProdLinx,[]);
+
+         EdtCBSProduto.Text:=DMCentralTrocas.CDS_V_NfePerdasCOD_PRODUTO.AsString+' - '+
+                                   DMCentralTrocas.CDS_V_NfePerdasNOME.AsString;
+         EdtCBSForn.Text:=DMCentralTrocas.CDS_V_NfePerdasCOD_FORNECEDOR.AsString+' - '+
+                           DMCentralTrocas.CDS_V_NfePerdasNOME_CLIENTE.AsString;
+         EdtCBSCodBarras.Text:=DMCentralTrocas.CDS_V_NfePerdasCOD_BARRA.AsString;
+         DMBelShop.CDS_BuscaRapida.Close;
+
+         Screen.Cursor:=crDefault;
+         EdtQtdEmbalagem.AsInteger:=1;
+         EdtCodBarras.Text:='0';
+         EdtQtdEmbalagem.SetFocus;
+         SelectNext(ActiveControl,True,True);
+       End; // If bgCheckOutPerdas Then
+       // Inclui Produto no Documento de Perdas ================================
+       //=======================================================================
+
+     End
+    Else
+     Begin
+       msg('Código de Barras Inválido !!','A');
+       Screen.Cursor:=crDefault;
+       EdtQtdEmbalagem.AsInteger:=1;
+       EdtCodBarras.Text:='0';
+       EdtQtdEmbalagem.SetFocus;
+       SelectNext(ActiveControl,True,True);
+     End; // If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
   End; // If bgCheckOutSimples Then
   // Leitora de Codigo de Barras SIMPLE ========================================
   //============================================================================
