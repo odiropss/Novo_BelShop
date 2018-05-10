@@ -347,146 +347,10 @@ Begin
 //  // Monta Select de Busca de Debitos e Créditos (SIDICOM) =====================
 //  //============================================================================
 
-// OdirApagar - 04/05/2018
-//  //============================================================================
-//  // Monta Select de Busca de Debitos e Créditos (LINX) ========================
-//  //============================================================================
-//  MySqlLinx:=' SELECT'+
-//             ' fl.cod_cliente codfornecedor,'+
-//             ' fl.nome_cliente nomefornecedor,'+
-//             ' CAST(ml.data_documento AS DATE) datacomprovante,'+
-//             ' CAST(ml.data_lancamento AS DATE) dataentrada,'+
-//             ' ''011'' codcomprovante,'+
-//             ' ''D'' tp_debcre,'+
-//             ' ml.empresa codfilial,'+
-//             // OdirApagar - 04/09/02017
-//             // ' CAST(SUBSTRING(ml.obs FROM 1 FOR 200) AS VARCHAR(200)) observacao,'+
-//             ' NULL observacao,'+
-//
-//             ' TRIM(ml.chave_nf) chavenf,'+
-//             ' CAST(SUBSTRING(ml.documento FROM 1 FOR 12) AS VARCHAR(12)) numero,'+
-//             ' CAST(TRIM(ml.serie) AS VARCHAR(4)) serie,'+
-//             ' CAST((ROUND((SUM(ml.valor_total)), 2)) AS NUMERIC(18,2)) vlr_total,'+
-////OdirApagar - 02/05/2018             ' fs.codfornecedor Cod_Forn_Sidicom'+
-//             ' fl.doc_cliente,'+
-//
-//             ' (SELECT max(fs.codfornecedor) codfornecedor'+
-//             '  FROM FORNECEDOR fs'+
-//             '  WHERE REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
-//             '        REPLACE(REPLACE(REPLACE(TRIM(fl.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''')'+
-//             ' ) Cod_Forn_Sidicom'+
-//
-//             ' FROM LINXMOVIMENTO ml'+
-//             '      LEFT JOIN LINXCLIENTESFORNEC fl  ON fl.cod_cliente = ml.codigo_cliente'+
-//             '                                      AND fl.tipo_cliente IN (''A'', ''F'')'+
-//
-////OdirApagar - 02/05/2018
-////             '      LEFT JOIN FORNECEDOR fs ON REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
-////             '                                 REPLACE(REPLACE(REPLACE(TRIM(fl.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''')'+
-//
-//             ' WHERE ml.operacao = ''DE'''+ // Saida de Devolução de Entrada
-//             ' AND   ml.tipo_transacao IS NULL'+
-//             ' AND   ml.cancelado = ''N'''+
-//             ' AND   ml.excluido = ''N'''+
-//             ' AND   TRIM(ml.id_cfop) IN (''5411'', ''6411'')'+
-//             ' AND   fl.cod_cliente is not null'+
-//
-//             ' AND   ml.empresa = :CodEmpLINX'+
-//             ' AND   CAST(ml.data_lancamento AS DATE) >= :DtaInicioLinx';
-//
-//             If Trim(sgCodForn)<>'' Then
-//              MySqlLinx:=
-//                MySqlLinx+' AND   ml.codigo_cliente = :CodForn';
-//  MySqlLinx:=
-//   MySqlLinx+' GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14'+
-//
-//             ' UNION'+ // <<====
-//
-//             // E - Operações ee Entrada de Mercadorias por Bonificações de Fornecedor
-//             //-----------------------------------------------------------------------
-//             // 1910	- Entrada de bonificação, doação ou brinde
-//             // 2910	- Entrada de bonificação, doação ou brinde
-//
-//             // S - Operações ee Saida   de Mercadorias por Bonificações de Fornecedor
-//             //-----------------------------------------------------------------------
-//             // 5910	- Remessa em bonificação, doação ou brinde
-//             // 6910	- Remessa em bonificação, doação ou brinde
-//
-//             ' SELECT'+
-//             ' fl.cod_cliente codfornecedor,'+
-//             ' fl.nome_cliente nomefornecedor,'+
-//             ' CAST(ml.data_documento AS DATE) datacomprovante,'+
-//             ' CAST(ml.data_lancamento AS DATE) dataentrada,'+
-//
-//             ' CASE'+
-//             '   WHEN (TRIM(ml.id_cfop) = ''1910'') OR (TRIM(ml.id_cfop) = ''2910'') THEN'+
-//             '     ''913'''+
-//             '   WHEN (TRIM(ml.id_cfop) = ''5910'') OR (TRIM(ml.id_cfop) = ''6910'') THEN'+
-//             '     ''027'''+
-//             ' END codcomprovante,'+
-//
-//             ' CASE'+
-//             '   WHEN (TRIM(ml.id_cfop) = ''1910'') OR (TRIM(ml.id_cfop) = ''2910'') THEN'+
-//             '     ''C'''+
-//             '   WHEN (TRIM(ml.id_cfop) = ''5910'') OR (TRIM(ml.id_cfop) = ''6910'') THEN'+
-//             '     ''D'''+
-//             ' END tp_debcre,'+
-//
-//             ' ml.empresa codfilial,'+
-//
-//             // OdirApagar - 04/09/02017
-//             // ' CAST(SUBSTRING(ml.obs FROM 1 FOR 200) AS VARCHAR(200)) observacao,'+
-//             ' NULL observacao,'+
-//
-//             ' TRIM(ml.chave_nf) chavenf,'+
-//             ' CAST(SUBSTRING(ml.documento FROM 1 FOR 12) AS VARCHAR(12)) numero,'+
-//             ' CAST(TRIM(ml.serie) AS VARCHAR(4)) serie,'+
-//             ' CAST((ROUND((SUM(ml.valor_total)), 2)) AS NUMERIC(18,2)) vlr_total,'+
-//// OdirApagar - 02/05/2018             ' fs.codfornecedor Cod_Forn_Sidicom'+
-//             ' fl.doc_cliente,'+
-//
-//             ' (SELECT max(fs.codfornecedor) codfornecedor'+
-//             '  FROM FORNECEDOR fs'+
-//             '  WHERE REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
-//             '        REPLACE(REPLACE(REPLACE(TRIM(fl.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''')'+
-//             ' ) Cod_Forn_Sidicom'+
-//
-//             ' FROM LINXMOVIMENTO ml'+
-//             '      LEFT JOIN linxclientesfornec fl  ON fl.cod_cliente = ml.codigo_cliente'+
-//             '                                      AND fl.tipo_cliente IN (''A'', ''F'')'+
-//// OdirApagar - 02/05/2018
-////             '      LEFT JOIN fornecedor fs ON REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
-////             '                                 REPLACE(REPLACE(REPLACE(TRIM(fl.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''')'+
-//
-//             ' WHERE ml.cancelado = ''N'''+
-//             ' AND   ml.excluido = ''N'''+
-//             ' AND   COALESCE(ml.tipo_transacao, '''') <> ''J'''+ // NÃO Pode Ajustes de Estoques
-//
-//             ' AND   ('+
-//             '        ((TRIM(ml.id_cfop) IN (''1910'', ''2910''))'+
-//             '          AND'+
-//             '         (ml.operacao = ''E''))'+ // Operação de Entrada de Mercadorias Bonificadas
-//             '       OR'+
-//             '        ((TRIM(ml.id_cfop) IN (''5910'', ''6910''))'+
-//             '          AND (ml.operacao = ''S''))'+ // Operação de Saida de Mercadorias Bonificadas
-//             '      )'+
-//             ' AND   fl.cod_cliente is not null'+
-//
-//             ' AND   CAST(ml.data_lancamento AS DATE) >= :DtaInicioLinx'+
-//             ' AND   ml.empresa = :CodEmpLinx';
-//
-//             If Trim(sgCodForn)<>'' Then
-//              MySqlLinx:=
-//                MySqlLinx+' AND   ml.codigo_cliente = :CodForn';
-//
-//  MySqlLinx:=
-//   MySqlLinx+' GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14'+
-//             ' ORDER BY 1, 4';
-
-
   //============================================================================
   // Monta Select de Busca de Debitos e Créditos (LINX) ========================
   //============================================================================
+  // Todos Cfops dos Fornecedores que estão no Conta Corrente ==================
   MySqlLinx:=' SELECT'+
              ' fo.cod_fornecedor COD_FORNECEDOR,'+ // 1'+
              ' fo.des_fornecedor DES_FORNECEDOR,'+ // 2'+
@@ -546,6 +410,83 @@ Begin
              ' AND   mf.empresa = :CodEmpLinx'+ // Codigo da Empresa Linx
              ' AND   CAST(mf.data_lancamento AS DATE) >= :DtaInicioLinx'; // Data Inicio do Limite
 
+             // Se Parametro sgCodForn ------------------------------
+             If Trim(sgCodForn)<>'' Then
+              MySqlLinx:=
+               MySqlLinx+' AND   mf.codigo_cliente = :CodForn';
+
+  MySqlLinx:=
+   MySqlLinx+' GROUP BY 1,2,3,4,6,7,8,10,11,12,14,15,16,17,20,21,22,23';
+
+  // Cfops 5923 - Perdas dos Fornecedores que estão no Conta Corrente ==========
+  MySqlLinx:=
+   MySqlLinx+' UNION'+
+
+             ' SELECT '+
+             ' (SELECT FIRST 1 ff.cod_fornecedor '+
+             '  FROM FL_CAIXA_FORNECEDORES ff '+
+             '  WHERE ff.cod_vinculado=fr.cod_cliente) COD_FORNECEDOR,'+ // 1
+
+             ' (SELECT FIRST 1 ff.des_fornecedor '+
+             '  FROM FL_CAIXA_FORNECEDORES ff '+
+             '  WHERE ff.cod_vinculado=fr.cod_cliente) DES_FORNECEDOR,'+ // 2
+
+             ' fr.cod_cliente COD_VINCULADO,'+ // 3
+             ' fr.nome_cliente DES_VINCULADO,'+ // 4
+
+             ' CAST((ROUND((SUM(mf.valor_total)), 2)) AS NUMERIC(18,2)) VLR_ORIGEM,'+ // 5
+             ' CAST(mf.data_documento AS DATE) DTA_ORIGEM,'+ // 6
+             ' CAST(mf.data_lancamento AS DATE) DTA_CAIXA,'+ // 7
+             ' mf.data_lancamento,'+ // 8
+             ' 0  NUM_SEQ,'+ // 9
+             ' TRIM(mf.chave_nf) NUM_CHAVENF,'+ // 10
+             ' mf.empresa COD_EMPRESA,'+ // 11
+             ' hi.cod_historico COD_HISTORICO,'+ // 12
+             ' NULL TXT_OBS,'+ // 13
+             ' CAST(SUBSTRING(mf.documento FROM 1 FOR 12) AS VARCHAR(12)) NUM_DOCUMENTO,'+ // 14
+             ' CAST(TRIM(mf.serie) AS VARCHAR(4)) NUM_SERIE,'+ // 15
+
+             // Percentual de Redução
+             ' COALESCE((SELECT r.per_reducao'+
+             '           FROM FL_CAIXA_PERC_REDUCAO r'+
+             '           WHERE r.cod_fornecedor = fr.cod_cliente'+
+             '           AND   r.cod_comprovante = hi.cod_historico'+
+             '           AND   r.dta_incio<=CAST(mf.data_lancamento AS DATE)'+
+             '           AND   COALESCE(r.dta_fim, CAST(''31.12.3000'' AS DATE))>=CAST(mf.data_lancamento AS DATE))'+
+             ' ,0.00) PER_REDUCAO,'+ // 16
+
+             ' hi.ind_debcre TIP_DEBCRE,'+ // 17
+             ' CAST((ROUND((SUM(mf.valor_total)), 2)) AS NUMERIC(18,2)) VLR_CAIXA,'+ // 18
+             ' 0.00 VLR_SALDO,'+ // 19
+
+             // Fornecedor Sidicom
+             ' fr.doc_cliente,'+ // 20
+             ' COALESCE((SELECT max(fs.codfornecedor) codfornecedor'+
+             '           FROM FORNECEDOR fs'+
+             '           WHERE REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''), ''.'', ''''), ''-'', '''') ='+
+             '                 REPLACE(REPLACE(REPLACE(TRIM(fr.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', ''''))'+
+             ' , ''000000'') CODFORNECEDOR,'+ // 21
+
+             ' mf.empresa COD_LOJA_LINX,'+ // 22
+             ' mf.cod_loja COD_LOJA_SIDICOM'+ // 23
+
+             ' FROM LINXMOVIMENTO mf, LINXPRODUTOS pr,'+
+             '      TAB_AUXILIAR cf, FL_CAIXA_HISTORICOS hi,'+
+             '      LINXCLIENTESFORNEC fr'+
+
+             ' WHERE mf.cod_produto=pr.cod_produto'+
+             ' AND   CAST(TRIM(COALESCE(mf.id_cfop,''0'')) AS INTEGER)=cf.cod_aux'+
+             ' AND   CAST(cf.des_aux as INTEGER)=hi.cod_historico'+
+             ' AND   pr.cod_fornecedor=fr.cod_cliente'+
+             ' AND   cf.tip_aux=25'+ // CONTA CORRENTE FORNECEDORES - CFops Utilizados
+             ' AND   cf.cod_aux=5927'+
+             ' AND   mf.cancelado=''N'''+
+             ' AND   mf.excluido =''N'''+
+             ' AND   mf.codigo_cliente=13'+
+             ' AND   COALESCE(mf.tipo_transacao, '''') <> ''J'''+ // NÃO Pode Ajustes de Estoques
+
+             ' AND   mf.empresa = :CodEmpLinx'+ // Codigo da Empresa Linx
+             ' AND   CAST(mf.data_lancamento AS DATE) >= :DtaInicioLinx'; // Data Inicio do Limite
 
              // Se Parametro sgCodForn ------------------------------
              If Trim(sgCodForn)<>'' Then
@@ -553,7 +494,8 @@ Begin
                MySqlLinx+' AND   mf.codigo_cliente = :CodForn';
 
   MySqlLinx:=
-   MySqlLinx+' GROUP BY 1,2,3,4, 6,7,8,10,11,12,14,15,16,17,20,21,22,23';
+   MySqlLinx+' GROUP BY 1,2,3,4,6,7,8,10,11,12,14,15,16,17,20,21,22,23'+
+             ' ORDER BY 1,3';
   // Monta Select de Busca de Debitos e Créditos (LINX) ========================
   //============================================================================
 
@@ -913,16 +855,16 @@ Begin
     If Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('Cod_Fornecedor').AsString)='' Then
     Begin
       // Fecha Transacao =================================================
-      DMAtualizaSeteHoras.SQLC.Commit(TD);
+      DMAtualizaSeteHoras.SQLC.Rollback(TD);
 
       DateSeparator:='/';
       DecimalSeparator:=',';
 
       DMAtualizaSeteHoras.CDS_MovtoLinx.Close;
-      DMAtualizaSeteHoras.SQLC.Rollback(TD);
       Exit;
     End;
 
+//opss - retornar
     // Guarda Codigo do Fornecedor =============================================
     MySql:=' SELECT DISTINCT f.cod_fornecedor, f.cod_vinculado'+
            ' FROM FL_CAIXA_FORNECEDORES f'+
@@ -2096,7 +2038,7 @@ begin
   // Busca Lojas ===============================================================
   MySql:=' SELECT e.cod_filial, e.cod_linx, e.dta_inicio_linx'+
          ' FROM EMP_CONEXOES e'+
-         //opss somente uma loja
+         // opss somente uma loja
          // ' WHERE e.cod_linx=2'+
          ' WHERE ((e.ind_ativo = ''SIM'') OR (e.cod_filial = ''99''))'+
 
@@ -2166,8 +2108,8 @@ begin
       sCodFornCalcCC:=Trim(Copy(Mem_Odir.Lines[i],1,ii-1));
       sDtaCalcCC:=Trim(Copy(Mem_Odir.Lines[i],ii+1, Length(Mem_Odir.Lines[i])));
 
-
-      CalculaFluxoCaixaFornecedores(sDtaCalcCC, sCodFornCalcCC);
+      If Trim(sCodFornCalcCC)<>'' Then
+       CalculaFluxoCaixaFornecedores(sDtaCalcCC, sCodFornCalcCC);
     End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
     Mem_Odir.Lines.Clear;
 

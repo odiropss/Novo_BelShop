@@ -171,6 +171,8 @@ type
 
     Procedure CarregaComboBoxFornecedorVinculados(sFornVinculo: String);
 
+    Procedure CriaLancamentoAbertura;
+
     // FORNECEDORES VINCULADOS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     Procedure AcertaCodVinculado; // Acerta os Codigo Vinculados = null
     Procedure FornVincAtualizaVinculos;
@@ -296,13 +298,164 @@ var
 implementation
 
 uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop, DB, UPesquisa,
-     UFrmSelectEmpProcessamento, UFrmSolicitacoes, UDMRelatorio, DBClient;
+     UFrmSelectEmpProcessamento, UFrmSolicitacoes, UDMRelatorio, DBClient,
+  SysConst;
 
 {$R *.dfm}
 
 //==============================================================================
 // ODIR - INICIO ===============================================================
 //==============================================================================
+
+// Cria Lançamento de Abertura em Caso de Vinculo de Fornecedor Novo >>>>>>>>>>>
+Procedure TFrmFluxoFornecedor.CriaLancamentoAbertura;
+Var
+  MySql: String;
+  sDtaInicioLinx: String;
+
+  Procedure CriaLancamento(sCodigo, sNome: String);
+  Var
+    bCria: Boolean;
+
+    sNumSeq,
+    sCodHist, sDebCre, sObs,
+    sCodFornSID: String;
+
+    i: Integer;
+  Begin
+    MySql:=' SELECT f.cod_vinculado'+
+           ' FROM FL_CAIXA_FORNECEDORES f'+
+           ' WHERE f.cod_vinculado='+sCodigo;
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+    bCria:=(Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Vinculado').AsString)='');
+    DMBelShop.CDS_BuscaRapida.Close;
+
+    If bCria Then
+    Begin
+      // Busca Código Fornecedor SIDICOM =========================================
+      MySql:=' SELECT fs.codfornecedor'+
+             ' FROM FORNECEDOR fs'+
+             ' WHERE EXISTS (SELECT 1'+
+             '               FROM  LINXCLIENTESFORNEC fl'+
+             '               WHERE REPLACE(REPLACE(REPLACE(TRIM(fl.doc_cliente), ''/'', ''''),''.'',''''),''-'','''')='+
+             '                     REPLACE(REPLACE(REPLACE(TRIM(fs.numerocgcmf), ''/'', ''''),''.'',''''),''-'','''')'+
+             '               AND   fl.cod_cliente='+sCodigo+')';
+      DMBelShop.CDS_BuscaRapida.Close;
+      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+      DMBelShop.CDS_BuscaRapida.Open;
+      sCodFornSID:='0';
+      If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('CodFornecedor').AsString)<>'' Then
+       sCodFornSID:=DMBelShop.CDS_BuscaRapida.FieldByName('CodFornecedor').AsString;
+      DMBelShop.CDS_BuscaRapida.Close;
+
+      // Insere Lancamento de Abertura Débito e Crédito ========================
+      bCria:=True;
+      i:=0;
+      While bCria do
+      Begin
+        Inc(i);
+
+        If i=1 Then
+         Begin
+           sNumSeq:='1';
+           sCodHist:='900';
+           sDebCre:='D';
+           sObs:='Lançamento de Abertura de Conta Corrente (Débito)';
+         End
+        Else
+         Begin
+           sNumSeq:='2';
+           sCodHist:='955';
+           sDebCre:='C';
+           sObs:='Lançamento de Abertura de Conta Corrente (Crédito)';
+         End;
+
+        MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES'+
+               ' (COD_FORNECEDOR, DES_FORNECEDOR, COD_VINCULADO, DES_VINCULADO,'+
+               '  VLR_ORIGEM, DTA_ORIGEM, DTA_CAIXA,'+
+               '  NUM_SEQ, NUM_CHAVENF, COD_EMPRESA, COD_HISTORICO, TXT_OBS,'+
+               '  NUM_DOCUMENTO, NUM_SERIE, PER_REDUCAO, TIP_DEBCRE, VLR_CAIXA,'+
+               '  VLR_SALDO, CODFORNECEDOR, COD_LOJA_LINX, COD_LOJA_SIDICOM)'+
+
+               ' VALUES ('+
+               sCodigo+', '+ // COD_FORNECEDOR
+               QuotedStr(sNome)+', '+ // DES_FORNECEDOR
+               sCodigo+', '+ // COD_VINCULADO
+               QuotedStr(sNome)+', '+ // DES_VINCULADO
+               ' 0.01, '+ // VLR_ORIGEM de Abertura
+               QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaInicioLinx)))+', '+ // DTA_ORIGEM de Inicio Linx
+               QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaInicioLinx)))+', '+ // DTA_CAIXA de Inicio Linx
+               sNumSeq+', '+ // NUM_SEQ
+               'NULL, '+ // NUM_CHAVENF
+               '2 , '+ // COD_EMPRESA
+               sCodHist+', '+ // COD_HISTORICO - (900 - CONTA CORRENTE (D)) (955 - REEMBOLSO FIN FORN (C))
+               QuotedStr(sObs)+', '+ // TXT_OBS
+               QuotedStr('999999')+', '+ // NUM_DOCUMENTO
+               ' NULL, '+ // NUM_SERIE
+               '0.00, '+ // PER_REDUCAO
+               QuotedStr(sDebCre)+', '+ // TIP_DEBCRE
+               '0.01 , '+ // VLR_CAIXA
+               '0.00 , '+ // VLR_SALDO
+               QuotedStr(sCodFornSID)+', '+ // CODFORNECEDOR
+               '2, '+ // COD_LOJA_LINX
+               QuotedStr('99')+')'; // COD_LOJA_SIDICOM
+        DMBelShop.SQLC.Execute(MySql, nil, nil);
+
+        If i=2 Then
+         Break;
+      End; // While bCria do
+
+    End; // If bCria Then
+  End; // Procedure CriaLancamento(sCodigo, sNome: String);
+Begin
+  // Pega Data de Inicio do Linx =============================================
+  MySql:=' SELECT Min(e.dta_inicio_linx) Dta_inicio'+
+         ' FROM EMP_CONEXOES e';
+  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+  DMBelShop.CDS_BuscaRapida.Open;
+  sDtaInicioLinx:=DMBelShop.CDS_BuscaRapida.FieldByName('Dta_Inicio').AsString;
+  DMBelShop.CDS_BuscaRapida.Close;
+
+  //==========================================================================
+  //  Processa os Incluídos IND_SITUACAO='I' =================================
+  //==========================================================================
+  DMBelShop.CDS_FluxoFornVinculo.First;
+  While Not DMBelShop.CDS_FluxoFornVinculo.Eof do
+  Begin
+    // VINCULO.IND_SITUACAO='N' Ou 'I' =======================================
+    If (DMBelShop.CDS_FluxoFornVinculoIND_SITUACAO.AsString='N') Or (DMBelShop.CDS_FluxoFornVinculoIND_SITUACAO.AsString='I') Then
+    Begin
+      // Novos Lancamento de Abertura Fornecedor Vinculo
+      If DMBelShop.CDS_FluxoFornVinculoIND_SITUACAO.AsString='I' Then
+      Begin
+        CriaLancamento(DMBelShop.CDS_FluxoFornVinculoCOD_FORNECEDOR.AsString, DMBelShop.CDS_FluxoFornVinculoDES_FORNECEDOR.AsString);
+      End; // If DMBelShop.CDS_FluxoFornVinculoIND_SITUACAO.AsString='I' Then
+
+      // Novos Lancamento de Abertura Fornecedor Vinculados
+      DMBelShop.CDS_FluxoFornVinculados.First;
+      While Not DMBelShop.CDS_FluxoFornVinculados.Eof do
+      Begin
+        If DMBelShop.CDS_FluxoFornVinculadosIND_SITUACAO.AsString='I' Then
+        Begin
+          CriaLancamento(DMBelShop.CDS_FluxoFornVinculadosCOD_VINCULADO.AsString, DMBelShop.CDS_FluxoFornVinculadosDES_VINCULADO.AsString);
+        End; // If DMBelShop.CDS_FluxoFornVinculadosIND_SITUACAO.AsString='I' Then
+
+        DMBelShop.CDS_FluxoFornVinculados.Next;
+      End; // While Not DMBelShop.CDS_FluxoFornVinculados.Eof do
+      DMBelShop.CDS_FluxoFornVinculados.First;
+
+    End; // If (DMBelShop.CDS_FluxoFornVinculoIND_SITUACAO.AsString='N') Or (DMBelShop.CDS_FluxoFornVinculoIND_SITUACAO.AsString='I') Then
+ 
+    DMBelShop.CDS_FluxoFornVinculo.Next;
+  End; // While Not DMBelShop.CDS_FluxoFornVinculo.Eof do
+  DMBelShop.CDS_FluxoFornVinculo.First;
+  //  Processa os Incluídos IND_SITUACAO='I' =================================
+  //==========================================================================
+
+End; // // Cria Lançamento de Abertura em Caso de Vinculo de Fornecedor Novo >>>
 
 // FORNECEDORES VINCULADOS - Atualiza Vinculos dos Fornecedore >>>>>>>>>>>>>>>>>
 Procedure TFrmFluxoFornecedor.FornVincAtualizaVinculos;
@@ -364,6 +517,12 @@ Begin
     OdirPanApres.Visible:=True;
     Refresh;
 
+    //==========================================================================
+    // Cria Lançamento de Abertura de Conta Corrente ===========================
+    //==========================================================================
+    CriaLancamentoAbertura;
+    // Cria Lançamento de Abertura de Conta Corrente ===========================
+    //==========================================================================
     FrmBelShop.MontaProgressBar(True, FrmFluxoFornecedor);
     pgProgBar.Properties.Max:=DMBelShop.CDS_FluxoFornVinculo.RecordCount;
     pgProgBar.Position:=0;
@@ -654,7 +813,7 @@ Begin
   Begin
     If Cbx_FornVinculado.Items.Count<1 Then
      Cbx_FornVinculado.Items.Add('');
-     
+
     Cbx_FornVinculado.Items.Add(DMBelShop.CDS_BuscaRapida.FieldByName('Forn_Vinc').AsString);
 
     DMBelShop.CDS_BuscaRapida.Next;
@@ -4516,6 +4675,10 @@ end;
 procedure TFrmFluxoFornecedor.EdtFornVinculoCodFornExit(Sender: TObject);
 Var
   MySql: String;
+
+  iCodForn: Integer;
+  sDesForn: String;
+
   i: Integer;
 begin
 
@@ -4523,25 +4686,28 @@ begin
   Begin
     Screen.Cursor:=crAppStart;
 
-    // Busca Fornecedores ======================================================
-    MySql:=' SELECT DISTINCT c.des_vinculado des_fornecedor,'+
-           '                 c.cod_vinculado cod_fornecedor'+
-           ' FROM FL_CAIXA_FORNECEDORES c'+
-           ' WHERE c.cod_vinculado='+IntToStr(EdtFornVinculoCodForn.AsInteger);
+    MySql:=' SELECT fo.cod_cliente   cod_fornecedor,'+
+           '        fo.razao_cliente des_fornecedor'+
+           ' FROM LINXCLIENTESFORNEC fo'+
+           ' WHERE fo.tipo_cliente IN (''F'',''A'',''J'')'+
+           ' AND   COALESCE(fo.ativo,''S'')=''S'''+
+           ' AND   fo.cod_cliente='+IntToStr(EdtFornVinculoCodForn.AsInteger);
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
 
-    Screen.Cursor:=crDefault;
-
     If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsString)='' Then
     Begin
+      Screen.Cursor:=crDefault;
       msg('Fornecedor NÃO Encontrado !!!', 'A');
       DMBelShop.CDS_BuscaRapida.Close;
       EdtFornVinculoCodForn.Clear;
       EdtFornVinculoCodForn.SetFocus;
       Exit;
     End;
+    iCodForn:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsInteger;
+    sDesForn:=DMBelShop.CDS_BuscaRapida.FieldByName('Des_Fornecedor').AsString;
+    DMBelShop.CDS_BuscaRapida.Close;
 
     // Verifica Vinculados =====================================================
     If DMBelShop.CDS_FluxoFornVinculados.Active Then
@@ -4552,6 +4718,7 @@ begin
       If (DMBelShop.CDS_FluxoFornVinculados.Locate('Cod_Vinculado;ind_Situacao',VarArrayOf([EdtFornVinculoCodForn.AsInteger,'I']),[])) Or
          (DMBelShop.CDS_FluxoFornVinculados.Locate('Cod_Vinculado;ind_Situacao',VarArrayOf([EdtFornVinculoCodForn.AsInteger,'N']),[])) Then
       Begin
+        Screen.Cursor:=crDefault;
         DMBelShop.CDS_FluxoFornVinculados.EnableControls;
 
         // Apresetna já Vinculado
@@ -4559,12 +4726,11 @@ begin
         If Not DMBelShop.CDS_FluxoFornVinculados.Locate('Cod_Vinculado;ind_Situacao',VarArrayOf([EdtFornVinculoCodForn.AsInteger,'N']),[]) Then
          DMBelShop.CDS_FluxoFornVinculados.Locate('Cod_Vinculado;ind_Situacao',VarArrayOf([EdtFornVinculoCodForn.AsInteger,'I']),[]);
 
-        msg('Fornecedor Já Existe como Vinculado !!','A');
-        DMBelShop.CDS_BuscaRapida.Close;
+        msg('Fornecedor'+cr+sDesForn+cr+cr+'Já Vinculado !!','A');
         EdtFornVinculoCodForn.Text:='0';
         EdtFornVinculoCodForn.SetFocus;
         Exit;
-      End; // If DMBelShop.CDS_FluxoFornVinculados.Locate('Cod_Vinculado',DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsString,[]) Then
+      End; // If (DMBelShop.CDS_FluxoFornVinculados.Locate('Cod_Vinculado;ind_Situacao',VarArrayOf([EdtFornVinculoCodForn.AsInteger,'I']),[])) Or
       DMBelShop.CDS_FluxoFornVinculados.Filtered:=True;
       DMBelShop.CDS_FluxoFornVinculados.EnableControls;
     End; // If DMBelShop.CDS_FluxoFornVinculados.Active Then
@@ -4573,102 +4739,51 @@ begin
     If (DMBelShop.CDS_FluxoFornVinculo.Locate('Cod_Fornecedor;ind_Situacao',VarArrayOf([EdtFornVinculoCodForn.AsInteger,'I']),[])) Or
        (DMBelShop.CDS_FluxoFornVinculo.Locate('Cod_Fornecedor;ind_Situacao',VarArrayOf([EdtFornVinculoCodForn.AsInteger,'N']),[])) Then
     Begin
-//      If DMBelShop.CDS_FluxoFornVinculoIND_SITUACAO.AsString='E' Then
-//      Begin
-//        If msg('Fornecedor Teve Seus Vínculos Retirados !!'+cr+cr+' Deseja Retorná-los ??','C')=2 Then
-//        Begin
-//          DMBelShop.CDS_BuscaRapida.Close;
-//          EdtFornVinculoCodForn.Text:='0';
-//          EdtFornVinculoCodForn.SetFocus;
-//          Exit;
-//        End;
-//
-//        DMBelShop.CDS_FluxoFornVinculados.DisableControls;
-//        DMBelShop.CDS_FluxoFornVinculados.First;
-//
-//        // Gaurda Fornecedores a Excluir =======================================
-//        FrmBelShop.Mem_Odir.Lines.Clear; // Guardar Codigo para exclui se já existirem
-//        While Not DMBelShop.CDS_FluxoFornVinculados.Eof do
-//        Begin
-//          FrmBelShop.Mem_Odir.Lines.Add(DMBelShop.CDS_FluxoFornVinculadosCOD_VINCULADO.AsString);
-//
-//          DMBelShop.CDS_FluxoFornVinculados.Next;
-//        End; // While Not DMBelShop.CDS_FluxoFornVinculados.Eof do
-//
-//        // Exclui Fornecedores Iguais ==========================================
-//        DMBelShop.CDS_FluxoFornVinculo.DisableControls;
-//        DMBelShop.CDS_FluxoFornVinculo.First;
-//        While Not DMBelShop.CDS_FluxoFornVinculo.Eof do
-//        Begin
-//          For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
-//          Begin
-//            If DMBelShop.CDS_FluxoFornVinculados.Locate('Cod_Viculado; Ind_Situacao',VarArrayOf([FrmBelShop.Mem_Odir.Lines[i],'I']),[]) Then
-//            Begin
-//              DMBelShop.CDS_FluxoFornVinculados.Delete;
-//            End;
-//          End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
-//
-//          DMBelShop.CDS_FluxoFornVinculo.Next;
-//        End; // While Not DMBelShop.CDS_FluxoFornVinculo.Eof do
-//        DMBelShop.CDS_FluxoFornVinculo.EnableControls;
-//
-//
-//        // Marca os Vinculados de Excluidos para Incluir ou Normais ============
-// =======        locali8zar ==============
-//        DMBelShop.CDS_FluxoFornVinculados.First;
-//        While Not DMBelShop.CDS_FluxoFornVinculados.Eof do
-//        Begin
-//          DMBelShop.CDS_FluxoFornVinculados.Edit;
-//          DMBelShop.CDS_FluxoFornVinculadosIND_SITUACAO.AsString:=
-//                       DMBelShop.CDS_FluxoFornVinculadosIND_SIT_ORIGEM.AsString;
-//
-//          If Trim(DMBelShop.CDS_FluxoFornVinculadosIND_SITUACAO.AsString)='S' Then // Sem Origem
-//           DMBelShop.CDS_FluxoFornVinculadosIND_SITUACAO.AsString  :='I';
-//          DMBelShop.CDS_FluxoFornVinculados.Post;
-//
-//          DMBelShop.CDS_FluxoFornVinculados.Next;
-//        End; // While Not DMBelShop.CDS_FluxoFornVinculados.Eof do
-//        DMBelShop.CDS_FluxoFornVinculados.EnableControls;
-//        DMBelShop.CDS_FluxoFornVinculados.First;
-//
-//        // Marca o Vinculado de Excluidos para Incluir =========================
-//        DMBelShop.CDS_FluxoFornVinculo.Edit;
-//        DMBelShop.CDS_FluxoFornVinculoIND_SITUACAO.AsString:=
-//                          DMBelShop.CDS_FluxoFornVinculoIND_SIT_ORIGEM.AsString;
-//
-//        If Trim(DMBelShop.CDS_FluxoFornVinculoIND_SITUACAO.AsString)='S' Then // Sem Origem
-//         DMBelShop.CDS_FluxoFornVinculoIND_SITUACAO.AsString  :='I';
-//        DMBelShop.CDS_FluxoFornVinculo.Post;
-//
-//        DMBelShop.CDS_BuscaRapida.Close;
-//        EdtFornVinculoCodForn.Text:='0';
-//        EdtFornVinculoCodForn.SetFocus;
-//
-//        Exit;
-//      End; // If DMBelShop.CDS_FluxoFornVinculoIND_SITUACAO.AsString='E' Then
-
       If DMBelShop.CDS_FluxoFornVinculoIND_SITUACAO.AsString<>'E' Then
       Begin
-        msg('Fornecedor Já Vinculado !!','A');
+        Screen.Cursor:=crDefault;
+        msg('Fornecedor'+cr+sDesForn+cr+cr+'Já Existe como Vinculo !!','A');
+        EdtFornVinculoCodForn.Clear;
+        EdtFornVinculoCodForn.SetFocus;
+        Exit;
+      End;
+    End; // If (DMBelShop.CDS_FluxoFornVinculo.Locate('Cod_Fornecedor;ind_Situacao',VarArrayOf([EdtFornVinculoCodForn.AsInteger,'I']),[])) Or
+
+    // Verifica se Existe Conta Corrente =======================================
+    MySql:=' SELECT cod_fornecedor'+
+           ' FROM FL_CAIXA_FORNECEDORES c'+
+           ' WHERE c.num_seq NOT IN (0, 999999)'+
+           ' AND   c.cod_vinculado='+IntToStr(EdtFornVinculoCodForn.AsInteger);
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+
+    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsString)='' Then
+    Begin
+      Screen.Cursor:=crDefault;
+      If MessageBox(Handle, pChar('Fornecedor'+cr+sDesForn+cr+cr+'NÃO Contém Conta Corrente !!'+cr+'Criar com Negociação de R$ 0,01 ??'), 'ATENÇÃO !!', 292)=IdNo Then
+      Begin                                                                                                                         
         DMBelShop.CDS_BuscaRapida.Close;
         EdtFornVinculoCodForn.Clear;
         EdtFornVinculoCodForn.SetFocus;
         Exit;
       End;
-    End; // If DMBelShop.CDS_FluxoFornVinculo.Locate('Cod_Fornecedor',DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsString,[]) Then
+      Screen.Cursor:=crAppStart;
+    End;
+    DMBelShop.CDS_BuscaRapida.Close;
 
     DMBelShop.CDS_FluxoFornVinculo.Insert;
-    DMBelShop.CDS_FluxoFornVinculoCOD_FORNECEDOR.AsInteger:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsInteger;
-    DMBelShop.CDS_FluxoFornVinculoDES_FORNECEDOR.AsString :=DMBelShop.CDS_BuscaRapida.FieldByName('Des_Fornecedor').AsString;
+    DMBelShop.CDS_FluxoFornVinculoCOD_FORNECEDOR.AsInteger:=iCodForn;
+    DMBelShop.CDS_FluxoFornVinculoDES_FORNECEDOR.AsString :=sDesForn;
     DMBelShop.CDS_FluxoFornVinculoIND_SITUACAO.AsString   :='I';
     DMBelShop.CDS_FluxoFornVinculoIND_SIT_ORIGEM.AsString :='S'; // Sem Origem
     DMBelShop.CDS_FluxoFornVinculo.Post;
 
-    DMBelShop.CDS_FluxoFornVinculo.Locate('Cod_Fornecedor',DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsString,[]);
+    DMBelShop.CDS_FluxoFornVinculo.Locate('Cod_Fornecedor',iCodForn,[]);
 
-    DMBelShop.CDS_BuscaRapida.Close;
     EdtFornVinculoCodForn.Text:='0';
     EdtFornVinculoCodForn.SetFocus;
+    Screen.Cursor:=crDefault;
   End; // If EdtFornVinculoCodForn.Value<>0 Then
 end;
 
@@ -4683,13 +4798,13 @@ begin
 
   // ========== EXECUTA QUERY PARA PESQUISA ====================================
   Screen.Cursor:=crAppStart;
-                                                             
+
   // Busca Fornecedores ======================================================
-  MySql:=' SELECT DISTINCT c.des_vinculado des_fornecedor,'+
-         '                 c.cod_vinculado cod_fornecedor'+
-         ' FROM FL_CAIXA_FORNECEDORES c'+
-         ' WHERE c.num_seq<>0'+
-         ' AND   c.num_seq<>999999'+
+  MySql:=' SELECT fo.razao_cliente des_fornecedor,'+
+         '        fo.cod_cliente cod_fornecedor'+
+         ' FROM LINXCLIENTESFORNEC fo'+
+         ' WHERE fo.tipo_cliente IN (''F'',''A'',''J'')'+
+         ' AND   COALESCE(fo.ativo,''S'')=''S'''+
          ' ORDER BY 1';
   DMBelShop.CDS_Pesquisa.Close;
   DMBelShop.CDS_Pesquisa.Filtered:=False;
@@ -4904,31 +5019,37 @@ end;
 procedure TFrmFluxoFornecedor.EdtFornVinculadoCodFornExit(Sender: TObject);
 Var
   MySql: String;
+
+  iCodForn: Integer;
+  sDesForn: String;
 begin
 
   If EdtFornVinculadoCodForn.Value<>0 Then
   Begin
     Screen.Cursor:=crAppStart;
 
-    // Busca Fornecedores ======================================================
-    MySql:=' SELECT DISTINCT c.des_vinculado des_fornecedor,'+
-           '                 c.cod_vinculado cod_fornecedor'+
-           ' FROM FL_CAIXA_FORNECEDORES c'+
-           ' WHERE c.cod_vinculado='+IntToStr(EdtFornVinculadoCodForn.AsInteger);
+    MySql:=' SELECT fo.cod_cliente   cod_fornecedor,'+
+           '        fo.razao_cliente des_fornecedor'+
+           ' FROM LINXCLIENTESFORNEC fo'+
+           ' WHERE fo.tipo_cliente IN (''F'',''A'',''J'')'+
+           ' AND   COALESCE(fo.ativo,''S'')=''S'''+
+           ' AND   fo.cod_cliente='+IntToStr(EdtFornVinculadoCodForn.AsInteger);
     DMBelShop.CDS_BuscaRapida.Close;
     DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
     DMBelShop.CDS_BuscaRapida.Open;
 
-    Screen.Cursor:=crDefault;
-
     If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsString)='' Then
     Begin
+      Screen.Cursor:=crDefault;
       msg('Fornecedor NÃO Encontrado !!!', 'A');
       DMBelShop.CDS_BuscaRapida.Close;
       EdtFornVinculadoCodForn.Clear;
       EdtFornVinculadoCodForn.SetFocus;
       Exit;
     End;
+    iCodForn:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsInteger;
+    sDesForn:=DMBelShop.CDS_BuscaRapida.FieldByName('Des_Fornecedor').AsString;
+    DMBelShop.CDS_BuscaRapida.Close;
 
     // Verifica Vinculados =====================================================
     If DMBelShop.CDS_FluxoFornVinculados.Active Then
@@ -4940,18 +5061,18 @@ begin
          (DMBelShop.CDS_FluxoFornVinculados.Locate('Cod_Vinculado;ind_Situacao',VarArrayOf([EdtFornVinculadoCodForn.AsInteger,'N']),[])) Then
       Begin
         DMBelShop.CDS_FluxoFornVinculados.EnableControls;
+        Screen.Cursor:=crDefault;
 
         // Apresetna já Vinculado
         DMBelShop.CDS_FluxoFornVinculo.Locate('Cod_Fornecedor',DMBelShop.CDS_FluxoFornVinculadosCOD_FORNECEDOR.AsInteger,[]);
         If Not DMBelShop.CDS_FluxoFornVinculados.Locate('Cod_Vinculado;ind_Situacao',VarArrayOf([EdtFornVinculadoCodForn.AsInteger,'N']),[]) Then
          DMBelShop.CDS_FluxoFornVinculados.Locate('Cod_Vinculado;ind_Situacao',VarArrayOf([EdtFornVinculadoCodForn.AsInteger,'I']),[]);
 
-        msg('Fornecedor Já Existe como Vinculado !!','A');
-        DMBelShop.CDS_BuscaRapida.Close;
+        msg('Fornecedor'+cr+sDesForn+cr+cr+'Já Vinculado !!','A');
         EdtFornVinculadoCodForn.Text:='0';
         EdtFornVinculadoCodForn.SetFocus;
         Exit;
-      End; // If DMBelShop.CDS_FluxoFornVinculados.Locate('Cod_Vinculado',DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsString,[]) Then
+      End; // If (DMBelShop.CDS_FluxoFornVinculados.Locate('Cod_Vinculado;ind_Situacao',VarArrayOf([EdtFornVinculadoCodForn.AsInteger,'I']),[])) Or
       DMBelShop.CDS_FluxoFornVinculados.Filtered:=True;
       DMBelShop.CDS_FluxoFornVinculados.EnableControls;
     End; // If DMBelShop.CDS_FluxoFornVinculados.Active Then
@@ -4960,24 +5081,46 @@ begin
     If (DMBelShop.CDS_FluxoFornVinculo.Locate('Cod_Fornecedor;ind_Situacao',VarArrayOf([EdtFornVinculadoCodForn.AsInteger,'I']),[])) Or
        (DMBelShop.CDS_FluxoFornVinculo.Locate('Cod_Fornecedor;ind_Situacao',VarArrayOf([EdtFornVinculadoCodForn.AsInteger,'N']),[])) Then
     Begin
-      msg('Fornecedor Já Vinculado !!','A');
-      DMBelShop.CDS_BuscaRapida.Close;
+      Screen.Cursor:=crDefault;
+      msg('Fornecedor'+cr+sDesForn+cr+cr+'Já Existe como Vinculo !!','A');
       EdtFornVinculadoCodForn.Clear;
       EdtFornVinculadoCodForn.SetFocus;
       Exit;
-    End; // If DMBelShop.CDS_FluxoFornVinculo.Locate('Cod_Fornecedor',DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsString,[]) Then
+    End; // If (DMBelShop.CDS_FluxoFornVinculo.Locate('Cod_Fornecedor;ind_Situacao',VarArrayOf([EdtFornVinculadoCodForn.AsInteger,'I']),[])) Or
+
+    // Verifica se Existe Conta Corrente ========================================
+    MySql:=' SELECT DISTINCT c.cod_fornecedor'+
+           ' FROM FL_CAIXA_FORNECEDORES c'+
+           ' WHERE c.num_seq NOT IN (0, 999999)'+
+           ' AND   c.cod_vinculado='+IntToStr(EdtFornVinculadoCodForn.AsInteger);
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+
+    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsString)='' Then
+    Begin
+      If MessageBox(Handle, pChar('Fornecedor'+cr+sDesForn+cr+cr+'NÃO Contém Conta Corrente !!'+cr+'Criar com Negociação de R$ 0,01 ??'), 'ATENÇÃO !!', 292)=IdNo Then
+      Begin
+        Screen.Cursor:=crDefault;
+        DMBelShop.CDS_BuscaRapida.Close;
+        EdtFornVinculadoCodForn.Clear;
+        EdtFornVinculadoCodForn.SetFocus;
+        Exit;
+      End; // If MessageBox(Handle, pChar('Fornecedor'+cr+sDesForn+cr+cr+'NÃO Contém Conta Corrente !!'+cr+'Criar com Negociação de R$ 0,01 ??'), 'ATENÇÃO !!', MB_ICONERROR)=IdNo Then
+    End;
+    DMBelShop.CDS_BuscaRapida.Close;
 
     DMBelShop.CDS_FluxoFornVinculados.Insert;
     DMBelShop.CDS_FluxoFornVinculadosCOD_FORNECEDOR.AsInteger:=DMBelShop.CDS_FluxoFornVinculoCOD_FORNECEDOR.AsInteger;
-    DMBelShop.CDS_FluxoFornVinculadosCOD_VINCULADO.AsInteger :=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsInteger;
-    DMBelShop.CDS_FluxoFornVinculadosDES_VINCULADO.AsString  :=DMBelShop.CDS_BuscaRapida.FieldByName('Des_Fornecedor').AsString;
+    DMBelShop.CDS_FluxoFornVinculadosCOD_VINCULADO.AsInteger :=iCodForn;
+    DMBelShop.CDS_FluxoFornVinculadosDES_VINCULADO.AsString  :=sDesForn;
     DMBelShop.CDS_FluxoFornVinculadosIND_SITUACAO.AsString   :='I';
     DMBelShop.CDS_FluxoFornVinculadosIND_SIT_ORIGEM.AsString :='S'; // Sem Origem
     DMBelShop.CDS_FluxoFornVinculados.Post;
 
-    DMBelShop.CDS_FluxoFornVinculados.Locate('Cod_Vinculado',DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsString,[]);
+    DMBelShop.CDS_FluxoFornVinculados.Locate('Cod_Vinculado',EdtFornVinculadoCodForn.AsInteger,[]);
 
-    DMBelShop.CDS_BuscaRapida.Close;
+    Screen.Cursor:=crDefault;
     EdtFornVinculadoCodForn.Text:='0';
     EdtFornVinculadoCodForn.SetFocus;
   End; // If EdtFornVinculadoCodForn.Value<>0 Then
@@ -4997,11 +5140,11 @@ begin
   Screen.Cursor:=crAppStart;
 
   // Busca Fornecedores ======================================================
-  MySql:=' SELECT DISTINCT c.des_vinculado des_fornecedor,'+
-         '                 c.cod_vinculado cod_fornecedor'+
-         ' FROM FL_CAIXA_FORNECEDORES c'+
-         ' WHERE c.num_seq<>0'+
-         ' AND   c.num_seq<>999999'+
+  MySql:=' SELECT fo.razao_cliente des_fornecedor,'+
+         '        fo.cod_cliente cod_fornecedor'+
+         ' FROM LINXCLIENTESFORNEC fo'+
+         ' WHERE fo.tipo_cliente IN (''F'',''A'',''J'')'+
+         ' AND   COALESCE(fo.ativo,''S'')=''S'''+
          ' ORDER BY 1';
   DMBelShop.CDS_Pesquisa.Close;
   DMBelShop.CDS_Pesquisa.Filtered:=False;
@@ -5009,14 +5152,15 @@ begin
   DMBelShop.CDS_Pesquisa.Open;
 
   Screen.Cursor:=crDefault;
-
+  
   // ============== Verifica Existencia de Dados ===============================
   If Trim(DMBelShop.CDS_Pesquisa.FieldByName('Cod_Fornecedor').AsString)='' Then
   Begin
+    Screen.Cursor:=crDefault;
     FreeAndNil(FrmPesquisa);
     msg('Sem FORNECEDOR a Listar !!','A');
-    EdtFornVinculoCodForn.Clear;
-    EdtFornVinculoCodForn.SetFocus;
+    EdtFornVinculadoCodForn.Clear;
+    EdtFornVinculadoCodForn.SetFocus;
     Exit;
   End;
 
