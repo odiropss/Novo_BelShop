@@ -4456,9 +4456,9 @@ object FrmCentralTrocas: TFrmCentralTrocas
         1094
         550)
       object Gb_NFePerdas: TGroupBox
-        Left = 43
+        Left = 11
         Top = 0
-        Width = 1014
+        Width = 1072
         Height = 550
         Anchors = [akTop, akBottom]
         Caption = ' Nota Fiscal de Entrada de Avarias '
@@ -4474,7 +4474,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         object Dbg_NFePerdas: TDBGrid
           Left = 1
           Top = 14
-          Width = 1012
+          Width = 1070
           Height = 492
           Align = alClient
           DataSource = DMCentralTrocas.DS_V_NfePerdas
@@ -4512,6 +4512,12 @@ object FrmCentralTrocas: TFrmCentralTrocas
               Visible = True
             end
             item
+              Expanded = False
+              FieldName = 'REFERENCIA'
+              Width = 100
+              Visible = True
+            end
+            item
               Color = 15987699
               Expanded = False
               FieldName = 'NOME'
@@ -4529,8 +4535,8 @@ object FrmCentralTrocas: TFrmCentralTrocas
               Expanded = False
               FieldName = 'COD_FORNECEDOR'
               Title.Alignment = taRightJustify
-              Width = 65
-              Visible = True
+              Width = -1
+              Visible = False
             end
             item
               Color = 15987699
@@ -4543,7 +4549,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         object Pan_NFePerdas: TPanel
           Left = 1
           Top = 506
-          Width = 1012
+          Width = 1070
           Height = 43
           Align = alBottom
           BevelInner = bvLowered

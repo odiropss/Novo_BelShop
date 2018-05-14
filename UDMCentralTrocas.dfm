@@ -1433,6 +1433,10 @@ object DMCentralTrocas: TDMCentralTrocas
       DisplayLabel = 'C'#243'digo Barras'
       FieldName = 'COD_BARRA'
     end
+    object CDS_V_NfePerdasREFERENCIA: TStringField
+      DisplayLabel = 'Refer'#234'ncia'
+      FieldName = 'REFERENCIA'
+    end
     object CDS_V_NfePerdasCOD_PRODUTO: TFMTBCDField
       DisplayLabel = 'C'#243'd Produto'
       FieldName = 'COD_PRODUTO'

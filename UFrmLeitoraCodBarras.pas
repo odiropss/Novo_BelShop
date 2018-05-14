@@ -324,8 +324,8 @@ begin
        If bgCheckOutPerdas Then
        Begin
          // Busca Produto ======================================================
-         MySql:=' SELECT p.cod_barra, p.cod_produto, p.nome, 0 Quantidade,'+
-                ' p.cod_fornecedor, f.nome_cliente'+
+         MySql:=' SELECT p.cod_barra, p.referencia, p.cod_produto, p.nome,'+
+                '        0 Quantidade, p.cod_fornecedor, f.nome_cliente'+
                 ' FROM LINXPRODUTOS p, LINXCLIENTESFORNEC f'+
                 ' WHERE p.cod_fornecedor=f.cod_cliente'+
                 ' AND   p.cod_produto='+sgCodProdLinx;
@@ -339,6 +339,8 @@ begin
             DMCentralTrocas.CDS_V_NfePerdas.Insert;
             DMCentralTrocas.CDS_V_NfePerdasCOD_BARRA.AsString:=
                     DMBelShop.CDS_BuscaRapida.FieldByName('cod_barra').AsString;
+            DMCentralTrocas.CDS_V_NfePerdasREFERENCIA.AsString:=
+                   DMBelShop.CDS_BuscaRapida.FieldByName('referencia').AsString;
             DMCentralTrocas.CDS_V_NfePerdasCOD_PRODUTO.AsInteger:=
                  DMBelShop.CDS_BuscaRapida.FieldByName('cod_produto').AsInteger;
             DMCentralTrocas.CDS_V_NfePerdasNOME.AsString:=

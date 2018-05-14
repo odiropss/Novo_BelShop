@@ -288,7 +288,9 @@ var
   : Boolean;
 
   // Lançamentos
-  igTabSheet: Integer; // Qual TabSheet.TabIndex Chamou o Grafico
+  igTabSheet,  // Qual TabSheet.TabIndex Chamou o Grafico
+  igFornPosicao: Integer; // Guarda a Posição do Ultimo Fornecedor
+
 
   sgDMLMovto, // (N)Novo Fornecedor (I)Incluir Movto (A)Alterar Movto ()Pesquisa
   sgNum_SeqCC // Usado no Lançamento para Guardar a Sequencia do Dia do Fornecedor
@@ -1666,10 +1668,11 @@ Procedure TFrmFluxoFornecedor.CalculaFluxoCaixaFornecedores(sDt: String=''; sCod
 Var
   MySql:String;
   cVlrSaldo: Currency;
-  iUltimo: Integer;
-  sCodigo: String;
 
-  sNumSeqIF: String; // Cria Saldo Inicial Final
+  iUltimo: Integer;
+
+  sCodigo, sNumSeqIF: String; // Cria Saldo Inicial Final
+
   b: Boolean;
 Begin
   DMBelShop.CDS_FluxoFornecedor.Close;
@@ -1939,15 +1942,12 @@ Begin
            '                  AND   f.num_seq BETWEEN 1 AND 999998)';
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
-    OdirPanApres.Visible:=False;
-    Refresh;
-
     // Fecha Transacao =========================================================
     DMBelShop.SQLC.Commit(TD);
 
-    DateSeparator:='/';
-    DecimalSeparator:=',';
+    OdirPanApres.Visible:=False;
     Screen.Cursor:=crDefault;
+    Refresh;
   Except
     on e : Exception do
     Begin
@@ -1956,15 +1956,13 @@ Begin
       DMBelShop.SQLC.Rollback(TD);
 
       OdirPanApres.Visible:=False;
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
       Screen.Cursor:=crDefault;
 
       MessageBox(Handle, pChar('Erro Fornecedor:'+sCodigo+#13+e.message), 'Erro', MB_ICONERROR);
     End;
   End;
-
+  DateSeparator:='/';
+  DecimalSeparator:=',';
 End; // Calcula Fluxo de Caixo de Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 //==============================================================================
@@ -2490,6 +2488,16 @@ begin
     MEdt_DtaAtualizacao.Text:='  .  .20  ';
     EdtFluFornCodFornAcertar.Text:='Cód a Acertar';
 
+    // Posiciona no Fornecedor =================================================
+    igFornPosicao:=DMBelShop.CDS_FluxoFornecedoresCOD_FORNECEDOR.AsInteger;
+
+    If DMBelShop.CDS_FluxoFornecedores.Active Then
+     DMBelShop.CDS_FluxoFornecedores.Close;
+
+    FiltraComprador('',0);
+    DMBelShop.CDS_FluxoFornecedores.Locate('COD_FORNECEDOR', igFornPosicao,[]);
+    igFornPosicao:=0;
+
     Exit;
   End;
 
@@ -2512,8 +2520,14 @@ begin
   End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
 
   // Reabre Fornecedores =======================================================
-  DMBelShop.CDS_FluxoFornecedores.Close;
+  igFornPosicao:=DMBelShop.CDS_FluxoFornecedoresCOD_FORNECEDOR.AsInteger;
+
+  If DMBelShop.CDS_FluxoFornecedores.Active Then
+   DMBelShop.CDS_FluxoFornecedores.Close;
+
   FiltraComprador('',0);
+  DMBelShop.CDS_FluxoFornecedores.Locate('COD_FORNECEDOR', igFornPosicao,[]);
+  igFornPosicao:=0;
 
   If Not bgAtualizaDireto Then
   Begin
