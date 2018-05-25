@@ -3555,6 +3555,7 @@ begin
     DMBelShop.CDS_EmpProcessa.Next;
   End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
 
+  bgTodasEmpresas:=False;
   sgCodLojas:='('+sgCodLojas+')';
 
   // Calcula Nivel de Atendimentodas Lojas Selecionadas ========================

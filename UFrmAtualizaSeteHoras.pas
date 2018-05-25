@@ -14,9 +14,6 @@ type
     procedure FormCreate(Sender: TObject);
 
     // ODIR ====================================================================
-
-    Procedure Linx_Produtos_Lojas;
-
     Procedure Demanda4Meses;
 
     Procedure MontaSqlsSidicomLinx;
@@ -32,6 +29,8 @@ type
     Procedure CodigoBarras;
 
     Procedure AcertaEstoqueLoja;
+
+    Procedure SidicomDataBackup;
 
     // ODIR ====================================================================
 
@@ -77,12 +76,55 @@ uses DK_Procs1, UDMConexoes, uj_001, uj_002, UDMAtualizaSeteHoras;
 // ODIR - INICIO ===============================================================
 //==============================================================================
 
-
-// Atualiza Produtos Trabalhados Pelas Lojs >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmAtualizaSeteHoras.Linx_Produtos_Lojas;
-
+// Acerta Data de Backup do Sidicom >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+procedure TFrmAtualizaSeteHoras.SidicomDataBackup;
+Var
+  MySql: String;
+  sDta, sHora: String;
 Begin
-End; // Atualiza Produtos Trabalhados Pelas Lojs >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+  sDta :=DateToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
+  sHora:=TimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
+
+  Try // Try da Transação
+    // Conecata SIDICOM ========================================================
+    ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A');
+    CriaQueryIB('IBDB_99', 'IBT_99', IBQ_ConsultaFilial, True);
+
+    // Verifica se Transação esta Ativa
+    If DMConexoes.IBT_99.Active Then
+     DMConexoes.IBT_99.Rollback;
+
+    // Monta Transacao  -------------------------------------
+    DMConexoes.IBT_99.StartTransaction;
+
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    // Busca Saldos Linx =======================================================
+    MySql:=' UPDATE OR INSERT INTO EMPRESA'+
+           ' (CODEMPRESA, DATASISTEMA, DATABACKUP, DATA_ATUALIZACAO_CONTRATO)'+
+           ' VALUES ('+
+           QuotedStr('390926')+', '+ // CODEMPRESA
+           QuotedStr(f_Troca('/','.',f_Troca('-','.',sDta)))+', '+ // DATASISTEMA
+           QuotedStr(f_Troca('/','.',f_Troca('-','.',sDta))+' '+sHora)+', '+ // DATABACKUP
+           QuotedStr(f_Troca('/','.',f_Troca('-','.',sDta))+' '+sHora)+')'+ // DATA_ATUALIZACAO_CONTRATO
+           ' MATCHING (CODEMPRESA)';
+    IBQ_ConsultaFilial.Close;
+    IBQ_ConsultaFilial.SQL.Clear;
+    IBQ_ConsultaFilial.SQL.Add(MySql);
+    IBQ_ConsultaFilial.ExecSQL;
+
+    DMConexoes.IBT_99.Commit;
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+  Except
+    DMConexoes.IBT_99.Rollback;
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+  End; // Try
+  ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+End; // Acerta Data de Backup do Sidicom >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Iguala Todos os Produtos de Todas a Lojas com o CD >>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaSeteHoras.AcertaEstoqueLoja;
@@ -1952,6 +1994,14 @@ Var
   sCodFornCalcCC, sDtaCalcCC: String;
   ii, i: Integer;
 begin
+
+//============================================================================
+  // Acerta Data de Backup do Sidicom ==========================================
+  //============================================================================
+//opss
+  SidicomDataBackup;
+  // Acerta Data de Backup do Sidicom ==========================================
+  //============================================================================
 
   //============================================================================
   // Atualiza Codigos de Barras ================================================

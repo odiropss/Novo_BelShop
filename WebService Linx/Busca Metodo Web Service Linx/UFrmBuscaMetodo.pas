@@ -16,7 +16,7 @@ uses
   dxSkinOffice2010Silver, dxSkinPumpkin, dxSkinSeven, dxSkinSharp,
   dxSkinSilver, dxSkinSpringTime, dxSkinStardust, dxSkinSummer2008,
   dxSkinsDefaultPainters, dxSkinValentine, dxSkinXmas2008Blue, cxTextEdit,
-  cxMaskEdit, cxDropDownEdit, cxCalendar;
+  cxMaskEdit, cxDropDownEdit, cxCalendar, StrUtils ;
 
 type
   TFrmBuscaMetodo = class(TForm)
@@ -27,12 +27,13 @@ type
     EdtCodLoja: TCurrencyEdit;
     Label1: TLabel;
     Label2: TLabel;
-    EdtMetodo: TEdit;
     EdtDesLoja: TEdit;
     Label74: TLabel;
     DtEdt_DtaInicio: TcxDateEdit;
     Label75: TLabel;
     DtEdt_DtaFim: TcxDateEdit;
+    Cbx_Metodos: TComboBox;
+    Lab_Dias: TLabel;
     procedure Bt_BuscaMetodoClick(Sender: TObject);
     procedure EdtCodLojaExit(Sender: TObject);
 
@@ -41,6 +42,7 @@ type
     // Odir
 
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure Cbx_MetodosChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -107,7 +109,7 @@ begin
   OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
-
+  
   // Busca Lojas Linx ==========================================================
   MySql:=' SELECT em.cod_linx, em.Razao_Social'+
          ' FROM EMP_CONEXOES em';
@@ -141,10 +143,10 @@ begin
   Try
     While Not DMBuscaMetodo.CDS_Busca.Eof do
     Begin
-      OdirPanApres.Caption:='AGUARDE !! Atualizando Metodo: '+EdtMetodo.Text+' (LINX - CLOUD) Loja: '+DMBuscaMetodo.CDS_Busca.FieldByName('Cod_Linx').AsString;
+      OdirPanApres.Caption:='AGUARDE !! Atualizando Metodo: '+Cbx_Metodos.Text+' (LINX - CLOUD) Loja: '+DMBuscaMetodo.CDS_Busca.FieldByName('Cod_Linx').AsString;
       Application.ProcessMessages;
 
-      sParametros:=sgPastaWebService+'PWebServiceLinx.exe '+EdtMetodo.Text; // Excutavel e Metodo a Processar
+      sParametros:=sgPastaWebService+'PWebServiceLinx.exe '+Cbx_Metodos.Text; // Excutavel e Metodo a Processar
       sParametros:=sParametros+' '+DMBuscaMetodo.CDS_Busca.FieldByName('Cod_Linx').AsString; // Codigo da Loja a Processar
       sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Metodos')+'"'; // Pasta dos Metodos
       sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Retornos')+'"'; // Pasta dos Retornos
@@ -208,6 +210,79 @@ begin
     Key:=#0;
     SelectNext(ActiveControl,True,True);
   End;
+
+end;
+
+procedure TFrmBuscaMetodo.Cbx_MetodosChange(Sender: TObject);
+begin
+  DtEdt_DtaInicio.Clear;
+  DtEdt_DtaFim.Clear;
+  DtEdt_DtaInicio.Visible:=False;
+  DtEdt_DtaFim.Visible:=False;
+  Label74.Visible:=False;
+  Label75.Visible:=False;
+  Lab_Dias.Visible:=False;
+
+  Bt_BuscaMetodo.Enabled:=False;
+  If Trim(Cbx_Metodos.Text)<>'' Then
+  Begin
+    // Não Rodar ===============================================================
+    If AnsiContainsStr('LinxMovimentoSerial LinxReducoesZ LinxLancContabil ', Cbx_Metodos.Text+' ') Then
+    Begin
+      msg('Não Rodar Este Metodo !!','A');
+      Cbx_Metodos.SetFocus;
+      Exit;
+    End;
+
+    Bt_BuscaMetodo.Enabled:=True;
+
+    // Menos 30 Dias ===========================================================
+    If AnsiContainsStr('LinxClientesFornec LinxClientesFornecCamposAdicionais ', Cbx_Metodos.Text+' ') Then
+    Begin
+      Label74.Visible:=True;
+      Label75.Visible:=True;
+      Lab_Dias.Visible:=True;
+      Lab_Dias.Caption:='30 Dias';
+
+      DtEdt_DtaInicio.Visible:=True;
+      DtEdt_DtaFim.Visible:=True;
+
+      DtEdt_DtaInicio.Date:=(Now-31);
+      DtEdt_DtaFim.Date:=(Now-1);
+    End;
+
+    // Menos 15 Dias ===========================================================
+    If AnsiContainsStr('LinxMovimento LinxMovtosAjustesEntradas LinxMovtosAjustesSaidas LinxMovimentoTrocas ', Cbx_Metodos.Text+' ') Then
+    Begin
+      Label74.Visible:=True;
+      Label75.Visible:=True;
+      Lab_Dias.Visible:=True;
+      Lab_Dias.Caption:='15 Dias';
+
+      DtEdt_DtaInicio.Visible:=True;
+      DtEdt_DtaFim.Visible:=True;
+
+      DtEdt_DtaInicio.Date:=(Now-16);
+      DtEdt_DtaFim.Date:=(Now-1);
+    End;
+
+    // Menos 7 Dias ============================================================
+    If AnsiContainsStr('LinxMovimentoOrigemDevolucoes LinxMovimentoPlanos LinxAcoesPromocionais '+
+                       'LinxMovimentoAcoesPromocionais LinxPedidosVenda LinxPlanosPedidoVenda '+
+                       'LinxPedidosCompra LinxSangriaSuprimentos LinxFaturas ', Cbx_Metodos.Text+' ') Then
+    Begin
+      Label74.Visible:=True;
+      Label75.Visible:=True;
+      Lab_Dias.Visible:=True;
+      Lab_Dias.Caption:='7 Dias';
+
+      DtEdt_DtaInicio.Visible:=True;
+      DtEdt_DtaFim.Visible:=True;
+
+      DtEdt_DtaInicio.Date:=(Now-8);
+      DtEdt_DtaFim.Date:=(Now-1);
+    End;
+  End; // If Trim(Cbx_Metodos.Text)<>'' Then
 
 end;
 

@@ -38,7 +38,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
     end
     object Label2: TLabel
       Left = 280
-      Top = 49
+      Top = 50
       Width = 97
       Height = 13
       Caption = 'M'#233'todo a Buscar'
@@ -50,7 +50,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       ParentFont = False
     end
     object Label74: TLabel
-      Left = 282
+      Left = 306
       Top = 106
       Width = 64
       Height = 13
@@ -63,7 +63,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       ParentFont = False
     end
     object Label75: TLabel
-      Left = 458
+      Left = 482
       Top = 107
       Width = 8
       Height = 13
@@ -75,11 +75,24 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       Font.Style = [fsBold]
       ParentFont = False
     end
+    object Lab_Dias: TLabel
+      Left = 608
+      Top = 104
+      Width = 37
+      Height = 13
+      Caption = 'Dias 0'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
     object Bt_BuscaMetodo: TJvXPButton
-      Left = 408
+      Left = 400
       Top = 136
       Width = 161
-      Height = 26
+      Height = 31
       Caption = ' Buscar M'#233'todo '
       TabOrder = 5
       Font.Charset = DEFAULT_CHARSET
@@ -101,20 +114,6 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       TabOrder = 0
       OnExit = EdtCodLojaExit
     end
-    object EdtMetodo: TEdit
-      Left = 281
-      Top = 65
-      Width = 407
-      Height = 28
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -16
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 2
-      Text = 'LINXMOVIMENTO'
-    end
     object EdtDesLoja: TEdit
       Left = 328
       Top = 24
@@ -132,7 +131,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       TabOrder = 1
     end
     object DtEdt_DtaInicio: TcxDateEdit
-      Left = 352
+      Left = 376
       Top = 100
       ParentFont = False
       Properties.ReadOnly = False
@@ -150,7 +149,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       Width = 99
     end
     object DtEdt_DtaFim: TcxDateEdit
-      Left = 474
+      Left = 498
       Top = 100
       ParentFont = False
       Properties.ReadOnly = False
@@ -166,10 +165,52 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       TabOrder = 4
       Width = 99
     end
+    object Cbx_Metodos: TComboBox
+      Left = 280
+      Top = 66
+      Width = 408
+      Height = 22
+      Style = csOwnerDrawFixed
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ItemHeight = 16
+      ParentFont = False
+      TabOrder = 2
+      OnChange = Cbx_MetodosChange
+      Items.Strings = (
+        'LinxLojas'
+        'LinxGrupoLojas'
+        'LinxVendedores'
+        'LinxProdutos'
+        'LinxProdutosCamposAdicionais'
+        'LinxProdutosDetalhes'
+        'LinxProdutosCodBar'
+        'LinxClientesFornec'
+        'LinxClientesFornecCamposAdicionais'
+        'LinxMovimento'
+        'LinxMovtosAjustesEntradas'
+        'LinxMovtosAjustesSaidas'
+        'LinxMovimentoTrocas'
+        'LinxMovimentoOrigemDevolucoes'
+        'LinxMovimentoSerial'
+        'LinxMovimentoPlanos'
+        'LinxAcoesPromocionais'
+        'LinxMovimentoAcoesPromocionais'
+        'LinxPedidosVenda'
+        'LinxPlanosPedidoVenda'
+        'LinxPedidosCompra'
+        'LinxReducoesZ'
+        'LinxSangriaSuprimentos'
+        'LinxFaturas'
+        'LinxLancContabil')
+    end
   end
   object OdirPanApres: TPanel
-    Left = 362
-    Top = 4
+    Left = 50
+    Top = 20
     Width = 89
     Height = 33
     BevelInner = bvLowered

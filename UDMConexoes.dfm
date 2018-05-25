@@ -1,9 +1,9 @@
 object DMConexoes: TDMConexoes
   OldCreateOrder = False
-  Left = 175
-  Top = 113
+  Left = 240
+  Top = 116
   Height = 607
-  Width = 1116
+  Width = 1025
   object IBDB_06: TIBDatabase
     DatabaseName = '\\LOCALHOST\C:\PROJETOS\BELSHOP\DADOS\BANCO_MATRIZ.FDB'
     Params.Strings = (

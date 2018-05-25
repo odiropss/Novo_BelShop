@@ -180,27 +180,37 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
         'RCE_SN, PRECOCOMPRA, PRECOVENDA, MARGEM, DATAINCLUSAO, DATAALTER' +
         'ACAO, DTA_ATUALIZACAO) values ('#39'||'
       #39#39#39#39'||pr.codproduto||'#39#39#39','#39'||'
-      #39#39#39#39'||replace (COALESCE(pr.apresentacao,'#39#39'),'#39#39#39#39','#39'"'#39')||'#39#39#39','#39'||'
-      #39#39#39#39'||COALESCE(pr.codbarra,'#39#39')||'#39#39#39','#39'||'
+      
+        #39#39#39#39'||TRIM(REPLACE (COALESCE(pr.apresentacao,'#39#39'),'#39#39#39#39','#39'"'#39'))||'#39#39#39 +
+        ','#39'||'
+      #39#39#39#39'||TRIM(COALESCE(pr.codbarra,'#39#39'))||'#39#39#39','#39'||'
       #39#39#39#39'||COALESCE(pr.situacaopro,'#39'0'#39')||'#39#39#39','#39'||'
-      #39#39#39#39'||COALESCE(pr.unidade,'#39#39')||'#39#39#39','#39'||'
-      #39#39#39#39'||COALESCE(pr.unidadeestoque,'#39#39')||'#39#39#39','#39'||'
+      #39#39#39#39'||TRIM(COALESCE(pr.unidade,'#39#39'))||'#39#39#39','#39'||'
+      #39#39#39#39'||TRIM(COALESCE(pr.unidadeestoque,'#39#39'))||'#39#39#39','#39'||'
       #39#39#39#39'||COALESCE(pr.classeabc,'#39'E'#39')||'#39#39#39','#39'||'
       #39#39#39#39'||COALESCE(pr.principalfor,'#39#39')||'#39#39#39','#39'||'
-      #39#39#39#39'||replace (COALESCE(fo.nomefornecedor,'#39#39'),'#39#39#39#39','#39'"'#39')||'#39#39#39','#39'||'
-      #39#39#39#39'||COALESCE(pr.referencia,'#39#39')||'#39#39#39','#39'||'
-      #39#39#39#39'||COALESCE(pr.codgruposub,'#39#39')||'#39#39#39','#39'||'
-      #39#39#39#39'||COALESCE(gr.codgrupo,'#39#39')||'#39#39#39','#39'||'
-      #39#39#39#39'||COALESCE(gr.nomegrupo,'#39#39')||'#39#39#39','#39'||'
-      #39#39#39#39'||COALESCE(sg.codsubgrupo,'#39#39')||'#39#39#39','#39'||'
-      #39#39#39#39'||replace (COALESCE(sg.nomesubgrupo,'#39#39'),'#39#39#39#39','#39'"'#39')||'#39#39#39','#39'||'
-      #39#39#39#39'||COALESCE(pr.codfamiliapreco,'#39#39')||'#39#39#39','#39'||'
       
-        #39#39#39#39'||replace (COALESCE(fp.nomefamiliapreco,'#39#39'),'#39#39#39#39','#39'"'#39')||'#39#39#39','#39 +
-        '||'
-      #39#39#39#39'||replace (COALESCE(pr.nomegenerico,'#39#39'),'#39#39#39#39','#39'"'#39')||'#39#39#39','#39'||'
+        #39#39#39#39'||TRIM(REPLACE(COALESCE(fo.nomefornecedor,'#39#39'),'#39#39#39#39','#39'"'#39'))||'#39#39 +
+        #39','#39'||'
+      #39#39#39#39'||TRIM(COALESCE(pr.referencia,'#39#39'))||'#39#39#39','#39'||'
+      #39#39#39#39'||TRIM(COALESCE(pr.codgruposub,'#39#39'))||'#39#39#39','#39'||'
+      #39#39#39#39'||COALESCE(gr.codgrupo,'#39#39')||'#39#39#39','#39'||'
+      #39#39#39#39'||TRIM(COALESCE(gr.nomegrupo,'#39#39'))||'#39#39#39','#39'||'
+      #39#39#39#39'||COALESCE(sg.codsubgrupo,'#39#39')||'#39#39#39','#39'||'
+      
+        #39#39#39#39'||TRIM(REPLACE(COALESCE(sg.nomesubgrupo,'#39#39'),'#39#39#39#39','#39'"'#39'))||'#39#39#39',' +
+        #39'||'
+      #39#39#39#39'||TRIM(COALESCE(pr.codfamiliapreco,'#39#39'))||'#39#39#39','#39'||'
+      
+        #39#39#39#39'||TRIM(REPLACE(COALESCE(fp.nomefamiliapreco,'#39#39'),'#39#39#39#39','#39'"'#39'))||' +
+        #39#39#39','#39'||'
+      
+        #39#39#39#39'||TRIM(REPLACE(COALESCE(pr.nomegenerico,'#39#39'),'#39#39#39#39','#39'"'#39'))||'#39#39#39',' +
+        #39'||'
       #39#39#39#39'||COALESCE(pr.codaplicacao,'#39#39')||'#39#39#39','#39'||'
-      #39#39#39#39'||replace (COALESCE(ap.nomeaplicacao,'#39#39'),'#39#39#39#39','#39'"'#39')||'#39#39#39','#39'||'
+      
+        #39#39#39#39'||TRIM(REPLACE(COALESCE(ap.nomeaplicacao,'#39#39'),'#39#39#39#39','#39'"'#39'))||'#39#39#39 +
+        ','#39'||'
       #39#39#39#39'||COALESCE(pr.codicmvenda,'#39'00'#39')||'#39#39#39','#39'||'
       #39#39#39#39'||COALESCE(pr.codicmcompra,'#39'00'#39')||'#39#39#39','#39'||'
       #39#39#39#39'||COALESCE(pr.codipicompra,'#39'00'#39')||'#39#39#39','#39'||'
@@ -212,7 +222,7 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
       #39#39#39#39'||COALESCE(pr.controlalote,'#39#39')||'#39#39#39','#39'||'
       #39#39#39#39'||COALESCE(pr.diasvencelote,0)||'#39#39#39','#39'||'
       #39#39#39#39'||COALESCE(pr.naovendezerado,'#39#39')||'#39#39#39','#39'||'
-      #39#39#39#39'||COALESCE(pr.codmercosulncm,'#39#39')||'#39#39#39','#39'||'
+      #39#39#39#39'||TRIM(COALESCE(pr.codmercosulncm,'#39#39'))||'#39#39#39','#39'||'
       #39#39#39#39'||COALESCE(pr.grupostmva,0)||'#39#39#39','#39'||'
       #39#39#39#39'||COALESCE(pr.codpiscofins_venda,'#39'00'#39')||'#39#39#39','#39'||'
       #39#39#39#39'||COALESCE(pr.codpiscofins_compra,'#39'00'#39')||'#39#39#39','#39'||'

@@ -1620,6 +1620,16 @@ Begin
            ' WHERE pr.dta_atualizacao<>CURRENT_DATE';
     DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
+    // Atualiza Data de Inclusão e Alteração conforme LinxProduto
+    MySql:=' UPDATE PRODUTO ps'+
+           ' SET ps.datainclusao=(SELECT MAX(CAST(p.dt_inclusao AS DATE))'+
+           '                      FROM LINXPRODUTOS p'+
+           '                      WHERE p.cod_auxiliar=ps.codproduto)'+
+           ' , ps.dataalteracao=(SELECT MAX(CAST(p.dt_update AS DATE))'+
+           '                     FROM LINXPRODUTOS p'+
+           '                     WHERE p.cod_auxiliar=ps.codproduto)';
+    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
     MySql:=' DELETE FROM movtos_empresas m'+
            ' Where m.Ind_Tipo=''OK'''+
            ' And m.NomeFornecedor=''Produtos''';
@@ -1963,9 +1973,9 @@ begin
 
   // odiropss odiraqui1: Original: Nao Comentar 1 ///////////////////////
   If Trim(EdtParamStr.Text)='' Then
-   EdtParamStr.Text:='ODIR'; // Agora é Direto por Agendamento
-// EdtParamStr.Text:='OPSS';   // Não Libera Direto
-// EdtParamStr.Text:='OPSS_N'; // Não Libera Direto
+   EdtParamStr.Text:='ODIR'; // Agora é Direto por Agendamento - Libera bgJaProcessouUmaVez:=False Para Rodar;
+// EdtParamStr.Text:='OPSS';   // Não Libera Direto - Não Libera bgJaProcessouUmaVez:=False Para Rodar;
+// EdtParamStr.Text:='OPSS_N'; // Não Libera Direto - Não Libera bgJaProcessouUmaVez:=False Para Rodar;
 
 //==========================
 // Se Parametro = ODIR

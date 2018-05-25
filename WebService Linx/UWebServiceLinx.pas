@@ -1,6 +1,90 @@
 unit UWebServiceLinx;
 {
 odirTeste
+
+-> LinxClientesFornecContatos
+   - 1 vez
+   ===========================
+   Retorna os campos referentes ao contato do cadastro dos
+   Clientes/Fornecedores cadastrados no portal
+
+-> LinxPlanos
+   - 1 vez
+   ==========
+   Retorna o cadastro dos Planos de Pagamentos do portal
+
+-> LinxListaDaVez
+   - Por Loja
+   ==============
+   Retorna os registros gerados na rotina de Lista da Vez
+
+-> LinxMetasVendedores
+   - Por Loja
+   ===================
+   Retorna as Metas de Vendedores das lojas
+
+-> LinxProdutosInventario
+   - Por Loja
+   ======================
+  Retorna informações do saldo do produto na data pesquisada
+
+-> LinxConfiguracoesTributarias
+   - Por Loja
+   ============================
+   Retorna o cadastro de configurações tributárias da empresa
+
+-> LinxConfiguracoesTributariasDetalhes (Problema no Tamanho dos Campos)
+   - Por Loja
+   ====================================
+   Retorna o detalhamento das configurações tributárias da empresa
+create table LinxConfiguracoesTributariasDetalhes
+(
+portal integer,
+EMPRESA              INTEGER,
+cnpj_emp VARCHAR (14),
+id_config_tributaria integer,
+desc_classe_fiscal VarChar(150),
+cod_natureza_operacao integer,
+desc_natureza_operacao VarChar(40),
+cfop_fiscal VarChar(5),
+desc_cfop_fiscal VarChar(200),
+aliq_icms numeric(12,4),
+valor_tributado_icms numeric(12,4),
+aliq_pis numeric(12,4),
+aliq_cofins numeric(12,4),
+perc_reducao_icms numeric(12,4),
+perc_reducao_icms_st numeric(12,4),
+margem_st numeric(12,4),
+aliquota_st numeric(12,4),
+margem_st_simulador numeric(12,4),
+aliquota_st_simulador numeric(12,4),
+desconto_icms numeric(12,4),
+cst_icms_fiscal VarChar(4),
+desc_cst_icms_fiscal VarChar(150),
+cst_ipi_fiscal VarChar(4),
+desc_cst_ipi_fiscal VarChar(150),
+cst_pis_fiscal VarChar(4),
+desc_cst_pis_fiscal VarChar(150),
+cst_cofins_fiscal VarChar(4),
+desc_cst_cofins_fiscal VarChar(150),
+desc_obs_padrao VarChar(250),
+icms_credito integer,
+ipi_credito integer,
+cod_enquadramento_ipi VarChar(3),
+desc_enquadramento_ipi VarChar(600),
+perc_aliquota_interna_uf_destinatario numeric(12,4),
+perc_aliquota_interestadual_uf_envolvidas numeric(12,4),
+csosn_fiscal VarChar(5),
+desc_csosn_fiscal VarChar(200),
+forma_tributacao_pis integer,
+forma_tributacao_cofins integer,
+COD_LOJA             VARCHAR(2),
+DTA_ATUALIZACAO       DATE,
+HRA_ATUALIZACAO       TIME
+)
+
+================================================================================
+
 -> Métodos: LinxMetodos
    - 1 Vez
    ====================
@@ -2082,37 +2166,37 @@ End;
       //========================================================================
 
       //========================================================================
-      // LinxMovimentoSerial ===================================================
+      // LinxMovimentoSerial (NÃO EXECUTAR - NÃO EXISTE DADOS PARA BELSHOP) ====
       //========================================================================
-      If sgMetodo='LinxMovimentoSerial' Then
-      Begin
-        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
-         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
-
-        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
-        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
-
-        DecodeDate(dDtaHoje, wAno, wMes, wDia);
-        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
-
-        // Metodo por Parametro (Acerta Data Inicial)
-        If Trim(sgParametroMetodo)<>'' Then
-        Begin
-          If dDtaUltAtual=dDtaHoje Then
-          Begin
-            sgDtaInicio:=sgDtaFim;
-          End;
-
-          If dDtaUltAtual<dDtaHoje Then
-          Begin
-            DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
-            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
-          End;
-        End; // If Trim(sgParametroMetodo)<>'' Then
-
-        MontaMetodoXMLPost();
-      End; // If sgMetodo='LinxMovimentoSerial' Then
-      //========================================================================
+//      If sgMetodo='LinxMovimentoSerial' Then
+//      Begin
+//        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+//         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
+//
+//        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
+//        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+//
+//        DecodeDate(dDtaHoje, wAno, wMes, wDia);
+//        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+//
+//        // Metodo por Parametro (Acerta Data Inicial)
+//        If Trim(sgParametroMetodo)<>'' Then
+//        Begin
+//          If dDtaUltAtual=dDtaHoje Then
+//          Begin
+//            sgDtaInicio:=sgDtaFim;
+//          End;
+//
+//          If dDtaUltAtual<dDtaHoje Then
+//          Begin
+//            DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+//            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+//          End;
+//        End; // If Trim(sgParametroMetodo)<>'' Then
+//
+//        MontaMetodoXMLPost();
+//      End; // If sgMetodo='LinxMovimentoSerial' Then
+//      //========================================================================
 
       //========================================================================
       // LinxMovimentoPlanos ===================================================
@@ -2515,46 +2599,46 @@ End;
       //========================================================================
 
       //========================================================================
-      // LinxReducoesZ =========================================================
+      // LinxReducoesZ (NÃO EXECUTAR - NÃO EXISTE DADOS PARA BELSHOP) ==========
       //========================================================================
-      If sgMetodo='LinxReducoesZ' Then
-      Begin
-        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
-         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
+//      If sgMetodo='LinxReducoesZ' Then
+//      Begin
+//        If (dDtaUltAtual=0) Or ((dDtaUltAtual-7)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+//         dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
+//
+//        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
+//        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+//
+//        DecodeDate(dDtaHoje, wAno, wMes, wDia);
+//        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+//
+//        // Metodo por Parametro (Acerta Data Inicial)
+//        If Trim(sgParametroMetodo)<>'' Then
+//        Begin
+//          If dDtaUltAtual=dDtaHoje Then
+//          Begin
+//            sgDtaInicio:=sgDtaFim;
+//          End;
+//
+//          If dDtaUltAtual<dDtaHoje Then
+//          Begin
+//            DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
+//            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+//          End;
+//        End; // If Trim(sgParametroMetodo)<>'' Then
+//
+//        // cnpjPortal -----------------------------------------------
+//        // (S) = Retorna registros de todos CNPJs do Portal
+//        //       (utiliza como base o cnpj informado nocampo cnpjEmp para pesquisar o portal).
+//        // (N) = Retorna registros somente do CNPJ pesquisa
+//        sgCnpjPortal:='N';
+//
+//        MontaMetodoXMLPost();
+//      End; // If sgMetodo='LinxReducoesZ' Then
+//      //========================================================================
 
-        DecodeDate(dDtaUltAtual-7, wAno, wMes, wDia);
-        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
-
-        DecodeDate(dDtaHoje, wAno, wMes, wDia);
-        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
-
-        // Metodo por Parametro (Acerta Data Inicial)
-        If Trim(sgParametroMetodo)<>'' Then
-        Begin
-          If dDtaUltAtual=dDtaHoje Then
-          Begin
-            sgDtaInicio:=sgDtaFim;
-          End;
-
-          If dDtaUltAtual<dDtaHoje Then
-          Begin
-            DecodeDate(dDtaUltAtual, wAno, wMes, wDia);
-            sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
-          End;
-        End; // If Trim(sgParametroMetodo)<>'' Then
-
-        // cnpjPortal -----------------------------------------------
-        // (S) = Retorna registros de todos CNPJs do Portal
-        //       (utiliza como base o cnpj informado nocampo cnpjEmp para pesquisar o portal).
-        // (N) = Retorna registros somente do CNPJ pesquisa
-        sgCnpjPortal:='N';
-
-        MontaMetodoXMLPost();
-      End; // If sgMetodo='LinxReducoesZ' Then
       //========================================================================
-
-      //========================================================================
-      // LinxSangriaSuprimentos ======================================================
+      // LinxSangriaSuprimentos ================================================
       //========================================================================
       If sgMetodo='LinxSangriaSuprimentos' Then
       Begin
