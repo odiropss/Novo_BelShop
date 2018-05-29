@@ -580,7 +580,7 @@ procedure TFrmCurvasDemandas.Bt_AtualizarClick(Sender: TObject);
 Var
   MySql,
   sTotQtdDemandas, sTotVlrDemandas,
-  sDtaDemI, sDtaDemF, sDtaTra: String;
+  sDtaDemI, sDtaDemF, sDtaTra, sDtaProdNovo: String;
 
   sDtaExcluir: String;
 
@@ -916,6 +916,19 @@ begin
       // Calcula Curvas de Valores e Quantidades ===============================
       CalculaCurvas;
 
+      // Coloca Pprodutos Novos (Até 6 Meses de Cadastro) ======================
+      // da Curva "E" para Curva "C" ===========================================
+      sDtaProdNovo:=DateToStr(IncMonth(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor),-6));
+
+      MySql:=' UPDATE ES_FINAN_CURVA_ABC cv'+
+             ' SET cv.ind_curva=''C'''+
+             ' WHERE EXISTS (SELECT 1'+
+             '               FROM LINXPRODUTOS pl'+
+             '               WHERE pl.cod_auxiliar=cv.cod_produto'+
+             '               AND   CAST(pl.dt_inclusao AS DATE)>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaProdNovo)))+')'+
+             ' AND cv.ind_curva=''E''';
+      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
       // Atualiza Transacao ====================================================
       DMMovtosEmpresas.SQLC.Commit(TD);
 
@@ -948,8 +961,7 @@ begin
 end; // Atualiza Curvas e Demandas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
-procedure TFrmCurvasDemandas.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TFrmCurvasDemandas.FormClose(Sender: TObject;var Action: TCloseAction);
 begin
 
   Try

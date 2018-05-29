@@ -407,7 +407,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Top = 0
     Width = 1047
     Height = 564
-    ActivePage = Ts_ConciliacoesManutDepositos
+    ActivePage = Ts_ConciliacoesManutDepAnalise
     Align = alClient
     TabOrder = 0
     OnChange = PC_PrincipalChange

@@ -4358,7 +4358,6 @@ begin
   End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtCodigo.Text)<>'0')Then
 
   FreeAndNil(FrmPesquisa);
-
 end;
 
 procedure TFrmOCLinx.EdtFiltroCodProdutoExit(Sender: TObject);

@@ -1989,7 +1989,7 @@ Begin
   DMBelShop.CDS_Busca1.Close;
 
   // Busca Movtos ==============================================================
-  // ANtigo Esta no Fim do FormEstoques
+  // Antigo Esta no Fim do FormEstoques
   MySql:=' SELECT'+
          ' GEN_ID('+sGenProd+',1) SEQ,'+
          ' pr.codproduto COD_PRODUTO,'+

@@ -1357,7 +1357,7 @@ Begin
 
 End; // CONCILIA합ES PAGTOS/DEPOSITOS - Web Service GoeBeauty (Pagtos) >>>>>>>>>
 
-// CONCILIA합ES PAGTOS/DEPOSITOS - Atualiza Faturamento em Dinheiro no Dia >>>>>
+// CONCILIA합ES PAGTOS/DEPOSITOS - Atualiza Depositos/Faturamento em Dinheiro no Dia >>>>>
 Procedure TFrmBancoExtratos.ConcDepositoFaturamentoDinheiro(sDia: String);
 Var
   Tot_Dinh, Tot_Salao, Tot_Dia: Currency;
@@ -1502,7 +1502,7 @@ Begin
   DMConciliacao.CDS_CMDepositosAnalise.First;
 
   OdirPanApres.Visible:=False;
-end; // CONCILIA합ES PAGTOS/DEPOSITOS - Atualiza Faturamento em Dinheiro no Dia
+end; // CONCILIA합ES PAGTOS/DEPOSITOS - Atualiza Depositos/Faturamento em Dinheiro no Dia >>>>>
 
 // CONCILIA합ES PAGTOS/DEPOSITOS - Fechamento do Dia no Banco de Dados >>>>>>>>>
 Procedure TFrmBancoExtratos.ConcDepositosFechamentoDia;
@@ -16097,14 +16097,16 @@ begin
            '  END)'+
            ' , 0.00) CX_MTZ,'+
 
-           ' COALESCE(SUM('+
-           '  CASE'+
-           '     WHEN (TRIM(COALESCE(dp.tip_conciliacao,''''))='''') THEN'+
-           '       md.vlr_docto'+
-           '     ELSE'+
-           '       0.00'+
-           '  END)'+
-           ' , 0.00) DEPOSITO,'+
+// OdirApagar - 29/05/2018
+//           ' COALESCE(SUM('+
+//           '  CASE'+
+//           '     WHEN (TRIM(COALESCE(dp.tip_conciliacao,''''))='''') THEN'+
+//           '       md.vlr_docto'+
+//           '     ELSE'+
+//           '       0.00'+
+//           '  END)'+
+//           ' , 0.00) DEPOSITO,'+
+           ' 0.00 DEPOSITO,'+
 
            ' COALESCE(SUM('+
            '  CASE'+
@@ -16124,7 +16126,18 @@ begin
            '  END)'+
            ' ,0.00) OUTROS,'+
 
-           ' SUM(COALESCE(md.vlr_docto,0.00)) TOTAL,'+
+// OdirApagar - 29/05/2018
+//           ' SUM(COALESCE(md.vlr_docto,0.00)) TOTAL,'+
+
+           ' COALESCE(SUM('+
+           '  CASE'+
+           '     WHEN (TRIM(COALESCE(dp.tip_conciliacao,''''))='''') THEN'+
+           '       0.00'+
+           '     ELSE'+
+           '       md.vlr_docto'+
+           '  END)'+
+           ' , 0.00) TOTAL,'+
+
            ' 0.00 DIF_DEPOSITO,'+
            ' 0.00 QUEBRA_CX,';
 
@@ -16185,14 +16198,16 @@ begin
            ' END)'+
            ' , 0.00) CX_MTZ,'+
 
-           ' COALESCE(SUM('+
-           '  CASE'+
-           '     WHEN (TRIM(COALESCE(dp.tip_conciliacao,''''))='''') THEN'+
-           '       md.vlr_docto'+
-           '     ELSE'+
-           '       0.00'+
-           ' END)'+
-           ' , 0.00) DEPOSITO,'+
+// OdirApagar - 29/05/2018
+//           ' COALESCE(SUM('+
+//           '  CASE'+
+//           '     WHEN (TRIM(COALESCE(dp.tip_conciliacao,''''))='''') THEN'+
+//           '       md.vlr_docto'+
+//           '     ELSE'+
+//           '       0.00'+
+//           ' END)'+
+//           ' , 0.00) DEPOSITO,'+
+           ' 0.00 DEPOSITO,'+
 
            ' COALESCE(SUM('+
            '  CASE'+
@@ -16211,7 +16226,17 @@ begin
            '       0.00'+
            ' END),0.00) OUTROS,'+
 
-           ' SUM(COALESCE(md.vlr_docto,0.00)) TOTAL,'+
+// OdirApagar - 29/05/2018
+//         ' SUM(COALESCE(md.vlr_docto,0.00)) TOTAL,'+
+
+           ' COALESCE(SUM('+
+           '  CASE'+
+           '     WHEN (TRIM(COALESCE(dp.tip_conciliacao,''''))='''') THEN'+
+           '       0.00'+
+           '     ELSE'+
+           '       md.vlr_docto'+
+           '  END)'+
+           ' , 0.00) TOTAL,'+
 
            ' 0.00 DIF_DEPOSITO,'+
            ' 0.00 QUEBRA_CX,'+

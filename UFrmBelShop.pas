@@ -2315,6 +2315,7 @@ type
       Sender: TObject);
     procedure SubMenuCentralTrocasNotasAvariasClick(Sender: TObject);
     procedure NFePerdasProdutos1Click(Sender: TObject);
+    procedure MenuAnaliseFornecedoresProdutosClick(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -2532,7 +2533,7 @@ uses DK_Procs1, UPermissao, UDMBelShop,
      UDMCentralTrocas, UFrmCentralTrocas, UFrmEstoques, UEntrada, UDMSidicom,
      UFrmFaltasCDLojas, UFrmControleKits, UFrmControleEstoques,
      UFrmFluxFornecedor, UFrmComissaoVendedor, UDMLinx, RTLConsts, UFrmOCLinx,
-     UFrmPrioridadesReposicao;
+     UFrmPrioridadesReposicao, UFrmAnaliseFornecedores;
 
 {$R *.dfm}
 {$R C:\Projetos\BelShop\Botoes\Botoes.res }
@@ -45325,8 +45326,9 @@ procedure TFrmBelShop.MenuEstoquesSimuladorEstoquesClick(Sender: TObject);
 begin
   FrmControleEstoques:=TFrmControleEstoques.Create(Self);
 
-//  TabSheetInvisivel(FrmControleEstoques);
-//  FrmControleEstoques.Ts_ContEstSolic.TabVisible:=True;
+  TabSheetInvisivel(FrmControleEstoques);
+  FrmControleEstoques.Ts_ContEstSolic.TabVisible:=True;
+  FrmControleEstoques.Ts_ContEstSimulador.TabVisible:=True;
 
   If (Sender is TMenuItem) Then
    igTagPermissao:=(Sender as TMenuItem).Tag;
@@ -45335,9 +45337,9 @@ begin
 
   // Permissões de Visualização ================================================
 //  PermissaoVisual(FrmcSalao.Ts_Profissionais);
-
-  FrmControleEstoques.Ts_ContEstFornecedores.TabVisible:=False;
-  FrmControleEstoques.Ts_ContEstProdutos.TabVisible:=False;
+//OdirApagar - 28/05/2018
+//  FrmControleEstoques.Ts_ContEstFornecedores.TabVisible:=False;
+//  FrmControleEstoques.Ts_ContEstProdutos.TabVisible:=False;
 
   FrmControleEstoques.PC_ContEstPrincipal.TabIndex:=0;
   FrmControleEstoques.ShowModal;
@@ -46587,7 +46589,24 @@ begin
   FrmCentralTrocas.Bt_AnaliseRepDiariaFechar.Parent:=FrmCentralTrocas.Pan_AnaliseRepDiaria;
 end;
 
-End.
+procedure TFrmBelShop.MenuAnaliseFornecedoresProdutosClick(Sender: TObject);
+begin
+  FrmAnaliseFornecedores:=TFrmAnaliseFornecedores.Create(Self);
+
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
+  BloqueioBotoes(FrmAnaliseFornecedores, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
+
+  // Permissões de Visualização ================================================
+//  PermissaoVisual(FrmcSalao.Ts_Profissionais);
+
+  FrmAnaliseFornecedores.ShowModal;
+
+  FreeAndNil(FrmAnaliseFornecedores);
+end;
+
+end.
 // 42296 - Record
 // 45983 - 05/08/2015 +
 // 44887 - 06/08/2015 -

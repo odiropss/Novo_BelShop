@@ -64,7 +64,6 @@ type
     Gb_ContEstTipoEstoques: TGroupBox;
     Cbx_ContEstEstTipo: TComboBox;
     Dbg_ContEstSimulador: TDBGridJul;
-    Bt_ContEstSalvaExcel: TJvXPButton;
     Bt_ContEstClipboard: TJvXPButton;
     Label4: TLabel;
     Label5: TLabel;
@@ -102,7 +101,6 @@ type
     procedure Ckb_ParamCurvaSelectAClick(Sender: TObject);
     procedure Ckb_ParamCurvaSelectAKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure Bt_ContEstParametrosSalvarClick(Sender: TObject);
-    procedure Bt_ContEstSalvaExcelClick(Sender: TObject);
     procedure Bt_ContEstClipboardClick(Sender: TObject);
     procedure Bt_ContEstSimuladorClick(Sender: TObject);
     procedure Dbg_ContEstSimuladorDrawColumnCell(Sender: TObject;
@@ -387,7 +385,6 @@ end;
 
 procedure TFrmControleEstoques.FormKeyPress(Sender: TObject; var Key: Char);
 begin
-
   If Key = #13 Then
   Begin
     Key:=#0;
@@ -445,12 +442,10 @@ begin
   Bt_ContEstFornecedores.Visible:=True;
   Bt_ContEstProdutos.Visible:=True;
   Bt_ContEstClipboard.Visible:=True;
-  Bt_ContEstSalvaExcel.Visible:=True;
 
   If (PC_ContEstPrincipal.ActivePage=Ts_ContEstSolic) And (Ts_ContEstSolic.CanFocus) Then
   Begin
     Bt_ContEstClipboard.Visible:=False;
-    Bt_ContEstSalvaExcel.Visible:=False;
     Bt_ContEstProdutos.Visible:=False;
     Bt_ContEstFornecedores.Visible:=False;
     Bt_ContEstSimulador.Visible:=True;
@@ -472,7 +467,6 @@ begin
     Bt_ContEstFornecedores.Visible:=True;
     Bt_ContEstProdutos.Visible:=False;
     Bt_ContEstClipboard.Visible:=True;
-    Bt_ContEstSalvaExcel.Visible:=True;
 
     Dbg_ContEstProdutos.SetFocus;
   End;
@@ -485,7 +479,6 @@ begin
     Bt_ContEstFornecedores.Visible:=False;
     Bt_ContEstProdutos.Visible:=True;
     Bt_ContEstClipboard.Visible:=True;
-    Bt_ContEstSalvaExcel.Visible:=True;
 
     Dbg_ContEstFornecedores.SetFocus;
   End;
@@ -611,14 +604,6 @@ begin
 
 end;
 
-procedure TFrmControleEstoques.Bt_ContEstSalvaExcelClick(Sender: TObject);
-begin
-  If DMVirtual.CDS_V_EstoqueLojas.IsEmpty Then
-   Exit;
-
-  ExportDBGridExcel(True, Dbg_ContEstSimulador, FrmControleEstoques);
-end;
-
 procedure TFrmControleEstoques.Bt_ContEstClipboardClick(Sender: TObject);
 begin
   If DMVirtual.CDS_V_EstoqueLojas.IsEmpty Then
@@ -634,6 +619,7 @@ Var
   iQtdEstoque, iQtdVendas, iEstPrevisto: Integer;
   cVlrEstoque, cVlrPrevisto: Currency;
 begin
+
   Cbx_ContEstEstTipo.SetFocus;
 
   // Solicita Lojas ============================================================
@@ -1115,6 +1101,7 @@ begin
       Exit;
     End;
   End; // If (Sender is TJvXPButton) Then
+
 end;
 
 end.

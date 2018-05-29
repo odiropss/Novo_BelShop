@@ -1607,6 +1607,7 @@ Begin
 
     DMMovtosEmpresas.IBQ_ProdutoMPMS.Close;
     DMMovtosEmpresas.IBQ_ProdutoMPMS.Open;
+    DMMovtosEmpresas.IBQ_ProdutoMPMS.DisableControls;
     While Not DMMovtosEmpresas.IBQ_ProdutoMPMS.Eof do
     Begin
       MySql:=DMMovtosEmpresas.IBQ_ProdutoMPMSUPDATE_INSERT.AsString;
@@ -1614,20 +1615,39 @@ Begin
 
      DMMovtosEmpresas.IBQ_ProdutoMPMS.Next;
     End; // While Not DMMovtosEmpresas.IBQ_ProdutoMPMS.Eof do
+    DMMovtosEmpresas.IBQ_ProdutoMPMS.EnableControls;
     DMMovtosEmpresas.IBQ_ProdutoMPMS.Close;
 
     MySql:=' DELETE FROM PRODUTO pr'+
            ' WHERE pr.dta_atualizacao<>CURRENT_DATE';
     DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
-    // Atualiza Data de Inclusão e Alteração conforme LinxProduto
+    // Atualiza Data de Inclusão Conforme LinxProduto ==========================
     MySql:=' UPDATE PRODUTO ps'+
            ' SET ps.datainclusao=(SELECT MAX(CAST(p.dt_inclusao AS DATE))'+
            '                      FROM LINXPRODUTOS p'+
-           '                      WHERE p.cod_auxiliar=ps.codproduto)'+
-           ' , ps.dataalteracao=(SELECT MAX(CAST(p.dt_update AS DATE))'+
-           '                     FROM LINXPRODUTOS p'+
-           '                     WHERE p.cod_auxiliar=ps.codproduto)';
+           '                      WHERE p.cod_auxiliar=ps.codproduto'+
+           '                      AND   TRIM(COALESCE(p.cod_auxiliar,''''))<>'''''+
+           '                      AND   TRIM(COALESCE(p.dt_inclusao,''''))<>'''')'+
+           ' WHERE EXISTS (SELECT 1'+
+           '               FROM LINXPRODUTOS p'+
+           '               WHERE p.cod_auxiliar=ps.codproduto'+
+           '               AND   TRIM(COALESCE(p.cod_auxiliar,''''))<>'''''+
+           '               AND   TRIM(COALESCE(p.dt_inclusao,''''))<>'''')';
+    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Data de Alteração Conforme LinxProduto =========================
+    MySql:=' UPDATE PRODUTO ps'+
+           ' SET ps.dataalteracao=(SELECT MAX(CAST(p.dt_update AS DATE))'+
+           '                       FROM LINXPRODUTOS p'+
+           '                       WHERE p.cod_auxiliar=ps.codproduto'+
+           '                       AND   TRIM(COALESCE(p.cod_auxiliar,''''))<>'''''+
+           '                       AND   TRIM(COALESCE(p.dt_update,''''))<>'''')'+
+           ' WHERE EXISTS (SELECT 1'+
+           '               FROM LINXPRODUTOS p'+
+           '               WHERE p.cod_auxiliar=ps.codproduto'+
+           '               AND   TRIM(COALESCE(p.cod_auxiliar,''''))<>'''''+
+           '               AND   TRIM(COALESCE(p.dt_update,''''))<>'''')';
     DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
     MySql:=' DELETE FROM movtos_empresas m'+
