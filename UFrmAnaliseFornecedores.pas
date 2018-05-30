@@ -18,7 +18,8 @@ uses
   dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
   dxSkinXmas2008Blue, cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar,
   JvCombobox, JvExStdCtrls, JvHtControls, JvListBox, JvComboListBox, Mask,
-  ToolEdit, CurrEdit, Grids, DBGrids, DBGridJul;
+  Commctrl, // SHOW HINT EM FORMA DE BALÃO
+  ToolEdit, CurrEdit, Grids, DBGrids, DBGridJul, Math;
 
 type
   TFrmAnaliseFornecedores = class(TForm)
@@ -32,7 +33,7 @@ type
     Gb_Lojas: TGroupBox;
     Gb_Fornecedores: TGroupBox;
     Gb_Setores: TGroupBox;
-    Bt_Minimizar: TJvXPButton;
+    Bt_MinimizarGraficos: TJvXPButton;
     EdtDesFornecedor: TEdit;
     Bt_BuscaFornecedor: TJvXPButton;
     EdtDesSetor: TEdit;
@@ -45,16 +46,25 @@ type
     Cbx_Lojas: TJvHTComboBox;
     EdtCodFornecedor: TCurrencyEdit;
     EdtCodSetor: TCurrencyEdit;
-    DBGridJul1: TDBGridJul;
+    Dbg_Produtos: TDBGridJul;
+    Bt_MinimizarGraficoLojas: TJvXPButton;
+    Bt_MinimizarGraficoForn: TJvXPButton;
+    Bt_MinimizarGraficoSetores: TJvXPButton;
     Button1: TButton;
+    Bt_Processar: TJvXPButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
     procedure Bt_FecharClick(Sender: TObject);
-    procedure Bt_MinimizarClick(Sender: TObject);
+    procedure Bt_MinimizarGraficosClick(Sender: TObject);
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    // Hint em Fortma de Balão
+    Procedure CreateToolTips(hWnd: Cardinal); // Cria Show Hint em Forma de Balão
+    Procedure FocoToControl(Sender: TControl); // Posiciona no Componente
+
     // Graficos
     Procedure FechaSeriesGraficos;
     Procedure CriaSeriesGraficos;
@@ -66,19 +76,35 @@ type
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-    procedure DtEdt_DtaInicioExit(Sender: TObject);
-    procedure DtEdt_DtaFimPropertiesChange(Sender: TObject);
     procedure Bt_BuscaFornecedorClick(Sender: TObject);
     procedure Bt_BuscaSetorClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure Bt_MinimizarGraficoLojasClick(Sender: TObject);
+    procedure Dbg_ProdutosDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure Dbg_ProdutosDblClick(Sender: TObject);
+    procedure Bt_ProcessarClick(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
   end;
 
+const 
+  // Show Hint em Forma de Balão
+  TTS_BALLOON = $40; 
+  TTM_SETTITLE = (WM_USER + 32); 
+  //////////////////////////////
+
 var
   FrmAnaliseFornecedores: TFrmAnaliseFornecedores;
+
+  // Show Hint em Forma de Balão
+  hTooltip: Cardinal;
+  ti: TToolInfo;
+  buffer : array[0..255] of char;
+  ///////////////////////////////
 
   TD : TTransactionDesc; // Ponteiro de Transação
   bgSair: Boolean;
@@ -89,9 +115,12 @@ var
   gsPizzaForn: TPieSeries;
   gsPizzaSetores: TPieSeries;
 
+  iPanHeight, // Posição Inicial do Painel Pan_Solicitacoes
+  iGraHeight, iGraLeft, iGraWidth, iGraTop: Integer; // Posição Inicial do Graficos
+  
 implementation
 
-uses DK_Procs1, UDMBelShop, UDMVirtual, UPesquisa;
+uses DK_Procs1, UDMBelShop, UDMVirtual, UPesquisa, DB;
 
 {$R *.dfm}
 
@@ -99,12 +128,121 @@ uses DK_Procs1, UDMBelShop, UDMVirtual, UPesquisa;
 // Odir _ INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// Show Hint em Forma de Balão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+procedure TFrmAnaliseFornecedores.CreateToolTips(hWnd: Cardinal);
+begin
+  hToolTip := CreateWindowEx(0, 'Tooltips_Class32', nil, TTS_ALWAYSTIP or TTS_BALLOON,
+  Integer(CW_USEDEFAULT), Integer(CW_USEDEFAULT),Integer(CW_USEDEFAULT),
+  Integer(CW_USEDEFAULT), hWnd, 0, hInstance, nil);
+
+  if hToolTip <> 0 then
+  begin
+    SetWindowPos(hToolTip, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE or  SWP_NOSIZE or SWP_NOACTIVATE);
+    ti.cbSize := SizeOf(TToolInfo);
+    ti.uFlags := TTF_SUBCLASS;
+    ti.hInst := hInstance;
+  end;
+end; // Show Hint em Forma de Balão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Show Hint em Forma de Balão - Usado no FormCreate >>>>>>>>>>>>>>>>>>>>>>>>>>>
+procedure AddToolTip(hwnd: dword; lpti: PToolInfo; IconType: Integer; Text, Title: PChar);
+var
+  Item: THandle;
+  Rect: TRect;
+begin
+
+  Item := hWnd;
+
+  if (Item <> 0) and (GetClientRect(Item, Rect)) then
+  begin
+    lpti.hwnd := Item;
+    lpti.Rect := Rect;
+    lpti.lpszText := Text;
+    SendMessage(hToolTip, TTM_ADDTOOL, 0, Integer(lpti));
+    FillChar(buffer, sizeof(buffer), #0);
+    lstrcpy(buffer, Title);
+
+    if (IconType > 3) or (IconType < 0) then
+      IconType := 0;
+
+    SendMessage(hToolTip, TTM_SETTITLE, IconType, Integer(@buffer));
+  end;
+
+end; // Show Hint em Forma de Balão - Usado no FormCreate >>>>>>>>>>>>>>>>>>>>>>
+
+// Show Hint em Forma de Balão - Posiciona do Componente >>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAnaliseFornecedores.FocoToControl(Sender: TControl);
+Var
+ NewPos: TPoint;
+Begin
+  NewPos.X:=Sender.Left+(Sender.Width div 2);
+  NewPos.y:=Sender.Top+(Sender.Height div 2);
+
+  If Sender.Parent<>Nil Then
+   NewPos:=Sender.Parent.ClientToScreen(NewPos);
+
+  SetCursorPos(NewPos.x,NewPos.y)
+End; // Show Hint em Forma de Balão - Posiciona do Componente >>>>>>>>>>>>>>>>>>
+
+//// Busca Mix das Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//Procedure TFrmAnaliseFornecedores.MixLojas;
+//Var
+//  MySql: String;
+//Begin
+//  Screen.Cursor:=crAppStart;
+//
+//  MySql:=' DELETE FROM W_PRODUTOS_MIX';
+//  DMBelShop.SQLC.Execute(MySql,nil,nil);
+//
+//  MySql:='INSERT INTO W_PRODUTOS_MIX'+
+//         ' SELECT'+
+//         ' cv.cod_loja,'+
+//         ' lj.empresa,'+
+//         ' cv.cod_produto CODPRODUTO,'+
+//         ' pr.cod_produto,'+
+//         ' CASE'+
+//         '   WHEN COALESCE(cv.est_minimo,0)<>0 THEN'+
+//         '     ''SIM'''+
+//         '   ELSE'+
+//         '     ''NAO'''+
+//         ' END MIX'+
+//         ' FROM ES_FINAN_CURVA_ABC cv, LINXPRODUTOS pr, LINXLOJAS lj'+
+//         ' WHERE cv.cod_produto=pr.cod_auxiliar'+
+//         ' AND   cv.cod_loja=lj.cod_loja';
+//  DMBelShop.SQLC.Execute(MySql,nil,nil);
+//
+//  Screen.Cursor:=crDefault;
+//
+//End; // Busca Mix das Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 // Busca faturamento dos produtos no Periodo >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAnaliseFornecedores.FaturamentoPeriodo;
 Var
   MySql: String;
+  s: String;
 Begin
-  Screen.Cursor:=crAppStart;
+  MySql:=' SELECT FIRST 1 f.empresa'+
+         ' FROM W_FAT_PERIODO f'+
+         ' WHERE f.dta_inicio='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaInicio.Date))))+
+         ' AND   f.dta_fim='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaFim.Date))));
+  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+  DMBelShop.CDS_BuscaRapida.Open;
+  s:=DMBelShop.CDS_BuscaRapida.FieldByName('Empresa').AsString;
+  DMBelShop.CDS_BuscaRapida.Close;
+
+  If Trim(s)<>'' Then
+   Exit;
+
+//  // Verifica se Transação esta Ativa
+//  If DMBelShop.SQLC.InTransaction Then
+//   DMBelShop.SQLC.Rollback(TD);
+//
+//  // Monta Transacao ===========================================================
+//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+//  TD.IsolationLevel:=xilREADCOMMITTED;
+//  DMBelShop.SQLC.StartTransaction(TD);
+
   MySql:=' DELETE FROM W_FAT_PERIODO';
   DMBelShop.SQLC.Execute(MySql,nil,nil);
 
@@ -143,7 +281,6 @@ Begin
 
          ' GROUP BY 1,2,3,4';
   DMBelShop.SQLC.Execute(MySql,nil,nil);
-  DMBelShop.SQLC.Commit(td);
 
   Screen.Cursor:=crDefault;
 
@@ -251,7 +388,8 @@ Begin
   DbGrafico_Lojas.View3DWalls:=True;
   DbGrafico_Lojas.View3DOptions.Orthogonal:=True;
 
-  // Linhas Laterais, Chão e Fundo =============================================
+// OdirApaggar - 30/05/2018
+//  // Linhas Laterais, Chão e Fundo =============================================
 //  DbGrafico_Lojas.LeftAxis.Grid.Visible:=True;
 //  DbGrafico_Lojas.BottomAxis.Grid.Visible:=True;
 
@@ -281,6 +419,7 @@ Begin
   DbGrafico_Fornecedores.View3DOptions.Orthogonal:=True;
 
   // Linhas Laterais, Chão e Fundo =============================================
+// OdirApaggar - 30/05/2018
 //  DbGrafico_Fornecedores.LeftAxis.Grid.Visible:=True;
 //  DbGrafico_Fornecedores.BottomAxis.Grid.Visible:=True;
 
@@ -309,6 +448,7 @@ Begin
   DbGrafico_Setores.View3DWalls:=True;
   DbGrafico_Setores.View3DOptions.Orthogonal:=True;
 
+// OdirApaggar - 30/05/2018
   // Linhas Laterais, Chão e Fundo =============================================
 //  DbGrafico_Setores.LeftAxis.Grid.Visible:=True;
 //  DbGrafico_Setores.BottomAxis.Grid.Visible:=True;
@@ -363,17 +503,68 @@ begin
 end;
 
 procedure TFrmAnaliseFornecedores.FormCreate(Sender: TObject);
+const
+  TipoDoIcone = 1; // Show Hint em Forma de Balão
 Var
   MySql: String;
 begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
 
+  // Show Hint em Forma de Balão ///////////////////////////////////////////////
+  CreateToolTips(Self.Handle);
+  AddToolTip(Bt_MinimizarGraficoLojas.Handle, @ti, TipoDoIcone, 'Maximizar/Minimivar', 'GRÃFICO');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Bt_MinimizarGraficoForn.Handle, @ti, TipoDoIcone, 'Maximizar/Minimivar', 'GRÃFICO');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Bt_MinimizarGraficoSetores.Handle, @ti, TipoDoIcone, 'Maximizar/Minimivar', 'GRÃFICO');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Bt_MinimizarGraficos.Handle, @ti, TipoDoIcone, 'Minimivar/Maximizar', 'GRÃFICOS');
+  //////////////////////////////////////////////////////////////////////////////
+
   // Acerta Graficos ===========================================================
   AcertaGraficos;
 
   // Cria Serie do Grafico Lojas ===============================================
   CriaSeriesGraficos;
+
+  with gsPizzaLojas do
+  Begin
+    Clear;
+    Add(20, 'JAN', clRed);
+    Add(50, 'FEV', clRed);
+    Add(20, 'MAR', clRed);
+    Add(35, 'ABR', clRed);
+    Add(41, 'MAI', clRed);
+    Add(50, 'JUN', clRed);
+    Add(35, 'JUL', clRed);
+    Add(45, 'AGO', clRed);
+    Add(21, 'SET', clRed);
+    Add(25, 'OUT', clRed);
+    Add(30, 'NOV', clRed);
+    Add(35, 'DEZ', clRed);
+  end;
+
+  with gsPizzaForn do
+  Begin
+    Clear;
+    Add(20, 'JAN', clRed);
+    Add(100, 'FEV', clWindow);
+  end;
+
+  with gsPizzaSetores do
+  Begin
+    Clear;
+    Add(20, 'JAN', clRed);
+    Add(50, 'FEV', cl3DLight);
+    Add(20, 'MAR', clBlue);
+    Add(50, 'JUN', clGray);
+    Add(21, 'SET', clMaroon);
+    Add(25, 'OUT', clGray);
+  end;
 
   // Busca Lojas ===============================================================
   MySql:=' SELECT l.nome_emp||''-''||l.empresa Loja'+
@@ -397,10 +588,9 @@ begin
   DMBelShop.CDS_BuscaRapida.EnableControls;
   DMBelShop.CDS_BuscaRapida.Close;
 
-// OdirApagar - 29/05/2018  
-//  // Acerta Periodo ============================================================
-//  DtEdt_DtaInicio.Date:=PrimUltDia(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor),'P');
-//  DtEdt_DtaFim.Date   :=StrToDate(DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)));
+  // Acerta Periodo ============================================================
+  DtEdt_DtaInicio.Date:=PrimUltDia(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor),'P');
+  DtEdt_DtaFim.Date   :=StrToDate(DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)));
 end;
 
 procedure TFrmAnaliseFornecedores.FormKeyPress(Sender: TObject; var Key: Char);
@@ -421,50 +611,24 @@ begin
 
   bgSair:=False;
 
+  msg('MÓDULO EM DESEMVOLVIMENTO !!','A');
+
 end;
 
 procedure TFrmAnaliseFornecedores.Bt_FecharClick(Sender: TObject);
 begin
+  DMVirtual.CDS_V_AnaliseForn.Close;
   bgSair:=True;
   Close;
 
 end;
 
-procedure TFrmAnaliseFornecedores.Bt_MinimizarClick(  Sender: TObject);
+procedure TFrmAnaliseFornecedores.Bt_MinimizarGraficosClick(  Sender: TObject);
 begin
   If Pan_Solicitacoes.Height=50 Then
    Pan_Solicitacoes.Height:=308
   Else
    Pan_Solicitacoes.Height:=50;
-end;
-
-procedure TFrmAnaliseFornecedores.DtEdt_DtaInicioExit(Sender: TObject);
-begin
-  DtEdt_DtaFim.SetFocus;
-end;
-
-procedure TFrmAnaliseFornecedores.DtEdt_DtaFimPropertiesChange(Sender: TObject);
-begin
-
-  If Length(DtEdt_DtaFim.Text)<10 Then
-  Begin
-    Exit;
-  End;
-
-  If Not PeriodoConsiste Then
-   Exit;
-//OPSS
-//  // Verifica se Transação esta Ativa
-//  If DMBelShop.SQLC.InTransaction Then
-//   DMBelShop.SQLC.Rollback(TD);
-//
-//  // Monta Transacao ===========================================================
-//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-//  TD.IsolationLevel:=xilREADCOMMITTED;
-//  DMBelShop.SQLC.StartTransaction(TD);
-//
-//  // Busca Faturamento dos produtos no Periodo =================================
-//  FaturamentoPeriodo;
 end;
 
 procedure TFrmAnaliseFornecedores.Bt_BuscaFornecedorClick(Sender: TObject);
@@ -578,8 +742,168 @@ begin
 end;
 
 procedure TFrmAnaliseFornecedores.Button1Click(Sender: TObject);
+Var
+  hHrInicio, hHrFim: String;
 begin
+  hHrInicio:='';
+  hHrFim:='';
+  hHrInicio:=TimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+
   DMVirtual.CDS_V_AnaliseForn.Open;
+
+  // APRESENTA O RESULTA DO TEMPO FINAL
+  hHrFim:=TimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+  msg('TEMPO: '+TimeToStr(StrToTime(hHrFim)-StrToTime(hHrInicio)),'A');
+
+  hHrInicio:='';
+  hHrFim:='';
+  
+end;
+
+procedure TFrmAnaliseFornecedores.Bt_MinimizarGraficoLojasClick(Sender: TObject);
+begin
+  If Dbg_Produtos.Align=alClient Then
+  Begin
+    iPanHeight:=Pan_Solicitacoes.Height;
+
+    Dbg_Produtos.Align    :=alNone;
+    Pan_Solicitacoes.Align:=alClient;
+    Pan_Solicitacoes.BringToFront;
+
+    If (Sender is TJvXPButton) Then
+    Begin
+      If (Sender as TJvXPButton).Name='Bt_MinimizarGraficoLojas' Then
+      Begin
+        iGraHeight:=DbGrafico_Lojas.Height;
+        iGraLeft  :=DbGrafico_Lojas.Left;
+        iGraWidth :=DbGrafico_Lojas.Width;
+        iGraTop   :=DbGrafico_Lojas.Top;
+
+        DbGrafico_Lojas.Align:=alClient;
+        DbGrafico_Lojas.BringToFront;
+      End; // If (Sender as TJvXPButton).Name='Bt_MinimizarGraficoLojas' Then
+
+      If (Sender as TJvXPButton).Name='Bt_MinimizarGraficoForn' Then
+      Begin
+        iGraHeight:=DbGrafico_Fornecedores.Height;
+        iGraLeft  :=DbGrafico_Fornecedores.Left;
+        iGraWidth :=DbGrafico_Fornecedores.Width;
+        iGraTop   :=DbGrafico_Fornecedores.Top;
+
+        DbGrafico_Fornecedores.Align:=alClient;
+        DbGrafico_Fornecedores.BringToFront;
+      End; // If (Sender as TJvXPButton).Name='Bt_MinimizarGraficoForn' Then
+
+      If (Sender as TJvXPButton).Name='Bt_MinimizarGraficoSetores' Then
+      Begin
+        iGraHeight:=DbGrafico_Setores.Height;
+        iGraLeft  :=DbGrafico_Setores.Left;
+        iGraWidth :=DbGrafico_Setores.Width;
+        iGraTop   :=DbGrafico_Setores.Top;
+
+        DbGrafico_Setores.Align:=alClient;
+        DbGrafico_Setores.BringToFront;
+      End; // If (Sender as TJvXPButton).Name='Bt_MinimizarGraficoSetores' Then
+
+    End; // If (Sender is TJvXPButton) Then
+
+    Exit;
+  End;
+
+  If Dbg_Produtos.Align=alNone Then
+  Begin
+    Pan_Solicitacoes.Align :=alTop;
+    Pan_Solicitacoes.Height:=iPanHeight;
+
+    If (Sender is TJvXPButton) Then
+    Begin
+      If (Sender as TJvXPButton).Name='Bt_MinimizarGraficoLojas' Then
+      Begin
+        DbGrafico_Lojas.Align :=alNone;
+        DbGrafico_Lojas.Height:=iGraHeight;
+        DbGrafico_Lojas.Left  :=iGraLeft;
+        DbGrafico_Lojas.Width :=iGraWidth;
+        DbGrafico_Lojas.Top   :=iGraTop;
+      End; // If (Sender as TJvXPButton).Name='Bt_MinimizarGraficoLojas' Then
+
+      If (Sender as TJvXPButton).Name='Bt_MinimizarGraficoForn' Then
+      Begin
+        DbGrafico_Fornecedores.Align :=alNone;
+        DbGrafico_Fornecedores.Height:=iGraHeight;
+        DbGrafico_Fornecedores.Left  :=iGraLeft;
+        DbGrafico_Fornecedores.Width :=iGraWidth;
+        DbGrafico_Fornecedores.Top   :=iGraTop;
+      End; // If (Sender as TJvXPButton).Name='Bt_MinimizarGraficoForn' Then
+
+      If (Sender as TJvXPButton).Name='Bt_MinimizarGraficoSetores' Then
+      Begin
+        DbGrafico_Setores.Align :=alNone;
+        DbGrafico_Setores.Height:=iGraHeight;
+        DbGrafico_Setores.Left  :=iGraLeft;
+        DbGrafico_Setores.Width :=iGraWidth;
+        DbGrafico_Setores.Top   :=iGraTop;
+      End; // If (Sender as TJvXPButton).Name='Bt_MinimizarGraficoSetores' Then
+
+    End; // If (Sender is TJvXPButton) Then
+    Dbg_Produtos.Align:=alClient;
+
+    Exit;
+  End;
+end;
+
+procedure TFrmAnaliseFornecedores.Dbg_ProdutosDrawColumnCell(Sender: TObject;
+           const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+var
+  Check: Integer;
+  R: TRect;
+begin
+  inherited;
+
+  if ((Sender as TDBGrid).DataSource.Dataset.IsEmpty) then
+    Exit;
+
+  // Desenha um checkbox no dbgrid
+  if Column.FieldName = 'LOJA1' then
+  begin
+    TDBGrid(Sender).Canvas.FillRect(Rect);
+
+    if ((Sender as TDBGrid).DataSource.Dataset.FieldByName('LOJA1').AsInteger = 1) then
+      Check := DFCS_CHECKED
+    else
+      Check := 0;
+
+    R := Rect;
+    InflateRect(R, -2, -2); { Diminue o tamanho do CheckBox }
+    DrawFrameControl(TDBGrid(Sender).Canvas.Handle, R, DFC_BUTTON,
+      DFCS_BUTTONCHECK or Check);
+  end;
+
+end;
+
+procedure TFrmAnaliseFornecedores.Dbg_ProdutosDblClick(Sender: TObject);
+begin
+  if ((Sender as TDBGrid).DataSource.Dataset.IsEmpty) then
+    Exit;
+
+  (Sender as TDBGrid).DataSource.Dataset.Edit;
+
+  If (Sender as TDBGrid).SelectedField.FieldName='LOJA1' Then //-- DataSource.Dataset.seFieldByName('LOJA1').FieldName='LOJA1' Then
+  Begin
+    (Sender as TDBGrid).DataSource.Dataset.FieldByName('LOJA1').AsInteger :=
+      IfThen ((Sender as TDBGrid).DataSource.Dataset.FieldByName('LOJA1').AsInteger = 1, 0, 1);
+  End;
+
+  (Sender as TDBGrid).DataSource.Dataset.Post;
+end;
+
+procedure TFrmAnaliseFornecedores.Bt_ProcessarClick(Sender: TObject);
+begin
+  If Not PeriodoConsiste Then
+   Exit;
+
+  // Busca Faturamento dos Produtos no Periodo =================================
+  FaturamentoPeriodo;
+
 end;
 
 end.

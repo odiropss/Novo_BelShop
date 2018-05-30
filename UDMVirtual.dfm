@@ -4491,30 +4491,25 @@ object DMVirtual: TDMVirtual
     Params = <>
     ProviderName = 'DSP_FechaCaixa'
     Left = 934
-    Top = 315
+    Top = 403
     object CDS_V_AnaliseFornCOD_AUXILIAR: TStringField
       FieldName = 'COD_AUXILIAR'
-      Visible = False
       Size = 40
     end
     object CDS_V_AnaliseFornCOD_PRODUTO: TFMTBCDField
-      DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_PRODUTO'
       Precision = 15
       Size = 0
     end
     object CDS_V_AnaliseFornNOME: TStringField
-      DisplayLabel = 'Produto'
       FieldName = 'NOME'
       Size = 250
     end
     object CDS_V_AnaliseFornDESC_SETOR: TStringField
-      DisplayLabel = 'Setor'
       FieldName = 'DESC_SETOR'
       Size = 30
     end
     object CDS_V_AnaliseFornDESC_COLECAO: TStringField
-      DisplayLabel = 'Cole'#231#227'o'
       FieldName = 'DESC_COLECAO'
       Size = 50
     end
@@ -4523,299 +4518,228 @@ object DMVirtual: TDMVirtual
       Size = 1
     end
     object CDS_V_AnaliseFornFAT_PERIODO: TFMTBCDField
-      DisplayLabel = 'Fat_Periodo'
       FieldName = 'FAT_PERIODO'
       Precision = 15
       Size = 4
     end
-    object CDS_V_AnaliseFornLOJA1: TStringField
+    object CDS_V_AnaliseFornLOJA1: TIntegerField
       FieldName = 'LOJA1'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA2: TStringField
+    object CDS_V_AnaliseFornLOJA2: TIntegerField
       FieldName = 'LOJA2'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA3: TStringField
+    object CDS_V_AnaliseFornLOJA3: TIntegerField
       FieldName = 'LOJA3'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA4: TStringField
+    object CDS_V_AnaliseFornLOJA4: TIntegerField
       FieldName = 'LOJA4'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA5: TStringField
+    object CDS_V_AnaliseFornLOJA5: TIntegerField
       FieldName = 'LOJA5'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA6: TStringField
+    object CDS_V_AnaliseFornLOJA6: TIntegerField
       FieldName = 'LOJA6'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA7: TStringField
+    object CDS_V_AnaliseFornLOJA7: TIntegerField
       FieldName = 'LOJA7'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA8: TStringField
+    object CDS_V_AnaliseFornLOJA8: TIntegerField
       FieldName = 'LOJA8'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA9: TStringField
+    object CDS_V_AnaliseFornLOJA9: TIntegerField
       FieldName = 'LOJA9'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA10: TStringField
+    object CDS_V_AnaliseFornLOJA10: TIntegerField
       FieldName = 'LOJA10'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA11: TStringField
+    object CDS_V_AnaliseFornLOJA11: TIntegerField
       FieldName = 'LOJA11'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA12: TStringField
+    object CDS_V_AnaliseFornLOJA12: TIntegerField
       FieldName = 'LOJA12'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA13: TStringField
+    object CDS_V_AnaliseFornLOJA13: TIntegerField
       FieldName = 'LOJA13'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA14: TStringField
+    object CDS_V_AnaliseFornLOJA14: TIntegerField
       FieldName = 'LOJA14'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA15: TStringField
+    object CDS_V_AnaliseFornLOJA15: TIntegerField
       FieldName = 'LOJA15'
-      FixedChar = True
-      Size = 5
+      Required = True
     end
-    object CDS_V_AnaliseFornLOJA16: TStringField
+    object CDS_V_AnaliseFornLOJA16: TIntegerField
       FieldName = 'LOJA16'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA17: TStringField
+    object CDS_V_AnaliseFornLOJA17: TIntegerField
       FieldName = 'LOJA17'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA18: TStringField
+    object CDS_V_AnaliseFornLOJA18: TIntegerField
       FieldName = 'LOJA18'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA19: TStringField
+    object CDS_V_AnaliseFornLOJA19: TIntegerField
       FieldName = 'LOJA19'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA20: TStringField
+    object CDS_V_AnaliseFornLOJA20: TIntegerField
       FieldName = 'LOJA20'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA21: TStringField
+    object CDS_V_AnaliseFornLOJA21: TIntegerField
       FieldName = 'LOJA21'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA22: TStringField
+    object CDS_V_AnaliseFornLOJA22: TIntegerField
       FieldName = 'LOJA22'
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA23: TStringField
+    object CDS_V_AnaliseFornLOJA23: TIntegerField
       FieldName = 'LOJA23'
       Required = True
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA24: TStringField
+    object CDS_V_AnaliseFornLOJA24: TIntegerField
       FieldName = 'LOJA24'
-      Required = True
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA25: TStringField
+    object CDS_V_AnaliseFornLOJA25: TIntegerField
       FieldName = 'LOJA25'
       Required = True
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA26: TStringField
+    object CDS_V_AnaliseFornLOJA26: TIntegerField
       FieldName = 'LOJA26'
       Required = True
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA27: TStringField
+    object CDS_V_AnaliseFornLOJA27: TIntegerField
       FieldName = 'LOJA27'
       Required = True
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA28: TStringField
+    object CDS_V_AnaliseFornLOJA28: TIntegerField
       FieldName = 'LOJA28'
       Required = True
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA29: TStringField
+    object CDS_V_AnaliseFornLOJA29: TIntegerField
       FieldName = 'LOJA29'
       Required = True
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA30: TStringField
+    object CDS_V_AnaliseFornLOJA30: TIntegerField
       FieldName = 'LOJA30'
       Required = True
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA31: TStringField
+    object CDS_V_AnaliseFornLOJA31: TIntegerField
       FieldName = 'LOJA31'
       Required = True
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA32: TStringField
+    object CDS_V_AnaliseFornLOJA32: TIntegerField
       FieldName = 'LOJA32'
       Required = True
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA33: TStringField
+    object CDS_V_AnaliseFornLOJA33: TIntegerField
       FieldName = 'LOJA33'
       Required = True
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA34: TStringField
+    object CDS_V_AnaliseFornLOJA34: TIntegerField
       FieldName = 'LOJA34'
       Required = True
-      FixedChar = True
-      Size = 5
     end
-    object CDS_V_AnaliseFornLOJA35: TStringField
+    object CDS_V_AnaliseFornLOJA35: TIntegerField
       FieldName = 'LOJA35'
       Required = True
-      FixedChar = True
-      Size = 5
     end
   end
   object DS_V_AnaliseForn: TDataSource
     DataSet = CDS_V_AnaliseForn
     Left = 1001
-    Top = 329
+    Top = 417
   end
   object SDS_FechaCaixa: TSQLDataSet
     CommandText = 
-      'select'#13#10'pr.cod_auxiliar, pr.cod_produto, pr.nome, pr.desc_setor,' +
-      ' pr.desc_colecao, -- pr.desc_linha, pr.desc_marca'#13#10#13#10'/*'#13#10'-- SE E' +
-      'MPRESA'#13#10'(select cv.ind_curva from es_finan_curva_abc cv where cv' +
-      '.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'99'#39') ABC, -- ABC_' +
-      'Empresa,'#13#10'COALESCE((select sum(fa.vlr_fat)'#13#10'        from w_fat_p' +
-      'eriodo fa'#13#10'        where fa.cod_produto=pr.cod_auxiliar), 0.00) ' +
-      'Fat_Priodo,'#13#10'-- SE EMPRESA'#13#10'*/'#13#10#13#10'-- SE LOJA'#13#10'(select cv.ind_cur' +
-      'va from es_finan_curva_abc cv where cv.cod_produto=pr.cod_auxili' +
-      'ar and cv.cod_loja ='#39'04'#39') ABC, -- ABC_RIACHUELO,'#13#10'COALESCE((sele' +
-      'ct sum(fa.vlr_fat)'#13#10'        from w_fat_periodo fa'#13#10'        where' +
-      ' fa.cod_produto=pr.cod_auxiliar'#13#10'        and   fa.cod_loja ='#39'04'#39 +
-      '), 0.00) Fat_Periodo,'#13#10'-- SE LOJA'#13#10#13#10'(select case when COALESCE(' +
-      'cv.est_minimo,0)<>0 Then '#39'TRUE'#39' Else '#39'FALSE'#39' end from es_finan_c' +
-      'urva_abc cv where cv.cod_produto=pr.cod_auxiliar and cv.cod_loja' +
-      ' ='#39'01'#39') LOJA1, -- FELICIANO,'#13#10'(select case when COALESCE(cv.est_' +
-      'minimo,0)<>0 Then '#39'TRUE'#39' Else '#39'FALSE'#39' end from es_finan_curva_ab' +
-      'c cv where cv.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'02'#39')' +
-      ' LOJA2, --ANDRADAS,'#13#10'(select case when COALESCE(cv.est_minimo,0)' +
-      '<>0 Then '#39'TRUE'#39' Else '#39'FALSE'#39' end from es_finan_curva_abc cv wher' +
-      'e cv.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'03'#39') LOJA3, -' +
-      '-A_BRASIL,'#13#10'(select case when COALESCE(cv.est_minimo,0)<>0 Then ' +
-      #39'TRUE'#39' Else '#39'FALSE'#39' end from es_finan_curva_abc cv where cv.cod_' +
-      'produto=pr.cod_auxiliar and cv.cod_loja ='#39'04'#39') LOJA4, --RIACHUEL' +
-      'O,'#13#10'(select case when COALESCE(cv.est_minimo,0)<>0 Then '#39'TRUE'#39' E' +
-      'lse '#39'FALSE'#39' end from es_finan_curva_abc cv where cv.cod_produto=' +
-      'pr.cod_auxiliar and cv.cod_loja ='#39'05'#39') LOJA5, --S_FILHO,'#13#10'(selec' +
-      't case when COALESCE(cv.est_minimo,0)<>0 Then '#39'TRUE'#39' Else '#39'FALSE' +
-      #39' end from es_finan_curva_abc cv where cv.cod_produto=pr.cod_aux' +
-      'iliar and cv.cod_loja ='#39'06'#39') LOJA6, --O_ROCHA,'#13#10'(select case whe' +
-      'n COALESCE(cv.est_minimo,0)<>0 Then '#39'TRUE'#39' Else '#39'FALSE'#39' end from' +
-      ' es_finan_curva_abc cv where cv.cod_produto=pr.cod_auxiliar and ' +
-      'cv.cod_loja ='#39'07'#39') LOJA7, --M_FLORIANO,'#13#10'(select case when COALE' +
-      'SCE(cv.est_minimo,0)<>0 Then '#39'TRUE'#39' Else '#39'FALSE'#39' end from es_fin' +
-      'an_curva_abc cv where cv.cod_produto=pr.cod_auxiliar and cv.cod_' +
-      'loja ='#39'08'#39') LOJA8, --W_ESCOBAR,'#13#10'(select case when COALESCE(cv.e' +
-      'st_minimo,0)<>0 Then '#39'TRUE'#39' Else '#39'FALSE'#39' end from es_finan_curva' +
-      '_abc cv where cv.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'0' +
-      '9'#39') LOJA9, --O_ARANHA,'#13#10'(select case when COALESCE(cv.est_minimo' +
-      ',0)<>0 Then '#39'TRUE'#39' Else '#39'FALSE'#39' end from es_finan_curva_abc cv w' +
-      'here cv.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'10'#39') LOJA1' +
-      '0, --GRAVATAI,'#13#10'(select case when COALESCE(cv.est_minimo,0)<>0 T' +
-      'hen '#39'TRUE'#39' Else '#39'FALSE'#39' end from es_finan_curva_abc cv where cv.' +
-      'cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'11'#39') LOJA11, --F_M' +
-      'ILANEZ,'#13#10'(select case when COALESCE(cv.est_minimo,0)<>0 Then '#39'TR' +
-      'UE'#39' Else '#39'FALSE'#39' end from es_finan_curva_abc cv where cv.cod_pro' +
-      'duto=pr.cod_auxiliar and cv.cod_loja ='#39'12'#39') LOJA12, --VIAMAO,'#13#10'(' +
-      'select case when COALESCE(cv.est_minimo,0)<>0 Then '#39'TRUE'#39' Else '#39 +
-      'FALSE'#39' end from es_finan_curva_abc cv where cv.cod_produto=pr.co' +
-      'd_auxiliar and cv.cod_loja ='#39'13'#39') LOJA13, --CACHOEIRNHA,'#13#10'(selec' +
-      't case when COALESCE(cv.est_minimo,0)<>0 Then '#39'TRUE'#39' Else '#39'FALSE' +
-      #39' end from es_finan_curva_abc cv where cv.cod_produto=pr.cod_aux' +
-      'iliar and cv.cod_loja ='#39'14'#39') LOJA14, --L_ABREU,'#13#10'(select case wh' +
-      'en COALESCE(cv.est_minimo,0)<>0 Then '#39'TRUE'#39' Else '#39'FALSE'#39' end fro' +
-      'm es_finan_curva_abc cv where cv.cod_produto=pr.cod_auxiliar and' +
-      ' cv.cod_loja ='#39'16'#39') LOJA15, --URUGUAI,'#13#10'(select case when COALES' +
-      'CE(cv.est_minimo,0)<>0 Then '#39'TRUE'#39' Else '#39'FALSE'#39' end from es_fina' +
-      'n_curva_abc cv where cv.cod_produto=pr.cod_auxiliar and cv.cod_l' +
-      'oja ='#39'17'#39') LOJA16, --P_ALVES,'#13#10'(select case when COALESCE(cv.est' +
-      '_minimo,0)<>0 Then '#39'TRUE'#39' Else '#39'FALSE'#39' end from es_finan_curva_a' +
-      'bc cv where cv.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'18'#39 +
-      ') LOJA17, --TOTAL,'#13#10'(select case when COALESCE(cv.est_minimo,0)<' +
-      '>0 Then '#39'TRUE'#39' Else '#39'FALSE'#39' end from es_finan_curva_abc cv where' +
-      ' cv.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'19'#39') LOJA18, -' +
-      '-P_BELAS,'#13#10'(select case when COALESCE(cv.est_minimo,0)<>0 Then '#39 +
-      'TRUE'#39' Else '#39'FALSE'#39' end from es_finan_curva_abc cv where cv.cod_p' +
-      'roduto=pr.cod_auxiliar and cv.cod_loja ='#39'20'#39') LOJA19, --TIRADENT' +
-      'ES,'#13#10'(select case when COALESCE(cv.est_minimo,0)<>0 Then '#39'TRUE'#39' ' +
-      'Else '#39'FALSE'#39' end from es_finan_curva_abc cv where cv.cod_produto' +
-      '=pr.cod_auxiliar and cv.cod_loja ='#39'21'#39') LOJA20, --AZENHA,'#13#10'(sele' +
-      'ct case when COALESCE(cv.est_minimo,0)<>0 Then '#39'TRUE'#39' Else '#39'FALS' +
-      'E'#39' end from es_finan_curva_abc cv where cv.cod_produto=pr.cod_au' +
-      'xiliar and cv.cod_loja ='#39'22'#39') LOJA21, --P_CANOAS,'#13#10'(select case ' +
-      'when COALESCE(cv.est_minimo,0)<>0 Then '#39'TRUE'#39' Else '#39'FALSE'#39' end f' +
+      'select'#13#10'TRIM(pr.cod_auxiliar) COD_AUXILIAR,'#13#10'pr.cod_produto,'#13#10'TR' +
+      'IM(pr.nome) NOME,'#13#10'TRIM(pr.desc_setor) DESC_SETOR,'#13#10'TRIM(pr.desc' +
+      '_colecao) DESC_COLECAO, -- pr.desc_linha, pr.desc_marca'#13#10#13#10'/*'#13#10'-' +
+      '- SE EMPRESA'#13#10'(select cv.ind_curva from es_finan_curva_abc cv wh' +
+      'ere cv.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'99'#39') ABC, -' +
+      '- ABC_Empresa,'#13#10'COALESCE((select sum(fa.vlr_fat)'#13#10'        from w' +
+      '_fat_periodo fa'#13#10'        where fa.cod_produto=pr.cod_produto), 0' +
+      '.00) Fat_Priodo,'#13#10'-- SE EMPRESA'#13#10'*/'#13#10#13#10'-- SE LOJA               ' +
+      '                                                                ' +
+      '        /* SIDICOM */'#13#10'(select cv.ind_curva from es_finan_curva_' +
+      'abc cv where cv.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'08' +
+      #39') ABC, -- ABC 23-W_ESCOBAR'#13#10'COALESCE((select sum(fa.vlr_fat)'#13#10' ' +
+      '       from w_fat_periodo fa'#13#10'        where fa.cod_produto=pr.co' +
+      'd_produto'#13#10'        and   fa.empresa=23), 0.00) Fat_Periodo,'#13#10'   ' +
+      '            /* LINX */'#13#10'-- SE LOJA'#13#10'                            ' +
+      '                                                                ' +
+      '                                              /* SIDICOM */'#13#10'(se' +
+      'lect decode(cv.est_minimo,0,0,1) from es_finan_curva_abc cv wher' +
+      'e cv.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'01'#39') LOJA1,  ' +
+      '--  8-FELICIANO,'#13#10'(select decode(cv.est_minimo,0,0,1) from es_fi' +
+      'nan_curva_abc cv where cv.cod_produto=pr.cod_auxiliar and cv.cod' +
+      '_loja ='#39'02'#39') LOJA2,  --  1-ANDRADAS,'#13#10'(select decode(cv.est_mini' +
+      'mo,0,0,1) from es_finan_curva_abc cv where cv.cod_produto=pr.cod' +
+      '_auxiliar and cv.cod_loja ='#39'03'#39') LOJA3,  -- 14-A_BRASIL,'#13#10'(selec' +
+      't decode(cv.est_minimo,0,0,1) from es_finan_curva_abc cv where c' +
+      'v.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'04'#39') LOJA4,  -- ' +
+      '15-RIACHUELO,'#13#10'(select decode(cv.est_minimo,0,0,1) from es_finan' +
+      '_curva_abc cv where cv.cod_produto=pr.cod_auxiliar and cv.cod_lo' +
+      'ja ='#39'05'#39') LOJA5,  -- 11-S_FILHO,'#13#10'(select decode(cv.est_minimo,0' +
+      ',0,1) from es_finan_curva_abc cv where cv.cod_produto=pr.cod_aux' +
+      'iliar and cv.cod_loja ='#39'06'#39') LOJA6,  -- 13-O_ROCHA,'#13#10'(select dec' +
+      'ode(cv.est_minimo,0,0,1) from es_finan_curva_abc cv where cv.cod' +
+      '_produto=pr.cod_auxiliar and cv.cod_loja ='#39'07'#39') LOJA7,  --  7-M_' +
+      'FLORIANO,'#13#10'(select decode(cv.est_minimo,0,0,1) from es_finan_cur' +
+      'va_abc cv where cv.cod_produto=pr.cod_auxiliar and cv.cod_loja =' +
+      #39'08'#39') LOJA8,  -- 23-W_ESCOBAR,'#13#10'(select decode(cv.est_minimo,0,0' +
+      ',1) from es_finan_curva_abc cv where cv.cod_produto=pr.cod_auxil' +
+      'iar and cv.cod_loja ='#39'09'#39') LOJA9,  --  9-O_ARANHA,'#13#10'(select deco' +
+      'de(cv.est_minimo,0,0,1) from es_finan_curva_abc cv where cv.cod_' +
+      'produto=pr.cod_auxiliar and cv.cod_loja ='#39'10'#39') LOJA10, -- 10-GRA' +
+      'VATAI,'#13#10'(select decode(cv.est_minimo,0,0,1) from es_finan_curva_' +
+      'abc cv where cv.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'11' +
+      #39') LOJA11, --  3-F_MILANEZ,'#13#10'(select decode(cv.est_minimo,0,0,1)' +
+      ' from es_finan_curva_abc cv where cv.cod_produto=pr.cod_auxiliar' +
+      ' and cv.cod_loja ='#39'12'#39') LOJA12, --  4-VIAMAO,'#13#10'(select decode(cv' +
+      '.est_minimo,0,0,1) from es_finan_curva_abc cv where cv.cod_produ' +
+      'to=pr.cod_auxiliar and cv.cod_loja ='#39'13'#39') LOJA13, -- 12-CACHOEIR' +
+      'NHA,'#13#10'(select decode(cv.est_minimo,0,0,1) from es_finan_curva_ab' +
+      'c cv where cv.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'14'#39')' +
+      ' LOJA14, -- 16-L_ABREU,'#13#10'--(select decode(cv.est_minimo,0,0,1) f' +
       'rom es_finan_curva_abc cv where cv.cod_produto=pr.cod_auxiliar a' +
-      'nd cv.cod_loja ='#39'24'#39') LOJA22, --IGUATEMI'#13#10#39'FALSE'#39' LOJA23,'#13#10#39'FALS' +
-      'E'#39' LOJA24,'#13#10#39'FALSE'#39' LOJA25,'#13#10#39'FALSE'#39' LOJA26,'#13#10#39'FALSE'#39' LOJA27,'#13#10#39 +
-      'FALSE'#39' LOJA28,'#13#10#39'FALSE'#39' LOJA29,'#13#10#39'FALSE'#39' LOJA30,'#13#10#39'FALSE'#39' LOJA31' +
-      ','#13#10#39'FALSE'#39' LOJA32,'#13#10#39'FALSE'#39' LOJA33,'#13#10#39'FALSE'#39' LOJA34,'#13#10#39'FALSE'#39' LO' +
-      'JA35'#13#10#13#10#13#10'from linxprodutos pr'#13#10#13#10'WHERE pr.id_linha<>33 -- Brind' +
-      'es'#13#10'AND   id_colecao<>294 -- Brindes'#13#10'AND   pr.desativado='#39'N'#39#13#10'A' +
-      'ND   pr.cod_auxiliar is not null'#13#10'AND   pr.cod_fornecedor=3'#13#10#13#10'-' +
-      '-and   pr.cod_produto=1593'#13#10'order by 2'#13#10
+      'nd cv.cod_loja ='#39'15'#39') LOJA15, --  5-MOSTARDEIRO'#13#10'0 LOJA15, --  5' +
+      '-MOSTARDEIRO'#13#10'(select decode(cv.est_minimo,0,0,1) from es_finan_' +
+      'curva_abc cv where cv.cod_produto=pr.cod_auxiliar and cv.cod_loj' +
+      'a ='#39'16'#39') LOJA16, --  6-URUGUAI,'#13#10'(select decode(cv.est_minimo,0,' +
+      '0,1) from es_finan_curva_abc cv where cv.cod_produto=pr.cod_auxi' +
+      'liar and cv.cod_loja ='#39'17'#39') LOJA17, -- 17-P_ALVES,'#13#10'(select deco' +
+      'de(cv.est_minimo,0,0,1) from es_finan_curva_abc cv where cv.cod_' +
+      'produto=pr.cod_auxiliar and cv.cod_loja ='#39'18'#39') LOJA18, -- 18-TOT' +
+      'AL,'#13#10'(select decode(cv.est_minimo,0,0,1) from es_finan_curva_abc' +
+      ' cv where cv.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'19'#39') ' +
+      'LOJA19, -- 19-P_BELAS,'#13#10'(select decode(cv.est_minimo,0,0,1) from' +
+      ' es_finan_curva_abc cv where cv.cod_produto=pr.cod_auxiliar and ' +
+      'cv.cod_loja ='#39'20'#39') LOJA20, -- 20-TIRADENTES,'#13#10'(select decode(cv.' +
+      'est_minimo,0,0,1) from es_finan_curva_abc cv where cv.cod_produt' +
+      'o=pr.cod_auxiliar and cv.cod_loja ='#39'21'#39') LOJA21, -- 21-AZENHA,'#13#10 +
+      '(select decode(cv.est_minimo,0,0,1) from es_finan_curva_abc cv w' +
+      'here cv.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'22'#39') LOJA2' +
+      '2, -- 22-P_CANOAS,'#13#10'--(select decode(cv.est_minimo,0,0,1) from e' +
+      's_finan_curva_abc cv where cv.cod_produto=pr.cod_auxiliar and cv' +
+      '.cod_loja ='#39'23'#39') LOJA23, -- 23-SEM LOJA'#13#10'0 LOJA23, -- 23-SEM LOJ' +
+      'A'#13#10'(select decode(cv.est_minimo,0,0,1) from es_finan_curva_abc c' +
+      'v where cv.cod_produto=pr.cod_auxiliar and cv.cod_loja ='#39'24'#39') LO' +
+      'JA24, -- 24-IGUATEMI'#13#10'0 LOJA25,'#13#10'0 LOJA26,'#13#10'0 LOJA27,'#13#10'0 LOJA28,' +
+      #13#10'0 LOJA29,'#13#10'0 LOJA30,'#13#10'0 LOJA31,'#13#10'0 LOJA32,'#13#10'0 LOJA33,'#13#10'0 LOJA3' +
+      '4,'#13#10'0 LOJA35'#13#10#13#10#13#10'from linxprodutos pr'#13#10#13#10'WHERE pr.id_linha<>33 ' +
+      '-- Brindes'#13#10'AND   id_colecao<>294 -- Brindes'#13#10'AND   pr.desativad' +
+      'o='#39'N'#39#13#10'AND   pr.cod_auxiliar is not null'#13#10'AND   pr.cod_fornecedo' +
+      'r=54'#13#10'             /* LINX */'#13#10#13#10'--and   pr.cod_produto=1593'#13#10'or' +
+      'der by 7 desc'#13#10#13#10'/*'#13#10'select f.empresa, f.cod_produto, f.vlr_fat'#13 +
+      #10'from w_fat_periodo f, linxprodutos p'#13#10'where f.cod_produto=p.cod' +
+      '_produto'#13#10'and p.cod_fornecedor=54'#13#10'*/'#13#10#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
     Left = 933
-    Top = 382
+    Top = 470
   end
   object DSP_FechaCaixa: TDataSetProvider
     DataSet = SDS_FechaCaixa
     Options = [poRetainServerOrder]
     Left = 974
-    Top = 398
+    Top = 486
   end
 end
