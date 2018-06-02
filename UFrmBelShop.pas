@@ -34646,19 +34646,19 @@ begin
   Begin
     If Rb_FinanObjetivosGraficoTpBarras.Checked Then 
     Begin
-      gsBarra.Marks.Style:=smsLabelValue;
+      gsBarra.Marks.Style:=smsLabelPercent;
       gsBarra.Marks.Visible:=True;
     End;
 
     If Rb_FinanObjetivosGraficoTpLinha.Checked Then
     Begin
-      gsLinha.Marks.Style:=smsLabelValue;
+      gsLinha.Marks.Style:=smsLabelPercent;
       gsLinha.Marks.Visible:=True;
     End;
 
-    If Rb_FinanObjetivosGraficoTpPizza.Checked Then 
+    If Rb_FinanObjetivosGraficoTpPizza.Checked Then
     Begin
-      gsPizza.Marks.Style:=smsLabelValue;
+      gsPizza.Marks.Style:=smsLabelPercent;
       gsPizza.Marks.Visible:=True;
     End;
   End; // If Cbx_FinanObjetivosGraficoTpApres.Text='Descrição/Percentual' Then

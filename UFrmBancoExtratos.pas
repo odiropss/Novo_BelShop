@@ -16892,10 +16892,10 @@ begin
 
     DMBelShop.CDS_BuscaRapida.Close;
 
-    Application.MessageBox(PChar('Valor dos Depósitos Conciliados: '+
+    Application.MessageBox(PChar('Valor dos DEPÓSITOS Conciliados: '+
                                  FormatFloat(',0.00',DMConciliacao.CDS_CMDepositosAnaliseDEPOSITO.AsCurrency)+cr+cr+
-                                 'Valor das  Despesas  Concilidas:  '+sNomeLoja), 'Depósitos Conciliados', 64);
-  End; // If (Key=Vk_F5) Then
+                                 'Valor das  SANGRIAS  Concilidas:  '+sNomeLoja), 'Depósitos Conciliados', 64);
+  End; // If (Key=Vk_F5) Then     
 end;
 
 procedure TFrmBancoExtratos.Bt_DepAnaliseCadHistoricosClick(Sender: TObject);

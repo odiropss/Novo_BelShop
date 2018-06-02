@@ -114,29 +114,41 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     object Panel1: TPanel
       Left = 2
       Top = 2
-      Width = 448
+      Width = 296
       Height = 34
       Align = alLeft
       BevelInner = bvLowered
       Color = clSilver
       TabOrder = 0
       object Label85: TLabel
-        Left = 160
-        Top = 11
-        Width = 6
+        Left = 169
+        Top = 10
+        Width = 8
         Height = 13
         Caption = 'a'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
       end
       object Label1: TLabel
         Left = 8
-        Top = 11
-        Width = 38
+        Top = 10
+        Width = 46
         Height = 13
         Caption = 'Per'#237'odo'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
       end
       object DtEdt_DtaInicio: TcxDateEdit
-        Left = 51
-        Top = 5
+        Left = 59
+        Top = 4
         ParentFont = False
         Style.Font.Charset = DEFAULT_CHARSET
         Style.Font.Color = clWindowText
@@ -148,11 +160,12 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         StyleFocused.TextStyle = [fsBold]
         StyleHot.BorderStyle = ebsUltraFlat
         TabOrder = 0
+        OnExit = DtEdt_DtaInicioExit
         Width = 106
       end
       object DtEdt_DtaFim: TcxDateEdit
-        Left = 169
-        Top = 5
+        Left = 181
+        Top = 4
         ParentFont = False
         Style.Font.Charset = DEFAULT_CHARSET
         Style.Font.Color = clWindowText
@@ -164,37 +177,8 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         StyleFocused.TextStyle = [fsBold]
         StyleHot.BorderStyle = ebsUltraFlat
         TabOrder = 1
+        OnExit = DtEdt_DtaInicioExit
         Width = 106
-      end
-      object Bt_Processar: TJvXPButton
-        Tag = 99
-        Left = 280
-        Top = 2
-        Width = 166
-        Height = 30
-        Caption = 'Apresentar Per'#237'odo'
-        TabOrder = 2
-        TabStop = False
-        Glyph.Data = {
-          07544269746D6170F6000000424DF60000000000000076000000280000001000
-          0000100000000100040000000000800000000000000000000000100000001000
-          0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
-          C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
-          FF0077777777777777777000000000000007707778FF7FF7FF077077788F78F7
-          8F0770888887787787077077780078F78F077077780E0FF78F0770888870E077
-          7707700000FF0E07FF077077770F70E0FF07077777707F0E0F070F7555707FF0
-          E0070F75777044440E070F757770000000E070FFF70777777700770000777777
-          7777}
-        ShowFocusRect = True
-        Spacing = 10
-        Align = alRight
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
-        OnClick = Bt_ProcessarClick
       end
     end
     object Button1: TButton
@@ -219,7 +203,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = []
-    Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
     ParentFont = False
     TabOrder = 2
     TitleFont.Charset = DEFAULT_CHARSET
@@ -1023,6 +1007,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
           'sADasdAS'
           'asdAD')
         TabOrder = 0
+        OnChange = Cbx_LojasChange
       end
     end
     object Gb_Fornecedores: TGroupBox
@@ -1316,6 +1301,24 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       ShowHint = False
       OnClick = Bt_MinimizarGraficosClick
     end
+  end
+  object OdirPanApres: TPanel
+    Left = 784
+    Top = 534
+    Width = 89
+    Height = 33
+    BevelInner = bvLowered
+    BevelWidth = 2
+    Caption = 'OdirPanApres'
+    Color = clSilver
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 3
+    Visible = False
   end
   object CorCaptionForm: TJvGradientCaption
     Active = False

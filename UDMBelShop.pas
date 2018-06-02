@@ -16,7 +16,7 @@ interface
 uses
   Windows, Forms, SysUtils, Classes, DBXpress, FMTBcd, ExtCtrls, SqlExpr, IBCustomDataSet,
   IBUpdateSQL, DB, IBQuery, IBDatabase, DBClient, Provider, Math, WinInet, Variants,
-  StrUtils, QStdCtrls, Menus, IBTable, SimpleDS;
+  StrUtils, QStdCtrls, Menus, IBTable, SimpleDS, Graphics;
 
 type
   TDMBelShop = class(TDataModule)

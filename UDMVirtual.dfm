@@ -4726,10 +4726,8 @@ object DMVirtual: TDMVirtual
       '4,'#13#10'0 LOJA35'#13#10#13#10#13#10'from linxprodutos pr'#13#10#13#10'WHERE pr.id_linha<>33 ' +
       '-- Brindes'#13#10'AND   id_colecao<>294 -- Brindes'#13#10'AND   pr.desativad' +
       'o='#39'N'#39#13#10'AND   pr.cod_auxiliar is not null'#13#10'AND   pr.cod_fornecedo' +
-      'r=54'#13#10'             /* LINX */'#13#10#13#10'--and   pr.cod_produto=1593'#13#10'or' +
-      'der by 7 desc'#13#10#13#10'/*'#13#10'select f.empresa, f.cod_produto, f.vlr_fat'#13 +
-      #10'from w_fat_periodo f, linxprodutos p'#13#10'where f.cod_produto=p.cod' +
-      '_produto'#13#10'and p.cod_fornecedor=54'#13#10'*/'#13#10#13#10
+      'r=54'#13#10'             /* LINX */'#13#10#13#10'--and   pr.cod_produto=1593'#13#10'--' +
+      'order by 7 desc'#13#10#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
