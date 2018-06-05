@@ -18,13 +18,13 @@ var
 begin
 
   // NAO PERMITE EXECUTAR DUAS VEZES
-  CreateMutex(nil, false, 'PMovtosEmpresas');
-  If GetLastError()=ERROR_ALREADY_EXISTS Then
-   Begin
-     ShowWindow(Aplicativo, SW_RESTORE);
-   End
-  Else
-   Begin
+//  CreateMutex(nil, false, 'PMovtosEmpresas');
+//  If GetLastError()=ERROR_ALREADY_EXISTS Then
+//   Begin
+//     ShowWindow(Aplicativo, SW_RESTORE);
+//   End
+//  Else
+//   Begin
      Application.Initialize;
      Application.Title := 'Odir - Não Fechar este Programa !!';
      Application.ShowMainForm:=False;
@@ -36,6 +36,6 @@ begin
      Application.CreateForm(TJ_002, J_002);
      Application.CreateForm(TJ_001, J_001);
      Application.Run;
-   End;
+//   End;
 
 end.

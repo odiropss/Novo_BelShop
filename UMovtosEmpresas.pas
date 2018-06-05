@@ -5607,8 +5607,13 @@ begin
       End
      Else
       Begin
-        Application.Terminate;
-        Exit;
+        // Deleta Sempre Ind_Tipo = 'OK'
+        MySql:=' Delete from movtos_empresas m'+
+               ' where m.ind_tipo='+QuotedStr('OK');
+        DMMovtosEmpresas.SQLC.Execute(MySql, nil, nil);
+
+        // Application.Terminate;
+        // Exit;
       End; //
    End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('ind_tipo').AsString)<>'' Then
   DMMovtosEmpresas.CDS_Busca.Close;

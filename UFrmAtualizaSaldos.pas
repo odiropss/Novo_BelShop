@@ -83,7 +83,6 @@ begin
 
     MySql:=' DELETE FROM LINX_PRODUTOS_LOJAS lp'+
            ' WHERE lp.dta_processa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDia)));
-//opssaqui
     DMAtualizaSaldos.SQLC.Execute(MySql,nil,nil);
 
     hHrFimSql1:=TimeToStr(DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor));

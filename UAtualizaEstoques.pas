@@ -35,6 +35,8 @@ type
 
     Procedure EnderecamentosSidicomBelShop;
 
+    Procedure Tabela_W_Produtos_MIX;
+
     // Odir ====================================================================
   private
     { Private declarations }
@@ -62,6 +64,52 @@ uses UDMAtualizaEstoques, UDMConexoes, DK_Procs1, DB;
 {$R *.dfm}
 
 // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Atualiza Tabela W_Produtos_MIX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAtualizaEstoques.Tabela_W_Produtos_MIX;
+Var
+  MySql: String;
+Begin
+  // Verifica se Transação esta Ativa
+  If DMAtualizaEstoques.SQLC.InTransaction Then
+   DMAtualizaEstoques.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMAtualizaEstoques.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    MySql:=' DELETE FROM ES_PRODUTOS_MIX';
+    DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
+    MySql:=' INSERT INTO ES_PRODUTOS_MIX'+
+           ' SELECT'+
+           ' lj.cod_loja COD_LOJA,'+
+           ' lj.empresa EMPRESA,'+
+           ' cv.cod_produto CODPRODUTO,'+
+           ' pr.cod_produto COD_PRODUTO,'+
+           ' COALESCE(cv.ind_curva,''E'') IND_CURVA,'+
+           ' CASE'+
+           '   WHEN COALESCE(cv.est_minimo,0)<1 THEN'+
+           '     0'+
+           '   ELSE'+
+           '     1'+
+           ' END IND_MIX,'+
+           ' CURRENT_DATE DTA_ATUALIZACAO'+
+
+           ' FROM LINXPRODUTOS pr'+
+           '      LEFT JOIN ES_FINAN_CURVA_ABC cv ON cv.cod_produto=pr.cod_auxiliar'+
+           '      LEFT JOIN LINXLOJAS lj          ON lj.cod_loja=cv.cod_loja';
+    DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMAtualizaEstoques.SQLC.Commit(TD);
+
+  Except // Except da Transação
+    // Abandona Transacao ====================================================
+    DMAtualizaEstoques.SQLC.Rollback(TD);
+  End; // Try da Transação
+End; // Atualiza Tabela W_Produtos_MIX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Atualiza Lista de Preços 0006 em BELSHOP.FDB >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //Procedure TFrmAtualizaEstoques.AtualizaLista0006_BELSHOP(sLista, sDesconto: String);
@@ -1089,6 +1137,13 @@ begin
 //---------  -----------  ---------------  --------------------------------  --------------------------------------------
 //    COM	        COM	          COM	       iCodLinx<>0 e sDtaInventLinx<>''  Busca Estoques no LINX Direto
 // ========  ===========  ===============  ================================  ============================================
+
+  //============================================================================
+  // Atualiza Tabela W_Produtos_MIX ============================================
+  //============================================================================
+  Tabela_W_Produtos_MIX;
+  // Atualiza Tabela W_Produtos_MIX ============================================
+  //============================================================================
 
   tgMySqlErro.Clear;
   tgMySqlErro.SaveToFile(sgPath_Local+'ODIR_ERRO.txt');

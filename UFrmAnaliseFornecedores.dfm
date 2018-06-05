@@ -34,6 +34,23 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     Ctl3D = False
     ParentCtl3D = False
     TabOrder = 0
+    DesignSize = (
+      1082
+      38)
+    object Label2: TLabel
+      Left = 486
+      Top = 13
+      Width = 139
+      Height = 13
+      Anchors = [akTop, akBottom]
+      Caption = '<F6> No Grid Altera MIX'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
     object Bt_Fechar: TJvXPButton
       Tag = 99
       Left = 980
@@ -181,14 +198,63 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Width = 106
       end
     end
-    object Button1: TButton
-      Left = 504
-      Top = 8
-      Width = 75
-      Height = 25
-      Caption = 'Button1'
+    object Bt_BuscaMixProdutos: TJvXPButton
+      Left = 298
+      Top = 2
+      Width = 166
+      Height = 34
+      Caption = 'Busca MIX Produtos'
       TabOrder = 2
-      OnClick = Button1Click
+      Glyph.Data = {
+        07544269746D6170AA040000424DAA0400000000000036000000280000001400
+        000013000000010018000000000074040000C40E0000C40E0000000000000000
+        0000008080008080008080008080008080008080008080000000000000000000
+        0000000000000000000000000000000000000000000000000000000080800080
+        80008080008080008080008080008080008080000000FFFFFFFFFFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000008080000000000000
+        008080008080000000000000000000000000000000FFFFFFFFFFFFFFFFFF0000
+        00FFFFFF000000000000FFFFFFFFFFFF0000007F7F7F00000000000000808000
+        8080000000000000000000000000000000FFFFFFFFFFFFFFFFFF000000FFFFFF
+        000000000000FFFFFFFFFFFF0000007F7F7FFFFF0000000000000000000000FF
+        FFFFFFFF00FFFFFFFFFF00FFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFF
+        FFFFFFFFFFFFFFFF0000007F7F7FFFFF0000000000FFFF00FFFFFFFFFF00FFFF
+        FFFFFF000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF000000FFFF
+        FFFFFFFF0000007F7F7FFFFF00000000FFFFFFFFFFFF00FFFFFFFFFF00FFFFFF
+        FFFF00FFFFFFFFFFFFFFFF000000FFFFFF000000000000FFFFFFFFFFFFFFFFFF
+        0000007F7F7FFFFF0000000000FFFF00FFFFFFFFFF00FFFFFFFFFF0000000000
+        0000000000000000000000000000FFFF000000FFFFFFFFFFFFFFFFFF0000007F
+        7F7FFFFF00000000FFFFFFFFFFFF00FFFFFFFFFF00FFFFFFFFFF00FFFFFFFFFF
+        FFFFFF00FFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFF0000007F7F7FFFFF
+        00000000FFFFFFFFFFFF00FFFFFFFFFF00FFFFFFFFFF00FFFFFFFFFFFFFFFF00
+        FFFFFFFFFF000000FFFFFFFFFFFFFFFFFFFFFFFF0000007F7F7FFFFF00000000
+        00FFFF00FFFFFFFFFF0000000000000000000000000000000000000000000000
+        00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000007F7F7F00000000000000000000
+        000000FFFFFFFFFF00FFFF00000000000000FFFF00FFFF000000FFFFFFFFFFFF
+        000000000000FFFFFFFFFFFF0000007F7F7F0080800080800080800080800000
+        0000000000000000000000FFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFF
+        FFFFFFFFFFFFFFFF000000008080008080008080008080008080008080008080
+        00000000FFFF000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000000000000000
+        0000000000000000808000808000808000808000808000808000000000FFFF00
+        0000FFFFFFFFFFFFFFFFFF000000000000FFFFFF000000FFFFFFFFFFFFFFFFFF
+        00000000808000808000808000808000808000000000FFFF000000000000FFFF
+        FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF00000000000000808000
+        808000808000808000808000808000000000FFFF000000000000FFFFFFFFFFFF
+        FFFFFFFFFFFFFFFFFFFFFFFF000000FFFFFF0000000000000080800080800080
+        800080800000000000000000FF000000008080000000FFFFFFFFFFFFFFFFFFFF
+        FFFFFFFFFFFFFFFF000000000000008080008080008080008080008080008080
+        0080800080800000000080800080800000000000000000000000000000000000
+        00000000000000008080008080008080008080008080}
+      ShowFocusRect = True
+      Align = alLeft
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = False
+      OnClick = Bt_BuscaMixProdutosClick
     end
   end
   object Dbg_Produtos: TDBGridJul
@@ -197,7 +263,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     Width = 1084
     Height = 221
     Align = alClient
-    DataSource = DMVirtual.DS_V_AnaliseForn
+    DataSource = DMLinx.DS_AnaliseForn
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
@@ -213,6 +279,8 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     TitleFont.Style = [fsBold]
     OnDrawColumnCell = Dbg_ProdutosDrawColumnCell
     OnDblClick = Dbg_ProdutosDblClick
+    OnKeyDown = Dbg_ProdutosKeyDown
+    OnKeyPress = Dbg_ProdutosKeyPress
     SairComEnter = False
     CampoCheckBox = 'LOJA1;LOJA2'
     ValorCampoCheck = 'SIM'
@@ -221,19 +289,19 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       item
         Expanded = False
         FieldName = 'COD_AUXILIAR'
-        Visible = False
+        Visible = True
       end
       item
         Expanded = False
         FieldName = 'COD_PRODUTO'
         Title.Alignment = taRightJustify
-        Width = 60
+        Width = 50
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'NOME'
-        Width = 300
+        Width = 250
         Visible = True
       end
       item
@@ -268,7 +336,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA1'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -276,7 +344,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA2'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -284,7 +352,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA3'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -292,7 +360,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA4'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -300,7 +368,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA5'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -308,7 +376,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA6'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -316,7 +384,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA7'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -324,7 +392,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA8'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -332,7 +400,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA9'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -340,7 +408,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA10'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -348,7 +416,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA11'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -356,7 +424,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA12'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -364,7 +432,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA13'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -372,7 +440,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA14'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -380,7 +448,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA15'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -388,7 +456,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA16'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -396,7 +464,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA17'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -404,7 +472,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA18'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -412,7 +480,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA19'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -420,7 +488,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA20'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -428,7 +496,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA21'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -436,7 +504,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA22'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -444,7 +512,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA23'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -452,7 +520,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA24'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -460,7 +528,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA25'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -468,7 +536,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA26'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -476,7 +544,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA27'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -484,7 +552,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA28'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -492,7 +560,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA29'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -500,7 +568,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA30'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -508,7 +576,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA31'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -516,7 +584,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA32'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -524,7 +592,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA33'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -532,7 +600,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA34'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
         Visible = True
       end
       item
@@ -540,7 +608,20 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA35'
         Title.Alignment = taCenter
-        Width = 70
+        Width = 78
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'COD_FORNECEDOR'
+        Title.Alignment = taRightJustify
+        Width = 60
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'FORN'
+        Width = 300
         Visible = True
       end>
   end
@@ -594,6 +675,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       Title.Frame.Visible = True
       Title.Text.Strings = (
         '')
+      Title.Visible = False
       BackColor = 16777088
       BottomAxis.MinorTickCount = 0
       BottomAxis.MinorTickLength = 1
@@ -628,19 +710,18 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       View3DOptions.Perspective = 0
       View3DOptions.Rotation = 360
       BevelInner = bvLowered
+      BevelOuter = bvNone
       BevelWidth = 2
       BorderWidth = 1
-      BorderStyle = bsSingle
-      Color = 16777088
       TabOrder = 0
       Anchors = [akTop]
       DesignSize = (
-        355
-        255)
-      object Bt_MinimizarGraficoLojas: TJvXPButton
+        357
+        257)
+      object Bt_GraficoLojasMinMax: TJvXPButton
         Tag = 91
-        Left = 330
-        Top = 230
+        Left = 6
+        Top = 233
         Width = 25
         Height = 22
         Hint = 'Maximizar / Minimizar'
@@ -683,7 +764,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
           90F9B294F89A73F78C60F68455F67E4DF57A48F57642F57844F5733EF5733EF5
           713BF5713BF46C33F46C33F46A30F46428EF5D1FE06734000000}
         ShowFocusRect = True
-        Anchors = [akRight, akBottom]
+        Anchors = [akLeft, akBottom]
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -692,7 +773,186 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         ParentFont = False
         ParentShowHint = False
         ShowHint = False
-        OnClick = Bt_MinimizarGraficoLojasClick
+        OnClick = Bt_GraficoLojasMinMaxClick
+      end
+      object Rb_GraficoLojasNome: TJvRadioButton
+        Left = 36
+        Top = 236
+        Width = 54
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akBottom]
+        Caption = 'Nome'
+        Checked = True
+        Color = 15400959
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 1
+        TabStop = True
+        OnClick = Rb_GraficoLojasNomeClick
+        OnKeyUp = Rb_GraficoLojasNomeKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+      object Rb_GraficoLojasPerc: TJvRadioButton
+        Left = 93
+        Top = 236
+        Width = 33
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akBottom]
+        Caption = '%'
+        Color = 15400959
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 2
+        OnClick = Rb_GraficoLojasNomeClick
+        OnKeyUp = Rb_GraficoLojasNomeKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -13
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+      object Rb_GraficoLojasNomePerc: TJvRadioButton
+        Left = 130
+        Top = 236
+        Width = 60
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akBottom]
+        Caption = 'Nome %'
+        Color = 15400959
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 3
+        OnClick = Rb_GraficoLojasNomeClick
+        OnKeyUp = Rb_GraficoLojasNomeKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+      object Bt_GraficoLojasGirar: TJvXPButton
+        Left = 330
+        Top = 231
+        Width = 26
+        Height = 25
+        TabOrder = 4
+        TabStop = False
+        Glyph.Data = {
+          07544269746D61707E030000424D7E0300000000000036000000280000001200
+          00000F0000000100180000000000480300000000000000000000000000000000
+          0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBF3F3700BFBFBFBFBFBFBFBFBFBFBFBF0000BFBFBFBFBFBF
+          BFBFBFCF6760CF6760CF6760CF6760000000BFBFBFBFBFBFBFBFBFBFBFBF0000
+          00000000BFBFBFBFBFBFBFBFBFBFBFBF0000BFBFBFBFBFBF007F00007F00007F
+          00007F00007F00000000BFBFBFBFBFBFBFBFBF000000A0983F000000BFBFBFBF
+          BFBFBFBFBFBFBFBF0000BFBFBFA0983FA0983FA0983FA0983F007F00000000BF
+          BFBFBFBFBFBFBFBF3F3700A0983F00FF007F7F003F37003F3700BFBFBFBFBFBF
+          0000BFBFBFA0983F00FF00A0983F007F00000000BFBFBFBFBFBFBFBFBF3F3700
+          A0983F00FF00A0983FA0983F007F003F3700007F00BFBFBF0000BFBFBFA0983F
+          00FF00A0983F000000BFBFBFBFBFBFBFBFBFA0983FA0983F00FF00A0983F00FF
+          00A0983F007F00007F003F3700BFBFBF0000BFBFBFA0983F90FF2FA0983F007F
+          003F3700BFBFBFBFBFBF90FF2FFFFFFFA0983F90FF2FA0983FA0983F007F003F
+          37003F3700BFBFBF0000BFBFBFA0983F90FF2FA0983FA0983F007F003F3700BF
+          BFBFBFBFBF90FF2FFFFFFFA0983F90FF2FA0983F007F00007F003F3700BFBFBF
+          0000BFBFBFA0983F90FF2FFFFFFF90FF2F90FF2F007F003F3700000000000000
+          90FF2FFFFFFFA0983FA0983F007F003F37003F3700BFBFBF0000BFBFBFA0983F
+          FFFFFFA0983F00000000000000000000000000000000000000000000FF00FFFF
+          FF00000090FF2F007F003F3700BFBFBF0000BFBFBFA0983F90FF2F0000000000
+          003F37000000003F37000000003F370000000000000000FF0000000000000090
+          FF2F3F3700BFBFBF0000BFBFBFA0983F90FF2FA0983F3F370000000060302F00
+          000060302F000000000000000000000000000000000000A0983F007F00BFBFBF
+          0000BFBFBFBFBFBFA0983F90FF2FCF67603F37003F37003F37000000003F3700
+          000000000000000000000000007F00007F00BFBFBFBFBFBF0000BFBFBFBFBFBF
+          BFBFBFA0983FA0983FA0983F007F00007F00007F00007F00007F00007F00007F
+          00007F00007F00BFBFBFBFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBF0000}
+        ShowFocusRect = True
+        Anchors = [akRight, akBottom]
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = Bt_GraficoLojasGirarClick
+      end
+      object Rb_GraficoLojasNomeVlr: TJvRadioButton
+        Left = 233
+        Top = 236
+        Width = 58
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akBottom]
+        Caption = 'Nome $'
+        Color = 15400959
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 5
+        OnClick = Rb_GraficoLojasNomeClick
+        OnKeyUp = Rb_GraficoLojasNomeKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+      object Rb_GraficoLojasVlr: TJvRadioButton
+        Left = 196
+        Top = 236
+        Width = 28
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akBottom]
+        Caption = '$'
+        Color = 15400959
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 6
+        OnClick = Rb_GraficoLojasNomeClick
+        OnKeyUp = Rb_GraficoLojasNomeKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -13
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
       end
     end
     object DbGrafico_Fornecedores: TDBChart
@@ -735,6 +995,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       Title.Frame.Visible = True
       Title.Text.Strings = (
         '')
+      Title.Visible = False
       BackColor = 16777088
       BottomAxis.MinorTickCount = 0
       BottomAxis.MinorTickLength = 1
@@ -769,6 +1030,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       View3DOptions.Perspective = 0
       View3DOptions.Rotation = 360
       BevelInner = bvLowered
+      BevelOuter = bvNone
       BevelWidth = 2
       BorderWidth = 1
       BorderStyle = bsSingle
@@ -778,10 +1040,10 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       DesignSize = (
         355
         255)
-      object Bt_MinimizarGraficoForn: TJvXPButton
+      object Bt_GraficoFornMinMax: TJvXPButton
         Tag = 91
-        Left = 330
-        Top = 230
+        Left = 6
+        Top = 233
         Width = 25
         Height = 22
         Hint = 'Maximizar / Minimizar'
@@ -824,7 +1086,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
           90F9B294F89A73F78C60F68455F67E4DF57A48F57642F57844F5733EF5733EF5
           713BF5713BF46C33F46C33F46A30F46428EF5D1FE06734000000}
         ShowFocusRect = True
-        Anchors = [akRight, akBottom]
+        Anchors = [akLeft, akBottom]
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -833,7 +1095,188 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         ParentFont = False
         ParentShowHint = False
         ShowHint = False
-        OnClick = Bt_MinimizarGraficoLojasClick
+        OnClick = Bt_GraficoLojasMinMaxClick
+      end
+      object Rb_GraficoFornNome: TJvRadioButton
+        Left = 36
+        Top = 236
+        Width = 49
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akBottom]
+        Caption = 'Nome'
+        Color = 15400959
+        Enabled = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 1
+        OnClick = Rb_GraficoLojasNomeClick
+        OnKeyUp = Rb_GraficoLojasNomeKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+      object Rb_GraficoFornPerc: TJvRadioButton
+        Left = 93
+        Top = 236
+        Width = 35
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akBottom]
+        Caption = '%'
+        Checked = True
+        Color = 15400959
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 2
+        TabStop = True
+        OnClick = Rb_GraficoLojasNomeClick
+        OnKeyUp = Rb_GraficoLojasNomeKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -13
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+      object Rb_GraficoFornNomePerc: TJvRadioButton
+        Left = 130
+        Top = 236
+        Width = 60
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akBottom]
+        Caption = 'Nome %'
+        Color = 15400959
+        Enabled = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 3
+        OnClick = Rb_GraficoLojasNomeClick
+        OnKeyUp = Rb_GraficoLojasNomeKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+      object Bt_GraficoFornGirar: TJvXPButton
+        Left = 329
+        Top = 230
+        Width = 26
+        Height = 25
+        TabOrder = 4
+        TabStop = False
+        Glyph.Data = {
+          07544269746D61707E030000424D7E0300000000000036000000280000001200
+          00000F0000000100180000000000480300000000000000000000000000000000
+          0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBF3F3700BFBFBFBFBFBFBFBFBFBFBFBF0000BFBFBFBFBFBF
+          BFBFBFCF6760CF6760CF6760CF6760000000BFBFBFBFBFBFBFBFBFBFBFBF0000
+          00000000BFBFBFBFBFBFBFBFBFBFBFBF0000BFBFBFBFBFBF007F00007F00007F
+          00007F00007F00000000BFBFBFBFBFBFBFBFBF000000A0983F000000BFBFBFBF
+          BFBFBFBFBFBFBFBF0000BFBFBFA0983FA0983FA0983FA0983F007F00000000BF
+          BFBFBFBFBFBFBFBF3F3700A0983F00FF007F7F003F37003F3700BFBFBFBFBFBF
+          0000BFBFBFA0983F00FF00A0983F007F00000000BFBFBFBFBFBFBFBFBF3F3700
+          A0983F00FF00A0983FA0983F007F003F3700007F00BFBFBF0000BFBFBFA0983F
+          00FF00A0983F000000BFBFBFBFBFBFBFBFBFA0983FA0983F00FF00A0983F00FF
+          00A0983F007F00007F003F3700BFBFBF0000BFBFBFA0983F90FF2FA0983F007F
+          003F3700BFBFBFBFBFBF90FF2FFFFFFFA0983F90FF2FA0983FA0983F007F003F
+          37003F3700BFBFBF0000BFBFBFA0983F90FF2FA0983FA0983F007F003F3700BF
+          BFBFBFBFBF90FF2FFFFFFFA0983F90FF2FA0983F007F00007F003F3700BFBFBF
+          0000BFBFBFA0983F90FF2FFFFFFF90FF2F90FF2F007F003F3700000000000000
+          90FF2FFFFFFFA0983FA0983F007F003F37003F3700BFBFBF0000BFBFBFA0983F
+          FFFFFFA0983F00000000000000000000000000000000000000000000FF00FFFF
+          FF00000090FF2F007F003F3700BFBFBF0000BFBFBFA0983F90FF2F0000000000
+          003F37000000003F37000000003F370000000000000000FF0000000000000090
+          FF2F3F3700BFBFBF0000BFBFBFA0983F90FF2FA0983F3F370000000060302F00
+          000060302F000000000000000000000000000000000000A0983F007F00BFBFBF
+          0000BFBFBFBFBFBFA0983F90FF2FCF67603F37003F37003F37000000003F3700
+          000000000000000000000000007F00007F00BFBFBFBFBFBF0000BFBFBFBFBFBF
+          BFBFBFA0983FA0983FA0983F007F00007F00007F00007F00007F00007F00007F
+          00007F00007F00BFBFBFBFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBF0000}
+        ShowFocusRect = True
+        Anchors = [akRight, akBottom]
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = Bt_GraficoLojasGirarClick
+      end
+      object Rb_GraficoFornVlr: TJvRadioButton
+        Left = 196
+        Top = 236
+        Width = 28
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akBottom]
+        Caption = '$'
+        Color = 15400959
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 5
+        OnClick = Rb_GraficoLojasNomeClick
+        OnKeyUp = Rb_GraficoLojasNomeKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -13
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+      object Rb_GraficoFornNomeVlr: TJvRadioButton
+        Left = 233
+        Top = 236
+        Width = 58
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akBottom]
+        Caption = 'Nome $'
+        Color = 15400959
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 6
+        OnClick = Rb_GraficoLojasNomeClick
+        OnKeyUp = Rb_GraficoLojasNomeKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
       end
     end
     object DbGrafico_Setores: TDBChart
@@ -876,6 +1319,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       Title.Frame.Visible = True
       Title.Text.Strings = (
         '')
+      Title.Visible = False
       BackColor = 16777088
       BottomAxis.MinorTickCount = 0
       BottomAxis.MinorTickLength = 1
@@ -910,6 +1354,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       View3DOptions.Perspective = 0
       View3DOptions.Rotation = 360
       BevelInner = bvLowered
+      BevelOuter = bvNone
       BevelWidth = 2
       BorderWidth = 1
       BorderStyle = bsSingle
@@ -919,10 +1364,10 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       DesignSize = (
         355
         255)
-      object Bt_MinimizarGraficoSetores: TJvXPButton
+      object Bt_GraficoSetoresMinMax: TJvXPButton
         Tag = 91
-        Left = 330
-        Top = 230
+        Left = 6
+        Top = 233
         Width = 25
         Height = 22
         Hint = 'Maximizar / Minimizar'
@@ -965,7 +1410,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
           90F9B294F89A73F78C60F68455F67E4DF57A48F57642F57844F5733EF5733EF5
           713BF5713BF46C33F46C33F46A30F46428EF5D1FE06734000000}
         ShowFocusRect = True
-        Anchors = [akRight, akBottom]
+        Anchors = [akLeft, akBottom]
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -974,13 +1419,194 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         ParentFont = False
         ParentShowHint = False
         ShowHint = False
-        OnClick = Bt_MinimizarGraficoLojasClick
+        OnClick = Bt_GraficoLojasMinMaxClick
+      end
+      object Rb_GraficoSetoresNome: TJvRadioButton
+        Left = 36
+        Top = 236
+        Width = 49
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akBottom]
+        Caption = 'Nome'
+        Color = 15400959
+        Enabled = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 1
+        OnClick = Rb_GraficoLojasNomeClick
+        OnKeyUp = Rb_GraficoLojasNomeKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+      object Rb_GraficoSetoresPerc: TJvRadioButton
+        Left = 93
+        Top = 236
+        Width = 35
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akBottom]
+        Caption = '%'
+        Checked = True
+        Color = 15400959
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 2
+        TabStop = True
+        OnClick = Rb_GraficoLojasNomeClick
+        OnKeyUp = Rb_GraficoLojasNomeKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -13
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+      object Rb_GraficoSetoresNomePerc: TJvRadioButton
+        Left = 130
+        Top = 236
+        Width = 60
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akBottom]
+        Caption = 'Nome %'
+        Color = 15400959
+        Enabled = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 3
+        OnClick = Rb_GraficoLojasNomeClick
+        OnKeyUp = Rb_GraficoLojasNomeKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+      object Bt_GraficoSetoresGirar: TJvXPButton
+        Left = 329
+        Top = 230
+        Width = 26
+        Height = 25
+        TabOrder = 4
+        TabStop = False
+        Glyph.Data = {
+          07544269746D61707E030000424D7E0300000000000036000000280000001200
+          00000F0000000100180000000000480300000000000000000000000000000000
+          0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBF3F3700BFBFBFBFBFBFBFBFBFBFBFBF0000BFBFBFBFBFBF
+          BFBFBFCF6760CF6760CF6760CF6760000000BFBFBFBFBFBFBFBFBFBFBFBF0000
+          00000000BFBFBFBFBFBFBFBFBFBFBFBF0000BFBFBFBFBFBF007F00007F00007F
+          00007F00007F00000000BFBFBFBFBFBFBFBFBF000000A0983F000000BFBFBFBF
+          BFBFBFBFBFBFBFBF0000BFBFBFA0983FA0983FA0983FA0983F007F00000000BF
+          BFBFBFBFBFBFBFBF3F3700A0983F00FF007F7F003F37003F3700BFBFBFBFBFBF
+          0000BFBFBFA0983F00FF00A0983F007F00000000BFBFBFBFBFBFBFBFBF3F3700
+          A0983F00FF00A0983FA0983F007F003F3700007F00BFBFBF0000BFBFBFA0983F
+          00FF00A0983F000000BFBFBFBFBFBFBFBFBFA0983FA0983F00FF00A0983F00FF
+          00A0983F007F00007F003F3700BFBFBF0000BFBFBFA0983F90FF2FA0983F007F
+          003F3700BFBFBFBFBFBF90FF2FFFFFFFA0983F90FF2FA0983FA0983F007F003F
+          37003F3700BFBFBF0000BFBFBFA0983F90FF2FA0983FA0983F007F003F3700BF
+          BFBFBFBFBF90FF2FFFFFFFA0983F90FF2FA0983F007F00007F003F3700BFBFBF
+          0000BFBFBFA0983F90FF2FFFFFFF90FF2F90FF2F007F003F3700000000000000
+          90FF2FFFFFFFA0983FA0983F007F003F37003F3700BFBFBF0000BFBFBFA0983F
+          FFFFFFA0983F00000000000000000000000000000000000000000000FF00FFFF
+          FF00000090FF2F007F003F3700BFBFBF0000BFBFBFA0983F90FF2F0000000000
+          003F37000000003F37000000003F370000000000000000FF0000000000000090
+          FF2F3F3700BFBFBF0000BFBFBFA0983F90FF2FA0983F3F370000000060302F00
+          000060302F000000000000000000000000000000000000A0983F007F00BFBFBF
+          0000BFBFBFBFBFBFA0983F90FF2FCF67603F37003F37003F37000000003F3700
+          000000000000000000000000007F00007F00BFBFBFBFBFBF0000BFBFBFBFBFBF
+          BFBFBFA0983FA0983FA0983F007F00007F00007F00007F00007F00007F00007F
+          00007F00007F00BFBFBFBFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+          BFBFBFBFBFBFBFBF0000}
+        ShowFocusRect = True
+        Anchors = [akRight, akBottom]
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = Bt_GraficoLojasGirarClick
+      end
+      object Rb_GraficoSetoresVlr: TJvRadioButton
+        Left = 196
+        Top = 236
+        Width = 28
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akBottom]
+        Caption = '$'
+        Color = 15400959
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 5
+        OnClick = Rb_GraficoLojasNomeClick
+        OnKeyUp = Rb_GraficoLojasNomeKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -13
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+      object Rb_GraficoSetoresNomeVlr: TJvRadioButton
+        Left = 233
+        Top = 236
+        Width = 58
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akBottom]
+        Caption = 'Nome $'
+        Color = 15400959
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 6
+        OnClick = Rb_GraficoLojasNomeClick
+        OnKeyUp = Rb_GraficoLojasNomeKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
       end
     end
     object Gb_Lojas: TGroupBox
       Left = 1
       Top = 1
-      Width = 356
+      Width = 357
       Height = 46
       Anchors = [akTop]
       Caption = ' Lojas '
@@ -1001,7 +1627,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         ColorHighlight = clHighlight
         ColorHighlightText = clHighlightText
         ColorDisabledText = clGrayText
-        Color = clBtnFace
+        Color = 16382457
         Items.Strings = (
           'SADas'
           'sADasdAS'
@@ -1013,7 +1639,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     object Gb_Fornecedores: TGroupBox
       Left = 362
       Top = 1
-      Width = 356
+      Width = 357
       Height = 46
       Anchors = [akTop]
       Caption = ' Fornecedores '
@@ -1030,7 +1656,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Width = 303
         Height = 19
         TabStop = False
-        Color = 14737632
+        Color = 16382457
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -1111,7 +1737,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       end
       object EdtCodFornecedor: TCurrencyEdit
         Left = 323
-        Top = 17
+        Top = 18
         Width = 29
         Height = 21
         AutoSize = False
@@ -1130,7 +1756,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     object Gb_Setores: TGroupBox
       Left = 723
       Top = 1
-      Width = 356
+      Width = 357
       Height = 46
       Anchors = [akTop]
       Caption = ' Setores '
@@ -1147,7 +1773,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Width = 303
         Height = 19
         TabStop = False
-        Color = 14737632
+        Color = 16382457
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -1228,7 +1854,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       end
       object EdtCodSetor: TCurrencyEdit
         Left = 295
-        Top = 9
+        Top = 18
         Width = 29
         Height = 21
         AutoSize = False
@@ -1244,7 +1870,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Visible = False
       end
     end
-    object Bt_MinimizarGraficos: TJvXPButton
+    object Bt_GraficosMinMax: TJvXPButton
       Tag = 91
       Left = 1058
       Top = 6
@@ -1299,12 +1925,12 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       ParentFont = False
       ParentShowHint = False
       ShowHint = False
-      OnClick = Bt_MinimizarGraficosClick
+      OnClick = Bt_GraficosMinMaxClick
     end
   end
   object OdirPanApres: TPanel
-    Left = 784
-    Top = 534
+    Left = 856
+    Top = 542
     Width = 89
     Height = 33
     BevelInner = bvLowered

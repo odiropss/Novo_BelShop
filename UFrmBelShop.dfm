@@ -18890,7 +18890,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_FinanObjetivosGraficos
+        ActivePage = Ts_FinanObjetivosManut
         Align = alClient
         TabOrder = 0
         OnChange = PC_FinanObjetivosChange

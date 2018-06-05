@@ -17,13 +17,13 @@ var
 
 begin
   // Não Permite Rodar Duas Vezes
-  CreateMutex(nil, false, 'PTransferencias');
-  If GetLastError()=ERROR_ALREADY_EXISTS Then
-   Begin
-     ShowWindow(Aplicativo, SW_RESTORE);
-   End
-  Else
-   Begin
+//  CreateMutex(nil, false, 'PTransferencias');
+//  If GetLastError()=ERROR_ALREADY_EXISTS Then
+//   Begin
+//     ShowWindow(Aplicativo, SW_RESTORE);
+//   End
+//  Else
+//   Begin
      // Não Apresenta o Form
      Application.ShowMainForm:=False;
 
@@ -36,5 +36,5 @@ begin
      Application.CreateForm(TJ_002, J_002);
      Application.CreateForm(TJ_001, J_001);
      Application.Run;
-   End;
+//   End;
 end.
