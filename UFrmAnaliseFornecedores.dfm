@@ -34,9 +34,6 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     Ctl3D = False
     ParentCtl3D = False
     TabOrder = 0
-    DesignSize = (
-      1082
-      41)
     object Bt_Fechar: TJvXPButton
       Tag = 99
       Left = 980
@@ -163,6 +160,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         StyleFocused.TextStyle = [fsBold]
         StyleHot.BorderStyle = ebsUltraFlat
         TabOrder = 0
+        OnEnter = DtEdt_DtaInicioEnter
         OnExit = DtEdt_DtaInicioExit
         Width = 106
       end
@@ -180,43 +178,9 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         StyleFocused.TextStyle = [fsBold]
         StyleHot.BorderStyle = ebsUltraFlat
         TabOrder = 1
+        OnEnter = DtEdt_DtaInicioEnter
         OnExit = DtEdt_DtaInicioExit
         Width = 106
-      end
-    end
-    object GroupBox1: TGroupBox
-      Left = 449
-      Top = -1
-      Width = 185
-      Height = 41
-      Anchors = [akTop, akBottom]
-      Caption = ' Faturamento Total '
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 2
-      object DbeFat_Total: TDBEdit
-        Left = -11
-        Top = 15
-        Width = 20
-        Height = 19
-        DataField = 'FAT_TOTAL'
-        DataSource = DMLinx.DS_AnaliseForn
-        TabOrder = 0
-        Visible = False
-        OnChange = DbeFat_TotalChange
-      end
-      object EdtFat_Total: TCurrencyEdit
-        Left = 14
-        Top = 16
-        Width = 157
-        Height = 19
-        AutoSize = False
-        Color = 16382457
-        TabOrder = 1
       end
     end
   end
@@ -1523,367 +1487,6 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       ShowHint = False
       OnClick = Bt_GraficosMinMaxClick
     end
-    object DBGrid1: TDBGrid
-      Left = 2
-      Top = 48
-      Width = 1082
-      Height = 258
-      Anchors = [akLeft, akTop, akRight, akBottom]
-      DataSource = DMLinx.DS_IBQuery
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
-      ParentFont = False
-      TabOrder = 7
-      TitleFont.Charset = DEFAULT_CHARSET
-      TitleFont.Color = clWindowText
-      TitleFont.Height = -11
-      TitleFont.Name = 'MS Sans Serif'
-      TitleFont.Style = [fsBold]
-      OnColEnter = Dbg_ProdutosColEnter
-      OnDrawDataCell = Dbg_ProdutosDrawDataCell
-      OnDrawColumnCell = DBGrid1DrawColumnCell
-      OnKeyDown = DBGrid1KeyDown
-      OnKeyPress = Dbg_ProdutosKeyPress
-      OnMouseMove = Dbg_ProdutosMouseMove
-      Columns = <
-        item
-          Expanded = False
-          FieldName = 'COD_PRODUTO'
-          Title.Alignment = taRightJustify
-          Width = 50
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'NOME'
-          Width = 250
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'ABC'
-          Title.Alignment = taCenter
-          Width = 30
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'FAT_PERIODO'
-          Title.Alignment = taRightJustify
-          Width = 90
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'DESC_SETOR'
-          Width = 150
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'DESC_COLECAO'
-          Width = 160
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA1'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA2'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA3'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA4'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA5'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA6'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA7'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA8'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA9'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA10'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA11'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA12'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA13'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA14'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA15'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA16'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA17'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA18'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA19'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA20'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA21'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA22'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA23'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA24'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA25'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA26'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA27'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA28'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA29'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA30'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA31'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA32'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA33'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA34'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Alignment = taCenter
-          Expanded = False
-          FieldName = 'LOJA35'
-          Title.Alignment = taCenter
-          Width = 78
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'COD_FORNECEDOR'
-          Title.Alignment = taRightJustify
-          Width = 60
-          Visible = True
-        end
-        item
-          Expanded = False
-          FieldName = 'FORN'
-          Width = 300
-          Visible = True
-        end>
-    end
   end
   object OdirPanApres: TPanel
     Left = 856
@@ -1893,9 +1496,9 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     BevelInner = bvLowered
     BevelWidth = 2
     Caption = 'OdirPanApres'
-    Color = clYellow
+    Color = clBlue
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
+    Font.Color = clWhite
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
@@ -1909,7 +1512,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     Width = 1084
     Height = 198
     Align = alClient
-    DataSource = DMLinx.DS_AnaliseForn
+    DataSource = DMVirtual.DS_V_MixAnaliseForn
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
@@ -2271,6 +1874,10 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     Height = 20
     Panels = <
       item
+        PanelStyleClassName = 'TdxStatusBarContainerPanelStyle'
+        PanelStyle.Container = dxStatusBar3Container11
+      end
+      item
         PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
         PanelStyle.Alignment = taRightJustify
         PanelStyle.Color = clBtnFace
@@ -2316,7 +1923,17 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
         PanelStyle.Alignment = taCenter
         Fixed = False
+        Text = '<F4> Localiza Produto'
+      end
+      item
+        PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+        PanelStyle.Alignment = taCenter
+        Fixed = False
         Text = '<F6> Verificar Estoque M'#237'nino/M'#225'ximo'
+      end
+      item
+        PanelStyleClassName = 'TdxStatusBarContainerPanelStyle'
+        PanelStyle.Container = dxStatusBar3Container10
       end>
     PaintStyle = stpsOffice11
     Font.Charset = DEFAULT_CHARSET
@@ -2324,6 +1941,18 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
+    object dxStatusBar3Container10: TdxStatusBarContainerControl
+      Left = 1034
+      Top = 2
+      Width = 50
+      Height = 16
+    end
+    object dxStatusBar3Container11: TdxStatusBarContainerControl
+      Left = 2
+      Top = 2
+      Width = 48
+      Height = 16
+    end
   end
   object CorCaptionForm: TJvGradientCaption
     Active = False

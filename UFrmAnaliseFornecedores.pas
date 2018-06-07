@@ -72,10 +72,8 @@ type
     Rb_GraficoSetoresNomeVlr: TJvRadioButton;
     Dbg_Produtos: TDBGrid;
     dxStatusBar3: TdxStatusBar;
-    GroupBox1: TGroupBox;
-    DbeFat_Total: TDBEdit;
-    EdtFat_Total: TCurrencyEdit;
-    DBGrid1: TDBGrid;
+    dxStatusBar3Container10: TdxStatusBarContainerControl;
+    dxStatusBar3Container11: TdxStatusBarContainerControl;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -105,6 +103,16 @@ type
 
     Procedure MixProdutos;
 
+    Procedure BuscaLojaSidicomEstMinMax(sCodProdLx, sCodLojaLx: String;
+                                        Var sCodProdSid: String;
+                                        Var sCodLojaSid: String;
+                                        Var sEstMin: String;
+                                        Var sEstMax: String);
+
+    Procedure GravaEstMinimoMaximo(sCodLojaLx, sCodProdLx,
+                                   sCodLojaSid, sCodProdSid,
+                                   sEstMin, sEstMax: String);
+
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     procedure Bt_BuscaFornecedorClick(Sender: TObject);
@@ -126,11 +134,7 @@ type
     procedure Dbg_ProdutosKeyPress(Sender: TObject; var Key: Char);
     procedure Dbg_ProdutosMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
-    procedure DbeFat_TotalChange(Sender: TObject);
-    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: Integer; Column: TColumn; State: TGridDrawState);
-    procedure DBGrid1KeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure DtEdt_DtaInicioEnter(Sender: TObject);
   private
     { Private declarations }
   public
@@ -157,7 +161,8 @@ var
 
   TD : TTransactionDesc; // Ponteiro de Transação
 
-  bgSair: Boolean;
+  bgSair,
+  bgMontaCheck: Boolean;
 
   sgDtaIniPadrao, sgDtaFimPadrao, 
   sOrderGrid,    // Ordenar Grid
@@ -175,13 +180,122 @@ var
 
 implementation
 
-uses DK_Procs1, UDMBelShop, UDMVirtual, UPesquisa, UDMLinx;
+uses DK_Procs1, UDMBelShop, UDMVirtual, UPesquisa, UDMLinx, SqlExpr;
 
 {$R *.dfm}
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir _ INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Busca Codigo Loja SIDICOM e Estoques Minimo/Maximo >>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAnaliseFornecedores.BuscaLojaSidicomEstMinMax(sCodProdLx, sCodLojaLx: String;
+                                                            Var sCodProdSid: String;
+                                                            Var sCodLojaSid: String;
+                                                            Var sEstMin: String;
+                                                            Var sEstMax: String);
+Var
+  MySql: String;
+Begin
+  // Busca Codigo do Produtos SIDICOM ==========================================
+  MySql:=' SELECT TRIM(pr.cod_auxiliar) PROD_SIDICOM'+
+         ' FROM LINXPRODUTOS pr'+
+         ' WHERE pr.cod_produto='+sCodProdLx;
+  DMBelShop.SQLQuery1.Close;
+  DMBelShop.SQLQuery1.SQL.Clear;
+  DMBelShop.SQLQuery1.SQL.Add(MySql);
+  DMBelShop.SQLQuery1.Open;
+  sCodProdSid:=Trim(DMBelShop.SQLQuery1.FieldByName('Prod_Sidicom').AsString);
+  DMBelShop.SQLQuery1.Close;
+
+  // Busca Codigo da Loja Linx =================================================
+  MySql:=' SELECT l.cod_loja'+
+         ' FROM LINXLOJAS l'+
+         ' WHERE l.empresa='+sCodLojaLx;
+  DMBelShop.SQLQuery1.Close;
+  DMBelShop.SQLQuery1.SQL.Clear;
+  DMBelShop.SQLQuery1.SQL.Add(MySql);
+  DMBelShop.SQLQuery1.Open;
+  sCodLojaSid:=Trim(DMBelShop.SQLQuery1.FieldByName('Cod_Loja').AsString);
+  DMBelShop.SQLQuery1.Close;
+
+  // Busca Estoque Minimo/Maximo =============================================
+  MySql:=' SELECT c.est_minimo, c.est_maximo'+
+         ' FROM ES_FINAN_CURVA_ABC c'+
+         ' WHERE c.cod_loja='+QuotedStr(sCodLojaSid)+
+         ' AND   c.cod_produto='+QuotedStr(sCodProdSid);
+  DMBelShop.SQLQuery1.Close;
+  DMBelShop.SQLQuery1.SQL.Clear;
+  DMBelShop.SQLQuery1.SQL.Add(MySql);
+  DMBelShop.SQLQuery1.Open;
+  sEstMin:=Trim(DMBelShop.SQLQuery1.FieldByName('Est_Minimo').AsString);
+  sEstMax:=Trim(DMBelShop.SQLQuery1.FieldByName('Est_Maximo').AsString);
+  DMBelShop.SQLQuery1.Close;
+End; // Busca Codigo Loja SIDICOM e Estoques Minimo/Maximo >>>>>>>>>>>>>>>>>>>>>
+
+// Grava Estoque Minimo/Maximo na Tabela ES_FINAN_CURVA_ABC >>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAnaliseFornecedores.GravaEstMinimoMaximo(sCodLojaLx, sCodProdLx,
+                                                       sCodLojaSid, sCodProdSid,
+                                                       sEstMin, sEstMax: String);
+Var
+  MySql: String;
+Begin
+  OdirPanApres.Caption:='AGUARDE !! Salvando Mix Do Produto...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmAnaliseFornecedores.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmAnaliseFornecedores.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmAnaliseFornecedores;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    MySql:=' UPDATE ES_FINAN_CURVA_ABC cv'+
+           ' SET cv.est_minimo='+sEstMin+
+           ',    cv.est_maximo='+sEstMax+
+           ' WHERE cv.cod_loja='+QuotedStr(sCodLojaSid)+
+           ' AND   cv.cod_produto='+QuotedStr(sCodProdSid);
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    MySql:=' UPDATE ES_PRODUTOS_MIX mx'+
+           ' SET mx.est_minimo='+sEstMin+
+           ' ,   mx.est_maximo='+sEstMax+
+           ' WHERE mx.empresa='+sCodLojaLx+
+           ' AND   mx.cod_produto='+sCodProdLx;
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      MessageBox(Handle, pChar(e.message=cr+cr+'Entrar em Contato com o Odir !!'), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+
+End; // Grava Estoque Minimo/Maximo na Tabela ES_FINAN_CURVA_ABC >>>>>>>>>>>>>>>
 
 // Busca Mix de Produtos por Loja >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAnaliseFornecedores.MixProdutos;
@@ -199,8 +313,11 @@ Begin
   OdirPanApres.Visible:=True;
   Refresh;
 
+  // Não Monta CheckBox no DBGrid ==============================================
+   bgMontaCheck:=False;
+
   // Acerta CDS_AnaliseForn ====================================================
-  DMLinx.CDS_AnaliseForn.Close;
+  DMVirtual.CDS_V_MixAnaliseForn.Close;
 
   For i:=6 to Dbg_Produtos.Columns.Count-3 do
    Dbg_Produtos.Columns.Items[i].Visible:=False;
@@ -220,32 +337,33 @@ Begin
          ' WHERE l.empresa=a.empresa'+
          ' AND   l.empresa NOT IN (2,5)'+
          ' ORDER BY 1';
-  DMBelShop.CDS_BuscaRapida.Close;
-  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-  DMBelShop.CDS_BuscaRapida.Open;
+  DMBelShop.SQLQuery1.Close;
+  DMBelShop.SQLQuery1.SQL.Clear;
+  DMBelShop.SQLQuery1.SQL.Add(MySql);
+  DMBelShop.SQLQuery1.Open;
 
-  DMBelShop.CDS_BuscaRapida.First;
-  DMBelShop.CDS_BuscaRapida.DisableControls;
-  While Not DMBelShop.CDS_BuscaRapida.Eof do
+  DMBelShop.SQLQuery1.First;
+  DMBelShop.SQLQuery1.DisableControls;
+  While Not DMBelShop.SQLQuery1.Eof do
   Begin
-    mMemoColLojas.Lines.Add('LOJA'+Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Empresa').AsString));
+    mMemoColLojas.Lines.Add('LOJA'+Trim(DMBelShop.SQLQuery1.FieldByName('Empresa').AsString));
 
     // DBGrid.Coluna Visivel / Nome
     For i:=0 to Dbg_Produtos.Columns.Count-1 do
     Begin
-      If Dbg_Produtos.Columns[i].FieldName='LOJA'+Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Empresa').AsString) Then
+      If Dbg_Produtos.Columns[i].FieldName='LOJA'+Trim(DMBelShop.SQLQuery1.FieldByName('Empresa').AsString) Then
       Begin
         Dbg_Produtos.Columns[i].Visible:=True;
         Break;
       End;
     End;
 
-    DMLinx.CDS_AnaliseForn.FieldByName('LOJA'+Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Empresa').AsString)).DisplayLabel:=
-                                              Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Nome_Abrev').AsString);
+    DMVirtual.CDS_V_MixAnaliseForn.FieldByName('LOJA'+Trim(DMBelShop.SQLQuery1.FieldByName('Empresa').AsString)).DisplayLabel:=
+                                               Trim(DMBelShop.SQLQuery1.FieldByName('Nome_Abrev').AsString);
 
-    DMBelShop.CDS_BuscaRapida.Next;
-  End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
-  DMBelShop.CDS_BuscaRapida.First;
+    DMBelShop.SQLQuery1.Next;
+  End; // While Not DMBelShop.SQLQuery1.Eof do
+  DMBelShop.SQLQuery1.First;
 
   Dbg_Produtos.Refresh;
 
@@ -280,10 +398,10 @@ Begin
          ' TRIM(pr.desc_colecao) DESC_COLECAO,';
 
   // Monta MIX Das Lojas =======================================================
-  DMBelShop.CDS_BuscaRapida.First;
+  DMBelShop.SQLQuery1.First;
   For i:=1 to 35 do
   Begin
-    If DMBelShop.CDS_BuscaRapida.Locate('Empresa',i,[]) Then
+    If DMBelShop.SQLQuery1.Locate('Empresa',i,[]) Then
      MySql:=
       MySql+' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto AND mx.empresa='+IntToStr(i)+')  LOJA'+IntToStr(i)+','
     Else
@@ -309,20 +427,44 @@ Begin
          If Trim(sgCodSetor)<>'' Then
           MySql:=
            MySql+' And   pr.id_setor='+sgCodSetor;
-  DMLinx.CDS_AnaliseForn.Close;
-  DMLinx.SDS_AnaliseForn.CommandText:=MySql;
-//  DMLinx.CDS_AnaliseForn.Open;
-//
-//  If DMLinx.CDS_AnaliseForn.Eof Then
-//  Begin
-//    msg('Sem Produto Selecionado !!','A');
-//    DMLinx.CDS_AnaliseForn.Close;
-//  End;
+  If Not DMBelShop.IBDB_BelShop.Connected Then
+   DMBelShop.IBDB_BelShop.Connected:=True;
+  DMBelShop.IBDS_Busca.Close;
+  DMBelShop.IBDS_Busca.SelectSQL.Clear;
+  DMBelShop.IBDS_Busca.SelectSQL.Add(MySql);
+  DMBelShop.IBDS_Busca.Open;
 
-  DMLinx.IBDataSet1.Close;
-  DMBelShop.IBDB_BelShop.Connected:=True;
-  DMLinx.IBDataSet1.Open;
+  // Inicializa ClientDataSet Virtual
+  If DMVirtual.CDS_V_MixAnaliseForn.Active Then
+   DMVirtual.CDS_V_MixAnaliseForn.Close;
 
+  DMVirtual.CDS_V_MixAnaliseForn.CreateDataSet;
+  DMVirtual.CDS_V_MixAnaliseForn.IndexFieldNames:='';
+  DMVirtual.CDS_V_MixAnaliseForn.Open;
+
+  DMBelShop.IBDS_Busca.DisableControls;
+  While not DMBelShop.IBDS_Busca.Eof do
+  Begin
+    Application.ProcessMessages;
+
+    DMVirtual.CDS_V_MixAnaliseForn.Insert;
+    For i:=0 to DMBelShop.IBDS_Busca.FieldCount-1 do
+     DMVirtual.CDS_V_MixAnaliseForn.Fields[i].Assign(DMBelShop.IBDS_Busca.Fields[i]);
+
+    DMVirtual.CDS_V_MixAnaliseForn.Post;
+
+    DMBelShop.IBDS_Busca.Next;
+  End;
+  DMBelShop.IBDS_Busca.EnableControls;
+  DMBelShop.IBDS_Busca.Close;
+
+  // Monta CheckBox no DBGrid ==================================================
+   bgMontaCheck:=True;
+
+  DMVirtual.CDS_V_MixAnaliseForn.IndexFieldNames:='ABC;NOME';
+  DMVirtual.CDS_V_MixAnaliseForn.First;
+  Dbg_Produtos.SetFocus;
+   
   OdirPanApres.Visible:=False;
 End; // Busca Mix de Produtos por Loja >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -398,9 +540,10 @@ Begin
     MySql:=
      MySql+' GROUP BY 1';
   End; // If Trim(sgCodLoja)<>'' Then
-  DMBelShop.CDS_BuscaRapida.Close;
-  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-  DMBelShop.CDS_BuscaRapida.Open;
+  DMBelShop.SQLQuery1.Close;
+  DMBelShop.SQLQuery1.SQL.Clear;
+  DMBelShop.SQLQuery1.SQL.Add(MySql);
+  DMBelShop.SQLQuery1.Open;
 
   // Inicializa Grafico Setores ================================================
   gsPizzaSetores.Clear;
@@ -412,12 +555,12 @@ Begin
   Rb_GraficoLojasNomeClick(Rb_GraficoSetoresPerc);
 
   // Sem Movimentos ============================================================
-  If DMBelShop.CDS_BuscaRapida.IsEmpty Then
+  If DMBelShop.SQLQuery1.IsEmpty Then
    gsPizzaSetores.Add(0, 'Sem Movtos', clWindow);
 
   i:=25;
-  DMBelShop.CDS_BuscaRapida.DisableControls;
-  While Not DMBelShop.CDS_BuscaRapida.Eof do
+  DMBelShop.SQLQuery1.DisableControls;
+  While Not DMBelShop.SQLQuery1.Eof do
   Begin
     // Todas os Setores ========================================================
     If Trim(sgCodSetor)='' Then
@@ -433,20 +576,19 @@ Begin
     // Uma Setor ===============================================================
     If Trim(sgCodSetor)<>'' Then
     Begin
-      If DMBelShop.CDS_BuscaRapida.FieldByName('Setor').AsString='OUTROS SETORES' Then
+      If DMBelShop.SQLQuery1.FieldByName('Setor').AsString='OUTROS SETORES' Then
        CgCor:=clWindow
       Else
        CgCor:=clGreen;
     End; // If Trim(sgCodSetor)<>'' Then
 
-    gsPizzaSetores.Add(DMBelShop.CDS_BuscaRapida.FieldByName('Tot_Fat').AsCurrency,
-                       DMBelShop.CDS_BuscaRapida.FieldByName('Setor').AsString, CgCor);
+    gsPizzaSetores.Add(DMBelShop.SQLQuery1.FieldByName('Tot_Fat').AsCurrency,
+                       DMBelShop.SQLQuery1.FieldByName('Setor').AsString, CgCor);
 
-    DMBelShop.CDS_BuscaRapida.Next;
-  End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
-
-  DMBelShop.CDS_BuscaRapida.EnableControls;
-  DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SQLQuery1.Next;
+  End; // While Not DMBelShop.SQLQuery1.Eof do
+  DMBelShop.SQLQuery1.EnableControls;
+  DMBelShop.SQLQuery1.Close;
 
   OdirPanApres.Visible:=False;
 
@@ -529,9 +671,10 @@ Begin
     MySql:=
      MySql+' GROUP BY 1';
   End; // If Trim(sgCodLoja)<>'' Then
-  DMBelShop.CDS_BuscaRapida.Close;
-  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-  DMBelShop.CDS_BuscaRapida.Open;
+  DMBelShop.SQLQuery1.Close;
+  DMBelShop.SQLQuery1.SQL.Clear;
+  DMBelShop.SQLQuery1.SQL.Add(MySql);
+  DMBelShop.SQLQuery1.Open;
 
   // Inicializa Grafico Fornecedores ===========================================
   gsPizzaForn.Clear;
@@ -543,12 +686,12 @@ Begin
   Rb_GraficoLojasNomeClick(Rb_GraficoFornPerc);
 
   // Sem Movimentos ============================================================
-  If DMBelShop.CDS_BuscaRapida.IsEmpty Then
+  If DMBelShop.SQLQuery1.IsEmpty Then
    gsPizzaForn.Add(0, 'Sem Movtos', clWindow);
 
   i:=25;
-  DMBelShop.CDS_BuscaRapida.DisableControls;
-  While Not DMBelShop.CDS_BuscaRapida.Eof do
+  DMBelShop.SQLQuery1.DisableControls;
+  While Not DMBelShop.SQLQuery1.Eof do
   Begin
     // Todas os Fornecedores ===================================================
     If Trim(sgCodForn)='' Then
@@ -564,19 +707,19 @@ Begin
     // Uma Fornecedor ==========================================================
     If Trim(sgCodForn)<>'' Then
     Begin
-      If DMBelShop.CDS_BuscaRapida.FieldByName('Fornecedor').AsString='OUTROS FORNECEDORES' Then
+      If DMBelShop.SQLQuery1.FieldByName('Fornecedor').AsString='OUTROS FORNECEDORES' Then
        CgCor:=clWindow
       Else
        CgCor:=clGreen;
     End; // If Trim(sgCodForn)<>'' Then
 
-    gsPizzaForn.Add(DMBelShop.CDS_BuscaRapida.FieldByName('Tot_Fat').AsCurrency,
-                    DMBelShop.CDS_BuscaRapida.FieldByName('Fornecedor').AsString, CgCor);
+    gsPizzaForn.Add(DMBelShop.SQLQuery1.FieldByName('Tot_Fat').AsCurrency,
+                    DMBelShop.SQLQuery1.FieldByName('Fornecedor').AsString, CgCor);
 
-    DMBelShop.CDS_BuscaRapida.Next;
-  End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
-  DMBelShop.CDS_BuscaRapida.EnableControls;
-  DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SQLQuery1.Next;
+  End; // While Not DMBelShop.SQLQuery1.Eof do
+  DMBelShop.SQLQuery1.EnableControls;
+  DMBelShop.SQLQuery1.Close;
 
   OdirPanApres.Visible:=False;
 
@@ -695,9 +838,10 @@ Begin
      MySql:=
       MySql+' GROUP BY 1';
   End; // If Trim(sgCodLoja)<>'' Then
-  DMBelShop.CDS_BuscaRapida.Close;
-  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-  DMBelShop.CDS_BuscaRapida.Open;
+  DMBelShop.SQLQuery1.Close;
+  DMBelShop.SQLQuery1.SQL.Clear;
+  DMBelShop.SQLQuery1.SQL.Add(MySql);
+  DMBelShop.SQLQuery1.Open;
 
   // Inicializa Grafico de Lojas ===============================================
   gsPizzaLojas.Clear;
@@ -709,12 +853,12 @@ Begin
   Rb_GraficoLojasNomeClick(Rb_GraficoLojasPerc);
 
   // Sem Movimentos ============================================================
-  If DMBelShop.CDS_BuscaRapida.IsEmpty Then
+  If DMBelShop.SQLQuery1.IsEmpty Then
    gsPizzaLojas.Add(0, 'Sem Movtos', clWindow);
 
   i:=25;
-  DMBelShop.CDS_BuscaRapida.DisableControls;
-  While Not DMBelShop.CDS_BuscaRapida.Eof do
+  DMBelShop.SQLQuery1.DisableControls;
+  While Not DMBelShop.SQLQuery1.Eof do
   Begin
     // Todas as Lojas ==========================================================
     If Trim(sgCodLoja)='' Then
@@ -730,19 +874,19 @@ Begin
     // Uma Loja ================================================================
     If Trim(sgCodLoja)<>'' Then
     Begin
-      If DMBelShop.CDS_BuscaRapida.FieldByName('nome_abrev').AsString='OUTRAS LOJAS' Then
+      If DMBelShop.SQLQuery1.FieldByName('nome_abrev').AsString='OUTRAS LOJAS' Then
        CgCor:=clWindow
       Else
        CgCor:=clGreen;
     End; // If Trim(sgCodLoja)<>'' Then
 
-    gsPizzaLojas.Add(DMBelShop.CDS_BuscaRapida.FieldByName('Tot_Fat').AsCurrency,
-                     DMBelShop.CDS_BuscaRapida.FieldByName('nome_abrev').AsString, CgCor);
+    gsPizzaLojas.Add(DMBelShop.SQLQuery1.FieldByName('Tot_Fat').AsCurrency,
+                     DMBelShop.SQLQuery1.FieldByName('nome_abrev').AsString, CgCor);
 
-    DMBelShop.CDS_BuscaRapida.Next;
-  End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
-  DMBelShop.CDS_BuscaRapida.EnableControls;
-  DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SQLQuery1.Next;
+  End; // While Not DMBelShop.SQLQuery1.Eof do
+  DMBelShop.SQLQuery1.EnableControls;
+  DMBelShop.SQLQuery1.Close;
 
   OdirPanApres.Visible:=False;
 
@@ -851,11 +995,12 @@ Begin
          ' FROM ES_FAT_PERIODO f'+
          ' WHERE f.dta_inicio='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaInicio.Date))))+
          ' AND   f.dta_fim='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaFim.Date))));
-  DMBelShop.CDS_BuscaRapida.Close;
-  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-  DMBelShop.CDS_BuscaRapida.Open;
-  s:=DMBelShop.CDS_BuscaRapida.FieldByName('Empresa').AsString;
-  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.SQLQuery1.Close;
+  DMBelShop.SQLQuery1.SQL.Clear;
+  DMBelShop.SQLQuery1.SQL.Add(MySql);
+  DMBelShop.SQLQuery1.Open;
+  s:=DMBelShop.SQLQuery1.FieldByName('Empresa').AsString;
+  DMBelShop.SQLQuery1.Close;
 
   If Trim(s)<>'' Then
    Exit;
@@ -1135,6 +1280,7 @@ begin
   If DMBelShop.SQLC.InTransaction Then
    DMBelShop.SQLC.Rollback(TD);
 
+  // Fecha Memo de Nome das Colunas de Lojas ===================================
   FreeAndNil(mMemoColLojas);
 
   // Fecha Series dos Graficos =================================================
@@ -1147,6 +1293,8 @@ const
 Var
   MySql: String;
 begin
+  // Se Monta CheckBox no DBGrid ===============================================
+  bgMontaCheck:=False;
 
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
@@ -1233,22 +1381,23 @@ begin
          ' FROM LINXLOJAS l'+
          ' WHERE l.empresa NOT IN (2, 5)'+ // Mostardeiro
          ' ORDER BY 1';
-  DMBelShop.CDS_BuscaRapida.Close;
-  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-  DMBelShop.CDS_BuscaRapida.Open;
+  DMBelShop.SQLQuery1.Close;
+  DMBelShop.SQLQuery1.SQL.Clear;
+  DMBelShop.SQLQuery1.SQL.Add(MySql);
+  DMBelShop.SQLQuery1.Open;
 
   Cbx_Lojas.Items.Clear;
   Cbx_Lojas.Items.Add('=== TODAS AS LOJAS ===');
 
-  DMBelShop.CDS_BuscaRapida.DisableControls;
-  While Not DMBelShop.CDS_BuscaRapida.Eof do
+  DMBelShop.SQLQuery1.DisableControls;
+  While Not DMBelShop.SQLQuery1.Eof do
   Begin
-    Cbx_Lojas.Items.Add(DMBelShop.CDS_BuscaRapida.FieldByName('Loja').AsString);
+    Cbx_Lojas.Items.Add(DMBelShop.SQLQuery1.FieldByName('Loja').AsString);
 
-    DMBelShop.CDS_BuscaRapida.Next;
-  End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
-  DMBelShop.CDS_BuscaRapida.EnableControls;
-  DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SQLQuery1.Next;
+  End; // While Not DMBelShop.SQLQuery1.Eof do
+  DMBelShop.SQLQuery1.EnableControls;
+  DMBelShop.SQLQuery1.Close;
 
   // Acerta Periodo ============================================================
   DtEdt_DtaInicio.Date:=StrToDate(DateToStr(PrimeiroUltimoDia(IncMonth(Date,-4),'P')));
@@ -1284,13 +1433,11 @@ begin
   CorCaptionForm.Active:=True;
 
   bgSair:=False;
-
-  msg('MÓDULO EM DESEMVOLVIMENTO !!','A');
 end;
 
 procedure TFrmAnaliseFornecedores.Bt_FecharClick(Sender: TObject);
 begin
-  DMLinx.CDS_AnaliseForn.Close;
+  DMVirtual.CDS_V_MixAnaliseForn.Close;
 
   // Verifica se Transação esta Ativa
   If DMBelShop.SQLC.InTransaction Then
@@ -1316,7 +1463,7 @@ Var
 begin
   Dbg_Produtos.SetFocus;
 
-  DMLinx.CDS_AnaliseForn.Close;
+  DMVirtual.CDS_V_MixAnaliseForn.Close;
 
   EdtCodFornecedor.Clear;
   EdtDesFornecedor.Clear;
@@ -1382,7 +1529,7 @@ Var
 begin
   Dbg_Produtos.SetFocus;
 
-  DMLinx.CDS_AnaliseForn.Close;
+  DMVirtual.CDS_V_MixAnaliseForn.Close;
 
   EdtCodSetor.Clear;
   EdtDesSetor.Clear;
@@ -1638,6 +1785,11 @@ begin
 
   Cbx_LojasChange(Self);
 
+  DtEdt_DtaInicio.TabStop:=False;
+  DtEdt_DtaFim.TabStop   :=False;
+
+  Dbg_Produtos.SetFocus;
+
 end;
 
 procedure TFrmAnaliseFornecedores.Cbx_LojasChange(Sender: TObject);
@@ -1859,7 +2011,9 @@ begin
   if ((Sender as TDBGrid).DataSource.Dataset.IsEmpty) then
     Exit;
 
-  // Desenha um checkbox no dbgrid =============================================
+  // Desenha Checkbox no DBGrid ================================================
+If bgMontaCheck Then
+Begin
   For i:=0 to mMemoColLojas.Lines.Count-1 do
   Begin
     If Column.FieldName=mMemoColLojas.Lines[i] Then
@@ -1887,7 +2041,7 @@ begin
 
     End; // If Column.FieldName=mMemoColLojas.Lines[i] Then
   End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
-
+End; // If bgMontaCheck Then
 end;
 
 procedure TFrmAnaliseFornecedores.Dbg_ProdutosDrawDataCell(Sender: TObject;
@@ -1900,23 +2054,38 @@ end;
 
 procedure TFrmAnaliseFornecedores.Dbg_ProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 Var
-  MySql: String;
   i: Integer;
+
+  sValor,
+  sCodLojaSid, sCodProdSid,
+  sEstMin, sEstMax: String;
+
+  b, bGravar: Boolean;
 begin
+  //============================================================================
   // Acerta Colunas Fixadas ====================================================
+  //============================================================================
   if (Key = VK_Left) and (THackDBGrid(Dbg_Produtos).SelectedIndex=4) Then // Index da 1ª Coluna Não Fixada Sem Contar Indicador
   Begin
     Key := VK_Clear;
   End;
+  // Acerta Colunas Fixadas ====================================================
+  //============================================================================
 
+  //============================================================================
   // Bloquei Ctrl + Delete =====================================================
+  //============================================================================
   If (((Shift = [ssCtrl]) And (key = vk_delete))) Or (key = vk_space) Then
    Abort;
+  // Bloquei Ctrl + Delete =====================================================
+  //============================================================================
 
-  If DMLinx.CDS_AnaliseForn.IsEmpty Then
+  If DMVirtual.CDS_V_MixAnaliseForn.IsEmpty Then
    Exit;
 
+  //============================================================================
   // Altera Mix da Loja (Entrega CD) ===========================================
+  //============================================================================
   If key=VK_F2 Then
   Begin
     // Alterar Mix =============================================================
@@ -1926,16 +2095,239 @@ begin
       If Dbg_Produtos.SelectedField.FieldName=mMemoColLojas.Lines[i] Then
       Begin
         Dbg_Produtos.DataSource.Dataset.Edit;
-
         Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger :=
           IfThen (Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1, 0, 1);
-
         Dbg_Produtos.DataSource.Dataset.Post;
 
+        // Grava Novos Estoques Minino e Maximo ================================
+        sCodProdSid:=Trim(DMVirtual.CDS_V_MixAnaliseFornCOD_AUXILIAR.AsString);
+
+
+        // Busca Codigo Loja SIDICOM e Estoques Minimo/Maximo ======================
+        BuscaLojaSidicomEstMinMax(DMVirtual.CDS_V_MixAnaliseFornCOD_PRODUTO.AsString,   // sCodProdLx
+                                  Copy(Trim(Dbg_Produtos.SelectedField.FieldName),5,2), // sCodLojaLx
+                                  sCodProdSid, // Var sCodProdSid
+                                  sCodLojaSid, // Var sCodLojaSid
+                                  sEstMin,     // Var sEstMin
+                                  sEstMax);    // Var sEstMax
+
+        // Zera Variaveil de Estoque Minimo ====================================
+        sEstMin:='0';
+
+        // Coloca Produto no MIX da Loja - Solicita Estoques Minimo e Maximo ===
+        If Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger=1 Then
+        Begin
+          b:=True;
+          bGravar:=False;
+          While b do
+          Begin
+            //                   Caption do Form                               Titul1o           Titulo2          Valor1   Valor2   SetFucos  Botao1    Botao2
+            If InputQuery2Values('Inform o Estoque Mínimo e Máximo', 'Estoque Mínimo (Use <Tab> para Mover)', 'Estoque Máximo (Use <Tab> para Mover)', sEstMin, sEstMax, sEstMin, 'Salvar', 'Voltar') Then
+             Begin
+               Try
+                 StrToInt(sEstMin);
+                 StrToInt(sEstMax);
+
+                 If StrToInt(sEstMin)=0 Then
+                  Begin
+                    msg('Estoque Mínino Igual a 0 (ZERO) !!'+cr+cr+'Favor Informar um Estoque Válido !!','A');
+                  End
+                 Else
+                  Begin
+                    bGravar:=True;
+                    Break;
+                  End;
+               Except
+                 msg('Estoque Mínino/Máximo'+cr+cr+'Deve Ser Um Valor INTEIRO !!','A');
+               End;
+             End
+            Else
+             Begin
+               If StrToInt(sEstMin)=0 Then
+                Begin
+                  msg('Estoque Mínino Igual a 0 (ZERO) !!'+cr+cr+'Favor Informar um Estoque Válido !!','A');
+                End
+               Else
+                Begin
+                  bGravar:=True;
+                  Break;
+                End;
+             End; // If InputQuery2Values('<Tab> Mudar de Campo <Enter> Salva', 'Estoque Mínimo', 'Estoque Máximo', sEstMin, sEstMax, sEstMin, 'Salvar', 'Voltar') Then
+          End; // While b do
+        End; // If (Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger=1 Then
+
+        // Retira/Coloca do MIX da Loja - Estoques Minimo e  Maximo ============
+        GravaEstMinimoMaximo(Copy(Trim(Dbg_Produtos.SelectedField.FieldName),5,2), // sCodLojaLx
+                             Trim(DMVirtual.CDS_V_MixAnaliseFornCOD_PRODUTO.AsString), // sCodProdLx
+                             sCodLojaSid, sCodProdSid, sEstMin, sEstMax);
+
+        Break;
+      End; // If Dbg_Produtos.SelectedField.FieldName=mMemoColLojas.Lines[i] Then
+    End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
+  End; // If key=VK_F2 Then
+  // Altera Mix da Loja (Entrega CD) ===========================================
+  //============================================================================
+
+  //============================================================================
+  // Altera Mix da Loja (Entrega CD) ===========================================
+  //============================================================================
+  If key=VK_F3 Then
+  Begin
+    // Verifica se é Uma Coluna de Indicação de MIX ============================
+    b:=False;
+    For i:=0 to mMemoColLojas.Lines.Count-1 do
+    Begin
+      // Coluna Selecionada
+      If Dbg_Produtos.SelectedField.FieldName=mMemoColLojas.Lines[i] Then
+      Begin
+        b:=True;
         Break;
       End;
     End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
+
+    // Não é Uma Coluna de Indicação de MIX -------------------------
+    If Not b Then
+     Exit;
+
+    msg('Função em Desenvolvimento !!','A');
+  End; // If key=VK_F3 Then
+  // Altera Mix da Loja (Entrega CD) ===========================================
+  //============================================================================
+
+  //============================================================================
+  // Localizar Produto =========================================================
+  //============================================================================
+  If Key=Vk_F4 Then
+  Begin
+    i:=DMVirtual.CDS_V_MixAnaliseForn.RecNo;
+    sValor:='';
+    b:=True;
+    While b do
+    Begin
+      If InputQuery('Localizar Produto','',sValor) then
+       Begin
+         Try
+           StrToInt(sValor);
+
+           If Not DMVirtual.CDS_V_MixAnaliseForn.Locate('COD_PRODUTO', sValor,[]) Then
+           Begin
+            If Not LocalizaRegistro(DMVirtual.CDS_V_MixAnaliseForn, 'NOME', sValor) Then
+             b:=False;
+           End; // If Not DMVirtual.CDS_V_MixAnaliseForn.Locate('COD_PRODUTO', sValor,[]) Then
+           Break;
+         Except
+           If Not DMVirtual.CDS_V_MixAnaliseForn.Locate('NOME', sValor,[]) Then
+           Begin
+             If Not LocalizaRegistro(DMVirtual.CDS_V_MixAnaliseForn, 'NOME', sValor) Then
+              b:=False;
+           End; // If Not DMVirtual.CDS_V_MixAnaliseForn..Locate('NOME', sValor,[]) Then
+           Break;
+         End;
+       End
+      Else // If InputQuery('Localizar Produto','',sValor) then
+       Begin
+         Break;
+       End; // If InputQuery('Localizar Produto','',sValor) then
+    End; // While b do
+
+    If Not b Then
+    Begin
+      DMVirtual.CDS_V_MixAnaliseForn.RecNo:=i;
+      msg('Produto Não Localizado !!','A');
+    End;
+  End; // If Key=Vk_F4 Then
+  // Localizar Produto =========================================================
+  //============================================================================
+
+  //============================================================================
+  // Apresenta Estoque Minino/Maximo ===========================================
+  //============================================================================
+  If key=VK_F6 Then
+  Begin
+    // Verifica se é Uma Coluna de Indicação de MIX ============================
+    b:=False;
+    For i:=0 to mMemoColLojas.Lines.Count-1 do
+    Begin
+      // Coluna Selecionada
+      If Dbg_Produtos.SelectedField.FieldName=mMemoColLojas.Lines[i] Then
+      Begin
+        b:=True;
+        Break;
+      End;
+    End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
+
+    // Não é Uma Coluna de Indicação de MIX -------------------------
+    If Not b Then
+     Exit;
+
+    // Produto Não Esta no MIX =================================================
+    If DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).AsInteger=0 Then
+    Begin
+      msg('Produto Não Pertence ao Mix da Loja !!','A');
+      Exit;
+    End;
+
+    If Trim(DMVirtual.CDS_V_MixAnaliseFornCOD_AUXILIAR.AsString)='' Then
+    Begin
+      msg('Produto Não Vinculado no'+cr+'Controle de Estoque Minimo/Máximo !!','A');
+      Exit;
+    End;
+
+    sCodProdSid:=Trim(DMVirtual.CDS_V_MixAnaliseFornCOD_AUXILIAR.AsString);
+
+    // Busca Codigo Loja SIDICOM e Estoques Minimo/Maximo ======================
+    BuscaLojaSidicomEstMinMax(DMVirtual.CDS_V_MixAnaliseFornCOD_PRODUTO.AsString,   // sCodProdLx
+                              Copy(Trim(Dbg_Produtos.SelectedField.FieldName),5,2), // sCodLojaLx
+                              sCodProdSid, // Var sCodProdSid
+                              sCodLojaSid, // Var sCodLojaSid
+                              sEstMin,     // Var sEstMin
+                              sEstMax);    // Var sEstMax
+
+    If sEstMin='' Then
+    Begin
+      msg('Produto Não Vinculado no'+cr+'Controle de Estoque Minimo/Máximo !!','A');
+      Exit;
+    End;
+
+    b:=True;
+    bGravar:=False;
+    While b do
+    Begin
+      //                   Caption do Form                               Titul1o           Titulo2          Valor1   Valor2   SetFucos  Botao1    Botao2
+      If InputQuery2Values('<Tab> Mudar de Campo <Enter> Salva', 'Estoque Mínimo (Use <Tab> para Mover)', 'Estoque Máximo (Use <Tab> para Mover)', sEstMin, sEstMax, sEstMin, 'Salvar', 'Voltar') Then
+       Begin
+         Try
+           StrToInt(sEstMin);
+           StrToInt(sEstMax);
+
+           If StrToInt(sEstMin)=0 Then
+            Begin
+              msg('Estoque Mínino Igual a 0 (ZERO) !!'+cr+cr+'Para Retira do MIX da Loja'+cr+'Volte e Tecle <F2> ou <F3>','A');
+            End
+           Else
+            Begin
+              bGravar:=True;
+              Break;
+            End;
+         Except
+           msg('Estoque Mínino/Máximo'+cr+cr+'Deve Ser Um Valor INTEIRO !!','A');
+         End;
+       End
+      Else
+       Begin
+         Break;
+       End;
+    End; // While b do
+
+    If bGravar Then
+    Begin
+      GravaEstMinimoMaximo(Copy(Trim(Dbg_Produtos.SelectedField.FieldName),5,2), // sCodLojaLx
+                           Trim(DMVirtual.CDS_V_MixAnaliseFornCOD_PRODUTO.AsString), // sCodProdLx
+                           sCodLojaSid, sCodProdSid, sEstMin, sEstMax);
+    End; // If bGravar Then
   End; // If key=VK_F6 Then
+  // Apresenta Estoque Minino/Maximo ===========================================
+  //============================================================================
 end;
 
 procedure TFrmAnaliseFornecedores.Dbg_ProdutosKeyPress(Sender: TObject; var Key: Char);
@@ -1953,79 +2345,10 @@ begin
 
 end;
 
-procedure TFrmAnaliseFornecedores.DbeFat_TotalChange(Sender: TObject);
+procedure TFrmAnaliseFornecedores.DtEdt_DtaInicioEnter(Sender: TObject);
 begin
-  EdtFat_Total.Value:=0.00;
-  If Trim(DbeFat_Total.Text)<>'' Then
-   EdtFat_Total.Value:=StrToCurr(DbeFat_Total.Text);
-end;
-
-procedure TFrmAnaliseFornecedores.DBGrid1DrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
-Var
-  MySql: String;
-  i: Integer;
-
-  Check: Integer;
-  R: TRect;
-begin
-  // Desenha um checkbox no dbgrid =============================================
-  For i:=0 to mMemoColLojas.Lines.Count-1 do
-  Begin
-    If Column.FieldName=mMemoColLojas.Lines[i] Then
-    Begin
-      // Altera Cor Quando for MIX =============================================
-      If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
-      Begin
-        DBGrid1.Canvas.Brush.Color:=$00C6FFC6;
-      End;
-      TDBGrid(Sender).Canvas.FillRect(Rect);
-
-      // Monta Check ===========================================================
-      If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
-       Begin
-         Check := DFCS_CHECKED;
-       End
-      Else
-       Begin
-         Check := 0;
-       End; //If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
-
-      R := Rect;
-      InflateRect(R, -2, -2); // Diminue o tamanho do CheckBox
-      DrawFrameControl(TDBGrid(Sender).Canvas.Handle, R, DFC_BUTTON, DFCS_BUTTONCHECK or Check);
-
-    End; // If Column.FieldName=mMemoColLojas.Lines[i] Then
-  End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
-
-end;
-
-procedure TFrmAnaliseFornecedores.DBGrid1KeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
-Var
-  i: Integer;
-begin
-  // Altera Mix da Loja (Entrega CD) ===========================================
-  If key=VK_F2 Then
-  Begin
-    // Alterar Mix =============================================================
-    For i:=0 to mMemoColLojas.Lines.Count-1 do
-    Begin
-      // Coluna Selecionada
-      If DBGrid1.SelectedField.FieldName=mMemoColLojas.Lines[i] Then
-      Begin
-        DBGrid1.DataSource.Dataset.Edit;
-
-        DBGrid1.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger :=
-          IfThen (DBGrid1.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1, 0, 1);
-
-//        DBGrid1.DataSource.Dataset.Post;
-
-        Break;
-      End;
-    End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
-  End; // If key=VK_F6 Then
-
+  DtEdt_DtaInicio.TabStop:=True;
+  DtEdt_DtaFim.TabStop   :=True;
 end;
 
 end.

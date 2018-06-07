@@ -4486,4 +4486,165 @@ object DMVirtual: TDMVirtual
     Left = 405
     Top = 118
   end
+  object CDS_V_MixAnaliseForn: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 943
+    Top = 307
+    object CDS_V_MixAnaliseFornCOD_AUXILIAR: TStringField
+      FieldName = 'COD_AUXILIAR'
+      Size = 40
+    end
+    object CDS_V_MixAnaliseFornCOD_PRODUTO: TFMTBCDField
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'COD_PRODUTO'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_V_MixAnaliseFornNOME: TStringField
+      DisplayLabel = 'Produto'
+      FieldName = 'NOME'
+      Size = 250
+    end
+    object CDS_V_MixAnaliseFornABC: TStringField
+      FieldName = 'ABC'
+      Size = 1
+    end
+    object CDS_V_MixAnaliseFornFAT_PERIODO: TFMTBCDField
+      DisplayLabel = 'Fat Per'#237'odo'
+      FieldName = 'FAT_PERIODO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 4
+    end
+    object CDS_V_MixAnaliseFornDESC_SETOR: TStringField
+      DisplayLabel = 'Setor'
+      FieldName = 'DESC_SETOR'
+      Size = 30
+    end
+    object CDS_V_MixAnaliseFornDESC_COLECAO: TStringField
+      DisplayLabel = 'Cole'#231#227'o'
+      FieldName = 'DESC_COLECAO'
+      Size = 50
+    end
+    object CDS_V_MixAnaliseFornLOJA1: TIntegerField
+      FieldName = 'LOJA1'
+    end
+    object CDS_V_MixAnaliseFornLOJA2: TIntegerField
+      FieldName = 'LOJA2'
+    end
+    object CDS_V_MixAnaliseFornLOJA3: TIntegerField
+      FieldName = 'LOJA3'
+    end
+    object CDS_V_MixAnaliseFornLOJA4: TIntegerField
+      FieldName = 'LOJA4'
+    end
+    object CDS_V_MixAnaliseFornLOJA5: TIntegerField
+      FieldName = 'LOJA5'
+    end
+    object CDS_V_MixAnaliseFornLOJA6: TIntegerField
+      FieldName = 'LOJA6'
+    end
+    object CDS_V_MixAnaliseFornLOJA7: TIntegerField
+      FieldName = 'LOJA7'
+    end
+    object CDS_V_MixAnaliseFornLOJA8: TIntegerField
+      FieldName = 'LOJA8'
+    end
+    object CDS_V_MixAnaliseFornLOJA9: TIntegerField
+      FieldName = 'LOJA9'
+    end
+    object CDS_V_MixAnaliseFornLOJA10: TIntegerField
+      FieldName = 'LOJA10'
+    end
+    object CDS_V_MixAnaliseFornLOJA11: TIntegerField
+      FieldName = 'LOJA11'
+    end
+    object CDS_V_MixAnaliseFornLOJA12: TIntegerField
+      FieldName = 'LOJA12'
+    end
+    object CDS_V_MixAnaliseFornLOJA13: TIntegerField
+      FieldName = 'LOJA13'
+    end
+    object CDS_V_MixAnaliseFornLOJA14: TIntegerField
+      FieldName = 'LOJA14'
+    end
+    object CDS_V_MixAnaliseFornLOJA15: TIntegerField
+      FieldName = 'LOJA15'
+    end
+    object CDS_V_MixAnaliseFornLOJA16: TIntegerField
+      FieldName = 'LOJA16'
+    end
+    object CDS_V_MixAnaliseFornLOJA17: TIntegerField
+      FieldName = 'LOJA17'
+    end
+    object CDS_V_MixAnaliseFornLOJA18: TIntegerField
+      FieldName = 'LOJA18'
+    end
+    object CDS_V_MixAnaliseFornLOJA19: TIntegerField
+      FieldName = 'LOJA19'
+    end
+    object CDS_V_MixAnaliseFornLOJA20: TIntegerField
+      FieldName = 'LOJA20'
+    end
+    object CDS_V_MixAnaliseFornLOJA21: TIntegerField
+      FieldName = 'LOJA21'
+    end
+    object CDS_V_MixAnaliseFornLOJA22: TIntegerField
+      FieldName = 'LOJA22'
+    end
+    object CDS_V_MixAnaliseFornLOJA23: TIntegerField
+      FieldName = 'LOJA23'
+    end
+    object CDS_V_MixAnaliseFornLOJA24: TIntegerField
+      FieldName = 'LOJA24'
+    end
+    object CDS_V_MixAnaliseFornLOJA25: TIntegerField
+      FieldName = 'LOJA25'
+    end
+    object CDS_V_MixAnaliseFornLOJA26: TIntegerField
+      FieldName = 'LOJA26'
+    end
+    object CDS_V_MixAnaliseFornLOJA27: TIntegerField
+      FieldName = 'LOJA27'
+    end
+    object CDS_V_MixAnaliseFornLOJA28: TIntegerField
+      FieldName = 'LOJA28'
+    end
+    object CDS_V_MixAnaliseFornLOJA29: TIntegerField
+      FieldName = 'LOJA29'
+    end
+    object CDS_V_MixAnaliseFornLOJA30: TIntegerField
+      FieldName = 'LOJA30'
+    end
+    object CDS_V_MixAnaliseFornLOJA31: TIntegerField
+      FieldName = 'LOJA31'
+    end
+    object CDS_V_MixAnaliseFornLOJA32: TIntegerField
+      FieldName = 'LOJA32'
+    end
+    object CDS_V_MixAnaliseFornLOJA33: TIntegerField
+      FieldName = 'LOJA33'
+    end
+    object CDS_V_MixAnaliseFornLOJA34: TIntegerField
+      FieldName = 'LOJA34'
+    end
+    object CDS_V_MixAnaliseFornLOJA35: TIntegerField
+      FieldName = 'LOJA35'
+    end
+    object CDS_V_MixAnaliseFornCOD_FORNECEDOR: TIntegerField
+      DisplayLabel = 'C'#243'd Forn'
+      FieldName = 'COD_FORNECEDOR'
+    end
+    object CDS_V_MixAnaliseFornFORN: TStringField
+      DisplayLabel = 'Fornecedor'
+      FieldName = 'FORN'
+      Size = 60
+    end
+  end
+  object DS_V_MixAnaliseForn: TDataSource
+    DataSet = CDS_V_MixAnaliseForn
+    Left = 993
+    Top = 321
+  end
 end
