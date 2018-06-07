@@ -19,7 +19,9 @@ uses
   dxSkinXmas2008Blue, cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar,
   JvCombobox, JvExStdCtrls, JvHtControls, JvListBox, JvComboListBox, Mask,
   Commctrl, // SHOW HINT EM FORMA DE BALÃO
-  ToolEdit, CurrEdit, Grids, DBGrids, DBGridJul, Math, JvRadioButton;
+  ToolEdit, CurrEdit, Grids, DBGrids, DBGridJul, Math, JvRadioButton, db,
+  dxSkinsdxStatusBarPainter, dxStatusBar, DBCtrls, JvExMask, JvToolEdit,
+  JvMaskEdit, JvDBControls;
 
 type
   TFrmAnaliseFornecedores = class(TForm)
@@ -46,7 +48,6 @@ type
     Cbx_Lojas: TJvHTComboBox;
     EdtCodFornecedor: TCurrencyEdit;
     EdtCodSetor: TCurrencyEdit;
-    Dbg_Produtos: TDBGridJul;
     Bt_GraficoLojasMinMax: TJvXPButton;
     Bt_GraficoFornMinMax: TJvXPButton;
     Bt_GraficoSetoresMinMax: TJvXPButton;
@@ -63,14 +64,18 @@ type
     Bt_GraficoLojasGirar: TJvXPButton;
     Bt_GraficoFornGirar: TJvXPButton;
     Bt_GraficoSetoresGirar: TJvXPButton;
-    Label2: TLabel;
-    Bt_BuscaMixProdutos: TJvXPButton;
     Rb_GraficoLojasNomeVlr: TJvRadioButton;
     Rb_GraficoLojasVlr: TJvRadioButton;
     Rb_GraficoFornVlr: TJvRadioButton;
     Rb_GraficoFornNomeVlr: TJvRadioButton;
     Rb_GraficoSetoresVlr: TJvRadioButton;
     Rb_GraficoSetoresNomeVlr: TJvRadioButton;
+    Dbg_Produtos: TDBGrid;
+    dxStatusBar3: TdxStatusBar;
+    GroupBox1: TGroupBox;
+    DbeFat_Total: TDBEdit;
+    EdtFat_Total: TCurrencyEdit;
+    DBGrid1: TDBGrid;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -105,25 +110,35 @@ type
     procedure Bt_BuscaFornecedorClick(Sender: TObject);
     procedure Bt_BuscaSetorClick(Sender: TObject);
     procedure Bt_GraficoLojasMinMaxClick(Sender: TObject);
-    procedure Dbg_ProdutosDrawColumnCell(Sender: TObject;
-      const Rect: TRect; DataCol: Integer; Column: TColumn;
-      State: TGridDrawState);
-    procedure Dbg_ProdutosDblClick(Sender: TObject);
     procedure DtEdt_DtaInicioExit(Sender: TObject);
     procedure Cbx_LojasChange(Sender: TObject);
     procedure Rb_GraficoLojasNomeClick(Sender: TObject);
     procedure Rb_GraficoLojasNomeKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure Bt_GraficoLojasGirarClick(Sender: TObject);
+    procedure Dbg_ProdutosColEnter(Sender: TObject);
+    procedure Dbg_ProdutosDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure Dbg_ProdutosDrawDataCell(Sender: TObject; const Rect: TRect;
+      Field: TField; State: TGridDrawState);
     procedure Dbg_ProdutosKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure Bt_BuscaMixProdutosClick(Sender: TObject);
     procedure Dbg_ProdutosKeyPress(Sender: TObject; var Key: Char);
+    procedure Dbg_ProdutosMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure DbeFat_TotalChange(Sender: TObject);
+    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DBGrid1KeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
   public
     { Public declarations }
   end;
+
+type
+   THackDBGrid = class(TDBGrid);
 
 const
   // Show Hint em Forma de Balão
@@ -144,6 +159,7 @@ var
 
   bgSair: Boolean;
 
+  sgDtaIniPadrao, sgDtaFimPadrao, 
   sOrderGrid,    // Ordenar Grid
   sgCodLoja, sgCodForn, sgCodSetor: String; // Usar para Montagem dos Graficos
 
@@ -159,7 +175,7 @@ var
 
 implementation
 
-uses DK_Procs1, UDMBelShop, UDMVirtual, UPesquisa, DB, UDMLinx;
+uses DK_Procs1, UDMBelShop, UDMVirtual, UPesquisa, UDMLinx;
 
 {$R *.dfm}
 
@@ -183,10 +199,9 @@ Begin
   OdirPanApres.Visible:=True;
   Refresh;
 
+  // Acerta CDS_AnaliseForn ====================================================
   DMLinx.CDS_AnaliseForn.Close;
 
-  // Acerta CDS_AnaliseForn ====================================================
-  Dbg_Produtos.Columns.Items[0].Visible:=False; // Cod_Auxiliar
   For i:=6 to Dbg_Produtos.Columns.Count-3 do
    Dbg_Produtos.Columns.Items[i].Visible:=False;
 
@@ -234,13 +249,10 @@ Begin
 
   Dbg_Produtos.Refresh;
 
-  // Busca Mix de Produtos =====================================================
   MySql:=' SELECT'+
          ' TRIM(pr.cod_auxiliar) COD_AUXILIAR,'+
          ' pr.cod_produto,'+
-         ' TRIM(pr.nome) NOME,'+
-         ' TRIM(pr.desc_setor) DESC_SETOR,'+
-         ' TRIM(pr.desc_colecao) DESC_COLECAO,';
+         ' TRIM(pr.nome) NOME,';
 
          // Se Todas as Lojas
          If Trim(sgCodLoja)='' Then
@@ -248,7 +260,7 @@ Begin
            MySql+' (SELECT mx.ind_curva FROM ES_PRODUTOS_MIX mx'+
                  '  WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=2) ABC,'+ // ABC da Empresa
                  ' CAST(COALESCE((SELECT SUM(COALESCE(fa.vlr_fat,0.00))'+
-                 '                FROM w_fat_periodo fa'+
+                 '                FROM ES_FAT_PERIODO fa'+
                  '                WHERE fa.cod_produto=pr.cod_produto)'+
                  ' , 0.00) AS NUMERIC(12,2)) Fat_Periodo,';
 
@@ -258,10 +270,14 @@ Begin
            MySql+' (SELECT mx.ind_curva FROM ES_PRODUTOS_MIX mx'+
                  '  WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=23) ABC,'+ // ABC da Loja
                  ' CAST(COALESCE((SELECT SUM(COALESCE(fa.vlr_fat,0.00))'+
-                 '                 FROM w_fat_periodo fa'+
+                 '                 FROM ES_FAT_PERIODO fa'+
                  '                 WHERE fa.cod_produto=pr.cod_produto'+
                  '                 AND   fa.empresa='+sgCodLoja+')'+
                  ' , 0.00) AS NUMERIC(12,2)) Fat_Periodo,';
+
+  MySql:=
+   MySql+' TRIM(pr.desc_setor) DESC_SETOR,'+
+         ' TRIM(pr.desc_colecao) DESC_COLECAO,';
 
   // Monta MIX Das Lojas =======================================================
   DMBelShop.CDS_BuscaRapida.First;
@@ -295,16 +311,19 @@ Begin
            MySql+' And   pr.id_setor='+sgCodSetor;
   DMLinx.CDS_AnaliseForn.Close;
   DMLinx.SDS_AnaliseForn.CommandText:=MySql;
-  DMLinx.CDS_AnaliseForn.Open;
+//  DMLinx.CDS_AnaliseForn.Open;
+//
+//  If DMLinx.CDS_AnaliseForn.Eof Then
+//  Begin
+//    msg('Sem Produto Selecionado !!','A');
+//    DMLinx.CDS_AnaliseForn.Close;
+//  End;
 
-  If DMLinx.CDS_AnaliseForn.Eof Then
-  Begin
-    msg('Sem Produto Selecionado !!','A');
-    DMLinx.CDS_AnaliseForn.Close;
-  End;
+  DMLinx.IBDataSet1.Close;
+  DMBelShop.IBDB_BelShop.Connected:=True;
+  DMLinx.IBDataSet1.Open;
 
   OdirPanApres.Visible:=False;
-
 End; // Busca Mix de Produtos por Loja >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Grafico dos Setores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -329,7 +348,7 @@ Begin
   Begin
     MySql:=' SELECT pr.desc_setor SETOR,'+
            ' CAST(SUM(fa.vlr_fat) AS NUMERIC(12,2)) TOT_FAT'+
-           ' FROM W_FAT_PERIODO fa, LINXPRODUTOS pr'+
+           ' FROM ES_FAT_PERIODO fa, LINXPRODUTOS pr'+
            ' WHERE fa.cod_produto=pr.cod_produto';
 
            If Trim(sgCodLoja)<>'' Then
@@ -348,7 +367,7 @@ Begin
   Begin
     MySql:=' SELECT ''OUTROS SETORES'' SETOR,'+
            ' CAST(SUM(fa.vlr_fat) AS NUMERIC(12,2)) TOT_FAT'+
-           ' FROM W_FAT_PERIODO fa, LINXPRODUTOS pr'+
+           ' FROM ES_FAT_PERIODO fa, LINXPRODUTOS pr'+
            ' WHERE fa.cod_produto=pr.cod_produto'+
            ' AND   pr.id_setor<>'+sgCodSetor;
 
@@ -365,7 +384,7 @@ Begin
 
            ' SELECT pr.desc_setor SETOR,'+
            ' CAST(SUM(fa.vlr_fat) AS NUMERIC(12,2)) TOT_FAT'+
-           ' FROM W_FAT_PERIODO fa, LINXPRODUTOS pr'+
+           ' FROM ES_FAT_PERIODO fa, LINXPRODUTOS pr'+
            ' WHERE fa.cod_produto=pr.cod_produto'+
            ' AND   pr.id_setor='+sgCodSetor;
 
@@ -390,7 +409,6 @@ Begin
   Rb_GraficoSetoresNomeVlr.Enabled:=False;
 
   Rb_GraficoSetoresPerc.Checked:=True;
-
   Rb_GraficoLojasNomeClick(Rb_GraficoSetoresPerc);
 
   // Sem Movimentos ============================================================
@@ -457,7 +475,7 @@ Begin
     MySql:=' SELECT FIRST 15'+
            ' fo.nome_cliente FORNECEDOR,'+
            ' CAST(SUM(fa.vlr_fat) AS NUMERIC(12,2)) TOT_FAT'+
-           ' FROM W_FAT_PERIODO fa, LINXPRODUTOS pr, lINXCLIENTESFORNEC fo'+
+           ' FROM ES_FAT_PERIODO fa, LINXPRODUTOS pr, lINXCLIENTESFORNEC fo'+
            ' WHERE fa.cod_produto=pr.cod_produto'+
            ' AND   pr.cod_fornecedor=fo.cod_cliente';
 
@@ -478,7 +496,7 @@ Begin
   Begin
     MySql:=' SELECT ''OUTROS FORNECEDORES'' FORNECEDOR,'+
            ' CAST(SUM(fa.vlr_fat) AS NUMERIC(12,2)) TOT_FAT'+
-           ' FROM W_FAT_PERIODO fa, LINXPRODUTOS pr, lINXCLIENTESFORNEC fo'+
+           ' FROM ES_FAT_PERIODO fa, LINXPRODUTOS pr, lINXCLIENTESFORNEC fo'+
            ' WHERE fa.cod_produto=pr.cod_produto'+
            ' AND   pr.cod_fornecedor=fo.cod_cliente'+
            ' AND   pr.cod_fornecedor<>'+sgCodForn;
@@ -496,7 +514,7 @@ Begin
 
            ' SELECT fo.nome_cliente FORNECEDOR,'+
            ' CAST(SUM(fa.vlr_fat) AS NUMERIC(12,2)) TOT_FAT'+
-           ' FROM W_FAT_PERIODO fa, LINXPRODUTOS pr, lINXCLIENTESFORNEC fo'+
+           ' FROM ES_FAT_PERIODO fa, LINXPRODUTOS pr, lINXCLIENTESFORNEC fo'+
            ' WHERE fa.cod_produto=pr.cod_produto'+
            ' AND   pr.cod_fornecedor=fo.cod_cliente'+
            ' AND   pr.cod_fornecedor='+sgCodForn;
@@ -585,7 +603,7 @@ Begin
   If Trim(sgCodLoja)='' Then
   Begin
     MySql:=' SELECT a.nome_abrev, CAST(SUM(f.vlr_fat) AS NUMERIC(12,2)) TOT_FAT'+
-           ' FROM W_FAT_PERIODO f, LINXLOJAS_ABREVIATURAS a';
+           ' FROM ES_FAT_PERIODO f, LINXLOJAS_ABREVIATURAS a';
 
            // Ser Forncedor/Setor
            If (Trim(sgCodForn)<>'') Or (Trim(sgCodSetor)<>'') Then
@@ -618,7 +636,7 @@ Begin
   If Trim(sgCodLoja)<>'' Then
   Begin
     MySql:=' SELECT ''OUTRAS LOJAS'' nome_abrev, CAST(SUM(f.vlr_fat) AS NUMERIC(12,2)) TOT_FAT'+
-           ' FROM W_FAT_PERIODO f, LINXLOJAS_ABREVIATURAS a';
+           ' FROM ES_FAT_PERIODO f, LINXLOJAS_ABREVIATURAS a';
 
            // Ser Forncedor/Setor
            If (Trim(sgCodForn)<>'') Or (Trim(sgCodSetor)<>'') Then
@@ -648,7 +666,7 @@ Begin
      MySql+' UNION'+
 
            ' SELECT a.nome_abrev, CAST(SUM(f.vlr_fat) AS NUMERIC(12,2))'+
-           ' FROM W_FAT_PERIODO f, LINXLOJAS_ABREVIATURAS a';
+           ' FROM ES_FAT_PERIODO f, LINXLOJAS_ABREVIATURAS a';
 
            // Ser Forncedor/Setor
            If (Trim(sgCodForn)<>'') Or (Trim(sgCodSetor)<>'') Then
@@ -681,7 +699,14 @@ Begin
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
   DMBelShop.CDS_BuscaRapida.Open;
 
+  // Inicializa Grafico de Lojas ===============================================
   gsPizzaLojas.Clear;
+  Rb_GraficoLojasNome.Enabled:=False;
+  Rb_GraficoLojasNomePerc.Enabled:=False;
+  Rb_GraficoLojasNomeVlr.Enabled:=False;
+
+  Rb_GraficoLojasPerc.Checked:=True;
+  Rb_GraficoLojasNomeClick(Rb_GraficoLojasPerc);
 
   // Sem Movimentos ============================================================
   If DMBelShop.CDS_BuscaRapida.IsEmpty Then
@@ -823,7 +848,7 @@ Var
   s: String;
 Begin
   MySql:=' SELECT FIRST 1 f.empresa'+
-         ' FROM W_FAT_PERIODO f'+
+         ' FROM ES_FAT_PERIODO f'+
          ' WHERE f.dta_inicio='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaInicio.Date))))+
          ' AND   f.dta_fim='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_DtaFim.Date))));
   DMBelShop.CDS_BuscaRapida.Close;
@@ -845,10 +870,10 @@ Begin
   OdirPanApres.Visible:=True;
   Refresh;
 
-  MySql:=' DELETE FROM W_FAT_PERIODO';
+  MySql:=' DELETE FROM ES_FAT_PERIODO';
   DMBelShop.SQLC.Execute(MySql,nil,nil);
 
-  MySql:=' INSERT INTO W_FAT_PERIODO'+
+  MySql:=' INSERT INTO ES_FAT_PERIODO'+
          ' (EMPRESA, COD_LOJA, COD_PRODUTO, CODPRODUTO, VLR_FAT, DTA_INICIO, DTA_FIM)'+
          ' SELECT'+
          ' mv.empresa EMPRESA,'+
@@ -868,9 +893,9 @@ Begin
 
          ' FROM LINXMOVIMENTO mv, LINXPRODUTOS pr'+
          ' WHERE mv.cod_produto=pr.cod_produto'+
-         ' AND  ((mv.operacao=''S'') AND (mv.tipo_transacao=''V'')'+ // Saídas Vendas
+         ' AND  (((mv.operacao=''S'') AND (mv.tipo_transacao=''V''))'+ // Saídas Vendas
          '       OR'+
-         '       (mv.operacao=''DS'') AND (mv.tipo_transacao IS NULL))'+ // Entradas Devoluções
+         '       ((mv.operacao=''DS'') AND (mv.tipo_transacao IS NULL)))'+ // Entradas Devoluções
          ' AND  mv.cancelado=''N'''+
          ' AND  mv.excluido =''N'''+
          ' AND  mv.empresa  <>2'+ // Sem Venda do CD - Empresa=2
@@ -1128,25 +1153,73 @@ begin
 
   // Show Hint em Forma de Balão ///////////////////////////////////////////////
   CreateToolTips(Self.Handle);
+  AddToolTip(Bt_GraficosMinMax.Handle, @ti, TipoDoIcone, 'Minimizar/Maximizar', 'GRÃFICOS');
+
+  // Grafico de Lojas ----------------------------------------------------------
+  CreateToolTips(Self.Handle);
   AddToolTip(Bt_GraficoLojasMinMax.Handle, @ti, TipoDoIcone, 'Maximizar/Minimizar', 'GRÃFICO LOJAS');
 
+  CreateToolTips(Self.Handle);
+  AddToolTip(Bt_GraficoLojasGirar.Handle, @ti, TipoDoIcone, 'Girar', 'GRÃFICO LOJAS');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Rb_GraficoLojasNome.Handle, @ti, TipoDoIcone, 'Apresenta Nomes', 'GRÃFICO LOJAS');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Rb_GraficoLojasNomePerc.Handle, @ti, TipoDoIcone, 'Apresenta Nomes/Percentuais', 'GRÃFICO LOJAS');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Rb_GraficoLojasNomeVlr.Handle, @ti, TipoDoIcone, 'Apresenta Nomes/Valores', 'GRÃFICO LOJAS');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Rb_GraficoLojasPerc.Handle, @ti, TipoDoIcone, 'Apresenta Percentuais', 'GRÃFICO LOJAS');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Rb_GraficoLojasVlr.Handle, @ti, TipoDoIcone, 'Apresenta Valores', 'GRÃFICO LOJAS');
+
+  // Grafico de Fornecedores ---------------------------------------------------
   CreateToolTips(Self.Handle);
   AddToolTip(Bt_GraficoFornMinMax.Handle, @ti, TipoDoIcone, 'Maximizar/Minimizar', 'GRÃFICO FORNECEDORES');
 
   CreateToolTips(Self.Handle);
+  AddToolTip(Bt_GraficoFornGirar.Handle, @ti, TipoDoIcone, 'Girar', 'GRÃFICO FORNECEDORES');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Rb_GraficoFornNome.Handle, @ti, TipoDoIcone, 'Apresenta Nomes', 'GRÃFICO FORNECEDORES');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Rb_GraficoFornNomePerc.Handle, @ti, TipoDoIcone, 'Apresenta Nomes/Percentuais', 'GRÃFICO FORNECEDORES');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Rb_GraficoFornNomeVlr.Handle, @ti, TipoDoIcone, 'Apresenta Nomes/Valores', 'GRÃFICO FORNECEDORES');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Rb_GraficoFornPerc.Handle, @ti, TipoDoIcone, 'Apresenta Percentuais', 'GRÃFICO FORNECEDORES');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Rb_GraficoFornVlr.Handle, @ti, TipoDoIcone, 'Apresenta Valores', 'GRÃFICO FORNECEDORES');
+
+  // Grafico de Setores --------------------------------------------------------
+  CreateToolTips(Self.Handle);
   AddToolTip(Bt_GraficoSetoresMinMax.Handle, @ti, TipoDoIcone, 'Maximizar/Minimizar', 'GRÃFICO SETORES');
 
   CreateToolTips(Self.Handle);
-  AddToolTip(Bt_GraficosMinMax.Handle, @ti, TipoDoIcone, 'Minimizar/Maximizar', 'GRÃFICOS');
+  AddToolTip(Bt_GraficoSetoresGirar.Handle, @ti, TipoDoIcone, 'Girar', 'GRÃFICO SETORES');
 
   CreateToolTips(Self.Handle);
-  AddToolTip(Bt_GraficoFornGirar.Handle, @ti, TipoDoIcone, 'Girar', 'GRÃFICOS FORNECEDORES');
+  AddToolTip(Rb_GraficoSetoresNome.Handle, @ti, TipoDoIcone, 'Apresenta Nomes', 'GRÃFICO SETORES');
 
   CreateToolTips(Self.Handle);
-  AddToolTip(Bt_GraficoLojasGirar.Handle, @ti, TipoDoIcone, 'Girar', 'GRÃFICOS LOJAS');
+  AddToolTip(Rb_GraficoSetoresNomePerc.Handle, @ti, TipoDoIcone, 'Apresenta Nomes/Percentuais', 'GRÃFICO SETORES');
 
   CreateToolTips(Self.Handle);
-  AddToolTip(Bt_GraficoSetoresGirar.Handle, @ti, TipoDoIcone, 'Girar', 'GRÃFICOS SETORES');
+  AddToolTip(Rb_GraficoSetoresNomeVlr.Handle, @ti, TipoDoIcone, 'Apresenta Nomes/Valores', 'GRÃFICO SETORES');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Rb_GraficoSetoresPerc.Handle, @ti, TipoDoIcone, 'Apresenta Percentuais', 'GRÃFICO SETORES');
+
+  CreateToolTips(Self.Handle);
+  AddToolTip(Rb_GraficoSetoresVlr.Handle, @ti, TipoDoIcone, 'Apresenta Valores', 'GRÃFICO SETORES');
   //////////////////////////////////////////////////////////////////////////////
 
   // Acerta Graficos ===========================================================
@@ -1178,8 +1251,10 @@ begin
   DMBelShop.CDS_BuscaRapida.Close;
 
   // Acerta Periodo ============================================================
-//  DtEdt_DtaInicio.Date:=PrimUltDia(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor),'P');
-//  DtEdt_DtaFim.Date   :=StrToDate(DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)));
+  DtEdt_DtaInicio.Date:=StrToDate(DateToStr(PrimeiroUltimoDia(IncMonth(Date,-4),'P')));
+  DtEdt_DtaFim.Date   :=StrToDate(DateToStr(Date));
+  sgDtaIniPadrao      :=DateToStr(DtEdt_DtaInicio.Date);
+  sgDtaFimPadrao      :=DateToStr(DtEdt_DtaFim.Date);
 
   // Verifica se Transação esta Ativa
   If DMBelShop.SQLC.InTransaction Then
@@ -1229,7 +1304,7 @@ end;
 procedure TFrmAnaliseFornecedores.Bt_GraficosMinMaxClick(  Sender: TObject);
 begin
   If Pan_Solicitacoes.Height=50 Then
-   Pan_Solicitacoes.Height:=308
+   Pan_Solicitacoes.Height:=312
   Else
    Pan_Solicitacoes.Height:=50;
 end;
@@ -1258,7 +1333,7 @@ begin
   MySql:=' SELECT fo.nome_cliente Fornecedor, fo.cod_cliente Codigo'+
          ' FROM LINXCLIENTESFORNEC fo'+
          ' WHERE EXISTS(SELECT 1'+
-         '              FROM W_FAT_PERIODO fa, LINXPRODUTOS pr'+
+         '              FROM ES_FAT_PERIODO fa, LINXPRODUTOS pr'+
          '              WHERE fa.cod_produto=pr.cod_produto'+
          '              AND   pr.cod_fornecedor=fo.cod_cliente)'+
          ' ORDER BY fo.nome_cliente';
@@ -1324,7 +1399,7 @@ begin
   MySql:=' SELECT DISTINCT pr.desc_setor SETOR, pr.id_setor CODIGO'+
          ' FROM LINXPRODUTOS pr'+
          ' WHERE EXISTS(SELECT 1'+
-         '              FROM W_FAT_PERIODO fa'+
+         '              FROM ES_FAT_PERIODO fa'+
          '              WHERE fa.cod_produto=pr.cod_produto)'+
          ' ORDER BY 1';
   DMBelShop.CDS_Pesquisa.Close;
@@ -1386,6 +1461,10 @@ begin
         iGraWidth :=DbGrafico_Lojas.Width;
         iGraTop   :=DbGrafico_Lojas.Top;
 
+        Rb_GraficoLojasNome.Enabled:=True;
+        Rb_GraficoLojasNomePerc.Enabled:=True;
+        Rb_GraficoLojasNomeVlr.Enabled:=True;
+
         DbGrafico_Lojas.Align:=alClient;
         DbGrafico_Lojas.BringToFront;
       End; // If (Sender as TJvXPButton).Name='Bt_GraficoLojasMinMax' Then
@@ -1434,6 +1513,13 @@ begin
     Begin
       If (Sender as TJvXPButton).Name='Bt_GraficoLojasMinMax' Then
       Begin
+        Rb_GraficoLojasNome.Enabled:=False;
+        Rb_GraficoLojasNomePerc.Enabled:=False;
+        Rb_GraficoLojasNomeVlr.Enabled:=False;
+
+        Rb_GraficoLojasPerc.Checked:=True;
+        Rb_GraficoLojasNomeClick(Rb_GraficoLojasPerc);
+
         DbGrafico_Lojas.Align :=alNone;
         DbGrafico_Lojas.Height:=iGraHeight;
         DbGrafico_Lojas.Left  :=iGraLeft;
@@ -1478,66 +1564,6 @@ begin
 
     Exit;
   End;
-end;
-
-procedure TFrmAnaliseFornecedores.Dbg_ProdutosDrawColumnCell(Sender: TObject;
-           const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
-Var
-  MySql: String;
-  i: Integer;
-
-  Check: Integer;
-  R: TRect;
-begin
-  inherited;
-
-  if ((Sender as TDBGrid).DataSource.Dataset.IsEmpty) then
-    Exit;
-
-  // Desenha um checkbox no dbgrid =============================================
-  For i:=0 to mMemoColLojas.Lines.Count-1 do
-  Begin
-    If Column.FieldName=mMemoColLojas.Lines[i] Then
-    Begin
-      TDBGrid(Sender).Canvas.FillRect(Rect);
-
-      If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
-        Check := DFCS_CHECKED
-      else
-        Check := 0;
-
-      R := Rect;
-      InflateRect(R, -2, -2); { Diminue o tamanho do CheckBox }
-      DrawFrameControl(TDBGrid(Sender).Canvas.Handle, R, DFC_BUTTON, DFCS_BUTTONCHECK or Check);
-    End;
-  End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
-
-end;
-
-procedure TFrmAnaliseFornecedores.Dbg_ProdutosDblClick(Sender: TObject);
-//Var
-//  MySql: String;
-//  i: Integer;
-begin
-//  if ((Sender as TDBGrid).DataSource.Dataset.IsEmpty) then
-//    Exit;
-//
-//  // Alterar Mix ===============================================================
-//  For i:=0 to mMemoColLojas.Lines.Count-1 do
-//  Begin
-//    If (Sender as TDBGrid).SelectedField.FieldName=mMemoColLojas.Lines[i] Then
-//    Begin
-//      (Sender as TDBGrid).DataSource.Dataset.Edit;
-//
-//      (Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger :=
-//        IfThen ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1, 0, 1);
-//
-//      (Sender as TDBGrid).DataSource.Dataset.Post;
-//
-//      Break;
-//    End;
-//  End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
-
 end;
 
 procedure TFrmAnaliseFornecedores.DtEdt_DtaInicioExit(Sender: TObject);
@@ -1595,13 +1621,14 @@ begin
   If Not PeriodoConsiste Then
    Exit;
 
-  If msg('Período Informado Está CORRETO ??','C')=2 Then
+  If (sgDtaIniPadrao<>DateToStr(DtEdt_DtaInicio.Date)) and (sgDtaFimPadrao<>DateToStr(DtEdt_DtaFim.Date)) Then
   Begin
-    DtEdt_DtaInicio.Clear;
-    DtEdt_DtaFim.Clear;
-    DtEdt_DtaInicio.SetFocus;
-    Exit;
-  End;
+    If msg('Período Informado Está CORRETO ??','C')=2 Then
+    Begin
+      DtEdt_DtaInicio.SetFocus;
+      Exit;
+    End;
+  End; // If (sgDtaIniPadrao<>DateToStr(DtEdt_DtaInicio.Date)) and (sgDtaFimPadrao<>DateToStr(DtEdt_DtaFim.Date)) Then
 
   // Busca Faturamento dos Produtos no Periodo =================================
   FaturamentoPeriodo;
@@ -1616,9 +1643,19 @@ end;
 procedure TFrmAnaliseFornecedores.Cbx_LojasChange(Sender: TObject);
 begin
   // Atualiza Graficos =========================================================
-  DMLinx.CDS_AnaliseForn.Close;
-
   AtualizaGraficos;
+
+  If Trim(sgCodForn)<>'' Then
+  Begin
+
+    Dbg_Produtos.SetFocus;
+
+    // Busca Mix de Produdos =====================================================
+    MixProdutos;
+
+    // Fixar Colunas no DBGrid ===================================================
+    THackDBGrid(Dbg_Produtos).FixedCols:=4; // Considerar o Indicador
+  End;
 end;
 
 procedure TFrmAnaliseFornecedores.Rb_GraficoLojasNomeClick(Sender: TObject);
@@ -1635,11 +1672,40 @@ begin
     AcertaRb_Style(Rb_GraficoLojasVlr);
     AcertaRb_Style(Rb_GraficoLojasNomeVlr);
 
-    If Rb_GraficoLojasNome.Checked     Then gsPizzaLojas.Marks.Style:=smsLabel;
-    If Rb_GraficoLojasNomePerc.Checked Then gsPizzaLojas.Marks.Style:=smsLabelPercent;
-    If Rb_GraficoLojasPerc.Checked     Then gsPizzaLojas.Marks.Style:=smsPercent;
-    If Rb_GraficoLojasVlr.Checked      Then gsPizzaLojas.Marks.Style:=smsValue;
-    If Rb_GraficoLojasNomeVlr.Checked  Then gsPizzaLojas.Marks.Style:=smsLabelValue;
+    Rb_GraficoLojasNome.Color:=$00EAFFFF;
+    If Rb_GraficoLojasNome.Checked Then
+    Begin
+      Rb_GraficoLojasNome.Color:=clAqua;
+      gsPizzaLojas.Marks.Style:=smsLabel;
+    End;
+
+    Rb_GraficoLojasNomePerc.Color:=$00EAFFFF;
+    If Rb_GraficoLojasNomePerc.Checked Then
+    Begin
+      Rb_GraficoLojasNomePerc.Color:=clAqua;
+      gsPizzaLojas.Marks.Style:=smsLabelPercent;
+    End;
+
+    Rb_GraficoLojasPerc.Color:=$00EAFFFF;
+    If Rb_GraficoLojasPerc.Checked Then
+    Begin
+      Rb_GraficoLojasPerc.Color:=clAqua;
+      gsPizzaLojas.Marks.Style:=smsPercent;
+    End;
+
+    Rb_GraficoLojasVlr.Color:=$00EAFFFF;
+    If Rb_GraficoLojasVlr.Checked Then
+    Begin
+      Rb_GraficoLojasVlr.Color:=clAqua;
+      gsPizzaLojas.Marks.Style:=smsValue;
+    End;
+
+    Rb_GraficoLojasNomeVlr.Color:=$00EAFFFF;
+    If Rb_GraficoLojasNomeVlr.Checked Then
+    Begin
+      Rb_GraficoLojasNomeVlr.Color:=clAqua;
+      gsPizzaLojas.Marks.Style:=smsLabelValue;
+    End;
   End; // If (Sender as TJvRadioButton).Name='Rb_GraficoLojasNome' Then
 
   If ((Sender as TJvRadioButton).Name='Rb_GraficoFornNome') Or
@@ -1654,11 +1720,40 @@ begin
     AcertaRb_Style(Rb_GraficoFornVlr);
     AcertaRb_Style(Rb_GraficoFornNomeVlr);
 
-    If Rb_GraficoFornNomePerc.Checked Then gsPizzaForn.Marks.Style:=smsLabelPercent;
-    If Rb_GraficoFornPerc.Checked     Then gsPizzaForn.Marks.Style:=smsPercent;
-    If Rb_GraficoFornNome.Checked     Then gsPizzaForn.Marks.Style:=smsLabel;
-    If Rb_GraficoFornVlr.Checked      Then gsPizzaForn.Marks.Style:=smsValue;
-    If Rb_GraficoFornNomeVlr.Checked  Then gsPizzaForn.Marks.Style:=smsLabelValue;
+    Rb_GraficoFornNomePerc.Color:=$00EAFFFF;
+    If Rb_GraficoFornNomePerc.Checked Then
+    Begin
+      Rb_GraficoFornNomePerc.Color:=clAqua;
+      gsPizzaForn.Marks.Style:=smsLabelPercent;
+    End;
+
+    Rb_GraficoFornPerc.Color:=$00EAFFFF;
+    If Rb_GraficoFornPerc.Checked Then
+    Begin
+      Rb_GraficoFornPerc.Color:=clAqua;
+      gsPizzaForn.Marks.Style:=smsPercent;
+    End;
+
+    Rb_GraficoFornNome.Color:=$00EAFFFF;
+    If Rb_GraficoFornNome.Checked Then
+    Begin
+      Rb_GraficoFornNome.Color:=clAqua;
+      gsPizzaForn.Marks.Style:=smsLabel;
+    End;
+
+    Rb_GraficoFornVlr.Color:=$00EAFFFF;
+    If Rb_GraficoFornVlr.Checked Then
+    Begin
+      Rb_GraficoFornVlr.Color:=clAqua;
+      gsPizzaForn.Marks.Style:=smsValue;
+    End;
+
+    Rb_GraficoFornNomeVlr.Color:=$00EAFFFF;
+    If Rb_GraficoFornNomeVlr.Checked Then
+    Begin
+      Rb_GraficoFornNomeVlr.Color:=clAqua;
+      gsPizzaForn.Marks.Style:=smsLabelValue;
+    End;
   End; // If (Sender as TJvRadioButton).Name='Rb_GraficoFornNome' Then
 
   If ((Sender as TJvRadioButton).Name='Rb_GraficoSetoresNome') Or
@@ -1673,11 +1768,40 @@ begin
     AcertaRb_Style(Rb_GraficoSetoresVlr);
     AcertaRb_Style(Rb_GraficoSetoresNomeVlr);
 
-    If Rb_GraficoSetoresNome.Checked     Then gsPizzaSetores.Marks.Style:=smsLabel;
-    If Rb_GraficoSetoresNomePerc.Checked Then gsPizzaSetores.Marks.Style:=smsLabelPercent;
-    If Rb_GraficoSetoresPerc.Checked     Then gsPizzaSetores.Marks.Style:=smsPercent;
-    If Rb_GraficoSetoresVlr.Checked      Then gsPizzaSetores.Marks.Style:=smsValue;
-    If Rb_GraficoSetoresNomeVlr.Checked  Then gsPizzaSetores.Marks.Style:=smsLabelValue;
+    Rb_GraficoSetoresNome.Color:=$00EAFFFF;
+    If Rb_GraficoSetoresNome.Checked Then
+    Begin
+      Rb_GraficoSetoresNome.Color:=clAqua;
+      gsPizzaSetores.Marks.Style:=smsLabel;
+    End;
+
+    Rb_GraficoSetoresNomePerc.Color:=$00EAFFFF;
+    If Rb_GraficoSetoresNomePerc.Checked Then
+    Begin
+      Rb_GraficoSetoresNomePerc.Color:=clAqua;
+      gsPizzaSetores.Marks.Style:=smsLabelPercent;
+    End;
+
+    Rb_GraficoSetoresPerc.Color:=$00EAFFFF;
+    If Rb_GraficoSetoresPerc.Checked Then
+    Begin
+      Rb_GraficoSetoresPerc.Color:=clAqua;
+      gsPizzaSetores.Marks.Style:=smsPercent;
+    End;
+
+    Rb_GraficoSetoresVlr.Color:=$00EAFFFF;
+    If Rb_GraficoSetoresVlr.Checked Then
+    Begin
+      Rb_GraficoSetoresVlr.Color:=clAqua;
+      gsPizzaSetores.Marks.Style:=smsValue;
+    End;
+
+    Rb_GraficoSetoresNomeVlr.Color:=$00EAFFFF;
+    If Rb_GraficoSetoresNomeVlr.Checked Then
+    Begin
+      Rb_GraficoSetoresNomeVlr.Color:=clAqua;
+      gsPizzaSetores.Marks.Style:=smsLabelValue;
+    End;
   End; // If (Sender as TJvRadioButton).Name='Rb_GraficoSetoresNome' Then
 end;
 
@@ -1702,11 +1826,88 @@ begin
 
 end;
 
+procedure TFrmAnaliseFornecedores.Dbg_ProdutosColEnter(Sender: TObject);
+Var
+ i: Integer;
+begin
+  // NAO DEIXA IR APARECER A COLUNA FIXADA
+  if (THackDBGrid(Dbg_Produtos).SelectedIndex=0) Or
+     (THackDBGrid(Dbg_Produtos).SelectedIndex=1) Or
+     (THackDBGrid(Dbg_Produtos).SelectedIndex=2) Then // Index das Colunas Fixadas Sem Indicador
+  begin
+    THackDBGrid(Dbg_Produtos).LeftCol:=4; // Index da 1º Coluna Não Fixada Contando Indicador
+    THackDBGrid(Dbg_Produtos).SelectedIndex:=3; // Index da 1º Coluna Não Fixada Sem Contar Indicador
+    Dbg_Produtos.Refresh;
+  End; // if (THackDBGrid(Dbg_Produtos).SelectedIndex=0) Or
+end;
+
+procedure TFrmAnaliseFornecedores.Dbg_ProdutosDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn;State: TGridDrawState);
+Var
+  MySql: String;
+  i: Integer;
+
+  Check: Integer;
+  R: TRect;
+begin
+
+  inherited;
+
+  // Acerta Colunas Fixadas ====================================================
+  Dbg_ProdutosColEnter(Self);
+
+  if ((Sender as TDBGrid).DataSource.Dataset.IsEmpty) then
+    Exit;
+
+  // Desenha um checkbox no dbgrid =============================================
+  For i:=0 to mMemoColLojas.Lines.Count-1 do
+  Begin
+    If Column.FieldName=mMemoColLojas.Lines[i] Then
+    Begin
+      // Altera Cor Quando for MIX =============================================
+      If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
+      Begin
+        Dbg_Produtos.Canvas.Brush.Color:=$00C6FFC6;
+      End;
+      TDBGrid(Sender).Canvas.FillRect(Rect);
+
+      // Monta Check ===========================================================
+      If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
+       Begin
+         Check := DFCS_CHECKED;
+       End
+      Else
+       Begin
+         Check := 0;
+       End; //If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
+
+      R := Rect;
+      InflateRect(R, -2, -2); // Diminue o tamanho do CheckBox
+      DrawFrameControl(TDBGrid(Sender).Canvas.Handle, R, DFC_BUTTON, DFCS_BUTTONCHECK or Check);
+
+    End; // If Column.FieldName=mMemoColLojas.Lines[i] Then
+  End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
+
+end;
+
+procedure TFrmAnaliseFornecedores.Dbg_ProdutosDrawDataCell(Sender: TObject;
+  const Rect: TRect; Field: TField; State: TGridDrawState);
+begin
+  // Acerta Colunas Fixadas ====================================================
+  Dbg_ProdutosColEnter(Self);
+
+end;
+
 procedure TFrmAnaliseFornecedores.Dbg_ProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 Var
   MySql: String;
   i: Integer;
 begin
+  // Acerta Colunas Fixadas ====================================================
+  if (Key = VK_Left) and (THackDBGrid(Dbg_Produtos).SelectedIndex=4) Then // Index da 1ª Coluna Não Fixada Sem Contar Indicador
+  Begin
+    Key := VK_Clear;
+  End;
 
   // Bloquei Ctrl + Delete =====================================================
   If (((Shift = [ssCtrl]) And (key = vk_delete))) Or (key = vk_space) Then
@@ -1715,10 +1916,10 @@ begin
   If DMLinx.CDS_AnaliseForn.IsEmpty Then
    Exit;
 
-  // Altera Mix da Loja =========================================================
-  If key=VK_F6 Then
+  // Altera Mix da Loja (Entrega CD) ===========================================
+  If key=VK_F2 Then
   Begin
-    // Alterar Mix ===============================================================
+    // Alterar Mix =============================================================
     For i:=0 to mMemoColLojas.Lines.Count-1 do
     Begin
       // Coluna Selecionada
@@ -1737,27 +1938,93 @@ begin
   End; // If key=VK_F6 Then
 end;
 
-procedure TFrmAnaliseFornecedores.Bt_BuscaMixProdutosClick(Sender: TObject);
-begin
-  Dbg_Produtos.SetFocus;
-
-  DMLinx.CDS_AnaliseForn.Close;
-
-  If Trim(sgCodForn)='' Then
-  Begin
-    msg('Favor Informar o Fornecedor !!','A');
-    Exit;
-  End;
-
-  // Busca Mix de Produdos =====================================================
-  MixProdutos;
-
-end;
-
-procedure TFrmAnaliseFornecedores.Dbg_ProdutosKeyPress(Sender: TObject;var Key: Char);
+procedure TFrmAnaliseFornecedores.Dbg_ProdutosKeyPress(Sender: TObject; var Key: Char);
 begin
  if (Key = ' ') then
    Abort;
+
+end;
+
+procedure TFrmAnaliseFornecedores.Dbg_ProdutosMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  // Acerta Colunas Fixadas -----------------------------------------
+  Dbg_ProdutosColEnter(Self);
+
+end;
+
+procedure TFrmAnaliseFornecedores.DbeFat_TotalChange(Sender: TObject);
+begin
+  EdtFat_Total.Value:=0.00;
+  If Trim(DbeFat_Total.Text)<>'' Then
+   EdtFat_Total.Value:=StrToCurr(DbeFat_Total.Text);
+end;
+
+procedure TFrmAnaliseFornecedores.DBGrid1DrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+Var
+  MySql: String;
+  i: Integer;
+
+  Check: Integer;
+  R: TRect;
+begin
+  // Desenha um checkbox no dbgrid =============================================
+  For i:=0 to mMemoColLojas.Lines.Count-1 do
+  Begin
+    If Column.FieldName=mMemoColLojas.Lines[i] Then
+    Begin
+      // Altera Cor Quando for MIX =============================================
+      If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
+      Begin
+        DBGrid1.Canvas.Brush.Color:=$00C6FFC6;
+      End;
+      TDBGrid(Sender).Canvas.FillRect(Rect);
+
+      // Monta Check ===========================================================
+      If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
+       Begin
+         Check := DFCS_CHECKED;
+       End
+      Else
+       Begin
+         Check := 0;
+       End; //If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
+
+      R := Rect;
+      InflateRect(R, -2, -2); // Diminue o tamanho do CheckBox
+      DrawFrameControl(TDBGrid(Sender).Canvas.Handle, R, DFC_BUTTON, DFCS_BUTTONCHECK or Check);
+
+    End; // If Column.FieldName=mMemoColLojas.Lines[i] Then
+  End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
+
+end;
+
+procedure TFrmAnaliseFornecedores.DBGrid1KeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+Var
+  i: Integer;
+begin
+  // Altera Mix da Loja (Entrega CD) ===========================================
+  If key=VK_F2 Then
+  Begin
+    // Alterar Mix =============================================================
+    For i:=0 to mMemoColLojas.Lines.Count-1 do
+    Begin
+      // Coluna Selecionada
+      If DBGrid1.SelectedField.FieldName=mMemoColLojas.Lines[i] Then
+      Begin
+        DBGrid1.DataSource.Dataset.Edit;
+
+        DBGrid1.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger :=
+          IfThen (DBGrid1.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1, 0, 1);
+
+//        DBGrid1.DataSource.Dataset.Post;
+
+        Break;
+      End;
+    End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
+  End; // If key=VK_F6 Then
 
 end;
 

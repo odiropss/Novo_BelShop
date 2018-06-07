@@ -35,7 +35,9 @@ type
 
     Procedure EnderecamentosSidicomBelShop;
 
-    Procedure Tabela_W_Produtos_MIX;
+    // Utilizado em MIX de Fornecedores/Produtos
+    Procedure Tabela_ES_PRODUTOS_MIX; // Busca Dados de ES_FINAN_CURVA_ABC que Estejão em LINXPRODUTOS
+    Procedure Tabela_ES_FAT_PERIODO; // Ultimos 4 Meses de Faturamento
 
     // Odir ====================================================================
   private
@@ -65,8 +67,76 @@ uses UDMAtualizaEstoques, UDMConexoes, DK_Procs1, DB;
 
 // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Atualiza Tabela W_Produtos_MIX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmAtualizaEstoques.Tabela_W_Produtos_MIX;
+// Atualiza Faturamento do sUltimos 4 Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAtualizaEstoques.Tabela_ES_FAT_PERIODO;
+Var
+  MySql: String;
+  sDtaInicio, sDtaFim: String;
+Begin
+  // Acerta Periodo ============================================================
+  sDtaInicio:=DateToStr(PrimeiroUltimoDia(IncMonth(Date,-4),'P'));
+  sDtaFim   :=DateToStr(Date);
+
+  // Verifica se Transação esta Ativa
+  If DMAtualizaEstoques.SQLC.InTransaction Then
+   DMAtualizaEstoques.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMAtualizaEstoques.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    MySql:=' DELETE FROM ES_FAT_PERIODO';
+    DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
+    MySql:=' INSERT INTO ES_FAT_PERIODO'+
+           ' (EMPRESA, COD_LOJA, COD_PRODUTO, CODPRODUTO, VLR_FAT, DTA_INICIO, DTA_FIM)'+
+           ' SELECT'+
+           ' mv.empresa EMPRESA,'+
+           ' mv.cod_loja COD_LOJA,'+
+           ' mv.cod_produto COD_PRODUTO,'+
+           ' pr.cod_auxiliar CODPRODUTO,'+
+
+           ' SUM(CASE'+
+           '       WHEN ((mv.operacao=''S'') AND (mv.tipo_transacao=''V'')) THEN'+
+           '         mv.valor_total'+
+           '       ELSE'+
+           '         -mv.valor_total'+
+           '      END) VLR_FAT,'+
+
+           ' CAST('+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaInicio)))+' AS DATE) DTA_INICIO,'+
+           ' CAST('+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaFim)))+' AS DATE) DTA_FIM'+
+
+           ' FROM LINXMOVIMENTO mv, LINXPRODUTOS pr'+
+           ' WHERE mv.cod_produto=pr.cod_produto'+
+           ' AND  (((mv.operacao=''S'') AND (mv.tipo_transacao=''V''))'+ // Saídas Vendas
+           '       OR'+
+           '       ((mv.operacao=''DS'') AND (mv.tipo_transacao IS NULL)))'+ // Entradas Devoluções
+           ' AND  mv.cancelado=''N'''+
+           ' AND  mv.excluido =''N'''+
+           ' AND  mv.empresa  <>2'+ // Sem Venda do CD - Empresa=2
+           ' AND  mv.data_lancamento BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaInicio)))+
+                                              ' AND '+
+                                              QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaFim)))+
+           ' AND  pr.id_linha<>33'+ // Brindes
+           ' AND  pr.id_colecao<>294'+ // Brindes
+           ' AND  pr.desativado=''N'''+
+           ' AND  pr.cod_auxiliar IS NOT NULL'+
+
+           ' GROUP BY 1,2,3,4';
+    DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMAtualizaEstoques.SQLC.Commit(TD);
+
+  Except // Except da Transação
+    // Abandona Transacao ====================================================
+    DMAtualizaEstoques.SQLC.Rollback(TD);
+  End; // Try da Transação
+End; // Atualiza Faturamento do sUltimos 4 Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Atualiza Tabela ES_PRODUTOS_MIX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAtualizaEstoques.Tabela_ES_PRODUTOS_MIX;
 Var
   MySql: String;
 Begin
@@ -95,6 +165,8 @@ Begin
            '   ELSE'+
            '     1'+
            ' END IND_MIX,'+
+           ' cv.est_minimo EST_MINIMO,'+
+           ' cv.est_maximo EST_MAXIMO,'+
            ' CURRENT_DATE DTA_ATUALIZACAO'+
 
            ' FROM LINXPRODUTOS pr'+
@@ -109,7 +181,7 @@ Begin
     // Abandona Transacao ====================================================
     DMAtualizaEstoques.SQLC.Rollback(TD);
   End; // Try da Transação
-End; // Atualiza Tabela W_Produtos_MIX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+End; // Atualiza Tabela ES_Produtos_MIX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Atualiza Lista de Preços 0006 em BELSHOP.FDB >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //Procedure TFrmAtualizaEstoques.AtualizaLista0006_BELSHOP(sLista, sDesconto: String);
@@ -1139,10 +1211,17 @@ begin
 // ========  ===========  ===============  ================================  ============================================
 
   //============================================================================
-  // Atualiza Tabela W_Produtos_MIX ============================================
+  // Atualiza Tabela ES_FAT_PERIODO ============================================
   //============================================================================
-  Tabela_W_Produtos_MIX;
-  // Atualiza Tabela W_Produtos_MIX ============================================
+  Tabela_ES_FAT_PERIODO;
+  // Atualiza Tabela ES_FAT_PERIODO ============================================
+  //============================================================================
+
+  //============================================================================
+  // Atualiza Tabela ES_Produtos_MIX ===========================================
+  //============================================================================
+  Tabela_ES_PRODUTOS_MIX;
+  // Atualiza Tabela ES_Produtos_MIX ===========================================
   //============================================================================
 
   tgMySqlErro.Clear;

@@ -1433,6 +1433,7 @@ object DMBelShop: TDMBelShop
     Top = 376
   end
   object IBDB_BelShop: TIBDatabase
+    Connected = True
     DatabaseName = 'localhost:C:\Projetos\BelShop\Dados\BelShop.FDB'
     Params.Strings = (
       'user_name=SYSDBA'
@@ -1446,7 +1447,7 @@ object DMBelShop: TDMBelShop
     Top = 4
   end
   object IBT_BelShop: TIBTransaction
-    Active = False
+    Active = True
     DefaultDatabase = IBDB_BelShop
     AutoStopAction = saNone
     Left = 1231
@@ -1470,7 +1471,6 @@ object DMBelShop: TDMBelShop
       'AND CAST(oc.dta_documento AS DATE)= :dta_documento'
       'ORDER BY oc.cod_empresa, oc.qtd_transf desc'
       '')
-    UpdateObject = IBU_AComprar
     Left = 1183
     Top = 172
     ParamData = <
@@ -3166,7 +3166,6 @@ object DMBelShop: TDMBelShop
       'select *'
       'from oc_comprar o'
       'where o.num_seq<14')
-    UpdateObject = IBU_AComprarEdita
     Left = 1183
     Top = 236
     object IBQ_AComprarEditaNUM_SEQ: TIntegerField

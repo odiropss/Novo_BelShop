@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_FinanObjetivos
+    ActivePage = Ts_FinanComprPlanFinan
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -8816,7 +8816,7 @@ object FrmBelShop: TFrmBelShop
             Top = 53
             Width = 793
             Height = 435
-            ActivePage = Ts_GeraOCOrdensCompra
+            ActivePage = Ts_GeraOCGrid
             Align = alClient
             MultiLine = True
             TabOrder = 3
@@ -12784,7 +12784,7 @@ object FrmBelShop: TFrmBelShop
         Top = 61
         Width = 971
         Height = 431
-        ActivePage = Ts_ConsultaNFeMovtoCompr
+        ActivePage = TS_ConsultaNFeFiltros
         Align = alClient
         TabOrder = 1
         OnChange = PC_ConsultaMovtoComprChange
@@ -17189,7 +17189,7 @@ object FrmBelShop: TFrmBelShop
               object Label77: TLabel
                 Left = 2
                 Top = 2
-                Width = 232
+                Width = 412
                 Height = 13
                 Align = alTop
                 Alignment = taCenter
@@ -31655,7 +31655,7 @@ object FrmBelShop: TFrmBelShop
     object MenuEstoques: TMenuItem
       Tag = 10
       Caption = 'Estoques'
-      object MenuAnaliseFornecedoresProdutos: TMenuItem
+      object MenuMIXFornecedorProdutos: TMenuItem
         Tag = 1002
         Bitmap.Data = {
           3E050000424D3E05000000000000760000002800000022000000220000000100
@@ -31701,9 +31701,9 @@ object FrmBelShop: TFrmBelShop
           0000000000000000000000000000000808080808080808080808080800000808
           0808080808080808080808080808080808080808080808080808080808080808
           0000}
-        Caption = 'Analise Fornecedores/Produtos'
+        Caption = 'MIX Fornecedor/Produtos'
         HelpContext = 1
-        OnClick = MenuAnaliseFornecedoresProdutosClick
+        OnClick = MenuMIXFornecedorProdutosClick
       end
       object MenuEstoquesSimuladorEstoques: TMenuItem
         Tag = 1001

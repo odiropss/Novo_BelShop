@@ -51,77 +51,57 @@ object DMLinx: TDMLinx
   end
   object SDS_AnaliseForn: TSQLDataSet
     CommandText = 
-      'SELECT'#13#10'TRIM(pr.cod_auxiliar) COD_AUXILIAR,'#13#10'pr.cod_produto,'#13#10'TR' +
-      'IM(pr.nome) NOME,'#13#10'TRIM(pr.desc_setor) DESC_SETOR,'#13#10'TRIM(pr.desc' +
-      '_colecao) DESC_COLECAO, -- pr.desc_linha, pr.desc_marca'#13#10#13#10'-- SE' +
-      ' EMPRESA'#13#10'/* 1'#13#10'(SELECT mx.ind_curva FROM ES_PRODUTOS_MIX mx WHE' +
-      'RE mx.cod_produto=pr.cod_produto AND mx.empresa=2) ABC, -- ABC_E' +
-      'mpresa,'#13#10'CAST(COALESCE((SELECT SUM(COALESCE(fa.vlr_fat,0.00))'#13#10' ' +
-      '              FROM w_fat_periodo fa'#13#10'               WHERE fa.cod' +
-      '_produto=pr.cod_produto)'#13#10', 0.00) AS NUMERIC(12,2)) Fat_Periodo,' +
-      #13#10'1 */'#13#10'-- SE EMPRESA'#13#10'--select e.cod_linx, e.cod_filial, a.nome' +
-      '_abrev from emp_conexoes e, linxlojas_abreviaturas a where e.cod' +
-      '_linx=a.empresa'#13#10'-- SE LOJA                                     ' +
-      '                                                  /* SIDICOM */'#13 +
-      #10'--/* 2'#13#10'(SELECT mx.ind_curva FROM ES_PRODUTOS_MIX mx WHERE mx.c' +
-      'od_produto=pr.cod_produto AND mx.empresa=23) ABC, -- ABC_Empresa' +
-      ','#13#10'CAST(COALESCE((SELECT SUM(COALESCE(fa.vlr_fat,0.00))'#13#10'       ' +
-      '        FROM w_fat_periodo fa'#13#10'               WHERE fa.cod_produ' +
-      'to=pr.cod_produto'#13#10'               AND   fa.empresa=23)'#13#10', 0.00) ' +
-      'AS NUMERIC(12,2)) Fat_Periodo,'#13#10#13#10'--2 */'#13#10'-- SE LOJA'#13#10#13#10'(SELECT ' +
+      'SELECT'#13#10' TRIM(pr.cod_auxiliar) COD_AUXILIAR,'#13#10' pr.cod_produto,'#13#10 +
+      ' TRIM(pr.nome) NOME,'#13#10#13#10' (SELECT mx.ind_curva FROM ES_PRODUTOS_M' +
+      'IX mx  WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=2) ABC' +
+      ','#13#10' CAST(COALESCE((SELECT SUM(COALESCE(fa.vlr_fat,0.00))'#13#10'      ' +
+      'FROM ES_FAT_PERIODO fa'#13#10'      WHERE fa.cod_produto=pr.cod_produt' +
+      'o) , 0.00)'#13#10' AS NUMERIC(12,2)) Fat_Periodo,'#13#10#13#10' TRIM(pr.desc_set' +
+      'or) DESC_SETOR,'#13#10' TRIM(pr.desc_colecao) DESC_COLECAO,'#13#10' (SELECT ' +
       'mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_p' +
-      'roduto AND mx.empresa= 1) LOJA1,  -- 02-Andradas'#13#10'--(SELECT mx.i' +
-      'nd_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produ' +
-      'to AND mx.empresa= 2) LOJA2,  -- 99-CD'#13#10'(SELECT mx.ind_mix FROM ' +
+      'roduto AND mx.empresa=1)  LOJA1,'#13#10' 0 LOJA2,'#13#10' (SELECT mx.ind_mix' +
+      ' FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto AND' +
+      ' mx.empresa=3)  LOJA3,'#13#10' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX' +
+      ' mx WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=4)  LOJA4' +
+      ','#13#10' 0 LOJA5,'#13#10' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE ' +
+      'mx.cod_produto=pr.cod_produto AND mx.empresa=6)  LOJA6,'#13#10' (SELEC' +
+      'T mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod' +
+      '_produto AND mx.empresa=7)  LOJA7,'#13#10' (SELECT mx.ind_mix FROM ES_' +
+      'PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto AND mx.empre' +
+      'sa=8)  LOJA8,'#13#10' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE' +
+      ' mx.cod_produto=pr.cod_produto AND mx.empresa=9)  LOJA9,'#13#10' (SELE' +
+      'CT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.co' +
+      'd_produto AND mx.empresa=10)  LOJA10,'#13#10' (SELECT mx.ind_mix FROM ' +
       'ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto AND mx.em' +
-      'presa= 3) LOJA3,  -- 11-F Milanez'#13#10'(SELECT mx.ind_mix FROM ES_PR' +
+      'presa=11)  LOJA11,'#13#10' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx ' +
+      'WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=12)  LOJA12,'#13 +
+      #10' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produt' +
+      'o=pr.cod_produto AND mx.empresa=13)  LOJA13,'#13#10' (SELECT mx.ind_mi' +
+      'x FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto AN' +
+      'D mx.empresa=14)  LOJA14,'#13#10' (SELECT mx.ind_mix FROM ES_PRODUTOS_' +
+      'MIX mx WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=15)  L' +
+      'OJA15,'#13#10' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod' +
+      '_produto=pr.cod_produto AND mx.empresa=16)  LOJA16,'#13#10' (SELECT mx' +
+      '.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_pro' +
+      'duto AND mx.empresa=17)  LOJA17,'#13#10' (SELECT mx.ind_mix FROM ES_PR' +
       'ODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto AND mx.empresa' +
-      '= 4) LOJA4,  -- 12-Viam'#227'o'#13#10'(SELECT mx.ind_mix FROM ES_PRODUTOS_M' +
-      'IX mx WHERE mx.cod_produto=pr.cod_produto AND mx.empresa= 5) LOJ' +
-      'A5,  -- 15-Mostardeiro (Fechada)'#13#10'(SELECT mx.ind_mix FROM ES_PRO' +
-      'DUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=' +
-      ' 6) LOJA6,  -- 16-Uruguai'#13#10'(SELECT mx.ind_mix FROM ES_PRODUTOS_M' +
-      'IX mx WHERE mx.cod_produto=pr.cod_produto AND mx.empresa= 7) LOJ' +
-      'A7,  -- 07-M Floriano'#13#10'(SELECT mx.ind_mix FROM ES_PRODUTOS_MIX m' +
-      'x WHERE mx.cod_produto=pr.cod_produto AND mx.empresa= 8) LOJA8, ' +
-      ' -- 01-D Feliciano'#13#10'(SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx W' +
-      'HERE mx.cod_produto=pr.cod_produto AND mx.empresa= 9) LOJA9,  --' +
-      ' 09-O Aranha'#13#10'(SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE m' +
-      'x.cod_produto=pr.cod_produto AND mx.empresa=10) LOJA10, -- 10-Gr' +
-      'avata'#237#13#10'(SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_' +
-      'produto=pr.cod_produto AND mx.empresa=11) LOJA11, -- 05-S Filho'#13 +
-      #10'(SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
-      '=pr.cod_produto AND mx.empresa=12) LOJA12, -- 13-Cachoeirinha'#13#10'(' +
-      'SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=p' +
-      'r.cod_produto AND mx.empresa=13) LOJA13, -- 06-O Rocha'#13#10'(SELECT ' +
-      'mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_p' +
-      'roduto AND mx.empresa=14) LOJA14, -- 03-A Brasil'#13#10'(SELECT mx.ind' +
-      '_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto' +
-      ' AND mx.empresa=15) LOJA15, -- 04-Riachuelo'#13#10'(SELECT mx.ind_mix ' +
-      'FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto AND ' +
-      'mx.empresa=16) LOJA16, -- 14-L Abreu'#13#10'(SELECT mx.ind_mix FROM ES' +
-      '_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto AND mx.empr' +
-      'esa=17) LOJA17, -- 17-P Alves'#13#10'(SELECT mx.ind_mix FROM ES_PRODUT' +
-      'OS_MIX mx WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=18)' +
-      ' LOJA18, -- 18-Total'#13#10'(SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx' +
-      ' WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=19) LOJA19, ' +
-      '-- 19-P Belas'#13#10'(SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE ' +
-      'mx.cod_produto=pr.cod_produto AND mx.empresa=20) LOJA20, -- 20-T' +
-      'iradentes'#13#10'(SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.c' +
-      'od_produto=pr.cod_produto AND mx.empresa=21) LOJA21, -- 21-Azenh' +
-      'a'#13#10'(SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produ' +
-      'to=pr.cod_produto AND mx.empresa=22) LOJA22, -- 22-P Canoas'#13#10'(SE' +
+      '=18)  LOJA18,'#13#10' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE' +
+      ' mx.cod_produto=pr.cod_produto AND mx.empresa=19)  LOJA19,'#13#10' (SE' +
       'LECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.' +
-      'cod_produto AND mx.empresa=23) LOJA23, -- 08-W Escobar'#13#10'(SELECT ' +
-      'mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_p' +
-      'roduto AND mx.empresa=24) LOJA24, -- 24-Iguatemi'#13#10#13#10'0 LOJA25,'#13#10'0' +
-      ' LOJA26,'#13#10'0 LOJA27,'#13#10'0 LOJA28,'#13#10'0 LOJA29,'#13#10'0 LOJA30,'#13#10'0 LOJA31,'#13 +
-      #10'0 LOJA32,'#13#10'0 LOJA33,'#13#10'0 LOJA34,'#13#10'0 LOJA35,'#13#10#13#10'pr.cod_fornecedor' +
-      ','#13#10'(SELECT fo.nome_cliente FROM LINXCLIENTESFORNEC fo WHERE fo.c' +
-      'od_cliente=pr.cod_fornecedor) Forn'#13#10#13#10#13#10'FROM linxprodutos pr'#13#10#13#10 +
-      'WHERE pr.id_linha<>33 -- Brindes'#13#10'AND   id_colecao<>294 -- Brind' +
-      'es'#13#10'AND   pr.desativado='#39'N'#39#13#10'AND   pr.cod_auxiliar IS NOT NULL'#13#10 +
-      '--AND   pr.cod_fornecedor=54'#13#10'And   pr.id_setor=1'#13#10#13#10#13#10
+      'cod_produto AND mx.empresa=20)  LOJA20,'#13#10' (SELECT mx.ind_mix FRO' +
+      'M ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto AND mx.' +
+      'empresa=21)  LOJA21,'#13#10' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX m' +
+      'x WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=22)  LOJA22' +
+      ','#13#10' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_prod' +
+      'uto=pr.cod_produto AND mx.empresa=23)  LOJA23,'#13#10' (SELECT mx.ind_' +
+      'mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto ' +
+      'AND mx.empresa=24)  LOJA24,'#13#10#13#10' 0 LOJA25,'#13#10' 0 LOJA26, 0 LOJA27, ' +
+      '0 LOJA28, 0 LOJA29, 0 LOJA30, 0 LOJA31, 0 LOJA32, 0 LOJA33, 0 LO' +
+      'JA34,'#13#10' 0 LOJA35, pr.cod_fornecedor,'#13#10' (SELECT fo.nome_cliente F' +
+      'ROM LINXCLIENTESFORNEC fo WHERE fo.cod_cliente=pr.cod_fornecedor' +
+      ') Forn'#13#10#13#10' FROM lINXPRODUTOS pr'#13#10' WHERE pr.id_linha<>33'#13#10' AND   ' +
+      'id_colecao<>294'#13#10' AND   pr.desativado='#39'N'#39#13#10' AND   pr.cod_auxilia' +
+      'r IS NOT NULL'#13#10' AND   pr.cod_fornecedor=56'
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
@@ -131,11 +111,13 @@ object DMLinx: TDMLinx
   object DSP_AnaliseForn: TDataSetProvider
     DataSet = SDS_AnaliseForn
     Options = [poRetainServerOrder]
+    UpdateMode = upWhereChanged
     Left = 90
     Top = 254
   end
   object CDS_AnaliseForn: TClientDataSet
     Aggregates = <>
+    AggregatesActive = True
     IndexFieldNames = 'ABC;NOME'
     Params = <>
     ProviderName = 'DSP_AnaliseForn'
@@ -156,16 +138,6 @@ object DMLinx: TDMLinx
       FieldName = 'NOME'
       Size = 250
     end
-    object CDS_AnaliseFornDESC_SETOR: TStringField
-      DisplayLabel = 'Setor'
-      FieldName = 'DESC_SETOR'
-      Size = 30
-    end
-    object CDS_AnaliseFornDESC_COLECAO: TStringField
-      DisplayLabel = 'Cole'#231#227'o'
-      FieldName = 'DESC_COLECAO'
-      Size = 50
-    end
     object CDS_AnaliseFornABC: TStringField
       FieldName = 'ABC'
       Size = 1
@@ -176,6 +148,16 @@ object DMLinx: TDMLinx
       DisplayFormat = '0,.00'
       Precision = 15
       Size = 4
+    end
+    object CDS_AnaliseFornDESC_SETOR: TStringField
+      DisplayLabel = 'Setor'
+      FieldName = 'DESC_SETOR'
+      Size = 30
+    end
+    object CDS_AnaliseFornDESC_COLECAO: TStringField
+      DisplayLabel = 'Cole'#231#227'o'
+      FieldName = 'DESC_COLECAO'
+      Size = 50
     end
     object CDS_AnaliseFornLOJA1: TIntegerField
       FieldName = 'LOJA1'
@@ -309,5 +291,277 @@ object DMLinx: TDMLinx
     DataSet = CDS_AnaliseForn
     Left = 177
     Top = 249
+  end
+  object ADOConnection1: TADOConnection
+    Left = 328
+    Top = 152
+  end
+  object DS_IBQuery: TDataSource
+    DataSet = IBDataSet1
+    Left = 385
+    Top = 201
+  end
+  object IBDataSet1: TIBDataSet
+    Database = DMBelShop.IBDB_BelShop
+    Transaction = DMBelShop.IBT_BelShop
+    BufferChunks = 1000
+    CachedUpdates = False
+    SelectSQL.Strings = (
+      ' SELECT'
+      ' TRIM(pr.cod_auxiliar) COD_AUXILIAR,'
+      ' pr.cod_produto,'
+      ' TRIM(pr.nome) NOME,'
+      ''
+      
+        ' (SELECT mx.ind_curva FROM ES_PRODUTOS_MIX mx  WHERE mx.cod_prod' +
+        'uto=pr.cod_produto AND mx.empresa=2) ABC,'
+      ' CAST(COALESCE((SELECT SUM(COALESCE(fa.vlr_fat,0.00))'
+      '      FROM ES_FAT_PERIODO fa'
+      '      WHERE fa.cod_produto=pr.cod_produto) , 0.00)'
+      ' AS NUMERIC(12,2)) Fat_Periodo,'
+      ''
+      ' TRIM(pr.desc_setor) DESC_SETOR,'
+      ' TRIM(pr.desc_colecao) DESC_COLECAO,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=1)  LOJA1,'
+      ' 0 LOJA2,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=3)  LOJA3,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=4)  LOJA4,'
+      ' 0 LOJA5,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=6)  LOJA6,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=7)  LOJA7,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=8)  LOJA8,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=9)  LOJA9,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=10)  LOJA10,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=11)  LOJA11,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=12)  LOJA12,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=13)  LOJA13,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=14)  LOJA14,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=15)  LOJA15,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=16)  LOJA16,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=17)  LOJA17,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=18)  LOJA18,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=19)  LOJA19,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=20)  LOJA20,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=21)  LOJA21,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=22)  LOJA22,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=23)  LOJA23,'
+      
+        ' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto' +
+        '=pr.cod_produto AND mx.empresa=24)  LOJA24,'
+      ''
+      ' 0 LOJA25,'
+      
+        ' 0 LOJA26, 0 LOJA27, 0 LOJA28, 0 LOJA29, 0 LOJA30, 0 LOJA31, 0 L' +
+        'OJA32, 0 LOJA33, 0 LOJA34,'
+      ' 0 LOJA35, pr.cod_fornecedor,'
+      
+        ' (SELECT fo.nome_cliente FROM LINXCLIENTESFORNEC fo WHERE fo.cod' +
+        '_cliente=pr.cod_fornecedor) Forn'
+      ''
+      ' FROM lINXPRODUTOS pr'
+      ' WHERE pr.id_linha<>33'
+      ' AND   id_colecao<>294'
+      ' AND   pr.desativado='#39'N'#39
+      ' AND   pr.cod_auxiliar IS NOT NULL'
+      ' AND   pr.cod_fornecedor=56')
+    Left = 336
+    Top = 248
+    object IBDataSet1COD_AUXILIAR: TIBStringField
+      FieldName = 'COD_AUXILIAR'
+      Size = 40
+    end
+    object IBDataSet1COD_PRODUTO: TLargeintField
+      FieldName = 'COD_PRODUTO'
+      Origin = 'LINXPRODUTOS.COD_PRODUTO'
+    end
+    object IBDataSet1NOME: TIBStringField
+      FieldName = 'NOME'
+      Size = 250
+    end
+    object IBDataSet1ABC: TIBStringField
+      FieldName = 'ABC'
+      Size = 1
+    end
+    object IBDataSet1FAT_PERIODO: TIBBCDField
+      FieldName = 'FAT_PERIODO'
+      Precision = 18
+      Size = 2
+    end
+    object IBDataSet1DESC_SETOR: TIBStringField
+      FieldName = 'DESC_SETOR'
+      Size = 30
+    end
+    object IBDataSet1DESC_COLECAO: TIBStringField
+      FieldName = 'DESC_COLECAO'
+      Size = 50
+    end
+    object IBDataSet1LOJA1: TIntegerField
+      FieldName = 'LOJA1'
+    end
+    object IBDataSet1LOJA2: TIntegerField
+      FieldName = 'LOJA2'
+      Required = True
+    end
+    object IBDataSet1LOJA3: TIntegerField
+      FieldName = 'LOJA3'
+    end
+    object IBDataSet1LOJA4: TIntegerField
+      FieldName = 'LOJA4'
+    end
+    object IBDataSet1LOJA5: TIntegerField
+      FieldName = 'LOJA5'
+      Required = True
+    end
+    object IBDataSet1LOJA6: TIntegerField
+      FieldName = 'LOJA6'
+    end
+    object IBDataSet1LOJA7: TIntegerField
+      FieldName = 'LOJA7'
+    end
+    object IBDataSet1LOJA8: TIntegerField
+      FieldName = 'LOJA8'
+    end
+    object IBDataSet1LOJA9: TIntegerField
+      FieldName = 'LOJA9'
+    end
+    object IBDataSet1LOJA10: TIntegerField
+      FieldName = 'LOJA10'
+    end
+    object IBDataSet1LOJA11: TIntegerField
+      FieldName = 'LOJA11'
+    end
+    object IBDataSet1LOJA12: TIntegerField
+      FieldName = 'LOJA12'
+    end
+    object IBDataSet1LOJA13: TIntegerField
+      FieldName = 'LOJA13'
+    end
+    object IBDataSet1LOJA14: TIntegerField
+      FieldName = 'LOJA14'
+    end
+    object IBDataSet1LOJA15: TIntegerField
+      FieldName = 'LOJA15'
+    end
+    object IBDataSet1LOJA16: TIntegerField
+      FieldName = 'LOJA16'
+    end
+    object IBDataSet1LOJA17: TIntegerField
+      FieldName = 'LOJA17'
+    end
+    object IBDataSet1LOJA18: TIntegerField
+      FieldName = 'LOJA18'
+    end
+    object IBDataSet1LOJA19: TIntegerField
+      FieldName = 'LOJA19'
+    end
+    object IBDataSet1LOJA20: TIntegerField
+      FieldName = 'LOJA20'
+    end
+    object IBDataSet1LOJA21: TIntegerField
+      FieldName = 'LOJA21'
+    end
+    object IBDataSet1LOJA22: TIntegerField
+      FieldName = 'LOJA22'
+    end
+    object IBDataSet1LOJA23: TIntegerField
+      FieldName = 'LOJA23'
+    end
+    object IBDataSet1LOJA24: TIntegerField
+      FieldName = 'LOJA24'
+    end
+    object IBDataSet1LOJA25: TIntegerField
+      FieldName = 'LOJA25'
+      Required = True
+    end
+    object IBDataSet1LOJA26: TIntegerField
+      FieldName = 'LOJA26'
+      Required = True
+    end
+    object IBDataSet1LOJA27: TIntegerField
+      FieldName = 'LOJA27'
+      Required = True
+    end
+    object IBDataSet1LOJA28: TIntegerField
+      FieldName = 'LOJA28'
+      Required = True
+    end
+    object IBDataSet1LOJA29: TIntegerField
+      FieldName = 'LOJA29'
+      Required = True
+    end
+    object IBDataSet1LOJA30: TIntegerField
+      FieldName = 'LOJA30'
+      Required = True
+    end
+    object IBDataSet1LOJA31: TIntegerField
+      FieldName = 'LOJA31'
+      Required = True
+    end
+    object IBDataSet1LOJA32: TIntegerField
+      FieldName = 'LOJA32'
+      Required = True
+    end
+    object IBDataSet1LOJA33: TIntegerField
+      FieldName = 'LOJA33'
+      Required = True
+    end
+    object IBDataSet1LOJA34: TIntegerField
+      FieldName = 'LOJA34'
+      Required = True
+    end
+    object IBDataSet1LOJA35: TIntegerField
+      FieldName = 'LOJA35'
+      Required = True
+    end
+    object IBDataSet1COD_FORNECEDOR: TIntegerField
+      FieldName = 'COD_FORNECEDOR'
+      Origin = 'LINXPRODUTOS.COD_FORNECEDOR'
+    end
+    object IBDataSet1FORN: TIBStringField
+      FieldName = 'FORN'
+      Size = 60
+    end
   end
 end

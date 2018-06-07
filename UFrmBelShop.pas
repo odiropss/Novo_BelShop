@@ -1338,6 +1338,7 @@ type
     N55: TMenuItem;
     SubMenuCentralTrocasNotasAvarias: TMenuItem;
     NFePerdasProdutos1: TMenuItem;
+    MenuMIXFornecedorProdutos: TMenuItem;
 
     // Odir ====================================================================
 
@@ -2315,7 +2316,7 @@ type
       Sender: TObject);
     procedure SubMenuCentralTrocasNotasAvariasClick(Sender: TObject);
     procedure NFePerdasProdutos1Click(Sender: TObject);
-    procedure MenuAnaliseFornecedoresProdutosClick(Sender: TObject);
+    procedure MenuMIXFornecedorProdutosClick(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -46589,7 +46590,7 @@ begin
   FrmCentralTrocas.Bt_AnaliseRepDiariaFechar.Parent:=FrmCentralTrocas.Pan_AnaliseRepDiaria;
 end;
 
-procedure TFrmBelShop.MenuAnaliseFornecedoresProdutosClick(Sender: TObject);
+procedure TFrmBelShop.MenuMIXFornecedorProdutosClick(Sender: TObject);
 begin
   FrmAnaliseFornecedores:=TFrmAnaliseFornecedores.Create(Self);
 

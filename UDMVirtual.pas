@@ -964,6 +964,7 @@ procedure TDMVirtual.CDS_V_EstoquesAfterPost(DataSet: TDataSet);
 var
   MySql, s: string;
   bAtualizar: Boolean;
+  sMix, sLojaLinx, sProdLinx: String;
 begin
   bAtualizar:=False;
 
@@ -988,6 +989,7 @@ begin
       TD.IsolationLevel:=xilREADCOMMITTED;
       DMBelShop.SQLC.StartTransaction(TD);
       Try
+        // Atualiza ES_FINAN_CURVA_ABC
         MySql:=' UPDATE ES_FINAN_CURVA_ABC c'+
                ' SET c.EST_MINIMO='+QuotedStr(CDS_V_EstoquesEST_IDEAL.AsString)+
                ', c.EST_MAXIMO='+QuotedStr(CDS_V_EstoquesEST_MAXIMO.AsString)+
@@ -995,6 +997,43 @@ begin
                ', c.DTA_ALTERA=current_timestamp'+
                ' WHERE COD_LOJA='+QuotedStr(sgCodEmp)+
                ' AND COD_PRODUTO='+QuotedStr(CDS_V_EstoquesCOD_PRODUTO.AsString);
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+        sMix:='0';
+        If CDS_V_EstoquesEST_IDEAL.AsInteger>0 Then
+         sMix:='1';
+
+        // Loja Linx
+        MySql:=' SELECT l.empresa'+
+               ' FROM LINXLOJAS l'+
+               ' WHERE l.cod_loja='+QuotedStr(sgCodEmp);
+        DMBelShop.CDS_BuscaRapida.Close;
+        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+        DMBelShop.CDS_BuscaRapida.Open;
+        sLojaLinx:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Empresa').AsString);
+
+        // Produto Linx
+        MySql:=' SELECT p.cod_produto'+
+               ' FROM LINXPRODUTOS p'+
+               ' WHERE Trim(p.cod_auxiliar)='+QuotedStr(CDS_V_EstoquesCOD_PRODUTO.AsString);
+        DMBelShop.CDS_BuscaRapida.Close;
+        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+        DMBelShop.CDS_BuscaRapida.Open;
+        sProdLinx:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString);
+        DMBelShop.CDS_BuscaRapida.Close;
+
+        // Atualiza ES_PRODUTOS_MIX
+        MySql:=' UPDATE OR INSERT INTO ES_PRODUTOS_MIX'+
+               ' (COD_LOJA, EMPRESA, CODPRODUTO, COD_PRODUTO, IND_CURVA, IND_MIX, DTA_ATUALIZACAO)'+
+               'VALUES ('+
+               QuotedStr(sgCodEmp)+', '+ // COD_LOJA
+               sLojaLinx+', '+ // EMPRESA
+               QuotedStr(CDS_V_EstoquesCOD_PRODUTO.AsString)+', '+ // CODPRODUTO
+               sProdLinx+', '+ // COD_PRODUTO
+               QuotedStr(CDS_V_EstoquesIND_CURVA.AsString)+', '+ // IND_CURVA
+               sMix+', '+ // IND_MIX
+               ' CURRENT_DATE)'+ //DTA_ATUALIZACAO
+               ' MATCHING (COD_LOJA, CODPRODUTO)';
         DMBelShop.SQLC.Execute(MySql,nil,nil);
 
         // Atualiza Transacao ====================================================

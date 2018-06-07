@@ -3,7 +3,9 @@ unit UDMLinx;
 interface
 
 uses
-  SysUtils, Classes, FMTBcd, DBClient, Provider, DB, SqlExpr;
+  SysUtils, Classes, FMTBcd, DBClient, Provider, DB, SqlExpr,
+  ZAbstractRODataset, ZDataset, ZConnection, ADODB, ZAbstractDataset,
+  IBCustomDataSet, DBLocal, DBLocalI, IBUpdateSQL;
 
 type
   TDMLinx = class(TDataModule)
@@ -62,6 +64,53 @@ type
     CDS_AnaliseFornCOD_FORNECEDOR: TIntegerField;
     CDS_AnaliseFornFORN: TStringField;
     DS_AnaliseForn: TDataSource;
+    ADOConnection1: TADOConnection;
+    DS_IBQuery: TDataSource;
+    IBDataSet1: TIBDataSet;
+    IBDataSet1COD_AUXILIAR: TIBStringField;
+    IBDataSet1COD_PRODUTO: TLargeintField;
+    IBDataSet1NOME: TIBStringField;
+    IBDataSet1ABC: TIBStringField;
+    IBDataSet1FAT_PERIODO: TIBBCDField;
+    IBDataSet1DESC_SETOR: TIBStringField;
+    IBDataSet1DESC_COLECAO: TIBStringField;
+    IBDataSet1LOJA1: TIntegerField;
+    IBDataSet1LOJA2: TIntegerField;
+    IBDataSet1LOJA3: TIntegerField;
+    IBDataSet1LOJA4: TIntegerField;
+    IBDataSet1LOJA5: TIntegerField;
+    IBDataSet1LOJA6: TIntegerField;
+    IBDataSet1LOJA7: TIntegerField;
+    IBDataSet1LOJA8: TIntegerField;
+    IBDataSet1LOJA9: TIntegerField;
+    IBDataSet1LOJA10: TIntegerField;
+    IBDataSet1LOJA11: TIntegerField;
+    IBDataSet1LOJA12: TIntegerField;
+    IBDataSet1LOJA13: TIntegerField;
+    IBDataSet1LOJA14: TIntegerField;
+    IBDataSet1LOJA15: TIntegerField;
+    IBDataSet1LOJA16: TIntegerField;
+    IBDataSet1LOJA17: TIntegerField;
+    IBDataSet1LOJA18: TIntegerField;
+    IBDataSet1LOJA19: TIntegerField;
+    IBDataSet1LOJA20: TIntegerField;
+    IBDataSet1LOJA21: TIntegerField;
+    IBDataSet1LOJA22: TIntegerField;
+    IBDataSet1LOJA23: TIntegerField;
+    IBDataSet1LOJA24: TIntegerField;
+    IBDataSet1LOJA25: TIntegerField;
+    IBDataSet1LOJA26: TIntegerField;
+    IBDataSet1LOJA27: TIntegerField;
+    IBDataSet1LOJA28: TIntegerField;
+    IBDataSet1LOJA29: TIntegerField;
+    IBDataSet1LOJA30: TIntegerField;
+    IBDataSet1LOJA31: TIntegerField;
+    IBDataSet1LOJA32: TIntegerField;
+    IBDataSet1LOJA33: TIntegerField;
+    IBDataSet1LOJA34: TIntegerField;
+    IBDataSet1LOJA35: TIntegerField;
+    IBDataSet1COD_FORNECEDOR: TIntegerField;
+    IBDataSet1FORN: TIBStringField;
   private
     { Private declarations }
   public

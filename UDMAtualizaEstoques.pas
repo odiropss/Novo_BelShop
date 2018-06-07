@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Classes, DBXpress, FMTBcd, DB, IBCustomDataSet, IBQuery,
-  SqlExpr, DBClient, Provider, IBDatabase, WinInet, Forms;
+  SqlExpr, DBClient, Provider, IBDatabase, WinInet, Forms, Menus;
 
 type
   TDMAtualizaEstoques = class(TDataModule)
