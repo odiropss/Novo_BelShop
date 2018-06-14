@@ -126,12 +126,19 @@ begin
            ' ''E'' IND_CURVA'+
 
            ' FROM ES_FINAN_CURVA_ABC cv, LINXPRODUTOS pr, EMP_CONEXOES em'+
-           ' WHERE cv.cod_produto=TRIM(pr.cod_auxiliar)'+
+           ' WHERE cv.cod_produto=pr.cod_auxiliar'+
            ' AND cv.cod_loja=em.cod_filial'+
            // Estoque Minimo Mairo que 0
            ' AND cv.est_minimo>0';
-//opssaqui
     DMAtualizaSaldos.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMAtualizaSaldos.SQLC.Commit(TD);
+
+    // Monta Transacao ===========================================================
+    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMAtualizaSaldos.SQLC.StartTransaction(TD);
 
     hHrFimSql2:=TimeToStr(DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor));
     sFimSql2:=TimeToStr(StrToTime(hHrFimSql2)-StrToTime(hHrIniSql2));
@@ -145,8 +152,15 @@ begin
            '                     WHERE d.empresa=pl.cod_loja_linx'+
            '                     AND   d.cod_produto=pl.cod_produto)'+
            ' WHERE pl.dta_processa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDia)));
-//opssaqui
     DMAtualizaSaldos.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMAtualizaSaldos.SQLC.Commit(TD);
+
+    // Monta Transacao ===========================================================
+    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMAtualizaSaldos.SQLC.StartTransaction(TD);
 
     hHrFimSql3:=TimeToStr(DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor));
     sFimSql3:=TimeToStr(StrToTime(hHrFimSql3)-StrToTime(hHrIniSql3));
@@ -160,8 +174,15 @@ begin
            '                   WHERE c.cod_loja=pl.cod_loja_sidicom'+
            '                   AND   c.cod_produto=pl.codproduto)'+
            ' WHERE pl.dta_processa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDia)));
-//opssaqui
     DMAtualizaSaldos.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMAtualizaSaldos.SQLC.Commit(TD);
+
+    // Monta Transacao ===========================================================
+    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMAtualizaSaldos.SQLC.StartTransaction(TD);
 
     hHrFimSql4:=TimeToStr(DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor));
     sFimSql4:=TimeToStr(StrToTime(hHrFimSql4)-StrToTime(hHrIniSql4));
@@ -172,7 +193,6 @@ begin
     MySql:=' UPDATE LINX_PRODUTOS_LOJAS pl'+
            ' SET pl.ind_curva=''E'''+
            ' WHERE pl.ind_curva IS NULL';
-//opssaqui
     DMAtualizaSaldos.SQLC.Execute(MySql,nil,nil);
 
     hHrFimSql5:=TimeToStr(DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor));
@@ -189,7 +209,6 @@ begin
                      ' 1º-'+sFimSql1+' 2º-'+sFimSql2+' 3º-'+sFimSql3+
                      ' 4º-'+sFimSql4+' 5º-'+sFimSql5)+', '+
                      QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor))))+')';
-//opssaqui
     DMAtualizaSaldos.SQLC.Execute(MySql,nil,nil);
 
     // Atualiza Transacao ======================================================
@@ -202,6 +221,7 @@ begin
     Begin
       // Abandona Transacao ====================================================
       DMAtualizaSaldos.SQLC.Rollback(TD);
+      MessageBox(Application.Handle, Pchar(MySql+cr+Trim(e.Message)), 'Aviso', MB_ICONEXCLAMATION);
 
       // Transacao para Gravação do Erro no Banco de Dados =====================
       TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
@@ -212,7 +232,7 @@ begin
                  ' IND_TIPO, NOMEFORNECEDOR, DTA_ATUALIZACAO)'+
                  ' Values ('+
                  QuotedStr('AS')+', '+
-                 QuotedStr('ERRO Atualização de Saldos: ')+'||'+QuotedStr(Trim(e.Message))+', '+
+                 QuotedStr('ERRO Atualização Saldos: ')+'||'+QuotedStr(Trim(e.Message))+', '+
                            QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor))))+')';
       DMAtualizaSaldos.SQLC.Execute(MySqlErro,nil,nil);
 

@@ -403,7 +403,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 452
-    ActivePage = Ts_ConcDepHistoricos
+    ActivePage = Ts_MixProdutosLojas
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -2535,7 +2535,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_HabServVoltarClick
+          OnClick = Bt_IBGEVoltarClick
         end
         object Bt_HabServSalvar: TJvXPButton
           Left = 2
@@ -3005,7 +3005,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_ManutDiversosVoltarClick
+          OnClick = Bt_IBGEVoltarClick
         end
         object Bt_ManutDiversosDML: TJvXPButton
           Left = 2
@@ -6029,7 +6029,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_ConsistenciasVoltarClick
+          OnClick = Bt_IBGEVoltarClick
         end
         object Bt_ConsistenciasSalvar: TJvXPButton
           Tag = 2
@@ -6626,7 +6626,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             000030F44F00033333333333000030FFFF003333333333330000300000033333
             333333330000333333333333333333330000}
           Align = alLeft
-          OnClick = Bt_ValesSalvarClick
+          OnClick = Bt_IBGESelecionarClick
         end
         object Bt_ValesGeraParc: TJvXPButton
           Tag = 3
@@ -8118,7 +8118,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Top = 36
         Width = 449
         Height = 281
-        ActivePage = Ts_FinanPlanFinanceiraSolicitaDatas
+        ActivePage = Ts_FinanPlanFinanceiraSolicitaTamColunas
         Anchors = [akTop]
         TabOrder = 0
         OnChange = PC_FinanPlanFinanceiraSolicitaChange
@@ -8760,7 +8760,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
                   0808080808080808080808080808080808080808080808000008080808080808
                   08080808080808080808080808080808080808080808}
                 Align = alLeft
-                OnClick = Bt_FinanPlanFinanceiraTamColunasOKClick
+                OnClick = Bt_IBGESelecionarClick
               end
             end
           end
@@ -9523,7 +9523,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_ReposLojasVoltarClick
+          OnClick = Bt_IBGEVoltarClick
         end
       end
       object Panel7: TPanel
@@ -9896,7 +9896,6 @@ object FrmSolicitacoes: TFrmSolicitacoes
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
             ParentFont = False
-            OnClick = Bt_ReposLojasVoltarClick
           end
         end
         object GroupBox2: TGroupBox
@@ -10694,7 +10693,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_ConcDepHistoricosVoltarClick
+          OnClick = Bt_IBGEVoltarClick
         end
         object Bt_ConcDepHistoricosSalvar: TJvXPButton
           Tag = 4
@@ -10725,7 +10724,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_ConcDepHistoricosSalvarClick
+          OnClick = Bt_ConcDepHistoricoSalvarClick
         end
       end
       object Dbg_ConcDepHistoricos: TDBGrid
@@ -10902,10 +10901,266 @@ object FrmSolicitacoes: TFrmSolicitacoes
         end
       end
     end
+    object Ts_MixProdutosLojas: TTabSheet
+      Caption = ' Atualiza MIX Lojas '
+      ImageIndex = 27
+      DesignSize = (
+        625
+        424)
+      object Bt_MixLojasOrigemSim: TJvTransparentButton
+        Left = 285
+        Top = 11
+        Width = 29
+        Height = 22
+        AutoGray = False
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        FrameStyle = fsNone
+        Transparent = False
+        WordWrap = True
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          04000000000000010000120B0000120B00001000000000000000000000000000
+          800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+          3333333333333333333333333333333333333333333333333333333333333333
+          3333333333333333333333333333333333333333333FF3333333333333003333
+          3333333333773FF3333333333309003333333333337F773FF333333333099900
+          33333FFFFF7F33773FF30000000999990033777777733333773F099999999999
+          99007FFFFFFF33333F7700000009999900337777777F333F7733333333099900
+          33333333337F3F77333333333309003333333333337F77333333333333003333
+          3333333333773333333333333333333333333333333333333333333333333333
+          3333333333333333333333333333333333333333333333333333}
+        NumGlyphs = 2
+      end
+      object Bt_MixLojasOrigemNao: TJvTransparentButton
+        Left = 285
+        Top = 32
+        Width = 29
+        Height = 22
+        AutoGray = False
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        FrameStyle = fsNone
+        Transparent = False
+        WordWrap = True
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          04000000000000010000120B0000120B00001000000000000000000000000000
+          800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+          3333333333333333333333333333333333333333333333333333333333333333
+          3333333333333FF3333333333333003333333333333F77F33333333333009033
+          333333333F7737F333333333009990333333333F773337FFFFFF330099999000
+          00003F773333377777770099999999999990773FF33333FFFFF7330099999000
+          000033773FF33777777733330099903333333333773FF7F33333333333009033
+          33333333337737F3333333333333003333333333333377333333333333333333
+          3333333333333333333333333333333333333333333333333333333333333333
+          3333333333333333333333333333333333333333333333333333}
+        NumGlyphs = 2
+      end
+      object Label88: TLabel
+        Left = 320
+        Top = 3
+        Width = 127
+        Height = 13
+        Caption = 'Loja de Origem do Mix'
+      end
+      object Bt_MixLojasDestSim: TJvTransparentButton
+        Left = 285
+        Top = 69
+        Width = 29
+        Height = 22
+        AutoGray = False
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        FrameStyle = fsNone
+        Transparent = False
+        WordWrap = True
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          04000000000000010000120B0000120B00001000000000000000000000000000
+          800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+          3333333333333333333333333333333333333333333333333333333333333333
+          3333333333333333333333333333333333333333333FF3333333333333003333
+          3333333333773FF3333333333309003333333333337F773FF333333333099900
+          33333FFFFF7F33773FF30000000999990033777777733333773F099999999999
+          99007FFFFFFF33333F7700000009999900337777777F333F7733333333099900
+          33333333337F3F77333333333309003333333333337F77333333333333003333
+          3333333333773333333333333333333333333333333333333333333333333333
+          3333333333333333333333333333333333333333333333333333}
+        NumGlyphs = 2
+      end
+      object Bt_MixLojasDestNao: TJvTransparentButton
+        Left = 285
+        Top = 91
+        Width = 29
+        Height = 22
+        AutoGray = False
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        FrameStyle = fsNone
+        Transparent = False
+        WordWrap = True
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          04000000000000010000120B0000120B00001000000000000000000000000000
+          800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+          3333333333333333333333333333333333333333333333333333333333333333
+          3333333333333FF3333333333333003333333333333F77F33333333333009033
+          333333333F7737F333333333009990333333333F773337FFFFFF330099999000
+          00003F773333377777770099999999999990773FF33333FFFFF7330099999000
+          000033773FF33777777733330099903333333333773FF7F33333333333009033
+          33333333337737F3333333333333003333333333333377333333333333333333
+          3333333333333333333333333333333333333333333333333333333333333333
+          3333333333333333333333333333333333333333333333333333}
+        NumGlyphs = 2
+      end
+      object Panel14: TPanel
+        Left = 0
+        Top = 389
+        Width = 625
+        Height = 35
+        Align = alBottom
+        BevelInner = bvLowered
+        BorderStyle = bsSingle
+        Ctl3D = False
+        ParentCtl3D = False
+        TabOrder = 0
+        object Bt_MixLojasVoltar: TJvXPButton
+          Left = 521
+          Top = 2
+          Width = 100
+          Height = 29
+          Caption = 'Voltar'
+          TabOrder = 0
+          TabStop = False
+          Glyph.Data = {
+            07544269746D6170F6000000424DF60000000000000076000000280000001000
+            0000100000000100040000000000800000000000000000000000100000001000
+            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF0077777700000087777777770AAAAA00877777770AAAAAA2077777770AAAAA
+            2A20777777000000A22077777777777700207777777777777700777707777777
+            77007770077777770020770A00000000A22070AAAAAAAAAA2A200AAAAAAAAAAA
+            A20770AAAAAAAAAA0077770A0000000087777770077777777777777707777777
+            7777}
+          ShowFocusRect = True
+          Align = alRight
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_IBGEVoltarClick
+        end
+        object Bt_MixLojasAlterar: TJvXPButton
+          Tag = 4
+          Left = 2
+          Top = 2
+          Width = 167
+          Height = 29
+          Caption = 'Efetuar Altera'#231#245'es'
+          TabOrder = 1
+          Glyph.Data = {
+            07544269746D617066010000424D660100000000000076000000280000001400
+            0000140000000100040000000000F00000000000000000000000100000001000
+            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00333333333333333333330000333333000000000000030000333333078888
+            8888880300003333330F77777777780300003333330F99777777780300003333
+            330FFFFFFFFFF703000033333300000000000003000033333333333333333333
+            0000333333333333330033330000333333333333300003330000300000000333
+            00000033000030FFFFFF033333003333000030F4444F033333003333000030FF
+            FFFF033338003333000030F4444F030000083333000030FFFFFF030000833333
+            000030F44F00033333333333000030FFFF003333333333330000300000033333
+            333333330000333333333333333333330000}
+          ShowFocusRect = True
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_IBGESelecionarClick
+        end
+      end
+      object EdtMixLoja: TEdit
+        Left = 320
+        Top = 20
+        Width = 299
+        Height = 19
+        Ctl3D = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentCtl3D = False
+        ParentFont = False
+        TabOrder = 1
+        Text = 'EdtMixLoja'
+      end
+      object Gb_MixLojasSel: TGroupBox
+        Left = 0
+        Top = 0
+        Width = 281
+        Height = 389
+        Align = alLeft
+        Caption = ' Lojas a Selecionar '
+        Ctl3D = False
+        ParentCtl3D = False
+        TabOrder = 2
+        object Lbx_MixLojasSel: TListBox
+          Left = 1
+          Top = 14
+          Width = 279
+          Height = 374
+          Style = lbOwnerDrawFixed
+          Align = alClient
+          ItemHeight = 16
+          TabOrder = 0
+        end
+      end
+      object Gb_MixProdutos: TGroupBox
+        Left = 320
+        Top = 52
+        Width = 302
+        Height = 337
+        Anchors = [akLeft, akTop, akRight, akBottom]
+        Caption = ' Lojas de Destino do Mix '
+        TabOrder = 3
+        object Lbx_MixLojas: TListBox
+          Left = 2
+          Top = 15
+          Width = 298
+          Height = 320
+          Align = alClient
+          ItemHeight = 13
+          TabOrder = 0
+        end
+      end
+    end
   end
   object PainelApresExp: TPanel
-    Left = 504
-    Top = 112
+    Left = 200
+    Top = 416
     Width = 99
     Height = 33
     BevelInner = bvRaised
@@ -10925,15 +11180,15 @@ object FrmSolicitacoes: TFrmSolicitacoes
   object CDS_: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 452
-    Top = 392
+    Left = 460
+    Top = 400
   end
   object ADOC_Excel: TADOConnection
     LoginPrompt = False
     Mode = cmShareDenyNone
     Provider = 'Microsoft.Jet.OLEDB.4.0'
     Left = 404
-    Top = 384
+    Top = 400
   end
   object ADOT_Dcto: TADOTable
     Connection = ADOC_Excel
@@ -10941,7 +11196,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     LockType = ltReadOnly
     TableDirect = True
     Left = 327
-    Top = 384
+    Top = 400
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message

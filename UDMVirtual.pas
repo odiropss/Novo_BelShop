@@ -845,6 +845,7 @@ type
     CDS_V_MixAnaliseFornCOD_FORNECEDOR: TIntegerField;
     CDS_V_MixAnaliseFornFORN: TStringField;
     DS_V_MixAnaliseForn: TDataSource;
+    CDS_V_MixAnaliseFornIND_MULTISEL: TSmallintField;
     procedure CDS_V_GruposProdutosAfterScroll(DataSet: TDataSet);
     procedure CDS_V_EstFisFinanEmpAfterScroll(DataSet: TDataSet);
     procedure CDS_V_MargemLucroFornAfterScroll(DataSet: TDataSet);

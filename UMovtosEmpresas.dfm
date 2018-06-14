@@ -114,21 +114,5 @@ object FrmMovtosEmpresas: TFrmMovtosEmpresas
       ItemHeight = 13
       TabOrder = 2
     end
-    object Bt_Estoques: TJvXPButton
-      Left = 69
-      Top = 3
-      Width = 148
-      Height = 38
-      Caption = 'Estoques N'#227'o Usar Devido a Bel_18'
-      TabOrder = 3
-      Anchors = [akTop]
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      OnClick = Bt_EstoquesClick
-    end
   end
 end

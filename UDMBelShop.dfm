@@ -1,10 +1,10 @@
 object DMBelShop: TDMBelShop
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 234
-  Top = 113
-  Height = 611
-  Width = 1115
+  Left = 232
+  Top = 123
+  Height = 585
+  Width = 1124
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
     DriverName = 'Interbase'
@@ -1469,6 +1469,7 @@ object DMBelShop: TDMBelShop
       'AND CAST(oc.dta_documento AS DATE)= :dta_documento'
       'ORDER BY oc.cod_empresa, oc.qtd_transf desc'
       '')
+    UpdateObject = IBU_AComprar
     Left = 1183
     Top = 212
     ParamData = <
@@ -3164,6 +3165,7 @@ object DMBelShop: TDMBelShop
       'select *'
       'from oc_comprar o'
       'where o.num_seq<14')
+    UpdateObject = IBU_AComprarEdita
     Left = 1183
     Top = 276
     object IBQ_AComprarEditaNUM_SEQ: TIntegerField
@@ -9440,162 +9442,7 @@ object DMBelShop: TDMBelShop
       ' AND   pr.desativado='#39'N'#39
       ' AND   pr.cod_auxiliar IS NOT NULL'
       ' AND   pr.cod_fornecedor=56')
-    Left = 1256
-    Top = 128
-    object IBDS_BuscaCOD_AUXILIAR: TIBStringField
-      FieldName = 'COD_AUXILIAR'
-      Size = 40
-    end
-    object IBDS_BuscaCOD_PRODUTO: TLargeintField
-      FieldName = 'COD_PRODUTO'
-      Origin = 'LINXPRODUTOS.COD_PRODUTO'
-    end
-    object IBDS_BuscaNOME: TIBStringField
-      FieldName = 'NOME'
-      Size = 250
-    end
-    object IBDS_BuscaABC: TIBStringField
-      FieldName = 'ABC'
-      Size = 1
-    end
-    object IBDS_BuscaFAT_PERIODO: TIBBCDField
-      FieldName = 'FAT_PERIODO'
-      Precision = 18
-      Size = 2
-    end
-    object IBDS_BuscaDESC_SETOR: TIBStringField
-      FieldName = 'DESC_SETOR'
-      Size = 30
-    end
-    object IBDS_BuscaDESC_COLECAO: TIBStringField
-      FieldName = 'DESC_COLECAO'
-      Size = 50
-    end
-    object IBDS_BuscaLOJA1: TIntegerField
-      FieldName = 'LOJA1'
-    end
-    object IBDS_BuscaLOJA2: TIntegerField
-      FieldName = 'LOJA2'
-      Required = True
-    end
-    object IBDS_BuscaLOJA3: TIntegerField
-      FieldName = 'LOJA3'
-    end
-    object IBDS_BuscaLOJA4: TIntegerField
-      FieldName = 'LOJA4'
-    end
-    object IBDS_BuscaLOJA5: TIntegerField
-      FieldName = 'LOJA5'
-      Required = True
-    end
-    object IBDS_BuscaLOJA6: TIntegerField
-      FieldName = 'LOJA6'
-    end
-    object IBDS_BuscaLOJA7: TIntegerField
-      FieldName = 'LOJA7'
-    end
-    object IBDS_BuscaLOJA8: TIntegerField
-      FieldName = 'LOJA8'
-    end
-    object IBDS_BuscaLOJA9: TIntegerField
-      FieldName = 'LOJA9'
-    end
-    object IBDS_BuscaLOJA10: TIntegerField
-      FieldName = 'LOJA10'
-    end
-    object IBDS_BuscaLOJA11: TIntegerField
-      FieldName = 'LOJA11'
-    end
-    object IBDS_BuscaLOJA12: TIntegerField
-      FieldName = 'LOJA12'
-    end
-    object IBDS_BuscaLOJA13: TIntegerField
-      FieldName = 'LOJA13'
-    end
-    object IBDS_BuscaLOJA14: TIntegerField
-      FieldName = 'LOJA14'
-    end
-    object IBDS_BuscaLOJA15: TIntegerField
-      FieldName = 'LOJA15'
-    end
-    object IBDS_BuscaLOJA16: TIntegerField
-      FieldName = 'LOJA16'
-    end
-    object IBDS_BuscaLOJA17: TIntegerField
-      FieldName = 'LOJA17'
-    end
-    object IBDS_BuscaLOJA18: TIntegerField
-      FieldName = 'LOJA18'
-    end
-    object IBDS_BuscaLOJA19: TIntegerField
-      FieldName = 'LOJA19'
-    end
-    object IBDS_BuscaLOJA20: TIntegerField
-      FieldName = 'LOJA20'
-    end
-    object IBDS_BuscaLOJA21: TIntegerField
-      FieldName = 'LOJA21'
-    end
-    object IBDS_BuscaLOJA22: TIntegerField
-      FieldName = 'LOJA22'
-    end
-    object IBDS_BuscaLOJA23: TIntegerField
-      FieldName = 'LOJA23'
-    end
-    object IBDS_BuscaLOJA24: TIntegerField
-      FieldName = 'LOJA24'
-    end
-    object IBDS_BuscaLOJA25: TIntegerField
-      FieldName = 'LOJA25'
-      Required = True
-    end
-    object IBDS_BuscaLOJA26: TIntegerField
-      FieldName = 'LOJA26'
-      Required = True
-    end
-    object IBDS_BuscaLOJA27: TIntegerField
-      FieldName = 'LOJA27'
-      Required = True
-    end
-    object IBDS_BuscaLOJA28: TIntegerField
-      FieldName = 'LOJA28'
-      Required = True
-    end
-    object IBDS_BuscaLOJA29: TIntegerField
-      FieldName = 'LOJA29'
-      Required = True
-    end
-    object IBDS_BuscaLOJA30: TIntegerField
-      FieldName = 'LOJA30'
-      Required = True
-    end
-    object IBDS_BuscaLOJA31: TIntegerField
-      FieldName = 'LOJA31'
-      Required = True
-    end
-    object IBDS_BuscaLOJA32: TIntegerField
-      FieldName = 'LOJA32'
-      Required = True
-    end
-    object IBDS_BuscaLOJA33: TIntegerField
-      FieldName = 'LOJA33'
-      Required = True
-    end
-    object IBDS_BuscaLOJA34: TIntegerField
-      FieldName = 'LOJA34'
-      Required = True
-    end
-    object IBDS_BuscaLOJA35: TIntegerField
-      FieldName = 'LOJA35'
-      Required = True
-    end
-    object IBDS_BuscaCOD_FORNECEDOR: TIntegerField
-      FieldName = 'COD_FORNECEDOR'
-      Origin = 'LINXPRODUTOS.COD_FORNECEDOR'
-    end
-    object IBDS_BuscaFORN: TIBStringField
-      FieldName = 'FORN'
-      Size = 60
-    end
+    Left = 1272
+    Top = 136
   end
 end

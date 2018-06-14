@@ -95,7 +95,6 @@ type
     Bt_Atualizar: TJvXPButton;
     EdtParamStr: TEdit;
     Lbx_EmpresasProcessar: TListBox;
-    Bt_Estoques: TJvXPButton;
 
     // Odir ====================================================================
     Procedure ParaProcessamentoLoja; // Loja Ultrapassou 1 Hora
@@ -122,7 +121,8 @@ type
     Procedure AtualizaLP(sDta: String);
     Procedure AtualizaForn(sDta: String);
 
-    Procedure Es_Finan_Curva_ABC(sCodLoja: String);
+    Procedure Es_Finan_Curva_ABC(sCodLoja: String); // Insere Novos Produtos no Controle de Estoques
+    Procedure Mix_Retira_Descontinuados; // Retira Produtos Descontinuados dos MIXs
 
     // Salão
     Procedure AtualizaServicosSalao;
@@ -138,7 +138,6 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure Bt_EstoquesClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -1250,6 +1249,57 @@ begin
 
 End; // Atualiza Serviços de Profissionais de Salão >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// Retira Produtos Descontinuados dos MIXs >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmMovtosEmpresas.Mix_Retira_Descontinuados;
+Var
+  MySql: String;
+Begin
+  // Verifica se Transação esta Ativa
+  If DMMovtosEmpresas.SQLC.InTransaction Then
+   DMMovtosEmpresas.SQLC.Rollback(TD);
+
+  // Monta Transacao Para Arrumar Produtos Descontinuados nos Mixs =============
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMMovtosEmpresas.SQLC.StartTransaction(TD);
+
+  // Tira Produtos Descontinuados dos Mix ======================================
+  Try // Try da Transação
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    MySql:=' UPDATE ES_FINAN_CURVA_ABC mx'+
+           ' SET mx.est_minimo=0'+
+           ' WHERE EXISTS (SELECT 1'+
+           '               FROM LINXPRODUTOS p'+
+           '               WHERE p.cod_auxiliar=mx.cod_produto'+
+           '               AND   p.id_colecao=197)'+
+           ' AND mx.est_minimo>0';
+    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+    MySql:=' UPDATE ES_PRODUTOS_MIX pm'+
+           ' SET pm.est_minimo=0'+
+           ', pm.ind_mix=0'+
+           ' WHERE EXISTS (SELECT 1'+
+           '               FROM LINXPRODUTOS p'+
+           '               WHERE p.cod_produto=pm.cod_produto'+
+           '               AND   p.id_colecao=197)'+
+           ' AND pm.est_minimo>0';
+    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMMovtosEmpresas.SQLC.Commit(TD);
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMMovtosEmpresas.SQLC.Rollback(TD);
+    End; // on e : Exception do
+  End; // Try da Transação
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+End; // Retira Produtos Descontinuados dos MIXs >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 // Insere Novos Produtos no Controle de Estoques >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmMovtosEmpresas.Es_Finan_Curva_ABC(sCodLoja: String);
 Var
@@ -1968,7 +2018,6 @@ procedure TFrmMovtosEmpresas.FormCreate(Sender: TObject);
 Var
   i: Integer;
 begin
-
 //OdirApagar
 //iCodLojaLinx:=2;
 //          AtualizaTabelaEstoque('99');
@@ -5551,13 +5600,8 @@ begin
     DMMovtosEmpresas.CDS_EmpProcessa.Next;
   End; // While Not DMMovtosEmpresas.CDS_EmpProcessa.Eof do
 
-// Retirei Não Roda mais de uma vez ===================
-//  If Lbx_EmpresasProcessar.Items.Count>0 Then
-//  Begin
-//    Bt_AtualizarClick(Self);
-//    Exit;
-//  End;
-// Retirei Não Roda mais de uma vez ===================
+  // Retira Produtos Descontinuados dos MIXs ====================================
+  Mix_Retira_Descontinuados;
 
   // Verifica Processamento ====================================================
   VerificaProcessamento;
@@ -5646,175 +5690,6 @@ begin
     Exit;
   Except
   End;
-
-end;
-
-procedure TFrmMovtosEmpresas.Bt_EstoquesClick(Sender: TObject);
-var
-  bSiga: Boolean;
-
-  MySql,
-  sCodEmpresa, sHora,
-  sgDML, sgValues: String;
-
-  i: Integer;
-begin
-//  If Not DMMovtosEmpresas.CDS_EmpProcessa.Active Then
-//   DMMovtosEmpresas.CDS_EmpProcessa.Open;
-//
-//  // Inicia Processamento ======================================================
-//  DMMovtosEmpresas.CDS_EmpProcessa.First;
-//  While Not DMMovtosEmpresas.CDS_EmpProcessa.Eof do
-//  Begin
-//    sCodEmpresa:=DMMovtosEmpresas.CDS_EmpProcessaCOD_FILIAL.AsString;
-//
-//    sHora:=TimeToStr(Time);
-//
-//    // Conecta Empresa =======================================================
-//    Try
-//      If ConexaoEmpIndividual('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, 'A') Then
-//       Begin
-//         bSiga:=True;
-//       End
-//      Else
-//       Begin
-//         bSiga:=False;
-//       End; // If ConexaoEmpIndividual(DMVirtual.CDS_V_EmpConexoesDATABASE.AsString, DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString, 'A') Then
-//    Except
-//      bSiga:=False;
-//    End;
-//
-//    If bSiga Then // Conexão
-//    Begin
-//      // ============================================================
-//      // Busca ESTOQUE ==============================================
-//      // ============================================================
-//      DateSeparator:='.';
-//      DecimalSeparator:='.';
-//
-//      // Cria Query da Empresa ------------------------------------
-//      CriaQueryIB('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, IBQ_Consulta, False, True);
-//
-//      If DMMovtosEmpresas.IBQ_EstoqueLoja.Active Then
-//       DMMovtosEmpresas.IBQ_EstoqueLoja.Close;
-//
-//      DMMovtosEmpresas.IBQ_EstoqueLoja.Database:=IBQ_Consulta.Database;
-//      DMMovtosEmpresas.IBQ_EstoqueLoja.Transaction:=IBQ_Consulta.Transaction;
-//
-//      MySql:=' SELECT'+
-//             ' e.codfilial, e.codproduto, e.saldoatual, e.pedidopendente,'+
-//             ' e.zonaendereco, e.corredor, e.prateleira, e.gaveta,'+
-//             ' e.cusmedvalor, e.customedio, e.lastprecocompra, e.lastcustomedio,'+
-//             ' e.estoqueideal, e.estoquemaximo,'+
-//             ' e.dataalteracadastro, e.dataalteraestoque, e.dataalteraestoque_ped,'+
-//             ' coalesce(p.principalfor,''000000'') principalfor,'+
-//             ' current_date DTA_ATUALIZACAO, '+QuotedStr(sHora)+' HRA_ATUALIZACAO'+
-//             ' FROM ESTOQUE e'+
-//             '      LEFT JOIN PRODUTO p on e.codproduto=p.codproduto'+
-//             ' WHERE e.codfilial='+QuotedStr(sCodEmpresa);
-//      DMMovtosEmpresas.IBQ_EstoqueLoja.Close;
-//      DMMovtosEmpresas.IBQ_EstoqueLoja.SQL.Clear;
-//      DMMovtosEmpresas.IBQ_EstoqueLoja.SQL.Add(MySql);
-//
-//      // Abre Query da no Banco de Dados da Loja -----------------
-//      i:=0;
-//      bSiga:=False;
-//      While Not bSiga do
-//      Begin
-//        Try
-//          DMMovtosEmpresas.IBQ_EstoqueLoja.Open;
-//          bSiga:=True;
-//        Except
-//          Inc(i);
-//        End; // Try
-//
-//        If i>2 Then
-//         Break;
-//      End; // While Not bSiga do
-//
-//      // Processamento  -------------------------------------------
-//      If bSiga Then // Consulta Transferencias de Entrada
-//      Begin
-//        Try
-//          // Monta Transacao  ---------------------------------------
-//          TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
-//          TD.IsolationLevel:=xilREADCOMMITTED;
-//          DMMovtosEmpresas.SQLC.StartTransaction(TD);
-//
-//          DateSeparator:='.';
-//          DecimalSeparator:='.';
-//
-//          // Atualiza Estoques da Loja --------------------------------
-//          sgDML:=' UPDATE OR INSERT INTO ESTOQUE ('+
-//                 ' CODFILIAL, CODPRODUTO, SALDOATUAL, PEDIDOPENDENTE,'+
-//                 ' ZONAENDERECO, CORREDOR, PRATELEIRA, GAVETA,'+
-//                 ' CUSMEDVALOR, CUSTOMEDIO, LASTPRECOCOMPRA, LASTCUSTOMEDIO,'+
-//                 ' ESTOQUEIDEAL, ESTOQUEMAXIMO,'+
-//                 ' DATAALTERACADASTRO, DATAALTERAESTOQUE, DATAALTERAESTOQUE_PED,'+
-//                 ' PRINCIPALFOR,'+
-//                 ' DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
-//
-//                 ' VALUES (';
-//
-//          While Not DMMovtosEmpresas.IBQ_EstoqueLoja.Eof do
-//          Begin
-//            sgValues:='';
-//            For i:=0 to DMMovtosEmpresas.IBQ_EstoqueLoja.FieldCount-1 do
-//            Begin
-//              // ULTIMO CAMPO - HRA_ATUALIZACAO ==================================
-//              If Trim(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
-//              Begin
-//                sgValues:=sgValues+QuotedStr(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].AsString)+')';
-//              End // If Trim(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
-//
-//              // Grava Resto do Registro =========================================
-//              Else
-//               Begin
-//                 If Trim(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].AsString)<>'' Then
-//                  sgValues:=sgValues+QuotedStr(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].AsString)+', '
-//                 Else
-//                  sgValues:=sgValues+'NULL, ';
-//               End;
-//            End; // For i:=0 to DMMovtosEmpresas.IBQ_EstoqueLoja.FieldCount-1 do
-//
-//            // UPDATE OR INSERT INTO ESTOQUE - BelShop.FDB =====================
-//            MySql:=sgDML+sgValues+' MATCHING (CODFILIAL, CODPRODUTO)';
-//            DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-//
-//            DMMovtosEmpresas.IBQ_EstoqueLoja.Next;
-//          End; // While Not DMMovtosEmpresas.IBQ_EstoqueLoja.Eof do
-//          DMMovtosEmpresas.IBQ_EstoqueLoja.Close;
-//
-//          DMMovtosEmpresas.SQLC.Commit(TD);
-//
-//          DateSeparator:='/';
-//          DecimalSeparator:=',';
-//        Except
-//          on e : Exception do
-//          Begin
-//            DMMovtosEmpresas.SQLC.Rollback(TD);
-//            DMMovtosEmpresas.IBQ_EstoqueLoja.Close;
-//
-//            DateSeparator:='/';
-//            DecimalSeparator:=',';
-//
-//          End; // on e : Exception do
-//        End; // Try
-//      End; // If bSiga Then // Consulta Transferencias de Entrada
-//
-//      DateSeparator:='/';
-//      DecimalSeparator:=',';
-//      // ============================================================
-//      // Busca ESTOQUE ==============================================
-//      // ============================================================
-//
-//      // Fecha Conexão =========================================================
-//      ConexaoEmpIndividual('IBDB_'+sCodEmpresa, 'IBT_'+sCodEmpresa, 'F');
-//    End; // If bSiga Then // Conexão
-//
-//    DMMovtosEmpresas.CDS_EmpProcessa.Next;
-//  End; // While Not DMMovtosEmpresas.CDS_EmpProcessa.Eof do
-//  DMMovtosEmpresas.CDS_EmpProcessa.Close;
 
 end;
 

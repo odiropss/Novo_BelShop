@@ -4641,6 +4641,9 @@ object DMVirtual: TDMVirtual
       FieldName = 'FORN'
       Size = 60
     end
+    object CDS_V_MixAnaliseFornIND_MULTISEL: TSmallintField
+      FieldName = 'IND_MULTISEL'
+    end
   end
   object DS_V_MixAnaliseForn: TDataSource
     DataSet = CDS_V_MixAnaliseForn

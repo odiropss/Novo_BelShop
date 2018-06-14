@@ -345,50 +345,6 @@ Procedure TFrmAtualizaSeteHoras.MontaSqlsSidicomLinx;
 Var
   MySql: String;
 Begin
-  // OdirApagar - 02/05/2018 -- SIDICOM Desativado
-  //============================================================================
-  // Monta Select de Busca de Débitos e Créditos (SIDICOM) =====================
-//  MySqlSelect:=' SELECT'+
-//               ' mf.codfornecedor,'+
-//               ' f.nomefornecedor,'+
-//               ' REPLACE(REPLACE(REPLACE(TRIM(f.numerocgcmf), ''/'', ''''),''.'',''''),''-'','''') Doc_Forn,'+
-//               ' mf.datacomprovante,'+
-//               ' mf.dataentrada,'+
-//               ' mf.codcomprovante,'+
-//
-//               ' CASE'+
-//               '   WHEN mf.codcomprovante IN ('+sgCompCre+') Then'+
-//               '    ''C'''+
-//               '   WHEN mf.codcomprovante IN ('+sgCompDeb+') Then'+
-//               '    ''D'''+
-//               ' End Tp_DebCre,'+
-//
-//               ' mf.codfilial,'+
-//
-//               // OdirApagar - 04/09/02017
-//               // ' mf.observacao,'+
-//               ' NULL observacao,'+
-//
-//               ' TRIM(mf.chavenf) chavenf,'+
-//               ' CAST(SUBSTRING(mf.numero FROM 1 FOR 12) AS VARCHAR(12)) numero,'+
-//               ' Trim(mf.serie) serie,'+
-//               ' ABS(COALESCE(mf.totnota,0.00)) Vlr_Total'+
-//
-//               ' FROM MFOR mf, FORNECED f'+
-//               ' WHERE  mf.codfornecedor=f.codfornecedor'+
-//               ' AND    mf.codfilial=:CodLoja'+
-//               ' AND    mf.codcomprovante in ('+sgCompCre+', '+sgCompDeb+')'+
-//               ' AND    mf.dataentrada>='+QuotedStr(sgDtaInicio);
-//
-//               If Trim(sgCodForn)<>'' Then
-//                MySqlSelect:=
-//                 MySqlSelect+' AND mf.codfornecedor = :CodForn';
-//
-//  MySqlSelect:=
-//   MySqlSelect+' ORDER BY mf.codfornecedor, mf.dataentrada';
-//  // Monta Select de Busca de Debitos e Créditos (SIDICOM) =====================
-//  //============================================================================
-
   //============================================================================
   // Monta Select de Busca de Debitos e Créditos (LINX) ========================
   //============================================================================
@@ -398,7 +354,16 @@ Begin
              ' fo.des_fornecedor DES_FORNECEDOR,'+ // 2'+
              ' fo.cod_vinculado COD_VINCULADO,'+ // 3'+
              ' fo.des_vinculado DES_VINCULADO,'+ // 4'+
-             ' CAST((ROUND((SUM(mf.valor_total)), 2)) AS NUMERIC(18,2)) VLR_ORIGEM,'+ // 5'+
+
+             ' CAST((ROUND((SUM('+ // 5
+             '    CASE'+
+             '       WHEN (CAST(COALESCE(mf.id_cfop,''0'') AS INTEGER)=6603) or (CAST(COALESCE(mf.id_cfop,''0'') AS INTEGER)=5603) THEN'+ // Ressarcimento ICMS_ST
+             '          COALESCE(mf.valor_icms_st,0.00)'+
+             '       ELSE'+
+             '          COALESCE(mf.valor_total,0.00)'+
+             '    END'+
+             ' )), 2)) AS NUMERIC(18,2)) VLR_ORIGEM,'+
+
              ' CAST(mf.data_documento AS DATE) DTA_ORIGEM,'+ // 6'+
              ' CAST(mf.data_lancamento AS DATE) DTA_CAIXA,'+ // 7'+
              ' mf.data_lancamento,'+ // 8'+
@@ -420,7 +385,16 @@ Begin
              ' ,0.00) PER_REDUCAO,'+ // 16'+
 
              ' hi.ind_debcre TIP_DEBCRE,'+ // 17'+
-             ' CAST((ROUND((SUM(mf.valor_total)), 2)) AS NUMERIC(18,2)) VLR_CAIXA,'+ // 18'+
+
+             ' CAST((ROUND((SUM('+ // 18
+             '    CASE'+
+             '       WHEN (CAST(COALESCE(mf.id_cfop,''0'') AS INTEGER)=6603) or (CAST(COALESCE(mf.id_cfop,''0'') AS INTEGER)=5603) THEN'+ // Ressarcimento ICMS_ST
+             '          COALESCE(mf.valor_icms_st,0.00)'+
+             '       ELSE'+
+             '          COALESCE(mf.valor_total,0.00)'+
+             '    END'+
+             ' )), 2)) AS NUMERIC(18,2)) VLR_CAIXA,'+ // 18'+
+
              ' 0.00 VLR_SALDO,'+ // 19'+
 
              // Fornecedor Sidicom ----------------------------------
@@ -540,7 +514,6 @@ Begin
              ' ORDER BY 1,3';
   // Monta Select de Busca de Debitos e Créditos (LINX) ========================
   //============================================================================
-
 end; // Monta SQL's Para Busca SIDICOM / LINX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Atualiza Centro de Custos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -885,7 +858,7 @@ Begin
            ' AND   f.num_seq NOT IN (0,999999)';
     DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
 
-    // Busca Movtos Debitos / Creditos ===========================================
+    // Busca Movtos Debitos / Creditos =========================================
     DMAtualizaSeteHoras.CDS_MovtoLinx.Close;
     DMAtualizaSeteHoras.SDS_MovtoLinx.CommandText:=MySqlLinx;
     DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('CodEmpLINX').AsString:=sgCodEmpLINX;
@@ -1995,7 +1968,7 @@ Var
   ii, i: Integer;
 begin
 
-//============================================================================
+  //============================================================================
   // Acerta Data de Backup do Sidicom ==========================================
   //============================================================================
 //opss
@@ -2046,42 +2019,6 @@ begin
   sgDtaInicio:=DateToStr(IncMonth(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor),-4));
   sgDtaInicio:=f_Troca('/','.',f_Troca('-','.',sgDtaInicio));
 
-//OdirApagar - 04/05/2018
-//  // Busca Comprovantes ========================================================
-//  MySql:=' SELECT LPAD(h.cod_historico, 3, ''0'') cod_comprv, h.ind_debcre'+
-//         ' FROM FL_CAIXA_HISTORICOS h'+
-//         ' WHERE h.cod_historico <> 0'+
-//         ' AND   h.cod_historico <> 999999'+
-//         ' AND   h.cod_historico <> 900'+
-//         ' AND   h.cod_historico <> 955';
-//  DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
-//  DMAtualizaSeteHoras.SDS_BuscaRapida.CommandText:=MySql;
-//  DMAtualizaSeteHoras.CDS_BuscaRapida.Open;
-//
-//  sgCompCre:='';
-//  sgCompDeb:='';
-//  While Not DMAtualizaSeteHoras.CDS_BuscaRapida.Eof do
-//  Begin
-//    If DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('ind_debcre').AsString='D' Then
-//    Begin
-//      If Trim(sgCompDeb)='' Then
-//       sgCompDeb:=QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString)
-//      Else
-//       sgCompDeb:=sgCompDeb+', '+QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString);
-//    End;
-//
-//    If DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('ind_debcre').AsString='C' Then
-//    Begin
-//      If Trim(sgCompCre)='' Then
-//       sgCompCre:=QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString)
-//      Else
-//       sgCompCre:=sgCompCre+', '+QuotedStr(DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('cod_comprv').AsString);
-//    End;
-//
-//    DMAtualizaSeteHoras.CDS_BuscaRapida.Next;
-//  End; // While Not DMAtualizaSeteHoras.CDS_BuscaRapida.Eof do
-//  DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
-
   // Monta SQL's Para Busca SIDICOM / LINX =====================================
   MontaSqlsSidicomLinx;
 
@@ -2104,42 +2041,6 @@ begin
     sgCodEmp    :=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('COD_FILIAL').AsString;
     sgCodEmpLINX:=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('COD_LINX').AsString;
     sgDtaIniLINX:=DMAtualizaSeteHoras.CDS_Lojas.FieldByName('DTA_INICIO_LINX').AsString;
-
-//OdirApagar - 02/05/2018 -- SIDICOM Desativado
-//    // Busca Débitos/Crétidos no SIDICOM =======================================
-//    If sgCodEmpLINX='0' Then
-//    Begin
-//      //========================================================================
-//      // Quando Busca Por Codigo no SIDICOM Altera o Código para LINX ==========
-//      If Trim(sgCodForn)<>'' Then
-//      Begin
-//        MySql:=' SELECT'+
-//               ' REPLACE(REPLACE(REPLACE(TRIM(f.doc_cliente), ''/'', ''''), ''.'', ''''), ''-'', '''') Doc_Forn'+
-//               ' FROM LINXCLIENTESFORNEC f'+
-//               ' WHERE f.cod_cliente='+sgCodForn;
-//        DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
-//        DMAtualizaSeteHoras.SDS_BuscaRapida.CommandText:=MySql;
-//        DMAtualizaSeteHoras.CDS_BuscaRapida.Open;
-//        sgCodForn:=DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('Doc_Forn').AsString;
-//        DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
-//
-//        If Trim(sgCodForn)<>'' Then
-//        Begin
-//          MySql:=' SELECT fo.codfornecedor'+
-//                 ' FROM FORNECEDOR fo'+
-//                 ' WHERE REPLACE(REPLACE(REPLACE(fo.numerocgcmf, ''/'', ''''), ''.'', ''''), ''-'', '''') = '+QuotedStr(sgCodForn);
-//          DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
-//          DMAtualizaSeteHoras.SDS_BuscaRapida.CommandText:=MySql;
-//          DMAtualizaSeteHoras.CDS_BuscaRapida.Open;
-//          sgCodForn:=DMAtualizaSeteHoras.CDS_BuscaRapida.FieldByName('codfornecedor').AsString;
-//          DMAtualizaSeteHoras.CDS_BuscaRapida.Close;
-//        End; // If Trim(sgCodForn)<>'' Then
-//      End; // If Trim(sgCodForn)<>'' Then
-//      // Quando Busca Por Codigo no SIDICOM Altera o Código para LINX ==========
-//      //=========================================================================
-//
-//      BuscaMovtosDebCreSIDICOM;
-//    End; // If sgCodEmpLINX='0' Then
 
     // Limpa Codigos de Fornecedores ===========================================
     Mem_Odir.Lines.Clear;

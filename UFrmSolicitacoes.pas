@@ -94,7 +94,8 @@ uses
   cxGroupBox, JvXPButtons, JvExControls, JvXPCore, JvXPCheckCtrls,
   ToolEdit, CurrEdit, DBXpress, Commctrl, ComCtrls, Math, StrUtils, DateUtils,
   Clipbrd, jpeg, cxSpinEdit, JvRadioButton, ADODB, Menus, IBQuery,
-  JvOutlookBar, RelVisual, AppEvnts, MMSystem;
+  JvOutlookBar, RelVisual, AppEvnts, MMSystem, JvButton,
+  JvTransparentButton, RXCtrls;
 //  Último: MMSystem
 
 type
@@ -638,6 +639,20 @@ type
     Rb_ConcDepHistoricosOUTROS: TJvRadioButton;
     Rb_ConcDepHistoricosDESPESA: TJvRadioButton;
     Label87: TLabel;
+    Ts_MixProdutosLojas: TTabSheet;
+    Panel14: TPanel;
+    Bt_MixLojasVoltar: TJvXPButton;
+    Bt_MixLojasAlterar: TJvXPButton;
+    EdtMixLoja: TEdit;
+    Bt_MixLojasOrigemSim: TJvTransparentButton;
+    Bt_MixLojasOrigemNao: TJvTransparentButton;
+    Label88: TLabel;
+    Bt_MixLojasDestSim: TJvTransparentButton;
+    Bt_MixLojasDestNao: TJvTransparentButton;
+    Gb_MixLojasSel: TGroupBox;
+    Gb_MixProdutos: TGroupBox;
+    Lbx_MixLojasSel: TListBox;
+    Lbx_MixLojas: TListBox;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -741,7 +756,6 @@ type
       var Key: Word; Shift: TShiftState);
     procedure Bt_SimplesOKClick(Sender: TObject);
     procedure Bt_QtdCaixaCDVoltarClick(Sender: TObject);
-    procedure Bt_AtualizaSIDICOMCurvaABCEnderecoOKClick(Sender: TObject);
     procedure Bt_GeraOCLegendaCoresVoltarClick(Sender: TObject);
     procedure Bt_FinanFechaCaixaVoltarClick(Sender: TObject);
     procedure mem_FinanFechaCaixaChange(Sender: TObject);
@@ -759,7 +773,6 @@ type
     procedure FormKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure DtEdt_MargemLucroDtaFimVenPropertiesEditValueChanged(Sender: TObject);
-    procedure Bt_HabServVoltarClick(Sender: TObject);
     procedure Bt_HabServSalvarClick(Sender: TObject);
     procedure Ckb_HabServAtivoClick(Sender: TObject);
     procedure Ckb_HabServAtivoKeyUp(Sender: TObject; var Key: Word;
@@ -771,7 +784,6 @@ type
     procedure Bt_IBGESelecionarClick(Sender: TObject);
     procedure Dbg_IBGE1KeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure Bt_ManutDiversosVoltarClick(Sender: TObject);
     procedure Bt_ManutDiversosDMLClick(Sender: TObject);
     procedure CkbDesc8Click(Sender: TObject);
     procedure CkbDesc8KeyUp(Sender: TObject; var Key: Word;
@@ -786,13 +798,11 @@ type
       Shift: TShiftState);
     procedure Bt_ParamSisSalvarClick(Sender: TObject);
     procedure Bt_ConsistenciasSalvarClick(Sender: TObject);
-    procedure Bt_ConsistenciasVoltarClick(Sender: TObject);
     procedure Dbg_ConsistenciasDblClick(Sender: TObject);
     procedure Dbg_ConsistenciasDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
     procedure Bt_ValesVoltarClick(Sender: TObject);
-    procedure Bt_ValesSalvarClick(Sender: TObject);
     procedure Dbg_ValesParcelasDblClick(Sender: TObject);
     procedure EdtValesCodLojaExit(Sender: TObject);
     procedure Bt_ValesBuscaLojaClick(Sender: TObject);
@@ -856,7 +866,6 @@ type
     procedure Bt_ProSoftImpArquivoSalvarClick(Sender: TObject);
     procedure Bt_ProSoftImpArqImportaClick(Sender: TObject);
     procedure PC_FinanPlanFinanceiraPeriodoChange(Sender: TObject);
-    procedure Bt_FinanPlanFinanceiraTamColunasOKClick(Sender: TObject);
     procedure EdtProSoftImpPastaArquivoChange(Sender: TObject);
     procedure Bt_SelecionarOKClick(Sender: TObject);
     procedure Bt_SelecionarValtarClick(Sender: TObject);
@@ -887,7 +896,6 @@ type
     procedure Bt_ParamLojaNecesExcluirClick(Sender: TObject);
     procedure EditorProSoftImpArquivoKeyDown(Sender: TObject;
       var Key: Word; Shift: TShiftState);
-    procedure Bt_ReposLojasVoltarClick(Sender: TObject);
     procedure EdtReposLojasSeqExit(Sender: TObject);
     procedure Bt_ReposLojasAlterarClick(Sender: TObject);
     procedure Bt_LimpaListaClick(Sender: TObject);
@@ -946,8 +954,7 @@ type
     procedure Dbg_AnaliseRepDiariaDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
-    procedure Bt_ConcDepHistoricosSalvarClick(Sender: TObject);
-    procedure Bt_ConcDepHistoricosVoltarClick(Sender: TObject);
+    procedure Bt_ConcDepHistoricoSalvarClick(Sender: TObject);
     procedure Rb_ConcDepHistoricosCX_MTZClick(Sender: TObject);
     procedure Rb_ConcDepHistoricosCX_MTZKeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
@@ -3946,14 +3953,6 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.Bt_AtualizaSIDICOMCurvaABCEnderecoOKClick(Sender: TObject);
-begin
-  bgProcessar:=True;
-
-  Close;
-
-end;
-
 procedure TFrmSolicitacoes.Bt_GeraOCLegendaCoresVoltarClick(Sender: TObject);
 begin
   Close;
@@ -4263,12 +4262,6 @@ begin
     DtEdt_MargemLucroDtaInicioEnt.Date:=EncodeDate(wgAnoH-1, wgMesH, wgDiaH);
     DtEdt_MargemLucroDtaFimEnt.Date:=DtEdt_MargemLucroDtaInicioVen.Date-1;
   End; // If Gb_MargemLucroPeriodoEntradas.Visible Then
-end;
-
-procedure TFrmSolicitacoes.Bt_HabServVoltarClick(Sender: TObject);
-begin
-  bgProcessar:=False;
-  Close;
 end;
 
 procedure TFrmSolicitacoes.Bt_HabServSalvarClick(Sender: TObject);
@@ -4584,6 +4577,15 @@ end;
 
 procedure TFrmSolicitacoes.Bt_IBGEVoltarClick(Sender: TObject);
 begin
+  {
+  Usado em:
+  Bt_HabServVoltarClick
+  Bt_ManutDiversosVoltarClick
+  Bt_ConsistenciasVoltarClick
+  Bt_ReposLojasVoltarClick
+  Bt_ConcDepHistoricosVoltarClick
+  }
+
   bgProcessar:=False;
   Close;
 
@@ -4591,6 +4593,14 @@ end;
 
 procedure TFrmSolicitacoes.Bt_IBGESelecionarClick(Sender: TObject);
 begin
+  {
+  Usado em:
+  Bt_ValesSalvarClick (Consistir se Incluir)
+
+  Bt_FinanPlanFinanceiraTamColunasOKClick
+  Bt_MixProdutosAlterarClick
+  }
+
   bgProcessar:=True;
   Close;
 
@@ -4618,13 +4628,6 @@ begin
     End; // If InputQuery('Localizar Endereço','',sIBGE) then
   End; // If Key=VK_F4 Then
 End;
-
-procedure TFrmSolicitacoes.Bt_ManutDiversosVoltarClick(Sender: TObject);
-begin
-  bgProcessar:=False;
-  Close;
-
-end;
 
 procedure TFrmSolicitacoes.Bt_ManutDiversosDMLClick(Sender: TObject);
 begin
@@ -4763,13 +4766,6 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.Bt_ConsistenciasVoltarClick(Sender: TObject);
-begin
-  bgProcessar:=False;
-  Close;
-
-end;
-
 procedure TFrmSolicitacoes.Dbg_ConsistenciasDblClick(Sender: TObject);
 begin
   gCDS_V1.Edit;
@@ -4803,15 +4799,6 @@ begin
    DMSalao.CDS_Vales.CancelUpdates;
 
   bgProcessar:=False;
-  Close;
-
-end;
-
-procedure TFrmSolicitacoes.Bt_ValesSalvarClick(Sender: TObject);
-begin
-  //Consistir se incluir
-
-  bgProcessar:=True;
   Close;
 
 end;
@@ -6950,13 +6937,6 @@ begin
                   
 end;
 
-procedure TFrmSolicitacoes.Bt_FinanPlanFinanceiraTamColunasOKClick(Sender: TObject);
-begin
-  bgProcessar:=True;
-  Close;
-
-end;
-
 procedure TFrmSolicitacoes.EdtProSoftImpPastaArquivoChange(Sender: TObject);
 begin
   EditorProSoftImpArquivo.Lines.Clear;
@@ -7712,13 +7692,6 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.Bt_ReposLojasVoltarClick(Sender: TObject);
-begin
-  bgProcessar:=False;
-  Close;
-
-end;
-
 procedure TFrmSolicitacoes.EdtReposLojasSeqExit(Sender: TObject);
 begin
   EdtReposLojasProduto.Clear;
@@ -7844,7 +7817,7 @@ begin
 
   // Se Deve Fechar Digitação de Alteração de Qtd de Reposição Depois de Salvar...
   If bgFechaRepos Then
-   Bt_ReposLojasVoltarClick(Self);
+   Bt_IBGEVoltarClick(Self);
 
 
 end;
@@ -8974,7 +8947,7 @@ begin
   DMBelShop.CDS_BuscaRapida.FieldByName('Total_Qtds').Alignment:=taRightJustify;
 end;
 
-procedure TFrmSolicitacoes.Bt_ConcDepHistoricosSalvarClick(Sender: TObject);
+procedure TFrmSolicitacoes.Bt_ConcDepHistoricoSalvarClick(Sender: TObject);
 begin
   Dbg_ConcDepHistoricos.SetFocus;
 
@@ -8983,12 +8956,6 @@ begin
 
   DBGridClipboard(Dbg_ConcDepHistoricos);
 
-end;
-
-procedure TFrmSolicitacoes.Bt_ConcDepHistoricosVoltarClick(Sender: TObject);
-Begin
-  bgProcessar:=False;
-  Close;
 end;
 
 procedure TFrmSolicitacoes.Rb_ConcDepHistoricosCX_MTZClick(Sender: TObject);
