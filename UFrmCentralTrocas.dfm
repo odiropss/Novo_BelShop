@@ -408,7 +408,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
     Top = 0
     Width = 1102
     Height = 578
-    ActivePage = Ts_NFePerdas
+    ActivePage = Ts_ReposLojas
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -4535,7 +4535,6 @@ object FrmCentralTrocas: TFrmCentralTrocas
               Expanded = False
               FieldName = 'COD_FORNECEDOR'
               Title.Alignment = taRightJustify
-              Width = -1
               Visible = False
             end
             item

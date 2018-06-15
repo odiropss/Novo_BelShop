@@ -72,10 +72,9 @@ type
     Rb_GraficoSetoresNomeVlr: TJvRadioButton;
     Dbg_Produtos: TDBGrid;
     dxStatusBar3: TdxStatusBar;
-    dxStatusBar3Container10: TdxStatusBarContainerControl;
-    dxStatusBar3Container11: TdxStatusBarContainerControl;
     ApplicationEvents1: TApplicationEvents;
     Bt_MultiAlteracoes: TJvXPButton;
+    Bt_GruposLojas: TJvXPButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -115,6 +114,7 @@ type
                                    sCodLojaSid, sCodProdSid,
                                    sEstMin, sEstMax: String);
 
+    Procedure MixMultiplasAlteracoes;
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     procedure Bt_BuscaFornecedorClick(Sender: TObject);
@@ -141,8 +141,9 @@ type
       var Handled: Boolean);
     procedure DtEdt_DtaInicioKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure Dbg_ProdutosDblClick(Sender: TObject);
     procedure Bt_MultiAlteracoesClick(Sender: TObject);
+    procedure Dbg_ProdutosTitleClick(Column: TColumn);
+    procedure Bt_GruposLojasClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -187,6 +188,8 @@ var
 
   mMemoColLojas: TMemo; // Nome das Coluans de Lojas
 
+  sgOrderGrid: String=''; // Ordenar pela Coluna do DBGrid
+
 implementation
 
 uses DK_Procs1, UDMBelShop, UDMVirtual, UPesquisa, UDMLinx, SqlExpr,
@@ -197,6 +200,173 @@ uses DK_Procs1, UDMBelShop, UDMVirtual, UPesquisa, UDMLinx, SqlExpr,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir _ INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Efetua MultiAlterações de MIX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAnaliseFornecedores.MixMultiplasAlteracoes;
+Var
+  MySql: String;
+
+  s, sLjOrigLX,
+  sColOrig, sColDest,
+  sCodProdSID, sEstMin, sEstMax: String;
+
+  mMemoLjSID, mMemoLjLX: TMemo; // Guarda Codigo das Lojas Linx e Sidicom
+
+  i, ii,
+  iPos, iRecNo: Integer;
+Begin
+  OdirPanApres.Caption:='AGUARDE !! Efetuando Multiplas Alterações ...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmAnaliseFornecedores.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmAnaliseFornecedores.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmAnaliseFornecedores;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  iRecNo:=DMVirtual.CDS_V_MixAnaliseForn.RecNo;
+
+  // Pega Loja Origem ==========================================================
+  iPos:=Pos('-',FrmSolicitacoes.EdtMixLoja.Text);
+  sLjOrigLX:=Trim(Copy(FrmSolicitacoes.EdtMixLoja.Text,iPos+1,3));
+  sColOrig:='LOJA'+sLjOrigLX;
+
+  // Guarda Codigo das Lojas Linx e Sidicom ====================================
+  mMemoLjLX:=TMemo.Create(Self);
+  mMemoLjLX.Visible:=False;
+  mMemoLjLX.Parent:=FrmBelShop;
+  mMemoLjLX.Width:=500;
+  mMemoLjLX.Lines.Clear;
+
+  mMemoLjSID:=TMemo.Create(Self);
+  mMemoLjSID.Visible:=False;
+  mMemoLjSID.Parent:=FrmBelShop;
+  mMemoLjSID.Width:=500;
+  mMemoLjSID.Lines.Clear;
+
+  For i:=0 to FrmSolicitacoes.Lbx_MixLojas.Items.Count-1 do
+  Begin
+    iPos:=Pos('-',FrmSolicitacoes.Lbx_MixLojas.Items[i]);
+
+    // Codigo da Loja Linx
+    s:=Trim(Copy(FrmSolicitacoes.Lbx_MixLojas.Items[i],iPos+1,3));
+    mMemoLjLX.Lines.Add(s);
+
+    // Codigo da Loja Sidicom
+    MySql:=' SELECT l.cod_loja'+
+           ' FROM LINXLOJAS l'+
+           ' WHERE l.empresa='+s;
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+    mMemoLjSID.Lines.Add(Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Loja').AsString));
+    DMBelShop.CDS_BuscaRapida.Close;
+  End; // For i:=0 to FrmSolicitacoes.Lbx_MixLojas.Items.Count-1 do
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    DMVirtual.CDS_V_MixAnaliseForn.First;
+    While Not DMVirtual.CDS_V_MixAnaliseForn.Eof do
+    Begin
+      OdirPanApres.Caption:='AGUARDE !! Efetuando Multiplas Alterações Produto: '+Trim(DMVirtual.CDS_V_MixAnaliseFornNOME.AsString);
+      OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+      OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmAnaliseFornecedores.Width-OdirPanApres.Width)/2));
+      OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmAnaliseFornecedores.Height-OdirPanApres.Height)/2))-20;
+      Application.ProcessMessages;
+
+      If DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger=1 Then
+      Begin
+        // Acerta MIX das Lojas ================================================
+        For i:=0 to mMemoLjLX.Lines.Count-1 do
+        Begin
+          sColDest:='Loja'+mMemoLjLX.Lines[i];
+
+          // Acerta Indidicador de Mix
+          DMVirtual.CDS_V_MixAnaliseForn.Edit;
+          DMVirtual.CDS_V_MixAnaliseForn.FieldByName(sColDest).AsInteger:=
+                 DMVirtual.CDS_V_MixAnaliseForn.FieldByName(sColOrig).AsInteger;
+          DMVirtual.CDS_V_MixAnaliseForn.Post;
+
+          MySql:=' SELECT mx.codproduto, mx.est_minimo, mx.est_maximo'+
+                 ' FROM ES_PRODUTOS_MIX mx'+
+                 ' WHERE mx.cod_produto='+DMVirtual.CDS_V_MixAnaliseFornCOD_PRODUTO.AsString+
+                 ' AND   mx.empresa='+sLjOrigLX;
+          DMBelShop.CDS_Busca.Close;
+          DMBelShop.SDS_Busca.CommandText:=MySql;
+          DMBelShop.CDS_Busca.Open;
+          sCodProdSID:=DMBelShop.CDS_Busca.FieldByName('CodProduto').AsString;
+          sEstMin    :=DMBelShop.CDS_Busca.FieldByName('Est_Minimo').AsString;
+          sEstMax    :=DMBelShop.CDS_Busca.FieldByName('Est_Maximo').AsString;
+          DMBelShop.CDS_Busca.Close;
+
+          // Acerta Tabela ES_PRODUTOS_MIX
+          MySql:=' UPDATE ES_PRODUTOS_MIX mx'+
+                 ' SET mx.ind_mix='+DMVirtual.CDS_V_MixAnaliseForn.FieldByName(sColOrig).AsString+
+                 ' , mx.est_minimo='+sEstMin+
+                 ' , mx.est_maximo='+sEstMax+
+                 ' WHERE mx.empresa='+mMemoLjLX.Lines[i]+
+                 ' AND   mx.cod_produto='+DMVirtual.CDS_V_MixAnaliseFornCOD_PRODUTO.AsString;
+          DMBelShop.SQLC.Execute(MySql,nil,nil);
+        End; // For i:=0 to mMemoLjLX.Lines.Count-1 do
+
+        // Acerta Tabela ES_FINAN_CURVA_ABC
+        For ii:=0 to mMemoLjSID.Lines.Count-1 do
+        Begin
+          MySql:=' UPDATE ES_FINAN_CURVA_ABC cv'+
+                 ' SET cv.est_minimo='+sEstMin+
+                 ' , cv.est_maximo='+sEstMax+
+                 ' WHERE cv.cod_loja='+QuotedStr(mMemoLjSID.Lines[ii])+
+                 ' AND   cv.cod_produto='+QuotedStr(sCodProdSID);
+          DMBelShop.SQLC.Execute(MySql,nil,nil);
+        End; // For ii:=0 to mMemoLjSID.Lines.Count-1 do
+
+        DMVirtual.CDS_V_MixAnaliseForn.Edit;
+        DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger:=0;
+        DMVirtual.CDS_V_MixAnaliseForn.Post;
+      End; // If DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger=1 Then
+
+      DMVirtual.CDS_V_MixAnaliseForn.Next;
+    End; // While Not DMVirtual.CDS_V_MixAnaliseForn.Eof do
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+    msg('MultiAlterações Efetuadas com SUCESSO !!','A');
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+  DMVirtual.CDS_V_MixAnaliseForn.First;
+  DMVirtual.CDS_V_MixAnaliseForn.RecNo:=iRecNo;
+
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+
+  FreeAndNil(mMemoLjSID);
+  FreeAndNil(mMemoLjLX);
+
+  Application.ProcessMessages;
+End; // Efetua MultiAlterações de MIX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Busca Codigo Loja SIDICOM e Estoques Minimo/Maximo >>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAnaliseFornecedores.BuscaLojaSidicomEstMinMax(sCodProdLx, sCodLojaLx: String;
@@ -249,6 +419,7 @@ Procedure TFrmAnaliseFornecedores.GravaEstMinimoMaximo(sCodLojaLx, sCodProdLx,
                                                        sEstMin, sEstMax: String);
 Var
   MySql: String;
+  sIndMix: String;
 Begin
   OdirPanApres.Caption:='AGUARDE !! Salvando Mix Do Produto...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
@@ -280,9 +451,14 @@ Begin
            ' AND   cv.cod_produto='+QuotedStr(sCodProdSid);
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
+    sIndMix:='0';
+    If StrToInt(sEstMin)>0 Then
+     sIndMix:='1';
+
     MySql:=' UPDATE ES_PRODUTOS_MIX mx'+
            ' SET mx.est_minimo='+sEstMin+
            ' ,   mx.est_maximo='+sEstMax+
+           ' ,   mx.ind_mix='+sIndMix+
            ' WHERE mx.empresa='+sCodLojaLx+
            ' AND   mx.cod_produto='+sCodProdLx;
     DMBelShop.SQLC.Execute(MySql,nil,nil);
@@ -324,7 +500,7 @@ Begin
   Refresh;
 
   // Não Monta CheckBox no DBGrid ==============================================
-   bgMontaCheck:=False;
+  bgMontaCheck:=False;
 
   // Acerta CDS_AnaliseForn ====================================================
   DMVirtual.CDS_V_MixAnaliseForn.Close;
@@ -346,7 +522,7 @@ Begin
          ' FROM LINXLOJAS l, LINXLOJAS_ABREVIATURAS a'+
          ' WHERE l.empresa=a.empresa'+
          ' AND   l.empresa NOT IN (2,5)'+
-         ' ORDER BY 1';
+         ' ORDER BY 2';
   DMBelShop.SQLQuery1.Close;
   DMBelShop.SQLQuery1.SQL.Clear;
   DMBelShop.SQLQuery1.SQL.Add(MySql);
@@ -378,34 +554,34 @@ Begin
   Dbg_Produtos.Refresh;
 
   MySql:=' SELECT'+
-         ' TRIM(pr.cod_auxiliar) COD_AUXILIAR,'+
-         ' pr.cod_produto,'+
-         ' TRIM(pr.nome) NOME,';
+         ' TRIM(pr.cod_auxiliar) COD_AUXILIAR,'+ // 1
+         ' pr.cod_produto,'+ // 2
+         ' TRIM(pr.nome) NOME,'; // 3
 
          // Se Todas as Lojas
          If Trim(sgCodLoja)='' Then
           MySql:=
            MySql+' (SELECT mx.ind_curva FROM ES_PRODUTOS_MIX mx'+
-                 '  WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=2) ABC,'+ // ABC da Empresa
+                 '  WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=2) ABC,'+ // ABC da Empresa // 4
                  ' CAST(COALESCE((SELECT SUM(COALESCE(fa.vlr_fat,0.00))'+
                  '                FROM ES_FAT_PERIODO fa'+
                  '                WHERE fa.cod_produto=pr.cod_produto)'+
-                 ' , 0.00) AS NUMERIC(12,2)) Fat_Periodo,';
+                 ' , 0.00) AS NUMERIC(12,2)) Fat_Periodo,'; // 5
 
          // Se Uma Loja
          If Trim(sgCodLoja)<>'' Then
           MySql:=
            MySql+' (SELECT mx.ind_curva FROM ES_PRODUTOS_MIX mx'+
-                 '  WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=23) ABC,'+ // ABC da Loja
+                 '  WHERE mx.cod_produto=pr.cod_produto AND mx.empresa=23) ABC,'+ // ABC da Loja // 4
                  ' CAST(COALESCE((SELECT SUM(COALESCE(fa.vlr_fat,0.00))'+
                  '                 FROM ES_FAT_PERIODO fa'+
                  '                 WHERE fa.cod_produto=pr.cod_produto'+
                  '                 AND   fa.empresa='+sgCodLoja+')'+
-                 ' , 0.00) AS NUMERIC(12,2)) Fat_Periodo,';
+                 ' , 0.00) AS NUMERIC(12,2)) Fat_Periodo,'; // 5
 
   MySql:=
-   MySql+' TRIM(pr.desc_setor) DESC_SETOR,'+
-         ' TRIM(pr.desc_colecao) DESC_COLECAO,';
+   MySql+' TRIM(pr.desc_setor) DESC_SETOR,'+ // 6
+         ' TRIM(pr.desc_colecao) DESC_COLECAO,'; // 7
 
   // Monta MIX Das Lojas =======================================================
   DMBelShop.SQLQuery1.First;
@@ -437,6 +613,9 @@ Begin
          If Trim(sgCodSetor)<>'' Then
           MySql:=
            MySql+' And   pr.id_setor='+sgCodSetor;
+
+  MySql:=
+   MySql+' ORDER BY 4, 5 DESC';
   DMBelShop.SQLQuery3.Close;
   DMBelShop.SQLQuery3.SQL.Clear;
   DMBelShop.SQLQuery3.SQL.Add(MySql);
@@ -455,7 +634,7 @@ Begin
   Begin
     Application.ProcessMessages;
 
-    DMVirtual.CDS_V_MixAnaliseForn.Insert;
+    DMVirtual.CDS_V_MixAnaliseForn.Append;
     For i:=0 to DMBelShop.SQLQuery3.FieldCount-1 do
      DMVirtual.CDS_V_MixAnaliseForn.Fields[i].Assign(DMBelShop.SQLQuery3.Fields[i]);
     DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger:=0;
@@ -469,9 +648,8 @@ Begin
   DMBelShop.SQLQuery3.Close;
 
   // Monta CheckBox no DBGrid ==================================================
-   bgMontaCheck:=True;
+  bgMontaCheck:=True;
 
-  DMVirtual.CDS_V_MixAnaliseForn.IndexFieldNames:='ABC;NOME';
   DMVirtual.CDS_V_MixAnaliseForn.First;
   Dbg_Produtos.SetFocus;
 
@@ -2148,7 +2326,7 @@ end;
 
 procedure TFrmAnaliseFornecedores.Dbg_ProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 Var
-  i: Integer;
+  i, iRecNo: Integer;
   MySql: String;
 
   sValor,
@@ -2160,7 +2338,7 @@ begin
   //============================================================================
   // Acerta Colunas Fixadas ====================================================
   //============================================================================
-  if (Key = VK_Left) and (THackDBGrid(Dbg_Produtos).SelectedIndex=4) Then // Index da 1ª Coluna Não Fixada Sem Contar Indicador
+  if (Key = VK_Left) and (THackDBGrid(Dbg_Produtos).SelectedIndex=3) Then // Index (Inciando por 0) da 1ª Coluna Não Fixada Sem Contar Indicador
   Begin
     Key := VK_Clear;
   End;
@@ -2436,6 +2614,48 @@ begin
   End; // If key=VK_F6 Then
   // Apresenta Estoque Minino/Maximo ===========================================
   //============================================================================
+
+  //============================================================================
+  // Marca/Desmarca Produto para MultiAlterações ===============================
+  //============================================================================
+  If key=VK_F7 Then
+  Begin
+    DMVirtual.CDS_V_MixAnaliseForn.Edit;
+    If DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger=1 Then
+     DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger:=0
+    Else
+     DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger:=1;
+    DMVirtual.CDS_V_MixAnaliseForn.Post;
+  End; // If key=VK_F7 Then
+  // Marca/Desmarca Produto para MultiAlterações ===============================
+  //============================================================================
+
+  //============================================================================
+  // Marca/Desmarca Produto Selecionados para MultiAlterações ==================
+  //============================================================================
+  If key=VK_F8 Then
+  Begin
+    iRecNo:=DMVirtual.CDS_V_MixAnaliseForn.RecNo;
+    For i:=0 to Dbg_Produtos.SelectedRows.Count - 1 do
+    Begin
+      // Posiciona na Linha Selecionada
+      Dbg_Produtos.Datasource.Dataset.Bookmark:=Dbg_Produtos.SelectedRows[i];
+
+      // Altera Apresentação
+      DMVirtual.CDS_V_MixAnaliseForn.Edit;
+      If DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger=1 Then
+       DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger:=0
+      Else
+       DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger:=1;
+      DMVirtual.CDS_V_MixAnaliseForn.Post;
+    End; // For i:=0 to Dbg_Produtos.SelectedRows.Count - 1 do
+    Dbg_Produtos.Options:=[dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
+    Dbg_Produtos.Options:=[dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection,dgMultiSelect];
+
+    DMVirtual.CDS_V_MixAnaliseForn.RecNo:=iRecNo;
+  End; // If key=VK_F8 Then
+  // Marca/Desmarca Produto Selecionados para MultiAlterações ==================
+  //============================================================================
 end;
 
 procedure TFrmAnaliseFornecedores.Dbg_ProdutosKeyPress(Sender: TObject; var Key: Char);
@@ -2485,23 +2705,13 @@ begin
   End; // If key=VK_F2 Then
 end;
 
-procedure TFrmAnaliseFornecedores.Dbg_ProdutosDblClick(Sender: TObject);
-begin
-  DMVirtual.CDS_V_MixAnaliseForn.Edit;
-  If DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger=1 Then
-   DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger:=0
-  Else
-   DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger:=1;
-  DMVirtual.CDS_V_MixAnaliseForn.Post;
-end;
-
 procedure TFrmAnaliseFornecedores.Bt_MultiAlteracoesClick(Sender: TObject);
 Var
   i: integer;
   b: Boolean;
 begin
   Dbg_Produtos.SetFocus;
-{
+
   If DMVirtual.CDS_V_MixAnaliseForn.IsEmpty Then
    Exit;
 
@@ -2529,7 +2739,7 @@ begin
     Dbg_Produtos.SetFocus;
     Exit;
   End; // If Not b Then
- }
+
   // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
   FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
   FrmBelShop.AbreSolicitacoes(27);
@@ -2545,7 +2755,43 @@ begin
 
   If bgProcessar Then
   Begin
-    showmessage('foi');
+    MixMultiplasAlteracoes;
+  End; // If bgProcessar Then
+  FreeAndNil(FrmSolicitacoes);
+
+end;
+
+procedure TFrmAnaliseFornecedores.Dbg_ProdutosTitleClick(Column: TColumn);
+begin
+
+  If (Column.FieldName<>'COD_PRODUTO') And (Column.FieldName<>'NOME') Then
+  Begin
+    If (sgOrderGrid='') or (sgOrderGrid='Crescente') Then
+     Begin
+       OrderByGrid(DMVirtual.CDS_V_MixAnaliseForn, Dbg_Produtos, Column.FieldName, False);
+       sgOrderGrid:='Decescente';
+     End
+    Else
+     Begin
+       OrderByGrid(DMVirtual.CDS_V_MixAnaliseForn, Dbg_Produtos, Column.FieldName, True);
+       sgOrderGrid:='Crescente';
+     End; // If (sgOrderGrid='') or (sgOrderGrid='Crescente') Then
+  End; // If (Column.FieldName<>'COD_PRODUTO') And (Column.FieldName<>'NOME') Then
+end;
+
+procedure TFrmAnaliseFornecedores.Bt_GruposLojasClick(Sender: TObject);
+begin
+  Dbg_Produtos.SetFocus;
+
+  FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+  FrmBelShop.AbreSolicitacoes(28);
+
+  bgProcessar:=False;
+  FrmSolicitacoes.ShowModal;
+
+  If bgProcessar Then
+  Begin
+    ShowMessage('Proc')
   End; // If bgProcessar Then
   FreeAndNil(FrmSolicitacoes);
 

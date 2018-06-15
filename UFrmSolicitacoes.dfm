@@ -403,7 +403,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 452
-    ActivePage = Ts_MixProdutosLojas
+    ActivePage = Ts_GruposLojas
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -917,7 +917,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             0000777777777777C448770000007777777777777C4477000000777777777777
             77C777000000}
           Align = alLeft
-          OnClick = Bt_SimplesOKClick
+          OnClick = Bt_IBGESelecionarClick
         end
       end
     end
@@ -1081,7 +1081,6 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_QtdCaixaCDVoltarClick
         end
         object Bt_ProSoftImpArqImporta: TJvXPButton
           Tag = 1
@@ -1353,7 +1352,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 0
-        object Bt_QtdCaixaCDVoltar: TJvXPButton
+        object Bt_CodigosViculadosVoltar: TJvXPButton
           Left = 521
           Top = 2
           Width = 100
@@ -1379,9 +1378,9 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_QtdCaixaCDVoltarClick
+          OnClick = Bt_SolicExpVoltarClick
         end
-        object JvXPButton1: TJvXPButton
+        object Bt_CodigosViculadosSalvar: TJvXPButton
           Left = 2
           Top = 2
           Width = 100
@@ -1402,7 +1401,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             000030F44F00033333333333000030FFFF003333333333330000300000033333
             333333330000333333333333333333330000}
           Align = alLeft
-          OnClick = JvXPButton1Click
+          OnClick = Bt_IBGESelecionarClick
         end
       end
       object Dbg_CodigosViculados: TDBGrid
@@ -1575,7 +1574,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_GeraOCLegendaCoresVoltarClick
+          OnClick = Bt_SolicExpVoltarClick
         end
       end
       object Pan_Cor8: TPanel
@@ -1895,7 +1894,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_FinanFechaCaixaVoltarClick
+          OnClick = Bt_SolicExpVoltarClick
         end
         object sPanel6: TsPanel
           Left = 8
@@ -2133,7 +2132,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_MargemLucroVoltarClick
+          OnClick = Bt_SolicExpVoltarClick
         end
         object Bt_MargemLucroOK: TJvXPButton
           Left = 2
@@ -2273,7 +2272,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_FormulaVoltarClick
+          OnClick = Bt_SolicExpVoltarClick
         end
       end
     end
@@ -3028,7 +3027,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             000030F44F00033333333333000030FFFF003333333333330000300000033333
             333333330000333333333333333333330000}
           Align = alLeft
-          OnClick = Bt_ManutDiversosDMLClick
+          OnClick = Bt_IBGESelecionarClick
         end
       end
     end
@@ -6053,7 +6052,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             000030F44F00033333333333000030FFFF003333333333330000300000033333
             333333330000333333333333333333330000}
           Align = alLeft
-          OnClick = Bt_ConsistenciasSalvarClick
+          OnClick = Bt_IBGESelecionarClick
         end
       end
     end
@@ -8118,7 +8117,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Top = 36
         Width = 449
         Height = 281
-        ActivePage = Ts_FinanPlanFinanceiraSolicitaTamColunas
+        ActivePage = Ts_FinanPlanFinanceiraSolicitaDatas
         Anchors = [akTop]
         TabOrder = 0
         OnChange = PC_FinanPlanFinanceiraSolicitaChange
@@ -8177,7 +8176,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 Font.Name = 'MS Sans Serif'
                 Font.Style = [fsBold]
                 ParentFont = False
-                OnClick = Bt_FinanPlanFinanceiraPeriodoVoltarClick
+                OnClick = Bt_SolicExpVoltarClick
               end
               object Bt_FinanPlanFinanceiraPeriodoOK: TJvXPButton
                 Left = 2
@@ -8721,7 +8720,6 @@ object FrmSolicitacoes: TFrmSolicitacoes
                 Font.Name = 'MS Sans Serif'
                 Font.Style = [fsBold]
                 ParentFont = False
-                OnClick = Bt_FinanPlanFinanceiraPeriodoVoltarClick
               end
               object Bt_FinanPlanFinanceiraTamColunasOK: TJvXPButton
                 Left = 2
@@ -8865,7 +8863,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Caption = '0'
           Visible = False
         end
-        object Bt_SelecionarValtar: TJvXPButton
+        object Bt_SelecionarVoltar: TJvXPButton
           Left = 521
           Top = 2
           Width = 100
@@ -8884,6 +8882,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             A20770AAAAAAAAAA0077770A0000000087777770077777777777777707777777
             7777}
           ShowFocusRect = True
+          Spacing = 10
           Align = alRight
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -8891,7 +8890,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_SelecionarValtarClick
+          OnClick = Bt_SolicExpVoltarClick
         end
         object Bt_SelecionarOK: TJvXPButton
           Tag = 4
@@ -10516,6 +10515,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           item
             Expanded = False
             FieldName = 'CODBARRA'
+            Width = 64
             Visible = True
           end>
       end
@@ -10903,6 +10903,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     end
     object Ts_MixProdutosLojas: TTabSheet
       Caption = ' Atualiza MIX Lojas '
+      Highlighted = True
       ImageIndex = 27
       DesignSize = (
         625
@@ -10921,6 +10922,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         FrameStyle = fsNone
         Transparent = False
         WordWrap = True
+        OnClick = Bt_MixLojasOrigemSimClick
         Glyph.Data = {
           76010000424D7601000000000000760000002800000020000000100000000100
           04000000000000010000120B0000120B00001000000000000000000000000000
@@ -10950,6 +10952,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         FrameStyle = fsNone
         Transparent = False
         WordWrap = True
+        OnClick = Bt_MixLojasOrigemSimClick
         Glyph.Data = {
           76010000424D7601000000000000760000002800000020000000100000000100
           04000000000000010000120B0000120B00001000000000000000000000000000
@@ -10986,6 +10989,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         FrameStyle = fsNone
         Transparent = False
         WordWrap = True
+        OnClick = Bt_MixLojasOrigemSimClick
         Glyph.Data = {
           76010000424D7601000000000000760000002800000020000000100000000100
           04000000000000010000120B0000120B00001000000000000000000000000000
@@ -11015,6 +11019,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         FrameStyle = fsNone
         Transparent = False
         WordWrap = True
+        OnClick = Bt_MixLojasOrigemSimClick
         Glyph.Data = {
           76010000424D7601000000000000760000002800000020000000100000000100
           04000000000000010000120B0000120B00001000000000000000000000000000
@@ -11108,14 +11113,14 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Height = 19
         Ctl3D = False
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = clBlue
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
-        Font.Style = []
+        Font.Style = [fsBold]
         ParentCtl3D = False
         ParentFont = False
+        ReadOnly = True
         TabOrder = 1
-        Text = 'EdtMixLoja'
       end
       object Gb_MixLojasSel: TGroupBox
         Left = 0
@@ -11135,6 +11140,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Style = lbOwnerDrawFixed
           Align = alClient
           ItemHeight = 16
+          MultiSelect = True
+          Sorted = True
           TabOrder = 0
         end
       end
@@ -11152,8 +11159,85 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Width = 298
           Height = 320
           Align = alClient
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlue
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
           ItemHeight = 13
+          MultiSelect = True
+          ParentFont = False
+          Sorted = True
           TabOrder = 0
+        end
+      end
+    end
+    object Ts_GruposLojas: TTabSheet
+      Caption = ' Grupos de Lojas '
+      Highlighted = True
+      ImageIndex = 28
+      object Panel15: TPanel
+        Left = 0
+        Top = 389
+        Width = 625
+        Height = 35
+        Align = alBottom
+        BevelInner = bvLowered
+        BorderStyle = bsSingle
+        Ctl3D = False
+        ParentCtl3D = False
+        TabOrder = 0
+        object Bt_GruposLojasVoltar: TJvXPButton
+          Left = 521
+          Top = 2
+          Width = 100
+          Height = 29
+          Caption = 'Voltar'
+          TabOrder = 0
+          TabStop = False
+          Glyph.Data = {
+            07544269746D6170F6000000424DF60000000000000076000000280000001000
+            0000100000000100040000000000800000000000000000000000100000001000
+            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF0077777700000087777777770AAAAA00877777770AAAAAA2077777770AAAAA
+            2A20777777000000A22077777777777700207777777777777700777707777777
+            77007770077777770020770A00000000A22070AAAAAAAAAA2A200AAAAAAAAAAA
+            A20770AAAAAAAAAA0077770A0000000087777770077777777777777707777777
+            7777}
+          ShowFocusRect = True
+          Spacing = 10
+          Align = alRight
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_SolicExpVoltarClick
+        end
+        object Bt_GruposLojasSalvar: TJvXPButton
+          Left = 2
+          Top = 2
+          Width = 100
+          Height = 29
+          Caption = 'Salvar'
+          TabOrder = 1
+          Glyph.Data = {
+            07544269746D617066010000424D660100000000000076000000280000001400
+            0000140000000100040000000000F00000000000000000000000100000001000
+            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00333333333333333333330000333333000000000000030000333333078888
+            8888880300003333330F77777777780300003333330F99777777780300003333
+            330FFFFFFFFFF703000033333300000000000003000033333333333333333333
+            0000333333333333330033330000333333333333300003330000300000000333
+            00000033000030FFFFFF033333003333000030F4444F033333003333000030FF
+            FFFF033338003333000030F4444F030000083333000030FFFFFF030000833333
+            000030F44F00033333333333000030FFFF003333333333330000300000033333
+            333333330000333333333333333333330000}
+          Align = alLeft
+          OnClick = Bt_IBGESelecionarClick
         end
       end
     end

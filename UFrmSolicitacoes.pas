@@ -226,7 +226,7 @@ type
     Bt_SimplesVoltar: TJvXPButton;
     Bt_SimplesOK: TJvXPButton;
     Panel8: TPanel;
-    Bt_QtdCaixaCDVoltar: TJvXPButton;
+    Bt_CodigosViculadosVoltar: TJvXPButton;
     Pan_Cor1: TPanel;
     Pan_Cor2: TPanel;
     Pan_Cor3: TPanel;
@@ -431,7 +431,7 @@ type
     Ts_Selecionar: TTabSheet;
     Dbg_Selecionar: TDBGridJul;
     Panel4: TPanel;
-    Bt_SelecionarValtar: TJvXPButton;
+    Bt_SelecionarVoltar: TJvXPButton;
     Bt_SelecionarOK: TJvXPButton;
     Dbg_IBGE1: TDBGridJul;
     Dbg_IBGE2: TDBGridJul;
@@ -600,7 +600,7 @@ type
     Label80: TLabel;
     EdtParamCurvaECorte: TCurrencyEdit;
     Dbg_CodigosViculados: TDBGrid;
-    JvXPButton1: TJvXPButton;
+    Bt_CodigosViculadosSalvar: TJvXPButton;
     DtaEdtSolicExpDoctoDestino: TDateTimePicker;
     Pan_Cor8: TPanel;
     Ts_ReposDivergencias: TTabSheet;
@@ -653,6 +653,10 @@ type
     Gb_MixProdutos: TGroupBox;
     Lbx_MixLojasSel: TListBox;
     Lbx_MixLojas: TListBox;
+    Ts_GruposLojas: TTabSheet;
+    Panel15: TPanel;
+    Bt_GruposLojasVoltar: TJvXPButton;
+    Bt_GruposLojasSalvar: TJvXPButton;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -754,10 +758,6 @@ type
       var Key: Word; Shift: TShiftState);
     procedure Ckb_FinanObjetivosHabDesObjetivosKeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
-    procedure Bt_SimplesOKClick(Sender: TObject);
-    procedure Bt_QtdCaixaCDVoltarClick(Sender: TObject);
-    procedure Bt_GeraOCLegendaCoresVoltarClick(Sender: TObject);
-    procedure Bt_FinanFechaCaixaVoltarClick(Sender: TObject);
     procedure mem_FinanFechaCaixaChange(Sender: TObject);
     procedure Bt_FinanFechaCaixaAnteriorClick(Sender: TObject);
     procedure Bt_FinanFechaCaixaProximoClick(Sender: TObject);
@@ -765,11 +765,9 @@ type
       ARow: Integer; Rect: TRect; State: TGridDrawState);
     procedure Ts_FinanFechaCaixaLanctosShow(Sender: TObject);
     procedure Bt_MargemLucroOKClick(Sender: TObject);
-    procedure Bt_MargemLucroVoltarClick(Sender: TObject);
     procedure Cbx_MargemLucroApresChange(Sender: TObject);
     procedure Ts_MargemLucroShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure Bt_FormulaVoltarClick(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure DtEdt_MargemLucroDtaFimVenPropertiesEditValueChanged(Sender: TObject);
@@ -784,7 +782,6 @@ type
     procedure Bt_IBGESelecionarClick(Sender: TObject);
     procedure Dbg_IBGE1KeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure Bt_ManutDiversosDMLClick(Sender: TObject);
     procedure CkbDesc8Click(Sender: TObject);
     procedure CkbDesc8KeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -797,7 +794,6 @@ type
     procedure Ckb_ParamConsNfeOCSolicKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure Bt_ParamSisSalvarClick(Sender: TObject);
-    procedure Bt_ConsistenciasSalvarClick(Sender: TObject);
     procedure Dbg_ConsistenciasDblClick(Sender: TObject);
     procedure Dbg_ConsistenciasDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
@@ -861,14 +857,12 @@ type
     procedure Cbx_FinanPlanFinanceiraMes1Exit(Sender: TObject);
     procedure Cbx_FinanPlanFinanceiraMes2Exit(Sender: TObject);
     procedure Bt_FinanPlanFinanceiraPeriodoOKClick(Sender: TObject);
-    procedure Bt_FinanPlanFinanceiraPeriodoVoltarClick(Sender: TObject);
     procedure Bt_ProSoftImpArquivoClick(Sender: TObject);
     procedure Bt_ProSoftImpArquivoSalvarClick(Sender: TObject);
     procedure Bt_ProSoftImpArqImportaClick(Sender: TObject);
     procedure PC_FinanPlanFinanceiraPeriodoChange(Sender: TObject);
     procedure EdtProSoftImpPastaArquivoChange(Sender: TObject);
     procedure Bt_SelecionarOKClick(Sender: TObject);
-    procedure Bt_SelecionarValtarClick(Sender: TObject);
     procedure Dbg_SelecionarDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
@@ -921,7 +915,6 @@ type
       Shift: TShiftState);
     procedure Cbx_ParamLojaNecesClick(Sender: TObject);
     procedure Bt_ReposLojasPrecoClick(Sender: TObject);
-    procedure JvXPButton1Click(Sender: TObject);
     procedure EdtSolicExpDoctoDestinoEnter(Sender: TObject);
     procedure Dbg_ExcelImportarKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -958,6 +951,7 @@ type
     procedure Rb_ConcDepHistoricosCX_MTZClick(Sender: TObject);
     procedure Rb_ConcDepHistoricosCX_MTZKeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
+    procedure Bt_MixLojasOrigemSimClick(Sender: TObject);
   private
     { Private declarations }
 
@@ -2101,7 +2095,7 @@ begin
   Bt_SelecionarOK.Enabled:=False;
   Bt_SelectEmpProcMarcaTodos.Enabled:=False;
   Bt_SelectEmpProcDesMarcaTodos.Enabled:=False;
-  Bt_SelecionarValtar.Enabled:=False;
+  Bt_SelecionarVoltar.Enabled:=False;
 
   Dbg_Selecionar.SetFocus;
 
@@ -2329,7 +2323,7 @@ begin
     Bt_SelecionarOK.Enabled:=True;
     Bt_SelectEmpProcMarcaTodos.Enabled:=True;
     Bt_SelectEmpProcDesMarcaTodos.Enabled:=True;
-    Bt_SelecionarValtar.Enabled:=True;
+    Bt_SelecionarVoltar.Enabled:=True;
 
     DMBelShop.CDS_Busca.First;
     Exit;
@@ -2352,7 +2346,7 @@ begin
   Bt_SelecionarOK.Enabled:=True;
   Bt_SelectEmpProcMarcaTodos.Enabled:=True;
   Bt_SelectEmpProcDesMarcaTodos.Enabled:=True;
-  Bt_SelecionarValtar.Enabled:=True;
+  Bt_SelecionarVoltar.Enabled:=True;
 
 // =============================================================================
 // FIM DO PROCESSO =============================================================
@@ -3647,6 +3641,19 @@ end;
 
 procedure TFrmSolicitacoes.Bt_SolicExpVoltarClick(Sender: TObject);
 begin
+  {
+  Usado em:
+  Bt_QtdCaixaCDVoltarClick
+  Bt_GeraOCLegendaCoresVoltarClick
+  Bt_FinanFechaCaixaVoltarClick
+  Bt_MargemLucroVoltarClick
+  Bt_FormulaVoltarClick
+  Bt_FinanPlanFinanceiraPeriodoVoltarClick
+  Bt_SelecionarVoltarClick
+  Bt_GruposLojasVoltarClick
+  }
+  bgOK:=False;
+  bgProcessar:=False;
   Close;
 end;
 
@@ -3921,19 +3928,6 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.Bt_SimplesOKClick(Sender: TObject);
-begin
-  If Trim(sgMessagemSimplesOK)<>'' Then
-  Begin
-    If msg(sgMessagemSimplesOK,'C')=2 Then
-     Exit;
-  End; //  If Trim(sgMessagemSimplesOK)<>'' Then
-
-  bgProcessar:=True;
-
-  Close;
-end;
-
 procedure TFrmSolicitacoes.Bt_SimplesVoltarClick(Sender: TObject);
 begin
   If Trim(sgMessagemSimplesVoltar)<>'' Then
@@ -3944,23 +3938,6 @@ begin
 
   bgProcessar:=False;
 
-  Close;
-end;
-
-procedure TFrmSolicitacoes.Bt_QtdCaixaCDVoltarClick(Sender: TObject);
-begin
-  Close;
-
-end;
-
-procedure TFrmSolicitacoes.Bt_GeraOCLegendaCoresVoltarClick(Sender: TObject);
-begin
-  Close;
-
-end;
-
-procedure TFrmSolicitacoes.Bt_FinanFechaCaixaVoltarClick(Sender: TObject);
-begin
   Close;
 end;
 
@@ -4191,12 +4168,6 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.Bt_MargemLucroVoltarClick(Sender: TObject);
-begin
-  Close;
-
-end;
-
 procedure TFrmSolicitacoes.Cbx_MargemLucroApresChange(Sender: TObject);
 Var
   s: String;
@@ -4239,12 +4210,6 @@ begin
 
   If GridNew<>nil Then
    FreeAndNil(GridNew);
-end;
-
-procedure TFrmSolicitacoes.Bt_FormulaVoltarClick(Sender: TObject);
-begin
-  Close;
-
 end;
 
 procedure TFrmSolicitacoes.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -4599,7 +4564,73 @@ begin
 
   Bt_FinanPlanFinanceiraTamColunasOKClick
   Bt_MixProdutosAlterarClick
+  Bt_SimplesOKClick
+  Bt_ManutDiversosDMLClick
+  Bt_ConsistenciasSalvarClick
+  Bt_CodigosViculadosSalvarClick
+  Bt_GruposLojasSalvarClick
   }
+
+  If (Sender as TJvXPButton).Name='Bt_CodigosViculadosSalvar' Then
+  Begin
+    If msg('Deseja Realmente Salvar  ??','C')=2 Then
+    Begin
+      Dbg_CodigosViculados.SetFocus;
+      Exit;
+    End;
+  End; // If (Sender as TJvXPButton).Name='Bt_CodigosViculadosSalvar' Then
+
+  If (Sender as TJvXPButton).Name='Bt_ConsistenciasSalvar' Then
+  Begin
+    if msg('As Alterações nas Consistências '+cr+cr+'Estão Corretas ??','C')=2 Then
+    Begin
+      Dbg_Consistencias.SetFocus;
+      Exit;
+    End;
+  End; //If (Sender as TJvXPButton).Name='Bt_ManutDiversosDML' Then
+
+  If (Sender as TJvXPButton).Name='Bt_ManutDiversosDML' Then
+  Begin
+    If Trim(sgComponentesConsiste)<>'' Then
+    Begin
+      If Not ConsisteComponentesManutDiversas Then
+       Exit;
+    End;
+  End; // If (Sender as TJvXPButton).Name='Bt_ManutDiversosDML' Then
+
+  If (Sender as TJvXPButton).Name='Bt_SimplesOK' Then
+  Begin
+    If Trim(sgMessagemSimplesOK)<>'' Then
+    Begin
+      If msg(sgMessagemSimplesOK,'C')=2 Then
+       Exit;
+    End; //  If Trim(sgMessagemSimplesOK)<>'' Then
+  End;
+
+  If (Sender as TJvXPButton).Name='Bt_MixLojasAlterar' Then
+  Begin
+    Lbx_MixLojasSel.SetFocus;
+
+    If Trim(EdtMixLoja.Text)='' Then
+    Begin
+      msg('Favor Selecionar Loja'+cr+cr+'para Origem do MIX !!','A');
+      Lbx_MixLojasSel.SetFocus;
+      Exit;
+    End; // If Trim(EdtMixLoja.Text)='' Then
+
+    If Lbx_MixLojas.Items.Count<1 Then
+    Begin
+      msg('Favor Selecionar Loja'+cr+cr+'para Destino do MIX !!','A');
+      Lbx_MixLojasSel.SetFocus;
+      Exit;
+    End; // If Trim(EdtMixLoja.Text)='' Then
+
+    If msg('As Seleções das Lojas'+cr+cr+'Estão CORRETAS ??','C')=2 Then
+    Begin
+     Lbx_MixLojasSel.SetFocus;
+     Exit;
+    End;
+  End; // If (Sender as TJvTransparentButton).Name='Bt_MixLojasAlterar' Then
 
   bgProcessar:=True;
   Close;
@@ -4628,20 +4659,6 @@ begin
     End; // If InputQuery('Localizar Endereço','',sIBGE) then
   End; // If Key=VK_F4 Then
 End;
-
-procedure TFrmSolicitacoes.Bt_ManutDiversosDMLClick(Sender: TObject);
-begin
-
-  If Trim(sgComponentesConsiste)<>'' Then
-  Begin
-    If Not ConsisteComponentesManutDiversas Then
-     Exit;
-  End;
-
-  bgProcessar:=True;
-  Close;
-
-end;
 
 procedure TFrmSolicitacoes.CkbDesc8Click(Sender: TObject);
 begin
@@ -4750,20 +4767,6 @@ begin
 
   bgProcessar:=True;
   Close;
-end;
-
-procedure TFrmSolicitacoes.Bt_ConsistenciasSalvarClick(Sender: TObject);
-begin
-  if msg('As Alterações nas Consistências '+cr+cr+'Estão Corretas ??','C')=2 Then
-  Begin
-    Dbg_Consistencias.SetFocus;
-    Exit;
-  End;
-
-  bgProcessar:=True;
-  Close;
-
-
 end;
 
 procedure TFrmSolicitacoes.Dbg_ConsistenciasDblClick(Sender: TObject);
@@ -5664,9 +5667,8 @@ begin
   Close;
 end;
 
-procedure TFrmSolicitacoes.Dbg_SolicitFornLojasDrawColumnCell(
-  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
-  State: TGridDrawState);
+procedure TFrmSolicitacoes.Dbg_SolicitFornLojasDrawColumnCell(Sender: TObject;
+          const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
   If not (gdSelected in State) Then
   Begin
@@ -6413,13 +6415,6 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.Bt_FinanPlanFinanceiraPeriodoVoltarClick(Sender: TObject);
-begin
-  bgProcessar:=False;
-  Close;
-
-end;
-
 procedure TFrmSolicitacoes.Bt_ProSoftImpArquivoClick(Sender: TObject);
 Var
   OpenDialog: TOpenDialog;
@@ -6966,14 +6961,6 @@ begin
 
   bgProcessar:=True;
   Close;
-end;
-
-procedure TFrmSolicitacoes.Bt_SelecionarValtarClick(Sender: TObject);
-begin
-  bgOK:=False;
-  bgProcessar:=False;
-  Close;
-
 end;
 
 procedure TFrmSolicitacoes.Dbg_SelecionarDrawColumnCell(Sender: TObject;
@@ -8583,20 +8570,6 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.JvXPButton1Click(Sender: TObject);
-begin
-
-  If msg('Deseja Realmente Salvar  ??','C')=2 Then
-  Begin
-    Dbg_CodigosViculados.SetFocus;
-    Exit;
-  End;
-
-  bgProcessar:=True;
-  Close;
-
-end;
-
 procedure TFrmSolicitacoes.EdtSolicExpDoctoDestinoEnter(Sender: TObject);
 begin
    Bt_SoliciExpExportar.Enabled:=False;
@@ -8610,10 +8583,9 @@ begin
 
 end;
 
-procedure TFrmSolicitacoes.Dbg_IBGE2KeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TFrmSolicitacoes.Dbg_IBGE2KeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  // Bloquei Ctrl + Delete =====================================================  
+  // Bloquei Ctrl + Delete =====================================================
   if (Shift = [ssCtrl]) and (Key = 46) then
     Key := 0;
 
@@ -9036,6 +9008,163 @@ end;
 procedure TFrmSolicitacoes.Rb_ConcDepHistoricosCX_MTZKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Rb_ConcDepHistoricosCX_MTZClick(Self);
+end;
+
+procedure TFrmSolicitacoes.Bt_MixLojasOrigemSimClick(Sender: TObject);
+Var
+  sLojaSel: String;
+  i: Integer;
+  b: Boolean;
+begin
+  //============================================================================
+  // Verifica se Existe Loja Selecionada =======================================
+  //============================================================================
+  If (((Sender as TJvTransparentButton).Name='Bt_MixLojasOrigemSim') Or
+     ((Sender as TJvTransparentButton).Name='Bt_MixLojasDestSim')) Then
+  Begin
+    If Lbx_MixLojasSel.Items.Count<1 Then
+     Exit;
+
+    If Lbx_MixLojasSel.SelCount<1 Then
+    Begin
+      msg('Favor Selecionar Loja !!','A');
+      Lbx_MixLojasSel.SetFocus;
+      Exit;
+    End;
+  End; // If (((Sender as TJvTransparentButton).Name='Bt_MixLojasOrigemSim') Or
+  // Verifica se Existe Loja Selecionada =======================================
+  //============================================================================
+
+  //============================================================================
+  // Guarda Loja de Origem Se Existir ==========================================
+  //============================================================================
+  sLojaSel:='';
+  If Trim(EdtMixLoja.Text)<>'' Then
+   sLojaSel:=Trim(EdtMixLoja.Text);
+  // Guarda Loja de Origem Se Existir ==========================================
+  //============================================================================
+
+  //============================================================================
+  // Se Existe Somente uma Loja Selecionada para Colocar Loja de Origem ========
+  //============================================================================
+  If (Sender as TJvTransparentButton).Name='Bt_MixLojasOrigemSim' Then
+  Begin
+    If Lbx_MixLojasSel.SelCount>1 Then
+    Begin
+      msg('Selecione Somente UMA Loja'+cr+cr+'para Origem do MIX !!','A');
+      Lbx_MixLojasSel.SetFocus;
+      Exit;
+    End;
+  End; // If (Sender as TJvTransparentButton).Name='Bt_MixLojasOrigemSim' Then
+  // Se Existe Somente uma Loja Selecionada para Colocar Loja de Origem ========
+  //============================================================================
+
+  //============================================================================
+  // Coloca Loja de Origem ======================================================
+  //============================================================================
+  If (Sender as TJvTransparentButton).Name='Bt_MixLojasOrigemSim' Then
+  Begin
+    EdtMixLoja.Text:=Lbx_MixLojasSel.Items[Lbx_MixLojasSel.ItemIndex];
+    Lbx_MixLojasSel.DeleteSelected;
+
+    If Trim(sLojaSel)<>'' Then
+     Lbx_MixLojasSel.Items.Add(Trim(sLojaSel));
+  End; // If ((Sender as TJvTransparentButton).Name='Bt_MixLojasOrigemSim') Or
+  // Coloca Loja de Origem ======================================================
+  //============================================================================
+
+  //============================================================================
+  // Retira Loja de Origem =====================================================
+  //============================================================================
+  If (Sender as TJvTransparentButton).Name='Bt_MixLojasOrigemNao' Then
+  Begin
+    If Trim(sLojaSel)<>'' Then
+    Begin
+      Lbx_MixLojasSel.Items.Add(Trim(sLojaSel));
+      EdtMixLoja.Clear;
+    End; // If Trim(EdtMixLoja.Text)<>'' Then
+  End; // If ((Sender as TJvTransparentButton).Name='Bt_MixLojasOrigemSim') Or
+  // Retira Loja de Origem =====================================================
+  //============================================================================
+
+  //============================================================================
+  // Acrescenta Lojas Destino ==================================================
+  //============================================================================
+  If (Sender as TJvTransparentButton).Name='Bt_MixLojasDestSim' Then
+  Begin
+    // Acrescenta Lojas Selecionadas
+    For i:=0 to Lbx_MixLojasSel.Items.Count-1 do
+    Begin
+      If Lbx_MixLojasSel.Selected[i]<>False then
+      begin
+        Lbx_MixLojas.Items.add(Lbx_MixLojasSel.Items[i]);
+      End; // If Lbx_MixLojasSel.Selected[i]<>False then
+    End; // For i:=0 to Lbx_MixLojasSel.Items.Count-1 do
+
+    // Exclui Lojas Acrescentadas
+    b:=True;
+    While b do
+    Begin
+      For i:=0 to Lbx_MixLojasSel.Items.Count-1 do
+      Begin
+        If Lbx_MixLojasSel.Selected[i]<>False then
+        begin
+          Lbx_MixLojasSel.Items.Delete(i);
+          Break;
+        End; // If Lbx_MixLojasSel.Selected[i]<>False then
+      End; // For i:=0 to Lbx_MixLojasSel.Items.Count-1 do
+
+      If Lbx_MixLojasSel.SelCount<1 Then
+       Break;
+    End; // While b do
+  End; // If (Sender as TJvTransparentButton).Name='Bt_MixLojasDestSim' Then
+  // Acrescenta Lojas Destino ==================================================
+  //============================================================================
+
+  //============================================================================
+  // Retira Lojas Destino ======================================================
+  //============================================================================
+  If (Sender as TJvTransparentButton).Name='Bt_MixLojasDestNao' Then
+  Begin
+    If Lbx_MixLojas.Items.Count<1 Then
+     Exit;
+
+    If Lbx_MixLojas.SelCount<1 Then
+    Begin
+      msg('Favor Selecionar Loja Destino !!','A');
+      Lbx_MixLojas.SetFocus;
+      Exit;
+    End;
+
+    // Retira Lojas Selecionada no Destino
+    For i:=0 to Lbx_MixLojas.Items.Count-1 do
+    Begin
+      If Lbx_MixLojas.Selected[i]<>False then
+      begin
+        Lbx_MixLojasSel.Items.add(Lbx_MixLojas.Items[i]);
+      End; // If Lbx_MixLojas.Selected[i]<>False then
+    End; // For i:=0 to Lbx_MixLojasSel.Items.Count-1 do
+
+    // Exclui Lojas Acrescentadas no Destino
+    b:=True;
+    While b do
+    Begin
+      For i:=0 to Lbx_MixLojas.Items.Count-1 do
+      Begin
+        If Lbx_MixLojas.Selected[i]<>False then
+        begin
+          Lbx_MixLojas.Items.Delete(i);
+          Break;
+        End; // If Lbx_MixLojas.Selected[i]<>False then
+      End; // For i:=0 to Lbx_MixLojas.Items.Count-1 do
+
+      If Lbx_MixLojas.SelCount<1 Then
+       Break;
+    End; // While b do
+  End; // If (Sender as TJvTransparentButton).Name='Bt_MixLojasDestNao' Then
+  // Retira Lojas Destino ======================================================
+  //============================================================================
+
 end;
 
 end.

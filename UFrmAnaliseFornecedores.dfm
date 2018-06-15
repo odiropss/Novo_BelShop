@@ -190,7 +190,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     end
     object Bt_MultiAlteracoes: TJvXPButton
       Tag = 99
-      Left = 458
+      Left = 565
       Top = 2
       Width = 160
       Height = 37
@@ -271,6 +271,90 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       Font.Style = [fsBold]
       ParentFont = False
       OnClick = Bt_MultiAlteracoesClick
+    end
+    object Bt_GruposLojas: TJvXPButton
+      Tag = 99
+      Left = 357
+      Top = 2
+      Width = 160
+      Height = 37
+      Caption = 'Grupos de Lojas'
+      TabOrder = 3
+      TabStop = False
+      Glyph.Data = {
+        07544269746D6170C6070000424DC60700000000000036040000280000002D00
+        000013000000010008000000000090030000C30E0000C30E0000000100000000
+        0000000000007B000000FF000000007B00007B7B000000FF0000FFFF0000007B
+        7B007B7B7B00BDBDBD0000FFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00090909090909090909090909090909090909090909090909090909090909
+        0909090909090909090909090909090000000909090909090909090909090909
+        0909090909090909090909090909090909090909090909090909090909090900
+        0000090909090909090909090909090909090909090909090909090909090909
+        0909090909090909090909090909090000000909090909090101010101010101
+        0109090909090909090909090909000000000000000000000009090909090900
+        0000090909090909010606060606060601090909090909090909090909090000
+        0303030303030303030009090909090000000909090000000106000000000006
+        0109090909090909090909090909000500030303030303030303000909090900
+        0000090909000606010606060606060601090909090909090209090909090005
+        0500030303030303030303000909090000000909090006000106000000000006
+        0109090909090909020209090909000505050003030303030303030300090900
+        0000090909000606010606060606060601090909020202020202020909090005
+        0505050000000000000000000009090000000909090006000106000006010101
+        0109090902020202020202090909000505050505050505050009090909090900
+        0000090909000606010606060601060109090909090909090202090909090005
+        0505050505050505000909090909090000000909090006000106060606010109
+        0909090909090909020909090909000505050000000000000009090909090900
+        0000090909000606010101010101090909090909090909090909090909090900
+        0000090909090909090909090909090000000909090006060606000009090909
+        0909090909090909090909090909090909090909090909090909090909090900
+        0000090909000000000000090909090909090909090909090909090909090909
+        0909090909090909090909090909090000000909090909090909090909090909
+        0909090909090909090909090909090909090909090909090909090909090900
+        0000090909090909090909090909090909090909090909090909090909090909
+        0909090909090909090909090909090000000909090909090909090909090909
+        0909090909090909090909090909090909090909090909090909090909090900
+        0000090909090909090909090909090909090909090909090909090909090909
+        090909090909090909090909090909000000}
+      ShowFocusRect = True
+      Spacing = 6
+      Anchors = [akTop]
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      OnClick = Bt_GruposLojasClick
     end
   end
   object Pan_Solicitacoes: TPanel
@@ -1577,24 +1661,6 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       OnClick = Bt_GraficosMinMaxClick
     end
   end
-  object OdirPanApres: TPanel
-    Left = 856
-    Top = 542
-    Width = 89
-    Height = 33
-    BevelInner = bvLowered
-    BevelWidth = 2
-    Caption = 'OdirPanApres'
-    Color = clBlue
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWhite
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
-    Font.Style = [fsBold]
-    ParentFont = False
-    TabOrder = 2
-    Visible = False
-  end
   object Dbg_Produtos: TDBGrid
     Left = 0
     Top = 312
@@ -1607,7 +1673,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = []
-    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgMultiSelect]
     ParentFont = False
     TabOrder = 3
     TitleFont.Charset = DEFAULT_CHARSET
@@ -1618,10 +1684,10 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     OnColEnter = Dbg_ProdutosColEnter
     OnDrawDataCell = Dbg_ProdutosDrawDataCell
     OnDrawColumnCell = Dbg_ProdutosDrawColumnCell
-    OnDblClick = Dbg_ProdutosDblClick
     OnKeyDown = Dbg_ProdutosKeyDown
     OnKeyPress = Dbg_ProdutosKeyPress
     OnMouseMove = Dbg_ProdutosMouseMove
+    OnTitleClick = Dbg_ProdutosTitleClick
     Columns = <
       item
         Expanded = False
@@ -1964,10 +2030,6 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     Height = 20
     Panels = <
       item
-        PanelStyleClassName = 'TdxStatusBarContainerPanelStyle'
-        PanelStyle.Container = dxStatusBar3Container11
-      end
-      item
         PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
         PanelStyle.Alignment = taRightJustify
         PanelStyle.Color = clBtnFace
@@ -1996,20 +2058,21 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Fixed = False
         ParentBiDiMode = False
         Text = '<F2> Alterar MIX (Entrega CD)'
-        Width = 40
-      end
-      item
-        PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-        PanelStyle.Alignment = taCenter
-        Fixed = False
-        Text = '<F4> Localiza Produto'
         Width = 30
       end
       item
         PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
         PanelStyle.Alignment = taCenter
         Fixed = False
+        Text = '<F4> Localiza Produto'
+        Width = 20
+      end
+      item
+        PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+        PanelStyle.Alignment = taCenter
+        Fixed = False
         Text = '<F6> Verificar Estoque M'#237'nino/M'#225'ximo'
+        Width = 30
       end
       item
         PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
@@ -2021,11 +2084,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         PanelStyle.Font.Style = [fsBold]
         PanelStyle.ParentFont = False
         Fixed = False
-        Text = '<DuploClique> Para Multiplas Altera'#231#245'es'
-      end
-      item
-        PanelStyleClassName = 'TdxStatusBarContainerPanelStyle'
-        PanelStyle.Container = dxStatusBar3Container10
+        Text = 'Marca Multiplas Altera'#231#245'es: <F7> Um <F8> Todos Selecionados'
       end>
     PaintStyle = stpsOffice11
     Font.Charset = DEFAULT_CHARSET
@@ -2033,18 +2092,24 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
-    object dxStatusBar3Container10: TdxStatusBarContainerControl
-      Left = 1034
-      Top = 2
-      Width = 50
-      Height = 16
-    end
-    object dxStatusBar3Container11: TdxStatusBarContainerControl
-      Left = 2
-      Top = 2
-      Width = 50
-      Height = 16
-    end
+  end
+  object OdirPanApres: TPanel
+    Left = 952
+    Top = 446
+    Width = 89
+    Height = 33
+    BevelInner = bvLowered
+    BevelWidth = 2
+    Caption = 'OdirPanApres'
+    Color = clBlue
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWhite
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 2
+    Visible = False
   end
   object CorCaptionForm: TJvGradientCaption
     Active = False
