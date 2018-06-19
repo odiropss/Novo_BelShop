@@ -2969,8 +2969,6 @@ procedure TFrmFluxoFornecedor.Bt_FluFornBuscaFornecedorClick(Sender: TObject);
 Var
   MySql: String;
 begin
-  Dbg_FluFornFornec.SetFocus;
-  
   EdtFluFornCodFornecedor.Clear;
   EdtFluFornFornecedor.Clear;
 

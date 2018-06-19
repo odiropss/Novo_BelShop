@@ -1673,7 +1673,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = []
-    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgMultiSelect]
+    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgMultiSelect]
     ParentFont = False
     TabOrder = 3
     TitleFont.Charset = DEFAULT_CHARSET
@@ -1684,6 +1684,8 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     OnColEnter = Dbg_ProdutosColEnter
     OnDrawDataCell = Dbg_ProdutosDrawDataCell
     OnDrawColumnCell = Dbg_ProdutosDrawColumnCell
+    OnEnter = Dbg_ProdutosEnter
+    OnExit = Dbg_ProdutosExit
     OnKeyDown = Dbg_ProdutosKeyDown
     OnKeyPress = Dbg_ProdutosKeyPress
     OnMouseMove = Dbg_ProdutosMouseMove
@@ -1692,6 +1694,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       item
         Expanded = False
         FieldName = 'COD_PRODUTO'
+        ReadOnly = True
         Title.Alignment = taRightJustify
         Width = 50
         Visible = True
@@ -1699,6 +1702,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       item
         Expanded = False
         FieldName = 'NOME'
+        ReadOnly = True
         Width = 250
         Visible = True
       end
@@ -1706,6 +1710,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Alignment = taCenter
         Expanded = False
         FieldName = 'ABC'
+        ReadOnly = True
         Title.Alignment = taCenter
         Width = 30
         Visible = True
@@ -1713,6 +1718,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       item
         Expanded = False
         FieldName = 'FAT_PERIODO'
+        ReadOnly = True
         Title.Alignment = taRightJustify
         Width = 90
         Visible = True
@@ -1720,12 +1726,14 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       item
         Expanded = False
         FieldName = 'DESC_SETOR'
+        ReadOnly = True
         Width = 150
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'DESC_COLECAO'
+        ReadOnly = True
         Width = 160
         Visible = True
       end
@@ -1734,7 +1742,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA1'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1742,7 +1750,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA2'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1750,7 +1758,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA3'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1758,7 +1766,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA4'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1766,7 +1774,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA5'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1774,7 +1782,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA6'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1782,7 +1790,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA7'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1790,7 +1798,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA8'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1798,7 +1806,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA9'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1806,7 +1814,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA10'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1814,7 +1822,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA11'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1822,7 +1830,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA12'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1830,7 +1838,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA13'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1838,7 +1846,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA14'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1846,7 +1854,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA15'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1854,7 +1862,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA16'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1862,7 +1870,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA17'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1870,7 +1878,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA18'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1878,7 +1886,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA19'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1886,7 +1894,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA20'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1894,7 +1902,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA21'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1902,7 +1910,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA22'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1910,7 +1918,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA23'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1918,7 +1926,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA24'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1926,7 +1934,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA25'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1934,7 +1942,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA26'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1942,7 +1950,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA27'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1950,7 +1958,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA28'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1958,7 +1966,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA29'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1966,7 +1974,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA30'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1974,7 +1982,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA31'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1982,7 +1990,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA32'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1990,7 +1998,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA33'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -1998,7 +2006,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA34'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
@@ -2006,12 +2014,13 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         Expanded = False
         FieldName = 'LOJA35'
         Title.Alignment = taCenter
-        Width = 78
+        Width = 50
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'COD_FORNECEDOR'
+        ReadOnly = True
         Title.Alignment = taRightJustify
         Width = 60
         Visible = True
@@ -2019,6 +2028,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       item
         Expanded = False
         FieldName = 'FORN'
+        ReadOnly = True
         Width = 300
         Visible = True
       end>
@@ -2048,31 +2058,16 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
       item
         PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
         PanelStyle.Alignment = taCenter
-        PanelStyle.Font.Charset = DEFAULT_CHARSET
-        PanelStyle.Font.Color = clBlue
-        PanelStyle.Font.Height = -11
-        PanelStyle.Font.Name = 'MS Sans Serif'
-        PanelStyle.Font.Style = [fsBold]
-        PanelStyle.ParentFont = False
-        BiDiMode = bdLeftToRight
-        Fixed = False
-        ParentBiDiMode = False
-        Text = '<F2> Alterar MIX (Entrega CD)'
-        Width = 30
-      end
-      item
-        PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-        PanelStyle.Alignment = taCenter
         Fixed = False
         Text = '<F4> Localiza Produto'
-        Width = 20
+        Width = 150
       end
       item
         PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
         PanelStyle.Alignment = taCenter
         Fixed = False
-        Text = '<F6> Verificar Estoque M'#237'nino/M'#225'ximo'
-        Width = 30
+        Text = '<F6> Est. M'#237'nino/M'#225'ximo'
+        Width = 170
       end
       item
         PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
@@ -2084,7 +2079,47 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         PanelStyle.Font.Style = [fsBold]
         PanelStyle.ParentFont = False
         Fixed = False
-        Text = 'Marca Multiplas Altera'#231#245'es: <F7> Um <F8> Todos Selecionados'
+        Text = 'Marca/Desmarca Multiplas Altera'#231#245'es ==>>'
+        Width = 260
+      end
+      item
+        PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+        PanelStyle.Alignment = taCenter
+        PanelStyle.Font.Charset = DEFAULT_CHARSET
+        PanelStyle.Font.Color = clBlue
+        PanelStyle.Font.Height = -11
+        PanelStyle.Font.Name = 'MS Sans Serif'
+        PanelStyle.Font.Style = []
+        PanelStyle.ParentFont = False
+        Fixed = False
+        Text = '<F7> Produto Selecionado'
+        Width = 160
+      end
+      item
+        PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+        PanelStyle.Alignment = taCenter
+        PanelStyle.Font.Charset = DEFAULT_CHARSET
+        PanelStyle.Font.Color = clBlue
+        PanelStyle.Font.Height = -11
+        PanelStyle.Font.Name = 'MS Sans Serif'
+        PanelStyle.Font.Style = []
+        PanelStyle.ParentFont = False
+        Fixed = False
+        Text = '<F8> Todos Selecionados'
+        Width = 160
+      end
+      item
+        PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+        PanelStyle.Alignment = taCenter
+        PanelStyle.Font.Charset = DEFAULT_CHARSET
+        PanelStyle.Font.Color = clBlue
+        PanelStyle.Font.Height = -11
+        PanelStyle.Font.Name = 'MS Sans Serif'
+        PanelStyle.Font.Style = []
+        PanelStyle.ParentFont = False
+        Fixed = False
+        Text = '<F9> Desmarca Todos'
+        Width = 140
       end>
     PaintStyle = stpsOffice11
     Font.Charset = DEFAULT_CHARSET

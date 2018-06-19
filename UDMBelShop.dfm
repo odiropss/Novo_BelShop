@@ -2,8 +2,8 @@ object DMBelShop: TDMBelShop
   OldCreateOrder = False
   OnCreate = DataModuleCreate
   Left = 232
-  Top = 123
-  Height = 585
+  Top = 114
+  Height = 584
   Width = 1124
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
@@ -4869,8 +4869,8 @@ object DMBelShop: TDMBelShop
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Demandas'
-    Left = 324
-    Top = 173
+    Left = 332
+    Top = 180
   end
   object CDS_VisualObjetos: TClientDataSet
     Aggregates = <>

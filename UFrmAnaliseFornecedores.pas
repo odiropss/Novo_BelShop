@@ -1,5 +1,5 @@
 unit UFrmAnaliseFornecedores;
-
+// IfThen
 interface
 
 uses
@@ -144,6 +144,8 @@ type
     procedure Bt_MultiAlteracoesClick(Sender: TObject);
     procedure Dbg_ProdutosTitleClick(Column: TColumn);
     procedure Bt_GruposLojasClick(Sender: TObject);
+    procedure Dbg_ProdutosExit(Sender: TObject);
+    procedure Dbg_ProdutosEnter(Sender: TObject);
   private
     { Private declarations }
   public
@@ -172,6 +174,7 @@ var
   TD1: TTransactionDesc; // Ponteiro de Transação Para Faturamento
 
   bgSair,
+  bgEnterTab,
   bgMontaCheck: Boolean;
 
   sgDtaIniPadrao, sgDtaFimPadrao,
@@ -545,7 +548,7 @@ Begin
     End;
 
     DMVirtual.CDS_V_MixAnaliseForn.FieldByName('LOJA'+Trim(DMBelShop.SQLQuery1.FieldByName('Empresa').AsString)).DisplayLabel:=
-                                               Trim(DMBelShop.SQLQuery1.FieldByName('Nome_Abrev').AsString);
+                                               Copy(Trim(DMBelShop.SQLQuery1.FieldByName('Nome_Abrev').AsString),1,6);
 
     DMBelShop.SQLQuery1.Next;
   End; // While Not DMBelShop.SQLQuery1.Eof do
@@ -589,14 +592,16 @@ Begin
   Begin
     If DMBelShop.SQLQuery1.Locate('Empresa',i,[]) Then
      MySql:=
-      MySql+' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto AND mx.empresa='+IntToStr(i)+')  LOJA'+IntToStr(i)+','
+      MySql+' (SELECT mx.est_minimo FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto AND mx.empresa='+IntToStr(i)+')  LOJA'+IntToStr(i)+','
+//      MySql+' (SELECT mx.ind_mix FROM ES_PRODUTOS_MIX mx WHERE mx.cod_produto=pr.cod_produto AND mx.empresa='+IntToStr(i)+')  LOJA'+IntToStr(i)+','
     Else
      MySql:=
       MySql+' 0 LOJA'+IntToStr(i)+',';
   End; // For i:=1 to 35 do
 
   MySql:=
-   MySql+' pr.cod_fornecedor,'+
+   MySql+' pr.id_colecao,'+
+         ' pr.cod_fornecedor,'+
          ' (SELECT fo.nome_cliente FROM LINXCLIENTESFORNEC fo WHERE fo.cod_cliente=pr.cod_fornecedor) Forn'+
 
          ' FROM lINXPRODUTOS pr'+
@@ -1562,6 +1567,8 @@ const
 Var
   MySql: String;
 begin
+  bgEnterTab:=True;
+
   // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
   Application.OnMessage := ApplicationEvents1Message;
 
@@ -1673,18 +1680,21 @@ begin
 
   // Acerta Periodo ============================================================
   DtEdt_DtaInicio.Date:=StrToDate(DateToStr(PrimeiroUltimoDia(IncMonth(Date,-4),'P')));
-  DtEdt_DtaFim.Date   :=StrToDate(DateToStr(Date));
+  DtEdt_DtaFim.Date   :=StrToDate(DateToStr(Date-1));
   sgDtaIniPadrao      :=DateToStr(DtEdt_DtaInicio.Date);
   sgDtaFimPadrao      :=DateToStr(DtEdt_DtaFim.Date);
 end;
 
 procedure TFrmAnaliseFornecedores.FormKeyPress(Sender: TObject; var Key: Char);
 begin
-  If Key = #13 Then
+  If bgEnterTab Then
   Begin
-    Key:=#0;
-    SelectNext(ActiveControl,True,True);
-  End;
+    If Key = #13 Then
+    Begin
+      Key:=#0;
+      SelectNext(ActiveControl,True,True);
+    End;
+  End; // If bgEnterTab Then
 
 end;
 
@@ -1972,6 +1982,7 @@ procedure TFrmAnaliseFornecedores.DtEdt_DtaInicioExit(Sender: TObject);
 Var
   b: Boolean;
 begin
+
   // Limpa Graficos ============================================================
   gsPizzaForn.Clear;
   gsPizzaLojas.Clear;
@@ -2259,8 +2270,8 @@ Var
   MySql: String;
   i: Integer;
 
-  Check: Integer;
-  R: TRect;
+//  Check: Integer;
+//  R: TRect;
 begin
 
   inherited;
@@ -2283,37 +2294,58 @@ begin
     End;
   End; // if not (gdSelected in State) Then
 
-  // Desenha Checkbox no DBGrid ================================================
-  If bgMontaCheck Then
+  For i:=0 to mMemoColLojas.Lines.Count-1 do
   Begin
-    For i:=0 to mMemoColLojas.Lines.Count-1 do
+    If (Column.FieldName=mMemoColLojas.Lines[i]) Then // Este comando altera cor da Celula
     Begin
-      If Column.FieldName=mMemoColLojas.Lines[i] Then
+      If DMVirtual.CDS_V_MixAnaliseForn.FieldByName(mMemoColLojas.Lines[i]).AsInteger<1 Then
       Begin
-        // Altera Cor Quando for MIX =============================================
-        If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
-        Begin
-          Dbg_Produtos.Canvas.Brush.Color:=$00C6FFC6;
-        End;
-        TDBGrid(Sender).Canvas.FillRect(Rect);
+        Dbg_Produtos.Canvas.Font.Style:=[fsBold];
+//      Dbg_Produtos.Canvas.Font.Color:=clBlue; // Cor da Fonte
+        Dbg_Produtos.Canvas.Brush.Color:=$009D9DFF; // Cor da Celula
+      End;
+    End;
+  End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
 
-        // Monta Check ===========================================================
-        If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
-         Begin
-           Check := DFCS_CHECKED;
-         End
-        Else
-         Begin
-           Check := 0;
-         End; //If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
+  // Funciona Somente com Isto
+  Dbg_Produtos.Canvas.FillRect(Rect);
+  Dbg_Produtos.DefaultDrawDataCell(Rect,Column.Field,state);
 
-        R := Rect;
-        InflateRect(R, -2, -2); // Diminue o tamanho do CheckBox
-        DrawFrameControl(TDBGrid(Sender).Canvas.Handle, R, DFC_BUTTON, DFCS_BUTTONCHECK or Check);
+  // Desenha Checkbox no DBGrid ================================================
+//  If bgMontaCheck Then
+//  Begin
+//    For i:=0 to mMemoColLojas.Lines.Count-1 do
+//    Begin
+//      If Column.FieldName=mMemoColLojas.Lines[i] Then
+//      Begin
+//        // Altera Cor Quando for MIX =============================================
+//        If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
+//        Begin
+//          Dbg_Produtos.Canvas.Brush.Color:=$00C6FFC6;
+//        End;
+//        TDBGrid(Sender).Canvas.FillRect(Rect);
+//
+//        // Monta Check ===========================================================
+//        If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
+//         Begin
+//           Check := DFCS_CHECKED;
+//         End
+//        Else
+//         Begin
+//           Check := 0;
+//         End; //If ((Sender as TDBGrid).DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1) Then
+//
+//        R := Rect;
+//        InflateRect(R, -2, -2); // Diminue o tamanho do CheckBox
+//        DrawFrameControl(TDBGrid(Sender).Canvas.Handle, R, DFC_BUTTON, DFCS_BUTTONCHECK or Check);
+//
+//      End; // If Column.FieldName=mMemoColLojas.Lines[i] Then
+//    End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
+//  End; // If bgMontaCheck Then
 
-      End; // If Column.FieldName=mMemoColLojas.Lines[i] Then
-    End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
-  End; // If bgMontaCheck Then
+  // Fixar Colunas no DBGrid ===================================================
+  THackDBGrid(Dbg_Produtos).FixedCols:=4; // Considerar o Indicador
+
 end;
 
 procedure TFrmAnaliseFornecedores.Dbg_ProdutosDrawDataCell(Sender: TObject;
@@ -2335,6 +2367,14 @@ Var
 
   b, bGravar: Boolean;
 begin
+
+  if (key in [vk_down]) And (THackDBGrid(Dbg_Produtos).SelectedIndex>5) Then // Seta Para Baixa=Enter
+  Begin
+    If DMVirtual.CDS_V_MixAnaliseForn.RecNo<>DMVirtual.CDS_V_MixAnaliseForn.RecordCount Then
+     DMVirtual.CDS_V_MixAnaliseForn.Next;
+    key := 0;
+  End;
+
   //============================================================================
   // Acerta Colunas Fixadas ====================================================
   //============================================================================
@@ -2352,6 +2392,9 @@ begin
    Abort;
   // Bloquei Ctrl + Delete =====================================================
   //============================================================================
+
+  // Fixar Colunas no DBGrid ===================================================
+  THackDBGrid(Dbg_Produtos).FixedCols:=4; // Considerar o Indicador
 
   If DMVirtual.CDS_V_MixAnaliseForn.IsEmpty Then
    Exit;
@@ -2387,14 +2430,14 @@ begin
           End;
         End; // If Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger:=0 Then
 
-        Dbg_Produtos.DataSource.Dataset.Edit;
-        Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger:=
-                     IfThen (Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1, 0, 1);
-        Dbg_Produtos.DataSource.Dataset.Post;
+// IfThen
+//        Dbg_Produtos.DataSource.Dataset.Edit;
+//        Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger:=
+//                     IfThen (Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1, 0, 1);
+//        Dbg_Produtos.DataSource.Dataset.Post;
 
-        // Grava Novos Estoques Minino e Maximo ================================
+        // Grava Novos Estoques Minimo e Maximo ================================
         sCodProdSid:=Trim(DMVirtual.CDS_V_MixAnaliseFornCOD_AUXILIAR.AsString);
-
 
         // Busca Codigo Loja SIDICOM e Estoques Minimo/Maximo ======================
         BuscaLojaSidicomEstMinMax(DMVirtual.CDS_V_MixAnaliseFornCOD_PRODUTO.AsString,   // sCodProdLx
@@ -2408,10 +2451,11 @@ begin
         Begin
           msg('Produto Não Vinculado no'+cr+'Controle de Estoque Minimo/Máximo !!','A');
 
-          Dbg_Produtos.DataSource.Dataset.Edit;
-          Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger:=
-                       IfThen (Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1, 0, 1);
-          Dbg_Produtos.DataSource.Dataset.Post;
+//IfThen
+//          Dbg_Produtos.DataSource.Dataset.Edit;
+//          Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger:=
+//                       IfThen (Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1, 0, 1);
+//          Dbg_Produtos.DataSource.Dataset.Post;
           bGravar:=False;
           Break;
         End;
@@ -2451,10 +2495,11 @@ begin
              Begin
                If StrToInt(sEstMin)=0 Then
                 Begin
-                  Dbg_Produtos.DataSource.Dataset.Edit;
-                  Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger:=
-                               IfThen (Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1, 0, 1);
-                  Dbg_Produtos.DataSource.Dataset.Post;
+// IfThen
+//                  Dbg_Produtos.DataSource.Dataset.Edit;
+//                  Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger:=
+//                               IfThen (Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1, 0, 1);
+//                  Dbg_Produtos.DataSource.Dataset.Post;
                   bGravar:=False;
                   Break;
                 End
@@ -2526,7 +2571,7 @@ begin
   //============================================================================
 
   //============================================================================
-  // Apresenta Estoque Minino/Maximo ===========================================
+  // Apresenta Estoque Minimo/Maximo ===========================================
   //============================================================================
   If key=VK_F6 Then
   Begin
@@ -2612,7 +2657,7 @@ begin
                            sCodLojaSid, sCodProdSid, sEstMin, sEstMax);
     End; // If bGravar Then
   End; // If key=VK_F6 Then
-  // Apresenta Estoque Minino/Maximo ===========================================
+  // Apresenta Estoque Minimo/Maximo ===========================================
   //============================================================================
 
   //============================================================================
@@ -2656,6 +2701,10 @@ begin
   End; // If key=VK_F8 Then
   // Marca/Desmarca Produto Selecionados para MultiAlterações ==================
   //============================================================================
+
+  // Fixar Colunas no DBGrid ===================================================
+  THackDBGrid(Dbg_Produtos).FixedCols:=4; // Considerar o Indicador
+  
 end;
 
 procedure TFrmAnaliseFornecedores.Dbg_ProdutosKeyPress(Sender: TObject; var Key: Char);
@@ -2663,6 +2712,27 @@ begin
  if (Key = ' ') then
    Abort;
 
+  // Vai para o Proximo Produtos
+  If (Key=#13) And (THackDBGrid(Dbg_Produtos).SelectedIndex>5) Then
+  Begin
+    igQtd_Tipo:=DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).AsInteger;
+    DMVirtual.CDS_V_MixAnaliseForn.Edit;
+    If (DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).OldValue<>0) and
+       (DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).NewValue=0) Then
+     msg('ok','A');
+
+    If (DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).OldValue='0') And
+       (DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).NewValue>0) Then
+    Begin
+      msg('nao','A');
+      DMVirtual.CDS_V_MixAnaliseForn.Cancel;
+      Exit;
+    End;
+    DMVirtual.CDS_V_MixAnaliseForn.Post;
+
+    If DMVirtual.CDS_V_MixAnaliseForn.RecNo<>DMVirtual.CDS_V_MixAnaliseForn.RecordCount Then
+     DMVirtual.CDS_V_MixAnaliseForn.Next;
+  End; // If (Sender is TDBGrid) Then
 end;
 
 procedure TFrmAnaliseFornecedores.Dbg_ProdutosMouseMove(Sender: TObject;
@@ -2671,10 +2741,14 @@ begin
   // Acerta Colunas Fixadas -----------------------------------------
   Dbg_ProdutosColEnter(Self);
 
+  // Fixar Colunas no DBGrid ===================================================
+  THackDBGrid(Dbg_Produtos).FixedCols:=4; // Considerar o Indicador
+
 end;
 
 procedure TFrmAnaliseFornecedores.DtEdt_DtaInicioEnter(Sender: TObject);
 begin
+  bgEnterTab:=True;
   DtEdt_DtaInicio.TabStop:=True;
   DtEdt_DtaFim.TabStop   :=True;
 end;
@@ -2742,6 +2816,7 @@ begin
 
   // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
   FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+  FrmSolicitacoes.Caption:='MultiAlterações';
   FrmBelShop.AbreSolicitacoes(27);
 
   For i:=0 to Cbx_Lojas.Items.Count-1 do
@@ -2783,8 +2858,14 @@ procedure TFrmAnaliseFornecedores.Bt_GruposLojasClick(Sender: TObject);
 begin
   Dbg_Produtos.SetFocus;
 
+  msg('Opção em Desenvolvimento ...','A');
+  Exit;
+
   FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+  FrmSolicitacoes.Caption:='Cadastros';
   FrmBelShop.AbreSolicitacoes(28);
+
+  // Mota Grupo de Lojas e Lojas =============================================== 
 
   bgProcessar:=False;
   FrmSolicitacoes.ShowModal;
@@ -2794,6 +2875,18 @@ begin
     ShowMessage('Proc')
   End; // If bgProcessar Then
   FreeAndNil(FrmSolicitacoes);
+
+end;
+
+procedure TFrmAnaliseFornecedores.Dbg_ProdutosExit(Sender: TObject);
+begin
+  bgEnterTab:=True;
+
+end;
+
+procedure TFrmAnaliseFornecedores.Dbg_ProdutosEnter(Sender: TObject);
+begin
+  bgEnterTab:=False;
 
 end;
 

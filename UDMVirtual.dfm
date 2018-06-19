@@ -4636,6 +4636,9 @@ object DMVirtual: TDMVirtual
       DisplayLabel = 'C'#243'd Forn'
       FieldName = 'COD_FORNECEDOR'
     end
+    object CDS_V_MixAnaliseFornID_COLECAO: TIntegerField
+      FieldName = 'ID_COLECAO'
+    end
     object CDS_V_MixAnaliseFornFORN: TStringField
       DisplayLabel = 'Fornecedor'
       FieldName = 'FORN'

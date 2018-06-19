@@ -1339,6 +1339,7 @@ type
     SubMenuCentralTrocasNotasAvarias: TMenuItem;
     NFePerdasProdutos1: TMenuItem;
     MenuMIXFornecedorProdutos: TMenuItem;
+    N56: TMenuItem;
 
     // Odir ====================================================================
 
@@ -46591,20 +46592,33 @@ begin
 end;
 
 procedure TFrmBelShop.MenuMIXFornecedorProdutosClick(Sender: TObject);
+Var
+  b: Boolean;
 begin
-  FrmAnaliseFornecedores:=TFrmAnaliseFornecedores.Create(Self);
+  b:=True;
+  While b do
+  Begin
+    Try
+      FrmAnaliseFornecedores:=TFrmAnaliseFornecedores.Create(Self);
 
-  If (Sender is TMenuItem) Then
-   igTagPermissao:=(Sender as TMenuItem).Tag;
+      If (Sender is TMenuItem) Then
+       igTagPermissao:=(Sender as TMenuItem).Tag;
 
-  BloqueioBotoes(FrmAnaliseFornecedores, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
+      BloqueioBotoes(FrmAnaliseFornecedores, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
 
-  // Permissões de Visualização ================================================
-//  PermissaoVisual(FrmcSalao.Ts_Profissionais);
+      // Permissões de Visualização ================================================
+      // PermissaoVisual(FrmcSalao.Ts_Profissionais);
 
+      Break
+    Except
+      If FrmAnaliseFornecedores<>Nil Then
+       FreeAndNil(FrmAnaliseFornecedores);
+    End;
+  End; // While b do
   FrmAnaliseFornecedores.ShowModal;
 
   FreeAndNil(FrmAnaliseFornecedores);
+
 end;
 
 end.

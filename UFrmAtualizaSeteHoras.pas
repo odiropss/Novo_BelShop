@@ -24,8 +24,6 @@ type
     Procedure BuscaMovtosDebCreLINX;
     Procedure CalculaFluxoCaixaFornecedores(sDt: String=''; sCodForn: String ='');
 
-    Procedure CentroCustos;
-
     Procedure CodigoBarras;
 
     Procedure AcertaEstoqueLoja;
@@ -412,7 +410,8 @@ Begin
              '      FL_CAIXA_HISTORICOS hi, LINXCLIENTESFORNEC fr,'+
              '      (SELECT DISTINCT ff.cod_fornecedor, ff.des_fornecedor,'+
              '                       ff.cod_vinculado, ff.des_vinculado'+
-             '       FROM FL_CAIXA_FORNECEDORES ff) fo'+
+             '       FROM FL_CAIXA_FORNECEDORES ff'+
+             '       WHERE ff.num_seq NOT IN (0,999999)) fo'+
 
              ' WHERE CAST(TRIM(COALESCE(mf.id_cfop,''0'')) AS INTEGER)=cf.cod_aux'+
              ' AND   mf.codigo_cliente=fo.cod_vinculado'+
@@ -429,7 +428,7 @@ Begin
              // Se Parametro sgCodForn ------------------------------
              If Trim(sgCodForn)<>'' Then
               MySqlLinx:=
-               MySqlLinx+' AND   mf.codigo_cliente = :CodForn';
+               MySqlLinx+' AND   mf.codigo_cliente=:CodForn';
 
   MySqlLinx:=
    MySqlLinx+' GROUP BY 1,2,3,4,6,7,8,10,11,12,14,15,16,17,20,21,22,23';
@@ -441,11 +440,13 @@ Begin
              ' SELECT '+
              ' (SELECT FIRST 1 ff.cod_fornecedor '+
              '  FROM FL_CAIXA_FORNECEDORES ff '+
-             '  WHERE ff.cod_vinculado=fr.cod_cliente) COD_FORNECEDOR,'+ // 1
+             '  WHERE ff.cod_vinculado=fr.cod_cliente'+
+             '  AND   ff.num_seq NOT IN (0,999999)) COD_FORNECEDOR,'+ // 1
 
              ' (SELECT FIRST 1 ff.des_fornecedor '+
              '  FROM FL_CAIXA_FORNECEDORES ff '+
-             '  WHERE ff.cod_vinculado=fr.cod_cliente) DES_FORNECEDOR,'+ // 2
+             '  WHERE ff.cod_vinculado=fr.cod_cliente'+
+             '  AND   ff.num_seq NOT IN (0,999999)) COD_FORNECEDOR,'+ // 2
 
              ' fr.cod_cliente COD_VINCULADO,'+ // 3
              ' fr.nome_cliente DES_VINCULADO,'+ // 4
@@ -515,109 +516,6 @@ Begin
   // Monta Select de Busca de Debitos e Créditos (LINX) ========================
   //============================================================================
 end; // Monta SQL's Para Busca SIDICOM / LINX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-// Atualiza Centro de Custos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmAtualizaSeteHoras.CentroCustos;
-Var
-   bSiga: Boolean;
-   i: Integer;
-   MySql: String;
-Begin
-  bSiga:=False;
-  sgCodEmp:='99';
-
-  // Conecta Loja =======================================================
-  If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
-   Begin
-     // Cria Query da Empresa ------------------------------------
-     CriaQueryIB('IBDB_'+sgCodEmp,'IBT_'+sgCodEmp, IBQ_ConsultaFilial, True);
-     bSiga:=True;
-   End
-  Else
-   Begin
-     bSiga:=False;
-   End; // If ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'A') Then
-
-  If bSiga Then
-  Begin
-    // Abre Query -----------------------------------------------
-    i:=0;
-    bSiga:=False;
-    While Not bSiga do
-    Begin
-      Try
-        MySql:=' SELECT S.CODCENTROCUSTO, S.CODCUSTO, C.NOMECUSTO,'+
-               '        S.CODSUBCUSTO, S.NOMESUBCUSTO'+
-               ' FROM CUSTO C, CUSTOSUB S'+
-               ' WHERE C.CODCUSTO = S.CODCUSTO';
-        IBQ_ConsultaFilial.Close;
-        IBQ_ConsultaFilial.SQL.Clear;
-        IBQ_ConsultaFilial.SQL.Add(MySql);
-        IBQ_ConsultaFilial.Open;
-
-        bSiga:=True;
-      Except
-        Inc(i);
-      End; // Try
-
-      If i>2 Then
-      Begin
-        Break;
-      End; // If i>10 Then
-    End; // While Not bSiga do
-
-    // Processamento ===========================================================
-    If bSiga Then // Query Executada
-    Begin
-      // Monta Transacao =======================================================
-      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-      TD.IsolationLevel:=xilREADCOMMITTED;
-      DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
-      Try
-        DateSeparator:='.';
-        DecimalSeparator:='.';
-
-        // Exclui Centro de Custos =============================================
-        MySql:=' DELETE FROM CENTROCUSTO';
-        DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
-
-        While Not IBQ_ConsultaFilial.Eof do
-        Begin
-          // Insere Centro de Custos -------------------------------------------
-          MySql:=' INSERT INTO CENTROCUSTO ('+
-                 ' CODCENTROCUSTO, CODCUSTO, NOMECUSTO, CODSUBCUSTO, NOMESUBCUSTO)'+
-
-                 ' VALUES ('+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODCENTROCUSTO').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODCUSTO').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('NOMECUSTO').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('CODSUBCUSTO').AsString)+', '+
-                 QuotedStr(IBQ_ConsultaFilial.FieldByName('NOMESUBCUSTO').AsString)+')';
-          DMAtualizaSeteHoras.SQLC.Execute(MySql, nil, nil);
-
-          IBQ_ConsultaFilial.Next;
-        End; // While Not IBQ_ConsultaFilial.Eof do
-        IBQ_ConsultaFilial.Close;
-
-        // Fecha Transacao =================================================
-        DMAtualizaSeteHoras.SQLC.Commit(TD);
-
-        DateSeparator:='/';
-        DecimalSeparator:=',';
-      Except
-        on e : Exception do
-        Begin
-          DMAtualizaSeteHoras.SQLC.Rollback(TD);
-
-          DateSeparator:='/';
-          DecimalSeparator:=',';
-        End; // on e : Exception do
-      End; // Try
-    End; // If bSiga Then
-    ConexaoEmpIndividual('IBDB_'+sgCodEmp, 'IBT_'+sgCodEmp, 'F')
-  End; // If bSiga Then
-
-end; // Atualiza Centro de Custos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Calcula Demanda de 4 Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaSeteHoras.Demanda4Meses;
@@ -832,7 +730,7 @@ Begin
   // Acerta Data do Movto em Relação a Data de Início da Loja ==================
   sDtaMovtoLinx:=sgDtaIniLINX;
 
-//opss === ATENÇÃO === Comentar para Buscar todo o Movto Linx Depois retornar
+//opss === ATENÇÃO === Comentar para Buscar todo o Movto Linx Depois Retornar
   If StrToDate(f_Troca('.','/',f_Troca('-','/',sDtaMovtoLinx)))<StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio))) Then
    sDtaMovtoLinx:=sgDtaInicio;
 
@@ -854,7 +752,7 @@ Begin
     MySql:=' UPDATE FL_CAIXA_FORNECEDORES f'+
            ' SET f.cod_vinculado=f.cod_fornecedor'+
            ' ,   f.des_vinculado=f.des_fornecedor'+
-           ' WHERE f.cod_vinculado IS NULL'+
+           ' WHERE ((f.cod_vinculado IS NULL) OR (COALESCE(TRIM(f.des_vinculado),'''')=''''))'+
            ' AND   f.num_seq NOT IN (0,999999)';
     DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
 
@@ -863,8 +761,15 @@ Begin
     DMAtualizaSeteHoras.SDS_MovtoLinx.CommandText:=MySqlLinx;
     DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('CodEmpLINX').AsString:=sgCodEmpLINX;
     DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('DtaInicioLinx').AsString:=sDtaMovtoLinx;
+    try
     If Trim(sgCodForn)<>'' Then
-     DMAtualizaSeteHoras.CDS_MovtoLinx.Params.ParamByName('CodForn').AsString:=sgCodForn;
+     DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('CodForn').AsString:=sgCodForn;
+    except
+    on e : Exception do
+    Begin
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+    End;
     DMAtualizaSeteHoras.CDS_MovtoLinx.Open;
 
     If Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('Cod_Fornecedor').AsString)='' Then
@@ -885,6 +790,7 @@ Begin
            ' FROM FL_CAIXA_FORNECEDORES f'+
            ' WHERE f.cod_empresa='+sgCodEmpLINX+
            ' AND   f.dta_caixa>='+QuotedStr(sDtaMovtoLinx)+
+           ' AND   f.num_seq NOT IN (0,999999)'+
            ' AND   EXISTS (SELECT 1'+
            '               FROM TAB_AUXILIAR cf, fl_caixa_historicos hi'+
            '               WHERE cf.tip_aux=25'+ // CONTA CORRENTE FORNECEDORES - CFops Utilizados
@@ -924,6 +830,7 @@ Begin
              ' WHERE f.cod_empresa='+sgCodEmpLINX+
              ' AND   f.dta_caixa>='+QuotedStr(sDtaMovtoLinx)+
              ' AND   f.cod_vinculado='+sCodFornVinc+
+             ' AND   f.num_seq NOT IN (0,999999)'+
              ' AND   EXISTS (SELECT 1'+
              '               FROM TAB_AUXILIAR cf, fl_caixa_historicos hi'+
              '               WHERE cf.tip_aux=25'+ // CONTA CORRENTE FORNECEDORES - CFops Utilizados
@@ -1111,7 +1018,7 @@ End; // Busca Movtos de Debito/Credito de Fornecedores LINX - NOVO >>>>>>>>>>>>>
 //  DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('CodEmpLINX').AsString:=sgCodEmpLINX;
 //  DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('DtaInicioLinx').AsString:=sDtaMovtoLinx;
 //  If Trim(sgCodForn)<>'' Then
-//   DMAtualizaSeteHoras.CDS_MovtoLinx.Params.ParamByName('CodForn').AsString:=sgCodForn;
+//   DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('CodForn').AsString:=sgCodForn;
 //  DMAtualizaSeteHoras.CDS_MovtoLinx.Open;
 //
 //  If Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('codfornecedor').AsString)='' Then
@@ -1739,9 +1646,10 @@ Begin
              '                 AND   f.dta_caixa=cf.dta_caixa'+
              '                 AND   f.cod_fornecedor=cf.cod_fornecedor)';
       DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
-      
+
       bgExcSemMovto:=False;
     End; // If bgExcSemMovto Then
+
     // Busca Fornecedores ========================================================
     MySql:=' SELECT distinct c.COD_FORNECEDOR, c.DTA_CAIXA'+
            ' FROM FL_CAIXA_FORNECEDORES c';
@@ -2001,13 +1909,14 @@ begin
     Exit;
   End;
 
-//opss
   //============================================================================
   // ATUALIZA CONTA CORRENTE FORNECEDORES ======================================
   //============================================================================
   // Verifica Parametro Enviado ================================================
   // OBS: Enviar Somente Um Código por Vez
   //======================================
+
+  //opss ===>> TIRA O CODIGO
   sgCodForn:='';
   for i := 1 to ParamCount do
   Begin
@@ -2078,13 +1987,6 @@ begin
 //  End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
   // ATUALIZA CONTA CORRENTE FORNECEDORES ======================================
   //============================================================================
-
-  //============================================================================
-  // Atualiza Centro de Custos =================================================
-  //============================================================================
-//opss
-// OdirApagar 23/04/2018 - Comprador (Sidicom) Será subatituído pelo Linx
-//  CentroCustos;
 
   //============================================================================
   // Igual Todos os Produtos de Todas a Lojas com o CD =========================

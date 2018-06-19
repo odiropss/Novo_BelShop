@@ -7183,7 +7183,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_OCGeraOrdemCompra
+        ActivePage = Ts_OCBuscaProdutos
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -31704,6 +31704,9 @@ object FrmBelShop: TFrmBelShop
         Caption = 'MIX Fornecedor/Produtos'
         HelpContext = 1
         OnClick = MenuMIXFornecedorProdutosClick
+      end
+      object N56: TMenuItem
+        Caption = '-'
       end
       object MenuEstoquesSimuladorEstoques: TMenuItem
         Tag = 1001
