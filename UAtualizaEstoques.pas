@@ -75,7 +75,7 @@ Var
 Begin
   // Acerta Periodo ============================================================
   sDtaInicio:=DateToStr(PrimeiroUltimoDia(IncMonth(Date,-4),'P'));
-  sDtaFim   :=DateToStr(Date);
+  sDtaFim   :=DateToStr(Date-1);
 
   // Verifica se Transação esta Ativa
   If DMAtualizaEstoques.SQLC.InTransaction Then

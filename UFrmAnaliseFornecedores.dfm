@@ -1666,6 +1666,7 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     Top = 312
     Width = 1084
     Height = 198
+    Hint = '<Enter> Para Gravar'#13#10'Estoque M'#237'nimo'
     Align = alClient
     DataSource = DMVirtual.DS_V_MixAnaliseForn
     Font.Charset = DEFAULT_CHARSET
@@ -1675,6 +1676,8 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     Font.Style = []
     Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgMultiSelect]
     ParentFont = False
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 3
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
@@ -2041,22 +2044,6 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
     Panels = <
       item
         PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-        PanelStyle.Alignment = taRightJustify
-        PanelStyle.Color = clBtnFace
-        PanelStyle.Font.Charset = DEFAULT_CHARSET
-        PanelStyle.Font.Color = clRed
-        PanelStyle.Font.Height = -11
-        PanelStyle.Font.Name = 'MS Sans Serif'
-        PanelStyle.Font.Style = [fsBold]
-        PanelStyle.ParentFont = False
-        Bevel = dxpbRaised
-        BiDiMode = bdLeftToRight
-        ParentBiDiMode = False
-        Text = 'No Grid ==>>'
-        Width = 80
-      end
-      item
-        PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
         PanelStyle.Alignment = taCenter
         Fixed = False
         Text = '<F4> Localiza Produto'
@@ -2066,7 +2053,61 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
         PanelStyle.Alignment = taCenter
         Fixed = False
-        Text = '<F6> Est. M'#237'nino/M'#225'ximo'
+        Text = '<F5> Est. M'#237'nino/M'#225'ximo'
+        Width = 190
+      end
+      item
+        PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+        PanelStyle.Alignment = taCenter
+        PanelStyle.Font.Charset = DEFAULT_CHARSET
+        PanelStyle.Font.Color = clBlue
+        PanelStyle.Font.Height = -11
+        PanelStyle.Font.Name = 'MS Sans Serif'
+        PanelStyle.Font.Style = [fsBold]
+        PanelStyle.ParentFont = False
+        Fixed = False
+        Text = 'Produto Multiplas Altera'#231#245'es ==>>'
+        Width = 200
+      end
+      item
+        PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+        PanelStyle.Alignment = taCenter
+        PanelStyle.Font.Charset = DEFAULT_CHARSET
+        PanelStyle.Font.Color = clBlue
+        PanelStyle.Font.Height = -11
+        PanelStyle.Font.Name = 'MS Sans Serif'
+        PanelStyle.Font.Style = [fsBold]
+        PanelStyle.ParentFont = False
+        BiDiMode = bdLeftToRight
+        Fixed = False
+        ParentBiDiMode = False
+        Text = '<F6> Marca Todos'
+        Width = 130
+      end
+      item
+        PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+        PanelStyle.Alignment = taCenter
+        PanelStyle.Font.Charset = DEFAULT_CHARSET
+        PanelStyle.Font.Color = clBlue
+        PanelStyle.Font.Height = -11
+        PanelStyle.Font.Name = 'MS Sans Serif'
+        PanelStyle.Font.Style = [fsBold]
+        PanelStyle.ParentFont = False
+        Fixed = False
+        Text = '<F7> Marca/Desmarca Selecionado'
+        Width = 250
+      end
+      item
+        PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+        PanelStyle.Alignment = taCenter
+        PanelStyle.Font.Charset = DEFAULT_CHARSET
+        PanelStyle.Font.Color = clBlue
+        PanelStyle.Font.Height = -11
+        PanelStyle.Font.Name = 'MS Sans Serif'
+        PanelStyle.Font.Style = [fsBold]
+        PanelStyle.ParentFont = False
+        Fixed = False
+        Text = '<F8> Marca Selecionados'
         Width = 170
       end
       item
@@ -2079,47 +2120,8 @@ object FrmAnaliseFornecedores: TFrmAnaliseFornecedores
         PanelStyle.Font.Style = [fsBold]
         PanelStyle.ParentFont = False
         Fixed = False
-        Text = 'Marca/Desmarca Multiplas Altera'#231#245'es ==>>'
-        Width = 260
-      end
-      item
-        PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-        PanelStyle.Alignment = taCenter
-        PanelStyle.Font.Charset = DEFAULT_CHARSET
-        PanelStyle.Font.Color = clBlue
-        PanelStyle.Font.Height = -11
-        PanelStyle.Font.Name = 'MS Sans Serif'
-        PanelStyle.Font.Style = []
-        PanelStyle.ParentFont = False
-        Fixed = False
-        Text = '<F7> Produto Selecionado'
-        Width = 160
-      end
-      item
-        PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-        PanelStyle.Alignment = taCenter
-        PanelStyle.Font.Charset = DEFAULT_CHARSET
-        PanelStyle.Font.Color = clBlue
-        PanelStyle.Font.Height = -11
-        PanelStyle.Font.Name = 'MS Sans Serif'
-        PanelStyle.Font.Style = []
-        PanelStyle.ParentFont = False
-        Fixed = False
-        Text = '<F8> Todos Selecionados'
-        Width = 160
-      end
-      item
-        PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-        PanelStyle.Alignment = taCenter
-        PanelStyle.Font.Charset = DEFAULT_CHARSET
-        PanelStyle.Font.Color = clBlue
-        PanelStyle.Font.Height = -11
-        PanelStyle.Font.Name = 'MS Sans Serif'
-        PanelStyle.Font.Style = []
-        PanelStyle.ParentFont = False
-        Fixed = False
         Text = '<F9> Desmarca Todos'
-        Width = 140
+        Width = 160
       end>
     PaintStyle = stpsOffice11
     Font.Charset = DEFAULT_CHARSET

@@ -1727,7 +1727,7 @@ End;
   Begin
     hHrInicio:=TimeToStr(DataHoraServidorFI(DMLinxWebService.SDS_DtaHoraServidor));
     // If (StrToTime(hHrInicio)>StrToTime('16:00:00')) and (StrToTime(hHrInicio)<StrToTime('18:00:00')) Then
-    If (StrToTime(hHrInicio)>StrToTime('18:00:00')) Then
+    If (StrToTime(hHrInicio)>StrToTime('21:00:00')) Then
     Begin
       Application.Terminate;
       Exit;

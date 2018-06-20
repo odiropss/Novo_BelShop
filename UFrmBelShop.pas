@@ -25335,38 +25335,39 @@ begin
     End; // While Not DMBelShop.CDS_AComprarOCs.Eof do
   End; // If msg('Deseja Informar OBSERVAÇÕES'+cr+cr+'Na(s) Ordem(ns) de Compra ??','C')=1 Then
 
-  // Cria Insert para OC =======================================================
-  sOrdem:='Insert into ORDEM ('+
-          ' CODOC, CODFORNECEDOR, CODFILIAL, SITUACAO, DATAPEDIDO, DATAENTREGA,'+
-          ' FLAG, TOTALOC, OBSERVACAO, TOTALITENS, TOTBRUTO, TOTDESCONTO,'+
-          ' TOTIPI, TOTDESPESAS, TOTSUBSTITUICAO, TOTFRETE, TOTICM, ISENTOIPI,'+
-          ' ISENTOICM, ISENTOSUBST, CODOCPENDENTE, GRUPOPENDENTESN,'+
-          ' CODCOMPRADOR, CODTRANSPORTADORA, TIPOFRETE, TOTREPASSE,'+
-          ' CODCOMPROVANTEOC)'+
-
-          ' Values ('+
-          ' :CODOC, :CODFORNECEDOR, :CODFILIAL, :SITUACAO, :DATAPEDIDO, :DATAENTREGA,'+
-          ' :FLAG, :TOTALOC, :OBSERVACAO, :TOTALITENS, :TOTBRUTO, :TOTDESCONTO,'+
-          ' :TOTIPI, :TOTDESPESAS, :TOTSUBSTITUICAO, :TOTFRETE, :TOTICM, :ISENTOIPI,'+
-          ' :ISENTOICM, :ISENTOSUBST, :CODOCPENDENTE, :GRUPOPENDENTESN,'+
-          ' :CODCOMPRADOR, :CODTRANSPORTADORA, :TIPOFRETE, :TOTREPASSE,'+
-          ' :CODCOMPROVANTEOC)';
-
-  sItensOC:='Insert into ORDEMITE ('+
-            ' CODOC, CODPRODUTO, QUANTIDADE, PRECO, ALIQIPI, IPIPERCOUVALOR,'+
-            ' ALIQICM, ALIQICMREDUCAO, SUBSTVALPER, SUBSTMARGEM, SUBSTALIQ,'+
-            ' DESCONTO1, DESCONTO2, DESCONTO3, DESCONTO4, DESCONTOCALC,'+
-            ' VALBRUTO, VALDESCONTO, VALDESPESAS, VALFRETE, VALIPI,'+
-            ' VALSUBSTITUICAO, VALBASEICM, VALBASESUBST, VALICM, TOTALITEM,'+
-            ' ALIQREPASSE, VALREPASSE, VALPECAS)'+
-
-            ' Values ('+
-            ' :CODOC, :CODPRODUTO, :QUANTIDADE, :PRECO, :ALIQIPI, :IPIPERCOUVALOR,'+
-            ' :ALIQICM, :ALIQICMREDUCAO, :SUBSTVALPER, :SUBSTMARGEM, :SUBSTALIQ,'+
-            ' :DESCONTO1, :DESCONTO2, :DESCONTO3, :DESCONTO4, :DESCONTOCALC,'+
-            ' :VALBRUTO, :VALDESCONTO, :VALDESPESAS, :VALFRETE, :VALIPI,'+
-            ' :VALSUBSTITUICAO, :VALBASEICM, :VALBASESUBST, :VALICM, :TOTALITEM,'+
-            ' :ALIQREPASSE, :VALREPASSE, :VALPECAS)';
+//OdirApagar - SEM SIDICOM - 20/09/2018
+//  // Cria Insert para OC =======================================================
+//  sOrdem:='Insert into ORDEM ('+
+//          ' CODOC, CODFORNECEDOR, CODFILIAL, SITUACAO, DATAPEDIDO, DATAENTREGA,'+
+//          ' FLAG, TOTALOC, OBSERVACAO, TOTALITENS, TOTBRUTO, TOTDESCONTO,'+
+//          ' TOTIPI, TOTDESPESAS, TOTSUBSTITUICAO, TOTFRETE, TOTICM, ISENTOIPI,'+
+//          ' ISENTOICM, ISENTOSUBST, CODOCPENDENTE, GRUPOPENDENTESN,'+
+//          ' CODCOMPRADOR, CODTRANSPORTADORA, TIPOFRETE, TOTREPASSE,'+
+//          ' CODCOMPROVANTEOC)'+
+//
+//          ' Values ('+
+//          ' :CODOC, :CODFORNECEDOR, :CODFILIAL, :SITUACAO, :DATAPEDIDO, :DATAENTREGA,'+
+//          ' :FLAG, :TOTALOC, :OBSERVACAO, :TOTALITENS, :TOTBRUTO, :TOTDESCONTO,'+
+//          ' :TOTIPI, :TOTDESPESAS, :TOTSUBSTITUICAO, :TOTFRETE, :TOTICM, :ISENTOIPI,'+
+//          ' :ISENTOICM, :ISENTOSUBST, :CODOCPENDENTE, :GRUPOPENDENTESN,'+
+//          ' :CODCOMPRADOR, :CODTRANSPORTADORA, :TIPOFRETE, :TOTREPASSE,'+
+//          ' :CODCOMPROVANTEOC)';
+//
+//  sItensOC:='Insert into ORDEMITE ('+
+//            ' CODOC, CODPRODUTO, QUANTIDADE, PRECO, ALIQIPI, IPIPERCOUVALOR,'+
+//            ' ALIQICM, ALIQICMREDUCAO, SUBSTVALPER, SUBSTMARGEM, SUBSTALIQ,'+
+//            ' DESCONTO1, DESCONTO2, DESCONTO3, DESCONTO4, DESCONTOCALC,'+
+//            ' VALBRUTO, VALDESCONTO, VALDESPESAS, VALFRETE, VALIPI,'+
+//            ' VALSUBSTITUICAO, VALBASEICM, VALBASESUBST, VALICM, TOTALITEM,'+
+//            ' ALIQREPASSE, VALREPASSE, VALPECAS)'+
+//
+//            ' Values ('+
+//            ' :CODOC, :CODPRODUTO, :QUANTIDADE, :PRECO, :ALIQIPI, :IPIPERCOUVALOR,'+
+//            ' :ALIQICM, :ALIQICMREDUCAO, :SUBSTVALPER, :SUBSTMARGEM, :SUBSTALIQ,'+
+//            ' :DESCONTO1, :DESCONTO2, :DESCONTO3, :DESCONTO4, :DESCONTOCALC,'+
+//            ' :VALBRUTO, :VALDESCONTO, :VALDESPESAS, :VALFRETE, :VALIPI,'+
+//            ' :VALSUBSTITUICAO, :VALBASEICM, :VALBASESUBST, :VALICM, :TOTALITEM,'+
+//            ' :ALIQREPASSE, :VALREPASSE, :VALPECAS)';
 
   // Monta Busca Pedido para Gerar Ordem de Compra =============================
   MySql:=' Select *'+
@@ -25426,36 +25427,38 @@ begin
 
       bSiga:=True;
 
-      // Efetua Conecxão SIDICOM =============================================
-      If igCodLojaLinx=0 Then // SIDICOM
-      Begin
-        // Busca Dados de Conexão para Banco de Dados SIDICOM ====================
-        DMVirtual.CDS_V_EmpConexoes.Locate('COD_FILIAL', DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString,[]);
-
-        If ConexaoEmpIndividual(DMVirtual.CDS_V_EmpConexoesDATABASE.AsString, DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString, 'A') Then
-         Begin
-           bSiga:=True;
-         End
-        Else
-         Begin
-           bSiga:=False;
-           iNrOCNaoGeradas:=iNrOCNaoGeradas+1;
-           Memo2.Lines.Add(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString);
-         End; // If ConexaoEmpIndividual(DMVirtual.CDS_V_EmpConexoesDATABASE.AsString, DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString, 'A') Then
-      End; // If igCodLojaLinx=0 Then // SIDICOM
+//OdirApagar - SEM SIDICOM - 20/09/2018
+//      // Efetua Conecxão SIDICOM =============================================
+//      If igCodLojaLinx=0 Then // SIDICOM
+//      Begin
+//        // Busca Dados de Conexão para Banco de Dados SIDICOM ====================
+//        DMVirtual.CDS_V_EmpConexoes.Locate('COD_FILIAL', DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString,[]);
+//
+//        If ConexaoEmpIndividual(DMVirtual.CDS_V_EmpConexoesDATABASE.AsString, DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString, 'A') Then
+//         Begin
+//           bSiga:=True;
+//         End
+//        Else
+//         Begin
+//           bSiga:=False;
+//           iNrOCNaoGeradas:=iNrOCNaoGeradas+1;
+//           Memo2.Lines.Add(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString);
+//         End; // If ConexaoEmpIndividual(DMVirtual.CDS_V_EmpConexoesDATABASE.AsString, DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString, 'A') Then
+//      End; // If igCodLojaLinx=0 Then // SIDICOM
 
       If bSiga Then
       Begin
-        // Insere OC e Itens - SIDICOM =======================================
-        If igCodLojaLinx=0 Then // SIDICOM
-        Begin
-          Try
-            CriaQueryIB(DMVirtual.CDS_V_EmpConexoesDATABASE.AsString,
-                        DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString,
-                        IBQ_ConsultaFilial, True, True);
-          Except
-          End;
-        End; // If igCodLojaLinx=0 Then // SIDICOM
+//OdirApagar - SEM SIDICOM - 20/09/2018
+//        // Insere OC e Itens - SIDICOM =======================================
+//        If igCodLojaLinx=0 Then // SIDICOM
+//        Begin
+//          Try
+//            CriaQueryIB(DMVirtual.CDS_V_EmpConexoesDATABASE.AsString,
+//                        DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString,
+//                        IBQ_ConsultaFilial, True, True);
+//          Except
+//          End;
+//        End; // If igCodLojaLinx=0 Then // SIDICOM
 
         // Busca OC para Transferir para Empresa/Filial ======================
         // Transfere Somente em Caso de Banco SIDICOM
@@ -25470,71 +25473,73 @@ begin
         pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
         pgProgBar.Position:=0;
 
-        // Monta StoredProcInicializa Busca Numero da OC ---------------------
-        If igCodLojaLinx=0 Then // SIDICOM
-        Begin
-          b:=False;
-          While Not b do
-          Begin
-            b:=IBTransacao('S', DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString);
-          End; // While Not b do
-
-          b:=False;
-          i:=0;
-          While Not b do
-          Begin
-            Try
-              StoredProcInicializa(IBSP_Geral,
-                                   DMVirtual.CDS_V_EmpConexoesDATABASE.AsString,
-                                   DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString);
-              b:=True;
-              i:=0;
-            Except
-              i:=i+1
-            End;
-
-            If i=10 Then
-            Begin
-              iNrOCNaoGeradas:=iNrOCNaoGeradas+1;
-              Memo2.Lines.Add(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString);
-              bSiga:=False;
-              Break;
-            End;
-          End; // While Not b do
-        End; // If igCodLojaLinx=0 Then // SIDICOM
+//OdirApagar - SEM SIDICOM - 20/09/2018
+//        // Monta StoredProcInicializa Busca Numero da OC ---------------------
+//        If igCodLojaLinx=0 Then // SIDICOM
+//        Begin
+//          b:=False;
+//          While Not b do
+//          Begin
+//            b:=IBTransacao('S', DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString);
+//          End; // While Not b do
+//
+//          b:=False;
+//          i:=0;
+//          While Not b do
+//          Begin
+//            Try
+//              StoredProcInicializa(IBSP_Geral,
+//                                   DMVirtual.CDS_V_EmpConexoesDATABASE.AsString,
+//                                   DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString);
+//              b:=True;
+//              i:=0;
+//            Except
+//              i:=i+1
+//            End;
+//
+//            If i=10 Then
+//            Begin
+//              iNrOCNaoGeradas:=iNrOCNaoGeradas+1;
+//              Memo2.Lines.Add(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString);
+//              bSiga:=False;
+//              Break;
+//            End;
+//          End; // While Not b do
+//        End; // If igCodLojaLinx=0 Then // SIDICOM
 
         If bSiga Then
         Begin
-          // Busca Numero da OC - SIDICOM ====================================
-          If igCodLojaLinx=0 Then // SIDICOM
-          Begin
-            b:=False;
-            i:=0;
-            While Not b do
-            Begin
-              Try
-                IBSP_Geral.StoredProcName:='BUSCA_NUMERADOR_AUTOMATICO';
-                IBSP_Geral.Prepare;
-                IBSP_Geral.ParamByName('PAR_CODNUMERADOR').Value:='04';
-                IBSP_Geral.ParamByName('PAR_ADICIONA_SN').Value:='S';
-                IBSP_Geral.ExecProc;
-                sNrOC:=IBSP_Geral.ParamByName('RET_NUMERO').AsString;
-                IBSP_Geral.Prepared:=False;
-                b:=True;
-                i:=0;
-              Except
-                i:=i+1
-              End;
-
-              If i=10 Then
-              Begin
-                iNrOCNaoGeradas:=iNrOCNaoGeradas+1;
-                Memo2.Lines.Add(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString);
-                bSiga:=False;
-                Break;
-              End;
-            End; // While Not b do
-          End; // If igCodLojaLinx=0 Then // SIDICOM
+//OdirApagar - SEM SIDICOM - 20/09/2018
+//          // Busca Numero da OC - SIDICOM ====================================
+//          If igCodLojaLinx=0 Then // SIDICOM
+//          Begin
+//            b:=False;
+//            i:=0;
+//            While Not b do
+//            Begin
+//              Try
+//                IBSP_Geral.StoredProcName:='BUSCA_NUMERADOR_AUTOMATICO';
+//                IBSP_Geral.Prepare;
+//                IBSP_Geral.ParamByName('PAR_CODNUMERADOR').Value:='04';
+//                IBSP_Geral.ParamByName('PAR_ADICIONA_SN').Value:='S';
+//                IBSP_Geral.ExecProc;
+//                sNrOC:=IBSP_Geral.ParamByName('RET_NUMERO').AsString;
+//                IBSP_Geral.Prepared:=False;
+//                b:=True;
+//                i:=0;
+//              Except
+//                i:=i+1
+//              End;
+//
+//              If i=10 Then
+//              Begin
+//                iNrOCNaoGeradas:=iNrOCNaoGeradas+1;
+//                Memo2.Lines.Add(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString);
+//                bSiga:=False;
+//                Break;
+//              End;
+//            End; // While Not b do
+//          End; // If igCodLojaLinx=0 Then // SIDICOM
 
           // Busca Numero da OC ==============================================
           If igCodLojaLinx<>0 Then // LINX
@@ -25556,28 +25561,30 @@ begin
 
           If bSiga Then
           Begin
-            If igCodLojaLinx=0 Then // SIDICOM
-            Begin
-              // Commita Transação =============================================
-              b:=False;
-              While Not b do
-              Begin
-                b:=IBTransacao('C', DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString);
-              End; // While Not b do
-            End; // If igCodLojaLinx=0 Then // SIDICOM
+//OdirApagar - SEM SIDICOM - 20/09/2018
+//            If igCodLojaLinx=0 Then // SIDICOM
+//            Begin
+//              // Commita Transação =============================================
+//              b:=False;
+//              While Not b do
+//              Begin
+//                b:=IBTransacao('C', DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString);
+//              End; // While Not b do
+//            End; // If igCodLojaLinx=0 Then // SIDICOM
 
             // Processa Empres/Filial ========================================
             Screen.Cursor:=crAppStart;
             Try
-              If igCodLojaLinx=0 Then // SIDICOM
-              Begin
-                // Abre Transacao ----------------------------------------------
-                b:=False;
-                While Not b do
-                Begin
-                  b:=IBTransacao('S', DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString);
-                End; // While Not b do
-              End; // If igCodLojaLinx=0 Then // SIDICOM
+//OdirApagar - SEM SIDICOM - 20/09/2018
+//              If igCodLojaLinx=0 Then // SIDICOM
+//              Begin
+//                // Abre Transacao ----------------------------------------------
+//                b:=False;
+//                While Not b do
+//                Begin
+//                  b:=IBTransacao('S', DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString);
+//                End; // While Not b do
+//              End; // If igCodLojaLinx=0 Then // SIDICOM
 
               If DMBelShop.IBT_BelShop.Active Then
               Begin
@@ -25594,147 +25601,148 @@ begin
                 pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
                 Refresh;
 
-                If igCodLojaLinx=0 Then // SIDICOM
-                Begin
-                  // Insere OC -------------------------------------------
-                  If DMBelShop.CDS_Busca.RecNo=1 Then
-                  Begin
-                    IBQ_ConsultaFilial.Close;
-                    IBQ_ConsultaFilial.SQL.Clear;
-                    IBQ_ConsultaFilial.SQL.Add(sOrdem);
-
-                    IBQ_ConsultaFilial.Params.ParamByName('CODOC').Value:=
-                                          FormatFloat('000000',StrToInt(sNrOC));
-                    IBQ_ConsultaFilial.Params.ParamByName('CODFORNECEDOR').Value:=
-                     DMBelShop.CDS_Busca.FieldByName('COD_FORNECEDOR').AsString;
-                    IBQ_ConsultaFilial.Params.ParamByName('CODFILIAL').Value:=
-                                  DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString;
-                    IBQ_ConsultaFilial.Params.ParamByName('SITUACAO').Value:='1';
-                    IBQ_ConsultaFilial.Params.ParamByName('DATAPEDIDO').Value:=
-                                                    DateToStr(DataHoraServidorFI(
-                                                DMBelShop.SDS_DtaHoraServidor));
-                    IBQ_ConsultaFilial.Params.ParamByName('DATAENTREGA').Value:=
-                                                    DateToStr(DataHoraServidorFI(
-                                                DMBelShop.SDS_DtaHoraServidor));
-                    IBQ_ConsultaFilial.Params.ParamByName('FLAG').Value:=EmptyStr;
-                    IBQ_ConsultaFilial.Params.ParamByName('TOTALOC').Value:=
-                                     DMBelShop.CDS_AComprarOCsTOTAL_OC.AsString;
-
-                    IBQ_ConsultaFilial.Params.ParamByName('OBSERVACAO').Value:=
-                          DMBelShop.CDS_Busca.FieldByName('OBS_OC').AsString+cr+
-                                                    'OC Gerada em '+sDtaGeracao+
-                                                  ' Pelo Usuário: '+Des_Usuario;
-
-                    IBQ_ConsultaFilial.Params.ParamByName('TOTALITENS').Value:=
-                                                DMBelShop.CDS_Busca.RecordCount;
-                    IBQ_ConsultaFilial.Params.ParamByName('TOTBRUTO').Value:=
-                                  DMBelShop.CDS_AComprarOCsTOTAL_BRUTO.AsString;
-                    IBQ_ConsultaFilial.Params.ParamByName('TOTDESCONTO').Value:=
-                              DMBelShop.CDS_AComprarOCsTOTAL_DESCONTOS.AsString;
-                    IBQ_ConsultaFilial.Params.ParamByName('TOTIPI').Value:=
-                                    DMBelShop.CDS_AComprarOCsTOTAL_IPI.AsString;
-                    IBQ_ConsultaFilial.Params.ParamByName('TOTDESPESAS').Value:=
-                               DMBelShop.CDS_AComprarOCsTOTAL_DESPESAS.AsString;
-                    IBQ_ConsultaFilial.Params.ParamByName('TOTSUBSTITUICAO').Value:=
-                                     DMBelShop.CDS_AComprarOCsTOTAL_ST.AsString;
-                    IBQ_ConsultaFilial.Params.ParamByName('TOTFRETE').Value:=
-                                   DMBelShop.CDS_AComprarOCsTOTAL_FRETE.AsString;
-                    IBQ_ConsultaFilial.Params.ParamByName('TOTICM').Value:=
-                                    DMBelShop.CDS_AComprarOCsTOTAL_ICMS.AsString;
-                    IBQ_ConsultaFilial.Params.ParamByName('ISENTOIPI').Value:='N';
-                    IBQ_ConsultaFilial.Params.ParamByName('ISENTOICM').Value:='N';
-                    IBQ_ConsultaFilial.Params.ParamByName('ISENTOSUBST').Value:='N';
-                    IBQ_ConsultaFilial.Params.ParamByName('CODOCPENDENTE').Value:=
-                                                                       EmptyStr;
-                    IBQ_ConsultaFilial.Params.ParamByName('GRUPOPENDENTESN').Value:='N';
-                    IBQ_ConsultaFilial.Params.ParamByName('CODCOMPRADOR').Value:=
-                                                                    Cod_Usuario;
-                    IBQ_ConsultaFilial.Params.ParamByName('CODTRANSPORTADORA').Value:=
-                                                                       EmptyStr;
-                    IBQ_ConsultaFilial.Params.ParamByName('TIPOFRETE').Value:='1';
-                    IBQ_ConsultaFilial.Params.ParamByName('TOTREPASSE').Value:=
-                                DMBelShop.CDS_AComprarOCsTOTAL_REPASSE.AsString;
-                    IBQ_ConsultaFilial.Params.ParamByName('CODCOMPROVANTEOC').Value:=
-                         DMBelShop.CDS_AComprarOCsCOD_COMPROVANTE_ICMS.AsString;
-
-                    IBQ_ConsultaFilial.ExecSQL;
-
-                  End; // If DMBelShop.CDS_Busca.RecNo=1 Then
-
-                  // Monta Insere Itens da OC ---------------------------
-                  IBQ_ConsultaFilial.Close;
-                  IBQ_ConsultaFilial.SQL.Clear;
-                  IBQ_ConsultaFilial.SQL.Add(sItensOC);
-
-                  // Insere Itens da OC -----------------------------------
-                  IBQ_ConsultaFilial.Params.ParamByName('CODOC').Value:=
-                                          FormatFloat('000000',StrToInt(sNrOC));
-                  IBQ_ConsultaFilial.Params.ParamByName('CODPRODUTO').Value:=
-                           DMBelShop.CDS_Busca.FieldByName('COD_ITEM').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('QUANTIDADE').Value:=
-                       DMBelShop.CDS_Busca.FieldByName('QTD_ACOMPRAR').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('PRECO').Value:=
-                     DMBelShop.CDS_Busca.FieldByName('Vlr_UNI_COMPRA').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('ALIQIPI').Value:=
-                            DMBelShop.CDS_Busca.FieldByName('PER_IPI').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('IPIPERCOUVALOR').Value:=
-                            DMBelShop.CDS_Busca.FieldByName('IND_IPI').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('ALIQICM').Value:=
-                           DMBelShop.CDS_Busca.FieldByName('PER_ICMS').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('ALIQICMREDUCAO').Value:=
-                   DMBelShop.CDS_Busca.FieldByName('PER_REDUCAO_ICMS').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('SUBSTVALPER').Value:=
-                             DMBelShop.CDS_Busca.FieldByName('IND_ST').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('SUBSTMARGEM').Value:=
-                      DMBelShop.CDS_Busca.FieldByName('PER_MARGEM_ST').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('SUBSTALIQ').Value:=
-                             DMBelShop.CDS_Busca.FieldByName('PER_ST').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('DESCONTO1').Value:='0';
-                  IBQ_ConsultaFilial.Params.ParamByName('DESCONTO2').Value:='0';
-                  IBQ_ConsultaFilial.Params.ParamByName('DESCONTO3').Value:='0';
-                  IBQ_ConsultaFilial.Params.ParamByName('DESCONTO4').Value:='0';
-                  IBQ_ConsultaFilial.Params.ParamByName('DESCONTOCALC').Value:=
-                       DMBelShop.CDS_Busca.FieldByName('PER_DESCONTO').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('VALBRUTO').Value:=
-                          DMBelShop.CDS_Busca.FieldByName('VLR_BRUTO').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('VALDESCONTO').Value:=
-                      DMBelShop.CDS_Busca.FieldByName('VLR_DESCONTOS').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('VALDESPESAS').Value:=
-                       DMBelShop.CDS_Busca.FieldByName('VLR_DESPESAS').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('VALFRETE').Value:=
-                          DMBelShop.CDS_Busca.FieldByName('VLR_FRETE').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('VALIPI').Value:=
-                            DMBelShop.CDS_Busca.FieldByName('VLR_IPI').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('VALSUBSTITUICAO').Value:=
-                             DMBelShop.CDS_Busca.FieldByName('VLR_ST').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('VALBASEICM').Value:=
-                      DMBelShop.CDS_Busca.FieldByName('VLR_BASE_ICMS').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('VALBASESUBST').Value:=
-                        DMBelShop.CDS_Busca.FieldByName('VLR_BASE_ST').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('VALICM').Value:=
-                           DMBelShop.CDS_Busca.FieldByName('VLR_ICMS').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('TOTALITEM').Value:=
-                     DMBelShop.CDS_Busca.FieldByName('VLR_TOT_COMPRA').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('ALIQREPASSE').Value:=
-                        DMBelShop.CDS_Busca.FieldByName('PER_REPASSE').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('VALREPASSE').Value:=
-                        DMBelShop.CDS_Busca.FieldByName('VLR_REPASSE').AsString;
-                  IBQ_ConsultaFilial.Params.ParamByName('VALPECAS').Value:='0';
-                  IBQ_ConsultaFilial.ExecSQL;
-
-                  // Atualiza Quantidades Pendentes -----------------------
-                  MySql:=' Update ESTOQUE'+
-                         ' Set comprapendente=comprapendente+'+
-                         DMBelShop.CDS_Busca.FieldByName('QTD_ACOMPRAR').AsString+
-                         ' Where codproduto='+QuotedStr(
-                         DMBelShop.CDS_Busca.FieldByName('Cod_Item').AsString)+
-                         ' And codfilial='+QuotedStr(
-                         DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString);
-                  IBQ_ConsultaFilial.Close;
-                  IBQ_ConsultaFilial.SQL.Clear;
-                  IBQ_ConsultaFilial.SQL.Add(MySql);
-                  IBQ_ConsultaFilial.ExecSQL;
-                End; // If igCodLojaLinx=0 Then // SIDICOM
+//OdirApagar - SEM SIDICOM - 20/09/2018
+//                If igCodLojaLinx=0 Then // SIDICOM
+//                Begin
+//                  // Insere OC -------------------------------------------
+//                  If DMBelShop.CDS_Busca.RecNo=1 Then
+//                  Begin
+//                    IBQ_ConsultaFilial.Close;
+//                    IBQ_ConsultaFilial.SQL.Clear;
+//                    IBQ_ConsultaFilial.SQL.Add(sOrdem);
+//
+//                    IBQ_ConsultaFilial.Params.ParamByName('CODOC').Value:=
+//                                          FormatFloat('000000',StrToInt(sNrOC));
+//                    IBQ_ConsultaFilial.Params.ParamByName('CODFORNECEDOR').Value:=
+//                     DMBelShop.CDS_Busca.FieldByName('COD_FORNECEDOR').AsString;
+//                    IBQ_ConsultaFilial.Params.ParamByName('CODFILIAL').Value:=
+//                                  DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString;
+//                    IBQ_ConsultaFilial.Params.ParamByName('SITUACAO').Value:='1';
+//                    IBQ_ConsultaFilial.Params.ParamByName('DATAPEDIDO').Value:=
+//                                                    DateToStr(DataHoraServidorFI(
+//                                                DMBelShop.SDS_DtaHoraServidor));
+//                    IBQ_ConsultaFilial.Params.ParamByName('DATAENTREGA').Value:=
+//                                                    DateToStr(DataHoraServidorFI(
+//                                                DMBelShop.SDS_DtaHoraServidor));
+//                    IBQ_ConsultaFilial.Params.ParamByName('FLAG').Value:=EmptyStr;
+//                    IBQ_ConsultaFilial.Params.ParamByName('TOTALOC').Value:=
+//                                     DMBelShop.CDS_AComprarOCsTOTAL_OC.AsString;
+//
+//                    IBQ_ConsultaFilial.Params.ParamByName('OBSERVACAO').Value:=
+//                          DMBelShop.CDS_Busca.FieldByName('OBS_OC').AsString+cr+
+//                                                    'OC Gerada em '+sDtaGeracao+
+//                                                  ' Pelo Usuário: '+Des_Usuario;
+//
+//                    IBQ_ConsultaFilial.Params.ParamByName('TOTALITENS').Value:=
+//                                                DMBelShop.CDS_Busca.RecordCount;
+//                    IBQ_ConsultaFilial.Params.ParamByName('TOTBRUTO').Value:=
+//                                  DMBelShop.CDS_AComprarOCsTOTAL_BRUTO.AsString;
+//                    IBQ_ConsultaFilial.Params.ParamByName('TOTDESCONTO').Value:=
+//                              DMBelShop.CDS_AComprarOCsTOTAL_DESCONTOS.AsString;
+//                    IBQ_ConsultaFilial.Params.ParamByName('TOTIPI').Value:=
+//                                    DMBelShop.CDS_AComprarOCsTOTAL_IPI.AsString;
+//                    IBQ_ConsultaFilial.Params.ParamByName('TOTDESPESAS').Value:=
+//                               DMBelShop.CDS_AComprarOCsTOTAL_DESPESAS.AsString;
+//                    IBQ_ConsultaFilial.Params.ParamByName('TOTSUBSTITUICAO').Value:=
+//                                     DMBelShop.CDS_AComprarOCsTOTAL_ST.AsString;
+//                    IBQ_ConsultaFilial.Params.ParamByName('TOTFRETE').Value:=
+//                                   DMBelShop.CDS_AComprarOCsTOTAL_FRETE.AsString;
+//                    IBQ_ConsultaFilial.Params.ParamByName('TOTICM').Value:=
+//                                    DMBelShop.CDS_AComprarOCsTOTAL_ICMS.AsString;
+//                    IBQ_ConsultaFilial.Params.ParamByName('ISENTOIPI').Value:='N';
+//                    IBQ_ConsultaFilial.Params.ParamByName('ISENTOICM').Value:='N';
+//                    IBQ_ConsultaFilial.Params.ParamByName('ISENTOSUBST').Value:='N';
+//                    IBQ_ConsultaFilial.Params.ParamByName('CODOCPENDENTE').Value:=
+//                                                                       EmptyStr;
+//                    IBQ_ConsultaFilial.Params.ParamByName('GRUPOPENDENTESN').Value:='N';
+//                    IBQ_ConsultaFilial.Params.ParamByName('CODCOMPRADOR').Value:=
+//                                                                    Cod_Usuario;
+//                    IBQ_ConsultaFilial.Params.ParamByName('CODTRANSPORTADORA').Value:=
+//                                                                       EmptyStr;
+//                    IBQ_ConsultaFilial.Params.ParamByName('TIPOFRETE').Value:='1';
+//                    IBQ_ConsultaFilial.Params.ParamByName('TOTREPASSE').Value:=
+//                                DMBelShop.CDS_AComprarOCsTOTAL_REPASSE.AsString;
+//                    IBQ_ConsultaFilial.Params.ParamByName('CODCOMPROVANTEOC').Value:=
+//                         DMBelShop.CDS_AComprarOCsCOD_COMPROVANTE_ICMS.AsString;
+//
+//                    IBQ_ConsultaFilial.ExecSQL;
+//
+//                  End; // If DMBelShop.CDS_Busca.RecNo=1 Then
+//
+//                  // Monta Insere Itens da OC ---------------------------
+//                  IBQ_ConsultaFilial.Close;
+//                  IBQ_ConsultaFilial.SQL.Clear;
+//                  IBQ_ConsultaFilial.SQL.Add(sItensOC);
+//
+//                  // Insere Itens da OC -----------------------------------
+//                  IBQ_ConsultaFilial.Params.ParamByName('CODOC').Value:=
+//                                          FormatFloat('000000',StrToInt(sNrOC));
+//                  IBQ_ConsultaFilial.Params.ParamByName('CODPRODUTO').Value:=
+//                           DMBelShop.CDS_Busca.FieldByName('COD_ITEM').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('QUANTIDADE').Value:=
+//                       DMBelShop.CDS_Busca.FieldByName('QTD_ACOMPRAR').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('PRECO').Value:=
+//                     DMBelShop.CDS_Busca.FieldByName('Vlr_UNI_COMPRA').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('ALIQIPI').Value:=
+//                            DMBelShop.CDS_Busca.FieldByName('PER_IPI').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('IPIPERCOUVALOR').Value:=
+//                            DMBelShop.CDS_Busca.FieldByName('IND_IPI').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('ALIQICM').Value:=
+//                           DMBelShop.CDS_Busca.FieldByName('PER_ICMS').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('ALIQICMREDUCAO').Value:=
+//                   DMBelShop.CDS_Busca.FieldByName('PER_REDUCAO_ICMS').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('SUBSTVALPER').Value:=
+//                             DMBelShop.CDS_Busca.FieldByName('IND_ST').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('SUBSTMARGEM').Value:=
+//                      DMBelShop.CDS_Busca.FieldByName('PER_MARGEM_ST').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('SUBSTALIQ').Value:=
+//                             DMBelShop.CDS_Busca.FieldByName('PER_ST').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('DESCONTO1').Value:='0';
+//                  IBQ_ConsultaFilial.Params.ParamByName('DESCONTO2').Value:='0';
+//                  IBQ_ConsultaFilial.Params.ParamByName('DESCONTO3').Value:='0';
+//                  IBQ_ConsultaFilial.Params.ParamByName('DESCONTO4').Value:='0';
+//                  IBQ_ConsultaFilial.Params.ParamByName('DESCONTOCALC').Value:=
+//                       DMBelShop.CDS_Busca.FieldByName('PER_DESCONTO').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('VALBRUTO').Value:=
+//                          DMBelShop.CDS_Busca.FieldByName('VLR_BRUTO').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('VALDESCONTO').Value:=
+//                      DMBelShop.CDS_Busca.FieldByName('VLR_DESCONTOS').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('VALDESPESAS').Value:=
+//                       DMBelShop.CDS_Busca.FieldByName('VLR_DESPESAS').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('VALFRETE').Value:=
+//                          DMBelShop.CDS_Busca.FieldByName('VLR_FRETE').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('VALIPI').Value:=
+//                            DMBelShop.CDS_Busca.FieldByName('VLR_IPI').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('VALSUBSTITUICAO').Value:=
+//                             DMBelShop.CDS_Busca.FieldByName('VLR_ST').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('VALBASEICM').Value:=
+//                      DMBelShop.CDS_Busca.FieldByName('VLR_BASE_ICMS').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('VALBASESUBST').Value:=
+//                        DMBelShop.CDS_Busca.FieldByName('VLR_BASE_ST').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('VALICM').Value:=
+//                           DMBelShop.CDS_Busca.FieldByName('VLR_ICMS').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('TOTALITEM').Value:=
+//                     DMBelShop.CDS_Busca.FieldByName('VLR_TOT_COMPRA').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('ALIQREPASSE').Value:=
+//                        DMBelShop.CDS_Busca.FieldByName('PER_REPASSE').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('VALREPASSE').Value:=
+//                        DMBelShop.CDS_Busca.FieldByName('VLR_REPASSE').AsString;
+//                  IBQ_ConsultaFilial.Params.ParamByName('VALPECAS').Value:='0';
+//                  IBQ_ConsultaFilial.ExecSQL;
+//
+//                  // Atualiza Quantidades Pendentes -----------------------
+//                  MySql:=' Update ESTOQUE'+
+//                         ' Set comprapendente=comprapendente+'+
+//                         DMBelShop.CDS_Busca.FieldByName('QTD_ACOMPRAR').AsString+
+//                         ' Where codproduto='+QuotedStr(
+//                         DMBelShop.CDS_Busca.FieldByName('Cod_Item').AsString)+
+//                         ' And codfilial='+QuotedStr(
+//                         DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString);
+//                  IBQ_ConsultaFilial.Close;
+//                  IBQ_ConsultaFilial.SQL.Clear;
+//                  IBQ_ConsultaFilial.SQL.Add(MySql);
+//                  IBQ_ConsultaFilial.ExecSQL;
+//                End; // If igCodLojaLinx=0 Then // SIDICOM
 
                 // Atualiza OC_COMPRAR ----------------------------------
                 MySql:=' Update OC_COMPRAR oc'+
@@ -25764,15 +25772,16 @@ begin
               DecimalSeparator:=',';
               MontaProgressBar(False, FrmBelShop);
 
-              If igCodLojaLinx=0 Then // SIDICOM
-              Begin
-                // Commit ------------------------------------------------------
-                b:=False;
-                While Not b do
-                Begin
-                  b:=IBTransacao('C', DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString);
-                End; // While Not b do
-              End; // If igCodLojaLinx=0 Then // SIDICOM
+//OdirApagar - SEM SIDICOM - 20/09/2018
+//              If igCodLojaLinx=0 Then // SIDICOM
+//              Begin
+//                // Commit ------------------------------------------------------
+//                b:=False;
+//                While Not b do
+//                Begin
+//                  b:=IBTransacao('C', DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString);
+//                End; // While Not b do
+//              End; // If igCodLojaLinx=0 Then // SIDICOM
 
               DMBelShop.IBT_BelShop.Commit;
 
@@ -25790,15 +25799,16 @@ begin
                 iNrOCNaoGeradas:=iNrOCNaoGeradas+1;
                 Memo2.Lines.Add(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString);
 
-                If igCodLojaLinx=0 Then // SIDICOM
-                Begin
-                  // Rollback Transacao --------------------------------------------
-                  b:=False;
-                  While Not b do
-                  Begin
-                    b:=IBTransacao('R', DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString);
-                  End; // While Not b do
-                End; // If igCodLojaLinx=0 Then // SIDICOM
+//OdirApagar - SEM SIDICOM - 20/09/2018
+//                If igCodLojaLinx=0 Then // SIDICOM
+//                Begin
+//                  // Rollback Transacao --------------------------------------------
+//                  b:=False;
+//                  While Not b do
+//                  Begin
+//                    b:=IBTransacao('R', DMVirtual.CDS_V_EmpConexoesTRANSACAO.AsString);
+//                  End; // While Not b do
+//                End; // If igCodLojaLinx=0 Then // SIDICOM
 
                 MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
 
@@ -25823,6 +25833,7 @@ begin
   If iNrOCNaoGeradas<> 0 Then
    msg('Hoveram '+IntToStr(iNrOCNaoGeradas)+' Ordens de Compra Não Geradas !!'+cr+cr+'Tende Novamente !!','A')
   Else
+
    msg('Geração de Ordens de Compra'+cr+cr+'Efetuada com SUCESSO !!','A');
 
   // Busca Ordem de Compra =====================================================
@@ -25848,6 +25859,7 @@ begin
    DMBelShop.CDS_AComprarOCs.Locate('NUM_OC_GERADA', sNrOC,[]);
 
   Screen.Cursor:=crDefault;
+
 end;
 
 procedure TFrmBelShop.Bt_GeraOCImpEditOCClick(Sender: TObject);

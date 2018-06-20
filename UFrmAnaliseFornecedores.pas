@@ -115,6 +115,8 @@ type
                                    sEstMin, sEstMax: String);
 
     Procedure MixMultiplasAlteracoes;
+
+    Function  AtualizaProduto: Boolean;
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     procedure Bt_BuscaFornecedorClick(Sender: TObject);
@@ -175,7 +177,9 @@ var
 
   bgSair,
   bgEnterTab,
-  bgMontaCheck: Boolean;
+  bgMontaCheck, // Se Cria CheckBox no DBGrid
+  bgMultiSelect // Libera MiltiSelect
+  : Boolean;
 
   sgDtaIniPadrao, sgDtaFimPadrao,
   sOrderGrid,    // Ordenar Grid
@@ -193,6 +197,8 @@ var
 
   sgOrderGrid: String=''; // Ordenar pela Coluna do DBGrid
 
+  MyKey: Char;
+
 implementation
 
 uses DK_Procs1, UDMBelShop, UDMVirtual, UPesquisa, UDMLinx, SqlExpr,
@@ -203,6 +209,63 @@ uses DK_Procs1, UDMBelShop, UDMVirtual, UPesquisa, UDMLinx, SqlExpr,
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir _ INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Atualiza Estoque Minimo do Produto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TFrmAnaliseFornecedores.AtualizaProduto: Boolean;
+Var
+  sCodProdSid, // Var sCodProdSid
+  sCodLojaSid, // Var sCodLojaSid
+  sEstMin,     // Var sEstMin
+  sEstMax      // Var sEstMax
+  : String;
+Begin
+  Result:=False;
+
+  // Verifica Estoque Minimo Negativo ==========================================
+  If DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).NewValue<0 Then
+  Begin
+    msg('Impossível Alterar !!'+cr+cr+'Estoque Mínimo Negativo !!','A');
+    DMVirtual.CDS_V_MixAnaliseForn.Cancel;
+    Exit;
+  End; // If DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).NewValue<0 Then
+
+  // Verifica Produto Descontinua ==============================================
+  If (DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).OldValue='0') And
+     (DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).NewValue>0) And
+     (DMVirtual.CDS_V_MixAnaliseFornID_COLECAO.AsString='197')  Then
+  Begin
+    msg('Impossível Alterar !!'+cr+cr+'Produto Descontinuado !!','A');
+    DMVirtual.CDS_V_MixAnaliseForn.Cancel;
+    Exit;
+  End; // If (DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).OldValue='0') And
+
+  // Busca Codigo Loja SIDICOM e Estoques Minimo/Maximo ======================
+  BuscaLojaSidicomEstMinMax(DMVirtual.CDS_V_MixAnaliseFornCOD_PRODUTO.AsString,   // sCodProdLx
+                            Copy(Trim(Dbg_Produtos.SelectedField.FieldName),5,2), // sCodLojaLx
+                            sCodProdSid, // Var sCodProdSid
+                            sCodLojaSid, // Var sCodLojaSid
+                            sEstMin,     // Var sEstMin
+                            sEstMax);    // Var sEstMax
+
+  If sEstMin='' Then
+  Begin
+    msg('Produto Não Vinculado no'+cr+'Controle de Estoque Minimo/Máximo !!','A');
+    DMVirtual.CDS_V_MixAnaliseForn.Cancel;
+    Exit;
+  End;
+
+  sEstMin:=DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).NewValue;
+
+  GravaEstMinimoMaximo(Copy(Trim(Dbg_Produtos.SelectedField.FieldName),5,2), // sCodLojaLx
+                       Trim(DMVirtual.CDS_V_MixAnaliseFornCOD_PRODUTO.AsString), // sCodProdLx
+                       sCodLojaSid, sCodProdSid, sEstMin, sEstMax);
+
+  DMVirtual.CDS_V_MixAnaliseForn.Edit;
+  DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).AsInteger:=StrToInt(sEstMin);
+  DMVirtual.CDS_V_MixAnaliseForn.Post;
+
+  Result:=True;
+End; // Atualiza Estoque Minimo do Produto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Efetua MultiAlterações de MIX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAnaliseFornecedores.MixMultiplasAlteracoes;
@@ -643,7 +706,6 @@ Begin
     For i:=0 to DMBelShop.SQLQuery3.FieldCount-1 do
      DMVirtual.CDS_V_MixAnaliseForn.Fields[i].Assign(DMBelShop.SQLQuery3.Fields[i]);
     DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger:=0;
-
 
     DMVirtual.CDS_V_MixAnaliseForn.Post;
 
@@ -2262,6 +2324,25 @@ begin
     THackDBGrid(Dbg_Produtos).SelectedIndex:=3; // Index da 1º Coluna Não Fixada Sem Contar Indicador
     Dbg_Produtos.Refresh;
   End; // if (THackDBGrid(Dbg_Produtos).SelectedIndex=0) Or
+
+  //============================================================================
+  // Libera MultiSeleção Somente nas Colunas 3,4,5 =============================
+  // FAT_PERIODO, DESC_SETOR, DESC_COLECAO =====================================
+  //============================================================================
+  If ((THackDBGrid(Dbg_Produtos).SelectedIndex in [3, 4, 5])) And (not bgMultiSelect) Then
+  Begin
+    bgMultiSelect:=True;
+    Dbg_Produtos.Options:=[dgEditing,dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines,dgTabs,dgMultiSelect];
+  End; // If  (THackDBGrid(Dbg_Produtos).SelectedIndex in [3, 4, 5]) Then
+
+  If (Not (THackDBGrid(Dbg_Produtos).SelectedIndex in [3, 4, 5])) And (bgMultiSelect) Then
+  Begin
+    bgMultiSelect:=False;
+    Dbg_Produtos.Options:=[dgEditing,dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines,dgTabs];
+  End; // If  (THackDBGrid(Dbg_Produtos).SelectedIndex in [3, 4, 5]) Then
+  // Libera MultiSeleção Somente nas Colunas 3,4,5 =============================
+  //============================================================================
+
 end;
 
 procedure TFrmAnaliseFornecedores.Dbg_ProdutosDrawColumnCell(Sender: TObject;
@@ -2270,19 +2351,27 @@ Var
   MySql: String;
   i: Integer;
 
+// Cria CheckBox no DBGrid
 //  Check: Integer;
 //  R: TRect;
 begin
 
-  inherited;
+// Cria CheckBox no DBGrid
+//  inherited;
 
+  //============================================================================
   // Acerta Colunas Fixadas ====================================================
+  //============================================================================
   Dbg_ProdutosColEnter(Self);
+  // Acerta Colunas Fixadas ====================================================
+  //============================================================================
 
   if ((Sender as TDBGrid).DataSource.Dataset.IsEmpty) then
-    Exit;
+   Exit;
 
-  // Cor no DBGrid para MultiSeleção ===========================================
+  //============================================================================
+  // Cor no DBGrid para IND_MULTISEL Marcado ===================================
+  //============================================================================
   if not (gdSelected in State) Then // Este comando altera cor da Linha
   Begin
     If DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger=1 Then
@@ -2293,7 +2382,12 @@ begin
       Dbg_Produtos.DefaultDrawDataCell(Rect,Column.Field,state);
     End;
   End; // if not (gdSelected in State) Then
+  // Cor no DBGrid para IND_MULTISEL Marcado ===================================
+  //============================================================================
 
+  //============================================================================
+  // Cor no DBGrid para EST_MINIMO=0 - Não Pertence ao MIX da Loja =============
+  //============================================================================
   For i:=0 to mMemoColLojas.Lines.Count-1 do
   Begin
     If (Column.FieldName=mMemoColLojas.Lines[i]) Then // Este comando altera cor da Celula
@@ -2301,17 +2395,20 @@ begin
       If DMVirtual.CDS_V_MixAnaliseForn.FieldByName(mMemoColLojas.Lines[i]).AsInteger<1 Then
       Begin
         Dbg_Produtos.Canvas.Font.Style:=[fsBold];
-//      Dbg_Produtos.Canvas.Font.Color:=clBlue; // Cor da Fonte
         Dbg_Produtos.Canvas.Brush.Color:=$009D9DFF; // Cor da Celula
       End;
     End;
   End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
+  // Cor no DBGrid para EST_MINIMO=0 - Não Pertence ao MIX da Loja =============
+  //============================================================================
 
   // Funciona Somente com Isto
   Dbg_Produtos.Canvas.FillRect(Rect);
   Dbg_Produtos.DefaultDrawDataCell(Rect,Column.Field,state);
 
-  // Desenha Checkbox no DBGrid ================================================
+  //============================================================================
+  // Desenha CheckBox no DBGrid ================================================
+  //============================================================================
 //  If bgMontaCheck Then
 //  Begin
 //    For i:=0 to mMemoColLojas.Lines.Count-1 do
@@ -2342,9 +2439,15 @@ begin
 //      End; // If Column.FieldName=mMemoColLojas.Lines[i] Then
 //    End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
 //  End; // If bgMontaCheck Then
+  // Desenha CheckBox no DBGrid ================================================
+  //============================================================================
 
+  //============================================================================
   // Fixar Colunas no DBGrid ===================================================
+  //============================================================================
   THackDBGrid(Dbg_Produtos).FixedCols:=4; // Considerar o Indicador
+  // Fixar Colunas no DBGrid ===================================================
+  //============================================================================
 
 end;
 
@@ -2367,13 +2470,58 @@ Var
 
   b, bGravar: Boolean;
 begin
+  If DMVirtual.CDS_V_MixAnaliseForn.IsEmpty Then
+   Exit;
 
-  if (key in [vk_down]) And (THackDBGrid(Dbg_Produtos).SelectedIndex>5) Then // Seta Para Baixa=Enter
+  //============================================================================
+  // Bloquei <Ctrl + Delete> ou  <Shift> ou <Insert>  ==========================
+  //============================================================================
+  If (((Shift=[ssCtrl]) And (key=vk_delete))) Or (Shift=[ssShift]) Or (key=vk_space) Or (key=vk_insert) Then
+   Abort;
+  // Bloquei <Ctrl + Delete> ou  <Shift> ou <Insert>  ==========================
+  //============================================================================
+
+  //============================================================================
+  // Seta Para Baixa=Enter =====================================================
+  //============================================================================
+//  if (key in [vk_down]) Then
+  if key in [vk_down, vk_up, vk_left, vk_right, vk_tab] then //key := 0;  ou key := #13; <Enter>
   Begin
-    If DMVirtual.CDS_V_MixAnaliseForn.RecNo<>DMVirtual.CDS_V_MixAnaliseForn.RecordCount Then
-     DMVirtual.CDS_V_MixAnaliseForn.Next;
-    key := 0;
-  End;
+    If ((THackDBGrid(Dbg_Produtos).SelectedIndex>5) And (THackDBGrid(Dbg_Produtos).SelectedIndex<36)) And
+      (DMVirtual.CDS_V_MixAnaliseForn.State=dsEdit) Then
+    Begin
+      DMVirtual.CDS_V_MixAnaliseForn.Cancel;
+//      key := 0;
+//       If Not AtualizaProduto Then
+//        Exit;
+//
+//      If DMVirtual.CDS_V_MixAnaliseForn.RecNo<>DMVirtual.CDS_V_MixAnaliseForn.RecordCount Then
+//       DMVirtual.CDS_V_MixAnaliseForn.Next;
+//
+//      key := 0;
+    End; // If ((THackDBGrid(Dbg_Produtos).SelectedIndex>5) And (THackDBGrid(Dbg_Produtos).SelectedIndex<36)) And
+
+//    If (THackDBGrid(Dbg_Produtos).SelectedIndex>5) And (THackDBGrid(Dbg_Produtos).SelectedIndex<36) Then
+//    Begin
+//      MyKey:=#13;
+//      Dbg_ProdutosKeyPress(Dbg_Produtos, MyKey);
+////      Exit;
+////      If Not AtualizaProduto Then
+////       Exit;
+////
+////      If DMVirtual.CDS_V_MixAnaliseForn.RecNo<>DMVirtual.CDS_V_MixAnaliseForn.RecordCount Then
+////       DMVirtual.CDS_V_MixAnaliseForn.Next;
+////      key := 0;
+//    End; // If (THackDBGrid(Dbg_Produtos).SelectedIndex>5) And (THackDBGrid(Dbg_Produtos).SelectedIndex<36) Then
+
+//    If Not (THackDBGrid(Dbg_Produtos).SelectedIndex>5) And (THackDBGrid(Dbg_Produtos).SelectedIndex<36) Then
+//    Begin
+//      If DMVirtual.CDS_V_MixAnaliseForn.RecNo=DMVirtual.CDS_V_MixAnaliseForn.RecordCount Then
+//       key := 0;
+//    End; // If (THackDBGrid(Dbg_Produtos).SelectedIndex>5) And (THackDBGrid(Dbg_Produtos).SelectedIndex<36) Then
+  End; // if (key in [vk_down]) Then
+  // Seta Para Baixa=Enter =====================================================
+  //============================================================================
 
   //============================================================================
   // Acerta Colunas Fixadas ====================================================
@@ -2385,145 +2533,8 @@ begin
   // Acerta Colunas Fixadas ====================================================
   //============================================================================
 
-  //============================================================================
-  // Bloquei Ctrl + Delete =====================================================
-  //============================================================================
-  If (((Shift = [ssCtrl]) And (key = vk_delete))) Or (key = vk_space) Then
-   Abort;
-  // Bloquei Ctrl + Delete =====================================================
-  //============================================================================
-
   // Fixar Colunas no DBGrid ===================================================
   THackDBGrid(Dbg_Produtos).FixedCols:=4; // Considerar o Indicador
-
-  If DMVirtual.CDS_V_MixAnaliseForn.IsEmpty Then
-   Exit;
-
-  //============================================================================
-  // Altera Mix da Loja (Entrega CD) ===========================================
-  //============================================================================
-  If key=VK_F2 Then
-  Begin
-    // Alterar Mix =============================================================
-    For i:=0 to mMemoColLojas.Lines.Count-1 do
-    Begin
-      // Coluna Selecionada
-      If Dbg_Produtos.SelectedField.FieldName=mMemoColLojas.Lines[i] Then
-      Begin
-        // Verifica se é Produto Descontinuado =====================================
-        If Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger=0 Then
-        Begin
-          MySql:=' SELECT p.id_colecao'+
-                 ' FROM LINXPRODUTOS p'+
-                 ' WHERE p.cod_produto='+DMVirtual.CDS_V_MixAnaliseFornCOD_PRODUTO.AsString;
-          DMBelShop.SQLQuery1.Close;
-          DMBelShop.SQLQuery1.SQL.Clear;
-          DMBelShop.SQLQuery1.SQL.Add(MySql);
-          DMBelShop.SQLQuery1.Open;
-          MySql:=Trim(DMBelShop.SQLQuery1.FieldByName('Id_Colecao').AsString);
-          DMBelShop.SQLQuery1.Close;
-
-          If MySql='197' Then
-          Begin
-            msg('Produto Descontinuado !!'+cr+'Não Pode Fazer Parte de MIX de Loja !!','A');
-            Break;
-          End;
-        End; // If Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger:=0 Then
-
-// IfThen
-//        Dbg_Produtos.DataSource.Dataset.Edit;
-//        Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger:=
-//                     IfThen (Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1, 0, 1);
-//        Dbg_Produtos.DataSource.Dataset.Post;
-
-        // Grava Novos Estoques Minimo e Maximo ================================
-        sCodProdSid:=Trim(DMVirtual.CDS_V_MixAnaliseFornCOD_AUXILIAR.AsString);
-
-        // Busca Codigo Loja SIDICOM e Estoques Minimo/Maximo ======================
-        BuscaLojaSidicomEstMinMax(DMVirtual.CDS_V_MixAnaliseFornCOD_PRODUTO.AsString,   // sCodProdLx
-                                  Copy(Trim(Dbg_Produtos.SelectedField.FieldName),5,2), // sCodLojaLx
-                                  sCodProdSid, // Var sCodProdSid
-                                  sCodLojaSid, // Var sCodLojaSid
-                                  sEstMin,     // Var sEstMin
-                                  sEstMax);    // Var sEstMax
-
-        If sEstMin='' Then
-        Begin
-          msg('Produto Não Vinculado no'+cr+'Controle de Estoque Minimo/Máximo !!','A');
-
-//IfThen
-//          Dbg_Produtos.DataSource.Dataset.Edit;
-//          Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger:=
-//                       IfThen (Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1, 0, 1);
-//          Dbg_Produtos.DataSource.Dataset.Post;
-          bGravar:=False;
-          Break;
-        End;
-
-        // Zera Variaveil de Estoque Minimo ====================================
-        sEstMin:='0';
-
-        // Coloca Produto no MIX da Loja - Solicita Estoques Minimo e Maximo ===
-        bGravar:=True;
-        If Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger=1 Then
-        Begin
-          b:=True;
-          bGravar:=False;
-          While b do
-          Begin
-            //                   Caption do Form                               Titul1o           Titulo2          Valor1   Valor2   SetFucos  Botao1    Botao2
-            If InputQuery2Values('Inform o Estoque Mínimo e Máximo', 'Estoque Mínimo (Use <Tab> para Mover)', 'Estoque Máximo (Use <Tab> para Mover)', sEstMin, sEstMax, sEstMin, 'Salvar', 'Voltar') Then
-             Begin
-               Try
-                 StrToInt(sEstMin);
-                 StrToInt(sEstMax);
-
-                 If StrToInt(sEstMin)=0 Then
-                  Begin
-                    msg('Estoque Mínino Igual a 0 (ZERO) !!'+cr+cr+'Favor Informar um Estoque Válido !!','A');
-                  End
-                 Else
-                  Begin
-                    bGravar:=True;
-                    Break;
-                  End;
-               Except
-                 msg('Estoque Mínino/Máximo'+cr+cr+'Deve Ser Um Valor INTEIRO !!','A');
-               End;
-             End
-            Else
-             Begin
-               If StrToInt(sEstMin)=0 Then
-                Begin
-// IfThen
-//                  Dbg_Produtos.DataSource.Dataset.Edit;
-//                  Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger:=
-//                               IfThen (Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger = 1, 0, 1);
-//                  Dbg_Produtos.DataSource.Dataset.Post;
-                  bGravar:=False;
-                  Break;
-                End
-               Else
-                Begin
-                  bGravar:=True;
-                  Break;
-                End;
-             End; // If InputQuery2Values('<Tab> Mudar de Campo <Enter> Salva', 'Estoque Mínimo', 'Estoque Máximo', sEstMin, sEstMax, sEstMin, 'Salvar', 'Voltar') Then
-          End; // While b do
-        End; // If (Dbg_Produtos.DataSource.Dataset.FieldByName(mMemoColLojas.Lines[i]).AsInteger=1 Then
-
-        // Retira/Coloca do MIX da Loja - Estoques Minimo e  Maximo ============
-        If bGravar Then
-         GravaEstMinimoMaximo(Copy(Trim(Dbg_Produtos.SelectedField.FieldName),5,2), // sCodLojaLx
-                              Trim(DMVirtual.CDS_V_MixAnaliseFornCOD_PRODUTO.AsString), // sCodProdLx
-                              sCodLojaSid, sCodProdSid, sEstMin, sEstMax);
-
-        Break;
-      End; // If Dbg_Produtos.SelectedField.FieldName=mMemoColLojas.Lines[i] Then
-    End; // For i:=0 to mMemoColLojas.Lines.Count-1 do
-  End; // If key=VK_F2 Then
-  // Altera Mix da Loja (Entrega CD) ===========================================
-  //============================================================================
 
   //============================================================================
   // Localizar Produto =========================================================
@@ -2573,7 +2584,7 @@ begin
   //============================================================================
   // Apresenta Estoque Minimo/Maximo ===========================================
   //============================================================================
-  If key=VK_F6 Then
+  If key=VK_F5 Then
   Begin
     // Verifica se é Uma Coluna de Indicação de MIX ============================
     b:=False;
@@ -2655,9 +2666,53 @@ begin
       GravaEstMinimoMaximo(Copy(Trim(Dbg_Produtos.SelectedField.FieldName),5,2), // sCodLojaLx
                            Trim(DMVirtual.CDS_V_MixAnaliseFornCOD_PRODUTO.AsString), // sCodProdLx
                            sCodLojaSid, sCodProdSid, sEstMin, sEstMax);
+
+      DMVirtual.CDS_V_MixAnaliseForn.Edit;
+      DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).AsInteger:=StrToInt(sEstMin);
+      DMVirtual.CDS_V_MixAnaliseForn.Post;
     End; // If bGravar Then
-  End; // If key=VK_F6 Then
+  End; // If key=VK_F5 Then
   // Apresenta Estoque Minimo/Maximo ===========================================
+  //============================================================================
+
+  //============================================================================
+  // Marca Produto para MultiAlterações ========================================
+  //============================================================================
+  If key=VK_F6 Then
+  Begin
+    OdirPanApres.Caption:='AGUARDE !! Marcando MultiAlterações...';
+    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmAnaliseFornecedores.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmAnaliseFornecedores.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmAnaliseFornecedores;
+    OdirPanApres.BringToFront();
+    OdirPanApres.Visible:=True;
+    Refresh;
+
+    iRecNo:=DMVirtual.CDS_V_MixAnaliseForn.RecNo;
+    DMVirtual.CDS_V_MixAnaliseForn.First;
+    DMVirtual.CDS_V_MixAnaliseForn.DisableControls;
+    While Not DMVirtual.CDS_V_MixAnaliseForn.Eof do
+    Begin
+      // Altera Apresentação
+      If DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger=0 Then
+      Begin
+        DMVirtual.CDS_V_MixAnaliseForn.Edit;
+        DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger:=1;
+        DMVirtual.CDS_V_MixAnaliseForn.Post;
+      End;
+
+      DMVirtual.CDS_V_MixAnaliseForn.Next;
+    End; // While Not DMVirtual.CDS_V_MixAnaliseForn.Eof do
+    DMVirtual.CDS_V_MixAnaliseForn.EnableControls;
+    Dbg_Produtos.Options:=[dgEditing,dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines];
+    Dbg_Produtos.Options:=[dgEditing,dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines,dgTabs,dgMultiSelect];
+
+    DMVirtual.CDS_V_MixAnaliseForn.RecNo:=iRecNo;
+    OdirPanApres.Visible:=False;
+  End; // If key=VK_F6 Then
+  // Desmarca Produto para MultiAlterações =====================================
   //============================================================================
 
   //============================================================================
@@ -2687,52 +2742,87 @@ begin
       Dbg_Produtos.Datasource.Dataset.Bookmark:=Dbg_Produtos.SelectedRows[i];
 
       // Altera Apresentação
-      DMVirtual.CDS_V_MixAnaliseForn.Edit;
-      If DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger=1 Then
-       DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger:=0
-      Else
-       DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger:=1;
-      DMVirtual.CDS_V_MixAnaliseForn.Post;
+      If DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger=0 Then
+      Begin
+        DMVirtual.CDS_V_MixAnaliseForn.Edit;
+        DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger:=1;
+        DMVirtual.CDS_V_MixAnaliseForn.Post;
+      End
     End; // For i:=0 to Dbg_Produtos.SelectedRows.Count - 1 do
-    Dbg_Produtos.Options:=[dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
-    Dbg_Produtos.Options:=[dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection,dgMultiSelect];
+    Dbg_Produtos.Options:=[dgEditing,dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines];
+    Dbg_Produtos.Options:=[dgEditing,dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines,dgTabs,dgMultiSelect];
 
     DMVirtual.CDS_V_MixAnaliseForn.RecNo:=iRecNo;
   End; // If key=VK_F8 Then
   // Marca/Desmarca Produto Selecionados para MultiAlterações ==================
   //============================================================================
 
+  //============================================================================
+  // Desmarca Produto Selecionados para MultiAlterações ========================
+  //============================================================================
+  If key=VK_F9 Then
+  Begin
+    OdirPanApres.Caption:='AGUARDE !! Desmarcando MultiAlterações...';
+    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmAnaliseFornecedores.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmAnaliseFornecedores.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmAnaliseFornecedores;
+    OdirPanApres.BringToFront();
+    OdirPanApres.Visible:=True;
+    Refresh;
+
+    iRecNo:=DMVirtual.CDS_V_MixAnaliseForn.RecNo;
+    DMVirtual.CDS_V_MixAnaliseForn.First;
+    DMVirtual.CDS_V_MixAnaliseForn.DisableControls;
+    While Not DMVirtual.CDS_V_MixAnaliseForn.Eof do
+    Begin
+      // Altera Apresentação
+      If DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger=1 Then
+      Begin
+        DMVirtual.CDS_V_MixAnaliseForn.Edit;
+        DMVirtual.CDS_V_MixAnaliseFornIND_MULTISEL.AsInteger:=0;
+        DMVirtual.CDS_V_MixAnaliseForn.Post;
+      End;
+
+      DMVirtual.CDS_V_MixAnaliseForn.Next;
+    End; // While Not DMVirtual.CDS_V_MixAnaliseForn.Eof do
+    DMVirtual.CDS_V_MixAnaliseForn.EnableControls;
+    Dbg_Produtos.Options:=[dgEditing,dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines];
+    Dbg_Produtos.Options:=[dgEditing,dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines,dgTabs,dgMultiSelect];
+
+    DMVirtual.CDS_V_MixAnaliseForn.RecNo:=iRecNo;
+    OdirPanApres.Visible:=False;
+  End; // If key=VK_F9 Then
+  // Desmarca Produto Selecionados para MultiAlterações ========================
+  //============================================================================
+
   // Fixar Colunas no DBGrid ===================================================
   THackDBGrid(Dbg_Produtos).FixedCols:=4; // Considerar o Indicador
-  
+
 end;
 
 procedure TFrmAnaliseFornecedores.Dbg_ProdutosKeyPress(Sender: TObject; var Key: Char);
 begin
- if (Key = ' ') then
+  if (Key = ' ') then
    Abort;
 
-  // Vai para o Proximo Produtos
-  If (Key=#13) And (THackDBGrid(Dbg_Produtos).SelectedIndex>5) Then
-  Begin
-    igQtd_Tipo:=DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).AsInteger;
-    DMVirtual.CDS_V_MixAnaliseForn.Edit;
-    If (DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).OldValue<>0) and
-       (DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).NewValue=0) Then
-     msg('ok','A');
+  If ((Sender as TDBGrid).DataSource.Dataset.IsEmpty) then
+   Exit;
 
-    If (DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).OldValue='0') And
-       (DMVirtual.CDS_V_MixAnaliseForn.FieldByName(Dbg_Produtos.SelectedField.FieldName).NewValue>0) Then
+  // Vai para o Proximo Produtos
+  If (Key=#13) Then
+  Begin
+    If ((THackDBGrid(Dbg_Produtos).SelectedIndex>5) And (THackDBGrid(Dbg_Produtos).SelectedIndex<36)) And
+      (DMVirtual.CDS_V_MixAnaliseForn.State=dsEdit) Then
     Begin
-      msg('nao','A');
-      DMVirtual.CDS_V_MixAnaliseForn.Cancel;
-      Exit;
-    End;
-    DMVirtual.CDS_V_MixAnaliseForn.Post;
+       If Not AtualizaProduto Then
+        Exit;
+    End; // If ((THackDBGrid(Dbg_Produtos).SelectedIndex>5) And (THackDBGrid(Dbg_Produtos).SelectedIndex<36)) And
 
     If DMVirtual.CDS_V_MixAnaliseForn.RecNo<>DMVirtual.CDS_V_MixAnaliseForn.RecordCount Then
      DMVirtual.CDS_V_MixAnaliseForn.Next;
-  End; // If (Sender is TDBGrid) Then
+  End; // If (Key=#13) Then
 end;
 
 procedure TFrmAnaliseFornecedores.Dbg_ProdutosMouseMove(Sender: TObject;

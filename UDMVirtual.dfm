@@ -4632,12 +4632,12 @@ object DMVirtual: TDMVirtual
     object CDS_V_MixAnaliseFornLOJA35: TIntegerField
       FieldName = 'LOJA35'
     end
+    object CDS_V_MixAnaliseFornID_COLECAO: TIntegerField
+      FieldName = 'ID_COLECAO'
+    end
     object CDS_V_MixAnaliseFornCOD_FORNECEDOR: TIntegerField
       DisplayLabel = 'C'#243'd Forn'
       FieldName = 'COD_FORNECEDOR'
-    end
-    object CDS_V_MixAnaliseFornID_COLECAO: TIntegerField
-      FieldName = 'ID_COLECAO'
     end
     object CDS_V_MixAnaliseFornFORN: TStringField
       DisplayLabel = 'Fornecedor'
