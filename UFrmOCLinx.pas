@@ -1458,7 +1458,7 @@ Begin
                ' 0 QTD_NR_DIAS,'+
                ' 0 QTD_NR_MESES,'+
                ' 0 QTD_TOT_MESES,'+
-               ' 0 COD_COMPRADOR,'+
+               QuotedStr(Cod_Usuario)+' COD_COMPRADOR,'+
                QuotedStr('Calculado em: '+DateTimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor))+
                                           ' por '+Des_Usuario)+' BLOB_TEXTO,'+
                ' ''N'' IND_TRANSF, NULL DTA_LIM_TRANSF, 0 QTD_TRANSF,'+

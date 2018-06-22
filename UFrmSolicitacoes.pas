@@ -657,6 +657,23 @@ type
     Panel15: TPanel;
     Bt_GruposLojasVoltar: TJvXPButton;
     Bt_GruposLojasSalvar: TJvXPButton;
+    Ts_Auditoria: TTabSheet;
+    Gb_AudArqDestino: TGroupBox;
+    Bt_AudBuscaArq: TJvXPButton;
+    EdtAudDescArquivo: TEdit;
+    Gb_AudTipoArquivo: TGroupBox;
+    Rb_AudCadProdutos: TJvRadioButton;
+    Rb_AudPosEstoque: TJvRadioButton;
+    Gb_AudLoja: TGroupBox;
+    Bt_AudBuscaLoja: TJvXPButton;
+    EdtAudDescLoja: TEdit;
+    Pan_AudProdutos: TPanel;
+    Rb_AudPosEstoqueLoja: TJvRadioButton;
+    Rb_AudPosEstoqueEmpresa: TJvRadioButton;
+    Panel16: TPanel;
+    Bt_AudGeraVoltar: TJvXPButton;
+    Bt_AudGeraArquivo: TJvXPButton;
+    EdtAudCodLoja: TCurrencyEdit;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -721,7 +738,6 @@ type
 
     // ATUALIZA PERMISSOES USUARIOS ////////////////////////////////////////////
     Procedure AtualizaPermissoesUsuarios;
-
     Function ExcutaQueryUsuario(MySql: String): Boolean;
 
     // BUSCA ESTOQUES DAS LOJAS ////////////////////////////////////////////////
@@ -730,6 +746,11 @@ type
 
     // SALÃO - RELATÓRIOS //////////////////////////////////////////////////////
     Procedure SalaoRelatorios;
+    ////////////////////////////////////////////////////////////////////////////
+
+    // AUDITORIA ///////////////////////////////////////////////////////////////
+    Function  Auditoria_Delete_Insert(bInsert:Boolean): Boolean;
+    Procedure AuditoriaGeraArquivo;
     ////////////////////////////////////////////////////////////////////////////
 
     //==========================================================================
@@ -952,6 +973,9 @@ type
     procedure Rb_ConcDepHistoricosCX_MTZKeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
     procedure Bt_MixLojasOrigemSimClick(Sender: TObject);
+    procedure Bt_AudBuscaArqClick(Sender: TObject);
+    procedure Bt_AudBuscaLojaClick(Sender: TObject);
+    procedure Rb_AudCadProdutosClick(Sender: TObject);
   private
     { Private declarations }
 
@@ -1036,6 +1060,202 @@ uses DK_Procs1, UDMBelShop, UFrmBelShop, UDMSalao, UPesquisa, UFrmSalao,
 //==============================================================================
 // Odir ========================================================================
 //==============================================================================
+
+// AUDITORIA - Delete e/ou Insert Tabela: W_PROD_LOJA >>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TFrmSolicitacoes.Auditoria_Delete_Insert(bInsert:Boolean): Boolean;
+Var
+  MySql: String;
+Begin
+  Result:=True;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+
+  Try // Try da Transação
+    // Exclui Produtos Antigos da Loja ------------------------------
+    MySql:=' DELETE FROM W_PROD_LOJA pl'+
+           ' WHERE pl.cod_loja_linx='+IntToStr(EdtAudCodLoja.AsInteger);
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Insere Mix da Produtos da Loja -------------------------------
+    If bInsert Then
+    Begin
+      MySql:=' INSERT into W_PROD_LOJA'+
+             ' SELECT DISTINCT pl.cod_loja_linx, pl.cod_produto'+
+             ' FROM LINX_PRODUTOS_LOJAS pl'+
+             ' WHERE pl.cod_loja_linx='+IntToStr(EdtAudCodLoja.AsInteger);
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+    End; // If bInsert Then
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      OdirPanApres.Visible:=False;
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      
+      Result:=False;
+    End; // on e : Exception do
+  End; // Try da Transação
+End; // AUDITORIA - Delete e/ou Insert Tabela: W_PROD_LOJA >>>>>>>>>>>>>>>>>>>>>
+
+// AUDITORIA - Gera Arquivo de Estoques >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmSolicitacoes.AuditoriaGeraArquivo;
+Var
+  MySql: String;
+  tsArquivo: TStringList;
+Begin
+  Screen.Cursor:=crArrow;
+
+  If Rb_AudCadProdutos.Checked Then
+   PainelApresExp.Caption:='AGUARDE !! Gerando Arquivo de Produtos...'
+  Else
+   PainelApresExp.Caption:='AGUARDE !! Gerando Arquivo de Estoque de Produtos...';
+
+  PainelApresExp.Width:=Length(PainelApresExp.Caption)*10;
+  PainelApresExp.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-PainelApresExp.Width)/2));
+  PainelApresExp.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-PainelApresExp.Height)/2))-20;
+  PainelApresExp.Color:=clSilver;
+  PainelApresExp.Font.Style:=[fsBold];
+  PainelApresExp.Parent:=FrmSolicitacoes;
+  PainelApresExp.Visible:=True;
+  Refresh;
+
+  //============================================================================
+  // Busca Cadastro de Produtos ================================================
+  //============================================================================
+  If Rb_AudCadProdutos.Checked Then
+  Begin
+    MySql:=' SELECT'+
+           ' TRIM(p.cod_barra)||'';''||TRIM(p.nome)||'';''||TRIM(p.desc_setor)||'';''||TRIM(p.desativado)||'';'' LINHA'+
+           ' FROM LINXPRODUTOS p'+
+
+           ' UNION'+
+
+           ' SELECT'+
+           ' TRIM(b.cod_barra)||'';''||TRIM(pb.nome)||'';''||TRIM(pb.desc_setor)||'';''||TRIM(pb.desativado)||'';'''+
+           ' FROM LINXPRODUTOS pb'+
+           '     LEFT JOIN LINXPRODUTOSCODBAR b on b.cod_produto=pb.cod_produto';
+  End; // If Rb_AudCadProdutos.Checked Then
+  // Busca Cadastro de Produtos ================================================
+  //============================================================================
+
+  //============================================================================
+  // Busca Posição de Estoque dos Produtos da Loja =============================
+  //============================================================================
+  If (Rb_AudPosEstoque.Checked) And (Rb_AudPosEstoqueLoja.Checked) Then
+  Begin
+    If Not Auditoria_Delete_Insert(True) Then
+     Exit;
+
+    // Busca Posição de Estoque dos Produtos da Loja ----------------
+    MySql:=' SELECT'+
+           ' TRIM(lj.nome_emp)||'';''||TRIM(pr.cod_barra)||'';''||TRIM(pd.preco_custo)||'';''||'+
+           ' TRIM(pd.preco_venda)||'';''||CAST(COALESCE(pd.quantidade,0) AS INTEGER)||'';''||'+
+           ' TRIM(pr.desativado)||'';'' LINHA'+
+
+           ' FROM W_PROD_LOJA pl, LINXLOJAS lj, LINXPRODUTOS pr, LINXPRODUTOSDETALHES pd'+
+
+           ' WHERE pl.cod_loja_linx=lj.empresa'+
+           ' AND   pl.cod_produto=pr.cod_produto'+
+           ' AND   pl.cod_loja_linx=pd.empresa'+
+           ' AND   pl.cod_produto=pd.cod_produto'+
+           ' AND   pl.cod_loja_linx='+IntToStr(EdtAudCodLoja.AsInteger);
+  End; // If (Rb_AudPosEstoque.Checked) And (Rb_AudPosEstoqueLoja.Checked) Then
+  // Busca Posição de estoque dos Produtos da Loja =============================
+  //============================================================================
+
+  //============================================================================
+  // Busca Posição de estoque dos Produtos da Empresa ==========================
+  //============================================================================
+  If (Rb_AudPosEstoque.Checked) And (Rb_AudPosEstoqueEmpresa.Checked) Then
+  Begin
+    MySql:=' SELECT'+
+           ' TRIM(lj.nome_emp)||'';''||TRIM(pr.cod_barra)||'';''||TRIM(pd.preco_custo)||'';''||'+
+           ' TRIM(pd.preco_venda)||'';''||CAST(COALESCE(pd.quantidade,0) AS INTEGER)||'';''||'+
+           ' TRIM(pr.desativado)||'';'' LINHA'+
+
+           ' FROM LINXPRODUTOSDETALHES pd, LINXPRODUTOS pr, LINXLOJAS lj'+
+
+           ' WHERE pd.cod_produto=pr.cod_produto'+
+           ' AND   pd.empresa=lj.empresa'+
+           ' AND   pd.empresa='+IntToStr(EdtAudCodLoja.AsInteger);
+  End; // If (Rb_AudPosEstoque.Checked) And (Rb_AudPosEstoqueLoja.Checked) Then
+  // Busca Posição de estoque dos Produtos da Loja =============================
+  //============================================================================
+
+  //============================================================================
+  // Monta o Arquivo ===========================================================
+  //============================================================================
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:=MySql;
+  DMBelShop.CDS_Busca.Open;
+
+  FrmBelShop.MontaProgressBar(True, FrmSolicitacoes);
+  pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
+  pgProgBar.Position:=0;
+
+  Try
+    //==========================================================================
+    // Cria Arquivo Texto ======================================================
+    //==========================================================================
+    tsArquivo:=TStringList.Create;
+    // Cria Arquivo Texto ======================================================
+    //==========================================================================
+
+    //==========================================================================
+    // Apropria Produtos no Arquivo ============================================
+    //==========================================================================
+    DMBelShop.CDS_Busca.DisableControls;
+    While Not DMBelShop.CDS_Busca.Eof do
+    Begin
+      Application.ProcessMessages;
+
+      pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
+
+      tsArquivo.Add(DMBelShop.CDS_Busca.FieldByName('Linha').AsString);
+
+      DMBelShop.CDS_Busca.Next;
+    End; // While Not DMBelShop.CDS_Busca.Eof do
+    DMBelShop.CDS_Busca.EnableControls;
+    DMBelShop.CDS_Busca.Close;
+    // Apropria Produtos no Arquivo ============================================
+    //==========================================================================
+
+    //==========================================================================
+    // Salva Arquivo Texto =====================================================
+    //==========================================================================
+    tsArquivo.SaveToFile(EdtAudDescArquivo.Text);
+    // Salva Arquivo Texto =====================================================
+    //==========================================================================
+  Finally // Try
+    { Libera a instancia da lista da memória }
+    FreeAndNil(tsArquivo);
+  End; // Try
+  // Monta o Arquivo ===========================================================
+  //============================================================================
+
+  If Not Auditoria_Delete_Insert(False) Then
+   Exit;
+
+  FrmBelShop.MontaProgressBar(False, FrmSolicitacoes);
+  PainelApresExp.Visible:=False;
+  Screen.Cursor:=crDefault;
+
+  msg('Arquivo Gerado com SUCESSO !!','A');
+End; // AUDITORIA - Gera Arquivo de Estoques >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Relatórios do Salão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmSolicitacoes.SalaoRelatorios;
@@ -3651,6 +3871,7 @@ begin
   Bt_FinanPlanFinanceiraPeriodoVoltarClick
   Bt_SelecionarVoltarClick
   Bt_GruposLojasVoltarClick
+  Bt_SolicExpVoltarClick
   }
   bgOK:=False;
   bgProcessar:=False;
@@ -4569,8 +4790,54 @@ begin
   Bt_ConsistenciasSalvarClick
   Bt_CodigosViculadosSalvarClick
   Bt_GruposLojasSalvarClick
+  Bt_AudGeraArquivo
   }
 
+  //============================================================================
+  // Gera Arquivo de Auditoria de Estoques =====================================
+  //============================================================================
+  If (Sender as TJvXPButton).Name='Bt_AudGeraArquivo' Then
+  Begin
+    Gb_AudTipoArquivo.SetFocus;
+
+    If Trim(EdtAudDescArquivo.Text)='' Then
+    Begin
+      msg('Favor Informar o Arquivo Destino !','A');
+      Bt_AudBuscaArq.SetFocus;
+      Exit;
+    End; // If Trim(EdtAudDescArquivo.Text)='' Then
+
+    If msg('O Arquivo DESIINO Esta CORRETO ?','C')=2 Then
+    Begin
+      Bt_AudBuscaArq.SetFocus;
+      Exit;
+    End;
+
+    If Rb_AudPosEstoque.Checked Then
+    Begin
+      If Trim(EdtAudDescLoja.Text)='' Then
+      Begin
+        msg('Favor Informar a Loja !','A');
+        Bt_AudBuscaLoja.SetFocus;
+        Exit;
+      End; // If Trim(EdtAudDescArquivo.Text)='' Then
+
+      If msg('A LOJA Selecionada Esta CORRETA ?','C')=2 Then
+      Begin
+        Bt_AudBuscaLoja.SetFocus;
+        Exit;
+      End;
+    End; // If Rb_AudPosEstoque.Checked Then
+
+    AuditoriaGeraArquivo;
+    Exit;
+  End; // If (Sender as TJvTransparentButton).Name='Bt_MixLojasAlterar' Then
+  // Gera Arquivo de Auditoria de Estoques =====================================
+  //============================================================================
+
+  //============================================================================
+  // Salvar Codigos Vinculados Conta Corrente ==================================
+  //============================================================================
   If (Sender as TJvXPButton).Name='Bt_CodigosViculadosSalvar' Then
   Begin
     If msg('Deseja Realmente Salvar  ??','C')=2 Then
@@ -4579,7 +4846,12 @@ begin
       Exit;
     End;
   End; // If (Sender as TJvXPButton).Name='Bt_CodigosViculadosSalvar' Then
+  // Salvar Codigos Vinculados Conta Corrente ==================================
+  //============================================================================
 
+  //============================================================================
+  // Salvar Consistencias Salão ================================================
+  //============================================================================
   If (Sender as TJvXPButton).Name='Bt_ConsistenciasSalvar' Then
   Begin
     if msg('As Alterações nas Consistências '+cr+cr+'Estão Corretas ??','C')=2 Then
@@ -4588,7 +4860,12 @@ begin
       Exit;
     End;
   End; //If (Sender as TJvXPButton).Name='Bt_ManutDiversosDML' Then
+  // Salvar Consistencias Salão ================================================
+  //============================================================================
 
+  //============================================================================
+  // Salvar Manutenções em Geral ===============================================
+  //============================================================================
   If (Sender as TJvXPButton).Name='Bt_ManutDiversosDML' Then
   Begin
     If Trim(sgComponentesConsiste)<>'' Then
@@ -4597,7 +4874,12 @@ begin
        Exit;
     End;
   End; // If (Sender as TJvXPButton).Name='Bt_ManutDiversosDML' Then
+  // Salvar Manutenções em Geral ===============================================
+  //============================================================================
 
+  //============================================================================
+  //  Habilita / Desabilita Linha dos Objetivos/Metas ==========================
+  //============================================================================
   If (Sender as TJvXPButton).Name='Bt_SimplesOK' Then
   Begin
     If Trim(sgMessagemSimplesOK)<>'' Then
@@ -4606,7 +4888,12 @@ begin
        Exit;
     End; //  If Trim(sgMessagemSimplesOK)<>'' Then
   End;
+  //  Habilita / Desabilita Linha dos Objetivos/Metas ==========================
+  //============================================================================
 
+  //============================================================================
+  // Altera Mix Entre Lojas ====================================================
+  //============================================================================
   If (Sender as TJvXPButton).Name='Bt_MixLojasAlterar' Then
   Begin
     Lbx_MixLojasSel.SetFocus;
@@ -4631,6 +4918,8 @@ begin
      Exit;
     End;
   End; // If (Sender as TJvTransparentButton).Name='Bt_MixLojasAlterar' Then
+  // Altera Mix Entre Lojas ====================================================
+  //============================================================================
 
   bgProcessar:=True;
   Close;
@@ -4641,7 +4930,7 @@ procedure TFrmSolicitacoes.Dbg_IBGE1KeyDown(Sender: TObject; var Key: Word; Shif
 Var
   sIBGE: String;
 begin
-  // Bloquei Ctrl + Delete =====================================================  
+  // Bloquei Ctrl + Delete =====================================================
   if (Shift = [ssCtrl]) and (Key = 46) then
     Key := 0;
 
@@ -9165,6 +9454,116 @@ begin
   // Retira Lojas Destino ======================================================
   //============================================================================
 
+end;
+
+procedure TFrmSolicitacoes.Bt_AudBuscaArqClick(Sender: TObject);
+Var
+  SaveDialog: TSaveDialog;
+begin
+
+  EdtAudDescArquivo.Clear;
+
+  SaveDialog := TSaveDialog.Create(Self);
+  With SaveDialog do
+  Begin
+    Options := [ofPathMustExist, ofHideReadOnly, ofOverwritePrompt];
+    DefaultExt := 'TXT';
+    Filter := 'Arquivo TXT (*.txt)|*.TXT|';
+    FilterIndex := 1;
+    Title := 'Salvar Arquivo Texto para Auditoria';
+
+    if Execute then
+     Begin
+        EdtAudDescArquivo.Text:=SaveDialog.FileName;
+     End
+    else // if Execute then
+     begin
+       Free;
+       Exit;
+     end; // if Execute then
+  End; // With OpenDialog do
+end;
+
+procedure TFrmSolicitacoes.Bt_AudBuscaLojaClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+
+  FrmPesquisa:=TFrmPesquisa.Create(Self);
+
+  EdtAudDescLoja.Clear;
+  EdtAudCodLoja.Clear;
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  MySql:=' SELECT l.nome_emp, l.empresa, l.cod_loja'+
+         ' FROM LINXLOJAS l'+
+         ' WHERE l.empresa<>5'+ // Mostardeiro Fechou
+         ' ORDER BY 1';
+  DMBelShop.CDS_Pesquisa.Close;
+  DMBelShop.CDS_Pesquisa.Filtered:=False;
+  DMBelShop.SDS_Pesquisa.CommandText:=MySql;
+  DMBelShop.CDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(DMBelShop.CDS_Pesquisa.FieldByName('Nome_Emp').AsString)='' Then
+  Begin
+    DMBelShop.CDS_Pesquisa.Close;
+    msg('Sem Loja a Listar !!','A');
+    Bt_AudBuscaLoja.SetFocus;
+    FreeAndNil(FrmPesquisa);
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisa.Campo_pesquisa:='Nome_Emp';
+  FrmPesquisa.Campo_Codigo:='Empresa';
+  FrmPesquisa.Campo_Descricao:='Nome_Emp';
+  //FrmPesquisa.EdtDescricao.Text:=FrmAcessos.EdtDescPessoa.Text;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisa.ShowModal;
+  DMBelShop.CDS_Pesquisa.Close;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+   Begin
+     EdtAudDescLoja.Text:=FrmPesquisa.EdtDescricao.Text;
+     EdtAudCodLoja.Text    :=FrmPesquisa.EdtCodigo.Text;
+   End
+  Else
+   Begin
+     EdtAudDescLoja.Clear;
+     EdtAudCodLoja.Clear;
+     Bt_AudBuscaLoja.SetFocus;
+   End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+
+  FreeAndNil(FrmPesquisa);
+end;
+
+procedure TFrmSolicitacoes.Rb_AudCadProdutosClick(Sender: TObject);
+begin
+  If (Sender is TJvRadioButton) Then
+  Begin
+    AcertaRb_Style(Rb_AudCadProdutos);
+    AcertaRb_Style(Rb_AudPosEstoque);
+    AcertaRb_Style(Rb_AudPosEstoqueEmpresa);
+    AcertaRb_Style(Rb_AudPosEstoqueLoja);
+
+    If Rb_AudPosEstoque.Checked Then
+     Begin
+       Pan_AudProdutos.Visible:=True;
+       Gb_AudLoja.Visible:=True;
+     End
+    Else // If Rb_AudPosEstoque.Checked Then
+     Begin
+       Pan_AudProdutos.Visible:=False;
+       Gb_AudLoja.Visible:=False;
+     End; // If Rb_AudPosEstoque.Checked Then
+  End; // If (Sender is TJvRadioButton) Then
 end;
 
 end.

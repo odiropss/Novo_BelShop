@@ -1,0 +1,133 @@
+=====================================
+Loja Linx: 2 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 3 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 7 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 9 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 10 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 11 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 12 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 13 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 14 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 15 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 16 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 17 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 18 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 19 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 20 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 21 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 22 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 23 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================
+=====================================
+Loja Linx: 24 Metodo: LinxProdutosInventario Resposta Negativa !!
+LinxProdutosInventario: Ocorreu um erro na execução da integração, verifique o nome da consulta e os parâmetros informados. Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.. Stack:   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.runQuery(String sql, IEnumerable`1 dbParameters, DbProviderFactory dbFactory, Nullable`1 timeout)
+   at Linx.Microvix.WebApi.Data.AdoNet.ClientPortal.ExecuteCommand(IDictionary`2 userParameters, String strCommand)
+   at Linx.Microvix.WebApi.Business.Microvix.ClientPortalAdoAdapter.ExecuteDatabaseIntegration()
+   at Linx.Microvix.WebApi.Business.IntegrationBusiness.generateIntegrationResponse(usuario user, ApiXmlRequest request)
+=====================================

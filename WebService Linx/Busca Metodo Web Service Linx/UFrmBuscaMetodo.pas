@@ -25,15 +25,19 @@ type
     Bt_BuscaMetodo: TJvXPButton;
     Dbg_Lojas: TDBGridJul;
     EdtCodLoja: TCurrencyEdit;
-    Label1: TLabel;
-    Label2: TLabel;
+    Lab_LojaLinx: TLabel;
+    Lab_MetodoBuca: TLabel;
     EdtDesLoja: TEdit;
-    Label74: TLabel;
+    Lab_Periodo1: TLabel;
     DtEdt_DtaInicio: TcxDateEdit;
-    Label75: TLabel;
+    Lab_Periodo2: TLabel;
     DtEdt_DtaFim: TcxDateEdit;
     Cbx_Metodos: TComboBox;
     Lab_Dias: TLabel;
+    EdtCodQualquer: TEdit;
+    Lab_CodQualquer: TLabel;
+    Lab_CodProduto: TLabel;
+    EdtCodProduto: TEdit;
     procedure Bt_BuscaMetodoClick(Sender: TObject);
     procedure EdtCodLojaExit(Sender: TObject);
 
@@ -54,7 +58,9 @@ var
 
   pgProgBar: TcxProgressBar;
 
-  sgDtaI, sgDtaF: String;
+  sgDtaI, sgDtaF,
+  sgCodQualquer,
+  sgCodProduto: String;
 
 implementation
 
@@ -140,18 +146,30 @@ begin
     sgDtaF:=DateToStr(DtEdt_DtaFim.Date);
   End;
 
+  sgCodQualquer:='0';
+  If Trim(EdtCodQualquer.Text)<>'' Then
+   sgCodQualquer:=Trim(EdtCodQualquer.Text);
+
+  sgCodProduto:='0';
+  If Trim(EdtCodProduto.Text)<>'' Then
+   sgCodProduto:=Trim(EdtCodProduto.Text);
+
   Try
     While Not DMBuscaMetodo.CDS_Busca.Eof do
     Begin
       OdirPanApres.Caption:='AGUARDE !! Atualizando Metodo: '+Cbx_Metodos.Text+' (LINX - CLOUD) Loja: '+DMBuscaMetodo.CDS_Busca.FieldByName('Cod_Linx').AsString;
       Application.ProcessMessages;
 
-      sParametros:=sgPastaWebService+'PWebServiceLinx.exe '+Cbx_Metodos.Text; // Excutavel e Metodo a Processar
+      sParametros:=sgPastaWebService+'PWebServiceLinx.exe';
+      sParametros:=sParametros+' '+Cbx_Metodos.Text; // Executavel e Metodo a Processar
       sParametros:=sParametros+' '+DMBuscaMetodo.CDS_Busca.FieldByName('Cod_Linx').AsString; // Codigo da Loja a Processar
       sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Metodos')+'"'; // Pasta dos Metodos
       sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Retornos')+'"'; // Pasta dos Retornos
       sParametros:=sParametros+' "'+sgDtaI+'"'; // Data Inicial
       sParametros:=sParametros+' "'+sgDtaF+'"'; // Data Final
+      sParametros:=sParametros+' "'+sgCodProduto+'"'; // Codigo de Determinado Produto
+      sParametros:=sParametros+' "'+sgCodQualquer+'"'; // Um Codigo Qualquer - Utilizado se ha Necessidade de Uma Unico Elelmente
+      sParametros:=sParametros+' "SIM"'; // Metodo LinxFaturas - Pesquisa Pela Data: SIM=Emissão NAO=Pagamento
 
       // Envia Parametro e Aguarda Termino do Processo =============================
       CreateProcessSimple(sParametros);
@@ -215,13 +233,20 @@ end;
 
 procedure TFrmBuscaMetodo.Cbx_MetodosChange(Sender: TObject);
 begin
-  DtEdt_DtaInicio.Clear;
-  DtEdt_DtaFim.Clear;
-  DtEdt_DtaInicio.Visible:=False;
-  DtEdt_DtaFim.Visible:=False;
-  Label74.Visible:=False;
-  Label75.Visible:=False;
+  Lab_Periodo1.Visible:=False;
+  Lab_Periodo2.Visible:=False;
   Lab_Dias.Visible:=False;
+
+  DtEdt_DtaInicio.Clear;
+  DtEdt_DtaInicio.Visible:=False;
+  DtEdt_DtaFim.Clear;
+  DtEdt_DtaFim.Visible:=False;
+
+  Lab_CodQualquer.Visible:=False;
+  EdtCodQualquer.Clear;
+  EdtCodQualquer.Visible:=False;
+
+  EdtCodProduto.Clear;
 
   Bt_BuscaMetodo.Enabled:=False;
   If Trim(Cbx_Metodos.Text)<>'' Then
@@ -239,8 +264,8 @@ begin
     // Menos 30 Dias ===========================================================
     If AnsiContainsStr('LinxClientesFornec LinxClientesFornecCamposAdicionais ', Cbx_Metodos.Text+' ') Then
     Begin
-      Label74.Visible:=True;
-      Label75.Visible:=True;
+      Lab_Periodo1.Visible:=True;
+      Lab_Periodo2.Visible:=True;
       Lab_Dias.Visible:=True;
       Lab_Dias.Caption:='30 Dias';
 
@@ -254,8 +279,8 @@ begin
     // Menos 15 Dias ===========================================================
     If AnsiContainsStr('LinxMovimento LinxMovtosAjustesEntradas LinxMovtosAjustesSaidas LinxMovimentoTrocas ', Cbx_Metodos.Text+' ') Then
     Begin
-      Label74.Visible:=True;
-      Label75.Visible:=True;
+      Lab_Periodo1.Visible:=True;
+      Lab_Periodo2.Visible:=True;
       Lab_Dias.Visible:=True;
       Lab_Dias.Caption:='15 Dias';
 
@@ -271,8 +296,8 @@ begin
                        'LinxMovimentoAcoesPromocionais LinxPedidosVenda LinxPlanosPedidoVenda '+
                        'LinxPedidosCompra LinxSangriaSuprimentos LinxFaturas ', Cbx_Metodos.Text+' ') Then
     Begin
-      Label74.Visible:=True;
-      Label75.Visible:=True;
+      Lab_Periodo1.Visible:=True;
+      Lab_Periodo2.Visible:=True;
       Lab_Dias.Visible:=True;
       Lab_Dias.Caption:='7 Dias';
 
@@ -282,6 +307,15 @@ begin
       DtEdt_DtaInicio.Date:=(Now-8);
       DtEdt_DtaFim.Date:=(Now-1);
     End;
+
+    // Solicita Código Qualquer ================================================
+    If AnsiContainsStr('LinxProdutosDepositos ', Cbx_Metodos.Text+' ') Then
+    Begin
+      Lab_CodQualquer.Caption:='Codigo do Local do Depósito'; 
+      Lab_CodQualquer.Visible:=True;
+      EdtCodQualquer.Visible:=True;
+    End;
+
   End; // If Trim(Cbx_Metodos.Text)<>'' Then
 
 end;

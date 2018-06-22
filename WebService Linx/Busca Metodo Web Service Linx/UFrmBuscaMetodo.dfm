@@ -20,10 +20,10 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
     Left = 0
     Top = 0
     Width = 986
-    Height = 177
+    Height = 205
     Align = alTop
     TabOrder = 0
-    object Label1: TLabel
+    object Lab_LojaLinx: TLabel
       Left = 280
       Top = 8
       Width = 52
@@ -36,7 +36,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object Label2: TLabel
+    object Lab_MetodoBuca: TLabel
       Left = 280
       Top = 50
       Width = 97
@@ -49,9 +49,9 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object Label74: TLabel
+    object Lab_Periodo1: TLabel
       Left = 306
-      Top = 106
+      Top = 138
       Width = 64
       Height = 13
       Caption = 'Per'#237'odo de'
@@ -62,11 +62,11 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object Label75: TLabel
+    object Lab_Periodo2: TLabel
       Left = 482
-      Top = 107
+      Top = 139
       Width = 8
-      Height = 13
+      Height = 14
       Caption = 'a'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -77,7 +77,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
     end
     object Lab_Dias: TLabel
       Left = 608
-      Top = 104
+      Top = 136
       Width = 37
       Height = 13
       Caption = 'Dias 0'
@@ -88,9 +88,35 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       Font.Style = [fsBold]
       ParentFont = False
     end
+    object Lab_CodQualquer: TLabel
+      Left = 498
+      Top = 90
+      Width = 117
+      Height = 13
+      Caption = 'Um C'#243'digo Qualquer'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Lab_CodProduto: TLabel
+      Left = 354
+      Top = 90
+      Width = 106
+      Height = 13
+      Caption = 'C'#243'digo do Produto'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
     object Bt_BuscaMetodo: TJvXPButton
       Left = 400
-      Top = 136
+      Top = 168
       Width = 161
       Height = 31
       Caption = ' Buscar M'#233'todo '
@@ -132,7 +158,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
     end
     object DtEdt_DtaInicio: TcxDateEdit
       Left = 376
-      Top = 100
+      Top = 132
       ParentFont = False
       Properties.ReadOnly = False
       Style.Color = clWindow
@@ -150,7 +176,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
     end
     object DtEdt_DtaFim: TcxDateEdit
       Left = 498
-      Top = 100
+      Top = 132
       ParentFont = False
       Properties.ReadOnly = False
       Style.Font.Charset = DEFAULT_CHARSET
@@ -205,7 +231,22 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
         'LinxReducoesZ'
         'LinxSangriaSuprimentos'
         'LinxFaturas'
-        'LinxLancContabil')
+        'LinxLancContabil'
+        'LinxProdutosDepositos')
+    end
+    object EdtCodQualquer: TEdit
+      Left = 499
+      Top = 104
+      Width = 121
+      Height = 21
+      TabOrder = 6
+    end
+    object EdtCodProduto: TEdit
+      Left = 355
+      Top = 104
+      Width = 121
+      Height = 21
+      TabOrder = 7
     end
   end
   object OdirPanApres: TPanel
@@ -228,9 +269,9 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
   end
   object Dbg_Lojas: TDBGridJul
     Left = 0
-    Top = 177
+    Top = 205
     Width = 986
-    Height = 358
+    Height = 330
     Align = alClient
     DataSource = DMBuscaMetodo.DS_Busca
     FixedColor = clSilver
