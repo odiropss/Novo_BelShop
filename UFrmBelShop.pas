@@ -25335,7 +25335,13 @@ begin
     DMRelatorio.frReport1.Dictionary.Variables.Variable['ContatoForn']:=#39+sFornContato+#39;
 
     DMRelatorio.frReport1.PrepareReport;
+//    DMRelatorio.frReport1.SaveToFR3File('C:\Projetos\BelShop\@@Enviar\OdirFR.fr3');
     DMRelatorio.frReport1.ShowReport;
+
+//    DMRelatorio.frxReport1.Clear;
+//    DMRelatorio.frxReport1.LoadFromFile('C:\Projetos\BelShop\@@Enviar\OdirFR.fr3');
+//    DMRelatorio.frxReport1.PrepareReport;
+//    DMRelatorio.frxReport1.Export(DMRelatorio.frxPDFExport1);
 
     Screen.Cursor:=crDefault;
     OdirPanApres.Visible:=False;

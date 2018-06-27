@@ -36,8 +36,8 @@ object DMLinxWebService: TDMLinxWebService
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 207
-    Top = 11
+    Left = 271
+    Top = 19
   end
   object SDS_Busca: TSQLDataSet
     MaxBlobSize = -1
@@ -136,5 +136,12 @@ object DMLinxWebService: TDMLinxWebService
     ProviderName = 'DSP_ProdutosZerados'
     Left = 368
     Top = 177
+  end
+  object SQLQ_Busca: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 136
+    Top = 16
   end
 end

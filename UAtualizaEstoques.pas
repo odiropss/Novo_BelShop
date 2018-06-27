@@ -1,4 +1,5 @@
 unit UAtualizaEstoques;
+// OpssAqui
 
 interface
 
@@ -501,8 +502,6 @@ Begin
           // UPDATE OR INSERT INTO LISTAPRE E-COMMERCE -------------------------
           MySql:=' UPDATE OR INSERT INTO LISTAPRE'+
                  ' (CODLISTA, CODPRODUTO, PRECOCOMPRA, MARGEM, PRECOVENDA,'+
-                 // OdirApagar - 08/09/2017
-                 // '  PRECOANTERIOR,
                  ' DATAALTERACAO, HORAALTERACAO, DESCONTO,'+
                  ' DESCONTOMAX, DESATIVADO, PRECODOLAR, ACRECIMOLISTA,'+
                  ' CUSTOSLISTA)'+
@@ -512,8 +511,6 @@ Begin
                  f_Troca(',','.',sPcCusto)+', '+ // PRECOCOMPRA
                  f_Troca(',','.',sMargem)+', '+ // MARGEM
                  f_Troca(',','.',sPcVenda)+', '+ // PRECOVENDA
-                 // OdirApagar - 08/09/2017
-                 // ' 0.0000,'+ // PRECOANTERIOR
                  QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDataAtual)))+' ,'+ // DATAALTERACAO
                  QuotedStr(sgHoraAtual)+' ,'+ // HORAALTERACAO
                  ' 10.00,'+ // DESCONTO
@@ -532,8 +529,6 @@ Begin
           // UPDATE OR INSERT INTO LISTAPRE LISTA-0006 -------------------------
           MySql:=' UPDATE OR INSERT INTO LISTAPRE'+
                  ' (CODLISTA, CODPRODUTO, PRECOCOMPRA, MARGEM, PRECOVENDA,'+
-                 // OdirApagar - 08/09/2017
-                 // '  PRECOANTERIOR,
                  ' DATAALTERACAO, HORAALTERACAO, DESCONTO,'+
                  ' DESCONTOMAX, DESATIVADO, PRECODOLAR, ACRECIMOLISTA,'+
                  ' CUSTOSLISTA)'+
@@ -543,8 +538,6 @@ Begin
                  f_Troca(',','.',sPcCusto)+', '+ // PRECOCOMPRA
                  f_Troca(',','.',sMargem)+', '+ // MARGEM
                  f_Troca(',','.',sPcVenda)+', '+ // PRECOVENDA
-                 // OdirApagar - 08/09/2017
-                 // ' 0.0000,'+ // PRECOANTERIOR
                  QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDataAtual)))+' ,'+ // DATAALTERACAO
                  QuotedStr(sgHoraAtual)+' ,'+ // HORAALTERACAO
                  ' 0.00,'+ // DESCONTO
@@ -889,8 +882,6 @@ Begin
            ' WHERE m.operacao in (''E'', ''DS'', ''S'', ''DE'')'+
            ' AND   m.cancelado=''N'''+
            ' AND   m.excluido =''N'''+
-//odirapagar - 22/05/2017
-//           ' AND   m.soma_relatorio=''S'''+
            ' AND   p.cod_auxiliar IS NOT NULL'+
            ' AND   Char_length(p.cod_auxiliar)<=6'+
            ' AND   m.data_lancamento>='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaInicioLinx)))+
@@ -1213,6 +1204,7 @@ begin
   //============================================================================
   // Atualiza Tabela ES_FAT_PERIODO ============================================
   //============================================================================
+// OpssAqui
   Tabela_ES_FAT_PERIODO;
   // Atualiza Tabela ES_FAT_PERIODO ============================================
   //============================================================================
@@ -1220,10 +1212,14 @@ begin
   //============================================================================
   // Atualiza Tabela ES_Produtos_MIX ===========================================
   //============================================================================
+// OpssAqui
   Tabela_ES_PRODUTOS_MIX;
   // Atualiza Tabela ES_Produtos_MIX ===========================================
   //============================================================================
 
+  //============================================================================
+  // Atualiza Estoques =========================================================
+  //============================================================================
   tgMySqlErro.Clear;
   tgMySqlErro.SaveToFile(sgPath_Local+'ODIR_ERRO.txt');
 
@@ -1267,7 +1263,7 @@ begin
 
     sCodEmpresa   :=DMAtualizaEstoques.CDS_EmpProcessaCOD_FILIAL.AsString;
 
-// Odir Roda Uma Loja Linx
+// OpssAqui - Roda Uma Loja Linx
 //    iCodLinx      :=15;
 //    sDtaLinx      :='17/03/2017';
 //    sDtaInventLinx:='09/05/2017';
@@ -1385,9 +1381,6 @@ begin
                  QuotedStr(sCodEmpresa)+' codfilial,'+
 
                  ' pr.codproduto codproduto,'+
-                 // OdirApagar - 13/09/2017
-                 // ' CAST(LPAD(lp.cod_auxiliar,6,0) AS VARCHAR(6)) codproduto,'+
-
                  ' lpd.quantidade saldoatual, 0.0000 pedidopendente,'+
                  ' 0 zonaendereco, ''000'' corredor, ''000'' prateleira, ''0000'' gaveta,'+
                  ' lpd.custo_medio cusmedvalor, lpd.custo_medio customedio,'+
@@ -1621,6 +1614,8 @@ begin
     DMAtualizaEstoques.CDS_EmpProcessa.Next;
   End; // While Not DMAtualizaEstoques.CDS_EmpProcessa.Eof do
   DMAtualizaEstoques.CDS_EmpProcessa.Close;
+  // Atualiza Estoques =========================================================
+  //============================================================================
 
   // ===========================================================================
   // Atualiza Endereçamento do SIDICOM (CD) em BelShop.FDB =====================

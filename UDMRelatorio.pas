@@ -24,6 +24,8 @@ type
     FontDialog: TFontDialog;
     RelVisual: TRelVisualJul;
     frReport1: TfrReport;
+    frxPDFExport1: TfrxPDFExport;
+    frxReport1: TfrxReport;
 
     // Odir
     Procedure ImpressaoRomaneioSeparacao(sNumDocto, sCodLoja, sNumOCGerada: String);
@@ -62,7 +64,7 @@ Var
   sTotal_Valor, sTotal_Itens, sTotal_Qtd: String;
   s: String;
 Begin
-
+                    
   FrmBelShop.OdirPanApres.Caption:='AGUARDE !! Montando Relatório...';
   FrmBelShop.OdirPanApres.Width:=Length(FrmBelShop.OdirPanApres.Caption)*10;
   FrmBelShop.OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-FrmBelShop.OdirPanApres.Width)/2));

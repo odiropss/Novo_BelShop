@@ -25,6 +25,7 @@ type
     SDS_ProdutosZerados: TSQLDataSet;
     DSP_ProdutosZerados: TDataSetProvider;
     CDS_ProdutosZerados: TClientDataSet;
+    SQLQ_Busca: TSQLQuery;
 
     // Odir
     Function ConectaBanco: Boolean;

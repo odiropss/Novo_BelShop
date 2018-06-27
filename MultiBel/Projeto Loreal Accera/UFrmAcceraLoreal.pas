@@ -15,13 +15,13 @@ type
     //==============================================================================
     // ODIR - INICIO ===============================================================
     //==============================================================================
-    Procedure ACC_CADPROD; // Cadastro de Produtos
-    Procedure ACC_CADSITE; // Cadastro de CDs/Lojas
-    Procedure ACC_POSESTQ; // Cadastro de Estoques
-    Procedure ACC_SELLOUT; // Cadastro de Vendas do Distribuidor
-    Procedure ACC_PDVS;    // Cadastro de Clientes (PDVs)
-    Procedure ACC_NFS;     // Notas Fiscais Recebidas
-    Procedure ACC_CADVEND; // Cadastro de Vendedores
+    Function ACC_CADPROD: Boolean; // Cadastro de Produtos
+    Function ACC_CADSITE: Boolean; // Cadastro de CDs/Lojas
+    Function ACC_POSESTQ: Boolean; // Cadastro de Estoques
+    Function ACC_SELLOUT: Boolean; // Cadastro de Vendas do Distribuidor
+    Function ACC_PDVS: Boolean;    // Cadastro de Clientes (PDVs)
+    Function ACC_NFS: Boolean;     // Notas Fiscais Recebidas
+    Function ACC_CADVEND: Boolean; // Cadastro de Vendedores
 
     //==============================================================================
     // ODIR - FIM ==================================================================
@@ -51,12 +51,14 @@ uses UDMAcceraLoreal, DB, DK_Procs1;
 //==============================================================================
 
 // Cadastro de Vendedores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmAcceraLoreal.ACC_CADVEND;
+Function TFrmAcceraLoreal.ACC_CADVEND: Boolean;
 Var
   tsArquivo: TStringList;
   i: Integer;
   sLinha: String;
 Begin
+  Result:=False;
+
   // Instancia a variável arquivo
   tsArquivo:=TStringList.Create;
 
@@ -184,10 +186,12 @@ Begin
     // Libera a instancia da lista da memória
     FreeAndNil(tsArquivo);
   End; // Try
+
+  Result:=True;
 End; // Cadastro de Vendedores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Notas Fiscais Recebidas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmAcceraLoreal.ACC_NFS;
+Function TFrmAcceraLoreal.ACC_NFS: Boolean;
 Var
   tsArquivo: TStringList;
   i: Integer;
@@ -196,6 +200,7 @@ Var
 
   sLinha: String;
 Begin
+   Result:=False;
 
   // Busca Datas de Inicio e Fim dos Movtos Selecionados =====================
   MySql:=' SELECT'+
@@ -369,15 +374,19 @@ Begin
     // Libera a instancia da lista da memória
     FreeAndNil(tsArquivo);
   End; // Try
+
+  Result:=True;
 End; // Notas Fiscais Recebidas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Cadastro de Clientes (PDVs) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmAcceraLoreal.ACC_PDVS;
+Function TFrmAcceraLoreal.ACC_PDVS: Boolean;
 Var
   tsArquivo: TStringList;
   i: Integer;
   sLinha: String;
 Begin
+  Result:=False;
+
   // Instancia a variável arquivo
   tsArquivo:=TStringList.Create;
 
@@ -551,10 +560,12 @@ Begin
     // Libera a instancia da lista da memória
     FreeAndNil(tsArquivo);
   End; // Try
+
+  Result:=True;
 End; // Cadastro de Clientes (PDVs) >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Cadastro de Vendas do Distribuidor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmAcceraLoreal.ACC_SELLOUT;
+Function TFrmAcceraLoreal.ACC_SELLOUT: Boolean;
 Var
   tsArquivo: TStringList;
   i: Integer;
@@ -563,6 +574,7 @@ Var
 
   sLinha: String;
 Begin
+  Result:=False;
 
   // Busca Datas de Inicio e Fim dos Movtos Selecionados =====================
   MySql:=' SELECT'+
@@ -909,15 +921,19 @@ Begin
     // Libera a instancia da lista da memória
     FreeAndNil(tsArquivo);
   End; // Try
+
+  Result:=True;
 End; // Cadastro de Vendas do Distribuidor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Cadastro de Estoques >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmAcceraLoreal.ACC_POSESTQ;
+Function TFrmAcceraLoreal.ACC_POSESTQ: Boolean;
 Var
   tsArquivo: TStringList;
   i: Integer;
   sLinha: String;
 Begin
+  Result:=False;
+
   // Instancia a variável arquivo
   tsArquivo:=TStringList.Create;
 
@@ -1072,15 +1088,19 @@ Begin
     // Libera a instancia da lista da memória
     FreeAndNil(tsArquivo);
   End; // Try
+
+  Result:=True;
 End; // Cadastro de Estoques >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Cadastro de CDs/Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmAcceraLoreal.ACC_CADSITE;
+Function TFrmAcceraLoreal.ACC_CADSITE: Boolean;
 Var
   tsArquivo: TStringList;
   i: Integer;
   sLinha: String;
 Begin
+  Result:=False;
+
   // Instancia a variável arquivo
   tsArquivo:=TStringList.Create;
 
@@ -1193,15 +1213,19 @@ Begin
     // Libera a instancia da lista da memória
     FreeAndNil(tsArquivo);
   End; // Try
+
+  Result:=True;
 End; // // Cadastro de CDs/Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Cadastro de Produtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-procedure TFrmAcceraLoreal.ACC_CADPROD;
+Function TFrmAcceraLoreal.ACC_CADPROD: Boolean;
 Var
   tsArquivo: TStringList;
   i: Integer;
   sLinha: String;
 Begin
+  Result:=False;
+
   // Instancia a variável arquivo
   tsArquivo:=TStringList.Create;
 
@@ -1377,6 +1401,7 @@ Begin
     FreeAndNil(tsArquivo);
   End; // Try
 
+  Result:=True;
 End; // Cadastro de Produtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 //==============================================================================
@@ -1386,8 +1411,6 @@ End; // Cadastro de Produtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 procedure TFrmAcceraLoreal.FormCreate(Sender: TObject);
 Var
   sArqProc: String;
-
-  tsArqErro: TStringList;
 begin
   If Not DMAcceraLoreal.SQLC.Connected Then
   Begin
@@ -1405,8 +1428,8 @@ begin
   OdirPanApres.Visible:=True;
   Refresh;
 
-  mMemo_Odir.Lines.Clear;
-  mMemo_Odir.Lines.Add(DMAcceraLoreal.SQLC.Params.GetText);
+  sArqProc:='';
+  Application.ProcessMessages;
 
   // Monta Data da Geração dos Arquivos ========================================
   MySql:=' SELECT'+
@@ -1430,47 +1453,42 @@ begin
   sgNomeEmpresa:=Trim(DMAcceraLoreal.SDS_Arquivo.FieldByName('Nome').AsString);
   DMAcceraLoreal.SDS_Arquivo.Close;
 
-  Try
-    // Cadastro de Produtos ====================================================
-    sArqProc:='Cadastro de Produtos';
-    ACC_CADPROD;
+  // Cadastro de Produtos ====================================================
+  If Not ACC_CADPROD Then
+   sArqProc:=sArqProc+cr+'Cadastro de Produtos';
 
-    // Cadastro de CDs/Lojas ===================================================
-    sArqProc:='Cadastro de CDs/Lojas';
-    ACC_CADSITE;
+  // Cadastro de CDs/Lojas ===================================================
+  If Not ACC_CADSITE Then
+   sArqProc:=sArqProc+cr+'Cadastro de CDs/Lojas';
 
-    // Cadastro de Estoques ====================================================
-    sArqProc:='Cadastro de Estoques';
-    ACC_POSESTQ;
+  // Cadastro de Estoques ====================================================
+  If Not ACC_POSESTQ Then
+   sArqProc:=sArqProc+cr+'Cadastro de Estoques';
 
-    // Cadastro de Vendas do Distribuidor ======================================
-    sArqProc:='Cadastro de Vendas do Distribuidor';
-    ACC_SELLOUT;
+  // Cadastro de Vendas do Distribuidor ======================================
+  If Not ACC_SELLOUT Then
+   sArqProc:=sArqProc+cr+'Cadastro de Vendas do Distribuidor';
 
-    // Cadastro de Clientes (PDVs) =============================================
-    sArqProc:='Cadastro de Clientes (PDVs)';
-    ACC_PDVS;
+  // Cadastro de Clientes (PDVs) =============================================
+  If Not ACC_PDVS Then
+   sArqProc:=sArqProc+cr+'Cadastro de Clientes (PDVs)';
 
-    // Notas Fiscais Recebidas =================================================
-    sArqProc:='Notas Fiscais Recebidas';
-    ACC_NFS;
+  // Notas Fiscais Recebidas =================================================
+  If Not ACC_NFS Then
+   sArqProc:=sArqProc+cr+'Notas Fiscais Recebidas';
 
-    // Cadastro de Vendedores ==================================================
-    sArqProc:='Cadastro de Vendedores';
-    ACC_CADVEND;
+  // Cadastro de Vendedores ==================================================
+  If Not ACC_CADVEND Then
+   sArqProc:=sArqProc+cr+'Cadastro de Vendedores';
 
-    msg('Arquivos Gerados com SUCESSO !!','A');
-
-  Except
-    tsArqErro:=TStringList.Create;
-    tsArqErro.Add('Erro no Arquivo: '+sArqProc);
-    tsArqErro.Add(' ');
-    tsArqErro.Add(MySql);
-    tsArqErro.SaveToFile(sgPastaSalvarArq+'ArqError_'+sgDtaGeracao+'.TXT');
-    FreeAndNil(tsArqErro);
-
-    msg('Erro ao Gerar o Arquivo'+cr+cr+sArqProc+' !!','A');
-  End;
+  If Trim(sArqProc)='' Then
+   Begin
+     MessageBox(Handle, pChar('Arquivos Gerados com SUCESSO !!'), 'ATENÇÃO !!', MB_ICONERROR);
+   End
+  Else
+   Begin
+     MessageBox(Handle, pChar('ERRO ao Gerar Arquivos !!'+cr+cr+Trim(sArqProc)), 'ATENÇÃO !!', MB_ICONERROR);
+   End;
 
   OdirPanApres.Visible:=False;
 

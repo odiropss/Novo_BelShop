@@ -38,7 +38,8 @@ var
 
   sgPastaExecutavel, // Pasta do Executável
   sgVendorLib,       // DLL do Banco de Dados
-  sgDialect,
+  sgPastaBancoDados,  // Pasta e Nome do Banco de Dados
+  sgDialect,         // Dialect
   sgPastaSalvarArq   // Pasta para Salvar Arquivo do Projeto Accera Loreal
   : String;
 
@@ -97,6 +98,10 @@ Begin
         Readln(ArqINI,sgPastaSalvarArq);
         sgPastaSalvarArq:=IncludeTrailingPathDelimiter(sgPastaSalvarArq);
       End;
+
+      // Pasta e Banco de Dados
+      If iLinha=3 Then
+       Readln(ArqINI,sgPastaBancoDados);
     End; // While not Eof(ArqINI) do
     CloseFile(ArqINI);
 

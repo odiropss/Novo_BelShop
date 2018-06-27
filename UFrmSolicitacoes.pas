@@ -1164,7 +1164,7 @@ Begin
     MySql:=' SELECT'+
            ' TRIM(lj.nome_emp)||'';''||TRIM(pr.cod_barra)||'';''||TRIM(pd.preco_custo)||'';''||'+
            ' TRIM(pd.preco_venda)||'';''||CAST(COALESCE(pd.quantidade,0) AS INTEGER)||'';''||'+
-           ' TRIM(pr.desativado)||'';'' LINHA'+
+           ' TRIM(pr.desativado) LINHA'+
 
            ' FROM W_PROD_LOJA pl, LINXLOJAS lj, LINXPRODUTOS pr, LINXPRODUTOSDETALHES pd'+
 
@@ -1185,7 +1185,7 @@ Begin
     MySql:=' SELECT'+
            ' TRIM(lj.nome_emp)||'';''||TRIM(pr.cod_barra)||'';''||TRIM(pd.preco_custo)||'';''||'+
            ' TRIM(pd.preco_venda)||'';''||CAST(COALESCE(pd.quantidade,0) AS INTEGER)||'';''||'+
-           ' TRIM(pr.desativado)||'';'' LINHA'+
+           ' TRIM(pr.desativado)|| LINHA'+
 
            ' FROM LINXPRODUTOSDETALHES pd, LINXPRODUTOS pr, LINXLOJAS lj'+
 
@@ -9497,7 +9497,7 @@ begin
   // ========== EXECUTA QUERY PARA PESQUISA ====================================
   Screen.Cursor:=crAppStart;
 
-  MySql:=' SELECT l.nome_emp, l.empresa, l.cod_loja'+
+  MySql:=' SELECT UPPER(l.nome_emp) nome_emp, l.empresa, l.cod_loja'+
          ' FROM LINXLOJAS l'+
          ' WHERE l.empresa<>5'+ // Mostardeiro Fechou
          ' ORDER BY 1';

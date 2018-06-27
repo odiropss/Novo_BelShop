@@ -13,7 +13,7 @@
 			<Parameter id="id_colecao">NULL</Parameter>
 			<Parameter id="dt_update_inicio">NULL</Parameter>
 			<Parameter id="dt_update_fim">NULL</Parameter>
-			<Parameter id="cod_produto">10171</Parameter>
+			<Parameter id="cod_produto">10170</Parameter>
 		</Parameters>
 	</Command>
 </LinxMicrovix>
