@@ -550,12 +550,9 @@ End; // ORDEM DE COMPRA - Calcula Sugestões / Transferencias / Estoque Excedente
 Procedure TFrmOCLinx.BuscaDemanda(sCodProduto: String; var iNrDias: Integer; Var iNrMeses: Integer);
 Var
   ii: Integer;
-  sDta, MySql: String;
+  MySql: String;
   sDem1, sDem2, sDem3, sDem4, sDem5, sDem6, sDem7, sDem8: String;
 
-  dDta: TDateTime;
-
-  sCase, sCaseDiasMeses, sIN: String;
   sDateSeparator: String;
 Begin
 
@@ -1028,15 +1025,11 @@ End; // ORDEM DE COMPRA - Atualiza Numero dos Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // ORDEM DE COMPRA - Novo Calculode Pedido de Compra do Linx >>>>>>>>>>>>>>>>>>>
 Procedure TFrmOCLinx.CriaPedidoOC;
 Var
-  s, ss, MySql: String;
-  b: Boolean;
   i: Integer;
 
   iQtdMediaDia, iQtdMediaMes: Integer; // Indices dos Campos para Calcular Depois
 
-  sDta_Ref, sCodForn,  sNomeForn: String;
-  cQuant_Ref, cPreco, cPrecoUnit, cVlr_Total_Ref, cQtdTransito,
-  cMediaMes, cDemanda: Currency;
+  cMediaMes: Currency;
 
   // Tributação
   sCOD_ICMS, sEstado, sTIP_PESSOA,
@@ -3350,11 +3343,12 @@ begin
              '               WHERE d.num_docto=oc.num_documento'+
              '               AND   d.origem='+QuotedStr('Linx')+
              '               )';
-      DMBelShop.CDS_BuscaRapida.Close;
-      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-      DMBelShop.CDS_BuscaRapida.Open;
-      sNrOC:=DMBelShop.CDS_BuscaRapida.fieldByName('Num_Docto').AsString;
-      DMBelShop.CDS_BuscaRapida.Close;
+      DMBelShop.SQLQuery1.Close;
+      DMBelShop.SQLQuery1.SQL.Clear;
+      DMBelShop.SQLQuery1.SQL.Add(MySql);
+      DMBelShop.SQLQuery1.Open;
+      sNrOC:=DMBelShop.SQLQuery1.fieldByName('Num_Docto').AsString;
+      DMBelShop.SQLQuery1.Close;
 
       // Verifica se Transação esta Ativa
       If DMBelShop.SQLC.InTransaction Then
@@ -3388,6 +3382,14 @@ begin
                ' And   oc.cod_empresa='+DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString+
                ' And   oc.cod_fornecedor='+DMBelShop.CDS_AComprarOCsCOD_FORNECEDOR.AsString;
         DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+        //====================================================
+        // Salva Ordem de Compra para Loja CHECKOUT ==========
+        //====================================================
+        //                                          sCodLjLinx                  CodLjSidi sNumOC               sNumDoc,                    sTpSistema: String);
+        FrmBelShop.Salva_OC_LOJAS_NFE(DMBelShop.CDS_AComprarOCsCOD_EMP_FIL.AsString, '',  sNrOC, IntToStr(EdtGeraOCBuscaDocto.AsInteger), 'LINX');
+        // Salva Ordem de Compra para Loja CHECKOUT ==========
+        //====================================================
 
         // Atualiza Transacao ======================================================
         DMBelShop.SQLC.Commit(TD);
@@ -3679,7 +3681,7 @@ end;
 
 procedure TFrmOCLinx.Dbg_GeraOCGridKeyDown(Sender: TObject; var Key: Word;Shift: TShiftState);
 Var
-  MySql, s: String;
+  s: String;
 begin
   If DMBelShop.CDS_AComprarItens.IsEmpty Then
    Exit;
@@ -3744,9 +3746,7 @@ end;
 procedure TFrmOCLinx.Bt_GeraOCImpEditOCClick(Sender: TObject);
 Var
   MySql, dir_relat: String;
-  sTotal_Valor, sTotal_Itens, sTotal_Qtd: String;
-  s: String;
-begin
+Begin
   Dbg_GeraOCTotalGeral.SetFocus;
 
   If DMBelShop.CDS_AComprarOCs.IsEmpty Then
@@ -4021,8 +4021,7 @@ procedure TFrmOCLinx.Bt_OCBuscaProdutosClick(Sender: TObject);
 Var
   MySql: String;
 
-  hHrInicio, hHrFim,
-  sDtaDocto: String;
+  hHrInicio, hHrFim: String;
 
   bCriaPedidoOC: Boolean;
 begin
@@ -4213,15 +4212,16 @@ end;
 procedure TFrmOCLinx.EdtFiltroCodFornExit(Sender: TObject);
 Var
   MySql: String;
-  bSiga: Boolean;
+  bGravar: Boolean;
 begin
 
   If EdtFiltroCodForn.Value<>0 Then
   Begin
     Screen.Cursor:=crAppStart;
+    bGravar:=True;
 
     // Busca Fornecedores ======================================================
-    MySql:=' SELECT fo.nome_cliente nomefornecedor, fo.cod_cliente codfornecedor'+
+    MySql:=' SELECT fo.nome_cliente nomefornecedor, fo.cod_cliente codfornecedor, fo.doc_cliente CNPJ'+
            ' FROM LINXCLIENTESFORNEC fo'+
            ' WHERE fo.tipo_cliente IN (''F'',''A'',''J'')'+
            ' AND   EXISTS(SELECT 1'+
@@ -4265,13 +4265,57 @@ begin
       End;
     End;
 
-    DMVirtual.CDS_V_Fornecedores.Insert;
-    DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsString:=DMBelShop.CDS_BuscaRapida.FieldByName('CodFornecedor').AsString;
-    DMVirtual.CDS_V_FornecedoresDes_Fornecedor.AsString:=DMBelShop.CDS_BuscaRapida.FieldByName('NomeFornecedor').AsString;
-    DMVirtual.CDS_V_Fornecedores.Post;
+    // Verifica Correspondecia com Fornecedor no Sidicom =======================
+    If (PC_OrdemCompra.Visible) and (PC_OrdemCompra.CanFocus) Then
+    Begin
+      MySql:=' SELECT fs.nomefornecedor Nome_Forn, fs.codfornecedor Cod_Forn'+
+             ' FROM FORNECEDOR fs'+
+             ' WHERE fs.numerocgcmf='+QuotedStr(Trim(DMBelShop.CDS_BuscaRapida.FieldByName('CNPJ').AsString));
+      DMBelShop.SQLQuery2.Close;
+      DMBelShop.SQLQuery2.SQL.Clear;
+      DMBelShop.SQLQuery2.SQL.Add(MySql);
+      DMBelShop.SQLQuery2.Open;
 
-    // Monta sFornecedore
-    MontaSelectFornecedoresLinx;
+      If DMBelShop.SQLQuery2.IsEmpty Then
+      Begin
+        MessageBox(Handle, pChar('Fornecedor LINX:'+cr+
+                                 Trim(DMBelShop.CDS_BuscaRapida.FieldByName('codfornecedor').AsString)+' - '+
+                                 Trim(DMBelShop.CDS_BuscaRapida.FieldByName('nomefornecedor').AsString)+cr+cr+
+                                 'SEM Fornecedor Correspondente no SIDICOM'+cr+cr+
+                                 'Favor Verificar com o Setor de Cadastro !!'), 'ATENÇÃO !!', MB_ICONERROR);
+        bGravar:=False;
+      End; // If DMBelShop.SQLQuery2.IsEmpty Then
+
+      If (Not DMBelShop.SQLQuery2.IsEmpty) And
+         (Trim(DMBelShop.CDS_BuscaRapida.FieldByName('nomefornecedor').AsString)<>
+          Trim(DMBelShop.SQLQuery2.FieldByName('Nome_Forn').AsString)) Then
+      Begin
+        If Application.MessageBox(pChar('Fornecedor LINX:'+cr+
+                                        Trim(DMBelShop.CDS_BuscaRapida.FieldByName('codfornecedor').AsString)+' - '+
+                                        Trim(DMBelShop.CDS_BuscaRapida.FieldByName('nomefornecedor').AsString)+cr+cr+
+                                        'Fornecedor SIDICOM:'+cr+
+                                        Trim(DMBelShop.SQLQuery2.FieldByName('Cod_Forn').AsString)+' - '+
+                                        Trim(DMBelShop.SQLQuery2.FieldByName('Nome_Forn').AsString)+cr+cr+
+                                        'Fornecedor Correspondente no SIDICOM Esta CORRETO ??'), 'ATENÇÃO !!', 36) =IdNo Then
+        Begin
+          bGravar:=False;
+        End;
+      End; // If DMBelShop.SQLQuery2.IsEmpty Then
+
+      DMBelShop.SQLQuery2.Close;
+    End; // If (PC_OrdemCompra.Visible) and (PC_OrdemCompra.CanFocus) Then
+
+    // Inclui Fornecedor =======================================================
+    If bGravar Then
+    Begin
+      DMVirtual.CDS_V_Fornecedores.Insert;
+      DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsString:=DMBelShop.CDS_BuscaRapida.FieldByName('CodFornecedor').AsString;
+      DMVirtual.CDS_V_FornecedoresDes_Fornecedor.AsString:=DMBelShop.CDS_BuscaRapida.FieldByName('NomeFornecedor').AsString;
+      DMVirtual.CDS_V_Fornecedores.Post;
+
+      // Monta sFornecedore
+      MontaSelectFornecedoresLinx;
+    End; // If bGravar Then
 
     DMBelShop.CDS_BuscaRapida.Close;
     EdtFiltroCodForn.Text:='0';
@@ -4282,17 +4326,18 @@ end;
 procedure TFrmOCLinx.Bt_FiltroBuscaFornClick(Sender: TObject);
 Var
   MySql: String;
-  bSiga: Boolean;
+  bGravar: Boolean;
 begin
 
   // ========== EFETUA A CONEXÃO ===============================================
   FrmPesquisa:=TFrmPesquisa.Create(Self);
+  bGravar:=True;
 
   // ========== EXECUTA QUERY PARA PESQUISA ====================================
   Screen.Cursor:=crAppStart;
 
-  // Busca Fornecedores ======================================================
-  MySql:=' SELECT fo.nome_cliente nomefornecedor, fo.cod_cliente codfornecedor'+
+  // Busca Fornecedores ========================================================
+  MySql:=' SELECT fo.nome_cliente nomefornecedor, fo.cod_cliente codfornecedor, fo.doc_cliente CNPJ'+
          ' FROM LINXCLIENTESFORNEC fo'+
          ' WHERE fo.tipo_cliente IN (''F'',''A'',''J'')'+
          ' AND   EXISTS(SELECT 1'+
@@ -4332,6 +4377,7 @@ begin
   FrmPesquisa.Campo_Codigo:='CodFornecedor';
   FrmPesquisa.Campo_Descricao:='NomeFornecedor';
   FrmPesquisa.EdtDescricao.Clear;
+  FrmPesquisa.Campo_Retorno1:='CNPJ';
 
   // ============= ABRE FORM DE PESQUISA =======================================
   FrmPesquisa.ShowModal;
@@ -4348,13 +4394,58 @@ begin
       Exit;
     End;
 
-    DMVirtual.CDS_V_Fornecedores.Insert;
-    DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsString:=FrmPesquisa.EdtCodigo.Text;
-    DMVirtual.CDS_V_FornecedoresDes_Fornecedor.AsString:=FrmPesquisa.EdtDescricao.Text;
-    DMVirtual.CDS_V_Fornecedores.Post;
+    // Verifica Correspondecia com Fornecedor no Sidicom =======================
+    If (PC_OrdemCompra.Visible) and (PC_OrdemCompra.CanFocus) Then
+    Begin
+      MySql:=' SELECT fs.nomefornecedor Nome_Forn, fs.codfornecedor Cod_Forn'+
+             ' FROM FORNECEDOR fs'+
+             ' WHERE fs.numerocgcmf='+QuotedStr(Trim(FrmPesquisa.Retorno1));
+      DMBelShop.SQLQuery2.Close;
+      DMBelShop.SQLQuery2.SQL.Clear;
+      DMBelShop.SQLQuery2.SQL.Add(MySql);
+      DMBelShop.SQLQuery2.Open;
 
-    // Monta sFornecedore
-    MontaSelectFornecedoresLinx;
+      If DMBelShop.SQLQuery2.IsEmpty Then
+      Begin
+        MessageBox(Handle, pChar('Fornecedor LINX:'+cr+
+                                 Trim(FrmPesquisa.EdtCodigo.Text)+' - '+
+                                 Trim(FrmPesquisa.EdtDescricao.Text)+cr+cr+
+                                 'SEM Fornecedor Correspondente no SIDICOM'+cr+cr+
+                                 'Favor Verificar com o Setor de Cadastro !!'), 'ATENÇÃO !!', MB_ICONERROR);
+        bGravar:=False;
+      End; // If DMBelShop.SQLQuery2.IsEmpty Then
+
+      If (Not DMBelShop.SQLQuery2.IsEmpty) And
+         (Trim(FrmPesquisa.EdtDescricao.Text)<>
+          Trim(DMBelShop.SQLQuery2.FieldByName('Nome_Forn').AsString)) Then
+      Begin
+        If Application.MessageBox(pChar('Fornecedor LINX:'+cr+
+                                        Trim(FrmPesquisa.EdtCodigo.Text)+' - '+
+                                        Trim(FrmPesquisa.EdtDescricao.Text)+cr+cr+
+                                        'Fornecedor SIDICOM:'+cr+
+                                        Trim(DMBelShop.SQLQuery2.FieldByName('Cod_Forn').AsString)+' - '+
+                                        Trim(DMBelShop.SQLQuery2.FieldByName('Nome_Forn').AsString)+cr+cr+
+                                        'Fornecedor Correspondente no SIDICOM Esta CORRETO ??'), 'ATENÇÃO !!', 36) =IdNo Then
+        Begin
+          bGravar:=False;
+        End;
+      End; // If DMBelShop.SQLQuery2.IsEmpty Then
+
+      DMBelShop.SQLQuery2.Close;
+    End; // If (PC_OrdemCompra.Visible) and (PC_OrdemCompra.CanFocus) Then
+
+    // Inclui Fornecedor =======================================================
+    If bGravar Then
+    Begin
+      DMVirtual.CDS_V_Fornecedores.Insert;
+      DMVirtual.CDS_V_FornecedoresCod_Fornecedor.AsString:=FrmPesquisa.EdtCodigo.Text;
+      DMVirtual.CDS_V_FornecedoresDes_Fornecedor.AsString:=FrmPesquisa.EdtDescricao.Text;
+      DMVirtual.CDS_V_Fornecedores.Post;
+
+      // Monta sFornecedore
+      MontaSelectFornecedoresLinx;
+    End; //If bGravar Then
+
   End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtCodigo.Text)<>'0')Then
 
   FreeAndNil(FrmPesquisa);

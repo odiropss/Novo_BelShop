@@ -1,9 +1,9 @@
 object DMRelatorio: TDMRelatorio
   OldCreateOrder = False
-  Left = 376
-  Top = 121
-  Height = 436
-  Width = 678
+  Left = 244
+  Top = 117
+  Height = 564
+  Width = 1064
   object frTextExport1: TfrTextExport
     ScaleX = 1.000000000000000000
     ScaleY = 1.000000000000000000
@@ -43,25 +43,25 @@ object DMRelatorio: TDMRelatorio
     Top = 216
   end
   object frRtfAdvExport1: TfrRtfAdvExport
-    Left = 381
-    Top = 216
+    Left = 101
+    Top = 288
   end
   object frTIFFExport1: TfrTIFFExport
-    Left = 437
-    Top = 202
+    Left = 157
+    Top = 274
   end
   object frJPEGExport1: TfrJPEGExport
-    Left = 492
-    Top = 223
+    Left = 212
+    Top = 295
   end
   object frOLEExcelExport1: TfrOLEExcelExport
-    Left = 558
-    Top = 208
+    Left = 278
+    Top = 280
   end
   object frDBDataSet1: TfrDBDataSet
     DataSet = DMCentralTrocas.CDS_RelReposicao
-    Left = 328
-    Top = 128
+    Left = 184
+    Top = 144
   end
   object frBMPExport1: TfrBMPExport
     Left = 325
@@ -73,8 +73,8 @@ object DMRelatorio: TDMRelatorio
     Font.Height = -11
     Font.Name = 'Courier New'
     Font.Style = []
-    Left = 116
-    Top = 64
+    Left = 204
+    Top = 24
   end
   object RelVisual: TRelVisualJul
     Cabecalho1Direita = '#Pag'
@@ -99,16 +99,16 @@ object DMRelatorio: TDMRelatorio
     Fonte.Name = 'MS Sans Serif'
     Fonte.Style = []
     TXTCharSeparador = ';'
-    Left = 64
-    Top = 48
+    Left = 152
+    Top = 8
   end
   object frReport1: TfrReport
     Dataset = frDBDataSet1
     InitialZoom = pzDefault
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
     RebuildPrinter = False
-    Left = 280
-    Top = 112
+    Left = 136
+    Top = 128
     ReportForm = {19000000}
   end
   object frxPDFExport1: TfrxPDFExport
@@ -132,8 +132,8 @@ object DMRelatorio: TDMRelatorio
     CenterWindow = False
     PrintScaling = False
     PdfA = False
-    Left = 528
-    Top = 40
+    Left = 848
+    Top = 192
   end
   object frxReport1: TfrxReport
     Version = '5.2.16'
@@ -150,8 +150,8 @@ object DMRelatorio: TDMRelatorio
       'begin'
       ''
       'end.')
-    Left = 472
-    Top = 24
+    Left = 792
+    Top = 176
     Datasets = <>
     Variables = <>
     Style = <>

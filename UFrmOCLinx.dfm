@@ -3533,7 +3533,7 @@ object FrmOCLinx: TFrmOCLinx
               end
               object Bt_FiltroBuscaSubGrupo: TJvXPButton
                 Tag = 92
-                Left = 82
+                Left = 88
                 Top = 24
                 Width = 24
                 Height = 26
@@ -4457,7 +4457,7 @@ object FrmOCLinx: TFrmOCLinx
         Top = 53
         Width = 799
         Height = 475
-        ActivePage = Ts_GeraOCGrid
+        ActivePage = Ts_GeraOCOrdensCompra
         Align = alClient
         MultiLine = True
         TabOrder = 3

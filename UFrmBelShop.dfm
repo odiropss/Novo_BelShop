@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_OrdemCompra
+    ActivePage = TS_Filtros
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -7183,7 +7183,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_OCGeraOrdemCompra
+        ActivePage = Ts_OCBuscaProdutos
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -8460,7 +8460,6 @@ object FrmBelShop: TFrmBelShop
                 Height = 29
                 Hint = 'Localizar Docto'
                 TabOrder = 2
-                TabStop = False
                 ShowFocusRect = True
                 Anchors = [akTop, akRight]
                 Font.Charset = DEFAULT_CHARSET

@@ -213,6 +213,25 @@ Var
   MySql,
   sPercTotal: String;
 Begin
+{
+(100 - ((SOMA DE ITENS COM SALDO<1))*(100.000 / TOTAL DE ITENS)) * ((PERCENTUAL DA CURVA DO ITEM) / 100.000)
+
+EXMPLOS
+CURVA A - 50 %
+(100 - ((2500))*(100.000 / 15000)) * ((50) / 100.000) = 42,50 %
+
+CURVA B - 30 %
+(100 - ((6000))*(100.000 / 15000)) * ((30) / 100.000) = 32 %
+
+CURVA C - 4 %
+(100 - ((8500))*(100.000 / 15000)) * ((4) / 100.000) = 1,96 %
+
+CURVA D - 1 %
+(100 - ((5500))*(100.000 / 15000)) * ((1) / 100.000) = 0,67 %
+
+MEDIA TOTAL: 42,50 + 32 + 1,96 + 0,67 = 77,13
+}
+
   OdirPanApres.Caption:='AGUARDE !! Fase 1/3 - Calculando Níveis de Atendimentos...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmEstoques.Width-OdirPanApres.Width)/2));
