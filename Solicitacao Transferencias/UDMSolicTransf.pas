@@ -49,6 +49,19 @@ type
     SQLQ_BuscaRapida: TSQLQuery;
     DSP_BuscaRapida: TDataSetProvider;
     CDS_BuscaRapida: TClientDataSet;
+    SQLQuery1: TSQLQuery;
+    DSP_OCItensCheck: TDataSetProvider;
+    CDS_OCItensCheck: TClientDataSet;
+    DS_OCItensCheck: TDataSource;
+    SQLQ_OCItensCheck: TSQLQuery;
+    CDS_OCItensCheckNUM_SEQ_ITEM: TIntegerField;
+    CDS_OCItensCheckCOD_PRODUTO_LINX: TFMTBCDField;
+    CDS_OCItensCheckDES_PRODUTO: TStringField;
+    CDS_OCItensCheckQTD_PRODUTO: TIntegerField;
+    CDS_OCItensCheckQTD_CHECKOUT: TIntegerField;
+    CDS_OCItensCheckDTA_CHECKOUT: TDateField;
+    CDS_OCItensCheckHRA_CHECKOUT: TTimeField;
+    CDS_OCItensCheckIND_OC: TStringField;
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -146,8 +159,9 @@ begin
 
     If AnsiUpperCase(sgNomeUsuario)='ODIR' Then
     Begin
-      If i=1 Then sgFBConect:='FBConect_Local.ini';
-    End;
+      If msg('DB Local ??','C')=1 Then
+       If i=1 Then sgFBConect:='FBConect_Local.ini';
+    End; // If AnsiUpperCase(sgNomeUsuario)='ODIR' Then
 
     If i=4 Then
     Begin

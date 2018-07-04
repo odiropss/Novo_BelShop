@@ -129,7 +129,7 @@ object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
       OnChange = EdtCodBarrasChange
       OnKeyDown = EdtCodBarrasKeyDown
     end
-    object Pc_OBS: TPageControl
+    object PC_OBS: TPageControl
       Left = 1
       Top = 73
       Width = 539

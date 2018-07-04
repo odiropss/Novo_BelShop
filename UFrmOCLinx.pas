@@ -4320,7 +4320,7 @@ begin
     DMBelShop.CDS_BuscaRapida.Close;
     EdtFiltroCodForn.Text:='0';
     EdtFiltroCodForn.SetFocus;
-  End;
+  End; // If EdtFiltroCodForn.Value<>0 Then
 end;
 
 procedure TFrmOCLinx.Bt_FiltroBuscaFornClick(Sender: TObject);

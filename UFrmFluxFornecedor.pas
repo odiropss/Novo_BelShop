@@ -3970,6 +3970,7 @@ begin
   EdtCodLojaDoc.Enabled:=True;
   EdtCodHistDoc.Enabled:=True;
 
+  // Não é Só Observação =======================================================
   bgSoObs:=False;
 
   // Busca Historicos Utilizados ===============================================
@@ -4078,6 +4079,7 @@ begin
   // Relatório Lançamento Débito / Crédito =====================================
   //============================================================================
 
+  // Data para Processamento dod Caixa =========================================
   sgDtaDoc :='';
   sgNum_SeqCC:='';
 
@@ -4170,9 +4172,9 @@ begin
       Else
        EdtCodHistDocExit(Self);
 
-      EdtObsDoc.Text     :=DMBelShop.CDS_FluxoFornecedorTXT_OBS.AsString;
-      sgDtaDoc :=DateToStr(DMBelShop.CDS_FluxoFornecedorDATA.AsDateTime);
-      sgNum_SeqCC:=DMBelShop.CDS_FluxoFornecedorNUM_SEQ.AsString;
+      EdtObsDoc.Text:=DMBelShop.CDS_FluxoFornecedorTXT_OBS.AsString;
+      sgDtaDoc      :=DateToStr(DMBelShop.CDS_FluxoFornecedorDATA.AsDateTime);
+      sgNum_SeqCC   :=DMBelShop.CDS_FluxoFornecedorNUM_SEQ.AsString;
 
       // Apresenta Alteração =====================================================
       igTabSheet:=PC_Principal.TabIndex;
@@ -4541,6 +4543,9 @@ begin
   // Fecha Conta Corrente Fornecedor ===========================================
   If DMBelShop.CDS_FluxoFornecedor.Active Then
    DMBelShop.CDS_FluxoFornecedor.Close;
+
+  // Coloca Data do Caixa para 30 Dias Atras ===================================
+  sgDtaDoc:=DateToStr((IncMonth(StrToDate(sgDtaDoc),-1)));
 
   // Atualiza Saldos do Fornecedor =============================================
   EdtFluFornCodFornAcertar.Text:=sCodForn;

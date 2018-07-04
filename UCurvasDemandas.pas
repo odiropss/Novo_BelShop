@@ -709,7 +709,6 @@ begin
     Try
       DateSeparator:='.';
       DecimalSeparator:='.';
-
       sgCodLoja:=DMMovtosEmpresas.CDS_Pesquisa.FieldByName('COD_FILIAL').AsString;
 
       // Busca Valor e Quantidade Total de Demandas ============================
@@ -805,11 +804,11 @@ begin
                 ' FROM PRODUTO pr'+
                 '        LEFT JOIN (SELECT md.codfilial,'+
                 '                          md.codproduto,'+
-                '                          CAST(SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.preco,0)),0.00)) AS NUMERIC(12,2)) VLR_DEMANDAS,'+
-                '                          CAST((((SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.preco,0)),0.0000)))*100)/'+sTotVlrDemandas+') AS NUMERIC(12,4)) PER_PARTICIPACAO,'+
-                '                          CAST(SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.quant_ref,0)),0)) AS INTEGER) QTD_DEMANDAS,'+
-                '                          CAST((((SUM(DECODE(md.ind_tipo,''DM'',ABS(COALESCE(md.quant_ref,0)),0.0000)))*100)/'+sTotQtdDemandas+') AS NUMERIC(12,4)) PER_PART_QTD,'+
-                '                          CAST(SUM(DECODE(md.ind_tipo,''TR'',ABS(COALESCE(md.quant_ref,0)),0)) AS INTEGER) QTD_TRANSITO'+
+                '                          CAST(SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.preco,0),0.00)) AS NUMERIC(12,2)) VLR_DEMANDAS,'+
+                '                          CAST((((SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.preco,0),0.0000)))*100)/'+sTotVlrDemandas+') AS NUMERIC(12,4)) PER_PARTICIPACAO,'+
+                '                          CAST(SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.quant_ref,0),0)) AS INTEGER) QTD_DEMANDAS,'+
+                '                          CAST((((SUM(DECODE(md.ind_tipo,''DM'',COALESCE(md.quant_ref,0),0.0000)))*100)/'+sTotQtdDemandas+') AS NUMERIC(12,4)) PER_PART_QTD,'+
+                '                          CAST(SUM(DECODE(md.ind_tipo,''TR'',COALESCE(md.quant_ref,0),0)) AS INTEGER) QTD_TRANSITO'+
                 '                   FROM MOVTOS_EMPRESAS md'+
                 '           WHERE ((md.ind_tipo=''DM'' AND md.dta_ref BETWEEN '+QuotedStr(sDtaDemI)+' AND '+
                                                                                 QuotedStr(sDtaDemF)+')'+

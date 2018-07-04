@@ -6,10 +6,26 @@ object DMSolicTransf: TDMSolicTransf
   Height = 571
   Width = 848
   object SQLC: TSQLConnection
-    DriverName = 'UIB FireBird15'
+    ConnectionName = 'BelShop'
+    DriverName = 'Interbase'
     GetDriverFunc = 'getSQLDriverINTERBASE'
-    LibraryName = 'dbexpUIBfire15.dll'
+    LibraryName = 'dbexpint.dll'
     LoginPrompt = False
+    Params.Strings = (
+      'DriverName=Interbase'
+      'Database=\\LocalHost\c:\Projetos\BelShop\Dados\BELSHOP.FDB'
+      'RoleName=RoleName'
+      'User_Name=sysdba'
+      'Password=masterkey'
+      'ServerCharSet='
+      'SQLDialect=3'
+      'BlobSize=-1'
+      'CommitRetain=False'
+      'WaitOnLocks=True'
+      'ErrorResourceFile='
+      'LocaleCode=0000'
+      'Interbase TransIsolation=ReadCommited'
+      'Trim Char=False')
     VendorLib = 'fbclient.dll'
     Left = 44
     Top = 16
@@ -18,51 +34,51 @@ object DMSolicTransf: TDMSolicTransf
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 60
-    Top = 88
+    Left = 36
+    Top = 120
   end
   object DSP_Busca: TDataSetProvider
     DataSet = SQLQ_Busca
     Options = [poFetchBlobsOnDemand, poRetainServerOrder]
-    Left = 116
-    Top = 101
+    Left = 92
+    Top = 133
   end
   object CDS_Busca: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Busca'
-    Left = 164
-    Top = 88
+    Left = 140
+    Top = 120
   end
   object DS_Busca: TDataSource
     DataSet = CDS_Busca
-    Left = 220
-    Top = 101
+    Left = 196
+    Top = 133
   end
   object DSP_Pesquisa: TDataSetProvider
     DataSet = SQLQ_Pesquisa
     Options = [poRetainServerOrder]
-    Left = 97
-    Top = 259
+    Left = 81
+    Top = 275
   end
   object CDS_Pesquisa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Pesquisa'
-    Left = 137
-    Top = 239
+    Left = 121
+    Top = 255
   end
   object DS_Pesquisa: TDataSource
     DataSet = CDS_Pesquisa
-    Left = 181
-    Top = 259
+    Left = 165
+    Top = 275
   end
   object SQLQ_Pesquisa: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 60
-    Top = 232
+    Left = 44
+    Top = 248
   end
   object DSP_Solicitacao: TDataSetProvider
     DataSet = SQLQ_Solicitacao
@@ -131,7 +147,7 @@ object DMSolicTransf: TDMSolicTransf
   object Timer1: TTimer
     Interval = 1800000
     OnTimer = Timer1Timer
-    Left = 360
+    Left = 432
     Top = 64
   end
   object SDS_DtaHoraServidor: TSQLDataSet
@@ -141,21 +157,21 @@ object DMSolicTransf: TDMSolicTransf
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 188
+    Left = 308
     Top = 22
   end
   object DSP_Verifica: TDataSetProvider
     DataSet = SQLQ_Verifica
     Options = [poRetainServerOrder]
-    Left = 73
-    Top = 443
+    Left = 89
+    Top = 435
   end
   object CDS_Verifica: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Verifica'
-    Left = 113
-    Top = 423
+    Left = 129
+    Top = 415
     object CDS_VerificaDTA_SOLICITACAO: TDateField
       DisplayLabel = 'Dta Solicita'#231#227'o'
       FieldName = 'DTA_SOLICITACAO'
@@ -229,8 +245,8 @@ object DMSolicTransf: TDMSolicTransf
   end
   object DS_Verifica: TDataSource
     DataSet = CDS_Verifica
-    Left = 157
-    Top = 443
+    Left = 173
+    Top = 435
   end
   object SQLQ_Verifica: TSQLQuery
     MaxBlobSize = -1
@@ -284,27 +300,120 @@ object DMSolicTransf: TDMSolicTransf
       ''
       '')
     SQLConnection = SQLC
-    Left = 36
-    Top = 416
+    Left = 52
+    Top = 408
   end
   object SQLQ_BuscaRapida: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 60
-    Top = 160
+    Top = 192
   end
   object DSP_BuscaRapida: TDataSetProvider
     DataSet = SQLQ_BuscaRapida
     Options = [poFetchBlobsOnDemand, poRetainServerOrder]
     Left = 116
-    Top = 173
+    Top = 205
   end
   object CDS_BuscaRapida: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_BuscaRapida'
     Left = 164
-    Top = 160
+    Top = 192
+  end
+  object SQLQuery1: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 132
+    Top = 56
+  end
+  object DSP_OCItensCheck: TDataSetProvider
+    DataSet = SQLQ_OCItensCheck
+    Options = [poRetainServerOrder]
+    Left = 321
+    Top = 195
+  end
+  object CDS_OCItensCheck: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_OCItensCheck'
+    Left = 361
+    Top = 175
+    object CDS_OCItensCheckNUM_SEQ_ITEM: TIntegerField
+      FieldName = 'NUM_SEQ_ITEM'
+    end
+    object CDS_OCItensCheckCOD_PRODUTO_LINX: TFMTBCDField
+      Alignment = taLeftJustify
+      DisplayLabel = 'C'#243'd Prod Linx'
+      FieldName = 'COD_PRODUTO_LINX'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_OCItensCheckDES_PRODUTO: TStringField
+      DisplayLabel = 'Produto Linx'
+      FieldName = 'DES_PRODUTO'
+      Size = 250
+    end
+    object CDS_OCItensCheckQTD_PRODUTO: TIntegerField
+      Alignment = taLeftJustify
+      DisplayLabel = 'Quant OC'
+      FieldName = 'QTD_PRODUTO'
+    end
+    object CDS_OCItensCheckQTD_CHECKOUT: TIntegerField
+      Alignment = taLeftJustify
+      DisplayLabel = 'Quant CheckOut'
+      FieldName = 'QTD_CHECKOUT'
+    end
+    object CDS_OCItensCheckDTA_CHECKOUT: TDateField
+      DisplayLabel = 'Data CheckOut'
+      FieldName = 'DTA_CHECKOUT'
+    end
+    object CDS_OCItensCheckHRA_CHECKOUT: TTimeField
+      DisplayLabel = 'Hora CheckOut'
+      FieldName = 'HRA_CHECKOUT'
+    end
+    object CDS_OCItensCheckIND_OC: TStringField
+      DisplayLabel = 'OC ?'
+      FieldName = 'IND_OC'
+      FixedChar = True
+      Size = 1
+    end
+  end
+  object DS_OCItensCheck: TDataSource
+    DataSet = CDS_OCItensCheck
+    Left = 405
+    Top = 195
+  end
+  object SQLQ_OCItensCheck: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQL.Strings = (
+      'SELECT'
+      'oi.num_seq_item, oi.cod_produto_linx, oi.des_produto,'
+      
+        'oi.qtd_produto, oi.qtd_checkout, oi.dta_checkout, oi.hra_checkou' +
+        't,'
+      'CASE'
+      '  WHEN ni.ind_oc IS NULL THEN'
+      '    '#39'S'#39
+      '  ELSE'
+      '    ni.ind_oc'
+      'END IND_OC'
+      'FROM OC_LOJAS_ITENS oi'
+      
+        '    left JOIN oc_lojas_itens_nfe ni  ON ni.num_seq_oc=oi.num_seq' +
+        '_oc'
+      
+        '                                    AND ni.num_seq_item=oi.num_s' +
+        'eq_item'
+      'WHERE oi.num_seq_oc=23'
+      'ORDER BY 1'
+      '')
+    SQLConnection = SQLC
+    Left = 284
+    Top = 168
   end
 end

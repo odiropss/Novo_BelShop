@@ -18,7 +18,7 @@ type
     Bt_Fechar: TJvXPButton;
     EdtQtdEmbalagem: TCurrencyEdit;
     EdtCodBarras: TJvEdit;
-    Pc_OBS: TPageControl;
+    PC_OBS: TPageControl;
     Ts_OBS_Reposicao: TTabSheet;
     Gb_CheckOut_OK: TGroupBox;
     PBar_CheckOut_OK: TJvGradientProgressBar;
@@ -51,9 +51,7 @@ type
       Shift: TShiftState);
 
     // ODIR - INICO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
     Function BuscaProdutoLinx(sCodBarras: String): Boolean;
-
     // ODIR - FIM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     procedure Bt_CodBarrasSimplesRetornarClick(Sender: TObject);
@@ -65,7 +63,6 @@ type
     bgProcessar,
     bgCheckOutPerdas,
     bgCheckOutSimples: Boolean;
-
   end;
 
 var
@@ -77,6 +74,7 @@ uses DK_Procs1, UFrmCentralTrocas, UDMBelShop, UDMCentralTrocas, DBClient,
   DB;
 
 {$R *.dfm}
+
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // ODIR - INICO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

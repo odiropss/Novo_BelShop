@@ -212,6 +212,8 @@ Procedure TFrmEstoques.NivelAtendimentoCalcula;
 Var
   MySql,
   sPercTotal: String;
+
+  hHrInicio, hHrFim: String;
 Begin
 {
 (100 - ((SOMA DE ITENS COM SALDO<1))*(100.000 / TOTAL DE ITENS)) * ((PERCENTUAL DA CURVA DO ITEM) / 100.000)
@@ -244,6 +246,10 @@ MEDIA TOTAL: 42,50 + 32 + 1,96 + 0,67 = 77,13
   Refresh;
 
   Screen.Cursor:=crAppStart;
+
+  hHrInicio:='';
+  hHrFim:='';
+  hHrInicio:=TimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
 
   // Percentual Média Total do Nivel de Atendimento das Lojas ==================
   MySql:=' Select'+
@@ -429,7 +435,14 @@ MEDIA TOTAL: 42,50 + 32 + 1,96 + 0,67 = 77,13
 
   OdirPanApres.Visible:=False;
   Screen.Cursor:=crDefault;
-                                                                  
+
+  // APRESENTA O RESULTA DO TEMPO FINAL
+  hHrFim:=TimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+  msg('TEMPO: '+TimeToStr(StrToTime(hHrFim)-StrToTime(hHrInicio)),'A');
+
+  hHrInicio:='';
+  hHrFim:='';
+
 end; // Calcula Nivel de Atendimento da Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Acerta Seleção das Curvas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -2580,15 +2593,6 @@ Begin
   DMVirtual.SQLQ_Busca.SQL.Add(MySql+MySqlSelect+MySqlClausula1+MySqlClausula2);
   DMVirtual.CDS_V_Estoques.Open;
 
-//  DMBelShop.CDS_SQLQ_Busca.close;
-//  DMBelShop.SQLQ_Busca.SQL.Clear;
-//  DMBelShop.SQLQ_Busca.SQL.Add(MySql+MySqlSelect+MySqlClausula1+MySqlClausula2);
-//  DMBelShop.CDS_SQLQ_Busca.Open;
-//
-//  // Apresenta Produtos ========================================================
-//  DMVirtual.CDS_V_Estoques.Data:=DMBelShop.CDS_SQLQ_Busca.Data;
-//  DMBelShop.CDS_SQLQ_Busca.close;
-
   // Drop Sequence's ===========================================================
   MySql:=' DROP SEQUENCE '+sGenProd;
   DMBelShop.SQLC.Execute(MySql,nil,nil);
@@ -2642,10 +2646,6 @@ Begin
   THackDBGrid(Dbg_Estoques).FixedCols:=4;
   THackDBGrid(Dbg_Estoques).SelectedIndex:=9;
   Dbg_Estoques.SetFocus;
-
-// OdirApagar - 19/12/2017 - Não Apresenta Mais - Dbg_EstoquesPrev
-//  // Apresenta Estoques e Demanda Prevista =====================================
-//  DMVirtual.CDS_V_EstoquesAfterScroll(DMVirtual.CDS_V_Estoques);
 
   // APRESENTA O RESULTA DO TEMPO FINAL
   hHrFim:=TimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
@@ -3501,10 +3501,13 @@ begin
 
   bgSiga:=False;
   FrmPeriodoApropriacao:=TFrmPeriodoApropriacao.Create(Self);
-  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date:=
-             PrimUltDia(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)-1,'P');
-  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date   :=StrToDate(
+
+  // Ajusta Período para 30 Dias ===============================================
+  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date:=StrToDate(
                 DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)-1));
+  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date:=
+              IncMonth(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date,-1);
+
   FrmPeriodoApropriacao.ShowModal;
 
   sgDtaI:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date);
@@ -3517,18 +3520,6 @@ begin
   // Verifica se Prossegue Processamento =======================================
   If Not bgSiga Then
    Exit;
-
-//  // Busca Ultima Data Processada ==============================================
-//  MySql:=' select max(l.dta_processa) Data From LINX_PRODUTOS_LOJAS l';
-//  DMBelShop.CDS_Busca.Close;
-//  DMBelShop.SDS_Busca.CommandText:=MySql;
-//  DMBelShop.CDS_Busca.Open;
-//
-//  sgDtaI:=f_Troca('/','.',f_Troca('-','.',DMBelShop.CDS_Busca.FieldByName('Data').AsString));
-//  sgDtaF:=f_Troca('/','.',f_Troca('-','.',DMBelShop.CDS_Busca.FieldByName('Data').AsString));
-//  DMBelShop.CDS_Busca.Close;
-//  sgDtaI:='12.01.2018';
-//  sgDtaF:='12.01.2018';
 
   // Apresentas Loja Para Seleção ==============================================
   sgEmpresaNao:='(''89'',''96'',''97'',''98'')';

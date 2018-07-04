@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = TS_Filtros
+    ActivePage = Ts_FinanFechaCaixa
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -12783,7 +12783,7 @@ object FrmBelShop: TFrmBelShop
         Top = 61
         Width = 971
         Height = 431
-        ActivePage = TS_ConsultaNFeFiltros
+        ActivePage = Ts_ConsultaNFeMovtoCompr
         Align = alClient
         TabOrder = 1
         OnChange = PC_ConsultaMovtoComprChange

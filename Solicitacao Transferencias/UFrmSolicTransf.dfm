@@ -3,6 +3,7 @@ object FrmSolicTransf: TFrmSolicTransf
   Top = 119
   Width = 907
   Height = 606
+  AutoSize = True
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'BelShop - Solicita'#231#227'o de Transfer'#234'ncia do CD para Loja'
   Color = clBtnFace
@@ -985,21 +986,25 @@ object FrmSolicTransf: TFrmSolicTransf
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
-    object Bt_AcertaDoc_Gerado_Odir: TButton
-      Left = 704
+    object JvXPButton1: TJvXPButton
+      Left = 750
       Top = 2
-      Width = 145
-      Height = 25
+      Width = 139
+      Height = 26
       Caption = 'Acerta Doc_Gerado'
+      TabOrder = 0
+      ShowFocusRect = True
+      Spacing = 8
+      Align = alRight
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
-      Font.Style = []
+      Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 0
-      Visible = False
-      OnClick = Bt_AcertaDoc_Gerado_OdirClick
+      ParentShowHint = False
+      ShowHint = False
+      OnClick = JvXPButton1Click
     end
   end
   object OdirPanApres: TPanel
@@ -1025,7 +1030,7 @@ object FrmSolicTransf: TFrmSolicTransf
     Top = 0
     Width = 891
     Height = 538
-    ActivePage = Ts_Produtos
+    ActivePage = Ts_NFeCheckOut
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1973,6 +1978,438 @@ object FrmSolicTransf: TFrmSolicTransf
           end>
       end
     end
+    object Ts_NFeCheckOut: TTabSheet
+      Caption = ' CheckOut NFe Entrada '
+      ImageIndex = 2
+      object Gb_NFe_Solicitacoes: TGroupBox
+        Left = 0
+        Top = 0
+        Width = 883
+        Height = 85
+        Align = alTop
+        Caption = ' OC / NFe Entrada '
+        Ctl3D = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentCtl3D = False
+        ParentFont = False
+        TabOrder = 0
+        object Label6: TLabel
+          Left = 36
+          Top = 22
+          Width = 65
+          Height = 13
+          Caption = 'Fornecedor'
+          Color = clBtnFace
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+        end
+        object Label7: TLabel
+          Left = 687
+          Top = 22
+          Width = 90
+          Height = 13
+          Caption = 'N'#186' NFe Entrada'
+          Color = clBtnFace
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+        end
+        object Label8: TLabel
+          Left = 36
+          Top = 55
+          Width = 123
+          Height = 13
+          Caption = 'N'#186' Ordens de Compra'
+          Color = clBtnFace
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+        end
+        object EdtNFeCodFornLinx: TCurrencyEdit
+          Left = 105
+          Top = 20
+          Width = 49
+          Height = 18
+          AutoSize = False
+          Ctl3D = False
+          DecimalPlaces = 0
+          DisplayFormat = ',0'
+          ParentCtl3D = False
+          TabOrder = 0
+          OnChange = EdtNFeCodFornLinxChange
+          OnExit = EdtNFeCodFornLinxExit
+        end
+        object EdtNFeDesFornLinx: TEdit
+          Left = 190
+          Top = 20
+          Width = 484
+          Height = 19
+          TabStop = False
+          Color = 14737632
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 1
+        end
+        object Bt_NFeBuscaFornLinx: TJvXPButton
+          Tag = 92
+          Left = 158
+          Top = 15
+          Width = 27
+          Height = 26
+          TabOrder = 2
+          TabStop = False
+          Glyph.Data = {
+            07544269746D61705E060000424D5E0600000000000036040000280000001600
+            000017000000010008000000000028020000C30E0000C30E0000000100000000
+            000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
+            FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
+            FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000010101010101010101010101010101010101010101010000010101010101
+            0101010101010101010101040404030100000101010101010101010101010101
+            0101040701070401000001010101010101010101010101010104070101070401
+            0000010101010101010101010101010104070101070704010000010101010101
+            0101010101010104070101070704010100000101010101010101010101010407
+            0101070704010101000001010101010101010101010407010107070401010101
+            0000010101010101010101010407010107070401010101010000010101010101
+            0101010404040307070401010101010100000101010101010404040404040407
+            0401010101010101000001010101040406010601010404040101010101010101
+            0000010101040106010601010101040101010101010101010000010101040601
+            0601060106010401010101010101010100000101040601060101010601060104
+            0101010101010101000001010401060106010601060101040101010101010101
+            0000010104060106010601060106010401010101010101010000010104010601
+            0601060106010104010101010101010100000101010401060101010601060401
+            0101010101010101000001010104060106010601060104010101010101010101
+            0000010101010404010101060404010101010101010101010000010101010101
+            0404040401010101010101010101010100000101010101010101010101010101
+            01010101010101010000}
+          ShowFocusRect = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_NFeBuscaFornLinxClick
+        end
+        object EdtNFeNumNFe: TCurrencyEdit
+          Left = 781
+          Top = 18
+          Width = 66
+          Height = 21
+          AutoSize = False
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 3
+          OnChange = EdtNFeNumNFeChange
+        end
+        object EdtNFeNumOC: TCurrencyEdit
+          Left = 162
+          Top = 52
+          Width = 66
+          Height = 21
+          AutoSize = False
+          DecimalPlaces = 0
+          DisplayFormat = '0'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 4
+          OnChange = EdtNFeNumOCChange
+          OnExit = EdtNFeNumOCExit
+        end
+        object Bt_NFeBuscaOC: TJvXPButton
+          Tag = 92
+          Left = 232
+          Top = 49
+          Width = 27
+          Height = 26
+          TabOrder = 5
+          TabStop = False
+          Glyph.Data = {
+            07544269746D61705E060000424D5E0600000000000036040000280000001600
+            000017000000010008000000000028020000C30E0000C30E0000000100000000
+            000000FF0000FFFFFF0080808000C0C0C00000000000FF000000FFFF00000000
+            FF0000FFFF0045CABF004B737F00D0B4B400CC625700FF31310000CEFF000079
+            FF000029FF005E5EFF00BDBDFF00502B2D000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000010101010101010101010101010101010101010101010000010101010101
+            0101010101010101010101040404030100000101010101010101010101010101
+            0101040701070401000001010101010101010101010101010104070101070401
+            0000010101010101010101010101010104070101070704010000010101010101
+            0101010101010104070101070704010100000101010101010101010101010407
+            0101070704010101000001010101010101010101010407010107070401010101
+            0000010101010101010101010407010107070401010101010000010101010101
+            0101010404040307070401010101010100000101010101010404040404040407
+            0401010101010101000001010101040406010601010404040101010101010101
+            0000010101040106010601010101040101010101010101010000010101040601
+            0601060106010401010101010101010100000101040601060101010601060104
+            0101010101010101000001010401060106010601060101040101010101010101
+            0000010104060106010601060106010401010101010101010000010104010601
+            0601060106010104010101010101010100000101010401060101010601060401
+            0101010101010101000001010104060106010601060104010101010101010101
+            0000010101010404010101060404010101010101010101010000010101010101
+            0404040401010101010101010101010100000101010101010101010101010101
+            01010101010101010000}
+          ShowFocusRect = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_NFeBuscaOCClick
+        end
+        object Bt_NFeEscanear: TJvXPButton
+          Left = 686
+          Top = 43
+          Width = 160
+          Height = 37
+          Caption = 'Escanear Produtos'
+          TabOrder = 6
+          TabStop = False
+          Glyph.Data = {
+            0A544A504547496D616765D7040000FFD8FFE000104A46494600010101006000
+            600000FFDB004300020101020101020202020202020203050303030303060404
+            0305070607070706070708090B0908080A0807070A0D0A0A0B0C0C0C0C07090E
+            0F0D0C0E0B0C0C0CFFDB004301020202030303060303060C0807080C0C0C0C0C
+            0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C0C
+            0C0C0C0C0C0C0C0C0C0C0C0C0CFFC00011080020001C03012200021101031101
+            FFC4001F0000010501010101010100000000000000000102030405060708090A
+            0BFFC400B5100002010303020403050504040000017D01020300041105122131
+            410613516107227114328191A1082342B1C11552D1F02433627282090A161718
+            191A25262728292A3435363738393A434445464748494A535455565758595A63
+            6465666768696A737475767778797A838485868788898A92939495969798999A
+            A2A3A4A5A6A7A8A9AAB2B3B4B5B6B7B8B9BAC2C3C4C5C6C7C8C9CAD2D3D4D5D6
+            D7D8D9DAE1E2E3E4E5E6E7E8E9EAF1F2F3F4F5F6F7F8F9FAFFC4001F01000301
+            01010101010101010000000000000102030405060708090A0BFFC400B5110002
+            0102040403040705040400010277000102031104052131061241510761711322
+            328108144291A1B1C109233352F0156272D10A162434E125F11718191A262728
+            292A35363738393A434445464748494A535455565758595A636465666768696A
+            737475767778797A82838485868788898A92939495969798999AA2A3A4A5A6A7
+            A8A9AAB2B3B4B5B6B7B8B9BAC2C3C4C5C6C7C8C9CAD2D3D4D5D6D7D8D9DAE2E3
+            E4E5E6E7E8E9EAF2F3F4F5F6F7F8F9FAFFDA000C03010002110311003F00FDF7
+            9B72C2CCABB9B070B9DB93F5ED5FC7778CFF006B3F8BFF00113E31CDF171BE24
+            78F34BF8B570F3457BA93CD750C96B2012C327932C18FB246AAD2C7B212B1853
+            B04623009FE97FFE0B39FF00050687FE09E3FB13EBDE24B1D62D74BF19EB0BF6
+            0F0F6F856E2589CB289AE9626CA930C6DF2190188DC496D1C9C4A01FE703FE09
+            89FB32F8D3FE0A71FB51F8BB49D075486DF5E8F4B935C326B7A85CCD64F1F9F1
+            DBAC523949A46937DC42A8CC73B4484B6556B0AF88A5429BAB59DA2B77F81518
+            B93B4773EBFF00D837FE0EC0F8ABFB394FA7F86FE3D787CF8FBC3318B7B5B6D5
+            95C43ABC3129B585DFED40B4579B218EE253E6A89269E51BAE234FBBFBF5FB32
+            FED23E0FFDAEFE07E85F113E1FEAADAD784BC44923D8DDBDACD6AD27952BC320
+            31CAA8EBB648DD79500EDC8CA904FF003FDA6FFC106FE336BFF182FBC0FE30F8
+            32D70B7574B676FE20B2BD41A3C62592E7CBD49A5048921D9652BB238172892C
+            0B24492DC411C9FBF9FB2DFECD5E17FD8FFE01786FE1BF8362BE87C3BE17B778
+            2D7ED53F9F3C8CF23CD2C8ED80373CB248E551551776D45440AA37211FCEFF00
+            FC1CDDFB4EEBFF00B6E7FC14E2CBE08F841EEB5CD3BC062DF46B6B1D2D5AF24B
+            BD4E62A668E389537FDA0CCE9018D1996430DBE4064C8FD38FF8214FFC10934B
+            FF008275F83ECBE2178F0CF75F18B5AB0104B676DA849FD9DE1BB673E61B3DB1
+            B08EEA7661134B2C81D049044210A23F365F99FF006AEFF837FBE3C7C77FDAAF
+            4FFDA0AD2FB4AD0FC79E36F1141A9DFE9DA15E456D75E04CCFFE8EED721A18EE
+            0DB5BA4026B8B75333481D922B9706597F7040C74A8A94E325CB257434DAD85A
+            28A2AC0FFFD9}
+          ShowFocusRect = True
+          Spacing = 15
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_NFeEscanearClick
+        end
+        object EdtNFeNumSeqOC: TEdit
+          Left = 368
+          Top = 16
+          Width = 201
+          Height = 19
+          TabOrder = 7
+        end
+        object Memo1: TMemo
+          Left = 264
+          Top = 44
+          Width = 410
+          Height = 36
+          Lines.Strings = (
+            'Memo1')
+          TabOrder = 8
+        end
+      end
+      object Dbg_NFeProdutosOC: TDBGrid
+        Left = 0
+        Top = 85
+        Width = 883
+        Height = 425
+        Align = alClient
+        DataSource = DMSolicTransf.DS_OCItensCheck
+        FixedColor = clTeal
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+        ParentFont = False
+        TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWhite
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = [fsBold]
+        Columns = <
+          item
+            Alignment = taRightJustify
+            Expanded = False
+            FieldName = 'COD_PRODUTO_LINX'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'C'#243'd Prod'
+            Width = 60
+            Visible = True
+          end
+          item
+            Color = 15395562
+            Expanded = False
+            FieldName = 'DES_PRODUTO'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Width = 370
+            Visible = True
+          end
+          item
+            Alignment = taRightJustify
+            Expanded = False
+            FieldName = 'QTD_PRODUTO'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Qtd OC'
+            Width = 60
+            Visible = True
+          end
+          item
+            Alignment = taRightJustify
+            Expanded = False
+            FieldName = 'QTD_CHECKOUT'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Qtd CheckOut'
+            Width = 90
+            Visible = True
+          end
+          item
+            Alignment = taRightJustify
+            Expanded = False
+            FieldName = 'DTA_CHECKOUT'
+            Title.Alignment = taRightJustify
+            Width = 100
+            Visible = True
+          end
+          item
+            Alignment = taRightJustify
+            Expanded = False
+            FieldName = 'HRA_CHECKOUT'
+            Title.Alignment = taRightJustify
+            Width = 100
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'IND_OC'
+            Title.Alignment = taCenter
+            Width = 50
+            Visible = True
+          end>
+      end
+    end
   end
   object CorCaptionForm: TJvGradientCaption
     Active = False
@@ -1995,12 +2432,12 @@ object FrmSolicTransf: TFrmSolicTransf
     Font.Style = [fsBold]
     StartColor = 16777088
     EndColor = 16777088
-    Left = 520
-    Top = 224
+    Left = 680
+    Top = 496
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 516
-    Top = 159
+    Left = 484
+    Top = 487
   end
 end

@@ -2393,7 +2393,6 @@ Begin
            ' fl.razao_cliente DES_FORN_LINX,'+
            ' oc.num_oc_gerada NUM_OC,'+
            ' CAST(oc.dta_oc_gerada AS DATE) DTA_OC,'+
-           ' 0 NUM_NFE,'+
            ' od.cod_comprador,'+
            ' od.des_comprador,'+
            ' oc.num_documento DOC_ORIGEM,'+
@@ -2477,7 +2476,6 @@ Begin
            ' fl.razao_cliente DES_FORN_LINX,'+
            ' oc.num_oc_gerada NUM_OC,'+
            ' CAST(oc.dta_oc_gerada AS DATE) DTA_OC,'+
-           ' 0 NUM_NFE,'+
            ' od.cod_comprador,'+
            ' od.des_comprador,'+
            ' oc.num_documento DOC_ORIGEM,'+

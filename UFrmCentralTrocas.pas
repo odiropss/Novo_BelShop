@@ -411,8 +411,6 @@ var
 
   OrderGrid: String;    // Ordenar Grid
 
-
-
 implementation
 
 uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
@@ -6702,7 +6700,7 @@ begin
   Begin
     OdirPanApres.Visible:=False;
     Screen.Cursor:=crDefault;
-    msg('Date Inválida !!','A');
+    msg('Date Inválida !!'+cr+cr+'Maior que Hoje !!','A');
     DtaEdt_ReposLojas.Date:=StrToDate(DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)));
     DtaEdt_ReposLojas.SetFocus;
     Exit;

@@ -28,7 +28,7 @@ object FrmEstoques: TFrmEstoques
     Top = 0
     Width = 977
     Height = 569
-    ActivePage = Ts_NivelAtendimento
+    ActivePage = Ts_Estoques
     Align = alClient
     TabOrder = 0
     OnChange = PC_EstoquesPrincipalChange
@@ -1393,7 +1393,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 251
+          Left = 250
           Top = 11
           Width = 353
           Height = 13
