@@ -2521,7 +2521,6 @@ object FrmCentralTrocas: TFrmCentralTrocas
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        OnClick = Bt_ReposLojasGeraPedidoSIDICOMClick
       end
     end
     object Ts_AnaliseReposicoesEndereco: TTabSheet

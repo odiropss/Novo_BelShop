@@ -62,6 +62,9 @@ type
     CDS_OCItensCheckDTA_CHECKOUT: TDateField;
     CDS_OCItensCheckHRA_CHECKOUT: TTimeField;
     CDS_OCItensCheckIND_OC: TStringField;
+    SQLQuery2: TSQLQuery;
+    CDS_OCItensCheckNUM_SEQ_OC: TIntegerField;
+    CDS_OCItensCheckNUM_OC: TIntegerField;
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -94,6 +97,7 @@ var
 
   dgDtaHoje: TDateTime;
 
+  sgNrsOCs, sgNrsSeqOCs: String; // Usado na CheckOut OC / NFe
 
 implementation
 

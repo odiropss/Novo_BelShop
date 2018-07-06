@@ -342,11 +342,18 @@ object DMSolicTransf: TDMSolicTransf
     ProviderName = 'DSP_OCItensCheck'
     Left = 361
     Top = 175
+    object CDS_OCItensCheckNUM_SEQ_OC: TIntegerField
+      FieldName = 'NUM_SEQ_OC'
+    end
     object CDS_OCItensCheckNUM_SEQ_ITEM: TIntegerField
       FieldName = 'NUM_SEQ_ITEM'
     end
+    object CDS_OCItensCheckNUM_OC: TIntegerField
+      DisplayLabel = 'N'#186' OC'
+      FieldName = 'NUM_OC'
+      DisplayFormat = ',0'
+    end
     object CDS_OCItensCheckCOD_PRODUTO_LINX: TFMTBCDField
-      Alignment = taLeftJustify
       DisplayLabel = 'C'#243'd Prod Linx'
       FieldName = 'COD_PRODUTO_LINX'
       Precision = 15
@@ -358,24 +365,27 @@ object DMSolicTransf: TDMSolicTransf
       Size = 250
     end
     object CDS_OCItensCheckQTD_PRODUTO: TIntegerField
-      Alignment = taLeftJustify
       DisplayLabel = 'Quant OC'
       FieldName = 'QTD_PRODUTO'
+      DisplayFormat = ',0'
     end
     object CDS_OCItensCheckQTD_CHECKOUT: TIntegerField
-      Alignment = taLeftJustify
       DisplayLabel = 'Quant CheckOut'
       FieldName = 'QTD_CHECKOUT'
+      DisplayFormat = ',0'
     end
     object CDS_OCItensCheckDTA_CHECKOUT: TDateField
+      Alignment = taCenter
       DisplayLabel = 'Data CheckOut'
       FieldName = 'DTA_CHECKOUT'
     end
     object CDS_OCItensCheckHRA_CHECKOUT: TTimeField
+      Alignment = taCenter
       DisplayLabel = 'Hora CheckOut'
       FieldName = 'HRA_CHECKOUT'
     end
     object CDS_OCItensCheckIND_OC: TStringField
+      Alignment = taCenter
       DisplayLabel = 'OC ?'
       FieldName = 'IND_OC'
       FixedChar = True
@@ -391,8 +401,9 @@ object DMSolicTransf: TDMSolicTransf
     MaxBlobSize = -1
     Params = <>
     SQL.Strings = (
-      'SELECT'
-      'oi.num_seq_item, oi.cod_produto_linx, oi.des_produto,'
+      
+        'SELECT oi.num_seq_oc, oi.num_seq_item, oc.num_oc, oi.cod_produto' +
+        '_linx, oi.des_produto,'
       
         'oi.qtd_produto, oi.qtd_checkout, oi.dta_checkout, oi.hra_checkou' +
         't,'
@@ -404,16 +415,25 @@ object DMSolicTransf: TDMSolicTransf
       'END IND_OC'
       'FROM OC_LOJAS_ITENS oi'
       
-        '    left JOIN oc_lojas_itens_nfe ni  ON ni.num_seq_oc=oi.num_seq' +
+        '    LEFT JOIN OC_LOJAS_NFE oc        ON oc.num_seq_oc=oi.num_seq' +
+        '_oc'
+      
+        '    LEFT JOIN OC_LOJAS_ITENS_NFE ni  ON ni.num_seq_oc=oi.num_seq' +
         '_oc'
       
         '                                    AND ni.num_seq_item=oi.num_s' +
         'eq_item'
-      'WHERE oi.num_seq_oc=23'
-      'ORDER BY 1'
-      '')
+      'WHERE oi.num_seq_oc in (23,27)'
+      'ORDER BY oi.des_produto')
     SQLConnection = SQLC
     Left = 284
     Top = 168
+  end
+  object SQLQuery2: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 196
+    Top = 56
   end
 end

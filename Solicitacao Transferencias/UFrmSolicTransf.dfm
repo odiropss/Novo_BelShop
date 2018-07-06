@@ -2044,9 +2044,9 @@ object FrmSolicTransf: TFrmSolicTransf
         end
         object EdtNFeCodFornLinx: TCurrencyEdit
           Left = 105
-          Top = 20
+          Top = 18
           Width = 49
-          Height = 18
+          Height = 21
           AutoSize = False
           Ctl3D = False
           DecimalPlaces = 0
@@ -2055,12 +2055,13 @@ object FrmSolicTransf: TFrmSolicTransf
           TabOrder = 0
           OnChange = EdtNFeCodFornLinxChange
           OnExit = EdtNFeCodFornLinxExit
+          OnKeyDown = EdtNFeCodFornLinxKeyDown
         end
         object EdtNFeDesFornLinx: TEdit
           Left = 190
-          Top = 20
+          Top = 18
           Width = 484
-          Height = 19
+          Height = 21
           TabStop = False
           Color = 14737632
           Font.Charset = DEFAULT_CHARSET
@@ -2174,8 +2175,8 @@ object FrmSolicTransf: TFrmSolicTransf
           Font.Style = [fsBold]
           ParentFont = False
           TabOrder = 4
-          OnChange = EdtNFeNumOCChange
           OnExit = EdtNFeNumOCExit
+          OnKeyDown = EdtNFeNumOCKeyDown
         end
         object Bt_NFeBuscaOC: TJvXPButton
           Tag = 92
@@ -2306,28 +2307,29 @@ object FrmSolicTransf: TFrmSolicTransf
           ParentFont = False
           OnClick = Bt_NFeEscanearClick
         end
-        object EdtNFeNumSeqOC: TEdit
-          Left = 368
-          Top = 16
-          Width = 201
-          Height = 19
-          TabOrder = 7
-        end
-        object Memo1: TMemo
+        object Lbx_NFeNumOCs: TListBox
           Left = 264
           Top = 44
-          Width = 410
-          Height = 36
-          Lines.Strings = (
-            'Memo1')
-          TabOrder = 8
+          Width = 407
+          Height = 35
+          Hint = '<Delete> Para Excluir OC da Lista'
+          Columns = 8
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlue
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ItemHeight = 16
+          ParentFont = False
+          TabOrder = 7
+          OnKeyDown = Lbx_NFeNumOCsKeyDown
         end
       end
       object Dbg_NFeProdutosOC: TDBGrid
         Left = 0
         Top = 85
         Width = 883
-        Height = 425
+        Height = 396
         Align = alClient
         DataSource = DMSolicTransf.DS_OCItensCheck
         FixedColor = clTeal
@@ -2344,9 +2346,22 @@ object FrmSolicTransf: TFrmSolicTransf
         TitleFont.Height = -11
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
+        OnDrawColumnCell = Dbg_NFeProdutosOCDrawColumnCell
         Columns = <
           item
-            Alignment = taRightJustify
+            Color = 15395562
+            Expanded = False
+            FieldName = 'NUM_OC'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 50
+            Visible = True
+          end
+          item
             Expanded = False
             FieldName = 'COD_PRODUTO_LINX'
             Title.Alignment = taRightJustify
@@ -2363,11 +2378,10 @@ object FrmSolicTransf: TFrmSolicTransf
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
-            Width = 370
+            Width = 335
             Visible = True
           end
           item
-            Alignment = taRightJustify
             Expanded = False
             FieldName = 'QTD_PRODUTO'
             Title.Alignment = taRightJustify
@@ -2376,7 +2390,6 @@ object FrmSolicTransf: TFrmSolicTransf
             Visible = True
           end
           item
-            Alignment = taRightJustify
             Expanded = False
             FieldName = 'QTD_CHECKOUT'
             Title.Alignment = taRightJustify
@@ -2385,29 +2398,125 @@ object FrmSolicTransf: TFrmSolicTransf
             Visible = True
           end
           item
-            Alignment = taRightJustify
             Expanded = False
             FieldName = 'DTA_CHECKOUT'
-            Title.Alignment = taRightJustify
+            Title.Alignment = taCenter
             Width = 100
             Visible = True
           end
           item
-            Alignment = taRightJustify
             Expanded = False
             FieldName = 'HRA_CHECKOUT'
-            Title.Alignment = taRightJustify
+            Title.Alignment = taCenter
             Width = 100
             Visible = True
           end
           item
-            Alignment = taCenter
             Expanded = False
             FieldName = 'IND_OC'
             Title.Alignment = taCenter
-            Width = 50
+            Width = 40
             Visible = True
           end>
+      end
+      object Panel1: TPanel
+        Left = 0
+        Top = 481
+        Width = 883
+        Height = 29
+        Align = alBottom
+        BevelOuter = bvNone
+        Ctl3D = False
+        ParentCtl3D = False
+        TabOrder = 2
+        object Panel2: TPanel
+          Left = 32
+          Top = 3
+          Width = 159
+          Height = 23
+          BevelInner = bvRaised
+          BevelOuter = bvLowered
+          BevelWidth = 2
+          Caption = 'Sem CheckOut'
+          Color = clWindow
+          Ctl3D = True
+          ParentCtl3D = False
+          TabOrder = 0
+        end
+        object Panel3: TPanel
+          Left = 192
+          Top = 3
+          Width = 159
+          Height = 23
+          BevelInner = bvRaised
+          BevelOuter = bvLowered
+          BevelWidth = 2
+          Caption = 'CheckOut Fechado'
+          Color = clYellow
+          Ctl3D = True
+          ParentCtl3D = False
+          TabOrder = 1
+        end
+        object Panel4: TPanel
+          Left = 353
+          Top = 3
+          Width = 159
+          Height = 23
+          BevelInner = bvRaised
+          BevelOuter = bvLowered
+          BevelWidth = 2
+          Caption = 'CheckOut a Menor'
+          Color = clBlue
+          Ctl3D = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentCtl3D = False
+          ParentFont = False
+          TabOrder = 2
+        end
+        object Panel5: TPanel
+          Left = 513
+          Top = 3
+          Width = 159
+          Height = 23
+          BevelInner = bvRaised
+          BevelOuter = bvLowered
+          BevelWidth = 2
+          Caption = 'CheckOut a Maior'
+          Color = clLime
+          Ctl3D = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentCtl3D = False
+          ParentFont = False
+          TabOrder = 3
+        end
+        object Panel6: TPanel
+          Left = 675
+          Top = 3
+          Width = 159
+          Height = 23
+          BevelInner = bvRaised
+          BevelOuter = bvLowered
+          BevelWidth = 2
+          Caption = 'CheckOut Sem Produto'
+          Color = clRed
+          Ctl3D = True
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentCtl3D = False
+          ParentFont = False
+          TabOrder = 4
+        end
       end
     end
   end
@@ -2432,12 +2541,12 @@ object FrmSolicTransf: TFrmSolicTransf
     Font.Style = [fsBold]
     StartColor = 16777088
     EndColor = 16777088
-    Left = 680
-    Top = 496
+    Left = 688
+    Top = 440
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 484
-    Top = 487
+    Left = 564
+    Top = 431
   end
 end

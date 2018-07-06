@@ -16951,7 +16951,8 @@ Begin
          End; // If (Bt_GeraOCImpEditOC.Caption='Editar OC') Then
 
          If siNumOC<>'' Then
-          MySql:=MySql+' And oc.num_oc_gerada='+QuotedStr(siNumOC)
+          MySql:=
+           MySql+' And oc.num_oc_gerada='+QuotedStr(siNumOC)
          Else
           MySql:=MySql+' And oc.ind_oc_gerada= ''N''';
 
@@ -24813,7 +24814,7 @@ begin
       OdirPanApres.Visible:=True;
       Refresh;
 
-      // Busca Codigo Linx =====================================================
+      // Busca Codigo Loja Linx ================================================
       MySql:=' SELECT em.cod_linx'+
              ' FROM EMP_CONEXOES em'+
              ' where em.cod_filial='+QuotedStr(sCodFilial);
@@ -26754,7 +26755,8 @@ begin
           MySql:=MySql+' and oc.num_documento='+VarToStr(EdtConsultaOCNumDocto.Value)+cr;
 
          If EdtConsultaOCNumOC.Value<>0 Then
-          MySql:=MySql+' and oc.num_oc_gerada='+VarToStr(EdtConsultaOCNumOC.Value)+cr;
+          MySql:=
+           MySql+' and oc.num_oc_gerada='+VarToStr(EdtConsultaOCNumOC.Value)+cr;
 
          MySql:=
           MySql+' AND   EXISTS (SELECT 1'+
