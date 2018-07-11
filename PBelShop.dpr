@@ -23,7 +23,7 @@ uses
   UFrmGrafico in 'UFrmGrafico.pas' {FrmGrafico},
   UFrmAcessosUsuario in 'UFrmAcessosUsuario.pas' {FrmAcessosUsuario},
   UFrmBancoExtratos in 'UFrmBancoExtratos.pas' {FrmBancoExtratos},
-  UDMBancosConciliacao in 'UDMBancosConciliacao.pas' {DMConciliacao: TDataModule},
+  UDMBancosConciliacao in 'UDMBancosConciliacao.pas' {DMConciliacao: TDataModule}, // Nome da Unit: UDMBancosConciliacao // Nome do Form: DMConciliacao
   UFrmTiposConciliacao in 'UFrmTiposConciliacao.pas' {FrmTiposConciliacao},
   UFrmApresConciliacao in 'UFrmApresConciliacao.pas' {FrmApresConciliacao},
   UDMSalao in 'UDMSalao.pas' {DMSalao: TDataModule},
@@ -68,37 +68,47 @@ begin
 
   FrmEntrada.Refresh;
   Application.Title := 'Gerenciador BelShop';
+
+  // Form Principal ============================================================
   Application.CreateForm(TFrmBelShop, FrmBelShop);
+
+  // DataModules ===============================================================
   Application.CreateForm(TDMVirtual, DMVirtual);
   Application.CreateForm(TDMConexoes, DMConexoes);
   Application.CreateForm(TDMBelShop, DMBelShop);
   Application.CreateForm(TDMSalao, DMSalao);
   Application.CreateForm(TDMConciliacao, DMConciliacao);
-  Application.CreateForm(TDMLojaUnica, DMLojaUnica);
+  Application.CreateForm(TDMLojaUnica, DMLojaUnica); // RETIRAR DI PROJETO E APAGAR
   Application.CreateForm(TDMRelatorio, DMRelatorio);
-  Application.CreateForm(TDMSidicom, DMSidicom);
+  Application.CreateForm(TDMSidicom, DMSidicom); // RETIRAR DI PROJETO E APAGAR
+  Application.CreateForm(TDMCentralTrocas, DMCentralTrocas);
+  Application.CreateForm(TDMComissaoVendedor, DMComissaoVendedor);
+  Application.CreateForm(TDMLinx, DMLinx);
+  Application.CreateForm(TFDK_Procs1, FDK_Procs1);
+  Application.CreateForm(TJ_001, J_001);
+  Application.CreateForm(TJ_002, J_002);
+
+  // Forms =====================================================================
+  Application.CreateForm(TFrmCentralTrocas, FrmCentralTrocas);
   // Application.CreateForm(TFrmAnaliseFornecedores, FrmAnaliseFornecedores);
   // Application.CreateForm(TFrmWebServicesImporta, FrmWebServicesImporta);
   // Application.CreateForm(TFrmConfirmacao, FrmConfirmacao);
   // Application.CreateForm(TFrmLeitoraCodBarras, FrmLeitoraCodBarras);
-  Application.CreateForm(TDMCentralTrocas, DMCentralTrocas);
   Application.CreateForm(TFrmBancoExtratos, FrmBancoExtratos);
-  Application.CreateForm(TFrmGeraPedidosComprasLojas, FrmGeraPedidosComprasLojas);
-  Application.CreateForm(TFDK_Procs1, FDK_Procs1);
-  Application.CreateForm(TJ_001, J_001);
-  Application.CreateForm(TJ_002, J_002);
+  Application.CreateForm(TFrmGeraPedidosComprasLojas, FrmGeraPedidosComprasLojas); // RETIRAR DI PROJETO E APAGAR
   Application.CreateForm(TFrmFluxoFornecedor, FrmFluxoFornecedor);
-  Application.CreateForm(TDMComissaoVendedor, DMComissaoVendedor);
-  Application.CreateForm(TDMLinx, DMLinx);
-  Application.CreateForm(TFrmCentralTrocas, FrmCentralTrocas);
   // Application.CreateForm(TFrmPrioridadesReposicao, FrmPrioridadesReposicao);
   // Application.CreateForm(TFrmOCLinx, FrmOCLinx);
   // Application.CreateForm(TFrmComissaoVendedor, FrmComissaoVendedor);
   // Application.CreateForm(TFrmControleEstoques, FrmControleEstoques);
 
   // Application.CreateForm(TFrmControleKits, FrmControleKits);
-  // Application.CreateForm(TFrmFaltasCDLojas, FrmFaltasCDLojas);
+  // Application.CreateForm(TFrmFaltasCD\Lojas, FrmFaltasCDLojas);
   // Application.CreateForm(TFrmEstoques, FrmEstoques);
+
+  //============================================================================
   // Formulario Modelo ==>>: Application.CreateForm(TFrmModelo, FrmModelo);
+  //============================================================================
+
   Application.Run;
 end.

@@ -3177,7 +3177,7 @@ end;
 procedure TFrmOCLinx.Bt_GeraOCGeraOCClick(Sender: TObject);
 Var
   MySql: String;
-  sNrOC, sDtaGeracao: String;
+  sCodLjSIDI, sNrOC, sDtaGeracao: String;
   i: Integer;
   mMemo: TMemo;
 begin
@@ -3333,22 +3333,37 @@ begin
       // Dta da Geração -----------------------------------
       sDtaGeracao:=DateTimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
 
-      // Busca Numero da Ordem de Compra =======================================
-      MySql:=' SELECT COALESCE(MAX(oc.num_oc_gerada)+1 ,1) Num_Docto'+
-             ' FROM OC_COMPRAR oc'+
-             ' WHERE oc.num_oc_gerada<1000000'+
-             ' AND   oc.ind_oc_gerada=''S'''+
-             ' AND   EXISTS (SELECT 1'+
-             '               FROM OC_COMPRAR_DOCS d'+
-             '               WHERE d.num_docto=oc.num_documento'+
-             '               AND   d.origem='+QuotedStr('Linx')+
-             '               )';
+      // Busca Código da Loja SIDICOM ==========================================
+      MySql:=' SELECT e.cod_filial'+
+             ' FROM EMP_CONEXOES e'+
+             ' WHERE e.cod_linx='+IntToStr(igCodLojaLinx);
       DMBelShop.SQLQuery1.Close;
       DMBelShop.SQLQuery1.SQL.Clear;
       DMBelShop.SQLQuery1.SQL.Add(MySql);
       DMBelShop.SQLQuery1.Open;
-      sNrOC:=DMBelShop.SQLQuery1.fieldByName('Num_Docto').AsString;
-      DMBelShop.SQLQuery1.Close;
+      sCodLjSIDI:=DMBelShop.SQLQuery1.fieldByName('Cod_Filial').AsString;
+     DMBelShop.SQLQuery1.Close;
+
+      // Busca Numero da Ordem de Compra =======================================
+      sNrOC:=DMBelShop.OCBuscaNumeroOC(sCodLjSIDI, igCodLojaLinx);
+                                       //SIDICOM  // LINX
+
+// OdirApagar - 09/07/2018 - Substituido pela StoredProcedure: SP_BUSCA_NUMERO_OC
+//      MySql:=' SELECT COALESCE(MAX(oc.num_oc_gerada)+1 ,1) Num_Docto'+
+//             ' FROM OC_COMPRAR oc'+
+//             ' WHERE oc.num_oc_gerada<1000000'+
+//             ' AND   oc.ind_oc_gerada=''S'''+
+//             ' AND   EXISTS (SELECT 1'+
+//             '               FROM OC_COMPRAR_DOCS d'+
+//             '               WHERE d.num_docto=oc.num_documento'+
+//             '               AND   d.origem='+QuotedStr('Linx')+
+//             '               )';
+//      DMBelShop.SQLQuery1.Close;
+//      DMBelShop.SQLQuery1.SQL.Clear;
+//      DMBelShop.SQLQuery1.SQL.Add(MySql);
+//      DMBelShop.SQLQuery1.Open;
+////odiraqui      sNrOC:=DMBelShop.SQLQuery1.fieldByName('Num_Docto').AsString;
+//      DMBelShop.SQLQuery1.Close;
 
       // Verifica se Transação esta Ativa
       If DMBelShop.SQLC.InTransaction Then

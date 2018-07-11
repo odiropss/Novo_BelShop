@@ -8002,8 +8002,7 @@ begin
     Begin
       MessageBox(Handle, pChar('IMPOSSÍVEL ALTERAR !!'+cr+cr+
                                'Produto já Transferido para o'+cr+
-                               'Pedido Nº '+DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsString+
-                               ' no SIDICOM.'), 'ATENÇÃO !!', MB_ICONERROR);
+                               'LINX no Pedido Nº '+DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsString+' !!'), 'ATENÇÃO !!', MB_ICONERROR);
       EdtReposLojasProduto.Clear;
       EdtReposLojasQtdReposicao.Value:=0;
       EdtReposLojasSeq.Value:=0;
@@ -8050,9 +8049,10 @@ begin
     DecimalSeparator:='.';
 
     MySql:=' UPDATE ES_ESTOQUES_LOJAS el'+
-           ' SET el.qtd_a_transf='+VarToStr(EdtReposLojasQtdReposicao.Value)+
-           ', USU_ALTERA='+QuotedStr(Cod_Usuario)+
-           ', DTA_ALTERA=current_timestamp'+
+           ' SET el.Qtd_a_Transf='+VarToStr(EdtReposLojasQtdReposicao.Value)+
+           ', el.Usu_Altera='+QuotedStr(Cod_Usuario)+
+           ', el.Ind_Leitora=''NAO'''+
+           ', el.Dta_Altera=current_timestamp'+
            ' WHERE el.dta_movto='+QuotedStr(sgDtaInicio)+
            ' AND   el.num_docto='+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
            ' AND   el.num_seq='+DMCentralTrocas.CDS_ReposicaoTransfNUM_SEQ.AsString+
@@ -8094,7 +8094,6 @@ begin
   // Se Deve Fechar Digitação de Alteração de Qtd de Reposição Depois de Salvar...
   If bgFechaRepos Then
    Bt_IBGEVoltarClick(Self);
-
 
 end;
 

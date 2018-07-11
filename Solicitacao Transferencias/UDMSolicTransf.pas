@@ -65,6 +65,7 @@ type
     SQLQuery2: TSQLQuery;
     CDS_OCItensCheckNUM_SEQ_OC: TIntegerField;
     CDS_OCItensCheckNUM_OC: TIntegerField;
+    SQLQuery3: TSQLQuery;
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

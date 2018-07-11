@@ -35,63 +35,63 @@ object DMSolicTransf: TDMSolicTransf
     Params = <>
     SQLConnection = SQLC
     Left = 36
-    Top = 120
+    Top = 144
   end
   object DSP_Busca: TDataSetProvider
     DataSet = SQLQ_Busca
     Options = [poFetchBlobsOnDemand, poRetainServerOrder]
     Left = 92
-    Top = 133
+    Top = 157
   end
   object CDS_Busca: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Busca'
     Left = 140
-    Top = 120
+    Top = 144
   end
   object DS_Busca: TDataSource
     DataSet = CDS_Busca
     Left = 196
-    Top = 133
+    Top = 157
   end
   object DSP_Pesquisa: TDataSetProvider
     DataSet = SQLQ_Pesquisa
     Options = [poRetainServerOrder]
     Left = 81
-    Top = 275
+    Top = 299
   end
   object CDS_Pesquisa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Pesquisa'
     Left = 121
-    Top = 255
+    Top = 279
   end
   object DS_Pesquisa: TDataSource
     DataSet = CDS_Pesquisa
     Left = 165
-    Top = 275
+    Top = 299
   end
   object SQLQ_Pesquisa: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 44
-    Top = 248
+    Top = 272
   end
   object DSP_Solicitacao: TDataSetProvider
     DataSet = SQLQ_Solicitacao
     Options = [poRetainServerOrder]
     Left = 89
-    Top = 355
+    Top = 379
   end
   object CDS_Solicitacao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Solicitacao'
     Left = 129
-    Top = 335
+    Top = 359
     object CDS_SolicitacaoDTA_SOLICITACAO: TDateField
       DisplayLabel = 'Data'
       FieldName = 'DTA_SOLICITACAO'
@@ -125,7 +125,7 @@ object DMSolicTransf: TDMSolicTransf
   object DS_Solicitacao: TDataSource
     DataSet = CDS_Solicitacao
     Left = 173
-    Top = 355
+    Top = 379
   end
   object SQLQ_Solicitacao: TSQLQuery
     MaxBlobSize = -1
@@ -142,7 +142,7 @@ object DMSolicTransf: TDMSolicTransf
       'ORDER BY pr.nome')
     SQLConnection = SQLC
     Left = 52
-    Top = 328
+    Top = 352
   end
   object Timer1: TTimer
     Interval = 1800000
@@ -157,21 +157,21 @@ object DMSolicTransf: TDMSolicTransf
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 308
-    Top = 22
+    Left = 356
+    Top = 62
   end
   object DSP_Verifica: TDataSetProvider
     DataSet = SQLQ_Verifica
     Options = [poRetainServerOrder]
     Left = 89
-    Top = 435
+    Top = 459
   end
   object CDS_Verifica: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Verifica'
     Left = 129
-    Top = 415
+    Top = 439
     object CDS_VerificaDTA_SOLICITACAO: TDateField
       DisplayLabel = 'Dta Solicita'#231#227'o'
       FieldName = 'DTA_SOLICITACAO'
@@ -246,7 +246,7 @@ object DMSolicTransf: TDMSolicTransf
   object DS_Verifica: TDataSource
     DataSet = CDS_Verifica
     Left = 173
-    Top = 435
+    Top = 459
   end
   object SQLQ_Verifica: TSQLQuery
     MaxBlobSize = -1
@@ -301,34 +301,34 @@ object DMSolicTransf: TDMSolicTransf
       '')
     SQLConnection = SQLC
     Left = 52
-    Top = 408
+    Top = 432
   end
   object SQLQ_BuscaRapida: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 60
-    Top = 192
+    Top = 216
   end
   object DSP_BuscaRapida: TDataSetProvider
     DataSet = SQLQ_BuscaRapida
     Options = [poFetchBlobsOnDemand, poRetainServerOrder]
     Left = 116
-    Top = 205
+    Top = 229
   end
   object CDS_BuscaRapida: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_BuscaRapida'
     Left = 164
-    Top = 192
+    Top = 216
   end
   object SQLQuery1: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 132
-    Top = 56
+    Left = 108
+    Top = 72
   end
   object DSP_OCItensCheck: TDataSetProvider
     DataSet = SQLQ_OCItensCheck
@@ -433,7 +433,14 @@ object DMSolicTransf: TDMSolicTransf
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 196
-    Top = 56
+    Left = 172
+    Top = 72
+  end
+  object SQLQuery3: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 236
+    Top = 72
   end
 end

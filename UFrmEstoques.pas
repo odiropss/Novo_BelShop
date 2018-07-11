@@ -22,7 +22,8 @@ uses
   DBXpress, Commctrl, dxSkinsdxStatusBarPainter, dxStatusBar, Menus,
   JvExComCtrls, JvAnimate, JvButton, JvTransparentButton, DBCtrls, cxDBEdit,
   DateUtils,
-  JvXPCheckCtrls;
+  JvXPCheckCtrls,
+  AppEvnts;
 
 type
   TFrmEstoques = class(TForm)
@@ -91,6 +92,7 @@ type
     Dbg_NivelAtendCurva: TDBGrid;
     Dbg_NivelAtendLojas: TDBGrid;
     Bt_NivelAtendBusca: TJvXPButton;
+    ApplicationEvents1: TApplicationEvents;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -160,6 +162,10 @@ type
     procedure Dbg_NivelAtendLojasDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
+    procedure ApplicationEvents1Message(var Msg: tagMSG;
+      var Handled: Boolean);
+    procedure Dbg_NivelAtendCurvaEnter(Sender: TObject);
+    procedure Dbg_NivelAtendLojasEnter(Sender: TObject);
 
   private
     { Private declarations }
@@ -922,6 +928,9 @@ begin
   // Coloca Icone no Form ======================================================
   Icon:=Application.Icon;
 
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  Application.OnMessage := ApplicationEvents1Message;
+
   // Show Hint em Forma de Balao
   CreateToolTips(Self.Handle);
   AddToolTip(Pan_EstoquesProdNovo.Handle, @ti, TipoDoIcone, 'Cadastrado a'+#13+'MENOS de um MÊS !!', 'PRODUTO NOVO !!');
@@ -1062,6 +1071,11 @@ end;
 
 procedure TFrmEstoques.Dbg_EstoquesEnter(Sender: TObject);
 begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_EstoquesEnter; // Nome do Evento do DBGRID
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
   bEnterTab:=False;
 end;
 
@@ -3644,6 +3658,42 @@ begin
 
   // Alinhamento
   DMBelShop.CDS_NivelAtendLojasNIVEL_ATENDIMENTO.Alignment:=taRightJustify;
+
+end;
+
+procedure TFrmEstoques.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
+var
+  Sentido: SmallInt;
+begin
+  // (ERRO) ACERTA ROLAGEM DO MOUSE (SCROLL)
+  If Msg.message = WM_MOUSEWHEEL then // primeiramente verificamos se é o evento a ser tratado...
+  Begin
+    Msg.message := WM_KEYDOWN;
+    Msg.lParam := 0;
+    Sentido := HiWord(Msg.wParam);
+    if Sentido > 0 then
+     Msg.wParam := VK_UP
+    else
+     Msg.wParam := VK_DOWN;
+  End; // if Msg.message = WM_MOUSEWHEEL then
+
+end;
+
+procedure TFrmEstoques.Dbg_NivelAtendCurvaEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_NivelAtendCurvaEnter; // Nome do Evento do DBGRID
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmEstoques.Dbg_NivelAtendLojasEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_NivelAtendLojasEnter; // Nome do Evento do DBGRID
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
 
 end;
 

@@ -223,6 +223,7 @@ type
     CDS_V_NfePerdasCOD_FORNECEDOR: TIntegerField;
     CDS_V_NfePerdasNOME_CLIENTE: TStringField;
     CDS_V_NfePerdasREFERENCIA: TStringField;
+    CDS_V_ReposDivergenciasQTD_ORIGINAL: TFMTBCDField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir

@@ -62,7 +62,6 @@ type
     Lab_UnidadeCD: TLabel;
     Ts_NFeCheckOut: TTabSheet;
     Gb_NFe_Solicitacoes: TGroupBox;
-    JvXPButton1: TJvXPButton;
     EdtNFeCodFornLinx: TCurrencyEdit;
     Label6: TLabel;
     EdtNFeDesFornLinx: TEdit;
@@ -125,7 +124,6 @@ type
       Shift: TShiftState);
     procedure FormKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure JvXPButton1Click(Sender: TObject);
     procedure EdtNFeCodFornLinxExit(Sender: TObject);
     procedure Bt_NFeBuscaFornLinxClick(Sender: TObject);
     procedure Bt_NFeBuscaOCClick(Sender: TObject);
@@ -141,7 +139,9 @@ type
       Shift: TShiftState);
     procedure Dbg_NFeProdutosOCDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
-      State: TGridDrawState); // Posiciona no Componente
+      State: TGridDrawState);
+    procedure EdtNFeNumNFeExit(Sender: TObject);
+    procedure Dbg_NFeProdutosOCEnter(Sender: TObject); // Posiciona no Componente
 
   private
     { Private declarations }
@@ -226,7 +226,7 @@ Begin
      sgNrsSeqOCs:=sgNrsSeqOCs+', '+DMSolicTransf.SQLQuery2.FieldByName('num_seq_oc').AsString;
 
     DMSolicTransf.SQLQuery2.Next;
-  End; // While Not DMSolicTransf.SQLQuery1.Eof do
+  End; // While Not DMSolicTransf.SQLQuery2.Eof do
   DMSolicTransf.SQLQuery2.Close;
 
   // Itens das OCs =============================================================
@@ -263,8 +263,7 @@ Function TFrmSolicTransf.NovaVersao:Boolean;
 Var
   MySql: String;
 
-  sDtaAplicativo, sDtaVersao,
-  sCliente: String;
+  sDtaAplicativo, sDtaVersao: String;
 Begin
   Result:=True;
 
@@ -616,8 +615,9 @@ begin
   // Atualiza Novca Versão do Sistema ==========================================
   If Not NovaVersao Then
   Begin
-    msg('== SOLICITAÇÃO DE TRANSFERÊNCIA =='+cr+cr+
-        'Versão do Sistema esta Incorreta!!'+cr+cr+
+    msg('== TECNONOLOGIA DA INFORMAÇÃO =='+cr+
+        ' BelShop-CD ADVERTE !!'+cr+cr+
+        'Versão do Sistema esta Incorreta !!'+cr+
         'Solicite Atualização para ALINE/ODIR...','A');
   End; // If not NovaVersao Then
 
@@ -886,27 +886,29 @@ begin
 
   If (PC_Principal.ActivePage=Ts_Produtos) And (Ts_Produtos.CanFocus) Then
   Begin
+    CorCaptionForm.FormCaption:='BelShop - '+Ts_Produtos.Caption;
     Gb_Produto.Parent:=Gb_Solicitacao;
-    EdtCodProdLinx.SetFocus;
   End;
 
   If (PC_Principal.ActivePage=Ts_Consultas) And (Ts_Consultas.CanFocus) Then
   Begin
+    CorCaptionForm.FormCaption:='BelShop - '+Ts_Consultas.Caption;
     Gb_Produto.Parent:=Gb_Verifica;
-    EdtCodProdLinx.SetFocus;
   End;
 
   If (PC_Principal.ActivePage=Ts_NFeCheckOut) And (Ts_NFeCheckOut.CanFocus) Then
   Begin
+    CorCaptionForm.FormCaption:='BelShop - '+Ts_NFeCheckOut.Caption;
     bFocar_Gb_Produto:=False;
+
     EdtNFeCodFornLinx.SetFocus;
   End;
-//
-//  If bFocar_Gb_Produto Then
-//  Begin
-//    Gb_Produto.TabOrder:=0;
-//    EdtCodProdLinx.SetFocus;
-//  End; //   If bFocar_Gb_Produto Then
+
+  If bFocar_Gb_Produto Then
+  Begin
+    Gb_Produto.TabOrder:=0;
+    EdtCodProdLinx.SetFocus;
+  End; //   If bFocar_Gb_Produto Then
 end;
 
 procedure TFrmSolicTransf.Dbg_ProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -1522,102 +1524,6 @@ begin
 
 end;
 
-procedure TFrmSolicTransf.JvXPButton1Click(Sender: TObject);
-Var
-  MySql: String;
-begin
-{
-  MySql:=' select distinct  DOC_NA_SEPARACAO, NUM_DOCTO_ATUAL, NUM_SOLICITACAO,'+
-         ' DOC_GERADO_SOLICITACAO, DTA_SOLICITACAO, COD_LOJA_SIDI, COD_LOJA_LINX,'+
-         ' COD_PROD_LINX, COD_PROD_SIDI'+
-         ' FROM APAGAR';
-  DMSolicTransf.CDS_Busca.Close;
-  DMSolicTransf.SQLQ_Busca.Close;
-  DMSolicTransf.SQLQ_Busca.SQL.Clear;
-  DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
-  DMSolicTransf.CDS_Busca.Open;
-
-  OdirPanApres.Caption:='AGUARDE !! Alterado Data CC';
-  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSolicTransf.Width-OdirPanApres.Width)/2));
-  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmSolicTransf.Height-OdirPanApres.Height)/2))-20;
-  OdirPanApres.Font.Style:=[fsBold];
-  OdirPanApres.Parent:=FrmSolicTransf;
-  OdirPanApres.BringToFront();
-  OdirPanApres.Visible:=True;
-  Refresh;
-
-  // Verifica se Transação esta Ativa
-  If DMSolicTransf.SQLC.InTransaction Then
-   DMSolicTransf.SQLC.Rollback(TD);
-
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMSolicTransf.SQLC.StartTransaction(TD);
-  Try // Try da Transação
-    Screen.Cursor:=crAppStart;
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    EdtQtdEstoque.AsInteger:=DMSolicTransf.CDS_Busca.RecordCount;
-
-    DMSolicTransf.CDS_Busca.DisableControls;
-    While Not DMSolicTransf.CDS_Busca.Eof do
-    Begin
-      Application.ProcessMessages;
-
-      MySql:=' update sol_transferencia_cd t'+
-             ' set t.doc_gerado='+DMSolicTransf.CDS_Busca.FieldByName('num_docto_atual').AsString+
-             ', t.dta_processamento=current_date'+
-             ' where t.num_solicitacao='+DMSolicTransf.CDS_Busca.FieldByName('NUM_SOLICITACAO').AsString+
-             ' and t.doc_gerado='+DMSolicTransf.CDS_Busca.FieldByName('DOC_GERADO_SOLICITACAO').AsString+
-             ' and t.dta_solicitacao='+QuotedStr(DMSolicTransf.CDS_Busca.FieldByName('DTA_SOLICITACAO').AsString)+
-             ' and t.cod_loja_sidi='+QuotedStr(DMSolicTransf.CDS_Busca.FieldByName('cod_loja_sidi').AsString)+
-             ' and t.cod_loja_linx='+DMSolicTransf.CDS_Busca.FieldByName('cod_loja_linx').AsString+
-             ' and t.cod_prod_linx='+DMSolicTransf.CDS_Busca.FieldByName('cod_prod_linx').AsString+
-             ' and t.cod_prod_sidi='+QuotedStr(DMSolicTransf.CDS_Busca.FieldByName('cod_prod_sidi').AsString);
-      DMSolicTransf.SQLC.Execute(MySql,nil,nil);
-
-      EdtQtdTransf.AsInteger:=DMSolicTransf.CDS_Busca.RecNo;
-
-      DMSolicTransf.CDS_Busca.Next;
-    End;
-    DMSolicTransf.CDS_Busca.EnableControls;
-    DMSolicTransf.CDS_Busca.Close;
-
-    // Atualiza Transacao ======================================================
-    DMSolicTransf.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-
-    OdirPanApres.Visible:=False;
-
-    Screen.Cursor:=crDefault;
-
-  Except // Except da Transação
-    on e : Exception do
-    Begin
-      // Abandona Transacao ====================================================
-      DMSolicTransf.SQLC.Rollback(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-
-      OdirPanApres.Visible:=False;
-
-      Screen.Cursor:=crDefault;
-
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-      Exit;
-    End; // on e : Exception do
-  End; // Try da Transação
-
-  DMSolicTransf.CDS_Busca.Close
-}
-end;
-
 procedure TFrmSolicTransf.EdtNFeCodFornLinxExit(Sender: TObject);
 Var
   MySql: String;
@@ -1759,7 +1665,7 @@ begin
          ' AND   oc.cod_loja_linx='+sgLojaLinx+
          ' AND   oc.cod_forn_linx='+IntToStr(EdtNFeCodFornLinx.AsInteger)+
          ' GROUP BY 1,2'+
-         ' ORDER BY 1';
+         ' ORDER BY 1 DESC';
   DMSolicTransf.CDS_Pesquisa.Close;
   DMSolicTransf.SQLQ_Pesquisa.Close;
   DMSolicTransf.SQLQ_Pesquisa.SQL.Clear;
@@ -1959,6 +1865,7 @@ end;
 procedure TFrmSolicTransf.Dbg_NFeProdutosOCDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
+{
   If (Column.FieldName='IND_OC') Or (Column.FieldName='COD_PRODUTO_LINX') Then // Este comando altera cor da Celula
   Begin
     If DMSolicTransf.CDS_OCItensCheckQTD_CHECKOUT.AsInteger<>0 Then
@@ -2008,6 +1915,42 @@ begin
   DMSolicTransf.CDS_OCItensCheckDTA_CHECKOUT.Alignment:=taCenter;
   DMSolicTransf.CDS_OCItensCheckHRA_CHECKOUT.Alignment:=taCenter;
   DMSolicTransf.CDS_OCItensCheckIND_OC.Alignment:=taCenter;
+}
+end;
+
+procedure TFrmSolicTransf.EdtNFeNumNFeExit(Sender: TObject);
+Var
+  MySql: String;
+begin
+  If (Trim(EdtNFeNumNFe.Text)<>'') and (Trim(EdtNFeCodFornLinx.Text)<>'') Then
+  Begin
+    MySql:=' SELECT DISTINCT o.num_oc'+
+           ' FROM OC_LOJAS_NFE o, OC_LOJAS_ITENS_NFE n'+
+           ' WHERE o.num_seq_oc=n.num_seq_oc'+
+           ' AND   o.cod_forn_linx='+IntToStr(EdtNFeCodFornLinx.AsInteger)+
+           ' AND   n.num_nfe='+IntToStr(EdtNFeNumNFe.AsInteger);
+    DMSolicTransf.SQLQuery3.Close;
+    DMSolicTransf.SQLQuery3.SQL.Clear;
+    DMSolicTransf.SQLQuery3.SQL.Add(MySql);
+    DMSolicTransf.SQLQuery3.Open;
+    While Not DMSolicTransf.SQLQuery3.Eof do
+    Begin
+      EdtNFeNumOC.AsInteger:=DMSolicTransf.SQLQuery3.FieldByName('num_oc').AsInteger;
+      EdtNFeNumOCExit(Self);
+
+      DMSolicTransf.SQLQuery3.Next;
+    End; // While Not DMSolicTransf.SQLQuery3.Eof do
+    
+    DMSolicTransf.SQLQuery3.Close;
+  End; // If (Trim(EdtNFeNumNFe.Text)<>'')) and (Trim(EdtNFeCodFornLinx.Text)<>'')) Then
+end;
+
+procedure TFrmSolicTransf.Dbg_NFeProdutosOCEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_NFeProdutosOCEnter; // Nome do Evento do DBGRID
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
 
 end;
 

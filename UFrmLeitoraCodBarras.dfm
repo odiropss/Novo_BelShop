@@ -1,6 +1,7 @@
 object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
   Left = 414
   Top = 134
+  AutoSize = True
   BorderIcons = []
   BorderStyle = bsSingle
   Caption = 'Checkout - Leitora de C'#243'digo de Barras (EAN13)'
@@ -134,7 +135,7 @@ object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
       Top = 73
       Width = 539
       Height = 165
-      ActivePage = Ts_OBS_Avarias
+      ActivePage = Ts_OBS_Reposicao
       Align = alBottom
       TabOrder = 4
       TabStop = False

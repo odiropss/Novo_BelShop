@@ -986,26 +986,6 @@ object FrmSolicTransf: TFrmSolicTransf
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
-    object JvXPButton1: TJvXPButton
-      Left = 750
-      Top = 2
-      Width = 139
-      Height = 26
-      Caption = 'Acerta Doc_Gerado'
-      TabOrder = 0
-      ShowFocusRect = True
-      Spacing = 8
-      Align = alRight
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = False
-      OnClick = JvXPButton1Click
-    end
   end
   object OdirPanApres: TPanel
     Left = 583
@@ -2013,7 +1993,7 @@ object FrmSolicTransf: TFrmSolicTransf
           ParentFont = False
         end
         object Label7: TLabel
-          Left = 687
+          Left = 684
           Top = 22
           Width = 90
           Height = 13
@@ -2061,7 +2041,7 @@ object FrmSolicTransf: TFrmSolicTransf
           Left = 190
           Top = 18
           Width = 484
-          Height = 21
+          Height = 19
           TabStop = False
           Color = 14737632
           Font.Charset = DEFAULT_CHARSET
@@ -2144,7 +2124,7 @@ object FrmSolicTransf: TFrmSolicTransf
           OnClick = Bt_NFeBuscaFornLinxClick
         end
         object EdtNFeNumNFe: TCurrencyEdit
-          Left = 781
+          Left = 778
           Top = 18
           Width = 66
           Height = 21
@@ -2159,6 +2139,7 @@ object FrmSolicTransf: TFrmSolicTransf
           ParentFont = False
           TabOrder = 3
           OnChange = EdtNFeNumNFeChange
+          OnExit = EdtNFeNumNFeExit
         end
         object EdtNFeNumOC: TCurrencyEdit
           Left = 162
@@ -2249,7 +2230,7 @@ object FrmSolicTransf: TFrmSolicTransf
           OnClick = Bt_NFeBuscaOCClick
         end
         object Bt_NFeEscanear: TJvXPButton
-          Left = 686
+          Left = 684
           Top = 43
           Width = 160
           Height = 37
@@ -2298,7 +2279,7 @@ object FrmSolicTransf: TFrmSolicTransf
             0DB5BA4026B8B75333481D922B9706597F7040C74A8A94E325CB257434DAD85A
             28A2AC0FFFD9}
           ShowFocusRect = True
-          Spacing = 15
+          Spacing = 10
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -2310,7 +2291,7 @@ object FrmSolicTransf: TFrmSolicTransf
         object Lbx_NFeNumOCs: TListBox
           Left = 264
           Top = 44
-          Width = 407
+          Width = 410
           Height = 35
           Hint = '<Delete> Para Excluir OC da Lista'
           Columns = 8
@@ -2338,7 +2319,7 @@ object FrmSolicTransf: TFrmSolicTransf
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Font.Style = []
-        Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+        Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         ParentFont = False
         TabOrder = 1
         TitleFont.Charset = DEFAULT_CHARSET
@@ -2347,6 +2328,7 @@ object FrmSolicTransf: TFrmSolicTransf
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_NFeProdutosOCDrawColumnCell
+        OnEnter = Dbg_NFeProdutosOCEnter
         Columns = <
           item
             Color = 15395562
@@ -2429,6 +2411,7 @@ object FrmSolicTransf: TFrmSolicTransf
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 2
+        Visible = False
         object Panel2: TPanel
           Left = 32
           Top = 3

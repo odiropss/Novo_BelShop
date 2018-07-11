@@ -2362,24 +2362,24 @@ uses DK_Procs1, UPermissao, UDMBelShop,
 // ODIR INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// ORDEM DE COMPRA - Salca Ordem de Compra para Loja CHECKOUT >>>>>>>>>>>>>>>>>>
+// ORDEM DE COMPRA - Salva Ordem de Compra para Loja CHECKOUT >>>>>>>>>>>>>>>>>>
 Procedure TFrmBelShop.Salva_OC_LOJAS_NFE(sCodLjLinx, sCodLjSidi, sNumOC, sNumDocto, sTpSistema: String);
 Var
   MySql: String;
   sNumSeqOC: String;
 Begin
+  // Busca Num_Seq da OC =======================================================
+  MySql:=' SELECT GEN_ID(GEN_OC_LOJAS,1) Num_Seq'+
+         ' FROM RDB$DATABASE';
+  DMBelShop.SQLQuery1.Close;
+  DMBelShop.SQLQuery1.SQL.Clear;
+  DMBelShop.SQLQuery1.SQL.Add(MySql);
+  DMBelShop.SQLQuery1.Open;
+  sNumSeqOC:=DMBelShop.SQLQuery1.FieldByName('Num_Seq').AsString;
+  DMBelShop.SQLQuery1.Close;
+
   If sTpSistema='SIDICOM' Then
   Begin
-    // Busca Num_Seq da OC =====================================================
-    MySql:=' SELECT GEN_ID(GEN_OC_LOJAS,1) Num_Seq'+
-           ' FROM RDB$DATABASE';
-    DMBelShop.SQLQuery1.Close;
-    DMBelShop.SQLQuery1.SQL.Clear;
-    DMBelShop.SQLQuery1.SQL.Add(MySql);
-    DMBelShop.SQLQuery1.Open;
-    sNumSeqOC:=DMBelShop.SQLQuery1.FieldByName('Num_Seq').AsString;
-    DMBelShop.SQLQuery1.Close;
-
     // Salva Hearder da Ordem de Compra ========================================
     MySql:=' INSERT INTO OC_LOJAS_NFE'+
            ' SELECT DISTINCT '+
@@ -2453,16 +2453,6 @@ Begin
 
   If sTpSistema='LINX' Then
   Begin
-    // Busca Num_Seq da OC =====================================================
-    MySql:=' SELECT GEN_ID(GEN_OC_LOJAS,1) Num_Seq'+
-           ' FROM RDB$DATABASE';
-    DMBelShop.SQLQuery1.Close;
-    DMBelShop.SQLQuery1.SQL.Clear;
-    DMBelShop.SQLQuery1.SQL.Add(MySql);
-    DMBelShop.SQLQuery1.Open;
-    sNumSeqOC:=DMBelShop.SQLQuery1.FieldByName('Num_Seq').AsString;
-    DMBelShop.SQLQuery1.Close;
-
     // Salva Hearder da Ordem de Compra ========================================
     MySql:=' INSERT INTO OC_LOJAS_NFE'+
            ' SELECT DISTINCT '+
@@ -24853,20 +24843,25 @@ begin
           // Busca Numero da OC ==============================================
           If igCodLojaLinx<>0 Then // LINX
           Begin
-            MySql:=' SELECT COALESCE(MAX(oc.num_oc_gerada)+1 ,1) Num_Docto'+
-                   ' FROM OC_COMPRAR oc'+
-                   ' WHERE oc.cod_empresa='+QuotedStr(sCodFilial)+
-                   ' AND   oc.num_oc_gerada< 1000000'+
-                   ' AND   EXISTS (SELECT 1'+
-                   '               FROM OC_COMPRAR_DOCS d'+
-                   '               WHERE d.num_docto=oc.num_documento'+
-                   '               AND   d.origem<>'+QuotedStr('Linx')+')';
-            DMBelShop.SQLQuery1.Close;
-            DMBelShop.SQLQuery1.SQL.Clear;
-            DMBelShop.SQLQuery1.SQL.Add(MySql);
-            DMBelShop.SQLQuery1.Open;
-            sNrOC:=DMBelShop.SQLQuery1.fieldByName('Num_Docto').AsString;
-            DMBelShop.SQLQuery1.Close;
+            sNrOC:=DMBelShop.OCBuscaNumeroOC(sCodFilial, igCodLojaLinx);
+                                             //SIDICOM  // LINX
+
+// OdirApagar - 09/07/2018 - Substituido pela StoredProcedure: SP_BUSCA_NUMERO_OC
+//            MySql:=' SELECT COALESCE(MAX(oc.num_oc_gerada)+1 ,1) Num_Docto'+
+//                   ' FROM OC_COMPRAR oc'+
+//                   ' WHERE oc.cod_empresa='+QuotedStr(sCodFilial)+
+//                   ' AND   oc.num_oc_gerada< 1000000'+
+//                   ' AND   EXISTS (SELECT 1'+
+//                   '               FROM OC_COMPRAR_DOCS d'+
+//                   '               WHERE d.num_docto=oc.num_documento'+
+//                   '               AND   d.origem<>'+QuotedStr('Linx')+')';
+//            DMBelShop.SQLQuery1.Close;
+//            DMBelShop.SQLQuery1.SQL.Clear;
+//            DMBelShop.SQLQuery1.SQL.Add(MySql);
+//            DMBelShop.SQLQuery1.Open;
+//            sNrOC:=DMBelShop.SQLQuery1.fieldByName('Num_Docto').AsString;
+//            DMBelShop.SQLQuery1.Close;
+// OdirApagar - 09/07/2018 - Substituido pela StoredProcedure: SP_BUSCA_NUMERO_OC
           End; // If igCodLojaLinx<>0 Then // LINX
 
           If bSiga Then
@@ -44079,7 +44074,6 @@ begin
   FrmSolicitacoes.ShowModal;
 
   FreeAndNil(FrmSolicitacoes);
-
 end;
 
 end.
@@ -44092,6 +44086,7 @@ end.
 // 45483 - 23/05/2016
 // 45100 - 11/08/2016
 // 44104 - Sem Auditoria - 21/06/2018
+
 // unit cxSchedulerCustomControls;
 
 

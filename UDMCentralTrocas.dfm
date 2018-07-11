@@ -949,6 +949,12 @@ object DMCentralTrocas: TDMCentralTrocas
       FieldName = 'NUM_SEQ'
       Visible = False
     end
+    object CDS_V_ReposDivergenciasQTD_ORIGINAL: TFMTBCDField
+      DisplayLabel = 'Qtd Original'
+      FieldName = 'QTD_ORIGINAL'
+      Precision = 15
+      Size = 2
+    end
   end
   object DS_V_ReposDivergencias: TDataSource
     DataSet = CDS_V_ReposDivergencias

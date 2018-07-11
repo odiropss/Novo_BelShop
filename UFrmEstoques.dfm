@@ -28,7 +28,7 @@ object FrmEstoques: TFrmEstoques
     Top = 0
     Width = 977
     Height = 569
-    ActivePage = Ts_Estoques
+    ActivePage = Ts_NivelAtendimento
     Align = alClient
     TabOrder = 0
     OnChange = PC_EstoquesPrincipalChange
@@ -1393,7 +1393,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 250
+          Left = 249
           Top = 11
           Width = 353
           Height = 13
@@ -1676,6 +1676,7 @@ object FrmEstoques: TFrmEstoques
           TitleFont.Style = [fsBold]
           OnCellClick = Dbg_NivelAtendCurvaCellClick
           OnDrawColumnCell = Dbg_NivelAtendCurvaDrawColumnCell
+          OnEnter = Dbg_NivelAtendCurvaEnter
           OnKeyDown = Dbg_NivelAtendCurvaKeyDown
           Columns = <
             item
@@ -1777,6 +1778,7 @@ object FrmEstoques: TFrmEstoques
           TitleFont.Style = [fsBold]
           OnCellClick = Dbg_NivelAtendLojasCellClick
           OnDrawColumnCell = Dbg_NivelAtendLojasDrawColumnCell
+          OnEnter = Dbg_NivelAtendLojasEnter
           OnKeyDown = Dbg_NivelAtendCurvaKeyDown
           Columns = <
             item
@@ -1929,5 +1931,10 @@ object FrmEstoques: TFrmEstoques
     object N1: TMenuItem
       Caption = '-'
     end
+  end
+  object ApplicationEvents1: TApplicationEvents
+    OnMessage = ApplicationEvents1Message
+    Left = 900
+    Top = 128
   end
 end
