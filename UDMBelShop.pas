@@ -1393,15 +1393,18 @@ uses DK_Procs1, UFrmBelShop, UDMConexoes,  UFrmSolicitacoes, UDMVirtual,
 // ORDEM DE COMPRA - Busca Numero da Ordem de Compra - SIDICOM / LINX >>>>>>>>>>
 Function TDMBelShop.OCBuscaNumeroOC(sCodLjSIDI: String; iCodLjLINX: Integer): String;
 Begin
- SQLSP.Prepared:=False;
- SQLSP.StoredProcName:='SP_BUSCA_NUMERO_OC';
- SQLSP.ParamByName('par_CodLojaSIDI').AsString:=sCodLjSIDI;
- SQLSP.ParamByName('par_CodLojaLINX').AsInteger:=iCodLjLINX;
- SQLSP.Prepared:=True;
+  SQLSP.Prepared:=False;
+  SQLSP.StoredProcName:='SP_BUSCA_NUMERO_OC';
+  SQLSP.ParamByName('par_CodLojaSIDI').AsString:=sCodLjSIDI;
+  SQLSP.ParamByName('par_CodLojaLINX').AsInteger:=iCodLjLINX;
+  SQLSP.Prepared:=True;
 
- SQLSP.ExecProc;
- Result:=SQLSP.ParamByName('ret_NumOC').AsString;
- SQLSP.Prepared:=False;
+  SQLSP.ExecProc;
+  Result:=SQLSP.ParamByName('ret_NumOC').AsString;
+  SQLSP.Prepared:=False;
+  SQLSP.Close;
+  SQLSP.Params.Clear;
+  SQLSP.StoredProcName:='';
 End; // ORDEM DE COMPRA - Busca Numero da Ordem de Compra - SIDICOM / LINX >>>>>
 
 // CONTA CORRENTE FORNECEDORES - Busca Fornecedor de Vinculo >>>>>>>>>>>>>>>>>>>

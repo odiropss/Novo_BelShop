@@ -5531,25 +5531,25 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 693
-    Top = 382
+    Top = 206
   end
   object DS_FechaCaixa: TDataSource
     DataSet = CDS_FechaCaixa
     Left = 810
-    Top = 398
+    Top = 222
   end
   object DSP_FechaCaixa: TDataSetProvider
     DataSet = SDS_FechaCaixa
     Options = [poRetainServerOrder]
     Left = 734
-    Top = 398
+    Top = 222
   end
   object CDS_FechaCaixa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FechaCaixa'
     Left = 774
-    Top = 386
+    Top = 210
     object CDS_FechaCaixaCOD_CREDITO: TIntegerField
       DisplayLabel = 'Cod'
       FieldName = 'COD_CREDITO'
@@ -5605,25 +5605,25 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 693
-    Top = 442
+    Top = 266
   end
   object DS_FechaCaixaTotais: TDataSource
     DataSet = CDS_FechaCaixaTotais
     Left = 810
-    Top = 458
+    Top = 282
   end
   object DSP_FechaCaixaTotais: TDataSetProvider
     DataSet = SDS_FechaCaixaTotais
     Options = [poRetainServerOrder]
     Left = 734
-    Top = 458
+    Top = 282
   end
   object CDS_FechaCaixaTotais: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FechaCaixaTotais'
     Left = 774
-    Top = 446
+    Top = 270
     object CDS_FechaCaixaTotaisCOD_CREDITO: TIntegerField
       DisplayLabel = 'Cod'
       FieldName = 'COD_CREDITO'
@@ -5701,20 +5701,20 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 693
-    Top = 565
+    Top = 389
   end
   object DSP_FechaDiarioMov: TDataSetProvider
     DataSet = SDS_FechaDiarioMov
     Options = [poRetainServerOrder]
     Left = 734
-    Top = 581
+    Top = 405
   end
   object CDS_FechaDiarioMov: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FechaDiarioMov'
     Left = 774
-    Top = 569
+    Top = 393
     object CDS_FechaDiarioMovNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Required = True
@@ -5779,7 +5779,7 @@ object DMBelShop: TDMBelShop
   object DS_FechaDiarioMov: TDataSource
     DataSet = CDS_FechaDiarioMov
     Left = 810
-    Top = 581
+    Top = 405
   end
   object SDS_FechaDiarioTot: TSQLDataSet
     CommandText = 
@@ -5803,20 +5803,20 @@ object DMBelShop: TDMBelShop
       end>
     SQLConnection = SQLC
     Left = 693
-    Top = 628
+    Top = 452
   end
   object DSP_FechaDiarioTot: TDataSetProvider
     DataSet = SDS_FechaDiarioTot
     Options = [poRetainServerOrder]
     Left = 734
-    Top = 639
+    Top = 463
   end
   object CDS_FechaDiarioTot: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_FechaDiarioTot'
     Left = 774
-    Top = 627
+    Top = 451
     object CDS_FechaDiarioTotNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
       Required = True
@@ -5846,7 +5846,7 @@ object DMBelShop: TDMBelShop
   object DS_FechaDiarioTot: TDataSource
     DataSet = CDS_FechaDiarioTot
     Left = 810
-    Top = 639
+    Top = 463
   end
   object DS_Geral: TDataSource
     Left = 189
@@ -6135,25 +6135,25 @@ object DMBelShop: TDMBelShop
     Params = <>
     SQLConnection = SQLC
     Left = 693
-    Top = 503
+    Top = 327
   end
   object DS_CurvaFinanceira: TDataSource
     DataSet = CDS_CurvaFinanceira
     Left = 810
-    Top = 519
+    Top = 343
   end
   object DSP_CurvaFinanceira: TDataSetProvider
     DataSet = SDS_CurvaFinanceira
     Options = [poRetainServerOrder]
     Left = 734
-    Top = 519
+    Top = 343
   end
   object CDS_CurvaFinanceira: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CurvaFinanceira'
     Left = 774
-    Top = 507
+    Top = 331
     object CDS_CurvaFinanceiraCOD_LOJA: TStringField
       FieldName = 'COD_LOJA'
       Required = True
@@ -8523,7 +8523,7 @@ object DMBelShop: TDMBelShop
         Value = 'NAO'
       end>
     SQLConnection = SQLC
-    Left = 925
+    Left = 693
     Top = 532
   end
   object CDS_Prioridades: TClientDataSet
@@ -8531,7 +8531,7 @@ object DMBelShop: TDMBelShop
     Params = <>
     ProviderName = 'DSP_Prioridades'
     AfterScroll = CDS_PrioridadesAfterScroll
-    Left = 1006
+    Left = 774
     Top = 531
     object CDS_PrioridadesCOD_PRIORIDADE: TIntegerField
       FieldName = 'COD_PRIORIDADE'
@@ -8574,12 +8574,12 @@ object DMBelShop: TDMBelShop
   object DSP_Prioridades: TDataSetProvider
     DataSet = SDS_Prioridades
     Options = [poRetainServerOrder]
-    Left = 966
+    Left = 734
     Top = 548
   end
   object DS_Prioridades: TDataSource
     DataSet = CDS_Prioridades
-    Left = 1042
+    Left = 810
     Top = 548
   end
   object SDS_PrioridadeProd: TSQLDataSet
@@ -8597,14 +8597,14 @@ object DMBelShop: TDMBelShop
         ParamType = ptInput
       end>
     SQLConnection = SQLC
-    Left = 925
+    Left = 693
     Top = 596
   end
   object CDS_PrioridadeProd: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_PrioridadeProd'
-    Left = 1006
+    Left = 774
     Top = 595
     object CDS_PrioridadeProdCOD_PRODUTO: TFMTBCDField
       DisplayLabel = 'C'#243'd Linx'
@@ -8637,12 +8637,12 @@ object DMBelShop: TDMBelShop
   object DSP_PrioridadeProd: TDataSetProvider
     DataSet = SDS_PrioridadeProd
     Options = [poRetainServerOrder]
-    Left = 966
+    Left = 734
     Top = 612
   end
   object DS_PrioridadeProd: TDataSource
     DataSet = CDS_PrioridadeProd
-    Left = 1042
+    Left = 810
     Top = 612
   end
   object SDS_NivelAtendCurvas: TSQLDataSet

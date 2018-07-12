@@ -1753,6 +1753,24 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Visible = False
           end
         end
+        object Bt_ReposLojasResultados: TJvXPButton
+          Left = 350
+          Top = 10
+          Width = 80
+          Height = 31
+          Caption = 'Apresenta Resultados'
+          TabOrder = 4
+          TabStop = False
+          ShowFocusRect = True
+          Spacing = 10
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_ReposLojasResultadosClick
+        end
       end
       object Dbg_ReposLojasItens: TDBGridJul
         Left = 423
@@ -2094,6 +2112,9 @@ object FrmCentralTrocas: TFrmCentralTrocas
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 4
+        DesignSize = (
+          1092
+          40)
         object Bt_ReposLojasEmissaoDoc: TJvXPButton
           Tag = 5
           Left = 2
@@ -2325,83 +2346,25 @@ object FrmCentralTrocas: TFrmCentralTrocas
           ParentFont = False
           OnClick = Bt_ReposLojasGeraArquivoLinxClick
         end
-        object GroupBox1: TGroupBox
-          Left = 350
+        object Bt_ReposLojasDivAlteradas: TJvXPButton
+          Tag = 5
+          Left = 480
           Top = 2
-          Width = 89
+          Width = 118
           Height = 36
-          Caption = ' Produtos '
-          Enabled = False
+          Caption = 'Diverg'#234'ncias'#13#10'   Alteradas'
           TabOrder = 8
-          object DBEdit1: TDBEdit
-            Left = 14
-            Top = 14
-            Width = 64
-            Height = 19
-            Color = 16777156
-            DataField = 'Tot_Itens'
-            DataSource = DMCentralTrocas.DS_ReposicaoDocs
-            TabOrder = 0
-          end
-        end
-        object GroupBox2: TGroupBox
-          Left = 555
-          Top = 2
-          Width = 88
-          Height = 36
-          Caption = ' Qtds Loja '
-          Enabled = False
-          TabOrder = 9
-          object DBEdit2: TDBEdit
-            Left = 12
-            Top = 14
-            Width = 64
-            Height = 19
-            Color = 16777156
-            DataField = 'Tot_Qtds'
-            DataSource = DMCentralTrocas.DS_ReposicaoTransf
-            TabOrder = 0
-          end
-        end
-        object GroupBox3: TGroupBox
-          Left = 440
-          Top = 2
-          Width = 112
-          Height = 36
-          Caption = ' QtdsTotal '
-          Enabled = False
-          TabOrder = 10
-          object EdtReposLojasCalTotQtds: TCurrencyEdit
-            Left = 12
-            Top = 14
-            Width = 88
-            Height = 18
-            AutoSize = False
-            Color = 16777156
-            DecimalPlaces = 0
-            DisplayFormat = ',0'
-            TabOrder = 0
-          end
-        end
-        object GroupBox4: TGroupBox
-          Left = 644
-          Top = 2
-          Width = 112
-          Height = 36
-          Caption = ' Qtds a Separar '
-          Enabled = False
-          TabOrder = 11
-          object EdtReposLojasTotQtdsSeparar: TCurrencyEdit
-            Left = 12
-            Top = 14
-            Width = 88
-            Height = 18
-            AutoSize = False
-            Color = 16777156
-            DecimalPlaces = 0
-            DisplayFormat = ',0'
-            TabOrder = 0
-          end
+          TabStop = False
+          ShowFocusRect = True
+          Spacing = 0
+          Anchors = [akTop]
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_ReposLojasDivAlteradasClick
         end
       end
       object Gb_ReposLojasItens: TGroupBox

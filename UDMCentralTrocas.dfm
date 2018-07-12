@@ -578,14 +578,14 @@ object DMCentralTrocas: TDMCentralTrocas
       Alignment = taRightJustify
       FieldName = 'Tot_Itens'
       Active = True
-      DisplayFormat = '0,'
+      DisplayFormat = ',0'
       Expression = 'SUM(NUM_PRODUTOS)'
     end
     object CDS_ReposicaoDocsTot_Qtds: TAggregateField
       Alignment = taRightJustify
       FieldName = 'Tot_Qtds'
       Active = True
-      DisplayFormat = '0,'
+      DisplayFormat = ',0'
       Expression = 'SUM(QTD_ATRANSF)'
     end
   end
@@ -722,7 +722,7 @@ object DMCentralTrocas: TDMCentralTrocas
       Alignment = taRightJustify
       FieldName = 'Tot_Qtds'
       Active = True
-      DisplayFormat = '0,'
+      DisplayFormat = ',0'
       Expression = 'SUM(QTD_A_TRANSF)'
     end
   end
