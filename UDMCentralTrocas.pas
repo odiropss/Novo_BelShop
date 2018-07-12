@@ -224,6 +224,25 @@ type
     CDS_V_NfePerdasNOME_CLIENTE: TStringField;
     CDS_V_NfePerdasREFERENCIA: TStringField;
     CDS_V_ReposDivergenciasQTD_ORIGINAL: TFMTBCDField;
+    SDS_RelDivergManuais: TSQLDataSet;
+    DSP_RelDivergManuais: TDataSetProvider;
+    CDS_RelDivergManuais: TClientDataSet;
+    CDS_RelDivergManuaisCOD_LOJA: TStringField;
+    CDS_RelDivergManuaisNOME_EMP: TStringField;
+    CDS_RelDivergManuaisNUM_PEDIDO: TStringField;
+    CDS_RelDivergManuaisDTA_MOVTO: TDateField;
+    CDS_RelDivergManuaisNUM_DOCTO: TIntegerField;
+    CDS_RelDivergManuaisNUM_SEQ: TIntegerField;
+    CDS_RelDivergManuaisCOD_SIDICOM: TStringField;
+    CDS_RelDivergManuaisCOD_LINX: TFMTBCDField;
+    CDS_RelDivergManuaisNOME: TStringField;
+    CDS_RelDivergManuaisQTD_ORIGINAL: TFMTBCDField;
+    CDS_RelDivergManuaisQTD_A_TRANSF: TFMTBCDField;
+    CDS_RelDivergManuaisUSU_ALTERA: TIntegerField;
+    CDS_RelDivergManuaisDES_USUARIO: TStringField;
+    CDS_RelDivergManuaisEMPRESA: TIntegerField;
+    CDS_RelDivergManuaisDTA_ALTERA: TDateField;
+    CDS_RelDivergManuaisHRA_ALTERA: TStringField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir

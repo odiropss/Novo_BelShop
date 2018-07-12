@@ -243,6 +243,8 @@ type
     Procedure OC_GeraOCLoja(sNumOC: String); // Gera Header da OC Loja - Pedido do CD
     Procedure OC_IncluiItemOCLoja(iNumSeqItem: Integer); // Inclui Produtos da OC Loja - Pedido do CD
 
+    Function  BuscaDivergenciasDocto(sNrPedido: String): Boolean;
+
     // Odir ====================================================================
 
     procedure Bt_NotasEntDevBuscaDoctoClick(Sender: TObject);
@@ -423,6 +425,145 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
 //==============================================================================
 // Odir - INICIO ===============================================================
 //==============================================================================
+
+// CHECKOUT LOJAS - Apresenta Divergências do Docto Selecionado >>>>>>>>>>>>>>>>>>>>>>
+Function TFrmCentralTrocas.BuscaDivergenciasDocto(sNrPedido: String): Boolean;
+Var
+  MySql: String;
+Begin
+  OdirPanApres.Caption:='AGUARDE !! Montando Relatório de Alterações de Divergencias...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+
+  Screen.Cursor:=crAppStart;
+  Refresh;
+
+  Result:=True;
+
+  MySql:=' SELECT dv.cod_loja, lj.empresa, lj.nome_emp, dv.num_pedido,'+
+         '        dv.dta_movto, dv.num_docto, dv.num_seq,'+
+         '        dv.cod_produto COD_SIDICOM, pr.cod_produto COD_LINX,'+
+         '        pr.nome, dv.qtd_original, dv.qtd_a_transf,'+
+         '        CAST(dv.dta_altera AS DATE) DTA_ALTERA,'+
+         '        CAST(SUBSTRING(CAST(dv.hra_altera AS TIME) FROM 1 FOR 8)AS VARCHAR(8)) HRA_ALTERA,'+
+         '        dv.usu_altera, us.des_usuario'+
+
+         ' FROM ES_ESTOQUES_LOJAS_DIV dv'+
+         '      LEFT JOIN LINXLOJAS lj    on lj.cod_loja=dv.cod_loja'+
+         '      LEFT JOIN LINXPRODUTOS pr on pr.cod_auxiliar=dv.cod_produto'+
+         '      LEFT JOIN PS_USUARIOS us  on us.cod_usuario=dv.usu_altera'+
+
+         ' WHERE dv.num_pedido='+QuotedStr(sNrPedido);
+
+         If sNrPedido='000000' Then
+         Begin
+           MySql:=
+            MySql+' AND dv.cod_loja='+QuotedStr(DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString)+
+                  ' AND dv.dta_movto='+QuotedStr(f_Troca('-','.',(f_Troca('/','.',DateToStr(DtaEdt_ReposLojas.Date)))))+
+                  ' AND EXISTS (SELECT 1'+
+                  '             FROM ES_ESTOQUES_LOJAS lo, ES_ESTOQUES_CD cd, PRODUTO pr'+
+                  '             WHERE lo.cod_produto=pr.codproduto'+
+                  '             AND   lo.cod_produto=cd.cod_produto'+
+                  '             AND   lo.dta_movto=cd.dta_movto'+
+                  '             AND   lo.ind_transf=''SIM'''+
+                  '             AND   lo.dta_movto=dv.dta_movto'+
+                  '             AND   lo.cod_loja=dv.cod_loja'+
+                  '             AND   lo.cod_produto=dv.cod_produto'+
+                  '             AND   lo.num_docto= dv.num_docto'+
+                  '             AND   lo.num_pedido=dv.num_pedido';
+
+                  If Trim(sgCorredoresFilter)<>'' Then
+                   MySql:=
+                    MySql+'     AND   ('+QuotedStr(f_Troca('ENDERECO','cd.end_zona||''.''||cd.end_corredor||''.''||cd.end_prateleira||''.''||cd.end_gaveta',sgCorredoresFilter))+')';
+
+                  If Trim(sgPrioridadeFilter)<>'' Then
+                   MySql:=
+                    MySql+'     AND ('+f_Troca('IND_PRIORIDADE', 'lo.ind_prioridade', sgPrioridadeFilter)+')';
+
+                  If Trim(EdtReposLojasCodForn.Text)<>'' Then
+                   MySql:=
+                    MySql+'     AND pr.principalfor='+QuotedStr(Trim(EdtReposLojasCodForn.Text));
+
+            MySql:=
+             MySql+')';
+         End; // If sNrPedido='000000' Then
+
+  MySql:=
+   MySql+' ORDER BY pr.nome, dv.dta_altera, dv.hra_altera';
+  DMCentralTrocas.CDS_RelDivergManuais.Close;
+  DMCentralTrocas.SDS_RelDivergManuais.CommandText:=MySql;
+  DMCentralTrocas.CDS_RelDivergManuais.Open;
+
+  If DMCentralTrocas.CDS_RelDivergManuais.IsEmpty Then
+  Begin
+    OdirPanApres.Visible:=False;
+    Screen.Cursor:=crDefault;
+
+    sgMensagemERRO:='Pedido Nº '+sNrPedido+cr+cr+'SEM Divergências Manuais !!';
+
+    DMCentralTrocas.CDS_RelDivergManuais.Close;
+    Result:=False;
+    Exit;
+  End; // If DMCentralTrocas.CDS_RelReposicao.IsEmpty Then
+
+  // Apresenta Relatório =======================================================
+  With DMRelatorio.RelVisual do
+  Begin
+    ClientDataSet:=DMCentralTrocas.CDS_RelDivergManuais;
+    Destino:=toVisualiza;
+    Orientacao:=toRetrato;
+
+    RodapeGrupo:=True;
+
+    TextoRodape:='';
+    TextoRodapeGrupo:='';
+    Zoom:=140;
+    Fonte.Size:=8;
+
+
+    ImprimirTarjaCinza:=False;
+    ImprimirVisto:=False;
+
+    Cabecalho1Esquerda:='BelShop - Centro de Distribuição';
+    Cabecalho1Centro  :='RELATÓRIO DE ALTERAÇÔES DE REPOSIÇÕES';
+    Cabecalho1Direita :='Página: '+'#Pag';
+
+    Cabecalho2Esquerda:='LOJA LINX: '+DMCentralTrocas.CDS_RelDivergManuaisEMPRESA.AsString+' - '+
+                                      DMCentralTrocas.CDS_RelDivergManuaisNOME_EMP.AsString;
+    Cabecalho2Direita :='#Data';
+    Cabecalho2Centro  :=EmptyStr;
+
+    Cabecalho3Esquerda:='Nr Pedido: '+DMCentralTrocas.CDS_RelDivergManuaisNUM_PEDIDO.AsString+
+                        '   Nr Docto: '+DMCentralTrocas.CDS_RelDivergManuaisNUM_DOCTO.AsString+
+                        '   Data Docto: '+DMCentralTrocas.CDS_RelDivergManuaisDTA_MOVTO.AsString;
+    Cabecalho3Direita :=EmptyStr;
+    Cabecalho3Centro  :=EmptyStr;
+
+    DefinicaoCampos.Clear;
+    DefinicaoCampos.Add('D0;10;D;;NUM_SEQ;Seq');
+    DefinicaoCampos.Add('D0;13;C;;COD_SIDICOM;Cod Sidi');
+    DefinicaoCampos.Add('D0;14;C;;COD_LINX;Cod Linx');
+    DefinicaoCampos.Add('D0;96;E;;NOME;Nome Produto');
+    DefinicaoCampos.Add('D0;20;D;;QTD_ORIGINAL;Qtd Original');
+    DefinicaoCampos.Add('D0;20;D;;QTD_A_TRANSF;Qtd Alterada');
+    DefinicaoCampos.Add('D0;18;C;;DTA_ALTERA;Data');
+    DefinicaoCampos.Add('D0;14;C;;HRA_ALTERA;Hora');
+    DefinicaoCampos.Add('D0;30;E;;DES_USUARIO;Usuário');
+
+    OdirPanApres.Visible:=False;
+    Screen.Cursor:=crDefault;
+
+    Execute;
+  End; // With DMRelatorio.RelVisual do
+
+  DMCentralTrocas.CDS_RelDivergManuais.Close;
+
+End; // CHECKOUT LOJAS - Apresenta Divergências do Docto Selecionado >>>>>>>>>>>
 
 // CHECKOUT LOJAS - Gera Header da OC Loja - Pedido do CD >>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmCentralTrocas.OC_GeraOCLoja(sNumOC: String);
@@ -7971,7 +8112,13 @@ begin
 
   sNumPed:=FormatFloat('000000',StrToInt(sNumPed));
 
-  ShowMessage(sNumPed);
+  sgMensagemERRO:='';
+  If Not BuscaDivergenciasDocto(sNumPed) Then
+  Begin
+    msg(sgMensagemERRO,'A');
+    sgMensagemERRO:='';
+    Exit;
+  End;
 end;
 
 end.

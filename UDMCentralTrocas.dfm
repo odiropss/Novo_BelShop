@@ -507,7 +507,7 @@ object DMCentralTrocas: TDMCentralTrocas
     AggregatesActive = True
     Params = <>
     ProviderName = 'DSP_Transf_Cd'
-    Left = 357
+    Left = 309
     Top = 24
     object CDS_V_GeralCodBarras: TStringField
       FieldName = 'CodBarras'
@@ -522,7 +522,7 @@ object DMCentralTrocas: TDMCentralTrocas
     AfterOpen = CDS_ReposicaoDocsAfterOpen
     AfterScroll = CDS_ReposicaoDocsAfterScroll
     Left = 499
-    Top = 104
+    Top = 48
     object CDS_ReposicaoDocsCOD_LOJA: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'C'#243'd'
@@ -609,18 +609,18 @@ object DMCentralTrocas: TDMCentralTrocas
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 392
-    Top = 96
+    Top = 40
   end
   object DSP_ReposicaoDocs: TDataSetProvider
     DataSet = SDS_ReposicaoDocs
     Options = [poRetainServerOrder]
     Left = 448
-    Top = 112
+    Top = 56
   end
   object DS_ReposicaoDocs: TDataSource
     DataSet = CDS_ReposicaoDocs
     Left = 576
-    Top = 112
+    Top = 56
   end
   object CDS_ReposicaoTransf: TClientDataSet
     Aggregates = <>
@@ -630,7 +630,7 @@ object DMCentralTrocas: TDMCentralTrocas
     ProviderName = 'DSP_ReposicaoTransf'
     AfterOpen = CDS_ReposicaoTransfAfterOpen
     Left = 507
-    Top = 160
+    Top = 104
     object CDS_ReposicaoTransfNUM_SEQ: TSmallintField
       DisplayLabel = 'Seq'
       FieldName = 'NUM_SEQ'
@@ -767,18 +767,18 @@ object DMCentralTrocas: TDMCentralTrocas
       end>
     SQLConnection = DMBelShop.SQLC
     Left = 392
-    Top = 160
+    Top = 104
   end
   object DSP_ReposicaoTransf: TDataSetProvider
     DataSet = SDS_ReposicaoTransf
     Options = [poRetainServerOrder]
     Left = 448
-    Top = 176
+    Top = 120
   end
   object DS_ReposicaoTransf: TDataSource
     DataSet = CDS_ReposicaoTransf
     Left = 576
-    Top = 176
+    Top = 120
   end
   object SDS_RelReposicao: TSQLDataSet
     CommandText = 
@@ -808,20 +808,20 @@ object DMCentralTrocas: TDMCentralTrocas
     Params = <>
     SQLConnection = DMBelShop.SQLC
     Left = 400
-    Top = 232
+    Top = 176
   end
   object DSP_RelReposicao: TDataSetProvider
     DataSet = SDS_RelReposicao
     Options = [poRetainServerOrder]
     Left = 459
-    Top = 248
+    Top = 192
   end
   object CDS_RelReposicao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_RelReposicao'
     Left = 507
-    Top = 232
+    Top = 176
     object CDS_RelReposicaoLOJA: TStringField
       FieldName = 'LOJA'
       Size = 69
@@ -903,8 +903,8 @@ object DMCentralTrocas: TDMCentralTrocas
     Aggregates = <>
     Params = <>
     AfterScroll = CDS_V_ReposDivergenciasAfterScroll
-    Left = 512
-    Top = 304
+    Left = 472
+    Top = 240
     object CDS_V_ReposDivergenciasCOD_PRODUTO: TStringField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_PRODUTO'
@@ -958,8 +958,8 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DS_V_ReposDivergencias: TDataSource
     DataSet = CDS_V_ReposDivergencias
-    Left = 560
-    Top = 320
+    Left = 520
+    Top = 256
   end
   object CDS_ParamTransf: TClientDataSet
     Aggregates = <>
@@ -1473,5 +1473,122 @@ object DMCentralTrocas: TDMCentralTrocas
     DataSet = CDS_V_NfePerdas
     Left = 880
     Top = 448
+  end
+  object SDS_RelDivergManuais: TSQLDataSet
+    CommandText = 
+      'SELECT'#13#10'dv.cod_loja, '#13#10'lj.empresa,'#13#10'lj.nome_emp,'#13#10'dv.num_pedido,' +
+      #13#10'dv.dta_movto,'#13#10'dv.num_docto,'#13#10'dv.num_seq,'#13#10'dv.cod_produto COD_' +
+      'SIDICOM,'#13#10'pr.cod_produto COD_LINX,'#13#10'pr.nome,'#13#10'dv.qtd_original,'#13#10 +
+      'dv.qtd_a_transf,'#13#10'CAST(dv.dta_altera AS DATE) DTA_ALTERA,'#13#10'CAST(' +
+      'CAST(dv.hra_altera AS TIME) AS VARCHAR(8)) HRA_ALTERA,'#13#10'dv.usu_a' +
+      'ltera,'#13#10'us.des_usuario'#13#10#13#10'FROM ES_ESTOQUES_LOJAS_DIV dv'#13#10'     LE' +
+      'FT JOIN linxlojas lj    on lj.cod_loja=dv.cod_loja'#13#10'     LEFT JO' +
+      'IN linxprodutos pr on pr.cod_auxiliar=dv.cod_produto'#13#10'     LEFT ' +
+      'JOIN ps_usuarios us  on us.cod_usuario=dv.usu_altera'#13#10#13#10'WHERE dv' +
+      '.num_pedido='#39'003111'#39#13#10#13#10'ORDER BY pr.nome, dv.dta_altera, dv.hra_' +
+      'altera'#13#10
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 400
+    Top = 328
+  end
+  object DSP_RelDivergManuais: TDataSetProvider
+    DataSet = SDS_RelDivergManuais
+    Options = [poRetainServerOrder]
+    Left = 459
+    Top = 344
+  end
+  object CDS_RelDivergManuais: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_RelDivergManuais'
+    Left = 507
+    Top = 328
+    object CDS_RelDivergManuaisCOD_LOJA: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Cod Loja'
+      FieldName = 'COD_LOJA'
+      FixedChar = True
+      Size = 2
+    end
+    object CDS_RelDivergManuaisEMPRESA: TIntegerField
+      FieldName = 'EMPRESA'
+    end
+    object CDS_RelDivergManuaisNOME_EMP: TStringField
+      DisplayLabel = 'Nome Loja'
+      FieldName = 'NOME_EMP'
+      Size = 50
+    end
+    object CDS_RelDivergManuaisNUM_PEDIDO: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'N'#186' Pedido'
+      FieldName = 'NUM_PEDIDO'
+      FixedChar = True
+      Size = 6
+    end
+    object CDS_RelDivergManuaisDTA_MOVTO: TDateField
+      Alignment = taRightJustify
+      DisplayLabel = 'Dta Docto'
+      FieldName = 'DTA_MOVTO'
+    end
+    object CDS_RelDivergManuaisNUM_DOCTO: TIntegerField
+      DisplayLabel = 'N'#186' Docto'
+      FieldName = 'NUM_DOCTO'
+      DisplayFormat = ',0'
+    end
+    object CDS_RelDivergManuaisNUM_SEQ: TIntegerField
+      DisplayLabel = 'Seq Item'
+      FieldName = 'NUM_SEQ'
+      DisplayFormat = ',0'
+    end
+    object CDS_RelDivergManuaisCOD_SIDICOM: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Cod Prod SIDICOM'
+      FieldName = 'COD_SIDICOM'
+      FixedChar = True
+      Size = 6
+    end
+    object CDS_RelDivergManuaisCOD_LINX: TFMTBCDField
+      DisplayLabel = 'Cod Prod LINX'
+      FieldName = 'COD_LINX'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_RelDivergManuaisNOME: TStringField
+      DisplayLabel = 'Nome Produto'
+      FieldName = 'NOME'
+      Size = 250
+    end
+    object CDS_RelDivergManuaisQTD_ORIGINAL: TFMTBCDField
+      DisplayLabel = 'Qtd Original'
+      FieldName = 'QTD_ORIGINAL'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_RelDivergManuaisQTD_A_TRANSF: TFMTBCDField
+      DisplayLabel = 'Qtd Alterada'
+      FieldName = 'QTD_A_TRANSF'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_RelDivergManuaisDTA_ALTERA: TDateField
+      FieldName = 'DTA_ALTERA'
+    end
+    object CDS_RelDivergManuaisHRA_ALTERA: TStringField
+      FieldName = 'HRA_ALTERA'
+      Size = 8
+    end
+    object CDS_RelDivergManuaisUSU_ALTERA: TIntegerField
+      DisplayLabel = 'Cod Usu'#225'rio'
+      FieldName = 'USU_ALTERA'
+    end
+    object CDS_RelDivergManuaisDES_USUARIO: TStringField
+      DisplayLabel = 'Nome Usu'#225'rio'
+      FieldName = 'DES_USUARIO'
+      Size = 50
+    end
   end
 end
