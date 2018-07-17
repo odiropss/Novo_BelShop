@@ -4457,7 +4457,7 @@ object FrmOCLinx: TFrmOCLinx
         Top = 53
         Width = 799
         Height = 475
-        ActivePage = Ts_GeraOCOrdensCompra
+        ActivePage = Ts_GeraOCGrid
         Align = alClient
         MultiLine = True
         TabOrder = 3
@@ -4583,6 +4583,7 @@ object FrmOCLinx: TFrmOCLinx
                 Font.Style = [fsBold]
                 ReadOnly = True
                 Title.Alignment = taCenter
+                Title.Caption = '$ Un Compra'
                 Width = 85
                 Visible = True
               end
@@ -4596,6 +4597,7 @@ object FrmOCLinx: TFrmOCLinx
                 Font.Style = [fsBold]
                 ReadOnly = True
                 Title.Alignment = taRightJustify
+                Title.Caption = '$ Tot Compra'
                 Width = 90
                 Visible = True
               end
@@ -4618,7 +4620,8 @@ object FrmOCLinx: TFrmOCLinx
                 FieldName = 'QTD_ULT_COMPRA'
                 ReadOnly = True
                 Title.Alignment = taRightJustify
-                Width = 85
+                Title.Caption = 'Qtd Ult Entrada'
+                Width = 94
                 Visible = True
               end
               item
@@ -4626,7 +4629,8 @@ object FrmOCLinx: TFrmOCLinx
                 FieldName = 'VLR_UNI_ULT_COMPRA'
                 ReadOnly = True
                 Title.Alignment = taRightJustify
-                Width = 95
+                Title.Caption = '$ Un Ult Entrada'
+                Width = 102
                 Visible = True
               end
               item
@@ -4634,6 +4638,7 @@ object FrmOCLinx: TFrmOCLinx
                 FieldName = 'DTA_ULT_COMPRA'
                 ReadOnly = True
                 Title.Alignment = taCenter
+                Title.Caption = 'Ult Entrada'
                 Width = 70
                 Visible = True
               end

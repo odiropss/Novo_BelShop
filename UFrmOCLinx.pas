@@ -446,6 +446,9 @@ Begin
     DMBelShop.IBQ_OC_ComprarAdd.SQL.Add(MySql);
     DMBelShop.IBQ_OC_ComprarAdd.Open;
 
+    If DMBelShop.IBQ_OC_ComprarAdd.IsEmpty Then
+     Exit;
+
     DMBelShop.IBQ_OC_ComprarAdd.Last;
     pgProgBar.Properties.Max:=DMBelShop.IBQ_OC_ComprarAdd.RecordCount;
     pgProgBar.Position:=0;
@@ -4038,7 +4041,9 @@ Var
 
   hHrInicio, hHrFim: String;
 
-  bCriaPedidoOC: Boolean;
+  bCriaPedidoOC, // Se é para Criar Pedido de Compra
+  bCriouPed // Se Criou Pedido de Compra
+  : Boolean;
 begin
 
   Lb_EmpAprocessar.Caption:='0';
@@ -4101,7 +4106,7 @@ begin
 
   If Not ConsisteBuscaProdutos Then
    Exit;
-  
+
   OdirPanApres.Caption:='AGUARDE !! Inicializando Processos...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmOCLinx.Width-OdirPanApres.Width)/2));
@@ -4142,6 +4147,7 @@ begin
   igNumSeqPed:=0;
   sgNumPed:='0';
 
+  bCriouPed:=False;
   DMBelShop.CDS_EmpProcessa.First;
   While Not DMBelShop.CDS_EmpProcessa.Eof do
   Begin
@@ -4149,18 +4155,6 @@ begin
 
     if DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
     Begin
-      // Busca Numero de Documento =================================================
-      If sgNumPed='0' Then
-      Begin
-        MySql:=' SELECT GEN_ID(GEN_NUM_DOC_CALCULO_LINX,1) Codigo'+
-               ' FROM RDB$DATABASE';
-        DMBelShop.CDS_Busca.Close;
-        DMBelShop.SDS_Busca.CommandText:=MySql;
-        DMBelShop.CDS_Busca.Open;
-        sgNumPed:=DMBelShop.CDS_Busca.FieldByName('Codigo').AsString;
-        DMBelShop.CDS_Busca.Close;
-      End; // If sgNumPed='0' Then
-
       sCodFilial   :=DMBelShop.CDS_EmpProcessaCOD_FILIAL.AsString;
       igCodLojaLinx:=DMBelShop.CDS_EmpProcessaCOD_LINX.AsInteger;
 
@@ -4181,8 +4175,24 @@ begin
       If Not BuscaProdutosAnalise Then
        bCriaPedidoOC:=False;
 
+       // Cria Pedido de Compras ===============================================
        If bCriaPedidoOC Then
-        CriaPedidoOC;
+       Begin
+         // Busca Numero de Documento ==========================================
+         If sgNumPed='0' Then
+         Begin
+           MySql:=' SELECT GEN_ID(GEN_NUM_DOC_CALCULO_LINX,1) Codigo'+
+                  ' FROM RDB$DATABASE';
+           DMBelShop.CDS_Busca.Close;
+           DMBelShop.SDS_Busca.CommandText:=MySql;
+           DMBelShop.CDS_Busca.Open;
+           sgNumPed:=DMBelShop.CDS_Busca.FieldByName('Codigo').AsString;
+           DMBelShop.CDS_Busca.Close;
+         End; // If sgNumPed='0' Then
+
+         CriaPedidoOC;
+         bCriouPed:=True;
+       End;
 
       FrmBelShop.MontaProgressBar(False, FrmOCLinx);
     End; // if DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
@@ -4197,8 +4207,24 @@ begin
   DecimalSeparator:=',';
   DateSeparator:='/';
 
+  //============================================================================
+  // Se Não Criou Peido Encerra ================================================
+  //============================================================================
+  If Not bCriouPed Then
+  Begin
+    msg('SEM Produto para Geração'+cr+cr+'do Pedido de Compra !!','A');
+    Screen.Cursor:=crDefault;
+    Exit;
+  End; // If Not bCriouPed Then
+  // Se Não Criou Peido Encerra ================================================
+  //============================================================================
+
+  //============================================================================
   // Calcula Sugestões / Transferencias / Estoque Excedente ====================
+  //============================================================================
   OCCalculaSugTransfExc(sgNumPed, sgDtaDoc);
+  // Calcula Sugestões / Transferencias / Estoque Excedente ====================
+  //============================================================================
 
   // Busca Totais das OCs ======================================================
   TotaisOCLinx(sgNumPed);
@@ -4210,8 +4236,7 @@ begin
 
   Edt_OCTotProdutos.Value:=0;
 
-  msg('Analise dos Produtos'+cr+'Efetuada com SUCESSO !!'+cr+cr+
-      ' TEMPO: '+TimeToStr(StrToTime(hHrFim)-StrToTime(hHrInicio)),'A');
+  msg('Analise dos Produtos'+cr+'Efetuada com SUCESSO !!'+cr+cr+'TEMPO: '+TimeToStr(StrToTime(hHrFim)-StrToTime(hHrInicio)),'A');
 
   Lb_EmpAprocessar.Caption:='0';
   Lb_EmpProcessadas.Caption:='0';

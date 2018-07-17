@@ -1,10 +1,10 @@
 object DMMovtosEmpresas: TDMMovtosEmpresas
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 458
-  Top = 121
+  Left = 261
+  Top = 118
   Height = 581
-  Width = 768
+  Width = 1029
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
     DriverName = 'Interbase'
@@ -26,7 +26,7 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
       'LocaleCode=0000'
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
-    VendorLib = 'gds32.dll'
+    VendorLib = 'fbclient.dll'
     Left = 24
     Top = 16
   end
@@ -145,21 +145,21 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 511
-    Top = 75
+    Left = 743
+    Top = 91
   end
   object DSP_Produto: TDataSetProvider
     DataSet = SDS_Produto
     Options = [poRetainServerOrder]
-    Left = 562
-    Top = 90
+    Left = 794
+    Top = 106
   end
   object CDS_Produto: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Produto'
-    Left = 612
-    Top = 76
+    Left = 844
+    Top = 92
   end
   object IBQ_ProdutoMPMS: TIBQuery
     Database = DMConexoes.IBDB_MPMS
@@ -245,8 +245,8 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
       '     left join forneced fo  on fo.codfornecedor=pr.principalfor'
       '     left join listapre lp  on lp.codlista='#39'0006'#39
       '                           and lp.codproduto=pr.codproduto')
-    Left = 416
-    Top = 32
+    Left = 648
+    Top = 48
     object IBQ_ProdutoMPMSUPDATE_INSERT: TIBStringField
       FieldName = 'UPDATE_INSERT'
       Size = 1359
@@ -271,8 +271,8 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
       'FROM LISTAPRE l'
       ''
       'ORDER BY 1')
-    Left = 424
-    Top = 128
+    Left = 656
+    Top = 144
     object IBQ_ListaPrecosMPMSCODLISTA: TIBStringField
       FieldName = 'CODLISTA'
       Origin = 'LISTAPRE.CODLISTA'
@@ -365,21 +365,21 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 376
-    Top = 184
+    Left = 608
+    Top = 200
   end
   object DSP_ListaPrecos: TDataSetProvider
     DataSet = SDS_ListaPrecos
     Options = [poRetainServerOrder]
-    Left = 436
-    Top = 200
+    Left = 668
+    Top = 216
   end
   object CDS_ListaPrecos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ListaPrecos'
-    Left = 495
-    Top = 186
+    Left = 727
+    Top = 202
     object CDS_ListaPrecosCODLISTA: TStringField
       FieldName = 'CODLISTA'
       Required = True
@@ -481,8 +481,8 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
       ''
       'from forneced f'
       'order by 1')
-    Left = 512
-    Top = 272
+    Left = 744
+    Top = 288
     object IBQ_FornecedoresMPMSCODFORNECEDOR: TIBStringField
       FieldName = 'CODFORNECEDOR'
       Origin = 'FORNECED.CODFORNECEDOR'
@@ -695,21 +695,21 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 456
-    Top = 336
+    Left = 688
+    Top = 352
   end
   object DSP_Fornecedores: TDataSetProvider
     DataSet = SDS_Fornecedores
     Options = [poRetainServerOrder]
-    Left = 521
-    Top = 352
+    Left = 753
+    Top = 368
   end
   object CDS_Fornecedores: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Fornecedores'
-    Left = 584
-    Top = 336
+    Left = 816
+    Top = 352
     object CDS_FornecedoresCODFORNECEDOR: TStringField
       FieldName = 'CODFORNECEDOR'
       Required = True
@@ -943,8 +943,8 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
       'FROM ESTOQUE e'
       '      LEFT JOIN PRODUTO p on e.codproduto=p.codproduto '
       'WHERE e.codfilial='#39'99'#39)
-    Left = 312
-    Top = 424
+    Left = 568
+    Top = 360
     object IBQ_EstoqueLojaCODFILIAL: TIBStringField
       FieldName = 'CODFILIAL'
       Origin = 'ESTOQUE.CODFILIAL'
@@ -1080,8 +1080,8 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     DataSet.MaxBlobSize = -1
     DataSet.Params = <>
     Params = <>
-    Left = 664
-    Top = 160
+    Left = 896
+    Top = 176
   end
   object SDS: TSQLDataSet
     MaxBlobSize = -1
@@ -1114,5 +1114,12 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     DataSet = CDS_EmpProcessa
     Left = 272
     Top = 168
+  end
+  object SQLQ_Linx: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 288
+    Top = 88
   end
 end

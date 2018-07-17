@@ -190,6 +190,7 @@ type
     DSP_LojaLinx: TDataSetProvider;
     DS_EmpProcessa: TDataSource;
     CDS_EmpProcessaCOD_LINX: TIntegerField;
+    SQLQ_Linx: TSQLQuery;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir

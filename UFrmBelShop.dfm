@@ -8815,7 +8815,7 @@ object FrmBelShop: TFrmBelShop
             Top = 53
             Width = 793
             Height = 435
-            ActivePage = Ts_GeraOCOrdensCompra
+            ActivePage = Ts_GeraOCGrid
             Align = alClient
             MultiLine = True
             TabOrder = 3
@@ -8941,6 +8941,7 @@ object FrmBelShop: TFrmBelShop
                     Font.Style = [fsBold]
                     ReadOnly = True
                     Title.Alignment = taCenter
+                    Title.Caption = '$ Un Compra'
                     Width = 85
                     Visible = True
                   end
@@ -8954,6 +8955,7 @@ object FrmBelShop: TFrmBelShop
                     Font.Style = [fsBold]
                     ReadOnly = True
                     Title.Alignment = taRightJustify
+                    Title.Caption = '$ Tot Compra'
                     Width = 90
                     Visible = True
                   end
@@ -8991,7 +8993,8 @@ object FrmBelShop: TFrmBelShop
                     FieldName = 'QTD_ULT_COMPRA'
                     ReadOnly = True
                     Title.Alignment = taRightJustify
-                    Width = 85
+                    Title.Caption = 'Qtd Ult Entrada'
+                    Width = 94
                     Visible = True
                   end
                   item
@@ -8999,7 +9002,8 @@ object FrmBelShop: TFrmBelShop
                     FieldName = 'VLR_UNI_ULT_COMPRA'
                     ReadOnly = True
                     Title.Alignment = taRightJustify
-                    Width = 95
+                    Title.Caption = '$ Un Ult Entrada'
+                    Width = 102
                     Visible = True
                   end
                   item
@@ -9007,6 +9011,7 @@ object FrmBelShop: TFrmBelShop
                     FieldName = 'DTA_ULT_COMPRA'
                     ReadOnly = True
                     Title.Alignment = taCenter
+                    Title.Caption = 'Ult Entrada'
                     Width = 70
                     Visible = True
                   end
@@ -9603,6 +9608,7 @@ object FrmBelShop: TFrmBelShop
                     FieldName = 'COD_FORNECEDOR'
                     ReadOnly = True
                     Title.Alignment = taCenter
+                    Width = 64
                     Visible = True
                   end
                   item

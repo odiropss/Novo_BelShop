@@ -419,7 +419,8 @@ Begin
            ' CAST(LPAD(EXTRACT(MONTH FROM CAST(REPLACE(cl.data_cadastro,''/'',''.'') AS DATE)),2,''0'') AS VARCHAR(2))||'+
            ' CAST(LPAD(EXTRACT(DAY FROM CAST(REPLACE(cl.data_cadastro,''/'',''.'') AS DATE)),2,''0'') AS VARCHAR(2)) DTA_CADASTRO,'+ // 15 Data do Cadastro
 
-           ' TRIM(REPLACE(REPLACE(REPLACE(COALESCE(cl.cep,''99999999''), ''/'', ''''),''.'',''''),''-'','''')) CEP_PDV,'+ // 16 CEP do PDV
+           ' TRIM(REPLACE(REPLACE(REPLACE(REPLACE(COALESCE(cl.cep,''99999999''), ''/'', ''''),''.'',''''),''-'',''''),'' '','''')) CEP_PDV,'+ // 16 CEP do PDV
+
            ' SUBSTRING(TRIM(cl.email) FROM 1 FOR 60) CONTATO,'+ // 17 E-Mail do Cliente
            ' ''A'' STATUS'+ // 18 Status do Cliente
 
@@ -671,7 +672,7 @@ Begin
            '                        ''/'', ''''),''.'',''''),''-'','''') AS VARCHAR(18))) IDENTIFICADOR_PDV,'+ // 16 Identificador do PDV
 
            ' SUBSTRING(TRIM(cl.nome) FROM 1 FOR 60) DESCRICAO_PDV,'+ // 17 Descrição do PDV
-           ' TRIM(REPLACE(REPLACE(REPLACE(COALESCE(cl.cep,''99999999''), ''/'', ''''),''.'',''''),''-'','''')) CEP_PDV,'+ // 18 CEP do PDV
+           ' TRIM(REPLACE(REPLACE(REPLACE(REPLACE(COALESCE(cl.cep,''99999999''), ''/'', ''''),''.'',''''),''-'',''''),'' '','''')) CEP_PDV,'+ // 16 CEP do PDV
 
            ' ''N1'' CLASSIFICACAO_PDV,'+ // 19 Classificação do PDV
 
@@ -756,7 +757,7 @@ Begin
            '                        ''/'', ''''),''.'',''''),''-'','''') AS VARCHAR(18))) IDENTIFICADOR_PDV,'+ // 16 Identificador do PDV
 
            ' SUBSTRING(TRIM(cl.nome) FROM 1 FOR 60) DESCRICAO_PDV,'+ // 17 Descrição do PDV
-           ' TRIM(REPLACE(REPLACE(REPLACE(COALESCE(cl.cep,''99999999''), ''/'', ''''),''.'',''''),''-'','''')) CEP_PDV,'+ // 18 CEP do PDV
+           ' TRIM(REPLACE(REPLACE(REPLACE(REPLACE(COALESCE(cl.cep,''99999999''), ''/'', ''''),''.'',''''),''-'',''''),'' '','''')) CEP_PDV,'+ // 18 CEP do PDV
 
            ' ''N1'' CLASSIFICACAO_PDV,'+ // 19 Classificação do PDV
 
@@ -1115,7 +1116,7 @@ Begin
            ' TRIM(l.estado) UF_LOJA,'+ // 5 UF
            ' SUBSTRING(TRIM(l.cidade) FROM 1 FOR 60) CIDADE_LOJA,'+ // 6 Cidade
            ' SUBSTRING(TRIM(l.bairro) FROM 1 FOR 60) BAIRRO_LOJA,'+ // 7 Bairro
-           ' REPLACE(REPLACE(REPLACE(COALESCE(l.cep,''99999999''), ''/'',''''),''.'',''''),''-'','''') CEP_LOJA,'+ // 8 CEP
+           ' TRIM(REPLACE(REPLACE(REPLACE(REPLACE(COALESCE(l.cep,''99999999''), ''/'',''''),''.'',''''),''-'',''''),'' '','''')) CEP_LOJA,'+ // 8 CEP
            ' ''A'' STATUS_LOJA'+ // 9 Status da Loja
 
            ' FROM EA l'+
@@ -1410,7 +1411,8 @@ End; // Cadastro de Produtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TFrmAcceraLoreal.FormCreate(Sender: TObject);
 Var
-  sArqProc: String;
+  sArqProc, sPeriodo: String;
+
 begin
   If Not DMAcceraLoreal.SQLC.Connected Then
   Begin
@@ -1487,8 +1489,11 @@ begin
    End
   Else
    Begin
-     MessageBox(Handle, pChar('ERRO ao Gerar Arquivos !!'+cr+cr+Trim(sArqProc)), 'ATENÇÃO !!', MB_ICONERROR);
-   End;
+     MessageBox(Handle, pChar('ERRO ao Gerar Arquivos !!'+cr+cr+
+                              'Período de '+DateToStr(Date-31)+' a '+DateToStr(Date-1)+cr+cr+
+                              'Não Existe Movto a Gerar no(s) Arquivo(s) Abaixo'+cr+cr+
+                              Trim(sArqProc)), 'ATENÇÃO !!', MB_ICONERROR);
+   End; // If Trim(sArqProc)='' Then
 
   OdirPanApres.Visible:=False;
 
