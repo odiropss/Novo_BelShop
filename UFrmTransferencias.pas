@@ -1684,15 +1684,6 @@ Begin
          '                                     END=t.cod_aux'+
          '                                 AND t.tip_aux=2'+
 
-         // OdirApagar - 21/12/2017 - Retira Agora Direto no Linx em (Exists (select 1...))
-         // ' WHERE p.situacaopro in (0,3)'+
-         // ' AND   CAST(COALESCE(c.est_minimo,0) AS INTEGER)>0'+
-         // ' AND   p.codaplicacao<>''0015'''+ // Não Processa: 0015 = E-Commerce
-         // ' AND   p.codaplicacao<>''0016'''+ // Não Processa: 0016 = Brindes
-         // ' AND   p.codaplicacao<>''0017'''+ // Não Processa: 0017 = Provadores
-         // ' AND   p.principalfor Not in ('+sgFornNAO+')'+ // Tira Fornecedores que Não Entram no Processo de Reposição Automática
-         // ' AND   UPPER(p.apresentacao) NOT LIKE ''LUVA%'''+ // Tira todas as Luvas
-
          ' WHERE CAST(COALESCE(c.est_minimo,0) AS INTEGER)>0'+
          ' AND   c.cod_loja='+QuotedStr(sCodLoja);
 
@@ -1720,7 +1711,8 @@ Begin
          '             WHERE pl.cod_auxiliar=p.codproduto'+
          '             AND   pl.desativado=''N'''+
          '             AND   pl.id_linha<>33'+     // Brindes
-         '             AND   pl.id_colecao<>294)'+ // Brindes
+         '             AND   pl.id_colecao<>294'+
+         '             AND   pl.id_colecao<>197)'+ // Brindes
 
          ' ORDER BY p.codproduto';
   DMTransferencias.CDS_CurvasLoja.Close;

@@ -26,7 +26,7 @@ object DMTransferencias: TDMTransferencias
       'LocaleCode=0000'
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
-    VendorLib = 'gds32.dll'
+    VendorLib = 'fbclient.dll'
     Left = 48
     Top = 16
   end

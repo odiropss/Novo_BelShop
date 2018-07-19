@@ -97,6 +97,9 @@ type
     Lbx_EmpresasProcessar: TListBox;
 
     // Odir ====================================================================
+    Procedure LimpaOBS;
+    Procedure MenssagemAnterior(sCodLj: String);
+
     Procedure ParaProcessamentoLoja; // Loja Ultrapassou 1 Hora
 
     Function  ConectaCentralTrocas: Boolean;
@@ -187,6 +190,7 @@ var
 
   sgDtaServidor: String;
 
+  sgMsgAnterior,
   sgDML, sgValues: String;
 
   Flags : Cardinal; // Verifica Internet Ativo - Encerra Necessario
@@ -199,6 +203,55 @@ uses UDMConexoes, UDMMovtosEmpresas, DK_Procs1, DateUtils, IBCustomDataSet,
 {$R *.dfm}
 
 // Odir
+
+// Busca Messagem Anterior em Obs_MovtoEmp do Processamento >>>>>>>>>>>>>>>>>>>>
+Procedure TFrmMovtosEmpresas.MenssagemAnterior(sCodLj: String);
+Var
+  MySql: String;
+Begin
+  MySql:=' SELECT TRIM(e.obs_movtoemp) obs'+
+         ' FROM ES_PROCESSADOS e'+
+         ' WHERE e.cod_loja='+QuotedStr(sCodLj);
+  DMMovtosEmpresas.SQLQuery1.Close;
+  DMMovtosEmpresas.SQLQuery1.SQL.Clear;
+  DMMovtosEmpresas.SQLQuery1.SQL.Add(MySql);
+  DMMovtosEmpresas.SQLQuery1.Open;
+  sgMsgAnterior:=Trim(DMMovtosEmpresas.SQLQuery1.FieldByname('Obs').AsString);
+  DMMovtosEmpresas.SQLQuery1.Close;
+End; // Busca Messagem Anterior em Obs_MovtoEmp do Processamento >>>>>>>>>>>>>>>
+
+// Limpa Obs_MovtoEmp do Processamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmMovtosEmpresas.LimpaOBS;
+Var
+  MySql: String;
+Begin
+  sgMsgAnterior:='';
+
+  // Verifica se Transação esta Ativa
+  If DMMovtosEmpresas.SQLC.InTransaction Then
+   DMMovtosEmpresas.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMMovtosEmpresas.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    MySql:=' UPDATE ES_PROCESSADOS e'+
+           ' SET e.obs_movtoemp=NULL';
+    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMMovtosEmpresas.SQLC.Commit(TD);
+
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMMovtosEmpresas.SQLC.Rollback(TD);
+    End; // on e : Exception do
+  End; // Try da Transação
+End; // Limpa obs_movtoemp do Processamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 
 // Atualiza Dados da Tabela ESTOQUE ============================================
 Procedure TFrmMovtosEmpresas.AtualizaTabelaEstoque(sCodLoja: String);
@@ -2073,6 +2126,9 @@ begin
     Exit;
   End;
 
+  // Limpa Obs do Processamento OBS_MOVTOEMP
+  LimpaOBS;
+
   iNumTentativas:=0;
   bExecutaDireto:=False;
 
@@ -3359,6 +3415,16 @@ begin
                 DateSeparator:='/';
                 DecimalSeparator:=',';
 
+                MenssagemAnterior(sCodEmpresa);
+                MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, obs_movtoemp)'+
+                       ' VALUES ('+
+                       QuotedStr(sCodEmpresa)+', '+
+                       IntToStr(iCodLojaLinx)+', '+
+                       ' CURRENT_TIMESTAMP,'+
+                       QuotedStr(Trim(sgMsgAnterior)+' -> DM: '+e.message+' - '+MySql)+')'+
+                       'MATCHING (COD_LOJA)';
+                DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
                 sgMensagem:='DM-'+sCodEmpresa+': '+e.Message;
                 sgMensagem:=copy(sgMensagem,1,200);
                 MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
@@ -3367,7 +3433,6 @@ begin
                        QuotedStr(sgMensagem)+', '+
                        QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
                 DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-
               End; // on e : Exception do
             End; // Try
           End; // If bSiga Then // Consulta Demandas
@@ -4044,7 +4109,17 @@ begin
                 DateSeparator:='/';
                 DecimalSeparator:=',';
 
-                sgMensagem:='ERRO: UC-'+sCodEmpresa+': '+MySql; //e.Message;
+                MenssagemAnterior(sCodEmpresa);
+                MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, obs_movtoemp)'+
+                       ' VALUES ('+
+                       QuotedStr(sCodEmpresa)+', '+
+                       IntToStr(iCodLojaLinx)+', '+
+                       ' CURRENT_TIMESTAMP,'+
+                       QuotedStr(Trim(sgMsgAnterior)+' -> UC: '+e.message+' - '+MySql)+')'+
+                       'MATCHING (COD_LOJA)';
+                DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+                sgMensagem:='ERRO: UC-'+sCodEmpresa+': '+e.Message;
                 sgMensagem:=copy(sgMensagem,1,200);
                 MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
                        ' Values ('+
@@ -4052,7 +4127,6 @@ begin
                        QuotedStr(sgMensagem)+', '+
                        QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
                 DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-
               End; // on e : Exception do
             End; // Try
           End; // If bSiga Then // Consulta Ultima Compra
@@ -4512,6 +4586,16 @@ begin
 
                 DateSeparator:='/';
                 DecimalSeparator:=',';
+
+                MenssagemAnterior(sCodEmpresa);
+                MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, obs_movtoemp)'+
+                       ' VALUES ('+
+                       QuotedStr(sCodEmpresa)+', '+
+                       IntToStr(iCodLojaLinx)+', '+
+                       ' CURRENT_TIMESTAMP,'+
+                       QuotedStr(Trim(sgMsgAnterior)+' -> '+sgMensagem+': '+e.message+' - '+MySql)+')'+
+                       'MATCHING (COD_LOJA)';
+                DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
                 sgMensagem:=sgMensagem+'-'+sCodEmpresa+': '+e.Message;
                 sgMensagem:=copy(sgMensagem,1,200);

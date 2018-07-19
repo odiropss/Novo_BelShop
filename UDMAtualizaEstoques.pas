@@ -55,6 +55,7 @@ type
     CDS_BuscaRapida: TClientDataSet;
     DSP_BuscaRapida: TDataSetProvider;
     SQLQ_BuscaRapida: TSQLQuery;
+    SQLQuery1: TSQLQuery;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir ====================================================================

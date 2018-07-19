@@ -8815,7 +8815,7 @@ object FrmBelShop: TFrmBelShop
             Top = 53
             Width = 793
             Height = 435
-            ActivePage = Ts_GeraOCGrid
+            ActivePage = Ts_GeraOCOrdensCompra
             Align = alClient
             MultiLine = True
             TabOrder = 3
@@ -9608,7 +9608,6 @@ object FrmBelShop: TFrmBelShop
                     FieldName = 'COD_FORNECEDOR'
                     ReadOnly = True
                     Title.Alignment = taCenter
-                    Width = 64
                     Visible = True
                   end
                   item

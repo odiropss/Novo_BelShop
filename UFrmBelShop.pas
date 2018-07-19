@@ -2336,7 +2336,8 @@ var
 
   igCodLojaLinx: Integer;
 
-  bgSoLinx: Boolean;
+  bgSoLinx,
+  bgGerouPedCompra: Boolean; // Se Gerou Pedido de Compra
 
   bgLinxChamada: Boolean;
   //=====================================
@@ -2424,7 +2425,14 @@ Begin
            ' GEN_ID(GEN_ODIR,1) NUM_SEQ_ITEM,'+
            ' oc.cod_item COD_PRODUTO_SIDI,'+
            ' pr.cod_produto COD_PRODUTO_LINX,'+
-           ' pr.nome DES_PRODUTO,'+
+                         
+           ' CASE'+
+           '   WHEN TRIM(COALESCE(pr.nome, ''''))<>'''' THEN'+
+           '     pr.nome'+
+           '   ELSE'+
+           '     oc.des_item'+
+           ' END DES_PRODUTO,'+
+
            ' CAST(COALESCE(oc.qtd_acomprar, 0) AS INTEGER) QTD_PRODUTO,'+
            ' oc.vlr_uni_compra,'+
            ' oc.vlr_tot_compra,'+
@@ -19565,7 +19573,7 @@ Var
   MySql: String;
 
   s, ss,
-  sCodLojaLinx, sCodProdSidicom, sCodProdLinx, sSaldoLinx, sCodBarras: String;
+  sCodLojaLinx, sCodProdSidicom, sCodProdLinx, sSaldoLinx: String;
 
   b: Boolean;
   i: Integer;
@@ -19781,6 +19789,7 @@ Begin
     sCodLojaLinx:=DMBelShop.CDS_BuscaRapida.FieldByName('COD_LINX').AsString;
     DMBelShop.CDS_BuscaRapida.Close;
 
+    bgGerouPedCompra:=False;
     IBQ_Matriz.First;
     While not IBQ_Matriz.Eof do
     Begin
@@ -19790,60 +19799,26 @@ Begin
       sCodProdSidicom:=IBQ_Matriz.FieldByName('COD_ITEM').AsString;
 
       //========================================================================
-      // Dados Liunx ===========================================================
+      // Só Processa se Houver o Produto no LINX ===============================
       //========================================================================
-      sCodProdLInx:='';
-      sSaldoLinx:='';
-      sCodBarras:='';
-
-      If sCodLojaLinx<>'0' Then
-      Begin
-        MySql:=' select p.codbarra'+
-               ' from PRODUTO p'+
-               ' where p.codproduto='+QuotedStr(sCodProdSidicom)+
-               ' union'+
-               ' select b.codbarra'+
-               ' from PRODUTOSBARRA b'+
-               ' where b.codproduto='+QuotedStr(sCodProdSidicom);
-        IBQ_MPMS.Close;
-        IBQ_MPMS.SQL.Clear;
-        IBQ_MPMS.SQL.Add(MySql);
-        IBQ_MPMS.Open;
-
-        While Not IBQ_MPMS.Eof do
-        Begin
-          If Trim(sCodBarras)='' Then
-           sCodBarras:=QuotedStr(Trim(IBQ_MPMS.FieldByName('CodBarra').AsString))
-          Else
-           sCodBarras:=sCodBarras+', '+QuotedStr(Trim(IBQ_MPMS.FieldByName('CodBarra').AsString));
-
-          IBQ_MPMS.Next;
-        End; // While Not IBQ_MPMS.Eof do
-        IBQ_MPMS.Close;
-      End; // If sCodLojaLinx<>'0' Then
-
-      If Trim(sCodBarras)<>'' Then
-      Begin
-        MySql:=' select pr.cod_produto'+
-               ' from LINXPRODUTOS pr'+
-               ' where ((Trim(pr.cod_barra) in ('+sCodBarras+')) or (trim(pr.cod_auxiliar)='+QuotedStr(sCodProdSidicom)+'))'+
-               ' UNION'+
-               ' select cb.cod_produto'+
-               ' from LINXPRODUTOSCODBAR cb'+
-               ' where Trim(cb.cod_barra) in ('+sCodBarras+')';
-        DMBelShop.CDS_BuscaRapida.Close;
-        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-        DMBelShop.CDS_BuscaRapida.Open;
-        sCodProdLinx:='';
-
-        If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)<>'' Then
-         sCodProdLinx:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString;
-
-        DMBelShop.CDS_BuscaRapida.Close;
-      End; // If Trim(sCodBarras)<>'' Then
+      MySql:=' select pr.cod_produto'+
+             ' from LINXPRODUTOS pr'+
+             ' where trim(pr.cod_auxiliar)='+QuotedStr(sCodProdSidicom);
+      DMBelShop.CDS_BuscaRapida.Close;
+      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+      DMBelShop.CDS_BuscaRapida.Open;
+      sCodProdLinx:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString;
+      DMBelShop.CDS_BuscaRapida.Close;
 
       If Trim(sCodProdLinx)<>'' Then
       Begin
+        bgGerouPedCompra:=True;
+
+        //======================================================================
+        // Saldo do Produto no Linx ============================================
+        //======================================================================
+        sSaldoLinx:='';
+
         MySql:=' select CAST(pd.quantidade as Integer) quantidade'+
                ' from LINXPRODUTOSDETALHES pd'+
                ' where pd.cod_produto='+sCodProdLinx+
@@ -19856,415 +19831,408 @@ Begin
          sSaldoLinx:=DMBelShop.CDS_BuscaRapida.FieldByName('Quantidade').AsString;
 
         DMBelShop.CDS_BuscaRapida.Close;
-      End; // If Trim(sCodBarras)<>'' Then
-      // Dados Liunx ===========================================================
-      //========================================================================
+        // Saldo do Produto no Linx ============================================
+        //======================================================================
 
-      bgProcCurva:=True;
+        bgProcCurva:=True;
 
-      b:=False;
-      While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
-      Begin
-        If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_Matriz.FieldByName('COD_ITEM').AsString,[]) Then
-         Begin
-           b:=True;
-
-           // Curvas Por Loja ou Por MPMS
-           If ((Gb_CalculoTpCurvaABC.Visible) Or (Gb_CalculoApresCurva.Visible)) and (Gb_CalculoApresCurva.Visible) Then
+        b:=False;
+        While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
+        Begin
+          If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_Matriz.FieldByName('COD_ITEM').AsString,[]) Then
            Begin
-             If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Not Ckb_CalculoApresCurvaFora.Checked) Then
+             b:=True;
+
+             // Curvas Por Loja ou Por MPMS
+             If ((Gb_CalculoTpCurvaABC.Visible) Or (Gb_CalculoApresCurva.Visible)) and (Gb_CalculoApresCurva.Visible) Then
+             Begin
+               If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Not Ckb_CalculoApresCurvaFora.Checked) Then
+                Begin
+                  bgProcCurva:=False;
+                End
+               Else If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Ckb_CalculoApresCurvaFora.Checked) Then
+                Begin
+                  If (Rb_CalculoApresCurvaEstCom.Checked) and (IBQ_Matriz.FieldByName('QTD_SALDO').AsInteger=0) Then
+                    bgProcCurva:=False
+                  Else If (Rb_CalculoApresCurvaEstSem.Checked) and (IBQ_Matriz.FieldByName('QTD_SALDO').AsInteger<>0) Then
+                    bgProcCurva:=False
+                End;
+             End; // If Gb_CalculoTpCurvaABC.Visible Then
+           End
+          Else // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_Matriz.FieldByName('COD_ITEM').AsString,[]) Then
+           Begin
+             If (StrToDate(IBQ_Matriz.FieldByName('DATAINCLUSAO').AsString)>=StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio)))) Or
+                (StrToDate(IBQ_Matriz.FieldByName('DATAALTERACAO').AsString)>=StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio)))) Then
+              Begin
+                DMBelShop.CDS_Join.Locate('IND_CURVA','E',[]);
+                MySql:=DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString;
+                DMBelShop.CDS_Join.Insert;
+                DMBelShop.CDS_Join.FieldByName('COD_LOJA').AsString:=sCodMatriz;
+                DMBelShop.CDS_Join.FieldByName('COD_PRODUTO').AsString:=IBQ_Matriz.FieldByName('COD_ITEM').AsString;
+                DMBelShop.CDS_Join.FieldByName('IND_CURVA').AsString:='E';
+                DMBelShop.CDS_Join.FieldByName('DATAINCLUSAO').AsString:=IBQ_Matriz.FieldByName('DATAINCLUSAO').AsString;
+                DMBelShop.CDS_Join.FieldByName('EST_MINIMO').AsString:='3';
+                DMBelShop.CDS_Join.FieldByName('USAR_CURVA').AsString:='SIM';
+                DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString:=MySql;
+              End
+             Else
               Begin
                 bgProcCurva:=False;
-              End
-             Else If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Ckb_CalculoApresCurvaFora.Checked) Then
-              Begin
-                If (Rb_CalculoApresCurvaEstCom.Checked) and (IBQ_Matriz.FieldByName('QTD_SALDO').AsInteger=0) Then
-                  bgProcCurva:=False
-                Else If (Rb_CalculoApresCurvaEstSem.Checked) and (IBQ_Matriz.FieldByName('QTD_SALDO').AsInteger<>0) Then
-                  bgProcCurva:=False
+                b:=True;
               End;
-           End; // If Gb_CalculoTpCurvaABC.Visible Then
-         End
-        Else // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',IBQ_Matriz.FieldByName('COD_ITEM').AsString,[]) Then
+           End;
+        End; // While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
+
+        // Ultima Compra ----------------------------------------------
+        sDta_Ref:='';
+        sCodForn:='';
+        sNomeForn:='';
+        cQuant_Ref:=0;
+        cPreco:=0;
+        cPrecoUnit:=0;
+        cVlr_Total_Ref:=0;
+
+        s :=IBQ_Matriz.FieldByName('COD_EMPRESA').AsString;
+        ss:=IBQ_Matriz.FieldByName('COD_ITEM').AsString;
+        If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'UC']),[]) Then
          Begin
-           If (StrToDate(IBQ_Matriz.FieldByName('DATAINCLUSAO').AsString)>=StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio)))) Or
-              (StrToDate(IBQ_Matriz.FieldByName('DATAALTERACAO').AsString)>=StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio)))) Then
-            Begin
-              DMBelShop.CDS_Join.Locate('IND_CURVA','E',[]);
-              MySql:=DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString;
-              DMBelShop.CDS_Join.Insert;
-              DMBelShop.CDS_Join.FieldByName('COD_LOJA').AsString:=sCodMatriz;
-              DMBelShop.CDS_Join.FieldByName('COD_PRODUTO').AsString:=IBQ_Matriz.FieldByName('COD_ITEM').AsString;
-              DMBelShop.CDS_Join.FieldByName('IND_CURVA').AsString:='E';
-              DMBelShop.CDS_Join.FieldByName('DATAINCLUSAO').AsString:=IBQ_Matriz.FieldByName('DATAINCLUSAO').AsString;
-              DMBelShop.CDS_Join.FieldByName('EST_MINIMO').AsString:='3';
-              DMBelShop.CDS_Join.FieldByName('USAR_CURVA').AsString:='SIM';
-              DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString:=MySql;
-            End
-           Else
-            Begin
-              bgProcCurva:=False;
-              b:=True;
-            End;
-         End;
-      End; // While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
+           sDta_Ref      :=DMBelShop.CDS_UltCompraTransito.FieldByName('Dta_Ref').AsString;
+           sCodForn      :=DMBelShop.CDS_UltCompraTransito.FieldByName('CodFornecedor').AsString;
+           sNomeForn     :=DMBelShop.CDS_UltCompraTransito.FieldByName('NomeFornecedor').AsString;
+           cQuant_Ref    :=DMBelShop.CDS_UltCompraTransito.FieldByName('Quant_Ref').AsCurrency;
+           cPreco        :=DMBelShop.CDS_UltCompraTransito.FieldByName('Preco').AsCurrency;
+           cPrecoUnit    :=DMBelShop.CDS_UltCompraTransito.FieldByName('Preco').AsCurrency;
+           cVlr_Total_Ref:=DMBelShop.CDS_UltCompraTransito.FieldByName('Vlr_Total_Ref').AsCurrency;
+         End
+        Else If DMBelShop.CDS_UltCompraTransito.Locate('CodProduto;Tipo',VarArrayOf([ss, 'UC']),[]) Then
+         Begin
+           cPrecoUnit    :=DMBelShop.CDS_UltCompraTransito.FieldByName('Preco').AsCurrency;
+         End;// If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'UC']),[]) Then
 
-      // Ultima Compra ----------------------------------------------
-      sDta_Ref:='';
-      sCodForn:='';
-      sNomeForn:='';
-      cQuant_Ref:=0;
-      cPreco:=0;
-      cPrecoUnit:=0;
-      cVlr_Total_Ref:=0;
-
-      s :=IBQ_Matriz.FieldByName('COD_EMPRESA').AsString;
-      ss:=IBQ_Matriz.FieldByName('COD_ITEM').AsString;
-      If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'UC']),[]) Then
-       Begin
-         sDta_Ref      :=DMBelShop.CDS_UltCompraTransito.FieldByName('Dta_Ref').AsString;
-         sCodForn      :=DMBelShop.CDS_UltCompraTransito.FieldByName('CodFornecedor').AsString;
-         sNomeForn     :=DMBelShop.CDS_UltCompraTransito.FieldByName('NomeFornecedor').AsString;
-         cQuant_Ref    :=DMBelShop.CDS_UltCompraTransito.FieldByName('Quant_Ref').AsCurrency;
-         cPreco        :=DMBelShop.CDS_UltCompraTransito.FieldByName('Preco').AsCurrency;
-         cPrecoUnit    :=DMBelShop.CDS_UltCompraTransito.FieldByName('Preco').AsCurrency;
-         cVlr_Total_Ref:=DMBelShop.CDS_UltCompraTransito.FieldByName('Vlr_Total_Ref').AsCurrency;
-       End
-      Else If DMBelShop.CDS_UltCompraTransito.Locate('CodProduto;Tipo',VarArrayOf([ss, 'UC']),[]) Then
-       Begin
-         cPrecoUnit    :=DMBelShop.CDS_UltCompraTransito.FieldByName('Preco').AsCurrency;
-       End;// If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'UC']),[]) Then
-
-      // Transito ---------------------------------------------------
-      cQtdTransito:=0;
-      If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'TR']),[]) Then
-      Begin
-        cQtdTransito  :=DMBelShop.CDS_UltCompraTransito.FieldByName('Quant_Ref').AsCurrency;
-      End; // If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'TR']),[]) Then
-
-      // Inicializa Variaveis de Demanda ---------------------------------------
-      igNrDias:=0;
-      igNrMeses:=0;
-      cgOutras_Demandas:=0;
-      cgTotal_Demandas:=0;
-
-      // Busca Demandas e Totais Dias para Mes 1 -------------------------------
-      bgDemandaNovo:=True;
-//      bgDemandaNovo:=False;
-
-      BuscaDemanda(CB_Mes1, ME_Ano1, IBQ_Matriz.FieldByName('Cod_Item').AsString,
-                   IBQ_Matriz.FieldByName('Cod_Empresa').AsString, cDemanda,
-                   igNrDias, igNrMeses, True);
-      bgDemandaNovo:=False;
-
-      // Tributação ------------------------------------------------------------
-      If (sCOD_ICMS  <>IBQ_Matriz.FieldByName('COD_ICMS').AsString) Or
-         (sEstado    <>IBQ_Matriz.FieldByName('Estado').AsString)   Or
-         (sTIP_PESSOA<>IBQ_Matriz.FieldByName('TIP_PESSOA').AsString) Then
-      Begin
-        sCodICM           :='';
-        sSittributaria    :='';
-        sSubstituicao     :='';
-        sSomaIPIBase      :='N';
-        sSomaFreteBase    :='N';
-        sSomaDespesaBase  :='N';
-        sSomaIPIBaseSubst :='N';
-        sSomaFreteBaseST  :='N';
-        sSomaDespesaBaseST:='N';
-        cReducao          :=0;
-        cAliquota         :=0;
-        cSubstMargem      :=0;
-        sSubstValPer      :='P';
-        cSubstAliquota    :=0;
-        cAliqRepasse      :=0;
-
-        sCOD_ICMS  :=IBQ_Matriz.FieldByName('COD_ICMS').AsString;
-        sEstado    :=IBQ_Matriz.FieldByName('Estado').AsString;
-        sTIP_PESSOA:=IBQ_Matriz.FieldByName('TIP_PESSOA').AsString;
-
-        If IBQ_ConsultaMatriz.Locate('CODICM;CODESTADO;REVENDACONSUMOFJ',VarArrayOf([sCOD_ICMS,sEstado,sTIP_PESSOA]),[]) Then
+        // Transito ---------------------------------------------------
+        cQtdTransito:=0;
+        If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'TR']),[]) Then
         Begin
-          sCodICM           :=IBQ_ConsultaMatriz.FieldByName('CODICM').AsString;
-          sSittributaria    :=IBQ_ConsultaMatriz.FieldByName('SITTRIBUTARIA').AsString;
-          sSomaIPIBase      :=IBQ_ConsultaMatriz.FieldByName('SOMAIPIBASE').AsString;
-          sSomaFreteBase    :=IBQ_ConsultaMatriz.FieldByName('SOMAFRETEBASE').AsString;
-          sSomaDespesaBase  :=IBQ_ConsultaMatriz.FieldByName('SOMADESPESABASE').AsString;
-          sSubstituicao     :=IBQ_ConsultaMatriz.FieldByName('SUBSTITUICAO').AsString;
-          sSubstValPer      :=IBQ_ConsultaMatriz.FieldByName('SUBSTVALPER').AsString;
-          sSomaIPIBaseSubst :=IBQ_ConsultaMatriz.FieldByName('SOMAIPIBASESUBST').AsString;
-          sSomaFreteBaseST  :=IBQ_ConsultaMatriz.FieldByName('SOMAFRETEBASEST').AsString;
-          sSomaDespesaBaseST:=IBQ_ConsultaMatriz.FieldByName('SOMADESPESABASEST').AsString;
-          cAliquota         :=IBQ_ConsultaMatriz.FieldByName('ALIQUOTA').AsCurrency;
-          cReducao          :=IBQ_ConsultaMatriz.FieldByName('REDUCAO').AsCurrency;
-          cSubstMargem      :=IBQ_ConsultaMatriz.FieldByName('SUBSTMARGEM').AsCurrency;
-          cSubstAliquota    :=IBQ_ConsultaMatriz.FieldByName('SUBSTALIQUOTA').AsCurrency;
-          cAliqRepasse      :=IBQ_ConsultaMatriz.FieldByName('ALIQREPASSE').AsCurrency;
-        End; // If IBQ_ConsultaMatriz.Locate('CODICM;CODESTADO;REVENDACONSUMOFJ',VarArrayOf([sCOD_ICMS,sEstado,sTIP_PESSOA]),[]) Then
-      End; // If (sCOD_ICMS  <>IBQ_Matriz.FieldByName('COD_ICMS').AsString) Or
+          cQtdTransito  :=DMBelShop.CDS_UltCompraTransito.FieldByName('Quant_Ref').AsCurrency;
+        End; // If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'TR']),[]) Then
 
-      // Num_Seq de Documento --------------------------------------------------
-      If bgProcCurva Then
-       Inc(iNumSeqDoc);
+        // Inicializa Variaveis de Demanda ----------------------------
+        igNrDias:=0;
+        igNrMeses:=0;
+        cgOutras_Demandas:=0;
+        cgTotal_Demandas:=0;
 
-      // Insere Documento OC_COMPRAR -------------------------------------------
-      DMBelShop.IBQ_OC_ComprarAdd.Insert;
-      For i:=0 to IBQ_Matriz.FieldCount-1 do
-      Begin
-        // Trata Campos =============================================
+        // Busca Demandas e Totais Dias para Mes 1 --------------------
+        bgDemandaNovo:=True;
 
+        BuscaDemanda(CB_Mes1, ME_Ano1, IBQ_Matriz.FieldByName('Cod_Item').AsString,
+                     IBQ_Matriz.FieldByName('Cod_Empresa').AsString, cDemanda,
+                     igNrDias, igNrMeses, True);
+        bgDemandaNovo:=False;
 
-        If (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='NUM_SEQ') and (bgProcCurva) Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=iNumSeqDoc
+        // Tributação -------------------------------------------------
+        If (sCOD_ICMS  <>IBQ_Matriz.FieldByName('COD_ICMS').AsString) Or
+           (sEstado    <>IBQ_Matriz.FieldByName('Estado').AsString)   Or
+           (sTIP_PESSOA<>IBQ_Matriz.FieldByName('TIP_PESSOA').AsString) Then
+        Begin
+          sCodICM           :='';
+          sSittributaria    :='';
+          sSubstituicao     :='';
+          sSomaIPIBase      :='N';
+          sSomaFreteBase    :='N';
+          sSomaDespesaBase  :='N';
+          sSomaIPIBaseSubst :='N';
+          sSomaFreteBaseST  :='N';
+          sSomaDespesaBaseST:='N';
+          cReducao          :=0;
+          cAliquota         :=0;
+          cSubstMargem      :=0;
+          sSubstValPer      :='P';
+          cSubstAliquota    :=0;
+          cAliqRepasse      :=0;
 
-        Else If (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='NUM_SEQ') and (Not bgProcCurva) Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=9999999
+          sCOD_ICMS  :=IBQ_Matriz.FieldByName('COD_ICMS').AsString;
+          sEstado    :=IBQ_Matriz.FieldByName('Estado').AsString;
+          sTIP_PESSOA:=IBQ_Matriz.FieldByName('TIP_PESSOA').AsString;
 
-        Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='NUM_DOCUMENTO' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=StrToInt(sNumDoc)
+          If IBQ_ConsultaMatriz.Locate('CODICM;CODESTADO;REVENDACONSUMOFJ',VarArrayOf([sCOD_ICMS,sEstado,sTIP_PESSOA]),[]) Then
+          Begin
+            sCodICM           :=IBQ_ConsultaMatriz.FieldByName('CODICM').AsString;
+            sSittributaria    :=IBQ_ConsultaMatriz.FieldByName('SITTRIBUTARIA').AsString;
+            sSomaIPIBase      :=IBQ_ConsultaMatriz.FieldByName('SOMAIPIBASE').AsString;
+            sSomaFreteBase    :=IBQ_ConsultaMatriz.FieldByName('SOMAFRETEBASE').AsString;
+            sSomaDespesaBase  :=IBQ_ConsultaMatriz.FieldByName('SOMADESPESABASE').AsString;
+            sSubstituicao     :=IBQ_ConsultaMatriz.FieldByName('SUBSTITUICAO').AsString;
+            sSubstValPer      :=IBQ_ConsultaMatriz.FieldByName('SUBSTVALPER').AsString;
+            sSomaIPIBaseSubst :=IBQ_ConsultaMatriz.FieldByName('SOMAIPIBASESUBST').AsString;
+            sSomaFreteBaseST  :=IBQ_ConsultaMatriz.FieldByName('SOMAFRETEBASEST').AsString;
+            sSomaDespesaBaseST:=IBQ_ConsultaMatriz.FieldByName('SOMADESPESABASEST').AsString;
+            cAliquota         :=IBQ_ConsultaMatriz.FieldByName('ALIQUOTA').AsCurrency;
+            cReducao          :=IBQ_ConsultaMatriz.FieldByName('REDUCAO').AsCurrency;
+            cSubstMargem      :=IBQ_ConsultaMatriz.FieldByName('SUBSTMARGEM').AsCurrency;
+            cSubstAliquota    :=IBQ_ConsultaMatriz.FieldByName('SUBSTALIQUOTA').AsCurrency;
+            cAliqRepasse      :=IBQ_ConsultaMatriz.FieldByName('ALIQREPASSE').AsCurrency;
+          End; // If IBQ_ConsultaMatriz.Locate('CODICM;CODESTADO;REVENDACONSUMOFJ',VarArrayOf([sCOD_ICMS,sEstado,sTIP_PESSOA]),[]) Then
+        End; // If (sCOD_ICMS  <>IBQ_Matriz.FieldByName('COD_ICMS').AsString) Or
 
-        Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='CLA_CURVA_ABC' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=DMBelShop.CDS_Join.FieldByName('IND_CURVA').AsString
+        // Num_Seq de Documento ---------------------------------------
+        If bgProcCurva Then
+         Inc(iNumSeqDoc);
 
-        Else If (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='VLR_UNI_COMPRA') And (cPrecoUnit<>0) Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cPrecoUnit
+        // Insere Documento OC_COMPRAR --------------------------------
+        DMBelShop.IBQ_OC_ComprarAdd.Insert;
+        For i:=0 to IBQ_Matriz.FieldCount-1 do
+        Begin
+          // Trata Campos =============================================
 
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='DTA_ULT_COMPRA') And (sDta_Ref<>'') Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sDta_Ref
+          If (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='NUM_SEQ') and (bgProcCurva) Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=iNumSeqDoc
 
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='COD_FOR_ULT_COMPRA') And (sDta_Ref<>'') Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sCodForn
+          Else If (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='NUM_SEQ') and (Not bgProcCurva) Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=9999999
 
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='DES_FOR_ULT_COMPRA') And (sDta_Ref<>'') Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sNomeForn
+          Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='NUM_DOCUMENTO' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=StrToInt(sNumDoc)
 
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_ULT_COMPRA') And (sDta_Ref<>'') Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cQuant_Ref
+          Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='CLA_CURVA_ABC' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=DMBelShop.CDS_Join.FieldByName('IND_CURVA').AsString
 
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='VLR_UNI_ULT_COMPRA') And (sDta_Ref<>'') Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cPreco
+          Else If (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='VLR_UNI_COMPRA') And (cPrecoUnit<>0) Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cPrecoUnit
 
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='VLR_TOT_ULT_COMPRA') And (sDta_Ref<>'') Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cVlr_Total_Ref
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='DTA_ULT_COMPRA') And (sDta_Ref<>'') Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sDta_Ref
 
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_TRANSITO') And (cQtdTransito>0) Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cQtdTransito
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='COD_FOR_ULT_COMPRA') And (sDta_Ref<>'') Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sCodForn
 
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DISPONIVEL') And (cQtdTransito>0) Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cQtdTransito+
-                                DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='DES_FOR_ULT_COMPRA') And (sDta_Ref<>'') Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sNomeForn
 
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES1') And (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem1').AsString)<>'') Then
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_ULT_COMPRA') And (sDta_Ref<>'') Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cQuant_Ref
+
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='VLR_UNI_ULT_COMPRA') And (sDta_Ref<>'') Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cPreco
+
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='VLR_TOT_ULT_COMPRA') And (sDta_Ref<>'') Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cVlr_Total_Ref
+
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_TRANSITO') And (cQtdTransito>0) Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cQtdTransito
+
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DISPONIVEL') And (cQtdTransito>0) Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cQtdTransito+
+                                  DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency
+
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES1') And (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem1').AsString)<>'') Then
+           Begin
+             cgTotal_Demandas:=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem1').AsCurrency;
+             DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem1').AsCurrency;
+           End
+
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES2') And (StrToIntDef(sMes2,0)<>0) And
+                  (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem2').AsString)<>'') Then
+           Begin
+             cgOutras_Demandas:=cgOutras_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem2').AsCurrency;
+             cgTotal_Demandas :=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem2').AsCurrency;
+             DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem2').AsCurrency;
+           End
+
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES3') And (StrToIntDef(sMes3,0)<>0) And
+                  (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem3').AsString)<>'') Then
+           Begin
+             cgOutras_Demandas:=cgOutras_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem3').AsCurrency;
+             cgTotal_Demandas :=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem3').AsCurrency;
+             DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem3').AsCurrency;
+           End
+
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES4') And (StrToIntDef(sMes4,0)<>0) And
+                  (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem4').AsString)<>'') Then
+           Begin
+             cgOutras_Demandas:=cgOutras_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem4').AsCurrency;
+             cgTotal_Demandas :=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem4').AsCurrency;
+             DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem4').AsCurrency;
+           End
+
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES5') And (StrToIntDef(sMes5,0)<>0) And
+                  (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem5').AsString)<>'') Then
+           Begin
+             cgOutras_Demandas:=cgOutras_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem5').AsCurrency;
+             cgTotal_Demandas :=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem5').AsCurrency;
+             DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem5').AsCurrency;
+           End
+
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES6') And (StrToIntDef(sMes6,0)<>0) And
+                  (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem6').AsString)<>'') Then
+           Begin
+             cgOutras_Demandas:=cgOutras_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem6').AsCurrency;
+             cgTotal_Demandas :=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem6').AsCurrency;
+             DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem6').AsCurrency;
+           End
+
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES7') And (StrToIntDef(sMes7,0)<>0) And
+                  (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem7').AsString)<>'') Then
+           Begin
+             cgOutras_Demandas:=cgOutras_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem7').AsCurrency;
+             cgTotal_Demandas :=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem7').AsCurrency;
+             DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem7').AsCurrency;
+           End
+
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES8') And (StrToIntDef(sMes8,0)<>0) And
+                  (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem8').AsString)<>'') Then
+           Begin
+             cgOutras_Demandas:=cgOutras_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem8').AsCurrency;
+             cgTotal_Demandas :=cgTotal_Demandas+DMBelShop.CDS_Demandas.FieldByName('Dem8').AsCurrency;
+             DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=DMBelShop.CDS_Demandas.FieldByName('Dem8').AsCurrency;
+           End
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_NR_DIAS' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=igNrDias
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_NR_MESES' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=igNrMeses
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_TOT_MESES' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=igTotMeses
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_MEDIA_MES' Then
+           iQtdMediaMes:=i
+
+          Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_MEDIA_DIA') Then
+           iQtdMediaDia:=i
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='COD_SIT_TRIBUTARIA' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSittributaria
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='IND_SOMA_IPI_BASE_ICMS' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSomaIPIBase
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='IND_SOMA_FRETE_BASE_ICMS' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSomaFreteBase
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='IND_SOMA_DESPESA_BASE_ICMS' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSomaDespesaBase
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='IND_SOMA_IPI_BASE_ST' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSomaIPIBaseSubst
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='IND_SOMA_FRETE_BASE_ST' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSomaFreteBaseST
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='IND_SOMA_DESPESA_BASE_ST' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSomaDespesaBaseST
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='PER_REDUCAO_ICMS' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cReducao
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='PER_ICMS' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cAliquota
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='PER_MARGEM_ST' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cSubstMargem
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='IND_ST' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSubstValPer
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='SUBSTALIQUOTA' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cSubstAliquota
+
+          Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='PER_REPASSE' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cAliqRepasse
+
+          Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='EST_MINIMO' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=DMBelShop.CDS_Join.FieldByName('EST_MINIMO').AsInteger
+
+          Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='DIAS_ESTOCAGEM' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsInteger
+
+          Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEMANDA_DIA' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cgDemAnoDia
+
+          Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEMANDA_ANO' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cgDemAno
+
+          Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DIAS_ANO' Then
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=igNrDiasAno
+
+          Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_TRANSF_ANO' Then // Saldo Linx
+           Begin
+             If Trim(sSaldoLinx)='' Then
+              DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=Unassigned
+             Else
+              DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSaldoLinx;
+           End
+
+          Else // Outros Campos
+           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].Assign(IBQ_Matriz.Fields[i]);
+
+        End; // For i:=0 to IBQ_Matriz.FieldCount-1 do
+
+        // Acerta Media (QTD_MEDIA_MES) ===============================
+        If igNrMeses<igTotMeses Then
          Begin
-           cgTotal_Demandas:=cgTotal_Demandas+
-                                DMBelShop.CDS_Demandas.FieldByName('Dem1').AsCurrency;
-           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=
-                                 DMBelShop.CDS_Demandas.FieldByName('Dem1').AsCurrency;
-         End
-
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES2') And (StrToIntDef(sMes2,0)<>0) And
-                (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem2').AsString)<>'') Then
-         Begin
-           cgOutras_Demandas:=cgOutras_Demandas+
-                                  DMBelShop.CDS_Demandas.FieldByName('Dem2').AsCurrency;
-           cgTotal_Demandas:=cgTotal_Demandas+
-                                DMBelShop.CDS_Demandas.FieldByName('Dem2').AsCurrency;
-           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=
-                                 DMBelShop.CDS_Demandas.FieldByName('Dem2').AsCurrency;
-         End
-
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES3') And (StrToIntDef(sMes3,0)<>0) And
-                (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem3').AsString)<>'') Then
-         Begin
-           cgOutras_Demandas:=cgOutras_Demandas+
-                                  DMBelShop.CDS_Demandas.FieldByName('Dem3').AsCurrency;
-           cgTotal_Demandas:=cgTotal_Demandas+
-                                DMBelShop.CDS_Demandas.FieldByName('Dem3').AsCurrency;
-           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=
-                                 DMBelShop.CDS_Demandas.FieldByName('Dem3').AsCurrency;
-         End
-
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES4') And (StrToIntDef(sMes4,0)<>0) And
-                (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem4').AsString)<>'') Then
-         Begin
-           cgOutras_Demandas:=cgOutras_Demandas+
-                                  DMBelShop.CDS_Demandas.FieldByName('Dem4').AsCurrency;
-           cgTotal_Demandas:=cgTotal_Demandas+
-                                DMBelShop.CDS_Demandas.FieldByName('Dem4').AsCurrency;
-           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=
-                                 DMBelShop.CDS_Demandas.FieldByName('Dem4').AsCurrency;
-         End
-
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES5') And (StrToIntDef(sMes5,0)<>0) And
-                (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem5').AsString)<>'') Then
-         Begin
-           cgOutras_Demandas:=cgOutras_Demandas+
-                                  DMBelShop.CDS_Demandas.FieldByName('Dem5').AsCurrency;
-           cgTotal_Demandas:=cgTotal_Demandas+
-                                DMBelShop.CDS_Demandas.FieldByName('Dem5').AsCurrency;
-           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=
-                                 DMBelShop.CDS_Demandas.FieldByName('Dem5').AsCurrency;
-         End
-
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES6') And (StrToIntDef(sMes6,0)<>0) And
-                (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem6').AsString)<>'') Then
-         Begin
-           cgOutras_Demandas:=cgOutras_Demandas+
-                                  DMBelShop.CDS_Demandas.FieldByName('Dem6').AsCurrency;
-           cgTotal_Demandas:=cgTotal_Demandas+
-                                DMBelShop.CDS_Demandas.FieldByName('Dem6').AsCurrency;
-           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=
-                                 DMBelShop.CDS_Demandas.FieldByName('Dem6').AsCurrency;
-         End
-
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES7') And (StrToIntDef(sMes7,0)<>0) And
-                (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem7').AsString)<>'') Then
-         Begin
-           cgOutras_Demandas:=cgOutras_Demandas+
-                                  DMBelShop.CDS_Demandas.FieldByName('Dem7').AsCurrency;
-           cgTotal_Demandas:=cgTotal_Demandas+
-                                DMBelShop.CDS_Demandas.FieldByName('Dem7').AsCurrency;
-           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=
-                                 DMBelShop.CDS_Demandas.FieldByName('Dem7').AsCurrency;
-         End
-
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEM_MES8') And (StrToIntDef(sMes8,0)<>0) And
-                (Trim(DMBelShop.CDS_Demandas.FieldByName('Dem8').AsString)<>'') Then
-         Begin
-           cgOutras_Demandas:=cgOutras_Demandas+
-                                  DMBelShop.CDS_Demandas.FieldByName('Dem8').AsCurrency;
-           cgTotal_Demandas:=cgTotal_Demandas+
-                                DMBelShop.CDS_Demandas.FieldByName('Dem8').AsCurrency;
-           DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=
-                                 DMBelShop.CDS_Demandas.FieldByName('Dem8').AsCurrency;
-         End
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_NR_DIAS' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=igNrDias
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_NR_MESES' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=igNrMeses
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_TOT_MESES' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=igTotMeses
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_MEDIA_MES' Then
-         iQtdMediaMes:=i
-
-        Else if (AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_MEDIA_DIA') Then
-         iQtdMediaDia:=i
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='COD_SIT_TRIBUTARIA' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSittributaria
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='IND_SOMA_IPI_BASE_ICMS' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSomaIPIBase
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='IND_SOMA_FRETE_BASE_ICMS' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSomaFreteBase
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='IND_SOMA_DESPESA_BASE_ICMS' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSomaDespesaBase
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='IND_SOMA_IPI_BASE_ST' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSomaIPIBaseSubst
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='IND_SOMA_FRETE_BASE_ST' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSomaFreteBaseST
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='IND_SOMA_DESPESA_BASE_ST' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSomaDespesaBaseST
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='PER_REDUCAO_ICMS' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cReducao
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='PER_ICMS' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cAliquota
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='PER_MARGEM_ST' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cSubstMargem
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='IND_ST' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSubstValPer
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='SUBSTALIQUOTA' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cSubstAliquota
-
-        Else if AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='PER_REPASSE' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cAliqRepasse
-
-        Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='EST_MINIMO' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=DMBelShop.CDS_Join.FieldByName('EST_MINIMO').AsInteger
-
-        Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='DIAS_ESTOCAGEM' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsInteger
-
-        Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEMANDA_DIA' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cgDemAnoDia
-
-        Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DEMANDA_ANO' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsCurrency:=cgDemAno
-
-        Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_DIAS_ANO' Then
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsInteger:=igNrDiasAno
-
-        Else If AnsiUpperCase(IBQ_Matriz.Fields[i].FieldName)='QTD_TRANSF_ANO' Then // Saldo Linx
-         Begin
-           If Trim(sSaldoLinx)='' Then
-            DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=Unassigned
+           If igNrMeses<>0 Then
+            cMediaMes:=RoundTo((cgOutras_Demandas/igNrMeses),-4)
            Else
-            DMBelShop.IBQ_OC_ComprarAdd.Fields[i].AsString:=sSaldoLinx;
+            cMediaMes:=0;
          End
+        Else
+         Begin
+           cMediaMes:=RoundTo((cgTotal_Demandas/igTotMeses),-4);
+         End; // If igNrMeses<igTotMeses Then
 
-        Else // Outros Campos
-         DMBelShop.IBQ_OC_ComprarAdd.Fields[i].Assign(IBQ_Matriz.Fields[i]);
+         DMBelShop.IBQ_OC_ComprarAdd.Fields[iQtdMediaMes].AsCurrency:=cMediaMes;
 
-      End; // For i:=0 to IBQ_Matriz.FieldCount-1 do
+        // Acerta Media (QTD_MEDIA_DIA) ===============================
+        If igNrDias<>0 Then
+         DMBelShop.IBQ_OC_ComprarAdd.Fields[iQtdMediaDia].AsCurrency:=RoundTo((cgTotal_Demandas/igNrDias),-4)
+        Else
+         DMBelShop.IBQ_OC_ComprarAdd.Fields[iQtdMediaDia].AsCurrency:=0;
 
-      // Acerta Media (QTD_MEDIA_MES) ============================================
-      If igNrMeses<igTotMeses Then
-       Begin
-         If igNrMeses<>0 Then
-          cMediaMes:=RoundTo((cgOutras_Demandas/igNrMeses),-4)
-         Else
-          cMediaMes:=0;
-       End
-      Else
-       Begin
-         cMediaMes:=RoundTo((cgTotal_Demandas/igTotMeses),-4);
-       End; // If igNrMeses<igTotMeses Then
-
-       DMBelShop.IBQ_OC_ComprarAdd.Fields[iQtdMediaMes].AsCurrency:=cMediaMes;
-
-      // Acerta Media (QTD_MEDIA_DIA) ============================================
-      If igNrDias<>0 Then
-       DMBelShop.IBQ_OC_ComprarAdd.Fields[iQtdMediaDia].AsCurrency:=RoundTo((cgTotal_Demandas/igNrDias),-4)
-      Else
-       DMBelShop.IBQ_OC_ComprarAdd.Fields[iQtdMediaDia].AsCurrency:=0;
-
-      DMBelShop.IBQ_OC_ComprarAdd.Post;
+        DMBelShop.IBQ_OC_ComprarAdd.Post;
+      End; // If Trim(sCodProdLinx)<>'' Then
 
       IBQ_Matriz.Next;
     End; // While not IBQ_Matriz.Eof do
 
-    // Atualiza Transacao ======================================================
-    DMBelShop.IBQ_OC_ComprarAdd.ApplyUpdates;
-    DMBelShop.IBT_BelShop.CommitRetaining;
-    DMBelShop.IBT_BelShop.Commit;
+    If bgGerouPedCompra Then
+    Begin
+      // Atualiza Transacao ======================================================
+      DMBelShop.IBQ_OC_ComprarAdd.ApplyUpdates;
+      DMBelShop.IBT_BelShop.CommitRetaining;
+      DMBelShop.IBT_BelShop.Commit;
+
+      // Atualiza OC_COMPRAR_DOCS ================================================
+      OC_COMPRAR_DOCS('I', sNumDoc, 'BelShop');
+
+      Lb_EmpProcessadas.Caption:=IntToStr(StrToInt(Lb_EmpProcessadas.Caption)+1);
+
+      Result:=True;
+    End; // If bgGerouPedCompra Then
+
+    If Not bgGerouPedCompra Then
+    Begin
+      // Atualiza Transacao ======================================================
+      DMBelShop.IBQ_OC_ComprarAdd.CancelUpdates;
+      DMBelShop.IBT_BelShop.RollbackRetaining;
+      DMBelShop.IBT_BelShop.Rollback;
+
+      Lb_EmpProcessadas.Caption:='0';
+
+      msg('Impossível Gerar Pedido de Compra !!'+cr+'Produto(s) Sem Vínculo com LINX !!'+cr+cr+'Filial: '+sCodMatriz +' !!','A');
+
+      Result:=False;
+    End; // If Not bgGerouPedCompra Then
 
     IBQ_ConsultaMatriz.Close;
     DMBelShop.CDS_DemandasNovo.Close;
     DMBelShop.IBQ_OC_ComprarAdd.Close;
     IBQ_Matriz.Close;
 
-    // Atualiza OC_COMPRAR_DOCS ================================================
-    OC_COMPRAR_DOCS('I', sNumDoc, 'BelShop');
-
     MontaProgressBar(False, FrmBelShop);
     OdirPanApres.Visible:=False;
 
-    Lb_EmpProcessadas.Caption:=IntToStr(StrToInt(Lb_EmpProcessadas.Caption)+1);
-
-    Result:=True;
   Except // Try // IBQ_OC_ComprarAdd
     On e : Exception do
     Begin

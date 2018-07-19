@@ -353,11 +353,15 @@ object DMSolicTransf: TDMSolicTransf
       FieldName = 'NUM_OC'
       DisplayFormat = ',0'
     end
-    object CDS_OCItensCheckCOD_PRODUTO_LINX: TFMTBCDField
-      DisplayLabel = 'C'#243'd Prod Linx'
+    object CDS_OCItensCheckCOD_PRODUTO_SIDI: TStringField
+      FieldName = 'COD_PRODUTO_SIDI'
+      Size = 6
+    end
+    object CDS_OCItensCheckCOD_PRODUTO_LINX: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'C'#243'd Prod'
       FieldName = 'COD_PRODUTO_LINX'
-      Precision = 15
-      Size = 0
+      Size = 21
     end
     object CDS_OCItensCheckDES_PRODUTO: TStringField
       DisplayLabel = 'Produto Linx'
@@ -391,6 +395,13 @@ object DMSolicTransf: TDMSolicTransf
       FixedChar = True
       Size = 1
     end
+    object CDS_OCItensCheckENDERECO: TStringField
+      DisplayLabel = 'Endere'#231'amento'
+      FieldName = 'ENDERECO'
+      Required = True
+      FixedChar = True
+      Size = 14
+    end
   end
   object DS_OCItensCheck: TDataSource
     DataSet = CDS_OCItensCheck
@@ -401,9 +412,17 @@ object DMSolicTransf: TDMSolicTransf
     MaxBlobSize = -1
     Params = <>
     SQL.Strings = (
-      
-        'SELECT oi.num_seq_oc, oi.num_seq_item, oc.num_oc, oi.cod_produto' +
-        '_linx, oi.des_produto,'
+      'SELECT oi.num_seq_oc, oi.num_seq_item, oc.num_oc, '
+      'oi.cod_produto_sidi, '
+      ''
+      'CASE'
+      '   WHEN TRIM(COALESCE(oi.cod_produto_linx,'#39#39'))<>'#39#39' then'
+      '     oi.cod_produto_linx'
+      '   ELSE'
+      '     oi.cod_produto_sidi'
+      'END cod_produto_linx,'
+      ''
+      'oi.des_produto,'
       
         'oi.qtd_produto, oi.qtd_checkout, oi.dta_checkout, oi.hra_checkou' +
         't,'
@@ -412,7 +431,8 @@ object DMSolicTransf: TDMSolicTransf
       '    '#39'S'#39
       '  ELSE'
       '    ni.ind_oc'
-      'END IND_OC'
+      'END IND_OC,'
+      #39'0.000.000.0000'#39' ENDERECO'
       'FROM OC_LOJAS_ITENS oi'
       
         '    LEFT JOIN OC_LOJAS_NFE oc        ON oc.num_seq_oc=oi.num_seq' +
@@ -442,5 +462,33 @@ object DMSolicTransf: TDMSolicTransf
     SQLConnection = SQLC
     Left = 236
     Top = 72
+  end
+  object IBQ_Busca: TIBQuery
+    Database = IBDB_CD
+    Transaction = IBT_CD
+    BufferChunks = 1000
+    CachedUpdates = False
+    Left = 631
+    Top = 87
+  end
+  object IBDB_CD: TIBDatabase
+    DatabaseName = '\\LOCALHOST\C:\sidicom.new\BelShop_CD.FDB'
+    Params.Strings = (
+      'user_name=SYSDBA'
+      'password=masterkey')
+    LoginPrompt = False
+    DefaultTransaction = IBT_CD
+    IdleTimer = 0
+    SQLDialect = 3
+    TraceFlags = []
+    Left = 608
+    Top = 34
+  end
+  object IBT_CD: TIBTransaction
+    Active = False
+    DefaultDatabase = IBDB_CD
+    AutoStopAction = saNone
+    Left = 672
+    Top = 34
   end
 end

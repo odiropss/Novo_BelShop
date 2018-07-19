@@ -1122,4 +1122,11 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     Left = 288
     Top = 88
   end
+  object SQLQuery1: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 344
+    Top = 32
+  end
 end

@@ -61,25 +61,26 @@ type
     EdtQtdEstoqueCD: TCurrencyEdit;
     Lab_UnidadeCD: TLabel;
     Ts_NFeCheckOut: TTabSheet;
-    Gb_NFe_Solicitacoes: TGroupBox;
-    EdtNFeCodFornLinx: TCurrencyEdit;
-    Label6: TLabel;
-    EdtNFeDesFornLinx: TEdit;
-    Bt_NFeBuscaFornLinx: TJvXPButton;
-    EdtNFeNumNFe: TCurrencyEdit;
-    Label7: TLabel;
-    EdtNFeNumOC: TCurrencyEdit;
-    Label8: TLabel;
-    Bt_NFeBuscaOC: TJvXPButton;
     Dbg_NFeProdutosOC: TDBGrid;
-    Bt_NFeEscanear: TJvXPButton;
-    Lbx_NFeNumOCs: TListBox;
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
     Panel5: TPanel;
     Panel6: TPanel;
+    Panel7: TPanel;
+    Gb_NFe_Solicitacoes: TGroupBox;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    EdtNFeCodFornLinx: TCurrencyEdit;
+    EdtNFeDesFornLinx: TEdit;
+    Bt_NFeBuscaFornLinx: TJvXPButton;
+    EdtNFeNumNFe: TCurrencyEdit;
+    EdtNFeNumOC: TCurrencyEdit;
+    Bt_NFeBuscaOC: TJvXPButton;
+    Bt_NFeEscanear: TJvXPButton;
+    Lbx_NFeNumOCs: TListBox;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -232,7 +233,16 @@ Begin
   // Itens das OCs =============================================================
   MySql:=' SELECT DISTINCT'+
          '        oi.num_seq_oc, oi.num_seq_item, oc.num_oc,'+
-         '        oi.cod_produto_linx, oi.des_produto,'+
+         '        oi.cod_produto_sidi,'+
+
+         ' CASE'+
+         '   WHEN TRIM(COALESCE(oi.cod_produto_linx,''''))<>'''' THEN'+
+         '     oi.cod_produto_linx'+
+         '   ELSE'+
+         '     oi.cod_produto_sidi'+
+         ' END cod_produto_linx,'+
+
+         ' oi.des_produto,'+
          '        oi.qtd_produto, oi.qtd_checkout,'+
          '        oi.dta_checkout, oi.hra_checkout,'+
          ' CASE'+
@@ -240,7 +250,8 @@ Begin
          '     ''S'''+
          '   ELSE'+
          '     ni.ind_oc'+
-         ' END IND_OC'+
+         ' END IND_OC,'+
+         ' ''0.000.000.0000'' ENDERECO'+
          ' FROM OC_LOJAS_ITENS oi'+
          '     LEFT JOIN OC_LOJAS_NFE oc        ON oc.num_seq_oc=oi.num_seq_oc'+
          '     LEFT JOIN OC_LOJAS_ITENS_NFE ni  ON ni.num_seq_oc=oi.num_seq_oc'+
@@ -254,8 +265,46 @@ Begin
   DMSolicTransf.SQLQ_OCItensCheck.SQL.Clear;
   DMSolicTransf.SQLQ_OCItensCheck.SQL.Add(MySql);
   DMSolicTransf.CDS_OCItensCheck.Open;
-  DMSolicTransf.CDS_OCItensCheck.EnableControls;
 
+  // Acerta Endereçamento Qunado For CD ========================================
+  Dbg_NFeProdutosOC.Columns[8].Visible:=False;
+  If sgLojaLinx='2' Then
+  Begin
+    DMSolicTransf.IBDB_CD.Connected:=True;
+
+    DMSolicTransf.CDS_OCItensCheck.First;
+    While Not DMSolicTransf.CDS_OCItensCheck.Eof do
+    Begin
+      If Trim(DMSolicTransf.CDS_OCItensCheckCOD_PRODUTO_SIDI.AsString)<>'' Then
+      Begin
+        MySql:=' SELECT'+
+               ' TRIM(e.zonaendereco)||''.''||e.corredor||''.''||e.prateleira||''.''||e.gaveta ENDERECO'+
+               ' FROM ESTOQUE e'+
+               ' WHERE e.codfilial=''99'''+
+               ' AND   e.codproduto='+QuotedStr(Trim(DMSolicTransf.CDS_OCItensCheckCOD_PRODUTO_SIDI.AsString));
+        DMSolicTransf.IBQ_Busca.Close;
+        DMSolicTransf.IBQ_Busca.SQL.Clear;
+        DMSolicTransf.IBQ_Busca.SQL.Add(MySql);
+        DMSolicTransf.IBQ_Busca.Open;
+
+        If Not DMSolicTransf.IBQ_Busca.IsEmpty Then
+        Begin
+          DMSolicTransf.CDS_OCItensCheck.Edit;
+          DMSolicTransf.CDS_OCItensCheckENDERECO.AsString:=DMSolicTransf.IBQ_Busca.FieldbyName('Endereco').AsString;
+          DMSolicTransf.CDS_OCItensCheck.Post;
+        End; // If Not DMSolicTransf.IBQ_Busca.IsEmpty Then
+
+        DMSolicTransf.IBQ_Busca.Close;
+      End; // If Trim(DMSolicTransf.CDS_OCItensCheckCOD_PRODUTO_SIDI.AsString)<>'' Then
+
+      DMSolicTransf.CDS_OCItensCheck.Next;
+    End; // While Not DMSolicTransf.CDS_OCItensCheck.Eof do
+    DMSolicTransf.CDS_OCItensCheck.First;
+
+    DMSolicTransf.IBDB_CD.Connected:=False;
+    Dbg_NFeProdutosOC.Columns[8].Visible:=True;
+  End; // If sgLojaLinx='2' Then
+  DMSolicTransf.CDS_OCItensCheck.EnableControls;
 End; // // Busca Ordem de Compra para CheckOut >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Atualiza Nova Versão do Sistema >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -594,6 +643,18 @@ begin
     DMSolicTransf.CDS_Busca.Close;
   End; // If Trim(sgNumSolicitacao)='' Then
 
+  If sgLojaLinx='2' Then
+  Begin
+    // =========================================================================
+    // Inicializa TabSheets para o CD ==========================================
+    // =========================================================================
+    Ts_Consultas.TabVisible:=False;
+    Ts_Produtos.TabVisible:=False;
+    FrmSolicTransf.Align:=alClient;
+    // Inicializa TabSheets para o CD ==========================================
+    // =========================================================================
+  End;
+
   PC_Principal.TabIndex:=0;
 end;
 
@@ -613,15 +674,33 @@ begin
   CorCaptionForm.Active:=True;
 
   // Atualiza Novca Versão do Sistema ==========================================
-  If Not NovaVersao Then
+  If sgLojaLinx<>'2' Then // Não Verifica Versão para o CD
   Begin
-    msg('== TECNONOLOGIA DA INFORMAÇÃO =='+cr+
-        ' BelShop-CD ADVERTE !!'+cr+cr+
-        'Versão do Sistema esta Incorreta !!'+cr+
-        'Solicite Atualização para ALINE/ODIR...','A');
-  End; // If not NovaVersao Then
-
+    If Not NovaVersao Then
+    Begin
+      msg('== TECNONOLOGIA DA INFORMAÇÃO =='+cr+
+          ' BelShop-CD ADVERTE !!'+cr+cr+
+          'Versão do Sistema esta Incorreta !!'+cr+
+          'Solicite Atualização para ALINE/ODIR...','A');
+    End; // If not NovaVersao Then
+  End; // If sgLojaLinx<>2 Then // Não Verifica Versão para o CD
   PC_PrincipalChange(Self);
+
+  If sgLojaLinx='2' Then
+  Begin
+    Application.ProcessMessages;
+    // =========================================================================
+    // Conexão IBDataBase do CD ================================================
+    // =========================================================================
+    If Not DMSolicTransf.Conecta_CD Then
+    Begin
+      msg('Erro ao Conectar Banco de Dados do CD'+cr+cr+'BelShop_CD - SIDICOM !!','A');
+      Application.Terminate;
+      Exit;
+    End; // If Not Conecta_CD Then
+    // Conexão IBDataBase do CD ================================================
+    // =========================================================================
+  End; // If sgLojaLinx='2' Then
 
 end;
 

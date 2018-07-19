@@ -191,6 +191,7 @@ type
     DS_EmpProcessa: TDataSource;
     CDS_EmpProcessaCOD_LINX: TIntegerField;
     SQLQ_Linx: TSQLQuery;
+    SQLQuery1: TSQLQuery;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir

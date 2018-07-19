@@ -16,6 +16,9 @@ type
     procedure Bt_AtualizarClick(Sender: TObject);
 
     // Odir ====================================================================
+    Procedure LimpaOBS;
+    Procedure MenssagemAnterior(sCodLj: String);
+
     Function ConexaoEmpIndividual(sDataBase, sTransaction, sProcedimento: String): Boolean;
             // Procedimento: (A) Abrir Conexão (F) Fechar COnexão
 
@@ -52,7 +55,8 @@ var
 
   bgConexaoLocal: Boolean; // Se Conexão com o Servidor da Matriz é Local - Verifica a Existencia do Arquivo "ConexaoExterna.ini"
 
-  sgDataAtual, sgHoraAtual: String;
+  sgDataAtual, sgHoraAtual,
+  sgMsgAnterior: String;
 
   IBQ_Consulta: TIBQuery;
 
@@ -67,6 +71,54 @@ uses UDMAtualizaEstoques, UDMConexoes, DK_Procs1, DB;
 {$R *.dfm}
 
 // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Busca Messagem Anterior na Obs do Processamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAtualizaEstoques.MenssagemAnterior(sCodLj: String);
+Var
+  MySql: String;
+Begin
+  MySql:=' SELECT TRIM(e.obs) obs'+
+         ' FROM ES_PROCESSADOS e'+
+         ' WHERE e.cod_loja='+QuotedStr(sCodLj);
+  DMAtualizaEstoques.SQLQuery1.Close;
+  DMAtualizaEstoques.SQLQuery1.SQL.Clear;
+  DMAtualizaEstoques.SQLQuery1.SQL.Add(MySql);
+  DMAtualizaEstoques.SQLQuery1.Open;
+  sgMsgAnterior:=Trim(DMAtualizaEstoques.SQLQuery1.FieldByname('Obs').AsString);
+  DMAtualizaEstoques.SQLQuery1.Close;
+End; // Busca Messagem Anterior na Obs do Processamento >>>>>>>>>>>>>>>>>>>>>>>>
+
+// Limpa Obs do Processamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAtualizaEstoques.LimpaOBS;
+Var
+  MySql: String;
+Begin
+  sgMsgAnterior:='';
+
+  // Verifica se Transação esta Ativa
+  If DMAtualizaEstoques.SQLC.InTransaction Then
+   DMAtualizaEstoques.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMAtualizaEstoques.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    MySql:=' UPDATE ES_PROCESSADOS e'+
+           ' SET e.obs=NULL';
+    DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMAtualizaEstoques.SQLC.Commit(TD);
+
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMAtualizaEstoques.SQLC.Rollback(TD);
+    End; // on e : Exception do
+  End; // Try da Transação
+End; // Limpa Obs do Processamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Atualiza Faturamento do sUltimos 4 Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaEstoques.Tabela_ES_FAT_PERIODO;
@@ -291,14 +343,13 @@ Begin
       TD.IsolationLevel:=xilREADCOMMITTED;
       DMAtualizaEstoques.SQLC.StartTransaction(TD);
 
-      MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
+      MenssagemAnterior('99');
+      MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, obs)'+
              ' VALUES ('+
              QuotedStr('99')+', '+
              '2, '+
              ' CURRENT_TIMESTAMP,'+
-             QuotedStr('Err')+', '+ // Linx Com Inventário
-             QuotedStr(e.message+' - Enderecamento Sidicom BelShop'+
-             DMAtualizaEstoques.CDS_LojaLinx.FieldByName('MDL').AsString)+')'+
+             QuotedStr(Trim(sgMsgAnterior)+' -> Enderecamento Sidicom BelShop: '+e.message+' - '+DMAtualizaEstoques.CDS_LojaLinx.FieldByName('MDL').AsString)+')'+
              'MATCHING (COD_LOJA)';
       DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
@@ -599,13 +650,13 @@ Begin
       TD.IsolationLevel:=xilREADCOMMITTED;
       DMAtualizaEstoques.SQLC.StartTransaction(TD);
 
-      MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
+      MenssagemAnterior('99');
+      MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, obs)'+
              ' VALUES ('+
              QuotedStr('99')+', '+
              '2, '+
              ' CURRENT_TIMESTAMP,'+
-             QuotedStr('LPr')+', '+ // Linx Com Inventário
-             QuotedStr('ListPreco'+e.message+' - '+MySql)+')'+
+             QuotedStr(Trim(sgMsgAnterior)+' -> Lista de Preços: '+e.message+' - '+MySql)+')'+
              'MATCHING (COD_LOJA)';
       DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
@@ -687,14 +738,13 @@ Begin
       TD.IsolationLevel:=xilREADCOMMITTED;
       DMAtualizaEstoques.SQLC.StartTransaction(TD);
 
-      MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
+      MenssagemAnterior('99');
+      MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, obs)'+
              ' VALUES ('+
              QuotedStr('99')+', '+
              '2, '+
              ' CURRENT_TIMESTAMP,'+
-             QuotedStr('Err')+', '+ // Linx Com Inventário
-             QuotedStr(e.message+' - SaldosTransfere_Linx_Sidicom'+
-             DMAtualizaEstoques.CDS_LojaLinx.FieldByName('MDL').AsString)+')'+
+             QuotedStr(Trim(sgMsgAnterior)+' -> Transfere Saldos Linx Sidicom; '+DMAtualizaEstoques.CDS_LojaLinx.FieldByName('MDL').AsString)+')'+
              'MATCHING (COD_LOJA)';
       DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
@@ -966,13 +1016,14 @@ Begin
            ' AND   es.dta_atualizacao<'+QuotedStr(sgDataAtual);
     DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
+    MenssagemAnterior(sCodBelShop);
     MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
            ' VALUES ('+
            QuotedStr(sCodBelShop)+', '+
            sCodLinx+', '+
            'CURRENT_TIMESTAMP,'+
            QuotedStr('LsI')+', '+ // Linx Sem Inventário
-           '''OK'')'+
+           QuotedStr(Trim(sgMsgAnterior)+' -> OK')+')'+
            'MATCHING (COD_LOJA)';
     DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
@@ -991,13 +1042,14 @@ Begin
       TD.IsolationLevel:=xilREADCOMMITTED;
       DMAtualizaEstoques.SQLC.StartTransaction(TD);
 
+      MenssagemAnterior(sCodBelShop);
       MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
              ' VALUES ('+
              QuotedStr(sCodBelShop)+', '+
              sCodLinx+', '+
              ' CURRENT_TIMESTAMP,'+
              QuotedStr('LsI')+', '+ // Linx Sem Inventário
-             QuotedStr(e.message+' - '+MySql)+')'+
+             QuotedStr(Trim(sgMsgAnterior)+' -> Atualiza ESTOQUE: '+e.message+' - '+MySql)+')'+
              'MATCHING (COD_LOJA)';
       DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
@@ -1163,6 +1215,9 @@ end;
 procedure TFrmAtualizaEstoques.FormCreate(Sender: TObject);
 begin
   tgMySqlErro:=TStringList.Create;
+
+  // Limpa Obs do Processamento em PAtualizaEstoques
+  LimpaOBS;
 
   Bt_AtualizarClick(Self);
 end;
@@ -1556,13 +1611,14 @@ begin
                    ' AND   es.dta_atualizacao<'+QuotedStr(sgDataAtual);
             DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
+            MenssagemAnterior(sCodEmpresa);
             MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
                    ' VALUES ('+
                    QuotedStr(sCodEmpresa)+', '+
                    IntToStr(iCodLinx)+', '+
                    ' CURRENT_TIMESTAMP,'+
                    QuotedStr(sTipo)+', '+ // Linx Com Inventário
-                   '''OK'')'+
+                   QuotedStr(Trim(sgMsgAnterior)+' -> OK')+')'+
                    'MATCHING (COD_LOJA)';
             DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 
@@ -1580,13 +1636,14 @@ begin
               TD.IsolationLevel:=xilREADCOMMITTED;
               DMAtualizaEstoques.SQLC.StartTransaction(TD);
 
+              MenssagemAnterior(sCodEmpresa);
               MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
                      ' VALUES ('+
                      QuotedStr(sCodEmpresa)+', '+
                      IntToStr(iCodLinx)+', '+
                      ' CURRENT_TIMESTAMP,'+
                      QuotedStr(sTipo)+', '+ // Linx Com Inventário
-                     QuotedStr(e.message+' - '+MySql)+')'+
+                     QuotedStr(Trim(sgMsgAnterior)+' -> Atualiza ESTOQUE: '+e.message+' - '+MySql)+')'+
                      'MATCHING (COD_LOJA)';
               DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
 

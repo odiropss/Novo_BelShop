@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Forms, SysUtils, Classes, DBXpress, FMTBcd, SqlExpr, DB, DBClient,
-  Provider, StdCtrls, WinInet, ExtCtrls;
+  Provider, StdCtrls, WinInet, ExtCtrls, IBDatabase, IBCustomDataSet,
+  IBQuery;
 
 type
   TDMSolicTransf = class(TDataModule)
@@ -55,7 +56,6 @@ type
     DS_OCItensCheck: TDataSource;
     SQLQ_OCItensCheck: TSQLQuery;
     CDS_OCItensCheckNUM_SEQ_ITEM: TIntegerField;
-    CDS_OCItensCheckCOD_PRODUTO_LINX: TFMTBCDField;
     CDS_OCItensCheckDES_PRODUTO: TStringField;
     CDS_OCItensCheckQTD_PRODUTO: TIntegerField;
     CDS_OCItensCheckQTD_CHECKOUT: TIntegerField;
@@ -66,13 +66,25 @@ type
     CDS_OCItensCheckNUM_SEQ_OC: TIntegerField;
     CDS_OCItensCheckNUM_OC: TIntegerField;
     SQLQuery3: TSQLQuery;
+    CDS_OCItensCheckENDERECO: TStringField;
+    IBQ_Busca: TIBQuery;
+    IBDB_CD: TIBDatabase;
+    IBT_CD: TIBTransaction;
+    CDS_OCItensCheckCOD_PRODUTO_SIDI: TStringField;
+    CDS_OCItensCheckCOD_PRODUTO_LINX: TStringField;
 
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     Procedure ConectaBanco;
+    Function  Conecta_CD: Boolean;
+
     Procedure FechaTudo;
 
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     procedure DataModuleCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
@@ -102,13 +114,48 @@ var
 
 implementation
 
-uses DK_Procs1;
+uses DK_Procs1, Variants;
 
 {$R *.dfm}
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - Inicio >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// Atualiza Conexão com Banco de Dados CD - SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TDMSolicTransf.Conecta_CD: Boolean;
+Var
+  MySql: String;
+  i: Integer;
+  sEndIP, sDataBaseName: String;
+Begin
+  Result:=True;
+
+  Try
+    MySql:=' SELECT *'+
+           ' FROM EMP_CONEXOES emp'+
+           ' WHERE emp.Tip_Emp=''M''';
+    DMSolicTransf.CDS_BuscaRapida.Close;
+    DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
+    DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql);
+    DMSolicTransf.CDS_BuscaRapida.Open;
+
+    // Inicializa Conexao
+    IBDB_CD.Connected:=False;
+    sEndIP:=DMSolicTransf.CDS_BuscaRapida.FieldByName('ENDERECO_IP').AsString;
+    sDataBaseName:='\\'+IncludeTrailingPathDelimiter(sEndIP)+
+                        IncludeTrailingPathDelimiter(DMSolicTransf.CDS_BuscaRapida.FieldByName('PASTA_BASE_DADOS').AsString)+
+                                                     DMSolicTransf.CDS_BuscaRapida.FieldByName('DES_BASE_DADOS').AsString;
+    IBDB_CD.DatabaseName:=sDataBaseName;
+
+    DMSolicTransf.CDS_BuscaRapida.Close;
+
+    IBDB_CD.Connected:=True;
+    IBDB_CD.Connected:=False;
+  Except
+    Result:=False;
+  End;
+End; // Atualiza Conexão com Banco de Dados CD - SIDICOM >>>>>>>>>>>>>>>>>>>>>>>
 
 // Fecha Todos os Client's >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TDMSolicTransf.FechaTudo;
@@ -190,7 +237,6 @@ begin
       Begin
         Params.Clear;
         Params.LoadFromFile(sgPastaExecutavel+sgFBConect);
-//        LoadParamsFromIniFile(sgPastaExecutavel+sgFBConect);
 
         Params.Add('User_Name='+sUser_Name);
         Params.Add('Password='+sPassword);
@@ -207,6 +253,8 @@ begin
       End;
     End; // try
   End; // While bConecta do
+  // Conexão DBExpress =========================================================
+  // ===========================================================================
 End; // Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
