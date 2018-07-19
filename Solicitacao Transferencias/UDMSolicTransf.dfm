@@ -333,14 +333,14 @@ object DMSolicTransf: TDMSolicTransf
   object DSP_OCItensCheck: TDataSetProvider
     DataSet = SQLQ_OCItensCheck
     Options = [poRetainServerOrder]
-    Left = 321
+    Left = 369
     Top = 195
   end
   object CDS_OCItensCheck: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_OCItensCheck'
-    Left = 361
+    Left = 409
     Top = 175
     object CDS_OCItensCheckNUM_SEQ_OC: TIntegerField
       FieldName = 'NUM_SEQ_OC'
@@ -353,15 +353,23 @@ object DMSolicTransf: TDMSolicTransf
       FieldName = 'NUM_OC'
       DisplayFormat = ',0'
     end
+    object CDS_OCItensCheckCOD_PRODUTO_LINX: TFMTBCDField
+      DisplayLabel = 'C'#243'd LINX'
+      FieldName = 'COD_PRODUTO_LINX'
+      Precision = 15
+      Size = 0
+    end
     object CDS_OCItensCheckCOD_PRODUTO_SIDI: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'C'#243'd SIDICOM'
       FieldName = 'COD_PRODUTO_SIDI'
       Size = 6
     end
-    object CDS_OCItensCheckCOD_PRODUTO_LINX: TStringField
+    object CDS_OCItensCheckREFERENCIA: TStringField
       Alignment = taRightJustify
-      DisplayLabel = 'C'#243'd Prod'
-      FieldName = 'COD_PRODUTO_LINX'
-      Size = 21
+      DisplayLabel = 'Refer'#234'ncia'
+      FieldName = 'REFERENCIA'
+      Size = 40
     end
     object CDS_OCItensCheckDES_PRODUTO: TStringField
       DisplayLabel = 'Produto Linx'
@@ -405,27 +413,27 @@ object DMSolicTransf: TDMSolicTransf
   end
   object DS_OCItensCheck: TDataSource
     DataSet = CDS_OCItensCheck
-    Left = 405
+    Left = 453
     Top = 195
   end
   object SQLQ_OCItensCheck: TSQLQuery
     MaxBlobSize = -1
     Params = <>
     SQL.Strings = (
-      'SELECT oi.num_seq_oc, oi.num_seq_item, oc.num_oc, '
-      'oi.cod_produto_sidi, '
-      ''
+      'SELECT DISTINCT'
+      'oi.num_seq_oc, oi.num_seq_item, oc.num_oc,'
+      'oi.cod_produto_linx,'
+      'oi.cod_produto_sidi,'
       'CASE'
-      '   WHEN TRIM(COALESCE(oi.cod_produto_linx,'#39#39'))<>'#39#39' then'
-      '     oi.cod_produto_linx'
-      '   ELSE'
-      '     oi.cod_produto_sidi'
-      'END cod_produto_linx,'
-      ''
+      '  WHEN TRIM(COALESCE(ps.referencia,'#39#39'))<>'#39#39' THEN'
+      '    TRIM(ps.referencia)'
+      '  ELSE'
+      '    TRIM(pl.referencia)'
+      'END REFERENCIA,'
       'oi.des_produto,'
-      
-        'oi.qtd_produto, oi.qtd_checkout, oi.dta_checkout, oi.hra_checkou' +
-        't,'
+      'oi.qtd_produto, oi.qtd_checkout,'
+      'oi.dta_checkout, oi.hra_checkout,'
+      ''
       'CASE'
       '  WHEN ni.ind_oc IS NULL THEN'
       '    '#39'S'#39
@@ -433,6 +441,7 @@ object DMSolicTransf: TDMSolicTransf
       '    ni.ind_oc'
       'END IND_OC,'
       #39'0.000.000.0000'#39' ENDERECO'
+      ''
       'FROM OC_LOJAS_ITENS oi'
       
         '    LEFT JOIN OC_LOJAS_NFE oc        ON oc.num_seq_oc=oi.num_seq' +
@@ -443,11 +452,18 @@ object DMSolicTransf: TDMSolicTransf
       
         '                                    AND ni.num_seq_item=oi.num_s' +
         'eq_item'
-      'WHERE oi.num_seq_oc in (23,27)'
+      
+        '    LEFT JOIN linxprodutos pl        ON pl.cod_produto=oi.cod_pr' +
+        'oduto_linx'
+      
+        '    LEFT JOIN produto ps             ON ps.codproduto=oi.cod_pro' +
+        'duto_sidi'
+      ''
+      'WHERE oi.num_seq_oc IN (23,27)'
       'ORDER BY oi.des_produto')
     SQLConnection = SQLC
-    Left = 284
-    Top = 168
+    Left = 332
+    Top = 176
   end
   object SQLQuery2: TSQLQuery
     MaxBlobSize = -1

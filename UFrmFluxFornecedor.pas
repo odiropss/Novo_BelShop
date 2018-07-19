@@ -3258,7 +3258,7 @@ end;
 procedure TFrmFluxoFornecedor.Bt_FluFornFiltroCompradorClick(Sender: TObject);
 Var
   s, MySql: String;
-  ii, i: Integer;
+  ii, i, iRecno: Integer;
   bFiltra: Boolean;
 begin
 
@@ -3304,9 +3304,6 @@ begin
   // Seleciona Comprovante =====================================================
   If Bt_FluFornFiltroComprador.Caption='Seleciona Histórico' Then
   Begin
-    If DMBelShop.CDS_FluxoFornecedor.IsEmpty Then
-     Exit;
-
     // Apresenta Comprovantes ==================================================
     MySql:=' SELECT ''NAO'' PROC, H.COD_HISTORICO, H.DES_HISTORICO,'+
            ' CASE'+
@@ -3362,11 +3359,14 @@ begin
 
     If Bt_FluFornFiltroComprador.Caption='Seleciona Histórico' Then
     Begin
+      iRecno:=DMBelShop.CDS_FluxoFornecedor.RecNo;
+
       i:=0;
       ii:=0;
       s:='';
       bFiltra:=True;
       DMBelShop.CDS_Busca.First;
+      DMBelShop.CDS_Busca.DisableControls;
       While Not DMBelShop.CDS_Busca.Eof do
       Begin
         If DMBelShop.CDS_Busca.FieldByName('PROC').AsString='SIM' Then
@@ -3389,13 +3389,24 @@ begin
        bFiltra:=False;
 
       DMBelShop.CDS_Busca.Close;
+      DMBelShop.CDS_Busca.EnableControls;
 
+      DMBelShop.CDS_FluxoFornecedor.DisableControls;
       DMBelShop.CDS_FluxoFornecedor.Filtered:=False;
       DMBelShop.CDS_FluxoFornecedor.Filter:='';
       If bFiltra Then
       Begin
         DMBelShop.CDS_FluxoFornecedor.Filter:=s;
         DMBelShop.CDS_FluxoFornecedor.Filtered:=True;
+
+        If DMBelShop.CDS_FluxoFornecedor.IsEmpty Then
+        Begin
+          msg('Histórico Não Encontrado'+cr+cr+'no Movimento do Fornecedor !! ','A');
+          DMBelShop.CDS_FluxoFornecedor.Filtered:=False;
+          DMBelShop.CDS_FluxoFornecedor.Filter:='';
+          DMBelShop.CDS_FluxoFornecedor.RecNo:=iRecno;
+        End; // If DMBelShop.CDS_FluxoFornecedor.IsEmpty Then
+        DMBelShop.CDS_FluxoFornecedor.EnableControls;
       End;
     End; // If Bt_FluFornFiltroComprador.Caption='Seleciona Histórico' Then
   End; // If FrmSolicitacoes.bgOK Then

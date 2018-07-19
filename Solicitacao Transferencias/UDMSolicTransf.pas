@@ -71,7 +71,8 @@ type
     IBDB_CD: TIBDatabase;
     IBT_CD: TIBTransaction;
     CDS_OCItensCheckCOD_PRODUTO_SIDI: TStringField;
-    CDS_OCItensCheckCOD_PRODUTO_LINX: TStringField;
+    CDS_OCItensCheckREFERENCIA: TStringField;
+    CDS_OCItensCheckCOD_PRODUTO_LINX: TFMTBCDField;
 
     //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

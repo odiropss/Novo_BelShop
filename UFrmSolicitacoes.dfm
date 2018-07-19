@@ -403,7 +403,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 452
-    ActivePage = Ts_ReposLojasDigita
+    ActivePage = Ts_ReposDivergencias
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -10515,6 +10515,16 @@ object FrmSolicitacoes: TFrmSolicitacoes
           item
             Expanded = False
             FieldName = 'CODBARRA'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_ORIGINAL'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_ORIG_CHECK'
             Visible = True
           end>
       end

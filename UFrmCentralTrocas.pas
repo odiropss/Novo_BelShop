@@ -445,10 +445,12 @@ Begin
 
   Result:=True;
 
-  MySql:=' SELECT dv.cod_loja, lj.empresa, lj.nome_emp, dv.num_pedido,'+
-         '        dv.dta_movto, dv.num_docto, dv.num_seq,'+
-         '        dv.cod_produto COD_SIDICOM, pr.cod_produto COD_LINX,'+
-         '        pr.nome, dv.qtd_original, dv.qtd_a_transf,'+
+  MySql:=' SELECT dv.cod_loja, lj.empresa, lj.nome_emp,'+
+         '        dv.num_pedido, dv.dta_movto, dv.num_docto,'+
+         '        dv.num_seq, dv.cod_produto COD_SIDICOM, pr.cod_produto COD_LINX, pr.nome,'+
+         '        CAST(dv.qtd_original AS INTEGER) qtd_original,'+
+         '        CAST(dv.qtd_orig_check AS INTEGER) qtd_orig_check,'+
+         '        CAST(dv.qtd_a_transf AS INTEGER) qtd_a_transf,'+
          '        CAST(dv.dta_altera AS DATE) DTA_ALTERA,'+
          '        CAST(SUBSTRING(CAST(dv.hra_altera AS TIME) FROM 1 FOR 8)AS VARCHAR(8)) HRA_ALTERA,'+
          '        dv.usu_altera, us.des_usuario'+
@@ -548,9 +550,10 @@ Begin
     DefinicaoCampos.Add('D0;10;D;;NUM_SEQ;Seq');
     DefinicaoCampos.Add('D0;13;C;;COD_SIDICOM;Cod Sidi');
     DefinicaoCampos.Add('D0;14;C;;COD_LINX;Cod Linx');
-    DefinicaoCampos.Add('D0;96;E;;NOME;Nome Produto');
-    DefinicaoCampos.Add('D0;20;D;;QTD_ORIGINAL;Qtd Original');
-    DefinicaoCampos.Add('D0;20;D;;QTD_A_TRANSF;Qtd Alterada');
+    DefinicaoCampos.Add('D0;76;E;;NOME;Nome Produto');
+    DefinicaoCampos.Add('D0;18;D;;QTD_ORIGINAL;Rep Orig');
+    DefinicaoCampos.Add('D0;18;D;;QTD_ORIG_CHECK;Check Orig');
+    DefinicaoCampos.Add('D0;20;D;;QTD_A_TRANSF;Alteração');
     DefinicaoCampos.Add('D0;18;C;;DTA_ALTERA;Data');
     DefinicaoCampos.Add('D0;14;C;;HRA_ALTERA;Hora');
     DefinicaoCampos.Add('D0;30;E;;DES_USUARIO;Usuário');
@@ -1237,15 +1240,17 @@ Begin
 
       iNumSeqDoc:=DMCentralTrocas.CDS_V_ReposDivergenciasNUM_SEQ.AsInteger;
 
-      If DMCentralTrocas.CDS_ReposicaoTransf.Locate('NUM_SEQ',iNumSeqDoc,[]) Then
+      If DMCentralTrocas.CDS_V_ReposDivergenciasIND_CORRIGIDO.AsString='SIM' Then
       Begin
-        // Salvar Divergencia se Alterada Manualemnte a Qtd_a_Tansf ==========
-        If DMCentralTrocas.CDS_V_ReposDivergenciasQTD_A_TRANSF.AsInteger<>
-           DMCentralTrocas.CDS_V_ReposDivergenciasQTD_ORIGINAL.AsInteger Then
+        If DMCentralTrocas.CDS_ReposicaoTransf.Locate('NUM_SEQ',iNumSeqDoc,[]) Then
         Begin
+          //====================================================================
+          // Salvar Divergencia se Alterada Manualemnte a Qtd_a_Tansf ==========
+          //====================================================================
           MySql:=' INSERT INTO ES_ESTOQUES_LOJAS_DIV'+
                  ' (DTA_MOVTO, NUM_SEQ, NUM_DOCTO, COD_LOJA, NUM_PEDIDO, COD_PRODUTO,'+
-                 '  QTD_ORIGINAL, QTD_A_TRANSF, DTA_ALTERA, HRA_ALTERA, USU_ALTERA)'+
+                 '  QTD_ORIGINAL, QTD_ORIG_CHECK, QTD_A_TRANSF,'+
+                 '  DTA_ALTERA, HRA_ALTERA, USU_ALTERA)'+
 
                  ' VALUES ('+
                  QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtaEdt_ReposLojas.Date))))+', '+ // DTA_MOVTO
@@ -1255,15 +1260,15 @@ Begin
                  ' ''000000'', '+ // NUM_PEDIDO
                  QuotedStr(DMCentralTrocas.CDS_V_ReposDivergenciasCOD_PRODUTO.AsString)+', '+ // COD_PRODUTO
                  QuotedStr(DMCentralTrocas.CDS_V_ReposDivergenciasQTD_ORIGINAL.AsString)+', '+ // QTD_ORIGINAL
-                 QuotedStr(DMCentralTrocas.CDS_V_ReposDivergenciasQTD_A_TRANSF.AsString)+', '+ // QTD_A_TRANSF
+                 QuotedStr(DMCentralTrocas.CDS_V_ReposDivergenciasQTD_ORIG_CHECK.AsString)+', '+ // QTD_ORIG_CHECK
+                 QuotedStr(DMCentralTrocas.CDS_V_ReposDivergenciasQTD_A_TRANSF.AsString)+', '+ // QTD_A_TRANSF = ALterada
                  ' CURRENT_DATE, '+ // DTA_ALTERA
                  ' CURRENT_TIME, '+ // HRA_ALTERA
                  Cod_Usuario+')'; // USU_ALTERA
           DMBelShop.SQLC.Execute(MySql,nil,nil);
-        End; // If DMCentralTrocas.CDS_V_ReposDivergenciasQTD_A_TRANSF.AsInteger<>...
+          // Salvar Divergencia se Alterada Manualemnte a Qtd_a_Tansf ==========
+          //====================================================================
 
-        If DMCentralTrocas.CDS_V_ReposDivergenciasIND_CORRIGIDO.AsString='SIM' Then
-        Begin
           // Acerta ClientDataSet ==============================================
           DMCentralTrocas.CDS_ReposicaoTransf.Edit;
           DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsInteger:=
@@ -1287,8 +1292,8 @@ Begin
                  ' AND   lo.ind_prioridade='+DMCentralTrocas.CDS_ReposicaoTransfIND_PRIORIDADE.AsString+
                  ' AND   lo.num_seq='+DMCentralTrocas.CDS_ReposicaoTransfNUM_SEQ.AsString;
           DMBelShop.SQLC.Execute(MySql,nil,nil);
-        End; // If DMCentralTrocas.CDS_V_ReposDivergenciasIND_CORRIGIDO.AsString='SIM' Then
-      End; // If DMCentralTrocas.CDS_ReposicaoTransf.Locate('NUM_SEQ',DMCentralTrocas.CDS_V_ReposDivergenciasNUM_SEQ.AsInteger,[]) Then
+        End; // If DMCentralTrocas.CDS_ReposicaoTransf.Locate('NUM_SEQ',DMCentralTrocas.CDS_V_ReposDivergenciasNUM_SEQ.AsInteger,[]) Then
+      End; // If DMCentralTrocas.CDS_V_ReposDivergenciasIND_CORRIGIDO.AsString='SIM' Then
 
       pgProgBar.Position:=DMCentralTrocas.CDS_V_ReposDivergencias.RecNo;
 
@@ -1334,7 +1339,9 @@ Begin
          QuotedStr('NAO')+' ind_corrigido,'+
          ' cd.end_zona||''.''||cd.end_corredor||''.''||cd.end_prateleira||''.''||cd.end_gaveta Enderecamento,'+
          ' Trim(pr.codbarra) codbarra,'+
-         ' lo.num_seq, lo.qtd_a_transf qtd_original'+
+         ' lo.num_seq,'+
+         ' lo.qtd_a_transf qtd_original,'+
+         ' lo.qtd_checkout qtd_orig_check'+
 
          ' FROM ES_ESTOQUES_LOJAS lo, ES_ESTOQUES_CD cd, PRODUTO pr'+
 
@@ -8112,6 +8119,7 @@ begin
 
   sNumPed:=FormatFloat('000000',StrToInt(sNumPed));
 
+  // Busca Produtos Alterados na Divergencias de Checkout e Imprime ============
   sgMensagemERRO:='';
   If Not BuscaDivergenciasDocto(sNumPed) Then
   Begin

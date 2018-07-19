@@ -236,13 +236,15 @@ type
     CDS_RelDivergManuaisCOD_SIDICOM: TStringField;
     CDS_RelDivergManuaisCOD_LINX: TFMTBCDField;
     CDS_RelDivergManuaisNOME: TStringField;
-    CDS_RelDivergManuaisQTD_ORIGINAL: TFMTBCDField;
-    CDS_RelDivergManuaisQTD_A_TRANSF: TFMTBCDField;
     CDS_RelDivergManuaisUSU_ALTERA: TIntegerField;
     CDS_RelDivergManuaisDES_USUARIO: TStringField;
     CDS_RelDivergManuaisEMPRESA: TIntegerField;
     CDS_RelDivergManuaisDTA_ALTERA: TDateField;
     CDS_RelDivergManuaisHRA_ALTERA: TStringField;
+    CDS_V_ReposDivergenciasQTD_ORIG_CHECK: TFMTBCDField;
+    CDS_RelDivergManuaisQTD_ORIGINAL: TIntegerField;
+    CDS_RelDivergManuaisQTD_ORIG_CHECK: TIntegerField;
+    CDS_RelDivergManuaisQTD_A_TRANSF: TIntegerField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir

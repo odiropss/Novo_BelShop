@@ -1010,7 +1010,7 @@ object FrmSolicTransf: TFrmSolicTransf
     Top = 0
     Width = 891
     Height = 538
-    ActivePage = Ts_NFeCheckOut
+    ActivePage = Ts_Produtos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -2002,7 +2002,29 @@ object FrmSolicTransf: TFrmSolicTransf
             Expanded = False
             FieldName = 'COD_PRODUTO_LINX'
             Title.Alignment = taRightJustify
-            Width = 60
+            Title.Caption = 'Linx'
+            Width = 55
+            Visible = True
+          end
+          item
+            Color = 15395562
+            Expanded = False
+            FieldName = 'REFERENCIA'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Title.Alignment = taRightJustify
+            Width = 72
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'COD_PRODUTO_SIDI'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Sidicom'
+            Width = 55
             Visible = True
           end
           item
@@ -2014,7 +2036,8 @@ object FrmSolicTransf: TFrmSolicTransf
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
             Font.Style = [fsBold]
-            Width = 335
+            Title.Caption = 'Descri'#231#227'o do Produto'
+            Width = 300
             Visible = True
           end
           item
@@ -2029,22 +2052,24 @@ object FrmSolicTransf: TFrmSolicTransf
             Expanded = False
             FieldName = 'QTD_CHECKOUT'
             Title.Alignment = taRightJustify
-            Title.Caption = 'Qtd CheckOut'
-            Width = 90
+            Title.Caption = 'Qtd Check'
+            Width = 70
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'DTA_CHECKOUT'
             Title.Alignment = taCenter
-            Width = 100
+            Title.Caption = 'Dt Check'
+            Width = 70
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'HRA_CHECKOUT'
             Title.Alignment = taCenter
-            Width = 100
+            Title.Caption = 'Hr Check'
+            Width = 60
             Visible = True
           end
           item

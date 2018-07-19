@@ -232,30 +232,36 @@ Begin
 
   // Itens das OCs =============================================================
   MySql:=' SELECT DISTINCT'+
-         '        oi.num_seq_oc, oi.num_seq_item, oc.num_oc,'+
-         '        oi.cod_produto_sidi,'+
+         ' oi.num_seq_oc, oi.num_seq_item, oc.num_oc,'+
+         ' oi.cod_produto_linx, oi.cod_produto_sidi,'+
 
          ' CASE'+
-         '   WHEN TRIM(COALESCE(oi.cod_produto_linx,''''))<>'''' THEN'+
-         '     oi.cod_produto_linx'+
+         '   WHEN TRIM(COALESCE(ps.referencia,''''))<>'''' THEN'+
+         '     TRIM(ps.referencia)'+
          '   ELSE'+
-         '     oi.cod_produto_sidi'+
-         ' END cod_produto_linx,'+
+         '     TRIM(pl.referencia)'+
+         ' END REFERENCIA,'+
 
          ' oi.des_produto,'+
-         '        oi.qtd_produto, oi.qtd_checkout,'+
-         '        oi.dta_checkout, oi.hra_checkout,'+
+         ' oi.qtd_produto, oi.qtd_checkout,'+
+         ' oi.dta_checkout, oi.hra_checkout,'+
+
          ' CASE'+
          '   WHEN ni.ind_oc IS NULL THEN'+
          '     ''S'''+
          '   ELSE'+
          '     ni.ind_oc'+
          ' END IND_OC,'+
+
          ' ''0.000.000.0000'' ENDERECO'+
+
          ' FROM OC_LOJAS_ITENS oi'+
          '     LEFT JOIN OC_LOJAS_NFE oc        ON oc.num_seq_oc=oi.num_seq_oc'+
          '     LEFT JOIN OC_LOJAS_ITENS_NFE ni  ON ni.num_seq_oc=oi.num_seq_oc'+
          '                                     AND ni.num_seq_item=oi.num_seq_item'+
+         '     LEFT JOIN linxprodutos pl        ON pl.cod_produto=oi.cod_produto_linx'+
+         '     LEFT JOIN produto ps             ON ps.codproduto=oi.cod_produto_sidi'+
+
          ' WHERE oi.num_seq_oc in ('+sgNrsSeqOCs+')'+
          ' ORDER BY oi.des_produto';
   DMSolicTransf.CDS_OCItensCheck.DisableControls;
@@ -266,8 +272,15 @@ Begin
   DMSolicTransf.SQLQ_OCItensCheck.SQL.Add(MySql);
   DMSolicTransf.CDS_OCItensCheck.Open;
 
-  // Acerta Endereçamento Qunado For CD ========================================
-  Dbg_NFeProdutosOC.Columns[8].Visible:=False;
+//  // Coluna de Endereçamento INVISIVEL para Lojas ==============================
+//  For iIndexCol:=0 to Dbg_NFeProdutosOC.Columns.Count-1 do
+//  Begin
+//    If Dbg_NFeProdutosOC.Columns[iIndexCol].FieldName='ENDERECO' Then
+//     Break;
+//  End; // For iIndexCol:=0 to Dbg_NFeProdutosOC.Columns.Count-1 do
+//  Dbg_NFeProdutosOC.Columns[iIndexCol].Visible:=False;
+
+  // Acerta Endereçamento Quando For CD ========================================
   If sgLojaLinx='2' Then
   Begin
     DMSolicTransf.IBDB_CD.Connected:=True;
@@ -302,7 +315,9 @@ Begin
     DMSolicTransf.CDS_OCItensCheck.First;
 
     DMSolicTransf.IBDB_CD.Connected:=False;
-    Dbg_NFeProdutosOC.Columns[8].Visible:=True;
+
+//    // Coluna de Endereçamento VISIVEL para CD =================================
+//    Dbg_NFeProdutosOC.Columns[iIndexCol].Visible:=True;
   End; // If sgLojaLinx='2' Then
   DMSolicTransf.CDS_OCItensCheck.EnableControls;
 End; // // Busca Ordem de Compra para CheckOut >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -484,7 +499,7 @@ Var
   MySql: String;
   sErro: String;
   b: Boolean;
-  i: Integer;
+  i, iIndexCol: Integer;
 begin
 
   If not(fileexists(IncludeTrailingPathDelimiter(sgPastaExecutavel)+'Loja.ini')) then
@@ -499,11 +514,17 @@ begin
 //  for i:=1 to ParamCount do
 //   sgCodLojaVersaoOK:=ParamStr(i);
 
+  // ===========================================================================
   // Coloca Icone no Form ======================================================
+  // ===========================================================================
   Icon:=Application.Icon;
+  // Coloca Icone no Form ======================================================
+  // ===========================================================================
 
+  // ===========================================================================
   // Descrição do Loja =========================================================
   // Loja.Ini = Cod_Loja_Sidicom ; Cod_Loja_Linx ; Descriçãso do Loja ;
+  // ===========================================================================
   tsgArquivo:=TStringList.Create;
   tsgArquivo.LoadFromFile(IncludeTrailingPathDelimiter(sgPastaExecutavel)+'Loja.ini');
 
@@ -540,14 +561,27 @@ begin
 
   FreeAndNil(tsgArquivo);
   Pan_Loja.Caption:=sgNomeLoja;
+  // Descrição do Loja =========================================================
+  // Loja.Ini = Cod_Loja_Sidicom ; Cod_Loja_Linx ; Descriçãso do Loja ;
+  // ===========================================================================
 
+  // ===========================================================================
   // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  // ===========================================================================
   Application.OnMessage := ApplicationEvents1Message;
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  // ===========================================================================
 
+  // ===========================================================================
   // Não Permite Movimentar o Formulário =======================================
+  // ===========================================================================
   DeleteMenu(GetSystemMenu(Handle, False), SC_MOVE, MF_BYCOMMAND);
+  // Não Permite Movimentar o Formulário =======================================
+  // ===========================================================================
 
+  // ===========================================================================
   // Show Hint em Forma de Balão ===============================================
+  // ===========================================================================
   CreateToolTips(Self.Handle);
   AddToolTip(EdtCodProdLinx.Handle, @ti, TipoDoIcone, 'Informar Código Linx', 'CÓDIGO DO PRODUTO !!');
 
@@ -572,77 +606,100 @@ begin
 
   CreateToolTips(Self.Handle);
   AddToolTip(Bt_NFeEscanear.Handle, @ti, TipoDoIcone, 'Orcanear Produtos', 'CHECKOUT PRODUTOS !!');
+  // Show Hint em Forma de Balão ===============================================
+  // ===========================================================================
 
+  // ===========================================================================
   // Verifica Conexão ==========================================================
+  // ===========================================================================
   If Not DMSolicTransf.SQLC.Connected Then
    DMSolicTransf.SQLC.Connected:=True;
+  // Verifica Conexão ==========================================================
+  // ===========================================================================
 
-  // Busca Numero/Quantidade Máxima de Transferencia ===========================
-  b:=True;
-  While b do
+  // ===========================================================================
+  // Busca Informações para Lojas ==============================================
+  // ===========================================================================
+  If sgLojaLinx<>'2' Then
   Begin
-    MySql:=' SELECT t.des_aux Num_Prod, t.des_aux1 Qtd_Prod'+
-           ' FROM TAB_AUXILIAR t'+
-           ' WHERE t.tip_aux=19'+
-           ' AND   t.cod_aux='+sgLojaLinx;
-    DMSolicTransf.CDS_Busca.Close;
-    DMSolicTransf.SQLQ_Busca.Close;
-    DMSolicTransf.SQLQ_Busca.SQL.Clear;
-    DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
-    DMSolicTransf.CDS_Busca.Open;
-    If Trim(DMSolicTransf.CDS_Busca.FieldByName('Num_Prod').AsString)='' Then
-     Begin
-       // Cria Limites da Loja em Tab_Auxiliar
-       If Not CriaLimitesLoja Then
+    // ===========================================================================
+    // Busca Numero/Quantidade Máxima de Transferencia ===========================
+    // ===========================================================================
+    b:=True;
+    While b do
+    Begin
+      MySql:=' SELECT t.des_aux Num_Prod, t.des_aux1 Qtd_Prod'+
+             ' FROM TAB_AUXILIAR t'+
+             ' WHERE t.tip_aux=19'+
+             ' AND   t.cod_aux='+sgLojaLinx;
+      DMSolicTransf.CDS_Busca.Close;
+      DMSolicTransf.SQLQ_Busca.Close;
+      DMSolicTransf.SQLQ_Busca.SQL.Clear;
+      DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
+      DMSolicTransf.CDS_Busca.Open;
+      If Trim(DMSolicTransf.CDS_Busca.FieldByName('Num_Prod').AsString)='' Then
        Begin
-         msg('Erro ao Criar Limites da Loja !!','A');
-         Application.Terminate;
-         Exit;
-       End;
-     End
-    Else
-     Begin
-       Break;
-     End; // If Trim(DMSolicTransf.CDS_Busca.FieldByName('Num_Prod').AsString)='' Then
-  End; // While b do
-  igNumMaxProd:=DMSolicTransf.CDS_Busca.FieldByName('Num_Prod').AsInteger;
-  igQtdMaxProd:=DMSolicTransf.CDS_Busca.FieldByName('Qtd_Prod').AsInteger;
-  DMSolicTransf.CDS_Busca.Close;
-  Stb_ParamTransf.Panels[3].Text:='Nº Maximo de Produtos/Dia: '+IntToStr(igNumMaxProd);
-  Stb_ParamTransf.Panels[4].Text:='Quantidade Maxima Por Produto: '+IntToStr(igQtdMaxProd);
+         // Cria Limites da Loja em Tab_Auxiliar
+         If Not CriaLimitesLoja Then
+         Begin
+           msg('Erro ao Criar Limites da Loja !!','A');
+           Application.Terminate;
+           Exit;
+         End;
+       End
+      Else
+       Begin
+         Break;
+       End; // If Trim(DMSolicTransf.CDS_Busca.FieldByName('Num_Prod').AsString)='' Then
+    End; // While b do
+    igNumMaxProd:=DMSolicTransf.CDS_Busca.FieldByName('Num_Prod').AsInteger;
+    igQtdMaxProd:=DMSolicTransf.CDS_Busca.FieldByName('Qtd_Prod').AsInteger;
+    DMSolicTransf.CDS_Busca.Close;
+    Stb_ParamTransf.Panels[3].Text:='Nº Maximo de Produtos/Dia: '+IntToStr(igNumMaxProd);
+    Stb_ParamTransf.Panels[4].Text:='Quantidade Maxima Por Produto: '+IntToStr(igQtdMaxProd);
+    // Busca Numero/Quantidade Máxima de Transferencia ===========================
+    // ===========================================================================
 
-  // Busca Solicitação do Dia ==================================================
-  MySql:=' SELECT tr.dta_solicitacao, tr.num_solicitacao,'+
-         '        tr.cod_prod_linx, TRIM(pr.nome) nome,'+
-         '        tr.qtd_estoque, tr.qtd_transf'+
-         ' FROM SOL_TRANSFERENCIA_CD tr, LINXPRODUTOS pr'+
-         ' WHERE tr.cod_prod_linx=pr.cod_produto'+
-         ' AND  tr.dta_solicitacao=CURRENT_DATE'+
-         ' AND  tr.cod_loja_linx='+sgLojaLinx+
-         ' ORDER BY pr.nome';
-  DMSolicTransf.CDS_Solicitacao.Close;
-  DMSolicTransf.CDS_Solicitacao.Filtered:=False;
-  DMSolicTransf.CDS_Solicitacao.Filter:='';
-  DMSolicTransf.SQLQ_Solicitacao.Close;
-  DMSolicTransf.SQLQ_Solicitacao.SQL.Clear;
-  DMSolicTransf.SQLQ_Solicitacao.SQL.Add(MySql);
-  DMSolicTransf.CDS_Solicitacao.Open;
-  sgNumSolicitacao:=DMSolicTransf.CDS_SolicitacaoNUM_SOLICITACAO.AsString;
+    // ===========================================================================
+    // Busca Solicitação do Dia ==================================================
+    // ===========================================================================
+    MySql:=' SELECT tr.dta_solicitacao, tr.num_solicitacao,'+
+           '        tr.cod_prod_linx, TRIM(pr.nome) nome,'+
+           '        tr.qtd_estoque, tr.qtd_transf'+
+           ' FROM SOL_TRANSFERENCIA_CD tr, LINXPRODUTOS pr'+
+           ' WHERE tr.cod_prod_linx=pr.cod_produto'+
+           ' AND  tr.dta_solicitacao=CURRENT_DATE'+
+           ' AND  tr.cod_loja_linx='+sgLojaLinx+
+           ' ORDER BY pr.nome';
+    DMSolicTransf.CDS_Solicitacao.Close;
+    DMSolicTransf.CDS_Solicitacao.Filtered:=False;
+    DMSolicTransf.CDS_Solicitacao.Filter:='';
+    DMSolicTransf.SQLQ_Solicitacao.Close;
+    DMSolicTransf.SQLQ_Solicitacao.SQL.Clear;
+    DMSolicTransf.SQLQ_Solicitacao.SQL.Add(MySql);
+    DMSolicTransf.CDS_Solicitacao.Open;
+    sgNumSolicitacao:=DMSolicTransf.CDS_SolicitacaoNUM_SOLICITACAO.AsString;
+    // Busca Solicitação do Dia ==================================================
+    // ===========================================================================
+  End; // If sgLojaLinx<>'2' Then
+  // Busca Informações para Lojas ==============================================
+  // ===========================================================================
 
-  // Busca Numero da Solicitação ===============================================
-  If Trim(sgNumSolicitacao)='' Then
+  // ===========================================================================
+  // Coluna de Endereçamento INVISIVEL para Lojas ==============================
+  // ===========================================================================
+  For iIndexCol:=0 to Dbg_NFeProdutosOC.Columns.Count-1 do
   Begin
-    MySql:=' SELECT GEN_ID(GEN_SOLIC_TRANSFERENCIAS,1) Numero'+
-           ' FROM RDB$DATABASE';
-    DMSolicTransf.CDS_Busca.Close;
-    DMSolicTransf.SQLQ_Busca.Close;
-    DMSolicTransf.SQLQ_Busca.SQL.Clear;
-    DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
-    DMSolicTransf.CDS_Busca.Open;
-    sgNumSolicitacao:=DMSolicTransf.CDS_Busca.FieldByName('Numero').AsString;
-    DMSolicTransf.CDS_Busca.Close;
-  End; // If Trim(sgNumSolicitacao)='' Then
+    If Dbg_NFeProdutosOC.Columns[iIndexCol].FieldName='ENDERECO' Then
+     Break;
+  End; // For iIndexCol:=0 to Dbg_NFeProdutosOC.Columns.Count-1 do
+  Dbg_NFeProdutosOC.Columns[iIndexCol].Visible:=False;
+  // Coluna de Endereçamento INVISIVEL para Lojas ==============================
+  // ===========================================================================
 
+  // ===========================================================================
+  // Acerta Apresentação para o CD =============================================
+  // ===========================================================================
   If sgLojaLinx='2' Then
   Begin
     // =========================================================================
@@ -653,7 +710,16 @@ begin
     FrmSolicTransf.Align:=alClient;
     // Inicializa TabSheets para o CD ==========================================
     // =========================================================================
+
+    // =========================================================================
+    // Coluna de Endereçamento VISIVEL para CD =================================
+    // =========================================================================
+    Dbg_NFeProdutosOC.Columns[iIndexCol].Visible:=True;
+    // Coluna de Endereçamento VISIVEL para CD =================================
+    // =========================================================================
   End;
+  // Acerta Apresentação para o CD =============================================
+  // ===========================================================================
 
   PC_Principal.TabIndex:=0;
 end;
@@ -1046,6 +1112,27 @@ begin
   OdirPanApres.BringToFront();
   OdirPanApres.Visible:=True;
   Refresh;
+
+  // ===========================================================================
+  // Busca Numero da Solicitação ===============================================
+  // ===========================================================================
+  If Trim(sgNumSolicitacao)='' Then
+  Begin
+    If Trim(sgNumSolicitacao)='' Then
+    Begin
+      MySql:=' SELECT GEN_ID(GEN_SOLIC_TRANSFERENCIAS,1) Numero'+
+             ' FROM RDB$DATABASE';
+      DMSolicTransf.CDS_Busca.Close;
+      DMSolicTransf.SQLQ_Busca.Close;
+      DMSolicTransf.SQLQ_Busca.SQL.Clear;
+      DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
+      DMSolicTransf.CDS_Busca.Open;
+      sgNumSolicitacao:=DMSolicTransf.CDS_Busca.FieldByName('Numero').AsString;
+      DMSolicTransf.CDS_Busca.Close;
+    End; // If Trim(sgNumSolicitacao)='' Then
+  End; // If Trim(sgNumSolicitacao)='' Then
+  // Busca Numero da Solicitação ===============================================
+  // ===========================================================================
 
   // Verifica Conexão ==========================================================
   If Not DMSolicTransf.SQLC.Connected Then

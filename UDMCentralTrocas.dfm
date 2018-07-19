@@ -955,6 +955,12 @@ object DMCentralTrocas: TDMCentralTrocas
       Precision = 15
       Size = 2
     end
+    object CDS_V_ReposDivergenciasQTD_ORIG_CHECK: TFMTBCDField
+      DisplayLabel = 'Qtd Orig Check'
+      FieldName = 'QTD_ORIG_CHECK'
+      Precision = 15
+      Size = 2
+    end
   end
   object DS_V_ReposDivergencias: TDataSource
     DataSet = CDS_V_ReposDivergencias
@@ -1476,17 +1482,28 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object SDS_RelDivergManuais: TSQLDataSet
     CommandText = 
-      'SELECT'#13#10'dv.cod_loja, '#13#10'lj.empresa,'#13#10'lj.nome_emp,'#13#10'dv.num_pedido,' +
-      #13#10'dv.dta_movto,'#13#10'dv.num_docto,'#13#10'dv.num_seq,'#13#10'dv.cod_produto COD_' +
-      'SIDICOM,'#13#10'pr.cod_produto COD_LINX,'#13#10'pr.nome,'#13#10'dv.qtd_original,'#13#10 +
-      'dv.qtd_a_transf,'#13#10'CAST(dv.dta_altera AS DATE) DTA_ALTERA,'#13#10'CAST(' +
-      'CAST(dv.hra_altera AS TIME) AS VARCHAR(8)) HRA_ALTERA,'#13#10'dv.usu_a' +
-      'ltera,'#13#10'us.des_usuario'#13#10#13#10'FROM ES_ESTOQUES_LOJAS_DIV dv'#13#10'     LE' +
-      'FT JOIN linxlojas lj    on lj.cod_loja=dv.cod_loja'#13#10'     LEFT JO' +
-      'IN linxprodutos pr on pr.cod_auxiliar=dv.cod_produto'#13#10'     LEFT ' +
-      'JOIN ps_usuarios us  on us.cod_usuario=dv.usu_altera'#13#10#13#10'WHERE dv' +
-      '.num_pedido='#39'003111'#39#13#10#13#10'ORDER BY pr.nome, dv.dta_altera, dv.hra_' +
-      'altera'#13#10
+      'SELECT'#13#10' dv.cod_loja, lj.empresa,'#13#10' lj.nome_emp, dv.num_pedido,'#13 +
+      #10' dv.dta_movto,'#13#10' dv.num_docto,'#13#10' dv.num_seq,'#13#10' dv.cod_produto C' +
+      'OD_SIDICOM,'#13#10' pr.cod_produto COD_LINX,'#13#10' pr.nome,'#13#10' CAST(dv.qtd_' +
+      'original AS INTEGER) qtd_original,'#13#10' CAST(dv.qtd_orig_check AS I' +
+      'NTEGER) qtd_orig_check,'#13#10' CAST(dv.qtd_a_transf AS INTEGER) qtd_a' +
+      '_transf,'#13#10' CAST(dv.dta_altera AS DATE) DTA_ALTERA,'#13#10' CAST(SUBSTR' +
+      'ING(CAST(dv.hra_altera AS TIME) FROM 1 FOR 8)AS VARCHAR(8)) HRA_' +
+      'ALTERA,'#13#10' dv.usu_altera,'#13#10' us.des_usuario'#13#10#13#10' FROM ES_ESTOQUES_L' +
+      'OJAS_DIV dv'#13#10'       LEFT JOIN LINXLOJAS lj    on lj.cod_loja=dv.' +
+      'cod_loja'#13#10'       LEFT JOIN LINXPRODUTOS pr on pr.cod_auxiliar=dv' +
+      '.cod_produto'#13#10'       LEFT JOIN PS_USUARIOS us  on us.cod_usuario' +
+      '=dv.usu_altera'#13#10#13#10'WHERE dv.num_pedido='#39'000000'#39#13#10'AND dv.cod_loja=' +
+      #39'18'#39#13#10'AND dv.dta_movto='#39'19.07.2018'#39#13#10'AND EXISTS (SELECT 1'#13#10'     ' +
+      '       FROM ES_ESTOQUES_LOJAS lo, ES_ESTOQUES_CD cd, PRODUTO pr'#13 +
+      #10'            WHERE lo.cod_produto=pr.codproduto'#13#10'            AND' +
+      '   lo.cod_produto=cd.cod_produto'#13#10'            AND   lo.dta_movto' +
+      '=cd.dta_movto'#13#10'            AND   lo.ind_transf='#39'SIM'#39#13#10'          ' +
+      '  AND   lo.dta_movto=dv.dta_movto'#13#10'            AND   lo.cod_loja' +
+      '=dv.cod_loja'#13#10'            AND   lo.cod_produto=dv.cod_produto'#13#10' ' +
+      '           AND   lo.num_docto= dv.num_docto'#13#10'            AND   l' +
+      'o.num_pedido=dv.num_pedido'#13#10'            AND   (lo.ind_prioridade' +
+      '=0))'#13#10#13#10'ORDER BY pr.nome, dv.dta_altera, dv.hra_altera'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
@@ -1560,19 +1577,20 @@ object DMCentralTrocas: TDMCentralTrocas
       FieldName = 'NOME'
       Size = 250
     end
-    object CDS_RelDivergManuaisQTD_ORIGINAL: TFMTBCDField
-      DisplayLabel = 'Qtd Original'
+    object CDS_RelDivergManuaisQTD_ORIGINAL: TIntegerField
+      DisplayLabel = 'Qtd Resp Orig'
       FieldName = 'QTD_ORIGINAL'
       DisplayFormat = ',0'
-      Precision = 15
-      Size = 2
     end
-    object CDS_RelDivergManuaisQTD_A_TRANSF: TFMTBCDField
-      DisplayLabel = 'Qtd Alterada'
+    object CDS_RelDivergManuaisQTD_ORIG_CHECK: TIntegerField
+      DisplayLabel = 'Qtd Check Orig'
+      FieldName = 'QTD_ORIG_CHECK'
+      DisplayFormat = ',0'
+    end
+    object CDS_RelDivergManuaisQTD_A_TRANSF: TIntegerField
+      DisplayLabel = 'Qrtd Alterada'
       FieldName = 'QTD_A_TRANSF'
       DisplayFormat = ',0'
-      Precision = 15
-      Size = 2
     end
     object CDS_RelDivergManuaisDTA_ALTERA: TDateField
       FieldName = 'DTA_ALTERA'
