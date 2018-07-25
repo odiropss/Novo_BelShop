@@ -2070,7 +2070,7 @@ Begin
            ' WHERE oc.num_documento = dc.num_docto'+
            ' AND   CAST(oc.dta_documento AS DATE) = dc.dta_docto'+
            ' AND   oc.cod_comprador = dc.cod_comprador'+
-           ' AND   dc.origem='+QuotedStr('Linx')+
+           ' AND   UPPER(TRIM(dc.origem))='+QuotedStr('LINX')+
            ' AND   oc.num_documento='+sNrDoc+
 
            ' GROUP BY tipo, oc.cod_empresa, oc.des_empresa,'+
@@ -2096,7 +2096,7 @@ Begin
   MySql:=' SELECT om.*'+
          ' FROM OC_COMPRAR_MESES om, OC_COMPRAR_DOCS od'+
          ' WHERE om.num_documento=od.num_docto'+
-         ' AND   od.origem='+QuotedStr('Linx')+
+         ' AND   UPPER(TRIM(od.origem))='+QuotedStr('LINX')+
          ' AND   om.num_documento='+VarToStr(EdtGeraOCBuscaDocto.Value);
   DMBelShop.CDS_Busca.Close;
   DMBelShop.SDS_Busca.CommandText:=MySql;
@@ -2707,13 +2707,15 @@ begin
   Refresh;
 
   // Busca Itens do Documento --------------------------------------------------
-  MySql:=' SELECT DISTINCT oc.cod_item, oc.des_item, oc.num_documento,'+
+  MySql:=' SELECT DISTINCT oc.cod_item, CAST(NULL as varchar(6)) cod_linx,'+
+         '                 oc.des_item, oc.num_documento,'+
          '                 cast(oc.dta_documento as Date) dta_documento,'+
          '                 oc.cod_comprador, us.des_usuario'+
+
          ' FROM OC_COMPRAR oc'+
          '       LEFT JOIN PS_USUARIOS us     ON us.cod_usuario = oc.cod_comprador'+
          '       LEFT JOIN OC_COMPRAR_DOCS od ON od.num_docto = oc.num_documento'+
-         ' WHERE od.origem='+QuotedStr('Linx')+
+         ' WHERE UPPER(TRIM(od.origem))='+QuotedStr('LINX')+
          ' AND   oc.num_documento='+VarToStr(EdtGeraOCBuscaDocto.Value)+
          ' ORDER BY oc.des_item';
   DMBelShop.CDS_AComprarItens.Close;
@@ -2800,7 +2802,7 @@ begin
          '        d.des_comprador, d.origem, d.dta_docto Dta_Documento, d.cod_comprador'+
          ' FROM OC_COMPRAR_DOCS d'+
          ' WHERE d.dta_docto='+QuotedStr(f_Troca('/','.',(f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date)))))+
-         ' AND   d.Origem='+QuotedStr('Linx')+
+         ' AND   UPPER(TRIM(d.origem))='+QuotedStr('LINX')+
          ' AND   EXISTS (SELECT 1'+
          ' FROM  OC_COMPRAR c'+
          ' WHERE c.num_documento=d.num_docto)'+
@@ -2869,8 +2871,8 @@ begin
          ' FROM OC_COMPRAR o, OC_COMPRAR_DOCS d'+
          ' WHERE o.num_documento=d.num_docto'+
          ' AND   o.num_oc_gerada is not null'+
-         ' AND   d.origem='+QuotedStr('Linx')+
-         ' and   o.num_documento='+VarToStr(EdtGeraOCBuscaDocto.Value);
+         ' AND   UPPER(TRIM(d.origem))='+QuotedStr('LINX')+
+         ' AND   o.num_documento='+VarToStr(EdtGeraOCBuscaDocto.Value);
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
   DMBelShop.CDS_BuscaRapida.Open;
@@ -2909,7 +2911,7 @@ begin
            ' AND   EXISTS (SELECT 1'+
            '               FROM OC_COMPRAR_DOCS d'+
            '               WHERE d.num_docto=o.num_documento'+
-           '               AND   d.origem='+QuotedStr('Linx')+')';
+           '               AND   UPPER(TRIM(d.origem))='+QuotedStr('LINX')+')';
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
     MySql:=' DELETE FROM OC_COMPRAR_MESES m'+
@@ -2917,7 +2919,7 @@ begin
            ' AND   EXISTS (SELECT 1'+
            '               FROM OC_COMPRAR_DOCS d'+
            '               WHERE d.num_docto=m.num_documento'+
-           '               AND   d.origem='+QuotedStr('Linx')+')';
+           '               AND   UPPER(TRIM(d.origem))='+QuotedStr('LINX')+')';
     DMBelShop.SQLC.Execute(MySql,nil,nil);
 
     // Deleta OC_COMPRAR_DOCS ==================================================
@@ -3351,23 +3353,6 @@ begin
       sNrOC:=DMBelShop.OCBuscaNumeroOC(sCodLjSIDI, igCodLojaLinx);
                                        //SIDICOM  // LINX
 
-// OdirApagar - 09/07/2018 - Substituido pela StoredProcedure: SP_BUSCA_NUMERO_OC
-//      MySql:=' SELECT COALESCE(MAX(oc.num_oc_gerada)+1 ,1) Num_Docto'+
-//             ' FROM OC_COMPRAR oc'+
-//             ' WHERE oc.num_oc_gerada<1000000'+
-//             ' AND   oc.ind_oc_gerada=''S'''+
-//             ' AND   EXISTS (SELECT 1'+
-//             '               FROM OC_COMPRAR_DOCS d'+
-//             '               WHERE d.num_docto=oc.num_documento'+
-//             '               AND   d.origem='+QuotedStr('Linx')+
-//             '               )';
-//      DMBelShop.SQLQuery1.Close;
-//      DMBelShop.SQLQuery1.SQL.Clear;
-//      DMBelShop.SQLQuery1.SQL.Add(MySql);
-//      DMBelShop.SQLQuery1.Open;
-////odiraqui      sNrOC:=DMBelShop.SQLQuery1.fieldByName('Num_Docto').AsString;
-//      DMBelShop.SQLQuery1.Close;
-
       // Verifica se Transação esta Ativa
       If DMBelShop.SQLC.InTransaction Then
        DMBelShop.SQLC.Rollback(TD);
@@ -3699,7 +3684,7 @@ end;
 
 procedure TFrmOCLinx.Dbg_GeraOCGridKeyDown(Sender: TObject; var Key: Word;Shift: TShiftState);
 Var
-  s: String;
+s: String;
 begin
   If DMBelShop.CDS_AComprarItens.IsEmpty Then
    Exit;

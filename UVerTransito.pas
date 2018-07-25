@@ -301,9 +301,8 @@ begin
                 Exit;
               End; // If i>20 Then
             End; // While Not bSiga do - Executa Query
+          End; // If DMBelShop.CDS_AComprarItens.Locate('Cod_Item', DMBelShop.CDS_Busca.FieldByName('CodProduto').AsString,[]) Then
 
-          End; // If DMBelShop.CDS_AComprarItens.Locate('Cod_Item', DMBelShop.CDS_Busca.FieldByName('CodProduto').AsInteger,[]) Then
-      
           DMBelShop.CDS_Busca.Next;
         End; // While Not DMBelShop.CDS_Busca.Eof do
         DMBelShop.CDS_Busca.Close;

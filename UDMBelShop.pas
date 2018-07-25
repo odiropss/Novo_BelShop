@@ -1170,6 +1170,7 @@ type
     CDS_FluxoFornVinculadosIND_SIT_ORIGEM: TStringField;
     CDS_FluxoFornVinculoIND_SIT_ORIGEM: TStringField;
     IBDS_Busca: TIBDataSet;
+    CDS_AComprarItensCOD_LINX: TStringField;
 
     //==========================================================================
     // Odir ====================================================================

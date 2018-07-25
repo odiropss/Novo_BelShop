@@ -28,7 +28,7 @@ object FrmOCLinx: TFrmOCLinx
     Top = 0
     Width = 977
     Height = 576
-    ActivePage = Ts_OCBuscaProdutos
+    ActivePage = Ts_OCGeraOrdemCompra
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

@@ -8672,7 +8672,7 @@ object FrmBelShop: TFrmBelShop
           object PC_GeraOCProduto: TPageControl
             Left = 0
             Top = 53
-            Width = 102
+            Width = 129
             Height = 435
             ActivePage = Ts_GeraOCProdutos
             Align = alLeft
@@ -8685,7 +8685,7 @@ object FrmBelShop: TFrmBelShop
               object Dbg_GeraOCProdutos: TDBGridJul
                 Left = 0
                 Top = 0
-                Width = 94
+                Width = 121
                 Height = 392
                 Align = alClient
                 DataSource = DMBelShop.DS_AComprarItens
@@ -8694,7 +8694,7 @@ object FrmBelShop: TFrmBelShop
                 Font.Height = -11
                 Font.Name = 'Tahoma'
                 Font.Style = []
-                Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
+                Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
                 ParentFont = False
                 ParentShowHint = False
                 PopupMenu = PopM_GeraOC
@@ -8713,7 +8713,7 @@ object FrmBelShop: TFrmBelShop
                 SairComEnter = False
                 Columns = <
                   item
-                    Alignment = taCenter
+                    Alignment = taRightJustify
                     Color = 14211288
                     Expanded = False
                     FieldName = 'COD_ITEM'
@@ -8723,15 +8723,30 @@ object FrmBelShop: TFrmBelShop
                     Font.Name = 'Tahoma'
                     Font.Style = [fsBold]
                     Title.Alignment = taCenter
-                    Title.Caption = 'Produto'
-                    Width = 60
+                    Title.Caption = 'Sidicom'
+                    Width = 46
+                    Visible = True
+                  end
+                  item
+                    Alignment = taRightJustify
+                    Color = clYellow
+                    Expanded = False
+                    FieldName = 'COD_LINX'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWindowText
+                    Font.Height = -11
+                    Font.Name = 'Tahoma'
+                    Font.Style = [fsBold]
+                    Title.Alignment = taRightJustify
+                    Title.Caption = 'Linx'
+                    Width = 40
                     Visible = True
                   end>
               end
               object Panel4: TPanel
                 Left = 0
                 Top = 392
-                Width = 94
+                Width = 121
                 Height = 15
                 Align = alBottom
                 TabOrder = 1
@@ -8739,7 +8754,7 @@ object FrmBelShop: TFrmBelShop
             end
           end
           object PC_GeraOCFiliais: TPageControl
-            Left = 102
+            Left = 129
             Top = 53
             Width = 68
             Height = 435
@@ -8811,11 +8826,11 @@ object FrmBelShop: TFrmBelShop
             end
           end
           object PC_GeraOCApresentacao: TPageControl
-            Left = 170
+            Left = 197
             Top = 53
-            Width = 793
+            Width = 766
             Height = 435
-            ActivePage = Ts_GeraOCOrdensCompra
+            ActivePage = Ts_GeraOCGrid
             Align = alClient
             MultiLine = True
             TabOrder = 3
@@ -8827,7 +8842,7 @@ object FrmBelShop: TFrmBelShop
               object Dbg_GeraOCGrid: TDBGridJul
                 Left = 0
                 Top = 0
-                Width = 785
+                Width = 758
                 Height = 407
                 Align = alClient
                 DataSource = DMBelShop.DS_AComprar
@@ -9705,7 +9720,7 @@ object FrmBelShop: TFrmBelShop
               object Panel35: TPanel
                 Left = 0
                 Top = 0
-                Width = 785
+                Width = 758
                 Height = 44
                 Align = alTop
                 BevelInner = bvLowered
@@ -9794,7 +9809,7 @@ object FrmBelShop: TFrmBelShop
                 end
                 object Bt_GeraOCImpEditOC: TJvXPButton
                   Tag = 4
-                  Left = 649
+                  Left = 622
                   Top = 4
                   Width = 132
                   Height = 36
@@ -10117,7 +10132,7 @@ object FrmBelShop: TFrmBelShop
               object Dbg_GeraOCTotalGeral: TDBGridJul
                 Left = 0
                 Top = 44
-                Width = 785
+                Width = 758
                 Height = 363
                 Hint = '<Duplo Click> Alterar Gerar'
                 Align = alClient

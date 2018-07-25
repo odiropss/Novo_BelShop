@@ -484,7 +484,7 @@ object DMSolicTransf: TDMSolicTransf
     Transaction = IBT_CD
     BufferChunks = 1000
     CachedUpdates = False
-    Left = 631
+    Left = 711
     Top = 87
   end
   object IBDB_CD: TIBDatabase
@@ -497,14 +497,59 @@ object DMSolicTransf: TDMSolicTransf
     IdleTimer = 0
     SQLDialect = 3
     TraceFlags = []
-    Left = 608
+    Left = 688
     Top = 34
   end
   object IBT_CD: TIBTransaction
     Active = False
     DefaultDatabase = IBDB_CD
     AutoStopAction = saNone
-    Left = 672
+    Left = 752
     Top = 34
+  end
+  object RelVisual: TRelVisualJul
+    Cabecalho1Direita = '#Pag'
+    Cabecalho2Direita = '#Data'
+    Cabecalho3Esquerda = '#Titulo'
+    Cabecalho3Direita = '#Hora'
+    TextoRodape = 'Total Geral:'
+    TextoRodapeGrupo = 'Sub-Total:'
+    Orientacao = toPaisagem
+    CabecalhoGrupo = True
+    RodapeGrupo = True
+    LinhaGrupo = True
+    LinhaRodapeGrupo = True
+    MarginLeft = 5.000000000000000000
+    MarginTop = 10.000000000000000000
+    MarginRight = 5.000000000000000000
+    MarginBottom = 10.000000000000000000
+    Fonte.Charset = DEFAULT_CHARSET
+    Fonte.Color = clWindowText
+    Fonte.Height = -11
+    Fonte.Name = 'MS Sans Serif'
+    Fonte.Style = []
+    TXTCharSeparador = ';'
+    Left = 584
+    Top = 392
+  end
+  object SQLQ_Relatorio: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 540
+    Top = 440
+  end
+  object DSP_Relatorio: TDataSetProvider
+    DataSet = SQLQ_Relatorio
+    Options = [poFetchBlobsOnDemand, poRetainServerOrder]
+    Left = 596
+    Top = 453
+  end
+  object CDS_Relatorio: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_Relatorio'
+    Left = 644
+    Top = 440
   end
 end

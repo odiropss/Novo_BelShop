@@ -8269,25 +8269,25 @@ End; // Fechamento de Caixa Dia >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //
 //    MySql:=' SELECT en.codfilial COD_LOJA, en.codproduto COD_ITEM,'+
 //           ' CASE'+
-//           '   WHEN ((TRIM(en.zonaendereco)='''') OR (en.zonaendereco=NULL)) THEN'+
+//           '   WHEN ((TRIM(en.zonaendereco)='''') OR (en.zonaendereco IS NULL)) THEN'+
 //           '     ''0'''+
 //           '   ELSE'+
 //           '     en.zonaendereco'+
 //           ' END zonaendereco,'+
 //           ' CASE'+
-//           '   WHEN ((TRIM(en.corredor)='''') OR (en.corredor=NULL)) THEN'+
+//           '   WHEN ((TRIM(en.corredor)='''') OR (en.corredor IS NULL)) THEN'+
 //           '     ''000'''+
 //           '   ELSE'+
 //           '     en.corredor'+
 //           ' END CORREDOR,'+
 //           ' CASE'+
-//           '   WHEN ((TRIM(en.prateleira)='''') OR (en.prateleira=NULL)) THEN'+
+//           '   WHEN ((TRIM(en.prateleira)='''') OR (en.prateleira IS NULL)) THEN'+
 //           '     ''000'''+
 //           '   ELSE'+
 //           '     en.prateleira'+
 //           ' END PRATELEIRA,'+
 //           ' CASE'+
-//           '   WHEN ((TRIM(en.gaveta)='''') OR (en.gaveta=NULL)) THEN'+
+//           '   WHEN ((TRIM(en.gaveta)='''') OR (en.gaveta IS NULL)) THEN'+
 //           '     ''0000'''+
 //           '   ELSE'+
 //           '     en.gaveta'+
@@ -23916,13 +23916,16 @@ begin
   Refresh;
 
   // Busca Itens do Documento --------------------------------------------------
-  MySql:=' SELECT DISTINCT oc.cod_item, oc.des_item, oc.num_documento,'+
+  MySql:=' SELECT DISTINCT oc.cod_item, CAST(pl.cod_produto AS VARCHAR(6)) cod_linx,'+
+         '                 oc.des_item, oc.num_documento,'+
          '                 cast(oc.dta_documento as Date) dta_documento,'+
          '                 oc.cod_comprador, us.des_usuario'+
 
          ' FROM OC_COMPRAR oc'+
-         '       LEFT JOIN PS_USUARIOS us     ON us.cod_usuario = oc.cod_comprador'+
+         '       LEFT JOIN PS_USUARIOS     us ON us.cod_usuario = oc.cod_comprador'+
          '       LEFT JOIN OC_COMPRAR_DOCS od ON od.num_docto = oc.num_documento'+
+         '       LEFT JOIN LINXPRODUTOS    pl ON pl.cod_auxiliar=oc.cod_item'+
+
          ' WHERE UPPER(TRIM(od.origem))<>'+QuotedStr('LINX')+
          ' AND   oc.num_documento='+VarToStr(EdtGeraOCBuscaDocto.Value)+
          ' ORDER BY oc.des_item';
@@ -24047,7 +24050,11 @@ end;
 
 procedure TFrmBelShop.Dbg_GeraOCProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 Var
-  MySql, s: String;
+  MySql: String;
+
+  // Executar OnKeyDown (Com a tecle que Quiser)
+  MyShiftState : TShiftState;
+  MyWord: Word;
 begin
   // Bloquei Ctrl + Delete =====================================================
   If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
@@ -24059,43 +24066,11 @@ begin
   If key=Vk_Return Then
    Ts_GeraOCFiliais.SetFocus;
 
-  // Localiza Produto SIDICOM ==================================================
-  If (Key=VK_F4) And (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) Then
+  // Localiza Produto SIDICOM / LINX ===========================================
+  If (Key=VK_F4) And ((PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) And (Ts_GeraOCGrid.CanFocus)) Then
   Begin
-    s:='';
-    If InputQuery('Localizar Produto SIDICOM','',s) then
-    Begin
-      if Trim(s)<>'' then
-      Begin
-        Try
-          StrToInt(s);
-          DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]);
-        Except
-          s:=AnsiUpperCase(s);
-          DMBelShop.CDS_AComprarItens.Locate('Des_Item',s,[loPartialKey]);
-        End;
-      End; // if Trim(s)<>'' then
-    End; // If InputQuery('Localizar Produto','',s) then
-  End; // If Key=VK_F4 Then
-
-  // Localiza Produto LINX =====================================================
-  If (Key=VK_F3) And (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) Then
-  Begin
-    s:='';
-    If InputQuery('Localizar Produto LINX','',s) then
-    Begin
-      if Trim(s)<>'' then
-      Begin
-        Try
-          StrToInt(s);
-          s:=DMBelShop.LINX_BuscaCodigoSIDICOM(s);
-          DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]);
-        Except
-          s:=AnsiUpperCase(s);
-          DMBelShop.CDS_AComprarItens.Locate('Des_Item',s,[loPartialKey]);
-        End;
-      End; // if Trim(s)<>'' then
-    End; // If InputQuery('Localizar Produto','',s) then
+    MyWord:=VK_F4;
+    Dbg_GeraOCGridKeyDown(Self, MyWord, MyShiftState);
   End; // If Key=VK_F4 Then
 
   // Apresenta Datas de Inclusao/Alteracao do Produto ==========================
@@ -24119,7 +24094,11 @@ end;
 
 procedure TFrmBelShop.Dbg_GeraOCFiliaisKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 Var
-  MySql, s: String;
+  MySql: String;
+
+  // Executar OnKeyDown (Com a tecle que Quiser)
+  MyShiftState : TShiftState;
+  MyWord: Word;
 begin
   // Bloquei Ctrl + Delete =====================================================
   If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
@@ -24131,43 +24110,11 @@ begin
   If key=Vk_Return Then
    Ts_GeraOCGrid.SetFocus;
 
-  // Localiza Produto SISICOM ==================================================
-  If (Key=VK_F4) And (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) Then
+  // Localiza Produto SIDICOM / LINX ===========================================
+  If (Key=VK_F4) And ((PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) And (Ts_GeraOCGrid.CanFocus)) Then
   Begin
-    s:='';
-    If InputQuery('Localizar Produto SIDICOM','',s) then
-    Begin
-      if Trim(s)<>'' then
-      Begin
-        Try
-          StrToInt(s);
-          DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]);
-        Except
-          s:=AnsiUpperCase(s);
-          DMBelShop.CDS_AComprarItens.Locate('Des_Item',s,[loPartialKey]);
-        End;
-      End; // if Trim(s)<>'' then
-    End; // If InputQuery('Localizar Produto','',s) then
-  End; // If Key=VK_F4 Then
-
-  // Localiza Produto LINX =====================================================
-  If (Key=VK_F3) And (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) Then
-  Begin
-    s:='';
-    If InputQuery('Localizar Produto LINX','',s) then
-    Begin
-      if Trim(s)<>'' then
-      Begin
-        Try
-          StrToInt(s);
-          s:=DMBelShop.LINX_BuscaCodigoSIDICOM(s);
-          DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]);
-        Except
-          s:=AnsiUpperCase(s);
-          DMBelShop.CDS_AComprarItens.Locate('Des_Item',s,[loPartialKey]);
-        End;
-      End; // if Trim(s)<>'' then
-    End; // If InputQuery('Localizar Produto','',s) then
+    MyWord:=VK_F4;
+    Dbg_GeraOCGridKeyDown(Self, MyWord, MyShiftState);
   End; // If Key=VK_F4 Then
 
   // Apresenta Datas de Inclusao/Alteracao do Produto ==========================
@@ -24240,39 +24187,30 @@ begin
   If (Key=VK_F4) And ((PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) And (Ts_GeraOCGrid.CanFocus)) Then
   Begin
     s:='';
-    If InputQuery('Localizar Produto SIDICOM','',s) then
-    Begin
-      if Trim(s)<>'' then
-      Begin
-        Try
-          StrToInt(s);
-          DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]);
-        Except
-          s:=AnsiUpperCase(s);
-          DMBelShop.CDS_AComprarItens.Locate('Des_Item',s,[loPartialKey]);
-        End;
-      End; // if Trim(s)<>'' then
-    End; // If InputQuery('Localizar Produto','',s) then
-  End; // If Key=VK_F4 Then
+    If Dbg_GeraOCProdutos.Columns[Dbg_GeraOCProdutos.SelectedIndex].FieldName='COD_ITEM' Then
+     sgMensagem:='Localizar Produto SIDICOM';
 
-  // Localiza Produto LINX =====================================================
-  If (Key=VK_F3) And ((PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) And (Ts_GeraOCGrid.CanFocus)) Then
-  Begin
-    s:='';
-    If InputQuery('Localizar Produto LINX','',s) then
+    If Dbg_GeraOCProdutos.Columns[Dbg_GeraOCProdutos.SelectedIndex].FieldName='COD_LINX' Then
+     sgMensagem:='Localizar Produto LINX';
+
+    If InputQuery(sgMensagem,'',s) then
     Begin
       if Trim(s)<>'' then
       Begin
         Try
           StrToInt(s);
-          s:=DMBelShop.LINX_BuscaCodigoSIDICOM(s);
-          DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]);
+          If Dbg_GeraOCProdutos.Columns[Dbg_GeraOCProdutos.SelectedIndex].FieldName='COD_ITEM' Then
+           DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]);
+
+          If Dbg_GeraOCProdutos.Columns[Dbg_GeraOCProdutos.SelectedIndex].FieldName='COD_LINX' Then
+           DMBelShop.CDS_AComprarItens.Locate('Cod_Linx',StrToInt(s),[]);
         Except
           s:=AnsiUpperCase(s);
           DMBelShop.CDS_AComprarItens.Locate('Des_Item',s,[loPartialKey]);
         End;
       End; // if Trim(s)<>'' then
     End; // If InputQuery('Localizar Produto','',s) then
+    sgMensagem:='';
   End; // If Key=VK_F4 Then
 
   // Apresenta Datas de Inclusao/Alteracao do Produto ==========================
@@ -25045,7 +24983,7 @@ begin
 
       Screen.Cursor:=crDefault;
       Exit;
-    End; // If DMBelShop.CDS_AComprarItens.IsEmpty Then
+    End; // If DMBelShop.IBQ_AComprarEdita.IsEmpty Then
 
     EdtGeraOCEditaDocto.Value:=EdtGeraOCBuscaDocto.Value;
     DtEdt_GeraOCEditaDataDocto.Date:=DtEdt_GeraOCDataDocto.Date;
@@ -26263,7 +26201,7 @@ begin
     DMBelShop.IBQ_AComprarEdita.Close;
 
     Exit;
-  End; // If DMBelShop.CDS_AComprarItens.IsEmpty Then
+  End; // If DMBelShop.IBQ_AComprarEdita.IsEmpty Then
 
   // Busca Totais do Pedido ===================================================
   If Rb_GeraOCEditaComQtd.Checked Then s:='C';
@@ -43732,7 +43670,7 @@ Begin
 
     TextoRodape:='';
     TextoRodapeGrupo:='';
-    Zoom:=150;
+    Zoom:=140;
 
     ImprimirTarjaCinza:=False;
     ImprimirVisto:=False;

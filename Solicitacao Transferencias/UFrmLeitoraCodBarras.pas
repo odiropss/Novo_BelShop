@@ -184,7 +184,7 @@ Begin
              ' AND   io.num_seq_item='+DMSolicTransf.CDS_OCItensCheckNUM_SEQ_ITEM.AsString;
       DMSolicTransf.SQLC.Execute(MySql,nil,nil);
 
-      // Insere Produto Não Encontrado no Controle de OC/NFe ===================
+      // Insere Produto no Controle de OC/NFe ==================================
       MySql:=' INSERT INTO OC_LOJAS_ITENS_NFE ('+
              ' NUM_SEQ_OC, NUM_SEQ_ITEM, NUM_NFE, QTD_CHECKOUT,'+
              ' DTA_CHECKOUT, HRA_CHECKOUT, IND_OC)'+
@@ -233,7 +233,7 @@ Begin
                    ' AND   io.num_seq_item='+sNumSeqItem;
             DMSolicTransf.SQLC.Execute(MySql,nil,nil);
 
-            // Insere Produto Não Encontrado no Controle de OC/NFe ===================
+            // Insere Produto no Controle de OC/NFe ============================
             MySql:=' INSERT INTO OC_LOJAS_ITENS_NFE ('+
                    ' NUM_SEQ_OC, NUM_SEQ_ITEM, NUM_NFE, QTD_CHECKOUT,'+
                    ' DTA_CHECKOUT, HRA_CHECKOUT, IND_OC)'+
@@ -284,7 +284,7 @@ Begin
                    ' AND   io.num_seq_item='+sNumSeqItem;
             DMSolicTransf.SQLC.Execute(MySql,nil,nil);
 
-            // Insere Produto Não Encontrado no Controle de OC/NFe ===================
+            // Insere Produto no Controle de OC/NFe ============================
             MySql:=' INSERT INTO OC_LOJAS_ITENS_NFE ('+
                    ' NUM_SEQ_OC, NUM_SEQ_ITEM, NUM_NFE, QTD_CHECKOUT,'+
                    ' DTA_CHECKOUT, HRA_CHECKOUT, IND_OC)'+
@@ -343,6 +343,12 @@ Begin
   DMSolicTransf.CDS_OCItensCheck.DisableControls;
   DMSolicTransf.CDS_OCItensCheck.Close;
   DMSolicTransf.CDS_OCItensCheck.Open;
+
+//  // Acerta Endereçamento Quando For CD ========================================
+//  If sgLojaLinx='2' Then
+//  Begin
+//    FrmSolicTransf.CheckOutColocaEnderecamento;
+//  End; // If sgLojaLinx='2' Then
   DMSolicTransf.CDS_OCItensCheck.EnableControls;
 
   // Posiciona no Produto ======================================================

@@ -1010,7 +1010,7 @@ object FrmSolicTransf: TFrmSolicTransf
     Top = 0
     Width = 891
     Height = 538
-    ActivePage = Ts_Produtos
+    ActivePage = Ts_NFeCheckOut
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1965,7 +1965,7 @@ object FrmSolicTransf: TFrmSolicTransf
         Left = 0
         Top = 87
         Width = 883
-        Height = 394
+        Height = 383
         Align = alClient
         DataSource = DMSolicTransf.DS_OCItensCheck
         FixedColor = clTeal
@@ -1984,6 +1984,8 @@ object FrmSolicTransf: TFrmSolicTransf
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_NFeProdutosOCDrawColumnCell
         OnEnter = Dbg_NFeProdutosOCEnter
+        OnKeyDown = Dbg_ProdutosKeyDown
+        OnTitleClick = Dbg_NFeProdutosOCTitleClick
         Columns = <
           item
             Color = 15395562
@@ -2094,106 +2096,6 @@ object FrmSolicTransf: TFrmSolicTransf
             Visible = True
           end>
       end
-      object Panel1: TPanel
-        Left = 0
-        Top = 481
-        Width = 883
-        Height = 29
-        Align = alBottom
-        BevelOuter = bvNone
-        Ctl3D = False
-        ParentCtl3D = False
-        TabOrder = 1
-        Visible = False
-        object Panel2: TPanel
-          Left = 32
-          Top = 3
-          Width = 159
-          Height = 23
-          BevelInner = bvRaised
-          BevelOuter = bvLowered
-          BevelWidth = 2
-          Caption = 'Sem CheckOut'
-          Color = clWindow
-          Ctl3D = True
-          ParentCtl3D = False
-          TabOrder = 0
-        end
-        object Panel3: TPanel
-          Left = 192
-          Top = 3
-          Width = 159
-          Height = 23
-          BevelInner = bvRaised
-          BevelOuter = bvLowered
-          BevelWidth = 2
-          Caption = 'CheckOut Fechado'
-          Color = clYellow
-          Ctl3D = True
-          ParentCtl3D = False
-          TabOrder = 1
-        end
-        object Panel4: TPanel
-          Left = 353
-          Top = 3
-          Width = 159
-          Height = 23
-          BevelInner = bvRaised
-          BevelOuter = bvLowered
-          BevelWidth = 2
-          Caption = 'CheckOut a Menor'
-          Color = clBlue
-          Ctl3D = True
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWhite
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentCtl3D = False
-          ParentFont = False
-          TabOrder = 2
-        end
-        object Panel5: TPanel
-          Left = 513
-          Top = 3
-          Width = 159
-          Height = 23
-          BevelInner = bvRaised
-          BevelOuter = bvLowered
-          BevelWidth = 2
-          Caption = 'CheckOut a Maior'
-          Color = clLime
-          Ctl3D = True
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentCtl3D = False
-          ParentFont = False
-          TabOrder = 3
-        end
-        object Panel6: TPanel
-          Left = 675
-          Top = 3
-          Width = 159
-          Height = 23
-          BevelInner = bvRaised
-          BevelOuter = bvLowered
-          BevelWidth = 2
-          Caption = 'CheckOut Sem Produto'
-          Color = clRed
-          Ctl3D = True
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWhite
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentCtl3D = False
-          ParentFont = False
-          TabOrder = 4
-        end
-      end
       object Panel7: TPanel
         Left = 0
         Top = 0
@@ -2201,7 +2103,7 @@ object FrmSolicTransf: TFrmSolicTransf
         Height = 87
         Align = alTop
         BevelOuter = bvNone
-        TabOrder = 2
+        TabOrder = 1
         DesignSize = (
           883
           87)
@@ -2551,6 +2453,140 @@ object FrmSolicTransf: TFrmSolicTransf
           end
         end
       end
+      object dxStatusBar2: TdxStatusBar
+        Left = 0
+        Top = 470
+        Width = 883
+        Height = 20
+        Panels = <
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            PanelStyle.Color = clWhite
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clWindowText
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = [fsBold]
+            PanelStyle.ParentFont = False
+            BiDiMode = bdLeftToRight
+            ParentBiDiMode = False
+            Text = 'Sem CheckOut'
+            Width = 140
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            PanelStyle.Color = clLime
+            PanelStyle.EllipsisType = dxetSmartPath
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clWindowText
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = [fsBold]
+            PanelStyle.ParentFont = False
+            Text = 'CheckOut Fechado'
+            Width = 140
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            PanelStyle.Color = clAqua
+            Text = 'CheckOut a Menor'
+            Width = 140
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            PanelStyle.Color = clYellow
+            Text = 'CheckOut a Maior'
+            Width = 140
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            PanelStyle.Color = clRed
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clWhite
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = [fsBold]
+            PanelStyle.ParentFont = False
+            Text = 'Sem Produto na OC'
+            Width = 140
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarKeyboardStatePanelStyle'
+            PanelStyle.CapsLockKeyAppearance.ActiveCaption = 'CAPS'
+            PanelStyle.CapsLockKeyAppearance.InactiveCaption = 'CAPS'
+            PanelStyle.NumLockKeyAppearance.ActiveCaption = 'NUM'
+            PanelStyle.NumLockKeyAppearance.InactiveCaption = 'NUM'
+            PanelStyle.ScrollLockKeyAppearance.ActiveCaption = 'SCRL'
+            PanelStyle.ScrollLockKeyAppearance.InactiveCaption = 'SCRL'
+            PanelStyle.InsertKeyAppearance.ActiveCaption = 'OVR'
+            PanelStyle.InsertKeyAppearance.InactiveCaption = 'INS'
+          end>
+        PaintStyle = stpsStandard
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+      end
+      object dxStatusBar3: TdxStatusBar
+        Left = 0
+        Top = 490
+        Width = 883
+        Height = 20
+        Panels = <
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Color = 16777088
+            Text = 'No Grid =>'
+            Width = 66
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clWindowText
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = [fsBold]
+            PanelStyle.ParentFont = False
+            Fixed = False
+            Text = 
+              'Clique no T'#237'tulo da Coluna (Linx, Refer'#234'ncia ou Sidicom) Localiz' +
+              'ar Produto'
+            Width = 150
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            PanelStyle.Font.Charset = DEFAULT_CHARSET
+            PanelStyle.Font.Color = clWindowText
+            PanelStyle.Font.Height = -11
+            PanelStyle.Font.Name = 'MS Sans Serif'
+            PanelStyle.Font.Style = [fsBold]
+            PanelStyle.ParentFont = False
+            Fixed = False
+            Text = '<Delete> Retira Qtd CheckOut Pela Nota'
+            Width = 86
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            Fixed = False
+            Text = '<F3> Relat'#243'rio'
+            Width = 36
+          end>
+        PaintStyle = stpsStandard
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+      end
     end
   end
   object CorCaptionForm: TJvGradientCaption
@@ -2574,12 +2610,12 @@ object FrmSolicTransf: TFrmSolicTransf
     Font.Style = [fsBold]
     StartColor = 16777088
     EndColor = 16777088
-    Left = 688
-    Top = 440
+    Left = 696
+    Top = 360
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
     Left = 564
-    Top = 431
+    Top = 375
   end
 end

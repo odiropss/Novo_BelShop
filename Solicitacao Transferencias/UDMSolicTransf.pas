@@ -5,7 +5,7 @@ interface
 uses
   Windows, Forms, SysUtils, Classes, DBXpress, FMTBcd, SqlExpr, DB, DBClient,
   Provider, StdCtrls, WinInet, ExtCtrls, IBDatabase, IBCustomDataSet,
-  IBQuery;
+  IBQuery, RelVisual;
 
 type
   TDMSolicTransf = class(TDataModule)
@@ -73,6 +73,10 @@ type
     CDS_OCItensCheckCOD_PRODUTO_SIDI: TStringField;
     CDS_OCItensCheckREFERENCIA: TStringField;
     CDS_OCItensCheckCOD_PRODUTO_LINX: TFMTBCDField;
+    RelVisual: TRelVisualJul;
+    SQLQ_Relatorio: TSQLQuery;
+    DSP_Relatorio: TDataSetProvider;
+    CDS_Relatorio: TClientDataSet;
 
     //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

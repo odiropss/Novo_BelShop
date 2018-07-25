@@ -22,7 +22,7 @@ uses
   dxSkinSummer2008, dxSkinsDefaultPainters, dxSkinValentine,
   dxSkinXmas2008Blue, dxSkinsdxStatusBarPainter, dxStatusBar, cxContainer,
   cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, Shellapi,
-  jpeg;
+  jpeg, RelVisual;
 
 type
   TFrmSolicTransf = class(TForm)
@@ -62,12 +62,6 @@ type
     Lab_UnidadeCD: TLabel;
     Ts_NFeCheckOut: TTabSheet;
     Dbg_NFeProdutosOC: TDBGrid;
-    Panel1: TPanel;
-    Panel2: TPanel;
-    Panel3: TPanel;
-    Panel4: TPanel;
-    Panel5: TPanel;
-    Panel6: TPanel;
     Panel7: TPanel;
     Gb_NFe_Solicitacoes: TGroupBox;
     Label6: TLabel;
@@ -81,6 +75,8 @@ type
     Bt_NFeBuscaOC: TJvXPButton;
     Bt_NFeEscanear: TJvXPButton;
     Lbx_NFeNumOCs: TListBox;
+    dxStatusBar2: TdxStatusBar;
+    dxStatusBar3: TdxStatusBar;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -105,6 +101,10 @@ type
     Function  NovaVersao: Boolean;
 
     Procedure CheckOutBuscaOC;
+    Procedure CheckOutRetiraQtdCheckout;
+    Procedure CheckOutRelatorio;
+
+    // Odir Analisar ==>> Procedure CheckOutColocaEnderecamento;
 
     // ODIR >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -142,7 +142,8 @@ type
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
     procedure EdtNFeNumNFeExit(Sender: TObject);
-    procedure Dbg_NFeProdutosOCEnter(Sender: TObject); // Posiciona no Componente
+    procedure Dbg_NFeProdutosOCEnter(Sender: TObject);
+    procedure Dbg_NFeProdutosOCTitleClick(Column: TColumn); // Posiciona no Componente
 
   private
     { Private declarations }
@@ -189,7 +190,278 @@ uses DK_Procs1, UDMSolicTransf, UPesquisa, DB, UFrmLeitoraCodBarras;
 // ODIR - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Busca Ordens de Compra para CheckOut >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// CHECKOUT NFeE - Emissão do Relatório >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmSolicTransf.CheckOutRelatorio;
+Var
+  MySql: String;
+  sNotas: String;
+Begin
+  // Burca Produtos Checados ===================================================
+  MySql:=' SELECT DISTINCT'+
+         ' oc.num_oc,'+
+         ' oi.cod_produto_linx, oi.cod_produto_sidi,'+
+
+         ' CASE'+
+         '   WHEN TRIM(COALESCE(ps.referencia,''''))<>'''' THEN'+
+         '     TRIM(ps.referencia)'+
+         '   ELSE'+
+         '     TRIM(pl.referencia)'+
+         ' END REFERENCIA,'+
+
+         ' oi.des_produto,'+
+         ' oi.qtd_checkout,'+
+         ' TRIM(COALESCE(en.zonaendereco,0))||''.''||COALESCE(en.corredor,''000'')||''.''||'+
+         '      COALESCE(en.prateleira,''000'')||''.''||COALESCE(en.gaveta,''0000'') ENDERECO'+
+
+         ' FROM OC_LOJAS_ITENS oi'+
+         '     LEFT JOIN OC_LOJAS_NFE oc        ON oc.num_seq_oc=oi.num_seq_oc'+
+         '     LEFT JOIN LINXPRODUTOS pl        ON pl.cod_produto=oi.cod_produto_linx'+
+         '     LEFT JOIN PRODUTO ps             ON ps.codproduto=oi.cod_produto_sidi'+
+         '     LEFT JOIN ESTOQUE en             ON en.codproduto=oi.cod_produto_sidi'+
+         '                                     AND en.codfilial=''99'''+
+
+         ' WHERE oi.num_seq_oc in ('+sgNrsSeqOCs+')'+
+         ' AND   oi.qtd_checkout>0'+
+
+         ' ORDER BY oi.des_produto';
+  DMSolicTransf.CDS_Relatorio.Close;
+  DMSolicTransf.SQLQ_Relatorio.Close;
+  DMSolicTransf.SQLQ_Relatorio.SQL.Clear;
+  DMSolicTransf.SQLQ_Relatorio.SQL.Add(MySql);
+  DMSolicTransf.CDS_Relatorio.Open;
+
+  If Not DMSolicTransf.CDS_Relatorio.IsEmpty Then
+   Begin
+     // Notas Fiscais Envolvidas nas OCs =======================================
+     MySql:=' SELECT DISTINCT nf.num_nfe'+
+            ' FROM OC_LOJAS_ITENS_NFE nf'+
+            ' WHERE nf.num_seq_oc in ('+sgNrsSeqOCs+')';
+     DMSolicTransf.CDS_BuscaRapida.Close;
+     DMSolicTransf.SQLQ_BuscaRapida.Close;
+     DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
+     DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql);
+     DMSolicTransf.CDS_BuscaRapida.Open;
+     sNotas:='';
+     While Not DMSolicTransf.CDS_BuscaRapida.Eof do
+     Begin
+       If Trim(sNotas)='' Then
+        sNotas:=DMSolicTransf.CDS_BuscaRapida.FieldByName('num_nfe').AsString
+       Else
+        sNotas:=sNotas+', '+DMSolicTransf.CDS_BuscaRapida.FieldByName('num_nfe').AsString;
+
+       DMSolicTransf.CDS_BuscaRapida.Next;
+     End; // While Not DMSolicTransf.CDS_BuscaRapida.Eof do
+     DMSolicTransf.CDS_BuscaRapida.Close;
+
+     // Imprime Relatório ======================================================
+     With DMSolicTransf.RelVisual do
+     Begin
+       ClientDataSet:=DMSolicTransf.CDS_Relatorio;
+       Destino:=toVisualiza;
+       Orientacao:=toRetrato;
+
+       RodapeGrupo:=True;
+
+       TextoRodape:='';
+       TextoRodapeGrupo:='';
+       Zoom:=140;
+
+       ImprimirTarjaCinza:=False;
+       ImprimirVisto:=False;
+
+       Cabecalho1Esquerda:=sgNomeLoja;
+       Cabecalho1Direita:='#Data';
+       Cabecalho1Centro:='RELATÓRIO DE ENTRADA DE PRODUTOS';
+
+       Cabecalho2Esquerda:='Fornecedor: '+EdtNFeCodFornLinx.Text+' - '+EdtNFeDesFornLinx.Text;
+       Cabecalho2Direita:=EmptyStr;
+       Cabecalho2Centro:=EmptyStr;
+
+       Cabecalho3Esquerda:='Nº OC(s): '+sgNrsOCs;
+       Cabecalho3Direita:='Nº NFeE(s): '+sNotas;
+       Cabecalho3Centro:=EmptyStr;
+
+       DefinicaoCampos.Clear;
+       DefinicaoCampos.Add('D0;12;D;;NUM_OC;Nº OC');
+       DefinicaoCampos.Add('D0;14;D;;COD_PRODUTO_SIDI;Cod Sidi');
+       DefinicaoCampos.Add('D0;14;D;;COD_PRODUTO_LINX;Cod Linx');
+       DefinicaoCampos.Add('D0;100;E;;DES_PRODUTO;Nome Produto');
+       DefinicaoCampos.Add('D0;24;D;;QTD_CHECKOUT;Qtd CheckOut');
+       DefinicaoCampos.Add('D0;26;C;;ENDERECO;Endereçamento');
+       DefinicaoCampos.Add('D0;48;E;;REFERENCIA;Referência');
+
+       Execute;
+      End; // With DMRelatorio.RelVisual do
+   End
+  Else // If Not DMSolicTransf.CDS_Relatorio.IsEmpty Then
+   Begin
+     msg('Sem Produto com'+cr+cr+'CheckOut Efetuado !!','A');
+   End; // If Not DMSolicTransf.CDS_Relatorio.IsEmpty Then
+  DMSolicTransf.CDS_Relatorio.Close;
+End; // CHECKOUT NFeE - Emissão do Relatório >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// CHECKOUT NFeE - Retira Quantidade de CheckOut na Nota Fiscal >>>>>>>>>>>>>>>>
+Procedure TFrmSolicTransf.CheckOutRetiraQtdCheckout;
+Var
+  MySql: String;
+  iRecNo: Integer;
+Begin
+  iRecNo:=DMSolicTransf.CDS_OCItensCheck.RecNo;
+
+  // Verifia se Existe Lançamento da Nota Fiscal ===============================
+  MySql:=' SELECT nf.num_seq_oc, nf.num_seq_item, nf.num_nfe,'+
+         '        sum(nf.qtd_checkout) qtd_checkout'+
+         ' FROM OC_LOJAS_ITENS_NFE nf'+
+         ' WHERE nf.num_seq_oc='+DMSolicTransf.CDS_OCItensCheckNUM_SEQ_OC.AsString+
+         ' AND nf.num_seq_item='+DMSolicTransf.CDS_OCItensCheckNUM_SEQ_ITEM.AsString+
+         ' AND nf.num_nfe='+IntToStr(EdtNFeNumNFe.AsInteger)+
+         ' GROUP BY 1,2,3';
+  DMSolicTransf.CDS_BuscaRapida.Close;
+  DMSolicTransf.SQLQ_BuscaRapida.Close;
+  DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
+  DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql);
+  DMSolicTransf.CDS_BuscaRapida.Open;
+
+  If Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('Num_Seq_Oc').AsString)<>'' Then
+   Begin
+     OdirPanApres.Caption:='AGUARDE !! Retirando CheCkOut Efetuada Nesta Nota...';
+     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+     OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSolicTransf.Width-OdirPanApres.Width)/2));
+     OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmSolicTransf.Height-OdirPanApres.Height)/2))-20;
+     OdirPanApres.Font.Style:=[fsBold];
+     OdirPanApres.Parent:=FrmSolicTransf;
+     OdirPanApres.BringToFront();
+     OdirPanApres.Visible:=True;
+     Refresh;
+
+     // Verifica se Transação esta Ativa
+     If DMSolicTransf.SQLC.InTransaction Then
+      DMSolicTransf.SQLC.Rollback(TD);
+
+     // Monta Transacao ========================================================
+     TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+     TD.IsolationLevel:=xilREADCOMMITTED;
+     DMSolicTransf.SQLC.StartTransaction(TD);
+     Try // Try da Transação
+       Screen.Cursor:=crAppStart;
+       DateSeparator:='.';
+       DecimalSeparator:='.';
+
+       // Atualiza Produto =====================================================
+       MySql:=' UPDATE OC_LOJAS_ITENS io'+
+              ' SET  io.qtd_checkout=qtd_checkout-'+IntToStr(
+              DMSolicTransf.CDS_BuscaRapida.FieldByName('qtd_checkout').AsInteger);
+
+              If DMSolicTransf.CDS_BuscaRapida.FieldByName('qtd_checkout').AsInteger=DMSolicTransf.CDS_OCItensCheckQTD_CHECKOUT.AsInteger Then
+               Begin
+                 MySql:=
+                  MySql+', io.dta_checkout=NULL'+
+                        ', io.hra_checkout=NULL'
+               End
+              Else
+               Begin
+                 MySql:=
+                  MySql+', io.dta_checkout=CURRENT_DATE'+
+                        ', io.hra_checkout=CURRENT_TIME'
+               End; // If DMSolicTransf.CDS_BuscaRapida.FieldByName('qtd_checkout').AsInteger=DMSolicTransf.CDS_OCItensCheckQTD_CHECKOUT.AsInteger Then
+
+       MySql:=
+        MySql+' WHERE io.num_seq_oc='+DMSolicTransf.CDS_OCItensCheckNUM_SEQ_OC.AsString+
+              ' AND   io.num_seq_item='+DMSolicTransf.CDS_OCItensCheckNUM_SEQ_ITEM.AsString;
+       DMSolicTransf.SQLC.Execute(MySql,nil,nil);
+
+       // Retira Controle de Checkou da NFe ====================================
+       MySql:=' DELETE FROM OC_LOJAS_ITENS_NFE nf'+
+              ' WHERE nf.num_seq_oc='+DMSolicTransf.CDS_OCItensCheckNUM_SEQ_OC.AsString+
+              ' AND nf.num_seq_item='+DMSolicTransf.CDS_OCItensCheckNUM_SEQ_ITEM.AsString+
+              ' AND nf.num_nfe='+IntToStr(EdtNFeNumNFe.AsInteger);
+       DMSolicTransf.SQLC.Execute(MySql,nil,nil);
+
+       // Atualiza Transacao ===================================================
+       DMSolicTransf.SQLC.Commit(TD);
+     Except // Except da Transação
+       on e : Exception do
+       Begin
+         // Abandona Transacao =================================================
+         DMSolicTransf.SQLC.Rollback(TD);
+
+          MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+        End; // on e : Exception do
+      End; // Try da Transação
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+      Screen.Cursor:=crDefault;
+      OdirPanApres.Visible:=False;
+   End
+  Else // If Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('Num_Seq_Oc').AsString)<>'' Then
+   Begin
+     msg('Quantidade de ChekOut'+cr+'Não Efetuada por Esta Nota !!','A')
+   End; // If Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('Num_Seq_Oc').AsString)<>'' Then
+  DMSolicTransf.CDS_BuscaRapida.Close;
+
+  // Reabre Client dos Produtos da OC ==========================================
+  DMSolicTransf.CDS_OCItensCheck.DisableControls;
+  DMSolicTransf.CDS_OCItensCheck.Close;
+  DMSolicTransf.CDS_OCItensCheck.Open;
+
+//  // Acerta Endereçamento Quando For CD ========================================
+//  If sgLojaLinx='2' Then
+//  Begin
+//    FrmSolicTransf.CheckOutColocaEnderecamento;
+//  End; // If sgLojaLinx='2' Then
+  DMSolicTransf.CDS_OCItensCheck.EnableControls;
+
+  // Posiciona no Produto ======================================================
+  DMSolicTransf.CDS_OCItensCheck.RecNo:=iRecNo;
+
+End; // CHECKOUT NFeE - Retira Quantidade de CheckOut na Nota Fiscal >>>>>>>>>>>
+
+// Odir Analisar ==>>
+//// CHECKOUT NFeE - Coloca Endereçamento nos Produtos >>>>>>>>>>>>>>>>>>>>>>>>>>>
+//Procedure TFrmSolicTransf.CheckOutColocaEnderecamento;
+//Var
+//  MySql: String;
+//Begin
+////  If Not DMSolicTransf.IBDB_CD.Connected Then
+////   DMSolicTransf.IBDB_CD.Connected:=True;
+//
+//  DMSolicTransf.CDS_OCItensCheck.First;
+//  While Not DMSolicTransf.CDS_OCItensCheck.Eof do
+//  Begin
+//    If Trim(DMSolicTransf.CDS_OCItensCheckCOD_PRODUTO_SIDI.AsString)<>'' Then
+//    Begin
+//      MySql:=' SELECT'+
+//             ' TRIM(e.zonaendereco)||''.''||e.corredor||''.''||e.prateleira||''.''||e.gaveta ENDERECO'+
+//             ' FROM ESTOQUE e'+
+//             ' WHERE e.codfilial=''99'''+
+//             ' AND   e.codproduto='+QuotedStr(Trim(DMSolicTransf.CDS_OCItensCheckCOD_PRODUTO_SIDI.AsString));
+//      DMSolicTransf.SQLQuery3.Close;
+//      DMSolicTransf.SQLQuery3.SQL.Clear;
+//      DMSolicTransf.SQLQuery3.SQL.Add(MySql);
+//      DMSolicTransf.SQLQuery3.Open;
+////      DMSolicTransf.IBQ_Busca.Close;
+////      DMSolicTransf.IBQ_Busca.SQL.Clear;
+////      DMSolicTransf.IBQ_Busca.SQL.Add(MySql);
+////      DMSolicTransf.IBQ_Busca.Open;
+//
+//      If Not DMSolicTransf.SQLQuery3.IsEmpty Then
+//      Begin
+//        DMSolicTransf.CDS_OCItensCheck.Edit;
+//        DMSolicTransf.CDS_OCItensCheckENDERECO.AsString:=DMSolicTransf.SQLQuery3.FieldbyName('Endereco').AsString;
+//        DMSolicTransf.CDS_OCItensCheck.Post;
+//      End; // If Not DMSolicTransf.SQLQuery3.IsEmpty Then
+//      DMSolicTransf.SQLQuery3.Close;
+//    End; // If Trim(DMSolicTransf.CDS_OCItensCheckCOD_PRODUTO_SIDI.AsString)<>'' Then
+//
+//    DMSolicTransf.CDS_OCItensCheck.Next;
+//  End; // While Not DMSolicTransf.CDS_OCItensCheck.Eof do
+//  DMSolicTransf.CDS_OCItensCheck.First;
+//
+////  DMSolicTransf.IBDB_CD.Connected:=False;
+//End; // CHECKOUT NFeE - Coloca Endereçamento nos Produtos >>>>>>>>>>>>>>>>>>>>>>
+// Odir Analisar 
+
+// CHECKOUT NFeE - Busca Ordens de Compra para CheckOut >>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmSolicTransf.CheckOutBuscaOC;
 Var
   MySql: String;
@@ -253,14 +525,17 @@ Begin
          '     ni.ind_oc'+
          ' END IND_OC,'+
 
-         ' ''0.000.000.0000'' ENDERECO'+
+         ' TRIM(COALESCE(en.zonaendereco,0))||''.''||COALESCE(en.corredor,''000'')||''.''||'+
+         '      COALESCE(en.prateleira,''000'')||''.''||COALESCE(en.gaveta,''0000'') ENDERECO'+
 
          ' FROM OC_LOJAS_ITENS oi'+
          '     LEFT JOIN OC_LOJAS_NFE oc        ON oc.num_seq_oc=oi.num_seq_oc'+
          '     LEFT JOIN OC_LOJAS_ITENS_NFE ni  ON ni.num_seq_oc=oi.num_seq_oc'+
          '                                     AND ni.num_seq_item=oi.num_seq_item'+
-         '     LEFT JOIN linxprodutos pl        ON pl.cod_produto=oi.cod_produto_linx'+
-         '     LEFT JOIN produto ps             ON ps.codproduto=oi.cod_produto_sidi'+
+         '     LEFT JOIN LINXPRODUTOS pl        ON pl.cod_produto=oi.cod_produto_linx'+
+         '     LEFT JOIN PRODUTO ps             ON ps.codproduto=oi.cod_produto_sidi'+
+         '     LEFT JOIN ESTOQUE en             ON en.codproduto=oi.cod_produto_sidi'+
+         '                                     AND en.codfilial=''99'''+
 
          ' WHERE oi.num_seq_oc in ('+sgNrsSeqOCs+')'+
          ' ORDER BY oi.des_produto';
@@ -272,55 +547,13 @@ Begin
   DMSolicTransf.SQLQ_OCItensCheck.SQL.Add(MySql);
   DMSolicTransf.CDS_OCItensCheck.Open;
 
-//  // Coluna de Endereçamento INVISIVEL para Lojas ==============================
-//  For iIndexCol:=0 to Dbg_NFeProdutosOC.Columns.Count-1 do
-//  Begin
-//    If Dbg_NFeProdutosOC.Columns[iIndexCol].FieldName='ENDERECO' Then
-//     Break;
-//  End; // For iIndexCol:=0 to Dbg_NFeProdutosOC.Columns.Count-1 do
-//  Dbg_NFeProdutosOC.Columns[iIndexCol].Visible:=False;
-
   // Acerta Endereçamento Quando For CD ========================================
-  If sgLojaLinx='2' Then
-  Begin
-    DMSolicTransf.IBDB_CD.Connected:=True;
-
-    DMSolicTransf.CDS_OCItensCheck.First;
-    While Not DMSolicTransf.CDS_OCItensCheck.Eof do
-    Begin
-      If Trim(DMSolicTransf.CDS_OCItensCheckCOD_PRODUTO_SIDI.AsString)<>'' Then
-      Begin
-        MySql:=' SELECT'+
-               ' TRIM(e.zonaendereco)||''.''||e.corredor||''.''||e.prateleira||''.''||e.gaveta ENDERECO'+
-               ' FROM ESTOQUE e'+
-               ' WHERE e.codfilial=''99'''+
-               ' AND   e.codproduto='+QuotedStr(Trim(DMSolicTransf.CDS_OCItensCheckCOD_PRODUTO_SIDI.AsString));
-        DMSolicTransf.IBQ_Busca.Close;
-        DMSolicTransf.IBQ_Busca.SQL.Clear;
-        DMSolicTransf.IBQ_Busca.SQL.Add(MySql);
-        DMSolicTransf.IBQ_Busca.Open;
-
-        If Not DMSolicTransf.IBQ_Busca.IsEmpty Then
-        Begin
-          DMSolicTransf.CDS_OCItensCheck.Edit;
-          DMSolicTransf.CDS_OCItensCheckENDERECO.AsString:=DMSolicTransf.IBQ_Busca.FieldbyName('Endereco').AsString;
-          DMSolicTransf.CDS_OCItensCheck.Post;
-        End; // If Not DMSolicTransf.IBQ_Busca.IsEmpty Then
-
-        DMSolicTransf.IBQ_Busca.Close;
-      End; // If Trim(DMSolicTransf.CDS_OCItensCheckCOD_PRODUTO_SIDI.AsString)<>'' Then
-
-      DMSolicTransf.CDS_OCItensCheck.Next;
-    End; // While Not DMSolicTransf.CDS_OCItensCheck.Eof do
-    DMSolicTransf.CDS_OCItensCheck.First;
-
-    DMSolicTransf.IBDB_CD.Connected:=False;
-
-//    // Coluna de Endereçamento VISIVEL para CD =================================
-//    Dbg_NFeProdutosOC.Columns[iIndexCol].Visible:=True;
-  End; // If sgLojaLinx='2' Then
+//  If sgLojaLinx='2' Then
+//  Begin
+//    CheckOutColocaEnderecamento';
+//  End; // If sgLojaLinx='2' Then
   DMSolicTransf.CDS_OCItensCheck.EnableControls;
-End; // // Busca Ordem de Compra para CheckOut >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+End; // CHECKOUT NFeE - Busca Ordens de Compra para CheckOut >>>>>>>>>>>>>>>>>>>
 
 // Atualiza Nova Versão do Sistema >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmSolicTransf.NovaVersao:Boolean;
@@ -705,9 +938,11 @@ begin
     // =========================================================================
     // Inicializa TabSheets para o CD ==========================================
     // =========================================================================
+    FrmSolicTransf.AutoSize:=False;
     Ts_Consultas.TabVisible:=False;
     Ts_Produtos.TabVisible:=False;
     FrmSolicTransf.Align:=alClient;
+    FrmSolicTransf.AutoSize:=True;
     // Inicializa TabSheets para o CD ==========================================
     // =========================================================================
 
@@ -752,21 +987,22 @@ begin
   End; // If sgLojaLinx<>2 Then // Não Verifica Versão para o CD
   PC_PrincipalChange(Self);
 
-  If sgLojaLinx='2' Then
-  Begin
-    Application.ProcessMessages;
-    // =========================================================================
-    // Conexão IBDataBase do CD ================================================
-    // =========================================================================
-    If Not DMSolicTransf.Conecta_CD Then
-    Begin
-      msg('Erro ao Conectar Banco de Dados do CD'+cr+cr+'BelShop_CD - SIDICOM !!','A');
-      Application.Terminate;
-      Exit;
-    End; // If Not Conecta_CD Then
-    // Conexão IBDataBase do CD ================================================
-    // =========================================================================
-  End; // If sgLojaLinx='2' Then
+// Odir SIDICOM Retirado
+//  If sgLojaLinx='2' Then
+//  Begin
+//    Application.ProcessMessages;
+//    // =========================================================================
+//    // Conexão IBDataBase do CD ================================================
+//    // =========================================================================
+//    If Not DMSolicTransf.Conecta_CD Then
+//    Begin
+//      msg('Erro ao Conectar Banco de Dados do CD'+cr+cr+'BelShop_CD - SIDICOM !!','A');
+//      Application.Terminate;
+//      Exit;
+//    End; // If Not Conecta_CD Then
+//    // Conexão IBDataBase do CD ================================================
+//    // =========================================================================
+//  End; // If sgLojaLinx='2' Then
 
 end;
 
@@ -1058,15 +1294,45 @@ end;
 
 procedure TFrmSolicTransf.Dbg_ProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  // Bloquei Ctrl + Delete =====================================================
   // Usado em:
   //=====================
   // Dbg_Produtos
   // Dbg_VerificaProdutos
+  // Dbg_NFeProdutosOC
   //=====================
+  // Bloquei Ctrl + Delete =====================================================
   If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
    Abort;
 
+  //============================================================================
+  // Dbg_NFeProdutosOC =========================================================
+  //============================================================================
+  If (Sender as TDBGrid).Name='Dbg_NFeProdutosOC' Then
+  Begin
+    If DMSolicTransf.CDS_OCItensCheck.IsEmpty Then
+     Exit;
+
+    // CHECKOUT NFeE - Retira Quantidade de CheckOut na Nota Fiscal ============
+    If Key=Vk_Delete Then
+    Begin
+      If DMSolicTransf.CDS_OCItensCheckQTD_CHECKOUT.AsInteger=0 Then
+      Begin
+        msg('Produto SEM Quantidade de Checout !!','A');
+        Exit;
+      End;
+
+      // Retira Quantidade de Checkou da NFe
+      CheckOutRetiraQtdCheckout;
+    End; // If Key=Vk_Delete Then
+
+    // Impressão do Relatório do Produtos Checados =============================
+    If Key=Vk_F3 Then
+    Begin
+      CheckOutRelatorio;
+    End; // If Key=Vk_F3 Then
+  End; // If (Sender as TDBGrid).Name='Dbg_NFeProdutosOC' Then
+  // Dbg_NFeProdutosOC =========================================================
+  //============================================================================
 end;
 
 procedure TFrmSolicTransf.Bt_IncluirClick(Sender: TObject);
@@ -1681,7 +1947,7 @@ end;
 procedure TFrmSolicTransf.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   // Versão do Sistema =========================================================
-  If Key=Vk_F3 Then
+  If Key=Vk_F1 Then
   Begin
     msg('Data da Última Alteração: '+cr+cr+Copy(DateTimeToStr(FileDateToDateTime(
         FileAge(IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+
@@ -2031,6 +2297,49 @@ end;
 procedure TFrmSolicTransf.Dbg_NFeProdutosOCDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 begin
+
+  If (Column.FieldName='QTD_CHECKOUT') Then // Este comando altera cor da Celula
+  Begin
+    If DMSolicTransf.CDS_OCItensCheckQTD_CHECKOUT.AsInteger<>0 Then
+    Begin
+      // Checkout Fechado ======================================================
+      If DMSolicTransf.CDS_OCItensCheckQTD_PRODUTO.AsInteger = DMSolicTransf.CDS_OCItensCheckQTD_CHECKOUT.AsInteger Then
+      Begin
+        Dbg_NFeProdutosOC.Canvas.Font.Style:=[fsBold];
+        Dbg_NFeProdutosOC.Canvas.Font.Color:=clWindowText; // Cor da Fonte
+        Dbg_NFeProdutosOC.Canvas.Brush.Color:=clLime; // Cor da Celula
+      End; // If DMSolicTransf.CDS_OCItensCheckQTD_PRODUTO.AsInteger > DMSolicTransf.CDS_OCItensCheckQTD_CHECKOUT.AsInteger Then
+
+      // Checkout a Menor ======================================================
+      If DMSolicTransf.CDS_OCItensCheckQTD_PRODUTO.AsInteger > DMSolicTransf.CDS_OCItensCheckQTD_CHECKOUT.AsInteger Then
+      Begin
+        Dbg_NFeProdutosOC.Canvas.Font.Style:=[fsBold];
+        Dbg_NFeProdutosOC.Canvas.Font.Color:=clWindowText; // Cor da Fonte
+        Dbg_NFeProdutosOC.Canvas.Brush.Color:=clAqua; // Cor da Celula
+      End; // If DMSolicTransf.CDS_OCItensCheckQTD_PRODUTO.AsInteger > DMSolicTransf.CDS_OCItensCheckQTD_CHECKOUT.AsInteger Then
+
+      // Checkout a Maior ======================================================
+      If DMSolicTransf.CDS_OCItensCheckQTD_PRODUTO.AsInteger < DMSolicTransf.CDS_OCItensCheckQTD_CHECKOUT.AsInteger Then
+      Begin
+        Dbg_NFeProdutosOC.Canvas.Font.Style:=[fsBold];
+        Dbg_NFeProdutosOC.Canvas.Font.Color:=clWindowText; // Cor da Fonte
+        Dbg_NFeProdutosOC.Canvas.Brush.Color:=clYellow; // Cor da Celula
+      End; // If DMSolicTransf.CDS_OCItensCheckQTD_PRODUTO.AsInteger > DMSolicTransf.CDS_OCItensCheckQTD_CHECKOUT.AsInteger Then
+
+      // Checkout de Produto Não Pertencente a OC ==============================
+      If DMSolicTransf.CDS_OCItensCheckIND_OC.AsString='N' Then
+      Begin
+        Dbg_NFeProdutosOC.Canvas.Font.Style:=[fsBold];
+        Dbg_NFeProdutosOC.Canvas.Font.Color:=clWhite; // Cor da Fonte
+        Dbg_NFeProdutosOC.Canvas.Brush.Color:=clRed; // Cor da Celula
+      End; // If DMSolicTransf.CDS_OCItensCheckIND_OC.AsString='N' Then
+
+      Dbg_NFeProdutosOC.Canvas.FillRect(Rect);
+      Dbg_NFeProdutosOC.DefaultDrawDataCell(Rect,Column.Field,state);
+    End; // If DMSolicTransf.CDS_OCItensCheckQTD_CHECKOUT.AsInteger<>0 Then
+  End;
+
+
 {
   If (Column.FieldName='IND_OC') Or (Column.FieldName='COD_PRODUTO_LINX') Then // Este comando altera cor da Celula
   Begin
@@ -2072,7 +2381,7 @@ begin
       Dbg_NFeProdutosOC.DefaultDrawDataCell(Rect,Column.Field,state);
     End; // If DMSolicTransf.CDS_OCItensCheckQTD_CHECKOUT.AsInteger<>0 Then
   End; // If (Column.FieldName='IND_OC') Then // Este comando altera cor da Celula
-
+}
   // Alinhamento
   DMSolicTransf.CDS_OCItensCheckNUM_OC.Alignment:=taRightJustify;
   DMSolicTransf.CDS_OCItensCheckCOD_PRODUTO_LINX.Alignment:=taRightJustify;
@@ -2081,7 +2390,7 @@ begin
   DMSolicTransf.CDS_OCItensCheckDTA_CHECKOUT.Alignment:=taCenter;
   DMSolicTransf.CDS_OCItensCheckHRA_CHECKOUT.Alignment:=taCenter;
   DMSolicTransf.CDS_OCItensCheckIND_OC.Alignment:=taCenter;
-}
+
 end;
 
 procedure TFrmSolicTransf.EdtNFeNumNFeExit(Sender: TObject);
@@ -2118,6 +2427,50 @@ begin
   Application.OnMessage := ApplicationEvents1Message;
   ApplicationEvents1.Activate;
 
+end;
+
+procedure TFrmSolicTransf.Dbg_NFeProdutosOCTitleClick(Column: TColumn);
+Var
+  s, sPesquisa: String;
+  b: Boolean;
+  i: Integer;
+begin
+
+  If Not DMSolicTransf.CDS_OCItensCheck.IsEmpty Then
+  Begin
+    If (Column.FieldName<>'COD_PRODUTO_LINX') And (Column.FieldName<>'REFERENCIA') And (Column.FieldName<>'COD_PRODUTO_SIDI') Then
+     Exit;
+
+    i:=DMSolicTransf.CDS_OCItensCheck.RecNo;
+    sPesquisa:='';
+    b:=True;
+    While b do
+    Begin
+      s:=DMSolicTransf.CDS_OCItensCheck.FieldByName(Column.FieldName).DisplayLabel;
+      If InputQuery('Localizar: '+s,'',sPesquisa) then
+       Begin
+         Try
+           If Not DMSolicTransf.CDS_OCItensCheck.Locate(Column.FieldName, sPesquisa,[]) Then
+           Begin
+             If Not LocalizaRegistro(DMSolicTransf.CDS_OCItensCheck, Column.FieldName, sPesquisa) Then
+             Begin
+               DMSolicTransf.CDS_OCItensCheck.RecNo:=i;
+               msg('Não Localizado !!','A');
+               Exit;
+             End;
+           End; // If Not DMSolicTransf.CDS_OCItensCheck.Locate(Column.FieldName, sPesquisa,[]) Then
+           Break;
+         Except
+           msg('Informação Inválida !!','A');
+           Break;
+         End;
+       End
+      Else // If InputQuery('Localizar: '+s,'',sPesquisa) then
+       Begin
+         Break;
+       End; // If InputQuery('Localizar: '+s,'',sPesquisa) then
+    End; // While b do
+  End; // If Not DMSolicTransf.CDS_OCItensCheck.IsEmpty Then
 end;
 
 end.

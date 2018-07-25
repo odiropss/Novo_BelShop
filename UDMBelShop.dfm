@@ -466,12 +466,15 @@ object DMBelShop: TDMBelShop
   end
   object SDS_AComprarItens: TSQLDataSet
     CommandText = 
-      'SELECT DISTINCT oc.cod_item, oc.des_item,'#13#10'oc.num_documento,'#13#10'ca' +
-      'st(oc.dta_documento as Date) dta_documento,'#13#10'oc.cod_comprador, u' +
-      's.des_usuario'#13#10'FROM OC_COMPRAR oc'#13#10'        LEFT JOIN PS_USUARIOS' +
-      ' us     ON us.cod_usuario = oc.cod_comprador'#13#10'        LEFT JOIN ' +
-      'OC_COMPRAR_DOCS od ON od.num_docto = oc.num_documento'#13#10'WHERE od.' +
-      'origem='#39'Linx'#39#13#10'AND   oc.num_documento=18'#13#10'ORDER BY oc.des_item'
+      'SELECT DISTINCT oc.cod_item, CAST(pl.cod_produto AS VARCHAR(6)) ' +
+      'cod_linx, '#13#10'                oc.des_item, oc.num_documento,'#13#10'    ' +
+      '            cast(oc.dta_documento as Date) dta_documento,'#13#10'     ' +
+      '           oc.cod_comprador, us.des_usuario'#13#10#13#10'FROM OC_COMPRAR o' +
+      'c'#13#10'      LEFT JOIN PS_USUARIOS     us ON us.cod_usuario =oc.cod_' +
+      'comprador'#13#10'      LEFT JOIN OC_COMPRAR_DOCS od ON od.num_docto   ' +
+      '=oc.num_documento'#13#10'      LEFT JOIN LINXPRODUTOS    pl on pl.cod_' +
+      'auxiliar=oc.cod_item'#13#10'WHERE UPPER(TRIM(od.origem))<>'#39'LINX'#39#13#10'AND ' +
+      '  oc.num_documento=22759'#13#10'ORDER BY oc.des_item'#13#10#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -488,6 +491,10 @@ object DMBelShop: TDMBelShop
     Top = 370
     object CDS_AComprarItensCOD_ITEM: TStringField
       FieldName = 'COD_ITEM'
+      Size = 6
+    end
+    object CDS_AComprarItensCOD_LINX: TStringField
+      FieldName = 'COD_LINX'
       Size = 6
     end
     object CDS_AComprarItensDES_ITEM: TStringField
@@ -2519,7 +2526,7 @@ object DMBelShop: TDMBelShop
     Transaction = IBT_BelShop
     BufferChunks = 1000
     CachedUpdates = False
-    Left = 1191
+    Left = 1192
     Top = 63
   end
   object DS_OrdemCompra: TDataSource
