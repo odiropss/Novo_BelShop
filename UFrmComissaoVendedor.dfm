@@ -1,13 +1,13 @@
 object FrmComissaoVendedor: TFrmComissaoVendedor
   Left = 238
   Top = 107
-  ActiveControl = Dbg_UltimaAtualizacao
+  ActiveControl = PC_CampColecao
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Comiss'#227'o Vendedores'
   ClientHeight = 578
   ClientWidth = 977
-  Color = clSilver
+  Color = clWindow
   Ctl3D = False
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -182,7 +182,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
     Top = 0
     Width = 977
     Height = 543
-    ActivePage = Ts_Produtos
+    ActivePage = Ts_CampColecao
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -193,6 +193,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
     TabOrder = 1
     OnChange = PC_ComissaoVendedorChange
     object Ts_Produtos: TTabSheet
+      Tag = 9999
       Caption = ' Produtos/Atualiza'#231#227'o '
       Highlighted = True
       object Gb_UltimaAtualizacao: TGroupBox
@@ -269,6 +270,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           OnDblClick = Dbg_UltimaAtualizacaoDblClick
           OnEnter = Dbg_UltimaAtualizacaoEnter
           OnExit = Dbg_ComisVendedoresExit
+          OnKeyDown = Dbg_UltimaAtualizacaoKeyDown
           OnKeyUp = Dbg_UltimaAtualizacaoKeyUp
           OnTitleClick = Dbg_UltimaAtualizacaoTitleClick
           Columns = <
@@ -475,6 +477,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
       end
     end
     object Ts_Comissoes: TTabSheet
+      Tag = 9999
       Caption = ' Comiss'#245'es '
       ImageIndex = 1
       object Panel3: TPanel
@@ -595,6 +598,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         OnDrawColumnCell = Dbg_ComisVendedoresDrawColumnCell
         OnEnter = Dbg_ComisVendedoresEnter
         OnExit = Dbg_ComisVendedoresExit
+        OnKeyDown = Dbg_ComisVendedoresKeyDown
         Columns = <
           item
             Expanded = False
@@ -658,6 +662,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
       end
     end
     object Ts_ParametrosVendedores: TTabSheet
+      Tag = 9999
       Caption = ' Parametros Vendedores '
       ImageIndex = 2
       DesignSize = (
@@ -705,7 +710,6 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           OnEnter = Dbg_FamiliaPrecosEnter
           OnExit = Dbg_FamiliaPrecosExit
           OnKeyDown = Dbg_AplicacaoKeyDown
-          OnKeyUp = Dbg_AplicacaoKeyUp
           SairComEnter = False
           Columns = <
             item
@@ -819,7 +823,6 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           OnEnter = Dbg_AplicacaoEnter
           OnExit = Dbg_ComisVendedoresExit
           OnKeyDown = Dbg_AplicacaoKeyDown
-          OnKeyUp = Dbg_AplicacaoKeyUp
           SairComEnter = False
           Columns = <
             item
@@ -906,6 +909,520 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         Color = clSilver
       end
     end
+    object Ts_CampColecao: TTabSheet
+      Tag = 9999
+      Caption = 'Comiss'#227'o Campanhas'
+      ImageIndex = 3
+      object PC_CampColecao: TPageControl
+        Left = 0
+        Top = 0
+        Width = 969
+        Height = 515
+        ActivePage = Ts_CampColecaoCadastro
+        Align = alClient
+        TabOrder = 0
+        OnChange = PC_CampColecaoChange
+        object Ts_CampColecaoCadastro: TTabSheet
+          Tag = 9999
+          Caption = ' Cadastros '
+          Highlighted = True
+          object Gb_CampColecaoCampanhas: TGroupBox
+            Left = 500
+            Top = 0
+            Width = 461
+            Height = 487
+            Align = alClient
+            Caption = ' Companhas a Processar '
+            TabOrder = 0
+            object Dbg_CampColecaoCamp: TDBGrid
+              Left = 1
+              Top = 89
+              Width = 459
+              Height = 373
+              Align = alClient
+              Ctl3D = False
+              DataSource = DMComissaoVendedor.DS_CampCampanhas
+              FixedColor = clTeal
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+              ParentCtl3D = False
+              ParentFont = False
+              ReadOnly = True
+              TabOrder = 0
+              TitleFont.Charset = DEFAULT_CHARSET
+              TitleFont.Color = clWhite
+              TitleFont.Height = -11
+              TitleFont.Name = 'MS Sans Serif'
+              TitleFont.Style = [fsBold]
+              OnDrawColumnCell = Dbg_CampColecaoCampDrawColumnCell
+              OnDblClick = Dbg_CampColecaoCampDblClick
+              OnEnter = Dbg_CampColecaoCampEnter
+              OnExit = Dbg_ComisVendedoresExit
+              OnKeyDown = Dbg_CampColecaoCampKeyDown
+              Columns = <
+                item
+                  Expanded = False
+                  FieldName = 'COD_CAMPANHA'
+                  Title.Alignment = taRightJustify
+                  Width = 38
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'DES_CAMPANHA'
+                  Width = 220
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PER_FAT'
+                  Title.Alignment = taRightJustify
+                  Width = 78
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'VLR_UNID'
+                  Title.Alignment = taRightJustify
+                  Width = 78
+                  Visible = True
+                end>
+            end
+            object Pan_CampColecaoCamp: TPanel
+              Left = 1
+              Top = 14
+              Width = 459
+              Height = 75
+              Align = alTop
+              TabOrder = 1
+              object Label6: TLabel
+                Left = 13
+                Top = 36
+                Width = 139
+                Height = 13
+                Caption = 'Descri'#231#227'o da Campanha'
+              end
+              object Label7: TLabel
+                Left = 278
+                Top = 37
+                Width = 71
+                Height = 13
+                Caption = '% / Venda $'
+              end
+              object Label8: TLabel
+                Left = 370
+                Top = 37
+                Width = 59
+                Height = 13
+                Caption = '$ / Unid $'
+              end
+              object Bt_CampColecaoCampAban: TJvXPButton
+                Left = 365
+                Top = 5
+                Width = 88
+                Height = 25
+                Caption = 'Abandonar'
+                TabOrder = 3
+                ShowFocusRect = True
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+                OnClick = Bt_CampColecaoCampAbanClick
+              end
+              object Bt_CampColecaoCampAlt: TJvXPButton
+                Left = 8
+                Top = 5
+                Width = 68
+                Height = 25
+                Caption = 'Alterar'
+                TabOrder = 2
+                ShowFocusRect = True
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+                OnClick = Bt_CampColecaoPessoasIncClick
+              end
+              object EdtCampColecaoCampNome: TEdit
+                Left = 14
+                Top = 50
+                Width = 257
+                Height = 21
+                TabStop = False
+                CharCase = ecUpperCase
+                Color = 14145495
+                Ctl3D = True
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = []
+                MaxLength = 20
+                ParentCtl3D = False
+                ParentFont = False
+                ReadOnly = True
+                TabOrder = 4
+              end
+              object EdtCampColecaoCampPerc: TCurrencyEdit
+                Left = 273
+                Top = 50
+                Width = 77
+                Height = 22
+                AutoSize = False
+                DisplayFormat = '0.00 %'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = []
+                MaxValue = 100.000000000000000000
+                ParentFont = False
+                TabOrder = 0
+              end
+              object EdtCampColecaoCampVlr: TCurrencyEdit
+                Left = 353
+                Top = 50
+                Width = 77
+                Height = 22
+                AutoSize = False
+                DisplayFormat = ',0.00'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = []
+                ParentFont = False
+                TabOrder = 1
+              end
+            end
+            object dxStatusBar5: TdxStatusBar
+              Left = 1
+              Top = 462
+              Width = 459
+              Height = 24
+              Panels = <
+                item
+                  PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                  PanelStyle.Alignment = taCenter
+                  PanelStyle.Color = clSilver
+                  Fixed = False
+                  Text = '<Duplo Click> Para Selecionar'
+                  Width = 65
+                end>
+              PaintStyle = stpsOffice11
+              SizeGrip = False
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              Color = clSilver
+            end
+          end
+          object Gb_CampColecaoPessoas: TGroupBox
+            Left = 0
+            Top = 0
+            Width = 500
+            Height = 487
+            Align = alLeft
+            Caption = ' Pessoas '
+            TabOrder = 1
+            object Dbg_CampColecaoPessoas: TDBGrid
+              Left = 1
+              Top = 89
+              Width = 498
+              Height = 373
+              Align = alClient
+              Ctl3D = False
+              DataSource = DMComissaoVendedor.DS_V_CampPessoas
+              FixedColor = clTeal
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+              ParentCtl3D = False
+              ParentFont = False
+              ReadOnly = True
+              TabOrder = 0
+              TitleFont.Charset = DEFAULT_CHARSET
+              TitleFont.Color = clWhite
+              TitleFont.Height = -11
+              TitleFont.Name = 'MS Sans Serif'
+              TitleFont.Style = [fsBold]
+              OnDrawColumnCell = Dbg_CampColecaoPessoasDrawColumnCell
+              OnDblClick = Dbg_CampColecaoPessoasDblClick
+              OnEnter = Dbg_CampColecaoPessoasEnter
+              OnExit = Dbg_ComisVendedoresExit
+              OnKeyDown = Dbg_CampColecaoPessoasKeyDown
+              Columns = <
+                item
+                  Expanded = False
+                  FieldName = 'COD_AUX'
+                  Visible = False
+                end
+                item
+                  Expanded = False
+                  FieldName = 'COD_LOJA'
+                  Visible = False
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PESSOA'
+                  Width = 180
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'CARGO'
+                  Width = 128
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'PER_FAT'
+                  Title.Alignment = taRightJustify
+                  Title.Caption = '% / Venda $'
+                  Width = 78
+                  Visible = True
+                end
+                item
+                  Expanded = False
+                  FieldName = 'VLR_UNID'
+                  Title.Alignment = taRightJustify
+                  Title.Caption = 'Vlr / Unid $'
+                  Width = 78
+                  Visible = True
+                end>
+            end
+            object Pan_CampColecaoPessoas: TPanel
+              Left = 1
+              Top = 14
+              Width = 498
+              Height = 75
+              Align = alTop
+              Ctl3D = False
+              ParentCtl3D = False
+              TabOrder = 1
+              object Label2: TLabel
+                Left = 13
+                Top = 36
+                Width = 78
+                Height = 13
+                Caption = 'Nome Pessoa'
+              end
+              object Label3: TLabel
+                Left = 194
+                Top = 36
+                Width = 34
+                Height = 13
+                Caption = 'Cargo'
+              end
+              object Label4: TLabel
+                Left = 331
+                Top = 37
+                Width = 71
+                Height = 13
+                Caption = '% / Venda $'
+              end
+              object Label5: TLabel
+                Left = 423
+                Top = 37
+                Width = 59
+                Height = 13
+                Caption = '$ / Unid $'
+              end
+              object Bt_CampColecaoPessoasAlt: TJvXPButton
+                Left = 7
+                Top = 5
+                Width = 68
+                Height = 25
+                Caption = 'Alterar'
+                TabOrder = 4
+                ShowFocusRect = True
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+                OnClick = Bt_CampColecaoPessoasIncClick
+              end
+              object Bt_CampColecaoPessoasAban: TJvXPButton
+                Left = 391
+                Top = 5
+                Width = 88
+                Height = 25
+                Caption = 'Abandonar'
+                TabOrder = 7
+                ShowFocusRect = True
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+                OnClick = Bt_CampColecaoPessoasAbanClick
+              end
+              object Bt_CampColecaoPessoasInc: TJvXPButton
+                Left = 79
+                Top = 5
+                Width = 68
+                Height = 25
+                Caption = 'Incluir'
+                TabOrder = 5
+                ShowFocusRect = True
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+                OnClick = Bt_CampColecaoPessoasIncClick
+              end
+              object Bt_CampColecaoPessoasExc: TJvXPButton
+                Left = 152
+                Top = 5
+                Width = 67
+                Height = 25
+                Caption = 'Excluir'
+                TabOrder = 6
+                ShowFocusRect = True
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+                OnClick = Bt_CampColecaoPessoasExcClick
+              end
+              object EdtCampColecaoPessNome: TEdit
+                Left = 14
+                Top = 50
+                Width = 178
+                Height = 21
+                CharCase = ecUpperCase
+                Ctl3D = True
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = []
+                MaxLength = 20
+                ParentCtl3D = False
+                ParentFont = False
+                TabOrder = 0
+              end
+              object EdtCampColecaoPessPerc: TCurrencyEdit
+                Left = 324
+                Top = 50
+                Width = 77
+                Height = 22
+                AutoSize = False
+                DisplayFormat = '0.00 %'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = []
+                MaxValue = 100.000000000000000000
+                ParentFont = False
+                TabOrder = 2
+              end
+              object EdtCampColecaoPessVlr: TCurrencyEdit
+                Left = 403
+                Top = 50
+                Width = 78
+                Height = 22
+                AutoSize = False
+                DisplayFormat = ',0.00'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = []
+                ParentFont = False
+                TabOrder = 3
+              end
+              object EdtCampColecaoPessCod: TCurrencyEdit
+                Left = 240
+                Top = 8
+                Width = 31
+                Height = 19
+                AutoSize = False
+                DecimalPlaces = 0
+                DisplayFormat = '0'
+                TabOrder = 8
+                Visible = False
+              end
+              object Cbx_CampColecaoPessCargo: TComboBox
+                Left = 194
+                Top = 50
+                Width = 128
+                Height = 22
+                Style = csOwnerDrawFixed
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = []
+                ItemHeight = 16
+                ParentFont = False
+                TabOrder = 1
+                Items.Strings = (
+                  'GERENTE'
+                  'SUPERVISOR'
+                  'ASSISTENTE')
+              end
+            end
+            object dxStatusBar4: TdxStatusBar
+              Left = 1
+              Top = 462
+              Width = 498
+              Height = 24
+              Panels = <
+                item
+                  PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                  PanelStyle.Alignment = taCenter
+                  PanelStyle.Color = clSilver
+                  Fixed = False
+                  Text = '<Duplo Click> Para Selecionar'
+                  Width = 65
+                end
+                item
+                  PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                  PanelStyle.Alignment = taCenter
+                  Fixed = False
+                  Text = '<F4> Localiza Pessoa'
+                end>
+              PaintStyle = stpsOffice11
+              SizeGrip = False
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              Color = clSilver
+            end
+          end
+        end
+        object Ts_CampColecaoComissao: TTabSheet
+          Tag = 9999
+          Caption = ' Comiss'#245'es '
+          ImageIndex = 1
+        end
+      end
+    end
   end
   object CorCaptionForm: TJvGradientCaption
     Active = False
@@ -933,7 +1450,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 685
-    Top = 128
+    Left = 765
+    Top = 400
   end
 end

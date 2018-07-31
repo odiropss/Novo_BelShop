@@ -27,7 +27,7 @@ object DMSolicTransf: TDMSolicTransf
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
-    Left = 44
+    Left = 52
     Top = 16
   end
   object SQLQ_Busca: TSQLQuery
@@ -366,10 +366,8 @@ object DMSolicTransf: TDMSolicTransf
       Size = 6
     end
     object CDS_OCItensCheckREFERENCIA: TStringField
-      Alignment = taRightJustify
       DisplayLabel = 'Refer'#234'ncia'
       FieldName = 'REFERENCIA'
-      Size = 40
     end
     object CDS_OCItensCheckDES_PRODUTO: TStringField
       DisplayLabel = 'Produto Linx'
@@ -386,6 +384,25 @@ object DMSolicTransf: TDMSolicTransf
       FieldName = 'QTD_CHECKOUT'
       DisplayFormat = ',0'
     end
+    object CDS_OCItensCheckCOD_BARRA: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'C'#243'digo Barras'
+      FieldName = 'COD_BARRA'
+    end
+    object CDS_OCItensCheckENDERECO: TStringField
+      DisplayLabel = 'Endere'#231'amento'
+      FieldName = 'ENDERECO'
+      Required = True
+      FixedChar = True
+      Size = 14
+    end
+    object CDS_OCItensCheckIND_OC: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'OC ?'
+      FieldName = 'IND_OC'
+      FixedChar = True
+      Size = 1
+    end
     object CDS_OCItensCheckDTA_CHECKOUT: TDateField
       Alignment = taCenter
       DisplayLabel = 'Data CheckOut'
@@ -395,20 +412,6 @@ object DMSolicTransf: TDMSolicTransf
       Alignment = taCenter
       DisplayLabel = 'Hora CheckOut'
       FieldName = 'HRA_CHECKOUT'
-    end
-    object CDS_OCItensCheckIND_OC: TStringField
-      Alignment = taCenter
-      DisplayLabel = 'OC ?'
-      FieldName = 'IND_OC'
-      FixedChar = True
-      Size = 1
-    end
-    object CDS_OCItensCheckENDERECO: TStringField
-      DisplayLabel = 'Endere'#231'amento'
-      FieldName = 'ENDERECO'
-      Required = True
-      FixedChar = True
-      Size = 14
     end
   end
   object DS_OCItensCheck: TDataSource
@@ -421,45 +424,47 @@ object DMSolicTransf: TDMSolicTransf
     Params = <>
     SQL.Strings = (
       'SELECT DISTINCT'
-      'oi.num_seq_oc, oi.num_seq_item, oc.num_oc,'
+      'oi.num_seq_oc,'
+      'oi.num_seq_item,'
+      'oc.num_oc,'
       'oi.cod_produto_linx,'
       'oi.cod_produto_sidi,'
-      'CASE'
-      '  WHEN TRIM(COALESCE(ps.referencia,'#39#39'))<>'#39#39' THEN'
-      '    TRIM(ps.referencia)'
-      '  ELSE'
-      '    TRIM(pl.referencia)'
-      'END REFERENCIA,'
+      'TRIM(pl.referencia) REFERENCIA,'
       'oi.des_produto,'
-      'oi.qtd_produto, oi.qtd_checkout,'
-      'oi.dta_checkout, oi.hra_checkout,'
+      'oi.qtd_produto,'
+      'oi.qtd_checkout,'
+      'pl.cod_barra,'
+      
+        'TRIM(COALESCE(en.zonaendereco,0))||'#39'.'#39'||COALESCE(en.corredor,'#39'00' +
+        '0'#39')||'#39'.'#39'||'
+      
+        '     COALESCE(en.prateleira,'#39'000'#39')||'#39'.'#39'||COALESCE(en.gaveta,'#39'000' +
+        '0'#39') ENDERECO,'
+      
+        'CASE   WHEN ni.ind_oc IS NULL THEN     '#39'S'#39'   ELSE     ni.ind_oc ' +
+        'END IND_OC,'
+      'oi.dta_checkout,'
+      'oi.hra_checkout'
       ''
-      'CASE'
-      '  WHEN ni.ind_oc IS NULL THEN'
-      '    '#39'S'#39
-      '  ELSE'
-      '    ni.ind_oc'
-      'END IND_OC,'
-      #39'0.000.000.0000'#39' ENDERECO'
       ''
       'FROM OC_LOJAS_ITENS oi'
       
-        '    LEFT JOIN OC_LOJAS_NFE oc        ON oc.num_seq_oc=oi.num_seq' +
-        '_oc'
+        '     LEFT JOIN OC_LOJAS_NFE oc        ON oc.num_seq_oc=oi.num_se' +
+        'q_oc'
       
-        '    LEFT JOIN OC_LOJAS_ITENS_NFE ni  ON ni.num_seq_oc=oi.num_seq' +
-        '_oc'
+        '     LEFT JOIN OC_LOJAS_ITENS_NFE ni  ON ni.num_seq_oc=oi.num_se' +
+        'q_oc'
       
-        '                                    AND ni.num_seq_item=oi.num_s' +
-        'eq_item'
+        '                                     AND ni.num_seq_item=oi.num_' +
+        'seq_item'
       
-        '    LEFT JOIN linxprodutos pl        ON pl.cod_produto=oi.cod_pr' +
-        'oduto_linx'
+        '     LEFT JOIN LINXPRODUTOS pl        ON pl.cod_produto=oi.cod_p' +
+        'roduto_linx'
       
-        '    LEFT JOIN produto ps             ON ps.codproduto=oi.cod_pro' +
-        'duto_sidi'
-      ''
-      'WHERE oi.num_seq_oc IN (23,27)'
+        '     LEFT JOIN ESTOQUE en             ON en.codproduto=oi.cod_pr' +
+        'oduto_sidi'
+      '                                     AND en.codfilial='#39'99'#39
+      'WHERE oi.num_seq_oc in (372)'
       'ORDER BY oi.des_produto')
     SQLConnection = SQLC
     Left = 332
@@ -479,30 +484,30 @@ object DMSolicTransf: TDMSolicTransf
     Left = 236
     Top = 72
   end
-  object IBQ_Busca: TIBQuery
-    Database = IBDB_CD
-    Transaction = IBT_CD
+  object IBQ_Busca1: TIBQuery
+    Database = IBDB_CD1
+    Transaction = IBT_CD1
     BufferChunks = 1000
     CachedUpdates = False
     Left = 711
     Top = 87
   end
-  object IBDB_CD: TIBDatabase
+  object IBDB_CD1: TIBDatabase
     DatabaseName = '\\LOCALHOST\C:\sidicom.new\BelShop_CD.FDB'
     Params.Strings = (
       'user_name=SYSDBA'
       'password=masterkey')
     LoginPrompt = False
-    DefaultTransaction = IBT_CD
+    DefaultTransaction = IBT_CD1
     IdleTimer = 0
     SQLDialect = 3
     TraceFlags = []
     Left = 688
     Top = 34
   end
-  object IBT_CD: TIBTransaction
+  object IBT_CD1: TIBTransaction
     Active = False
-    DefaultDatabase = IBDB_CD
+    DefaultDatabase = IBDB_CD1
     AutoStopAction = saNone
     Left = 752
     Top = 34

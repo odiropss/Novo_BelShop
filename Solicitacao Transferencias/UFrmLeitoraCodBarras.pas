@@ -5,7 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, JvExControls, JvXPCore, JvXPButtons, JvExStdCtrls,
-  JvEdit, StdCtrls, Mask, ToolEdit, CurrEdit, MMSystem, DBXpress;
+  JvEdit, StdCtrls, Mask, ToolEdit, CurrEdit, MMSystem, DBXpress,
+  JvCheckBox;
 
 type
   TFrmLeitoraCodBarras = class(TForm)
@@ -16,6 +17,7 @@ type
     Bt_Processar: TJvXPButton;
     Panel1: TPanel;
     Bt_Retornar: TJvXPButton;
+    Ckb_Referencia: TJvCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure Bt_RetornarClick(Sender: TObject);
@@ -30,6 +32,9 @@ type
 
     Function BuscaProdutoLinx(sCodBarras: String): Boolean;
     Function CheckProcessa: Boolean;
+    procedure Ckb_ReferenciaClick(Sender: TObject);
+    procedure Ckb_ReferenciaKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
 
     // ODIR - FIM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -51,7 +56,7 @@ var
 
 implementation
 
-uses UDMSolicTransf, DK_Procs1, DB;
+uses UDMSolicTransf, DK_Procs1, DB, UFrmSolicTransf;
 
 {$R *.dfm}
 
@@ -364,26 +369,51 @@ Var
 Begin
   Result:=False;
 
-  // Busca Produto Linx ========================================================
-  MySql:=' SELECT pr.cod_produto'+
-         ' FROM LINXPRODUTOS pr'+
-         ' WHERE pr.cod_barra='+sCodBarras+
+  //============================================================================
+  // Busca Produto Linx pelo Codigo de Barras ==================================
+  //============================================================================
+  If Not Ckb_Referencia.Checked Then
+  Begin
+    MySql:=' SELECT pr.cod_produto'+
+           ' FROM LINXPRODUTOS pr'+
+           ' WHERE pr.cod_barra='+QuotedStr(sCodBarras)+
 
-         'UNION'+
+           ' UNION'+
 
-         ' SELECT cb.cod_produto'+
-         ' FROM LINXPRODUTOSCODBAR cb'+
-         ' WHERE cb.cod_barra='+sCodBarras;
-  DMSolicTransf.CDS_BuscaRapida.Close;
-  DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
-  DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql);
-  DMSolicTransf.CDS_BuscaRapida.Open;
-  sgProdLinx:=Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString);
-  DMSolicTransf.CDS_BuscaRapida.Close;
+           ' SELECT cb.cod_produto'+
+           ' FROM LINXPRODUTOSCODBAR cb'+
+           ' WHERE cb.cod_barra='+QuotedStr(sCodBarras);
+    DMSolicTransf.CDS_BuscaRapida.Close;
+    DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
+    DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql);
+    DMSolicTransf.CDS_BuscaRapida.Open;
+    sgProdLinx:=Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString);
+    DMSolicTransf.CDS_BuscaRapida.Close;
+  End; // If Not Ckb_Referencia.Checked Then
+  // Busca Produto Linx pelo Codigo de Barras ==================================
+  //============================================================================
+
+  //============================================================================
+  // Busca Produto Linx pelo Codigo de Referencia ==============================
+  //============================================================================
+  If Ckb_Referencia.Checked Then
+  Begin
+    MySql:=' SELECT p.cod_produto'+
+           ' FROM LINXPRODUTOS p'+
+           ' WHERE p.cod_fornecedor='+IntToStr(FrmSolicTransf.EdtNFeCodFornLinx.AsInteger)+
+           ' AND   TRIM(UPPER(p.referencia))='+QuotedStr(sCodBarras);
+    DMSolicTransf.CDS_BuscaRapida.Close;
+    DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
+    DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql);
+    DMSolicTransf.CDS_BuscaRapida.Open;
+    sgProdLinx:=Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString);
+    DMSolicTransf.CDS_BuscaRapida.Close;
+  End; // If Ckb_Referencia.Checked Then
+  // Busca Produto Linx pelo Codigo de Referencia ==============================
+  //============================================================================
 
   If Trim(sgProdLinx)<>'' Then
    Result:=True;
-
 End; // Busca Produto pelo Codigo de Barras >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -426,8 +456,11 @@ end;
 
 procedure TFrmLeitoraCodBarras.EdtCodBarrasChange(Sender: TObject);
 begin
-  If Length(EdtCodBarras.Text)=13 Then
-   Bt_ProcessarClick(Self);
+  If Not Ckb_Referencia.Checked Then
+  Begin
+    If Length(EdtCodBarras.Text)=13 Then
+     Bt_ProcessarClick(Self);
+  End; // If Not Ckb_Referencia.Checked Then
 
 end;
 
@@ -442,43 +475,102 @@ end;
 procedure TFrmLeitoraCodBarras.Bt_ProcessarClick(Sender: TObject);
 Var
   MySql: String;
+  bSiga: Boolean;
 begin
   //============================================================================
   // Leitora de Codigo de Barras SIMPLE ========================================
   //============================================================================
   If bgCheckOutSimples Then
   Begin
-    If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
-     Begin
-       Screen.Cursor:=crAppStart;
+    Screen.Cursor:=crAppStart;
 
-       // Busca Produtos =======================================================
-       If Not BuscaProdutoLinx(EdtCodBarras.Text) Then
+    //==========================================================================
+    // Busca Pelo Codigo de Barras =============================================
+    //==========================================================================
+    If Not Ckb_Referencia.Checked Then
+    Begin
+      If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
        Begin
-         Screen.Cursor:=crDefault;
 
-         PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
-         msg('Não Foi Encontrado Produto com'+cr+cr+'Código de Barras'+cr+'Informado !!','A');
-         EdtCodBarras.SetFocus;
-         Exit;
-       End;
+         // Busca Produtos =======================================================
+         If Not BuscaProdutoLinx(EdtCodBarras.Text) Then
+         Begin
+           Screen.Cursor:=crDefault;
 
-       // Processa Scaneamento do Produto ======================================
-       CheckProcessa;
-     End
-    Else // If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
-     Begin
-       msg('Código de Barras Inválido !!','A');
-     End; // If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
-     Screen.Cursor:=crDefault;
-     EdtQtdEmbalagem.AsInteger:=1;
-     EdtCodBarras.Text:='0';
-     EdtQtdEmbalagem.SetFocus;
-     SelectNext(ActiveControl,True,True);
+           PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
+           msg('Não Foi Encontrado Produto com'+cr+'Código de Barras Informado !!','A');
+           EdtCodBarras.SetFocus;
+           Exit;
+         End;
+
+         // Processa Scaneamento do Produto ======================================
+         CheckProcessa;
+       End
+      Else // If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
+       Begin
+         msg('Código de Barras Inválido !!','A');
+       End; // If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
+    End; // If Not Ckb_Referencia.Checked Then
+    // Busca Pelo Codigo de Barras =============================================
+    //==========================================================================
+
+    //==========================================================================
+    // Busca Pelo Codigo de Referencia =========================================
+    //==========================================================================
+    If Ckb_Referencia.Checked Then
+    Begin
+      bSiga:=True;
+      Try
+        If StrToInt(EdtCodBarras.Text)=0 Then
+        Begin
+          msg('Código de Referência Inválido !!','A');
+          bSiga:=False;
+        End; // If StrToInt64Def(EdtCodBarras.Text,0)<>0 Then
+      Except
+      End;
+
+      // Busca Produtos ========================================================
+      If bSiga Then
+      Begin
+        If Not BuscaProdutoLinx(EdtCodBarras.Text) Then
+        Begin
+          Screen.Cursor:=crDefault;
+
+          PlaySound(PChar('SystemHand'), 0, SND_ASYNC);
+          msg('Não Foi Encontrado Produto com'+cr+'Código de Referência Informado !!','A');
+          EdtCodBarras.SetFocus;
+          Exit;
+        End; // If Not BuscaProdutoLinx(EdtCodBarras.Text) Then
+
+        // Processa Scaneamento do Produto ======================================
+        CheckProcessa;
+      End; // If bSiga Then
+    End; // If Ckb_Referencia.Checked Then
+    // Busca Pelo Codigo de referencia =========================================
+    //==========================================================================
+
+    Screen.Cursor:=crDefault;
+    Ckb_Referencia.Checked:=False;
+    EdtQtdEmbalagem.AsInteger:=1;
+    EdtCodBarras.Text:='0';
+    EdtQtdEmbalagem.SetFocus;
+    SelectNext(ActiveControl,True,True);
   End; // If bgCheckOutSimples Then
   // Leitora de Codigo de Barras SIMPLE ========================================
   //============================================================================
 
+end;
+
+procedure TFrmLeitoraCodBarras.Ckb_ReferenciaClick(Sender: TObject);
+begin
+  AcertaCkb_Style(Ckb_Referencia);
+  EdtCodBarras.SetFocus;
+end;
+
+procedure TFrmLeitoraCodBarras.Ckb_ReferenciaKeyUp(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  Ckb_ReferenciaClick(Self);
 end;
 
 end.

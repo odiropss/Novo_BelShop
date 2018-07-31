@@ -163,9 +163,6 @@ var
   // Cria Ponteiro de transacão ================================================
   TD: TTransactionDesc;
 
-  tsgArquivo: TStringList;
-
-  sgLojaLinx, sgLojaSidicom, sgNomeLoja,
   sgNumSolicitacao,
   sgCodProdLinx, sgCodProdSidicom
   : String;
@@ -507,16 +504,13 @@ Begin
          ' oi.num_seq_oc, oi.num_seq_item, oc.num_oc,'+
          ' oi.cod_produto_linx, oi.cod_produto_sidi,'+
 
-         ' CASE'+
-         '   WHEN TRIM(COALESCE(ps.referencia,''''))<>'''' THEN'+
-         '     TRIM(ps.referencia)'+
-         '   ELSE'+
-         '     TRIM(pl.referencia)'+
-         ' END REFERENCIA,'+
+         ' TRIM(pl.referencia) REFERENCIA,'+
 
          ' oi.des_produto,'+
          ' oi.qtd_produto, oi.qtd_checkout,'+
-         ' oi.dta_checkout, oi.hra_checkout,'+
+         ' pl.cod_barra,'+
+         ' TRIM(COALESCE(en.zonaendereco,0))||''.''||COALESCE(en.corredor,''000'')||''.''||'+
+         '      COALESCE(en.prateleira,''000'')||''.''||COALESCE(en.gaveta,''0000'') ENDERECO,'+
 
          ' CASE'+
          '   WHEN ni.ind_oc IS NULL THEN'+
@@ -524,16 +518,13 @@ Begin
          '   ELSE'+
          '     ni.ind_oc'+
          ' END IND_OC,'+
-
-         ' TRIM(COALESCE(en.zonaendereco,0))||''.''||COALESCE(en.corredor,''000'')||''.''||'+
-         '      COALESCE(en.prateleira,''000'')||''.''||COALESCE(en.gaveta,''0000'') ENDERECO'+
+         ' oi.dta_checkout, oi.hra_checkout'+
 
          ' FROM OC_LOJAS_ITENS oi'+
          '     LEFT JOIN OC_LOJAS_NFE oc        ON oc.num_seq_oc=oi.num_seq_oc'+
          '     LEFT JOIN OC_LOJAS_ITENS_NFE ni  ON ni.num_seq_oc=oi.num_seq_oc'+
          '                                     AND ni.num_seq_item=oi.num_seq_item'+
          '     LEFT JOIN LINXPRODUTOS pl        ON pl.cod_produto=oi.cod_produto_linx'+
-         '     LEFT JOIN PRODUTO ps             ON ps.codproduto=oi.cod_produto_sidi'+
          '     LEFT JOIN ESTOQUE en             ON en.codproduto=oi.cod_produto_sidi'+
          '                                     AND en.codfilial=''99'''+
 
@@ -730,7 +721,6 @@ const
   TipoDoIcone = 1; // Show Hint em Forma de Balão
 Var
   MySql: String;
-  sErro: String;
   b: Boolean;
   i, iIndexCol: Integer;
 begin
@@ -756,46 +746,9 @@ begin
 
   // ===========================================================================
   // Descrição do Loja =========================================================
-  // Loja.Ini = Cod_Loja_Sidicom ; Cod_Loja_Linx ; Descriçãso do Loja ;
   // ===========================================================================
-  tsgArquivo:=TStringList.Create;
-  tsgArquivo.LoadFromFile(IncludeTrailingPathDelimiter(sgPastaExecutavel)+'Loja.ini');
-
-  sgLojaLinx     :='';
-  sgLojaSidicom  :='';
-  sgNomeLoja     :='';
-  sErro          :='';
-  Try
-    If Trim(tsgArquivo[0])='' Then
-     sErro:='SIM';
-
-    If sErro='' Then
-    Begin
-      sgLojaSidicom  :=Separa_String(tsgArquivo[0],1);
-      sgLojaLinx     :=Separa_String(tsgArquivo[0],2);
-      sgNomeLoja     :=Separa_String(tsgArquivo[0],3);
-
-      StrToInt(sgLojaLinx);
-      StrToInt(sgLojaSidicom);
-
-      If Trim(sgNomeLoja)='' Then
-       sErro:='SIM';
-    End; // If sErro='' Then
-  Except
-    sErro:='SIM'
-  End;
-
-  If (Trim(sErro)<>'') or (Trim(sgNomeLoja)='Limite Superado') Then
-  Begin
-    msg('Definição da Loja Inválida !!'+cr+'Entrar em Contato com o ODIR'+cr+'Celcular:  999-578-234','A');
-    Application.Terminate;
-    Exit;
-  End;
-
-  FreeAndNil(tsgArquivo);
   Pan_Loja.Caption:=sgNomeLoja;
   // Descrição do Loja =========================================================
-  // Loja.Ini = Cod_Loja_Sidicom ; Cod_Loja_Linx ; Descriçãso do Loja ;
   // ===========================================================================
 
   // ===========================================================================

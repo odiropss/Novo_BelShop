@@ -73,6 +73,7 @@ object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
     Height = 32
     Alignment = taRightJustify
     Modified = False
+    CharCase = ecUpperCase
     Color = 8454143
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -140,5 +141,21 @@ object FrmLeitoraCodBarras: TFrmLeitoraCodBarras
       ParentFont = False
       OnClick = Bt_RetornarClick
     end
+  end
+  object Ckb_Referencia: TJvCheckBox
+    Left = 230
+    Top = 13
+    Width = 98
+    Height = 17
+    Caption = 'Usar Refer'#234'ncia'
+    TabOrder = 4
+    OnClick = Ckb_ReferenciaClick
+    OnKeyUp = Ckb_ReferenciaKeyUp
+    LinkedControls = <>
+    HotTrackFont.Charset = DEFAULT_CHARSET
+    HotTrackFont.Color = clWindowText
+    HotTrackFont.Height = -11
+    HotTrackFont.Name = 'MS Sans Serif'
+    HotTrackFont.Style = []
   end
 end

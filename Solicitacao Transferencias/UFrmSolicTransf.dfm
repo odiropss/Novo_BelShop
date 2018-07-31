@@ -2009,6 +2009,7 @@ object FrmSolicTransf: TFrmSolicTransf
             Visible = True
           end
           item
+            Alignment = taRightJustify
             Color = 15395562
             Expanded = False
             FieldName = 'REFERENCIA'
@@ -2060,25 +2061,9 @@ object FrmSolicTransf: TFrmSolicTransf
           end
           item
             Expanded = False
-            FieldName = 'DTA_CHECKOUT'
-            Title.Alignment = taCenter
-            Title.Caption = 'Dt Check'
-            Width = 70
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'HRA_CHECKOUT'
-            Title.Alignment = taCenter
-            Title.Caption = 'Hr Check'
-            Width = 60
-            Visible = True
-          end
-          item
-            Expanded = False
-            FieldName = 'IND_OC'
-            Title.Alignment = taCenter
-            Width = 40
+            FieldName = 'COD_BARRA'
+            Title.Alignment = taRightJustify
+            Width = 86
             Visible = True
           end
           item
@@ -2093,6 +2078,29 @@ object FrmSolicTransf: TFrmSolicTransf
             Font.Style = [fsBold]
             Title.Alignment = taCenter
             Width = 100
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'IND_OC'
+            Title.Alignment = taCenter
+            Width = 40
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DTA_CHECKOUT'
+            Title.Alignment = taCenter
+            Title.Caption = 'Dt Check'
+            Width = 70
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'HRA_CHECKOUT'
+            Title.Alignment = taCenter
+            Title.Caption = 'Hr Check'
+            Width = 60
             Visible = True
           end>
       end

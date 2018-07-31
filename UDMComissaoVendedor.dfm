@@ -1,7 +1,8 @@
 object DMComissaoVendedor: TDMComissaoVendedor
   OldCreateOrder = False
-  Left = 258
-  Top = 116
+  OnCreate = DataModuleCreate
+  Left = 243
+  Top = 124
   Height = 572
   Width = 935
   object DS_V_UltimaAtualizacao: TDataSource
@@ -210,8 +211,8 @@ object DMComissaoVendedor: TDMComissaoVendedor
       '     left join forneced fo  on fo.codfornecedor=pr.principalfor'
       '     left join listapre lp  on lp.codlista='#39'0006'#39
       '                           and lp.codproduto=pr.codproduto')
-    Left = 304
-    Top = 88
+    Left = 264
+    Top = 40
     object IBQ_ProdutoMPMSUPDATE_INSERT: TIBStringField
       FieldName = 'UPDATE_INSERT'
       Size = 1359
@@ -256,21 +257,21 @@ object DMComissaoVendedor: TDMComissaoVendedor
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 336
-    Top = 288
+    Left = 56
+    Top = 392
   end
   object DSP_ComisVendedores: TDataSetProvider
     DataSet = SDS_ComisVendedores
     Options = [poRetainServerOrder]
-    Left = 392
-    Top = 304
+    Left = 112
+    Top = 408
   end
   object CDS_ComisVendedores: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ComisVendedores'
-    Left = 456
-    Top = 288
+    Left = 176
+    Top = 392
     object CDS_ComisVendedoresCOD_LOJA: TStringField
       Alignment = taCenter
       DisplayLabel = 'C'#243'd'
@@ -324,7 +325,103 @@ object DMComissaoVendedor: TDMComissaoVendedor
   end
   object DS_ComisVendedores: TDataSource
     DataSet = CDS_ComisVendedores
-    Left = 520
-    Top = 304
+    Left = 240
+    Top = 408
+  end
+  object DS_V_CampPessoas: TDataSource
+    DataSet = CDS_V_CampPessoas
+    Left = 398
+    Top = 163
+  end
+  object CDS_V_CampPessoas: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    AfterScroll = CDS_V_CampPessoasAfterScroll
+    Left = 320
+    Top = 152
+    object CDS_V_CampPessoasCOD_AUX: TIntegerField
+      FieldName = 'COD_AUX'
+      Required = True
+    end
+    object CDS_V_CampPessoasCOD_LOJA: TIntegerField
+      FieldName = 'COD_LOJA'
+      Required = True
+    end
+    object CDS_V_CampPessoasPESSOA: TStringField
+      DisplayLabel = 'Nome Pessoa'
+      FieldName = 'PESSOA'
+      Size = 50
+    end
+    object CDS_V_CampPessoasCARGO: TStringField
+      DisplayLabel = 'Cargo'
+      FieldName = 'CARGO'
+      Size = 50
+    end
+    object CDS_V_CampPessoasPER_FAT: TFMTBCDField
+      DisplayLabel = '% / Fat'
+      FieldName = 'PER_FAT'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_CampPessoasVLR_UNID: TFMTBCDField
+      DisplayLabel = 'Vlr / Unid'
+      FieldName = 'VLR_UNID'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+  end
+  object SDS_CampCampanhas: TSQLDataSet
+    CommandText = 
+      'SELECT'#13#10't.cod_aux COD_CAMPANHA,'#13#10't.des_aux DES_CAMPANHA,'#13#10't.vlr_' +
+      'aux PER_FAT,'#13#10't.vlr_aux1 VLR_UNID'#13#10#13#10'FROM TAB_AUXILIAR t'#13#10'WHERE ' +
+      't.tip_aux=28'#13#10'ORDER BY 1,2'#13#10
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 272
+    Top = 224
+  end
+  object DSP_CampCampanhas: TDataSetProvider
+    DataSet = SDS_CampCampanhas
+    Left = 320
+    Top = 237
+  end
+  object CDS_CampCampanhas: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_CampCampanhas'
+    Left = 368
+    Top = 225
+    object CDS_CampCampanhasCOD_CAMPANHA: TIntegerField
+      DisplayLabel = 'C'#243'd'
+      FieldName = 'COD_CAMPANHA'
+      Required = True
+    end
+    object CDS_CampCampanhasDES_CAMPANHA: TStringField
+      DisplayLabel = 'Descri'#231#227'o da Campanha'
+      FieldName = 'DES_CAMPANHA'
+      Size = 50
+    end
+    object CDS_CampCampanhasPER_FAT: TFMTBCDField
+      DisplayLabel = '% / Venda $'
+      FieldName = 'PER_FAT'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_CampCampanhasVLR_UNID: TFMTBCDField
+      DisplayLabel = 'Vlr / Unid $'
+      FieldName = 'VLR_UNID'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+  end
+  object DS_CampCampanhas: TDataSource
+    DataSet = CDS_CampCampanhas
+    Left = 416
+    Top = 237
   end
 end

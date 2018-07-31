@@ -113,7 +113,7 @@ end;
 
 procedure TFrmSelectEmpProcessamento.Bt_SelectEmpProcFecharClick(Sender: TObject);
 begin
-  bOK    :=False;
+  bOK:=False;
 
   Close;
 end;
@@ -371,7 +371,7 @@ begin
                     MySql+' And e.Cod_Filial Not in '+sgEmpresaNao;
 
                    MySql:=
-                    MySql+' Order by e.COD_FILIAL';
+                    MySql+' Order by e.RAZAO_SOCIAL';
   End; // If Not bgSelectSoLinx Then
 
   // Busca Dados das Lojs Lix ==================================================

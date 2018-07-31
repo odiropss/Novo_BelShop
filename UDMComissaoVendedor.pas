@@ -44,11 +44,29 @@ type
     CDS_ComisVendedoresQTD_VENDA: TFMTBCDField;
     CDS_ComisVendedoresVLR_CONVERSAO: TFMTBCDField;
     CDS_ComisVendedoresVLR_COMISSAO: TFMTBCDField;
+    DS_V_CampPessoas: TDataSource;
+    CDS_V_CampPessoas: TClientDataSet;
+    CDS_V_CampPessoasCOD_AUX: TIntegerField;
+    CDS_V_CampPessoasCOD_LOJA: TIntegerField;
+    CDS_V_CampPessoasPESSOA: TStringField;
+    CDS_V_CampPessoasCARGO: TStringField;
+    CDS_V_CampPessoasPER_FAT: TFMTBCDField;
+    CDS_V_CampPessoasVLR_UNID: TFMTBCDField;
+    SDS_CampCampanhas: TSQLDataSet;
+    DSP_CampCampanhas: TDataSetProvider;
+    CDS_CampCampanhas: TClientDataSet;
+    DS_CampCampanhas: TDataSource;
+    CDS_CampCampanhasCOD_CAMPANHA: TIntegerField;
+    CDS_CampCampanhasDES_CAMPANHA: TStringField;
+    CDS_CampCampanhasPER_FAT: TFMTBCDField;
+    CDS_CampCampanhasVLR_UNID: TFMTBCDField;
     procedure CDS_V_ProdutosAfterPost(DataSet: TDataSet);
     procedure CDS_V_FamiliaPrecosAfterPost(DataSet: TDataSet);
     procedure CDS_V_AplicacaoAfterPost(DataSet: TDataSet);
     procedure CDS_V_FamiliaPrecosBeforeDelete(DataSet: TDataSet);
     procedure CDS_V_AplicacaoBeforeDelete(DataSet: TDataSet);
+    procedure CDS_V_CampPessoasAfterScroll(DataSet: TDataSet);
+    procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -59,6 +77,8 @@ var
   DMComissaoVendedor: TDMComissaoVendedor;
 
   bgGravar: Boolean;
+
+  bgAfterScroll: Boolean;
 
 implementation
 
@@ -303,6 +323,20 @@ begin
       msg(e.Message, 'X');
     End; // on e : Exception do
   End; // Try
+end;
+
+procedure TDMComissaoVendedor.CDS_V_CampPessoasAfterScroll(DataSet: TDataSet);
+begin
+  If (Not CDS_V_CampPessoas.IsEmpty) And (bgAfterScroll) Then
+  Begin
+    If CDS_V_CampPessoasCOD_AUX.AsInteger=0 Then
+     CDS_V_CampPessoas.Next;
+  End; // If Not CDS_V_CampPessoas.IsEmpty Then
+end;
+
+procedure TDMComissaoVendedor.DataModuleCreate(Sender: TObject);
+begin
+  bgAfterScroll:=True;
 end;
 
 end.

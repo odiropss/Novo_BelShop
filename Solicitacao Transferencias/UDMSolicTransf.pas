@@ -67,23 +67,26 @@ type
     CDS_OCItensCheckNUM_OC: TIntegerField;
     SQLQuery3: TSQLQuery;
     CDS_OCItensCheckENDERECO: TStringField;
-    IBQ_Busca: TIBQuery;
-    IBDB_CD: TIBDatabase;
-    IBT_CD: TIBTransaction;
+    IBQ_Busca1: TIBQuery;
+    IBDB_CD1: TIBDatabase;
+    IBT_CD1: TIBTransaction;
     CDS_OCItensCheckCOD_PRODUTO_SIDI: TStringField;
-    CDS_OCItensCheckREFERENCIA: TStringField;
     CDS_OCItensCheckCOD_PRODUTO_LINX: TFMTBCDField;
     RelVisual: TRelVisualJul;
     SQLQ_Relatorio: TSQLQuery;
     DSP_Relatorio: TDataSetProvider;
     CDS_Relatorio: TClientDataSet;
+    CDS_OCItensCheckREFERENCIA: TStringField;
+    CDS_OCItensCheckCOD_BARRA: TStringField;
 
     //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     Procedure ConectaBanco;
-    Function  Conecta_CD: Boolean;
+
+    // Odir SIDICOM Retirado
+    // Function  Conecta_CD: Boolean;
 
     Procedure FechaTudo;
 
@@ -117,6 +120,10 @@ var
 
   sgNrsOCs, sgNrsSeqOCs: String; // Usado na CheckOut OC / NFe
 
+  tsgArquivo: TStringList;
+
+  sgLojaLinx, sgLojaSidicom, sgNomeLoja: String;
+
 implementation
 
 uses DK_Procs1, Variants;
@@ -127,40 +134,41 @@ uses DK_Procs1, Variants;
 // Odir - Inicio >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Atualiza Conexão com Banco de Dados CD - SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Function TDMSolicTransf.Conecta_CD: Boolean;
-Var
-  MySql: String;
-  i: Integer;
-  sEndIP, sDataBaseName: String;
-Begin
-  Result:=True;
-
-  Try
-    MySql:=' SELECT *'+
-           ' FROM EMP_CONEXOES emp'+
-           ' WHERE emp.Tip_Emp=''M''';
-    DMSolicTransf.CDS_BuscaRapida.Close;
-    DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
-    DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql);
-    DMSolicTransf.CDS_BuscaRapida.Open;
-
-    // Inicializa Conexao
-    IBDB_CD.Connected:=False;
-    sEndIP:=DMSolicTransf.CDS_BuscaRapida.FieldByName('ENDERECO_IP').AsString;
-    sDataBaseName:='\\'+IncludeTrailingPathDelimiter(sEndIP)+
-                        IncludeTrailingPathDelimiter(DMSolicTransf.CDS_BuscaRapida.FieldByName('PASTA_BASE_DADOS').AsString)+
-                                                     DMSolicTransf.CDS_BuscaRapida.FieldByName('DES_BASE_DADOS').AsString;
-    IBDB_CD.DatabaseName:=sDataBaseName;
-
-    DMSolicTransf.CDS_BuscaRapida.Close;
-
-    IBDB_CD.Connected:=True;
-    IBDB_CD.Connected:=False;
-  Except
-    Result:=False;
-  End;
-End; // Atualiza Conexão com Banco de Dados CD - SIDICOM >>>>>>>>>>>>>>>>>>>>>>>
+// Odir SIDICOM Retirado
+//// Atualiza Conexão com Banco de Dados CD - SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//Function TDMSolicTransf.Conecta_CD: Boolean;
+//Var
+//  MySql: String;
+//  i: Integer;
+//  sEndIP, sDataBaseName: String;
+//Begin
+//  Result:=True;
+//
+//  Try
+//    MySql:=' SELECT *'+
+//           ' FROM EMP_CONEXOES emp'+
+//           ' WHERE emp.Tip_Emp=''M''';
+//    DMSolicTransf.CDS_BuscaRapida.Close;
+//    DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
+//    DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql);
+//    DMSolicTransf.CDS_BuscaRapida.Open;
+//
+//    // Inicializa Conexao
+//    IBDB_CD.Connected:=False;
+//    sEndIP:=DMSolicTransf.CDS_BuscaRapida.FieldByName('ENDERECO_IP').AsString;
+//    sDataBaseName:='\\'+IncludeTrailingPathDelimiter(sEndIP)+
+//                        IncludeTrailingPathDelimiter(DMSolicTransf.CDS_BuscaRapida.FieldByName('PASTA_BASE_DADOS').AsString)+
+//                                                     DMSolicTransf.CDS_BuscaRapida.FieldByName('DES_BASE_DADOS').AsString;
+//    IBDB_CD.DatabaseName:=sDataBaseName;
+//
+//    DMSolicTransf.CDS_BuscaRapida.Close;
+//
+//    //IBDB_CD.Connected:=True;
+//    IBDB_CD.Connected:=False;
+//  Except
+//    Result:=False;
+//  End;
+//End; // Atualiza Conexão com Banco de Dados CD - SIDICOM >>>>>>>>>>>>>>>>>>>>>>>
 
 // Fecha Todos os Client's >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TDMSolicTransf.FechaTudo;
@@ -213,6 +221,10 @@ begin
     If i=1 Then sgFBConect:='FBConect_InterNet.ini';
     If i=2 Then sgFBConect:='FBConect_IntraNet.ini';
     If i=3 Then sgFBConect:='FBConect_Local.ini';
+
+    // Se Loja Cd = 99-SIDICOM e/ou 2-Linx Utiliza FBConect_IntraNet.ini =======
+    If sgLojaLinx='2' Then
+     If i=2 Then sgFBConect:='FBConect_IntraNet.ini';
 
     If AnsiUpperCase(sgNomeUsuario)='ODIR' Then
     Begin
@@ -267,12 +279,61 @@ End; // Conecta Bancos de Dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TDMSolicTransf.DataModuleCreate(Sender: TObject);
+Var
+  sErro: String;
 begin
-
+  // ===========================================================================
   // Pasta Executavel ==========================================================
+  // ===========================================================================
   sgPastaExecutavel:=IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName));
+  // Pasta Executavel ==========================================================
+  // ===========================================================================
 
+  // ===========================================================================
+  // Descrição do Loja =========================================================
+  // Loja.Ini = Cod_Loja_Sidicom ; Cod_Loja_Linx ; Descriçãso do Loja ;
+  // ===========================================================================
+  tsgArquivo:=TStringList.Create;
+  tsgArquivo.LoadFromFile(IncludeTrailingPathDelimiter(sgPastaExecutavel)+'Loja.ini');
+
+  sgLojaLinx     :='';
+  sgLojaSidicom  :='';
+  sgNomeLoja     :='';
+  sErro          :='';
+  Try
+    If Trim(tsgArquivo[0])='' Then
+     sErro:='SIM';
+
+    If sErro='' Then
+    Begin
+      sgLojaSidicom  :=Separa_String(tsgArquivo[0],1);
+      sgLojaLinx     :=Separa_String(tsgArquivo[0],2);
+      sgNomeLoja     :=Separa_String(tsgArquivo[0],3);
+
+      StrToInt(sgLojaLinx);
+      StrToInt(sgLojaSidicom);
+
+      If Trim(sgNomeLoja)='' Then
+       sErro:='SIM';
+    End; // If sErro='' Then
+  Except
+    sErro:='SIM'
+  End;
+
+  If (Trim(sErro)<>'') or (Trim(sgNomeLoja)='Limite Superado') Then
+  Begin
+    msg('Definição da Loja Inválida !!'+cr+'Entrar em Contato com o ODIR'+cr+'Celcular:  999-578-234','A');
+    Application.Terminate;
+    Exit;
+  End;
+  FreeAndNil(tsgArquivo);
+  // Descrição do Loja =========================================================
+  // Loja.Ini = Cod_Loja_Sidicom ; Cod_Loja_Linx ; Descriçãso do Loja ;
+  // ===========================================================================
+
+  // ===========================================================================
   // Verifica Existencia do Arquivo de Configuração de Conexão =================
+  // ===========================================================================
   sgFBConect:='FBConect_Local.ini';
   If not(fileexists(IncludeTrailingPathDelimiter(sgPastaExecutavel)+sgFBConect)) then
   Begin
@@ -296,18 +357,33 @@ begin
     Application.Terminate;
     Exit;
   End;
+  // ===========================================================================
+  // Verifica Existencia do Arquivo de Configuração de Conexão =================
+  // ===========================================================================
 
+  // ===========================================================================
   // Windows: Nome do Usuario e do Computador ==================================
+  // ===========================================================================
   UsuarioComputadorWindows(sgNomeUsuario, sgNomeComputador);
+  // Windows: Nome do Usuario e do Computador ==================================
+  // ===========================================================================
 
+  // ===========================================================================
   // Conecta Banco BelShop.FDB =================================================
+  // ===========================================================================
   SQLC.Connected:=False;
 
   ConectaBanco;
+  // Conecta Banco BelShop.FDB =================================================
+  // ===========================================================================
 
+  // ===========================================================================
   // Date da Inicialização do Sistema ==========================================
+  // ===========================================================================
   sgDtaHoje:=DateToStr(DataHoraServidorFI(DMSolicTransf.SQLQ_BuscaRapida));
   dgDtaHoje:=StrToDate(sgDtaHoje);
+  // Date da Inicialização do Sistema ==========================================
+  // ===========================================================================
 
 end;
 

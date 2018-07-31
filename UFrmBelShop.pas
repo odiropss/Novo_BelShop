@@ -1201,6 +1201,8 @@ type
     MenuMIXFornecedorProdutos: TMenuItem;
     N56: TMenuItem;
     SubMenuGeracaoArquivos: TMenuItem;
+    N57: TMenuItem;
+    SubMenuComisCampanhasColecao: TMenuItem;
 
     // Odir ====================================================================
 
@@ -2086,8 +2088,6 @@ type
     procedure SubMenuComprasGeraOCLinxClick(Sender: TObject);
     procedure EdtFiltroCodProdLinxExit(Sender: TObject);
     procedure PrioridadesdeReposio1Click(Sender: TObject);
-    procedure Dbg_GeraOCProdutosKeyUp(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
     procedure SubMenuFinanConciliaDepositosClick(Sender: TObject);
     procedure SubMenuComprasNivelAtendimentoLojasClick(Sender: TObject);
     procedure SubMenuCentroDistAnaliseAnalReposicoesEnderecoClick(
@@ -2136,6 +2136,7 @@ type
     procedure NFePerdasProdutos1Click(Sender: TObject);
     procedure MenuMIXFornecedorProdutosClick(Sender: TObject);
     procedure SubMenuGeracaoArquivosClick(Sender: TObject);
+    procedure SubMenuComisCampanhasColecaoClick(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -42729,7 +42730,11 @@ begin
   sgDescricao:='Comissao';
 
   FrmComissaoVendedor:=TFrmComissaoVendedor.Create(Self);
-  FrmComissaoVendedor.Ts_ParametrosVendedores.TabVisible:=False;
+
+  TabSheetInvisivel(FrmComissaoVendedor);
+  FrmComissaoVendedor.Ts_Produtos.TabVisible:=True;
+  FrmComissaoVendedor.Ts_Comissoes.TabVisible:=True;
+
   FrmComissaoVendedor.PC_ComissaoVendedor.TabIndex:=0;
   FrmComissaoVendedor.Bt_Clipboard.Visible:=False;
   FrmComissaoVendedor.Rb_ComisVendSintetico.Visible:=False;
@@ -42748,8 +42753,8 @@ begin
 
   FrmComissaoVendedor:=TFrmComissaoVendedor.Create(Self);
 
-  FrmComissaoVendedor.Ts_Comissoes.TabVisible:=False;
-  FrmComissaoVendedor.Ts_Produtos.TabVisible:=False;
+  TabSheetInvisivel(FrmComissaoVendedor);
+  FrmComissaoVendedor.Ts_ParametrosVendedores.TabVisible:=True;
 
   FrmComissaoVendedor.Bt_ImportaProdutos.Visible:=True;
   FrmComissaoVendedor.Bt_Clipboard.Visible:=False;
@@ -43290,15 +43295,6 @@ begin
   FrmPrioridadesReposicao.ShowModal;
 
   FreeAndNil(FrmPrioridadesReposicao);
-
-end;
-
-procedure TFrmBelShop.Dbg_GeraOCProdutosKeyUp(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
-begin
-  // BLOQUEAR TECLA Ctrl+Del ===================================================
-  if ((Shift=[ssCtrl]) and (key=vk_delete)) THEN
-   Abort;
 
 end;
 
@@ -43981,6 +43977,28 @@ begin
   FrmSolicitacoes.ShowModal;
 
   FreeAndNil(FrmSolicitacoes);
+end;
+
+procedure TFrmBelShop.SubMenuComisCampanhasColecaoClick(Sender: TObject);
+begin
+  sgDescricao:='Campanhas-Colecao';
+
+  FrmComissaoVendedor:=TFrmComissaoVendedor.Create(Self);
+
+  TabSheetInvisivel(FrmComissaoVendedor);
+  FrmComissaoVendedor.Ts_CampColecao.TabVisible:=True;
+  FrmComissaoVendedor.Ts_CampColecaoCadastro.TabVisible:=True;
+
+//  FrmComissaoVendedor.Bt_ImportaProdutos.Visible:=True;
+//  FrmComissaoVendedor.Bt_Clipboard.Visible:=False;
+//  FrmComissaoVendedor.Rb_ComisVendSintetico.Visible:=False;
+//  FrmComissaoVendedor.Rb_ComisVendAnalitico.Visible:=False;
+
+  FrmComissaoVendedor.PC_ComissaoVendedor.TabIndex:=0;
+  FrmComissaoVendedor.ShowModal;
+
+  FreeAndNil(FrmComissaoVendedor);
+
 end;
 
 end.
