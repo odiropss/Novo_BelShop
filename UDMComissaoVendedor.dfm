@@ -1,8 +1,8 @@
 object DMComissaoVendedor: TDMComissaoVendedor
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 243
-  Top = 124
+  Left = 244
+  Top = 115
   Height = 572
   Width = 935
   object DS_V_UltimaAtualizacao: TDataSource
@@ -423,5 +423,116 @@ object DMComissaoVendedor: TDMComissaoVendedor
     DataSet = CDS_CampCampanhas
     Left = 416
     Top = 237
+  end
+  object SQLDataSet1: TSQLDataSet
+    CommandText = 
+      'SELECT'#13#10'first 10 v.cod_vendedor Codigo, --1'#13#10'v.nome_vendedor Des' +
+      'cricao, --2'#13#10'p.id_colecao Cod_Camp, --3'#13#10'p.desc_colecao Campanha' +
+      ', --4'#13#10#13#10'CAST(ROUND(SUM(DECODE(m.operacao, '#39'S'#39', m.quantidade,  -' +
+      'm.quantidade)),2) AS INTEGER) Qtd_Itens, --5'#13#10't.vlr_aux1 Pontos_' +
+      'Item, --6'#13#10'(CAST(ROUND(SUM(DECODE(m.operacao, '#39'S'#39', m.quantidade,' +
+      '  -m.quantidade)),2) AS INTEGER)) * t.vlr_aux1 Vlr_Comis_Itens, ' +
+      '--7'#13#10#13#10'CAST(ROUND(SUM(DECODE(m.operacao, '#39'S'#39', m.valor_total, -m.' +
+      'valor_total)),2) AS NUMERIC(12,2)) Vlr_Fat, --8'#13#10't.vlr_aux Per_F' +
+      'at, --9'#13#10'(CAST(ROUND(((SUM(DECODE(m.operacao, '#39'S'#39', m.valor_total' +
+      ', -m.valor_total)) * t.vlr_aux) / 100),2) AS NUMERIC(12,2))) Vlr' +
+      '_Comis_Fat, --10'#13#10#13#10'((CAST(ROUND(SUM(DECODE(m.operacao, '#39'S'#39', m.q' +
+      'uantidade,  -m.quantidade)),2) AS INTEGER)) * t.vlr_aux1) +'#13#10'   ' +
+      '(CAST(ROUND(((SUM(DECODE(m.operacao, '#39'S'#39', m.valor_total, -m.valo' +
+      'r_total)) * t.vlr_aux) / 100),2) AS NUMERIC(12,2))) Tot_Comissao' +
+      #13#10#13#10#13#10'FROM LINXMOVIMENTO m, LINXVENDEDORES v, LINXPRODUTOS p, TA' +
+      'B_AUXILIAR t'#13#10'WHERE m.cod_vendedor=v.cod_vendedor'#13#10'AND m.empresa' +
+      '=v.empresa'#13#10'AND m.cod_produto=p.cod_produto'#13#10'AND p.id_colecao=t.' +
+      'cod_aux'#13#10'AND t.tip_aux=28'#13#10'AND v.tipo_vendedor in ('#39'V'#39', '#39'A'#39')'#13#10'AN' +
+      'D m.cancelado='#39'N'#39#13#10'AND m.excluido='#39'N'#39#13#10'AND ((m.operacao='#39'S'#39' AND ' +
+      'm.tipo_transacao='#39'V'#39')'#13#10'     OR'#13#10'     (m.operacao='#39'DS'#39' AND m.tipo' +
+      '_transacao IS NULL))'#13#10'AND m.data_documento BETWEEN '#39'01.05.2018'#39' ' +
+      'AND '#39'31.05.2018'#39#13#10#13#10'GROUP BY 1,2,3,4,6,9'#13#10
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 776
+    Top = 216
+  end
+  object DataSetProvider1: TDataSetProvider
+    DataSet = SQLDataSet1
+    Left = 824
+    Top = 229
+  end
+  object CDS_V_CampComissoes: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 368
+    Top = 297
+    object CDS_V_CampComissoesCODIGO: TIntegerField
+      DisplayLabel = 'C'#243'd'
+      FieldName = 'CODIGO'
+    end
+    object CDS_V_CampComissoesDESCRICAO: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      FieldName = 'DESCRICAO'
+      Size = 50
+    end
+    object CDS_V_CampComissoesCOD_CAMP: TIntegerField
+      DisplayLabel = 'C'#243'd'
+      FieldName = 'COD_CAMP'
+    end
+    object CDS_V_CampComissoesCAMPANHA: TStringField
+      DisplayLabel = 'Campanha'
+      FieldName = 'CAMPANHA'
+      Size = 50
+    end
+    object CDS_V_CampComissoesQTD_ITENS: TIntegerField
+      DisplayLabel = 'Itens'
+      FieldName = 'QTD_ITENS'
+      DisplayFormat = ',0'
+    end
+    object CDS_V_CampComissoesPONTOS_ITEM: TFMTBCDField
+      DisplayLabel = 'Pts/Item'
+      FieldName = 'PONTOS_ITEM'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_CampComissoesVLR_COMIS_ITENS: TFMTBCDField
+      DisplayLabel = 'Comis'#227'o Itens'
+      FieldName = 'VLR_COMIS_ITENS'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_CampComissoesVLR_FAT: TFMTBCDField
+      DisplayLabel = 'Faturamento'
+      FieldName = 'VLR_FAT'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_CampComissoesPER_FAT: TFMTBCDField
+      DisplayLabel = '% / Fat'
+      FieldName = 'PER_FAT'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_CampComissoesVLR_COMIS_FAT: TFMTBCDField
+      DisplayLabel = 'Comis'#227'o Fat'
+      FieldName = 'VLR_COMIS_FAT'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_V_CampComissoesTOT_COMISSAO: TFMTBCDField
+      DisplayLabel = 'Tot Comiss'#227'o'
+      FieldName = 'TOT_COMISSAO'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+  end
+  object DS_V_CampComissoes: TDataSource
+    DataSet = CDS_V_CampComissoes
+    Left = 416
+    Top = 309
   end
 end

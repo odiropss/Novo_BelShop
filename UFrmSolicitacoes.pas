@@ -3378,6 +3378,8 @@ end; // MOVIMENTO DE CAIXA DIA - Desenha Calendário >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // CRIA GRIDNEW em Ts_QualquerCoisa >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmSolicitacoes.GridNewCriar(Dts: TDataSource; sNomeObjeto: String; bSalvar: Boolean = True);
+Var
+  i, iFormWidth: Integer;
 Begin
   GridNew:=TDBGrid.Create(Self);
   GridNew.Visible:=True;
@@ -3385,6 +3387,39 @@ Begin
   GridNew.Align:=alClient;
   GridNew.Options:=[dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
   GridNew.DataSource:=Dts;
+
+  If sNomeObjeto='Corredores' Then
+  Begin
+    GridNew.TitleFont.Style:=[fsBold];
+
+    iFormWidth:=100;
+    For i:=0 to GridNew.Columns.Count-1 do
+    Begin
+      If i=0 Then
+      Begin
+        GridNew.Columns[i].Width:=200;
+        iFormWidth:=iFormWidth+200;
+      End;
+
+      If (i=1) Or (i=2)Then
+      Begin
+        GridNew.Columns[i].Width:=52;
+        iFormWidth:=iFormWidth+52;
+      End;
+
+      If i>2 Then
+      Begin
+        GridNew.Columns[i].Width:=64;
+        iFormWidth:=iFormWidth+64;
+      End;
+
+      If i<>0 Then
+      Begin
+        GridNew.Columns[i].Title.Alignment:=taRightJustify;
+      End;
+
+    End;
+  End; // If sNomeObjeto='Corredores' Then
 
   If sNomeObjeto='PopM_GeraOC' Then
   Begin
@@ -3422,11 +3457,17 @@ Begin
     GridNew.Columns[17].Width:=70;
     GridNew.Columns[18].Title.Alignment:=taRightJustify;
     GridNew.Columns[18].Width:=130;
-  End;
+  End; // If sNomeObjeto='PopM_GeraOC' Then
 
   If Not bSalvar Then
    Bt_QualquerCoisaSalvar.Visible:=False;
 
+  If iFormWidth<>0 Then
+  Begin
+    FrmSolicitacoes.AutoSize:=False;
+    FrmSolicitacoes.Width:=iFormWidth;
+    FrmSolicitacoes.AutoSize:=True;
+  End; // If iFormWidth<>0 Then
 End; // CRIA GRIDNEW em Ts_QualquerCoisa >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Ordem de Compra - Exporta Documento para Outros >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -7393,11 +7434,15 @@ begin
 end;
 
 procedure TFrmSolicitacoes.Bt_QualquerCoisaSalvarClick(Sender: TObject);
+Var
+  bFechar: Boolean;
 begin
   // Usado por Outros Botoes ===================================================
 
+  bFechar:=True;
   If (Sender is TJvXPButton) Then
   Begin
+    // Imprime Resultados do Salão =============================================
     If Trim((Sender as TJvXPButton).Name)='Bt_SalaoRelImprime' Then
     Begin
       If Trim(Pan_SalaoRelatorios.Caption)='' Then
@@ -7419,10 +7464,20 @@ begin
       SalaoRelatorios;
       Exit;
     End; // If Trim((Sender as TJvXPButton).Name)='Bt_SalaoRelImprime' Then
+
+    // Salva em Memória Resultado dos Corredores de Reposição ==================
+    If Trim((Sender as TJvXPButton).Name)='Bt_ReposLojasResultados' Then
+    Begin
+      DBGridClipboard(GridNew);
+      bFechar:=False;
+    End;
   End; // If (Sender is TJvXPButton) Then
 
-  bgProcessar:=True;
-  Close;
+  If bFechar Then
+  Begin
+    bgProcessar:=True;
+    Close;
+  End;
 end;
 
 procedure TFrmSolicitacoes.Bt_QualquerCoisaVoltarClick(Sender: TObject);

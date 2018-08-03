@@ -43988,13 +43988,11 @@ begin
   TabSheetInvisivel(FrmComissaoVendedor);
   FrmComissaoVendedor.Ts_CampColecao.TabVisible:=True;
   FrmComissaoVendedor.Ts_CampColecaoCadastro.TabVisible:=True;
-
-//  FrmComissaoVendedor.Bt_ImportaProdutos.Visible:=True;
-//  FrmComissaoVendedor.Bt_Clipboard.Visible:=False;
-//  FrmComissaoVendedor.Rb_ComisVendSintetico.Visible:=False;
-//  FrmComissaoVendedor.Rb_ComisVendAnalitico.Visible:=False;
+  FrmComissaoVendedor.Ts_CampColecaoComissao.TabVisible:=True;
 
   FrmComissaoVendedor.PC_ComissaoVendedor.TabIndex:=0;
+  FrmComissaoVendedor.PC_CampColecao.TabIndex:=0;
+  FrmComissaoVendedor.Bt_ImportaProdutos.Tag:=6;
   FrmComissaoVendedor.ShowModal;
 
   FreeAndNil(FrmComissaoVendedor);

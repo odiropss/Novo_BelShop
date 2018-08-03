@@ -211,6 +211,8 @@ type
 
 
     // REPOSIÇÕES ==============================================================
+    Procedure ItemMenu1Click(Sender: TObject); // Usado no PopUpMenu (Botao: Apresenta Resultados)
+
     Function  VerificaExistenciaItens(bComQtd: Boolean = False): Boolean;
     Function  VerificaPrecosItens: Boolean;
 
@@ -412,7 +414,6 @@ var
   sgNumSeqOC, // Sequencia da OC - OC_LOJAS_NFE
   sgNumSeqOCItem: String; // Sequenciado Item na OC - OC_LOJAS_ITENS
 
-
 implementation
 
 uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
@@ -425,6 +426,123 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
 //==============================================================================
 // Odir - INICIO ===============================================================
 //==============================================================================
+
+// REPOSIÇÕES - Usado no PopUpMenu (Botao: Apresenta Resultados) >>>>>>>>>>>>>>>
+Procedure TFrmCentralTrocas.ItemMenu1Click(Sender: TObject);
+Var
+  MySql: String;
+  sCorredor: String;
+begin
+  OdirPanApres.Caption:='AGUARDE !! Montando Totais de Separação por Corredor...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  Screen.Cursor:=crAppStart;
+
+  // Busca Corredores ==========================================================
+  MySql:=' SELECT DISTINCT c.end_zona||''.''||c.end_corredor Corredor'+
+         ' FROM ES_ESTOQUES_CD c, ES_ESTOQUES_LOJAS l'+
+         ' WHERE l.dta_movto=c.dta_movto'+
+         ' AND   l.cod_produto=c.cod_produto'+
+         ' AND   c.dta_movto='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtaEdt_ReposLojas.Date))))+
+         ' AND   l.ind_transf=''SIM'''+
+         ' ORDER BY 1';
+  DMBelShop.SQLQuery3.Close;
+  DMBelShop.SQLQuery3.SQL.Clear;
+  DMBelShop.SQLQuery3.SQL.Add(MySql);
+  DMBelShop.SQLQuery3.Open;
+
+  // Monta Sql de Corredores ===================================================
+  MySql:=' SELECT em.razao_social "Nome da Loja",'+
+         ' lo.num_docto "Nº Doc",'+
+         ' COUNT(lo.cod_produto) "Linhas"';
+
+  DMBelShop.SQLQuery3.DisableControls;
+  While Not DMBelShop.SQLQuery3.Eof do
+  Begin
+    sCorredor:=DMBelShop.SQLQuery3.FieldByName('Corredor').AsString;
+
+    MySql:=
+     MySql+','+
+           ' SUM('+
+           ' CASE'+
+           '        WHEN cd.end_zona||''.''||cd.end_corredor='+QuotedStr(sCorredor)+' THEN'+
+           '          1'+
+           '        ELSE'+
+           '          0'+
+           ' END) "C-'+sCorredor+'"';
+
+    DMBelShop.SQLQuery3.Next;
+  End; // While Not DMBelShop.SQLQuery3.Eof do
+  DMBelShop.SQLQuery3.EnableControls;
+  DMBelShop.SQLQuery3.Close;
+
+  MySql:=
+   MySql+' FROM ES_ESTOQUES_LOJAS lo, EMP_CONEXOES em, ES_ESTOQUES_CD cd, PRODUTO pr'+
+
+         ' WHERE lo.cod_loja=em.cod_filial'+
+         ' AND   lo.dta_movto=cd.dta_movto'+
+         ' AND   lo.cod_produto=cd.cod_produto'+
+         ' AND   lo.cod_produto=pr.codproduto';
+
+         If Trim(sgPrioridadeFilter)<>'' Then
+          MySql:=
+           MySql+' AND   '+f_Troca('IND_PRIORIDADE', 'lo.ind_prioridade', sgPrioridadeFilter);
+
+         If Trim(EdtReposLojasCodForn.Text)<>'' Then
+          MySql:=
+           MySql+'     AND pr.principalfor='+QuotedStr(Trim(EdtReposLojasCodForn.Text));
+
+  MySql:=
+   MySql+' AND   lo.ind_transf=''SIM'''+
+         ' AND   lo.dta_movto='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtaEdt_ReposLojas.Date))))+
+
+         ' GROUP BY 1,2'+
+         ' ORDER BY 1';
+
+  // Busca Totais por Corredores ===============================================
+  DMBelShop.CDS_Busca.Close;
+  DMBelShop.SDS_Busca.CommandText:=MySql;
+  DMBelShop.CDS_Busca.Open;
+
+  If DMBelShop.CDS_Busca.IsEmpty Then
+  Begin
+    OdirPanApres.Visible:=False;
+    Screen.Cursor:=crDefault;
+    DMBelShop.CDS_Busca.Close;
+    msg('Sem Corredores a Apresentar !!','A');
+    Exit;
+  End;
+
+  // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
+  FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+  AbreSolicitacoes(19);
+  FrmSolicitacoes.Ts_QualquerCoisa.Font.Style:=[];
+
+  bgProcessar:=False;
+
+  // Monta DBGrig ==============================================================
+  FrmSolicitacoes.GridNewCriar(DMBelShop.DS_Busca, 'Corredores', True);
+
+  FrmSolicitacoes.Bt_QualquerCoisaSalvar.Width:=168;
+  FrmSolicitacoes.Caption:='CENTRO DE DISTRIBUIÇÃO';
+  FrmSolicitacoes.Ts_QualquerCoisa.Caption:='Totais de Separações por Corredores';
+  FrmSolicitacoes.Bt_QualquerCoisaSalvar.Caption:='Salvar em Memória';
+  FrmSolicitacoes.Bt_QualquerCoisaSalvar.Name:='Bt_ReposLojasResultados';
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+  FrmSolicitacoes.ShowModal;
+
+  DMBelShop.CDS_Busca.Close;
+  FreeAndNil(FrmSolicitacoes);
+End; // REPOSIÇÕES - Usado no PopUpMenu (Botao: Apresenta Resultados) >>>>>>>>>>
 
 // CHECKOUT LOJAS - Apresenta Divergências do Docto Selecionado >>>>>>>>>>>>>>>>>>>>>>
 Function TFrmCentralTrocas.BuscaDivergenciasDocto(sNrPedido: String): Boolean;
@@ -1445,8 +1563,6 @@ Begin
   DMCentralTrocas.CDS_ReposicaoDocs.Open;
   While Not DMCentralTrocas.CDS_ReposicaoDocs.Eof do
   Begin
-//odirapagar - 23/08/2017
-//    sCodFilial:=DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString;
     If DMCentralTrocas.CDS_ReposicaoDocs.RecNo=DMCentralTrocas.CDS_ReposicaoDocs.RecordCount Then
      Break;
 
@@ -6382,7 +6498,6 @@ begin
     Action := caNone;
     Exit;
   End;
-
 end;
 
 procedure TFrmCentralTrocas.Ckb_ReposLojasPrioridade0Click(Sender: TObject);
@@ -8020,14 +8135,27 @@ begin
   If DMCentralTrocas.CDS_ReposicaoDocs.IsEmpty Then
    Exit;
 
+  Dbg_ReposLojasDocs.SetFocus;
+  
   PopMenu:=TPopupMenu.Create(Self);
 
   PopMenu.Items.Clear;
-  for i := 1 to 4 do
+  for i := 1 to 6 do
   begin
     item := TMenuItem.Create(Self);
 
     If i=1 Then
+    Begin
+      item.Caption := 'Totais por Corredor';
+      item.OnClick := ItemMenu1Click;
+    End; // If i=1 Then
+
+    If i=2 Then
+    Begin
+      item.Caption := '-';
+    End; // If i=2 Then
+
+    If i=3 Then
     Begin
       s:=DMCentralTrocas.CDS_ReposicaoDocsTot_Itens.AsString;
       If Trim(s)='' Then s:='0';
@@ -8039,9 +8167,9 @@ begin
       End; // If (Not (AnsiContainsStr(s, '.')) Then
 
       item.Caption := 'Total de  Produtos: '+s;
-    End;
+    End; // If i=3 Then
 
-    If i=2 Then
+    If i=4 Then
     Begin
       If Trim(sTotQtds)='' Then sTotQtds:='0';
 
@@ -8052,9 +8180,9 @@ begin
       End; // If (Not (AnsiContainsStr(sTotQtds, '.')) Then
 
       item.Caption := 'Total Quantidades: '+sTotQtds;
-    End;
+    End; // If i=4 Then
 
-    If i=3 Then
+    If i=5 Then
     Begin
       s:=DMCentralTrocas.CDS_ReposicaoTransfTot_Qtds.AsString;
       If Trim(s)='' Then s:='0';
@@ -8066,9 +8194,9 @@ begin
       End; // If (Not (AnsiContainsStr(s, '.')) Then
 
       item.Caption := 'Total Quants  Loja: '+s;
-    End;
+    End; // If i=5 Then
 
-    If i=4 Then
+    If i=6 Then
     Begin
       If Trim(sTotQtdsSeparar)='' Then sTotQtdsSeparar:='0';
 
@@ -8079,14 +8207,12 @@ begin
       End; // If (Not (AnsiContainsStr(sTotQtdsSeparar, '.')) Then
 
       item.Caption := 'Total Qtds Separar: '+sTotQtdsSeparar;
-    End;
+    End; // If i=6 Then
 
     PopMenu.Items.Add(item);
   end;
 
   PopMenu.Popup(FrmCentralTrocas.Left+300,FrmCentralTrocas.Top+100);
-
-  FreeAndNil(PopMenu);
 
 end;
 

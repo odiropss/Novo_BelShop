@@ -95,6 +95,8 @@ type
     Label8: TLabel;
     EdtCampColecaoCampVlr: TCurrencyEdit;
     dxStatusBar5: TdxStatusBar;
+    EdtCampColecaoCampCod: TCurrencyEdit;
+    Dbg_CampComissoes: TDBGrid;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -103,7 +105,7 @@ type
     procedure PC_ComissaoVendedorChange(Sender: TObject);
 
     //==========================================================================
-    // Odir ====================================================================
+    // Odir4 ====================================================================
     //==========================================================================
     Procedure FechaTudoComVend;
 
@@ -131,9 +133,12 @@ type
                                     // sTipo='C' Campanhas
 
     Procedure CampanhaComissaoDML(sDML: String; sTipo: String='P');
+                                 // sDML ='UI'Insert/Update "EX"xclusão
                                  // sTipo='P'essoas / 'C'ampanhas
-                                 // sDML='IU'Insert/Update "EX"xclusão
 
+    Procedure CampanhaComissaoCalcular;
+    Function  CampanhaComissaoBuscaComissoes: Boolean;
+    Procedure CampanhaComissaoMontaComissoes;
     //==========================================================================
     // Odir ====================================================================
     //==========================================================================
@@ -234,6 +239,143 @@ uses DK_Procs1, UDMComissaoVendedor, UDMBelShop, UFrmBelShop, DB,
 //==============================================================================
 // Odir - INICIO ===============================================================
 //==============================================================================
+
+// CAMPANHA COMISSAO - Monta Grid de Comissões >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmComissaoVendedor.CampanhaComissaoMontaComissoes;
+Begin
+  // Cria ClienteDataSet
+  If DMComissaoVendedor.CDS_V_CampComissoes.Active Then
+   DMComissaoVendedor.CDS_V_CampComissoes.Close;
+
+  DMComissaoVendedor.CDS_V_CampComissoes.CreateDataSet;
+  DMComissaoVendedor.CDS_V_CampComissoes.Open;
+
+  DMComissaoVendedor.CDS_V_CampComissoes.Append;
+  DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString:='COMISSÕES POR CAMPANHAS';
+  DMComissaoVendedor.CDS_V_CampComissoes.Post;
+
+  DMComissaoVendedor.CDS_V_CampComissoes.Append;
+  DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString:='PERÍODO DE '+sgDtaInicio+' A '+sgDtaFim;
+  DMComissaoVendedor.CDS_V_CampComissoes.Post;
+
+  DMComissaoVendedor.CDS_V_CampComissoes.Append;
+  DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.Clear;
+  DMComissaoVendedor.CDS_V_CampComissoes.Post;
+
+  DMBelShop.SQLQuery3.DisableControls;
+  While Not DMBelShop.SQLQuery3.Eof do
+  Begin
+
+    DMBelShop.SQLQuery3.Next;
+  End; // While Not DMBelShop.SQLQuery3.Eof do
+  DMBelShop.SQLQuery3.EnableControls;
+
+End; // CAMPANHA COMISSAO - Monta Grid de Comissões >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// CAMPANHA COMISSAO - Busca Comissão por Id_Coleção >>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TFrmComissaoVendedor.CampanhaComissaoBuscaComissoes: Boolean;
+Var
+  MySql: String;
+Begin
+  // Apresentacao ==========================================================
+  OdirPanApres.Caption:='AGUARDE !! Apropriando Vendas para Calculo de Comissão...';
+  OdirPanApres.Visible:=True;
+  Application.ProcessMessages;
+
+  Screen.Cursor:=crAppStart;
+
+  Result:=True;
+
+  MySql:=' SELECT'+
+         ' l.empresa, l.nome_emp,'+
+         ' v.cod_vendedor, v.nome_vendedor,'+
+         ' p.id_colecao, p.desc_colecao,'+
+         ' CAST(ROUND(SUM(DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)),2) AS INTEGER) QTD_ITENS,'+
+         ' t.vlr_aux1 PONTOS_ITEM,'+
+         ' (CAST(ROUND(SUM(DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)),2) AS INTEGER)) * t.vlr_aux1 VLR_COMISSAO_ITENS,'+
+         ' CAST(ROUND(SUM(DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total)),2) AS NUMERIC(12,2)) VLR_FATURAMENTO,'+
+         ' t.vlr_aux PER_COMISSAO_FAT,'+
+         ' (CAST(ROUND(((SUM(DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total)) * t.vlr_aux) / 100),2) AS NUMERIC(12,2))) VLR_COMISSAO_FAT,'+
+
+         ' ((CAST(ROUND(SUM(DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)),2) AS INTEGER)) * t.vlr_aux1) +'+
+         '  (CAST(ROUND(((SUM(DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total)) * t.vlr_aux) / 100),2) AS NUMERIC(12,2))) TOT_COMISSAO'+
+
+         ' FROM LINXMOVIMENTO m, LINXVENDEDORES v,'+
+         '      LINXPRODUTOS p, LINXLOJAS l, TAB_AUXILIAR t'+
+
+         ' WHERE m.cod_vendedor=v.cod_vendedor'+
+         ' AND m.empresa=v.empresa'+
+         ' AND m.cod_produto=p.cod_produto'+
+         ' AND m.empresa=l.empresa'+
+         ' AND p.id_colecao=t.cod_aux'+
+         ' AND t.tip_aux=28'+ // 28 => CALCULO DE COMISSÃO SOBRE CAMPANHAS sobre Venda LinxProduto.Id_Colecao
+         ' AND v.tipo_vendedor in (''V'', ''A'')'+
+         ' AND m.cancelado=''N'''+
+         ' AND m.excluido=''N'''+
+         ' AND ((m.operacao=''S'' AND m.tipo_transacao=''V'')'+
+         '      OR'+
+         '      (m.operacao=''DS'' AND m.tipo_transacao IS NULL))'+
+         ' AND ((t.vlr_aux<>0) or (t.vlr_aux1<>0))'+
+         ' AND m.data_documento BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaInicio)))+
+                                  ' AND '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFim)))+
+
+         ' GROUP BY 1,2,3,4,5,6,8,11'+
+         ' ORDER BY 2, 4, 6';
+//  DMBelShop.SQLQuery3.Close;
+//  DMBelShop.SQLQuery3.SQL.Clear;
+//  DMBelShop.SQLQuery3.SQL.Add(MySql);
+//  DMBelShop.SQLQuery3.Open;
+//
+//  If DMBelShop.SQLQuery3.IsEmpty Then
+//  Begin
+//    Result:=False;
+//    Screen.Cursor:=crDefault;
+//    OdirPanApres.Visible:=False;
+//
+//    DMBelShop.SQLQuery3.Close;
+//    DMBelShop.SQLQuery3.SQL.Clear;
+//    msg('SEM Venda no Período de '+cr+cr+sgDtaInicio+' a '+sgDtaFim,'A');
+//    Exit;
+//  End; // If DMBelShop.SQLQuery3.IsEmpty Then
+
+  //============================================================================
+  // Monta Grid de Apresentação ================================================
+  //============================================================================
+  CampanhaComissaoMontaComissoes;
+  // Monta Grid de Apresentação ================================================
+  //============================================================================
+
+  // Fecha Tudo ================================================================
+  DMBelShop.SQLQuery3.Close;
+  DMBelShop.SQLQuery3.SQL.Clear;
+
+  Screen.Cursor:=crDefault;
+  OdirPanApres.Visible:=False;
+End; // CAMPANHA COMISSAO - Busca Comissão por Id_Coleção >>>>>>>>>>>>>>>>>>>>>>
+
+// CAMPANHA COMISSAO - Calculo de Comissão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmComissaoVendedor.CampanhaComissaoCalcular;
+Begin
+  bgSiga:=False;
+  FrmPeriodoApropriacao:=TFrmPeriodoApropriacao.Create(Self);
+  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Text:=
+                      DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Text   :=
+                      DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+  FrmPeriodoApropriacao.ShowModal;
+
+  sgDtaInicio:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date);
+  sgDtaFim:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date);
+  FreeAndNil(FrmPeriodoApropriacao);
+
+  // Verifica se Prossegue Processamento =======================================
+  If Not bgSiga Then
+   Exit;
+
+  If Not CampanhaComissaoBuscaComissoes Then
+   Exit;
+End; // CAMPANHA COMISSAO - Calculo de Comissão >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 // CAMPANHA COMISSAO - Apresenta Pessoas e Companhas >>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmComissaoVendedor.CampanhaComissaoTabelas(sTipo: String='');
 Var
@@ -282,6 +424,8 @@ Begin
         If Trim(DMBelShop.SQLQuery3.FieldByName('Vlr_Unid').AsString)<>'' Then
          cVlr:=DMBelShop.SQLQuery3.FieldByName('Vlr_Unid').AsCurrency;
         DMBelShop.SQLQuery3.Close;
+        DMBelShop.SQLQuery3.SQL.Clear;
+
 
         // Insere Campanhas ====================================================
         MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR '+
@@ -344,7 +488,7 @@ Begin
            ' SELECT DISTINCT'+
            ' 0 COD_AUX,'+
            ' CAST((t.cod_aux/100) AS INTEGER) COD_LOJA,'+
-           ' UPPER(TRIM(a.nome_abrev)) PESSOA,'+
+           ' TRIM(a.nome_abrev) PESSOA,'+
            ' NULL CARGO,'+
            ' NULL PER_FAT,'+
            ' NULL VLR_UNID,'+
@@ -380,36 +524,35 @@ Var
 Begin
   // sTipo="P"essoas
   //       "C"ampanhas
-  // sDML="IU" Insert/Update
+  // sDML="UI" Insert/Update
   //      "EX"xclusão
 
-  If sTipo='P' Then
-  Begin
-    // Manutenção de Pessoa ====================================================
-    OdirPanApres.Caption:='AGUARDE !! Manutenção de Pessoas...';
-    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Width-OdirPanApres.Width)/2));
-    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Height-OdirPanApres.Height)/2))-20;
-    OdirPanApres.Font.Style:=[fsBold];
-    OdirPanApres.Parent:=FrmComissaoVendedor;
-    OdirPanApres.BringToFront();
-    OdirPanApres.BringToFront();
-    OdirPanApres.Visible:=True;
-    Refresh;
+  // Manutenção DML - Pessoa ou Campanhas ======================================
+  OdirPanApres.Caption:='AGUARDE !! Efetuando Alterações e/ou Inclusões...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmComissaoVendedor;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
 
-    // Monta Transacao =========================================================
-    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-    TD.IsolationLevel:=xilREADCOMMITTED;
-    DMBelShop.SQLC.StartTransaction(TD);
-    Try // Try da Transação
-      Screen.Cursor:=crAppStart;
-      DateSeparator:='.';
-      DecimalSeparator:='.';
+  // Monta Transacao =========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
 
-
-      // Altera ou Inclui Pessoa ===============================================
-      If sDML='UI' Then
-      Begin
+    // =========================================================================
+    // DML - PESSOA ============================================================
+    // =========================================================================
+    // Altera ou Inclui Pessoa =================================================
+    If (sTipo='P') And (sDML='UI') Then
+    Begin
       MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR'+
              ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
              ' VALUES (27,'+ // TIP_AUX - 27 => CALCULO DE COMISSÃO SOBRE CAMPANHAS sobre Venda LinxProduto.Id_Colecao
@@ -419,38 +562,63 @@ Begin
              QuotedStr(f_Troca(',','.',CurrToStr(EdtCampColecaoPessPerc.Value)))+', '+ // VLR_AUX - Percentual Sobre Faturamento
              QuotedStr(f_Troca(',','.',CurrToStr(EdtCampColecaoPessVlr.Value)))+')'+ // VLR_AUX1 - Preço Sobre Unidades Vendidas
              ' MATCHING (TIP_AUX, COD_AUX)';
-      End; // If sDML='UI' Then
+    End; // If (sTipo='P') And (sDML='UI') Then
 
-      // Exclui Pessoa =========================================================
-      If sDML='EX' Then
-      Begin
-        MySql:=' DELETE FROM TAB_AUXILIAR t'+
-               ' WHERE t.tip_aux=27'+ // 27 => CALCULO DE COMISSÃO SOBRE CAMPANHAS sobre Venda LinxProduto.Id_Colecao
-               ' AND  t.cod_aux='+IntToStr(EdtCampColecaoPessCod.AsInteger);
-      End; // If sDML='EX' Then
-      DMBelShop.SQLC.Execute(MySql,nil,nil);
+    // Exclui Pessoa ===========================================================
+    If (sTipo='P') And (sDML='EX') Then
+    Begin
+      MySql:=' DELETE FROM TAB_AUXILIAR t'+
+             ' WHERE t.tip_aux=27'+ // 27 => CALCULO DE COMISSÃO SOBRE CAMPANHAS sobre Venda LinxProduto.Id_Colecao
+             ' AND  t.cod_aux='+IntToStr(EdtCampColecaoPessCod.AsInteger);
+    End; // If (sTipo='P') And (sDML='EX') Then
+    // DML - PESSOA ============================================================
+    // =========================================================================
 
-      // Atualiza Transacao ====================================================
-      DMBelShop.SQLC.Commit(TD);
+    // =========================================================================
+    // DML - CAMPANHA ==========================================================
+    // =========================================================================
+    // Altera Campanha =========================================================
+    If (sTipo='C') And (sDML='UI') Then
+    Begin
+      MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR'+
+             ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
+             ' VALUES (28, '+ // TIP_AUX - 28 => CALCULO DE COMISSÃO SOBRE CAMPANHAS sobre Venda LinxProduto.Id_Colecao
+             DMComissaoVendedor.CDS_CampCampanhasCOD_CAMPANHA.AsString+', '+ // COD_AUX  = Código da Campanha: LinxProduto.Id_Colecao
+             QuotedStr(DMComissaoVendedor.CDS_CampCampanhasDES_CAMPANHA.AsString)+', '+ // DES_AUX  = Descrição da Campanha
+             ' NULL, '+ // DES_AUX1 = --> Não Usado
+             QuotedStr(f_Troca(',','.',CurrToStr(EdtCampColecaoCampPerc.Value)))+', '+ // VLR_AUX  = Percentual Sobre Faturamento
+             QuotedStr(f_Troca(',','.',CurrToStr(EdtCampColecaoCampVlr.Value)))+')'+ // VLR_AUX1 = Preço Sobre Unidades Vendidas
+             ' MATCHING (TIP_AUX, COD_AUX)';
+    End; // If (sTipo='C') And (sDML='UI') Then
+    // DML - CAMPANHA ==========================================================
+    // =========================================================================
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
 
-      CampanhaComissaoTabelas('P');
+    // Atualiza Transacao ====================================================
+    DMBelShop.SQLC.Commit(TD);
 
-    Except // Except da Transação
-      on e : Exception do
-      Begin
-        // Abandona Transacao ==================================================
-        DMBelShop.SQLC.Rollback(TD);
+    If sTipo='P' Then
+     CampanhaComissaoTabelas('P');
 
-        MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-      End; // on e : Exception do
-    End; // Try da Transação
-    DateSeparator:='/';
-    DecimalSeparator:=',';
+    If sTipo='C' Then
+     CampanhaComissaoTabelas('C');
 
-    OdirPanApres.Visible:=False;
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ==================================================
+      DMBelShop.SQLC.Rollback(TD);
 
-    Screen.Cursor:=crDefault;
-  End; // If sTipo='P' Then
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+
+  OdirPanApres.Visible:=False;
+
+  Screen.Cursor:=crDefault;
+
 End; // CAMPANHA COMISSAO - Update / Insert Tabelas Pessoa/Campanhas>>>>>>>>>>>>
 
 // CAMPANHA COMISSAO - Consiste Dados de Pessoa >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -460,6 +628,29 @@ Begin
   // sTipo='C' Campanhas
   Result:=False;
 
+  //============================================================================
+  // Consisite Campanha ========================================================
+  //============================================================================
+  If sTipo='C' Then
+  Begin
+    If Trim(EdtCampColecaoCampNome.Text)='' Then
+    Begin
+      msg('Favor Selecionar a Campanha !!','A');
+      EdtCampColecaoCampPerc.SetFocus;
+      Exit;
+    End;
+
+    If (EdtCampColecaoCampPerc.Value=0) and (EdtCampColecaoCampVlr.Value=0) Then
+    Begin
+      msg('A Campanha Selecionada NÃO Será'+cr+'Utilizada nos Cálculos...'+cr+cr+'Percentual e Valor Zerados !!','A');
+    End;
+  End; // If sTipo='C' Then
+  // Consisite Campanha ========================================================
+  //============================================================================
+
+  //============================================================================
+  // Consisite Pessoa ==========================================================
+  //============================================================================
   If sTipo='P' Then
   Begin
     If Trim(EdtCampColecaoPessNome.Text)='' Then
@@ -478,11 +669,14 @@ Begin
 
     If (EdtCampColecaoPessPerc.Value=0) and (EdtCampColecaoPessVlr.Value=0) Then
     Begin
-      msg('Favor Informar o %/Venda ou $/Unid !!','A');
+      msg('Favor Informar o'+cr+'Percentual Sobre a Venda'+cr+'e/ou'+cr+'Valor Sobre a Unidade Vendida','A');
       EdtCampColecaoPessPerc.SetFocus;
       Exit;
     End;
   End; // If sTipo='P' Then
+  // Consisite Pessoa ==========================================================
+  //============================================================================
+
   Result:=True;
 End; // CAMPANHA COMISSAO - Consiste Dados de Pessoa >>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -1043,13 +1237,11 @@ begin
 
   If (PC_ComissaoVendedor.ActivePage=Ts_CampColecao) And (Ts_CampColecao.CanFocus) Then
   Begin
-    Bt_Clipboard.Visible:=False;
-    Rb_ComisVendSintetico.Visible:=False;
-    Rb_ComisVendAnalitico.Visible:=False;
-
     // Busca Gerente/Supervidores/Assistentes e Campanhas ======================
     CampanhaComissaoTabelas();
+    PC_CampColecaoChange(Self);
   End;
+
 end;
 
 procedure TFrmComissaoVendedor.Dbg_UltimaAtualizacaoDblClick( Sender: TObject);
@@ -1950,78 +2142,88 @@ procedure TFrmComissaoVendedor.Bt_ImportaProdutosClick(Sender: TObject);
 Var
   MySql: String;
 begin
-  If Not ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A') Then
+  //============================================================================
+  If (Sender as TJvXPButton).Caption='Comissão Por Campanha' Then
   Begin
-    msg('Erro de Conexão ao Banco de Dados do CD !!','X');
-    Exit;
-  End;
+    CampanhaComissaoCalcular;
+  End; // If (Sender as TJvXPButton).Caption='Comissão Por Campanha' Then
 
-  If msg('Deseja Realmente IMPORTAR'+cr+'PRODUTOS AGORA ??','C')=2 Then
-   Exit;
-
-  Dbg_Aplicacao.SetFocus;
-
-  OdirPanApres.Caption:='AGUARDE !! Importando Produtos';
-  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Width-OdirPanApres.Width)/2));
-  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Height-OdirPanApres.Height)/2))-20;
-  OdirPanApres.Font.Style:=[fsBold];
-  OdirPanApres.Parent:=FrmComissaoVendedor;
-  OdirPanApres.BringToFront();
-  OdirPanApres.Visible:=True;
-  Application.ProcessMessages;
-
-  FrmBelShop.CriaQueryIB('IBDB_99','IBT_99', DMComissaoVendedor.IBQ_ProdutoMPMS, True, False);
-
-  If DMBelShop.SQLC.InTransaction Then
-   DMBelShop.SQLC.Rollback(TD);
-
-  // Monta Transacao ===========================================================
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMBelShop.SQLC.StartTransaction(TD);
-  Try
-    DateSeparator:='.';
-    DecimalSeparator:='.';
-
-    DMComissaoVendedor.IBQ_ProdutoMPMS.Close;
-    DMComissaoVendedor.IBQ_ProdutoMPMS.Open;
-
-    While Not DMComissaoVendedor.IBQ_ProdutoMPMS.Eof do
+  //============================================================================
+  If (Sender as TJvXPButton).Caption='Busca Produtos CD' Then
+  Begin
+    If Not ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A') Then
     Begin
-      MySql:=DMComissaoVendedor.IBQ_ProdutoMPMSUPDATE_INSERT.AsString;
-      DMBelShop.SQLC.Execute(MySql,nil,nil);
+      msg('Erro de Conexão ao Banco de Dados do CD !!','X');
+      Exit;
+    End;
 
-     DMComissaoVendedor.IBQ_ProdutoMPMS.Next;
-    End; // While Not DMComissaoVendedor.IBQ_ProdutoMPMS.Eof do
-    DMComissaoVendedor.IBQ_ProdutoMPMS.Close;
+    If msg('Deseja Realmente IMPORTAR'+cr+'PRODUTOS AGORA ??','C')=2 Then
+     Exit;
 
-    // Atualiza Transacao =======================================
-    DMBelShop.SQLC.Commit(TD);
+    Dbg_Aplicacao.SetFocus;
 
-    DateSeparator:='/';
-    DecimalSeparator:=',';
+    OdirPanApres.Caption:='AGUARDE !! Importando Produtos';
+    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmComissaoVendedor;
+    OdirPanApres.BringToFront();
+    OdirPanApres.Visible:=True;
+    Application.ProcessMessages;
 
-    msg('Importação de Produtos'+cr+'Efetuado com Sucesso !!','A');
+    FrmBelShop.CriaQueryIB('IBDB_99','IBT_99', DMComissaoVendedor.IBQ_ProdutoMPMS, True, False);
 
-  Except
-    on e : Exception do
-    Begin
-      // Abandona Transacao =====================================
-      DMBelShop.SQLC.Rollback(TD);
+    If DMBelShop.SQLC.InTransaction Then
+     DMBelShop.SQLC.Rollback(TD);
+
+    // Monta Transacao ===========================================================
+    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMBelShop.SQLC.StartTransaction(TD);
+    Try
+      DateSeparator:='.';
+      DecimalSeparator:='.';
 
       DMComissaoVendedor.IBQ_ProdutoMPMS.Close;
+      DMComissaoVendedor.IBQ_ProdutoMPMS.Open;
+
+      While Not DMComissaoVendedor.IBQ_ProdutoMPMS.Eof do
+      Begin
+        MySql:=DMComissaoVendedor.IBQ_ProdutoMPMSUPDATE_INSERT.AsString;
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+       DMComissaoVendedor.IBQ_ProdutoMPMS.Next;
+      End; // While Not DMComissaoVendedor.IBQ_ProdutoMPMS.Eof do
+      DMComissaoVendedor.IBQ_ProdutoMPMS.Close;
+
+      // Atualiza Transacao =======================================
+      DMBelShop.SQLC.Commit(TD);
 
       DateSeparator:='/';
       DecimalSeparator:=',';
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-            
-    End; // on e : Exception do
-  End; // Try
 
-  OdirPanApres.Visible:=False;
+      msg('Importação de Produtos'+cr+'Efetuado com Sucesso !!','A');
 
-  ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+    Except
+      on e : Exception do
+      Begin
+        // Abandona Transacao =====================================
+        DMBelShop.SQLC.Rollback(TD);
+
+        DMComissaoVendedor.IBQ_ProdutoMPMS.Close;
+
+        DateSeparator:='/';
+        DecimalSeparator:=',';
+        MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+
+      End; // on e : Exception do
+    End; // Try
+
+    OdirPanApres.Visible:=False;
+
+    ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+  End; // If (Sender as TJvXPButton).Caption='Busca Produtos CD' Then
 end;
 
 procedure TFrmComissaoVendedor.Bt_CalculaComiisaoClick(Sender: TObject);
@@ -2380,12 +2582,21 @@ end;
 procedure TFrmComissaoVendedor.Bt_ClipboardClick(Sender: TObject);
 begin
 
-  If DMComissaoVendedor.CDS_ComisVendedores.IsEmpty Then
-   Exit;
+  If (PC_ComissaoVendedor.ActivePage=Ts_Comissoes) And (Ts_Comissoes.CanFocus) Then
+  Begin
+    If DMComissaoVendedor.CDS_ComisVendedores.IsEmpty Then
+     Exit;
 
-  Dbg_ComisVendedores.SetFocus;
+    Dbg_ComisVendedores.SetFocus;
 
-  DBGridClipboard(Dbg_ComisVendedores);
+    DBGridClipboard(Dbg_ComisVendedores);
+  End; // If (PC_ComissaoVendedor.ActivePage=Ts_Comissoes) And (Ts_Comissoes.CanFocus) Then
+
+  If (PC_ComissaoVendedor.ActivePage=Ts_CampColecao) And (Ts_CampColecao.CanFocus) Then
+  Begin
+    ShowMessage('OK');
+  End; // If (PC_ComissaoVendedor.ActivePage=Ts_CampColecao) And (Ts_CampColecao.CanFocus) Then
+
 end;
 
 procedure TFrmComissaoVendedor.Dbg_ComisVendedoresExit(Sender: TObject);
@@ -2430,6 +2641,23 @@ end;
 procedure TFrmComissaoVendedor.PC_CampColecaoChange(Sender: TObject);
 begin
   CorSelecaoTabSheet(PC_CampColecao);
+
+  If (PC_CampColecao.ActivePage=Ts_CampColecaoCadastro) And (Ts_CampColecaoCadastro.CanFocus) Then
+  Begin
+    Bt_ImportaProdutos.Visible:=False;
+    Bt_Clipboard.Visible:=False;
+    Rb_ComisVendSintetico.Visible:=False;
+    Rb_ComisVendAnalitico.Visible:=False;
+  End;
+
+  If (PC_CampColecao.ActivePage=Ts_CampColecaoComissao) And (Ts_CampColecaoComissao.CanFocus) Then
+  Begin
+    Bt_Clipboard.Visible:=True;
+
+    Bt_ImportaProdutos.Caption:='Comissão Por Campanha';
+    Bt_ImportaProdutos.Visible:=True;
+
+  End;
 
 end;
 
@@ -2526,7 +2754,6 @@ begin
   DMComissaoVendedor.CDS_V_CampPessoas.Locate('COD_AUX',i,[]);
 
   Dbg_CampColecaoPessoas.SetFocus;
-
 end;
 
 procedure TFrmComissaoVendedor.Dbg_CampColecaoPessoasKeyDown(
@@ -2585,87 +2812,117 @@ begin
   {
    Usado em:
    Bt_CampColecaoPessoasAlt
+   Bt_CampColecaoCampAltClick
   }
 
-  // Incluir Pessoa ==========================================================
-  If (Sender as TJvXPButton).Name='Bt_CampColecaoPessoasInc' Then
+  //============================================================================
+  // Altera Percentaul e Valor da Camapanha ====================================
+  //============================================================================
+  If (Sender as TJvXPButton).Name='Bt_CampColecaoCampAlt' Then
+  Begin
+    If Not CampanhaComissaoConsiste('C') Then
+     Exit;
+
+    // Executa DML =============================================================
+    CampanhaComissaoDML('UI', 'C');
+
+    Bt_CampColecaoCampAbanClick(Self);
+  End; // If (Sender as TJvXPButton).Name='Bt_CampColecaoCampAlt' Then
+  // Altera Percentaul e Valor da Camapanha ====================================
+  //============================================================================
+
+  //============================================================================
+  // Altera / Inclui Pessoa ====================================================
+  //============================================================================
+  If ((Sender as TJvXPButton).Name='Bt_CampColecaoPessoasInc') Or ((Sender as TJvXPButton).Name='Bt_CampColecaoPessoasAlt') Then
   Begin
     If Not CampanhaComissaoConsiste('P') Then
      Exit;
 
-    // Solicita Empresas =====================================================
-    FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
-    FrmSelectEmpProcessamento.bUsarMatriz:=False;
-
-    FrmSelectEmpProcessamento.Bt_SelectEmpProcMarcaTodos.Visible:=False;
-    FrmSelectEmpProcessamento.Bt_SelectEmpProcDesMarcaTodos.Visible:=False;
-
-    While b do
+    // Inclui Pessoa ===========================================================
+    If (Sender as TJvXPButton).Name='Bt_CampColecaoPessoasInc' Then
     Begin
-      FrmSelectEmpProcessamento.ShowModal;
+      // Solicita Empresas =====================================================
+      FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
+      FrmSelectEmpProcessamento.bUsarMatriz:=False;
 
-      // Somente uma Loja ====================================================
-      If FrmSelectEmpProcessamento.iNrEmpProc<>1 Then
-       msg('Selecione uma Loja !!','A')
-      Else
-      b:=False;
-    End; // While b do
-    FreeAndNil(FrmSelectEmpProcessamento);
+      FrmSelectEmpProcessamento.Bt_SelectEmpProcMarcaTodos.Visible:=False;
+      FrmSelectEmpProcessamento.Bt_SelectEmpProcDesMarcaTodos.Visible:=False;
 
-    // Busca Loja Selecionada ================================================
-    DMBelShop.CDS_EmpProcessa.First;
-    While Not DMBelShop.CDS_EmpProcessa.Eof do
-    Begin
-      If DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
+      While b do
       Begin
-        iCodLoja:=DMBelShop.CDS_EmpProcessaCOD_LINX.AsInteger;
-        Break;
-      End; // If DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
+        FrmSelectEmpProcessamento.ShowModal;
 
-      DMBelShop.CDS_EmpProcessa.Next;
-    End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
-    DMBelShop.CDS_EmpProcessa.Close;
+        // Somente uma Loja ====================================================
+        If FrmSelectEmpProcessamento.iNrEmpProc<>1 Then
+         msg('Selecione uma Loja !!','A')
+        Else
+        b:=False;
+      End; // While b do
+      FreeAndNil(FrmSelectEmpProcessamento);
 
-    // Busca o Proximo Código da Loja da Pessoa ==============================
-    // - COD_AUX  = Código da Loja + Codigo da Função:
-    //           01 a 30 - Gerente    = Exemplo Loja 15 = 1501, 1502, ... 1530
-    //           31 a 60 - Supervidor = Exemplo Loja 15 = 1531, 1532, ... 1560
-    //           61 a 99 - Assistente = Exemplo Loja 15 = 1561, 1562, ... 1599
-    If Cbx_CampColecaoPessCargo.Text='GERENTE' Then
-    Begin
-      iMinLoja:=1;
-      iMaxLoja:=30;
-    End;
+      // Busca Loja Selecionada ================================================
+      DMBelShop.CDS_EmpProcessa.First;
+      While Not DMBelShop.CDS_EmpProcessa.Eof do
+      Begin
+        If DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
+        Begin
+          iCodLoja:=DMBelShop.CDS_EmpProcessaCOD_LINX.AsInteger;
+          Break;
+        End; // If DMBelShop.CDS_EmpProcessaPROC.AsString='SIM' Then
 
-    If Cbx_CampColecaoPessCargo.Text='SUPERVISOR' Then
-    Begin
-      iMinLoja:=31;
-      iMaxLoja:=60;
-    End;
+        DMBelShop.CDS_EmpProcessa.Next;
+      End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
+      DMBelShop.CDS_EmpProcessa.Close;
 
-    If Cbx_CampColecaoPessCargo.Text='ASSISTENTE' Then
-    Begin
-      iMinLoja:=61;
-      iMaxLoja:=99;
-    End;
+      // Busca o Proximo Código da Loja da Pessoa ==============================
+      // - COD_AUX  = Código da Loja + Codigo da Função:
+      //           01 a 30 - Gerente    = Exemplo Loja 15 = 1501, 1502, ... 1530
+      //           31 a 60 - Supervidor = Exemplo Loja 15 = 1531, 1532, ... 1560
+      //           61 a 99 - Assistente = Exemplo Loja 15 = 1561, 1562, ... 1599
+      If Cbx_CampColecaoPessCargo.Text='GERENTE' Then
+      Begin
+        iMinLoja:=1;
+        iMaxLoja:=30;
+      End;
 
-    // Busca o Proximo Código da Loja da Pessoa ==============================
-    MySql:=' SELECT COALESCE(MAX(t.cod_aux)+1 ,('+IntToStr(iCodLoja)+'*100)+1) CODIGO'+
-           ' FROM TAB_AUXILIAR t'+
-           ' WHERE t.tip_aux=27'+ // 27 => CALCULO DE COMISSÃO SOBRE CAMPANHAS sobre Venda LinxProduto.Id_Colecao
-           ' AND   t.cod_aux BETWEEN ('+IntToStr(iCodLoja)+'*100)+'+IntToStr(iMinLoja)+' AND ('+
-                                        IntToStr(iCodLoja)+'*100)+'+IntToStr(iMaxLoja);
-    DMBelShop.SQLQuery3.Close;
-    DMBelShop.SQLQuery3.SQL.Clear;
-    DMBelShop.SQLQuery3.SQL.Add(MySql);
-    DMBelShop.SQLQuery3.Open;
-    EdtCampColecaoPessCod.AsInteger:=DMBelShop.SQLQuery3.FieldByName('Codigo').AsInteger;
-    DMBelShop.SQLQuery3.Close;
-  End;
+      If Cbx_CampColecaoPessCargo.Text='SUPERVISOR' Then
+      Begin
+        iMinLoja:=31;
+        iMaxLoja:=60;
+      End;
 
-  CampanhaComissaoDML('UI', 'P');
+      If Cbx_CampColecaoPessCargo.Text='ASSISTENTE' Then
+      Begin
+        iMinLoja:=61;
+        iMaxLoja:=99;
+      End;
 
-  Bt_CampColecaoPessoasAbanClick(Self);
+      // Busca o Proximo Código da Loja da Pessoa ==============================
+      MySql:=' SELECT COALESCE(MAX(t.cod_aux)+1 ,('+IntToStr(iCodLoja)+'*100)+1) CODIGO'+
+             ' FROM TAB_AUXILIAR t'+
+             ' WHERE t.tip_aux=27'+ // 27 => CALCULO DE COMISSÃO SOBRE CAMPANHAS sobre Venda LinxProduto.Id_Colecao
+             ' AND   t.cod_aux BETWEEN ('+IntToStr(iCodLoja)+'*100)+'+IntToStr(iMinLoja)+' AND ('+
+                                          IntToStr(iCodLoja)+'*100)+'+IntToStr(iMaxLoja);
+      DMBelShop.SQLQuery3.Close;
+      DMBelShop.SQLQuery3.SQL.Clear;
+      DMBelShop.SQLQuery3.SQL.Add(MySql);
+      DMBelShop.SQLQuery3.Open;
+      EdtCampColecaoPessCod.AsInteger:=DMBelShop.SQLQuery3.FieldByName('Codigo').AsInteger;
+      DMBelShop.SQLQuery3.Close;
+      DMBelShop.SQLQuery3.SQL.Clear;
+
+    End; // If (Sender as TJvXPButton).Name='Bt_CampColecaoPessoasInc' Then
+
+    // Executa DML =============================================================
+    CampanhaComissaoDML('UI', 'P');
+
+    Bt_CampColecaoPessoasAbanClick(Self);
+  End; // If ((Sender as TJvXPButton).Name='Bt_CampColecaoPessoasInc') Or ((Sender as TJvXPButton).Name='Bt_CampColecaoPessoasAlt') Then
+  //============================================================================
+  // Altera / Inclui Pessoa ====================================================
+  //============================================================================
+
 end;
 
 procedure TFrmComissaoVendedor.Bt_CampColecaoPessoasExcClick(Sender: TObject);
@@ -2691,7 +2948,7 @@ procedure TFrmComissaoVendedor.Dbg_CampColecaoCampDrawColumnCell(
   State: TGridDrawState);
 begin
   // Quando Percentual e Valor Igual a Zero Celular = Vermelha =================
-  If ((Column.FieldName='PER_FAT') Or (Column.FieldName='VLR_UNID')) And (Trim(DMComissaoVendedor.CDS_V_CampPessoasCARGO.AsString)<>'') Then // Este comando altera cor da Celula
+  If ((Column.FieldName='PER_FAT') Or (Column.FieldName='VLR_UNID')) And (Trim(DMComissaoVendedor.CDS_CampCampanhasDES_CAMPANHA.AsString)<>'') Then // Este comando altera cor da Celula
   Begin
     If (DMComissaoVendedor.CDS_CampCampanhasPER_FAT.AsCurrency=0.00) And
        (DMComissaoVendedor.CDS_CampCampanhasVLR_UNID.AsCurrency=0.00) Then
@@ -2717,21 +2974,22 @@ begin
   If DMComissaoVendedor.CDS_CampCampanhas.IsEmpty Then
    Exit;
 
-  EdtCampColecaoCampNome.Text :=DMComissaoVendedor.CDS_CampCampanhasDES_CAMPANHA.AsString;
-  EdtCampColecaoCampPerc.Value:=DMComissaoVendedor.CDS_CampCampanhasPER_FAT.AsCurrency;
-  EdtCampColecaoCampVlr.Value :=DMComissaoVendedor.CDS_CampCampanhasVLR_UNID.AsCurrency;
-
+  EdtCampColecaoCampCod.AsInteger:=DMComissaoVendedor.CDS_CampCampanhasCOD_CAMPANHA.AsInteger;
+  EdtCampColecaoCampNome.Text    :=DMComissaoVendedor.CDS_CampCampanhasDES_CAMPANHA.AsString;
+  EdtCampColecaoCampPerc.Value   :=DMComissaoVendedor.CDS_CampCampanhasPER_FAT.AsCurrency;
+  EdtCampColecaoCampVlr.Value    :=DMComissaoVendedor.CDS_CampCampanhasVLR_UNID.AsCurrency;
+  EdtCampColecaoCampPerc.SetFocus;
 end;
 
 procedure TFrmComissaoVendedor.Bt_CampColecaoCampAbanClick(Sender: TObject);
-Var
-  i: Integer;
 begin
-  i:=DMComissaoVendedor.CDS_CampCampanhasCOD_CAMPANHA.AsInteger
 
-  CampanhaComissaoTabelas('C');
+  DMComissaoVendedor.CDS_CampCampanhas.Locate('COD_CAMPANHA',EdtCampColecaoCampCod.AsInteger,[]);
 
-  DMComissaoVendedor.CDS_CampCampanhas.Locate('COD_CAMPANHA',i,[]);
+  EdtCampColecaoCampCod.Clear;
+  EdtCampColecaoCampNome.Clear;
+  EdtCampColecaoCampPerc.Clear;
+  EdtCampColecaoCampVlr.Clear;
 
   Dbg_CampColecaoCamp.SetFocus;
 

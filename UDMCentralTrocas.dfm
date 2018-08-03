@@ -1,8 +1,8 @@
 object DMCentralTrocas: TDMCentralTrocas
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 238
-  Top = 115
+  Left = 242
+  Top = 114
   Height = 607
   Width = 1053
   object SDS_Transf_Cd: TSQLDataSet
@@ -507,8 +507,8 @@ object DMCentralTrocas: TDMCentralTrocas
     AggregatesActive = True
     Params = <>
     ProviderName = 'DSP_Transf_Cd'
-    Left = 309
-    Top = 24
+    Left = 277
+    Top = 16
     object CDS_V_GeralCodBarras: TStringField
       FieldName = 'CodBarras'
       Size = 13
@@ -521,7 +521,7 @@ object DMCentralTrocas: TDMCentralTrocas
     ProviderName = 'DSP_ReposicaoDocs'
     AfterOpen = CDS_ReposicaoDocsAfterOpen
     AfterScroll = CDS_ReposicaoDocsAfterScroll
-    Left = 499
+    Left = 504
     Top = 48
     object CDS_ReposicaoDocsCOD_LOJA: TStringField
       Alignment = taRightJustify

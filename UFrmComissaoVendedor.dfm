@@ -1,12 +1,12 @@
 object FrmComissaoVendedor: TFrmComissaoVendedor
-  Left = 238
-  Top = 107
+  Left = 244
+  Top = 117
   ActiveControl = PC_CampColecao
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Comiss'#227'o Vendedores'
   ClientHeight = 578
-  ClientWidth = 977
+  ClientWidth = 1029
   Color = clWindow
   Ctl3D = False
   Font.Charset = DEFAULT_CHARSET
@@ -25,9 +25,9 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
   TextHeight = 13
   object Panel38: TPanel
     Left = 0
-    Top = 543
-    Width = 977
-    Height = 35
+    Top = 539
+    Width = 1029
+    Height = 39
     Align = alBottom
     BevelInner = bvLowered
     BorderStyle = bsSingle
@@ -36,10 +36,10 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
     TabOrder = 0
     object Bt_FluFornFechar: TJvXPButton
       Tag = 99
-      Left = 873
+      Left = 925
       Top = 2
       Width = 100
-      Height = 29
+      Height = 33
       Caption = 'Fechar'
       TabOrder = 0
       TabStop = False
@@ -58,7 +58,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
       Left = 2
       Top = 2
       Width = 159
-      Height = 29
+      Height = 33
       Caption = 'Busca Produtos CD'
       TabOrder = 1
       TabStop = False
@@ -77,8 +77,8 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
       Tag = 4
       Left = 161
       Top = 2
-      Width = 143
-      Height = 29
+      Width = 155
+      Height = 33
       Caption = 'Salvar em Mem'#243'ria'
       TabOrder = 2
       Glyph.Data = {
@@ -180,8 +180,8 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
   object PC_ComissaoVendedor: TPageControl
     Left = 0
     Top = 0
-    Width = 977
-    Height = 543
+    Width = 1029
+    Height = 539
     ActivePage = Ts_CampColecao
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
@@ -200,7 +200,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         Left = 0
         Top = 0
         Width = 433
-        Height = 515
+        Height = 511
         Align = alLeft
         Caption = ' '#218'ltimas Atualiza'#231#245'es '
         Font.Charset = DEFAULT_CHARSET
@@ -212,7 +212,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         TabOrder = 0
         object Panel1: TPanel
           Left = 1
-          Top = 479
+          Top = 475
           Width = 431
           Height = 35
           Align = alBottom
@@ -245,7 +245,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           Left = 1
           Top = 14
           Width = 431
-          Height = 441
+          Height = 437
           Align = alClient
           Color = 15004403
           Ctl3D = False
@@ -312,7 +312,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         end
         object dxStatusBar2: TdxStatusBar
           Left = 1
-          Top = 455
+          Top = 451
           Width = 431
           Height = 24
           Panels = <
@@ -343,8 +343,8 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
       object Gb_ProdutosComissao: TGroupBox
         Left = 433
         Top = 0
-        Width = 536
-        Height = 515
+        Width = 588
+        Height = 511
         Align = alClient
         Caption = ' Produtos/Comiss'#227'o '
         Font.Charset = DEFAULT_CHARSET
@@ -357,8 +357,8 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         object Dbg_ProdutosComissao: TDBGrid
           Left = 1
           Top = 14
-          Width = 534
-          Height = 441
+          Width = 586
+          Height = 437
           Align = alClient
           Color = 15004403
           Ctl3D = False
@@ -441,8 +441,8 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         end
         object dxStatusBar1: TdxStatusBar
           Left = 1
-          Top = 455
-          Width = 534
+          Top = 451
+          Width = 586
           Height = 24
           Panels = <
             item
@@ -464,8 +464,8 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         end
         object Panel2: TPanel
           Left = 1
-          Top = 479
-          Width = 534
+          Top = 475
+          Width = 586
           Height = 35
           Align = alBottom
           BevelInner = bvLowered
@@ -483,7 +483,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
       object Panel3: TPanel
         Left = 0
         Top = 0
-        Width = 969
+        Width = 1021
         Height = 38
         Align = alTop
         BevelInner = bvLowered
@@ -573,8 +573,8 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
       object Dbg_ComisVendedores: TDBGrid
         Left = 0
         Top = 38
-        Width = 969
-        Height = 477
+        Width = 1021
+        Height = 473
         Align = alClient
         Color = 15004403
         Ctl3D = False
@@ -666,8 +666,8 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
       Caption = ' Parametros Vendedores '
       ImageIndex = 2
       DesignSize = (
-        969
-        515)
+        1021
+        511)
       object Gb_FamiliaPrecos: TGroupBox
         Left = 433
         Top = 9
@@ -781,7 +781,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         end
       end
       object Gb_Aplicacoes: TGroupBox
-        Left = 88
+        Left = 140
         Top = 9
         Width = 338
         Height = 478
@@ -887,8 +887,8 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
       end
       object dxStatusBar3: TdxStatusBar
         Left = 0
-        Top = 491
-        Width = 969
+        Top = 487
+        Width = 1021
         Height = 24
         Panels = <
           item
@@ -916,9 +916,9 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
       object PC_CampColecao: TPageControl
         Left = 0
         Top = 0
-        Width = 969
-        Height = 515
-        ActivePage = Ts_CampColecaoCadastro
+        Width = 1021
+        Height = 511
+        ActivePage = Ts_CampColecaoComissao
         Align = alClient
         TabOrder = 0
         OnChange = PC_CampColecaoChange
@@ -929,16 +929,16 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           object Gb_CampColecaoCampanhas: TGroupBox
             Left = 500
             Top = 0
-            Width = 461
-            Height = 487
+            Width = 513
+            Height = 483
             Align = alClient
             Caption = ' Companhas a Processar '
-            TabOrder = 0
+            TabOrder = 1
             object Dbg_CampColecaoCamp: TDBGrid
               Left = 1
               Top = 89
-              Width = 459
-              Height = 373
+              Width = 511
+              Height = 369
               Align = alClient
               Ctl3D = False
               DataSource = DMComissaoVendedor.DS_CampCampanhas
@@ -995,7 +995,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
             object Pan_CampColecaoCamp: TPanel
               Left = 1
               Top = 14
-              Width = 459
+              Width = 511
               Height = 75
               Align = alTop
               TabOrder = 1
@@ -1103,11 +1103,22 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
                 ParentFont = False
                 TabOrder = 1
               end
+              object EdtCampColecaoCampCod: TCurrencyEdit
+                Left = 240
+                Top = 8
+                Width = 31
+                Height = 19
+                AutoSize = False
+                DecimalPlaces = 0
+                DisplayFormat = '0'
+                TabOrder = 5
+                Visible = False
+              end
             end
             object dxStatusBar5: TdxStatusBar
               Left = 1
-              Top = 462
-              Width = 459
+              Top = 458
+              Width = 511
               Height = 24
               Panels = <
                 item
@@ -1116,7 +1127,19 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
                   PanelStyle.Color = clSilver
                   Fixed = False
                   Text = '<Duplo Click> Para Selecionar'
-                  Width = 65
+                  Width = 40
+                end
+                item
+                  PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                  PanelStyle.Alignment = taCenter
+                  PanelStyle.Font.Charset = DEFAULT_CHARSET
+                  PanelStyle.Font.Color = clRed
+                  PanelStyle.Font.Height = -11
+                  PanelStyle.Font.Name = 'MS Sans Serif'
+                  PanelStyle.Font.Style = [fsBold]
+                  PanelStyle.ParentFont = False
+                  Fixed = False
+                  Text = '<% e $ Zerados> N'#227'o Entra no Calculo'
                 end>
               PaintStyle = stpsOffice11
               SizeGrip = False
@@ -1132,15 +1155,15 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
             Left = 0
             Top = 0
             Width = 500
-            Height = 487
+            Height = 483
             Align = alLeft
             Caption = ' Pessoas '
-            TabOrder = 1
+            TabOrder = 0
             object Dbg_CampColecaoPessoas: TDBGrid
               Left = 1
               Top = 89
               Width = 498
-              Height = 373
+              Height = 369
               Align = alClient
               Ctl3D = False
               DataSource = DMComissaoVendedor.DS_V_CampPessoas
@@ -1387,7 +1410,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
             end
             object dxStatusBar4: TdxStatusBar
               Left = 1
-              Top = 462
+              Top = 458
               Width = 498
               Height = 24
               Panels = <
@@ -1420,6 +1443,108 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
           Tag = 9999
           Caption = ' Comiss'#245'es '
           ImageIndex = 1
+          object Dbg_CampComissoes: TDBGrid
+            Left = 0
+            Top = 0
+            Width = 1013
+            Height = 483
+            Align = alClient
+            Ctl3D = False
+            DataSource = DMComissaoVendedor.DS_V_CampComissoes
+            FixedColor = clTeal
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+            ParentCtl3D = False
+            ParentFont = False
+            ReadOnly = True
+            TabOrder = 0
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWhite
+            TitleFont.Height = -11
+            TitleFont.Name = 'MS Sans Serif'
+            TitleFont.Style = [fsBold]
+            Columns = <
+              item
+                Expanded = False
+                FieldName = 'CODIGO'
+                Title.Alignment = taRightJustify
+                Width = 34
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'DESCRICAO'
+                Width = 210
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'COD_CAMP'
+                Title.Alignment = taRightJustify
+                Width = 36
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'CAMPANHA'
+                Width = 200
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'QTD_ITENS'
+                Title.Alignment = taRightJustify
+                Width = 40
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'PONTOS_ITEM'
+                Title.Alignment = taRightJustify
+                Width = 60
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_COMIS_ITENS'
+                Title.Alignment = taRightJustify
+                Width = 90
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_FAT'
+                Title.Alignment = taRightJustify
+                Title.Caption = 'Vlr Vendas'
+                Width = 70
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'PER_FAT'
+                Title.Alignment = taRightJustify
+                Width = 52
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'VLR_COMIS_FAT'
+                Title.Alignment = taRightJustify
+                Width = 80
+                Visible = True
+              end
+              item
+                Expanded = False
+                FieldName = 'TOT_COMISSAO'
+                Title.Alignment = taRightJustify
+                Width = 90
+                Visible = True
+              end>
+          end
         end
       end
     end

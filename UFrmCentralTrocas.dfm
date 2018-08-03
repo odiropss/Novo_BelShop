@@ -1,6 +1,6 @@
 object FrmCentralTrocas: TFrmCentralTrocas
-  Left = 238
-  Top = 114
+  Left = 241
+  Top = 113
   Align = alClient
   AutoSize = True
   BorderIcons = [biSystemMenu]
@@ -1610,9 +1610,9 @@ object FrmCentralTrocas: TFrmCentralTrocas
           end
           object Bt_ReposLojasBuscaForn: TJvXPButton
             Left = 7
-            Top = 16
-            Width = 20
-            Height = 20
+            Top = 14
+            Width = 23
+            Height = 23
             TabOrder = 1
             TabStop = False
             Glyph.Data = {

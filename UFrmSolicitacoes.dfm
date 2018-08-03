@@ -403,7 +403,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 452
-    ActivePage = Ts_ReposDivergencias
+    ActivePage = Ts_QualquerCoisa
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -11665,27 +11665,27 @@ object FrmSolicitacoes: TFrmSolicitacoes
   object CDS_: TClientDataSet
     Aggregates = <>
     Params = <>
-    Left = 460
-    Top = 400
+    Left = 492
+    Top = 368
   end
   object ADOC_Excel: TADOConnection
     LoginPrompt = False
     Mode = cmShareDenyNone
     Provider = 'Microsoft.Jet.OLEDB.4.0'
-    Left = 404
-    Top = 400
+    Left = 420
+    Top = 392
   end
   object ADOT_Dcto: TADOTable
     Connection = ADOC_Excel
     CursorType = ctStatic
     LockType = ltReadOnly
     TableDirect = True
-    Left = 327
-    Top = 400
+    Left = 343
+    Top = 360
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 249
-    Top = 378
+    Left = 281
+    Top = 330
   end
 end
