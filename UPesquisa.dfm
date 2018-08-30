@@ -1,6 +1,6 @@
 object FrmPesquisa: TFrmPesquisa
-  Left = 275
-  Top = 114
+  Left = 350
+  Top = 117
   ActiveControl = EdtDescricao
   AutoSize = True
   BorderIcons = []
@@ -416,7 +416,7 @@ object FrmPesquisa: TFrmPesquisa
     DesignSize = (
       481
       49)
-    object Label1: TLabel
+    object Lab_Pesquisa: TLabel
       Left = 17
       Top = 5
       Width = 58
@@ -485,10 +485,13 @@ object FrmPesquisa: TFrmPesquisa
     Ctl3D = True
     ParentCtl3D = False
     TabOrder = 2
+    DesignSize = (
+      481
+      39)
     object EdtCodigo: TEdit
-      Left = 192
+      Left = 120
       Top = 8
-      Width = 41
+      Width = 28
       Height = 21
       TabOrder = 0
       Visible = False
@@ -562,6 +565,39 @@ object FrmPesquisa: TFrmPesquisa
       Font.Style = [fsBold]
       ParentFont = False
       OnClick = Bt_PesquisaRetornaClick
+    end
+    object Bt_PesquisaNovo: TJvXPButton
+      Left = 177
+      Top = 3
+      Width = 110
+      Height = 31
+      Caption = 'Incluir Novo'
+      TabOrder = 3
+      Glyph.Data = {
+        07544269746D617096010000424D960100000000000076000000280000001800
+        0000180000000100040000000000200100000000000000000000100000000000
+        0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+        C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+        FF00333333333333333333333333333333388888888888888833333333000000
+        000000000883333330BBBBBBBBBBBBBBB083333330B8000000000008B0833333
+        30B0FFFFFFFFFFF0B08333334FB0F777777777F0B083333344F0FFFFFFFFFFF0
+        B0833333444F7FFFFFFFFFF0B08334444444F7FF777777F0B083344444444F7F
+        FFFFFFF0B0833444444444F7FFFFFFF0B083344444444F7FF77777F0B0833444
+        4444F7FFFFFFFFF0B0833333444F7FFFFFFFFFF0B083333344F0FF77777777F0
+        B08333334FB0FFFFFFFFFFF0B083333330B0FFFFFFFFFFF0B083333330B0FF00
+        00000FF0B083333330B80007F7770008B083333330BBBBB07F70BBBBB0333333
+        33000000070000000333333333333330F7703333333333333333333000003333
+        3333}
+      ShowFocusRect = True
+      Anchors = [akTop]
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      Visible = False
+      OnClick = Bt_PesquisaNovoClick
     end
   end
 end

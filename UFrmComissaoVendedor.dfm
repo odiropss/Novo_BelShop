@@ -918,7 +918,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
         Top = 0
         Width = 1021
         Height = 511
-        ActivePage = Ts_CampColecaoComissao
+        ActivePage = Ts_CampColecaoCadastro
         Align = alClient
         TabOrder = 0
         OnChange = PC_CampColecaoChange
@@ -1467,6 +1467,7 @@ object FrmComissaoVendedor: TFrmComissaoVendedor
             TitleFont.Height = -11
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
+            OnDrawColumnCell = Dbg_CampComissoesDrawColumnCell
             Columns = <
               item
                 Expanded = False

@@ -160,6 +160,12 @@ const
 var
   FrmSolicTransf: TFrmSolicTransf;
 
+  // Show Hint em Forma de Balão
+  hTooltip: Cardinal;
+  ti: TToolInfo;
+  buffer : array[0..255] of char;
+  ///////////////////////////////
+
   // Cria Ponteiro de transacão ================================================
   TD: TTransactionDesc;
 
@@ -168,14 +174,10 @@ var
   : String;
 
 //  sgCodLojaVersaoOK: String;
-  
+
   igNumMaxProd, igQtdMaxProd: Integer;
 
-  // Show Hint em Forma de Balão
-  hTooltip: Cardinal;
-  ti: TToolInfo;
-  buffer : array[0..255] of char;
-  ///////////////////////////////
+  sgNrOCNova, sgNumSeqOCNova: String;
 
 implementation
 
@@ -694,6 +696,7 @@ end; // Show Hint em Forma de Balão - Usado no FormCreate >>>>>>>>>>>>>>>>>>>>>>
 procedure TFrmSolicTransf.EdtNFeCodFornLinxChange(Sender: TObject);
 begin
   DMSolicTransf.CDS_OCItensCheck.Close;
+  EdtNFeDesFornLinx.Clear;
   Lbx_NFeNumOCs.Items.Clear;
   EdtNFeNumNFe.Clear;
 end;
@@ -1918,11 +1921,49 @@ begin
   EdtNFeNumNFe.Clear;
   EdtNFeNumOC.Clear;
 
+  sgNumSeqOCNova:='';
+  sgNrOCNova:='';
+  bgOCNova:=False;
+  EdtNFeNumOC.Enabled:=True;
+  Bt_NFeBuscaOC.Enabled:=True;
+  Lbx_NFeNumOCs.Enabled:=True;
+
   If EdtNFeCodFornLinx.Value<>0 Then
   Begin
     Screen.Cursor:=crAppStart;
 
-    // Busca Lojas =============================================================
+    // Busca Fornecedores ========================================================
+    MySql:=' SELECT fo.nome_cliente des_forn_linx, fo.cod_cliente cod_forn_linx'+
+           ' FROM LINXCLIENTESFORNEC fo'+
+           ' WHERE fo.tipo_cliente IN (''F'',''A'',''J'')'+
+           ' AND   TRIM(COALESCE(fo.nome_cliente,''''))<>'''''+
+           ' AND   EXISTS(SELECT 1'+
+           '              FROM LINXPRODUTOS pr'+
+           '              WHERE pr.cod_fornecedor = fo.cod_cliente)'+
+           ' AND   fo.cod_cliente='+VarToStr(EdtNFeCodFornLinx.AsInteger)+
+
+           ' UNION '+
+
+           ' SELECT be.nome_cliente, be.cod_cliente'+
+           ' FROM LINXCLIENTESFORNEC be'+
+           ' WHERE UPPER(be.nome_cliente) LIKE ''%BELSHOP%'''+
+           ' AND   be.cod_cliente='+VarToStr(EdtNFeCodFornLinx.AsInteger);
+    DMSolicTransf.SQLQuery1.Close;
+    DMSolicTransf.SQLQuery1.SQL.Clear;
+    DMSolicTransf.SQLQuery1.SQL.Add(MySql);
+    DMSolicTransf.SQLQuery1.Open;
+
+    // ============== Verifica Existencia de Dados ===============================
+    If Trim(DMSolicTransf.SQLQuery1.FieldByName('des_forn_linx').AsString)='' Then
+    Begin
+      DMSolicTransf.SQLQuery1.Close;
+      msg('Fornecedor Não Encontrado !!','A');
+      EdtNFeCodFornLinx.SetFocus;
+      Exit;
+    End;
+    EdtNFeDesFornLinx.Text:=DMSolicTransf.SQLQuery1.FieldByName('des_forn_linx').AsString;
+
+    // Busca OC do Fornecedor ==================================================
     MySql:=' SELECT FIRST 1 fo.des_forn_linx, fo.cod_forn_linx'+
            ' FROM OC_LOJAS_NFE fo'+
            ' WHERE fo.cod_loja_linx='+sgLojaLinx+
@@ -1934,18 +1975,22 @@ begin
 
     If Trim(DMSolicTransf.SQLQuery1.FieldByName('des_forn_linx').AsString)='' Then
     Begin
-      msg('Fornecedor Sem Ordem de Compra !!!', 'A');
-      Screen.Cursor:=crDefault;
-      EdtNFeCodFornLinx.Clear;
-      EdtNFeCodFornLinx.SetFocus;
-      DMSolicTransf.SQLQuery1.Close;
-      Exit;
+      // OdirApagar - 08/08/2018
+      // msg('Fornecedor Sem Ordem de Compra !!!', 'A');
+      If msg('Fornecedor Sem Ordem de Compra !'+cr+cr+'Deseja Continuar ??', 'C')=2 Then
+      Begin
+        Screen.Cursor:=crDefault;
+        EdtNFeCodFornLinx.Clear;
+        EdtNFeCodFornLinx.SetFocus;
+        DMSolicTransf.SQLQuery1.Close;
+        Exit;
+      End; // If msg('Fornecedor Sem Ordem de Compra !'+cr+cr+'Deseja Continuar ??', 'C')=2 Then
     End;
-
-    EdtNFeDesFornLinx.Text:=DMSolicTransf.SQLQuery1.FieldByName('des_forn_linx').AsString;
-    EdtNFeNumNFe.SetFocus;
-
     DMSolicTransf.SQLQuery1.Close;
+
+    // OdirApagar - 08/08/2018
+    // EdtNFeDesFornLinx.Text:=DMSolicTransf.SQLQuery1.FieldByName('des_forn_linx').AsString;
+    EdtNFeNumNFe.SetFocus;
 
     Screen.Cursor:=crDefault;
   End;
@@ -1965,9 +2010,56 @@ begin
   // ========== EXECUTA QUERY PARA PESQUISA ====================================
   Screen.Cursor:=crAppStart;
 
-  MySql:=' SELECT DISTINCT fo.des_forn_linx, fo.cod_forn_linx'+
-         ' FROM OC_LOJAS_NFE fo'+
-         ' WHERE fo.cod_loja_linx='+sgLojaLinx+
+  // Busca Fornecedores ========================================================
+  MySql:=' SELECT fo.nome_cliente DES_FORN_LINX,'+
+         '        CASE'+
+         '          WHEN char_length(TRIM(fo.doc_cliente))=14 THEN'+
+         '            SUBSTRING(TRIM(fo.doc_cliente) FROM 1 FOR 2) || ''.'' ||'+
+         '            SUBSTRING(TRIM(fo.doc_cliente) FROM 3 for 3) || ''.'' ||'+
+         '            SUBSTRING(TRIM(fo.doc_cliente) FROM 6 for 3) || ''/'' ||'+
+         '            SUBSTRING(TRIM(fo.doc_cliente) FROM 9 for 4) || ''-'' ||'+
+         '            SUBSTRING(TRIM(fo.doc_cliente) FROM 13 for 2)'+
+         '          WHEN char_length(TRIM(fo.doc_cliente))=11 THEN'+
+         '            SUBSTRING(TRIM(fo.doc_cliente) FROM 1 for 3) || ''.'' ||'+
+         '            SUBSTRING(TRIM(fo.doc_cliente) FROM 4 for 3) || ''.'' ||'+
+         '            SUBSTRING(TRIM(fo.doc_cliente) FROM 7 for 3) || ''-'' ||'+
+         '            SUBSTRING(TRIM(fo.doc_cliente) FROM 10 for 2)'+
+         '          ELSE'+
+         '            TRIM(fo.doc_cliente)'+
+         '        End CNPJ_CPF,'+
+         '        fo.razao_cliente RAXAO_SOCIAL,'+
+         '        fo.cod_cliente COD_FORN_LINX'+
+         ' FROM LINXCLIENTESFORNEC fo'+
+         ' WHERE fo.tipo_cliente IN (''F'',''A'',''J'')'+
+         ' AND   TRIM(COALESCE(fo.nome_cliente,''''))<>'''''+
+         ' AND   EXISTS(SELECT 1'+
+         '              FROM LINXPRODUTOS pr'+
+         '              WHERE pr.cod_fornecedor = fo.cod_cliente)'+
+
+         ' UNION'+
+
+         ' SELECT be.nome_cliente,'+
+         '        CASE'+
+         '          WHEN char_length(TRIM(be.doc_cliente))=14 THEN'+
+         '            SUBSTRING(TRIM(be.doc_cliente) FROM 1 FOR 2) || ''.'' ||'+
+         '            SUBSTRING(TRIM(be.doc_cliente) FROM 3 for 3) || ''.'' ||'+
+         '            SUBSTRING(TRIM(be.doc_cliente) FROM 6 for 3) || ''/'' ||'+
+         '            SUBSTRING(TRIM(be.doc_cliente) FROM 9 for 4) || ''-'' ||'+
+         '            SUBSTRING(TRIM(be.doc_cliente) FROM 13 for 2)'+
+         '          WHEN char_length(TRIM(be.doc_cliente))=11 THEN'+
+         '            SUBSTRING(TRIM(be.doc_cliente) FROM 1 for 3) || ''.'' ||'+
+         '            SUBSTRING(TRIM(be.doc_cliente) FROM 4 for 3) || ''.'' ||'+
+         '            SUBSTRING(TRIM(be.doc_cliente) FROM 7 for 3) || ''-'' ||'+
+         '            SUBSTRING(TRIM(be.doc_cliente) FROM 10 for 2)'+
+         '          ELSE'+
+         '            TRIM(be.doc_cliente)'+
+         '        End CNPJ_CPF,'+
+         '        be.razao_cliente RAXAO_SOCIAL,'+
+         '        be.cod_cliente COD_FORN_LINX'+
+
+         ' FROM LINXCLIENTESFORNEC be'+
+         ' WHERE UPPER(be.nome_cliente) LIKE ''%BELSHOP%'''+
+
          ' ORDER BY 1';
   DMSolicTransf.CDS_Pesquisa.Close;
   DMSolicTransf.SQLQ_Pesquisa.Close;
@@ -1983,7 +2075,7 @@ begin
   If Trim(DMSolicTransf.CDS_Pesquisa.FieldByName('des_forn_linx').AsString)='' Then
   Begin
     DMSolicTransf.CDS_Pesquisa.Close;
-    msg('Sem Loja a Listar !!','A');
+    msg('Sem Fornecedor a Listar !!','A');
     EdtNFeCodFornLinx.SetFocus;
     FreeAndNil(FrmPesquisa);
     Exit;
@@ -2003,8 +2095,11 @@ begin
   If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
    Begin
      EdtNFeCodFornLinx.Text:=FrmPesquisa.EdtCodigo.Text;
-     EdtNFeCodFornLinxExit(Self);
+     // OdirApagar - 08/08/2018
+     // EdtNFeCodFornLinxExit(Self);
      DMSolicTransf.CDS_OCItensCheck.Close;
+     EdtNFeCodFornLinx.SetFocus;
+     EdtNFeNumNFe.SetFocus;
    End
   Else
    Begin
@@ -2044,12 +2139,17 @@ begin
   // ========== EXECUTA QUERY PARA PESQUISA ====================================
   Screen.Cursor:=crAppStart;
 
-  MySql:=' SELECT oc.num_oc, oc.dta_oc, COUNT(oi.cod_produto_linx) Tot_Itens'+
-         ' FROM OC_LOJAS_NFE oc, OC_LOJAS_ITENS oi'+
-         ' WHERE oc.num_seq_oc=oi.num_seq_oc'+
-         ' AND   oc.cod_loja_linx='+sgLojaLinx+
+  MySql:=' SELECT oc.num_oc, oc.dta_oc, oe.num_nfe,'+
+         '        COUNT(oi.cod_produto_linx) Tot_Itens'+
+
+         ' FROM OC_LOJAS_NFE oc'+
+         '    LEFT JOIN OC_LOJAS_ITENS oi      ON oi.num_seq_oc=oc.num_seq_oc'+
+         '    LEFT JOIN oc_lojas_itens_nfe oe  ON oe.num_seq_oc=oc.num_seq_oc'+
+         '                                    AND oe.num_seq_item=oi.num_seq_item'+
+
+         ' WHERE oc.cod_loja_linx='+sgLojaLinx+
          ' AND   oc.cod_forn_linx='+IntToStr(EdtNFeCodFornLinx.AsInteger)+
-         ' GROUP BY 1,2'+
+         ' GROUP BY 1, 2, 3'+
          ' ORDER BY 1 DESC';
   DMSolicTransf.CDS_Pesquisa.Close;
   DMSolicTransf.SQLQ_Pesquisa.Close;
@@ -2179,9 +2279,52 @@ begin
 end;
 
 procedure TFrmSolicTransf.Bt_NFeEscanearClick(Sender: TObject);
+Var
+  MySql: String;
 begin
-  If DMSolicTransf.CDS_OCItensCheck.IsEmpty Then
-   Exit;
+  If EdtNFeCodFornLinx.AsInteger=0 Then
+  Begin
+    msg('Favor Informar o Fornecedor !!','A');
+    EdtNFeNumOC.Clear;
+    EdtNFeCodFornLinx.SetFocus;
+    Exit;
+  End; // If EdtNFeCodFornLinx.AsInteger=0 Then
+
+  If EdtNFeNumNFe.AsInteger=0 Then
+  Begin
+    msg('Favor Informar o Nº da NFE !!','A');
+    EdtNFeNumOC.Clear;
+    EdtNFeNumNFe.SetFocus;
+    Exit;
+  End; // If EdtNFeNumNFe.AsInteger=0 Then Then
+
+  // Cria OC NOVA ==============================================================
+  If Lbx_NFeNumOCs.Items.Count<1 Then
+  Begin
+    If msg('Deseja Criar ORDEM DE COMPRA ??', 'C')=2 Then
+     Exit;
+
+    EdtNFeNumOC.Enabled:=False;
+    Bt_NFeBuscaOC.Enabled:=False;
+    Lbx_NFeNumOCs.Enabled:=False;
+
+    // Busca Numero da Ordem de Compra Nova =======================================
+    sgNrOCNova:=DMSolicTransf.OCBuscaNumeroOC(sgLojaSidicom, StrToInt(sgLojaLinx));
+                                 //SIDICOM  // LINX
+    Lbx_NFeNumOCs.Items.Add(sgNrOCNova);
+
+    // Busca Num_Seq da OC =======================================================
+    MySql:=' SELECT GEN_ID(GEN_OC_LOJAS,1) Num_Seq'+
+           ' FROM RDB$DATABASE';
+    DMSolicTransf.SQLQuery1.Close;
+    DMSolicTransf.SQLQuery1.SQL.Clear;
+    DMSolicTransf.SQLQuery1.SQL.Add(MySql);
+    DMSolicTransf.SQLQuery1.Open;
+    sgNumSeqOCNova:=DMSolicTransf.SQLQuery1.FieldByName('Num_Seq').AsString;
+    DMSolicTransf.SQLQuery1.Close;
+
+    bgOCNova:=True;
+  End; // If Lbx_NFeNumOCs.Items.Count<1 Then
 
   Dbg_NFeProdutosOC.SetFocus;
 
@@ -2191,6 +2334,31 @@ begin
 
   FrmLeitoraCodBarras.ShowModal;
   FreeAndNil(FrmLeitoraCodBarras);
+
+  // Se Oc foI Criada no Caso de Sem OC ========================================
+  If Not Lbx_NFeNumOCs.Enabled Then
+  Begin
+    MySql:=' SELECT oc.num_seq_oc'+
+           ' FROM OC_LOJAS_NFE oc'+
+           ' WHERE oc.num_oc='+Lbx_NFeNumOCs.Items[0]+
+           ' AND   oc.cod_forn_linx='+VarToStr(EdtNFeCodFornLinx.AsInteger)+
+           ' AND   oc.cod_loja_linx='+sgLojaLinx;
+    DMSolicTransf.CDS_BuscaRapida.Close;
+    DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
+    DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql);
+    DMSolicTransf.CDS_BuscaRapida.Open;
+
+    If Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('num_seq_oc').AsString)='' Then
+     Lbx_NFeNumOCs.Items.Clear;
+
+    DMSolicTransf.CDS_BuscaRapida.Close;
+
+    EdtNFeNumOC.Enabled:=True;
+    Bt_NFeBuscaOC.Enabled:=True;
+    Lbx_NFeNumOCs.Enabled:=True;
+  End; // If Not Lbx_NFeNumOCs.Enabled Then
+
+  Dbg_NFeProdutosOC.SetFocus;
 
 end;
 

@@ -917,6 +917,9 @@ Begin
       // Aspas Vírgula Aspas "," restegui #
       sRegistro:=f_Troca('","','#',sRegistro);
 
+      // <":0,"> por <":"0.00",">
+      sRegistro:=f_Troca('":0,"','#0.00#',sRegistro);
+
       // Aspas " por NULL
       sRegistro:=f_Troca('"','',sRegistro);
 
@@ -1133,10 +1136,26 @@ Begin
              QuotedStr(Trim(Separa_String(mMemo.Lines[i], 2,'#')))+', '+ // NOME_CAIXA
              QuotedStr(Trim(Separa_String(mMemo.Lines[i], 4,'#')))+', '+ // NOME_USUARIO
              QuotedStr(f_Troca('/','.',f_Troca('-','.',Copy(Trim(Separa_String(mMemo.Lines[i], 6,'#')),1,10))))+', '+ // DATA_ABERTURA
-             QuotedStr(Copy(Trim(Separa_String(mMemo.Lines[i], 6,'#')),12,8))+', '+ // HORA_ABERTURA
-             QuotedStr(f_Troca('/','.',f_Troca('-','.',Copy(Trim(Separa_String(mMemo.Lines[i], 8,'#')),1,10))))+', '+ // DATA_FECHAMENTO
-             QuotedStr(Copy(Trim(Separa_String(mMemo.Lines[i], 8,'#')),12,8))+', '+ // HORA_FECHAMENTO
-             QuotedStr(Trim(Separa_String(mMemo.Lines[i], 12,'#')))+', '+ // VLR_CHEQUE_ATUAL
+             QuotedStr(Copy(Trim(Separa_String(mMemo.Lines[i], 6,'#')),12,8))+', '; // HORA_ABERTURA
+
+             // DATA_FECHAMENTO
+             If Trim(Copy(Trim(Separa_String(mMemo.Lines[i], 8,'#')),1,10))='' Then
+              MySql:=
+               MySql+'NULL, '
+             Else
+              MySql:=
+               MySql+QuotedStr(f_Troca('/','.',f_Troca('-','.',Copy(Trim(Separa_String(mMemo.Lines[i], 8,'#')),1,10))))+', ';
+
+             // HORA_FECHAMENTO
+             If Trim(Copy(Trim(Separa_String(mMemo.Lines[i], 8,'#')),1,10))='' Then
+              MySql:=
+               MySql+'NULL, '
+             Else
+              MySql:=
+               MySql+QuotedStr(Copy(Trim(Separa_String(mMemo.Lines[i], 8,'#')),12,8))+', ';
+
+      MySql:=
+       MySql+QuotedStr(Trim(Separa_String(mMemo.Lines[i], 12,'#')))+', '+ // VLR_CHEQUE_ATUAL
              QuotedStr(Trim(Separa_String(mMemo.Lines[i], 14,'#')))+', '+ // VLR_CARTAO_ATUAL
              QuotedStr(Trim(Separa_String(mMemo.Lines[i], 16,'#')))+', '+ // VLR_DINHEIRO_ATUAL
              QuotedStr(Trim(Separa_String(mMemo.Lines[i], 24,'#')))+', '+ // VLR_TOTAL_ATUAL
@@ -1333,7 +1352,7 @@ Begin
       // Pega Registro da Loja Somente UM Dia ==================================
       sRegistro:=copy(sRetornoPagtos,1,i+2);
 
-      // Retina CNPJ e Data do Inicio do Registro ==============================
+      // Retira Parte Inicial do registro - ("8679":) ou CNPJ e Data do Inicio da Linha ====
       bb:=True;
       While bb do
       Begin
@@ -3069,7 +3088,7 @@ Begin
                ' AND   s.usuario='+DMBelShop.CDS_Busca.FieldByName('Usuario').AsString+
                ' AND   ABS(s.valor)='+QuotedStr(f_Troca(',','.',DMBelShop.CDS_Busca.FieldByName('Valor').AsString))+
                ' AND   s.cod_historico='+DMBelShop.CDS_Busca.FieldByName('Cod_Historico').AsString+
-               ' AND   Upper(SUBSTRING(TRIM(s.obs) FROM 1 FOR 80))='+QuotedStr(AnsiUpperCase(Trim(DMBelShop.CDS_Busca.FieldByName('Obs').AsString)));
+               ' AND   SUBSTRING(TRIM(s.obs) FROM 1 FOR 80)='+QuotedStr(Trim(DMBelShop.CDS_Busca.FieldByName('Obs').AsString));
         DMBelShop.CDS_BuscaRapida.Close;
         DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
         DMBelShop.CDS_BuscaRapida.Open;
@@ -3077,8 +3096,11 @@ Begin
         DMBelShop.CDS_BuscaRapida.Close;
 
         bExcluir:=False;
-        If (DMBelShop.CDS_Busca1.RecordCount<>iRegNaoCanc) Or ((DMBelShop.CDS_Busca1.RecordCount=1) And (iRegNaoCanc=1))Then
+        If DMBelShop.CDS_Busca1.RecordCount<>iRegNaoCanc Then
          bExcluir:=True;
+
+        If (DMBelShop.CDS_Busca1.RecordCount=1) And (iRegNaoCanc=1) Then
+         bExcluir:=False;
 
         If bExcluir Then // Exclui Movimento Devido a Cacelamentos
         Begin
@@ -3229,6 +3251,11 @@ Begin
              ' AND   md.cod_historico='+DMBelShop.CDS_Busca.FieldByName('Cod_Historico').AsString+
              ' AND   md.dta_docto='+QuotedStr(sDta)+
              ' AND   TRIM(md.obs_texto)='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Obs_Texto').AsString)+
+
+//             If DMBelShop.CDS_Busca.FieldByName('TotReg').AsInteger=1 Then
+//              MySql:=
+//               MySql+' AND md.cod_linx='+QuotedStr(f_Troca(',','.',sVlrUMat))
+
              ' GROUP BY 1,2,3,4,5';
       DMBelShop.CDS_Busca1.Close;
       DMBelShop.SDS_Busca1.CommandText:=MySql;
@@ -15306,7 +15333,7 @@ begin
 
   If (igTotMarcaExt=0) And (igTotMarcaPag=0) Then
   Begin
-    msg('Sem Registro Selecionado !!','A');
+    msg('Sem Depósito Selecionado !!','A');
     Dbg_ConcManutExtratoDep.SetFocus;
     Exit;
   End;
@@ -15401,7 +15428,7 @@ begin
   //============================================================================
   // INICIO IM DAS CONCILIAÇÕES ================================================
   // ===========================================================================
-  
+
   // Monta Transacao ===========================================================
   TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
   TD.IsolationLevel:=xilREADCOMMITTED;
@@ -15650,6 +15677,12 @@ begin
     If Not DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
      DMConciliacao.CDS_CMExtratosDep.Locate('CHV_EXTRATO', sChvExtrato,[]);
   End; // If bgLocate Then
+
+  // Focar nos Depósitos =======================================================
+  If (bConcDinheiro) Or (bConcDespesa) Then
+  Begin
+    Dbg_ConcManutDepositos.SetFocus;
+  End;
 
 end;
 

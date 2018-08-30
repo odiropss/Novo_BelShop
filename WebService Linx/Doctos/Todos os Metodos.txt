@@ -1,0 +1,32 @@
+LinxMetodos << ============== Roda Sempre
+LinxGrupoLojas
+LinxLojas
+LinxClientesFornec
+LinxClientesFornecCamposAdicionais
+LinxClientesFornecContatos <<==== Não Baixado
+LinxMovimento
+LinxMovimentoTrocas
+LinxMovimentoOrigemDevolucoes
+LinxMovimentoSerial
+LinxPlanos
+LinxMovimentoPlanos
+LinxSangriaSuprimentos
+LinxMovimentoAcoesPromocionais
+LinxAcoesPromocionais
+LinxListaDaVez
+LinxVendedores
+LinxMetasVendedores
+LinxProdutosDepositos
+LinxProdutosInventario
+LinxProdutosDetalhes
+LinxProdutos
+LinxProdutosCodBar
+LinxProdutosCamposAdicionais
+LinxConfiguracoesTributarias <<================
+LinxConfiguracoesTributariasDetalhes <<========= Criar
+LinxFaturas
+LinxLancContabil
+LinxPedidosVenda
+LinxPlanosPedidoVenda
+LinxPedidosCompra
+LinxReducoesZ

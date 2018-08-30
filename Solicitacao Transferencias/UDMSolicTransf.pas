@@ -78,6 +78,7 @@ type
     CDS_Relatorio: TClientDataSet;
     CDS_OCItensCheckREFERENCIA: TStringField;
     CDS_OCItensCheckCOD_BARRA: TStringField;
+    SQLSP: TSQLStoredProc;
 
     //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -89,6 +90,9 @@ type
     // Function  Conecta_CD: Boolean;
 
     Procedure FechaTudo;
+
+    // Busca Numero da Ordem de Compra - SIDICOM / LINX 
+    Function OCBuscaNumeroOC(sCodLjSIDI: String; iCodLjLINX: Integer): String;
 
     //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -123,6 +127,8 @@ var
   tsgArquivo: TStringList;
 
   sgLojaLinx, sgLojaSidicom, sgNomeLoja: String;
+
+  bgOCNova: Boolean;
 
 implementation
 
@@ -169,6 +175,23 @@ uses DK_Procs1, Variants;
 //    Result:=False;
 //  End;
 //End; // Atualiza Conexão com Banco de Dados CD - SIDICOM >>>>>>>>>>>>>>>>>>>>>>>
+
+// Busca Numero da Ordem de Compra - SIDICOM / LINX >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TDMSolicTransf.OCBuscaNumeroOC(sCodLjSIDI: String; iCodLjLINX: Integer): String;
+Begin
+  SQLSP.Prepared:=False;
+  SQLSP.StoredProcName:='SP_BUSCA_NUMERO_OC';
+  SQLSP.ParamByName('par_CodLojaSIDI').AsString:=sCodLjSIDI;
+  SQLSP.ParamByName('par_CodLojaLINX').AsInteger:=iCodLjLINX;
+  SQLSP.Prepared:=True;
+
+  SQLSP.ExecProc;
+  Result:=SQLSP.ParamByName('Ret_NumOC').AsString;
+  SQLSP.Prepared:=False;
+  SQLSP.Close;
+  SQLSP.Params.Clear;
+  SQLSP.StoredProcName:='';
+End; // // Busca Numero da Ordem de Compra - SIDICOM / LINX >>>>>>>>>>>>>>>>>>>>
 
 // Fecha Todos os Client's >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TDMSolicTransf.FechaTudo;

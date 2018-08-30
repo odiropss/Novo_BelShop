@@ -72,33 +72,30 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       OnExit = EdtFluFornCodFornecedorExit
     end
     object EdtFluFornCodFornAcertar: TEdit
-      Left = 624
+      Left = 576
       Top = 20
       Width = 75
       Height = 19
-      TabStop = False
       TabOrder = 3
       Text = 'C'#243'd a Acertar'
     end
     object MEdt_DtaAtualizacao: TMaskEdit
-      Left = 702
+      Left = 654
       Top = 20
       Width = 71
       Height = 19
-      TabStop = False
       EditMask = '!99.99.2\000;1;_'
       MaxLength = 10
       TabOrder = 4
       Text = '  .  .20  '
     end
     object Bt_FluFornAcertaSaldos: TJvXPButton
-      Left = 778
+      Left = 730
       Top = 15
       Width = 85
       Height = 29
       Caption = 'Acerta Saldo'#13#10'     (Odir)'
       TabOrder = 5
-      TabStop = False
       ShowFocusRect = True
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -178,13 +175,23 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       ParentFont = False
       OnClick = Bt_FluFornBuscaFornecedorClick
     end
+    object Bt_AvariasCentralTrocas: TButton
+      Left = 824
+      Top = 18
+      Width = 133
+      Height = 25
+      Caption = 'Avarias Central Trocas'
+      TabOrder = 6
+      Visible = False
+      OnClick = Bt_AvariasCentralTrocasClick
+    end
   end
   object PC_Principal: TPageControl
     Left = 0
     Top = 56
     Width = 977
     Height = 479
-    ActivePage = Ts_FluxFornCaixa
+    ActivePage = Ts_FluxFornLanctos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -2134,8 +2141,8 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     end
   end
   object OdirPanApres: TPanel
-    Left = 928
-    Top = 4
+    Left = 856
+    Top = 60
     Width = 89
     Height = 33
     BevelInner = bvLowered

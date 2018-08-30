@@ -29,14 +29,13 @@ type
     procedure Bt_ProcessarClick(Sender: TObject);
 
     // ODIR - INICO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
     Function BuscaProdutoLinx(sCodBarras: String): Boolean;
     Function CheckProcessa: Boolean;
+    // ODIR - FIM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
     procedure Ckb_ReferenciaClick(Sender: TObject);
     procedure Ckb_ReferenciaKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-
-    // ODIR - FIM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
   private
     { Private declarations }
@@ -67,10 +66,13 @@ uses UDMSolicTransf, DK_Procs1, DB, UFrmSolicTransf;
 // Processa Scaneamento do Produto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmLeitoraCodBarras.CheckProcessa: Boolean;
 Var
-  MySql: String;
+  MySql, MySql1: String;
   iNumItens, iQtdCkOut: Integer;
   sNumSeqOC, sNumSeqItem: String;
 Begin
+  if bgOCNova Then
+   sgNrsSeqOCs:=sgNumSeqOCNova;
+
   // Busca Produto na(s) OC(s) =================================================
   MySql:=' SELECT io.num_seq_oc, io.num_seq_item, io.cod_produto_linx,'+
          '        io.qtd_produto, io.qtd_checkout,'+
@@ -103,7 +105,64 @@ Begin
       DMSolicTransf.CDS_BuscaRapida.Close;
 
       // Guarda Num_Seq_OC Posicionada Atualmente ==============================
-      sNumSeqOC:=DMSolicTransf.CDS_OCItensCheckNUM_SEQ_OC.AsString;
+      If bgOCNova Then
+       sNumSeqOC:=sgNumSeqOCNova
+      Else
+       sNumSeqOC:=DMSolicTransf.CDS_OCItensCheckNUM_SEQ_OC.AsString;
+
+      // Insere Ordem de Compra Nova ===========================================
+      If bgOCNova Then
+      Begin
+        MySql:=' INSERT INTO OC_LOJAS_NFE'+
+               ' (NUM_SEQ_OC, COD_LOJA_LINX, COD_LOJA_SIDI, DES_LOJA,'+
+               '  COD_FORN_SIDI, DES_FORN_SIDI, COD_FORN_LINX, DES_FORN_LINX,'+
+               '  NUM_OC, DTA_OC, COD_COMPRADOR, DES_COMPRADOR, DOC_ORIGEM,'+
+               '  DTA_ORIGEM, SIS_ORIGEM)'+
+               ' VALUES ('+
+               sgNumSeqOCNova+', '+ //  NUM_SEQ_OC
+               sgLojaLinx+', '+ // COD_LOJA_LINX
+               sgLojaSidicom+', '+ // COD_LOJA_SIDI
+               QuotedStr(sgNomeLoja)+', '; // DES_LOJA
+
+               // Busca Dados do Fornecedor SIDICOM
+               MySql1:=' SELECT fs.codfornecedor, fs.nomefornecedor'+
+                       ' FROM FORNECEDOR fs'+
+                       ' WHERE EXISTS (SELECT 1'+
+                       '               FROM LINXCLIENTESFORNEC fl'+
+                       '               WHERE TRIM(fl.doc_cliente)=TRIM(fs.numerocgcmf)'+
+                       '               AND   fl.cod_cliente='+IntToStr(FrmSolicTransf.EdtNFeCodFornLinx.AsInteger)+')';
+               DMSolicTransf.CDS_BuscaRapida.Close;
+               DMSolicTransf.SQLQ_BuscaRapida.Close;
+               DMSolicTransf.SQLQ_BuscaRapida.SQL.Clear;
+               DMSolicTransf.SQLQ_BuscaRapida.SQL.Add(MySql1);
+               DMSolicTransf.CDS_BuscaRapida.Open;
+
+               If Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('codfornecedor').AsString)<>'' Then
+                Begin
+                  MySql:=
+                   MySql+QuotedStr(Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('codfornecedor').AsString))+', '+ // COD_FORN_SIDI
+                         QuotedStr(Trim(DMSolicTransf.CDS_BuscaRapida.FieldByName('nomefornecedor').AsString))+',' // DES_FORN_SIDI
+                End
+               Else
+                Begin
+                  MySql:=
+                   MySql+' NULL,'+ // COD_FORN_SIDI
+                         ' NULL, '; // DES_FORN_SIDI
+                End; // If Trim DMSolicTransf.CDS_BuscaRapida.FieldByName('codfornecedor').AsString<>'' Then
+               DMSolicTransf.CDS_BuscaRapida.Close;
+
+        MySql:=
+         MySql+IntToStr(FrmSolicTransf.EdtNFeCodFornLinx.AsInteger)+', '+ // COD_FORN_LINX
+               QuotedStr(FrmSolicTransf.EdtNFeDesFornLinx.Text)+', '+ // DES_FORN_LINX
+               sgNrOCNova+','+ // NUM_OC
+               ' CURRENT_DATE,'+ // DTA_OC
+               ' NULL,'+ // COD_COMPRADOR
+               ' NULL,'+ // DES_COMPRADOR
+               ' 0,'+ // DOC_ORIGEM
+               ' NULL,'+ // DTA_ORIGEM
+               ' ''SEM-OC'')'; // SIS_ORIGEM
+        DMSolicTransf.SQLC.Execute(MySql,nil,nil);
+      End; // If bgOCNova Then
 
       // Busca Produto LINX/SIDICOM ============================================
       MySql:=' SELECT pr.cod_produto, pr.nome, TRIM(pr.cod_auxiliar) COD_PRODUTO_SIDI'+
@@ -123,9 +182,10 @@ Begin
              ' VALUES ('+
              sNumSeqOC+', '+ // NUM_SEQ_OC da OC Onde Estiver Posicionado
 
+             // NUM_SEQ_ITEM da OC Onde Estiver Posicionado
              ' (SELECT COALESCE(MAX(oi.num_seq_item)+1 ,1) SEQ'+
              '  FROM OC_LOJAS_ITENS oi'+
-             '  WHERE oi.num_seq_oc='+sNumSeqOC+'),'; // NUM_SEQ_ITEM da OC Onde Estiver Posicionado
+             '  WHERE oi.num_seq_oc='+sNumSeqOC+'),';
 
              // COD_PRODUTO_SIDI
              If Trim(DMSolicTransf.SQLQuery2.FieldByName('COD_PRODUTO_SIDI').AsString)='' Then
@@ -155,7 +215,9 @@ Begin
              ' VALUES ('+
              sNumSeqOC+', '+ // NUM_SEQ_OC
 
-             ' (SELECT MAX(oi.num_seq_item) FROM OC_LOJAS_ITENS oi WHERE oi.num_seq_oc='+sNumSeqOC+'), '+ // NUM_SEQ_ITEM
+             // NUM_SEQ_ITEM do Ultima Item Incluido
+             ' (SELECT MAX(oi.num_seq_item) FROM OC_LOJAS_ITENS oi WHERE oi.num_seq_oc='+sNumSeqOC+'), '+
+
              sgNumNFe+', '+ // NUM_NFE,
              IntToStr(EdtQtdEmbalagem.AsInteger)+', '+ // QTD_CHECKOUT
              ' CURRENT_DATE, '+ // DTA_CHECKOUT
@@ -174,7 +236,8 @@ Begin
       DMSolicTransf.CDS_BuscaRapida.Close;
 
       // Posiciona no Produto ==================================================
-      DMSolicTransf.CDS_OCItensCheck.Locate('COD_PRODUTO_LINX',sgProdLinx,[]);
+      If Not DMSolicTransf.CDS_OCItensCheck.IsEmpty Then
+       DMSolicTransf.CDS_OCItensCheck.Locate('COD_PRODUTO_LINX',sgProdLinx,[]);
 
       // Guarda Num_Seq_OC Posicionada Atualmente ==================================
       sNumSeqOC:=DMSolicTransf.CDS_OCItensCheckNUM_SEQ_OC.AsString;
@@ -344,10 +407,19 @@ Begin
   DateSeparator:='/';
   DecimalSeparator:=',';
 
+  // Busca OC NOVA =============================================================
+  If bgOCNova Then
+  Begin
+    FrmSolicTransf.CheckOutBuscaOC;
+  End; // If bgOCNova Then
+
   // Reabre Client dos Produtos da OC ==========================================
-  DMSolicTransf.CDS_OCItensCheck.DisableControls;
-  DMSolicTransf.CDS_OCItensCheck.Close;
-  DMSolicTransf.CDS_OCItensCheck.Open;
+  If Not bgOCNova Then
+  Begin
+    DMSolicTransf.CDS_OCItensCheck.DisableControls;
+    DMSolicTransf.CDS_OCItensCheck.Close;
+    DMSolicTransf.CDS_OCItensCheck.Open;
+  End; // If Not bgOCNova Then
 
 //  // Acerta Endereçamento Quando For CD ========================================
 //  If sgLojaLinx='2' Then
@@ -359,6 +431,7 @@ Begin
   // Posiciona no Produto ======================================================
   DMSolicTransf.CDS_OCItensCheck.Locate('NUM_SEQ_OC; COD_PRODUTO_LINX',VarArrayOf([sNumSeqOC, sgProdLinx]),[]);
 
+  bgOCNova:=False;
   Screen.Cursor:=crDefault;
 End; // Processa Scaneamento do Produto >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

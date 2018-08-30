@@ -160,4 +160,8 @@ object DMRelatorio: TDMRelatorio
       Width = 1000.000000000000000000
     end
   end
+  object frBarCodeObject1: TfrBarCodeObject
+    Left = 408
+    Top = 104
+  end
 end

@@ -1,6 +1,6 @@
 object FrmBelShop: TFrmBelShop
   Left = 240
-  Top = 113
+  Top = 106
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_FinanComprPlanFinan
+    ActivePage = Ts_OrdemCompra
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -7183,7 +7183,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_OCBuscaProdutos
+        ActivePage = Ts_OCGeraOrdemCompra
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -17205,7 +17205,7 @@ object FrmBelShop: TFrmBelShop
               object Label77: TLabel
                 Left = 2
                 Top = 2
-                Width = 412
+                Width = 232
                 Height = 13
                 Align = alTop
                 Alignment = taCenter
@@ -25509,7 +25509,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = TS_FiltroFornecedor
+        ActivePage = TS_FiltroProdutos
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -30237,7 +30237,7 @@ object FrmBelShop: TFrmBelShop
         Caption = 'Comiss'#245'es'
         HelpContext = 3
         object SubMenuComisCampanhasColecao: TMenuItem
-          Tag = 131201
+          Tag = 131203
           Bitmap.Data = {
             26050000424D260500000000000036040000280000000F0000000F0000000100
             080000000000F0000000400B0000400B00000001000000000000000000000000
@@ -30285,10 +30285,7 @@ object FrmBelShop: TFrmBelShop
           HelpContext = 1
           OnClick = SubMenuComisCampanhasColecaoClick
         end
-        object N57: TMenuItem
-          Caption = '-'
-        end
-        object SubMenuParametrosVendedores: TMenuItem
+        object SubMenuComisParamVendedores: TMenuItem
           Tag = 131202
           Bitmap.Data = {
             26050000424D260500000000000036040000280000000F0000000F0000000100
@@ -30335,7 +30332,7 @@ object FrmBelShop: TFrmBelShop
             07070707070707070700}
           Caption = 'Parametros Vendedores'
           HelpContext = 1
-          OnClick = SubMenuParametrosVendedoresClick
+          OnClick = SubMenuComisParamVendedoresClick
         end
         object SubMenuComisVendedores: TMenuItem
           Tag = 131201

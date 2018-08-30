@@ -34,12 +34,14 @@ type
 
 var
   FrmAcceraLoreal: TFrmAcceraLoreal;
-
-  sgDtaGeracao: String;
   MySql: String;
 
+  sgDtaGeracao, sgDtaIniParam, sgDtaFimParam: String;
+
   sgCodEmpresa, sgNomeEmpresa: String;
-  
+
+  bgUsaDtaParam: Boolean;
+
 implementation
 
 uses UDMAcceraLoreal, DB, DK_Procs1;
@@ -216,12 +218,19 @@ Begin
          '     LEFT JOIN AUGC0501 fo  ON fo.fcod=pr.cod_fornecedor'+ // Cadastro de Fornecedores
          '     LEFT JOIN AFVC0901 op  ON op.cod_op=it.cod_op'+ // Operacoes e Cfops
 
-         ' WHERE NOT (nt.operacao_doc=''00000'' AND nt.operacaop=''05000'')'+ // Pedencia Não
-         ' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
-         ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'+
+         ' WHERE NOT (nt.operacao_doc=''00000'' AND nt.operacaop=''05000'')'+ // Pedência Não
          ' AND   ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%COMPRA%'') AND (UPPER(nt.entrada_saida)=''E''))'+
          ' AND   pr.cod_fornecedor=''00246'''+ // Somente Loreal
          ' AND   it.valor_unitarioproduto IS NOT NULL';
+
+         If Not bgUsaDtaParam Then
+          MySql:=
+           MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
+                 ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'
+         Else
+          MySql:=
+           MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
+                 ' AND   CAST(nt.data as DATE)<='+QuotedStr(sgDtaFimParam);
   DMAcceraLoreal.SDS_Arquivo.Close;
   DMAcceraLoreal.SDS_Arquivo.CommandText:=MySql;
   DMAcceraLoreal.SDS_Arquivo.Open;
@@ -268,13 +277,20 @@ Begin
            '     LEFT JOIN AFVC0901 op  ON op.cod_op=it.cod_op'+ // Operacoes e Cfops
 
            ' WHERE NOT (nt.operacao_doc=''00000'' AND nt.operacaop=''05000'')'+ // Pedencia Não
-           ' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
-           ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'+
            ' AND   ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%COMPRA%'') AND (UPPER(nt.entrada_saida)=''E''))'+
            ' AND   pr.cod_fornecedor=''00246'''+ // Somente Loreal
-           ' AND   it.valor_unitarioproduto IS NOT NULL'+
+           ' AND   it.valor_unitarioproduto IS NOT NULL';
 
-           ' GROUP BY 3,4,5,6,8'+
+          If Not bgUsaDtaParam Then
+           MySql:=
+            MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
+                  ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'
+          Else
+           MySql:=
+            MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
+                  ' AND   CAST(nt.data as DATE)<='+QuotedStr(sgDtaFimParam);
+    MySql:=
+     MySql+' GROUP BY 3,4,5,6,8'+
 
            // REGISTRO "H" CABECALHO ===========================================
            ' UNION'+
@@ -437,10 +453,19 @@ Begin
            '                   LEFT JOIN AUGC0501 fo  ON fo.fcod=pr.cod_fornecedor'+ // Cadastro de Fornecedores
            '                   LEFT JOIN AFVC0901 op  ON op.cod_op=it.cod_op'+ // Operacoes e Cfops
 
-           '               WHERE NOT (nt.operacao_doc=''00000'' AND nt.operacaop=''05000'')'+ // Pedencia Não
-           '               AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
-           '               AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'+
-           '               AND   (((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
+           '               WHERE NOT (nt.operacao_doc=''00000'' AND nt.operacaop=''05000'')'; // Pedencia Não
+
+                           If Not bgUsaDtaParam Then
+                            MySql:=
+                             MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
+                                   ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'
+                           Else
+                            MySql:=
+                             MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
+                                   ' AND   CAST(nt.data as DATE)<='+QuotedStr(sgDtaFimParam);
+
+    MySql:=
+     MySql+'               AND   (((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
            '                      OR'+
            '                      ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%DEVOL%VENDA%'') AND (UPPER(nt.entrada_saida)=''E'')))'+
            '               AND   pr.cod_fornecedor=''00246'''+ // Somente Loreal
@@ -593,10 +618,19 @@ Begin
          '     LEFT JOIN AFVC0901 op  ON op.cod_op=it.cod_op'+ // Cadastro de Operacoes e Cfops
          '     LEFT JOIN AUGC0301 cl  ON cl.codigo_cliente=nt.cod_cli'+ // Cadastro de Clientes
 
-         ' WHERE NOT (nt.operacao_doc=''00000'' AND nt.operacaop=''05000'')'+ // Pedencia Não
-         ' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
-         ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'+
-         ' AND   (((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
+         ' WHERE NOT (nt.operacao_doc=''00000'' AND nt.operacaop=''05000'')'; // Pedencia Não
+
+         If Not bgUsaDtaParam Then
+          MySql:=
+           MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
+                 ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'
+         Else
+          MySql:=
+           MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
+                 ' AND   CAST(nt.data as DATE)<='+QuotedStr(sgDtaFimParam);
+
+  MySql:=
+   MySql+' AND   (((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
          '        OR'+
          '        ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%DEVOL%VENDA%'') AND (UPPER(nt.entrada_saida)=''E'')))'+
          ' AND   pr.cod_fornecedor=''00246'''+ // Somente Loreal
@@ -698,10 +732,19 @@ Begin
            '     LEFT JOIN AUGC0301 cl  ON cl.codigo_cliente=nt.cod_cli'+ // Cadastro de Clientes
            '     LEFT JOIN AUGM2101 cf  ON cf.produto=pr.codigo'+ // Cadastro de Fornecedores e Produtos
 
-           ' WHERE NOT (nt.operacao_doc=''00000'' AND nt.operacaop=''05000'')'+ // Pedencia Não
-           ' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
-           ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'+
-           ' AND   (((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
+           ' WHERE NOT (nt.operacao_doc=''00000'' AND nt.operacaop=''05000'')'; // Pedencia Não
+
+           If Not bgUsaDtaParam Then
+            MySql:=
+             MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
+                   ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'
+           Else
+            MySql:=
+             MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
+                   ' AND   CAST(nt.data as DATE)<='+QuotedStr(sgDtaFimParam);
+
+    MySql:=
+     MySql+' AND   (((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
            '        OR'+
            '        ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%DEVOL%VENDA%'') AND (UPPER(nt.entrada_saida)=''E'')))'+
            ' AND   pr.cod_fornecedor=''00246'''+ // Somente Loreal
@@ -782,10 +825,19 @@ Begin
            '     LEFT JOIN AFVC0901 op  ON op.cod_op=it.cod_op'+ // Operacoes e Cfops
            '     LEFT JOIN AUGC0301 cl  ON cl.codigo_cliente=nt.cod_cli'+ // Cadastro de Clientes
 
-           ' WHERE NOT (nt.operacao_doc=''00000'' AND nt.operacaop=''05000'')'+ // Pedencia Não
-           ' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
-           ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'+
-           ' AND   ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
+           ' WHERE NOT (nt.operacao_doc=''00000'' AND nt.operacaop=''05000'')'; // Pedencia Não
+
+           If Not bgUsaDtaParam Then
+            MySql:=
+             MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
+                   ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'
+           Else
+            MySql:=
+             MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
+                   ' AND   CAST(nt.data as DATE)<='+QuotedStr(sgDtaFimParam);
+
+    MySql:=
+     MySql+' AND   ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
            ' AND   ((nt.menfemotivocancelamento IS NOT NULL) OR (UPPER(COALESCE(nt.operacaop, ''''))=''CA''))'+
            ' AND   pr.cod_fornecedor=''00246'''+ // Somente Loreal
            ' AND   it.valor_unitarioproduto IS NOT NULL'+
@@ -1412,7 +1464,6 @@ End; // Cadastro de Produtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 procedure TFrmAcceraLoreal.FormCreate(Sender: TObject);
 Var
   sArqProc, sPeriodo: String;
-
 begin
   If Not DMAcceraLoreal.SQLC.Connected Then
   Begin
@@ -1430,22 +1481,54 @@ begin
   OdirPanApres.Visible:=True;
   Refresh;
 
+  //============================================================================
+  // Se Periodo Vem por Parametros =============================================
+  //============================================================================
+  // PAcceraLoreal.exe 01/08/2018 16/08/2018  ==> Usar Barras de Separação Normais < / >
+  //                   Parametro1 Parametro2
+  //============================================================================
+  bgUsaDtaParam:=False;
+  sgDtaIniParam:=f_Troca('/','.',f_Troca('-','.',ParamStr(1)));
+  sgDtaFimParam:=f_Troca('/','.',f_Troca('-','.',ParamStr(2)));
+  If (Trim(sgDtaIniParam)<>'') And (Trim(sgDtaFimParam)<>'') Then
+   bgUsaDtaParam:=True;
+  // Se Periodo Vem por Parametros =============================================
+  //============================================================================
+
   sArqProc:='';
   Application.ProcessMessages;
 
+  //============================================================================
   // Monta Data da Geração dos Arquivos ========================================
-  MySql:=' SELECT'+
-         ' Cast(extract(Year FROM CURRENT_TIMESTAMP) as varchar(4))||'+
-         ' Cast(lpad(extract(month FROM CURRENT_TIMESTAMP),2,''0'') as varchar(2))||'+
-         ' Cast(lpad(extract(day FROM CURRENT_TIMESTAMP),2,''0'') as varchar(2)) Dta_Geracao'+
-         ' FROM RDB$DATABASE';
+  //============================================================================
+  If Not bgUsaDtaParam Then
+  Begin
+    MySql:=' SELECT'+
+           ' CAST(EXTRACT(YEAR FROM CURRENT_TIMESTAMP) AS VARCHAR(4))||'+
+           ' CAST(LPAD(EXTRACT(MONTH FROM CURRENT_TIMESTAMP),2,''0'') AS VARCHAR(2))||'+
+           ' CAST(LPAD(EXTRACT(DAY FROM CURRENT_TIMESTAMP),2,''0'') AS VARCHAR(2)) DTA_GERACAO'+
+           ' FROM RDB$DATABASE';
+  End; // If Not bgUsaDtaParam Then
+
+  If bgUsaDtaParam Then
+  Begin
+    MySql:=' SELECT'+
+           ' CAST(EXTRACT(YEAR FROM CAST('+QuotedStr(sgDtaFimParam)+' AS DATE)) AS VARCHAR(4))||'+
+           ' CAST(LPAD(EXTRACT(MONTH FROM CAST('+QuotedStr(sgDtaFimParam)+' AS DATE)),2,''0'') AS VARCHAR(2))||'+
+           ' CAST(LPAD(EXTRACT(DAY FROM CAST('+QuotedStr(sgDtaFimParam)+' AS DATE)),2,''0'') AS VARCHAR(2)) DTA_GERACAO'+
+           ' FROM RDB$DATABASE';
+  End; // If Not bgUsaDtaParam Then
   DMAcceraLoreal.SDS_Arquivo.Close;
   DMAcceraLoreal.SDS_Arquivo.CommandText:=MySql;
   DMAcceraLoreal.SDS_Arquivo.Open;
   sgDtaGeracao:=DMAcceraLoreal.SDS_Arquivo.FieldByName('Dta_Geracao').AsString;
   DMAcceraLoreal.SDS_Arquivo.Close;
+  // Monta Data da Geração dos Arquivos ========================================
+  //============================================================================
 
+  //============================================================================
   // Busca Codigo e Nome da Empresa ============================================
+  //============================================================================
   MySql:=' SELECT d.codigo, d.nome'+
          ' FROM EA d';
   DMAcceraLoreal.SDS_Arquivo.Close;
@@ -1454,35 +1537,66 @@ begin
   sgCodEmpresa :=Trim(DMAcceraLoreal.SDS_Arquivo.FieldByName('Codigo').AsString);
   sgNomeEmpresa:=Trim(DMAcceraLoreal.SDS_Arquivo.FieldByName('Nome').AsString);
   DMAcceraLoreal.SDS_Arquivo.Close;
+  // Busca Codigo e Nome da Empresa ============================================
+  //============================================================================
 
-  // Cadastro de Produtos ====================================================
+  //============================================================================
+  // Cadastro de Produtos ======================================================
+  //============================================================================
   If Not ACC_CADPROD Then
    sArqProc:=sArqProc+cr+'Cadastro de Produtos';
+  // Cadastro de Produtos ======================================================
+  //============================================================================
 
-  // Cadastro de CDs/Lojas ===================================================
+  //============================================================================
+  // Cadastro de CDs/Lojas =====================================================
+  //============================================================================
   If Not ACC_CADSITE Then
    sArqProc:=sArqProc+cr+'Cadastro de CDs/Lojas';
+  // Cadastro de CDs/Lojas =====================================================
+  //============================================================================
 
-  // Cadastro de Estoques ====================================================
+  //============================================================================
+  // Cadastro de Estoques ======================================================
+  //============================================================================
   If Not ACC_POSESTQ Then
    sArqProc:=sArqProc+cr+'Cadastro de Estoques';
+  // Cadastro de Estoques ======================================================
+  //============================================================================
 
-  // Cadastro de Vendas do Distribuidor ======================================
+  //============================================================================
+  // Cadastro de Vendas do Distribuidor ========================================
+  //============================================================================
   If Not ACC_SELLOUT Then
    sArqProc:=sArqProc+cr+'Cadastro de Vendas do Distribuidor';
+  // Cadastro de Vendas do Distribuidor ========================================
+  //============================================================================
 
-  // Cadastro de Clientes (PDVs) =============================================
+  //============================================================================
+  // Cadastro de Clientes (PDVs) ===============================================
+  //============================================================================
   If Not ACC_PDVS Then
    sArqProc:=sArqProc+cr+'Cadastro de Clientes (PDVs)';
+  // Cadastro de Clientes (PDVs) ===============================================
+  //============================================================================
 
-  // Notas Fiscais Recebidas =================================================
+  //============================================================================
+  // Notas Fiscais Recebidas ===================================================
+  //============================================================================
   If Not ACC_NFS Then
    sArqProc:=sArqProc+cr+'Notas Fiscais Recebidas';
+  // Notas Fiscais Recebidas ===================================================
+  //============================================================================
 
-  // Cadastro de Vendedores ==================================================
+  //============================================================================
+  // Cadastro de Vendedores ====================================================
+  //============================================================================
   If Not ACC_CADVEND Then
    sArqProc:=sArqProc+cr+'Cadastro de Vendedores';
 
+  //============================================================================
+  // F I M =====================================================================
+  //============================================================================
   If Trim(sArqProc)='' Then
    Begin
      MessageBox(Handle, pChar('Arquivos Gerados com SUCESSO !!'), 'ATENÇÃO !!', MB_ICONERROR);
@@ -1494,6 +1608,8 @@ begin
                               'Não Existe Movto a Gerar no(s) Arquivo(s) Abaixo'+cr+cr+
                               Trim(sArqProc)), 'ATENÇÃO !!', MB_ICONERROR);
    End; // If Trim(sArqProc)='' Then
+  // F I M =====================================================================
+  //============================================================================
 
   OdirPanApres.Visible:=False;
 

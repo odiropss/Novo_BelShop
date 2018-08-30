@@ -23,7 +23,7 @@ uses
   UFrmGrafico in 'UFrmGrafico.pas' {FrmGrafico},
   UFrmAcessosUsuario in 'UFrmAcessosUsuario.pas' {FrmAcessosUsuario},
   UFrmBancoExtratos in 'UFrmBancoExtratos.pas' {FrmBancoExtratos},
-  UDMBancosConciliacao in 'UDMBancosConciliacao.pas' {DMConciliacao: TDataModule}, // Nome da Unit: UDMBancosConciliacao // Nome do Form: DMConciliacao
+  UDMBancosConciliacao in 'UDMBancosConciliacao.pas' {DMConciliacao: TDataModule},
   UFrmTiposConciliacao in 'UFrmTiposConciliacao.pas' {FrmTiposConciliacao},
   UFrmApresConciliacao in 'UFrmApresConciliacao.pas' {FrmApresConciliacao},
   UDMSalao in 'UDMSalao.pas' {DMSalao: TDataModule},
@@ -53,7 +53,9 @@ uses
   UFrmConfirmacao in 'UFrmConfirmacao.pas' {FrmConfirmacao},
   GeoBeautyServerWebService in 'GeoBeautyServerWebService.pas',
   UFrmWebServicesImporta in 'UFrmWebServicesImporta.pas' {FrmWebServicesImporta},
-  UFrmAnaliseFornecedores in 'UFrmAnaliseFornecedores.pas' {FrmAnaliseFornecedores};
+  UFrmAnaliseFornecedores in 'UFrmAnaliseFornecedores.pas' {FrmAnaliseFornecedores},
+  FR_Arg in '..\..\..\Program Files (x86)\Borland\Delphi7\FastReportVCL\source\fr_arg.pas' {frFuncArgForm},
+  Main in '..\..\..\Program Files (x86)\Borland\Delphi7\FastReports\FastReport 5\Extra\New DB Engine\Main.pas' {Form1};
 
 {$R *.res}
 
@@ -71,7 +73,7 @@ begin
 
   // Form Principal ============================================================
   Application.CreateForm(TFrmBelShop, FrmBelShop);
-
+  Application.CreateForm(TForm1, Form1);
   // DataModules ===============================================================
   Application.CreateForm(TDMVirtual, DMVirtual);
   Application.CreateForm(TDMConexoes, DMConexoes);

@@ -1140,7 +1140,7 @@ type
     SubMenuFinanComissoes: TMenuItem;
     SubMenuComisVendedores: TMenuItem;
     N48: TMenuItem;
-    SubMenuParametrosVendedores: TMenuItem;
+    SubMenuComisParamVendedores: TMenuItem;
     Ts_ConsultaNFeProdutos: TTabSheet;
     Pan_ConsultaNFeProdutos: TPanel;
     Bt_ConsultaNFeProdSalvarClipboard: TJvXPButton;
@@ -1201,7 +1201,6 @@ type
     MenuMIXFornecedorProdutos: TMenuItem;
     N56: TMenuItem;
     SubMenuGeracaoArquivos: TMenuItem;
-    N57: TMenuItem;
     SubMenuComisCampanhasColecao: TMenuItem;
 
     // Odir ====================================================================
@@ -2063,7 +2062,7 @@ type
     procedure Ckbx_ConsultaNFeApresParcelaKeyUp(Sender: TObject;
       var Key: Word; Shift: TShiftState);
     procedure SubMenuComisVendedoresClick(Sender: TObject);
-    procedure SubMenuParametrosVendedoresClick(Sender: TObject);
+    procedure SubMenuComisParamVendedoresClick(Sender: TObject);
     procedure Dbg_ConsultaNFeProdutosDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
@@ -24051,7 +24050,7 @@ end;
 
 procedure TFrmBelShop.Dbg_GeraOCProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 Var
-  MySql: String;
+  MySql, s: String;
 
   // Executar OnKeyDown (Com a tecle que Quiser)
   MyShiftState : TShiftState;
@@ -24074,6 +24073,27 @@ begin
     Dbg_GeraOCGridKeyDown(Self, MyWord, MyShiftState);
   End; // If Key=VK_F4 Then
 
+  // Localiza Produto LINX =====================================================
+  If (Key=VK_F3) And (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) Then
+  Begin
+    s:='';
+    If InputQuery('Localizar Produto LINX','',s) then
+    Begin
+      if Trim(s)<>'' then
+      Begin
+        Try
+          StrToInt(s);
+          s:=DMBelShop.LINX_BuscaCodigoSIDICOM(s);
+          If Not DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]) Then
+           msg('Produto SIDICOM Não Encontrado no Pedido !!','A');
+        Except
+          s:=AnsiUpperCase(s);
+          DMBelShop.CDS_AComprarItens.Locate('Des_Item',s,[loPartialKey]);
+        End;
+      End; // if Trim(s)<>'' then
+    End; // If InputQuery('Localizar Produto','',s) then
+  End; // If (Key=VK_F3) And (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) Then
+
   // Apresenta Datas de Inclusao/Alteracao do Produto ==========================
   If (key=Vk_F5) And (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) Then
   Begin
@@ -24095,7 +24115,7 @@ end;
 
 procedure TFrmBelShop.Dbg_GeraOCFiliaisKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 Var
-  MySql: String;
+  MySql, s: String;
 
   // Executar OnKeyDown (Com a tecle que Quiser)
   MyShiftState : TShiftState;
@@ -24117,6 +24137,27 @@ begin
     MyWord:=VK_F4;
     Dbg_GeraOCGridKeyDown(Self, MyWord, MyShiftState);
   End; // If Key=VK_F4 Then
+
+  // Localiza Produto LINX =====================================================
+  If (Key=VK_F3) And (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) Then
+  Begin
+    s:='';
+    If InputQuery('Localizar Produto LINX','',s) then
+    Begin
+      if Trim(s)<>'' then
+      Begin
+        Try
+          StrToInt(s);
+          s:=DMBelShop.LINX_BuscaCodigoSIDICOM(s);
+          If Not DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]) Then
+           msg('Produto SIDICOM Não Encontrado no Pedido !!','A');
+        Except
+          s:=AnsiUpperCase(s);
+          DMBelShop.CDS_AComprarItens.Locate('Des_Item',s,[loPartialKey]);
+        End;
+      End; // if Trim(s)<>'' then
+    End; // If InputQuery('Localizar Produto','',s) then
+  End; // If (Key=VK_F3) And (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) Then
 
   // Apresenta Datas de Inclusao/Alteracao do Produto ==========================
   If (key=Vk_F5) And (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) Then
@@ -24213,6 +24254,27 @@ begin
     End; // If InputQuery('Localizar Produto','',s) then
     sgMensagem:='';
   End; // If Key=VK_F4 Then
+
+  // Localiza Produto LINX =====================================================
+  If (Key=VK_F3) And ((PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) And (Ts_GeraOCGrid.CanFocus)) Then
+  Begin
+    s:='';
+    If InputQuery('Localizar Produto LINX','',s) then
+    Begin
+      if Trim(s)<>'' then
+      Begin
+        Try
+          StrToInt(s);
+          s:=DMBelShop.LINX_BuscaCodigoSIDICOM(s);
+          If Not DMBelShop.CDS_AComprarItens.Locate('Cod_Item',FormatFloat('000000',StrToInt(s)),[]) Then
+           msg('Produto SIDICOM Não Encontrado no Pedido !!','A');
+        Except
+          s:=AnsiUpperCase(s);
+          DMBelShop.CDS_AComprarItens.Locate('Des_Item',s,[loPartialKey]);
+        End;
+      End; // if Trim(s)<>'' then
+    End; // If InputQuery('Localizar Produto','',s) then
+  End; // If (Key=VK_F3) And ((PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) And (Ts_GeraOCGrid.CanFocus)) Then
 
   // Apresenta Datas de Inclusao/Alteracao do Produto ==========================
   If (key=Vk_F5) And (PC_GeraOCApresentacao.ActivePage=Ts_GeraOCGrid) Then
@@ -42743,10 +42805,11 @@ begin
   FrmComissaoVendedor.ShowModal;
 
   FreeAndNil(FrmComissaoVendedor);
-
+  sgDescricao:='';
+  
 end;
 
-procedure TFrmBelShop.SubMenuParametrosVendedoresClick(Sender: TObject);
+procedure TFrmBelShop.SubMenuComisParamVendedoresClick(Sender: TObject);
 begin
 
   sgDescricao:='Parametros';
@@ -42765,7 +42828,7 @@ begin
   FrmComissaoVendedor.ShowModal;
 
   FreeAndNil(FrmComissaoVendedor);
-
+  sgDescricao:='';
 end;
 
 procedure TFrmBelShop.Dbg_ConsultaNFeProdutosDrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -43981,6 +44044,39 @@ end;
 
 procedure TFrmBelShop.SubMenuComisCampanhasColecaoClick(Sender: TObject);
 begin
+  OdirPanApres.Caption:='AGUARDE !! Verificando Data da Última Atualização da Web Service LINX...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBelShop;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Apresenta Data da Ultima Atualização da Web Service =======================
+  MySqlDML:=' SELECT MAX(m.data_documento) DTA'+
+            ' FROM LINXMOVIMENTO m'+
+            ' WHERE m.cancelado=''N'''+
+            ' AND m.excluido=''N'''+
+            ' AND m.operacao=''S'''+
+            ' AND m.tipo_transacao=''V'''+
+            ' AND m.data_documento > current_timestamp-20';
+  DMBelShop.SQLQuery3.Close;
+  DMBelShop.SQLQuery3.SQL.Clear;
+  DMBelShop.SQLQuery3.SQL.Add(MySqlDML);
+  DMBelShop.SQLQuery3.Open;
+  sgDescricao:=DMBelShop.SQLQuery3.FieldByName('Dta').AsString;
+  DMBelShop.SQLQuery3.SQL.Clear;
+  DMBelShop.SQLQuery3.Close;
+
+  OdirPanApres.Visible:=False;
+
+  If msg('DATA da ÚLTIMA Atualização da'+cr+'Web Service LINX: '+sgDescricao+cr+cr+'Deseja Continuar ??','C')=2 Then
+  Begin
+    sgDescricao:='';
+    Exit;
+  End;
   sgDescricao:='Campanhas-Colecao';
 
   FrmComissaoVendedor:=TFrmComissaoVendedor.Create(Self);
@@ -43996,6 +44092,7 @@ begin
   FrmComissaoVendedor.ShowModal;
 
   FreeAndNil(FrmComissaoVendedor);
+  sgDescricao:='';
 
 end;
 

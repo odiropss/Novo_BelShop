@@ -557,4 +557,11 @@ object DMSolicTransf: TDMSolicTransf
     Left = 644
     Top = 440
   end
+  object SQLSP: TSQLStoredProc
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 149
+    Top = 10
+  end
 end

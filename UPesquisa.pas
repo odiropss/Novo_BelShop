@@ -73,8 +73,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, JvExControls, JvXPCore, JvXPButtons, Grids, DBGrids, StdCtrls,
   Clipbrd, // PrintScreen
-  Qt, ExtCtrls;
-//  Último: ExtCtrls;
+  Qt, ExtCtrls, DBXpress;
+//  Último: DBXpress,;
 {
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, DB, ADODB, StdCtrls, Buttons, Grids, DBGrids, ExtCtrls, Qt,
@@ -87,12 +87,13 @@ type
   TFrmPesquisa = class(TForm)
     Panel1: TPanel;
     EdtDescricao: TEdit;
-    Label1: TLabel;
+    Lab_Pesquisa: TLabel;
     Dbg_Pesquisa: TDBGrid;
     Panel2: TPanel;
     EdtCodigo: TEdit;
     Bt_PesquisaOK: TJvXPButton;
     Bt_PesquisaRetorna: TJvXPButton;
+    Bt_PesquisaNovo: TJvXPButton;
     procedure EdtDescricaoChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -113,6 +114,7 @@ type
 
     // Dbg_Pesquisa para Pesquisa de Documentos de OC ==============================
     Procedure Dbg_PesquisaPesquisaDoctosOC;
+    procedure Bt_PesquisaNovoClick(Sender: TObject);
 
     // Odir ====================================================================
   private
@@ -131,6 +133,12 @@ type
     Retorno1: String;
     Retorno2: String;
     Retorno3: String;
+
+    sgBt_PesquisaNovo: String;
+    //
+    // sBt_PesquisaNovo.Visible:=True;
+    // 1 = 29 => LOGISTICA - Cadastro de Separadores de Mercadorias
+    //
   end;
 
 var
@@ -138,7 +146,7 @@ var
 
 implementation
 
-uses UDMBelShop;
+uses UDMBelShop, DK_Procs1;
 
 {$R *.dfm}
 
@@ -229,7 +237,7 @@ begin
   EdtCodigo.Clear;
   EdtDescricao.SetFocus;
 
-  Label1.Caption:='Campo de Pesquisa: '+Campo_Pesquisa;
+  Lab_Pesquisa.Caption:='Campo de Pesquisa: '+Campo_Pesquisa;
 end;
 
 procedure TFrmPesquisa.FormKeyPress(Sender: TObject; var Key: Char);
@@ -241,7 +249,7 @@ end;
 procedure TFrmPesquisa.Dbg_PesquisaTitleClick(Column: TColumn);
 begin
   Campo_Pesquisa:=Column.FieldName;
-  Label1.Caption:='Campo de Pesquisa: '+Campo_Pesquisa;
+  Lab_Pesquisa.Caption:='Campo de Pesquisa: '+Campo_Pesquisa;
   EdtDescricao.SetFocus;
   
 end;
@@ -326,6 +334,75 @@ begin
   if Key=44   Then
    Clipboard.AsText:='';
 
+end;
+
+procedure TFrmPesquisa.Bt_PesquisaNovoClick(Sender: TObject);
+Var
+  i: Integer;
+
+  MySql: String;
+  sNome: String;
+begin
+  Dbg_Pesquisa.SetFocus;
+
+  //============================================================================
+  // 1 = 29 => LOGISTICA - Cadastro de Separadores de Mercadorias ==============
+  //============================================================================
+  If sgBt_PesquisaNovo='1' Then
+  Begin
+    sNome:='';
+    sNome:=InputBox('Separador de Mercadoria ', 'Informe o Nome do Usuário',sNome);
+
+    If Trim(sNome)='' Then
+     Exit;
+
+    // Cadastra Usuário ========================================================
+    If DMBelShop.SQLC.InTransaction Then
+     DMBelShop.SQLC.Rollback(TD);
+
+    // Monta Transacao =========================================================
+    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMBelShop.SQLC.StartTransaction(TD);
+    Try // Try da Transação
+      Screen.Cursor:=crAppStart;
+      DateSeparator:='.';
+      DecimalSeparator:='.';
+
+      MySql:=' INSERT INTO TAB_AUXILIAR'+
+             ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
+             ' VALUES ('+
+             ' 29,'+ // TIP_AUX,
+             ' (SELECT COALESCE(MAX(c.cod_aux)+1 ,1) FROM tab_auxiliar c WHERE c.tip_aux=29),'+ // COD_AUX
+             QuotedStr(AnsiUpperCase(sNome))+', '+ // DES_AUX
+             ' NULL,'+ // DES_AUX1
+             ' NULL,'+ // VLR_AUX
+             ' NULL)'; // VLR_AUX1
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+      // Atualiza Transacao ====================================================
+      DMBelShop.SQLC.Commit(TD);
+
+      DMBelShop.CDS_Pesquisa.Close;
+      DMBelShop.CDS_Pesquisa.Open;
+
+      EdtDescricao.Text:=sNome;
+      Bt_PesquisaOKClick(Self);
+
+    Except // Except da Transação
+      on e : Exception do
+      Begin
+        // Abandona Transacao ====================================================
+        DMBelShop.SQLC.Rollback(TD);
+        MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      End; // on e : Exception do
+    End; // Try da Transação
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+    Screen.Cursor:=crDefault;
+  End; // If sgBt_PesquisaNovo='1' Then
+  // 1 = 29 => LOGISTICA - Cadastro de Separadores de Mercadorias ==============
+  //============================================================================
 end;
 
 end.

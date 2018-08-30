@@ -197,7 +197,9 @@ type
     procedure EdtNotasEntDevNumSolicitacaoExit(Sender: TObject);
     procedure DtaEdtNotasEntDevChange(Sender: TObject);
 
-    // Odir ====================================================================
+    //==========================================================================
+    // ODIR ====================================================================
+    //==========================================================================
 
     Procedure CreateToolTips(hWnd: Cardinal); // Cria Show Hint em Forma de Balão
     Procedure FocoToControl(Sender: TControl);
@@ -247,7 +249,15 @@ type
 
     Function  BuscaDivergenciasDocto(sNrPedido: String): Boolean;
 
-    // Odir ====================================================================
+
+    // RELATORIO DE SEPARAÇÃO ==================================================
+    Procedure UsuarioCorredorSeparacao(Var sNome: String);
+    Function  CadastroRelSeparacao: Boolean;
+    Procedure AtualizaNumRelatorio;
+
+    //==========================================================================
+    // ODIR ====================================================================
+    //==========================================================================
 
     procedure Bt_NotasEntDevBuscaDoctoClick(Sender: TObject);
     procedure Bt_NotasEntDevLocalizarClick(Sender: TObject);
@@ -410,6 +420,8 @@ var
 
   OrderGrid: String;    // Ordenar Grid
 
+  sgNumDocSep,    // Numero do Relatório de Separação
+  sgCodUsuSep, // Codigo do Usuario de Separação
   sgCodLjLINX,
   sgNumSeqOC, // Sequencia da OC - OC_LOJAS_NFE
   sgNumSeqOCItem: String; // Sequenciado Item na OC - OC_LOJAS_ITENS
@@ -426,6 +438,220 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
 //==============================================================================
 // Odir - INICIO ===============================================================
 //==============================================================================
+
+// RELATORIO DE SEPARAÇÃO - Atualiza Nº Relatório em ES_ESTOQUES_LOJAS >>>>>>>>>
+Procedure TFrmCentralTrocas.AtualizaNumRelatorio;
+Var
+  MySql: String;
+Begin
+  OdirPanApres.Caption:='AGUARDE !! Atualizando Numero do Relatório...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    FrmBelShop.MontaProgressBar(True, FrmCentralTrocas);
+    pgProgBar.Properties.Max:=DMCentralTrocas.CDS_RelReposicao.RecordCount;
+    pgProgBar.Position:=0;
+
+    DMCentralTrocas.CDS_RelReposicao.First;
+    DMCentralTrocas.CDS_RelReposicao.DisableControls;
+    While Not DMCentralTrocas.CDS_RelReposicao.Eof do
+    Begin
+      Application.ProcessMessages;
+
+      MySql:=' UPDATE ES_ESTOQUES_LOJAS l'+
+             ' SET l.rel_separacao='+sgNumDocSep+
+             ' WHERE l.num_seq='+DMCentralTrocas.CDS_RelReposicaoSEQ.AsString+
+             ' AND l.dta_movto='+
+             QuotedStr(f_Troca('/','.',f_Troca('-','.',DMCentralTrocas.CDS_RelReposicaoDTA_MOVTO.AsString)))+
+             ' AND l.num_docto='+DMCentralTrocas.CDS_RelReposicaoNUM_DOCTO.AsString+
+             ' AND l.cod_produto='+QuotedStr(DMCentralTrocas.CDS_RelReposicaoCOD_PRODUTO.AsString);
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+      pgProgBar.Position:=DMCentralTrocas.CDS_RelReposicao.RecNo;
+
+      DMCentralTrocas.CDS_RelReposicao.Next;
+    End; // While Not DMCentralTrocas.CDS_RelReposicao.Eof do
+    DMCentralTrocas.CDS_RelReposicao.EnableControls;
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+  FrmBelShop.MontaProgressBar(False, FrmCentralTrocas);
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+
+End; // RELATORIO DE SEPARAÇÃO - Atualiza Nº Relatório em ES_ESTOQUES_LOJAS >>>>
+
+// RELATORIO DE SEPARAÇÃO - Cadastro de Relatórios Separação >>>>>>>>>>>>>>>>>>>
+Function TFrmCentralTrocas.CadastroRelSeparacao: Boolean;
+Var
+  MySql: String;
+Begin
+  Result:=True;
+
+  // Busca Numero do Relatório =================================================
+  MySql:=' SELECT GEN_ID(GEN_NUM_REL_SEPARACAO,1) Num_Doc'+
+         ' FROM RDB$DATABASE';
+  DMBelShop.SQLQuery1.Close;
+  DMBelShop.SQLQuery1.SQL.Clear;
+  DMBelShop.SQLQuery1.SQL.Add(MySql);
+  DMBelShop.SQLQuery1.Open;
+  sgNumDocSep:=DMBelShop.SQLQuery1.FieldByName('Num_Doc').AsString;
+  DMBelShop.SQLQuery1.Close;
+
+  // Dados do Relatório ========================================================
+  OdirPanApres.Caption:='AGUARDE !! Salvando Dados do Relatório...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    // Insere Cadastro de relatórios de Separação ==============================
+    MySql:=' INSERT INTO LG_REL_SEPARACAO'+
+           ' (NUM_RELATORIO, DTA_RELATORIO, HRA_RELATORIO, COD_SEPARADOR,'+
+           '  END_ZONA_CORREDOR, DTA_DOCTO, NUM_DOCTO, IND_PRIORIDADES,'+
+           '  COD_FORN, DTA_INICIO, DTA_FIM, SEP_DIAS, SEP_HORAS)'+
+           ' VALUES ('+
+           sgNumDocSep+','+ // NUM_RELATORIO,
+           ' CURRENT_DATE,'+ // DTA_RELATORIO
+           ' CURRENT_TIME, '+ // HRA_RELATORIO
+           sgCodUsuSep+', '+ // COD_SEPARADOR
+           QuotedStr(f_Troca('''','',sgCorredores))+', '+ // END_ZONA_CORREDOR
+           QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtaEdt_ReposLojas.Date))))+', '+ // DTA_DOCTO
+           DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+', '; // NUM_DOCTO
+
+           // IND_PRIORIDADES
+           If sgTipoPrioridade<>'Todas as Prioridades' Then
+            MySql:=
+             MySql+QuotedStr(sgTipoPrioridade)+','
+           Else
+            MySql:=
+             MySql+QuotedStr('Todas')+',';
+
+           // COD_FORN
+           If Trim(EdtReposLojasCodForn.Text)<>'' Then
+            MySql:=
+             MySql+QuotedStr(Trim(EdtReposLojasCodForn.Text))+', '
+           Else
+            MySql:=
+             MySql+' NULL,';
+
+    MySql:=
+     MySql+' NULL,'+ // DTA_INICIO
+           ' NULL,'+ // DTA_FIM
+           ' NULL,'+ // SEP_DIAS
+           ' NULL)'; // SEP_HORAS
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+      Result:=False;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+End; // RELATORIO DE SEPARAÇÃO - Cadastro de Relatórios Separação >>>>>>>>>>>>>>
+
+// RELATORIO DE SEPARAÇÃO - Usuario do Corredor de Separação >>>>>>>>>>>>>>>>>>>
+Procedure TFrmCentralTrocas.UsuarioCorredorSeparacao(Var sNome: String);
+Var
+  MySql: String;
+Begin
+  FrmPesquisa:=TFrmPesquisa.Create(Self);
+  FrmPesquisa.Caption:='Selecione o Usuário Separador Deste Docto de Separação';
+  FrmPesquisa.sgBt_PesquisaNovo:='1';
+  FrmPesquisa.Bt_PesquisaNovo.Visible:=True;
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  MySql:=' SELECT t.des_aux NOME, t.cod_aux CODIGO'+
+         ' FROM TAB_AUXILIAR t'+
+         ' WHERE t.tip_aux=29'+ // 29 => LOGISTICA - CADASTRO DE SEPARADORES DE MERCADORIAS
+         ' ORDER BY 1';
+  DMBelShop.CDS_Pesquisa.Close;
+  DMBelShop.CDS_Pesquisa.Filtered:=False;
+  DMBelShop.SDS_Pesquisa.CommandText:=MySql;
+  DMBelShop.CDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisa.Campo_pesquisa:='Nome';
+  FrmPesquisa.Campo_Codigo:='Codigo';
+  FrmPesquisa.Campo_Descricao:='Nome';
+//  FrmPesquisa.EdtDescricao.Clear;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisa.ShowModal;
+  DMBelShop.CDS_Pesquisa.Close;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+  Begin
+    sgCodUsuSep:=Trim(FrmPesquisa.EdtCodigo.Text);
+    sNome:=Trim(FrmPesquisa.EdtDescricao.Text);
+  End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+
+  FreeAndNil(FrmPesquisa);
+End; // RELATORIO DE SEPARAÇÃO - Usuario do Corredor de Separação >>>>>>>>>>>>>>
 
 // REPOSIÇÕES - Usado no PopUpMenu (Botao: Apresenta Resultados) >>>>>>>>>>>>>>>
 Procedure TFrmCentralTrocas.ItemMenu1Click(Sender: TObject);
@@ -4639,6 +4865,8 @@ end;
 procedure TFrmCentralTrocas.Bt_ReposLojasEmissaoDocClick(Sender: TObject);
 Var
   MySql: String;
+
+  sNomeUsuSep, sCodBarras,
   dir_padrao, dir_relat: String;
 begin
   Dbg_ReposLojasDocs.SetFocus;
@@ -4646,9 +4874,17 @@ begin
   If DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty Then
    Exit;
 
-  If (igCorredores<>CkCbx_ReposLojasCorredor.Items.Count) and (igCorredores>1) Then
+// OdirApagar - 21/08/2018
+//  If (igCorredores<>CkCbx_ReposLojasCorredor.Items.Count) and (igCorredores>1) Then
+  If igCorredores=0 Then
   Begin
-    msg('Relatório deve Conter: '+cr+'TODOS os Corredores ou Somente UM !!','A');
+    msg('Relatório é Por Corredor !!'+cr+'Selecione UM Corredor !!','A');
+    Exit;
+  End; // If Not bgTodosCorredores Then
+
+  If igCorredores<>1 Then
+  Begin
+    msg('Relatório deve Conter: '+cr+'Somente UM Corredor !!','A');
     Exit;
   End; // If Not bgTodosCorredores Then
 
@@ -4660,7 +4896,9 @@ begin
     Exit;
   End;
 
+  //============================================================================
   // Lojas Por Fornecedor ======================================================
+  //============================================================================
 //  If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
 //     (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='89') Then
 //     (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='24') Then
@@ -4672,7 +4910,36 @@ begin
 //      Exit;
 //    End;
 //  End; // If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
+  // Lojas Por Fornecedor ======================================================
+  //============================================================================
 
+//OdirOpss inicio =======>>>>>>>>>>>>>>>>>>>>>
+  //============================================================================
+  // Solicita Usuário de Separador de Mercadoria ===============================
+  //============================================================================
+  sgCodUsuSep:='';
+  UsuarioCorredorSeparacao(sNomeUsuSep);
+
+  If Trim(sgCodUsuSep)='' Then
+   Exit;
+
+  If msg('O Separador Selecionado Esta CORRETO ??'+cr+cr+sgCodUsuSep+' - '+sNomeUsuSep,'C')=2 Then
+   Exit;
+  // Solicita Usuário de Separador de Mercadoria ===============================
+  //============================================================================
+
+  //============================================================================
+  // Cadastro de Relatórios Emitidos para Separação na Logistica ===============
+  //============================================================================
+  If Not CadastroRelSeparacao Then
+   Exit;
+  // Cadastro de Relatórios Emitidos para Separação na Logistica ===============
+  //============================================================================
+//OdirOpss fim =======>>>>>>>>>>>>>>>>>>>>>
+
+  //============================================================================
+  // Apresenta Relatório de Separação de Mercadoria ============================
+  //============================================================================
   Screen.Cursor:=crAppStart;
   OdirPanApres.Caption:='AGUARDE !! Montando Relatório...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
@@ -4752,67 +5019,68 @@ begin
     Exit;
   End;
 
-//OdirApagar - 08/08/2017 - Não Apresenta a Observação
-//  If CkB_ReposLojasOBS.Checked Then
-//  Begin
-//    MySql:=' SELECT DISTINCT l.obs_docto'+
-//           ' FROM es_estoques_lojas l, ES_ESTOQUES_CD c'+
-//           ' WHERE l.cod_produto=c.cod_produto'+
-//           ' AND   l.dta_movto=c.dta_movto'+
-//           ' AND   l.dta_movto='+QuotedStr(f_Troca('-','.',(f_Troca('/','.',DateToStr(DtaEdt_ReposLojas.Date)))))+
-//           ' AND   l.ind_transf='+QuotedStr('SIM')+
-//           ' AND   l.num_docto='+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
-//           ' AND   CAST(TRIM(COALESCE(l.num_pedido,''0'')) AS INTEGER)=0';
-//
-//           If (sgCorredores<>'') and (Not bgTodosCorredores) Then
-//            MySql:=
-//             MySql+' AND c.end_zona||''.''||c.end_corredor in ('+sgCorredores+')';
-//
-//           If Rb_ReposLojasPrioridade0.Checked Then
-//            MySql:=
-//             MySql+' AND l.Ind_Prioridade=0';
-//
-//           If Rb_ReposLojasPrioridade1.Checked Then
-//            MySql:=
-//             MySql+' AND l.Ind_Prioridade=1';
-//
-//           If Rb_ReposLojasPrioridade2.Checked Then
-//            MySql:=
-//             MySql+' AND l.Ind_Prioridade=2';
-//
-//           If Rb_ReposLojasPrioridade3.Checked Then
-//            MySql:=
-//             MySql+' AND l.Ind_Prioridade=3';
-//    DMBelShop.CDS_BuscaRapida.Close;
-//    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-//    DMBelShop.CDS_BuscaRapida.Open;
-//
-//    While Not DMBelShop.CDS_BuscaRapida.Eof do
-//    Begin
-//      FrmBelShop.Memo2.Lines.Add(F_TROCA(''#$D'',''#$D#$A'', DMBelShop.CDS_BuscaRapida.FieldByName('OBS_DOCTO').AsString));
-//
-//      DMBelShop.CDS_BuscaRapida.Next;
-//    End;
-//    DMBelShop.CDS_BuscaRapida.Close;
-//
-//    For i:=0 to FrmBelShop.Memo2.Lines.Count-1 do
-//    Begin
-//      If (Pos('Calculado em:',FrmBelShop.Memo2.Lines[i])=0) And
-//         (Pos('Romaneio de Separação CD Gerado em',FrmBelShop.Memo2.Lines[i])=0) And
-//         (Pos('CD Gerado em',FrmBelShop.Memo2.Lines[i])=0) And
-//         (Pos(': Corte',FrmBelShop.Memo2.Lines[i])=0) And
-//         (Pos('Sem Reposição Pelo',FrmBelShop.Memo2.Lines[i])=0) And
-//         (Pos('Pelo Usuário:',FrmBelShop.Memo2.Lines[i])=0) And
-//         (Pos('Corte Pelo',FrmBelShop.Memo2.Lines[i])=0) And
-//         (Trim(FrmBelShop.Memo2.Lines[i])<>'') Then
-//      Begin
-//        If FrmBelShop.Mem_Odir.Lines.Count<1 Then
-//         FrmBelShop.Mem_Odir.Lines.Add('Observações:');
-//
-//        FrmBelShop.Mem_Odir.Lines.Add(FrmBelShop.Memo2.Lines[i]);
-//      End; // If (Pos('Calculado em:',FrmBelShop.Memo2.Lines[i])=0) And
-//    End; // For i:=0 to FrmBelShop.Memo2.Lines.Count-1 do
-//  End; // If CkB_ReposLojasOBS.Checked Then
+  //OdirApagar - 08/08/2017 - Não Apresenta a Observação
+  //  If CkB_ReposLojasOBS.Checked Then
+  //  Begin
+  //    MySql:=' SELECT DISTINCT l.obs_docto'+
+  //           ' FROM es_estoques_lojas l, ES_ESTOQUES_CD c'+
+  //           ' WHERE l.cod_produto=c.cod_produto'+
+  //           ' AND   l.dta_movto=c.dta_movto'+
+  //           ' AND   l.dta_movto='+QuotedStr(f_Troca('-','.',(f_Troca('/','.',DateToStr(DtaEdt_ReposLojas.Date)))))+
+  //           ' AND   l.ind_transf='+QuotedStr('SIM')+
+  //           ' AND   l.num_docto='+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
+  //           ' AND   CAST(TRIM(COALESCE(l.num_pedido,''0'')) AS INTEGER)=0';
+  //
+  //           If (sgCorredores<>'') and (Not bgTodosCorredores) Then
+  //            MySql:=
+  //             MySql+' AND c.end_zona||''.''||c.end_corredor in ('+sgCorredores+')';
+  //
+  //           If Rb_ReposLojasPrioridade0.Checked Then
+  //            MySql:=
+  //             MySql+' AND l.Ind_Prioridade=0';
+  //
+  //           If Rb_ReposLojasPrioridade1.Checked Then
+  //            MySql:=
+  //             MySql+' AND l.Ind_Prioridade=1';
+  //
+  //           If Rb_ReposLojasPrioridade2.Checked Then
+  //            MySql:=
+  //             MySql+' AND l.Ind_Prioridade=2';
+  //
+  //           If Rb_ReposLojasPrioridade3.Checked Then
+  //            MySql:=
+  //             MySql+' AND l.Ind_Prioridade=3';
+  //    DMBelShop.CDS_BuscaRapida.Close;
+  //    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+  //    DMBelShop.CDS_BuscaRapida.Open;
+  //
+  //    While Not DMBelShop.CDS_BuscaRapida.Eof do
+  //    Begin
+  //      FrmBelShop.Memo2.Lines.Add(F_TROCA(''#$D'',''#$D#$A'', DMBelShop.CDS_BuscaRapida.FieldByName('OBS_DOCTO').AsString));
+  //
+  //      DMBelShop.CDS_BuscaRapida.Next;
+  //    End;
+  //    DMBelShop.CDS_BuscaRapida.Close;
+  //
+  //    For i:=0 to FrmBelShop.Memo2.Lines.Count-1 do
+  //    Begin
+  //      If (Pos('Calculado em:',FrmBelShop.Memo2.Lines[i])=0) And
+  //         (Pos('Romaneio de Separação CD Gerado em',FrmBelShop.Memo2.Lines[i])=0) And
+  //         (Pos('CD Gerado em',FrmBelShop.Memo2.Lines[i])=0) And
+  //         (Pos(': Corte',FrmBelShop.Memo2.Lines[i])=0) And
+  //         (Pos('Sem Reposição Pelo',FrmBelShop.Memo2.Lines[i])=0) And
+  //         (Pos('Pelo Usuário:',FrmBelShop.Memo2.Lines[i])=0) And
+  //         (Pos('Corte Pelo',FrmBelShop.Memo2.Lines[i])=0) And
+  //         (Trim(FrmBelShop.Memo2.Lines[i])<>'') Then
+  //      Begin
+  //        If FrmBelShop.Mem_Odir.Lines.Count<1 Then
+  //         FrmBelShop.Mem_Odir.Lines.Add('Observações:');
+  //
+  //        FrmBelShop.Mem_Odir.Lines.Add(FrmBelShop.Memo2.Lines[i]);
+  //      End; // If (Pos('Calculado em:',FrmBelShop.Memo2.Lines[i])=0) And
+  //    End; // For i:=0 to FrmBelShop.Memo2.Lines.Count-1 do
+  //  End; // If CkB_ReposLojasOBS.Checked Then
+  //OdirApagar - 08/08/2017 - Não Apresenta a Observação
 
   // Apresenta Relatório =======================================================
   {$IFDEF MSWINDOWS}
@@ -4820,39 +5088,76 @@ begin
     dir_relat       := dir_padrao +'Relatorios\';
   {$ENDIF}
 
-//OdirApagar - 08/08/2017 - Não Apresenta a Observação
-//  If FrmBelShop.Mem_Odir.Lines.Count>1 Then
-//   Begin
-//     DMRelatorio.frReport1.LoadFromFile(Dir_Relat+'RomaneioReposicoes.frf');
-//     DMRelatorio.frReport1.Dictionary.Variables.Variable['Obs']:=#39+FrmBelShop.Mem_Odir.Text+#39;
-//   End
-//  Else
-//   Begin
-//     DMRelatorio.frReport1.LoadFromFile(Dir_Relat+'RomaneioReposicoes_SObs.frf');
-//   End;
-  DMRelatorio.frReport1.LoadFromFile(Dir_Relat+'RomaneioReposicoes_SObs.frf');
+  //OdirApagar - 08/08/2017 - Não Apresenta a Observação
+  //  If FrmBelShop.Mem_Odir.Lines.Count>1 Then
+  //   Begin
+  //     DMRelatorio.frReport1.LoadFromFile(Dir_Relat+'RomaneioReposicoes.frf');
+  //     DMRelatorio.frReport1.Dictionary.Variables.Variable['Obs']:=#39+FrmBelShop.Mem_Odir.Text+#39;
+  //   End
+  //  Else
+  //   Begin
+  //     DMRelatorio.frReport1.LoadFromFile(Dir_Relat+'RomaneioReposicoes_SObs.frf');
+  //   End;
+  //OdirApagar - 08/08/2017 - Não Apresenta a Observação
 
   // Apropria DataSet ==========================================================
   DMRelatorio.frDBDataSet1.DataSet:=DMCentralTrocas.CDS_RelReposicao;
+  DMRelatorio.frReport1.LoadFromFile(Dir_Relat+'RomaneioReposicoes_SObs.frf');
 
-  // Informa Corredores ========================================================
+  //============================================================================
+  // Variaveis de Dicionário do Relatório ======================================
+  //============================================================================
+  // Informa Corredores --------------------------------------------------------
   If (bgTodosCorredores) or (igCorredores=0) Then
    DMRelatorio.frReport1.Dictionary.Variables.Variable['Corredor']:=#39+'TODOS'+#39
   Else
    DMRelatorio.frReport1.Dictionary.Variables.Variable['Corredor']:=#39+Trim(f_troca('''','',sgCorredores))+#39;
 
-  // Informa Prioridades =======================================================
+  // Informa Prioridades -------------------------------------------------------
   DMRelatorio.frReport1.Dictionary.Variables.Variable['Prioridades']:=#39+sgTipoPrioridade+#39;
 
-//OdirApagar - 08/08/2017 - Não Apresenta a Observação
-//  If FrmBelShop.Mem_Odir.Lines.Count>0 Then
-//   DMRelatorio.frReport1.Dictionary.Variables.Variable['Obs']:=#39+FrmBelShop.Mem_Odir.Text+#39;
+  // Informa Nome do Usuario de Separação --------------------------------------
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['NomeUsuSeparador']:=#39+sNomeUsuSep+#39;
 
+  // Informa o Numero do Relatório ---------------------------------------------
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['NumDocto']:=#39+sgNumDocSep+#39;
+
+  // Informa o Codigo de Barras do Relatório -----------------------------------
+  // Montagem:
+  //    NumDocSep Tamanho de 7
+  //    NumDocto  Tamanho de 6
+  sCodBarras:=FormatFloat('0000000',StrToInt(sgNumDocSep));
+  sCodBarras:=sCodBarras+FormatFloat('000000',DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsInteger);
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['CodBarrasDocto']:=#39+sCodBarras+#39;
+
+  //OdirApagar - 08/08/2017 - Não Apresenta a Observação
+  //  If FrmBelShop.Mem_Odir.Lines.Count>0 Then
+  //   DMRelatorio.frReport1.Dictionary.Variables.Variable['Obs']:=#39+FrmBelShop.Mem_Odir.Text+#39;
+  // Variaveis de Dicionário do Relatório ======================================
+  //============================================================================
+
+  //============================================================================
+  // Apresenta Relatório =======================================================
+  //============================================================================
   DMRelatorio.frReport1.PrepareReport;
   DMRelatorio.frReport1.ShowReport;
+  // Apresenta Relatório =======================================================
+  //============================================================================
 
-  // Retorna para o DBGrid
+//OdirOpss inicio =======>>>>>>>>>>>>>>>>>>>>>
+  //============================================================================
+  // Atualiza Numero do Relatório em ES_ESTOQUES_LOJAS =========================
+  //============================================================================
+  AtualizaNumRelatorio;
+  // Atualiza Numero do Relatório em ES_ESTOQUES_LOJAS =========================
+  //============================================================================
+//OdirOpss fim =======>>>>>>>>>>>>>>>>>>>>>
+
+  // Retorna para o DBGrid =====================================================
   DMCentralTrocas.CDS_RelReposicao.Close;
+  Dbg_ReposLojasDocs.SetFocus;
+  // Apresenta Relatório de Separação de Mercadoria ============================
+  //============================================================================
 
 end;
 
@@ -4878,7 +5183,7 @@ begin
   If Trim(EdtReposLojasCodForn.Text)<>'' Then
    sgMensagem:=sgMensagem+cr+cr+'Fornecedor'+cr+Trim(EdtReposLojasDesForn.Text);
 
-  If Application.MessageBox(PChar('Deseja Realmente Alterar Quantidades De Reposição ??'+cr+cr+
+  If Application.MessageBox(PChar('Deseja Realmente Alterar Quantidades de Reposição ??'+cr+cr+
                                   'Docto Nº:  '+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+cr+
                                   'Loja:  '+DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString+' - '+
                                             DMCentralTrocas.CDS_ReposicaoDocsRAZAO_SOCIAL.AsString+cr+

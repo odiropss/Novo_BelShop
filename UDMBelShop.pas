@@ -1401,7 +1401,7 @@ Begin
   SQLSP.Prepared:=True;
 
   SQLSP.ExecProc;
-  Result:=SQLSP.ParamByName('ret_NumOC').AsString;
+  Result:=SQLSP.ParamByName('Ret_NumOC').AsString;
   SQLSP.Prepared:=False;
   SQLSP.Close;
   SQLSP.Params.Clear;

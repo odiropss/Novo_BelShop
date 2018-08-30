@@ -138,6 +138,7 @@ type
     Bt_FluxoVinculadoExcluir: TJvXPButton;
     EdtFornVinculadoCodForn: TCurrencyEdit;
     Bt_FluxoVinculadoBuscaForn: TJvXPButton;
+    Bt_AvariasCentralTrocas: TButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -249,6 +250,7 @@ type
     procedure Bt_FluxoVinculadoExcluirClick(Sender: TObject);
     procedure EdtFornVinculadoCodFornExit(Sender: TObject);
     procedure Bt_FluxoVinculadoBuscaFornClick(Sender: TObject);
+    procedure Bt_AvariasCentralTrocasClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -509,7 +511,7 @@ Begin
     //==========================================================================
     //  Processa os Excluídos IND_SITUACAO='E' =================================
     //==========================================================================
-    OdirPanApres.Caption:='AGUARDE !! Fase 1/2 - Excluindo Vínculos de Fornecedores.. ';
+    OdirPanApres.Caption:='AGUARDE !! Fase 1/2 - Excluindo Vínculos de Fornecedores...';
     OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
     OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Width-OdirPanApres.Width)/2));
     OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Height-OdirPanApres.Height)/2))-20;
@@ -2060,6 +2062,7 @@ begin
     MEdt_DtaAtualizacao.Visible:=True;
     EdtFluFornCodFornAcertar.Visible:=True;
     Bt_FluFornAcertaSaldos.Visible:=True;
+    Bt_AvariasCentralTrocas.Visible:=True;
   End; // If AnsiUpperCase(Des_Login)='ODIR' Then
 
   bgPodeUsar:=False;
@@ -4210,7 +4213,7 @@ begin
    Begin
      Lab_Lanctos.Caption:='Inclusão de Débito/Crédito';
 
-     // Atualiza Componentes ====================================================
+     // Busca Numero do Docto/Serie ============================================
      MySql:=' SELECT GEN_ID(GEN_DOC_CC,1) Docto'+
             ' FROM RDB$DATABASE';
      DMBelShop.CDS_Busca.Close;
@@ -4706,8 +4709,6 @@ Var
 
   iCodForn: Integer;
   sDesForn: String;
-
-  i: Integer;
 begin
 
   If EdtFornVinculoCodForn.Value<>0 Then
@@ -5212,8 +5213,188 @@ begin
   FreeAndNil(FrmPesquisa);
 end;
 
+procedure TFrmFluxoFornecedor.Bt_AvariasCentralTrocasClick(Sender: TObject);
+Var
+  MySql: String;
+
+  sPercRed,
+  sCodForn, sDesForn,
+  sDtaCaixa, sNumSeq,
+  sNumDocto, sSerieDocto: String;
+begin
+  If AnsiUpperCase(Des_Login)<>'ODIR' Then
+   Exit;
+
+  OdirPanApres.Caption:='AGUARDE !! Atualizando CC Avarias...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmFluxoFornecedor;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD1);
+
+  // Monta Transacao ===========================================================
+  Try // Try da Transação
+   MySql:=' SELECT'+
+          ' ct.cod_fornecedor COD_FORNECEDOR,'+
+          ' fo.nome_cliente NOME_FORNECEDOR,'+
+          ' fs.codfornecedor COD_FOR_SID,'+
+          ' fs.nomefornecedor NOME_FORN_SID,'+
+          ' cast(sum(ct.saldo * ct.vlr_unit) as numeric(12,2)) TOT_FINANCEIRO'+
+
+          ' FROM CENTRAL_TROCAS ct, LINXCLIENTESFORNEC fo, FORNECEDOR fs'+
+
+          ' WHERE ct.cod_fornecedor=fo.cod_cliente'+
+          ' AND   ct.codfornecedor=fs.codfornecedor'+
+          ' AND   COALESCE(ct.saldo,0)<>0'+
+
+          ' GROUP BY 1,2,3,4'+
+          ' ORDER BY 1,3';
+    DMBelShop.CDS_Busca1.Close;
+    DMBelShop.SDS_Busca1.CommandText:=MySql;
+    DMBelShop.CDS_Busca1.Open;
+
+    Bt_AvariasCentralTrocas.Caption:=IntToStr(DMBelShop.CDS_Busca1.RecordCount);
+
+    DMBelShop.CDS_Busca1.DisableControls;
+    While Not DMBelShop.CDS_Busca1.Eof do
+    Begin
+      Application.ProcessMessages;
+
+      TD1.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+      TD1.IsolationLevel:=xilREADCOMMITTED;
+      DMBelShop.SQLC.StartTransaction(TD1);
+      Screen.Cursor:=crAppStart;
+      DateSeparator:='.';
+      DecimalSeparator:='.';
+
+      // Busca Codigo Fornecedor pelo Codigo Vinculado =========================
+      MySql:=' SELECT ff.cod_fornecedor, ff.des_fornecedor'+
+             ' FROM fl_caixa_fornecedores ff'+
+             ' WHERE ff.cod_vinculado='+DMBelShop.CDS_Busca1.FieldByName('COD_FORNECEDOR').AsString;
+      DMBelShop.SQLQuery3.Close;
+      DMBelShop.SQLQuery3.SQL.Clear;
+      DMBelShop.SQLQuery3.SQL.Add(MySql);
+      DMBelShop.SQLQuery3.Open;
+
+      sCodForn:=DMBelShop.CDS_Busca1.FieldByName('Cod_Fornecedor').AsString;
+      sDesForn:=DMBelShop.CDS_Busca1.FieldByName('Nome_Fornecedor').AsString;
+      If Trim(DMBelShop.SQLQuery3.FieldByName('cod_fornecedor').AsString)<>'' Then
+      Begin
+        sCodForn:=DMBelShop.SQLQuery3.FieldByName('Cod_Fornecedor').AsString;
+        sDesForn:=DMBelShop.SQLQuery3.FieldByName('Des_Fornecedor').AsString;
+      End;
+      DMBelShop.SQLQuery3.Close;
+
+      // Data do Caixa =========================================================
+      sDtaCaixa:=DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+      sPercRed:='0.00';
+
+      // Busca Num_Seq do Dia do Fornecedor ====================================
+      MySql:=' SELECT COALESCE(MAX(cf.num_seq)+1 ,1) Num_Seq'+
+             ' FROM FL_CAIXA_FORNECEDORES cf'+
+             ' WHERE cf.dta_caixa='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaCaixa)))+
+             ' AND   cf.cod_fornecedor='+sCodForn+
+             ' AND   cf.num_seq NOT IN (0,999999)';
+      DMBelShop.SQLQuery3.Close;
+      DMBelShop.SQLQuery3.SQL.Clear;
+      DMBelShop.SQLQuery3.SQL.Add(MySql);
+      DMBelShop.SQLQuery3.Open;
+      sNumSeq:=DMBelShop.SQLQuery3.FieldByName('Num_Seq').AsString;
+      DMBelShop.SQLQuery3.Close;
+
+      // Busca Numero do Docto/Serie ===========================================
+      MySql:=' SELECT GEN_ID(GEN_DOC_CC,1) Docto'+
+             ' FROM RDB$DATABASE';
+      DMBelShop.SQLQuery3.Close;
+      DMBelShop.SQLQuery3.SQL.Clear;
+      DMBelShop.SQLQuery3.SQL.Add(MySql);
+      DMBelShop.SQLQuery3.Open;
+      sNumDocto:=DMBelShop.SQLQuery3.FieldByName('Docto').AsString;
+      sSerieDocto:='UNIC';
+      DMBelShop.SQLQuery3.Close;
+
+      // Insere Caixa ==========================================================
+      MySql:=' INSERT INTO FL_CAIXA_FORNECEDORES ('+
+             ' COD_FORNECEDOR, DES_FORNECEDOR,'+
+             ' COD_VINCULADO, DES_VINCULADO,'+
+             ' VLR_ORIGEM, DTA_ORIGEM, DTA_CAIXA, NUM_SEQ,'+
+             ' NUM_CHAVENF, COD_EMPRESA, COD_HISTORICO, TXT_OBS,'+
+             ' NUM_DOCUMENTO, NUM_SERIE, PER_REDUCAO, TIP_DEBCRE, VLR_CAIXA, VLR_SALDO,'+
+             ' CODFORNECEDOR, COD_LOJA_LINX, COD_LOJA_SIDICOM)'+
+             ' VALUES ('+
+             sCodForn+', '+ // COD_FORNECEDOR (LINX) - Fornecedor de Vinculo
+             QuotedStr(sDesForn)+', '+ // DES_FORNECEDOR (LINX) - Fornecedor de Vinculo
+             DMBelShop.CDS_Busca1.FieldByName('COD_FORNECEDOR').AsString+', '+ // COD_VINCULADO (LINX) - Fornecedor Vinculado
+             QuotedStr(DMBelShop.CDS_Busca1.FieldByName('NOME_FORNECEDOR').AsString)+', '+ // DES_VINCULADO (LINX) - Fornecedor Vinculado
+             DMBelShop.CDS_Busca1.FieldByName('TOT_FINANCEIRO').AsString+', '+ // VLR_ORIGEM
+             QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaCaixa)))+', '+ // DTA_ORIGEM
+             QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaCaixa)))+', '+ // DTA_CAIXA
+             sNumSeq+', '+ // NUM_SEQ
+             'NULL, '+ // NUM_CHAVENF
+             '2, '+ // COD_EMPRESA (2 = CD)
+             '900, '+ // COD_HISTORICO (900 = Conta Corrente Débito)
+             '''DESCARTE DE AVARIAS - Central de Trocas - 13/12/2016'', '+ // TXT_OBS
+             QuotedStr(sNumDocto)+', '+ // NUM_DOCUMENTO
+             QuotedStr(sSerieDocto)+', '+ // NUM_SERIE
+             sPercRed+', '+ // PER_REDUCAO,
+             QuotedStr('D')+', '+ // TIP_DEBCRE
+
+             'CAST(('+DMBelShop.CDS_Busca1.FieldByName('TOT_FINANCEIRO').AsString+
+                    '-(('+sPercRed+' * '+DMBelShop.CDS_Busca1.FieldByName('TOT_FINANCEIRO').AsString+
+                    ') / 100)) AS NUMERIC(12,2)), '+ // VLR_CAIXA
+
+             '0.00, '+ // VLR_SALDO
+             QuotedStr(DMBelShop.CDS_Busca1.FieldByName('COD_FOR_SID').AsString)+', '+ // CODFORNECEDOR VARCHAR(6)
+             '2, '+ // COD_LOJA_LINX INTEGER (2 = CD)
+             QuotedStr('50')+')'; // COD_LOJA_SIDICOM VARCHAR(2) = 50 = Central de Trocas
+      DMBelShop.SQLC.Execute(MySql, nil, nil);
+
+      // Atualiza Transacao ====================================================
+      DMBelShop.SQLC.Commit(TD1);
+
+      // Recalcula Conta Corrente ==============================================
+      EdtFluFornCodFornAcertar.Text:=sCodForn;
+      MEdt_DtaAtualizacao.Text:=f_Troca('/','.',f_Troca('-','.',DateToStr(StrToDate(sDtaCaixa)-30)));
+      bgAtualizaDireto:=True;
+      Bt_FluFornAcertaSaldosClick(Self);
+
+      EdtFluFornCodFornAcertar.Text:='Cód a Acertar';
+      MEdt_DtaAtualizacao.Text:='  .  .20  ';
+
+      Bt_AvariasCentralTrocas.Caption:=IntToStr(DMBelShop.CDS_Busca1.RecordCount)+' - '+
+                                       IntToStr(DMBelShop.CDS_Busca1.RecNo);
+
+      DMBelShop.CDS_Busca1.Next;
+    End; // While Not DMBelShop.CDS_Busca1.Eof do
+    DMBelShop.CDS_Busca1.EnableControls;
+    DMBelShop.CDS_Busca1.Close;
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD1);
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+  FrmBelShop.MontaProgressBar(False, FrmFluxoFornecedor);
+
+end;
+
 end.
 
 {
 hint balao revisar
-}
+}             

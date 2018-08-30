@@ -64,7 +64,9 @@ begin
   hHrInicio:=TimeToStr(DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor));
 
   // Dia Anterior para Processar as Lojas ======================================
+//OdirAqui
   sgDia:=DateToStr(DataHoraServidorFI(DMAtualizaSaldos.SDS_DtaHoraServidor)-1);
+//  sgDia:='11.08.2018';
 
   // Processa Saldos do Dia ====================================================
   If DMAtualizaSaldos.SQLC.InTransaction Then

@@ -90,6 +90,8 @@ begin
         i := FindNext(SR);
       end;
     End; // If Not fileexists(EdtDestino.Text+'WinRAR.exe') then
+    // Copia WinRAR ============================================================
+    //==========================================================================
 
     //==========================================================================
     // Copia Executável PBelShop ===============================================
@@ -126,6 +128,8 @@ begin
      Begin
        winexec(PChar(EdtDestino.Text+'WinRAR.exe e '+EdtDestino.Text+'PBelShop.rar '+EdtDestino.Text),sw_normal);
      End; // If fileexists(EdtDestino.Text+'PBelShop.exe') then
+    // Copia Executável PBelShop ===============================================
+    //==========================================================================
 
     //==========================================================================
     // Copia Executável PCriptografiaGeoBeauty =================================
@@ -162,21 +166,23 @@ begin
      Begin
        winexec(PChar(EdtDestino.Text+'WinRAR.exe e '+EdtDestino.Text+'PCriptografiaGeoBeauty.rar '+EdtDestino.Text),sw_normal);
      End; // If fileexists(EdtDestino.Text+'PCriptografiaGeoBeauty.exe') then
-                                            
+    // Copia Executável PCriptografiaGeoBeauty =================================
     //==========================================================================
-    // Copia Executável PMovtosEmpresas ========================================
-    //==========================================================================
-    If fileexists(EdtDestino.Text+'PMovtosEmpresas.rar') then
-     DeleteFile(EdtDestino.Text+'PMovtosEmpresas.rar');
 
-    If Not fileexists(EdtOrigem.Text+'PMovtosEmpresas.rar') then
+    //==========================================================================
+    // Copia Executável PSeparacaoDoctos =======================================
+    //==========================================================================
+    If fileexists(EdtDestino.Text+'PSeparacaoDoctos.rar') then
+     DeleteFile(EdtDestino.Text+'PSeparacaoDoctos.rar');
+
+    If Not fileexists(EdtOrigem.Text+'PSeparacaoDoctos.rar') then
     Begin
-      ShowMessage('O Arquivo Abaixo Não Foi Encontrado !!'+cr+'Entrar em Contato com o ODIR !!'+cr+cr+'PMovtosEmpresas.rar');
+      ShowMessage('O Arquivo Abaixo Não Foi Encontrado !!'+cr+'Entrar em Contato com o ODIR !!'+cr+cr+'PSeparacaoDoctos.rar');
       Application.Terminate;
       Exit;
     End;
 
-    i := FindFirst(EdtOrigem.Text+'PMovtosEmpresas.rar', faAnyFile, SR);
+    i := FindFirst(EdtOrigem.Text+'PSeparacaoDoctos.rar', faAnyFile, SR);
     FrmExecutar.Refresh;
     while i = 0 do
     begin
@@ -189,15 +195,57 @@ begin
       i := FindNext(SR);
     end;
 
-    If fileexists(EdtDestino.Text+'PMovtosEmpresas.exe') then
+    If fileexists(EdtDestino.Text+'PSeparacaoDoctos.exe') then
      Begin
-      If DeleteFile(EdtDestino.Text+'PMovtosEmpresas.exe') Then
-       winexec (PChar(EdtDestino.Text+'WinRAR.exe e '+EdtDestino.Text+'PMovtosEmpresas.rar '+EdtDestino.Text),sw_normal);
+      If DeleteFile(EdtDestino.Text+'PSeparacaoDoctos.exe') Then
+       winexec (PChar(EdtDestino.Text+'WinRAR.exe e '+EdtDestino.Text+'PSeparacaoDoctos.rar '+EdtDestino.Text),sw_normal);
      End
-    Else // If fileexists(EdtDestino.Text+'PMovtosEmpresas.exe') then
+    Else // If fileexists(EdtDestino.Text+'PSeparacaoDoctos.exe') then
      Begin
-       winexec (PChar(EdtDestino.Text+'WinRAR.exe e '+EdtDestino.Text+'PMovtosEmpresas.rar '+EdtDestino.Text),sw_normal);
-     End; // If fileexists(EdtDestino.Text+'PMovtosEmpresas.exe') then
+       winexec (PChar(EdtDestino.Text+'WinRAR.exe e '+EdtDestino.Text+'PSeparacaoDoctos.rar '+EdtDestino.Text),sw_normal);
+     End; // If fileexists(EdtDestino.Text+'PSeparacaoDoctos.exe') then
+    // Copia Executável PSeparacaoDoctos =======================================
+    //==========================================================================
+
+    //==========================================================================
+    // Retirei Fora em 29/08/2018 ==============================================
+    // Copia Executável PMovtosEmpresas ========================================
+    //==========================================================================
+//    If fileexists(EdtDestino.Text+'PMovtosEmpresas.rar') then
+//     DeleteFile(EdtDestino.Text+'PMovtosEmpresas.rar');
+//
+//    If Not fileexists(EdtOrigem.Text+'PMovtosEmpresas.rar') then
+//    Begin
+//      ShowMessage('O Arquivo Abaixo Não Foi Encontrado !!'+cr+'Entrar em Contato com o ODIR !!'+cr+cr+'PMovtosEmpresas.rar');
+//      Application.Terminate;
+//      Exit;
+//    End;
+//
+//    i := FindFirst(EdtOrigem.Text+'PMovtosEmpresas.rar', faAnyFile, SR);
+//    FrmExecutar.Refresh;
+//    while i = 0 do
+//    begin
+//      if (SR.Attr and faDirectory) <> faDirectory then
+//      begin
+//        Origem := EdtOrigem.Text + SR.Name;
+//        Destino := EdtDestino.Text + SR.Name;
+//        CopyFile(PChar(Origem), PChar(Destino), False);
+//      end;
+//      i := FindNext(SR);
+//    end;
+//
+//    If fileexists(EdtDestino.Text+'PMovtosEmpresas.exe') then
+//     Begin
+//      If DeleteFile(EdtDestino.Text+'PMovtosEmpresas.exe') Then
+//       winexec (PChar(EdtDestino.Text+'WinRAR.exe e '+EdtDestino.Text+'PMovtosEmpresas.rar '+EdtDestino.Text),sw_normal);
+//     End
+//    Else // If fileexists(EdtDestino.Text+'PMovtosEmpresas.exe') then
+//     Begin
+//       winexec (PChar(EdtDestino.Text+'WinRAR.exe e '+EdtDestino.Text+'PMovtosEmpresas.rar '+EdtDestino.Text),sw_normal);
+//     End; // If fileexists(EdtDestino.Text+'PMovtosEmpresas.exe') then
+    // Retirei Fora em 29/08/2018 ==============================================
+    // Copia Executável PMovtosEmpresas ========================================
+    //==========================================================================
 
     //==========================================================================
     // Copia Executável Relatório Visual (VisualR4.exe) =============================
@@ -234,6 +282,8 @@ begin
      Begin
        winexec (PChar(EdtDestino.Text+'WinRAR.exe e '+EdtDestino.Text+'VisualR4.rar '+EdtDestino.Text),sw_normal);
      End; // If fileexists(EdtDestino.Text+'VisualR4.exe') then
+    // Copia Executável Relatório Visual (VisualR4.exe) =============================
+    //==========================================================================
 
     //==========================================================================
     // Copia Tradução DevExpress ===============================================
@@ -270,42 +320,48 @@ begin
      Begin
        winexec (PChar(EdtDestino.Text+'WinRAR.exe e '+EdtDestino.Text+'TradDevExpBr.rar '+EdtDestino.Text),sw_normal);
      End; // If fileexists(EdtDestino.Text+'TradDevExpBr.ini') then
+    // Copia Tradução DevExpress ===============================================
+    //==========================================================================
 
     //==========================================================================
+    // Retirei em 29/08/2018 ===================================================
     // Copia Executável PAtualizaDocWord =======================================
     //==========================================================================
-    If fileexists(EdtDestino.Text+'PAtualizaDocWord.rar') then
-     DeleteFile(EdtDestino.Text+'PAtualizaDocWord.rar');
-
-    If Not fileexists(EdtOrigem.Text+'PAtualizaDocWord.rar') then
-    Begin
-      ShowMessage('O Arquivo Abaixo Não Foi Encontrado !!'+cr+'Entrar em Contato com o ODIR !!'+cr+cr+'PAtualizaDocWord.rar');
-      Application.Terminate;
-      Exit;
-    End;
-
-    i := FindFirst(EdtOrigem.Text+'PAtualizaDocWord.rar', faAnyFile, SR);
-    FrmExecutar.Refresh;
-    while i = 0 do
-    begin
-      if (SR.Attr and faDirectory) <> faDirectory then
-      begin
-        Origem := EdtOrigem.Text + SR.Name;
-        Destino := EdtDestino.Text + SR.Name;
-        CopyFile(PChar(Origem), PChar(Destino), False);
-      end;
-      i := FindNext(SR);
-    end;
-
-    If fileexists(EdtDestino.Text+'PAtualizaDocWord.exe') then
-     Begin
-       If DeleteFile(EdtDestino.Text+'PAtualizaDocWord.exe') Then
-        winexec(PChar(EdtDestino.Text+'WinRAR.exe e '+EdtDestino.Text+'PAtualizaDocWord.rar '+EdtDestino.Text),sw_normal);
-     End
-    Else // If fileexists(EdtDestino.Text+'PAtualizaDocWord.exe') then
-     Begin
-        winexec(PChar(EdtDestino.Text+'WinRAR.exe e '+EdtDestino.Text+'PAtualizaDocWord.rar '+EdtDestino.Text),sw_normal);
-     End; // If fileexists(EdtDestino.Text+'PAtualizaDocWord.exe') then
+//    If fileexists(EdtDestino.Text+'PAtualizaDocWord.rar') then
+//     DeleteFile(EdtDestino.Text+'PAtualizaDocWord.rar');
+//
+//    If Not fileexists(EdtOrigem.Text+'PAtualizaDocWord.rar') then
+//    Begin
+//      ShowMessage('O Arquivo Abaixo Não Foi Encontrado !!'+cr+'Entrar em Contato com o ODIR !!'+cr+cr+'PAtualizaDocWord.rar');
+//      Application.Terminate;
+//      Exit;
+//    End;
+//
+//    i := FindFirst(EdtOrigem.Text+'PAtualizaDocWord.rar', faAnyFile, SR);
+//    FrmExecutar.Refresh;
+//    while i = 0 do
+//    begin
+//      if (SR.Attr and faDirectory) <> faDirectory then
+//      begin
+//        Origem := EdtOrigem.Text + SR.Name;
+//        Destino := EdtDestino.Text + SR.Name;
+//        CopyFile(PChar(Origem), PChar(Destino), False);
+//      end;
+//      i := FindNext(SR);
+//    end;
+//
+//    If fileexists(EdtDestino.Text+'PAtualizaDocWord.exe') then
+//     Begin
+//       If DeleteFile(EdtDestino.Text+'PAtualizaDocWord.exe') Then
+//        winexec(PChar(EdtDestino.Text+'WinRAR.exe e '+EdtDestino.Text+'PAtualizaDocWord.rar '+EdtDestino.Text),sw_normal);
+//     End
+//    Else // If fileexists(EdtDestino.Text+'PAtualizaDocWord.exe') then
+//     Begin
+//        winexec(PChar(EdtDestino.Text+'WinRAR.exe e '+EdtDestino.Text+'PAtualizaDocWord.rar '+EdtDestino.Text),sw_normal);
+//     End; // If fileexists(EdtDestino.Text+'PAtualizaDocWord.exe') then
+    // Retirei em 29/08/2018 ===================================================
+    // Copia Executável PAtualizaDocWord =======================================
+    //==========================================================================
 
     //==========================================================================
     // Copia Relatorios ========================================================
@@ -328,6 +384,8 @@ begin
         i := FindNext(SR);
       end;
     End; // If bPastaRelatorio Then
+    // Copia Relatorios ========================================================
+    //==========================================================================
 
     //==========================================================================
     // Copia Arquivos.ini ======================================================
@@ -344,9 +402,11 @@ begin
       end;
       i := FindNext(SR);
     end;
+    // Copia Arquivos.ini ======================================================
+    //==========================================================================
 
     //==========================================================================
-    // Copia fbclient.dll (Devido a Empresa 08) ================================
+    // Copia fbclient.dll ======================================================
     //==========================================================================
     If fileexists(EdtDestino.Text+'fbclient.dll') then
      DeleteFile(EdtDestino.Text+'fbclient.dll');
@@ -363,9 +423,11 @@ begin
       end;
       i := FindNext(SR);
     end;
+    // Copia fbclient.dll ======================================================
+    //==========================================================================
 
     //==========================================================================
-    // Copia gds32.dll (Devido a Empresa 08) ===================================
+    // Copia gds32.dll==========================================================
     //==========================================================================
     If fileexists(EdtDestino.Text+'gds32.dll') then
      DeleteFile(EdtDestino.Text+'gds32.dll');
@@ -382,6 +444,8 @@ begin
       end;
       i := FindNext(SR);
     end;
+    // Copia gds32.dll==========================================================
+    //==========================================================================
 
     //==========================================================================
     // Executa EdtAplicativo.Text ==============================================
@@ -389,6 +453,8 @@ begin
     FrmExecutar.Refresh;
     // ShellExecute(handle, 'open', PChar(EdtAplicativo.Text), '', PChar(EdtDestino.Text), sw_shownormal);
     ShellExecute(handle, 'open', PChar(EdtAplicativo.Text), PChar(EdtOrigem.Text+'PBelShop.exe'), PChar(EdtDestino.Text), sw_shownormal);
+    // Executa EdtAplicativo.Text ==============================================
+    //==========================================================================
 
     FrmEntrada.Free;
     Application.Terminate;

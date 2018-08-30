@@ -40,6 +40,8 @@ odirTeste
 
 -> LinxConfiguracoesTributariasDetalhes (Problema no Tamanho dos Campos)
    - Por Loja
+      - 1 Vez (Nome da Tabela: LinxConfigTributariasDetalhes)
+
    ====================================
    Retorna o detalhamento das configurações tributárias da empresa
 create table LinxConfiguracoesTributariasDetalhes
@@ -305,6 +307,7 @@ var
   // sgAtiva=0
 
   bgMontouPost: Boolean;
+  igCodTrib: Integer; // Incremento para Busca da Tributação (Metodo LinxConfiguracoesTributariasDetalhes)
 
   // Comandos Sql de UpDate/Insert
   sgMetodoNomeTabela,   // É preenchido com o Nome da Tabela se Diferente do Nome do Metodo
@@ -537,7 +540,7 @@ Begin
     If Note_Response.NodeName = 'ResponseData' Then
     Begin
       // Busca Campos da Tabela para Comparações ===============================
-      MySql:=' SELECT DISTINCT Trim(c.rdb$field_name) Campo'+
+      MySql:=' SELECT DISTINCT UPPER(TRIM(c.rdb$field_name)) Campo'+
              ' FROM RDB$RELATION_FIELDS c';
 
              If Trim(sgMetodoNomeTabela)<>'' Then
@@ -581,9 +584,21 @@ Begin
           sSqlUpInCampos:=
            sSqlUpInCampos+', '+DMLinxWebService.CDS_Busca.FieldByName('Campo').AsString;
 
-        tgCamposBD.Add(DMLinxWebService.CDS_Busca.FieldByName('Campo').AsString);
+        //======================================================================
+        // Campo Com Nome Alterado =============================================
+        //======================================================================
+        If AnsiUpperCase(Trim(DMLinxWebService.CDS_Busca.FieldByName('Campo').AsString))='ALIQ_INTERNA_UF_DEST' Then // LinxConfiguracoesTributariasDetalhes
+         tgCamposBD.Add('PERC_ALIQUOTA_INTERNA_UF_DESTINATARIO')
 
-        DMLinxWebService.CDS_Busca.Next;
+        Else If AnsiUpperCase(Trim(DMLinxWebService.CDS_Busca.FieldByName('Campo').AsString))='ALIQ_INTERESTADUAL_UF_ENV' Then // LinxConfiguracoesTributariasDetalhes
+         tgCamposBD.Add('PERC_ALIQUOTA_INTERESTADUAL_UF_ENVOLVIDAS')
+
+        Else // Sem Alteração de Nome
+         tgCamposBD.Add(Trim(DMLinxWebService.CDS_Busca.FieldByName('Campo').AsString));
+        // Campo Com Nome Alterado =============================================
+        //======================================================================
+
+       DMLinxWebService.CDS_Busca.Next;
       End; // While Not DMLinxWebService.CDS_Busca.Eof do
       DMLinxWebService.CDS_Busca.Close;
 
@@ -607,22 +622,24 @@ Begin
 //                 - Com o parentes Final. Todos com 2 e no Final com 3.
 //                 - "Or" em todos no Último "AND"
           // Considera Campo "Empresa (ODIR)" COM Campo "Portal" das TABELAS ==========
-          If ((AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas'))                    Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento'))                  Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoTrocas'))            Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxVendedores'))                 Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoPlanos'))            Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoSerial'))            Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoOrigemDevolucoes'))  Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoAcoesPromocionais')) Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxAcoesPromocionais'))          Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLancContabil'))               Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosVenda'))               Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosCompra'))              Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes'))           Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPlanosPedidoVenda'))          Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosInventario'))         Or
-              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxSangriaSuprimentos')))        And
+          If ((AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas'))                            Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento'))                          Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoTrocas'))                    Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxVendedores'))                         Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoPlanos'))                    Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoSerial'))                    Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoOrigemDevolucoes'))          Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoAcoesPromocionais'))         Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxAcoesPromocionais'))                  Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLancContabil'))                       Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosVenda'))                       Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosCompra'))                      Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes'))                   Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPlanosPedidoVenda'))                  Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosInventario'))                 Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxConfiguracoesTributarias'))           Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxConfiguracoesTributariasDetalhes'))   Or
+              (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxSangriaSuprimentos')))               And
               (ii>0) Then
            iii:=iii+1;
 
@@ -639,10 +656,12 @@ Begin
           Begin
             SalvaProcessamento('=====================================');
             SalvaProcessamento(sgMetodo+' Campos em Divergencia !!');
+            FreeAndNil(tgCamposBD);
             Exit;
           End; // If Trim(Node_Campos.ChildNodes[ii].NodeValue)<>tgCamposBD[ii] Then
         End; // for ii := 0 to Node_Campos.ChildNodes.Count-1 do
       End; // If Assigned(Node_Campos) Then
+      FreeAndNil(tgCamposBD);
 
       // Monta Transacao =======================================================
       TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
@@ -683,7 +702,7 @@ Begin
         Begin
           Node_Valores := Note_Response.ChildNodes[iii]; // Node "R"
 
-          // Se Node de Registro - Node "R"
+          // Se Node de Registro - Node "R" ====================================
           If VarToStr(Node_Valores.NodeName)='R' Then // Node "R"
           Begin
             // Inicia sSqlUpInCampos --------------------------------
@@ -700,23 +719,25 @@ Begin
 //                 - Com o parentes Final. Todos com 2 e no Final com 3.
 //                 - "Or" em todos no Último "AND"
                 // Considera Campo "Empresa" das TABELAS ------------
-                If ((AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas'))                    Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento'))                  Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoTrocas'))            Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxVendedores'))                 Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxGrupoLojas'))                 Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoSerial'))            Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoPlanos'))            Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoOrigemDevolucoes'))  Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoAcoesPromocionais')) Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxAcoesPromocionais'))          Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLancContabil'))               Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosVenda'))               Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosCompra'))              Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes'))           Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPlanosPedidoVenda'))          Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosInventario'))         Or
-                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxSangriaSuprimentos')))        And
+                If ((AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas'))                              Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento'))                            Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoTrocas'))                      Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxVendedores'))                           Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxGrupoLojas'))                           Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoSerial'))                      Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoPlanos'))                      Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoOrigemDevolucoes'))            Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoAcoesPromocionais'))           Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxAcoesPromocionais'))                    Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLancContabil'))                         Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosVenda'))                         Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosCompra'))                        Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes'))                     Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPlanosPedidoVenda'))                    Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosInventario'))                   Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxConfiguracoesTributarias'))             Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxConfiguracoesTributariasDetalhes'))     Or
+                    (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxSangriaSuprimentos')))                 And
                     (ii=1) Then // COLOCA COD_EMPRESA NO MICROVIX
                 Begin
                   sSqlUpInValores:=
@@ -767,6 +788,9 @@ Begin
                      End
                    End; // If (Copy(Trim(Node_Valores.ChildNodes[ii].NodeValue),5,1)='-') And ....
 
+                   //===========================================================
+                   // If Trim(sCampoDta)<>'' Then ==============================
+                   //===========================================================
                    If Trim(sCampoDta)<>'' Then
                     Begin
                       sSqlUpInValores:=
@@ -805,6 +829,24 @@ Begin
                            sSqlUpInValores:=
                             sSqlUpInValores+QuotedStr(sConteudoCampo)+', ';
                         End
+                      Else // Método LinxConfiguracoesTributariasDetalhes Acerta Campo ICMS_CREDITO / IPI_CREDITO False/True para 0/1
+                       If (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxConfiguracoesTributariasDetalhes')) And
+                          ((ii=28) or (ii=29) or (ii=36) or (ii=37)) Then
+                        Begin
+                          If AnsiUpperCase(sConteudoCampo)='FALSE' Then
+                           sSqlUpInValores:=
+                            sSqlUpInValores+'0, '
+                          Else If AnsiUpperCase(sConteudoCampo)='TRUE' Then
+                           sSqlUpInValores:=
+                            sSqlUpInValores+'1, '
+                          Else If AnsiUpperCase(sConteudoCampo)='PERCENTUAL' Then
+                           sSqlUpInValores:=
+                            sSqlUpInValores+'NULL, '
+                          Else
+                           sSqlUpInValores:=
+                            sSqlUpInValores+QuotedStr(sConteudoCampo)+', ';
+                        End
+
                       Else // Apropria Resto dos Campos
                        Begin
                         sSqlUpInValores:=
@@ -812,6 +854,8 @@ Begin
                        End;
 
                     End; // If Trim(sCampoDta)<>'' Then
+                    // If Trim(sCampoDta)<>'' Then =============================
+                    //==========================================================
                  End; // if VarIsNull(Node_Valores.ChildNodes[ii].NodeValue) Then
               End; // For ii:=0 to Node_Valores.ChildNodes.Count-1 do // Le Node "R"
 
@@ -819,25 +863,27 @@ Begin
 
 //odiraqui 6 - Campo "COD_LOJA do SIDICOM"
               // Considera Campo "Cod_Loja do SIDICOM" das TABELAS ------------
-              If (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas'))                    Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxGrupoLojas'))                 Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLojas'))                      Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoTrocas'))            Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoOrigemDevolucoes'))  Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoSerial'))            Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoPlanos'))            Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxVendedores'))                 Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento'))                  Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoAcoesPromocionais')) Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxAcoesPromocionais'))          Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLancContabil'))               Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosVenda'))               Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosCompra'))              Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxReducoesZ'))                  Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes'))           Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPlanosPedidoVenda'))          Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosInventario'))         Or
-                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxSangriaSuprimentos'))         Then
+              If (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxFaturas'))                                 Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxGrupoLojas'))                              Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLojas'))                                   Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoTrocas'))                         Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoOrigemDevolucoes'))               Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoSerial'))                         Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoPlanos'))                         Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxVendedores'))                              Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimento'))                               Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoAcoesPromocionais'))              Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxAcoesPromocionais'))                       Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxLancContabil'))                            Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosVenda'))                            Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPedidosCompra'))                           Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxReducoesZ'))                               Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes'))                        Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxPlanosPedidoVenda'))                       Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosInventario'))                      Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxConfiguracoesTributarias'))                Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxConfiguracoesTributariasDetalhes'))        Or
+                 (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxSangriaSuprimentos'))                      Then
                Begin
                  sSqlUpInValores:=
                   sSqlUpInValores+' '+QuotedStr(sgCodLoja)+', '+QuotedStr(sDtaAtual)+', '+QuotedStr(sHraAtual)+')';
@@ -970,11 +1016,21 @@ Begin
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (cod_deposito)';
 
-              // LinxProdutosInventario ------------------------------
+              // LinxProdutosInventario -----------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosInventario') Then
                sSqlUpInValores:=
                 sSqlUpInValores+' MATCHING (empresa, cnpj_emp, cod_produto, cod_barra, cod_deposito)';
 
+              // LinxConfiguracoesTributarias -----------------------
+              If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxConfiguracoesTributarias') Then
+               sSqlUpInValores:=
+                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, id_config_tributaria)';
+
+              // LinxConfiguracoesTributariasDetalhes ---------------
+              If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxConfiguracoesTributariasDetalhes') Then
+               sSqlUpInValores:=
+                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, id_config_tributaria, desc_classe_fiscal, cod_natureza_operacao)';
+                                                               
               // SQL Com Insert Direto ------------------------------
               // LinxSangriaSuprimentos
 
@@ -1272,6 +1328,21 @@ Begin
     sXML:='			<Parameter id="cnpjEmp">'+sgCNPJProc+'</Parameter>'; // 03772229001880
     Writeln(txtArq,sXML);
   End; // If (sgMetodo<>'LinxMetodos') And (sgMetodo<>'LinxGrupoLojas') Then // Cabecalho de Parametro Padrão
+  // ===========================================================================
+
+  // ===========================================================================
+  // Parametros:
+  // - id_config_tributaria
+  //
+  // Metodos:
+  // --------
+  // LinxConfiguracoesTributariasDetalhes
+  // ===========================================================================
+  If sgMetodo='LinxConfiguracoesTributariasDetalhes' Then // Cabecalho de Parametro
+  Begin
+    sXML:='			<Parameter id="id_config_tributaria">'+sSetor+'</Parameter>';
+    Writeln(txtArq,sXML);
+  End; // If sgMetodo='LinxGrupoLojas' Then // Cabecalho de Parametro
   // ===========================================================================
 
   // ===========================================================================
@@ -2201,6 +2272,9 @@ End;
       sgMetodoNomeTabela:='';
       If sgMetodo='LinxClientesFornecCamposAdicionais' Then
        sgMetodoNomeTabela:='LinxClientesFornecAdicionais';
+
+      If sgMetodo='LinxConfiguracoesTributariasDetalhes' Then
+       sgMetodoNomeTabela:='LinxConfigTributariasDetalhes';
       // Nome da Tabela for Diferente da Nome do Metodo ========================
       //========================================================================
 
@@ -2245,24 +2319,26 @@ End;
                MySql+' FROM '+sgMetodo+' lx';
 
 //Odiraqui 2 - Quando Contem CAMPO: EMPRESA
-             If (AnsiUpperCase(sgMetodo)='LINXFATURAS')                    or
-                (AnsiUpperCase(sgMetodo)='LINXLOJAS')                      or
-                (AnsiUpperCase(sgMetodo)='LINXMOVIMENTO')                  or
-                (AnsiUpperCase(sgMetodo)='LINXMOVIMENTOTROCAS')            or
-                (AnsiUpperCase(sgMetodo)='LINXGRUPOLOJAS')                 or
-                (AnsiUpperCase(sgMetodo)='LINXMOVIMENTOORIGEMDEVOLUCOES')  or
-                (AnsiUpperCase(sgMetodo)='LINXMOVIMENTOSERIAL')            or
-                (AnsiUpperCase(sgMetodo)='LINXVENDEDORES')                 or
-                (AnsiUpperCase(sgMetodo)='LINXMOVIMENTOPLANOS')            or
-                (AnsiUpperCase(sgMetodo)='LINXMOVIMENTOACOESPROMOCIONAIS') or
-                (AnsiUpperCase(sgMetodo)='LINXACOESPROMOCIONAIS')          or
-                (AnsiUpperCase(sgMetodo)='LINXLANCCONTABIL')               or
-                (AnsiUpperCase(sgMetodo)='LINXPEDIDOSVENDA')               or
-                (AnsiUpperCase(sgMetodo)='LINXPLANOSPEDIDOVENDA')          or
-                (AnsiUpperCase(sgMetodo)='LINXPEDIDOSCOMPRA')              or
-                (AnsiUpperCase(sgMetodo)='LINXREDUCOESZ')                  or
-                (AnsiUpperCase(sgMetodo)='LINXSANGRIASUPRIMENTOS')         or
-                (AnsiUpperCase(sgMetodo)='LINXPRODUTOSDETALHES')           Then
+             If (AnsiUpperCase(sgMetodo)='LINXFATURAS')                                 or
+                (AnsiUpperCase(sgMetodo)='LINXLOJAS')                                   or
+                (AnsiUpperCase(sgMetodo)='LINXMOVIMENTO')                               or
+                (AnsiUpperCase(sgMetodo)='LINXMOVIMENTOTROCAS')                         or
+                (AnsiUpperCase(sgMetodo)='LINXGRUPOLOJAS')                              or
+                (AnsiUpperCase(sgMetodo)='LINXMOVIMENTOORIGEMDEVOLUCOES')               or
+                (AnsiUpperCase(sgMetodo)='LINXMOVIMENTOSERIAL')                         or
+                (AnsiUpperCase(sgMetodo)='LINXVENDEDORES')                              or
+                (AnsiUpperCase(sgMetodo)='LINXMOVIMENTOPLANOS')                         or
+                (AnsiUpperCase(sgMetodo)='LINXMOVIMENTOACOESPROMOCIONAIS')              or
+                (AnsiUpperCase(sgMetodo)='LINXACOESPROMOCIONAIS')                       or
+                (AnsiUpperCase(sgMetodo)='LINXLANCCONTABIL')                            or
+                (AnsiUpperCase(sgMetodo)='LINXPEDIDOSVENDA')                            or
+                (AnsiUpperCase(sgMetodo)='LINXPLANOSPEDIDOVENDA')                       or
+                (AnsiUpperCase(sgMetodo)='LINXPEDIDOSCOMPRA')                           or
+                (AnsiUpperCase(sgMetodo)='LINXREDUCOESZ')                               or
+                (AnsiUpperCase(sgMetodo)='LINXSANGRIASUPRIMENTOS')                      or
+                (AnsiUpperCase(sgMetodo)='LINXCONFIGURACOESTRIBUTARIAS')                or
+                (AnsiUpperCase(sgMetodo)='LINXCONFIGURACOESTRIBUTARIASDETALHES')        or
+                (AnsiUpperCase(sgMetodo)='LINXPRODUTOSDETALHES')                        Then
               MySql:=
                MySql+' WHERE lx.Empresa='+sgCodLojaLinx;
       DMLinxWebService.CDS_Busca.Close;
@@ -2294,6 +2370,46 @@ End;
         MontaMetodoXMLPost();
       End; // If sgMetodo='LinxLojas' Then
       // LinxLojas =============================================================
+      //========================================================================
+
+      //========================================================================
+      // LinxConfiguracoesTributarias ==========================================
+      //========================================================================
+      If sgMetodo='LinxConfiguracoesTributarias' Then
+      Begin
+        MontaMetodoXMLPost();
+      End; // If sgMetodo='LinxConfiguracoesTributarias' Then
+      // LinxConfiguracoesTributarias ==========================================
+      //========================================================================
+
+      //========================================================================
+      // LinxConfiguracoesTributarias ==========================================
+      //========================================================================
+      If (sgMetodo='LinxConfiguracoesTributariasDetalhes') And (sgCodLojaLinx='2') Then
+      Begin
+        For igCodTrib:=1 to 300 do
+        Begin
+          MontaMetodoXMLPost(IntToStr(igCodTrib));
+
+          If bgMontouPost Then
+          Begin
+            bSiga:=True;
+            // Envio do Http.post ==================================================
+            If Not EnviaMetodoXMLPost Then
+            Begin
+              bSiga:=False;
+            End; // If Not EnviaMetodoXMLPost Then
+
+            // Ler XML de Retorno e Salva no Banco de Dados ========================
+            If bSiga Then
+            Begin
+              LeMetodoXMLRetorno;
+            End; // If bSiga Then
+          End; // If bgMontouPost Then
+        End; // For igCodTrib:=1 to 300 do
+        bgMontouPost:=False;
+      End; // If sgMetodo='LinxConfiguracoesTributarias' Then
+      // LinxConfiguracoesTributarias ==========================================
       //========================================================================
 
       //========================================================================

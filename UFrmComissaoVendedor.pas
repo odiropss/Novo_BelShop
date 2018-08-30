@@ -210,6 +210,9 @@ type
       State: TGridDrawState);
     procedure Dbg_CampColecaoCampDblClick(Sender: TObject);
     procedure Bt_CampColecaoCampAbanClick(Sender: TObject);
+    procedure Dbg_CampComissoesDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
 
   private
     { Private declarations }
@@ -242,14 +245,19 @@ uses DK_Procs1, UDMComissaoVendedor, UDMBelShop, UFrmBelShop, DB,
 
 // CAMPANHA COMISSAO - Monta Grid de Comissões >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmComissaoVendedor.CampanhaComissaoMontaComissoes;
+Var
+  MySql: String;
+
+  iRegs,
+  iCodLoja, iCodVend: Integer;
+
+  iTotGeralItens, iTotLojaItens: Integer;
+  cTotGeralComissItens, cTotGeralFat, cTotGeralComissFat, cTotGeralComissao,
+  cTotLojaComissItens, cTotLojaFat, cTotLojaComissFat, cTotLojaComissao: Currency;
 Begin
-  // Cria ClienteDataSet
-  If DMComissaoVendedor.CDS_V_CampComissoes.Active Then
-   DMComissaoVendedor.CDS_V_CampComissoes.Close;
-
-  DMComissaoVendedor.CDS_V_CampComissoes.CreateDataSet;
-  DMComissaoVendedor.CDS_V_CampComissoes.Open;
-
+  //============================================================================
+  // Cria Cabeçalho ============================================================
+  //============================================================================
   DMComissaoVendedor.CDS_V_CampComissoes.Append;
   DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString:='COMISSÕES POR CAMPANHAS';
   DMComissaoVendedor.CDS_V_CampComissoes.Post;
@@ -257,48 +265,382 @@ Begin
   DMComissaoVendedor.CDS_V_CampComissoes.Append;
   DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString:='PERÍODO DE '+sgDtaInicio+' A '+sgDtaFim;
   DMComissaoVendedor.CDS_V_CampComissoes.Post;
+  // Cria Cabeçalho ============================================================
+  //============================================================================
 
+  //============================================================================
+  // Cria Cabeçalho Primeira Loja ==============================================
+  //============================================================================
+  // Linha em Branco ------------------------------------------------
   DMComissaoVendedor.CDS_V_CampComissoes.Append;
   DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.Clear;
   DMComissaoVendedor.CDS_V_CampComissoes.Post;
 
+  // Loja ----------------------------------------------------------
+  DMComissaoVendedor.CDS_V_CampComissoes.Append;
+  DMComissaoVendedor.CDS_V_CampComissoesCODIGO.AsInteger  :=DMBelShop.SQLQuery3.FieldByName('Empresa').AsInteger;
+  DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString:=DMBelShop.SQLQuery3.FieldByName('Nome_Emp').AsString;
+  DMComissaoVendedor.CDS_V_CampComissoes.Post;
+  // Cria Cabeçalho Primeira Loja ==============================================
+  //============================================================================
+
+  iTotGeralItens      :=0;
+  cTotGeralComissItens:=0.00;
+  cTotGeralFat        :=0.00;
+  cTotGeralComissFat  :=0.00;
+  cTotGeralComissao   :=0.00;
+
+  // Apresentacao ==========================================================
+  OdirPanApres.Caption:='AGUARDE !! Efetuando Calculos0 de Comissão...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmComissaoVendedor;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  //============================================================================
+  // Cria Detalhes Lojas / Vendedores ==========================================
+  //============================================================================
+  iCodLoja:=DMBelShop.SQLQuery3.FieldByName('Empresa').AsInteger;
+
+  iRegs:=0;
   DMBelShop.SQLQuery3.DisableControls;
   While Not DMBelShop.SQLQuery3.Eof do
   Begin
+    Refresh;
+
+    //==========================================================================
+    // Mudando a Loja ==========================================================
+    //==========================================================================
+    If iCodLoja<>DMBelShop.SQLQuery3.FieldByName('Empresa').AsInteger Then
+    Begin
+      //-------------------------------------------------------------
+      // Busca Totais do Vendedor Anterior (iCodVend) ---------------
+      //-------------------------------------------------------------
+      MySql:=' SELECT'+
+             // Comissão por Itens Vendidos
+             ' CAST(SUM(DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) AS INTEGER) QTD_ITENS,'+
+             ' CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) * t.vlr_aux1),2) as numeric(12,2)) VLR_COMISSAO_ITENS,'+
+             // Comissão por Faturamento
+             ' CAST(ROUND(SUM(DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total)),2) AS NUMERIC(12,2)) VLR_FATURAMENTO,'+
+             ' CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total) * t.vlr_aux) / 100),2) AS NUMERIC(12,2)) VLR_COMISSAO_FAT,'+
+             // Total das Comissões
+             ' (CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) * t.vlr_aux1),2) AS NUMERIC(12,2))) +'+
+             ' (CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total) * t.vlr_aux) / 100),2) AS NUMERIC(12,2))) TOT_COMISSAO'+
+
+             ' FROM LINXMOVIMENTO m, LINXVENDEDORES v,'+
+             '      LINXPRODUTOS p, LINXLOJAS l, TAB_AUXILIAR t'+
+
+             ' WHERE m.cod_vendedor=v.cod_vendedor'+
+             ' AND m.empresa=v.empresa'+
+             ' AND m.cod_produto=p.cod_produto'+
+             ' AND m.empresa=l.empresa'+
+             ' AND p.id_colecao=t.cod_aux'+
+             ' AND t.tip_aux=28'+ // 28 => CALCULO DE COMISSÃO SOBRE CAMPANHAS sobre Venda LinxProduto.Id_Colecao
+             ' AND v.tipo_vendedor in (''V'', ''A'')'+
+             ' AND m.cancelado=''N'''+
+             ' AND m.excluido=''N'''+
+             ' AND ((m.operacao=''S'' AND m.tipo_transacao=''V'')'+
+             '      OR'+
+             '      (m.operacao=''DS'' AND m.tipo_transacao IS NULL))'+
+             ' AND ((t.vlr_aux<>0) or (t.vlr_aux1<>0))'+
+             ' AND m.data_documento BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaInicio)))+
+                                      ' AND '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFim)))+
+             ' AND m.empresa='+IntToStr(iCodLoja)+
+             ' AND m.cod_vendedor='+IntToStr(iCodVend);
+      DMBelShop.SQLQuery2.Close;
+      DMBelShop.SQLQuery2.SQL.Clear;
+      DMBelShop.SQLQuery2.SQL.Add(MySql);
+      DMBelShop.SQLQuery2.Open;
+      // Busca Totais do Vendedor Anterior (iCodVend) ---------------
+      //-------------------------------------------------------------
+
+      //-------------------------------------------------------------
+      // Apresenta Totais Vendedor ----------------------------------
+      //-------------------------------------------------------------
+      DMComissaoVendedor.CDS_V_CampComissoes.Append;
+      // DMComissaoVendedor.CDS_V_CampComissoesCODIGO.AsInteger          :=DMBelShop.SQLQuery2.FieldByName('Cod_VendEdor').AsInteger;
+      DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString        :='TOTAL DO VENDEDOR';
+      // DMComissaoVendedor.CDS_V_CampComissoesCOD_CAMP.AsInteger        :=DMBelShop.SQLQuery2.FieldByName('Id_Colecao').AsInteger;
+      // DMComissaoVendedor.CDS_V_CampComissoesCAMPANHA.AsString         :=DMBelShop.SQLQuery2.FieldByName('Desc_Colecao').AsString;
+      DMComissaoVendedor.CDS_V_CampComissoesQTD_ITENS.AsInteger       :=DMBelShop.SQLQuery2.FieldByName('Qtd_Itens').AsInteger;
+      // DMComissaoVendedor.CDS_V_CampComissoesPONTOS_ITEM.AsCurrency    :=DMBelShop.SQLQuery2.FieldByName('Pontos_Item').AsCurrency;
+      DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_ITENS.AsCurrency:=DMBelShop.SQLQuery2.FieldByName('Vlr_Comissao_Itens').AsCurrency;
+      DMComissaoVendedor.CDS_V_CampComissoesVLR_FAT.AsCurrency        :=DMBelShop.SQLQuery2.FieldByName('Vlr_Faturamento').AsCurrency;
+      // DMComissaoVendedor.CDS_V_CampComissoesPER_FAT.AsCurrency        :=DMBelShop.SQLQuery2.FieldByName('Per_Comissao_Fat').AsCurrency;
+      DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_FAT.AsCurrency  :=DMBelShop.SQLQuery2.FieldByName('Vlr_Comissao_Fat').AsCurrency;
+      DMComissaoVendedor.CDS_V_CampComissoesTOT_COMISSAO.AsCurrency   :=DMBelShop.SQLQuery2.FieldByName('Tot_Comissao').AsCurrency;
+      DMComissaoVendedor.CDS_V_CampComissoes.Post;
+      // Apresenta Totais Vendedor ----------------------------------
+      //-------------------------------------------------------------
+
+      //-------------------------------------------------------------
+      // Busca Totais da Loja ---------------------------------------
+      //-------------------------------------------------------------
+      MySql:=' SELECT'+
+             // Comissão por Itens Vendidos
+             ' CAST(SUM(DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) AS INTEGER) QTD_ITENS,'+
+             ' CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) * t.vlr_aux1),2) as numeric(12,2)) VLR_COMISSAO_ITENS,'+
+             // Comissão por Faturamento
+             ' CAST(ROUND(SUM(DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total)),2) AS NUMERIC(12,2)) VLR_FATURAMENTO,'+
+             ' CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total) * t.vlr_aux) / 100),2) AS NUMERIC(12,2)) VLR_COMISSAO_FAT,'+
+             // Total das Comissões
+             ' (CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) * t.vlr_aux1),2) AS NUMERIC(12,2))) +'+
+             ' (CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total) * t.vlr_aux) / 100),2) AS NUMERIC(12,2))) TOT_COMISSAO'+
+
+             ' FROM LINXMOVIMENTO m, LINXVENDEDORES v,'+
+             '      LINXPRODUTOS p, LINXLOJAS l, TAB_AUXILIAR t'+
+
+             ' WHERE m.cod_vendedor=v.cod_vendedor'+
+             ' AND m.empresa=v.empresa'+
+             ' AND m.cod_produto=p.cod_produto'+
+             ' AND m.empresa=l.empresa'+
+             ' AND p.id_colecao=t.cod_aux'+
+             ' AND t.tip_aux=28'+ // 28 => CALCULO DE COMISSÃO SOBRE CAMPANHAS sobre Venda LinxProduto.Id_Colecao
+             ' AND v.tipo_vendedor in (''V'', ''A'')'+
+             ' AND m.cancelado=''N'''+
+             ' AND m.excluido=''N'''+
+             ' AND ((m.operacao=''S'' AND m.tipo_transacao=''V'')'+
+             '      OR'+
+             '      (m.operacao=''DS'' AND m.tipo_transacao IS NULL))'+
+             ' AND ((t.vlr_aux<>0) or (t.vlr_aux1<>0))'+
+             ' AND UPPER(v.nome_vendedor)<>''BELSHOP'''+
+             ' AND UPPER(v.nome_vendedor)<>''BELCENTER'''+
+             ' AND m.data_documento BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaInicio)))+
+                                      ' AND '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFim)))+
+             ' AND m.empresa='+IntToStr(iCodLoja);
+      DMBelShop.SQLQuery2.Close;
+      DMBelShop.SQLQuery2.SQL.Clear;
+      DMBelShop.SQLQuery2.SQL.Add(MySql);
+      DMBelShop.SQLQuery2.Open;
+      iTotLojaItens      :=DMBelShop.SQLQuery2.FieldByName('Qtd_Itens').AsInteger;;
+      cTotLojaComissItens:=DMBelShop.SQLQuery2.FieldByName('Vlr_Comissao_Itens').AsCurrency;
+      cTotLojaFat        :=DMBelShop.SQLQuery2.FieldByName('Vlr_Faturamento').AsCurrency;
+      cTotLojaComissFat  :=DMBelShop.SQLQuery2.FieldByName('Vlr_Comissao_Fat').AsCurrency;
+      cTotLojaComissao   :=DMBelShop.SQLQuery2.FieldByName('Tot_Comissao').AsCurrency;
+      DMBelShop.SQLQuery2.Close;
+      // Busca Totais da Loja ---------------------------------------
+      //-------------------------------------------------------------
+
+      //-------------------------------------------------------------
+      // Apresenta Comissões Gerentes/Supervisores e Assistenstes ---
+      //-------------------------------------------------------------
+      MySql:=' SELECT t.des_aux PESSOA, t.des_aux1 CARGO, '+
+
+             IntToStr(iTotLojaItens)+' QTD_ITENS,'+
+             ' t.vlr_aux1 PONTOS_ITEM,'+
+             ' ('+IntToStr(iTotLojaItens)+' * t.vlr_aux1) VLR_COMIS_ITENS,'+
+
+             f_Troca(',','.',CurrToStr(cTotLojaFat))+' VLR_FAT,'+
+             ' t.vlr_aux PER_FAT,'+
+             ' CAST((('+f_Troca(',','.',CurrToStr(cTotLojaFat))+' * t.vlr_aux) / 100) AS NUMERIC(12,2)) VLR_COMIS_FAT,'+
+
+             ' ('+IntToStr(iTotLojaItens)+'* t.vlr_aux1) +'+
+             ' (CAST((('+f_Troca(',','.',CurrToStr(cTotLojaFat))+' * t.vlr_aux) / 100) AS NUMERIC(12,2))) TOT_COMISSAO'+
+
+             ' FROM TAB_AUXILIAR t'+
+             ' WHERE t.tip_aux=27'+ // 27 => CALCULO DE COMISSÃO SOBRE CAMPANHAS sobre Venda LinxProduto.Id_Colecao
+             ' AND CAST((t.cod_aux/100) AS INTEGER)='+IntToStr(iCodLoja);
+      DMBelShop.SQLQuery2.Close;
+      DMBelShop.SQLQuery2.SQL.Clear;
+      DMBelShop.SQLQuery2.SQL.Add(MySql);
+      DMBelShop.SQLQuery2.Open;
+
+      DMBelShop.SQLQuery2.DisableControls;
+      While Not DMBelShop.SQLQuery2.Eof do
+      Begin
+        // Apresenta Totais do Vendedor -------------------------------
+        DMComissaoVendedor.CDS_V_CampComissoes.Append;
+        // DMComissaoVendedor.CDS_V_CampComissoesCODIGO.AsInteger          :=DMBelShop.SQLQuery2.FieldByName('Cod_VendEdor').AsInteger;
+        DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString        :=DMBelShop.SQLQuery2.FieldByName('Pessoa').AsString;
+        // DMComissaoVendedor.CDS_V_CampComissoesCOD_CAMP.AsInteger        :=DMBelShop.SQLQuery2.FieldByName('Id_Colecao').AsInteger;
+        DMComissaoVendedor.CDS_V_CampComissoesCAMPANHA.AsString         :=DMBelShop.SQLQuery2.FieldByName('Cargo').AsString;
+        DMComissaoVendedor.CDS_V_CampComissoesQTD_ITENS.AsInteger       :=DMBelShop.SQLQuery2.FieldByName('Qtd_Itens').AsInteger;
+        DMComissaoVendedor.CDS_V_CampComissoesPONTOS_ITEM.AsCurrency    :=DMBelShop.SQLQuery2.FieldByName('Pontos_Item').AsCurrency;
+        DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_ITENS.AsCurrency:=DMBelShop.SQLQuery2.FieldByName('Vlr_Comis_Itens').AsCurrency;
+        DMComissaoVendedor.CDS_V_CampComissoesVLR_FAT.AsCurrency        :=DMBelShop.SQLQuery2.FieldByName('Vlr_Fat').AsCurrency;
+        DMComissaoVendedor.CDS_V_CampComissoesPER_FAT.AsCurrency        :=DMBelShop.SQLQuery2.FieldByName('Per_Fat').AsCurrency;
+        DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_FAT.AsCurrency  :=DMBelShop.SQLQuery2.FieldByName('Vlr_Comis_Fat').AsCurrency;
+        DMComissaoVendedor.CDS_V_CampComissoesTOT_COMISSAO.AsCurrency   :=DMBelShop.SQLQuery2.FieldByName('Tot_Comissao').AsCurrency;
+        DMComissaoVendedor.CDS_V_CampComissoes.Post;
+
+        // Atualiza Acumuladores da Loja ----------------------------
+        cTotLojaComissItens:=cTotLojaComissItens + DMBelShop.SQLQuery2.FieldByName('Vlr_Comis_Itens').AsCurrency;
+        cTotLojaComissFat  :=cTotLojaComissFat   + DMBelShop.SQLQuery2.FieldByName('Vlr_Comis_Fat').AsCurrency;
+        cTotLojaComissao   :=cTotLojaComissao    + DMBelShop.SQLQuery2.FieldByName('Tot_Comissao').AsCurrency;
+
+        DMBelShop.SQLQuery2.Next;
+      End; // While Not DMBelShop.SQLQuery2.Eof do
+      DMBelShop.SQLQuery2.EnableControls;
+      DMBelShop.SQLQuery2.Close;
+      // Apresenta Comissões Gerentes/Supervisores e Assistenstes ---
+      //-------------------------------------------------------------
+
+      //-------------------------------------------------------------
+      // Acumula Totais Geral ---------------------------------------
+      //-------------------------------------------------------------
+      iTotGeralItens      :=iTotGeralItens       + iTotLojaItens;
+      cTotGeralComissItens:=cTotGeralComissItens + cTotLojaComissItens;
+      cTotGeralFat        :=cTotGeralFat         + cTotLojaFat;
+      cTotGeralComissFat  :=cTotGeralComissFat   + cTotLojaComissFat;
+      cTotGeralComissao   :=cTotGeralComissao    + cTotLojaComissao;
+      // Acumula Totais Geral ---------------------------------------
+      //-------------------------------------------------------------
+
+      //-------------------------------------------------------------
+      // Apresenta Totais da Loja -----------------------------------
+      //-------------------------------------------------------------
+      DMComissaoVendedor.CDS_V_CampComissoes.Append;
+      DMComissaoVendedor.CDS_V_CampComissoesCODIGO.AsInteger          :=iCodLoja;
+      DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString        :='TOTAL DA LOJA';
+      // DMComissaoVendedor.CDS_V_CampComissoesCOD_CAMP.AsInteger        :=DMBelShop.SQLQuery2.FieldByName('Id_Colecao').AsInteger;
+      // DMComissaoVendedor.CDS_V_CampComissoesCAMPANHA.AsString         :=DMBelShop.SQLQuery2.FieldByName('Cargo').AsString;
+      DMComissaoVendedor.CDS_V_CampComissoesQTD_ITENS.AsInteger       :=iTotLojaItens;
+      // DMComissaoVendedor.CDS_V_CampComissoesPONTOS_ITEM.AsCurrency    :=DMBelShop.SQLQuery2.FieldByName('Pontos_Item').AsCurrency;
+      DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_ITENS.AsCurrency:=cTotLojaComissItens;
+      DMComissaoVendedor.CDS_V_CampComissoesVLR_FAT.AsCurrency        :=cTotLojaFat;
+      // DMComissaoVendedor.CDS_V_CampComissoesPER_FAT.AsCurrency        :=DMBelShop.SQLQuery2.FieldByName('Per_Fat').AsCurrency;
+      DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_FAT.AsCurrency  :=cTotLojaComissFat;
+      DMComissaoVendedor.CDS_V_CampComissoesTOT_COMISSAO.AsCurrency   :=cTotLojaComissao;
+      DMComissaoVendedor.CDS_V_CampComissoes.Post;
+      // Apresenta Totais da Loja -----------------------------------
+      //-------------------------------------------------------------
+
+      //-------------------------------------------------------------
+      // Linha em Branco --------------------------------------------
+      //-------------------------------------------------------------
+      DMComissaoVendedor.CDS_V_CampComissoes.Append;
+      DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.Clear;
+      DMComissaoVendedor.CDS_V_CampComissoes.Post;
+      // Linha em Branco --------------------------------------------
+      //-------------------------------------------------------------
+
+      //-------------------------------------------------------------
+      // Apresenta Nova Loja ----------------------------------------
+      //-------------------------------------------------------------
+      DMComissaoVendedor.CDS_V_CampComissoes.Append;
+      DMComissaoVendedor.CDS_V_CampComissoesCODIGO.AsInteger  :=DMBelShop.SQLQuery3.FieldByName('Empresa').AsInteger;
+      DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString:=DMBelShop.SQLQuery3.FieldByName('Nome_Emp').AsString;
+      DMComissaoVendedor.CDS_V_CampComissoes.Post;
+      // Apresenta Nova Loja ----------------------------------------
+      //-------------------------------------------------------------
+    End; // If iCodLoja<>DMBelShop.SQLQuery3.FieldByName('Empresa').AsInteger Then
+    // Mudando a Loja ==========================================================
+    //==========================================================================
+
+    //==========================================================================
+    // Apresentando Totais do Vendedor =========================================
+    //==========================================================================
+    If (iCodLoja=DMBelShop.SQLQuery3.FieldByName('Empresa').AsInteger) And
+       (iRegs<>0) And (iCodVend<>DMBelShop.SQLQuery3.FieldByName('Cod_Vendedor').AsInteger) Then
+    Begin
+      MySql:=' SELECT'+
+             // Comissão por Itens Vendidos
+             ' CAST(SUM(DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) AS INTEGER) QTD_ITENS,'+
+             ' CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) * t.vlr_aux1),2) as numeric(12,2)) VLR_COMISSAO_ITENS,'+
+             // Comissão por Faturamento
+             ' CAST(ROUND(SUM(DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total)),2) AS NUMERIC(12,2)) VLR_FATURAMENTO,'+
+             ' CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total) * t.vlr_aux) / 100),2) AS NUMERIC(12,2)) VLR_COMISSAO_FAT,'+
+             // Total das Comissões
+             ' (CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) * t.vlr_aux1),2) AS NUMERIC(12,2))) +'+
+             ' (CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total) * t.vlr_aux) / 100),2) AS NUMERIC(12,2))) TOT_COMISSAO'+
+
+             ' FROM LINXMOVIMENTO m, LINXVENDEDORES v,'+
+             '      LINXPRODUTOS p, LINXLOJAS l, TAB_AUXILIAR t'+
+
+             ' WHERE m.cod_vendedor=v.cod_vendedor'+
+             ' AND m.empresa=v.empresa'+
+             ' AND m.cod_produto=p.cod_produto'+
+             ' AND m.empresa=l.empresa'+
+             ' AND p.id_colecao=t.cod_aux'+
+             ' AND t.tip_aux=28'+ // 28 => CALCULO DE COMISSÃO SOBRE CAMPANHAS sobre Venda LinxProduto.Id_Colecao
+             ' AND v.tipo_vendedor in (''V'', ''A'')'+
+             ' AND m.cancelado=''N'''+
+             ' AND m.excluido=''N'''+
+             ' AND ((m.operacao=''S'' AND m.tipo_transacao=''V'')'+
+             '      OR'+
+             '      (m.operacao=''DS'' AND m.tipo_transacao IS NULL))'+
+             ' AND ((t.vlr_aux<>0) or (t.vlr_aux1<>0))'+
+             ' AND m.data_documento BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaInicio)))+
+                                      ' AND '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFim)))+
+             ' AND m.empresa='+IntToStr(iCodLoja)+
+             ' AND m.cod_vendedor='+IntToStr(iCodVend);
+      DMBelShop.SQLQuery2.Close;
+      DMBelShop.SQLQuery2.SQL.Clear;
+      DMBelShop.SQLQuery2.SQL.Add(MySql);
+      DMBelShop.SQLQuery2.Open;
+      // Busca Totais do Vendedor Anterior (iCodVend) ---------------
+      //-------------------------------------------------------------
+
+      //-------------------------------------------------------------
+      // Apresenta Totais Vendedor ----------------------------------
+      //-------------------------------------------------------------
+      DMComissaoVendedor.CDS_V_CampComissoes.Append;
+      // DMComissaoVendedor.CDS_V_CampComissoesCODIGO.AsInteger          :=DMBelShop.SQLQuery2.FieldByName('Cod_VendEdor').AsInteger;
+      DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString        :='TOTAL DO VENDEDOR';
+      // DMComissaoVendedor.CDS_V_CampComissoesCOD_CAMP.AsInteger        :=DMBelShop.SQLQuery2.FieldByName('Id_Colecao').AsInteger;
+      // DMComissaoVendedor.CDS_V_CampComissoesCAMPANHA.AsString         :=DMBelShop.SQLQuery2.FieldByName('Desc_Colecao').AsString;
+      DMComissaoVendedor.CDS_V_CampComissoesQTD_ITENS.AsInteger       :=DMBelShop.SQLQuery2.FieldByName('Qtd_Itens').AsInteger;
+      // DMComissaoVendedor.CDS_V_CampComissoesPONTOS_ITEM.AsCurrency    :=DMBelShop.SQLQuery2.FieldByName('Pontos_Item').AsCurrency;
+      DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_ITENS.AsCurrency:=DMBelShop.SQLQuery2.FieldByName('Vlr_Comissao_Itens').AsCurrency;
+      DMComissaoVendedor.CDS_V_CampComissoesVLR_FAT.AsCurrency        :=DMBelShop.SQLQuery2.FieldByName('Vlr_Faturamento').AsCurrency;
+      // DMComissaoVendedor.CDS_V_CampComissoesPER_FAT.AsCurrency        :=DMBelShop.SQLQuery2.FieldByName('Per_Comissao_Fat').AsCurrency;
+      DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_FAT.AsCurrency  :=DMBelShop.SQLQuery2.FieldByName('Vlr_Comissao_Fat').AsCurrency;
+      DMComissaoVendedor.CDS_V_CampComissoesTOT_COMISSAO.AsCurrency   :=DMBelShop.SQLQuery2.FieldByName('Tot_Comissao').AsCurrency;
+      DMComissaoVendedor.CDS_V_CampComissoes.Post;
+      // Apresenta Totais Vendedor ----------------------------------
+      //-------------------------------------------------------------
+    End; // If (iCodLoja=DMBelShop.SQLQuery3.FieldByName('Empresa').AsInteger) And
+         //    (iRegs<>0) And (iCodVend<>DMBelShop.SQLQuery3.FieldByName('Cod_Vendedor').AsInteger) Then
+    // Apresentando Totais do Vendedor =========================================
+    //==========================================================================
+
+    //==========================================================================
+    // Apresentando Vendedor ===================================================
+    //==========================================================================
+    DMComissaoVendedor.CDS_V_CampComissoes.Append;
+    DMComissaoVendedor.CDS_V_CampComissoesCODIGO.AsInteger          :=DMBelShop.SQLQuery3.FieldByName('Cod_VendEdor').AsInteger;
+    DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString        :=DMBelShop.SQLQuery3.FieldByName('Nome_Vendedor').AsString;
+    DMComissaoVendedor.CDS_V_CampComissoesCOD_CAMP.AsInteger        :=DMBelShop.SQLQuery3.FieldByName('Id_Colecao').AsInteger;
+    DMComissaoVendedor.CDS_V_CampComissoesCAMPANHA.AsString         :=DMBelShop.SQLQuery3.FieldByName('Desc_Colecao').AsString;
+    DMComissaoVendedor.CDS_V_CampComissoesQTD_ITENS.AsInteger       :=DMBelShop.SQLQuery3.FieldByName('Qtd_Itens').AsInteger;
+    DMComissaoVendedor.CDS_V_CampComissoesPONTOS_ITEM.AsCurrency    :=DMBelShop.SQLQuery3.FieldByName('Pontos_Item').AsCurrency;
+    DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_ITENS.AsCurrency:=DMBelShop.SQLQuery3.FieldByName('Vlr_Comissao_Itens').AsCurrency;
+    DMComissaoVendedor.CDS_V_CampComissoesVLR_FAT.AsCurrency        :=DMBelShop.SQLQuery3.FieldByName('Vlr_Faturamento').AsCurrency;
+    DMComissaoVendedor.CDS_V_CampComissoesPER_FAT.AsCurrency        :=DMBelShop.SQLQuery3.FieldByName('Per_Comissao_Fat').AsCurrency;
+    DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_FAT.AsCurrency  :=DMBelShop.SQLQuery3.FieldByName('Vlr_Comissao_Fat').AsCurrency;
+    DMComissaoVendedor.CDS_V_CampComissoesTOT_COMISSAO.AsCurrency   :=DMBelShop.SQLQuery3.FieldByName('Tot_Comissao').AsCurrency;
+    DMComissaoVendedor.CDS_V_CampComissoes.Post;
+    // Apresentando Vendedor ===================================================
+    //==========================================================================
+
+    iCodLoja:=DMBelShop.SQLQuery3.FieldByName('Empresa').AsInteger;
+    iCodVend:=DMBelShop.SQLQuery3.FieldByName('Cod_Vendedor').AsInteger;
+
+    Inc(iRegs);
 
     DMBelShop.SQLQuery3.Next;
   End; // While Not DMBelShop.SQLQuery3.Eof do
   DMBelShop.SQLQuery3.EnableControls;
+  // Cria Detalhes Lojas / Vendedores ==========================================
+  //============================================================================
 
-End; // CAMPANHA COMISSAO - Monta Grid de Comissões >>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-// CAMPANHA COMISSAO - Busca Comissão por Id_Coleção >>>>>>>>>>>>>>>>>>>>>>>>>>>
-Function TFrmComissaoVendedor.CampanhaComissaoBuscaComissoes: Boolean;
-Var
-  MySql: String;
-Begin
-  // Apresentacao ==========================================================
-  OdirPanApres.Caption:='AGUARDE !! Apropriando Vendas para Calculo de Comissão...';
-  OdirPanApres.Visible:=True;
-  Application.ProcessMessages;
-
-  Screen.Cursor:=crAppStart;
-
-  Result:=True;
-
+  //============================================================================
+  // Apresentando Totais do Ultimo Vendedor ====================================
+  //============================================================================
   MySql:=' SELECT'+
-         ' l.empresa, l.nome_emp,'+
-         ' v.cod_vendedor, v.nome_vendedor,'+
-         ' p.id_colecao, p.desc_colecao,'+
-         ' CAST(ROUND(SUM(DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)),2) AS INTEGER) QTD_ITENS,'+
-         ' t.vlr_aux1 PONTOS_ITEM,'+
-         ' (CAST(ROUND(SUM(DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)),2) AS INTEGER)) * t.vlr_aux1 VLR_COMISSAO_ITENS,'+
+         // Comissão por Itens Vendidos
+         ' CAST(SUM(DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) AS INTEGER) QTD_ITENS,'+
+         ' CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) * t.vlr_aux1),2) as numeric(12,2)) VLR_COMISSAO_ITENS,'+
+         // Comissão por Faturamento
          ' CAST(ROUND(SUM(DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total)),2) AS NUMERIC(12,2)) VLR_FATURAMENTO,'+
-         ' t.vlr_aux PER_COMISSAO_FAT,'+
-         ' (CAST(ROUND(((SUM(DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total)) * t.vlr_aux) / 100),2) AS NUMERIC(12,2))) VLR_COMISSAO_FAT,'+
-
-         ' ((CAST(ROUND(SUM(DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)),2) AS INTEGER)) * t.vlr_aux1) +'+
-         '  (CAST(ROUND(((SUM(DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total)) * t.vlr_aux) / 100),2) AS NUMERIC(12,2))) TOT_COMISSAO'+
+         ' CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total) * t.vlr_aux) / 100),2) AS NUMERIC(12,2)) VLR_COMISSAO_FAT,'+
+         // Total das Comissões
+         ' (CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) * t.vlr_aux1),2) AS NUMERIC(12,2))) +'+
+         ' (CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total) * t.vlr_aux) / 100),2) AS NUMERIC(12,2))) TOT_COMISSAO'+
 
          ' FROM LINXMOVIMENTO m, LINXVENDEDORES v,'+
          '      LINXPRODUTOS p, LINXLOJAS l, TAB_AUXILIAR t'+
@@ -318,29 +660,295 @@ Begin
          ' AND ((t.vlr_aux<>0) or (t.vlr_aux1<>0))'+
          ' AND m.data_documento BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaInicio)))+
                                   ' AND '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFim)))+
+         ' AND m.empresa='+IntToStr(iCodLoja)+
+         ' AND m.cod_vendedor='+IntToStr(iCodVend);
+  DMBelShop.SQLQuery2.Close;
+  DMBelShop.SQLQuery2.SQL.Clear;
+  DMBelShop.SQLQuery2.SQL.Add(MySql);
+  DMBelShop.SQLQuery2.Open;
+  // Busca Totais do Vendedor Anterior (iCodVend) ---------------
+  //-------------------------------------------------------------
+
+  //-------------------------------------------------------------
+  // Apresenta Totais do Ultimo Vendedor ------------------------
+  //-------------------------------------------------------------
+  DMComissaoVendedor.CDS_V_CampComissoes.Append;
+  // DMComissaoVendedor.CDS_V_CampComissoesCODIGO.AsInteger          :=DMBelShop.SQLQuery2.FieldByName('Cod_VendEdor').AsInteger;
+  DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString        :='TOTAL DO VENDEDOR';
+  // DMComissaoVendedor.CDS_V_CampComissoesCOD_CAMP.AsInteger        :=DMBelShop.SQLQuery2.FieldByName('Id_Colecao').AsInteger;
+  // DMComissaoVendedor.CDS_V_CampComissoesCAMPANHA.AsString         :=DMBelShop.SQLQuery2.FieldByName('Desc_Colecao').AsString;
+  DMComissaoVendedor.CDS_V_CampComissoesQTD_ITENS.AsInteger       :=DMBelShop.SQLQuery2.FieldByName('Qtd_Itens').AsInteger;
+  // DMComissaoVendedor.CDS_V_CampComissoesPONTOS_ITEM.AsCurrency    :=DMBelShop.SQLQuery2.FieldByName('Pontos_Item').AsCurrency;
+  DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_ITENS.AsCurrency:=DMBelShop.SQLQuery2.FieldByName('Vlr_Comissao_Itens').AsCurrency;
+  DMComissaoVendedor.CDS_V_CampComissoesVLR_FAT.AsCurrency        :=DMBelShop.SQLQuery2.FieldByName('Vlr_Faturamento').AsCurrency;
+  // DMComissaoVendedor.CDS_V_CampComissoesPER_FAT.AsCurrency        :=DMBelShop.SQLQuery2.FieldByName('Per_Comissao_Fat').AsCurrency;
+  DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_FAT.AsCurrency  :=DMBelShop.SQLQuery2.FieldByName('Vlr_Comissao_Fat').AsCurrency;
+  DMComissaoVendedor.CDS_V_CampComissoesTOT_COMISSAO.AsCurrency   :=DMBelShop.SQLQuery2.FieldByName('Tot_Comissao').AsCurrency;
+  DMComissaoVendedor.CDS_V_CampComissoes.Post;
+  // Apresenta Totais do Ultimo Vendedor ------------------------
+  //-------------------------------------------------------------
+  // Apresentando Totais do Ultimo Vendedor ====================================
+  //============================================================================
+
+  //-------------------------------------------------------------
+  // Busca Totais da Loja ---------------------------------------
+  //-------------------------------------------------------------
+  MySql:=' SELECT'+
+         // Comissão por Itens Vendidos
+         ' CAST(SUM(DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) AS INTEGER) QTD_ITENS,'+
+         ' CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) * t.vlr_aux1),2) as numeric(12,2)) VLR_COMISSAO_ITENS,'+
+         // Comissão por Faturamento
+         ' CAST(ROUND(SUM(DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total)),2) AS NUMERIC(12,2)) VLR_FATURAMENTO,'+
+         ' CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total) * t.vlr_aux) / 100),2) AS NUMERIC(12,2)) VLR_COMISSAO_FAT,'+
+         // Total das Comissões
+         ' (CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) * t.vlr_aux1),2) AS NUMERIC(12,2))) +'+
+         ' (CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total) * t.vlr_aux) / 100),2) AS NUMERIC(12,2))) TOT_COMISSAO'+
+
+         ' FROM LINXMOVIMENTO m, LINXVENDEDORES v,'+
+         '      LINXPRODUTOS p, LINXLOJAS l, TAB_AUXILIAR t'+
+
+         ' WHERE m.cod_vendedor=v.cod_vendedor'+
+         ' AND m.empresa=v.empresa'+
+         ' AND m.cod_produto=p.cod_produto'+
+         ' AND m.empresa=l.empresa'+
+         ' AND p.id_colecao=t.cod_aux'+
+         ' AND t.tip_aux=28'+ // 28 => CALCULO DE COMISSÃO SOBRE CAMPANHAS sobre Venda LinxProduto.Id_Colecao
+         ' AND v.tipo_vendedor in (''V'', ''A'')'+
+         ' AND m.cancelado=''N'''+
+         ' AND m.excluido=''N'''+
+         ' AND ((m.operacao=''S'' AND m.tipo_transacao=''V'')'+
+         '      OR'+
+         '      (m.operacao=''DS'' AND m.tipo_transacao IS NULL))'+
+         ' AND ((t.vlr_aux<>0) or (t.vlr_aux1<>0))'+
+         ' AND UPPER(v.nome_vendedor)<>''BELSHOP'''+
+         ' AND UPPER(v.nome_vendedor)<>''BELCENTER'''+
+         ' AND m.data_documento BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaInicio)))+
+                                  ' AND '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFim)))+
+         ' AND m.empresa='+IntToStr(iCodLoja);
+  DMBelShop.SQLQuery2.Close;
+  DMBelShop.SQLQuery2.SQL.Clear;
+  DMBelShop.SQLQuery2.SQL.Add(MySql);
+  DMBelShop.SQLQuery2.Open;
+  iTotLojaItens      :=DMBelShop.SQLQuery2.FieldByName('Qtd_Itens').AsInteger;;
+  cTotLojaComissItens:=DMBelShop.SQLQuery2.FieldByName('Vlr_Comissao_Itens').AsCurrency;
+  cTotLojaFat        :=DMBelShop.SQLQuery2.FieldByName('Vlr_Faturamento').AsCurrency;
+  cTotLojaComissFat  :=DMBelShop.SQLQuery2.FieldByName('Vlr_Comissao_Fat').AsCurrency;
+  cTotLojaComissao   :=DMBelShop.SQLQuery2.FieldByName('Tot_Comissao').AsCurrency;
+  DMBelShop.SQLQuery2.Close;
+  // Busca Totais da Loja ---------------------------------------
+  //-------------------------------------------------------------
+
+  //-------------------------------------------------------------
+  // Apresenta Comissões Gerentes/Supervisores e Assistenstes ---
+  //-------------------------------------------------------------
+  MySql:=' SELECT t.des_aux PESSOA, t.des_aux1 CARGO, '+
+
+         IntToStr(iTotLojaItens)+' QTD_ITENS,'+
+         ' t.vlr_aux1 PONTOS_ITEM,'+
+         ' ('+IntToStr(iTotLojaItens)+' * t.vlr_aux1) VLR_COMIS_ITENS,'+
+
+         f_Troca(',','.',CurrToStr(cTotLojaFat))+' VLR_FAT,'+
+         ' t.vlr_aux PER_FAT,'+
+         ' CAST((('+f_Troca(',','.',CurrToStr(cTotLojaFat))+' * t.vlr_aux) / 100) AS NUMERIC(12,2)) VLR_COMIS_FAT,'+
+
+         ' ('+IntToStr(iTotLojaItens)+'* t.vlr_aux1) +'+
+         ' (CAST((('+f_Troca(',','.',CurrToStr(cTotLojaFat))+' * t.vlr_aux) / 100) AS NUMERIC(12,2))) TOT_COMISSAO'+
+
+         ' FROM TAB_AUXILIAR t'+
+         ' WHERE t.tip_aux=27'+ // 27 => CALCULO DE COMISSÃO SOBRE CAMPANHAS sobre Venda LinxProduto.Id_Colecao
+         ' AND CAST((t.cod_aux/100) AS INTEGER)='+IntToStr(iCodLoja);
+  DMBelShop.SQLQuery2.Close;
+  DMBelShop.SQLQuery2.SQL.Clear;
+  DMBelShop.SQLQuery2.SQL.Add(MySql);
+  DMBelShop.SQLQuery2.Open;
+
+  DMBelShop.SQLQuery2.DisableControls;
+  While Not DMBelShop.SQLQuery2.Eof do
+  Begin
+    // Apresenta Totais do Vendedor -------------------------------
+    DMComissaoVendedor.CDS_V_CampComissoes.Append;
+    // DMComissaoVendedor.CDS_V_CampComissoesCODIGO.AsInteger          :=DMBelShop.SQLQuery2.FieldByName('Cod_VendEdor').AsInteger;
+    DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString        :=DMBelShop.SQLQuery2.FieldByName('Pessoa').AsString;
+    // DMComissaoVendedor.CDS_V_CampComissoesCOD_CAMP.AsInteger        :=DMBelShop.SQLQuery2.FieldByName('Id_Colecao').AsInteger;
+    DMComissaoVendedor.CDS_V_CampComissoesCAMPANHA.AsString         :=DMBelShop.SQLQuery2.FieldByName('Cargo').AsString;
+    DMComissaoVendedor.CDS_V_CampComissoesQTD_ITENS.AsInteger       :=DMBelShop.SQLQuery2.FieldByName('Qtd_Itens').AsInteger;
+    DMComissaoVendedor.CDS_V_CampComissoesPONTOS_ITEM.AsCurrency    :=DMBelShop.SQLQuery2.FieldByName('Pontos_Item').AsCurrency;
+    DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_ITENS.AsCurrency:=DMBelShop.SQLQuery2.FieldByName('Vlr_Comis_Itens').AsCurrency;
+    DMComissaoVendedor.CDS_V_CampComissoesVLR_FAT.AsCurrency        :=DMBelShop.SQLQuery2.FieldByName('Vlr_Fat').AsCurrency;
+    DMComissaoVendedor.CDS_V_CampComissoesPER_FAT.AsCurrency        :=DMBelShop.SQLQuery2.FieldByName('Per_Fat').AsCurrency;
+    DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_FAT.AsCurrency  :=DMBelShop.SQLQuery2.FieldByName('Vlr_Comis_Fat').AsCurrency;
+    DMComissaoVendedor.CDS_V_CampComissoesTOT_COMISSAO.AsCurrency   :=DMBelShop.SQLQuery2.FieldByName('Tot_Comissao').AsCurrency;
+    DMComissaoVendedor.CDS_V_CampComissoes.Post;
+
+    // Atualiza Acumuladores da Loja ----------------------------
+    cTotLojaComissItens:=cTotLojaComissItens + DMBelShop.SQLQuery2.FieldByName('Vlr_Comis_Itens').AsCurrency;
+    cTotLojaComissFat  :=cTotLojaComissFat   + DMBelShop.SQLQuery2.FieldByName('Vlr_Comis_Fat').AsCurrency;
+    cTotLojaComissao   :=cTotLojaComissao    + DMBelShop.SQLQuery2.FieldByName('Tot_Comissao').AsCurrency;
+
+    DMBelShop.SQLQuery2.Next;
+  End; // While Not DMBelShop.SQLQuery2.Eof do
+  DMBelShop.SQLQuery2.EnableControls;
+  DMBelShop.SQLQuery2.Close;
+  // Apresenta Comissões Gerentes/Supervisores e Assistenstes ---
+  //-------------------------------------------------------------
+
+  //-------------------------------------------------------------
+  // Acumula Totais Geral ---------------------------------------
+  //-------------------------------------------------------------
+  iTotGeralItens      :=iTotGeralItens       + iTotLojaItens;
+  cTotGeralComissItens:=cTotGeralComissItens + cTotLojaComissItens;
+  cTotGeralFat        :=cTotGeralFat         + cTotLojaFat;
+  cTotGeralComissFat  :=cTotGeralComissFat   + cTotLojaComissFat;
+  cTotGeralComissao   :=cTotGeralComissao    + cTotLojaComissao;
+  // Acumula Totais Geral ---------------------------------------
+  //-------------------------------------------------------------
+
+  //============================================================================
+  // Apresenta Totais da Loja ==================================================
+  //============================================================================
+  DMComissaoVendedor.CDS_V_CampComissoes.Append;
+  DMComissaoVendedor.CDS_V_CampComissoesCODIGO.AsInteger          :=iCodLoja;
+  DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString        :='TOTAL DA LOJA';
+  // DMComissaoVendedor.CDS_V_CampComissoesCOD_CAMP.AsInteger        :=DMBelShop.SQLQuery2.FieldByName('Id_Colecao').AsInteger;
+  // DMComissaoVendedor.CDS_V_CampComissoesCAMPANHA.AsString         :=DMBelShop.SQLQuery2.FieldByName('Cargo').AsString;
+  DMComissaoVendedor.CDS_V_CampComissoesQTD_ITENS.AsInteger       :=iTotLojaItens;
+  // DMComissaoVendedor.CDS_V_CampComissoesPONTOS_ITEM.AsCurrency    :=DMBelShop.SQLQuery2.FieldByName('Pontos_Item').AsCurrency;
+  DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_ITENS.AsCurrency:=cTotLojaComissItens;
+  DMComissaoVendedor.CDS_V_CampComissoesVLR_FAT.AsCurrency        :=cTotLojaFat;
+  // DMComissaoVendedor.CDS_V_CampComissoesPER_FAT.AsCurrency        :=DMBelShop.SQLQuery2.FieldByName('Per_Fat').AsCurrency;
+  DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_FAT.AsCurrency  :=cTotLojaComissFat;
+  DMComissaoVendedor.CDS_V_CampComissoesTOT_COMISSAO.AsCurrency   :=cTotLojaComissao;
+  DMComissaoVendedor.CDS_V_CampComissoes.Post;
+  // Apresenta Totais da Loja ==================================================
+  //============================================================================
+
+  //============================================================================
+  // Linha em Branco ===========================================================
+  //============================================================================
+  DMComissaoVendedor.CDS_V_CampComissoes.Append;
+  DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.Clear;
+  DMComissaoVendedor.CDS_V_CampComissoes.Post;
+  // Linha em Branco ===========================================================
+  //============================================================================
+
+  //============================================================================
+  // Apresenta Totais da Empresa ===============================================
+  //============================================================================
+  DMComissaoVendedor.CDS_V_CampComissoes.Append;
+  // DMComissaoVendedor.CDS_V_CampComissoesCODIGO.AsInteger          :=iCodLoja;
+  DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString        :='TOTAL DA EMPRESA';
+  // DMComissaoVendedor.CDS_V_CampComissoesCOD_CAMP.AsInteger        :=DMBelShop.SQLQuery2.FieldByName('Id_Colecao').AsInteger;
+  // DMComissaoVendedor.CDS_V_CampComissoesCAMPANHA.AsString         :=DMBelShop.SQLQuery2.FieldByName('Cargo').AsString;
+  DMComissaoVendedor.CDS_V_CampComissoesQTD_ITENS.AsInteger       :=iTotGeralItens;
+  // DMComissaoVendedor.CDS_V_CampComissoesPONTOS_ITEM.AsCurrency    :=DMBelShop.SQLQuery2.FieldByName('Pontos_Item').AsCurrency;
+  DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_ITENS.AsCurrency:=cTotGeralComissItens;
+  DMComissaoVendedor.CDS_V_CampComissoesVLR_FAT.AsCurrency        :=cTotGeralFat;
+  // DMComissaoVendedor.CDS_V_CampComissoesPER_FAT.AsCurrency        :=DMBelShop.SQLQuery2.FieldByName('Per_Fat').AsCurrency;
+  DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_FAT.AsCurrency  :=cTotGeralComissFat;
+  DMComissaoVendedor.CDS_V_CampComissoesTOT_COMISSAO.AsCurrency   :=cTotGeralComissao;
+  DMComissaoVendedor.CDS_V_CampComissoes.Post;
+  // Apresenta Totais da Loja ==================================================
+  //============================================================================
+
+  msg('Calculo de Comissôes'+cr+cr+'Efetuado com SUCESSO !!','A');
+  DMComissaoVendedor.CDS_V_CampComissoes.First;
+
+End; // CAMPANHA COMISSAO - Monta Grid de Comissões >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// CAMPANHA COMISSAO - Busca Comissão por Id_Coleção >>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TFrmComissaoVendedor.CampanhaComissaoBuscaComissoes: Boolean;
+Var
+  MySql: String;
+Begin
+  // Apresentacao ==========================================================
+  OdirPanApres.Caption:='AGUARDE !! Apropriando Vendas para Calculo de Comissão...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmComissaoVendedor.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmComissaoVendedor;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  Screen.Cursor:=crAppStart;
+  Result:=True;
+
+  //============================================================================
+  // Cria ClienteDataSet =======================================================
+  //============================================================================
+  If DMComissaoVendedor.CDS_V_CampComissoes.Active Then
+   DMComissaoVendedor.CDS_V_CampComissoes.Close;
+  // Cria ClienteDataSet =======================================================
+  //============================================================================
+
+  //============================================================================
+  // Busca Movimentos de Campanhas e Comissões =================================
+  //============================================================================
+  MySql:=' SELECT'+
+         ' l.empresa, l.nome_emp,'+
+         ' v.cod_vendedor, v.nome_vendedor,'+
+         ' p.id_colecao, p.desc_colecao,'+
+         // Comissão por Itens Vendidos
+         ' CAST(SUM(DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) AS INTEGER) QTD_ITENS,'+
+         ' t.vlr_aux1 PONTOS_ITEM,'+
+         ' CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) * t.vlr_aux1),2) as numeric(12,2)) VLR_COMISSAO_ITENS,'+
+         // Comissão por Faturamento
+         ' CAST(ROUND(SUM(DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total)),2) AS NUMERIC(12,2)) VLR_FATURAMENTO,'+
+         ' t.vlr_aux PER_COMISSAO_FAT,'+
+         ' CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total) * t.vlr_aux) / 100),2) AS NUMERIC(12,2)) VLR_COMISSAO_FAT,'+
+         // Total das Comissões
+         ' (CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.quantidade, -m.quantidade)) * t.vlr_aux1),2) AS NUMERIC(12,2))) +'+
+         ' (CAST(ROUND(SUM((DECODE(m.operacao, ''S'', m.valor_total, -m.valor_total) * t.vlr_aux) / 100),2) AS NUMERIC(12,2))) TOT_COMISSAO'+
+
+         ' FROM LINXMOVIMENTO m, LINXVENDEDORES v,'+
+         '      LINXPRODUTOS p, LINXLOJAS l, TAB_AUXILIAR t'+
+
+         ' WHERE m.cod_vendedor=v.cod_vendedor'+
+         ' AND m.empresa=v.empresa'+
+         ' AND m.cod_produto=p.cod_produto'+
+         ' AND m.empresa=l.empresa'+
+         ' AND p.id_colecao=t.cod_aux'+
+         ' AND t.tip_aux=28'+ // 28 => CALCULO DE COMISSÃO SOBRE CAMPANHAS sobre Venda LinxProduto.Id_Colecao
+         ' AND v.tipo_vendedor in (''V'', ''A'')'+
+         ' AND m.cancelado=''N'''+
+         ' AND m.excluido=''N'''+
+         ' AND ((m.operacao=''S'' AND m.tipo_transacao=''V'')'+
+         '      OR'+
+         '      (m.operacao=''DS'' AND m.tipo_transacao IS NULL))'+
+         ' AND ((t.vlr_aux<>0) or (t.vlr_aux1<>0))'+
+         ' AND UPPER(v.nome_vendedor)<>''BELSHOP'''+
+         ' AND UPPER(v.nome_vendedor)<>''BELCENTER'''+
+         ' AND m.data_documento BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaInicio)))+
+                                  ' AND '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFim)))+
 
          ' GROUP BY 1,2,3,4,5,6,8,11'+
          ' ORDER BY 2, 4, 6';
-//  DMBelShop.SQLQuery3.Close;
-//  DMBelShop.SQLQuery3.SQL.Clear;
-//  DMBelShop.SQLQuery3.SQL.Add(MySql);
-//  DMBelShop.SQLQuery3.Open;
-//
-//  If DMBelShop.SQLQuery3.IsEmpty Then
-//  Begin
-//    Result:=False;
-//    Screen.Cursor:=crDefault;
-//    OdirPanApres.Visible:=False;
-//
-//    DMBelShop.SQLQuery3.Close;
-//    DMBelShop.SQLQuery3.SQL.Clear;
-//    msg('SEM Venda no Período de '+cr+cr+sgDtaInicio+' a '+sgDtaFim,'A');
-//    Exit;
-//  End; // If DMBelShop.SQLQuery3.IsEmpty Then
+  DMBelShop.SQLQuery3.Close;
+  DMBelShop.SQLQuery3.SQL.Clear;
+  DMBelShop.SQLQuery3.SQL.Add(MySql);
+  DMBelShop.SQLQuery3.Open;
+
+  If DMBelShop.SQLQuery3.IsEmpty Then
+  Begin
+    Result:=False;
+    Screen.Cursor:=crDefault;
+    OdirPanApres.Visible:=False;
+
+    DMBelShop.SQLQuery3.Close;
+    DMBelShop.SQLQuery3.SQL.Clear;
+    msg('SEM Venda no Período de '+cr+cr+sgDtaInicio+' a '+sgDtaFim,'A');
+    Exit;
+  End; // If DMBelShop.SQLQuery3.IsEmpty Then
+  // Busca Movimentos de Campanhas e Comissões =================================
+  //============================================================================
 
   //============================================================================
   // Monta Grid de Apresentação ================================================
   //============================================================================
+  DMComissaoVendedor.CDS_V_CampComissoes.CreateDataSet;
+  DMComissaoVendedor.CDS_V_CampComissoes.Open;
+
   CampanhaComissaoMontaComissoes;
   // Monta Grid de Apresentação ================================================
   //============================================================================
@@ -2145,6 +2753,7 @@ begin
   //============================================================================
   If (Sender as TJvXPButton).Caption='Comissão Por Campanha' Then
   Begin
+    Dbg_CampComissoes.SetFocus;
     CampanhaComissaoCalcular;
   End; // If (Sender as TJvXPButton).Caption='Comissão Por Campanha' Then
 
@@ -2594,7 +3203,12 @@ begin
 
   If (PC_ComissaoVendedor.ActivePage=Ts_CampColecao) And (Ts_CampColecao.CanFocus) Then
   Begin
-    ShowMessage('OK');
+    If DMComissaoVendedor.CDS_V_CampComissoes.IsEmpty Then
+     Exit;
+
+    Dbg_CampComissoes.SetFocus;
+
+    DBGridClipboard(Dbg_CampComissoes);
   End; // If (PC_ComissaoVendedor.ActivePage=Ts_CampColecao) And (Ts_CampColecao.CanFocus) Then
 
 end;
@@ -2899,7 +3513,7 @@ begin
       End;
 
       // Busca o Proximo Código da Loja da Pessoa ==============================
-      MySql:=' SELECT COALESCE(MAX(t.cod_aux)+1 ,('+IntToStr(iCodLoja)+'*100)+1) CODIGO'+
+      MySql:=' SELECT COALESCE(MAX(t.cod_aux)+1 ,('+IntToStr(iCodLoja)+'*100)+'+IntToStr(iMinLoja)+') CODIGO'+
              ' FROM TAB_AUXILIAR t'+
              ' WHERE t.tip_aux=27'+ // 27 => CALCULO DE COMISSÃO SOBRE CAMPANHAS sobre Venda LinxProduto.Id_Colecao
              ' AND   t.cod_aux BETWEEN ('+IntToStr(iCodLoja)+'*100)+'+IntToStr(iMinLoja)+' AND ('+
@@ -2992,6 +3606,56 @@ begin
   EdtCampColecaoCampVlr.Clear;
 
   Dbg_CampColecaoCamp.SetFocus;
+
+end;
+
+procedure TFrmComissaoVendedor.Dbg_CampComissoesDrawColumnCell(Sender: TObject;
+          const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if not (gdSelected in State) Then // Este comando altera cor da Linha
+  Begin
+    If (DMComissaoVendedor.CDS_V_CampComissoesCODIGO.AsString<>'') And
+       (DMComissaoVendedor.CDS_V_CampComissoesCAMPANHA.AsString='') Then
+    Begin
+      Dbg_CampComissoes.Canvas.Brush.Color:=clBlue;
+      Dbg_CampComissoes.Canvas.Font.Color:=clWhite; // Cor da Fonte
+      Dbg_CampComissoes.Canvas.Font.Style:=[fsBold];
+    End; // If (DMComissaoVendedor.CDS_V_CampComissoesCODIGO.AsString<>'') And ...
+
+    If DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString='TOTAL DO VENDEDOR' Then
+    Begin
+      Dbg_CampComissoes.Canvas.Brush.Color:=clYellow;
+      Dbg_CampComissoes.Canvas.Font.Style:=[fsBold];
+    End; // If DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString='TOTAL DO VENDEDOR' Then
+
+    If DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString='TOTAL DA LOJA' Then
+    Begin
+      Dbg_CampComissoes.Canvas.Brush.Color:=clBlue;
+      Dbg_CampComissoes.Canvas.Font.Color:=clWhite; // Cor da Fonte
+      Dbg_CampComissoes.Canvas.Font.Style:=[fsBold];
+    End; // If DMComissaoVendedor.CDS_V_CampComissoesCAMPANHA.AsString='TOTAL DA LOJA' Then
+
+    If DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString='TOTAL DA EMPRESA' Then
+    Begin
+      Dbg_CampComissoes.Canvas.Brush.Color:=clBlue;
+      Dbg_CampComissoes.Canvas.Font.Color:=clWhite; // Cor da Fonte
+      Dbg_CampComissoes.Canvas.Font.Style:=[fsBold];
+    End; // If DMComissaoVendedor.CDS_V_CampComissoesDESCRICAO.AsString='TOTAL DA EMPRESA' Then
+  End; // if not (gdSelected in State) Then
+
+  // Alinhamento
+  DMComissaoVendedor.CDS_V_CampComissoesCODIGO.Alignment:=taRightJustify;
+  DMComissaoVendedor.CDS_V_CampComissoesCOD_CAMP.Alignment:=taRightJustify;
+  DMComissaoVendedor.CDS_V_CampComissoesQTD_ITENS.Alignment:=taRightJustify;
+  DMComissaoVendedor.CDS_V_CampComissoesPONTOS_ITEM.Alignment:=taRightJustify;
+  DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_ITENS.Alignment:=taRightJustify;
+  DMComissaoVendedor.CDS_V_CampComissoesVLR_FAT.Alignment:=taRightJustify;
+  DMComissaoVendedor.CDS_V_CampComissoesPER_FAT.Alignment:=taRightJustify;
+  DMComissaoVendedor.CDS_V_CampComissoesVLR_COMIS_FAT.Alignment:=taRightJustify;
+  DMComissaoVendedor.CDS_V_CampComissoesTOT_COMISSAO.Alignment:=taRightJustify;
+
+  Dbg_CampComissoes.Canvas.FillRect(Rect);
+  Dbg_CampComissoes.DefaultDrawDataCell(Rect,Column.Field,state);
 
 end;
 

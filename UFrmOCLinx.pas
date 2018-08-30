@@ -3347,7 +3347,7 @@ begin
       DMBelShop.SQLQuery1.SQL.Add(MySql);
       DMBelShop.SQLQuery1.Open;
       sCodLjSIDI:=DMBelShop.SQLQuery1.fieldByName('Cod_Filial').AsString;
-     DMBelShop.SQLQuery1.Close;
+      DMBelShop.SQLQuery1.Close;
 
       // Busca Numero da Ordem de Compra =======================================
       sNrOC:=DMBelShop.OCBuscaNumeroOC(sCodLjSIDI, igCodLojaLinx);

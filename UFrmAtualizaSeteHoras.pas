@@ -347,7 +347,7 @@ Begin
   // Monta Select de Busca de Debitos e Créditos (LINX) ========================
   //============================================================================
   // Todos Cfops dos Fornecedores que estão no Conta Corrente ==================
-  MySqlLinx:=' SELECT'+
+      MySql:=' SELECT'+
              ' fo.cod_fornecedor COD_FORNECEDOR,'+ // 1'+
              ' fo.des_fornecedor DES_FORNECEDOR,'+ // 2'+
              ' fo.cod_vinculado COD_VINCULADO,'+ // 3'+
@@ -427,26 +427,43 @@ Begin
 
              // Se Parametro sgCodForn ------------------------------
              If Trim(sgCodForn)<>'' Then
-              MySqlLinx:=
-               MySqlLinx+' AND   mf.codigo_cliente=:CodForn';
+              MySql:=
+               MySql+' AND   mf.codigo_cliente=:CodForn';
 
-  MySqlLinx:=
-   MySqlLinx+' GROUP BY 1,2,3,4,6,7,8,10,11,12,14,15,16,17,20,21,22,23';
+      MySql:=
+       MySql+' GROUP BY 1,2,3,4,6,7,8,10,11,12,14,15,16,17,20,21,22,23';
 
   // Cfops 5923 - Perdas dos Fornecedores que estão no Conta Corrente ==========
   MySqlLinx:=
    MySqlLinx+' UNION'+
 
              ' SELECT '+
-             ' (SELECT FIRST 1 ff.cod_fornecedor '+
-             '  FROM FL_CAIXA_FORNECEDORES ff '+
-             '  WHERE ff.cod_vinculado=fr.cod_cliente'+
-             '  AND   ff.num_seq NOT IN (0,999999)) COD_FORNECEDOR,'+ // 1
 
-             ' (SELECT FIRST 1 ff.des_fornecedor '+
-             '  FROM FL_CAIXA_FORNECEDORES ff '+
-             '  WHERE ff.cod_vinculado=fr.cod_cliente'+
-             '  AND   ff.num_seq NOT IN (0,999999)) COD_FORNECEDOR,'+ // 2
+             ' CASE'+
+             '    WHEN COALESCE((SELECT FIRST 1 ff.cod_fornecedor '+
+             '                   FROM FL_CAIXA_FORNECEDORES ff '+
+             '                   WHERE ff.cod_vinculado=fr.cod_cliente'+
+             '                   AND   ff.num_seq NOT IN (0,999999)),0)<>0 THEN'+
+             '      (SELECT FIRST 1 ff.cod_fornecedor'+
+             '       FROM FL_CAIXA_FORNECEDORES ff'+
+             '       WHERE ff.cod_vinculado=fr.cod_cliente'+
+             '       AND   ff.num_seq NOT IN (0,999999))'+
+             '    ELSE'+
+             '      fr.cod_cliente'+
+             ' END COD_FORNECEDOR,'+ // 1
+
+             ' CASE'+
+             '    WHEN COALESCE((SELECT FIRST 1 ff.des_fornecedor '+
+             '                   FROM FL_CAIXA_FORNECEDORES ff '+
+             '                   WHERE ff.cod_vinculado=fr.cod_cliente'+
+             '                   AND   ff.num_seq NOT IN (0,999999)),'''')<>'''' THEN'+
+             '      (SELECT FIRST 1 ff.des_fornecedor'+
+             '       FROM FL_CAIXA_FORNECEDORES ff'+
+             '       WHERE ff.cod_vinculado=fr.cod_cliente'+
+             '       AND   ff.num_seq NOT IN (0,999999))'+
+             '    ElSE'+
+             '     fr.nome_cliente'+
+             ' END DES_FORNECEDOR,'+ // 2
 
              ' fr.cod_cliente COD_VINCULADO,'+ // 3
              ' fr.nome_cliente DES_VINCULADO,'+ // 4
@@ -515,6 +532,8 @@ Begin
              ' ORDER BY 1,3';
   // Monta Select de Busca de Debitos e Créditos (LINX) ========================
   //============================================================================
+
+  MySqlLinx:= MySql + MySqlLinx;
 end; // Monta SQL's Para Busca SIDICOM / LINX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Calcula Demanda de 4 Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -905,15 +924,15 @@ Begin
              ' VALUES ('+
              sCodFornLINX+', '+ // COD_FORNECEDOR (LINX) - Fornecedor de Vinculo
              QuotedStr(sNomeFornLINX)+', '+ // DES_FORNECEDOR (LINX) - Fornecedor de Vinculo
-             sCodFornVinc+', '+ // COD_VINCULADO (LINX) - Fornecedor de Vinculado
-             QuotedStr(sNomeFornVinc)+', '+ // DES_VINCULADO (LINX) - Fornecedor de Vinculado
+             sCodFornVinc+', '+ // COD_VINCULADO (LINX) - Fornecedor Vinculado
+             QuotedStr(sNomeFornVinc)+', '+ // DES_VINCULADO (LINX) - Fornecedor Vinculado
              DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('VLR_ORIGEM').AsString+', '+ // VLR_ORIGEM
              QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DTA_ORIGEM').AsString)+', '+ // DTA_ORIGEM
              QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('DTA_CAIXA').AsString)+', '+ // DTA_CAIXA
              sNumSeq+', '+ // NUM_SEQ
              QuotedStr(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('NUM_CHAVENF').AsString)+', '+ // NUM_CHAVENF
              sgCodEmpLINX+', '+ // COD_EMPRESA
-             DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('COD_HISTORICO').AsString+', '+ // COD_HISTORICO,
+             DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('COD_HISTORICO').AsString+', '+ // COD_HISTORICO
              QuotedStr(AnsiUpperCase(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('TXT_OBS').AsString))+', '+ // TXT_OBS
              QuotedStr(Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('NUM_DOCUMENTO').AsString))+', '+ // NUM_DOCUMENTO
              QuotedStr(Trim(DMAtualizaSeteHoras.CDS_MovtoLinx.FieldByName('NUM_SERIE').AsString))+', '+ // NUM_SERIE

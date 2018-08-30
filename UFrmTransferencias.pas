@@ -209,7 +209,8 @@ Begin
              ' ''Sol. Transf. Nº ''||so.num_solicitacao||'' Qtd: ''||so.qtd_transf OBS_DOCTO,'+
              ' 2 IND_PRIORIDADE,'+
              ' ''NAO'' IND_LEITORA,'+
-             ' 0 QTD_CHECKOUT'+
+             ' 0 QTD_CHECKOUT,'+
+             ' 0 REL_SEPARACAO'+
 
              ' FROM SOL_TRANSFERENCIA_CD so'+
              '     LEFT JOIN ES_FINAN_CURVA_ABC ff  ON CAST(LPAD(TRIM(so.cod_loja_sidi),2,''0'') AS VARCHAR(2))=ff.cod_loja'+
@@ -2584,7 +2585,7 @@ begin
   //============================================================================
   SalvaProcessamento('10/999 - Busca Produtos nas Lojas com Necessidade de Compras - INICIO - '+TimeToStr(Time));
   //============================================================================
-  // Busca Produtos nas Lojas com Necessidade de Compras =======================
+  // Busca Produtos das Lojas com Necessidade de Compra ========================
   //============================================================================
 //OdirAqui 4.Inicio
   If Not BuscaProdutosLojas Then
@@ -2596,7 +2597,7 @@ begin
     Exit;
   End;
 //OdirAqui 4.Fim
-  // Busca Produtos nas Lojas com Necessidade de Compras =======================
+  // Busca Produtos das Lojas com Necessidade de Compra ========================
   //============================================================================
   SalvaProcessamento('10/999 - Busca Produtos nas Lojas com Necessidade de Compras - FIM - '+TimeToStr(Time));
   //============================================================================

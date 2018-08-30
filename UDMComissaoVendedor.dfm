@@ -495,7 +495,7 @@ object DMComissaoVendedor: TDMComissaoVendedor
       Size = 2
     end
     object CDS_V_CampComissoesVLR_COMIS_ITENS: TFMTBCDField
-      DisplayLabel = 'Comis'#227'o Itens'
+      DisplayLabel = 'Comiss'#227'o Itens'
       FieldName = 'VLR_COMIS_ITENS'
       DisplayFormat = '0,.00'
       Precision = 15
@@ -516,7 +516,7 @@ object DMComissaoVendedor: TDMComissaoVendedor
       Size = 2
     end
     object CDS_V_CampComissoesVLR_COMIS_FAT: TFMTBCDField
-      DisplayLabel = 'Comis'#227'o Fat'
+      DisplayLabel = 'Comiss'#227'o Fat'
       FieldName = 'VLR_COMIS_FAT'
       DisplayFormat = '0,.00'
       Precision = 15

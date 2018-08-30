@@ -5,7 +5,7 @@ interface
 uses
   Windows, SysUtils, Classes, Variants, Forms, frexpimg, FR_Class, FR_DSet,
   FR_DBSet, frOLEExl, frRtfExp, FR_E_HTML2, FR_E_HTM, FR_E_CSV, FR_E_RTF,
-  FR_E_TXT, DBXpress, RelVisual, Dialogs, frxClass, frxExportPDF;
+  FR_E_TXT, DBXpress, RelVisual, Dialogs, frxClass, frxExportPDF, FR_BarC;
   //  Último: DBXpress;
 
 type
@@ -26,6 +26,7 @@ type
     frReport1: TfrReport;
     frxPDFExport1: TfrxPDFExport;
     frxReport1: TfrxReport;
+    frBarCodeObject1: TfrBarCodeObject;
 
     // Odir
     Procedure ImpressaoRomaneioSeparacao(sNumDocto, sCodLoja, sNumOCGerada: String);
