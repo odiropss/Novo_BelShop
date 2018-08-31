@@ -245,6 +245,7 @@ type
     CDS_RelDivergManuaisQTD_ORIGINAL: TIntegerField;
     CDS_RelDivergManuaisQTD_ORIG_CHECK: TIntegerField;
     CDS_RelDivergManuaisQTD_A_TRANSF: TIntegerField;
+    CDS_RelReposicaoFORNEC: TStringField;
     procedure CDS_Transf_CdAfterScroll(DataSet: TDataSet);
 
     // Odir

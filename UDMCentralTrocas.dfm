@@ -794,16 +794,17 @@ object DMCentralTrocas: TDMCentralTrocas
       #13#10'lo.qtd_a_transf,'#13#10#39'_____'#39' qtd_disponivel,'#13#10'cd.qtd_estoque Sald' +
       'o_CD,'#13#10'lo.cod_produto, '#13#10'TRIM(pr.codbarra) codbarra, '#13#10'Trim(pr.r' +
       'eferencia) referencia, '#13#10'TRIM(pr.apresentacao) Des_produto, '#13#10#39'O' +
-      'DIR'#39' Usuario,'#13#10'lo.obs_docto'#13#10#13#10'FROM ES_ESTOQUES_LOJAS lo, ES_EST' +
-      'OQUES_CD cd,'#13#10'     PRODUTO pr, EMP_CONEXOES em'#13#10#13#10'WHERE lo.cod_p' +
-      'roduto=pr.codproduto'#13#10'AND   lo.cod_produto=cd.cod_produto'#13#10'AND  ' +
-      ' lo.dta_movto=cd.dta_movto'#13#10'AND   lo.cod_loja=em.cod_filial'#13#10'---' +
-      '----------------- AND   lo.dta_movto=current_date'#13#10'AND   lo.ind_' +
-      'transf='#39'SIM'#39#13#10#13#10'AND   lo.num_docto = 2970'#13#10'and    lo.cod_loja='#39'0' +
-      '8'#39#13#10#13#10'-------------------- AND   lo.qtd_a_transf>IntToStr(iQtdI)' +
-      '+'#13#10'-------------------- AND   lo.qtd_a_transf<IntToStr(iQtdF)+'#13#10 +
-      'AND   CAST(TRIM(COALESCE(lo.num_pedido,'#39'0'#39')) AS INTEGER)=0'#13#10#13#10'OR' +
-      'DER BY 6, 11'#13#10
+      'DIR'#39' Usuario,'#13#10'lo.obs_docto,'#13#10'pr.principalfor||'#39' - '#39'||pr.nomefor' +
+      'necedor FORNEC'#13#10#13#10'FROM ES_ESTOQUES_LOJAS lo, ES_ESTOQUES_CD cd,'#13 +
+      #10'     PRODUTO pr, EMP_CONEXOES em'#13#10#13#10'WHERE lo.cod_produto=pr.cod' +
+      'produto'#13#10'AND   lo.cod_produto=cd.cod_produto'#13#10'AND   lo.dta_movto' +
+      '=cd.dta_movto'#13#10'AND   lo.cod_loja=em.cod_filial'#13#10'----------------' +
+      '---- AND   lo.dta_movto=current_date'#13#10'AND   lo.ind_transf='#39'SIM'#39#13 +
+      #10#13#10'AND   lo.num_docto = 2970'#13#10'and    lo.cod_loja='#39'08'#39#13#10#13#10'-------' +
+      '------------- AND   lo.qtd_a_transf>IntToStr(iQtdI)+'#13#10'----------' +
+      '---------- AND   lo.qtd_a_transf<IntToStr(iQtdF)+'#13#10'AND   CAST(TR' +
+      'IM(COALESCE(lo.num_pedido,'#39'0'#39')) AS INTEGER)=0'#13#10#13#10'ORDER BY 6, 11'#13 +
+      #10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
@@ -885,6 +886,10 @@ object DMCentralTrocas: TDMCentralTrocas
     object CDS_RelReposicaoOBS_DOCTO: TStringField
       FieldName = 'OBS_DOCTO'
       Size = 2000
+    end
+    object CDS_RelReposicaoFORNEC: TStringField
+      FieldName = 'FORNEC'
+      Size = 49
     end
   end
   object DS_AnaliseReposicao: TDataSource

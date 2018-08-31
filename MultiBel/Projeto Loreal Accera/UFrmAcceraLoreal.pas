@@ -677,7 +677,11 @@ Begin
            ' NULL LOTE_VALIDADE,'+ // 7 Lote Validade
 
            ' CAST(SUM(COALESCE(it.qunatidadeproduto,0) * 1000) AS INTEGER) QUANTIDADE,'+ // 8 Quantidade de Venda Atendida
-           ' SUM(COALESCE(it.meitvalorbrutoitem,0) + COALESCE(it.meitfreterateado,0)) * 100  VALOR_TRANSACAO,'+ // 9 Valor Final da Tansação
+
+           // OdirApagar - 30/08/2018 - É o campo VALOR_TOTAL_UNIT
+           // ' SUM(COALESCE(it.meitvalorbrutoitem,0) + COALESCE(it.meitfreterateado,0)) * 100  VALOR_TRANSACAO,'+ // 9 Valor Final da Tansação
+           ' SUM(COALESCE(it.valor_total_unit,0)) * 100  VALOR_TRANSACAO,'+ // 9 Valor Final da Tansação
+
            ' ''BRL'' MOEDA,'+ // 10 Moeda
            ' nt.documento DOCUMENTO,'+ // 11 Identificação da Transação
 
@@ -698,7 +702,7 @@ Begin
            '    WHEN CHAR_LENGTH(TRIM(CAST(REPLACE(REPLACE(REPLACE(COALESCE(cl.cgc_cnpj,''99999999999999''),'+
            '                     ''/'',''''),''.'',''''),''-'','''') AS VARCHAR(18))))<12 Then'+
            '      1'+
-           '    ELSE'+                                                
+           '    ELSE'+
            '      2'+
            ' END  TIPO_IDENT_PDV,'+ // 15 Tipo Identificador PDV
 
@@ -706,7 +710,7 @@ Begin
            '                        ''/'', ''''),''.'',''''),''-'','''') AS VARCHAR(18))) IDENTIFICADOR_PDV,'+ // 16 Identificador do PDV
 
            ' SUBSTRING(TRIM(cl.nome) FROM 1 FOR 60) DESCRICAO_PDV,'+ // 17 Descrição do PDV
-           ' TRIM(REPLACE(REPLACE(REPLACE(REPLACE(COALESCE(cl.cep,''99999999''), ''/'', ''''),''.'',''''),''-'',''''),'' '','''')) CEP_PDV,'+ // 16 CEP do PDV
+           ' TRIM(REPLACE(REPLACE(REPLACE(REPLACE(COALESCE(cl.cep,''99999999''), ''/'', ''''),''.'',''''),''-'',''''),'' '','''')) CEP_PDV,'+ // 18 CEP do PDV
 
            ' ''N1'' CLASSIFICACAO_PDV,'+ // 19 Classificação do PDV
 
@@ -776,7 +780,11 @@ Begin
            ' NULL LOTE_VALIDADE,'+ // 7 Lote Validade
 
            ' CAST(SUM(COALESCE(it.qunatidadeproduto,0) * 1000) AS INTEGER) QUANTIDADE,'+ // 8 Quantidade de Venda Atendida
-           ' SUM(COALESCE(it.meitvalorbrutoitem,0) + COALESCE(it.meitfreterateado,0)) * 100  VALOR_TRANSACAO,'+ // 9 Valor Final da Tansação
+
+           // OdirApagar - 30/08/2018 - É o campo VALOR_TOTAL_UNIT
+           // ' SUM(COALESCE(it.meitvalorbrutoitem,0) + COALESCE(it.meitfreterateado,0)) * 100  VALOR_TRANSACAO,'+ // 9 Valor Final da Tansação
+           ' SUM(COALESCE(it.valor_total_unit,0)) * 100  VALOR_TRANSACAO,'+ // 9 Valor Final da Tansação
+
            ' ''BRL'' MOEDA,'+ // 10 Moeda
            ' nt.documento DOCUMENTO,'+ // 11 Identificação da Transação
 

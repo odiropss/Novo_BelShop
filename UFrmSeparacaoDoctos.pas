@@ -1,4 +1,8 @@
 unit UFrmSeparacaoDoctos;
+{
+Icone em:
+C:\Projetos\Botôes\Icons\doc03.ico
+}
 
 interface
 
@@ -368,16 +372,17 @@ begin
     EdtCodBarras.Enabled:=True;
 
     Try
-      // Montagem do Codigo de Barras
-      //    NumDocSep Tamanho de 7
+      // Montagem do Codigo de Barras (13 Caracteres)
+      //    NumDocSep Tamanho de 6
       //    NumDocto  Tamanho de 6
-      sgNumRel:=Copy(sCodBarras,1,7);
+      //    Ultimo Caracter é Digito calculodo
+      sgNumRel:=Copy(sCodBarras,1,6);
       sgNumRel:=IntToStr(StrToInt(sgNumRel));
 
-      sgNumDoc:=Copy(sCodBarras,8,6);
+      sgNumDoc:=Copy(sCodBarras,7,6);
       sgNumDoc:=IntToStr(StrToInt(sgNumDoc));
     Except
-      msg('Erro de leitura do Código de Barras !!','A');
+      msg('Erro de Leitura do Código de Barras !!','A');
       LimpaTudo;
       EdtCodBarras.Clear;
       EdtCodBarras.SetFocus;

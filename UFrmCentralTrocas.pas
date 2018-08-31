@@ -184,6 +184,7 @@ type
     SaveDialog: TSaveDialog;
     Bt_ReposLojasDivAlteradas: TJvXPButton;
     Bt_ReposLojasResultados: TJvXPButton;
+    JvXPButton2: TJvXPButton;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -369,6 +370,7 @@ type
     procedure Bt_NFePerdasScanearClick(Sender: TObject);
     procedure Bt_ReposLojasResultadosClick(Sender: TObject);
     procedure Bt_ReposLojasDivAlteradasClick(Sender: TObject);
+    procedure JvXPButton2Click(Sender: TObject);
 
   private
     { Private declarations }
@@ -391,10 +393,11 @@ var
   buffer : array[0..255] of char;
   ///////////////////////////////
 
-  bgTodosCorredores,
-  bgEnterTab: Boolean;
+  bgEnterTab,
   bgSair,
-  bgChange: Boolean; // Se Já Executou o Primeiro ENTER na Data;
+  bgChange,     // Se Já Executou o Primeiro ENTER na Data;
+  bgMsgReposicao, // Se Aparesenta Mensagens Prioridades/Corredor
+  bgTodosCorredores: Boolean;
 
   sgCorredores,
   sgFilterAtual,
@@ -723,7 +726,7 @@ begin
 
          If Trim(EdtReposLojasCodForn.Text)<>'' Then
           MySql:=
-           MySql+'     AND pr.principalfor='+QuotedStr(Trim(EdtReposLojasCodForn.Text));
+           MySql+'     AND pr.principalfor='+QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))));
 
   MySql:=
    MySql+' AND   lo.ind_transf=''SIM'''+
@@ -833,7 +836,7 @@ Begin
 
                   If Trim(EdtReposLojasCodForn.Text)<>'' Then
                    MySql:=
-                    MySql+'     AND pr.principalfor='+QuotedStr(Trim(EdtReposLojasCodForn.Text));
+                    MySql+'     AND pr.principalfor='+QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))));
 
             MySql:=
              MySql+')';
@@ -1064,7 +1067,8 @@ Begin
 
          If Trim(EdtReposLojasCodForn.Text)<>'' Then
           MySql:=
-           MySql+' AND   p.principalfor='+QuotedStr(Trim(EdtReposLojasCodForn.Text));
+           MySql+' AND   p.principalfor='+QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))));
+
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
   DMBelShop.CDS_BuscaRapida.Open;
@@ -1179,7 +1183,7 @@ Begin
   OdirPanApres.Visible:=False;
 end; // Atualiza Movimento Nuvem Linx >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Imprime Romaeiros por Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Imprime Romaeios por Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmCentralTrocas.RomaneioFornecedor;
 Var
   MySql: String;
@@ -1210,7 +1214,7 @@ Begin
 
          If Trim(EdtReposLojasCodForn.Text)<>'' Then
           MySql:=
-           MySql+' AND pr.principalfor='+QuotedStr(Trim(EdtReposLojasCodForn.Text));
+           MySql+' AND pr.principalfor='+QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))));
 
   MySql:=
    MySql+' ORDER BY 2';
@@ -1356,7 +1360,7 @@ Begin
 
          If Trim(EdtReposLojasCodForn.Text)<>'' Then
           MySql:=
-           MySql+' AND pr.principalfor='+QuotedStr(Trim(EdtReposLojasCodForn.Text));
+           MySql+' AND pr.principalfor='+QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))));
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
   DMBelShop.CDS_BuscaRapida.Open;
@@ -1709,7 +1713,7 @@ Begin
 
          If Trim(EdtReposLojasCodForn.Text)<>'' Then
           MySql:=
-           MySql+' AND pr.principalfor='+QuotedStr(Trim(EdtReposLojasCodForn.Text));
+           MySql+' AND pr.principalfor='+QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))));
 
   MySql:=
    MySql+' ORDER BY 2';
@@ -2179,7 +2183,7 @@ Begin
 
          If Trim(EdtReposLojasCodForn.Text)<>'' Then
           MySql:=
-           MySql+' AND pr.principalfor='+QuotedStr(Trim(EdtReposLojasCodForn.Text));
+           MySql+' AND pr.principalfor='+QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))));
 
   DMBelShop.CDS_BuscaRapida.Close;
   DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
@@ -2880,12 +2884,12 @@ begin
   bgSair     :=False;
   bgEnterTab :=True;
 
+  bgMsgReposicao:=True; // Se Aparesenta Mensagem de Prioridades Utilizadas
   bgTodosCorredores:=True;
   sgCorredores:='';
   sgCorredoresFilter:='';
   sgPrioridadeFilter:='';
   igCorredores:=0;
-
   // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
   Application.OnMessage := ApplicationEvents1Message;
 
@@ -4729,7 +4733,8 @@ begin
                MySql+' AND EXISTS (SELECT 1'+
                      '             FROM PRODUTO pr'+
                      '             WHERE pr.codproduto=l.cod_produto'+
-                     '             AND   pr.principalfor='+QuotedStr(Trim(EdtReposLojasCodForn.Text))+')';
+                     '             AND   pr.principalfor='+
+                     QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))))+')';
       DMBelShop.SQLC.Execute(MySql,nil,nil);
 
       // Atualiza Transacao ======================================================
@@ -4953,27 +4958,28 @@ begin
 
   // Busca Docto ===============================================================
   MySql:=' SELECT '+
-
-         // OdirApagar - 24/08/2017
-         // ''Bel_''||lo.cod_loja||'' - ''||em.razao_social loja,'+
-         ' em.cod_cli_linx||'' - ''||em.razao_social loja,'+
+         ' em.cod_cli_linx||'' - ''||em.razao_social LOJA,'+
 
          ' SUBSTRING(em.num_cnpj FROM 1 FOR 2) || ''.'' ||SUBSTRING(em.num_cnpj FROM 3 FOR 3) || ''.'' ||'+
          ' SUBSTRING(em.num_cnpj FROM 6 FOR 3) || ''/'' ||SUBSTRING(em.num_cnpj FROM 9 FOR 4) || ''-'' ||'+
          ' SUBSTRING(em.num_cnpj FROM 13 FOR 2) CNPJ,'+
 
-         ' lo.num_docto, lo.dta_movto, lo.num_seq Seq,'+
+         ' lo.num_docto,'+
+         ' lo.dta_movto,'+
+         ' lo.num_seq Seq,'+
 
-         // OdirApagar - 24/08/2017
-         // ' cd.end_zona||''.''||cd.end_corredor||''.''||cd.end_prateleira||''.''||cd.end_gaveta Enderecamento,'+
-         ' cd.end_prateleira||''.''||cd.end_gaveta Enderecamento,'+
+         ' cd.end_prateleira||''.''||cd.end_gaveta ENDERECAMENTO,'+
 
          ' lo.qtd_a_transf,'+
          ' ''_____'' qtd_disponivel,'+
          ' cd.qtd_estoque Saldo_CD,'+
-         ' lo.cod_produto, TRIM(pr.codbarra) codbarra, Trim(pr.referencia) referencia, TRIM(pr.apresentacao) Des_produto, '+
+         ' lo.cod_produto,'+
+         ' TRIM(pr.codbarra) codbarra,'+
+         ' Trim(pr.referencia) referencia,'+
+         ' TRIM(pr.apresentacao) Des_produto, '+
          QuotedStr(Des_Usuario)+' Usuario,'+
-         ' lo.obs_docto'+
+         ' lo.obs_docto,'+
+         ' pr.principalfor||'' - ''||pr.nomefornecedor FORNEC'+
 
          ' FROM ES_ESTOQUES_LOJAS lo, ES_ESTOQUES_CD cd,'+
          '      PRODUTO pr, EMP_CONEXOES em'+
@@ -5000,7 +5006,7 @@ begin
 
          If Trim(EdtReposLojasCodForn.Text)<>'' Then
           MySql:=
-           MySql+' AND pr.principalfor='+QuotedStr(Trim(EdtReposLojasCodForn.Text));
+           MySql+' AND pr.principalfor='+QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))));
 
   MySql:=
    MySql+' ORDER BY 6, 11';
@@ -5123,12 +5129,17 @@ begin
   DMRelatorio.frReport1.Dictionary.Variables.Variable['NumDocto']:=#39+sgNumDocSep+#39;
 
   // Informa o Codigo de Barras do Relatório -----------------------------------
-  // Montagem:
-  //    NumDocSep Tamanho de 7
-  //    NumDocto  Tamanho de 6
-  sCodBarras:=FormatFloat('0000000',StrToInt(sgNumDocSep));
+      // Montagem do Codigo de Barras (13 Caracteres)
+      //    NumDocSep Tamanho de 6
+      //    NumDocto  Tamanho de 6
+      //    Ultimo Caracter é Digito calculodo
+  sCodBarras:=FormatFloat('000000',StrToInt(sgNumDocSep));
   sCodBarras:=sCodBarras+FormatFloat('000000',DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsInteger);
   DMRelatorio.frReport1.Dictionary.Variables.Variable['CodBarrasDocto']:=#39+sCodBarras+#39;
+
+  // Informa o Fornecedor ------------------------------------------------------
+  If Trim(EdtReposLojasCodForn.Text)<>'' Then
+   DMRelatorio.frReport1.Dictionary.Variables.Variable['Fornecedor']:=#39+Trim(DMCentralTrocas.CDS_RelReposicaoFORNEC.AsString)+#39;
 
   //OdirApagar - 08/08/2017 - Não Apresenta a Observação
   //  If FrmBelShop.Mem_Odir.Lines.Count>0 Then
@@ -5481,7 +5492,8 @@ begin
            MySql+' AND EXISTS (SELECT 1'+
                  '             FROM PRODUTO pr'+
                  '             WHERE pr.codproduto=lo.cod_produto'+
-                 '             AND   pr.principalfor='+QuotedStr(Trim(EdtReposLojasCodForn.Text))+')';
+                 '             AND   pr.principalfor='+
+                 QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))))+')';
 
   MySql:=
    MySql+' GROUP BY 1,2'+
@@ -6182,7 +6194,8 @@ begin
      DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND ('+sgPrioridadeFilter+')';
 
     If Trim(EdtReposLojasCodForn.Text)<>'' Then
-     DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND (PRINCIPALFOR='+QuotedStr(Trim(EdtReposLojasCodForn.Text))+')';
+     DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND (PRINCIPALFOR='+
+                                                 QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))))+')';
 
     DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
   End;
@@ -6192,14 +6205,15 @@ begin
     DMCentralTrocas.CDS_ReposicaoTransf.Filter:='('+sgPrioridadeFilter+')';
 
     If Trim(EdtReposLojasCodForn.Text)<>'' Then
-     DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND (PRINCIPALFOR='+QuotedStr(Trim(EdtReposLojasCodForn.Text))+')';
+     DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND (PRINCIPALFOR='+
+                                                 QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))))+')';
 
     DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
   End; // If Trim(sgPrioridadeFilter)<>'' Then
 
   If (Trim(EdtReposLojasCodForn.Text)<>'') And (Not DMCentralTrocas.CDS_ReposicaoTransf.Filtered) Then
   Begin
-    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='PRINCIPALFOR='+QuotedStr(Trim(EdtReposLojasCodForn.Text));
+    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='PRINCIPALFOR='+QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))));
 
     DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
   End; // If Trim(EdtReposLojasCodForn.Text)<>'' Then
@@ -6234,7 +6248,8 @@ begin
   If Trim(sgTipoPrioridade)<>'' Then
    sgMensagem:=sgMensagem+cr+'Prioridades: '+sgTipoPrioridade;
 
-  msg('VOCÊ está Trabalhando com '+cr+sgMensagem,'A');
+  If bgMsgReposicao Then
+   msg('VOCÊ está Trabalhando com '+cr+sgMensagem,'A');
 
   sgMensagem:='';
 
@@ -6909,7 +6924,8 @@ begin
      DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND ('+sgPrioridadeFilter+')';
 
     If Trim(EdtReposLojasCodForn.Text)<>'' Then
-     DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND (PRINCIPALFOR='+QuotedStr(Trim(EdtReposLojasCodForn.Text))+')';
+     DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND (PRINCIPALFOR='+
+                                                 QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))))+')';
 
     DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
   End;
@@ -6919,14 +6935,15 @@ begin
     DMCentralTrocas.CDS_ReposicaoTransf.Filter:='('+sgPrioridadeFilter+')';
 
     If Trim(EdtReposLojasCodForn.Text)<>'' Then
-     DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND (PRINCIPALFOR='+QuotedStr(Trim(EdtReposLojasCodForn.Text))+')';
+     DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND (PRINCIPALFOR='+
+                                                 QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))))+')';
 
     DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
   End; // If Trim(sgPrioridadeFilter)<>'' Then
 
   If (Trim(EdtReposLojasCodForn.Text)<>'') And (Not DMCentralTrocas.CDS_ReposicaoTransf.Filtered) Then
   Begin
-    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='PRINCIPALFOR='+QuotedStr(Trim(EdtReposLojasCodForn.Text));
+    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='PRINCIPALFOR='+QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))));
 
     DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
   End; // If Trim(EdtReposLojasCodForn.Text)<>'' Then
@@ -6949,7 +6966,7 @@ begin
   If Trim(EdtReposLojasCodForn.Text)<>'' Then
    s:='Fornecedor'+cr+EdtReposLojasDesForn.Text;
 
-  If DMCentralTrocas.CDS_ReposicaoDocsTot_Itens.Value<>0 Then
+  If (DMCentralTrocas.CDS_ReposicaoDocsTot_Itens.Value<>0) And (bgMsgReposicao) Then
    msg('VOCÊ irá Trabalhar com a(s) Prioridade(s)'+cr+sgTipoPrioridade+cr+cr+Trim(s),'A');
 
   Dbg_ReposLojasDocs.SetFocus;
@@ -8558,6 +8575,121 @@ begin
     sgMensagemERRO:='';
     Exit;
   End;
+end;
+
+procedure TFrmCentralTrocas.JvXPButton2Click(Sender: TObject);
+Var
+  MySql: String;
+
+  i: Integer;
+  sCodBarras, sNumRel, sNumDocto: String;
+begin
+  Dbg_ReposLojasDocs.SetFocus;
+
+  If DMCentralTrocas.CDS_ReposicaoDocs.IsEmpty Then
+   Exit;
+
+  If InputQueryOdir('Seleção de Romaneio de Separação', 'Scanei o Romaneio', sCodBarras, 200) Then
+  Begin
+    If Trim(sCodBarras)='' Then
+     Exit;
+
+    sCodBarras:=FormatFloat('0000000000000',StrToInt(sCodBarras));
+
+    Try
+      // Montagem do Codigo de Barras
+      //    NumDocSep Tamanho de 7
+      //    NumDocto  Tamanho de 6
+      sNumRel:=Copy(sCodBarras,1,6);
+      sNumRel:=IntToStr(StrToInt(sNumRel));
+
+      sNumDocto:=Copy(sCodBarras,7,6);
+      sNumDocto:=IntToStr(StrToInt(sNumDocto));
+    Except
+      msg('Erro de Leitura do Código de Barras !!','A');
+      Exit;
+    End;
+
+    // Busca Romaneio ==========================================================
+    MySql:=' SELECT l.dta_docto, l.num_docto, l.end_zona_corredor,'+
+           '        l.ind_prioridades, l.cod_forn, f.nomefornecedor'+
+           ' FROM LG_REL_SEPARACAO l'+
+           '    LEFT JOIN FORNECEDOR f ON f.codfornecedor=l.cod_forn'+
+           ' WHERE l.num_relatorio='+sNumRel+
+           ' AND   l.num_docto='+sNumDocto;
+    DMBelShop.SQLQuery3.Close;
+    DMBelShop.SQLQuery3.SQL.Clear;
+    DMBelShop.SQLQuery3.SQL.Add(MySql);
+    DMBelShop.SQLQuery3.Open;
+
+    If DMBelShop.SQLQuery3.Eof Then
+    Begin
+      msg('Romaneio Não Encontrado !!','A');
+      DMBelShop.SQLQuery3.Close;
+      Exit;
+    End; // If DMBelShop.SQLQuery3.Eof Then
+
+    If DMBelShop.SQLQuery3.FieldByName('Dta_Docto').AsDateTime<>DtaEdt_ReposLojas.Date Then
+    Begin
+      msg(' Data do Docro do Romaneio: '+DMBelShop.SQLQuery3.FieldByName('Dta_Docto').AsString+cr+cr+' Não Corresponde a Data em Trabalho !!','A');
+      DMBelShop.SQLQuery3.Close;
+      Exit;
+    End; // If DMBelShop.SQLQuery3.Eof Then
+
+    // Localiza o Documento de Reposição =======================================
+    If Not DMCentralTrocas.CDS_ReposicaoDocs.Locate('NUM_DOCTO', sNumDocto,[]) Then
+    Begin
+      msg('Documento de Reposição'+cr+cr+'Não Encontrado !!','A');
+      DMBelShop.SQLQuery3.Close;
+      Exit;
+    End; // If DMBelShop.SQLQuery3.Eof Then
+
+    bgMsgReposicao:=False;
+
+    // Acerta Fornecedor =======================================================
+    EdtReposLojasCodForn.Clear;
+    EdtReposLojasDesForn.Clear;
+    EdtReposLojasDesForn.Color:=$00E0E0E0;
+    EdtReposLojasDesForn.Font.Color:=clWindowText;
+
+    If Trim(DMBelShop.SQLQuery3.FieldByName('Cod_Forn').AsString)<>'' Then
+    Begin
+      EdtReposLojasCodForn.Text:=Trim(DMBelShop.SQLQuery3.FieldByName('Cod_Forn').AsString);
+      EdtReposLojasDesForn.Text:=Trim(DMBelShop.SQLQuery3.FieldByName('NomeFornecedor').AsString);
+    End; // If Trim(DMBelShop.SQLQuery3.FieldByName('Cod_Forn').AsString)<>'' Then
+
+    // Acerta Prioridades ======================================================
+    Ckb_ReposLojasPrioridade0.Checked:=False;
+    If Pos('0', DMBelShop.SQLQuery3.FieldByName('Ind_Prioridades').AsString)<>0 Then
+     Ckb_ReposLojasPrioridade0.Checked:=True;
+
+    Ckb_ReposLojasPrioridade1.Checked:=False;
+    If Pos('1', DMBelShop.SQLQuery3.FieldByName('Ind_Prioridades').AsString)<>0 Then
+     Ckb_ReposLojasPrioridade1.Checked:=True;
+
+    Ckb_ReposLojasPrioridade2.Checked:=False;
+    If Pos('2', DMBelShop.SQLQuery3.FieldByName('Ind_Prioridades').AsString)<>0 Then
+     Ckb_ReposLojasPrioridade2.Checked:=True;
+
+    Ckb_ReposLojasPrioridade3.Checked:=False;
+    If Pos('3', DMBelShop.SQLQuery3.FieldByName('Ind_Prioridades').AsString)<>0 Then
+      Ckb_ReposLojasPrioridade3.Checked:=True;
+
+    Ckb_ReposLojasPrioridade0Click(Self);
+
+    // Acerta Corredor =========================================================
+    For i:=0 to CkCbx_ReposLojasCorredor.Items.Count-1 do
+    Begin
+     CkCbx_ReposLojasCorredor.Checked[i]:=False;
+
+     If CkCbx_ReposLojasCorredor.Items[i]=Trim(DMBelShop.SQLQuery3.FieldByName('End_Zona_Corredor').AsString) Then
+      CkCbx_ReposLojasCorredor.Checked[i]:=True;
+    End; // For i:=0 to CkCbx_ReposLojasCorredor.Items.Count-1 do
+
+    bgMsgReposicao:=True;
+    CkCbx_ReposLojasCorredorChange(Self);
+  End; // If InputQueryOdir('Selecioção de Romaneio de Separação', 'Scanei o Romaneio' sCodBarras) Then
+
 end;
 
 end.

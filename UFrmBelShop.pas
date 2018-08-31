@@ -1202,6 +1202,7 @@ type
     N56: TMenuItem;
     SubMenuGeracaoArquivos: TMenuItem;
     SubMenuComisCampanhasColecao: TMenuItem;
+    SubMenuCentroDistrCtrlRomSeparacao: TMenuItem;
 
     // Odir ====================================================================
 
@@ -2136,6 +2137,7 @@ type
     procedure MenuMIXFornecedorProdutosClick(Sender: TObject);
     procedure SubMenuGeracaoArquivosClick(Sender: TObject);
     procedure SubMenuComisCampanhasColecaoClick(Sender: TObject);
+    procedure SubMenuCentroDistrCtrlRomSeparacaoClick(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -44094,6 +44096,36 @@ begin
   FreeAndNil(FrmComissaoVendedor);
   sgDescricao:='';
 
+end;
+
+procedure TFrmBelShop.SubMenuCentroDistrCtrlRomSeparacaoClick(Sender: TObject);
+Var
+  i: Integer;
+begin
+  // Verifica se Existe Executavel =============================================
+  If Not FileExists(sPath_Local+'PSeparacaoDoctos.rar') then
+  Begin
+    ShowMessage('O Arquivo Abaixo Não Foi Encontrado !!'+cr+'Entrar em Contato com o ODIR !!'+cr+cr+'PSeparacaoDoctos.rar');
+    Application.Terminate;
+    Exit;
+  End;
+
+  // Apaga Processo se Já Aberto ===============================================
+  ApagaProcessos('PSeparacaoDoctos.exe');
+
+  // Descontacta Executavel ====================================================
+  If FileExists(sPath_Local+'PSeparacaoDoctos.exe') then
+   Begin
+     If DeleteFile(sPath_Local+'PSeparacaoDoctos.exe') Then
+      WinExec(PChar(sPath_Local+'WinRAR.exe e '+sPath_Local+'PSeparacaoDoctos.rar '+sPath_Local),sw_normal);
+   End
+  Else // If FileExists(sPath_Local+'PSeparacaoDoctos.exe') then
+   Begin
+     WinExec(PChar(sPath_Local+'WinRAR.exe e '+sPath_Local+'PSeparacaoDoctos.rar '+sPath_Local),sw_normal);
+   End; // If FileExists(sPath_Local+'PSeparacaoDoctos.exe') thenIf fileexists(EdtDestino.Text+'PSeparacaoDoctos.exe') then
+
+  // Executa Executavel ========================================================
+  ShellExecute(handle, 'open', 'PSeparacaoDoctos.exe', 'ODIR', PChar(sPath_Local), sw_shownormal);
 end;
 
 end.
