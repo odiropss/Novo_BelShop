@@ -6289,6 +6289,11 @@ begin
      sQtd:=DMCentralTrocas.CDS_ReposicaoTransfQTD_TRANSF_OC.AsString;
      sObs:='Quantidade de Reposição Sugerida (Compras): ';
    End
+  Else If DMCentralTrocas.CDS_ReposicaoTransfIND_PRIORIDADE.AsInteger=2 Then
+   Begin
+     sQtd:=DMCentralTrocas.CDS_ReposicaoTransfQTD_TRANSF.AsString;
+     sObs:='Quantidade de Reposição Sugerida (Loja): ';
+   End
   Else If DMCentralTrocas.CDS_ReposicaoTransfQTD_TRANSF.AsInteger<>0 Then
    Begin
      sQtd:=DMCentralTrocas.CDS_ReposicaoTransfQTD_TRANSF.AsString;
@@ -6304,7 +6309,7 @@ procedure TFrmCentralTrocas.Dbg_ReposLojasDocsDblClick(Sender: TObject);
 Var
   s: String;
 begin
-  s:='ODIR PEDRO MARCIO HERALDO WESLEY GEVERTON CHRISTIAN CRISTIANO RAFAEL';
+  s:='ODIR PEDRO MARCIO HERALDO WESLEY GEVERTON CHRISTIAN CRISTIANO RAFAEL EDUARDOCD';
 
   If Pos(AnsiUpperCase(Des_Login), s)<>0 Then
   Begin

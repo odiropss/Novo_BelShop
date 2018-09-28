@@ -1128,8 +1128,6 @@ type
     Img_Calculo: TImage;
     N41: TMenuItem;
     SubMenuSalaoRelatorios: TMenuItem;
-    N44: TMenuItem;
-    N45: TMenuItem;
     Ckb_EstFisFinanGiroEstoqueEmp: TJvCheckBox;
     MenuEstoques: TMenuItem;
     MenuEstoquesSimuladorEstoques: TMenuItem;
@@ -1172,12 +1170,8 @@ type
     Label72: TLabel;
     EdtDta_ConEmpresasInventLinx: TcxDateEdit;
     Button4: TButton;
-    N46: TMenuItem;
-    N47: TMenuItem;
     SubMenuComprasGeraOCLinx: TMenuItem;
-    N29: TMenuItem;
     Label73: TLabel;
-    N51: TMenuItem;
     Label74: TLabel;
     Label75: TLabel;
     EdtFiltroCodProdLinx: TCurrencyEdit;
@@ -1185,17 +1179,11 @@ type
     N39: TMenuItem;
     PrioridadesdeReposio1: TMenuItem;
     N50: TMenuItem;
-    N52: TMenuItem;
-    N53: TMenuItem;
     SubMenuFinanConciliaDepositos: TMenuItem;
-    N54: TMenuItem;
     SubMenuComprasNivelAtendimentoLojas: TMenuItem;
     SubMenuCentroDistAnaliseAnalReposicoesEndereco: TMenuItem;
     SubMenuCentroDistAnaliseAnalReposicoesRelatReposicao: TMenuItem;
-    N9: TMenuItem;
     SubMenuCentroDistAnaliseAnalReposicoesRespDiaria: TMenuItem;
-    N10: TMenuItem;
-    N55: TMenuItem;
     SubMenuCentralTrocasNotasAvarias: TMenuItem;
     NFePerdasProdutos1: TMenuItem;
     MenuMIXFornecedorProdutos: TMenuItem;
@@ -1211,7 +1199,6 @@ type
     Dbcb_ConEmpresasDomingo: TDBComboBox;
     Label136: TLabel;
     N57: TMenuItem;
-    N58: TMenuItem;
     SubMenuFinanExpImpImportaTrinks: TMenuItem;
 
     // Odir ====================================================================
@@ -41222,6 +41209,7 @@ end;
 
 procedure TFrmBelShop.SubMenuFinanExpImpArquivosProSoftClick(Sender: TObject);
 begin
+
   // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
   FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
   AbreSolicitacoes(2);
@@ -41235,11 +41223,11 @@ begin
 
     If (Sender as TMenuItem).Name='SubMenuFinanExpImpImportaTrinks' Then
     Begin
-      FrmSolicitacoes.Ts_ProSoftImpArquivo.Caption:='Importa Arquivo Trinks';
+      FrmSolicitacoes.Ts_ProSoftImpArquivo.Caption:='Importa Arquivo Trinks Diário';
       FrmSolicitacoes.DtEdt_ProSoftImpDtaLimite.Visible:=False;
       FrmSolicitacoes.Label5.Visible:=False;
       FrmSolicitacoes.Gb_ProSoftImpArquivoSalvar.Visible:=False;
-      FrmSolicitacoes.Gb_ProSoftImpArquivo.Caption:=' Informe a Pasta e o Arquivo de TRINKS (Arquivo.CSV) a Importar ';
+      FrmSolicitacoes.Gb_ProSoftImpArquivo.Caption:=' Informe a Pasta e o Arquivo de TRINKS (DIARIO.CSV) a Importar ';
     End;
     FrmSolicitacoes.sgSender:=(Sender as TMenuItem).Name;
   End; // If (Sender is TMenuItem) Then

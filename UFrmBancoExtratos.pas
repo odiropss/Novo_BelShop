@@ -318,6 +318,7 @@ type
     Procedure HabilitaBotoesDep(b: Boolean);
     Function  AtualizaMovtosDepositosLinx: Boolean;
     Function  AtualizaMovtosDepositosGeoBeauty: Boolean;
+    Function  AtualizaMovtosDepositosTRINKS: Boolean;
 
     Function  PodeConciliarDepositos(iExtrato, iPagto: Integer): Boolean;
 
@@ -596,6 +597,206 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// CONCILIAÇÕES DEPOSITOS - Atualiza Movtos Depositos TRINKS >>>>>>>>>>>>>>>>>>>
+Function TFrmBancoExtratos.AtualizaMovtosDepositosTRINKS: Boolean;
+Var
+  MySql: String;
+
+  sDta,
+  sNrSeq, sNrCompl: String;
+
+  iRegNaoCanc: Integer; // Numero de registros Não Cancelados
+
+  bInserir, bExcluir: Boolean;
+Begin
+  Result:=False;
+
+  OdirPanApres.Caption:='AGUARDE !! Analisanto Depósitos/Conciliações (TRINKS) no Período de '+sgDtaI+' a '+sgDtaF;
+
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBancoExtratos;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    //==========================================================================
+    // Exclui Lançamento do Salão Que foram Alterados ==========================
+    //==========================================================================
+    MySql:=' DELETE FROM FIN_CONCILIACAO_MOV_DEP f'+
+           ' WHERE f.dta_docto BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+' AND '+
+                                         QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
+           ' AND   f.cod_historico=999999999'+
+
+           ' AND NOT EXISTS (SELECT 1'+
+           '                 FROM TAB_AUXILIAR fh'+
+           '                 WHERE fh.tip_aux=22'+ // CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
+           '                 AND   fh.des_aux1=f.cod_linx'+
+           '                 AND   Trim(fh.des_aux)=CAST(LPAD(EXTRACT(DAY FROM f.dta_docto),2,''0'')   AS VARCHAR(2))||''/''||'+
+           '                                        CAST(LPAD(EXTRACT(MONTH FROM f.dta_docto),2,''0'') AS VARCHAR(2))||''/''||'+
+           '                                        CAST(EXTRACT(YEAR FROM f.dta_docto) AS VARCHAR(4)))'+
+
+           ' AND NOT EXISTS (SELECT 1'+
+           '                 FROM TRINKS_DIARIO g'+
+           '                 WHERE g.dta_movto=f.dta_docto'+
+           '                 AND   g.cod_loja=f.cod_loja'+
+           '                 AND   g.cod_linx=f.cod_linx'+
+           '                 AND   g.num_docto=f.num_docto'+
+           '                 AND   (g.vlr_dinheiro - g.vlr_troco)=f.vlr_original'+
+           '                 AND   g.obs_texto=f.obs_texto'+
+           '                 AND   g.cod_historico=f.cod_historico'+
+           '                 AND   NOT EXISTS (SELECT 1'+
+           '                                   FROM TAB_AUXILIAR fh'+
+           '                                   WHERE fh.tip_aux=22'+ // CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
+           '                                   AND   fh.des_aux1=g.cod_linx'+
+           '                                   AND   Trim(fh.des_aux)=CAST(LPAD(EXTRACT(DAY FROM f.dta_docto),2,''0'')   AS VARCHAR(2))||''/''||'+
+           '                                                          CAST(LPAD(EXTRACT(MONTH FROM f.dta_docto),2,''0'') AS VARCHAR(2))||''/''||'+
+           '                                                          CAST(EXTRACT(YEAR FROM f.dta_docto) AS VARCHAR(4))))';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+    // Exclui Lançamento do Salão a Serem Substituidos =========================
+    //==========================================================================
+
+    //==========================================================================
+    // Insere Novos Movtos Pagamentos em Dinheiro no Salão =====================
+    //==========================================================================
+    MySql:=' INSERT INTO FIN_CONCILIACAO_MOV_DEP'+
+           ' SELECT GEN_ID(GEN_CONCILIACAO_MOV_DEP,1) NUM_SEQ,'+
+           ' GEN_ID(GEN_COMPL_CONCILIACAO_MOV_DEP,0) NUM_COMPL,'+
+           ' g.cod_loja COD_LOJA,'+
+           ' g.cod_linx COD_LINX,'+
+           ' g.num_docto NUM_DOCTO,'+
+           ' g.dta_movto DTA_DOCTO,'+
+           ' g.dta_movto DTA_VENC,'+
+           ' NULL COD_BANCO,'+
+           ' NULL DES_BANCO,'+
+           ' 0 COD_PESSOA,'+ // 0 - Indica Lançamento de Sangria/Trinks/Salao
+           ' (g.vlr_dinheiro - g.vlr_troco) VLR_ORIGINAL,'+
+           ' 0.00 VLR_DESCONTO,'+
+           ' 0.00 VLR_ACRESCIMO,'+
+           ' (g.vlr_dinheiro - g.vlr_troco) VLR_DOCTO,'+
+           ' g.obs_texto OBS_TEXTO,'+
+           ' ''NAO'' IND_CONCILIACAO,'+
+           ' 0 COD_HISTO_AUTO,'+
+           ' 0 COD_BANCO_AUTO,'+
+           ' g.cod_historico,'+
+           ' g.des_historico desc_historico,'+
+           ' NULL OBS_NAO_CONC'+
+
+           ' FROM TRINKS_DIARIO g'+
+
+           ' WHERE g.dta_movto BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaI)))+
+                                         ' AND '+
+                                         QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaF)))+
+           ' AND NOT EXISTS (SELECT 1'+
+           '                 FROM TAB_AUXILIAR fh'+
+           '                 WHERE fh.tip_aux=22'+ // CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
+           '                 AND   fh.des_aux1=g.cod_linx'+
+           '                 AND   Trim(fh.des_aux)=Cast(lpad(extract(day from g.dta_movto),2,''0'')   as varchar(2))||''/''||'+
+           '                                        Cast(lpad(extract(month from g.dta_movto),2,''0'') as varchar(2))||''/''||'+
+           '                                        Cast(extract(Year from g.dta_movto) as varchar(4)))'+
+
+           ' AND NOT EXISTS (SELECT 1'+
+           '                 FROM FIN_CONCILIACAO_MOV_DEP f'+
+           '                 WHERE f.dta_docto=g.dta_movto'+
+           '                 AND   f.cod_loja=g.cod_loja'+
+           '                 AND   f.cod_linx=g.cod_linx'+
+           '                 AND   f.num_docto=g.num_docto'+
+           '                 AND   f.dta_docto=g.dta_movto'+
+           '                 and   f.vlr_original=(g.vlr_dinheiro - g.vlr_troco)'+
+           '                 and   f.obs_texto=g.obs_texto'+
+           '                 AND   f.cod_historico=g.cod_historico'+
+           '                 AND   NOT EXISTS (SELECT 1'+
+           '                                   FROM TAB_AUXILIAR fh'+
+           '                                   WHERE fh.tip_aux=22'+ // CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
+           '                                   AND   fh.des_aux1=f.cod_linx'+
+           '                                   AND   TRIM(fh.des_aux)=CAST(LPAD(EXTRACT(DAY FROM f.dta_docto),2,''0'')   AS VARCHAR(2))||''/''||'+
+           '                                                          CAST(LPAD(EXTRACT(MONTH FROM f.dta_docto),2,''0'') AS VARCHAR(2))||''/''||'+
+           '                                                          CAST(EXTRACT(YEAR FROM f.dta_docto) AS VARCHAR(4))))'+
+
+           ' ORDER BY 3,4,5';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    // AJUSTA TABELAS DE CONCILIAÇÃO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    //==========================================================================
+    // Exclui Conciliações Existentes Sem Depositos ============================
+    //==========================================================================
+    MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS d'+
+           ' WHERE NOT EXISTS (SELECT 1'+
+           '                   FROM FIN_CONCILIACAO_MOV_DEP M'+
+           '                   WHERE m.num_seq=d.num_seq'+
+           '                   AND   m.num_compl=d.num_compl)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+    // Exclui Conciliações Existentes Sem Depositos ============================
+    //==========================================================================
+
+    //==========================================================================
+    // Exclui Conciliações Existentes Sem Extratos =============================
+    //==========================================================================
+    MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS d'+
+           ' WHERE COALESCE(d.tip_conciliacao,'''')<>''DINH'''+
+           ' AND   COALESCE(d.tip_conciliacao,'''')<>''DESP'''+
+           ' AND   NOT EXISTS (SELECT 1'+
+           '                   FROM FIN_BANCOS_EXTRATOS ex'+
+           '                   WHERE ex.chv_extrato=d.chv_extrato)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+    // Exclui Conciliações Existentes Sem Extratos =============================
+    //==========================================================================
+
+    //==========================================================================
+    // Coloca para Não Conciliado Retirado de FIN_CONCILIACAO_DEPOSITOS ========
+    //==========================================================================
+    MySql:=' UPDATE FIN_CONCILIACAO_MOV_DEP m'+
+           ' SET m.ind_conciliacao=''NAO'''+
+           ' WHERE m.ind_conciliacao=''SIM'''+
+           ' AND   NOT EXISTS (SELECT 1'+
+           '                   FROM FIN_CONCILIACAO_DEPOSITOS D'+
+           '                   WHERE d.num_seq=m.num_seq'+
+           '                   AND   d.num_compl=m.num_compl)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+    // Coloca para Não Conciliado Retirado de FIN_CONCILIACAO_DEPOSITOS ========
+    //==========================================================================
+    // AJUSTA TABELAS DE CONCILIAÇÃO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+    Result:=True;
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      FrmBelShop.MontaProgressBar(False, FrmBancoExtratos);
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+End; // CONCILIAÇÕES DEPOSITOS - Atualiza Movtos Depositos TRINKS >>>>>>>>>>>>>>
 
 // CONCILIAÇÕES PAGTOS/DEPOSITOS - Atualiza Total de Depósitos e Total Geral >>>
 Procedure TFrmBancoExtratos.AtualizaTotaisDepositosDia(sDia: String);
@@ -2847,7 +3048,6 @@ Begin
            '                AND   g.cod_loja=f.cod_loja'+
            '                AND   g.empresa=f.cod_linx'+
            '                AND   g.num_docto=f.num_docto'+
-           '                AND   g.dta_pagto=f.dta_docto'+
            '                and   g.vlr_dinheiro=f.vlr_original'+
            '                and   g.obs_texto=f.obs_texto'+
            '                AND   g.cod_historico=f.cod_historico'+
@@ -2879,7 +3079,7 @@ Begin
            ' g.vlr_dinheiro VLR_ORIGINAL,'+
            ' 0.00 VLR_DESCONTO,'+
            ' 0.00 VLR_ACRESCIMO,'+
-           ' g.vlr_dinheiro  VLR_DOCTO,'+
+           ' g.vlr_dinheiro VLR_DOCTO,'+
            ' g.obs_texto OBS_TEXTO,'+
            ' ''NAO'' IND_CONCILIACAO,'+
            ' 0 COD_HISTO_AUTO,'+
@@ -14325,6 +14525,13 @@ begin
   // Insere Novos Depositos se Buscou Dados no Linx ============================
   //============================================================================
 
+  //============================================================================
+  // Atualiza / Insere Movimentos Trinks =======================================
+  //============================================================================
+  AtualizaMovtosDepositosTRINKS;
+  // Atualiza / Insere Movimentos Trinks =======================================
+  //============================================================================
+
   // Acerta Data para Separador <.> Ponto ======================================
   sgDtaI:=f_Troca('/','.',f_Troca('-','.',sgDtaI));
   sgDtaF:=f_Troca('/','.',f_Troca('-','.',sgDtaF));
@@ -15311,11 +15518,21 @@ Var
 begin
   Dbg_ConcManutDepositos.SetFocus;
 
-  If DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
+  If (DMConciliacao.CDS_CMExtratosDep.IsEmpty) And (DMConciliacao.CDS_CMDepositos.IsEmpty) Then
    Exit;
 
-  If DMConciliacao.CDS_CMDepositos.IsEmpty Then
-   Exit;
+// OdirApagar - 28/09/2018
+//  If (DMConciliacao.CDS_CMExtratosDep.IsEmpty) And (Not DMConciliacao.CDS_CMDepositos.IsEmpty) Then
+//  Begin
+//   If msg('Movimentos de Depósitos SEM Extratos no Período !!'+cr+cr+'Deseja Continuar ??','C')=2 Then
+//    Exit;
+//  End; // If (DMConciliacao.CDS_CMExtratosDep.IsEmpty) and (Not DMConciliacao.CDS_CMDepositos.IsEmpty) Then
+//
+//  If (Not DMConciliacao.CDS_CMExtratosDep.IsEmpty) And (DMConciliacao.CDS_CMDepositos.IsEmpty) Then
+//  Begin
+//   If msg('Extratos SEM Movimentos de Depósitos no Período !!'+cr+cr+'Deseja Continuar ??','C')=2 Then
+//    Exit;
+//  End; // If (Not DMConciliacao.CDS_CMExtratosDep.IsEmpty) And (DMConciliacao.CDS_CMDepositos.IsEmpty) Then
 
   bgLocate:=True;
 

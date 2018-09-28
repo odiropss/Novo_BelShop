@@ -28085,9 +28085,6 @@ object FrmBelShop: TFrmBelShop
           HelpContext = 1
           OnClick = SubMenuComprasGeraOCClick
         end
-        object N29: TMenuItem
-          Caption = '-'
-        end
         object SubMenuComprasConsultaOC: TMenuItem
           Tag = 120302
           Bitmap.Data = {
@@ -28185,9 +28182,6 @@ object FrmBelShop: TFrmBelShop
           Caption = 'Faltas de Reposi'#231#245'es (CD => Lojas)'
           HelpContext = 1
           OnClick = SubMenuFaltasReposicoesCDLojasClick
-        end
-        object N51: TMenuItem
-          Caption = '-'
         end
         object SubMenuComprasGeraOCLinx: TMenuItem
           Tag = 120305
@@ -28390,9 +28384,6 @@ object FrmBelShop: TFrmBelShop
           HelpContext = 1
           OnClick = SubMenuComprasGeraOCLinxClick
         end
-        object N47: TMenuItem
-          Caption = '-'
-        end
         object SubMenuVerificaImportacaoEstoques: TMenuItem
           Tag = 120304
           Bitmap.Data = {
@@ -28441,9 +28432,6 @@ object FrmBelShop: TFrmBelShop
           Caption = 'Verifica Importa'#231#227'o de Estoques'
           HelpContext = 1
           OnClick = SubMenuVerificaImportacaoEstoquesClick
-        end
-        object N46: TMenuItem
-          Caption = '-'
         end
       end
       object N1: TMenuItem
@@ -29089,9 +29077,6 @@ object FrmBelShop: TFrmBelShop
           HelpContext = 1
           OnClick = SubMenuCentroDistAnaliseAnalReposicoesRespDiariaClick
         end
-        object N9: TMenuItem
-          Caption = '-'
-        end
         object SubMenuCentroDistAnaliseAnalReposicoesEndereco: TMenuItem
           Tag = 160402
           Bitmap.Data = {
@@ -29336,9 +29321,6 @@ object FrmBelShop: TFrmBelShop
           HelpContext = 1
           OnClick = NFePerdasProdutos1Click
         end
-        object N55: TMenuItem
-          Caption = '-'
-        end
         object SubMenuCentralTrocasNotasEntradaDevolucao: TMenuItem
           Tag = 160301
           Bitmap.Data = {
@@ -29387,9 +29369,6 @@ object FrmBelShop: TFrmBelShop
           Caption = 'Notas Entrada para Devolu'#231#227'o'
           HelpContext = 1
           OnClick = SubMenuCentralTrocasNotasEntradaDevolucaoClick
-        end
-        object N10: TMenuItem
-          Caption = '-'
         end
       end
     end
@@ -29784,9 +29763,6 @@ object FrmBelShop: TFrmBelShop
           HelpContext = 1
           OnClick = SubMenuFinanExtratosClick
         end
-        object N54: TMenuItem
-          Caption = '-'
-        end
         object SubMenuFinanConciliaPagtos: TMenuItem
           Tag = 130903
           Bitmap.Data = {
@@ -29836,9 +29812,6 @@ object FrmBelShop: TFrmBelShop
           HelpContext = 1
           OnClick = SubMenuFinanConciliaPagtosClick
         end
-        object N52: TMenuItem
-          Caption = '-'
-        end
         object SubMenuFinanConciliaDepositos: TMenuItem
           Tag = 130905
           Bitmap.Data = {
@@ -29887,9 +29860,6 @@ object FrmBelShop: TFrmBelShop
           Caption = 'Concilia'#231#227'o Dep'#243'sitos'
           HelpContext = 1
           OnClick = SubMenuFinanConciliaDepositosClick
-        end
-        object N53: TMenuItem
-          Caption = '-'
         end
         object SubMenuFinanVerificaExtratos: TMenuItem
           Tag = 130904
@@ -30733,9 +30703,6 @@ object FrmBelShop: TFrmBelShop
           HelpContext = 1
           OnClick = SubMenuFinanExpImpArquivosProSoftClick
         end
-        object N58: TMenuItem
-          Caption = '-'
-        end
         object SubMenuFinanExpImpImportaTrinks: TMenuItem
           Tag = 131102
           Bitmap.Data = {
@@ -30781,7 +30748,8 @@ object FrmBelShop: TFrmBelShop
             07F9F9F9F9070707070007070707070707F9F9F9070707070700070707070707
             07F9F90707070707070007070707070707F90707070707070700070707070707
             07070707070707070700}
-          Caption = 'Importa Trinks'
+          Caption = 'Importa Trinks (Di'#225'rio)'
+          HelpContext = 1
           OnClick = SubMenuFinanExpImpArquivosProSoftClick
         end
       end
@@ -31089,9 +31057,6 @@ object FrmBelShop: TFrmBelShop
           HelpContext = 1
           OnClick = SubMenuSalaoMetasClick
         end
-        object N45: TMenuItem
-          Caption = '-'
-        end
         object SubMenuSalaoMovimentosDebitosRH: TMenuItem
           Tag = 140106
           Bitmap.Data = {
@@ -31140,9 +31105,6 @@ object FrmBelShop: TFrmBelShop
           Caption = 'Movimentos (RH) D'#233'bitos/Cr'#233'ditos'
           HelpContext = 1
           OnClick = SubMenuSalaoMovimentosDebitosRHClick
-        end
-        object N44: TMenuItem
-          Caption = '-'
         end
       end
       object N41: TMenuItem

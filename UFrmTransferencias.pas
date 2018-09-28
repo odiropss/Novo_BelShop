@@ -208,7 +208,7 @@ Begin
       // Importa SOL_TRANSFERENCIA_CD para ES_ESTOQUES_LOJA ====================
       MySql:=' INSERT INTO ES_ESTOQUES_LOJAS'+
              ' SELECT GEN_ID(gen_odir,1) NUM_SEQ,'+
-             ' CURRENT_DATE DTA_MOVTO,'+
+             ' CURRENT_DATE DTA_MOVTO, '+
              sgNrDocto+' NUM_DOCTO,'+
              ' CAST(LPAD(TRIM(so.cod_loja_sidi),2,''00'') AS VARCHAR(2)) COD_LOJA,'+
              ' so.cod_prod_sidi COD_PRODUTO,'+
@@ -221,7 +221,7 @@ Begin
              ' 0 QTD_DIAS,'+
              ' 0.00 QTD_VENDA_DIA,'+
              ' 0.00 QTD_DEMANDA,'+
-             ' 0.00 QTD_REPOSICAO,'+
+             ' so.qtd_transf QTD_REPOSICAO,'+ // OdirAqui
              ' so.qtd_transf QTD_TRANSF,'+
              ' so.qtd_transf QTD_A_TRANSF,'+
              ' ''000000'' NUM_PEDIDO,'+
@@ -1437,7 +1437,12 @@ Begin
            DMTransferencias.CDS_EstoqueLojaIND_TRANSF.AsString:='SIM';
            DMTransferencias.CDS_EstoqueLojaQTD_TRANSF.AsInteger:=iQtdReposicao;
            DMTransferencias.CDS_EstoqueLojaQTD_A_TRANSF.AsInteger:=iQtdReposicao;
-           DMTransferencias.CDS_EstoqueLojaOBS_DOCTO.AsString:=Trim(sObs);
+
+           // OBS_DOCTO
+           If Trim(DMTransferencias.CDS_EstoqueLojaOBS_DOCTO.AsString)='' Then
+            DMTransferencias.CDS_EstoqueLojaOBS_DOCTO.AsString:=Trim(sObs)
+           Else
+            DMTransferencias.CDS_EstoqueLojaOBS_DOCTO.AsString:=Copy(DMTransferencias.CDS_EstoqueLojaOBS_DOCTO.AsString+' '+Trim(sObs),1,2000);
 
            // Acerta Saldo no CD ------------------------------------
            DMTransferencias.CDS_EstoqueCD.Edit;
@@ -1454,9 +1459,13 @@ Begin
            DMTransferencias.CDS_EstoqueLojaIND_TRANSF.AsString:='NAO';
            DMTransferencias.CDS_EstoqueLojaQTD_TRANSF.AsInteger:=iQtdReposicao;
            DMTransferencias.CDS_EstoqueLojaQTD_A_TRANSF.AsInteger:=0;
-           DMTransferencias.CDS_EstoqueLojaOBS_DOCTO.AsString:=Trim(sObs);
-         End; // If Not bRepoe Then
 
+           // OBS_DOCTO
+           If Trim(DMTransferencias.CDS_EstoqueLojaOBS_DOCTO.AsString)='' Then
+            DMTransferencias.CDS_EstoqueLojaOBS_DOCTO.AsString:=Trim(sObs)
+           Else
+            DMTransferencias.CDS_EstoqueLojaOBS_DOCTO.AsString:=Copy(DMTransferencias.CDS_EstoqueLojaOBS_DOCTO.AsString+' '+Trim(sObs),1,2000);
+         End; // If Not bRepoe Then
          DMTransferencias.CDS_EstoqueLoja.Post;
 
        End; // If DMTransferencias.CDS_EstoqueCD.IsEmpty Then
@@ -1928,7 +1937,7 @@ Begin
       SalvaProcessamento('10.03.03/999 - Conecta Loja - '+sCodLoja+' - '+TimeToStr(Time));
       //==========================================================================
     End; // If igCodLojaLinx=0 Then // SIDICOM
-                         
+
     // Monta Transacao ===================================================
     TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
     TD.IsolationLevel:=xilREADCOMMITTED;
