@@ -251,6 +251,7 @@ type
     procedure EdtFornVinculadoCodFornExit(Sender: TObject);
     procedure Bt_FluxoVinculadoBuscaFornClick(Sender: TObject);
     procedure Bt_AvariasCentralTrocasClick(Sender: TObject);
+    procedure Dbg_FornVinculadosEnter(Sender: TObject);
 
   private
     { Private declarations }
@@ -672,6 +673,31 @@ Begin
     //==========================================================================
 
     FrmBelShop.MontaProgressBar(False, FrmFluxoFornecedor);
+
+    // Acerta Nome dos Fornecedores ============================================
+    MySql:=' UPDATE FL_CAIXA_FORNECEDORES f'+
+           ' SET f.des_fornecedor=(SELECT'+
+           '                       CASE'+
+           '                          WHEN TRIM(COALESCE(fl.nome_cliente,''''))<>'''' THEN'+
+           '                            TRIM(fl.nome_cliente)'+
+           '                          ELSE'+
+           '                            TRIM(fl.razao_cliente)'+
+           '                       END'+
+           '                       FROM LINXCLIENTESFORNEC fl'+
+           '                       WHERE fl.cod_cliente=f.cod_fornecedor)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    MySql:=' UPDATE FL_CAIXA_FORNECEDORES f'+
+           ' SET f.des_vinculado=(SELECT'+
+           '                      CASE'+
+           '                         WHEN TRIM(COALESCE(fl.nome_cliente,''''))<>'''' THEN'+
+           '                           TRIM(fl.nome_cliente)'+
+           '                         ELSE'+
+           '                           TRIM(fl.razao_cliente)'+
+           '                      END'+
+           '                      FROM LINXCLIENTESFORNEC fl'+
+           '                      WHERE fl.cod_cliente=f.cod_vinculado)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
 
     // Atualiza Transacao ======================================================
     DMBelShop.SQLC.Commit(TD);
@@ -2172,6 +2198,7 @@ begin
      Gb_FluFornFornecedor.Visible:=True;
 
     Bt_FluFornVinculos.Visible:=PermissaoComponente(Cod_Usuario, 'FrmFluxFornecedor', 'Bt_FluFornVinculos', DMBelShop.SDS_DtaHoraServidor);
+    Bt_FluFornVinculos.Caption:='Vinculos de Fornecedores';
     Bt_FluFornIncluir.Visible:=True;
     Bt_FluFornIncluir.Caption:='    Incluir Fornecedor';
 
@@ -2200,7 +2227,8 @@ begin
     If Not Gb_FluFornFornecedor.Visible Then
      Gb_FluFornFornecedor.Visible:=True;
 
-    Bt_FluFornVinculos.Visible:=False;
+    Bt_FluFornVinculos.Visible:=True;
+    Bt_FluFornVinculos.Caption:='Localiza Avarias';
     Bt_FluFornIncluir.Visible:=True;
     Bt_FluFornIncluir.Caption:='    Incluir Lançamento';
 
@@ -3110,7 +3138,6 @@ begin
      Exit;
 
     FornVincAtualizaVinculos;
-
   End; // If (PC_Principal.ActivePage=Ts_FluxFornCaixa) And (Ts_FluxFornCaixa.CanFocus) Then
   // Processa Fornecedores Vinculados ==========================================
   //============================================================================
@@ -4141,8 +4168,18 @@ begin
   Begin
     If (PC_Principal.ActivePage=Ts_FluxFornCaixa) and ((Sender as TJvXPButton).Name='Bt_FluFornAlterar') Then
     Begin
+      If Trim(DMBelShop.CDS_FluxoFornecedorTXT_OBS.AsString)='DESCARTE DE AVARIAS - Central de Trocas - 13/12/2016' Then
+      Begin
+        msg('Alteração NÃO Permitida Neste Lançamento !!','A');
+        Dbg_FluFornCaixa.SetFocus;
+        Exit;
+      End; // If Trim(DMBelShop.CDS_FluxoFornecedorTXT_OBS.AsString)='DESCARTE DE AVARIAS - Central de Trocas - 13/12/2016' Then
+
       If (DMBelShop.CDS_FluxoFornecedores.IsEmpty) Or (Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='') Then
-       Exit;
+      Begin
+        Dbg_FluFornCaixa.SetFocus;
+        Exit;
+      End; // If (DMBelShop.CDS_FluxoFornecedores.IsEmpty) Or (Trim(DMBelShop.CDS_FluxoFornecedorCOD_HISTORICO.AsString)='') Then
 
       Gb_FornVinculado.Visible:=True;
       CarregaComboBoxFornecedorVinculados(DMBelShop.CDS_FluxoFornecedorCOD_FORNECEDOR.AsString);
@@ -4237,18 +4274,173 @@ begin
 end;
 
 procedure TFrmFluxoFornecedor.Bt_FluFornVinculosClick(Sender: TObject);
+Var
+  MySql: String;
 begin
-  Dbg_FluFornFornec.SetFocus;
+  If (Sender is TJvXPButton) Then
+  Begin
+    //==========================================================================
+    // Vinculos de Fornecedores ================================================
+    //==========================================================================
+    If Trim((Sender as TJvXPButton).Caption)='Vinculos de Fornecedores' Then
+    Begin
+      Dbg_FluFornFornec.SetFocus;
 
-  DMBelShop.CDS_FluxoFornVinculo.Close;
-  DMBelShop.CDS_FluxoFornVinculo.Open;
+      DMBelShop.CDS_FluxoFornVinculo.Close;
+      DMBelShop.CDS_FluxoFornVinculo.Open;
 
-  Ts_FluxFornApres.TabVisible :=False;
-  Ts_FluxFornCaixa.TabVisible :=False;
-  Ts_FluxFornVinculos.TabVisible:=True;
+      Ts_FluxFornApres.TabVisible :=False;
+      Ts_FluxFornCaixa.TabVisible :=False;
+      Ts_FluxFornVinculos.TabVisible:=True;
 
-  PC_PrincipalChange(Self);
+      PC_PrincipalChange(Self);
+    End; // If Trim((Sender as TJvXPButton).Caption)='Vinculos de Fornecedores' Then
+    // Vinculos de Fornecedores ================================================
+    //==========================================================================
 
+    //==========================================================================
+    // Apresenta Avarias =======================================================
+    //==========================================================================
+    If Trim((Sender as TJvXPButton).Caption)='Apresenta Avarias' Then
+    Begin
+      If DMBelShop.CDS_FluxoFornecedor.IsEmpty Then
+       Exit;
+
+      // Busca total Avarias ===================================================
+             // PRODUTOS - Ordem 4
+      MySql:=' SELECT'+
+             ' pr.apresentacao DES_PRODUTO,'+
+             ' CAST(ct.saldo AS INTEGER) QTD_AVARIAS,'+
+             ' CAST(ct.vlr_unit AS NUMERIC(12,2)) VLR_UNITARIO,'+
+             ' CAST((ct.saldo * ct.vlr_unit) AS NUMERIC(12,2)) TOT_FINANCEIRO,'+
+             ' 4 ORDEM'+
+             ' FROM CENTRAL_TROCAS ct, PRODUTO pr'+
+             ' WHERE ct.codproduto=pr.codproduto'+
+             ' AND   COALESCE(ct.saldo,0)<>0'+
+             ' AND   ct.cod_fornecedor= :Forn'+
+
+              // TITULO DO RELATORIO - Ordem 0
+             ' UNION'+
+             ' SELECT'+
+             QuotedStr('RELAÇÃO DE AVARIAS')+','+ // DES_PRODUTO
+             ' NULL,'+ // QTD_AVARIAS
+             ' NULL,'+ // VLR_UNITARIO
+             ' NULL,'+ // TOT_FINANCEIRO
+             ' 0'+     // ORDEM
+             ' FROM RDB$DATABASE'+
+
+             // LINHA EM BRANCO - Ordem 1
+             ' UNION'+
+             ' SELECT'+
+             ' NULL,'+ // DES_PRODUTO
+             ' NULL,'+ // QTD_AVARIAS
+             ' NULL,'+ // VLR_UNITARIO
+             ' NULL,'+ // TOT_FINANCEIRO
+             ' 1'+     // ORDEM
+             ' FROM RDB$DATABASE'+
+
+             // FORNECEDOR - Ordem 2
+             ' UNION'+
+             ' SELECT'+
+             ' CASE'+
+             '   WHEN TRIM(COALESCE(fo.nome_cliente,''''))<>'''' THEN'+
+             '     fo.cod_cliente||'' - ''||fo.nome_cliente'+
+             '   ELSE'+
+             '     fo.cod_cliente||'' - ''||fo.razao_cliente'+
+             ' END,'+  // DES_PRODUTO
+             ' NULL,'+ // QTD_AVARIAS
+             ' NULL,'+ // VLR_UNITARIO
+             ' NULL,'+ // TOT_FINANCEIRO
+             ' 2'+     // ORDEM
+             ' FROM LINXCLIENTESFORNEC fo'+
+             ' WHERE fo.cod_cliente= :Forn'+
+
+             // LINHA EM BRANCO - Ordem 3
+
+             ' UNION'+
+             ' SELECT'+
+             ' NULL,'+ // DES_PRODUTO
+             ' NULL,'+ // QTD_AVARIAS
+             ' NULL,'+ // VLR_UNITARIO
+             ' NULL,'+ // TOT_FINANCEIRO
+             ' 3'+     // ORDEM
+             ' FROM RDB$DATABASE'+
+
+             // LINHA EM BRANCO - Ordem 5
+             ' UNION'+
+             ' SELECT'+
+             ' NULL,'+ // DES_PRODUTO
+             ' NULL,'+ // QTD_AVARIAS
+             ' NULL,'+ // VLR_UNITARIO
+             ' NULL,'+ // TOT_FINANCEIRO
+             ' 5'+     // ORDEM
+             ' FROM RDB$DATABASE'+
+
+             // TOTAL DO FORNECEDOR - Ordem 6
+             ' UNION'+
+             ' SELECT'+
+             QuotedStr('TOTAL DO FORNECEDOR')+','+ // DES_PRODUTO
+             ' CAST(SUM(ct.saldo) aS INTEGER),'+ // QTD_AVARIAS
+             ' NULL,'+ // VLR_UNITARIO,
+             ' CAST(SUM(ct.saldo * ct.vlr_unit) AS NUMERIC(12,2)),'+ // TOT_FINANCEIRO
+             ' 6'+     // ORDEM
+             ' FROM CENTRAL_TROCAS ct'+
+             ' WHERE COALESCE(ct.saldo,0)<>0'+
+             ' AND   ct.cod_fornecedor= :Forn'+
+
+             ' ORDER BY 5,1';
+      DMBelShop.CDS_Busca1.Close;
+      DMBelShop.SDS_Busca1.CommandText:=MySql;
+      If (Trim(DMBelShop.CDS_FluxoFornecedorCOD_VINCULADO.AsString)<>'') And (DMBelShop.CDS_FluxoFornecedorCOD_VINCULADO.AsInteger<>0) Then
+       DMBelShop.SDS_Busca1.Params.ParamByName('Forn').AsInteger:=DMBelShop.CDS_FluxoFornecedorCOD_VINCULADO.AsInteger
+      Else
+       DMBelShop.SDS_Busca1.Params.ParamByName('Forn').AsInteger:=DMBelShop.CDS_FluxoFornecedorCOD_FORNECEDOR.AsInteger;
+
+      DMBelShop.CDS_Busca1.Open;
+      TNumericField(DMBelShop.CDS_Busca1.FieldByName('QTD_AVARIAS')).DisplayFormat:=',0';
+      TNumericField(DMBelShop.CDS_Busca1.FieldByName('VLR_UNITARIO')).DisplayFormat:='0.,00';
+      TNumericField(DMBelShop.CDS_Busca1.FieldByName('TOT_FINANCEIRO')).DisplayFormat:='0.,00';
+
+
+      FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+      FrmBelShop.AbreSolicitacoes(19);
+
+      bgProcessar:=False;
+      FrmSolicitacoes.GridNewCriar(DMBelShop.DS_Busca1, 'Apresenta Avarias', True);
+      FrmSolicitacoes.Caption:='CONTA CORRENTE FORNECEDORES';
+      FrmSolicitacoes.Ts_QualquerCoisa.Caption:='AVARIAS'; // Usado no Botão TFrmSolicitacoes.Bt_QualquerCoisaSalvarClick
+
+      FrmSolicitacoes.AutoSize:=False;
+      FrmSolicitacoes.Width:=610;
+      FrmSolicitacoes.AutoSize:=True;
+      FrmSolicitacoes.ShowModal;
+
+      DMBelShop.CDS_Busca1.Close;
+      FreeAndNil(FrmSolicitacoes);
+
+      Dbg_FluFornCaixa.SetFocus;
+    End; // If Trim((Sender as TJvXPButton).Caption)='Apresenta Avarias' Then
+    // Apresenta Avarias =======================================================
+    //==========================================================================
+
+    //==========================================================================
+    // Localiza Avarias ========================================================
+    //==========================================================================
+    If Trim((Sender as TJvXPButton).Caption)='Localiza Avarias' Then
+    Begin
+      If DMBelShop.CDS_FluxoFornecedor.IsEmpty Then
+       Exit;
+
+      If Not DMBelShop.CDS_FluxoFornecedor.Locate('TXT_OBS','DESCARTE DE AVARIAS - Central de Trocas - 13/12/2016',[]) Then
+      Begin
+        msg('Fornecedor Sem Avarias !!','A');
+      End; // If Not DMBelShop.CDS_FluxoFornecedor.Locate('TXT_OBS','DESCARTE DE AVARIAS - Central de Trocas - 13/12/2016',[]) Then
+
+      Dbg_FluFornCaixa.SetFocus;
+    End; // If Trim((Sender as TJvXPButton).Caption)='Localiza Avarias' Then
+    // Localiza Avarias ========================================================
+    //==========================================================================
+  End; // If (Sender is TJvXPButton) Then
 end;
 
 procedure TFrmFluxoFornecedor.Pan_LanctosEnter(Sender: TObject);
@@ -4687,6 +4879,7 @@ procedure TFrmFluxoFornecedor.Dbg_FornVinculoExit(Sender: TObject);
 begin
   {
   USADO EM:
+  Dbg_FornVinculo
   Dbg_FornVinculados
   }
   If (Sender is TDBGrid) Then
@@ -4695,10 +4888,10 @@ end;
 
 procedure TFrmFluxoFornecedor.Dbg_FornVinculoEnter(Sender: TObject);
 begin
-  {
-  USADO EM:
-  Dbg_FornVinculados
-  }
+  ApplicationEvents1.OnActivate:=Dbg_FornVinculoEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
   If (Sender is TDBGrid) Then
    (Sender as TDBGrid).Color:=clWindow;
 end;
@@ -5390,6 +5583,17 @@ begin
   OdirPanApres.Visible:=False;
   Screen.Cursor:=crDefault;
   FrmBelShop.MontaProgressBar(False, FrmFluxoFornecedor);
+
+end;
+
+procedure TFrmFluxoFornecedor.Dbg_FornVinculadosEnter(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=Dbg_FornVinculadosEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+  If (Sender is TDBGrid) Then
+   (Sender as TDBGrid).Color:=clWindow;
 
 end;
 

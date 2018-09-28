@@ -53,9 +53,7 @@ uses
   UFrmConfirmacao in 'UFrmConfirmacao.pas' {FrmConfirmacao},
   GeoBeautyServerWebService in 'GeoBeautyServerWebService.pas',
   UFrmWebServicesImporta in 'UFrmWebServicesImporta.pas' {FrmWebServicesImporta},
-  UFrmAnaliseFornecedores in 'UFrmAnaliseFornecedores.pas' {FrmAnaliseFornecedores},
-  FR_Arg in '..\..\..\Program Files (x86)\Borland\Delphi7\FastReportVCL\source\fr_arg.pas' {frFuncArgForm},
-  Main in '..\..\..\Program Files (x86)\Borland\Delphi7\FastReports\FastReport 5\Extra\New DB Engine\Main.pas' {Form1};
+  UFrmAnaliseFornecedores in 'UFrmAnaliseFornecedores.pas' {FrmAnaliseFornecedores};
 
 {$R *.res}
 
@@ -73,7 +71,6 @@ begin
 
   // Form Principal ============================================================
   Application.CreateForm(TFrmBelShop, FrmBelShop);
-  Application.CreateForm(TForm1, Form1);
   // DataModules ===============================================================
   Application.CreateForm(TDMVirtual, DMVirtual);
   Application.CreateForm(TDMConexoes, DMConexoes);

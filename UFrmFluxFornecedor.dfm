@@ -191,7 +191,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Top = 56
     Width = 977
     Height = 479
-    ActivePage = Ts_FluxFornLanctos
+    ActivePage = Ts_FluxFornCaixa
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1599,7 +1599,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_FornVinculadosDrawColumnCell
-            OnEnter = Dbg_FornVinculoEnter
+            OnEnter = Dbg_FornVinculadosEnter
             OnExit = Dbg_FornVinculoExit
             OnKeyDown = Dbg_FornVinculoKeyDown
             Columns = <
@@ -2141,8 +2141,8 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     end
   end
   object OdirPanApres: TPanel
-    Left = 856
-    Top = 60
+    Left = 864
+    Top = 52
     Width = 89
     Height = 33
     BevelInner = bvLowered

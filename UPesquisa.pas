@@ -73,7 +73,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, JvExControls, JvXPCore, JvXPButtons, Grids, DBGrids, StdCtrls,
   Clipbrd, // PrintScreen
-  Qt, ExtCtrls, DBXpress;
+  Qt, ExtCtrls, DBXpress, AppEvnts;
 //  Último: DBXpress,;
 {
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
@@ -106,7 +106,6 @@ type
     procedure Bt_PesquisaOKClick(Sender: TObject);
     procedure Bt_PesquisaRetornaClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure Dbg_PesquisaCellClick(Column: TColumn);
     procedure FormKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
 
@@ -135,10 +134,8 @@ type
     Retorno3: String;
 
     sgBt_PesquisaNovo: String;
-    //
-    // sBt_PesquisaNovo.Visible:=True;
-    // 1 = 29 => LOGISTICA - Cadastro de Separadores de Mercadorias
-    //
+    // Bt_PesquisaNovo.Visible:=True;
+    //          1 = 29 => LOGISTICA - Cadastro de Separadores de Mercadorias
   end;
 
 var
@@ -210,25 +207,17 @@ end; // // Rolagem no Grid com Mouse >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TFrmPesquisa.EdtDescricaoChange(Sender: TObject);
 begin
- Try
-   DMBelShop.CDS_Pesquisa.Filtered:=False;
-   DMBelShop.CDS_Pesquisa.Filter:=Campo_Pesquisa+' LIKE ''%'+EdtDescricao.Text+'%''';
-   DMBelShop.CDS_Pesquisa.Filtered:=True;
- Except
-   DMBelShop.CDS_Pesquisa.Filtered:=False;
-   DMBelShop.CDS_Pesquisa.Filter:=Campo_Pesquisa+'='+QuotedStr(EdtDescricao.Text);
-   DMBelShop.CDS_Pesquisa.Filtered:=True;
- End;
+  Try
+    DMBelShop.CDS_Pesquisa.Filtered:=False;
+    DMBelShop.CDS_Pesquisa.Filter:=Campo_Pesquisa+' LIKE ''%'+EdtDescricao.Text+'%''';
+    DMBelShop.CDS_Pesquisa.Filtered:=True;
+  Except
+    DMBelShop.CDS_Pesquisa.Filtered:=False;
+    DMBelShop.CDS_Pesquisa.Filter:=Campo_Pesquisa+'='+QuotedStr(EdtDescricao.Text);
+    DMBelShop.CDS_Pesquisa.Filtered:=True;
+  End;
 
- DMBelShop.CDS_Pesquisa.Locate(Campo_pesquisa,EdtDescricao.Text,[]);
-
-//  If Trim(EdtDescricao.Text)<>'' Then
-//  Begin
-//   Try
-//    DMBelShop.CDS_Pesquisa.Locate(Campo_Pesquisa,EdtDescricao.Text,[loPartialKey]);
-//   Except
-//   End;
-//  End;
+  DMBelShop.CDS_Pesquisa.Locate(Campo_pesquisa,EdtDescricao.Text,[]);
 end;
 
 procedure TFrmPesquisa.FormShow(Sender: TObject);
@@ -278,7 +267,7 @@ end;
 procedure TFrmPesquisa.Bt_PesquisaOKClick(Sender: TObject);
 begin
 
-  EdtCodigo.Text:=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Codigo).AsString;
+  EdtCodigo.Text   :=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Codigo).AsString;
   EdtDescricao.Text:=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Descricao).AsString;
 
   If Campo_Retorno1<>'' Then
@@ -291,17 +280,14 @@ begin
    Retorno3:=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Retorno3).AsString;
 
   Close;
-
 end;
 
 procedure TFrmPesquisa.Bt_PesquisaRetornaClick(Sender: TObject);
 begin
-
   EdtDescricao.Text:='';
   EdtCodigo.Text:='0';
 
   Close;
-
 end;
 
 procedure TFrmPesquisa.FormCreate(Sender: TObject);
@@ -310,28 +296,11 @@ begin
   Icon:=Application.Icon;
 
   Application.OnMessage := MouseAppEventsMessage;
-
-end;
-
-procedure TFrmPesquisa.Dbg_PesquisaCellClick(Column: TColumn);
-begin
-//  EdtCodigo.Text:=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Codigo).AsString;
-//  EdtDescricao.Text:=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Descricao).AsString;
-//
-//  If Campo_Retorno1<>'' Then
-//   Retorno1:=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Retorno1).AsString;
-//
-//  If Campo_Retorno2<>'' Then
-//   Retorno2:=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Retorno2).AsString;
-//
-//  If Campo_Retorno3<>'' Then
-//   Retorno3:=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Retorno3).AsString;
-//
 end;
 
 procedure TFrmPesquisa.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if Key=44   Then
+  If Key=44   Then
    Clipboard.AsText:='';
 
 end;
@@ -357,6 +326,10 @@ begin
      Exit;
 
     // Cadastra Usuário ========================================================
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
     If DMBelShop.SQLC.InTransaction Then
      DMBelShop.SQLC.Rollback(TD);
 
@@ -365,9 +338,6 @@ begin
     TD.IsolationLevel:=xilREADCOMMITTED;
     DMBelShop.SQLC.StartTransaction(TD);
     Try // Try da Transação
-      Screen.Cursor:=crAppStart;
-      DateSeparator:='.';
-      DecimalSeparator:='.';
 
       MySql:=' INSERT INTO TAB_AUXILIAR'+
              ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
@@ -394,12 +364,14 @@ begin
       Begin
         // Abandona Transacao ====================================================
         DMBelShop.SQLC.Rollback(TD);
+
         MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
       End; // on e : Exception do
     End; // Try da Transação
     DateSeparator:='/';
     DecimalSeparator:=',';
     Screen.Cursor:=crDefault;
+
   End; // If sgBt_PesquisaNovo='1' Then
   // 1 = 29 => LOGISTICA - Cadastro de Separadores de Mercadorias ==============
   //============================================================================

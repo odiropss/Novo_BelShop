@@ -3,6 +3,7 @@
 // Todos os Controles estão em: C:\Projetos\BelShop\Outras Pastas\Documentos\@Coisas BelShop.doc
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+Acrescentar em EMP_CONEXAO 0 Campo Cod_Trinks
 Apagar:
  DMBelShop.DS_FechaDiarioMov
  DMBelShop.DS_FechaDiarioTot
@@ -1171,6 +1172,9 @@ type
     CDS_FluxoFornVinculoIND_SIT_ORIGEM: TStringField;
     IBDS_Busca: TIBDataSet;
     CDS_AComprarItensCOD_LINX: TStringField;
+    CDS_EmpresaCOD_CLI_LINX: TIntegerField;
+    CDS_EmpresaIND_DOMINGO: TStringField;
+    CDS_EmpresaCOD_TRINKS: TIntegerField;
 
     //==========================================================================
     // Odir ====================================================================
@@ -1247,6 +1251,7 @@ type
     procedure CDS_FluxoFornecedoresAfterOpen(DataSet: TDataSet);
     procedure CDS_FluxoFornVinculoAfterPost(DataSet: TDataSet);
     procedure CDS_FluxoFornVinculadosAfterPost(DataSet: TDataSet);
+    procedure CDS_FluxoFornecedorAfterScroll(DataSet: TDataSet);
 
   private
     { Private declarations }
@@ -4750,6 +4755,18 @@ end;
 procedure TDMBelShop.CDS_FluxoFornVinculadosAfterPost(DataSet: TDataSet);
 begin
   FrmFluxoFornecedor.bgAltVinculos:=True;
+end;
+
+procedure TDMBelShop.CDS_FluxoFornecedorAfterScroll(DataSet: TDataSet);
+begin
+  If CDS_FluxoFornecedor.IsEmpty Then
+   Exit;
+
+  FrmFluxoFornecedor.Bt_FluFornVinculos.Caption:='Localiza Avarias';
+
+  If Trim(CDS_FluxoFornecedorTXT_OBS.AsString)='DESCARTE DE AVARIAS - Central de Trocas - 13/12/2016' Then
+   FrmFluxoFornecedor.Bt_FluFornVinculos.Caption:='Apresenta Avarias';
+
 end;
 
 end.

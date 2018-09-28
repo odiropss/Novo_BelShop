@@ -638,4 +638,11 @@ object DMTransferencias: TDMTransferencias
     Left = 149
     Top = 152
   end
+  object SQLQ_Busca: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 320
+    Top = 16
+  end
 end

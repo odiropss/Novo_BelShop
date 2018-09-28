@@ -1,5 +1,12 @@
 unit UFrmAcceraLoreal;
 
+//============================================================================
+// Se Periodo Vem por Parametros =============================================
+//============================================================================
+// PAcceraLoreal.exe 01/08/2018 16/08/2018  ==> Usar Barras de Separação Normais < / >
+//                   Parametro1 Parametro2
+//============================================================================
+
 interface
 
 uses
@@ -662,13 +669,20 @@ Begin
            ' CAST(REPLACE(REPLACE(REPLACE(COALESCE(fo.fcnpj_cic,''99999999999999''),'+
            '           ''/'', ''''),''.'',''''),''-'','''') AS VARCHAR(18)) CNPJ_FORN,'+ // 4 CNPJ do Fornecedor
 
+// Retirado em 26/09/2018 - Produto com mais de um Fornecedor
+//           ' CASE'+
+//           '   WHEN COALESCE(pr.outro_codigo,'''')<>'''' THEN'+
+//           '     pr.outro_codigo'+
+//           '   WHEN COALESCE(cf.ficodigo_barras,'''')<>'''' THEN'+
+//           '     cf.ficodigo_barras'+
+//           '   WHEN COALESCE(cf.ficodigofornecedor,'''')<>'''' THEN'+
+//           '     cf.ficodigofornecedor'+
+//           '   ELSE'+
+//           '     pr.codigo'+
+//           ' END COD_BARRAS,'+ // 5 Codigo de Barras
            ' CASE'+
            '   WHEN COALESCE(pr.outro_codigo,'''')<>'''' THEN'+
            '     pr.outro_codigo'+
-           '   WHEN COALESCE(cf.ficodigo_barras,'''')<>'''' THEN'+
-           '     cf.ficodigo_barras'+
-           '   WHEN COALESCE(cf.ficodigofornecedor,'''')<>'''' THEN'+
-           '     cf.ficodigofornecedor'+
            '   ELSE'+
            '     pr.codigo'+
            ' END COD_BARRAS,'+ // 5 Codigo de Barras
@@ -677,11 +691,7 @@ Begin
            ' NULL LOTE_VALIDADE,'+ // 7 Lote Validade
 
            ' CAST(SUM(COALESCE(it.qunatidadeproduto,0) * 1000) AS INTEGER) QUANTIDADE,'+ // 8 Quantidade de Venda Atendida
-
-           // OdirApagar - 30/08/2018 - É o campo VALOR_TOTAL_UNIT
-           // ' SUM(COALESCE(it.meitvalorbrutoitem,0) + COALESCE(it.meitfreterateado,0)) * 100  VALOR_TRANSACAO,'+ // 9 Valor Final da Tansação
            ' SUM(COALESCE(it.valor_total_unit,0)) * 100  VALOR_TRANSACAO,'+ // 9 Valor Final da Tansação
-
            ' ''BRL'' MOEDA,'+ // 10 Moeda
            ' nt.documento DOCUMENTO,'+ // 11 Identificação da Transação
 
@@ -692,6 +702,8 @@ Begin
            ' CASE'+
            '   WHEN UPPER(op.tipo_op)=''D'' THEN'+
            '     ''DV'''+
+           '   WHEN ((nt.menfemotivocancelamento IS NOT NULL) OR (UPPER(COALESCE(nt.operacaop, ''''))=''CA'')) THEN'+
+           '     ''C'''+
            '   ELSE'+
            '     ''V'''+
            ' END TIPO_TRANSACAO,'+ // 13 Tipo de Transação
@@ -734,7 +746,8 @@ Begin
            '     LEFT JOIN AUGC0501 vd  ON vd.fcod=nt.vendedor_doc'+ // Cadastro de Vendedores/Outros
            '     LEFT JOIN AFVC0901 op  ON op.cod_op=it.cod_op'+ // Cadastro de Operacoes e Cfops
            '     LEFT JOIN AUGC0301 cl  ON cl.codigo_cliente=nt.cod_cli'+ // Cadastro de Clientes
-           '     LEFT JOIN AUGM2101 cf  ON cf.produto=pr.codigo'+ // Cadastro de Fornecedores e Produtos
+// Retirado em 26/09/2018 - Produto com mais de um Fornecedor
+//           '     LEFT JOIN AUGM2101 cf  ON cf.produto=pr.codigo'+ // Cadastro de Fornecedores e Produtos
 
            ' WHERE NOT (nt.operacao_doc=''00000'' AND nt.operacaop=''05000'')'; // Pedencia Não
 
@@ -756,101 +769,103 @@ Begin
 
            ' GROUP BY 3,4,5,11,12,13,14,15,16,17,18,20'+
 
-           ' UNION'+
 
-           // Notas Fiscais Canceladas =========================================
-           ' SELECT'+
-           ' 1 ORDEM,'+ // 1 ORDEM
-           ' ''V'' TR,'+ // 2
-           ' (SELECT CAST(REPLACE(REPLACE(REPLACE(COALESCE(d.ciccgc,''99999999999999''), ''/'',''''),''.'',''''),''-'','''')'+
-           '         AS VARCHAR(18))'+
-           '  FROM ea d) COD_LOJA,'+ // 3 CNPJ da Distribuidora
-
-           ' CAST(REPLACE(REPLACE(REPLACE(COALESCE(fo.fcnpj_cic,''99999999999999''), ''/'', ''''),''.'',''''),''-'','''')'+
-           '     AS VARCHAR(18)) CNPJ_FORN,'+ // 4 CNPJ do Fornecedor
-
-           ' CASE'+
-           '   WHEN pr.outro_codigo=NULL THEN'+
-           '     pr.codigo'+
-           '   ELSE'+
-           '     pr.outro_codigo'+
-           ' END COD_BARRAS,'+ // 5 Codigo de Barras
-
-           ' NULL LOTE,'+ // 6 Lote
-           ' NULL LOTE_VALIDADE,'+ // 7 Lote Validade
-
-           ' CAST(SUM(COALESCE(it.qunatidadeproduto,0) * 1000) AS INTEGER) QUANTIDADE,'+ // 8 Quantidade de Venda Atendida
-
-           // OdirApagar - 30/08/2018 - É o campo VALOR_TOTAL_UNIT
-           // ' SUM(COALESCE(it.meitvalorbrutoitem,0) + COALESCE(it.meitfreterateado,0)) * 100  VALOR_TRANSACAO,'+ // 9 Valor Final da Tansação
-           ' SUM(COALESCE(it.valor_total_unit,0)) * 100  VALOR_TRANSACAO,'+ // 9 Valor Final da Tansação
-
-           ' ''BRL'' MOEDA,'+ // 10 Moeda
-           ' nt.documento DOCUMENTO,'+ // 11 Identificação da Transação
-
-           ' CAST(EXTRACT(YEAR FROM nt.data) AS VARCHAR(4))||'+
-           ' CAST(LPAD(EXTRACT(MONTH FROM nt.data),2,''0'') AS VARCHAR(2))||'+
-           ' CAST(LPAD(EXTRACT(DAY FROM nt.data),2,''0'') AS VARCHAR(2)) DTA_DOCUMENTO,'+ // 12 Data da Emissão do Documento
-
-           ' ''C'','+ // 13 Tipo de Transação
-
-           ' CAST(CAST(COALESCE(op.cod_natureza,0) AS INTEGER) AS VARCHAR(4)) CFOP,'+ // 14 CFop
-
-           ' CASE'+
-           '    WHEN CHAR_LENGTH(TRIM(CAST(REPLACE(REPLACE(REPLACE(COALESCE(cl.cgc_cnpj,''99999999999999''),'+
-           '                        ''/'', ''''),''.'',''''),''-'','''') AS VARCHAR(18))))<12 Then'+
-           '      1'+
-           '    ELSE'+
-           '      2'+
-           ' END  TIPO_IDENT_PDV,'+ // 15 Tipo Identificador PDV
-
-           ' TRIM(CAST(REPLACE(REPLACE(REPLACE(COALESCE(cl.cgc_cnpj,''99999999999999''),'+
-           '                        ''/'', ''''),''.'',''''),''-'','''') AS VARCHAR(18))) IDENTIFICADOR_PDV,'+ // 16 Identificador do PDV
-
-           ' SUBSTRING(TRIM(cl.nome) FROM 1 FOR 60) DESCRICAO_PDV,'+ // 17 Descrição do PDV
-           ' TRIM(REPLACE(REPLACE(REPLACE(REPLACE(COALESCE(cl.cep,''99999999''), ''/'', ''''),''.'',''''),''-'',''''),'' '','''')) CEP_PDV,'+ // 18 CEP do PDV
-
-           ' ''N1'' CLASSIFICACAO_PDV,'+ // 19 Classificação do PDV
-
-           ' CASE'+
-           '     WHEN TRIM(COALESCE(vd.fnome,''''))='''' THEN '+
-           '       SUBSTRING(TRIM('+QuotedStr(sgCodEmpresa+'-'+sgNomeEmpresa)+') FROM 1 FOR 60)'+ // SQL - Busca Codigo e Nome da Empresa
-           '     ELSE'+
-           '       SUBSTRING(TRIM(nt.vendedor_doc||''-''||vd.fnome) FROM 1 FOR 60)'+
-           ' END NOME_VENDEDOR,'+ // 20 Nome do Vendedor
-
-           ' NULL CAMPO_LIVRE_1,'+ // 21 Campo Livre 1
-           ' NULL CAMPO_LIVRE_2'+ // 22 Campo Livre 2
-
-           ' FROM ACEM1401 nt'+ // Movimento de Notas
-           '     LEFT JOIN ACEM14IT it  ON it.documento=nt.documento'+ // Produtos da Nota
-           '                           AND it.serie=nt.serie_doc'+
-           '                           AND it.cod_op=nt.operacao_doc'+
-           '                           AND it.cod_cli=nt.cod_cli'+
-           '     LEFT JOIN ACEC1101 pr  ON pr.codigo=it.codigoproduto'+ // Cadastro de Produto
-           '     LEFT JOIN AUGC0501 fo  ON fo.fcod=pr.cod_fornecedor'+ // Cadastro de Fornecedores
-           '     LEFT JOIN AUGC0501 vd  ON vd.fcod=nt.vendedor_doc'+ // Cadastro de Vendedores
-           '     LEFT JOIN AFVC0901 op  ON op.cod_op=it.cod_op'+ // Operacoes e Cfops
-           '     LEFT JOIN AUGC0301 cl  ON cl.codigo_cliente=nt.cod_cli'+ // Cadastro de Clientes
-
-           ' WHERE NOT (nt.operacao_doc=''00000'' AND nt.operacaop=''05000'')'; // Pedencia Não
-
-           If Not bgUsaDtaParam Then
-            MySql:=
-             MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
-                   ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'
-           Else
-            MySql:=
-             MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
-                   ' AND   CAST(nt.data as DATE)<='+QuotedStr(sgDtaFimParam);
-
-    MySql:=
-     MySql+' AND   ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
-           ' AND   ((nt.menfemotivocancelamento IS NOT NULL) OR (UPPER(COALESCE(nt.operacaop, ''''))=''CA''))'+
-           ' AND   pr.cod_fornecedor=''00246'''+ // Somente Loreal
-           ' AND   it.valor_unitarioproduto IS NOT NULL'+
-
-           ' GROUP BY 3,4,5,11,12,13,14,15,16,17,18,20'+
+           // OdirApagar - 17/09/2018 - Não Separar Devoluções =================
+//           ' UNION'+
+//
+//           // Notas Fiscais Canceladas =========================================
+//           ' SELECT'+
+//           ' 1 ORDEM,'+ // 1 ORDEM
+//           ' ''V'' TR,'+ // 2
+//           ' (SELECT CAST(REPLACE(REPLACE(REPLACE(COALESCE(d.ciccgc,''99999999999999''), ''/'',''''),''.'',''''),''-'','''')'+
+//           '         AS VARCHAR(18))'+
+//           '  FROM ea d) COD_LOJA,'+ // 3 CNPJ da Distribuidora
+//
+//           ' CAST(REPLACE(REPLACE(REPLACE(COALESCE(fo.fcnpj_cic,''99999999999999''), ''/'', ''''),''.'',''''),''-'','''')'+
+//           '     AS VARCHAR(18)) CNPJ_FORN,'+ // 4 CNPJ do Fornecedor
+//
+//           ' CASE'+
+//           '   WHEN pr.outro_codigo=NULL THEN'+
+//           '     pr.codigo'+
+//           '   ELSE'+
+//           '     pr.outro_codigo'+
+//           ' END COD_BARRAS,'+ // 5 Codigo de Barras
+//
+//           ' NULL LOTE,'+ // 6 Lote
+//           ' NULL LOTE_VALIDADE,'+ // 7 Lote Validade
+//
+//           ' CAST(SUM(COALESCE(it.qunatidadeproduto,0) * 1000) AS INTEGER) QUANTIDADE,'+ // 8 Quantidade de Venda Atendida
+//
+//           // OdirApagar - 30/08/2018 - É o campo VALOR_TOTAL_UNIT
+//           // ' SUM(COALESCE(it.meitvalorbrutoitem,0) + COALESCE(it.meitfreterateado,0)) * 100  VALOR_TRANSACAO,'+ // 9 Valor Final da Tansação
+//           ' SUM(COALESCE(it.valor_total_unit,0)) * 100  VALOR_TRANSACAO,'+ // 9 Valor Final da Tansação
+//
+//           ' ''BRL'' MOEDA,'+ // 10 Moeda
+//           ' nt.documento DOCUMENTO,'+ // 11 Identificação da Transação
+//
+//           ' CAST(EXTRACT(YEAR FROM nt.data) AS VARCHAR(4))||'+
+//           ' CAST(LPAD(EXTRACT(MONTH FROM nt.data),2,''0'') AS VARCHAR(2))||'+
+//           ' CAST(LPAD(EXTRACT(DAY FROM nt.data),2,''0'') AS VARCHAR(2)) DTA_DOCUMENTO,'+ // 12 Data da Emissão do Documento
+//
+//           ' ''C'','+ // 13 Tipo de Transação
+//
+//           ' CAST(CAST(COALESCE(op.cod_natureza,0) AS INTEGER) AS VARCHAR(4)) CFOP,'+ // 14 CFop
+//
+//           ' CASE'+
+//           '    WHEN CHAR_LENGTH(TRIM(CAST(REPLACE(REPLACE(REPLACE(COALESCE(cl.cgc_cnpj,''99999999999999''),'+
+//           '                        ''/'', ''''),''.'',''''),''-'','''') AS VARCHAR(18))))<12 Then'+
+//           '      1'+
+//           '    ELSE'+
+//           '      2'+
+//           ' END  TIPO_IDENT_PDV,'+ // 15 Tipo Identificador PDV
+//
+//           ' TRIM(CAST(REPLACE(REPLACE(REPLACE(COALESCE(cl.cgc_cnpj,''99999999999999''),'+
+//           '                        ''/'', ''''),''.'',''''),''-'','''') AS VARCHAR(18))) IDENTIFICADOR_PDV,'+ // 16 Identificador do PDV
+//
+//           ' SUBSTRING(TRIM(cl.nome) FROM 1 FOR 60) DESCRICAO_PDV,'+ // 17 Descrição do PDV
+//           ' TRIM(REPLACE(REPLACE(REPLACE(REPLACE(COALESCE(cl.cep,''99999999''), ''/'', ''''),''.'',''''),''-'',''''),'' '','''')) CEP_PDV,'+ // 18 CEP do PDV
+//
+//           ' ''N1'' CLASSIFICACAO_PDV,'+ // 19 Classificação do PDV
+//
+//           ' CASE'+
+//           '     WHEN TRIM(COALESCE(vd.fnome,''''))='''' THEN '+
+//           '       SUBSTRING(TRIM('+QuotedStr(sgCodEmpresa+'-'+sgNomeEmpresa)+') FROM 1 FOR 60)'+ // SQL - Busca Codigo e Nome da Empresa
+//           '     ELSE'+
+//           '       SUBSTRING(TRIM(nt.vendedor_doc||''-''||vd.fnome) FROM 1 FOR 60)'+
+//           ' END NOME_VENDEDOR,'+ // 20 Nome do Vendedor
+//
+//           ' NULL CAMPO_LIVRE_1,'+ // 21 Campo Livre 1
+//           ' NULL CAMPO_LIVRE_2'+ // 22 Campo Livre 2
+//
+//           ' FROM ACEM1401 nt'+ // Movimento de Notas
+//           '     LEFT JOIN ACEM14IT it  ON it.documento=nt.documento'+ // Produtos da Nota
+//           '                           AND it.serie=nt.serie_doc'+
+//           '                           AND it.cod_op=nt.operacao_doc'+
+//           '                           AND it.cod_cli=nt.cod_cli'+
+//           '     LEFT JOIN ACEC1101 pr  ON pr.codigo=it.codigoproduto'+ // Cadastro de Produto
+//           '     LEFT JOIN AUGC0501 fo  ON fo.fcod=pr.cod_fornecedor'+ // Cadastro de Fornecedores
+//           '     LEFT JOIN AUGC0501 vd  ON vd.fcod=nt.vendedor_doc'+ // Cadastro de Vendedores
+//           '     LEFT JOIN AFVC0901 op  ON op.cod_op=it.cod_op'+ // Operacoes e Cfops
+//           '     LEFT JOIN AUGC0301 cl  ON cl.codigo_cliente=nt.cod_cli'+ // Cadastro de Clientes
+//
+//           ' WHERE NOT (nt.operacao_doc=''00000'' AND nt.operacaop=''05000'')'; // Pedencia Não
+//
+//           If Not bgUsaDtaParam Then
+//            MySql:=
+//             MySql+' AND   CAST(nt.data as DATE)>=CURRENT_TIMESTAMP-31'+
+//                   ' AND   CAST(nt.data as DATE)<=CURRENT_TIMESTAMP-1'
+//           Else
+//            MySql:=
+//             MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
+//                   ' AND   CAST(nt.data as DATE)<='+QuotedStr(sgDtaFimParam);
+//
+//    MySql:=
+//     MySql+' AND   ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
+//           ' AND   ((nt.menfemotivocancelamento IS NOT NULL) OR (UPPER(COALESCE(nt.operacaop, ''''))=''CA''))'+
+//           ' AND   pr.cod_fornecedor=''00246'''+ // Somente Loreal
+//           ' AND   it.valor_unitarioproduto IS NOT NULL'+
+//
+//           ' GROUP BY 3,4,5,11,12,13,14,15,16,17,18,20'+
 
            // REGISTRO "H" CABECALHO ===========================================
            ' UNION'+
@@ -1011,13 +1026,20 @@ Begin
            ' CAST(REPLACE(REPLACE(REPLACE(COALESCE(fo.fcnpj_cic,''99999999999999''),'+
            '      ''/'', ''''),''.'',''''),''-'','''') AS VARCHAR(18)) COD_FORNECEDOR,'+ // 4 Codigo (CNPJ) Fornecedor
 
+// Retirado em 26/09/2018 - Produto com mais de um Fornecedor
+//           ' CASE'+
+//           '   WHEN COALESCE(pr.outro_codigo,'''')<>'''' THEN'+
+//           '     pr.outro_codigo'+
+//           '   WHEN COALESCE(cf.ficodigo_barras,'''')<>'''' THEN'+
+//           '     cf.ficodigo_barras'+
+//           '   WHEN COALESCE(cf.ficodigofornecedor,'''')<>'''' THEN'+
+//           '     cf.ficodigofornecedor'+
+//           '   ELSE'+
+//           '     pr.codigo'+
+//           ' END COD_BARRAS,'+ // 5 Codigo de Barras
            ' CASE'+
            '   WHEN COALESCE(pr.outro_codigo,'''')<>'''' THEN'+
            '     pr.outro_codigo'+
-           '   WHEN COALESCE(cf.ficodigo_barras,'''')<>'''' THEN'+
-           '     cf.ficodigo_barras'+
-           '   WHEN COALESCE(cf.ficodigofornecedor,'''')<>'''' THEN'+
-           '     cf.ficodigofornecedor'+
            '   ELSE'+
            '     pr.codigo'+
            ' END COD_BARRAS,'+ // 5 Codigo de Barras
@@ -1041,7 +1063,9 @@ Begin
 
            ' FROM ACEC1101 pr'+ // Cadastro de Produto
            '    LEFT JOIN AUGC0501 fo ON fo.fcod=pr.cod_fornecedor'+ // Cadastro de Fornecedores
-           '    LEFT JOIN AUGM2101 cf ON cf.produto=pr.codigo'+ // Cadastro de Fornecedores e Produtos
+
+// Retirado em 26/09/2018 - Produto com mais de um Fornecedor
+//           '    LEFT JOIN AUGM2101 cf ON cf.produto=pr.codigo'+ // Cadastro de Fornecedores e Produtos
 
            ' WHERE pr.codigo<>''000001'''+ // Produto de Teste
            ' AND   ((pr.prativo=''S'') OR (pr.prativo=''N'' AND pr.estoque>0))'+ // Inativos Somente com Estoque
@@ -1307,13 +1331,20 @@ Begin
            ' NULL DES_SUBFAMILIA,'+ // 12 Descricao SubFamilia
            ' ''E'' TIPO_CODBARRAS,'+ // 13 Tipo do Codigo de Barras (EAN)
 
+// Retirado em 26/09/2018 - Produto com mais de um Fornecedor
+//           ' CASE'+
+//           '   WHEN COALESCE(pr.outro_codigo,'''')<>'''' THEN'+
+//           '     pr.outro_codigo'+
+//           '   WHEN COALESCE(cf.ficodigo_barras,'''')<>'''' THEN'+
+//           '     cf.ficodigo_barras'+
+//           '   WHEN COALESCE(cf.ficodigofornecedor,'''')<>'''' THEN'+
+//           '     cf.ficodigofornecedor'+
+//           '   ELSE'+
+//           '     pr.codigo'+
+//           ' END COD_BARRAS,'+ // 14 Codigo de Barras
            ' CASE'+
            '   WHEN COALESCE(pr.outro_codigo,'''')<>'''' THEN'+
            '     pr.outro_codigo'+
-           '   WHEN COALESCE(cf.ficodigo_barras,'''')<>'''' THEN'+
-           '     cf.ficodigo_barras'+
-           '   WHEN COALESCE(cf.ficodigofornecedor,'''')<>'''' THEN'+
-           '     cf.ficodigofornecedor'+
            '   ELSE'+
            '     pr.codigo'+
            ' END COD_BARRAS,'+ // 14 Codigo de Barras
@@ -1336,7 +1367,9 @@ Begin
            ' FROM ACEC1101 pr'+ // Cadastro de Produto
            '    LEFT JOIN AUGC0501 fo ON fo.fcod=pr.cod_fornecedor'+ // Cadastro de Fornecedores
            '    LEFT JOIN ACEC1201 gr ON gr.codigo=pr.grupo'+ // Cadastro de Grupos de Produtos
-           '    LEFT JOIN AUGM2101 cf ON cf.produto=pr.codigo'+ // Cadastro de Fornecedores e Produtos
+
+// Retirado em 26/09/2018 - Produto com mais de um Fornecedor
+//           '    LEFT JOIN AUGM2101 cf ON cf.produto=pr.codigo'+ // Cadastro de Fornecedores e Produtos
 
            ' WHERE pr.codigo<>''000001'''+ // Produto de Teste
            ' AND   pr.cod_fornecedor=''00246'''+ // Somente Loreal
@@ -1626,3 +1659,6 @@ begin
 end;
 
 end.
+
+
+

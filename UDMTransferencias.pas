@@ -105,6 +105,7 @@ type
     SDS_Busca1: TSQLDataSet;
     DSP_Busca1: TDataSetProvider;
     CDS_Busca1: TClientDataSet;
+    SQLQ_Busca: TSQLQuery;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir ====================================================================
@@ -756,3 +757,13 @@ begin
 end;
 
 end.
+{
+-> Grava Produtos SEM Saldo no CD - SOL_TRANSFERENCIA_CD
+
+-> Importa SOL_TRANSFERENCIA_CD para ES_ESTOQUES_LOJA - Ind_Transf = CALL
+-> Busca Produtos das Lojas com Necessidade de Compra
+-> Analisa e Atualiza Necessitadades de Transferencias do Dia
+
+-> Busca Solicitações das Lojas de Dias Anteiroes e Novas do Setor de Compras
+   - Não Verifia Estoque - Saldo no CD
+}

@@ -1,8 +1,8 @@
 object DMSeparacaoDoctos: TDMSeparacaoDoctos
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 586
-  Top = 143
+  Left = 243
+  Top = 119
   Height = 362
   Width = 551
   object SQLC: TSQLConnection
@@ -158,5 +158,30 @@ object DMSeparacaoDoctos: TDMSeparacaoDoctos
     object SQLQ_RomaneioSEP_HORAS: TTimeField
       FieldName = 'SEP_HORAS'
     end
+  end
+  object SDS_Pesquisa: TSQLDataSet
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = SQLC
+    Left = 237
+    Top = 187
+  end
+  object CDS_Pesquisa: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_Pesquisa'
+    Left = 318
+    Top = 183
+  end
+  object DSP_Pesquisa: TDataSetProvider
+    DataSet = SDS_Pesquisa
+    Options = [poRetainServerOrder]
+    Left = 278
+    Top = 195
+  end
+  object DS_Pesquisa: TDataSource
+    DataSet = CDS_Pesquisa
+    Left = 354
+    Top = 195
   end
 end

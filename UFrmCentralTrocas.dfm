@@ -2436,6 +2436,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
+          Visible = False
           OnClick = JvXPButton2Click
         end
       end

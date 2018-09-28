@@ -1010,7 +1010,7 @@ object FrmSolicTransf: TFrmSolicTransf
     Top = 0
     Width = 891
     Height = 538
-    ActivePage = Ts_NFeCheckOut
+    ActivePage = Ts_Produtos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1352,7 +1352,6 @@ object FrmSolicTransf: TFrmSolicTransf
             DisplayFormat = ',0'
             ReadOnly = True
             TabOrder = 3
-            OnExit = EdtQtdTransfExit
           end
         end
       end

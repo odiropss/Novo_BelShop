@@ -992,7 +992,7 @@ type
     SBar_ConsultaNFeNotasLojas: TStatusBar;
     SubMenuFinanVerificaExtratos: TMenuItem;
     SubMenuFinanExportImportArquivos: TMenuItem;
-    SubMenuFinanExpImpArquivosProSoft1: TMenuItem;
+    SubMenuFinanExpImpArquivosProSoft: TMenuItem;
     N22: TMenuItem;
     PopM_PlanFinanceiraMemoria: TMenuItem;
     Panel27: TPanel;
@@ -1161,7 +1161,7 @@ type
     Label16: TLabel;
     Label15: TLabel;
     Dbe_ConEmpresasCodEmp: TDBEdit;
-    GroupBox1: TGroupBox;
+    Gb_Linx: TGroupBox;
     Label2: TLabel;
     Dbe_ConEmpresasCodLojaLinx: TDBEdit;
     EdtDta_ConEmpresasInicioLinx: TcxDateEdit;
@@ -1203,6 +1203,16 @@ type
     SubMenuGeracaoArquivos: TMenuItem;
     SubMenuComisCampanhasColecao: TMenuItem;
     SubMenuCentroDistrCtrlRomSeparacao: TMenuItem;
+    Label54: TLabel;
+    Dbe_ConEmpresasCodEmpLinx: TDBEdit;
+    Gb_Trinks: TGroupBox;
+    Label137: TLabel;
+    DBEdit2: TDBEdit;
+    Dbcb_ConEmpresasDomingo: TDBComboBox;
+    Label136: TLabel;
+    N57: TMenuItem;
+    N58: TMenuItem;
+    SubMenuFinanExpImpImportaTrinks: TMenuItem;
 
     // Odir ====================================================================
 
@@ -1993,8 +2003,7 @@ type
     procedure SubMenuSalaoPlanoSaudeClick(Sender: TObject);
     procedure Sbt_FinanMLResFinalClick(Sender: TObject);
     procedure Dbg_FinanMLResultadoDblClick(Sender: TObject);
-    procedure ApplicationEvents1Message(var Msg: tagMSG;
-      var Handled: Boolean);
+    procedure ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
     procedure Dbg_FinanMargemLucroEnter(Sender: TObject);
     procedure Bt_GeraOCDocSeparacaoClick(Sender: TObject);
     procedure Dbg_GeraOCTotalGeralDrawColumnCell(Sender: TObject;
@@ -2013,7 +2022,7 @@ type
       var Key: Word; Shift: TShiftState);
     procedure PC_ConsultaMovtoComprChange(Sender: TObject);
     procedure SubMenuFinanVerificaExtratosClick(Sender: TObject);
-    procedure SubMenuFinanExpImpArquivosProSoft1Click(Sender: TObject);
+    procedure SubMenuFinanExpImpArquivosProSoftClick(Sender: TObject);
     procedure PopM_PlanFinanceiraMemoriaClick(Sender: TObject);
     procedure SubMenuProtUsuariosPermAcessoSIDICOMClick(Sender: TObject);
     procedure Rb_ConsultaNFeTpMovtoAmbosKeyUp(Sender: TObject;
@@ -21329,16 +21338,16 @@ Begin
     Exit;
   End;
 
-  // Ajusta Dados das Lojas ====================================================
-  If Trim(sgCodLojaUnica)='' Then
-  Begin
-    Screen.Cursor:=crAppStart;
-    If Not DMBelShop.AjustaDadosLojas Then
-    Begin
-      MessageBox(Handle,pChar('Erro ao Ajustar Empresas'+cr+cr+sgMensagem), 'Erro', MB_ICONERROR);
-    End;
-    Screen.Cursor:=crDefault;
-  End; // If Trim(sgCodLojaUnica)='' Then
+//  // Ajusta Dados das Lojas ====================================================
+//  If Trim(sgCodLojaUnica)='' Then
+//  Begin
+//    Screen.Cursor:=crAppStart;
+//    If Not DMBelShop.AjustaDadosLojas Then
+//    Begin
+//      MessageBox(Handle,pChar('Erro ao Ajustar Empresas'+cr+cr+sgMensagem), 'Erro', MB_ICONERROR);
+//    End;
+//    Screen.Cursor:=crDefault;
+//  End; // If Trim(sgCodLojaUnica)='' Then
 
   // Guarda Codigo do Usuario ==================================================
   If Des_Login<>'' Then
@@ -22547,7 +22556,7 @@ end;
 
 procedure TFrmBelShop.Bt_ConEmpresasDMLClick(Sender: TObject);
 Var
-  Cod: Integer;
+  iCod: integer;
   MySql: String;
   i: Integer;
   bDeleteConexao, bDesconecta: Boolean;
@@ -22569,125 +22578,165 @@ begin
     TD.IsolationLevel:=xilREADCOMMITTED;
     DMBelShop.SQLC.StartTransaction(TD);
 
-    Cod:=DMBelShop.CDS_Empresa.FieldByName('Cod_Emp').AsInteger;
+    iCod:=DMBelShop.CDS_EmpresaCOD_LINX.AsInteger;
     DateSeparator:='.';
+
+    MySql:=' UPDATE OR INSERT INTO EMP_CONEXOES '+
+           ' (COD_FILIAL, ENDERECO_IP, ENDERECO_IP_EXTERNO, PASTA_BASE_DADOS,'+
+           '  DES_BASE_DADOS, COD_EMP, RAZAO_SOCIAL, TIP_EMP, DES_BAIRRO, DES_CIDADE,'+
+           '  COD_UF, COD_CEP, NUM_CNPJ, INSCR_ESTADUAL, DES_ENDERECO, NUM_ENDERECO,'+
+           '  COMPL_ENDERECO, QTD_TRANSF_DIA, COD_LISTAPRE, IND_ATIVO,'+
+           '  NUM_SINDICATO, NUM_ALVARA_MUN, COD_CONTABIL, COD_LINX,'+
+           '  COD_CLI_LINX, IND_DOMINGO, COD_TRINKS,';
+
+           // Campos Datas Validas
+           If Trim(DMBelShop.CDS_EmpresaDTA_LIM_TRANSF.AsString)<>'' Then
+            MySql:=
+             MySql+'  DTA_LIM_TRANSF,';
+
+           If Trim(DMBelShop.CDS_EmpresaDTA_ULT_ATUAL_VEND.AsString)<>'' Then
+            MySql:=
+             MySql+'  DTA_ULT_ATUAL_VEND,';
+
+           If Trim(DMBelShop.CDS_EmpresaDTA_INICIO_LINX.AsString)<>'' Then
+            MySql:=
+             MySql+'  DTA_INICIO_LINX,';
+
+           If Trim(DMBelShop.CDS_EmpresaDTA_INVENTARIO_LINX.AsString)<>'' Then
+            MySql:=
+             MySql+'  DTA_INVENTARIO_LINX,';
+
+           // Usuários
+           If Bt_ConEmpresasDML.Caption='Incluir' Then
+            Begin
+              MySql:=
+               MySql+' USU_INCLUI, DTA_INCLUI)';
+            End
+           Else
+            Begin
+              MySql:=
+               MySql+' USU_ALTERA, DTA_ALTERA)';
+            End; // If Bt_ConEmpresasDML.Caption='Incluir' Then
+
+    MySql:=
+     MySql+' VALUES'+
+           ' (:COD_FILIAL, :ENDERECO_IP, :ENDERECO_IP_EXTERNO, :PASTA_BASE_DADOS,'+
+           '  :DES_BASE_DADOS, :COD_EMP, :RAZAO_SOCIAL, :TIP_EMP, :DES_BAIRRO, :DES_CIDADE,'+
+           '  :COD_UF, :COD_CEP, :NUM_CNPJ, :INSCR_ESTADUAL, :DES_ENDERECO, :NUM_ENDERECO,'+
+           '  :COMPL_ENDERECO, :QTD_TRANSF_DIA, :COD_LISTAPRE, :IND_ATIVO,'+
+           '  :NUM_SINDICATO, :NUM_ALVARA_MUN, :COD_CONTABIL, :COD_LINX,'+
+           '  :COD_CLI_LINX, :IND_DOMINGO, :COD_TRINKS,';
+
+           // Campos Datas Validas
+           If Trim(DMBelShop.CDS_EmpresaDTA_LIM_TRANSF.AsString)<>'' Then
+            MySql:=
+             MySql+'  :DTA_LIM_TRANSF,';
+
+           If Trim(DMBelShop.CDS_EmpresaDTA_ULT_ATUAL_VEND.AsString)<>'' Then
+            MySql:=
+             MySql+'  :DTA_ULT_ATUAL_VEND,';
+
+           If Trim(DMBelShop.CDS_EmpresaDTA_INICIO_LINX.AsString)<>'' Then
+            MySql:=
+             MySql+'  :DTA_INICIO_LINX,';
+
+           If Trim(DMBelShop.CDS_EmpresaDTA_INVENTARIO_LINX.AsString)<>'' Then
+            MySql:=
+             MySql+'  :DTA_INVENTARIO_LINX,';
+
+           // Usuários
+           If Bt_ConEmpresasDML.Caption='Incluir' Then
+            Begin
+              MySql:=
+               MySql+' :USU_INCLUI, :DTA_INCLUI)';
+            End
+           Else
+            Begin
+              MySql:=
+               MySql+' :USU_ALTERA, :DTA_ALTERA)';
+            End; // If Bt_ConEmpresasDML.Caption='Incluir' Then
+
+    MySql:=
+     MySql+' MATCHING (COD_FILIAL, COD_LINX)';
+    DMBelShop.SQLQuery1.Close;
+    DMBelShop.SQLQuery1.SQL.Clear;
+    DMBelShop.SQLQuery1.SQL.Add(MySql);
+
+    DMBelShop.SQLQuery1.Params.ParamByName('COD_FILIAL').AsString          :=DMBelShop.CDS_EmpresaCOD_FILIAL.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('ENDERECO_IP').AsString         :=DMBelShop.CDS_EmpresaENDERECO_IP.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('ENDERECO_IP_EXTERNO').AsString :=DMBelShop.CDS_EmpresaENDERECO_IP_EXTERNO.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('PASTA_BASE_DADOS').AsString    :=DMBelShop.CDS_EmpresaPASTA_BASE_DADOS.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('DES_BASE_DADOS').AsString      :=DMBelShop.CDS_EmpresaDES_BASE_DADOS.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('COD_EMP').AsString             :=DMBelShop.CDS_EmpresaCOD_EMP.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('RAZAO_SOCIAL').AsString        :=DMBelShop.CDS_EmpresaRAZAO_SOCIAL.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('TIP_EMP').AsString             :=DMBelShop.CDS_EmpresaTIP_EMP.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('DES_BAIRRO').AsString          :=DMBelShop.CDS_EmpresaDES_BAIRRO.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('DES_CIDADE').AsString          :=DMBelShop.CDS_EmpresaDES_CIDADE.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('COD_UF').AsString              :=DMBelShop.CDS_EmpresaCOD_UF.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('COD_CEP').AsString             :=Tira_Mascara(Me_ConEmpresasCEP.Text);
+    DMBelShop.SQLQuery1.Params.ParamByName('NUM_CNPJ').AsString            :=Tira_Mascara(Me_ConEmpresasCNPJ.Text);
+    DMBelShop.SQLQuery1.Params.ParamByName('INSCR_ESTADUAL').AsString      :=DMBelShop.CDS_EmpresaINSCR_ESTADUAL.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('DES_ENDERECO').AsString        :=DMBelShop.CDS_EmpresaDES_ENDERECO.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('NUM_ENDERECO').AsString        :=DMBelShop.CDS_EmpresaNUM_ENDERECO.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('COMPL_ENDERECO').AsString      :=DMBelShop.CDS_EmpresaCOMPL_ENDERECO.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('COD_LISTAPRE').AsString        :=DMBelShop.CDS_EmpresaCOD_LISTAPRE.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('IND_ATIVO').AsString           :=DMBelShop.CDS_EmpresaIND_ATIVO.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('NUM_SINDICATO').AsString       :=DMBelShop.CDS_EmpresaNUM_SINDICATO.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('NUM_ALVARA_MUN').AsString      :=DMBelShop.CDS_EmpresaNUM_ALVARA_MUN.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('COD_CONTABIL').AsString        :=DMBelShop.CDS_EmpresaCOD_CONTABIL.AsString;
+    DMBelShop.SQLQuery1.Params.ParamByName('IND_DOMINGO').AsString         :=DMBelShop.CDS_EmpresaIND_DOMINGO.AsString;
+
+    If Trim(DMBelShop.CDS_EmpresaQTD_TRANSF_DIA.AsString)<>'' Then
+     DMBelShop.SQLQuery1.Params.ParamByName('QTD_TRANSF_DIA').AsString:=DMBelShop.CDS_EmpresaQTD_TRANSF_DIA.AsString
+    Else
+     DMBelShop.SQLQuery1.Params.ParamByName('QTD_TRANSF_DIA').AsInteger:=0;
+
+    If Trim(DMBelShop.CDS_EmpresaCOD_LINX.AsString)<>'' Then
+     DMBelShop.SQLQuery1.Params.ParamByName('COD_LINX').AsString:=DMBelShop.CDS_EmpresaCOD_LINX.AsString
+    Else
+     DMBelShop.SQLQuery1.Params.ParamByName('COD_LINX').AsInteger:=0;
+
+    If Trim(DMBelShop.CDS_EmpresaCOD_CLI_LINX.AsString)<>'' Then
+     DMBelShop.SQLQuery1.Params.ParamByName('COD_CLI_LINX').AsString:=DMBelShop.CDS_EmpresaCOD_CLI_LINX.AsString
+    Else
+     DMBelShop.SQLQuery1.Params.ParamByName('COD_CLI_LINX').AsInteger:=0;
+
+    If Trim(DMBelShop.CDS_EmpresaCOD_TRINKS.AsString)<>'' Then
+     DMBelShop.SQLQuery1.Params.ParamByName('COD_TRINKS').AsString:=DMBelShop.CDS_EmpresaCOD_TRINKS.AsString
+    Else
+     DMBelShop.SQLQuery1.Params.ParamByName('COD_TRINKS').AsInteger:=0;
+
+    If Trim(DMBelShop.CDS_EmpresaDTA_LIM_TRANSF.AsString)<>'' Then
+     DMBelShop.SQLQuery1.Params.ParamByName('DTA_LIM_TRANSF').AsString:=DMBelShop.CDS_EmpresaDTA_LIM_TRANSF.AsString;
+
+    If Trim(DMBelShop.CDS_EmpresaDTA_ULT_ATUAL_VEND.AsString)<>'' Then
+     DMBelShop.SQLQuery1.Params.ParamByName('DTA_ULT_ATUAL_VEND').AsString:=DMBelShop.CDS_EmpresaDTA_ULT_ATUAL_VEND.AsString;
+
+    if Trim(DMBelShop.CDS_EmpresaDTA_INICIO_LINX.AsString)<>'' Then
+     DMBelShop.SQLQuery1.Params.ParamByName('DTA_INICIO_LINX').AsString:=DMBelShop.CDS_EmpresaDTA_INICIO_LINX.AsString;
+
+    If Trim(DMBelShop.CDS_EmpresaDTA_INVENTARIO_LINX.AsString)<>'' Then
+     DMBelShop.SQLQuery1.Params.ParamByName('DTA_INVENTARIO_LINX').AsString:=DMBelShop.CDS_EmpresaDTA_INVENTARIO_LINX.AsString;
 
     If Bt_ConEmpresasDML.Caption='Incluir' Then
      Begin
-       MySql:=' Insert into EMP_CONEXOES ('+
-              ' COD_FILIAL, ENDERECO_IP, ENDERECO_IP_EXTERNO, PASTA_BASE_DADOS,'+
-              ' DES_BASE_DADOS, COD_EMP, RAZAO_SOCIAL, TIP_EMP, DES_BAIRRO,'+
-              ' DES_CIDADE, COD_UF, COD_CEP, NUM_CNPJ, INSCR_ESTADUAL,'+
-              ' DES_ENDERECO, NUM_ENDERECO, COMPL_ENDERECO, COD_LISTAPRE, IND_ATIVO,'+
-              ' USU_INCLUI, NUM_SINDICATO, NUM_ALVARA_MUN, COD_CONTABIL,'+
-              ' COD_LINX, DTA_INICIO_LINX, DTA_INVENTARIO_LINX)'+
-
-              ' Values('+
-              ' :COD_FILIAL, :ENDERECO_IP, :ENDERECO_IP_EXTERNO, :PASTA_BASE_DADOS,'+
-              ' :DES_BASE_DADOS, :COD_EMP, :RAZAO_SOCIAL, :TIP_EMP, :DES_BAIRRO,'+
-              ' :DES_CIDADE, :COD_UF, :COD_CEP, :NUM_CNPJ, :INSCR_ESTADUAL,'+
-              ' :DES_ENDERECO, :NUM_ENDERECO, :COMPL_ENDERECO, :COD_LISTAPRE, :IND_ATIVO,'+
-              ' :USU_INCLUI, :NUM_SINDICATO, :NUM_ALVARA_MUN, :COD_CONTABIL,'+
-              ' :COD_LINX, :DTA_INICIO_LINX, :DTA_INVENTARIO_LINX)';
-       DMBelShop.SQLQuery1.Close;
-       DMBelShop.SQLQuery1.SQL.Clear;
-       DMBelShop.SQLQuery1.SQL.Add(MySql);
-
-       DMBelShop.SQLQuery1.Params.ParamByName('COD_FILIAL').AsString          :=DMBelShop.CDS_EmpresaCOD_FILIAL.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('ENDERECO_IP').AsString         :=DMBelShop.CDS_EmpresaENDERECO_IP.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('ENDERECO_IP_EXTERNO').AsString :=DMBelShop.CDS_EmpresaENDERECO_IP_EXTERNO.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('PASTA_BASE_DADOS').AsString    :=DMBelShop.CDS_EmpresaPASTA_BASE_DADOS.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('DES_BASE_DADOS').AsString      :=DMBelShop.CDS_EmpresaDES_BASE_DADOS.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('COD_EMP').AsString             :=DMBelShop.CDS_EmpresaCOD_EMP.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('RAZAO_SOCIAL').AsString        :=DMBelShop.CDS_EmpresaRAZAO_SOCIAL.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('TIP_EMP').AsString             :=DMBelShop.CDS_EmpresaTIP_EMP.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('DES_BAIRRO').AsString          :=DMBelShop.CDS_EmpresaDES_BAIRRO.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('DES_CIDADE').AsString          :=DMBelShop.CDS_EmpresaDES_CIDADE.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('COD_UF').AsString              :=DMBelShop.CDS_EmpresaCOD_UF.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('COD_CEP').AsString             :=Tira_Mascara(Me_ConEmpresasCEP.Text);
-       DMBelShop.SQLQuery1.Params.ParamByName('NUM_CNPJ').AsString            :=Tira_Mascara(Me_ConEmpresasCNPJ.Text);
-       DMBelShop.SQLQuery1.Params.ParamByName('INSCR_ESTADUAL').AsString      :=DMBelShop.CDS_EmpresaINSCR_ESTADUAL.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('DES_ENDERECO').AsString        :=DMBelShop.CDS_EmpresaDES_ENDERECO.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('NUM_ENDERECO').AsString        :=DMBelShop.CDS_EmpresaNUM_ENDERECO.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('COMPL_ENDERECO').AsString      :=DMBelShop.CDS_EmpresaCOMPL_ENDERECO.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('COD_LISTAPRE').AsString        :=DMBelShop.CDS_EmpresaCOD_LISTAPRE.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('IND_ATIVO').AsString           :=DMBelShop.CDS_EmpresaIND_ATIVO.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('NUM_SINDICATO').AsString       :=DMBelShop.CDS_EmpresaNUM_SINDICATO.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('NUM_ALVARA_MUN').AsString      :=DMBelShop.CDS_EmpresaNUM_ALVARA_MUN.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('COD_CONTABIL').AsString        :=DMBelShop.CDS_EmpresaCOD_CONTABIL.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('COD_LINX').AsString            :=DMBelShop.CDS_EmpresaCOD_LINX.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('DTA_INICIO_LINX').AsString     :=DMBelShop.CDS_EmpresaDTA_INICIO_LINX.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('DTA_INVENTARIO_LINX').AsString :=DMBelShop.CDS_EmpresaDTA_INVENTARIO_LINX.AsString;
-       DMBelShop.SQLQuery1.Params.ParamByName('USU_INCLUI').AsString          :=Cod_Usuario;
-       DMBelShop.SQLQuery1.ExecSQL;
+       DMBelShop.SQLQuery1.Params.ParamByName('USU_INCLUI').AsString:=Cod_Usuario;
+       DMBelShop.SQLQuery1.Params.ParamByName('DTA_INCLUI').AsDate  :=Now;
      End
-    Else // If Bt_ConEmpresasDML.Caption='Incluir' Then
+    Else
      Begin
-       MySql:='Update EMP_Conexoes Set'+
-              ' COD_FILIAL='+QuotedStr(Dbe_ConEmpresasCodFilial.Text)+', '+
-              ' COD_EMP='+QuotedStr(Dbe_ConEmpresasCodEmp.Text)+', '+
-              ' ENDERECO_IP='+QuotedStr(Dbe_ConEmpresasIP.Text)+', '+
-              ' ENDERECO_IP_EXTERNO='+QuotedStr(Dbe_ConEmpresasIPExterno.Text)+', '+
-              ' PASTA_BASE_DADOS='+QuotedStr(Dbe_ConEmpresasPastaBD.Text)+', '+
-              ' DES_BASE_DADOS='+QuotedStr(Dbe_ConEmpresasBaseDados.Text)+', '+
-              ' RAZAO_SOCIAL='+QuotedStr(Dbe_ConEmpresasRazaoSocial.Text)+', '+
-              ' TIP_EMP='+QuotedStr(Dbcb_ConEmpresasTipo.Text)+', '+
-              ' DES_BAIRRO='+QuotedStr(Dbe_ConEmpresasBairro.Text)+', '+
-              ' DES_CIDADE='+QuotedStr(Dbe_ConEmpresasMunicipio.Text)+', '+
-              ' COD_UF='+QuotedStr(Dbe_ConEmpresasUF.Text)+', '+
-              ' COD_CEP='+QuotedStr(Tira_Mascara(Me_ConEmpresasCEP.Text))+', '+
-              ' NUM_CNPJ='+QuotedStr(Tira_Mascara(Me_ConEmpresasCNPJ.Text))+', '+
-              ' INSCR_ESTADUAL='+QuotedStr(Dbe_ConEmpresasInscrEstadual.Text)+', '+
-              ' DES_ENDERECO='+QuotedStr(Dbe_ConEmpresasEndereco.Text)+', '+
-              ' NUM_ENDERECO='+QuotedStr(Dbe_ConEmpresasNumero.Text)+', '+
-              ' COMPL_ENDERECO='+QuotedStr(Dbe_ConEmpresasComplemento.Text)+', '+
-              ' IND_ATIVO='+QuotedStr(Dbcb_ConEmpresasAtivo.Text)+', '+
-              ' COD_LISTAPRE='+QuotedStr(Dbe_ConEmpresasCodLP.Text)+', '+
-              ' USU_ALTERA='+QuotedStr(Cod_Usuario)+', '+
-              ' DTA_ALTERA=Current_Date'+', '+
-              ' NUM_SINDICATO='+QuotedStr(Dbe_ConEmpresasNumSindicato.Text)+', '+
-              ' NUM_ALVARA_MUN='+QuotedStr(Dbe_ConEmpresasNumAlvaraMun.Text)+', '+
-              ' COD_CONTABIL='+QuotedStr(Dbe_ConEmpresasCodContabil.Text)+', ';
-
-              If (Trim(EdtDta_ConEmpresasInicioLinx.Text)<>'') and (Trim(EdtDta_ConEmpresasInicioLinx.Text)<>'/  /') Then
-               Begin
-                 MySql:=
-                  MySql+ ' DTA_INICIO_LINX='+QuotedStr(f_Troca('/','.',f_Troca('-','.',EdtDta_ConEmpresasInicioLinx.Text)))+', ';
-               End
-              Else
-               Begin
-                 MySql:=
-                  MySql+ ' DTA_INICIO_LINX=NULL, ';
-               End;
-
-              If (Trim(EdtDta_ConEmpresasInventLinx.Text)<>'') and (Trim(EdtDta_ConEmpresasInventLinx.Text)<>'/  /') Then
-               Begin
-                 MySql:=
-                  MySql+ ' DTA_INVENTARIO_LINX='+QuotedStr(f_Troca('/','.',f_Troca('-','.',EdtDta_ConEmpresasInventLinx.Text)))+', ';
-               End
-              Else
-               Begin
-                 MySql:=
-                  MySql+ ' DTA_INVENTARIO_LINX=NULL, ';
-               End;
-
-       MySql:=
-        MySql+' COD_LINX='+QuotedStr(Dbe_ConEmpresasCodLojaLinx.Text)+
-
-              ' Where Cod_Emp='+
-              QuotedStr(DMBelShop.CDS_Empresa.FieldByName('Cod_Emp').OldValue)+
-              ' And Cod_Filial='+
-              QuotedStr(DMBelShop.CDS_Empresa.FieldByName('Cod_Filial').OldValue);
-       DMBelShop.SQLC.Execute(MySql,nil,nil);
+       DMBelShop.SQLQuery1.Params.ParamByName('USU_ALTERA').AsString:=Cod_Usuario;
+       DMBelShop.SQLQuery1.Params.ParamByName('DTA_ALTERA').AsDate  :=Now;
      End; // If Bt_ConEmpresasDML.Caption='Incluir' Then
+    DMBelShop.SQLQuery1.ExecSQL;
 
     // Acerta Conexoes =========================================================
     If DMVirtual.CDS_V_EmpConexoes.Active Then
     Begin
-      If Trim(DMBelShop.CDS_Empresa.FieldByName('Cod_Emp').OldValue)<>'' Then
-       i:=DMBelShop.CDS_Empresa.FieldByName('Cod_Emp').OldValue
+      If Trim(DMBelShop.CDS_EmpresaCOD_EMP.OldValue)<>'' Then
+       i:=DMBelShop.CDS_EmpresaCod_Emp.OldValue
       Else
-       i:=DMBelShop.CDS_Empresa.FieldByName('Cod_Emp').NewValue;
+       i:=DMBelShop.CDS_EmpresaCod_Emp.NewValue;
 
       // Localiza Conexão da Empresa ----------------------------------
       bDesconecta:=False;
@@ -22785,7 +22834,7 @@ begin
   DMBelShop.CDS_Empresa.Close;
   DMBelShop.CDS_Empresa.IndexFieldNames:='';
   DMBelShop.CDS_Empresa.Open;
-  DMBelShop.CDS_Empresa.Locate('Cod_Emp',cod,[]);
+  DMBelShop.CDS_Empresa.Locate('COD_LINX',icod,[]);
 
   LiberaCamposSidicom(False);
 
@@ -24975,7 +25024,9 @@ begin
   If DMBelShop.CDS_AComprarOCs.IsEmpty Then
    Exit;
 
+  //============================================================================
   // Edit OC ===================================================================
+  //============================================================================
   If (Bt_GeraOCImpEditOC.Caption='Editar OC') Or (Bt_GeraOCImpEditOC.Caption='Editar TR') Then
   Begin
     Screen.Cursor:=crAppStart;
@@ -25074,8 +25125,12 @@ begin
 
     Screen.Cursor:=crDefault;
   End; // If Bt_GeraOCImpEditOC.Caption='Editar OC' Then
+  // Edit OC ===================================================================
+  //============================================================================
 
+  //============================================================================
   // Imprime OC ================================================================
+  //============================================================================
   If Bt_GeraOCImpEditOC.Caption='Imprimir OC' Then
   Begin
     If DMBelShop.CDS_AComprarOCsIND_OC_GERADA.AsString='N' Then
@@ -25224,6 +25279,8 @@ begin
     OdirPanApres.Visible:=False;
     Refresh;
   End; // If Bt_GeraOCImpEditOC.Caption='Imprimir OC' Then
+  // Imprime OC ================================================================
+  //============================================================================
 
 end;
 
@@ -41163,13 +41220,30 @@ begin
 
 end;
 
-procedure TFrmBelShop.SubMenuFinanExpImpArquivosProSoft1Click(Sender: TObject);
+procedure TFrmBelShop.SubMenuFinanExpImpArquivosProSoftClick(Sender: TObject);
 begin
   // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
   FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
   AbreSolicitacoes(2);
 
-  FrmSolicitacoes.DtEdt_ProSoftImpDtaLimite.Text:='01/05/2015';
+  If (Sender is TMenuItem) Then
+  Begin
+    If (Sender as TMenuItem).Name='SubMenuFinanExpImpArquivosProSoft' Then
+    Begin
+      FrmSolicitacoes.DtEdt_ProSoftImpDtaLimite.Text:='01/05/2015';
+    End;
+
+    If (Sender as TMenuItem).Name='SubMenuFinanExpImpImportaTrinks' Then
+    Begin
+      FrmSolicitacoes.Ts_ProSoftImpArquivo.Caption:='Importa Arquivo Trinks';
+      FrmSolicitacoes.DtEdt_ProSoftImpDtaLimite.Visible:=False;
+      FrmSolicitacoes.Label5.Visible:=False;
+      FrmSolicitacoes.Gb_ProSoftImpArquivoSalvar.Visible:=False;
+      FrmSolicitacoes.Gb_ProSoftImpArquivo.Caption:=' Informe a Pasta e o Arquivo de TRINKS (Arquivo.CSV) a Importar ';
+    End;
+    FrmSolicitacoes.sgSender:=(Sender as TMenuItem).Name;
+  End; // If (Sender is TMenuItem) Then
+
   FrmSolicitacoes.ShowModal;
 
   FreeAndNil(FrmSolicitacoes);

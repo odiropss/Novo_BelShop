@@ -14276,10 +14276,11 @@ begin
   // Busca Movtos Web Services: Sangria/Suprimento Linx ========================
   //============================================================================
 
+  // OdirApagar - 13/09/2018 - Retirar GeoBeauty
   //============================================================================
   // Atualiza Variáveis Web Services GeoBeauty =================================
   //============================================================================
-  GeoBeautyWebServicesVariaveis;
+  // GeoBeautyWebServicesVariaveis;
   // Atualiza Variáveis Web Services GeoBeauty =================================
   //============================================================================
 
@@ -14305,10 +14306,11 @@ begin
   // Insere Novos Pagtos se Buscou Dados no GeoBeauty ==========================
   //============================================================================
 
+  // OdirApagar - 13/09/2018 - Retirar GeoBeauty
   //============================================================================
   // Busca Movtos Web Services: Insere Fechamentos GeoBeauty ===================
   //============================================================================
-  ConcDepositoWebServiceGeoBeautyFechamentos;
+  // ConcDepositoWebServiceGeoBeautyFechamentos;
   // Busca Movtos Web Services: Fechamentos GeoBeauty ==========================
   //============================================================================
 

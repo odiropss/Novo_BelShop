@@ -694,6 +694,11 @@ type
     // OCComparaPedidos
     procedure OCComparaPedidosDrawColumnCell(Sender: TObject; const Rect: TRect;
                       DataCol: Integer; Column: TColumn; State: TGridDrawState);
+
+
+    // AvariasFornecedor
+    procedure AvariasFornecedorDrawColumnCell(Sender: TObject; const Rect: TRect;
+                      DataCol: Integer; Column: TColumn; State: TGridDrawState);
     ////////////////////////////////////////////////////////////////////////////
 
     // ORDEM DE COMPRA /////////////////////////////////////////////////////////
@@ -983,6 +988,7 @@ type
     procedure AppMessage(var Msg: TMSG; var HAndled: Boolean);
   public
     { Public declarations }
+    sgSender: String; // Usado para Determinar Qual o Componente SENDER
 
     bgFechaRepos, // Se Deve Fechar Digitação de Alteração de Qtd de reposição Depois de Salvar...
     bgOK: Boolean;
@@ -1007,7 +1013,7 @@ type
 
 type
    THackDBGrid = class(TDBGrid);
-  
+
 const
   // Show Hint em Forma de Balão
   TTS_BALLOON = $40;
@@ -1027,7 +1033,7 @@ var
 
   GridNew: TDBGrid;
 
-  iTipo: Integer;
+  igTipo: Integer; // Tipo de Eventos no Calendario
   PrimeiroDiaMes: TDateTime;
 
   sgDtaI, sgDtaF: String;
@@ -1162,8 +1168,11 @@ Begin
 
     // Busca Posição de Estoque dos Produtos da Loja ----------------
     MySql:=' SELECT'+
-           ' TRIM(lj.nome_emp)||'';''||TRIM(pr.cod_barra)||'';''||TRIM(pd.preco_custo)||'';''||'+
-           ' TRIM(pd.preco_venda)||'';''||CAST(COALESCE(pd.quantidade,0) AS INTEGER)||'';''||'+
+           ' TRIM(REPLACE(lj.nome_emp, ''-'', ''|''))||'';''||'+
+           ' TRIM(pr.cod_barra)||'';''||'+
+           ' REPLACE(TRIM(pd.preco_custo), ''.'', '','')||'';''||'+
+           ' REPLACE(TRIM(pd.preco_venda), ''.'', '','')||'';''||'+
+           ' CAST(COALESCE(pd.quantidade,0) AS INTEGER)||'';''||'+
            ' TRIM(pr.desativado) LINHA'+
 
            ' FROM W_PROD_LOJA pl, LINXLOJAS lj, LINXPRODUTOS pr, LINXPRODUTOSDETALHES pd'+
@@ -1183,9 +1192,12 @@ Begin
   If (Rb_AudPosEstoque.Checked) And (Rb_AudPosEstoqueEmpresa.Checked) Then
   Begin
     MySql:=' SELECT'+
-           ' TRIM(lj.nome_emp)||'';''||TRIM(pr.cod_barra)||'';''||TRIM(pd.preco_custo)||'';''||'+
-           ' TRIM(pd.preco_venda)||'';''||CAST(COALESCE(pd.quantidade,0) AS INTEGER)||'';''||'+
-           ' TRIM(pr.desativado)|| LINHA'+
+           ' TRIM(REPLACE(lj.nome_emp, ''-'', ''|''))||'';''||'+
+           ' TRIM(pr.cod_barra)||'';''||'+
+           ' REPLACE(TRIM(pd.preco_custo), ''.'', '','')||'';''||'+
+           ' REPLACE(TRIM(pd.preco_venda), ''.'', '','')||'';''||'+
+           ' CAST(COALESCE(pd.quantidade,0) AS INTEGER)||'';''||'+
+           ' TRIM(pr.desativado) LINHA'+
 
            ' FROM LINXPRODUTOSDETALHES pd, LINXPRODUTOS pr, LINXLOJAS lj'+
 
@@ -2622,6 +2634,30 @@ Begin
   GridNew.DefaultDrawDataCell(Rect,Column.Field,state);
 
 End; // OCComparaPedidos =======================================================
+
+// AvariasFornecedor ===========================================================
+procedure TFrmSolicitacoes.AvariasFornecedorDrawColumnCell(Sender: TObject; const Rect: TRect;
+                      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+Begin
+
+  If not (gdSelected in State) Then
+  Begin
+    if DMBelShop.CDS_Busca1.FieldByName('Ordem').AsInteger in [0, 2, 6] Then
+    Begin
+      GridNew.Canvas.Brush.Color:=clYellow;
+      GridNew.Canvas.Font.Style:=[fsBold];
+      GridNew.Canvas.Font.Color:=clBlue;
+    End;
+  End;
+
+  GridNew.Canvas.FillRect(Rect);
+  GridNew.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  GridNew.Columns[1].Alignment:=taRightJustify;
+  GridNew.Columns[2].Alignment:=taRightJustify;
+  GridNew.Columns[3].Alignment:=taRightJustify;
+
+End; // AvariasFornecedor ======================================================
 // EVENTOS EM TEMPO DE EXCUÇÂO - FIM ///////////////////////////////////////////
 
 // PARAMETROS do SISTEMA - Consiste Parametros do Sistema //////////////////////
@@ -3388,6 +3424,9 @@ Begin
   GridNew.Options:=[dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
   GridNew.DataSource:=Dts;
 
+  iFormWidth:=0;
+  GridNew.TitleFont.Style:=[];
+
   If sNomeObjeto='Corredores' Then
   Begin
     GridNew.TitleFont.Style:=[fsBold];
@@ -3458,6 +3497,31 @@ Begin
     GridNew.Columns[18].Title.Alignment:=taRightJustify;
     GridNew.Columns[18].Width:=130;
   End; // If sNomeObjeto='PopM_GeraOC' Then
+
+  If sNomeObjeto='Apresenta Avarias' Then
+  Begin
+    GridNew.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection,dgConfirmDelete,dgCancelOnExit];
+    GridNew.OnDrawColumnCell:=AvariasFornecedorDrawColumnCell;
+    GridNew.TitleFont.Style:=[fsBold];
+    GridNew.Font.Style:=[];
+
+    GridNew.Columns[4].Visible:=False;
+
+    GridNew.Columns[0].Width:=300;
+    GridNew.Columns[0].Title.Caption:='Nome do Produto';
+
+    GridNew.Columns[1].Width:=80;
+    GridNew.Columns[1].Title.Caption:='Qtd Avarias';
+    GridNew.Columns[1].Title.Alignment:=taRightJustify;
+
+    GridNew.Columns[2].Width:=80;
+    GridNew.Columns[2].Title.Caption:='Vlr Unitário';
+    GridNew.Columns[2].Title.Alignment:=taRightJustify;
+
+    GridNew.Columns[3].Width:=80;
+    GridNew.Columns[3].Title.Caption:='Vlr Total';
+    GridNew.Columns[3].Title.Alignment:=taRightJustify;
+  End; // If sNomeObjeto='Apresenta Avarias' Then
 
   If Not bSalvar Then
    Bt_QualquerCoisaSalvar.Visible:=False;
@@ -3913,6 +3977,7 @@ begin
   Bt_SelecionarVoltarClick
   Bt_GruposLojasVoltarClick
   Bt_SolicExpVoltarClick
+  Bt_ProSoftImpVoltar
   }
   bgOK:=False;
   bgProcessar:=False;
@@ -4278,32 +4343,32 @@ begin
         end;
 
         // Se existir evento na data
-        iTipo:=5;
+        igTipo:=5;
         If CDS_.Locate('Data',DateToStr(Data),[]) Then
-         iTipo:=CDS_.FieldByName('COR').AsInteger;
+         igTipo:=CDS_.FieldByName('COR').AsInteger;
 
         if mem_FinanFechaCaixa.Lines.IndexOf(DateToStr(Data)) >= 0 then
         begin
           if gdSelected in State then
           begin
-            If iTipo<>5 Then
+            If igTipo<>5 Then
             Begin
-              Canvas.Brush.Color :=ArrayCores[iTipo]; //Odir
+              Canvas.Brush.Color :=ArrayCores[igTipo]; //Odir
               Canvas.Font.Color  :=clWhite;     //Odir
 
-              If (iTipo in [3..4]) then
+              If (igTipo in [3..4]) then
                Canvas.Font.Color  :=clWindowText;     //Odir
 
             End;
           end
           else // if gdSelected in State then
           begin
-            If iTipo<>5 Then
+            If igTipo<>5 Then
             Begin
-              Canvas.Brush.Color :=ArrayCores[iTipo]; //Odir
+              Canvas.Brush.Color :=ArrayCores[igTipo]; //Odir
               Canvas.Font.Color  :=clWhite;     //Odir
 
-              If (iTipo in [3..4]) then
+              If (igTipo in [3..4]) then
                Canvas.Font.Color  :=clWindowText;     //Odir
             End;
           end; // if gdSelected in State then
@@ -4848,7 +4913,7 @@ begin
       Exit;
     End; // If Trim(EdtAudDescArquivo.Text)='' Then
 
-    If msg('O Arquivo DESIINO Esta CORRETO ?','C')=2 Then
+    If msg('O Arquivo DESTINO Esta CORRETO ?','C')=2 Then
     Begin
       Bt_AudBuscaArq.SetFocus;
       Exit;
@@ -6761,66 +6826,88 @@ begin
   With OpenDialog do
   Begin
     Options := [ofPathMustExist, ofHideReadOnly, ofOverwritePrompt];
-    DefaultExt := 'TXT;txt';
-    Filter := 'Arquivo TXT (*.txt)|*.txt';
     FilterIndex := 1;
-    Title := 'Busca Arquivo Texto para ProSoft';
+
+    // Arquivo ProSoft
+    If sgSender='SubMenuFinanExpImpArquivosProSoft' Then
+    Begin
+      DefaultExt := 'TXT;txt';
+      Filter := 'Arquivo TXT (*.txt)|*.TXT';
+      Title := 'Busca Arquivo Texto para ProSoft';
+    End;
+
+    // Arquivo Trinks
+    If sgSender='SubMenuFinanExpImpImportaTrinks' Then
+    Begin
+      DefaultExt := 'CSV;csv';
+      Filter := 'Arquivo CSV (*.csv)|*.CSV';
+      Title := 'Busca Arquivo CSV Trinks';
+    End;
 
     If Execute then
      Begin
        EdtProSoftImpPastaArquivo.Text:=OpenDialog.FileName;
        EditorProSoftImpArquivo.Lines.LoadFromFile(EdtProSoftImpPastaArquivo.Text);
 
-       // Monta Nome do Arquivo -------------------------------------
-       tsArquivo:=TStringList.Create;
+       // Arquivo ProSoft
+       If sgSender='SubMenuFinanExpImpArquivosProSoft' Then
+       Begin
+         // Monta Nome do Arquivo -------------------------------------
+         tsArquivo:=TStringList.Create;
 
-       Try
-         tsArquivo.LoadFromFile(EdtProSoftImpPastaArquivo.Text);
+         Try
+           tsArquivo.LoadFromFile(EdtProSoftImpPastaArquivo.Text);
 
-         For i := 0 to tsArquivo.Count - 1 do
-         Begin
-           sLinha:=AnsiUpperCase(Trim(tsArquivo[i]));
-
-           If (AnsiContainsStr(sLinha, 'EMPRESA: ')) Then
+           For i := 0 to tsArquivo.Count - 1 do
            Begin
-             iPosIni:=pos('Empresa:',sLinha);
-             iPosIni:=iPosIni+length('Empresa: ');
-             iPosFin:=pos('-',sLinha);
-             sCodContabil:=Trim(copy(sLinha,iPosIni,iPosFin-iPosIni));
+             sLinha:=AnsiUpperCase(Trim(tsArquivo[i]));
 
-             // Busca Lojas =============================================================
-             MySql:=' Select e.COD_FILIAL, e.RAZAO_SOCIAL, e.COD_CONTABIL'+
-                    ' From EMP_CONEXOES e'+
-                    ' Where e.COD_CONTABIL='+QuotedStr(sCodContabil);
-             DMBelShop.CDS_BuscaRapida.Close;
-             DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-             DMBelShop.CDS_BuscaRapida.Open;
-
-             If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Filial').AsString)='' Then
+             If (AnsiContainsStr(sLinha, 'EMPRESA: ')) Then
              Begin
-               msg('Loja NÃO Encontrada com Código'+cr+'Contabil Igual a '+sCodContabil+' !!', 'A');
+               iPosIni:=pos('Empresa:',sLinha);
+               iPosIni:=iPosIni+length('Empresa: ');
+               iPosFin:=pos('-',sLinha);
+               sCodContabil:=Trim(copy(sLinha,iPosIni,iPosFin-iPosIni));
+
+               // Busca Lojas ==================================================
+               MySql:=' Select e.COD_FILIAL, e.RAZAO_SOCIAL, e.COD_CONTABIL'+
+                      ' From EMP_CONEXOES e'+
+                      ' Where e.COD_CONTABIL='+QuotedStr(sCodContabil);
                DMBelShop.CDS_BuscaRapida.Close;
-               EdtProSoftImpPastaArquivo.SetFocus;
-               Exit;
-             End; // If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Filial').AsString)='' Then
+               DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+               DMBelShop.CDS_BuscaRapida.Open;
 
-             sgNomeArq:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Filial').AsString+'_'+
-                        DMBelShop.CDS_BuscaRapida.FieldByName('Razao_Social').AsString;
-             sgNomeArq:=f_Troca('|','',sgNomeArq);
-             sgNomeArq:=f_Troca('  ',' ',sgNomeArq);
+               If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Filial').AsString)='' Then
+               Begin
+                 msg('Loja NÃO Encontrada com Código'+cr+'Contabil Igual a '+sCodContabil+' !!', 'A');
+                 DMBelShop.CDS_BuscaRapida.Close;
+                 EdtProSoftImpPastaArquivo.SetFocus;
+                 Exit;
+               End; // If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Filial').AsString)='' Then
 
+               sgNomeArq:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Filial').AsString+'_'+
+                          DMBelShop.CDS_BuscaRapida.FieldByName('Razao_Social').AsString;
+               sgNomeArq:=f_Troca('|','',sgNomeArq);
+               sgNomeArq:=f_Troca('  ',' ',sgNomeArq);
+
+               DMBelShop.CDS_BuscaRapida.Close;
+
+               Break;
+             End; // If (AnsiContainsStr(sLinha, 'EMPRESA: ')) Then
+           End; // For i := 0 to tsArquivo.Count - 1 do
+         Finally // Try
+           Begin
              DMBelShop.CDS_BuscaRapida.Close;
+             FreeAndNil(tsArquivo);
+           End;
+         End; // Try
+         FreeAndNil(tsArquivo);
+       End; // If sgSender='SubMenuFinanExpImpArquivosProSoft' Then
 
-             Break;
-           End; // If (AnsiContainsStr(sLinha, 'EMPRESA: ')) Then
-         End; // For i := 0 to tsArquivo.Count - 1 do
-       Finally // Try
-         Begin
-           DMBelShop.CDS_BuscaRapida.Close;
-           FreeAndNil(tsArquivo);
-         End;
-       End; // Try
-       FreeAndNil(tsArquivo);
+       If msg('O Arquivo Selecionado Esta CORRETO ??','C')=2 Then
+       Begin
+         EdtProSoftImpPastaArquivo.Clear;
+       End; //If msg('O Arquivo Selecionado Esta CORRETO ??','C')=2 Then
      End
     Else // if Execute then
      Begin
@@ -7466,7 +7553,7 @@ begin
     End; // If Trim((Sender as TJvXPButton).Name)='Bt_SalaoRelImprime' Then
 
     // Salva em Memória Resultado dos Corredores de Reposição ==================
-    If Trim((Sender as TJvXPButton).Name)='Bt_ReposLojasResultados' Then
+    If (Trim((Sender as TJvXPButton).Name)='Bt_ReposLojasResultados') Or (Ts_QualquerCoisa.Caption='AVARIAS') Then
     Begin
       DBGridClipboard(GridNew);
       bFechar:=False;

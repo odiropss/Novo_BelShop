@@ -1,5 +1,8 @@
 {
-Pasta para Instalação em: C:\SolicitacaoTransferencias\
+-- Instalador em:
+        - C:\Program Files (x86)\Inno Setup 5\Compil32.exe"
+Pasta para Instalação em:
+        - C:\SolicitacaoTransferencias\
 }
 
 unit UFrmSolicTransf;
@@ -926,6 +929,10 @@ end;
 
 procedure TFrmSolicTransf.FormShow(Sender: TObject);
 begin
+  If sgLojaLinx<>'2' Then
+   Ts_NFeCheckOut.TabVisible:=False;
+
+
   // Cor Form
   CorCaptionForm.Active:=False;
   CorCaptionForm.Active:=True;
@@ -1117,6 +1124,9 @@ begin
   EdtDescProduto.Clear;
   Lab_Unidade.Caption:='';
   Lab_UnidadeCD.Caption:='';
+  EdtQtdEstoque.Clear;
+  EdtQtdEstoqueCD.Clear;
+  EdtQtdTransf.Clear;
 end;
 
 procedure TFrmSolicTransf.Bt_BuscaProdtudoClick(Sender: TObject);
@@ -1325,6 +1335,13 @@ begin
     Exit;
   End;
 
+  If EdtQtdTransf.AsInteger>EdtQtdEstoqueCD.AsInteger Then
+  Begin
+    msg('Quantidade Solicitada é Maior'+cr+cr+'Que Estoque Disponível no CD !!','X');
+    EdtQtdTransf.SetFocus;
+    Exit;
+  End;
+
   OdirPanApres.Caption:='AGUARDE !! Incluindo Produto na Solicitação';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSolicTransf.Width-OdirPanApres.Width)/2));
@@ -1441,6 +1458,9 @@ begin
 
   If msg('Excluir o Produto Selecionado ?'+cr+DMSolicTransf.CDS_SolicitacaoNOME.AsString,'C')=2 Then
    Exit;
+
+  EdtCodProdLinxChange(Self);
+  EdtCodProdLinx.Clear;
 
   OdirPanApres.Caption:='AGUARDE !! Excluindo Produto da Solicitação...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
@@ -1594,80 +1614,82 @@ begin
   If Not DMSolicTransf.SQLC.Connected Then
    DMSolicTransf.SQLC.Connected:=True;
 
-  // Busca Produto Caixa Embarque ==============================================
-  MySql:=' SELECT Trim(pr.codgrupo) CodGrupo, Trim(pr.codsubgrupo) CodSubGrupo'+
-         ' FROM PRODUTO pr'+
-         ' WHERE pr.codproduto='+QuotedStr(sgCodProdSidicom);
-  DMSolicTransf.CDS_Busca.Close;
-  DMSolicTransf.SQLQ_Busca.Close;
-  DMSolicTransf.SQLQ_Busca.SQL.Clear;
-  DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
-  DMSolicTransf.CDS_Busca.Open;
-  sCodGrupo   :=DMSolicTransf.CDS_Busca.FieldByName('CodGrupo').AsString;
-  sCodSubGrupo:=DMSolicTransf.CDS_Busca.FieldByName('CodSubGrupo').AsString;
-  DMSolicTransf.CDS_Busca.Close;
-
-  MySql:=' SELECT cp.Cod_Produto, cp.Cod_Grupo, cp.Cod_Subgrupo,'+
-         '        cp.Qtd_Caixa, cp.Per_Corte'+
-         ' FROM PROD_CAIXA_CD cp'+
-         ' WHERE ((cp.cod_produto='+QuotedStr(sgCodProdSidicom)+')'+
-         '        OR'+
-         '        ((cp.cod_grupo='+QuotedStr(sCodGrupo)+') and (cp.cod_subgrupo is null))'+
-         '        OR'+
-         '        ((cp.cod_grupo='+QuotedStr(sCodGrupo)+') and (cp.cod_subgrupo='+QuotedStr(sCodSubGrupo)+')))'+
-         ' ORDER BY 1 desc, 4 desc';
-  DMSolicTransf.CDS_Busca.Close;
-  DMSolicTransf.SQLQ_Busca.Close;
-  DMSolicTransf.SQLQ_Busca.SQL.Clear;
-  DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
-  DMSolicTransf.CDS_Busca.Open;
-
-  sQtdCaixa:=DMSolicTransf.CDS_Busca.FieldByName('Qtd_Caixa').AsString;
-  DMSolicTransf.CDS_Busca.Close;
-
   bMultiplo:=False;
-  If Trim(sQtdCaixa)<>'' Then
-  Begin
-    bMultiplo:=True;
-    If StrToInt(sQtdCaixa)<>igQtdMaxProd Then
-    Begin
-      MessageBox(Application.Handle, Pchar('PRODUTO com CAIXA de Transferência'+cr+
-                                           'com '+sQtdCaixa+' Produtos por Caixa'), 'Aviso', MB_ICONEXCLAMATION);
 
-      If EdtQtdTransf.AsInteger<StrToInt(sQtdCaixa) Then
-       Begin
-         EdtQtdTransf.AsInteger:=StrToInt(sQtdCaixa)
-       End
-      Else If EdtQtdTransf.AsInteger>StrToInt(sQtdCaixa) Then // Calcula Multiplo
-       Begin
-         iQtdMultiplo:=StrToInt(sQtdCaixa);
-         While bMultiplo do
-         Begin
-           If iQtdMultiplo>igQtdMaxProd Then
-           Begin
-             EdtQtdTransf.AsInteger:=iQtdMultiplo;
-             Break;
-           End;
-
-           If EdtQtdTransf.AsInteger<iQtdMultiplo Then
-           Begin
-             EdtQtdTransf.AsInteger:=iQtdMultiplo;
-             Break;
-           End;
-
-           If EdtQtdTransf.AsInteger=iQtdMultiplo Then
-            Begin
-              Break;
-            End
-           Else
-            Begin
-              iQtdMultiplo:=iQtdMultiplo+StrToInt(sQtdCaixa);
-            End;
-         End; // While bMultiplo do
-       End; // If EdtQtdTransf.AsInteger<StrToInt(sQtdCaixa) Then
-    End; // If StrToInt(sQtdCaixa)<>igQtdMaxProd Then
-    Bt_Incluir.SetFocus;
-  End; // If Trim(sQtdCaixa)<>'' Then
+// Retirado Controle de Qtd/Cx - 27/09/2018 ====================================
+//  // Busca Produto Caixa Embarque ==============================================
+//  MySql:=' SELECT Trim(pr.codgrupo) CodGrupo, Trim(pr.codsubgrupo) CodSubGrupo'+
+//         ' FROM PRODUTO pr'+
+//         ' WHERE pr.codproduto='+QuotedStr(sgCodProdSidicom);
+//  DMSolicTransf.CDS_Busca.Close;
+//  DMSolicTransf.SQLQ_Busca.Close;
+//  DMSolicTransf.SQLQ_Busca.SQL.Clear;
+//  DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
+//  DMSolicTransf.CDS_Busca.Open;
+//  sCodGrupo   :=DMSolicTransf.CDS_Busca.FieldByName('CodGrupo').AsString;
+//  sCodSubGrupo:=DMSolicTransf.CDS_Busca.FieldByName('CodSubGrupo').AsString;
+//  DMSolicTransf.CDS_Busca.Close;
+//
+//  MySql:=' SELECT cp.Cod_Produto, cp.Cod_Grupo, cp.Cod_Subgrupo,'+
+//         '        cp.Qtd_Caixa, cp.Per_Corte'+
+//         ' FROM PROD_CAIXA_CD cp'+
+//         ' WHERE ((cp.cod_produto='+QuotedStr(sgCodProdSidicom)+')'+
+//         '        OR'+
+//         '        ((cp.cod_grupo='+QuotedStr(sCodGrupo)+') and (cp.cod_subgrupo is null))'+
+//         '        OR'+
+//         '        ((cp.cod_grupo='+QuotedStr(sCodGrupo)+') and (cp.cod_subgrupo='+QuotedStr(sCodSubGrupo)+')))'+
+//         ' ORDER BY 1 desc, 4 desc';
+//  DMSolicTransf.CDS_Busca.Close;
+//  DMSolicTransf.SQLQ_Busca.Close;
+//  DMSolicTransf.SQLQ_Busca.SQL.Clear;
+//  DMSolicTransf.SQLQ_Busca.SQL.Add(MySql);
+//  DMSolicTransf.CDS_Busca.Open;
+//
+//  sQtdCaixa:=DMSolicTransf.CDS_Busca.FieldByName('Qtd_Caixa').AsString;
+//  DMSolicTransf.CDS_Busca.Close;
+//
+//  If Trim(sQtdCaixa)<>'' Then
+//  Begin
+//    bMultiplo:=True;
+//    If StrToInt(sQtdCaixa)<>igQtdMaxProd Then
+//    Begin
+//      MessageBox(Application.Handle, Pchar('PRODUTO com CAIXA de Transferência'+cr+
+//                                           'com '+sQtdCaixa+' Produtos por Caixa'), 'Aviso', MB_ICONEXCLAMATION);
+//
+//      If EdtQtdTransf.AsInteger<StrToInt(sQtdCaixa) Then
+//       Begin
+//         EdtQtdTransf.AsInteger:=StrToInt(sQtdCaixa)
+//       End
+//      Else If EdtQtdTransf.AsInteger>StrToInt(sQtdCaixa) Then // Calcula Multiplo
+//       Begin
+//         iQtdMultiplo:=StrToInt(sQtdCaixa);
+//         While bMultiplo do
+//         Begin
+//           If iQtdMultiplo>igQtdMaxProd Then
+//           Begin
+//             EdtQtdTransf.AsInteger:=iQtdMultiplo;
+//             Break;
+//           End;
+//
+//           If EdtQtdTransf.AsInteger<iQtdMultiplo Then
+//           Begin
+//             EdtQtdTransf.AsInteger:=iQtdMultiplo;
+//             Break;
+//           End;
+//
+//           If EdtQtdTransf.AsInteger=iQtdMultiplo Then
+//            Begin
+//              Break;
+//            End
+//           Else
+//            Begin
+//              iQtdMultiplo:=iQtdMultiplo+StrToInt(sQtdCaixa);
+//            End;
+//         End; // While bMultiplo do
+//       End; // If EdtQtdTransf.AsInteger<StrToInt(sQtdCaixa) Then
+//    End; // If StrToInt(sQtdCaixa)<>igQtdMaxProd Then
+//    Bt_Incluir.SetFocus;
+//  End; // If Trim(sQtdCaixa)<>'' Then
 
   If (Not bMultiplo) And (EdtQtdTransf.AsInteger>igQtdMaxProd) Then
   Begin
@@ -1676,7 +1698,6 @@ begin
     Exit;
   End; // If Not bMultiplo Then
 
-  Bt_Incluir.SetFocus;
 end;
 
 procedure TFrmSolicTransf.FormCloseQuery(Sender: TObject;  var CanClose: Boolean);

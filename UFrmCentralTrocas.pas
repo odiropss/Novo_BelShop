@@ -423,7 +423,7 @@ var
 
   OrderGrid: String;    // Ordenar Grid
 
-  sgNumDocSep,    // Numero do Relatório de Separação
+  sgNumDocSep,    // Numero do Romaneio de Separação
   sgCodUsuSep, // Codigo do Usuario de Separação
   sgCodLjLINX,
   sgNumSeqOC, // Sequencia da OC - OC_LOJAS_NFE
@@ -442,12 +442,12 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
 // Odir - INICIO ===============================================================
 //==============================================================================
 
-// RELATORIO DE SEPARAÇÃO - Atualiza Nº Relatório em ES_ESTOQUES_LOJAS >>>>>>>>>
+// RELATORIO DE SEPARAÇÃO - Atualiza Nº Romaneio em ES_ESTOQUES_LOJAS >>>>>>>>>>
 Procedure TFrmCentralTrocas.AtualizaNumRelatorio;
 Var
   MySql: String;
 Begin
-  OdirPanApres.Caption:='AGUARDE !! Atualizando Numero do Relatório...';
+  OdirPanApres.Caption:='AGUARDE !! Atualizando Numero do Romaneio...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
@@ -470,30 +470,43 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
-    FrmBelShop.MontaProgressBar(True, FrmCentralTrocas);
-    pgProgBar.Properties.Max:=DMCentralTrocas.CDS_RelReposicao.RecordCount;
-    pgProgBar.Position:=0;
-
-    DMCentralTrocas.CDS_RelReposicao.First;
-    DMCentralTrocas.CDS_RelReposicao.DisableControls;
-    While Not DMCentralTrocas.CDS_RelReposicao.Eof do
+    // Atualiza Numero do Relatório/Romaneio em ES_ESTOQUES_LOJAS ==============
+    If bgSiga Then
     Begin
-      Application.ProcessMessages;
+      FrmBelShop.MontaProgressBar(True, FrmCentralTrocas);
+      pgProgBar.Properties.Max:=DMCentralTrocas.CDS_RelReposicao.RecordCount;
+      pgProgBar.Position:=0;
 
-      MySql:=' UPDATE ES_ESTOQUES_LOJAS l'+
-             ' SET l.rel_separacao='+sgNumDocSep+
-             ' WHERE l.num_seq='+DMCentralTrocas.CDS_RelReposicaoSEQ.AsString+
-             ' AND l.dta_movto='+
-             QuotedStr(f_Troca('/','.',f_Troca('-','.',DMCentralTrocas.CDS_RelReposicaoDTA_MOVTO.AsString)))+
-             ' AND l.num_docto='+DMCentralTrocas.CDS_RelReposicaoNUM_DOCTO.AsString+
-             ' AND l.cod_produto='+QuotedStr(DMCentralTrocas.CDS_RelReposicaoCOD_PRODUTO.AsString);
-      DMBelShop.SQLC.Execute(MySql,nil,nil);
+      DMCentralTrocas.CDS_RelReposicao.First;
+      DMCentralTrocas.CDS_RelReposicao.DisableControls;
+      While Not DMCentralTrocas.CDS_RelReposicao.Eof do
+      Begin
+        Application.ProcessMessages;
 
-      pgProgBar.Position:=DMCentralTrocas.CDS_RelReposicao.RecNo;
+        MySql:=' UPDATE ES_ESTOQUES_LOJAS l'+
+               ' SET l.rel_separacao='+sgNumDocSep+
+               ' WHERE l.num_seq='+DMCentralTrocas.CDS_RelReposicaoSEQ.AsString+
+               ' AND l.dta_movto='+
+               QuotedStr(f_Troca('/','.',f_Troca('-','.',DMCentralTrocas.CDS_RelReposicaoDTA_MOVTO.AsString)))+
+               ' AND l.num_docto='+DMCentralTrocas.CDS_RelReposicaoNUM_DOCTO.AsString+
+               ' AND l.cod_produto='+QuotedStr(DMCentralTrocas.CDS_RelReposicaoCOD_PRODUTO.AsString);
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
 
-      DMCentralTrocas.CDS_RelReposicao.Next;
-    End; // While Not DMCentralTrocas.CDS_RelReposicao.Eof do
-    DMCentralTrocas.CDS_RelReposicao.EnableControls;
+        pgProgBar.Position:=DMCentralTrocas.CDS_RelReposicao.RecNo;
+
+        DMCentralTrocas.CDS_RelReposicao.Next;
+      End; // While Not DMCentralTrocas.CDS_RelReposicao.Eof do
+      DMCentralTrocas.CDS_RelReposicao.EnableControls;
+    End; // If bgSiga Then
+
+    // NÃO Atualiza Numero do Relatório/Romaneio em ES_ESTOQUES_LOJAS ==========
+    If Not bgSiga Then
+    Begin
+      MySql:=' DELETE FROM LG_REL_SEPARACAO l'+
+             ' WHERE l.num_relatorio='+sgNumDocSep+
+             ' AND   l.num_docto='+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString;
+      DMBelShop.SQLC.Execute(MySql,nil,nil)
+    End; // If Not bgSiga Then
 
     // Atualiza Transacao ======================================================
     DMBelShop.SQLC.Commit(TD);
@@ -512,17 +525,16 @@ Begin
 
   OdirPanApres.Visible:=False;
   Screen.Cursor:=crDefault;
+End; // RELATORIO DE SEPARAÇÃO - Atualiza Nº Romaneio em ES_ESTOQUES_LOJAS >>>>>
 
-End; // RELATORIO DE SEPARAÇÃO - Atualiza Nº Relatório em ES_ESTOQUES_LOJAS >>>>
-
-// RELATORIO DE SEPARAÇÃO - Cadastro de Relatórios Separação >>>>>>>>>>>>>>>>>>>
+// RELATORIO DE SEPARAÇÃO - Cadastro de Romaneio Separação >>>>>>>>>>>>>>>>>>>>>
 Function TFrmCentralTrocas.CadastroRelSeparacao: Boolean;
 Var
   MySql: String;
 Begin
   Result:=True;
 
-  // Busca Numero do Relatório =================================================
+  // Busca Numero do Romaneio ==================================================
   MySql:=' SELECT GEN_ID(GEN_NUM_REL_SEPARACAO,1) Num_Doc'+
          ' FROM RDB$DATABASE';
   DMBelShop.SQLQuery1.Close;
@@ -532,8 +544,8 @@ Begin
   sgNumDocSep:=DMBelShop.SQLQuery1.FieldByName('Num_Doc').AsString;
   DMBelShop.SQLQuery1.Close;
 
-  // Dados do Relatório ========================================================
-  OdirPanApres.Caption:='AGUARDE !! Salvando Dados do Relatório...';
+  // Dados do Romaneio +========================================================
+  OdirPanApres.Caption:='AGUARDE !! Salvando Dados do Romaneio...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
@@ -556,7 +568,7 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
-    // Insere Cadastro de relatórios de Separação ==============================
+    // Insere Cadastro de Romaneios de Separação ==============================
     MySql:=' INSERT INTO LG_REL_SEPARACAO'+
            ' (NUM_RELATORIO, DTA_RELATORIO, HRA_RELATORIO, COD_SEPARADOR,'+
            '  END_ZONA_CORREDOR, DTA_DOCTO, NUM_DOCTO, IND_PRIORIDADES,'+
@@ -610,7 +622,7 @@ Begin
 
   OdirPanApres.Visible:=False;
   Screen.Cursor:=crDefault;
-End; // RELATORIO DE SEPARAÇÃO - Cadastro de Relatórios Separação >>>>>>>>>>>>>>
+End; // RELATORIO DE SEPARAÇÃO - Cadastro de Romaneios Separação >>>>>>>>>>>>>>>
 
 // RELATORIO DE SEPARAÇÃO - Usuario do Corredor de Separação >>>>>>>>>>>>>>>>>>>
 Procedure TFrmCentralTrocas.UsuarioCorredorSeparacao(Var sNome: String);
@@ -4883,13 +4895,13 @@ begin
 //  If (igCorredores<>CkCbx_ReposLojasCorredor.Items.Count) and (igCorredores>1) Then
   If igCorredores=0 Then
   Begin
-    msg('Relatório é Por Corredor !!'+cr+'Selecione UM Corredor !!','A');
+    msg('Romaneio é Por Corredor !!'+cr+cr+'Selecione UM Corredor !!','A');
     Exit;
   End; // If Not bgTodosCorredores Then
 
   If igCorredores<>1 Then
   Begin
-    msg('Relatório deve Conter: '+cr+'Somente UM Corredor !!','A');
+    msg('Romaneio deve Conter: '+cr+cr+'Somente UM Corredor !!','A');
     Exit;
   End; // If Not bgTodosCorredores Then
 
@@ -4909,7 +4921,7 @@ begin
 //     (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='24') Then
 //  If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='24') Then
 //  Begin
-//    If msg('Deseja Impressão de Relatório'+cr+'por Fornecedor ??','C')=1 Then
+//    If msg('Deseja Impressão de Romaneio'+cr+'por Fornecedor ??','C')=1 Then
 //    Begin
 //      RomaneioFornecedor;
 //      Exit;
@@ -4918,35 +4930,35 @@ begin
   // Lojas Por Fornecedor ======================================================
   //============================================================================
 
-//OdirOpss inicio =======>>>>>>>>>>>>>>>>>>>>>
-  //============================================================================
-  // Solicita Usuário de Separador de Mercadoria ===============================
-  //============================================================================
-  sgCodUsuSep:='';
-  UsuarioCorredorSeparacao(sNomeUsuSep);
+  sgCodUsuSep:='0';
+//OdirApagar 06/09/2018 - Inicio - Não Solicita Usuario no Romaneio >>>>>>>>>>>>
+//  //============================================================================
+//  // Solicita Usuário de Separador de Mercadoria ===============================
+//  //============================================================================
+//  UsuarioCorredorSeparacao(sNomeUsuSep);
+//
+//  If Trim(sgCodUsuSep)='' Then
+//   Exit;
+//
+//  If msg('O Separador Selecionado Esta CORRETO ??'+cr+cr+sgCodUsuSep+' - '+sNomeUsuSep,'C')=2 Then
+//   Exit;
+//  // Solicita Usuário de Separador de Mercadoria ===============================
+//  //============================================================================
+//OdirApagar 06/09/2018 - Fim - Não Solicita Usuario no Romaneio >>>>>>>>>>>>>>>
 
-  If Trim(sgCodUsuSep)='' Then
-   Exit;
-
-  If msg('O Separador Selecionado Esta CORRETO ??'+cr+cr+sgCodUsuSep+' - '+sNomeUsuSep,'C')=2 Then
-   Exit;
-  // Solicita Usuário de Separador de Mercadoria ===============================
   //============================================================================
-
-  //============================================================================
-  // Cadastro de Relatórios Emitidos para Separação na Logistica ===============
+  // Cadastro de Romaneios Emitidos para Separação na Logistica ================
   //============================================================================
   If Not CadastroRelSeparacao Then
    Exit;
-  // Cadastro de Relatórios Emitidos para Separação na Logistica ===============
+  // Cadastro de Romaneios Emitidos para Separação na Logistica ================
   //============================================================================
-//OdirOpss fim =======>>>>>>>>>>>>>>>>>>>>>
 
   //============================================================================
-  // Apresenta Relatório de Separação de Mercadoria ============================
+  // Apresenta Romaneio de Separação de Mercadoria =============================
   //============================================================================
   Screen.Cursor:=crAppStart;
-  OdirPanApres.Caption:='AGUARDE !! Montando Relatório...';
+  OdirPanApres.Caption:='AGUARDE !! Montando Romaneio de Separação...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2));
@@ -5088,7 +5100,7 @@ begin
   //  End; // If CkB_ReposLojasOBS.Checked Then
   //OdirApagar - 08/08/2017 - Não Apresenta a Observação
 
-  // Apresenta Relatório =======================================================
+  // Apresenta Romaneio ========================================================
   {$IFDEF MSWINDOWS}
     dir_padrao      := ExtractFilePath(Application.ExeName);
     dir_relat       := dir_padrao +'Relatorios\';
@@ -5111,7 +5123,7 @@ begin
   DMRelatorio.frReport1.LoadFromFile(Dir_Relat+'RomaneioReposicoes_SObs.frf');
 
   //============================================================================
-  // Variaveis de Dicionário do Relatório ======================================
+  // Variaveis de Dicionário do Romaneio =======================================
   //============================================================================
   // Informa Corredores --------------------------------------------------------
   If (bgTodosCorredores) or (igCorredores=0) Then
@@ -5125,10 +5137,10 @@ begin
   // Informa Nome do Usuario de Separação --------------------------------------
   DMRelatorio.frReport1.Dictionary.Variables.Variable['NomeUsuSeparador']:=#39+sNomeUsuSep+#39;
 
-  // Informa o Numero do Relatório ---------------------------------------------
+  // Informa o Numero do Romaneio ----------------------------------------------
   DMRelatorio.frReport1.Dictionary.Variables.Variable['NumDocto']:=#39+sgNumDocSep+#39;
 
-  // Informa o Codigo de Barras do Relatório -----------------------------------
+  // Informa o Codigo de Barras do Romaneio ------------------------------------
       // Montagem do Codigo de Barras (13 Caracteres)
       //    NumDocSep Tamanho de 6
       //    NumDocto  Tamanho de 6
@@ -5144,30 +5156,34 @@ begin
   //OdirApagar - 08/08/2017 - Não Apresenta a Observação
   //  If FrmBelShop.Mem_Odir.Lines.Count>0 Then
   //   DMRelatorio.frReport1.Dictionary.Variables.Variable['Obs']:=#39+FrmBelShop.Mem_Odir.Text+#39;
-  // Variaveis de Dicionário do Relatório ======================================
+  // Variaveis de Dicionário do Romaneio +======================================
   //============================================================================
 
   //============================================================================
-  // Apresenta Relatório =======================================================
+  // Apresenta Romaneio ========================================================
   //============================================================================
   DMRelatorio.frReport1.PrepareReport;
   DMRelatorio.frReport1.ShowReport;
-  // Apresenta Relatório =======================================================
+  // Apresenta Romaneio ========================================================
   //============================================================================
 
 //OdirOpss inicio =======>>>>>>>>>>>>>>>>>>>>>
   //============================================================================
-  // Atualiza Numero do Relatório em ES_ESTOQUES_LOJAS =========================
+  // Atualiza Numero do Relatório/Romaneio em ES_ESTOQUES_LOJAS ================
   //============================================================================
+  bgSiga:=False; // Atauliza Numero de Relatório/Romaneio em ES_ESTOQUES_LOJAS
+  If msg('Romaneio Impresso CORRETAMENTE ??','C')=1 Then
+   bgSiga:=True;
+
   AtualizaNumRelatorio;
-  // Atualiza Numero do Relatório em ES_ESTOQUES_LOJAS =========================
+  // Atualiza Numero do Relatório/Romaneio em ES_ESTOQUES_LOJAS ================
   //============================================================================
 //OdirOpss fim =======>>>>>>>>>>>>>>>>>>>>>
 
   // Retorna para o DBGrid =====================================================
   DMCentralTrocas.CDS_RelReposicao.Close;
   Dbg_ReposLojasDocs.SetFocus;
-  // Apresenta Relatório de Separação de Mercadoria ============================
+  // Apresenta Romaneio de Separação de Mercadoria =============================
   //============================================================================
 
 end;
@@ -6288,7 +6304,7 @@ procedure TFrmCentralTrocas.Dbg_ReposLojasDocsDblClick(Sender: TObject);
 Var
   s: String;
 begin
-  s:='ODIR PEDRO MARCIO HERALDO WESLEY GEVERTON CHRISTIAN CRISTIANO';
+  s:='ODIR PEDRO MARCIO HERALDO WESLEY GEVERTON CHRISTIAN CRISTIANO RAFAEL';
 
   If Pos(AnsiUpperCase(Des_Login), s)<>0 Then
   Begin

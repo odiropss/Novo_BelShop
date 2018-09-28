@@ -350,6 +350,7 @@ begin
     Exit;
   End;
   FreeAndNil(tsgArquivo);
+
   // Descrição do Loja =========================================================
   // Loja.Ini = Cod_Loja_Sidicom ; Cod_Loja_Linx ; Descriçãso do Loja ;
   // ===========================================================================

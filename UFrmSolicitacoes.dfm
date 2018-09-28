@@ -1,6 +1,6 @@
 object FrmSolicitacoes: TFrmSolicitacoes
-  Left = 244
-  Top = 115
+  Left = 408
+  Top = 79
   Width = 649
   Height = 490
   BorderIcons = []
@@ -403,7 +403,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
     Top = 0
     Width = 633
     Height = 452
-    ActivePage = Ts_QualquerCoisa
+    ActivePage = Ts_ProSoftImpArquivo
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1081,6 +1081,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
+          OnClick = Bt_SolicExpVoltarClick
         end
         object Bt_ProSoftImpArqImporta: TJvXPButton
           Tag = 1
@@ -10515,16 +10516,19 @@ object FrmSolicitacoes: TFrmSolicitacoes
           item
             Expanded = False
             FieldName = 'CODBARRA'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'QTD_ORIGINAL'
+            Width = 64
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'QTD_ORIG_CHECK'
+            Width = 64
             Visible = True
           end>
       end
@@ -11672,8 +11676,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
     LoginPrompt = False
     Mode = cmShareDenyNone
     Provider = 'Microsoft.Jet.OLEDB.4.0'
-    Left = 420
-    Top = 392
+    Left = 444
+    Top = 328
   end
   object ADOT_Dcto: TADOTable
     Connection = ADOC_Excel

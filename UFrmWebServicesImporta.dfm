@@ -73,6 +73,7 @@ object FrmWebServicesImporta: TFrmWebServicesImporta
         Font.Name = 'MS Sans Serif'
         Font.Style = []
         ParentFont = False
+        Visible = False
         OnClick = Ckb_ImportaLinxClick
         OnKeyUp = Ckb_ImportaLinxKeyUp
       end

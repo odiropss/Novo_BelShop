@@ -165,7 +165,7 @@ Begin
     sgNrDocto:=DMTransferencias.CDS_BuscaRapida.FieldByName('Nr_Docto').AsString;
     DMTransferencias.CDS_BuscaRapida.Close;
 
-    // Verifica se Transação esta Ativa
+    // Verifica se Transação esta Ativa ========================================
     If DMTransferencias.SQLC.InTransaction Then
      DMTransferencias.SQLC.Rollback(TD);
 
@@ -177,11 +177,35 @@ Begin
       DateSeparator:='.';
       DecimalSeparator:='.';
 
+      // Grava Produtos SEM Saldo no CD - SOL_TRANSFERENCIA_CD =================
+      MySql:=' UPDATE SOL_TRANSFERENCIA_CD so'+
+             ' SET so.doc_gerado = 999999999,'+
+             '     so.dta_processamento=CURRENT_DATE,'+
+             '     so.obs_texto = CAST(LPAD(EXTRACT(DAY FROM CURRENT_DATE),2,''0'') AS VARCHAR(2))||''/''||'+
+             '                    CAST(LPAD(EXTRACT(MONTH FROM CURRENT_DATE),2,''0'') AS VARCHAR(2))||''/''||'+
+             '                    CAST(EXTRACT(YEAR FROM CURRENT_DATE) AS VARCHAR(4))||'' - ''||'+
+             '                    ''Produto Sem Saldo no Centro de Distribuição'''+
+
+             ' WHERE so.doc_gerado=0'+
+             ' AND   so.dta_solicitacao<CURRENT_DATE'+
+             ' AND   so.cod_loja_sidi='+QuotedStr(sgCodLoja)+
+             ' AND   ((NOT EXISTS (SELECT 1'+
+             '                     FROM ES_ESTOQUES_CD cd'+
+             '                     WHERE cd.dta_movto=CURRENT_DATE'+
+             '                     AND   cd.cod_produto=so.cod_prod_sidi))'+
+             '         OR'+
+             '         (EXISTS (SELECT 1'+
+             '                  FROM ES_ESTOQUES_CD cd'+
+             '                  WHERE cd.dta_movto=CURRENT_DATE'+
+             '                  AND   cd.qtd_saldo<1'+
+             '                  AND   cd.cod_produto=so.cod_prod_sidi)))';
+      DMTransferencias.SQLC.Execute(MySql,nil,nil);
+
       // Retorna Generator para 0 ==============================================
       MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH 0';
       DMTransferencias.SQLC.Execute(MySql,nil,nil);
 
-      // Importa para ES_ESTOQUES_LOJA =========================================
+      // Importa SOL_TRANSFERENCIA_CD para ES_ESTOQUES_LOJA ====================
       MySql:=' INSERT INTO ES_ESTOQUES_LOJAS'+
              ' SELECT GEN_ID(gen_odir,1) NUM_SEQ,'+
              ' CURRENT_DATE DTA_MOVTO,'+
@@ -201,7 +225,7 @@ Begin
              ' so.qtd_transf QTD_TRANSF,'+
              ' so.qtd_transf QTD_A_TRANSF,'+
              ' ''000000'' NUM_PEDIDO,'+
-             ' ''SIM'' IND_TRANSF,'+
+             ' ''CAL'' IND_TRANSF,'+
              ' 0 USU_ALTERA,'+
              ' CURRENT_DATE DTA_ALTERA,'+
              ' 0 NUM_TR_GERADA,'+
@@ -217,7 +241,7 @@ Begin
              '                                     AND so.cod_prod_sidi=ff.cod_produto'+
              ' WHERE so.doc_gerado=0'+
              ' AND   so.dta_solicitacao<CURRENT_DATE'+
-             ' AND   so.cod_loja_sidi='+sgCodLoja+
+             ' AND   so.cod_loja_sidi='+QuotedStr(sgCodLoja)+
              ' ORDER BY so.cod_prod_sidi';
       DMTransferencias.SQLC.Execute(MySql,nil,nil);
 
@@ -225,7 +249,7 @@ Begin
       MySql:=' ALTER SEQUENCE GEN_ODIR RESTART WITH 0';
       DMTransferencias.SQLC.Execute(MySql,nil,nil);
 
-      // Cria ES_ESTOQUES_CD, Acerta Produto Duplo =============================
+      // Acerta Produto Duplo ==================================================
       MySql:=' SELECT lo.NUM_SEQ, lo.COD_PRODUTO, lo.QTD_ESTOQUE,'+
              ' lo.QTD_TRANSF, lo.QTD_A_TRANSF, lo.OBS_DOCTO'+
 
@@ -276,70 +300,74 @@ Begin
 
         sgCodProduto:=DMTransferencias.CDS_Busca1.FieldByName('Cod_Produto').AsString;
 
-        // Apropria Produtos em ES_ESTOQUES_CD =================================
-        MySql:=' SELECT cd.cod_produto'+
-               ' FROM ES_ESTOQUES_CD cd'+
-               ' WHERE cd.dta_movto=CURRENT_DATE'+
-               ' AND cd.cod_produto='+QuotedStr(sgCodProduto);
-        DMTransferencias.CDS_BuscaRapida.Close;
-        DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
-        DMTransferencias.CDS_BuscaRapida.Open;
-        bAchouCD:=Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)<>'';
-        DMTransferencias.CDS_BuscaRapida.Close;
-
-        If Not bAchouCD Then
-        Begin
-          // Busca Endereçamento e saldo no SIDICOM ============================
-          MySql:=' SELECT'+
-                 ' e.saldoatual,'+
-                 ' e.zonaendereco end_zona,'+
-                 ' e.corredor end_corredor,'+
-                 ' e.prateleira end_prateleira,'+
-                 ' e.gaveta end_gaveta'+
-                 ' FROM ESTOQUE e'+
-                 ' WHERE e.codproduto='+QuotedStr(sgCodProduto)+
-                 ' AND   e.codfilial=''99''';
-          IBQ_MPMS.Close;
-          IBQ_MPMS.SQL.Clear;
-          IBQ_MPMS.SQL.Add(MySql);
-          IBQ_MPMS.Open;
-
-          sEnd_Zona      :='0';
-          sEnd_Corredor  :='000';
-          sEnd_Prateleira:='000';
-          sEnd_Gaveta    :='0000';
-          sSaldoCD       :='0.00';
-          If Trim(IBQ_MPMS.FieldByName('end_zona').AsString)<>'' Then
-          Begin
-            sEnd_Zona      :=Trim(IBQ_MPMS.FieldByName('end_zona').AsString);
-            sEnd_Corredor  :=Trim(IBQ_MPMS.FieldByName('end_corredor').AsString);
-            sEnd_Prateleira:=Trim(IBQ_MPMS.FieldByName('end_prateleira').AsString);
-            sEnd_Gaveta    :=Trim(IBQ_MPMS.FieldByName('end_gaveta').AsString);
-            sSaldoCD       :=f_Troca(',','.',IBQ_MPMS.FieldByName('saldoatual').AsString);
-          End; // If Trim(IBQ_MPMS.FieldByName('end_zona').AsString)<>'' Then
-          IBQ_MPMS.Close;
-
-          // Busca Saldo no Linx ===============================================
-          sgSaldoLinx:=Trim(BuscaSaldoLinx('99',sgCodProduto));
-          If sgSaldoLinx<>'' Then
-           sSaldoCD:=sgSaldoLinx;
-
-          // Insere ES_ESTOQUES_CD =============================================
-          MySql:=' INSERT INTO ES_ESTOQUES_CD ('+
-                 ' DTA_MOVTO, COD_PRODUTO, QTD_ESTOQUE, QTD_SAIDAS, QTD_SALDO,'+
-                 ' END_ZONA, END_CORREDOR, END_PRATELEIRA, END_GAVETA)'+
-                 ' VALUES ('+
-                 ' CURRENT_DATE, '+ // DTA_MOVTO
-                 QuotedStr(sgCodProduto)+', '+ // COD_PRODUTO
-                 sSaldoCD+', '+ // QTD_ESTOQUE
-                 '0.00, '+ // QTD_SAIDAS
-                 '0.00, '+ // QTD_SALDO
-                 QuotedStr(sEnd_Zona)+', '+ // END_ZONA
-                 QuotedStr(sEnd_Corredor)+', '+ // END_CORREDOR
-                 QuotedStr(sEnd_Prateleira)+', '+ // END_PRATELEIRA
-                 QuotedStr(sEnd_Gaveta)+')'; // END_GAVETA
-          DMTransferencias.SQLC.Execute(MySql,nil,nil);
-        End; // If Not bAchouCD Then
+// OdirApagar - 26/09/2018 - Inicio
+//        // Se CD Contem estoque do Produtos ES_ESTOQUES_CD =====================
+//        MySql:=' SELECT cd.cod_produto'+
+//               ' FROM ES_ESTOQUES_CD cd'+
+//               ' WHERE cd.dta_movto=CURRENT_DATE'+
+//               ' AND cd.qtd_saldo>0'+
+//               ' AND cd.cod_produto='+QuotedStr(sgCodProduto);
+//        DMTransferencias.CDS_BuscaRapida.Close;
+//        DMTransferencias.SDS_BuscaRapida.CommandText:=MySql;
+//        DMTransferencias.CDS_BuscaRapida.Open;
+//        bAchouCD:=Trim(DMTransferencias.CDS_BuscaRapida.FieldByName('Cod_Produto').AsString)<>'';
+//        DMTransferencias.CDS_BuscaRapida.Close;
+//
+//        If Not bAchouCD Then
+//        Begin
+//          // Coloca Como Produto Sem Estoque no CD =============================
+//          // Busca Endereçamento e saldo no SIDICOM ============================
+//          MySql:=' SELECT'+
+//                 ' e.saldoatual,'+
+//                 ' e.zonaendereco end_zona,'+
+//                 ' e.corredor end_corredor,'+
+//                 ' e.prateleira end_prateleira,'+
+//                 ' e.gaveta end_gaveta'+
+//                 ' FROM ESTOQUE e'+
+//                 ' WHERE e.codproduto='+QuotedStr(sgCodProduto)+
+//                 ' AND   e.codfilial=''99''';
+//          IBQ_MPMS.Close;
+//          IBQ_MPMS.SQL.Clear;
+//          IBQ_MPMS.SQL.Add(MySql);
+//          IBQ_MPMS.Open;
+//
+//          sEnd_Zona      :='0';
+//          sEnd_Corredor  :='000';
+//          sEnd_Prateleira:='000';
+//          sEnd_Gaveta    :='0000';
+//          sSaldoCD       :='0.00';
+//          If Trim(IBQ_MPMS.FieldByName('end_zona').AsString)<>'' Then
+//          Begin
+//            sEnd_Zona      :=Trim(IBQ_MPMS.FieldByName('end_zona').AsString);
+//            sEnd_Corredor  :=Trim(IBQ_MPMS.FieldByName('end_corredor').AsString);
+//            sEnd_Prateleira:=Trim(IBQ_MPMS.FieldByName('end_prateleira').AsString);
+//            sEnd_Gaveta    :=Trim(IBQ_MPMS.FieldByName('end_gaveta').AsString);
+//            sSaldoCD       :=f_Troca(',','.',IBQ_MPMS.FieldByName('saldoatual').AsString);
+//          End; // If Trim(IBQ_MPMS.FieldByName('end_zona').AsString)<>'' Then
+//          IBQ_MPMS.Close;
+//
+//          // Busca Saldo no Linx ===============================================
+//          sgSaldoLinx:=Trim(BuscaSaldoLinx('99',sgCodProduto));
+//          If sgSaldoLinx<>'' Then
+//           sSaldoCD:=sgSaldoLinx;
+//
+//          // Insere ES_ESTOQUES_CD =============================================
+//          MySql:=' INSERT INTO ES_ESTOQUES_CD ('+
+//                 ' DTA_MOVTO, COD_PRODUTO, QTD_ESTOQUE, QTD_SAIDAS, QTD_SALDO,'+
+//                 ' END_ZONA, END_CORREDOR, END_PRATELEIRA, END_GAVETA)'+
+//                 ' VALUES ('+
+//                 ' CURRENT_DATE, '+ // DTA_MOVTO
+//                 QuotedStr(sgCodProduto)+', '+ // COD_PRODUTO
+//                 sSaldoCD+', '+ // QTD_ESTOQUE
+//                 '0.00, '+ // QTD_SAIDAS
+//                 '0.00, '+ // QTD_SALDO
+//                 QuotedStr(sEnd_Zona)+', '+ // END_ZONA
+//                 QuotedStr(sEnd_Corredor)+', '+ // END_CORREDOR
+//                 QuotedStr(sEnd_Prateleira)+', '+ // END_PRATELEIRA
+//                 QuotedStr(sEnd_Gaveta)+')'; // END_GAVETA
+//          DMTransferencias.SQLC.Execute(MySql,nil,nil);
+//        End; // If Not bAchouCD Then
+// OdirApagar - 26/09/2018 - Fim
 
         DMTransferencias.CDS_Busca1.Next;
       End; // While Not DMTransferencias.CDS_Busca1.Eof do
@@ -371,13 +399,13 @@ Begin
              ' AND   lo.num_docto='+sgNrDocto;
       DMTransferencias.SQLC.Execute(MySql,nil,nil);
 
-      // Atualiza Transferências com o Numero do Docto Gerado ==================
+      // Atualiza o Numero do Docto Gerado - SOL_TRANSFERENCIA_CD ==============
       MySql:=' UPDATE SOL_TRANSFERENCIA_CD so'+
              ' SET so.doc_gerado='+sgNrDocto+
              ', so.dta_processamento=CURRENT_DATE'+
              ' WHERE so.doc_gerado=0'+
              ' AND   so.dta_solicitacao<CURRENT_DATE'+
-             ' AND   so.cod_loja_sidi='+sgCodLoja;
+             ' AND   so.cod_loja_sidi='+QuotedStr(sgCodLoja);
       DMTransferencias.SQLC.Execute(MySql,nil,nil);
 
       // Atualiza Transacao ======================================================
@@ -502,7 +530,6 @@ Begin
 
          ' SELECT l.cod_loja cod_empresa'+
          ' FROM ES_ESTOQUES_LOJAS l'+
-
          ' WHERE ('+ // Último DIA do Calculo Automático (Somente Prioridade igual a Zero)
          '        (l.num_tr_gerada=0 AND l.ind_prioridade=0 AND l.dta_movto >  ''27.09.2017'')'+
          '         OR'+ // Primeiro Dia Que Busca Loja Não Atendida
@@ -510,7 +537,6 @@ Begin
          '         OR'+ // Último DIA do Calculo Automático (Solicitações do Compras)
          '        (l.num_tr_gerada<>0 AND l.dta_movto >  ''27.09.2017'')'+
          '        )'+
-
          ' AND   l.qtd_a_transf > 0'+
          ' AND   l.ind_transf = ''SIM'''+
          ' AND   l.num_pedido = ''000000'''+
@@ -698,9 +724,6 @@ Begin
       Begin
         sgCodProduto:=Trim(DMTransferencias.CDS_Busca.FieldByName('Cod_Produto').AsString);
 
-        If sgCodProduto='034006' Then
-         sgCodProduto:=Trim(DMTransferencias.CDS_Busca.FieldByName('Cod_Produto').AsString);
-
         //======================================================================
         // Atualiza OC_COMPRAR =================================================
         //======================================================================
@@ -747,7 +770,7 @@ Begin
                  ' AND   l.cod_produto='+QuotedStr(sgCodProduto);
           DMTransferencias.SQLC.Execute(MySql,nil,nil);
 
-          // Acerta NUmero do Docto em SOL_TRANSFERENCIA_CD ====================
+          // Acerta Numero do Docto em SOL_TRANSFERENCIA_CD ====================
           If DMTransferencias.CDS_Busca.FieldByName('Doc_Loja').AsInteger<>0 Then
           Begin
             MySql:=' UPDATE SOL_TRANSFERENCIA_CD so'+
@@ -757,8 +780,6 @@ Begin
                    ' AND so.cod_prod_sidi='+QuotedStr(DMTransferencias.CDS_Busca.FieldByName('COD_PRODUTO').AsString);
             DMTransferencias.SQLC.Execute(MySql,nil,nil);
           End; // If DMTransferencias.CDS_Busca.FieldByName('Doc_Loja').AsInteger<>0 Then
-
-
         End; // If DMTransferencias.CDS_Busca.FieldByName('Doc_Origem').AsInteger<>0 Then
         // Atualiza ES_ESTOQUES_LOJAS ==========================================
         //======================================================================
@@ -896,7 +917,7 @@ Begin
         DMTransferencias.CDS_Busca1.Close;
 
         //======================================================================
-        // Só Atualiza Es_Estoque_CD se Atualizou Es_Estoque_Loja ==============
+        // Só Atualiza Es_Estoques_CD se Atualizou Es_Estoque_Loja ==============
         //======================================================================
         If bProcessou Then
         Begin
@@ -981,7 +1002,7 @@ Begin
           DMTransferencias.SQLC.Execute(MySql,nil,nil);
           DMTransferencias.CDS_BuscaRapida.Close;
         End; // If bProcessou Then
-        // Só Atualiza Es_Estoque_CD se Atualizou Es_Estoque_Loja ==============
+        // Só Atualiza Es_Estoques_CD se Atualizou Es_Estoque_Loja ==============
         //======================================================================
 
         DMTransferencias.CDS_Busca.Next;
@@ -1056,7 +1077,6 @@ Begin
   End; // Try
 
   FreeAndNil(mMemo);
-
 End; // Busca Transferencias Anteiroes Setor de Compras >>>>>>>>>>>>>>>>>>>>>>>>
 
 // Salva Arquivo de Acompanhamento de Processamento >>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1908,7 +1928,7 @@ Begin
       SalvaProcessamento('10.03.03/999 - Conecta Loja - '+sCodLoja+' - '+TimeToStr(Time));
       //==========================================================================
     End; // If igCodLojaLinx=0 Then // SIDICOM
-
+                         
     // Monta Transacao ===================================================
     TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
     TD.IsolationLevel:=xilREADCOMMITTED;
@@ -1932,6 +1952,8 @@ Begin
       Begin
         sCodProdSidi:=DMTransferencias.CDS_CurvasLojaCOD_PRODUTO.AsString;
 
+        If sCodProdSidi='030270' Then
+          sCodProdSidi:=DMTransferencias.CDS_CurvasLojaCOD_PRODUTO.AsString;
         // Verifica se Já Existe em ES_ESTOQUES_LOJAS ==========================
         MySql:=' SELECT l.cod_produto'+
                ' FROM ES_ESTOQUES_LOJAS l'+
@@ -2034,9 +2056,16 @@ Begin
 
           // Atualiza o Saldo do Produto ------------------------------
           If sgSaldoLinx<>'' Then
-           cQtdSaldo:= StrToCurr(f_Troca('.',',',sgSaldoLinx)) + cQtdMais
+           Begin
+             If StrToFloat(sgSaldoLinx)<0.00 Then
+              sgSaldoLinx:='0.00';
+
+             cQtdSaldo:= StrToCurr(f_Troca('.',',',sgSaldoLinx)) + cQtdMais;
+           End
           Else
-           cQtdSaldo:=DMTransferencias.CDS_CurvasLojaSALDOATUAL.AsCurrency + cQtdMais;
+           Begin
+             cQtdSaldo:=DMTransferencias.CDS_CurvasLojaSALDOATUAL.AsCurrency + cQtdMais;
+           End;
 
           // Se Saldo Negativo Alterar para 0.00 <Zero> ==========================
           If cQtdSaldo<0 Then
@@ -2161,17 +2190,17 @@ Begin
     DMTransferencias.SQLC.Execute(MySql,nil,nil);
 
     // Insere Estoque de Produtos do CD -----------------------------
-    IBQ_MPMS.First;
-    While not IBQ_MPMS.Eof do
+    DMTransferencias.SQLQ_Busca.First;
+    While not DMTransferencias.SQLQ_Busca.Eof do
     Begin
       DMTransferencias.CDS_EstoqueCD.Insert;
-      For i:=0 to IBQ_MPMS.FieldCount-1 do
-       DMTransferencias.CDS_EstoqueCD.Fields[i].Assign(IBQ_MPMS.Fields[i]);
+      For i:=0 to DMTransferencias.SQLQ_Busca.FieldCount-1 do
+       DMTransferencias.CDS_EstoqueCD.Fields[i].Assign(DMTransferencias.SQLQ_Busca.Fields[i]);
 
       DMTransferencias.CDS_EstoqueCD.Post;
 
-      IBQ_MPMS.Next;
-    End; // While not IBQ_MPMS.Eof do
+      DMTransferencias.SQLQ_Busca.Next;
+    End; // While not DMTransferencias.SQLQ_Busca.Eof do
 
     // Atualiza Transacao ======================================================
     DMTransferencias.CDS_EstoqueCD.ApplyUpdates(0);
@@ -2189,7 +2218,7 @@ Begin
       tgArqErros.Add('InsereProdutosCD: 99 - '+e.message)
     End; // on e : Exception do
   End; // Try
-  IBQ_MPMS.Close;
+  DMTransferencias.SQLQ_Busca.Close;
   DMTransferencias.CDS_EstoqueCD.Close;
 
 End; // Insere Produtos no CD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -2220,16 +2249,19 @@ Begin
          ' AND   p.codaplicacao<>''0016'''+ // Não Processa: 0016=Brindes
 
          ' AND   e.codfilial=''99'''+
-         ' AND   p.principalfor Not in ('+sgFornNAO+')'+
+
+         // OdirApagar - 26/09/2018 - São todos os Fornecedores
+         // AND   p.principalfor Not in ('+sgFornNAO+')'+
+
          ' AND   COALESCE(e.saldoatual,0)>0'+
 
          ' ORDER BY 2';
-  IBQ_MPMS.Close;
-  IBQ_MPMS.SQL.Clear;
-  IBQ_MPMS.SQL.Add(MySql);
-  IBQ_MPMS.Open;
+  DMTransferencias.SQLQ_Busca.Close;
+  DMTransferencias.SQLQ_Busca.SQL.Clear;
+  DMTransferencias.SQLQ_Busca.SQL.Add(MySql);
+  DMTransferencias.SQLQ_Busca.Open;
 
-  If IBQ_MPMS.Eof Then
+  If DMTransferencias.SQLQ_Busca.Eof Then
    Result:=False;
 
 End; // Busca Produtos no CD - Somente se Houver com Estoque > 0 >>>>>>>>>>>>>>>
@@ -2530,6 +2562,8 @@ begin
 //OdirAqui 1.Inicio
   If Not BuscaProdutosCD Then
   Begin
+    DMTransferencias.SQLQ_Busca.Close;
+
     bgArqErros:=True;
     tgArqErros.Add('Erro ao Localizar Estoques no CD');
     SalvaErros;
@@ -2565,7 +2599,7 @@ begin
   //============================================================================
   SalvaProcessamento('00/999 - Roda Transferencias Solicitadas Pelas Lojas - INICIO - '+TimeToStr(Time));
   //============================================================================
-  // Roda Transferencias Solicitadas Pelas Lojas ===============================
+  // Busca Solicitações Efetuadas Pelas Lojas ==================================
   //============================================================================
 //OdirAqui 3.Inicio
   If Not TransferenciasLojas Then
@@ -2577,7 +2611,7 @@ begin
     Exit;
   End;
 //OdirAqui 3.Fim
-  // Roda Transferencias Solicitadas Pelas Lojas ===============================
+  // Busca Solicitações Efetuadas Pelas Lojas ==================================
   //============================================================================
    SalvaProcessamento('00/999 - Roda Transferencias Solicitadas Pelas Lojas - FIM - '+TimeToStr(Time));
   //============================================================================
@@ -2605,7 +2639,7 @@ begin
   //============================================================================
   SalvaProcessamento('11/999 - Analisa e Atualiza Transferencias do Dia - INICIO - '+TimeToStr(Time));
   //============================================================================
-  // Analisa e Atualiza Transferencias do Dia ==================================
+  // Analisa e Atualiza Necessitadades de Transferencias do Dia ================
   //============================================================================
 //OdirAqui 5.Inicio
   If Not AnalisaAtualizaTransferencias Then
@@ -2617,7 +2651,7 @@ begin
     Exit;
   End;
 //OdirAqui 5.Fim
-  // Analisa e Atualiza Transferencias do Dia ==================================
+  // Analisa e Atualiza Necessitadades de Transferencias do Dia ================
   //============================================================================
   SalvaProcessamento('11/999 - Analisa e Atualiza Transferencias do Dia - FIM - '+TimeToStr(Time));
   //============================================================================
@@ -2625,7 +2659,7 @@ begin
   //============================================================================
    SalvaProcessamento('12/999 - Busca Transferencias de Dias Anteiroes e Novas do Setor de Compras - INICIO - '+TimeToStr(Time));
   //============================================================================
-  // Busca Transferencias de Dias Anteiroes e Novas do Setor de Compras ========
+  // Busca Solicitações das Lojas de Dias Anteiroes e Novas do Setor de Compras
   //============================================================================
 //OdirAqui 6.Inicio
   If Not ProcessaTransferenciasCompras Then
@@ -2637,7 +2671,7 @@ begin
     Exit;
   End;
 //OdirAqui 6.Fim
-  // Busca Transferencias de Dias Anteiroes e Novas do Setor de Compras ========
+  // Busca Solicitações das Lojas de Dias Anteiroes e Novas do Setor de Compras
   //============================================================================
   SalvaProcessamento('12/999 - Busca Transferencias de Dias Anteiroes e Novas do Setor de Compras - FIM - '+TimeToStr(Time));
   //============================================================================

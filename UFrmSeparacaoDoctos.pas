@@ -9,7 +9,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, Grids, DBGrids, Mask, ToolEdit, CurrEdit,
-  DBXpress, DateUtils, JvExControls, JvXPCore, JvXPButtons;
+  DBXpress, DateUtils, JvExControls, JvXPCore, JvXPButtons, DB;
 
 type
   TFrmSeparacaoDoctos = class(TForm)
@@ -48,27 +48,33 @@ type
     EdtRomHraEmissao: TMaskEdit;
     EdtRomSeparados: TEdit;
     Label6: TLabel;
-    Bt_GeraOCCalcular: TJvXPButton;
+    Bt_RomLimpaTudo: TJvXPButton;
     Label2: TLabel;
     EdtDocItens: TCurrencyEdit;
     EdtDocItensSIM: TCurrencyEdit;
     Label9: TLabel;
     Label10: TLabel;
     EdtDocItensNAO: TCurrencyEdit;
+    Bt_RomBuscaSeparados: TJvXPButton;
     procedure EdtCodBarrasChange(Sender: TObject);
 
     // Odir ====================================================================
     Procedure LimpaTudo;
 
-    Procedure LimpaRomaneiosInexistente;
+    Procedure ExecutaTransacao(sTipo: String);
+                 // sTipo:
+                 //    < L > = Limpa Romaneios Inexistente
+                 //    < S > = Altera Separador do Romaneio
     Function  BuscaDoctoRelatorio: Boolean;
     Function  AtualizaTempoSeparacao: Boolean;
     Procedure CalculaTempoSeparacao(dDtaIni, dDtaFim: TDateTime; Var iDias: Integer; Var sTempo: String);
 
+    Procedure UsuarioCorredorSeparacao;
     // Odir ====================================================================
 
     procedure FormShow(Sender: TObject);
-    procedure Bt_GeraOCCalcularClick(Sender: TObject);
+    procedure Bt_RomLimpaTudoClick(Sender: TObject);
+    procedure Bt_RomBuscaSeparadosClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -79,11 +85,14 @@ type
 var
   FrmSeparacaoDoctos: TFrmSeparacaoDoctos;
 
-  sgNumDoc, sgNumRel: String;
+  sgCodBarras,
+  sgNumDoc, sgNumRel,
+  sgCodUsuSep, sgNomeUsuSep: String;
+
 
 implementation
 
-uses DK_Procs1, uj_001, uj_002, UDMSeparacaoDoctos, DB;
+uses DK_Procs1, uj_001, uj_002, UDMSeparacaoDoctos, UPesquisa_Geral;
 
 {$R *.dfm}
 
@@ -91,12 +100,73 @@ uses DK_Procs1, uj_001, uj_002, UDMSeparacaoDoctos, DB;
 // Odir - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-
-// Exclui Romaneios Inexistente >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmSeparacaoDoctos.LimpaRomaneiosInexistente;
+// ROMANEIO DE SEPARAÇÃO - Usuario do Corredor de Separação >>>>>>>>>>>>>>>>>>>>
+Procedure TFrmSeparacaoDoctos.UsuarioCorredorSeparacao;
 Var
   MySql: String;
 Begin
+  sgCodUsuSep :='';
+  sgNomeUsuSep:='';
+
+  FrmPesquisaGeral:=TFrmPesquisaGeral.Create(Self);
+  FrmPesquisaGeral.Caption:='Selecione o Usuário Separador Deste Docto de Separação';
+  FrmPesquisaGeral.sgBt_PesquisaNovo:='1';
+  FrmPesquisaGeral.Bt_PesquisaNovo.Visible:=True;
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  MySql:=' SELECT t.des_aux NOME, t.cod_aux CODIGO'+
+         ' FROM TAB_AUXILIAR t'+
+         ' WHERE t.tip_aux=29'+ // 29 => LOGISTICA - CADASTRO DE SEPARADORES DE MERCADORIAS
+         ' ORDER BY 1';
+  FrmPesquisaGeral.CDS_Geral.Close;
+  FrmPesquisaGeral.CDS_Geral.Filtered:=False;
+  FrmPesquisaGeral.SDS_Geral.CommandText:=MySql;
+  FrmPesquisaGeral.CDS_Geral.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisaGeral.Campo_pesquisa:='Nome';
+  FrmPesquisaGeral.Campo_Codigo:='Codigo';
+  FrmPesquisaGeral.Campo_Descricao:='Nome';
+  FrmPesquisaGeral.EdtDescricao.Clear;
+
+//  // Campos Qualquer de Retorno ================================================
+//  // Variavel de Entrada  - Variavel de Retorno
+//  // Campo_Retorno1       - Retorno1
+//  // Campo_Retorno2       - Retorno2
+//  // Campo_Retorno3       - Retorno3
+//  FrmPesquisaGeral.Campo_Retorno1:='Dta_Cadastro';
+//  FrmPesquisaGeral.Campo_Retorno2:='Cod_Cidade';
+//  FrmPesquisaGeral.Campo_Retorno3:='';
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisaGeral.ShowModal;
+  FrmPesquisaGeral.CDS_Geral.Close;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisaGeral.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaGeral.EdtDescricao.Text)<>'') Then
+  Begin
+    sgCodUsuSep :=Trim(FrmPesquisaGeral.EdtCodigo.Text);
+    sgNomeUsuSep:=Trim(FrmPesquisaGeral.EdtDescricao.Text);
+  End; // If (Trim(FrmPesquisaGeral.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaGeral.EdtDescricao.Text)<>'') Then
+
+  FrmPesquisaGeral.SQLC.Connected:=False;
+  FreeAndNil(FrmPesquisaGeral);
+
+End; // ROMANEIO DE SEPARAÇÃO - Usuario do Corredor de Separação >>>>>>>>>>>>>>>
+
+// Exclui Romaneios Inexistente >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmSeparacaoDoctos.ExecutaTransacao;
+Var
+  MySql: String;
+Begin
+// sTipo:
+//    < L > = Limpa Romaneios Inexistente
+//    < S > = Altera Separador do Romaneio
+
   // Verifica se Transação esta Ativa
   If DMSeparacaoDoctos.SQLC.InTransaction Then
    DMSeparacaoDoctos.SQLC.Rollback(TD);
@@ -108,14 +178,34 @@ Begin
   DMSeparacaoDoctos.SQLC.StartTransaction(TD);
   Try // Try da Transação
 
-    MySql:=' DELETE FROM LG_REL_SEPARACAO l'+
-           ' WHERE NOT EXISTS (SELECT 1'+
-           '                   FROM ES_ESTOQUES_LOJAS e'+
-           '                   WHERE e.rel_separacao=l.num_relatorio)';
+    // Limpa Romaneios Inexistente =============================================
+    If sTipo='L' Then
+    Begin
+      MySql:=' DELETE FROM LG_REL_SEPARACAO l'+
+             ' WHERE NOT EXISTS (SELECT 1'+
+             '                   FROM ES_ESTOQUES_LOJAS e'+
+             '                   WHERE e.rel_separacao=l.num_relatorio)';
+    End; // If sTipo='L' Then
+
+    // Altera Separador do Romaneio ============================================
+    If sTipo='S' Then
+    Begin
+      MySql:=' UPDATE LG_REL_SEPARACAO l'+
+             ' SET l.cod_separador='+sgCodUsuSep+
+             ' WHERE l.num_relatorio='+IntToStr(EdtRomNumero.AsInteger)+
+             ' AND   l.num_docto='+IntToStr(EdtDocNumero.AsInteger);
+    End; // If sTipo='L' Then
+
     DMSeparacaoDoctos.SQLC.Execute(MySql,nil,nil);
 
     // Atualiza Transacao ======================================================
     DMSeparacaoDoctos.SQLC.Commit(TD);
+
+    // Apresenta Novo Separador do Romaneio ====================================
+    If sTipo='S' Then
+    Begin
+      EdtRomSeparados.Text:=sgCodUsuSep+' - '+sgNomeUsuSep;
+    End; // If sTipo='L' Then
 
   Except // Except da Transação
     on e : Exception do
@@ -220,7 +310,7 @@ Begin
 
 End; // Atualiza Tempo de Separação >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Busca Documento de Relatóroi de Separação >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Busca Documento de Romaneio de Separação >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmSeparacaoDoctos.BuscaDoctoRelatorio: Boolean;
 Var
   MySql: String;
@@ -232,7 +322,14 @@ Begin
          ' l.end_zona_corredor,'+
          ' l.ind_prioridades,'+
          ' l.cod_forn||'' - ''||f.nomefornecedor NOME_FORNECEDOR,'+
-         ' l.cod_separador||'' - ''||u.des_aux NOME_SEPARADOR,'+
+
+         ' CASE'+
+         '   WHEN COALESCE(l.cod_separador,0)=0 THEN'+
+         '     NULL'+
+         '   ELSE'+
+         '     l.cod_separador||'' - ''||u.des_aux'+
+         ' END NOME_SEPARADOR,'+
+
          ' l.num_docto, l.dta_docto,'+
 
          {
@@ -322,7 +419,7 @@ Begin
   End; //   If Result Then
   DMSeparacaoDoctos.SQLQ_Romaneio.Close;
 
-End; // Busca Documento de Relatóroi de Separação >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+End; // Busca Documento de Romaneio de Separação >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Limpa todos os Componentes >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmSeparacaoDoctos.LimpaTudo;
@@ -338,6 +435,9 @@ Begin
   EdtDocNumero.Clear;
   EdtDocData.Clear;
   EdtDocLoja.Clear;
+  EdtDocItens.Clear;
+  EdtDocItensSIM.Clear;
+  EdtDocItensNAO.Clear;
 
   EdtTemInicio.Clear;
   EdtTemInicio.Color:=clBtnFace;
@@ -354,38 +454,48 @@ End; // Limpa todos os Componentes >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TFrmSeparacaoDoctos.EdtCodBarrasChange(Sender: TObject);
-Var
-  sCodBarras: String;
 begin
   LimpaTudo;
 
   If Length(EdtCodBarras.Text)>=12 Then
   Begin
-
     // Exclui Romaneios Inexistente ============================================
-    LimpaRomaneiosInexistente;
+    ExecutaTransacao('L');
 
     // Atualiza e Apresenta Romaneiro ==========================================
-    EdtCodBarras.Enabled:=False;
-    sCodBarras:=FormatFloat('0000000000000',StrToInt(EdtCodBarras.Text));
-    EdtCodBarras.Clear;
-    EdtCodBarras.Enabled:=True;
+    Try
+      EdtCodBarras.Enabled:=False;
+      sgCodBarras:=FormatFloat('0000000000000',StrToInt64(EdtCodBarras.Text));
+      EdtCodBarras.Clear;
+      EdtCodBarras.Enabled:=True;
+    Except
+      msg('Erro de Leitura do Código de Barras !!','A');
+      LimpaTudo;
+      EdtCodBarras.Enabled:=True;
+      EdtCodBarras.Clear;
+      EdtCodBarras.SetFocus;
+      sgCodBarras:='';
+      Exit;
+    End;
 
+    // Montagem do Codigo de Barras (13 Caracteres) ============================
     Try
       // Montagem do Codigo de Barras (13 Caracteres)
       //    NumDocSep Tamanho de 6
       //    NumDocto  Tamanho de 6
       //    Ultimo Caracter é Digito calculodo
-      sgNumRel:=Copy(sCodBarras,1,6);
+      sgNumRel:=Copy(sgCodBarras,1,6);
       sgNumRel:=IntToStr(StrToInt(sgNumRel));
 
-      sgNumDoc:=Copy(sCodBarras,7,6);
+      sgNumDoc:=Copy(sgCodBarras,7,6);
       sgNumDoc:=IntToStr(StrToInt(sgNumDoc));
     Except
       msg('Erro de Leitura do Código de Barras !!','A');
       LimpaTudo;
+      EdtCodBarras.Enabled:=True;
       EdtCodBarras.Clear;
       EdtCodBarras.SetFocus;
+      sgCodBarras:='';
       Exit;
     End;
 
@@ -393,9 +503,12 @@ begin
     Begin
       LimpaTudo;
       EdtCodBarras.Clear;
+      EdtCodBarras.Enabled:=True;
       EdtCodBarras.SetFocus;
+      sgCodBarras:='';
       Exit;
     End; // If Not BuscaDoctoRelatorio Then
+    sgCodBarras:='';
 
     Application.ProcessMessages;
     If EdtTemHoras.Text='  :  :  ' Then
@@ -404,6 +517,7 @@ begin
       Begin
         LimpaTudo;
         EdtCodBarras.Clear;
+        EdtCodBarras.Enabled:=True;
         EdtCodBarras.SetFocus;
         Exit;
       End; // If Application.MessageBox('O Romaneio Selecionado Esta CORRETO ?', 'ATENÇÃO !!', 292) = IdNo Then
@@ -413,9 +527,19 @@ begin
     If EdtTemHoras.Text='  :  :  ' Then
      AtualizaTempoSeparacao;
 
+    // Solicita o Separador ====================================================
+    If Trim(EdtRomSeparados.Text)='' Then
+    Begin
+      Bt_RomBuscaSeparadosClick(Self);
+    End; // If Trim(EdtRomSeparados.Text)='' Then
+
     // Retorna para Codigo de Barras ===========================================
     EdtCodBarras.SetFocus;
   End; // If Length(EdtCodBarras.Text)>=12 Then
+
+  If Not EdtCodBarras.Enabled Then
+   EdtCodBarras.Enabled:=True;
+
 end;
 
 procedure TFrmSeparacaoDoctos.FormShow(Sender: TObject);
@@ -423,11 +547,57 @@ begin
   LimpaTudo;
 end;
 
-procedure TFrmSeparacaoDoctos.Bt_GeraOCCalcularClick(Sender: TObject);
+procedure TFrmSeparacaoDoctos.Bt_RomLimpaTudoClick(Sender: TObject);
 begin
   LimpaTudo;
   EdtCodBarras.Clear;
   EdtCodBarras.SetFocus;
+end;
+
+procedure TFrmSeparacaoDoctos.Bt_RomBuscaSeparadosClick(Sender: TObject);
+Var
+  b: Boolean;
+begin
+  EdtCodBarras.SetFocus;
+
+  If EdtRomNumero.AsInteger=0 Then
+   Exit;
+
+  //============================================================================
+  // Solicita Usuário de Separador de Mercadoria ===============================
+  //============================================================================
+  While b do
+  Begin
+    UsuarioCorredorSeparacao;
+
+    If (Trim(sgCodUsuSep)='') and (Trim(EdtRomSeparados.Text)<>'') Then
+    Begin
+      Exit;
+    End; // If (Trim(sgCodUsuSep)='') and (Trim(EdtRomSeparados.Text)<>'')  Then
+
+    If Trim(sgCodUsuSep)<>'' Then
+    Begin
+      If msg('O Separador Selecionado Esta CORRETO ??'+cr+cr+sgCodUsuSep+' - '+sgNomeUsuSep,'C')=1 Then
+       Begin
+         Break;
+       End
+      Else
+       Begin
+         If Trim(EdtRomSeparados.Text)<>'' Then
+          Exit;
+       End; // If msg('O Separador Selecionado Esta CORRETO ??'+cr+cr+sgCodUsuSep+' - '+sgNomeUsuSep,'C')=2 Then
+    End; // If Trim(sgCodUsuSep)<>'' Then
+  End; // While b do
+  // Solicita Usuário de Separador de Mercadoria ===============================
+  //============================================================================
+
+  //============================================================================
+  // Altera para Novo Separador ================================================
+  //============================================================================
+  ExecutaTransacao('S');
+  // Altera para Novo Separador ================================================
+  //============================================================================
+
 end;
 
 end.

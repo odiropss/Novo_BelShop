@@ -27,6 +27,10 @@ type
     SQLQ_RomaneioDTA_FIM: TSQLTimeStampField;
     SQLQ_RomaneioSEP_DIAS: TIntegerField;
     SQLQ_RomaneioSEP_HORAS: TTimeField;
+    SDS_Pesquisa: TSQLDataSet;
+    CDS_Pesquisa: TClientDataSet;
+    DSP_Pesquisa: TDataSetProvider;
+    DS_Pesquisa: TDataSource;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir ====================================================================
@@ -177,3 +181,6 @@ begin
 end;
 
 end.
+
+
+

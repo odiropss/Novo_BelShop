@@ -90,7 +90,9 @@ Begin
 
       // DLL do Banco de Dados
       If iLinha=1 Then
-       Readln(ArqINI,sgVendorLib);
+      Begin
+        Readln(ArqINI,sgVendorLib);
+      End;
 
       // Pasta para Salvar Arquivo do Projeto Accera Loreal
       If iLinha=2 Then
@@ -101,7 +103,9 @@ Begin
 
       // Pasta e Banco de Dados
       If iLinha=3 Then
-       Readln(ArqINI,sgPastaBancoDados);
+      Begin
+        Readln(ArqINI,sgPastaBancoDados);
+      End;
     End; // While not Eof(ArqINI) do
     CloseFile(ArqINI);
 
