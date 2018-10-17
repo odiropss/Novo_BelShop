@@ -674,6 +674,7 @@ type
     Bt_AudGeraVoltar: TJvXPButton;
     Bt_AudGeraArquivo: TJvXPButton;
     EdtAudCodLoja: TCurrencyEdit;
+    Bt_ProSoftImpTodos: TJvXPButton;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -985,6 +986,7 @@ type
     procedure Bt_AudBuscaArqClick(Sender: TObject);
     procedure Bt_AudBuscaLojaClick(Sender: TObject);
     procedure Rb_AudCadProdutosClick(Sender: TObject);
+    procedure Bt_ProSoftImpTodosClick(Sender: TObject);
   private
     { Private declarations }
 
@@ -1063,7 +1065,7 @@ implementation
 uses DK_Procs1, UDMBelShop, UFrmBelShop, UDMSalao, UPesquisa, UFrmSalao,
      UDMVirtual, UDMLojaUnica, UDMCentralTrocas, UDMConexoes,
      UFrmSelectEmpProcessamento, IBCustomDataSet, UDMRelatorio,
-     UPesquisaIB, UDMBancosConciliacao;
+     UPesquisaIB, UDMBancosConciliacao, RTLConsts;
 
 {$R *.dfm}
 
@@ -1082,8 +1084,7 @@ Var
   sCodTrinks, sCodLinx, sCodSidicom: String;
 
   i: Integer;
-  bImporta: Boolean; // Se é Linha Para Importar
-
+  bImporta, bInsert: Boolean; // Se é Linha Para Importar
 Begin
   Result:=True;
 
@@ -1155,7 +1156,7 @@ Begin
         DMBelShop.SQLQuery1.SQL.Add(MySql);
         DMBelShop.SQLQuery1.Open;
         sCodSidicom:=DMBelShop.SQLQuery1.FieldByName('Cod_Filial').AsString;
-        sCodLinx:=DMBelShop.SQLQuery1.FieldByName('Cod_Linx').AsString;
+        sCodLinx   :=DMBelShop.SQLQuery1.FieldByName('Cod_Linx').AsString;
         DMBelShop.SQLQuery1.Close;
 
         If Trim(sCodLinx)='' Then
@@ -1166,41 +1167,88 @@ Begin
 
         If bImporta Then
         Begin
-          MySql:=' UPDATE OR INSERT INTO TRINKS_DIARIO '+
-                 ' (COD_TRINKS, DES_TRINKS, NUM_DOCTO, DTA_MOVTO,'+
-                 '  NUM_CLIENTES, NUM_ATENDIMENTOS,'+
-                 '  VLR_TICKET_MEDIO, VLR_SERVICOS, VLR_PRODUTOS, VLR_PACOTES,'+
-                 '  VLR_DESCONTOS, VLR_TOTAL, VLR_CREDITOS, VLR_DEBITOS, VLR_DINHEIRO,'+
-                 '  VLR_OUTROS, VLR_TROCO,'+
-                 '  QTD_SERVICOS, QTD_PRODUTOS, QTD_PACOTES,'+
-                 '  COD_LINX, COD_LOJA, DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
+          // Verifica se Já Existe Movto =======================================
+          MySql:=' SELECT t.cod_trinks'+
+                 ' FROM TRINKS_DIARIO t'+
+                 ' WHERE t.dta_movto = '+QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(sLinha,3)))))+
+                 ' AND   t.cod_trinks='+sCodTrinks;
+          DMBelShop.SQLQuery1.Close;
+          DMBelShop.SQLQuery1.SQL.Clear;
+          DMBelShop.SQLQuery1.SQL.Add(MySql);
+          DMBelShop.SQLQuery1.Open;
+          bInsert:=(Trim(DMBelShop.SQLQuery1.FieldByName('Cod_Trinks').AsString)='');
+          DMBelShop.SQLQuery1.Close;
 
-                 ' VALUES ('+
-                 sCodTrinks+', '+ // COD_TRINKS
-                 QuotedStr(Trim(Separa_String(sLinha,2)))+', '+ // DES_TRINKS
-                 QuotedStr(sNrDocto)+', '+ // NUM_DOCTO
-                 QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(sLinha,3)))))+', '+ // DTA_MOVTO
-                 Trim(Separa_String(sLinha,4))+', '+ // NUM_CLIENTES
-                 Trim(Separa_String(sLinha,5))+', '+ // NUM_ATENDIMENTOS
-                 f_Troca('R$ ','',Trim(Separa_String(sLinha,6)))+', '+ // VLR_TICKET_MEDIO
-                 f_Troca('R$ ','',Trim(Separa_String(sLinha,7)))+', '+ // VLR_SERVICOS
-                 f_Troca('R$ ','',Trim(Separa_String(sLinha,8)))+', '+ // VLR_PRODUTOS
-                 f_Troca('R$ ','',Trim(Separa_String(sLinha,9)))+', '+ // VLR_PACOTES
-                 'ABS('+f_Troca('R$ ','',Trim(Separa_String(sLinha,10)))+'), '+ // VLR_DESCONTOS
-                 f_Troca('R$ ','',Trim(Separa_String(sLinha,11)))+', '+ // VLR_TOTAL
-                 f_Troca('R$ ','',Trim(Separa_String(sLinha,12)))+', '+ // VLR_CREDITOS
-                 f_Troca('R$ ','',Trim(Separa_String(sLinha,13)))+', '+ // VLR_DEBITOS
-                 f_Troca('R$ ','',Trim(Separa_String(sLinha,14)))+', '+ // VLR_DINHEIRO
-                 f_Troca('R$ ','',Trim(Separa_String(sLinha,15)))+', '+ // VLR_OUTROS
-                 'ABS('+f_Troca('R$ ','',Trim(Separa_String(sLinha,16)))+'), '+ //  VLR_TROCO
-                 Trim(Separa_String(sLinha,17))+', '+ // QTD_SERVICOS
-                 Trim(Separa_String(sLinha,18))+', '+ // QTD_PRODUTOS
-                 Trim(Separa_String(sLinha,19))+', '+ // QTD_PACOTES
-                 sCodLinx+', '+ // COD_LINX
-                 QuotedStr(sCodSidicom)+', '+ // COD_LOJA
-                 QuotedStr(f_Troca('/','.',f_Troca('-','.',sDia)))+', '+ // DTA_ATUALIZACAO
-                 QuotedStr(sHora)+')'+ // HRA_ATUALIZACAO
-                 ' MATCHING (COD_TRINKS, DTA_MOVTO)';
+
+
+          // Update no Movimento ===============================================
+          If Not bInsert Then
+          Begin
+            MySql:=' UPDATE TRINKS_DIARIO t'+
+                   ' set t.num_clientes=t.num_clientes + '+Trim(f_Troca('.','',Separa_String(sLinha,4)))+
+                   ', t.num_atendimentos=num_atendimentos + '+Trim(f_Troca('.','',Separa_String(sLinha,5)))+
+                   ', t.vlr_servicos=vlr_servicos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,7)))))+
+                   ', t.vlr_produtos=vlr_produtos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,8)))))+
+                   ', t.vlr_pacotes=vlr_pacotes + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,9)))))+
+                   ', t.vlr_descontos=vlr_descontos + ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,10)))))+')'+
+                   ', t.vlr_total=vlr_total + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,11)))))+
+                   ', t.vlr_creditos=vlr_creditos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,12)))))+
+                   ', t.vlr_debitos=vlr_debitos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,13)))))+
+                   ', t.vlr_dinheiro=vlr_dinheiro + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,14)))))+
+                   ', t.vlr_outros=vlr_outros + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,15)))))+
+                   ', t.vlr_troco=vlr_troco + ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,16)))))+')'+
+                   ', t.vlr_sangria = '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,17)))))+
+                   ', t.qtd_servicos=qtd_servicos + '+Trim(f_Troca('.','',Separa_String(sLinha,18)))+
+                   ', t.qtd_produtos=qtd_produtos + '+Trim(f_Troca('.','',Separa_String(sLinha,19)))+
+                   ', t.qtd_pacotes=qtd_pacotes + '+Trim(f_Troca('.','',Separa_String(sLinha,20)))+
+                   ', t.vlr_ticket_medio=t.vlr_total / t.num_atendimentos'+
+                   ', t.dta_atualizacao='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDia)))+
+                   ', t.hra_atualizacao='+QuotedStr(sHora)+
+
+                   ' WHERE t.dta_movto = '+QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(sLinha,3)))))+
+                   ' AND   t.cod_trinks='+sCodTrinks;
+          End; // If Not bInsert Then
+
+          // Insere Novo Movimento =============================================
+          If bInsert Then
+          Begin
+            MySql:=' UPDATE OR INSERT INTO TRINKS_DIARIO '+
+                   ' (COD_TRINKS, DES_TRINKS, NUM_DOCTO, DTA_MOVTO,'+
+                   '  NUM_CLIENTES, NUM_ATENDIMENTOS,'+
+                   '  VLR_TICKET_MEDIO, VLR_SERVICOS, VLR_PRODUTOS, VLR_PACOTES,'+
+                   '  VLR_DESCONTOS, VLR_TOTAL, VLR_CREDITOS, VLR_DEBITOS, VLR_DINHEIRO,'+
+                   '  VLR_OUTROS, VLR_TROCO, VLR_SANGRIA,'+
+                   '  QTD_SERVICOS, QTD_PRODUTOS, QTD_PACOTES,'+
+                   '  COD_LINX, COD_LOJA, DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
+
+                   ' VALUES ('+
+                   sCodTrinks+', '+ // COD_TRINKS
+                   QuotedStr(Trim(Separa_String(sLinha,2)))+', '+ // DES_TRINKS
+                   QuotedStr(sNrDocto)+', '+ // NUM_DOCTO
+                   QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(sLinha,3)))))+', '+ // DTA_MOVTO
+                   Trim(f_Troca('.','',Separa_String(sLinha,4)))+', '+ // NUM_CLIENTES
+                   Trim(f_Troca('.','',Separa_String(sLinha,5)))+', '+ // NUM_ATENDIMENTOS
+                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,6)))))+', '+ // VLR_TICKET_MEDIO
+                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,7)))))+', '+ // VLR_SERVICOS
+                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,8)))))+', '+ // VLR_PRODUTOS
+                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,9)))))+', '+ // VLR_PACOTES
+                   'ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,10)))))+'), '+ // VLR_DESCONTOS
+                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,11)))))+', '+ // VLR_TOTAL
+                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,12)))))+', '+ // VLR_CREDITOS
+                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,13)))))+', '+ // VLR_DEBITOS
+                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,14)))))+', '+ // VLR_DINHEIRO
+                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,15)))))+', '+ // VLR_OUTROS
+                   'ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,16)))))+'), '+ //  VLR_TROCO
+                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,17)))))+', '+ // VLR_SAGRIA
+                   Trim(f_Troca('.','',Separa_String(sLinha,18)))+', '+ // QTD_SERVICOS
+                   Trim(f_Troca('.','',Separa_String(sLinha,19)))+', '+ // QTD_PRODUTOS
+                   Trim(f_Troca('.','',Separa_String(sLinha,20)))+', '+ // QTD_PACOTES
+                   sCodLinx+', '+ // COD_LINX
+                   QuotedStr(sCodSidicom)+', '+ // COD_LOJA
+                   QuotedStr(f_Troca('/','.',f_Troca('-','.',sDia)))+', '+ // DTA_ATUALIZACAO
+                   QuotedStr(sHora)+')'+ // HRA_ATUALIZACAO
+                   ' MATCHING (COD_TRINKS, DTA_MOVTO)';
+          End; // If bInsert Then
           DMBelShop.SQLC.Execute(MySql,nil,nil);
         End; // If bImporta Then
       End; // If bImporta Then
@@ -4103,7 +4151,12 @@ begin
   End;
 
   If (PC_Principal.ActivePage=Ts_ProSoftImpArquivo) And (Ts_ProSoftImpArquivo.CanFocus) Then
-   Bt_ProSoftImpArquivo.SetFocus;
+  Begin
+//    If AnsiUpperCase(Des_Usuario)='ODIR' Then
+//     Bt_ProSoftImpTodos.Visible:=True;
+
+    Bt_ProSoftImpArquivo.SetFocus;
+  End;
 
   If (PC_Principal.ActivePage=Ts_PlanilhaFinanceira) And (Ts_PlanilhaFinanceira.CanFocus) Then
   Begin
@@ -7181,7 +7234,7 @@ begin
   //============================================================================
 
   //============================================================================
-  // Inporta Arquivo ProSoft ===================================================
+  // Importa Arquivo ProSoft ===================================================
   //============================================================================
   If sgSender='SubMenuFinanExpImpArquivosProSoft' Then
   Begin
@@ -7508,7 +7561,7 @@ begin
     tsArquivo.Free;
     tsArqNovo.Free;
   End; // If sgSender='SubMenuFinanExpImpArquivosProSoft' Then
-  // Inporta Arquivo ProSoft ===================================================
+  // Importa Arquivo ProSoft ===================================================
   //============================================================================
 
 end;
@@ -9885,6 +9938,610 @@ begin
        Gb_AudLoja.Visible:=False;
      End; // If Rb_AudPosEstoque.Checked Then
   End; // If (Sender is TJvRadioButton) Then
+end;
+
+procedure TFrmSolicitacoes.Bt_ProSoftImpTodosClick(Sender: TObject);
+var
+  tsArquivo: TStringList;
+  tsArqNovo: TStringList;
+  i, iPosIni, iPosFin: Integer;
+  sCampo, sLinha, sLinhaNova: String;
+  MySql: String;
+
+  bMoradia: Boolean; // Se proximo ENDEREÇO é Moradia
+
+  sAtualizadoEm,
+  sNome, sMatricula,
+  sDataDeNascimento, sNaturalidade, sSexo,
+  sNomedoPai, sNomedaMae,
+  sNacionalidade, sEstadoCivil, sEscolaridade,
+  sEndereco,
+  sEmail,
+  sCPF, sCTPSNum, sCTPSSerie, sPis,
+  sRG, sTituloDeEleitor, sZonaEleitoral, sSecaoEleitoral,
+  sReservista,
+  sCNH,
+  sStatus,
+  sCargo, sDataDeAdmissao, sDataDoContrato, sDataDeDemissao,
+  sMotivoDaDemissao,
+  sSalario,
+  sTurno,
+
+  sPerfil, sSaudacao, sFoto, sPNE,
+  sDistanciaDaEmpresa, sValorDaRescisao,
+  sContato, sTipoDeContrato, sSuperiorDireto,
+  sGrauHierarquico, sDuracaoDoContrato,
+  sVencimentoDoContrato, sCriadoEm, sDepartamento, sCandidato,
+  sBancoDeHoras, sBanco, sAgencia, sContaCorrente
+  : String;
+
+  bGrava: Boolean;     // Se Data de Demissão < 01/05/2015 Não gravar
+
+  Procedure LimpaTudo;
+  Begin
+    sAtualizadoEm:='';
+    sNome:=''; sMatricula:='';
+    sDataDeNascimento:=''; sNaturalidade:=''; sSexo:='';
+    sNomedoPai:=''; sNomedaMae:='';
+    sNacionalidade:=''; sEstadoCivil:=''; sEscolaridade:='';
+    sEndereco:='';
+    sEmail:='';
+    sCPF:=''; sCTPSNum:=''; sCTPSSerie:=''; sPis:='';
+    sRG:=''; sTituloDeEleitor:=''; sZonaEleitoral:=''; sSecaoEleitoral:='';
+    sReservista:='';
+    sCNH:='';
+    sStatus:='';
+    sCargo:=''; sDataDeAdmissao:=''; sDataDoContrato:=''; sDataDeDemissao:='';
+    sMotivoDaDemissao:='';
+    sSalario:='';
+    sTurno:='';
+
+    sPerfil:='';
+    sSaudacao:='';
+    sFoto:='';
+    sPNE:='';
+    sDistanciaDaEmpresa:='';
+    sValorDaRescisao:='';
+    sContato:='';
+    sTipoDeContrato:='';
+    sSuperiorDireto:='';
+    sGrauHierarquico:='';
+    sDuracaoDoContrato:='';
+    sVencimentoDoContrato:='';
+    sCriadoEm:='';
+    sDepartamento:='';
+    sCandidato:='';
+    sBancoDeHoras:='';
+    sBanco:='';
+    sAgencia:='';
+    sContaCorrente:='';
+  End;
+begin
+
+  If (EditorProSoftImpArquivo.Lines.Count<1) Or (Trim(EdtProSoftImpPastaArquivo.Text)='') Then
+  Begin
+    msg('Favor Informar a'+cr+'Pasta e o Arquivo a Importar !!','A');
+    Bt_ProSoftImpArquivo.SetFocus;
+    Exit;
+  End;
+
+  //============================================================================
+  // Exporta Arquivo ProSoft ===================================================
+  //============================================================================
+  If Trim(EdtProSoftImpArquivoSalvar.Text)='' Then
+  Begin
+    msg('Favor Informar a Pasta e o Arquivo'+cr+'de DESTINO a Salvar !!','A');
+    Bt_ProSoftImpArquivoSalvar.SetFocus;
+    Exit;
+  End;
+
+  If Trim(ExtractName(EdtProSoftImpPastaArquivo.Text))=Trim(ExtractName(EdtProSoftImpArquivoSalvar.Text)) Then
+  Begin
+    msg('Arquivos com o Mesmo Nome !!'+cr+'Altere o Nome do Arquivo de DESTINO !!','A');
+    EdtProSoftImpArquivoSalvar.Clear;
+    Bt_ProSoftImpArquivoSalvar.SetFocus;
+    Exit;
+  End;
+
+  Ts_ProSoftImpArquivo.Enabled:=False;
+  FrmBelShop.MontaProgressBar(True, FrmSolicitacoes);
+
+  { Instancia a variável arquivo }
+  tsArquivo:=TStringList.Create;
+  tsArqNovo:=TStringList.Create;
+
+  Try
+    tsArquivo.LoadFromFile(EdtProSoftImpPastaArquivo.Text);
+    pgProgBar.Properties.Max:=tsArquivo.Count;
+    pgProgBar.Position:=0;
+
+    sLinhaNova:='Nome;Matricula;Perfil;Data de Nascimento;Sexo;Estado Civil;Saudacao;'+
+                'Foto;Nacionalidade;Naturalidade;Nome do Pai;Nome da Mae;PNE;Distancia da empresa;'+
+                'Data de admissao;Data de demissao;Motivo da demissao;Valor da Rescisao;Endereco;Contato;'+
+                'Cargo;Status;Salario;Turno;Tipo de contrato;Data do contrato;Escolaridade;Superior direto;'+
+                'Grau hierarquico;Duracao do contrato;Vencimento do contrato;Criado em;Atualizado em;'+
+                'Departamento;Candidato;E-mail;Banco de Horas;CPF;RG;Titulo de Eleitor;Zona Eleitoral;'+
+                'Secao Eleitoral;CTPS NUM;CTPS Serie;Reservista;CNH;Banco;Agencia;Conta Corrente;PIS;';
+    tsArqNovo.Add(sLinhaNova);
+    sLinhaNova:='';
+
+    LimpaTudo;
+
+    bMoradia:=False;
+    For i:=0 to tsArquivo.Count - 1 do
+    Begin
+      Application.ProcessMessages;
+
+      pgProgBar.Position:=i+1;
+      Refresh;
+
+      sLinha:=Trim(tsArquivo[i]);
+
+      If (AnsiContainsStr(sLinha, 'DADOS BASICOS - LOCAL MORADIA')) Then
+       bMoradia:=True;
+
+      //========================================================================
+      // Data de Emissao: - Salva Linha Se sAtualizadoEm Estiver Preenchido ====
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'Data de Emissao: ')) Then
+      Begin
+        If Trim(sTurno)<>'' Then
+        Begin
+          sLinhaNova:=sNome+';'+sMatricula+';'+sPerfil+';'+sDataDeNascimento+';'+sSexo+';'+sEstadoCivil+';'+
+                      sSaudacao+';'+sFoto+';'+sNacionalidade+';'+sNaturalidade+';'+sNomedoPai+';'+sNomedaMae+';'+
+                      sPNE+';'+sDistanciaDaEmpresa+';'+sDataDeAdmissao+';'+sDataDeDemissao+';'+sMotivoDaDemissao+';'+
+                      sValorDaRescisao+';'+sEndereco+';'+sContato+';'+sCargo+';'+sStatus+';'+sSalario+';'+
+                      sTurno+';'+sTipoDeContrato+';'+sDataDoContrato+';'+sEscolaridade+';'+sSuperiorDireto+';'+
+                      sGrauHierarquico+';'+sDuracaoDoContrato+';'+sVencimentoDoContrato+';'+sCriadoEm+';'+
+                      sAtualizadoEm+';'+sDepartamento+';'+sCandidato+';'+sEmail+';'+sBancoDeHoras+';'+sCPF+';'+sRG+';'+
+                      sTitulodeEleitor+';'+sZonaEleitoral+';'+sSecaoEleitoral+';'+sCTPSNum+';'+sCTPSSerie+';'+
+                      sReservista+';'+sCNH+';'+sBanco+';'+sAgencia+';'+sContaCorrente+';'+sPis+';';
+          tsArqNovo.Add(sLinhaNova);
+
+          LimpaTudo;
+
+          sLinhaNova:='';
+        End; // If Trim(sAtualizadoEm)<>'' Then
+
+        If (Trim(sTurno)='') and (sAtualizadoEm='') Then
+        Begin
+          // sAtualizadoEm
+          sCampo:='Data de Emissao: ';
+          iPosIni:=pos(sCampo,sLinha);
+          iPosIni:=iPosIni+length(sCampo);
+
+          sAtualizadoEm:=Trim(Copy(sLinha,iPosIni,10));
+        End; // If (Trim(sTurno)='') and (sAtualizadoEm='') Then
+      End; // If (AnsiContainsStr(sLinha, 'Data de Emissao: ')) Then
+
+      //========================================================================
+      // Nome, Matricula =======================================================
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'Funcionario: ')) Then
+      Begin
+        sCampo:='Funcionario: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+        sNome:=Trim(Copy(sLinha,iPosIni, Length(Trim(sLinha))));
+
+        // Matricula
+        sMatricula:=Trim(Copy(sNome,1, Pos('/', sNome)-1));
+
+        // Nome
+        sNome:=Trim(Copy(sNome,Pos('/', sNome)+1, Length(Trim(sNome))));
+//        sNome:=Trim(Copy(sNome,Pos('/', sNome)+1, Length(Trim(sNome))-Pos('/', sNome)+1));
+      End; // If (AnsiContainsStr(sLinha, 'Funcionario: ')) Then
+
+      //========================================================================
+      // Data de Nascimento, Naturalidade, Sexo ================================
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'Data de Nascimento: ')) Then
+      Begin
+        sCampo:='Data de Nascimento: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+
+        // Data de Nascimento
+        sDataDeNascimento:=Trim(Copy(sLinha,iPosIni,10));
+
+        sCampo:='Local de Nascimento: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+
+        // Naturalidade
+        sCampo:='Sexo: ';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sNaturalidade:=Trim(Copy(sLinha,iPosIni,iPosFin-iPosIni));
+
+        // Sexo
+        iPosIni:=iPosFin;
+        iPosIni:=iPosIni+length(sCampo);
+
+        If Copy(sLinha,iPosIni,1)='1' Then sSexo:='Masculino';
+        If Copy(sLinha,iPosIni,1)='2' Then sSexo:='Feminino';
+
+      End; // If (AnsiContainsStr(sLinha, 'Data de Nascimento: ')) Then
+
+      //========================================================================
+      // Nome do Pai, Nome da Mãe ==============================================
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'Filiacao: ')) Then
+      Begin
+        sCampo:='Filiacao: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+
+        // Posição do ' e '
+        sCampo:=' e ';
+        iPosFin:=pos(sCampo,sLinha);
+
+        // Nome do Pai
+        sNomedoPai:=Trim(Copy(sLinha,iPosIni,iPosFin-iPosIni));
+
+        // Nome da Mãe
+        sCampo:=' e ';
+        iPosIni:=iPosFin;
+        iPosIni:=iPosIni+length(sCampo);
+
+        sNomedaMae:=Trim(Copy(sLinha, iPosIni, Length(Trim(sLinha))-iPosIni+1));
+      End; // If (AnsiContainsStr(sLinha, 'Filiacao: ')) Then
+
+      //========================================================================
+      // Nacionalidade, Estado Civil, Escolaridade
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'Nacional.: ')) Then
+      Begin
+        // Nacionalidade
+        sCampo:='Nacional.: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+
+        sCampo:='Est.Civil: ';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sNacionalidade:=Trim(Copy(sLinha,iPosIni, iPosFin-iPosIni));
+
+        // Estado Civil
+        iPosIni:=iPosFin;
+        iPosIni:=iPosIni+length(sCampo);
+
+        sCampo:='Instrucao: ';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sEstadoCivil:=Trim(Copy(sLinha,iPosIni,iPosFin-iPosIni));
+
+        // Escolaridade
+        iPosIni:=iPosFin;
+        iPosIni:=iPosIni+length(sCampo);
+
+        sEscolaridade:=Trim(Copy(sLinha, iPosIni, Length(Trim(sLinha))-iPosIni+1));
+      End; // If (AnsiContainsStr(sLinha, 'Nacional.: ')) Then
+
+      //========================================================================
+      // Endereco
+      //========================================================================
+      If ((AnsiContainsStr(sLinha, 'Endereco: ')) Or
+          (AnsiContainsStr(sLinha, 'Complemento: ')) Or
+          (AnsiContainsStr(sLinha, 'Municipio: '))) And (bMoradia) Then
+      Begin
+        // Endereço
+        If (AnsiContainsStr(sLinha, 'Endereco: ')) Then
+        Begin
+          sCampo:='Endereco: ';
+          iPosIni:=pos(sCampo,sLinha);
+          iPosIni:=iPosIni+length(sCampo);
+
+          sEndereco:=Trim(Copy(sLinha, iPosIni, Length(Trim(sLinha))-iPosIni+1));
+        End; // If (AnsiContainsStr(sLinha, 'Endereco: ')) Then
+
+        If (Trim(sEndereco)='') Then
+          bMoradia:=False;
+
+        If (Trim(sEndereco)<>'') And  (bMoradia) And
+           ((AnsiContainsStr(sLinha, 'Complemento: ')) Or
+            (AnsiContainsStr(sLinha, 'Municipio: '))) Then
+        Begin
+          // Complemento
+          If (AnsiContainsStr(sLinha, 'Complemento: ')) Then
+          Begin
+            sCampo:='Complemento: ';
+            iPosIni:=pos(sCampo,sLinha);
+            iPosIni:=iPosIni+length(sCampo);
+
+            sCampo:='Bairro: ';
+            iPosFin:=pos(sCampo,sLinha);
+
+            sEndereco:=sEndereco+', '+Trim(Copy(sLinha,iPosIni, iPosFin-iPosIni));
+
+            // Bairro
+            iPosIni:=iPosFin;
+            iPosIni:=iPosIni+length(sCampo);
+
+            sCampo:='CEP: ';
+            iPosFin:=pos(sCampo,sLinha);
+
+            sEndereco:=sEndereco+' - '+Trim(Copy(sLinha,iPosIni,iPosFin-iPosIni));
+
+            // CEP
+            iPosIni:=iPosFin;
+            iPosIni:=iPosIni+length(sCampo);
+
+            sEndereco:=sEndereco+' - '+Trim(Copy(sLinha, iPosIni, Length(Trim(sLinha))-iPosIni+1));
+          End; // If (AnsiContainsStr(sLinha, 'Complemento: ')) Then
+
+          // Municipio
+          If (AnsiContainsStr(sLinha, 'Municipio: ')) Then
+          Begin
+            sCampo:='Municipio: ';
+            iPosIni:=pos(sCampo,sLinha);
+            iPosIni:=iPosIni+length(sCampo);
+
+            sCampo:='Telefone: ';
+            iPosFin:=pos(sCampo,sLinha);
+
+            sEndereco:=sEndereco+' - '+Trim(Copy(sLinha,iPosIni, iPosFin-iPosIni));
+
+            // UF
+            sCampo:='UF: ';
+            iPosIni:=pos(sCampo,sLinha);
+            iPosIni:=iPosIni+length(sCampo);
+            sEndereco:=sEndereco+'/'+Trim(Copy(sLinha, iPosIni, Length(Trim(sLinha))-iPosIni+1));
+
+            bMoradia:=False;
+          End; // If (AnsiContainsStr(sLinha, 'Municipio: ')) Then
+        End; // If (Trim(sEndereco)<>'') And (AnsiContainsStr(sLinha, 'Complemento: ')) Or (AnsiContainsStr(sLinha, 'Municipio: '))) And (bMoradia) Then
+      End; // If ((AnsiContainsStr(sLinha, 'Endereco: ')) Or (AnsiContainsStr(sLinha, 'Complemento: ')) Or AnsiContainsStr(sLinha, 'Municipio: '))) And (bMoradia) Then
+
+      //========================================================================
+      // E-Mail ================================================================
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'E-Mail: ')) Then
+      Begin
+        sCampo:='E-Mail: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+
+        // Data de Nascimento
+        sEmail:=Trim(Copy(sLinha,iPosIni, Length(Trim(sLinha))-iPosIni+1));
+      End; // If (AnsiContainsStr(sLinha, 'E-Mail: ')) Then
+
+      //========================================================================
+      // CPF, CTPS NUM, CTPS Série, PIS
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'CPF: ')) Then
+      Begin
+        // CPF
+        sCampo:='CPF: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+
+        sCampo:='CTPS: ';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sCPF:=Trim(Copy(sLinha,iPosIni, iPosFin-iPosIni));
+
+        // CTPS e CTPSSerie
+        iPosIni:=iPosFin;
+        iPosIni:=iPosIni+length(sCampo);
+
+        sCampo:='EXP: ';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sCTPSNum:=Trim(Copy(sLinha,iPosIni,iPosFin-iPosIni));
+        sCTPSSerie:=Trim(Copy(sCTPSNum,pos('.',sCTPSNum)+1,Length(sCTPSNum)));
+        sCTPSNum:=Trim(Copy(sCTPSNum,1, pos('.',sCTPSNum)-1));
+
+        // PIS
+        sCampo:='PIS: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+
+        sPis:=Trim(Copy(sLinha, iPosIni, Length(Trim(sLinha))-iPosIni+1));
+        sPis:=Trim(Copy(sPis,1,Length(Trim(sPis))-pos('EXP:',sPis)+1));
+      End; // If (AnsiContainsStr(sLinha, 'CPF: ')) Then
+
+      //========================================================================
+      // RG, Título de Eleitor,	Zona Eleitoral, Seção Eleitoral
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'RG: ')) Then
+      Begin
+        // CPF
+        sCampo:='RG: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+
+        sCampo:='Titulo Eleitor: ';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sRG:=Trim(Copy(sLinha,iPosIni, iPosFin-iPosIni));
+
+        // Título de Eleitor,	Zona Eleitoral, Seção Eleitoral
+        iPosIni:=iPosFin;
+        iPosIni:=iPosIni+length(sCampo);
+
+        sCampo:='Emissao: ';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sTituloDeEleitor:=Trim(Copy(sLinha,iPosIni,iPosFin-iPosIni));
+        sSecaoEleitoral:=Trim(Copy(sTituloDeEleitor,pos('-',sTituloDeEleitor)+1,Length(sTituloDeEleitor)));
+        sZonaEleitoral:=Trim(Copy(sTituloDeEleitor,pos('/',sTituloDeEleitor)+1,(Length(sTituloDeEleitor)-pos('-',sTituloDeEleitor)+1)));
+        sTituloDeEleitor:=Trim(Copy(sTituloDeEleitor,1, pos('/',sTituloDeEleitor)-1));
+      End; // If (AnsiContainsStr(sLinha, 'RG: ')) Then
+
+      //========================================================================
+      // Certificado Reservista ================================================
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'Certificado Reservista: ')) Then
+      Begin
+        // Certificado Reservista
+        sCampo:='Certificado Reservista: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+
+        sCampo:='Categoria:';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sReservista:=Trim(Copy(sLinha,iPosIni, iPosFin-iPosIni));
+      End; // If (AnsiContainsStr(sLinha, 'Certificado Reservista: ')) Then
+
+      //========================================================================
+      // Carteira Habilitacao ==================================================
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'Carteira Habilitacao: ')) Then
+      Begin
+        // Certificado Reservista
+        sCampo:='Carteira Habilitacao: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+
+        sCampo:='Data:';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sCNH:=Trim(Copy(sLinha,iPosIni, iPosFin-iPosIni));
+      End; // If (AnsiContainsStr(sLinha, 'Carteira Habilitacao: ')) Then
+
+      //========================================================================
+      // Condição/Status =======================================================
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'Condicao: ')) Then
+      Begin
+        // Condição/Status
+        sCampo:='Condicao: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+
+        sCampo:='Vinculo: ';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sStatus:=Trim(Copy(sLinha,iPosIni, iPosFin-iPosIni));
+      End; // If (AnsiContainsStr(sLinha, 'Condicao: ')) Then
+
+      //========================================================================
+      // Cargo, Data de admissão, Data do contrato, Data de demissão
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'Funcao: ')) Then
+      Begin
+        // Cargo
+        sCampo:='Funcao: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+
+        sCampo:='Admissao: ';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sCargo:=Trim(Copy(sLinha,iPosIni, iPosFin-iPosIni));
+
+        // Data de admissão, Data do contrato,
+        iPosIni:=iPosFin;
+        iPosIni:=iPosIni+length(sCampo);
+
+        sCampo:='Demissao: ';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sDataDeAdmissao:=Trim(Copy(sLinha,iPosIni,iPosFin-iPosIni));
+        sDataDoContrato:=sDataDeAdmissao;
+
+        // Data de demissão
+        iPosIni:=iPosFin;
+        iPosIni:=iPosIni+length(sCampo);
+
+        sCampo:='Ex.Demissao: ';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sDataDeDemissao:=Trim(Copy(sLinha,iPosIni,iPosFin-iPosIni));
+      End; // If (AnsiContainsStr(sLinha, 'Funcao: ')) Then
+
+      //========================================================================
+      // Mot.Desligamento
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'Mot.Desligamento: ')) Then
+      Begin
+        // Cargo
+        sCampo:='Mot.Desligamento: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+
+        sCampo:='Opcao/FGTS:';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sMotivoDaDemissao:=Trim(Copy(sLinha,iPosIni, iPosFin-iPosIni));
+      End; // If (AnsiContainsStr(sLinha, 'Mot.Desligamento: ')) Then
+
+      //========================================================================
+      // Salário
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'Sal. Base: ')) Then
+      Begin
+        // Cargo
+        sCampo:='Sal. Base: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+
+        sCampo:='Horas Mes: ';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sSalario:=Trim(Copy(sLinha,iPosIni, iPosFin-iPosIni));
+      End; // If (AnsiContainsStr(sLinha, 'Sal. Base: ')) Then
+
+      //========================================================================
+      // Turno: Horario Informado
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'Horario Informado: ')) Then
+      Begin
+        // Cargo
+        sCampo:='Horario Informado: ';
+        iPosIni:=pos(sCampo,sLinha);
+        iPosIni:=iPosIni+length(sCampo);
+
+        sCampo:='Almoco';
+        iPosFin:=pos(sCampo,sLinha);
+
+        sTurno:=Trim(Copy(sLinha,iPosIni, iPosFin-iPosIni));
+
+        If Trim(sTurno)='' Then
+         sTurno:='SEM';
+      End; // If (AnsiContainsStr(sLinha, 'Sal. Base: ')) Then
+    End; // For i:=0 to tsArquivo.Count - 1 do
+
+    // Grava o Ultimo ==========================================================
+    sLinhaNova:=sNome+';'+sMatricula+';'+sPerfil+';'+sDataDeNascimento+';'+sSexo+';'+sEstadoCivil+';'+
+                sSaudacao+';'+sFoto+';'+sNacionalidade+';'+sNaturalidade+';'+sNomedoPai+';'+sNomedaMae+';'+
+                sPNE+';'+sDistanciaDaEmpresa+';'+sDataDeAdmissao+';'+sDataDeDemissao+';'+sMotivoDaDemissao+';'+
+                sValorDaRescisao+';'+sEndereco+';'+sContato+';'+sCargo+';'+sStatus+';'+sSalario+';'+
+                sTurno+';'+sTipoDeContrato+';'+sDataDoContrato+';'+sEscolaridade+';'+sSuperiorDireto+';'+
+                sGrauHierarquico+';'+sDuracaoDoContrato+';'+sVencimentoDoContrato+';'+sCriadoEm+';'+
+                sAtualizadoEm+';'+sDepartamento+';'+sCandidato+';'+sEmail+';'+sBancoDeHoras+';'+sCPF+';'+sRG+';'+
+                sTitulodeEleitor+';'+sZonaEleitoral+';'+sSecaoEleitoral+';'+sCTPSNum+';'+sCTPSSerie+';'+
+                sReservista+';'+sCNH+';'+sBanco+';'+sAgencia+';'+sContaCorrente+';'+sPis+';';
+    tsArqNovo.Add(sLinhaNova);
+
+    // Salva o Arquivo =========================================================
+    sgMensagem:=IncludeTrailingPathDelimiter(ExtractFilePath(EdtProSoftImpArquivoSalvar.Text));
+    sgMensagem:=sgMensagem+ExtractName(EdtProSoftImpArquivoSalvar.Text)+'.csv';
+
+    tsArqNovo.SaveToFile(sgMensagem);
+
+  Finally // Try
+   Begin
+     FreeAndNil(tsArquivo);
+     FreeAndNil(tsArqNovo);
+   End;
+  End; // Try
+
+  tsArquivo.Free;
+  tsArqNovo.Free;
+
+  FrmBelShop.MontaProgressBar(False, FrmSolicitacoes);
+  Ts_ProSoftImpArquivo.Enabled:=True;
+
+  MessageBox(Handle, pChar('Arquivo Gerado com SUCESSO !!'+cr+cr+sgMensagem), 'ATENÇÃO !!', MB_ICONERROR);
+
+  EditorProSoftImpArquivo.Lines.Clear;
+  EdtProSoftImpPastaArquivo.Clear;
+  EdtProSoftImpArquivoSalvar.Clear;
+  // Exporta Arquivo ProSoft ===================================================
+  //============================================================================
 end;
 
 end.

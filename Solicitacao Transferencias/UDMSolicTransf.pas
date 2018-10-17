@@ -67,9 +67,6 @@ type
     CDS_OCItensCheckNUM_OC: TIntegerField;
     SQLQuery3: TSQLQuery;
     CDS_OCItensCheckENDERECO: TStringField;
-    IBQ_Busca1: TIBQuery;
-    IBDB_CD1: TIBDatabase;
-    IBT_CD1: TIBTransaction;
     CDS_OCItensCheckCOD_PRODUTO_SIDI: TStringField;
     CDS_OCItensCheckCOD_PRODUTO_LINX: TFMTBCDField;
     RelVisual: TRelVisualJul;
@@ -79,6 +76,14 @@ type
     CDS_OCItensCheckREFERENCIA: TStringField;
     CDS_OCItensCheckCOD_BARRA: TStringField;
     SQLSP: TSQLStoredProc;
+    DSP_ProdNegativos: TDataSetProvider;
+    CDS_ProdNegativos: TClientDataSet;
+    DS_ProdNegativos: TDataSource;
+    SQLQ_ProdNegativos: TSQLQuery;
+    CDS_ProdNegativosCOD_PRODUTO: TFMTBCDField;
+    CDS_ProdNegativosNOME: TStringField;
+    CDS_ProdNegativosQTD_ESTOQUE: TFMTBCDField;
+    CDS_ProdNegativosATIVO: TStringField;
 
     //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

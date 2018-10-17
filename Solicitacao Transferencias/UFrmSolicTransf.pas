@@ -32,7 +32,6 @@ type
     CorCaptionForm: TJvGradientCaption;
     Pan_Loja: TPanel;
     ApplicationEvents1: TApplicationEvents;
-    OdirPanApres: TPanel;
     PC_Principal: TPageControl;
     Ts_Produtos: TTabSheet;
     Gb_Solicitacao: TGroupBox;
@@ -80,6 +79,13 @@ type
     Lbx_NFeNumOCs: TListBox;
     dxStatusBar2: TdxStatusBar;
     dxStatusBar3: TdxStatusBar;
+    Ts_ProdNegativos: TTabSheet;
+    Gb_ProdNegativos: TGroupBox;
+    Dbg_ProdNegativos: TDBGrid;
+    Pan_ProdNegativos: TPanel;
+    Bt_ProdNegativosBusca: TJvXPButton;
+    Bt_ProdNegativosMemoria: TJvXPButton;
+    OdirPanApres: TPanel;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -106,8 +112,6 @@ type
     Procedure CheckOutBuscaOC;
     Procedure CheckOutRetiraQtdCheckout;
     Procedure CheckOutRelatorio;
-
-    // Odir Analisar ==>> Procedure CheckOutColocaEnderecamento;
 
     // ODIR >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -146,7 +150,9 @@ type
       State: TGridDrawState);
     procedure EdtNFeNumNFeExit(Sender: TObject);
     procedure Dbg_NFeProdutosOCEnter(Sender: TObject);
-    procedure Dbg_NFeProdutosOCTitleClick(Column: TColumn); // Posiciona no Componente
+    procedure Dbg_NFeProdutosOCTitleClick(Column: TColumn);
+    procedure Bt_ProdNegativosBuscaClick(Sender: TObject);
+    procedure Bt_ProdNegativosMemoriaClick(Sender: TObject); // Posiciona no Componente
 
   private
     { Private declarations }
@@ -406,62 +412,12 @@ Begin
   DMSolicTransf.CDS_OCItensCheck.Close;
   DMSolicTransf.CDS_OCItensCheck.Open;
 
-//  // Acerta Endereçamento Quando For CD ========================================
-//  If sgLojaLinx='2' Then
-//  Begin
-//    FrmSolicTransf.CheckOutColocaEnderecamento;
-//  End; // If sgLojaLinx='2' Then
   DMSolicTransf.CDS_OCItensCheck.EnableControls;
 
   // Posiciona no Produto ======================================================
   DMSolicTransf.CDS_OCItensCheck.RecNo:=iRecNo;
 
 End; // CHECKOUT NFeE - Retira Quantidade de CheckOut na Nota Fiscal >>>>>>>>>>>
-
-// Odir Analisar ==>>
-//// CHECKOUT NFeE - Coloca Endereçamento nos Produtos >>>>>>>>>>>>>>>>>>>>>>>>>>>
-//Procedure TFrmSolicTransf.CheckOutColocaEnderecamento;
-//Var
-//  MySql: String;
-//Begin
-////  If Not DMSolicTransf.IBDB_CD.Connected Then
-////   DMSolicTransf.IBDB_CD.Connected:=True;
-//
-//  DMSolicTransf.CDS_OCItensCheck.First;
-//  While Not DMSolicTransf.CDS_OCItensCheck.Eof do
-//  Begin
-//    If Trim(DMSolicTransf.CDS_OCItensCheckCOD_PRODUTO_SIDI.AsString)<>'' Then
-//    Begin
-//      MySql:=' SELECT'+
-//             ' TRIM(e.zonaendereco)||''.''||e.corredor||''.''||e.prateleira||''.''||e.gaveta ENDERECO'+
-//             ' FROM ESTOQUE e'+
-//             ' WHERE e.codfilial=''99'''+
-//             ' AND   e.codproduto='+QuotedStr(Trim(DMSolicTransf.CDS_OCItensCheckCOD_PRODUTO_SIDI.AsString));
-//      DMSolicTransf.SQLQuery3.Close;
-//      DMSolicTransf.SQLQuery3.SQL.Clear;
-//      DMSolicTransf.SQLQuery3.SQL.Add(MySql);
-//      DMSolicTransf.SQLQuery3.Open;
-////      DMSolicTransf.IBQ_Busca.Close;
-////      DMSolicTransf.IBQ_Busca.SQL.Clear;
-////      DMSolicTransf.IBQ_Busca.SQL.Add(MySql);
-////      DMSolicTransf.IBQ_Busca.Open;
-//
-//      If Not DMSolicTransf.SQLQuery3.IsEmpty Then
-//      Begin
-//        DMSolicTransf.CDS_OCItensCheck.Edit;
-//        DMSolicTransf.CDS_OCItensCheckENDERECO.AsString:=DMSolicTransf.SQLQuery3.FieldbyName('Endereco').AsString;
-//        DMSolicTransf.CDS_OCItensCheck.Post;
-//      End; // If Not DMSolicTransf.SQLQuery3.IsEmpty Then
-//      DMSolicTransf.SQLQuery3.Close;
-//    End; // If Trim(DMSolicTransf.CDS_OCItensCheckCOD_PRODUTO_SIDI.AsString)<>'' Then
-//
-//    DMSolicTransf.CDS_OCItensCheck.Next;
-//  End; // While Not DMSolicTransf.CDS_OCItensCheck.Eof do
-//  DMSolicTransf.CDS_OCItensCheck.First;
-//
-////  DMSolicTransf.IBDB_CD.Connected:=False;
-//End; // CHECKOUT NFeE - Coloca Endereçamento nos Produtos >>>>>>>>>>>>>>>>>>>>>>
-// Odir Analisar 
 
 // CHECKOUT NFeE - Busca Ordens de Compra para CheckOut >>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmSolicTransf.CheckOutBuscaOC;
@@ -543,11 +499,6 @@ Begin
   DMSolicTransf.SQLQ_OCItensCheck.SQL.Add(MySql);
   DMSolicTransf.CDS_OCItensCheck.Open;
 
-  // Acerta Endereçamento Quando For CD ========================================
-//  If sgLojaLinx='2' Then
-//  Begin
-//    CheckOutColocaEnderecamento';
-//  End; // If sgLojaLinx='2' Then
   DMSolicTransf.CDS_OCItensCheck.EnableControls;
 End; // CHECKOUT NFeE - Busca Ordens de Compra para CheckOut >>>>>>>>>>>>>>>>>>>
 
@@ -943,29 +894,12 @@ begin
     If Not NovaVersao Then
     Begin
       msg('== TECNONOLOGIA DA INFORMAÇÃO =='+cr+
-          ' BelShop-CD ADVERTE !!'+cr+cr+
+          ' BelShop-CD ADVERTE !!'+cr+
           'Versão do Sistema esta Incorreta !!'+cr+
-          'Solicite Atualização para ALINE/ODIR...','A');
+          'Solicite Atualização Imediata'+cr+'para ODIR / ALINE...','A');
     End; // If not NovaVersao Then
   End; // If sgLojaLinx<>2 Then // Não Verifica Versão para o CD
   PC_PrincipalChange(Self);
-
-// Odir SIDICOM Retirado
-//  If sgLojaLinx='2' Then
-//  Begin
-//    Application.ProcessMessages;
-//    // =========================================================================
-//    // Conexão IBDataBase do CD ================================================
-//    // =========================================================================
-//    If Not DMSolicTransf.Conecta_CD Then
-//    Begin
-//      msg('Erro ao Conectar Banco de Dados do CD'+cr+cr+'BelShop_CD - SIDICOM !!','A');
-//      Application.Terminate;
-//      Exit;
-//    End; // If Not Conecta_CD Then
-//    // Conexão IBDataBase do CD ================================================
-//    // =========================================================================
-//  End; // If sgLojaLinx='2' Then
 
 end;
 
@@ -1229,16 +1163,21 @@ begin
 
   LimpaEdts;
 
-  bFocar_Gb_Produto:=True;
+  If DMSolicTransf.CDS_ProdNegativos.Active Then
+   DMSolicTransf.CDS_ProdNegativos.Close;
+
+  bFocar_Gb_Produto:=False;
 
   If (PC_Principal.ActivePage=Ts_Produtos) And (Ts_Produtos.CanFocus) Then
   Begin
     CorCaptionForm.FormCaption:='BelShop - '+Ts_Produtos.Caption;
     Gb_Produto.Parent:=Gb_Solicitacao;
+    bFocar_Gb_Produto:=True;
   End;
 
   If (PC_Principal.ActivePage=Ts_Consultas) And (Ts_Consultas.CanFocus) Then
   Begin
+    bFocar_Gb_Produto:=True;
     CorCaptionForm.FormCaption:='BelShop - '+Ts_Consultas.Caption;
     Gb_Produto.Parent:=Gb_Verifica;
   End;
@@ -1246,9 +1185,13 @@ begin
   If (PC_Principal.ActivePage=Ts_NFeCheckOut) And (Ts_NFeCheckOut.CanFocus) Then
   Begin
     CorCaptionForm.FormCaption:='BelShop - '+Ts_NFeCheckOut.Caption;
-    bFocar_Gb_Produto:=False;
-
     EdtNFeCodFornLinx.SetFocus;
+  End;
+
+  If (PC_Principal.ActivePage=Ts_ProdNegativos) And (Ts_ProdNegativos.CanFocus) Then
+  Begin
+    CorCaptionForm.FormCaption:='BelShop - '+Ts_ProdNegativos.Caption;
+    Dbg_ProdNegativos.SetFocus;
   End;
 
   If bFocar_Gb_Produto Then
@@ -1996,8 +1939,6 @@ begin
 
     If Trim(DMSolicTransf.SQLQuery1.FieldByName('des_forn_linx').AsString)='' Then
     Begin
-      // OdirApagar - 08/08/2018
-      // msg('Fornecedor Sem Ordem de Compra !!!', 'A');
       If msg('Fornecedor Sem Ordem de Compra !'+cr+cr+'Deseja Continuar ??', 'C')=2 Then
       Begin
         Screen.Cursor:=crDefault;
@@ -2009,8 +1950,6 @@ begin
     End;
     DMSolicTransf.SQLQuery1.Close;
 
-    // OdirApagar - 08/08/2018
-    // EdtNFeDesFornLinx.Text:=DMSolicTransf.SQLQuery1.FieldByName('des_forn_linx').AsString;
     EdtNFeNumNFe.SetFocus;
 
     Screen.Cursor:=crDefault;
@@ -2116,8 +2055,6 @@ begin
   If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
    Begin
      EdtNFeCodFornLinx.Text:=FrmPesquisa.EdtCodigo.Text;
-     // OdirApagar - 08/08/2018
-     // EdtNFeCodFornLinxExit(Self);
      DMSolicTransf.CDS_OCItensCheck.Close;
      EdtNFeCodFornLinx.SetFocus;
      EdtNFeNumNFe.SetFocus;
@@ -2613,6 +2550,61 @@ begin
        End; // If InputQuery('Localizar: '+s,'',sPesquisa) then
     End; // While b do
   End; // If Not DMSolicTransf.CDS_OCItensCheck.IsEmpty Then
+end;
+
+procedure TFrmSolicTransf.Bt_ProdNegativosBuscaClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  OdirPanApres.Caption:='AGUARDE !! Localizando Produtos com Saldos Negativos...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSolicTransf.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmSolicTransf.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmSolicTransf;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+  Screen.Cursor:=crAppStart;
+
+  MySql:=' SELECT p.cod_produto, p.nome , COALESCE(d.quantidade,0) QTD_ESTOQUE,'+
+         ' CASE'+
+         '   WHEN COALESCE(p.desativado,''N'')=''N'' THEN'+
+         '    ''SIM'''+
+         '   ELSE'+
+         '    ''NÃO'''+
+         ' END ATIVO'+
+         ' FROM LINXPRODUTOS p, LINXPRODUTOSDETALHES d'+
+         ' WHERE p.cod_produto=d.cod_produto'+
+         ' AND   d.quantidade<0'+
+         ' AND   d.empresa='+sgLojaLinx+
+         ' ORDER BY 2';
+  DMSolicTransf.CDS_ProdNegativos.Close;
+  DMSolicTransf.SQLQ_ProdNegativos.Close;
+  DMSolicTransf.SQLQ_ProdNegativos.SQL.Clear;
+  DMSolicTransf.SQLQ_ProdNegativos.SQL.Add(MySql);
+  DMSolicTransf.CDS_ProdNegativos.Open;
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+
+  If DMSolicTransf.CDS_ProdNegativos.IsEmpty Then
+  Begin
+    msg('SEM Produto Com'+cr+cr+'Saldo Negativo a Listar...','A');
+    DMSolicTransf.CDS_ProdNegativos.Close;
+  End; // If DMSolicTransf.CDS_ProdNegativos.IsEmpty Then
+
+end;
+
+procedure TFrmSolicTransf.Bt_ProdNegativosMemoriaClick(Sender: TObject);
+begin
+  Dbg_ProdNegativos.SetFocus;
+
+  If DMSolicTransf.CDS_ProdNegativos.IsEmpty Then
+   Exit;
+
+  DBGridClipboard(Dbg_ProdNegativos);
+
 end;
 
 end.

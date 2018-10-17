@@ -9,7 +9,7 @@
 			<Parameter id="cnpjEmp">03772229002348</Parameter>
 			<Parameter id="identificador">NULL</Parameter>
 			<Parameter id="data_inicial">2018-01-01</Parameter>
-			<Parameter id="data_fim">2018-03-07</Parameter>
+			<Parameter id="data_fim">2018-10-09</Parameter>
 		</Parameters>
 	</Command>
 </LinxMicrovix>

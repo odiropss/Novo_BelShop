@@ -137,6 +137,8 @@ Begin
   MySql:=' SELECT e.cod_filial'+
          ' FROM EMP_CONEXOES e'+
          ' WHERE e.ind_ativo=''SIM'''+
+         // OdirAqui Loja 89
+         ' AND e.cod_filial<>''89'''+
          ' ORDER BY 1';
   DMAtualizaSeteHoras.CDS_Lojas.Close;
   DMAtualizaSeteHoras.SDS_Lojas.CommandText:=MySql;
@@ -1956,6 +1958,8 @@ begin
          // opss somente uma loja
          // ' WHERE e.cod_linx=2'+
          ' WHERE ((e.ind_ativo = ''SIM'') OR (e.cod_filial = ''99''))'+
+         // OdirAqui Loja 89
+         ' AND e.cod_filial<>''89'''+
 
          ' ORDER BY 1';
   DMAtualizaSeteHoras.CDS_Lojas.Close;

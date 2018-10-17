@@ -6,11 +6,11 @@
 		<Name>LinxProdutosInventario</Name>
 		<Parameters>
 			<Parameter id="chave">d52511f4-3541-4a65-9adc-665513ea3207</Parameter>
-			<Parameter id="cnpjEmp">03772229000302</Parameter>
-			<Parameter id="data_inventario">2018-06-27</Parameter>
+			<Parameter id="cnpjEmp">03772229002348</Parameter>
+			<Parameter id="data_inventario">2018-10-03</Parameter>
 			<Parameter id="cod_produto">NULL</Parameter>
 			<Parameter id="referencia">NULL</Parameter>
-			<Parameter id="cod_deposito">9</Parameter>
+			<Parameter id="cod_deposito">1</Parameter>
 		</Parameters>
 	</Command>
 </LinxMicrovix>

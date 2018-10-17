@@ -221,7 +221,7 @@ Begin
              ' 0 QTD_DIAS,'+
              ' 0.00 QTD_VENDA_DIA,'+
              ' 0.00 QTD_DEMANDA,'+
-             ' so.qtd_transf QTD_REPOSICAO,'+ // OdirAqui
+             ' so.qtd_transf QTD_REPOSICAO,'+
              ' so.qtd_transf QTD_TRANSF,'+
              ' so.qtd_transf QTD_A_TRANSF,'+
              ' ''000000'' NUM_PEDIDO,'+
@@ -1715,6 +1715,7 @@ Begin
          '                                 AND t.tip_aux=2'+
 
          ' WHERE CAST(COALESCE(c.est_minimo,0) AS INTEGER)>0'+
+         ' AND   e.saldoatual>=0'+
          ' AND   c.cod_loja='+QuotedStr(sCodLoja);
 
          If bCurvaC Then

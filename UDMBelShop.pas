@@ -3322,7 +3322,7 @@ Begin
              If (DMConexoes.Components[i] as TIBTransaction).Name=sTransaction Then
              Begin
 
-               If sSituacao='S' Then
+               If sSituacao='S' Then // Start na Transação
                Begin
                  If (DMConexoes.Components[i] as TIBTransaction).Active Then
                   (DMConexoes.Components[i] as TIBTransaction).Rollback;
@@ -3330,12 +3330,12 @@ Begin
                  (DMConexoes.Components[i] as TIBTransaction).StartTransaction;
                End; // If sSituacao='S' Then
 
-               If sSituacao='C' Then
+               If sSituacao='C' Then // Commit na Transação
                Begin
                  (DMConexoes.Components[i] as TIBTransaction).Commit;
                End;
 
-               If sSituacao='R' Then
+               If sSituacao='R' Then // Rollback na Transação
                Begin
                  (DMConexoes.Components[i] as TIBTransaction).Rollback;
                End;
@@ -4283,6 +4283,7 @@ procedure TDMBelShop.IBQ_AComprarBeforePost(DataSet: TDataSet);
 Var
   cQtdComp, cPerApurCxEmb: Currency;
   s, sNumSeq, MySql: String;
+  cSaldo: Currency;
 begin
   // Retirado Não Atualuza Qtd_Acomprar do CD (99) Com as Transferencias
   // AcertaCompraCD(IBQ_AComprarNUM_DOCUMENTO.AsString, False, True);
@@ -4294,7 +4295,16 @@ begin
    End
   Else // If IBQ_AComprarIND_OC_GERADA.AsString='S' Then
    Begin
-     // Caixa de Embarque =====================================================
+     // Não Altera nada ========================================================
+     If (IBQ_AComprarQTD_ACOMPRAR.AsCurrency<>0) And (IBQ_AComprarQTD_TRANSF.AsCurrency<>0) and 
+        (IBQ_AComprarQTD_ACOMPRAR.NewValue<>IBQ_AComprarQTD_ACOMPRAR.OldValue) And
+        (IBQ_AComprarQTD_TRANSF.NewValue=IBQ_AComprarQTD_TRANSF.OldValue) Then
+     Begin
+       IBQ_AComprarQTD_ACOMPRAR.NewValue:=IBQ_AComprarQTD_ACOMPRAR.OldValue;
+       Exit;
+     End;
+
+     // Caixa de Embarque ======================================================
      If (bgLojaCXEmbarque) And (IBQ_AComprarQTD_ACOMPRAR.AsCurrency>0) And (IBQ_AComprarUNI_COMPRA.AsCurrency>0) Then
      Begin
        cPerApurCxEmb:=RoundTo((IBQ_AComprarQTD_ACOMPRAR.AsCurrency/IBQ_AComprarUNI_COMPRA.AsCurrency),-2);
@@ -4328,6 +4338,63 @@ begin
        IBQ_AComprarQTD_TRANSF.AsCurrency:=0;
        Exit;
      End;
+
+     //=========================================================================
+     // Verifica Saldo no CD para Transferencia ================================
+     //=========================================================================
+     If IBQ_AComprarQTD_TRANSF.NewValue<>IBQ_AComprarQTD_TRANSF.OldValue Then
+     Begin
+       MySql:=' SELECT SUM(t.qtd_transf) QTD_TRANSF'+
+              ' FROM OC_COMPRAR t'+
+              ' WHERE t.num_documento='+IBQ_AComprarNUM_DOCUMENTO.AsString+
+              ' AND   t.cod_item='+QuotedStr(IBQ_AComprarCOD_ITEM.AsString);
+       SQLQuery3.Close;
+       SQLQuery3.SQL.Clear;
+       SQLQuery3.SQL.Add(MySql);
+       SQLQuery3.Open;
+
+       cSaldo:=0;
+       If Trim(SQLQuery3.FieldByName('Qtd_Transf').AsString)<>'' Then
+        cSaldo:=SQLQuery3.FieldByName('Qtd_Transf').AsCurrency;
+       SQLQuery3.Close;
+
+       // Verifica se Existem Quabtidade a Separa do Produto ===================
+       MySql:=' SELECT SUM(l.qtd_a_transf) Qtd_Separa'+
+              ' FROM ES_ESTOQUES_LOJAS l'+
+              ' WHERE l.dta_movto=CURRENT_DATE'+
+              ' AND   l.num_pedido=''000000'''+
+              ' AND   l.ind_transf=''SIM'''+
+              ' AND   l.qtd_a_transf>0'+
+              ' AND   l.cod_produto='+QuotedStr(IBQ_AComprarCOD_ITEM.AsString);
+       SQLQuery3.Close;
+       SQLQuery3.SQL.Clear;
+       SQLQuery3.SQL.Add(MySql);
+       SQLQuery3.Open;
+
+       If Trim(SQLQuery3.FieldByName('Qtd_Separa').AsString)<>'' Then
+        cSaldo:=cSaldo+SQLQuery3.FieldByName('Qtd_Separa').AsCurrency;
+       SQLQuery3.Close;
+
+       MySql:=' SELECT COALESCE(ld.quantidade,0.0000) - '+f_Troca(',','.',CurrToStr(cSaldo))+' Saldo'+
+              ' FROM LINXPRODUTOSDETALHES ld'+
+              ' WHERE ld.empresa=2'+
+              ' AND   ld.cod_produto='+CDS_AComprarItensCOD_LINX.AsString;
+       SQLQuery3.Close;
+       SQLQuery3.SQL.Clear;
+       SQLQuery3.SQL.Add(MySql);
+       SQLQuery3.Open;
+       cSaldo:=SQLQuery3.FieldByName('Saldo').AsCurrency+IBQ_AComprarQTD_TRANSF.OldValue;
+       SQLQuery3.Close;
+
+       If cSaldo < IBQ_AComprarQTD_TRANSF.AsCurrency Then
+       Begin
+         msg('Saldo Atual no CD é Insuficiente'+cr+cr+'Para esta Transferências !!'+cr+cr+' SALDO: '+CurrToStr(cSaldo),'X');
+         IBQ_AComprarQTD_TRANSF.AsCurrency:=IBQ_AComprarQTD_TRANSF.OldValue;
+         Exit;
+       End;
+     End; // If IBQ_AComprarQTD_TRANSF.NewValue<>IBQ_AComprarQTD_TRANSF.OldValue Then
+     // Verifica Saldo no CD para Transferencia ================================
+     //=========================================================================
 
      If (IBQ_AComprarQTD_TRANSF.AsCurrency<>0) and (IBQ_AComprarQTD_TRANSF.OldValue=0) Then
      Begin

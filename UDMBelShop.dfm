@@ -8123,8 +8123,8 @@ object DMBelShop: TDMBelShop
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_SQLQ_Busca'
-    Left = 122
-    Top = 468
+    Left = 130
+    Top = 476
   end
   object SDS_FaltasCDLojas: TSQLDataSet
     MaxBlobSize = -1

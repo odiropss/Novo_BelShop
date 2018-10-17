@@ -484,34 +484,6 @@ object DMSolicTransf: TDMSolicTransf
     Left = 236
     Top = 72
   end
-  object IBQ_Busca1: TIBQuery
-    Database = IBDB_CD1
-    Transaction = IBT_CD1
-    BufferChunks = 1000
-    CachedUpdates = False
-    Left = 711
-    Top = 87
-  end
-  object IBDB_CD1: TIBDatabase
-    DatabaseName = '\\LOCALHOST\C:\sidicom.new\BelShop_CD.FDB'
-    Params.Strings = (
-      'user_name=SYSDBA'
-      'password=masterkey')
-    LoginPrompt = False
-    DefaultTransaction = IBT_CD1
-    IdleTimer = 0
-    SQLDialect = 3
-    TraceFlags = []
-    Left = 688
-    Top = 34
-  end
-  object IBT_CD1: TIBTransaction
-    Active = False
-    DefaultDatabase = IBDB_CD1
-    AutoStopAction = saNone
-    Left = 752
-    Top = 34
-  end
   object RelVisual: TRelVisualJul
     Cabecalho1Direita = '#Pag'
     Cabecalho2Direita = '#Data'
@@ -563,5 +535,68 @@ object DMSolicTransf: TDMSolicTransf
     SQLConnection = SQLC
     Left = 149
     Top = 10
+  end
+  object DSP_ProdNegativos: TDataSetProvider
+    DataSet = SQLQ_ProdNegativos
+    Options = [poRetainServerOrder]
+    Left = 369
+    Top = 275
+  end
+  object CDS_ProdNegativos: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_ProdNegativos'
+    Left = 409
+    Top = 255
+    object CDS_ProdNegativosCOD_PRODUTO: TFMTBCDField
+      DisplayLabel = 'C'#243'd Linx'
+      FieldName = 'COD_PRODUTO'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_ProdNegativosNOME: TStringField
+      DisplayLabel = 'Nome do Produto'
+      FieldName = 'NOME'
+      Size = 250
+    end
+    object CDS_ProdNegativosQTD_ESTOQUE: TFMTBCDField
+      DisplayLabel = 'Qtd Estoque'
+      FieldName = 'QTD_ESTOQUE'
+      Precision = 15
+      Size = 4
+    end
+    object CDS_ProdNegativosATIVO: TStringField
+      DisplayLabel = 'Ativo ?'
+      FieldName = 'ATIVO'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
+  end
+  object DS_ProdNegativos: TDataSource
+    DataSet = CDS_ProdNegativos
+    Left = 453
+    Top = 275
+  end
+  object SQLQ_ProdNegativos: TSQLQuery
+    MaxBlobSize = -1
+    Params = <>
+    SQL.Strings = (
+      'SELECT p.cod_produto, p.nome , d.quantidade QTD_ESTOQUE,'
+      'CASE'
+      '  WHEN COALESCE(p.desativado,'#39'N'#39')='#39'N'#39' THEN'
+      '   '#39'SIM'#39
+      '  ELSE'
+      '  '#39'N'#195'O'#39
+      'END ATIVO'
+      'FROM LINXPRODUTOS p, LINXPRODUTOSDETALHES d'
+      'WHERE p.cod_produto=d.cod_produto'
+      'AND   d.quantidade<0'
+      'AND   d.empresa=1'
+      ''
+      'ORDER BY 2')
+    SQLConnection = SQLC
+    Left = 332
+    Top = 256
   end
 end

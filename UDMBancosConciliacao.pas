@@ -350,6 +350,10 @@ type
     CDS_CMDepositosAnaliseQUEBRA_CX: TFMTBCDField;
     CDS_CMDepositosAnaliseDIF_DEPOSITO: TFMTBCDField;
     CDS_CMDepositosAnaliseOBS_FINANCEIRO: TStringField;
+    CDS_CMDepositosAnaliseDTA_DOCTO: TDateField;
+    CDS_CMDepositosAnaliseIND_CONCILIACAO: TStringField;
+    CDS_CMDepositosAnaliseORDEM_APRES: TIntegerField;
+    CDS_CMDepositosAnaliseNUM_RELATORIO: TStringField;
     CDS_CMDepositosAnaliseOBSERVACOES: TStringField;
     procedure CDS_LojasBancoAfterScroll(DataSet: TDataSet);
     procedure CDS_CMApresExtratosAfterScroll(DataSet: TDataSet);

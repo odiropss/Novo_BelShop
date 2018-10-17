@@ -1,6 +1,6 @@
 object FrmCentralTrocas: TFrmCentralTrocas
-  Left = 241
-  Top = 113
+  Left = 240
+  Top = 79
   Align = alClient
   AutoSize = True
   BorderIcons = [biSystemMenu]

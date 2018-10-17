@@ -1,6 +1,6 @@
 object FrmBancoExtratos: TFrmBancoExtratos
-  Left = 242
-  Top = 106
+  Left = 238
+  Top = 114
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Banco / Extratos'
@@ -407,7 +407,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Top = 0
     Width = 1047
     Height = 564
-    ActivePage = Ts_ConciliacoesManutDepositos
+    ActivePage = Ts_ConciliacoesManutDepAnalise
     Align = alClient
     TabOrder = 0
     OnChange = PC_PrincipalChange
@@ -5269,11 +5269,11 @@ object FrmBancoExtratos: TFrmBancoExtratos
         end
         object Bt_CMRelatorioDep: TJvXPButton
           Tag = 1
-          Left = 319
+          Left = 303
           Top = 2
-          Width = 118
+          Width = 131
           Height = 33
-          Caption = 'Analise Dia'
+          Caption = 'Analise Caixas'
           TabOrder = 3
           TabStop = False
           Glyph.Data = {
@@ -5379,7 +5379,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
       end
     end
     object Ts_ConciliacoesManutDepAnalise: TTabSheet
-      Caption = 'Concilia'#231#227'o Dep'#243'sitos Analise Dia '
+      Caption = 'Analise de Concilia'#231#245'es de Caixa'
       Highlighted = True
       ImageIndex = 8
       object Panel4: TPanel
@@ -5428,74 +5428,14 @@ object FrmBancoExtratos: TFrmBancoExtratos
           ParentFont = False
           OnClick = Bt_DepAnaliseVoltarClick
         end
-        object Bt_DepAnaliseDia: TJvXPButton
-          Tag = 1
-          Left = 2
-          Top = 2
-          Width = 141
-          Height = 35
-          Caption = 'Informar Dia'
-          TabOrder = 1
-          TabStop = False
-          Glyph.Data = {
-            07544269746D6170AA040000424DAA0400000000000036000000280000001400
-            000013000000010018000000000074040000C30E0000C30E0000000000000000
-            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF00000000000000000000
-            0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000
-            000000000000000000000000BFBFBF000000BFBFBFBFBFBFBFBFBFBFBFBF7F7F
-            7F000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F
-            00007F0000000000000000BFBFBFFFFFFFFFFFFF000000000000000000000000
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F00007F00007F00007F00
-            00000000BFBFBFFFFFFFFFFFFF000000BFBFBF00000000000000000000000000
-            0000000000000000000000BFBFBFBFBFBF7F00007F00007F00007F0000000000
-            BFBFBFFFFFFFFFFFFFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFF000000BFBFBFBFBFBFFF0000FF0000FF0000FF00000000007F7F7F7F
-            7F7F7F7F7F7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            000000BFBFBFBFBFBF7F00007F00007F00007F0000BFBFBFBFBFBFBFBFBF7F7F
-            7FFFFFFF7F00007F00007F00007F00007F00007F0000FFFFFFFFFFFF000000BF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F
-            00007F00007F00007F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F0000FFFFFFFFFF
-            FFFFFFFFFFFFFFFFFFFF7F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F00007F00007F00007F00007F0000
-            7F00007F00007F00007F0000000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            FFFFFFFFFFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBF7F7F7FFFFFFF7F00007F00007F00007F0000FFFFFFFFFFFFFFFF
-            FFFFFFFF000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBF7F7F7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F
-            7FFFFFFF7F00007F00007F00007F00007F0000FFFFFFFFFFFFFFFFFF000000BF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7FFFFFFF
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000BFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F7F7F7F7F7F7F
-            7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7FBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
-            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF}
-          ShowFocusRect = True
-          Spacing = 5
-          Align = alLeft
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-          Style.Theme = OfficeXP
-          OnClick = Bt_DepAnaliseDiaClick
-        end
         object Bt_DepAnaliseSalvaClipboard: TJvXPButton
           Tag = 4
-          Left = 457
+          Left = 691
           Top = 2
-          Width = 159
+          Width = 118
           Height = 35
-          Caption = 'Salvar em Mem'#243'ria'
-          TabOrder = 2
+          Caption = 'Salvar em'#13#10' Mem'#243'ria'
+          TabOrder = 1
           Glyph.Data = {
             07544269746D617066010000424D660100000000000076000000280000001400
             0000140000000100040000000000F00000000000000000000000100000001000
@@ -5510,7 +5450,8 @@ object FrmBancoExtratos: TFrmBancoExtratos
             000030F44F00033333333333000030FFFF003333333333330000300000033333
             333333330000333333333333333333330000}
           ShowFocusRect = True
-          Anchors = [akLeft, akTop, akBottom]
+          Spacing = 5
+          Anchors = [akTop, akRight]
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -5521,12 +5462,12 @@ object FrmBancoExtratos: TFrmBancoExtratos
         end
         object Bt_DepAnaliseCadHistoricos: TJvXPButton
           Tag = 4
-          Left = 695
+          Left = 811
           Top = 2
-          Width = 167
+          Width = 118
           Height = 35
-          Caption = 'Cadastro Hist'#243'ricos'
-          TabOrder = 3
+          Caption = 'Cadastro de'#13#10' Hist'#243'ricos'
+          TabOrder = 2
           Glyph.Data = {
             07544269746D6170F6030000424DF60300000000000076000000280000001E00
             00001C0000000100080000000000800300000000000000000000100000000000
@@ -5563,7 +5504,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             BF00}
           ShowFocusRect = True
           Spacing = 5
-          Anchors = [akLeft, akTop, akBottom]
+          Anchors = [akTop, akRight]
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -5574,12 +5515,12 @@ object FrmBancoExtratos: TFrmBancoExtratos
         end
         object Bt_DepAnaliseObsFinan: TJvXPButton
           Tag = 1
-          Left = 239
+          Left = 571
           Top = 2
-          Width = 153
+          Width = 118
           Height = 35
-          Caption = 'Obs Financeira Loja Conciliada'
-          TabOrder = 4
+          Caption = 'Observa'#231#227'o '#13#10' Financeira'
+          TabOrder = 3
           TabStop = False
           Glyph.Data = {
             07544269746D617016070000424D160700000000000036000000280000001A00
@@ -5641,8 +5582,8 @@ object FrmBancoExtratos: TFrmBancoExtratos
             BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF000000BFBFBFBFBFBF
             0000}
           ShowFocusRect = True
-          Spacing = 15
-          Anchors = [akLeft, akTop, akBottom]
+          Spacing = 5
+          Anchors = [akTop, akRight]
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -5650,6 +5591,98 @@ object FrmBancoExtratos: TFrmBancoExtratos
           Font.Style = [fsBold]
           ParentFont = False
           OnClick = Bt_DepAnaliseObsFinanClick
+        end
+        object Panel5: TPanel
+          Left = 2
+          Top = 2
+          Width = 288
+          Height = 35
+          Align = alLeft
+          TabOrder = 4
+          object Bt_DepAnaliseFechados: TJvXPButton
+            Left = 1
+            Top = 4
+            Width = 92
+            Height = 27
+            Caption = 'Fechados'
+            TabOrder = 0
+            Glyph.Data = {
+              07544269746D617042010000424D420100000000000076000000280000001100
+              0000110000000100040000000000CC0000000000000000000000100000001000
+              0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+              C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF0077777777777777777000000070000000007777777000000070FFFFFFF077
+              77700000000070F77777F07777000000000070F77777F07770007000000070F7
+              7780008700077000000070F7700FFF0000777000000070F708FFFF0807777000
+              000070F80E000F0708777000000070F0EFEFEF0770777000000070F0F0000F07
+              7077700000007000EFEFFF077077700000007778000000070877700000007777
+              0077777807777000000077777007770077777000000077777780008777777000
+              0000777777777777777770000000}
+            Spacing = 5
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_DepAnaliseFechadosClick
+          end
+          object Bt_DepAnaliseAbertos: TJvXPButton
+            Left = 95
+            Top = 4
+            Width = 92
+            Height = 27
+            Caption = 'Abertos'
+            TabOrder = 1
+            Glyph.Data = {
+              07544269746D617042010000424D420100000000000076000000280000001100
+              0000110000000100040000000000CC0000000000000000000000100000001000
+              0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+              C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF0077777777777777777000000070000000007777777000000070FFFFFFF077
+              77700000000070F77777F07777000000000070F77777F07770007000000070F7
+              7780008700077000000070F7700FFF0000777000000070F708FFFF0807777000
+              000070F80E000F0708777000000070F0EFEFEF0770777000000070F0F0000F07
+              7077700000007000EFEFFF077077700000007778000000070877700000007777
+              0077777807777000000077777007770077777000000077777780008777777000
+              0000777777777777777770000000}
+            Spacing = 5
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_DepAnaliseFechadosClick
+          end
+          object Bt_DepAnaliseAmbos: TJvXPButton
+            Left = 189
+            Top = 4
+            Width = 92
+            Height = 27
+            Caption = 'Ambos'
+            TabOrder = 2
+            Glyph.Data = {
+              07544269746D617042010000424D420100000000000076000000280000001100
+              0000110000000100040000000000CC0000000000000000000000100000001000
+              0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+              C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF0077777777777777777000000070000000007777777000000070FFFFFFF077
+              77700000000070F77777F07777000000000070F77777F07770007000000070F7
+              7780008700077000000070F7700FFF0000777000000070F708FFFF0807777000
+              000070F80E000F0708777000000070F0EFEFEF0770777000000070F0F0000F07
+              7077700000007000EFEFFF077077700000007778000000070877700000007777
+              0077777807777000000077777007770077777000000077777780008777777000
+              0000777777777777777770000000}
+            Spacing = 5
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_DepAnaliseFechadosClick
+          end
         end
       end
       object Dbg_DepAnalise: TDBGrid
@@ -5679,11 +5712,22 @@ object FrmBancoExtratos: TFrmBancoExtratos
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_DepAnaliseDrawColumnCell
         OnKeyDown = Dbg_DepAnaliseKeyDown
+        OnTitleClick = Dbg_DepAnaliseTitleClick
         Columns = <
           item
             Expanded = False
             FieldName = 'NOME_EMP'
+            Title.Caption = 'Nome da Loja'
             Width = 288
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'DTA_DOCTO'
+            Title.Alignment = taCenter
+            Title.Caption = 'Data'
+            Width = 70
             Visible = True
           end
           item
@@ -5789,7 +5833,6 @@ object FrmBancoExtratos: TFrmBancoExtratos
           item
             Expanded = False
             FieldName = 'OBSERVACOES'
-            Title.Caption = 'Dep'#243'sitos/OBS N'#227'o Conciliados'
             Width = 200
             Visible = True
           end
@@ -5815,6 +5858,30 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Expanded = False
             FieldName = 'COD_LOJA'
             Visible = False
+          end
+          item
+            Expanded = False
+            FieldName = 'IND_CONCILIACAO'
+            Title.Alignment = taCenter
+            Width = 74
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'NUM_RELATORIO'
+            Title.Alignment = taRightJustify
+            Width = 100
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'ORDEM'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'ORDEM_APRES'
+            Visible = True
           end>
       end
       object Sb_DepAnaliseDia: TdxStatusBar
@@ -5827,8 +5894,15 @@ object FrmBancoExtratos: TFrmBancoExtratos
             PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
             PanelStyle.Alignment = taCenter
             Fixed = False
-            Text = '<F6> Fechamento/Abertura do Dia'
-            Width = 400
+            Text = 'Inserir no relat'#243'rio Financeiro'
+            Width = 20
+          end
+          item
+            PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+            PanelStyle.Alignment = taCenter
+            Fixed = False
+            Text = '<F6> Fechamento/Abertura da Loja/Dia Selecionados'
+            Width = 50
           end>
         PaintStyle = stpsOffice11
         Font.Charset = DEFAULT_CHARSET
@@ -5859,8 +5933,8 @@ object FrmBancoExtratos: TFrmBancoExtratos
     Visible = False
   end
   object MainMenu1: TMainMenu
-    Left = 784
-    Top = 446
+    Left = 752
+    Top = 430
     object MenuConcilicao: TMenuItem
       Tag = 50
       Caption = 'Concilia'#231#227'o'

@@ -497,6 +497,9 @@ Begin
         DMCentralTrocas.CDS_RelReposicao.Next;
       End; // While Not DMCentralTrocas.CDS_RelReposicao.Eof do
       DMCentralTrocas.CDS_RelReposicao.EnableControls;
+
+      msg('OK !!'+cr+cr+'Número do Romaneio Atualizado ...','A');
+
     End; // If bgSiga Then
 
     // NÃO Atualiza Numero do Relatório/Romaneio em ES_ESTOQUES_LOJAS ==========
@@ -1195,11 +1198,13 @@ Begin
   OdirPanApres.Visible:=False;
 end; // Atualiza Movimento Nuvem Linx >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Imprime Romaeios por Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Imprime Romaneios por Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmCentralTrocas.RomaneioFornecedor;
 Var
   MySql: String;
+
   dir_padrao, dir_relat: String;
+  sNomeUsuSep, sCodBarras: String;
 Begin
   // Busca Docto ===============================================================
   MySql:=' SELECT distinct pr.principalfor, pr.nomefornecedor'+
@@ -1234,6 +1239,13 @@ Begin
   DMBelShop.SDS_Busca.CommandText:=MySql;
   DMBelShop.CDS_Busca.Open;
 
+  If DMBelShop.CDS_Busca.IsEmpty Then
+  Begin
+    DMBelShop.CDS_Busca.Close;
+    msg('Sem Produto a Listar !!','A');
+    Exit;
+  End;
+
   DMBelShop.CDS_Busca.DisableControls;
   While Not DMBelShop.CDS_Busca.Eof do
   Begin
@@ -1251,19 +1263,29 @@ Begin
 
     // Busca Docto =============================================================
     MySql:=' SELECT '+
-           ' em.cod_cli_linx||'' - ''||em.razao_social||'+
-           QuotedStr(' =>'+DMBelShop.CDS_Busca.FieldByName('nomefornecedor').AsString)+' loja,'+
+           ' em.cod_cli_linx||'' - ''||em.razao_social LOJA,'+
            ' SUBSTRING(em.num_cnpj FROM 1 FOR 2) || ''.'' ||SUBSTRING(em.num_cnpj FROM 3 FOR 3) || ''.'' ||'+
            ' SUBSTRING(em.num_cnpj FROM 6 FOR 3) || ''/'' ||SUBSTRING(em.num_cnpj FROM 9 FOR 4) || ''-'' ||'+
            ' SUBSTRING(em.num_cnpj FROM 13 FOR 2) CNPJ,'+
-           ' lo.num_docto, lo.dta_movto, lo.num_seq Seq,'+
-           ' cd.end_prateleira||''.''||cd.end_gaveta Enderecamento,'+
+
+           ' lo.num_docto,'+
+           ' lo.dta_movto,'+
+           ' lo.num_seq Seq,'+
+
+           ' cd.end_prateleira||''.''||cd.end_gaveta ENDERECAMENTO,'+
            ' lo.qtd_a_transf,'+
            ' ''_____'' qtd_disponivel,'+
            ' cd.qtd_estoque Saldo_CD,'+
-           ' lo.cod_produto, TRIM(pr.codbarra) codbarra, Trim(pr.referencia) referencia, TRIM(pr.apresentacao) Des_produto, '+
+           ' lo.cod_produto,'+
+           ' TRIM(pr.codbarra) codbarra,'+
+           ' Trim(pr.referencia) referencia,'+
+           ' TRIM(pr.apresentacao) Des_produto, '+
            QuotedStr(Des_Usuario)+' Usuario,'+
-           ' lo.obs_docto'+
+           ' lo.obs_docto,'+
+
+           // OdirApagar - 10/10/2018
+           // ' pr.principalfor||'' - ''||pr.nomefornecedor FORNEC'+
+           ' pr.nomefornecedor FORNEC'+
 
            ' FROM ES_ESTOQUES_LOJAS lo, ES_ESTOQUES_CD cd,'+
            '      PRODUTO pr, EMP_CONEXOES em'+
@@ -1274,7 +1296,6 @@ Begin
            ' AND   lo.cod_loja=em.cod_filial'+
 
            ' AND   CAST(TRIM(COALESCE(lo.num_pedido,''0'')) AS INTEGER)=0'+
-
            ' AND   lo.dta_movto='+QuotedStr(f_Troca('-','.',(f_Troca('/','.',DateToStr(DtaEdt_ReposLojas.Date)))))+
            ' AND   lo.ind_transf='+QuotedStr('SIM')+
            ' AND   lo.num_docto='+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString+
@@ -1299,28 +1320,93 @@ Begin
     OdirPanApres.Visible:=False;
     Screen.Cursor:=crDefault;
 
+    sgCodUsuSep:='0';
+    sNomeUsuSep:='';
+
+//    // Inicio - Não Solicita Usuario no Romaneio >>>>>>>>>>>>
+//    //============================================================================
+//    // Solicita Usuário de Separador de Mercadoria ===============================
+//    //============================================================================
+//    UsuarioCorredorSeparacao(sNomeUsuSep);
+//
+//    If Trim(sgCodUsuSep)='' Then
+//     Exit;
+//
+//    If msg('O Separador Selecionado Esta CORRETO ??'+cr+cr+sgCodUsuSep+' - '+sNomeUsuSep,'C')=2 Then
+//     Exit;
+//    // Solicita Usuário de Separador de Mercadoria ===============================
+//    //============================================================================
+//    // Fim - Não Solicita Usuario no Romaneio >>>>>>>>>>>>>>>
+
     // Apresenta Relatório =====================================================
     {$IFDEF MSWINDOWS}
       dir_padrao      := ExtractFilePath(Application.ExeName);
       dir_relat       := dir_padrao +'Relatorios\';
     {$ENDIF}
 
-    DMRelatorio.frReport1.LoadFromFile(Dir_Relat+'RomaneioReposicoes_SObs.frf');
-
     // Apropria DataSet ========================================================
     DMRelatorio.frDBDataSet1.DataSet:=DMCentralTrocas.CDS_RelReposicao;
+    DMRelatorio.frReport1.LoadFromFile(Dir_Relat+'RomaneioReposicoes_SObs.frf');
 
-    // Informa Corredores ======================================================
+    //============================================================================
+    // Cadastro de Romaneios Emitidos para Separação na Logistica ================
+    //============================================================================
+    If Not CadastroRelSeparacao Then
+     Exit;
+    // Cadastro de Romaneios Emitidos para Separação na Logistica ================
+    //============================================================================
+
+    //============================================================================
+    // Variaveis de Dicionário do Romaneio =======================================
+    //============================================================================
+    // Informa Corredores --------------------------------------------------------
     If (bgTodosCorredores) or (igCorredores=0) Then
      DMRelatorio.frReport1.Dictionary.Variables.Variable['Corredor']:=#39+'TODOS'+#39
     Else
      DMRelatorio.frReport1.Dictionary.Variables.Variable['Corredor']:=#39+Trim(f_troca('''','',sgCorredores))+#39;
 
-    // Informa Prioridades =======================================================
+    // Informa Prioridades -------------------------------------------------------
     DMRelatorio.frReport1.Dictionary.Variables.Variable['Prioridades']:=#39+sgTipoPrioridade+#39;
 
+    // Informa Nome do Usuario de Separação --------------------------------------
+    DMRelatorio.frReport1.Dictionary.Variables.Variable['NomeUsuSeparador']:=#39+sNomeUsuSep+#39;
+
+    // Informa o Numero do Romaneio ----------------------------------------------
+    DMRelatorio.frReport1.Dictionary.Variables.Variable['NumDocto']:=#39+sgNumDocSep+#39;
+
+    // Informa o Codigo de Barras do Romaneio ------------------------------------
+        // Montagem do Codigo de Barras (13 Caracteres)
+        //    NumDocSep Tamanho de 6
+        //    NumDocto  Tamanho de 6
+        //    Ultimo Caracter é Digito calculodo
+    sCodBarras:=FormatFloat('000000',StrToInt(sgNumDocSep));
+    sCodBarras:=sCodBarras+FormatFloat('000000',DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsInteger);
+    DMRelatorio.frReport1.Dictionary.Variables.Variable['CodBarrasDocto']:=#39+sCodBarras+#39;
+
+    // Informa o Fornecedor ------------------------------------------------------
+    DMRelatorio.frReport1.Dictionary.Variables.Variable['Fornecedor']:=#39+Trim(DMCentralTrocas.CDS_RelReposicaoFORNEC.AsString)+#39;
+
+    //OdirApagar - 08/08/2017 - Não Apresenta a Observação
+    //  If FrmBelShop.Mem_Odir.Lines.Count>0 Then
+    //   DMRelatorio.frReport1.Dictionary.Variables.Variable['Obs']:=#39+FrmBelShop.Mem_Odir.Text+#39;
+    // Variaveis de Dicionário do Romaneio +======================================
+    //============================================================================
+
+    //============================================================================
+    // Apresenta Romaneio ========================================================
+    //============================================================================
     DMRelatorio.frReport1.PrepareReport;
     DMRelatorio.frReport1.ShowReport;
+    // Apresenta Romaneio ========================================================
+    //============================================================================
+
+    //============================================================================
+    // Atualiza Numero do Relatório/Romaneio em ES_ESTOQUES_LOJAS ================
+    //============================================================================
+    bgSiga:=True;
+    AtualizaNumRelatorio;
+    // Atualiza Numero do Relatório/Romaneio em ES_ESTOQUES_LOJAS ================
+    //============================================================================
 
     // Retorna para o DBGrid
     DMCentralTrocas.CDS_RelReposicao.Close;
@@ -1330,7 +1416,7 @@ Begin
   DMBelShop.CDS_Busca.EnableControls;
   DMBelShop.CDS_Busca.Close;
 
-End; // // Imprime Romaeiros por Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+End; // Imprime Romaneiros por Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // ReCalcula Posição dos ProgressBar da Leitura de Codigo de Barras >>>>>>>>>>>>
 Procedure TFrmCentralTrocas.ReCalculaPosicaoLeitora;
@@ -1493,10 +1579,75 @@ Begin
         // Inclui Produtos da OC Loja - Pedido do CD ===========================
         //======================================================================
 
+        //======================================================================
+        // Inclui Produtos no Arquivo Texto no Linx ============================
+        //======================================================================
         tsArquivo.Add(Trim(DMCentralTrocas.CDS_ReposicaoTransfCODBARRA.AsString)+';'+
                            IntToStr(DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsInteger));
+        // Inclui Produtos no Arquivo Texto no Linx ============================
+        //======================================================================
 
+        //======================================================================
+        // Atualiza Estoque no GERENCIADOR =====================================
+        //======================================================================
+        // Saldo Sidicom no Gerenciador
+        MySql:=' UPDATE ESTOQUE e'+
+               ' SET e.saldoatual = e.saldoatual - '+IntToStr(DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsInteger)+
+               ' WHERE e.codfilial=''99'''+
+               ' AND e.codproduto='+QuotedStr(DMCentralTrocas.CDS_ReposicaoTransfCOD_PRODUTO.AsString);
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+        // Saldo Linx no Gerenciador
+        MySql:=' SELECT p.cod_produto'+
+               ' FROM LINXPRODUTOS p'+
+               ' WHERE p.cod_auxiliar='+QuotedStr(DMCentralTrocas.CDS_ReposicaoTransfCOD_PRODUTO.AsString);
+        DMBelShop.SQLQuery3.Close;
+        DMBelShop.SQLQuery3.SQL.Clear;
+        DMBelShop.SQLQuery3.SQL.Add(MySql);
+        DMBelShop.SQLQuery3.Open;
+
+        If Trim(DMBelShop.SQLQuery3.FieldByName('cod_produto').AsString)<>'' Then
+        Begin
+          MySql:=' UPDATE LINXPRODUTOSDETALHES d'+
+                 ' set d.quantidade = d.quantidade - '+IntToStr(DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsInteger)+
+                 ' WHERE d.empresa=2'+
+                 ' AND   d.cod_produto='+Trim(DMBelShop.SQLQuery3.FieldByName('cod_produto').AsString);
+          DMBelShop.SQLC.Execute(MySql,nil,nil);
+        End; // If Trim(DMBelShop.SQLQuery3.FieldByName('cod_produto').AsString)<>'' Then
+        DMBelShop.SQLQuery3.SQL.Clear;
+        DMBelShop.SQLQuery3.Close;
+
+        // Atualiza Estoque no GERENCIADOR =====================================
+        //======================================================================
+
+        //======================================================================
+        // Atualiza Estoque no SIDICOM =========================================
+        //======================================================================
+        ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A');
+        FrmBelShop.CriaQueryIB('IBDB_99','IBT_99', IBQ_ConsultaFilial, True, True);
+        IBTransacao('S','IBT_99');
+
+        MySql:=' UPDATE ESTOQUE e'+
+               ' SET e.saldoatual = e.saldoatual - '+IntToStr(
+                     DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsInteger)+
+               ' WHERE e.codfilial=''99'''+
+               ' AND e.codproduto='+QuotedStr(
+                       DMCentralTrocas.CDS_ReposicaoTransfCOD_PRODUTO.AsString);
+        IBQ_ConsultaFilial.Close;
+        IBQ_ConsultaFilial.SQL.Clear;
+        IBQ_ConsultaFilial.SQL.Add(MySql);
+        IBQ_ConsultaFilial.ExecSQL;
+
+        IBTransacao('C','IBT_99');
+
+        ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
+        FreeAndNil(IBQ_ConsultaFilial);
+        // Atualiza Estoque no SIDICOM =========================================
+        //======================================================================
+
+        //======================================================================
         // Coloca Numero do Arquivo Gerado para o LINX - ES_ESTOQUES_LOJAS =====
+        //======================================================================
         MySql:=' UPDATE ES_ESTOQUES_LOJAS lo'+
                ' SET lo.Num_Pedido='+QuotedStr(FormatFloat('000000',StrToInt(sNumSeq)))+
                ',    lo.usu_altera='+QuotedStr(Cod_Usuario)+
@@ -1509,8 +1660,12 @@ Begin
                ' AND   lo.ind_prioridade='+DMCentralTrocas.CDS_ReposicaoTransfIND_PRIORIDADE.AsString+
                ' AND   lo.num_seq='+DMCentralTrocas.CDS_ReposicaoTransfNUM_SEQ.AsString;
         DMBelShop.SQLC.Execute(MySql,nil,nil);
+        // Coloca Numero do Arquivo Gerado para o LINX - ES_ESTOQUES_LOJAS =====
+        //======================================================================
 
+        //======================================================================
         // Coloca Numero do Arquivo Gerado para o LINX - ES_ESTOQUES_LOJAS_DIV =
+        //======================================================================
         MySql:=' UPDATE ES_ESTOQUES_LOJAS_DIV dv'+
                ' SET dv.num_pedido='+QuotedStr(FormatFloat('000000',StrToInt(sNumSeq)))+
                ' WHERE dv.cod_loja='+QuotedStr(DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString)+
@@ -1519,6 +1674,8 @@ Begin
                ' AND   dv.num_seq='+DMCentralTrocas.CDS_ReposicaoTransfNUM_SEQ.AsString+
                ' AND   dv.cod_produto='+QuotedStr(DMCentralTrocas.CDS_ReposicaoTransfCOD_PRODUTO.AsString);
         DMBelShop.SQLC.Execute(MySql,nil,nil);
+        // Coloca Numero do Arquivo Gerado para o LINX - ES_ESTOQUES_LOJAS_DIV =
+        //======================================================================
       End; // If (DMCentralTrocas.CDS_ReposicaoTransfQTD_A_TRANSF.AsCurrency>0) and (DMCentralTrocas.CDS_ReposicaoTransfNUM_PEDIDO.AsCurrency='000000') Then
       pgProgBar.Position:=DMCentralTrocas.CDS_ReposicaoTransf.RecNo;
 
@@ -4885,6 +5042,7 @@ Var
 
   sNomeUsuSep, sCodBarras,
   dir_padrao, dir_relat: String;
+  iRecNo: Integer;
 begin
   Dbg_ReposLojasDocs.SetFocus;
 
@@ -4919,19 +5077,20 @@ begin
 //  If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
 //     (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='89') Then
 //     (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='24') Then
-//  If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='24') Then
-//  Begin
-//    If msg('Deseja Impressão de Romaneio'+cr+'por Fornecedor ??','C')=1 Then
-//    Begin
-//      RomaneioFornecedor;
-//      Exit;
-//    End;
-//  End; // If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
+  If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='89') Then
+  Begin                                                  
+    If msg('Deseja Impressão de Romaneio'+cr+'por Fornecedor ??','C')=1 Then
+    Begin
+      RomaneioFornecedor;
+      Exit;
+    End;
+  End; // If (DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString='22') Or
   // Lojas Por Fornecedor ======================================================
   //============================================================================
 
   sgCodUsuSep:='0';
-//OdirApagar 06/09/2018 - Inicio - Não Solicita Usuario no Romaneio >>>>>>>>>>>>
+  sNomeUsuSep:='';
+// Inicio - Não Solicita Usuario no Romaneio >>>>>>>>>>>>
 //  //============================================================================
 //  // Solicita Usuário de Separador de Mercadoria ===============================
 //  //============================================================================
@@ -4944,7 +5103,7 @@ begin
 //   Exit;
 //  // Solicita Usuário de Separador de Mercadoria ===============================
 //  //============================================================================
-//OdirApagar 06/09/2018 - Fim - Não Solicita Usuario no Romaneio >>>>>>>>>>>>>>>
+// Fim - Não Solicita Usuario no Romaneio >>>>>>>>>>>>>>>
 
   //============================================================================
   // Cadastro de Romaneios Emitidos para Separação na Logistica ================
@@ -4991,7 +5150,10 @@ begin
          ' TRIM(pr.apresentacao) Des_produto, '+
          QuotedStr(Des_Usuario)+' Usuario,'+
          ' lo.obs_docto,'+
-         ' pr.principalfor||'' - ''||pr.nomefornecedor FORNEC'+
+
+         // OdirApagar - 10/10/2018
+         // ' pr.principalfor||'' - ''||pr.nomefornecedor FORNEC'+
+         ' pr.nomefornecedor FORNEC'+
 
          ' FROM ES_ESTOQUES_LOJAS lo, ES_ESTOQUES_CD cd,'+
          '      PRODUTO pr, EMP_CONEXOES em'+
@@ -5167,22 +5329,30 @@ begin
   // Apresenta Romaneio ========================================================
   //============================================================================
 
-//OdirOpss inicio =======>>>>>>>>>>>>>>>>>>>>>
-  //============================================================================
+ //============================================================================
   // Atualiza Numero do Relatório/Romaneio em ES_ESTOQUES_LOJAS ================
   //============================================================================
-  bgSiga:=False; // Atauliza Numero de Relatório/Romaneio em ES_ESTOQUES_LOJAS
+  bgSiga:=False; // Atualiza Numero de Relatório/Romaneio em ES_ESTOQUES_LOJAS
   If msg('Romaneio Impresso CORRETAMENTE ??','C')=1 Then
    bgSiga:=True;
 
   AtualizaNumRelatorio;
   // Atualiza Numero do Relatório/Romaneio em ES_ESTOQUES_LOJAS ================
   //============================================================================
-//OdirOpss fim =======>>>>>>>>>>>>>>>>>>>>>
 
   // Retorna para o DBGrid =====================================================
   DMCentralTrocas.CDS_RelReposicao.Close;
+
+//  iRecNo:=DMCentralTrocas.CDS_ReposicaoDocs.RecNo;
+//  DMCentralTrocas.CDS_ReposicaoDocs.DisableControls;
+//  DMCentralTrocas.CDS_ReposicaoDocs.First;
+//  DMCentralTrocas.CDS_ReposicaoDocs.Last;
+//  DMCentralTrocas.CDS_ReposicaoDocs.RecNo:=iRecNo;
+//  DMCentralTrocas.CDS_ReposicaoDocs.EnableControls;
+
+  Dbg_ReposLojasItens.SetFocus;
   Dbg_ReposLojasDocs.SetFocus;
+
   // Apresenta Romaneio de Separação de Mercadoria =============================
   //============================================================================
 
@@ -5238,7 +5408,11 @@ begin
 
   FrmSolicitacoes.ShowModal;
 
-  FreeAndNil(FrmSolicitacoes);
+  Try
+    FreeAndNil(FrmSolicitacoes);
+  Except
+    FrmSolicitacoes.Free;
+  End;
 
 end;
 

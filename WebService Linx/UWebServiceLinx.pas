@@ -242,7 +242,11 @@ type
 
     Procedure LeMetodoXMLRetorno;
 
+    // OdirAqui -Não Utilizado Mais - Agora o Saldo CD é Direto do Local 1
     Procedure AcertaSaldo_Deposito9;
+
+    Procedure AcertaSaldo_CD_Deposito1;
+
     // Odir ====================================================================
 
     procedure FormCreate(Sender: TObject);
@@ -329,18 +333,96 @@ uses
 // Odir - Inicio ===============================================================
 //==============================================================================
 
+// Acerta Estoque no CD - Depósito 1 - Estoques >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmWebServiceLinx.AcertaSaldo_CD_Deposito1;
+Var
+  MySql: String;
+  i: Integer;
+Begin
+  // Verifica se Transação esta Ativa
+  If DMLinxWebService.SQLC.InTransaction Then
+   DMLinxWebService.SQLC.Rollback(TD);
+
+  // Busca Saldo do Local de Estoque - 1 =======================================
+  MySql:=' SELECT i.cod_produto, i.quantidade'+
+         ' FROM LINXPRODUTOSINVENTARIO i'+
+         ' WHERE i.cod_deposito=1'+
+         ' AND   i.empresa='+sgCodLojaLinx+
+         ' ORDER BY 1';
+  DMLinxWebService.SQLQ_Busca.Close;
+  DMLinxWebService.SQLQ_Busca.SQL.Clear;
+  DMLinxWebService.SQLQ_Busca.SQL.Add(MySql);
+  DMLinxWebService.SQLQ_Busca.Open;
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMLinxWebService.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    // Zera Saldos Linx do CD ==================================================
+    MySql:=' UPDATE LINXPRODUTOSDETALHES d'+
+           ' SET d.quantidade=0.0000'+
+           ' WHERE d.empresa='+sgCodLojaLinx+
+           ' AND   d.quantidade<>0';
+    DMLinxWebService.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Saldo Linx do Cd Conforme Local de Estoque - 1 =================
+    DMLinxWebService.SQLQ_Busca.DisableControls;
+    While not DMLinxWebService.SQLQ_Busca.Eof do
+    Begin
+      // Atualiza Saldo no CD ==================================================
+      MySql:=' UPDATE LINXPRODUTOSDETALHES d'+
+             ' SET d.quantidade='+DMLinxWebService.SQLQ_Busca.FieldByName('Quantidade').AsString+
+             ' WHERE d.empresa='+sgCodLojaLinx+
+             ' AND   d.cod_produto='+DMLinxWebService.SQLQ_Busca.FieldByName('Cod_Produto').AsString;
+      DMLinxWebService.SQLC.Execute(MySql,nil,nil);
+
+      Inc(i);
+
+      if i mod 500 = 0 Then
+      Begin
+        DMLinxWebService.SQLC.Commit(TD);
+        DMLinxWebService.SQLC.StartTransaction(TD);
+      End;
+
+      DMLinxWebService.SQLQ_Busca.Next;
+    End; // While not DMLinxWebService.SQLQ_Busca.Eof do
+    DMLinxWebService.SQLQ_Busca.EnableControls;
+    DMLinxWebService.SQLQ_Busca.Close;
+
+    // Atualiza Transacao ======================================================
+    DMLinxWebService.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMLinxWebService.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      DMLinxWebService.SQLQ_Busca.EnableControls;
+      DMLinxWebService.SQLQ_Busca.Close;
+    End; // on e : Exception do
+  End; // Try da Transação
+End; // Acerta Estoque no CD - Depósito 1 - Estoques >>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// OdirAqui -Não Utilizado Mais - Agora o Saldo CD é Direto do Local 1 >>>>>>>>>
 // Acerta Estoque no CD - Depósito 9 - Depósito 09 | Devolução >>>>>>>>>>>>>>>>>
 Procedure TFrmWebServiceLinx.AcertaSaldo_Deposito9;
 Var
   MySql: String;
 
   bBuscaMovCD: Boolean;
-
   sCodLoja: String;
-
   i, iSaldoAtual: Integer;
 Begin
-
   // Busca Deposito 9 - Depósito 09 | Devolução da Loja Em Seleção =============
   MySql:=' SELECT i.cod_produto, i.quantidade'+
          ' FROM LINXPRODUTOSINVENTARIO i'+
@@ -942,7 +1024,8 @@ Begin
               // LinxMovimentoTrocas --------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoTrocas') Then
                sSqlUpInValores:=
-                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, identificador, num_vale)';
+                sSqlUpInValores+' MATCHING (empresa, cnpj_emp, identificador, num_vale,'+
+                                '           doc_origem, serie_origem, doc_venda, serie_venda)';
 
               // LinxMovimentoPlanos --------------------------------
               If AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxMovimentoPlanos') Then
@@ -1842,7 +1925,6 @@ Var
 
   hHrInicio: String; // Não permite rodar com Parametro entre as 16 e 18 Horas - Existe um processo rodando
 Begin
-
   // Parametro: Somente o Metodo Enviado =======================================
   sgParametroMetodo     :=''; // Metodo a Processar
   sgParametroCodLoja    :=''; // Loja a Processar
@@ -2596,6 +2678,13 @@ End;
           End;
         End; // If Trim(sgParametroMetodo)<>'' Then
 
+//        sgDtaInicio:='01/01/2018';
+//        sgDtaFim:='09/10/2018';
+//        DecodeDate(StrToDate(sgDtaInicio), wAno, wMes, wDia);
+//        sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+//        DecodeDate(StrToDate(sgDtaFim), wAno, wMes, wDia);
+//        sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
         MontaMetodoXMLPost();
       End; // If sgMetodo='LinxMovimentoTrocas' Then
       // LinxMovimentoTrocas ===================================================
@@ -2968,7 +3057,9 @@ End;
           sgCodQualquer:='NULL';
         End;
 
-        sgCodQualquer:='9';
+        // OdirAqui -Não Utilizado Mais - Agora o Saldo CD é Direto do Local 1
+        // sgCodQualquer:='9';
+        sgCodQualquer:='1';
 
         MontaMetodoXMLPost();
       End; // If sgMetodo='LinxProdutosInventario' Then
@@ -3258,8 +3349,12 @@ End;
         //======================================================================
         If (AnsiUpperCase(sgMetodo)=AnsiUpperCase('LinxProdutosDetalhes')) Then
         Begin
-          // Acerta Estoque no CD - Depósito 9 - Depósito 09 | Devolução =======
-          AcertaSaldo_Deposito9;
+          // OdirAqui -Não Utilizado Mais - Agora o Saldo CD é Direto do Local 1
+          // Acerta Estoque no CD - Depósito 9 - Depósito 09 | Devolução
+          // AcertaSaldo_Deposito9;
+
+          // Acerta Estoque no CD - Depósito 1 - Estoque
+          AcertaSaldo_CD_Deposito1;
         End;
         // Acerta Estoque no CD - Depósito 9 - Depósito 09 | Devolução =========
         //======================================================================

@@ -987,30 +987,12 @@ object FrmSolicTransf: TFrmSolicTransf
     ParentFont = False
     TabOrder = 0
   end
-  object OdirPanApres: TPanel
-    Left = 583
-    Top = 0
-    Width = 89
-    Height = 33
-    BevelInner = bvLowered
-    BevelWidth = 2
-    Caption = 'OdirPanApres'
-    Color = clSilver
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
-    Font.Style = [fsBold]
-    ParentFont = False
-    TabOrder = 1
-    Visible = False
-  end
   object PC_Principal: TPageControl
     Left = 0
     Top = 0
     Width = 891
     Height = 538
-    ActivePage = Ts_Produtos
+    ActivePage = Ts_ProdNegativos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1018,7 +1000,7 @@ object FrmSolicTransf: TFrmSolicTransf
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 2
+    TabOrder = 1
     OnChange = PC_PrincipalChange
     object Ts_Produtos: TTabSheet
       Caption = ' Solicita'#231#227'o de Transfer'#234'ncia no Dia '
@@ -2595,6 +2577,180 @@ object FrmSolicTransf: TFrmSolicTransf
         Font.Style = [fsBold]
       end
     end
+    object Ts_ProdNegativos: TTabSheet
+      Caption = 'Produtos Com Saldo Negativo'
+      ImageIndex = 3
+      DesignSize = (
+        883
+        510)
+      object Gb_ProdNegativos: TGroupBox
+        Left = 131
+        Top = 5
+        Width = 615
+        Height = 503
+        Anchors = [akTop, akBottom]
+        Caption = 
+          ' Rela'#231#227'o de Produtos Com Saldo Negativo na Loja  (Posi'#231#227'o Vincul' +
+          'ada as 08 Horas da Manh'#227') '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        object Dbg_ProdNegativos: TDBGrid
+          Left = 2
+          Top = 15
+          Width = 611
+          Height = 453
+          Align = alClient
+          DataSource = DMSolicTransf.DS_ProdNegativos
+          FixedColor = clTeal
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+          ParentFont = False
+          TabOrder = 0
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWhite
+          TitleFont.Height = -11
+          TitleFont.Name = 'MS Sans Serif'
+          TitleFont.Style = [fsBold]
+          OnDrawColumnCell = Dbg_NFeProdutosOCDrawColumnCell
+          OnEnter = Dbg_NFeProdutosOCEnter
+          OnKeyDown = Dbg_ProdutosKeyDown
+          OnTitleClick = Dbg_NFeProdutosOCTitleClick
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'COD_PRODUTO'
+              Title.Alignment = taRightJustify
+              Width = 70
+              Visible = True
+            end
+            item
+              Color = 15461355
+              Expanded = False
+              FieldName = 'NOME'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              Width = 300
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'QTD_ESTOQUE'
+              Visible = True
+            end
+            item
+              Alignment = taCenter
+              Expanded = False
+              FieldName = 'ATIVO'
+              Title.Alignment = taCenter
+              Width = 80
+              Visible = True
+            end>
+        end
+        object Pan_ProdNegativos: TPanel
+          Left = 2
+          Top = 468
+          Width = 611
+          Height = 33
+          Align = alBottom
+          TabOrder = 1
+          object Bt_ProdNegativosBusca: TJvXPButton
+            Left = 1
+            Top = 1
+            Width = 147
+            Height = 31
+            Caption = 'Busca Produtos'
+            TabOrder = 0
+            Glyph.Data = {
+              07544269746D617066010000424D660100000000000076000000280000001400
+              0000140000000100040000000000F00000000000000000000000100000001000
+              0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+              C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF00333333333333333333330000300000000000003333330000307888888888
+              80333333000030F77777777780333333000030F99777777780333333000030FF
+              FFFFFFFF70333333000030000000000000333333000033333333333333333333
+              0000333003333333333333330000333003333333333333330000333003333330
+              000000030000333003303330FFFFFF030000333008300330F4444F0300003338
+              00000030FFFFFF030000333380000030F4444F030000333333300330FFFFFF03
+              0000333333303330F44F00030000333333333330FFFF00330000333333333330
+              000003330000333333333333333333330000}
+            ShowFocusRect = True
+            Spacing = 8
+            Align = alLeft
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ParentShowHint = False
+            ShowHint = False
+            OnClick = Bt_ProdNegativosBuscaClick
+          end
+          object Bt_ProdNegativosMemoria: TJvXPButton
+            Tag = 4
+            Left = 456
+            Top = 1
+            Width = 154
+            Height = 31
+            Caption = 'Salvar em Mem'#243'ria'
+            TabOrder = 1
+            Glyph.Data = {
+              07544269746D617066010000424D660100000000000076000000280000001400
+              0000140000000100040000000000F00000000000000000000000100000001000
+              0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+              C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF00333333333333333333330000333333000000000000030000333333078888
+              8888880300003333330F77777777780300003333330F99777777780300003333
+              330FFFFFFFFFF703000033333300000000000003000033333333333333333333
+              0000333333333333330033330000333333333333300003330000300000000333
+              00000033000030FFFFFF033333003333000030F4444F033333003333000030FF
+              FFFF033338003333000030F4444F030000083333000030FFFFFF030000833333
+              000030F44F00033333333333000030FFFF003333333333330000300000033333
+              333333330000333333333333333333330000}
+            ShowFocusRect = True
+            Spacing = 5
+            Align = alRight
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_ProdNegativosMemoriaClick
+          end
+        end
+      end
+    end
+  end
+  object OdirPanApres: TPanel
+    Left = 783
+    Top = 80
+    Width = 89
+    Height = 33
+    BevelInner = bvLowered
+    BevelWidth = 2
+    Caption = 'OdirPanApres'
+    Color = clSilver
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 2
+    Visible = False
   end
   object CorCaptionForm: TJvGradientCaption
     Active = False
