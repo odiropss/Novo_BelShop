@@ -1892,13 +1892,6 @@ Begin
   End;
   Stb_Estoques.Panels[0].Text:='LOJA:';
 
-// OdirApagar - 28/12/2017
-//  DMVirtual.CDS_V_Estoques.CreateDataSet;
-//  DMVirtual.CDS_V_Estoques.IndexName:='';
-//  DMVirtual.CDS_V_Estoques.Filtered:=False;
-//  DMVirtual.CDS_V_Estoques.Filter:='';
-//  DMVirtual.CDS_V_Estoques.EmptyDataSet;
-
   DMVirtual.CDS_V_Estoques.IndexName:='';
   DMVirtual.CDS_V_Estoques.Filtered:=False;
   DMVirtual.CDS_V_Estoques.Filter:='';

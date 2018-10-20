@@ -243,6 +243,7 @@ type
     Bt_DepAnaliseFechados: TJvXPButton;
     Bt_DepAnaliseAbertos: TJvXPButton;
     Bt_DepAnaliseAmbos: TJvXPButton;
+    Bt_DepAnaliseDoctoFinan: TJvXPButton;
     procedure FormCreate(Sender: TObject);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SairClick(Sender: TObject);
@@ -370,6 +371,8 @@ type
     Procedure DepositoAnaliseFaturamentoDinheiro(sDiaInicial, sDiaFinal: String); // Fase 4
     Procedure DepositoAnaliseDataDepositos; // Fase 5 e 6
 
+    Procedure DepositoAnaliseApresDoctFinanceiro(sDoc: String; sLoja: String=''; sData: String=''); // Apresenta Documento Financeiro
+
     // Odir FIM ////////////////////////////////////////////////////////////////
 
     Procedure ConcPopMenuClick(Sender: TObject);
@@ -483,7 +486,6 @@ type
     procedure Bt_VerifExtratoVerificarClick(Sender: TObject);
     procedure Bt_VerifExtratoDtSemMovtoClick(Sender: TObject);
     procedure DtEdt_VerifExtratoDtaInicioPropertiesChange(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Bt_CMPeriodoDepClick(Sender: TObject);
     procedure Dbg_ConcManutExtratoDepDblClick(Sender: TObject);
     procedure Rb_ConcConciliadosDepClick(Sender: TObject);
@@ -506,10 +508,6 @@ type
     procedure Rb_ConcConciliadosDepKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure Bt_CMDesmarcarDepClick(Sender: TObject);
-    procedure EdtConcManutExtratoVlrDepChange(Sender: TObject);
-    procedure EdtConcManutDepVlrChange(Sender: TObject);
-    procedure EdtConcManutExtratoVlrChange(Sender: TObject);
-    procedure EdtConcManutPagtoVlrChange(Sender: TObject);
     procedure Bt_DepAnaliseVoltarClick(Sender: TObject);
     procedure Bt_CMRelatorioDepClick(Sender: TObject);
     procedure Bt_CMObsNaoConcDepClick(Sender: TObject);
@@ -535,6 +533,8 @@ type
     procedure Bt_DepAnaliseObsFinanClick(Sender: TObject);
     procedure Bt_DepAnaliseFechadosClick(Sender: TObject);
     procedure Dbg_DepAnaliseTitleClick(Column: TColumn);
+    procedure Dbg_DepAnaliseEnter(Sender: TObject);
+    procedure Bt_DepAnaliseDoctoFinanClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -588,8 +588,7 @@ var
 
   sgAgencia, sgContaCorrente: String;
 
-  bgComNrConta, // Se Extrato do Santander contém o Numero da Conta
-  bgFechamento: Boolean; // Se Usuário Pode Efetuar o Fechamento do Dia na Conciliaão de Depósitos
+  bgComNrConta: Boolean; // Se Extrato do Santander contém o Numero da Conta
 
   // WebServices GeoBeauty
   sgDtaGeoInicio, sgDtaGeoFim, sgChaveAcessoGeo: String;
@@ -609,6 +608,65 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UEntrada,
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Odir - INICIO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+// CONCILIAÇÕES DEPOSITOS - Apresenta Documento Financeiro`>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmBancoExtratos.DepositoAnaliseApresDoctFinanceiro(sDoc: String; sLoja: String=''; sData: String='');
+Begin
+  OdirPanApres.Caption:='AGUARDE !! Localizando Documento Financeiro...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmBancoExtratos;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Screen.Cursor:=crAppStart;
+  Refresh;
+
+  // Busca Documento Financeiro ================================================
+  DMConciliacao.CDS_CMDepAnaliseDocRel.Close;
+  DMConciliacao.SDS_CMDepAnaliseDocRel.Params.ParamByName('NumDoc').AsInteger:=StrToInt(sDoc);
+  DMConciliacao.CDS_CMDepAnaliseDocRel.Open;
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+
+  If DMConciliacao.CDS_CMDepAnaliseDocRel.RecordCount<2 Then
+  Begin
+
+    msg('Documento Financeiro'+cr+cr+'Não Encontrado !!','A');
+    DMConciliacao.CDS_CMDepAnaliseDocRel.Close;
+    Exit;
+  End;
+
+  // Abre Form para Apresentação ===============================================
+  FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+  FrmBelShop.AbreSolicitacoes(30);
+
+  bgProcessar:=False;
+  FrmSolicitacoes.AutoSize:=False;
+  FrmSolicitacoes.Width:=1110;
+  FrmSolicitacoes.AutoSize:=True;
+
+  // Inicializa Botaão de Impressão ============================================
+  FrmSolicitacoes.Bt_ConcDepDocFinanImprimir.Enabled:=False;
+  FrmSolicitacoes.Bt_ConcDepDocFinanExcluir.Enabled:=False;
+  If Trim(DMConciliacao.CDS_CMDepAnaliseDocRelUSU_IMPRESSAO.AsString)<>'' Then
+  Begin
+    FrmSolicitacoes.Bt_ConcDepDocFinanImprimir.Enabled:=True;
+    FrmSolicitacoes.Bt_ConcDepDocFinanExcluir.Enabled:=True;
+  End; // If Trim(DMConciliacao.CDS_CMDepAnaliseDocRelUSU_IMPRESSAO.AsString)<>'' Then
+
+  // Posiciona na Loja Selecionada =============================================
+  If Trim(sLoja)<>'' Then
+   DMConciliacao.CDS_CMDepAnaliseDocRel.Locate('COD_LINX',StrToInt(sLoja),[]);
+
+  FrmSolicitacoes.Caption:='F I N A N C E I R O';
+  FrmSolicitacoes.ShowModal;
+  DMConciliacao.CDS_CMDepAnaliseDocRel.Close;
+
+  FreeAndNil(FrmSolicitacoes);
+End; // CONCILIAÇÕES DEPOSITOS - Apresenta Documento Financeiro`>>>>>>>>>>>>>>>>
 
 // CONCILIAÇÕES DEPOSITOS - Atualiza Totais e Informa Data de Depositos >>>>>>>>
 Procedure TFrmBancoExtratos.DepositoAnaliseDataDepositos;
@@ -1424,6 +1482,7 @@ Begin
          ' NULL FECHA,'+
          ' NULL IND_CONCILIACAO,'+
          ' NULL NUM_RELATORIO,'+
+         ' NULL REL_ENTREGUE,'+
          ' 0 ORDEM,'+
          ' 0 ORDEM_APRES'+
          ' FROM RDB$DATABASE'+
@@ -1491,6 +1550,15 @@ Begin
 
          ' md.ind_conciliacao,'+
          ' fo.des_aux1 NUM_RELATORIO,'+
+
+
+         ' CASE'+
+         '   WHEN COALESCE(fo.vlr_aux,0)=1 THEN'+
+         '     ''SIM'''+
+         '   ELSE'+
+         '     ''NÃO'''+
+         ' END REL_ENTREGUE,'+
+
          ' 4 ORDEM,'+
          ' 2 ORDEM_APRES'+
 
@@ -1531,7 +1599,7 @@ Begin
          End; // If Not bgAmbosRenato Then
 
   MySql:=
-   MySql+' GROUP BY 1,2,13,14,15,16,17,18';
+   MySql+' GROUP BY 1,2,13,14,15,16,17,18,19';
 
          // APRESENTA VALORES NÃO CONCILIADOS
   MySql1:=
@@ -1596,6 +1664,7 @@ Begin
 
          ' md.ind_conciliacao,'+
          ' NULL NUM_RELATORIO,'+
+         ' NULL REL_ENTREGUE,'+
          ' 9 ORDEM,'+
          ' 2 ORDEM_APRES'+
 
@@ -1630,7 +1699,7 @@ Begin
          End; // If Not bgAmbosRenato Then
 
   MySql1:=
-   MySql1+' GROUP BY 1,2,13,14,15,16,17,18'+
+   MySql1+' GROUP BY 1,2,13,14,15,16,17,18,19'+
 
          // APRESENTA TOTAL DE VALORES CONCILIADOS
          ' UNION'+
@@ -1687,6 +1756,7 @@ Begin
          ' NULL FECHA,'+
          ' NULL IND_CONCILIACAO,'+
          ' NULL NUM_RELATORIO,'+
+         ' NULL REL_ENTREGUE,'+
          ' 5 ORDEM,'+
          ' 4 ORDEM_APRES'+
 
@@ -1779,6 +1849,7 @@ Begin
          ' NULL FECHA,'+
          ' NULL IND_CONCILIACAO,'+
          ' NULL NUM_RELATORIO,'+
+         ' NULL REL_ENTREGUE,'+
          ' 10 ORDEM,'+
          ' 5 ORDEM_APRES'+
 
@@ -1816,7 +1887,7 @@ Begin
    MySql2+' GROUP BY 2'+
 
          // ORDER BY - FIM
-         ' ORDER BY 2 DESC,1,20,19';
+         ' ORDER BY 2 DESC,1,21,20';
   DMConciliacao.CDS_CMDepositosAnalise.Close;
   DMConciliacao.SDS_CMDepositosAnalise.CommandText:=MySql+MySql1+MySql2;
   DMConciliacao.CDS_CMDepositosAnalise.Open;
@@ -2750,7 +2821,7 @@ End; // CONCILIAÇÕES DEPOSITOS - Atualiza Movtos Depositos TRINKS >>>>>>>>>>>>>>
 //
 //  Screen.Cursor:=crAppStart;
 //
-//// OdirApagar - 23/047/2018 - Gerado Procedure GeoBeautyVariaveis
+//// OdirApagar - 23/07/2018 - Gerado Procedure GeoBeautyVariaveis
 ////  //============================================================================
 ////  // Gera Chave de Acesso GeoBeauty ============================================
 ////  //============================================================================
@@ -2821,7 +2892,7 @@ End; // CONCILIAÇÕES DEPOSITOS - Atualiza Movtos Depositos TRINKS >>>>>>>>>>>>>>
 ////   sgDtaGeoFim:=sgDtaGeoFim+IntToStr(wDia);
 ////  // Acerta Datas do Período ===================================================
 ////  //============================================================================
-//// OdirApagar - 23/047/2018 - Gerado Procedure GeoBeautyVariaveis
+//// OdirApagar - 23/07/2018 - Gerado Procedure GeoBeautyVariaveis
 //
 //  //============================================================================
 //  // Consome Pagamentos da GeoBeauty Web Service ===============================
@@ -3745,8 +3816,6 @@ Begin
         DMConciliacao.CDS_CMDepositosCOD_USUARIO.AsString:=sgCodUsuario;
         DMConciliacao.CDS_CMDepositosConciliado.AsString:='SIM';
         DMConciliacao.CDS_CMDepositosQUEM.AsString:='USU';
-//OdirApagar - 19/02/2018
-//        DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString:='DINH';
         DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString:='DINHEIRO';
         DMConciliacao.CDS_CMDepositosTXT_OBS.AsString:=sObs;
         DMConciliacao.CDS_CMDepositos.Post;
@@ -3809,8 +3878,6 @@ Begin
         DMConciliacao.CDS_CMDepositosCOD_USUARIO.AsString:=sgCodUsuario;
         DMConciliacao.CDS_CMDepositosConciliado.AsString:='SIM';
         DMConciliacao.CDS_CMDepositosQUEM.AsString:='USU';
-//OdirApagar - 19/02/2018
-//        DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString:='DESP';
         DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString:='DESPESA';
         DMConciliacao.CDS_CMDepositosTXT_OBS.AsString:=sObs;
         DMConciliacao.CDS_CMDepositos.Post;
@@ -4318,10 +4385,6 @@ Begin
 
   If igTotMarcaPag<0 Then igTotMarcaPag:=0;
   If igTotMarcaExt<0 Then igTotMarcaExt:=0;
-
-// OdirApagar - 13/12/2017 - Conciliar Diversos com Diversos
-//  If (igTotMarcaPag>1) and (igTotMarcaExt>1) Then
-//   Result:=False;
 End; // CONCILIAÇÕES DEPOSITOS - Verifica se Pode Conciliar >>>>>>>>>>>>>>>>>>>>
 
 //odirapagar - 03/10/2018
@@ -10611,16 +10674,22 @@ begin
   If (PC_Principal.ActivePage=Ts_ConciliacoesManutDepAnalise) And (Ts_ConciliacoesManutDepAnalise.CanFocus) Then
   Begin
     Bt_DepAnaliseObsFinan.Visible:=False;
-    Sb_DepAnaliseDia.Visible:=False;
-    bgFechamento:=False;
+
+    Sb_DepAnaliseDia.Panels[0].Visible:=False;
+    Sb_DepAnaliseDia.Panels[1].Visible:=False;
+
+    // Administrador/Renato Visivel
     If (bgInd_Admin) And ((AnsiUpperCase(Des_Usuario)='RENATO') Or (AnsiUpperCase(Des_Usuario)='ODIR')) Then
     Begin
-      Sb_DepAnaliseDia.Visible:=True;
-      bgFechamento:=True;
+      Sb_DepAnaliseDia.Panels[1].Visible:=True;
     End;
 
+    // Outros Usuários Visivel
     If Not ((bgInd_Admin) And ((AnsiUpperCase(Des_Usuario)='RENATO'))) Then
-     Bt_DepAnaliseObsFinan.Visible:=True;
+    Begin
+      Sb_DepAnaliseDia.Panels[0].Visible:=True;
+      Bt_DepAnaliseObsFinan.Visible:=True;
+    End; // If Not ((bgInd_Admin) And ((AnsiUpperCase(Des_Usuario)='RENATO'))) Then
 
     Dbg_DepAnalise.SetFocus;
 
@@ -10732,7 +10801,7 @@ begin
       If sgTpMDL='I' Then
       Begin
         // Busca Codigo do Banco ------------------------------------
-        MySql:='SELECT GEN_ID(GEN_BANCO_CODIGO,1) Codigo'+
+        MySql:=' SELECT GEN_ID(GEN_BANCO_CODIGO,1) Codigo'+
                ' FROM RDB$DATABASE';
         DMBelShop.CDS_Busca.Close;
         DMBelShop.SDS_Busca.CommandText:=MySql;
@@ -11580,51 +11649,9 @@ Var
   bIniciou, bGrava: Boolean;
   MySql: String;
   iPosDocto: Integer;
-//odirapagar -  bSaldoConta, bInvestAut: Boolean; // Pega Saldo da Conta e Inventimento Automatico.
 
   Procedure ExcluirExtrato(sCodBanco, sDtaExclui: String);
   Begin
-    // =========================================================================
-    // OdirApagar - Não Retira Conciliações Já Feitas - 24/11/2017 =============
-    // =========================================================================
-//    // Exclui Conciliações Já Efetuadas no Dia =================================
-//    MySql:=' DELETE FROM FIN_CONCILIACAO_PAGTOS pg'+
-//           ' WHERE EXISTS (SELECT 1'+
-//           '               FROM FIN_BANCOS_EXTRATOS ex'+
-//           '               WHERE ex.chv_extrato=pg.chv_extrato'+
-//           '               AND   ex.cod_banco='+QuotedStr(sCodBanco)+
-//           '               AND   ex.dta_extrato='+QuotedStr(sDtaExclui)+')';
-//    DMBelShop.SQLC.Execute(MySql,nil,nil);
-//
-//    MySql:=' UPDATE FIN_CONCILIACAO_MOVTOS m'+
-//           ' Set m.ind_conciliacao=''NAO'''+
-//           ' WHERE m.ind_conciliacao=''SIM'''+
-//           ' AND   NOT EXISTS (SELECT 1'+
-//           '                   FROM FIN_CONCILIACAO_PAGTOS p'+
-//           '                   WHERE p.num_seq=m.num_seq'+
-//           '                   AND   p.num_compl=m.num_compl)';
-//    DMBelShop.SQLC.Execute(MySql,nil,nil);
-//
-//    // Exclui Conciliações de Depósitos do Dia ===========================
-//    MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS dp'+
-//           ' WHERE EXISTS (SELECT 1'+
-//           '               FROM FIN_BANCOS_EXTRATOS ex'+
-//           '               WHERE ex.chv_extrato=dp.chv_extrato'+
-//           '               AND   ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
-//           '               AND   ex.dta_extrato='+QuotedStr(sgDta)+')';
-//    DMBelShop.SQLC.Execute(MySql,nil,nil);
-//
-//    MySql:=' UPDATE FIN_CONCILIACAO_MOV_DEP m'+
-//           ' Set m.ind_conciliacao=''NAO'''+
-//           ' WHERE m.ind_conciliacao=''SIM'''+
-//           ' AND   NOT EXISTS (SELECT 1'+
-//           '                   FROM FIN_CONCILIACAO_DEPOSITOS D'+
-//           '                   WHERE d.num_seq=m.num_seq'+
-//           '                   AND   d.num_compl=m.num_compl)';
-//    DMBelShop.SQLC.Execute(MySql,nil,nil);
-    // OdirApagar - Não Retira Conciliações Já Feitas - 24/11/2017 =============
-    // =========================================================================
-
     // Exclui Extrato do Dia ===================================================
     MySql:=' DELETE FROM FIN_BANCOS_EXTRATOS ex'+
            ' WHERE ex.cod_banco='+QuotedStr(sCodBanco)+
@@ -12516,51 +12543,6 @@ begin
         // Apaga Extrato do dia ================================================
         If sDtaApagar<>sgDta Then
         Begin
-          // ===================================================================
-          // OdirApagar - Não Retira Conciliações Já Feitas - 24/11/2017 =======
-          // ===================================================================
-//          // Exclui Conciliações de Pagatos do Dia =============================
-//          MySql:=' DELETE FROM FIN_CONCILIACAO_PAGTOS pg'+
-//                 ' WHERE  COALESCE(pg.tip_conciliacao,'''')<>''DESP'''+
-//                 ' AND    COALESCE(pg.tip_conciliacao,'''')<>''DINH'''+
-//                 ' AND    EXISTS (SELECT 1'+
-//                 '               FROM FIN_BANCOS_EXTRATOS ex'+
-//                 '               WHERE ex.chv_extrato=pg.chv_extrato'+
-//                 '               AND   ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
-//                 '               AND   ex.dta_extrato='+QuotedStr(sgDta)+')';
-//          DMBelShop.SQLC.Execute(MySql,nil,nil);
-//
-//          MySql:=' UPDATE FIN_CONCILIACAO_MOVTOS m'+
-//                 ' Set m.ind_conciliacao=''NAO'''+
-//                 ' WHERE m.ind_conciliacao=''SIM'''+
-//                 ' AND   NOT EXISTS (SELECT 1'+
-//                 '                   FROM FIN_CONCILIACAO_PAGTOS p'+
-//                 '                   WHERE p.num_seq=m.num_seq'+
-//                 '                   AND   p.num_compl=m.num_compl)';
-//          DMBelShop.SQLC.Execute(MySql,nil,nil);
-//
-//          // Exclui Conciliações de Depósitos do Dia ===========================
-//          MySql:=' DELETE FROM FIN_CONCILIACAO_DEPOSITOS dp'+
-//                 ' WHERE COALESCE(dp.tip_conciliacao,'''')<>''DESP'''+
-//                 ' AND   COALESCE(dp.tip_conciliacao,'''')<>''DINH'''+
-//                 ' AND   EXISTS (SELECT 1'+
-//                 '               FROM FIN_BANCOS_EXTRATOS ex'+
-//                 '               WHERE ex.chv_extrato=dp.chv_extrato'+
-//                 '               AND   ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
-//                 '               AND   ex.dta_extrato='+QuotedStr(sgDta)+')';
-//          DMBelShop.SQLC.Execute(MySql,nil,nil);
-//
-//          MySql:=' UPDATE FIN_CONCILIACAO_MOV_DEP m'+
-//                 ' Set m.ind_conciliacao=''NAO'''+
-//                 ' WHERE m.ind_conciliacao=''SIM'''+
-//                 ' AND   NOT EXISTS (SELECT 1'+
-//                 '                   FROM FIN_CONCILIACAO_DEPOSITOS D'+
-//                 '                   WHERE d.num_seq=m.num_seq'+
-//                 '                   AND   d.num_compl=m.num_compl)';
-//          DMBelShop.SQLC.Execute(MySql,nil,nil);
-          // OdirApagar - Não Retira Conciliações Já Feitas - 24/11/2017 =======
-          // ===================================================================
-
           // Exclui Extrato do Dia =============================================
           MySql:=' DELETE FROM FIN_BANCOS_EXTRATOS ex'+
                  ' WHERE ex.cod_banco='+QuotedStr(EdtExtCodBanco.Text)+
@@ -15634,29 +15616,6 @@ begin
 
 end;
 
-procedure TFrmBancoExtratos.FormClose(Sender: TObject;var Action: TCloseAction);
-begin
-// OdirApagar - 09/11/2017
-//  if bgSairBancos Then
-//   Begin
-//     Action := caHide;
-//   End
-//  Else
-//   Begin
-//     msg('Para Fechar Tecle no Botão <Sair>...','A');
-//     Action := caNone;
-//   End;
-
-{
-Valor       Significado
-canone      A forma não é permitido para fechar, então nada acontece.
-caHide      O formulário não está fechado, mas apenas escondido.  O aplicativo ainda pode acessar um formulário oculto.
-caFree      O formulário está fechada e toda a memória alocada para a forma é liberada.
-caMinimize  A forma é minimizado, em vez de fechado.  Esta é a ação padrão para formulários filho MDI.
- }
-
-end;
-
 procedure TFrmBancoExtratos.Bt_CMPeriodoDepClick(Sender: TObject);
 Var
   MySql: String;
@@ -16661,26 +16620,13 @@ begin
     if (Trim(DMConciliacao.CDS_CMDepositosQUEM.AsString)='USU') And (Trim(DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString)='DEPOSITO') then
      Dbg_ConcManutDepositos.Canvas.Brush.Color:=$00CCFFCC;
 
-//OdirApagar - 19/02/2018
-//    if (DMConciliacao.CDS_CMDepositosQUEM.AsString='USU') And (DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString='DINH') then
     if (Trim(DMConciliacao.CDS_CMDepositosQUEM.AsString)='USU') And (Trim(DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString)='DINHEIRO') then
      Dbg_ConcManutDepositos.Canvas.Brush.Color:=clAqua;
 
-//OdirApagar - 19/02/2018
-//    if (DMConciliacao.CDS_CMDepositosQUEM.AsString='USU') And (DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString='DESP') then
     if (Trim(DMConciliacao.CDS_CMDepositosQUEM.AsString)='USU') And (Trim(DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString)='DESPESA') then
     Begin
-      //OdirApagar - 19/02/2018
-      // Dbg_ConcManutDepositos.Canvas.Brush.Color:=clRed;
-      // Dbg_ConcManutDepositos.Canvas.Font.Color:=clWhite; // Cor da Fonte
       Dbg_ConcManutDepositos.Canvas.Brush.Color:=$00CFB8C0
     End;
-
-//    if (DMConciliacao.CDS_CMDepositosQUEM.AsString='USU') And (DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString='SExt') then
-//    Begin
-//      Dbg_ConcManutDepositos.Canvas.Brush.Color:=$00FF75BA;
-//      Dbg_ConcManutDepositos.Canvas.Font.Color:=clWhite; // Cor da Fonte
-//    End;
 
     if (Trim(DMConciliacao.CDS_CMDepositosQUEM.AsString)='') And (DMConciliacao.CDS_CMDepositosConciliar.AsString='SIM') then
      Dbg_ConcManutDepositos.Canvas.Brush.Color:=clYellow;
@@ -16755,16 +16701,12 @@ begin
       If DMConciliacao.CDS_CMDepositosConciliado.AsString='SIM' Then
        Begin
 
-//OdirApagar - 19/02/2018
-//         If DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString='DINH' Then
          If DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString='DINHEIRO' Then
          Begin
            msg('Depósito Conciliado como DINHEIRO !!','A');
            Exit;
          End;
 
-//OdirApagar - 19/02/2018
-//         If DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString='DESP' Then
          If DMConciliacao.CDS_CMDepositosTIP_CONCILIACAO.AsString='DESPESA' Then
          Begin
            msg('Depósito Conciliado como DESPESA !!','A');
@@ -16863,19 +16805,6 @@ begin
   If (DMConciliacao.CDS_CMExtratosDep.IsEmpty) And (DMConciliacao.CDS_CMDepositos.IsEmpty) Then
    Exit;
 
-// OdirApagar - 28/09/2018
-//  If (DMConciliacao.CDS_CMExtratosDep.IsEmpty) And (Not DMConciliacao.CDS_CMDepositos.IsEmpty) Then
-//  Begin
-//   If msg('Movimentos de Depósitos SEM Extratos no Período !!'+cr+cr+'Deseja Continuar ??','C')=2 Then
-//    Exit;
-//  End; // If (DMConciliacao.CDS_CMExtratosDep.IsEmpty) and (Not DMConciliacao.CDS_CMDepositos.IsEmpty) Then
-//
-//  If (Not DMConciliacao.CDS_CMExtratosDep.IsEmpty) And (DMConciliacao.CDS_CMDepositos.IsEmpty) Then
-//  Begin
-//   If msg('Extratos SEM Movimentos de Depósitos no Período !!'+cr+cr+'Deseja Continuar ??','C')=2 Then
-//    Exit;
-//  End; // If (Not DMConciliacao.CDS_CMExtratosDep.IsEmpty) And (DMConciliacao.CDS_CMDepositos.IsEmpty) Then
-
   bgLocate:=True;
 
   bConcDinheiro:=False;
@@ -16915,62 +16844,7 @@ begin
       Dbg_ConcManutDepositos.SetFocus;
       Exit;
     End;
-
-
-    // OdirApagar - 11/01/2018
-//    If msg('Conciliar como DINHEIRO ??','C')=1 Then
-//     Begin
-//       bConcDinheiro:=True;
-//     End
-//    Else
-//     Begin
-//       Exit;
-//     End; // If msg('Conciliar como DINHEIRO ??','C')=1 Then
   End; // If (igTotMarcaPag<>0) Or (igTotMarcaExt=0) Then
-
-  {
-  //============================================================================
-  // Conciliação Somente Extrato ===============================================
-  //============================================================================
-  If (igTotMarcaPag=0) And (igTotMarcaExt<>0) Then
-  Begin
-    If msg('Conciliar Somente o Extrato  ??','C')=1 Then
-     Begin
-       b:=True;
-       While b do
-       Begin
-         sgCodLojaExt:=InputBoxInteiro('Loja Responsável pelo(s) Extrato(s)', 'Informe o Código da Loja',sgCodLojaExt);
-         If Trim(sgCodLojaExt)='' Then
-          Exit;
-
-         Try
-           StrToCurr(sgCodLojaExt);
-           MySqlSelect:=' SELECT e.cod_filial'+
-                        ' FROM EMP_CONEXOES e'+
-                        ' WHERE e.cod_filial='+QuotedStr(FormatFloat('00',StrToInt(sgCodLojaExt)));
-           DMBelShop.CDS_BuscaRapida.Close;
-           DMBelShop.SDS_BuscaRapida.CommandText:=MySqlSelect;
-           DMBelShop.CDS_BuscaRapida.Open;
-           sgCodLojaExt:=DMBelShop.CDS_BuscaRapida.FieldByName('cod_filial').AsString;
-           DMBelShop.CDS_BuscaRapida.Close;
-
-           If sgCodLojaExt='' Then
-            msg('Código da Loja é Inválido !!','A')
-           Else
-            Break;
-         Except
-         End;
-       End; // While b do
-       bConcExtrato:=True;
-     End
-    Else // If msg('Conciliar Somente o Extrato  ??','C')=1 Then
-     Begin
-       Exit;
-     End; // If msg('Conciliar Somente o Extrato  ??','C')=1 Then
-  End; // If (igTotMarcaPag=0) And (igTotMarcaExt<>0) Then
-  // Conciliação Somente Extrato ===============================================
-  //============================================================================
-  }
 
   If ((igTotMarcaPag=0) Or (igTotMarcaExt=0)) And (Not bConcDinheiro) And (Not bConcExtrato) And (Not bConcDespesa) Then
   Begin
@@ -17088,11 +16962,6 @@ begin
 
        If Not bConcilia Then
        Begin
-         // OdirApagar - 30/11/2017
-         // If msg('Valores a Conciliar Diferentes:'+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag)+cr+cr+'Deseja Conciliar ??','C')=2 Then
-         //Begin
-         // msg('IMPOSSÍVEL Conciliar !!'+cr+'Valores Diferentes:'+cr+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag),'A');
-
          If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
           DMConciliacao.CDS_CMDepositos.Locate('NUM_SEQ;NUM_COMPL', VarArrayOf([sNumSeq,sNumCompl]),[]);
 
@@ -17135,11 +17004,6 @@ begin
 
        If Not bConcilia Then
        Begin
-         // OdirApagar - 30/11/2017
-         // If msg('Valores a Conciliar Diferentes:'+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag)+cr+cr+'Deseja Conciliar ??','C')=2 Then
-         // Begin
-//         msg('IMPOSSÍVEL Conciliar !!'+cr+'Valores Diferentes:'+cr+cr+'Valor Extrato: '+CurrToStr(cgVlrConciarExt)+' Valor Depósito: '+CurrToStr(cgVlrConciarPag),'A');
-
          If Not DMConciliacao.CDS_CMDepositos.IsEmpty Then
           DMConciliacao.CDS_CMDepositos.Locate('NUM_SEQ;NUM_COMPL', VarArrayOf([sNumSeq,sNumCompl]),[]);
 
@@ -17332,81 +17196,6 @@ begin
   Dbg_ConcManutExtratoDep.SetFocus;
 end;
 
-procedure TFrmBancoExtratos.EdtConcManutExtratoVlrDepChange(Sender: TObject);
-begin
-// Odirapagar - 18/01/2018 Trocado Pela Procedure LocalizaValoresConciliar(iTipo: Integer);
-//  If EdtConcManutExtratoVlrDep.Value<>0 Then
-//  Begin
-//    If DMConciliacao.CDS_CMDepositos.Locate('VLR_DOCTO', EdtConcManutExtratoVlrDep.Value,[]) Then
-//    Begin
-////      Dbg_ConcManutDepositos.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
-////
-////      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
-////      msg('Movto com Valor Localizado !!','A');
-////
-////      Dbg_ConcManutDepositos.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
-//      THackDBGrid(Dbg_ConcManutDepositos).SelectedIndex:=7;
-//    End;
-//  End; // If EdtConcManutExtratoVlrDep.Value<>0 Then
-
-end;
-
-procedure TFrmBancoExtratos.EdtConcManutDepVlrChange(Sender: TObject);
-begin
-// Odirapagar - 18/01/2018 Trocado Pela Procedure LocalizaValoresConciliar(iTipo: Integer);
-//  If EdtConcManutDepVlr.Value<>0 Then
-//  Begin
-//    If DMConciliacao.CDS_CMExtratosDep.Locate('VLR_DOCTO', EdtConcManutDepVlr.Value,[]) Then
-//    Begin
-////      Dbg_ConcManutExtratoDep.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
-////
-////      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
-////      msg('Extrato com Valor Localizado !!','A');
-////
-////      Dbg_ConcManutExtratoDep.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
-//      THackDBGrid(Dbg_ConcManutExtratoDep).SelectedIndex:=7;
-//    End;
-//  End; // If EdtConcManutExtratoVlrDep.Value<>0 Then
-
-end;
-
-procedure TFrmBancoExtratos.EdtConcManutExtratoVlrChange(Sender: TObject);
-begin
-// Odirapagar - 18/01/2018 Trocado Pela Procedure LocalizaValoresConciliar(iTipo: Integer);
-//  If EdtConcManutExtratoVlr.Value<>0 Then
-//  Begin
-//    If DMConciliacao.CDS_CMPagtos.Locate('VLR_DOCTO', EdtConcManutExtratoVlr.Value,[]) Then
-//    Begin
-////      Dbg_ConcManutPagto.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
-////
-////      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
-////      msg('Movto com Valor Localizado !!','A');
-////
-////      Dbg_ConcManutPagto.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
-//      THackDBGrid(Dbg_ConcManutPagto).SelectedIndex:=7;
-//    End;
-//  End; // If EdtConcManutExtratoVlr.Value<>0 Then
-end;
-
-procedure TFrmBancoExtratos.EdtConcManutPagtoVlrChange(Sender: TObject);
-begin
-// Odirapagar - 18/01/2018 Trocado Pela Procedure LocalizaValoresConciliar(iTipo: Integer);
-//  If EdtConcManutPagtoVlr.Value<>0 Then
-//  Begin
-//    If DMConciliacao.CDS_CMExtratos.Locate('VLR_DOCTO', EdtConcManutPagtoVlr.Value,[]) Then
-//    Begin
-////      Dbg_ConcManutExtrato.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection];
-////
-////      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
-////      msg('Extrato com Valor Localizado !!','A');
-////
-////      Dbg_ConcManutExtrato.Options:=[dgTitles,dgIndicator,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
-//      THackDBGrid(Dbg_ConcManutExtrato).SelectedIndex:=7;
-//    End;
-//  End; // If EdtConcManutPagtoVlr.Value<>0 Then
-
-end;
-
 procedure TFrmBancoExtratos.Bt_DepAnaliseVoltarClick(Sender: TObject);
 begin
   Dbg_DepAnalise.SetFocus;
@@ -17438,10 +17227,6 @@ Var
   sObsNaoConc: String;
 begin
   Dbg_ConcManutDepositos.SetFocus;
-
-// OdirApagar - 17/10/218
-//  If DMConciliacao.CDS_CMExtratosDep.IsEmpty Then
-//   Exit;
 
   If DMConciliacao.CDS_CMDepositos.IsEmpty Then
    Exit;
@@ -17765,8 +17550,145 @@ end;
 
 procedure TFrmBancoExtratos.Dbg_DepAnaliseKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 Var
-  MySql, sNomeLoja, sDtaMov: String;
+  MySql: String;
+
+  bDocNovo: Boolean;
+
+  sNomeLoja, sDtaMov,
+  sCodAux, // Usado para Atualiza Tab_Auxiliar.Cod_Aux  Tip_Aux=24 - Numero do Documento Financeiro
+  sCodDoc  // Numero do Documento Financeiro
+  : String;
+
   iRecNo: Integer;
+
+  Function IncluiDoctoFinanceiro: Boolean;
+  Begin
+    OdirPanApres.Caption:='AGUARDE !! Atualizando Documento Financeiro...';
+    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBancoExtratos.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBancoExtratos.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmBancoExtratos;
+    OdirPanApres.BringToFront();
+    OdirPanApres.Visible:=True;
+    Screen.Cursor:=crAppStart;
+    Refresh;
+
+    Result:=True;
+
+    // Verifica se Transação esta Ativa
+    If DMBelShop.SQLC.InTransaction Then
+     DMBelShop.SQLC.Rollback(TD);
+
+    // Monta Transacao ===========================================================
+    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMBelShop.SQLC.StartTransaction(TD);
+    Try // Try da Transação
+      Screen.Cursor:=crAppStart;
+      DateSeparator:='.';
+      DecimalSeparator:='.';
+
+      // Informa Inclusão no Documento Financeiro no Tab_Auxiliar ==============
+      // 24 => CONCILIAÇÃO DE DEPÓSITOS:
+      //       - DES_AUX  = Observação Financeira
+      //       ==>> DES_AUX1 = Número do Documento Financeiro de Entrega para o Renato
+      //       - VLR_AUX  = (1=SIM) Se Documento Financeiro Foi Entregue para o Renato
+      MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR ('+
+             ' TIP_AUX, COD_AUX, DES_AUX1)'+
+             ' VALUES ('+
+             ' 24,'+ // TIP_AUX
+             QuotedStr(sCodAux)+', '+ // Codigo ds Loja + DDMMAAAA
+             QuotedStr(sCodDoc)+')'+ // Numero do Documento
+             ' MATCHING (TIP_AUX, COD_AUX)';
+      DMBelShop.SQLC.Execute(MySql, nil, nil);
+
+      // Inclui Novo Documento Financeiro ======================================
+      If bDocNovo Then
+      Begin
+        MySql:=' INSERT INTO FIN_CONCILIACAO_DEP_REL'+
+               ' (NUM_DOCTO, USU_CRIACAO, DTA_CRIACAO, HRA_CRIACAO, USU_INCLUSAO,'+
+               ' DTA_INCLUSAO, HRA_INCLUSAO, DTA_MOVTO, COD_LINX, NOME_LOJA,'+
+               ' VLR_MATRIZ, VLR_DEPOSITOS, VLR_DESPESAS, VLR_OUTROS, VLR_TOTAL,'+
+               ' OBS_FINANCEIRO)'+
+
+               ' VALUES('+
+               sCodDoc+', '+ // NUM_DOCTO
+               Cod_Usuario+', '+ // USU_CRIACAO
+               ' CURRENT_DATE,'+ // DTA_CRIACAO
+               ' CURRENT_TIME, '+ // HRA_CRIACAO
+               Cod_Usuario+','+ // USU_INCLUSAO
+               ' CURRENT_DATE,'+ // DTA_INCLUSAO
+               ' CURRENT_TIME, '+ // HRA_INCLUSAO
+               QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(DMConciliacao.CDS_CMDepositosAnaliseDTA_DOCTO.AsString))))+', '+ // DTA_MOVTO
+               Trim(DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString)+', '+ // COD_LINX
+               QuotedStr(Trim(DMConciliacao.CDS_CMDepositosAnaliseNOME_EMP.AsString))+', '+ // NOME_LOJA
+               QuotedStr(f_Troca(',','.',Trim(DMConciliacao.CDS_CMDepositosAnaliseCX_MTZ.AsString)))+', '+ // VLR_MATRIZ
+               QuotedStr(f_Troca(',','.',Trim(DMConciliacao.CDS_CMDepositosAnaliseDEPOSITO.AsString)))+', '+ // VLR_DEPOSITOS
+               QuotedStr(f_Troca(',','.',Trim(DMConciliacao.CDS_CMDepositosAnaliseDESPESA.AsString)))+', '+ // VLR_DESPESAS
+               QuotedStr(f_Troca(',','.',Trim(DMConciliacao.CDS_CMDepositosAnaliseOUTROS.AsString)))+', '+ // VLR_OUTROS
+               QuotedStr(f_Troca(',','.',Trim(DMConciliacao.CDS_CMDepositosAnaliseTOTAL.AsString)))+', '+ // VLR_TOTAL
+               QuotedStr(Trim(DMConciliacao.CDS_CMDepositosAnaliseOBS_FINANCEIRO.AsString))+')'; // OBS_FINANCEIRO
+      End; // If bDocNovo Then
+
+      // Inclui Novo Movto em Documento Financeiro Existente ===================
+      If not bDocNovo Then
+      Begin
+        MySql:=' INSERT INTO FIN_CONCILIACAO_DEP_REL'+
+               ' (NUM_DOCTO, USU_CRIACAO, DTA_CRIACAO, HRA_CRIACAO, USU_INCLUSAO,'+
+               '  DTA_INCLUSAO, HRA_INCLUSAO, DTA_MOVTO, COD_LINX, NOME_LOJA,'+
+               '  VLR_MATRIZ, VLR_DEPOSITOS, VLR_DESPESAS, VLR_OUTROS, VLR_TOTAL,'+
+               '  OBS_FINANCEIRO)'+
+
+               ' SELECT FIRST 1'+
+               ' r.num_docto,'+
+               ' r.usu_criacao,'+
+               ' r.dta_criacao,'+
+               ' r.hra_criacao,'+
+               Cod_Usuario+' USU_INCLUSAO,'+
+               ' CURRENT_DATE DTA_INCLUSAO,'+
+               ' CURRENT_TIME HRA_INCLUSAO, '+
+               QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(DMConciliacao.CDS_CMDepositosAnaliseDTA_DOCTO.AsString))))+' DTA_MOVTO, '+
+               Trim(DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString)+' COD_LINX, '+
+               QuotedStr(Trim(DMConciliacao.CDS_CMDepositosAnaliseNOME_EMP.AsString))+' NOME_LOJA, '+
+               QuotedStr(f_Troca(',','.',Trim(DMConciliacao.CDS_CMDepositosAnaliseCX_MTZ.AsString)))+' VLR_MATRIZ, '+
+               QuotedStr(f_Troca(',','.',Trim(DMConciliacao.CDS_CMDepositosAnaliseDEPOSITO.AsString)))+' VLR_DEPOSITOS, '+
+               QuotedStr(f_Troca(',','.',Trim(DMConciliacao.CDS_CMDepositosAnaliseDESPESA.AsString)))+' VLR_DESPESAS, '+
+               QuotedStr(f_Troca(',','.',Trim(DMConciliacao.CDS_CMDepositosAnaliseOUTROS.AsString)))+' VLR_OUTROS, '+
+               QuotedStr(f_Troca(',','.',Trim(DMConciliacao.CDS_CMDepositosAnaliseTOTAL.AsString)))+' VLR_TOTAL, '+
+               QuotedStr(Trim(DMConciliacao.CDS_CMDepositosAnaliseOBS_FINANCEIRO.AsString))+' OBS_FINANCEIRO'+
+
+               ' FROM FIN_CONCILIACAO_DEP_REL r'+
+               ' WHERE r.num_docto='+sCodDoc;
+      End; // If not bDocNovo Then
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+      // Atualiza ClientDataSet - CDS_CMDepositosAnalise =======================
+      DMConciliacao.CDS_CMDepositosAnalise.Edit;
+      DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString:=sCodDoc;
+      DMConciliacao.CDS_CMDepositosAnalise.Post;
+
+      // Atualiza Transacao ====================================================
+      DMBelShop.SQLC.Commit(TD);
+    Except // Except da Transação
+      on e : Exception do
+      Begin
+        // Abandona Transacao ==================================================
+        DMBelShop.SQLC.Rollback(TD);
+
+        MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+        Result:=False;
+      End; // on e : Exception do
+    End; // Try da Transação
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    OdirPanApres.Visible:=False;
+
+    Screen.Cursor:=crDefault;
+  End; // Procedure IncluiDoctoFinanceiro;
+
 begin
   // Bloquei Ctrl + Delete =====================================================
   If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
@@ -17777,8 +17699,10 @@ begin
   If DMConciliacao.CDS_CMDepositosAnalise.IsEmpty Then
    Exit;
 
-  // Faz o fechamento do Dia ===================================================
-  If (Key=Vk_F6) And (bgFechamento) Then
+  //============================================================================
+  // Inclui Movimento no Docto Financeiro de Entrega para o Renato =============
+  //============================================================================
+  If (Key=Vk_F2) And (Sb_DepAnaliseDia.Panels[0].Visible) Then
   Begin
     iRecNo:=DMConciliacao.CDS_CMDepositosAnalise.RecNo;
 
@@ -17786,7 +17710,7 @@ begin
     If (DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>4) And
        (DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>9) Then
     Begin
-      msg('Favor Selecionar uma Loja !!','A');
+      msg('Favor Selecionar UMA Loja !!','A');
       Dbg_DepAnalise.SetFocus;
       Exit;
     End; // If DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>4 And (DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>9) Then
@@ -17816,12 +17740,131 @@ begin
 
     DMConciliacao.CDS_CMDepositosAnalise.RecNo:=iRecNo;
 
+    If Trim(DMConciliacao.CDS_CMDepositosAnaliseREL_ENTREGUE.AsString)='SIM' Then
+    Begin
+      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+      msg('Loja Já Fechada por Entrega do'+cr+'Documento Financeiro Número: '+
+          Trim(DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString),'A');
+      Dbg_DepAnalise.SetFocus;
+      Exit;
+    End; // If Trim(DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString)<>'' Then
+
     If Trim(DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString)<>'' Then
     Begin
       PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
-      msg('Impossível Abrir !!'+cr+'Movimento Fechado por Entrega de'+cr+
-          'Relatório Financeiro Número: '+
-          Trim(DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString)+' !!','A');
+      msg('Loja já Incluída no'+cr+'Documento Financeiro Número: '+
+          Trim(DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString),'A');
+      Dbg_DepAnalise.SetFocus;
+      Exit;
+    End; // If Trim(DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString)<>'' Then
+
+    If msg('Deseja Relamente Incluir a Loja:'+cr+Trim(DMConciliacao.CDS_CMDepositosAnaliseNOME_EMP.AsString)+cr+cr+'No Documento Financeiro ?','C')=2 Then
+     Exit;
+
+    // Busca Numero do Docto Financeiro Aberto/Não Impresso ====================
+    MySql:=' SELECT FIRST 1 r.num_docto'+ // Docto Financeiro sem Emissão em Aberto
+           ' FROM FIN_CONCILIACAO_DEP_REL r'+
+           ' WHERE r.dta_impressao IS NULL';
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+    sCodDoc:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_docto').AsString);
+    bDocNovo:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_docto').AsString)='';
+    DMBelShop.CDS_BuscaRapida.Close;
+
+    If Trim(sCodDoc)='' Then
+    Begin
+      // Busca Num_Seq e Num_Compl ===========================================
+      MySql:=' SELECT GEN_ID(GEN_NUM_REL_CONC_DEPOSITOS,1) Num_Doc'+
+             ' FROM RDB$DATABASE';
+      DMBelShop.CDS_BuscaRapida.Close;
+      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+      DMBelShop.CDS_BuscaRapida.Open;
+      sCodDoc:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Num_Doc').AsString);
+      DMBelShop.CDS_BuscaRapida.Close;
+    End; // If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_docto').AsString)='' Then
+
+    // Monta Tab_Auxiliar.Tip_Aux ==============================================
+    sCodAux:=Trim(DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString)+ // Codigo da Loja Linx
+             FormatFloat('00',StrToInt(Copy(Trim(DMConciliacao.CDS_CMDepositosAnaliseDTA_DOCTO.AsString),1,2)))+ // Dia do Movto
+             FormatFloat('00',StrToInt(Copy(Trim(DMConciliacao.CDS_CMDepositosAnaliseDTA_DOCTO.AsString),4,2)))+ // Mes do Movto
+             Copy(Trim(DMConciliacao.CDS_CMDepositosAnaliseDTA_DOCTO.AsString),9,2); // Ano do Movto - 2 Caracteres
+
+    // Inclui no Documento Financeiro ==========================================
+    If Not IncluiDoctoFinanceiro Then
+    Begin
+      msg('Erro na Inclusão da Loja !'+cr+cr+'Entrar em Contato com o Odir !!','A');
+      Exit;
+    End; // If Not IncluiDoctoFinanceiro Then
+
+    msg('Loja Incluida com SUCESSO !!'+cr+cr+'Documento Financeiro Nº: '+sCodDoc,'A');
+
+    // Apresenta Documento Financeiro ==========================================
+    DepositoAnaliseApresDoctFinanceiro(sCodDoc,
+                                       DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString,
+                                       DMConciliacao.CDS_CMDepositosAnaliseDTA_DOCTO.AsString);
+    Dbg_DepAnalise.SetFocus;
+  End; // If (Key=Vk_F2) And (Sb_DepAnaliseDia.Panels[0].Visible) Then
+  // Inclui Movimento no Docto Financeiro de Entrega para o Renato =============
+  //============================================================================
+
+  //============================================================================
+  // Faz o Fechamento do Dia ===================================================
+  //============================================================================
+  If (Key=Vk_F6) And (Sb_DepAnaliseDia.Panels[1].Visible) Then
+  Begin
+    iRecNo:=DMConciliacao.CDS_CMDepositosAnalise.RecNo;
+
+    // Verifica se Esta na Loja Corretamente ===================================
+    If (DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>4) And
+       (DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>9) Then
+    Begin
+      msg('Favor Selecionar UMA Loja !!','A');
+      Dbg_DepAnalise.SetFocus;
+      Exit;
+    End; // If DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>4 And (DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>9) Then
+
+    // Verifica se Loja Esta Como Não Conciliada ===============================
+    If (DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger=9) And
+       (Trim(DMConciliacao.CDS_CMDepositosAnaliseOBSERVACOES.AsString)='') Then
+    Begin
+      msg('Loja Não Conciliada !!','A');
+      Dbg_DepAnalise.SetFocus;
+      Exit;
+    End; // If (DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger=9) And (Trim(DMConciliacao.CDS_CMDepositosAnaliseOBSERVACOES.AsString)='') Then
+
+    // Verifica se a Loja Esta Repetida como Não Conciliada ====================
+    sNomeLoja:=DMConciliacao.CDS_CMDepositosAnaliseNOME_EMP.AsString;
+    sDtaMov  :=DMConciliacao.CDS_CMDepositosAnaliseDTA_DOCTO.AsString;
+    If DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>9 Then
+    Begin
+      If DMConciliacao.CDS_CMDepositosAnalise.Locate('NOME_EMP; DTA_DOCTO; ORDEM; OBSERVACOES',VarArrayOf([sNomeLoja, sDtaMov, 9, '']),[]) Then
+      Begin
+        msg('Loja Não Conciliada !!','A');
+        DMConciliacao.CDS_CMDepositosAnalise.RecNo:=iRecNo;
+        Dbg_DepAnalise.SetFocus;
+        Exit;
+      End; // If DMConciliacao.CDS_CMDepositosAnalise.Locate('NOME_EMP; DTA_DOCTO; ORDEM; OBSERVACOES',VarArrayOf([sNomeLoja, sDtaMov, 9, '']),[]) Then
+    End; // If DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>9 Then
+
+    DMConciliacao.CDS_CMDepositosAnalise.RecNo:=iRecNo;
+
+    If Trim(DMConciliacao.CDS_CMDepositosAnaliseREL_ENTREGUE.AsString)='SIM' Then
+    Begin
+      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+      msg('Impossível Abrir !!'+cr+cr+'Loja Já Fechada por Entrega do'+cr+
+          'Documento Financeiro Número: '+
+          Trim(DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString),'A');
+      Dbg_DepAnalise.SetFocus;
+      Exit;
+    End; // If Trim(DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString)<>'' Then
+
+    If Trim(DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString)<>'' Then
+    Begin
+      PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+      msg('Impossível Fechar !!'+cr+cr+'Loja Só Pode ser Fechada por'+cr+
+          'Entrega do Docto Financeiro Número: '+
+          Trim(DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString),'A');
       Dbg_DepAnalise.SetFocus;
       Exit;
     End; // If Trim(DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString)<>'' Then
@@ -17864,7 +17907,9 @@ begin
        End; // If DMConciliacao.CDS_CMDepositosAnalise.Locate('NOME_EMP; ORDEM',VarArrayOf([sNomeLoja, 4]),[]) Then
      End; // If DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>9 Then
     DMConciliacao.CDS_CMDepositosAnalise.RecNo:=iRecNo;
-  End; // If (Key=Vk_F6) And (bgFechamento) Then
+  End; // If (Key=Vk_F6) And (Sb_DepAnaliseDia.Panels[1].Visible) Then
+  // Faz o fechamento do Dia ===================================================
+  //============================================================================
 
 //  // Apresenta Valores de Despesas Conciliados com o Deposito
 //  If (Key=Vk_F5) Then
@@ -18102,6 +18147,15 @@ begin
     End; // If DMConciliacao.CDS_CMDepositosAnalise.Locate('NOME_EMP; DTA_DOCTO; ORDEM; OBSERVACOES',VarArrayOf([sNomeLoja, sDtaMov, 9, '']),[]) Then
   End; // If DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger<>9 Then
 
+  If Trim(DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString)<>'' Then
+  Begin
+    PlaySound(PChar('SystemExclamation'), 0, SND_ASYNC);
+    msg('Movimento já Incluído no'+cr+'Docto Financeiro Número: '+
+    Trim(DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString),'A');
+    Dbg_DepAnalise.SetFocus;
+    Exit;
+  End; // If Trim(DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString)<>'' Then
+
   b:=True;
   sObsFinan:=Trim(DMConciliacao.CDS_CMDepositosAnaliseOBS_FINANCEIRO.AsString);
   While b do
@@ -18244,9 +18298,9 @@ begin
       If msg('Deseja Realmente Caixas ABERTOS ??','C')=2 Then
        Exit;
 
-      bPeriodo:=False;
-      If msg('Selecionar por Período ??','C')=1 Then
-       bPeriodo:=True;
+      bPeriodo:=True;
+      If msg('Deseja TODOS os Movimentos de'+cr+cr+'Caixas em ABERTO ??','C')=1 Then
+       bPeriodo:=False;
 
       bgFechadoRenato:=False;
     End;
@@ -18346,6 +18400,67 @@ begin
        Break;
      End; // If InputQuery('Localizar: '+sCampo,'',sPesquisa) then
   End; // While b do
+end;
+
+procedure TFrmBancoExtratos.Dbg_DepAnaliseEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_DepAnaliseEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmBancoExtratos.Bt_DepAnaliseDoctoFinanClick(Sender: TObject);
+Var
+  MySql: String;
+  sNumDocto: String;
+  b: Boolean;
+begin
+  Dbg_DepAnalise.SetFocus;
+
+ // If DMConciliacao.CDS_CMDepositosAnalise.IsEmpty Then
+//   Exit;
+
+  b:=True;
+  While b do
+  Begin
+    If InputQueryOdir('Informe o Nº (0=Não Impresso/Aberto)', 'Documento Financeiro', sNumDocto, 200) Then
+     Begin
+       If Trim(sNumDocto)='' Then
+        Exit;
+
+       Try
+         StrToInt(sNumDocto);
+         Break;
+       Except
+         msg('Número Inválido !!','A');
+       End;
+     End
+    Else
+     Begin
+       Exit;
+     End; // If InputQueryOdir('Selecioção de Romaneio de Separação', 'Scanei o Romaneio' sCodBarras) Then
+  End; // While b do
+
+  // Se 0 (Zero) Verifi se Existe Documento Financeiro em Aberto/Não Impresso ==
+  sNumDocto:=IntToStr(StrToInt(sNumDocto));
+  If sNumDocto='0' Then
+  Begin
+    MySql:=' SELECT FIRST 1 r.num_docto'+ // Docto Financeiro sem Emissão em Aberto
+           ' FROM FIN_CONCILIACAO_DEP_REL r'+
+           ' WHERE r.dta_impressao IS NULL';
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+    sNumDocto:=Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_docto').AsString);
+    DMBelShop.CDS_BuscaRapida.Close;
+  End; // If sNumDocto='0' Then
+
+  // Apresenta Documento Financeiro ============================================
+  DepositoAnaliseApresDoctFinanceiro(sNumDocto);
+
+  Dbg_DepAnalise.SetFocus;
 end;
 
 end.

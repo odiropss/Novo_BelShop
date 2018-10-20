@@ -5312,27 +5312,6 @@ begin
          Begin
            b:=True;
          End;
-
-// OdirApagar - 16/12/2016
-//         Begin
-//           If StrToDate(FrmBelShop.IBQ_Matriz.FieldByName('datainclusao').AsString)>=StrToDate(sgDtaInicio) Then
-//            Begin
-//              DMBelShop.CDS_Join.Close;
-//              MySql:=' Insert into ES_CURVA_ABC'+
-//                      ' (COD_LOJA, COD_PRODUTO, IND_CURVA, DTA_INCLUSAO)'+
-//                      ' Values ('+
-//                      QuotedStr(sCodMatriz)+', '+
-//                      QuotedStr(FrmBelShop.IBQ_Matriz.FieldByName('COD_ITEM').AsString)+', '+
-//                      QuotedStr('E')+', '+
-//                      QuotedStr(FrmBelShop.IBQ_Matriz.FieldByName('datainclusao').AsString)+')';
-//              DMBelShop.SQLC.Execute(MySql,nil,nil);
-//              DMBelShop.CDS_Join.Open;
-//            End
-//           Else
-//            Begin
-//              b:=True;
-//            End;
-//         End;
       End; // While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
 
       // Num_Seq de Documento --------------------------------------------------

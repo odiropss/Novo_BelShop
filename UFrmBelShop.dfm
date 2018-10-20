@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_OrdemCompra
+    ActivePage = Ts_EstoqueFisicoFinan
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -7282,7 +7282,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_OCBuscaProdutos
+        ActivePage = Ts_OCGeraOrdemCompra
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -14604,25 +14604,6 @@ object FrmBelShop: TFrmBelShop
             Ctl3D = False
             ParentCtl3D = False
             TabOrder = 2
-            object Bt_CurvaABCEndDistrEndereco: TJvXPButton
-              Tag = 6
-              Left = 2
-              Top = 2
-              Width = 196
-              Height = 34
-              Caption = 'Distribui Endere'#231'amento'
-              TabOrder = 0
-              ShowFocusRect = True
-              Align = alLeft
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-              Visible = False
-              OnClick = Bt_CurvaABCEndDistrEnderecoClick
-            end
             object Bt_CurvaABCEndVoltar: TJvXPButton
               Tag = 90
               Left = 859
@@ -14630,7 +14611,7 @@ object FrmBelShop: TFrmBelShop
               Width = 100
               Height = 34
               Caption = 'Voltar'
-              TabOrder = 1
+              TabOrder = 0
               TabStop = False
               ShowFocusRect = True
               Align = alRight
@@ -14644,12 +14625,12 @@ object FrmBelShop: TFrmBelShop
             end
             object Bt_CurvaABCEndSalvaProdClipboard: TJvXPButton
               Tag = 8
-              Left = 198
+              Left = 2
               Top = 2
               Width = 152
               Height = 34
               Caption = 'Produtos Salvar '#13#10'  em Mem'#243'ria'
-              TabOrder = 2
+              TabOrder = 1
               TabStop = False
               ShowFocusRect = True
               Spacing = 10
@@ -14664,12 +14645,12 @@ object FrmBelShop: TFrmBelShop
             end
             object Bt_CurvaABCEndSalvaFornClipboard: TJvXPButton
               Tag = 8
-              Left = 350
+              Left = 154
               Top = 2
               Width = 152
               Height = 34
               Caption = 'Fornecedores '#13#10'Salvar em Mem'#243'ria'
-              TabOrder = 3
+              TabOrder = 2
               TabStop = False
               ShowFocusRect = True
               Spacing = 10
@@ -14689,7 +14670,7 @@ object FrmBelShop: TFrmBelShop
               Height = 34
               Align = alRight
               BevelOuter = bvNone
-              TabOrder = 4
+              TabOrder = 3
               DesignSize = (
                 148
                 34)
@@ -14730,531 +14711,6 @@ object FrmBelShop: TFrmBelShop
             end
           end
         end
-        object Ts_CurvaABCEnderecamentos: TTabSheet
-          Caption = 'Endere'#231'amentos'
-          ImageIndex = 2
-          object Gb_CurvaABCEndEnderecamentos: TGroupBox
-            Left = 0
-            Top = 0
-            Width = 963
-            Height = 107
-            Align = alTop
-            Caption = ' Localiza'#231#227'o '
-            TabOrder = 0
-            DesignSize = (
-              963
-              107)
-            object Label125: TLabel
-              Left = 13
-              Top = 19
-              Width = 30
-              Height = 13
-              Caption = 'Zona'
-            end
-            object Label126: TLabel
-              Left = 225
-              Top = 19
-              Width = 49
-              Height = 13
-              Caption = 'Corredor'
-            end
-            object Label127: TLabel
-              Left = 354
-              Top = 19
-              Width = 55
-              Height = 13
-              Caption = 'Prateleira'
-            end
-            object Label124: TLabel
-              Left = 16
-              Top = 64
-              Width = 45
-              Height = 13
-              Caption = 'Produto'
-            end
-            object Cbx_CurvaABCEndZona: TComboBox
-              Left = 13
-              Top = 35
-              Width = 204
-              Height = 22
-              Style = csOwnerDrawFixed
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = []
-              ItemHeight = 16
-              ParentFont = False
-              TabOrder = 0
-              OnChange = Cbx_CurvaABCEndZonaChange
-            end
-            object Cbx_CurvaABCEndCorredor: TComboBox
-              Left = 225
-              Top = 35
-              Width = 123
-              Height = 19
-              Style = csOwnerDrawFixed
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = []
-              ItemHeight = 13
-              ParentFont = False
-              TabOrder = 1
-              OnChange = Cbx_CurvaABCEndZonaChange
-            end
-            object Cbx_CurvaABCEndPrateleira: TComboBox
-              Left = 354
-              Top = 35
-              Width = 123
-              Height = 19
-              Style = csOwnerDrawFixed
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = []
-              ItemHeight = 13
-              ParentFont = False
-              TabOrder = 2
-              OnChange = Cbx_CurvaABCEndZonaChange
-            end
-            object Bt_CurvaABCEndLocalizaProd: TJvXPButton
-              Tag = 92
-              Left = 81
-              Top = 76
-              Width = 23
-              Height = 25
-              Hint = 'Localiza Produto'
-              TabOrder = 4
-              TabStop = False
-              ShowFocusRect = True
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = [fsBold]
-              ParentFont = False
-              ParentShowHint = False
-              ShowHint = True
-              OnClick = Bt_CurvaABCEndLocalizaProdClick
-            end
-            object EdtCurvaABCEndDescProd: TEdit
-              Left = 107
-              Top = 79
-              Width = 370
-              Height = 19
-              TabStop = False
-              Color = 12171775
-              ReadOnly = True
-              TabOrder = 5
-            end
-            object EdtCurvaABCEndCodProd: TEdit
-              Left = 14
-              Top = 79
-              Width = 62
-              Height = 19
-              TabOrder = 3
-              OnExit = EdtCurvaABCEndCodProdExit
-            end
-            object Gb_CurvaABCEndEstatistica: TGroupBox
-              Left = 632
-              Top = 0
-              Width = 321
-              Height = 107
-              Anchors = [akTop, akRight]
-              Caption = ' Estatistica '
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = []
-              ParentFont = False
-              TabOrder = 6
-              object Label128: TLabel
-                Left = 10
-                Top = 21
-                Width = 81
-                Height = 13
-                Caption = 'Total Gavetas'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
-              object Label129: TLabel
-                Left = 11
-                Top = 42
-                Width = 79
-                Height = 13
-                Caption = 'Total Curva A'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
-              object Label130: TLabel
-                Left = 12
-                Top = 81
-                Width = 79
-                Height = 13
-                Caption = 'Total Curva C'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
-              object Label131: TLabel
-                Left = 12
-                Top = 63
-                Width = 79
-                Height = 13
-                Caption = 'Total Curva B'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
-              object Label132: TLabel
-                Left = 176
-                Top = 21
-                Width = 68
-                Height = 13
-                Caption = 'Total Livres'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
-              object Label133: TLabel
-                Left = 176
-                Top = 40
-                Width = 68
-                Height = 13
-                Caption = 'Total Livres'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
-              object Label134: TLabel
-                Left = 176
-                Top = 60
-                Width = 68
-                Height = 13
-                Caption = 'Total Livres'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
-              object Label135: TLabel
-                Left = 176
-                Top = 79
-                Width = 68
-                Height = 13
-                Caption = 'Total Livres'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-              end
-              object EdtCurvaABCEndTotGavetas: TCurrencyEdit
-                Left = 95
-                Top = 18
-                Width = 60
-                Height = 18
-                AutoSize = False
-                Color = 15395541
-                DecimalPlaces = 0
-                DisplayFormat = '0,'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-                ReadOnly = True
-                TabOrder = 0
-              end
-              object EdtCurvaABCEndTotGavA: TCurrencyEdit
-                Left = 95
-                Top = 38
-                Width = 60
-                Height = 18
-                AutoSize = False
-                Color = 14671839
-                DecimalPlaces = 0
-                DisplayFormat = '0,'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-                ReadOnly = True
-                TabOrder = 1
-              end
-              object EdtCurvaABCEndTotGavB: TCurrencyEdit
-                Left = 95
-                Top = 58
-                Width = 60
-                Height = 18
-                AutoSize = False
-                Color = 14671839
-                DecimalPlaces = 0
-                DisplayFormat = '0,'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-                ReadOnly = True
-                TabOrder = 2
-              end
-              object EdtCurvaABCEndTotGavC: TCurrencyEdit
-                Left = 95
-                Top = 78
-                Width = 60
-                Height = 18
-                AutoSize = False
-                Color = 14671839
-                DecimalPlaces = 0
-                DisplayFormat = '0,'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-                ReadOnly = True
-                TabOrder = 3
-              end
-              object EdtCurvaABCEndTotGavLivres: TCurrencyEdit
-                Left = 247
-                Top = 18
-                Width = 60
-                Height = 18
-                AutoSize = False
-                Color = 15395541
-                DecimalPlaces = 0
-                DisplayFormat = '0,'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-                ReadOnly = True
-                TabOrder = 4
-              end
-              object EdtCurvaABCEndTotGavLivresA: TCurrencyEdit
-                Left = 247
-                Top = 38
-                Width = 60
-                Height = 18
-                AutoSize = False
-                Color = 14671839
-                DecimalPlaces = 0
-                DisplayFormat = '0,'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-                ReadOnly = True
-                TabOrder = 5
-              end
-              object EdtCurvaABCEndTotGavLivresB: TCurrencyEdit
-                Left = 247
-                Top = 58
-                Width = 60
-                Height = 18
-                AutoSize = False
-                Color = 14671839
-                DecimalPlaces = 0
-                DisplayFormat = '0,'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-                ReadOnly = True
-                TabOrder = 6
-              end
-              object EdtCurvaABCEndTotGavLivresC: TCurrencyEdit
-                Left = 247
-                Top = 77
-                Width = 60
-                Height = 18
-                AutoSize = False
-                Color = 14671839
-                DecimalPlaces = 0
-                DisplayFormat = '0,'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-                ParentFont = False
-                ReadOnly = True
-                TabOrder = 7
-              end
-            end
-          end
-          object Dbg_CurvaABCEndEnderecamento: TDBGridJul
-            Left = 0
-            Top = 107
-            Width = 963
-            Height = 361
-            Align = alClient
-            Color = 15004403
-            DataSource = DMBelShop.DS_Enderecamento
-            FixedColor = clSilver
-            Font.Charset = ANSI_CHARSET
-            Font.Color = clBlack
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
-            ParentFont = False
-            ReadOnly = True
-            TabOrder = 1
-            TitleFont.Charset = DEFAULT_CHARSET
-            TitleFont.Color = clBlack
-            TitleFont.Height = -11
-            TitleFont.Name = 'MS Sans Serif'
-            TitleFont.Style = [fsBold]
-            OnKeyDown = Dbg_CurvaABCEndEnderecamentoKeyDown
-            CorComFoco = 15004403
-            SairComEnter = False
-            EditDataSetCheck = False
-            CampoCheckBox = 'PROC'
-            ValorCampoCheck = 'SIM'
-            ValorCampoUnCheck = 'NAO'
-            ImageChecked.Data = {
-              3E020000424D3E0200000000000036000000280000000D0000000D0000000100
-              180000000000080200000000000000000000000000000000000080511C80511C
-              80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
-              1C0080511CF1F3F3F3F5F5F6F7F7F8F9F9F9FAFAFBFCFCFDFDFDFEFEFEFFFFFF
-              FFFFFFFFFFFF80511C0080511CEFF1F1F1F3F3F3F5F5F6F7F7F8F9F9F9FAFAFB
-              FCFCFDFDFDFEFEFEFFFFFFFFFFFF80511C0080511CECEFEFEFF1F1F1F3F3F3F5
-              F521A121F8F9F9F9FAFAFBFCFCFDFDFDFEFEFEFFFFFF80511C0080511CE9ECEC
-              ECEFEFEFF1F121A12121A12121A121F8F9F9F9FAFAFBFCFCFDFDFDFEFEFE8051
-              1C0080511CE6EAEAE9ECEC21A12121A12121A12121A12121A121F8F9F9F9FAFA
-              FBFCFCFDFDFD80511C0080511CE3E7E7E6EAEA21A12121A121EFF1F121A12121
-              A12121A121F8F9F9F9FAFAFBFCFC80511C0080511CE1E5E5E3E7E721A121E9EC
-              ECECEFEFEFF1F121A12121A12121A121F8F9F9F9FAFA80511C0080511CDFE3E3
-              E1E5E5E3E7E7E6EAEAE9ECECECEFEFEFF1F121A12121A121F6F7F7F8F9F98051
-              1C0080511CDDE2E2DFE3E3E1E5E5E3E7E7E6EAEAE9ECECECEFEFEFF1F121A121
-              F3F5F5F6F7F780511C0080511CDDE2E2DDE2E2DFE3E3E1E5E5E3E7E7E6EAEAE9
-              ECECECEFEFEFF1F1F1F3F3F3F5F580511C0080511CDDE2E2DDE2E2DDE2E2DFE3
-              E3E1E5E5E3E7E7E6EAEAE9ECECECEFEFEFF1F1F1F3F380511C0080511C80511C
-              80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
-              1C00}
-            ImageUnChecked.Data = {
-              3E020000424D3E0200000000000036000000280000000D0000000D0000000100
-              180000000000080200000000000000000000000000000000000080511C80511C
-              80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
-              1C0080511CEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9FAFBFBFCFDFDFEFEFEFFFFFF
-              FFFFFFFFFFFF80511C0080511CECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9FA
-              FBFBFCFDFDFEFEFEFFFFFFFFFFFF80511C0080511CE9ECECECEFEFEFF1F1F1F3
-              F3F4F5F5F6F7F7F8F9F9FAFBFBFCFDFDFEFEFEFFFFFF80511C0080511CE5E8E8
-              E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9FAFBFBFCFDFDFEFEFE8051
-              1C0080511CE2E5E5E5E8E8E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F9
-              FAFBFBFCFDFD80511C0080511CDEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F1F1
-              F3F3F4F5F5F6F7F7F8F9F9FAFBFB80511C0080511CDBE0E0DEE2E2E2E5E5E5E8
-              E8E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F7F8F9F980511C0080511CD9DEDE
-              DBE0E0DEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F1F1F3F3F4F5F5F6F7F78051
-              1C0080511CD7DCDCD9DEDEDBE0E0DEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F1
-              F1F3F3F4F5F580511C0080511CD7DCDCD7DCDCD9DEDEDBE0E0DEE2E2E2E5E5E5
-              E8E8E9ECECECEFEFEFF1F1F1F3F380511C0080511CD7DCDCD7DCDCD7DCDCD9DE
-              DEDBE0E0DEE2E2E2E5E5E5E8E8E9ECECECEFEFEFF1F180511C0080511C80511C
-              80511C80511C80511C80511C80511C80511C80511C80511C80511C80511C8051
-              1C00}
-            Columns = <
-              item
-                Expanded = False
-                FieldName = 'COD_GAVETA'
-                Title.Alignment = taRightJustify
-                Width = 75
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'DES_GAVETA'
-                Title.Alignment = taCenter
-                Width = 130
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'TIP_CURVAABC'
-                Title.Alignment = taCenter
-                Width = 70
-                Visible = True
-              end
-              item
-                Color = 14680063
-                Expanded = False
-                FieldName = 'COD_PRODUTO'
-                Title.Alignment = taRightJustify
-                Width = 80
-                Visible = True
-              end
-              item
-                Color = 14680063
-                Expanded = False
-                FieldName = 'DES_PRODUTO'
-                Width = 365
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'COD_FORNECEDOR'
-                Title.Alignment = taRightJustify
-                Width = 75
-                Visible = True
-              end
-              item
-                Expanded = False
-                FieldName = 'DES_FORNECEDOR'
-                Visible = True
-              end>
-          end
-          object Pan_CurvaABCEndEndereca: TPanel
-            Left = 0
-            Top = 468
-            Width = 963
-            Height = 40
-            Align = alBottom
-            BevelInner = bvLowered
-            BorderStyle = bsSingle
-            Ctl3D = False
-            ParentCtl3D = False
-            TabOrder = 2
-          end
-        end
       end
     end
     object Ts_EstoqueFisicoFinan: TTabSheet
@@ -15266,7 +14722,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_EstFisFinaFiltros
+        ActivePage = Ts_EstFisFinaResutadoGiroEstoque
         Align = alClient
         TabOrder = 0
         OnChange = PC_EstoqueFisicoFinanChange

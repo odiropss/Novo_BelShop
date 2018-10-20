@@ -784,8 +784,6 @@ Begin
   sDta:=f_Troca('-', '.',sDta);
 
   // Busca Cadastro de Créditos ================================================
-  // OdirApagar - 26/10/2017
-  // If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
   If Not bgSemBancoDados Then
    Begin
      MySql:=' SELECT f.codforma,'+
@@ -966,8 +964,6 @@ Begin
   sDta:=f_Troca('/', '.',DtEdtConcFechaCaixaData.Text);
   sDta:=f_Troca('-', '.',sDta);
 
-  // OdirApagar - 26/10/2017
-  // If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
   If Not bgSemBancoDados Then // Busca no Sidicom
    Begin
      MySql:=' SELECT cx.codcaixa, cx.nomecaixa'+
@@ -1093,8 +1089,6 @@ Begin
   sDta:=f_Troca('/', '.',DtEdtConcFechaCaixaData.Text);
   sDta:=f_Troca('-', '.',sDta);
 
-  // OdirApagar - 26/10/2017
-  // If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
   If Not bgSemBancoDados Then // Busca no Sidicom
    Begin
      MySql:=' Select sum(Coalesce(m.totnota,0.00)) Tot_Debitos'+
@@ -1252,8 +1246,6 @@ Begin
   sDta:=f_Troca('/', '.',DtEdtConcFechaCaixaData.Text);
   sDta:=f_Troca('-', '.',sDta);
 
-  // OdirApagar - 26/10/2017
-  // If StrToInt(sCodFilial)<18 Then // Busca no Sidicom
   If Not bgSemBancoDados Then // Busca no Sidicom
    Begin
      MySql:=' SELECT'+

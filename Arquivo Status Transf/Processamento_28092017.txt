@@ -1,5 +1,0 @@
-00/999 - Roda Transferencias Solicitadas Pelas Lojas - INICIO - 11:05:37
-00/999 - Roda Transferencias Solicitadas Pelas Lojas - FIM - 11:06:03
-12/999 - Busca Transferencias Anteiroes Setor de Compras - INICIO - 11:06:05
-12/999 - Busca Transferencias Anteiroes Setor de Compras - FIM - 11:06:15
-14/999 - FIM - 11:06:19

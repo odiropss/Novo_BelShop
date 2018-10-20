@@ -1138,9 +1138,6 @@ Begin
   TD.IsolationLevel:=xilREADCOMMITTED;
   DMBelShop.SQLC.StartTransaction(TD);
   Try // Try da Transação
-    // OdirApagar
-    //Inc(iEndereco);
-
     MySql:=' INSERT INTO TAB_AUXILIAR'+
            ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
            ' VALUES ('+ //23, 545, '1', NULL, NULL, NULL);
@@ -1282,9 +1279,6 @@ Begin
            ' TRIM(pr.apresentacao) Des_produto, '+
            QuotedStr(Des_Usuario)+' Usuario,'+
            ' lo.obs_docto,'+
-
-           // OdirApagar - 10/10/2018
-           // ' pr.principalfor||'' - ''||pr.nomefornecedor FORNEC'+
            ' pr.nomefornecedor FORNEC'+
 
            ' FROM ES_ESTOQUES_LOJAS lo, ES_ESTOQUES_CD cd,'+
@@ -1529,16 +1523,6 @@ Begin
                                              //SIDICOM  // LINX
     sNumSeq     :=DMBelShop.OCBuscaNumeroOC(DMCentralTrocas.CDS_ReposicaoDocsCOD_LOJA.AsString, iCodLjLINX);
     sNomeArqLinx:='Reposicao_Linx_Doc_'+sNumSeq+'.TXT';
-
-// OdirApagar - 09/07/2018 - Substituido pela StoredProcedure: SP_BUSCA_NUMERO_OC
-//    MySql:=' SELECT GEN_ID(GEN_LINX_REPOSICAO_EXPORT,1) Codigo'+
-//           ' FROM RDB$DATABASE';
-//    DMBelShop.CDS_BuscaRapida.Close;
-//    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-//    DMBelShop.CDS_BuscaRapida.Open;
-//    sNumSeq     :=DMBelShop.CDS_BuscaRapida.FieldByName('Codigo').AsString;
-//    sNomeArqLinx:='Reposicao_Linx_Doc_'+sNumSeq+'.TXT';
-//    DMBelShop.SDS_BuscaRapida.Close;
 
     // Cria StringList Para Gerar Arquivo Texto ================================
     tsArquivo:= TStringList.Create;
@@ -5049,8 +5033,6 @@ begin
   If DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty Then
    Exit;
 
-// OdirApagar - 21/08/2018
-//  If (igCorredores<>CkCbx_ReposLojasCorredor.Items.Count) and (igCorredores>1) Then
   If igCorredores=0 Then
   Begin
     msg('Romaneio é Por Corredor !!'+cr+cr+'Selecione UM Corredor !!','A');
@@ -5150,9 +5132,6 @@ begin
          ' TRIM(pr.apresentacao) Des_produto, '+
          QuotedStr(Des_Usuario)+' Usuario,'+
          ' lo.obs_docto,'+
-
-         // OdirApagar - 10/10/2018
-         // ' pr.principalfor||'' - ''||pr.nomefornecedor FORNEC'+
          ' pr.nomefornecedor FORNEC'+
 
          ' FROM ES_ESTOQUES_LOJAS lo, ES_ESTOQUES_CD cd,'+
@@ -6422,7 +6401,6 @@ begin
   OdirPanApres.Visible:=False;
   Refresh;
 
-//odirapagar - 20/03/2018
   sForn:='';
   sCorr:='TODOS os Corredores';
   If Trim(EdtReposLojasCodForn.Text)<>'' Then

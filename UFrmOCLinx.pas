@@ -1076,89 +1076,6 @@ Begin
       Application.ProcessMessages;
       pgProgBar.Position:=DMLinx.CDS_OCProdLinx.RecNo;
 
-// CURVA ABC - OdirApagar
-//      bgProcCurva:=True;
-//      b:=False;
-//      While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
-//      Begin
-//        If DMBelShop.CDS_Join.Locate('COD_PRODUTO',DMLinx.CDS_OCProdLinx.FieldByName('COD_ITEM').AsString,[]) Then
-//         Begin
-//           b:=True;
-//
-//           // Curvas Por Loja ou Por MPMS
-//           If ((Gb_CalculoTpCurvaABC.Visible) Or (Gb_CalculoApresCurva.Visible)) and (Gb_CalculoApresCurva.Visible) Then
-//           Begin
-//             If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Not Ckb_CalculoApresCurvaFora.Checked) Then
-//              Begin
-//                bgProcCurva:=False;
-//              End
-//             Else If (DMBelShop.CDS_Join.FieldByName('Usar_Curva').AsString='NAO') and (Ckb_CalculoApresCurvaFora.Checked) Then
-//              Begin
-//                If (Rb_CalculoApresCurvaEstCom.Checked) and (DMLinx.CDS_OCProdLinx.FieldByName('QTD_SALDO').AsInteger=0) Then
-//                  bgProcCurva:=False
-//                Else If (Rb_CalculoApresCurvaEstSem.Checked) and (DMLinx.CDS_OCProdLinx.FieldByName('QTD_SALDO').AsInteger<>0) Then
-//                  bgProcCurva:=False
-//              End;
-//           End; // If Gb_CalculoTpCurvaABC.Visible Then
-//         End
-//        Else // If DMBelShop.CDS_Join.Locate('COD_PRODUTO',DMLinx.CDS_OCProdLinx.FieldByName('COD_ITEM').AsString,[]) Then
-//         Begin
-//           If (StrToDate(DMLinx.CDS_OCProdLinx.FieldByName('DATAINCLUSAO').AsString)>=StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio)))) Or
-//              (StrToDate(DMLinx.CDS_OCProdLinx.FieldByName('DATAALTERACAO').AsString)>=StrToDate(f_Troca('.','/',f_Troca('-','/',sgDtaInicio)))) Then
-//            Begin
-//              DMBelShop.CDS_Join.Locate('IND_CURVA','E',[]);
-//              MySql:=DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString;
-//              DMBelShop.CDS_Join.Insert;
-//              DMBelShop.CDS_Join.FieldByName('COD_LOJA').AsString:=sCodMatriz;
-//              DMBelShop.CDS_Join.FieldByName('COD_PRODUTO').AsString:=DMLinx.CDS_OCProdLinx.FieldByName('COD_ITEM').AsString;
-//              DMBelShop.CDS_Join.FieldByName('IND_CURVA').AsString:='E';
-//              DMBelShop.CDS_Join.FieldByName('DATAINCLUSAO').AsString:=DMLinx.CDS_OCProdLinx.FieldByName('DATAINCLUSAO').AsString;
-//              DMBelShop.CDS_Join.FieldByName('EST_MINIMO').AsString:='3';
-//              DMBelShop.CDS_Join.FieldByName('USAR_CURVA').AsString:='SIM';
-//              DMBelShop.CDS_Join.FieldByName('DIAS_ESTOCAGEM').AsString:=MySql;
-//            End
-//           Else
-//            Begin
-//              bgProcCurva:=False;
-//              b:=True;
-//            End;
-//         End;
-//      End; // While Not b do // Verifica se Existe na Tabela ES_FINAN_CURVA_ABC
-
-//Ultima Compra e Transito - OdirApagar
-//      // Ultima Compra ----------------------------------------------
-//      sDta_Ref:='';
-//      sCodForn:='';
-//      sNomeForn:='';
-//      cQuant_Ref:=0;
-//      cPreco:=0;
-//      cPrecoUnit:=0;
-//      cVlr_Total_Ref:=0;
-//
-//      s :=Trim(DMLinx.CDS_OCProdLinx.FieldByName('COD_EMPRESA').AsString)(;
-//      ss:=Trim(DMLinx.CDS_OCProdLinx.FieldByName('COD_ITEM').AsString);
-//      If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'UC']),[]) Then
-//       Begin
-//         sDta_Ref      :=DMBelShop.CDS_UltCompraTransito.FieldByName('Dta_Ref').AsString;
-//         sCodForn      :=DMBelShop.CDS_UltCompraTransito.FieldByName('CodFornecedor').AsString;
-//         sNomeForn     :=DMBelShop.CDS_UltCompraTransito.FieldByName('NomeFornecedor').AsString;
-//         cQuant_Ref    :=DMBelShop.CDS_UltCompraTransito.FieldByName('Quant_Ref').AsCurrency;
-//         cPreco        :=DMBelShop.CDS_UltCompraTransito.FieldByName('Preco').AsCurrency;
-//         cPrecoUnit    :=DMBelShop.CDS_UltCompraTransito.FieldByName('Preco').AsCurrency;
-//         cVlr_Total_Ref:=DMBelShop.CDS_UltCompraTransito.FieldByName('Vlr_Total_Ref').AsCurrency;
-//       End
-//      Else If DMBelShop.CDS_UltCompraTransito.Locate('CodProduto;Tipo',VarArrayOf([ss, 'UC']),[]) Then
-//       Begin
-//         cPrecoUnit    :=DMBelShop.CDS_UltCompraTransito.FieldByName('Preco').AsCurrency;
-//       End;// If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'UC']),[]) Then
-//
-//      // Transito ---------------------------------------------------
-//      cQtdTransito:=0;
-//      If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'TR']),[]) Then
-//      Begin
-//        cQtdTransito  :=DMBelShop.CDS_UltCompraTransito.FieldByName('Quant_Ref').AsCurrency;
-//      End; // If DMBelShop.CDS_UltCompraTransito.Locate('CodFilial;CodProduto;Tipo',VarArrayOf([s, ss, 'TR']),[]) Then
-
       // Inicializa Variaveis de Demanda ---------------------------------------
       igNrDias:=0;
       igNrMeses:=0;
@@ -1192,26 +1109,6 @@ Begin
         sCOD_ICMS  :=DMLinx.CDS_OCProdLinx.FieldByName('COD_ICMS').AsString;
         sEstado    :=DMLinx.CDS_OCProdLinx.FieldByName('Estado').AsString;
         sTIP_PESSOA:=DMLinx.CDS_OCProdLinx.FieldByName('TIP_PESSOA').AsString;
-
-// OdirApagar
-//        If IBQ_ConsultaMatriz.Locate('CODICM;CODESTADO;REVENDACONSUMOFJ',VarArrayOf([sCOD_ICMS,sEstado,sTIP_PESSOA]),[]) Then
-//        Begin
-//          sCodICM           :=IBQ_ConsultaMatriz.FieldByName('CODICM').AsString;
-//          sSittributaria    :=IBQ_ConsultaMatriz.FieldByName('SITTRIBUTARIA').AsString;
-//          sSomaIPIBase      :=IBQ_ConsultaMatriz.FieldByName('SOMAIPIBASE').AsString;
-//          sSomaFreteBase    :=IBQ_ConsultaMatriz.FieldByName('SOMAFRETEBASE').AsString;
-//          sSomaDespesaBase  :=IBQ_ConsultaMatriz.FieldByName('SOMADESPESABASE').AsString;
-//          sSubstituicao     :=IBQ_ConsultaMatriz.FieldByName('SUBSTITUICAO').AsString;
-//          sSubstValPer      :=IBQ_ConsultaMatriz.FieldByName('SUBSTVALPER').AsString;
-//          sSomaIPIBaseSubst :=IBQ_ConsultaMatriz.FieldByName('SOMAIPIBASESUBST').AsString;
-//          sSomaFreteBaseST  :=IBQ_ConsultaMatriz.FieldByName('SOMAFRETEBASEST').AsString;
-//          sSomaDespesaBaseST:=IBQ_ConsultaMatriz.FieldByName('SOMADESPESABASEST').AsString;
-//          cAliquota         :=IBQ_ConsultaMatriz.FieldByName('ALIQUOTA').AsCurrency;
-//          cReducao          :=IBQ_ConsultaMatriz.FieldByName('REDUCAO').AsCurrency;
-//          cSubstMargem      :=IBQ_ConsultaMatriz.FieldByName('SUBSTMARGEM').AsCurrency;
-//          cSubstAliquota    :=IBQ_ConsultaMatriz.FieldByName('SUBSTALIQUOTA').AsCurrency;
-//          cAliqRepasse      :=IBQ_ConsultaMatriz.FieldByName('ALIQREPASSE').AsCurrency;
-//        End; // If IBQ_ConsultaMatriz.Locate('CODICM;CODESTADO;REVENDACONSUMOFJ',VarArrayOf([sCOD_ICMS,sEstado,sTIP_PESSOA]),[]) Then
       End; // If (sCOD_ICMS  <>DMLinx.CDS_OCProdLinx.FieldByName('COD_ICMS').AsString) Or
 
       // Num_Seq de Documento --------------------------------------------------
@@ -4185,9 +4082,6 @@ begin
     OdirPanApres.Visible:=False;
     DMBelShop.CDS_EmpProcessa.Next;
   End; // While Not DMBelShop.CDS_EmpProcessa.Eof do
-
-  // Odirapagar
-  // DMBelShop.CDS_UltCompraTransito.Close;
 
   DecimalSeparator:=',';
   DateSeparator:='/';

@@ -651,23 +651,6 @@ type
     CDS_ObjetivosPROC: TStringField;
     CDS_ObjetivosIND_OPERACAO: TIntegerField;
     CDS_ObjetivosIND_NAOCOMPRA: TStringField;
-    SDS_Enderecamento: TSQLDataSet;
-    DSP_Enderecamento: TDataSetProvider;
-    CDS_Enderecamento: TClientDataSet;
-    CDS_EnderecamentoCOD_ZONA: TIntegerField;
-    CDS_EnderecamentoDES_ZONA: TStringField;
-    CDS_EnderecamentoCOD_CORREDOR: TStringField;
-    CDS_EnderecamentoDES_CORREDOR: TStringField;
-    CDS_EnderecamentoCOD_PRATELEIRA: TStringField;
-    CDS_EnderecamentoDES_PRATELEIRA: TStringField;
-    CDS_EnderecamentoCOD_GAVETA: TStringField;
-    CDS_EnderecamentoDES_GAVETA: TStringField;
-    CDS_EnderecamentoTIP_CURVAABC: TStringField;
-    CDS_EnderecamentoCOD_PRODUTO: TStringField;
-    CDS_EnderecamentoDES_PRODUTO: TStringField;
-    CDS_EnderecamentoCOD_FORNECEDOR: TStringField;
-    CDS_EnderecamentoDES_FORNECEDOR: TStringField;
-    DS_Enderecamento: TDataSource;
     SDS_ConectaEmpresa: TSQLDataSet;
     CDS_ConectaEmpresa: TClientDataSet;
     DSP_ConectaEmpresa: TDataSetProvider;
@@ -2486,146 +2469,101 @@ Begin
   //          = 'OC(s) Importada(s):' - Busca as lojas do Docto
   //          = 'Linx' Somente Linx
 
-  // odirApagar - 20/04/2017
-  // Verifica se Transação esta Aberta =========================================
-//  bTransacao:=False;
-//  If Not DMBelShop.SQLC.InTransaction Then
-//  Begin
-//    // Monta Transacao
-//    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-//    TD.IsolationLevel:=xilREADCOMMITTED;
-//    DMBelShop.SQLC.StartTransaction(TD);
-//
-//    sDateSeparator:=DateSeparator;
-//    sDecimalSeparator:=DecimalSeparator;
-//
-////    bTransacao:=True;
-//  End; // If Not DMBelShop.SQLC.InTransaction Then
-//
-//  Try // Try da Transação
-//
-//    if bTransacao Then
-//    Begin
-//      DateSeparator:='.';
-//      DecimalSeparator:='.';
-//    End;
+  // Deleta Documento ==========================================================
+  If sTipo='D' Then
+  Begin
+    MySql:=' DELETE FROM OC_COMPRAR_DOCS d'+
+           ' WHERE d.Origem'+sOrigem+
+           ' AND   d.num_docto='+QuotedStr(sDoc);
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+    Exit;
+  End; // If sTipo='D' Then
 
-    // Deleta Documento ==========================================================
-    If sTipo='D' Then
+  // Verifica se é Somente Linx ================================================
+  bLinx:=False;
+  If AnsiContainsStr(sOrigem, 'Linx') Then
+   bLinx:=True;
+
+  // Inclui Documento ==========================================================
+  If sTipo='I' Then
+  Begin
+    MySql:=' SELECT d.num_docto'+
+           ' FROM oc_comprar_docs d'+
+           ' WHERE d.num_docto='+sDoc;
+
+           If bLinx Then
+            MySql:=
+             MySql+' AND d.Origem='+QuotedStr('Linx')
+           Else
+            MySql:=
+             MySql+' AND d.Origem<>'+QuotedStr('Linx');
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+
+    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_docto').AsString)='' Then
     Begin
-      MySql:=' DELETE FROM OC_COMPRAR_DOCS d'+
-             ' WHERE d.Origem'+sOrigem+
-             ' AND   d.num_docto='+QuotedStr(sDoc);
-      DMBelShop.SQLC.Execute(MySql,nil,nil);
-      Exit;
-    End; // If sTipo='D' Then
+      bOrigem:=False;
+      If (Trim(sOrigem)='') Or (Trim(sOrigem)='OC(s) Importada(s):') Then
+       bOrigem:=True;
 
-    // Verifica se é Somente Linx ================================================
-    bLinx:=False;
-    If AnsiContainsStr(sOrigem, 'Linx') Then
-     bLinx:=True;
+      MySql:=' SELECT DISTINCT CAST(c.dta_documento AS DATE) Dta_Doc,'+
+             ' c.cod_comprador,'+
+             ' CASE'+
+             '   WHEN u.des_usuario IS NULL THEN ''Usuário Excluído'''+
+             '   ELSE u.des_usuario'+
+             ' END des_Comprador';
 
-    // Inclui Documento ==========================================================
-    If sTipo='I' Then
-    Begin
-      MySql:=' SELECT d.num_docto'+
-             ' FROM oc_comprar_docs d'+
-             ' WHERE d.num_docto='+sDoc;
+             If bOrigem Then
+              MySql:=MySql+',  ''BEL_''||c.cod_empresa Cod_Loja';
 
-             If bLinx Then
-              MySql:=
-               MySql+' AND d.Origem='+QuotedStr('Linx')
-             Else
-              MySql:=
-               MySql+' AND d.Origem<>'+QuotedStr('Linx');
-      DMBelShop.CDS_BuscaRapida.Close;
-      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-      DMBelShop.CDS_BuscaRapida.Open;
+      MySql:=
+       MySql+' FROM oc_comprar c'+
+             '    LEFT JOIN ps_usuarios u ON u.cod_usuario=c.cod_comprador'+
+             ' WHERE c.num_documento='+QuotedStr(sDoc)+
+             ' And   Cast(c.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(Date))));
+      DMBelShop.CDS_Busca.Close;
+      DMBelShop.SDS_Busca.CommandText:=MySql;
+      DMBelShop.CDS_Busca.Open;
 
-      If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_docto').AsString)='' Then
+      If bOrigem Then
       Begin
-        bOrigem:=False;
-        If (Trim(sOrigem)='') Or (Trim(sOrigem)='OC(s) Importada(s):') Then
-         bOrigem:=True;
-
-        MySql:=' SELECT DISTINCT CAST(c.dta_documento AS DATE) Dta_Doc,'+
-               ' c.cod_comprador,'+
-               ' CASE'+
-               '   WHEN u.des_usuario IS NULL THEN ''Usuário Excluído'''+
-               '   ELSE u.des_usuario'+
-               ' END des_Comprador';
-
-               If bOrigem Then
-                MySql:=MySql+',  ''BEL_''||c.cod_empresa Cod_Loja';
-
-        MySql:=
-         MySql+' FROM oc_comprar c'+
-               '    LEFT JOIN ps_usuarios u ON u.cod_usuario=c.cod_comprador'+
-               ' WHERE c.num_documento='+QuotedStr(sDoc)+
-               ' And   Cast(c.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(Date))));
-        DMBelShop.CDS_Busca.Close;
-        DMBelShop.SDS_Busca.CommandText:=MySql;
-        DMBelShop.CDS_Busca.Open;
-
-        If bOrigem Then
+        While Not DMBelShop.CDS_Busca.Eof do
         Begin
-          While Not DMBelShop.CDS_Busca.Eof do
-          Begin
-            If Trim(sOrigem)='' Then
-             Begin
-               sOrigem:=DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString;
-             End
-            Else // If Trim(sOrigem)='' Then
-             Begin
-               If sOrigem='OC(s) Importada(s):' Then
-                sOrigem:=sOrigem+' '+DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString
-               Else
-                sOrigem:=sOrigem+' / '+DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString;
-             End; // If Trim(sOrigem)='' Then
+          If Trim(sOrigem)='' Then
+           Begin
+             sOrigem:=DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString;
+           End
+          Else // If Trim(sOrigem)='' Then
+           Begin
+             If sOrigem='OC(s) Importada(s):' Then
+              sOrigem:=sOrigem+' '+DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString
+             Else
+              sOrigem:=sOrigem+' / '+DMBelShop.CDS_Busca.FieldByName('Cod_Loja').AsString;
+           End; // If Trim(sOrigem)='' Then
 
-            DMBelShop.CDS_Busca.Next;
-          End; // While Not DMBelShop.CDS_Busca.Eof do
-        End; // If bOrigem Then
+          DMBelShop.CDS_Busca.Next;
+        End; // While Not DMBelShop.CDS_Busca.Eof do
+      End; // If bOrigem Then
 
-        DMBelShop.CDS_Busca.First;
-        MySql:=' INSERT INTO OC_COMPRAR_DOCS'+
-               ' (NUM_DOCTO, DTA_DOCTO, COD_COMPRADOR, DES_COMPRADOR, ORIGEM)'+
-               ' VALUES ('+
-               QuotedStr(sDoc)+', '+
-               QuotedStr(f_Troca('/','.',(f_Troca('-','.',DMBelShop.CDS_Busca.FieldByName('Dta_Doc').AsString))))+', '+
-               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Comprador').AsString)+', '+
-               QuotedStr(DMBelShop.CDS_Busca.FieldByName('Des_Comprador').AsString)+', '+
-               QuotedStr(sOrigem)+')';
-        DMBelShop.SQLC.Execute(MySql,nil,nil);
+      DMBelShop.CDS_Busca.First;
+      MySql:=' INSERT INTO OC_COMPRAR_DOCS'+
+             ' (NUM_DOCTO, DTA_DOCTO, COD_COMPRADOR, DES_COMPRADOR, ORIGEM)'+
+             ' VALUES ('+
+             QuotedStr(sDoc)+', '+
+             QuotedStr(f_Troca('/','.',(f_Troca('-','.',DMBelShop.CDS_Busca.FieldByName('Dta_Doc').AsString))))+', '+
+             QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Comprador').AsString)+', '+
+             QuotedStr(DMBelShop.CDS_Busca.FieldByName('Des_Comprador').AsString)+', '+
+             QuotedStr(sOrigem)+')';
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
 
-        DMBelShop.CDS_Busca.Close;
-      End; // If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_docto').AsString)='' Then
-      DMBelShop.CDS_BuscaRapida.Close;
+      DMBelShop.CDS_Busca.Close;
+    End; // If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_docto').AsString)='' Then
+    DMBelShop.CDS_BuscaRapida.Close;
 
-      Exit;
-    End; // If sTipo='I' Then
+    Exit;
+  End; // If sTipo='I' Then
 
-// odirApagar - 20/04/2017
-//    // Atualiza Transacao ======================================================
-//    if bTransacao Then
-//    Begin
-//      DMBelShop.SQLC.Commit(TD);
-//      If sDateSeparator='/' Then DateSeparator:='/' Else DateSeparator:='.';
-//      If sDecimalSeparator=',' Then DecimalSeparator:=',' Else DecimalSeparator:='.';
-//    End;
-//  Except // Except da Transação
-//    on e : Exception do
-//    Begin
-//      if bTransacao Then
-//      Begin
-//        DMBelShop.SQLC.Rollback(TD);
-//        If sDateSeparator='/' Then DateSeparator:='/' Else DateSeparator:='.';
-//        If sDecimalSeparator=',' Then DecimalSeparator:=',' Else DecimalSeparator:='.';
-//
-//        MessageBox(Application.Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-//      End; // if bTransacao Then
-//    End; // on e : Exception do
-//  End; // Try da Transação
 End; // Manutenção do Arquivo de Documentos de OC >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Consiste Conexão Empresas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

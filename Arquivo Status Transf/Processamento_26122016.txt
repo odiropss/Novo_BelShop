@@ -1,5 +1,0 @@
-01/999 - Fornecedores que Não São Processados - 08:42:31
-03/999 - Busca Percentuais de Cortes das Curvas - 08:42:31
-06/999 - Calcula Dias Uteis no Período - 08:42:31
-07/999 - Conecta CD - 08:42:31
-11/999 - Analisa e Atualiza Transferencias do Dia - INICIO - 08:42:31

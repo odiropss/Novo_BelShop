@@ -109,7 +109,6 @@ type
     Rb_FinanObjetivosGraficoTpWMF: TJvRadioButton;
     Rb_FinanObjetivosGraficoTpClipboard: TJvRadioButton;
     Ts_FinanObjetivosResultadosMeses: TTabSheet;
-    Ts_CurvaABCEnderecamentos: TTabSheet;
     EdtVersao: TJvBehaviorLabel;
     Mem_Odir: TMemo;
     SubMenuFinanAuditoria: TMenuItem;
@@ -503,38 +502,7 @@ type
     Splitter3: TSplitter;
     Dbg_CurvaABCEndCurvaABCForn: TDBGrid;
     Pan_CurvaABCEndABC: TPanel;
-    Bt_CurvaABCEndDistrEndereco: TJvXPButton;
     Bt_CurvaABCEndVoltar: TJvXPButton;
-    Gb_CurvaABCEndEnderecamentos: TGroupBox;
-    Label125: TLabel;
-    Label126: TLabel;
-    Label127: TLabel;
-    Label124: TLabel;
-    Cbx_CurvaABCEndZona: TComboBox;
-    Cbx_CurvaABCEndCorredor: TComboBox;
-    Cbx_CurvaABCEndPrateleira: TComboBox;
-    Bt_CurvaABCEndLocalizaProd: TJvXPButton;
-    EdtCurvaABCEndDescProd: TEdit;
-    EdtCurvaABCEndCodProd: TEdit;
-    Gb_CurvaABCEndEstatistica: TGroupBox;
-    Label128: TLabel;
-    Label129: TLabel;
-    Label130: TLabel;
-    Label131: TLabel;
-    Label132: TLabel;
-    Label133: TLabel;
-    Label134: TLabel;
-    Label135: TLabel;
-    EdtCurvaABCEndTotGavetas: TCurrencyEdit;
-    EdtCurvaABCEndTotGavA: TCurrencyEdit;
-    EdtCurvaABCEndTotGavB: TCurrencyEdit;
-    EdtCurvaABCEndTotGavC: TCurrencyEdit;
-    EdtCurvaABCEndTotGavLivres: TCurrencyEdit;
-    EdtCurvaABCEndTotGavLivresA: TCurrencyEdit;
-    EdtCurvaABCEndTotGavLivresB: TCurrencyEdit;
-    EdtCurvaABCEndTotGavLivresC: TCurrencyEdit;
-    Dbg_CurvaABCEndEnderecamento: TDBGridJul;
-    Pan_CurvaABCEndEndereca: TPanel;
     PC_FinanComprPlanFinan: TPageControl;
     Ts_FinanComprPlanFinanRelacao: TTabSheet;
     Ts_FinanComprPlanFinanManutComprov: TTabSheet;
@@ -1361,19 +1329,6 @@ type
 
     // CURVA ABC - ENDEREÇAMENTOS //////////////////////////////////////////////
     Function  CalculaCurvaABCEndereco: Boolean;
-
-// OdirApagar BuscaEnderecamentos - 09/06/2017
-//    Procedure BuscaEnderecamentos;
-
-// OdirApagar EnderecamentoProduto - 09/06/2017
-//    Function  EnderecamentoProduto: Boolean;
-
-// OdirApagar AtualizaEnderecamentos - 09/06/2017
-//    Procedure AtualizaEnderecamentos(bManter: Boolean);
-// ====>>> Exclui TabSheet: Ts_CurvaABCEnderecamentos <<<================
-
-// OdirApagar AtualizaProd_Endereco - 09/06/2017
-//    Procedure AtualizaProd_Endereco(sCodLoja: String);
     ////////////////////////////////////////////////////////////////////////////
 
     // PLANILHA PLANO DE CONTAS (COMPROVANTE 200) //////////////////////////////
@@ -1728,7 +1683,6 @@ type
       const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure Bt_EstFisFinanSalvarLojasClick(Sender: TObject);
     procedure PC_CurvaABCFornEndChange(Sender: TObject);
-    procedure Bt_CurvaABCEndDistrEnderecoClick(Sender: TObject);
     procedure Dbg_FinanObjetivosManutEmpresasKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure Bt_FinanObjetivosGraficoVoltarClick(Sender: TObject);
     procedure Bt_FinanObjetivosDiasGraficosClick(Sender: TObject);
@@ -1766,9 +1720,6 @@ type
     procedure Bt_FinanObjetivosResultMesesTamColunasClick(Sender: TObject);
     procedure Bt_FinanObjetivosResultMesesVoltarClick(Sender: TObject);
     procedure Ckb_FinanObjetivosManutNaoCompraClick(Sender: TObject);
-    procedure Cbx_CurvaABCEndZonaChange(Sender: TObject);
-    procedure Bt_CurvaABCEndLocalizaProdClick(Sender: TObject);
-    procedure EdtCurvaABCEndCodProdExit(Sender: TObject);
     procedure Image1DblClick(Sender: TObject);
     procedure EdtVersaoStop(Sender: TObject);
     procedure Dbg_GeraOCFiliaisDrawColumnCell(Sender: TObject;
@@ -2104,8 +2055,6 @@ type
       var Key: Word; Shift: TShiftState);
     procedure Dbg_CurvaABCEndCurvaABCFornKeyDown(Sender: TObject;
       var Key: Word; Shift: TShiftState);
-    procedure Dbg_CurvaABCEndEnderecamentoKeyDown(Sender: TObject;
-      var Key: Word; Shift: TShiftState);
     procedure Dbg_FinanGrFinanceiroKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure Dbg_FinanGrFinanUsuarioKeyDown(Sender: TObject;
@@ -2202,6 +2151,7 @@ var
   bgOnActivate, // Se Ja Executou o Evento do Form OnActivate
   bgConexaoLocal, // Se Conexão com o Servidor do Banco MPMS é Local - Verifica a Existencia do Arquivo "ConexaoExterna.ini"
   bgAuditoria, bgCor, bgSiga,
+
   bgProcessar: Boolean;
 
   cgVlrAcumulado1, cgVlrAcumulado2, cgVlrAcumulado3: Currency;
@@ -2662,8 +2612,6 @@ Begin
          '       )'+
          ' AND   mv.cancelado=''N'''+
          ' AND   mv.excluido =''N'''+
-//odirapagar - 22/05/2017
-//         ' AND   mv.soma_relatorio = ''S'''+
          ' AND   mv.data_lancamento BETWEEN '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaIncioLinx)))+' AND '+
                                               QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDtaFimLinx)))+
          ' AND   mv.Empresa='+IntToStr(igCodLojaLinx); // Loja Linx
@@ -8088,14 +8036,6 @@ Begin
          Exit;
        End;
      End;
-//OdirAPagar - 19/01/2018
-//    Else If sTipo='D' Then
-//     Begin
-//       If Not FechaCaixaPlanoContas(DtEdtFinanFechaDiarioData.Text, 'D') Then
-//       Begin
-//         Exit;
-//       End;
-//     End;
 
     // Fechamento de Caixa Dia - Busca Total de Déditos -------------
     If bgSiga Then
@@ -8119,15 +8059,6 @@ Begin
            Exit;
          End;
        End;
-//OdirAPagar - 19/01/2018
-//      Else If sTipo='D' Then
-//       Begin
-//         If Not FechaCaixaMovtosCreditos(DtEdtFinanFechaDiarioData.Text, 'D') Then
-//         Begin
-//           Exit;
-//         End;
-//         Result:=True;
-//       End;
     End;
 
     // Acerta Totais do Caixo do Dia --------------------------------
@@ -8249,102 +8180,6 @@ Begin
   End; // Try
 
 End; // Fechamento de Caixa Dia >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-// OdirApagar INICIO - AtualizaProd_Endereco - 09/06/2017
-//// Curva ABC - Endereçamentos - Atualiza Enderecamento do CD >>>>>>>>>>>>>>>>>>>
-//Procedure TFrmBelShop.AtualizaProd_Endereco(sCodLoja: String);
-//Var
-//  MySql: String;
-//Begin
-//  // Monta Transacao ===========================================================
-//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-//  TD.IsolationLevel:=xilREADCOMMITTED;
-//  DMBelShop.SQLC.StartTransaction(TD);
-//  Try
-//    Screen.Cursor:=crAppStart;
-//    DateSeparator:='.';
-//    DecimalSeparator:='.';
-//
-//    MySql:=' SELECT en.codfilial COD_LOJA, en.codproduto COD_ITEM,'+
-//           ' CASE'+
-//           '   WHEN ((TRIM(en.zonaendereco)='''') OR (en.zonaendereco IS NULL)) THEN'+
-//           '     ''0'''+
-//           '   ELSE'+
-//           '     en.zonaendereco'+
-//           ' END zonaendereco,'+
-//           ' CASE'+
-//           '   WHEN ((TRIM(en.corredor)='''') OR (en.corredor IS NULL)) THEN'+
-//           '     ''000'''+
-//           '   ELSE'+
-//           '     en.corredor'+
-//           ' END CORREDOR,'+
-//           ' CASE'+
-//           '   WHEN ((TRIM(en.prateleira)='''') OR (en.prateleira IS NULL)) THEN'+
-//           '     ''000'''+
-//           '   ELSE'+
-//           '     en.prateleira'+
-//           ' END PRATELEIRA,'+
-//           ' CASE'+
-//           '   WHEN ((TRIM(en.gaveta)='''') OR (en.gaveta IS NULL)) THEN'+
-//           '     ''0000'''+
-//           '   ELSE'+
-//           '     en.gaveta'+
-//           ' END GAVETA'+
-//           ' FROM estoque en'+
-//           ' WHERE en.codfilial='+QuotedStr(sCodLoja);
-//    IBQ_MPMS.Close;
-//    IBQ_MPMS.SQL.Clear;
-//    IBQ_MPMS.SQL.Add(MySql);
-//    IBQ_MPMS.Open;
-//
-//    If not IBQ_MPMS.IsEmpty Then
-//    Begin
-//      MySql:=' DELETE FROM PROD_ENDERECO pe'+
-//             ' WHERE pe.cod_loja='+QuotedStr(sCodLoja);
-//      DMBelShop.SQLC.Execute(MySql,nil,nil);
-//
-//      While not IBQ_MPMS.Eof do
-//      Begin
-//        MySql:=' INSERT INTO PROD_ENDERECO'+
-//               ' (COD_LOJA, COD_ITEM, ZONAENDERECO, CORREDOR, PRATELEIRA, GAVETA)'+
-//               ' Values('+
-//               QuotedStr(IBQ_MPMS.FieldByName('COD_LOJA').AsString)+', '+
-//               QuotedStr(IBQ_MPMS.FieldByName('COD_ITEM').AsString)+', '+
-//               QuotedStr(IBQ_MPMS.FieldByName('ZONAENDERECO').AsString)+', '+
-//               QuotedStr(IBQ_MPMS.FieldByName('CORREDOR').AsString)+', '+
-//               QuotedStr(IBQ_MPMS.FieldByName('PRATELEIRA').AsString)+', '+
-//               QuotedStr(IBQ_MPMS.FieldByName('GAVETA').AsString)+')';
-//        DMBelShop.SQLC.Execute(MySql,nil,nil);
-//
-//        IBQ_MPMS.Next;
-//      End;
-//      DMBelShop.CDS_Busca.Close
-//    End; // If not IBQ_MPMS.IsEmpty Then
-//    IBQ_MPMS.Close;
-//
-//    // Atualiza Transacao =======================================
-//    DMBelShop.SQLC.Commit(TD);
-//
-//    DateSeparator:='/';
-//    DecimalSeparator:=',';
-//    Screen.Cursor:=crDefault;
-//
-//  Except
-//    on e : Exception do
-//    Begin
-//      // Abandona Transacao =====================================
-//      DMBelShop.SQLC.Rollback(TD);
-//
-//      DateSeparator:='/';
-//      DecimalSeparator:=',';
-//      Screen.Cursor:=crDefault;
-//
-//      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-//      Exit;
-//    End; // on e : Exception do
-//  End; // Try
-//End; // // Curva ABC - Endereçamentos - Atualiza Enderecamento do CD >>>>>>>>>>>
-// OdirApagar FIM - AtualizaProd_Endereco - 09/06/2017
 
 // Ordem de Compra - Busca Curva ABC por Mix de Loja >>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBelShop.BuscaMixLoja(sLoja: String);
@@ -9730,324 +9565,6 @@ Begin
   EdtVersao.BehaviorOptions.Active:=Not EdtVersao.BehaviorOptions.Active;
  
 End;
-
-// OdirApagar Inicio AtualizaEnderecamentos - 09/06/2017
-//// Atualiza Endereçamentos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-//Procedure TFrmBelShop.AtualizaEnderecamentos(bManter: Boolean);
-//Var
-//  MySql, sCurvaABC: String;
-//  bCurvaA, bCurvaB, bCurvaC: Boolean;
-//  iRecGaveta: Integer;
-//Begin
-//
-//  DMBelShop.CDS_Enderecamento.Close;
-//  Cbx_CurvaABCEndZona.ItemIndex:=-1;
-//  Cbx_CurvaABCEndCorredor.ItemIndex:=-1;
-//  Cbx_CurvaABCEndPrateleira.ItemIndex:=-1;
-//  EdtCurvaABCEndCodProd.Clear;
-//  EdtCurvaABCEndDescProd.Clear;
-//
-//  // Monta Transacao ===========================================================
-//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-//  TD.IsolationLevel:=xilREADCOMMITTED;
-//  DMBelShop.SQLC.StartTransaction(TD);
-//  Try
-//    Screen.Cursor:=crAppStart;
-//    DateSeparator:='.';
-//    DecimalSeparator:='.';
-//
-//    bCurvaA:=True;
-//    bCurvaB:=True;
-//    bCurvaC:=True;
-//    iRecGaveta:=50;
-//    DMVirtual.CDS_V_CurvaABCEndereco.First;
-//    While Not DMVirtual.CDS_V_CurvaABCEndereco.Eof do
-//    Begin
-//      Refresh;
-//
-//      If Trim(DMVirtual.CDS_V_CurvaABCEnderecoCOD_PRODUTO.AsString)<>'' Then
-//      Begin
-//        // Verifica se Tem Enderecamento Livre da Curva para Processar =========
-//        bgProcessar:=True;
-//        If (Not bCurvaA) and (DMVirtual.CDS_V_CurvaABCEnderecoIND_CURVA.AsString='A') Then
-//         bgProcessar:=False;
-//
-//        If (Not bCurvaB) and (DMVirtual.CDS_V_CurvaABCEnderecoIND_CURVA.AsString='B') Then
-//         bgProcessar:=False;
-//
-//        If (Not bCurvaC) and (DMVirtual.CDS_V_CurvaABCEnderecoIND_CURVA.AsString='C') Then
-//         bgProcessar:=False;
-//
-//        If bgProcessar Then
-//        Begin
-//          // Veriica se Manten Enderecamento do SIDICOM ========================
-//          bgSiga:=True;
-//          If (DMVirtual.CDS_V_CurvaABCEnderecoDES_ZONA.AsInteger<>0) And
-//             (DMVirtual.CDS_V_CurvaABCEnderecoDES_CORREDOR.AsInteger<>0) And
-//             (DMVirtual.CDS_V_CurvaABCEnderecoDES_PRATELEIRA.AsInteger<>0) And
-//             (DMVirtual.CDS_V_CurvaABCEnderecoDES_GAVETA.AsInteger<>0) And (bManter) Then
-//          Begin
-//            bgSiga:=False
-//          End;
-//
-//          // Processa Enderecamentos ===========================================
-//          If bgSiga Then
-//          Begin
-//            // Apaga Enderecamento Anterior ==================================
-//            MySql:=' Update CE_ENDERECAMENTOS e'+
-//                   ' set e.cod_produto=null,'+
-//                   ' e.des_produto=null,'+
-//                   ' e.cod_fornecedor=null,'+
-//                   ' e.des_fornecedor=null'+
-//                   ' where e.cod_produto = '+
-//                   QuotedStr(DMVirtual.CDS_V_CurvaABCEnderecoCOD_PRODUTO.AsString);
-//            DMBelShop.SQLC.Execute(MySql,nil,nil);
-//
-//            // Busca Gavetas Livre da Curva ====================================
-//            sCurvaABC:=DMVirtual.CDS_V_CurvaABCEnderecoIND_CURVA.AsString;
-//            MySql:=' Select *'+
-//                   ' From CE_ENDERECAMENTOS e'+
-//                   ' Where e.cod_produto is null'+
-//                   ' and e.tip_curvaabc='+QuotedStr(sCurvaABC)+
-//                   ' Order by e.cod_zona, e.cod_corredor, e.cod_prateleira,'+
-//                   ' e.cod_gaveta';
-//            DMBelShop.CDS_Busca.Close;
-//            DMBelShop.SDS_Busca.CommandText:=MySql;
-//            DMBelShop.CDS_Busca.Open;
-//
-//            If Trim(DMBelShop.CDS_Busca.FieldByName('cod_zona').AsString)='' Then
-//            Begin
-//              msg('Sem Endereço Disponível Para Curva '+sCurvaABC+cr+cr+'Tecle <OK> Para Continuar...','A');
-//              If sCurvaABC='A' Then bCurvaA:=False;
-//              If sCurvaABC='B' Then bCurvaB:=False;
-//              If sCurvaABC='C' Then bCurvaC:=False;
-//              DMBelShop.CDS_Busca.Close;
-//              bgSiga:=False;
-//            End;
-//
-//            // Cria Enderecamento ==============================================
-//            If bgSiga Then
-//            Begin
-//              iRecGaveta:=DMBelShop.CDS_Busca.RecordCount;
-//              iRecGaveta:=StrToInt(sorteia(1,iRecGaveta));
-//
-//              // Grava Enderecamento ===========================================
-//              DMBelShop.CDS_Busca.RecNo:=iRecGaveta;
-//
-//              DMVirtual.CDS_V_CurvaABCEndereco.Edit;
-//              DMVirtual.CDS_V_CurvaABCEnderecoDES_ZONA.AsString:=
-//                           DMBelShop.CDS_Busca.FieldByName('Cod_Zona').AsString;
-//              DMVirtual.CDS_V_CurvaABCEnderecoDES_CORREDOR.AsString:=
-//                       DMBelShop.CDS_Busca.FieldByName('Cod_Corredor').AsString;
-//              DMVirtual.CDS_V_CurvaABCEnderecoDES_PRATELEIRA.AsString:=
-//                     DMBelShop.CDS_Busca.FieldByName('Cod_Prateleira').AsString;
-//              DMVirtual.CDS_V_CurvaABCEnderecoDES_GAVETA.AsString:=
-//                         DMBelShop.CDS_Busca.FieldByName('Cod_Gaveta').AsString;
-//              DMVirtual.CDS_V_CurvaABCEndereco.Post;
-//
-//              // Insere Novo Enderecamento =====================================
-//              MySql:=' Update CE_ENDERECAMENTOS e'+
-//                     ' set e.cod_produto='+
-//                     QuotedStr(DMVirtual.CDS_V_CurvaABCEnderecoCOD_PRODUTO.AsString)+','+
-//                     ' e.des_produto='+
-//                     QuotedStr(DMVirtual.CDS_V_CurvaABCEnderecoDES_PRODUTO.AsString)+','+
-//                     ' e.cod_fornecedor='+
-//                     QuotedStr(DMVirtual.CDS_V_CurvaABCEnderecoCOD_FORNECEDOR.AsString)+','+
-//                     ' e.des_fornecedor='+
-//                     QuotedStr(DMVirtual.CDS_V_CurvaABCEnderecoDES_FORNECEDOR.AsString)+
-//                     ' where e.cod_zona='+
-//                     QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Zona').AsString)+
-//                     ' and e.cod_corredor='+
-//                     QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Corredor').AsString)+
-//                     ' and e.cod_prateleira='+
-//                     QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Prateleira').AsString)+
-//                     ' and e.cod_gaveta='+
-//                     QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Gaveta').AsString);
-//              DMBelShop.SQLC.Execute(MySql,nil,nil);
-//            End; // If bgSiga Then // Cria Enderecamento
-//
-//            DMBelShop.CDS_Busca.Close;
-//          End; // If Siga Then // Cria Enderecamento
-//        End; // If bgProcessar Then
-//      End; // If Trim(DMVirtual.CDS_V_CurvaABCEnderecoCOD_PRODUTO.AsString)<>'' Then
-//
-//      DMVirtual.CDS_V_CurvaABCEndereco.Next;
-//    End ; // While Not DMVirtual.CDS_V_CurvaABCEndereco.Eof do
-//    DMVirtual.CDS_V_CurvaABCEndereco.First;
-//
-//    // Atualiza Transacao =======================================
-//    DMBelShop.SQLC.Commit(TD);
-//
-//    DateSeparator:='/';
-//    DecimalSeparator:=',';
-//    Screen.Cursor:=crDefault;
-//
-//    msg('Endereçamentos Efetuados com SUCESSO !!','A');
-//
-//  Except
-//    on e : Exception do
-//    Begin
-//      // Abandona Transacao =====================================
-//      DMBelShop.SQLC.Rollback(TD);
-//
-//      DateSeparator:='/';
-//      DecimalSeparator:=',';
-//      MontaProgressBar(False, FrmBelShop);
-//
-//      Screen.Cursor:=crDefault;
-//
-//      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-//
-//      DMVirtual.CDS_V_CurvaABCEndereco.First;
-//      While Not DMVirtual.CDS_V_CurvaABCEndereco.Eof do
-//      Begin
-//        DMVirtual.CDS_V_CurvaABCEndereco.Edit;
-//        DMVirtual.CDS_V_CurvaABCEnderecoDES_ZONA.AsString:=DMVirtual.CDS_V_CurvaABCEnderecoDES_ZONA.OldValue;
-//        DMVirtual.CDS_V_CurvaABCEnderecoDES_CORREDOR.AsString:=DMVirtual.CDS_V_CurvaABCEnderecoDES_CORREDOR.OldValue;
-//        DMVirtual.CDS_V_CurvaABCEnderecoDES_PRATELEIRA.AsString:=DMVirtual.CDS_V_CurvaABCEnderecoDES_PRATELEIRA.OldValue;
-//        DMVirtual.CDS_V_CurvaABCEnderecoDES_GAVETA.AsString:=DMVirtual.CDS_V_CurvaABCEnderecoDES_GAVETA.OldValue;
-//        DMVirtual.CDS_V_CurvaABCEndereco.Post;
-//
-//        DMVirtual.CDS_V_CurvaABCEndereco.Next;
-//      End ; // While Not DMVirtual.CDS_V_CurvaABCEndereco.Eof do
-//      DMVirtual.CDS_V_CurvaABCEndereco.First;
-//
-//    End; // on e : Exception do
-//  End; // Try
-//
-//End; // Atualiza Endereçamentos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// OdirApagar FIM AtualizaEnderecamentos - 09/06/2017
-
-// OdirApagar INICIO - EnderecamentoProduto - 09/06/2017
-// Apresenta Enderecamentos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-//Function TFrmBelShop.EnderecamentoProduto:Boolean;
-//Var
-//  sCodProd: String;
-//  MySql: String;
-//  i: Integer;
-//begin
-//  Result:=True;
-//
-//  Cbx_CurvaABCEndZona.ItemIndex:=-1;
-//  Cbx_CurvaABCEndCorredor.ItemIndex:=-1;
-//  Cbx_CurvaABCEndPrateleira.ItemIndex:=-1;
-//
-//  DMBelShop.CDS_Enderecamento.Close;
-//
-//  sCodProd:=EdtCurvaABCEndCodProd.Text;
-//  MySql:=' Select e.Cod_Produto, z.des_zona, c.des_corredor, p.des_prateleira'+
-//         ' from CE_ENDERECAMENTOS e,'+
-//         ' ce_zona_enderecos z, ce_corredores c, ce_prateleiras p'+
-//         ' where e.cod_zona=z.cod_zona'+
-//         ' and e.cod_corredor=c.cod_corredor'+
-//         ' and e.cod_prateleira=p.cod_prateleira';
-//
-//         If Trim(sCodProd)<>'' Then
-//          MySql:=MySql+' and e.cod_produto='+QuotedStr(sCodProd);
-//  DMBelShop.CDS_Busca.Close;
-//  DMBelShop.SDS_Busca.CommandText:=MySql;
-//  DMBelShop.CDS_Busca.Open;
-//
-//  If Trim(DMBelShop.CDS_Busca.FieldByName('Cod_Produto').AsString)='' Then
-//  Begin
-//    Result:=False;
-//    DMBelShop.CDS_Busca.Close;
-//    Exit;
-//  End;
-//
-//  For i:=0 to Cbx_CurvaABCEndZona.Items.Count-1 do
-//  Begin
-//    If Cbx_CurvaABCEndZona.Items[i]=DMBelShop.CDS_Busca.FieldByName('des_zona').AsString Then
-//    Begin
-//      Cbx_CurvaABCEndZona.ItemIndex:=i;
-//      Break;
-//    End;
-//  End; // For i:=0 to Cbx_CurvaABCEndZona.Items.Count-1 do
-//
-//  For i:=0 to Cbx_CurvaABCEndCorredor.Items.Count-1 do
-//  Begin
-//    If Cbx_CurvaABCEndCorredor.Items[i]=DMBelShop.CDS_Busca.FieldByName('des_corredor').AsString Then
-//    Begin
-//      Cbx_CurvaABCEndCorredor.ItemIndex:=i;
-//      Break;
-//    End;
-//  End; // For i:=0 to Cbx_CurvaABCEndCorredor.Items.Count-1 do
-//
-//  For i:=0 to Cbx_CurvaABCEndPrateleira.Items.Count-1 do
-//  Begin
-//    If Cbx_CurvaABCEndPrateleira.Items[i]=DMBelShop.CDS_Busca.FieldByName('des_prateleira').AsString Then
-//    Begin
-//      Cbx_CurvaABCEndPrateleira.ItemIndex:=i;
-//      Break;
-//    End;
-//  End; // For i:=0 to Cbx_CurvaABCEndPrateleira.Items.Count-1 do
-//
-//  DMBelShop.CDS_Busca.Close;
-//
-//End;// Apresenta Enderecamentos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// OdirApagar FIM - EnderecamentoProduto - 09/06/2017
-
-// OdirApagar Inicio - BuscaEnderecamentos - 09/06/2017
-//// Busca Enderecamentos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-//Procedure TFrmBelShop.BuscaEnderecamentos;
-//Var
-//  MySql: String;
-//begin
-//  // Busca Enderecamentos de Zonas =============================================
-//  MySql:=' Select z.Cod_Zona, z.Des_Zona'+
-//         ' From CE_ZONA_ENDERECOS z'+
-//         ' Order By z.Cod_Zona';
-//  DMBelShop.CDS_Busca.Close;
-//  DMBelShop.SDS_Busca.CommandText:=MySql;
-//  DMBelShop.CDS_Busca.Open;
-//
-//  Cbx_CurvaABCEndZona.Items.Clear;
-//  Cbx_CurvaABCEndZona.ItemIndex:=-1;
-//  While Not DMBelShop.CDS_Busca.Eof do
-//  Begin
-//    Cbx_CurvaABCEndZona.Items.Add(DMBelShop.CDS_Busca.FieldByName('Des_Zona').AsString);
-//
-//    DMBelShop.CDS_Busca.Next;
-//  End; // While Not DMBelShop.CDS_Busca.Eof do
-//  DMBelShop.CDS_Busca.Close;
-//
-//  // Busca Enderecamentos de Corredores ========================================
-//  MySql:=' Select z.Cod_Corredor, z.Des_Corredor'+
-//         ' From CE_CORREDORES z'+
-//         ' Order By z.Cod_Corredor';
-//  DMBelShop.CDS_Busca.Close;
-//  DMBelShop.SDS_Busca.CommandText:=MySql;
-//  DMBelShop.CDS_Busca.Open;
-//
-//  Cbx_CurvaABCEndCorredor.Items.Clear;
-//  Cbx_CurvaABCEndCorredor.ItemIndex:=-1;
-//  While Not DMBelShop.CDS_Busca.Eof do
-//  Begin
-//    Cbx_CurvaABCEndCorredor.Items.Add(DMBelShop.CDS_Busca.FieldByName('Des_Corredor').AsString);
-//
-//    DMBelShop.CDS_Busca.Next;
-//  End; // While Not DMBelShop.CDS_Busca.Eof do
-//  DMBelShop.CDS_Busca.Close;
-//
-//  // Busca Enderecamentos de Prateleiras =======================================
-//  MySql:=' Select z.Cod_Prateleira, z.Des_Prateleira'+
-//         ' From CE_PRATELEIRAS z'+
-//         ' Order By z.Cod_Prateleira';
-//  DMBelShop.CDS_Busca.Close;
-//  DMBelShop.SDS_Busca.CommandText:=MySql;
-//  DMBelShop.CDS_Busca.Open;
-//
-//  Cbx_CurvaABCEndPrateleira.Items.Clear;
-//  Cbx_CurvaABCEndPrateleira.ItemIndex:=-1;
-//  While Not DMBelShop.CDS_Busca.Eof do
-//  Begin
-//    Cbx_CurvaABCEndPrateleira.Items.Add(DMBelShop.CDS_Busca.FieldByName('Des_Prateleira').AsString);
-//
-//    DMBelShop.CDS_Busca.Next;
-//  End; // While Not DMBelShop.CDS_Busca.Eof do
-//  DMBelShop.CDS_Busca.Close;
-//End; // Busca Enderecamentos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// OdirApagar FIM - BuscaEnderecamentos - 09/06/2017
 
 // Calcula Resultado dos Objetivos por Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBelShop.CaluclaResultadosObjetivosMetasMeses;
@@ -19561,8 +19078,6 @@ Begin
     End; // On e : Exception do
   End; // Try // IBQ_OC_ComprarAdd
 
-//odirapagar - dta_
-
 End; // Novo Calculo de Pedido de Compra das Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Novo Calculo de Pedido de Compra da Matriz >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -24854,23 +24369,6 @@ begin
           Begin
             sNrOC:=DMBelShop.OCBuscaNumeroOC(sCodFilial, igCodLojaLinx);
                                              //SIDICOM  // LINX
-
-// OdirApagar - 09/07/2018 - Substituido pela StoredProcedure: SP_BUSCA_NUMERO_OC
-//            MySql:=' SELECT COALESCE(MAX(oc.num_oc_gerada)+1 ,1) Num_Docto'+
-//                   ' FROM OC_COMPRAR oc'+
-//                   ' WHERE oc.cod_empresa='+QuotedStr(sCodFilial)+
-//                   ' AND   oc.num_oc_gerada< 1000000'+
-//                   ' AND   EXISTS (SELECT 1'+
-//                   '               FROM OC_COMPRAR_DOCS d'+
-//                   '               WHERE d.num_docto=oc.num_documento'+
-//                   '               AND   UPPER(TRIM(d.origem))<>'+QuotedStr('LINX')+')';
-//            DMBelShop.SQLQuery1.Close;
-//            DMBelShop.SQLQuery1.SQL.Clear;
-//            DMBelShop.SQLQuery1.SQL.Add(MySql);
-//            DMBelShop.SQLQuery1.Open;
-//            sNrOC:=DMBelShop.SQLQuery1.fieldByName('Num_Docto').AsString;
-//            DMBelShop.SQLQuery1.Close;
-// OdirApagar - 09/07/2018 - Substituido pela StoredProcedure: SP_BUSCA_NUMERO_OC
           End; // If igCodLojaLinx<>0 Then // LINX
 
           If bSiga Then
@@ -27132,7 +26630,7 @@ begin
 end;
 
 procedure TFrmBelShop.SubMenuComprasCurvaABCClick(Sender: TObject);
-Var                   
+Var
   MySql: String;
 begin
   // Executa Permissões de Botões ==============================================
@@ -27149,8 +26647,6 @@ begin
   EdtCurvaABCEndTotalProdutos.Value:=0;
   PC_CurvaABCEnderecamentos.TabIndex:=0;
   PC_CurvaABCFornEnd.TabIndex:=0;
-  Ts_CurvaABCEnderecamentos.TabVisible:=False;
-  Bt_CurvaABCEndDistrEndereco.Visible:=False;
   Refresh;
 
   EdtCurvaABCEndTotalProc.Value:=0;
@@ -27234,10 +26730,6 @@ begin
     DMVirtual.CDS_V_Aplicacao.EmptyDataSet;
     DMVirtual.CDS_V_Aplicacao.Open;
   End;
-
-// OdirApagar BuscaEnderecamentos - 09/06/2017
-//  // Busca Enderecamentos ======================================================
-//  BuscaEnderecamentos;
 
   // Inicializa Datas ==========================================================
   DecodeDate(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor), wgAnoH, wgMesH, wgDiaH);
@@ -29947,75 +29439,6 @@ begin
     Dbg_CurvaABCEndCurvaABC.SetFocus;
   End;
 
-  If (PC_CurvaABCEnderecamentos.ActivePage=Ts_CurvaABCEnderecamentos) And (Ts_CurvaABCEnderecamentos.CanFocus) Then
-  Begin
-    Bt_CurvaABCEndVoltar.Parent:=Pan_CurvaABCEndEndereca;
-
-    Cbx_CurvaABCEndZona.SetFocus;
-
-    EdtCurvaABCEndTotGavetas.AsInteger:=0;
-    EdtCurvaABCEndTotGavLivres.AsInteger:=0;
-    
-    EdtCurvaABCEndTotGavA.AsInteger:=0;
-    EdtCurvaABCEndTotGavLivresA.AsInteger:=0;
-    EdtCurvaABCEndTotGavB.AsInteger:=0;
-    EdtCurvaABCEndTotGavLivresB.AsInteger:=0;
-    EdtCurvaABCEndTotGavC.AsInteger:=0;
-    EdtCurvaABCEndTotGavLivresC.AsInteger:=0;
-
-    // Totais de Gavetas =========================================================
-    MySql:=' Select e.tip_curvaabc, count(e.cod_prateleira) Gavetas'+
-           ' From ce_enderecamentos e'+
-           ' Group by e.tip_curvaabc';
-    DMBelShop.CDS_BuscaRapida.Close;
-    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-    DMBelShop.CDS_BuscaRapida.Open;
-
-    While Not DMBelShop.CDS_BuscaRapida.Eof do
-    Begin
-      EdtCurvaABCEndTotGavetas.AsInteger:=EdtCurvaABCEndTotGavetas.AsInteger+
-                       DMBelShop.CDS_BuscaRapida.FieldByName('Gavetas').AsInteger;
-
-      If DMBelShop.CDS_BuscaRapida.FieldByName('tip_curvaabc').AsString='A' Then
-       EdtCurvaABCEndTotGavA.AsInteger:=DMBelShop.CDS_BuscaRapida.FieldByName('Gavetas').AsInteger;
-                     
-      If DMBelShop.CDS_BuscaRapida.FieldByName('tip_curvaabc').AsString='B' Then
-       EdtCurvaABCEndTotGavB.AsInteger:=DMBelShop.CDS_BuscaRapida.FieldByName('Gavetas').AsInteger;
-
-      If DMBelShop.CDS_BuscaRapida.FieldByName('tip_curvaabc').AsString='C' Then
-       EdtCurvaABCEndTotGavC.AsInteger:=DMBelShop.CDS_BuscaRapida.FieldByName('Gavetas').AsInteger;
-
-      DMBelShop.CDS_BuscaRapida.Next;
-    End;
-    DMBelShop.CDS_BuscaRapida.Close;
-         
-    // Totais de Gavetas Livres ==================================================
-    MySql:=' Select e.tip_curvaabc, count(e.cod_prateleira) Gavetas'+
-           ' From ce_enderecamentos e'+
-           ' Where e.cod_produto is null'+
-           ' Group by e.tip_curvaabc';
-    DMBelShop.CDS_BuscaRapida.Close;
-    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
-    DMBelShop.CDS_BuscaRapida.Open;
-
-    While Not DMBelShop.CDS_BuscaRapida.Eof do
-    Begin
-      EdtCurvaABCEndTotGavLivres.AsInteger:=EdtCurvaABCEndTotGavLivres.AsInteger+
-                       DMBelShop.CDS_BuscaRapida.FieldByName('Gavetas').AsInteger;
-
-      If DMBelShop.CDS_BuscaRapida.FieldByName('tip_curvaabc').AsString='A' Then
-       EdtCurvaABCEndTotGavLivresA.AsInteger:=DMBelShop.CDS_BuscaRapida.FieldByName('Gavetas').AsInteger;
-                     
-      If DMBelShop.CDS_BuscaRapida.FieldByName('tip_curvaabc').AsString='B' Then
-       EdtCurvaABCEndTotGavLivresB.AsInteger:=DMBelShop.CDS_BuscaRapida.FieldByName('Gavetas').AsInteger;
-
-      If DMBelShop.CDS_BuscaRapida.FieldByName('tip_curvaabc').AsString='C' Then
-       EdtCurvaABCEndTotGavLivresC.AsInteger:=DMBelShop.CDS_BuscaRapida.FieldByName('Gavetas').AsInteger;
-
-      DMBelShop.CDS_BuscaRapida.Next;
-    End;
-    DMBelShop.CDS_BuscaRapida.Close;
-  End; // If (PC_CurvaABCEnderecamentos.ActivePage=Ts_CurvaABCEnderecamentos) And (Ts_CurvaABCEnderecamentos.CanFocus) Then
 end;
 
 procedure TFrmBelShop.Bt_CurvaABCEndCalculoCurvaABCClick(Sender: TObject);
@@ -33444,37 +32867,6 @@ begin
   CorSelecaoTabSheet(PC_CurvaABCFornEnd);
 end;
 
-procedure TFrmBelShop.Bt_CurvaABCEndDistrEnderecoClick(Sender: TObject);
-//Var
-//  bSIDICOM: Boolean;
-begin
-// OdirApagar  - 09/06/2017
-//  msg('Opção Desabilitada Momentaneamente !!','A');
-//  Exit;
-//
-//  Dbg_CurvaABCEndCurvaABC.SetFocus;
-//  bSIDICOM:=True;
-//  If msg('Deseja Manter Endereçamento'+cr+'do SIDICOM ?? !!','C')=2 Then
-//   bSIDICOM:=False;
-//
-//  If bSIDICOM Then
-//  Begin
-//   If msg('Deseja Realmente Efetuar a Distribuição de'+cr+'Endereçamente MANTENDO o ENDEREÇO do SIDICOM  ??','C')=2 Then
-//    Exit;
-//  End;
-//
-//  If Not bSIDICOM Then
-//  Begin
-//   If msg('Deseja Realmente Efetuar a Distribuição de'+cr+'Endereçamente SEM MANTER o ENDEREÇO do SIDICOM  ??','C')=2 Then
-//    Exit;
-//  End;
-//
-//// OdirApagar AtualizaEnderecamentos - 09/06/2017
-////  AtualizaEnderecamentos(bSIDICOM);
-//
-//  msg('SIDICOM Não Atualizado...'+cr+cr+'Faltam Definiçoes Sobre BelShop_CD !!','A');
-end;
-
 procedure TFrmBelShop.Dbg_FinanObjetivosManutEmpresasKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 Var
   sCodObjetivo: String;  
@@ -34383,231 +33775,6 @@ end;
 procedure TFrmBelShop.Ckb_FinanObjetivosManutNaoCompraClick(Sender: TObject);
 begin
   AcertaCkb_Style(Ckb_FinanObjetivosManutNaoCompra);
-end;
-
-procedure TFrmBelShop.Cbx_CurvaABCEndZonaChange(Sender: TObject);
-Var
-  MySql: String;
-  sCodZona, sCodCorredor, sCodPrateleira: String;
-begin
-  DMBelShop.CDS_Enderecamento.Close;
-
-  sCodZona:=Trim(Copy(Cbx_CurvaABCEndZona.Text,Pos('ENDERECAMENTO ',Cbx_CurvaABCEndZona.Text)+Length('ENDERECAMENTO '),4));
-  sCodCorredor:=Trim(Copy(Cbx_CurvaABCEndCorredor.Text,Pos('CORREDOR ',Cbx_CurvaABCEndCorredor.Text)+Length('CORREDOR '),4));
-  sCodPrateleira:=Trim(Copy(Cbx_CurvaABCEndPrateleira.Text,Pos('PRATELEIRA ',Cbx_CurvaABCEndPrateleira.Text)+Length('PRATELEIRA '),4));
-
-  If Trim(sCodZona)='' Then
-  Begin
-    msg('Favor Informar a Zona de Endereçamento !!','A');
-    Cbx_CurvaABCEndZona.SetFocus;
-    Exit;
-  End;
-
-  If Trim(sCodCorredor)='' Then
-   Exit;
-
-  If Trim(sCodPrateleira)='' Then
-   Exit;
-
-  MySql:=' Select e.cod_zona, z.des_zona,'+
-         ' e.cod_corredor, c.des_corredor,'+
-         ' e.cod_prateleira, p.des_prateleira,'+
-         ' e.cod_gaveta, g.des_gaveta,'+
-         ' e.tip_curvaabc,'+
-         ' e.cod_produto, e.des_produto, e.cod_fornecedor, e.des_fornecedor'+
-
-         ' from CE_ENDERECAMENTOS e,'+
-         ' ce_zona_enderecos z, ce_corredores c, ce_prateleiras p, ce_gavetas g'+
-
-         ' where e.cod_zona=z.cod_zona'+
-         ' and e.cod_corredor=c.cod_corredor'+
-         ' and e.cod_prateleira=p.cod_prateleira'+
-         ' and e.cod_gaveta=g.cod_gaveta'+
-
-         ' and e.cod_zona='+QuotedStr(sCodZona);
-
-         If Trim(sCodCorredor)<>'' Then
-          MySql:=MySql+' and c.cod_corredor='+QuotedStr(sCodCorredor);
-          
-         If Trim(sCodPrateleira)<>'' Then
-          MySql:=MySql+' and p.cod_prateleira='+QuotedStr(sCodPrateleira);
-
-         MySql:=MySql+' order by e.COD_ZONA, e.COD_CORREDOR,'+
-                      ' e.COD_PRATELEIRA, e.COD_GAVETA';
-  DMBelShop.CDS_Enderecamento.Close;
-  DMBelShop.SDS_Enderecamento.CommandText:=MySql;
-  DMBelShop.CDS_Enderecamento.Open;
-
-  If Trim(DMBelShop.CDS_Enderecamento.FieldByName('cod_zona').AsString)='' Then
-  Begin
-    msg('Espaço Físico NÃO Existe !!','A');
-    DMBelShop.CDS_Enderecamento.Close;
-    Cbx_CurvaABCEndZona.SetFocus;
-    Exit;
-  End;
-
-  If Trim(EdtCurvaABCEndCodProd.Text)<>'' Then
-   DMBelShop.CDS_Enderecamento.Locate('COD_PRODUTO',EdtCurvaABCEndCodProd.Text,[]);
-
-  EdtCurvaABCEndCodProd.Clear;
-  EdtCurvaABCEndDescProd.Clear;
-
-end;
-
-procedure TFrmBelShop.Bt_CurvaABCEndLocalizaProdClick(Sender: TObject);
-Var
-  MySql: String;
-  b: Boolean;
-  sNomeProd: String;
-begin
-
-  EdtCurvaABCEndCodProd.Clear;
-  EdtCurvaABCEndDescProd.Clear;
-  Dbg_CurvaABCEndEnderecamento.SetFocus;
-  
-  b:=True;
-  While b do
-  Begin
-    If InputQuery('Informe Parte do Nome do Produto','',sNomeProd) then
-     Begin
-       sNomeProd:=AnsiUpperCase(sNomeProd);
-       If Trim(sNomeProd)='' Then
-        Exit;
-        
-       Break;
-     End
-    Else // If InputQuery('Informe Parte do Nome do Produto','',sNomeProd) then
-     Begin
-       Exit;
-     End; // If InputQuery('Informe Parte do Nome do Produto','',sNomeProd) then
-  End; // While b do
-
-  // ========== EFETUA A CONEXÃO ===============================================
-  FrmPesquisaIB:=TFrmPesquisaIB.Create(Self);
-
-  FrmPesquisaIB.IBCDS_Pesquisa.DBConnection:=IBQ_Matriz.Database;
-  FrmPesquisaIB.IBCDS_Pesquisa.DBTransaction:=IBQ_Matriz.Transaction;
-
-  // ========== EXECUTA QUERY PARA PESQUISA ====================================
-  Screen.Cursor:=crAppStart;
-
-  MySql:=' select p.Apresentacao Des_Produto, p.CodProduto, p.PrincipalFor'+
-         ' from produto p'+
-         ' Where p.Apresentacao Like ''%'+sNomeProd+'%'''+
-         ' Order by p.Apresentacao';
-  FrmPesquisaIB.IBCDS_Pesquisa.Close;
-  FrmPesquisaIB.IBCDS_Pesquisa.CommandText:=MySql;
-  FrmPesquisaIB.IBCDS_Pesquisa.Open;
-
-  Screen.Cursor:=crDefault;
-
-  // ============== Verifica Existencia de Dados ===============================
-  If Trim(FrmPesquisaIB.IBCDS_Pesquisa.FieldByName('PrincipalFor').AsString)='' Then
-  Begin
-    msg('Produtos Não Encontrado !!','A');
-    EdtCurvaABCEndCodProd.Clear;
-    EdtCurvaABCEndDescProd.Clear;
-    FreeAndNil(FrmPesquisaIB);
-    EdtCurvaABCEndCodProd.SetFocus;
-    Exit;
-  End;
-
-  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
-  FrmPesquisaIB.Campo_pesquisa:='Des_Produto';
-  FrmPesquisaIB.Campo_Codigo:='CodProduto';
-  FrmPesquisaIB.Campo_Descricao:='Des_Produto';
-  FrmPesquisaIB.EdtDescricao.Clear;
-  FrmPesquisaIB.Campo_Retorno1:='PrincipalFor';
-
-  // ============= ABRE FORM DE PESQUISA =======================================
-  FrmPesquisaIB.ShowModal;
-
-  // ============= RETORNO =====================================================
-  If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0')Then
-  Begin
-    EdtCurvaABCEndCodProd.Text:=FrmPesquisaIB.EdtCodigo.Text;
-    EdtCurvaABCEndDescProd.Text:=FrmPesquisaIB.EdtDescricao.Text;
-
-// OdirApagar - EnderecamentoProduto - 09/06/2017
-//    If Not EnderecamentoProduto Then
-//    Begin
-//      msg('Produto SEM Endereçamento !!','A');
-//      EdtCurvaABCEndCodProd.Clear;
-//      EdtCurvaABCEndDescProd.Clear;
-//      FreeAndNil(FrmPesquisaIB);
-//      EdtCurvaABCEndCodProd.SetFocus;
-//      Exit;
-//    End;
-
-    Cbx_CurvaABCEndZonaChange(Self);
-
-    Dbg_CurvaABCEndEnderecamento.SetFocus;
-  End; // If (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'') and (Trim(FrmPesquisaIB.EdtCodigo.Text)<>'0')Then
-
-  FreeAndNil(FrmPesquisaIB);
-end;
-
-procedure TFrmBelShop.EdtCurvaABCEndCodProdExit(Sender: TObject);
-Var
-  MySql: String;
-begin
-
-  
-  EdtCurvaABCEndDescProd.Clear;
-  If EdtCurvaABCEndCodProd.Text<>'' Then
-  Begin
-    Try
-      StrToInt(EdtCurvaABCEndCodProd.Text);
-    Except
-      msg('Código do Produto´Inválido !!','A');
-      EdtCurvaABCEndCodProd.SetFocus;
-      Exit;
-    End;
-
-    Try
-      EdtCurvaABCEndCodProd.Text:=FormatFloat('000000',StrToInt(EdtCurvaABCEndCodProd.text));
-    Except
-    End;
-
-    Screen.Cursor:=crAppStart;
-
-    // Busca Produto ===========================================================
-    MySql:=' Select p.Apresentacao Des_Produto, p.CodProduto, p.PrincipalFor'+
-           ' From produto p'+
-           ' Where p.CodProduto='+QuotedStr(EdtCurvaABCEndCodProd.Text);
-    IBQ_Matriz.Close;
-    IBQ_Matriz.SQL.Clear;
-    IBQ_Matriz.SQL.Add(MySql);
-    IBQ_Matriz.Open;
-
-    Screen.Cursor:=crDefault;
-
-    If Trim(IBQ_Matriz.FieldByName('PrincipalFor').AsString)='' Then
-    Begin
-     msg('Produto NÃO Encontrado !!!', 'A');
-     EdtCurvaABCEndCodProd.Clear;
-     EdtCurvaABCEndDescProd.Clear;
-     EdtCurvaABCEndCodProd.SetFocus;
-     Exit;
-    End;
-
-    EdtCurvaABCEndDescProd.Text:=IBQ_Matriz.FieldByName('Des_Produto').AsString;
-    IBQ_Matriz.Close;
-
-// OdirApagar EnderecamentoProduto - 09/06/2017
-//    If Not EnderecamentoProduto Then
-//    Begin
-//      msg('Produto SEM Endereçamento !!','A');
-//      EdtCurvaABCEndCodProd.Clear;
-//      EdtCurvaABCEndDescProd.Clear;
-//      EdtCurvaABCEndCodProd.SetFocus;
-//      Exit;
-//    End;
-
-    Cbx_CurvaABCEndZonaChange(Self);
-    Dbg_CurvaABCEndEnderecamento.SetFocus;
-
-  End;
 end;
 
 procedure TFrmBelShop.Image1DblClick(Sender: TObject);
@@ -42135,9 +41302,6 @@ begin
     Close;
     Exit;
   End;
-//OdirApagar
-//  FrmCentralTrocas:=TFrmCentralTrocas.Create(Self);
-//  DMCentralTrocas:=TDMCentralTrocas.Create(Self);
 
   If (Sender is TMenuItem) Then
    igTagPermissao:=(Sender as TMenuItem).Tag;
@@ -42149,11 +41313,6 @@ begin
   FrmCentralTrocas.Ts_ReposLojas.TabVisible:=True;
 
   FrmCentralTrocas.ShowModal;
-
-//OdirApagar
-//  FreeAndNil(FrmCentralTrocas);
-//  FreeAndNil(DMCentralTrocas);
-
 end;
 
 procedure TFrmBelShop.SubMenuCentralTrocasNotasEntradaDevolucaoClick(Sender: TObject);
@@ -42817,9 +41976,6 @@ begin
 
   // Permissões de Visualização ================================================
 //  PermissaoVisual(FrmcSalao.Ts_Profissionais);
-//OdirApagar - 28/05/2018
-//  FrmControleEstoques.Ts_ContEstFornecedores.TabVisible:=False;
-//  FrmControleEstoques.Ts_ContEstProdutos.TabVisible:=False;
 
   FrmControleEstoques.PC_ContEstPrincipal.TabIndex:=0;
   FrmControleEstoques.ShowModal;
@@ -42976,10 +42132,6 @@ begin
   FrmCentralTrocas.Ts_QtdCaixaCD.TabVisible:=True;
 
   FrmCentralTrocas.ShowModal;
-
-//odirapagar - 26/01/2018
-//  FreeAndNil(FrmCentralTrocas);
-//  FreeAndNil(DMCentralTrocas);
 end;
 
 procedure TFrmBelShop.Dbe_ConEmpresasCodLojaLinxKeyPress(Sender: TObject;
@@ -43526,11 +42678,6 @@ begin
   FrmCentralTrocas.Ts_AnaliseReposicoesEndereco.TabVisible:=True;
 
   FrmCentralTrocas.ShowModal;
-
-//odirapagar - 26/01/2018
-//  FreeAndNil(FrmCentralTrocas);
-//  FreeAndNil(DMCentralTrocas);
-
 end;
 
 procedure TFrmBelShop.SubMenuCentroDistAnaliseAnalReposicoesRelatReposicaoClick(Sender: TObject);
@@ -43883,15 +43030,6 @@ begin
 
 end;
 
-procedure TFrmBelShop.Dbg_CurvaABCEndEnderecamentoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  // Bloquei Ctrl + Delete =====================================================
-  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
-   Abort;
-
-
-end;
-
 procedure TFrmBelShop.Dbg_FinanGrFinanceiroKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   // Bloquei Ctrl + Delete =====================================================
@@ -44200,11 +43338,7 @@ end.
 // 45483 - 23/05/2016
 // 45100 - 11/08/2016
 // 44104 - Sem Auditoria - 21/06/2018
-
-// unit cxSchedulerCustomControls;
-
-
-
+// 43330 - 18/10/2018
 
 {
 
@@ -44216,8 +43350,6 @@ end.
 -----------------------------------
 - Botão Sair do Sistema = SBt_Sair
 -----------------------------------
-
-LojaBel_17 - Altera para Loja 17 para Loja 09
 
 CorTelaForm:
   - EndColor = $00737373

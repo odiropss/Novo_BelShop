@@ -105,7 +105,7 @@ Var
 Begin
   Result:='';
 
-  MySql:=' SELECT ld.quantidade'+
+  MySql:=' SELECT CAST(TRUNC(COALESCE(ld.quantidade,0)) as Numeric(12,4)) QUANTIDADE'+
          ' FROM LINXPRODUTOS lp'+
          '      LEFT JOIN LINXPRODUTOSDETALHES ld  ON ld.cod_produto=lp.cod_produto'+
          '                                        AND ld.cod_loja='+QuotedStr(sCodLojaSid)+
@@ -847,9 +847,6 @@ Begin
          End
         Else
          Begin
-           // OdirApagar - 08/12/2017
-//           sQtdTrans:=DMTransferencias.CDS_Busca1.FieldByName('Qtd_A_Transf').AsString;
-//           If DMTransferencias.CDS_Busca.FieldByName('Qtd_A_Transf').AsCurrency>DMTransferencias.CDS_Busca1.FieldByName('Qtd_A_Transf').AsCurrency Then
            //===================================================================
            // Controle de Prioridades
            //===================================================================
@@ -1566,17 +1563,27 @@ Function TFrmTransferencias.BuscaProdutosDemanda(sCodLoja, sCodProduto, sSaldo: 
 Var
   MySql: String;
   sCurva, sDiasEstocagem, sEstMinimo, sEstMaximo: String;
-  sEstMinimoDec, sSaldoDec: String; // Decimal com Ponto
 Begin
   Result:=True;
 
   sCurva        :=DMTransferencias.CDS_CurvasLojaIND_CURVA.AsString;
   sDiasEstocagem:=DMTransferencias.CDS_CurvasLojaDIAS_ESTOCAGEM.AsString;
-  sEstMinimo    :=DMTransferencias.CDS_CurvasLojaEST_MINIMO.AsString;
-  sEstMaximo    :=DMTransferencias.CDS_CurvasLojaEST_MAXIMO.AsString;
 
-  sEstMinimoDec:=f_Troca(',','.',ZerosCentavos(sEstMinimo,2));
-  sSaldoDec    :=f_Troca(',','.',ZerosCentavos(sSaldo,2));
+  sEstMinimo:='0';
+  If Trim(DMTransferencias.CDS_CurvasLojaEST_MINIMO.AsString)<>'' Then
+   sEstMinimo:=DMTransferencias.CDS_CurvasLojaEST_MINIMO.AsString;
+
+  sEstMaximo:='0';
+  If Trim(DMTransferencias.CDS_CurvasLojaEST_MAXIMO.AsString)<>'' Then
+   sEstMaximo:=DMTransferencias.CDS_CurvasLojaEST_MAXIMO.AsString;
+
+// OdirApagar - 19/10/2018 - Quantidades Inteiras
+//  sEstMinimo:=f_Troca(',','.',ZerosCentavos(sEstMinimo,2));
+//  sEstMaximo:=f_Troca(',','.',ZerosCentavos(sEstMaximo,2));
+//  sSaldo    :=f_Troca(',','.',ZerosCentavos(sSaldo,2));
+  sEstMinimo:=IntToStr(ParteInteiro(sEstMinimo));
+  sEstMaximo:=IntToStr(ParteInteiro(sEstMaximo));;
+  sSaldo    :=IntToStr(ParteInteiro(sSaldo));;
 
   MySql:=' SELECT'+
          ' CAST(GEN_ID(GEN_ODIR,1) AS INTEGER) Num_Seq,'+
@@ -1633,16 +1640,19 @@ Begin
          '               ELSE '+
                            sEstMinimo+' - '+sSaldo+
          '            END) AS INTEGER)>0';
-  DMTransferencias.CDS_ProdutoDemanda.Close;
-  DMTransferencias.SDS_ProdutoDemanda.CommandText:=MySql;
-  DMTransferencias.CDS_ProdutoDemanda.Open;
-
-  If DMTransferencias.CDS_ProdutoDemanda.Eof Then
-  Begin
-    Result:=False;
+  Try
     DMTransferencias.CDS_ProdutoDemanda.Close;
-  End;
+    DMTransferencias.SDS_ProdutoDemanda.CommandText:=MySql;
+    DMTransferencias.CDS_ProdutoDemanda.Open;
 
+    If DMTransferencias.CDS_ProdutoDemanda.Eof Then
+    Begin
+      Result:=False;
+      DMTransferencias.CDS_ProdutoDemanda.Close;
+    End;
+  Except
+    SalvaProcessamento('ERRO: '+MySql);
+  End
 end; // Busca Produto e Demanda >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Busca Produtos das Curvas da Loja >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1934,17 +1944,17 @@ Begin
           bConetada:=False;
         End;
       End;
-      //==========================================================================
+      //========================================================================
       SalvaProcessamento('10.03.03/999 - Conecta Loja - '+sCodLoja+' - '+TimeToStr(Time));
-      //==========================================================================
+      //========================================================================
     End; // If igCodLojaLinx=0 Then // SIDICOM
 
-    // Monta Transacao ===================================================
+    // Monta Transacao =========================================================
     TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
     TD.IsolationLevel:=xilREADCOMMITTED;
     DMTransferencias.SQLC.StartTransaction(TD);
     Try
-      // Busca Codigo da Emopresa ---------------------------------------
+      // Busca Codigo da Empresa - Linx ========================================
       MySql:=' SELECT em.Cod_Cli_Linx'+
              ' FROM EMP_CONEXOES em'+
              ' WHERE em.cod_filial='+QuotedStr(sCodLoja);
@@ -1962,8 +1972,9 @@ Begin
       Begin
         sCodProdSidi:=DMTransferencias.CDS_CurvasLojaCOD_PRODUTO.AsString;
 
-        If sCodProdSidi='030270' Then
-          sCodProdSidi:=DMTransferencias.CDS_CurvasLojaCOD_PRODUTO.AsString;
+//        If sCodProdSidi='030270' Then
+//          sCodProdSidi:=DMTransferencias.CDS_CurvasLojaCOD_PRODUTO.AsString;
+
         // Verifica se Já Existe em ES_ESTOQUES_LOJAS ==========================
         MySql:=' SELECT l.cod_produto'+
                ' FROM ES_ESTOQUES_LOJAS l'+
@@ -2254,15 +2265,9 @@ Begin
          ' FROM ESTOQUE e, PRODUTO p'+
 
          ' WHERE e.codproduto=p.codproduto'+
-
          ' AND   p.codaplicacao<>''0015'''+ // Não Processa: 0015=E-Commerce
          ' AND   p.codaplicacao<>''0016'''+ // Não Processa: 0016=Brindes
-
          ' AND   e.codfilial=''99'''+
-
-         // OdirApagar - 26/09/2018 - São todos os Fornecedores
-         // AND   p.principalfor Not in ('+sgFornNAO+')'+
-
          ' AND   COALESCE(e.saldoatual,0)>0'+
 
          ' ORDER BY 2';
@@ -2731,7 +2736,6 @@ begin
 end;
 
 end.
-
 {
           // Busca Tranferencias do CD Para a Loja ==================
           // SIDICOM Coloque no Fim =================================

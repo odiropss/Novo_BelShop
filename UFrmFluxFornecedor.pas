@@ -150,9 +150,6 @@ type
     Procedure CreateToolTips(hWnd: Cardinal); // Cria Show Hint em Forma de Balão
     Procedure FocoToControl(Sender: TControl); // Posiciona no Componente
 
-// OdirApagar - 06/07/2017
-//    Procedure AtualizaDescComprvCCorrente;
-
     Procedure CalculaPercReducao;
     Procedure PercReducaoHabiita_GroupBox(bHabilita: Boolean);
 
@@ -1239,8 +1236,6 @@ begin
          '        )'+
          ' AND NOT EXISTS (SELECT 1'+
          '                 FROM FL_CAIXA_FORNECEDORES fl'+
-//OdirApagar - 25/04/2018 -- cod_vinculado
-//         '                 WHERE fl.cod_fornecedor=fo.cod_cliente)'+
          '                 WHERE fl.cod_vinculado=fo.cod_cliente)'+
          ' AND fo.cod_cliente='+IntToStr(EdtFluFornCodFornecedor.AsInteger);
   DMBelShop.CDS_BuscaRapida.Close;
@@ -1326,8 +1321,6 @@ Begin
            '     f.vlr_caixa = f.vlr_origem'+
            ' WHERE EXISTS (SELECT 1'+
            '               FROM FL_CAIXA_PERC_REDUCAO p'+
-//OdirApagar - 25/04/2018 -- cod_vinculado
-//           '               WHERE p.cod_fornecedor = f.cod_fornecedor'+
            '               WHERE p.cod_fornecedor=f.cod_vinculado'+
            '               AND   p.cod_comprovante = f.cod_historico'+
            '               AND   p.num_seq = '+sgNumSeq+
@@ -1371,8 +1364,6 @@ Begin
       MySql:=' UPDATE FL_CAIXA_FORNECEDORES f'+
              ' SET f.per_reducao = (SELECT p.per_reducao'+
              '                      FROM FL_CAIXA_PERC_REDUCAO p'+
-//OdirApagar - 25/04/2018 -- cod_vinculado
-//             '                      WHERE p.cod_fornecedor = f.cod_fornecedor'+
              '                      WHERE p.cod_fornecedor = f.cod_vinculado'+
              '                      AND   p.cod_comprovante = f.cod_historico'+
              '                      AND   p.num_seq = '+sgNumSeq+
@@ -1381,8 +1372,6 @@ Begin
 
              ' WHERE EXISTS(SELECT 1'+
              '              FROM FL_CAIXA_PERC_REDUCAO p'+
-//OdirApagar - 25/04/2018 -- cod_vinculado
-//             '              WHERE p.cod_fornecedor = f.cod_fornecedor'+
              '              WHERE p.cod_fornecedor = f.cod_vinculado'+
              '              AND   p.cod_comprovante = f.cod_historico'+
              '              AND   p.num_seq = '+sgNumSeq+
@@ -1613,83 +1602,6 @@ Begin
 
   SetCursorPos(NewPos.x,NewPos.y)
 End; // Show Hint em Forma de Balão - Posiciona do Componente >>>>>>>>>>>>>>>>>>
-
-// OdirApagar - 06/07/2017
-//// Atualiza Descrição dos Comprovantes de Conta Corrente >>>>>>>>>>>>>>>>>>>>>>>
-//Procedure TFrmFluxoFornecedor.AtualizaDescComprvCCorrente;
-//Var
-//  MySql: String;
-//Begin
-//
-//  MySql:=' select H.COD_HISTORICO'+
-//         ' from FL_CAIXA_HISTORICOS H'+
-//         ' where H.COD_HISTORICO <> 0 and'+
-//         '       H.COD_HISTORICO <> 999999';
-//  DMBelShop.CDS_Busca.Close;
-//  DMBelShop.SDS_Busca.CommandText:=MySql;
-//  DMBelShop.CDS_Busca.Open;
-//  sgCodigo:='';
-//  While not DMBelShop.CDS_Busca.Eof do
-//  Begin
-//    If sgCodigo='' Then
-//     sgCodigo:=QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Historico').AsString)
-//    Else
-//     sgCodigo:=sgCodigo+', '+QuotedStr(DMBelShop.CDS_Busca.FieldByName('Cod_Historico').AsString);
-//
-//    DMBelShop.CDS_Busca.Next;
-//  End;
-//  DMBelShop.CDS_Busca.Close;
-//
-//  If sgCodigo<>'' Then
-//  Begin
-//    // Verifica se Transação esta Ativa
-//    If DMBelShop.SQLC.InTransaction Then
-//     DMBelShop.SQLC.Rollback(TD);
-//
-//    // Monta Transacao ===========================================================
-//    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-//    TD.IsolationLevel:=xilREADCOMMITTED;
-//    DMBelShop.SQLC.StartTransaction(TD);
-//    Try
-//      DateSeparator:='.';
-//      DecimalSeparator:='.';
-//
-//      MySql:=' select C.CODCOMPROVANTE, C.NOMECOMPROVANTE'+
-//             ' from COMPRV C'+
-//             ' where C.CODCOMPROVANTE in ('+sgCodigo+')';
-//      FrmBelShop.IBQ_MPMS.Close;
-//      FrmBelShop.IBQ_MPMS.SQL.Clear;
-//      FrmBelShop.IBQ_MPMS.SQL.Add(MySql);
-//      FrmBelShop.IBQ_MPMS.Open;
-//
-//      While Not FrmBelShop.IBQ_MPMS.Eof do
-//      Begin
-//        MySql:=' update FL_CAIXA_HISTORICOS H'+
-//               ' set H.DES_HISTORICO='+QuotedStr(FrmBelShop.IBQ_MPMS.FieldByName('NOMECOMPROVANTE').AsString)+
-//               ' where H.COD_HISTORICO='+FrmBelShop.IBQ_MPMS.FieldByName('CODCOMPROVANTE').AsString;
-//        DMBelShop.SQLC.Execute(MySql,nil,nil);
-//
-//        FrmBelShop.IBQ_MPMS.Next;
-//      End; // While Not FrmBelShop.IBQ_MPMS.Eof do
-//      FrmBelShop.IBQ_MPMS.Close;
-//
-//      // Atualiza Transacao ======================================================
-//      DMBelShop.SQLC.Commit(TD);
-//    Except
-//      on e : Exception do
-//      Begin
-//        // Abandona Transacao ====================================================
-//        DMBelShop.SQLC.Rollback(TD);
-//        MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-//      End; // on e : Exception do
-//    End; // Try
-//    DateSeparator:='/';
-//    DecimalSeparator:=',';
-//  End; // If sgCodigo<>'' Then
-//
-//  sgCodigo:='';
-//
-//End; // Atualiza Descrição dos Comprovantes de Conta Corrente >>>>>>>>>>>>>>>>>>
 
 // Calcula Fluxo de Caixo de Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmFluxoFornecedor.CalculaFluxoCaixaFornecedores(sDt: String=''; sCodForn: String ='');
@@ -2125,13 +2037,6 @@ begin
   // Acerta os Codigo Vinculados = null (No Inicio do FrmFluxFornecedor ========
   AcertaCodVinculado;
 
-// OdirApagar - 06/07/2017
-//  // Atualiza Descrição dos Comprovantes de Conta Corrente =====================
-//  If FrmBelShop.ConectaMPMS Then
-//  Begin
-//    AtualizaDescComprvCCorrente;
-//  End;
-
   // Apresenta Históricos ======================================================
   If DMBelShop.CDS_FluxoFornHistorico.Active Then
    DMBelShop.CDS_FluxoFornHistorico.Close;
@@ -2490,13 +2395,6 @@ procedure TFrmFluxoFornecedor.Bt_FluFornAcertaSaldosClick(Sender: TObject);
 Var
   i: Integer;
 begin
-//odirapagar - 07/07/2017
-//  If (PC_Principal.ActivePage=Ts_FluxFornApres) And (Ts_FluxFornApres.CanFocus) Then
-//   Dbg_FluFornFornec.SetFocus;
-//
-//  If (PC_Principal.ActivePage=Ts_FluxFornCaixa) And (Ts_FluxFornCaixa.CanFocus) Then
-//   Dbg_FluFornCaixa.SetFocus;
-
   If (PC_Principal.ActivePage=Ts_FluxFornApres) And (Ts_FluxFornApres.CanFocus) Then
    EdtFluFornCodFornecedor.SetFocus;
 

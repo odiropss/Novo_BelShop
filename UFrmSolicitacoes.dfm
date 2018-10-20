@@ -1,8 +1,9 @@
 object FrmSolicitacoes: TFrmSolicitacoes
-  Left = 334
-  Top = 122
-  Width = 649
-  Height = 490
+  Left = 245
+  Top = 116
+  Width = 651
+  Height = 470
+  AutoSize = True
   BorderIcons = []
   Caption = 'Solicitacoes'
   Color = clBtnFace
@@ -401,9 +402,9 @@ object FrmSolicitacoes: TFrmSolicitacoes
   object PC_Principal: TPageControl
     Left = 0
     Top = 0
-    Width = 633
-    Height = 452
-    ActivePage = Ts_ProSoftImpArquivo
+    Width = 635
+    Height = 432
+    ActivePage = Ts_ConcDepDocFinan
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -593,8 +594,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel6: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -841,8 +842,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Pan_Simples: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -942,7 +943,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         ParentFont = False
         TabOrder = 0
         DesignSize = (
-          625
+          627
           56)
         object Bt_ProSoftImpArquivo: TJvXPButton
           Left = 12
@@ -1015,7 +1016,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         object EdtProSoftImpPastaArquivo: TEdit
           Left = 39
           Top = 24
-          Width = 578
+          Width = 580
           Height = 21
           TabStop = False
           Anchors = [akLeft, akTop, akRight]
@@ -1033,8 +1034,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Pan_ProSoftImpArquivo: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -1198,7 +1199,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       object Gb_ProSoftImpArquivoSalvar: TGroupBox
         Left = 0
         Top = 56
-        Width = 625
+        Width = 627
         Height = 56
         Align = alTop
         Caption = 
@@ -1214,7 +1215,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         ParentFont = False
         TabOrder = 1
         DesignSize = (
-          625
+          627
           56)
         object Bt_ProSoftImpArquivoSalvar: TJvXPButton
           Left = 12
@@ -1287,7 +1288,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         object EdtProSoftImpArquivoSalvar: TEdit
           Left = 39
           Top = 24
-          Width = 578
+          Width = 580
           Height = 21
           TabStop = False
           Anchors = [akLeft, akTop, akRight]
@@ -1398,8 +1399,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       object EditorProSoftImpArquivo: TJvEditor
         Left = 0
         Top = 112
-        Width = 625
-        Height = 277
+        Width = 627
+        Height = 257
         Cursor = crIBeam
         GutterWidth = 0
         RightMarginColor = clSilver
@@ -1433,12 +1434,12 @@ object FrmSolicitacoes: TFrmSolicitacoes
       Highlighted = True
       ImageIndex = 4
       DesignSize = (
-        625
-        424)
+        627
+        404)
       object Panel8: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -1499,10 +1500,10 @@ object FrmSolicitacoes: TFrmSolicitacoes
         end
       end
       object Dbg_CodigosViculados: TDBGrid
-        Left = 159
+        Left = 160
         Top = 1
         Width = 304
-        Height = 385
+        Height = 365
         Anchors = [akTop, akBottom]
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -1517,6 +1518,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Height = -11
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
+        OnEnter = Dbg_CodigosViculadosEnter
       end
     end
     object Ts_GeraOCLegendaCores: TTabSheet
@@ -1633,7 +1635,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel10: TPanel
         Left = 0
-        Top = 389
+        Top = 369
         Width = 625
         Height = 35
         Align = alBottom
@@ -1700,7 +1702,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Caption = ' Legenda '
         TabOrder = 0
         Height = 75
-        Width = 625
+        Width = 627
         object Label7: TLabel
           Left = 60
           Top = 23
@@ -1943,8 +1945,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel22: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -2191,8 +2193,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel24: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -2302,7 +2304,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 389
+        Height = 369
         Cursor = crIBeam
         GutterWidth = 0
         RightMarginColor = clSilver
@@ -2331,7 +2333,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel25: TPanel
         Left = 0
-        Top = 389
+        Top = 369
         Width = 625
         Height = 35
         Align = alBottom
@@ -2593,8 +2595,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel27: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -2675,7 +2677,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 335
+        Height = 315
         Align = alClient
         DataSource = DMSalao.DS_V_RetornoIBGE
         FixedColor = clTeal
@@ -2694,6 +2696,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Height = -11
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
+        OnEnter = Dbg_IBGE1Enter
         OnKeyDown = Dbg_IBGE1KeyDown
         CorComFoco = 15921894
         SairComEnter = False
@@ -2721,7 +2724,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Dbg_IBGE2: TDBGridJul
         Left = 0
-        Top = 370
+        Top = 350
         Width = 625
         Height = 54
         Align = alBottom
@@ -2769,7 +2772,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel28: TPanel
         Left = 0
-        Top = 335
+        Top = 315
         Width = 625
         Height = 35
         Align = alBottom
@@ -3055,8 +3058,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel30: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -3132,8 +3135,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       object PC_Parametros: TPageControl
         Left = 0
         Top = 0
-        Width = 625
-        Height = 389
+        Width = 627
+        Height = 369
         ActivePage = Ts_ParamLojaReposicoes
         Align = alClient
         MultiLine = True
@@ -3154,7 +3157,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           object Shape9: TShape
             Left = 0
             Top = 0
-            Width = 617
+            Width = 619
             Height = 4
             Align = alTop
             Brush.Color = 16744448
@@ -3162,7 +3165,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           object Pan_ParamLojaNeces: TPanel
             Left = 0
             Top = 4
-            Width = 617
+            Width = 619
             Height = 76
             Align = alTop
             Color = clSilver
@@ -3457,8 +3460,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
           object Gb_ParamLojaNeces: TGroupBox
             Left = 0
             Top = 80
-            Width = 617
-            Height = 254
+            Width = 619
+            Height = 234
             Align = alClient
             Caption = ' Lojas Definidas '
             TabOrder = 1
@@ -3466,7 +3469,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
               Left = 2
               Top = 15
               Width = 613
-              Height = 217
+              Height = 197
               Align = alClient
               Color = 15004403
               DataSource = DMVirtual.DS_V_ParamLojaNeces
@@ -3488,6 +3491,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
               TitleFont.Name = 'MS Sans Serif'
               TitleFont.Style = [fsBold]
               OnDrawColumnCell = Dbg_ParamLojaNecesDrawColumnCell
+              OnEnter = Dbg_ParamLojaNecesEnter
               OnKeyDown = Dbg_ParamLojaNecesKeyDown
               CorComFoco = 15004403
               SairComEnter = False
@@ -3608,7 +3612,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             end
             object dxStatusBar1: TdxStatusBar
               Left = 2
-              Top = 232
+              Top = 212
               Width = 613
               Height = 20
               Panels = <
@@ -3637,7 +3641,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           object Shape1: TShape
             Left = 0
             Top = 0
-            Width = 617
+            Width = 619
             Height = 4
             Align = alTop
             Brush.Color = 8421631
@@ -3736,7 +3740,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           object Shape2: TShape
             Left = 0
             Top = 0
-            Width = 617
+            Width = 619
             Height = 4
             Align = alTop
             Brush.Color = 8454143
@@ -4077,6 +4081,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
               TitleFont.Name = 'MS Sans Serif'
               TitleFont.Style = [fsBold]
               OnDrawColumnCell = Dbg_ParamSalMininoDrawColumnCell
+              OnEnter = Dbg_ParamSalMininoEnter
               OnKeyDown = Dbg_ParamSalMininoKeyDown
               SairComEnter = False
               EditDataSetCheck = False
@@ -4210,7 +4215,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           object Shape7: TShape
             Left = 0
             Top = 0
-            Width = 617
+            Width = 619
             Height = 4
             Align = alTop
             Brush.Color = clBlack
@@ -4378,7 +4383,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           object Shape8: TShape
             Left = 0
             Top = 0
-            Width = 617
+            Width = 619
             Height = 4
             Align = alTop
             Brush.Color = 54528
@@ -4386,14 +4391,14 @@ object FrmSolicitacoes: TFrmSolicitacoes
           object Panel11: TPanel
             Left = 0
             Top = 4
-            Width = 617
-            Height = 330
+            Width = 619
+            Height = 310
             Align = alClient
             TabOrder = 0
             object Gb_ParamCurvaDiaUteis: TGroupBox
               Left = 1
-              Top = 275
-              Width = 615
+              Top = 255
+              Width = 617
               Height = 54
               Align = alBottom
               Caption = ' Calcula Dias Uteis do Periodo '
@@ -4558,8 +4563,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
             object Gb_ParamCurvaABCDados: TGroupBox
               Left = 1
               Top = 1
-              Width = 615
-              Height = 274
+              Width = 617
+              Height = 254
               Align = alClient
               Caption = ' CURVAS '
               TabOrder = 0
@@ -5310,12 +5315,12 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Caption = 'Fornecedores'
           ImageIndex = 9
           DesignSize = (
-            617
-            334)
+            619
+            314)
           object Shape10: TShape
             Left = 0
             Top = 0
-            Width = 617
+            Width = 619
             Height = 4
             Align = alTop
             Brush.Color = 16744448
@@ -5323,7 +5328,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           object Label60: TLabel
             Left = 0
             Top = 4
-            Width = 617
+            Width = 619
             Height = 22
             Align = alTop
             Alignment = taCenter
@@ -5339,7 +5344,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           object Shape11: TShape
             Left = 0
             Top = 26
-            Width = 617
+            Width = 619
             Height = 4
             Align = alTop
             Brush.Color = 16744448
@@ -5364,7 +5369,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
           object Bt_ParamLojaReposBuscaForn: TJvXPButton
             Tag = 92
-            Left = 77
+            Left = 79
             Top = 32
             Width = 24
             Height = 26
@@ -5436,8 +5441,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
           object Dbg_ParamLojaReposFornec: TDBGridJul
             Left = 0
             Top = 64
-            Width = 617
-            Height = 270
+            Width = 619
+            Height = 250
             Align = alBottom
             Anchors = [akLeft, akTop, akRight, akBottom]
             Color = 15004403
@@ -5459,6 +5464,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             TitleFont.Height = -11
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
+            OnEnter = Dbg_ParamLojaReposFornecEnter
             OnKeyDown = Dbg_ParamLojaReposFornecKeyDown
             CorComFoco = 15004403
             SairComEnter = False
@@ -5536,7 +5542,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           object GroupBox3: TGroupBox
             Left = 0
             Top = 0
-            Width = 617
+            Width = 619
             Height = 71
             Align = alTop
             Caption = ' Loja Linx '
@@ -5744,8 +5750,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
           object Dbg_TransfLojas: TDBGridJul
             Left = 0
             Top = 71
-            Width = 617
-            Height = 263
+            Width = 619
+            Height = 243
             Align = alClient
             Color = 15004403
             DataSource = DMCentralTrocas.DS_ParamTransf
@@ -5767,6 +5773,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             TitleFont.Name = 'MS Sans Serif'
             TitleFont.Style = [fsBold]
             OnDrawColumnCell = Dbg_ParamLojaNecesDrawColumnCell
+            OnEnter = Dbg_TransfLojasEnter
             OnKeyDown = Dbg_ParamLojaNecesKeyDown
             CorComFoco = 15004403
             SairComEnter = False
@@ -5858,8 +5865,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Pan_ParamSis: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -5987,7 +5994,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 389
+        Height = 369
         Align = alClient
         Color = 15004403
         FixedColor = clSilver
@@ -6007,6 +6014,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_ConsistenciasDrawColumnCell
         OnDblClick = Dbg_ConsistenciasDblClick
+        OnEnter = Dbg_ConsistenciasEnter
         OnKeyDown = Dbg_ConsistenciasKeyDown
         CorComFoco = 15004403
         SairComEnter = False
@@ -6087,7 +6095,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel34: TPanel
         Left = 0
-        Top = 389
+        Top = 369
         Width = 625
         Height = 35
         Align = alBottom
@@ -6155,12 +6163,12 @@ object FrmSolicitacoes: TFrmSolicitacoes
       Highlighted = True
       ImageIndex = 14
       DesignSize = (
-        625
-        424)
+        627
+        404)
       object Gb_ValesFiltroLoja: TGroupBox
         Left = 6
         Top = 0
-        Width = 614
+        Width = 616
         Height = 52
         Anchors = [akLeft, akTop, akRight]
         Caption = ' Loja '
@@ -6174,7 +6182,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         ParentFont = False
         TabOrder = 0
         DesignSize = (
-          614
+          616
           52)
         object EdtValesCodLoja: TCurrencyEdit
           Left = 12
@@ -6268,7 +6276,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         object EdtValesDesLoja: TEdit
           Left = 82
           Top = 22
-          Width = 519
+          Width = 521
           Height = 21
           TabStop = False
           Anchors = [akLeft, akTop, akRight]
@@ -6286,7 +6294,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       object Gb_ValesFiltroProf: TGroupBox
         Left = 6
         Top = 52
-        Width = 459
+        Width = 461
         Height = 52
         Anchors = [akLeft, akTop, akRight]
         Caption = ' Profissional '
@@ -6300,7 +6308,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         ParentFont = False
         TabOrder = 1
         DesignSize = (
-          459
+          461
           52)
         object EdtValesCodProf: TCurrencyEdit
           Left = 12
@@ -6394,7 +6402,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         object EdtValesDesProf: TEdit
           Left = 82
           Top = 22
-          Width = 365
+          Width = 367
           Height = 21
           TabStop = False
           Anchors = [akLeft, akTop, akRight]
@@ -6660,8 +6668,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel35: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -6802,8 +6810,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Gb_ValesParcelas: TGroupBox
         Left = 0
-        Top = 225
-        Width = 625
+        Top = 205
+        Width = 627
         Height = 164
         Align = alBottom
         Caption = ' Parcelas '
@@ -6829,6 +6837,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           TitleFont.Name = 'Tahoma'
           TitleFont.Style = [fsBold]
           OnDblClick = Dbg_ValesParcelasDblClick
+          OnEnter = Dbg_ValesParcelasEnter
           OnKeyDown = Dbg_ValesParcelasKeyDown
           SairComEnter = False
           Columns = <
@@ -7145,7 +7154,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       object Gb_ValesFiltroSitProf: TGroupBox
         Left = 465
         Top = 52
-        Width = 155
+        Width = 157
         Height = 52
         Anchors = [akLeft, akTop, akRight]
         Caption = ' Situa'#231#227'o Profissionais '
@@ -7201,8 +7210,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       object Dbg_SolicitFornLojas: TDBGridJul
         Left = 0
         Top = 0
-        Width = 625
-        Height = 369
+        Width = 627
+        Height = 349
         Hint = '<Duplo Click> Marca/DesMarca'
         Align = alClient
         Color = 15004403
@@ -7226,6 +7235,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_SolicitFornLojasDrawColumnCell
         OnDblClick = Dbg_SolicitFornLojasDblClick
+        OnEnter = Dbg_SolicitFornLojasEnter
         OnKeyDown = Dbg_SolicitFornLojasKeyDown
         CorComFoco = 15004403
         SairComEnter = False
@@ -7385,8 +7395,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel43: TPanel
         Left = 0
-        Top = 369
-        Width = 625
+        Top = 349
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -7395,7 +7405,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         ParentCtl3D = False
         TabOrder = 1
         object Bt_SolicitFornLojasVoltar: TJvXPButton
-          Left = 521
+          Left = 523
           Top = 2
           Width = 100
           Height = 29
@@ -7484,7 +7494,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           OnClick = Bt_SolicitFornLojasImportarClick
         end
         object Pan_SolicitFornLojasMostraLoja: TPanel
-          Left = 398
+          Left = 400
           Top = 2
           Width = 123
           Height = 29
@@ -7603,8 +7613,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Sb_SelectEmpProc2: TdxStatusBar
         Left = 0
-        Top = 404
-        Width = 625
+        Top = 384
+        Width = 627
         Height = 20
         Panels = <
           item
@@ -7630,8 +7640,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 6
       object Panel12: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -7693,13 +7703,13 @@ object FrmSolicitacoes: TFrmSolicitacoes
       object Gb_EdtProfSeleciona: TGroupBox
         Left = 0
         Top = 0
-        Width = 625
+        Width = 627
         Height = 57
         Align = alTop
         Caption = ' Informe o Nome do Profissional  '
         TabOrder = 1
         DesignSize = (
-          625
+          627
           57)
         object EdtProfSelecionaNome: TEdit
           Left = 13
@@ -7779,7 +7789,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           OnClick = Bt_EdtProfSelecionaLocalizaClick
         end
         object Gb_ProfSelecionaSituacao: TGroupBox
-          Left = 396
+          Left = 398
           Top = 8
           Width = 125
           Height = 45
@@ -7815,8 +7825,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       object Dbg_ProfSeleciona: TDBGridJul
         Left = 0
         Top = 57
-        Width = 625
-        Height = 332
+        Width = 627
+        Height = 312
         Hint = '<Duplo Click> Marca/DesMarca'
         Align = alClient
         Color = 15004403
@@ -7840,6 +7850,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_ProfSelecionaDrawColumnCell
         OnDblClick = Dbg_ProfSelecionaDblClick
+        OnEnter = Dbg_ProfSelecionaEnter
         OnKeyDown = Dbg_ProfSelecionaKeyDown
         CorComFoco = 15004403
         SairComEnter = False
@@ -7975,7 +7986,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 25
         Width = 625
-        Height = 364
+        Height = 344
         Align = alClient
         Color = 15004403
         DataSource = DMSalao.DS_ApresGrid
@@ -8047,7 +8058,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel3: TPanel
         Left = 0
-        Top = 389
+        Top = 369
         Width = 625
         Height = 35
         Align = alBottom
@@ -8204,10 +8215,10 @@ object FrmSolicitacoes: TFrmSolicitacoes
       Highlighted = True
       ImageIndex = 17
       DesignSize = (
-        625
-        424)
+        627
+        404)
       object PC_FinanPlanFinanceiraSolicita: TPageControl
-        Left = 84
+        Left = 85
         Top = 36
         Width = 449
         Height = 281
@@ -8867,7 +8878,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 389
+        Height = 369
         Align = alClient
         Color = 15004403
         DataSource = DMBelShop.DS_Busca
@@ -8890,6 +8901,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_SelecionarDrawColumnCell
         OnDblClick = Dbg_SelecionarDblClick
+        OnEnter = Dbg_SelecionarEnter
         OnKeyDown = Dbg_SelecionarKeyDown
         CorComFoco = 15004403
         SairComEnter = False
@@ -8940,7 +8952,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel4: TPanel
         Left = 0
-        Top = 389
+        Top = 369
         Width = 625
         Height = 35
         Align = alBottom
@@ -9196,7 +9208,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 19
       object Pan_QualquerCoisa: TPanel
         Left = 0
-        Top = 389
+        Top = 369
         Width = 625
         Height = 35
         Align = alBottom
@@ -9462,7 +9474,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 93
         Width = 625
-        Height = 296
+        Height = 276
         Align = alClient
         FixedColor = clTeal
         Font.Charset = DEFAULT_CHARSET
@@ -9477,11 +9489,12 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Height = -11
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
+        OnEnter = Dbg_ExcelImportarEnter
         OnKeyDown = Dbg_ExcelImportarKeyDown
       end
       object Panel1: TPanel
         Left = 0
-        Top = 389
+        Top = 369
         Width = 625
         Height = 35
         Align = alBottom
@@ -9580,8 +9593,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Pan_ReposicaoLojas: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -9885,7 +9898,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 625
-        Height = 424
+        Height = 404
         Align = alClient
         TabOrder = 0
         object GroupBox1: TGroupBox
@@ -9905,7 +9918,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           ParentFont = False
           TabOrder = 0
           DesignSize = (
-            623
+            625
             58)
           object Label62: TLabel
             Left = 14
@@ -9963,7 +9976,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             OnKeyPress = EdtLojaModeloKeyPress
           end
           object Bt_Voltar: TJvXPButton
-            Left = 518
+            Left = 520
             Top = 21
             Width = 96
             Height = 25
@@ -9994,8 +10007,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
         object GroupBox2: TGroupBox
           Left = 1
           Top = 59
-          Width = 623
-          Height = 364
+          Width = 625
+          Height = 344
           Align = alClient
           Caption = '  Usu'#225'rios a Atualizar '
           Color = clSilver
@@ -10008,8 +10021,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
           ParentFont = False
           TabOrder = 1
           DesignSize = (
-            623
-            364)
+            625
+            344)
           object Label63: TLabel
             Left = 11
             Top = 31
@@ -10026,7 +10039,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           object Lbx_Usuarios: TListBox
             Left = 10
             Top = 47
-            Width = 601
+            Width = 603
             Height = 266
             Anchors = [akLeft, akTop, akRight]
             Columns = 4
@@ -10035,7 +10048,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             OnKeyUp = Lbx_UsuariosKeyUp
           end
           object Bt_Atualiza: TJvXPButton
-            Left = 456
+            Left = 458
             Top = 17
             Width = 157
             Height = 25
@@ -10067,7 +10080,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
             OnClick = Bt_AtualizaClick
           end
           object Bt_LimpaLista: TJvXPButton
-            Left = 325
+            Left = 327
             Top = 17
             Width = 125
             Height = 25
@@ -10099,8 +10112,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
           object Sb_GeraOC: TdxStatusBar
             Left = 2
-            Top = 342
-            Width = 619
+            Top = 322
+            Width = 621
             Height = 20
             Panels = <
               item
@@ -10136,8 +10149,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 23
       object Pan_SalaoRelatorios: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -10244,7 +10257,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       object Panel21: TPanel
         Left = 0
         Top = 0
-        Width = 625
+        Width = 627
         Height = 53
         Align = alTop
         TabOrder = 1
@@ -10322,7 +10335,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           end
         end
         object Gb_SalaoRelSituacao: TGroupBox
-          Left = 501
+          Left = 503
           Top = 1
           Width = 123
           Height = 51
@@ -10359,7 +10372,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 53
         Width = 166
-        Height = 336
+        Height = 316
         Align = alLeft
         BevelInner = bvRaised
         BevelOuter = bvLowered
@@ -10371,7 +10384,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Left = 2
           Top = 2
           Width = 158
-          Height = 328
+          Height = 308
           Align = alClient
           Pages = <
             item
@@ -10436,7 +10449,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       object Pan_ReposDivergencias: TPanel
         Left = 0
         Top = 0
-        Width = 625
+        Width = 627
         Height = 66
         Align = alTop
         TabOrder = 0
@@ -10467,7 +10480,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         object Gb_ReposDivQtd: TGroupBox
           Left = 414
           Top = 1
-          Width = 210
+          Width = 212
           Height = 64
           Align = alClient
           Caption = ' Quantidade '
@@ -10515,8 +10528,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       object Dbg_ReposDivProdutos: TDBGridJul
         Left = 0
         Top = 66
-        Width = 625
-        Height = 358
+        Width = 627
+        Height = 338
         TabStop = False
         Align = alClient
         Ctl3D = False
@@ -10539,6 +10552,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_ReposDivProdutosDrawColumnCell
+        OnEnter = Dbg_ReposDivProdutosEnter
         OnKeyDown = Dbg_ReposDivProdutosKeyDown
         CorComFoco = 16776176
         SairComEnter = False
@@ -10631,12 +10645,12 @@ object FrmSolicitacoes: TFrmSolicitacoes
       Highlighted = True
       ImageIndex = 25
       DesignSize = (
-        625
-        424)
+        627
+        404)
       object Panel2: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -10705,10 +10719,10 @@ object FrmSolicitacoes: TFrmSolicitacoes
         end
       end
       object Dbg_AnaliseRepDiaria: TDBGridJul
-        Left = 72
+        Left = 73
         Top = 0
         Width = 472
-        Height = 389
+        Height = 369
         TabStop = False
         Anchors = [akTop, akBottom]
         Ctl3D = False
@@ -10730,6 +10744,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
         OnDrawColumnCell = Dbg_AnaliseRepDiariaDrawColumnCell
+        OnEnter = Dbg_AnaliseRepDiariaEnter
         OnKeyDown = Dbg_ReposDivProdutosKeyDown
         CorComFoco = 16776176
         SairComEnter = False
@@ -10764,8 +10779,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 26
       object Panel5: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -10837,7 +10852,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 476
-        Height = 389
+        Height = 369
         Align = alLeft
         DataSource = DMConciliacao.DS_CMDepHistoricos
         Font.Charset = DEFAULT_CHARSET
@@ -10853,6 +10868,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         TitleFont.Height = -11
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
+        OnEnter = Dbg_ConcDepHistoricosEnter
         Columns = <
           item
             Expanded = False
@@ -10900,8 +10916,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       object Gb_ConcDepHistoricosGrupos: TGroupBox
         Left = 476
         Top = 0
-        Width = 149
-        Height = 389
+        Width = 151
+        Height = 369
         Align = alClient
         Caption = ' Selecione o Grupo '
         TabOrder = 2
@@ -11012,8 +11028,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       Highlighted = True
       ImageIndex = 27
       DesignSize = (
-        625
-        424)
+        627
+        404)
       object Bt_MixLojasOrigemSim: TJvTransparentButton
         Left = 285
         Top = 11
@@ -11143,8 +11159,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel14: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -11232,7 +11248,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
         Left = 0
         Top = 0
         Width = 281
-        Height = 389
+        Height = 369
         Align = alLeft
         Caption = ' Lojas a Selecionar '
         Ctl3D = False
@@ -11242,7 +11258,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Left = 1
           Top = 14
           Width = 279
-          Height = 374
+          Height = 354
           Style = lbOwnerDrawFixed
           Align = alClient
           ItemHeight = 16
@@ -11254,8 +11270,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       object Gb_MixProdutos: TGroupBox
         Left = 320
         Top = 52
-        Width = 302
-        Height = 337
+        Width = 304
+        Height = 317
         Anchors = [akLeft, akTop, akRight, akBottom]
         Caption = ' Lojas de Destino do Mix '
         TabOrder = 3
@@ -11263,7 +11279,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
           Left = 2
           Top = 15
           Width = 298
-          Height = 320
+          Height = 300
           Align = alClient
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlue
@@ -11284,7 +11300,7 @@ object FrmSolicitacoes: TFrmSolicitacoes
       ImageIndex = 28
       object Panel15: TPanel
         Left = 0
-        Top = 389
+        Top = 369
         Width = 625
         Height = 35
         Align = alBottom
@@ -11676,8 +11692,8 @@ object FrmSolicitacoes: TFrmSolicitacoes
       end
       object Panel16: TPanel
         Left = 0
-        Top = 389
-        Width = 625
+        Top = 369
+        Width = 627
         Height = 35
         Align = alBottom
         BevelInner = bvLowered
@@ -11739,10 +11755,514 @@ object FrmSolicitacoes: TFrmSolicitacoes
         end
       end
     end
+    object Ts_ConcDepDocFinan: TTabSheet
+      Caption = ' Concilia'#231#227'o de Dep'#243'sitos '
+      Highlighted = True
+      ImageIndex = 30
+      object Gb_ConcDepDocFinan: TGroupBox
+        Left = 0
+        Top = 0
+        Width = 627
+        Height = 61
+        Align = alTop
+        Caption = ' Documento Financeiro '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        object Label96: TLabel
+          Left = 8
+          Top = 16
+          Width = 53
+          Height = 13
+          Caption = 'N'#186' Docto'
+          FocusControl = Dbe_ConcDepDocFinanDocto
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label97: TLabel
+          Left = 80
+          Top = 16
+          Width = 59
+          Height = 13
+          Caption = 'Criado por'
+          FocusControl = Dbe_ConcDepDocFinanUsuCriacao
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label98: TLabel
+          Left = 191
+          Top = 16
+          Width = 57
+          Height = 13
+          Caption = 'Criado em'
+          FocusControl = Dbe_ConcDepDocFinanDtaCriacao
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label99: TLabel
+          Left = 268
+          Top = 16
+          Width = 64
+          Height = 13
+          Caption = 'Emitido por'
+          FocusControl = Dbe_ConcDepDocFinanUsuEmissao
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label100: TLabel
+          Left = 382
+          Top = 16
+          Width = 62
+          Height = 13
+          Caption = 'Emitido em'
+          FocusControl = Dbe_ConcDepDocFinanDtaEmissao
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label101: TLabel
+          Left = 472
+          Top = 16
+          Width = 77
+          Height = 13
+          Caption = 'Recebido por'
+          FocusControl = Dbe_ConcDepDocFinanUsuRecebe
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label102: TLabel
+          Left = 584
+          Top = 16
+          Width = 75
+          Height = 13
+          Caption = 'Recebido em'
+          FocusControl = Dbe_ConcDepDocFinanDtaRecebe
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Dbe_ConcDepDocFinanDocto: TDBEdit
+          Left = 8
+          Top = 32
+          Width = 57
+          Height = 24
+          BevelInner = bvNone
+          BevelOuter = bvNone
+          Color = clBlue
+          DataField = 'NUM_DOCTO'
+          DataSource = DMConciliacao.DS_CMDepAnaliseDocRel
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+        end
+        object Dbe_ConcDepDocFinanUsuCriacao: TDBEdit
+          Left = 80
+          Top = 32
+          Width = 111
+          Height = 21
+          DataField = 'DES_USU_CRIACAO'
+          DataSource = DMConciliacao.DS_CMDepAnaliseDocRel
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 1
+        end
+        object Dbe_ConcDepDocFinanDtaCriacao: TDBEdit
+          Left = 191
+          Top = 32
+          Width = 70
+          Height = 21
+          DataField = 'DTA_CRIACAO'
+          DataSource = DMConciliacao.DS_CMDepAnaliseDocRel
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 2
+        end
+        object Dbe_ConcDepDocFinanUsuEmissao: TDBEdit
+          Left = 268
+          Top = 32
+          Width = 114
+          Height = 21
+          DataField = 'USU_IMPRESSAO'
+          DataSource = DMConciliacao.DS_CMDepAnaliseDocRel
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 3
+        end
+        object Dbe_ConcDepDocFinanDtaEmissao: TDBEdit
+          Left = 382
+          Top = 32
+          Width = 81
+          Height = 21
+          DataField = 'DTA_IMPRESSAO'
+          DataSource = DMConciliacao.DS_CMDepAnaliseDocRel
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 4
+        end
+        object Dbe_ConcDepDocFinanUsuRecebe: TDBEdit
+          Left = 472
+          Top = 32
+          Width = 111
+          Height = 21
+          DataField = 'DES_USU_RECEBE'
+          DataSource = DMConciliacao.DS_CMDepAnaliseDocRel
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 5
+        end
+        object Dbe_ConcDepDocFinanDtaRecebe: TDBEdit
+          Left = 584
+          Top = 32
+          Width = 70
+          Height = 21
+          DataField = 'DTA_RECEBE'
+          DataSource = DMConciliacao.DS_CMDepAnaliseDocRel
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 6
+        end
+      end
+      object Dbg_ConcDepDocFinan: TDBGrid
+        Left = 0
+        Top = 61
+        Width = 627
+        Height = 308
+        Align = alClient
+        DataSource = DMConciliacao.DS_CMDepAnaliseDocRel
+        FixedColor = clTeal
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+        ParentFont = False
+        TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWhite
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = [fsBold]
+        OnDrawColumnCell = Dbg_ConcDepDocFinanDrawColumnCell
+        OnEnter = Dbg_ConcDepDocFinanEnter
+        OnKeyDown = Dbg_ReposDivProdutosKeyDown
+        Columns = <
+          item
+            Color = 8454143
+            Expanded = False
+            FieldName = 'DTA_MOVTO'
+            Visible = True
+          end
+          item
+            Color = 16777162
+            Expanded = False
+            FieldName = 'NOME_LOJA'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Width = 200
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_MATRIZ'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_DEPOSITOS'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_DESPESAS'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_OUTROS'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_TOTAL'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'OBS_FINANCEIRO'
+            Width = 200
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'DES_USU_INCLUSAO'
+            Width = 110
+            Visible = True
+          end
+          item
+            Alignment = taCenter
+            Expanded = False
+            FieldName = 'DTA_INCLUSAO'
+            Title.Alignment = taCenter
+            Title.Caption = 'Inclus'#227'o'
+            Width = 66
+            Visible = True
+          end>
+      end
+      object Pan_ConcDepDocFinan: TPanel
+        Left = 0
+        Top = 369
+        Width = 627
+        Height = 35
+        Align = alBottom
+        BevelInner = bvLowered
+        BorderStyle = bsSingle
+        Ctl3D = False
+        ParentCtl3D = False
+        TabOrder = 2
+        object Bt_ConcDepDocFinanVoltar: TJvXPButton
+          Left = 523
+          Top = 2
+          Width = 100
+          Height = 29
+          Caption = 'Voltar'
+          TabOrder = 0
+          TabStop = False
+          Glyph.Data = {
+            07544269746D6170F6000000424DF60000000000000076000000280000001000
+            0000100000000100040000000000800000000000000000000000100000001000
+            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF0077777700000087777777770AAAAA00877777770AAAAAA2077777770AAAAA
+            2A20777777000000A22077777777777700207777777777777700777707777777
+            77007770077777770020770A00000000A22070AAAAAAAAAA2A200AAAAAAAAAAA
+            A20770AAAAAAAAAA0077770A0000000087777770077777777777777707777777
+            7777}
+          ShowFocusRect = True
+          Align = alRight
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_QualquerCoisaVoltarClick
+        end
+        object Bt_ConcDepDocFinanImprimir: TJvXPButton
+          Tag = 2
+          Left = 2
+          Top = 2
+          Width = 100
+          Height = 29
+          Caption = 'Imprimir'
+          TabOrder = 1
+          Glyph.Data = {
+            07544269746D6170BE060000424DBE0600000000000036040000280000001600
+            00001B0000000100080000000000880200000000000000000000000100000000
+            000000000000000080000080000000808000800000008000800080800000C0C0
+            C000C0DCC000F0CAA6000020400000206000002080000020A0000020C0000020
+            E00000400000004020000040400000406000004080000040A0000040C0000040
+            E00000600000006020000060400000606000006080000060A0000060C0000060
+            E00000800000008020000080400000806000008080000080A0000080C0000080
+            E00000A0000000A0200000A0400000A0600000A0800000A0A00000A0C00000A0
+            E00000C0000000C0200000C0400000C0600000C0800000C0A00000C0C00000C0
+            E00000E0000000E0200000E0400000E0600000E0800000E0A00000E0C00000E0
+            E00040000000400020004000400040006000400080004000A0004000C0004000
+            E00040200000402020004020400040206000402080004020A0004020C0004020
+            E00040400000404020004040400040406000404080004040A0004040C0004040
+            E00040600000406020004060400040606000406080004060A0004060C0004060
+            E00040800000408020004080400040806000408080004080A0004080C0004080
+            E00040A0000040A0200040A0400040A0600040A0800040A0A00040A0C00040A0
+            E00040C0000040C0200040C0400040C0600040C0800040C0A00040C0C00040C0
+            E00040E0000040E0200040E0400040E0600040E0800040E0A00040E0C00040E0
+            E00080000000800020008000400080006000800080008000A0008000C0008000
+            E00080200000802020008020400080206000802080008020A0008020C0008020
+            E00080400000804020008040400080406000804080008040A0008040C0008040
+            E00080600000806020008060400080606000806080008060A0008060C0008060
+            E00080800000808020008080400080806000808080008080A0008080C0008080
+            E00080A0000080A0200080A0400080A0600080A0800080A0A00080A0C00080A0
+            E00080C0000080C0200080C0400080C0600080C0800080C0A00080C0C00080C0
+            E00080E0000080E0200080E0400080E0600080E0800080E0A00080E0C00080E0
+            E000C0000000C0002000C0004000C0006000C0008000C000A000C000C000C000
+            E000C0200000C0202000C0204000C0206000C0208000C020A000C020C000C020
+            E000C0400000C0402000C0404000C0406000C0408000C040A000C040C000C040
+            E000C0600000C0602000C0604000C0606000C0608000C060A000C060C000C060
+            E000C0800000C0802000C0804000C0806000C0808000C080A000C080C000C080
+            E000C0A00000C0A02000C0A04000C0A06000C0A08000C0A0A000C0A0C000C0A0
+            E000C0C00000C0C02000C0C04000C0C06000C0C08000C0C0A000F0FBFF00A4A0
+            A000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFF
+            EDEC9B9B9B9B9B9B9B9BFFFFFFFFFFFF0000FFFFFFFFFFFFEDFFFFFFFFFFFFFF
+            FF9BFFFFFFFFFFFF0000FFFFFFFFFFFFEDFFA4A4A4A4A4A4FF9BFFFFFFFFFFFF
+            0000FFFFFFFFFFFFEDFFF6FFE3ECE3E2FF9BFFFFFFFFFFFF0000FFFFFFFFFFFF
+            EDFFE3FFE3E3E209FF9BFFFFFFFFFFFF0000FFFFA49B9B52EDFF090909090909
+            FF9B529B9B9BADFF0000FFA4F7F7A452EDFF090909090909FFA352A4F7A49BFF
+            0000FFF7F7F7F752F7F6090909A7A709F6A352A4F7F79BFF0000FFA4A4A4A4A4
+            A4A4A4A4A4A4A4A4A4A4A4A4A4A49BFF0000FFA4070707F7F7F7F7F7F7F7F7F7
+            F7F7A40707079BFF0000FFA4070707F7F7F7F7F7F7F7F7F7F7F7A40707079BFF
+            0000FFF7F6F6F60808080808080808080808F7F6F6F69BFF0000FFF7F607F607
+            07070707070707070707A4F607089BFF0000FFF7F6F6F6070707070707070707
+            0707A4F608089BFF0000FFF7FFF6F60707070707070707070707A4F607089BFF
+            0000FFF7FFFFFF0808080808080808080808A4F607F69BFF0000FFF7FFFFFF08
+            08080808080808080808A4F6F6F69BFF0000FFB7F7F7F7F7F7F7F7A4A4A4A4A4
+            A4A4A4F7A5A4B6FF0000FFFFFFFFFF9BEDFFFFFFFFFFFFFFFF9BA4FFFFFFFFFF
+            0000FFFFFFFFFF5BEDFFFFFFFFFFFFFFFF9BA5FFFFFFFFFF0000FFFFFFFFFF9B
+            EDFFFFFFFFFFFFFFFF9BFFFFFFFFFFFF0000FFFFFFFFFFFFEDFFFFFFFFFFFFFF
+            FF9BFFFFFFFFFFFF0000FFFFFFFFFFFFEDFFFFFFFFFFFFFFFF9BFFFFFFFFFFFF
+            0000FFFFFFFFFFFFEDFFFFFFFFFFFFFFFFA3FFFFFFFFFFFF0000FFFFFFFFFFFF
+            EDEDEDEDEDEDEDEDECECFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            FFFFFFFFFFFFFFFF0000}
+          Align = alLeft
+          OnClick = Bt_ConcDepDocFinanImprimirClick
+        end
+        object Bt_ConcDepDocFinanExcluir: TJvXPButton
+          Tag = 2
+          Left = 102
+          Top = 2
+          Width = 100
+          Height = 29
+          Caption = 'Excluir'
+          TabOrder = 2
+          Glyph.Data = {
+            07544269746D61701E070000424D1E0700000000000036000000280000001600
+            00001A0000000100180000000000E8060000C30E0000C30E0000000000000000
+            0000BFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F7F7FBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBF0000BFBFBFBFBFBF7F7F7F7F7F7F7F7F7F7F7F7F7F7F7FBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F7F7FBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBF0000BFBFBFBFBFBF0000000000007F7F7F7F7F7F7F7F7FBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF7F7F7F7F7F7F7F7F7F7F7F7FBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBF00000000FF00007F00007F0000000000007F7F7F
+            7F7F7F7F7F7FBFBFBFBFBFBFBFBFBFBFBFBF0000FF0000007F7F7F7F7F7F7F7F
+            7F7F7F7FBFBFBFBFBFBFBFBFBFBFBFBF00000000FF00007F00007F00007F0000
+            007F7F7F7F7F7F7F7F7F7F7F7FBFBFBFBFBFBF0000FF00007F0000000000007F
+            7F7F7F7F7F7F7F7F7F7F7FBFBFBFBFBFBFBFBFBF00000000FF00007F00007F00
+            007F0000000000007F7F7F7F7F7F7F7F7F7F7F7FBFBFBF0000FF00007F00007F
+            0000000000007F7F7F7F7F7F7F7F7F7F7F7FBFBFBFBFBFBF00000000FF00007F
+            00007F00007F00007F0000000000007F7F7F7F7F7F7F7F7F0000FF00007F0000
+            7F00007F00007F0000000000007F7F7F7F7F7FBFBFBFBFBFBFBFBFBF00000000
+            FF0000FF00007F00007F00007F00007F0000000000007F7F7F0000FF00007F00
+            007F00007F00007F00007F00007F000000000000BFBFBFBFBFBFBFBFBFBFBFBF
+            0000BFBFBF0000FF00007F00007F00007F00007F00007F00000000000000007F
+            00007F00007F00007F00007F00007F00007F000000BFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBF0000BFBFBF0000FF0000FF00007F00007F00007F00007F00007F0000
+            7F00007F00007F00007F00007F00007F00007F000000BFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBF0000BFBFBFBFBFBF0000FF0000FF00007F00007F00007F00
+            007F00007F00007F00007F00007F00007F00007F000000BFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBF0000FF0000FF00007F
+            00007F00007F00007F00007F00007F00007F00007F0000007F7F7FBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBF0000
+            FF0000FF00007F00007F00007F00007F00007F00007F0000007F7F7F7F7F7F7F
+            7F7FBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBF0000FF00007F00007F00007F00007F00007F00007F0000007F7F7F
+            7F7F7F7F7F7F7F7F7FBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF0000BFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBF0000FF00007F00007F00007F00007F00007F00007F0000
+            000000007F7F7F7F7F7F7F7F7FBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF0000BFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBF0000FF00007F00007F00007F00007F00007F00
+            007F00007F0000000000007F7F7F7F7F7F7F7F7FBFBFBFBFBFBFBFBFBFBFBFBF
+            0000BFBFBFBFBFBFBFBFBFBFBFBF0000FF00007F00007F00007F00007F00007F
+            00007F00007F00007F00007F0000007F7F7F7F7F7F7F7F7F7F7F7FBFBFBFBFBF
+            BFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBF0000FF00007F00007F00007F0000
+            7F0000FF0000FF00007F00007F00007F0000000000007F7F7F7F7F7F7F7F7FBF
+            BFBFBFBFBFBFBFBF0000BFBFBFBFBFBFBFBFBF0000FF00007F00007F00007F00
+            007F0000007F7F7F0000FF0000FF00007F00007F00007F0000000000007F7F7F
+            7F7F7F7F7F7F7F7F7FBFBFBF0000BFBFBFBFBFBFBFBFBF0000FF00007F00007F
+            00007F0000007F7F7FBFBFBFBFBFBF0000FF0000FF00007F00007F00007F0000
+            000000007F7F7F7F7F7F7F7F7F7F7F7F0000BFBFBFBFBFBF0000FF00007F0000
+            7F00007F00007F0000007F7F7FBFBFBFBFBFBFBFBFBF0000FF0000FF00007F00
+            007F00007F0000000000007F7F7F7F7F7F7F7F7F0000BFBFBFBFBFBF0000FF00
+            007F00007F00007F0000007F7F7FBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF0000FF
+            0000FF00007F00007F00007F0000000000007F7F7FBFBFBF0000BFBFBF0000FF
+            0000FF0000FF00007F00007F000000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBF0000FF0000FF00007F00007F00007F000000BFBFBFBFBFBF0000BFBF
+            BFBFBFBFBFBFBF0000FF0000FF0000FFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBF0000FF0000FF00007F00007FBFBFBFBFBFBFBFBFBF
+            0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF0000FF0000FFBFBFBFBFBFBFBFBF
+            BFBFBFBF0000BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFBF
+            BFBFBFBFBFBFBFBF0000}
+          Align = alLeft
+          OnClick = Bt_ConcDepDocFinanExcluirClick
+        end
+      end
+    end
   end
   object PainelApresExp: TPanel
-    Left = 208
-    Top = 416
+    Left = 376
+    Top = 379
     Width = 99
     Height = 33
     BevelInner = bvRaised

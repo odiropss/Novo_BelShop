@@ -5716,16 +5716,6 @@ Begin
            If EdtPagtoCodLoja.AsInteger=11 Then
             MySql:=
              MySql+sgVinculadoCodCASEVendas
-// OdirApagar - 13/036/2017             
-//             MySql+' Case'+
-//                   '   When nt.codvendedor=''000400'' then ''000040'''+
-//                   '   When nt.codvendedor=''000480'' then ''000048'''+
-//                   '   When nt.codvendedor=''000470'' then ''000047'''+
-//                   '   When nt.codvendedor=''000460'' then ''000046'''+
-//                   '   When nt.codvendedor=''000490'' then ''000049'''+
-//                   '   When nt.codvendedor=''000240'' then ''000024'''+
-//                   '   Else nt.codvendedor'+
-//                   ' End Cod_Profissional,'
            Else
             MySql:=
              MySql+' nt.codvendedor Cod_Profissional,';

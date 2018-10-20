@@ -69,6 +69,11 @@ TabIndex:
   23 = Salão - Relatórios - Ts_SalaoRelatorios
   24 = Divergências Reposições Lojas  - Acerta Divergências - Ts_ReposDivergencias
   25 = Analise Reposicao Diária - Ts_AnaliseReposicaoDiaria
+  26 - Conciliação de Depósitos - Cadastro de Históricos
+  27 - Estoque Minio/Máximo - Atualiza MIX de Lojas
+  28 - Estoque Minio/Máximo - Grupo de Lojas (Em Desenvolvimento)
+  29 - AUDITORIA - Salva Posição de Estoqe para Inventário (Aquivo.TXT)
+  30 - Conciliação de Depósitos - Documento Financeiro de Entrega para o Renato
 }
 unit UFrmSolicitacoes;
 
@@ -675,6 +680,27 @@ type
     Bt_AudGeraArquivo: TJvXPButton;
     EdtAudCodLoja: TCurrencyEdit;
     Bt_ProSoftImpTodos: TJvXPButton;
+    Ts_ConcDepDocFinan: TTabSheet;
+    Gb_ConcDepDocFinan: TGroupBox;
+    Label96: TLabel;
+    Label97: TLabel;
+    Label98: TLabel;
+    Label99: TLabel;
+    Label100: TLabel;
+    Label101: TLabel;
+    Label102: TLabel;
+    Dbe_ConcDepDocFinanDocto: TDBEdit;
+    Dbe_ConcDepDocFinanUsuCriacao: TDBEdit;
+    Dbe_ConcDepDocFinanDtaCriacao: TDBEdit;
+    Dbe_ConcDepDocFinanUsuEmissao: TDBEdit;
+    Dbe_ConcDepDocFinanDtaEmissao: TDBEdit;
+    Dbe_ConcDepDocFinanUsuRecebe: TDBEdit;
+    Dbe_ConcDepDocFinanDtaRecebe: TDBEdit;
+    Dbg_ConcDepDocFinan: TDBGrid;
+    Pan_ConcDepDocFinan: TPanel;
+    Bt_ConcDepDocFinanVoltar: TJvXPButton;
+    Bt_ConcDepDocFinanImprimir: TJvXPButton;
+    Bt_ConcDepDocFinanExcluir: TJvXPButton;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -987,6 +1013,27 @@ type
     procedure Bt_AudBuscaLojaClick(Sender: TObject);
     procedure Rb_AudCadProdutosClick(Sender: TObject);
     procedure Bt_ProSoftImpTodosClick(Sender: TObject);
+    procedure Dbg_CodigosViculadosEnter(Sender: TObject);
+    procedure Dbg_IBGE1Enter(Sender: TObject);
+    procedure Dbg_ParamLojaNecesEnter(Sender: TObject);
+    procedure Dbg_ParamSalMininoEnter(Sender: TObject);
+    procedure Dbg_ParamLojaReposFornecEnter(Sender: TObject);
+    procedure Dbg_TransfLojasEnter(Sender: TObject);
+    procedure Dbg_ConsistenciasEnter(Sender: TObject);
+    procedure Dbg_ValesParcelasEnter(Sender: TObject);
+    procedure Dbg_SolicitFornLojasEnter(Sender: TObject);
+    procedure Dbg_ProfSelecionaEnter(Sender: TObject);
+    procedure Dbg_SelecionarEnter(Sender: TObject);
+    procedure Dbg_ExcelImportarEnter(Sender: TObject);
+    procedure Dbg_ReposDivProdutosEnter(Sender: TObject);
+    procedure Dbg_AnaliseRepDiariaEnter(Sender: TObject);
+    procedure Dbg_ConcDepHistoricosEnter(Sender: TObject);
+    procedure Dbg_ConcDepDocFinanEnter(Sender: TObject);
+    procedure Dbg_ConcDepDocFinanDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure Bt_ConcDepDocFinanImprimirClick(Sender: TObject);
+    procedure Bt_ConcDepDocFinanExcluirClick(Sender: TObject);
   private
     { Private declarations }
 
@@ -9072,7 +9119,7 @@ end;
 procedure TFrmSolicitacoes.Dbg_ApresGridEnter(Sender: TObject);
 begin
   // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
-  ApplicationEvents1.OnActivate:=Dbg_ApresGridEnter; 
+  ApplicationEvents1.OnActivate:=Dbg_ApresGridEnter;
   Application.OnMessage := ApplicationEvents1Message;
   ApplicationEvents1.Activate;
 
@@ -9333,7 +9380,7 @@ begin
    - Usado em outros DBGrids
         - Dbg_ConcDepHistoricos
         - Dbg_AnaliseRepDiaria
-
+        - Dbg_ConcDepDocFinan
   }
   // Bloquei Ctrl + Delete =====================================================
   if (Shift = [ssCtrl]) and (Key = 46) then
@@ -10542,6 +10589,193 @@ begin
   EdtProSoftImpArquivoSalvar.Clear;
   // Exporta Arquivo ProSoft ===================================================
   //============================================================================
+end;
+
+procedure TFrmSolicitacoes.Dbg_CodigosViculadosEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_CodigosViculadosEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_IBGE1Enter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_IBGE1Enter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ParamLojaNecesEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_ParamLojaNecesEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ParamSalMininoEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_ParamSalMininoEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ParamLojaReposFornecEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_ParamLojaReposFornecEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_TransfLojasEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_TransfLojasEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ConsistenciasEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_ConsistenciasEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ValesParcelasEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_ValesParcelasEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_SolicitFornLojasEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_SolicitFornLojasEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ProfSelecionaEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_ProfSelecionaEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_SelecionarEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_SelecionarEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ExcelImportarEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_ExcelImportarEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ReposDivProdutosEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_ReposDivProdutosEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_AnaliseRepDiariaEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_AnaliseRepDiariaEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ConcDepHistoricosEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_ConcDepHistoricosEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ConcDepDocFinanEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_ConcDepDocFinanEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ConcDepDocFinanDrawColumnCell(Sender: TObject;
+          const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  if not (gdSelected in State) Then // Este comando altera cor da Linha
+  Begin
+    If DMConciliacao.CDS_CMDepAnaliseDocRelNOME_LOJA.AsString='TOTAL DO DOCUMENTO' Then
+    Begin
+      Dbg_ConcDepDocFinan.Canvas.Brush.Color:=clSkyBlue;
+      Dbg_ConcDepDocFinan.Canvas.Font.Style:=[fsBold]; // Cor da Fonte
+    End;
+  End; // if not (gdSelected in State) Then
+  Dbg_ConcDepDocFinan.Canvas.FillRect(Rect);
+  Dbg_ConcDepDocFinan.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  // Alianhamentos =============================================================
+  DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.Alignment:=taCenter;
+  DMConciliacao.CDS_CMDepAnaliseDocRelVLR_MATRIZ.Alignment:=taRightJustify;
+  DMConciliacao.CDS_CMDepAnaliseDocRelVLR_DEPOSITOS.Alignment:=taRightJustify;
+  DMConciliacao.CDS_CMDepAnaliseDocRelVLR_DESPESAS.Alignment:=taRightJustify;
+  DMConciliacao.CDS_CMDepAnaliseDocRelVLR_OUTROS.Alignment:=taRightJustify;
+  DMConciliacao.CDS_CMDepAnaliseDocRelVLR_TOTAL.Alignment:=taRightJustify;
+  DMConciliacao.CDS_CMDepAnaliseDocRelDTA_INCLUSAO.Alignment:=taCenter;
+
+end;
+
+procedure TFrmSolicitacoes.Bt_ConcDepDocFinanImprimirClick(Sender: TObject);
+begin
+  bgProcessar:=False;
+  Close;
+
+end;
+
+procedure TFrmSolicitacoes.Bt_ConcDepDocFinanExcluirClick(Sender: TObject);
+begin
+  If Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString)='' Then
+   Exit;
+
+  If msg('Deseja Realmente EXCLUIR'+cr+cr+' a Loja SELECIONADA ??','C')=2 Then
+   Exit;
+
+
 end;
 
 end.

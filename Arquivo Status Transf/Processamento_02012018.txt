@@ -1,8 +1,0 @@
-01/999 - Fornecedores que Não São Processados - 16:25:02
-02/999 - Busca Lojas do Dia - 16:25:03
-03/999 - Busca Percentuais de Cortes das Curvas - 16:25:03
-04/999 - Zera Sequencia para Novo Docto - 16:25:03
-05/999 - Cria Memo para Codigos de Lojas - 16:25:03
-06/999 - Calcula Dias do Período - 16:25:03
-07/999 - Conecta CD - 16:25:03
-08/999 - Busca Produtos com Saldo no CD - 16:25:04
