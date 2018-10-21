@@ -2426,12 +2426,13 @@ object DMConciliacao: TDMConciliacao
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'NumDoc'
         ParamType = ptInput
+        Value = '1'
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'NumDoc'
         ParamType = ptInput
       end>

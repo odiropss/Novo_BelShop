@@ -17421,7 +17421,6 @@ begin
     End;
   End;
 
-
   // Totais de Faturamento =====================================================
   If (Column.FieldName='LOJA_DINHEIRO') Or (Column.FieldName='SALAO_DINHEIRO') Or
      (Column.FieldName='DIA_DINHEIRO')  Then // Este comando altera cor da Celula/Font
@@ -17561,6 +17560,7 @@ Var
 
   iRecNo: Integer;
 
+    // Função Interna - Grava Loja no Docto Financeiro =========================
   Function IncluiDoctoFinanceiro: Boolean;
   Begin
     OdirPanApres.Caption:='AGUARDE !! Atualizando Documento Financeiro...';
@@ -17784,7 +17784,7 @@ begin
       DMBelShop.CDS_BuscaRapida.Close;
     End; // If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('num_docto').AsString)='' Then
 
-    // Monta Tab_Auxiliar.Tip_Aux ==============================================
+    // Monta Tab_Auxiliar.Cod_Aux ==============================================
     sCodAux:=Trim(DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsString)+ // Codigo da Loja Linx
              FormatFloat('00',StrToInt(Copy(Trim(DMConciliacao.CDS_CMDepositosAnaliseDTA_DOCTO.AsString),1,2)))+ // Dia do Movto
              FormatFloat('00',StrToInt(Copy(Trim(DMConciliacao.CDS_CMDepositosAnaliseDTA_DOCTO.AsString),4,2)))+ // Mes do Movto

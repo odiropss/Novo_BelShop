@@ -580,6 +580,10 @@ Begin
     End;
     DMTransferencias.CDS_Busca.Close;
 
+//odiropss
+//    mMemo.Lines.Clear;
+//    mMemo.Lines.Add('06');
+
     For i:=0 to mMemo.Lines.Count-1 do
     Begin
       // Verifica se Existe ES_ESTOQUES_LOJAS ==================================
@@ -723,6 +727,9 @@ Begin
       While Not DMTransferencias.CDS_Busca.Eof do
       Begin
         sgCodProduto:=Trim(DMTransferencias.CDS_Busca.FieldByName('Cod_Produto').AsString);
+
+        If sgCodProduto='039560' Then
+         sgCodProduto:=Trim(DMTransferencias.CDS_Busca.FieldByName('Cod_Produto').AsString);
 
         //======================================================================
         // Atualiza OC_COMPRAR =================================================
@@ -955,14 +962,17 @@ Begin
              sEnd_Corredor  :='000';
              sEnd_Prateleira:='000';
              sEnd_Gaveta    :='0000';
-             sSaldoCD       :='0.00';
+
+             sSaldoCD       :='0';
+             If Trim(IBQ_MPMS.FieldByName('saldoatual').AsString)<>'' Then
+              sSaldoCD:=IntToStr(ParteInteiro(IBQ_MPMS.FieldByName('saldoatual').AsString));
+
              If Trim(IBQ_MPMS.FieldByName('end_zona').AsString)<>'' Then
              Begin
                sEnd_Zona      :=Trim(IBQ_MPMS.FieldByName('end_zona').AsString);
                sEnd_Corredor  :=Trim(IBQ_MPMS.FieldByName('end_corredor').AsString);
                sEnd_Prateleira:=Trim(IBQ_MPMS.FieldByName('end_prateleira').AsString);
                sEnd_Gaveta    :=Trim(IBQ_MPMS.FieldByName('end_gaveta').AsString);
-               sSaldoCD       :=f_Troca(',','.',IBQ_MPMS.FieldByName('saldoatual').AsString);
              End; // If Trim(IBQ_MPMS.FieldByName('end_zona').AsString)<>'' Then
              IBQ_MPMS.Close;
 
@@ -2295,8 +2305,8 @@ Var
 begin
 
   //============================================================================
-  // Windows: Nome do Usuario, Computador e Data Hoje Sem Separadores ==========
-  //============================================================================
+  // Windows: Nome do Usuario, Computador e Data Hoje Sem Separadores =========
+  //=============================================================================
   UsuarioComputadorWindows(sUsuarioWindows, sComputadorWindows);
 
 //  hHrInicio:=TimeToStr(DataHoraServidorFI(DMTransferencias.SDS));

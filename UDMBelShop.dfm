@@ -27,7 +27,6 @@ object DMBelShop: TDMBelShop
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'fbclient.dll'
-    Connected = True
     Left = 29
     Top = 14
   end

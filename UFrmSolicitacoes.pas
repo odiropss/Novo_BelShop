@@ -788,7 +788,6 @@ type
     Procedure AuditoriaGeraArquivo;
     ////////////////////////////////////////////////////////////////////////////
 
-
     //==========================================================================
     // Odir ====================================================================
     //==========================================================================
@@ -10768,12 +10767,122 @@ begin
 end;
 
 procedure TFrmSolicitacoes.Bt_ConcDepDocFinanExcluirClick(Sender: TObject);
+Var
+  MySql, sCodAux: String;
+  bExclui: Boolean; // Se Exclui Tab_Auxiliar.tip_aux=24
+
+  // Função Interna - Exclui Loja do Docto Financeiro de Entrega ===============
+  Function ConcDepExcluiLojaDoctoFinanceiro: Boolean;
+  Begin
+    OdirPanApres.Caption:='AGUARDE !! Excluindo Loja do Documento Financeiro...';
+    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmSolicitacoes;
+    OdirPanApres.BringToFront();
+    OdirPanApres.Visible:=True;
+    Screen.Cursor:=crAppStart;
+    Refresh;
+
+    Result:=True;
+
+    // Verifica se Transação esta Ativa
+    If DMBelShop.SQLC.InTransaction Then
+     DMBelShop.SQLC.Rollback(TD);
+
+    // Monta Transacao ===========================================================
+    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMBelShop.SQLC.StartTransaction(TD);
+    Try // Try da Transação
+      Screen.Cursor:=crAppStart;
+      DateSeparator:='.';
+      DecimalSeparator:='.';
+
+      // Monta Tab_Auxiliar.Cod_Aux ==============================================
+      sCodAux:=Trim(DMConciliacao.CDS_CMDepAnaliseDocRelCOD_LINX.AsString)+ // Codigo da Loja Linx
+               FormatFloat('00',StrToInt(Copy(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString),1,2)))+ // Dia do Movto
+               FormatFloat('00',StrToInt(Copy(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString),4,2)))+ // Mes do Movto
+               Copy(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString),9,2); // Ano do Movto - 2 Caracteres
+
+      // Verifica se Movto a Excluir Contem Observação Financeira ==============
+      MySql:=' SELECT t.des_aux'+
+             ' FROM TAB_AUXILIAR t'+
+             ' WHERE t.tip_aux=24'+ // CONCILIAÇÃO DE DEPÓSITOS: - OBSERVAÇÃO FINANCEIRA / NUMERO DO DOCUMENTO FINANCEIRO - SE ENTREGUE PARA O RENATO
+             ' AND t.cod_aux='+QuotedStr(sCodAux)+
+             ' AND t.des_aux1='+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString);
+      DMBelShop.CDS_BuscaRapida.Close;
+      DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+      DMBelShop.CDS_BuscaRapida.Open;
+      bExclui:=(DMBelShop.CDS_BuscaRapida.FieldByName('Des_Aux').AsString)='';;
+      DMBelShop.CDS_BuscaRapida.Close;
+
+      If bExclui Then
+      Begin
+        MySql:=' DELETE FROM TAB_AUXILIAR t'+
+               ' WHERE t.tip_aux=24'+ // CONCILIAÇÃO DE DEPÓSITOS: - OBSERVAÇÃO FINANCEIRA / NUMERO DO DOCUMENTO FINANCEIRO - SE ENTREGUE PARA O RENATO
+               ' AND t.cod_aux='+QuotedStr(sCodAux)+
+               ' AND t.des_aux1='+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString);
+      End; // If bExclui Then
+
+      If Not bExclui Then
+      Begin
+        MySql:=' UPDATE TAB_AUXILIAR t'+
+               ' SET t.des_aux1=NULL'+
+               ' WHERE t.tip_aux=24'+ // CONCILIAÇÃO DE DEPÓSITOS: - OBSERVAÇÃO FINANCEIRA / NUMERO DO DOCUMENTO FINANCEIRO - SE ENTREGUE PARA O RENATO
+               ' AND t.cod_aux='+QuotedStr(sCodAux)+
+               ' AND t.des_aux1='+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString);
+      End; // If bExclui Then
+      DMBelShop.SQLC.Execute(MySql, nil, nil);
+
+      // Exclui Loja do Documento Financeiro ===================================
+      MySql:=' DELETE FROM FIN_CONCILIACAO_DEP_REL r'+
+             ' WHERE r.num_docto='+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString)+
+             ' AND   r.cod_linx='+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelCOD_LINX.AsString)+
+             ' AND   r.dta_movto='+QuotedStr(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString));
+      DMBelShop.SQLC.Execute(MySql, nil, nil);
+
+      // Atualiza ClientDataSet - CDS_CMDepositosAnalise =======================
+      DMConciliacao.CDS_CMDepositosAnalise.Edit;
+      DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString:=sCodDoc;
+      DMConciliacao.CDS_CMDepositosAnalise.Post;
+
+      // Atualiza Transacao ====================================================
+      DMBelShop.SQLC.Commit(TD);
+    Except // Except da Transação
+      on e : Exception do
+      Begin
+        // Abandona Transacao ==================================================
+        DMBelShop.SQLC.Rollback(TD);
+
+        MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+        Result:=False;
+      End; // on e : Exception do
+    End; // Try da Transação
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    OdirPanApres.Visible:=False;
+
+    Screen.Cursor:=crDefault;
+  End;
+
+End; // CONCILIAÇÃO DEPOSITOS - Exclui Loja do Docto Financeiro de Entrega >>>>>
+
 begin
   If Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString)='' Then
    Exit;
 
-  If msg('Deseja Realmente EXCLUIR'+cr+cr+' a Loja SELECIONADA ??','C')=2 Then
+  If msg('Deseja Realmente EXCLUIR'+cr+cr+'a Loja SELECIONADA ??','C')=2 Then
    Exit;
+
+  If ConcDepExcluiLojaDoctoFinanceiro Then
+  Begin
+    msg('Ocorreu Erro na Exclusão da Loja !!'+cr+cr+'Entrar em Contato'+cr+'= Imediatamente ='++cr+cr+'com o ODIR - 999-578-234','A');
+    Exit;
+  End; // If ConcDepExcluiLojaDoctoFinanceiro Then
 
 
 end;
