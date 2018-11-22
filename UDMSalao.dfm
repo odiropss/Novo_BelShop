@@ -1,6 +1,6 @@
 object DMSalao: TDMSalao
   OldCreateOrder = False
-  Left = 238
+  Left = 199
   Top = 108
   Height = 609
   Width = 1105

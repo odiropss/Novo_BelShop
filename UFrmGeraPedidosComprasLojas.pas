@@ -21,7 +21,7 @@ uses
   cxCalendar, Mask, CurrEdit, JvExControls, JvXPCore, JvXPButtons, ComCtrls,
   DBClient, DBXpress, DB, IdFTP, IdFTPCommon, StrUtils, DateUtils, Math,
   IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient,
-  IdAntiFreezeBase, IdAntiFreeze;
+  IdAntiFreezeBase, IdAntiFreeze, AppEvnts;
   // Ultimo: DateUtils
 
 {
@@ -253,6 +253,7 @@ type
     IdAntiFreeze1: TIdAntiFreeze;
     IdFTP1: TIdFTP;
     Lb_CalculoFTP: TLabel;
+    ApplicationEvents1: TApplicationEvents;
     procedure Bt_OCFecharClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -295,8 +296,9 @@ type
     // Acerta Entrada dos Parametros de Lojas
     Function  ParametrosEntrada: Boolean;
 
-    // Acerta Cor do Fornecedor Principal
-    Procedure AcertaCorFornPrincipal;
+//Odiraqui Apagar - 05/11/2018
+//    // Acerta Cor do Fornecedor Principal
+//    Procedure AcertaCorFornPrincipal;
 
     // Salva as Ocorrencias de Fornecedores/Dia
     Function SalvaOcorrencias: Boolean;
@@ -390,6 +392,8 @@ type
     procedure Dbg_GeraOCTotForncDblClick(Sender: TObject);
     procedure Dbg_GeraOCTotForncDrawColumnCell(Sender: TObject;
               const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure ApplicationEvents1Message(var Msg: tagMSG;
+      var Handled: Boolean);
 
   private
     { Private declarations }
@@ -1781,47 +1785,48 @@ Begin
 
 End; // Salva Arquivos Para Transferencia FTP para Lojas >>>>>>>>>>>>>>>>>>>>>>>
 
-// Acerta Cor do Fornecedor Principal >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Procedure TFrmGeraPedidosComprasLojas.AcertaCorFornPrincipal;
-Begin
-  sgCodigo:='';
-  sgCodProd:='';
-
-  DMLojaUnica.CDS_ParamLjFornDia.First;
-  DMLojaUnica.CDS_ParamLjFornDia.DisableControls;
-  While Not DMLojaUnica.CDS_ParamLjFornDia.Eof do
-  Begin
-    If sgCodigo=DMLojaUnica.CDS_ParamLjFornDiaCODFORNECEDOR.AsString Then
-    Begin
-      If sgCodProd<>sgCodigo Then
-      Begin
-        DMLojaUnica.CDS_ParamLjFornDia.Prior;
-
-        DMLojaUnica.CDS_ParamLjFornDia.Edit;
-        DMLojaUnica.CDS_ParamLjFornDiaFORN.AsString:='SIM';
-        DMLojaUnica.CDS_ParamLjFornDia.Post;
-
-        DMLojaUnica.CDS_ParamLjFornDia.Next;
-
-        sgCodProd:=sgCodigo;
-      End; // If sgCodProd<>sgCodigo Then
-
-      If sgCodProd=sgCodigo Then
-      Begin
-        DMLojaUnica.CDS_ParamLjFornDia.Edit;
-        DMLojaUnica.CDS_ParamLjFornDiaFORN.AsString:='FIL';
-        DMLojaUnica.CDS_ParamLjFornDia.Post;
-      End; // If sgCodProd=sgCodigo Then
-    End; // If sgCodigo=DMLojaUnica.CDS_ParamLjFornDiaCODFORNECEDOR.AsString Then
-
-    sgCodigo:=DMLojaUnica.CDS_ParamLjFornDiaCODFORNECEDOR.AsString;
-
-    DMLojaUnica.CDS_ParamLjFornDia.Next;
-  End; // While Not DMLojaUnica.CDS_ParamLjFornDia.Eof do
-  DMLojaUnica.CDS_ParamLjFornDia.EnableControls;
-  DMLojaUnica.CDS_ParamLjFornDia.First;
-
-End; // Acerta Cor do Fornecedor Principal >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//Odiraqui Apagar - 05/11/2018
+//// Acerta Cor do Fornecedor Principal >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//Procedure TFrmGeraPedidosComprasLojas.AcertaCorFornPrincipal;
+//Begin
+//  sgCodigo:='';
+//  sgCodProd:='';
+//
+//  DMLojaUnica.CDS_ParamLjFornDia.First;
+//  DMLojaUnica.CDS_ParamLjFornDia.DisableControls;
+//  While Not DMLojaUnica.CDS_ParamLjFornDia.Eof do
+//  Begin
+//    If sgCodigo=DMLojaUnica.CDS_ParamLjFornDiaCODFORNECEDOR.AsString Then
+//    Begin
+//      If sgCodProd<>sgCodigo Then
+//      Begin
+//        DMLojaUnica.CDS_ParamLjFornDia.Prior;
+//
+//        DMLojaUnica.CDS_ParamLjFornDia.Edit;
+//        DMLojaUnica.CDS_ParamLjFornDiaFORN.AsString:='SIM';
+//        DMLojaUnica.CDS_ParamLjFornDia.Post;
+//
+//        DMLojaUnica.CDS_ParamLjFornDia.Next;
+//
+//        sgCodProd:=sgCodigo;
+//      End; // If sgCodProd<>sgCodigo Then
+//
+//      If sgCodProd=sgCodigo Then
+//      Begin
+//        DMLojaUnica.CDS_ParamLjFornDia.Edit;
+//        DMLojaUnica.CDS_ParamLjFornDiaFORN.AsString:='FIL';
+//        DMLojaUnica.CDS_ParamLjFornDia.Post;
+//      End; // If sgCodProd=sgCodigo Then
+//    End; // If sgCodigo=DMLojaUnica.CDS_ParamLjFornDiaCODFORNECEDOR.AsString Then
+//
+//    sgCodigo:=DMLojaUnica.CDS_ParamLjFornDiaCODFORNECEDOR.AsString;
+//
+//    DMLojaUnica.CDS_ParamLjFornDia.Next;
+//  End; // While Not DMLojaUnica.CDS_ParamLjFornDia.Eof do
+//  DMLojaUnica.CDS_ParamLjFornDia.EnableControls;
+//  DMLojaUnica.CDS_ParamLjFornDia.First;
+//
+//End; // Acerta Cor do Fornecedor Principal >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Salva Ocorrencias por Dias >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmGeraPedidosComprasLojas.ProcessaOcorrenciasPorDias(sTipo, sCodLoja: String): Boolean;
@@ -2155,6 +2160,7 @@ Begin
 
   // Loja a Processar ==========================================================
   DMBelShop.CDS_EmpBusca.First;
+  DMBelShop.CDS_EmpBusca.DisableControls;
   While Not DMBelShop.CDS_EmpBusca.Eof do
   Begin
     If DMBelShop.CDS_EmpBusca.FieldByName('PROC').AsString='SIM' Then
@@ -2165,8 +2171,9 @@ Begin
 
     DMBelShop.CDS_EmpBusca.Next;
   End; // While Not DMBelShop.CDS_EmpBusca.Eof do
-
   DMBelShop.CDS_EmpBusca.First;
+  DMBelShop.CDS_EmpBusca.EnableControls;
+
   Result:=True;
 
 End; // // Salva as Ocorrencias de Fornecedores/Dia >>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -2404,8 +2411,9 @@ Begin
   DMLojaUnica.CDS_ParamLjFornDia.Open;
 
   // Acerta Cor do Fornecedor Principal ========================================
-  AcertaCorFornPrincipal;
-  DMLojaUnica.CDS_ParamLjFornDia.First;
+////Odiraqui Apagar - 05/11/2018
+//  AcertaCorFornPrincipal;
+//  DMLojaUnica.CDS_ParamLjFornDia.First;
 
   //============================================================================
   // Apresenta Formulario ======================================================
@@ -4696,8 +4704,9 @@ Var
 begin
 
   // Alinha mento do Form ======================================================
-  Align:=alClient;
-  WindowState:=wsMaximized;
+//odiraqui
+//  Align:=alClient;
+//  WindowState:=wsMaximized;
   AutoSize:=True;
   FrmBelShop.PC_FiltrosChange(Self);
   Refresh;
@@ -4906,6 +4915,8 @@ begin
   // NÃO PERMITIR MOVIMENTAR O FORM
   DeleteMenu(GetSystemMenu(Handle, False), SC_MOVE, MF_BYCOMMAND);
 
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  Application.OnMessage := ApplicationEvents1Message;
 end;
 
 procedure TFrmGeraPedidosComprasLojas.Bt_GeraOCBuscaDoctoClick(Sender: TObject);
@@ -7063,8 +7074,6 @@ begin
     Pan_ParamLjLocaliza.Visible:=False;
     Dbg_ParamLjDiasFornLojas.SetFocus;
   End;
-
-
 end;
 
 procedure TFrmGeraPedidosComprasLojas.EdtParamLjLocalizaChange(Sender: TObject);
@@ -7095,9 +7104,9 @@ begin
     Begin
       Try
         StrToInt(EdtParamLjLocaliza.Text);
-        DMLojaUnica.CDS_ParamLjFornDia.Locate('CODFORNECEDOR',FormatFloat('000000',StrToInt(EdtParamLjLocaliza.Text)),[]);
+        DMLojaUnica.CDS_ParamLjFornDia.Locate('COD_LOJA;COD_FORN',VarArrayOf(['', FormatFloat('000000',StrToInt(EdtParamLjLocaliza.Text))]),[]);
       Except
-        LocalizaRegistro(DMLojaUnica.CDS_ParamLjFornDia,'NOMEFORNECEDOR', Trim(EdtParamLjLocaliza.Text));
+        LocalizaRegistro(DMLojaUnica.CDS_ParamLjFornDia,'FORN_LOJA', Trim(EdtParamLjLocaliza.Text));
       End;
     End;
   End;
@@ -7289,20 +7298,17 @@ end;
 
 procedure TFrmGeraPedidosComprasLojas.Dbg_ParamLjDiasFornEnter(Sender: TObject);
 begin
-  // Desabilita Mouse No Grid ==================================================
-  Application.OnMessage:=DesabilitaScrollMouse;
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_ParamLjDiasFornEnter; // Nome do Evento do DBGRID
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
 
   bEnterTab:=False;
-
 end;
 
 procedure TFrmGeraPedidosComprasLojas.Dbg_ParamLjDiasFornExit(Sender: TObject);
 begin
-  // Habilita Mouse No Grid ====================================================
-  Application.OnMessage:=HabilitaScrollMouse;
-
   bEnterTab:=True;
-
 end;
 
 procedure TFrmGeraPedidosComprasLojas.Dbg_ParamLjDiasFornKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -7334,6 +7340,7 @@ begin
 
          ' FROM emp_conexoes em'+
          ' WHERE em.ind_ativo=''SIM'''+
+         ' AND   TRIM(COALESCE(em.dta_inicio_linx,''''))<>'''''+
          ' ORDER BY 2';
   DMBelShop.CDS_EmpBusca.Close;
   DMBelShop.SDS_EmpBusca.CommandText:=MySql;
@@ -7364,47 +7371,57 @@ end;
 procedure TFrmGeraPedidosComprasLojas.Bt_ParamLjDiasFornExcluirClick(Sender: TObject);
 Var
   MySql: String;
-  i: Integer;
+
+  //OdirAqui - Apagar 0 05/11/2018
+  // i: Integer;
+  sCodForn: String;
+  bExcluido: Boolean;
 begin
   Dbg_ParamLjDiasForn.SetFocus;
+  bExcluido:=False;
 
-  If (DMLojaUnica.CDS_ParamLjFornDia.IsEmpty) Or (Lbx_ParamLjDiasFornSelec.Items.Count<1) Then
+  // OdirAqui - Apagar 0 05/11/2018
+  // If (DMLojaUnica.CDS_ParamLjFornDia.IsEmpty) Or (Lbx_ParamLjDiasFornSelec.Items.Count<1) Then
+  If (DMLojaUnica.CDS_ParamLjFornDia.IsEmpty) Then
   Begin
-    msg('Favor Selecionar Fornecedor(es)/Loja(s) !!','A');
     Dbg_ParamLjDiasForn.SetFocus;
     Exit;
   End; // If (DMLojaUnica.CDS_ParamLjFornDia.IsEmpty) Or (Lbx_ParamLjDiasFornSelec.Items.Count<1) Then
 
-  If msg('Deseja Realmente Excluir o(s)'+cr+cr+'Fornecedor(es)/Loja(s) Selecionados ??','C')= 2 Then
+  If msg('Deseja Realmente Excluir a'+cr+cr+'Loja Selecionada ??','C')= 2 Then
    Exit;
 
-  OdirPanApres.Caption:='AGUARDE !! Excluindo Fornecedores/Lojas Selecionados...';
+  OdirPanApres.Caption:='AGUARDE !! Excluindo Loja Selecionado...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmGeraPedidosComprasLojas.Width-OdirPanApres.Width)/2));
   OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmGeraPedidosComprasLojas.Height-OdirPanApres.Height)/2));
   OdirPanApres.Visible:=True;
   Refresh;
 
-  i:=0;
-  DMLojaUnica.CDS_ParamLjFornDia.First;
+  sCodForn:='0';
   DMLojaUnica.CDS_ParamLjFornDia.DisableControls;
+  DMLojaUnica.CDS_ParamLjFornDia.First;
   While Not DMLojaUnica.CDS_ParamLjFornDia.Eof do
   Begin
     Refresh;
 
     If DMLojaUnica.CDS_ParamLjFornDiaPROC.AsString='SIM' Then
     Begin
-      If i=0 Then
-       i:=DMLojaUnica.CDS_ParamLjFornDia.RecNo;
+      //OdirAqui - Apagar 0 05/11/2018
+//      If i=0 Then
+//       i:=DMLojaUnica.CDS_ParamLjFornDia.RecNo;
 
       If Trim(DMLojaUnica.CDS_ParamLjFornDiaCOD_LOJA.AsString)<>'' Then
       Begin
+        sCodForn:=DMLojaUnica.CDS_ParamLjFornDiaCOD_FORN.AsString;
         MySql:=' UPDATE PARAMETROS_LOJAS pl'+
                ' SET pl.ind_dml='+QuotedStr('EXC')+
                ' WHERE pl.ind_tipo=7'+
                ' AND pl.cod_loja='+QuotedStr(DMLojaUnica.CDS_ParamLjFornDiaCOD_LOJA.AsString)+
-               ' AND pl.cod_fornecedor='+QuotedStr(DMLojaUnica.CDS_ParamLjFornDiaCODFORNECEDOR.AsString);
+               ' AND pl.cod_fornecedor='+QuotedStr(DMLojaUnica.CDS_ParamLjFornDiaCOD_FORN.AsString);
         DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+        bExcluido:=True;
       End; // If Trim(DMLojaUnica.CDS_ParamLjFornDiaCOD_LOJA.AsString)<>'' Then
     End; // If DMLojaUnica.CDS_ParamLjFornDiaPROC.AsString='SIM' Then
 
@@ -7416,13 +7433,18 @@ begin
   DMLojaUnica.CDS_ParamLjFornDia.Open;
 
   // Acerta Cor do Fornecedor Principal ========================================
-  AcertaCorFornPrincipal;
-  If i<>0 Then DMLojaUnica.CDS_ParamLjFornDia.RecNo:=i;
+//Odiraqui Apagar - 05/11/2018
+//  AcertaCorFornPrincipal;
+//  If i<>0 Then DMLojaUnica.CDS_ParamLjFornDia.RecNo:=i;
+  DMLojaUnica.CDS_ParamLjFornDia.Locate('COD_FORN', sCodForn,[]);
 
-  Lbx_ParamLjDiasFornSelec.Items.Clear;
+//Odiraqui Apagar - 05/11/2018
+//  Lbx_ParamLjDiasFornSelec.Items.Clear;
+
   OdirPanApres.Visible:=False;
 
-  msg('Exclusão Efetuada Com SUCESSO !!','A');
+  If bExcluido Then
+   msg('Exclusão Efetuada Com SUCESSO !!','A');
 
 end;
 
@@ -7448,6 +7470,10 @@ Var
   sForn: String;
   bIncluir: Boolean;
 begin
+
+  If DMLojaUnica.CDS_ParamLjFornDia.IsEmpty Then
+   Exit;
+
   DMLojaUnica.CDS_ParamLjFornDia.Edit;
   If DMLojaUnica.CDS_ParamLjFornDiaPROC.AsString='SIM' Then
    DMLojaUnica.CDS_ParamLjFornDiaPROC.AsString:='NAO'
@@ -7455,31 +7481,33 @@ begin
    DMLojaUnica.CDS_ParamLjFornDiaPROC.AsString:='SIM';
 
   // Acerta Fornecedores Selecionados ==========================================
-  sForn:=DMLojaUnica.CDS_ParamLjFornDiaCODFORNECEDOR.AsString+' - '+DMLojaUnica.CDS_ParamLjFornDiaNOMEFORNECEDOR.AsString;
-
-  bIncluir:=True;
-  For i:=0 to Lbx_ParamLjDiasFornSelec.Count - 1 do
+  If Trim(DMLojaUnica.CDS_ParamLjFornDiaCOD_LOJA.AsString)='' Then
   Begin
-    if (Lbx_ParamLjDiasFornSelec.Items[i]=sForn) and (DMLojaUnica.CDS_ParamLjFornDiaPROC.AsString='NAO') Then
+    sForn:=DMLojaUnica.CDS_ParamLjFornDiaCOD_FORN.AsString+' - '+DMLojaUnica.CDS_ParamLjFornDiaFORN_LOJA.AsString;
+
+    bIncluir:=True;
+    For i:=0 to Lbx_ParamLjDiasFornSelec.Count - 1 do
     Begin
-      Lbx_ParamLjDiasFornSelec.Items.Delete(i);
-      bIncluir:=False;
-      Break;
-    End;
+      if (Lbx_ParamLjDiasFornSelec.Items[i]=sForn) and (DMLojaUnica.CDS_ParamLjFornDiaPROC.AsString='NAO') Then
+      Begin
+        Lbx_ParamLjDiasFornSelec.Items.Delete(i);
+        bIncluir:=False;
+        Break;
+      End;
 
-    if (Lbx_ParamLjDiasFornSelec.Items[i]=sForn) and (DMLojaUnica.CDS_ParamLjFornDiaPROC.AsString='SIM') Then
+      if (Lbx_ParamLjDiasFornSelec.Items[i]=sForn) and (DMLojaUnica.CDS_ParamLjFornDiaPROC.AsString='SIM') Then
+      Begin
+        DMLojaUnica.CDS_ParamLjFornDiaPROC.AsString:='NAO';
+        bIncluir:=False;
+        Break;
+      End;
+    End; // For i:=0 to Lbx_ParamLjDiasFornSelec.Count - 1 do
+
+    If bIncluir Then
     Begin
-      DMLojaUnica.CDS_ParamLjFornDiaPROC.AsString:='NAO';
-      bIncluir:=False;
-      Break;
-    End;
-  End; // For i:=0 to Lbx_ParamLjDiasFornSelec.Count - 1 do
-
-  If bIncluir Then
-  Begin
-    Lbx_ParamLjDiasFornSelec.Items.Add(sForn);
-  End; // If DMLojaUnica.CDS_ParamLjFornDiaPROC.AsString='SIM' Then
-
+      Lbx_ParamLjDiasFornSelec.Items.Add(sForn);
+    End; // If DMLojaUnica.CDS_ParamLjFornDiaPROC.AsString='SIM' Then
+  End; // If Trim(DMLojaUnica.CDS_ParamLjFornDiaCOD_LOJA.AsString)='' Then
   DMLojaUnica.CDS_ParamLjFornDia.Post;
 
 end;
@@ -7494,6 +7522,10 @@ begin
     Else
      Dbg_ParamLjDiasForn.Canvas.Brush.Color:=clWindow;
 
+    // Pinta Fornecedor
+    if DMLojaUnica.CDS_ParamLjFornDiaORDEM.AsInteger=0 then
+     Dbg_ParamLjDiasForn.Canvas.Brush.Color:=clSkyBlue;
+
     If (Column.FieldName='TIPO_CALCULO') Then //--> Este comando altera cor da Celula
     Begin
       If Trim(DMLojaUnica.CDS_ParamLjFornDiaTIPO_CALCULO.AsString)='Diariamente' Then
@@ -7506,19 +7538,20 @@ begin
        Dbg_ParamLjDiasForn.Canvas.Brush.Color:=$00FFFFB3;  //-->> Cor da Celula
     End; // If (Column.FieldName='TIPO_CALCULO') Then //--> Este comando altera cor da Celula
 
-    If (Column.FieldName='NOMEFORNECEDOR') Then //--> Este comando altera cor da Celula
-    Begin
-      If Trim(DMLojaUnica.CDS_ParamLjFornDiaFORN.AsString)='SIM' Then
-      Begin
-        Dbg_ParamLjDiasForn.Canvas.Font.Color:=clWindow; //-->> Cor da Fonte
-        Dbg_ParamLjDiasForn.Canvas.Brush.Color:=clBlue;  //-->> Cor da Celula
-      End;
-
-      If Trim(DMLojaUnica.CDS_ParamLjFornDiaFORN.AsString)='FIL' Then
-      Begin
-        Dbg_ParamLjDiasForn.Canvas.Brush.Color:=$00FFFFCE;  //-->> Cor da Celula
-      End;
-    End; // If (Column.FieldName='PINTA_FORN') Then //--> Este comando altera cor da Celula
+//OdirAqui - Apapgar - 05/11/2018
+//    If (Column.FieldName='NOMEFORNECEDOR') Then //--> Este comando altera cor da Celula
+//    Begin
+//      If Trim(DMLojaUnica.CDS_ParamLjFornDiaFORN.AsString)='SIM' Then
+//      Begin
+//        Dbg_ParamLjDiasForn.Canvas.Font.Color:=clWindow; //-->> Cor da Fonte
+//        Dbg_ParamLjDiasForn.Canvas.Brush.Color:=clBlue;  //-->> Cor da Celula
+//      End;
+//
+//      If Trim(DMLojaUnica.CDS_ParamLjFornDiaFORN.AsString)='FIL' Then
+//      Begin
+//        Dbg_ParamLjDiasForn.Canvas.Brush.Color:=$00FFFFCE;  //-->> Cor da Celula
+//      End;
+//    End; // If (Column.FieldName='PINTA_FORN') Then //--> Este comando altera cor da Celula
 
     Dbg_ParamLjDiasForn.Canvas.FillRect(Rect);
     Dbg_ParamLjDiasForn.DefaultDrawDataCell(Rect,Column.Field,state);
@@ -7679,8 +7712,9 @@ begin
   DMLojaUnica.CDS_ParamLjFornDia.Open;
 
   // Acerta Cor do Fornecedor Principal ========================================
-  AcertaCorFornPrincipal;
-  DMLojaUnica.CDS_ParamLjFornDia.RecNo:=i;
+//Odiraqui Apagar - 05/11/2018
+//  AcertaCorFornPrincipal;
+//  DMLojaUnica.CDS_ParamLjFornDia.RecNo:=i;
 
   Lbx_ParamLjDiasFornSelec.Items.Clear;
 
@@ -7720,19 +7754,16 @@ end;
 
 procedure TFrmGeraPedidosComprasLojas.Dbg_ParamLjDiasFornLojasEnter(Sender: TObject);
 begin
-  // Desabilita Mouse No Grid ==================================================
-  Application.OnMessage:=DesabilitaScrollMouse;
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_ParamLjDiasFornLojasEnter; // Nome do Evento do DBGRID
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
 
   bEnterTab:=False;
-
-
 end;
 
 procedure TFrmGeraPedidosComprasLojas.Dbg_ParamLjDiasFornLojasExit(Sender: TObject);
 begin
-  // Habilita Mouse No Grid ====================================================
-  Application.OnMessage:=HabilitaScrollMouse;
-
   bEnterTab:=True;
 
 end;
@@ -7961,6 +7992,23 @@ begin
     Dbg_GeraOCTotFornc.DefaultDrawDataCell(Rect,Column.Field,state);
   End;
     
+end;
+
+procedure TFrmGeraPedidosComprasLojas.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
+var
+  Sentido: SmallInt;
+begin
+  // primeiramente verificamos se é o evento a ser tratado...
+  If Msg.message = WM_MOUSEWHEEL then
+  Begin
+    Msg.message := WM_KEYDOWN;
+    Msg.lParam := 0;
+    Sentido := HiWord(Msg.wParam);
+    if Sentido > 0 then
+     Msg.wParam := VK_UP
+    else
+     Msg.wParam := VK_DOWN;
+  End; // if Msg.message = WM_MOUSEWHEEL then
 end;
 
 end.

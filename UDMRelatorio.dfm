@@ -59,7 +59,7 @@ object DMRelatorio: TDMRelatorio
     Top = 280
   end
   object frDBDataSet1: TfrDBDataSet
-    DataSet = DMCentralTrocas.CDS_RelReposicao
+    DataSet = DMConciliacao.CDS_CMDepAnaliseDocRel
     Left = 184
     Top = 144
   end
@@ -107,7 +107,7 @@ object DMRelatorio: TDMRelatorio
     InitialZoom = pzDefault
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit]
     RebuildPrinter = False
-    Left = 136
+    Left = 144
     Top = 128
     ReportForm = {19000000}
   end

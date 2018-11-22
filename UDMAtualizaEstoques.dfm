@@ -1,8 +1,8 @@
 object DMAtualizaEstoques: TDMAtualizaEstoques
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 238
-  Top = 110
+  Left = 292
+  Top = 104
   Height = 604
   Width = 631
   object SQLC: TSQLConnection
@@ -178,15 +178,16 @@ object DMAtualizaEstoques: TDMAtualizaEstoques
   end
   object SDS_EmpProcessa: TSQLDataSet
     CommandText = 
-      'SELECT '#13#10'c.cod_filial, c.cod_linx,'#13#10'c.endereco_ip, c.endereco_ip' +
-      '_externo,'#13#10'c.pasta_base_dados, c.des_base_dados,'#13#10'c.cod_emp, c.r' +
-      'azao_social, c.tip_emp,'#13#10'c.ind_ativo, c.dta_inicio_linx, c.dta_i' +
-      'nventario_linx,'#13#10#39'IBDB_'#39'||c.cod_filial "DATABASE",'#13#10#39'IBT_'#39'||c.co' +
-      'd_filial  "TRANSACAO"'#13#10#13#10'FROM EMP_CONEXOES  c'#13#10#13#10'WHERE ((c.ind_a' +
-      'tivo='#39'SIM'#39')'#13#10'       OR'#13#10'       (c.cod_filial='#39'99'#39')'#13#10'       OR'#13#10' ' +
-      '      (c.cod_filial='#39'50'#39'))'#13#10#13#10'--AND c.cod_filial<>'#39'21'#39#13#10'--AND c.' +
-      'cod_filial<>'#39'50'#39#13#10'--AND c.cod_filial<>'#39'99'#39#13#10#13#10'ORDER BY c.cod_fil' +
-      'ial'#13#10
+      'SELECT c.cod_filial, c.cod_linx,'#13#10'       c.endereco_ip, c.endere' +
+      'co_ip_externo,'#13#10'       c.pasta_base_dados, c.des_base_dados,'#13#10'  ' +
+      '     c.cod_emp, c.razao_social, c.tip_emp,'#13#10'       c.ind_ativo, ' +
+      'c.dta_inicio_linx, c.dta_inventario_linx,'#13#10'       '#39'IBDB_'#39'||c.cod' +
+      '_filial "DATABASE",'#13#10'       '#39'IBT_'#39'||c.cod_filial  "TRANSACAO",'#13#10 +
+      '       c.ind_domingo'#13#10#13#10'FROM EMP_CONEXOES c'#13#10'--//Where c.cod_fil' +
+      'ial='#39'99'#39#39';'#13#10#13#10'WHERE ((c.dta_inicio_linx IS NOT NULL AND c.ind_at' +
+      'ivo='#39'SIM'#39')'#13#10'       OR'#13#10'       (c.cod_filial='#39'99'#39')'#13#10'       OR'#13#10'  ' +
+      '     (c.cod_filial='#39'50'#39'))'#13#10#13#10'ORDER BY c.ind_domingo, c.dta_inici' +
+      'o_linx, c.cod_filial'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
@@ -263,6 +264,11 @@ object DMAtualizaEstoques: TDMAtualizaEstoques
     end
     object CDS_EmpProcessaDTA_INVENTARIO_LINX: TDateField
       FieldName = 'DTA_INVENTARIO_LINX'
+    end
+    object CDS_EmpProcessaIND_DOMINGO: TStringField
+      FieldName = 'IND_DOMINGO'
+      FixedChar = True
+      Size = 1
     end
   end
   object SDS_LojaLinx: TSQLDataSet

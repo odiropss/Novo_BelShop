@@ -192,6 +192,8 @@ type
     CDS_EmpProcessaCOD_LINX: TIntegerField;
     SQLQ_Linx: TSQLQuery;
     SQLQuery1: TSQLQuery;
+    CDS_EmpProcessaDTA_INICIO_LINX: TDateField;
+    CDS_EmpProcessaIND_DOMINGO: TStringField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir

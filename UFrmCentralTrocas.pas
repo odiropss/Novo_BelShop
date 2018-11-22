@@ -185,6 +185,15 @@ type
     Bt_ReposLojasDivAlteradas: TJvXPButton;
     Bt_ReposLojasResultados: TJvXPButton;
     JvXPButton2: TJvXPButton;
+    Ts_ControleProducao: TTabSheet;
+    Panel5: TPanel;
+    Bt_ControleProducaoPeriodo: TJvXPButton;
+    Bt_ControleProducaoSalvaConferentes: TJvXPButton;
+    Bt_ControleProducaoFechar: TJvXPButton;
+    Bt_ControleProducaoSalvaSepardores: TJvXPButton;
+    Dbg_ContProdConferencia: TDBGrid;
+    Dbg_ContProdSeparacao: TDBGrid;
+    Splitter2: TSplitter;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -371,6 +380,17 @@ type
     procedure Bt_ReposLojasResultadosClick(Sender: TObject);
     procedure Bt_ReposLojasDivAlteradasClick(Sender: TObject);
     procedure JvXPButton2Click(Sender: TObject);
+    procedure Bt_ControleProducaoPeriodoClick(Sender: TObject);
+    procedure Dbg_ContProdSeparacaoEnter(Sender: TObject);
+    procedure Dbg_ContProdConferenciaEnter(Sender: TObject);
+    procedure Dbg_ContProdConferenciaDrawColumnCell(
+      Sender: TObject; const Rect: TRect; DataCol: Integer;
+      Column: TColumn; State: TGridDrawState);
+    procedure Dbg_ContProdSeparacaoDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure Bt_ControleProducaoSalvaSepardoresClick(Sender: TObject);
+    procedure Bt_ControleProducaoSalvaConferentesClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -434,7 +454,7 @@ implementation
 uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop,
      UDMCentralTrocas, UPesquisaIB, UPesquisa,
      UFrmSelectEmpProcessamento, UFrmSolicitacoes, UDMRelatorio,
-     UFrmLeitoraCodBarras, SysConst;
+     UFrmLeitoraCodBarras, SysConst, UFrmPeriodoApropriacao;
 
 {$R *.dfm}
 
@@ -510,6 +530,22 @@ Begin
              ' AND   l.num_docto='+DMCentralTrocas.CDS_ReposicaoDocsNUM_DOCTO.AsString;
       DMBelShop.SQLC.Execute(MySql,nil,nil)
     End; // If Not bgSiga Then
+
+    // Retira Relatorio Que Não Existam em ES_ESTOQUES_LOJAS ===================
+    MySql:=' DELETE FROM LG_REL_SEPARACAO l'+
+           ' WHERE NOT EXISTS (SELECT 1'+
+           '                   FROM ES_ESTOQUES_LOJAS e'+
+           '                   WHERE e.rel_separacao=l.num_relatorio)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+    // Retira Numero do Relatorio ES_ESTOQUES_LOJAS se NÃO Houve LG_REL_SEPARACAO
+    MySql:=' UPDATE ES_ESTOQUES_LOJAS l'+
+           ' SET l.rel_separacao=0'+
+           ' WHERE l.rel_separacao<>0'+
+           ' AND   NOT EXISTS (SELECT 1'+
+           '                   FROM LG_REL_SEPARACAO sl'+
+           '                   WHERE sl.num_relatorio=l.rel_separacao)';
+    DMBelShop.SQLC.Execute(MySql,nil,nil);
 
     // Atualiza Transacao ======================================================
     DMBelShop.SQLC.Commit(TD);
@@ -5297,7 +5333,7 @@ begin
   //OdirApagar - 08/08/2017 - Não Apresenta a Observação
   //  If FrmBelShop.Mem_Odir.Lines.Count>0 Then
   //   DMRelatorio.frReport1.Dictionary.Variables.Variable['Obs']:=#39+FrmBelShop.Mem_Odir.Text+#39;
-  // Variaveis de Dicionário do Romaneio +======================================
+  // Variaveis de Dicionário do Romaneio =======================================
   //============================================================================
 
   //============================================================================
@@ -7464,6 +7500,7 @@ begin
   USADO EM:
   Ts_AvariasEndercamentos.Pan_AvariasEndercamentos
   Ts_NFePerdas.Pan_NFePerdas
+  Bt_ControleProducaoFechar
  }
 
   DMCentralTrocas.FechaTudoCentralTrocas;
@@ -7482,6 +7519,11 @@ begin
    Dbg_AnaliseReposCorredores
    Dbg_AnaliseReposicoes
    Dbg_AnaliseRepDiaria
+   Dbg_AvariasEndNota
+   Dbg_AvariasEndFornecedores
+   Dbg_NFePerdas
+   Dbg_ContProdSeparacao
+   Dbg_ContProdConferencia
   }
   // Bloquei Ctrl + Delete =====================================================
   If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
@@ -8862,6 +8904,162 @@ begin
     bgMsgReposicao:=True;
     CkCbx_ReposLojasCorredorChange(Self);
   End; // If InputQueryOdir('Selecioção de Romaneio de Separação', 'Scanei o Romaneio' sCodBarras) Then
+
+end;
+
+procedure TFrmCentralTrocas.Bt_ControleProducaoPeriodoClick(Sender: TObject);
+begin
+  // Solicita Período ==========================================================
+  FrmPeriodoApropriacao:=TFrmPeriodoApropriacao.Create(Self);
+  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Text:=DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Text   :=DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+
+  FrmPeriodoApropriacao.ShowModal;
+
+  // Verifica se Prossegue Processamento
+  If Not bgSiga Then
+  Begin
+    FreeAndNil(FrmPeriodoApropriacao);
+    Exit;
+  End;
+
+  sgDtaInicio:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date);
+  sgDtaFim   :=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date);
+  FreeAndNil(FrmPeriodoApropriacao);
+
+  OdirPanApres.Caption:='AGUARDE !! Localizando Produção...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Screen.Cursor:=crAppStart;
+  Refresh;
+
+  DMCentralTrocas.CDS_ContProdSeparacao.Close;
+  DMCentralTrocas.SDS_ContProdSeparacao.Params.ParamByName('DtaI').AsString:=f_Troca('/','.',f_Troca('-','.',sgDtaInicio));
+  DMCentralTrocas.SDS_ContProdSeparacao.Params.ParamByName('DtaF').AsString:=f_Troca('/','.',f_Troca('-','.',sgDtaFim));
+  DMCentralTrocas.CDS_ContProdSeparacao.Open;
+
+  DMCentralTrocas.CDS_ContProdConferencia.Close;
+  DMCentralTrocas.SDS_ContProdConferencia.Params.ParamByName('DtaI').AsString:=f_Troca('/','.',f_Troca('-','.',sgDtaInicio));
+  DMCentralTrocas.SDS_ContProdConferencia.Params.ParamByName('DtaF').AsString:=f_Troca('/','.',f_Troca('-','.',sgDtaFim));
+  DMCentralTrocas.CDS_ContProdConferencia.Open;
+
+  Screen.Cursor:=crDefault;
+  OdirPanApres.Visible:=False;
+
+end;
+
+procedure TFrmCentralTrocas.Dbg_ContProdSeparacaoEnter(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=Dbg_ContProdSeparacaoEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmCentralTrocas.Dbg_ContProdConferenciaEnter(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=Dbg_ContProdConferenciaEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmCentralTrocas.Dbg_ContProdConferenciaDrawColumnCell(
+  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+  State: TGridDrawState);
+begin
+  If (Not DMCentralTrocas.CDS_ContProdConferencia.Active) or (DMCentralTrocas.CDS_ContProdConferencia.IsEmpty) Then
+   Exit;
+
+  // COR Cabeçalho e Totais ====================================================
+  if not (gdSelected in State) Then // Altera Cor da Linhas
+  Begin
+    If DMCentralTrocas.CDS_ContProdConferenciaORDEM.AsInteger in [0, 1, 4] Then
+    Begin
+      Dbg_ContProdConferencia.Canvas.Font.Color:=clWindowText;
+              
+      Dbg_ContProdConferencia.Canvas.Brush.Color:=$00FFFFD5;
+      Dbg_ContProdConferencia.Canvas.Font.Style:=[fsBold];
+    End; // If DMCentralTrocas.CDS_ContProdConferenciaORDEM.AsInteger in [0, 1, 4] Then
+  End; // if not (gdSelected in State) Then
+
+  Dbg_ContProdConferencia.Canvas.FillRect(Rect);
+  Dbg_ContProdConferencia.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  // Alinhamentos ==============================================================
+  DMCentralTrocas.CDS_ContProdConferenciaLINHAS_ALTERADAS.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdConferenciaLINHAS_ALTERADAS_DIF_ZERO.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdConferenciaLINHAS_ALTERADAS_ZERO.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdConferenciaLINHAS_NAO_ALTERADAS.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdConferenciaLINHAS_NFE.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdConferenciaLINHAS_SEM_NFE.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdConferenciaLINHAS_TOTAL.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdConferenciaQTD_ALTERADAS.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdConferenciaQTD_ALTERADAS_ORIGINAL.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdConferenciaQTD_NAO_ALTERADAS.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdConferenciaQTD_NFE.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdConferenciaQTD_SEM_NFE.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdConferenciaQTD_TOTAL_ORIGINAL.Alignment:=taRightJustify;
+end;
+
+procedure TFrmCentralTrocas.Dbg_ContProdSeparacaoDrawColumnCell(
+  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+  State: TGridDrawState);
+begin
+  If (Not DMCentralTrocas.CDS_ContProdSeparacao.Active) or (DMCentralTrocas.CDS_ContProdSeparacao.IsEmpty) Then
+   Exit;
+
+  // COR Cabeçalho e Totais ====================================================
+  if not (gdSelected in State) Then // Altera Cor da Linhas
+  Begin
+    If DMCentralTrocas.CDS_ContProdSeparacaoORDEM.AsInteger in [0, 1, 4] Then
+    Begin
+      Dbg_ContProdSeparacao.Canvas.Font.Color:=clWindowText;
+
+      Dbg_ContProdSeparacao.Canvas.Brush.Color:=$00FFFFD5;
+      Dbg_ContProdSeparacao.Canvas.Font.Style:=[fsBold];
+    End; // If DMCentralTrocas.CDS_ContProdSeparacaoORDEM.AsInteger in [0, 1, 4] Then
+  End; // if not (gdSelected in State) Then
+
+  Dbg_ContProdSeparacao.Canvas.FillRect(Rect);
+  Dbg_ContProdSeparacao.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  // Alinhamentos ==============================================================
+  DMCentralTrocas.CDS_ContProdSeparacaoLINHAS_NSEPARADAS.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdSeparacaoLINHAS_PERCENTUAL.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdSeparacaoLINHAS_SEPARADAS.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdSeparacaoLINHAS_TOTAL.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdSeparacaoQTD_NSEPARADAS.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdSeparacaoQTD_PERCENTUAL.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdSeparacaoQTD_SEPARADAS.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdSeparacaoQTD_TOTAL.Alignment:=taRightJustify;
+end;
+
+procedure TFrmCentralTrocas.Bt_ControleProducaoSalvaSepardoresClick(Sender: TObject);
+begin
+  Dbg_ContProdSeparacao.SetFocus;
+
+  If DMCentralTrocas.CDS_ContProdSeparacao.IsEmpty Then
+   Exit;
+
+  DBGridClipboard(Dbg_ContProdSeparacao);
+
+end;
+
+procedure TFrmCentralTrocas.Bt_ControleProducaoSalvaConferentesClick(
+  Sender: TObject);
+begin
+  Dbg_ContProdConferencia.SetFocus;
+
+  If DMCentralTrocas.CDS_ContProdConferencia.IsEmpty Then
+   Exit;
+
+  DBGridClipboard(Dbg_ContProdConferencia);
 
 end;
 

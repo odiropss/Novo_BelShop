@@ -2096,9 +2096,9 @@ begin
 
   // odiropss odiraqui1: Original: Nao Comentar 1 ///////////////////////
   If Trim(EdtParamStr.Text)='' Then
-   EdtParamStr.Text:='ODIR'; // Agora é Direto por Agendamento - Libera bgJaProcessouUmaVez:=False Para Rodar;
-// EdtParamStr.Text:='OPSS';   // Não Libera Direto - Não Libera bgJaProcessouUmaVez:=False Para Rodar;
-// EdtParamStr.Text:='OPSS_N'; // Não Libera Direto - Não Libera bgJaProcessouUmaVez:=False Para Rodar;
+   EdtParamStr.Text:='ODIR';   // Agora é Direto por Agendamento - Libera bgJaProcessouUmaVez:=False Para Rodar;
+//   EdtParamStr.Text:='OPSS';   // Não Libera Direto - Não Libera bgJaProcessouUmaVez:=False Para Rodar;
+//   EdtParamStr.Text:='OPSS_N'; // Não Libera Direto - Não Libera bgJaProcessouUmaVez:=False Para Rodar;
 
 //==========================
 // Se Parametro = ODIR
@@ -2343,30 +2343,31 @@ begin
     // =========================================================================
 
 //odiropss - SALAO
-    // =========================================================================
-    // Atualiza SERVIÇOS DE SALÃO (MPMS) - INICIO ==============================
-    // =========================================================================
-    MySql:=' SELECT m.ind_tipo'+
-           ' FROM movtos_empresas m'+
-           ' WHERE m.ind_tipo=''OK'''+
-           ' AND m.nomefornecedor=''Servicos Salao''';
-    DMMovtosEmpresas.CDS_Busca.Close;
-    DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
-    DMMovtosEmpresas.CDS_Busca.Open;
-    bgNewIndTipo:=Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString)='';
-    DMMovtosEmpresas.CDS_Busca.Close;
+//    // =========================================================================
+//    // Atualiza SERVIÇOS DE SALÃO (MPMS) - INICIO ==============================
+//    // =========================================================================
+//    MySql:=' SELECT m.ind_tipo'+
+//           ' FROM movtos_empresas m'+
+//           ' WHERE m.ind_tipo=''OK'''+
+//           ' AND m.nomefornecedor=''Servicos Salao''';
+//    DMMovtosEmpresas.CDS_Busca.Close;
+//    DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
+//    DMMovtosEmpresas.CDS_Busca.Open;
+//    bgNewIndTipo:=Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString)='';
+//    DMMovtosEmpresas.CDS_Busca.Close;
+//
+//    If bgNewIndTipo Then
+//    Begin
+//      MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
+//             ' Values ('+
+//             QuotedStr('OK')+', '+
+//             QuotedStr('Servicos Salao')+', '+
+//             QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
+//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+//
+//      AtualizaServicosSalao;
+//    End;
 
-    If bgNewIndTipo Then
-    Begin
-      MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
-             ' Values ('+
-             QuotedStr('OK')+', '+
-             QuotedStr('Servicos Salao')+', '+
-             QuotedStr(f_Troca('/','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))))+')';
-      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-
-      AtualizaServicosSalao;
-    End;
 //    // =========================================================================
 //    // Atualiza SERVIÇOS DE SALÃO (MPMS) - FIM =================================
 //    // =========================================================================
@@ -2465,7 +2466,7 @@ begin
       iCodLojaLinx:=0;
     End;
 
-//odiropss Comentar              
+//odiropss Comentar
 //iCodLojaLinx:=18;
 //if sCodEmpresa='01' Then
 //sCodEmpresa:='18'

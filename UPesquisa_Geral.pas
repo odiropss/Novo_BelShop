@@ -359,7 +359,7 @@ begin
       MySql:=' INSERT INTO TAB_AUXILIAR'+
              ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
              ' VALUES ('+
-             ' 29,'+ // TIP_AUX,
+             ' 29,'+ // TIP_AUX - 29 => LOGISTICA - CADASTRO DE SEPARADORES DE MERCADORIAS
              ' (SELECT COALESCE(MAX(c.cod_aux)+1 ,1) FROM tab_auxiliar c WHERE c.tip_aux=29),'+ // COD_AUX
              QuotedStr(AnsiUpperCase(sNome))+', '+ // DES_AUX
              ' NULL,'+ // DES_AUX1

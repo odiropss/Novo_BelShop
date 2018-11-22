@@ -373,6 +373,7 @@ Var
   iCodProdLinx: Integer;
   b: Boolean;
 Begin
+
   sgDataAtual:=DateToStr(DataHoraServidorFI(DMAtualizaEstoques.SDS_DtaHoraServidor));
   sgHoraAtual:=TimeToStr(DataHoraServidorFI(DMAtualizaEstoques.SDS_DtaHoraServidor));
 
@@ -392,7 +393,7 @@ Begin
     DecimalSeparator:='.';
 
     // Busca Preços Linx =======================================================
-    MySql:=' SELECT'+
+    MySql:=' SELECT DISTINCT'+
            ' pl.cod_produto, pl.cod_auxiliar,'+
            ' COALESCE(dl.preco_custo,0.0000) preco_custo,'+
            ' COALESCE(dl.preco_venda,0.0000) preco_venda,'+
@@ -407,10 +408,13 @@ Begin
 
            ' FROM LINXPRODUTOS pl'+
            '   LEFT JOIN LINXPRODUTOSDETALHES DL  ON dl.cod_produto=pl.cod_produto'+
-           '                                     AND dl.empresa=2'+
+//OdirApagar - 01/11/2018
+//           '                                     AND dl.empresa=2'+
            '   LEFT JOIN LINXPRODUTOSCODBAR bl    ON dl.cod_produto=bl.cod_produto'+
 
            ' WHERE pl.desativado=''N'''+
+           ' AND   dl.preco_venda<>0'+
+           ' AND   TRIM(COALESCE(pl.cod_auxiliar,''''))<>'''''+
 
            ' ORDER BY 1, 4 desc';
     DMAtualizaEstoques.CDS_LojaLinx.Close;
@@ -426,11 +430,11 @@ Begin
     While Not DMAtualizaEstoques.CDS_LojaLinx.Eof do
     Begin
 
-      If DMAtualizaEstoques.CDS_LojaLinx.FieldByName('preco_venda').AsCurrency<>0 Then
+      If sCodProdSidicom<>Trim(DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_auxiliar').AsString) Then
       Begin
         // Inicializa Variaveis ================================================
         iCodProdLinx   :=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_produto').AsInteger;
-        sCodProdSidicom:=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_auxiliar').AsString;
+        sCodProdSidicom:=Trim(DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_auxiliar').AsString);
         sPcCusto       :=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('preco_custo').AsString;
         sPcVenda       :=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('preco_venda').AsString;
         sMargem        :=DMAtualizaEstoques.CDS_LojaLinx.FieldByName('margem').AsString;
@@ -624,7 +628,7 @@ Begin
           // Atualiza Lista:0006 no BELSHOP.FDB ==================================
           // AtualizaLista0006_BELSHOP(MySql, MySqlDescLP6);
         End; // If Trim(sCodProdSidicom)<>'' Then
-      End; // If DMAtualizaEstoques.CDS_LojaLinx.FieldByName('preco_venda').AsCurrency<>0 Then
+      End; // If sCodProdSidicom<>Trim(DMAtualizaEstoques.CDS_LojaLinx.FieldByName('cod_auxiliar').AsString) Then
 
       If DMAtualizaEstoques.CDS_LojaLinx.RecNo mod 1000=0 Then
       Begin
@@ -1265,11 +1269,11 @@ begin
   //============================================================================
 
   //============================================================================
-  // Atualiza Tabela ES_Produtos_MIX ===========================================
+  // Atualiza Tabela ES_PRODUTOS_MIX ===========================================
   //============================================================================
 // OpssAqui
   Tabela_ES_PRODUTOS_MIX;
-  // Atualiza Tabela ES_Produtos_MIX ===========================================
+  // Atualiza Tabela ES_PRODUTOS_MIX ===========================================
   //============================================================================
 
   //============================================================================
@@ -1284,17 +1288,19 @@ begin
          '        c.cod_emp, c.razao_social, c.tip_emp,'+
          '        c.ind_ativo, c.dta_inicio_linx, c.dta_inventario_linx,'+
          '        ''IBDB_''||c.cod_filial "DATABASE",'+
-         '        ''IBT_''||c.cod_filial  "TRANSACAO"'+
+         '        ''IBT_''||c.cod_filial  "TRANSACAO",'+
+         '        c.ind_domingo'+
 
          ' FROM EMP_CONEXOES c'+
 //         ' Where c.cod_filial=''99''';
 
-         ' WHERE ((c.ind_ativo=''SIM'')'+
+         ' WHERE ((c.dta_inicio_linx IS NOT NULL AND c.ind_ativo=''SIM'')'+
          '        OR'+
          '        (c.cod_filial=''99'')'+
          '        OR'+
          '        (c.cod_filial=''50''))'+
-         ' ORDER BY c.cod_filial';
+
+         ' ORDER BY c.ind_domingo, c.dta_inicio_linx, c.cod_filial';
   DMAtualizaEstoques.CDS_EmpProcessa.Close;
   DMAtualizaEstoques.SDS_EmpProcessa.CommandText:=MySql;
   DMAtualizaEstoques.CDS_EmpProcessa.Open;

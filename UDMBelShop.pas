@@ -1158,6 +1158,20 @@ type
     CDS_EmpresaCOD_CLI_LINX: TIntegerField;
     CDS_EmpresaIND_DOMINGO: TStringField;
     CDS_EmpresaCOD_TRINKS: TIntegerField;
+    DS_ComprasEstoqueCD: TDataSource;
+    CDS_ComprasEstoqueCD: TClientDataSet;
+    SDS_ComprasEstoqueCD: TSQLDataSet;
+    DSP_ComprasEstoqueCD: TDataSetProvider;
+    CDS_ComprasEstoqueCDCOD_PRODUTO: TFMTBCDField;
+    CDS_ComprasEstoqueCDDES_PRODUTO: TStringField;
+    CDS_ComprasEstoqueCDIND_CURVA: TStringField;
+    CDS_ComprasEstoqueCDQTD_ESTOQUE: TFMTBCDField;
+    CDS_ComprasEstoqueCDQTD_VENDA15DD: TIntegerField;
+    CDS_ComprasEstoqueCDQTD_DIVERGENCIA: TFMTBCDField;
+    CDS_ComprasEstoqueCDDES_FORNECEDOR: TStringField;
+    CDS_ComprasEstoqueCDDESC_SETOR: TStringField;
+    CDS_ComprasEstoqueCDDESC_COLECAO: TStringField;
+    CDS_ComprasEstoqueCDORDEM: TIntegerField;
 
     //==========================================================================
     // Odir ====================================================================

@@ -1,5 +1,5 @@
 object FrmBelShop: TFrmBelShop
-  Left = 240
+  Left = 234
   Top = 106
   Align = alClient
   BorderIcons = [biSystemMenu, biMinimize]
@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_EstoqueFisicoFinan
+    ActivePage = Ts_OrdemCompra
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -6351,11 +6351,11 @@ object FrmBelShop: TFrmBelShop
           OnClick = Bt_ConEmpresasUsuWindowsClick
         end
         object Button1: TButton
-          Left = 360
+          Left = 356
           Top = 6
-          Width = 93
+          Width = 96
           Height = 25
-          Caption = 'Tabela: Odir1'
+          Caption = 'Arq Tex Fenac'
           TabOrder = 4
           Visible = False
           OnClick = Button1Click
@@ -7282,7 +7282,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_OCGeraOrdemCompra
+        ActivePage = Ts_OCGeraEditaOrdemCompra
         Align = alClient
         TabOrder = 0
         OnChange = PC_OrdemCompraChange
@@ -11507,61 +11507,6 @@ object FrmBelShop: TFrmBelShop
                     Visible = True
                   end>
               end
-              object StB_GeraOCEdit: TdxStatusBar
-                Left = 0
-                Top = 356
-                Width = 955
-                Height = 20
-                Panels = <
-                  item
-                    PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-                    PanelStyle.Alignment = taCenter
-                    PanelStyle.Color = clSilver
-                    Fixed = False
-                    Text = '<F4> Localiza Produto'
-                    Width = 150
-                  end
-                  item
-                    PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-                    PanelStyle.Alignment = taCenter
-                    PanelStyle.Color = clSilver
-                    BiDiMode = bdRightToLeft
-                    Fixed = False
-                    ParentBiDiMode = False
-                    Text = '<F2> Altera Valor Unit'#225'rio'
-                    Width = 180
-                  end
-                  item
-                    PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-                    PanelStyle.Alignment = taCenter
-                    PanelStyle.Color = clSilver
-                    Fixed = False
-                    Text = '<F3> Altera Percentual de Desconto'
-                    Width = 250
-                  end
-                  item
-                    PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-                    PanelStyle.Alignment = taCenter
-                    PanelStyle.Color = clSilver
-                    Fixed = False
-                    Text = '<F5> Altera % Desc MIX'
-                    Width = 150
-                  end
-                  item
-                    PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
-                    PanelStyle.Alignment = taCenter
-                    PanelStyle.Color = clSilver
-                    Fixed = False
-                    Text = '<F6> Ver Tr'#226'nsito'
-                    Width = 150
-                  end>
-                PaintStyle = stpsOffice11
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -11
-                Font.Name = 'MS Sans Serif'
-                Font.Style = [fsBold]
-              end
               object Dbg_GeraOCEditaProdutos: TDBGrid
                 Left = 0
                 Top = 0
@@ -11575,9 +11520,9 @@ object FrmBelShop: TFrmBelShop
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
-                Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+                Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit, dgMultiSelect]
                 ParentFont = False
-                TabOrder = 2
+                TabOrder = 1
                 TitleFont.Charset = DEFAULT_CHARSET
                 TitleFont.Color = clWhite
                 TitleFont.Height = -11
@@ -11619,7 +11564,7 @@ object FrmBelShop: TFrmBelShop
                 BevelInner = bvLowered
                 BevelWidth = 2
                 Color = 13816530
-                TabOrder = 3
+                TabOrder = 2
                 DesignSize = (
                   955
                   40)
@@ -11813,6 +11758,66 @@ object FrmBelShop: TFrmBelShop
                   OnClick = Rb_GeraOCEditaTodosItensClick
                   OnKeyUp = Rb_GeraOCEditaTodosItensKeyUp
                 end
+              end
+              object StB_GeraOCEdit: TdxStatusBar
+                Left = 0
+                Top = 356
+                Width = 955
+                Height = 20
+                Panels = <
+                  item
+                    PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                    PanelStyle.Alignment = taCenter
+                    PanelStyle.Color = clSilver
+                    Text = '<F6> Marcar Todos'
+                    Width = 150
+                  end
+                  item
+                    PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                    PanelStyle.Alignment = taCenter
+                    Text = '<F7> DesMarcar Todos'
+                    Width = 164
+                  end
+                  item
+                    PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                    PanelStyle.Alignment = taCenter
+                    PanelStyle.Color = clSilver
+                    BiDiMode = bdRightToLeft
+                    Fixed = False
+                    ParentBiDiMode = False
+                    Text = '<F2> Altera $ Unit'#225'rio'
+                    Width = 150
+                  end
+                  item
+                    PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                    PanelStyle.Alignment = taCenter
+                    PanelStyle.Color = clSilver
+                    Fixed = False
+                    Text = '<F4> Localiza Produto'
+                    Width = 140
+                  end
+                  item
+                    PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                    PanelStyle.Alignment = taCenter
+                    PanelStyle.Color = clSilver
+                    Fixed = False
+                    Text = '<F3> Altera % de Desconto'
+                    Width = 170
+                  end
+                  item
+                    PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+                    PanelStyle.Alignment = taCenter
+                    PanelStyle.Color = clSilver
+                    Fixed = False
+                    Text = '<F5> Altera % Desconto MIX'
+                    Width = 150
+                  end>
+                PaintStyle = stpsOffice11
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
               end
             end
           end
@@ -14722,7 +14727,7 @@ object FrmBelShop: TFrmBelShop
         Top = 0
         Width = 971
         Height = 536
-        ActivePage = Ts_EstFisFinaResutadoGiroEstoque
+        ActivePage = Ts_EstFisFinaFiltros
         Align = alClient
         TabOrder = 0
         OnChange = PC_EstoqueFisicoFinanChange
@@ -26497,7 +26502,6 @@ object FrmBelShop: TFrmBelShop
           DDDDD0000000}
         Caption = 'Par'#226'metros de Lojas'
         HelpContext = 1
-        Visible = False
         OnClick = SubMenuParmetrosdeLojasClick
       end
       object N17: TMenuItem
@@ -28581,6 +28585,55 @@ object FrmBelShop: TFrmBelShop
           Caption = 'Endere'#231'amento'
           HelpContext = 1
           OnClick = SubMenuCentroDistAnaliseAnalReposicoesEnderecoClick
+        end
+        object SubMenuCentroDistControleProducao: TMenuItem
+          Tag = 160404
+          Bitmap.Data = {
+            26050000424D260500000000000036040000280000000F0000000F0000000100
+            080000000000F0000000400B0000400B00000001000000000000000000000000
+            BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C000C0DCC000F0CA
+            A600800000008080000000800000008080000000800080008000FFFBF0008080
+            400000FF800000404000A6CAF0000080FF00A0A0A40000408000FF0080004000
+            8000804000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            000000000000000000000000000000000000F0FBFF00A4A0A000808080000000
+            FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00070707070707
+            F7F70707070707070700070707070707F7F9F707070707070700070707070707
+            F7F9F9F7070707070700070707070707F7F9F9F9F7070707070007F7F7F7F7F7
+            F7F9F9F9F9F70707070007F7F9F9F9F9F9F9F9F9F9F9F707070007F7F9F9F9F9
+            F9F9F9F9F9F9F9F7070007F7F9F9F9F9F9F9F9F9F9F9F9F9070007F7F9F9F9F9
+            F9F9F9F9F9F9F90707000707F9F9F9F9F9F9F9F9F9F907070700070707070707
+            07F9F9F9F9070707070007070707070707F9F9F9070707070700070707070707
+            07F9F90707070707070007070707070707F90707070707070700070707070707
+            07070707070707070700}
+          Caption = 'Controle de Produ'#231#227'o'
+          HelpContext = 1
+          OnClick = SubMenuCentroDistControleProducaoClick
         end
       end
       object N49: TMenuItem

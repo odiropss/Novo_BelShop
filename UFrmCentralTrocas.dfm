@@ -1,6 +1,6 @@
 object FrmCentralTrocas: TFrmCentralTrocas
-  Left = 240
-  Top = 79
+  Left = 239
+  Top = 113
   Align = alClient
   AutoSize = True
   BorderIcons = [biSystemMenu]
@@ -2348,7 +2348,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         end
         object Bt_ReposLojasDivAlteradas: TJvXPButton
           Tag = 5
-          Left = 552
+          Left = 550
           Top = 2
           Width = 118
           Height = 36
@@ -2367,7 +2367,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           OnClick = Bt_ReposLojasDivAlteradasClick
         end
         object JvXPButton2: TJvXPButton
-          Left = 392
+          Left = 390
           Top = 2
           Width = 118
           Height = 36
@@ -3959,7 +3959,8 @@ object FrmCentralTrocas: TFrmCentralTrocas
           TitleFont.Style = [fsBold]
           OnDrawColumnCell = Dbg_AvariasEndFornecedoresDrawColumnCell
           OnEnter = Dbg_AvariasEndFornecedoresEnter
-          OnKeyUp = Dbg_AvariasEndFornecedoresKeyUp
+          OnKeyDown = Dbg_NotasEntDevProdutosKeyDown
+          OnKeyUp = Dbg_NotasEntDevProdutosKeyDown
           Columns = <
             item
               Expanded = False
@@ -4098,6 +4099,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           TitleFont.Style = [fsBold]
           OnDrawColumnCell = Dbg_AvariasEndNotaDrawColumnCell
           OnEnter = Dbg_AvariasEndNotaEnter
+          OnKeyDown = Dbg_NotasEntDevProdutosKeyDown
           Columns = <
             item
               Expanded = False
@@ -4453,6 +4455,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           TitleFont.Name = 'MS Sans Serif'
           TitleFont.Style = [fsBold]
           OnEnter = Dbg_NFePerdasEnter
+          OnKeyDown = Dbg_NotasEntDevProdutosKeyDown
           Columns = <
             item
               Alignment = taCenter
@@ -4720,10 +4723,473 @@ object FrmCentralTrocas: TFrmCentralTrocas
         end
       end
     end
+    object Ts_ControleProducao: TTabSheet
+      Tag = 9999
+      Caption = 'Controle de Produ'#231#227'o'
+      ImageIndex = 7
+      object Splitter2: TSplitter
+        Left = 0
+        Top = 219
+        Width = 1094
+        Height = 5
+        Cursor = crVSplit
+        Align = alTop
+        Color = clBlue
+        ParentColor = False
+      end
+      object Panel5: TPanel
+        Left = 0
+        Top = 513
+        Width = 1094
+        Height = 37
+        Align = alBottom
+        BevelInner = bvLowered
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+        DesignSize = (
+          1094
+          37)
+        object Bt_ControleProducaoPeriodo: TJvXPButton
+          Tag = 1
+          Left = 2
+          Top = 2
+          Width = 121
+          Height = 33
+          Caption = 'Per'#237'odo'
+          TabOrder = 0
+          TabStop = False
+          Glyph.Data = {
+            07544269746D6170D2040000424DD20400000000000076000000280000002100
+            00001F00000001000800000000005C0400000000000000000000100000000000
+            0000000000000000800000800000008080008000000080008000808000008080
+            8000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00080808080808080808080808080808080808080808080808080808080808
+            0808080B00000808080808070707070707070707070707070707070708080808
+            080808080808080B000008080808000000000000000000000000000000000707
+            07080808080808080808080B0000080808080007080808080808080808080808
+            0808000707070808080808080808080B00000808080800070707070707070707
+            070707070707080007070708080808080808080B00000808080800080F0F0F0F
+            0F0F0F0F0F0F0F0F0F0F070700070707080808080808080B0000080808080007
+            0707070707070707070707070707080707000707070808080808080B00000808
+            080800080F0F0F0F0F0F0F0F0F0F0F0F0F0F070707070007070708080808080B
+            0000080808080007070707070707070707070707070708070707070007070708
+            0808080B000008080808000F0F0F0F0F0F0F0F0F0F0F0F0F0F0F070707070707
+            000707070808080B000008080808000707070707070707070707070707070707
+            07070707070007070708080B00000808070700080F0F0F0F0F0F0F0F0F0F0F0F
+            0F0F0F0707070707070007070707080B0000080000000000070F0F0F0F000000
+            0F0F00000F0F0F0F07070707070008080808080B000008000F0F070F00070F0F
+            0F0F0F07000F0F07000F0F0F0F070707070008080808080B000008000F0F070F
+            0F00070F0F0F000007000F0F07000F0F0F0F0707070008080808080B00000800
+            08080808080800070F0F000F0F000F0F0F0F000F0F0F0F07070008080808080B
+            000008000F0F070F0F070F00070F0F0000070F07000000070F0F0F0F07000808
+            0808080B000008000F0F070F0F070F0F00070F0F0F0F0F0F0F0F0F0F0F0F0F0F
+            070008080808080B000008000808080808080808080000000000000000000000
+            00000000000008080808080B000008000F0F070F0F070F0F070F0F070F0F070F
+            0F070F0F00070808080808080808080B000008000F0F070F0F070F0F070F0F07
+            0F0F070F0F070F0F00070808080808080808080B000008000808080808080808
+            08080808080808080808080800070808080808080808080B000008000F0F070F
+            0F070F0F070F0F070F0F070F0F070F0F00070808080808080808080B00000800
+            0F0F070F0F070F0F070F0F070F0F070F0F070F0F00070808080808080808080B
+            0000080008080808080808080808080808080808080808080007080808080808
+            0808080B000008000F0F070F0F070F0F070F0F070F0F070F0F070F0F00070808
+            080808080808080B000008000F0F070F0F070F0F070F0F070F0F070F0F070F0F
+            00070808080808080808080B0000080000000000000000000000000000000000
+            0000000000070808080808080808080B000008000E0E0E0E0E0E0E0E0E0E0E0E
+            0E0E0E0E0E0E0E0E00070808080808080808080B000008000000000000000000
+            00000000000000000000000000080808080808080808080B0000080808080808
+            0808080808080808080808080808080808080808080808080808080B0000}
+          ShowFocusRect = True
+          Spacing = 10
+          Align = alLeft
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          Style.Theme = OfficeXP
+          OnClick = Bt_ControleProducaoPeriodoClick
+        end
+        object Bt_ControleProducaoSalvaConferentes: TJvXPButton
+          Tag = 4
+          Left = 511
+          Top = 2
+          Width = 150
+          Height = 33
+          Caption = '    Conferentes'#13#10'Salvar em Mem'#243'ria'
+          TabOrder = 1
+          Glyph.Data = {
+            07544269746D617066010000424D660100000000000076000000280000001400
+            0000140000000100040000000000F00000000000000000000000100000001000
+            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00333333333333333333330000333333000000000000030000333333078888
+            8888880300003333330F77777777780300003333330F99777777780300003333
+            330FFFFFFFFFF703000033333300000000000003000033333333333333333333
+            0000333333333333330033330000333333333333300003330000300000000333
+            00000033000030FFFFFF033333003333000030F4444F033333003333000030FF
+            FFFF033338003333000030F4444F030000083333000030FFFFFF030000833333
+            000030F44F00033333333333000030FFFF003333333333330000300000033333
+            333333330000333333333333333333330000}
+          ShowFocusRect = True
+          Spacing = 10
+          Anchors = [akLeft, akTop, akBottom]
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_ControleProducaoSalvaConferentesClick
+        end
+        object Bt_ControleProducaoFechar: TJvXPButton
+          Left = 978
+          Top = 2
+          Width = 114
+          Height = 33
+          Caption = 'Fechar'
+          TabOrder = 2
+          TabStop = False
+          Glyph.Data = {
+            07544269746D6170D6060000424DD60600000000000036040000280000001900
+            0000180000000100080000000000A0020000C30E0000C30E0000000100000000
+            0000000000007B000000FF000000007B00007B7B000000FF0000FFFF0000007B
+            7B007B7B7B00BDBDBD0000FFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+            FF00090909090909090909090909090909080909090909090909090000000909
+            0909090909090909090909090808080909090909090909000000090909090909
+            0909090909090909080404080909090909090900000009090909090909090909
+            0909090908060604080909090909090000000909090909090909090909090909
+            0806060404080909090909000000090909090909090909090909090908060604
+            0404080909090900000000000000000000000000090909090806060404040000
+            0000080000000909090909090909090008080808000606040404000809090900
+            0000090909090909090808000A0A0A0A07060604040400080909090000000909
+            09090909080004000A0A0A0A0706060404040008090909000000090909090909
+            080004000A0A0A0A070606040404000809090900000009090908080808040404
+            070A0A0A07060404000400080909090000000909080808080804060404070A0A
+            0706040800040008090909000000090400000000000406060404070A07060604
+            0404000809090900000008040606060606060606060404070706060404040008
+            0909090000000804060B0B0B0B0B0B0B06060407070606040404000809090900
+            0000090404040404040406060604070A07060604040400080909090000000909
+            080808080804060604070A0A0706060404040008090909000000090909090909
+            08040604070A0A0A070606040404000809090900000009090909090908040400
+            0A0A0A0A0704060404040008090909000000090909090909080000000A0A0A0A
+            0A070406040400080909090000000909090909090909080A0A0A0A0A0A0A0A04
+            0604000809090900000009090909090909090807070707070707070004040008
+            0909090000000909090909090909090808080808080808080808080909090900
+            0000}
+          ShowFocusRect = True
+          Spacing = 10
+          Align = alRight
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_AnaliseRepDiariaFecharClick
+        end
+        object Bt_ControleProducaoSalvaSepardores: TJvXPButton
+          Tag = 4
+          Left = 303
+          Top = 2
+          Width = 150
+          Height = 33
+          Caption = '    Separdores'#13#10'Salvar em Mem'#243'ria'
+          TabOrder = 3
+          Glyph.Data = {
+            07544269746D617066010000424D660100000000000076000000280000001400
+            0000140000000100040000000000F00000000000000000000000100000001000
+            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00333333333333333333330000333333000000000000030000333333078888
+            8888880300003333330F77777777780300003333330F99777777780300003333
+            330FFFFFFFFFF703000033333300000000000003000033333333333333333333
+            0000333333333333330033330000333333333333300003330000300000000333
+            00000033000030FFFFFF033333003333000030F4444F033333003333000030FF
+            FFFF033338003333000030F4444F030000083333000030FFFFFF030000833333
+            000030F44F00033333333333000030FFFF003333333333330000300000033333
+            333333330000333333333333333333330000}
+          ShowFocusRect = True
+          Spacing = 10
+          Anchors = [akLeft, akTop, akBottom]
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_ControleProducaoSalvaSepardoresClick
+        end
+      end
+      object Dbg_ContProdConferencia: TDBGrid
+        Left = 0
+        Top = 224
+        Width = 1094
+        Height = 289
+        Align = alClient
+        DataSource = DMCentralTrocas.DS_ContProdConferencia
+        FixedColor = clTeal
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+        ParentFont = False
+        TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWhite
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = [fsBold]
+        OnDrawColumnCell = Dbg_ContProdConferenciaDrawColumnCell
+        OnEnter = Dbg_ContProdConferenciaEnter
+        OnKeyDown = Dbg_NotasEntDevProdutosKeyDown
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'DES_USUARIO'
+            Width = 246
+            Visible = True
+          end
+          item
+            Color = 16053492
+            Expanded = False
+            FieldName = 'LINHAS_TOTAL'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Color = 16053492
+            Expanded = False
+            FieldName = 'LINHAS_NAO_ALTERADAS'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Color = 16053492
+            Expanded = False
+            FieldName = 'LINHAS_ALTERADAS'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Color = 16053492
+            Expanded = False
+            FieldName = 'LINHAS_ALTERADAS_DIF_ZERO'
+            Title.Alignment = taRightJustify
+            Width = 112
+            Visible = True
+          end
+          item
+            Color = 16053492
+            Expanded = False
+            FieldName = 'LINHAS_ALTERADAS_ZERO'
+            Title.Alignment = taRightJustify
+            Width = 110
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_TOTAL_ORIGINAL'
+            Title.Alignment = taRightJustify
+            Width = 90
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_NAO_ALTERADAS'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_ALTERADAS_ORIGINAL'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_ALTERADAS'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'LINHAS_NFE'
+            Title.Alignment = taRightJustify
+            Width = 76
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'LINHAS_SEM_NFE'
+            Title.Alignment = taRightJustify
+            Width = 90
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_NFE'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_SEM_NFE'
+            Title.Alignment = taRightJustify
+            Width = 80
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'ORDEM'
+            Visible = True
+          end>
+      end
+      object Dbg_ContProdSeparacao: TDBGrid
+        Left = 0
+        Top = 0
+        Width = 1094
+        Height = 219
+        Align = alTop
+        DataSource = DMCentralTrocas.DS_ContProdSeparacao
+        FixedColor = clTeal
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+        ParentFont = False
+        TabOrder = 2
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWhite
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = [fsBold]
+        OnDrawColumnCell = Dbg_ContProdSeparacaoDrawColumnCell
+        OnEnter = Dbg_ContProdSeparacaoEnter
+        OnKeyDown = Dbg_NotasEntDevProdutosKeyDown
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'NOME_SEPARDOR'
+            Width = 246
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'LINHAS_SEPARADAS'
+            Title.Alignment = taRightJustify
+            Width = 110
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'LINHAS_NSEPARADAS'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Linhas '#209' Separadas'
+            Width = 124
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'LINHAS_TOTAL'
+            Title.Alignment = taRightJustify
+            Width = 74
+            Visible = True
+          end
+          item
+            Color = 8454143
+            Expanded = False
+            FieldName = 'LINHAS_PERCENTUAL'
+            Title.Alignment = taRightJustify
+            Width = 66
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_SEPARADAS'
+            Title.Alignment = taRightJustify
+            Width = 96
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_NSEPARADAS'
+            Title.Alignment = taRightJustify
+            Width = 108
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_TOTAL'
+            Title.Alignment = taRightJustify
+            Width = 66
+            Visible = True
+          end
+          item
+            Color = clYellow
+            Expanded = False
+            FieldName = 'QTD_PERCENTUAL'
+            Title.Alignment = taRightJustify
+            Width = 66
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'ORDEM'
+            Visible = True
+          end>
+      end
+    end
   end
   object OdirPanApres: TPanel
-    Left = 768
-    Top = 220
+    Left = 888
+    Top = 412
     Width = 89
     Height = 33
     BevelInner = bvLowered
@@ -4760,16 +5226,16 @@ object FrmCentralTrocas: TFrmCentralTrocas
     Font.Style = [fsBold]
     StartColor = 15522303
     EndColor = 8388863
-    Left = 1000
-    Top = 176
+    Left = 1008
+    Top = 320
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message
-    Left = 900
-    Top = 151
+    Left = 884
+    Top = 319
   end
   object SaveDialog: TSaveDialog
-    Left = 719
-    Top = 112
+    Left = 711
+    Top = 336
   end
 end

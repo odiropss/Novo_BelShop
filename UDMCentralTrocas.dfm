@@ -2,8 +2,8 @@ object DMCentralTrocas: TDMCentralTrocas
   OldCreateOrder = False
   OnCreate = DataModuleCreate
   Left = 242
-  Top = 114
-  Height = 607
+  Top = 116
+  Height = 612
   Width = 1053
   object SDS_Transf_Cd: TSQLDataSet
     CommandText = 
@@ -26,14 +26,14 @@ object DMCentralTrocas: TDMCentralTrocas
         Value = '1'
       end>
     SQLConnection = DMBelShop.SQLC
-    Left = 48
-    Top = 40
+    Left = 62
+    Top = 64
   end
   object DSP_Transf_Cd: TDataSetProvider
     DataSet = SDS_Transf_Cd
     Options = [poRetainServerOrder]
-    Left = 104
-    Top = 56
+    Left = 118
+    Top = 80
   end
   object CDS_Transf_Cd: TClientDataSet
     Aggregates = <>
@@ -41,8 +41,8 @@ object DMCentralTrocas: TDMCentralTrocas
     Params = <>
     ProviderName = 'DSP_Transf_Cd'
     AfterScroll = CDS_Transf_CdAfterScroll
-    Left = 165
-    Top = 40
+    Left = 179
+    Top = 64
     object CDS_Transf_CdNUM_SOLICITACAO: TIntegerField
       FieldName = 'NUM_SOLICITACAO'
     end
@@ -121,15 +121,15 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DS_Transf_Cd: TDataSource
     DataSet = CDS_Transf_Cd
-    Left = 216
-    Top = 56
+    Left = 230
+    Top = 80
   end
   object CDS_NotasEntrada: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_NotasEntrada'
-    Left = 155
-    Top = 112
+    Left = 169
+    Top = 136
     object CDS_NotasEntradaNUM_SOLICITACAO: TIntegerField
       FieldName = 'NUM_SOLICITACAO'
     end
@@ -238,26 +238,26 @@ object DMCentralTrocas: TDMCentralTrocas
         ParamType = ptInput
       end>
     SQLConnection = DMBelShop.SQLC
-    Left = 40
-    Top = 112
+    Left = 54
+    Top = 136
   end
   object DSP_NotasEntrada: TDataSetProvider
     DataSet = SDS_NotasEntrada
     Options = [poRetainServerOrder]
-    Left = 96
-    Top = 128
+    Left = 110
+    Top = 152
   end
   object DS_NotasEntrada: TDataSource
     DataSet = CDS_NotasEntrada
-    Left = 208
-    Top = 128
+    Left = 222
+    Top = 152
   end
   object CDS_NotasEntr: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_NotasEntr'
-    Left = 171
-    Top = 224
+    Left = 169
+    Top = 208
     object CDS_NotasEntrNUM_SEQ: TIntegerField
       FieldName = 'NUM_SEQ'
     end
@@ -321,21 +321,21 @@ object DMCentralTrocas: TDMCentralTrocas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 56
-    Top = 224
+    Left = 54
+    Top = 208
   end
   object DSP_NotasEntr: TDataSetProvider
     DataSet = SDS_NotasEntr
     Options = [poRetainServerOrder]
-    Left = 112
-    Top = 240
+    Left = 110
+    Top = 224
   end
   object CDS_RomaneioDev: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_RomaneioDev'
-    Left = 179
-    Top = 288
+    Left = 177
+    Top = 272
     object CDS_RomaneioDevDES_LOJA: TStringField
       FieldName = 'DES_LOJA'
       Size = 69
@@ -488,27 +488,27 @@ object DMCentralTrocas: TDMCentralTrocas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 56
-    Top = 288
+    Left = 54
+    Top = 272
   end
   object DSP_RomaneioDev: TDataSetProvider
     DataSet = SDS_RomaneioDev
     Options = [poRetainServerOrder]
-    Left = 112
-    Top = 304
+    Left = 110
+    Top = 288
   end
   object DS_RomaneioDev: TDataSource
     DataSet = CDS_RomaneioDev
-    Left = 248
-    Top = 304
+    Left = 232
+    Top = 288
   end
   object CDS_V_Geral: TClientDataSet
     Aggregates = <>
     AggregatesActive = True
     Params = <>
     ProviderName = 'DSP_Transf_Cd'
-    Left = 277
-    Top = 16
+    Left = 29
+    Top = 8
     object CDS_V_GeralCodBarras: TStringField
       FieldName = 'CodBarras'
       Size = 13
@@ -521,8 +521,8 @@ object DMCentralTrocas: TDMCentralTrocas
     ProviderName = 'DSP_ReposicaoDocs'
     AfterOpen = CDS_ReposicaoDocsAfterOpen
     AfterScroll = CDS_ReposicaoDocsAfterScroll
-    Left = 504
-    Top = 48
+    Left = 448
+    Top = 24
     object CDS_ReposicaoDocsCOD_LOJA: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'C'#243'd'
@@ -608,19 +608,19 @@ object DMCentralTrocas: TDMCentralTrocas
         Value = '01.08.2016'
       end>
     SQLConnection = DMBelShop.SQLC
-    Left = 392
-    Top = 40
+    Left = 352
+    Top = 16
   end
   object DSP_ReposicaoDocs: TDataSetProvider
     DataSet = SDS_ReposicaoDocs
     Options = [poRetainServerOrder]
-    Left = 448
-    Top = 56
+    Left = 400
+    Top = 32
   end
   object DS_ReposicaoDocs: TDataSource
     DataSet = CDS_ReposicaoDocs
-    Left = 576
-    Top = 56
+    Left = 504
+    Top = 32
   end
   object CDS_ReposicaoTransf: TClientDataSet
     Aggregates = <>
@@ -629,8 +629,8 @@ object DMCentralTrocas: TDMCentralTrocas
     Params = <>
     ProviderName = 'DSP_ReposicaoTransf'
     AfterOpen = CDS_ReposicaoTransfAfterOpen
-    Left = 507
-    Top = 104
+    Left = 448
+    Top = 80
     object CDS_ReposicaoTransfNUM_SEQ: TSmallintField
       DisplayLabel = 'Seq'
       FieldName = 'NUM_SEQ'
@@ -766,19 +766,19 @@ object DMCentralTrocas: TDMCentralTrocas
         Value = '1'
       end>
     SQLConnection = DMBelShop.SQLC
-    Left = 392
-    Top = 104
+    Left = 352
+    Top = 80
   end
   object DSP_ReposicaoTransf: TDataSetProvider
     DataSet = SDS_ReposicaoTransf
     Options = [poRetainServerOrder]
-    Left = 448
-    Top = 120
+    Left = 400
+    Top = 96
   end
   object DS_ReposicaoTransf: TDataSource
     DataSet = CDS_ReposicaoTransf
-    Left = 576
-    Top = 120
+    Left = 504
+    Top = 96
   end
   object SDS_RelReposicao: TSQLDataSet
     CommandText = 
@@ -807,21 +807,21 @@ object DMCentralTrocas: TDMCentralTrocas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 400
-    Top = 176
+    Left = 352
+    Top = 152
   end
   object DSP_RelReposicao: TDataSetProvider
     DataSet = SDS_RelReposicao
     Options = [poRetainServerOrder]
-    Left = 459
-    Top = 192
+    Left = 395
+    Top = 168
   end
   object CDS_RelReposicao: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_RelReposicao'
-    Left = 507
-    Top = 176
+    Left = 448
+    Top = 152
     object CDS_RelReposicaoLOJA: TStringField
       FieldName = 'LOJA'
       Size = 69
@@ -893,22 +893,22 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DS_AnaliseReposicao: TDataSource
     DataSet = CDS_V_AnaliseReposicao
-    Left = 864
+    Left = 768
     Top = 8
   end
   object CDS_V_AnaliseReposicao: TClientDataSet
     Aggregates = <>
     Params = <>
     AfterScroll = CDS_Transf_CdAfterScroll
-    Left = 790
+    Left = 718
     Top = 16
   end
   object CDS_V_ReposDivergencias: TClientDataSet
     Aggregates = <>
     Params = <>
     AfterScroll = CDS_V_ReposDivergenciasAfterScroll
-    Left = 472
-    Top = 240
+    Left = 448
+    Top = 216
     object CDS_V_ReposDivergenciasCOD_PRODUTO: TStringField
       DisplayLabel = 'C'#243'digo'
       FieldName = 'COD_PRODUTO'
@@ -968,14 +968,14 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DS_V_ReposDivergencias: TDataSource
     DataSet = CDS_V_ReposDivergencias
-    Left = 520
-    Top = 256
+    Left = 504
+    Top = 232
   end
   object CDS_ParamTransf: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_ParamTransf'
-    Left = 848
+    Left = 718
     Top = 96
     object CDS_ParamTransfRAZAO_SOCIAL: TStringField
       DisplayLabel = 'Descri'#231#227'o Loja'
@@ -1009,31 +1009,31 @@ object DMCentralTrocas: TDMCentralTrocas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 736
+    Left = 624
     Top = 96
   end
   object DSP_ParamTransf: TDataSetProvider
     DataSet = SDS_ParamTransf
     Options = [poRetainServerOrder]
-    Left = 792
+    Left = 672
     Top = 112
   end
   object DS_ParamTransf: TDataSource
     DataSet = CDS_ParamTransf
-    Left = 909
+    Left = 768
     Top = 112
   end
   object DS_QtdCxCDProdutos: TDataSource
     DataSet = CDS_QtdCxCDProdutos
-    Left = 560
-    Top = 432
+    Left = 504
+    Top = 408
   end
   object CDS_QtdCxCDProdutos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_QtdCxCDProdutos'
-    Left = 512
-    Top = 424
+    Left = 448
+    Top = 400
     object CDS_QtdCxCDProdutosCODIGO: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'C'#243'd'
@@ -1059,8 +1059,8 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DSP_QtdCxCDProdutos: TDataSetProvider
     DataSet = SDS_QtdCxCDProdutos
-    Left = 472
-    Top = 438
+    Left = 400
+    Top = 414
   end
   object SDS_QtdCxCDProdutos: TSQLDataSet
     CommandText = 
@@ -1070,20 +1070,20 @@ object DMCentralTrocas: TDMCentralTrocas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 416
-    Top = 424
+    Left = 352
+    Top = 400
   end
   object DS_QtdCxCDGrupos: TDataSource
     DataSet = CDS_QtdCxCDGrupos
-    Left = 560
-    Top = 496
+    Left = 504
+    Top = 472
   end
   object CDS_QtdCxCDGrupos: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_QtdCxCDGrupos'
-    Left = 512
-    Top = 488
+    Left = 448
+    Top = 464
     object CDS_QtdCxCDGruposCODIGO: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'Cod'
@@ -1108,8 +1108,8 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DSP_QtdCxCDGrupos: TDataSetProvider
     DataSet = SDS_QtdCxCDGrupos
-    Left = 472
-    Top = 502
+    Left = 400
+    Top = 478
   end
   object SDS_QtdCxCDGrupos: TSQLDataSet
     CommandText = 
@@ -1121,14 +1121,14 @@ object DMCentralTrocas: TDMCentralTrocas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 416
-    Top = 488
+    Left = 352
+    Top = 464
   end
   object CDS_AnalRepDiaria: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_AnalRepDiaria'
-    Left = 848
+    Left = 718
     Top = 184
     object CDS_AnalRepDiariaORDEM: TIntegerField
       FieldName = 'ORDEM'
@@ -1273,18 +1273,18 @@ object DMCentralTrocas: TDMCentralTrocas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 736
+    Left = 624
     Top = 184
   end
   object DSP_AnalRepDiaria: TDataSetProvider
     DataSet = SDS_AnalRepDiaria
     Options = [poRetainServerOrder]
-    Left = 792
+    Left = 672
     Top = 200
   end
   object DS_AnalRepDiaria: TDataSource
     DataSet = CDS_AnalRepDiaria
-    Left = 909
+    Left = 768
     Top = 200
   end
   object CDS_NFeAvarias: TClientDataSet
@@ -1292,7 +1292,7 @@ object DMCentralTrocas: TDMCentralTrocas
     Params = <>
     ProviderName = 'DSP_NFeAvarias'
     AfterScroll = CDS_NFeAvariasAfterScroll
-    Left = 848
+    Left = 718
     Top = 296
     object CDS_NFeAvariasCOD_PRODUTO: TFMTBCDField
       DisplayLabel = 'C'#243'digo'
@@ -1346,18 +1346,18 @@ object DMCentralTrocas: TDMCentralTrocas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 736
+    Left = 624
     Top = 296
   end
   object DSP_NFeAvarias: TDataSetProvider
     DataSet = SDS_NFeAvarias
     Options = [poRetainServerOrder]
-    Left = 792
+    Left = 672
     Top = 312
   end
   object DS_NFeAvarias: TDataSource
     DataSet = CDS_NFeAvarias
-    Left = 909
+    Left = 768
     Top = 312
   end
   object CDS_NFeAvariasForneEnd: TClientDataSet
@@ -1365,7 +1365,7 @@ object DMCentralTrocas: TDMCentralTrocas
     IndexFieldNames = 'TROCAR;NOME_FORN'
     Params = <>
     ProviderName = 'DSP_NFeAvariasForneEnd'
-    Left = 848
+    Left = 718
     Top = 360
     object CDS_NFeAvariasForneEndCODIGO: TIntegerField
       FieldName = 'CODIGO'
@@ -1399,50 +1399,50 @@ object DMCentralTrocas: TDMCentralTrocas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 736
+    Left = 624
     Top = 360
   end
   object DSP_NFeAvariasForneEnd: TDataSetProvider
     DataSet = SDS_NFeAvariasForneEnd
     Options = [poRetainServerOrder]
-    Left = 792
+    Left = 672
     Top = 376
   end
   object DS_NFeAvariasForneEnd: TDataSource
     DataSet = CDS_NFeAvariasForneEnd
-    Left = 909
+    Left = 768
     Top = 376
   end
   object CDS_RelRomaneio: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_RelRomaneio'
-    Left = 163
-    Top = 481
+    Left = 153
+    Top = 348
   end
   object SDS_RelRomaneio: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 64
-    Top = 481
+    Left = 54
+    Top = 348
   end
   object DSP_RelRomaneio: TDataSetProvider
     DataSet = SDS_RelRomaneio
     Options = [poRetainServerOrder]
-    Left = 112
-    Top = 496
+    Left = 102
+    Top = 363
   end
   object DS_RelRomaneio: TDataSource
     DataSet = CDS_RelRomaneio
-    Left = 208
-    Top = 496
+    Left = 198
+    Top = 363
   end
   object CDS_V_NfePerdas: TClientDataSet
     Aggregates = <>
     IndexFieldNames = 'NOME'
     Params = <>
-    Left = 816
+    Left = 718
     Top = 432
     object CDS_V_NfePerdasCOD_BARRA: TStringField
       Alignment = taRightJustify
@@ -1481,7 +1481,7 @@ object DMCentralTrocas: TDMCentralTrocas
   end
   object DS_V_NfePerdas: TDataSource
     DataSet = CDS_V_NfePerdas
-    Left = 880
+    Left = 768
     Top = 448
   end
   object SDS_RelDivergManuais: TSQLDataSet
@@ -1511,21 +1511,21 @@ object DMCentralTrocas: TDMCentralTrocas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
-    Left = 400
-    Top = 328
+    Left = 352
+    Top = 304
   end
   object DSP_RelDivergManuais: TDataSetProvider
     DataSet = SDS_RelDivergManuais
     Options = [poRetainServerOrder]
-    Left = 459
-    Top = 344
+    Left = 400
+    Top = 320
   end
   object CDS_RelDivergManuais: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_RelDivergManuais'
-    Left = 507
-    Top = 328
+    Left = 448
+    Top = 304
     object CDS_RelDivergManuaisCOD_LOJA: TStringField
       Alignment = taRightJustify
       DisplayLabel = 'Cod Loja'
@@ -1612,5 +1612,482 @@ object DMCentralTrocas: TDMCentralTrocas
       FieldName = 'DES_USUARIO'
       Size = 50
     end
+  end
+  object CDS_ContProdSeparacao: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_ContProdSeparacao'
+    Left = 153
+    Top = 425
+    object CDS_ContProdSeparacaoNOME_SEPARDOR: TStringField
+      DisplayLabel = 'Separador'
+      FieldName = 'NOME_SEPARDOR'
+      Size = 50
+    end
+    object CDS_ContProdSeparacaoLINHAS_SEPARADAS: TFMTBCDField
+      DisplayLabel = 'Linhas Separadas'
+      FieldName = 'LINHAS_SEPARADAS'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_ContProdSeparacaoLINHAS_NSEPARADAS: TFMTBCDField
+      DisplayLabel = 'Linhas '#209' Separadas '
+      FieldName = 'LINHAS_NSEPARADAS'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_ContProdSeparacaoLINHAS_TOTAL: TIntegerField
+      DisplayLabel = 'Linha Total'
+      FieldName = 'LINHAS_TOTAL'
+      DisplayFormat = ',0'
+    end
+    object CDS_ContProdSeparacaoLINHAS_PERCENTUAL: TFMTBCDField
+      DisplayLabel = 'Linhas %'
+      FieldName = 'LINHAS_PERCENTUAL'
+      DisplayFormat = '0.,00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_ContProdSeparacaoQTD_SEPARADAS: TIntegerField
+      DisplayLabel = 'Qtd Separadas'
+      FieldName = 'QTD_SEPARADAS'
+      DisplayFormat = ',0'
+    end
+    object CDS_ContProdSeparacaoQTD_NSEPARADAS: TIntegerField
+      DisplayLabel = 'Qtd '#209' Separadas'
+      FieldName = 'QTD_NSEPARADAS'
+      DisplayFormat = ',0'
+    end
+    object CDS_ContProdSeparacaoQTD_TOTAL: TIntegerField
+      DisplayLabel = 'Qtd Total'
+      FieldName = 'QTD_TOTAL'
+      DisplayFormat = ',0'
+    end
+    object CDS_ContProdSeparacaoQTD_PERCENTUAL: TFMTBCDField
+      DisplayLabel = 'Qtd %'
+      FieldName = 'QTD_PERCENTUAL'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_ContProdSeparacaoORDEM: TIntegerField
+      FieldName = 'ORDEM'
+    end
+  end
+  object SDS_ContProdSeparacao: TSQLDataSet
+    CommandText = 
+      '-- ======== Produ'#231#227'o / Separa'#231#227'o'#13#10'-- ======== Produ'#231#227'o / Separa'#231 +
+      #227'o'#13#10'SELECT'#13#10'CASE'#13#10'   WHEN COALESCE(us.des_aux,'#39#39')='#39#39' THEN'#13#10'     ' +
+      #39'@ N'#195'O INFORMADO @'#39#13#10'   ELSE'#13#10'     us.des_aux'#13#10'END NOME_SEPARDOR' +
+      ', -- 1'#13#10#13#10'SUM(decode(el.qtd_a_transf,0.00,0,1)) LINHAS_SEPARADAS' +
+      ', -- 2'#13#10'SUM(decode(el.qtd_a_transf,0.00,1,0)) LINHAS_NSEPARADAS,' +
+      ' -- 3'#13#10'COUNT(el.num_seq) LINHAS_TOTAL, -- 4'#13#10'(((SUM(decode(el.qt' +
+      'd_a_transf,0.00,0,1))) * 100) / CAST((COUNT(el.num_seq))AS NUMER' +
+      'IC(12,2))) LINHAS_PERCENTUAL, -- 5'#13#10#13#10'CAST(SUM(el.qtd_A_transf) ' +
+      'AS INTEGER) QTD_SEPARADAS, -- 6'#13#10'CAST(SUM((el.qtd_transf + el.qt' +
+      'd_transf_oc) - el.qtd_A_transf) AS INTEGER) QTD_NSEPARADAS, -- 7' +
+      #13#10'CAST(SUM(el.qtd_transf + el.qtd_transf_oc) AS INTEGER) QTD_TOT' +
+      'AL, -- 8'#13#10#13#10'CAST((SUM(el.qtd_A_transf) * 100) / SUM(el.qtd_trans' +
+      'f + el.qtd_transf_oc) AS NUMERIC(12,2)) QTD_PERCENTUAL, -- 9'#13#10#13#10 +
+      '3 ORDEM -- 10'#13#10#13#10'FROM LG_REL_SEPARACAO sl'#13#10'   LEFT JOIN tab_auxi' +
+      'liar us  ON us.tip_aux=29 -- 29 => LOGISTICA - CADASTRO DE SEPAR' +
+      'ADORES DE MERCADORIAS'#13#10'                             AND us.cod_a' +
+      'ux=sl.cod_separador'#13#10'   LEFT JOIN es_estoques_lojas el ON el.rel' +
+      '_separacao=sl.num_relatorio'#13#10#13#10'WHERE CAST(sl.dta_inicio AS DATE)' +
+      ' BETWEEN :DtaI AND :DtaF'#13#10'AND   sl.dta_inicio IS NOT NULL'#13#10#13#10'GRO' +
+      'UP BY 1'#13#10#13#10'UNION'#13#10#13#10'-- ======== Produ'#231#227'o / Separa'#231#227'o - Totais'#13#10'S' +
+      'ELECT'#13#10#39'TOTAL DO PER'#205'ODO'#39' NOME_SEPARDOR,'#13#10#13#10'SUM(decode(el.qtd_a_' +
+      'transf,0.00,0,1)) LINHAS_SEPARADAS, -- 2'#13#10'SUM(decode(el.qtd_a_tr' +
+      'ansf,0.00,1,0)) LINHAS_NSEPARADAS, -- 3'#13#10'COUNT(el.num_seq) LINHA' +
+      'S_TOTAL, -- 4'#13#10'(((SUM(decode(el.qtd_a_transf,0.00,0,1))) * 100) ' +
+      '/ CAST((COUNT(el.num_seq))AS NUMERIC(12,2))) LINHAS_PERCENTUAL, ' +
+      '-- 5'#13#10#13#10'CAST(SUM(el.qtd_A_transf) AS INTEGER) QTD_SEPARADAS, -- ' +
+      '6'#13#10'CAST(SUM((el.qtd_transf + el.qtd_transf_oc) - el.qtd_A_transf' +
+      ') AS INTEGER) QTD_NSEPARADAS, -- 7'#13#10'CAST(SUM(el.qtd_transf + el.' +
+      'qtd_transf_oc) AS INTEGER) QTD_TOTAL, -- 8'#13#10#13#10'CAST((SUM(el.qtd_A' +
+      '_transf) * 100) / SUM(el.qtd_transf + el.qtd_transf_oc) AS NUMER' +
+      'IC(12,2)) QTD_PERCENTUAL, -- 9'#13#10#13#10'4 ORDEM -- 10'#13#10#13#10'FROM LG_REL_S' +
+      'EPARACAO sl'#13#10'   LEFT JOIN tab_auxiliar us  ON us.tip_aux=29 -- 2' +
+      '9 => LOGISTICA - CADASTRO DE SEPARADORES DE MERCADORIAS'#13#10'       ' +
+      '                      AND us.cod_aux=sl.cod_separador'#13#10'   LEFT J' +
+      'OIN es_estoques_lojas el ON el.rel_separacao=sl.num_relatorio'#13#10#13 +
+      #10'WHERE CAST(sl.dta_inicio AS DATE) BETWEEN :DtaI AND :DtaF'#13#10'AND ' +
+      '  sl.dta_inicio IS NOT NULL'#13#10#13#10'UNION'#13#10#13#10'-- ======== Produ'#231#227'o / S' +
+      'epara'#231#227'o - Cabe'#231'alho'#13#10'SELECT'#13#10#39'LOGISTICA PRODU'#199#195'O / SEPARA'#199#195'O'#39' N' +
+      'OME_SEPARDOR,'#13#10#13#10'NULL LINHAS_SEPARADAS, -- 2'#13#10'NULL LINHAS_NSEPAR' +
+      'ADAS, -- 3'#13#10'NULL LINHAS_TOTAL, -- 4'#13#10'NULL LINHAS_PERCENTUAL, -- ' +
+      '5'#13#10'NULL QTD_SEPARADAS, -- 6'#13#10'NULL QTD_NSEPARADAS, -- 7'#13#10'NULL QTD' +
+      '_TOTAL, -- 8'#13#10'NULL QTD_PERCENTUAL, -- 9'#13#10'0 ORDEM -- 10'#13#10'FROM RDB' +
+      '$DATABASE'#13#10#13#10'UNION'#13#10#13#10'-- ======== Produ'#231#227'o / Separa'#231#227'o - Periodo' +
+      #13#10'SELECT'#13#10#39'PER'#205'ODO DE '#39'||REPLACE(CAST(:DtaI AS VARCHAR(10)) ||'#39' ' +
+      'A '#39'||CAST(:DtaF AS VARCHAR(10)), '#39'.'#39', '#39'/'#39') NOME_SEPARDOR,'#13#10#13#10'NUL' +
+      'L LINHAS_SEPARADAS, -- 2'#13#10'NULL LINHAS_NSEPARADAS, -- 3'#13#10'NULL LIN' +
+      'HAS_TOTAL, -- 4'#13#10'NULL LINHAS_PERCENTUAL, -- 5'#13#10'NULL QTD_SEPARADA' +
+      'S, -- 6'#13#10'NULL QTD_NSEPARADAS, -- 7'#13#10'NULL QTD_TOTAL, -- 8'#13#10'NULL Q' +
+      'TD_PERCENTUAL, -- 9'#13#10'1 ORDEM -- 10'#13#10'FROM RDB$DATABASE'#13#10#13#10'ORDER B' +
+      'Y 10, 1'
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftString
+        Name = 'DtaI'
+        ParamType = ptInput
+        Value = '01.10.2018'
+      end
+      item
+        DataType = ftString
+        Name = 'DtaF'
+        ParamType = ptInput
+        Value = '15.10.2018'
+      end
+      item
+        DataType = ftString
+        Name = 'DtaI'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftString
+        Name = 'DtaF'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftString
+        Name = 'DtaI'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftString
+        Name = 'DtaF'
+        ParamType = ptInput
+      end>
+    SQLConnection = DMBelShop.SQLC
+    Left = 54
+    Top = 425
+  end
+  object DSP_ContProdSeparacao: TDataSetProvider
+    DataSet = SDS_ContProdSeparacao
+    Options = [poRetainServerOrder]
+    Left = 102
+    Top = 440
+  end
+  object DS_ContProdSeparacao: TDataSource
+    DataSet = CDS_ContProdSeparacao
+    Left = 198
+    Top = 440
+  end
+  object CDS_ContProdConferencia: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_ContProdConferencia'
+    Left = 153
+    Top = 497
+    object CDS_ContProdConferenciaDES_USUARIO: TStringField
+      DisplayLabel = 'Conferente'
+      FieldName = 'DES_USUARIO'
+      Size = 50
+    end
+    object CDS_ContProdConferenciaLINHAS_TOTAL: TIntegerField
+      DisplayLabel = 'Linhas Total'
+      FieldName = 'LINHAS_TOTAL'
+      DisplayFormat = ',0'
+    end
+    object CDS_ContProdConferenciaLINHAS_NAO_ALTERADAS: TIntegerField
+      DisplayLabel = 'Linhas '#209' Alt'
+      FieldName = 'LINHAS_NAO_ALTERADAS'
+      DisplayFormat = ',0'
+    end
+    object CDS_ContProdConferenciaLINHAS_ALTERADAS: TIntegerField
+      DisplayLabel = 'Linhas Alt'
+      FieldName = 'LINHAS_ALTERADAS'
+      DisplayFormat = ',0'
+    end
+    object CDS_ContProdConferenciaLINHAS_ALTERADAS_DIF_ZERO: TIntegerField
+      DisplayLabel = 'Linhas Alt <> Zero'
+      FieldName = 'LINHAS_ALTERADAS_DIF_ZERO'
+      DisplayFormat = ',0'
+    end
+    object CDS_ContProdConferenciaLINHAS_ALTERADAS_ZERO: TIntegerField
+      DisplayLabel = 'Linhas Alt = Zero'
+      FieldName = 'LINHAS_ALTERADAS_ZERO'
+      DisplayFormat = ',0'
+    end
+    object CDS_ContProdConferenciaQTD_TOTAL_ORIGINAL: TFMTBCDField
+      DisplayLabel = 'Qtd Total Orig'
+      FieldName = 'QTD_TOTAL_ORIGINAL'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_ContProdConferenciaQTD_NAO_ALTERADAS: TFMTBCDField
+      DisplayLabel = 'Qtd '#209' Alt'
+      FieldName = 'QTD_NAO_ALTERADAS'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_ContProdConferenciaQTD_ALTERADAS_ORIGINAL: TFMTBCDField
+      DisplayLabel = 'Qtd Alt Orig'
+      FieldName = 'QTD_ALTERADAS_ORIGINAL'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_ContProdConferenciaQTD_ALTERADAS: TFMTBCDField
+      DisplayLabel = 'Qtd Alt'
+      FieldName = 'QTD_ALTERADAS'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_ContProdConferenciaLINHAS_NFE: TFMTBCDField
+      DisplayLabel = 'Linhas NFe'
+      FieldName = 'LINHAS_NFE'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_ContProdConferenciaLINHAS_SEM_NFE: TFMTBCDField
+      DisplayLabel = 'Linhas '#209' NFe'
+      FieldName = 'LINHAS_SEM_NFE'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_ContProdConferenciaQTD_NFE: TFMTBCDField
+      DisplayLabel = 'Qtd NFe'
+      FieldName = 'QTD_NFE'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_ContProdConferenciaQTD_SEM_NFE: TFMTBCDField
+      DisplayLabel = 'Qtd '#209' NFe'
+      FieldName = 'QTD_SEM_NFE'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_ContProdConferenciaORDEM: TIntegerField
+      FieldName = 'ORDEM'
+      Required = True
+    end
+  end
+  object SDS_ContProdConferencia: TSQLDataSet
+    CommandText = 
+      '-- ======== Produ'#231#227'o / Confer'#234'ncia'#13#10'SELECT'#13#10'TRIM(CASE'#13#10'  WHEN l.' +
+      'usu_altera=0 THEN'#13#10'    '#39'@ N'#195'O EXECUTADO @'#39#13#10'  ELSE'#13#10'    u.des_us' +
+      'uario'#13#10'END) DES_USUARIO, -- 1'#13#10#13#10'COUNT(l.num_seq) LINHAS_TOTAL, ' +
+      '-- 2'#13#10#13#10'-- Linhas N'#194'O Alteradaso ===============================' +
+      '=================================='#13#10'CAST(SUM('#13#10'  CASE'#13#10'    WHEN ' +
+      '((l.qtd_transf + l.qtd_transf_oc)=l.qtd_a_transf)  THEN'#13#10'      1' +
+      #13#10'    ELSE'#13#10'      0'#13#10'  END'#13#10') AS INTEGER) LINHAS_NAO_ALTERADAS, ' +
+      '-- 3'#13#10#13#10'-- Linahs Alteradas ====================================' +
+      '============================'#13#10'CAST(SUM('#13#10'  CASE'#13#10'    WHEN ((l.qt' +
+      'd_transf + l.qtd_transf_oc)<>l.qtd_a_transf) THEN'#13#10'      1'#13#10'    ' +
+      'ELSE'#13#10'      0'#13#10'  END'#13#10') AS INTEGER) LINHAS_ALTERADAS, -- 4'#13#10#13#10'--' +
+      ' Linahs Alteradas Diferente de Zero=============================' +
+      '===================================='#13#10'CAST(SUM('#13#10'  CASE'#13#10'    WHE' +
+      'N ((l.qtd_transf + l.qtd_transf_oc)<>l.qtd_a_transf) AND (l.qtd_' +
+      'a_transf<>0) THEN'#13#10'      1'#13#10'    ELSE'#13#10'      0'#13#10'  END'#13#10') AS INTEG' +
+      'ER) LINHAS_ALTERADAS_DIF_ZERO, -- 5'#13#10#13#10'-- Linahs Alteradas para ' +
+      'Zero ===========================================================' +
+      '======'#13#10'CAST(SUM('#13#10'  CASE'#13#10'    WHEN ((l.qtd_transf + l.qtd_trans' +
+      'f_oc)<>l.qtd_a_transf) AND (l.qtd_a_transf=0) THEN'#13#10'      1'#13#10'   ' +
+      ' ELSE'#13#10'      0'#13#10'  END'#13#10') AS INTEGER) LINHAS_ALTERADAS_ZERO, -- 6' +
+      #13#10#13#10'--==========================================================' +
+      '======'#13#10'SUM((l.qtd_transf + l.qtd_transf_oc)) QTD_TOTAL_ORIGINAL' +
+      ', -- 7'#13#10#13#10#13#10'SUM('#13#10'  CASE'#13#10'    WHEN ((l.qtd_transf + l.qtd_transf' +
+      '_oc)=l.qtd_a_transf)  THEN'#13#10'      l.qtd_a_transf'#13#10'    ELSE'#13#10'    ' +
+      '  0'#13#10'  END'#13#10') QTD_NAO_ALTERADAS, -- 8'#13#10#13#10#13#10'SUM('#13#10'  CASE'#13#10'    WHE' +
+      'N ((l.qtd_transf + l.qtd_transf_oc)<>l.qtd_a_transf)  THEN'#13#10'    ' +
+      '  (l.qtd_transf + l.qtd_transf_oc)'#13#10'    ELSE'#13#10'      0'#13#10'  END'#13#10') ' +
+      'QTD_ALTERADAS_ORIGINAL, -- 9'#13#10#13#10'SUM('#13#10'  CASE'#13#10'    WHEN ((l.qtd_t' +
+      'ransf + l.qtd_transf_oc)<>l.qtd_a_transf)  THEN'#13#10'      l.qtd_a_t' +
+      'ransf'#13#10'    ELSE'#13#10'      0'#13#10'  END'#13#10') QTD_ALTERADAS, -- 10'#13#10#13#10'-- Em' +
+      'iss'#227'o NFE ======================================================' +
+      '==========='#13#10'SUM('#13#10'  CASE'#13#10'    WHEN l.num_pedido<>'#39'000000'#39' THEN'#13 +
+      #10'      1'#13#10'    ELSE'#13#10'      0'#13#10'  END'#13#10') LINHAS_NFE, -- 11'#13#10#13#10'SUM('#13 +
+      #10'  CASE'#13#10'    WHEN l.num_pedido='#39'000000'#39' THEN'#13#10'      1'#13#10'    ELSE'#13 +
+      #10'      0'#13#10'  END'#13#10') LINHAS_SEM_NFE, -- 12'#13#10#13#10'SUM('#13#10'  CASE'#13#10'    WH' +
+      'EN l.num_pedido<>'#39'000000'#39' THEN'#13#10'      l.qtd_a_transf'#13#10'    ELSE'#13#10 +
+      '      0'#13#10'  END'#13#10') QTD_NFE, -- 13'#13#10#13#10'SUM('#13#10'  CASE'#13#10'    WHEN l.num' +
+      '_pedido='#39'000000'#39' THEN'#13#10'      l.qtd_a_transf'#13#10'    ELSE'#13#10'      0'#13#10 +
+      '  END'#13#10') QTD_SEM_NFE, -- 14'#13#10#13#10'3 ORDEM -- 15'#13#10#13#10'FROM ES_ESTOQUES' +
+      '_LOJAS l'#13#10'          LEFT JOIN PS_USUARIOS u ON u.cod_usuario=l.u' +
+      'su_altera'#13#10'WHERE l.ind_transf='#39'SIM'#39#13#10'AND   l.num_pedido<>'#39'999999' +
+      #39#13#10'AND   l.num_pedido<>'#39'999998'#39#13#10'AND   l.dta_movto BETWEEN :DtaI' +
+      ' AND :DtaF'#13#10#13#10'GROUP BY 1'#13#10#13#10'UNION ------------------------------' +
+      '---'#13#10#13#10'-- ======== Produ'#231#227'o / Confer'#234'ncia - Totais'#13#10'SELECT'#13#10#39'TOT' +
+      'AL DO PER'#205'ODO'#39' DES_USUARIO,'#13#10#13#10'COUNT(l.num_seq) LINHAS_TOTAL, --' +
+      ' 2'#13#10#13#10'-- Linhas N'#194'O Alteradaso =================================' +
+      '================================'#13#10'CAST(SUM('#13#10'  CASE'#13#10'    WHEN ((' +
+      'l.qtd_transf + l.qtd_transf_oc)=l.qtd_a_transf)  THEN'#13#10'      1'#13#10 +
+      '    ELSE'#13#10'      0'#13#10'  END'#13#10') AS INTEGER) LINHAS_NAO_ALTERADAS, --' +
+      ' 3'#13#10#13#10'-- Linahs Alteradas ======================================' +
+      '=========================='#13#10'CAST(SUM('#13#10'  CASE'#13#10'    WHEN ((l.qtd_' +
+      'transf + l.qtd_transf_oc)<>l.qtd_a_transf) THEN'#13#10'      1'#13#10'    EL' +
+      'SE'#13#10'      0'#13#10'  END'#13#10') AS INTEGER) LINHAS_ALTERADAS, -- 4'#13#10#13#10'-- L' +
+      'inahs Alteradas Diferente de Zero===============================' +
+      '=================================='#13#10'CAST(SUM('#13#10'  CASE'#13#10'    WHEN ' +
+      '((l.qtd_transf + l.qtd_transf_oc)<>l.qtd_a_transf) AND (l.qtd_a_' +
+      'transf<>0) THEN'#13#10'      1'#13#10'    ELSE'#13#10'      0'#13#10'  END'#13#10') AS INTEGER' +
+      ') LINHAS_ALTERADAS_DIF_ZERO, -- 5'#13#10#13#10'-- Linahs Alteradas para Ze' +
+      'ro =============================================================' +
+      '===='#13#10'CAST(SUM('#13#10'  CASE'#13#10'    WHEN ((l.qtd_transf + l.qtd_transf_' +
+      'oc)<>l.qtd_a_transf) AND (l.qtd_a_transf=0) THEN'#13#10'      1'#13#10'    E' +
+      'LSE'#13#10'      0'#13#10'  END'#13#10') AS INTEGER) LINHAS_ALTERADAS_ZERO, -- 6'#13#10 +
+      #13#10#13#10'--==========================================================' +
+      '======'#13#10'SUM((l.qtd_transf + l.qtd_transf_oc)) QTD_TOTAL_ORIGINAL' +
+      ', -- 7'#13#10#13#10#13#10'SUM('#13#10'  CASE'#13#10'    WHEN ((l.qtd_transf + l.qtd_transf' +
+      '_oc)=l.qtd_a_transf)  THEN'#13#10'      l.qtd_a_transf'#13#10'    ELSE'#13#10'    ' +
+      '  0'#13#10'  END'#13#10') QTD_NAO_ALTERADAS, -- 8'#13#10#13#10#13#10'SUM('#13#10'  CASE'#13#10'    WHE' +
+      'N ((l.qtd_transf + l.qtd_transf_oc)<>l.qtd_a_transf)  THEN'#13#10'    ' +
+      '  (l.qtd_transf + l.qtd_transf_oc)'#13#10'    ELSE'#13#10'      0'#13#10'  END'#13#10') ' +
+      'QTD_ALTERADAS_ORIGINAL, -- 9'#13#10#13#10'SUM('#13#10'  CASE'#13#10'    WHEN ((l.qtd_t' +
+      'ransf + l.qtd_transf_oc)<>l.qtd_a_transf)  THEN'#13#10'      l.qtd_a_t' +
+      'ransf'#13#10'    ELSE'#13#10'      0'#13#10'  END'#13#10') QTD_ALTERADAS, -- 10'#13#10#13#10'-- Em' +
+      'iss'#227'o NFE ======================================================' +
+      '==========='#13#10'SUM('#13#10'  CASE'#13#10'    WHEN l.num_pedido<>'#39'000000'#39' THEN'#13 +
+      #10'      1'#13#10'    ELSE'#13#10'      0'#13#10'  END'#13#10') LINHAS_NFE, -- 11'#13#10#13#10'SUM('#13 +
+      #10'  CASE'#13#10'    WHEN l.num_pedido='#39'000000'#39' THEN'#13#10'      1'#13#10'    ELSE'#13 +
+      #10'      0'#13#10'  END'#13#10') LINHAS_SEM_NFE, -- 12'#13#10#13#10'SUM('#13#10'  CASE'#13#10'    WH' +
+      'EN l.num_pedido<>'#39'000000'#39' THEN'#13#10'      l.qtd_a_transf'#13#10'    ELSE'#13#10 +
+      '      0'#13#10'  END'#13#10') QTD_NFE, -- 13'#13#10#13#10'SUM('#13#10'  CASE'#13#10'    WHEN l.num' +
+      '_pedido='#39'000000'#39' THEN'#13#10'      l.qtd_a_transf'#13#10'    ELSE'#13#10'      0'#13#10 +
+      '  END'#13#10') QTD_SEM_NFE, -- 14'#13#10#13#10'4 ORDEM -- 15'#13#10#13#10'FROM ES_ESTOQUES' +
+      '_LOJAS l'#13#10'          LEFT JOIN PS_USUARIOS u ON u.cod_usuario=l.u' +
+      'su_altera'#13#10'WHERE l.ind_transf='#39'SIM'#39#13#10'AND   l.num_pedido<>'#39'999999' +
+      #39#13#10'AND   l.num_pedido<>'#39'999998'#39#13#10'AND   l.dta_movto BETWEEN :DtaI' +
+      ' AND :DtaF'#13#10#13#10'UNION'#13#10#13#10'-- ======== Produ'#231#227'o / Confer'#234'ncia - Cabe' +
+      #231'alho'#13#10'SELECT'#13#10#39'LOGISTICA PRODU'#199#195'O / CONFER'#202'NCIA'#39' des_usuario, -' +
+      '- 1'#13#10#13#10'NULL LINHAS_TOTAL, -- 2'#13#10'NULL LINHAS_NAO_ALTERADAS, -- 3'#13 +
+      #10'NULL LINHAS_ALTERADAS, -- 4'#13#10'NULL LINHAS_ALTERADAS_DIF_ZERO, --' +
+      ' 5'#13#10'NULL LINHAS_ALTERADAS_ZERO, -- 6'#13#10'NULL QTD_TOTAL_ORIGINAL, -' +
+      '- 7'#13#10'NULL QTD_NAO_ALTERADAS, -- 8'#13#10'NULL QTD_ALTERADAS_ORIGINAL, ' +
+      '-- 9'#13#10'NULL QTD_ALTERADAS, -- 10'#13#10'NULL LINHAS_NFE, -- 11'#13#10'NULL LI' +
+      'NHAS_SEM_NFE, -- 12'#13#10'NULL QTD_NFE, -- 13'#13#10'NULL QTD_SEM_NFE, -- 1' +
+      '4'#13#10#13#10'0 ORDEM -- 15'#13#10'FROM RDB$DATABASE'#13#10#13#10'UNION'#13#10#13#10'-- ======== Pr' +
+      'odu'#231#227'o / Confer'#234'ncia - Periodo'#13#10'SELECT'#13#10#39'PER'#205'ODO DE '#39'||REPLACE(C' +
+      'AST(:DtaI AS VARCHAR(10)) ||'#39' A '#39'||CAST(:DtaF AS VARCHAR(10)), '#39 +
+      '.'#39', '#39'/'#39') NOME_SEPARDOR,'#13#10#13#10'NULL LINHAS_TOTAL, -- 2'#13#10'NULL LINHAS_' +
+      'NAO_ALTERADAS, -- 3'#13#10'NULL LINHAS_ALTERADAS, -- 4'#13#10'NULL LINHAS_AL' +
+      'TERADAS_DIF_ZERO, -- 5'#13#10'NULL LINHAS_ALTERADAS_ZERO, -- 6'#13#10'NULL Q' +
+      'TD_TOTAL_ORIGINAL, -- 7'#13#10'NULL QTD_NAO_ALTERADAS, -- 8'#13#10'NULL QTD_' +
+      'ALTERADAS_ORIGINAL, -- 9'#13#10'NULL QTD_ALTERADAS, -- 10'#13#10'NULL LINHAS' +
+      '_NFE, -- 11'#13#10'NULL LINHAS_SEM_NFE, -- 12'#13#10'NULL QTD_NFE, -- 13'#13#10'NU' +
+      'LL QTD_SEM_NFE, -- 14'#13#10#13#10'1 ORDEM -- 14'#13#10'FROM RDB$DATABASE'#13#10#13#10'ORD' +
+      'ER BY 15,1'
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'DtaI'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'DtaF'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'DtaI'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'DtaF'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'DtaI'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftUnknown
+        Name = 'DtaF'
+        ParamType = ptInput
+      end>
+    SQLConnection = DMBelShop.SQLC
+    Left = 54
+    Top = 497
+  end
+  object DSP_ContProdConferencia: TDataSetProvider
+    DataSet = SDS_ContProdConferencia
+    Options = [poRetainServerOrder]
+    Left = 102
+    Top = 512
+  end
+  object DS_ContProdConferencia: TDataSource
+    DataSet = CDS_ContProdConferencia
+    Left = 198
+    Top = 512
+  end
+  object CDS_Depositos: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_Depositos'
+    Left = 926
+    Top = 72
+    object CDS_DepositosSELECAO: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'Sele'#231#227'o'
+      FieldName = 'SELECAO'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
+    object CDS_DepositosCOD_DEPOSITO: TIntegerField
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'COD_DEPOSITO'
+    end
+    object CDS_DepositosNOME_DEPOSITO: TStringField
+      DisplayLabel = 'Descri'#231#227'o'
+      FieldName = 'NOME_DEPOSITO'
+      Size = 50
+    end
+    object CDS_DepositosDISP_VENDA: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'Dispon'#237'vel Venda'
+      FieldName = 'DISP_VENDA'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
+    object CDS_DepositosDISP_TRANSF: TStringField
+      Alignment = taCenter
+      DisplayLabel = 'Dispon'#237'vel  Transf Filiais'
+      FieldName = 'DISP_TRANSF'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
+  end
+  object SDS_Depositos: TSQLDataSet
+    CommandText = 
+      'SELECT'#13#10#39'NAO'#39' Selecao,'#13#10'd.cod_deposito, d.nome_deposito,'#13#10#13#10'CASE' +
+      ' d.disponivel'#13#10'  When 0 Then'#13#10'   '#39'N'#195'O'#39#13#10'  ELSE'#13#10'   '#39'SIM'#39#13#10'END Di' +
+      'sp_Venda,'#13#10#13#10'CASE d.disponivel_transferencia'#13#10'  When 0 Then'#13#10'   ' +
+      #39'N'#195'O'#39#13#10'  ELSE'#13#10'   '#39'SIM'#39#13#10'END  Disp_Transf'#13#10#13#10'FROM LINXPRODUTOSDE' +
+      'POSITOS d'#13#10#13#10'ORDER BY 2'
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 832
+    Top = 72
+  end
+  object DSP_Depositos: TDataSetProvider
+    DataSet = SDS_Depositos
+    Options = [poRetainServerOrder]
+    Left = 880
+    Top = 88
+  end
+  object DS_Depositos: TDataSource
+    DataSet = CDS_Depositos
+    Left = 976
+    Top = 88
   end
 end

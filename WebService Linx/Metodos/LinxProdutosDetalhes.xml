@@ -9,7 +9,6 @@
 			<Parameter id="cnpjEmp">03772229000213</Parameter>
 			<Parameter id="data_mov_ini">NULL</Parameter>
 			<Parameter id="data_mov_fim">NULL</Parameter>
-			<Parameter id="cod_produto">10171</Parameter>
 		</Parameters>
 	</Command>
 </LinxMicrovix>

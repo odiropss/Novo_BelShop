@@ -15,6 +15,7 @@ type
 
     // ODIR ====================================================================
     Procedure Demanda4Meses;
+    Procedure ProdutosCompradores;
 
     Procedure MontaSqlsSidicomLinx;
 
@@ -49,7 +50,7 @@ var
 
   IBQ_ConsultaFilial: TIBQuery;
 
-  igDiasUteis, igDiasUteis_18: Integer;
+  igDiasUteis : Integer;
 
   MySqlSelect, MySqlLinx: String;
 
@@ -538,6 +539,106 @@ Begin
   MySqlLinx:= MySql + MySqlLinx;
 end; // Monta SQL's Para Busca SIDICOM / LINX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+// Atualiza Produtos / Compradores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmAtualizaSeteHoras.ProdutosCompradores;
+Var
+  MySql: String;
+Begin
+  // Verifica se Transação esta Ativa
+  If DMAtualizaSeteHoras.SQLC.InTransaction Then
+   DMAtualizaSeteHoras.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
+  Try
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    MySql:=' DELETE FROM PRODUTOS_COMPRADORES';
+    DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+
+    MySql:=' INSERT INTO PRODUTOS_COMPRADORES'+
+           ' (CODPRODUTO, COD_PRODUTO, DES_PRODUTO, COD_COMPRADOR, DES_COMPRADOR,'+
+           '  COD_FORNECEDOR, DES_FORNECEDOR, ID_SETOR, DESC_SETOR, ID_COLECAO,'+
+           '  DESC_COLECAO, DESATIVADO, NUM_ORDENS, CD_COMPRA, QTD_VENDA15DD)'+
+
+           ' SELECT'+
+           ' cp.cod_item CODPRODUTO,'+
+           ' pr.cod_produto COD_PRODUTO,'+
+           ' pr.nome DES_PRODUTO,'+
+           ' cp.cod_comprador COD_COMPRADOR,'+
+           ' cp.des_usuario DES_COMPRADOR,'+
+           ' pr.cod_fornecedor COD_FORNECEDOR,'+
+           ' fo.nome_cliente DES_FORNECEDOR,'+
+           ' pr.id_setor ID_SETOR,'+
+           ' pr.desc_setor DESC_SETOR,'+
+           ' pr.id_colecao ID_COLECAO,'+
+           ' pr.desc_colecao DESC_COLECAO,'+
+           ' pr.desativado DESATIVADO,'+
+           ' cp.num_ordens NUM_ORDENS,'+
+           ' cp.oc_cd CD_COMPRA,'+
+           ' CAST(((SUM(COALESCE(dm.qtd_venda_dia,0.0000))) * 15) AS INTEGER) QTD_VENDAS15DD'+
+
+           ' FROM LINXPRODUTOS pr,'+
+           '      LINXCLIENTESFORNEC fo,'+
+           '      ES_DEMANDAS_4MESES dm,'+
+           '      (SELECT DISTINCT co.cod_Item,'+
+           '                       co.cod_comprador,'+
+           '                       co.num_ordens,'+
+           '                       co.des_usuario,'+
+           '                       co.oc_cd'+
+           '               FROM (SELECT oc.cod_item,'+
+           '                            oc.cod_comprador,'+
+           '                            us.des_usuario,'+
+           '                            CASE'+
+           '                              WHEN oc.cod_empresa=''99'' THEN'+
+           '                                ''S'''+
+           '                              ELSE'+
+           '                                ''N'''+
+           '                            END OC_CD,'+
+           '                            COUNT(oc.num_seq) NUM_ORDENS'+
+           '                     FROM OC_COMPRAR oc,'+
+           '                          PS_USUARIOS us,'+
+           '                          EMP_CONEXOES em'+
+           '                     WHERE oc.cod_comprador=us.cod_usuario'+
+           '                     AND   oc.cod_empresa=em.cod_filial'+
+           '                     AND   oc.cod_comprador<>0'+
+           '                     AND   em.cod_linx<>0'+
+           '                     AND   em.dta_inicio_linx IS NOT NULL'+
+           '                     AND   em.dta_inventario_linx IS NOT NULL'+
+           '                     AND   ((COALESCE(oc.num_oc_gerada,0)<>0)'+
+           '                            or'+ // Manuela Sem OC: Loreal-47 Wella-1298-164 Delly-356 (Códigos Sidicom)
+           '                            (oc.cod_comprador=205 AND COALESCE(oc.num_oc_gerada,0)=0'+
+           '                             AND oc.cod_fornecedor in (''000047'', ''001298'', ''000164'', ''000356'')))'+
+           '                     GROUP BY 1,2,3,4) co) cp'+
+
+           ' WHERE pr.cod_auxiliar=cp.cod_item'+
+           ' AND   pr.cod_fornecedor=fo.cod_cliente'+
+           ' AND   pr.cod_auxiliar=dm.codproduto'+
+
+           ' GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14';
+    DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
+
+    // Atualiza Transacao ======================================================
+    DMAtualizaSeteHoras.SQLC.Commit(TD);
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+  Except
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMAtualizaSeteHoras.SQLC.Rollback(TD);
+
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+    End; // on e : Exception do
+  End; // Try
+
+End; // Atualiza Produtos / Compradores >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 // Calcula Demanda de 4 Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaSeteHoras.Demanda4Meses;
 Var
@@ -556,7 +657,6 @@ Begin
   sgDtaFim   :=f_Troca('/','.',f_Troca('-','.',DateToStr(dDtaFim)));
 
   igDiasUteis   :=DiasUteisBelShop(dDtaInicio, dDtaFim, False, True);
-  igDiasUteis_18:=DiasUteisBelShop(StrToDate('13/12/2016'), dDtaFim, False, True);
 
   // Calcula os Meses de Demandas Vendas =======================================
   i:=0;
@@ -638,12 +738,8 @@ Begin
 
            ' CAST(SUM(dem.quant_ref) AS INTEGER) qtd_venda,'+
 
-           ' CASE'+
-           '   WHEN dem.codfilial=''18'' THEN'+
-           '     CAST((SUM(CAST(dem.quant_ref AS NUMERIC(12,4))) / '+IntToStr(igDiasUteis_18)+') AS NUMERIC(12,4))'+
-           '   Else'+
-           '     CAST((SUM(CAST(dem.quant_ref AS NUMERIC(12,4))) / '+IntToStr(igDiasUteis)+') AS NUMERIC(12,4))'+
-           ' End  qtd_venda_dia,'+
+
+           ' CAST((SUM(CAST(dem.quant_ref AS NUMERIC(12,4))) / '+IntToStr(igDiasUteis)+') AS NUMERIC(12,4)) qtd_venda_dia,'+
 
            ' CAST(SUM('+
            '   CASE'+
@@ -692,22 +788,12 @@ Begin
 
            ' CAST(SUM(dem.preco) AS NUMERIC(12,2)) vlr_venda,'+
 
-           ' case'+
-           '   when dem.codfilial=''18'' Then'+
-           '      CAST((SUM(CAST(dem.preco AS NUMERIC(12,4))) / '+IntToStr(igDiasUteis_18)+') AS NUMERIC(12,2))'+
-           '   Else'+
-           '      CAST((SUM(CAST(dem.preco AS NUMERIC(12,4))) / '+IntToStr(igDiasUteis)+') AS NUMERIC(12,2))'+
-           ' End vlr_venda_dia,'+
+           ' CAST((SUM(CAST(dem.preco AS NUMERIC(12,4))) / '+IntToStr(igDiasUteis)+') AS NUMERIC(12,2)) vlr_venda_dia,'+
 
            ' '+QuotedStr(sgDtaInicio)+' periodo_inicio,'+
            ' '+QuotedStr(sgDtaFim)+'    periodo_fim,'+
 
-           ' case'+
-           '   when dem.codfilial=''18'' Then'+
-           '      '+IntToStr(igDiasUteis_18)+
-           '   Else'+
-           '      '+IntToStr(igDiasUteis)+
-           ' End dias_uteis,'+
+           IntToStr(igDiasUteis)+' dias_uteis,'+
 
            ' CURRENT_DATE dta_atualizacao,'+
            ' CURRENT_TIME hra_atualizacao'+
@@ -1886,7 +1972,7 @@ End; // Calcula Fluxo de Caixo de Fornecedor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 //==============================================================================
 // ODIR - FIM ==================================================================
 //==============================================================================
-                                           
+
 procedure TFrmAtualizaSeteHoras.FormCreate(Sender: TObject);
 Var
   Flags : Cardinal;
@@ -1922,13 +2008,26 @@ begin
   //============================================================================
 
   //============================================================================
-  // VERIFICA SE A INTERNET ESTA CONECTADA =====================================
+  // Atualiza Produtos / Fornecedores / Vendas 15 Dias =========================
+  // RODAR APÓS ATUALIZA DEMANDA 4 MESES =======================================
   //============================================================================
-  if not InternetGetConnectedState(@Flags, 0) then
-  Begin
-    Application.Terminate;
-    Exit;
-  End;
+//opss
+  ProdutosCompradores;
+  // Atualiza Produtos / Fornecedores / Vendas 15 Dias =========================
+  // RODAR APÓS ATUALIZA DEMANDA 4 MESES =======================================
+  //============================================================================
+
+// OdirApagar - 31/10/2018
+//  //============================================================================
+//  // VERIFICA SE A INTERNET ESTA CONECTADA =====================================
+//  //============================================================================
+//  if not InternetGetConnectedState(@Flags, 0) then
+//  Begin
+//    Application.Terminate;
+//    Exit;
+//  End;
+//  // VERIFICA SE A INTERNET ESTA CONECTADA =====================================
+//  //============================================================================
 
   //============================================================================
   // ATUALIZA CONTA CORRENTE FORNECEDORES ======================================
@@ -2016,6 +2115,8 @@ begin
   //============================================================================
 //opss
   AcertaEstoqueLoja;
+  // Igual Todos os Produtos de Todas a Lojas com o CD =========================
+  //============================================================================
 
   // Encerra Programa ==========================================================
   Application.Terminate;

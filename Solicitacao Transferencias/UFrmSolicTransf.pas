@@ -528,7 +528,7 @@ Begin
   DMSolicTransf.CDS_BuscaRapida.Close;
 
   // Analisa Nova Versão =======================================================
-  If sDtaAplicativo<>sDtaVersao Then
+  If Copy(sDtaAplicativo,1,13)<>Copy(sDtaVersao,1,13) Then
    Result:=False;
 End; // Atualiza Nova Versão do Sistema >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

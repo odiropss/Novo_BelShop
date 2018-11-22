@@ -1,6 +1,7 @@
 object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
-  Left = 243
+  Left = 238
   Top = 114
+  Align = alClient
   BorderIcons = []
   BorderStyle = bsSingle
   Caption = 'Gera Solicita'#231#227'o de Compras - Loja:'
@@ -1474,7 +1475,7 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
               961
               33)
             object Label59: TLabel
-              Left = 593
+              Left = 587
               Top = 11
               Width = 93
               Height = 13
@@ -1488,7 +1489,7 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
               ParentFont = False
             end
             object Label39: TLabel
-              Left = 388
+              Left = 382
               Top = 11
               Width = 77
               Height = 13
@@ -1532,7 +1533,7 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
             end
             object Bt_GeraOCExcluir: TJvXPButton
               Tag = 3
-              Left = 260
+              Left = 225
               Top = 2
               Width = 152
               Height = 29
@@ -1650,14 +1651,14 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
             object Panel4: TPanel
               Left = 164
               Top = 2
-              Width = 96
+              Width = 61
               Height = 29
               Align = alLeft
               BevelOuter = bvNone
               TabOrder = 3
             end
             object EdtGeraOCTotalGeral: TCurrencyEdit
-              Left = 469
+              Left = 463
               Top = 8
               Width = 116
               Height = 19
@@ -1676,7 +1677,7 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
               Visible = False
             end
             object EdtGeraOCTotalItens: TCurrencyEdit
-              Left = 690
+              Left = 684
               Top = 8
               Width = 74
               Height = 19
@@ -3984,7 +3985,7 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
                       Top = 12
                       Width = 218
                       Height = 27
-                      Caption = 'Excluir Fornecedor da Loja'
+                      Caption = 'Excluir Loja do Fornecedor'
                       TabOrder = 1
                       Glyph.Data = {
                         07544269746D617042010000424D420100000000000076000000280000001100
@@ -4021,7 +4022,7 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
                     Font.Height = -11
                     Font.Name = 'MS Sans Serif'
                     Font.Style = []
-                    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection]
+                    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
                     ParentFont = False
                     ReadOnly = True
                     TabOrder = 1
@@ -4090,33 +4091,8 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
                         Visible = True
                       end
                       item
-                        Alignment = taCenter
                         Expanded = False
-                        FieldName = 'COD_LOJA'
-                        Font.Charset = DEFAULT_CHARSET
-                        Font.Color = clWindowText
-                        Font.Height = -11
-                        Font.Name = 'MS Sans Serif'
-                        Font.Style = [fsBold]
-                        Title.Alignment = taCenter
-                        Width = 30
-                        Visible = True
-                      end
-                      item
-                        Color = 16777139
-                        Expanded = False
-                        FieldName = 'CODFORNECEDOR'
-                        Font.Charset = DEFAULT_CHARSET
-                        Font.Color = clWindowText
-                        Font.Height = -11
-                        Font.Name = 'MS Sans Serif'
-                        Font.Style = [fsBold]
-                        Title.Alignment = taRightJustify
-                        Visible = True
-                      end
-                      item
-                        Expanded = False
-                        FieldName = 'NOMEFORNECEDOR'
+                        FieldName = 'FORN_LOJA'
                         Font.Charset = DEFAULT_CHARSET
                         Font.Color = clWindowText
                         Font.Height = -11
@@ -4152,8 +4128,7 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
                       item
                         Expanded = False
                         FieldName = 'FORN'
-                        Width = 64
-                        Visible = True
+                        Visible = False
                       end>
                   end
                 end
@@ -4426,7 +4401,7 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
                       Top = 14
                       Width = 608
                       Height = 126
-                      ActivePage = Ts_ParamLjMeses
+                      ActivePage = Ts_ParamLjDias
                       Align = alTop
                       LookAndFeel.SkinName = 'UserSkin'
                       TabOrder = 1
@@ -5173,6 +5148,11 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
     ProxySettings.ProxyType = fpcmNone
     ProxySettings.Port = 0
     Left = 68
+    Top = 351
+  end
+  object ApplicationEvents1: TApplicationEvents
+    OnMessage = ApplicationEvents1Message
+    Left = 748
     Top = 351
   end
 end

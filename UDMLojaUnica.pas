@@ -8,14 +8,6 @@ uses
 type
   TDMLojaUnica = class(TDataModule)
     CDS_ParamLjFornDia: TClientDataSet;
-    CDS_ParamLjFornDiaPROC: TStringField;
-    CDS_ParamLjFornDiaCOD_LOJA: TStringField;
-    CDS_ParamLjFornDiaCODFORNECEDOR: TStringField;
-    CDS_ParamLjFornDiaNOMEFORNECEDOR: TStringField;
-    CDS_ParamLjFornDiaTIPO_CALCULO: TStringField;
-    CDS_ParamLjFornDiaSITUACAO_CALCULO: TStringField;
-    CDS_ParamLjFornDiaDIAS_MESES: TStringField;
-    CDS_ParamLjFornDiaFORN: TStringField;
     DSP_ParamLjFornDia: TDataSetProvider;
     DS_ParamLjFornDia: TDataSource;
     CDS_ParamLojasFTP: TClientDataSet;
@@ -223,6 +215,27 @@ type
     CDS_V_SolicitFornLojasDEM_MES7: TStringField;
     CDS_V_SolicitFornLojasDEM_MES8: TStringField;
     CDS_V_SolicitFornLojasDTA_SOLICITACAO: TDateField;
+    ClientDataSet1: TClientDataSet;
+    StringField1: TStringField;
+    StringField2: TStringField;
+    StringField3: TStringField;
+    StringField4: TStringField;
+    StringField5: TStringField;
+    StringField6: TStringField;
+    StringField7: TStringField;
+    StringField8: TStringField;
+    DataSetProvider1: TDataSetProvider;
+    DataSource1: TDataSource;
+    SQLDataSet1: TSQLDataSet;
+    CDS_ParamLjFornDiaPROC: TStringField;
+    CDS_ParamLjFornDiaCOD_FORN: TStringField;
+    CDS_ParamLjFornDiaFORN_LOJA: TStringField;
+    CDS_ParamLjFornDiaTIPO_CALCULO: TStringField;
+    CDS_ParamLjFornDiaSITUACAO_CALCULO: TStringField;
+    CDS_ParamLjFornDiaDIAS_MESES: TStringField;
+    CDS_ParamLjFornDiaFORN: TStringField;
+    CDS_ParamLjFornDiaORDEM: TIntegerField;
+    CDS_ParamLjFornDiaCOD_LOJA: TStringField;
 
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

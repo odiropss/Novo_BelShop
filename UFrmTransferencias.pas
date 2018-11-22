@@ -427,7 +427,7 @@ Begin
         DecimalSeparator:=',';
 
         bgArqErros:=True;
-        tgArqErros.Add('ERRO - Sol. Trabsferência Loja SIDICOM: '+sgCodLoja+' - '+e.message)
+        tgArqErros.Add('ERRO - Sol. Trabsferência Loja SIDICOM: '+sgCodLoja+' - '+e.message);
       End; // on e : Exception do
     End; // Try da Transação
 
@@ -495,7 +495,7 @@ Begin
       DecimalSeparator:=',';
 
       bgArqErros:=True;
-      tgArqErros.Add('AtualizaPrioridades - '+e.message)
+      tgArqErros.Add('AtualizaPrioridades - '+e.message);
     End; // on e : Exception do
   End; // Try da Transação
 
@@ -1079,7 +1079,7 @@ Begin
       DecimalSeparator:=',';
 
       bgArqErros:=True;
-      tgArqErros.Add('ProcessaTransferenciasCompras: '+mMemo.Lines[i]+' - '+e.message)
+      tgArqErros.Add('ProcessaTransferenciasCompras: '+mMemo.Lines[i]+' - '+e.message);
     End; // on e : Exception do
   End; // Try
 
@@ -1561,7 +1561,7 @@ Begin
       DecimalSeparator:=',';
 
       bgArqErros:=True;
-      tgArqErros.Add('AnalisaAtualizaTransferencias: '+sCodLoja+' - '+e.message)
+      tgArqErros.Add('AnalisaAtualizaTransferencias: '+sCodLoja+' - '+e.message);
     End; // on e : Exception do
   End; // Try
   DMTransferencias.CDS_EstoqueLoja.Close;
@@ -2246,7 +2246,7 @@ Begin
       Result:=False;
 
       bgArqErros:=True;
-      tgArqErros.Add('InsereProdutosCD: 99 - '+e.message)
+      tgArqErros.Add('InsereProdutosCD: 99 - '+e.message);
     End; // on e : Exception do
   End; // Try
   DMTransferencias.SQLQ_Busca.Close;
@@ -2318,7 +2318,7 @@ begin
   //============================================================================
 
   //============================================================================
-  // NÃO PROCESSA NO SÁBADO, DOMINGO E FERIADOS ================================
+  // VERIFICA SE DIA É FERIADO =================================================
   //============================================================================
   MySql:=' SELECT f.Dta_Feriado'+
          ' FROM FIN_FERIADOS_ANO f'+
@@ -2329,14 +2329,7 @@ begin
   DMTransferencias.CDS_BuscaRapida.Open;
   bFeriado:=(DMTransferencias.CDS_BuscaRapida.FieldByName('Dta_Feriado').AsString<>'');
   DMTransferencias.CDS_BuscaRapida.Close;
-
-  sNomeDia:=AnsiUpperCase(DiaSemanaNome(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor)));
-  If (sNomeDia='DOMINGO') Or (sNomeDia='SÁBADO') Or (bFeriado) Then
-  Begin
-    Application.Terminate;
-    Exit;
-  End;
-  // NÃO PROCESSA NO SÁBADO, DOMINGO E FERIADOS ================================
+  // VERIFICA SE DIA É FERIADO =================================================
   //============================================================================
 
   //============================================================================
@@ -2369,6 +2362,25 @@ begin
   bgArqErros:=False;
   tgArqErros:=TStringList.Create;
   // Monta Arquivo Texto de Status =============================================
+  //============================================================================
+
+  //============================================================================
+  // NÃO PROCESSA NO SÁBADO, DOMINGO E FERIADOS ================================
+  //============================================================================
+  // Apartir de 10/11/2018 - Roda no Sábado se Houver Movimento
+  //  If (sNomeDia='DOMINGO') Or (sNomeDia='SÁBADO') Or (bFeriado) Then
+  sNomeDia:=AnsiUpperCase(DiaSemanaNome(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor)));
+  If (sNomeDia='DOMINGO') Or (bFeriado) Then
+  Begin
+    bgArqErros:=True;
+    tgArqErros.Add('Não Roda no Dia: '+sNomeDia);
+    SalvaErros;
+    DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
+
+    Application.Terminate;
+    Exit;
+  End;
+  // NÃO PROCESSA NO SÁBADO, DOMINGO E FERIADOS ================================
   //============================================================================
 
   //============================================================================
@@ -2407,6 +2419,7 @@ begin
     bgArqErros:=True;
     tgArqErros.Add('Erro ao Conectar CD');
     SalvaErros;
+    DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
 
     Application.Terminate;
     Exit;
@@ -2473,7 +2486,18 @@ begin
   Begin
     bgArqErros:=True;
     tgArqErros.Add('Sem Loja Para Processamento Automático no Dia '+DateToStr(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor)));
-  End;
+
+    If (sNomeDia='SÁBADO') Then
+    Begin
+      bgArqErros:=True;
+      tgArqErros.Add('SÁBADO Não Roda Sem Loja Para Processamento Automático no Dia '+DateToStr(DataHoraServidorFI(DMTransferencias.SDS_DtaHoraServidor)));
+      SalvaErros;
+      DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
+
+      Application.Terminate;
+      Exit;
+    End;
+  End; // If DMTransferencias.CDS_Busca.Eof Then
   // Busca Lojas do Dia ========================================================
   //============================================================================
   SalvaProcessamento('02/999 - Busca Lojas do Dia - '+TimeToStr(Time));
@@ -2570,8 +2594,8 @@ begin
   Begin
     bgArqErros:=True;
     tgArqErros.Add('Erro ao Conectar CD');
-
     SalvaErros;
+    DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
 
     Application.Terminate;
     Exit;
@@ -2590,8 +2614,9 @@ begin
     DMTransferencias.SQLQ_Busca.Close;
 
     bgArqErros:=True;
-    tgArqErros.Add('Erro ao Localizar Estoques no CD');
+    tgArqErros.Add('Erro - BuscaProdutosCD');
     SalvaErros;
+    DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
 
     Application.Terminate;
     Exit;
@@ -2610,7 +2635,9 @@ begin
   If Not InsereProdutosCD Then
   Begin
     bgArqErros:=True;
+    tgArqErros.Add('Erro - InsereProdutosCD');
     SalvaErros;
+    DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
 
     Application.Terminate;
     Exit;
@@ -2630,7 +2657,9 @@ begin
   If Not TransferenciasLojas Then
   Begin
     bgArqErros:=True;
+    tgArqErros.Add('Erro - TransferenciasLojas');
     SalvaErros;
+    DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
 
     Application.Terminate;
     Exit;
@@ -2650,7 +2679,9 @@ begin
   If Not BuscaProdutosLojas Then
   Begin
     bgArqErros:=True;
+    tgArqErros.Add('Erro - BuscaProdutosLojas');
     SalvaErros;
+    DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
 
     Application.Terminate;
     Exit;
@@ -2670,7 +2701,9 @@ begin
   If Not AnalisaAtualizaTransferencias Then
   Begin
     bgArqErros:=True;
+    tgArqErros.Add('Erro - AnalisaAtualizaTransferencias');
     SalvaErros;
+    DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
 
     Application.Terminate;
     Exit;
@@ -2690,7 +2723,9 @@ begin
   If Not ProcessaTransferenciasCompras Then
   Begin
     bgArqErros:=True;
+    tgArqErros.Add('Erro - ProcessaTransferenciasCompras');
     SalvaErros;
+    DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
 
     Application.Terminate;
     Exit;
@@ -2715,7 +2750,9 @@ begin
   If Not AtualizaPrioridades Then
   Begin
     bgArqErros:=True;
+    tgArqErros.Add('Erro - AtualizaPrioridades');
     SalvaErros;
+    DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
 
     Application.Terminate;
     Exit;

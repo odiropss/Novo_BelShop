@@ -457,7 +457,7 @@ Begin
   //  Processa os Incluídos IND_SITUACAO='I' =================================
   //==========================================================================
 
-End; // // Cria Lançamento de Abertura em Caso de Vinculo de Fornecedor Novo >>>
+End; // Cria Lançamento de Abertura em Caso de Vinculo de Fornecedor Novo >>>>>>
 
 // FORNECEDORES VINCULADOS - Atualiza Vinculos dos Fornecedore >>>>>>>>>>>>>>>>>
 Procedure TFrmFluxoFornecedor.FornVincAtualizaVinculos;
@@ -1873,14 +1873,17 @@ Begin
     FrmBelShop.MontaProgressBar(False, FrmFluxoFornecedor);
 
     // Exclui Caixas Sem Movtos do Ultimo Fornecedor ===========================
-    MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES fe'+
-           ' WHERE fe.cod_fornecedor='+sCodigo+
-           ' AND  NOT EXISTS (SELECT 1'+
-           '                  FROM FL_CAIXA_FORNECEDORES f'+
-           '                  WHERE f.cod_fornecedor=fe.cod_fornecedor'+
-           '                  AND   f.dta_caixa=fe.dta_caixa'+
-           '                  AND   f.num_seq BETWEEN 1 AND 999998)';
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
+    If Trim(sCodigo)<>'' Then
+    Begin
+      MySql:=' DELETE FROM FL_CAIXA_FORNECEDORES fe'+
+             ' WHERE fe.cod_fornecedor='+sCodigo+
+             ' AND  NOT EXISTS (SELECT 1'+
+             '                  FROM FL_CAIXA_FORNECEDORES f'+
+             '                  WHERE f.cod_fornecedor=fe.cod_fornecedor'+
+             '                  AND   f.dta_caixa=fe.dta_caixa'+
+             '                  AND   f.num_seq BETWEEN 1 AND 999998)';
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+    End; // If Trim(sCodigo)<>'' Then
 
     // Fecha Transacao =========================================================
     DMBelShop.SQLC.Commit(TD);
@@ -5499,4 +5502,4 @@ end.
 
 {
 hint balao revisar
-}             
+}

@@ -34,40 +34,42 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 95
+    Left = 55
     Top = 217
   end
   object CDS_Busca: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Busca'
-    Left = 197
+    Left = 173
     Top = 216
   end
   object DSP_Busca: TDataSetProvider
     DataSet = SDS_Busca
     Options = [poRetainServerOrder]
-    Left = 148
+    Left = 116
     Top = 230
   end
   object SDS_EmpProcessa: TSQLDataSet
     CommandText = 
-      'Select '#13#10'c.COD_FILIAL, c.ENDERECO_IP, c.endereco_ip_externo,'#13#10'c.' +
-      'PASTA_BASE_DADOS, c.DES_BASE_DADOS, c.COD_EMP, c.RAZAO_SOCIAL, c' +
-      '.TIP_EMP,'#13#10'c.IND_ATIVO,'#13#10#39'IBDB_'#39'||c.COD_FILIAL "DATABASE",'#13#10#39'IBT' +
-      '_'#39'||c.COD_FILIAL  "TRANSACAO",'#13#10'c.COD_LINX'#13#10#13#10'From EMP_Conexoes ' +
-      'c'#13#10'Where (c.Ind_Ativo='#39'SIM'#39' or c.cod_filial=99)'#13#10'Order by 1'#13#10#13#10
+      'SELECT'#13#10'c.cod_filial, c.endereco_ip, c.endereco_ip_externo,'#13#10'c.p' +
+      'asta_base_dados, c.des_base_dados, c.cod_emp, c.razao_social, c.' +
+      'tip_emp,'#13#10'c.ind_ativo,'#13#10#39'IBDB_'#39'||c.cod_filial "DATABASE",'#13#10#39'IBT_' +
+      #39'||c.cod_filial  "TRANSACAO",'#13#10'c.cod_linx, c.dta_inicio_linx, c.' +
+      'ind_domingo'#13#10#13#10'FROM EMP_CONEXOES c'#13#10'WHERE (c.Ind_Ativo='#39'SIM'#39' OR ' +
+      'c.cod_filial=99)'#13#10'AND c.dta_inicio_linx IS NOT NULL'#13#10'ORDER BY c.' +
+      'ind_domingo, c.dta_inicio_linx'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 79
+    Left = 55
     Top = 147
   end
   object CDS_EmpProcessa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_EmpProcessa'
-    Left = 206
+    Left = 174
     Top = 152
     object CDS_EmpProcessaCOD_FILIAL: TStringField
       FieldName = 'COD_FILIAL'
@@ -123,11 +125,19 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     object CDS_EmpProcessaCOD_LINX: TIntegerField
       FieldName = 'COD_LINX'
     end
+    object CDS_EmpProcessaDTA_INICIO_LINX: TDateField
+      FieldName = 'DTA_INICIO_LINX'
+    end
+    object CDS_EmpProcessaIND_DOMINGO: TStringField
+      FieldName = 'IND_DOMINGO'
+      FixedChar = True
+      Size = 1
+    end
   end
   object DSP_EmpProcessa: TDataSetProvider
     DataSet = SDS_EmpProcessa
     Options = [poRetainServerOrder]
-    Left = 144
+    Left = 116
     Top = 164
   end
   object SDS_DtaHoraServidor: TSQLDataSet
@@ -886,40 +896,40 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 95
+    Left = 55
     Top = 289
   end
   object CDS_BuscaRapida: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_BuscaRapida'
-    Left = 197
+    Left = 173
     Top = 288
   end
   object DSP_BuscaRapida: TDataSetProvider
     DataSet = SDS_BuscaRapida
     Options = [poRetainServerOrder]
-    Left = 148
+    Left = 116
     Top = 302
   end
   object SDS_Pesquisa: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 95
+    Left = 55
     Top = 369
   end
   object CDS_Pesquisa: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Pesquisa'
-    Left = 197
+    Left = 173
     Top = 368
   end
   object DSP_Pesquisa: TDataSetProvider
     DataSet = SDS_Pesquisa
     Options = [poRetainServerOrder]
-    Left = 148
+    Left = 116
     Top = 382
   end
   object IBQ_EstoqueLoja: TIBQuery
@@ -1072,7 +1082,7 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     Params = <>
     SQLConnection = SQLC
     Left = 143
-    Top = 91
+    Top = 83
   end
   object SimpleDS: TSimpleDataSet
     Aggregates = <>
@@ -1094,14 +1104,14 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 71
+    Left = 55
     Top = 457
   end
   object CDS_LojaLinx: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_LojaLinx'
-    Left = 165
+    Left = 173
     Top = 456
   end
   object DSP_LojaLinx: TDataSetProvider
@@ -1112,7 +1122,7 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
   end
   object DS_EmpProcessa: TDataSource
     DataSet = CDS_EmpProcessa
-    Left = 272
+    Left = 225
     Top = 168
   end
   object SQLQ_Linx: TSQLQuery

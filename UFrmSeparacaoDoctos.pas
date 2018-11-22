@@ -61,10 +61,7 @@ type
     // Odir ====================================================================
     Procedure LimpaTudo;
 
-    Procedure ExecutaTransacao(sTipo: String);
-                 // sTipo:
-                 //    < L > = Limpa Romaneios Inexistente
-                 //    < S > = Altera Separador do Romaneio
+    Procedure ExecutaTransacao;
     Function  BuscaDoctoRelatorio: Boolean;
     Function  AtualizaTempoSeparacao: Boolean;
     Procedure CalculaTempoSeparacao(dDtaIni, dDtaFim: TDateTime; Var iDias: Integer; Var sTempo: String);
@@ -163,10 +160,6 @@ Procedure TFrmSeparacaoDoctos.ExecutaTransacao;
 Var
   MySql: String;
 Begin
-// sTipo:
-//    < L > = Limpa Romaneios Inexistente
-//    < S > = Altera Separador do Romaneio
-
   // Verifica se Transação esta Ativa
   If DMSeparacaoDoctos.SQLC.InTransaction Then
    DMSeparacaoDoctos.SQLC.Rollback(TD);
@@ -178,35 +171,18 @@ Begin
   DMSeparacaoDoctos.SQLC.StartTransaction(TD);
   Try // Try da Transação
 
-    // Limpa Romaneios Inexistente =============================================
-    If sTipo='L' Then
-    Begin
-      MySql:=' DELETE FROM LG_REL_SEPARACAO l'+
-             ' WHERE NOT EXISTS (SELECT 1'+
-             '                   FROM ES_ESTOQUES_LOJAS e'+
-             '                   WHERE e.rel_separacao=l.num_relatorio)';
-    End; // If sTipo='L' Then
-
     // Altera Separador do Romaneio ============================================
-    If sTipo='S' Then
-    Begin
-      MySql:=' UPDATE LG_REL_SEPARACAO l'+
-             ' SET l.cod_separador='+sgCodUsuSep+
-             ' WHERE l.num_relatorio='+IntToStr(EdtRomNumero.AsInteger)+
-             ' AND   l.num_docto='+IntToStr(EdtDocNumero.AsInteger);
-    End; // If sTipo='L' Then
-
+    MySql:=' UPDATE LG_REL_SEPARACAO l'+
+           ' SET l.cod_separador='+sgCodUsuSep+
+           ' WHERE l.num_relatorio='+IntToStr(EdtRomNumero.AsInteger)+
+           ' AND   l.num_docto='+IntToStr(EdtDocNumero.AsInteger);
     DMSeparacaoDoctos.SQLC.Execute(MySql,nil,nil);
 
     // Atualiza Transacao ======================================================
     DMSeparacaoDoctos.SQLC.Commit(TD);
 
     // Apresenta Novo Separador do Romaneio ====================================
-    If sTipo='S' Then
-    Begin
-      EdtRomSeparados.Text:=sgCodUsuSep+' - '+sgNomeUsuSep;
-    End; // If sTipo='L' Then
-
+    EdtRomSeparados.Text:=sgCodUsuSep+' - '+sgNomeUsuSep;
   Except // Except da Transação
     on e : Exception do
     Begin
@@ -459,9 +435,6 @@ begin
 
   If Length(EdtCodBarras.Text)>=12 Then
   Begin
-    // Exclui Romaneios Inexistente ============================================
-    ExecutaTransacao('L');
-
     // Atualiza e Apresenta Romaneiro ==========================================
     Try
       EdtCodBarras.Enabled:=False;
@@ -594,7 +567,7 @@ begin
   //============================================================================
   // Altera para Novo Separador ================================================
   //============================================================================
-  ExecutaTransacao('S');
+  ExecutaTransacao;
   // Altera para Novo Separador ================================================
   //============================================================================
 

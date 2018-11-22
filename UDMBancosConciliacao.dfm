@@ -1,6 +1,6 @@
 object DMConciliacao: TDMConciliacao
   OldCreateOrder = False
-  Left = 237
+  Left = 183
   Top = 122
   Height = 604
   Width = 1121
@@ -2408,21 +2408,27 @@ object DMConciliacao: TDMConciliacao
       'ARIOS ue ON ue.cod_usuario=dc.usu_impressao /* Usuario que Efetu' +
       'ou a Emissao do Docto */'#13#10'    LEFT JOIN PS_USUARIOS ur ON ur.cod' +
       '_usuario=dc.usu_recebe    /* Usuario que Recebeu o Docto */'#13#10'WHE' +
-      'RE dc.num_docto=:NumDoc'#13#10#13#10'UNION'#13#10#13#10'SELECT'#13#10'NULL NUM_DOCTO, -- 1' +
-      #13#10'NULL USU_CRIACAO, -- 2'#13#10'NULL DES_USU_CRIACAO, -- 3'#13#10'NULL DTA_C' +
-      'RIACAO, -- 4'#13#10'NULL HRA_CRIACAO, -- 5'#13#10'NULL DTA_MOVTO, -- 6'#13#10'NULL' +
-      ' COD_LINX, -- 7'#13#10#39'TOTAL DO DOCUMENTO'#39' NOME_LOJA, -- 8'#13#10'SUM(dc.vl' +
-      'r_matriz) VLR_MATRIZ, -- 9'#13#10'SUM(dc.vlr_depositos) VLR_DEPOSITOS,' +
-      ' -- 10'#13#10'SUM(dc.vlr_despesas) VLR_DESPESAS, -- 11'#13#10'SUM(dc.vlr_out' +
-      'ros) VLR_OUTROS, -- 12'#13#10'SUM(dc.vlr_total) VLR_TOTAL, -- 13'#13#10'NULL' +
-      ' OBS_FINANCEIRO, -- 14'#13#10'NULL USU_INCLUSAO, -- 15'#13#10'NULL DES_USU_I' +
-      'NCLUSAO, -- 16'#13#10'NULL DTA_INCLUSAO, -- 17'#13#10'NULL HRA_INCLUSAO, -- ' +
-      '18'#13#10'NULL USU_IMPRESSAO, -- 19'#13#10'NULL DES_USU_IMPRESSAO, -- 20'#13#10'NU' +
-      'LL DTA_IMPRESSAO, -- 21'#13#10'NULL HRA_IMPRESSAO, -- 22'#13#10'NULL USU_REC' +
-      'EBE, -- 23'#13#10'NULL DES_USU_RECEBE, -- 24'#13#10'NULL DTA_RECEBE, -- 25'#13#10 +
-      'NULL HRA_RECEBE, -- 26'#13#10'1 ORDEM -- 27'#13#10#13#10'FROM FIN_CONCILIACAO_DE' +
-      'P_REL dc'#13#10'WHERE dc.num_docto=:NumDoc'#13#10#13#10'ORDER BY 27,8,6'#13#10'-- ORDE' +
-      'M -- 27'#13#10'-- DTA_MOVTO, -- 6'#13#10'-- NOME_LOJA, -- 8'#13#10
+      'RE dc.num_docto=:NumDoc'#13#10#13#10'UNION'#13#10#13#10'SELECT'#13#10'dc.num_docto, -- 1'#13#10 +
+      'dc.usu_criacao, -- 2'#13#10'uc.des_usuario DES_USU_CRIACAO, -- 3'#13#10'dc.d' +
+      'ta_criacao, -- 4'#13#10'dc.hra_criacao, -- 5'#13#10'NULL DTA_MOVTO, -- 6'#13#10'NU' +
+      'LL COD_LINX, -- 7'#13#10#13#10#39'TOTAL DO DOCUMENTO'#39' NOME_LOJA, -- 8,'#13#10'SUM(' +
+      'dc.vlr_matriz) VLR_MATRIZ, -- 9'#13#10'SUM(dc.vlr_depositos) VLR_DEPOS' +
+      'ITOS, -- 10'#13#10'SUM(dc.vlr_despesas) VLR_DESPESAS, -- 11'#13#10'SUM(dc.vl' +
+      'r_outros) VLR_OUTROS, -- 12'#13#10'SUM(dc.vlr_total) VLR_TOTAL, -- 13'#13 +
+      #10#39'TOTAL DE LOJAS:'#39'||TRIM(CAST(Count(dc.cod_linx) AS VARCHAR(20))' +
+      ') OBS_FINANCEIRO, -- 14'#13#10#13#10'NULL USU_INCLUSAO,  -- 15'#13#10'NULL DES_U' +
+      'SU_INCLUSAO, -- 16'#13#10'NULL DTA_INCLUSAO, -- 17'#13#10'NULL HRA_INCLUSAO,' +
+      ' -- 18'#13#10'dc.usu_impressao, -- 19'#13#10'ue.des_usuario DES_USU_IMPRESSA' +
+      'O, -- 20'#13#10'dc.dta_impressao, -- 21'#13#10'dc.hra_impressao, -- 22'#13#10'dc.u' +
+      'su_recebe, -- 23'#13#10'ur.des_usuario DES_USU_RECEBE, -- 24'#13#10'dc.dta_r' +
+      'ecebe, -- 25'#13#10'dc.hra_recebe, -- 26'#13#10'1 ORDEM --27'#13#10#13#10'FROM FIN_CON' +
+      'CILIACAO_DEP_REL dc'#13#10'    LEFT JOIN PS_USUARIOS uc ON uc.cod_usua' +
+      'rio=dc.usu_criacao   /* Usuario que Criou o Docto */'#13#10'    LEFT J' +
+      'OIN PS_USUARIOS ue ON ue.cod_usuario=dc.usu_impressao /* Usuario' +
+      ' que Efetuou a Emissao do Docto */'#13#10'    LEFT JOIN PS_USUARIOS ur' +
+      ' ON ur.cod_usuario=dc.usu_recebe    /* Usuario que Recebeu o Doc' +
+      'to */'#13#10'WHERE dc.num_docto=:NumDoc'#13#10#13#10'GROUP BY 1,2,3,4,5,19,20,21' +
+      ',22,23,24,25,26'#13#10'ORDER BY 27,8,6'#13#10
     MaxBlobSize = -1
     Params = <
       item
@@ -2545,6 +2551,7 @@ object DMConciliacao: TDMConciliacao
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_CMDepAnaliseDocRel'
+    AfterOpen = CDS_CMDepAnaliseDocRelAfterOpen
     Left = 664
     Top = 488
     object CDS_CMDepAnaliseDocRelNUM_DOCTO: TIntegerField

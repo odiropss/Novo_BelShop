@@ -426,6 +426,7 @@ type
       var Text: String; DisplayText: Boolean);
     procedure CDS_CMDepHistoricosGRUPOSetText(Sender: TField;
       const Text: String);
+    procedure CDS_CMDepAnaliseDocRelAfterOpen(DataSet: TDataSet);
 
     // ODIR ====================================================================
 
@@ -442,13 +443,14 @@ var
 implementation
 
 uses UDMBelShop, UFrmBelShop, UFrmBancoExtratos, UFrmConciliacaoCaixa,
-  UFrmApresConciliacao, Controls, cxTextEdit;
+  UFrmApresConciliacao, Controls, cxTextEdit, UFrmSolicitacoes;
 
 {$R *.dfm}
 
 // =============================================================================
 // Odir - INICIO ===============================================================
 // =============================================================================
+
 // Diversos - Fecha Todos os Client's >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TDMConciliacao.FechaTudoConciliacao;
 Var
@@ -560,6 +562,34 @@ end;
 procedure TDMConciliacao.CDS_CMDepHistoricosGRUPOSetText(Sender: TField; const Text: String);
 begin
 //  DMConciliacao.CDS_CMDepHistoricos.Post;
+end;
+
+procedure TDMConciliacao.CDS_CMDepAnaliseDocRelAfterOpen(
+  DataSet: TDataSet);
+begin
+  // Inicializa Botões Documento Financeiro ====================================
+  If (Not CDS_CMDepAnaliseDocRel.IsEmpty) And (FrmSolicitacoes<>Nil) Then
+  Begin
+    FrmSolicitacoes.Bt_ConcDepDocFinanExcluir.Enabled:=True;
+    If Trim(CDS_CMDepAnaliseDocRelUSU_IMPRESSAO.AsString)<>'' Then
+    Begin
+      FrmSolicitacoes.Bt_ConcDepDocFinanExcluir.Enabled:=False;
+    End; // If Trim(DCDS_CMDepAnaliseDocRelUSU_IMPRESSAO.AsString)<>'' Then
+
+    FrmSolicitacoes.Bt_ConcDepDocFinanRecebe.Enabled:=True;
+    If (Trim(CDS_CMDepAnaliseDocRelUSU_RECEBE.AsString)<>'') Or
+       (Trim(CDS_CMDepAnaliseDocRelUSU_IMPRESSAO.AsString)='') Then
+    Begin
+      FrmSolicitacoes.Bt_ConcDepDocFinanRecebe.Enabled:=False;
+    End; // If (Trim(DMConciliacao.CDS_CMDepAnaliseDocRelUSU_RECEBE.AsString)<>'') Or
+
+    FrmSolicitacoes.Bt_ConcDepDocFinanFechamento.Enabled:=False;
+    If (Trim(CDS_CMDepAnaliseDocRelUSU_RECEBE.AsString)<>'') Then
+    Begin
+      FrmSolicitacoes.Bt_ConcDepDocFinanFechamento.Enabled:=True;
+    End; // If (Trim(DMConciliacao.CDS_CMDepAnaliseDocRelUSU_RECEBE.AsString)<>'') Or
+
+  End; // If CDS_CMDepAnaliseDocRel.Active Then
 end;
 
 end.

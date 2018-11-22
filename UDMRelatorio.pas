@@ -1,4 +1,5 @@
 unit UDMRelatorio;
+//DMCentralTrocas.CDS_RelReposicao
 
 interface
 
@@ -50,7 +51,7 @@ var
 implementation
 
 uses UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop, DB, DK_Procs1,
-  UDMCentralTrocas;
+     UDMCentralTrocas, UDMBancosConciliacao;
 
 {$R *.dfm}
 
@@ -65,7 +66,7 @@ Var
   sTotal_Valor, sTotal_Itens, sTotal_Qtd: String;
   s: String;
 Begin
-                    
+
   FrmBelShop.OdirPanApres.Caption:='AGUARDE !! Montando Relatório...';
   FrmBelShop.OdirPanApres.Width:=Length(FrmBelShop.OdirPanApres.Caption)*10;
   FrmBelShop.OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-FrmBelShop.OdirPanApres.Width)/2));
@@ -219,3 +220,5 @@ end; // Impressão do Romaneio de Separação >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
 end.
+
+

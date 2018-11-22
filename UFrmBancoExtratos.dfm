@@ -1,6 +1,6 @@
 object FrmBancoExtratos: TFrmBancoExtratos
-  Left = 238
-  Top = 114
+  Left = 241
+  Top = 95
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Banco / Extratos'
@@ -1388,7 +1388,7 @@ object FrmBancoExtratos: TFrmBancoExtratos
             Top = 74
             Width = 1031
             Height = 434
-            ActivePage = Ts_ExtratoConsulta
+            ActivePage = Ts_ExtratoBanrisul
             Align = alClient
             TabOrder = 1
             OnChange = PC_ExtExtratosChange
@@ -5806,16 +5806,14 @@ object FrmBancoExtratos: TFrmBancoExtratos
         Height = 471
         TabStop = False
         Align = alClient
-        Ctl3D = False
         DataSource = DMConciliacao.DS_CMDepositosAnalise
-        FixedColor = 14671839
+        FixedColor = 14737632
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Font.Style = []
-        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-        ParentCtl3D = False
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
         ParentFont = False
         ReadOnly = True
         TabOrder = 1
@@ -5830,14 +5828,21 @@ object FrmBancoExtratos: TFrmBancoExtratos
         OnTitleClick = Dbg_DepAnaliseTitleClick
         Columns = <
           item
+            ButtonStyle = cbsEllipsis
             Expanded = False
             FieldName = 'NOME_EMP'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
             Title.Caption = 'Nome da Loja'
             Width = 288
             Visible = True
           end
           item
             Alignment = taCenter
+            Color = 15987699
             Expanded = False
             FieldName = 'DTA_DOCTO'
             Title.Alignment = taCenter
@@ -6001,12 +6006,12 @@ object FrmBancoExtratos: TFrmBancoExtratos
           item
             Expanded = False
             FieldName = 'ORDEM'
-            Visible = True
+            Visible = False
           end
           item
             Expanded = False
             FieldName = 'ORDEM_APRES'
-            Visible = True
+            Visible = False
           end>
       end
       object Sb_DepAnaliseDia: TdxStatusBar

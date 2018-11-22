@@ -56,6 +56,7 @@ type
     DSP_BuscaRapida: TDataSetProvider;
     SQLQ_BuscaRapida: TSQLQuery;
     SQLQuery1: TSQLQuery;
+    CDS_EmpProcessaIND_DOMINGO: TStringField;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir ====================================================================

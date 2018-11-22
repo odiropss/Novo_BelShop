@@ -1393,7 +1393,7 @@ object FrmEstoques: TFrmEstoques
           967
           33)
         object Label1: TLabel
-          Left = 248
+          Left = 246
           Top = 11
           Width = 353
           Height = 13

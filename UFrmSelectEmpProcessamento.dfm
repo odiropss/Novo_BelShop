@@ -1,8 +1,8 @@
 object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
-  Left = 248
-  Top = 114
+  Left = 240
+  Top = 103
   Width = 961
-  Height = 583
+  Height = 619
   AutoSize = True
   BorderIcons = []
   Caption = 'Sele'#231#227'o de Empresa para Processamento'
@@ -403,7 +403,7 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
     Left = 0
     Top = 0
     Width = 945
-    Height = 545
+    Height = 581
     Align = alClient
     BevelInner = bvLowered
     Color = 14342874
@@ -412,7 +412,7 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
     TabOrder = 0
     object Panel13: TPanel
       Left = 2
-      Top = 508
+      Top = 544
       Width = 941
       Height = 35
       Align = alBottom
@@ -712,7 +712,7 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
       Left = 2
       Top = 2
       Width = 941
-      Height = 506
+      Height = 542
       Align = alClient
       Caption = '  Empresas a Selecionar para Processamento '
       Ctl3D = False
@@ -728,7 +728,7 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
         Left = 1
         Top = 14
         Width = 939
-        Height = 471
+        Height = 507
         Align = alClient
         Color = 15004403
         DataSource = DMBelShop.DS_EmpProcessa
@@ -866,7 +866,7 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
       end
       object Sb_SelectEmpProc: TdxStatusBar
         Left = 1
-        Top = 485
+        Top = 521
         Width = 939
         Height = 20
         Panels = <

@@ -749,7 +749,6 @@ type
     Ts_GeraOCEditaGrid: TTabSheet;
     Splitter1: TSplitter;
     Dbg_GeraOCEditaGrid: TDBGridJul;
-    StB_GeraOCEdit: TdxStatusBar;
     Dbg_GeraOCEditaProdutos: TDBGrid;
     Panel43: TPanel;
     Label62: TLabel;
@@ -1168,6 +1167,8 @@ type
     Label136: TLabel;
     N57: TMenuItem;
     SubMenuFinanExpImpImportaTrinks: TMenuItem;
+    SubMenuCentroDistControleProducao: TMenuItem;
+    StB_GeraOCEdit: TdxStatusBar;
 
     // Odir ====================================================================
 
@@ -2083,6 +2084,7 @@ type
     procedure SubMenuGeracaoArquivosClick(Sender: TObject);
     procedure SubMenuComisCampanhasColecaoClick(Sender: TObject);
     procedure SubMenuCentroDistrCtrlRomSeparacaoClick(Sender: TObject);
+    procedure SubMenuCentroDistControleProducaoClick(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -3419,7 +3421,7 @@ begin
     if i <> 0 then
     Handled := False;
   End;
-End; // // DIVERSOS - Desbilita o Scroll do Mouse no DbGrid >>>>>>>>>>>>>>>>>>>>
+End; // DIVERSOS - Desbilita o Scroll do Mouse no DbGrid >>>>>>>>>>>>>>>>>>>>>>>
 
 // DIVERSOS - Habilita o Scroll do Mouse no DBGrid >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 procedure TFrmBelShop.HabilitaScrollMouse(var Msg: TMsg; var Handled: Boolean);
@@ -7625,7 +7627,7 @@ Begin
     End; // Try 
       
   End; // If bSiga Then // Query Executada
-End; // // Fechamento de Caixa Dia - Busca Total de Déditos >>>>>>>>>>>>>>>>>>>>
+End; // Fechamento de Caixa Dia - Busca Total de Déditos >>>>>>>>>>>>>>>>>>>>>>>
 
 // Fechamento de Caixa Dia - Busca Movtos de Créditos >>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmBelShop.FechaCaixaMovtosCreditos(sData, sTipo: String): Boolean;
@@ -7982,7 +7984,7 @@ Begin
       MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
     End; // on e : Exception do
   End; // Try 
-End; // // Fechamento de Caixa Dia - Totais Caixa do Dia da Loja >>>>>>>>>>>>>>>
+End; // Fechamento de Caixa Dia - Totais Caixa do Dia da Loja >>>>>>>>>>>>>>>>>>
 
 // Fechamento de Caixa Dia - Busca Movtos do Caixa do Dia da Loja >>>>>>>>>>>>>>
 Function TFrmBelShop.FechaCaixaBuscaMovtoCaixaDia(sCodLoja, sDesLoja, sTipo: String): Boolean;
@@ -9891,7 +9893,7 @@ Begin
 
   DMVirtual.CDS_V_ObjetivosMeses.First;
 
-End; // // Calcula Resultado dos Objetivos por Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>
+End; // Calcula Resultado dos Objetivos por Meses >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Objetivos/Metas Meses - Atualiza 12 Meses Outros >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBelShop.AtualizaValorObjetivosMetasMesesOutros;
@@ -11477,7 +11479,7 @@ Begin
   DMVirtual.CDS_V_ObjetivosDiasVISIVEL.AsString:='S';
   DMVirtual.CDS_V_ObjetivosDias.Post;
   
-End; // // Monta Planilha de Objetivos por Dias >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+End; // Monta Planilha de Objetivos por Dias >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Apresenta Grafico de Objetivos/Metas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBelShop.ApresentaGraficoObjetivosMetas;
@@ -12258,7 +12260,7 @@ Begin
 
   DMVirtual.CDS_V_ObjetivosDias.First;
                                                   
-End; // // Calcula Resultado dos Objetivos por Dia >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+End; // Calcula Resultado dos Objetivos por Dia >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Cria Feriados no Ano >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBelShop.CriaFeriadosAno(iAno: Integer);
@@ -14885,7 +14887,7 @@ begin
       Msg.wParam := VK_DOWN;
    end; // if ActiveControl is TDBGrid then
  End; // if Msg.message = WM_MOUSEWHEEL then
-end; // // Rolagem no Grid com Mouse >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+end; // Rolagem no Grid com Mouse >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // Planilha FInanceira - Retira Comprovantes que não devem aparecer >>>>>>>>>>>>
 Procedure TFrmBelShop.PlanilhaFinanceiraRetiraComprovantes;
@@ -17267,7 +17269,7 @@ Begin
     Except
       msg('Valor Inválido !!','A');
     End;
-  End; // If InputQuery('Informe a Quantidade a COMPRAR...','',sQtdComprar) then
+  End; // If InputQuery(s,'',sValorNew) then
 
 End; // Altera Quantidade ou Preço Unitário a Comparar >>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -25663,6 +25665,13 @@ end;
 procedure TFrmBelShop.Dbg_GeraOCEditaGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 Var
   s: String;
+  bk: TBookmarkStr;
+  i: Integer;
+
+  MySql: String;
+  sCodEmp, sNumSeq: String;
+  sValorNew, sValorOld: String;
+  bLinx: Boolean;
 begin
   // Bloquei Ctrl + Delete =====================================================
   If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
@@ -25698,23 +25707,172 @@ begin
 
   If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização OC' Then
   Begin
-    // Altera Preco Unitário =====================================================
+    //==========================================================================
+    // Altera Preco Unitário ===================================================
+    //==========================================================================
     If (key=Vk_F2) and (StB_GeraOCEdit.Visible) Then
-     AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'P', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
+    Begin
+      For i:=0 to Dbg_GeraOCEditaProdutos.SelectedRows.Count-1 do
+      Begin
+        // Posiciona no ClientDataSet
+        DMBelShop.IBQ_AComprarEdita.GotoBookmark(Pointer(Dbg_GeraOCEditaProdutos.SelectedRows.Items[i]));
 
-    // Altera Desconto Individual ================================================
+        // Solicita Novo Preço Unitario
+        If i=0 Then
+        Begin
+          // Verifica se é Linx Puro ===================================================
+          MySql:=' SELECT d.origem'+
+                 ' FROM OC_COMPRAR_DOCS d'+
+                 ' WHERE d.num_docto='+VarToStr(EdtGeraOCBuscaDocto.Value)+
+                 ' AND   d.dta_docto='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date))));
+          DMBelShop.CDS_BuscaRapida.Close;
+          DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+          DMBelShop.CDS_BuscaRapida.Open;
+          bLinx:=(AnsiUpperCase(DMBelShop.CDS_BuscaRapida.FieldByName('origem').AsString)='LINX');
+          DMBelShop.CDS_BuscaRapida.Close;
+
+          sCodEmp:=DMBelShop.IBQ_AComprarEdita.FieldByName('COD_EMPRESA').AsString;
+          sNumSeq:=DMBelShop.IBQ_AComprarEdita.FieldByName('NUM_SEQ').AsString;
+
+          sValorNew:=DMBelShop.IBQ_AComprarEdita.FieldByName('VLR_UNI_COMPRA').AsString;
+          sValorOld:=DMBelShop.IBQ_AComprarEdita.FieldByName('VLR_UNI_COMPRA').AsString;
+          If InputQuery('Novo Preço Unitário do Produto...','',sValorNew) then
+          Begin
+            Try
+              StrToCurr(sValorNew);
+              If StrToCurr(sValorNew)=0 Then
+              Begin
+                sValorNew:='';
+                Exit;
+              End;
+            Except
+              msg('Valor Inválido !!','A');
+              sValorNew:='';
+              Exit;
+            End;
+          End; // If InputQuery('Informe a Quantidade a COMPRAR...','',sQtdComprar) then
+        End; // If i=0 Then
+
+        If (Trim(sValorNew)<>'') And (DMBelShop.IBQ_AComprarEdita.FieldByName('IND_OC_GERADA').AsString<>'S')Then
+        Begin
+          DecimalSeparator:='.';
+          MySql:=' UpDate OC_COMPRAR oc'+
+                 ' Set oc.Vlr_Uni_Compra='+QuotedStr(f_Troca(',','.',sValorNew))+
+                 ', oc.VLR_DESCONTOS=((oc.QTD_ACOMPRAR*oc.VLR_UNI_COMPRA)*(oc.PER_DESCONTO/100))'+
+                 ', oc.VLR_BRUTO=(oc.QTD_ACOMPRAR*oc.VLR_UNI_COMPRA)-oc.VLR_DESCONTOS'+
+                 ', oc.VLR_BASE_ICMS=oc.VLR_BRUTO'+
+                 ', oc.VLR_ICMS=Cast(((oc.VLR_BASE_ICMS*oc.PER_ICMS)/100) as Numeric(12,2))'+
+                 ', oc.VLR_IPI=Cast(((oc.VLR_BRUTO*oc.PER_IPI)/100) as Numeric(12,2))'+
+                 ', oc.VLR_BASE_ST=oc.VLR_BRUTO+(Cast(((oc.VLR_BRUTO*oc.PER_MARGEM_ST)/100) as Numeric(12,2)))'+
+                 ', oc.VLR_ST=(Cast(((oc.VLR_BASE_ST*oc.PER_ST)/100) as Numeric(12,2))-oc.VLR_ICMS)'+
+                 ', oc.VLR_TOT_COMPRA=oc.VLR_BRUTO+oc.VLR_ST+oc.VLR_IPI'+
+
+                 ', oc.BLOB_TEXTO=oc.BLOB_TEXTO||ascii_char(13)||'+
+                     QuotedStr('Aberturta do Aplicativo: '+sgDataHoraAplicativo)+
+                               '|| ascii_char(13) ||'+
+                               QuotedStr('Alterado em: '+DateTimeToStr(
+                               DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor))+
+                               ' por '+Des_Usuario+
+                               ' - Preço Anterior: '+sValorOld+
+                               ' - Preço Atual: '+sValorNew)+
+
+                 ' Where oc.Ind_OC_Gerada=''N'''+
+                 ' And   oc.Num_Documento='+QuotedStr(VarToStr(EdtGeraOCBuscaDocto.Value))+
+                 ' And   Cast(oc.dta_documento as Date)='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdt_GeraOCDataDocto.Date))))+
+                 ' And   oc.Cod_Item='+QuotedStr(DMBelShop.IBQ_AComprarEdita.FieldByName('COD_ITEM').AsString);
+          DMBelShop.IBQ_Executa.Close;
+          DMBelShop.IBQ_Executa.SQL.Clear;
+          DMBelShop.IBQ_Executa.SQL.Add(MySql);
+          DMBelShop.IBQ_Executa.ExecSQL;
+
+          DMBelShop.IBT_BelShop.CommitRetaining;
+
+          DecimalSeparator:=',';
+        End; // If Trim(sValorNew)<> '' Then
+      End; // For i:=0 to Dbg_GeraOCEditaProdutos.SelectedRows.Count-1 do
+      Dbg_GeraOCEditaProdutos.SelectedRows.Clear;
+
+      // Reabre IBQ_Comprar ====================================================
+      DMBelShop.IBQ_AComprarEdita.DisableControls;
+      DMBelShop.IBQ_AComprarEdita.Close;
+      DMBelShop.IBQ_AComprarEdita.Open;
+      DMBelShop.IBQ_AComprarEdita.Locate('Num_Seq', sNumSeq,[]);
+      DMBelShop.IBQ_AComprarEdita.EnableControls;
+
+      // Busca Totais das OCs ==================================================
+      If Not bLinx Then
+       Begin
+         If sgCodLojaUnica='' Then
+          TotaisOC(VarToStr(EdtGeraOCBuscaDocto.Value))
+       Else
+          FrmGeraPedidosComprasLojas.TotaisOC;
+       End
+      Else
+       Begin
+         FrmOCLinx.TotaisOCLinx(VarToStr(EdtGeraOCBuscaDocto.Value))
+       End; // If Not bLinx Then
+    End; // Altera Preco Unitário - If (key=Vk_F2) and (StB_GeraOCEdit.Visible) Then
+    // Altera Preco Unitário ===================================================
+    //==========================================================================
+
+    //==========================================================================
+    // Altera Desconto Individual ==============================================
+    //==========================================================================
     If (key=Vk_F3) and (StB_GeraOCEdit.Visible) Then
-     AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'DI', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
+    Begin
+      AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'DI', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
+    End;
+    // Altera Desconto Individual ==============================================
+    //==========================================================================
 
-    // Altera Desconto no Mix ====================================================
+    //==========================================================================
+    // Altera Desconto no Mix ==================================================
+    //==========================================================================
     If (key=Vk_F5) and (StB_GeraOCEdit.Visible) Then
-     AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'DM', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
+    Begin
+      AlteraAComprar(DMBelShop.IBQ_AComprarEdita, 'DM', VarToStr(EdtGeraOCBuscaDocto.Value), DateToStr(DtEdt_GeraOCDataDocto.Date));
+    End;
+    // Altera Desconto no Mix ==================================================
+    //==========================================================================
 
-    // Transito ==================================================================
+    //==========================================================================
+    // (F6) Marca Todos Produtos Para Alteração ================================
+    //==========================================================================
     If (Key=VK_F6) and (StB_GeraOCEdit.Visible) Then
     Begin
-      VerTransito(DMBelShop.IBQ_AComprarEdita, DMBelShop.DS_AComprarEdita, False);
-    End; // Transito - If Key=VK_F3 Then
+      With Dbg_GeraOCEditaProdutos, Datasource.Dataset do
+      Begin
+        bk := Bookmark;
+        DisableControls;
+        Try
+          SelectedRows.Clear;
+          First;
+          While not EOF do
+          Begin
+            SelectedRows.CurrentRowSelected := True;
+            Next;
+          End;
+          Bookmark := bk;
+        Finally
+          EnableControls;
+        End;
+      End; // With Dbg_GeraOCEditaProdutos, Datasource.Dataset do
+      // OdirApagar - 21/11/2018
+      // VerTransito(DMBelShop.IBQ_AComprarEdita, DMBelShop.DS_AComprarEdita, False);
+    End; // Transito - If (Key=VK_F6) and (StB_GeraOCEdit.Visible) Then
+    // (F6) Marca Todos Produtos Para Alteração ================================
+    //==========================================================================
+
+    //==========================================================================
+    // (F7) DesMarca Todos Produtos Para Alteração =============================
+    //==========================================================================
+    If (Key=VK_F7) and (StB_GeraOCEdit.Visible) Then
+    Begin
+      Dbg_GeraOCEditaProdutos.SelectedRows.Clear;
+    End; // If (Key=VK_F7) and (StB_GeraOCEdit.Visible) Then
+    // (F7) DesMarca Todos Produtos Para Alteração =============================
+    //==========================================================================
+
   End; // If Bt_GeraOCPreVisualizaOC.Caption=' Pré-Visualização OC' Then
 end;
 
@@ -39640,6 +39798,7 @@ begin
 
     Exit;
   End;
+
   OdirPanApres.Visible:=False;
   Screen.Cursor:=crDefault;
   Refresh;
@@ -39709,6 +39868,63 @@ begin
     End; // If sgCodLojaUnica<>'' Then
 
     bgOnActivate:=True;
+
+    // Apresenta Ditorções de Estoques para Compras
+    // Compradores
+    //   3 - ANNA
+    //  11 - ZILANDRA
+    //  20 - IVANIA
+    // 205 - MANUELLA
+    If StrToInt(Cod_Usuario) in [3, 11, 20, 205] Then
+    Begin
+      If msg('Oi !! '+Des_Usuario+cr+cr+'Deseja Verificar Estoques para Compra ??','C')=1 Then
+      Begin
+        // Abre Form para Apresentação =========================================
+        FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+        FrmBelShop.AbreSolicitacoes(31);
+
+        FrmSolicitacoes.AutoSize:=False;
+        FrmSolicitacoes.Width:=1000;
+        FrmSolicitacoes.Height:=500;
+        FrmSolicitacoes.AutoSize:=True;
+
+        FrmSolicitacoes.Caption:='C O M P R A S';
+
+        bgProcessar:=False;
+        DMBelShop.CDS_ComprasEstoqueCD.Close;
+
+        // Busca Proutos do CD para Analise ====================================
+        OdirPanApres.Caption:='AGUARDE !! Localizando Estoque CD para Analise...';
+        OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+        OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
+        OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
+        OdirPanApres.Font.Style:=[fsBold];
+        OdirPanApres.Parent:=FrmBelShop;
+        OdirPanApres.BringToFront();
+        OdirPanApres.Visible:=True;
+        Refresh;
+        Screen.Cursor:=crAppStart;
+
+        FrmSolicitacoes.Rb_ComprasEstoquesA.Checked:=True;
+        FrmSolicitacoes.Rb_ComprasEstoquesAClick(Self);
+        FrmSolicitacoes.Bt_ComprasEstoquesCDCurvaClick(Self);
+
+        OdirPanApres.Visible:=False;
+        Screen.Cursor:=crDefault;
+
+        // Abre Apresentação ===================================================
+        FrmSolicitacoes.ShowModal;
+        DMBelShop.CDS_ComprasEstoqueCD.Close;
+
+        Try
+          FreeAndNil(FrmSolicitacoes);
+        Finally
+          If FrmSolicitacoes<>nil then
+           FreeAndNil(FrmSolicitacoes);
+        End;
+      End;
+    End; // If StrToInt(Cod_Usuario) in [3, 11, 20, 205] Then
+
   End; // If Not bgOnActivate Then
 end;
 
@@ -40074,7 +40290,7 @@ Begin
              MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
              Exit;
            End; // on e : Exception do
-         End; // // Try Atualiza
+         End; // Try Atualiza
        End
       Else // If bgProcessar Then
        Begin
@@ -41580,7 +41796,7 @@ begin
   Screen.Cursor:=crDefault;
 
   OdirPanApres.Visible:=False;
-  
+
   FrmSolicitacoes.ShowModal;
 
   DMBelShop.CDS_Busca.Close;
@@ -42166,82 +42382,65 @@ begin
 end;
 
 procedure TFrmBelShop.Button1Click(Sender: TObject);
+Var
+  MySql: String;
+  tsArquivo: TStringList;
+
+  sPastaArqTexto: String;
+  ii, i: Integer;
+  b: Boolean;
 begin
-//  MySqlSelect:=' select *'+
-//               ' from odir1 pl'+
-//               ' order by pl.cod_loja, pl.num_planilha, pl."INDEX" desc';
-//  DMBelShop.CDS_Busca.Close;
-//  DMBelShop.SDS_Busca.CommandText:=MySqlSelect;
-//  DMBelShop.CDS_Busca.Open;
-//
-//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-//  TD.IsolationLevel:=xilREADCOMMITTED;
-//  DMBelShop.SQLC.StartTransaction(TD);
-//  Try // Try da Transação
-//    Screen.Cursor:=crAppStart;
-//    DateSeparator:='.';
-//    DecimalSeparator:='.';
-//
-//    MontaProgressBar(True, FrmBelShop);
-//    pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
-//    pgProgBar.Position:=0;
-//
-//    While not DMBelShop.CDS_Busca.Eof do
-//    Begin
-//      Application.ProcessMessages;
-//      pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
-//
-//      If (Trim(DMBelShop.CDS_Busca.FieldByName('COD_PROFISSIONAL').AsString)='') and
-//         (DMBelShop.CDS_Busca.FieldByName('INDEX').AsInteger=igNrDias-1) And
-//         (igNrEmpProc=DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsInteger) Then
-//      Begin
-//         MySqlClausula1:=' update  odir1 pl'+
-//                         ' set pl.cod_profissional='+QuotedStr(sgCodProd)+
-//                         ' , pl.des_profissional='+QuotedStr(sgDescricao)+
-//                         ' where pl.cod_loja='+QuotedStr(DMBelShop.CDS_Busca.FieldByName('COD_LOJA').AsString)+
-//                         ' and pl.num_planilha='+DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsString+
-//                         ' and pl."INDEX"='+DMBelShop.CDS_Busca.FieldByName('INDEX').AsString;
-//         DMBelShop.SQLC.Execute(MySqlClausula1,nil,nil);
-//
-//
-//      End;
-//
-//      igNrEmpProc:=DMBelShop.CDS_Busca.FieldByName('NUM_PLANILHA').AsInteger;
-//      igNrDias   :=DMBelShop.CDS_Busca.FieldByName('INDEX').AsInteger;
-//      sgCodProd  :=DMBelShop.CDS_Busca.FieldByName('COD_PROFISSIONAL').AsString;
-//      sgDescricao:=DMBelShop.CDS_Busca.FieldByName('DES_PROFISSIONAL').AsString;
-//
-//      DMBelShop.CDS_Busca.Next
-//    End;
-//    DMBelShop.CDS_Busca.Close;
-//    MontaProgressBar(False, FrmBelShop);
-//
-//    // Atualiza Transacao ======================================================
-//    DMBelShop.SQLC.Commit(TD);
-//
-//    DateSeparator:='/';
-//    DecimalSeparator:=',';
-//
-//    Screen.Cursor:=crDefault;
-//  Except // Except da Transação
-//    on e : Exception do
-//    Begin
-//      // Abandona Transacao ====================================================
-//      DMBelShop.SQLC.Rollback(TD);
-//
-//      DateSeparator:='/';
-//      DecimalSeparator:=',';
-//
-//      MontaProgressBar(False, FrmBelShop);
-//
-//      Screen.Cursor:=crDefault;
-//
-//      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-//      Exit;
-//    End; // on e : Exception do
-//  End; // Try da Transação
-//
-//  msg('fim','A');
+  b:=True;
+  While b do
+  Begin
+    MySql:=' SELECT'+
+           ' FIRST 80 SKIP '+IntToStr(i)+
+           ' e.cod_barra||'';''||(e.qtd_envio-COALESCE(v.qtd_venda,0)) LINHA'+
+           ' FROM FENAC_ENVIADOS e'+
+           '    LEFT JOIN FENAC_VENDIDOS v ON v.cod_barra=e.cod_barra'+
+           ' WHERE CHAR_LENGTH(e.cod_barra)=13'+
+           ' AND (e.qtd_envio-COALESCE(v.qtd_venda,0)) >0'+
+           ' ORDER BY 1';
+    DMBelShop.SQLQuery3.Close;
+    DMBelShop.SQLQuery3.SQL.Clear;
+    DMBelShop.SQLQuery3.SQL.Add(MySql);
+    DMBelShop.SQLQuery3.Open;
+
+    If DMBelShop.SQLQuery3.IsEmpty Then
+    Begin
+      Break;
+    End;
+
+    OdirPanApres.Caption:='AGUARDE !! Montando Arquivo Texto '+IntToStr(i);
+    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmBelShop;
+    OdirPanApres.BringToFront();
+    OdirPanApres.Visible:=True;
+    Refresh;
+
+    Inc(ii);
+    tsArquivo:= TStringList.Create;
+    sPastaArqTexto:='C:\Projetos\BelShop\FENAC Arquivos\ArqTexto_'+IntToStr(ii)+'.txt';
+    DMBelShop.SQLQuery3.DisableControls;
+    While Not DMBelShop.SQLQuery3.Eof do
+    Begin
+      tsArquivo.Add(Trim(DMBelShop.SQLQuery3.FieldByName('Linha').AsString));
+
+      DMBelShop.SQLQuery3.Next;
+    End; // While Not DMBelShop.SQLQuery3.Eof do
+    DMBelShop.SQLQuery3.EnableControls;
+
+    // Salva o Arquivo Texto
+    tsArquivo.SaveToFile(sPastaArqTexto);
+
+    OdirPanApres.Visible:=False;
+
+    i:=i+80;
+  End; // While b do
+  msg('fim','A');
 end;
 
 procedure TFrmBelShop.Button3Click(Sender: TObject);
@@ -43328,6 +43527,21 @@ begin
   ShellExecute(handle, 'open', 'PSeparacaoDoctos.exe', 'ODIR', PChar(sPath_Local), sw_shownormal);
 end;
 
+procedure TFrmBelShop.SubMenuCentroDistControleProducaoClick(Sender: TObject);
+begin
+  If (Sender is TMenuItem) Then
+   igTagPermissao:=(Sender as TMenuItem).Tag;
+
+  BloqueioBotoes(FrmCentralTrocas, DMBelShop.CDS_Seguranca, igTagPermissao, Des_Login, bgInd_Admin);
+
+  // Apresenta TabSheet ========================================================
+  TabSheetInvisivel(FrmCentralTrocas);
+  FrmCentralTrocas.Ts_ControleProducao.TabVisible:=True;
+
+  FrmCentralTrocas.ShowModal;
+
+end;
+
 end.
 // 42296 - Record
 // 45983 - 05/08/2015 +
@@ -43364,4 +43578,6 @@ CorCaptionForm:
  Form.ClientWidth  = 979
  Cor Componente Disabilitado = $00E0E0E0
 }
+
+
 

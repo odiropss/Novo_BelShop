@@ -1,9 +1,9 @@
 object DMBelShop: TDMBelShop
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Left = 237
-  Top = 115
-  Height = 611
+  Left = 236
+  Top = 108
+  Height = 619
   Width = 1127
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
@@ -8925,5 +8925,129 @@ object DMBelShop: TDMBelShop
       ' AND   pr.cod_fornecedor=56')
     Left = 1272
     Top = 148
+  end
+  object DS_ComprasEstoqueCD: TDataSource
+    DataSet = CDS_ComprasEstoqueCD
+    Left = 1056
+    Top = 576
+  end
+  object CDS_ComprasEstoqueCD: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_ComprasEstoqueCD'
+    Left = 1006
+    Top = 558
+    object CDS_ComprasEstoqueCDCOD_PRODUTO: TFMTBCDField
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'COD_PRODUTO'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 0
+    end
+    object CDS_ComprasEstoqueCDDES_PRODUTO: TStringField
+      DisplayLabel = 'Descri'#231#227'o do Produto'
+      FieldName = 'DES_PRODUTO'
+      Size = 250
+    end
+    object CDS_ComprasEstoqueCDIND_CURVA: TStringField
+      DisplayLabel = 'CL'
+      FieldName = 'IND_CURVA'
+      Size = 1
+    end
+    object CDS_ComprasEstoqueCDQTD_ESTOQUE: TFMTBCDField
+      DisplayLabel = 'Saldo CD'
+      FieldName = 'QTD_ESTOQUE'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 4
+    end
+    object CDS_ComprasEstoqueCDQTD_VENDA15DD: TIntegerField
+      DisplayLabel = 'Venda 15dd'
+      FieldName = 'QTD_VENDA15DD'
+      DisplayFormat = ',0'
+    end
+    object CDS_ComprasEstoqueCDQTD_DIVERGENCIA: TFMTBCDField
+      DisplayLabel = 'Qtd Aten'#231#227'o'
+      FieldName = 'QTD_DIVERGENCIA'
+      DisplayFormat = ',0'
+      Precision = 15
+      Size = 4
+    end
+    object CDS_ComprasEstoqueCDDES_FORNECEDOR: TStringField
+      DisplayLabel = 'Descri'#231#227'o do Fornecedor'
+      FieldName = 'DES_FORNECEDOR'
+      Size = 60
+    end
+    object CDS_ComprasEstoqueCDDESC_SETOR: TStringField
+      DisplayLabel = 'Descri'#231#227'o do Setor'
+      FieldName = 'DESC_SETOR'
+      Size = 30
+    end
+    object CDS_ComprasEstoqueCDDESC_COLECAO: TStringField
+      DisplayLabel = 'Descri'#231#227'o da Cole'#231#227'o'
+      FieldName = 'DESC_COLECAO'
+      Size = 50
+    end
+    object CDS_ComprasEstoqueCDORDEM: TIntegerField
+      FieldName = 'ORDEM'
+      Required = True
+    end
+  end
+  object SDS_ComprasEstoqueCD: TSQLDataSet
+    CommandText = 
+      '-- ================== PRODUTOS'#13#10'SELECT'#13#10'p.cod_produto COD_PRODUT' +
+      'O, -- 1'#13#10'p.des_produto DES_PRODUTO, -- 2'#13#10'c.ind_curva IND_CURVA,' +
+      ' -- 3'#13#10'e.quantidade QTD_ESTOQUE, -- 4'#13#10'p.qtd_venda15dd QTD_VENDA' +
+      '15DD, -- 5'#13#10'(p.qtd_venda15dd - e.quantidade) QTD_DIVERGENCIA, --' +
+      ' 6'#13#10'p.des_fornecedor DES_FORNECEDOR, -- 7'#13#10'p.desc_setor DESC_SET' +
+      'OR, -- 8'#13#10'p.desc_colecao DESC_COLECAO, -- 9'#13#10'2 ORDEM -- 10'#13#10#13#10'FR' +
+      'OM PRODUTOS_COMPRADORES p'#13#10'  LEFT JOIN LINXPRODUTOSDEtalhes e  O' +
+      'N e.cod_produto=p.cod_produto'#13#10'                                 ' +
+      '  AND e.empresa=2'#13#10'  LEFT JOIN ES_FINAN_CURVA_ABC c    ON c.cod_' +
+      'produto=p.codproduto'#13#10#13#10'WHERE p.id_colecao<>197'#13#10'AND   p.desativ' +
+      'ado='#39'N'#39#13#10'AND   p.cd_compra='#39'S'#39#13#10'AND   COALESCE(p.qtd_venda15dd,0' +
+      ')>=e.quantidade'#13#10'AND   COALESCE(p.qtd_venda15dd,0)<>0'#13#10'AND   c.c' +
+      'od_loja='#39'99'#39#13#10'AND   c.ind_curva IN (:Curva)'#13#10'AND   p.cod_comprad' +
+      'or=:Comprador'#13#10#13#10'UNION'#13#10#13#10'-- ================== COMPRADOR'#13#10'SELEC' +
+      'T'#13#10'NULL COD_PRODUTO, -- 1'#13#10#39'Comprador(a) - '#39'||(SELECT u.des_usua' +
+      'rio'#13#10'                    FROM PS_USUARIOS u'#13#10'                   ' +
+      ' WHERE u.cod_usuario=:Comprador) DES_PRODUTO, -- 2'#13#10'NULL IND_CUR' +
+      'VA, -- 3'#13#10'NULL QTD_ESTOQUE, -- 4'#13#10'NULL QTD_VENDA15DD, -- 5'#13#10'NULL' +
+      ' QTD_DIVERGENCIA, -- 6'#13#10'NULL DES_FORNECEDOR, -- 7'#13#10'NULL DESC_SET' +
+      'OR, -- 8'#13#10'NULL DESC_COLECAO, -- 9'#13#10'0 ORDEM -- 10'#13#10#13#10'FROM RDB$DAT' +
+      'ABASE'#13#10#13#10#13#10'UNION'#13#10#13#10'-- ================== LINHA EM BRANCO'#13#10'SELEC' +
+      'T'#13#10'NULL COD_PRODUTO, -- 1'#13#10'NULL DES_PRODUTO, -- 2'#13#10'NULL IND_CURV' +
+      'A, -- 3'#13#10'NULL QTD_ESTOQUE, -- 4'#13#10'NULL QTD_VENDA15DD, -- 5'#13#10'NULL ' +
+      'QTD_DIVERGENCIA, -- 6'#13#10'NULL DES_FORNECEDOR, -- 7'#13#10'NULL DESC_SETO' +
+      'R, -- 8'#13#10'NULL DESC_COLECAO, -- 9'#13#10'1 ORDEM -- 10'#13#10#13#10'FROM RDB$DATA' +
+      'BASE'#13#10#13#10#13#10'ORDER BY 10, 7, 2, 6'#13#10
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftString
+        Name = 'Curva'
+        ParamType = ptInput
+        Value = 'A'
+      end
+      item
+        DataType = ftString
+        Name = 'Comprador'
+        ParamType = ptInput
+        Value = '11'
+      end
+      item
+        DataType = ftString
+        Name = 'Comprador'
+        ParamType = ptInput
+      end>
+    SQLConnection = SQLC
+    Left = 925
+    Top = 562
+  end
+  object DSP_ComprasEstoqueCD: TDataSetProvider
+    DataSet = SDS_ComprasEstoqueCD
+    Options = [poRetainServerOrder]
+    Left = 966
+    Top = 576
   end
 end

@@ -12,28 +12,22 @@ object DMLojaUnica: TDMLojaUnica
     Top = 56
     object CDS_ParamLjFornDiaPROC: TStringField
       FieldName = 'PROC'
-      Required = True
       FixedChar = True
       Size = 3
     end
-    object CDS_ParamLjFornDiaCOD_LOJA: TStringField
-      Alignment = taRightJustify
-      DisplayLabel = 'Loja'
-      FieldName = 'COD_LOJA'
-      Size = 2
-    end
-    object CDS_ParamLjFornDiaCODFORNECEDOR: TStringField
-      Alignment = taRightJustify
-      DisplayLabel = 'C'#243'd Forn'
-      FieldName = 'CODFORNECEDOR'
-      Required = True
+    object CDS_ParamLjFornDiaCOD_FORN: TStringField
+      FieldName = 'COD_FORN'
       FixedChar = True
       Size = 6
     end
-    object CDS_ParamLjFornDiaNOMEFORNECEDOR: TStringField
-      DisplayLabel = 'Fornecedor'
-      FieldName = 'NOMEFORNECEDOR'
-      Size = 40
+    object CDS_ParamLjFornDiaCOD_LOJA: TStringField
+      FieldName = 'COD_LOJA'
+      Size = 2
+    end
+    object CDS_ParamLjFornDiaFORN_LOJA: TStringField
+      DisplayLabel = 'Fornecedor / Loja'
+      FieldName = 'FORN_LOJA'
+      Size = 50
     end
     object CDS_ParamLjFornDiaTIPO_CALCULO: TStringField
       DisplayLabel = 'Tipo Calculo'
@@ -56,6 +50,10 @@ object DMLojaUnica: TDMLojaUnica
       Required = True
       FixedChar = True
       Size = 3
+    end
+    object CDS_ParamLjFornDiaORDEM: TIntegerField
+      FieldName = 'ORDEM'
+      Required = True
     end
   end
   object DSP_ParamLjFornDia: TDataSetProvider
@@ -292,43 +290,50 @@ object DMLojaUnica: TDMLojaUnica
   end
   object SDS_ParamLjFornDia: TSQLDataSet
     CommandText = 
-      'select '#39'NAO'#39' PROC, pl.cod_loja,'#13#10'fr.codfornecedor, fr.nomefornec' +
-      'edor,'#13#10'Case'#13#10'  When pl.ind_diariamente='#39'SIM'#39' Then '#39'Diariamente'#39#13 +
-      #10'  When pl.ind_semanamente='#39'SIM'#39' Then '#39'Semanalmente'#39#13#10'  When pl.' +
-      'ind_mensalmente='#39'SIM'#39' Then '#39'Mensalmente'#39#13#10'End Tipo_Calculo,'#13#10'Cas' +
-      'e'#13#10'  When (pl.ind_diariamente='#39'SIM'#39') and (pl.ind_todos_dias='#39'SIM' +
-      #39') Then '#39'Todos os Dias'#39#13#10'  When (pl.ind_diariamente='#39'SIM'#39') and (' +
-      'pl.ind_todos_dias='#39'NAO'#39') Then '#39'A Cada '#39'||pl.cada_num_dias||'#39' Dia' +
-      '(s)'#39#13#10#13#10'  When pl.ind_semanamente='#39'SIM'#39' Then '#39'A Cada '#39'||pl.cada_' +
-      'num_semana||'#39' Semana(s)'#39#13#10#13#10'  When pl.ind_mensalmente='#39'SIM'#39' Then' +
-      #13#10'  Case'#13#10'    When pl.dia_dias='#39'SIM'#39' then '#39'Posi'#231#227'o: '#39'||pl.des_po' +
-      'sicao||'#39' Dias de Cada M'#234's'#39#13#10'    When pl.dia_seg='#39'SIM'#39'  then '#39'Pos' +
-      'i'#231#227'o: '#39'||pl.des_posicao||'#39' Segunda de Cada M'#234's'#39#13#10'    When pl.dia' +
-      '_ter='#39'SIM'#39'  then '#39'Posi'#231#227'o: '#39'||pl.des_posicao||'#39' Ter'#231'a de Cada M'#234 +
-      's'#39#13#10'    When pl.dia_qua='#39'SIM'#39'  then '#39'Posi'#231#227'o: '#39'||pl.des_posicao|' +
-      '|'#39' Quarta de Cada M'#234's'#39#13#10'    When pl.dia_qui='#39'SIM'#39'  then '#39'Posi'#231#227'o' +
-      ': '#39'||pl.des_posicao||'#39' Quinta de Cada M'#234's'#39#13#10'    When pl.dia_sex=' +
-      #39'SIM'#39'  then '#39'Posi'#231#227'o: '#39'||pl.des_posicao||'#39' Sexta de Cada M'#234's'#39#13#10' ' +
-      ' End'#13#10'End Situacao_Calculo,'#13#10#13#10'Case'#13#10'  When pl.ind_semanamente='#39 +
-      'SIM'#39' Then '#39' Dias: (Seg='#39'||pl.dia_seg||'#39') ( Ter='#39'||pl.dia_ter||'#39')' +
-      #39'||'#13#10'                                           '#39' (Qua='#39'||pl.dia' +
-      '_qua||'#39') ( Qui='#39'||pl.dia_qui||'#39')'#39'||'#13#10'                           ' +
-      '                '#39' (Sex='#39'||pl.dia_sex||'#39')'#39#13#10#13#10'  When pl.ind_mensa' +
-      'lmente='#39'SIM'#39' Then '#39'Meses: (Jan='#39'||pl.mes_jan||'#39') (Fev='#39'||pl.mes_' +
-      'fev||'#39')'#39'||'#13#10'                                           '#39' (Mar='#39'|' +
-      '|pl.mes_mar||'#39') (Abr='#39'||pl.mes_abr||'#39')'#39'||'#13#10'                     ' +
-      '                      '#39' (Mai='#39'||pl.mes_mai||'#39') (Jun='#39'||pl.mes_ju' +
-      'n||'#39')'#39'||'#13#10'                                           '#39' (Jul='#39'||p' +
-      'l.mes_jul||'#39') (Ago='#39'||pl.mes_ago||'#39')'#39'||'#13#10'                       ' +
-      '                    '#39' (Set='#39'||pl.mes_set||'#39') (Out='#39'||pl.mes_out|' +
-      '|'#39')'#39'||'#13#10'                                           '#39' (Nov='#39'||pl.' +
-      'mes_nov||'#39') (Dez='#39'||pl.mes_dez||'#39')'#39#13#10'end Dias_Meses,'#13#10#39'NAO'#39' Forn' +
-      #13#10#13#10'from fornecedor fr'#13#10'   Left Join PARAMETROS_LOJAS pl  on fr.' +
-      'codfornecedor=pl.cod_fornecedor'#13#10'                               ' +
-      '  And pl.ind_tipo=7'#13#10'                                 And (pl.in' +
-      'd_dml is null or pl.ind_dml<>'#39'EXC'#39')'#13#10#13#10'where exists(select 1'#13#10'fr' +
-      'om produto p'#13#10'where p.principalfor=fr.codfornecedor'#13#10'AND p.situa' +
-      'caopro in (0,3))'#13#10#13#10'ORDER BY 4, 2'
+      '--== FORNECEDORES ==============================================' +
+      '================'#13#10'SELECT'#13#10'DISTINCT'#13#10#39'NAO'#39' PROC, -- 1'#13#10'fr.codforn' +
+      'ecedor COD_FORN, -- 2'#13#10'NULL COD_LOJA, -- 3'#13#10'fr.nomefornecedor FO' +
+      'RN_LOJA, -- 4'#13#10'NULL Tipo_Calculo, -- 5'#13#10'NULL Situacao_Calculo,  ' +
+      '-- 6'#13#10'NULL Dias_Meses, -- 7'#13#10#39'NAO'#39' Forn, -- 8'#13#10'0 ORDEM -- 9'#13#10#13#10'F' +
+      'ROM FORNECEDOR fr'#13#10#13#10'WHERE EXISTS(SELECT 1'#13#10'FROM PRODUTO p'#13#10'WHER' +
+      'E p.principalfor=fr.codfornecedor'#13#10'AND p.situacaopro IN (0,3))'#13#10 +
+      #13#10'--=== LOJAS ==================================================' +
+      '=================='#13#10'UNION'#13#10#13#10'SELECT'#13#10'NULL PROC, -- 1'#13#10'pl.cod_for' +
+      'necedor COD_FORN, -- 2'#13#10'lj.cod_loja COD_LOJA, -- 3'#13#10'lj.nome_emp ' +
+      'FORN_LOJA, -- 4'#13#10'CASE'#13#10'  WHEN pl.ind_diariamente='#39'SIM'#39' THEN '#39'Dia' +
+      'riamente'#39#13#10'  WHEN pl.ind_semanamente='#39'SIM'#39' THEN '#39'Semanalmente'#39#13#10 +
+      '  WHEN pl.ind_mensalmente='#39'SIM'#39' THEN '#39'Mensalmente'#39#13#10'END Tipo_Cal' +
+      'culo, -- 5'#13#10'CASE'#13#10'  WHEN (pl.ind_diariamente='#39'SIM'#39') AND (pl.ind_' +
+      'todos_dias='#39'SIM'#39') THEN '#39'Todos os Dias'#39#13#10'  WHEN (pl.ind_diariamen' +
+      'te='#39'SIM'#39') AND (pl.ind_todos_dias='#39'NAO'#39') THEN '#39'A Cada '#39'||pl.cada_' +
+      'num_dias||'#39' Dia(s)'#39#13#10#13#10'  WHEN pl.ind_semanamente='#39'SIM'#39' THEN '#39'A C' +
+      'ada '#39'||pl.cada_num_semana||'#39' Semana(s)'#39#13#10#13#10'  WHEN pl.ind_mensalm' +
+      'ente='#39'SIM'#39' THEN'#13#10'  CASE'#13#10'    WHEN pl.dia_dias='#39'SIM'#39' THEN '#39'Posi'#231#227 +
+      'o: '#39'||pl.des_posicao||'#39' Dias de Cada M'#234's'#39#13#10'    WHEN pl.dia_seg='#39 +
+      'SIM'#39'  THEN '#39'Posi'#231#227'o: '#39'||pl.des_posicao||'#39' Segunda de Cada M'#234's'#39#13#10 +
+      '    WHEN pl.dia_ter='#39'SIM'#39'  THEN '#39'Posi'#231#227'o: '#39'||pl.des_posicao||'#39' T' +
+      'er'#231'a de Cada M'#234's'#39#13#10'    WHEN pl.dia_qua='#39'SIM'#39'  THEN '#39'Posi'#231#227'o: '#39'||' +
+      'pl.des_posicao||'#39' Quarta de Cada M'#234's'#39#13#10'    WHEN pl.dia_qui='#39'SIM'#39 +
+      '  THEN '#39'Posi'#231#227'o: '#39'||pl.des_posicao||'#39' Quinta de Cada M'#234's'#39#13#10'    W' +
+      'HEN pl.dia_sex='#39'SIM'#39'  THEN '#39'Posi'#231#227'o: '#39'||pl.des_posicao||'#39' Sexta ' +
+      'de Cada M'#234's'#39#13#10'  END'#13#10'END Situacao_Calculo,  -- 56'#13#10#13#10'CASE'#13#10'  WHE' +
+      'N pl.ind_semanamente='#39'SIM'#39' THEN '#39' Dias: (Seg='#39'||pl.dia_seg||'#39') (' +
+      ' Ter='#39'||pl.dia_ter||'#39')'#39'||'#13#10'                                     ' +
+      '      '#39' (Qua='#39'||pl.dia_qua||'#39') ( Qui='#39'||pl.dia_qui||'#39')'#39'||'#13#10'     ' +
+      '                                      '#39' (Sex='#39'||pl.dia_sex||'#39')'#39#13 +
+      #10#13#10'  WHEN pl.ind_mensalmente='#39'SIM'#39' THEN '#39'Meses: (Jan='#39'||pl.mes_j' +
+      'an||'#39') (Fev='#39'||pl.mes_fev||'#39')'#39'||'#13#10'                              ' +
+      '             '#39' (Mar='#39'||pl.mes_mar||'#39') (Abr='#39'||pl.mes_abr||'#39')'#39'||'#13 +
+      #10'                                           '#39' (Mai='#39'||pl.mes_mai' +
+      '||'#39') (Jun='#39'||pl.mes_jun||'#39')'#39'||'#13#10'                                ' +
+      '           '#39' (Jul='#39'||pl.mes_jul||'#39') (Ago='#39'||pl.mes_ago||'#39')'#39'||'#13#10' ' +
+      '                                          '#39' (Set='#39'||pl.mes_set||' +
+      #39') (Out='#39'||pl.mes_out||'#39')'#39'||'#13#10'                                  ' +
+      '         '#39' (Nov='#39'||pl.mes_nov||'#39') (Dez='#39'||pl.mes_dez||'#39')'#39#13#10'END D' +
+      'ias_Meses, -- 8'#13#10#39'NAO'#39' Forn, -- 8'#13#10'1 ORDEM -- 9'#13#10#13#10'FROM PARAMETR' +
+      'OS_LOJAS pl'#13#10'   LEFT JOIN LINXLOJAS lj         ON lj.cod_loja=pl' +
+      '.cod_loja'#13#10#13#10'WHERE pl.ind_tipo=7'#13#10'AND (pl.ind_dml IS NULL OR pl.' +
+      'ind_dml<>'#39'EXC'#39')'#13#10#13#10'ORDER BY 2,9'
     MaxBlobSize = -1
     Params = <>
     SQLConnection = DMBelShop.SQLC
@@ -1366,5 +1371,115 @@ object DMLojaUnica: TDMLojaUnica
     Options = [poRetainServerOrder]
     Left = 460
     Top = 206
+  end
+  object ClientDataSet1: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    ProviderName = 'DSP_ParamLjFornDia'
+    Left = 471
+    Top = 296
+    object StringField1: TStringField
+      FieldName = 'PROC'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
+    object StringField2: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'Loja'
+      FieldName = 'COD_LOJA'
+      Size = 2
+    end
+    object StringField3: TStringField
+      Alignment = taRightJustify
+      DisplayLabel = 'C'#243'd Forn'
+      FieldName = 'CODFORNECEDOR'
+      Required = True
+      FixedChar = True
+      Size = 6
+    end
+    object StringField4: TStringField
+      DisplayLabel = 'Fornecedor'
+      FieldName = 'NOMEFORNECEDOR'
+      Size = 40
+    end
+    object StringField5: TStringField
+      DisplayLabel = 'Tipo Calculo'
+      FieldName = 'TIPO_CALCULO'
+      FixedChar = True
+      Size = 12
+    end
+    object StringField6: TStringField
+      DisplayLabel = 'Situa'#231#227'o do Calculo'
+      FieldName = 'SITUACAO_CALCULO'
+      Size = 41
+    end
+    object StringField7: TStringField
+      DisplayLabel = 'Dias ou Meses para Calculo'
+      FieldName = 'DIAS_MESES'
+      Size = 126
+    end
+    object StringField8: TStringField
+      FieldName = 'FORN'
+      Required = True
+      FixedChar = True
+      Size = 3
+    end
+  end
+  object DataSetProvider1: TDataSetProvider
+    DataSet = SQLDataSet1
+    Options = [poRetainServerOrder]
+    Left = 422
+    Top = 316
+  end
+  object DataSource1: TDataSource
+    DataSet = ClientDataSet1
+    Left = 535
+    Top = 316
+  end
+  object SQLDataSet1: TSQLDataSet
+    CommandText = 
+      'select '#39'NAO'#39' PROC, pl.cod_loja,'#13#10'fr.codfornecedor, fr.nomefornec' +
+      'edor,'#13#10'Case'#13#10'  When pl.ind_diariamente='#39'SIM'#39' Then '#39'Diariamente'#39#13 +
+      #10'  When pl.ind_semanamente='#39'SIM'#39' Then '#39'Semanalmente'#39#13#10'  When pl.' +
+      'ind_mensalmente='#39'SIM'#39' Then '#39'Mensalmente'#39#13#10'End Tipo_Calculo,'#13#10'Cas' +
+      'e'#13#10'  When (pl.ind_diariamente='#39'SIM'#39') and (pl.ind_todos_dias='#39'SIM' +
+      #39') Then '#39'Todos os Dias'#39#13#10'  When (pl.ind_diariamente='#39'SIM'#39') and (' +
+      'pl.ind_todos_dias='#39'NAO'#39') Then '#39'A Cada '#39'||pl.cada_num_dias||'#39' Dia' +
+      '(s)'#39#13#10#13#10'  When pl.ind_semanamente='#39'SIM'#39' Then '#39'A Cada '#39'||pl.cada_' +
+      'num_semana||'#39' Semana(s)'#39#13#10#13#10'  When pl.ind_mensalmente='#39'SIM'#39' Then' +
+      #13#10'  Case'#13#10'    When pl.dia_dias='#39'SIM'#39' then '#39'Posi'#231#227'o: '#39'||pl.des_po' +
+      'sicao||'#39' Dias de Cada M'#234's'#39#13#10'    When pl.dia_seg='#39'SIM'#39'  then '#39'Pos' +
+      'i'#231#227'o: '#39'||pl.des_posicao||'#39' Segunda de Cada M'#234's'#39#13#10'    When pl.dia' +
+      '_ter='#39'SIM'#39'  then '#39'Posi'#231#227'o: '#39'||pl.des_posicao||'#39' Ter'#231'a de Cada M'#234 +
+      's'#39#13#10'    When pl.dia_qua='#39'SIM'#39'  then '#39'Posi'#231#227'o: '#39'||pl.des_posicao|' +
+      '|'#39' Quarta de Cada M'#234's'#39#13#10'    When pl.dia_qui='#39'SIM'#39'  then '#39'Posi'#231#227'o' +
+      ': '#39'||pl.des_posicao||'#39' Quinta de Cada M'#234's'#39#13#10'    When pl.dia_sex=' +
+      #39'SIM'#39'  then '#39'Posi'#231#227'o: '#39'||pl.des_posicao||'#39' Sexta de Cada M'#234's'#39#13#10' ' +
+      ' End'#13#10'End Situacao_Calculo,'#13#10#13#10'Case'#13#10'  When pl.ind_semanamente='#39 +
+      'SIM'#39' Then '#39' Dias: (Seg='#39'||pl.dia_seg||'#39') ( Ter='#39'||pl.dia_ter||'#39')' +
+      #39'||'#13#10'                                           '#39' (Qua='#39'||pl.dia' +
+      '_qua||'#39') ( Qui='#39'||pl.dia_qui||'#39')'#39'||'#13#10'                           ' +
+      '                '#39' (Sex='#39'||pl.dia_sex||'#39')'#39#13#10#13#10'  When pl.ind_mensa' +
+      'lmente='#39'SIM'#39' Then '#39'Meses: (Jan='#39'||pl.mes_jan||'#39') (Fev='#39'||pl.mes_' +
+      'fev||'#39')'#39'||'#13#10'                                           '#39' (Mar='#39'|' +
+      '|pl.mes_mar||'#39') (Abr='#39'||pl.mes_abr||'#39')'#39'||'#13#10'                     ' +
+      '                      '#39' (Mai='#39'||pl.mes_mai||'#39') (Jun='#39'||pl.mes_ju' +
+      'n||'#39')'#39'||'#13#10'                                           '#39' (Jul='#39'||p' +
+      'l.mes_jul||'#39') (Ago='#39'||pl.mes_ago||'#39')'#39'||'#13#10'                       ' +
+      '                    '#39' (Set='#39'||pl.mes_set||'#39') (Out='#39'||pl.mes_out|' +
+      '|'#39')'#39'||'#13#10'                                           '#39' (Nov='#39'||pl.' +
+      'mes_nov||'#39') (Dez='#39'||pl.mes_dez||'#39')'#39#13#10'end Dias_Meses,'#13#10#39'NAO'#39' Forn' +
+      #13#10#13#10'from fornecedor fr'#13#10'   Left Join PARAMETROS_LOJAS pl  on fr.' +
+      'codfornecedor=pl.cod_fornecedor'#13#10'                               ' +
+      '  And pl.ind_tipo=7'#13#10'                                 And (pl.in' +
+      'd_dml is null or pl.ind_dml<>'#39'EXC'#39')'#13#10#13#10'where exists(select 1'#13#10'fr' +
+      'om produto p'#13#10'where p.principalfor=fr.codfornecedor'#13#10'AND p.situa' +
+      'caopro in (0,3))'#13#10#13#10'ORDER BY 4, 2'
+    MaxBlobSize = -1
+    Params = <>
+    SQLConnection = DMBelShop.SQLC
+    Left = 368
+    Top = 296
   end
 end

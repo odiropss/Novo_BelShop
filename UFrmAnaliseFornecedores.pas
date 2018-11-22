@@ -173,7 +173,7 @@ var
   ///////////////////////////////
 
   TD : TTransactionDesc; // Ponteiro de Transação Normal
-  TD1: TTransactionDesc; // Ponteiro de Transação Para Faturamento
+//  TD1: TTransactionDesc; // Ponteiro de Transação Para Faturamento
 
   bgSair,
   bgEnterTab,
@@ -392,7 +392,10 @@ Begin
         Begin
           MySql:=' UPDATE ES_FINAN_CURVA_ABC cv'+
                  ' SET cv.est_minimo='+sEstMin+
-                 ' , cv.est_maximo='+sEstMax+
+                 ',    cv.est_maximo='+sEstMax+
+                 ',    cv.usu_altera='+Cod_Usuario+
+                 ',    cv.dta_altera=current_date'+
+
                  ' WHERE cv.cod_loja='+QuotedStr(mMemoLjSID.Lines[ii])+
                  ' AND   cv.cod_produto='+QuotedStr(sCodProdSID);
           DMBelShop.SQLC.Execute(MySql,nil,nil);
@@ -513,6 +516,8 @@ Begin
     MySql:=' UPDATE ES_FINAN_CURVA_ABC cv'+
            ' SET cv.est_minimo='+sEstMin+
            ',    cv.est_maximo='+sEstMax+
+           ',    cv.usu_altera='+Cod_Usuario+
+           ',    cv.dta_altera=current_date'+
            ' WHERE cv.cod_loja='+QuotedStr(sCodLojaSid)+
            ' AND   cv.cod_produto='+QuotedStr(sCodProdSid);
     DMBelShop.SQLC.Execute(MySql,nil,nil);
@@ -546,7 +551,7 @@ Begin
 
   OdirPanApres.Visible:=False;
   Screen.Cursor:=crDefault;
-
+                                 
 End; // Grava Estoque Minimo/Maximo na Tabela ES_FINAN_CURVA_ABC >>>>>>>>>>>>>>>
 
 // Busca Mix de Produtos por Loja >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1308,12 +1313,12 @@ Var
   s: String;
 Begin
 
-  If (sgDtaIniPadrao=DateToStr(DtEdt_DtaInicio.Date)) and (sgDtaFimPadrao=DateToStr(DtEdt_DtaFim.Date)) Then
-  Begin
-    // Verifica se Transação esta Ativa
-    If DMBelShop.SQLC.InTransaction Then
-     DMBelShop.SQLC.Rollback(TD1);
-  End;
+//  If (sgDtaIniPadrao=DateToStr(DtEdt_DtaInicio.Date)) and (sgDtaFimPadrao=DateToStr(DtEdt_DtaFim.Date)) Then
+//  Begin
+//    // Verifica se Transação esta Ativa
+//    If DMBelShop.SQLC.InTransaction Then
+//     DMBelShop.SQLC.Rollback(TD1);
+//  End;
 
   MySql:=' SELECT FIRST 1 f.empresa'+
          ' FROM ES_FAT_PERIODO f'+
@@ -1329,15 +1334,15 @@ Begin
   If Trim(s)<>'' Then
    Exit;
 
-  // Verifica se Transação esta Ativa
-  If DMBelShop.SQLC.InTransaction Then
-   DMBelShop.SQLC.Rollback(TD1);
-
-  // Monta Transacao Geral do Formulario =======================================
-  // NUNCA COMITAR - ROLLBACK NO FECHAMENTO DO FORM ============================
-  TD1.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD1.IsolationLevel:=xilREADCOMMITTED;
-  DMBelShop.SQLC.StartTransaction(TD1);
+//  // Verifica se Transação esta Ativa
+//  If DMBelShop.SQLC.InTransaction Then
+//   DMBelShop.SQLC.Rollback(TD1);
+//
+//  // Monta Transacao Geral do Formulario =======================================
+//  // NUNCA COMITAR - ROLLBACK NO FECHAMENTO DO FORM ============================
+//  TD1.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+//  TD1.IsolationLevel:=xilREADCOMMITTED;
+//  DMBelShop.SQLC.StartTransaction(TD1);
 
   OdirPanApres.Caption:='AGUARDE 30 Segundos !! Calculando Faturamento do Período Solicitado...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
@@ -1612,9 +1617,9 @@ begin
 
   DMVirtual.CDS_V_MixAnaliseForn.Close;
 
-  // Verifica se Transação esta Ativa
-  If DMBelShop.SQLC.InTransaction Then
-   DMBelShop.SQLC.Rollback(TD1);
+//  // Verifica se Transação esta Ativa
+//  If DMBelShop.SQLC.InTransaction Then
+//   DMBelShop.SQLC.Rollback(TD1);
 
   // Fecha Memo de Nome das Colunas de Lojas ===================================
   FreeAndNil(mMemoColLojas);

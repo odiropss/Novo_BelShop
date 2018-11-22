@@ -267,17 +267,17 @@ end;
 procedure TFrmPesquisa.Bt_PesquisaOKClick(Sender: TObject);
 begin
 
-  EdtCodigo.Text   :=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Codigo).AsString;
-  EdtDescricao.Text:=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Descricao).AsString;
-
   If Campo_Retorno1<>'' Then
-   Retorno1:=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Retorno1).AsString;
+   Retorno1:=Trim(DMBelShop.CDS_Pesquisa.FieldByName(Campo_Retorno1).AsString);
 
   If Campo_Retorno2<>'' Then
-   Retorno2:=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Retorno2).AsString;
+   Retorno2:=Trim(DMBelShop.CDS_Pesquisa.FieldByName(Campo_Retorno2).AsString);
 
   If Campo_Retorno3<>'' Then
-   Retorno3:=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Retorno3).AsString;
+   Retorno3:=Trim(DMBelShop.CDS_Pesquisa.FieldByName(Campo_Retorno3).AsString);
+
+  EdtCodigo.Text   :=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Codigo).AsString;
+  EdtDescricao.Text:=DMBelShop.CDS_Pesquisa.FieldByName(Campo_Descricao).AsString;
 
   Close;
 end;

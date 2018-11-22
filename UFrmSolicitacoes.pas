@@ -65,15 +65,16 @@ TabIndex:
   19 = Usar com Qualquer Coisa - Ts_QualquerCoisa
   20 = Excel Importa Arquivo - Ts_ExcelImportar
   21 = Digitação de Reposições de Lojas - Ts_ReposLojasDigita
-  22 = Transfere Permissões Usuários SIDICOM  - _SidicomUsuario
+  22 = Transfere Permissões Usuários SIDICOM  - Ts_SidicomUsuario
   23 = Salão - Relatórios - Ts_SalaoRelatorios
   24 = Divergências Reposições Lojas  - Acerta Divergências - Ts_ReposDivergencias
   25 = Analise Reposicao Diária - Ts_AnaliseReposicaoDiaria
-  26 - Conciliação de Depósitos - Cadastro de Históricos
-  27 - Estoque Minio/Máximo - Atualiza MIX de Lojas
-  28 - Estoque Minio/Máximo - Grupo de Lojas (Em Desenvolvimento)
-  29 - AUDITORIA - Salva Posição de Estoqe para Inventário (Aquivo.TXT)
-  30 - Conciliação de Depósitos - Documento Financeiro de Entrega para o Renato
+  26 - Conciliação de Depósitos - Cadastro de Históricos - Ts_ConcDepHistoricos
+  27 - Estoque Minio/Máximo - Atualiza MIX de Lojas - Ts_MixProdutosLojas
+  28 - Estoque Minio/Máximo - Grupo de Lojas (Em Desenvolvimento) - Ts_GruposLojas
+  29 - AUDITORIA - Salva Posição de Estoqe para Inventário (Aquivo.TXT) - Ts_Auditoria
+  30 - Conciliação de Depósitos - Documento Financeiro de Entrega para o Renato - Ts_ConcDepDocFinan
+  31 - Apresenta Estoque do CD Com Necessidade de Compra em 15 Dias - Ts_ComprasEstoquesCD
 }
 unit UFrmSolicitacoes;
 
@@ -666,15 +667,9 @@ type
     Gb_AudArqDestino: TGroupBox;
     Bt_AudBuscaArq: TJvXPButton;
     EdtAudDescArquivo: TEdit;
-    Gb_AudTipoArquivo: TGroupBox;
-    Rb_AudCadProdutos: TJvRadioButton;
-    Rb_AudPosEstoque: TJvRadioButton;
     Gb_AudLoja: TGroupBox;
     Bt_AudBuscaLoja: TJvXPButton;
     EdtAudDescLoja: TEdit;
-    Pan_AudProdutos: TPanel;
-    Rb_AudPosEstoqueLoja: TJvRadioButton;
-    Rb_AudPosEstoqueEmpresa: TJvRadioButton;
     Panel16: TPanel;
     Bt_AudGeraVoltar: TJvXPButton;
     Bt_AudGeraArquivo: TJvXPButton;
@@ -701,6 +696,25 @@ type
     Bt_ConcDepDocFinanVoltar: TJvXPButton;
     Bt_ConcDepDocFinanImprimir: TJvXPButton;
     Bt_ConcDepDocFinanExcluir: TJvXPButton;
+    Bt_ConcDepDocFinanRecebe: TJvXPButton;
+    Bt_ConcDepDocFinanFechamento: TJvXPButton;
+    Panel17: TPanel;
+    Ts_ComprasEstoquesCD: TTabSheet;
+    Dbg_ComprasEstoquesCD: TDBGrid;
+    Panel18: TPanel;
+    Bt_ComprasEstoquesCDVoltar: TJvXPButton;
+    Bt_ComprasEstoquesMemoria: TJvXPButton;
+    Rb_ComprasEstoquesA: TRadioButton;
+    Rb_ComprasEstoquesB: TRadioButton;
+    Rb_ComprasEstoquesD: TRadioButton;
+    Rb_ComprasEstoquesC: TRadioButton;
+    Rb_ComprasEstoquesE: TRadioButton;
+    Label89: TLabel;
+    Bt_ComprasEstoquesCDCurva: TJvXPButton;
+    Rb_AudCadProdutos: TJvRadioButton;
+    Rb_AudPosEstoque: TJvRadioButton;
+    Gb_AudDepositos: TGroupBox;
+    Dbg_AudDepositos: TDBGrid;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure PC_PrincipalChange(Sender: TObject);
     procedure Bt_SolicExpVoltarClick(Sender: TObject);
@@ -728,8 +742,10 @@ type
                       DataCol: Integer; Column: TColumn; State: TGridDrawState);
     ////////////////////////////////////////////////////////////////////////////
 
-    // ORDEM DE COMPRA /////////////////////////////////////////////////////////
+    // COMPRAS /////////////////////////////////////////////////////////////////
     Function  OcExportaDocumento: Boolean;
+    Procedure ComprasAnaliseSaldoCD(sCurva: String);
+
     ////////////////////////////////////////////////////////////////////////////
 
     // MOVIMENTO DE CAIXA DIA //////////////////////////////////////////////////
@@ -1033,6 +1049,24 @@ type
       State: TGridDrawState);
     procedure Bt_ConcDepDocFinanImprimirClick(Sender: TObject);
     procedure Bt_ConcDepDocFinanExcluirClick(Sender: TObject);
+    procedure Bt_ConcDepDocFinanRecebeClick(Sender: TObject);
+    procedure Bt_ConcDepDocFinanFechamentoClick(Sender: TObject);
+    procedure Dbg_ComprasEstoquesCDEnter(Sender: TObject);
+    procedure Bt_ComprasEstoquesMemoriaClick(Sender: TObject);
+    procedure Rb_ComprasEstoquesAClick(Sender: TObject);
+    procedure Rb_ComprasEstoquesAKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Bt_ComprasEstoquesCDCurvaClick(Sender: TObject);
+    procedure Dbg_ComprasEstoquesCDDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure Dbg_AudDepositosDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
+    procedure Dbg_AudDepositosEnter(Sender: TObject);
+    procedure Dbg_AudDepositosDblClick(Sender: TObject);
+    procedure Rb_AudCadProdutosKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
 
@@ -1106,18 +1140,51 @@ var
 
   IBQ_ConsultaFilial  : TIBQuery;
 
+  igCodDeposito: Integer;
+
 implementation
 
 uses DK_Procs1, UDMBelShop, UFrmBelShop, UDMSalao, UPesquisa, UFrmSalao,
      UDMVirtual, UDMLojaUnica, UDMCentralTrocas, UDMConexoes,
      UFrmSelectEmpProcessamento, IBCustomDataSet, UDMRelatorio,
-     UPesquisaIB, UDMBancosConciliacao, RTLConsts;
+     UPesquisaIB, UDMBancosConciliacao, RTLConsts, UFrmBancoExtratos;
 
 {$R *.dfm}
 
 //==============================================================================
 // Odir ========================================================================
 //==============================================================================
+
+// COMPRAS - Analise de Saldo no CD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Procedure TFrmSolicitacoes.ComprasAnaliseSaldoCD(sCurva: String);
+Var
+  MySql: String;
+Begin
+  OdirPanApres.Caption:='AGUARDE !! Localizando Estoque CD para Analise...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmSolicitacoes;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  OdirPanApres.Refresh;
+  Refresh;
+
+  DMBelShop.CDS_ComprasEstoqueCD.Close;
+  DMBelShop.SDS_ComprasEstoqueCD.Params.ParamByName('Curva').AsString:=sCurva;
+  DMBelShop.SDS_ComprasEstoqueCD.Params.ParamByName('Comprador').AsString:=Cod_Usuario;
+  DMBelShop.CDS_ComprasEstoqueCD.Open;
+
+  OdirPanApres.Visible:=False;
+  If DMBelShop.CDS_ComprasEstoqueCD.RecordCount<3 Then
+  Begin
+    msg('Sem Produtos a Apresentar...','A');
+    DMBelShop.CDS_ComprasEstoqueCD.Close;
+    Exit;
+  End; // If DMBelShop.CDS_ComprasEstoqueCD.IsEmpty Then
+
+End; // COMPRAS - Analise de Saldo no CD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // MOVIMENTO DE CAIXA DIA - Importa Arquivo Diario - Trinks >>>>>>>>>>>>>>>>>>>>
 Function TFrmSolicitacoes.TrinksImportaArquivoDiario:Boolean;
@@ -1160,6 +1227,18 @@ Begin
     Screen.Cursor:=crAppStart;
     DateSeparator:='.';
     DecimalSeparator:='.';
+
+    // Verifica se Exclui Movimewntos do Dia já Existentes =====================
+// OdirApagar - 21/11/2018
+//    If bgOK Then
+//    Begin
+//      If msg('Dia '+sgDta+' Já Importado !!'+cr+cr+'Deseja Excluí-lo'+cr+'Antes da Importação ???','C')=1 Then
+//      Begin
+//        MySql:=' DELETE FROM TRINKS_DIARIO t'+
+//               ' WHERE t.dta_movto='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDta)));
+//        DMBelShop.SQLC.Execute(MySql,nil,nil);
+//      End; // If msg('Dia '+sgDta+' Já Importado !!'+cr+cr+'Deseja Excluí-lo'+cr+'Antes da Importação ???','C')=1 Then
+//    End; // If bgOK Then
 
     FrmBelShop.MontaProgressBar(True, FrmSolicitacoes);
     pgProgBar.Properties.Max:=EditorProSoftImpArquivo.Lines.Count;
@@ -1224,8 +1303,6 @@ Begin
           DMBelShop.SQLQuery1.Open;
           bInsert:=(Trim(DMBelShop.SQLQuery1.FieldByName('Cod_Trinks').AsString)='');
           DMBelShop.SQLQuery1.Close;
-
-
 
           // Update no Movimento ===============================================
           If Not bInsert Then
@@ -1370,7 +1447,7 @@ Begin
       Screen.Cursor:=crDefault;
 
       MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-      
+
       Result:=False;
     End; // on e : Exception do
   End; // Try da Transação
@@ -1381,28 +1458,25 @@ Procedure TFrmSolicitacoes.AuditoriaGeraArquivo;
 Var
   MySql: String;
   tsArquivo: TStringList;
+  sParametros: String;
 Begin
   Screen.Cursor:=crArrow;
-
-  If Rb_AudCadProdutos.Checked Then
-   PainelApresExp.Caption:='AGUARDE !! Gerando Arquivo de Produtos...'
-  Else
-   PainelApresExp.Caption:='AGUARDE !! Gerando Arquivo de Estoque de Produtos...';
-
-  PainelApresExp.Width:=Length(PainelApresExp.Caption)*10;
-  PainelApresExp.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-PainelApresExp.Width)/2));
-  PainelApresExp.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-PainelApresExp.Height)/2))-20;
-  PainelApresExp.Color:=clSilver;
-  PainelApresExp.Font.Style:=[fsBold];
-  PainelApresExp.Parent:=FrmSolicitacoes;
-  PainelApresExp.Visible:=True;
-  Refresh;
 
   //============================================================================
   // Busca Cadastro de Produtos ================================================
   //============================================================================
   If Rb_AudCadProdutos.Checked Then
   Begin
+    PainelApresExp.Caption:='AGUARDE !! Gerando Arquivo de Produtos...';
+    PainelApresExp.Width:=Length(PainelApresExp.Caption)*10;
+    PainelApresExp.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-PainelApresExp.Width)/2));
+    PainelApresExp.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-PainelApresExp.Height)/2))-20;
+    PainelApresExp.Color:=clSilver;
+    PainelApresExp.Font.Style:=[fsBold];
+    PainelApresExp.Parent:=FrmSolicitacoes;
+    PainelApresExp.Visible:=True;
+    Refresh;
+
     MySql:=' SELECT'+
            ' TRIM(p.cod_barra)||'';''||TRIM(p.nome)||'';''||TRIM(p.desc_setor)||'';''||TRIM(p.desativado)||'';'' LINHA'+
            ' FROM LINXPRODUTOS p'+
@@ -1420,8 +1494,65 @@ Begin
   //============================================================================
   // Busca Posição de Estoque dos Produtos da Loja =============================
   //============================================================================
-  If (Rb_AudPosEstoque.Checked) And (Rb_AudPosEstoqueLoja.Checked) Then
+  If Rb_AudPosEstoque.Checked Then
   Begin
+    PainelApresExp.Caption:='AGUARDE !! Atualizando Saldo Depósito '+IntToStr(igCodDeposito)+' (LINX - CLOUD)';
+    PainelApresExp.Width:=Length(PainelApresExp.Caption)*10;
+    PainelApresExp.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-PainelApresExp.Width)/2));
+    PainelApresExp.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-PainelApresExp.Height)/2))-20;
+    PainelApresExp.Color:=clSilver;
+    PainelApresExp.Font.Style:=[fsBold];
+    PainelApresExp.Parent:=FrmSolicitacoes;
+    PainelApresExp.Visible:=True;
+    Refresh;
+
+    // WebService Linx - Atualiza Saldo do Depoisto Solicitado =================
+    sParametros:=sgPastaWebService+'PWebServiceLinx.exe LinxProdutosInventario'; // Excutavel e Metodo a Processar
+    sParametros:=sParametros+' '+IntToStr(EdtAudCodLoja.AsInteger); // Codigo da Loja a Processar
+    sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Metodos')+'"'; // Pasta dos Metodos
+    sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Retornos')+'"'; // Pasta dos Retornos
+    sParametros:=sParametros+' NULL'; // Data Inicial
+    sParametros:=sParametros+' NULL'; // Data Final
+    sParametros:=sParametros+' NULL'; // Codigo do Produto   => Pode ser Nulo - String ''
+    sParametros:=sParametros+' '+IntToStr(igCodDeposito); // Codigo Qualqueer    => Pode ser Nulo - String ''
+    sParametros:=sParametros+' NULL'; // Campo Data para Pesquisa => SIM ou Branco => Se Utilização de Data de Emissão Para Pesquisa
+
+    // Envia Parametro e Aguarda Termino do Processo ===========================
+    CreateProcessSimple(sParametros);
+
+    // Verifica se Web Serive Funcionou ========================================
+    MySql:=' SELECT FIRST 1 i.cod_produto'+
+           ' FROM LINXPRODUTOSINVENTARIO i'+
+           ' WHERE i.dta_atualizacao=CURRENT_DATE'+
+           ' AND   i.cod_deposito='+IntToStr(igCodDeposito)+
+           ' AND   i.empresa='+IntToStr(EdtAudCodLoja.AsInteger);
+    DMBelShop.SQLQuery3.Close;
+    DMBelShop.SQLQuery3.SQL.Clear;
+    DMBelShop.SQLQuery3.SQL.Add(MySql);
+    DMBelShop.SQLQuery3.Open;
+    sParametros:=DMBelShop.SQLQuery3.FieldByName('Cod_Produto').AsString;
+    DMBelShop.SQLQuery3.Close;
+
+    If Trim(sParametros)='' Then
+    Begin
+      msg('Problema de Conexão com o LINX !!'+cr+'Web Service Não Funcionou !!'+cr+cr+'TENTE NOVAMENTE !!!','A');
+      PainelApresExp.Visible:=False;
+      Screen.Cursor:=crDefault;
+      Exit;
+    End; // If Trim(sParametros)='' Then
+
+    // Gera o Arquivo para Auditoria - Inventario ==============================
+    PainelApresExp.Caption:='AGUARDE !! Gerando Arquivo de Estoque de Produtos...';
+    PainelApresExp.Width:=Length(PainelApresExp.Caption)*10;
+    PainelApresExp.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-PainelApresExp.Width)/2));
+    PainelApresExp.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-PainelApresExp.Height)/2))-20;
+    PainelApresExp.Color:=clSilver;
+    PainelApresExp.Font.Style:=[fsBold];
+    PainelApresExp.Parent:=FrmSolicitacoes;
+    PainelApresExp.Visible:=True;
+    Refresh;
+
+    // Insere Produtos que a Loja Trabalha =====================================
     If Not Auditoria_Delete_Insert(True) Then
      Exit;
 
@@ -1431,39 +1562,20 @@ Begin
            ' TRIM(pr.cod_barra)||'';''||'+
            ' REPLACE(TRIM(pd.preco_custo), ''.'', '','')||'';''||'+
            ' REPLACE(TRIM(pd.preco_venda), ''.'', '','')||'';''||'+
-           ' CAST(COALESCE(pd.quantidade,0) AS INTEGER)||'';''||'+
+           ' CAST(COALESCE(iv.quantidade,0) AS INTEGER)||'';''||'+
            ' TRIM(pr.desativado) LINHA'+
 
-           ' FROM W_PROD_LOJA pl, LINXLOJAS lj, LINXPRODUTOS pr, LINXPRODUTOSDETALHES pd'+
+           ' FROM W_PROD_LOJA pl'+
+           '     LEFT JOIN LINXLOJAS lj               ON lj.empresa=pl.cod_loja_linx'+
+           '     LEFT JOIN LINXPRODUTOS pr            ON pr.cod_produto=pl.cod_produto'+
+           '     LEFT JOIN LINXPRODUTOSDETALHES pd    ON pd.empresa=pl.cod_loja_linx'+
+           '                                         AND pd.cod_produto=pl.cod_produto'+
+           '     LEFT JOIN LINXPRODUTOSINVENTARIO iv  ON iv.empresa=pl.cod_loja_linx'+
+           '                                         AND iv.cod_produto=pl.cod_produto'+
+           '                                         AND iv.cod_deposito='+IntToStr(igCodDeposito)+
 
-           ' WHERE pl.cod_loja_linx=lj.empresa'+
-           ' AND   pl.cod_produto=pr.cod_produto'+
-           ' AND   pl.cod_loja_linx=pd.empresa'+
-           ' AND   pl.cod_produto=pd.cod_produto'+
-           ' AND   pl.cod_loja_linx='+IntToStr(EdtAudCodLoja.AsInteger);
-  End; // If (Rb_AudPosEstoque.Checked) And (Rb_AudPosEstoqueLoja.Checked) Then
-  // Busca Posição de estoque dos Produtos da Loja =============================
-  //============================================================================
-
-  //============================================================================
-  // Busca Posição de estoque dos Produtos da Empresa ==========================
-  //============================================================================
-  If (Rb_AudPosEstoque.Checked) And (Rb_AudPosEstoqueEmpresa.Checked) Then
-  Begin
-    MySql:=' SELECT'+
-           ' TRIM(REPLACE(lj.nome_emp, ''-'', ''|''))||'';''||'+
-           ' TRIM(pr.cod_barra)||'';''||'+
-           ' REPLACE(TRIM(pd.preco_custo), ''.'', '','')||'';''||'+
-           ' REPLACE(TRIM(pd.preco_venda), ''.'', '','')||'';''||'+
-           ' CAST(COALESCE(pd.quantidade,0) AS INTEGER)||'';''||'+
-           ' TRIM(pr.desativado) LINHA'+
-
-           ' FROM LINXPRODUTOSDETALHES pd, LINXPRODUTOS pr, LINXLOJAS lj'+
-
-           ' WHERE pd.cod_produto=pr.cod_produto'+
-           ' AND   pd.empresa=lj.empresa'+
-           ' AND   pd.empresa='+IntToStr(EdtAudCodLoja.AsInteger);
-  End; // If (Rb_AudPosEstoque.Checked) And (Rb_AudPosEstoqueLoja.Checked) Then
+           ' WHERE pl.cod_loja_linx='+IntToStr(EdtAudCodLoja.AsInteger);
+  End; // If Rb_AudPosEstoque.Checked Then
   // Busca Posição de estoque dos Produtos da Loja =============================
   //============================================================================
 
@@ -2968,7 +3080,7 @@ Begin
         End; // if EdtParamVlrSalMinimo.Value<=DMVirtual.CDS_V_ParamSalMinimoVLR_INICIAL.AsCurrency And ...
       End; // If DMVirtual.CDS_V_ParamSalMinimoIND_SIT.AsString<>'Excluido' Then
       DMVirtual.CDS_V_ParamSalMinimo.Next;
-    End;
+    End; // While Not DMVirtual.CDS_V_ParamSalMinimo.Eof do
 
     If Not bSalMinExiste Then
     Begin
@@ -3643,7 +3755,7 @@ begin
     end; // with CalendarGrid do
   End; // If DayOfWeek(DiaPrimeiroMes) = 1 Then
 
-  while DayOfWeek(DiaPrimeiroMes) <> 1 do
+  While DayOfWeek(DiaPrimeiroMes) <> 1 do
   begin
     DiaPrimeiroMes := DiaPrimeiroMes - 1;
     i := 0;
@@ -3667,7 +3779,7 @@ begin
         end; // for Coluna := 0 to Pred(ColCount) do
       end; // for Linha := 1 to Pred(RowCount) do
     end; // with CalendarGrid do begin
-  End; // while DayOfWeek(DiaPrimeiroMes) <> 1 do
+  End; // While DayOfWeek(DiaPrimeiroMes) <> 1 do
 
 end; // MOVIMENTO DE CAIXA DIA - Desenha Calendário >>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -3793,7 +3905,7 @@ Begin
   End; // If iFormWidth<>0 Then
 End; // CRIA GRIDNEW em Ts_QualquerCoisa >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-// Ordem de Compra - Exporta Documento para Outros >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// Compras - Exporta Documento para Outros >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Function TFrmSolicitacoes.OcExportaDocumento: Boolean;
 Var
   sCodEmp, sDta, sCodComprador: String;
@@ -4115,7 +4227,7 @@ Begin
     End; // on e : Exception do
   End; // Try
 
-End; // Ordem de Compra - Exporta Documento para Outros >>>>>>>>>>>>>>>>>>>>>>>>
+End; // Compras - Exporta Documento para Outros >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 procedure TFrmSolicitacoes.FormKeyPress(Sender: TObject; var Key: Char);
 begin
@@ -4135,10 +4247,14 @@ begin
   CorSelecaoTabSheet(PC_Principal);
 
   If (PC_Principal.ActivePage=Ts_SidicomUsuario) And (Ts_SidicomUsuario.CanFocus) Then
-   EdtUsuarioModelo.SetFocus;
+  Begin
+    EdtUsuarioModelo.SetFocus;
+  End; // If (PC_Principal.ActivePage=Ts_SidicomUsuario) And (Ts_SidicomUsuario.CanFocus) Then
 
   If (PC_Principal.ActivePage=Ts_SolicitacoesExporta) And (Ts_SolicitacoesExporta.CanFocus) Then
-   EdtSolicExpDoctoDestino.SetFocus;
+  Begin
+    EdtSolicExpDoctoDestino.SetFocus;
+  End; // If (PC_Principal.ActivePage=Ts_SolicitacoesExporta) And (Ts_SolicitacoesExporta.CanFocus) Then
 
   If (PC_Principal.ActivePage=Ts_HabServ) And (Ts_HabServ.CanFocus) Then
   Begin
@@ -4146,12 +4262,12 @@ begin
      EdtHabServDesc.SetFocus
     Else
      EdtHabServAbrev.SetFocus;
-  End;
+  End; // If (PC_Principal.ActivePage=Ts_HabServ) And (Ts_HabServ.CanFocus) Then
 
   If (PC_Principal.ActivePage=Ts_GeraOCLegendaCores) And (Ts_GeraOCLegendaCores.CanFocus) Then
   Begin
     Bt_GeraOCLegendaCoresVoltar.SetFocus;
-  End;
+  End; // If (PC_Principal.ActivePage=Ts_GeraOCLegendaCores) And (Ts_GeraOCLegendaCores.CanFocus) Then
 
   If (PC_Principal.ActivePage=Ts_ManutDiversas) And (Ts_ManutDiversas.CanFocus) Then
   Begin
@@ -4169,10 +4285,12 @@ begin
     Except
       Bt_ManutDiversosVoltar.SetFocus;
     End;
-  End;
+  End; // If (PC_Principal.ActivePage=Ts_ManutDiversas) And (Ts_ManutDiversas.CanFocus) Then
 
   If (PC_Principal.ActivePage=Ts_ParametrosGerenciador) And (Ts_ParametrosGerenciador.CanFocus) Then
-   PC_ParametrosChange(Self);
+  Begin
+    PC_ParametrosChange(Self);
+  End; // If (PC_Principal.ActivePage=Ts_ParametrosGerenciador) And (Ts_ParametrosGerenciador.CanFocus) Then
 
   If (PC_Principal.ActivePage=Ts_Vales) And (Ts_Vales.CanFocus) Then
   Begin
@@ -4180,21 +4298,27 @@ begin
     Else If (EdtValesCodProf.Visible) and (Not EdtValesCodLoja.ReadOnly) Then EdtValesCodProf.SetFocus
     Else If (EdtValesDocto.Visible)   and (Not EdtValesDocto.Properties.ReadOnly)   Then EdtValesDocto.SetFocus
     Else Dbg_ValesParcelas.SetFocus;
-  End;
+  End; // If (PC_Principal.ActivePage=Ts_Vales) And (Ts_Vales.CanFocus) Then
 
   If (PC_Principal.ActivePage=Ts_SolicitFornLojas) And (Ts_SolicitFornLojas.CanFocus) Then
-   Dbg_SolicitFornLojas.SetFocus;
+  Begin
+    Dbg_SolicitFornLojas.SetFocus;
+  End; // If (PC_Principal.ActivePage=Ts_SolicitFornLojas) And (Ts_SolicitFornLojas.CanFocus) Then
 
   If (PC_Principal.ActivePage=Ts_ProfSelecina) And (Ts_ProfSelecina.CanFocus) Then
-   EdtProfSelecionaNome.SetFocus;
+  Begin
+    EdtProfSelecionaNome.SetFocus;
+  End; // If (PC_Principal.ActivePage=Ts_ProfSelecina) And (Ts_ProfSelecina.CanFocus) Then
 
   If (PC_Principal.ActivePage=Ts_MargemLucroFormulas) And (Ts_MargemLucroFormulas.CanFocus) Then
-   Bt_FormulaVoltar.SetFocus;
+  Begin
+    Bt_FormulaVoltar.SetFocus;
+  End; // If (PC_Principal.ActivePage=Ts_MargemLucroFormulas) And (Ts_MargemLucroFormulas.CanFocus) Then
 
   If (PC_Principal.ActivePage=Ts_ApresentaGrid) And (Ts_ApresentaGrid.CanFocus) Then
   Begin
     Dbg_ApresGrid.SetFocus;
-  End;
+  End; // If (PC_Principal.ActivePage=Ts_ApresentaGrid) And (Ts_ApresentaGrid.CanFocus) Then
 
   If (PC_Principal.ActivePage=Ts_ProSoftImpArquivo) And (Ts_ProSoftImpArquivo.CanFocus) Then
   Begin
@@ -4202,12 +4326,12 @@ begin
 //     Bt_ProSoftImpTodos.Visible:=True;
 
     Bt_ProSoftImpArquivo.SetFocus;
-  End;
+  End; // If (PC_Principal.ActivePage=Ts_ProSoftImpArquivo) And (Ts_ProSoftImpArquivo.CanFocus) Then
 
   If (PC_Principal.ActivePage=Ts_PlanilhaFinanceira) And (Ts_PlanilhaFinanceira.CanFocus) Then
   Begin
     PC_FinanPlanFinanceiraSolicitaChange(Self);
-  End;
+  End; // If (PC_Principal.ActivePage=Ts_PlanilhaFinanceira) And (Ts_PlanilhaFinanceira.CanFocus) Then
 
   If (PC_Principal.ActivePage=Ts_ReposLojasDigita) And (Ts_ReposLojasDigita.CanFocus) Then
   Begin
@@ -4220,12 +4344,38 @@ begin
        EdtReposLojasSeqExit(Self);
        EdtReposLojasQtdReposicao.SetFocus;
      End;
-  End;
+  End; // If (PC_Principal.ActivePage=Ts_ReposLojasDigita) And (Ts_ReposLojasDigita.CanFocus) Then
 
   If (PC_Principal.ActivePage=Ts_AnaliseReposicaoDiaria) And (Ts_AnaliseReposicaoDiaria.CanFocus) Then
   Begin
     Dbg_AnaliseRepDiaria.SetFocus;
-  End;
+  End; // If (PC_Principal.ActivePage=Ts_AnaliseReposicaoDiaria) And (Ts_AnaliseReposicaoDiaria.CanFocus) Then
+
+  If (PC_Principal.ActivePage=Ts_ConcDepDocFinan) And (Ts_ConcDepDocFinan.CanFocus) Then
+  Begin
+    If Not ((bgInd_Admin) And ((AnsiUpperCase(Des_Usuario)='RENATO') Or (AnsiUpperCase(Des_Usuario)='ODIR'))) Then
+    Begin
+      Bt_ConcDepDocFinanRecebe.Visible:=False;
+      Bt_ConcDepDocFinanFechamento.Visible:=False;
+    End;
+
+    Dbg_ConcDepDocFinan.SetFocus;
+  End; // If (PC_Principal.ActivePage=Ts_ConcDepDocFinan) And (Ts_ConcDepDocFinan.CanFocus) Then
+
+  If (PC_Principal.ActivePage=Ts_ComprasEstoquesCD) And (Ts_ComprasEstoquesCD.CanFocus) Then
+  Begin
+//    Rb_ComprasEstoquesA.Checked:=True;
+//    Rb_ComprasEstoquesAClick(Self);
+//
+//    Bt_ComprasEstoquesCDCurvaClick(Self);
+
+    Dbg_ComprasEstoquesCD.SetFocus;
+  End; // If (PC_Principal.ActivePage=Ts_ComprasEstoquesCD) And (Ts_ComprasEstoquesCD.CanFocus) Then
+
+  If (PC_Principal.ActivePage=Ts_Auditoria) And (Ts_Auditoria.CanFocus) Then
+  Begin
+    igCodDeposito:=0;
+  End; // If (PC_Principal.ActivePage=Ts_Auditoria) And (Ts_Auditoria.CanFocus) Then
 end;
 
 procedure TFrmSolicitacoes.Bt_SolicExpVoltarClick(Sender: TObject);
@@ -4242,7 +4392,9 @@ begin
   Bt_GruposLojasVoltarClick
   Bt_SolicExpVoltarClick
   Bt_ProSoftImpVoltar
+  Bt_AudGeraVoltar
   }
+
   bgOK:=False;
   bgProcessar:=False;
   Close;
@@ -4793,8 +4945,11 @@ end;
 
 procedure TFrmSolicitacoes.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
+  If DMCentralTrocas.CDS_Depositos.Active Then
+   DMCentralTrocas.CDS_Depositos.Close;
 
-  DMCentralTrocas.CDS_ParamTransf.Close;
+  If DMCentralTrocas.CDS_ParamTransf.Active Then
+   DMCentralTrocas.CDS_ParamTransf.Close;
 
   // Retorna Permissão de Sair com Ctrl+F4
   Application.OnMessage := nil;
@@ -5152,7 +5307,6 @@ begin
   {
   Usado em:
   Bt_ValesSalvarClick (Consistir se Incluir)
-
   Bt_FinanPlanFinanceiraTamColunasOKClick
   Bt_MixProdutosAlterarClick
   Bt_SimplesOKClick
@@ -5168,7 +5322,7 @@ begin
   //============================================================================
   If (Sender as TJvXPButton).Name='Bt_AudGeraArquivo' Then
   Begin
-    Gb_AudTipoArquivo.SetFocus;
+    EdtAudDescArquivo.SetFocus;
 
     If Trim(EdtAudDescArquivo.Text)='' Then
     Begin
@@ -5197,11 +5351,27 @@ begin
         Bt_AudBuscaLoja.SetFocus;
         Exit;
       End;
+
+      If igCodDeposito=0 Then
+      Begin
+        msg('Favor Selecionar o'+cr+cr+'Depósito para Inventário?','A');
+        Dbg_AudDepositos.SetFocus;
+        Exit;
+      End; // If igCodDeposito=0 Then
+
+      If igCodDeposito<>0 Then
+      Begin
+        If msg('O DEPÓSITO Selecionado Esta CORRETO ?','C')=2 Then
+        Begin
+          Dbg_AudDepositos.SetFocus;
+          Exit;
+        End; // If msg('O DEPÓSITO Selecionado Esta CORRETO ?','C')=2 Then
+      End; // If igCodDeposito<>0 Then
     End; // If Rb_AudPosEstoque.Checked Then
 
     AuditoriaGeraArquivo;
     Exit;
-  End; // If (Sender as TJvTransparentButton).Name='Bt_MixLojasAlterar' Then
+  End; // If (Sender as TJvXPButton).Name='Bt_AudGeraArquivo' Then
   // Gera Arquivo de Auditoria de Estoques =====================================
   //============================================================================
 
@@ -5210,6 +5380,8 @@ begin
   //============================================================================
   If (Sender as TJvXPButton).Name='Bt_CodigosViculadosSalvar' Then
   Begin
+    Dbg_CodigosViculados.SetFocus;
+
     If msg('Deseja Realmente Salvar  ??','C')=2 Then
     Begin
       Dbg_CodigosViculados.SetFocus;
@@ -5224,6 +5396,8 @@ begin
   //============================================================================
   If (Sender as TJvXPButton).Name='Bt_ConsistenciasSalvar' Then
   Begin
+    Dbg_Consistencias.SetFocus;
+
     if msg('As Alterações nas Consistências '+cr+cr+'Estão Corretas ??','C')=2 Then
     Begin
       Dbg_Consistencias.SetFocus;
@@ -5238,6 +5412,8 @@ begin
   //============================================================================
   If (Sender as TJvXPButton).Name='Bt_ManutDiversosDML' Then
   Begin
+    EdtDesc2.SetFocus;
+
     If Trim(sgComponentesConsiste)<>'' Then
     Begin
       If Not ConsisteComponentesManutDiversas Then
@@ -5248,10 +5424,17 @@ begin
   //============================================================================
 
   //============================================================================
-  //  Habilita / Desabilita Linha dos Objetivos/Metas ==========================
+  //  Utiliza Botão Bt_SimplesOK:
+  // - Habilita / Desabilita Linha dos Objetivos/Metas
+  // - Divergências Reposições Lojas
   //============================================================================
   If (Sender as TJvXPButton).Name='Bt_SimplesOK' Then
   Begin
+    If (PC_Principal.ActivePage=Ts_FinanObjetivosHabilitaDesabilita) And (Ts_FinanObjetivosHabilitaDesabilita.CanFocus) Then
+    Begin
+      Ckb_FinanObjetivosHabDesObjetivos.SetFocus;
+    End; // If (PC_Principal.ActivePage=Ts_FinanObjetivosHabilitaDesabilita) And (Ts_FinanObjetivosHabilitaDesabilita.CanFocus) Then
+
     If Trim(sgMessagemSimplesOK)<>'' Then
     Begin
       If msg(sgMessagemSimplesOK,'C')=2 Then
@@ -6173,6 +6356,7 @@ begin
       sCodLoja:='ok';
       Break;
     End;
+    
     DMLojaUnica.CDS_V_SolicitFornLojas.Next;
   End; // While Not DMLojaUnica.CDS_V_SolicitFornLojas.Eof do
   DMLojaUnica.CDS_V_SolicitFornLojas.EnableControls;
@@ -6781,7 +6965,7 @@ begin
       DMSalao.CDS_V_ProfSeleciona.Post;
 
       DMSalao.CDS_V_ProfSeleciona.Next
-    End;
+    End; // While Not DMSalao.CDS_V_ProfSeleciona.Eof do
     DMSalao.CDS_V_ProfSeleciona.EnableControls;
 
     // Posiciona no Marcado
@@ -7231,6 +7415,7 @@ var
 
   bProcOK: Boolean;
 
+  // Impostação Arquivo do RH ==================================================
   // Repete Uma Vez ============================================================
   sCodContabil,           // Código Contabil   => Empresa: 0928 - BELSHOP PERFUMARIA E COSMETICA LTDA
   sCodigoEmpresa,         // Código da Loja    => É Informado
@@ -7271,6 +7456,36 @@ begin
   //============================================================================
   If sgSender='SubMenuFinanExpImpImportaTrinks' Then
   Begin
+    // OdirApagar - 21/11/2018
+//    // Verifica se Já Existe Movto no Dia ======================================
+//    sgDta:='';
+//    For i:=0 to EditorProSoftImpArquivo.Lines.Count-1 do
+//    Begin
+//      Try
+//        //sCodTrinks:=IntToStr(StrToInt(Trim(Separa_String(EditorProSoftImpArquivo.Lines[i],1))));
+//        StrToDate(Trim(Separa_String(EditorProSoftImpArquivo.Lines[i],3)));
+//        sgDta:=Trim(Separa_String(EditorProSoftImpArquivo.Lines[i],3));
+//        Break;
+//      Except
+//      End;
+//    End; // For i:=0 to EditorProSoftImpArquivo.Lines.Count-1 do
+//
+//    If Trim(sgDta)='' Then
+//    Begin
+//      msg('Arquivo Inválido !!','A');
+//      Exit;
+//    End;
+//
+//    MySql:=' SELECT t.cod_trinks'+
+//           ' FROM TRINKS_DIARIO t'+
+//           ' WHERE t.dta_movto = '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sgDta)));
+//    DMBelShop.SQLQuery1.Close;
+//    DMBelShop.SQLQuery1.SQL.Clear;
+//    DMBelShop.SQLQuery1.SQL.Add(MySql);
+//    DMBelShop.SQLQuery1.Open;
+//    bgOK:=(Trim(DMBelShop.SQLQuery1.FieldByName('Cod_Trinks').AsString)<>'');
+//    DMBelShop.SQLQuery1.Close;
+
     If Not TrinksImportaArquivoDiario Then
      msg('Erro ao importa Arquivo Diário Trinks !!','A');
 
@@ -7646,7 +7861,7 @@ begin
     End;
 
     DMBelShop.CDS_Busca.Next;
-  End;
+  End; // While Not DMBelShop.CDS_Busca.Eof do
 
   If (FrmSolicitacoes.Caption='VERIFICA POSIÇÃO DE ESTOQUES DAS LOJAS') And (bgOK) Then
   Begin
@@ -7721,7 +7936,7 @@ begin
     DMBelShop.CDS_Busca.Post;
 
     DMBelShop.CDS_Busca.Next;
-  End;
+  End; // While Not DMBelShop.CDS_Busca.Eof do
   DMBelShop.CDS_Busca.EnableControls;
   DMBelShop.CDS_Busca.First;
 
@@ -7743,7 +7958,7 @@ begin
     DMBelShop.CDS_Busca.Post;
 
     DMBelShop.CDS_Busca.Next;
-  End;
+  End; // While Not DMBelShop.CDS_Busca.Eof do
   DMBelShop.CDS_Busca.EnableControls;
   DMBelShop.CDS_Busca.First;
 
@@ -7848,12 +8063,16 @@ end;
 
 procedure TFrmSolicitacoes.Bt_QualquerCoisaVoltarClick(Sender: TObject);
 begin
-  {
+ {
    Usado por Outros Botoes:
 
    Bt_AnaliseRepDiariaVoltar
+   Bt_ConcDepDocFinanVoltar
   }
 
+  If DMConciliacao.CDS_CMDepAnaliseDocRel.Active Then
+   DMConciliacao.CDS_CMDepAnaliseDocRel.Close;
+   
   If (Sender is TJvXPButton) Then
   Begin
     If Trim((Sender as TJvXPButton).Name)='Bt_ExcelVoltar' Then
@@ -8924,6 +9143,8 @@ begin
       // Zera Estoques Minimos
       MySql:=' UPDATE ES_FINAN_CURVA_ABC c'+
              ' SET c.est_minimo=0'+
+             ',    c.usu_altera='+Cod_Usuario+
+             ',    c.dta_altera=current_date'+
              ' WHERE c.est_minimo<>0'+
              ' AND EXISTS (SELECT 1'+
              '             FROM PRODUTO p'+
@@ -9380,6 +9601,8 @@ begin
         - Dbg_ConcDepHistoricos
         - Dbg_AnaliseRepDiaria
         - Dbg_ConcDepDocFinan
+        - Dbg_ComprasEstoquesCD
+        - Dbg_AudDepositos
   }
   // Bloquei Ctrl + Delete =====================================================
   if (Shift = [ssCtrl]) and (Key = 46) then
@@ -9970,18 +10193,23 @@ begin
   Begin
     AcertaRb_Style(Rb_AudCadProdutos);
     AcertaRb_Style(Rb_AudPosEstoque);
-    AcertaRb_Style(Rb_AudPosEstoqueEmpresa);
-    AcertaRb_Style(Rb_AudPosEstoqueLoja);
 
     If Rb_AudPosEstoque.Checked Then
      Begin
-       Pan_AudProdutos.Visible:=True;
        Gb_AudLoja.Visible:=True;
+
+       Gb_AudDepositos.Visible:=True;
+       DMCentralTrocas.CDS_Depositos.Open;
+       igCodDeposito:=0;
+       Dbg_AudDepositos.SetFocus;
      End
     Else // If Rb_AudPosEstoque.Checked Then
      Begin
-       Pan_AudProdutos.Visible:=False;
        Gb_AudLoja.Visible:=False;
+
+       Gb_AudDepositos.Visible:=False;
+       DMCentralTrocas.CDS_Depositos.Close;
+       igCodDeposito:=0;
      End; // If Rb_AudPosEstoque.Checked Then
   End; // If (Sender is TJvRadioButton) Then
 end;
@@ -10748,7 +10976,7 @@ begin
   Dbg_ConcDepDocFinan.Canvas.FillRect(Rect);
   Dbg_ConcDepDocFinan.DefaultDrawDataCell(Rect,Column.Field,state);
 
-  // Alianhamentos =============================================================
+  // Alinhamentos ==============================================================
   DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.Alignment:=taCenter;
   DMConciliacao.CDS_CMDepAnaliseDocRelVLR_MATRIZ.Alignment:=taRightJustify;
   DMConciliacao.CDS_CMDepAnaliseDocRelVLR_DEPOSITOS.Alignment:=taRightJustify;
@@ -10760,10 +10988,126 @@ begin
 end;
 
 procedure TFrmSolicitacoes.Bt_ConcDepDocFinanImprimirClick(Sender: TObject);
-begin
-  bgProcessar:=False;
-  Close;
+Var
+  MySql: String;           
+  dir_padrao, dir_relat: String;
 
+  // Function Interna- Atualiza Data Emissão Docto Financeiro >>>>>>>>>>>>>>>>>>
+  Function AtualizaDataEmissaoDoctoFinanceiro: Boolean;
+  Begin
+    // Atualiza Data de Emissão ================================================
+    OdirPanApres.Caption:='AGUARDE !! Montado/Imprimindo Documento Financeiro...';
+    OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+    OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-OdirPanApres.Width)/2));
+    OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-OdirPanApres.Height)/2))-20;
+    OdirPanApres.Font.Style:=[fsBold];
+    OdirPanApres.Parent:=FrmSolicitacoes;
+    OdirPanApres.BringToFront();
+    OdirPanApres.Visible:=True;
+    Screen.Cursor:=crAppStart;
+    Refresh;
+
+    Result:=True;
+
+    // Verifica se Transação esta Ativa
+    If DMBelShop.SQLC.InTransaction Then
+     DMBelShop.SQLC.Rollback(TD);
+
+    // Monta Transacao ===========================================================
+    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+    TD.IsolationLevel:=xilREADCOMMITTED;
+    DMBelShop.SQLC.StartTransaction(TD);
+    Try // Try da Transação
+      Screen.Cursor:=crAppStart;
+      DateSeparator:='.';
+      DecimalSeparator:='.';
+
+      MySql:=' UPDATE FIN_CONCILIACAO_DEP_REL r'+
+             ' SET r.dta_impressao=CURRENT_DATE,'+
+             '     r.hra_impressao=CURRENT_TIME,'+
+             '     r.usu_impressao='+Cod_Usuario+
+             ' WHERE r.num_docto='+DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString;
+      DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+      // Atualiza Transacao ====================================================
+      DMBelShop.SQLC.Commit(TD);
+
+      // Reabre CDS_CMDepAnaliseDocRel - Docto Financeiro ======================
+      DMConciliacao.CDS_CMDepAnaliseDocRel.DisableControls;
+      DMConciliacao.CDS_CMDepAnaliseDocRel.Close;
+      DMConciliacao.CDS_CMDepAnaliseDocRel.Open;
+      DMConciliacao.CDS_CMDepAnaliseDocRel.EnableControls;
+      DMConciliacao.CDS_CMDepAnaliseDocRel.First;
+    Except // Except da Transação
+      on e : Exception do
+      Begin
+        // Abandona Transacao ==================================================
+        DMBelShop.SQLC.Rollback(TD);
+
+        MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+        Result:=False;
+      End; // on e : Exception do
+    End; // Try da Transação
+
+    DateSeparator:='/';
+    DecimalSeparator:=',';
+
+    OdirPanApres.Visible:=False;
+
+    Screen.Cursor:=crDefault;
+  End; // Function Interna- Atualiza Data Emissão Docto Financeiro >>>>>>>>>>>>>
+
+begin
+  Dbg_ConcDepDocFinan.SetFocus;
+
+  If DMConciliacao.CDS_CMDepAnaliseDocRel.IsEmpty Then
+   Exit;
+
+  If msg('Deseja Realmente Efetuar a'+cr+cr+'Emissão do Docuemnto Financeiro ?','C')=2 Then
+   Exit;
+
+  // Salva Data e hora da Emissão ==============================================
+  If Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_IMPRESSAO.AsString)='' Then
+  Begin
+    If Not AtualizaDataEmissaoDoctoFinanceiro Then
+    Begin
+      msg('Ocorreu Erro na Emissão  do Documento !!'+cr+cr+'Entrar em Contato'+cr+'= Imediatamente ='+cr+'com o ODIR - 999-578-234','A');
+      Exit;
+    End; // If ConcDepExcluiLojaDoctoFinanceiro Then
+  End; // If Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_IMPRESSAO.AsString)='' Then
+
+  // Monta e Imprime Documento Financeiro ======================================
+  {$IFDEF MSWINDOWS}
+    dir_padrao      := ExtractFilePath(Application.ExeName);
+    dir_relat       := dir_padrao +'Relatorios\';
+  {$ENDIF}
+
+  // Apropria DataSet ==========================================================
+  DMRelatorio.frDBDataSet1.DataSet:=DMConciliacao.CDS_CMDepAnaliseDocRel;
+  DMRelatorio.frReport1.LoadFromFile(Dir_Relat+'Docto_Financeiro_Renato.frf');
+
+  //============================================================================
+  // Variaveis de Dicionário ===================================================
+  //============================================================================
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['NrDocto']    :=#39+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString)+#39;
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['CriadoPor']  :=#39+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDES_USU_CRIACAO.AsString)+#39;
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['CriadoEm']   :=#39+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_CRIACAO.AsString)+#39;
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['EmitidoPor'] :=#39+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDES_USU_IMPRESSAO.AsString)+#39;
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['EmitidoEm']  :=#39+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_IMPRESSAO.AsString)+#39;
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['RecebidoPor']:=#39+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDES_USU_RECEBE.AsString)+#39;
+  DMRelatorio.frReport1.Dictionary.Variables.Variable['RecebidoEm'] :=#39+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_RECEBE.AsString)+#39;
+  // Variaveis de Dicionário ===================================================
+  //============================================================================
+
+  //============================================================================
+  // Apresenta Romaneio ========================================================
+  //============================================================================
+  DMRelatorio.frReport1.PrepareReport;
+  DMRelatorio.frReport1.ShowReport;
+
+  DMConciliacao.CDS_CMDepAnaliseDocRel.First;
+  // Apresenta Romaneio ========================================================
+  //============================================================================
 end;
 
 procedure TFrmSolicitacoes.Bt_ConcDepDocFinanExcluirClick(Sender: TObject);
@@ -10771,7 +11115,7 @@ Var
   MySql, sCodAux: String;
   bExclui: Boolean; // Se Exclui Tab_Auxiliar.tip_aux=24
 
-  // Função Interna - Exclui Loja do Docto Financeiro de Entrega ===============
+  // Função Interna - Exclui Loja do Docto Financeiro de Entrega >>>>>>>>>>>>>>>
   Function ConcDepExcluiLojaDoctoFinanceiro: Boolean;
   Begin
     OdirPanApres.Caption:='AGUARDE !! Excluindo Loja do Documento Financeiro...';
@@ -10811,7 +11155,7 @@ Var
              ' FROM TAB_AUXILIAR t'+
              ' WHERE t.tip_aux=24'+ // CONCILIAÇÃO DE DEPÓSITOS: - OBSERVAÇÃO FINANCEIRA / NUMERO DO DOCUMENTO FINANCEIRO - SE ENTREGUE PARA O RENATO
              ' AND t.cod_aux='+QuotedStr(sCodAux)+
-             ' AND t.des_aux1='+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString);
+             ' AND t.des_aux1='+QuotedStr(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString));
       DMBelShop.CDS_BuscaRapida.Close;
       DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
       DMBelShop.CDS_BuscaRapida.Open;
@@ -10823,7 +11167,7 @@ Var
         MySql:=' DELETE FROM TAB_AUXILIAR t'+
                ' WHERE t.tip_aux=24'+ // CONCILIAÇÃO DE DEPÓSITOS: - OBSERVAÇÃO FINANCEIRA / NUMERO DO DOCUMENTO FINANCEIRO - SE ENTREGUE PARA O RENATO
                ' AND t.cod_aux='+QuotedStr(sCodAux)+
-               ' AND t.des_aux1='+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString);
+               ' AND t.des_aux1='+QuotedStr(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString));
       End; // If bExclui Then
 
       If Not bExclui Then
@@ -10832,7 +11176,7 @@ Var
                ' SET t.des_aux1=NULL'+
                ' WHERE t.tip_aux=24'+ // CONCILIAÇÃO DE DEPÓSITOS: - OBSERVAÇÃO FINANCEIRA / NUMERO DO DOCUMENTO FINANCEIRO - SE ENTREGUE PARA O RENATO
                ' AND t.cod_aux='+QuotedStr(sCodAux)+
-               ' AND t.des_aux1='+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString);
+               ' AND t.des_aux1='+QuotedStr(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString));
       End; // If bExclui Then
       DMBelShop.SQLC.Execute(MySql, nil, nil);
 
@@ -10843,13 +11187,32 @@ Var
              ' AND   r.dta_movto='+QuotedStr(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString));
       DMBelShop.SQLC.Execute(MySql, nil, nil);
 
-      // Atualiza ClientDataSet - CDS_CMDepositosAnalise =======================
-      DMConciliacao.CDS_CMDepositosAnalise.Edit;
-      DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString:=sCodDoc;
-      DMConciliacao.CDS_CMDepositosAnalise.Post;
+      // Acerta ClienteDataSet do Movto de Analise da Loja - CDS_CMDepositosAnalise
+      If not DMConciliacao.CDS_CMDepositosAnalise.IsEmpty Then
+      Begin
+        DMConciliacao.CDS_CMDepositosAnalise.First;
+        DMConciliacao.CDS_CMDepositosAnalise.DisableControls;
+        While Not DMConciliacao.CDS_CMDepositosAnalise.Eof do
+        Begin
+          If (DMConciliacao.CDS_CMDepositosAnaliseORDEM.AsInteger=4) And
+             (DMConciliacao.CDS_CMDepositosAnaliseDTA_DOCTO.AsDateTime=DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsDateTime) And
+             (DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsInteger  =DMConciliacao.CDS_CMDepAnaliseDocRelCOD_LINX.AsInteger) Then
+          Begin
+            DMConciliacao.CDS_CMDepositosAnalise.Edit;
+            DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString:='';
+            DMConciliacao.CDS_CMDepositosAnalise.Post;
+
+            Break;
+          End; // If Not DMConciliacao.CDS_CMDepositosAnalise.Locate('COD_LOJA; DTA_DOCTO',...
+
+          DMConciliacao.CDS_CMDepositosAnalise.Next;
+        End; // While Not DMConciliacao.CDS_CMDepositosAnalise.Eof do
+        DMConciliacao.CDS_CMDepositosAnalise.EnableControls;
+      End; // If not DMConciliacao.CDS_CMDepositosAnalise.IsEmpty Thyen
 
       // Atualiza Transacao ====================================================
       DMBelShop.SQLC.Commit(TD);
+
     Except // Except da Transação
       on e : Exception do
       Begin
@@ -10867,24 +11230,439 @@ Var
     OdirPanApres.Visible:=False;
 
     Screen.Cursor:=crDefault;
-  End;
-
-End; // CONCILIAÇÃO DEPOSITOS - Exclui Loja do Docto Financeiro de Entrega >>>>>
-
+  End; // Função Interna - Exclui Loja do Docto Financeiro de Entrega >>>>>>>>>>
 begin
+  Dbg_ConcDepDocFinan.SetFocus;
+
+  If DMConciliacao.CDS_CMDepAnaliseDocRel.IsEmpty Then
+   Exit;
+
   If Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString)='' Then
    Exit;
 
   If msg('Deseja Realmente EXCLUIR'+cr+cr+'a Loja SELECIONADA ??','C')=2 Then
    Exit;
 
-  If ConcDepExcluiLojaDoctoFinanceiro Then
+  If Not ConcDepExcluiLojaDoctoFinanceiro Then
   Begin
-    msg('Ocorreu Erro na Exclusão da Loja !!'+cr+cr+'Entrar em Contato'+cr+'= Imediatamente ='++cr+cr+'com o ODIR - 999-578-234','A');
+    msg('Ocorreu Erro na Exclusão da Loja !!'+cr+cr+'Entrar em Contato'+cr+'= Imediatamente ='+cr+'com o ODIR - 999-578-234','A');
     Exit;
   End; // If ConcDepExcluiLojaDoctoFinanceiro Then
 
+  DMConciliacao.CDS_CMDepAnaliseDocRel.DisableControls;
+  DMConciliacao.CDS_CMDepAnaliseDocRel.Close;
+  DMConciliacao.CDS_CMDepAnaliseDocRel.Open;
+  DMConciliacao.CDS_CMDepAnaliseDocRel.EnableControls;
 
+  msg('Exclusão Efetuada com SUCESSO !!','A');
+
+  If DMConciliacao.CDS_CMDepAnaliseDocRel.IsEmpty Then
+  Begin
+    msg('Documento Financeiro SEM Movimento !!'+cr+cr+'Será Descartado !!','A');
+    Bt_QualquerCoisaVoltarClick(Bt_QualquerCoisaVoltar);
+    Exit;
+  End; // If DMConciliacao.CDS_CMDepAnaliseDocRel.IsEmpty Then
+end;
+
+procedure TFrmSolicitacoes.Bt_ConcDepDocFinanRecebeClick(Sender: TObject);
+Var
+  MySql: String;
+  sCodAux, sDia, sHora: String;
+  iRecNo: Integer;
+begin
+  Dbg_ConcDepDocFinan.SetFocus;
+
+  If msg('Deseja Realmente Acertar o Recebimento'+cr+cr+'do Documento Financeiro Nº: '+
+         DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString,'C')=2 Then
+   Exit;
+
+  OdirPanApres.Caption:='AGUARDE !! Efetuando Fechamento Financeiro de Caixa...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmSolicitacoes;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  OdirPanApres.Refresh;
+  Refresh;
+
+  If not DMConciliacao.CDS_CMDepositosAnalise.IsEmpty Then
+   iRecNo:=DMConciliacao.CDS_CMDepositosAnalise.RecNo;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    sHora:=TimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+    sDia :=DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+
+    FrmBelShop.MontaProgressBar(True, FrmSolicitacoes);
+    pgProgBar.Properties.Max:=DMConciliacao.CDS_CMDepAnaliseDocRel.RecordCount;
+    pgProgBar.Position:=0;
+
+    sgDtaInicio:='';
+    sgDtaFim   :='';
+    DMConciliacao.CDS_CMDepAnaliseDocRel.First;
+    DMConciliacao.CDS_CMDepAnaliseDocRel.DisableControls;
+    While Not DMConciliacao.CDS_CMDepAnaliseDocRel.Eof do
+    Begin
+      Application.ProcessMessages;
+
+      If Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString)<>'' Then
+      Begin
+        // Acerta Período Para Apresentação dos Caixas Fechados ================
+        If Trim(sgDtaInicio)='' Then
+        Begin
+          sgDtaInicio:=Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString);
+          sgDtaFim   :=Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString);
+        End;
+
+        If StrToDate(sgDtaInicio)<StrToDate(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString)) Then
+        Begin
+          If StrToDate(sgDtaFim)<StrToDate(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString)) Then
+           sgDtaFim   :=Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString);
+        End;
+
+        If StrToDate(sgDtaInicio)>StrToDate(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString)) Then
+        Begin
+          sgDtaFim:=sgDtaInicio;
+          sgDtaInicio:=Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString);
+        End;
+
+        // Monta Tab_Auxiliar.Cod_Aux ============================================
+        sCodAux:=Trim(DMConciliacao.CDS_CMDepAnaliseDocRelCOD_LINX.AsString)+ // Codigo da Loja Linx
+                FormatFloat('00',StrToInt(Copy(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString),1,2)))+ // Dia do Movto
+                FormatFloat('00',StrToInt(Copy(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString),4,2)))+ // Mes do Movto
+                Copy(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString),9,2); // Ano do Movto - 2 Caracteres
+
+        // Atualiza Entrega do Docto Financeiro ================================
+        MySql:=' UPDATE TAB_AUXILIAR t'+
+               ' SET t.vlr_aux=1'+
+               ' WHERE t.tip_aux=24'+ // CONCILIAÇÃO DE DEPÓSITOS: - OBSERVAÇÃO FINANCEIRA / NUMERO DO DOCUMENTO FINANCEIRO - SE ENTREGUE PARA O RENATO
+               ' AND t.cod_aux='+QuotedStr(sCodAux)+
+               ' AND t.des_aux1='+QuotedStr(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString));
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
+
+        // Efetua o Fechamento do Movto ========================================
+        MySql:=' SELECT t.cod_aux'+
+               ' FROM TAB_AUXILIAR t'+
+               ' WHERE t.tip_aux=22'+ // 22 => CONCILIAÇÃO DE DEPÓSITOS: DATAS FECHADAS PELO RENATO
+               ' AND t.des_aux='+QuotedStr(f_Troca('.','/',f_Troca('-','/',Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString))))+
+               ' AND t.des_aux1='+QuotedStr(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelCOD_LINX.AsString));
+        DMBelShop.CDS_BuscaRapida.Close;
+        DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+        DMBelShop.CDS_BuscaRapida.Open;
+
+        If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Aux').AsString)='' Then
+        Begin
+//          22 => CONCILIAÇÃO DE DEPÓSITOS: DATAS FECHADAS PELO RENATO
+//                ====================================================
+//              - COD_AUX  = Sequência - Utilizado somente para ter Cod_Aux na PrimaryKey
+//              - DES_AUX  = Data do Fechamento (Renato)
+//              - DES_AUX1 = Código da Loja Linx
+//              - VLR_AUX  = --> Não Usado
+//              - VLR_AUX1 = --> Não Usado
+
+          MySql:=' INSERT INTO TAB_AUXILIAR'+
+                 ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
+                 ' VALUES ('+
+                 ' 22,'+ // TIP_AUX - CONCILIAÇÃO DE DEPÓSITOS - DATAS FECHADAS PELO RENATO
+                 ' (SELECT COALESCE(MAX(t.cod_aux)+1 ,1) FROM tab_auxiliar t WHERE t.tip_aux=22), '+ // COD_AUX
+                 QuotedStr(f_Troca('.','/',f_Troca('-','/',Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString))))+', '+ // DES_AUX
+                 DMConciliacao.CDS_CMDepAnaliseDocRelCOD_LINX.AsString+', '+ // DES_AUX1
+                 ' NULL,'+ // VLR_AUX
+                 ' NULL)'; // VLR_AUX1
+          DMBelShop.SQLC.Execute(MySql, nil,nil);
+        End; // If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Aux').AsString)='' Then
+        DMBelShop.CDS_BuscaRapida.Close;
+
+        // Atualiza Recebimento: Usuario, Data e Hora ==========================
+        MySql:=' UPDATE FIN_CONCILIACAO_DEP_REL dc'+
+               ' SET dc.usu_recebe='+Cod_Usuario+
+               ',    dc.dta_recebe='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDia)))+
+               ',    dc.hra_recebe='+QuotedStr(sHora)+
+               ' WHERE dc.num_docto='+Trim(DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString);
+        DMBelShop.SQLC.Execute(MySql, nil,nil);
+
+        // Acerta ClientDataSet Documento Financeiro - CDS_CMDepAnaliseDocRel ==
+        DMConciliacao.CDS_CMDepAnaliseDocRel.Edit;
+        DMConciliacao.CDS_CMDepAnaliseDocRelUSU_RECEBE.AsString:=Cod_Usuario;
+        DMConciliacao.CDS_CMDepAnaliseDocRelDES_USU_RECEBE.AsString:=Des_Usuario;
+        DMConciliacao.CDS_CMDepAnaliseDocRelDTA_RECEBE.AsString:=sDia;
+        DMConciliacao.CDS_CMDepAnaliseDocRelHRA_RECEBE.AsString:=sHora;
+        DMConciliacao.CDS_CMDepAnaliseDocRel.Post;
+
+        // Acerta ClientDataSet de Analise de Caixa - CDS_CMDepositosAnalise ===
+        If (DMConciliacao.CDS_CMDepositosAnalise.Active) and (Not DMConciliacao.CDS_CMDepositosAnalise.IsEmpty) Then
+        Begin
+          sDia:=f_Troca('/','.',f_Troca('-','.',Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString)));
+
+          If LocalizaRegistro(DMConciliacao.CDS_CMDepositosAnalise, 'DTA_DOCTO', sDia) Then
+          Begin
+            DMConciliacao.CDS_CMDepositosAnalise.DisableControls;
+            While Not DMConciliacao.CDS_CMDepositosAnalise.Eof do
+            Begin
+              If (DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsInteger          =DMConciliacao.CDS_CMDepAnaliseDocRelCOD_LINX.AsInteger) And
+                 (Trim(DMConciliacao.CDS_CMDepositosAnaliseNUM_RELATORIO.AsString)=Trim(DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString)) And
+                 (Trim(DMConciliacao.CDS_CMDepositosAnaliseDTA_DOCTO.AsString)    =Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString)) Then
+              Begin
+                DMConciliacao.CDS_CMDepositosAnalise.Edit;
+                DMConciliacao.CDS_CMDepositosAnaliseFECHA.AsString:='SIM';
+                DMConciliacao.CDS_CMDepositosAnaliseREL_ENTREGUE.AsString:='SIM';
+                DMConciliacao.CDS_CMDepositosAnalise.Post;
+                Break;
+              End; // If (DMConciliacao.CDS_CMDepositosAnaliseCOD_LOJA.AsInteger          =DMConciliacao.CDS_CMDepAnaliseDocRelCOD_LINX.AsInteger) And
+
+              DMConciliacao.CDS_CMDepositosAnalise.Next;
+            End; // While Not DMConciliacao.CDS_CMDepositosAnalise.Eof do
+            DMConciliacao.CDS_CMDepositosAnalise.EnableControls;
+            DMConciliacao.CDS_CMDepositosAnalise.RecNo:=iRecNo;
+          End; // If LocalizaRegistro(DMConciliacao.CDS_CMDepositosAnalise, 'DTA_DOCTO', sDia) Then
+        End; // If (DMConciliacao.CDS_CMDepositosAnalise.Active) and (Not DMConciliacao.CDS_CMDepositosAnalise.IsEmpty) Then
+      End; // If Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString)<>'' Then
+
+      pgProgBar.Position:=DMConciliacao.CDS_CMDepAnaliseDocRel.RecNo;
+
+      DMConciliacao.CDS_CMDepAnaliseDocRel.Next;
+    End; // While Not DMConciliacao.CDS_CMDepAnaliseDocRel.Eof do
+    DMConciliacao.CDS_CMDepAnaliseDocRel.EnableControls;
+    DMConciliacao.CDS_CMDepAnaliseDocRel.First;
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+
+      DMConciliacao.CDS_CMDepAnaliseDocRel.EnableControls;
+      DMConciliacao.CDS_CMDepAnaliseDocRel.First;
+
+      FrmBelShop.MontaProgressBar(False, FrmSolicitacoes);
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      OdirPanApres.Visible:=False;
+      Screen.Cursor:=crDefault;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+      Exit;
+    End; // on e : Exception do
+  End; // Try da Transação
+  FrmBelShop.MontaProgressBar(False, FrmSolicitacoes);
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+
+  bgProcessar:=False;
+  If msg('Deseja Apresentar as Lojas'+cr+cr+'Com Caixas Fechados ?? ','C')=1 Then
+  Begin
+    bgProcessar:=True;
+  End;
+
+  Close;
+end;
+
+procedure TFrmSolicitacoes.Bt_ConcDepDocFinanFechamentoClick(Sender: TObject);
+begin
+  sgDtaInicio:='';
+  sgDtaFim   :='';
+  DMConciliacao.CDS_CMDepAnaliseDocRel.First;
+  DMConciliacao.CDS_CMDepAnaliseDocRel.DisableControls;
+  While Not DMConciliacao.CDS_CMDepAnaliseDocRel.Eof do
+  Begin
+    Application.ProcessMessages;
+
+    If Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString)<>'' Then
+    Begin
+      // Acerta Período Para Apresentação dos Caixas Fechados ================
+      If Trim(sgDtaInicio)='' Then
+      Begin
+        sgDtaInicio:=Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString);
+        sgDtaFim   :=Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString);
+      End;
+
+      If StrToDate(sgDtaInicio)<StrToDate(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString)) Then
+      Begin
+        If StrToDate(sgDtaFim)<StrToDate(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString)) Then
+         sgDtaFim   :=Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString);
+      End;
+
+      If StrToDate(sgDtaInicio)>StrToDate(Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString)) Then
+      Begin
+        sgDtaFim:=sgDtaInicio;
+        sgDtaInicio:=Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString);
+      End;
+    End; // If Trim(DMConciliacao.CDS_CMDepAnaliseDocRelDTA_MOVTO.AsString)<>'' Then
+
+    DMConciliacao.CDS_CMDepAnaliseDocRel.Next;
+  End; // While Not DMConciliacao.CDS_CMDepAnaliseDocRel.Eof do
+  DMConciliacao.CDS_CMDepAnaliseDocRel.EnableControls;
+  DMConciliacao.CDS_CMDepAnaliseDocRel.First;
+
+  bgProcessar:=True;
+  Close;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_ComprasEstoquesCDEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_ComprasEstoquesCDEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Bt_ComprasEstoquesMemoriaClick(Sender: TObject);
+begin
+  Dbg_ComprasEstoquesCD.SetFocus;
+
+  If DMBelShop.CDS_ComprasEstoqueCD.IsEmpty Then
+   Exit;
+
+  DBGridClipboard(Dbg_ComprasEstoquesCD);
+
+end;
+
+procedure TFrmSolicitacoes.Rb_ComprasEstoquesAClick(Sender: TObject);
+begin
+  AcertaRb_Style(Rb_ComprasEstoquesA);
+  AcertaRb_Style(Rb_ComprasEstoquesB);
+  AcertaRb_Style(Rb_ComprasEstoquesC);
+  AcertaRb_Style(Rb_ComprasEstoquesD);
+  AcertaRb_Style(Rb_ComprasEstoquesE);
+end;
+
+procedure TFrmSolicitacoes.Rb_ComprasEstoquesAKeyUp(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  Rb_ComprasEstoquesAClick(Self);
+end;
+
+procedure TFrmSolicitacoes.Bt_ComprasEstoquesCDCurvaClick(Sender: TObject);
+begin
+  If Rb_ComprasEstoquesA.Checked Then
+   ComprasAnaliseSaldoCD(Rb_ComprasEstoquesA.Caption);
+
+  If Rb_ComprasEstoquesB.Checked Then
+   ComprasAnaliseSaldoCD(Rb_ComprasEstoquesB.Caption);
+
+  If Rb_ComprasEstoquesC.Checked Then
+   ComprasAnaliseSaldoCD(Rb_ComprasEstoquesC.Caption);
+
+  If Rb_ComprasEstoquesD.Checked Then
+   ComprasAnaliseSaldoCD(Rb_ComprasEstoquesD.Caption);
+
+  If Rb_ComprasEstoquesE.Checked Then
+   ComprasAnaliseSaldoCD(Rb_ComprasEstoquesE.Caption);
+end;
+
+procedure TFrmSolicitacoes.Dbg_ComprasEstoquesCDDrawColumnCell(
+  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+  State: TGridDrawState);
+begin
+  if not (gdSelected in State) Then // Este comando altera cor da Linha
+  Begin
+    If DMBelShop.CDS_ComprasEstoqueCDORDEM.AsInteger=0 Then
+    Begin
+      Dbg_ComprasEstoquesCD.Canvas.Brush.Color:=clSkyBlue;
+      Dbg_ComprasEstoquesCD.Canvas.Font.Style:=[fsBold]; // Cor da Fonte
+    End;
+  End; // if not (gdSelected in State) Then
+  Dbg_ComprasEstoquesCD.Canvas.FillRect(Rect);
+  Dbg_ComprasEstoquesCD.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  // Alinhamentos ==============================================================
+  DMBelShop.CDS_ComprasEstoqueCDCOD_PRODUTO.Alignment:=taRightJustify;
+  DMBelShop.CDS_ComprasEstoqueCDIND_CURVA.Alignment  :=taCenter;
+  DMBelShop.CDS_ComprasEstoqueCDQTD_DIVERGENCIA.Alignment:=taRightJustify;
+  DMBelShop.CDS_ComprasEstoqueCDQTD_ESTOQUE.Alignment:=taRightJustify;
+  DMBelShop.CDS_ComprasEstoqueCDQTD_VENDA15DD.Alignment:=taRightJustify;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_AudDepositosDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  If Dbg_AudDepositos.Visible Then
+  Begin
+    if not (gdSelected in State) Then // Este comando altera cor da Linha
+    Begin
+      If DMCentralTrocas.CDS_DepositosSELECAO.AsString='SIM' Then
+      Begin
+        Dbg_AudDepositos.Canvas.Brush.Color:=clSkyBlue;
+        Dbg_AudDepositos.Canvas.Font.Style:=[fsBold]; // Cor da Fonte
+      End;
+    End; // if not (gdSelected in State) Then
+    Dbg_AudDepositos.Canvas.FillRect(Rect);
+    Dbg_AudDepositos.DefaultDrawDataCell(Rect,Column.Field,state);
+
+    // Alinhamentos ==============================================================
+    DMCentralTrocas.CDS_DepositosSELECAO.Alignment     :=taCenter;
+    DMCentralTrocas.CDS_DepositosCOD_DEPOSITO.Alignment:=taRightJustify;
+    DMCentralTrocas.CDS_DepositosDISP_VENDA.Alignment  :=taCenter;
+    DMCentralTrocas.CDS_DepositosDISP_TRANSF.Alignment  :=taCenter;
+  End; // If Dbg_AudDepositos.Visible Then
+end;
+
+procedure TFrmSolicitacoes.Dbg_AudDepositosEnter(Sender: TObject);
+begin
+  // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
+  ApplicationEvents1.OnActivate:=Dbg_AudDepositosEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmSolicitacoes.Dbg_AudDepositosDblClick(Sender: TObject);
+begin
+  igCodDeposito:=DMCentralTrocas.CDS_DepositosCOD_DEPOSITO.AsInteger;
+
+  DMCentralTrocas.CDS_Depositos.First;
+  DMCentralTrocas.CDS_Depositos.DisableControls;
+  While Not DMCentralTrocas.CDS_Depositos.Eof do
+  Begin
+
+    If (DMCentralTrocas.CDS_DepositosSELECAO.AsString='SIM') And (DMCentralTrocas.CDS_DepositosCOD_DEPOSITO.AsInteger<>igCodDeposito) Then
+    Begin
+      DMCentralTrocas.CDS_Depositos.Edit;
+      DMCentralTrocas.CDS_DepositosSELECAO.AsString:='NAO';
+      DMCentralTrocas.CDS_Depositos.Post;
+    End; // If DMCentralTrocas.CDS_DepositosSELECAO.AsString='SIM' Then
+
+    If DMCentralTrocas.CDS_DepositosCOD_DEPOSITO.AsInteger=igCodDeposito Then
+    Begin
+      DMCentralTrocas.CDS_Depositos.Edit;
+      DMCentralTrocas.CDS_DepositosSELECAO.AsString:='SIM';
+      DMCentralTrocas.CDS_Depositos.Post;
+    End; // If DMCentralTrocas.CDS_DepositosSELECAO.AsString='SIM' Then
+
+    DMCentralTrocas.CDS_Depositos.Next;
+  End; // While Not DMCentralTrocas.CDS_Depositos.Eof do
+  DMCentralTrocas.CDS_Depositos.Locate('COD_DEPOSITO', igCodDeposito,[]);
+  DMCentralTrocas.CDS_Depositos.EnableControls;
+
+end;
+
+procedure TFrmSolicitacoes.Rb_AudCadProdutosKeyUp(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  Rb_AudCadProdutosClick(Self);
 end;
 
 end.

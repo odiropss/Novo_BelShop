@@ -102,13 +102,14 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
 
     // Odir
+    // Odir
 
     // Codigo da Loja Se Unica =================================================
     procedure Bt_SelecionaLojaClick(Sender: TObject);
     procedure Cklb_LojasClickCheck(Sender: TObject);
+
     procedure FormActivate(Sender: TObject);
 
-    // Odir
   private
     { Private declarations }
   public
