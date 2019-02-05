@@ -3,13 +3,12 @@
 // Todos os Controles estão em: C:\Projetos\BelShop\Outras Pastas\Documentos\@Coisas BelShop.doc
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-Acrescentar em EMP_CONEXAO 0 Campo Cod_Trinks
 Apagar:
  DMBelShop.DS_FechaDiarioMov
  DMBelShop.DS_FechaDiarioTot
 
 }
-
+                                       
 unit UDMBelShop;
 
 interface
@@ -1339,6 +1338,8 @@ var
 
   TD : TTransactionDesc; // Ponteiro de Transação
 
+  bgVerificaSaldoCD: Boolean;
+
   // OC = Ordem de Compra
 
   //============================================================================
@@ -1815,7 +1816,7 @@ begin
     Else If (DiaSemanaAbrev(dDataI)='Sab') and (Not bSabado) Then
      Begin
        sDiaSemanaMes:='0';
-     End; // If (DiaSemanaAbrev(StrToDateTime(sgDtaInicio))='Dom') Then
+     End; // If DMBelShop.CDS_BuscaRapida.Locate('Dta_Feriado',dDataI,[]) Then
 
     If sDiaSemanaMes<>'0' Then
     Begin
@@ -2894,63 +2895,59 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
-    MySql:=' Select ec.cod_emp'+
-           ' From EMP_CONEXOES ec'+
-           ' WHERE COALESCE(ec.cod_emp,0)>100'+
-           ' Order by ec.cod_emp';
+    MySql:=' SELECT'+
+           ' l.empresa COD_LINX,'+
+           ' TRIM(l.nome_emp) RAZAO_SOCIAL,'+
+           ' TRIM(l.bairro_emp) BAIRRO,'+
+           ' TRIM(l.cidade_emp) CIDADE,'+
+           ' l.estado_emp UF,'+
+           ' REPLACE(TRIM(l.cep_emp),''-'','''') CEP,'+
+           ' TRIM(l.cnpj_emp) CNPJ,'+
+           ' TRIM(l.inscricao_emp) INSCR_ESTADUAL,'+
+           ' TRIM(l.endereco_emp) ENDERECO,'+
+           ' TRIM(l.num_emp) NUMERO,'+
+           ' TRIM(l.complement_emp) COMPLEMENTO'+
+
+           ' FROM LINXLOJAS l'+
+           ' ORDER BY 1';
     CDS_Busca.Close;
     SDS_Busca.CommandText:=MySql;
     CDS_Busca.Open;
 
     While Not CDS_Busca.Eof do
     Begin
-      MySql:=' Select cl.nomecliente razao_social, cl.numerocgcmf CNPJ, cl.numeroinsc,'+
-             ' cl.bairro, cl.cidade, cl.estado, cl.codigopostal CEP,'+
-             ' cl.logradouro, cl.lognumero, cl.logcompl'+
-
-             ' From CLIENTE cl'+
-
-             ' Where cl.codcliente='+CDS_Busca.FieldByName('Cod_Emp').AsString;
-      FrmBelShop.IBQ_MPMS.Close;
-      FrmBelShop.IBQ_MPMS.SQL.Clear;
-      FrmBelShop.IBQ_MPMS.SQL.Add(MySql);
-      FrmBelShop.IBQ_MPMS.Open;
-
       MySql:=' Update EMP_CONEXOES ce'+
              ' Set ce.Razao_Social='+
-             QuotedStr(Trim(FrmBelShop.IBQ_MPMS.FieldByName('Razao_Social').AsString))+', '+
+             QuotedStr(Trim(CDS_Busca.FieldByName('Razao_Social').AsString))+', '+
              ' ce.Des_Bairro='+
-             QuotedStr(Trim(FrmBelShop.IBQ_MPMS.FieldByName('Bairro').AsString))+', '+
+             QuotedStr(Trim(CDS_Busca.FieldByName('Bairro').AsString))+', '+
              ' ce.Des_Cidade='+
-             QuotedStr(Trim(FrmBelShop.IBQ_MPMS.FieldByName('Cidade').AsString))+', '+
+             QuotedStr(Trim(CDS_Busca.FieldByName('Cidade').AsString))+', '+
              ' ce.Cod_UF='+
-             QuotedStr(Trim(FrmBelShop.IBQ_MPMS.FieldByName('Estado').AsString))+', '+
+             QuotedStr(Trim(CDS_Busca.FieldByName('UF').AsString))+', '+
              ' ce.Cod_CEP='+
-             QuotedStr(Trim(FrmBelShop.IBQ_MPMS.FieldByName('CEP').AsString))+', '+
+             QuotedStr(Trim(CDS_Busca.FieldByName('CEP').AsString))+', '+
              ' ce.Num_CNPJ='+
-             QuotedStr(Trim(FrmBelShop.IBQ_MPMS.FieldByName('CNPJ').AsString))+', '+
+             QuotedStr(Trim(CDS_Busca.FieldByName('CNPJ').AsString))+', '+
              ' ce.Inscr_Estadual='+
-             QuotedStr(Trim(FrmBelShop.IBQ_MPMS.FieldByName('NumeroInsc').AsString))+', '+
+             QuotedStr(Trim(CDS_Busca.FieldByName('Inscr_Estadual').AsString))+', '+
              ' ce.Des_Endereco='+
-             QuotedStr(Trim(FrmBelShop.IBQ_MPMS.FieldByName('Logradouro').AsString))+', '+
+             QuotedStr(Trim(CDS_Busca.FieldByName('Endereco').AsString))+', '+
              ' ce.Num_Endereco='+
-             QuotedStr(Trim(FrmBelShop.IBQ_MPMS.FieldByName('LogNumero').AsString))+', '+
+             QuotedStr(Trim(CDS_Busca.FieldByName('Numero').AsString))+', '+
              ' ce.Compl_Endereco='+
-             QuotedStr(Trim(FrmBelShop.IBQ_MPMS.FieldByName('LogCompl').AsString))+
+             QuotedStr(Trim(CDS_Busca.FieldByName('complemento').AsString))+', '+
+             ' ce.qtd_transf_dia=0'+
 
-             ' Where ce.Cod_Emp='+CDS_Busca.FieldByName('Cod_Emp').AsString;
+             ' Where ce.Cod_linx='+CDS_Busca.FieldByName('Cod_Linx').AsString;
       SQLC.Execute(MySql,nil,nil);
 
       CDS_Busca.Next;
     End; // While Not CDS_Busca.Eof do
     CDS_Busca.Close;
-    FrmBelShop.IBQ_MPMS.Close;
 
     // Atualiza Transacao =======================================
     SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
 
   Except
     on e : Exception do
@@ -2959,16 +2956,14 @@ Begin
       Result:=False;
 
       CDS_Busca.Close;
-      FrmBelShop.IBQ_MPMS.Close;
 
       SQLC.Rollback(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
 
       sgMensagem:='Mensagem de erro do sistema:'+#13+e.message;
     End; // on e : Exception do
   End; // Try
+  DateSeparator:='/';
+  DecimalSeparator:=',';
 
 End; // Banco de Dados - Ajusta Dados das Lojas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -3785,7 +3780,7 @@ begin
       End;
     Except // finally
     End;
-  end;
+  End; // with SQLC do
 
   FrmBelShop.Mem_Odir.Lines.Add(SQLC.Params.GetText);
 
@@ -3880,8 +3875,7 @@ begin
   While Not b do
   Begin
     Try
-      sgDataHoraAplicativo:=DateTimeToStr(
-                              DataHoraServidorFI(SDS_DtaHoraServidor));
+      sgDataHoraAplicativo:=DateTimeToStr(DataHoraServidorFI(SDS_DtaHoraServidor));
       b:=True;
     Except
       on e : Exception do
@@ -4294,57 +4288,60 @@ begin
      //=========================================================================
      // Verifica Saldo no CD para Transferencia ================================
      //=========================================================================
-     If IBQ_AComprarQTD_TRANSF.NewValue<>IBQ_AComprarQTD_TRANSF.OldValue Then
+     If bgVerificaSaldoCD Then
      Begin
-       MySql:=' SELECT SUM(t.qtd_transf) QTD_TRANSF'+
-              ' FROM OC_COMPRAR t'+
-              ' WHERE t.num_documento='+IBQ_AComprarNUM_DOCUMENTO.AsString+
-              ' AND   t.cod_item='+QuotedStr(IBQ_AComprarCOD_ITEM.AsString);
-       SQLQuery3.Close;
-       SQLQuery3.SQL.Clear;
-       SQLQuery3.SQL.Add(MySql);
-       SQLQuery3.Open;
-
-       cSaldo:=0;
-       If Trim(SQLQuery3.FieldByName('Qtd_Transf').AsString)<>'' Then
-        cSaldo:=SQLQuery3.FieldByName('Qtd_Transf').AsCurrency;
-       SQLQuery3.Close;
-
-       // Verifica se Existem Quabtidade a Separa do Produto ===================
-       MySql:=' SELECT SUM(l.qtd_a_transf) Qtd_Separa'+
-              ' FROM ES_ESTOQUES_LOJAS l'+
-              ' WHERE l.dta_movto=CURRENT_DATE'+
-              ' AND   l.num_pedido=''000000'''+
-              ' AND   l.ind_transf=''SIM'''+
-              ' AND   l.qtd_a_transf>0'+
-              ' AND   l.cod_produto='+QuotedStr(IBQ_AComprarCOD_ITEM.AsString);
-       SQLQuery3.Close;
-       SQLQuery3.SQL.Clear;
-       SQLQuery3.SQL.Add(MySql);
-       SQLQuery3.Open;
-
-       If Trim(SQLQuery3.FieldByName('Qtd_Separa').AsString)<>'' Then
-        cSaldo:=cSaldo+SQLQuery3.FieldByName('Qtd_Separa').AsCurrency;
-       SQLQuery3.Close;
-
-       MySql:=' SELECT COALESCE(ld.quantidade,0.0000) - '+f_Troca(',','.',CurrToStr(cSaldo))+' Saldo'+
-              ' FROM LINXPRODUTOSDETALHES ld'+
-              ' WHERE ld.empresa=2'+
-              ' AND   ld.cod_produto='+CDS_AComprarItensCOD_LINX.AsString;
-       SQLQuery3.Close;
-       SQLQuery3.SQL.Clear;
-       SQLQuery3.SQL.Add(MySql);
-       SQLQuery3.Open;
-       cSaldo:=SQLQuery3.FieldByName('Saldo').AsCurrency+IBQ_AComprarQTD_TRANSF.OldValue;
-       SQLQuery3.Close;
-
-       If cSaldo < IBQ_AComprarQTD_TRANSF.AsCurrency Then
+       If IBQ_AComprarQTD_TRANSF.NewValue<>IBQ_AComprarQTD_TRANSF.OldValue Then
        Begin
-         msg('Saldo Atual no CD é Insuficiente'+cr+cr+'Para esta Transferências !!'+cr+cr+' SALDO: '+CurrToStr(cSaldo),'X');
-         IBQ_AComprarQTD_TRANSF.AsCurrency:=IBQ_AComprarQTD_TRANSF.OldValue;
-         Exit;
-       End;
-     End; // If IBQ_AComprarQTD_TRANSF.NewValue<>IBQ_AComprarQTD_TRANSF.OldValue Then
+         MySql:=' SELECT SUM(t.qtd_transf) QTD_TRANSF'+
+                ' FROM OC_COMPRAR t'+
+                ' WHERE t.num_documento='+IBQ_AComprarNUM_DOCUMENTO.AsString+
+                ' AND   t.cod_item='+QuotedStr(IBQ_AComprarCOD_ITEM.AsString);
+         SQLQuery3.Close;
+         SQLQuery3.SQL.Clear;
+         SQLQuery3.SQL.Add(MySql);
+         SQLQuery3.Open;
+
+         cSaldo:=0;
+         If Trim(SQLQuery3.FieldByName('Qtd_Transf').AsString)<>'' Then
+          cSaldo:=SQLQuery3.FieldByName('Qtd_Transf').AsCurrency;
+         SQLQuery3.Close;
+
+         // Verifica se Existem Quabtidade a Separa do Produto ===================
+         MySql:=' SELECT SUM(l.qtd_a_transf) Qtd_Separa'+
+                ' FROM ES_ESTOQUES_LOJAS l'+
+                ' WHERE l.dta_movto=CURRENT_DATE'+
+                ' AND   l.num_pedido=''000000'''+
+                ' AND   l.ind_transf=''SIM'''+
+                ' AND   l.qtd_a_transf>0'+
+                ' AND   l.cod_produto='+QuotedStr(IBQ_AComprarCOD_ITEM.AsString);
+         SQLQuery3.Close;
+         SQLQuery3.SQL.Clear;
+         SQLQuery3.SQL.Add(MySql);
+         SQLQuery3.Open;
+
+         If Trim(SQLQuery3.FieldByName('Qtd_Separa').AsString)<>'' Then
+          cSaldo:=cSaldo+SQLQuery3.FieldByName('Qtd_Separa').AsCurrency;
+         SQLQuery3.Close;
+
+         MySql:=' SELECT COALESCE(ld.quantidade,0.0000) - '+f_Troca(',','.',CurrToStr(cSaldo))+' Saldo'+
+                ' FROM LINXPRODUTOSDETALHES ld'+
+                ' WHERE ld.empresa=2'+
+                ' AND   ld.cod_produto='+CDS_AComprarItensCOD_LINX.AsString;
+         SQLQuery3.Close;
+         SQLQuery3.SQL.Clear;
+         SQLQuery3.SQL.Add(MySql);
+         SQLQuery3.Open;
+         cSaldo:=SQLQuery3.FieldByName('Saldo').AsCurrency+IBQ_AComprarQTD_TRANSF.OldValue;
+         SQLQuery3.Close;
+
+         If cSaldo < IBQ_AComprarQTD_TRANSF.AsCurrency Then
+         Begin
+           msg('Saldo Atual no CD é Insuficiente'+cr+cr+'Para esta Transferências !!'+cr+cr+' SALDO: '+CurrToStr(cSaldo),'X');
+           IBQ_AComprarQTD_TRANSF.AsCurrency:=IBQ_AComprarQTD_TRANSF.OldValue;
+           Exit;
+         End;
+       End; // If IBQ_AComprarQTD_TRANSF.NewValue<>IBQ_AComprarQTD_TRANSF.OldValue Then
+     End; // If bgVerificaSaldoCD Then
      // Verifica Saldo no CD para Transferencia ================================
      //=========================================================================
 

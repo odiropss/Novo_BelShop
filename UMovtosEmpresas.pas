@@ -1,4 +1,5 @@
 {
+odirretorna
 Comentar 11
 
 timestamp-timestamp:
@@ -258,29 +259,42 @@ Procedure TFrmMovtosEmpresas.AtualizaTabelaEstoque(sCodLoja: String);
 var
   bSiga: Boolean;
 
-  MySql,
+  MySql: String;
+
   sHora,
+  sZona, sCorredor, sPrateleira, sGaveta,
   sgDML, sgValues: String;
 
   i: Integer;
 begin
   sHora:=TimeToStr(Time);
 
-  // ============================================================
-  // Busca ESTOQUE ==============================================
-  // ============================================================
+  //============================================================================
+  // Busca ESTOQUE =============================================================
+  //============================================================================
   DateSeparator:='.';
   DecimalSeparator:='.';
 
-  // Conecta Central de Trocas ---------------------------------
+  //============================================================================
+  // Conecta Central de Trocas =================================================
+  //============================================================================
   If sCodLoja='50' Then
    ConectaCentralTrocas;
+  // Conecta Central de Trocas =================================================
+  //============================================================================
 
-  // Cria Query da Empresa -------------------------------------
-  If iCodLojaLinx=0 Then // SIDICOM
+  //============================================================================
+  // Cria Query Consulta Loja CD ===============================================
+  //============================================================================
+   CriaQueryIB('IBDB_'+sCodLoja, 'IBT_'+sCodLoja, IBQ_Consulta, False, True);
+  // Cria Query Consulta Loja CD ===============================================
+  //============================================================================
+
+  //============================================================================
+  // Cria Query da Empresa =====================================================
+  //============================================================================
+  If iCodLojaLinx=0 Then // SIDICOM <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   Begin
-    CriaQueryIB('IBDB_'+sCodLoja, 'IBT_'+sCodLoja, IBQ_Consulta, False, True);
-
     If DMMovtosEmpresas.IBQ_EstoqueLoja.Active Then
      DMMovtosEmpresas.IBQ_EstoqueLoja.Close;
 
@@ -301,10 +315,9 @@ begin
     DMMovtosEmpresas.IBQ_EstoqueLoja.Close;
     DMMovtosEmpresas.IBQ_EstoqueLoja.SQL.Clear;
     DMMovtosEmpresas.IBQ_EstoqueLoja.SQL.Add(MySql);
-  End; // If iCodLojaLinx=0 Then // SIDICOM
+  End; // If iCodLojaLinx=0 Then // SIDICOM  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-  // Linx ======================================================================
-  If iCodLojaLinx<>0 Then // LINX
+  If iCodLojaLinx<>0 Then // LINX  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   Begin
     MySql:=' SELECT '+
            QuotedStr(sCodLoja)+' codfilial,'+
@@ -312,15 +325,17 @@ begin
            ' lpd.quantidade saldoatual, 0.0000 pedidopendente,'+
            ' 0 zonaendereco, ''000'' corredor, ''000'' prateleira, ''0000'' gaveta,'+
            ' lpd.custo_medio cusmedvalor, lpd.custo_medio customedio,'+
-           ' COALESCE((SELECT FIRST 1 m.valor_liquido'+
-           '           FROM LINXMOVIMENTO m'+
-           '           WHERE m.empresa = '+IntToStr(iCodLojaLinx)+
-           '           AND   m.operacao = ''E'''+
-           '           AND   m.tipo_transacao=''E'''+
-           '           AND   m.cancelado=''N'''+
-           '           AND   m.excluido=''N'''+
-           '           AND   m.cod_produto = lpd.cod_produto'+
-           '           ORDER BY m.data_documento DESC), 0.0000) lastprecocompra,'+
+           // OdirApagar - 24/01/2019
+           // ' COALESCE((SELECT FIRST 1 m.valor_liquido'+
+           // '           FROM LINXMOVIMENTO m'+
+           // '           WHERE m.empresa = '+IntToStr(iCodLojaLinx)+
+           // '           AND   m.operacao = ''E'''+
+           // '           AND   m.tipo_transacao=''E'''+
+           // '           AND   m.cancelado=''N'''+
+           // '           AND   m.excluido=''N'''+
+           // '           AND   m.cod_produto = lpd.cod_produto'+
+           // '           ORDER BY m.data_documento DESC), 0.0000) lastprecocompra,'+
+           ' 0.0000 lastprecocompra,'+
            ' lpd.custo_medio lastcustomedio,'+
            ' 0 estoqueideal, 0 estoquemaximo,'+
            ' lp.dt_update dataalteracadastro,'+
@@ -331,15 +346,20 @@ begin
 
            ' FROM LINXPRODUTOSDETALHES lpd'+
            '          LEFT JOIN LINXPRODUTOS lp ON lp.cod_produto = lpd.cod_produto'+
-           '          LEFT JOIN PRODUTO pr ON pr.codproduto = lp.cod_auxiliar'+
+           '          LEFT JOIN PRODUTO      pr ON pr.codproduto = lp.cod_auxiliar'+
            ' WHERE lpd.empresa = '+IntToStr(iCodLojaLinx)+
-           ' AND   lp.cod_auxiliar IS NOT NULL';
+           ' AND   TRIM(COALESCE(lp.cod_auxiliar,''''))<>'''''+
+           ' AND   CHAR_LENGTH(lp.cod_auxiliar)<=6';
     DMMovtosEmpresas.CDS_LojaLinx.Close;
     DMMovtosEmpresas.SDS_LojaLinx.CommandText:=MySql;
     DMMovtosEmpresas.CDS_LojaLinx.Open;
-  End; // If iCodLojaLinx<>0 Then // LINX
+  End; // If iCodLojaLinx<>0 Then // LINX  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  // Cria Query da Empresa =====================================================
+  //============================================================================
 
-  // Abre Query da no Banco de Dados da Loja -----------------
+  //============================================================================
+  // Abre Query da no Banco de Dados da Loja SIDICOM ===========================
+  //============================================================================
   bSiga:=True;
   If iCodLojaLinx=0 Then // SIDICOM
   Begin
@@ -359,8 +379,12 @@ begin
        Break;
     End; // While Not bSiga do
   End; // If iCodLojaLinx=0 Then // SIDICOM
+  // Abre Query da no Banco de Dados da Loja SIDICOM ===========================
+  //============================================================================
 
-  // Processamento ==============================================================
+  //============================================================================
+  // Processamento =============================================================
+  //============================================================================
   If bSiga Then // Consulta Transferencias de Entrada
   Begin
     Try
@@ -383,9 +407,10 @@ begin
 
             ' VALUES (';
 
-
-      // Atualiza Estoques da Loja ----------------------------------
-      If iCodLojaLinx=0 Then // SIDICOM
+      //========================================================================
+      // Atualiza Tabela ESTOQUE da Loja =======================================
+      //========================================================================
+      If iCodLojaLinx=0 Then // SIDICOM  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       Begin
         While Not DMMovtosEmpresas.IBQ_EstoqueLoja.Eof do
         Begin
@@ -395,58 +420,131 @@ begin
             // ULTIMO CAMPO - HRA_ATUALIZACAO ==================================
             If Trim(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
             Begin
-              sgValues:=sgValues+QuotedStr(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].AsString)+')';
-            End // If Trim(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
-
+              sgValues:=
+               sgValues+QuotedStr(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].AsString)+')';
+            End
             // Grava Resto do Registro =========================================
             Else
              Begin
                If Trim(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].AsString)<>'' Then
-                sgValues:=sgValues+QuotedStr(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].AsString)+', '
+                sgValues:=
+                 sgValues+QuotedStr(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].AsString)+', '
                Else
-                sgValues:=sgValues+'NULL, ';
+                sgValues:=
+                 sgValues+'NULL, ';
              End;
           End; // For i:=0 to DMMovtosEmpresas.IBQ_EstoqueLoja.FieldCount-1 do
 
           // UPDATE OR INSERT INTO ESTOQUE - BelShop.FDB =======================
-          MySql:=sgDML+sgValues+' MATCHING (CODFILIAL, CODPRODUTO)';
+          MySql:=
+           sgDML+sgValues+' MATCHING (CODFILIAL, CODPRODUTO)';
           DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
           DMMovtosEmpresas.IBQ_EstoqueLoja.Next;
         End; // While Not DMMovtosEmpresas.IBQ_EstoqueLoja.Eof do
         DMMovtosEmpresas.IBQ_EstoqueLoja.Close;
-      End; // If iCodLojaLinx=0 Then // SIDICOM
+      End; // If iCodLojaLinx=0 Then // SIDICOM  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-      If iCodLojaLinx<>0 Then // LINX
+      If iCodLojaLinx<>0 Then // LINX  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       Begin
         While Not DMMovtosEmpresas.CDS_LojaLinx.Eof do
         Begin
+          sZona      :=DMMovtosEmpresas.CDS_LojaLinx.FieldByName('zonaendereco').AsString;
+          sCorredor  :=DMMovtosEmpresas.CDS_LojaLinx.FieldByName('corredor').AsString;
+          sPrateleira:=DMMovtosEmpresas.CDS_LojaLinx.FieldByName('prateleira').AsString;
+          sGaveta    :=DMMovtosEmpresas.CDS_LojaLinx.FieldByName('gaveta').AsString;
+
+          // Busca Endereçamento Somente CD ====================================
+          If iCodLojaLinx=2 Then
+          Begin
+            MySql:=' SELECT e.zonaendereco, E.corredor, E.prateleira, E.gaveta'+
+                   ' FROM ESTOQUE e'+
+                   ' WHERE e.codfilial=''99'''+
+                   ' AND   e.codproduto='+QuotedStr(DMMovtosEmpresas.CDS_LojaLinx.FieldByName('CodProduto').AsString);
+            IBQ_Consulta.Close;
+            IBQ_Consulta.SQL.Clear;
+            IBQ_Consulta.SQL.Add(MySql);
+            IBQ_Consulta.Open;
+            sZona      :=IBQ_Consulta.FieldByName('zonaendereco').AsString;
+            sCorredor  :=IBQ_Consulta.FieldByName('corredor').AsString;
+            sPrateleira:=IBQ_Consulta.FieldByName('prateleira').AsString;
+            sGaveta    :=IBQ_Consulta.FieldByName('gaveta').AsString;
+            IBQ_Consulta.Close;
+          End; // If iCodLojaLinx=2 Then
+
+          If Trim(sZona)=''      Then sZona:='0';
+          If Trim(sCorredor)=''    Then sCorredor:='000';
+          If Trim(sPrateleira)='' Then sPrateleira:='000';
+          If Trim(sGaveta)=''     Then sGaveta:='0000';
+
           sgValues:='';
           For i:=0 to DMMovtosEmpresas.CDS_LojaLinx.FieldCount-1 do
           Begin
+            // ZONAENDERECO ====================================================
+            If Trim(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].FieldName)='ZONAENDERECO' Then
+            Begin
+              sgValues:=
+               sgValues+QuotedStr(sZona)+', ';
+            End
+            // CORREDOR ========================================================
+            Else
+            If Trim(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].FieldName)='CORREDOR' Then
+            Begin
+              sgValues:=
+               sgValues+QuotedStr(sCorredor)+', ';
+            End
+            // PRATELEIRA ======================================================
+            Else
+            If Trim(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].FieldName)='PRATELEIRA' Then
+            Begin
+              sgValues:=
+               sgValues+QuotedStr(sPrateleira)+', ';
+            End
+            // GAVETA ==========================================================
+            Else
+            If Trim(DMMovtosEmpresas.IBQ_EstoqueLoja.Fields[i].FieldName)='GAVETA' Then
+            Begin
+              sgValues:=
+               sgValues+QuotedStr(sGaveta)+', ';
+            End
             // ULTIMO CAMPO - HRA_ATUALIZACAO ==================================
+            Else
             If Trim(DMMovtosEmpresas.CDS_LojaLinx.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
              Begin
-               sgValues:=sgValues+QuotedStr(DMMovtosEmpresas.CDS_LojaLinx.Fields[i].AsString)+')';
+               sgValues:=
+                sgValues+QuotedStr(DMMovtosEmpresas.CDS_LojaLinx.Fields[i].AsString)+')';
              End // If Trim(DMMovtosEmpresas.CDS_LojaLinx.Fields[i].FieldName)='HRA_ATUALIZACAO' Then
             Else
              Begin
                // Grava Resto do Registro
                If Trim(DMMovtosEmpresas.CDS_LojaLinx.Fields[i].AsString)<>'' Then
-                sgValues:=sgValues+QuotedStr(DMMovtosEmpresas.CDS_LojaLinx.Fields[i].AsString)+', '
+                sgValues:=
+                 sgValues+QuotedStr(DMMovtosEmpresas.CDS_LojaLinx.Fields[i].AsString)+', '
                Else
-                sgValues:=sgValues+'NULL, ';
+                sgValues:=
+                 sgValues+'NULL, ';
              End;
           End; // For i:=0 to DMMovtosEmpresas.CDS_LojaLinx.FieldCount-1 do
 
           // UPDATE OR INSERT INTO ESTOQUE - BelShop.FDB =======================
-          MySql:=sgDML+sgValues+' MATCHING (CODFILIAL, CODPRODUTO)';
+          MySql:=
+           sgDML+sgValues+' MATCHING (CODFILIAL, CODPRODUTO)';
           DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+          If DMMovtosEmpresas.CDS_LojaLinx.RecNo mod 1000=0 Then
+          Begin
+            DMMovtosEmpresas.SQLC.Commit(TD);
+
+            // Monta Transacao  -------------------------------------------
+            TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
+            TD.IsolationLevel:=xilREADCOMMITTED;
+            DMMovtosEmpresas.SQLC.StartTransaction(TD);
+          End; // If DMMovtosEmpresas.CDS_LojaLinx.RecNo mod 1000=0 Then
 
           DMMovtosEmpresas.CDS_LojaLinx.Next;
         End; // While Not DMMovtosEmpresas.CDS_LojaLinx.Eof do
         DMMovtosEmpresas.CDS_LojaLinx.Close;
-      End; // If iCodLojaLinx<>0 Then // LINX
+      End; // If iCodLojaLinx<>0 Then // LINX <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
       DMMovtosEmpresas.SQLC.Commit(TD);
 
@@ -459,12 +557,15 @@ begin
         DMMovtosEmpresas.IBQ_EstoqueLoja.Close;
         DMMovtosEmpresas.CDS_LojaLinx.Close;
 
+        ShowMessage(e.Message);
         DateSeparator:='/';
         DecimalSeparator:=',';
 
       End; // on e : Exception do
     End; // Try
   End; // If bSiga Then // Consulta Transferencias de Entrada
+  // Processamento =============================================================
+  //============================================================================
 
   If sCodLoja='50' Then
    ConexaoEmpIndividual('IBDB_50', 'IBT_50', 'F');
@@ -1325,20 +1426,13 @@ Begin
     MySql:=' UPDATE ES_FINAN_CURVA_ABC mx'+
            ' SET mx.est_minimo=0'+
            ' WHERE EXISTS (SELECT 1'+
-           '               FROM LINXPRODUTOS p'+
-           '               WHERE p.cod_auxiliar=mx.cod_produto'+
-           '               AND   p.id_colecao=197)'+
+           '               FROM LINXPRODUTOS p, LINXPRODUTOSDETALHES d'+
+           '               WHERE p.cod_produto=d.cod_produto'+
+           '               AND   p.id_colecao=197'+
+           '               AND   d.empresa=2'+ // Se Não Tem Saldo no CD
+           '               AND   d.quantidade<1'+
+           '               AND   p.cod_auxiliar=mx.cod_produto)'+
            ' AND mx.est_minimo>0';
-    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-
-    MySql:=' UPDATE ES_PRODUTOS_MIX pm'+
-           ' SET pm.est_minimo=0'+
-           ', pm.ind_mix=0'+
-           ' WHERE EXISTS (SELECT 1'+
-           '               FROM LINXPRODUTOS p'+
-           '               WHERE p.cod_produto=pm.cod_produto'+
-           '               AND   p.id_colecao=197)'+
-           ' AND pm.est_minimo>0';
     DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
     // Atualiza Transacao ======================================================
@@ -1445,6 +1539,7 @@ Var
   MySql: String;
   i: Integer;
   bSiga: Boolean;
+  sData, sDataHora: String;
 Begin
 
   // Conecta MPMS ==============================================================
@@ -1480,48 +1575,135 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
+    sData    :=f_Troca('/','.',f_Troca('-','.',DateToStr(IncMonth(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor),-2))));
+    sDataHora:=f_Troca('/','.',f_Troca('-','.',DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))));
+
+    MySql:=' SELECT f.CODFORNECEDOR, f.NOMEFORNECEDOR, f.EFILIAL, f.CODTIPOFOR, f.CIDADE,'+
+           '        f.ESTADO, f.CODIGOPOSTAL, f.NUMEROCGCMF, f.NUMEROINSC, f.NUMEROISSQN,'+
+           '        f.NUMEROCPF, f.PESSOA, f.FONE1, f.FONE2, f.FONEFAX, f.INTERNET, f.EMAIL,'+
+           '        f.CLASSEFOR, f.CONTATO, f.OBSERVACAO, f.BAIRRO, f.SIMPLESESTADUAL,'+
+           '        f.CODCENTROCUSTO, f.LOGRADOURO, f.LOGNUMERO, f.LOGCOMPL, f.CODPAIS, f.RAZAOSOCIAL,'+
+           '        f.DATAALTERACAO, f.FORISENTOICM, f.FORISENTOIPI, f.FORISENTOSUBST,'+
+           '        f.FORISENTOPISCOFINS, f.USAICMCOMPRA2_SN,'+
+           '        CURRENT_TIMESTAMP DTA_ATUALIZACAO'+
+
+           ' FROM FORNECED f'+
+           ' WHERE CAST(f.dataalteracao AS DATE)>'+QuotedStr(sData);
     DMMovtosEmpresas.IBQ_FornecedoresMPMS.Close;
+    DMMovtosEmpresas.IBQ_FornecedoresMPMS.SQL.Clear;
+    DMMovtosEmpresas.IBQ_FornecedoresMPMS.SQL.Add(MySql);
     DMMovtosEmpresas.IBQ_FornecedoresMPMS.Open;
 
-    MySql:=' Delete From FORNECEDOR F';
-    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-
-    DMMovtosEmpresas.CDS_Fornecedores.Open;
-
+//OdirApagar - 16/01/2019
+//    MySql:=' Delete From FORNECEDOR F';
+//    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+//
+//    DMMovtosEmpresas.CDS_Fornecedores.Open;
+//
+//    While Not DMMovtosEmpresas.IBQ_FornecedoresMPMS.Eof do
+//    Begin
+//      DMMovtosEmpresas.CDS_Fornecedores.Insert;
+//      For i:=0 to DMMovtosEmpresas.IBQ_FornecedoresMPMS.FieldCount-1 do
+//      Begin
+//        If DMMovtosEmpresas.IBQ_FornecedoresMPMS.Fields[i].FieldName='DTA_ATUALIZACAO' Then
+//         DMMovtosEmpresas.CDS_Fornecedores.Fields[i].AsDateTime:=DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor)
+//        Else
+//         DMMovtosEmpresas.CDS_Fornecedores.Fields[i].Assign(DMMovtosEmpresas.IBQ_FornecedoresMPMS.Fields[i]);
+//      End;
+//
+//      DMMovtosEmpresas.CDS_Fornecedores.Post;
+//
+//      if DMMovtosEmpresas.IBQ_FornecedoresMPMS.RecNo mod 10000 = 0 Then
+//       DMMovtosEmpresas.CDS_Fornecedores.ApplyUpdates(0);
+//
+//      DMMovtosEmpresas.IBQ_FornecedoresMPMS.Next;
+//
+//    End; // While Not DMMovtosEmpresas.IBQ_FornecedoresMPMS.Eof do
+//    DMMovtosEmpresas.IBQ_FornecedoresMPMS.Close;
+    DMMovtosEmpresas.IBQ_FornecedoresMPMS.DisableControls;
     While Not DMMovtosEmpresas.IBQ_FornecedoresMPMS.Eof do
     Begin
-      DMMovtosEmpresas.CDS_Fornecedores.Insert;
-      For i:=0 to DMMovtosEmpresas.IBQ_FornecedoresMPMS.FieldCount-1 do
+      MySql:=' UPDATE OR INSERT INTO FORNECEDOR'+
+             ' (CODFORNECEDOR, NOMEFORNECEDOR, EFILIAL, CODTIPOFOR, CIDADE,'+
+             '  ESTADO, CODIGOPOSTAL, NUMEROCGCMF, NUMEROINSC, NUMEROISSQN,'+
+             '  NUMEROCPF, PESSOA, FONE1, FONE2, FONEFAX, INTERNET, EMAIL,'+
+             '  CLASSEFOR, CONTATO, BAIRRO, SIMPLESESTADUAL, CODCENTROCUSTO,'+
+             '  LOGRADOURO, LOGNUMERO, LOGCOMPL, CODPAIS, RAZAOSOCIAL,'+
+             '  DATAALTERACAO, FORISENTOICM, FORISENTOIPI, FORISENTOSUBST,'+
+             '  FORISENTOPISCOFINS, USAICMCOMPRA2_SN, DTA_ATUALIZACAO)'+
+
+             ' VALUES ('+
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSCODFORNECEDOR.AsString)+', '+ // CODFORNECEDOR
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSNOMEFORNECEDOR.AsString)+', '+ // NOMEFORNECEDOR
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSEFILIAL.AsString)+', '+ // EFILIAL
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSCODTIPOFOR.AsString)+', '+ // CODTIPOFOR
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSCIDADE.AsString)+', '+ // CIDADE
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSESTADO.AsString)+', '+ // ESTADO
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSCODIGOPOSTAL.AsString)+', '+ // CODIGOPOSTAL
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSNUMEROCGCMF.AsString)+', '+ // NUMEROCGCMF
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSNUMEROINSC.AsString)+', '+ // NUMEROINSC
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSNUMEROISSQN.AsString)+', '+ // NUMEROISSQN
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSNUMEROCPF.AsString)+', '+ // NUMEROCPF
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSPESSOA.AsString)+', '+ // PESSOA
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSFONE1.AsString)+', '+ // FONE1
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSFONE2.AsString)+', '+ // FONE2
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSFONEFAX.AsString)+', '+ // FONEFAX
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSINTERNET.AsString)+', '+ // INTERNET
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSEMAIL.AsString)+', '+ // EMAIL
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSCLASSEFOR.AsString)+', '+ // CLASSEFOR
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSCONTATO.AsString)+', '+ // CONTATO
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSBAIRRO.AsString)+', '+ // BAIRRO
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSSIMPLESESTADUAL.AsString)+', '+ // SIMPLESESTADUAL
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSCODCENTROCUSTO.AsString)+', '+ // CODCENTROCUSTO
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSLOGRADOURO.AsString)+', '+ // LOGRADOURO
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSLOGNUMERO.AsString)+', '+ // LOGNUMERO
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSLOGCOMPL.AsString)+', '+ // LOGCOMPL
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSCODPAIS.AsString)+', '+ // CODPAIS
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSRAZAOSOCIAL.AsString)+', '+ // RAZAOSOCIAL
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSDATAALTERACAO.AsString)+', '+ // DATAALTERACAO
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSFORISENTOICM.AsString)+', '+ // FORISENTOICM
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSFORISENTOIPI.AsString)+', '+ // FORISENTOIPI
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSFORISENTOSUBST.AsString)+', '+ // FORISENTOSUBST
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSFORISENTOPISCOFINS.AsString)+', '+ // FORISENTOPISCOFINS
+             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSUSAICMCOMPRA2_SN.AsString)+', '+ // USAICMCOMPRA2_SN
+//             QuotedStr(DMMovtosEmpresas.IBQ_FornecedoresMPMSDTA_ATUALIZACAO.AsString)+')'+ //DTA_ATUALIZACAO
+             QuotedStr(sDataHora)+')'+ //DTA_ATUALIZACAO
+
+             ' MATCHING (CODFORNECEDOR)';
+      DMMovtosEmpresas.SQLC.Execute(MySql, nil, nil);
+
+      If DMMovtosEmpresas.IBQ_FornecedoresMPMS.RecNo mod 1000=0 Then
       Begin
-        If DMMovtosEmpresas.IBQ_FornecedoresMPMS.Fields[i].FieldName='DTA_ATUALIZACAO' Then
-         DMMovtosEmpresas.CDS_Fornecedores.Fields[i].AsDateTime:=DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor)
-        Else
-         DMMovtosEmpresas.CDS_Fornecedores.Fields[i].Assign(DMMovtosEmpresas.IBQ_FornecedoresMPMS.Fields[i]);
-      End;
+        DMMovtosEmpresas.SQLC.Commit(TD);
 
-      DMMovtosEmpresas.CDS_Fornecedores.Post;
-
-      if DMMovtosEmpresas.IBQ_FornecedoresMPMS.RecNo mod 10000 = 0 Then
-       DMMovtosEmpresas.CDS_Fornecedores.ApplyUpdates(0);
+        // Monta Transacao  -------------------------------------------
+        TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
+        TD.IsolationLevel:=xilREADCOMMITTED;
+        DMMovtosEmpresas.SQLC.StartTransaction(TD);
+      End; // If DMMovtosEmpresas.IBQ_FornecedoresMPMS.RecNo mod 1000=0 Then
 
       DMMovtosEmpresas.IBQ_FornecedoresMPMS.Next;
-
     End; // While Not DMMovtosEmpresas.IBQ_FornecedoresMPMS.Eof do
     DMMovtosEmpresas.IBQ_FornecedoresMPMS.Close;
+    DMMovtosEmpresas.IBQ_FornecedoresMPMS.EnableControls;
 
     MySql:=' DELETE FROM movtos_empresas m'+
            ' Where m.Ind_Tipo=''OK'''+
            ' And m.NomeFornecedor=''Fornecedores''';
     DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
-    // Atualiza Transacao =======================================
-    DMMovtosEmpresas.CDS_Fornecedores.ApplyUpdates(0);
+//OdirApagar - 16/01/2019
+//    // Atualiza Transacao =======================================
+//    DMMovtosEmpresas.CDS_Fornecedores.ApplyUpdates(0);
+
     DMMovtosEmpresas.SQLC.Commit(TD);
 
     DateSeparator:='/';
     DecimalSeparator:=',';
 
-    DMMovtosEmpresas.CDS_Fornecedores.Close;
+//OdirApagar - 16/01/2019
+//    DMMovtosEmpresas.CDS_Fornecedores.Close;
+
     DMMovtosEmpresas.IBQ_FornecedoresMPMS.Close;
   Except
     on e : Exception do
@@ -1529,7 +1711,9 @@ Begin
       // Abandona Transacao =====================================
       DMMovtosEmpresas.SQLC.Rollback(TD);
 
-      DMMovtosEmpresas.CDS_Fornecedores.Close;
+//OdirApagar - 16/01/2019
+//      DMMovtosEmpresas.CDS_Fornecedores.Close;
+
       DMMovtosEmpresas.IBQ_FornecedoresMPMS.Close;
 
       DateSeparator:='/';
@@ -1540,9 +1724,13 @@ Begin
              ' And m.NomeFornecedor=''Fornecedores''';
       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
+//OdirApagar - 16/01/2019
+//      sgMensagem:='Fornecedor-'+e.Message+
+//                  '-Campo:'+DMMovtosEmpresas.IBQ_FornecedoresMPMS.Fields[i].FieldName+
+//                  '-'+DMMovtosEmpresas.IBQ_FornecedoresMPMS.Fields[i].AsString;
+
       sgMensagem:='Fornecedor-'+e.Message+
-                  '-Campo:'+DMMovtosEmpresas.IBQ_FornecedoresMPMS.Fields[i].FieldName+
-                  '-'+DMMovtosEmpresas.IBQ_FornecedoresMPMS.Fields[i].AsString;
+                  '-MySql: '+MySql;
       sgMensagem:=copy(sgMensagem,1,200);
 
       MySql:=' INSERT INTO movtos_empresas (ind_tipo, nomefornecedor, dta_atualizacao)'+
@@ -1563,6 +1751,7 @@ Var
   MySql: String;
   i: Integer;
   bSiga: Boolean;
+  sDataAtual: String;
 Begin
 
   // Conecta MPMS ==============================================================
@@ -1574,7 +1763,7 @@ Begin
       bSiga:=True
     Else
       Inc(i);
-  
+
     If i>99 Then
       Break;
   End; // While Not bSiga do
@@ -1598,43 +1787,98 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
+//OdirApagar - 16/01/2019 - Agora pela Data de Alteração
+//    DMMovtosEmpresas.IBQ_ListaPrecosMPMS.Close;
+//    DMMovtosEmpresas.IBQ_ListaPrecosMPMS.Open;
+//
+//    MySql:=' Delete From LISTAPRE l';
+//    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+//
+//    DMMovtosEmpresas.CDS_ListaPrecos.Close;
+//    DMMovtosEmpresas.CDS_ListaPrecos.Params.ParamByName('Data').Value:=sDta
+//    DMMovtosEmpresas.CDS_ListaPrecos.Open;
+//
+//    While Not DMMovtosEmpresas.IBQ_ListaPrecosMPMS.Eof do
+//    Begin
+//      DMMovtosEmpresas.CDS_ListaPrecos.Insert;
+//      For i:=0 to DMMovtosEmpresas.IBQ_ListaPrecosMPMS.FieldCount-1 do
+//       DMMovtosEmpresas.CDS_ListaPrecos.Fields[i].Assign(DMMovtosEmpresas.IBQ_ListaPrecosMPMS.Fields[i]);
+//
+//      DMMovtosEmpresas.CDS_ListaPrecos.Post;
+//
+//      if DMMovtosEmpresas.IBQ_ListaPrecosMPMS.RecNo mod 10000 = 0 Then
+//       DMMovtosEmpresas.CDS_ListaPrecos.ApplyUpdates(0);
+//
+//      DMMovtosEmpresas.IBQ_ListaPrecosMPMS.Next;
+//
+//    End; // While Not DMMovtosEmpresas.IBQ_ListaPrecosMpmsMPMS.Eof do
+//    DMMovtosEmpresas.IBQ_ListaPrecosMPMS.Close;
+
+    sDataAtual:=f_Troca('/','.',f_Troca('-','.',DateToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))));
+
     DMMovtosEmpresas.IBQ_ListaPrecosMPMS.Close;
+    DMMovtosEmpresas.IBQ_ListaPrecosMPMS.Params.ParamByName('Data').Value:=sDta;
     DMMovtosEmpresas.IBQ_ListaPrecosMPMS.Open;
 
-    MySql:=' Delete From LISTAPRE l';
-    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
-
-    DMMovtosEmpresas.CDS_ListaPrecos.Open;
-
+    DMMovtosEmpresas.IBQ_ListaPrecosMPMS.DisableControls;
     While Not DMMovtosEmpresas.IBQ_ListaPrecosMPMS.Eof do
     Begin
-      DMMovtosEmpresas.CDS_ListaPrecos.Insert;
-      For i:=0 to DMMovtosEmpresas.IBQ_ListaPrecosMPMS.FieldCount-1 do
-       DMMovtosEmpresas.CDS_ListaPrecos.Fields[i].Assign(DMMovtosEmpresas.IBQ_ListaPrecosMPMS.Fields[i]);
+      MySql:=' UPDATE OR INSERT INTO LISTAPRE'+
+             ' (CODLISTA, CODPRODUTO, PRECOCOMPRA, MARGEM, PRECOVENDA, PRECOANTERIOR,'+
+             '  DATAALTERACAO, HORAALTERACAO, DESCONTO, DESCONTOMAX, DESATIVADO,'+
+             '  PRECODOLAR, ACRECIMOLISTA, CUSTOSLISTA, DTA_ATUALIZACAO)'+
+             ' VALUES ('+
+             QuotedStr(DMMovtosEmpresas.IBQ_ListaPrecosMPMSCODLISTA.AsString)+', '+ // CODLISTA
+             QuotedStr(DMMovtosEmpresas.IBQ_ListaPrecosMPMSCODPRODUTO.AsString)+', '+ // CODPRODUTO
+             QuotedStr(DMMovtosEmpresas.IBQ_ListaPrecosMPMSPRECOCOMPRA.AsString)+', '+ // PRECOCOMPRA
+             QuotedStr(DMMovtosEmpresas.IBQ_ListaPrecosMPMSMARGEM.AsString)+', '+ // MARGEM
+             QuotedStr(DMMovtosEmpresas.IBQ_ListaPrecosMPMSPRECOVENDA.AsString)+', '+ // PRECOVENDA
+             QuotedStr(DMMovtosEmpresas.IBQ_ListaPrecosMPMSPRECOANTERIOR.AsString)+', '+ // PRECOANTERIOR
+             QuotedStr(DMMovtosEmpresas.IBQ_ListaPrecosMPMSDATAALTERACAO.AsString)+', '+ // DATAALTERACAO
+             QuotedStr(DMMovtosEmpresas.IBQ_ListaPrecosMPMSHORAALTERACAO.AsString)+', '+ // HORAALTERACAO
+             QuotedStr(DMMovtosEmpresas.IBQ_ListaPrecosMPMSDESCONTO.AsString)+', '+ // DESCONTO
+             QuotedStr(DMMovtosEmpresas.IBQ_ListaPrecosMPMSDESCONTOMAX.AsString)+', '+ // DESCONTOMAX
+             QuotedStr(DMMovtosEmpresas.IBQ_ListaPrecosMPMSDESATIVADO.AsString)+', '+ // DESATIVADO
+             QuotedStr(DMMovtosEmpresas.IBQ_ListaPrecosMPMSPRECODOLAR.AsString)+', '+ // PRECODOLAR
+             QuotedStr(DMMovtosEmpresas.IBQ_ListaPrecosMPMSACRECIMOLISTA.AsString)+', '+ // ACRECIMOLISTA
+             QuotedStr(DMMovtosEmpresas.IBQ_ListaPrecosMPMSCUSTOSLISTA.AsString)+', '+ // CUSTOSLISTA
+             QuotedStr(sDataAtual)+')'+ // DTA_ATUALIZACAO
 
-      DMMovtosEmpresas.CDS_ListaPrecos.Post;
+             ' MATCHING (CODLISTA, CODPRODUTO)';
+      DMMovtosEmpresas.SQLC.Execute(MySql, nil, nil);
 
-      if DMMovtosEmpresas.IBQ_ListaPrecosMPMS.RecNo mod 10000 = 0 Then
-       DMMovtosEmpresas.CDS_ListaPrecos.ApplyUpdates(0);
+      If DMMovtosEmpresas.IBQ_ListaPrecosMPMS.RecNo mod 1000=0 Then
+      Begin
+        DMMovtosEmpresas.SQLC.Commit(TD);
+
+        // Monta Transacao  -------------------------------------------
+        TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
+        TD.IsolationLevel:=xilREADCOMMITTED;
+        DMMovtosEmpresas.SQLC.StartTransaction(TD);
+      End; // If DMMovtosEmpresas.IBQ_ListaPrecosMPMS.RecNo mod 1000=0 Then
 
       DMMovtosEmpresas.IBQ_ListaPrecosMPMS.Next;
-
     End; // While Not DMMovtosEmpresas.IBQ_ListaPrecosMpmsMPMS.Eof do
     DMMovtosEmpresas.IBQ_ListaPrecosMPMS.Close;
+    DMMovtosEmpresas.IBQ_ListaPrecosMPMS.EnableControls;
 
     MySql:=' DELETE FROM movtos_empresas m'+
            ' Where m.Ind_Tipo=''OK'''+
            ' And m.NomeFornecedor=''Lista de Preços''';
     DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
+//OdirApagar - 16/01/2019 - Agora pela Data de Alteração
+//    DMMovtosEmpresas.CDS_ListaPrecos.ApplyUpdates(0);
+
     // Atualiza Transacao =======================================
-    DMMovtosEmpresas.CDS_ListaPrecos.ApplyUpdates(0);
     DMMovtosEmpresas.SQLC.Commit(TD);
 
     DateSeparator:='/';
     DecimalSeparator:=',';
 
-    DMMovtosEmpresas.CDS_ListaPrecos.Close;
+    // Atualiza Transacao =======================================
+//    DMMovtosEmpresas.CDS_ListaPrecos.Close;
+
     DMMovtosEmpresas.IBQ_ListaPrecosMPMS.Close;
   Except
 
@@ -1643,7 +1887,9 @@ Begin
       // Abandona Transacao =====================================
       DMMovtosEmpresas.SQLC.Rollback(TD);
 
-      DMMovtosEmpresas.CDS_ListaPrecos.Close;
+//OdirApagar - 16/01/2019 - Agora pela Data de Alteração
+//      DMMovtosEmpresas.CDS_ListaPrecos.Close;
+
       DMMovtosEmpresas.IBQ_ListaPrecosMPMS.Close;
 
       DateSeparator:='/';
@@ -1674,6 +1920,7 @@ Var
   sCodProd, MySql: String;
   i: Integer;
   bSiga: Boolean;
+  sData, sDataAtual: String;
 Begin
 
   // Conecta MPMS ==============================================================
@@ -1709,8 +1956,61 @@ Begin
     DateSeparator:='.';
     DecimalSeparator:='.';
 
+// OdirApagar - 16/01/2019 - Agora por Datas de Inclusão e Alteração
+//
+//    DMMovtosEmpresas.IBQ_ProdutoMPMS.Close;
+//    DMMovtosEmpresas.IBQ_ProdutoMPMS.Open;
+//    DMMovtosEmpresas.IBQ_ProdutoMPMS.DisableControls;
+//    While Not DMMovtosEmpresas.IBQ_ProdutoMPMS.Eof do
+//    Begin
+//      MySql:=DMMovtosEmpresas.IBQ_ProdutoMPMSUPDATE_INSERT.AsString;
+//      DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+//
+//     DMMovtosEmpresas.IBQ_ProdutoMPMS.Next;
+//    End; // While Not DMMovtosEmpresas.IBQ_ProdutoMPMS.Eof do
+//    DMMovtosEmpresas.IBQ_ProdutoMPMS.EnableControls;
+//    DMMovtosEmpresas.IBQ_ProdutoMPMS.Close;
+//
+//    MySql:=' DELETE FROM PRODUTO pr'+
+//           ' WHERE pr.dta_atualizacao<>CURRENT_DATE';
+//    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+//
+//    // Atualiza Data de Inclusão Conforme LinxProduto ==========================
+//    MySql:=' UPDATE PRODUTO ps'+
+//           ' SET ps.datainclusao=(SELECT MAX(CAST(p.dt_inclusao AS DATE))'+
+//           '                      FROM LINXPRODUTOS p'+
+//           '                      WHERE p.cod_auxiliar=ps.codproduto'+
+//           '                      AND   TRIM(COALESCE(p.cod_auxiliar,''''))<>'''''+
+//           '                      AND   TRIM(COALESCE(p.dt_inclusao,''''))<>'''')'+
+//           ' WHERE EXISTS (SELECT 1'+
+//           '               FROM LINXPRODUTOS p'+
+//           '               WHERE p.cod_auxiliar=ps.codproduto'+
+//           '               AND   TRIM(COALESCE(p.cod_auxiliar,''''))<>'''''+
+//           '               AND   TRIM(COALESCE(p.dt_inclusao,''''))<>'''')';
+//    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+//
+//    // Atualiza Data de Alteração Conforme LinxProduto =========================
+//    MySql:=' UPDATE PRODUTO ps'+
+//           ' SET ps.dataalteracao=(SELECT MAX(CAST(p.dt_update AS DATE))'+
+//           '                       FROM LINXPRODUTOS p'+
+//           '                       WHERE p.cod_auxiliar=ps.codproduto'+
+//           '                       AND   TRIM(COALESCE(p.cod_auxiliar,''''))<>'''''+
+//           '                       AND   TRIM(COALESCE(p.dt_update,''''))<>'''')'+
+//           ' WHERE EXISTS (SELECT 1'+
+//           '               FROM LINXPRODUTOS p'+
+//           '               WHERE p.cod_auxiliar=ps.codproduto'+
+//           '               AND   TRIM(COALESCE(p.cod_auxiliar,''''))<>'''''+
+//           '               AND   TRIM(COALESCE(p.dt_update,''''))<>'''')';
+//    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+
+
+    sData     :=f_Troca('/','.',f_Troca('-','.',DateToStr(IncDay(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor),-15))));
+    sDataAtual:=f_Troca('/','.',f_Troca('-','.',DateToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))));
+
     DMMovtosEmpresas.IBQ_ProdutoMPMS.Close;
+    DMMovtosEmpresas.IBQ_ProdutoMPMS.Params.ParamByName('Data').Value:=sData;
     DMMovtosEmpresas.IBQ_ProdutoMPMS.Open;
+
     DMMovtosEmpresas.IBQ_ProdutoMPMS.DisableControls;
     While Not DMMovtosEmpresas.IBQ_ProdutoMPMS.Eof do
     Begin
@@ -1722,9 +2022,10 @@ Begin
     DMMovtosEmpresas.IBQ_ProdutoMPMS.EnableControls;
     DMMovtosEmpresas.IBQ_ProdutoMPMS.Close;
 
-    MySql:=' DELETE FROM PRODUTO pr'+
-           ' WHERE pr.dta_atualizacao<>CURRENT_DATE';
-    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
+// OdirApagar - 16/01/2019
+//    MySql:=' DELETE FROM PRODUTO pr'+
+//           ' WHERE pr.dta_atualizacao<>CURRENT_DATE';
+//    DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
     // Atualiza Data de Inclusão Conforme LinxProduto ==========================
     MySql:=' UPDATE PRODUTO ps'+
@@ -1737,7 +2038,8 @@ Begin
            '               FROM LINXPRODUTOS p'+
            '               WHERE p.cod_auxiliar=ps.codproduto'+
            '               AND   TRIM(COALESCE(p.cod_auxiliar,''''))<>'''''+
-           '               AND   TRIM(COALESCE(p.dt_inclusao,''''))<>'''')';
+           '               AND   TRIM(COALESCE(p.dt_inclusao,''''))<>'''')'+
+           ' AND   ps.dta_atualizacao='+QuotedStr(sDataAtual);
     DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
     // Atualiza Data de Alteração Conforme LinxProduto =========================
@@ -1751,7 +2053,8 @@ Begin
            '               FROM LINXPRODUTOS p'+
            '               WHERE p.cod_auxiliar=ps.codproduto'+
            '               AND   TRIM(COALESCE(p.cod_auxiliar,''''))<>'''''+
-           '               AND   TRIM(COALESCE(p.dt_update,''''))<>'''')';
+           '               AND   TRIM(COALESCE(p.dt_update,''''))<>'''')'+
+           ' AND   ps.dta_atualizacao='+QuotedStr(sDataAtual);
     DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
     MySql:=' DELETE FROM movtos_empresas m'+
@@ -2072,16 +2375,6 @@ procedure TFrmMovtosEmpresas.FormCreate(Sender: TObject);
 Var
   i: Integer;
 begin
-//OdirApagar
-//iCodLojaLinx:=2;
-//          AtualizaTabelaEstoque('99');
-//  bProcessou:=False;
-
-// OdirApagar - 03/08/2017
-//  // Fechar Programa do Agendamento Anterior ===================================
-//  ApagaUltProcesso('PAtualizaEstoques.exe');
-//  //============================================================================
-
   // Sem Intenet Encerra =======================================================
   if not InternetGetConnectedState(@Flags, 0) then
   Begin
@@ -2181,7 +2474,9 @@ begin
 //==========================
   // NÃO ATUALIZA ESTOQUES (AtualizaTabelaEstoque(Cod_Empresa))
   // NÃO PROCESSA "UMA VEZ" bgJaProcessouUmaVez=True (Fica Como Já Processado)
-  // PROCESSA: VERIFICA SE PROCESSA <IND_TIPO> DA EMPRESA (Se Já Processada)
+        // - Atenção AtualizaTabelaEstoque('99') esta Dentro de "UMA VEZ"
+
+  // PROCESSA: - RETIRADO NÂO VERIFICA MAIS - VERIFICA SE PROCESSA <IND_TIPO> DA EMPRESA (Se Já Processada)
 
 //==========================
 // Se Parametro = OPSS_N
@@ -2195,17 +2490,20 @@ begin
 //==============================================================================
 
 // =============================================================================
-// INICIO DO PROCESSO ==========================================================
+// PARAMETRO ===================================================================
 // =============================================================================
+
   // Guarda Parametro ==========================================================
   EdtParamStr.Text:=AnsiUpperCase(EdtParamStr.Text);
-
   // Se Processamento Manual NÃO Efetua Processamento Somente Uma Vez ==========
   If (EdtParamStr.Text='OPSS') Or (EdtParamStr.Text='OPSS_N') Then
   Begin
     bgJaProcessouUmaVez:=True;
   End;
 
+// =============================================================================
+// INICIO DO PROCESSO ==========================================================
+// =============================================================================
   DMConexoes.FechaTudoIBDataBases;
   iNumTentativas:=iNumTentativas+1;
 
@@ -2332,7 +2630,7 @@ begin
       DMMovtosEmpresas.SQLC.Execute(MySql,nil,nil);
 
       // Atualiza Lista de Precos (MPMS)
-      sDtaUltAtualizacao:=DateToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor)-20);
+      sDtaUltAtualizacao:=DateToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor)-15);
       sDtaUltAtualizacao:=f_Troca('/','.',sDtaUltAtualizacao);
       sDtaUltAtualizacao:=f_Troca('-','.',sDtaUltAtualizacao);
 
@@ -2342,7 +2640,7 @@ begin
     // Atualiza LISTA DE PRECOS (MPMS) - FIM ===================================
     // =========================================================================
 
-//odiropss - SALAO
+// OdirApagar - SALAO
 //    // =========================================================================
 //    // Atualiza SERVIÇOS DE SALÃO (MPMS) - INICIO ==============================
 //    // =========================================================================
@@ -2367,7 +2665,7 @@ begin
 //
 //      AtualizaServicosSalao;
 //    End;
-
+//
 //    // =========================================================================
 //    // Atualiza SERVIÇOS DE SALÃO (MPMS) - FIM =================================
 //    // =========================================================================
@@ -2427,13 +2725,31 @@ begin
 //    // =========================================================================
 //    // Atualiza COMISSÕES DE HABILIDADES E GERAL DO PROFISSIONAL (MPMS) - FIM ==
 //    // =========================================================================
+// OdirApagar - SALAO
 
-    // =========================================================================
-    // Atualiza Dados da Tabela ESTOQUE - Central de Trocas ====================
-    // =========================================================================
+// OdirApagar - Central de Trocas Não Usada Mais - 24/01/2019
+//    // =========================================================================
+//    // Atualiza Dados da Tabela ESTOQUE - Central de Trocas ====================
+//    // =========================================================================
+//    If (EdtParamStr.Text<>'OPSS') And (EdtParamStr.Text<>'OPSS_N') Then
+//    Begin
+//      AtualizaTabelaEstoque('50');
+//    End;
+// OdirApagar - Central de Trocas Não Usada Mais - 24/01/2019
+
+    // ============================================================
+    // Atualiza Dados da Tabela ESTOQUE - Somente (CD) ============
+    // ============================================================
     If (EdtParamStr.Text<>'OPSS') And (EdtParamStr.Text<>'OPSS_N') Then
     Begin
-      AtualizaTabelaEstoque('50');
+      iCodLojaLinx:=2;
+      sCodEmpresa :='99';
+
+      //odiropss - Retirar comentario
+      AtualizaTabelaEstoque('99');
+
+      iCodLojaLinx:=0;
+      sCodEmpresa :='';
     End;
 
   End; // If Not bgJaProcessouUmaVez Then
@@ -2507,166 +2823,168 @@ begin
 
     bProcSaldoProd:=True;
 
+// OdirApagar - INICIO - 23/01/2019 - Sempres Processa
 //==============================================================================
 // VERIFICA SE PROCESSA <IND_TIPO> DA EMPRESA - INICIO =========================
 //==============================================================================
-    // Se Processamento Manual = OPSS_N
-    //  NÃO Processa: VERIFICA SE PROCESSA <IND_TIPO> DA EMPRESA
-    If EdtParamStr.Text<>'OPSS_N' Then
-    Begin
-      // Verifica se é para Processar Empresa ==================================
-      MySql:=' select m.ind_tipo,'+
-             ' Round((current_timestamp-Max(m.dta_atualizacao)),2) Diferenca'+
-             ' From MOVTOS_EMPRESAS m'+
-             ' Where m.codfilial='+QuotedStr(sCodEmpresa)+
-             ' group by m.ind_tipo';
-      DMMovtosEmpresas.CDS_Busca.Close;
-      DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
-      DMMovtosEmpresas.CDS_Busca.Open;
-
-      // VERIFICA SE PROCESSA ==================================================
-      While Not DMMovtosEmpresas.CDS_Busca.Eof do
-      Begin
-
-        //===========================
-        // Preço de Custo ======================================================
-        //===========================
-        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='PC' Then
-        Begin
-          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-          Begin
-            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
-             bProcPcCusto:=False;
-          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='PC' Then
-
-        //===========================
-        // Demanda =============================================================
-        //===========================
-        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='DM' Then
-        Begin
-          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-          Begin
-            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
-             bProcDemanda:=False;
-          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='DM' Then
-
-        //===========================
-        // Transferencas de Saida ==============================================
-        //===========================
-        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='TS' Then
-        Begin
-          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-          Begin
-            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
-             bProcTransfSai:=False;
-          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='DM' Then
-
-        //===========================
-        // Transferencas de Entrada ============================================
-        //===========================
-        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='TE' Then
-        Begin
-          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-          Begin
-            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
-             bProcTransfEnt:=False;
-          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='DM' Then
-
-        //===========================
-        // Transito ============================================================
-        //===========================
-        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='TR' Then
-        Begin
-          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-          Begin
-            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
-             bProcTransito:=False;
-          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='TR' Then
-
-        //===========================
-        // Ultima Compra =======================================================
-        //===========================
-        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='UC' Then
-        Begin
-          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-          Begin
-            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
-             bProcUltCompra:=False;
-          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='UC' Then
-
-        //===========================
-        // Ajustes de Estoques e Transferencias de Avarias e Perdas ============
-        //===========================
-        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='AP' Then
-        Begin
-          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-          Begin
-            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
-             bProcAjTrAvPe:=False;
-          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='AP' Then
-
-        //===========================
-        // Bonificações ========================================================
-        //===========================
-        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='BF' Then
-        Begin
-          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-          Begin
-            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
-             bProcBonifca:=False;
-          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='BF' Then
-
-        //===========================
-        // Desconto Financeiro =================================================
-        //===========================
-        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='DF' Then
-        Begin
-          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-          Begin
-            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
-             bProcDescFinan:=False;
-          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='DF' Then
-
-        //===========================
-        // Pagamento Substituição Tributária ===================================
-        //===========================
-        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='PS' Then
-        Begin
-          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-          Begin
-            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
-             bProcPagtoST:=False;
-          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='PS' Then
-
-        //===========================
-        // Valor Contabil ======================================================
-        //===========================
-        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='VC' Then
-        Begin
-          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-          Begin
-            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
-             bProcVlrContab:=False;
-          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
-        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='VC' Then
-
-        DMMovtosEmpresas.CDS_Busca.Next;
-      End; // While Not DMMovtosEmpresas.CDS_Busca.Eof do
-      DMMovtosEmpresas.CDS_Busca.Close;
-    End; // If EdtParamStr.Text<>'OPSS_N' Then
-//==============================================================================
-// VERIFICA SE PROCESSA <IND_TIPO> DA EMPRESA - FIM ============================
-//==============================================================================
+//    // Se Processamento Manual = OPSS_N
+//    //  NÃO Processa: VERIFICA SE PROCESSA <IND_TIPO> DA EMPRESA
+//    If EdtParamStr.Text<>'OPSS_N' Then
+//    Begin
+//      // Verifica se é para Processar Empresa ==================================
+//      MySql:=' select m.ind_tipo,'+
+//             ' Round((current_timestamp-Max(m.dta_atualizacao)),2) Diferenca'+
+//             ' From MOVTOS_EMPRESAS m'+
+//             ' Where m.codfilial='+QuotedStr(sCodEmpresa)+
+//             ' group by m.ind_tipo';
+//      DMMovtosEmpresas.CDS_Busca.Close;
+//      DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
+//      DMMovtosEmpresas.CDS_Busca.Open;
+//
+//      // VERIFICA SE PROCESSA ==================================================
+//      While Not DMMovtosEmpresas.CDS_Busca.Eof do
+//      Begin
+//
+//        //===========================
+//        // Preço de Custo ======================================================
+//        //===========================
+//        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='PC' Then
+//        Begin
+//          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//          Begin
+//            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
+//             bProcPcCusto:=False;
+//          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='PC' Then
+//
+//        //===========================
+//        // Demanda =============================================================
+//        //===========================
+//        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='DM' Then
+//        Begin
+//          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//          Begin
+//            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
+//             bProcDemanda:=False;
+//          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='DM' Then
+//
+//        //===========================
+//        // Transferencas de Saida ==============================================
+//        //===========================
+//        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='TS' Then
+//        Begin
+//          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//          Begin
+//            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
+//             bProcTransfSai:=False;
+//          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='DM' Then
+//
+//        //===========================
+//        // Transferencas de Entrada ============================================
+//        //===========================
+//        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='TE' Then
+//        Begin
+//          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//          Begin
+//            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
+//             bProcTransfEnt:=False;
+//          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='DM' Then
+//
+//        //===========================
+//        // Transito ============================================================
+//        //===========================
+//        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='TR' Then
+//        Begin
+//          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//          Begin
+//            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
+//             bProcTransito:=False;
+//          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='TR' Then
+//
+//        //===========================
+//        // Ultima Compra =======================================================
+//        //===========================
+//        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='UC' Then
+//        Begin
+//          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//          Begin
+//            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
+//             bProcUltCompra:=False;
+//          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='UC' Then
+//
+//        //===========================
+//        // Ajustes de Estoques e Transferencias de Avarias e Perdas ============
+//        //===========================
+//        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='AP' Then
+//        Begin
+//          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//          Begin
+//            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
+//             bProcAjTrAvPe:=False;
+//          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='AP' Then
+//
+//        //===========================
+//        // Bonificações ========================================================
+//        //===========================
+//        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='BF' Then
+//        Begin
+//          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//          Begin
+//            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
+//             bProcBonifca:=False;
+//          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='BF' Then
+//
+//        //===========================
+//        // Desconto Financeiro =================================================
+//        //===========================
+//        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='DF' Then
+//        Begin
+//          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//          Begin
+//            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
+//             bProcDescFinan:=False;
+//          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='DF' Then
+//
+//        //===========================
+//        // Pagamento Substituição Tributária ===================================
+//        //===========================
+//        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='PS' Then
+//        Begin
+//          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//          Begin
+//            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
+//             bProcPagtoST:=False;
+//          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='PS' Then
+//
+//        //===========================
+//        // Valor Contabil ======================================================
+//        //===========================
+//        If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='VC' Then
+//        Begin
+//          If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//          Begin
+//            If DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsCurrency<0.21 Then
+//             bProcVlrContab:=False;
+//          End; // If Trim(DMMovtosEmpresas.CDS_Busca.FieldByName('Diferenca').AsString)<>'' Then
+//        End; // If DMMovtosEmpresas.CDS_Busca.FieldByName('Ind_Tipo').AsString='VC' Then
+//
+//        DMMovtosEmpresas.CDS_Busca.Next;
+//      End; // While Not DMMovtosEmpresas.CDS_Busca.Eof do
+//      DMMovtosEmpresas.CDS_Busca.Close;
+//    End; // If EdtParamStr.Text<>'OPSS_N' Then
+////==============================================================================
+//// VERIFICA SE PROCESSA <IND_TIPO> DA EMPRESA - FIM ============================
+////==============================================================================
+// OdirApagar - FIM - 23/01/2019 - Sempres Processa
 
     // Estoques Financeiro Final de Mês ========================================
     Dta:=DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor);
@@ -2683,35 +3001,39 @@ begin
     If Length(sMes)<2 Then
      sMes:='0'+sMes;
 
-    bProcEstFinal:=False;
-    MySql:=' select m.ind_tipo'+
-           ' From MOVTOS_EMPRESAS m'+
-           ' Where m.codfilial='+QuotedStr(sCodEmpresa)+
-           ' and m.ind_tipo in (''EF'', ''EV'', ''EC'', ''EM'')'+
-           ' and m.dta_ref='+QuotedStr('01.'+sMes+'.'+sAno);
-    DMMovtosEmpresas.CDS_Busca.Close;
-    DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
-    DMMovtosEmpresas.CDS_Busca.Open;
+//OdirApagar - INICIO - 23/01/2019
+//    bProcEstFinal:=False;
+//    MySql:=' select m.ind_tipo'+
+//           ' From MOVTOS_EMPRESAS m'+
+//           ' Where m.codfilial='+QuotedStr(sCodEmpresa)+
+//           ' and m.ind_tipo in (''EF'', ''EV'', ''EC'', ''EM'')'+
+//           ' and m.dta_ref='+QuotedStr('01.'+sMes+'.'+sAno);
+//    DMMovtosEmpresas.CDS_Busca.Close;
+//    DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
+//    DMMovtosEmpresas.CDS_Busca.Open;
+//
+//    If DMMovtosEmpresas.CDS_Busca.IsEmpty Then
+//     bProcEstFinal:=True;
+//
+//    DMMovtosEmpresas.CDS_Busca.Close;
+//OdirApagar - FIM - 23/01/2019
 
-    If DMMovtosEmpresas.CDS_Busca.IsEmpty Then
-     bProcEstFinal:=True;
-
-    DMMovtosEmpresas.CDS_Busca.Close;
-
-    // Saldo Produtos Mês ======================================================
-    bProcSaldoProd:=False;
-    MySql:=' SELECT FIRST 1 m.dta_atualizacao'+
-           ' FROM PROD_SALDO_MES m'+
-           ' WHERE m.codfilial='+QuotedStr(sCodEmpresa)+
-           ' AND CAST(m.dta_atualizacao AS DATE)=current_date';
-    DMMovtosEmpresas.CDS_Busca.Close;
-    DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
-    DMMovtosEmpresas.CDS_Busca.Open;
-
-    If DMMovtosEmpresas.CDS_Busca.IsEmpty Then
-     bProcSaldoProd:=True;
-
-    DMMovtosEmpresas.CDS_Busca.Close;
+//OdirApagar - INICIO - 23/012019
+//    // Saldo Produtos Mês ======================================================
+//    bProcSaldoProd:=False;
+//    MySql:=' SELECT FIRST 1 m.dta_atualizacao'+
+//           ' FROM PROD_SALDO_MES m'+
+//           ' WHERE m.codfilial='+QuotedStr(sCodEmpresa)+
+//           ' AND CAST(m.dta_atualizacao AS DATE)=current_date';
+//    DMMovtosEmpresas.CDS_Busca.Close;
+//    DMMovtosEmpresas.SDS_Busca.CommandText:=MySql;
+//    DMMovtosEmpresas.CDS_Busca.Open;
+//
+//    If DMMovtosEmpresas.CDS_Busca.IsEmpty Then
+//     bProcSaldoProd:=True;
+//
+//    DMMovtosEmpresas.CDS_Busca.Close;
+//OdirApagar - FIM - 23/012019
 
     // Verifica se é para Processar a Empresa ==================================
     bSiga:=False;
@@ -2741,40 +3063,41 @@ begin
       bSiga:=False;
     End; // If (Not bProcDemanda) and (Not bProcTransito) and (Not bProcUltCompra) and ...
 
-    If iCodLojaLinx<>0 Then // LINX
-    Begin
-      // PROCESSOS LIBERADOS
-      //===============================
-      // bProcDemanda:=True;
-      // bProcUltCompra:=True;
-      // bProcEstFinal:=True;
+    //==========================================================================
+    // PROCESSOS LIBERADOS =====================================================
+    //==========================================================================
+    // bProcDemanda:=True;
+    // bProcUltCompra:=True;
 
-      // PROCESSOS NÂO LIBERADOS
-      //===============================
+    //==========================================================================
+    // PROCESSOS NÂO LIBERADOS =================================================
+    //==========================================================================
 
-      // ANALISAR NO LINX
-      //===============================
-      bProcTransito:=False;
+    //==========================================================================
+    // ANALISAR NO LINX ========================================================
+    //==========================================================================
+    bProcTransito:=False;
 
-      // PROCESSOS AINDA NÂO LIBERADOS
-      //===============================
-      bProcTransfSai:=False;
-      bProcTransfEnt:=False;
-      bProcPcCusto:=False;
-      bProcComprov:=False;
-      bProcAjTrAvPe:=False;
-      bProcBonifca:=False;
-      bProcDescFinan:=False;
-      bProcPagtoST:=False;
-      bProcVlrContab:=False;
-      bProcSaldoProd:=False;
-      bProcEstoque:=False;
-    End; // If iCodLojaLinx<>0 Then // LINX
+    //==========================================================================
+    // PROCESSOS AINDA NÂO LIBERADOS ===========================================
+    //==========================================================================
+    // (EC) Estoque Financeiro por Valor de Compra (Mes)
+    // (EF) Estoque Fisico (Mes)
+    // (EM) Estoque Financeiro por Valor Margem (Mes)
+    // (EV) Estoque Financeiro por Valor Venda (Mes)
+    bProcEstFinal:=False;
 
-    //opss - 28/12/2017
-//      bProcDemanda:=False;
-//      bProcUltCompra:=True;
-//      bProcEstFinal:=False;
+    bProcTransfSai:=False;
+    bProcTransfEnt:=False;
+    bProcPcCusto:=False;
+    bProcComprov:=False;
+    bProcAjTrAvPe:=False;
+    bProcBonifca:=False;
+    bProcDescFinan:=False;
+    bProcPagtoST:=False;
+    bProcVlrContab:=False;
+    bProcSaldoProd:=False;
+    bProcEstoque:=False;
 
     If bSiga Then // Se já faz mais de 5 horas a Ultima Atualização da Empresa
     Begin
@@ -2795,7 +3118,7 @@ begin
 
       // =======================================================================
       // =======================================================================
-      // VERIFICA SE CONTINUA O PROCESSAMENTO - INICIO =========================
+      // INICIO - VERIFICA SE CONTINUA O PROCESSAMENTO =========================
       // =======================================================================
       // =======================================================================
       If bSiga Then // Conexão OK
@@ -2814,14 +3137,16 @@ begin
         sDtaUltAtualizacao:=DateTimeToStr(PrimeiroUltimoDia(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor)-60,'P'));
         // odiraqui2 Original: Vale 2ª Linha ///////////////////
 
-        // ============================================================
-        // Atualiza Dados da Tabela ESTOQUE - Somente (CD) ============
-        // ============================================================
-        If (EdtParamStr.Text<>'OPSS') And (EdtParamStr.Text<>'OPSS_N') And (sCodEmpresa='99')Then
-        Begin
-          //odiropss - Retirar comentario
-          AtualizaTabelaEstoque(sCodEmpresa);
-        End;
+//OdirApagar - Colocado em "UMA VEZ" - 25/01/2019
+//        // ============================================================
+//        // Atualiza Dados da Tabela ESTOQUE - Somente (CD) ============
+//        // ============================================================
+//        If (EdtParamStr.Text<>'OPSS') And (EdtParamStr.Text<>'OPSS_N') And (sCodEmpresa='99')Then
+//        Begin
+//          //odiropss - Retirar comentario
+//          AtualizaTabelaEstoque(sCodEmpresa);
+//        End;
+//OdirApagar - Colocado em "UMA VEZ" - 25/01/2019
 
         dDtaProc:=DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor);
         // ============================================================
@@ -3268,14 +3593,16 @@ begin
                    '       WHERE lm.cod_produto = lp.cod_produto'+
 
                    '       AND  ('+
-                   '             (lm.operacao=''S'')  AND (lm.tipo_transacao=''V'')'+   // Saídas Vendas
+                   '             (lm.operacao=''S'')  AND ((lm.tipo_transacao=''V'') OR (COALESCE(lm.tipo_transacao,'''')=''''))'+   // Saídas Vendas
                    '            OR'+
                    '             (lm.operacao=''DS'') AND (lm.tipo_transacao is null)'+ // Entradas Devoluções
                    '            )'+
 
                    '       AND   lm.cancelado = ''N'''+
                    '       AND   lm.excluido = ''N'''+
-                   '       AND   lp.cod_auxiliar IS NOT NULL'+
+                   ' AND   TRIM(COALESCE(lp.cod_auxiliar,''''))<>'''''+
+                   ' AND   CHAR_LENGTH(lp.cod_auxiliar)<=6'+
+
                    '       AND   lm.empresa ='+IntToStr(iCodLojaLinx)+
                    '       AND   lm.data_lancamento >= '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDtaUltAtualizacao)))+
                    '       GROUP BY 1, 2'+
@@ -3915,7 +4242,8 @@ begin
 
                    ' FROM LINXMOVIMENTO ml, LINXPRODUTOS pl'+
                    ' WHERE ml.cod_produto=pl.cod_produto'+
-                   ' AND   pl.cod_auxiliar is not null'+
+                   ' AND   TRIM(COALESCE(pl.cod_auxiliar,''''))<>'''''+
+                   ' AND   CHAR_LENGTH(pl.cod_auxiliar)<=6'+
                    ' AND   ml.empresa='+IntToStr(iCodLojaLinx)+
 
                    // Entradas de Compras
@@ -4028,7 +4356,9 @@ begin
 
                          ' FROM LINXMOVIMENTO ml, LINXPRODUTOS pl'+
                          ' WHERE ml.cod_produto=pl.cod_produto'+
-                         ' AND   pl.cod_auxiliar is not null'+
+                         ' AND   TRIM(COALESCE(pl.cod_auxiliar,''''))<>'''''+
+                         ' AND   CHAR_LENGTH(pl.cod_auxiliar)<=6'+
+
                          ' AND   ml.operacao=''E'''+
                          ' AND   COALESCE(ml.tipo_transacao,''E'')=''E'''+
                          ' AND   TRIM(ml.id_cfop) NOT IN (''1152'',''2152'', ''1409'', ''2409'')'+ // Retira Transferencias
@@ -5721,13 +6051,17 @@ begin
 
     DMMovtosEmpresas.CDS_EmpProcessa.Next;
   End; // While Not DMMovtosEmpresas.CDS_EmpProcessa.Eof do
+  // ===========================================================================
+  // FIM PROCESSAMENTO =========================================================
+  // ===========================================================================
 
-  // Retira Produtos Descontinuados dos MIXs ====================================
+  // Retira Produtos Descontinuados dos MIXs ===================================
   Mix_Retira_Descontinuados;
 
   // Verifica Processamento ====================================================
   VerificaProcessamento;
 
+  
   Application.Terminate;
   Exit;
 
@@ -5745,12 +6079,13 @@ begin
 //  // Não Roda no Sábado e Domimgo ==============================================
 //  If (DiaSemanaAbrev(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))='Sab') Or
 //     (DiaSemanaAbrev(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))='Dom') Then
-  // Não Roda no Sábado para Domimgo ===========================================
-  If (DiaSemanaAbrev(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))='Sab') Then
-  Begin
-    Application.Terminate;
-    Exit;
-  End; // Não Roda no Sábado e Domimgo
+
+//  // Não Roda no Sábado para Domimgo ===========================================
+//  If (DiaSemanaAbrev(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor))='Sab') Then
+//  Begin
+//    Application.Terminate;
+//    Exit;
+//  End; // Não Roda no Sábado e Domimgo
 
   // Guarda Data do Servidor ===================================================
   sgDtaServidor:=DateTimeToStr(DataHoraServidorFI(DMMovtosEmpresas.SDS_DtaHoraServidor));

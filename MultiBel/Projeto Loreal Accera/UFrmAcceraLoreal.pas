@@ -51,7 +51,7 @@ var
 
 implementation
 
-uses UDMAcceraLoreal, DB, DK_Procs1;
+uses UDMAcceraLoreal, DB, DK_Procs1, UFrmPeriodoApropriacao;
 
 {$R *.dfm}
 
@@ -1505,12 +1505,22 @@ End; // Cadastro de Produtos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 procedure TFrmAcceraLoreal.FormCreate(Sender: TObject);
 Var
   sArqProc, sPeriodo: String;
+  bInformarPeriodo: Boolean;
 begin
   If Not DMAcceraLoreal.SQLC.Connected Then
   Begin
     Application.Terminate;
     Exit;
   End;
+
+  bInformarPeriodo:=False;
+  If Trim(ParamStr(1))='' Then
+  Begin
+    if msg('Deseja Informar o Período ??', 'C')=1 Then
+    Begin
+      bInformarPeriodo:=True;
+    End; // If Application.MessageBox('Deseja Informar o Período ??', 'ATENÇÃO !!', 292) = IdOk Then
+  End; // If Trim(ParamStr(1))='' Then
 
   OdirPanApres.Caption:='AGUARDE !! Criando Arquivos ACCERA/R´ORÉAL...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
@@ -1535,6 +1545,31 @@ begin
    bgUsaDtaParam:=True;
   // Se Periodo Vem por Parametros =============================================
   //============================================================================
+
+  If (Not bgUsaDtaParam) And (bInformarPeriodo) Then
+  Begin
+    bgSiga:=False;
+
+    FrmPeriodoApropriacao:=TFrmPeriodoApropriacao.Create(Self);
+    FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date:=IncMonth(Date,-1);
+    FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date   :=Date;
+    FrmPeriodoApropriacao.ShowModal;
+
+    sgDtaIniParam:=f_Troca('/','.',f_Troca('-','.',DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date)));
+    sgDtaFimParam:=f_Troca('/','.',f_Troca('-','.',DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date)));
+
+    FreeAndNil(FrmPeriodoApropriacao);
+
+    // Verifica se Prossegue Processamento =======================================
+    If Not bgSiga Then
+    Begin
+      msg('Aplicativo Será Encerrado !!','A');
+      Application.Terminate;
+      Exit;
+    End;
+
+    bgUsaDtaParam:=True;
+  End; // If (Not bgUsaDtaParam) And (bInformarPeriodo) Then
 
   sArqProc:='';
   Application.ProcessMessages;

@@ -2098,15 +2098,6 @@ begin
     DMAtualizaSeteHoras.CDS_Lojas.Next;
   End; // While Not DMAtualizaSeteHoras.CDS_Busca.Eof do
   DMAtualizaSeteHoras.CDS_Lojas.Close;
-
-  // OdirApagar - Caluclado por Fornecedor
-//  // Calcula Fluxo de Caixa do Fornecedore =====================================
-//  For i:=0 to Mem_Odir.Lines.Count-1 do
-//  Begin
-//    // OdirApagar é Sem Data de Inicio do Calculo
-//    // CalculaFluxoCaixaFornecedores(sgDtaProcCC,Mem_Odir.Lines[i])
-//    CalculaFluxoCaixaFornecedores('', Mem_Odir.Lines[i])
-//  End; // For i:=0 to FrmBelShop.Mem_Odir.Lines.Count-1 do
   // ATUALIZA CONTA CORRENTE FORNECEDORES ======================================
   //============================================================================
 

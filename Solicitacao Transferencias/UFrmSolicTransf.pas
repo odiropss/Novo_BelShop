@@ -226,9 +226,10 @@ Begin
          '     LEFT JOIN LINXPRODUTOS pl        ON pl.cod_produto=oi.cod_produto_linx'+
          '     LEFT JOIN PRODUTO ps             ON ps.codproduto=oi.cod_produto_sidi'+
          '     LEFT JOIN ESTOQUE en             ON en.codproduto=oi.cod_produto_sidi'+
-         '                                     AND en.codfilial=''99'''+
+         '                                     AND en.codfilial='+sgLojaSidicom+
 
-         ' WHERE oi.num_seq_oc in ('+sgNrsSeqOCs+')'+
+         ' WHERE oc.cod_loja_linx='+sgLojaLinx+
+         ' AND   oi.num_seq_oc in ('+sgNrsSeqOCs+')'+
          ' AND   oi.qtd_checkout>0'+
 
          ' ORDER BY oi.des_produto';
@@ -444,7 +445,8 @@ Begin
   // Busca Num_Seq_NFe da OCs ==================================================
   MySql:=' SELECT DISTINCT o.num_seq_oc'+
          ' FROM OC_LOJAS_NFE o'+
-         ' WHERE o.num_oc IN ('+sgNrsOCs+')';
+         ' WHERE o.cod_loja_linx='+sgLojaLinx+
+         ' AND   o.num_oc IN ('+sgNrsOCs+')';
   DMSolicTransf.SQLQuery2.Close;
   DMSolicTransf.SQLQuery2.SQL.Clear;
   DMSolicTransf.SQLQuery2.SQL.Add(MySql);
@@ -487,9 +489,10 @@ Begin
          '                                     AND ni.num_seq_item=oi.num_seq_item'+
          '     LEFT JOIN LINXPRODUTOS pl        ON pl.cod_produto=oi.cod_produto_linx'+
          '     LEFT JOIN ESTOQUE en             ON en.codproduto=oi.cod_produto_sidi'+
-         '                                     AND en.codfilial=''99'''+
+         '                                     AND en.codfilial=oc.cod_loja_sidi'+
 
-         ' WHERE oi.num_seq_oc in ('+sgNrsSeqOCs+')'+
+         ' WHERE oc.cod_loja_linx='+sgLojaLinx+
+         ' AND   oi.num_seq_oc in ('+sgNrsSeqOCs+')'+
          ' ORDER BY oi.des_produto';
   DMSolicTransf.CDS_OCItensCheck.DisableControls;
   DMSolicTransf.CDS_OCItensCheck.Close;
@@ -2481,6 +2484,7 @@ begin
     MySql:=' SELECT DISTINCT o.num_oc'+
            ' FROM OC_LOJAS_NFE o, OC_LOJAS_ITENS_NFE n'+
            ' WHERE o.num_seq_oc=n.num_seq_oc'+
+           ' AND   o.cod_loja_linx='+sgLojaLinx+
            ' AND   o.cod_forn_linx='+IntToStr(EdtNFeCodFornLinx.AsInteger)+
            ' AND   n.num_nfe='+IntToStr(EdtNFeNumNFe.AsInteger);
     DMSolicTransf.SQLQuery3.Close;

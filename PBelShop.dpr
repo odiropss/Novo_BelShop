@@ -53,7 +53,9 @@ uses
   UFrmConfirmacao in 'UFrmConfirmacao.pas' {FrmConfirmacao},
   GeoBeautyServerWebService in 'GeoBeautyServerWebService.pas',
   UFrmWebServicesImporta in 'UFrmWebServicesImporta.pas' {FrmWebServicesImporta},
-  UFrmAnaliseFornecedores in 'UFrmAnaliseFornecedores.pas' {FrmAnaliseFornecedores};
+  UFrmAnaliseFornecedores in 'UFrmAnaliseFornecedores.pas' {FrmAnaliseFornecedores},
+  UFrmDebCredST in 'UFrmDebCredST.pas' {FrmDebCredST},
+  UDMDebCredST in 'UDMDebCredST.pas' {DMDebCredST: TDataModule};
 
 {$R *.res}
 
@@ -83,6 +85,7 @@ begin
   Application.CreateForm(TDMCentralTrocas, DMCentralTrocas);
   Application.CreateForm(TDMComissaoVendedor, DMComissaoVendedor);
   Application.CreateForm(TDMLinx, DMLinx);
+//  Application.CreateForm(TDMDebCredST, DMDebCredST);
   Application.CreateForm(TFDK_Procs1, FDK_Procs1);
   Application.CreateForm(TJ_001, J_001);
   Application.CreateForm(TJ_002, J_002);
@@ -104,6 +107,7 @@ begin
   // Application.CreateForm(TFrmControleKits, FrmControleKits);
   // Application.CreateForm(TFrmFaltasCD\Lojas, FrmFaltasCDLojas);
   // Application.CreateForm(TFrmEstoques, FrmEstoques);
+  // Application.CreateForm(TFrmDebCredST, FrmDebCredST);
 
   //============================================================================
   // Formulario Modelo ==>>: Application.CreateForm(TFrmModelo, FrmModelo);

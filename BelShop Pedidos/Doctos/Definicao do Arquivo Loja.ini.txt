@@ -1,0 +1,3 @@
+sgLojaSidicom  :=Separa_String(tsgArquivo[0],1);
+sgLojaLinx     :=Separa_String(tsgArquivo[0],2);
+sgNomeLoja     :=Separa_String(tsgArquivo[0],3);

@@ -800,8 +800,13 @@ type
     ////////////////////////////////////////////////////////////////////////////
 
     // AUDITORIA ///////////////////////////////////////////////////////////////
-    Function  Auditoria_Delete_Insert(bInsert:Boolean): Boolean;
+    // OdirApagar - 22/01/2019
+    // Function  Auditoria_Delete_Insert(bInsert:Boolean): Boolean;
     Procedure AuditoriaGeraArquivo;
+    ////////////////////////////////////////////////////////////////////////////
+
+    // FINANCEIRO - ICMS DÉBIOT/CREDITO ////////////////////////////////////////
+    Function  ICMSDebitoCreditoImportaNCM: Boolean;
     ////////////////////////////////////////////////////////////////////////////
 
     //==========================================================================
@@ -1155,6 +1160,111 @@ uses DK_Procs1, UDMBelShop, UFrmBelShop, UDMSalao, UPesquisa, UFrmSalao,
 // Odir ========================================================================
 //==============================================================================
 
+// FINANCEIRO - ICMS DÉBIOT/CREDITO - Importa NCM >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Function TFrmSolicitacoes.ICMSDebitoCreditoImportaNCM: Boolean;
+Var
+  MySql: String;
+
+  sLinha,
+  sDia, sHora: String;
+
+  i: Integer;
+  bImporta: Boolean;
+Begin
+  Result:=True;
+
+  sHora:=TimeToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+  sDia :=DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+
+  OdirPanApres.Caption:='AGUARDE !! Importando Arquivo(CSV) NCM e Percentuais ICMS...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmSolicitacoes;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  OdirPanApres.Refresh;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    FrmBelShop.MontaProgressBar(True, FrmSolicitacoes);
+    pgProgBar.Properties.Max:=EditorProSoftImpArquivo.Lines.Count;
+    pgProgBar.Position:=0;
+
+    For i:=0 to EditorProSoftImpArquivo.Lines.Count-1 do
+    Begin
+      Try
+        StrToInt(Trim(Separa_String(EditorProSoftImpArquivo.Lines[i],1)));
+        bImporta:=True;
+      Except
+        bImporta:=False;
+      End;
+
+      // Importa NCM ===========================================================
+      If bImporta Then
+      Begin
+        // Trata Final da Linha para Importação ================================
+        sLinha:=Trim(EditorProSoftImpArquivo.Lines[i]);
+        If Copy(sLinha,length(sLinha),1)<>';' Then
+         sLinha:=sLinha+';';
+
+        MySql:=' UPDATE OR INSERT INTO DEB_CRED_ICMS_NCM'+
+               ' (DES_NCM, PER_ICMS, PER_FCP, PER_ICMS_EFETIVO,'+
+               '  USU_ATUALIZACAO, DTA_ATUALIZACAO, HRA_ATUALIZACA0)'+
+
+               ' VALUES ('+
+               QuotedStr(Trim(Separa_String(sLinha,1)))+', '+ // DES_NCM
+               QuotedStr(f_Troca(',','.',f_Troca('%','',Separa_String(sLinha,2))))+', '+ // PER_ICMS
+               QuotedStr(f_Troca(',','.',f_Troca('%','',Separa_String(sLinha,3))))+', '+ // PER_FCP
+               QuotedStr(f_Troca(',','.',f_Troca('%','',Separa_String(sLinha,4))))+', '+ // PER_ICMS_EFETIVO
+               Cod_Usuario+','+ // USU_ATUALIZACAO
+               QuotedStr(f_Troca('/','.',f_Troca('-','.',sDia)))+', '+ // DTA_ATUALIZACAO
+               QuotedStr(sHora)+')'+ // HRA_ATUALIZACA0
+
+               ' MATCHING (DES_NCM)';
+        DMBelShop.SQLC.Execute(MySql,nil,nil);
+      End; // If bImporta Then
+
+      pgProgBar.Position:=i+1;
+    End; // For i:=0 to EditorProSoftImpArquivo.Lines.Count-1 do
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+
+    msg('Arquivo NCM e Percentuais ICMS '+cr+cr+'Importado com SUCESSO !!','A')
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+      Result:=False;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+  FrmBelShop.MontaProgressBar(False, FrmSolicitacoes);
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+  OdirPanApres.Visible:=False;
+  Screen.Cursor:=crDefault;
+
+  EditorProSoftImpArquivo.Lines.Clear;
+  EdtProSoftImpPastaArquivo.Clear;
+End; // FINANCEIRO - ICMS DÉBIOT/CREDITO - Importa NCM >>>>>>>>>>>>>>>>>>>>>>>>>
+
 // COMPRAS - Analise de Saldo no CD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmSolicitacoes.ComprasAnaliseSaldoCD(sCurva: String);
 Var
@@ -1403,55 +1513,56 @@ Begin
   EdtProSoftImpPastaArquivo.Clear;
 End; // MOVIMENTO DE CAIXA DIA - Importa Arquivo Diario - Trinks >>>>>>>>>>>>>>>
 
-// AUDITORIA - Delete e/ou Insert Tabela: W_PROD_LOJA >>>>>>>>>>>>>>>>>>>>>>>>>>
-Function TFrmSolicitacoes.Auditoria_Delete_Insert(bInsert:Boolean): Boolean;
-Var
-  MySql: String;
-Begin
-  Result:=True;
-
-  // Verifica se Transação esta Ativa
-  If DMBelShop.SQLC.InTransaction Then
-   DMBelShop.SQLC.Rollback(TD);
-
-  // Monta Transacao
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMBelShop.SQLC.StartTransaction(TD);
-
-  Try // Try da Transação
-    // Exclui Produtos Antigos da Loja ------------------------------
-    MySql:=' DELETE FROM W_PROD_LOJA pl'+
-           ' WHERE pl.cod_loja_linx='+IntToStr(EdtAudCodLoja.AsInteger);
-    DMBelShop.SQLC.Execute(MySql,nil,nil);
-
-    // Insere Mix da Produtos da Loja -------------------------------
-    If bInsert Then
-    Begin
-      MySql:=' INSERT into W_PROD_LOJA'+
-             ' SELECT DISTINCT pl.cod_loja_linx, pl.cod_produto'+
-             ' FROM LINX_PRODUTOS_LOJAS pl'+
-             ' WHERE pl.cod_loja_linx='+IntToStr(EdtAudCodLoja.AsInteger);
-      DMBelShop.SQLC.Execute(MySql,nil,nil);
-    End; // If bInsert Then
-
-    // Atualiza Transacao ======================================================
-    DMBelShop.SQLC.Commit(TD);
-  Except // Except da Transação
-    on e : Exception do
-    Begin
-      // Abandona Transacao ====================================================
-      DMBelShop.SQLC.Rollback(TD);
-
-      OdirPanApres.Visible:=False;
-      Screen.Cursor:=crDefault;
-
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-
-      Result:=False;
-    End; // on e : Exception do
-  End; // Try da Transação
-End; // AUDITORIA - Delete e/ou Insert Tabela: W_PROD_LOJA >>>>>>>>>>>>>>>>>>>>>
+// OdirApagar - 22/01/2019
+//// AUDITORIA - Delete e/ou Insert Tabela: W_PROD_LOJA >>>>>>>>>>>>>>>>>>>>>>>>>>
+//Function TFrmSolicitacoes.Auditoria_Delete_Insert(bInsert:Boolean): Boolean;
+//Var
+//  MySql: String;
+//Begin
+//  Result:=True;
+//
+//  // Verifica se Transação esta Ativa
+//  If DMBelShop.SQLC.InTransaction Then
+//   DMBelShop.SQLC.Rollback(TD);
+//
+//  // Monta Transacao
+//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+//  TD.IsolationLevel:=xilREADCOMMITTED;
+//  DMBelShop.SQLC.StartTransaction(TD);
+//
+//  Try // Try da Transação
+//    // Exclui Produtos Antigos da Loja ------------------------------
+//    MySql:=' DELETE FROM W_PROD_LOJA pl'+
+//           ' WHERE pl.cod_loja_linx='+IntToStr(EdtAudCodLoja.AsInteger);
+//    DMBelShop.SQLC.Execute(MySql,nil,nil);
+//
+//    // Insere Mix da Produtos da Loja -------------------------------
+//    If bInsert Then
+//    Begin
+//      MySql:=' INSERT into W_PROD_LOJA'+
+//             ' SELECT DISTINCT pl.cod_loja_linx, pl.cod_produto'+
+//             ' FROM LINX_PRODUTOS_LOJAS pl'+
+//             ' WHERE pl.cod_loja_linx='+IntToStr(EdtAudCodLoja.AsInteger);
+//      DMBelShop.SQLC.Execute(MySql,nil,nil);
+//    End; // If bInsert Then
+//
+//    // Atualiza Transacao ======================================================
+//    DMBelShop.SQLC.Commit(TD);
+//  Except // Except da Transação
+//    on e : Exception do
+//    Begin
+//      // Abandona Transacao ====================================================
+//      DMBelShop.SQLC.Rollback(TD);
+//
+//      OdirPanApres.Visible:=False;
+//      Screen.Cursor:=crDefault;
+//
+//      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+//
+//      Result:=False;
+//    End; // on e : Exception do
+//  End; // Try da Transação
+//End; // AUDITORIA - Delete e/ou Insert Tabela: W_PROD_LOJA >>>>>>>>>>>>>>>>>>>>>
 
 // AUDITORIA - Gera Arquivo de Estoques >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmSolicitacoes.AuditoriaGeraArquivo;
@@ -1496,50 +1607,55 @@ Begin
   //============================================================================
   If Rb_AudPosEstoque.Checked Then
   Begin
-    PainelApresExp.Caption:='AGUARDE !! Atualizando Saldo Depósito '+IntToStr(igCodDeposito)+' (LINX - CLOUD)';
-    PainelApresExp.Width:=Length(PainelApresExp.Caption)*10;
-    PainelApresExp.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-PainelApresExp.Width)/2));
-    PainelApresExp.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-PainelApresExp.Height)/2))-20;
-    PainelApresExp.Color:=clSilver;
-    PainelApresExp.Font.Style:=[fsBold];
-    PainelApresExp.Parent:=FrmSolicitacoes;
-    PainelApresExp.Visible:=True;
-    Refresh;
-
-    // WebService Linx - Atualiza Saldo do Depoisto Solicitado =================
-    sParametros:=sgPastaWebService+'PWebServiceLinx.exe LinxProdutosInventario'; // Excutavel e Metodo a Processar
-    sParametros:=sParametros+' '+IntToStr(EdtAudCodLoja.AsInteger); // Codigo da Loja a Processar
-    sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Metodos')+'"'; // Pasta dos Metodos
-    sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Retornos')+'"'; // Pasta dos Retornos
-    sParametros:=sParametros+' NULL'; // Data Inicial
-    sParametros:=sParametros+' NULL'; // Data Final
-    sParametros:=sParametros+' NULL'; // Codigo do Produto   => Pode ser Nulo - String ''
-    sParametros:=sParametros+' '+IntToStr(igCodDeposito); // Codigo Qualqueer    => Pode ser Nulo - String ''
-    sParametros:=sParametros+' NULL'; // Campo Data para Pesquisa => SIM ou Branco => Se Utilização de Data de Emissão Para Pesquisa
-
-    // Envia Parametro e Aguarda Termino do Processo ===========================
-    CreateProcessSimple(sParametros);
-
-    // Verifica se Web Serive Funcionou ========================================
-    MySql:=' SELECT FIRST 1 i.cod_produto'+
-           ' FROM LINXPRODUTOSINVENTARIO i'+
-           ' WHERE i.dta_atualizacao=CURRENT_DATE'+
-           ' AND   i.cod_deposito='+IntToStr(igCodDeposito)+
-           ' AND   i.empresa='+IntToStr(EdtAudCodLoja.AsInteger);
-    DMBelShop.SQLQuery3.Close;
-    DMBelShop.SQLQuery3.SQL.Clear;
-    DMBelShop.SQLQuery3.SQL.Add(MySql);
-    DMBelShop.SQLQuery3.Open;
-    sParametros:=DMBelShop.SQLQuery3.FieldByName('Cod_Produto').AsString;
-    DMBelShop.SQLQuery3.Close;
-
-    If Trim(sParametros)='' Then
+    If msg('Buscar Saldo de Estoque Inicial'+cr+cr+'do Dia de Hoje no Linx ??','C')=1 Then
     Begin
-      msg('Problema de Conexão com o LINX !!'+cr+'Web Service Não Funcionou !!'+cr+cr+'TENTE NOVAMENTE !!!','A');
-      PainelApresExp.Visible:=False;
-      Screen.Cursor:=crDefault;
-      Exit;
-    End; // If Trim(sParametros)='' Then
+      PainelApresExp.Caption:='AGUARDE !! Atualizando Saldo Depósito '+IntToStr(igCodDeposito)+' (LINX - CLOUD)';
+      PainelApresExp.Width:=Length(PainelApresExp.Caption)*10;
+      PainelApresExp.Left:=ParteInteiro(FloatToStr((FrmSolicitacoes.Width-PainelApresExp.Width)/2));
+      PainelApresExp.Top:=ParteInteiro(FloatToStr((FrmSolicitacoes.Height-PainelApresExp.Height)/2))-20;
+      PainelApresExp.Color:=clSilver;
+      PainelApresExp.Font.Style:=[fsBold];
+      PainelApresExp.Parent:=FrmSolicitacoes;
+      PainelApresExp.Visible:=True;
+      Refresh;
+
+      sgDia :=DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+
+      // WebService Linx - Atualiza Saldo do Depoisto Solicitado =================
+      sParametros:=sgPastaWebService+'PWebServiceLinx.exe LinxProdutosInventario'; // Excutavel e Metodo a Processar
+      sParametros:=sParametros+' '+IntToStr(EdtAudCodLoja.AsInteger); // Codigo da Loja a Processar
+      sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Metodos')+'"'; // Pasta dos Metodos
+      sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Retornos')+'"'; // Pasta dos Retornos
+      sParametros:=sParametros+' "'+sgDtaI+'"'; // Data Inicial
+      sParametros:=sParametros+' NULL'; // Data Final
+      sParametros:=sParametros+' NULL'; // Codigo do Produto   => Pode ser Nulo - String ''
+      sParametros:=sParametros+' '+IntToStr(igCodDeposito); // Codigo Qualqueer    => Pode ser Nulo - String ''
+      sParametros:=sParametros+' NULL'; // Campo Data para Pesquisa => SIM ou Branco => Se Utilização de Data de Emissão Para Pesquisa
+
+      // Envia Parametro e Aguarda Termino do Processo ===========================
+      CreateProcessSimple(sParametros);
+
+      // Verifica se Web Serive Funcionou ========================================
+      MySql:=' SELECT FIRST 1 i.cod_produto'+
+             ' FROM LINXPRODUTOSINVENTARIO i'+
+             ' WHERE i.dta_atualizacao=CURRENT_DATE'+
+             ' AND   i.cod_deposito='+IntToStr(igCodDeposito)+
+             ' AND   i.empresa='+IntToStr(EdtAudCodLoja.AsInteger);
+      DMBelShop.SQLQuery3.Close;
+      DMBelShop.SQLQuery3.SQL.Clear;
+      DMBelShop.SQLQuery3.SQL.Add(MySql);
+      DMBelShop.SQLQuery3.Open;
+      sParametros:=DMBelShop.SQLQuery3.FieldByName('Cod_Produto').AsString;
+      DMBelShop.SQLQuery3.Close;
+
+      If Trim(sParametros)='' Then
+      Begin
+        msg('Problema de Conexão com o LINX !!'+cr+'Web Service Não Funcionou !!'+cr+cr+'TENTE NOVAMENTE !!!','A');
+        PainelApresExp.Visible:=False;
+        Screen.Cursor:=crDefault;
+        Exit;
+      End; // If Trim(sParametros)='' Then
+    End; // If msg('Buscar Saldo de Estoque Inicial'+cr+cr+'do Dia de Hoje no Linx ??','C')=1 Then
 
     // Gera o Arquivo para Auditoria - Inventario ==============================
     PainelApresExp.Caption:='AGUARDE !! Gerando Arquivo de Estoque de Produtos...';
@@ -1552,29 +1668,65 @@ Begin
     PainelApresExp.Visible:=True;
     Refresh;
 
-    // Insere Produtos que a Loja Trabalha =====================================
-    If Not Auditoria_Delete_Insert(True) Then
-     Exit;
+// OdirApagar - 22/01/2019
+//    // Insere Produtos que a Loja Trabalha =====================================
+//    If Not Auditoria_Delete_Insert(True) Then
+//     Exit;
+//
+//    // Busca Posição de Estoque dos Produtos da Loja ----------------
+//    MySql:=' SELECT'+
+//           ' TRIM(REPLACE(lj.nome_emp, ''-'', ''|''))||'';''||'+
+//           ' TRIM(pr.cod_barra)||'';''||'+
+//           ' REPLACE(TRIM(pd.preco_custo), ''.'', '','')||'';''||'+
+//           ' REPLACE(TRIM(pd.preco_venda), ''.'', '','')||'';''||'+
+//           ' CAST(COALESCE(iv.quantidade,0) AS INTEGER)||'';''||'+
+//           ' TRIM(pr.desativado) LINHA'+
+//
+//           ' FROM W_PROD_LOJA pl'+
+//           '     LEFT JOIN LINXLOJAS lj               ON lj.empresa=pl.cod_loja_linx'+
+//           '     LEFT JOIN LINXPRODUTOS pr            ON pr.cod_produto=pl.cod_produto'+
+//           '     LEFT JOIN LINXPRODUTOSDETALHES pd    ON pd.empresa=pl.cod_loja_linx'+
+//           '                                         AND pd.cod_produto=pl.cod_produto'+
+//           '     LEFT JOIN LINXPRODUTOSINVENTARIO iv  ON iv.empresa=pl.cod_loja_linx'+
+//           '                                         AND iv.cod_produto=pl.cod_produto'+
+//           '                                         AND iv.cod_deposito='+IntToStr(igCodDeposito)+
+//
+//           ' WHERE pl.cod_loja_linx='+IntToStr(EdtAudCodLoja.AsInteger);
 
-    // Busca Posição de Estoque dos Produtos da Loja ----------------
     MySql:=' SELECT'+
            ' TRIM(REPLACE(lj.nome_emp, ''-'', ''|''))||'';''||'+
            ' TRIM(pr.cod_barra)||'';''||'+
-           ' REPLACE(TRIM(pd.preco_custo), ''.'', '','')||'';''||'+
-           ' REPLACE(TRIM(pd.preco_venda), ''.'', '','')||'';''||'+
+           ' REPLACE(TRIM(COALESCE(pd.preco_custo,0.0000)), ''.'', '','')||'';''||'+
+           ' REPLACE(TRIM(COALESCE(pd.preco_venda,0.0000)), ''.'', '','')||'';''||'+
            ' CAST(COALESCE(iv.quantidade,0) AS INTEGER)||'';''||'+
            ' TRIM(pr.desativado) LINHA'+
 
-           ' FROM W_PROD_LOJA pl'+
-           '     LEFT JOIN LINXLOJAS lj               ON lj.empresa=pl.cod_loja_linx'+
-           '     LEFT JOIN LINXPRODUTOS pr            ON pr.cod_produto=pl.cod_produto'+
-           '     LEFT JOIN LINXPRODUTOSDETALHES pd    ON pd.empresa=pl.cod_loja_linx'+
-           '                                         AND pd.cod_produto=pl.cod_produto'+
-           '     LEFT JOIN LINXPRODUTOSINVENTARIO iv  ON iv.empresa=pl.cod_loja_linx'+
-           '                                         AND iv.cod_produto=pl.cod_produto'+
+           ' FROM LINXPRODUTOS pr'+
+           '     LEFT JOIN LINXLOJAS lj               ON lj.empresa='+IntToStr(EdtAudCodLoja.AsInteger)+
+           '     LEFT JOIN LINXPRODUTOSINVENTARIO iv  ON iv.empresa=lj.empresa'+
            '                                         AND iv.cod_deposito='+IntToStr(igCodDeposito)+
+           '                                         AND iv.cod_produto=pr.cod_produto'+
+           '     LEFT JOIN LINXPRODUTOSDETALHES pd    ON pd.empresa=lj.empresa'+
+           '                                         AND pd.cod_produto=pr.cod_produto'+
 
-           ' WHERE pl.cod_loja_linx='+IntToStr(EdtAudCodLoja.AsInteger);
+           ' UNION'+
+
+           ' SELECT'+
+           ' TRIM(REPLACE(lj.nome_emp, ''-'', ''|''))||'';''||'+
+           ' TRIM(cb.cod_barra)||'';''||'+
+           ' REPLACE(TRIM(COALESCE(pd.preco_custo,0.0000)), ''.'', '','')||'';''||'+
+           ' REPLACE(TRIM(COALESCE(pd.preco_venda,0.0000)), ''.'', '','')||'';''||'+
+           ' ''0;''||'+
+           ' TRIM(pr.desativado) LINHA'+
+
+           ' FROM linxprodutoscodbar cb'+
+           '     LEFT JOIN LINXPRODUTOS pr            ON pr.cod_produto=cb.cod_produto'+
+           '     LEFT JOIN LINXLOJAS lj               ON lj.empresa='+IntToStr(EdtAudCodLoja.AsInteger)+
+           '     LEFT JOIN LINXPRODUTOSDETALHES pd    ON pd.empresa=lj.empresa'+
+           '                                         AND pd.cod_produto=cb.cod_produto'+
+           ' WHERE NOT EXISTS (SELECT 1'+
+           '                   FROM LINXPRODUTOS pp'+
+           '                   WHERE pp.cod_barra=cb.cod_barra)';
   End; // If Rb_AudPosEstoque.Checked Then
   // Busca Posição de estoque dos Produtos da Loja =============================
   //============================================================================
@@ -1630,8 +1782,9 @@ Begin
   // Monta o Arquivo ===========================================================
   //============================================================================
 
-  If Not Auditoria_Delete_Insert(False) Then
-   Exit;
+  // OdirApagar - 22/01/2019
+//  If Not Auditoria_Delete_Insert(False) Then
+//   Exit;
 
   FrmBelShop.MontaProgressBar(False, FrmSolicitacoes);
   PainelApresExp.Visible:=False;
@@ -3827,7 +3980,6 @@ Begin
       Begin
         GridNew.Columns[i].Title.Alignment:=taRightJustify;
       End;
-
     End;
   End; // If sNomeObjeto='Corredores' Then
 
@@ -7276,28 +7428,38 @@ begin
     Options := [ofPathMustExist, ofHideReadOnly, ofOverwritePrompt];
     FilterIndex := 1;
 
-    // Arquivo ProSoft
+    //==========================================================================
+    // Arquivo ProSoft =========================================================
+    //==========================================================================
     If sgSender='SubMenuFinanExpImpArquivosProSoft' Then
     Begin
       DefaultExt := 'TXT;txt';
       Filter := 'Arquivo TXT (*.txt)|*.TXT';
       Title := 'Busca Arquivo Texto para ProSoft';
     End;
+    // Arquivo ProSoft =========================================================
+    //==========================================================================
 
-    // Arquivo Trinks
-    If sgSender='SubMenuFinanExpImpImportaTrinks' Then
+    //==========================================================================
+    // Arquivo Trinks e Tabela NCM/Percentuais =================================
+    //==========================================================================
+    If (sgSender='SubMenuFinanExpImpImportaTrinks') Or (sgSender='SubMenuICMSDebCredImpNCM') Then
     Begin
       DefaultExt := 'CSV;csv';
       Filter := 'Arquivo CSV (*.csv)|*.CSV';
       Title := 'Busca Arquivo CSV Trinks';
-    End;
+    End; // If (sgSender='SubMenuFinanExpImpImportaTrinks') Or (sgSender='SubMenuICMSDebCredImpNCM') Then
+    // Arquivo Trinks e Tabela NCM/Percentuais =================================
+    //==========================================================================
 
     If Execute then
      Begin
        EdtProSoftImpPastaArquivo.Text:=OpenDialog.FileName;
        EditorProSoftImpArquivo.Lines.LoadFromFile(EdtProSoftImpPastaArquivo.Text);
 
-       // Arquivo ProSoft
+       //=======================================================================
+       // Arquivo ProSoft ======================================================
+       //=======================================================================
        If sgSender='SubMenuFinanExpImpArquivosProSoft' Then
        Begin
          // Monta Nome do Arquivo -------------------------------------
@@ -7351,6 +7513,23 @@ begin
          End; // Try
          FreeAndNil(tsArquivo);
        End; // If sgSender='SubMenuFinanExpImpArquivosProSoft' Then
+       // Arquivo ProSoft ======================================================
+       //=======================================================================
+
+       //=======================================================================
+       // Tabela NCM/Percentuais de ICMS =======================================
+       //=======================================================================
+       If sgSender='SubMenuICMSDebCredImpNCM' Then
+       Begin
+         Application.MessageBox('O Arquivo CSV Deve Conter os Campos a Abaixo e na Mesma Ordem !!'+cr+
+                                'Separados por Ponto e Virgula <;> !'+cr+cr+
+                                '1º Campo: Código do NCM'+cr+
+                                '2º Campo: Percentual do ICMS'+cr+
+                                '3º Campo: Percentual do FCP (Fundo de Combate à Pobreza)'+cr+
+                                '3º Campo: Percentual do ICMS EFETIVO', 'ATENÇÃO !!', 16);
+       End; // If sgSender='SubMenuICMSDebCredImpNCM' Then
+       // Tabela NCM/Percentuais de ICMS =======================================
+       //=======================================================================
 
        If msg('O Arquivo Selecionado Esta CORRETO ??','C')=2 Then
        Begin
@@ -7443,6 +7622,7 @@ var
 
   bGrava: Boolean;     // Se Data de Demissão < 01/05/2015 Não gravar
 begin
+  EditorProSoftImpArquivo.SetFocus;
 
   If (EditorProSoftImpArquivo.Lines.Count<1) Or (Trim(EdtProSoftImpPastaArquivo.Text)='') Then
   Begin
@@ -7824,6 +8004,21 @@ begin
   End; // If sgSender='SubMenuFinanExpImpArquivosProSoft' Then
   // Importa Arquivo ProSoft ===================================================
   //============================================================================
+
+  //============================================================================
+  // Importa Tabela NCM/Percentuais de ICMS ====================================
+  //============================================================================
+  If sgSender='SubMenuICMSDebCredImpNCM' Then
+  Begin
+    If Not ICMSDebitoCreditoImportaNCM Then
+    Begin
+      msg('Erro ao Importar NCM'+cr+'ICMS Debito Credito'+cr+'Entrar em Contato com o ODIR !!', 'A');
+      Exit;
+    End;
+  End; // If sgSender='SubMenuICMSDebCredImpNCM' Then
+  // Importa Tabela NCM/Percentuais de ICMS ====================================
+  //============================================================================
+
 
 end;
 
@@ -10142,7 +10337,6 @@ begin
 
   MySql:=' SELECT UPPER(l.nome_emp) nome_emp, l.empresa, l.cod_loja'+
          ' FROM LINXLOJAS l'+
-         ' WHERE l.empresa<>5'+ // Mostardeiro Fechou
          ' ORDER BY 1';
   DMBelShop.CDS_Pesquisa.Close;
   DMBelShop.CDS_Pesquisa.Filtered:=False;
@@ -10544,9 +10738,10 @@ begin
             sEndereco:=sEndereco+' - '+Trim(Copy(sLinha, iPosIni, Length(Trim(sLinha))-iPosIni+1));
           End; // If (AnsiContainsStr(sLinha, 'Complemento: ')) Then
 
-          // Municipio
+          // Municipio e UF
           If (AnsiContainsStr(sLinha, 'Municipio: ')) Then
           Begin
+            // Municipio
             sCampo:='Municipio: ';
             iPosIni:=pos(sCampo,sLinha);
             iPosIni:=iPosIni+length(sCampo);
@@ -10576,7 +10771,7 @@ begin
         iPosIni:=pos(sCampo,sLinha);
         iPosIni:=iPosIni+length(sCampo);
 
-        // Data de Nascimento
+        // E-Mail
         sEmail:=Trim(Copy(sLinha,iPosIni, Length(Trim(sLinha))-iPosIni+1));
       End; // If (AnsiContainsStr(sLinha, 'E-Mail: ')) Then
 
@@ -10620,7 +10815,7 @@ begin
       //========================================================================
       If (AnsiContainsStr(sLinha, 'RG: ')) Then
       Begin
-        // CPF
+        // RG
         sCampo:='RG: ';
         iPosIni:=pos(sCampo,sLinha);
         iPosIni:=iPosIni+length(sCampo);
@@ -10664,7 +10859,7 @@ begin
       //========================================================================
       If (AnsiContainsStr(sLinha, 'Carteira Habilitacao: ')) Then
       Begin
-        // Certificado Reservista
+        // Carteira Habilitacao
         sCampo:='Carteira Habilitacao: ';
         iPosIni:=pos(sCampo,sLinha);
         iPosIni:=iPosIni+length(sCampo);
@@ -10727,11 +10922,11 @@ begin
       End; // If (AnsiContainsStr(sLinha, 'Funcao: ')) Then
 
       //========================================================================
-      // Mot.Desligamento
+      // Motivo de Desligamento
       //========================================================================
       If (AnsiContainsStr(sLinha, 'Mot.Desligamento: ')) Then
       Begin
-        // Cargo
+        // Motivo de Desligamento
         sCampo:='Mot.Desligamento: ';
         iPosIni:=pos(sCampo,sLinha);
         iPosIni:=iPosIni+length(sCampo);
@@ -10747,7 +10942,7 @@ begin
       //========================================================================
       If (AnsiContainsStr(sLinha, 'Sal. Base: ')) Then
       Begin
-        // Cargo
+        // Salário
         sCampo:='Sal. Base: ';
         iPosIni:=pos(sCampo,sLinha);
         iPosIni:=iPosIni+length(sCampo);
@@ -10763,7 +10958,7 @@ begin
       //========================================================================
       If (AnsiContainsStr(sLinha, 'Horario Informado: ')) Then
       Begin
-        // Cargo
+        // Turno
         sCampo:='Horario Informado: ';
         iPosIni:=pos(sCampo,sLinha);
         iPosIni:=iPosIni+length(sCampo);
@@ -10776,6 +10971,15 @@ begin
         If Trim(sTurno)='' Then
          sTurno:='SEM';
       End; // If (AnsiContainsStr(sLinha, 'Sal. Base: ')) Then
+
+      //========================================================================
+      // Turno: Jornada - Se NÃO EXISTIR Horario Informado
+      //========================================================================
+      If (AnsiContainsStr(sLinha, 'Jornada: ')) And (Trim(sTurno)='')Then
+      Begin
+        // Turno
+         sTurno:='SEM';
+      End; // If (AnsiContainsStr(sLinha, 'Jornada: ')) And (Trim(stur)Then
     End; // For i:=0 to tsArquivo.Count - 1 do
 
     // Grava o Ultimo ==========================================================
@@ -11272,7 +11476,7 @@ Var
 begin
   Dbg_ConcDepDocFinan.SetFocus;
 
-  If msg('Deseja Realmente Acertar o Recebimento'+cr+cr+'do Documento Financeiro Nº: '+
+  If msg('Deseja Realmente Aceitar o Recebimento'+cr+cr+'do Documento Financeiro Nº: '+
          DMConciliacao.CDS_CMDepAnaliseDocRelNUM_DOCTO.AsString,'C')=2 Then
    Exit;
 

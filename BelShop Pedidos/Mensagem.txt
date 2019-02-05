@@ -1,0 +1,3 @@
+Apartir de agora utilizar o Icone Chamado:  <BelShop Pedidos>
+
+O Icone anterior pode ser excluido: <Solicitação de Transferência>

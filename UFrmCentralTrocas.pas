@@ -187,13 +187,15 @@ type
     JvXPButton2: TJvXPButton;
     Ts_ControleProducao: TTabSheet;
     Panel5: TPanel;
-    Bt_ControleProducaoPeriodo: TJvXPButton;
-    Bt_ControleProducaoSalvaConferentes: TJvXPButton;
-    Bt_ControleProducaoFechar: TJvXPButton;
-    Bt_ControleProducaoSalvaSepardores: TJvXPButton;
-    Dbg_ContProdConferencia: TDBGrid;
+    Bt_ContProdPeriodo: TJvXPButton;
+    Bt_ContProdSalvaEstatisticas: TJvXPButton;
+    Bt_ContProdFechar: TJvXPButton;
+    Bt_ContProdSalvaSeparacao: TJvXPButton;
+    Dbg_ContProdEstatisticas: TDBGrid;
     Dbg_ContProdSeparacao: TDBGrid;
     Splitter2: TSplitter;
+    Dbg_ContProdConferencias: TDBGrid;
+    Bt_ContProdSalvaConferencia: TJvXPButton;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
@@ -380,17 +382,19 @@ type
     procedure Bt_ReposLojasResultadosClick(Sender: TObject);
     procedure Bt_ReposLojasDivAlteradasClick(Sender: TObject);
     procedure JvXPButton2Click(Sender: TObject);
-    procedure Bt_ControleProducaoPeriodoClick(Sender: TObject);
+    procedure Bt_ContProdPeriodoClick(Sender: TObject);
     procedure Dbg_ContProdSeparacaoEnter(Sender: TObject);
-    procedure Dbg_ContProdConferenciaEnter(Sender: TObject);
-    procedure Dbg_ContProdConferenciaDrawColumnCell(
+    procedure Dbg_ContProdEstatisticasEnter(Sender: TObject);
+    procedure Dbg_ContProdEstatisticasDrawColumnCell(
       Sender: TObject; const Rect: TRect; DataCol: Integer;
       Column: TColumn; State: TGridDrawState);
     procedure Dbg_ContProdSeparacaoDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
-    procedure Bt_ControleProducaoSalvaSepardoresClick(Sender: TObject);
-    procedure Bt_ControleProducaoSalvaConferentesClick(Sender: TObject);
+    procedure Bt_ContProdSalvaSeparacaoClick(Sender: TObject);
+    procedure Dbg_ContProdConferenciasDrawColumnCell(Sender: TObject;
+      const Rect: TRect; DataCol: Integer; Column: TColumn;
+      State: TGridDrawState);
 
   private
     { Private declarations }
@@ -808,6 +812,10 @@ begin
   bgProcessar:=False;
 
   // Monta DBGrig ==============================================================
+  // Procedure TFrmSolicitacoes.GridNewCriar:
+  // Dts: TDataSource =  DataSource a Presenta no Grid
+  // sNomeObjeto      = Alterações necessarias no Form e no Grad
+  // bSalvar          = Se Botão <Bt_QualquerCoisaSalvar> Salvar deve ser Apresentado
   FrmSolicitacoes.GridNewCriar(DMBelShop.DS_Busca, 'Corredores', True);
 
   FrmSolicitacoes.Bt_QualquerCoisaSalvar.Width:=168;
@@ -828,7 +836,50 @@ End; // REPOSIÇÕES - Usado no PopUpMenu (Botao: Apresenta Resultados) >>>>>>>>>>
 Function TFrmCentralTrocas.BuscaDivergenciasDocto(sNrPedido: String): Boolean;
 Var
   MySql: String;
+  sCodLjSid, sDtaMov: String;
 Begin
+  Result:=True;
+
+  MySql:=' SELECT DISTINCT dv.dta_movto, dv.num_docto,'+
+         '                 dv.cod_loja, lj.nome_emp loja'+
+         ' FROM ES_ESTOQUES_LOJAS_DIV dv, LINXLOJAS lj'+
+         ' WHERE dv.cod_loja=lj.cod_loja'+
+         ' AND   dv.num_pedido='+QuotedStr(sNrPedido);
+  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+  DMBelShop.CDS_BuscaRapida.Open;
+  sCodLjSid:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_loja').AsString;
+  sDtaMov  :=DMBelShop.CDS_BuscaRapida.FieldByName('Dta_Movto').AsString;
+
+  // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
+  If DMBelShop.CDS_BuscaRapida.RecordCount>1 Then
+  Begin
+    FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+    AbreSolicitacoes(19);
+
+    bgProcessar:=False;
+    // Procedure TFrmSolicitacoes.GridNewCriar:
+    // Dts: TDataSource =  DataSource a Presenta no Grid
+    // sNomeObjeto      = Alterações necessarias no Form e no Grad
+    // bSalvar          = Se Botão <Bt_QualquerCoisaSalvar> Salvar deve ser Apresentado
+    FrmSolicitacoes.GridNewCriar(DMBelShop.DS_BuscaRapida, '', True);
+    FrmSolicitacoes.Caption:='CENTRAL DE DISTRIBUIÇÃO - Divergências Alteradas';
+    FrmSolicitacoes.Ts_QualquerCoisa.Caption:='Selecione a Loja a Apresentar';
+
+    FrmSolicitacoes.Bt_QualquerCoisaSalvar.Caption:='Selecionar';
+    FrmSolicitacoes.AutoSize:=True;
+    FrmSolicitacoes.ShowModal;
+
+    sCodLjSid:=DMBelShop.CDS_BuscaRapida.FieldByName('Cod_loja').AsString;
+    sDtaMov  :=DMBelShop.CDS_BuscaRapida.FieldByName('Dta_Movto').AsString;
+    DMBelShop.CDS_BuscaRapida.Close;
+
+    FreeAndNil(FrmSolicitacoes);
+
+    If Not bgProcessar Then
+     Exit;
+  End; // If DMBelShop.CDS_BuscaRapida.RecordCount>1 Then
+
   OdirPanApres.Caption:='AGUARDE !! Montando Relatório de Alterações de Divergencias...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
@@ -840,8 +891,6 @@ Begin
 
   Screen.Cursor:=crAppStart;
   Refresh;
-
-  Result:=True;
 
   MySql:=' SELECT dv.cod_loja, lj.empresa, lj.nome_emp,'+
          '        dv.num_pedido, dv.dta_movto, dv.num_docto,'+
@@ -859,6 +908,13 @@ Begin
          '      LEFT JOIN PS_USUARIOS us  on us.cod_usuario=dv.usu_altera'+
 
          ' WHERE dv.num_pedido='+QuotedStr(sNrPedido);
+
+         If sNrPedido<>'000000' Then
+         Begin
+           MySql:=
+            MySql+' AND dv.cod_loja='+QuotedStr(sCodLjSid)+
+                  ' AND dv.dta_movto='+QuotedStr(f_Troca('-','.',(f_Troca('/','.',sDtaMov))));
+         End; // If sNrPedido<>'000000' Then
 
          If sNrPedido='000000' Then
          Begin
@@ -1051,8 +1107,7 @@ Begin
   // Busca Codigo do Produto LINX ==============================================
   MySql:=' SELECT p.cod_produto'+
          ' FROM LINXPRODUTOS p'+
-         ' WHERE p.cod_auxiliar='+
-         QuotedStr(DMCentralTrocas.CDS_ReposicaoTransfCOD_PRODUTO.AsString);
+         ' WHERE p.cod_auxiliar='+QuotedStr(DMCentralTrocas.CDS_ReposicaoTransfCOD_PRODUTO.AsString);
   DMBelShop.SQLQuery1.Close;
   DMBelShop.SQLQuery1.SQL.Clear;
   DMBelShop.SQLQuery1.SQL.Add(MySql);
@@ -1517,7 +1572,6 @@ Var
   MySql: String;
   sNumSeq, sNomeArqLinx: String;
 
-
   bGeraOC: Boolean; // Se Já Gerou Header da OC Para CheckOut Loja - OC_LOJAS_NFE
   iNumSeqItem, iCodLjLINX: Integer;
 Begin
@@ -1636,7 +1690,6 @@ Begin
         End; // If Trim(DMBelShop.SQLQuery3.FieldByName('cod_produto').AsString)<>'' Then
         DMBelShop.SQLQuery3.SQL.Clear;
         DMBelShop.SQLQuery3.Close;
-
         // Atualiza Estoque no GERENCIADOR =====================================
         //======================================================================
 
@@ -1667,6 +1720,7 @@ Begin
 
         //======================================================================
         // Coloca Numero do Arquivo Gerado para o LINX - ES_ESTOQUES_LOJAS =====
+        // Acerta Usuario em Quantidade Não Mexidas ============================
         //======================================================================
         MySql:=' UPDATE ES_ESTOQUES_LOJAS lo'+
                ' SET lo.Num_Pedido='+QuotedStr(FormatFloat('000000',StrToInt(sNumSeq)))+
@@ -3079,6 +3133,7 @@ begin
   sgCorredoresFilter:='';
   sgPrioridadeFilter:='';
   igCorredores:=0;
+  
   // DBGRID - (ERRO) Acerta Rolagem do Mouse ===================================
   Application.OnMessage := ApplicationEvents1Message;
 
@@ -3203,6 +3258,7 @@ begin
     DtaEdt_ReposLojas.Date:=StrToDate(DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)));
   End;
 
+  PC_PrincipalChange(Self);
 end;
 
 procedure TFrmCentralTrocas.Bt_NotasEntDevFecharClick(Sender: TObject);
@@ -5741,6 +5797,7 @@ end;
 procedure TFrmCentralTrocas.PC_PrincipalChange(Sender: TObject);
 Var
   MySql: String;
+  i:Integer;
 begin
   CorSelecaoTabSheet(PC_Principal);
 
@@ -5804,6 +5861,15 @@ begin
 
     If Not DMCentralTrocas.CDS_NFeAvariasForneEnd.Active Then
      DMCentralTrocas.CDS_NFeAvariasForneEnd.Open;
+  End;
+
+  If (PC_Principal.ActivePage=Ts_ControleProducao) And (Ts_ControleProducao.CanFocus) Then
+  Begin
+    i:=ParteInteiro(CurrToStr((FrmCentralTrocas.Width)/2));
+    Dbg_ContProdSeparacao.Width   :=i;
+    Dbg_ContProdEstatisticas.Width:=i;
+
+    Dbg_ContProdSeparacao.SetFocus;
   End;
 
 end;
@@ -6098,6 +6164,7 @@ begin
          ' (COUNT(lo.num_seq)) Total,'+
          ' (COUNT(lo.num_seq)-COUNT(decode(lo.num_pedido,''000000'',lo.num_seq))) Reposto,'+
          ' (COUNT(DECODE(lo.num_pedido,''000000'',lo.num_seq))) Nao_Reposto,'+
+
          ' CAST('+
          '      CASE'+
          '         WHEN (COUNT(lo.num_seq))=0 THEN'+
@@ -6106,8 +6173,8 @@ begin
          '            ((CAST((COUNT(lo.num_seq)-COUNT(DECODE(lo.num_pedido,''000000'',lo.num_seq))) AS NUMERIC(12,2))*100)/'+
          '             (COUNT(lo.num_seq)))'+
          '      END'+
-         ' AS NUMERIC(12,2)) Per_Reposicao,'+
-         QuotedStr(Cbx_AnaliseReposMes.Text+'/'+EdtAnaliseReposAno.Text)+' Mes,'+
+         ' AS NUMERIC(12,2)) Per_Reposicao,'+QuotedStr(Cbx_AnaliseReposMes.Text+'/'+EdtAnaliseReposAno.Text)+' Mes,'+
+
          ' 1 Ordem'+
          MySqlSelect+  // Campos de Dias
 
@@ -6118,12 +6185,13 @@ begin
          ' AND   lo.dta_movto '+sgPeriodo+
          ' GROUP BY 1'+
 
-         ' UNION'+
+         ' UNION ALL'+
 
          ' SELECT ''=> TOTAL'' Endereco,'+
          ' (COUNT(lo.num_seq)) Total,'+
          ' (COUNT(lo.num_seq)-COUNT(DECODE(lo.num_pedido,''000000'',lo.num_seq))) Reposto,'+
          ' (COUNT(DECODE(lo.num_pedido,''000000'',lo.num_seq))) Nao_Reposto,'+
+
          ' CAST('+
          '      CASE'+
          '         WHEN (COUNT(lo.num_seq))=0 THEN'+
@@ -6132,8 +6200,8 @@ begin
          '           ((CAST((COUNT(lo.num_seq)-COUNT(DECODE(lo.num_pedido,''000000'',lo.num_seq))) AS NUMERIC(12,2))*100)/'+
          '            (COUNT(lo.num_seq)))'+
          '      END'+
-         ' AS NUMERIC(12,2)) Per_Reposicao,'+
-         QuotedStr(Cbx_AnaliseReposMes.Text+'/'+EdtAnaliseReposAno.Text)+' Mes,'+
+         ' AS NUMERIC(12,2)) Per_Reposicao,'+QuotedStr(Cbx_AnaliseReposMes.Text+'/'+EdtAnaliseReposAno.Text)+' Mes,'+
+
          ' 0 Ordem'+
          MySqlSelect+  // Campos de Dias
 
@@ -7524,6 +7592,7 @@ begin
    Dbg_NFePerdas
    Dbg_ContProdSeparacao
    Dbg_ContProdConferencia
+   Dbg_ContProdEstatisticas
   }
   // Bloquei Ctrl + Delete =====================================================
   If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
@@ -7850,6 +7919,8 @@ begin
          '                                  AND e.cod_aux=p.cod_fornecedor'+
 
          ' WHERE m.codigo_cliente=13'+
+         ' AND   m.excluido=''N'''+
+         ' AND   m.cancelado=''N'''+
          ' AND   m.empresa='+EdtAvariasEndCodLoja.Text+
          ' AND   m.data_documento='+QuotedStr(f_Troca('/','.',f_Troca('-','.',DateToStr(DtEdtAvariasEndEmissao.Date))))+
          ' AND   m.documento='+EdtAvariasEndNota.Text;
@@ -8907,8 +8978,13 @@ begin
 
 end;
 
-procedure TFrmCentralTrocas.Bt_ControleProducaoPeriodoClick(Sender: TObject);
+procedure TFrmCentralTrocas.Bt_ContProdPeriodoClick(Sender: TObject);
+Var
+  MySql: String;
+  sTotLinhas, sTotQuant: String;
 begin
+  Dbg_ContProdSeparacao.SetFocus;
+
   // Solicita Período ==========================================================
   FrmPeriodoApropriacao:=TFrmPeriodoApropriacao.Create(Self);
   FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Text:=DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
@@ -8923,8 +8999,8 @@ begin
     Exit;
   End;
 
-  sgDtaInicio:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date);
-  sgDtaFim   :=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date);
+  sgDtaInicio:=f_Troca('/','.',f_Troca('-','.',DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date)));
+  sgDtaFim   :=f_Troca('/','.',f_Troca('-','.',DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date)));
   FreeAndNil(FrmPeriodoApropriacao);
 
   OdirPanApres.Caption:='AGUARDE !! Localizando Produção...';
@@ -8938,15 +9014,301 @@ begin
   Screen.Cursor:=crAppStart;
   Refresh;
 
-  DMCentralTrocas.CDS_ContProdSeparacao.Close;
-  DMCentralTrocas.SDS_ContProdSeparacao.Params.ParamByName('DtaI').AsString:=f_Troca('/','.',f_Troca('-','.',sgDtaInicio));
-  DMCentralTrocas.SDS_ContProdSeparacao.Params.ParamByName('DtaF').AsString:=f_Troca('/','.',f_Troca('-','.',sgDtaFim));
-  DMCentralTrocas.CDS_ContProdSeparacao.Open;
+  // Produção - Separação/Conferencia: TOTAIS ==================================
+  MySql:=' SELECT'+
+         ' CAST(COUNT(el.num_seq) AS NUMERIC(12,3)) LINHAS_TOTAL,'+
+         ' CAST(SUM('+
+         ' CASE'+
+         '    WHEN el.qtd_A_transf>(el.qtd_transf + el.qtd_transf_oc) THEN'+
+         '      el.qtd_A_transf'+
+         '    ELSE'+
+         '     (el.qtd_transf + el.qtd_transf_oc)'+
+         ' END) AS NUMERIC(12,3)) QTD_TOTAL'+
 
+         ' FROM LG_REL_SEPARACAO sl'+
+         '    LEFT JOIN ES_ESTOQUES_LOJAS el  ON el.rel_separacao=sl.num_relatorio'+
+
+         ' WHERE CAST(sl.dta_fim AS DATE) BETWEEN '+QuotedStr(sgDtaInicio)+' AND '+QuotedStr(sgDtaFim)+
+         ' AND   sl.dta_fim IS NOT NULL';
+  DMBelShop.CDS_BuscaRapida.Close;
+  DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+  DMBelShop.CDS_BuscaRapida.Open;
+  sTotLinhas:=f_Troca(',','.',DMBelShop.CDS_BuscaRapida.FieldByName('Linhas_Total').AsString)+'.000';
+  sTotQuant :=f_Troca(',','.',DMBelShop.CDS_BuscaRapida.FieldByName('Qtd_Total').AsString)+'.000';;
+  DMBelShop.CDS_BuscaRapida.Close;
+
+  If (Trim(sTotQuant)='') Or (Trim(sTotQuant)='0') Then
+  Begin
+    msg('Sem Documento de Produção'+cr+cr+'no Período Solicitado !!', 'A');
+    exit;
+  End;
+
+  //============================================================================
+  // Produção / Separação ======================================================
+  //============================================================================
+  // Produção / Separação - Cabeçalho
+  MySql:=' SELECT'+
+         ' ''LOGISTICA PRODUÇÃO / SEPARAÇÃO'' NOME_SEPARDOR,'+
+         ' NULL LINHAS_SEPARADAS,'+
+         ' NULL LINHAS_NSEPARADAS,'+
+         ' NULL LINHAS_TOTAL,'+
+         ' NULL LINHAS_PERCENTUAL,'+
+         ' NULL QTD_SEPARADAS,'+
+         ' NULL QTD_NSEPARADAS,'+
+         ' NULL QTD_TOTAL,'+ // 8
+         ' NULL QTD_PERCENTUAL,'+ // 9
+         ' 0 ORDEM'+ // 10
+         ' FROM RDB$DATABASE'+
+
+         ' UNION ALL'+
+
+         // Produção / Separação - Periodo
+         ' SELECT'+
+         ' ''PERÍODO DE ''||REPLACE('+QuotedStr(sgDtaInicio)+' ||'' A ''||'+QuotedStr(sgDtaFim)+', ''.'', ''/'') NOME_SEPARDOR,'+
+         ' NULL LINHAS_SEPARADAS,'+ // 2
+         ' NULL LINHAS_NSEPARADAS,'+ // 3
+         ' NULL LINHAS_TOTAL,'+ // 4
+         ' NULL LINHAS_PERCENTUAL,'+ // 5
+         ' NULL QTD_SEPARADAS,'+ // 6
+         ' NULL QTD_NSEPARADAS,'+ // 7
+         ' NULL QTD_TOTAL,'+ // 8
+         ' NULL QTD_PERCENTUAL,'+ // 9
+         ' 1 ORDEM'+ // 10
+         ' FROM RDB$DATABASE'+
+
+         ' UNION ALL'+
+
+         // Produção / Separação - Separadores
+         ' SELECT'+
+         ' CASE'+
+         '    WHEN COALESCE(us.des_aux,'''')='''' THEN'+
+         '      ''@ NÃO INFORMADO @'''+
+         '    ELSE'+
+         '      us.des_aux'+
+         ' END NOME_SEPARDOR,'+ // 1
+
+         ' SUM(DECODE(el.qtd_a_transf,0.00,0,1)) LINHAS_SEPARADAS,'+ // 2
+         ' SUM(DECODE(el.qtd_a_transf,0.00,1,0)) LINHAS_NSEPARADAS,'+ // 3
+         ' COUNT(el.num_seq) LINHAS_TOTAL,'+ // 4
+         ' CAST((SUM(DECODE(el.qtd_a_transf,0.00,0,1)) * 100) / '+sTotLinhas+' AS NUMERIC(12,3)) LINHAS_PERCENTUAL,'+ // 5  -- LINHAS_SEPARADAS / LINHAS_TOTAL
+         ' CAST(SUM(el.qtd_A_transf) AS INTEGER) QTD_SEPARADAS,'+ // 6
+         ' CAST(SUM('+
+
+         ' CASE'+
+         '    WHEN (el.qtd_A_transf<>0.00) AND (el.qtd_A_transf<(el.qtd_transf + el.qtd_transf_oc)) THEN'+
+         '      (el.qtd_transf + el.qtd_transf_oc) - el.qtd_A_transf'+
+         '    WHEN (el.qtd_A_transf<>0.00) AND (el.qtd_A_transf>=(el.qtd_transf + el.qtd_transf_oc)) THEN'+
+         '      0'+
+         '    ELSE'+
+         '     (el.qtd_transf + el.qtd_transf_oc)'+
+         ' END'+
+         ' ) AS INTEGER) QTD_NSEPARADAS,'+ // 7
+
+         ' CAST(SUM('+
+         ' CASE'+
+         '    WHEN el.qtd_A_transf>(el.qtd_transf + el.qtd_transf_oc) THEN'+
+         '      el.qtd_A_transf'+
+         '    ELSE'+
+         '     (el.qtd_transf + el.qtd_transf_oc)'+
+         ' END'+
+         ' ) AS INTEGER) QTD_TOTAL,'+ // 8
+
+         ' CAST((SUM(el.qtd_A_transf) * 100) / '+sTotQuant+' AS NUMERIC(12,3)) QTD_PERCENTUAL,'+ // 9 -- QTD_SEPARADAS / QTD_TOTAL
+         ' 3 ORDEM'+ // 10
+
+         ' FROM LG_REL_SEPARACAO sl'+
+         '    LEFT JOIN TAB_AUXILIAR us       ON us.tip_aux=29'+ // 29 => LOGISTICA - CADASTRO DE SEPARADORES DE MERCADORIAS
+         '                                   AND us.cod_aux=sl.cod_separador'+
+         '    LEFT JOIN ES_ESTOQUES_LOJAS el  ON el.rel_separacao=sl.num_relatorio'+
+
+         ' WHERE CAST(sl.dta_fim AS DATE) BETWEEN '+QuotedStr(sgDtaInicio)+' AND '+QuotedStr(sgDtaFim)+
+         ' AND   sl.dta_fim IS NOT NULL'+
+
+         ' GROUP BY 1'+
+
+         ' UNION ALL'+
+
+         // Produção / Separação - Totais
+         ' SELECT'+
+         ' ''TOTAL DO PERÍODO'' NOME_SEPARDOR,'+
+         ' SUM(DECODE(el.qtd_a_transf,0.00,0,1)) LINHAS_SEPARADAS,'+ // 2
+         ' SUM(DECODE(el.qtd_a_transf,0.00,1,0)) LINHAS_NSEPARADAS,'+ // 3
+         ' COUNT(el.num_seq) LINHAS_TOTAL,'+ // 4
+         ' CAST((SUM(DECODE(el.qtd_a_transf,0.00,0,1)) * 100) / '+sTotLinhas+' AS NUMERIC(12,3)) LINHAS_PERCENTUAL,'+ // 5
+         ' CAST(SUM(el.qtd_A_transf) AS INTEGER) QTD_SEPARADAS,'+ // 6
+
+         ' CAST(SUM('+
+         ' CASE'+
+         '    WHEN (el.qtd_A_transf<>0.00) AND (el.qtd_A_transf<(el.qtd_transf + el.qtd_transf_oc)) THEN'+
+         '      (el.qtd_transf + el.qtd_transf_oc) - el.qtd_A_transf'+
+         '    WHEN (el.qtd_A_transf<>0.00) AND (el.qtd_A_transf>=(el.qtd_transf + el.qtd_transf_oc)) THEN'+
+         '      0'+
+         '    ELSE'+
+         '     (el.qtd_transf + el.qtd_transf_oc)'+
+         ' END) AS INTEGER) QTD_NSEPARADAS,'+ // 7
+
+         ' CAST(SUM('+
+         ' CASE'+
+         '    WHEN el.qtd_A_transf>(el.qtd_transf + el.qtd_transf_oc) THEN'+
+         '      el.qtd_A_transf'+
+         '    ELSE'+
+         '     (el.qtd_transf + el.qtd_transf_oc)'+
+         ' END'+
+         ' ) AS INTEGER) QTD_TOTAL,'+ // 8
+
+         'CAST((SUM(el.qtd_A_transf) * 100) / '+sTotQuant+' AS NUMERIC(12,3))  QTD_PERCENTUAL,'+ // 9 ODIR
+         ' 4 ORDEM'+ // 10
+
+         ' FROM LG_REL_SEPARACAO sl'+
+         '    LEFT JOIN TAB_AUXILIAR us       ON us.tip_aux=29'+ // 29 => LOGISTICA - CADASTRO DE SEPARADORES DE MERCADORIAS
+         '                                   AND us.cod_aux=sl.cod_separador'+
+         '    LEFT JOIN ES_ESTOQUES_LOJAS el  ON el.rel_separacao=sl.num_relatorio'+
+
+         ' WHERE CAST(sl.dta_fim AS DATE) BETWEEN '+QuotedStr(sgDtaInicio)+' AND '+QuotedStr(sgDtaFim)+
+         ' AND   sl.dta_fim IS NOT NULL'+
+
+         ' ORDER BY 10, 9';
+  DMCentralTrocas.CDS_ContProdSeparacao.Close;
+  DMCentralTrocas.SDS_ContProdSeparacao.CommandText:=MySql;
+  DMCentralTrocas.CDS_ContProdSeparacao.Open;
+  // Produção / Separação ======================================================
+  //============================================================================
+
+  //============================================================================
+  // Produção / Conferencia - Cabeçalho ========================================
+  //============================================================================
+  MySql:=' SELECT'+
+         ' ''LOGISTICA PRODUÇÃO / CONFERÊNCIA'' NOME_CONFERENTE,'+
+         ' NULL QTD_ENVIADAS,'+ // 2
+         ' NULL QTD_NENVIADAS,'+ // 3
+         ' NULL QTD_TOTAL,'+ // 4
+         ' NULL QTD_PERCENTUAL,'+ // 5
+         ' 0 ORDEM'+ // 6
+         ' FROM RDB$DATABASE'+
+
+         ' UNION ALL'+
+
+         // Produção / Conferencia - Periodo
+         ' SELECT'+
+         ' ''PERÍODO DE ''||REPLACE('+QuotedStr(sgDtaInicio)+' ||'' A ''||'+QuotedStr(sgDtaFim)+', ''.'', ''/'') NOME_CONFERENTE,'+
+         ' NULL QTD_ENVIADAS,'+ // 2
+         ' NULL QTD_NENVIADAS,'+ // 3
+         ' NULL QTD_TOTAL,'+ // 4
+         ' NULL QTD_PERCENTUAL,'+ // 5
+         ' 1 ORDEM'+ // 6
+         ' FROM RDB$DATABASE'+
+
+         ' UNION ALL'+
+
+         // Produção / Conferencia - Conferente
+         ' SELECT'+
+         ' CASE'+
+         '    WHEN COALESCE(us.des_usuario,'''')='''' THEN'+
+         '      ''@ NÃO INFORMADO @'''+
+         '    WHEN UPPER(TRIM(us.des_usuario))=''ODIR'' THEN'+
+         '      ''NÃO CONFERIDO'''+
+         '    ELSE'+
+         '      us.des_usuario'+
+         ' END NOME_CONFERENTE,'+ // 1
+
+         ' CAST(SUM(el.qtd_A_transf) AS INTEGER) QTD_ENVIADAS,'+ // 2
+
+         ' CAST(SUM('+
+         ' CASE'+
+         '    WHEN (el.qtd_A_transf<>0.00) AND (el.qtd_A_transf<(el.qtd_transf + el.qtd_transf_oc)) THEN'+
+         '      (el.qtd_transf + el.qtd_transf_oc) - el.qtd_A_transf'+
+         '    WHEN (el.qtd_A_transf<>0.00) AND (el.qtd_A_transf>=(el.qtd_transf + el.qtd_transf_oc)) THEN'+
+         '      0'+
+         '    ELSE'+
+         '     (el.qtd_transf + el.qtd_transf_oc)'+
+         ' END'+
+         ' ) AS INTEGER) QTD_NENVIADAS,'+ // 3
+
+         ' CAST(SUM('+
+         ' CASE'+
+         '    WHEN el.qtd_A_transf>(el.qtd_transf + el.qtd_transf_oc) THEN'+
+         '      el.qtd_A_transf'+
+         '    ELSE'+
+         '     (el.qtd_transf + el.qtd_transf_oc)'+
+         ' END'+
+         ' )  AS INTEGER) QTD_TOTAL,'+ // 4
+
+         ' CAST(((SUM('+
+         ' CASE'+
+         '    WHEN el.qtd_A_transf>(el.qtd_transf + el.qtd_transf_oc) THEN'+
+         '      el.qtd_A_transf'+
+         '    ELSE'+
+         '     (el.qtd_transf + el.qtd_transf_oc)'+
+         ' END'+
+         ' ) * 100) / '+sTotQuant+') AS NUMERIC(12,3)) QTD_PERCENTUAL,'+ // 5
+
+         ' 3 ORDEM'+ // 6
+
+         ' FROM LG_REL_SEPARACAO sl'+
+         '     LEFT JOIN ES_ESTOQUES_LOJAS el ON el.rel_separacao=sl.num_relatorio'+
+         '     LEFT JOIN PS_USUARIOS us       ON us.cod_usuario=el.usu_altera'+
+
+         ' WHERE CAST(sl.dta_fim AS DATE) BETWEEN '+QuotedStr(sgDtaInicio)+' AND '+QuotedStr(sgDtaFim)+
+         ' AND   sl.dta_fim IS NOT NULL'+
+
+         ' GROUP BY 1'+
+
+         ' UNION ALL'+
+
+         // Produção / Conferencia - Totais
+         ' SELECT'+
+         ' ''TOTAL DO PERÍODO'' NOME_CONFERENTE,'+ // 1
+         ' CAST(SUM(el.qtd_A_transf) AS INTEGER) QTD_ENVIADAS,'+ // 2
+
+         ' CAST(SUM('+
+         ' CASE'+
+         '    WHEN (el.qtd_A_transf<>0.00) AND (el.qtd_A_transf<(el.qtd_transf + el.qtd_transf_oc)) THEN'+
+         '      (el.qtd_transf + el.qtd_transf_oc) - el.qtd_A_transf'+
+         '    WHEN (el.qtd_A_transf<>0.00) AND (el.qtd_A_transf>=(el.qtd_transf + el.qtd_transf_oc)) THEN'+
+         '      0'+
+         '    ELSE'+
+         '     (el.qtd_transf + el.qtd_transf_oc)'+
+         ' END'+
+         ' ) AS INTEGER) QTD_NENVIADAS,'+ // 3
+
+         ' CAST(SUM('+
+         ' CASE'+
+         '    WHEN el.qtd_A_transf>(el.qtd_transf + el.qtd_transf_oc) THEN'+
+         '      el.qtd_A_transf'+
+         '    ELSE'+
+         '     (el.qtd_transf + el.qtd_transf_oc)'+
+         ' END'+
+         ' ) AS INTEGER) QTD_TOTAL,'+ // 4
+
+         ' CAST(((SUM('+
+         ' CASE'+
+         '    WHEN el.qtd_A_transf>(el.qtd_transf + el.qtd_transf_oc) THEN'+
+         '      el.qtd_A_transf'+
+         '    ELSE'+
+         '     (el.qtd_transf + el.qtd_transf_oc)'+
+         ' END'+
+         ' ) * 100) / '+sTotQuant+') AS NUMERIC(12,3)) QTD_PERCENTUAL,'+ // 5
+         ' 4 ORDEM'+ // 6
+
+         ' FROM LG_REL_SEPARACAO sl'+
+         '     LEFT JOIN ES_ESTOQUES_LOJAS el ON el.rel_separacao=sl.num_relatorio'+
+         '     LEFT JOIN PS_USUARIOS us       ON us.cod_usuario=el.usu_altera'+
+
+         ' WHERE CAST(sl.dta_fim AS DATE) BETWEEN '+QuotedStr(sgDtaInicio)+' AND '+QuotedStr(sgDtaFim)+
+         ' AND   sl.dta_fim IS NOT NULL'+
+
+         ' ORDER BY 6, 5';
   DMCentralTrocas.CDS_ContProdConferencia.Close;
-  DMCentralTrocas.SDS_ContProdConferencia.Params.ParamByName('DtaI').AsString:=f_Troca('/','.',f_Troca('-','.',sgDtaInicio));
-  DMCentralTrocas.SDS_ContProdConferencia.Params.ParamByName('DtaF').AsString:=f_Troca('/','.',f_Troca('-','.',sgDtaFim));
+  DMCentralTrocas.SDS_ContProdConferencia.CommandText:=MySql;
   DMCentralTrocas.CDS_ContProdConferencia.Open;
+
+  // Produção / Conferencia - Cabeçalho ========================================
+  //============================================================================
+
+  DMCentralTrocas.CDS_ContProdEstatisticas.Close;
+  DMCentralTrocas.SDS_ContProdEstatisticas.Params.ParamByName('DtaI').AsString:=f_Troca('/','.',f_Troca('-','.',sgDtaInicio));
+  DMCentralTrocas.SDS_ContProdEstatisticas.Params.ParamByName('DtaF').AsString:=f_Troca('/','.',f_Troca('-','.',sgDtaFim));
+  DMCentralTrocas.CDS_ContProdEstatisticas.Open;
 
   Screen.Cursor:=crDefault;
   OdirPanApres.Visible:=False;
@@ -8961,50 +9323,50 @@ begin
 
 end;
 
-procedure TFrmCentralTrocas.Dbg_ContProdConferenciaEnter(Sender: TObject);
+procedure TFrmCentralTrocas.Dbg_ContProdEstatisticasEnter(Sender: TObject);
 begin
-  ApplicationEvents1.OnActivate:=Dbg_ContProdConferenciaEnter;
+  ApplicationEvents1.OnActivate:=Dbg_ContProdEstatisticasEnter;
   Application.OnMessage := ApplicationEvents1Message;
   ApplicationEvents1.Activate;
 
 end;
 
-procedure TFrmCentralTrocas.Dbg_ContProdConferenciaDrawColumnCell(
+procedure TFrmCentralTrocas.Dbg_ContProdEstatisticasDrawColumnCell(
   Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
   State: TGridDrawState);
 begin
-  If (Not DMCentralTrocas.CDS_ContProdConferencia.Active) or (DMCentralTrocas.CDS_ContProdConferencia.IsEmpty) Then
+  If (Not DMCentralTrocas.CDS_ContProdEstatisticas.Active) or (DMCentralTrocas.CDS_ContProdEstatisticas.IsEmpty) Then
    Exit;
 
   // COR Cabeçalho e Totais ====================================================
   if not (gdSelected in State) Then // Altera Cor da Linhas
-  Begin
-    If DMCentralTrocas.CDS_ContProdConferenciaORDEM.AsInteger in [0, 1, 4] Then
+  Begin                                       
+    If DMCentralTrocas.CDS_ContProdEstatisticasORDEM.AsInteger in [0, 1, 4] Then
     Begin
-      Dbg_ContProdConferencia.Canvas.Font.Color:=clWindowText;
-              
-      Dbg_ContProdConferencia.Canvas.Brush.Color:=$00FFFFD5;
-      Dbg_ContProdConferencia.Canvas.Font.Style:=[fsBold];
-    End; // If DMCentralTrocas.CDS_ContProdConferenciaORDEM.AsInteger in [0, 1, 4] Then
+      Dbg_ContProdEstatisticas.Canvas.Font.Color:=clWindowText;
+
+      Dbg_ContProdEstatisticas.Canvas.Brush.Color:=$00FFFFD5;
+      Dbg_ContProdEstatisticas.Canvas.Font.Style:=[fsBold];
+    End; // If DMCentralTrocas.CDS_ContProdEstatisticasORDEM.AsInteger in [0, 1, 4] Then
   End; // if not (gdSelected in State) Then
 
-  Dbg_ContProdConferencia.Canvas.FillRect(Rect);
-  Dbg_ContProdConferencia.DefaultDrawDataCell(Rect,Column.Field,state);
+  Dbg_ContProdEstatisticas.Canvas.FillRect(Rect);
+  Dbg_ContProdEstatisticas.DefaultDrawDataCell(Rect,Column.Field,state);
 
   // Alinhamentos ==============================================================
-  DMCentralTrocas.CDS_ContProdConferenciaLINHAS_ALTERADAS.Alignment:=taRightJustify;
-  DMCentralTrocas.CDS_ContProdConferenciaLINHAS_ALTERADAS_DIF_ZERO.Alignment:=taRightJustify;
-  DMCentralTrocas.CDS_ContProdConferenciaLINHAS_ALTERADAS_ZERO.Alignment:=taRightJustify;
-  DMCentralTrocas.CDS_ContProdConferenciaLINHAS_NAO_ALTERADAS.Alignment:=taRightJustify;
-  DMCentralTrocas.CDS_ContProdConferenciaLINHAS_NFE.Alignment:=taRightJustify;
-  DMCentralTrocas.CDS_ContProdConferenciaLINHAS_SEM_NFE.Alignment:=taRightJustify;
-  DMCentralTrocas.CDS_ContProdConferenciaLINHAS_TOTAL.Alignment:=taRightJustify;
-  DMCentralTrocas.CDS_ContProdConferenciaQTD_ALTERADAS.Alignment:=taRightJustify;
-  DMCentralTrocas.CDS_ContProdConferenciaQTD_ALTERADAS_ORIGINAL.Alignment:=taRightJustify;
-  DMCentralTrocas.CDS_ContProdConferenciaQTD_NAO_ALTERADAS.Alignment:=taRightJustify;
-  DMCentralTrocas.CDS_ContProdConferenciaQTD_NFE.Alignment:=taRightJustify;
-  DMCentralTrocas.CDS_ContProdConferenciaQTD_SEM_NFE.Alignment:=taRightJustify;
-  DMCentralTrocas.CDS_ContProdConferenciaQTD_TOTAL_ORIGINAL.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdEstatisticasLINHAS_ALTERADAS.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdEstatisticasLINHAS_ALTERADAS_DIF_ZERO.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdEstatisticasLINHAS_ALTERADAS_ZERO.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdEstatisticasLINHAS_NAO_ALTERADAS.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdEstatisticasLINHAS_NFE.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdEstatisticasLINHAS_SEM_NFE.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdEstatisticasLINHAS_TOTAL.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdEstatisticasQTD_ALTERADAS.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdEstatisticasQTD_ALTERADAS_ORIGINAL.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdEstatisticasQTD_NAO_ALTERADAS.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdEstatisticasQTD_NFE.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdEstatisticasQTD_SEM_NFE.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdEstatisticasQTD_TOTAL_ORIGINAL.Alignment:=taRightJustify;
 end;
 
 procedure TFrmCentralTrocas.Dbg_ContProdSeparacaoDrawColumnCell(
@@ -9040,27 +9402,79 @@ begin
   DMCentralTrocas.CDS_ContProdSeparacaoQTD_TOTAL.Alignment:=taRightJustify;
 end;
 
-procedure TFrmCentralTrocas.Bt_ControleProducaoSalvaSepardoresClick(Sender: TObject);
+procedure TFrmCentralTrocas.Bt_ContProdSalvaSeparacaoClick(Sender: TObject);
 begin
-  Dbg_ContProdSeparacao.SetFocus;
+  {
+  USADO EM :
+  Bt_ContProdSalvaSeparacao
+  Bt_ContProdSalvaConferencia
+  Bt_ContProdSalvaEstatisticas
+  }
 
-  If DMCentralTrocas.CDS_ContProdSeparacao.IsEmpty Then
-   Exit;
+  If (Sender is TJvXPButton) Then
+  Begin
+    If (Sender as TJvXPButton).Name='Bt_ContProdSalvaSeparacao' Then
+    Begin
+      Dbg_ContProdSeparacao.SetFocus;
 
-  DBGridClipboard(Dbg_ContProdSeparacao);
+      If DMCentralTrocas.CDS_ContProdSeparacao.IsEmpty Then
+       Exit;
+
+      DBGridClipboard(Dbg_ContProdSeparacao);
+    End; // If (Sender as TJvXPButton).Name='Bt_ContProdSalvaSeparacao' Then
+
+    If (Sender as TJvXPButton).Name='Bt_ContProdSalvaConferencia' Then
+    Begin
+      Dbg_ContProdConferencias.SetFocus;
+
+      If DMCentralTrocas.CDS_ContProdConferencia.IsEmpty Then
+       Exit;
+
+      DBGridClipboard(Dbg_ContProdConferencias);
+    End; // If (Sender as TJvXPButton).Name='Bt_ContProdSalvaConferencia' Then
+
+    If (Sender as TJvXPButton).Name='Bt_ContProdSalvaEstatisticas' Then
+    Begin
+      Dbg_ContProdEstatisticas.SetFocus;
+
+      If DMCentralTrocas.CDS_ContProdEstatisticas.IsEmpty Then
+       Exit;
+
+      DBGridClipboard(Dbg_ContProdEstatisticas);
+    End; // If (Sender as TJvXPButton).Name='Bt_ContProdSalvaEstatisticas' Then
+
+  End; // If (Sender is TJvXPButton) Then
+
 
 end;
 
-procedure TFrmCentralTrocas.Bt_ControleProducaoSalvaConferentesClick(
-  Sender: TObject);
+procedure TFrmCentralTrocas.Dbg_ContProdConferenciasDrawColumnCell(
+  Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn;
+  State: TGridDrawState);
 begin
-  Dbg_ContProdConferencia.SetFocus;
-
-  If DMCentralTrocas.CDS_ContProdConferencia.IsEmpty Then
+  If (Not DMCentralTrocas.CDS_ContProdConferencia.Active) or (DMCentralTrocas.CDS_ContProdConferencia.IsEmpty) Then
    Exit;
 
-  DBGridClipboard(Dbg_ContProdConferencia);
+  // COR Cabeçalho e Totais ====================================================
+  if not (gdSelected in State) Then // Altera Cor da Linhas
+  Begin
+    If DMCentralTrocas.CDS_ContProdConferenciaORDEM.AsInteger in [0, 1, 4] Then
+    Begin
+      Dbg_ContProdConferencias.Canvas.Font.Color:=clWindowText;
 
+      Dbg_ContProdConferencias.Canvas.Brush.Color:=$00FFFFD5;
+      Dbg_ContProdConferencias.Canvas.Font.Style:=[fsBold];
+    End; // If DMCentralTrocas.CDS_ContProdConferenciaORDEM.AsInteger in [0, 1, 4] Then
+  End; // if not (gdSelected in State) Then
+
+  Dbg_ContProdConferencias.Canvas.FillRect(Rect);
+  Dbg_ContProdConferencias.DefaultDrawDataCell(Rect,Column.Field,state);
+
+  // Alinhamentos ==============================================================
+  DMCentralTrocas.CDS_ContProdConferenciaQTD_ENVIADAS.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdConferenciaQTD_NENVIADAS.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdConferenciaQTD_PERCENTUAL.Alignment:=taRightJustify;
+  DMCentralTrocas.CDS_ContProdConferenciaQTD_TOTAL.Alignment:=taRightJustify;
 end;
 
 end.

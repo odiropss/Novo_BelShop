@@ -129,7 +129,6 @@ type
     SQLQ_VendasSERIE: TStringField;
     SQLQ_VendasVALOR_VENDA_BRUTA_TOTAL: TFMTBCDField;
     SQLQ_VendasVALOR_VENDA_LIQUIDA_TOTAL: TFMTBCDField;
-    SQLQ_VendasVALOR_TROCA_TOTAL: TIntegerField;
     SQLQ_VendasTrocasEMPRESA: TIntegerField;
     SQLQ_VendasTrocasNOTA_ORIGEM: TIntegerField;
     SQLQ_VendasTrocasCOD_VENDEDOR: TIntegerField;
@@ -167,12 +166,13 @@ type
     SQLQ_PagamentosPARCELAS: TIntegerField;
     SQLQ_PagamentosTIPO_PAGAMENTO: TStringField;
     SQLQ_PagamentosVALOR: TFMTBCDField;
-
+    SQLQ_VendasVALOR_TROCA_TOTAL: TFMTBCDField;
 
     // Odir ====================================================================
     Procedure ConectaBanco;
-    procedure DataModuleCreate(Sender: TObject);
     // Odir ====================================================================
+
+    procedure DataModuleCreate(Sender: TObject);
 
   private
     { Private declarations }

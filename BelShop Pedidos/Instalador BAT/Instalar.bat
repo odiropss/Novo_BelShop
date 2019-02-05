@@ -1,0 +1,5 @@
+ren InstallBelShopPedidos.txt InstallBelShopPedidos.exe
+InstallBelShopPedidos.exe
+del InstallBelShopPedidos.exe
+del Instalar.bat
+Exit

@@ -191,7 +191,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Top = 56
     Width = 977
     Height = 479
-    ActivePage = Ts_FluxFornVinculos
+    ActivePage = Ts_FluxFornLanctos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -199,6 +199,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ParentFont = False
+    Style = tsButtons
     TabOrder = 1
     OnChange = PC_PrincipalChange
     object Ts_FluxFornApres: TTabSheet
@@ -208,7 +209,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         Left = 0
         Top = 0
         Width = 969
-        Height = 451
+        Height = 448
         Align = alClient
         Caption = ' Fornecedores '
         Font.Charset = DEFAULT_CHARSET
@@ -222,7 +223,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Left = 566
           Top = 14
           Width = 4
-          Height = 416
+          Height = 413
           Align = alRight
           Color = clRed
           ParentColor = False
@@ -231,7 +232,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Left = 1
           Top = 14
           Width = 565
-          Height = 416
+          Height = 413
           Align = alClient
           Color = 15004403
           Ctl3D = False
@@ -346,7 +347,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         end
         object Stb_FluForn: TdxStatusBar
           Left = 1
-          Top = 430
+          Top = 427
           Width = 967
           Height = 20
           Panels = <
@@ -397,7 +398,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Left = 570
           Top = 14
           Width = 398
-          Height = 416
+          Height = 413
           ActivePage = Ts_FluxFornParamComprv
           Align = alRight
           TabOrder = 1
@@ -596,7 +597,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             OnExit = Ts_FluxFornManutReducaoExit
             DesignSize = (
               390
-              388)
+              385)
             object Gb_FluxFornManutReducao: TGroupBox
               Left = 3
               Top = 16
@@ -864,6 +865,30 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
               DesignSize = (
                 390
                 46)
+              object Label14: TLabel
+                Left = 184
+                Top = -2
+                Width = 124
+                Height = 24
+                Caption = 'N'#227'o Utilizado'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clBlue
+                Font.Height = -19
+                Font.Name = 'MS Sans Serif'
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object EdtFluFornComprovante: TEdit
+                Left = 36
+                Top = 18
+                Width = 350
+                Height = 19
+                TabStop = False
+                Anchors = [akLeft, akTop, akRight]
+                Color = 12171775
+                ReadOnly = True
+                TabOrder = 1
+              end
               object Bt_FluFornComprovante: TJvXPButton
                 Tag = 1
                 Left = 10
@@ -880,17 +905,6 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
                 Font.Style = [fsBold]
                 ParentFont = False
                 OnClick = Bt_FluFornComprovanteClick
-              end
-              object EdtFluFornComprovante: TEdit
-                Left = 36
-                Top = 18
-                Width = 350
-                Height = 19
-                TabStop = False
-                Anchors = [akLeft, akTop, akRight]
-                Color = 12171775
-                ReadOnly = True
-                TabOrder = 1
               end
               object Rb_FluFornDebito: TJvRadioButton
                 Left = 101
@@ -945,7 +959,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
               Left = 0
               Top = 46
               Width = 390
-              Height = 322
+              Height = 319
               Hint = 'Tecle <Dekete> Para Excluir'
               Align = alClient
               Color = 15004403
@@ -989,7 +1003,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             end
             object Stb_FluFornComprv: TdxStatusBar
               Left = 0
-              Top = 368
+              Top = 365
               Width = 390
               Height = 20
               Panels = <
@@ -998,7 +1012,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
                   PanelStyle.Alignment = taCenter
                   BiDiMode = bdLeftToRight
                   ParentBiDiMode = False
-                  Text = '<Delete> Exclui Comprovante'
+                  Text = 'N'#195'O UTILIZADO - <Delete> Exclui Comprovante'
                   Width = 300
                 end>
               PaintStyle = stpsOffice11
@@ -1007,6 +1021,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
               Font.Height = -11
               Font.Name = 'MS Sans Serif'
               Font.Style = [fsBold]
+              Visible = False
             end
           end
         end
@@ -1019,7 +1034,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         Left = 0
         Top = 0
         Width = 969
-        Height = 451
+        Height = 448
         Align = alClient
         Color = 15004403
         Ctl3D = False
@@ -1198,10 +1213,10 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       ImageIndex = 2
       DesignSize = (
         969
-        451)
+        448)
       object Pan_Lanctos: TPanel
         Left = 132
-        Top = 48
+        Top = 47
         Width = 705
         Height = 348
         Anchors = []
@@ -1229,24 +1244,10 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         end
         object Label10: TLabel
           Left = 52
-          Top = 62
+          Top = 59
           Width = 68
           Height = 13
           Caption = 'S'#233'rie Docto'
-        end
-        object Label5: TLabel
-          Left = 31
-          Top = 89
-          Width = 89
-          Height = 13
-          Caption = 'Data da Origem'
-        end
-        object Label4: TLabel
-          Left = 39
-          Top = 115
-          Width = 81
-          Height = 13
-          Caption = 'Data do Caixa'
         end
         object Label3: TLabel
           Left = 90
@@ -1306,7 +1307,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         end
         object EdtSerieDoc: TEdit
           Left = 124
-          Top = 59
+          Top = 56
           Width = 68
           Height = 19
           TabStop = False
@@ -1321,7 +1322,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Height = 21
           AutoSize = False
           DisplayFormat = ',0.00'
-          TabOrder = 4
+          TabOrder = 3
         end
         object EdtCodLojaDoc: TCurrencyEdit
           Left = 124
@@ -1331,7 +1332,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           AutoSize = False
           DecimalPlaces = 0
           DisplayFormat = '0'
-          TabOrder = 5
+          TabOrder = 4
           OnChange = EdtCodLojaDocChange
           OnExit = EdtCodLojaDocExit
         end
@@ -1343,7 +1344,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           AutoSize = False
           DecimalPlaces = 0
           DisplayFormat = '0'
-          TabOrder = 6
+          TabOrder = 5
           OnChange = EdtCodHistDocChange
           OnExit = EdtCodHistDocExit
         end
@@ -1355,7 +1356,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Ctl3D = False
           MaxLength = 200
           ParentCtl3D = False
-          TabOrder = 7
+          TabOrder = 6
         end
         object EdtBuscaLojaDoc: TJvXPButton
           Tag = 92
@@ -1363,7 +1364,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Top = 168
           Width = 23
           Height = 25
-          TabOrder = 8
+          TabOrder = 7
           TabStop = False
           ShowFocusRect = True
           Font.Charset = DEFAULT_CHARSET
@@ -1380,7 +1381,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Top = 197
           Width = 23
           Height = 25
-          TabOrder = 9
+          TabOrder = 8
           TabStop = False
           ShowFocusRect = True
           Font.Charset = DEFAULT_CHARSET
@@ -1400,7 +1401,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Anchors = [akLeft, akTop, akRight]
           Color = 12171775
           ReadOnly = True
-          TabOrder = 10
+          TabOrder = 9
         end
         object EdtHistDoc: TEdit
           Left = 200
@@ -1411,7 +1412,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Anchors = [akLeft, akTop, akRight]
           Color = 12171775
           ReadOnly = True
-          TabOrder = 11
+          TabOrder = 10
         end
         object EdtDebCreDoc: TEdit
           Left = 124
@@ -1422,49 +1423,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Anchors = [akLeft, akTop, akRight]
           Color = 12171775
           ReadOnly = True
-          TabOrder = 12
-        end
-        object EdtDtOrigemDoc: TcxDateEdit
-          Left = 124
-          Top = 85
-          Anchors = [akTop, akRight]
-          EditValue = 0d
-          ParentFont = False
-          Properties.DateButtons = [btnClear]
-          Properties.ReadOnly = False
-          Properties.SaveTime = False
-          Properties.ShowTime = False
-          Style.Font.Charset = DEFAULT_CHARSET
-          Style.Font.Color = clWindowText
-          Style.Font.Height = -11
-          Style.Font.Name = 'MS Sans Serif'
-          Style.Font.Style = [fsBold]
-          Style.IsFontAssigned = True
-          StyleDisabled.ButtonStyle = btsDefault
-          StyleFocused.Color = clSilver
-          TabOrder = 2
-          Width = 95
-        end
-        object EdtDtCaixaDoc: TcxDateEdit
-          Left = 124
-          Top = 112
-          Anchors = [akTop, akRight]
-          EditValue = 0d
-          ParentFont = False
-          Properties.DateButtons = [btnClear]
-          Properties.ReadOnly = False
-          Properties.SaveTime = False
-          Properties.ShowTime = False
-          Style.Font.Charset = DEFAULT_CHARSET
-          Style.Font.Color = clWindowText
-          Style.Font.Height = -11
-          Style.Font.Name = 'MS Sans Serif'
-          Style.Font.Style = [fsBold]
-          Style.IsFontAssigned = True
-          StyleDisabled.ButtonStyle = btsDefault
-          StyleFocused.Color = clSilver
-          TabOrder = 3
-          Width = 95
+          TabOrder = 11
         end
         object Panel4: TPanel
           Left = 6
@@ -1474,7 +1433,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Align = alBottom
           BevelInner = bvRaised
           BevelOuter = bvLowered
-          TabOrder = 14
+          TabOrder = 13
           object Bt_LanctosSalvar: TJvXPButton
             Tag = 1
             Left = 2
@@ -1533,7 +1492,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Width = 425
           Height = 49
           Caption = ' Fornecedor Vinculado '
-          TabOrder = 13
+          TabOrder = 12
           object Cbx_FornVinculado: TComboBox
             Left = 13
             Top = 18
@@ -1544,6 +1503,70 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             TabOrder = 0
           end
         end
+        object Pan_Datas: TPanel
+          Left = 25
+          Top = 79
+          Width = 203
+          Height = 58
+          BevelInner = bvRaised
+          BevelOuter = bvLowered
+          Enabled = False
+          TabOrder = 2
+          object Label5: TLabel
+            Left = 7
+            Top = 9
+            Width = 89
+            Height = 13
+            Caption = 'Data da Origem'
+          end
+          object Label4: TLabel
+            Left = 15
+            Top = 35
+            Width = 81
+            Height = 13
+            Caption = 'Data do Caixa'
+          end
+          object EdtDtCaixaDoc: TcxDateEdit
+            Left = 100
+            Top = 32
+            EditValue = 0d
+            ParentFont = False
+            Properties.DateButtons = [btnClear]
+            Properties.ReadOnly = False
+            Properties.SaveTime = False
+            Properties.ShowTime = False
+            Style.Font.Charset = DEFAULT_CHARSET
+            Style.Font.Color = clWindowText
+            Style.Font.Height = -11
+            Style.Font.Name = 'MS Sans Serif'
+            Style.Font.Style = [fsBold]
+            Style.IsFontAssigned = True
+            StyleDisabled.ButtonStyle = btsDefault
+            StyleFocused.Color = clSilver
+            TabOrder = 0
+            Width = 95
+          end
+          object EdtDtOrigemDoc: TcxDateEdit
+            Left = 100
+            Top = 5
+            EditValue = 0d
+            ParentFont = False
+            Properties.DateButtons = [btnClear]
+            Properties.ReadOnly = False
+            Properties.SaveTime = False
+            Properties.ShowTime = False
+            Style.Font.Charset = DEFAULT_CHARSET
+            Style.Font.Color = clWindowText
+            Style.Font.Height = -11
+            Style.Font.Name = 'MS Sans Serif'
+            Style.Font.Style = [fsBold]
+            Style.IsFontAssigned = True
+            StyleDisabled.ButtonStyle = btsDefault
+            StyleFocused.Color = clSilver
+            TabOrder = 1
+            Width = 95
+          end
+        end
       end
     end
     object Ts_FluxFornVinculos: TTabSheet
@@ -1551,19 +1574,19 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
       ImageIndex = 3
       DesignSize = (
         969
-        451)
+        448)
       object Panel5: TPanel
         Left = 1
         Top = 5
         Width = 967
-        Height = 446
+        Height = 443
         Anchors = [akTop, akBottom]
         TabOrder = 0
         object Gb_FornVinculados: TGroupBox
           Left = 484
           Top = 1
           Width = 482
-          Height = 444
+          Height = 441
           Align = alRight
           Caption = ' Fornecedores Vinculados '
           Font.Charset = DEFAULT_CHARSET
@@ -1577,7 +1600,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             Left = 1
             Top = 61
             Width = 480
-            Height = 382
+            Height = 379
             Align = alClient
             Color = 16053492
             Ctl3D = False
@@ -1771,7 +1794,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
           Left = 1
           Top = 1
           Width = 482
-          Height = 444
+          Height = 441
           Align = alLeft
           Caption = ' Fornecedores de V'#237'nculo '
           Font.Charset = DEFAULT_CHARSET
@@ -1924,7 +1947,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
             Left = 1
             Top = 61
             Width = 480
-            Height = 382
+            Height = 379
             Align = alClient
             Color = 16053492
             Ctl3D = False
@@ -1977,6 +2000,291 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         end
       end
     end
+    object Ts_FluxFornPercCampanhas: TTabSheet
+      Caption = '% Acrescimentos Campanhas <COLE'#199#195'O>'
+      ImageIndex = 4
+      DesignSize = (
+        969
+        448)
+      object Gb_FornAcrescCampanhas: TGroupBox
+        Left = 69
+        Top = 1
+        Width = 832
+        Height = 447
+        Anchors = [akTop, akBottom]
+        Caption = ' Percentuais de Acrescimos'
+        Color = clBtnFace
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 0
+        object Pan_FornAcrescCampanhas: TPanel
+          Left = 1
+          Top = 14
+          Width = 830
+          Height = 77
+          Align = alTop
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentColor = True
+          ParentFont = False
+          TabOrder = 0
+          object Label15: TLabel
+            Left = 16
+            Top = 8
+            Width = 76
+            Height = 13
+            Caption = 'Fornecedor Linx'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label16: TLabel
+            Left = 118
+            Top = 8
+            Width = 51
+            Height = 13
+            Caption = 'Percentual'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object Label17: TLabel
+            Left = 111
+            Top = 52
+            Width = 58
+            Height = 13
+            Caption = 'Observa'#231#227'o'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+          end
+          object EdtFornAcrescCampCodForn: TCurrencyEdit
+            Left = 16
+            Top = 23
+            Width = 68
+            Height = 21
+            AutoSize = False
+            DecimalPlaces = 0
+            DisplayFormat = '0'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            TabOrder = 0
+            OnChange = EdtFornAcrescCampCodFornChange
+            OnExit = EdtFornAcrescCampCodFornExit
+          end
+          object Bt_FornAcrescCampBuscaFornec: TJvXPButton
+            Tag = 92
+            Left = 90
+            Top = 21
+            Width = 23
+            Height = 25
+            TabOrder = 1
+            TabStop = False
+            ShowFocusRect = True
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_FornAcrescCampBuscaFornecClick
+          end
+          object EdtFornAcrescCampDescForn: TEdit
+            Left = 176
+            Top = 24
+            Width = 464
+            Height = 19
+            TabStop = False
+            Color = 12171775
+            ReadOnly = True
+            TabOrder = 3
+          end
+          object EdtFornAcrescCampPercentual: TCurrencyEdit
+            Left = 118
+            Top = 23
+            Width = 53
+            Height = 21
+            AutoSize = False
+            DisplayFormat = '0.00'
+            MaxValue = 100.000000000000000000
+            TabOrder = 2
+          end
+          object Bt_FornAcrescCampSalvar: TJvXPButton
+            Tag = 1
+            Left = 544
+            Top = 45
+            Width = 96
+            Height = 27
+            Caption = 'Salvar'
+            TabOrder = 5
+            Glyph.Data = {
+              07544269746D617066010000424D660100000000000076000000280000001400
+              0000140000000100040000000000F00000000000000000000000100000001000
+              0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+              C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+              FF00333333333333333333330000333333000000000000030000333333078888
+              8888880300003333330F77777777780300003333330F99777777780300003333
+              330FFFFFFFFFF703000033333300000000000003000033333333333333333333
+              0000333333333333330033330000333333333333300003330000300000000333
+              00000033000030FFFFFF033333003333000030F4444F033333003333000030FF
+              FFFF033338003333000030F4444F030000083333000030FFFFFF030000833333
+              000030F44F00033333333333000030FFFF003333333333330000300000033333
+              333333330000333333333333333333330000}
+            ShowFocusRect = True
+            Spacing = 10
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = Bt_FornAcrescCampSalvarClick
+          end
+          object EdtFornAcrescCampOBS: TEdit
+            Left = 176
+            Top = 49
+            Width = 360
+            Height = 19
+            TabOrder = 4
+          end
+        end
+        object Dbg_FornAcrescCampanhas: TDBGrid
+          Left = 1
+          Top = 91
+          Width = 830
+          Height = 335
+          Align = alClient
+          Color = 16053492
+          Ctl3D = False
+          DataSource = DMBelShop.DS_Join
+          FixedColor = clTeal
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = []
+          Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+          ParentCtl3D = False
+          ParentFont = False
+          ReadOnly = True
+          TabOrder = 1
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWhite
+          TitleFont.Height = -11
+          TitleFont.Name = 'MS Sans Serif'
+          TitleFont.Style = [fsBold]
+          OnDblClick = Dbg_FornAcrescCampanhasDblClick
+          OnEnter = Dbg_FornAcrescCampanhasEnter
+          OnKeyDown = Dbg_FornAcrescCampanhasKeyDown
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'COD_FORNECEDOR'
+              Title.Alignment = taRightJustify
+              Title.Caption = 'C'#243'd'
+              Width = 45
+              Visible = True
+            end
+            item
+              Color = 15532031
+              Expanded = False
+              FieldName = 'NOME_FORNECEDOR'
+              Title.Caption = 'Fornecedor'
+              Width = 310
+              Visible = True
+            end
+            item
+              Color = 14286809
+              Expanded = False
+              FieldName = 'PERC_ACRESCIMOS'
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = [fsBold]
+              Title.Alignment = taRightJustify
+              Title.Caption = '% Acresc'
+              Width = 80
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'NOME_USUARIO'
+              Title.Caption = 'Comprador'
+              Width = 100
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'TXT_OBS'
+              Title.Caption = 'Observa'#231#227'o'
+              Width = 250
+              Visible = True
+            end>
+        end
+        object Stb_FornAcrescCampanhas: TdxStatusBar
+          Left = 1
+          Top = 426
+          Width = 830
+          Height = 20
+          Panels = <
+            item
+              PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+              Bevel = dxpbRaised
+              Width = 20
+            end
+            item
+              PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+              PanelStyle.Alignment = taCenter
+              Bevel = dxpbNone
+              Fixed = False
+              Text = '<Delete> Exclui Fornecedor'
+              Width = 180
+            end
+            item
+              PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+              PanelStyle.Alignment = taCenter
+              Fixed = False
+              Text = 
+                'Procedimentos: Exclus'#227'o/Substitui'#231#227'o N'#227'o Alteram Valores Anterio' +
+                'res'
+              Width = 430
+            end
+            item
+              PanelStyleClassName = 'TdxStatusBarTextPanelStyle'
+              Bevel = dxpbNone
+              Width = 20
+            end>
+          PaintStyle = stpsOffice11
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+        end
+      end
+    end
   end
   object Panel38: TPanel
     Left = 0
@@ -2011,7 +2319,7 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     object Panel3: TPanel
       Left = 2
       Top = 2
-      Width = 683
+      Width = 823
       Height = 37
       Align = alLeft
       BevelOuter = bvNone
@@ -2138,6 +2446,34 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
         Visible = False
         OnClick = Bt_FluFornIncluirClick
       end
+      object Bt_FluFornAcrescCampanhas: TJvXPButton
+        Left = 677
+        Top = 1
+        Width = 113
+        Height = 35
+        Caption = 'Acrescimos'#13#10'Campanhas'
+        TabOrder = 6
+        TabStop = False
+        Glyph.Data = {
+          0B546478504E47496D61676589504E470D0A1A0A0000000D4948445200000016
+          00000011080200000056D3CBD4000000017352474200AECE1CE9000000046741
+          4D410000B18F0BFC6105000000097048597300000EC100000EC101B8916BED00
+          00009B49444154384FA591D101802008449BCB819AA7695CC661AC10912351AB
+          F749F0E468CBBFA98A7484ADB1472E0BFC3D1C890B0D52C49D0601B4948E9E80
+          14B240E9A83ED53F1290C2CC18A3149EE198A962269807196720C6E75C10B0E2
+          425621CADA90019E0169553CD10277CD1B57A132C88634654EE72AF8D9EE0C1A
+          1D85CEF049C12DED6438638D1D45EF47BE3AA73E02001678C039E73A399F4DA0
+          F4214165B44A0000000049454E44AE426082}
+        ShowFocusRect = True
+        Spacing = 5
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = Bt_FluFornAcrescCampanhasClick
+      end
     end
   end
   object OdirPanApres: TPanel
@@ -2179,8 +2515,8 @@ object FrmFluxoFornecedor: TFrmFluxoFornecedor
     Font.Style = [fsBold]
     StartColor = 15522303
     EndColor = 8388863
-    Left = 848
-    Top = 168
+    Left = 912
+    Top = 224
   end
   object ApplicationEvents1: TApplicationEvents
     OnMessage = ApplicationEvents1Message

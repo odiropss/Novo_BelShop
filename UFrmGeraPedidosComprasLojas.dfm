@@ -1475,7 +1475,7 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
               961
               33)
             object Label59: TLabel
-              Left = 587
+              Left = 585
               Top = 11
               Width = 93
               Height = 13
@@ -1489,7 +1489,7 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
               ParentFont = False
             end
             object Label39: TLabel
-              Left = 382
+              Left = 380
               Top = 11
               Width = 77
               Height = 13
@@ -1658,7 +1658,7 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
               TabOrder = 3
             end
             object EdtGeraOCTotalGeral: TCurrencyEdit
-              Left = 463
+              Left = 461
               Top = 8
               Width = 116
               Height = 19
@@ -1677,7 +1677,7 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
               Visible = False
             end
             object EdtGeraOCTotalItens: TCurrencyEdit
-              Left = 684
+              Left = 682
               Top = 8
               Width = 74
               Height = 19
@@ -3281,7 +3281,7 @@ object FrmGeraPedidosComprasLojas: TFrmGeraPedidosComprasLojas
             Top = 2
             Width = 963
             Height = 490
-            ActivePage = Ts_ParamLjFornecedores
+            ActivePage = Ts_ParamLjCalculo
             Align = alClient
             Color = 14342874
             Font.Charset = DEFAULT_CHARSET

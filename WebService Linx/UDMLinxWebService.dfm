@@ -1,9 +1,9 @@
 object DMLinxWebService: TDMLinxWebService
   OldCreateOrder = False
-  Left = 414
-  Top = 100
+  Left = 247
+  Top = 136
   Height = 334
-  Width = 507
+  Width = 466
   object SQLC: TSQLConnection
     ConnectionName = 'BelShop'
     DriverName = 'Interbase'
@@ -26,7 +26,7 @@ object DMLinxWebService: TDMLinxWebService
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
     VendorLib = 'gds32.dll'
-    Left = 48
+    Left = 24
     Top = 16
   end
   object SDS_DtaHoraServidor: TSQLDataSet
@@ -36,28 +36,28 @@ object DMLinxWebService: TDMLinxWebService
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 271
-    Top = 19
+    Left = 191
+    Top = 35
   end
   object SDS_Busca: TSQLDataSet
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
     Left = 40
-    Top = 88
+    Top = 120
   end
   object DSP_Busca: TDataSetProvider
     DataSet = SDS_Busca
     Options = [poRetainServerOrder]
     Left = 89
-    Top = 102
+    Top = 134
   end
   object CDS_Busca: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_Busca'
     Left = 136
-    Top = 89
+    Top = 121
   end
   object SDS_Lojas: TSQLDataSet
     CommandText = 
@@ -102,20 +102,20 @@ object DMLinxWebService: TDMLinxWebService
     Params = <>
     SQLConnection = SQLC
     Left = 40
-    Top = 152
+    Top = 184
   end
   object DSP_BuscaRapida: TDataSetProvider
     DataSet = SDS_BuscaRapida
     Options = [poRetainServerOrder]
     Left = 89
-    Top = 166
+    Top = 198
   end
   object CDS_BuscaRapida: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'DSP_BuscaRapida'
     Left = 136
-    Top = 153
+    Top = 185
   end
   object SDS_ProdutosZerados: TSQLDataSet
     MaxBlobSize = -1
@@ -141,7 +141,7 @@ object DMLinxWebService: TDMLinxWebService
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC
-    Left = 136
-    Top = 16
+    Left = 96
+    Top = 48
   end
 end

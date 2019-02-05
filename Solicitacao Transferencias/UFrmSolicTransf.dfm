@@ -992,7 +992,7 @@ object FrmSolicTransf: TFrmSolicTransf
     Top = 0
     Width = 891
     Height = 538
-    ActivePage = Ts_Produtos
+    ActivePage = Ts_NFeCheckOut
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

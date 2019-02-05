@@ -1,5 +1,15 @@
 unit UBlueMetrics;
 
+// ITENS_VENDA - CUSTO_VENDA_ITENS
+// PRODUTOS - SUBGRUPO=LINHA
+// ITENS_TROCAS - CUSTO_TROCA_ITENS = 0,00
+// VENDAS - CUSTO_VENDA_TOTAL
+//        - CUSTO_TROCA_TOTAL
+//        - QTDE_TROCA_TOTAL = 0,00
+//        - QTDE_VENDA_LIQUIDA_TOTAL
+//        - VALOR_VENDA_BRUTA_TOTAL
+//        - VALOR_VENDA_LIQUIDA_TOTAL
+//        - 0 VALOR_TROCA_TOTAL= 0,00
 interface
 
 uses
@@ -49,25 +59,28 @@ type
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     // Uma Vez ==============
-    Procedure Clientes;
-    Procedure Empresas;
-    Procedure Fornecedores;
-    Procedure Produtos;
-    Procedure Vendedores;
+    Procedure Clientes;     // Deleta Tutdo
+    Procedure Empresas;     // Deleta Tutdo
+    Procedure Fornecedores; // Deleta Tutdo
+    Procedure Produtos;     // Deleta Tutdo
+    Procedure Vendedores;   // Deleta Tutdo
 
-    Procedure Estoques;
+    Procedure Estoques;     // Deleta Tutdo
     Procedure EstoquesEntradas;
     Procedure EstoquesVendas;
 
-    Procedure Vendas;
+    Procedure Vendas;       // Deleta Por Periodo
     Procedure VendasTrocas;
 
-    Procedure ItensVendas;
-    Procedure ItensTrocas;
-    Procedure Pagamentos;
+    Procedure ItensVendas;  // Deleta Por Periodo
+    Procedure ItensTrocas;  // Deleta Por Periodo
 
-    // Pagamentos
+    Procedure Pagamentos;
     // Odir >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    procedure Ckb_ClientesClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormCreate(Sender: TObject);   // Deleta Por Periodo
 
   private
     { Private declarations }
@@ -82,6 +95,7 @@ var
   sgDtaInicio, sgDtaFim
   : String;
 
+  tgMySqlErro: TStringList; // Arquivo de Processamento e Erros
 
 implementation
 
@@ -103,6 +117,10 @@ Begin
   Try // Try da Transação
     Lb_Tabela.Caption:='Clientes';
     Lb_Reg.Caption:='0';
+
+    // Deleta Clientes
+    MySql:=' DELETE FROM CLIENTES';
+    DMBlueMetrics.ADOC.Execute(MySql);
 
     DMBlueMetrics.SQLQ_Clientes.Open;
     DMBlueMetrics.SQLQ_Clientes.DisableControls;
@@ -155,16 +173,22 @@ Begin
 
     DMBlueMetrics.ADOC.CommitTrans;
     Application.ProcessMessages;
-    msg('Exportação: Clientes'+cr+cr+'Efetuada com SUCESSO !!','A');
+
+    Ckb_Clientes.Font.Color:=clWindowText;
 
   Except // Except da Transação
     on e : Exception do
     Begin
       DMBlueMetrics.ADOC.RollbackTrans;
       MessageBox(Handle, pChar('Tabela: '+Lb_Tabela.Caption+#13+#13+e.message), 'Erro', MB_ICONERROR);
+
+      tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption);
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
     End;
   End; // Try da Transação
-
   DMBlueMetrics.SQLQ_Clientes.EnableControls;
   DMBlueMetrics.SQLQ_Clientes.Close;
 
@@ -183,6 +207,10 @@ Begin
   Try // Try da Transação
     Lb_Tabela.Caption:='Empresas';
     Lb_Reg.Caption:='0';
+
+    // Deleta Clientes
+    MySql:=' DELETE FROM EMPRESAS';
+    DMBlueMetrics.ADOC.Execute(MySql);
 
     DMBlueMetrics.SQLQ_Empresas.Open;
     DMBlueMetrics.SQLQ_Empresas.DisableControls;
@@ -248,16 +276,22 @@ Begin
 
     DMBlueMetrics.ADOC.CommitTrans;
     Application.ProcessMessages;
-    msg('Exportação: Empresas'+cr+cr+'Efetuada com SUCESSO !!','A');
+
+    Ckb_Empresas.Font.Color:=clWindowText;
 
   Except // Except da Transação
     on e : Exception do
     Begin
       DMBlueMetrics.ADOC.RollbackTrans;
       MessageBox(Handle, pChar('Tabela: '+Lb_Tabela.Caption+#13+#13+e.message), 'Erro', MB_ICONERROR);
+
+      tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption);
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
     End;
   End; // Try da Transação
-
   DMBlueMetrics.SQLQ_Empresas.EnableControls;
   DMBlueMetrics.SQLQ_Empresas.Close;
 
@@ -276,6 +310,9 @@ Begin
   Try // Try da Transação
     Lb_Tabela.Caption:='Fornecedores';
     Lb_Reg.Caption:='0';
+
+    MySql:=' DELETE FROM FORNECEDORES';
+    DMBlueMetrics.ADOC.Execute(MySql);
 
     DMBlueMetrics.SQLQ_Fornecedores.Open;
     DMBlueMetrics.SQLQ_Fornecedores.DisableControls;
@@ -310,16 +347,22 @@ Begin
 
     DMBlueMetrics.ADOC.CommitTrans;
     Application.ProcessMessages;
-    msg('Exportação: Fornecedores'+cr+cr+'Efetuada com SUCESSO !!','A');
+
+    Ckb_Fornecedores.Font.Color:=clWindowText;
 
   Except // Except da Transação
     on e : Exception do
     Begin
       DMBlueMetrics.ADOC.RollbackTrans;
       MessageBox(Handle, pChar('Tabela: '+Lb_Tabela.Caption+#13+#13+e.message), 'Erro', MB_ICONERROR);
+
+      tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption);
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
     End;
   End; // Try da Transação
-
   DMBlueMetrics.SQLQ_Fornecedores.EnableControls;
   DMBlueMetrics.SQLQ_Fornecedores.Close;
 
@@ -338,6 +381,9 @@ Begin
   Try // Try da Transação
     Lb_Tabela.Caption:='Produtos';
     Lb_Reg.Caption:='0';
+
+    MySql:=' DELETE FROM PRODUTOS';
+    DMBlueMetrics.ADOC.Execute(MySql);
 
     DMBlueMetrics.SQLQ_Produtos.Open;
     DMBlueMetrics.SQLQ_Produtos.DisableControls;
@@ -371,16 +417,22 @@ Begin
 
     DMBlueMetrics.ADOC.CommitTrans;
     Application.ProcessMessages;
-    msg('Exportação: Produtos'+cr+cr+'Efetuada com SUCESSO !!','A');
+
+    Ckb_Produtos.Font.Color:=clWindowText;
 
   Except // Except da Transação
     on e : Exception do
     Begin
       DMBlueMetrics.ADOC.RollbackTrans;
       MessageBox(Handle, pChar('Tabela: '+Lb_Tabela.Caption+#13+#13+e.message), 'Erro', MB_ICONERROR);
+
+      tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption);
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
     End;
   End; // Try da Transação
-
   DMBlueMetrics.SQLQ_Produtos.EnableControls;
   DMBlueMetrics.SQLQ_Produtos.Close;
 
@@ -399,6 +451,9 @@ Begin
   Try // Try da Transação
     Lb_Tabela.Caption:='Vendedores';
     Lb_Reg.Caption:='0';
+
+    MySql:=' DELETE FROM VENDEDORES';
+    DMBlueMetrics.ADOC.Execute(MySql);
 
     DMBlueMetrics.SQLQ_Vendedores.Open;
     DMBlueMetrics.SQLQ_Vendedores.DisableControls;
@@ -434,16 +489,22 @@ Begin
 
     DMBlueMetrics.ADOC.CommitTrans;
     Application.ProcessMessages;
-    msg('Exportação: Vendedores'+cr+cr+'Efetuada com SUCESSO !!','A');
+
+    Ckb_Vendedores.Font.Color:=clWindowText;
 
   Except // Except da Transação
     on e : Exception do
     Begin
       DMBlueMetrics.ADOC.RollbackTrans;
       MessageBox(Handle, pChar('Tabela: '+Lb_Tabela.Caption+#13+#13+e.message), 'Erro', MB_ICONERROR);
+
+      tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption);
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
     End;
   End; // Try da Transação
-
   DMBlueMetrics.SQLQ_Vendedores.EnableControls;
   DMBlueMetrics.SQLQ_Vendedores.Close;
 
@@ -462,6 +523,9 @@ Begin
   Try // Try da Transação
     Lb_Tabela.Caption:='Estoques';
     Lb_Reg.Caption:='0';
+
+    MySql:=' DELETE FROM ESTOQUES';
+    DMBlueMetrics.ADOC.Execute(MySql);
 
     DMBlueMetrics.SQLQ_Estoques.Open;
     DMBlueMetrics.SQLQ_Estoques.DisableControls;
@@ -501,10 +565,20 @@ Begin
     on e : Exception do
     Begin
       DMBlueMetrics.ADOC.RollbackTrans;
+
+      DMBlueMetrics.SQLQ_Estoques.EnableControls;
+      DMBlueMetrics.SQLQ_Estoques.Close;
+
       MessageBox(Handle, pChar('Tabela: '+Lb_Tabela.Caption+#13+#13+e.message), 'Erro', MB_ICONERROR);
+
+      tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption);
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
+      Exit;
     End;
   End; // Try da Transação
-
   DMBlueMetrics.SQLQ_Estoques.EnableControls;
   DMBlueMetrics.SQLQ_Estoques.Close;
 
@@ -514,7 +588,8 @@ Begin
   // Atualiza Datas de Vendas ==================================================
   EstoquesVendas;
 
-  msg('Exportação: Estoques'+cr+cr+'Efetuada com SUCESSO !!','A');
+  Ckb_Estoques.Font.Color:=clWindowText;
+
   Screen.Cursor:=crDefault;
 
 End; // Exporta Estoques >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -590,6 +665,12 @@ Begin
     Begin
       DMBlueMetrics.ADOC.RollbackTrans;
       MessageBox(Handle, pChar('Tabela: '+Lb_Tabela.Caption+#13+#13+e.message), 'Erro', MB_ICONERROR);
+
+      tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption);
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
     End;
   End; // Try da Transação
 
@@ -663,6 +744,12 @@ Begin
     Begin
       DMBlueMetrics.ADOC.RollbackTrans;
       MessageBox(Handle, pChar('Tabela: '+Lb_Tabela.Caption+#13+#13+e.message), 'Erro', MB_ICONERROR);
+
+      tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption);
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
     End;
   End; // Try da Transação
 
@@ -685,6 +772,11 @@ Begin
   Try // Try da Transação
     Lb_Tabela.Caption:='Vendas';
     Lb_Reg.Caption:='0';
+
+    MySql:=' DELETE FROM VENDAS'+
+           ' WHERE DATA_VENDA BETWEEN '+QuotedStr(DateToStr(DtEdt_DataInicio.Date))+' AND '+
+                                        QuotedStr(DateToStr(DtEdt_DataFim.Date));
+    DMBlueMetrics.ADOC.Execute(MySql);
 
     DMBlueMetrics.SQLQ_Vendas.Params.ParamByName('DtaI').AsDate:=DtEdt_DataInicio.Date;
     DMBlueMetrics.SQLQ_Vendas.Params.ParamByName('DtaF').AsDate:=DtEdt_DataFim.Date;
@@ -725,7 +817,7 @@ Begin
              QuotedStr(Trim(DMBlueMetrics.SQLQ_VendasSERIE.AsString))+', '+ // SERIE
              f_Troca(',','.',Trim(DMBlueMetrics.SQLQ_VendasVALOR_VENDA_BRUTA_TOTAL.AsString))+', '+ // VALOR_VENDA_BRUTA_TOTAL
              f_Troca(',','.',Trim(DMBlueMetrics.SQLQ_VendasVALOR_VENDA_LIQUIDA_TOTAL.AsString))+', '+ // VALOR_VENDA_LIQUIDA_TOTAL
-             f_Troca(',','.',Trim(DMBlueMetrics.SQLQ_VendasVALOR_TROCA_TOTAL.AsString))+')'; //VALOR_TROCA_TOTAL
+             f_Troca(',','.',Trim(DMBlueMetrics.SQLQ_VendasVALOR_TROCA_TOTAL.AsString))+')'; // VALOR_TROCA_TOTAL
       DMBlueMetrics.ADOC.Execute(MySql);
 
       Lb_Reg.Caption:=IntToStr(StrToInt(Lb_Reg.Caption)+1);
@@ -746,17 +838,28 @@ Begin
     on e : Exception do
     Begin
       DMBlueMetrics.ADOC.RollbackTrans;
+
+      DMBlueMetrics.SQLQ_Vendas.EnableControls;
+      DMBlueMetrics.SQLQ_Vendas.Close;
+
       MessageBox(Handle, pChar('Tabela: '+Lb_Tabela.Caption+#13+#13+e.message), 'Erro', MB_ICONERROR);
+
+      tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption);
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
+      Exit;
     End;
   End; // Try da Transação
-
   DMBlueMetrics.SQLQ_Vendas.EnableControls;
   DMBlueMetrics.SQLQ_Vendas.Close;
 
+  // Odir Não Utilizae - Troca é Devoluções e Esta Em Itens_Trocas
   // Atualiza Totais de Devolução do Vendedor no Periodo =====================
-  VendasTrocas;
+  // VendasTrocas;
 
-  msg('Exportação: Vendas'+cr+cr+'Efetuada com SUCESSO !!','A');
+  Ckb_Vendas.Font.Color:=clWindowText;
   Screen.Cursor:=crDefault;
 
 End; // Exporta Vendas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -815,6 +918,12 @@ Begin
     Begin
       DMBlueMetrics.ADOC.RollbackTrans;
       MessageBox(Handle, pChar('Tabela: '+Lb_Tabela.Caption+#13+#13+e.message), 'Erro', MB_ICONERROR);
+
+      tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption);
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
     End;
   End; // Try da Transação
 
@@ -837,6 +946,11 @@ Begin
   Try // Try da Transação
     Lb_Tabela.Caption:='ItensVendas';
     Lb_Reg.Caption:='0';
+
+    MySql:=' DELETE FROM ITENS_VENDAS'+
+           ' WHERE DATA BETWEEN '+QuotedStr(DateToStr(DtEdt_DataInicio.Date))+' AND '+
+                                  QuotedStr(DateToStr(DtEdt_DataFim.Date));
+    DMBlueMetrics.ADOC.Execute(MySql);
 
     DMBlueMetrics.SQLQ_ItensVendas.Params.ParamByName('DtaI').AsDate:=DtEdt_DataInicio.Date;
     DMBlueMetrics.SQLQ_ItensVendas.Params.ParamByName('DtaF').AsDate:=DtEdt_DataFim.Date;
@@ -886,18 +1000,23 @@ Begin
     DMBlueMetrics.ADOC.CommitTrans;
     Application.ProcessMessages;
 
+    Ckb_ItensVendas.Font.Color:=clWindowText;
   Except // Except da Transação
     on e : Exception do
     Begin
       DMBlueMetrics.ADOC.RollbackTrans;
       MessageBox(Handle, pChar('Tabela: '+Lb_Tabela.Caption+#13+#13+e.message), 'Erro', MB_ICONERROR);
+
+      tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption);
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
     End;
   End; // Try da Transação
-
   DMBlueMetrics.SQLQ_ItensVendas.EnableControls;
   DMBlueMetrics.SQLQ_ItensVendas.Close;
 
-  msg('Exportação: ItensVendas'+cr+cr+'Efetuada com SUCESSO !!','A');
   Screen.Cursor:=crDefault;
 
 End; // Exporta ItensVendas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -914,6 +1033,11 @@ Begin
   Try // Try da Transação
     Lb_Tabela.Caption:='ItensTrocas';
     Lb_Reg.Caption:='0';
+
+    MySql:=' DELETE FROM ITENS_TROCAS'+
+           ' WHERE DATA BETWEEN '+QuotedStr(DateToStr(DtEdt_DataInicio.Date))+' AND '+
+                                  QuotedStr(DateToStr(DtEdt_DataFim.Date));
+    DMBlueMetrics.ADOC.Execute(MySql);
 
     DMBlueMetrics.SQLQ_ItensTrocas.Params.ParamByName('DtaI').AsDate:=DtEdt_DataInicio.Date;
     DMBlueMetrics.SQLQ_ItensTrocas.Params.ParamByName('DtaF').AsDate:=DtEdt_DataFim.Date;
@@ -960,20 +1084,27 @@ Begin
     End; // While Not DMBlueMetrics.SQLQ_ItensTrocas.Eof do
 
     DMBlueMetrics.ADOC.CommitTrans;
+
     Application.ProcessMessages;
+
+    Ckb_ItensTrocas.Font.Color:=clWindowText;
 
   Except // Except da Transação
     on e : Exception do
     Begin
       DMBlueMetrics.ADOC.RollbackTrans;
       MessageBox(Handle, pChar('Tabela: '+Lb_Tabela.Caption+#13+#13+e.message), 'Erro', MB_ICONERROR);
+
+      tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption);
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
     End;
   End; // Try da Transação
-
   DMBlueMetrics.SQLQ_ItensTrocas.EnableControls;
   DMBlueMetrics.SQLQ_ItensTrocas.Close;
 
-  msg('Exportação: ItensTrocas'+cr+cr+'Efetuada com SUCESSO !!','A');
   Screen.Cursor:=crDefault;
 
 End; // Exporta ItensTrocas >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -990,6 +1121,11 @@ Begin
   Try // Try da Transação
     Lb_Tabela.Caption:='Pagamentos';
     Lb_Reg.Caption:='0';
+
+    MySql:=' DELETE FROM PAGAMENTOS'+
+           ' WHERE DATA_LANCAMENTO BETWEEN '+QuotedStr(DateToStr(DtEdt_DataInicio.Date))+' AND '+
+                                             QuotedStr(DateToStr(DtEdt_DataFim.Date));
+    DMBlueMetrics.ADOC.Execute(MySql);
 
     DMBlueMetrics.SQLQ_Pagamentos.Params.ParamByName('DtaI').AsDate:=DtEdt_DataInicio.Date;
     DMBlueMetrics.SQLQ_Pagamentos.Params.ParamByName('DtaF').AsDate:=DtEdt_DataFim.Date;
@@ -1040,18 +1176,24 @@ Begin
     DMBlueMetrics.ADOC.CommitTrans;
     Application.ProcessMessages;
 
+    Ckb_Pagamentos.Font.Color:=clWindowText;
+
   Except // Except da Transação
     on e : Exception do
     Begin
       DMBlueMetrics.ADOC.RollbackTrans;
       MessageBox(Handle, pChar('Tabela: '+Lb_Tabela.Caption+#13+#13+e.message), 'Erro', MB_ICONERROR);
+
+      tgMySqlErro.Add('Tabela: '+Lb_Tabela.Caption);
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
     End;
   End; // Try da Transação
-
   DMBlueMetrics.SQLQ_Pagamentos.EnableControls;
   DMBlueMetrics.SQLQ_Pagamentos.Close;
 
-  msg('Exportação: Pagamentos'+cr+cr+'Efetuada com SUCESSO !!','A');
   Screen.Cursor:=crDefault;
 
 End; // Exporta Pagamentos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1181,6 +1323,30 @@ begin
   DMBlueMetrics.CDS_Lojas.First;
 
   msg('FIM','A');
+end;
+
+procedure TFrmBlueMetrics.Ckb_ClientesClick(Sender: TObject);
+begin
+  If (Sender is TJvCheckBox) Then
+  Begin
+    (Sender as TJvCheckBox).Font.Color:=clWindowText;
+    If (Sender as TJvCheckBox).Checked Then
+     (Sender as TJvCheckBox).Font.Color:=clRed;
+  End; // If (Sender is TCurrencyEdit) Then
+end;
+
+procedure TFrmBlueMetrics.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  FreeAndNil(tgMySqlErro);
+
+end;
+
+procedure TFrmBlueMetrics.FormCreate(Sender: TObject);
+begin
+  tgMySqlErro:=TStringList.Create;
+  tgMySqlErro.Clear;
+  tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_BlueMetrics_Erros.txt');
+
 end;
 
 end.

@@ -1,7 +1,6 @@
 unit UFrmBelShop;
-// AjustaDadosLojas
-  // DtEdt_GeraOCDataDocto.
-  // EdtGeraOCBuscaDocto.
+// DtEdt_GeraOCDataDocto.
+// EdtGeraOCBuscaDocto.
 
 
 interface
@@ -1082,7 +1081,6 @@ type
     SubMenuCentralTrocasNotasEntradaDevolucao: TMenuItem;
     N18: TMenuItem;
     SubMenuAtualizaTabelasSPED: TMenuItem;
-    SubMenuVerificaImportacaoEstoques: TMenuItem;
     N42: TMenuItem;
     DiasInformados: TMenuItem;
     DiasEstocagemParametro: TMenuItem;
@@ -1169,6 +1167,10 @@ type
     SubMenuFinanExpImpImportaTrinks: TMenuItem;
     SubMenuCentroDistControleProducao: TMenuItem;
     StB_GeraOCEdit: TdxStatusBar;
+    N9: TMenuItem;
+    SubMenuICMSDebitoCredito: TMenuItem;
+    SubMenuICMSDebCredImpNCM: TMenuItem;
+    SubMenuICMSDebCredST: TMenuItem;
 
     // Odir ====================================================================
 
@@ -1994,7 +1996,6 @@ type
     procedure SubMenuCentroDistrReposicoesLojasClick(Sender: TObject);
     procedure SubMenuCentralTrocasNotasEntradaDevolucaoClick(Sender: TObject);
     procedure SubMenuAtualizaTabelasSPEDClick(Sender: TObject);
-    procedure SubMenuVerificaImportacaoEstoquesClick(Sender: TObject);
     procedure DiasInformadosClick(Sender: TObject);
     procedure DiasEstocagemParametroClick(Sender: TObject);
     procedure Bt_GeraOCPreVisualizaOCClick(Sender: TObject);
@@ -2085,6 +2086,8 @@ type
     procedure SubMenuComisCampanhasColecaoClick(Sender: TObject);
     procedure SubMenuCentroDistrCtrlRomSeparacaoClick(Sender: TObject);
     procedure SubMenuCentroDistControleProducaoClick(Sender: TObject);
+    procedure SubMenuICMSDebCredImpNCMClick(Sender: TObject);
+    procedure SubMenuICMSDebCredSTClick(Sender: TObject);
   private
     { Private declarations }
     // Rolagem no Grid com Mouse
@@ -2152,8 +2155,8 @@ var
   bgSemBancoDados, // Somente no Linx
   bgOnActivate, // Se Ja Executou o Evento do Form OnActivate
   bgConexaoLocal, // Se Conexão com o Servidor do Banco MPMS é Local - Verifica a Existencia do Arquivo "ConexaoExterna.ini"
-  bgAuditoria, bgCor, bgSiga,
-
+  bgAuditoria, bgCor,
+  bgSiga,
   bgProcessar: Boolean;
 
   cgVlrAcumulado1, cgVlrAcumulado2, cgVlrAcumulado3: Currency;
@@ -2304,7 +2307,8 @@ uses DK_Procs1, UPermissao, UDMBelShop,
      UDMCentralTrocas, UFrmCentralTrocas, UFrmEstoques, UEntrada, UDMSidicom,
      UFrmFaltasCDLojas, UFrmControleKits, UFrmControleEstoques,
      UFrmFluxFornecedor, UFrmComissaoVendedor, UDMLinx, RTLConsts, UFrmOCLinx,
-     UFrmPrioridadesReposicao, UFrmAnaliseFornecedores;
+     UFrmPrioridadesReposicao, UFrmAnaliseFornecedores, UFrmDebCredST,
+  UDMDebCredST;
 
 {$R *.dfm}
 {$R C:\Projetos\BelShop\Botoes\Botoes.res }
@@ -2675,7 +2679,7 @@ Begin
 
 End; // OBJETIVOS - METAS - LINX - MICRIVIX - Busca Vendas >>>>>>>>>>>>>>>>>>>>>
 
-// DIVERSOS - Controel de Apresentação do Menu >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+// DIVERSOS - Controle de Apresentação do Menu >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmBelShop.ControleMenu(bControle: Boolean);
 Var
   i: Integer;
@@ -2684,7 +2688,7 @@ Begin
   Begin
     If (MainMenu1.Items.Items[i].Name<>'MenuVersao') and
        (MainMenu1.Items.Items[i].Name<>'MenuCalculadora') Then
-     MainMenu1.Items.Items[i].Enabled:=bControle
+     MainMenu1.Items.Items[i].Enabled:=bControle;
   End; // For i:=0 to MainMenu1.Items.Count-1 do
 
   SBt_Sair.Enabled:=bControle;
@@ -14642,6 +14646,16 @@ Begin
     End;
   End; // If FrmEstoques<>nil Then
 
+  // TFrmComissaoVendedor ================================================================
+  If FrmComissaoVendedor<>nil Then
+  Begin
+    If TabSh.Name='Ts_CampColecao' Then
+    Begin
+      FrmComissaoVendedor.Bt_FornContaCorrente.Visible:=False;
+    End;
+  End; // If FrmEstoques<>nil Then
+
+
   MySql:='Select des_componente'+
          ' From PS_VISUAL_OBJETOS'+
          ' Where Des_Componente is not Null'+
@@ -14745,6 +14759,41 @@ Begin
         End
       End; // If FrmSolicitacoes<>nil Then
     End; // If FrmSalao<>nill Then
+
+    //==========================================================================
+    // Formulario FrmComissaoVendedor ==========================================
+    //==========================================================================
+    If FrmComissaoVendedor<>nil Then
+    Begin
+      for i:=0 to FrmComissaoVendedor.ComponentCount - 1 do
+      Begin
+        If FrmComissaoVendedor.components[i].Name=SName Then
+        Begin
+          If (FrmComissaoVendedor.Components[i] is TMenuItem) Then
+          Begin
+            (FrmComissaoVendedor.Components[i] as TMenuItem).Visible:=True;
+            (FrmComissaoVendedor.Components[i] as TMenuItem).Enabled:=True;
+          End
+          Else If (FrmComissaoVendedor.Components[i] is TTabSheet) Then
+          Begin
+            (FrmComissaoVendedor.Components[i] as TTabSheet).TabVisible:=True;
+            (FrmComissaoVendedor.Components[i] as TTabSheet).Enabled:=True;
+          End
+          Else If (FrmComissaoVendedor.Components[i] is TPageControl) Then
+          Begin
+            (FrmComissaoVendedor.Components[i] as TPageControl).Visible:=True;
+            (FrmComissaoVendedor.Components[i] as TPageControl).Enabled:=True;
+          End
+          Else
+           Begin
+             TControl(FrmComissaoVendedor.Components[i]).Visible := True;
+             TControl(FrmComissaoVendedor.Components[i]).Enabled := True;
+           End;
+
+          Break;
+        End; // If FrmComissaoVendedor.components[i].Name=SName Then
+      End; // for i:=0 to FrmComissaoVendedor.ComponentCount - 1 do
+    End; // If FrmComissaoVendedor<>nil Then
 
     DMBelShop.CDS_BuscaRapida.Next;
   End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
@@ -20738,6 +20787,10 @@ Begin
      If (DMBelShop.Components[i] as TClientDataSet).Active Then
      (DMBelShop.Components[i] as TClientDataSet).Close;
 
+    If DMBelShop.Components[i] is TSQLQuery Then
+     If (DMBelShop.Components[i] as TSQLQuery).Active Then
+     (DMBelShop.Components[i] as TSQLQuery).Close;
+
     If DMBelShop.Components[i] is TIBQuery Then
      If (DMBelShop.Components[i] as TIBQuery).Active Then
      (DMBelShop.Components[i] as TIBQuery).Close;
@@ -20843,15 +20896,15 @@ Begin
   End;
 
 //  // Ajusta Dados das Lojas ====================================================
-//  If Trim(sgCodLojaUnica)='' Then
-//  Begin
-//    Screen.Cursor:=crAppStart;
-//    If Not DMBelShop.AjustaDadosLojas Then
-//    Begin
-//      MessageBox(Handle,pChar('Erro ao Ajustar Empresas'+cr+cr+sgMensagem), 'Erro', MB_ICONERROR);
-//    End;
-//    Screen.Cursor:=crDefault;
-//  End; // If Trim(sgCodLojaUnica)='' Then
+  If Trim(sgCodLojaUnica)='' Then
+  Begin
+    Screen.Cursor:=crAppStart;
+    If Not DMBelShop.AjustaDadosLojas Then
+    Begin
+      MessageBox(Handle,pChar('Erro ao Ajustar Empresas'+cr+cr+sgMensagem), 'Erro', MB_ICONERROR);
+    End;
+    Screen.Cursor:=crDefault;
+  End; // If Trim(sgCodLojaUnica)='' Then
 
   // Guarda Codigo do Usuario ==================================================
   If Des_Login<>'' Then
@@ -20891,12 +20944,19 @@ Begin
     For ii:=0 to MainMenu1.Items[i].Count-1 do
     Begin
       If MainMenu1.Items[i].Items[ii].Tag<>0 Then
-       If Copy(Perm,MainMenu1.Items[i].Items[ii].Tag,1)='N' Then
-        MainMenu1.Items[i].Items[ii].Visible:=False
-       Else
-        MainMenu1.Items[i].Items[ii].Visible:=True;
-    End;
-  End;
+      Begin
+        If Copy(Perm,MainMenu1.Items[i].Items[ii].Tag,1)='N' Then
+         MainMenu1.Items[i].Items[ii].Visible:=False
+        Else
+         MainMenu1.Items[i].Items[ii].Visible:=True;
+      End; // If MainMenu1.Items[i].Items[ii].Tag<>0 Then
+
+      If ((MainMenu1.Items[i].Items[ii].Name='SubMenuComisParamVendedores') Or
+          (MainMenu1.Items[i].Items[ii].Name='SubMenuComisVendedores')) And
+         (Cod_Usuario<>'0') Then
+       MainMenu1.Items[i].Items[ii].Visible:=False;
+    End; // For ii:=0 to MainMenu1.Items[i].Count-1 do
+  End; // for i:=0 to MainMenu1.Items.Count-1 do
 
 End; // Acerta Acessos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -22807,7 +22867,7 @@ begin
     Exit;
   End; // If (Not Rb_CalculoTpProcLocal.Checked) and (Not Rb_CalculoTpProcLoja.Checked) Then
 
-  sgOutrasEmpresa:='(''89'',''99'')';
+  sgOutrasEmpresa:='(''99'')';
   FrmSelectEmpProcessamento:=TFrmSelectEmpProcessamento.Create(Self);
   FrmSelectEmpProcessamento.bUsarMatriz:=True;
   FrmSelectEmpProcessamento.Pan_SelectEmpProcECommerce.Visible:=True;
@@ -23432,6 +23492,7 @@ Var
   MySql: String;
   i: Integer;
 begin
+  bgVerificaSaldoCD:=True;
   If (EdtGeraOCBuscaDocto.Value=0) Or (PC_OrdemCompra.ActivePage<>Ts_OCGeraOrdemCompra) Then
    Exit;
 
@@ -23746,6 +23807,15 @@ begin
   // Altera Seta Para Baixo para Enter/Return ==================================
   If (key=Vk_Down) Then
    key:=Vk_Return;
+
+  // Verifica Estoque no CD (Somente o ODIR) ===================================
+  if (Shift = [ssCtrl, ssShift]) and (Key=VK_F11)  then
+  Begin
+    If bgVerificaSaldoCD Then
+     bgVerificaSaldoCD:=False
+    Else
+     bgVerificaSaldoCD:=True;
+  End; // if (Shift = [ssCtrl, ssShift]) and (Key=VK_F11)  then
 
   // Executa Enter/Return ======================================================
   If (key=Vk_Return) Then
@@ -41371,6 +41441,10 @@ begin
   AbreSolicitacoes(19);
 
   bgProcessar:=False;
+  // Procedure TFrmSolicitacoes.GridNewCriar:
+  // Dts: TDataSource =  DataSource a Presenta no Grid
+  // sNomeObjeto      = Alterações necessarias no Form e no Grad
+  // bSalvar          = Se Botão <Bt_QualquerCoisaSalvar> Salvar deve ser Apresentado
   FrmSolicitacoes.GridNewCriar(DMBelShop.DS_OCComparaPedidos, 'PopM_GeraOC', False);
   FrmSolicitacoes.Caption:='C O M P R A S';
   FrmSolicitacoes.Ts_QualquerCoisa.Caption:='Comparativo de Pedidos de Compra';
@@ -41710,97 +41784,6 @@ begin
 
   Mem_Salvar.Lines.Clear;
   Mem_Salvar.Width:=ii;
-
-end;
-
-procedure TFrmBelShop.SubMenuVerificaImportacaoEstoquesClick(Sender: TObject);
-Var
-  MySql: String;
-begin
-
-  If msg('VERIFIQUE se Alguém já esta'+cr+'Efetuando Atualização !!'+cr+cr+'Deseja Continuar ??','C')=2 Then
-   Exit;
-
-  OdirPanApres.Caption:='AGUARDE !! Localizando Últimas Atualizações de Estoques...';
-  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmBelShop.Width-OdirPanApres.Width)/2));
-  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmBelShop.Height-OdirPanApres.Height)/2))-20;
-  OdirPanApres.Font.Style:=[fsBold];
-  OdirPanApres.Parent:=FrmBelShop;
-  OdirPanApres.BringToFront();
-  OdirPanApres.Visible:=True;
-  Refresh;
-
-  Screen.Cursor:=crAppStart;
-
-  // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
-  FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
-  AbreSolicitacoes(18);
-  FrmSolicitacoes.Caption:='VERIFICA POSIÇÃO DE ESTOQUES DAS LOJAS';
-  FrmSolicitacoes.Ts_Selecionar.Caption:='Data da Última Importação de Saldo de Estoques';
-  FrmSolicitacoes.Bt_SelecionarOK.Caption:='Atualizar';
-  FrmSolicitacoes.Lab_Conta.Caption:='0';
-  FrmSolicitacoes.Lab_Conta.Visible:=True;
-
-  MySql:=' SELECT DISTINCT'+
-         ' ''NAO'' PROC,'+
-         ' em.COD_FILIAL,'+
-         ' em.RAZAO_SOCIAL,'+
-         ' es.dta_atualizacao,'+
-         ' es.hra_atualizacao'+
-         ' FROM EMP_CONEXOES em'+
-         '     LEFT JOIN ESTOQUE es ON em.cod_filial=es.codfilial'+
-         ' WHERE (em.Ind_Ativo=''SIM'' OR em.Cod_Filial IN (''99'') OR em.Cod_Filial IN (''50''))'+
-         ' ORDER BY em.Cod_Filial';
-  DMBelShop.CDS_Busca.Close;
-  DMBelShop.SDS_Busca.CommandText:=MySql;
-  DMBelShop.CDS_Busca.Open;
-
-  FrmSolicitacoes.Dbg_Selecionar.Columns.Add;
-  FrmSolicitacoes.Dbg_Selecionar.Columns[0].FieldName :='PROC';
-  FrmSolicitacoes.Dbg_Selecionar.Columns[0].Alignment :=taLeftJustify;
-  FrmSolicitacoes.Dbg_Selecionar.Columns[0].Width :=80;
-  FrmSolicitacoes.Dbg_Selecionar.Columns[0].Title.Caption := 'Atualizar ?';
-  FrmSolicitacoes.Dbg_Selecionar.Columns[0].Title.Alignment :=taLeftJustify;
-
-  FrmSolicitacoes.Dbg_Selecionar.Columns.Add;
-  FrmSolicitacoes.Dbg_Selecionar.Columns[1].FieldName :='COD_FILIAL';
-  FrmSolicitacoes.Dbg_Selecionar.Columns[1].Alignment := taCenter;
-  FrmSolicitacoes.Dbg_Selecionar.Columns[1].Title.Caption := 'Loja';
-  FrmSolicitacoes.Dbg_Selecionar.Columns[1].Width :=40;
-  FrmSolicitacoes.Dbg_Selecionar.Columns[1].Title.Alignment :=taCenter;
-
-  FrmSolicitacoes.Dbg_Selecionar.Columns.Add;
-  FrmSolicitacoes.Dbg_Selecionar.Columns[2].FieldName :='RAZAO_SOCIAL';
-  FrmSolicitacoes.Dbg_Selecionar.Columns[2].Alignment := taLeftJustify;
-  FrmSolicitacoes.Dbg_Selecionar.Columns[2].Title.Caption := 'Razão Social';
-  FrmSolicitacoes.Dbg_Selecionar.Columns[2].Width :=300;
-  FrmSolicitacoes.Dbg_Selecionar.Columns[2].Title.Alignment :=taLeftJustify;
-
-  FrmSolicitacoes.Dbg_Selecionar.Columns.Add;
-  FrmSolicitacoes.Dbg_Selecionar.Columns[3].FieldName :='dta_atualizacao';
-  FrmSolicitacoes.Dbg_Selecionar.Columns[3].Alignment := taCenter;
-  FrmSolicitacoes.Dbg_Selecionar.Columns[3].Title.Caption := 'Data Ult.Atual.';
-  FrmSolicitacoes.Dbg_Selecionar.Columns[3].Width :=90;
-  FrmSolicitacoes.Dbg_Selecionar.Columns[3].Title.Alignment :=taCenter;
-
-  FrmSolicitacoes.Dbg_Selecionar.Columns.Add;
-  FrmSolicitacoes.Dbg_Selecionar.Columns[4].FieldName :='hra_atualizacao';
-  FrmSolicitacoes.Dbg_Selecionar.Columns[4].Alignment := taCenter;
-  FrmSolicitacoes.Dbg_Selecionar.Columns[4].Title.Caption := 'Hora Ult.Atual.';
-  FrmSolicitacoes.Dbg_Selecionar.Columns[4].Width :=90;
-  FrmSolicitacoes.Dbg_Selecionar.Columns[4].Title.Alignment :=taCenter;
-
-  FrmSolicitacoes.Dbg_Selecionar.Options:=[dgTitles,dgColumnResize,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection];
-
-  Screen.Cursor:=crDefault;
-
-  OdirPanApres.Visible:=False;
-
-  FrmSolicitacoes.ShowModal;
-
-  DMBelShop.CDS_Busca.Close;
-  FreeAndNil(FrmSolicitacoes);
 
 end;
 
@@ -43458,11 +43441,14 @@ begin
   // Apresenta Data da Ultima Atualização da Web Service =======================
   MySqlDML:=' SELECT MAX(m.data_documento) DTA'+
             ' FROM LINXMOVIMENTO m'+
-            ' WHERE m.cancelado=''N'''+
-            ' AND m.excluido=''N'''+
-            ' AND m.operacao=''S'''+
-            ' AND m.tipo_transacao=''V'''+
-            ' AND m.data_documento > current_timestamp-20';
+            ' WHERE m.data_documento > current_timestamp-30';
+
+//OdirApagar - 11/12/2018
+//            ' WHERE m.cancelado=''N'''+
+//            ' AND m.excluido=''N'''+
+//            ' AND m.operacao=''S'''+
+//            ' AND m.tipo_transacao=''V'''+
+//            ' AND m.data_documento > current_timestamp-20';
   DMBelShop.SQLQuery3.Close;
   DMBelShop.SQLQuery3.SQL.Clear;
   DMBelShop.SQLQuery3.SQL.Add(MySqlDML);
@@ -43470,8 +43456,13 @@ begin
   sgDescricao:=DMBelShop.SQLQuery3.FieldByName('Dta').AsString;
   DMBelShop.SQLQuery3.SQL.Clear;
   DMBelShop.SQLQuery3.Close;
-
   OdirPanApres.Visible:=False;
+
+  If Trim(sgDescricao)='' Then
+  Begin
+    msg('Impossível Continuar ...'+cr+cr+'Web Service LINX Sem'+cr+'Atualização a Mais de Um Mês !!','A');
+    Exit;
+  End;
 
   If msg('DATA da ÚLTIMA Atualização da'+cr+'Web Service LINX: '+sgDescricao+cr+cr+'Deseja Continuar ??','C')=2 Then
   Begin
@@ -43490,6 +43481,10 @@ begin
   FrmComissaoVendedor.PC_ComissaoVendedor.TabIndex:=0;
   FrmComissaoVendedor.PC_CampColecao.TabIndex:=0;
   FrmComissaoVendedor.Bt_ImportaProdutos.Tag:=6;
+
+  // Permissões de Visualização ================================================
+  PermissaoVisual(FrmComissaoVendedor.Ts_CampColecao);
+
   FrmComissaoVendedor.ShowModal;
 
   FreeAndNil(FrmComissaoVendedor);
@@ -43539,6 +43534,45 @@ begin
   FrmCentralTrocas.Ts_ControleProducao.TabVisible:=True;
 
   FrmCentralTrocas.ShowModal;
+
+end;
+
+procedure TFrmBelShop.SubMenuICMSDebCredImpNCMClick(Sender: TObject);
+begin
+  // Abre Form de Solicitações (Enviar o TabIndex a Manter Ativo) ==============
+  FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+  AbreSolicitacoes(2);
+
+  FrmSolicitacoes.Ts_ProSoftImpArquivo.Caption:='Importa (CSV) Tabela NCM e Percentuais';
+  FrmSolicitacoes.Gb_ProSoftImpArquivo.Caption:=' Informe a Pasta e o Arquivo(CSV) Contendo a Tabela NCM e Percentuais a Importar ';
+  FrmSolicitacoes.Gb_ProSoftImpArquivoSalvar.Visible:=False;
+  FrmSolicitacoes.DtEdt_ProSoftImpDtaLimite.Visible:=False;
+  FrmSolicitacoes.Label5.Visible:=False;
+
+  FrmSolicitacoes.sgSender:=(Sender as TMenuItem).Name;
+
+  FrmSolicitacoes.ShowModal;
+
+  FreeAndNil(FrmSolicitacoes);
+
+end;
+
+procedure TFrmBelShop.SubMenuICMSDebCredSTClick(Sender: TObject);
+begin
+  DMDebCredST :=TDMDebCredST.Create(Self);
+  FrmDebCredST:=TFrmDebCredST.Create(Self);
+
+//  // Permissões de Visualização ================================================
+//  PermissaoVisual(FrmComissaoVendedor.Ts_CampColecao);
+
+  FrmDebCredST.Ts_FornBcICMSST.TabVisible:=False;
+  FrmDebCredST.Ts_FornTotais.TabVisible:=False;
+  FrmDebCredST.Ts_FornProdutos.TabVisible:=False;
+
+  FrmDebCredST.ShowModal;
+
+  FreeAndNil(FrmDebCredST);
+  FreeAndNil(DMDebCredST);
 
 end;
 

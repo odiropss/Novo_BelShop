@@ -254,9 +254,22 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
       '     left join aplica   ap  on ap.codaplicacao=pr.codaplicacao'
       '     left join forneced fo  on fo.codfornecedor=pr.principalfor'
       '     left join listapre lp  on lp.codlista='#39'0006'#39
-      '                           and lp.codproduto=pr.codproduto')
+      '                           and lp.codproduto=pr.codproduto'
+      ''
+      'WHERE ((pr.datainclusao>=:Data) or (pr.dataalteracao>=:Data))')
     Left = 648
     Top = 48
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'Data'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'Data'
+        ParamType = ptUnknown
+      end>
     object IBQ_ProdutoMPMSUPDATE_INSERT: TIBStringField
       FieldName = 'UPDATE_INSERT'
       Size = 1359
@@ -280,9 +293,15 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
       ''
       'FROM LISTAPRE l'
       ''
-      'ORDER BY 1')
+      'WHERE l.dataalteracao>= :Data')
     Left = 656
     Top = 144
+    ParamData = <
+      item
+        DataType = ftUnknown
+        Name = 'Data'
+        ParamType = ptUnknown
+      end>
     object IBQ_ListaPrecosMPMSCODLISTA: TIBStringField
       FieldName = 'CODLISTA'
       Origin = 'LISTAPRE.CODLISTA'
@@ -1138,5 +1157,29 @@ object DMMovtosEmpresas: TDMMovtosEmpresas
     SQLConnection = SQLC
     Left = 344
     Top = 32
+  end
+  object IBQ_Busca: TIBQuery
+    Database = DMConexoes.IBDB_01
+    Transaction = DMConexoes.IBT_01
+    BufferChunks = 1000
+    CachedUpdates = False
+    SQL.Strings = (
+      'SELECT '
+      'e.codfilial, e.codproduto, e.saldoatual, e.pedidopendente, '
+      'e.zonaendereco, e.corredor, e.prateleira, e.gaveta, '
+      'e.cusmedvalor, e.customedio, '
+      
+        'e.lastprecocompra, e.lastcustomedio, e.estoqueideal, e.estoquema' +
+        'ximo, '
+      
+        'e.dataalteracadastro, e.dataalteraestoque, e.dataalteraestoque_p' +
+        'ed, '
+      'coalesce(p.principalfor,'#39'000000'#39') principalfor, '
+      'current_date DTA_ATUALIZACAO, '#39'19:28:14'#39' HRA_ATUALIZACAO '
+      'FROM ESTOQUE e'
+      '      LEFT JOIN PRODUTO p on e.codproduto=p.codproduto '
+      'WHERE e.codfilial='#39'99'#39)
+    Left = 752
+    Top = 24
   end
 end

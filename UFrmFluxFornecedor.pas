@@ -20,7 +20,7 @@ uses
   Menus, Commctrl, JvExStdCtrls, JvRadioButton, cxContainer, cxEdit,
   cxTextEdit, cxMaskEdit, cxDropDownEdit, cxCalendar, JvExComCtrls,
   JvDateTimePicker, JvMaskEdit, JvCheckedMaskEdit, JvDatePickerEdit,
-  JvExMask, JvToolEdit, DBGridJul;
+  JvExMask, JvToolEdit, DBGridJul, dxGDIPlusClasses;
 
 type
   TFrmFluxoFornecedor = class(TForm)
@@ -95,8 +95,6 @@ type
     EdtNumDoc: TEdit;
     EdtSerieDoc: TEdit;
     Label10: TLabel;
-    Label5: TLabel;
-    Label4: TLabel;
     EdtValorDoc: TCurrencyEdit;
     Label3: TLabel;
     EdtCodLojaDoc: TCurrencyEdit;
@@ -112,8 +110,6 @@ type
     EdtHistDoc: TEdit;
     EdtDebCreDoc: TEdit;
     Lab_Lanctos: TLabel;
-    EdtDtOrigemDoc: TcxDateEdit;
-    EdtDtCaixaDoc: TcxDateEdit;
     Panel4: TPanel;
     Bt_LanctosSalvar: TJvXPButton;
     Bt_LanctosAbandonar: TJvXPButton;
@@ -139,17 +135,41 @@ type
     EdtFornVinculadoCodForn: TCurrencyEdit;
     Bt_FluxoVinculadoBuscaForn: TJvXPButton;
     Bt_AvariasCentralTrocas: TButton;
+    Label14: TLabel;
+    Bt_FluFornAcrescCampanhas: TJvXPButton;
+    Ts_FluxFornPercCampanhas: TTabSheet;
+    Gb_FornAcrescCampanhas: TGroupBox;
+    Pan_FornAcrescCampanhas: TPanel;
+    Dbg_FornAcrescCampanhas: TDBGrid;
+    EdtFornAcrescCampCodForn: TCurrencyEdit;
+    Bt_FornAcrescCampBuscaFornec: TJvXPButton;
+    EdtFornAcrescCampDescForn: TEdit;
+    Label15: TLabel;
+    EdtFornAcrescCampPercentual: TCurrencyEdit;
+    Label16: TLabel;
+    Stb_FornAcrescCampanhas: TdxStatusBar;
+    Bt_FornAcrescCampSalvar: TJvXPButton;
+    Label17: TLabel;
+    EdtFornAcrescCampOBS: TEdit;
+    Label5: TLabel;
+    Label4: TLabel;
+    EdtDtCaixaDoc: TcxDateEdit;
+    EdtDtOrigemDoc: TcxDateEdit;
+    Pan_Datas: TPanel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormShow(Sender: TObject);
     procedure PC_PrincipalChange(Sender: TObject);
 
+    // =========================================================================
     // ODIR ====================================================================
+    // =========================================================================
     // Hint em Fortma de Balão
     Procedure CreateToolTips(hWnd: Cardinal); // Cria Show Hint em Forma de Balão
     Procedure FocoToControl(Sender: TControl); // Posiciona no Componente
 
+    // FORNECEDORES CONTA CORRENTE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     Procedure CalculaPercReducao;
     Procedure PercReducaoHabiita_GroupBox(bHabilita: Boolean);
 
@@ -171,11 +191,15 @@ type
 
     Procedure CriaLancamentoAbertura;
 
+    Function  FornPercAcrescCampanhas(bIncluir: Boolean): Boolean;
+
     // FORNECEDORES VINCULADOS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     Procedure AcertaCodVinculado; // Acerta os Codigo Vinculados = null
     Procedure FornVincAtualizaVinculos;
 
+    // =========================================================================
     // ODIR ====================================================================
+    // =========================================================================
 
     procedure Dbg_FluFornFornecKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure Dbg_FluFornFornecKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -249,6 +273,15 @@ type
     procedure Bt_FluxoVinculadoBuscaFornClick(Sender: TObject);
     procedure Bt_AvariasCentralTrocasClick(Sender: TObject);
     procedure Dbg_FornVinculadosEnter(Sender: TObject);
+    procedure Bt_FluFornAcrescCampanhasClick(Sender: TObject);
+    procedure EdtFornAcrescCampCodFornChange(Sender: TObject);
+    procedure EdtFornAcrescCampCodFornExit(Sender: TObject);
+    procedure Bt_FornAcrescCampBuscaFornecClick(Sender: TObject);
+    procedure Dbg_FornAcrescCampanhasEnter(Sender: TObject);
+    procedure Bt_FornAcrescCampSalvarClick(Sender: TObject);
+    procedure Dbg_FornAcrescCampanhasKeyDown(Sender: TObject;
+      var Key: Word; Shift: TShiftState);
+    procedure Dbg_FornAcrescCampanhasDblClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -308,6 +341,88 @@ uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop, DB, UPesquisa,
 //==============================================================================
 // ODIR - INICIO ===============================================================
 //==============================================================================
+
+// Manuteção no Percentual de Acrescimos no Valor da Campanha - COLEÇÃO >>>>>>>>
+Function TFrmFluxoFornecedor.FornPercAcrescCampanhas(bIncluir: Boolean): Boolean;
+Var
+  MySql: String;
+Begin
+  Result:=True;
+
+  OdirPanApres.Caption:='AGUARDE !! Salvando Fornecedor...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmFluxoFornecedor.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmFluxoFornecedor;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+  Refresh;
+
+  // Verifica se Transação esta Ativa
+  If DMBelShop.SQLC.InTransaction Then
+   DMBelShop.SQLC.Rollback(TD);
+
+  // Monta Transacao ===========================================================
+  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+  TD.IsolationLevel:=xilREADCOMMITTED;
+  DMBelShop.SQLC.StartTransaction(TD);
+  Try // Try da Transação
+    Screen.Cursor:=crAppStart;
+    DateSeparator:='.';
+    DecimalSeparator:='.';
+
+    // Altera/Inclui Lançamento ================================================
+    // 30 => CONTA CORRENTE DE FORNECEDORES
+    //       - COMISSÕES POR CAMPANHAS <COLEÇÃO>: Percentuais de Acrescimos na Cobrança
+    //         - COD_AUX  = Código do Fornecedor Linx
+    //         - DES_AUX  = Código do Usuário
+    //         - DES_AUX1 = Data da Inclusão
+    //         - VLR_AUX  = Percentual de Acrescimo
+    //         - VLR_AUX1 = Se Lançamento Ativo (0=NÃO 1=SIM)
+    If bIncluir Then
+    Begin
+      MySql:=' UPDATE OR INSERT INTO TAB_AUXILIAR'+
+             ' (TIP_AUX, COD_AUX, DES_AUX, DES_AUX1, VLR_AUX, VLR_AUX1)'+
+             ' VALUES('+
+             '30, '+ // TIP_AUX
+             IntToStr(EdtFornAcrescCampCodForn.AsInteger)+', '+ // COD_AUX  = Código do Fornecedor Linx
+             QuotedStr(Cod_Usuario)+', '+ // DES_AUX  = Código do Usuário
+             QuotedStr(Trim(EdtFornAcrescCampOBS.Text))+', '+ // DES_AUX1 = Observações
+             QuotedStr(f_Troca(',','.',VarToStr(EdtFornAcrescCampPercentual.Value)))+', '+ // VLR_AUX  = Percentual de Acrescimo
+             'NULL)'+
+             ' MATCHING (TIP_AUX, COD_AUX)';
+    End; // If bIncluir Then
+
+    If Not bIncluir Then
+    Begin
+      MySql:=' DELETE FROM TAB_AUXILIAR t'+
+             ' WHERE t.tip_aux=30'+
+             ' AND   t.cod_aux='+DMBelShop.CDS_Join.FieldByName('Cod_Fornecedor').AsString;
+    End; // If bIncluir Then
+    DMBelShop.SQLC.Execute(MySql, nil, nil);
+
+    // Atualiza Transacao ======================================================
+    DMBelShop.SQLC.Commit(TD);
+  Except // Except da Transação
+    on e : Exception do
+    Begin
+      // Abandona Transacao ====================================================
+      DMBelShop.SQLC.Rollback(TD);
+      Result:=False;
+
+      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+    End; // on e : Exception do
+  End; // Try da Transação
+
+  DateSeparator:='/';
+  DecimalSeparator:=',';
+
+  OdirPanApres.Visible:=False;
+
+  Screen.Cursor:=crDefault;
+
+End; // Manuteção no Percentual de Acrescimos no Valor da Campanha - COLEÇÃO >>>
 
 // Cria Lançamento de Abertura em Caso de Vinculo de Fornecedor Novo >>>>>>>>>>>
 Procedure TFrmFluxoFornecedor.CriaLancamentoAbertura;
@@ -760,6 +875,7 @@ Begin
   Ts_FluxFornCaixa.TabVisible :=True;
   Ts_FluxFornLanctos.TabVisible:=False;
   Ts_FluxFornVinculos.TabVisible:=False;
+  Ts_FluxFornPercCampanhas.TabVisible:=False;
 
   igTabSheet:=0;
   PC_Principal.TabIndex:=igTabSheet;
@@ -785,7 +901,6 @@ Begin
   TD.IsolationLevel:=xilREADCOMMITTED;
   DMBelShop.SQLC.StartTransaction(TD);
   Try // Try da Transação
-    Screen.Cursor:=crAppStart;
     DateSeparator:='.';
     DecimalSeparator:='.';
 
@@ -801,7 +916,6 @@ Begin
 
     DateSeparator:='/';
     DecimalSeparator:=',';
-    Screen.Cursor:=crDefault;
 
   Except // Except da Transação
     on e : Exception do
@@ -811,8 +925,6 @@ Begin
 
       DateSeparator:='/';
       DecimalSeparator:=',';
-
-      Screen.Cursor:=crDefault;
 
       MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
     End; // on e : Exception do
@@ -890,7 +1002,6 @@ Begin
     sCodFornVinculado:=Trim(Copy(Cbx_FornVinculado.Text,1,i-1));
     sDesFornVinculado:=Trim(Copy(Cbx_FornVinculado.Text,i+1,Length(Cbx_FornVinculado.Text)));
   End; // If (Gb_FornVinculado.Visible) And (Trim(Cbx_FornVinculado.Text)<.'') Then
-
 
   // Acerta Data para Processamento do Conta Corrente ==========================
   If Trim(sgDtaDoc)='' Then
@@ -1199,8 +1310,8 @@ End; // Consiste Lançamentos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 // Limpas Componentes de Lancamentos >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmFluxoFornecedor.LimpaLancamentos;
 Begin
-  EdtDtOrigemDoc.Date:=Date;
-  EdtDtCaixaDoc.Date:=Date;
+  EdtDtOrigemDoc.Date:=StrToDate(DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)));
+  EdtDtCaixaDoc.Date :=StrToDate(DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)));
   EdtValorDoc.Clear;
   EdtCodLojaDoc.Clear;
   EdtLojaDoc.Clear;
@@ -1253,7 +1364,7 @@ begin
   End;
 
   EdtFluFornFornecedor.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('Razao_Cliente').AsString;
-  EdtDtOrigemDoc.SetFocus;
+  EdtValorDoc.SetFocus;
 
   DMBelShop.CDS_BuscaRapida.Close;
 
@@ -1949,7 +2060,10 @@ begin
   CreateToolTips(Self.Handle);
   AddToolTip(Bt_FluFornBuscaFornecedor.Handle, @ti, TipoDoIcone, 'Selecionar o'+#13+'Fornecedor', 'SELECIONAR !!');
 
-//  CreateToolTips(Self.Handle);
+  CreateToolTips(Self.Handle);
+  AddToolTip(Bt_FluFornAcrescCampanhas.Handle, @ti, TipoDoIcone, '% de Acrescimos'+#13+'Campanhas'+#13+'<Coleções>', 'CAMPANHAS !!');
+
+  //  CreateToolTips(Self.Handle);
 //  AddToolTip(Bt_FluFornSalvaMemoria.Handle, @ti, TipoDoIcone, 'Salvar Resultado'+#13+'em Memória', 'CONTA CORRENTE !!');
   // Show Hint em Forma de Balão ===============================================
   //============================================================================
@@ -2026,6 +2140,7 @@ begin
   PC_Principal.TabIndex:=0;
   Ts_FluxFornLanctos.TabVisible:=False;
   Ts_FluxFornVinculos.TabVisible:=False;
+  Ts_FluxFornPercCampanhas.TabVisible:=False;
   PC_PrincipalChange(Self);
 
   PC_FluxFornParametros.TabIndex:=0;
@@ -2039,6 +2154,7 @@ begin
 
   // Acerta os Codigo Vinculados = null (No Inicio do FrmFluxFornecedor ========
   AcertaCodVinculado;
+  Screen.Cursor:=crAppStart;
 
   // Apresenta Históricos ======================================================
   If DMBelShop.CDS_FluxoFornHistorico.Active Then
@@ -2080,11 +2196,17 @@ begin
 end;
 
 procedure TFrmFluxoFornecedor.PC_PrincipalChange(Sender: TObject);
-const
-  TipoDoIcone = 1; // Show Hint em Forma de Balão
+Var
+  MySql: String;
 begin
 
   CorSelecaoTabSheet(PC_Principal);
+
+  Bt_FluFornAcrescCampanhas.Visible:=False;
+
+  // Usado para Percentuais de Acrescimentos nos Fornecedores nas Campanhas
+  DMBelShop.CDS_Join.Close;
+  DMBelShop.SDS_Join.CommandText:='';
 
   // Ts_FluxFornApres
   If (PC_Principal.ActivePage=Ts_FluxFornApres) And (Ts_FluxFornApres.CanFocus) Then
@@ -2117,6 +2239,8 @@ begin
 
     Bt_FluFornFiltroComprador.Visible:=True;
     Bt_FluFornFiltroComprador.Caption:='Seleciona Comprador';
+
+    Bt_FluFornAcrescCampanhas.Visible:=True;
 
     Bt_FluFornFechar.Caption:='Fechar';
     Bt_FluFornFechar.Tag:=99;
@@ -2178,7 +2302,7 @@ begin
     If (sgDMLMovto='I') Or (sgDMLMovto='A') Then
      Begin
        If Not bgSoObs Then
-        EdtDtOrigemDoc.SetFocus
+        EdtValorDoc.SetFocus
        Else
         EdtObsDoc.SetFocus
      End
@@ -2209,8 +2333,53 @@ begin
     EdtFornVinculoCodForn.SetFocus;
   End; // Ts_FluxFornVinculos
 
+  // Ts_FluxFornCaixa
+  If (PC_Principal.ActivePage=Ts_FluxFornPercCampanhas) And (Ts_FluxFornPercCampanhas.CanFocus) Then
+  Begin
+    Gb_FluFornFornecedor.Visible:=False;
+
+    Bt_FluFornFiltroComprador.Visible:=False;
+    Bt_FluFornVinculos.Visible:=False;
+    Bt_FluFornIncluir.Visible:=False;
+    Bt_FluFornSalvaMemoria.Visible:=False;
+
+    Bt_FluFornFechar.Caption:='Voltar';
+    Bt_FluFornFechar.Tag:=90;
+    Bt_FluFornFechar.Glyph:=Nil;
+
+    EdtFornAcrescCampCodForn.Clear;
+    EdtFornAcrescCampPercentual.Clear;
+    EdtFornAcrescCampDescForn.Clear;
+
+    // Busca Fornecedores Com Acrescimos =====================
+    MySql:=' SELECT'+
+           ' t.cod_aux COD_FORNECEDOR,'+
+           ' f.nome_cliente NOME_FORNECEDOR,'+
+           ' t.vlr_aux PERC_ACRESCIMOS,'+
+           ' t.des_aux1 TXT_OBS,'+
+           ' CAST(t.des_aux AS INTEGER) COD_USUARIO,'+
+           ' u.des_usuario NOME_USUARIO'+
+
+           ' FROM TAB_AUXILIAR t'+
+           '    LEFT JOIN LINXCLIENTESFORNEC f  on f.cod_cliente=t.cod_aux'+
+           '    LEFT JOIN PS_USUARIOS u         on u.cod_usuario=t.des_aux'+
+
+           ' WHERE t.tip_aux=30'+ // CONTA CORRENTE DE FORNECEDORES
+                                  // COMISSÕES POR CAMPANHAS <COLEÇÃO>
+                                  // Percentuais de Acrescimos na Cobrança
+           ' ORDER BY 2';
+    DMBelShop.CDS_Join.Close;
+    DMBelShop.SDS_Join.CommandText:=MySql;
+    DMBelShop.CDS_Join.Open;
+    TNumericField(DMBelShop.CDS_Join.FieldByName('PERC_ACRESCIMOS')).DisplayFormat:='0.,00';
+
+    EdtFornAcrescCampCodForn.SetFocus;
+  End; // Ts_FluxFornCaixa
+
+
   // Coloca BitMaps em Componentes =============================================
   BitMaps(FrmFluxoFornecedor);
+
 end;
 
 procedure TFrmFluxoFornecedor.Dbg_FluFornFornecKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -2588,6 +2757,7 @@ begin
       Ts_FluxFornCaixa.TabVisible :=True;
       Ts_FluxFornLanctos.TabVisible:=False;
       Ts_FluxFornVinculos.TabVisible:=False;
+      Ts_FluxFornPercCampanhas.TabVisible:=False;
 
       PC_Principal.TabIndex:=igTabSheet;
       PC_PrincipalChange(Self);
@@ -2600,6 +2770,11 @@ begin
 
       DMBelShop.CDS_FluxoFornVinculo.Close;
       DMBelShop.CDS_FluxoFornVinculados.Close;
+
+      // Usado para Percentuais de Acrescimentos nos Fornecedores nas Campanhas
+      DMBelShop.CDS_Join.Close;
+      DMBelShop.SDS_Join.CommandText:='';
+
       Exit;
     End;
 
@@ -3906,8 +4081,6 @@ Var
   MySql, sHist: String;
 begin
   Gb_FornVinculado.Enabled:=True;
-  EdtDtOrigemDoc.Enabled:=True;
-  EdtDtCaixaDoc.Enabled:=True;
   EdtValorDoc.Enabled:=True;
   EdtCodLojaDoc.Enabled:=True;
   EdtCodHistDoc.Enabled:=True;
@@ -4098,8 +4271,6 @@ begin
         bgSoObs:=True;
 
         Gb_FornVinculado.Enabled:=False;
-        EdtDtOrigemDoc.Enabled:=False;
-        EdtDtCaixaDoc.Enabled:=False;
         EdtValorDoc.Enabled:=False;
         EdtCodLojaDoc.Enabled:=False;
         EdtCodHistDoc.Enabled:=False;
@@ -4570,10 +4741,10 @@ Var
   sCodForn, sNrDoc, sDtaDoc: String;
   MySql: String;
 begin
-  // Altera Somentea a Observação
+  // Altera Somente a Observação ===============================================
   If bgSoObs Then
   Begin
-    // Monta Transacao ===========================================================
+    // Monta Transacao =========================================================
     TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
     TD.IsolationLevel:=xilREADCOMMITTED;
     DMBelShop.SQLC.StartTransaction(TD);
@@ -4592,7 +4763,7 @@ begin
       DMBelShop.CDS_FluxoFornecedor.Edit;
       DMBelShop.CDS_FluxoFornecedorTXT_OBS.AsString:=EdtObsDoc.Text;
       DMBelShop.CDS_FluxoFornecedor.Post;
-      // Atualiza Transacao ======================================================
+      // Atualiza Transacao ====================================================
       DMBelShop.SQLC.Commit(TD);
 
       DateSeparator:='/';
@@ -4603,7 +4774,7 @@ begin
     Except // Except da Transação
       on e : Exception do
       Begin
-        // Abandona Transacao ====================================================
+        // Abandona Transacao ==================================================
         DMBelShop.SQLC.Rollback(TD);
 
         DateSeparator:='/';
@@ -4617,8 +4788,6 @@ begin
 
     LimpaLancamentos;
     Gb_FornVinculado.Enabled:=True;
-    EdtDtOrigemDoc.Enabled:=True;
-    EdtDtCaixaDoc.Enabled:=True;
     EdtValorDoc.Enabled:=True;
     EdtCodLojaDoc.Enabled:=True;
     EdtCodHistDoc.Enabled:=True;
@@ -4627,13 +4796,14 @@ begin
     Ts_FluxFornCaixa.TabVisible :=True;
     Ts_FluxFornLanctos.TabVisible:=False;
     Ts_FluxFornVinculos.TabVisible:=False;
+    Ts_FluxFornPercCampanhas.TabVisible:=False;
     PC_Principal.TabIndex:=1;
     PC_PrincipalChange(Self);
 
     Exit;
   End; // If bgSoObs Then
 
-  EdtDtOrigemDoc.SetFocus;
+  EdtValorDoc.SetFocus;
 
   sCodForn:=IntToStr(EdtFluFornCodFornecedor.AsInteger);
   sNrDoc  :=EdtNumDoc.Text;
@@ -4660,8 +4830,6 @@ begin
 
   LimpaLancamentos;
   Gb_FornVinculado.Enabled:=True;
-  EdtDtOrigemDoc.Enabled:=True;
-  EdtDtCaixaDoc.Enabled:=True;
   EdtValorDoc.Enabled:=True;
   EdtCodLojaDoc.Enabled:=True;
   EdtCodHistDoc.Enabled:=True;
@@ -4670,6 +4838,7 @@ begin
   Ts_FluxFornCaixa.TabVisible :=True;
   Ts_FluxFornLanctos.TabVisible:=False;
   Ts_FluxFornVinculos.TabVisible:=False;
+  Ts_FluxFornPercCampanhas.TabVisible:=False;
   PC_Principal.TabIndex:=1;
   PC_PrincipalChange(Self);
 
@@ -4692,6 +4861,7 @@ begin
   Ts_FluxFornCaixa.TabVisible :=True;
   Ts_FluxFornLanctos.TabVisible:=False;
   Ts_FluxFornVinculos.TabVisible:=False;
+  Ts_FluxFornPercCampanhas.TabVisible:=False;
   PC_Principal.TabIndex:=0;
   PC_PrincipalChange(Self);
 
@@ -5496,6 +5666,231 @@ begin
   If (Sender is TDBGrid) Then
    (Sender as TDBGrid).Color:=clWindow;
 
+end;
+
+procedure TFrmFluxoFornecedor.Bt_FluFornAcrescCampanhasClick(Sender: TObject);
+begin
+  Ts_FluxFornApres.TabVisible :=False;
+  Ts_FluxFornCaixa.TabVisible :=False;
+  Ts_FluxFornPercCampanhas.TabVisible:=True;
+  PC_Principal.ActivePage:=Ts_FluxFornPercCampanhas;
+  PC_PrincipalChange(Self);
+
+end;
+
+procedure TFrmFluxoFornecedor.EdtFornAcrescCampCodFornChange(Sender: TObject);
+begin
+  EdtFornAcrescCampDescForn.Clear;
+  EdtFornAcrescCampPercentual.Value:=0;
+end;
+
+procedure TFrmFluxoFornecedor.EdtFornAcrescCampCodFornExit(Sender: TObject);
+Var
+  MySql: String;
+begin
+
+  EdtFornAcrescCampDescForn.Clear;
+
+  If EdtFornAcrescCampCodForn.Value<>0 Then
+  Begin
+    Screen.Cursor:=crAppStart;
+    // Busca Fornecedores =======================================================
+    MySql:=' SELECT fo.cod_cliente   cod_fornecedor,'+
+           '        fo.razao_cliente des_fornecedor'+
+           ' FROM LINXCLIENTESFORNEC fo'+
+           ' WHERE fo.tipo_cliente IN (''F'',''A'',''J'')'+
+           ' AND   COALESCE(fo.ativo,''S'')=''S'''+
+           ' AND   fo.cod_cliente='+IntToStr(EdtFornAcrescCampCodForn.AsInteger);
+    DMBelShop.CDS_BuscaRapida.Close;
+    DMBelShop.SDS_BuscaRapida.CommandText:=MySql;
+    DMBelShop.CDS_BuscaRapida.Open;
+
+    If Trim(DMBelShop.CDS_BuscaRapida.FieldByName('Cod_Fornecedor').AsString)='' Then
+    Begin
+      Screen.Cursor:=crDefault;
+      msg('Fornecedor NÃO Encontrado !!!', 'A');
+      DMBelShop.CDS_BuscaRapida.Close;
+      EdtFornAcrescCampCodForn.Clear;
+      EdtFornAcrescCampCodForn.SetFocus;
+      Exit;
+    End;
+    Screen.Cursor:=crDefault;
+
+    EdtFornAcrescCampDescForn.Text:=DMBelShop.CDS_BuscaRapida.FieldByName('Des_Fornecedor').AsString;
+    DMBelShop.CDS_BuscaRapida.Close;
+
+    If DMBelShop.CDS_Join.Locate('Cod_Fornecedor', EdtFornAcrescCampCodForn.AsInteger,[]) Then
+     Dbg_FornAcrescCampanhasDblClick(Self);
+
+    EdtFornAcrescCampPercentual.SetFocus;
+  End; // If EdtFornAcrescCampCodForn.Value<>0 Then
+end;
+
+procedure TFrmFluxoFornecedor.Bt_FornAcrescCampBuscaFornecClick(Sender: TObject);
+Var
+  MySql: String;
+begin
+  FrmPesquisa:=TFrmPesquisa.Create(Self);
+
+  EdtFornAcrescCampCodForn.Clear;
+  EdtFornAcrescCampDescForn.Clear;
+
+  EdtFornAcrescCampCodForn.SetFocus;
+
+  // ========== EXECUTA QUERY PARA PESQUISA ====================================
+  Screen.Cursor:=crAppStart;
+
+  // Busca Fornecedor ==========================================================
+  MySql:=' SELECT fo.razao_cliente Des_Fornecedor,'+
+         '        fo.cod_cliente   Codigo'+
+         ' FROM LINXCLIENTESFORNEC fo'+
+         ' WHERE fo.tipo_cliente IN (''F'',''A'',''J'')'+
+         ' AND   COALESCE(fo.ativo,''S'')=''S'''+
+         ' ORDER BY 1';
+  DMBelShop.CDS_Pesquisa.Close;
+  DMBelShop.CDS_Pesquisa.Filtered:=False;
+  DMBelShop.SDS_Pesquisa.CommandText:=MySql;
+  DMBelShop.CDS_Pesquisa.Open;
+
+  Screen.Cursor:=crDefault;
+
+  // ============== Verifica Existencia de Dados ===============================
+  If Trim(DMBelShop.CDS_Pesquisa.FieldByName('Codigo').AsString)='' Then
+  Begin
+    DMBelShop.CDS_Pesquisa.Close;
+    msg('Sem Fornecedor a Listar !!','A');
+    EdtFornAcrescCampCodForn.SetFocus;
+    FreeAndNil(FrmPesquisa);
+    Exit;
+  End;
+
+  // ============= INFORMA O CAMPOS PARA PESQUISA E RETORNO ====================
+  FrmPesquisa.Campo_pesquisa:='Des_Fornecedor';
+  FrmPesquisa.Campo_Codigo:='Codigo';
+  FrmPesquisa.Campo_Descricao:='Des_Fornecedor';
+  //FrmPesquisa.EdtDescricao.Text:=FrmAcessos.EdtDescPessoa.Text;
+
+  // ============= ABRE FORM DE PESQUISA =======================================
+  FrmPesquisa.ShowModal;
+  DMBelShop.CDS_Pesquisa.Close;
+
+  // ============= RETORNO =====================================================
+  If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+   Begin
+     EdtFornAcrescCampCodForn.Text:=FrmPesquisa.EdtCodigo.Text;
+     EdtFornAcrescCampDescForn.Text:=FrmPesquisa.EdtDescricao.Text;
+     EdtFornAcrescCampCodFornExit(Self);
+   End
+  Else
+   Begin
+     EdtFornAcrescCampCodForn.Clear;
+     EdtFornAcrescCampDescForn.Clear;
+     EdtFornAcrescCampCodForn.SetFocus;
+   End; // If (Trim(FrmPesquisa.EdtCodigo.Text)<>'') and (Trim(FrmPesquisa.EdtDescricao.Text)<>'') Then
+
+  FreeAndNil(FrmPesquisa);
+end;
+
+procedure TFrmFluxoFornecedor.Dbg_FornAcrescCampanhasEnter(Sender: TObject);
+begin
+  ApplicationEvents1.OnActivate:=Dbg_FornAcrescCampanhasEnter;
+  Application.OnMessage := ApplicationEvents1Message;
+  ApplicationEvents1.Activate;
+
+end;
+
+procedure TFrmFluxoFornecedor.Bt_FornAcrescCampSalvarClick(Sender: TObject);
+begin
+  Dbg_FornAcrescCampanhas.SetFocus;
+
+  If EdtFornAcrescCampCodForn.AsInteger=0 Then
+  Begin
+    msg('Favor Informa o Fornecedor !!','A');
+    EdtFornAcrescCampCodForn.SetFocus;
+    Exit;
+  End; // If EdtFornAcrescCampCodForn.AsInteger=0 Then
+
+  If EdtFornAcrescCampPercentual.AsInteger=0 Then
+  Begin
+    If msg('O Percentual de Acrescimos Zerado !!'+cr+cr+'Esta CORRETO ??','C')=2 Then
+    Begin
+      EdtFornAcrescCampPercentual.SetFocus;
+      Exit;
+    End;
+  End; // If EdtFornAcrescCampCodForn.AsInteger=0 Then
+
+  If DMBelShop.CDS_Join.Locate('COD_FORNECEDOR', EdtFornAcrescCampCodForn.AsInteger,[]) Then
+  Begin
+    If msg('Fornecedor Já Incluído !!'+cr+cr+'DESEJA SUBSTITUÍ-LO ?? !!','C')=2 Then
+    Begin
+      EdtFornAcrescCampCodForn.Clear;
+      EdtFornAcrescCampPercentual.Clear;
+      EdtFornAcrescCampDescForn.Clear;
+      EdtFornAcrescCampCodForn.SetFocus;
+      Exit;
+    End;
+  End; // If EdtFornAcrescCampCodForn.AsInteger=0 Then
+
+  // Inclui/Substitui Fornacedor ===============================================
+  If FornPercAcrescCampanhas(True) Then
+  Begin
+    DMBelShop.CDS_Join.DisableControls;
+    DMBelShop.CDS_Join.Close;
+    DMBelShop.CDS_Join.Open;
+    TNumericField(DMBelShop.CDS_Join.FieldByName('PERC_ACRESCIMOS')).DisplayFormat:='0.,00';
+    DMBelShop.CDS_Join.Locate('COD_FORNECEDOR', EdtFornAcrescCampCodForn.AsInteger,[]);
+    DMBelShop.CDS_Join.EnableControls;
+
+    EdtFornAcrescCampCodForn.Clear;
+    EdtFornAcrescCampPercentual.Clear;
+    EdtFornAcrescCampDescForn.Clear;
+    EdtFornAcrescCampCodForn.SetFocus;
+  End; // If FornPercAcrescCampanhas(True) Then
+
+end;
+
+procedure TFrmFluxoFornecedor.Dbg_FornAcrescCampanhasKeyDown(
+  Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+
+
+  // Bloquei Ctrl + Delete =====================================================
+  If ((Shift = [ssCtrl]) And (key = vk_delete)) Then
+   Abort;
+
+  // Excluir Fornecedor ========================================================
+  If Key=VK_Delete Then
+  Begin
+    If DMBelShop.CDS_Join.IsEmpty Then
+     Exit;
+
+    If msg('Deseja Realmente Excluir o'+cr+cr+'Fornecedor Selecionado ??','C')=2 Then
+     Exit;
+
+    If FornPercAcrescCampanhas(False) Then
+    Begin
+      DMBelShop.CDS_Join.DisableControls;
+      DMBelShop.CDS_Join.Close;
+      DMBelShop.CDS_Join.Open;
+      TNumericField(DMBelShop.CDS_Join.FieldByName('PERC_ACRESCIMOS')).DisplayFormat:='0.,00';
+      DMBelShop.CDS_Join.EnableControls;
+
+      Dbg_FornAcrescCampanhas.SetFocus;
+    End; // If FornPercAcrescCampanhas(False) Then
+ End;
+
+end;
+
+procedure TFrmFluxoFornecedor.Dbg_FornAcrescCampanhasDblClick(Sender: TObject);
+begin
+  If DMBelShop.CDS_Join.IsEmpty Then
+   Exit;
+
+  EdtFornAcrescCampCodForn.AsInteger:=DMBelShop.CDS_Join.FieldByName('Cod_Fornecedor').AsInteger;
+  EdtFornAcrescCampPercentual.Value :=DMBelShop.CDS_Join.FieldByName('Perc_Acrescimos').AsCurrency;
+  EdtFornAcrescCampDescForn.Text    :=DMBelShop.CDS_Join.FieldByName('Nome_Fornecedor').AsString;
+  EdtFornAcrescCampOBS.Text         :=DMBelShop.CDS_Join.FieldByName('Txt_Obs').AsString;
+  EdtFornAcrescCampPercentual.SetFocus;
 end;
 
 end.

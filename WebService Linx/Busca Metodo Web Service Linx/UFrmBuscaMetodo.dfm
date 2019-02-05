@@ -13,6 +13,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
@@ -50,10 +51,12 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       ParentFont = False
     end
     object Lab_Periodo1: TLabel
-      Left = 306
+      Left = 242
       Top = 138
-      Width = 64
+      Width = 130
       Height = 13
+      Alignment = taRightJustify
+      AutoSize = False
       Caption = 'Per'#237'odo de'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -66,7 +69,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       Left = 482
       Top = 139
       Width = 8
-      Height = 14
+      Height = 13
       Caption = 'a'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -120,7 +123,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       Width = 161
       Height = 31
       Caption = ' Buscar M'#233'todo '
-      TabOrder = 5
+      TabOrder = 7
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -171,7 +174,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       StyleDisabled.ButtonStyle = btsDefault
       StyleFocused.BorderColor = clMoneyGreen
       StyleFocused.Color = clSilver
-      TabOrder = 3
+      TabOrder = 5
       Width = 99
     end
     object DtEdt_DtaFim: TcxDateEdit
@@ -188,7 +191,7 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       StyleDisabled.ButtonStyle = btsDefault
       StyleFocused.BorderColor = clMoneyGreen
       StyleFocused.Color = clSilver
-      TabOrder = 4
+      TabOrder = 6
       Width = 99
     end
     object Cbx_Metodos: TComboBox
@@ -239,14 +242,14 @@ object FrmBuscaMetodo: TFrmBuscaMetodo
       Top = 104
       Width = 121
       Height = 21
-      TabOrder = 6
+      TabOrder = 4
     end
     object EdtCodProduto: TEdit
       Left = 355
       Top = 104
       Width = 121
       Height = 21
-      TabOrder = 7
+      TabOrder = 3
     end
   end
   object OdirPanApres: TPanel

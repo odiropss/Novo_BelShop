@@ -1,6 +1,6 @@
 object FrmCentralTrocas: TFrmCentralTrocas
-  Left = 239
-  Top = 113
+  Left = 235
+  Top = 116
   Align = alClient
   AutoSize = True
   BorderIcons = [biSystemMenu]
@@ -1958,8 +1958,9 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Alignment = taCenter
             Color = 15395562
             Expanded = False
-            FieldName = 'COD_LOJA'
+            FieldName = 'COD_LINX'
             Title.Alignment = taCenter
+            Title.Caption = 'C'#243'd'
             Width = 28
             Visible = True
           end
@@ -1967,6 +1968,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Color = 14680031
             Expanded = False
             FieldName = 'RAZAO_SOCIAL'
+            Title.Caption = 'Nome Loja LINX'
             Width = 250
             Visible = True
           end
@@ -2348,7 +2350,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         end
         object Bt_ReposLojasDivAlteradas: TJvXPButton
           Tag = 5
-          Left = 550
+          Left = 546
           Top = 2
           Width = 118
           Height = 36
@@ -2367,7 +2369,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           OnClick = Bt_ReposLojasDivAlteradasClick
         end
         object JvXPButton2: TJvXPButton
-          Left = 390
+          Left = 386
           Top = 2
           Width = 118
           Height = 36
@@ -4733,7 +4735,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         Width = 1094
         Height = 5
         Cursor = crVSplit
-        Align = alTop
+        Align = alBottom
         Color = clBlue
         ParentColor = False
       end
@@ -4754,7 +4756,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         DesignSize = (
           1094
           37)
-        object Bt_ControleProducaoPeriodo: TJvXPButton
+        object Bt_ContProdPeriodo: TJvXPButton
           Tag = 1
           Left = 2
           Top = 2
@@ -4813,15 +4815,15 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Font.Style = [fsBold]
           ParentFont = False
           Style.Theme = OfficeXP
-          OnClick = Bt_ControleProducaoPeriodoClick
+          OnClick = Bt_ContProdPeriodoClick
         end
-        object Bt_ControleProducaoSalvaConferentes: TJvXPButton
+        object Bt_ContProdSalvaEstatisticas: TJvXPButton
           Tag = 4
-          Left = 511
+          Left = 759
           Top = 2
           Width = 150
           Height = 33
-          Caption = '    Conferentes'#13#10'Salvar em Mem'#243'ria'
+          Caption = '  ESTAT'#205'STICAS'#13#10'Salvar em Mem'#243'ria'
           TabOrder = 1
           Glyph.Data = {
             07544269746D617066010000424D660100000000000076000000280000001400
@@ -4837,7 +4839,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             000030F44F00033333333333000030FFFF003333333333330000300000033333
             333333330000333333333333333333330000}
           ShowFocusRect = True
-          Spacing = 10
+          Spacing = 5
           Anchors = [akLeft, akTop, akBottom]
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -4845,9 +4847,9 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_ControleProducaoSalvaConferentesClick
+          OnClick = Bt_ContProdSalvaSeparacaoClick
         end
-        object Bt_ControleProducaoFechar: TJvXPButton
+        object Bt_ContProdFechar: TJvXPButton
           Left = 978
           Top = 2
           Width = 114
@@ -4923,13 +4925,13 @@ object FrmCentralTrocas: TFrmCentralTrocas
           ParentFont = False
           OnClick = Bt_AnaliseRepDiariaFecharClick
         end
-        object Bt_ControleProducaoSalvaSepardores: TJvXPButton
+        object Bt_ContProdSalvaSeparacao: TJvXPButton
           Tag = 4
-          Left = 303
+          Left = 247
           Top = 2
           Width = 150
           Height = 33
-          Caption = '    Separdores'#13#10'Salvar em Mem'#243'ria'
+          Caption = '   SEPARA'#199#195'O'#13#10'Salvar em Mem'#243'ria'
           TabOrder = 3
           Glyph.Data = {
             07544269746D617066010000424D660100000000000076000000280000001400
@@ -4945,7 +4947,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             000030F44F00033333333333000030FFFF003333333333330000300000033333
             333333330000333333333333333333330000}
           ShowFocusRect = True
-          Spacing = 10
+          Spacing = 5
           Anchors = [akLeft, akTop, akBottom]
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -4953,16 +4955,48 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
-          OnClick = Bt_ControleProducaoSalvaSepardoresClick
+          OnClick = Bt_ContProdSalvaSeparacaoClick
+        end
+        object Bt_ContProdSalvaConferencia: TJvXPButton
+          Tag = 4
+          Left = 511
+          Top = 3
+          Width = 150
+          Height = 33
+          Caption = '  CONFER'#202'NCIA'#13#10'Salvar em Mem'#243'ria'
+          TabOrder = 4
+          Glyph.Data = {
+            07544269746D617066010000424D660100000000000076000000280000001400
+            0000140000000100040000000000F00000000000000000000000100000001000
+            0000000000000000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0
+            C000808080000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFF
+            FF00333333333333333333330000333333000000000000030000333333078888
+            8888880300003333330F77777777780300003333330F99777777780300003333
+            330FFFFFFFFFF703000033333300000000000003000033333333333333333333
+            0000333333333333330033330000333333333333300003330000300000000333
+            00000033000030FFFFFF033333003333000030F4444F033333003333000030FF
+            FFFF033338003333000030F4444F030000083333000030FFFFFF030000833333
+            000030F44F00033333333333000030FFFF003333333333330000300000033333
+            333333330000333333333333333333330000}
+          ShowFocusRect = True
+          Spacing = 5
+          Anchors = [akLeft, akTop, akBottom]
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          OnClick = Bt_ContProdSalvaSeparacaoClick
         end
       end
-      object Dbg_ContProdConferencia: TDBGrid
+      object Dbg_ContProdEstatisticas: TDBGrid
         Left = 0
         Top = 224
         Width = 1094
         Height = 289
-        Align = alClient
-        DataSource = DMCentralTrocas.DS_ContProdConferencia
+        Align = alBottom
+        DataSource = DMCentralTrocas.DS_ContProdEstatisticas
         FixedColor = clTeal
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -4977,14 +5011,14 @@ object FrmCentralTrocas: TFrmCentralTrocas
         TitleFont.Height = -11
         TitleFont.Name = 'MS Sans Serif'
         TitleFont.Style = [fsBold]
-        OnDrawColumnCell = Dbg_ContProdConferenciaDrawColumnCell
-        OnEnter = Dbg_ContProdConferenciaEnter
+        OnDrawColumnCell = Dbg_ContProdEstatisticasDrawColumnCell
+        OnEnter = Dbg_ContProdEstatisticasEnter
         OnKeyDown = Dbg_NotasEntDevProdutosKeyDown
         Columns = <
           item
             Expanded = False
             FieldName = 'DES_USUARIO'
-            Width = 246
+            Width = 260
             Visible = True
           end
           item
@@ -5092,9 +5126,9 @@ object FrmCentralTrocas: TFrmCentralTrocas
       object Dbg_ContProdSeparacao: TDBGrid
         Left = 0
         Top = 0
-        Width = 1094
+        Width = 644
         Height = 219
-        Align = alTop
+        Align = alLeft
         DataSource = DMCentralTrocas.DS_ContProdSeparacao
         FixedColor = clTeal
         Font.Charset = DEFAULT_CHARSET
@@ -5117,44 +5151,40 @@ object FrmCentralTrocas: TFrmCentralTrocas
           item
             Expanded = False
             FieldName = 'NOME_SEPARDOR'
-            Width = 246
+            Width = 260
             Visible = True
           end
           item
             Expanded = False
             FieldName = 'LINHAS_SEPARADAS'
             Title.Alignment = taRightJustify
-            Width = 110
-            Visible = True
+            Visible = False
           end
           item
             Expanded = False
             FieldName = 'LINHAS_NSEPARADAS'
             Title.Alignment = taRightJustify
             Title.Caption = 'Linhas '#209' Separadas'
-            Width = 124
-            Visible = True
+            Visible = False
           end
           item
             Expanded = False
             FieldName = 'LINHAS_TOTAL'
             Title.Alignment = taRightJustify
-            Width = 74
-            Visible = True
+            Visible = False
           end
           item
             Color = 8454143
             Expanded = False
             FieldName = 'LINHAS_PERCENTUAL'
             Title.Alignment = taRightJustify
-            Width = 66
-            Visible = True
+            Visible = False
           end
           item
             Expanded = False
             FieldName = 'QTD_SEPARADAS'
             Title.Alignment = taRightJustify
-            Width = 96
+            Width = 98
             Visible = True
           end
           item
@@ -5168,7 +5198,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Expanded = False
             FieldName = 'QTD_TOTAL'
             Title.Alignment = taRightJustify
-            Width = 66
+            Width = 76
             Visible = True
           end
           item
@@ -5182,6 +5212,68 @@ object FrmCentralTrocas: TFrmCentralTrocas
           item
             Expanded = False
             FieldName = 'ORDEM'
+            Visible = False
+          end>
+      end
+      object Dbg_ContProdConferencias: TDBGrid
+        Left = 450
+        Top = 0
+        Width = 644
+        Height = 219
+        Align = alRight
+        DataSource = DMCentralTrocas.DS_ContProdConferencia
+        FixedColor = clTeal
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+        ParentFont = False
+        TabOrder = 3
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWhite
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = [fsBold]
+        OnDrawColumnCell = Dbg_ContProdConferenciasDrawColumnCell
+        OnKeyDown = Dbg_NotasEntDevProdutosKeyDown
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'NOME_CONFERENTE'
+            Width = 260
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_ENVIADAS'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Confer C / Qtd'
+            Width = 98
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_NENVIADAS'
+            Title.Alignment = taRightJustify
+            Title.Caption = 'Confer S/Qtd'
+            Width = 108
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'QTD_TOTAL'
+            Title.Alignment = taRightJustify
+            Width = 76
+            Visible = True
+          end
+          item
+            Color = clYellow
+            Expanded = False
+            FieldName = 'QTD_PERCENTUAL'
+            Title.Alignment = taRightJustify
+            Width = 66
             Visible = True
           end>
       end

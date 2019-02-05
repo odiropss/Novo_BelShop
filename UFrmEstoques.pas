@@ -291,9 +291,7 @@ MEDIA TOTAL: 42,50 + 32 + 1,96 + 0,67 = 77,13
    MySql+ '       And   Not exists (Select 1'+
           '                         From LINXPRODUTOS pr'+
           '                         Where pr.cod_produto=l.cod_produto'+
-          '                         And (((pr.desativado=''S''))'+
-          '                              or'+
-          '                              ((pr.desativado=''N'') and (pr.id_colecao=197))))'+
+          '                         And ( (pr.desativado=''S'') or (pr.id_colecao=197) ))'+
 
           '       Group By 1,2) Total';
   DMBelShop.CDS_BuscaRapida.Close;
@@ -348,9 +346,7 @@ MEDIA TOTAL: 42,50 + 32 + 1,96 + 0,67 = 77,13
    MySql+ '       And   Not exists (Select 1'+
           '                         From LINXPRODUTOS pr'+
           '                         Where pr.cod_produto=l.cod_produto'+
-          '                         And (((pr.desativado=''S''))'+
-          '                              or'+
-          '                              ((pr.desativado=''N'') and (pr.id_colecao=197))))'+
+          '                         And ( (pr.desativado=''S'') or (pr.id_colecao=197) ))'+
 
          '       Group By 1,2,3'+
          '       Order By 2,1,3) Total'+
@@ -403,9 +399,7 @@ MEDIA TOTAL: 42,50 + 32 + 1,96 + 0,67 = 77,13
    MySql+ '       And   Not exists (Select 1'+
           '                         From LINXPRODUTOS pr'+
           '                         Where pr.cod_produto=l.cod_produto'+
-          '                         And (((pr.desativado=''S''))'+
-          '                              or'+
-          '                              ((pr.desativado=''N'') and (pr.id_colecao=197))))'+
+          '                         And ( (pr.desativado=''S'') or (pr.id_colecao=197) ))'+
 
           ' Group By 1,2,3'+
 
@@ -488,7 +482,8 @@ Begin
   MySql:=' SELECT p.cod_auxiliar Cod_SIDICOM, d.Quantidade'+
          ' FROM LINXPRODUTOS p, LINXPRODUTOSDETALHES d'+
          ' WHERE p.cod_produto=d.cod_produto'+
-         ' AND   p.cod_auxiliar is not null'+
+         ' AND   TRIM(COALESCE(p.cod_auxiliar,''''))<>'''''+
+         ' AND   CHAR_LENGTH(p.cod_auxiliar)<=6'+
          ' AND   d.quantidade>0'+
          ' AND   p.desativado=''N'''+
          ' AND   p.id_linha<>33'+    // Brindes

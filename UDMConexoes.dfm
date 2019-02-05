@@ -1,6 +1,6 @@
 object DMConexoes: TDMConexoes
   OldCreateOrder = False
-  Left = 240
+  Left = 256
   Top = 116
   Height = 607
   Width = 1025

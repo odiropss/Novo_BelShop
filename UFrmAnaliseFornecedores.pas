@@ -677,7 +677,8 @@ Begin
          ' WHERE pr.id_linha<>33'+ // Brindes
          ' AND   id_colecao<>294'+ // Brindes
          ' AND   pr.desativado=''N'''+
-         ' AND   pr.cod_auxiliar IS NOT NULL';
+         ' AND   TRIM(COALESCE(pr.cod_auxiliar,''''))<>'''''+
+         ' AND   CHAR_LENGTH(pr.cod_auxiliar)<=6';
 
          If Trim(sgCodForn)<>'' Then
           MySql:=
@@ -1389,7 +1390,8 @@ Begin
          ' AND  pr.id_linha<>33'+ // Brindes
          ' AND  pr.id_colecao<>294'+ // Brindes
          ' AND  pr.desativado=''N'''+
-         ' AND  pr.cod_auxiliar IS NOT NULL'+
+         ' AND   TRIM(COALESCE(pr.cod_auxiliar,''''))<>'''''+
+         ' AND   CHAR_LENGTH(pr.cod_auxiliar)<=6'+
 
          ' GROUP BY 1,2,3,4';
   DMBelShop.SQLC.Execute(MySql,nil,nil);

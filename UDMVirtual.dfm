@@ -1,7 +1,7 @@
 object DMVirtual: TDMVirtual
   OldCreateOrder = False
-  Left = 207
-  Top = 112
+  Left = 239
+  Top = 109
   Height = 615
   Width = 1097
   object CDS_V_EmpConexoes: TClientDataSet

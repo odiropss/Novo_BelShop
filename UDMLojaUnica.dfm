@@ -1,6 +1,6 @@
 object DMLojaUnica: TDMLojaUnica
   OldCreateOrder = False
-  Left = 243
+  Left = 259
   Top = 116
   Height = 581
   Width = 1026

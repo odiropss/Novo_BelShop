@@ -711,6 +711,8 @@ object FrmBlueMetrics: TFrmBlueMetrics
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
+  OnClose = FormClose
+  OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
@@ -725,9 +727,9 @@ object FrmBlueMetrics: TFrmBlueMetrics
       717
       61)
     object Lb_Tabela: TLabel
-      Left = 416
+      Left = 473
       Top = 24
-      Width = 118
+      Width = 61
       Height = 13
       Alignment = taRightJustify
       Caption = 'Lb_Tabela'
@@ -980,6 +982,7 @@ object FrmBlueMetrics: TFrmBlueMetrics
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
+      OnClick = Ckb_ClientesClick
       LinkedControls = <>
       HotTrackFont.Charset = DEFAULT_CHARSET
       HotTrackFont.Color = clWindowText
@@ -1000,6 +1003,7 @@ object FrmBlueMetrics: TFrmBlueMetrics
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
+      OnClick = Ckb_ClientesClick
       LinkedControls = <>
       HotTrackFont.Charset = DEFAULT_CHARSET
       HotTrackFont.Color = clWindowText
@@ -1020,6 +1024,7 @@ object FrmBlueMetrics: TFrmBlueMetrics
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 2
+      OnClick = Ckb_ClientesClick
       LinkedControls = <>
       HotTrackFont.Charset = DEFAULT_CHARSET
       HotTrackFont.Color = clWindowText
@@ -1040,6 +1045,7 @@ object FrmBlueMetrics: TFrmBlueMetrics
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 3
+      OnClick = Ckb_ClientesClick
       LinkedControls = <>
       HotTrackFont.Charset = DEFAULT_CHARSET
       HotTrackFont.Color = clWindowText
@@ -1060,6 +1066,7 @@ object FrmBlueMetrics: TFrmBlueMetrics
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 4
+      OnClick = Ckb_ClientesClick
       LinkedControls = <>
       HotTrackFont.Charset = DEFAULT_CHARSET
       HotTrackFont.Color = clWindowText
@@ -1080,6 +1087,7 @@ object FrmBlueMetrics: TFrmBlueMetrics
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 5
+      OnClick = Ckb_ClientesClick
       LinkedControls = <>
       HotTrackFont.Charset = DEFAULT_CHARSET
       HotTrackFont.Color = clWindowText
@@ -1100,6 +1108,7 @@ object FrmBlueMetrics: TFrmBlueMetrics
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 6
+      OnClick = Ckb_ClientesClick
       LinkedControls = <>
       HotTrackFont.Charset = DEFAULT_CHARSET
       HotTrackFont.Color = clWindowText
@@ -1120,6 +1129,7 @@ object FrmBlueMetrics: TFrmBlueMetrics
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 7
+      OnClick = Ckb_ClientesClick
       LinkedControls = <>
       HotTrackFont.Charset = DEFAULT_CHARSET
       HotTrackFont.Color = clWindowText
@@ -1140,6 +1150,7 @@ object FrmBlueMetrics: TFrmBlueMetrics
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 8
+      OnClick = Ckb_ClientesClick
       LinkedControls = <>
       HotTrackFont.Charset = DEFAULT_CHARSET
       HotTrackFont.Color = clWindowText
@@ -1160,6 +1171,7 @@ object FrmBlueMetrics: TFrmBlueMetrics
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 9
+      OnClick = Ckb_ClientesClick
       LinkedControls = <>
       HotTrackFont.Charset = DEFAULT_CHARSET
       HotTrackFont.Color = clWindowText

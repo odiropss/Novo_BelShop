@@ -1,9 +1,8 @@
 {///////////////////////////////
-
+ATENÇÃO !!!
 ================================================================================
          Este DataModulo é USADO TAMBÉM pelo Projeto: PCurvasDemandas
 ================================================================================
-
 ///////////////////////////////}
 
 
@@ -194,6 +193,7 @@ type
     SQLQuery1: TSQLQuery;
     CDS_EmpProcessaDTA_INICIO_LINX: TDateField;
     CDS_EmpProcessaIND_DOMINGO: TStringField;
+    IBQ_Busca: TIBQuery;
     procedure DataModuleCreate(Sender: TObject);
 
     // Odir
@@ -350,6 +350,9 @@ Begin
     Begin
       If DMConexoes.Components[i] is TIBDatabase Then
       Begin
+        If CDS_EmpProcessaDATABASE.AsString='IBDB_99' Then
+        sEndIP:='';
+
         If (DMConexoes.Components[i] as TIBDatabase).Name=CDS_EmpProcessaDATABASE.AsString Then
         Begin
           (DMConexoes.Components[i] as TIBDatabase).Connected:=False;
@@ -382,6 +385,9 @@ Begin
 //           s:=CDS_EmpProcessaENDERECO_IP.AsString+':'+
 //              IncludeTrailingPathDelimiter(CDS_EmpProcessaPASTA_BASE_DADOS.AsString)+
 //                                           CDS_EmpProcessaDES_BASE_DADOS.AsString;
+
+          If (CDS_EmpProcessaENDERECO_IP.AsString='192.168.0.252') AND (CDS_EmpProcessaDATABASE.AsString='IBDB_99') Then
+           s:='192.168.0.252:E:\sidicom.new\BELSHOP_CD.FDB';
 
           (DMConexoes.Components[i] as TIBDatabase).DatabaseName:=s;
           Break;

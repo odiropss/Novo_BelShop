@@ -634,7 +634,6 @@ Begin
 
   If DMConciliacao.CDS_CMDepAnaliseDocRel.RecordCount<2 Then
   Begin
-
     msg('Documento Financeiro'+cr+cr+'Não Encontrado !!','A');
     DMConciliacao.CDS_CMDepAnaliseDocRel.Close;
     Exit;
@@ -1137,7 +1136,7 @@ Begin
          '                                   AND fh.des_aux1=md.cod_linx'+
          '                                   AND Trim(fh.des_aux)=Cast(lpad(extract(day from md.dta_docto),2,''0'') as varchar(2))||''/''||'+
          '                                                        Cast(lpad(extract(month from md.dta_docto),2,''0'') as varchar(2))||''/''||'+
-         '                                                        Cast(extract(Year from current_date) as varchar(4))'+
+         '                                                        Cast(extract(Year from md.dta_docto) as varchar(4))'+
 
 
          '         LEFT JOIN TAB_AUXILIAR fo  ON fo.tip_aux=24'+ // CONCILIAÇÃO DE DEPÓSITOS - OBSERVAÇÃO FINANCEIRA PARA LOJAS CONCILIADAS/NUMERO DO RELATORIO FINANCEIRO DE ENTREGA
@@ -1279,57 +1278,115 @@ Begin
   OdirPanApres.Refresh;
   Refresh;
 
-  // Seleciona Vendas (Linx) em Dinheiro do Dia ================================
-  MySql:=' SELECT Dinh.empresa, CAST(Dinh.data_lancamento as DATE) DTA_DOCTO, 1 Tipo,'+ // 1 = LINX
-
-         ' cast(SUM(decode(Dinh.operacao,''S'',(COALESCE(Dinh.total_dinheiro, 0.00)),'+
-         '                               ''DS'',-(COALESCE(Dinh.total_dinheiro, 0.00))))'+
-         '          +'+
-         '         (SUM(COALESCE(Dinh.Vale_Dev, 0.00)))'+
-         '          -'+
-         '         ((SUM(COALESCE(Dinh.Vale_Ven, 0.00))) + (SUM(COALESCE(Dinh.Vale_fora, 0.00))))'+
-         ' as numeric(12,2)) Total_Dinheiro'+
-
-         ' FROM'+
-         ' (SELECT DISTINCT'+
-         '         mv.empresa, mv.documento, mv.data_lancamento, mv.chave_nf, mv.operacao,'+
-         '         mv.total_dinheiro,'+
-         '         md.valor_vale Vale_Dev, mt.valor_vale Vale_Ven, mf.valor_vale Vale_Fora'+ // mf.valor_vale Vale_Fora Fora do Período
-         '  FROM linxmovimento mv'+
-         '       left join linxmovimentotrocas md  on md.doc_origem=mv.documento'+
-         '                                        and md.serie_origem=mv.serie'+
-         '                                        and md.empresa=mv.empresa'+
-         '                                        and md.doc_venda=0'+
-         '       left join linxmovimentotrocas mt  on mt.doc_venda=mv.documento'+
-         '                                        and mt.serie_venda=mv.serie'+
-         // OdirApagar - 24/10/2018
+  //OdirApagar - 02/01/2019
+//  // Seleciona Vendas (Linx) em Dinheiro do Dia ================================
+//  MySql:=' SELECT Dinh.empresa, CAST(Dinh.data_lancamento as DATE) DTA_DOCTO, 1 Tipo,'+ // 1 = LINX
+//
+//         ' cast(SUM(decode(Dinh.operacao,''S'',(COALESCE(Dinh.total_dinheiro, 0.00)),'+
+//         '                               ''DS'',-(COALESCE(Dinh.total_dinheiro, 0.00))))'+
+//         '          +'+
+//         '         (SUM(COALESCE(Dinh.Vale_Dev, 0.00)))'+
+//         '          -'+
+//         '         ((SUM(COALESCE(Dinh.Vale_Ven, 0.00))) + (SUM(COALESCE(Dinh.Vale_fora, 0.00))))'+
+//         ' as numeric(12,2)) Total_Dinheiro'+
+//
+//         ' FROM'+
+//         ' (SELECT DISTINCT'+
+//         '         mv.empresa,'+
+//         '         mv.documento,'+
+//         '         mv.data_lancamento,'+
+//         '         mv.chave_nf,'+
+//         '         mv.operacao,'+
+//         '         mv.total_dinheiro,'+
+//
+//         // Soma Quando Nota Fiscal For Cancelada
+//         '         CASE'+
+//         '            WHEN mv.operacao=''DS'' THEN'+
+//         '               md.valor_vale'+
+//         '            ELSE'+
+//         '               0.000'+
+//         '         END Vale_Dev,'+
+//
+//         '         mt.valor_vale Vale_Ven,'+
+//         '         mf.valor_vale Vale_Fora'+ // mf.valor_vale Vale_Fora Fora do Período
+//         '  FROM linxmovimento mv'+
+//         '       left join linxmovimentotrocas md  on md.doc_origem=mv.documento'+
+//         '                                        and md.serie_origem=mv.serie'+
+//         '                                        and md.empresa=mv.empresa'+
+//         '                                        and md.doc_venda=0'+
+//         '       left join linxmovimentotrocas mt  on mt.doc_venda=mv.documento'+
+//         '                                        and mt.serie_venda=mv.serie'+
 //         '       left join linxmovimentotrocas mf  on mf.doc_origem=md.doc_origem'+
 //         '                                        and mf.serie_origem=md.serie_origem'+
+//         '                                        and mf.doc_venda<>mt.doc_venda'+
+//         '                                        and mf.serie_venda<>mt.serie_venda'+
 //         '                                        and mf.doc_venda<>0'+
-//         '                                        and exists (Select 1'+
-//         '                                                    from linxmovimento mv1'+
-//         '                                                    where mv1.operacao=''S'''+
-//         '                                                    and   mv1.tipo_transacao=''V'''+
-//         '                                                    and   mv1.data_lancamento>'+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDiaFinal)))+
-//         '                                                    and   mv1.empresa=mv.empresa'+
-//         '                                                    and   mv1.documento=mf.doc_venda'+
-//         '                                                    and   mv1.serie=mf.serie_venda)'+
-         '       left join linxmovimentotrocas mf  on mf.doc_origem=md.doc_origem'+
-         '                                        and mf.serie_origem=md.serie_origem'+
-         '                                        and mf.doc_venda<>mt.doc_venda'+
-         '                                        and mf.serie_venda<>mt.serie_venda'+
-         '                                        and mf.doc_venda<>0'+
+//
+//         '  WHERE ('+
+//         '         ((mv.operacao=''S'')  AND (mv.tipo_transacao=''V''))'+ // Saídas Vendas
+//         '          or'+
+//         '         ((mv.operacao=''DS'') AND (mv.tipo_transacao IS NULL))'+ // Entradas Devoluções
+//         '        )'+
+//         '  AND  mv.cancelado = ''N'''+
+//         '  AND  mv.excluido  = ''N'''+
+//         '  AND  mv.total_dinheiro<>0.00'+
+//         '  AND  mv.data_lancamento >= '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDiaInicial)))+
+//         '  AND  mv.data_lancamento <= '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDiaFinal)))+')  Dinh'+
+//         ' GROUP BY 1,2'+
 
-         '  WHERE ('+
-         '         ((mv.operacao=''S'')  AND (mv.tipo_transacao=''V''))'+ // Saídas Vendas
-         '          or'+
-         '         ((mv.operacao=''DS'') AND (mv.tipo_transacao IS NULL))'+ // Entradas Devoluções
-         '        )'+
-         '  AND  mv.cancelado = ''N'''+
-         '  AND  mv.excluido  = ''N'''+
-         '  AND  mv.total_dinheiro<>0.00'+
-         '  AND  mv.data_lancamento >= '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDiaInicial)))+
-         '  AND  mv.data_lancamento <= '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDiaFinal)))+')  Dinh'+
+  // Seleciona Vendas (Linx) em Dinheiro do Dia ================================
+  MySql:=' SELECT Totais.empresa, Totais.dta_docto, 1 Tipo,'+ // 1 = LINX
+         ' SUM(Totais.Total_Dinheiro) TOTAL_DINHEIRO'+
+
+         ' FROM (SELECT'+
+         '       Dinh.empresa,'+
+         '       CAST(Dinh.data_lancamento AS DATE) DTA_DOCTO,'+
+         '       dinh.documento,'+
+         '       dinh.chave_nf,'+
+         '       CAST(decode(Dinh.operacao,''S'',(COALESCE(Dinh.total_dinheiro, 0.00)),'+
+         '                                 ''DS'',-(COALESCE(Dinh.total_dinheiro, 0.00)))'+
+         '                                      +'+
+         '                                      (SUM(COALESCE(Dinh.Vale_Dev, 0.00)))'+
+         '                                      -'+
+         '                                      ((SUM(COALESCE(Dinh.Vale_Ven, 0.00)))'+
+         '                                      +'+
+         '                                      (SUM(COALESCE(Dinh.Vale_fora, 0.00))))'+
+         '        AS NUMERIC(12,2)) TOTAL_DINHEIRO'+
+
+         '        FROM (SELECT DISTINCT mv.empresa, mv.documento, mv.data_lancamento,'+
+         '                              mv.chave_nf, mv.operacao, mv.total_dinheiro,'+
+         '                              CASE'+
+         '                                WHEN mv.operacao=''DS'' THEN'+
+         '                                   md.valor_vale'+
+         '                                ELSE'+
+         '                                   0.000'+
+         '                              END Vale_Dev,'+
+         '                              mt.valor_vale Vale_Ven,'+
+         '                              mf.valor_vale Vale_Fora'+
+         '              FROM LINXMOVIMENTO mv'+
+         '                       LEFT JOIN LINXMOVIMENTOTROCAS md  ON md.doc_origem=mv.documento'+
+         '                                                        AND md.serie_origem=mv.serie'+
+         '                                                        AND md.empresa=mv.empresa'+
+         '                                                        AND md.doc_venda=0'+
+         '                       LEFT JOIN LINXMOVIMENTOTROCAS mt  ON mt.doc_venda=mv.documento'+
+         '                                                        AND mt.serie_venda=mv.serie'+
+         '                       LEFT JOIN LINXMOVIMENTOTROCAS mf  ON mf.doc_origem=md.doc_origem'+
+         '                                                        AND mf.serie_origem=md.serie_origem'+
+         '                                                        AND mf.doc_venda<>mt.doc_venda'+
+         '                                                        AND mf.serie_venda<>mt.serie_venda'+
+         '                                                        AND mf.doc_venda<>0'+
+         '              WHERE (((mv.operacao=''S'')  AND (mv.tipo_transacao=''V''))'+
+         '                      OR'+
+         '                     ((mv.operacao=''DS'') AND (mv.tipo_transacao IS NULL)))'+
+         '              AND  mv.cancelado = ''N'''+
+         '              AND  mv.excluido  = ''N'''+
+         '              AND  mv.total_dinheiro<>0.00'+
+         '              AND  mv.data_lancamento >= '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDiaInicial)))+
+         '              AND  mv.data_lancamento <= '+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDiaFinal)))+')  DINH'+
+         '       GROUP BY Dinh.empresa,  CAST(Dinh.data_lancamento AS DATE),'+
+         '                Dinh.documento, Dinh.chave_nf, Dinh.operacao,'+
+         '                Dinh.total_dinheiro) TOTAIS'+
+
          ' GROUP BY 1,2'+
 
   // Seleciona Pagtos do Salão GeoBeauty em Dinheiro do Dia ====================
@@ -1605,7 +1662,7 @@ Begin
          '                                   AND fh.des_aux1=md.cod_linx'+
          '                                   AND Trim(fh.des_aux)=Cast(lpad(extract(day from md.dta_docto),2,''0'') as varchar(2))||''/''||'+
          '                                                        Cast(lpad(extract(month from md.dta_docto),2,''0'') as varchar(2))||''/''||'+
-         '                                                        Cast(extract(Year from current_date) as varchar(4))'+
+         '                                                        Cast(extract(Year from md.dta_docto) as varchar(4))'+
          '         LEFT JOIN TAB_AUXILIAR fo  ON fo.tip_aux=24'+ // CONCILIAÇÃO DE DEPÓSITOS - OBSERVAÇÃO FINAL PARA LOJAS CONCILIADAS
          '                                   AND fo.cod_aux=md.cod_linx||'+
          '                                                        CAST(LPAD(EXTRACT(DAY FROM md.dta_docto),2,''0'') AS VARCHAR(2))||'+
@@ -1630,7 +1687,7 @@ Begin
 
              If Trim(sDocFinan)<>'0' Then
               MySql:=
-               MySql+' AND TRIM(fo.des_aux1)='+sDocFinan; // // Caicxas Fechados Com Documento Financeiro Entregue
+               MySql+' AND TRIM(fo.des_aux1)='+sDocFinan; // // Caixas Fechados Com Documento Financeiro Entregue
            End; // If bgFechadoRenato Then
 
            If Not bgFechadoRenato Then
@@ -1716,7 +1773,7 @@ Begin
          '                                   AND fh.des_aux1=md.cod_linx'+
          '                                   AND TRIM(fh.des_aux)=Cast(lpad(extract(day from md.dta_docto),2,''0'') as varchar(2))||''/''||'+
          '                                                        Cast(lpad(extract(month from md.dta_docto),2,''0'') as varchar(2))||''/''||'+
-         '                                                        Cast(extract(Year from current_date) as varchar(4))'+
+         '                                                        Cast(extract(Year from md.dta_docto) as varchar(4))'+
 
          ' WHERE md.ind_conciliacao=''NAO''';
 
@@ -1809,7 +1866,7 @@ Begin
          '                                   AND fh.des_aux1=md.cod_linx'+
          '                                   AND TRIM(fh.des_aux)=Cast(lpad(extract(day from md.dta_docto),2,''0'') as varchar(2))||''/''||'+
          '                                                        Cast(lpad(extract(month from md.dta_docto),2,''0'') as varchar(2))||''/''||'+
-         '                                                        Cast(extract(Year from current_date) as varchar(4))'+
+         '                                                        Cast(extract(Year from md.dta_docto) as varchar(4))'+
          '         LEFT JOIN TAB_AUXILIAR fo  ON fo.tip_aux=24'+ // CONCILIAÇÃO DE DEPÓSITOS - OBSERVAÇÃO FINAL PARA LOJAS CONCILIADAS
          '                                   AND fo.cod_aux=md.cod_linx||'+
          '                                                        CAST(LPAD(EXTRACT(DAY FROM md.dta_docto),2,''0'') AS VARCHAR(2))||'+
@@ -1913,7 +1970,7 @@ Begin
          '                                   AND fh.des_aux1=md.cod_linx'+
          '                                   AND TRIM(fh.des_aux)=Cast(lpad(extract(day from md.dta_docto),2,''0'') as varchar(2))||''/''||'+
          '                                                        Cast(lpad(extract(month from md.dta_docto),2,''0'') as varchar(2))||''/''||'+
-         '                                                        Cast(extract(Year from current_date) as varchar(4))'+
+         '                                                        Cast(extract(Year from md.dta_docto) as varchar(4))'+
 
          ' WHERE md.ind_conciliacao=''NAO''';
 

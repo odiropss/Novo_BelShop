@@ -13,7 +13,7 @@ object DMBelShop: TDMBelShop
     LoginPrompt = False
     Params.Strings = (
       'DriverName=Interbase'
-      'Database=\\LocalHost\c:\Projetos\BelShop\Dados\BELSHOP.FDB'
+      'Database=\\localhost\C:\Projetos\BelShop\Dados\BelShop.FDB'
       'RoleName=RoleName'
       'User_Name=sysdba'
       'Password=masterkey'
@@ -26,7 +26,7 @@ object DMBelShop: TDMBelShop
       'LocaleCode=0000'
       'Interbase TransIsolation=ReadCommited'
       'Trim Char=False')
-    VendorLib = 'fbclient.dll'
+    VendorLib = 'gds32.dll'
     Left = 29
     Top = 14
   end
@@ -2765,7 +2765,7 @@ object DMBelShop: TDMBelShop
   object SDS_DtaHoraServidor: TSQLDataSet
     CommandText = 
       'select current_timestamp, current_date, current_time'#13#10'from rdb$d' +
-      'atabase'
+      'atabase'#13#10
     MaxBlobSize = -1
     Params = <>
     SQLConnection = SQLC

@@ -2247,6 +2247,7 @@ Begin
 
       bgArqErros:=True;
       tgArqErros.Add('InsereProdutosCD: 99 - '+e.message);
+      SalvaErros;
     End; // on e : Exception do
   End; // Try
   DMTransferencias.SQLQ_Busca.Close;
@@ -2261,16 +2262,15 @@ Var
 Begin
   Result:=True;
 
-  MySql:=' SELECT CURRENT_DATE DTA_MOVTO, e.codproduto cod_produto,'+
-
-         ' COALESCE(e.saldoatual,0.00) qtd_estoque,'+
-         ' 0.00 qtd_saidas,'+
-         ' COALESCE(e.saldoatual,0.00) qtd_saldo,'+
-
-         ' COALESCE(e.zonaendereco,''0'') end_zona,'+
-         ' COALESCE(e.corredor,''000'') end_corredor,'+
-         ' COALESCE(e.prateleira,''000'') end_prateleira,'+
-         ' COALESCE(e.gaveta,''0000'') end_gaveta'+
+  MySql:=' SELECT CURRENT_DATE DTA_MOVTO,'+
+         '        e.codproduto COD_PRODUTO,'+
+         '        CAST(COALESCE(e.saldoatual,0.00) AS NUMERIC(18,2)) QTD_ESTOQUE,'+
+         '        0.00 QTD_SAIDAS,'+
+         '        CAST(COALESCE(e.saldoatual,0.00)  AS NUMERIC(18,2)) QTD_SALDO,'+
+         '        COALESCE(e.zonaendereco,0) END_ZONA,'+
+         '        COALESCE(e.corredor,''000'') END_CORREDOR,'+
+         '        COALESCE(e.prateleira,''000'') END_PRATELEIRA,'+
+         '        COALESCE(e.gaveta,''0000'') END_GAVETA'+
 
          ' FROM ESTOQUE e, PRODUTO p'+
 
@@ -2468,19 +2468,25 @@ begin
   //============================================================================
   // Busca Lojas do Dia ========================================================
   //============================================================================
-  MySql:=' SELECT LPAD(t.cod_aux,2,''0'') Cod_Loja'+
-         ' FROM TAB_AUXILIAR t'+
-         ' WHERE t.tip_aux='+IntToStr(igDiaSemana)+
+  MySql:=' SELECT LPAD(t.cod_aux,2,''0'') COD_LOJA , e.razao_social, e.ind_domingo'+
+
+         ' FROM TAB_AUXILIAR t, EMP_CONEXOES e'+
+
+         ' WHERE LPAD(t.cod_aux,2,''0'') =e.cod_filial'+
+         ' AND   t.tip_aux='+IntToStr(igDiaSemana)+
          ' AND   t.des_aux1='+QuotedStr('SIM')+
+
          ' ORDER BY'+
+         ' e.ind_domingo,'+
          ' SUBSTRING(t.des_aux FROM 1  FOR 3) desc,'+
          ' SUBSTRING(t.des_aux FROM 5  FOR 3) desc,'+
          ' SUBSTRING(t.des_aux FROM 9  FOR 3) desc,'+
          ' SUBSTRING(t.des_aux FROM 13 FOR 3) desc,'+
-         ' SUBSTRING(t.des_aux FROM 17 FOR 3) desc';
+         ' SUBSTRING(t.des_aux FROM 17 FOR 3) desc,'+
+         ' LPAD(t.cod_aux,2,''0'')';
   DMTransferencias.CDS_Busca.Close;
   DMTransferencias.SDS_Busca.CommandText:=MySql;
-  DMTransferencias.CDS_Busca.Open;
+ DMTransferencias.CDS_Busca.Open;
 
   If DMTransferencias.CDS_Busca.Eof Then
   Begin

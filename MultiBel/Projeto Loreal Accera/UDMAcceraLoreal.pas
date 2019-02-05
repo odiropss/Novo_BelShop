@@ -43,6 +43,8 @@ var
   sgPastaSalvarArq   // Pasta para Salvar Arquivo do Projeto Accera Loreal
   : String;
 
+  bgSiga: Boolean;
+
 implementation
 
 uses DK_Procs1, UFrmAcceraLoreal;

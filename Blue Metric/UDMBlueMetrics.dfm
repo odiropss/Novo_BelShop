@@ -520,7 +520,7 @@ object DMBlueMetrics: TDMBlueMetrics
       'pr.desc_marca MARCA,'
       'pr.nome NOME,'
       'NULL SEXO,'
-      'NULL SUBGRUPO,'
+      'pr.desc_linha SUBGRUPO,'
       '0.00 ULTIMO_CUSTO,'
       'NULL URL_IMAGEM'
       ''
@@ -810,13 +810,13 @@ object DMBlueMetrics: TDMBlueMetrics
         DataType = ftString
         Name = 'DtaI'
         ParamType = ptInput
-        Value = '01.11.2018'
+        Value = '10/10/2018'
       end
       item
         DataType = ftString
         Name = 'DtaF'
         ParamType = ptInput
-        Value = '02.11.2018'
+        Value = '10/10/2018'
       end>
     SQL.Strings = (
       
@@ -832,54 +832,51 @@ object DMBlueMetrics: TDMBlueMetrics
       'mv.codigo_cliente CODIGO_CLIENTE, -- 3'
       'mv.cod_vendedor CODIGO_VENDEDOR, -- 4'
       
-        'CAST(SUM(mv.valor_total + mv.desconto_total_item) AS NUMERIC(12,' +
-        '2)) CUSTO_VENDA_TOTAL, -- 5'
-      
-        '0.00 CUSTO_TROCA_TOTAL, -- 6 Buscar Totais de Devolu'#231#227'o do Vende' +
-        'dor no Periodo'
+        'CAST(SUM(COALESCE(mv.preco_custo, 0.00) * mv.quantidade) AS NUME' +
+        'RIC(12,2)) CUSTO_VENDA_TOTAL, -- 5'
+      '0.00 CUSTO_TROCA_TOTAL, -- 6'
       'mv.data_documento DATA_VENDA, -- 7'
       
-        'CAST(SUM(mv.desconto_total_item) AS NUMERIC(12,2)) DESCONTO_TOTA' +
-        'L, -- 8'
-      'CAST(SUM(mv.frete) AS NUMERIC(12,2)) FRETE, -- 9'
-      
-        '0 QTDE_TROCA_TOTAL, -- 10 Buscar Totais de Devolu'#231#227'o do Vendedor' +
-        ' no Periodo'
+        'CAST(SUM(COALESCE(mv.desconto_total_item, 0.00)) AS NUMERIC(12,2' +
+        ')) DESCONTO_TOTAL, -- 8'
+      'CAST(SUM(COALESCE(mv.frete,0.00)) AS NUMERIC(12,2)) FRETE, -- 9'
+      '0 QTDE_TROCA_TOTAL, -- 10'
       
         'CAST(SUM(mv.quantidade) AS INTEGER) QTDE_VENDA_BRUTA_TOTAL, -- 1' +
         '1'
       
-        'CAST(SUM(mv.quantidade) - 0 /*QTDE_TROCA_TOTAL*/ AS INTEGER) QTD' +
-        'E_VENDA_LIQUIDA_TOTAL, -- 12 Buscar Totais de Devolu'#231#227'o do Vende' +
-        'dor no Periodo'
+        'CAST(SUM(mv.quantidade) AS INTEGER) QTDE_VENDA_LIQUIDA_TOTAL, --' +
+        ' 12'
       'mv.serie SERIE, -- 13'
       
-        'CAST(SUM((COALESCE(mv.valor_total,0.00) + COALESCE(mv.desconto_t' +
-        'otal_item,0.00)) +'
-      '          COALESCE(mv.valor_icms,0.00) +'
-      '          COALESCE(mv.valor_pis,0.00) +'
-      '          COALESCE(mv.valor_ipi,0.00) +'
+        'CAST(SUM((mv.valor_total + COALESCE(mv.desconto_total_item, 0.00' +
+        ') + COALESCE(mv.frete, 0.00))) AS NUMERIC(12,2)) VALOR_VENDA_BRU' +
+        'TA_TOTAL, -- 14'
       
-        '          COALESCE(mv.frete,0.00)) AS NUMERIC(12,2)) VALOR_VENDA' +
-        '_BRUTA_TOTAL, -- 14'
+        'CAST(SUM(mv.valor_total) AS NUMERIC(12,2)) VALOR_VENDA_LIQUIDA_T' +
+        'OTAL, -- 15'
+      ''
       
-        'CAST(SUM(mv.valor_total)  - 0 /*VALOR_TROCA_TOTAL*/  AS NUMERIC(' +
-        '12,2)) VALOR_VENDA_LIQUIDA_TOTAL, -- 15 Buscar Totais de Devolu'#231 +
-        #227'o do Vendedor no Periodo'
-      
-        '0 VALOR_TROCA_TOTAL -- 16 Buscar Totais de Devolu'#231#227'o do Vendedor' +
-        ' no Periodo'
+        'CAST(COALESCE((SELECT  SUM(COALESCE(tr.valor_vale,0.00)) valor_v' +
+        'ale'
+      '               FROM linxmovimentotrocas tr'
+      '               WHERE tr.doc_venda=mv.documento'
+      '               AND tr.serie_venda=mv.serie'
+      '),0.00) as NUMERIC(12,2))  VALOR_TROCA_TOTAL -- 16'
       ''
       'FROM LINXMOVIMENTO mv'
       ''
       'WHERE mv.operacao='#39'S'#39
-      'AND   mv.tipo_transacao='#39'V'#39' -- Sa'#237'das Vendas'
+      
+        'AND  (((mv.tipo_transacao='#39'V'#39') OR (COALESCE(mv.tipo_transacao,'#39#39 +
+        ')='#39#39'))) -- Vendas'
       ''
       'AND   mv.cancelado = '#39'N'#39
       'AND   mv.excluido = '#39'N'#39
       'AND   mv.data_lancamento between :DtaI and :DtaF'
       ''
-      'GROUP BY 1,2,3,4,7,13')
+      'GROUP BY 1,2,3,4,7,13'
+      '')
     SQLConnection = SQLC
     Left = 336
     Top = 343
@@ -943,9 +940,10 @@ object DMBlueMetrics: TDMBlueMetrics
       Precision = 15
       Size = 2
     end
-    object SQLQ_VendasVALOR_TROCA_TOTAL: TIntegerField
+    object SQLQ_VendasVALOR_TROCA_TOTAL: TFMTBCDField
       FieldName = 'VALOR_TROCA_TOTAL'
-      Required = True
+      Precision = 15
+      Size = 2
     end
   end
   object SQLQ_VendasTrocas: TSQLQuery
@@ -1048,20 +1046,23 @@ object DMBlueMetrics: TDMBlueMetrics
         '----------------'
       ''
       'SELECT'
-      'mv.empresa CODIGO_EMPRESA,'
-      'mv.documento CODIGO_VENDA,'
-      'mv.cod_produto CODIGO_PRODUTO,'
-      'CAST(mv.valor_total AS NUMERIC(12,2)) CUSTO_VENDA_ITENS,'
-      'mv.data_documento DATA,'
-      'CAST(mv.quantidade AS NUMERIC(12,2)) QUANTIDADE_VENDA_ITENS,'
-      'mv.serie SERIE,'
+      'mv.empresa CODIGO_EMPRESA, -- 1'
+      'mv.documento CODIGO_VENDA, -- 2'
+      'mv.cod_produto CODIGO_PRODUTO, -- 3'
       
-        'CAST((mv.quantidade * mv.preco_unitario) AS NUMERIC(12,2)) VALOR' +
-        '_VENDA_ITENS,'
+        'CAST(COALESCE(mv.preco_custo, 0.00) AS NUMERIC(12,2)) CUSTO_VEND' +
+        'A_ITENS, -- 4'
+      'mv.data_documento DATA, -- 5'
       
-        'CAST((mv.quantidade * mv.preco_unitario) - mv.valor_total AS NUM' +
-        'ERIC(12,2)) VALOR_DESCONTO_ITENS'
-      ''
+        'CAST(mv.quantidade AS NUMERIC(12,2)) QUANTIDADE_VENDA_ITENS, -- ' +
+        '6'
+      'mv.serie SERIE, -- 7'
+      
+        'CAST((mv.quantidade * COALESCE(mv.preco_unitario, 0.00)) AS NUME' +
+        'RIC(12,2)) VALOR_VENDA_ITENS, -- 8'
+      
+        'CAST((mv.quantidade * COALESCE(mv.preco_unitario, 0.00)) - mv.va' +
+        'lor_total AS NUMERIC(12,2)) VALOR_DESCONTO_ITENS -- 9'
       ''
       'FROM LINXMOVIMENTO mv'
       'WHERE mv.operacao='#39'S'#39
@@ -1143,13 +1144,13 @@ object DMBlueMetrics: TDMBlueMetrics
       'dv.documento CODIGO_TROCA,'
       'mv.cod_produto CODIGO_PRODUTO,'
       
-        'CAST((dv.quantidade * dv.preco_unitario) AS NUMERIC(12,2)) CUSTO' +
-        '_TROCA_ITENS,'
+        'CAST((dv.quantidade * COALESCE(dv.preco_unitario, 0.00)) AS NUME' +
+        'RIC(12,2)) CUSTO_TROCA_ITENS,'
       'dv.data_documento DATA,'
       'CAST(dv.quantidade AS NUMERIC(12,2)) QUANTIDADE_TROCA_ITENS,'
       
-        'CAST((dv.valor_total + dv.desconto_total_item) AS NUMERIC(12,2))' +
-        ' VALOR_TROCA_ITENS'
+        'CAST((dv.valor_total + COALESCE(dv.desconto_total_item,0.00)) AS' +
+        ' NUMERIC(12,2)) VALOR_TROCA_ITENS'
       ''
       
         'from LINXMOVIMENTO mv, LINXMOVIMENTOORIGEMDEVOLUCOES md, LINXMOV' +
@@ -1258,11 +1259,17 @@ object DMBlueMetrics: TDMBlueMetrics
       'mp.total VALOR'
       ''
       'FROM LINXMOVIMENTOPLANOS mp, LINXLOJAS lj,'
-      '  (SELECT  mv.empresa, mv.data_documento, mv.identificador'
+      
+        '  (SELECT  mv.empresa, mv.data_documento, mv.identificador, mv.t' +
+        'ipo_transacao, mv.operacao'
       '   FROM LINXMOVIMENTO mv'
       '   WHERE mv.excluido='#39'N'#39
       '   AND   mv.cancelado='#39'N'#39
-      '   GROUP BY 1,2,3) vd'
+      '   AND   mv.operacao='#39'S'#39
+      
+        '   AND (((mv.tipo_transacao='#39'V'#39') OR (COALESCE(mv.tipo_transacao,' +
+        #39#39')='#39#39'))) -- Vendas'
+      '   GROUP BY 1,2,3,4,5) vd'
       ''
       'WHERE mp.empresa=lj.empresa'
       'AND   mp.empresa=vd.empresa'
