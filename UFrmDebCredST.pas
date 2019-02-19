@@ -17,7 +17,7 @@ uses
   dxSkinStardust, dxSkinSummer2008, dxSkinsDefaultPainters,
   dxSkinValentine, dxSkinXmas2008Blue, cxTextEdit, cxMaskEdit,
   cxDropDownEdit, cxCalendar, StdCtrls, dxSkinsdxStatusBarPainter,
-  dxStatusBar;
+  dxStatusBar, JvExStdCtrls, JvRadioButton;
 
 type
   TFrmDebCredST = class(TForm)
@@ -43,6 +43,10 @@ type
     DtEdtDtaFim: TcxDateEdit;
     Dbg_VlrBcICMSST: TDBGrid;
     dxStatusBar2: TdxStatusBar;
+    Gb_NFeCompras: TGroupBox;
+    Rb_NFeAmbas: TJvRadioButton;
+    Rb_NFeSem: TJvRadioButton;
+    Rb_NFeCom: TJvRadioButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -82,6 +86,9 @@ type
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
     procedure Bt_ClipboardClick(Sender: TObject);
+    procedure Rb_NFeSemClick(Sender: TObject);
+    procedure Rb_NFeSemKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -112,6 +119,22 @@ Var
 
   i: Integer;
 Begin
+  sForns:='';
+  For i:=0 to mMemoForn.Lines.Count-1 do
+  Begin
+    If sForns<>'' Then
+     sForns:=sForns+', '+mMemoForn.Lines[i];
+
+    If sForns='' Then
+     sForns:=mMemoForn.Lines[i];
+  End; // For i:=0 to mMemo.Lines.Count-1 do
+
+  If Trim(sForns)='' Then
+  Begin
+    If msg('Selecionar TODOS os Fornecedores !!'+cr+cr+'Esta CORRETO ??','C')=2 Then
+     Exit;
+  End; // If Trim(sForns)='' Then
+
   OdirPanApres.Caption:='AGUARDE !! Localizando Produtos/Fornecedores...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
   OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmDebCredST.Width-OdirPanApres.Width)/2));
@@ -122,24 +145,14 @@ Begin
   OdirPanApres.Visible:=True;
   Refresh;
 
-  sForns:='';
-  For i:=0 to mMemoForn.Lines.Count-1 do
-  Begin
-    If sForns<>'' Then
-     sForns:=sForns+', '+mMemoForn.Lines[i];
-
-    If sForns='' Then
-     sForns:=mMemoForn.Lines[i];
-
-  End; // For i:=0 to mMemo.Lines.Count-1 do
-
   // 03 - PRODUTOS DE FORNECEDOR (POR FORNECEDOR SE SELECIONADO)
   // ------ Cabeçalho
   MySql:=' SELECT'+
          ' NULL COD_PRODUTO,'+
-         ' ''CRÉDITO / DÉBITO ST - PRODUTOS'' NOME_PRODUTO,'+
-         ' NULL VLR_CRETIDO_ICMS_ST,'+
-         ' NULL VLR_DEBITO_ICMS_ST,'+
+         ' ''Débito/Crédito ST - PRODUTOS'' NOME_PRODUTO,'+
+         ' NULL VLR_ICMS_ST_VENDA,'+
+         ' NULL VLR_ICMS_ST_COMPRA,'+
+         ' NULL VLR_DEB_CRED_ICMS_ST,'+
          ' NULL DATA_DOCUMENTO,'+
          ' NULL DATA_LANCAMENTO,'+
          ' NULL DOCUMENTO,'+
@@ -178,8 +191,9 @@ Begin
          '                   CAST(LPAD(EXTRACT(MONTH FROM CAST('+QuotedStr(sgDtaFim)+' AS DATE)),2,''0'') AS VARCHAR(2))||''/''||'+
          '                   CAST(EXTRACT(YEAR FROM CAST('+QuotedStr(sgDtaFim)+' AS DATE)) AS VARCHAR(4))'+
          '                   NOME_PRODUTO,'+
-         ' NULL VLR_CRETIDO_ICMS_ST,'+
-         ' NULL VLR_DEBITO_ICMS_ST,'+
+         ' NULL VLR_ICMS_ST_VENDA,'+
+         ' NULL VLR_ICMS_ST_COMPRA,'+
+         ' NULL VLR_DEB_CRED_ICMS_ST,'+
          ' NULL DATA_DOCUMENTO,'+
          ' NULL DATA_LANCAMENTO,'+
          ' NULL DOCUMENTO,'+
@@ -211,8 +225,9 @@ Begin
          ' SELECT'+
          ' NULL COD_PRODUTO,'+
          ' NULL NOME_PRODUTO,'+
-         ' NULL VLR_CRETIDO_ICMS_ST,'+
-         ' NULL VLR_DEBITO_ICMS_ST,'+
+         ' NULL VLR_ICMS_ST_VENDA,'+
+         ' NULL VLR_ICMS_ST_COMPRA,'+
+         ' NULL VLR_DEB_CRED_ICMS_ST,'+
          ' NULL DATA_DOCUMENTO,'+
          ' NULL DATA_LANCAMENTO,'+
          ' NULL DOCUMENTO,'+
@@ -244,8 +259,9 @@ Begin
          ' SELECT'+
          ' NULL COD_PRODUTO,'+
          ' ''TOTAIS'' NOME_PRODUTO,'+
-         ' SUM(dc.vlr_cretido_icms_st) VLR_CRETIDO_ICMS_ST,'+
-         ' SUM(dc.vlr_debito_icms_st) VLR_DEBITO_ICMS_ST,'+
+         ' CAST(SUM(dc.vlr_icms_efetivo) AS NUMERIC(18,2)) TOT_ICMS_ST_VENDA,'+
+         ' CAST(SUM(dc.qtd_item * dc.vlr_icms_efetivo_c) AS NUMERIC(18,2)) TOT_ICMS_ST_COMPRA,'+
+         ' CAST(SUM(dc.vlr_icms_efetivo - (dc.qtd_item * dc.vlr_icms_efetivo_c)) AS NUMERIC(18,2)) TOT_DEB_CRED_ICMS_ST,'+
          ' NULL DATA_DOCUMENTO,'+
          ' NULL DATA_LANCAMENTO,'+
          ' NULL DOCUMENTO,'+
@@ -271,51 +287,24 @@ Begin
          ' 3 ORDEM'+
 
          ' FROM DEB_CRED_ICMS_ST dc'+
-         ' WHERE dc.data_lancamento BETWEEN '+QuotedStr(sgDtaInicio)+' AND '+QuotedStr(sgDtaFim);
+         ' WHERE dc.modalidade=''VENDAS'''+
+         ' AND   dc.data_lancamento BETWEEN '+QuotedStr(sgDtaInicio)+' AND '+QuotedStr(sgDtaFim);
 
          If sForns<>'' Then
           MySql:=
            MySql+' AND   dc.cod_fornecedor IN ('+sForns+')';
 
-  MySql:=
-   MySql+' UNION ALL'+
+         If Rb_NFeCom.Checked Then
+         Begin
+           MySql:=
+            MySql+' AND   dc.vlr_icms_efetivo_c BETWEEN 0.01 AND 9999999.99';
+         End; // If Rb_NFeCom.Checked Then
 
-         // ------ Resultado Crédito - Débito
-         ' SELECT'+
-         ' NULL COD_PRODUTO,'+
-         ' ''RESULTADO: CRÉDITO / DÉBITO'' NOME_PRODUTO,'+
-         ' (SUM(dc.vlr_cretido_icms_st) - SUM(dc.vlr_debito_icms_st)) VLR_CRETIDO_ICMS_ST,'+
-         ' NULL VLR_DEBITO_ICMS_ST,'+
-         ' NULL DATA_DOCUMENTO,'+
-         ' NULL DATA_LANCAMENTO,'+
-         ' NULL DOCUMENTO,'+
-         ' NULL SERIE,'+
-         ' NULL MODELO_NF,'+
-         ' NULL ID_CFOP,'+
-         ' NULL CST_ICMS,'+
-         ' NULL PER_ALIQ_ICMS,'+
-         ' NULL VLR_ICMS,'+
-         ' NULL PER_ALIQ_ICMS_ST,'+
-         ' NULL VLR_ICMS_ST,'+
-         ' NULL VLR_BASE_ICMS_ST,'+
-         ' NULL VLR_OPERACAO,'+
-         ' NULL MODALIDADE,'+
-         ' NULL TIPO,'+
-         ' NULL DES_NCM,'+
-         ' NULL PER_ICMS,'+
-         ' NULL PER_FCP,'+
-         ' NULL PER_ICMS_EFETIVO,'+
-         ' NULL UTILIZADO,'+
-         ' NULL COD_FORNECEDOR,'+
-         ' NULL NOME_FORNECDOR,'+
-         ' 4 ORDEM'+
-
-         ' FROM DEB_CRED_ICMS_ST dc'+
-         ' WHERE dc.data_lancamento BETWEEN '+QuotedStr(sgDtaInicio)+' AND '+QuotedStr(sgDtaFim);
-
-         If sForns<>'' Then
-          MySql:=
-           MySql+' AND   dc.cod_fornecedor IN ('+sForns+')';
+         If Rb_NFeSem.Checked Then
+         Begin
+           MySql:=
+            MySql+' AND   dc.vlr_icms_efetivo_c BETWEEN 0.00 AND 0.00';
+         End; // If Rb_NFeSem.Checked Then
 
   MySql:=
    MySql+' UNION ALL'+
@@ -324,8 +313,9 @@ Begin
          ' SELECT'+
          ' NULL COD_PRODUTO,'+
          ' NULL NOME_PRODUTO,'+
-         ' NULL VLR_CRETIDO_ICMS_ST,'+
-         ' NULL VLR_DEBITO_ICMS_ST,'+
+         ' NULL VLR_ICMS_ST_VENDA,'+
+         ' NULL VLR_ICMS_ST_COMPRA,'+
+         ' NULL VLR_DEB_CRED_ICMS_ST,'+
          ' NULL DATA_DOCUMENTO,'+
          ' NULL DATA_LANCAMENTO,'+
          ' NULL DOCUMENTO,'+
@@ -357,8 +347,9 @@ Begin
          ' SELECT'+
          ' dc.cod_produto COD_PRODUTO,'+
          ' pr.nome NOME_PRODUTO,'+
-         ' dc.vlr_cretido_icms_st,'+
-         ' dc.vlr_debito_icms_st,'+
+         ' CAST(dc.vlr_icms_efetivo AS NUMERIC(18,2)) TOT_ICMS_ST_VENDA,'+
+         ' CAST((dc.qtd_item * dc.vlr_icms_efetivo_c) AS NUMERIC(18,2)) TOT_ICMS_ST_COMPRA,'+
+         ' CAST((dc.vlr_icms_efetivo - (dc.qtd_item * dc.vlr_icms_efetivo_c)) AS NUMERIC(18,2)) TOT_DEB_CRED_ICMS_ST,'+
          ' dc.data_documento,'+
          ' dc.data_lancamento,'+
          ' dc.documento,'+
@@ -386,15 +377,27 @@ Begin
          ' FROM DEB_CRED_ICMS_ST dc, LINXPRODUTOS pr, LINXCLIENTESFORNEC fo'+
          ' WHERE dc.cod_produto=pr.cod_produto'+
          ' AND   dc.cod_fornecedor=fo.cod_cliente'+
+         ' AND   dc.modalidade=''VENDAS'''+
          ' AND   dc.data_lancamento BETWEEN '+QuotedStr(sgDtaInicio)+' AND '+QuotedStr(sgDtaFim);
-
 
          If sForns<>'' Then
           MySql:=
            MySql+' AND   dc.cod_fornecedor IN ('+sForns+')';
 
+         If Rb_NFeCom.Checked Then
+         Begin
+           MySql:=
+            MySql+' AND   dc.vlr_icms_efetivo_c BETWEEN 0.01 AND 9999999.99';
+         End; // If Rb_NFeCom.Checked Then
+
+         If Rb_NFeSem.Checked Then
+         Begin
+           MySql:=
+            MySql+' AND   dc.vlr_icms_efetivo_c BETWEEN 0.00 AND 0.00';
+         End; // If Rb_NFeSem.Checked Then
+
   MySql:=
-   MySql+' ORDER BY 27,2';
+   MySql+' ORDER BY 28,2';
   DMDebCredST.CDS_ProdutoForn.Close;
   DMDebCredST.SQLQ_ProdutoForn.SQL.Clear;
   DMDebCredST.SQLQ_ProdutoForn.SQL.Add(MySql);
@@ -597,11 +600,42 @@ begin
     OdirPanApres.Visible:=True;
     Refresh;
 
+    {=================================
+     02 - TOTAL POR FORNECEDOR
+     Parametros:
+     ===========
+     Com ICMS ST..: :Vlr1 = 0.01
+                    :Vlr2 = 9999999.99
+     Sem ICMS ST..: :Vlr1 = 0.00
+                    :Vlr2 = 0.00
+     Todos ICMS ST: :Vlr1 = 0
+                    :Vlr2 = 9999999.99
+     ==================================}
+
     mMemoForn.Lines.Clear;
 
     DMDebCredST.CDS_TotaisForn.Close;
     DMDebCredST.SQLQ_TotaisForn.Params.ParamByName('Dta1').Value:=sgDtaInicio;
     DMDebCredST.SQLQ_TotaisForn.Params.ParamByName('Dta2').Value:=sgDtaFim;
+
+    If Rb_NFeCom.Checked Then
+    Begin
+      DMDebCredST.SQLQ_TotaisForn.Params.ParamByName('Vlr1').AsCurrency:=0.01;
+      DMDebCredST.SQLQ_TotaisForn.Params.ParamByName('Vlr2').AsCurrency:=9999999.99;
+    End; // If Rb_NFeCom.Checked Then
+
+    If Rb_NFeSem.Checked Then
+    Begin
+      DMDebCredST.SQLQ_TotaisForn.Params.ParamByName('Vlr1').Value:='0.00';
+      DMDebCredST.SQLQ_TotaisForn.Params.ParamByName('Vlr2').Value:='0.00';
+    End; // If Rb_NFeSem.Checked Then
+
+    If Rb_NFeAmbas.Checked Then
+    Begin
+      DMDebCredST.SQLQ_TotaisForn.Params.ParamByName('Vlr1').Value:='0';
+      DMDebCredST.SQLQ_TotaisForn.Params.ParamByName('Vlr2').Value:='9999999';
+    End; // If Rb_NFeAmbas.Checked Then
+
     DMDebCredST.CDS_TotaisForn.Open;
 
     OdirPanApres.Visible:=False;
@@ -760,7 +794,7 @@ end;
 procedure TFrmDebCredST.DtEdtDtaInicioPropertiesEditValueChanged(Sender: TObject);
 begin
   {
-   uSADO EM:
+   Usado em:
    DtEdtDtaFimPropertiesEditValueChanged
   }
 
@@ -775,6 +809,7 @@ begin
         Begin
           mMemoForn.Lines.Clear;
           DMDebCredST.CDS_TotaisForn.Close;
+          DMDebCredST.CDS_ProdutoForn.Close;
         End;
 
         If (Trim(sgDtaInicio)<>'') Then
@@ -783,6 +818,7 @@ begin
           Begin
             mMemoForn.Lines.Clear;
             DMDebCredST.CDS_TotaisForn.Close;
+            DMDebCredST.CDS_ProdutoForn.Close;
           End;
         End; // If (Trim(sgDtaInicio)<>'') Then
       Except
@@ -798,6 +834,7 @@ begin
         Begin
           mMemoForn.Lines.Clear;
           DMDebCredST.CDS_TotaisForn.Close;
+          DMDebCredST.CDS_ProdutoForn.Close;
         End;
 
         If (Trim(sgDtaFim)<>'') Then
@@ -806,6 +843,7 @@ begin
           Begin
             mMemoForn.Lines.Clear;
             DMDebCredST.CDS_TotaisForn.Close;
+            DMDebCredST.CDS_ProdutoForn.Close;
           End;
         End; // If (Trim(sgDtaInicio)<>'') Then
       Except
@@ -854,8 +892,8 @@ begin
 
     DMDebCredST.CDS_TotaisFornSELECAO.Alignment             :=taCenter;
     DMDebCredST.CDS_TotaisFornCOD_FORNECEDOR.Alignment      :=taRightJustify;
-    DMDebCredST.CDS_TotaisFornTOT_CRETIDO_ICMS_ST.Alignment :=taRightJustify;
-    DMDebCredST.CDS_TotaisFornTOT_DEBITO_ICMS_ST.Alignment  :=taRightJustify;
+    DMDebCredST.CDS_TotaisFornTOT_ICMS_ST_VENDA.Alignment   :=taRightJustify;
+    DMDebCredST.CDS_TotaisFornTOT_ICMS_ST_COMPRA.Alignment  :=taRightJustify;
     DMDebCredST.CDS_TotaisFornTOT_DEB_CRED_ICMS_ST.Alignment:=taRightJustify;
   End; // If Not DMDebCredST.CDS_TotaisForn.IsEmpty Then
 end;
@@ -999,29 +1037,30 @@ begin
     Dbg_ProdutosForn.Canvas.FillRect(Rect);
     Dbg_ProdutosForn.DefaultDrawDataCell(Rect,Column.Field,state);
 
-    DMDebCredST.CDS_ProdutoFornCOD_PRODUTO.Alignment        :=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornVLR_CRETIDO_ICMS_ST.Alignment:=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornVLR_DEBITO_ICMS_ST.Alignment :=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornDATA_DOCUMENTO.Alignment     :=taCenter;
-    DMDebCredST.CDS_ProdutoFornDATA_LANCAMENTO.Alignment    :=taCenter;
-    DMDebCredST.CDS_ProdutoFornDOCUMENTO.Alignment          :=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornSERIE.Alignment              :=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornMODELO_NF.Alignment          :=taCenter;
-    DMDebCredST.CDS_ProdutoFornID_CFOP.Alignment            :=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornCST_ICMS.Alignment           :=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornPER_ALIQ_ICMS.Alignment      :=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornVLR_ICMS.Alignment           :=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornPER_ALIQ_ICMS_ST.Alignment   :=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornVLR_ICMS_ST.Alignment        :=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornVLR_BASE_ICMS_ST.Alignment   :=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornVLR_OPERACAO.Alignment       :=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornMODALIDADE.Alignment         :=taCenter;
-    DMDebCredST.CDS_ProdutoFornTIPO.Alignment               :=taCenter;
-    DMDebCredST.CDS_ProdutoFornDES_NCM.Alignment            :=taCenter;
-    DMDebCredST.CDS_ProdutoFornPER_ICMS.Alignment           :=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornPER_FCP.Alignment            :=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornPER_ICMS_EFETIVO.Alignment   :=taRightJustify;
-    DMDebCredST.CDS_ProdutoFornCOD_FORNECEDOR.Alignment     :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornCOD_PRODUTO.Alignment         :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornVLR_ICMS_ST_COMPRA.Alignment  :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornVLR_ICMS_ST_VENDA.Alignment   :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornVLR_DEB_CRED_ICMS_ST.Alignment:=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornDATA_DOCUMENTO.Alignment      :=taCenter;
+    DMDebCredST.CDS_ProdutoFornDATA_LANCAMENTO.Alignment     :=taCenter;
+    DMDebCredST.CDS_ProdutoFornDOCUMENTO.Alignment           :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornSERIE.Alignment               :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornMODELO_NF.Alignment           :=taCenter;
+    DMDebCredST.CDS_ProdutoFornID_CFOP.Alignment             :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornCST_ICMS.Alignment            :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornPER_ALIQ_ICMS.Alignment       :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornVLR_ICMS.Alignment            :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornPER_ALIQ_ICMS_ST.Alignment    :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornVLR_ICMS_ST.Alignment         :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornVLR_BASE_ICMS_ST.Alignment    :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornVLR_OPERACAO.Alignment        :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornMODALIDADE.Alignment          :=taCenter;
+    DMDebCredST.CDS_ProdutoFornTIPO.Alignment                :=taCenter;
+    DMDebCredST.CDS_ProdutoFornDES_NCM.Alignment             :=taCenter;
+    DMDebCredST.CDS_ProdutoFornPER_ICMS.Alignment            :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornPER_FCP.Alignment             :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornPER_ICMS_EFETIVO.Alignment    :=taRightJustify;
+    DMDebCredST.CDS_ProdutoFornCOD_FORNECEDOR.Alignment      :=taRightJustify;
   End; // If Not DMDebCredST.CDS_ProdutoForn.IsEmpty Then
 
 end;
@@ -1058,6 +1097,24 @@ begin
     End;
   End; // If (PC_DebCredICMSST.ActivePage=Ts_FornProdutos) And (Ts_FornProdutos.CanFocus) Then
 
+end;
+
+procedure TFrmDebCredST.Rb_NFeSemClick(Sender: TObject);
+begin
+  AcertaRb_Style(Rb_NFeAmbas);
+  AcertaRb_Style(Rb_NFeCom);
+  AcertaRb_Style(Rb_NFeSem);
+
+  mMemoForn.Lines.Clear;
+  DMDebCredST.CDS_TotaisForn.Close;
+  DMDebCredST.CDS_ProdutoForn.Close;
+
+
+end;
+
+procedure TFrmDebCredST.Rb_NFeSemKeyUp(Sender: TObject; var Key: Word;Shift: TShiftState);
+begin
+  Rb_NFeSemClick(Self);
 end;
 
 end.

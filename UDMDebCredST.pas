@@ -23,8 +23,6 @@ type
     CDS_TotaisFornSELECAO: TStringField;
     CDS_TotaisFornCOD_FORNECEDOR: TIntegerField;
     CDS_TotaisFornNOME_FORNECDOR: TStringField;
-    CDS_TotaisFornTOT_CRETIDO_ICMS_ST: TFMTBCDField;
-    CDS_TotaisFornTOT_DEBITO_ICMS_ST: TFMTBCDField;
     CDS_TotaisFornTOT_DEB_CRED_ICMS_ST: TFMTBCDField;
     CDS_TotaisFornORDEM: TIntegerField;
     SQLQ_ProdutoForn: TSQLQuery;
@@ -33,8 +31,6 @@ type
     DS_ProdutoForn: TDataSource;
     CDS_ProdutoFornCOD_PRODUTO: TFMTBCDField;
     CDS_ProdutoFornNOME_PRODUTO: TStringField;
-    CDS_ProdutoFornVLR_CRETIDO_ICMS_ST: TFMTBCDField;
-    CDS_ProdutoFornVLR_DEBITO_ICMS_ST: TFMTBCDField;
     CDS_ProdutoFornDATA_DOCUMENTO: TDateField;
     CDS_ProdutoFornDATA_LANCAMENTO: TDateField;
     CDS_ProdutoFornDOCUMENTO: TIntegerField;
@@ -58,6 +54,11 @@ type
     CDS_ProdutoFornCOD_FORNECEDOR: TIntegerField;
     CDS_ProdutoFornNOME_FORNECDOR: TStringField;
     CDS_ProdutoFornORDEM: TIntegerField;
+    CDS_TotaisFornTOT_ICMS_ST_VENDA: TFMTBCDField;
+    CDS_TotaisFornTOT_ICMS_ST_COMPRA: TFMTBCDField;
+    CDS_ProdutoFornVLR_ICMS_ST_VENDA: TFMTBCDField;
+    CDS_ProdutoFornVLR_ICMS_ST_COMPRA: TFMTBCDField;
+    CDS_ProdutoFornVLR_DEB_CRED_ICMS_ST: TFMTBCDField;
   private
     { Private declarations }
   public

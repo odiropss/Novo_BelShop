@@ -103,64 +103,87 @@ object DMDebCredST: TDMDebCredST
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Dta1'
-        ParamType = ptUnknown
+        ParamType = ptInput
+        Value = '01.03.2017'
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Dta1'
-        ParamType = ptUnknown
+        ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Dta1'
-        ParamType = ptUnknown
+        ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Dta2'
-        ParamType = ptUnknown
+        ParamType = ptInput
+        Value = '31.03.2017'
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Dta2'
-        ParamType = ptUnknown
+        ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Dta2'
-        ParamType = ptUnknown
+        ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftCurrency
+        Name = 'Vlr1'
+        ParamType = ptInput
+        Value = 10000c
+      end
+      item
+        DataType = ftCurrency
+        Name = 'Vlr2'
+        ParamType = ptInput
+        Value = 9999999990000c
+      end
+      item
+        DataType = ftString
         Name = 'Dta1'
-        ParamType = ptUnknown
+        ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Dta2'
-        ParamType = ptUnknown
+        ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftCurrency
+        Name = 'Vlr1'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftCurrency
+        Name = 'Vlr2'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftString
         Name = 'Dta1'
-        ParamType = ptUnknown
+        ParamType = ptInput
       end
       item
-        DataType = ftUnknown
+        DataType = ftString
         Name = 'Dta2'
-        ParamType = ptUnknown
+        ParamType = ptInput
       end>
     SQL.Strings = (
-      '-- 02 - TOTAL POR FORNECEDOR'
       '------ Cabe'#231'alho'
       'SELECT'
       'NULL SELECAO,'
       'NULL COD_FORNECEDOR,'
-      #39'Cr'#233'dito / D'#233'bito ST - FORNECEDORES'#39' NOME_FORNECDOR,'
-      'NULL TOT_CRETIDO_ICMS_ST,'
-      'NULL TOT_DEBITO_ICMS_ST,'
+      #39'D'#233'bito/Cr'#233'dito ST - FORNECEDORES'#39' NOME_FORNECDOR,'
+      'NULL TOT_ICMS_ST_VENDA,'
+      'NULL TOT_ICMS_ST_COMPRA,'
       'NULL TOT_DEB_CRED_ICMS_ST,'
       '0 ORDEM'
       'FROM RDB$DATABASE'
@@ -191,8 +214,8 @@ object DMDebCredST: TDMDebCredST
         '                CAST(EXTRACT(YEAR FROM CAST(:Dta2 AS DATE)) AS V' +
         'ARCHAR(4))'
       '                NOME_FORNECDOR,'
-      'NULL TOT_CRETIDO_ICMS_ST,'
-      'NULL TOT_DEBITO_ICMS_ST,'
+      'NULL TOT_ICMS_ST_VENDA,'
+      'NULL TOT_ICMS_ST_COMPRA,'
       'NULL TOT_DEB_CRED_ICMS_ST,'
       '1 ORDEM'
       'FROM RDB$DATABASE'
@@ -204,8 +227,8 @@ object DMDebCredST: TDMDebCredST
       'NULL SELECAO,'
       'NULL COD_FORNECEDOR,'
       'NULL NOME_FORNECDOR,'
-      'NULL TOT_CRETIDO_ICMS_ST,'
-      'NULL TOT_DEBITO_ICMS_ST,'
+      'NULL TOT_ICMS_ST_VENDA,'
+      'NULL TOT_ICMS_ST_COMPRA,'
       'NULL TOT_DEB_CRED_ICMS_ST,'
       '2 ORDEM'
       'FROM RDB$DATABASE'
@@ -216,16 +239,22 @@ object DMDebCredST: TDMDebCredST
       'SELECT'
       'NULL SELECAO,'
       'NULL COD_FORNECEDOR,'
-      #39'TOTAIS Cr'#233'dito / D'#233'bito'#39' NOME_FORNECDOR,'
-      'SUM(dc.vlr_cretido_icms_st) TOT_CRETIDO_ICMS_ST,'
-      'SUM(dc.vlr_debito_icms_st) TOT_DEBITO_ICMS_ST,'
+      #39'TOTAIS D'#233'bito/Cr'#233'dito'#39' NOME_FORNECDOR,'
       
-        'SUM(dc.vlr_cretido_icms_st - dc.vlr_debito_icms_st) TOT_DEB_CRED' +
-        '_ICMS_ST,'
+        'CAST(SUM(dc.vlr_icms_efetivo) AS NUMERIC(18,2)) TOT_ICMS_ST_VEND' +
+        'A,'
+      
+        'CAST(SUM(dc.qtd_item * dc.vlr_icms_efetivo_c) AS NUMERIC(18,2)) ' +
+        'TOT_ICMS_ST_COMPRA,'
+      
+        'CAST(SUM(dc.vlr_icms_efetivo - (dc.qtd_item * dc.vlr_icms_efetiv' +
+        'o_c)) AS NUMERIC(18,2)) TOT_DEB_CRED_ICMS_ST,'
       '3 ORDEM'
       ''
       'FROM DEB_CRED_ICMS_ST dc, LINXCLIENTESFORNEC fo'
       'WHERE dc.cod_fornecedor=fo.cod_cliente'
+      'AND   dc.modalidade='#39'VENDAS'#39
+      'AND   dc.vlr_icms_efetivo_c between :Vlr1 and :Vlr2'
       'AND   dc.data_lancamento BETWEEN :Dta1 AND :Dta2 -- Alterar'
       ''
       'UNION ALL'
@@ -235,8 +264,8 @@ object DMDebCredST: TDMDebCredST
       'NULL SELECAO,'
       'NULL COD_FORNECEDOR,'
       'NULL NOME_FORNECDOR,'
-      'NULL TOT_CRETIDO_ICMS_ST,'
-      'NULL TOT_DEBITO_ICMS_ST,'
+      'NULL TOT_ICMS_ST_VENDA,'
+      'NULL TOT_ICMS_ST_COMPRA,'
       'NULL TOT_DEB_CRED_ICMS_ST,'
       '4 ORDEM'
       'FROM RDB$DATABASE'
@@ -248,19 +277,25 @@ object DMDebCredST: TDMDebCredST
       #39'NAO'#39' SELECAO,'
       'dc.cod_fornecedor COD_FORNECEDOR,'
       'fo.nome_cliente NOME_FORNECDOR,'
-      'SUM(dc.vlr_cretido_icms_st) TOT_CRETIDO_ICMS_ST,'
-      'SUM(dc.vlr_debito_icms_st) TOT_DEBITO_ICMS_ST,'
       
-        'SUM(dc.vlr_cretido_icms_st - dc.vlr_debito_icms_st) TOT_DEB_CRED' +
-        '_ICMS_ST,'
+        'CAST(SUM(dc.vlr_icms_efetivo) AS NUMERIC(18,2)) TOT_ICMS_ST_VEND' +
+        'A,'
+      
+        'CAST(SUM(dc.qtd_item * dc.vlr_icms_efetivo_c) AS NUMERIC(18,2)) ' +
+        'TOT_ICMS_ST_COMPRA,'
+      
+        'CAST(SUM(dc.vlr_icms_efetivo - (dc.qtd_item * dc.vlr_icms_efetiv' +
+        'o_c)) AS NUMERIC(18,2)) TOT_DEB_CRED_ICMS_ST,'
       '5 ORDEM'
       ''
       'FROM DEB_CRED_ICMS_ST dc, LINXCLIENTESFORNEC fo'
       'WHERE dc.cod_fornecedor=fo.cod_cliente'
+      'AND   dc.modalidade='#39'VENDAS'#39
+      'AND   dc.vlr_icms_efetivo_c between :Vlr1 and :Vlr2'
       'AND   dc.data_lancamento BETWEEN :Dta1 AND :Dta2 -- Alterar'
       'GROUP BY 7, 2,3'
       ''
-      'order by 7,3')
+      'ORDER BY 7,3')
     SQLConnection = DMBelShop.SQLC
     Left = 46
     Top = 100
@@ -293,22 +328,22 @@ object DMDebCredST: TDMDebCredST
       FieldName = 'NOME_FORNECDOR'
       Size = 60
     end
-    object CDS_TotaisFornTOT_CRETIDO_ICMS_ST: TFMTBCDField
-      DisplayLabel = '$ Total Cr'#233'dito'
-      FieldName = 'TOT_CRETIDO_ICMS_ST'
+    object CDS_TotaisFornTOT_ICMS_ST_VENDA: TFMTBCDField
+      DisplayLabel = '$ ICMS ST Venda'
+      FieldName = 'TOT_ICMS_ST_VENDA'
       DisplayFormat = '0,.00'
       Precision = 15
       Size = 2
     end
-    object CDS_TotaisFornTOT_DEBITO_ICMS_ST: TFMTBCDField
-      DisplayLabel = '$ Total D'#233'bito'
-      FieldName = 'TOT_DEBITO_ICMS_ST'
+    object CDS_TotaisFornTOT_ICMS_ST_COMPRA: TFMTBCDField
+      DisplayLabel = '$ ICMS ST Compra'
+      FieldName = 'TOT_ICMS_ST_COMPRA'
       DisplayFormat = '0,.00'
       Precision = 15
       Size = 2
     end
     object CDS_TotaisFornTOT_DEB_CRED_ICMS_ST: TFMTBCDField
-      DisplayLabel = '$ Total Cr'#233'dito/D'#233'bito'
+      DisplayLabel = '$ Total D'#233'bito/Cr'#233'dito'
       FieldName = 'TOT_DEB_CRED_ICMS_ST'
       DisplayFormat = '0,.00'
       Precision = 15
@@ -325,15 +360,60 @@ object DMDebCredST: TDMDebCredST
   end
   object SQLQ_ProdutoForn: TSQLQuery
     MaxBlobSize = -1
-    Params = <>
+    Params = <
+      item
+        DataType = ftCurrency
+        Name = 'Vlr1'
+        ParamType = ptInput
+        Value = 10000c
+      end
+      item
+        DataType = ftCurrency
+        Name = 'Vlr2'
+        ParamType = ptInput
+        Value = '9999999.99'
+      end
+      item
+        DataType = ftString
+        Name = 'Dta1'
+        ParamType = ptInput
+        Value = '01.04.2017'
+      end
+      item
+        DataType = ftString
+        Name = 'Dta2'
+        ParamType = ptInput
+        Value = '30.04.2017'
+      end
+      item
+        DataType = ftCurrency
+        Name = 'Vlr1'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftCurrency
+        Name = 'Vlr2'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftString
+        Name = 'Dta1'
+        ParamType = ptInput
+      end
+      item
+        DataType = ftString
+        Name = 'Dta2'
+        ParamType = ptInput
+      end>
     SQL.Strings = (
       '-- 03 - PRODUTOS DE FORNECEDOR (POR FORNECEDOR SE SELECIONADO)'
       '------ Cabe'#231'alho'
       'SELECT'
       'NULL COD_PRODUTO,'
       #39'D'#233'bito/Cr'#233'dito ST - PRODUTOS'#39' NOME_PRODUTO,'
-      'NULL VLR_CRETIDO_ICMS_ST,'
-      'NULL VLR_DEBITO_ICMS_ST,'
+      'NULL VLR_ICMS_ST_VENDA,'
+      'NULL VLR_ICMS_ST_COMPRA,'
+      'NULL VLR_DEB_CRED_ICMS_ST,'
       'NULL DATA_DOCUMENTO,'
       'NULL DATA_LANCAMENTO,'
       'NULL DOCUMENTO,'
@@ -384,8 +464,9 @@ object DMDebCredST: TDMDebCredST
         '                CAST(EXTRACT(YEAR FROM CAST('#39'10.11.2018'#39' AS DATE' +
         ')) AS VARCHAR(4))'
       '                NOME_PRODUTO,'
-      'NULL VLR_CRETIDO_ICMS_ST,'
-      'NULL VLR_DEBITO_ICMS_ST,'
+      'NULL VLR_ICMS_ST_VENDA,'
+      'NULL VLR_ICMS_ST_COMPRA,'
+      'NULL VLR_DEB_CRED_ICMS_ST,'
       'NULL DATA_DOCUMENTO,'
       'NULL DATA_LANCAMENTO,'
       'NULL DOCUMENTO,'
@@ -417,8 +498,9 @@ object DMDebCredST: TDMDebCredST
       'SELECT'
       'NULL COD_PRODUTO,'
       'NULL NOME_PRODUTO,'
-      'NULL VLR_CRETIDO_ICMS_ST,'
-      'NULL VLR_DEBITO_ICMS_ST,'
+      'NULL VLR_ICMS_ST_VENDA,'
+      'NULL VLR_ICMS_ST_COMPRA,'
+      'NULL VLR_DEB_CRED_ICMS_ST,'
       'NULL DATA_DOCUMENTO,'
       'NULL DATA_LANCAMENTO,'
       'NULL DOCUMENTO,'
@@ -446,52 +528,19 @@ object DMDebCredST: TDMDebCredST
       ''
       'UNION ALL'
       ''
-      '------ Produtos'
-      'SELECT'
-      'dc.cod_produto COD_PRODUTO,'
-      'pr.nome NOME_PRODUTO,'
-      'dc.vlr_cretido_icms_st,'
-      'dc.vlr_debito_icms_st,'
-      'dc.data_documento,'
-      'dc.data_lancamento,'
-      'dc.documento,'
-      'dc.serie,'
-      'dc.modelo_nf,'
-      'dc.id_cfop,'
-      'dc.cst_icms,'
-      'dc.per_aliq_icms,'
-      'dc.vlr_icms,'
-      'dc.per_aliq_icms_st,'
-      'dc.vlr_icms_st,'
-      'dc.vlr_base_icms_st,'
-      'dc.vlr_operacao,'
-      'dc.modalidade,'
-      'dc.tipo,'
-      'dc.des_ncm,'
-      'dc.per_icms,'
-      'dc.per_fcp,'
-      'dc.per_icms_efetivo,'
-      'dc.utilizado,'
-      'dc.cod_fornecedor COD_FORNECEDOR,'
-      'fo.nome_cliente NOME_FORNECDOR,'
-      '3 ORDEM'
-      ''
-      'FROM DEB_CRED_ICMS_ST dc, LINXPRODUTOS pr, LINXCLIENTESFORNEC fo'
-      'WHERE dc.cod_produto=pr.cod_produto'
-      'AND   dc.cod_fornecedor=fo.cod_cliente'
-      
-        'AND   dc.data_lancamento BETWEEN '#39'13.12.2018'#39' AND '#39'13.12.2018'#39' -' +
-        '- ALterar'
-      'AND   dc.cod_fornecedor=594 -- ALterar'
-      ''
-      'UNION ALL'
-      ''
       '------ Totais'
       'SELECT'
       'NULL COD_PRODUTO,'
       #39'TOTAIS'#39' NOME_PRODUTO,'
-      'SUM(dc.vlr_cretido_icms_st) VLR_CRETIDO_ICMS_ST,'
-      'SUM(dc.vlr_debito_icms_st) VLR_DEBITO_ICMS_ST,'
+      
+        'CAST(SUM(dc.vlr_icms_efetivo) AS NUMERIC(18,2)) TOT_ICMS_ST_VEND' +
+        'A,'
+      
+        'CAST(SUM(dc.qtd_item * dc.vlr_icms_efetivo_c) AS NUMERIC(18,2)) ' +
+        'TOT_ICMS_ST_COMPRA,'
+      
+        'CAST(SUM(dc.vlr_icms_efetivo - (dc.qtd_item * dc.vlr_icms_efetiv' +
+        'o_c)) AS NUMERIC(18,2)) TOT_DEB_CRED_ICMS_ST,'
       'NULL DATA_DOCUMENTO,'
       'NULL DATA_LANCAMENTO,'
       'NULL DOCUMENTO,'
@@ -514,16 +563,94 @@ object DMDebCredST: TDMDebCredST
       'NULL UTILIZADO,'
       'NULL COD_FORNECEDOR,'
       'NULL NOME_FORNECDOR,'
-      '4 ORDEM'
+      '3 ORDEM'
       ''
       'FROM DEB_CRED_ICMS_ST dc'
+      'WHERE dc.modalidade='#39'VENDAS'#39
+      'AND   dc.vlr_icms_efetivo_c between :Vlr1 and :Vlr2 -- Alterar'
+      'AND   dc.data_lancamento BETWEEN :Dta1 AND :Dta2 -- Alterar'
+      'AND   dc.cod_fornecedor IN (17190) -- Alterar'
+      ''
+      'UNION ALL'
+      ''
+      '------ Linha em Branco'
+      'SELECT'
+      'NULL COD_PRODUTO,'
+      'NULL NOME_PRODUTO,'
+      'NULL VLR_ICMS_ST_VENDA,'
+      'NULL VLR_ICMS_ST_COMPRA,'
+      'NULL VLR_DEB_CRED_ICMS_ST,'
+      'NULL DATA_DOCUMENTO,'
+      'NULL DATA_LANCAMENTO,'
+      'NULL DOCUMENTO,'
+      'NULL SERIE,'
+      'NULL MODELO_NF,'
+      'NULL ID_CFOP,'
+      'NULL CST_ICMS,'
+      'NULL PER_ALIQ_ICMS,'
+      'NULL VLR_ICMS,'
+      'NULL PER_ALIQ_ICMS_ST,'
+      'NULL VLR_ICMS_ST,'
+      'NULL VLR_BASE_ICMS_ST,'
+      'NULL VLR_OPERACAO,'
+      'NULL MODALIDADE,'
+      'NULL TIPO,'
+      'NULL DES_NCM,'
+      'NULL PER_ICMS,'
+      'NULL PER_FCP,'
+      'NULL PER_ICMS_EFETIVO,'
+      'NULL UTILIZADO,'
+      'NULL COD_FORNECEDOR,'
+      'NULL NOME_FORNECDOR,'
+      '5 ORDEM'
+      'FROM RDB$DATABASE'
+      ''
+      'UNION ALL'
+      ''
+      '------ Produtos'
+      'SELECT'
+      'dc.cod_produto COD_PRODUTO,'
+      'pr.nome NOME_PRODUTO,'
+      'CAST(dc.vlr_icms_efetivo AS NUMERIC(18,2)) TOT_ICMS_ST_VENDA,'
       
-        'WHERE dc.data_lancamento BETWEEN '#39'13.12.2018'#39' AND '#39'13.12.2018'#39' -' +
-        '- ALterar'
-      'AND   dc.cod_fornecedor=594 -- ALterar'
+        'CAST((dc.qtd_item * dc.vlr_icms_efetivo_c) AS NUMERIC(18,2)) TOT' +
+        '_ICMS_ST_COMPRA,'
+      
+        'CAST((dc.vlr_icms_efetivo - (dc.qtd_item * dc.vlr_icms_efetivo_c' +
+        ')) AS NUMERIC(18,2)) TOT_DEB_CRED_ICMS_ST,'
+      'dc.data_documento,'
+      'dc.data_lancamento,'
+      'dc.documento,'
+      'dc.serie,'
+      'dc.modelo_nf,'
+      'dc.id_cfop,'
+      'dc.cst_icms,'
+      'dc.per_aliq_icms,'
+      'dc.vlr_icms,'
+      'dc.per_aliq_icms_st,'
+      'dc.vlr_icms_st,'
+      'dc.vlr_base_icms_st,'
+      'dc.vlr_operacao,'
+      'dc.modalidade,'
+      'dc.tipo,'
+      'dc.des_ncm,'
+      'dc.per_icms,'
+      'dc.per_fcp,'
+      'dc.per_icms_efetivo,'
+      'dc.utilizado,'
+      'dc.cod_fornecedor COD_FORNECEDOR,'
+      'fo.nome_cliente NOME_FORNECDOR,'
+      '6 ORDEM'
       ''
+      'FROM DEB_CRED_ICMS_ST dc, LINXPRODUTOS pr, LINXCLIENTESFORNEC fo'
+      'WHERE dc.cod_produto=pr.cod_produto'
+      'AND   dc.cod_fornecedor=fo.cod_cliente'
+      'AND   dc.modalidade='#39'VENDAS'#39
+      'AND   dc.vlr_icms_efetivo_c between :Vlr1 and :Vlr2 -- Alterar'
+      'AND   dc.data_lancamento BETWEEN :Dta1 AND :Dta2 -- Alterar'
+      'AND   dc.cod_fornecedor IN (17190) -- Alterar'
       ''
-      'ORDER BY 27,2')
+      'ORDER BY 28,2')
     SQLConnection = DMBelShop.SQLC
     Left = 46
     Top = 172
@@ -551,16 +678,23 @@ object DMDebCredST: TDMDebCredST
       FieldName = 'NOME_PRODUTO'
       Size = 250
     end
-    object CDS_ProdutoFornVLR_CRETIDO_ICMS_ST: TFMTBCDField
-      DisplayLabel = '$ Cr'#233'dito ICMS ST'
-      FieldName = 'VLR_CRETIDO_ICMS_ST'
+    object CDS_ProdutoFornVLR_ICMS_ST_VENDA: TFMTBCDField
+      DisplayLabel = '$ ICMS ST Venda'
+      FieldName = 'VLR_ICMS_ST_VENDA'
       DisplayFormat = '0,.00'
       Precision = 15
       Size = 2
     end
-    object CDS_ProdutoFornVLR_DEBITO_ICMS_ST: TFMTBCDField
-      DisplayLabel = '$ D'#233'bito ICMS ST'
-      FieldName = 'VLR_DEBITO_ICMS_ST'
+    object CDS_ProdutoFornVLR_ICMS_ST_COMPRA: TFMTBCDField
+      DisplayLabel = '$ ICMS ST Compra'
+      FieldName = 'VLR_ICMS_ST_COMPRA'
+      DisplayFormat = '0,.00'
+      Precision = 15
+      Size = 2
+    end
+    object CDS_ProdutoFornVLR_DEB_CRED_ICMS_ST: TFMTBCDField
+      DisplayLabel = '$ D'#233'b/Cr'#233'd ICMS ST'
+      FieldName = 'VLR_DEB_CRED_ICMS_ST'
       DisplayFormat = '0,.00'
       Precision = 15
       Size = 2

@@ -2503,6 +2503,7 @@ End;
          '        em.dta_inicio_linx, em.ind_domingo'+
          ' FROM EMP_CONEXOES em'+
          ' WHERE em.dta_inicio_linx IS NOT NULL';
+
          If sgParametroCodLoja<>'' Then
           MySql:=
            MySql+' AND em.cod_linx='+sgParametroCodLoja
@@ -2510,6 +2511,10 @@ End;
           MySql:=
            MySql+' AND em.cod_linx<>0'+
                  ' ORDER BY 5,4';
+
+//          MySql:=
+//           MySql+' AND em.cod_linx in (1,20,2,21,18,19,22,24,5,25)'+
+//                 ' ORDER BY 5,4';
   DMLinxWebService.CDS_Lojas.Close;
   DMLinxWebService.SDS_Lojas.CommandText:=MySql;
   DMLinxWebService.CDS_Lojas.Open;

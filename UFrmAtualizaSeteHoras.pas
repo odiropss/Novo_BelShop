@@ -30,6 +30,7 @@ type
     Procedure AcertaEstoqueLoja;
 
     Procedure SidicomDataBackup;
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
 
     // ODIR ====================================================================
 
@@ -65,6 +66,9 @@ var
   bgAchoFornCC: Boolean; // Se Encontrou Fornecedor com Negociação (Hist: 900, 955)
 
   Flags : Cardinal; // Verifica Internet Ativo - Encerra Necessario
+
+  tgMySqlErro: TStringList; // Arquivo de Processamento e Erros
+  sgDtaInicioProc: String;
 
 implementation
 
@@ -117,11 +121,25 @@ Begin
 
     DateSeparator:='/';
     DecimalSeparator:=',';
+
+    tgMySqlErro.Add('SidicomDataBackup - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
   Except
-    DMConexoes.IBT_99.Rollback;
-    DateSeparator:='/';
-    DecimalSeparator:=',';
+    on e : Exception do
+    Begin
+      DMConexoes.IBT_99.Rollback;
+      DateSeparator:='/';
+      DecimalSeparator:=',';
+
+      tgMySqlErro.Add('SidicomDataBackup - ERRO  -'+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
+    End; // on e : Exception do
   End; // Try
+
   ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
 End; // Acerta Data de Backup do Sidicom >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -138,8 +156,7 @@ Begin
   MySql:=' SELECT e.cod_filial'+
          ' FROM EMP_CONEXOES e'+
          ' WHERE e.ind_ativo=''SIM'''+
-         // OdirAqui Loja 89
-         ' AND e.cod_filial<>''89'''+
+         ' AND   e.dta_inicio_linx IS NOT NULL'+
          ' ORDER BY 1';
   DMAtualizaSeteHoras.CDS_Lojas.Close;
   DMAtualizaSeteHoras.SDS_Lojas.CommandText:=MySql;
@@ -206,31 +223,24 @@ Begin
 
       DateSeparator:='/';
       DecimalSeparator:=',';
+
+      tgMySqlErro.Add('AcertaEstoqueLoja: Loja '+sCodLoja+' - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
     Except // Except da Transação
       on e : Exception do
       Begin
         // Abandona Transacao ====================================================
         DMAtualizaSeteHoras.SQLC.Rollback(TD);
 
-        TD.TransactionID:=Cardinal(FormatDateTime('ddmmyyyy',now)+FormatDateTime('hhnnss',now));
-        TD.IsolationLevel:=xilREADCOMMITTED;
-        DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
-
-        MySql:=' INSERT INTO ES_PROCESSADOS  (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
-               ' VALUES ('+
-               QuotedStr(sCodLoja)+', '+ // COD_LOJA
-               '0, '+                    // COD_LINX
-               ' CURRENT_TIMESTAMP,'+    // DTA_PROC
-               QuotedStr('ERR')+', '+    // Erro AcertaEstoqueLoja
-               QuotedStr(MySql)+')'+     // OBS
-               'MATCHING (COD_LOJA)';
-        DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
-
-        DMAtualizaSeteHoras.SQLC.Commit(TD); // AcertaEstoqueLoja
-
         DateSeparator:='/';
         DecimalSeparator:=',';
-        Exit;
+
+        tgMySqlErro.Add('AcertaEstoqueLoja: Loja '+sCodLoja+' - ERRO  -'+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+        tgMySqlErro.Add('ERROR: '+e.message);
+        tgMySqlErro.Add(MySql);
+        tgMySqlErro.Add('==================================');
+        tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
       End; // on e : Exception do
     End; // Try da Transação
 
@@ -326,6 +336,10 @@ Begin
 
         DateSeparator:='/';
         DecimalSeparator:=',';
+
+        tgMySqlErro.Add('CodigoBarras - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+        tgMySqlErro.Add('==================================');
+        tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
       Except
         on e : Exception do
         Begin
@@ -333,6 +347,12 @@ Begin
 
           DateSeparator:='/';
           DecimalSeparator:=',';
+
+          tgMySqlErro.Add('CodigoBarras - ERRO  -'+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+          tgMySqlErro.Add('ERROR: '+e.message);
+          tgMySqlErro.Add(MySql);
+          tgMySqlErro.Add('==================================');
+          tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
         End; // on e : Exception do
       End; // Try
     End; // If bSiga Then
@@ -626,6 +646,10 @@ Begin
 
     DateSeparator:='/';
     DecimalSeparator:=',';
+
+    tgMySqlErro.Add('ProdutosCompradores - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
   Except
     on e : Exception do
     Begin
@@ -634,6 +658,12 @@ Begin
 
       DateSeparator:='/';
       DecimalSeparator:=',';
+
+      tgMySqlErro.Add('ProdutosCompradores - ERRO  -'+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
     End; // on e : Exception do
   End; // Try
 
@@ -810,6 +840,11 @@ Begin
 
     DateSeparator:='/';
     DecimalSeparator:=',';
+
+    tgMySqlErro.Add('Demanda4Meses - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
+
   Except
     on e : Exception do
     Begin
@@ -818,6 +853,13 @@ Begin
 
       DateSeparator:='/';
       DecimalSeparator:=',';
+
+      tgMySqlErro.Add('Demanda4Meses - ERRO  -'+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
+
     End; // on e : Exception do
   End; // Try
 
@@ -872,10 +914,14 @@ Begin
     If Trim(sgCodForn)<>'' Then
      DMAtualizaSeteHoras.SDS_MovtoLinx.Params.ParamByName('CodForn').AsString:=sgCodForn;
     except
-    on e : Exception do
-    Begin
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-    End; // on e : Exception do
+      on e : Exception do
+      Begin
+        tgMySqlErro.Add('BuscaMovtosDebCreLINX: Loja '+sgCodEmpLINX+' - ERRO  -'+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+        tgMySqlErro.Add('ERROR: '+e.message);
+        tgMySqlErro.Add(MySql);
+        tgMySqlErro.Add('==================================');
+        tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
+      End; // on e : Exception do
     End;
     DMAtualizaSeteHoras.CDS_MovtoLinx.Open;
 
@@ -1065,30 +1111,23 @@ Begin
     DateSeparator:='/';
     DecimalSeparator:=',';
 
+    tgMySqlErro.Add('BuscaMovtosDebCreLINX: Loja '+sgCodEmpLINX+' - OK - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
+
   Except
     on e : Exception do
     Begin
       DMAtualizaSeteHoras.SQLC.Rollback(TD);
 
-      // Monta Transacao ===========================================================
-      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-      TD.IsolationLevel:=xilREADCOMMITTED;
-      DMAtualizaSeteHoras.SQLC.StartTransaction(TD);
-
-      MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, Tipo, obs)'+
-             ' VALUES ('+
-             QuotedStr('80')+', '+
-             sgCodEmpLINX+', '+
-             ' CURRENT_TIMESTAMP,'+
-             QuotedStr('CCr')+', '+ // Linx Com Inventário
-             QuotedStr('Conta Corrente: '+e.message+' - '+MySql)+')'+
-             'MATCHING (COD_LOJA)';
-      DMAtualizaSeteHoras.SQLC.Execute(MySql,nil,nil);
-
-      DMAtualizaSeteHoras.SQLC.Commit(TD); // Linx Com Inventário
-
       DateSeparator:='/';
       DecimalSeparator:=',';
+
+      tgMySqlErro.Add('BuscaMovtosDebCreLINX: Loja '+sgCodEmpLINX+' - ERRO  -'+sgDtaInicioProc+' a '+DateTimeToStr(Now));
+      tgMySqlErro.Add('ERROR: '+e.message);
+      tgMySqlErro.Add(MySql);
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
     End; // on e : Exception do
   End; // Try
 
@@ -1982,11 +2021,18 @@ Var
   sCodFornCalcCC, sDtaCalcCC: String;
   ii, i: Integer;
 begin
+  tgMySqlErro:=TStringList.Create;
+  tgMySqlErro.Clear;
+  tgMySqlErro.Add('==================================');
+  tgMySqlErro.Add('Processamento INICIO: '+DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor)));
+  tgMySqlErro.Add('==================================');
+  tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
 
   //============================================================================
   // Acerta Data de Backup do Sidicom ==========================================
   //============================================================================
 //opss
+  sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
   SidicomDataBackup;
   // Acerta Data de Backup do Sidicom ==========================================
   //============================================================================
@@ -1995,6 +2041,7 @@ begin
   // Atualiza Codigos de Barras ================================================
   //============================================================================
 //opss
+  sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
   CodigoBarras;
   // Atualiza Codigos de Barras ================================================
   //============================================================================
@@ -2003,6 +2050,7 @@ begin
   // Atualiza Demanda 4 Meses ==================================================
   //============================================================================
 //opss
+  sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
   Demanda4Meses;
   // Atualiza Demanda 4 Meses ==================================================
   //============================================================================
@@ -2012,9 +2060,10 @@ begin
   // RODAR APÓS ATUALIZA DEMANDA 4 MESES =======================================
   //============================================================================
 //opss
+  sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
   ProdutosCompradores;
-  // Atualiza Produtos / Fornecedores / Vendas 15 Dias =========================
   // RODAR APÓS ATUALIZA DEMANDA 4 MESES =======================================
+  // Atualiza Produtos / Fornecedores / Vendas 15 Dias =========================
   //============================================================================
 
 // OdirApagar - 31/10/2018
@@ -2057,8 +2106,7 @@ begin
          // opss somente uma loja
          // ' WHERE e.cod_linx=2'+
          ' WHERE ((e.ind_ativo = ''SIM'') OR (e.cod_filial = ''99''))'+
-         // OdirAqui Loja 89
-         ' AND e.cod_filial<>''89'''+
+         ' AND   e.dta_inicio_linx IS NOT NULL'+
 
          ' ORDER BY 1';
   DMAtualizaSeteHoras.CDS_Lojas.Close;
@@ -2079,6 +2127,7 @@ begin
     // Busca Débitos/Crétidos no LINX ==========================================
     If sgCodEmpLINX<>'0' Then
     Begin
+      sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
       BuscaMovtosDebCreLINX;
     End;
 
@@ -2105,11 +2154,26 @@ begin
   // Igual Todos os Produtos de Todas a Lojas com o CD =========================
   //============================================================================
 //opss
+  sgDtaInicioProc:=DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor));
   AcertaEstoqueLoja;
   // Igual Todos os Produtos de Todas a Lojas com o CD =========================
   //============================================================================
 
+  tgMySqlErro.Add('==================================');
+  tgMySqlErro.Add('Processamento FIM: '+DateTimeToStr(DataHoraServidorFI(DMAtualizaSeteHoras.SDS_DtaHoraServidor)));
+  tgMySqlErro.Add('==================================');
+  tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_Sete_Horas_Proc.txt');
+
   // Encerra Programa ==========================================================
+  Application.Terminate;
+  Exit;
+
+end;
+
+procedure TFrmAtualizaSeteHoras.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  FreeAndNil(tgMySqlErro);
+
   Application.Terminate;
   Exit;
 

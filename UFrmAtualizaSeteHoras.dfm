@@ -1,5 +1,5 @@
 object FrmAtualizaSeteHoras: TFrmAtualizaSeteHoras
-  Left = 611
+  Left = 652
   Top = 251
   Width = 379
   Height = 243
@@ -12,6 +12,7 @@ object FrmAtualizaSeteHoras: TFrmAtualizaSeteHoras
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13

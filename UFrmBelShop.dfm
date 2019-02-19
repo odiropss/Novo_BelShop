@@ -5127,7 +5127,7 @@ object FrmBelShop: TFrmBelShop
     Top = 0
     Width = 979
     Height = 564
-    ActivePage = Ts_FinanComprPlanFinan
+    ActivePage = Ts_ConexaoEmpresas
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -6385,7 +6385,7 @@ object FrmBelShop: TFrmBelShop
           Top = 5
           Width = 106
           Height = 25
-          Caption = 'Linx Prod Duplo'
+          Caption = 'Acerta Deb Cred'
           TabOrder = 7
           Visible = False
           OnClick = Button4Click
@@ -16765,7 +16765,7 @@ object FrmBelShop: TFrmBelShop
               object Label77: TLabel
                 Left = 2
                 Top = 2
-                Width = 412
+                Width = 232
                 Height = 13
                 Align = alTop
                 Alignment = taCenter
@@ -33852,5 +33852,387 @@ object FrmBelShop: TFrmBelShop
     object N37: TMenuItem
       Caption = '-'
     end
+  end
+  object SQLQuery1: TSQLQuery
+    MaxBlobSize = -1
+    Params = <
+      item
+        DataType = ftUnknown
+        Name = 'Dta1'
+        ParamType = ptUnknown
+      end
+      item
+        DataType = ftUnknown
+        Name = 'Dta2'
+        ParamType = ptUnknown
+      end>
+    SQL.Strings = (
+      'INSERT INTO DEB_CRED_ICMS_ST'
+      'SELECT'
+      'm.empresa,'
+      'p.cod_fornecedor,'
+      'm.cod_produto,'
+      'CAST(m.data_documento AS DATE) DATA_DOCUMENTO,'
+      'CAST(m.data_lancamento AS DATE) DATA_LANCAMENTO,'
+      'm.documento DOCUMENTO,'
+      'm.serie SERIE,'
+      
+        'CAST(SUBSTRING(TRIM(m.chave_nf) FROM 21 FOR 2) AS VARCHAR(3)) MO' +
+        'DELO_NF,'
+      'm.operacao,'
+      'm.tipo_transacao,'
+      'm.id_cfop ID_CFOP,'
+      'm.cst_icms CST_ICMS,'
+      'm.quantidade qtd_item,'
+      
+        'CAST(COALESCE(m.aliquota_icms, 0.00) AS NUMERIC(18,2)) PER_ALIQ_' +
+        'ICMS,'
+      'CAST(COALESCE(m.valor_icms, 0.00) AS NUMERIC(18,2)) VLR_ICMS,'
+      
+        'CAST(COALESCE(m.aliquota_icms_st, 0.00) AS NUMERIC(18,2)) PER_AL' +
+        'IQ_ICMS_ST,'
+      
+        'CAST(COALESCE(m.valor_icms_st, 0.00) AS NUMERIC(18,2)) VLR_ICMS_' +
+        'ST,'
+      
+        'CAST(COALESCE(m.base_icms_st, 0.00) AS NUMERIC(18,2)) VLR_BASE_I' +
+        'CMS_ST,'
+      
+        'CAST(COALESCE(m.valor_total, 0.00) AS NUMERIC(18,2)) VLR_OPERACA' +
+        'O,'
+      ''
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      'CAST('
+      'CASE'
+      
+        '   WHEN TRIM(m.id_cfop) IN ('#39'5401'#39', '#39'6401'#39', '#39'5405'#39', '#39'6108'#39',  '#39'54' +
+        '03'#39') THEN  -- Vendas'
+      '      '#39'VENDAS'#39
+      
+        '   WHEN TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39') THEN' +
+        '  -- Compras'
+      '      '#39'COMPRAS'#39
+      'END'
+      'AS VARCHAR(15)) MODALIDADE,'
+      ''
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      'CAST('
+      'CASE'
+      
+        '   WHEN (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) AN' +
+        'D   -- Compras Atacado'
+      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%60'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'500'#39')) THEN'
+      '      '#39'ATACADO'#39
+      ''
+      
+        '   WHEN (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) AN' +
+        'D   -- Compras Industria'
+      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'201'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'202'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'203'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'204'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%10'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%30'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%70'#39')) THEN'
+      '      '#39'IND'#218'STRIA'#39
+      ''
+      
+        '   WHEN (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) AN' +
+        'D   -- Compras Outros'
+      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'900'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'%90'#39')) THEN'
+      '      '#39'OUTROS'#39
+      ''
+      '   ELSE ------------------ Vendas BelShop'
+      '     '#39'BELSHOP'#39
+      'END'
+      'AS VARCHAR(15)) TIPO,'
+      ''
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      '-- Dados NCM'
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      'n.des_ncm DES_NCM,'
+      'CAST(n.per_icms AS NUMERIC(18,2)) PER_ICMS,'
+      'CAST(n.per_fcp AS NUMERIC(18,2)) PER_FCP,'
+      'CAST(n.per_icms_efetivo AS NUMERIC(18,2)) PER_ICMS_EFETIVO,'
+      ''
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      'CAST('
+      'CASE'
+      '   -- Compras - Ind'#250'stria Base de Calculo ICMS ST'
+      
+        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
+        'AND   -- Compras - Ind'#250'stria'
+      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'201'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'202'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'203'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'204'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%10'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%30'#39')'
+      '          OR'
+      
+        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%70'#39')) ) AND (' +
+        'm.base_icms_st<>0) THEN'
+      '      '#39'Valor Base de Calculo ICMS ST'#39
+      ''
+      '   -- Compras - Ind'#250'stria Valor da Opera'#231#227'o'
+      
+        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
+        'AND   -- Compras - Ind'#250'stria'
+      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'201'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'202'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'203'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'204'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%10'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%30'#39')'
+      '          OR'
+      
+        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%70'#39')) ) AND (' +
+        'm.base_icms_st=0) THEN'
+      '      '#39'Valor da Opera'#231#227'o'#39
+      ''
+      '   -- Compras - Atacado Valor da Opera'#231#227'o'
+      
+        '   WHEN (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) AN' +
+        'D   -- Compras Atacado'
+      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%60'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'500'#39')) THEN'
+      '      '#39'Valor da Opera'#231#227'o'#39
+      ''
+      '   -- Compras - Outros Base de Calculo ICMS ST'
+      
+        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
+        'AND   -- Compras Outros'
+      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'900'#39')'
+      '          OR'
+      
+        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'%90'#39')) ) AND (m.b' +
+        'ase_icms_st<>0) THEN'
+      '      '#39'Valor Base de Calculo ICMS ST'#39
+      ''
+      '   -- Compras - Outros Valor da Opera'#231#227'o'
+      
+        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
+        'AND   -- Compras Outros'
+      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'900'#39')'
+      '          OR'
+      
+        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'%90'#39')) ) AND (m.b' +
+        'ase_icms_st<>0) THEN'
+      '      '#39'Valor da Opera'#231#227'o'#39
+      ''
+      '   ELSE ------------ Vendas BelShop'
+      '      '#39'Valor da Opera'#231#227'o'#39
+      'END'
+      'AS varchar(35)) UTILIZADO,'
+      ''
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      '-- Valor ICMS Efetivo'
+      
+        '----------------------------------------------------------------' +
+        '----------------'
+      'CAST('
+      'CASE'
+      '   -- Vendas - BelShop'
+      
+        '   WHEN TRIM(m.id_cfop) in ('#39'5401'#39', '#39'6401'#39', '#39'5405'#39', '#39'6108'#39',  '#39'54' +
+        '03'#39') THEN -- Somente Vendas'
+      
+        '     (COALESCE(m.valor_total, 0.00) * COALESCE(n.per_icms_efetiv' +
+        'o, 0.00)) / 100'
+      ''
+      '   -- Compras - Ind'#250'stria Base de Calculo ICMS ST'
+      
+        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
+        'AND   -- Compras - Ind'#250'stria'
+      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'201'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'202'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'203'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'204'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%10'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%30'#39')'
+      '          OR'
+      
+        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%70'#39')) ) AND (' +
+        'm.base_icms_st<>0) THEN'
+      
+        '     (COALESCE(m.base_icms_st, 0.00) * COALESCE(n.per_icms_efeti' +
+        'vo, 0.00)) / 100'
+      ''
+      '   -- Compras - Ind'#250'stria Valor da Opera'#231#227'o'
+      
+        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
+        'AND   -- Compras - Ind'#250'stria'
+      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'201'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'202'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'203'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'204'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%10'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%30'#39')'
+      '          OR'
+      
+        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%70'#39')) ) AND (' +
+        'm.base_icms_st=0) THEN'
+      
+        '     (COALESCE(m.valor_total, 0.00) * COALESCE(n.per_icms_efetiv' +
+        'o, 0.00)) / 100'
+      ''
+      '   -- Compras - Atacado Valor da Opera'#231#227'o'
+      
+        '   WHEN (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) AN' +
+        'D   -- Compras Atacado'
+      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%60'#39')'
+      '          OR'
+      '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'500'#39')) THEN'
+      
+        '     (COALESCE(m.valor_total, 0.00) * COALESCE(n.per_icms_efetiv' +
+        'o, 0.00)) / 100'
+      ''
+      '   -- Compras - Outros Base de Calculo ICMS ST'
+      
+        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
+        'AND   -- Compras Outros'
+      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'900'#39')'
+      '          OR'
+      
+        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'%90'#39')) ) AND (m.b' +
+        'ase_icms_st<>0) THEN'
+      
+        '     (COALESCE(m.base_icms_st, 0.00) * COALESCE(n.per_icms_efeti' +
+        'vo, 0.00)) / 100'
+      ''
+      '   -- Compras - Outros Valor da Opera'#231#227'o'
+      
+        '   WHEN ( (TRIM(m.id_cfop) IN ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39')) ' +
+        'AND   -- Compras Outros'
+      '        ((REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'900'#39')'
+      '          OR'
+      
+        '         (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'%90'#39')) ) AND (m.b' +
+        'ase_icms_st<>0) THEN'
+      
+        '     (COALESCE(m.valor_total, 0.00) * COALESCE(n.per_icms_efetiv' +
+        'o, 0.00)) / 100'
+      ''
+      '   ELSE ------------ Vendas BelShop'
+      '      0.00'
+      'END'
+      'AS NUMERIC(18,2)) VLR_ICMS_EFETIVO,'
+      '0.00 VLR_ICMS_EFETIVO_C'
+      ''
+      'FROM LINXMOVIMENTO m, LINXPRODUTOS p,'
+      '     DEB_CRED_ICMS_NCM n'
+      ''
+      'WHERE m.cod_produto=p.cod_produto'
+      'AND   p.ncm=n.des_ncm'
+      ''
+      'AND   m.excluido='#39'N'#39
+      'AND   m.cancelado='#39'N'#39
+      '---------------------------'
+      '--- CFOPs SELECIONADOS ----'
+      '---------------------------'
+      
+        'AND TRIM(m.id_cfop) in ('#39'5401'#39', '#39'6401'#39', '#39'5405'#39', '#39'6108'#39',  '#39'5403'#39',' +
+        ' -- Vendas'
+      
+        '                        '#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39') -- Compr' +
+        'as'
+      ''
+      
+        '--AND TRIM(m.id_cfop) in ('#39'5401'#39', '#39'6401'#39', '#39'5405'#39', '#39'6108'#39',  '#39'5403' +
+        #39') -- Somente Vendas'
+      
+        '--AND TRIM(m.id_cfop) in ('#39'1401'#39', '#39'2401'#39', '#39'1403'#39', '#39'2403'#39') -- Som' +
+        'ente Compras'
+      ''
+      '---------------------------'
+      '--- CFOPs SELECIONADOS ----'
+      '---------------------------'
+      ''
+      '------------------------'
+      '--- CST SELECIONADOS ---'
+      '------------------------'
+      'AND ( (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'201'#39')'
+      '      OR'
+      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'202'#39')'
+      '      OR'
+      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'203'#39')'
+      '      OR'
+      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'204'#39')'
+      '      OR'
+      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'500'#39')'
+      '      OR'
+      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') = '#39'900'#39')'
+      '      OR'
+      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%10'#39')'
+      '      OR'
+      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%30'#39')'
+      '      OR'
+      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%60'#39')'
+      '      OR'
+      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%70'#39')'
+      '      OR'
+      '      (REPLACE(TRIM(m.cst_icms),'#39'.'#39', '#39#39') like '#39'%90'#39') )'
+      '------------------------'
+      '--- CST SELECIONADOS ---'
+      '------------------------'
+      ''
+      'AND COALESCE(m.tipo_transacao,'#39#39')<>'#39'J'#39
+      'AND m.data_lancamento between :Dta1 and :Dta2'
+      '')
+    SQLConnection = DMBelShop.SQLC
+    Left = 150
+    Top = 449
   end
 end

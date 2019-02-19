@@ -3,7 +3,6 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
   Top = 103
   Width = 961
   Height = 619
-  AutoSize = True
   BorderIcons = []
   Caption = 'Sele'#231#227'o de Empresa para Processamento'
   Color = clBtnFace
@@ -738,7 +737,7 @@ object FrmSelectEmpProcessamento: TFrmSelectEmpProcessamento
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
-        Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
+        Options = [dgTitles, dgColumnResize, dgColLines, dgTabs, dgRowSelect, dgAlwaysShowSelection]
         ParentFont = False
         ReadOnly = True
         TabOrder = 0

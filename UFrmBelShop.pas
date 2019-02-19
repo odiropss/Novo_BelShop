@@ -1171,6 +1171,7 @@ type
     SubMenuICMSDebitoCredito: TMenuItem;
     SubMenuICMSDebCredImpNCM: TMenuItem;
     SubMenuICMSDebCredST: TMenuItem;
+    SQLQuery1: TSQLQuery;
 
     // Odir ====================================================================
 
@@ -42613,87 +42614,174 @@ begin
 end;
 
 procedure TFrmBelShop.Button4Click(Sender: TObject);
+Var
+  MySql: String;
+  i: Integer;
+  sDta1, sDta2: String;
+  tgMySqlErro: TStringList; // Arquivo de Processamento e Erros
 begin
-  MySqlSelect:=' SELECT d.empresa, d.cod_produto, d.dta_atualizacao'+
-               ' FROM LINXPRODUTOSDETALHES d'+
-               ' WHERE EXISTS (SELECT dt.empresa, dt.cod_produto, count(dt.cod_produto) tot'+
-               ' FROM LINXPRODUTOSDETALHES dt'+
-               ' WHERE dt.empresa=d.empresa'+
-               ' AND dt.cod_produto=d.cod_produto'+
-               ' GROUP BY dt.empresa, dt.cod_produto'+
-               ' HAVING COUNT(dt.cod_produto) >1'+
-               ' )'+
-               ' ORDER BY d.empresa, d.cod_produto, d.dta_atualizacao desc';
-  DMBelShop.CDS_Busca.Close;
-  DMBelShop.SDS_Busca.CommandText:=MySqlSelect;
-  DMBelShop.CDS_Busca.Open;
 
-  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-  TD.IsolationLevel:=xilREADCOMMITTED;
-  DMBelShop.SQLC.StartTransaction(TD);
-  Try // Try da Transação
-    Screen.Cursor:=crAppStart;
-    DateSeparator:='.';
-    DecimalSeparator:='.';
+//  tgMySqlErro:=TStringList.Create;
+//  tgMySqlErro.Clear;
+//  tgMySqlErro.SaveToFile(sPath_Local+'@ODIR_DebCred_Erros.txt');
 
-    MontaProgressBar(True, FrmBelShop);
-    pgProgBar.Properties.Max:=DMBelShop.CDS_Busca.RecordCount;
-    pgProgBar.Position:=0;
+{
+'01.12.2016' and '31.12.2016'
+'01.01.2017' and '31.01.2017'
+'01.02.2017' and '28.02.2017'
+'01.03.2017' and '31.03.2017'
+'01.04.2017' and '30.04.2017'
+'01.05.2017' and '31.05.2017'
+'01.06.2017' and '30.06.2017'
+'01.07.2017' and '31.07.2017'
+'01.08.2017' and '31.08.2017'
+'01.09.2017' and '30.09.2017'
+'01.10.2017' and '31.10.2017'
+'01.11.2017' and '30.11.2017'
+'01.12.2017' and '31.12.2017'
+'01.01.2018' and '31.01.2018'
+'01.02.2018' and '28.02.2018'
+'01.03.2018' and '31.03.2018'
+'01.04.2018' and '30.04.2018'
+'01.05.2018' and '31.05.2018'
+'01.06.2018' and '30.06.2018'
+'01.07.2018' and '31.07.2018'
+'01.08.2018' and '31.08.2018'
+'01.09.2018' and '30.09.2018'
+'01.10.2018' and '31.10.2018'
+'01.11.2018' and '30.11.2018'
+'01.12.2018' and '31.12.2018'
+'01.01.2019' and '31.01.2019'
+}
 
-    sgCodEmp:='';
-    sgCodProd:='';
+// BUSCA MOVIMENTOS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+//  TD.IsolationLevel:=xilREADCOMMITTED;
+//  DMBelShop.SQLC.StartTransaction(TD);
+//  Try // Try da Transação
+//    Screen.Cursor:=crAppStart;
+//    DateSeparator:='.';
+//    DecimalSeparator:='.';
+//
+//    MontaProgressBar(True, FrmBelShop);
+//    pgProgBar.Properties.Max:=Memo1.Lines.Count;
+//    pgProgBar.Position:=0;
+//
+//    For i:=0 to Memo1.Lines.Count-1 do
+//    Begin
+//      Application.ProcessMessages;
+//
+//      Edit1.Text:=Trim(Memo1.Lines[i]);
+//      If Trim(Edit1.Text)='' Then
+//       Break;
+//
+//      sDta1:=Copy(Memo1.Lines[i],1,12);
+//      sDta2:=Copy(Memo1.Lines[i],18,12);
+//
+//      SQLQuery1.Close;
+//      SQLQuery1.Params.ParamByName('Dta1').Value:=f_troca('''','',sDta1);
+//      SQLQuery1.Params.ParamByName('Dta2').Value:=f_troca('''','',sDta2);
+//      SQLQuery1.ExecSQL();
+//
+//      DMBelShop.SQLC.Commit(TD);
+//
+//      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+//      TD.IsolationLevel:=xilREADCOMMITTED;
+//      DMBelShop.SQLC.StartTransaction(TD);
+//
+//      pgProgBar.Position:=i;
+//    End; // For i:=0 to Memo1.Lines.Count-1 do
+//
+//    // Atualiza Transacao ======================================================
+//    DMBelShop.SQLC.Commit(TD);
+//
+//  Except // Except da Transação
+//    on e : Exception do
+//    Begin
+//      // Abandona Transacao ====================================================
+//      DMBelShop.SQLC.Rollback(TD);
+//
+//      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
+//    End; // on e : Exception do
+//  End; // Try da Transação
+//  MontaProgressBar(False, FrmBelShop);
+//
+//  DateSeparator:='/';
+//  DecimalSeparator:=',';
+//
+//  Screen.Cursor:=crDefault;
+//
+//  msg('fim','A');
+// BUSCA MOVIMENTOS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-    While not DMBelShop.CDS_Busca.Eof do
-    Begin
-      Application.ProcessMessages;
-      pgProgBar.Position:=DMBelShop.CDS_Busca.RecNo;
 
-      sgDta:=f_Troca('/','.',f_Troca('-','.',DMBelShop.CDS_Busca.FieldByName('dta_atualizacao').AsString));
-
-      If (sgCodEmp=DMBelShop.CDS_Busca.FieldByName('empresa').AsString) and
-         (sgCodProd=DMBelShop.CDS_Busca.FieldByName('cod_produto').AsString) Then
-      Begin
-         MySqlClausula1:=' DELETE FROM LINXPRODUTOSDETALHES pd'+
-                         ' WHERE pd.empresa='+sgCodEmp+
-                         ' AND pd.cod_produto='+sgCodProd+
-                         ' AND pd.dta_atualizacao='+QuotedStr(sgDta);
-         DMBelShop.SQLC.Execute(MySqlClausula1,nil,nil);
-      End;
-
-      sgCodEmp:=DMBelShop.CDS_Busca.FieldByName('empresa').AsString;
-      sgCodProd:=DMBelShop.CDS_Busca.FieldByName('cod_produto').AsString;
-
-      DMBelShop.CDS_Busca.Next
-    End;
-    DMBelShop.CDS_Busca.Close;
-    MontaProgressBar(False, FrmBelShop);
-
-    // Atualiza Transacao ======================================================
-    DMBelShop.SQLC.Commit(TD);
-
-    DateSeparator:='/';
-    DecimalSeparator:=',';
-
-    Screen.Cursor:=crDefault;
-  Except // Except da Transação
-    on e : Exception do
-    Begin
-      // Abandona Transacao ====================================================
-      DMBelShop.SQLC.Rollback(TD);
-
-      DateSeparator:='/';
-      DecimalSeparator:=',';
-
-      MontaProgressBar(False, FrmBelShop);
-
-      Screen.Cursor:=crDefault;
-
-      MessageBox(Handle, pChar('Mensagem de erro do sistema:'+#13+e.message), 'Erro', MB_ICONERROR);
-      Exit;
-    End; // on e : Exception do
-  End; // Try da Transação
-
-  msg('fim','A');
+// ATUALIZA vlr_icms_efetivo_c - UNITÁRIO ULTIMA COMPRA >>>>>>>>>>>>>>>>>>>>>>>>
+//  For i:=0 to Memo1.Lines.Count-1 do
+//  Begin
+//    Application.ProcessMessages;
+//
+//    Edit1.Text:=Trim(Memo1.Lines[i]);
+//    // Edit1.Text:='''01.05.2018'' and ''31.05.2018''';
+//
+//    If Trim(Edit1.Text)='' Then
+//     Break;
+//
+//    TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
+//    TD.IsolationLevel:=xilREADCOMMITTED;
+//    DMBelShop.SQLC.StartTransaction(TD);
+//    Try // Try da Transação
+//      Screen.Cursor:=crAppStart;
+//      DateSeparator:='.';
+//      DecimalSeparator:='.';
+//
+//      tgMySqlErro.Add('INICIO: '+Edit1.Text+' - '+TimeToStr(Time));
+//      tgMySqlErro.SaveToFile(sPath_Local+'@ODIR_DebCred_Erros.txt');
+//
+//      MySql:=' UPDATE DEB_CRED_ICMS_ST v'+
+//             ' SET v.vlr_icms_efetivo_c=(SELECT FIRST 1 COALESCE(r.vlr_icms_efetivo, 0.00)'+
+//             '                           FROM DEB_CRED_ICMS_ST_RESUMO r'+
+//             '                           WHERE r.cod_produto=v.cod_produto'+
+//             '                           AND   r.data_lancamento<=v.data_lancamento'+
+//             '                           ORDER BY r.data_lancamento DESC)'+
+//             ' WHERE v.modalidade=''VENDAS'''+
+//             ' AND   COALESCE(v.vlr_icms_efetivo_c, 0.00)=0.00'+
+//             ' AND   v.data_lancamento BETWEEN '+edit1.Text;
+//      DMBelShop.SQLC.Execute(MySql,nil,nil);
+//
+//      DMBelShop.SQLC.Commit(TD);
+//
+//      tgMySqlErro.Add('FIM: '+Edit1.Text+' - '+TimeToStr(Time));
+//      tgMySqlErro.SaveToFile(sPath_Local+'@ODIR_DebCred_Erros.txt');
+//
+//    Except // Except da Transação
+//      on e : Exception do
+//      Begin
+//        // Abandona Transacao ====================================================
+//        DMBelShop.SQLC.Rollback(TD);
+//
+//        MontaProgressBar(False, FrmBelShop);
+//        DMBelShop.CDS_SQLQ_Busca.EnableControls;
+//        DMBelShop.CDS_SQLQ_Busca.Close;
+//
+//        tgMySqlErro.Add('==================================');
+//        tgMySqlErro.Add('ERRO '+Edit1.Text);
+//        tgMySqlErro.Add('ERROR: '+e.message);
+//        tgMySqlErro.Add(MySql);
+//        tgMySqlErro.Add('==================================');
+//        tgMySqlErro.SaveToFile(sPath_Local+'@ODIR_DebCred_Erros.txt');
+//      End; // on e : Exception do
+//    End; // Try da Transação
+//
+//  End; // For i:=0 to Memo1.Lines.Count-1 do
+//
+//  DateSeparator:='/';
+//  DecimalSeparator:=',';
+//
+//  FreeAndNil(tgMySqlErro);
+//  Screen.Cursor:=crDefault;
+//
+//  msg('fim','A');
+// ATUALIZA vlr_icms_efetivo_c - UNITÁRIO ULTIMA COMPRA >>>>>>>>>>>>>>>>>>>>>>>>
 
 end;
 
@@ -43559,6 +43647,7 @@ end;
 
 procedure TFrmBelShop.SubMenuICMSDebCredSTClick(Sender: TObject);
 begin
+
   DMDebCredST :=TDMDebCredST.Create(Self);
   FrmDebCredST:=TFrmDebCredST.Create(Self);
 

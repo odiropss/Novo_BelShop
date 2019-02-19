@@ -36,9 +36,9 @@ object FrmDebCredST: TFrmDebCredST
     TabOrder = 0
     object Bt_Sair: TJvXPButton
       Tag = 99
-      Left = 873
+      Left = 891
       Top = 2
-      Width = 100
+      Width = 82
       Height = 45
       Caption = 'Sair'
       TabOrder = 6
@@ -114,7 +114,7 @@ object FrmDebCredST: TFrmDebCredST
     object Bt_VlrBcICMSST: TJvXPButton
       Left = 2
       Top = 2
-      Width = 135
+      Width = 128
       Height = 45
       Caption = ' Fornecedores '#13#10'Vlr BC ICMS ST'
       TabOrder = 0
@@ -145,9 +145,9 @@ object FrmDebCredST: TFrmDebCredST
     end
     object Bt_Clipboard: TJvXPButton
       Tag = 4
-      Left = 696
+      Left = 783
       Top = 2
-      Width = 119
+      Width = 98
       Height = 45
       Caption = 'Salvar em'#13#10' Mem'#243'ria'
       TabOrder = 4
@@ -199,9 +199,9 @@ object FrmDebCredST: TFrmDebCredST
       OnClick = Bt_ClipboardClick
     end
     object Bt_ProdutosForn: TJvXPButton
-      Left = 509
+      Left = 657
       Top = 2
-      Width = 137
+      Width = 118
       Height = 45
       Caption = 'Produtos  por'#13#10'Fornecedores'
       TabOrder = 3
@@ -231,9 +231,9 @@ object FrmDebCredST: TFrmDebCredST
     end
     object Bt_TotaisForn: TJvXPButton
       Tag = 4
-      Left = 378
+      Left = 538
       Top = 2
-      Width = 131
+      Width = 119
       Height = 45
       Caption = '  Totais por'#13#10'Fornecedores'
       TabOrder = 2
@@ -262,16 +262,16 @@ object FrmDebCredST: TFrmDebCredST
       OnClick = Bt_TotaisFornClick
     end
     object Panel1: TPanel
-      Left = 815
+      Left = 881
       Top = 2
-      Width = 58
+      Width = 10
       Height = 45
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 5
     end
     object Gb_Periodo: TGroupBox
-      Left = 137
+      Left = 130
       Top = 2
       Width = 241
       Height = 45
@@ -287,15 +287,15 @@ object FrmDebCredST: TFrmDebCredST
       ParentFont = False
       TabOrder = 1
       object Label85: TLabel
-        Left = 117
-        Top = 19
+        Left = 116
+        Top = 22
         Width = 8
         Height = 13
         Caption = 'a'
       end
       object DtEdtDtaInicio: TcxDateEdit
         Left = 9
-        Top = 13
+        Top = 16
         ParentFont = False
         Properties.OnEditValueChanged = DtEdtDtaInicioPropertiesEditValueChanged
         Style.Font.Charset = DEFAULT_CHARSET
@@ -312,7 +312,7 @@ object FrmDebCredST: TFrmDebCredST
       end
       object DtEdtDtaFim: TcxDateEdit
         Left = 127
-        Top = 13
+        Top = 16
         ParentFont = False
         Properties.OnEditValueChanged = DtEdtDtaInicioPropertiesEditValueChanged
         Style.Font.Charset = DEFAULT_CHARSET
@@ -326,6 +326,86 @@ object FrmDebCredST: TFrmDebCredST
         StyleHot.BorderStyle = ebsUltraFlat
         TabOrder = 1
         Width = 106
+      end
+    end
+    object Gb_NFeCompras: TGroupBox
+      Left = 371
+      Top = 2
+      Width = 167
+      Height = 45
+      Align = alLeft
+      Caption = ' NFe Compras '
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 7
+      object Rb_NFeAmbas: TJvRadioButton
+        Left = 103
+        Top = 20
+        Width = 59
+        Height = 17
+        Alignment = taLeftJustify
+        Caption = 'Ambas'
+        Checked = True
+        TabOrder = 2
+        TabStop = True
+        OnClick = Rb_NFeSemClick
+        OnKeyUp = Rb_NFeSemKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+      object Rb_NFeSem: TJvRadioButton
+        Left = 55
+        Top = 20
+        Width = 42
+        Height = 17
+        Alignment = taLeftJustify
+        Caption = 'Sem'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 1
+        OnClick = Rb_NFeSemClick
+        OnKeyUp = Rb_NFeSemKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
+      end
+      object Rb_NFeCom: TJvRadioButton
+        Left = 9
+        Top = 20
+        Width = 42
+        Height = 17
+        Alignment = taLeftJustify
+        Caption = 'Com'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+        OnClick = Rb_NFeSemClick
+        OnKeyUp = Rb_NFeSemKeyUp
+        HotTrackFont.Charset = DEFAULT_CHARSET
+        HotTrackFont.Color = clWindowText
+        HotTrackFont.Height = -11
+        HotTrackFont.Name = 'MS Sans Serif'
+        HotTrackFont.Style = []
+        LinkedControls = <>
       end
     end
   end
@@ -442,9 +522,9 @@ object FrmDebCredST: TFrmDebCredST
         969
         473)
       object Dbg_TotaisForn: TDBGrid
-        Left = 82
+        Left = 73
         Top = 0
-        Width = 809
+        Width = 826
         Height = 473
         Anchors = [akTop, akBottom]
         DataSource = DMDebCredST.DS_TotaisForn
@@ -491,16 +571,16 @@ object FrmDebCredST: TFrmDebCredST
           end
           item
             Expanded = False
-            FieldName = 'TOT_CRETIDO_ICMS_ST'
+            FieldName = 'TOT_ICMS_ST_VENDA'
             Title.Alignment = taRightJustify
-            Width = 110
+            Width = 120
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'TOT_DEBITO_ICMS_ST'
+            FieldName = 'TOT_ICMS_ST_COMPRA'
             Title.Alignment = taRightJustify
-            Width = 110
+            Width = 120
             Visible = True
           end
           item
@@ -561,16 +641,23 @@ object FrmDebCredST: TFrmDebCredST
           end
           item
             Expanded = False
-            FieldName = 'VLR_CRETIDO_ICMS_ST'
+            FieldName = 'VLR_ICMS_ST_VENDA'
             Title.Alignment = taRightJustify
-            Width = 110
+            Width = 128
             Visible = True
           end
           item
             Expanded = False
-            FieldName = 'VLR_DEBITO_ICMS_ST'
+            FieldName = 'VLR_ICMS_ST_COMPRA'
             Title.Alignment = taRightJustify
-            Width = 110
+            Width = 128
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'VLR_DEB_CRED_ICMS_ST'
+            Title.Alignment = taRightJustify
+            Width = 128
             Visible = True
           end
           item
