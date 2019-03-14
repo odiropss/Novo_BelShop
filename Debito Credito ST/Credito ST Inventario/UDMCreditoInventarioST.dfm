@@ -137,19 +137,19 @@ object DMCreditoInventarioST: TDMCreditoInventarioST
       '_icms_efetivo)/100) as Numeric(12,2)) VLR_CRED_PRES_ST,'#13#10#13#10'CASE'#13 +
       #10'  WHEN COALESCE(d.custo_medio, 0.0000)<>0.0000 Then'#13#10'    '#39'Custo' +
       ' M'#233'dio'#39#13#10'  ELSE'#13#10'    '#39'N'#227'o Encontrado'#39#13#10'END LOCALIZACAO'#13#10#13#10' FROM ' +
-      'ODIR_INVENTARIO_DEZ i'#13#10'     LEFT JOIN LINXPRODUTOS p          on' +
+      'ODIR_INVENTARIO_FEV i'#13#10'     LEFT JOIN LINXPRODUTOS p          on' +
       ' p.cod_produto=i.cod_produto'#13#10'     LEFT JOIN LINXPRODUTOSDETALHE' +
       'S d  on d.cod_produto=p.cod_produto'#13#10'                           ' +
       '           AND d.empresa=i.empresa'#13#10'     LEFT JOIN DEB_CRED_ICMS' +
       '_NCM n     on n.des_ncm=p.ncm'#13#10#13#10' WHERE n.per_icms_efetivo=27'#13#10' ' +
-      'AND   COALESCE(i.qtd_estoque,0)>0'#13#10' AND   i.empresa= :Loja'#13#10
+      'AND   COALESCE(i.qtd_estoque,0)>0'#13#10' AND   i.empresa= :Loja'#13#10#13#10'OR' +
+      'DER BY p.nome '
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Loja'
         ParamType = ptInput
-        Value = '2'
       end>
     SQLConnection = SQLC
     Left = 48
@@ -238,19 +238,19 @@ object DMCreditoInventarioST: TDMCreditoInventarioST
       '_icms_efetivo)/100) as Numeric(12,2)) VLR_CRED_PRES_ST,'#13#10#13#10'CASE'#13 +
       #10'  WHEN COALESCE(d.preco_custo, 0.0000)<>0.0000 Then'#13#10'    '#39'Custo' +
       ' ICMS'#39#13#10'  ELSE'#13#10'    '#39'N'#227'o Encontrado'#39#13#10'END LOCALIZACAO'#13#10#13#10' FROM O' +
-      'DIR_INVENTARIO_DEZ i'#13#10'     LEFT JOIN LINXPRODUTOS p          on ' +
+      'DIR_INVENTARIO_FEV i'#13#10'     LEFT JOIN LINXPRODUTOS p          on ' +
       'p.cod_produto=i.cod_produto'#13#10'     LEFT JOIN LINXPRODUTOSDETALHES' +
       ' d  on d.cod_produto=p.cod_produto'#13#10'                            ' +
       '          AND d.empresa=i.empresa'#13#10'     LEFT JOIN DEB_CRED_ICMS_' +
       'NCM n     on n.des_ncm=p.ncm'#13#10#13#10' WHERE n.per_icms_efetivo=27'#13#10' A' +
-      'ND   COALESCE(i.qtd_estoque,0)>0'#13#10' AND   i.empresa= :Loja'#13#10
+      'ND   COALESCE(i.qtd_estoque,0)>0'#13#10' AND   i.empresa= :Loja'#13#10#13#10'ORD' +
+      'ER BY p.nome '
     MaxBlobSize = -1
     Params = <
       item
-        DataType = ftString
+        DataType = ftUnknown
         Name = 'Loja'
         ParamType = ptInput
-        Value = '2'
       end>
     SQLConnection = SQLC
     Left = 48

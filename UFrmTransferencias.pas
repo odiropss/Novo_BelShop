@@ -2373,7 +2373,7 @@ begin
   If (sNomeDia='DOMINGO') Or (bFeriado) Then
   Begin
     bgArqErros:=True;
-    tgArqErros.Add('Não Roda no Dia: '+sNomeDia);
+    tgArqErros.Add('Não Roda no Dia (Domingo ou Feriado): '+sNomeDia);
     SalvaErros;
     DeleteFile(PChar(sgPastaStatus+'Odir.txt'));
 

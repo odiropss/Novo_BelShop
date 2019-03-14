@@ -273,55 +273,61 @@ Var
   sErro,
   sPastaFonte: String;
 begin
-
-   sPastaFonte:=sgPastaExecutavel;
-
-   If sPastaFonte='C:\Projetos\BelShop\Fontes\BelShop Pedidos\' Then
-    sPastaFonte:='C:\BelShop_Odir\BelShop-Pedidos\';
-
   // ===========================================================================
-  // Copia Arquivos: Loja.ini Anterior
-  // Exclui Pasta do Sistema Anterior
+  // Pasta Executavel ==========================================================
   // ===========================================================================
-  If DirectoryExists('C:\BelShop_Odir\Solicitação de Transferêncis CD Lojas BelShop') Then
-  Begin
-    // Copia Arquivo Loja.ini Original
-    // True=Não Sobrescreve / False=Sobrescreve
-    CopyFile(PChar('C:\BelShop_Odir\Solicitação de Transferêncis CD Lojas BelShop\Loja.ini'),PChar(sPastaFonte+'Loja.ini'),False);
-    CopyFile(PChar('C:\BelShop_Odir\Solicitação de Transferêncis CD Lojas BelShop\Loja.ini'),PChar(sPastaFonte+'Loja.ORIGINAL'),False);
-
-    // Excluia Pasta do Sistema Anterior
-    ExcluiPastaWindows('C:\BelShop_Odir\Solicitação de Transferêncis CD Lojas BelShop');
-
-  End; // If DirectoryExists('C:\BelShop_Odir\Solicitação de Transferêncis CD Lojas BelShop') Then
-  // Copia Arquivos: Loja.ini Anterior
-  // Exclui Pasta do Sistema Anterior
+  sgPastaExecutavel:=IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName));
+  // Pasta Executavel ==========================================================
   // ===========================================================================
 
-  // ===========================================================================
-  // Transfere DLLs para o Windows - True=Não Sobrescreve ======================
-  // ===========================================================================
-  If DirectoryExists('C:\Windows\System32\') Then
-  Begin
-    CopyFile(PChar(sPastaFonte+'dbexpint.dll'),      PChar('C:\Windows\System32\dbexpint.dll'),True);
-    CopyFile(PChar(sPastaFonte+'dbexpUIBfire15.dll'),PChar('C:\Windows\System32\dbexpUIBfire15.dll'),True);
-    CopyFile(PChar(sPastaFonte+'FBCLIENT.DLL'),      PChar('C:\Windows\System32\FBCLIENT.DLL'),True);
-    CopyFile(PChar(sPastaFonte+'GDS32.DLL'),         PChar('C:\Windows\System32\GDS32.DLL'),True);
-    CopyFile(PChar(sPastaFonte+'midas.dll'),         PChar('C:\Windows\System32\midas.dll'),True);
-    CopyFile(PChar(sPastaFonte+'qtintf70.dll'),      PChar('C:\Windows\System32\qtintf70.dll'),True);
-  End; // If DirectoryExists('C:\Windows\System32\') Then
-
-  If DirectoryExists('C:\Windows\SysWOW64\') Then
-  Begin
-    CopyFile(PChar(sPastaFonte+'dbexpint.dll'),      PChar('C:\Windows\SysWOW64\dbexpint.dll'),True);
-    CopyFile(PChar(sPastaFonte+'dbexpUIBfire15.dll'),PChar('C:\Windows\SysWOW64\dbexpUIBfire15.dll'),True);
-    CopyFile(PChar(sPastaFonte+'FBCLIENT.DLL'),      PChar('C:\Windows\SysWOW64\FBCLIENT.DLL'),True);
-    CopyFile(PChar(sPastaFonte+'GDS32.DLL'),         PChar('C:\Windows\SysWOW64\GDS32.DLL'),True);
-    CopyFile(PChar(sPastaFonte+'midas.dll'),         PChar('C:\Windows\SysWOW64\midas.dll'),True);
-    CopyFile(PChar(sPastaFonte+'qtintf70.dll'),      PChar('C:\Windows\SysWOW64\qtintf70.dll'),True);
-  End; // If DirectoryExists('C:\Windows\SysWOW64\') Then
-  // Transfere DLLs para o Windows - True=Não Sobrescreve ======================
-  // ===========================================================================
+//  sPastaFonte:=sgPastaExecutavel;
+//
+//  If sPastaFonte='C:\Projetos\BelShop\Fontes\BelShop Pedidos\' Then
+//   sPastaFonte:='C:\BelShop_Odir\BelShop-Pedidos\';
+//
+//  // ===========================================================================
+//  // Copia Arquivos: Loja.ini Anterior
+//  // Exclui Pasta do Sistema Anterior
+//  // ===========================================================================
+//  If DirectoryExists('C:\BelShop_Odir\Solicitação de Transferêncis CD Lojas BelShop') Then
+//  Begin
+//    // Copia Arquivo Loja.ini Original
+//    // True=Não Sobrescreve / False=Sobrescreve
+//    CopyFile(PChar('C:\BelShop_Odir\Solicitação de Transferêncis CD Lojas BelShop\Loja.ini'),PChar(sPastaFonte+'Loja.ini'),False);
+//    CopyFile(PChar('C:\BelShop_Odir\Solicitação de Transferêncis CD Lojas BelShop\Loja.ini'),PChar(sPastaFonte+'Loja.ORIGINAL'),False);
+//
+//    // Excluia Pasta do Sistema Anterior
+//    ExcluiPastaWindows('C:\BelShop_Odir\Solicitação de Transferêncis CD Lojas BelShop');
+//
+//  End; // If DirectoryExists('C:\BelShop_Odir\Solicitação de Transferêncis CD Lojas BelShop') Then
+//  // Copia Arquivos: Loja.ini Anterior
+//  // Exclui Pasta do Sistema Anterior
+//  // ===========================================================================
+//
+//  // ===========================================================================
+//  // Transfere DLLs para o Windows - True=Não Sobrescreve ======================
+//  // ===========================================================================
+//  If DirectoryExists('C:\Windows\System32\') Then
+//  Begin
+//    CopyFile(PChar(sPastaFonte+'dbexpint.dll'),      PChar('C:\Windows\System32\dbexpint.dll'),True);
+//    CopyFile(PChar(sPastaFonte+'dbexpUIBfire15.dll'),PChar('C:\Windows\System32\dbexpUIBfire15.dll'),True);
+//    CopyFile(PChar(sPastaFonte+'FBCLIENT.DLL'),      PChar('C:\Windows\System32\FBCLIENT.DLL'),True);
+//    CopyFile(PChar(sPastaFonte+'GDS32.DLL'),         PChar('C:\Windows\System32\GDS32.DLL'),True);
+//    CopyFile(PChar(sPastaFonte+'midas.dll'),         PChar('C:\Windows\System32\midas.dll'),True);
+//    CopyFile(PChar(sPastaFonte+'qtintf70.dll'),      PChar('C:\Windows\System32\qtintf70.dll'),True);
+//  End; // If DirectoryExists('C:\Windows\System32\') Then
+//
+//  If DirectoryExists('C:\Windows\SysWOW64\') Then
+//  Begin
+//    CopyFile(PChar(sPastaFonte+'dbexpint.dll'),      PChar('C:\Windows\SysWOW64\dbexpint.dll'),True);
+//    CopyFile(PChar(sPastaFonte+'dbexpUIBfire15.dll'),PChar('C:\Windows\SysWOW64\dbexpUIBfire15.dll'),True);
+//    CopyFile(PChar(sPastaFonte+'FBCLIENT.DLL'),      PChar('C:\Windows\SysWOW64\FBCLIENT.DLL'),True);
+//    CopyFile(PChar(sPastaFonte+'GDS32.DLL'),         PChar('C:\Windows\SysWOW64\GDS32.DLL'),True);
+//    CopyFile(PChar(sPastaFonte+'midas.dll'),         PChar('C:\Windows\SysWOW64\midas.dll'),True);
+//    CopyFile(PChar(sPastaFonte+'qtintf70.dll'),      PChar('C:\Windows\SysWOW64\qtintf70.dll'),True);
+//  End; // If DirectoryExists('C:\Windows\SysWOW64\') Then
+//  // Transfere DLLs para o Windows - True=Não Sobrescreve ======================
+//  // ===========================================================================
 
   // ===========================================================================
   // Descrição do Loja =========================================================

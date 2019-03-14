@@ -395,6 +395,7 @@ type
     procedure Dbg_ContProdConferenciasDrawColumnCell(Sender: TObject;
       const Rect: TRect; DataCol: Integer; Column: TColumn;
       State: TGridDrawState);
+    procedure CkCbx_ReposLojasCorredorExit(Sender: TObject);
 
   private
     { Private declarations }
@@ -3211,6 +3212,7 @@ begin
 
     DMBelShop.CDS_BuscaRapida.Next;
   End; // While Not DMBelShop.CDS_BuscaRapida.Eof do
+  CkCbx_ReposLojasCorredor.Items.Add('SAIR...');
   DMBelShop.CDS_BuscaRapida.Close;
   Screen.Cursor:=crDefault;
 
@@ -6412,120 +6414,17 @@ end;
 procedure TFrmCentralTrocas.CkCbx_ReposLojasCorredorChange(Sender: TObject);
 Var
   i: Integer;
-  sForn, sCorr: String;
 begin
-  If DMCentralTrocas.CDS_ReposicaoDocs.IsEmpty Then
-   Exit;
-
-  OdirPanApres.Caption:='AGUARDE !! Analisando Endereçamentos...';
-  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
-  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
-  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
-  OdirPanApres.Font.Style:=[fsBold];
-  OdirPanApres.Parent:=FrmCentralTrocas;
-  OdirPanApres.BringToFront();
-  OdirPanApres.Visible:=True;
-
-  Screen.Cursor:=crAppStart;
-  Refresh;
-
-  igCorredores:=0;
-  sgCorredores:='';
-  sgCorredoresFilter:='';
-  bgTodosCorredores:=True;
   For i:=0 to CkCbx_ReposLojasCorredor.Items.Count-1 do
   Begin
-    If CkCbx_ReposLojasCorredor.Checked[i] Then
-     Begin
-       If sgCorredoresFilter='' Then
-        sgCorredoresFilter:='ENDERECO LIKE '+QuotedStr(CkCbx_ReposLojasCorredor.Items[i]+'%')
-       Else
-        sgCorredoresFilter:=sgCorredoresFilter+' OR ENDERECO LIKE '+QuotedStr(CkCbx_ReposLojasCorredor.Items[i]+'%');
-
-       If sgCorredores='' Then
-        sgCorredores:=QuotedStr(CkCbx_ReposLojasCorredor.Items[i])
-       Else
-        sgCorredores:=sgCorredores+', '+QuotedStr(CkCbx_ReposLojasCorredor.Items[i]);
-
-       Inc(igCorredores);
-     End
-    Else
-     Begin
-       bgTodosCorredores:=False;
-     End;
+    If (CkCbx_ReposLojasCorredor.Checked[i]) And (CkCbx_ReposLojasCorredor.Items[i]='SAIR...') Then
+    Begin
+      CkCbx_ReposLojasCorredor.Checked[i]:=False;
+      bgMsgReposicao:=True;
+      SelectNext(ActiveControl,True,True);
+      Break;
+    End; // If CkCbx_ReposLojasCorredor.Checked[i] Then
   End; // for i:=0 to CkCbx_ReposLojasCorredor.Items.Count-1 do
-
-  // Busca Movtos ==============================================================
-  DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=False;
-  DMCentralTrocas.CDS_ReposicaoTransf.Filter:='';
-
-  If (Not DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty) and (sgCorredoresFilter<>'') and (Not bgTodosCorredores) Then
-  Begin
-    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='('+sgCorredoresFilter+')';
-
-    If Trim(sgPrioridadeFilter)<>'' Then
-     DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND ('+sgPrioridadeFilter+')';
-
-    If Trim(EdtReposLojasCodForn.Text)<>'' Then
-     DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND (PRINCIPALFOR='+
-                                                 QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))))+')';
-
-    DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
-  End;
-
-  If (Trim(sgPrioridadeFilter)<>'') And (Not DMCentralTrocas.CDS_ReposicaoTransf.Filtered) Then
-  Begin
-    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='('+sgPrioridadeFilter+')';
-
-    If Trim(EdtReposLojasCodForn.Text)<>'' Then
-     DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND (PRINCIPALFOR='+
-                                                 QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))))+')';
-
-    DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
-  End; // If Trim(sgPrioridadeFilter)<>'' Then
-
-  If (Trim(EdtReposLojasCodForn.Text)<>'') And (Not DMCentralTrocas.CDS_ReposicaoTransf.Filtered) Then
-  Begin
-    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='PRINCIPALFOR='+QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))));
-
-    DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
-  End; // If Trim(EdtReposLojasCodForn.Text)<>'' Then
-
-  // Busca Total de Qtds de Reposição ==========================================
-  TotalQtdsReposicao;
-
-  // Atualiza Totais ===========================================================
-  If DMCentralTrocas.CDS_ReposicaoTransf.Filter<>sgFilterAtual Then
-  Begin
-    sgFilterAtual:=DMCentralTrocas.CDS_ReposicaoTransf.Filter;
-    AtualizaTotaisLojas;
-  End;
-
-  Screen.Cursor:=crDefault;
-  OdirPanApres.Visible:=False;
-  Refresh;
-
-  sForn:='';
-  sCorr:='TODOS os Corredores';
-  If Trim(EdtReposLojasCodForn.Text)<>'' Then
-   sForn:='do Fornecedor'+cr+EdtReposLojasDesForn.Text;
-
-  If Trim(sgCorredores)<>'' Then
-   sCorr:='o(s) Corredor(es) '+f_troca('''','',sgCorredores);
-
-  sgMensagem:=sCorr;
-  If Trim(sForn)<>'' Then
-   sgMensagem:=sgMensagem+cr+sForn;
-
-  If Trim(sgTipoPrioridade)<>'' Then
-   sgMensagem:=sgMensagem+cr+'Prioridades: '+sgTipoPrioridade;
-
-  If bgMsgReposicao Then
-   msg('VOCÊ está Trabalhando com '+cr+sgMensagem,'A');
-
-  sgMensagem:='';
-
-  Dbg_ReposLojasDocs.SetFocus;
 end;
 
 procedure TFrmCentralTrocas.Dbg_ReposLojasItensDblClick(Sender: TObject);
@@ -7099,7 +6998,7 @@ end;
 
 procedure TFrmCentralTrocas.Ckb_ReposLojasPrioridade0Click(Sender: TObject);
 Var
-  s: String;
+  s, sCorr: String;
 begin
   If DMCentralTrocas.CDS_ReposicaoDocs.IsEmpty Then
    Exit;
@@ -7239,14 +7138,20 @@ begin
   Screen.Cursor:=crDefault;
   Refresh;
 
-  s:='Todos Fornecedores !!';
+  s:='Todos Fornecedores.';
   If Trim(EdtReposLojasCodForn.Text)<>'' Then
-   s:='Fornecedor'+cr+EdtReposLojasDesForn.Text;
+   s:='Fornecedor:'+cr+EdtReposLojasDesForn.Text;
 
+  sCorr:='TODOS os Corredores.';
+  If Trim(sgCorredores)<>'' Then
+   sCorr:='O(s) Corredor(es): '+f_troca('''','',sgCorredores);
+
+  bgMsgReposicao:=True;
   If (DMCentralTrocas.CDS_ReposicaoDocsTot_Itens.Value<>0) And (bgMsgReposicao) Then
-   msg('VOCÊ irá Trabalhar com a(s) Prioridade(s)'+cr+sgTipoPrioridade+cr+cr+Trim(s),'A');
+   msg('VOCÊ irá Trabalhar com a(s) Prioridade(s):'+cr+sgTipoPrioridade+cr+sCorr+cr+Trim(s),'A');
 
   Dbg_ReposLojasDocs.SetFocus;
+
 end;
 
 procedure TFrmCentralTrocas.Ckb_ReposLojasPrioridade0KeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -7261,7 +7166,9 @@ begin
   EdtReposLojasDesForn.Color:=$00E0E0E0;
   EdtReposLojasDesForn.Font.Color:=clWindowText;
 
-  CkCbx_ReposLojasCorredorChange(Self);
+// OdirApagar - Colocado no Exit
+//  CkCbx_ReposLojasCorredorChange(Self);
+  CkCbx_ReposLojasCorredorExit(Self);
 end;
 
 procedure TFrmCentralTrocas.Bt_ReposLojasBuscaFornClick(Sender: TObject);
@@ -7315,7 +7222,9 @@ Begin
 
   FreeAndNil(FrmPesquisa);
 
-  CkCbx_ReposLojasCorredorChange(Self);
+// OdirApagar - Colocado no Exit
+//  CkCbx_ReposLojasCorredorChange(Self);
+  CkCbx_ReposLojasCorredorExit(Self);
 end;
 
 procedure TFrmCentralTrocas.Bt_AnaliseRepDiariaDiaClick(Sender: TObject);
@@ -8973,7 +8882,9 @@ begin
     End; // For i:=0 to CkCbx_ReposLojasCorredor.Items.Count-1 do
 
     bgMsgReposicao:=True;
-    CkCbx_ReposLojasCorredorChange(Self);
+    // OdirApagar - Colocado no Exit
+    // CkCbx_ReposLojasCorredorChange(Self);
+    CkCbx_ReposLojasCorredorExit(Self);
   End; // If InputQueryOdir('Selecioção de Romaneio de Separação', 'Scanei o Romaneio' sCodBarras) Then
 
 end;
@@ -9475,6 +9386,127 @@ begin
   DMCentralTrocas.CDS_ContProdConferenciaQTD_NENVIADAS.Alignment:=taRightJustify;
   DMCentralTrocas.CDS_ContProdConferenciaQTD_PERCENTUAL.Alignment:=taRightJustify;
   DMCentralTrocas.CDS_ContProdConferenciaQTD_TOTAL.Alignment:=taRightJustify;
+end;
+
+procedure TFrmCentralTrocas.CkCbx_ReposLojasCorredorExit(Sender: TObject);
+Var
+  i: Integer;
+  sForn, sCorr: String;
+begin
+  If DMCentralTrocas.CDS_ReposicaoDocs.IsEmpty Then
+   Exit;
+
+  OdirPanApres.Caption:='AGUARDE !! Analisando Endereçamentos...';
+  OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
+  OdirPanApres.Left:=ParteInteiro(FloatToStr((FrmCentralTrocas.Width-OdirPanApres.Width)/2));
+  OdirPanApres.Top:=ParteInteiro(FloatToStr((FrmCentralTrocas.Height-OdirPanApres.Height)/2))-20;
+  OdirPanApres.Font.Style:=[fsBold];
+  OdirPanApres.Parent:=FrmCentralTrocas;
+  OdirPanApres.BringToFront();
+  OdirPanApres.Visible:=True;
+
+  Screen.Cursor:=crAppStart;
+  Refresh;
+
+  igCorredores:=0;
+  sgCorredores:='';
+  sgCorredoresFilter:='';
+  bgTodosCorredores:=True;
+  For i:=0 to CkCbx_ReposLojasCorredor.Items.Count-1 do
+  Begin
+    If CkCbx_ReposLojasCorredor.Checked[i] Then
+     Begin
+       If sgCorredoresFilter='' Then
+        sgCorredoresFilter:='ENDERECO LIKE '+QuotedStr(CkCbx_ReposLojasCorredor.Items[i]+'%')
+       Else
+        sgCorredoresFilter:=sgCorredoresFilter+' OR ENDERECO LIKE '+QuotedStr(CkCbx_ReposLojasCorredor.Items[i]+'%');
+
+       If sgCorredores='' Then
+        sgCorredores:=QuotedStr(CkCbx_ReposLojasCorredor.Items[i])
+       Else
+        sgCorredores:=sgCorredores+', '+QuotedStr(CkCbx_ReposLojasCorredor.Items[i]);
+
+       Inc(igCorredores);
+     End
+    Else
+     Begin
+       bgTodosCorredores:=False;
+     End;
+  End; // for i:=0 to CkCbx_ReposLojasCorredor.Items.Count-1 do
+
+  // Busca Movtos ==============================================================
+  DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=False;
+  DMCentralTrocas.CDS_ReposicaoTransf.Filter:='';
+
+  If (Not DMCentralTrocas.CDS_ReposicaoTransf.IsEmpty) and (sgCorredoresFilter<>'') and (Not bgTodosCorredores) Then
+  Begin
+    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='('+sgCorredoresFilter+')';
+
+    If Trim(sgPrioridadeFilter)<>'' Then
+     DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND ('+sgPrioridadeFilter+')';
+
+    If Trim(EdtReposLojasCodForn.Text)<>'' Then
+     DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND (PRINCIPALFOR='+
+                                                 QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))))+')';
+
+    DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
+  End;
+
+  If (Trim(sgPrioridadeFilter)<>'') And (Not DMCentralTrocas.CDS_ReposicaoTransf.Filtered) Then
+  Begin
+    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='('+sgPrioridadeFilter+')';
+
+    If Trim(EdtReposLojasCodForn.Text)<>'' Then
+     DMCentralTrocas.CDS_ReposicaoTransf.Filter:=DMCentralTrocas.CDS_ReposicaoTransf.Filter+' AND (PRINCIPALFOR='+
+                                                 QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))))+')';
+
+    DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
+  End; // If Trim(sgPrioridadeFilter)<>'' Then
+
+  If (Trim(EdtReposLojasCodForn.Text)<>'') And (Not DMCentralTrocas.CDS_ReposicaoTransf.Filtered) Then
+  Begin
+    DMCentralTrocas.CDS_ReposicaoTransf.Filter:='PRINCIPALFOR='+QuotedStr(FormatFloat('000000',StrToInt(Trim(EdtReposLojasCodForn.Text))));
+
+    DMCentralTrocas.CDS_ReposicaoTransf.Filtered:=True;
+  End; // If Trim(EdtReposLojasCodForn.Text)<>'' Then
+
+  // Busca Total de Qtds de Reposição ==========================================
+  TotalQtdsReposicao;
+
+  // Atualiza Totais ===========================================================
+  If DMCentralTrocas.CDS_ReposicaoTransf.Filter<>sgFilterAtual Then
+  Begin
+    sgFilterAtual:=DMCentralTrocas.CDS_ReposicaoTransf.Filter;
+    AtualizaTotaisLojas;
+  End;
+
+  Screen.Cursor:=crDefault;
+  OdirPanApres.Visible:=False;
+  Refresh;
+
+  sForn:='Todos Fornecedores.';
+  If Trim(EdtReposLojasCodForn.Text)<>'' Then
+   sForn:='Fornecedor:'+cr+EdtReposLojasDesForn.Text;
+
+  sCorr:='TODOS os Corredores';
+  If Trim(sgCorredores)<>'' Then
+   sCorr:='O(s) Corredor(es): '+f_troca('''','',sgCorredores);
+
+//  sgMensagem:=sCorr;
+//  If Trim(sForn)<>'' Then
+//   sgMensagem:=sgMensagem+cr+sForn;
+//
+//  If Trim(sgTipoPrioridade)<>'' Then
+//   sgMensagem:=sgMensagem+cr+'Prioridades: '+sgTipoPrioridade;
+
+  If bgMsgReposicao Then
+   msg('VOCÊ está Trabalhando com a(s) Prioridade(s):'+cr+sgTipoPrioridade+cr+sCorr+cr+Trim(sForn),'A');
+  bgMsgReposicao:=False;
+
+  sgMensagem:='';
+  Dbg_ReposLojasDocs.SetFocus;
+
+
 end;
 
 end.

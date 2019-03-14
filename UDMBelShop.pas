@@ -3845,6 +3845,7 @@ begin
    sgPastaWebService:='\\192.168.0.252\Projetos\BelShop\WebService Linx\';
 
 
+   
   // Conecta IBDataBase BelShop ================================================
   IBDB_BelShop.DatabaseName:=sBancoIB;
   DMConexoes.IBDB_BelShop.DatabaseName:=sBancoIB;
@@ -4242,7 +4243,7 @@ begin
   Else // If IBQ_AComprarIND_OC_GERADA.AsString='S' Then
    Begin
      // Não Altera nada ========================================================
-     If (IBQ_AComprarQTD_ACOMPRAR.AsCurrency<>0) And (IBQ_AComprarQTD_TRANSF.AsCurrency<>0) and 
+     If (IBQ_AComprarQTD_ACOMPRAR.AsCurrency<>0) And (IBQ_AComprarQTD_TRANSF.AsCurrency<>0) and
         (IBQ_AComprarQTD_ACOMPRAR.NewValue<>IBQ_AComprarQTD_ACOMPRAR.OldValue) And
         (IBQ_AComprarQTD_TRANSF.NewValue=IBQ_AComprarQTD_TRANSF.OldValue) Then
      Begin
@@ -4292,10 +4293,18 @@ begin
      Begin
        If IBQ_AComprarQTD_TRANSF.NewValue<>IBQ_AComprarQTD_TRANSF.OldValue Then
        Begin
-         MySql:=' SELECT SUM(t.qtd_transf) QTD_TRANSF'+
-                ' FROM OC_COMPRAR t'+
-                ' WHERE t.num_documento='+IBQ_AComprarNUM_DOCUMENTO.AsString+
-                ' AND   t.cod_item='+QuotedStr(IBQ_AComprarCOD_ITEM.AsString);
+         // Saldo de Transferencias do Compras em Aberto =======================
+         MySql:=' SELECT SUM(oc.qtd_transf) QTD_TRANSF'+
+                ' FROM OC_COMPRAR oc'+
+                ' WHERE ( (oc.num_oc_gerada>20160300)'+ // Numero do Documento de Transferencia
+                '         OR'+
+                '         (oc.qtd_transf<>0'+
+                '          AND'+
+                '          oc.num_documento='+IBQ_AComprarNUM_DOCUMENTO.AsString+
+                '          AND'+
+                '          oc.cod_empresa<>'+QuotedStr(Trim(IBQ_AComprarCOD_EMPRESA.AsString))+') )'+
+                ' AND   oc.ind_transf_cd=''N'''+
+                ' AND   oc.cod_item='+QuotedStr(IBQ_AComprarCOD_ITEM.AsString);
          SQLQuery3.Close;
          SQLQuery3.SQL.Clear;
          SQLQuery3.SQL.Add(MySql);
@@ -4306,12 +4315,13 @@ begin
           cSaldo:=SQLQuery3.FieldByName('Qtd_Transf').AsCurrency;
          SQLQuery3.Close;
 
-         // Verifica se Existem Quabtidade a Separa do Produto ===================
+         // Verifica se Produto tem Quantidade de Reposição no CD a Separar ====
          MySql:=' SELECT SUM(l.qtd_a_transf) Qtd_Separa'+
                 ' FROM ES_ESTOQUES_LOJAS l'+
                 ' WHERE l.dta_movto=CURRENT_DATE'+
-                ' AND   l.num_pedido=''000000'''+
                 ' AND   l.ind_transf=''SIM'''+
+                ' AND   l.num_pedido=''000000'''+
+                ' AND   COALESCE(l.rel_separacao,0)<>0'+
                 ' AND   l.qtd_a_transf>0'+
                 ' AND   l.cod_produto='+QuotedStr(IBQ_AComprarCOD_ITEM.AsString);
          SQLQuery3.Close;
@@ -4323,6 +4333,21 @@ begin
           cSaldo:=cSaldo+SQLQuery3.FieldByName('Qtd_Separa').AsCurrency;
          SQLQuery3.Close;
 
+         // Verifica Produto Solicitados pelas Lojas Ainda não Enviado para o CD ==
+         MySql:=' SELECT SUM(c.Qtd_Transf) QTD_SOLIC'+
+                ' FROM SOL_TRANSFERENCIA_CD c'+
+                ' WHERE c.doc_gerado=0'+
+                ' AND   c.cod_loja_sidi='+QuotedStr(IBQ_AComprarCOD_ITEM.AsString);
+         SQLQuery3.Close;
+         SQLQuery3.SQL.Clear;
+         SQLQuery3.SQL.Add(MySql);
+         SQLQuery3.Open;
+
+         If Trim(SQLQuery3.FieldByName('Qtd_Solic').AsString)<>'' Then
+          cSaldo:=cSaldo+SQLQuery3.FieldByName('Qtd_Solic').AsCurrency;
+         SQLQuery3.Close;
+
+         // Ajusta Saldo no CD =================================================
          MySql:=' SELECT COALESCE(ld.quantidade,0.0000) - '+f_Troca(',','.',CurrToStr(cSaldo))+' Saldo'+
                 ' FROM LINXPRODUTOSDETALHES ld'+
                 ' WHERE ld.empresa=2'+
@@ -4331,7 +4356,7 @@ begin
          SQLQuery3.SQL.Clear;
          SQLQuery3.SQL.Add(MySql);
          SQLQuery3.Open;
-         cSaldo:=SQLQuery3.FieldByName('Saldo').AsCurrency+IBQ_AComprarQTD_TRANSF.OldValue;
+         cSaldo:=SQLQuery3.FieldByName('Saldo').AsCurrency; // +IBQ_AComprarQTD_TRANSF.OldValue;
          SQLQuery3.Close;
 
          If cSaldo < IBQ_AComprarQTD_TRANSF.AsCurrency Then

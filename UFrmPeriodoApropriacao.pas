@@ -2,7 +2,30 @@ unit UFrmPeriodoApropriacao;
 {
 EdtNumero: Usado em TFrmSalao.Bt_CadProfNovaRenovacaoClick(Sender: TObject);
 Lb_Numero: Usado em TFrmSalao.Bt_CadProfNovaRenovacaoClick(Sender: TObject);
+
+================================================================================
+  bgSiga:=False;
+  FrmPeriodoApropriacao:=TFrmPeriodoApropriacao.Create(Self);
+  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Text:=
+                      DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+  FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Text   :=
+                      DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+  FrmPeriodoApropriacao.ShowModal;
+
+  sgDtaI:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date);
+  sgDtaI:=f_Troca('/','.',f_Troca('-','.',sgDtaI));
+
+  sgDtaF:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date);
+  sgDtaF:=f_Troca('/','.',f_Troca('-','.',sgDtaF));
+
+  FreeAndNil(FrmPeriodoApropriacao);
+
+  // Verifica se Prossegue Processamento =======================================
+  If Not bgSiga Then
+   Exit;
+================================================================================
 }
+
 interface
 
 uses

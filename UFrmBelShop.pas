@@ -5896,13 +5896,12 @@ Begin
   FrmPeriodoApropriacao.ShowModal;
 
   sgDtaI:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date);
-  sgDtaF:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date);
-  FreeAndNil(FrmPeriodoApropriacao);
+  sgDtaI:=f_Troca('/','.',f_Troca('-','.',sgDtaI));
 
-  sgDtaI:=f_Troca('/','.',sgDtaI);
-  sgDtaI:=f_Troca('-','.',sgDtaI);
-  sgDtaF:=f_Troca('/','.',sgDtaF);
-  sgDtaF:=f_Troca('-','.',sgDtaF);
+  sgDtaF:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date);
+  sgDtaF:=f_Troca('/','.',f_Troca('-','.',sgDtaF));
+
+  FreeAndNil(FrmPeriodoApropriacao);
 
   // Verifica se Prossegue Processamento =======================================
   If Not bgSiga Then
@@ -43530,13 +43529,6 @@ begin
   MySqlDML:=' SELECT MAX(m.data_documento) DTA'+
             ' FROM LINXMOVIMENTO m'+
             ' WHERE m.data_documento > current_timestamp-30';
-
-//OdirApagar - 11/12/2018
-//            ' WHERE m.cancelado=''N'''+
-//            ' AND m.excluido=''N'''+
-//            ' AND m.operacao=''S'''+
-//            ' AND m.tipo_transacao=''V'''+
-//            ' AND m.data_documento > current_timestamp-20';
   DMBelShop.SQLQuery3.Close;
   DMBelShop.SQLQuery3.SQL.Clear;
   DMBelShop.SQLQuery3.SQL.Add(MySqlDML);

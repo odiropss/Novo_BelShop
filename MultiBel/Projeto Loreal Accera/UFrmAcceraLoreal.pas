@@ -429,7 +429,13 @@ Begin
            ' cl.bairro BAIRRO,'+ // 10 Bairro do Cliente
            ' TRIM(CAST(REPLACE(cl.endereco,'';'', '':'' ) AS VARCHAR(120))) ENDERECO,'+ // 11 Endeço do Cliente
            ' NULL GRUPO_REDE,'+ // 12 Grupo/Rede
-           ' ''N1'' CLASSIFICACAO_PDV,'+ // 13 Classificação do PDV
+
+           ' CASE'+
+           '   WHEN COALESCE(cl.ramo,0) = 4 THEN'+
+           '     ''P1'''+ // Perfumarias
+           '   ELSE'+
+           '     ''N1'''+ // Outros
+           ' END CLASSIFICACAO_PDV,'+ // 13 Classificaçção do PDV
 
            ' CASE'+
            '     WHEN TRIM(COALESCE(vd.fnome,''''))='''' THEN '+
@@ -471,10 +477,14 @@ Begin
                              MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
                                    ' AND   CAST(nt.data as DATE)<='+QuotedStr(sgDtaFimParam);
 
+    // OdirApagar - 12/03/2019 - Retirado as Devoluções
+//    MySql:=
+//     MySql+'               AND   (((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
+//           '                      OR'+
+//           '                      ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%DEVOL%VENDA%'') AND (UPPER(nt.entrada_saida)=''E'')))'+
     MySql:=
-     MySql+'               AND   (((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
-           '                      OR'+
-           '                      ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%DEVOL%VENDA%'') AND (UPPER(nt.entrada_saida)=''E'')))'+
+     MySql+'               AND   ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
+
            '               AND   pr.cod_fornecedor=''00246'''+ // Somente Loreal
            '               AND   it.valor_unitarioproduto IS NOT NULL'+
            '               AND   nt.cod_cli=cl.codigo_cliente)'+
@@ -636,10 +646,14 @@ Begin
            MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
                  ' AND   CAST(nt.data as DATE)<='+QuotedStr(sgDtaFimParam);
 
+  // OdirApagar - 12/03/2019 - Retirado as Devoluções
+//  MySql:=
+//   MySql+' AND   (((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
+//         '        OR'+
+//         '        ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%DEVOL%VENDA%'') AND (UPPER(nt.entrada_saida)=''E'')))'+
   MySql:=
-   MySql+' AND   (((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
-         '        OR'+
-         '        ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%DEVOL%VENDA%'') AND (UPPER(nt.entrada_saida)=''E'')))'+
+   MySql+' AND   ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
+
          ' AND   pr.cod_fornecedor=''00246'''+ // Somente Loreal
          ' AND   it.valor_unitarioproduto IS NOT NULL';
   DMAcceraLoreal.SDS_Arquivo.Close;
@@ -724,7 +738,12 @@ Begin
            ' SUBSTRING(TRIM(cl.nome) FROM 1 FOR 60) DESCRICAO_PDV,'+ // 17 Descrição do PDV
            ' TRIM(REPLACE(REPLACE(REPLACE(REPLACE(COALESCE(cl.cep,''99999999''), ''/'', ''''),''.'',''''),''-'',''''),'' '','''')) CEP_PDV,'+ // 18 CEP do PDV
 
-           ' ''N1'' CLASSIFICACAO_PDV,'+ // 19 Classificação do PDV
+           ' CASE'+
+           '   WHEN COALESCE(cl.ramo,0) = 4 THEN'+
+           '     ''P1'''+ // Perfumarias
+           '   ELSE'+
+           '     ''N1'''+ // Outros
+           ' END CLASSIFICACAO_PDV,'+ // 19 Classificaçção do PDV
 
            ' CASE'+
            '     WHEN TRIM(COALESCE(vd.fnome,''''))='''' THEN '+
@@ -760,15 +779,18 @@ Begin
              MySql+' AND   CAST(nt.data as DATE)>='+QuotedStr(sgDtaIniParam)+
                    ' AND   CAST(nt.data as DATE)<='+QuotedStr(sgDtaFimParam);
 
+    // OdirApagar - 12/03/2019 - Retirado as Devoluções
+//    MySql:=
+//     MySql+' AND   (((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
+//           '        OR'+
+//           '        ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%DEVOL%VENDA%'') AND (UPPER(nt.entrada_saida)=''E'')))'+
     MySql:=
-     MySql+' AND   (((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
-           '        OR'+
-           '        ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%DEVOL%VENDA%'') AND (UPPER(nt.entrada_saida)=''E'')))'+
+     MySql+' AND   ((UPPER(TRIM(op.desc_op_nf)) LIKE ''%VENDA%'') AND (UPPER(nt.entrada_saida)=''S''))'+
+
            ' AND   pr.cod_fornecedor=''00246'''+ // Somente Loreal
            ' AND   it.valor_unitarioproduto IS NOT NULL'+
 
-           ' GROUP BY 3,4,5,11,12,13,14,15,16,17,18,20'+
-
+           ' GROUP BY 3,4,5,11,12,13,14,15,16,17,18,19, 20'+
 
            // OdirApagar - 17/09/2018 - Não Separar Devoluções =================
 //           ' UNION'+
@@ -825,7 +847,12 @@ Begin
 //           ' SUBSTRING(TRIM(cl.nome) FROM 1 FOR 60) DESCRICAO_PDV,'+ // 17 Descrição do PDV
 //           ' TRIM(REPLACE(REPLACE(REPLACE(REPLACE(COALESCE(cl.cep,''99999999''), ''/'', ''''),''.'',''''),''-'',''''),'' '','''')) CEP_PDV,'+ // 18 CEP do PDV
 //
-//           ' ''N1'' CLASSIFICACAO_PDV,'+ // 19 Classificação do PDV
+//           ' CASE'+
+//           '   WHEN COALESCE(cl.ramo,0) = 4 THEN'+
+//           '     ''P1'''+ // Perfumarias
+//           '   ELSE'+
+//           '     ''N1'''+ // Outros
+//           ' END CLASSIFICACAO_PDV,'+ // 13 Classificaçção do PDV
 //
 //           ' CASE'+
 //           '     WHEN TRIM(COALESCE(vd.fnome,''''))='''' THEN '+
@@ -1514,13 +1541,13 @@ begin
   End;
 
   bInformarPeriodo:=False;
-  If Trim(ParamStr(1))='' Then
-  Begin
-    if msg('Deseja Informar o Período ??', 'C')=1 Then
-    Begin
-      bInformarPeriodo:=True;
-    End; // If Application.MessageBox('Deseja Informar o Período ??', 'ATENÇÃO !!', 292) = IdOk Then
-  End; // If Trim(ParamStr(1))='' Then
+//  If Trim(ParamStr(1))='' Then
+//  Begin
+//    if msg('Deseja Informar o Período ??', 'C')=1 Then
+//    Begin
+//      bInformarPeriodo:=True;
+//    End; // If Application.MessageBox('Deseja Informar o Período ??', 'ATENÇÃO !!', 292) = IdOk Then
+//  End; // If Trim(ParamStr(1))='' Then
 
   OdirPanApres.Caption:='AGUARDE !! Criando Arquivos ACCERA/R´ORÉAL...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
@@ -1673,17 +1700,25 @@ begin
   //============================================================================
   // F I M =====================================================================
   //============================================================================
-  If Trim(sArqProc)='' Then
-   Begin
-     MessageBox(Handle, pChar('Arquivos Gerados com SUCESSO !!'), 'ATENÇÃO !!', MB_ICONERROR);
-   End
-  Else
-   Begin
-     MessageBox(Handle, pChar('ERRO ao Gerar Arquivos !!'+cr+cr+
-                              'Período de '+DateToStr(Date-31)+' a '+DateToStr(Date-1)+cr+cr+
-                              'Não Existe Movto a Gerar no(s) Arquivo(s) Abaixo'+cr+cr+
-                              Trim(sArqProc)), 'ATENÇÃO !!', MB_ICONERROR);
-   End; // If Trim(sArqProc)='' Then
+// OdirApagar - 12/03/2019
+//  If Trim(sArqProc)='' Then
+//   Begin
+//     MessageBox(Handle, pChar('Arquivos Gerados com SUCESSO !!'), 'ATENÇÃO !!', MB_ICONERROR);
+//   End
+//  Else
+//   Begin
+//     MessageBox(Handle, pChar('ERRO ao Gerar Arquivos !!'+cr+cr+
+//                              'Período de '+DateToStr(Date-31)+' a '+DateToStr(Date-1)+cr+cr+
+//                              'Não Existe Movto a Gerar no(s) Arquivo(s) Abaixo'+cr+cr+
+//                              Trim(sArqProc)), 'ATENÇÃO !!', MB_ICONERROR);
+//   End; // If Trim(sArqProc)='' Then
+  If Trim(sArqProc)<>'' Then
+  Begin
+    MessageBox(Handle, pChar('ERRO ao Gerar Arquivos !!'+cr+cr+
+                             'Período de '+DateToStr(Date-31)+' a '+DateToStr(Date-1)+cr+cr+
+                             'Não Existe Movto a Gerar no(s) Arquivo(s) Abaixo'+cr+cr+
+                             Trim(sArqProc)), 'ATENÇÃO !!', MB_ICONERROR);
+  End; // If Trim(sArqProc)='' Then
   // F I M =====================================================================
   //============================================================================
 

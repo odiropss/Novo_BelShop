@@ -1267,8 +1267,6 @@ End; // FINANCEIRO - ICMS DÉBIOT/CREDITO - Importa NCM >>>>>>>>>>>>>>>>>>>>>>>>>
 
 // COMPRAS - Analise de Saldo no CD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmSolicitacoes.ComprasAnaliseSaldoCD(sCurva: String);
-Var
-  MySql: String;
 Begin
   OdirPanApres.Caption:='AGUARDE !! Localizando Estoque CD para Analise...';
   OdirPanApres.Width:=Length(OdirPanApres.Caption)*10;
@@ -1301,9 +1299,9 @@ Function TFrmSolicitacoes.TrinksImportaArquivoDiario:Boolean;
 Var
   MySql: String;
 
-   wDia, wMes, wAno: Word;
+  wDia, wMes, wAno: Word;
 
-  sLinha, sDia, sHora, sNrDocto,
+  sLinha, sDia, sHora, sNrDocto, sDtaMovto,
   sCodTrinks, sCodLinx, sCodSidicom: String;
 
   i: Integer;
@@ -1356,6 +1354,58 @@ Begin
 
     For i:=0 to EditorProSoftImpArquivo.Lines.Count-1 do
     Begin
+      // Verifica Leiaute NOVO - Relatório de 2019-03-12 até 2019-03-13
+      If Copy(Trim(EditorProSoftImpArquivo.Lines[i]),1,9)='Relatório' Then
+      Begin
+        If Pos('-',Trim(EditorProSoftImpArquivo.Lines[i]))<>18 Then
+        Begin
+          msg('TRINKS - Leiaute Inválido !!','A');
+          FrmBelShop.MontaProgressBar(False, FrmSolicitacoes);
+          Screen.Cursor:=crDefault;
+          OdirPanApres.Visible:=False;
+          Exit;
+        End; // If Pos('-',(Trim(EditorProSoftImpArquivo.Lines[i]),1,9))<>5 Then
+
+        // Data de Todos os Movimentos ------------------------------
+        sNrDocto:=Copy(Trim(EditorProSoftImpArquivo.Lines[i]),14,10);
+        sDtaMovto:=Copy(sNrDocto,9,2);
+        sDtaMovto:=sDtaMovto+'.'+Copy(sNrDocto,6,2);
+        sDtaMovto:=sDtaMovto+'.'+Copy(sNrDocto,1,4);
+
+        // Verifica se Já Existe Movto =======================================
+        sNrDocto:='';
+        MySql:=' SELECT t.cod_trinks'+
+               ' FROM TRINKS_DIARIO t'+
+               ' WHERE t.dta_movto = '+QuotedStr(sDtaMovto);
+        DMBelShop.SQLQuery1.Close;
+        DMBelShop.SQLQuery1.SQL.Clear;
+        DMBelShop.SQLQuery1.SQL.Add(MySql);
+        DMBelShop.SQLQuery1.Open;
+        sNrDocto:=Trim(DMBelShop.SQLQuery1.FieldByName('Cod_Trinks').AsString);
+        DMBelShop.SQLQuery1.Close;
+
+        If Trim(sNrDocto)<>'' Then
+        Begin
+          msg('TRINKS - Movimentos do dia '+sDtaMovto+cr+cr+'Já Importado !!!','A');
+          FrmBelShop.MontaProgressBar(False, FrmSolicitacoes);
+          Screen.Cursor:=crDefault;
+          OdirPanApres.Visible:=False;
+          Exit;
+        End; // If Pos('-',(Trim(EditorProSoftImpArquivo.Lines[i]),1,9))<>5 Then
+
+        // Monta Numero do Documento ===========================================
+        sNrDocto:='';
+        DecodeDate(StrToDate(sDtaMovto), wAno, wMes, wDia);
+        sNrDocto:=IntToStr(wDia);
+
+        If wMes<10 Then
+         sNrDocto:=sNrDocto+'0'+IntToStr(wMes)
+        Else
+         sNrDocto:=sNrDocto+IntToStr(wMes);
+
+        sNrDocto:=sNrDocto+Copy(IntToStr(wAno),length(IntToStr(wAno))-1,2);
+      End; // If Copy(Trim(EditorProSoftImpArquivo.Lines[i]),1,9)='Relatório' Then
+
       Try
         sCodTrinks:=IntToStr(StrToInt(Trim(Separa_String(EditorProSoftImpArquivo.Lines[i],1))));
         bImporta:=True;
@@ -1371,16 +1421,15 @@ Begin
         If Copy(sLinha,length(sLinha),1)<>';' Then
          sLinha:=sLinha+';';
 
+        // OdirApapgar - Novo Leiaoute data é Unica para todos os Movtos
+        // Data do Movimento ===================================================
+        // sDtaMovto:=Copy(Trim(Separa_String(sLinha,3)),9,2);
+        // sDtaMovto:=sDtaMovto+'.'+Copy(Trim(Separa_String(sLinha,3)),6,2);
+        // sDtaMovto:=sDtaMovto+'.'+Copy(Trim(Separa_String(sLinha,3)),1,4);
+
         // Monta Numero do Documento ===========================================
-        DecodeDate(StrToDate(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(sLinha,3))))), wAno, wMes, wDia);
-        sNrDocto:=IntToStr(wDia);
-
-        If wMes<10 Then
-         sNrDocto:=sNrDocto+'0'+IntToStr(wMes)
-        Else
-         sNrDocto:=sNrDocto+IntToStr(wMes);
-
-        sNrDocto:=sNrDocto+Copy(IntToStr(wAno),length(IntToStr(wAno))-1,2);
+        // OdirApagar - 13/03/2019 - Mudança de Leiaute
+        // DecodeDate(StrToDate(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(sLinha,3))))), wAno, wMes, wDia);
 
         // Busca Codigos da Lojas SIDICOM e LINX ===============================
         MySql:=' SELECT e.cod_filial, e.cod_linx'+
@@ -1405,7 +1454,7 @@ Begin
           // Verifica se Já Existe Movto =======================================
           MySql:=' SELECT t.cod_trinks'+
                  ' FROM TRINKS_DIARIO t'+
-                 ' WHERE t.dta_movto = '+QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(sLinha,3)))))+
+                 ' WHERE t.dta_movto = '+QuotedStr(sDtaMovto)+
                  ' AND   t.cod_trinks='+sCodTrinks;
           DMBelShop.SQLQuery1.Close;
           DMBelShop.SQLQuery1.SQL.Clear;
@@ -1414,35 +1463,114 @@ Begin
           bInsert:=(Trim(DMBelShop.SQLQuery1.FieldByName('Cod_Trinks').AsString)='');
           DMBelShop.SQLQuery1.Close;
 
+          // OdirApagar - 13/03/2019 - Alteração de Leiaute
+//          // Update no Movimento ===============================================
+//          If Not bInsert Then
+//          Begin
+//            MySql:=' UPDATE TRINKS_DIARIO t'+
+//                   ' set t.num_clientes=t.num_clientes + '+Trim(f_Troca('.','',Separa_String(sLinha,4)))+
+//                   ', t.num_atendimentos=num_atendimentos + '+Trim(f_Troca('.','',Separa_String(sLinha,5)))+
+//                   ', t.vlr_servicos=vlr_servicos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,7)))))+
+//                   ', t.vlr_produtos=vlr_produtos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,8)))))+
+//                   ', t.vlr_pacotes=vlr_pacotes + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,9)))))+
+//                   ', t.vlr_descontos=vlr_descontos + ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,10)))))+')'+
+//                   ', t.vlr_total=vlr_total + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,11)))))+
+//                   ', t.vlr_creditos=vlr_creditos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,12)))))+
+//                   ', t.vlr_debitos=vlr_debitos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,13)))))+
+//                   ', t.vlr_dinheiro=vlr_dinheiro + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,14)))))+
+//                   ', t.vlr_outros=vlr_outros + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,15)))))+
+//                   ', t.vlr_troco=vlr_troco + ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,16)))))+')'+
+//                   ', t.vlr_sangria = '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,17)))))+
+//                   ', t.qtd_servicos=qtd_servicos + '+Trim(f_Troca('.','',Separa_String(sLinha,18)))+
+//                   ', t.qtd_produtos=qtd_produtos + '+Trim(f_Troca('.','',Separa_String(sLinha,19)))+
+//                   ', t.qtd_pacotes=qtd_pacotes + '+Trim(f_Troca('.','',Separa_String(sLinha,20)))+
+//                   ', t.vlr_ticket_medio=t.vlr_total / t.num_atendimentos'+
+//                   ', t.dta_atualizacao='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDia)))+
+//                   ', t.hra_atualizacao='+QuotedStr(sHora)+
+//
+//                   ' WHERE t.dta_movto = '+QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(sLinha,3)))))+
+//                   ' AND   t.cod_trinks='+sCodTrinks;
+//          End; // If Not bInsert Then
+//
+//          // Insere Novo Movimento =============================================
+//          If bInsert Then
+//          Begin
+//            MySql:=' UPDATE OR INSERT INTO TRINKS_DIARIO '+
+//                   ' (COD_TRINKS, DES_TRINKS, NUM_DOCTO, DTA_MOVTO,'+
+//                   '  NUM_CLIENTES, NUM_ATENDIMENTOS,'+
+//                   '  VLR_TICKET_MEDIO, VLR_SERVICOS, VLR_PRODUTOS, VLR_PACOTES,'+
+//                   '  VLR_DESCONTOS, VLR_TOTAL, VLR_CREDITOS, VLR_DEBITOS, VLR_DINHEIRO,'+
+//                   '  VLR_OUTROS, VLR_TROCO, VLR_SANGRIA,'+
+//                   '  QTD_SERVICOS, QTD_PRODUTOS, QTD_PACOTES,'+
+//                   '  COD_LINX, COD_LOJA, DTA_ATUALIZACAO, HRA_ATUALIZACAO)'+
+//
+//                   ' VALUES ('+
+//                   sCodTrinks+', '+ // COD_TRINKS
+//                   QuotedStr(Trim(Separa_String(sLinha,2)))+', '+ // DES_TRINKS
+//                   QuotedStr(sNrDocto)+', '+ // NUM_DOCTO
+//                   QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(sLinha,3)))))+', '+ // DTA_MOVTO
+//                   Trim(f_Troca('.','',Separa_String(sLinha,4)))+', '+ // NUM_CLIENTES
+//                   Trim(f_Troca('.','',Separa_String(sLinha,5)))+', '+ // NUM_ATENDIMENTOS
+//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,6)))))+', '+ // VLR_TICKET_MEDIO
+//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,7)))))+', '+ // VLR_SERVICOS
+//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,8)))))+', '+ // VLR_PRODUTOS
+//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,9)))))+', '+ // VLR_PACOTES
+//                   'ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,10)))))+'), '+ // VLR_DESCONTOS
+//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,11)))))+', '+ // VLR_TOTAL
+//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,12)))))+', '+ // VLR_CREDITOS
+//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,13)))))+', '+ // VLR_DEBITOS
+//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,14)))))+', '+ // VLR_DINHEIRO
+//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,15)))))+', '+ // VLR_OUTROS
+//                   'ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,16)))))+'), '+ //  VLR_TROCO
+//                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,17)))))+', '+ // VLR_SAGRIA
+//                   Trim(f_Troca('.','',Separa_String(sLinha,18)))+', '+ // QTD_SERVICOS
+//                   Trim(f_Troca('.','',Separa_String(sLinha,19)))+', '+ // QTD_PRODUTOS
+//                   Trim(f_Troca('.','',Separa_String(sLinha,20)))+', '+ // QTD_PACOTES
+//                   sCodLinx+', '+ // COD_LINX
+//                   QuotedStr(sCodSidicom)+', '+ // COD_LOJA
+//                   QuotedStr(f_Troca('/','.',f_Troca('-','.',sDia)))+', '+ // DTA_ATUALIZACAO
+//                   QuotedStr(sHora)+')'+ // HRA_ATUALIZACAO
+//                   ' MATCHING (COD_TRINKS, DTA_MOVTO)';
+//          End; // If bInsert Then
+
+
+          //====================================================================
           // Update no Movimento ===============================================
+          // NÃO EFETUA UPDATE EM MOVIMENTOS JÁ EXISTENTES =====================
+          //====================================================================
           If Not bInsert Then
           Begin
             MySql:=' UPDATE TRINKS_DIARIO t'+
-                   ' set t.num_clientes=t.num_clientes + '+Trim(f_Troca('.','',Separa_String(sLinha,4)))+
-                   ', t.num_atendimentos=num_atendimentos + '+Trim(f_Troca('.','',Separa_String(sLinha,5)))+
-                   ', t.vlr_servicos=vlr_servicos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,7)))))+
-                   ', t.vlr_produtos=vlr_produtos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,8)))))+
-                   ', t.vlr_pacotes=vlr_pacotes + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,9)))))+
-                   ', t.vlr_descontos=vlr_descontos + ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,10)))))+')'+
-                   ', t.vlr_total=vlr_total + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,11)))))+
-                   ', t.vlr_creditos=vlr_creditos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,12)))))+
-                   ', t.vlr_debitos=vlr_debitos + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,13)))))+
-                   ', t.vlr_dinheiro=vlr_dinheiro + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,14)))))+
-                   ', t.vlr_outros=vlr_outros + '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,15)))))+
-                   ', t.vlr_troco=vlr_troco + ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,16)))))+')'+
-                   ', t.vlr_sangria = '+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,17)))))+
-                   ', t.qtd_servicos=qtd_servicos + '+Trim(f_Troca('.','',Separa_String(sLinha,18)))+
-                   ', t.qtd_produtos=qtd_produtos + '+Trim(f_Troca('.','',Separa_String(sLinha,19)))+
-                   ', t.qtd_pacotes=qtd_pacotes + '+Trim(f_Troca('.','',Separa_String(sLinha,20)))+
+                   ' set t.num_clientes=t.num_clientes + '+Trim(f_Troca(',','',Separa_String(sLinha,4)))+
+                   ', t.num_atendimentos=num_atendimentos + '+Trim(f_Troca(',','',Separa_String(sLinha,5)))+
+                   ', t.vlr_servicos=vlr_servicos + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,7))))+
+                   ', t.vlr_produtos=vlr_produtos + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,8))))+
+                   ', t.vlr_pacotes=vlr_pacotes + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,9))))+
+                   ', t.vlr_descontos=vlr_descontos + ABS('+Trim(f_Troca(',','',Trim(Separa_String(sLinha,10))))+')'+
+                   ', t.vlr_total=vlr_total + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,11))))+
+                   ', t.vlr_creditos=vlr_creditos + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,12))))+
+                   ', t.vlr_debitos=vlr_debitos + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,13))))+
+                   ', t.vlr_dinheiro=vlr_dinheiro + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,14))))+
+                   ', t.vlr_outros=vlr_outros + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,15))))+
+                   ', t.vlr_troco=vlr_troco + ABS('+Trim(f_Troca(',','',Trim(Separa_String(sLinha,16))))+')'+
+                   ', t.vlr_sangria=t.vlr_sangria+'+Trim(f_Troca(',','',Trim(Separa_String(sLinha,17))))+
+                   ', t.qtd_servicos=qtd_servicos + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,18))))+
+                   ', t.qtd_produtos=qtd_produtos + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,19))))+
+                   ', t.qtd_pacotes=qtd_pacotes + '+Trim(f_Troca(',','',Trim(Separa_String(sLinha,20))))+
                    ', t.vlr_ticket_medio=t.vlr_total / t.num_atendimentos'+
                    ', t.dta_atualizacao='+QuotedStr(f_Troca('/','.',f_Troca('-','.',sDia)))+
                    ', t.hra_atualizacao='+QuotedStr(sHora)+
 
-                   ' WHERE t.dta_movto = '+QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(sLinha,3)))))+
+                   ' WHERE t.dta_movto = '+QuotedStr(sDtaMovto)+
                    ' AND   t.cod_trinks='+sCodTrinks;
           End; // If Not bInsert Then
+          // Update no Movimento ===============================================
+          // NÃO EFETUA UPDATE EM MOVIMENTOS JÁ EXISTENTES =====================
+          //====================================================================
 
+          //====================================================================
           // Insere Novo Movimento =============================================
+          //====================================================================
           If bInsert Then
           Begin
             MySql:=' UPDATE OR INSERT INTO TRINKS_DIARIO '+
@@ -1458,30 +1586,33 @@ Begin
                    sCodTrinks+', '+ // COD_TRINKS
                    QuotedStr(Trim(Separa_String(sLinha,2)))+', '+ // DES_TRINKS
                    QuotedStr(sNrDocto)+', '+ // NUM_DOCTO
-                   QuotedStr(f_Troca('/','.',f_Troca('-','.',Trim(Separa_String(sLinha,3)))))+', '+ // DTA_MOVTO
-                   Trim(f_Troca('.','',Separa_String(sLinha,4)))+', '+ // NUM_CLIENTES
-                   Trim(f_Troca('.','',Separa_String(sLinha,5)))+', '+ // NUM_ATENDIMENTOS
-                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,6)))))+', '+ // VLR_TICKET_MEDIO
-                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,7)))))+', '+ // VLR_SERVICOS
-                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,8)))))+', '+ // VLR_PRODUTOS
-                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,9)))))+', '+ // VLR_PACOTES
-                   'ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,10)))))+'), '+ // VLR_DESCONTOS
-                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,11)))))+', '+ // VLR_TOTAL
-                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,12)))))+', '+ // VLR_CREDITOS
-                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,13)))))+', '+ // VLR_DEBITOS
-                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,14)))))+', '+ // VLR_DINHEIRO
-                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,15)))))+', '+ // VLR_OUTROS
-                   'ABS('+f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,16)))))+'), '+ //  VLR_TROCO
-                   f_Troca(',','.',f_Troca('.','',f_Troca('R$','',Trim(Separa_String(sLinha,17)))))+', '+ // VLR_SAGRIA
-                   Trim(f_Troca('.','',Separa_String(sLinha,18)))+', '+ // QTD_SERVICOS
-                   Trim(f_Troca('.','',Separa_String(sLinha,19)))+', '+ // QTD_PRODUTOS
-                   Trim(f_Troca('.','',Separa_String(sLinha,20)))+', '+ // QTD_PACOTES
+                   QuotedStr(sDtaMovto)+', '+ // DTA_MOVTO
+                   Trim(f_Troca(',','',Separa_String(sLinha,4)))+', '+ // NUM_CLIENTES
+                   Trim(f_Troca(',','',Separa_String(sLinha,5)))+', '+ // NUM_ATENDIMENTOS
+                   Trim(f_Troca(',','',Separa_String(sLinha,6)))+', '+ // VLR_TICKET_MEDIO
+                   Trim(f_Troca(',','',Separa_String(sLinha,7)))+', '+ // VLR_SERVICOS
+                   Trim(f_Troca(',','',Separa_String(sLinha,8)))+', '+ // VLR_PRODUTOS
+                   Trim(f_Troca(',','',Separa_String(sLinha,9)))+', '+ // VLR_PACOTES
+                   'ABS('+Trim(f_Troca(',','',Separa_String(sLinha,10)))+'), '+ // VLR_DESCONTOS
+                   Trim(f_Troca(',','',Separa_String(sLinha,11)))+', '+ // VLR_TOTAL
+                   Trim(f_Troca(',','',Separa_String(sLinha,12)))+', '+ // VLR_CREDITOS
+                   Trim(f_Troca(',','',Separa_String(sLinha,13)))+', '+ // VLR_DEBITOS
+                   Trim(f_Troca(',','',Separa_String(sLinha,14)))+', '+ // VLR_DINHEIRO
+                   Trim(f_Troca(',','',Separa_String(sLinha,15)))+', '+ // VLR_OUTROS
+                   'ABS('+Trim(f_Troca(',','',Separa_String(sLinha,16)))+'), '+ // VLR_TROCO
+                   Trim(f_Troca(',','',Separa_String(sLinha,17)))+', '+ // VLR_SAGRIA
+                   Trim(f_Troca(',','',Separa_String(sLinha,18)))+', '+ // QTD_SERVICOS
+                   Trim(f_Troca(',','',Separa_String(sLinha,19)))+', '+ // QTD_PRODUTOS
+                   Trim(f_Troca(',','',Separa_String(sLinha,20)))+', '+ // QTD_PACOTES
                    sCodLinx+', '+ // COD_LINX
                    QuotedStr(sCodSidicom)+', '+ // COD_LOJA
                    QuotedStr(f_Troca('/','.',f_Troca('-','.',sDia)))+', '+ // DTA_ATUALIZACAO
                    QuotedStr(sHora)+')'+ // HRA_ATUALIZACAO
                    ' MATCHING (COD_TRINKS, DTA_MOVTO)';
           End; // If bInsert Then
+          // Insere Novo Movimento =============================================
+          //====================================================================
+
           DMBelShop.SQLC.Execute(MySql,nil,nil);
         End; // If bImporta Then
       End; // If bImporta Then
@@ -1619,14 +1750,14 @@ Begin
       PainelApresExp.Visible:=True;
       Refresh;
 
-      sgDia :=DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+      sgDia :=DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor)-1);
 
       // WebService Linx - Atualiza Saldo do Depoisto Solicitado =================
       sParametros:=sgPastaWebService+'PWebServiceLinx.exe LinxProdutosInventario'; // Excutavel e Metodo a Processar
       sParametros:=sParametros+' '+IntToStr(EdtAudCodLoja.AsInteger); // Codigo da Loja a Processar
       sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Metodos')+'"'; // Pasta dos Metodos
       sParametros:=sParametros+' "'+IncludeTrailingPathDelimiter(sgPastaWebService+'Retornos')+'"'; // Pasta dos Retornos
-      sParametros:=sParametros+' "'+sgDtaI+'"'; // Data Inicial
+      sParametros:=sParametros+' "'+sgDia+'"'; // Data Inicial
       sParametros:=sParametros+' NULL'; // Data Final
       sParametros:=sParametros+' NULL'; // Codigo do Produto   => Pode ser Nulo - String ''
       sParametros:=sParametros+' '+IntToStr(igCodDeposito); // Codigo Qualqueer    => Pode ser Nulo - String ''
@@ -8242,7 +8373,9 @@ begin
     End; // If Trim((Sender as TJvXPButton).Name)='Bt_SalaoRelImprime' Then
 
     // Salva em Memória Resultado dos Corredores de Reposição ==================
-    If (Trim((Sender as TJvXPButton).Name)='Bt_ReposLojasResultados') Or (Ts_QualquerCoisa.Caption='AVARIAS') Then
+    If (Trim((Sender as TJvXPButton).Name)='Bt_ReposLojasResultados') Or
+       (Ts_QualquerCoisa.Caption='AVARIAS') Or
+       (Ts_QualquerCoisa.Caption='REEMBOLSO FINANCEIRO') Then
     Begin
       DBGridClipboard(GridNew);
       bFechar:=False;

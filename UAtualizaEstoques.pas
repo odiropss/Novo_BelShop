@@ -37,10 +37,6 @@ type
     Procedure SaldosTransfere_Linx_Sidicom;
 
     Procedure AtualizaListaPrecosEcommerce;
-    // Procedure AtualizaLista0006_BELSHOP(sLista, sDesconto: String);
-
-    // OdirApagar - Atualizado em PMovtosEmpresa - 24/01/2019
-    // Procedure EnderecamentosSidicomBelShop;
 
     // Utilizado em MIX de Fornecedores/Produtos
     Procedure Tabela_ES_PRODUTOS_MIX; // Busca Dados de ES_FINAN_CURVA_ABC que Estejão em LINXPRODUTOS
@@ -283,137 +279,6 @@ Begin
     End; // on e : Exception do
   End; // Try da Transação
 End; // Atualiza Tabela ES_Produtos_MIX >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-// Atualiza Lista de Preços 0006 em BELSHOP.FDB >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-//Procedure TFrmAtualizaEstoques.AtualizaLista0006_BELSHOP(sLista, sDesconto: String);
-//Begin
-//  // Verifica se Transação esta Ativa
-//  If DMAtualizaEstoques.SQLC.InTransaction Then
-//   DMAtualizaEstoques.SQLC.Rollback(TD);
-//
-//  // Monta Transacao ===========================================================
-//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-//  TD.IsolationLevel:=xilREADCOMMITTED;
-//  DMAtualizaEstoques.SQLC.StartTransaction(TD);
-//  Try // Try da Transação
-//
-//    DMAtualizaEstoques.SQLC.Execute(sLista,nil,nil);
-//
-//    If Trim(sDesconto)<>'' Then
-//     DMAtualizaEstoques.SQLC.Execute(sDesconto,nil,nil);
-//
-//    // Atualiza Transacao ======================================================
-//    DMAtualizaEstoques.SQLC.Commit(TD);
-//
-//  Except // Except da Transação
-//    // Abandona Transacao ====================================================
-//    DMAtualizaEstoques.SQLC.Rollback(TD);
-//  End; // Try da Transação
-//End; // Atualiza Lista de Preços 0006 em BELSHOP.FDB >>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-// OdirApagar - INICIO - Atualizado em PMovtosEmpresa - 24/01/2019
-//// Atualiza Endereçamento do Sidicom para BelShop.FDB >>>>>>>>>>>>>>>>>>>>>>>>>>
-//Procedure TFrmAtualizaEstoques.EnderecamentosSidicomBelShop;
-//Var
-//  MySql: String;
-//Begin
-//  sgDtaInicioProc:=DateTimeToStr(Now);
-//
-//  // Verifica se Transação esta Ativa
-//  If DMAtualizaEstoques.SQLC.InTransaction Then
-//   DMAtualizaEstoques.SQLC.Rollback(TD);
-//
-//  // Monta Transacao ===========================================================
-//  TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-//  TD.IsolationLevel:=xilREADCOMMITTED;
-//  DMAtualizaEstoques.SQLC.StartTransaction(TD);
-//  Try // Try da Transação
-//
-//    // Conecata SIDICOM ========================================================
-//    ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'A');
-//    CriaQueryIB('IBDB_99', 'IBT_99', IBQ_Consulta, False, True);
-//
-//    DateSeparator:='.';
-//    DecimalSeparator:='.';
-//
-//    MySql:=' SELECT'+
-//           ' '' UPDATE ESTOQUE es''||'+
-//           ' '' SET es.zonaendereco=''||p.zonaendereco||'+
-//           ' '', es.corredor=''''''||p.corredor||''''''''||'+
-//           ' '', es.prateleira=''''''||p.prateleira||''''''''||'+
-//           ' '', es.gaveta=''''''||p.gaveta||''''''''||'+
-//           ' '' WHERE es.codfilial=''''''||p.codfilial||''''''''||'+
-//           ' '' AND   es.codproduto=''''''||p.codproduto||'''''''' DML'+
-//
-//           ' FROM ESTOQUE p'+
-//           ' WHERE p.codfilial=''99'''+
-//           ' AND   exists (SELECT 1'+
-//           '               FROM PRODUTO pr'+
-//           '               WHERE pr.codproduto=P.codproduto'+
-//           '               AND   pr.principalfor NOT IN (''000300'', ''000500'', ''000883'', ''010000'', ''001072'')'+
-//           '               AND   pr.situacaopro IN (0, 3))';
-//    IBQ_Consulta.Close;
-//    IBQ_Consulta.SQL.Clear;
-//    IBQ_Consulta.SQL.Add(MySql);
-//    IBQ_Consulta.Open;
-//
-//    IBQ_Consulta.DisableControls;
-//    While Not IBQ_Consulta.Eof do
-//    Begin
-//      MySql:=IBQ_Consulta.FieldByName('DML').AsString;
-//      DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
-//
-//      IBQ_Consulta.Next;
-//    End; // While Not IBQ_Consulta.Eof do
-//    IBQ_Consulta.EnableControls;
-//    IBQ_Consulta.Close;
-//
-//    // Atualiza Transacao ======================================================
-//    DMAtualizaEstoques.SQLC.Commit(TD);
-//
-//    tgMySqlErro.Add('EnderecamentosSidicomBelShop - OK  - '+sgDtaInicioProc+' a '+DateTimeToStr(Now));
-//    tgMySqlErro.Add('==================================');
-//    tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_AtuaLizaEstoquesProc.txt');
-//
-//    DateSeparator:='/';
-//    DecimalSeparator:=',';
-//  Except // Except da Transação
-//    on e : Exception do
-//    Begin
-//      // Abandona Transacao ====================================================
-//      DMAtualizaEstoques.SQLC.Rollback(TD);
-//
-//      tgMySqlErro.Add('EnderecamentosSidicomBelShop - ERRO -'+sgDtaInicioProc+' a '+DateTimeToStr(Now));
-//      tgMySqlErro.Add('ERROR: '+e.message);
-//      tgMySqlErro.Add(MySql);
-//      tgMySqlErro.Add('==================================');
-//      tgMySqlErro.SaveToFile(sgPath_Local+'@ODIR_AtuaLizaEstoquesProc.txt');
-//
-//      // Monta Transacao ===========================================================
-//      TD.TransactionID:=Cardinal('10'+FormatDateTime('ddmmyyyy',date)+FormatDateTime('hhnnss',time));
-//      TD.IsolationLevel:=xilREADCOMMITTED;
-//      DMAtualizaEstoques.SQLC.StartTransaction(TD);
-//
-//      MenssagemAnterior('99');
-//      MySql:=' UPDATE OR INSERT INTO ES_PROCESSADOS (cod_loja, cod_linx, dta_proc, obs)'+
-//             ' VALUES ('+
-//             QuotedStr('99')+', '+
-//             '2, '+
-//             ' CURRENT_TIMESTAMP,'+
-//             QuotedStr(Trim(sgMsgAnterior)+' -> Enderecamento Sidicom BelShop: '+e.message+' - '+DMAtualizaEstoques.CDS_LojaLinx.FieldByName('MDL').AsString)+')'+
-//             'MATCHING (COD_LOJA)';
-//      DMAtualizaEstoques.SQLC.Execute(MySql,nil,nil);
-//
-//      DMAtualizaEstoques.SQLC.Commit(TD); // Linx Com Inventário
-//
-//      DateSeparator:='/';
-//      DecimalSeparator:=',';
-//    End; // on e : Exception do
-//  End; // Try da Transação
-//  IBQ_Consulta.Close;
-//  ConexaoEmpIndividual('IBDB_99', 'IBT_99', 'F');
-//End; // Atualiza Endereçamento do Sidicom para BelShop.FDB >>>>>>>>>>>>>>>>>>>>>
-// OdirApagar - FIN - Atualizado em PMovtosEmpresa - 24/01/2019
 
 // Atualiza Lista de Preços do E-Commerce no SIDICOM >>>>>>>>>>>>>>>>>>>>>>>>>>>
 Procedure TFrmAtualizaEstoques.AtualizaListaPrecosEcommerce;
@@ -1375,15 +1240,6 @@ begin
   AtualizaListaPrecosEcommerce;
   // Atualiza Lista de Preços (0010) do E-Commece no SIDICOM CD ================
   // ===========================================================================
-
-// OdirApagar - Atualizado em PMovtosEmpresa - 24/01/2019
-//  // ===========================================================================
-//  // Atualiza Endereçamento do SIDICOM (CD) em BelShop.FDB =====================
-//  // ===========================================================================
-//// OpssAqui
-//  EnderecamentosSidicomBelShop;
-//  // Atualiza Endereçamento do SIDICOM (CD) em BelShop.FDB =====================
-//  // ===========================================================================
 
 // OpssAqui
   //============================================================================

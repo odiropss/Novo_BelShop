@@ -88,12 +88,14 @@ begin
          ' 0.00 VLR_CRED_PRES_ST,'+
          ' ''               '' LOCALIZACAO'+
 
-         ' FROM ODIR_INVENTARIO_DEZ i, LINXPRODUTOS p, DEB_CRED_ICMS_NCM n'+
+//         ' FROM ODIR_INVENTARIO_DEZ i, LINXPRODUTOS p, DEB_CRED_ICMS_NCM n'+
+         ' FROM ODIR_INVENTARIO_FEV i, LINXPRODUTOS p, DEB_CRED_ICMS_NCM n'+
          ' WHERE i.cod_produto=p.cod_produto'+
          ' AND p.ncm=n.des_ncm'+
          ' AND n.per_icms_efetivo=27'+
          ' AND i.qtd_estoque>0'+
-         ' AND i.empresa='+VarToStr(EdtCod_Loja.AsInteger);
+         ' AND i.empresa='+VarToStr(EdtCod_Loja.AsInteger)+
+         ' ORDER BY p.nome';
   DMCreditoInventarioST.CDS_Busca.Close;
   DMCreditoInventarioST.SDS_Busca.CommandText:=MySql;
   DMCreditoInventarioST.CDS_Busca.Open;
@@ -243,9 +245,10 @@ begin
   End; // While Not DMCreditoInventarioST.CDS_CreditoST.Eof do
 
   DMCreditoInventarioST.CDS_CreditoST.Append;
-  DMCreditoInventarioST.CDS_CreditoSTLOCALIZACAO.AsString:='Última Entrada';
+  DMCreditoInventarioST.CDS_CreditoSTDES_PRODUTO.AsString:='TOTAIS CRÉDITO PRESUMIDO ST';
   DMCreditoInventarioST.CDS_CreditoSTVLR_BC_ST_TOTAL.AsCurrency:=cVlrUE;
   DMCreditoInventarioST.CDS_CreditoSTVLR_CRED_PRES_ST.AsCurrency:=(cVlrUE * 100) / (cVlrUE+cVlrCM);
+  DMCreditoInventarioST.CDS_CreditoSTLOCALIZACAO.AsString:='Última Entrada';
 
   DMCreditoInventarioST.CDS_CreditoSTVLR_CUSTO.AsCurrency:=0.00;
   DMCreditoInventarioST.CDS_CreditoSTQTD_ESTOQUE.AsCurrency:=0;
@@ -255,9 +258,10 @@ begin
 
 
   DMCreditoInventarioST.CDS_CreditoST.Append;
-  DMCreditoInventarioST.CDS_CreditoSTLOCALIZACAO.AsString:='Custo Médio';
+  DMCreditoInventarioST.CDS_CreditoSTDES_PRODUTO.AsString:='TOTAIS CRÉDITO PRESUMIDO ST';
   DMCreditoInventarioST.CDS_CreditoSTVLR_BC_ST_TOTAL.AsCurrency:=cVlrCM;
   DMCreditoInventarioST.CDS_CreditoSTVLR_CRED_PRES_ST.AsCurrency:=(cVlrCM * 100) / (cVlrUE+cVlrCM);
+  DMCreditoInventarioST.CDS_CreditoSTLOCALIZACAO.AsString:='Custo Médio';
 
   DMCreditoInventarioST.CDS_CreditoSTVLR_CUSTO.AsCurrency:=0.00;
   DMCreditoInventarioST.CDS_CreditoSTQTD_ESTOQUE.AsCurrency:=0;

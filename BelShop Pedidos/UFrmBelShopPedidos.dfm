@@ -5709,7 +5709,7 @@ object FrmBelShopPedidos: TFrmBelShopPedidos
     Top = 0
     Width = 980
     Height = 531
-    ActivePage = Ts_NFeCheckOut
+    ActivePage = Ts_SolicitacaoProdutos
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -6237,14 +6237,6 @@ object FrmBelShopPedidos: TFrmBelShopPedidos
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-        end
-        object Button1: TButton
-          Left = 192
-          Top = 152
-          Width = 75
-          Height = 25
-          Caption = 'Button1'
-          TabOrder = 3
         end
       end
     end
@@ -7663,7 +7655,7 @@ object FrmBelShopPedidos: TFrmBelShopPedidos
         OnClick = SubMenuEN_CheckOutNFeEntradaClick
       end
     end
-    object PEDIDOS1: TMenuItem
+    object MenuPedidosCentralCompras: TMenuItem
       Caption = 'PEDIDOS CENTRAL DE COMPRAS'
       Default = True
       object SubMenuPCC_PedidoCompras: TMenuItem

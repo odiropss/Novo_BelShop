@@ -1563,7 +1563,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Height = 42
           Align = alRight
           Caption = ' Corredores '
-          TabOrder = 2
+          TabOrder = 4
           object CkCbx_ReposLojasCorredor: TJvCheckedComboBox
             Left = 10
             Top = 16
@@ -1578,6 +1578,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
             Delimiter = '-'
             TabOrder = 0
             OnChange = CkCbx_ReposLojasCorredorChange
+            OnExit = CkCbx_ReposLojasCorredorExit
           end
         end
         object Gb_ReposLojasFornecedor: TGroupBox
@@ -1759,7 +1760,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
           Width = 80
           Height = 31
           Caption = 'Apresenta Resultados'
-          TabOrder = 4
+          TabOrder = 2
           TabStop = False
           ShowFocusRect = True
           Spacing = 10
@@ -1789,7 +1790,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         ParentFont = False
         ParentShowHint = False
         ShowHint = False
-        TabOrder = 1
+        TabOrder = 2
         TitleFont.Charset = DEFAULT_CHARSET
         TitleFont.Color = clWindowText
         TitleFont.Height = -11
@@ -1942,7 +1943,7 @@ object FrmCentralTrocas: TFrmCentralTrocas
         ParentFont = False
         ParentShowHint = False
         ShowHint = False
-        TabOrder = 2
+        TabOrder = 1
         TitleFont.Charset = DEFAULT_CHARSET
         TitleFont.Color = clWindowText
         TitleFont.Height = -11

@@ -334,7 +334,7 @@ implementation
 
 uses DK_Procs1, UDMBelShop, UDMConexoes, UDMVirtual, UFrmBelShop, DB, UPesquisa,
      UFrmSelectEmpProcessamento, UFrmSolicitacoes, UDMRelatorio, DBClient,
-  SysConst;
+  SysConst, UFrmPeriodoApropriacao;
 
 {$R *.dfm}
 
@@ -2232,8 +2232,11 @@ begin
     Bt_FluFornIncluir.Visible:=True;
     Bt_FluFornIncluir.Caption:='    Incluir Fornecedor';
 
-    Bt_FluFornImprimir.Visible:=False;
+    Bt_FluFornImprimir.Visible:=True;
+    Bt_FluFornImprimir.Caption:='Reembolso Financeiro';
+
     Bt_FluFornAlterar.Visible:=False;
+
     Bt_FluFornSalvaMemoria.Visible:=True;
     Bt_FluFornSalvaMemoria.Caption:='Salva em'+cr+' Memória';
 
@@ -2265,6 +2268,8 @@ begin
     Bt_FluFornIncluir.Caption:='    Incluir Lançamento';
 
     Bt_FluFornImprimir.Visible:=True;
+    Bt_FluFornImprimir.Caption:='Imprimir';
+
     Bt_FluFornAlterar.Visible:=True;
     Bt_FluFornSalvaMemoria.Visible:=True;
     Bt_FluFornSalvaMemoria.Caption:='Salva em'+cr+' Memória';
@@ -2333,11 +2338,12 @@ begin
     EdtFornVinculoCodForn.SetFocus;
   End; // Ts_FluxFornVinculos
 
-  // Ts_FluxFornCaixa
+  // Ts_FluxFornPercCampanhas
   If (PC_Principal.ActivePage=Ts_FluxFornPercCampanhas) And (Ts_FluxFornPercCampanhas.CanFocus) Then
   Begin
     Gb_FluFornFornecedor.Visible:=False;
 
+    Bt_FluFornImprimir.Visible:=False;
     Bt_FluFornFiltroComprador.Visible:=False;
     Bt_FluFornVinculos.Visible:=False;
     Bt_FluFornIncluir.Visible:=False;
@@ -2374,8 +2380,7 @@ begin
     TNumericField(DMBelShop.CDS_Join.FieldByName('PERC_ACRESCIMOS')).DisplayFormat:='0.,00';
 
     EdtFornAcrescCampCodForn.SetFocus;
-  End; // Ts_FluxFornCaixa
-
+  End; // Ts_FluxFornPercCampanhas
 
   // Coloca BitMaps em Componentes =============================================
   BitMaps(FrmFluxoFornecedor);
@@ -4080,6 +4085,112 @@ procedure TFrmFluxoFornecedor.Bt_FluFornIncluirClick(Sender: TObject);
 Var
   MySql, sHist: String;
 begin
+  //============================================================================
+  // Apresenta Reembolso Financeiro ============================================
+  //============================================================================
+  If (Sender is TJvXPButton) Then
+  Begin
+    If (Sender as TJvXPButton).Caption='Reembolso Financeiro' Then
+    Begin
+      bgSiga:=False;
+      FrmPeriodoApropriacao:=TFrmPeriodoApropriacao.Create(Self);
+      FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Text:=
+                          DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+      FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Text   :=
+                          DateToStr(DataHoraServidorFI(DMBelShop.SDS_DtaHoraServidor));
+      FrmPeriodoApropriacao.ShowModal;
+
+      sgDtaI:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaInicio.Date);
+      sgDtaI:=f_Troca('/','.',f_Troca('-','.',sgDtaI));
+
+      sgDtaF:=DateToStr(FrmPeriodoApropriacao.DtEdt_PeriodoAproprDtaFim.Date);
+      sgDtaF:=f_Troca('/','.',f_Troca('-','.',sgDtaF));
+
+      FreeAndNil(FrmPeriodoApropriacao);
+
+      // Verifica se Prossegue Processamento ===================================
+      If Not bgSiga Then
+       Exit;
+
+      // Busca Reembolso Financeiro ============================================
+             // -- Detalhes
+      MySql:=' SELECT'+
+             ' f.cod_fornecedor CODIGO,'+
+             ' l.nome_cliente NOME_FORNECEDOR,'+
+             ' f.dta_caixa DTA_CAIXA,'+
+             ' SUM(f.vlr_origem) VLR_ORIGEM,'+
+             ' SUM(f.vlr_caixa) VLR_LANCAEMNTO,'+
+             ' f.txt_obs OBSERVACAO,'+
+             ' 1 ORDEM'+
+
+             ' FROM FL_CAIXA_FORNECEDORES f, LINXCLIENTESFORNEC l'+
+
+             ' WHERE f.cod_fornecedor=l.cod_cliente'+
+             ' AND   f.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
+             ' AND   f.cod_historico=955'+
+             ' GROUP BY 1,2,3,6'+
+
+             ' UNION'+
+
+             // -- Período
+             ' SELECT'+
+             ' NULL CODIGO, '+
+             QuotedStr('Período de '+f_Troca('.','/',f_Troca('-','/',sgDtaI))+' a '+f_Troca('.','/',f_Troca('-','/',sgDtaF)))+' NOME_FORNECEDOR,'+
+             ' NULL DTA_CAIXA,'+
+             ' NULL VLR_ORIGEM,'+
+             ' NULL VLR_LANCAEMNTO,'+
+             ' NULL OBSERVACAO,'+
+             ' 0 ORDEM'+
+
+             ' FROM RDB$DATABASE'+
+
+             ' UNION'+
+
+             // -- Totais
+             ' SELECT'+
+             ' NULL CODIGO,'+
+             ' ''TOTAL REEMBOLSO FINANCEIRO ==>>'' NOME_FORNECEDOR,'+
+             ' NULL DTA_CAIXA,'+
+             ' SUM(f.vlr_origem) VLR_ORIGEM,'+
+             ' SUM(f.vlr_caixa) VLR_LANCAEMNTO,'+
+             ' NULL OBSERVACAO,'+
+             ' 2 ORDEM'+
+
+             ' FROM FL_CAIXA_FORNECEDORES f'+
+             ' WHERE f.dta_caixa BETWEEN '+QuotedStr(sgDtaI)+' AND '+QuotedStr(sgDtaF)+
+             ' AND   f.cod_historico=955'+
+
+             ' ORDER BY 7,1,2';
+      DMBelShop.CDS_Busca1.Close;
+      DMBelShop.SDS_Busca1.CommandText:=MySql;
+      DMBelShop.CDS_Busca1.Open;
+      TNumericField(DMBelShop.CDS_Busca1.FieldByName('VLR_ORIGEM')).DisplayFormat:='0.,00';
+      TNumericField(DMBelShop.CDS_Busca1.FieldByName('VLR_LANCAEMNTO')).DisplayFormat:='0.,00';
+      TNumericField(DMBelShop.CDS_Busca1.FieldByName('ORDEM')).Visible:=False;
+
+      FrmSolicitacoes:=TFrmSolicitacoes.Create(Self);
+      FrmBelShop.AbreSolicitacoes(19);
+
+      bgProcessar:=False;
+      FrmSolicitacoes.GridNewCriar(DMBelShop.DS_Busca1, 'Reembolso Financeiro', True);
+      FrmSolicitacoes.Caption:='CONTA CORRENTE FORNECEDORES';
+      FrmSolicitacoes.Ts_QualquerCoisa.Caption:='REEMBOLSO FINANCEIRO'; // Usado no Botão TFrmSolicitacoes.Bt_QualquerCoisaSalvarClick
+
+      FrmSolicitacoes.AutoSize:=False;
+      FrmSolicitacoes.Width:=1000;
+      FrmSolicitacoes.AutoSize:=True;
+      FrmSolicitacoes.ShowModal;
+
+      DMBelShop.CDS_Busca1.Close;
+      FreeAndNil(FrmSolicitacoes);
+
+      Dbg_FluFornFornec.SetFocus;
+      Exit;
+    End; // If (Sender as TJvXPButton).Name='Reembolso Financeiro' Then
+  End; // If (Sender is TJvXPButton) Then
+  // Impressão Reembolso Financeiro ============================================
+  //============================================================================
+
   Gb_FornVinculado.Enabled:=True;
   EdtValorDoc.Enabled:=True;
   EdtCodLojaDoc.Enabled:=True;
@@ -4091,6 +4202,7 @@ begin
   // Busca Historicos Utilizados ===============================================
   DMBelShop.CDS_FluxoFornHistorico.Locate('COD_HISTORICO',900,[]);
   sHist:=DMBelShop.CDS_FluxoFornHistoricoDES_HISTORICO.AsString;
+
   DMBelShop.CDS_FluxoFornHistorico.Locate('COD_HISTORICO',955,[]);
   sHist:=
    sHist+cr+DMBelShop.CDS_FluxoFornHistoricoDES_HISTORICO.AsString;
@@ -4244,7 +4356,7 @@ begin
     Begin
       If Trim(DMBelShop.CDS_FluxoFornecedorTXT_OBS.AsString)='DESCARTE DE AVARIAS - Central de Trocas - 13/12/2016' Then
       Begin
-        msg('Alteração NÃO Permitida Neste Lançamento !!','A');
+        msg('DESCARTE DE AVARIAS !!'+cr+cr+'Alteração NÃO Permitida Neste Lançamento !!','A');
         Dbg_FluFornCaixa.SetFocus;
         Exit;
       End; // If Trim(DMBelShop.CDS_FluxoFornecedorTXT_OBS.AsString)='DESCARTE DE AVARIAS - Central de Trocas - 13/12/2016' Then

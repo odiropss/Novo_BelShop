@@ -330,6 +330,8 @@ var
 
   TD: TTransactionDesc; // Ponteiro de Transacão
 
+  tgMySqlErro: TStringList; // Arquivo de Processamento e Erros
+
 implementation
 
 uses
@@ -1438,14 +1440,25 @@ Begin
     DecodeDate(StrToDate(sgParametroDtaInicio), wAno, wMes, wDia);
     sgDtaInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
-    If (sgMetodo='LinxMovimento') Then
+    // OdirApagar - 11/03/2019
+    // If (sgMetodo='LinxMovimento') Then
+    // Begin
+    //   sgDtaUpdateInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+    //   sgDtaUpdateInicio:=sgDtaUpdateInicio+' 00:00:01';
+    // End; // If (sgMetodo='LinxMovimento') Then
+
      sgDtaUpdateInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+     sgDtaUpdateInicio:=sgDtaUpdateInicio+' 00:00:01';
+
   End; // If Trim(sgParametroDtaInicio)<>'' Then
 
   If Trim(sgParametroDtaFim)<>'' Then
   Begin
     DecodeDate(StrToDate(sgParametroDtaFim), wAno, wMes, wDia);
     sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+
+    sgDtaUpdateFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+    sgDtaUpdateFim:=sgDtaUpdateFim+' 23:59:59';
   End; // If Trim(sgParametroDtaFim)<>'' Then
   // Se Recebe do Parametros Período Acerta Datas ==============================
   // ===========================================================================
@@ -1903,7 +1916,7 @@ Begin
     Begin
       sXML:='			<Parameter id="dt_update_inicial">'+sgDtaUpdateInicio+'</Parameter>';
       Writeln(txtArq,sXML);
-      sXML:='			<Parameter id="dt_update_fim">'+sgDtaFim+'</Parameter>';
+      sXML:='			<Parameter id="dt_update_fim">'+sgDtaUpdateFim+'</Parameter>';
       Writeln(txtArq,sXML);
     End; // If (sgMetodo='LinxMovimento') Then
   End; // If (sgMetodo='LinxProdutos') Or (sgMetodo='LinxClientesFornec') Or (sgMetodo='LinxMovimento') Then
@@ -2220,6 +2233,29 @@ End;
   //============================================================================
 
   //============================================================================
+  // Pasta BelShop =============================================================
+  //============================================================================
+  i:=pos('BelShop',sgPastaExecutavel);
+  sgPastaBelShop:=IncludeTrailingPathDelimiter(Copy(sgPastaExecutavel,1,i+7));
+  // Pasta BelShop =============================================================
+  //============================================================================
+
+  //============================================================================
+  // Cria Controlador de Processamento =========================================
+  //============================================================================
+  If Trim(sgParametroMetodo)='' Then
+  Begin
+    tgMySqlErro:=TStringList.Create;
+    tgMySqlErro.Clear;
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.Add('Processamento INICIO: '+DateToStr(Date)+' '+TimeToStr(Time));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPastaBelShop+'@ODIR_Web_LINX_Proc.txt');
+  End; // If Trim(sgParametroMetodo)='' Then
+  // Cria Controlador de Processamento =========================================
+  //============================================================================
+
+  //============================================================================
   // Parametros na Rede ========================================================
   //============================================================================
   If Trim(sgParametroMetodo)<>'' Then
@@ -2500,9 +2536,12 @@ End;
   // Busca Lojas para Processamento ============================================
   // ===========================================================================
   MySql:=' SELECT em.num_cnpj, em.cod_filial, em.cod_linx,'+
-         '        em.dta_inicio_linx, em.ind_domingo'+
+         '        em.dta_inicio_linx, em.ind_domingo, em.tip_emp'+
          ' FROM EMP_CONEXOES em'+
          ' WHERE em.dta_inicio_linx IS NOT NULL';
+
+//          MySql:=
+//           MySql+' AND em.cod_linx=25';
 
          If sgParametroCodLoja<>'' Then
           MySql:=
@@ -2510,14 +2549,43 @@ End;
          Else
           MySql:=
            MySql+' AND em.cod_linx<>0'+
-                 ' ORDER BY 5,4';
-
-//          MySql:=
-//           MySql+' AND em.cod_linx in (1,20,2,21,18,19,22,24,5,25)'+
-//                 ' ORDER BY 5,4';
+                 ' ORDER BY 6 DESC,5,4';
+{
+  MySql:=
+   MySql+' AND em.cod_linx<>0'+
+         ' and exists (select 1'+
+         '             from linxlojas l'+
+         '             where l.empresa=em.cod_linx'+
+         '             and ((l.dta_atualizacao<>current_date) or (L.empresa IN (2,20)))'+
+         '             )'+
+         ' order by 5,4';
+}
   DMLinxWebService.CDS_Lojas.Close;
   DMLinxWebService.SDS_Lojas.CommandText:=MySql;
   DMLinxWebService.CDS_Lojas.Open;
+
+  If Trim(sgParametroMetodo)='' Then
+  Begin
+    tgMySqlErro.Add('LOJAS A PROCESSAR');
+    tgMySqlErro.SaveToFile(sgPastaBelShop+'@ODIR_Web_LINX_Proc.txt');
+
+    DMLinxWebService.CDS_Lojas.First;
+    While Not DMLinxWebService.CDS_Lojas.Eof do
+    Begin
+      sgCodLojaLinx:=Trim(DMLinxWebService.CDS_LojasCOD_LINX.AsString);
+      If DMLinxWebService.CDS_LojasCOD_LINX.AsInteger<10 Then
+       sgCodLojaLinx:='0'+Trim(DMLinxWebService.CDS_LojasCOD_LINX.AsString);
+
+      tgMySqlErro.Add('Loja SIDI: '+Trim(DMLinxWebService.CDS_LojasCOD_FILIAL.AsString)+
+                      ' Loja Linx: '+ sgCodLojaLinx+
+                      ' CNPJ: '+Trim(DMLinxWebService.CDS_LojasNUM_CNPJ.AsString));
+      tgMySqlErro.SaveToFile(sgPastaBelShop+'@ODIR_Web_LINX_Proc.txt');
+
+      DMLinxWebService.CDS_Lojas.Next;
+    End; // While Not DMLinxWebService.CDS_Lojas.Eof do
+  End; // If Trim(sgParametroMetodo)='' Then
+  DMLinxWebService.CDS_Lojas.First;
+
   //ShowMessage('Odir 2 - SQL Lojas');
   // Busca Lojas para Processamento ============================================
   // ===========================================================================
@@ -2537,6 +2605,13 @@ End;
     sgCodLoja       :=Trim(DMLinxWebService.CDS_LojasCOD_FILIAL.AsString);
     sgCodLojaLinx   :=Trim(DMLinxWebService.CDS_LojasCOD_LINX.AsString);
     sgDtaInicioLinx :=Trim(DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsString);
+
+    If Trim(sgParametroMetodo)='' Then
+    Begin
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.Add('INICIO LOJA: '+sgCodLojaLinx+' HORÁRIO: '+DateToStr(Date)+' '+TimeToStr(Time));
+      tgMySqlErro.SaveToFile(sgPastaBelShop+'@ODIR_Web_LINX_Proc.txt');
+    End; // If Trim(sgParametroMetodo)='' Then
 
     //==========================================================================
     // Loop nos Metodos - INICIO ===============================================
@@ -2593,13 +2668,13 @@ End;
 //odiraqui 1 - Campo Data para Pesquisa
       // Campo Data para Pesquisa ----------------------------------------------
       If (AnsiUpperCase(sgMetodo)='LINXVENDEDORES')  Then
-       sgCampoUpdate:='Dt_Upd'
+       sgCampoUpdate:='DT_UPD'
       Else If (AnsiUpperCase(sgMetodo)='LINXCLIENTESFORNEC') or (AnsiUpperCase(sgMetodo)='LINXPRODUTOS') Then
-       sgCampoUpdate:='Dt_Update'
+       sgCampoUpdate:='DT_UPDATE'
       Else If (AnsiUpperCase(sgMetodo)='LINXMOVIMENTO') Then
-       sgCampoUpdate:='Data_Documento'
+       sgCampoUpdate:='DATA_LANCAMENTO'
       Else If (AnsiUpperCase(sgMetodo)='LINXFATURAS') Then
-       sgCampoUpdate:='Data_Emissao'
+       sgCampoUpdate:='DATA_EMISSAO'
       Else If (AnsiUpperCase(sgMetodo)='LINXLANCCONTABIL') Then
        sgCampoUpdate:='DATA_LANC'
       Else If (AnsiUpperCase(sgMetodo)='LINXPEDIDOSVENDA') Then
@@ -2609,7 +2684,7 @@ End;
       Else If (AnsiUpperCase(sgMetodo)='LINXREDUCOESZ') Then
        sgCampoUpdate:='DATA_MOV'
       ELSE
-       sgCampoUpdate:='Dta_Atualizacao';
+       sgCampoUpdate:='DTA_ATUALIZACAO';
 
       MySql:=' SELECT CAST(MAX(Lx.'+sgCampoUpdate+') AS DATE) Dta_Ult_Alteracao';
              If Trim(sgMetodoNomeTabela)<>'' Then
@@ -2755,8 +2830,8 @@ End;
         // sgDtaFim:='2018-11-13'; // Hoje
 
         // Mesmas Datas de Inclusão e de Alteração no Cadastro
-        sgDtaUpdateInicio:=sgDtaInicio;
-        sgDtaUpdateFim   :=sgDtaFim;
+        sgDtaUpdateInicio:=sgDtaInicio+' 00:00:01';
+        sgDtaUpdateFim   :=sgDtaFim+' 23:59:59';
 
         MontaMetodoXMLPost();
       End; // If (sgMetodo='LinxClientesFornec') And (Not bUmaVez) Then Then
@@ -2808,7 +2883,7 @@ End;
           If (sgDiaSemana='SÁBADO') Or (sgDiaSemana='SABADO') Then
            iNumDias:=30;
 
-          If (dDtaUltAtual=0) Or ((dDtaUltAtual-iNumDias)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
+          If (dDtaUltAtual=0) Then // Or ((dDtaUltAtual-iNumDias)<DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime) Then
            dDtaUltAtual:=DMLinxWebService.CDS_LojasDTA_INICIO_LINX.AsDateTime+7;
 
           DecodeDate(dDtaUltAtual-iNumDias, wAno, wMes, wDia);
@@ -2817,8 +2892,16 @@ End;
           DecodeDate(dDtaHoje, wAno, wMes, wDia);
           sgDtaFim:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
 
-          sgDtaUpdateInicio:=sgDtaInicio;
-          sgDtaUpdateFim:=sgDtaFim;
+          // Datas de Update
+          If iNumDias<>30 Then
+           DecodeDate(dDtaUltAtual-15, wAno, wMes, wDia)
+          Else
+           DecodeDate(dDtaUltAtual-iNumDias, wAno, wMes, wDia);
+
+          sgDtaUpdateInicio:=VarToStr(wAno)+'-'+FormatFloat('00',wMes)+'-'+FormatFloat('00',wDia);
+          sgDtaUpdateInicio:=sgDtaUpdateInicio+' 00:00:01';
+
+          sgDtaUpdateFim:=sgDtaFim+' 23:59:59';
 
           // Metodo por Parametro (Acerta Data Inicial)
           If Trim(sgParametroMetodo)<>'' Then
@@ -3595,6 +3678,12 @@ End;
         If bSiga Then
         Begin
           LeMetodoXMLRetorno;
+
+          If Trim(sgParametroMetodo)='' Then
+          Begin
+            tgMySqlErro.Add('   - Médoto: '+sgMetodo+' HORÁRIO: '+DateToStr(Date)+' '+TimeToStr(Time));
+            tgMySqlErro.SaveToFile(sgPastaBelShop+'@ODIR_Web_LINX_Proc.txt');
+          End; // If Trim(sgParametroMetodo)='' Then
         End; // If bSiga Then
 
         //======================================================================
@@ -3623,6 +3712,13 @@ End;
     // Loop nos Metodos - FIM ==================================================
     //==========================================================================
 
+    If Trim(sgParametroMetodo)='' Then
+    Begin
+      tgMySqlErro.Add('FIM LOJA: '+sgCodLojaLinx+' HORÁRIO: '+DateToStr(Date)+' '+TimeToStr(Time));
+      tgMySqlErro.Add('==================================');
+      tgMySqlErro.SaveToFile(sgPastaBelShop+'@ODIR_Web_LINX_Proc.txt');
+    End; // If Trim(sgParametroMetodo)='' Then
+
     bUmaVez:=True;
 
     DMLinxWebService.CDS_Lojas.Next;
@@ -3633,11 +3729,20 @@ End;
 
   Application.Terminate;
   Exit;
-
 end;
 
 procedure TFrmWebServiceLinx.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
+  If Trim(sgParametroMetodo)='' Then
+  Begin
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.Add('Processamento FIM: '+DateToStr(Date)+' '+TimeToStr(Time));
+    tgMySqlErro.Add('==================================');
+    tgMySqlErro.SaveToFile(sgPastaBelShop+'@ODIR_Web_LINX_Proc.txt');
+
+    FreeAndNil(tgMySqlErro);
+  End; // If Trim(sgParametroMetodo)='' Then
+
   FreeAndNil(tgArqProc);
   FreeAndNil(tgMetodos);
 end;
